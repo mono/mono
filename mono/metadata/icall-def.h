@@ -415,6 +415,9 @@ ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfacePrope
 ICALL(MAC_IFACE_PROPS_1, "ParseRouteInfo_internal", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal)
 #endif
 
+ICALL_TYPE(MSRWI, "System.Net.Sockets.MonoSocketRuntimeWorkItem", MSRWI_1)
+ICALL(MSRWI_1, "ExecuteWorkItem", ves_icall_System_Net_Sockets_MonoSocketRuntimeWorkItem_ExecuteWorkItem)
+
 ICALL_TYPE(SOCK, "System.Net.Sockets.Socket", SOCK_1)
 ICALL(SOCK_1, "Accept_internal(intptr,int&,bool)", ves_icall_System_Net_Sockets_Socket_Accept_internal)
 ICALL(SOCK_2, "Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal)
@@ -869,7 +872,6 @@ ICALL(MTHREADP_6, "IsThreadPoolHosted", ves_icall_System_Threading_Microsoft_Thr
 ICALL(MTHREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemComplete)
 ICALL(MTHREADP_8, "NotifyWorkItemProgressNative", ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemProgressNative)
 ICALL(MTHREADP_9, "PostQueuedCompletionStatus", ves_icall_System_Threading_Microsoft_ThreadPool_PostQueuedCompletionStatus)
-ICALL(MTHREADP_10, "RegisterWaitForSingleObjectNative", ves_icall_System_Threading_Microsoft_ThreadPool_RegisterWaitForSingleObjectNative)
 ICALL(MTHREADP_11, "ReportThreadStatus", ves_icall_System_Threading_Microsoft_ThreadPool_ReportThreadStatus)
 ICALL(MTHREADP_12, "RequestWorkerThread", ves_icall_System_Threading_Microsoft_ThreadPool_RequestWorkerThread)
 ICALL(MTHREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_Microsoft_ThreadPool_SetMaxThreadsNative)

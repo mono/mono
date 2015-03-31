@@ -722,6 +722,7 @@ ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
 ReferenceSources/WebHeaderCollectionType.cs
 ReferenceSources/Win32Exception.cs
+ReferenceSources/MonoSocketRuntimeWorkItem.cs
 
 ../../../external/referencesource/System/misc/PrivilegedConfigurationManager.cs
 ../../../external/referencesource/System/regex/system/text/regularexpressions/Regex.cs

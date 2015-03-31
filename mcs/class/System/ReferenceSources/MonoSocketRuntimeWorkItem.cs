@@ -1,12 +1,12 @@
-
+using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
-namespace System.Threading
+namespace System.Net.Sockets
 {
-	internal sealed class MonoRuntimeWorkItem : IThreadPoolWorkItem
+	internal sealed class MonoSocketRuntimeWorkItem : IThreadPoolWorkItem
 	{
-		AsyncResult async_result;
+		Socket.SocketAsyncResult socket_async_result;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void ExecuteWorkItem();

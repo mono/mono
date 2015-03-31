@@ -26,6 +26,7 @@
 #include <mono/metadata/mono-cq.h>
 #include <mono/metadata/mono-wsq.h>
 #include <mono/metadata/mono-ptr-array.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
@@ -59,7 +60,8 @@
 #endif
 
 #include "threadpool.h"
-#include "threadpool-microsoft.h"
+#include "threadpool-ms.h"
+#include "threadpool-ms-io.h"
 
 static gboolean
 use_ms_threadpool (void)
@@ -78,8 +80,6 @@ use_ms_threadpool (void)
 
 #define THREAD_WANTS_A_BREAK(t) ((t->state & (ThreadState_StopRequested | \
 						ThreadState_SuspendRequested)) != 0)
-
-#define SMALL_STACK (128 * (sizeof (gpointer) / 4) * 1024)
 
 /* DEBUG: prints tp data every 2s */
 #undef DEBUG 
@@ -100,17 +100,6 @@ enum {
 };
 
 static SocketIOData socket_io_data;
-
-/* Keep in sync with the System.MonoAsyncCall class which provides GC tracking */
-typedef struct {
-	MonoObject         object;
-	MonoMethodMessage *msg;
-	MonoMethod        *cb_method;
-	MonoDelegate      *cb_target;
-	MonoObject        *state;
-	MonoObject        *res;
-	MonoArray         *out_args;
-} ASyncCall;
 
 typedef struct {
 	MonoSemType lock;
@@ -197,6 +186,8 @@ enum {
 };
 
 // #include <mono/metadata/tpool-poll.c>
+gpointer tp_poll_init (SocketIOData *data);
+
 #ifdef HAVE_EPOLL
 #include <mono/metadata/tpool-epoll.c>
 #elif defined(USE_KQUEUE_FOR_THREADPOOL)
@@ -450,7 +441,9 @@ mono_thread_pool_remove_socket (int sock)
 	MonoObject *ares;
 
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_remove_socket (sock);
+#ifndef DISABLE_SOCKETS
+		mono_threadpool_ms_io_remove_socket (sock);
+#endif
 		return;
 	}
 
@@ -613,63 +606,9 @@ socket_io_filter (MonoObject *target, MonoObject *state)
 static MonoObject *
 mono_async_invoke (ThreadPool *tp, MonoAsyncResult *ares)
 {
-	ASyncCall *ac = (ASyncCall *)ares->object_data;
-	MonoObject *res, *exc = NULL;
-	MonoArray *out_args = NULL;
-	HANDLE wait_event = NULL;
-	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoObject *exc = NULL;
 
-	if (ares->execution_context) {
-		/* use captured ExecutionContext (if available) */
-		MONO_OBJECT_SETREF (ares, original_context, mono_thread_get_execution_context ());
-		mono_thread_set_execution_context (ares->execution_context);
-	} else {
-		ares->original_context = NULL;
-	}
-
-	if (ac == NULL) {
-		/* Fast path from ThreadPool.*QueueUserWorkItem */
-		void *pa = ares->async_state;
-		/* The debugger needs this */
-		thread->async_invoke_method = ((MonoDelegate*)ares->async_delegate)->method;
-		res = mono_runtime_delegate_invoke (ares->async_delegate, &pa, &exc);
-		thread->async_invoke_method = NULL;
-	} else {
-		MonoObject *cb_exc = NULL;
-
-		ac->msg->exc = NULL;
-		res = mono_message_invoke (ares->async_delegate, ac->msg, &exc, &out_args);
-		MONO_OBJECT_SETREF (ac, res, res);
-		MONO_OBJECT_SETREF (ac, msg->exc, exc);
-		MONO_OBJECT_SETREF (ac, out_args, out_args);
-
-		mono_monitor_enter ((MonoObject *) ares);
-		ares->completed = 1;
-		if (ares->handle != NULL)
-			wait_event = mono_wait_handle_get_handle ((MonoWaitHandle *) ares->handle);
-		mono_monitor_exit ((MonoObject *) ares);
-		/* notify listeners */
-		if (wait_event != NULL)
-			SetEvent (wait_event);
-
-		/* call async callback if cb_method != null*/
-		if (ac != NULL && ac->cb_method) {
-			void *pa = &ares;
-			cb_exc = NULL;
-			thread->async_invoke_method = ac->cb_method;
-			mono_runtime_invoke (ac->cb_method, ac->cb_target, pa, &cb_exc);
-			thread->async_invoke_method = NULL;
-			exc = cb_exc;
-		} else {
-			exc = NULL;
-		}
-	}
-
-	/* restore original thread execution context if flow isn't suppressed, i.e. non null */
-	if (ares->original_context) {
-		mono_thread_set_execution_context (ares->original_context);
-		ares->original_context = NULL;
-	}
+	mono_async_result_invoke (ares, &exc);
 
 #if DEBUG
 	InterlockedDecrement (&tp->njobs);
@@ -975,7 +914,7 @@ void
 mono_thread_pool_init_tls (void)
 {
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_init_tls ();
+		mono_threadpool_ms_init_tls ();
 		return;
 	}
 
@@ -991,7 +930,7 @@ mono_thread_pool_init (void)
 	int result;
 	
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_init ();
+		mono_threadpool_ms_init ();
 		return;
 	}
 
@@ -1075,6 +1014,14 @@ icall_append_io_job (MonoObject *target, MonoSocketAsyncResult *state)
 	MonoAsyncResult *ares;
 
 	ares = create_simple_asyncresult (target, (MonoObject *) state);
+
+	if (use_ms_threadpool ()) {
+#ifndef DISABLE_SOCKETS
+		mono_threadpool_ms_io_add (ares, state);
+#endif
+		return;
+	}
+
 	socket_io_add (ares, state);
 }
 
@@ -1084,15 +1031,14 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 {
 	MonoDomain *domain;
 	MonoAsyncResult *ares;
-	ASyncCall *ac;
+	MonoAsyncCall *ac;
 
-	if (use_ms_threadpool ()) {
-		return mono_thread_pool_ms_add (target, msg, async_callback, state);
-	}
+	if (use_ms_threadpool ())
+		return mono_threadpool_ms_add (target, msg, async_callback, state);
 
 	domain = mono_domain_get ();
 
-	ac = (ASyncCall*)mono_object_new (domain, async_call_klass);
+	ac = (MonoAsyncCall*)mono_object_new (domain, async_call_klass);
 	MONO_OBJECT_SETREF (ac, msg, msg);
 	MONO_OBJECT_SETREF (ac, state, state);
 
@@ -1117,11 +1063,11 @@ mono_thread_pool_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *
 MonoObject *
 mono_thread_pool_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc)
 {
-	ASyncCall *ac;
+	MonoAsyncCall *ac;
 	HANDLE wait_event;
 
 	if (use_ms_threadpool ()) {
-		return mono_thread_pool_ms_finish (ares, out_args, exc);
+		return mono_threadpool_ms_finish (ares, out_args, exc);
 	}
 
 	*exc = NULL;
@@ -1152,7 +1098,7 @@ mono_thread_pool_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObject
 		mono_monitor_exit ((MonoObject *) ares);
 	}
 
-	ac = (ASyncCall *) ares->object_data;
+	ac = (MonoAsyncCall *) ares->object_data;
 	g_assert (ac != NULL);
 	*exc = ac->msg->exc; /* FIXME: GC add write barrier */
 	*out_args = ac->out_args;
@@ -1176,7 +1122,7 @@ void
 mono_thread_pool_cleanup (void)
 {
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_cleanup ();
+		mono_threadpool_ms_cleanup ();
 		return;
 	}
 
@@ -1388,7 +1334,7 @@ mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	guint32 start_time;
 
 	if (use_ms_threadpool ()) {
-		return mono_thread_pool_ms_remove_domain_jobs (domain, timeout);
+		return mono_threadpool_ms_remove_domain_jobs (domain, timeout);
 	}
 
 	result = TRUE;
@@ -1445,7 +1391,7 @@ gboolean
 mono_thread_pool_is_queue_array (MonoArray *o)
 {
 	if (use_ms_threadpool ()) {
-		return mono_thread_pool_ms_is_queue_array (o);
+		return mono_threadpool_ms_is_queue_array (o);
 	}
 
 	// gpointer obj = o;
@@ -1920,7 +1866,7 @@ void
 mono_thread_pool_suspend (void)
 {
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_suspend ();
+		mono_threadpool_ms_suspend ();
 		return;
 	}
 	suspended = TRUE;
@@ -1933,7 +1879,7 @@ void
 mono_thread_pool_resume (void)
 {
 	if (use_ms_threadpool ()) {
-		mono_thread_pool_ms_resume ();
+		mono_threadpool_ms_resume ();
 		return;
 	}
 	suspended = FALSE;

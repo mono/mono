@@ -1159,7 +1159,7 @@ namespace MonoTests.System.Threading.Tasks
 			});
 			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
 			testTask.RunSynchronously ();
-			onErrorTask.Wait (100);
+			onErrorTask.Wait (1000);
 			Assert.IsNotNull (e);
 			Assert.IsTrue (continuationRan);
 		}
