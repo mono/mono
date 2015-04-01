@@ -350,10 +350,17 @@ namespace System.Net.Http.Headers
 				sb.Append (entry.Key);
 				sb.Append (": ");
 
+				string separator = ",";
+				HeaderInfo headerInfo;
+				if (known_headers.TryGetValue (entry.Key, out headerInfo) && headerInfo.AllowsMany)
+					separator = headerInfo.Separator;
+
 				bool first = true;
 				foreach (var v in entry.Value) {
-					if (!first)
-						sb.Append (", ");
+					if (!first) {
+						sb.Append (separator);
+						sb.Append (" ");
+					}
 
 					sb.Append (v);
 					first = false;
