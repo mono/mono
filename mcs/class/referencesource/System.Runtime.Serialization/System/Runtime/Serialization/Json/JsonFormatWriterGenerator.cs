@@ -4,7 +4,9 @@ namespace System.Runtime.Serialization.Json
     using System;
     using System.Collections;
     using System.Reflection;
+#if !NO_DYNAMIC_CODEGEN
     using System.Reflection.Emit;
+#endif
     using System.Runtime.Serialization.Diagnostics.Application;
     using System.Security;
     using System.Security.Permissions;
@@ -13,7 +15,7 @@ namespace System.Runtime.Serialization.Json
     delegate void JsonFormatClassWriterDelegate(XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContextComplexJson context, ClassDataContract dataContract, XmlDictionaryString[] memberNames);
     delegate void JsonFormatCollectionWriterDelegate(XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContextComplexJson context, CollectionDataContract dataContract);
 
-    class JsonFormatWriterGenerator
+    partial class JsonFormatWriterGenerator
     {
         [Fx.Tag.SecurityNote(Critical = "Holds instance of CriticalHelper which keeps state that was produced within an assert.")]
         [SecurityCritical]
@@ -70,10 +72,11 @@ namespace System.Runtime.Serialization.Json
             }
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - handles all aspects of IL generation including initializing the DynamicMethod."
             + "Changes to how IL generated could affect how data is deserialized and what gets access to data, "
             + "therefore we mark it for review so that changes to generation logic are reviewed.")]
-        class CriticalHelper
+        partial class CriticalHelper
         {
             CodeGenerator ilg;
             ArgBuilder xmlWriterArg;
@@ -800,5 +803,6 @@ namespace System.Runtime.Serialization.Json
                 ilg.Call(xmlWriterArg, JsonFormatGeneratorStatics.WriteEndElementMethod);
             }
         }
+#endif
     }
 }

@@ -6,7 +6,9 @@ namespace System.Runtime.Serialization.Json
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+#if !NO_DYNAMIC_CODEGEN
     using System.Reflection.Emit;
+#endif
     using System.Runtime;
     using System.Runtime.Serialization.Diagnostics.Application;
     using System.Security;
@@ -17,7 +19,7 @@ namespace System.Runtime.Serialization.Json
     delegate object JsonFormatCollectionReaderDelegate(XmlReaderDelegator xmlReader, XmlObjectSerializerReadContextComplexJson context, XmlDictionaryString emptyDictionaryString, XmlDictionaryString itemName, CollectionDataContract collectionContract);
     delegate void JsonFormatGetOnlyCollectionReaderDelegate(XmlReaderDelegator xmlReader, XmlObjectSerializerReadContextComplexJson context, XmlDictionaryString emptyDictionaryString, XmlDictionaryString itemName, CollectionDataContract collectionContract);
 
-    sealed class JsonFormatReaderGenerator
+    sealed partial class JsonFormatReaderGenerator
     {
         [Fx.Tag.SecurityNote(Critical = "Holds instance of CriticalHelper which keeps state that was produced within an assert.")]
         [SecurityCritical]
@@ -102,10 +104,11 @@ namespace System.Runtime.Serialization.Json
             }
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - handles all aspects of IL generation including initializing the DynamicMethod."
             + "Changes to how IL generated could affect how data is deserialized and what gets access to data, "
             + "therefore we mark it for review so that changes to generation logic are reviewed.")]
-        class CriticalHelper
+        partial class CriticalHelper
         {
             CodeGenerator ilg;
             LocalBuilder objectLocal;
@@ -1106,6 +1109,7 @@ namespace System.Runtime.Serialization.Json
                 UsingCustomParse
             }
         }
+#endif
     }
 }
 

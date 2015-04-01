@@ -7,7 +7,9 @@ namespace System.Runtime.Serialization
     using System.Collections;
     using System.Collections.Generic;
     using System.Reflection;
+#if !NO_DYNAMIC_CODEGEN
     using System.Reflection.Emit;
+#endif
     using System.Security;
     using System.Security.Permissions;
     using System.Runtime.Serialization.Diagnostics.Application;
@@ -22,7 +24,7 @@ namespace System.Runtime.Serialization
     internal delegate void XmlFormatClassWriterDelegate(XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContext context, ClassDataContract dataContract);
     internal delegate void XmlFormatCollectionWriterDelegate(XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContext context, CollectionDataContract dataContract);
 
-    internal sealed class XmlFormatWriterGenerator
+    internal sealed partial class XmlFormatWriterGenerator
 #endif
     {
         [Fx.Tag.SecurityNote(Critical = "Holds instance of CriticalHelper which keeps state that was produced within an assert.")]
@@ -81,10 +83,11 @@ namespace System.Runtime.Serialization
             }
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - Handles all aspects of IL generation including initializing the DynamicMethod."
             + " Changes to how IL generated could affect how data is serialized and what gets access to data,"
             + " therefore we mark it for review so that changes to generation logic are reviewed.")]
-        class CriticalHelper
+        partial class CriticalHelper
         {
             CodeGenerator ilg;
             ArgBuilder xmlWriterArg;
@@ -837,8 +840,8 @@ namespace System.Runtime.Serialization
             return prefix;
         }
 #endif
-
         }
+#endif
     }
 }
 

@@ -18,7 +18,7 @@ namespace System.Runtime.Serialization
 #if USE_REFEMIT
     public sealed class XmlDataContract : DataContract
 #else
-    internal sealed class XmlDataContract : DataContract
+    internal sealed partial class XmlDataContract : DataContract
 #endif
     {
         [Fx.Tag.SecurityNote(Critical = "Holds instance of CriticalHelper which keeps state that is cached statically for serialization."
@@ -334,6 +334,7 @@ namespace System.Runtime.Serialization
             }
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Critical = "Calls CodeGenerator.BeginMethod which is SecurityCritical.",
             Safe = "Self-contained: returns the delegate to the generated IL but otherwise all IL generation is self-contained here.")]
         [SecuritySafeCritical]
@@ -372,6 +373,7 @@ namespace System.Runtime.Serialization
             ilg.Ret();
             return (CreateXmlSerializableDelegate)ilg.EndMethod();
         }
+#endif
 
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - Calculates whether this Xml type requires MemberAccessPermission for deserialization."
             + " Since this information is used to determine whether to give the generated code access"

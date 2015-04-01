@@ -9,6 +9,7 @@ namespace System.Runtime.Serialization
     using System.Reflection.Emit;
     using System.Security;
 
+#if !NO_DYNAMIC_CODEGEN
     [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview (Critical) - works on CodeGenerator objects, which require Critical access.")]
     class BitFlagsGenerator
     {
@@ -112,5 +113,6 @@ namespace System.Runtime.Serialization
         }
 
     }
+#endif
 }
 

@@ -6,7 +6,9 @@ namespace System.Runtime.Serialization
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+#if !NO_DYNAMIC_CODEGEN
     using System.Reflection.Emit;
+#endif
     using System.Runtime.Serialization.Diagnostics.Application;
     using System.Security;
     using System.Security.Permissions;
@@ -23,7 +25,7 @@ namespace System.Runtime.Serialization
     internal delegate object XmlFormatCollectionReaderDelegate(XmlReaderDelegator xmlReader, XmlObjectSerializerReadContext context, XmlDictionaryString itemName, XmlDictionaryString itemNamespace, CollectionDataContract collectionContract);
     internal delegate void XmlFormatGetOnlyCollectionReaderDelegate(XmlReaderDelegator xmlReader, XmlObjectSerializerReadContext context, XmlDictionaryString itemName, XmlDictionaryString itemNamespace, CollectionDataContract collectionContract);
 
-    internal sealed class XmlFormatReaderGenerator
+    internal sealed partial class XmlFormatReaderGenerator
 #endif
     {
         [Fx.Tag.SecurityNote(Critical = "Holds instance of CriticalHelper which keeps state that was produced within an assert.")]
@@ -103,10 +105,11 @@ namespace System.Runtime.Serialization
             }
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - Handles all aspects of IL generation including initializing the DynamicMethod."
             + " Changes to how IL generated could affect how data is deserialized and what gets access to data,"
             + " therefore we mark it for review so that changes to generation logic are reviewed.")]
-        class CriticalHelper
+        partial class CriticalHelper
         {
             CodeGenerator ilg;
             LocalBuilder objectLocal;
@@ -226,7 +229,7 @@ namespace System.Runtime.Serialization
                 DemandMemberAccessPermission(memberAccessFlag);
                 collectionContractArg = ilg.GetArg(4);
                 return ilg;
-            }
+             }
 
             void InitArgs()
             {
@@ -945,6 +948,7 @@ namespace System.Runtime.Serialization
             }
 
         }
+#endif
 
         [Fx.Tag.SecurityNote(Critical = "Elevates by calling GetUninitializedObject which has a LinkDemand.",
             Safe = "Marked as such so that it's callable from transparent generated IL. Takes id as parameter which "
