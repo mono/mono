@@ -1209,10 +1209,12 @@ namespace System.Data.ProviderBase {
                         finally {
                             waitResult = SafeNativeMethods.WaitForMultipleObjectsEx(waitHandleCount, _waitHandles.DangerousGetHandle(), false, waitForMultipleObjectsTimeout, false);
 
+#if !FULL_AOT_RUNTIME
                             // VSTFDEVDIV 479551 - call GetHRForLastWin32Error immediately after after the native call
                             if (waitResult == WAIT_FAILED) {
                                 waitForMultipleObjectsExHR = Marshal.GetHRForLastWin32Error();
                             }
+#endif
                         }
 
                         // From the WaitAny docs: "If more than one object became signaled during
@@ -1333,7 +1335,9 @@ namespace System.Data.ProviderBase {
                         if (CREATION_HANDLE == waitResult) {
                             int result = SafeNativeMethods.ReleaseSemaphore(_waitHandles.CreationHandle.DangerousGetHandle(), 1, IntPtr.Zero);
                             if (0 == result) { // failure case
+#if !FULL_AOT_RUNTIME
                                 releaseSemaphoreResult = Marshal.GetHRForLastWin32Error();
+#endif
                             }
                         }
                         if (mustRelease) {

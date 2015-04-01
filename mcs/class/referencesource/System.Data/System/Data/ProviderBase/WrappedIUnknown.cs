@@ -32,7 +32,9 @@ namespace System.Data.ProviderBase {
             if (null != unknown) {
                 RuntimeHelpers.PrepareConstrainedRegions();
                 try {} finally {
+#if !FULL_AOT_RUNTIME
                     base.handle = Marshal.GetIUnknownForObject(unknown);    // 
+#endif
                 }
             }
         }

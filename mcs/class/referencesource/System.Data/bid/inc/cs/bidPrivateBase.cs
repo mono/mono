@@ -892,12 +892,12 @@ internal static partial class Bid
         modID = NoData;
 
         string friendlyName = getAppDomainFriendlyName();
+#if !MONO
         BIDEXTINFO extInfo = new BIDEXTINFO(Marshal.GetHINSTANCE(mod),
                                             getModulePath(mod),
                                             friendlyName,
                                             hCookie.AddrOfPinnedObject());
 
-#if !MONO
         NativeMethods.DllBidEntryPoint( ref modID, BidVer, modIdentity,
                                         configFlags, ref modFlags, ctrlCallback,
                                         ref extInfo, IntPtr.Zero, IntPtr.Zero );
