@@ -34,10 +34,10 @@ mobile_common_dirs := \
 	System.Web.Services	\
 	Mono.Data.Tds	\
 	System.Transactions	\
+	System.Numerics	\
 	System.Data	\
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
-	System.Numerics	\
 	System.Data.Services.Client \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
