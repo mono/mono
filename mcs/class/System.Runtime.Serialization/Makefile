@@ -8,8 +8,8 @@ LIBRARY = System.Runtime.Serialization.dll
 LIB_REFS = System System.Xml System.Core System.ServiceModel.Internals SMDiagnostics
 LIB_MCS_FLAGS = \
 		-unsafe \
+		-d:NO_DYNAMIC_CODEGEN \
 		/nowarn:168,169,219,414 \
-		-d:USE_REFEMIT \
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
