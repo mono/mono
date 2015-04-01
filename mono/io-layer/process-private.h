@@ -50,7 +50,6 @@ struct MonoProcess {
 	 * the process has exited, so that the information there isn't lost.
 	 */
 	gpointer handle;
-	gboolean freeable;
 	struct MonoProcess *next;
 };
 
