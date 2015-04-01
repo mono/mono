@@ -1,4 +1,7 @@
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
+
 using System.Runtime.CompilerServices;
 
 namespace System.Reflection
