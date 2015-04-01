@@ -174,10 +174,6 @@ namespace Mono.Tools.LocaleBuilder
 				writer.WriteLine ("{0}: {1}", "NumberGroupSeparator", nf.NumberGroupSeparator);
 				Dump (writer, nf.NumberGroupSizes, "NumberGroupSizes", true);
 				writer.WriteLine ("{0}: {1}", "NumberNegativePattern", nf.NumberNegativePattern);
-				writer.WriteLine ("{0}: {1}", "PercentDecimalDigits", nf.PercentDecimalDigits);
-				writer.WriteLine ("{0}: {1}", "PercentDecimalSeparator", nf.PercentDecimalSeparator);
-				writer.WriteLine ("{0}: {1}", "PercentGroupSeparator", nf.PercentGroupSeparator);
-				Dump (writer, nf.PercentGroupSizes, "PercentGroupSizes", true);
 				writer.WriteLine ("{0}: {1}", "PercentNegativePattern", nf.PercentNegativePattern);
 				writer.WriteLine ("{0}: {1}", "PercentPositivePattern", nf.PercentPositivePattern);
 				writer.WriteLine ("{0}: {1}", "PercentSymbol", nf.PercentSymbol);
@@ -935,12 +931,10 @@ namespace Mono.Tools.LocaleBuilder
 			// We don't add 3 as it's for some arabic states only
 			switch (data.ThreeLetterISOLanguageName) {
 			case "amh":
-				data.NumberFormatEntry.NumberDecimalDigits =
-				data.NumberFormatEntry.PercentDecimalDigits = 1;
+				data.NumberFormatEntry.NumberDecimalDigits = 1;
 				break;
 			default:
-				data.NumberFormatEntry.NumberDecimalDigits =
-				data.NumberFormatEntry.PercentDecimalDigits = 2;
+				data.NumberFormatEntry.NumberDecimalDigits = 2;
 				break;
 			}
 
@@ -1110,12 +1104,6 @@ namespace Mono.Tools.LocaleBuilder
 
 			node = doc.SelectSingleNode ("ldml/numbers/symbols");
 			if (node != null) {
-				el = node.SelectSingleNode ("decimal");
-				if (el != null) {
-					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator = el.InnerText;
-				}
-
 				el = node.SelectSingleNode ("plusSign");
 				if (el != null)
 					ni.PositiveSign = el.InnerText;
@@ -1179,9 +1167,7 @@ namespace Mono.Tools.LocaleBuilder
 			}
 					
 			if (value != null) {
-				ni.NumberGroupSeparator =
-				ni.PercentGroupSeparator =
-				ni.CurrencyGroupSeparator = value;
+				ni.NumberGroupSeparator = ni.CurrencyGroupSeparator = value;
 			}
 		}
 
