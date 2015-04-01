@@ -8,5 +8,9 @@ ReferenceSources/FxTrace.cs
 ReferenceSources/SR.cs
 ReferenceSources/SR_missing.cs
 ReferenceSources/XmlExceptionHelper.cs
-
+ReferenceSources/JsonFormatReaderGenerator_static.cs
+ReferenceSources/JsonFormatWriterGenerator_static.cs
+ReferenceSources/XmlDataContract_static.cs
+ReferenceSources/XmlFormatReaderGenerator_static.cs
+ReferenceSources/XmlFormatWriterGenerator_static.cs
 
