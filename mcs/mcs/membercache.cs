@@ -368,10 +368,13 @@ namespace Mono.CSharp {
 				if (entry.Arity != member.Arity)
 					continue;
 
+				AParametersCollection entry_param = null;
 				if (member_param != null) {
 					var entry_pm = entry as IParametersMember;
-					if (entry_pm != null && !TypeSpecComparer.Override.IsEqual (entry_pm.Parameters, member_param)) {
-						continue;
+					if (entry_pm != null) {
+						entry_param = entry_pm.Parameters;
+						if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
+							continue;
 					}
 				}
 
@@ -385,8 +388,10 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor) ||
-					entry.DeclaringType.ImplementsInterface (member.DeclaringType, false))
+				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor))
+					return false;
+
+				if (entry.DeclaringType.ImplementsInterface (member.DeclaringType, false) && AParametersCollection.HasSameParameterDefaults (entry_param, member_param))
 					return false;
 			}
 

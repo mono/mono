@@ -19559,6 +19559,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-630.cs">
+    <type name="A">
+      <method name="Int32 Foo(Int32)" attrs="486">
+        <size>10</size>
+      </method>
+      <method name="Int32 Bar[T](T)" attrs="145">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

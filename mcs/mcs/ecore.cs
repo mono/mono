@@ -983,6 +983,9 @@ namespace Mono.CSharp {
 					if (!TypeSpecComparer.Override.IsEqual (candidate.Parameters, method.Parameters))
 						continue;
 
+					if (!AParametersCollection.HasSameParameterDefaults (candidate.Parameters, method.Parameters))
+						continue;
+
 					if (!copied) {
 						copied = true;
 						members = new List<MemberSpec> (members);
