@@ -1194,6 +1194,14 @@ namespace System
 						if (dst_end.Date == new DateTime (dst_end.Year, 1, 1) && dst_end.Year > dst_start.Year)
 							dst_end -= new TimeSpan (24, 0, 0);
 
+						/*
+						 * AdjustmentRule specifies a DST period that starts and ends within a year.
+						 * When we have a DST period longer than a year, the generated AdjustmentRule may not be usable.
+						 * Thus we fallback to the transitions.
+						 */
+						if (dst_start.AddYears (1) < dst_end)
+							storeTransition = true;
+
 						DateTime dateStart, dateEnd;
 						if (dst_start.Month < 7)
 							dateStart = new DateTime (dst_start.Year, 1, 1);
