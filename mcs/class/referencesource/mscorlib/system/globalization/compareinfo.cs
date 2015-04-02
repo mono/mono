@@ -71,7 +71,7 @@ namespace System.Globalization {
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
 
-    public class CompareInfo
+    public partial class CompareInfo
 #if FEATURE_SERIALIZATION
     : IDeserializationCallback
 #endif
@@ -122,7 +122,7 @@ namespace System.Globalization {
             this.m_name = culture.m_name;
             this.m_sortName = culture.SortName;
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
@@ -243,10 +243,13 @@ namespace System.Globalization {
                 // A zero length string is not invalid, but it is also not sortable.
                 return(false);
             }
-
+#if MONO
+            return Mono.Globalization.Unicode.MSCompatUnicodeTable.IsSortable (text);
+#else
             CompareInfo c = CultureInfo.InvariantCulture.CompareInfo;
 
             return (InternalIsSortable(c.m_dataHandle, c.m_handleOrigin, c.m_sortName, text, text.Length));
+#endif
         }
 
 
@@ -280,7 +283,7 @@ namespace System.Globalization {
                 ci = CultureInfo.GetCultureInfo(m_name);
             }
             this.m_sortName = ci.SortName;
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
@@ -441,7 +444,11 @@ namespace System.Globalization {
                 return (1);     // non-null > null
             }
 
+#if MONO
+            return internal_compare_switch (string1, 0, string1.Length, string2, 0, string2.Length, options);
+#else
             return InternalCompareString(m_dataHandle, m_handleOrigin, m_sortName, string1, 0, string1.Length, string2, 0, string2.Length, GetNativeCompareFlags(options));
+#endif
         }
 
 
@@ -539,10 +546,14 @@ namespace System.Globalization {
                 return CompareOrdinal(string1, offset1, length1,
                                       string2, offset2, length2);
             }
+#if MONO
+            return internal_compare_switch (string1, offset1, length1, string2, offset2, length2, options);
+#else
             return InternalCompareString(this.m_dataHandle, this.m_handleOrigin, this.m_sortName, 
                                          string1, offset1, length1, 
                                          string2, offset2, length2, 
                                          GetNativeCompareFlags(options));
+#endif
         }
 
         [System.Security.SecurityCritical]
@@ -596,7 +607,14 @@ namespace System.Globalization {
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
             }
 
+#if MONO
+            if (UseManagedCollation)
+                return GetCollator ().IsPrefix (source, prefix, options);
 
+            if(source.Length < prefix.Length)
+                return false;
+            return Compare (source, 0, prefix.Length, prefix, 0, prefix.Length, options) == 0;
+#else
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
 
@@ -604,6 +622,7 @@ namespace System.Globalization {
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_STARTSWITH | ((source.IsAscii() && prefix.IsAscii()) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, source.Length, 0, prefix, prefix.Length) > -1);
+#endif
         }
 
         public virtual bool IsPrefix(String source, String prefix)
@@ -649,12 +668,23 @@ namespace System.Globalization {
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
             }
 
+#if MONO
+            if (UseManagedCollation)
+                return GetCollator ().IsSuffix (source, suffix, options);
+
+            if (source.Length < suffix.Length)
+                return false;
+
+            return Compare (source, source.Length - suffix.Length, suffix.Length, suffix, 0, suffix.Length, options) == 0;
+#else
+
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
             return InternalFindNLSStringEx(
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_ENDSWITH | ((source.IsAscii() && suffix.IsAscii()) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, source.Length, source.Length - 1, suffix, suffix.Length) >= 0;
+#endif
         }
 
 
@@ -795,12 +825,16 @@ namespace System.Globalization {
             if ((options & ValidIndexMaskOffFlags) != 0 && (options != CompareOptions.Ordinal))
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
 
+#if MONO
+            return internal_index_switch (source, startIndex, count, value, options, true);
+#else
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
             return InternalFindNLSStringEx(
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_FROMSTART | ((source.IsAscii() && (value <= '\x007f')) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, count, startIndex, new String(value, 1), 1);
+#endif
         }
 
 
@@ -848,12 +882,16 @@ namespace System.Globalization {
             if ((options & ValidIndexMaskOffFlags) != 0 && (options != CompareOptions.Ordinal))
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidFlag"), "options");
 
+#if MONO
+            return internal_index_switch (source, startIndex, count, value, options, true);
+#else
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
             return InternalFindNLSStringEx(
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_FROMSTART | ((source.IsAscii() && value.IsAscii()) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, count, startIndex, value, value.Length);
+#endif
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -996,12 +1034,16 @@ namespace System.Globalization {
                 return source.LastIndexOf(value.ToString(), startIndex, count, StringComparison.OrdinalIgnoreCase);
             }
 
+#if MONO
+            return internal_index_switch (source, startIndex, count, value, options, false);
+#else
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
             return InternalFindNLSStringEx(
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_FROMEND | ((source.IsAscii() && (value <= '\x007f')) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, count, startIndex, new String(value, 1), 1);
+#endif
         }
 
 
@@ -1051,12 +1093,16 @@ namespace System.Globalization {
                 return source.LastIndexOf(value, startIndex, count, StringComparison.OrdinalIgnoreCase);
             }
 
+#if MONO
+            return internal_index_switch (source, startIndex, count, value, options, false);
+#else
             // to let the sorting DLL do the call optimization in case of Ascii strings, we check if the strings are in Ascii and then send the flag RESERVED_FIND_ASCII_STRING  to 
             // the sorting DLL API SortFindString so sorting DLL don't have to check if the string is Ascii with every call to SortFindString.
             return InternalFindNLSStringEx(
                         m_dataHandle, m_handleOrigin, m_sortName, 
                         GetNativeCompareFlags(options) | Win32Native.FIND_FROMEND | ((source.IsAscii() && value.IsAscii()) ? RESERVED_FIND_ASCII_STRING : 0),
                         source, count, startIndex, value, value.Length);
+#endif
         }
 
 
@@ -1067,7 +1113,7 @@ namespace System.Globalization {
         //  Gets the SortKey for the given string with the given options.
         //
         ////////////////////////////////////////////////////////////////////////
-#if !FEATURE_PAL
+#if !FEATURE_PAL || MONO
         public unsafe virtual SortKey GetSortKey(String source, CompareOptions options)
         {
             return CreateSortKey(source, options);
@@ -1106,7 +1152,9 @@ namespace System.Globalization {
                 // Fake value to test though so we can verify our flags
                 source = "\x0000";
             }
-
+#if MONO
+            return CreateSortKeyCore (source, options);
+#else
             int flags = GetNativeCompareFlags(options);
 
             // Go ahead and call the OS
@@ -1134,6 +1182,7 @@ namespace System.Globalization {
             }
 
             return new SortKey(Name, source, options, keyData);
+#endif
         }
 
 #endif // !FEATURE_PAL
@@ -1230,9 +1279,13 @@ namespace System.Globalization {
                 return(0);
             }
 
+#if MONO
+            return GetSortKey (source, options).GetHashCode ();
+#else
             //
             ////////////////////////////////////////////////////////////////////////
             return (InternalGetGlobalizedHashCode(m_dataHandle, m_handleOrigin, this.m_sortName, source, source.Length, GetNativeCompareFlags(options), forceRandomizedHashing, additionalEntropy));
+#endif
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -1260,7 +1313,7 @@ namespace System.Globalization {
         }
 #endif
 
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
         [System.Security.SecuritySafeCritical]
         internal static IntPtr InternalInitSortHandle(String localeName, out IntPtr handleOrigin)
         {
@@ -1326,7 +1379,7 @@ namespace System.Globalization {
         [SuppressUnmanagedCodeSecurity]
         private static extern IntPtr NativeInternalInitSortHandle(String localeName, out IntPtr handleOrigin);
 #endif
-
+#if !MONO
         // Get a locale sensitive sort hash code from native code -- COMNlsInfo::InternalGetGlobalizedHashCode
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -1364,5 +1417,6 @@ namespace System.Globalization {
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern int InternalGetSortKey(IntPtr handle, IntPtr handleOrigin, String localeName, int flags, String source, int sourceCount, byte[] target, int targetCount);
+#endif
     }
 }
