@@ -276,17 +276,13 @@ namespace System
 		{
 			if (destinationTimeZone == null) 
 				throw new ArgumentNullException("destinationTimeZone");
-		
+
 			var utcDateTime = dateTimeOffset.UtcDateTime;
-			AdjustmentRule rule = destinationTimeZone.GetApplicableRule (utcDateTime);
-		
-			if (rule != null && destinationTimeZone.IsDaylightSavingTime(utcDateTime)) {
-				var offset = destinationTimeZone.BaseUtcOffset + rule.DaylightDelta;
-				return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + offset, offset);
-			}
-			else {
-				return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + destinationTimeZone.BaseUtcOffset, destinationTimeZone.BaseUtcOffset);
-			}
+
+			bool isDst;
+			var utcOffset =  destinationTimeZone.GetUtcOffset(utcDateTime, out isDst);
+
+			return new DateTimeOffset(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified) + utcOffset, utcOffset);
 		}
 
 		public static DateTime ConvertTimeBySystemTimeZoneId (DateTime dateTime, string destinationTimeZoneId)
@@ -311,19 +307,12 @@ namespace System
 
 			if (this == TimeZoneInfo.Utc)
 				return DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
-			
-			//FIXME: do not rely on DateTime implementation !
-			if (this == TimeZoneInfo.Local) 
-			{
-				return dateTime.ToLocalTime ();
-			}
 
+			var utcOffset = GetUtcOffset (dateTime);
 
-			AdjustmentRule rule = GetApplicableRule (dateTime);
-			if (rule != null && IsDaylightSavingTime (DateTime.SpecifyKind (dateTime, DateTimeKind.Utc)))
-				return DateTime.SpecifyKind (dateTime + BaseUtcOffset + rule.DaylightDelta , DateTimeKind.Unspecified);
-			else
-				return DateTime.SpecifyKind (dateTime + BaseUtcOffset, DateTimeKind.Unspecified);
+			var kind = (this == TimeZoneInfo.Local)? DateTimeKind.Local : DateTimeKind.Unspecified;
+
+			return DateTime.SpecifyKind (dateTime + utcOffset, kind);
 		}
 
 		public static DateTime ConvertTimeFromUtc (DateTime dateTime, TimeZoneInfo destinationTimeZone)
@@ -371,22 +360,10 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Utc)
 				return dateTime;
 
-			if (sourceTimeZone.IsAmbiguousTime (dateTime) || !sourceTimeZone.IsDaylightSavingTime (dateTime)) {
-				var ticks = dateTime.Ticks - sourceTimeZone.BaseUtcOffset.Ticks;
-				if (ticks < DateTime.MinValue.Ticks)
-					ticks = DateTime.MinValue.Ticks;
-				else if (ticks > DateTime.MaxValue.Ticks)
-					ticks = DateTime.MaxValue.Ticks;
+			bool isDst;
+			var utcOffset = sourceTimeZone.GetUtcOffset (dateTime, out isDst);
 
-				return new DateTime (ticks, DateTimeKind.Utc);
-			}
-			
-				AdjustmentRule rule = sourceTimeZone.GetApplicableRule (dateTime);
-				if (rule != null)
-					return DateTime.SpecifyKind (dateTime - sourceTimeZone.BaseUtcOffset - rule.DaylightDelta, DateTimeKind.Utc);
-				else
-					return DateTime.SpecifyKind (dateTime - sourceTimeZone.BaseUtcOffset, DateTimeKind.Utc);
-			
+			return DateTime.SpecifyKind (dateTime - utcOffset, DateTimeKind.Utc);
 		}
 
 		static internal TimeSpan GetDateTimeNowUtcOffsetFromUtc(DateTime time, out Boolean isAmbiguousLocalDst)
