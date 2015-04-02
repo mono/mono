@@ -2129,7 +2129,7 @@ namespace Mono.CSharp {
 				// C# 3.0 introduced contextual keywords (var) which behaves like a type if type with
 				// same name exists or as a keyword when no type was found
 				//
-				if (vexpr != null && !vexpr.IsPossibleTypeOrNamespace (bc)) {
+				if (vexpr != null && !vexpr.IsPossibleType (bc)) {
 					if (bc.Module.Compiler.Settings.Version < LanguageVersion.V_3)
 						bc.Report.FeatureIsNotAvailable (bc.Module.Compiler, loc, "implicitly typed local variable");
 

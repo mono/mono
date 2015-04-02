@@ -2778,6 +2778,11 @@ namespace Mono.CSharp {
 			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing, loc) != null;
 		}
 
+		public bool IsPossibleType (IMemberContext mc)
+		{
+			return mc.LookupNamespaceOrType (Name, Arity, LookupMode.Probing, loc) is TypeExpr;
+		}
+
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
 		{
 			int lookup_arity = Arity;

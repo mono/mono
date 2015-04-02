@@ -70095,6 +70095,16 @@
       </method>
     </type>
   </test>
+  <test name="test-var-04.cs">
+    <type name="Test.A">
+      <method name="Int32 Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-05.cs">
     <type name="MyClass">
       <method name="Void Dispose()" attrs="486">
