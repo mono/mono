@@ -705,7 +705,7 @@ namespace System
 				tz = TimeZoneInfo.Local;
 
 			bool isTzDst;
-			var tzOffset = GetUtcOffset (dateTime, tz, out isTzDst);
+			var tzOffset = GetUtcOffsetHelper (dateTime, tz, out isTzDst);
 
 			if (tz == this) {
 				isDST = isTzDst;
@@ -718,10 +718,11 @@ namespace System
 
 			var utcDateTime = new DateTime (utcTicks, DateTimeKind.Utc);
 
-			return GetUtcOffset (utcDateTime, this, out isDST);
+			return GetUtcOffsetHelper (utcDateTime, this, out isDST);
 		}
 
-		private static TimeSpan GetUtcOffset (DateTime dateTime, TimeZoneInfo tz, out bool isDST)
+		// This is an helper method used by the method above, do not use this on its own.
+		private static TimeSpan GetUtcOffsetHelper (DateTime dateTime, TimeZoneInfo tz, out bool isDST)
 		{
 			if (dateTime.Kind == DateTimeKind.Local && tz != TimeZoneInfo.Local)
 				throw new Exception ();
