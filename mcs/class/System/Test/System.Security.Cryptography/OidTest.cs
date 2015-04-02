@@ -163,6 +163,9 @@ namespace MonoTests.System.Security.Cryptography {
 			Oid o = new Oid ("1.2.840.113549.1.1.1");
 			Assert.AreEqual ("1.2.840.113549.1.1.1", o.Value, "RSA Value");
 			Assert.AreEqual ("RSA", o.FriendlyName, "RSA FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "RSA";
+			Assert.AreEqual (o.Value, "1.2.840.113549.1.1.1", "RSA Value from FriendlyName");
 
 			o = new Oid ("1.2.840.113549.1.7.1");
 			Assert.AreEqual ("1.2.840.113549.1.7.1", o.Value, "PKCS 7 Data Value");
