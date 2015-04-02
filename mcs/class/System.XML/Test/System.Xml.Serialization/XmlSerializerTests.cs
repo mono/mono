@@ -1006,7 +1006,26 @@ namespace MonoTests.System.XmlSerialization
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace,
 				ANamespace), sw.ToString (), "#3");
 		}
-
+		
+		[Test]
+		public void TestRoundTripSerializeOptionalValueTypeContainer ()
+		{
+			var source = new OptionalValueTypeContainer ();
+			source.IsEmpty = true;
+			source.IsEmptySpecified = true;
+			var ser = new XmlSerializer (typeof (OptionalValueTypeContainer));
+			string xml;
+			using (var t = new StringWriter ()) {
+				ser.Serialize (t, source);
+				xml = t.ToString();
+			}
+			using (var s = new StringReader (xml)) {
+				var obj = (ClassWithOptionalField) ser.Deserialize(s);
+				Assert.AreEqual (source.X, obj.X, "#1");
+				Assert.AreEqual (source.XSpecified, obj.XSpecified, "#2");
+			}
+		}
+		
 		[Test]
 		public void TestSerializePlainContainer ()
 		{
