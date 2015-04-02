@@ -1020,7 +1020,7 @@ namespace MonoTests.System.XmlSerialization
 				xml = t.ToString();
 			}
 			using (var s = new StringReader (xml)) {
-				var obj = (ClassWithOptionalField) ser.Deserialize(s);
+				var obj = (OptionalValueTypeContainer) ser.Deserialize(s);
 				Assert.AreEqual (source.IsEmpty, obj.IsEmpty, "#1");
 				Assert.AreEqual (source.IsEmptySpecified, obj.IsEmptySpecified, "#2");
 			}
