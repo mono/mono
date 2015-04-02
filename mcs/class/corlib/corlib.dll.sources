@@ -244,8 +244,6 @@ System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
-System.Globalization/CompareInfo.cs
-System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DigitShapes.cs
@@ -1190,6 +1188,7 @@ ReferenceSources/RemotingFieldCachedData.cs
 ReferenceSources/MonoRuntimeWorkItem.cs
 ReferenceSources/MethodBase.cs
 ReferenceSources/RuntimeHandles.cs
+ReferenceSources/CompareInfo.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1363,6 +1362,7 @@ ReferenceSources/RuntimeHandles.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
+../../../external/referencesource/mscorlib/system/globalization/compareinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/culturenotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/globalization/culturetypes.cs
 ../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs

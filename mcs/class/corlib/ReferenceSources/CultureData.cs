@@ -532,6 +532,11 @@ namespace System.Globalization
 			return str;
 		}
 
+		internal static bool IsCustomCultureId(int cultureId)
+		{
+			return false;
+		}
+
 		internal void GetNFIValues (NumberFormatInfo nfi)
 		{
 			if (this.IsInvariantCulture)

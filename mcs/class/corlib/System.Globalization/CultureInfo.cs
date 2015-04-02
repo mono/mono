@@ -63,7 +63,7 @@ namespace System.Globalization
 		internal volatile NumberFormatInfo numInfo;
 		internal volatile DateTimeFormatInfo dateTimeInfo;
 		volatile TextInfo textInfo;
-		private string m_name;
+		internal string m_name;
 		
 		[NonSerialized]
 		private string englishname;
@@ -1041,6 +1041,12 @@ namespace System.Globalization
 			}
 			set {
 				Thread.default_ui_culture = value;
+			}
+		}
+
+		internal string SortName {
+			get {
+				return m_name;
 			}
 		}
 
