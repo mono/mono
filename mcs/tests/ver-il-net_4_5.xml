@@ -68499,6 +68499,16 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-011.cs">
+    <type name="Crash">
+      <method name="System.String GetFoo()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>27</size>
+      </method>
+    </type>
+  </test>
   <test name="test-null-operator-02.cs">
     <type name="CI">
       <method name="Int32 get_Prop()" attrs="2182">
