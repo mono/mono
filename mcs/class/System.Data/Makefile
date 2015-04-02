@@ -45,7 +45,8 @@ EXTRA_DISTFILES = \
 	app_test_net_2_0.config			\
 	app_test_net_4_5.config			\
 	Test/System.Data/binserialize/*.bin	\
-	SqliteTest.db
+	SqliteTest.db	\
+	referencesource.sources
 
 gen_OdbcConnection.cs: ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
 	sed -e "s/NAMESPACE/System.Data.Odbc/g" $< |\
