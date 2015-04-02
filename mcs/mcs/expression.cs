@@ -126,6 +126,11 @@ namespace Mono.CSharp
 		{
 			return visitor.Visit (this);
 		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return expr.HasConditionalAccess ();
+		}
 	}
 	
 	//
