@@ -1021,8 +1021,8 @@ namespace MonoTests.System.XmlSerialization
 			}
 			using (var s = new StringReader (xml)) {
 				var obj = (ClassWithOptionalField) ser.Deserialize(s);
-				Assert.AreEqual (source.X, obj.X, "#1");
-				Assert.AreEqual (source.XSpecified, obj.XSpecified, "#2");
+				Assert.AreEqual (source.IsEmpty, obj.IsEmpty, "#1");
+				Assert.AreEqual (source.IsEmptySpecified, obj.IsEmptySpecified, "#2");
 			}
 		}
 		
