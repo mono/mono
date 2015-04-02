@@ -107,6 +107,14 @@ namespace System.Security.Cryptography {
 		internal const string nameSha1 = "sha1";
 		internal const string oidSubjectAltName = "2.5.29.17";
 		internal const string nameSubjectAltName = "Subject Alternative Name";
+		internal const string oidAes128 = "2.16.840.1.101.3.4.1.2";
+		internal const string nameAes128 = "aes128";
+		internal const string oidAes256 = "2.16.840.1.101.3.4.1.42";
+		internal const string nameAes256 = "aes256";
+		internal const string oidSha256 = "2.16.840.1.101.3.4.2.1";
+		internal const string nameSha256 = "sha256";
+		internal const string oidSha512 = "2.16.840.1.101.3.4.2.3";
+		internal const string nameSha512 = "sha512";
 		internal const string oidNetscapeCertType = "2.16.840.1.113730.1.1";
 		internal const string nameNetscapeCertType = "Netscape Cert Type";
 
@@ -140,8 +148,16 @@ namespace System.Security.Cryptography {
 					return nameNetscapeCertType;
 				case oidMd5:
 					return nameMd5;
+				case oidAes128:
+					return nameAes128;
+				case oidAes256:
+					return nameAes256;
 				case oidSha1:
 					return nameSha1;
+				case oidSha256:
+					return nameSha256;
+				case oidSha512:
+					return nameSha512;
 				default:
 					return _name;
 			}
@@ -177,8 +193,16 @@ namespace System.Security.Cryptography {
 					return oidNetscapeCertType;
 				case nameMd5:
 					return oidMd5;
+				case nameAes128:
+					return oidAes128;
+				case nameAes256:
+					return oidAes256;
 				case nameSha1:
 					return oidSha1;
+				case nameSha256:
+					return oidSha256;
+				case nameSha512:
+					return oidSha512;
 				default:
 					return _value;
 			}
