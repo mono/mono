@@ -3032,6 +3032,27 @@
       </method>
     </type>
   </test>
+  <test name="dtest-060.cs">
+    <type name="Test.Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>201</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.C">
+      <method name="Int32 M[T](Int32)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Int32 M[T](Int64)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">

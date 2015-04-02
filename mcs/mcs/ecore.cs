@@ -5346,6 +5346,7 @@ namespace Mono.CSharp {
 			Arguments candidate_args = args;
 			bool error_mode = false;
 			MemberSpec invocable_member = null;
+			int applicable_candidates = 0;
 
 			while (true) {
 				best_candidate = null;
@@ -5418,6 +5419,7 @@ namespace Mono.CSharp {
 							if (candidate_rate < 0)
 								return null;
 
+							applicable_candidates = 1;
 							if ((restrictions & Restrictions.GetEnumeratorLookup) != 0 && candidate_args.Count != 0) {
 								// Only parameterless methods are considered
 							} else {
@@ -5440,6 +5442,7 @@ namespace Mono.CSharp {
 									continue;
 							}
 
+							++applicable_candidates;
 							bool is_better;
 							if (best_candidate.DeclaringType.IsInterface && member.DeclaringType.ImplementsInterface (best_candidate.DeclaringType, false)) {
 								//
@@ -5545,7 +5548,7 @@ namespace Mono.CSharp {
 				//
 				// Check type constraints only when explicit type arguments are used
 				//
-				if (best_candidate.IsGeneric && type_arguments != null) {
+				if (applicable_candidates == 1 && best_candidate.IsGeneric && type_arguments != null) {
 					MethodSpec bc = best_candidate as MethodSpec;
 					if (bc != null && TypeParameterSpec.HasAnyTypeParameterConstrained (bc.GenericDefinition)) {
 						ConstraintChecker cc = new ConstraintChecker (rc);
