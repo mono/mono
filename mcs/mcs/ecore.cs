@@ -5202,7 +5202,7 @@ namespace Mono.CSharp {
 			//
 			// LAMESPEC: No idea what the exact rules are for System.Reflection.Missing.Value instead of null
 			//
-			if (e == EmptyExpression.MissingValue && ptype.BuiltinType == BuiltinTypeSpec.Type.Object || ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+			if (e == EmptyExpression.MissingValue && (ptype.BuiltinType == BuiltinTypeSpec.Type.Object || ptype.BuiltinType == BuiltinTypeSpec.Type.Dynamic)) {
 				e = new MemberAccess (new MemberAccess (new MemberAccess (
 					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Reflection", loc), "Missing", loc), "Value", loc);
 			} else if (e is Constant) {

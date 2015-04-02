@@ -563,7 +563,8 @@ namespace Mono.CSharp {
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
 					(default_expr is NullConstant && TypeSpec.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
-					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object ||
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					return;
 				}
 
