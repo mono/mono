@@ -573,8 +573,11 @@ namespace Mono.CSharp {
 							// protected type then the type is accessible
 							//
 							while (mc.Parent != null && mc.Parent.PartialContainer != null) {
-								if (mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent))
+								if (mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent)) {
 									same_access_restrictions = true;
+									break;
+								}
+
 								mc = mc.Parent; 
 							}
 						}
@@ -586,8 +589,15 @@ namespace Mono.CSharp {
 							same_access_restrictions = p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
 						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
 							same_access_restrictions = mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent) && p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
-						else
+						else if (al == Modifiers.PROTECTED)
 							goto case Modifiers.PROTECTED;
+						else if (al == Modifiers.PRIVATE) {
+							if (p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly)) {
+								same_access_restrictions = true;
+							} else {
+								goto case Modifiers.PROTECTED;
+							}
+						}
 
 						break;
 
