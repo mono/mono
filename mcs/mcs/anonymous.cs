@@ -1920,17 +1920,16 @@ namespace Mono.CSharp {
 
 			var delegate_method = method.Spec;
 			if (storey != null && storey.MemberName.IsGeneric) {
-				TypeSpec t = storey.Instance.Type;
-
 				//
 				// Mutate anonymous method instance type if we are in nested
 				// hoisted generic anonymous method storey
 				//
 				if (ec.IsAnonymousStoreyMutateRequired) {
-					t = storey.Mutator.Mutate (t);
+					ec.Emit (OpCodes.Ldftn, delegate_method);
+				} else {
+					TypeSpec t = storey.Instance.Type;
+					ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 				}
-
-				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
 				if (delegate_method.IsGeneric) {
 					TypeParameterSpec[] tparams;

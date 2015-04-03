@@ -55562,6 +55562,33 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-177.cs">
+    <type name="X">
+      <method name="Void Execute[TArg](TArg)" attrs="150">
+        <size>21</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;Execute`1&gt;m__0[TArg]()" attrs="145">
+        <size>58</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Execute&gt;c__AnonStorey0`1[TArg]">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Object] &lt;&gt;m__0(System.String)" attrs="131">
+        <size>26</size>
+      </method>
+      <method name="System.Object &lt;&gt;m__1(Char)" attrs="131">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-anon-18.cs">
     <type name="A">
       <method name="Void Invoke()" attrs="454">
