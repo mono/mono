@@ -163,6 +163,9 @@ namespace MonoTests.System.Security.Cryptography {
 			Oid o = new Oid ("1.2.840.113549.1.1.1");
 			Assert.AreEqual ("1.2.840.113549.1.1.1", o.Value, "RSA Value");
 			Assert.AreEqual ("RSA", o.FriendlyName, "RSA FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "RSA";
+			Assert.AreEqual (o.Value, "1.2.840.113549.1.1.1", "RSA Value from FriendlyName");
 
 			o = new Oid ("1.2.840.113549.1.7.1");
 			Assert.AreEqual ("1.2.840.113549.1.7.1", o.Value, "PKCS 7 Data Value");
@@ -177,6 +180,37 @@ namespace MonoTests.System.Security.Cryptography {
 			o = new Oid ("1.2.840.113549.3.7");
 			Assert.AreEqual ("1.2.840.113549.3.7", o.Value, "3des Value");
 			Assert.AreEqual ("3des", o.FriendlyName, "3des FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "3des";
+			Assert.AreEqual (o.Value, "1.2.840.113549.3.7", "3des Value from FriendlyName");
+
+			o = new Oid ("2.16.840.1.101.3.4.1.2");
+			Assert.AreEqual ("2.16.840.1.101.3.4.1.2", o.Value, "aes128 Value");
+			Assert.AreEqual ("aes128", o.FriendlyName, "aes128 FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "aes128";
+			Assert.AreEqual (o.Value, "2.16.840.1.101.3.4.1.2", "aes123 Value from FriendlyName");
+
+			o = new Oid ("2.16.840.1.101.3.4.1.42");
+			Assert.AreEqual ("2.16.840.1.101.3.4.1.42", o.Value, "aes256 Value");
+			Assert.AreEqual ("aes256", o.FriendlyName, "aes256 FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "aes256";
+			Assert.AreEqual (o.Value, "2.16.840.1.101.3.4.1.42", "aes256 Value from FriendlyName");
+
+			o = new Oid ("2.16.840.1.101.3.4.2.1");
+			Assert.AreEqual ("2.16.840.1.101.3.4.2.1", o.Value, "sha256 Value");
+			Assert.AreEqual ("sha256", o.FriendlyName, "sha256 FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "sha256";
+			Assert.AreEqual (o.Value, "2.16.840.1.101.3.4.2.1", "sha256 Value from FriendlyName");
+
+			o = new Oid ("2.16.840.1.101.3.4.2.3");
+			Assert.AreEqual ("2.16.840.1.101.3.4.2.3", o.Value, "sha512 Value");
+			Assert.AreEqual ("sha512", o.FriendlyName, "sha512 FriendlyName");
+			o = new Oid ();
+			o.FriendlyName = "sha512";
+			Assert.AreEqual (o.Value, "2.16.840.1.101.3.4.2.3", "sha512 Value from FriendlyName");
 
 			// TODO: add other well known oid as we find them
 		}
