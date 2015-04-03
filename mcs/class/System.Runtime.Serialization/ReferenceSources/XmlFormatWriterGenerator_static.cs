@@ -387,15 +387,6 @@ namespace System.Runtime.Serialization
 			return null;
 		}
 
-		object GetMember (MemberInfo memberInfo, object instance)
-		{
-			var pi = memberInfo as PropertyInfo;
-			if (pi != null)
-				return pi.GetValue (instance);
-			else
-				return ((FieldInfo) memberInfo).GetValue (instance);
-		}
-
 		bool CheckIfMemberHasConflict(DataMember member, ClassDataContract classContract, ClassDataContract derivedMostClassContract)
 		{
 			// Check for conflict with base type members
@@ -552,7 +543,7 @@ namespace System.Runtime.Serialization
 			if (value != null)
 				args.Add (value ());
 			else if (memberInfo != null)
-				args.Add (GetMember (memberInfo, objLocal));
+				args.Add (CodeInterpreter.GetMember (memberInfo, objLocal));
 			else
 				args.Add (((Array) objLocal).GetValue (new int [] {(int) arrayItemIndex}));
 			// load name
@@ -612,7 +603,7 @@ namespace System.Runtime.Serialization
 
 		object LoadMemberValue (DataMember member)
 		{
-			var v = GetMember (member.MemberInfo, objLocal);
+			var v = CodeInterpreter.GetMember (member.MemberInfo, objLocal);
 			memberValues [member.Name + "Value"] = v;
 			return v;
 		}
