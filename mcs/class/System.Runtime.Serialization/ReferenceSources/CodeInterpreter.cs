@@ -1,3 +1,5 @@
+using System;
+using System.Reflection;
 
 namespace System.Runtime.Serialization
 {
@@ -58,6 +60,24 @@ namespace System.Runtime.Serialization
 				return arg;
             else
                 throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(XmlObjectSerializer.CreateSerializationException(SR.GetString(SR.IsNotAssignableFrom, DataContract.GetClrTypeFullName(target), DataContract.GetClrTypeFullName(source))));
+		}
+
+		public static object GetMember (MemberInfo memberInfo, object instance)
+		{
+			var pi = memberInfo as PropertyInfo;
+			if (pi != null)
+				return pi.GetValue (instance);
+			else
+				return ((FieldInfo) memberInfo).GetValue (instance);
+		}
+
+		public static void SetMember (MemberInfo memberInfo, object instance, object value)
+		{
+			var pi = memberInfo as PropertyInfo;
+			if (pi != null)
+				pi.SetValue (instance, value);
+			else
+				((FieldInfo) memberInfo).SetValue (instance, value);
 		}
 	}
 }
