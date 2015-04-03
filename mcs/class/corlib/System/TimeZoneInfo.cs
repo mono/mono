@@ -233,6 +233,18 @@ namespace System
 		}
 #endif
 
+		public static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
+		{
+			var resultTicks = date.Ticks + ticks;
+			if (resultTicks < DateTime.MinValue.Ticks || resultTicks > DateTime.MaxValue.Ticks) {
+				result =  default (DateTime);
+				return false;
+			}
+
+			result = new DateTime (resultTicks, kind);
+			return true;
+		}
+
 		public static void ClearCachedData ()
 		{
 			local = null;
@@ -316,7 +328,11 @@ namespace System
 
 			var kind = (this == TimeZoneInfo.Local)? DateTimeKind.Local : DateTimeKind.Unspecified;
 
-			return DateTime.SpecifyKind (dateTime + utcOffset, kind);
+			DateTime result;
+			if (!TryAddTicks (dateTime, utcOffset.Ticks, out result, kind))
+				return DateTime.SpecifyKind (DateTime.MaxValue, kind);
+
+			return result;
 		}
 
 		public static DateTime ConvertTimeFromUtc (DateTime dateTime, TimeZoneInfo destinationTimeZone)
@@ -367,7 +383,11 @@ namespace System
 			bool isDst;
 			var utcOffset = sourceTimeZone.GetUtcOffset (dateTime, out isDst);
 
-			return DateTime.SpecifyKind (dateTime - utcOffset, DateTimeKind.Utc);
+			DateTime utcDateTime;
+			if (!TryAddTicks (dateTime, -utcOffset.Ticks, out utcDateTime, DateTimeKind.Utc))
+				return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
+
+			return utcDateTime;
 		}
 
 		static internal TimeSpan GetDateTimeNowUtcOffsetFromUtc(DateTime time, out Boolean isAmbiguousLocalDst)
@@ -712,11 +732,9 @@ namespace System
 				return tzOffset;
 			}
 
-			var utcTicks = dateTime.Ticks - tzOffset.Ticks;
-			if (utcTicks < 0 || utcTicks > DateTime.MaxValue.Ticks)
+			DateTime utcDateTime;
+			if (!TryAddTicks (dateTime, -tzOffset.Ticks, out utcDateTime, DateTimeKind.Utc))
 				return BaseUtcOffset;
-
-			var utcDateTime = new DateTime (utcTicks, DateTimeKind.Utc);
 
 			return GetUtcOffsetHelper (utcDateTime, this, out isDST);
 		}
@@ -746,20 +764,16 @@ namespace System
 				return tz.BaseUtcOffset;
 			}
 
-			var stdTicks = dateTime.Ticks - tz.BaseUtcOffset.Ticks;
-			if (stdTicks < 0 || stdTicks > DateTime.MaxValue.Ticks)
+			DateTime stdUtcDateTime;
+			if (!TryAddTicks (dateTime, -tz.BaseUtcOffset.Ticks, out stdUtcDateTime, DateTimeKind.Utc))
 				return tz.BaseUtcOffset;
 
-			var stdUtcDateTime = new DateTime (stdTicks, DateTimeKind.Utc);
 			var tzRule = tz.GetApplicableRule (stdUtcDateTime);
 
 			DateTime dstUtcDateTime = DateTime.MinValue;
 			if (tzRule != null) {
-				var dstTicks = stdUtcDateTime.Ticks - tzRule.DaylightDelta.Ticks;
-				if (dstTicks < 0 || dstTicks > DateTime.MaxValue.Ticks)
+				if (!TryAddTicks (stdUtcDateTime, -tzRule.DaylightDelta.Ticks, out dstUtcDateTime, DateTimeKind.Utc))
 					return tz.BaseUtcOffset;
-
-				dstUtcDateTime = new DateTime (dstTicks, DateTimeKind.Utc);
 			}
 
 			if (tzRule != null && tz.IsInDST (tzRule, stdUtcDateTime) && tz.IsInDST (tzRule, dstUtcDateTime)) {
@@ -1020,10 +1034,13 @@ namespace System
 			//Applicable rules are in standard time
 			DateTime date = dateTime;
 
-			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local)
-				date = date.ToUniversalTime () + BaseUtcOffset;
-			else if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc)
-				date = date + BaseUtcOffset;
+			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local) {
+				if (!TryAddTicks (date.ToUniversalTime (), BaseUtcOffset.Ticks, out date))
+					return null;
+			} else if (dateTime.Kind == DateTimeKind.Utc && this != TimeZoneInfo.Utc) {
+				if (!TryAddTicks (date, BaseUtcOffset.Ticks, out date))
+					return null;
+			}
 
 			// get the date component of the datetime
 			date = date.Date;
@@ -1052,19 +1069,13 @@ namespace System
 			DateTime date = dateTime;
 
 			if (dateTime.Kind == DateTimeKind.Local && this != TimeZoneInfo.Local) {
-				var ticks = date.ToUniversalTime ().Ticks + BaseUtcOffset.Ticks;
-				if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
+				if (!TryAddTicks (date.ToUniversalTime (), BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-
-				date = new DateTime (ticks, DateTimeKind.Utc);
 			}
 
 			if (dateTime.Kind != DateTimeKind.Utc) {
-				var ticks = date.Ticks - BaseUtcOffset.Ticks;
-				if (ticks < DateTime.MinValue.Ticks || ticks > DateTime.MaxValue.Ticks)
+				if (!TryAddTicks (date, -BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-
-				date = new DateTime (ticks, DateTimeKind.Utc);
 			}
 
 			for (var i =  transitions.Count - 1; i >= 0; i--) {
