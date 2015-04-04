@@ -140,11 +140,12 @@ namespace System {
             InternalSetTypedReference(&target, value);
 #endif
         }
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal unsafe extern static void InternalSetTypedReference(void * target, Object value);
+#endif
     }
 
 }
