@@ -1897,6 +1897,7 @@ namespace System.Threading.Microsoft
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void InitializeVMTp(ref bool enableWorkerTracking);
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1909,6 +1910,7 @@ namespace System.Threading.Microsoft
              ref StackCrawlMark     stackMark,
              bool                   compressStack   
              );
+#endif
 
 #if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
