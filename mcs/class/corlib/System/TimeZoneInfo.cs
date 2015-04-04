@@ -233,7 +233,7 @@ namespace System
 		}
 #endif
 
-		public static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
+		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
 		{
 			var resultTicks = date.Ticks + ticks;
 			if (resultTicks < DateTime.MinValue.Ticks || resultTicks > DateTime.MaxValue.Ticks) {
