@@ -171,7 +171,7 @@ namespace System.IO.Compression
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
-			if (count + src_offset > src.Length)
+			if (src_offset > src.Length - count)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
 			WriteInternal (src, src_offset, count);
