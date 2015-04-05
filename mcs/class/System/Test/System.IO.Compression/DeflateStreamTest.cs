@@ -99,7 +99,7 @@ namespace MonoTests.System.IO.Compression
 			MemoryStream backing = new MemoryStream (data);
 			DeflateStream compressing = new DeflateStream (backing, CompressionMode.Decompress);
 			compressing.Read (dummy, 0, 1);
-		}		
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -362,6 +362,18 @@ namespace MonoTests.System.IO.Compression
 			backing.Close();
 		}
 #endif	
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CheckBufferOverrun ()
+		{
+			byte[] data = new byte [20];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (data, 0, data.Length + 1);
+			compressing.Close ();
+			backing.Close ();
+		}
 	}
 }
 
