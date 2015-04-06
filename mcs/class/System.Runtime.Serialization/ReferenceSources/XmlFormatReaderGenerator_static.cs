@@ -212,8 +212,7 @@ namespace System.Runtime.Serialization
 			int firstRequiredMember;
 			bool[] requiredMembers = GetRequiredMembers (classContract, out firstRequiredMember);
 			bool hasRequiredMembers = (firstRequiredMember < memberCount);
-			// FIXME: here I converted null as -1 but that may be wrong.
-			int requiredIndex = hasRequiredMembers ? firstRequiredMember : -1;
+			int requiredIndex = hasRequiredMembers ? firstRequiredMember : memberCount;
 
 			while (XmlObjectSerializerReadContext.MoveToNextElement (xmlReader)) {
 				int idx; // used as in "switch (idx)" in the original source.
@@ -242,10 +241,10 @@ namespace System.Runtime.Serialization
 				DataMember dataMember = classContract.Members [index];
 				Type memberType = dataMember.MemberType;
 				if (dataMember.IsRequired) {
-					int nextRequiredIndex = memberCount + 1;
+					int nextRequiredIndex = index + 1;
 					for (; nextRequiredIndex < requiredMembers.Length; nextRequiredIndex++)
-					if (requiredMembers [nextRequiredIndex])
-						break;
+						if (requiredMembers [nextRequiredIndex])
+							break;
 					requiredIndex = nextRequiredIndex;
 				}
 
