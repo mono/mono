@@ -145,7 +145,7 @@ namespace System.Runtime.Serialization
 					objectLocal = classContract.GetNonAttributedTypeConstructor ().Invoke (new object [0]);
 			}
 			else
-				objectLocal = XmlFormatReaderGenerator.UnsafeGetUninitializedObject (DataContract.GetIdForInitialization (classContract));
+				objectLocal = CodeInterpreter.ConvertValue (XmlFormatReaderGenerator.UnsafeGetUninitializedObject (DataContract.GetIdForInitialization (classContract)), Globals.TypeOfObject, type);
 		}
 
 		void InvokeOnDeserializing (ClassDataContract classContract)
@@ -172,7 +172,7 @@ namespace System.Runtime.Serialization
 		bool InvokeFactoryMethod (ClassDataContract classContract, string objectId)
 		{
 			if (HasFactoryMethod (classContract)) {
-				objectLocal = context.GetRealObject ((IObjectReference) objectLocal, objectId);
+				objectLocal = CodeInterpreter.ConvertValue (context.GetRealObject ((IObjectReference) objectLocal, objectId), Globals.TypeOfObject, classContract.UnderlyingType);
 				return true;
 			}
 			return false;
@@ -333,7 +333,7 @@ namespace System.Runtime.Serialization
 					if (type.IsValueType)
 						throw new SerializationException (SR.GetString (SR.ValueTypeCannotHaveRef, DataContract.GetClrTypeFullName (type)));
 					else
-						value = context.GetExistingObject (objectId, type, name, ns);
+						value = CodeInterpreter.ConvertValue (context.GetExistingObject (objectId, type, name, ns), Globals.TypeOfObject, type);
 				}
 
 				if (shouldAssignNullableValue) {
@@ -353,8 +353,8 @@ namespace System.Runtime.Serialization
 			var obj = context.InternalDeserialize (xmlReader, DataContract.GetId (declaredType.TypeHandle), declaredType.TypeHandle, name, ns);
 
 			if (type.IsPointer)
-				// wow, there is no way to convert void* to object...
-				return XmlFormatGeneratorStatics.UnboxPointer.Invoke (null, new object [] {obj});
+				// wow, there is no way to convert void* to object in strongly typed way...
+				return CodeInterpreter.ConvertValue (XmlFormatGeneratorStatics.UnboxPointer.Invoke (null, new object [] {obj}), Globals.TypeOfObject, type);
 			else
 				return obj;
 		}
@@ -565,7 +565,7 @@ namespace System.Runtime.Serialization
 		{
 			if (collectionContract.Kind == CollectionKind.Dictionary || collectionContract.Kind == CollectionKind.GenericDictionary) {
 				context.ResetAttributes ();
-				return collectionContract.ItemContract.ReadXmlValue (xmlReader, context);
+				return CodeInterpreter.ConvertValue (collectionContract.ItemContract.ReadXmlValue (xmlReader, context), Globals.TypeOfObject, itemType);
 			}
 			else
 				return ReadValue (itemType, itemName, itemNs);
