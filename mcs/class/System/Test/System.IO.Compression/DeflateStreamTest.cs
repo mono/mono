@@ -6,7 +6,7 @@
 // 	Christopher James Lahey  <clahey@ximian.com>
 //
 // (C) 2004 Novell, Inc. <http://www.novell.com>
-// 
+//
 
 #if NET_2_0
 
@@ -294,6 +294,95 @@ namespace MonoTests.System.IO.Compression
 					Console.WriteLine(len == 1);
 				}
 			}
+		}
+
+		class Bug19313Stream : MemoryStream
+		{
+			public Bug19313Stream (byte [] buffer)
+				: base (buffer)
+			{
+			}
+
+			public override int Read (byte [] buffer, int offset, int count)
+			{
+				// Thread was blocking when DeflateStream uses a NetworkStream.
+				// Because the NetworkStream.Read calls Socket.Receive that
+				// blocks the thread waiting for at least a byte to return.
+				// This assert guarantees that Read is called only when there
+				// is something to be read.
+				Assert.IsTrue (Position < Length, "Trying to read empty stream.");
+
+				return base.Read (buffer, offset, count);
+			}
+		}
+
+		[Test]
+		public void Bug19313 ()
+		{
+			byte [] buffer  = new byte [512];
+			using (var backing = new Bug19313Stream (compressed_data))
+			using (var decompressing = new DeflateStream (backing, CompressionMode.Decompress))
+				decompressing.Read (buffer, 0, buffer.Length);
+		}
+
+		public MemoryStream GenerateStreamFromString(string s)
+		{
+			return new MemoryStream (Encoding.UTF8.GetBytes (s));
+		}
+
+#if NET_4_5
+		[Test]
+		public void CheckNet45Overloads () // Xambug #21982
+		{
+			MemoryStream dataStream = GenerateStreamFromString("Hello");
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			CopyStream (dataStream, compressing);
+			dataStream.Close();
+			compressing.Close();
+
+			backing.Seek (0, SeekOrigin.Begin);
+			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
+			StreamReader reader = new StreamReader (decompressing);
+			Assert.AreEqual ("Hello", reader.ReadLine ());
+			decompressing.Close();
+			backing.Close();
+		}
+#endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CheckBufferOverrun ()
+		{
+			byte[] data = new byte [20];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (data, 0, data.Length + 1);
+			compressing.Close ();
+			backing.Close ();
+		}
+
+		[Test]
+		public void Bug28777_EmptyFlush ()
+		{
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
+		}
+
+		[Test]
+		public void Bug28777_DoubleFlush ()
+		{
+			byte[] buffer = new byte [4096];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (buffer, 0, buffer.Length);
+			compressing.Flush ();
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
 		}
 	}
 }
