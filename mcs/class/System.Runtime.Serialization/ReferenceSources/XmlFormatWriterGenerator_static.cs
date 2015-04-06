@@ -264,17 +264,16 @@ namespace System.Runtime.Serialization
 				Type elementType = getCurrentMethod.ReturnType;
 				object currentValue = null; // of elementType
 
-				IEnumerator enumerator = null; // of enumeratorType
-				var e = collectionContract.GetEnumeratorMethod.Invoke (objLocal, new object [0]);
+				var enumerator = (IEnumerator) collectionContract.GetEnumeratorMethod.Invoke (objLocal, new object [0]);
 				if (isDictionary)
 				{
-					enumerator = new CollectionDataContract.DictionaryEnumerator ((IDictionaryEnumerator) e);
+					enumerator = new CollectionDataContract.DictionaryEnumerator ((IDictionaryEnumerator) enumerator);
 				}
 				else if (isGenericDictionary)
 				{
 					Type ctorParam = Globals.TypeOfIEnumeratorGeneric.MakeGenericType(Globals.TypeOfKeyValuePair.MakeGenericType(keyValueTypes));
 					ConstructorInfo dictEnumCtor = enumeratorType.GetConstructor(Globals.ScanAllMembers, null, new Type[] { ctorParam }, null);
-					enumerator = (IEnumerator) Activator.CreateInstance (enumeratorType, new object [] {e});
+					enumerator = (IEnumerator) Activator.CreateInstance (enumeratorType, new object [] {enumerator});
 				}
 
 				var emptyArray = new object [0];
