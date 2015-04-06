@@ -252,6 +252,7 @@ DISTFILES = \
 	doc/TemplateTest.cs	\
 	notes/BitVecto32.txt	\
 	MicrosoftAjaxLibrary/License.htm	\
+	test-helpers/NetworkHelpers.cs	\
 	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)
