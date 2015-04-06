@@ -1641,7 +1641,7 @@ namespace MonoTests.System.Runtime.Serialization
 					+ "<SecondId>ID-GOES-HERE</SecondId>"
 					+ "</MyData>";
 			var serializer = new DataContractSerializer (typeof (MyData));
-			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (whatItGets)))
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (whatItGets.Replace ("ID-GOES-HERE", Guid.NewGuid ().ToString ()))))
 			{
 				var data = serializer.ReadObject (stream);
 			}
