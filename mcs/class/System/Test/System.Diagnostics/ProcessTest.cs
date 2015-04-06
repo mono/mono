@@ -52,6 +52,15 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+		[Test] // Covers #26363
+		public void GetProcesses_StartTime ()
+		{
+			foreach (var p in Process.GetProcesses ()) {
+				if (!p.HasExited && p.StartTime.Year < 1800)
+					Assert.Fail ("Process should not be started since the 18th century.");
+			}
+		}
+
 		[Test]
 		public void PriorityClass_NotStarted ()
 		{
