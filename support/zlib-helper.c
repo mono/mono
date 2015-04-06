@@ -90,6 +90,8 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 	result->gchandle = gchandle;
 	result->compress = compress;
 	result->buffer = g_new (guchar, BUFFER_SIZE);
+	result->stream->next_out = result->buffer;
+	result->stream->avail_out = BUFFER_SIZE;
 	return result;
 }
 
@@ -148,7 +150,7 @@ flush_internal (ZStream *stream, gboolean is_final)
 	if (!stream->compress)
 		return 0;
 
-	if (!is_final) {
+	if (!is_final && stream->stream->avail_in != 0) {
 		status = deflate (stream->stream, Z_PARTIAL_FLUSH);
 		if (status != Z_OK && status != Z_STREAM_END)
 			return status;

@@ -374,6 +374,29 @@ namespace MonoTests.System.IO.Compression
 			compressing.Close ();
 			backing.Close ();
 		}
+
+		[Test]
+		public void Bug28777_EmptyFlush ()
+		{
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
+		}
+		
+		[Test]
+		public void Bug28777_DoubleFlush ()
+		{
+			byte[] buffer = new byte [4096];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (buffer, 0, buffer.Length);
+			compressing.Flush ();
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
+		}
 	}
 }
 
