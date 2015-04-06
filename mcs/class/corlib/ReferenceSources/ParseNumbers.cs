@@ -168,6 +168,13 @@ namespace System {
 			}
 		}
 
+		// Value from which a new base 16 digit can cause an overflow.
+		const ulong base16MaxOverflowFreeValue = ulong.MaxValue / (16 * 16);
+
+		// From ulong we can only cast to positive long.
+		// As |long.MinValue| > |long.MaxValue| we need to do this to avoid an overflow.
+		const ulong longMinValue = ((ulong) long.MaxValue) + (ulong) -(long.MinValue + long.MaxValue);
+
 		public unsafe static long StringToLong (string value, int fromBase, int flags, int* parsePos)
 		{
 			if ((flags & (IsTight | NoSpace)) == 0)
@@ -177,11 +184,13 @@ namespace System {
 				return 0;
 
 			int chars = 0;
-			int digitValue = -1;
-			long result = 0;
+			ulong fromBaseULong = (ulong) fromBase;
+			ulong digitValue = 0;
+			ulong result = 0;
 
 			int len = value.Length;
 			bool negative = false;
+			bool treatAsUnsigned = (flags & ParseNumbers.TreatAsUnsigned) != 0;
 
 			if (len == 0) {
 				// Mimic broken .net behaviour
@@ -195,7 +204,7 @@ namespace System {
 				if (fromBase != 10)
 					throw new ArgumentException ("String cannot contain a minus sign if the base is not 10.");
 
-				if ((flags & TreatAsUnsigned) != 0)
+				if (treatAsUnsigned)
 					throw new OverflowException ("Negative number");
 
 				negative = true;
@@ -211,9 +220,9 @@ namespace System {
 			while (i < len) {
 				char c = value[i];
 				if (Char.IsNumber (c)) {
-					digitValue = c - '0';
+					digitValue = (ulong) (c - '0');
 				} else if (Char.IsLetter (c)) {
-					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
+					digitValue = (ulong) (Char.ToLowerInvariant (c) - 'a' + 10);
 				} else {
 					if (i == 0)
 						throw new FormatException ("Could not find any parsable digits.");
@@ -224,7 +233,7 @@ namespace System {
 					break;
 				}
 
-				if (digitValue >= fromBase) {
+				if (digitValue >= fromBaseULong) {
 					if (chars > 0) {
 						throw new FormatException ("Additional unparsable "
 							+ "characters are at the end of the string.");
@@ -234,7 +243,18 @@ namespace System {
 					}
 				}
 
-				result = fromBase * result + digitValue;
+				if (result <= base16MaxOverflowFreeValue) {
+					result = result * (ulong) fromBaseULong + digitValue;
+				} else {
+					// decompose 64 bit operation into 32 bit operations so we can check for overflows
+					ulong a = (result >> 32) * fromBaseULong;
+					ulong b = (result & uint.MaxValue) * fromBaseULong + digitValue;
+					if (((b >> 32) + a) > uint.MaxValue)
+						throw new OverflowException ();
+
+					result = (a << 32) + b;
+				}
+
 				chars++;
 				++i;
 			}
@@ -245,7 +265,24 @@ namespace System {
 			if (parsePos != null)
 				*parsePos = i;
 
-			return negative ? -result : result;
+			if (treatAsUnsigned)
+				return (long) result;
+
+			if (!negative) {
+				if (fromBase == 10 && result > ((ulong) long.MaxValue))
+					throw new OverflowException ();
+
+				return (long)result;
+			}
+
+			if (result <= (ulong) long.MaxValue)
+				return -((long) result);
+
+			if (result > longMinValue)
+				throw new OverflowException ();
+
+			// Avoids overflow of -result when result > long.MaxValue
+			return long.MinValue + (long) (longMinValue - result);
 		}
 
 		public static string IntToString (int value, int toBase, int width, char paddingChar, int flags)
