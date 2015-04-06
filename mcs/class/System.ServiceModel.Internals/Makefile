@@ -11,4 +11,8 @@ LIB_MCS_FLAGS = /unsafe
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
+EXTRA_DISTFILES = 
+
+NO_TEST = yes
+
 include ../../build/library.make
