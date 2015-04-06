@@ -12,7 +12,7 @@ monotouch_runtime_SUBDIRS := build class
 xammac_SUBDIRS := build class
 mobile_SUBDIRS := build class
 mobile_static_SUBDIRS := build class
-net_4_0_SUBDIRS := build class
+binary_reference_assemblies_SUBDIRS := build class
 net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
@@ -30,7 +30,7 @@ dir-check:
 
 # fun specialty targets
 
-PROFILES = net_4_5 net_4_0 xbuild_12 xbuild_14
+PROFILES = net_4_5 binary_reference_assemblies xbuild_12 xbuild_14
 
 .PHONY: all-profiles $(STD_TARGETS:=-profiles)
 all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
@@ -51,7 +51,7 @@ profiles-do--run-test:
 _boot_ = all clean install
 $(_boot_:%=profile-do--xbuild_14--%):         profile-do--xbuild_14--%:         profile-do--net_4_5--%
 $(_boot_:%=profile-do--xbuild_12--%):         profile-do--xbuild_12--%:         profile-do--net_4_5--%
-$(_boot_:%=profile-do--net_4_0--%):           profile-do--net_4_0--%:           profile-do--build--%
+$(_boot_:%=profile-do--binary_reference_assemblies--%):           profile-do--binary_reference_assemblies--%:           profile-do--build--%
 $(_boot_:%=profile-do--net_4_5--%):           profile-do--net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         profile-do--build--%
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%
