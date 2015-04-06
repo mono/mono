@@ -4711,6 +4711,86 @@ namespace MonoTests.System {
 			Convert.ToUInt64 ("-", 16);
 		}
 
+		[Test]
+		public void ToInt64_Base10_MaxValue ()
+		{
+			Assert.AreEqual (Int64.MaxValue, Convert.ToInt64 (Int64.MaxValue.ToString(), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt64_Base10_MaxValueOverflow ()
+		{
+			var overflowValue = ((UInt64) Int64.MaxValue) + 1;
+			Convert.ToInt64 (overflowValue.ToString (), 10);
+		}
+
+		[Test]
+		public void ToInt64_Base10_MinValue ()
+		{
+			Assert.AreEqual (Int64.MinValue, Convert.ToInt64 (Int64.MinValue.ToString(), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt64_Base10_MinValueOverflow ()
+		{
+			var overflowValue = ((UInt64) Int64.MaxValue) + 2;
+			Convert.ToInt64 ("-" + overflowValue.ToString (), 10);
+		}
+
+		[Test]
+		public void ToInt64_Base16_MaxValue ()
+		{
+			Assert.AreEqual (Int64.MaxValue, Convert.ToInt64 (Int64.MaxValue.ToString("x"), 16));
+		}
+
+		[Test]
+		public void ToInt64_Base16_MaxValueOverflow ()
+		{
+			var overflowValue = ((UInt64) Int64.MaxValue) + 1;
+			Assert.AreEqual (-9223372036854775808, Convert.ToInt64 (overflowValue.ToString("x"), 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt64_Base16_MaxValueOverflow2 ()
+		{
+			Convert.ToInt64 (UInt64.MaxValue.ToString ("x") + "0", 16);
+		}
+
+		[Test]
+		public void ToInt64_Base16_MinValue ()
+		{
+			Assert.AreEqual (Int64.MinValue, Convert.ToInt64 (Int64.MinValue.ToString ("x"), 16));
+		}
+
+		[Test]
+		public void ToUInt64_Base10_MaxValue ()
+		{
+			Assert.AreEqual (UInt64.MaxValue, Convert.ToUInt64 (UInt64.MaxValue.ToString (), 10));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_Base10_MaxValueOverflow ()
+		{
+			Convert.ToUInt64 (UInt64.MaxValue.ToString () + "0", 10);
+		}
+
+		[Test]
+		public void ToUInt64_Base16_MaxValue ()
+		{
+			Assert.AreEqual (UInt64.MaxValue, Convert.ToUInt64 (UInt64.MaxValue.ToString ("x"), 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_Base16_MaxValueOverflow ()
+		{
+			Convert.ToInt64 (UInt64.MaxValue.ToString ("x") + "0", 16);
+		}
+
 		[Test] // bug #481687
 		public void ChangeType_Value_IConvertible ()
 		{
