@@ -58,8 +58,6 @@ namespace System.Runtime.Serialization
 		int typeIndex = 1;
 		int childElementIndex = 0;
 
-		Dictionary<string,object> memberValues = new Dictionary<string,object> ();
-
 		public void WriteToXml (XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContext context, ClassDataContract dataContract)
 		{
 			this.writer = xmlWriter;
@@ -316,17 +314,18 @@ namespace System.Runtime.Serialization
 				object memberValue = null;
 				if (member.IsGetOnlyCollection)
 					ctx.StoreIsGetOnlyCollection ();
-				bool doWrite = true;
+				bool doWrite = true, hasMemberValue = false;
 				if (!member.EmitDefaultValue)
 				{
+					hasMemberValue = true;
 					memberValue = LoadMemberValue (member);
-					doWrite = IsDefaultValue (memberType, memberValue);
+					doWrite = !IsDefaultValue (memberType, memberValue);
 				}
 
 				if (doWrite) {
 
 					bool writeXsiType = CheckIfMemberHasConflict (member, classContract, derivedMostClassContract);
-					if (writeXsiType || !TryWritePrimitive (memberType, () =>memberValue, member.MemberInfo, null /*arrayItemIndex*/, ns, null /*nameLocal*/, i + childElementIndex)) {
+					if (writeXsiType || !TryWritePrimitive (memberType, hasMemberValue ? () => memberValue : (Func<object>) null, member.MemberInfo, null /*arrayItemIndex*/, ns, null /*nameLocal*/, i + childElementIndex)) {
 						WriteStartElement (memberType, classContract.Namespace, ns, null /*nameLocal*/, i + childElementIndex);
 						if (classContract.ChildElementNamespaces [i + childElementIndex] != null)
 							writer.WriteNamespaceDecl (childElementNamespaces [i + childElementIndex]);
@@ -603,9 +602,7 @@ namespace System.Runtime.Serialization
 
 		object LoadMemberValue (DataMember member)
 		{
-			var v = CodeInterpreter.GetMember (member.MemberInfo, objLocal);
-			memberValues [member.Name + "Value"] = v;
-			return v;
+			return CodeInterpreter.GetMember (member.MemberInfo, objLocal);
 		}
 	}
 }
