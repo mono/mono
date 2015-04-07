@@ -14,7 +14,6 @@ ASSEMBLED_DOCS = \
 EXTRA_DIST = \
 	abc-removal.txt		\
 	api-style.css		\
-	assembly-bundle		\
 	check-exports		\
 	check-coverage		\
 	convert.cs		\
@@ -23,7 +22,6 @@ EXTRA_DIST = \
 	docs.make		\
 	documented		\
 	embedded-api		\
-	exceptions		\
 	exdoc			\
 	file-share-modes	\
 	gc-issues		\
@@ -35,19 +33,14 @@ EXTRA_DIST = \
 	jit-imt			\
 	jit-thoughts		\
 	jit-trampolines		\
-	local-regalloc.txt	\
-	magic.diff		\
 	mini-doc.txt		\
 	mono-api-metadata.html	\
 	mono-file-formats.config\
 	mono-file-formats.source\
-	mono_handle_d		\
 	mono-tools.config       \
 	mono-tools.source       \
 	monoapi.source		\
-	new-regalloc		\
 	object-layout		\
-	opcode-decomp.txt	\
 	precise-gc		\
 	produce-lists		\
 	public			\
@@ -56,12 +49,10 @@ EXTRA_DIST = \
 	release-notes-1.0.html	\
 	remoting		\
 	ssapre.txt		\
-	stack-alignment		\
 	stack-overflow.txt	\
 	threading		\
 	toc.xml			\
 	TODO			\
-	tree-mover.txt		\
 	unmanaged-calls	
 
 dist-hook:
