@@ -16,10 +16,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,16 +40,28 @@ namespace System.Net.Sockets
 	{
 		bool disposed;
 		int in_progress;
-		internal Socket.Worker Worker;
 		EndPoint remote_ep;
-		public Exception ConnectByNameError { get; internal set; }
+
+		internal SocketAsyncWorker Worker;
 
 		public event EventHandler<SocketAsyncEventArgs> Completed;
 
+		public Socket AcceptSocket {
+			get;
+			set;
+		}
+
+		public byte[] Buffer {
+			get;
+			private set;
+		}
+
+		public Exception ConnectByNameError {
+			get;
+			internal set;
+		}
+
 		IList <ArraySegment <byte>> _bufferList;
-		
-		public Socket AcceptSocket { get; set; }
-		public byte[] Buffer { get; private set; }
 
 		public IList<ArraySegment<byte>> BufferList {
 			get { return _bufferList; }
@@ -60,26 +72,76 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public int BytesTransferred { get; internal set; }
-		public int Count { get; internal set; }
-		public bool DisconnectReuseSocket { get; set; }
-		public SocketAsyncOperation LastOperation { get; private set; }
-		public int Offset { get; private set; }
+		public int BytesTransferred {
+			get;
+			internal set;
+		}
+
+		public int Count {
+			get;
+			internal set;
+		}
+
+		public bool DisconnectReuseSocket {
+			get;
+			set;
+		}
+
+		public SocketAsyncOperation LastOperation {
+			get;
+			private set;
+		}
+
+		public int Offset {
+			get;
+			private set;
+		}
+
 		public EndPoint RemoteEndPoint {
 			get { return remote_ep; }
 			set { remote_ep = value; }
 		}
+
 #if !NET_2_1
-		public IPPacketInformation ReceiveMessageFromPacketInfo { get; private set; }
-		public SendPacketsElement[] SendPacketsElements { get; set; }
-		public TransmitFileOptions SendPacketsFlags { get; set; }
+		public IPPacketInformation ReceiveMessageFromPacketInfo {
+			get;
+			private set;
+		}
+
+		public SendPacketsElement[] SendPacketsElements {
+			get;
+			set;
+		}
+
+		public TransmitFileOptions SendPacketsFlags {
+			get;
+			set;
+		}
 #endif
+
 		[MonoTODO ("unused property")]
-		public int SendPacketsSendSize { get; set; }
-		public SocketError SocketError { get; set; }
-		public SocketFlags SocketFlags { get; set; }
-		public object UserToken { get; set; }
+		public int SendPacketsSendSize {
+			get;
+			set;
+		}
+
+		public SocketError SocketError {
+			get;
+			set;
+		}
+
+		public SocketFlags SocketFlags {
+			get;
+			set;
+		}
+
+		public object UserToken {
+			get;
+			set;
+		}
+
 		internal Socket curSocket;
+
 		public Socket ConnectSocket {
 			get {
 				switch (SocketError) {
@@ -91,17 +153,20 @@ namespace System.Net.Sockets
 			}
 		}
 
-		internal bool PolicyRestricted { get; private set; }
+		internal bool PolicyRestricted {
+			get;
+			private set;
+		}
 
-		internal SocketAsyncEventArgs (bool policy) : 
-			this ()
+		internal SocketAsyncEventArgs (bool policy)
+			: this ()
 		{
 			PolicyRestricted = policy;
 		}
-		
+
 		public SocketAsyncEventArgs ()
 		{
-			Worker = new Socket.Worker (this);
+			Worker = new SocketAsyncWorker (this);
 			AcceptSocket = null;
 			Buffer = null;
 			BufferList = null;
@@ -146,7 +211,7 @@ namespace System.Net.Sockets
 #if !NET_2_1
 			SendPacketsElements = null;
 #endif
-		}		
+		}
 
 		public void Dispose ()
 		{
@@ -167,7 +232,7 @@ namespace System.Net.Sockets
 		{
 			if (e == null)
 				return;
-			
+
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
 			if (handler != null)
 				handler (e.curSocket, e);
@@ -188,7 +253,7 @@ namespace System.Net.Sockets
 			if (buffer != null) {
 				if (BufferList != null)
 					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				
+
 				int buflen = buffer.Length;
 				if (offset < 0 || (offset != 0 && offset >= buflen))
 					throw new ArgumentOutOfRangeException ("offset");
@@ -203,38 +268,46 @@ namespace System.Net.Sockets
 		}
 
 #region Internals
+
 		internal static AsyncCallback Dispatcher = new AsyncCallback (DispatcherCB);
 
 		static void DispatcherCB (IAsyncResult ares)
 		{
 			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
+
 			if (Interlocked.Exchange (ref args.in_progress, 0) != 1)
 				throw new InvalidOperationException ("No operation in progress");
-			SocketAsyncOperation op = args.LastOperation;
+
 			// Notes;
 			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
 			//	-SendPackets and ReceiveMessageFrom are not implemented yet
-			if (op == SocketAsyncOperation.Receive)
+			switch (args.LastOperation) {
+			case SocketAsyncOperation.Receive:
 				args.ReceiveCallback (ares);
-			else if (op == SocketAsyncOperation.Send)
+				break;
+			case SocketAsyncOperation.Send:
 				args.SendCallback (ares);
-			else if (op == SocketAsyncOperation.ReceiveFrom)
+				break;
+			case SocketAsyncOperation.ReceiveFrom:
 				args.ReceiveFromCallback (ares);
-			else if (op == SocketAsyncOperation.SendTo)
+				break;
+			case SocketAsyncOperation.SendTo:
 				args.SendToCallback (ares);
-			else if (op == SocketAsyncOperation.Accept)
+				break;
+			case SocketAsyncOperation.Accept:
 				args.AcceptCallback (ares);
-			else if (op == SocketAsyncOperation.Disconnect)
+				break;
+			case SocketAsyncOperation.Disconnect:
 				args.DisconnectCallback (ares);
-			else if (op == SocketAsyncOperation.Connect)
+				break;
+			case SocketAsyncOperation.Connect:
 				args.ConnectCallback (ares);
-			/*
-			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
-			else if (op == Socket.SocketOperation.SendPackets)
-			*/
-			else
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
-
+				break;
+			// case Socket.SocketOperation.ReceiveMessageFrom:
+			// case Socket.SocketOperation.SendPackets:
+			default:
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", args.LastOperation));
+			}
 		}
 
 		internal void ReceiveCallback (IAsyncResult ares)
