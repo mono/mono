@@ -353,9 +353,9 @@ namespace System.Runtime.Serialization
 
 			if (type.IsPointer)
 				// wow, there is no way to convert void* to object in strongly typed way...
-				return CodeInterpreter.ConvertValue (XmlFormatGeneratorStatics.UnboxPointer.Invoke (null, new object [] {obj}), Globals.TypeOfObject, type);
+				return XmlFormatGeneratorStatics.UnboxPointer.Invoke (null, new object [] {obj});
 			else
-				return obj;
+				return CodeInterpreter.ConvertValue (obj, Globals.TypeOfObject, type);
 		}
 
 		object WrapNullableObject (Type innerType, object innerValue, Type outerType, int nullables)
@@ -420,7 +420,7 @@ namespace System.Runtime.Serialization
 			if (isArray && TryReadPrimitiveArray (type, itemType, size))
 				canReadPrimitiveArray = true;
 
-			if (!canReadPrimitiveArray) {
+			if (objectId != null) {
 				if (size == -1) {
 
 					object growingCollection = null;
