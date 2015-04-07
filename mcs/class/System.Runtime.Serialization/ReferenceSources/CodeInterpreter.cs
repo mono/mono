@@ -42,7 +42,7 @@ namespace System.Runtime.Serialization
             {
                 if (source.IsValueType)
                 {
-                    if (CanConvert (Type.GetTypeCode(target)))
+                    if (!CanConvert (Type.GetTypeCode (target)))
                         throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(XmlObjectSerializer.CreateSerializationException(SR.GetString(SR.NoConversionPossibleTo, DataContract.GetClrTypeFullName(target))));
                     else
 						return target;
