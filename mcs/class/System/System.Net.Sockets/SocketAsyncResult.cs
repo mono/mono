@@ -35,7 +35,7 @@ using System.Threading;
 namespace System.Net.Sockets
 {
 	[StructLayout (LayoutKind.Sequential)]
-	internal sealed class SocketAsyncResult: IAsyncResult
+	internal sealed class SocketAsyncResult: IAsyncResult, IThreadPoolWorkItem
 	{
 		/* Same structure in the runtime. Keep this in sync with
 		 * MonoSocketAsyncResult in metadata/socket-io.h and
@@ -300,6 +300,28 @@ namespace System.Net.Sockets
 			this.accept_socket = s;
 			this.total = total;
 			Complete ();
+		}
+
+		void IThreadPoolWorkItem.ExecuteWorkItem()
+		{
+			switch (operation) {
+			case SocketOperation.Receive:
+				total = Socket.Receive_internal (socket.safe_handle, Buffer, Offset, Size, SockFlags, out error);
+				break;
+			case SocketOperation.Send:
+				total = Socket.Send_internal (socket.safe_handle, Buffer, Offset, Size, SockFlags, out error);
+				break;
+			}
+
+			async_result.Invoke ();
+
+			if (completed && callback != null) {
+				ThreadPool.UnsafeQueueCustomWorkItem (new AsyncResult (state => callback ((IAsyncResult) state), this, false), false);
+			}
+		}
+
+		void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
+		{
 		}
 	}
 }

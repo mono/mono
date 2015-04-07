@@ -1066,7 +1066,6 @@ ReferenceSources/EncodingTable.cs
 ReferenceSources/TypeNameParser.cs
 ReferenceSources/RuntimeType.cs
 ReferenceSources/RemotingFieldCachedData.cs
-ReferenceSources/MonoRuntimeWorkItem.cs
 ReferenceSources/MethodBase.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs

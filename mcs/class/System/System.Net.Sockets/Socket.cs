@@ -70,12 +70,12 @@ namespace System.Net.Sockets
 
 		int linger_timeout;
 
-		/* the field "safe_handle" is looked up by name by the runtime */
-		SafeSocketHandle safe_handle;
-
 		AddressFamily address_family;
 		SocketType socket_type;
 		ProtocolType protocol_type;
+
+		/* the field "safe_handle" is looked up by name by the runtime */
+		internal SafeSocketHandle safe_handle;
 
 		/*
 		 * This EndPoint is used when creating new endpoints. Because
@@ -1806,7 +1806,7 @@ namespace System.Net.Sockets
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
 
-		static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error)
+		internal static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
@@ -2348,7 +2348,7 @@ namespace System.Net.Sockets
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
 
-		static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error)
+		internal static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
