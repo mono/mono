@@ -6,7 +6,7 @@ namespace System.Net.Sockets
 {
 	internal sealed class MonoSocketRuntimeWorkItem : IThreadPoolWorkItem
 	{
-		Socket.SocketAsyncResult socket_async_result;
+		SocketAsyncResult socket_async_result;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void ExecuteWorkItem();

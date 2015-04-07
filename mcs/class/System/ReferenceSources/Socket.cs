@@ -40,7 +40,7 @@ namespace System.Net.Sockets
 			if (!connected || disposed)
 				return;
 			int error;
-			Shutdown_internal (socket, how, out error);
+			Shutdown_internal (safe_handle, how, out error);
 		}
 
 		internal IAsyncResult UnsafeBeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
@@ -94,7 +94,7 @@ namespace System.Net.Sockets
 
 			int error;
 
-			SetSocketOption_internal (socket, optionLevel, optionName, null,
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null,
 				null, optionValue, out error);
 
 			if (!silent && error != 0)

@@ -1065,7 +1065,6 @@ ensure_cleanedup (void)
 gboolean
 mono_threadpool_ms_is_io (MonoObject *target, MonoObject *state)
 {
-	static MonoClass *socket_class = NULL;
 	static MonoClass *socket_async_class = NULL;
 	static MonoClass *process_class = NULL;
 	static MonoClass *async_read_handler_class = NULL;
@@ -1078,20 +1077,15 @@ mono_threadpool_ms_is_io (MonoObject *target, MonoObject *state)
 		return FALSE;
 	g_assert (mono_defaults.system);
 
-	if (!socket_class)
-		socket_class = mono_class_from_name (mono_defaults.system, "System.Net.Sockets", "Socket");
-	g_assert (socket_class);
+	if (!socket_async_class)
+		socket_async_class = mono_class_from_name (mono_defaults.system, "System.Net.Sockets", "SocketAsyncCall");
+	g_assert (socket_async_class);
 
 	if (!process_class)
 		process_class = mono_class_from_name (mono_defaults.system, "System.Diagnostics", "Process");
 	g_assert (process_class);
 
 	class = target->vtable->klass;
-
-	if (!socket_async_class) {
-		if (class->nested_in && class->nested_in == socket_class && strcmp (class->name, "SocketAsyncCall") == 0)
-			socket_async_class = class;
-	}
 
 	if (!async_read_handler_class) {
 		if (class->nested_in && class->nested_in == process_class && strcmp (class->name, "AsyncReadHandler") == 0)
