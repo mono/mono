@@ -16,7 +16,6 @@ enum {
 	STATUS_CLEANED_UP,
 };
 
-typedef struct _MonoRuntimeWorkItem MonoRuntimeWorkItem;
 typedef struct _MonoNativeOverlapped MonoNativeOverlapped;
 
 static void
@@ -53,9 +52,6 @@ mono_threadpool_ms_is_queue_array (MonoArray *arr)
 	/* The queue is in managed code */
 	return FALSE;
 }
-
-void
-ves_icall_System_Threading_MonoRuntimeWorkItem_ExecuteWorkItem (MonoRuntimeWorkItem *rwi);
 
 void
 ves_icall_System_Threading_Microsoft_ThreadPool_GetAvailableThreadsNative (gint *worker_threads, gint *completion_port_threads);
@@ -101,8 +97,6 @@ ves_icall_System_Threading_Microsoft_ThreadPool_IsThreadPoolHosted (void)
 
 /* Internals */
 
-void
-mono_threadpool_ms_enqueue_async_result (MonoDomain *domain, MonoAsyncResult *async_result);
 void
 mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item);
 
