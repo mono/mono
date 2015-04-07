@@ -611,6 +611,44 @@ namespace System
 		{
 			Buffer.Memcpy (dest, src, size);
 		}
+
+		/* Used by the runtime */
+		internal static unsafe void bzero (byte *dest, int len) {
+			memset (dest, 0, len);
+		}
+
+		internal static unsafe void bzero_aligned_1 (byte *dest, int len) {
+			((byte*)dest) [0] = 0;
+		}
+
+		internal static unsafe void bzero_aligned_2 (byte *dest, int len) {
+			((short*)dest) [0] = 0;
+		}
+
+		internal static unsafe void bzero_aligned_4 (byte *dest, int len) {
+			((int*)dest) [0] = 0;
+		}
+
+		internal static unsafe void bzero_aligned_8 (byte *dest, int len) {
+			((long*)dest) [0] = 0;
+		}
+
+		internal static unsafe void memcpy_aligned_1 (byte *dest, byte *src, int size) {
+			((byte*)dest) [0] = ((byte*)src) [0];
+		}
+
+		internal static unsafe void memcpy_aligned_2 (byte *dest, byte *src, int size) {
+			((short*)dest) [0] = ((short*)src) [0];
+		}
+
+		internal static unsafe void memcpy_aligned_4 (byte *dest, byte *src, int size) {
+			((int*)dest) [0] = ((int*)src) [0];
+		}
+
+		internal static unsafe void memcpy_aligned_8 (byte *dest, byte *src, int size) {
+			((long*)dest) [0] = ((long*)src) [0];
+		}
+
 		#endregion
 
 		// Certain constructors are redirected to CreateString methods with
