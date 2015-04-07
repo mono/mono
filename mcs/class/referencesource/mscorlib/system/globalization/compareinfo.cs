@@ -257,7 +257,7 @@ namespace System.Globalization {
 #region Serialization
         // the following fields are defined to keep the compatibility with Whidbey.
         // don't change/remove the names/types of these fields.
-#if FEATURE_USE_LCID
+#if FEATURE_USE_LCID || MONO
                 [OptionalField(VersionAdded = 1)]
                 private int win32LCID;             // mapped sort culture id of this instance
                 private int culture;               // the culture ID used to create this instance.
