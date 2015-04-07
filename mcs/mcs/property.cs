@@ -548,19 +548,21 @@ namespace Mono.CSharp
 			}
 
 			if (Set == null) {
-				if ((ModFlags & Modifiers.SEALED) != 0 && base_prop.HasSet && !base_prop.Set.IsAccessible (this)) {
-					// TODO: Should be different error code but csc uses for some reason same
-					Report.SymbolRelatedToPreviousError (base_prop);
-					Report.Error (546, Location,
-						"`{0}': cannot override because `{1}' does not have accessible set accessor",
-						GetSignatureForError (), base_prop.GetSignatureForError ());
-					ok = false;
-				}
+				if (base_prop.HasSet) {
+					if ((ModFlags & Modifiers.SEALED) != 0 && !base_prop.Set.IsAccessible (this)) {
+						// TODO: Should be different error code but csc uses for some reason same
+						Report.SymbolRelatedToPreviousError (base_prop);
+						Report.Error (546, Location,
+							"`{0}': cannot override because `{1}' does not have accessible set accessor",
+							GetSignatureForError (), base_prop.GetSignatureForError ());
+						ok = false;
+					}
 
-				if ((ModFlags & Modifiers.AutoProperty) != 0) {
-					Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
-						GetSignatureForError ());
-					ok = false;
+					if ((ModFlags & Modifiers.AutoProperty) != 0) {
+						Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
+							GetSignatureForError ());
+						ok = false;
+					}
 				}
 			} else {
 				if (!base_prop.HasSet) {

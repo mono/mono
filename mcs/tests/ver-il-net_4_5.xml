@@ -20573,6 +20573,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-17.cs">
+    <type name="MainClass">
+      <method name="Void Main(System.String[])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+Bar">
+      <method name="Boolean get_Condition()" attrs="3526">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+Baz">
+      <method name="Boolean get_Condition()" attrs="2246">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
