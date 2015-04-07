@@ -122,8 +122,6 @@ docs/perlmod*
 compile
 mono.h
 mono-*.tar.*
-mono.spec
-mono-core.spec
 tmpinst-dir.stamp
 msvc/scripts/inputs/
 
