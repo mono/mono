@@ -401,13 +401,19 @@ namespace System.Net
 		}
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
+			WebConnectionGroup cncGroup = null;
+
 			lock (this) {
-				WebConnectionGroup cncGroup = GetConnectionGroup (connectionGroupName);
+				cncGroup = GetConnectionGroup (connectionGroupName);
 				if (cncGroup != null) {
-					cncGroup.Close ();
 					RemoveConnectionGroup (cncGroup);
-					return true;
 				}
+			}
+
+			// WebConnectionGroup.Close() must *not* be called inside the lock
+			if (cncGroup != null) {
+				cncGroup.Close ();
+				return true;
 			}
 
 			return false;

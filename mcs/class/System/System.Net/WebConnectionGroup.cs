@@ -66,6 +66,8 @@ namespace System.Net
 
 		public void Close ()
 		{
+			List<WebConnection> connectionsToClose = null;
+
 			//TODO: what do we do with the queue? Empty it out and abort the requests?
 			//TODO: abort requests or wait for them to finish
 			lock (sPoint) {
@@ -76,7 +78,17 @@ namespace System.Net
 					var node = iter;
 					iter = iter.Next;
 
+					// Closing connections inside the lock leads to a deadlock.
+					if (connectionsToClose == null)
+						connectionsToClose = new List<WebConnection>();
+
+					connectionsToClose.Add (cnc);
 					connections.Remove (node);
+				}
+			}
+
+			if (connectionsToClose != null) {
+				foreach (var cnc in connectionsToClose) {
 					cnc.Close (false);
 					OnConnectionClosed ();
 				}
