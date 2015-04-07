@@ -63,7 +63,6 @@
 ../../../external/referencesource/System.Data/System/Data/Common/MultipartIdentifier.cs
 ../../../external/referencesource/System.Data/System/Data/Common/NameValuePair.cs
 ../../../external/referencesource/System.Data/System/Data/Common/NameValuePermission.cs
-../../../external/referencesource/System.Data/System/Data/Common/NativeMethods.cs
 ../../../external/referencesource/System.Data/System/Data/Common/ObjectStorage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/RowUpdatedEventArgs.cs
 ../../../external/referencesource/System.Data/System/Data/Common/RowUpdatingEventArgs.cs
