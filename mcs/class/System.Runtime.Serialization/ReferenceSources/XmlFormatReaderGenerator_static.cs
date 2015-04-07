@@ -238,7 +238,7 @@ namespace System.Runtime.Serialization
 			ref memberIndex, ref requiredIndex);
 			
 			if (memberCount <= index && index < memberCount + classContract.Members.Count) {
-				DataMember dataMember = classContract.Members [index];
+				DataMember dataMember = classContract.Members [index - memberCount];
 				Type memberType = dataMember.MemberType;
 				if (dataMember.IsRequired) {
 					int nextRequiredIndex = index + 1;
