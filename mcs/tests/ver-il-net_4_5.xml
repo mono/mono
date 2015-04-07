@@ -29766,10 +29766,16 @@
         <size>10</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>161</size>
+        <size>192</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Int32 Test_8(System.Type, Boolean, Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Test_8(System.Type, Int32[])" attrs="145">
+        <size>10</size>
       </method>
     </type>
   </test>
