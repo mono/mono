@@ -272,6 +272,449 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Properties
+
+		public static bool SupportsIPv4 {
+			get { return ipv4_supported == 1; }
+		}
+
+		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
+		public static bool SupportsIPv6 {
+			get { return ipv6_supported == 1; }
+		}
+
+#if NET_2_1
+		public static bool OSSupportsIPv4 {
+			get { return ipv4_supported == 1; }
+		}
+#endif
+
+#if NET_2_1
+		public static bool OSSupportsIPv6 {
+			get { return ipv6_supported == 1; }
+		}
+#else
+		public static bool OSSupportsIPv6 {
+			get {
+				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
+
+				foreach (NetworkInterface adapter in nics) {
+					if (adapter.Supports (NetworkInterfaceComponent.IPv6))
+						return true;
+				}
+
+				return false;
+			}
+		}
+#endif
+
+		public int Available {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				int ret, error;
+				ret = Available_internal (safe_handle, out error);
+
+				if (error != 0)
+					throw new SocketException (error);
+
+				return ret;
+			}
+		}
+
+		static int Available_internal (SafeSocketHandle safeHandle, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Available_internal (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		/* Returns the amount of data waiting to be read on socket */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int Available_internal (IntPtr socket, out int error);
+
+		public bool DontFragment {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					return ((int) GetSocketOption (SocketOptionLevel.IP, SocketOptionName.DontFragment)) != 0;
+				case AddressFamily.InterNetworkV6:
+					return ((int) GetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DontFragment)) != 0;
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DontFragment, value ? 1 : 0);
+					break;
+				case AddressFamily.InterNetworkV6:
+					SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DontFragment, value ? 1 : 0);
+					break;
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+		}
+
+		public bool EnableBroadcast {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				if (protocol_type != ProtocolType.Udp)
+					throw new SocketException ((int) SocketError.ProtocolOption);
+
+				return ((int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast)) != 0;
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (protocol_type != ProtocolType.Udp)
+					throw new SocketException ((int) SocketError.ProtocolOption);
+
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast, value ? 1 : 0);
+			}
+		}
+
+		public bool ExclusiveAddressUse {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return ((int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse)) != 0;
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (is_bound)
+					throw new InvalidOperationException ("Bind has already been called for this socket");
+
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, value ? 1 : 0);
+			}
+		}
+
+		public bool IsBound {
+			get {
+				return is_bound;
+			}
+		}
+
+		public LingerOption LingerState {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return (LingerOption) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger);
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger, value);
+			}
+		}
+
+		public bool MulticastLoopback {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				/* Even though this option can be set for TCP sockets on Linux, throw
+				 * this exception anyway to be compatible (the MSDN docs say
+				 * "Setting this property on a Transmission Control Protocol (TCP)
+				 * socket will have no effect." but the MS runtime throws the
+				 * exception...) */
+				if (protocol_type == ProtocolType.Tcp)
+					throw new SocketException ((int)SocketError.ProtocolOption);
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					return ((int) GetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastLoopback)) != 0;
+				case AddressFamily.InterNetworkV6:
+					return ((int) GetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastLoopback)) != 0;
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				/* Even though this option can be set for TCP sockets on Linux, throw
+				 * this exception anyway to be compatible (the MSDN docs say
+				 * "Setting this property on a Transmission Control Protocol (TCP)
+				 * socket will have no effect." but the MS runtime throws the
+				 * exception...) */
+				if (protocol_type == ProtocolType.Tcp)
+					throw new SocketException ((int)SocketError.ProtocolOption);
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, value ? 1 : 0);
+					break;
+				case AddressFamily.InterNetworkV6:
+					SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastLoopback, value ? 1 : 0);
+					break;
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+		}
+
+		[MonoTODO ("This doesn't do anything on Mono yet")]
+		public bool UseOnlyOverlappedIO {
+			get { return use_overlapped_io; }
+			set { use_overlapped_io = value; }
+		}
+
+		public IntPtr Handle {
+			get { return safe_handle.DangerousGetHandle (); }
+		}
+
+		// Wish:  support non-IP endpoints.
+		public EndPoint LocalEndPoint {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				/* If the seed EndPoint is null, Connect, Bind, etc has not yet
+				 * been called. MS returns null in this case. */
+				if (seed_endpoint == null)
+					return null;
+
+				int error;
+				SocketAddress sa = LocalEndPoint_internal (safe_handle, (int) address_family, out error);
+
+				if (error != 0)
+					throw new SocketException (error);
+
+				return seed_endpoint.Create (sa);
+			}
+		}
+
+		static SocketAddress LocalEndPoint_internal (SafeSocketHandle safeHandle, int family, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return LocalEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		/* Returns the local endpoint details in addr and port */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static SocketAddress LocalEndPoint_internal (IntPtr socket, int family, out int error);
+
+		public SocketType SocketType {
+			get { return socket_type; }
+		}
+
+		public int SendTimeout {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return (int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendTimeout);
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
+
+				/* According to the MSDN docs we should adjust values between 1 and
+				 * 499 to 500, but the MS runtime doesn't do this. */
+				if (value == -1)
+					value = 0;
+
+				SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, value);
+			}
+		}
+
+		public int ReceiveTimeout {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return (int) GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout);
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
+
+				if (value == -1)
+					value = 0;
+
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, value);
+			}
+		}
+
+		public AddressFamily AddressFamily {
+			get { return address_family; }
+		}
+
+		public bool Blocking {
+			get { return is_blocking; }
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				int error;
+				Blocking_internal (safe_handle, value, out error);
+
+				if (error != 0)
+					throw new SocketException (error);
+
+				is_blocking = value;
+			}
+		}
+
+		static void Blocking_internal (SafeSocketHandle safeHandle, bool block, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Blocking_internal (safeHandle.DangerousGetHandle (), block, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Blocking_internal(IntPtr socket, bool block, out int error);
+
+		public bool Connected {
+			get { return is_connected; }
+			internal set { is_connected = value; }
+		}
+
+		public ProtocolType ProtocolType {
+			get { return protocol_type; }
+		}
+
+		public bool NoDelay {
+			get {
+				ThrowIfDisposedAndClosed ();
+				ThrowIfUdp ();
+
+				return ((int) GetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay)) != 0;
+			}
+
+			set {
+				ThrowIfDisposedAndClosed ();
+				ThrowIfUdp ();
+
+				SetSocketOption (SocketOptionLevel.Tcp, SocketOptionName.NoDelay, value ? 1 : 0);
+			}
+		}
+
+		public int ReceiveBufferSize {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return (int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer);
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer, value);
+			}
+		}
+
+		public int SendBufferSize {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				return (int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendBuffer);
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+
+				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendBuffer, value);
+			}
+		}
+
+		public short Ttl {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					return (short) (int) GetSocketOption (SocketOptionLevel.IP, SocketOptionName.IpTimeToLive);
+				case AddressFamily.InterNetworkV6:
+					return (short) (int) GetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.HopLimit);
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+			set {
+				ThrowIfDisposedAndClosed ();
+
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than zero");
+
+				switch (address_family) {
+				case AddressFamily.InterNetwork:
+					SetSocketOption (SocketOptionLevel.IP, SocketOptionName.IpTimeToLive, value);
+					break;
+				case AddressFamily.InterNetworkV6:
+					SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.HopLimit, value);
+					break;
+				default:
+					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
+				}
+			}
+		}
+
+		public EndPoint RemoteEndPoint {
+			get {
+				ThrowIfDisposedAndClosed ();
+
+				/* If the seed EndPoint is null, Connect, Bind, etc has
+				 * not yet been called. MS returns null in this case. */
+				if (!is_connected || seed_endpoint == null)
+					return null;
+
+				int error;
+				SocketAddress sa = RemoteEndPoint_internal (safe_handle, (int) address_family, out error);
+
+				if (error != 0)
+					throw new SocketException (error);
+
+				return seed_endpoint.Create (sa);
+			}
+		}
+
+		static SocketAddress RemoteEndPoint_internal (SafeSocketHandle safeHandle, int family, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return RemoteEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		/* Returns the remote endpoint details in addr and port */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static SocketAddress RemoteEndPoint_internal (IntPtr socket, int family, out int error);
+
+#endregion
+
 #region Select
 
 		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
@@ -355,324 +798,6 @@ namespace System.Net.Sockets
 		extern static void Select_internal (ref Socket [] sockets, int microSeconds, out int error);
 
 #endregion
-
-		// Returns the amount of data waiting to be read on socket
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Available_internal(IntPtr socket, out int error);
-
-		private static int Available_internal (SafeSocketHandle safeHandle, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				return Available_internal (safeHandle.DangerousGetHandle (), out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public int Available {
-			get {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
-				int ret, error;
-				
-				ret = Available_internal (safe_handle, out error);
-
-				if (error != 0)
-					throw new SocketException (error);
-
-				return(ret);
-			}
-		}
-
-
-		public bool DontFragment {
-			get {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				bool dontfragment;
-				
-				if (address_family == AddressFamily.InterNetwork) {
-					dontfragment = (int)(GetSocketOption (SocketOptionLevel.IP, SocketOptionName.DontFragment)) != 0;
-				} else if (address_family == AddressFamily.InterNetworkV6) {
-					dontfragment = (int)(GetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DontFragment)) != 0;
-				} else {
-					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
-				}
-				
-				return(dontfragment);
-			}
-			set {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				if (address_family == AddressFamily.InterNetwork) {
-					SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DontFragment, value?1:0);
-				} else if (address_family == AddressFamily.InterNetworkV6) {
-					SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DontFragment, value?1:0);
-				} else {
-					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
-				}
-			}
-		}
-
-		public bool EnableBroadcast {
-			get {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				if (protocol_type != ProtocolType.Udp) {
-					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
-				
-				return((int)(GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast)) != 0);
-			}
-			set {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				if (protocol_type != ProtocolType.Udp) {
-					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
-
-				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Broadcast, value?1:0);
-			}
-		}
-		
-		public bool ExclusiveAddressUse {
-			get {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				return((int)(GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse)) != 0);
-			}
-			set {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-				if (is_bound) {
-					throw new InvalidOperationException ("Bind has already been called for this socket");
-				}
-				
-				SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, value?1:0);
-			}
-		}
-		
-		public bool IsBound {
-			get {
-				return(is_bound);
-			}
-		}
-		
-		public LingerOption LingerState {
-			get {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				return((LingerOption)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Linger));
-			}
-			set {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-				
-				SetSocketOption (SocketOptionLevel.Socket,
-						 SocketOptionName.Linger,
-						 value);
-			}
-		}
-		
-		public bool MulticastLoopback {
-			get {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				/* Even though this option can be set
-				 * for TCP sockets on Linux, throw
-				 * this exception anyway to be
-				 * compatible (the MSDN docs say
-				 * "Setting this property on a
-				 * Transmission Control Protocol (TCP)
-				 * socket will have no effect." but
-				 * the MS runtime throws the
-				 * exception...)
-				 */
-				if (protocol_type == ProtocolType.Tcp) {
-					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
-				
-				bool multicastloopback;
-				
-				if (address_family == AddressFamily.InterNetwork) {
-					multicastloopback = (int)(GetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastLoopback)) != 0;
-				} else if (address_family == AddressFamily.InterNetworkV6) {
-					multicastloopback = (int)(GetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastLoopback)) != 0;
-				} else {
-					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
-				}
-				
-				return(multicastloopback);
-			}
-			set {
-				if (is_disposed && is_closed) {
-					throw new ObjectDisposedException (GetType ().ToString ());
-				}
-
-				/* Even though this option can be set
-				 * for TCP sockets on Linux, throw
-				 * this exception anyway to be
-				 * compatible (the MSDN docs say
-				 * "Setting this property on a
-				 * Transmission Control Protocol (TCP)
-				 * socket will have no effect." but
-				 * the MS runtime throws the
-				 * exception...)
-				 */
-				if (protocol_type == ProtocolType.Tcp) {
-					throw new SocketException ((int)SocketError.ProtocolOption);
-				}
-				
-				if (address_family == AddressFamily.InterNetwork) {
-					SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, value?1:0);
-				} else if (address_family == AddressFamily.InterNetworkV6) {
-					SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastLoopback, value?1:0);
-				} else {
-					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
-				}
-			}
-		}
-		
-		
-		[MonoTODO ("This doesn't do anything on Mono yet")]
-		public bool UseOnlyOverlappedIO {
-			get {
-				return use_overlapped_io;
-			}
-			set {
-				use_overlapped_io = value;
-			}
-		}
-
-		public IntPtr Handle {
-			get {
-				return safe_handle.DangerousGetHandle ();
-			}
-		}
-
-		// Returns the local endpoint details in addr and port
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, int family, out int error);
-
-		private static SocketAddress LocalEndPoint_internal(SafeSocketHandle safeHandle, int family, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				return LocalEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		// Wish:  support non-IP endpoints.
-		public EndPoint LocalEndPoint {
-			get {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-				
-				/*
-				 * If the seed EndPoint is null, Connect, Bind,
-				 * etc has not yet been called. MS returns null
-				 * in this case.
-				 */
-				if (seed_endpoint == null)
-					return null;
-				
-				SocketAddress sa;
-				int error;
-				
-				sa = LocalEndPoint_internal (safe_handle, (int) address_family, out error);
-
-				if (error != 0)
-					throw new SocketException (error);
-
-				return seed_endpoint.Create (sa);
-			}
-		}
-
-		public SocketType SocketType {
-			get {
-				return(socket_type);
-			}
-		}
-
-		public int SendTimeout {
-			get {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
-				return (int)GetSocketOption(
-					SocketOptionLevel.Socket,
-					SocketOptionName.SendTimeout);
-			}
-			set {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
-
-				/* According to the MSDN docs we
-				 * should adjust values between 1 and
-				 * 499 to 500, but the MS runtime
-				 * doesn't do this.
-				 */
-				if (value == -1)
-					value = 0;
-
-				SetSocketOption(
-					SocketOptionLevel.Socket,
-					SocketOptionName.SendTimeout, value);
-			}
-		}
-
-		public int ReceiveTimeout {
-			get {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
-				return (int)GetSocketOption(
-					SocketOptionLevel.Socket,
-					SocketOptionName.ReceiveTimeout);
-			}
-			set {
-				if (is_disposed && is_closed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("value", "The value specified for a set operation is less than -1");
-
-				if (value == -1) {
-					value = 0;
-				}
-				
-				SetSocketOption(
-					SocketOptionLevel.Socket,
-					SocketOptionName.ReceiveTimeout, value);
-			}
-		}
 
 		public bool AcceptAsync (SocketAsyncEventArgs e)
 		{
@@ -2372,6 +2497,20 @@ namespace System.Net.Sockets
 					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
+		}
+
+		void ThrowIfDisposedAndClosed ()
+		{
+			if (is_disposed && is_closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+		}
+
+		void ThrowIfUdp ()
+		{
+#if !NET_2_1 || MOBILE
+			if (protocol_type == ProtocolType.Udp)
+				throw new SocketException ((int)SocketError.ProtocolOption);
+#endif
 		}
 	}
 }
