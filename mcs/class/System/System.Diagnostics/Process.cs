@@ -75,7 +75,7 @@ namespace System.Diagnostics {
 		IntPtr process_handle;
 		int pid;
 		bool enableRaisingEvents;
-		bool already_waiting;
+		RegisteredWaitHandle exitWaitHandle;
 		ISynchronizeInvoke synchronizingObject;
 		EventHandler exited_event;
 		IntPtr stdout_rd;
@@ -102,12 +102,11 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
-			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
+			bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
 			if (start && process_handle != IntPtr.Zero) {
 				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
 				ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
-				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
-				already_waiting = true;
+				exitWaitHandle = ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
 			}
 		}
 
@@ -1604,7 +1603,16 @@ namespace System.Diagnostics {
 		static void CBOnExit (object state, bool unused)
 		{
 			Process p = (Process) state;
-			p.already_waiting = false;
+
+			if (!p.HasExited) {
+				if (p.exitWaitHandle != null) {
+					p.exitWaitHandle.Unregister (null);
+					p.exitWaitHandle = null;
+				}
+				p.StartExitCallbackIfNeeded ();
+				return;
+			}
+
 			p.OnExited ();
 		}
 
@@ -1612,6 +1620,11 @@ namespace System.Diagnostics {
 		{
 			if (exited_event == null)
 				return;
+
+			if (exitWaitHandle != null) {
+				exitWaitHandle.Unregister (null);
+				exitWaitHandle = null;
+			}
 
 			if (synchronizingObject == null) {
 				foreach (EventHandler d in exited_event.GetInvocationList ()) {
