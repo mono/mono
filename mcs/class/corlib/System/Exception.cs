@@ -57,7 +57,7 @@ namespace System
 		   (vtable/MRGCTX) of the frames. */
 		IntPtr [] trace_ips;
 		Exception inner_exception;
-		internal string message;
+		internal string _message;
 		string help_link;
 		string class_name;
 		string stack_trace;
@@ -80,7 +80,7 @@ namespace System
 
 		public Exception (string message)
 		{
-			this.message = message;
+			this._message = message;
 		}
 
 		protected Exception (SerializationInfo info, StreamingContext context)
@@ -89,7 +89,7 @@ namespace System
 				throw new ArgumentNullException ("info");
 
 			class_name          = info.GetString ("ClassName");
-			message             = info.GetString ("Message");
+			_message             = info.GetString ("Message");
 			help_link           = info.GetString ("HelpURL");
 			stack_trace         = info.GetString ("StackTraceString");
 			_remoteStackTraceString  = info.GetString ("RemoteStackTraceString");
@@ -108,7 +108,7 @@ namespace System
 		public Exception (string message, Exception innerException)
 		{
 			inner_exception = innerException;
-			this.message = message;
+			this._message = message;
 		}
 
 		public Exception InnerException {
@@ -132,7 +132,7 @@ namespace System
 
 		internal void SetMessage (string s)
 		{
-			message = s;
+			_message = s;
 		}
 
 		internal void SetStackTrace (string s)
@@ -150,11 +150,11 @@ namespace System
 
 		public virtual string Message {
 			get {
-				if (message == null)
-					message = string.Format (Locale.GetText ("Exception of type '{0}' was thrown."),
+				if (_message == null)
+					_message = string.Format (Locale.GetText ("Exception of type '{0}' was thrown."),
 						ClassName);
 
-				return message;
+				return _message;
 			}
 		}
 		
@@ -302,7 +302,7 @@ namespace System
 				throw new ArgumentNullException ("info");
 
 			info.AddValue ("ClassName", ClassName);
-			info.AddValue ("Message", message);
+			info.AddValue ("Message", _message);
 			info.AddValue ("InnerException", inner_exception);
 			info.AddValue ("HelpURL", help_link);
 			info.AddValue ("StackTraceString", StackTrace);

@@ -200,7 +200,6 @@ System/TimeZoneNotFoundException.cs
 ../../build/common/MonoTODOAttribute.cs
 System/TypeSpec.cs
 System/TypeCode.cs
-System/TypeLoadException.cs
 System/UIntPtr.cs
 System/ValueType.cs
 System/Variant.cs
@@ -1276,6 +1275,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/type.cs
 ../../../external/referencesource/mscorlib/system/typeaccessexception.cs
 ../../../external/referencesource/mscorlib/system/typeinitializationexception.cs
+../../../external/referencesource/mscorlib/system/typeloadexception.cs
 ../../../external/referencesource/mscorlib/system/typedreference.cs
 ../../../external/referencesource/mscorlib/system/typeunloadedexception.cs
 ../../../external/referencesource/mscorlib/system/uint16.cs

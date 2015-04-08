@@ -100,7 +100,7 @@ namespace System.IO {
 
 		public override string Message {
 			get {
-				if (base.message == null) {
+				if (base._message == null) {
 					if (fileName != null) {
 						string message = string.Format (
 							"Could not load file or assembly '{0}' or one of"
@@ -109,7 +109,7 @@ namespace System.IO {
 						return message;
 					}
 				}
-				return base.message;
+				return base._message;
 			}
 		}
 

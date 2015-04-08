@@ -91,7 +91,7 @@ namespace System
 		public override string Message
 		{
 			get {
-				if (base.message == null) {
+				if (base._message == null) {
 					return string.Format (
 						"Could not load file or assembly '{0}' or one of"
 						+ " its dependencies. An attempt was made to load"
