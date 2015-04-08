@@ -46,7 +46,6 @@ EXTRA_DIST = \
 	public			\
 	public-api		\
 	README			\
-	release-notes-1.0.html	\
 	remoting		\
 	ssapre.txt		\
 	stack-overflow.txt	\
