@@ -1944,6 +1944,60 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region ReceiveMessageFrom
+
+		[MonoTODO ("Not implemented")]
+		public int ReceiveMessageFrom (byte[] buffer, int offset, int size, ref SocketFlags socketFlags, ref EndPoint remoteEP, out IPPacketInformation ipPacketInformation)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			// FIXME: figure out how we get hold of the IPPacketInformation
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("Not implemented")]
+		public bool ReceiveMessageFromAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public IAsyncResult BeginReceiveMessageFrom (byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public int EndReceiveMessageFrom (IAsyncResult asyncResult, ref SocketFlags socketFlags, ref EndPoint endPoint, out IPPacketInformation ipPacketInformation)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (endPoint == null)
+				throw new ArgumentNullException ("endPoint");
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndReceiveMessageFrom", "asyncResult");
+
+			throw new NotImplementedException ();
+		}
+
+#endregion
+
 		void CheckRange (byte[] buffer, int offset, int size)
 		{
 			if (offset < 0)
@@ -1956,25 +2010,6 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
 
-		[MonoTODO]
-		public IAsyncResult BeginReceiveMessageFrom (
-			byte[] buffer, int offset, int size,
-			SocketFlags socketFlags, ref EndPoint remoteEP,
-			AsyncCallback callback, object state)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			CheckRange (buffer, offset, size);
-
-			throw new NotImplementedException ();
-		}
 
 		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags,
 					       AsyncCallback callback, object state)
@@ -2230,34 +2265,7 @@ namespace System.Net.Sockets
 			return si;
 		}
 #endif
-	
 
-
-
-
-		[MonoTODO]
-		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
-						  ref SocketFlags socketFlags,
-						  ref EndPoint endPoint,
-						  out IPPacketInformation ipPacketInformation)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			if (endPoint == null)
-				throw new ArgumentNullException ("endPoint");
-
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndReceiveMessageFrom");
-			throw new NotImplementedException ();
-		}
 
 		public void EndSendFile (IAsyncResult asyncResult)
 		{
@@ -2453,39 +2461,7 @@ namespace System.Net.Sockets
 			return result;
 		}
 
-		[MonoTODO ("Not implemented")]
-		public bool ReceiveMessageFromAsync (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			
-			throw new NotImplementedException ();
-		}
 		
-		[MonoTODO ("Not implemented")]
-		public int ReceiveMessageFrom (byte[] buffer, int offset,
-					       int size,
-					       ref SocketFlags socketFlags,
-					       ref EndPoint remoteEP,
-					       out IPPacketInformation ipPacketInformation)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			CheckRange (buffer, offset, size);
-
-			/* FIXME: figure out how we get hold of the
-			 * IPPacketInformation
-			 */
-			throw new NotImplementedException ();
-		}
 
 		[MonoTODO ("Not implemented")]
 		public bool SendPacketsAsync (SocketAsyncEventArgs e)
