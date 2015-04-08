@@ -271,22 +271,9 @@ namespace System.Net.Sockets
 		extern IntPtr Socket_internal (AddressFamily family, SocketType type, ProtocolType proto, out int error);
 
 #endregion
-		static void AddSockets (List<Socket> sockets, IList list, string name)
-		{
-			if (list != null) {
-				foreach (Socket sock in list) {
-					if (sock == null) // MS throws a NullRef
-						throw new ArgumentNullException ("name", "Contains a null element");
-					sockets.Add (sock);
-				}
-			}
 
-			sockets.Add (null);
-		}
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Select_internal (ref Socket [] sockets,
-							int microSeconds,
-							out int error);
+#region Select
+
 		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
 		{
 			var list = new List<Socket> ();
@@ -294,18 +281,16 @@ namespace System.Net.Sockets
 			AddSockets (list, checkWrite, "checkWrite");
 			AddSockets (list, checkError, "checkError");
 
-			if (list.Count == 3) {
-				throw new ArgumentNullException ("checkRead, checkWrite, checkError",
-								 "All the lists are null or empty.");
-			}
+			if (list.Count == 3)
+				throw new ArgumentNullException ("checkRead, checkWrite, checkError", "All the lists are null or empty.");
+
+			/* The 'sockets' array contains:
+			 *  - READ socket 0-n, null,
+			 *  - WRITE socket 0-n, null,
+			 *  - ERROR socket 0-n, null */
+			Socket [] sockets = list.ToArray ();
 
 			int error;
-			/*
-			 * The 'sockets' array contains: READ socket 0-n, null,
-			 * 				 WRITE socket 0-n, null,
-			 *				 ERROR socket 0-n, null
-			 */
-			Socket [] sockets = list.ToArray ();
 			Select_internal (ref sockets, microSeconds, out error);
 
 			if (error != 0)
@@ -345,15 +330,32 @@ namespace System.Net.Sockets
 						sock.is_connected = true;
 				}
 
-				// Remove non-signaled sockets before the current one
-				//int max = currentList.Count;
-				while (((Socket) currentList [currentIdx]) != sock) {
+				/* Remove non-signaled sockets before the current one */
+				while (((Socket) currentList [currentIdx]) != sock)
 					currentList.RemoveAt (currentIdx);
-				}
+
 				currentIdx++;
 			}
 		}
-	
+
+		static void AddSockets (List<Socket> sockets, IList list, string name)
+		{
+			if (list != null) {
+				foreach (Socket sock in list) {
+					if (sock == null) // MS throws a NullRef
+						throw new ArgumentNullException ("name", "Contains a null element");
+					sockets.Add (sock);
+				}
+			}
+
+			sockets.Add (null);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void Select_internal (ref Socket [] sockets, int microSeconds, out int error);
+
+#endregion
+
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Available_internal(IntPtr socket, out int error);
