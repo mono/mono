@@ -1352,18 +1352,90 @@ namespace System.Net.Sockets
 
 #endregion
 
-		public IAsyncResult BeginDisconnect (bool reuseSocket,
-						     AsyncCallback callback,
-						     object state)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+#region Disconnect
 
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Disconnect);
-			req.ReuseSocket = reuseSocket;
-			socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return(req);
+		/* According to the docs, the MS runtime will throw PlatformNotSupportedException
+		 * if the platform is newer than w2k.  We should be able to cope... */
+		public void Disconnect (bool reuseSocket)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error = 0;
+			Disconnect_internal (safe_handle, reuseSocket, out error);
+
+			if (error != 0) {
+				if (error == 50) {
+					/* ERROR_NOT_SUPPORTED */
+					throw new PlatformNotSupportedException ();
+				} else {
+					throw new SocketException (error);
+				}
+			}
+
+			is_connected = false;
+			if (reuseSocket) {
+				/* Do managed housekeeping here... */
+			}
 		}
+
+		public bool DisconnectAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, SocketOperation.Disconnect);
+
+			SocketAsyncResult sockares = e.Worker.result;
+
+			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return true;
+		}
+
+
+		public IAsyncResult BeginDisconnect (bool reuseSocket, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Disconnect) {
+				ReuseSocket = reuseSocket,
+			};
+
+			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public void EndDisconnect (IAsyncResult asyncResult)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndDisconnect", "asyncResult");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne ();
+
+			sockares.CheckIfThrowDelayedException ();
+		}
+
+		static void Disconnect_internal (SafeSocketHandle safeHandle, bool reuse, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Disconnect_internal (safeHandle.DangerousGetHandle (), reuse, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void Disconnect_internal (IntPtr sock, bool reuse, out int error);
+
+#endregion
 
 		void CheckRange (byte[] buffer, int offset, int size)
 		{
@@ -1753,61 +1825,7 @@ namespace System.Net.Sockets
 		}
 
 
-		public bool DisconnectAsync (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.Disconnect);
-			socket_pool_queue (SocketAsyncWorker.Dispatcher, e.Worker.result);
-			return true;
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Disconnect_internal(IntPtr sock, bool reuse, out int error);
-
-		private static void Disconnect_internal(SafeSocketHandle safeHandle, bool reuse, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				Disconnect_internal (safeHandle.DangerousGetHandle (), reuse, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		/* According to the docs, the MS runtime will throw
-		 * PlatformNotSupportedException if the platform is
-		 * newer than w2k.  We should be able to cope...
-		 */
-		public void Disconnect (bool reuseSocket)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			int error = 0;
-			
-			Disconnect_internal (safe_handle, reuseSocket, out error);
-
-			if (error != 0) {
-				if (error == 50) {
-					/* ERROR_NOT_SUPPORTED */
-					throw new PlatformNotSupportedException ();
-				} else {
-					throw new SocketException (error);
-				}
-			}
-
-			is_connected = false;
-			
-			if (reuseSocket) {
-				/* Do managed housekeeping here... */
-			}
-		}
 
 #if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
@@ -1830,25 +1848,6 @@ namespace System.Net.Sockets
 
 
 
-		public void EndDisconnect (IAsyncResult asyncResult)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndDisconnect");
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			req.CheckIfThrowDelayedException ();
-		}
 
 		[MonoTODO]
 		public int EndReceiveMessageFrom (IAsyncResult asyncResult,
