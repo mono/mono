@@ -1256,7 +1256,13 @@ namespace System.Diagnostics {
 						return false;
 				}
 			}
-			return WaitForExit_internal (process_handle, ms);
+
+			bool exited = WaitForExit_internal (process_handle, ms);
+
+			if (exited)
+				OnExited ();
+
+			return exited;
 		}
 
 		/* Waits up to ms milliseconds for process 'handle' to 
