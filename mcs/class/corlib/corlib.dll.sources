@@ -100,14 +100,7 @@ System/CStreamReader.cs
 System/CStreamWriter.cs
 System/Console.cs
 System/Console.iOS.cs
-System/ConsoleCancelEventArgs.cs
-System/ConsoleCancelEventHandler.cs
-System/ConsoleColor.cs
 System/ConsoleDriver.cs
-System/ConsoleKey.cs
-System/ConsoleKeyInfo.cs
-System/ConsoleModifiers.cs
-System/ConsoleSpecialKey.cs
 System/ContextBoundObject.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
@@ -1192,6 +1185,12 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/cannotunloadappdomainexception.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/charenumerator.cs
+../../../external/referencesource/mscorlib/system/consolecanceleventargs.cs
+../../../external/referencesource/mscorlib/system/consolecolor.cs
+../../../external/referencesource/mscorlib/system/consolekey.cs
+../../../external/referencesource/mscorlib/system/consolekeyinfo.cs
+../../../external/referencesource/mscorlib/system/consolemodifiers.cs
+../../../external/referencesource/mscorlib/system/consolespecialkey.cs
 ../../../external/referencesource/mscorlib/system/contextstaticattribute.cs
 ../../../external/referencesource/mscorlib/system/clscompliantattribute.cs
 ../../../external/referencesource/mscorlib/system/contextmarshalexception.cs

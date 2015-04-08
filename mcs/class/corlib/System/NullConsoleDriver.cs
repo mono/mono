@@ -30,7 +30,10 @@
 using System.Runtime.InteropServices;
 using System.Text;
 namespace System {
-	class NullConsoleDriver : IConsoleDriver {
+	class NullConsoleDriver : IConsoleDriver
+	{
+		static readonly ConsoleKeyInfo EmptyConsoleKeyInfo = new ConsoleKeyInfo ('\0', 0, false, false, false);
+
 		public ConsoleColor BackgroundColor {
 			get { return ConsoleColor.Black; }
 			set {
@@ -151,7 +154,7 @@ namespace System {
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
-			return ConsoleKeyInfo.Empty;
+			return EmptyConsoleKeyInfo;
 		}
 
 		public void ResetColor ()
