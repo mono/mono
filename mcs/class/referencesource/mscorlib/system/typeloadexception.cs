@@ -68,7 +68,11 @@ namespace System {
                         ClassName = Environment.GetResourceString("IO_UnknownFileName");
 
                     String format = null;
+#if MONO
+                    format = "Could not load type '{0}' from assembly '{1}'.";
+#else
                     GetTypeLoadExceptionMessage(ResourceId, JitHelpers.GetStringHandleOnStack(ref format));
+#endif
                     _message = String.Format(CultureInfo.CurrentCulture, format, ClassName, AssemblyName, MessageArg);
                 }
             }
@@ -84,6 +88,12 @@ namespace System {
             }
         }
     
+#if MONO
+        private TypeLoadException(String className, String assemblyName)
+            : this (className, assemblyName, null, 0)
+        {
+        }
+#endif
         // This is called from inside the EE. 
         [System.Security.SecurityCritical]  // auto-generated
         private TypeLoadException(String className,
@@ -113,13 +123,13 @@ namespace System {
             MessageArg = info.GetString("TypeLoadMessageArg");
             ResourceId = info.GetInt32("TypeLoadResourceID");
         }
-    
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern void GetTypeLoadExceptionMessage(int resourceId, StringHandleOnStack retString);
-    
+#endif
         //We can rely on the serialization mechanism on Exception to handle most of our needs, but
         //we need to add a few fields of our own.
         [System.Security.SecurityCritical]  // auto-generated_required
