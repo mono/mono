@@ -45,14 +45,7 @@ using Microsoft.Win32;
 
 namespace System
 {
-#if MOBILE
-	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
-#else
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#endif
-	[SerializableAttribute]
-	public
-	sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
+	partial class TimeZoneInfo
 	{
 		TimeSpan baseUtcOffset;
 		public TimeSpan BaseUtcOffset {
