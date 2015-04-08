@@ -72,7 +72,7 @@ namespace System.Net.Sockets
 		public int EndCalled;
 
 		// These fields are not in MonoSocketAsyncResult
-		public Socket.Worker Worker;
+		public SocketAsyncWorker Worker;
 		public int CurrentAddress; // Connect
 
 		public SocketAsyncResult ()
@@ -147,7 +147,7 @@ namespace System.Net.Sockets
 			GC.KeepAlive (this.callback);
 			this.operation = operation;
 			SockFlags = SocketFlags.None;
-			Worker = new Socket.Worker (this);
+			Worker = new SocketAsyncWorker (this);
 		}
 
 		public void CheckIfThrowDelayedException ()
@@ -170,7 +170,7 @@ namespace System.Net.Sockets
 
 			WaitCallback cb;
 			for (int i = 0; i < pending.Length; i++) {
-				Socket.Worker worker = (Socket.Worker) pending [i];
+				SocketAsyncWorker worker = (SocketAsyncWorker) pending [i];
 				SocketAsyncResult ares = worker.result;
 				cb = new WaitCallback (ares.CompleteDisposed);
 				ThreadPool.UnsafeQueueUserWorkItem (cb, null);
@@ -203,7 +203,7 @@ namespace System.Net.Sockets
 			}
 
 			if (queue != null) {
-				Socket.Worker worker = null;
+				SocketAsyncWorker worker = null;
 				Socket.SocketAsyncCall sac = null;
 				lock (queue) {
 					// queue.Count will only be 0 if the socket is closed while receive/send/accept
@@ -212,9 +212,9 @@ namespace System.Net.Sockets
 					if (queue.Count > 0)
 						queue.Dequeue (); // remove ourselves
 					if (queue.Count > 0) {
-						worker = (Socket.Worker) queue.Peek ();
+						worker = (SocketAsyncWorker) queue.Peek ();
 						if (!Sock.disposed) {
-							sac = Socket.Worker.Dispatcher;
+							sac = SocketAsyncWorker.Dispatcher;
 						} else {
 							CompleteAllOnDispose (queue);
 						}

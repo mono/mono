@@ -537,6 +537,7 @@ System.Net.Sockets/Socket_2_1.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketAsyncResult.cs
+System.Net.Sockets/SocketAsyncWorker.cs
 System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs

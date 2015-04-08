@@ -40,7 +40,7 @@ namespace System.Net.Sockets
 	{
 		bool disposed;
 		int in_progress;
-		internal Socket.Worker Worker;
+		internal SocketAsyncWorker Worker;
 		EndPoint remote_ep;
 		public Exception ConnectByNameError { get; internal set; }
 
@@ -101,7 +101,7 @@ namespace System.Net.Sockets
 		
 		public SocketAsyncEventArgs ()
 		{
-			Worker = new Socket.Worker (this);
+			Worker = new SocketAsyncWorker (this);
 			AcceptSocket = null;
 			Buffer = null;
 			BufferList = null;

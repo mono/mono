@@ -58,349 +58,6 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		internal sealed class Worker
-		{
-			public SocketAsyncResult result;
-			SocketAsyncEventArgs args;
-
-			public Worker (SocketAsyncEventArgs args)
-			{
-				this.args = args;
-				result = new SocketAsyncResult ();
-				result.Worker = this;
-			}
-
-			public Worker (SocketAsyncResult ares)
-			{
-				this.result = ares;
-			}
-
-			public void Dispose ()
-			{
-				if (result != null) {
-					result.Dispose ();
-					result = null;
-					args = null;
-				}
-			}
-
-			public static SocketAsyncCall Dispatcher = new SocketAsyncCall (DispatcherCB);
-
-			static void DispatcherCB (SocketAsyncResult sar)
-			{
-				SocketOperation op = sar.operation;
-				if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric ||
-					op == SocketOperation.RecvJustCallback)
-					sar.Worker.Receive ();
-				else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric ||
-					op == SocketOperation.SendJustCallback)
-					sar.Worker.Send ();
-				else if (op == SocketOperation.ReceiveFrom)
-					sar.Worker.ReceiveFrom ();
-				else if (op == SocketOperation.SendTo)
-					sar.Worker.SendTo ();
-				else if (op == SocketOperation.Connect)
-					sar.Worker.Connect ();
-				else if (op == SocketOperation.Accept)
-					sar.Worker.Accept ();
-				else if (op == SocketOperation.AcceptReceive)
-					sar.Worker.AcceptReceive ();
-				else if (op == SocketOperation.Disconnect)
-					sar.Worker.Disconnect ();
-
-				// SendPackets and ReceiveMessageFrom are not implemented yet
-				/*
-				else if (op == SocketOperation.ReceiveMessageFrom)
-					async_op = SocketAsyncOperation.ReceiveMessageFrom;
-				else if (op == SocketOperation.SendPackets)
-					async_op = SocketAsyncOperation.SendPackets;
-				*/
-				else
-					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
-			}
-
-			/* This is called when reusing a SocketAsyncEventArgs */
-			public void Init (Socket sock, SocketAsyncEventArgs args, SocketOperation op)
-			{
-				result.Init (sock, args, SocketAsyncEventArgs.Dispatcher, op);
-				result.Worker = this;
-				SocketAsyncOperation async_op;
-
-				// Notes;
-				// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
-				//	-SendPackets and ReceiveMessageFrom are not implemented yet
-				if (op == SocketOperation.Connect)
-					async_op = SocketAsyncOperation.Connect;
-				else if (op == SocketOperation.Accept)
-					async_op = SocketAsyncOperation.Accept;
-				else if (op == SocketOperation.Disconnect)
-					async_op = SocketAsyncOperation.Disconnect;
-				else if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric)
-					async_op = SocketAsyncOperation.Receive;
-				else if (op == SocketOperation.ReceiveFrom)
-					async_op = SocketAsyncOperation.ReceiveFrom;
-				/*
-				else if (op == SocketOperation.ReceiveMessageFrom)
-					async_op = SocketAsyncOperation.ReceiveMessageFrom;
-				*/
-				else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric)
-					async_op = SocketAsyncOperation.Send;
-				/*
-				else if (op == SocketOperation.SendPackets)
-					async_op = SocketAsyncOperation.SendPackets;
-				*/
-				else if (op == SocketOperation.SendTo)
-					async_op = SocketAsyncOperation.SendTo;
-				else
-					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
-
-				args.SetLastOperation (async_op);
-				args.SocketError = SocketError.Success;
-				args.BytesTransferred = 0;
-			}
-
-			public void Accept ()
-			{
-				Socket acc_socket = null;
-				try {
-					if (args != null && args.AcceptSocket != null) {
-						result.Sock.Accept (args.AcceptSocket);
-						acc_socket = args.AcceptSocket;
-					} else {
-						acc_socket = result.Sock.Accept ();
-						if (args != null)
-							args.AcceptSocket = acc_socket;
-					}
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-
-				result.Complete (acc_socket);
-			}
-
-			/* only used in 2.0 profile and newer, but
-			 * leave in older profiles to keep interface
-			 * to runtime consistent
-			 */
-			public void AcceptReceive ()
-			{
-				Socket acc_socket = null;
-				try {
-					if (result.AcceptSocket == null) {
-						acc_socket = result.Sock.Accept ();
-					} else {
-						acc_socket = result.AcceptSocket;
-						result.Sock.Accept (acc_socket);
-					}
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-
-				/* It seems the MS runtime
-				 * special-cases 0-length requested
-				 * receive data.  See bug 464201.
-				 */
-				int total = 0;
-				if (result.Size > 0) {
-					try {
-						SocketError error;
-						total = acc_socket.Receive_nochecks (result.Buffer,
-										     result.Offset,
-										     result.Size,
-										     result.SockFlags,
-										     out error);
-						if (error != 0) {
-							result.Complete (new SocketException ((int) error));
-							return;
-						}
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-				}
-
-				result.Complete (acc_socket, total);
-			}
-
-			public void Connect ()
-			{
-				if (result.EndPoint == null) {
-					result.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
-					return;
-				}
-
-				SocketAsyncResult mconnect = result.AsyncState as SocketAsyncResult;
-				bool is_mconnect = (mconnect != null && mconnect.Addresses != null);
-				try {
-					int error_code;
-					EndPoint ep = result.EndPoint;
-					error_code = (int) result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-					if (error_code == 0) {
-						if (is_mconnect)
-							result = mconnect;
-						result.Sock.seed_endpoint = ep;
-						result.Sock.connected = true;
-						result.Sock.isbound = true;
-						result.Sock.connect_in_progress = false;
-						result.error = 0;
-						result.Complete ();
-						if (is_mconnect)
-							result.DoMConnectCallback ();
-						return;
-					}
-
-					if (!is_mconnect) {
-						result.Sock.connect_in_progress = false;
-						result.Complete (new SocketException (error_code));
-						return;
-					}
-
-					if (mconnect.CurrentAddress >= mconnect.Addresses.Length) {
-						mconnect.Complete (new SocketException (error_code));
-						if (is_mconnect)
-							mconnect.DoMConnectCallback ();
-						return;
-					}
-					mconnect.Sock.BeginMConnect (mconnect);
-				} catch (Exception e) {
-					result.Sock.connect_in_progress = false;
-					if (is_mconnect)
-						result = mconnect;
-					result.Complete (e);
-					if (is_mconnect)
-						result.DoMConnectCallback ();
-					return;
-				}
-			}
-
-			/* Also only used in 2.0 profile and newer */
-			public void Disconnect ()
-			{
-				try {
-					if (args != null)
-						result.ReuseSocket = args.DisconnectReuseSocket;
-					result.Sock.Disconnect (result.ReuseSocket);
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-				result.Complete ();
-			}
-
-			public void Receive ()
-			{
-				if (result.operation == SocketOperation.ReceiveGeneric) {
-					ReceiveGeneric ();
-					return;
-				}
-				// Actual recv() done in the runtime
-				result.Complete ();
-			}
-
-			public void ReceiveFrom ()
-			{
-				int total = 0;
-				try {
-					total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
-									 result.Offset,
-									 result.Size,
-									 result.SockFlags,
-									 ref result.EndPoint);
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-
-				result.Complete (total);
-			}
-
-			public void ReceiveGeneric ()
-			{
-				int total = 0;
-				try {
-					total = result.Sock.Receive (result.Buffers, result.SockFlags);
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-				result.Complete (total);
-			}
-
-			int send_so_far;
-
-			void UpdateSendValues (int last_sent)
-			{
-				if (result.error == 0) {
-					send_so_far += last_sent;
-					result.Offset += last_sent;
-					result.Size -= last_sent;
-				}
-			}
-
-			public void Send ()
-			{
-				if (result.operation == SocketOperation.SendGeneric) {
-					SendGeneric ();
-					return;
-				}
-				// Actual send() done in the runtime
-				if (result.error == 0) {
-					UpdateSendValues (result.Total);
-					if (result.Sock.disposed) {
-						result.Complete ();
-						return;
-					}
-
-					if (result.Size > 0) {
-						Socket.socket_pool_queue (Worker.Dispatcher, result);
-						return; // Have to finish writing everything. See bug #74475.
-					}
-					result.Total = send_so_far;
-					send_so_far = 0;
-				}
-				result.Complete ();
-			}
-
-			public void SendTo ()
-			{
-				int total = 0;
-				try {
-					total = result.Sock.SendTo_nochecks (result.Buffer,
-								    result.Offset,
-								    result.Size,
-								    result.SockFlags,
-								    result.EndPoint);
-
-					UpdateSendValues (total);
-					if (result.Size > 0) {
-						Socket.socket_pool_queue (Worker.Dispatcher, result);
-						return; // Have to finish writing everything. See bug #74475.
-					}
-					result.Total = send_so_far;
-					send_so_far = 0;
-				} catch (Exception e) {
-					send_so_far = 0;
-					result.Complete (e);
-					return;
-				}
-
-				result.Complete ();
-			}
-
-			public void SendGeneric ()
-			{
-				int total = 0;
-				try {
-					total = result.Sock.Send (result.Buffers, result.SockFlags);
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
-				}
-				result.Complete (total);
-			}
-		}
 
 		internal Queue readQ = new Queue (2);
 		internal Queue writeQ = new Queue (2);
@@ -525,7 +182,7 @@ namespace System.Net.Sockets {
 		private SocketType socket_type;
 		private ProtocolType protocol_type;
 		internal bool blocking=true;
-		private bool isbound;
+		internal bool isbound;
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
 		 */
@@ -533,7 +190,7 @@ namespace System.Net.Sockets {
 		/* true if we called Close_internal */
 		private bool closed;
 		internal bool disposed;
-		bool connect_in_progress;
+		internal bool connect_in_progress;
 
 		/*
 		 * This EndPoint is used when creating new endpoints. Because
@@ -961,7 +618,7 @@ namespace System.Net.Sockets {
 			}
 			if (count == 1) {
 				// Receive takes care of ReceiveGeneric
-				socket_pool_queue (Worker.Dispatcher, res);
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, res);
 			}
 
 			return true;
@@ -994,7 +651,7 @@ namespace System.Net.Sockets {
 			}
 			if (count == 1) {
 				// Send takes care of SendGeneric
-				socket_pool_queue (Worker.Dispatcher, res);
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, res);
 			}
 			return true;
 		}
@@ -1273,7 +930,7 @@ namespace System.Net.Sockets {
 			connected = false;
 			isbound = false;
 			connect_in_progress = true;
-			socket_pool_queue (Worker.Dispatcher, req);
+			socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
 			return req;
 		}
 
@@ -1306,7 +963,7 @@ namespace System.Net.Sockets {
 			return BeginMConnect (req);
 		}
 
-		IAsyncResult BeginMConnect (SocketAsyncResult req)
+		internal IAsyncResult BeginMConnect (SocketAsyncResult req)
 		{
 			IAsyncResult ares = null;
 			Exception exc = null;
@@ -1357,7 +1014,7 @@ namespace System.Net.Sockets {
 			IPAddress [] addresses = null;
 			use_remoteep = !GetCheckedIPs (e, out addresses);
 			e.curSocket = this;
-			Worker w = e.Worker;
+			SocketAsyncWorker w = e.Worker;
 			w.Init (this, e, SocketOperation.Connect);
 			SocketAsyncResult result = w.result;
 			IAsyncResult ares = null;
