@@ -58,11 +58,8 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-
 		internal Queue readQ = new Queue (2);
 		internal Queue writeQ = new Queue (2);
-
-		internal delegate void SocketAsyncCall (SocketAsyncResult sar);
 
 		/*
 		 *	These two fields are looked up by name by the runtime, don't change
@@ -1338,7 +1335,7 @@ namespace System.Net.Sockets {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void socket_pool_queue (SocketAsyncCall d, SocketAsyncResult r);
+		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
 	}
 }
 

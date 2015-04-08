@@ -204,7 +204,7 @@ namespace System.Net.Sockets
 
 			if (queue != null) {
 				SocketAsyncWorker worker = null;
-				Socket.SocketAsyncCall sac = null;
+				SocketAsyncCallback sac = null;
 				lock (queue) {
 					// queue.Count will only be 0 if the socket is closed while receive/send/accept
 					// operation(s) are pending and at least one call to this method is
