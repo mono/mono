@@ -799,13 +799,60 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Accept
+
+		public Socket Accept()
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error = 0;
+			SafeSocketHandle safe_handle = Accept_internal (this.safe_handle, out error, is_blocking);
+
+			if (error != 0) {
+				if (is_closed)
+					error = SOCKET_CLOSED_CODE;
+				throw new SocketException(error);
+			}
+
+			Socket accepted = new Socket (this.AddressFamily, this.SocketType, this.ProtocolType, safe_handle) {
+				seed_endpoint = this.seed_endpoint,
+				Blocking = this.Blocking,
+			};
+
+			return accepted;
+		}
+
+		internal void Accept (Socket acceptSocket)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error = 0;
+			SafeSocketHandle safe_handle = Accept_internal (this.safe_handle, out error, is_blocking);
+
+			if (error != 0) {
+				if (is_closed)
+					error = SOCKET_CLOSED_CODE;
+				throw new SocketException (error);
+			}
+
+			acceptSocket.address_family = this.AddressFamily;
+			acceptSocket.socket_type = this.SocketType;
+			acceptSocket.protocol_type = this.ProtocolType;
+			acceptSocket.safe_handle = safe_handle;
+			acceptSocket.is_connected = true;
+			acceptSocket.seed_endpoint = this.seed_endpoint;
+			acceptSocket.Blocking = this.Blocking;
+
+			// FIXME: figure out what if anything else needs to be reset
+		}
+
 		public bool AcceptAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			if (!IsBound)
+
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_bound)
 				throw new InvalidOperationException ("You must call the Bind method before performing this operation.");
 			if (!is_listening)
 				throw new InvalidOperationException ("You must call the Listen method before performing this operation.");
@@ -816,143 +863,83 @@ namespace System.Net.Sockets
 
 			Socket acceptSocket = e.AcceptSocket;
 			if (acceptSocket != null) {
-				if (acceptSocket.IsBound || acceptSocket.Connected)
+				if (acceptSocket.is_bound || acceptSocket.is_connected)
 					throw new InvalidOperationException ("AcceptSocket: The socket must not be bound or connected.");
 			}
 
 			e.curSocket = this;
-			SocketAsyncWorker w = e.Worker;
-			w.Init (this, e, SocketOperation.Accept);
+			e.Worker.Init (this, e, SocketOperation.Accept);
+
+			SocketAsyncResult sockares = e.Worker.result;
+
 			int count;
 			lock (readQ) {
 				readQ.Enqueue (e.Worker);
 				count = readQ.Count;
 			}
+
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, w.result);
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
 			return true;
-		}
-		// Creates a new system socket, returning the handle
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
-
-		private static SafeSocketHandle Accept_internal(SafeSocketHandle safeHandle, out int error, bool blocking)
-		{
-			try {
-				safeHandle.RegisterForBlockingSyscall ();
-				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
-				return new SafeSocketHandle (ret, true);
-			} finally {
-				safeHandle.UnRegisterForBlockingSyscall ();
-			}
-		}
-
-		public Socket Accept() {
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			int error = 0;
-			var sock = Accept_internal(safe_handle, out error, is_blocking);
-
-			if (error != 0) {
-				if (is_closed)
-					error = SOCKET_CLOSED_CODE;
-				throw new SocketException(error);
-			}
-
-			Socket accepted = new Socket(this.AddressFamily, this.SocketType,
-				this.ProtocolType, sock);
-
-			accepted.seed_endpoint = this.seed_endpoint;
-			accepted.Blocking = this.Blocking;
-			return(accepted);
-		}
-
-		internal void Accept (Socket acceptSocket)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			
-			int error = 0;
-			var sock = Accept_internal (safe_handle, out error, is_blocking);
-			
-			if (error != 0) {
-				if (is_closed)
-					error = SOCKET_CLOSED_CODE;
-				throw new SocketException (error);
-			}
-			
-			acceptSocket.address_family = this.AddressFamily;
-			acceptSocket.socket_type = this.SocketType;
-			acceptSocket.protocol_type = this.ProtocolType;
-			acceptSocket.safe_handle = sock;
-			acceptSocket.is_connected = true;
-			acceptSocket.seed_endpoint = this.seed_endpoint;
-			acceptSocket.Blocking = this.Blocking;
-
-			/* FIXME: figure out what if anything else
-			 * needs to be reset
-			 */
 		}
 
 		public IAsyncResult BeginAccept(AsyncCallback callback, object state)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			ThrowIfDisposedAndClosed ();
 
 			if (!is_bound || !is_listening)
 				throw new InvalidOperationException ();
 
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
+
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (req.Worker);
+				readQ.Enqueue (sockares.Worker);
 				count = readQ.Count;
 			}
+
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
 		}
 
-		public IAsyncResult BeginAccept (int receiveSize,
-						 AsyncCallback callback,
-						 object state)
+		public IAsyncResult BeginAccept (int receiveSize, AsyncCallback callback, object state)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			ThrowIfDisposedAndClosed ();
 
 			if (receiveSize < 0)
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
 
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
-			req.Buffer = new byte[receiveSize];
-			req.Offset = 0;
-			req.Size = receiveSize;
-			req.SockFlags = SocketFlags.None;
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive) {
+				Buffer = new byte [receiveSize],
+				Offset = 0,
+				Size = receiveSize,
+				SockFlags = SocketFlags.None,
+			};
+
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (req.Worker);
+				readQ.Enqueue (sockares.Worker);
 				count = readQ.Count;
 			}
+
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
 		}
 
-		public IAsyncResult BeginAccept (Socket acceptSocket,
-						 int receiveSize,
-						 AsyncCallback callback,
-						 object state)
+		public IAsyncResult BeginAccept (Socket acceptSocket, int receiveSize, AsyncCallback callback, object state)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			ThrowIfDisposedAndClosed ();
 
 			if (receiveSize < 0)
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
 
 			if (acceptSocket != null) {
-				if (acceptSocket.is_disposed && acceptSocket.is_closed)
-					throw new ObjectDisposedException (acceptSocket.GetType ().ToString ());
+				ThrowIfDisposedAndClosed (acceptSocket);
 
 				if (acceptSocket.IsBound)
 					throw new InvalidOperationException ();
@@ -966,21 +953,72 @@ namespace System.Net.Sockets
 					throw new SocketException ((int)SocketError.InvalidArgument);
 			}
 			
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive);
-			req.Buffer = new byte[receiveSize];
-			req.Offset = 0;
-			req.Size = receiveSize;
-			req.SockFlags = SocketFlags.None;
-			req.AcceptSocket = acceptSocket;
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive) {
+				Buffer = new byte [receiveSize],
+				Offset = 0,
+				Size = receiveSize,
+				SockFlags = SocketFlags.None,
+				AcceptSocket = acceptSocket,
+			};
+
 			int count;
 			lock (readQ) {
-				readQ.Enqueue (req.Worker);
+				readQ.Enqueue (sockares.Worker);
 				count = readQ.Count;
 			}
+
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return(req);
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
 		}
+
+		public Socket EndAccept (IAsyncResult result)
+		{
+			int bytes;
+			byte[] buffer;
+			return EndAccept (out buffer, out bytes, result);
+		}
+
+		public Socket EndAccept (out byte[] buffer, IAsyncResult asyncResult)
+		{
+			int bytes;
+			return EndAccept (out buffer, out bytes, asyncResult);
+		}
+
+		public Socket EndAccept (out byte[] buffer, out int bytesTransferred, IAsyncResult asyncResult)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndAccept", "asyncResult");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne ();
+
+			sockares.CheckIfThrowDelayedException ();
+
+			buffer = sockares.Buffer;
+			bytesTransferred = sockares.Total;
+
+			return sockares.Socket;
+		}
+
+		static SafeSocketHandle Accept_internal (SafeSocketHandle safeHandle, out int error, bool blocking)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
+				return new SafeSocketHandle (ret, true);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		/* Creates a new system socket, returning the handle */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static IntPtr Accept_internal (IntPtr sock, out int error, bool blocking);
+
+#endregion
 
 		public IAsyncResult BeginConnect (IPAddress address, int port,
 						  AsyncCallback callback,
@@ -1560,44 +1598,7 @@ namespace System.Net.Sockets
 		}
 #endif
 	
-		public Socket EndAccept (IAsyncResult result)
-		{
-			int bytes;
-			byte[] buffer;
-			
-			return(EndAccept (out buffer, out bytes, result));
-		}
 
-		public Socket EndAccept (out byte[] buffer, IAsyncResult asyncResult)
-		{
-			int bytes;
-			return(EndAccept (out buffer, out bytes, asyncResult));
-		}
-
-		public Socket EndAccept (out byte[] buffer, out int bytesTransferred, IAsyncResult asyncResult)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-			
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndAccept");
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			req.CheckIfThrowDelayedException ();
-			
-			buffer = req.Buffer;
-			bytesTransferred = req.Total;
-			
-			return(req.Socket);
-		}
 
 		public void EndConnect (IAsyncResult result)
 		{
@@ -2499,6 +2500,12 @@ namespace System.Net.Sockets
 			}
 		}
 
+		void ThrowIfDisposedAndClosed (Socket socket)
+		{
+			if (socket.is_disposed && socket.is_closed)
+				throw new ObjectDisposedException (socket.GetType ().ToString ());
+		}
+
 		void ThrowIfDisposedAndClosed ()
 		{
 			if (is_disposed && is_closed)
@@ -2511,6 +2518,20 @@ namespace System.Net.Sockets
 			if (protocol_type == ProtocolType.Udp)
 				throw new SocketException ((int)SocketError.ProtocolOption);
 #endif
+		}
+
+		SocketAsyncResult ValidateEndIAsyncResult (IAsyncResult ares, string methodName, string argName)
+		{
+			if (ares == null)
+				throw new ArgumentNullException (argName);
+
+			SocketAsyncResult sockares = ares as SocketAsyncResult;
+			if (sockares == null)
+				throw new ArgumentException ("Invalid IAsyncResult", argName);
+			if (Interlocked.CompareExchange (ref sockares.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp (methodName);
+
+			return sockares;
 		}
 	}
 }
