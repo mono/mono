@@ -21,9 +21,9 @@ Officially supported architectures:
 
 Community supported architectures:
 
-| debian-ppc64el              | centos-s390x              |
-|-----------------------------|---------------------------|
-| [![debian-ppc64el][11]][12] | [![centos-s390x][13]][14] |
+| centos-s390x              |
+|---------------------------|
+| [![centos-s390x][11]][12] |
 
 [1]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/badge/icon
 [2]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-amd64/
@@ -35,10 +35,8 @@ Community supported architectures:
 [8]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/
 [9]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
 [10]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
-[11]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/badge/icon
-[12]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=debian-ppc64el/
-[13]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/badge/icon
-[14]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=centos-s390x/
+[11]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=nealef-s390x-1/badge/icon
+[12]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=nealef-s390x-1/
 
 Compilation and Installation
 ============================
