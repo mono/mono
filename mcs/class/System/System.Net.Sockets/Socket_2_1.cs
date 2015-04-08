@@ -58,65 +58,8 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		internal static void CheckProtocolSupport ()
-		{
-			if(ipv4_supported == -1) {
-				try {
-					Socket tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-					tmp.Close();
-
-					ipv4_supported = 1;
-				} catch {
-					ipv4_supported = 0;
-				}
-			}
-
-			if (ipv6_supported == -1) {
-				// We need to put a try/catch around ConfigurationManager methods as will always throw an exception 
-				// when run in a mono embedded application.  This occurs as embedded applications do not have a setup
-				// for application config.  The exception is not thrown when called from a normal .NET application. 
-				//
-				// We, then, need to guard calls to the ConfigurationManager.  If the config is not found or throws an
-				// exception, will fall through to the existing Socket / API directly below in the code.
-				//
-				// Also note that catching ConfigurationErrorsException specifically would require library dependency
-				// System.Configuration, and wanted to avoid that.
-#if !NET_2_1
-#if CONFIGURATION_DEP
-				try {
-					SettingsSection config;
-					config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
-					if (config != null)
-						ipv6_supported = config.Ipv6.Enabled ? -1 : 0;
-				} catch {
-					ipv6_supported = -1;
-				}
-#else
-				try {
-					NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
-					if (config != null)
-						ipv6_supported = config.ipv6Enabled ? -1 : 0;
-				} catch {
-					ipv6_supported = -1;
-				}
-#endif
-#endif
-				if (ipv6_supported != 0) {
-					try {
-						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-						tmp.Close();
-
-						ipv6_supported = 1;
-					} catch {
-						ipv6_supported = 0;
-					}
-				}
-			}
-		}
-
 		public static bool SupportsIPv4 {
 			get {
-				CheckProtocolSupport();
 				return ipv4_supported == 1;
 			}
 		}
@@ -124,14 +67,12 @@ namespace System.Net.Sockets {
 		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
 		public static bool SupportsIPv6 {
 			get {
-				CheckProtocolSupport();
 				return ipv6_supported == 1;
 			}
 		}
 #if NET_2_1
 		public static bool OSSupportsIPv4 {
 			get {
-				CheckProtocolSupport();
 				return ipv4_supported == 1;
 			}
 		}
@@ -139,7 +80,6 @@ namespace System.Net.Sockets {
 #if NET_2_1
 		public static bool OSSupportsIPv6 {
 			get {
-				CheckProtocolSupport();
 				return ipv6_supported == 1;
 			}
 		}
