@@ -229,8 +229,8 @@ namespace System.Net.Sockets
 			else if (op == SocketAsyncOperation.Connect)
 				args.ConnectCallback (ares);
 			/*
-			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
-			else if (op == Socket.SocketOperation.SendPackets)
+			else if (op == SocketOperation.ReceiveMessageFrom)
+			else if (op == SocketOperation.SendPackets)
 			*/
 			else
 				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));

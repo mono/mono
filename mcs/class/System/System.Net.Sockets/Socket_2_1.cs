@@ -58,24 +58,6 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		// Used by the runtime
-		internal enum SocketOperation {
-			Accept,
-			Connect,
-			Receive,
-			ReceiveFrom,
-			Send,
-			SendTo,
-			RecvJustCallback,
-			SendJustCallback,
-			UsedInProcess,
-			UsedInConsole2,
-			Disconnect,
-			AcceptReceive,
-			ReceiveGeneric,
-			SendGeneric
-		}
-
 		[StructLayout (LayoutKind.Sequential)]
 		internal sealed class SocketAsyncResult: IAsyncResult
 		{
@@ -407,30 +389,30 @@ namespace System.Net.Sockets {
 			static void DispatcherCB (SocketAsyncResult sar)
 			{
 				SocketOperation op = sar.operation;
-				if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric ||
-					op == Socket.SocketOperation.RecvJustCallback)
+				if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric ||
+					op == SocketOperation.RecvJustCallback)
 					sar.Worker.Receive ();
-				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric ||
-					op == Socket.SocketOperation.SendJustCallback)
+				else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric ||
+					op == SocketOperation.SendJustCallback)
 					sar.Worker.Send ();
-				else if (op == Socket.SocketOperation.ReceiveFrom)
+				else if (op == SocketOperation.ReceiveFrom)
 					sar.Worker.ReceiveFrom ();
-				else if (op == Socket.SocketOperation.SendTo)
+				else if (op == SocketOperation.SendTo)
 					sar.Worker.SendTo ();
-				else if (op == Socket.SocketOperation.Connect)
+				else if (op == SocketOperation.Connect)
 					sar.Worker.Connect ();
-				else if (op == Socket.SocketOperation.Accept)
+				else if (op == SocketOperation.Accept)
 					sar.Worker.Accept ();
-				else if (op == Socket.SocketOperation.AcceptReceive)
+				else if (op == SocketOperation.AcceptReceive)
 					sar.Worker.AcceptReceive ();
-				else if (op == Socket.SocketOperation.Disconnect)
+				else if (op == SocketOperation.Disconnect)
 					sar.Worker.Disconnect ();
 
 				// SendPackets and ReceiveMessageFrom are not implemented yet
 				/*
-				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+				else if (op == SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
-				else if (op == Socket.SocketOperation.SendPackets)
+				else if (op == SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
 				*/
 				else
@@ -447,27 +429,27 @@ namespace System.Net.Sockets {
 				// Notes;
 				// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
 				//	-SendPackets and ReceiveMessageFrom are not implemented yet
-				if (op == Socket.SocketOperation.Connect)
+				if (op == SocketOperation.Connect)
 					async_op = SocketAsyncOperation.Connect;
-				else if (op == Socket.SocketOperation.Accept)
+				else if (op == SocketOperation.Accept)
 					async_op = SocketAsyncOperation.Accept;
-				else if (op == Socket.SocketOperation.Disconnect)
+				else if (op == SocketOperation.Disconnect)
 					async_op = SocketAsyncOperation.Disconnect;
-				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
+				else if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric)
 					async_op = SocketAsyncOperation.Receive;
-				else if (op == Socket.SocketOperation.ReceiveFrom)
+				else if (op == SocketOperation.ReceiveFrom)
 					async_op = SocketAsyncOperation.ReceiveFrom;
 				/*
-				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
+				else if (op == SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
 				*/
-				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
+				else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric)
 					async_op = SocketAsyncOperation.Send;
 				/*
-				else if (op == Socket.SocketOperation.SendPackets)
+				else if (op == SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
 				*/
-				else if (op == Socket.SocketOperation.SendTo)
+				else if (op == SocketOperation.SendTo)
 					async_op = SocketAsyncOperation.SendTo;
 				else
 					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
