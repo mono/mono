@@ -23,14 +23,15 @@ namespace System {
     using System.Security.Principal;
     using System.Security.Policy;
     using System.Security;
-    using System.Security.Util;
     using System.Collections;
     using System.Text;
     using System.Configuration.Assemblies;
     using System.Threading;
     using System.Runtime.InteropServices;
     using System.Runtime.Remoting;
+#if !FULL_AOT_RUNTIME
     using System.Reflection.Emit;
+#endif
     using CultureInfo = System.Globalization.CultureInfo;
     using System.IO;
     using System.Runtime.Versioning;
@@ -86,7 +87,7 @@ namespace System {
 
         [method:System.Security.SecurityCritical]
         event UnhandledExceptionEventHandler UnhandledException;
-
+#if !FULL_AOT_RUNTIME
         AssemblyBuilder DefineDynamicAssembly(AssemblyName            name,
                                               AssemblyBuilderAccess   access);
 
@@ -139,7 +140,7 @@ namespace System {
                                               PermissionSet           optionalPermissions,
                                               PermissionSet           refusedPermissions,
                                               bool                    isSynchronized);
-
+#endif
         ObjectHandle CreateInstance(String assemblyName,
                                     String typeName);
 
