@@ -97,6 +97,130 @@ namespace System.Net.Sockets
 		internal bool is_disposed;
 		internal bool connect_in_progress;
 
+#region Constructors
+
+		static Socket ()
+		{
+			// initialize ipv4_supported and ipv6_supported
+			CheckProtocolSupport ();
+		}
+
+		[MonoTODO ("Currently hardcoded to IPv4. Ideally, support v4/v6 dual-stack.")]
+		public Socket (SocketType socketType, ProtocolType protocolType)
+			: this (AddressFamily.InterNetwork, socketType, protocolType)
+		{
+		}
+		
+		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+		{
+#if NET_2_1 && !MOBILE
+			switch (addressFamily) {
+			case AddressFamily.InterNetwork:    // ok
+			case AddressFamily.InterNetworkV6:  // ok
+			case AddressFamily.Unknown:         // SocketException will be thrown later (with right error #)
+				break;
+			// case AddressFamily.Unspecified:
+			default:
+				throw new ArgumentException ("addressFamily");
+			}
+
+			switch (socketType) {
+			case SocketType.Stream:             // ok
+			case SocketType.Unknown:            // SocketException will be thrown later (with right error #)
+				break;
+			default:
+				throw new ArgumentException ("socketType");
+			}
+
+			switch (protocolType) {
+			case ProtocolType.Tcp:              // ok
+			case ProtocolType.Unspecified:      // ok
+			case ProtocolType.Unknown:          // SocketException will be thrown later (with right error #)
+				break;
+			default:
+				throw new ArgumentException ("protocolType");
+			}
+#endif
+			this.address_family = addressFamily;
+			this.socket_type = socketType;
+			this.protocol_type = protocolType;
+			
+			int error;
+			var handle = Socket_internal (addressFamily, socketType, protocolType, out error);
+
+			this.safe_handle = new SafeSocketHandle (handle, true);
+
+			if (error != 0)
+				throw new SocketException (error);
+
+#if !NET_2_1 || MOBILE
+			SocketDefaults ();
+#endif
+		}
+
+#if !MOBILE
+		public Socket (SocketInformation socketInformation)
+		{
+			this.is_listening      = (socketInformation.Options & SocketInformationOptions.Listening) != 0;
+			this.is_connected      = (socketInformation.Options & SocketInformationOptions.Connected) != 0;
+			this.is_blocking       = (socketInformation.Options & SocketInformationOptions.NonBlocking) == 0;
+			this.use_overlapped_io = (socketInformation.Options & SocketInformationOptions.UseOnlyOverlappedIO) != 0;
+
+			var result = Mono.DataConverter.Unpack ("iiiil", socketInformation.ProtocolInformation, 0);
+
+			this.address_family = (AddressFamily) (int) result [0];
+			this.socket_type = (SocketType) (int) result [1];
+			this.protocol_type = (ProtocolType) (int) result [2];
+			this.is_bound = (ProtocolType) (int) result [3] != 0;
+			this.safe_handle = new SafeSocketHandle ((IntPtr) (long) result [4], true);
+
+			SocketDefaults ();
+		}
+#endif
+
+		/* private constructor used by Accept, which already has a socket handle to use */
+		internal Socket(AddressFamily family, SocketType type, ProtocolType proto, SafeSocketHandle safe_handle)
+		{
+			this.address_family = family;
+			this.socket_type = type;
+			this.protocol_type = proto;
+			
+			this.safe_handle = safe_handle;
+			this.is_connected = true;
+		}
+
+		~Socket ()
+		{
+			Dispose (false);
+		}
+
+		void SocketDefaults ()
+		{
+			try {
+				/* Need to test IPv6 further */
+				if (address_family == AddressFamily.InterNetwork
+					// || address_family == AddressFamily.InterNetworkV6
+				) {
+					/* This is the default, but it probably has nasty side
+					 * effects on Linux, as the socket option is kludged by
+					 * turning on or off PMTU discovery... */
+					this.DontFragment = false;
+				}
+
+				/* Microsoft sets these to 8192, but we are going to keep them
+				 * both to the OS defaults as these have a big performance impact.
+				 * on WebClient performance. */
+				// this.ReceiveBufferSize = 8192;
+				// this.SendBufferSize = 8192;
+			} catch (SocketException) {
+			}
+		}
+
+		/* Creates a new system socket, returning the handle */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern IntPtr Socket_internal (AddressFamily family, SocketType type, ProtocolType proto, out int error);
+
+#endregion
 		static void AddSockets (List<Socket> sockets, IList list, string name)
 		{
 			if (list != null) {
@@ -179,65 +303,6 @@ namespace System.Net.Sockets
 				currentIdx++;
 			}
 		}
-
-		// private constructor used by Accept, which already
-		// has a socket handle to use
-		internal Socket(AddressFamily family, SocketType type,
-			       ProtocolType proto, SafeSocketHandle sock)
-		{
-			address_family=family;
-			socket_type=type;
-			protocol_type=proto;
-			
-			safe_handle = sock;
-			is_connected = true;
-		}
-
-		private void SocketDefaults ()
-		{
-			try {
-				if (address_family == AddressFamily.InterNetwork /* Need to test IPv6 further ||
-										   address_family == AddressFamily.InterNetworkV6 */) {
-					/* This is the default, but it
-					 * probably has nasty side
-					 * effects on Linux, as the
-					 * socket option is kludged by
-					 * turning on or off PMTU
-					 * discovery...
-					 */
-					this.DontFragment = false;
-				}
-
-				//
-				// Microsoft sets these to 8192, but we are going to keep them
-				// both to the OS defaults as these have a big performance impact.
-				// on WebClient performance.
-				//
-				//this.ReceiveBufferSize = 8192;
-				//this.SendBufferSize = 8192;
-			} catch (SocketException) {
-			}
-		}
-
-#if !MOBILE
-		public Socket (SocketInformation socketInformation)
-		{
-			var options = socketInformation.Options;
-			is_listening      = (options & SocketInformationOptions.Listening) != 0;
-			is_connected      = (options & SocketInformationOptions.Connected) != 0;
-			is_blocking       = (options & SocketInformationOptions.NonBlocking) == 0;
-			use_overlapped_io = (options & SocketInformationOptions.UseOnlyOverlappedIO) != 0;
-
-			var result = Mono.DataConverter.Unpack ("iiiil", socketInformation.ProtocolInformation, 0);
-			
-			address_family = (AddressFamily) (int) result [0];
-			socket_type = (SocketType) (int) result [1];
-			protocol_type = (ProtocolType) (int) result [2];
-			is_bound = (ProtocolType) (int) result [3] != 0;
-			safe_handle = new SafeSocketHandle ((IntPtr) (long) result [4], true);
-			SocketDefaults ();
-		}
-#endif
 	
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

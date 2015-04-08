@@ -58,12 +58,6 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		static Socket ()
-		{
-			// initialize ipv4_supported and ipv6_supported
-			CheckProtocolSupport ();
-		}
-
 		internal static void CheckProtocolSupport ()
 		{
 			if(ipv4_supported == -1) {
@@ -162,70 +156,6 @@ namespace System.Net.Sockets {
 			}
 		}
 #endif
-
-		// Creates a new system socket, returning the handle
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern IntPtr Socket_internal(AddressFamily family,
-						      SocketType type,
-						      ProtocolType proto,
-						      out int error);
-		
-		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
-		{
-#if NET_2_1 && !MOBILE
-			switch (addressFamily) {
-			case AddressFamily.InterNetwork:	// ok
-			case AddressFamily.InterNetworkV6:	// ok
-			case AddressFamily.Unknown:		// SocketException will be thrown later (with right error #)
-				break;
-			// case AddressFamily.Unspecified:
-			default:
-				throw new ArgumentException ("addressFamily");
-			}
-
-			switch (socketType) {
-			case SocketType.Stream:			// ok
-			case SocketType.Unknown:		// SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("socketType");
-			}
-
-			switch (protocolType) {
-			case ProtocolType.Tcp:			// ok
-			case ProtocolType.Unspecified:		// ok
-			case ProtocolType.Unknown:		// SocketException will be thrown later (with right error #)
-				break;
-			default:
-				throw new ArgumentException ("protocolType");
-			}
-#endif
-			address_family = addressFamily;
-			socket_type = socketType;
-			protocol_type = protocolType;
-			
-			int error;
-			
-			var handle = Socket_internal (addressFamily, socketType, protocolType, out error);
-			safe_handle = new SafeSocketHandle (handle, true);
-
-			if (error != 0)
-				throw new SocketException (error);
-#if !NET_2_1 || MOBILE
-			SocketDefaults ();
-#endif
-		}
-
-		[MonoTODO ("Currently hardcoded to IPv4. Ideally, support v4/v6 dual-stack.")]
-		public Socket (SocketType socketType, ProtocolType protocolType)
-			: this (AddressFamily.InterNetwork, socketType, protocolType)
-		{
-		}
-
-		~Socket ()
-		{
-			Dispose (false);
-		}
 
 
 		public AddressFamily AddressFamily {
