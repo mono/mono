@@ -326,7 +326,7 @@ namespace System.Runtime.Serialization
 							context.AddNewObject (value);
 					}
 					else
-							value = InternalDeserialize (value, type, name, ns);
+							value = InternalDeserialize (type, name, ns);
 				} else {
 					// Deserialize ref
 					if (type.IsValueType)
@@ -341,12 +341,12 @@ namespace System.Runtime.Serialization
 				}
 			}
 			else
-				value = InternalDeserialize (value, type, name, ns);
+				value = InternalDeserialize (type, name, ns);
 
 			return value;
 		}
 
-		object InternalDeserialize (object value, Type type, string name, string ns)
+		object InternalDeserialize (Type type, string name, string ns)
 		{
 			Type declaredType = type.IsPointer ? Globals.TypeOfReflectionPointer : type;
 			var obj = context.InternalDeserialize (xmlReader, DataContract.GetId (declaredType.TypeHandle), declaredType.TypeHandle, name, ns);
@@ -416,11 +416,11 @@ namespace System.Runtime.Serialization
 
 			string objectId = context.GetObjectId ();
 
-			bool canReadPrimitiveArray = false;
-			if (isArray && TryReadPrimitiveArray (type, itemType, size))
+			bool canReadPrimitiveArray = false, readResult = false;
+			if (isArray && TryReadPrimitiveArray (type, itemType, size, out readResult))
 				canReadPrimitiveArray = true;
 
-			if (objectId != null) {
+			if (!readResult) {
 				if (size == -1) {
 
 					object growingCollection = null;
@@ -473,7 +473,7 @@ namespace System.Runtime.Serialization
 					context.CheckEndOfArray (xmlReader, size, this.itemName, this.itemNamespace);
 				}
 			}
-			else
+			if (canReadPrimitiveArray)
 				context.AddNewObjectWithId (objectId, objectLocal);
 		}
 
@@ -519,8 +519,9 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		bool TryReadPrimitiveArray (Type type, Type itemType, int size)
+		bool TryReadPrimitiveArray (Type type, Type itemType, int size, out bool readResult)
 		{
+			readResult = false;
 			PrimitiveDataContract primitiveContract = PrimitiveDataContract.GetPrimitiveDataContract (itemType);
 			if (primitiveContract == null)
 				return false;
@@ -554,7 +555,9 @@ namespace System.Runtime.Serialization
 			}
 			if (readArrayMethod != null) {
 				var mi = typeof (XmlReaderDelegator).GetMethod (readArrayMethod, Globals.ScanAllMembers);
-				mi.Invoke (xmlReader, new object [] {context, itemName, itemNamespace, size, objectLocal});
+				var args = new object [] {context, itemName, itemNamespace, size, objectLocal};
+				readResult = (bool) mi.Invoke (xmlReader, args);
+				objectLocal = args.Last ();
 				return true;
 			}
 			return false;
