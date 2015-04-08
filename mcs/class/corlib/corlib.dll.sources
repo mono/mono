@@ -95,9 +95,7 @@ System/Array.cs
 System/AssemblyLoadEventArgs.cs
 System/AssemblyLoadEventHandler.cs
 System/AsyncCallback.cs
-System/AttributeTargets.cs
 System/Buffer.cs
-System/CLSCompliantAttribute.cs
 System/CStreamReader.cs
 System/CStreamWriter.cs
 System/Console.cs
@@ -111,7 +109,6 @@ System/ConsoleKeyInfo.cs
 System/ConsoleModifiers.cs
 System/ConsoleSpecialKey.cs
 System/ContextBoundObject.cs
-System/ContextStaticAttribute.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/Delegate.cs
@@ -124,7 +121,6 @@ System/EnvironmentVariableTarget.cs
 System/EventArgs.cs
 System/EventHandler.cs
 System/Exception.cs
-System/FlagsAttribute.cs
 System/Funcs.cs
 System/GC.cs
 System/GCCollectionMode.cs
@@ -149,8 +145,6 @@ System/InvalidTimeZoneException.cs
 System/IProgress.cs
 System/IServiceProvider.cs
 System/KnownTerminals.cs
-System/LoaderOptimization.cs
-System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
 System/Math.cs
@@ -160,16 +154,12 @@ System/MonoCustomAttrs.cs
 System/MonoListItem.cs
 System/MonoType.cs
 System/MonoTouchAOTHelper.cs
-System/MTAThreadAttribute.cs
 System/MulticastDelegate.cs
-System/NonSerializedAttribute.cs
 System/NullConsoleDriver.cs
 System/Nullable.cs
 System/NumberFormatter.cs
 System/Object.cs
-System/ObsoleteAttribute.cs
 System/OperatingSystem.cs
-System/ParamArrayAttribute.cs
 System/PlatformID.cs
 System/ResolveEventArgs.cs
 System/ResolveEventHandler.cs
@@ -178,16 +168,13 @@ System/RuntimeFieldHandle.cs
 System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
 System/ModuleHandle.cs
-System/SerializableAttribute.cs
 System/Single.cs
-System/STAThreadAttribute.cs
 System/StringComparison.cs
 System/TermInfoBooleans.cs
 System/TermInfoDriver.cs
 System/TermInfoNumbers.cs
 System/TermInfoReader.cs
 System/TermInfoStrings.cs
-System/ThreadStaticAttribute.cs
 System/TimeZone.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.AdjustmentRule.cs
@@ -1186,6 +1173,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/accessviolationexception.cs
 ../../../external/referencesource/mscorlib/system/activator.cs
 ../../../external/referencesource/mscorlib/system/AggregateException.cs
+../../../external/referencesource/mscorlib/system/appdomainattributes.cs
 ../../../external/referencesource/mscorlib/system/appdomainunloadedexception.cs
 ../../../external/referencesource/mscorlib/system/applicationexception.cs
 ../../../external/referencesource/mscorlib/system/argumentexception.cs
@@ -1195,6 +1183,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/arraysegment.cs
 ../../../external/referencesource/mscorlib/system/arraytypemismatchexception.cs
 ../../../external/referencesource/mscorlib/system/attribute.cs
+../../../external/referencesource/mscorlib/system/attributetargets.cs
 ../../../external/referencesource/mscorlib/system/attributeusageattribute.cs
 ../../../external/referencesource/mscorlib/system/badimageformatexception.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
@@ -1203,6 +1192,8 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/cannotunloadappdomainexception.cs
 ../../../external/referencesource/mscorlib/system/char.cs
 ../../../external/referencesource/mscorlib/system/charenumerator.cs
+../../../external/referencesource/mscorlib/system/contextstaticattribute.cs
+../../../external/referencesource/mscorlib/system/clscompliantattribute.cs
 ../../../external/referencesource/mscorlib/system/contextmarshalexception.cs
 ../../../external/referencesource/mscorlib/system/convert.cs
 ../../../external/referencesource/mscorlib/system/datamisalignedexception.cs
@@ -1221,6 +1212,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/entrypointnotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/executionengineexception.cs
 ../../../external/referencesource/mscorlib/system/fieldaccessexception.cs
+../../../external/referencesource/mscorlib/system/flagsattribute.cs
 ../../../external/referencesource/mscorlib/system/formatexception.cs
 ../../../external/referencesource/mscorlib/system/guid.cs
 ../../../external/referencesource/mscorlib/system/invalidcastexception.cs
@@ -1239,6 +1231,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/missingmemberexception.cs
 ../../../external/referencesource/mscorlib/system/missingmethodexception.cs
 ../../../external/referencesource/mscorlib/system/multicastnotsupportedexception.cs
+../../../external/referencesource/mscorlib/system/nonserializedattribute.cs
 ../../../external/referencesource/mscorlib/system/notfinitenumberexception.cs
 ../../../external/referencesource/mscorlib/system/notimplementedexception.cs
 ../../../external/referencesource/mscorlib/system/notsupportedexception.cs
@@ -1246,9 +1239,11 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/nullreferenceexception.cs
 ../../../external/referencesource/mscorlib/system/number.cs
 ../../../external/referencesource/mscorlib/system/objectdisposedexception.cs
+../../../external/referencesource/mscorlib/system/obsoleteattribute.cs
 ../../../external/referencesource/mscorlib/system/operationcanceledexception.cs
 ../../../external/referencesource/mscorlib/system/outofmemoryexception.cs
 ../../../external/referencesource/mscorlib/system/overflowexception.cs
+../../../external/referencesource/mscorlib/system/paramarrayattribute.cs
 ../../../external/referencesource/mscorlib/system/platformnotsupportedexception.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
 ../../../external/referencesource/mscorlib/system/random.cs
@@ -1256,6 +1251,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/resid.cs
 ../../../external/referencesource/mscorlib/system/rttype.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
+../../../external/referencesource/mscorlib/system/serializableattribute.cs
 ../../../external/referencesource/mscorlib/system/stackoverflowexception.cs
 ../../../external/referencesource/mscorlib/system/string.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
@@ -1263,6 +1259,8 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/systemexception.cs
 ../../../external/referencesource/mscorlib/system/timeoutexception.cs
 ../../../external/referencesource/mscorlib/system/timespan.cs
+../../../external/referencesource/mscorlib/system/threadattributes.cs
+../../../external/referencesource/mscorlib/system/threadstaticattribute.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
 ../../../external/referencesource/mscorlib/system/tuple.cs
 ../../../external/referencesource/mscorlib/system/type.cs
