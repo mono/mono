@@ -88,7 +88,6 @@ System/AppDomain.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
 System/AppDomainSetup.cs
-System/ApplicationId.cs
 System/ApplicationIdentity.cs
 System/ArgIterator.cs
 System/Array.cs
@@ -100,7 +99,6 @@ System/CStreamWriter.cs
 System/Console.cs
 System/Console.iOS.cs
 System/ConsoleDriver.cs
-System/ContextBoundObject.cs
 System/ControlCharacters.cs
 System/CrossAppDomainDelegate.cs
 System/Delegate.cs
@@ -118,7 +116,6 @@ System/Guid.cs
 System/Guid.MonoTouch.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
-System/InvalidTimeZoneException.cs
 System/KnownTerminals.cs
 System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
@@ -157,7 +154,6 @@ System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
 System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.TransitionTime.cs
-System/TimeZoneNotFoundException.cs
 ../../build/common/MonoTODOAttribute.cs
 System/TypeSpec.cs
 System/TypeCode.cs
@@ -1147,6 +1143,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/appdomainattributes.cs
 ../../../external/referencesource/mscorlib/system/appdomainunloadedexception.cs
 ../../../external/referencesource/mscorlib/system/applicationexception.cs
+../../../external/referencesource/mscorlib/system/applicationid.cs
 ../../../external/referencesource/mscorlib/system/argumentexception.cs
 ../../../external/referencesource/mscorlib/system/argumentnullexception.cs
 ../../../external/referencesource/mscorlib/system/argumentoutofrangeexception.cs
@@ -1170,6 +1167,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/consolekeyinfo.cs
 ../../../external/referencesource/mscorlib/system/consolemodifiers.cs
 ../../../external/referencesource/mscorlib/system/consolespecialkey.cs
+../../../external/referencesource/mscorlib/system/contextboundobject.cs
 ../../../external/referencesource/mscorlib/system/contextstaticattribute.cs
 ../../../external/referencesource/mscorlib/system/clscompliantattribute.cs
 ../../../external/referencesource/mscorlib/system/contextmarshalexception.cs
@@ -1219,6 +1217,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/iobserver.cs
 ../../../external/referencesource/mscorlib/system/iprogress.cs
 ../../../external/referencesource/mscorlib/system/iserviceobjectprovider.cs
+../../../external/referencesource/mscorlib/system/invalidtimezoneexception.cs
 ../../../external/referencesource/mscorlib/system/Lazy.cs
 ../../../external/referencesource/mscorlib/system/memberaccessexception.cs
 ../../../external/referencesource/mscorlib/system/methodaccessexception.cs
@@ -1257,6 +1256,7 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/threadattributes.cs
 ../../../external/referencesource/mscorlib/system/threadstaticattribute.cs
 ../../../external/referencesource/mscorlib/system/throwhelper.cs
+../../../external/referencesource/mscorlib/system/timezonenotfoundexception.cs
 ../../../external/referencesource/mscorlib/system/tuple.cs
 ../../../external/referencesource/mscorlib/system/type.cs
 ../../../external/referencesource/mscorlib/system/typeaccessexception.cs
@@ -1535,6 +1535,8 @@ ReferenceSources/CompareInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/security/util/hex.cs
 
 ../../../external/referencesource/mscorlib/system/text/asciiencoding.cs
 ../../../external/referencesource/mscorlib/system/text/codepageencoding.cs
