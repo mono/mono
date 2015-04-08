@@ -185,6 +185,9 @@ namespace System.IO {
         internal static String FormatFileLoadExceptionMessage(String fileName,
             int hResult)
         {
+#if MONO
+            return string.Format (CultureInfo.InvariantCulture, "Could not load file or assembly '{0}' or one of its dependencies", fileName);
+#else
             string format = null;
             GetFileLoadExceptionMessage(hResult, JitHelpers.GetStringHandleOnStack(ref format));
 
@@ -192,8 +195,9 @@ namespace System.IO {
             GetMessageForHR(hResult, JitHelpers.GetStringHandleOnStack(ref message));
 
             return String.Format(CultureInfo.CurrentCulture, format, fileName, message);
+#endif
         }
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -205,5 +209,6 @@ namespace System.IO {
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern void GetMessageForHR(int hresult, StringHandleOnStack retString);
+#endif
     }
 }
