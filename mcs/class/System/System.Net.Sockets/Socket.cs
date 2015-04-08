@@ -1437,104 +1437,334 @@ namespace System.Net.Sockets
 
 #endregion
 
-		void CheckRange (byte[] buffer, int offset, int size)
+#region Receive
+
+		public int Receive (byte [] buffer)
 		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-				
-			if (offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
-
-			if (size < 0)                          
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-				
-			if (size > buffer.Length - offset)
-				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
+			return Receive (buffer, SocketFlags.None);
 		}
-		
-		public IAsyncResult BeginReceive(byte[] buffer, int offset,
-						 int size,
-						 SocketFlags socket_flags,
-						 AsyncCallback callback,
-						 object state) {
 
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+		public int Receive (byte [] buffer, SocketFlags flags)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+			SocketError error;
+			int ret = Receive_nochecks (buffer, 0, buffer.Length, flags, out error);
 
-			CheckRange (buffer, offset, size);
-
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (req.Worker);
-				count = readQ.Count;
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
+				throw new SocketException ((int) error);
 			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
+
+			return ret;
 		}
 
-		public IAsyncResult BeginReceive (byte[] buffer, int offset,
-						  int size, SocketFlags flags,
-						  out SocketError error,
-						  AsyncCallback callback,
-						  object state)
+		public int Receive (byte [] buffer, int size, SocketFlags flags)
 		{
-			/* As far as I can tell from the docs and from
-			 * experimentation, a pointer to the
-			 * SocketError parameter is not supposed to be
-			 * saved for the async parts.  And as we don't
-			 * set any socket errors in the setup code, we
-			 * just have to set it to Success.
-			 */
-			error = SocketError.Success;
-			return (BeginReceive (buffer, offset, size, flags, callback, state));
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, size);
+
+			SocketError error;
+			int ret = Receive_nochecks (buffer, 0, size, flags, out error);
+
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
+				throw new SocketException ((int) error);
+			}
+
+			return ret;
+		}
+
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			SocketError error;
+			int ret = Receive_nochecks (buffer, offset, size, flags, out error);
+
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
+				throw new SocketException ((int) error);
+			}
+
+			return ret;
+		}
+
+		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			return Receive_nochecks (buffer, offset, size, flags, out error);
+		}
+
+		public int Receive (IList<ArraySegment<byte>> buffers)
+		{
+			SocketError error;
+			int ret = Receive (buffers, SocketFlags.None, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
 		}
 
 		[CLSCompliant (false)]
-		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers,
-						  SocketFlags socketFlags,
-						  AsyncCallback callback,
-						  object state)
+		public int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			SocketError error;
+			int ret = Receive (buffers, socketFlags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return(ret);
+		}
+
+		[CLSCompliant (false)]
+		public int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (buffers == null || buffers.Count == 0)
+				throw new ArgumentNullException ("buffers");
+
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;
+
+			/* Only example I can find of sending a byte array reference directly into an internal
+			 * call is in System.Runtime.Remoting/System.Runtime.Remoting.Channels.Ipc.Win32/NamedPipeSocket.cs,
+			 * so taking a lead from that... */
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+
+			for (int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+
+				if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
+					throw new ArgumentOutOfRangeException ("segment");
+
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+
+			try {
+				ret = Receive_internal (safe_handle, bufarray, socketFlags, out nativeError);
+			} finally {
+				for (int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated)
+						gch[i].Free ();
+				}
+			}
+
+			errorCode = (SocketError) nativeError;
+
+			return ret;
+		}
+
+		public bool ReceiveAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
+			// thrown when e.Buffer and e.BufferList are null (works fine when one is
+			// set to a valid object)
+			if (e.Buffer == null && e.BufferList == null)
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, e.Buffer != null ? SocketOperation.Receive : SocketOperation.ReceiveGeneric);
+
+			SocketAsyncResult sockares = e.Worker.result;
+			sockares.SockFlags = e.SocketFlags;
+
+			if (e.Buffer != null) {
+				sockares.Buffer = e.Buffer;
+				sockares.Offset = e.Offset;
+				sockares.Size = e.Count;
+			} else {
+				sockares.Buffers = e.BufferList;
+			}
+
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (e.Worker);
+				count = readQ.Count;
+			}
+
+			if (count == 1) {
+				// Receive takes care of ReceiveGeneric
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			}
+
+			return true;
+		}
+
+		public IAsyncResult BeginReceive (byte[] buffer, int offset, int size, SocketFlags socket_flags, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Receive) {
+				Buffer = buffer,
+				Offset = offset,
+				Size = size,
+				SockFlags = socket_flags,
+			};
+
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (sockares.Worker);
+				count = readQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public IAsyncResult BeginReceive (byte[] buffer, int offset, int size, SocketFlags flags, out SocketError error, AsyncCallback callback, object state)
+		{
+			/* As far as I can tell from the docs and from experimentation, a pointer to the
+			 * SocketError parameter is not supposed to be saved for the async parts.  And as we don't
+			 * set any socket errors in the setup code, we just have to set it to Success. */
+			error = SocketError.Success;
+			return BeginReceive (buffer, offset, size, flags, callback, state);
+		}
+
+		[CLSCompliant (false)]
+		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
 
 			if (buffers == null)
 				throw new ArgumentNullException ("buffers");
 
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveGeneric);
-			req.Buffers = buffers;
-			req.SockFlags = socketFlags;
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveGeneric) {
+				Buffers = buffers,
+				SockFlags = socketFlags,
+			};
+
 			int count;
 			lock(readQ) {
-				readQ.Enqueue (req.Worker);
+				readQ.Enqueue (sockares.Worker);
 				count = readQ.Count;
 			}
+
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
 		}
-		
+
 		[CLSCompliant (false)]
-		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers,
-						  SocketFlags socketFlags,
-						  out SocketError errorCode,
-						  AsyncCallback callback,
-						  object state)
+		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
 		{
-			/* I assume the same SocketError semantics as
-			 * above
-			 */
+			/* I assume the same SocketError semantics as above */
 			errorCode = SocketError.Success;
-			return (BeginReceive (buffers, socketFlags, callback, state));
+			return BeginReceive (buffers, socketFlags, callback, state);
+		}
+
+		public int EndReceive (IAsyncResult result)
+		{
+			SocketError error;
+			int bytesReceived = EndReceive (result, out error);
+
+			if (error != SocketError.Success) {
+				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException ((int)error);
+			}
+
+			return bytesReceived;
+		}
+
+		public int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndReceive", "asyncResult");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne ();
+
+			// If no socket error occurred, call CheckIfThrowDelayedException in case there are other
+			// kinds of exceptions that should be thrown.
+			if ((errorCode = sockares.ErrorCode) == SocketError.Success)
+				sockares.CheckIfThrowDelayedException();
+
+			return sockares.Total;
+		}
+
+		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			int nativeError;
+			int ret = Receive_internal (safe_handle, buf, offset, size, flags, out nativeError);
+
+			error = (SocketError) nativeError;
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
+				is_connected = false;
+				is_bound = false;
+			} else {
+				is_connected = true;
+			}
+
+			return ret;
+		}
+
+		static int Receive_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return Receive_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
+
+		static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return Receive_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int Receive_internal(IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, out int error);
+
+#endregion
+
+		void CheckRange (byte[] buffer, int offset, int size)
+		{
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
+			if (offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
+			if (size > buffer.Length - offset)
+				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
 
 		public IAsyncResult BeginReceiveFrom(byte[] buffer, int offset,
@@ -2067,90 +2297,6 @@ namespace System.Net.Sockets
 			return result;
 		}
 
-		public int Receive (byte [] buffer)
-		{
-			return Receive (buffer, SocketFlags.None);
-		}
-
-		public int Receive (byte [] buffer, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			SocketError error;
-
-			int ret = Receive_nochecks (buffer, 0, buffer.Length, flags, out error);
-			
-			if (error != SocketError.Success) {
-				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
-				throw new SocketException ((int) error);
-			}
-
-			return ret;
-		}
-
-		public int Receive (byte [] buffer, int size, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buffer, 0, size);
-
-			SocketError error;
-
-			int ret = Receive_nochecks (buffer, 0, size, flags, out error);
-			
-			if (error != SocketError.Success) {
-				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
-				throw new SocketException ((int) error);
-			}
-
-			return ret;
-		}
-
-		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buffer, offset, size);
-			
-			SocketError error;
-
-			int ret = Receive_nochecks (buffer, offset, size, flags, out error);
-			
-			if (error != SocketError.Success) {
-				if (error == SocketError.WouldBlock && is_blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) error, TIMEOUT_EXCEPTION_MSG);
-				throw new SocketException ((int) error);
-			}
-
-			return ret;
-		}
-
-		public int Receive (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buffer, offset, size);
-			
-			return Receive_nochecks (buffer, offset, size, flags, out error);
-		}
 
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
 		{
@@ -2719,6 +2865,24 @@ namespace System.Net.Sockets
 		{
 			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+		}
+
+		void ThrowIfBufferNull (byte[] buffer)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+		}
+
+		void ThrowIfBufferOutOfRange (byte[] buffer, int offset, int size)
+		{
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
+			if (offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
+			if (size > buffer.Length - offset)
+				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
 
 		void ThrowIfUdp ()
