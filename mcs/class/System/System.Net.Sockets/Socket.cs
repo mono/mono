@@ -1020,51 +1020,337 @@ namespace System.Net.Sockets
 
 #endregion
 
-		public IAsyncResult BeginConnect (IPAddress address, int port,
-						  AsyncCallback callback,
-						  object state)
+#region Connect
+
+		public void Connect (IPAddress address, int port)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			Connect (new IPEndPoint (address, port));
+		}
 
-			if (address == null)
-				throw new ArgumentNullException ("address");
+		public void Connect (string host, int port)
+		{
+			Connect (Dns.GetHostAddresses (host), port);
+		}
 
-			if (address.ToString ().Length == 0)
-				throw new ArgumentException ("The length of the IP address is zero");
+		public void Connect (IPAddress[] addresses, int port)
+		{
+			ThrowIfDisposedAndClosed ();
 
-			if (port <= 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+			if (addresses == null)
+				throw new ArgumentNullException ("addresses");
+			if (this.AddressFamily != AddressFamily.InterNetwork && this.AddressFamily != AddressFamily.InterNetworkV6)
+				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
+			if (is_listening)
+				throw new InvalidOperationException ();
+
+			// FIXME: do non-blocking sockets Poll here?
+			int error = 0;
+			foreach (IPAddress address in addresses) {
+				IPEndPoint iep = new IPEndPoint (address, port);
+
+				Connect_internal (safe_handle, iep.Serialize (), out error);
+				if (error == 0) {
+					is_connected = true;
+					is_bound = true;
+					seed_endpoint = iep;
+					return;
+				}
+				if (error != (int)SocketError.InProgress && error != (int)SocketError.WouldBlock)
+					continue;
+
+				if (!is_blocking) {
+					Poll (-1, SelectMode.SelectWrite);
+					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+					if (error == 0) {
+						is_connected = true;
+						is_bound = true;
+						seed_endpoint = iep;
+						return;
+					}
+				}
+			}
+
+			if (error != 0)
+				throw new SocketException (error);
+		}
+
+
+		public void Connect (EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			IPEndPoint ep = remoteEP as IPEndPoint;
+			/* Dgram uses Any to 'disconnect' */
+			if (ep != null && socket_type != SocketType.Dgram) {
+				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
+					throw new SocketException ((int) SocketError.AddressNotAvailable);
+			}
 
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			IPEndPoint iep = new IPEndPoint (address, port);
-			return(BeginConnect (iep, callback, state));
+			SocketAddress serial = remoteEP.Serialize ();
+
+			int error = 0;
+			Connect_internal (safe_handle, serial, out error);
+
+			if (error == 0 || error == 10035)
+				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
+
+			if (error != 0) {
+				if (is_closed)
+					error = SOCKET_CLOSED_CODE;
+				throw new SocketException (error);
+			}
+
+			is_connected = !(socket_type == SocketType.Dgram && ep != null && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)));
+			is_bound = true;
 		}
 
-		public IAsyncResult BeginConnect (string host, int port,
-						  AsyncCallback callback,
-						  object state)
+		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			if (is_listening)
+				throw new InvalidOperationException ("You may not perform this operation after calling the Listen method.");
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, SocketOperation.Connect);
+
+			SocketAsyncResult result = e.Worker.result;
+
+			try {
+				IPAddress [] addresses;
+				IAsyncResult ares;
+
+				if (!GetCheckedIPs (e, out addresses)) {
+					result.EndPoint = e.RemoteEndPoint;
+					ares = BeginConnect (e.RemoteEndPoint, SocketAsyncEventArgs.Dispatcher, e);
+				} else {
+					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
+					result.Addresses = addresses;
+					result.Port = dep.Port;
+					ares = BeginConnect (addresses, dep.Port, SocketAsyncEventArgs.Dispatcher, e);
+				}
+
+				if (ares.IsCompleted && ares.CompletedSynchronously) {
+					((SocketAsyncResult) ares).CheckIfThrowDelayedException ();
+					return false;
+				}
+			} catch (Exception exc) {
+				result.Complete (exc, true);
+				return false;
+			}
+
+			return true;
+		}
+
+		public IAsyncResult BeginConnect (IPAddress address, int port, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (address.ToString ().Length == 0)
+				throw new ArgumentException ("The length of the IP address is zero");
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+			if (is_listening)
+				throw new InvalidOperationException ();
+
+			return BeginConnect (new IPEndPoint (address, port), callback, state);
+		}
+
+		public IAsyncResult BeginConnect (string host, int port, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
 
 			if (host == null)
 				throw new ArgumentNullException ("host");
-
-			if (address_family != AddressFamily.InterNetwork &&
-				address_family != AddressFamily.InterNetworkV6)
+			if (address_family != AddressFamily.InterNetwork && address_family != AddressFamily.InterNetworkV6)
 				throw new NotSupportedException ("This method is valid only for sockets in the InterNetwork and InterNetworkV6 families");
-
 			if (port <= 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
-
 			if (is_listening)
 				throw new InvalidOperationException ();
 
 			return BeginConnect (Dns.GetHostAddresses (host), port, callback, state);
 		}
+
+		public IAsyncResult BeginConnect (EndPoint end_point, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (end_point == null)
+				throw new ArgumentNullException ("end_point");
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Connect) {
+				EndPoint = end_point,
+			};
+
+			// Bug #75154: Connect() should not succeed for .Any addresses.
+			if (end_point is IPEndPoint) {
+				IPEndPoint ep = (IPEndPoint) end_point;
+				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
+					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
+					return sockares;
+				}
+			}
+
+			int error = 0;
+
+			if (connect_in_progress) {
+				// This could happen when multiple IPs are used
+				// Calling connect() again will reset the connection attempt and cause
+				// an error. Better to just close the socket and move on.
+				connect_in_progress = false;
+				safe_handle.Dispose ();
+				var handle = Socket_internal (address_family, socket_type, protocol_type, out error);
+				safe_handle = new SafeSocketHandle (handle, true);
+				if (error != 0)
+					throw new SocketException (error);
+			}
+
+			bool blk = is_blocking;
+			if (blk)
+				Blocking = false;
+			Connect_internal (safe_handle, end_point.Serialize (), out error);
+			if (blk)
+				Blocking = true;
+
+			if (error == 0) {
+				// succeeded synch
+				is_connected = true;
+				is_bound = true;
+				sockares.Complete (true);
+				return sockares;
+			}
+
+			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
+				// error synch
+				is_connected = false;
+				is_bound = false;
+				sockares.Complete (new SocketException (error), true);
+				return sockares;
+			}
+
+			// continue asynch
+			is_connected = false;
+			is_bound = false;
+			connect_in_progress = true;
+
+			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (addresses == null)
+				throw new ArgumentNullException ("addresses");
+			if (addresses.Length == 0)
+				throw new ArgumentException ("Empty addresses list");
+			if (this.AddressFamily != AddressFamily.InterNetwork && this.AddressFamily != AddressFamily.InterNetworkV6)
+				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
+			if (port <= 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
+			if (is_listening)
+				throw new InvalidOperationException ();
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Connect) {
+				Addresses = addresses,
+				Port = port,
+			};
+
+			is_connected = false;
+
+			return BeginMConnect (sockares);
+		}
+
+		internal IAsyncResult BeginMConnect (SocketAsyncResult sockares)
+		{
+			IAsyncResult ares = null;
+			Exception exc = null;
+
+			for (int i = sockares.CurrentAddress; i < sockares.Addresses.Length; i++) {
+				try {
+					sockares.CurrentAddress++;
+
+					ares = BeginConnect (new IPEndPoint (sockares.Addresses [i], sockares.Port), null, sockares);
+					if (ares.IsCompleted && ares.CompletedSynchronously) {
+						((SocketAsyncResult) ares).CheckIfThrowDelayedException ();
+						sockares.DoMConnectCallback ();
+					}
+
+					break;
+				} catch (Exception e) {
+					exc = e;
+					ares = null;
+				}
+			}
+
+			if (ares == null)
+				throw exc;
+
+			return sockares;
+		}
+
+		public void EndConnect (IAsyncResult result)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndConnect", "result");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne();
+
+			sockares.CheckIfThrowDelayedException();
+		}
+
+		static void Connect_internal (SafeSocketHandle safeHandle, SocketAddress sa, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				Connect_internal (safeHandle.DangerousGetHandle (), sa, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		/* Connects to the remote address */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void Connect_internal(IntPtr sock, SocketAddress sa, out int error);
+
+		/* Returns :
+		 *  - false when it is ok to use RemoteEndPoint
+		 *  - true when addresses must be used (and addresses could be null/empty) */
+		bool GetCheckedIPs (SocketAsyncEventArgs e, out IPAddress [] addresses)
+		{
+			addresses = null;
+
+			// Connect to the first address that match the host name, like:
+			// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
+			// while skipping entries that do not match the address family
+			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
+			if (dep != null) {
+				addresses = Dns.GetHostAddresses (dep.Host);
+				return true;
+			} else {
+				e.ConnectByNameError = null;
+				return false;
+			}
+		}
+
+#endregion
 
 		public IAsyncResult BeginDisconnect (bool reuseSocket,
 						     AsyncCallback callback,
@@ -1466,63 +1752,6 @@ namespace System.Net.Sockets
 			seed_endpoint = local_end;
 		}
 
-		public void Connect (IPAddress address, int port)
-		{
-			Connect (new IPEndPoint (address, port));
-		}
-		
-		public void Connect (IPAddress[] addresses, int port)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (addresses == null)
-				throw new ArgumentNullException ("addresses");
-
-			if (this.AddressFamily != AddressFamily.InterNetwork &&
-				this.AddressFamily != AddressFamily.InterNetworkV6)
-				throw new NotSupportedException ("This method is only valid for addresses in the InterNetwork or InterNetworkV6 families");
-
-			if (is_listening)
-				throw new InvalidOperationException ();
-
-			/* FIXME: do non-blocking sockets Poll here? */
-			int error = 0;
-			foreach (IPAddress address in addresses) {
-				IPEndPoint iep = new IPEndPoint (address, port);
-				SocketAddress serial = iep.Serialize ();
-				
-				Connect_internal (safe_handle, serial, out error);
-				if (error == 0) {
-					is_connected = true;
-					is_bound = true;
-					seed_endpoint = iep;
-					return;
-				} else if (error != (int)SocketError.InProgress &&
-					   error != (int)SocketError.WouldBlock) {
-					continue;
-				}
-				
-				if (!is_blocking) {
-					Poll (-1, SelectMode.SelectWrite);
-					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-					if (error == 0) {
-						is_connected = true;
-						is_bound = true;
-						seed_endpoint = iep;
-						return;
-					}
-				}
-			}
-			if (error != 0)
-				throw new SocketException (error);
-		}
-
-		public void Connect (string host, int port)
-		{
-			IPAddress [] addresses = Dns.GetHostAddresses (host);
-			Connect (addresses, port);
-		}
 
 		public bool DisconnectAsync (SocketAsyncEventArgs e)
 		{
@@ -1600,25 +1829,6 @@ namespace System.Net.Sockets
 	
 
 
-		public void EndConnect (IAsyncResult result)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (result == null)
-				throw new ArgumentNullException ("result");
-
-			SocketAsyncResult req = result as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndConnect");
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne();
-
-			req.CheckIfThrowDelayedException();
-		}
 
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
