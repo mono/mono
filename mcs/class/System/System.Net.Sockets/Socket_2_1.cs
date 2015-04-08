@@ -131,38 +131,6 @@ namespace System.Net.Sockets {
 			((IDisposable) this).Dispose ();
 		}
 
-		public bool SendAsync (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			if (e.Buffer == null && e.BufferList == null)
-				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
-
-			e.curSocket = this;
-			SocketOperation op = (e.Buffer != null) ? SocketOperation.Send : SocketOperation.SendGeneric;
-			e.Worker.Init (this, e, op);
-			SocketAsyncResult res = e.Worker.result;
-			if (e.Buffer != null) {
-				res.Buffer = e.Buffer;
-				res.Offset = e.Offset;
-				res.Size = e.Count;
-			} else {
-				res.Buffers = e.BufferList;
-			}
-			res.SockFlags = e.SocketFlags;
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (e.Worker);
-				count = writeQ.Count;
-			}
-			if (count == 1) {
-				// Send takes care of SendGeneric
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, res);
-			}
-			return true;
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
@@ -196,50 +164,6 @@ namespace System.Net.Sockets {
 				if (release)
 					safeHandle.DangerousRelease ();
 			}
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int Send_internal(IntPtr sock,
-							byte[] buf, int offset,
-							int count,
-							SocketFlags flags,
-							out int error);
-
-		private static int Send_internal (SafeSocketHandle safeHandle,
-							byte[] buf, int offset,
-							int count,
-							SocketFlags flags,
-							out int error)
-		{
-			try {
-				safeHandle.RegisterForBlockingSyscall ();
-				return Send_internal (safeHandle.DangerousGetHandle (), buf, offset, count, flags, out error);
-			} finally {
-				safeHandle.UnRegisterForBlockingSyscall ();
-			}
-		}
-
-		internal int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
-		{
-			if (size == 0) {
-				error = SocketError.Success;
-				return 0;
-			}
-
-			int nativeError;
-
-			int ret = Send_internal (safe_handle, buf, offset, size, flags, out nativeError);
-
-			error = (SocketError)nativeError;
-
-			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
-				is_connected = false;
-				is_bound = false;
-			} else {
-				is_connected = true;
-			}
-
-			return ret;
 		}
 
 		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
@@ -332,132 +256,9 @@ namespace System.Net.Sockets {
 				throw new SocketException (error);
 		}
 
-
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
-
-		private static int Send_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				return Send_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public
-		int Send (IList<ArraySegment<byte>> buffers)
-		{
-			int ret;
-			SocketError error;
-			ret = Send (buffers, SocketFlags.None, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			return(ret);
-		}
-
-		public
-		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
-		{
-			int ret;
-			SocketError error;
-			ret = Send (buffers, socketFlags, out error);
-			if (error != SocketError.Success) {
-				throw new SocketException ((int)error);
-			}
-			return(ret);
-		}
-
-		[CLSCompliant (false)]
-		public
-		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			if (buffers == null)
-				throw new ArgumentNullException ("buffers");
-			if (buffers.Count == 0)
-				throw new ArgumentException ("Buffer is empty", "buffers");
-			int numsegments = buffers.Count;
-			int nativeError;
-			int ret;
-
-			WSABUF[] bufarray = new WSABUF[numsegments];
-			GCHandle[] gch = new GCHandle[numsegments];
-			for(int i = 0; i < numsegments; i++) {
-				ArraySegment<byte> segment = buffers[i];
-
-				if (segment.Offset < 0 || segment.Count < 0 ||
-				    segment.Count > segment.Array.Length - segment.Offset)
-					throw new ArgumentOutOfRangeException ("segment");
-
-				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
-				bufarray[i].len = segment.Count;
-				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
-			}
-
-			try {
-				ret = Send_internal (safe_handle, bufarray, socketFlags, out nativeError);
-			} finally {
-				for(int i = 0; i < numsegments; i++) {
-					if (gch[i].IsAllocated) {
-						gch[i].Free ();
-					}
-				}
-			}
-			errorCode = (SocketError)nativeError;
-			return(ret);
-		}
-
 		Exception InvalidAsyncOp (string method)
 		{
 			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
-		}
-
-
-
-		public
-		int EndSend (IAsyncResult result)
-		{
-			SocketError error;
-			int bytesSent = EndSend (result, out error);
-			if (error != SocketError.Success) {
-				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
-					is_connected = false;
-				throw new SocketException ((int)error);
-			}
-			return bytesSent;
-		}
-
-		public
-		int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			SocketAsyncResult req = asyncResult as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndSend");
-			if (!asyncResult.IsCompleted)
-				asyncResult.AsyncWaitHandle.WaitOne ();
-
-			errorCode = req.ErrorCode;
-			// If no socket error occurred, call CheckIfThrowDelayedException in case there are other
-			// kinds of exceptions that should be thrown.
-			if (errorCode == SocketError.Success)
-				req.CheckIfThrowDelayedException ();
-
-			return(req.Total);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

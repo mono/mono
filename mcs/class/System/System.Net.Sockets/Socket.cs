@@ -1998,6 +1998,341 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Send
+
+		public int Send (byte [] buffer)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			SocketError error;
+			int ret = Send_nochecks (buffer, 0, buffer.Length, SocketFlags.None, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		public int Send (byte [] buffer, SocketFlags flags)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			SocketError error;
+			int ret = Send_nochecks (buffer, 0, buffer.Length, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		public int Send (byte [] buffer, int size, SocketFlags flags)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, size);
+
+			SocketError error;
+			int ret = Send_nochecks (buffer, 0, size, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		public int Send (byte [] buffer, int offset, int size, SocketFlags flags)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			SocketError error;
+			int ret = Send_nochecks (buffer, offset, size, flags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		public int Send (byte [] buffer, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			return Send_nochecks (buffer, offset, size, flags, out error);
+		}
+
+		public
+		int Send (IList<ArraySegment<byte>> buffers)
+		{
+			SocketError error;
+			int ret = Send (buffers, SocketFlags.None, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		public
+		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
+		{
+			SocketError error;
+			int ret = Send (buffers, socketFlags, out error);
+
+			if (error != SocketError.Success)
+				throw new SocketException ((int) error);
+
+			return ret;
+		}
+
+		[CLSCompliant (false)]
+		public int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (buffers == null)
+				throw new ArgumentNullException ("buffers");
+			if (buffers.Count == 0)
+				throw new ArgumentException ("Buffer is empty", "buffers");
+
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;
+
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+
+			for(int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+
+				if (segment.Offset < 0 || segment.Count < 0 || segment.Count > segment.Array.Length - segment.Offset)
+					throw new ArgumentOutOfRangeException ("segment");
+
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+
+			try {
+				ret = Send_internal (safe_handle, bufarray, socketFlags, out nativeError);
+			} finally {
+				for(int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated) {
+						gch[i].Free ();
+					}
+				}
+			}
+
+			errorCode = (SocketError)nativeError;
+
+			return ret;
+		}
+
+		internal int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		{
+			if (size == 0) {
+				error = SocketError.Success;
+				return 0;
+			}
+
+			int nativeError;
+			int ret = Send_internal (safe_handle, buf, offset, size, flags, out nativeError);
+
+			error = (SocketError)nativeError;
+
+			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
+				is_connected = false;
+				is_bound = false;
+			} else {
+				is_connected = true;
+			}
+
+			return ret;
+		}
+
+		public bool SendAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			if (e.Buffer == null && e.BufferList == null)
+				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, e.Buffer != null ? SocketOperation.Send : SocketOperation.SendGeneric);
+
+			SocketAsyncResult sockares = e.Worker.result;
+			sockares.SockFlags = e.SocketFlags;
+
+			if (e.Buffer != null) {
+				sockares.Buffer = e.Buffer;
+				sockares.Offset = e.Offset;
+				sockares.Size = e.Count;
+			} else {
+				sockares.Buffers = e.BufferList;
+			}
+
+			int count;
+			lock (writeQ) {
+				writeQ.Enqueue (e.Worker);
+				count = writeQ.Count;
+			}
+
+			if (count == 1) {
+				// Send takes care of SendGeneric
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			}
+
+			return true;
+		}
+
+		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
+		{
+			if (!is_connected) {
+				errorCode = SocketError.NotConnected;
+				throw new SocketException ((int) errorCode);
+			}
+
+			errorCode = SocketError.Success;
+			return BeginSend (buffer, offset, size, socketFlags, callback, state);
+		}
+
+		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (!is_connected)
+				throw new SocketException ((int)SocketError.NotConnected);
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Send) {
+				Buffer = buffer,
+				Offset = offset,
+				Size = size,
+				SockFlags = socket_flags,
+			};
+
+			int count;
+			lock (writeQ) {
+				writeQ.Enqueue (sockares.Worker);
+				count = writeQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (buffers == null)
+				throw new ArgumentNullException ("buffers");
+			if (!is_connected)
+				throw new SocketException ((int)SocketError.NotConnected);
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.SendGeneric) {
+				Buffers = buffers,
+				SockFlags = socketFlags,
+			};
+
+			int count;
+			lock (writeQ) {
+				writeQ.Enqueue (sockares.Worker);
+				count = writeQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		[CLSCompliant (false)]
+		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode, AsyncCallback callback, object state)
+		{
+			if (!is_connected) {
+				errorCode = SocketError.NotConnected;
+				throw new SocketException ((int)errorCode);
+			}
+
+			errorCode = SocketError.Success;
+			return BeginSend (buffers, socketFlags, callback, state);
+		}
+
+		public int EndSend (IAsyncResult result)
+		{
+			SocketError error;
+			int bytesSent = EndSend (result, out error);
+
+			if (error != SocketError.Success) {
+				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException ((int)error);
+			}
+
+			return bytesSent;
+		}
+
+		public int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (asyncResult, "EndSend", "asyncResult");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne ();
+
+			/* If no socket error occurred, call CheckIfThrowDelayedException in
+			 * case there are other kinds of exceptions that should be thrown.*/
+			if ((errorCode = sockares.ErrorCode) == SocketError.Success)
+				sockares.CheckIfThrowDelayedException ();
+
+			return sockares.Total;
+		}
+
+		static int Send_internal (SafeSocketHandle safeHandle, WSABUF[] bufarray, SocketFlags flags, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Send_internal (safeHandle.DangerousGetHandle (), bufarray, flags, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
+
+		static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return Send_internal (safeHandle.DangerousGetHandle (), buf, offset, count, flags, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int Send_internal(IntPtr sock, byte[] buf, int offset, int count, SocketFlags flags, out int error);
+
+#endregion
+
 		void CheckRange (byte[] buffer, int offset, int size)
 		{
 			if (offset < 0)
@@ -2008,97 +2343,6 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
 			if (size > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
-		}
-
-
-		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags,
-					       AsyncCallback callback, object state)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buffer, offset, size);
-
-			if (!is_connected)
-				throw new SocketException ((int)SocketError.NotConnected);
-
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Send);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (req.Worker);
-				count = writeQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
-		}
-
-		public IAsyncResult BeginSend (byte[] buffer, int offset,
-					       int size,
-					       SocketFlags socketFlags,
-					       out SocketError errorCode,
-					       AsyncCallback callback,
-					       object state)
-		{
-			if (!is_connected) {
-				errorCode = SocketError.NotConnected;
-				throw new SocketException ((int)errorCode);
-			}
-			
-			errorCode = SocketError.Success;
-			
-			return (BeginSend (buffer, offset, size, socketFlags, callback,
-				state));
-		}
-
-		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers,
-					       SocketFlags socketFlags,
-					       AsyncCallback callback,
-					       object state)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffers == null)
-				throw new ArgumentNullException ("buffers");
-
-			if (!is_connected)
-				throw new SocketException ((int)SocketError.NotConnected);
-
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.SendGeneric);
-			req.Buffers = buffers;
-			req.SockFlags = socketFlags;
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (req.Worker);
-				count = writeQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
-		}
-
-		[CLSCompliant (false)]
-		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers,
-					       SocketFlags socketFlags,
-					       out SocketError errorCode,
-					       AsyncCallback callback,
-					       object state)
-		{
-			if (!is_connected) {
-				errorCode = SocketError.NotConnected;
-				throw new SocketException ((int)errorCode);
-			}
-			
-			errorCode = SocketError.Success;
-			return (BeginSend (buffers, socketFlags, callback, state));
 		}
 
 		delegate void SendFileHandler (string fileName, byte [] preBuffer, byte [] postBuffer, TransmitFileOptions flags);
@@ -2474,94 +2718,7 @@ namespace System.Net.Sockets
 			throw new NotImplementedException ();
 		}
 
-		public int Send (byte [] buf)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
-
-			SocketError error;
-
-			int ret = Send_nochecks (buf, 0, buf.Length, SocketFlags.None, out error);
-
-			if (error != SocketError.Success)
-				throw new SocketException ((int) error);
-
-			return ret;
-		}
-
-		public int Send (byte [] buf, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
-
-			SocketError error;
-
-			int ret = Send_nochecks (buf, 0, buf.Length, flags, out error);
-
-			if (error != SocketError.Success)
-				throw new SocketException ((int) error);
-
-			return ret;
-		}
-
-		public int Send (byte [] buf, int size, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buf == null)
-				throw new ArgumentNullException ("buf");
-
-			CheckRange (buf, 0, size);
-
-			SocketError error;
-
-			int ret = Send_nochecks (buf, 0, size, flags, out error);
-
-			if (error != SocketError.Success)
-				throw new SocketException ((int) error);
-
-			return ret;
-		}
-
-		public int Send (byte [] buf, int offset, int size, SocketFlags flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buf == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buf, offset, size);
-
-			SocketError error;
-
-			int ret = Send_nochecks (buf, offset, size, flags, out error);
-
-			if (error != SocketError.Success)
-				throw new SocketException ((int) error);
-
-			return ret;
-		}
-
-		public int Send (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buf == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buf, offset, size);
-
-			return Send_nochecks (buf, offset, size, flags, out error);
-		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool SendFile (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags);
