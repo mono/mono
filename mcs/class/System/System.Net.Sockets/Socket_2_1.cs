@@ -58,36 +58,26 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		internal Queue readQ = new Queue (2);
-		internal Queue writeQ = new Queue (2);
-
-		/*
-		 *	These two fields are looked up by name by the runtime, don't change
-		 *  their name without also updating the runtime code.
-		 */
-		private static int ipv4Supported = -1, ipv6Supported = -1;
-		int linger_timeout;
-
 		static Socket ()
 		{
-			// initialize ipv4Supported and ipv6Supported
+			// initialize ipv4_supported and ipv6_supported
 			CheckProtocolSupport ();
 		}
 
 		internal static void CheckProtocolSupport ()
 		{
-			if(ipv4Supported == -1) {
+			if(ipv4_supported == -1) {
 				try {
 					Socket tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 					tmp.Close();
 
-					ipv4Supported = 1;
+					ipv4_supported = 1;
 				} catch {
-					ipv4Supported = 0;
+					ipv4_supported = 0;
 				}
 			}
 
-			if (ipv6Supported == -1) {
+			if (ipv6_supported == -1) {
 				// We need to put a try/catch around ConfigurationManager methods as will always throw an exception 
 				// when run in a mono embedded application.  This occurs as embedded applications do not have a setup
 				// for application config.  The exception is not thrown when called from a normal .NET application. 
@@ -103,28 +93,28 @@ namespace System.Net.Sockets {
 					SettingsSection config;
 					config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
 					if (config != null)
-						ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
+						ipv6_supported = config.Ipv6.Enabled ? -1 : 0;
 				} catch {
-					ipv6Supported = -1;
+					ipv6_supported = -1;
 				}
 #else
 				try {
 					NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
 					if (config != null)
-						ipv6Supported = config.ipv6Enabled ? -1 : 0;
+						ipv6_supported = config.ipv6Enabled ? -1 : 0;
 				} catch {
-					ipv6Supported = -1;
+					ipv6_supported = -1;
 				}
 #endif
 #endif
-				if (ipv6Supported != 0) {
+				if (ipv6_supported != 0) {
 					try {
 						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 						tmp.Close();
 
-						ipv6Supported = 1;
+						ipv6_supported = 1;
 					} catch {
-						ipv6Supported = 0;
+						ipv6_supported = 0;
 					}
 				}
 			}
@@ -133,7 +123,7 @@ namespace System.Net.Sockets {
 		public static bool SupportsIPv4 {
 			get {
 				CheckProtocolSupport();
-				return ipv4Supported == 1;
+				return ipv4_supported == 1;
 			}
 		}
 
@@ -141,14 +131,14 @@ namespace System.Net.Sockets {
 		public static bool SupportsIPv6 {
 			get {
 				CheckProtocolSupport();
-				return ipv6Supported == 1;
+				return ipv6_supported == 1;
 			}
 		}
 #if NET_2_1
 		public static bool OSSupportsIPv4 {
 			get {
 				CheckProtocolSupport();
-				return ipv4Supported == 1;
+				return ipv4_supported == 1;
 			}
 		}
 #endif
@@ -156,7 +146,7 @@ namespace System.Net.Sockets {
 		public static bool OSSupportsIPv6 {
 			get {
 				CheckProtocolSupport();
-				return ipv6Supported == 1;
+				return ipv6_supported == 1;
 			}
 		}
 #else
@@ -172,31 +162,6 @@ namespace System.Net.Sockets {
 			}
 		}
 #endif
-
-		/* the field "socket" is looked up by name by the runtime */
-		private SafeSocketHandle socket;
-		private AddressFamily address_family;
-		private SocketType socket_type;
-		private ProtocolType protocol_type;
-		internal bool blocking=true;
-		internal bool isbound;
-		/* When true, the socket was connected at the time of
-		 * the last IO operation
-		 */
-		internal bool connected;
-		/* true if we called Close_internal */
-		private bool closed;
-		internal bool disposed;
-		internal bool connect_in_progress;
-
-		/*
-		 * This EndPoint is used when creating new endpoints. Because
-		 * there are many types of EndPoints possible,
-		 * seed_endpoint.Create(addr) is used for creating new ones.
-		 * As such, this value is set on Bind, SentTo, ReceiveFrom,
-		 * Connect, etc.
- 		 */
-		internal EndPoint seed_endpoint = null;
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -242,7 +207,7 @@ namespace System.Net.Sockets {
 			int error;
 			
 			var handle = Socket_internal (addressFamily, socketType, protocolType, out error);
-			socket = new SafeSocketHandle (handle, true);
+			safe_handle = new SafeSocketHandle (handle, true);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -288,26 +253,26 @@ namespace System.Net.Sockets {
 
 		public bool Blocking {
 			get {
-				return(blocking);
+				return is_blocking;
 			}
 			set {
-				if (disposed && closed)
+				if (is_disposed && is_closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 
 				int error;
 				
-				Blocking_internal (socket, value, out error);
+				Blocking_internal (safe_handle, value, out error);
 
 				if (error != 0)
 					throw new SocketException (error);
 				
-				blocking=value;
+				is_blocking = value;
 			}
 		}
 
 		public bool Connected {
-			get { return connected; }
-			internal set { connected = value; }
+			get { return is_connected; }
+			internal set { is_connected = value; }
 		}
 
 		public ProtocolType ProtocolType {
@@ -316,7 +281,7 @@ namespace System.Net.Sockets {
 
 		public bool NoDelay {
 			get {
-				if (disposed && closed)
+				if (is_disposed && is_closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 
 				ThrowIfUpd ();
@@ -327,7 +292,7 @@ namespace System.Net.Sockets {
 			}
 
 			set {
-				if (disposed && closed)
+				if (is_disposed && is_closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 
 				ThrowIfUpd ();
@@ -340,13 +305,13 @@ namespace System.Net.Sockets {
 
 		public int ReceiveBufferSize {
 			get {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				return((int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveBuffer));
 			}
 			set {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				if (value < 0) {
@@ -359,13 +324,13 @@ namespace System.Net.Sockets {
 
 		public int SendBufferSize {
 			get {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				return((int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendBuffer));
 			}
 			set {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				if (value < 0) {
@@ -380,7 +345,7 @@ namespace System.Net.Sockets {
 
 		public short Ttl {
 			get {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				
@@ -397,7 +362,7 @@ namespace System.Net.Sockets {
 				return(ttl_val);
 			}
 			set {
-				if (disposed && closed) {
+				if (is_disposed && is_closed) {
 					throw new ObjectDisposedException (GetType ().ToString ());
 				}
 				if (value < 0) {
@@ -432,7 +397,7 @@ namespace System.Net.Sockets {
 
 		public EndPoint RemoteEndPoint {
 			get {
-				if (disposed && closed)
+				if (is_disposed && is_closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 				
 				/*
@@ -440,12 +405,12 @@ namespace System.Net.Sockets {
 				 * etc has not yet been called. MS returns null
 				 * in this case.
 				 */
-				if (!connected || seed_endpoint == null)
+				if (!is_connected || seed_endpoint == null)
 					return null;
 				SocketAddress sa;
 				int error;
 				
-				sa=RemoteEndPoint_internal(socket, (int) address_family, out error);
+				sa = RemoteEndPoint_internal (safe_handle, (int) address_family, out error);
 
 				if (error != 0)
 					throw new SocketException (error);
@@ -456,7 +421,7 @@ namespace System.Net.Sockets {
 
 		void Linger (IntPtr handle)
 		{
-			if (!connected || linger_timeout <= 0)
+			if (!is_connected || linger_timeout <= 0)
 				return;
 
 			// We don't want to receive any more data
@@ -487,21 +452,21 @@ namespace System.Net.Sockets {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposed)
+			if (is_disposed)
 				return;
 
-			disposed = true;
-			bool was_connected = connected;
-			connected = false;
+			is_disposed = true;
+			bool was_connected = is_connected;
+			is_connected = false;
 			
-			if (socket != null) {
-				closed = true;
+			if (safe_handle != null) {
+				is_closed = true;
 				IntPtr x = Handle;
 
 				if (was_connected)
 					Linger (x);
 
-				socket.Dispose ();
+				safe_handle.Dispose ();
 			}
 		}
 
@@ -549,7 +514,7 @@ namespace System.Net.Sockets {
 		{
 			SocketAddress serial = null;
 
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (remoteEP == null)
@@ -560,34 +525,34 @@ namespace System.Net.Sockets {
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
-			if (islistening)
+			if (is_listening)
 				throw new InvalidOperationException ();
 			serial = remoteEP.Serialize ();
 
 			int error = 0;
 
-			Connect_internal (socket, serial, out error);
+			Connect_internal (safe_handle, serial, out error);
 
 			if (error == 0 || error == 10035)
 				seed_endpoint = remoteEP; // Keep the ep around for non-blocking sockets
 
 			if (error != 0) {
-				if (closed)
-					error = SOCKET_CLOSED;
+				if (is_closed)
+					error = SOCKET_CLOSED_CODE;
 				throw new SocketException (error);
 			}
 
 			if (socket_type == SocketType.Dgram && ep != null && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
-				connected = false;
+				is_connected = false;
 			else
-				connected = true;
-			isbound = true;
+				is_connected = true;
+			is_bound = true;
 		}
 
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
@@ -624,7 +589,7 @@ namespace System.Net.Sockets {
 		public bool SendAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (e.Buffer == null && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
@@ -694,13 +659,13 @@ namespace System.Net.Sockets {
 		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			int nativeError;
-			int ret = Receive_internal (socket, buf, offset, size, flags, out nativeError);
+			int ret = Receive_internal (safe_handle, buf, offset, size, flags, out nativeError);
 			error = (SocketError) nativeError;
 			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
-				connected = false;
-				isbound = false;
+				is_connected = false;
+				is_bound = false;
 			} else {
-				connected = true;
+				is_connected = true;
 			}
 			
 			return ret;
@@ -755,15 +720,15 @@ namespace System.Net.Sockets {
 
 			int nativeError;
 
-			int ret = Send_internal (socket, buf, offset, size, flags, out nativeError);
+			int ret = Send_internal (safe_handle, buf, offset, size, flags, out nativeError);
 
 			error = (SocketError)nativeError;
 
 			if (error != SocketError.Success && error != SocketError.WouldBlock && error != SocketError.InProgress) {
-				connected = false;
-				isbound = false;
+				is_connected = false;
+				is_bound = false;
 			} else {
-				connected = true;
+				is_connected = true;
 			}
 
 			return ret;
@@ -771,13 +736,13 @@ namespace System.Net.Sockets {
 
 		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			object obj_val;
 			int error;
 
-			GetSocketOption_obj_internal (socket, optionLevel, optionName, out obj_val,
+			GetSocketOption_obj_internal (safe_handle, optionLevel, optionName, out obj_val,
 				out error);
 			if (error != 0)
 				throw new SocketException (error);
@@ -811,15 +776,15 @@ namespace System.Net.Sockets {
 
 		public void Shutdown (SocketShutdown how)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (!connected)
+			if (!is_connected)
 				throw new SocketException (10057); // Not connected
 
 			int error;
 			
-			Shutdown_internal (socket, how, out error);
+			Shutdown_internal (safe_handle, how, out error);
 			if (error != 0)
 				throw new SocketException (error);
 		}
@@ -847,12 +812,12 @@ namespace System.Net.Sockets {
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
 
-			SetSocketOption_internal (socket, optionLevel, optionName, null,
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null,
 						 null, optionValue, out error);
 
 			if (error != 0)
@@ -870,7 +835,7 @@ namespace System.Net.Sockets {
 		public
 		IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, object state)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (end_point == null)
@@ -894,38 +859,38 @@ namespace System.Net.Sockets {
 				// Calling connect() again will reset the connection attempt and cause
 				// an error. Better to just close the socket and move on.
 				connect_in_progress = false;
-				socket.Dispose ();
+				safe_handle.Dispose ();
 				var handle = Socket_internal (address_family, socket_type, protocol_type, out error);
-				socket = new SafeSocketHandle (handle, true);
+				safe_handle = new SafeSocketHandle (handle, true);
 				if (error != 0)
 					throw new SocketException (error);
 			}
-			bool blk = blocking;
+			bool blk = is_blocking;
 			if (blk)
 				Blocking = false;
 			SocketAddress serial = end_point.Serialize ();
-			Connect_internal (socket, serial, out error);
+			Connect_internal (safe_handle, serial, out error);
 			if (blk)
 				Blocking = true;
 			if (error == 0) {
 				// succeeded synch
-				connected = true;
-				isbound = true;
+				is_connected = true;
+				is_bound = true;
 				req.Complete (true);
 				return req;
 			}
 
 			if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
 				// error synch
-				connected = false;
-				isbound = false;
+				is_connected = false;
+				is_bound = false;
 				req.Complete (new SocketException (error), true);
 				return req;
 			}
 
 			// continue asynch
-			connected = false;
-			isbound = false;
+			is_connected = false;
+			is_bound = false;
 			connect_in_progress = true;
 			socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
 			return req;
@@ -935,7 +900,7 @@ namespace System.Net.Sockets {
 		IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback callback, object state)
 
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (addresses == null)
@@ -950,13 +915,13 @@ namespace System.Net.Sockets {
 
 			if (port <= 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
-			if (islistening)
+			if (is_listening)
 				throw new InvalidOperationException ();
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.Addresses = addresses;
 			req.Port = port;
-			connected = false;
+			is_connected = false;
 			return BeginMConnect (req);
 		}
 
@@ -1042,9 +1007,9 @@ namespace System.Net.Sockets {
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
-			if (islistening)
+			if (is_listening)
 				throw new InvalidOperationException ("You may not perform this operation after calling the Listen method.");
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP");
@@ -1094,7 +1059,7 @@ namespace System.Net.Sockets {
 		public
 		int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (buffers == null ||
@@ -1128,7 +1093,7 @@ namespace System.Net.Sockets {
 			}
 
 			try {
-				ret = Receive_internal (socket, bufarray,
+				ret = Receive_internal (safe_handle, bufarray,
 							socketFlags,
 							out nativeError);
 			} finally {
@@ -1186,7 +1151,7 @@ namespace System.Net.Sockets {
 		public
 		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (buffers == null)
 				throw new ArgumentNullException ("buffers");
@@ -1211,7 +1176,7 @@ namespace System.Net.Sockets {
 			}
 
 			try {
-				ret = Send_internal (socket, bufarray, socketFlags, out nativeError);
+				ret = Send_internal (safe_handle, bufarray, socketFlags, out nativeError);
 			} finally {
 				for(int i = 0; i < numsegments; i++) {
 					if (gch[i].IsAllocated) {
@@ -1235,7 +1200,7 @@ namespace System.Net.Sockets {
 			int bytesReceived = EndReceive (result, out error);
 			if (error != SocketError.Success) {
 				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
-					connected = false;
+					is_connected = false;
 				throw new SocketException ((int)error);
 			}
 			return bytesReceived;
@@ -1244,7 +1209,7 @@ namespace System.Net.Sockets {
 		public
 		int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (asyncResult == null)
@@ -1275,7 +1240,7 @@ namespace System.Net.Sockets {
 			int bytesSent = EndSend (result, out error);
 			if (error != SocketError.Success) {
 				if (error != SocketError.WouldBlock && error != SocketError.InProgress)
-					connected = false;
+					is_connected = false;
 				throw new SocketException ((int)error);
 			}
 			return bytesSent;
@@ -1284,7 +1249,7 @@ namespace System.Net.Sockets {
 		public
 		int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
@@ -1311,7 +1276,7 @@ namespace System.Net.Sockets {
 		public
 		int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
 		{
-			if (disposed && closed)
+			if (is_disposed && is_closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			if (result == null)

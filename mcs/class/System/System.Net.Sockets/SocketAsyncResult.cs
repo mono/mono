@@ -83,7 +83,7 @@ namespace System.Net.Sockets
 		{
 			this.Sock = sock;
 			if (sock != null) {
-				this.blocking = sock.blocking;
+				this.blocking = sock.is_blocking;
 				this.handle = sock.Handle;
 			} else {
 				this.blocking = true;
@@ -140,7 +140,7 @@ namespace System.Net.Sockets
 		public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 		{
 			this.Sock = sock;
-			this.blocking = sock.blocking;
+			this.blocking = sock.is_blocking;
 			this.handle = sock.Handle;
 			this.state = state;
 			this.callback = callback;
@@ -153,12 +153,12 @@ namespace System.Net.Sockets
 		public void CheckIfThrowDelayedException ()
 		{
 			if (delayedException != null) {
-				Sock.connected = false;
+				Sock.is_connected = false;
 				throw delayedException;
 			}
 
 			if (error != 0) {
-				Sock.connected = false;
+				Sock.is_connected = false;
 				throw new SocketException (error);
 			}
 		}
@@ -184,7 +184,7 @@ namespace System.Net.Sockets
 
 		public void Complete ()
 		{
-			if (operation != SocketOperation.Receive && Sock.disposed)
+			if (operation != SocketOperation.Receive && Sock.is_disposed)
 				delayedException = new ObjectDisposedException (Sock.GetType ().ToString ());
 
 			IsCompleted = true;
@@ -213,7 +213,7 @@ namespace System.Net.Sockets
 						queue.Dequeue (); // remove ourselves
 					if (queue.Count > 0) {
 						worker = (SocketAsyncWorker) queue.Peek ();
-						if (!Sock.disposed) {
+						if (!Sock.is_disposed) {
 							sac = SocketAsyncWorker.Dispatcher;
 						} else {
 							CompleteAllOnDispose (queue);

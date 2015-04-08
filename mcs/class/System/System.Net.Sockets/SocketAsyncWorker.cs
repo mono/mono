@@ -211,8 +211,8 @@ namespace System.Net.Sockets
 					if (is_mconnect)
 						result = mconnect;
 					result.Sock.seed_endpoint = ep;
-					result.Sock.connected = true;
-					result.Sock.isbound = true;
+					result.Sock.is_connected = true;
+					result.Sock.is_bound = true;
 					result.Sock.connect_in_progress = false;
 					result.error = 0;
 					result.Complete ();
@@ -318,7 +318,7 @@ namespace System.Net.Sockets
 			// Actual send() done in the runtime
 			if (result.error == 0) {
 				UpdateSendValues (result.Total);
-				if (result.Sock.disposed) {
+				if (result.Sock.is_disposed) {
 					result.Complete ();
 					return;
 				}
