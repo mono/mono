@@ -3156,7 +3156,7 @@ namespace MonoTests.System.Net.Sockets
 
 			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
 			try {
-				s.ReceiveFrom ((Byte []) null, -1, (SocketFlags) 666,
+				s.ReceiveFrom ((Byte []) null, 0, (SocketFlags) 666,
 					ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -3178,7 +3178,7 @@ namespace MonoTests.System.Net.Sockets
 			byte [] buffer = new byte [5];
 			EndPoint remoteEP = null;
 			try {
-				s.ReceiveFrom (buffer, -1, (SocketFlags) 666, ref remoteEP);
+				s.ReceiveFrom (buffer, buffer.Length, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
@@ -3322,7 +3322,7 @@ namespace MonoTests.System.Net.Sockets
 			EndPoint remoteEP = null;
 
 			try {
-				s.ReceiveFrom (buffer, -1, -1, (SocketFlags) 666, ref remoteEP);
+				s.ReceiveFrom (buffer, 0, buffer.Length, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");

@@ -1755,6 +1755,195 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region ReceiveFrom
+
+		public int ReceiveFrom (byte [] buffer, ref EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
+		}
+
+		public int ReceiveFrom (byte [] buffer, SocketFlags flags, ref EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, flags, ref remoteEP);
+		}
+
+		public int ReceiveFrom (byte [] buffer, int size, SocketFlags flags, ref EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, size);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			return ReceiveFrom_nochecks (buffer, 0, size, flags, ref remoteEP);
+		}
+
+		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags, ref EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (remoteEP == null)
+				throw new ArgumentNullException ("remoteEP");
+
+			return ReceiveFrom_nochecks (buffer, offset, size, flags, ref remoteEP);
+		}
+
+		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			// We do not support recv into multiple buffers yet
+			if (e.BufferList != null)
+				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, SocketOperation.ReceiveFrom);
+
+			SocketAsyncResult sockares = e.Worker.result;
+			sockares.Buffer = e.Buffer;
+			sockares.Offset = e.Offset;
+			sockares.Size = e.Count;
+			sockares.EndPoint = e.RemoteEndPoint;
+			sockares.SockFlags = e.SocketFlags;
+
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (e.Worker);
+				count = readQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return true;
+		}
+
+		public IAsyncResult BeginReceiveFrom (byte[] buffer, int offset, int size, SocketFlags socket_flags, ref EndPoint remote_end, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom) {
+				Buffer = buffer,
+				Offset = offset,
+				Size = size,
+				SockFlags = socket_flags,
+				EndPoint = remote_end,
+			};
+
+			int count;
+			lock (readQ) {
+				readQ.Enqueue (sockares.Worker);
+				count = readQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (end_point == null)
+				throw new ArgumentNullException ("remote_end");
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndReceiveFrom", "result");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne();
+
+			sockares.CheckIfThrowDelayedException();
+
+			end_point = sockares.EndPoint;
+
+			return sockares.Total;
+		}
+
+		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags, ref EndPoint remote_end)
+		{
+			int error;
+			return ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref remote_end, true, out error);
+		}
+
+		internal int ReceiveFrom_nochecks_exc (byte [] buf, int offset, int size, SocketFlags flags, ref EndPoint remote_end, bool throwOnError, out int error)
+		{
+			SocketAddress sockaddr = remote_end.Serialize();
+
+			int cnt = ReceiveFrom_internal (safe_handle, buf, offset, size, flags, ref sockaddr, out error);
+
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress) {
+					is_connected = false;
+				} else if (err == SocketError.WouldBlock && is_blocking) { // This might happen when ReceiveTimeout is set
+					if (throwOnError)	
+						throw new SocketException ((int) SocketError.TimedOut, TIMEOUT_EXCEPTION_MSG);
+					error = (int) SocketError.TimedOut;
+					return 0;
+				}
+
+				if (throwOnError)
+					throw new SocketException (error);
+
+				return 0;
+			}
+
+			is_connected = true;
+			is_bound = true;
+
+			/* If sockaddr is null then we're a connection oriented protocol and should ignore the
+			 * remote_end parameter (see MSDN documentation for Socket.ReceiveFrom(...) ) */
+			if (sockaddr != null) {
+				/* Stupidly, EndPoint.Create() is an instance method */
+				remote_end = remote_end.Create (sockaddr);
+			}
+
+			seed_endpoint = remote_end;
+
+			return cnt;
+		}
+
+		static int ReceiveFrom_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return ReceiveFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int ReceiveFrom_internal(IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error);
+
+#endregion
+
 		void CheckRange (byte[] buffer, int offset, int size)
 		{
 			if (offset < 0)
@@ -1765,39 +1954,6 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
 			if (size > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
-		}
-
-		public IAsyncResult BeginReceiveFrom(byte[] buffer, int offset,
-						     int size,
-						     SocketFlags socket_flags,
-						     ref EndPoint remote_end,
-						     AsyncCallback callback,
-						     object state) {
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			CheckRange (buffer, offset, size);
-
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			req.EndPoint = remote_end;
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (req.Worker);
-				count = readQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
 		}
 
 		[MonoTODO]
@@ -2295,171 +2451,6 @@ namespace System.Net.Sockets
 			}
 			
 			return result;
-		}
-
-
-		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			// We do not support recv into multiple buffers yet
-			if (e.BufferList != null)
-				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
-			if (e.RemoteEndPoint == null)
-				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
-
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.ReceiveFrom);
-			SocketAsyncResult res = e.Worker.result;
-			res.Buffer = e.Buffer;
-			res.Offset = e.Offset;
-			res.Size = e.Count;
-			res.EndPoint = e.RemoteEndPoint;
-			res.SockFlags = e.SocketFlags;
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (e.Worker);
-				count = readQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, res);
-			return true;
-		}
-
-		public int ReceiveFrom (byte [] buffer, ref EndPoint remoteEP)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
-		}
-
-		public int ReceiveFrom (byte [] buffer, SocketFlags flags, ref EndPoint remoteEP)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, flags, ref remoteEP);
-		}
-
-		public int ReceiveFrom (byte [] buffer, int size, SocketFlags flags,
-					ref EndPoint remoteEP)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			if (size < 0 || size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("size");
-
-			return ReceiveFrom_nochecks (buffer, 0, size, flags, ref remoteEP);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int RecvFrom_internal(IntPtr sock,
-							    byte[] buffer,
-							    int offset,
-							    int count,
-							    SocketFlags flags,
-							    ref SocketAddress sockaddr,
-							    out int error);
-
-		private static int RecvFrom_internal (SafeSocketHandle safeHandle,
-							    byte[] buffer,
-							    int offset,
-							    int count,
-							    SocketFlags flags,
-							    ref SocketAddress sockaddr,
-							    out int error)
-		{
-			try {
-				safeHandle.RegisterForBlockingSyscall ();
-				return RecvFrom_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, ref sockaddr, out error);
-			} finally {
-				safeHandle.UnRegisterForBlockingSyscall ();
-			}
-		}
-
-		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags,
-					ref EndPoint remoteEP)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			CheckRange (buffer, offset, size);
-
-			return ReceiveFrom_nochecks (buffer, offset, size, flags, ref remoteEP);
-		}
-
-		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
-						   ref EndPoint remote_end)
-		{
-			int error;
-			return ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref remote_end, true, out error);
-		}
-
-		internal int ReceiveFrom_nochecks_exc (byte [] buf, int offset, int size, SocketFlags flags,
-						   ref EndPoint remote_end, bool throwOnError, out int error)
-		{
-			SocketAddress sockaddr = remote_end.Serialize();
-			int cnt = RecvFrom_internal (safe_handle, buf, offset, size, flags, ref sockaddr, out error);
-			SocketError err = (SocketError) error;
-			if (err != 0) {
-				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
-					is_connected = false;
-				else if (err == SocketError.WouldBlock && is_blocking) { // This might happen when ReceiveTimeout is set
-					if (throwOnError)	
-						throw new SocketException ((int) SocketError.TimedOut, TIMEOUT_EXCEPTION_MSG);
-					error = (int) SocketError.TimedOut;
-					return 0;
-				}
-
-				if (throwOnError)
-					throw new SocketException (error);
-				return 0;
-			}
-
-			is_connected = true;
-			is_bound = true;
-
-			// If sockaddr is null then we're a connection
-			// oriented protocol and should ignore the
-			// remote_end parameter (see MSDN
-			// documentation for Socket.ReceiveFrom(...) )
-			
-			if ( sockaddr != null ) {
-				// Stupidly, EndPoint.Create() is an
-				// instance method
-				remote_end = remote_end.Create (sockaddr);
-			}
-			
-			seed_endpoint = remote_end;
-			
-			return cnt;
 		}
 
 		[MonoTODO ("Not implemented")]

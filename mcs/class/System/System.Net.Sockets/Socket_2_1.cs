@@ -460,33 +460,6 @@ namespace System.Net.Sockets {
 			return(req.Total);
 		}
 
-		// Used by Udpclient
-		public
-		int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (result == null)
-				throw new ArgumentNullException ("result");
-
-			if (end_point == null)
-				throw new ArgumentNullException ("remote_end");
-
-			SocketAsyncResult req = result as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndReceiveFrom");
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne();
-
- 			req.CheckIfThrowDelayedException();
-			end_point = req.EndPoint;
-			return req.Total;
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
 	}
