@@ -140,7 +140,6 @@ System.Net.Sockets/SocketOptionLevel.cs
 System.Net.Sockets/SocketOptionName.cs
 System.Net.Sockets/SocketShutdown.cs
 System.Net.Sockets/SocketType.cs
-System.Net.Sockets/Socket_2_1.cs
 System.Net.Sockets/TcpClient.cs
 System.Net.Sockets/TcpListener.cs
 System.Net.Sockets/TransmitFileOptions.cs

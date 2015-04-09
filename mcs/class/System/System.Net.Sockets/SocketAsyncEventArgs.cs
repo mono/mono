@@ -40,7 +40,7 @@ namespace System.Net.Sockets
 	{
 		bool disposed;
 		int in_progress;
-		internal Socket.Worker Worker;
+		internal SocketAsyncWorker Worker;
 		EndPoint remote_ep;
 		public Exception ConnectByNameError { get; internal set; }
 
@@ -101,7 +101,7 @@ namespace System.Net.Sockets
 		
 		public SocketAsyncEventArgs ()
 		{
-			Worker = new Socket.Worker (this);
+			Worker = new SocketAsyncWorker (this);
 			AcceptSocket = null;
 			Buffer = null;
 			BufferList = null;
@@ -208,33 +208,42 @@ namespace System.Net.Sockets
 		static void DispatcherCB (IAsyncResult ares)
 		{
 			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
+
 			if (Interlocked.Exchange (ref args.in_progress, 0) != 1)
 				throw new InvalidOperationException ("No operation in progress");
-			SocketAsyncOperation op = args.LastOperation;
-			// Notes;
-			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
-			//	-SendPackets and ReceiveMessageFrom are not implemented yet
-			if (op == SocketAsyncOperation.Receive)
-				args.ReceiveCallback (ares);
-			else if (op == SocketAsyncOperation.Send)
-				args.SendCallback (ares);
-			else if (op == SocketAsyncOperation.ReceiveFrom)
-				args.ReceiveFromCallback (ares);
-			else if (op == SocketAsyncOperation.SendTo)
-				args.SendToCallback (ares);
-			else if (op == SocketAsyncOperation.Accept)
-				args.AcceptCallback (ares);
-			else if (op == SocketAsyncOperation.Disconnect)
-				args.DisconnectCallback (ares);
-			else if (op == SocketAsyncOperation.Connect)
-				args.ConnectCallback (ares);
-			/*
-			else if (op == Socket.SocketOperation.ReceiveMessageFrom)
-			else if (op == Socket.SocketOperation.SendPackets)
-			*/
-			else
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 
+			/* Notes;
+			 *  -SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
+			 *  -SendPackets and ReceiveMessageFrom are not implemented yet */
+			switch (args.LastOperation) {
+			case SocketAsyncOperation.Receive:
+				args.ReceiveCallback (ares);
+				break;
+			case SocketAsyncOperation.Send:
+				args.SendCallback (ares);
+				break;
+			case SocketAsyncOperation.ReceiveFrom:
+				args.ReceiveFromCallback (ares);
+				break;
+			case SocketAsyncOperation.SendTo:
+				args.SendToCallback (ares);
+				break;
+			case SocketAsyncOperation.Accept:
+				args.AcceptCallback (ares);
+				break;
+			case SocketAsyncOperation.Disconnect:
+				args.DisconnectCallback (ares);
+				break;
+			case SocketAsyncOperation.Connect:
+				args.ConnectCallback (ares);
+				break;
+			/*
+			case SocketOperation.ReceiveMessageFrom:
+			case SocketOperation.SendPackets:
+			*/
+			default:
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", args.LastOperation));
+			}
 		}
 
 		internal void ReceiveCallback (IAsyncResult ares)
