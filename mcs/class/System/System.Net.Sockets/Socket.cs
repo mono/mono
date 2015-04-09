@@ -2333,6 +2333,164 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region SendTo
+
+		public int SendTo (byte [] buffer, EndPoint remote_end)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			return SendTo_nochecks (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
+		}
+
+		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			return SendTo_nochecks (buffer, 0, buffer.Length, flags, remote_end);
+		}
+
+		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, 0, size);
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
+		}
+
+		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			if (remote_end == null)
+				throw new ArgumentNullException("remote_end");
+
+			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
+		}
+
+		internal int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
+		{
+			int error;
+			int ret = SendTo_internal (safe_handle, buffer, offset, size, flags, remote_end.Serialize (), out error);
+
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException (error);
+			}
+
+			is_connected = true;
+			is_bound = true;
+			seed_endpoint = remote_end;
+
+			return ret;
+		}
+
+		public bool SendToAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			if (e.BufferList != null)
+				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
+
+			e.curSocket = this;
+			e.Worker.Init (this, e, SocketOperation.SendTo);
+
+			SocketAsyncResult sockares = e.Worker.result;
+			sockares.Buffer = e.Buffer;
+			sockares.Offset = e.Offset;
+			sockares.Size = e.Count;
+			sockares.SockFlags = e.SocketFlags;
+			sockares.EndPoint = e.RemoteEndPoint;
+
+			int count;
+			lock (writeQ) {
+				writeQ.Enqueue (e.Worker);
+				count = writeQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return true;
+		}
+
+
+		public IAsyncResult BeginSendTo(byte[] buffer, int offset, int size, SocketFlags socket_flags, EndPoint remote_end, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+			ThrowIfBufferNull (buffer);
+			ThrowIfBufferOutOfRange (buffer, offset, size);
+
+			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo) {
+				Buffer = buffer,
+				Offset = offset,
+				Size = size,
+				SockFlags = socket_flags,
+				EndPoint = remote_end,
+			};
+
+			int count;
+			lock (writeQ) {
+				writeQ.Enqueue (sockares.Worker);
+				count = writeQ.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+
+			return sockares;
+		}
+
+		public int EndSendTo (IAsyncResult result)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			SocketAsyncResult sockares = ValidateEndIAsyncResult (result, "EndSendTo", "result");
+
+			if (!sockares.IsCompleted)
+				sockares.AsyncWaitHandle.WaitOne();
+
+			sockares.CheckIfThrowDelayedException();
+
+			return sockares.Total;
+		}
+
+		static int SendTo_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, SocketAddress sa, out int error)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int SendTo_internal (IntPtr sock, byte[] buffer, int offset, int count, SocketFlags flags, SocketAddress sa, out int error);
+
+#endregion
+
 		void CheckRange (byte[] buffer, int offset, int size)
 		{
 			if (offset < 0)
@@ -2421,36 +2579,6 @@ namespace System.Net.Sockets
 			}, state));
 		}
 
-		public IAsyncResult BeginSendTo(byte[] buffer, int offset,
-						int size,
-						SocketFlags socket_flags,
-						EndPoint remote_end,
-						AsyncCallback callback,
-						object state) {
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			CheckRange (buffer, offset, size);
-
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			req.EndPoint = remote_end;
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (req.Worker);
-				count = writeQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, req);
-			return req;
-		}
-
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Bind_internal(IntPtr sock,
@@ -2524,27 +2652,6 @@ namespace System.Net.Sockets
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			ares.Delegate.EndInvoke (ares.Original);
-		}
-
-		public int EndSendTo (IAsyncResult result)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (result == null)
-				throw new ArgumentNullException ("result");
-
-			SocketAsyncResult req = result as SocketAsyncResult;
-			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp ("EndSendTo");
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne();
-
-			req.CheckIfThrowDelayedException();
-			return req.Total;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -2764,145 +2871,6 @@ namespace System.Net.Sockets
 					throw new FileNotFoundException ();
 				throw exc;
 			}
-		}
-
-		public bool SendToAsync (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			if (e.BufferList != null)
-				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
-			if (e.RemoteEndPoint == null)
-				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
-
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.SendTo);
-			SocketAsyncResult res = e.Worker.result;
-			res.Buffer = e.Buffer;
-			res.Offset = e.Offset;
-			res.Size = e.Count;
-			res.SockFlags = e.SocketFlags;
-			res.EndPoint = e.RemoteEndPoint;
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (e.Worker);
-				count = writeQ.Count;
-			}
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, res);
-			return true;
-		}
-		
-		public int SendTo (byte [] buffer, EndPoint remote_end)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			return SendTo_nochecks (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
-		}
-
-		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-				
-			return SendTo_nochecks (buffer, 0, buffer.Length, flags, remote_end);
-		}
-
-		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			CheckRange (buffer, 0, size);
-
-			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int SendTo_internal(IntPtr sock,
-							  byte[] buffer,
-							  int offset,
-							  int count,
-							  SocketFlags flags,
-							  SocketAddress sa,
-							  out int error);
-
-		private static int SendTo_internal (SafeSocketHandle safeHandle,
-							  byte[] buffer,
-							  int offset,
-							  int count,
-							  SocketFlags flags,
-							  SocketAddress sa,
-							  out int error)
-		{
-			try {
-				safeHandle.RegisterForBlockingSyscall ();
-				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, offset, count, flags, sa, out error);
-			} finally {
-				safeHandle.UnRegisterForBlockingSyscall ();
-			}
-		}
-
-		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
-				   EndPoint remote_end)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (remote_end == null)
-				throw new ArgumentNullException("remote_end");
-
-			CheckRange (buffer, offset, size);
-
-			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
-		}
-
-		internal int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags,
-					      EndPoint remote_end)
-		{
-			SocketAddress sockaddr = remote_end.Serialize ();
-
-			int ret, error;
-
-			ret = SendTo_internal (safe_handle, buffer, offset, size, flags, sockaddr, out error);
-
-			SocketError err = (SocketError) error;
-			if (err != 0) {
-				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
-					is_connected = false;
-
-				throw new SocketException (error);
-			}
-
-			is_connected = true;
-			is_bound = true;
-			seed_endpoint = remote_end;
-			
-			return ret;
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
