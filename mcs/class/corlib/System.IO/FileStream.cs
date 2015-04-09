@@ -988,7 +988,7 @@ namespace System.IO
 			
 			if (count > 0) {
 				// Use the fastest method, all range checks has been done
-				Buffer.BlockCopyInternal (buf, buf_offset, dest, dest_offset, count);
+				Buffer.InternalBlockCopy (buf, buf_offset, dest, dest_offset, count);
 				buf_offset += count;
 			}
 			

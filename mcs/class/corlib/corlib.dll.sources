@@ -93,7 +93,6 @@ System/ArgIterator.cs
 System/Array.cs
 System/AssemblyLoadEventArgs.cs
 System/AssemblyLoadEventHandler.cs
-System/Buffer.cs
 System/CStreamReader.cs
 System/CStreamWriter.cs
 System/Console.cs
@@ -1129,6 +1128,7 @@ ReferenceSources/MethodBase.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
+ReferenceSources/Buffer.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1153,6 +1153,7 @@ ReferenceSources/TypeBuilderInstantiation.cs
 ../../../external/referencesource/mscorlib/system/badimageformatexception.cs
 ../../../external/referencesource/mscorlib/system/bitconverter.cs
 ../../../external/referencesource/mscorlib/system/boolean.cs
+../../../external/referencesource/mscorlib/system/buffer.cs
 ../../../external/referencesource/mscorlib/system/byte.cs
 ../../../external/referencesource/mscorlib/system/cannotunloadappdomainexception.cs
 ../../../external/referencesource/mscorlib/system/char.cs
