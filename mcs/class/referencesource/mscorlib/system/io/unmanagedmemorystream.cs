@@ -242,11 +242,12 @@ namespace System.IO {
             if (_isOpen)
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CalledTwice"));
 
+#if !DISABLE_CAS_USE
             if (!skipSecurityCheck)
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
 #pragma warning restore 618
-
+#endif
             _mem = pointer;
             _offset = 0;
             _length = length;
