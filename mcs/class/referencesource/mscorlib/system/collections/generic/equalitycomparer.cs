@@ -73,7 +73,7 @@ namespace System.Collections.Generic
                 RuntimeType u = (RuntimeType)t.GetGenericArguments()[0];
                 if (typeof(IEquatable<>).MakeGenericType(u).IsAssignableFrom(u)) {
 #if MONO
-                    return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableEqualityComparer<>), t);
+                    return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableEqualityComparer<>), u);
 #else
                     return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(NullableEqualityComparer<int>), u);
 #endif
@@ -423,7 +423,6 @@ namespace System.Collections.Generic
         }
     }
 
-#if MOBILE
     [Serializable]
     sealed class InternalStringComparer : EqualityComparer<string> {
     
@@ -456,7 +455,6 @@ namespace System.Collections.Generic
             return -1;
         }
     }
-#endif
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
     // This type is not serializeable by design.  It does not exist in previous versions and will be removed 
