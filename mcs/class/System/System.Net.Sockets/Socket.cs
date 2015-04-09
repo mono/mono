@@ -1058,6 +1058,41 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Listen
+
+		public void Listen (int backlog)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_bound)
+				throw new SocketException ((int) SocketError.InvalidArgument);
+
+			int error;
+			Listen_internal(safe_handle, backlog, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+
+			is_listening = true;
+		}
+
+		static void Listen_internal (SafeSocketHandle safeHandle, int backlog, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Listen_internal (safeHandle.DangerousGetHandle (), backlog, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void Listen_internal (IntPtr sock, int backlog, out int error);
+
+#endregion
+
 #region Connect
 
 		public void Connect (IPAddress address, int port)
@@ -2769,38 +2804,6 @@ namespace System.Net.Sockets
 		public int IOControl (IOControlCode ioControlCode, byte[] optionInValue, byte[] optionOutValue)
 		{
 			return IOControl ((int) ioControlCode, optionInValue, optionOutValue);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Listen_internal(IntPtr sock, int backlog, out int error);
-
-		private static void Listen_internal (SafeSocketHandle safeHandle, int backlog, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				Listen_internal (safeHandle.DangerousGetHandle (), backlog, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public void Listen (int backlog)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_bound)
-				throw new SocketException ((int)SocketError.InvalidArgument);
-
-			int error;
-			Listen_internal(safe_handle, backlog, out error);
-
-			if (error != 0)
-				throw new SocketException (error);
-
-			is_listening = true;
 		}
 
 		public bool Poll (int time_us, SelectMode mode)
