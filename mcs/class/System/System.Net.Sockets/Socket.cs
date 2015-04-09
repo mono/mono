@@ -2687,6 +2687,20 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region SendPackets
+
+		[MonoTODO ("Not implemented")]
+		public bool SendPacketsAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			ThrowIfDisposedAndClosed ();
+
+			throw new NotImplementedException ();
+		}
+
+#endregion
+
 #region DuplicateAndClose
 
 #if !MOBILE
@@ -2833,19 +2847,6 @@ namespace System.Net.Sockets
 			}
 			
 			return result;
-		}
-
-		
-
-		[MonoTODO ("Not implemented")]
-		public bool SendPacketsAsync (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
-			
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-			
-			throw new NotImplementedException ();
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
