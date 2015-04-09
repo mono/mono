@@ -58,62 +58,8 @@ namespace System.Net.Sockets {
 			public IntPtr buf;
 		}
 
-		void Linger (IntPtr handle)
-		{
-			if (!is_connected || linger_timeout <= 0)
-				return;
-
-			// We don't want to receive any more data
-			int error;
-			Shutdown_internal (handle, SocketShutdown.Receive, out error);
-			if (error != 0)
-				return;
-
-			int seconds = linger_timeout / 1000;
-			int ms = linger_timeout % 1000;
-			if (ms > 0) {
-				// If the other end closes, this will return 'true' with 'Available' == 0
-				Poll_internal (handle, SelectMode.SelectRead, ms * 1000, out error);
-				if (error != 0)
-					return;
-
-			}
-			if (seconds > 0) {
-				LingerOption linger = new LingerOption (true, seconds);
-				SetSocketOption_internal (handle, SocketOptionLevel.Socket, SocketOptionName.Linger, linger, null, 0, out error);
-				/* Not needed, we're closing upon return */
-				/*if (error != 0)
-					return; */
-			}
-		}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void cancel_blocking_socket_operation (Thread thread);
-
-		protected virtual void Dispose (bool disposing)
-		{
-			if (is_disposed)
-				return;
-
-			is_disposed = true;
-			bool was_connected = is_connected;
-			is_connected = false;
-			
-			if (safe_handle != null) {
-				is_closed = true;
-				IntPtr x = Handle;
-
-				if (was_connected)
-					Linger (x);
-
-				safe_handle.Dispose ();
-			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
 
 		Exception InvalidAsyncOp (string method)
 		{
