@@ -29,6 +29,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace System.Net.Sockets
@@ -40,229 +41,48 @@ namespace System.Net.Sockets
 		 * MonoSocketAsyncResult in metadata/socket-io.h and
 		 * ProcessAsyncReader in System.Diagnostics/Process.cs. */
 
-		public Socket Sock;
-		public IntPtr handle;
+		public Socket socket;
+		IntPtr handle;
 		object state;
 		AsyncCallback callback; // used from the runtime
-		WaitHandle waithandle;
+		WaitHandle wait_handle;
 
-		Exception delayedException;
+		Exception delayed_exception;
 
-		public EndPoint EndPoint;	// Connect,ReceiveFrom,SendTo
-		public byte [] Buffer;		// Receive,ReceiveFrom,Send,SendTo
-		public int Offset;		// Receive,ReceiveFrom,Send,SendTo
-		public int Size;		// Receive,ReceiveFrom,Send,SendTo
-		public SocketFlags SockFlags;	// Receive,ReceiveFrom,Send,SendTo
-		public Socket AcceptSocket;	// AcceptReceive
-		public IPAddress[] Addresses;	// Connect
-		public int Port;		// Connect
-		public IList<ArraySegment<byte>> Buffers;	// Receive, Send
-		public bool ReuseSocket;	// Disconnect
+		public EndPoint EndPoint;                 // Connect,ReceiveFrom,SendTo
+		public byte [] Buffer;                    // Receive,ReceiveFrom,Send,SendTo
+		public int Offset;                        // Receive,ReceiveFrom,Send,SendTo
+		public int Size;                          // Receive,ReceiveFrom,Send,SendTo
+		public SocketFlags SockFlags;             // Receive,ReceiveFrom,Send,SendTo
+		public Socket AcceptSocket;               // AcceptReceive
+		public IPAddress[] Addresses;             // Connect
+		public int Port;                          // Connect
+		public IList<ArraySegment<byte>> Buffers; // Receive, Send
+		public bool ReuseSocket;                  // Disconnect
 
 		// Return values
-		Socket acc_socket;
+		Socket accept_socket;
 		int total;
 
-		bool completed_sync;
+		bool completed_synchronously;
 		bool completed;
-		public bool blocking;
+		bool is_blocking;
 		internal int error;
 		public SocketOperation operation;
-		public object ares;
+		AsyncResult async_result;
 		public int EndCalled;
 
-		// These fields are not in MonoSocketAsyncResult
+		/* These fields are not in MonoSocketAsyncResult */
 		public SocketAsyncWorker Worker;
-		public int CurrentAddress; // Connect
+		public int CurrentAddress;                // Connect
 
 		public SocketAsyncResult ()
 		{
 		}
 
-		public void Init (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
+		public SocketAsyncResult (Socket socket, object state, AsyncCallback callback, SocketOperation operation)
 		{
-			this.Sock = sock;
-			if (sock != null) {
-				this.blocking = sock.is_blocking;
-				this.handle = sock.Handle;
-			} else {
-				this.blocking = true;
-				this.handle = IntPtr.Zero;
-			}
-			this.state = state;
-			this.callback = callback;
-			GC.KeepAlive (this.callback);
-			this.operation = operation;
-			SockFlags = SocketFlags.None;
-			if (waithandle != null)
-				((ManualResetEvent) waithandle).Reset ();
-
-			delayedException = null;
-
-			EndPoint = null;
-			Buffer = null;
-			Offset = 0;
-			Size = 0;
-			SockFlags = 0;
-			AcceptSocket = null;
-			Addresses = null;
-			Port = 0;
-			Buffers = null;
-			ReuseSocket = false;
-			acc_socket = null;
-			total = 0;
-
-			completed_sync = false;
-			completed = false;
-			blocking = false;
-			error = 0;
-			ares = null;
-			EndCalled = 0;
-			Worker = null;
-		}
-
-		public void DoMConnectCallback ()
-		{
-			if (callback == null)
-				return;
-			ThreadPool.UnsafeQueueUserWorkItem (_ => { callback (this); }, null);
-		}
-
-		public void Dispose ()
-		{
-			Init (null, null, null, 0);
-			if (waithandle != null) {
-				waithandle.Close ();
-				waithandle = null;
-			}
-		}
-
-		public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
-		{
-			this.Sock = sock;
-			this.blocking = sock.is_blocking;
-			this.handle = sock.Handle;
-			this.state = state;
-			this.callback = callback;
-			GC.KeepAlive (this.callback);
-			this.operation = operation;
-			SockFlags = SocketFlags.None;
-			Worker = new SocketAsyncWorker (this);
-		}
-
-		public void CheckIfThrowDelayedException ()
-		{
-			if (delayedException != null) {
-				Sock.is_connected = false;
-				throw delayedException;
-			}
-
-			if (error != 0) {
-				Sock.is_connected = false;
-				throw new SocketException (error);
-			}
-		}
-
-		void CompleteAllOnDispose (Queue queue)
-		{
-			object [] pending = queue.ToArray ();
-			queue.Clear ();
-
-			WaitCallback cb;
-			for (int i = 0; i < pending.Length; i++) {
-				SocketAsyncWorker worker = (SocketAsyncWorker) pending [i];
-				SocketAsyncResult ares = worker.result;
-				cb = new WaitCallback (ares.CompleteDisposed);
-				ThreadPool.UnsafeQueueUserWorkItem (cb, null);
-			}
-		}
-
-		void CompleteDisposed (object unused)
-		{
-			Complete ();
-		}
-
-		public void Complete ()
-		{
-			if (operation != SocketOperation.Receive && Sock.is_disposed)
-				delayedException = new ObjectDisposedException (Sock.GetType ().ToString ());
-
-			IsCompleted = true;
-
-			Queue queue = null;
-			if (operation == SocketOperation.Receive ||
-			    operation == SocketOperation.ReceiveFrom ||
-			    operation == SocketOperation.ReceiveGeneric ||
-			    operation == SocketOperation.Accept) {
-				queue = Sock.readQ;
-			} else if (operation == SocketOperation.Send ||
-				   operation == SocketOperation.SendTo ||
-				   operation == SocketOperation.SendGeneric) {
-
-				queue = Sock.writeQ;
-			}
-
-			if (queue != null) {
-				SocketAsyncWorker worker = null;
-				SocketAsyncCallback sac = null;
-				lock (queue) {
-					// queue.Count will only be 0 if the socket is closed while receive/send/accept
-					// operation(s) are pending and at least one call to this method is
-					// waiting on the lock while another one calls CompleteAllOnDispose()
-					if (queue.Count > 0)
-						queue.Dequeue (); // remove ourselves
-					if (queue.Count > 0) {
-						worker = (SocketAsyncWorker) queue.Peek ();
-						if (!Sock.is_disposed) {
-							sac = SocketAsyncWorker.Dispatcher;
-						} else {
-							CompleteAllOnDispose (queue);
-						}
-					}
-				}
-
-				if (sac != null)
-					Socket.socket_pool_queue (sac, worker.result);
-			}
-			// IMPORTANT: 'callback', if any is scheduled from unmanaged code
-		}
-
-		public void Complete (bool synch)
-		{
-			completed_sync = synch;
-			Complete ();
-		}
-
-		public void Complete (int total)
-		{
-			this.total = total;
-			Complete ();
-		}
-
-		public void Complete (Exception e, bool synch)
-		{
-			completed_sync = synch;
-			delayedException = e;
-			Complete ();
-		}
-
-		public void Complete (Exception e)
-		{
-			delayedException = e;
-			Complete ();
-		}
-
-		public void Complete (Socket s)
-		{
-			acc_socket = s;
-			Complete ();
-		}
-
-		public void Complete (Socket s, int total)
-		{
-			acc_socket = s;
-			this.total = total;
-			Complete ();
+			Init (socket, state, callback, operation, new SocketAsyncWorker (this));
 		}
 
 		public object AsyncState {
@@ -274,40 +94,39 @@ namespace System.Net.Sockets
 		public WaitHandle AsyncWaitHandle {
 			get {
 				lock (this) {
-					if (waithandle == null)
-						waithandle = new ManualResetEvent (completed);
+					if (wait_handle == null)
+						wait_handle = new ManualResetEvent (completed);
 				}
 
-				return waithandle;
+				return wait_handle;
 			}
 			set {
-				waithandle=value;
+				wait_handle = value;
 			}
 		}
 
 		public bool CompletedSynchronously {
 			get {
-				return(completed_sync);
+				return completed_synchronously;
 			}
 		}
 
 		public bool IsCompleted {
 			get {
-				return(completed);
+				return completed;
 			}
 			set {
-				completed=value;
+				completed = value;
 				lock (this) {
-					if (waithandle != null && value) {
-						((ManualResetEvent) waithandle).Set ();
-					}
+					if (wait_handle != null && value)
+						((ManualResetEvent) wait_handle).Set ();
 				}
 			}
 		}
 
 		public Socket Socket {
 			get {
-				return acc_socket;
+				return accept_socket;
 			}
 		}
 
@@ -318,15 +137,169 @@ namespace System.Net.Sockets
 
 		public SocketError ErrorCode {
 			get {
-				SocketException ex = delayedException as SocketException;
+				SocketException ex = delayed_exception as SocketException;
 				if (ex != null)
-					return(ex.SocketErrorCode);
+					return ex.SocketErrorCode;
 
 				if (error != 0)
-					return((SocketError)error);
+					return (SocketError) error;
 
-				return(SocketError.Success);
+				return SocketError.Success;
 			}
+		}
+
+		public void Init (Socket socket, object state, AsyncCallback callback, SocketOperation operation, SocketAsyncWorker worker)
+		{
+			this.socket = socket;
+			this.is_blocking = socket != null ? socket.is_blocking : true;
+			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
+			this.state = state;
+			this.callback = callback;
+			this.operation = operation;
+
+			if (wait_handle != null)
+				((ManualResetEvent) wait_handle).Reset ();
+
+			delayed_exception = null;
+
+			EndPoint = null;
+			Buffer = null;
+			Offset = 0;
+			Size = 0;
+			SockFlags = SocketFlags.None;
+			AcceptSocket = null;
+			Addresses = null;
+			Port = 0;
+			Buffers = null;
+			ReuseSocket = false;
+			accept_socket = null;
+			total = 0;
+
+			completed_synchronously = false;
+			completed = false;
+			is_blocking = false;
+			error = 0;
+			async_result = null;
+			EndCalled = 0;
+			Worker = worker;
+		}
+
+		public void DoMConnectCallback ()
+		{
+			if (callback == null)
+				return;
+			ThreadPool.UnsafeQueueUserWorkItem (_ => callback (this), null);
+		}
+
+		public void Dispose ()
+		{
+			Init (null, null, null, 0, Worker);
+			if (wait_handle != null) {
+				wait_handle.Close ();
+				wait_handle = null;
+			}
+		}
+
+		public void CheckIfThrowDelayedException ()
+		{
+			if (delayed_exception != null) {
+				socket.is_connected = false;
+				throw delayed_exception;
+			}
+
+			if (error != 0) {
+				socket.is_connected = false;
+				throw new SocketException (error);
+			}
+		}
+
+		void CompleteDisposed (object unused)
+		{
+			Complete ();
+		}
+
+		public void Complete ()
+		{
+			if (operation != SocketOperation.Receive && socket.is_disposed)
+				delayed_exception = new ObjectDisposedException (socket.GetType ().ToString ());
+
+			IsCompleted = true;
+
+			Queue queue = null;
+			switch (operation) {
+			case SocketOperation.Receive:
+			case SocketOperation.ReceiveFrom:
+			case SocketOperation.ReceiveGeneric:
+			case SocketOperation.Accept:
+				queue = socket.readQ;
+				break;
+			case SocketOperation.Send:
+			case SocketOperation.SendTo:
+			case SocketOperation.SendGeneric:
+				queue = socket.writeQ;
+				break;
+			}
+
+			if (queue != null) {
+				lock (queue) {
+					/* queue.Count will only be 0 if the socket is closed while receive/send/accept
+					 * operation(s) are pending and at least one call to this method is waiting
+					 * on the lock while another one calls CompleteAllOnDispose() */
+					if (queue.Count > 0)
+						queue.Dequeue (); /* remove ourselves */
+					if (queue.Count > 0) {
+						if (!socket.is_disposed) {
+							Socket.socket_pool_queue (SocketAsyncWorker.Dispatcher, ((SocketAsyncWorker) queue.Peek ()).result);
+						} else {
+							/* CompleteAllOnDispose */
+							object [] pending = queue.ToArray ();
+							for (int i = 0; i < pending.Length; i++)
+								ThreadPool.UnsafeQueueUserWorkItem (((SocketAsyncWorker) pending [i]).result.CompleteDisposed, null);
+							queue.Clear ();
+						}
+					}
+				}
+			}
+
+			// IMPORTANT: 'callback', if any is scheduled from unmanaged code
+		}
+
+		public void Complete (bool synch)
+		{
+			this.completed_synchronously = synch;
+			Complete ();
+		}
+
+		public void Complete (int total)
+		{
+			this.total = total;
+			Complete ();
+		}
+
+		public void Complete (Exception e, bool synch)
+		{
+			this.completed_synchronously = synch;
+			this.delayed_exception = e;
+			Complete ();
+		}
+
+		public void Complete (Exception e)
+		{
+			this.delayed_exception = e;
+			Complete ();
+		}
+
+		public void Complete (Socket s)
+		{
+			this.accept_socket = s;
+			Complete ();
+		}
+
+		public void Complete (Socket s, int total)
+		{
+			this.accept_socket = s;
+			this.total = total;
+			Complete ();
 		}
 	}
 }

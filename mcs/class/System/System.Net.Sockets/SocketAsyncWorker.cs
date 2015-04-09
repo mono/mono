@@ -58,71 +58,90 @@ namespace System.Net.Sockets
 
 		static void DispatcherCB (SocketAsyncResult sar)
 		{
-			SocketOperation op = sar.operation;
-			if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric ||
-				op == SocketOperation.RecvJustCallback)
+			/* SendPackets and ReceiveMessageFrom are not implemented yet */
+			switch (sar.operation) {
+			case SocketOperation.Receive:
+			case SocketOperation.ReceiveGeneric:
+			case SocketOperation.RecvJustCallback:
 				sar.Worker.Receive ();
-			else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric ||
-				op == SocketOperation.SendJustCallback)
+				break;
+			case SocketOperation.Send:
+			case SocketOperation.SendGeneric:
+			case SocketOperation.SendJustCallback:
 				sar.Worker.Send ();
-			else if (op == SocketOperation.ReceiveFrom)
+				break;
+			case SocketOperation.ReceiveFrom:
 				sar.Worker.ReceiveFrom ();
-			else if (op == SocketOperation.SendTo)
+				break;
+			case SocketOperation.SendTo:
 				sar.Worker.SendTo ();
-			else if (op == SocketOperation.Connect)
+				break;
+			case SocketOperation.Connect:
 				sar.Worker.Connect ();
-			else if (op == SocketOperation.Accept)
+				break;
+			case SocketOperation.Accept:
 				sar.Worker.Accept ();
-			else if (op == SocketOperation.AcceptReceive)
+				break;
+			case SocketOperation.AcceptReceive:
 				sar.Worker.AcceptReceive ();
-			else if (op == SocketOperation.Disconnect)
+				break;
+			case SocketOperation.Disconnect:
 				sar.Worker.Disconnect ();
-
-			// SendPackets and ReceiveMessageFrom are not implemented yet
-			/*
-			else if (op == SocketOperation.ReceiveMessageFrom)
-				async_op = SocketAsyncOperation.ReceiveMessageFrom;
-			else if (op == SocketOperation.SendPackets)
-				async_op = SocketAsyncOperation.SendPackets;
-			*/
-			else
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+				break;
+			// case SocketOperation.ReceiveMessageFrom
+			// 	sar.Worker.ReceiveMessageFrom ()
+			// 	break;
+			// case SocketOperation.SendPackets:
+			// 	sar.Worker.SendPackets ();
+			// 	break;
+			default:
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", sar.operation));
+			}
 		}
 
 		/* This is called when reusing a SocketAsyncEventArgs */
 		public void Init (Socket sock, SocketAsyncEventArgs args, SocketOperation op)
 		{
-			result.Init (sock, args, SocketAsyncEventArgs.Dispatcher, op);
-			result.Worker = this;
+			result.Init (sock, args, SocketAsyncEventArgs.Dispatcher, op, this);
+
 			SocketAsyncOperation async_op;
 
 			// Notes;
 			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
 			//	-SendPackets and ReceiveMessageFrom are not implemented yet
-			if (op == SocketOperation.Connect)
+			switch (op) {
+			case SocketOperation.Connect:
 				async_op = SocketAsyncOperation.Connect;
-			else if (op == SocketOperation.Accept)
+				break;
+			case SocketOperation.Accept:
 				async_op = SocketAsyncOperation.Accept;
-			else if (op == SocketOperation.Disconnect)
+				break;
+			case SocketOperation.Disconnect:
 				async_op = SocketAsyncOperation.Disconnect;
-			else if (op == SocketOperation.Receive || op == SocketOperation.ReceiveGeneric)
+				break;
+			case SocketOperation.Receive:
+			case SocketOperation.ReceiveGeneric:
 				async_op = SocketAsyncOperation.Receive;
-			else if (op == SocketOperation.ReceiveFrom)
+				break;
+			case SocketOperation.ReceiveFrom:
 				async_op = SocketAsyncOperation.ReceiveFrom;
-			/*
-			else if (op == SocketOperation.ReceiveMessageFrom)
-				async_op = SocketAsyncOperation.ReceiveMessageFrom;
-			*/
-			else if (op == SocketOperation.Send || op == SocketOperation.SendGeneric)
+				break;
+			// case SocketOperation.ReceiveMessageFrom:
+			// 	async_op = SocketAsyncOperation.ReceiveMessageFrom;
+			// 	break;
+			case SocketOperation.Send:
+			case SocketOperation.SendGeneric:
 				async_op = SocketAsyncOperation.Send;
-			/*
-			else if (op == SocketOperation.SendPackets)
-				async_op = SocketAsyncOperation.SendPackets;
-			*/
-			else if (op == SocketOperation.SendTo)
+				break;
+			// case SocketOperation.SendPackets:
+			// 	async_op = SocketAsyncOperation.SendPackets;
+			// 	break;
+			case SocketOperation.SendTo:
 				async_op = SocketAsyncOperation.SendTo;
-			else
+				break;
+			default:
 				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+			}
 
 			args.SetLastOperation (async_op);
 			args.SocketError = SocketError.Success;
@@ -134,10 +153,10 @@ namespace System.Net.Sockets
 			Socket acc_socket = null;
 			try {
 				if (args != null && args.AcceptSocket != null) {
-					result.Sock.Accept (args.AcceptSocket);
+					result.socket.Accept (args.AcceptSocket);
 					acc_socket = args.AcceptSocket;
 				} else {
-					acc_socket = result.Sock.Accept ();
+					acc_socket = result.socket.Accept ();
 					if (args != null)
 						args.AcceptSocket = acc_socket;
 				}
@@ -158,10 +177,10 @@ namespace System.Net.Sockets
 			Socket acc_socket = null;
 			try {
 				if (result.AcceptSocket == null) {
-					acc_socket = result.Sock.Accept ();
+					acc_socket = result.socket.Accept ();
 				} else {
 					acc_socket = result.AcceptSocket;
-					result.Sock.Accept (acc_socket);
+					result.socket.Accept (acc_socket);
 				}
 			} catch (Exception e) {
 				result.Complete (e);
@@ -176,11 +195,7 @@ namespace System.Net.Sockets
 			if (result.Size > 0) {
 				try {
 					SocketError error;
-					total = acc_socket.Receive_nochecks (result.Buffer,
-									     result.Offset,
-									     result.Size,
-									     result.SockFlags,
-									     out error);
+					total = acc_socket.Receive_nochecks (result.Buffer, result.Offset, result.Size, result.SockFlags, out error);
 					if (error != 0) {
 						result.Complete (new SocketException ((int) error));
 						return;
@@ -206,14 +221,14 @@ namespace System.Net.Sockets
 			try {
 				int error_code;
 				EndPoint ep = result.EndPoint;
-				error_code = (int) result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+				error_code = (int) result.socket.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
 				if (error_code == 0) {
 					if (is_mconnect)
 						result = mconnect;
-					result.Sock.seed_endpoint = ep;
-					result.Sock.is_connected = true;
-					result.Sock.is_bound = true;
-					result.Sock.connect_in_progress = false;
+					result.socket.seed_endpoint = ep;
+					result.socket.is_connected = true;
+					result.socket.is_bound = true;
+					result.socket.connect_in_progress = false;
 					result.error = 0;
 					result.Complete ();
 					if (is_mconnect)
@@ -222,7 +237,7 @@ namespace System.Net.Sockets
 				}
 
 				if (!is_mconnect) {
-					result.Sock.connect_in_progress = false;
+					result.socket.connect_in_progress = false;
 					result.Complete (new SocketException (error_code));
 					return;
 				}
@@ -233,9 +248,9 @@ namespace System.Net.Sockets
 						mconnect.DoMConnectCallback ();
 					return;
 				}
-				mconnect.Sock.BeginMConnect (mconnect);
+				mconnect.socket.BeginMConnect (mconnect);
 			} catch (Exception e) {
-				result.Sock.connect_in_progress = false;
+				result.socket.connect_in_progress = false;
 				if (is_mconnect)
 					result = mconnect;
 				result.Complete (e);
@@ -251,7 +266,7 @@ namespace System.Net.Sockets
 			try {
 				if (args != null)
 					result.ReuseSocket = args.DisconnectReuseSocket;
-				result.Sock.Disconnect (result.ReuseSocket);
+				result.socket.Disconnect (result.ReuseSocket);
 			} catch (Exception e) {
 				result.Complete (e);
 				return;
@@ -273,11 +288,7 @@ namespace System.Net.Sockets
 		{
 			int total = 0;
 			try {
-				total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
-								 result.Offset,
-								 result.Size,
-								 result.SockFlags,
-								 ref result.EndPoint);
+				total = result.socket.ReceiveFrom_nochecks (result.Buffer, result.Offset, result.Size, result.SockFlags, ref result.EndPoint);
 			} catch (Exception e) {
 				result.Complete (e);
 				return;
@@ -290,7 +301,7 @@ namespace System.Net.Sockets
 		{
 			int total = 0;
 			try {
-				total = result.Sock.Receive (result.Buffers, result.SockFlags);
+				total = result.socket.Receive (result.Buffers, result.SockFlags);
 			} catch (Exception e) {
 				result.Complete (e);
 				return;
@@ -318,7 +329,7 @@ namespace System.Net.Sockets
 			// Actual send() done in the runtime
 			if (result.error == 0) {
 				UpdateSendValues (result.Total);
-				if (result.Sock.is_disposed) {
+				if (result.socket.is_disposed) {
 					result.Complete ();
 					return;
 				}
@@ -337,11 +348,7 @@ namespace System.Net.Sockets
 		{
 			int total = 0;
 			try {
-				total = result.Sock.SendTo_nochecks (result.Buffer,
-							    result.Offset,
-							    result.Size,
-							    result.SockFlags,
-							    result.EndPoint);
+				total = result.socket.SendTo_nochecks (result.Buffer, result.Offset, result.Size, result.SockFlags, result.EndPoint);
 
 				UpdateSendValues (total);
 				if (result.Size > 0) {
@@ -363,7 +370,7 @@ namespace System.Net.Sockets
 		{
 			int total = 0;
 			try {
-				total = result.Sock.Send (result.Buffers, result.SockFlags);
+				total = result.socket.Send (result.Buffers, result.SockFlags);
 			} catch (Exception e) {
 				result.Complete (e);
 				return;

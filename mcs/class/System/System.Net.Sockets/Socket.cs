@@ -6,6 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sridhar Kulkarni (sridharkulkarni@gmail.com)
 //	Brian Nickel (brian.nickel@gmail.com)
+//	Ludovic Henry (ludovic@xamarin.com)
 //
 // Copyright (C) 2001, 2002 Phillip Pearson and Ximian, Inc.
 //    http://www.myelin.co.nz
