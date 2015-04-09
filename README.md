@@ -143,13 +143,6 @@ runtime as an embedded library.
 
 * `scripts/` - Scripts used to invoke Mono and the corresponding program.
 
-* `../olive/` - Incubation code from [Olive](https://github.com/mono/olive).
-
-  * If the directory ../olive is present (as an
-independent checkout) from the Mono module, that
-directory is automatically configured to share the
-same prefix than this module gets.
-
 Contributing to Mono
 ====================
 
