@@ -2806,6 +2806,108 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region SetSocketOption
+
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			// I'd throw an ArgumentNullException, but this is what MS does.
+			if (optionValue == null)
+				throw new SocketException ((int) SocketError.Fault, "Error trying to dereference an invalid pointer");
+
+			int error;
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, optionValue, 0, out error);
+
+			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
+				throw new SocketException (error);
+			}
+		}
+
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, object optionValue)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			// NOTE: if a null is passed, the byte[] overload is used instead...
+			if (optionValue == null)
+				throw new ArgumentNullException("optionValue");
+
+			int error;
+
+			if (optionLevel == SocketOptionLevel.Socket && optionName == SocketOptionName.Linger) {
+				LingerOption linger = optionValue as LingerOption;
+				if (linger == null)
+					throw new ArgumentException ("A 'LingerOption' value must be specified.", "optionValue");
+				SetSocketOption_internal (safe_handle, optionLevel, optionName, linger, null, 0, out error);
+			} else if (optionLevel == SocketOptionLevel.IP && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
+				MulticastOption multicast = optionValue as MulticastOption;
+				if (multicast == null)
+					throw new ArgumentException ("A 'MulticastOption' value must be specified.", "optionValue");
+				SetSocketOption_internal (safe_handle, optionLevel, optionName, multicast, null, 0, out error);
+			} else if (optionLevel == SocketOptionLevel.IPv6 && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
+				IPv6MulticastOption multicast = optionValue as IPv6MulticastOption;
+				if (multicast == null)
+					throw new ArgumentException ("A 'IPv6MulticastOption' value must be specified.", "optionValue");
+				SetSocketOption_internal (safe_handle, optionLevel, optionName, multicast, null, 0, out error);
+			} else {
+				throw new ArgumentException ("Invalid value specified.", "optionValue");
+			}
+
+			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
+				throw new SocketException (error);
+			}
+		}
+
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error;
+			int int_val = optionValue ? 1 : 0;
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, int_val, out error);
+
+			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
+				throw new SocketException (error);
+			}
+		}
+
+		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error;
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, optionValue, out error);
+
+			if (error != 0) {
+				if (error == (int) SocketError.InvalidArgument)
+					throw new ArgumentException ();
+				throw new SocketException (error);
+			}
+		}
+
+		static void SetSocketOption_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				SetSocketOption_internal (safeHandle.DangerousGetHandle (), level, name, obj_val, byte_val, int_val, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void SetSocketOption_internal (IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error);
+
+#endregion
+
 		// See Socket.IOControl, WSAIoctl documentation in MSDN. The
 		// common options between UNIX and Winsock are FIONREAD,
 		// FIONBIO and SIOCATMARK. Anything else will depend on the
@@ -2878,80 +2980,6 @@ namespace System.Net.Sockets
 			}
 			
 			return result;
-		}
-
-		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			// I'd throw an ArgumentNullException, but this is what MS does.
-			if (optionValue == null)
-				throw new SocketException ((int) SocketError.Fault,
-					"Error trying to dereference an invalid pointer");
-			
-			int error;
-
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null,
-						 optionValue, 0, out error);
-
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
-		}
-
-		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, object optionValue)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			// NOTE: if a null is passed, the byte[] overload is used instead...
-			if (optionValue == null)
-				throw new ArgumentNullException("optionValue");
-			
-			int error;
-
-			if (optionLevel == SocketOptionLevel.Socket && optionName == SocketOptionName.Linger) {
-				LingerOption linger = optionValue as LingerOption;
-				if (linger == null)
-					throw new ArgumentException ("A 'LingerOption' value must be specified.", "optionValue");
-				SetSocketOption_internal (safe_handle, optionLevel, optionName, linger, null, 0, out error);
-			} else if (optionLevel == SocketOptionLevel.IP && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
-				MulticastOption multicast = optionValue as MulticastOption;
-				if (multicast == null)
-					throw new ArgumentException ("A 'MulticastOption' value must be specified.", "optionValue");
-				SetSocketOption_internal (safe_handle, optionLevel, optionName, multicast, null, 0, out error);
-			} else if (optionLevel == SocketOptionLevel.IPv6 && (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)) {
-				IPv6MulticastOption multicast = optionValue as IPv6MulticastOption;
-				if (multicast == null)
-					throw new ArgumentException ("A 'IPv6MulticastOption' value must be specified.", "optionValue");
-				SetSocketOption_internal (safe_handle, optionLevel, optionName, multicast, null, 0, out error);
-			} else {
-				throw new ArgumentException ("Invalid value specified.", "optionValue");
-			}
-
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
-		}
-
-		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, bool optionValue)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			int error;
-			int int_val = (optionValue) ? 1 : 0;
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, int_val, out error);
-			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
-				throw new SocketException (error);
-			}
 		}
 
 		void ThrowIfDisposedAndClosed (Socket socket)

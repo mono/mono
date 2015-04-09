@@ -176,41 +176,6 @@ namespace System.Net.Sockets {
 				throw new SocketException (error);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetSocketOption_internal (IntPtr socket, SocketOptionLevel level,
-								     SocketOptionName name, object obj_val,
-								     byte [] byte_val, int int_val,
-								     out int error);
-
-		private static void SetSocketOption_internal (SafeSocketHandle safeHandle, SocketOptionLevel level,
-								     SocketOptionName name, object obj_val,
-								     byte [] byte_val, int int_val,
-								     out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				SetSocketOption_internal (safeHandle.DangerousGetHandle (), level, name, obj_val, byte_val, int_val, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			int error;
-
-			SetSocketOption_internal (safe_handle, optionLevel, optionName, null,
-						 null, optionValue, out error);
-
-			if (error != 0)
-				throw new SocketException (error);
-		}
-
 		Exception InvalidAsyncOp (string method)
 		{
 			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
