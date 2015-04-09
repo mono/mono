@@ -394,6 +394,13 @@ namespace System
 			return constraints;
 		}
 
+		internal static object CreateInstanceForAnotherGenericParameter (Type genericType, RuntimeType genericArgument)
+		{
+			var gt = (RuntimeType) MakeGenericType (genericType, new Type [] { genericArgument });
+			var ctor = gt.GetDefaultConstructor ();
+			return ctor.InternalInvoke (null, null);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 

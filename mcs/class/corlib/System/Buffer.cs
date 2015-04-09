@@ -260,5 +260,77 @@ namespace System {
 			}
 			memcpy4 (dest, src, size);
 		}
+
+        internal unsafe static int IndexOfByte(byte* src, byte value, int index, int count)
+        {
+            Contract.Assert(src != null, "src should not be null");
+
+            byte* pByte = src + index;
+
+            // Align up the pointer to sizeof(int).
+            while (((int)pByte & 3) != 0)
+            {
+                if (count == 0)
+                    return -1;
+                else if (*pByte == value)
+                    return (int) (pByte - src);
+
+                count--;
+                pByte++;
+            }
+
+            // Fill comparer with value byte for comparisons
+            //
+            // comparer = 0/0/value/value
+            uint comparer = (((uint)value << 8) + (uint)value);
+            // comparer = value/value/value/value
+            comparer = (comparer << 16) + comparer;
+
+            // Run through buffer until we hit a 4-byte section which contains
+            // the byte we're looking for or until we exhaust the buffer.
+            while (count > 3)
+            {
+                // Test the buffer for presence of value. comparer contains the byte
+                // replicated 4 times.
+                uint t1 = *(uint*)pByte;
+                t1 = t1 ^ comparer;
+                uint t2 = 0x7efefeff + t1;
+                t1 = t1 ^ 0xffffffff;
+                t1 = t1 ^ t2;
+                t1 = t1 & 0x81010100;
+
+                // if t1 is zero then these 4-bytes don't contain a match
+                if (t1 != 0)
+                {
+                    // We've found a match for value, figure out which position it's in.
+                    int foundIndex = (int) (pByte - src);
+                    if (pByte[0] == value)
+                        return foundIndex;
+                    else if (pByte[1] == value)
+                        return foundIndex + 1;
+                    else if (pByte[2] == value)
+                        return foundIndex + 2;
+                    else if (pByte[3] == value)
+                        return foundIndex + 3;
+                }
+
+                count -= 4;
+                pByte += 4;
+
+            }
+
+            // Catch any bytes that might be left at the tail of the buffer
+            while (count > 0)
+            {
+                if (*pByte == value)
+                    return (int) (pByte - src);
+
+                count--;
+                pByte++;
+            }
+
+            // If we don't have a match return -1;
+            return -1;
+        }		
 	}
 }

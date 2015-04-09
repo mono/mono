@@ -1100,8 +1100,6 @@ System.Threading/Timer.cs
 System.Threading/TimerCallback.cs
 System.Threading/Volatile.cs
 System.Threading/WaitHandle.cs
-System.Collections.Generic/Comparer.cs
-System.Collections.Generic/EqualityComparer.cs
 
 System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
@@ -1307,8 +1305,10 @@ ReferenceSources/TypeBuilderInstantiation.cs
 ../../../external/referencesource/mscorlib/system/collections/stack.cs
 ../../../external/referencesource/mscorlib/system/collections/structuralcomparisons.cs
 
+../../../external/referencesource/mscorlib/system/collections/generic/comparer.cs
 ../../../external/referencesource/mscorlib/system/collections/generic/debugview.cs
 ../../../external/referencesource/mscorlib/system/collections/generic/dictionary.cs
+../../../external/referencesource/mscorlib/system/collections/generic/equalitycomparer.cs
 ../../../external/referencesource/mscorlib/system/collections/generic/icollection.cs
 ../../../external/referencesource/mscorlib/system/collections/generic/icomparer.cs
 ../../../external/referencesource/mscorlib/system/collections/generic/idictionary.cs

@@ -3045,7 +3045,7 @@ namespace System
 			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
 				throw new ArgumentOutOfRangeException ();
 
-			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, startIndex + count);
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
 		}
 		
 		public static int LastIndexOf<T> (T [] array, T value)
