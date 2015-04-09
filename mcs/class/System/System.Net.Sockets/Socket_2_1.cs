@@ -115,36 +115,6 @@ namespace System.Net.Sockets {
 			GC.SuppressFinalize (this);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
-		
-		private static void Shutdown_internal (SafeSocketHandle safeHandle, SocketShutdown how, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				Shutdown_internal (safeHandle.DangerousGetHandle (), how, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public void Shutdown (SocketShutdown how)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_connected)
-				throw new SocketException (10057); // Not connected
-
-			int error;
-			
-			Shutdown_internal (safe_handle, how, out error);
-			if (error != 0)
-				throw new SocketException (error);
-		}
-
 		Exception InvalidAsyncOp (string method)
 		{
 			return new InvalidOperationException (method + " can only be called once per asynchronous operation");

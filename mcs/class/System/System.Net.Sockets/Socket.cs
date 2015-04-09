@@ -3012,6 +3012,39 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Shutdown
+
+		public void Shutdown (SocketShutdown how)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_connected)
+				throw new SocketException (10057); // Not connected
+
+			int error;
+			Shutdown_internal (safe_handle, how, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+		}
+
+		static void Shutdown_internal (SafeSocketHandle safeHandle, SocketShutdown how, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Shutdown_internal (safeHandle.DangerousGetHandle (), how, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
+
+#endregion
+
 		void ThrowIfDisposedAndClosed (Socket socket)
 		{
 			if (socket.is_disposed && socket.is_closed)
