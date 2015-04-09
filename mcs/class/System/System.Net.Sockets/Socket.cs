@@ -914,14 +914,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = e.Worker.result;
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (e.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, e.Worker, sockares);
 
 			return true;
 		}
@@ -935,14 +928,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -961,14 +947,7 @@ namespace System.Net.Sockets
 				SockFlags = SocketFlags.None,
 			};
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -1003,14 +982,7 @@ namespace System.Net.Sockets
 				AcceptSocket = acceptSocket,
 			};
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -1714,16 +1686,8 @@ namespace System.Net.Sockets
 				sockares.Buffers = e.BufferList;
 			}
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (e.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1) {
-				// Receive takes care of ReceiveGeneric
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
-			}
+			// Receive takes care of ReceiveGeneric
+			QueueSocketAsyncResult (readQ, e.Worker, sockares);
 
 			return true;
 		}
@@ -1741,14 +1705,7 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -1775,14 +1732,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			int count;
-			lock(readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -1940,14 +1890,7 @@ namespace System.Net.Sockets
 			sockares.EndPoint = e.RemoteEndPoint;
 			sockares.SockFlags = e.SocketFlags;
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (e.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, e.Worker, sockares);
 
 			return true;
 		}
@@ -1969,14 +1912,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			int count;
-			lock (readQ) {
-				readQ.Enqueue (sockares.Worker);
-				count = readQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -2296,16 +2232,8 @@ namespace System.Net.Sockets
 				sockares.Buffers = e.BufferList;
 			}
 
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (e.Worker);
-				count = writeQ.Count;
-			}
-
-			if (count == 1) {
-				// Send takes care of SendGeneric
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
-			}
+			// Send takes care of SendGeneric
+			QueueSocketAsyncResult (writeQ, e.Worker, sockares);
 
 			return true;
 		}
@@ -2337,14 +2265,7 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (sockares.Worker);
-				count = writeQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -2363,14 +2284,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (sockares.Worker);
-				count = writeQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -2538,14 +2452,7 @@ namespace System.Net.Sockets
 			sockares.SockFlags = e.SocketFlags;
 			sockares.EndPoint = e.RemoteEndPoint;
 
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (e.Worker);
-				count = writeQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (writeQ, e.Worker, sockares);
 
 			return true;
 		}
@@ -2565,14 +2472,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			int count;
-			lock (writeQ) {
-				writeQ.Enqueue (sockares.Worker);
-				count = writeQ.Count;
-			}
-
-			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
 
 			return sockares;
 		}
@@ -3155,6 +3055,18 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException (methodName + " can only be called once per asynchronous operation");
 
 			return sockares;
+		}
+
+		void QueueSocketAsyncResult (Queue queue, SocketAsyncWorker worker, SocketAsyncResult sockares)
+		{
+			int count;
+			lock (queue) {
+				queue.Enqueue (worker);
+				count = queue.Count;
+			}
+
+			if (count == 1)
+				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
