@@ -225,7 +225,7 @@ namespace System.Net.Sockets
 
 			IsCompleted = true;
 
-			Queue queue = null;
+			Queue<SocketAsyncWorker> queue = null;
 			switch (operation) {
 			case SocketOperation.Receive:
 			case SocketOperation.ReceiveFrom:
@@ -249,12 +249,12 @@ namespace System.Net.Sockets
 						queue.Dequeue (); /* remove ourselves */
 					if (queue.Count > 0) {
 						if (!socket.is_disposed) {
-							Socket.socket_pool_queue (SocketAsyncWorker.Dispatcher, ((SocketAsyncWorker) queue.Peek ()).result);
+							Socket.socket_pool_queue (SocketAsyncWorker.Dispatcher, (queue.Peek ()).result);
 						} else {
 							/* CompleteAllOnDispose */
-							object [] pending = queue.ToArray ();
-							for (int i = 0; i < pending.Length; i++)
-								ThreadPool.UnsafeQueueUserWorkItem (((SocketAsyncWorker) pending [i]).result.CompleteDisposed, null);
+							SocketAsyncWorker [] workers = queue.ToArray ();
+							for (int i = 0; i < workers.Length; i++)
+								ThreadPool.UnsafeQueueUserWorkItem (workers [i].result.CompleteDisposed, null);
 							queue.Clear ();
 						}
 					}

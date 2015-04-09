@@ -86,8 +86,8 @@ namespace System.Net.Sockets
 		 */
 		internal EndPoint seed_endpoint = null;
 
-		internal Queue readQ = new Queue (2);
-		internal Queue writeQ = new Queue (2);
+		internal Queue<SocketAsyncWorker> readQ = new Queue<SocketAsyncWorker> (2);
+		internal Queue<SocketAsyncWorker> writeQ = new Queue<SocketAsyncWorker> (2);
 
 		internal bool is_blocking = true;
 		internal bool is_bound;
@@ -3058,7 +3058,7 @@ namespace System.Net.Sockets
 			return sockares;
 		}
 
-		void QueueSocketAsyncResult (Queue queue, SocketAsyncWorker worker, SocketAsyncResult sockares)
+		void QueueSocketAsyncResult (Queue<SocketAsyncWorker> queue, SocketAsyncWorker worker, SocketAsyncResult sockares)
 		{
 			int count;
 			lock (queue) {
