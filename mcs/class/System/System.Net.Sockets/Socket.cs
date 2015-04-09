@@ -1020,6 +1020,44 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Bind
+
+		public void Bind (EndPoint local_end)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (local_end == null)
+				throw new ArgumentNullException("local_end");
+
+			int error;
+			Bind_internal (safe_handle, local_end.Serialize(), out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+			if (error == 0)
+				is_bound = true;
+
+			seed_endpoint = local_end;
+		}
+
+		private static void Bind_internal (SafeSocketHandle safeHandle, SocketAddress sa, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Bind_internal (safeHandle.DangerousGetHandle (), sa, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		// Creates a new system socket, returning the handle
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void Bind_internal(IntPtr sock, SocketAddress sa, out int error);
+
+#endregion
+
 #region Connect
 
 		public void Connect (IPAddress address, int port)
@@ -2625,47 +2663,6 @@ namespace System.Net.Sockets
 			if (size > buffer.Length - offset)
 				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
-
-		// Creates a new system socket, returning the handle
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Bind_internal(IntPtr sock,
-							 SocketAddress sa,
-							 out int error);
-
-		private static void Bind_internal (SafeSocketHandle safeHandle,
-							 SocketAddress sa,
-							 out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				Bind_internal (safeHandle.DangerousGetHandle (), sa, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public void Bind(EndPoint local_end) {
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (local_end == null)
-				throw new ArgumentNullException("local_end");
-			
-			int error;
-			
-			Bind_internal (safe_handle, local_end.Serialize(), out error);
-			if (error != 0)
-				throw new SocketException (error);
-			if (error == 0)
-				is_bound = true;
-			
-			seed_endpoint = local_end;
-		}
-
-
-
 
 #if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
