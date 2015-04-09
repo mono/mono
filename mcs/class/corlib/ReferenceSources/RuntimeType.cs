@@ -394,44 +394,6 @@ namespace System
 			return constraints;
 		}
 
-		public override Type MakeGenericType (params Type[] typeArguments)
-		{
-			if (IsUserType)
-				throw new NotSupportedException ();
-			if (!IsGenericTypeDefinition)
-				throw new InvalidOperationException ("not a generic type definition");
-			if (typeArguments == null)
-				throw new ArgumentNullException ("typeArguments");
-			if (GetGenericArguments().Length != typeArguments.Length)
-				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, typeArguments.Length), "typeArguments");
-
-			bool hasUserType = false;
-
-			Type[] systemTypes = new Type[typeArguments.Length];
-			for (int i = 0; i < typeArguments.Length; ++i) {
-				Type t = typeArguments [i];
-				if (t == null)
-					throw new ArgumentNullException ("typeArguments");
-
-				if (!(t is MonoType))
-					hasUserType = true;
-				systemTypes [i] = t;
-			}
-
-			if (hasUserType) {
-#if FULL_AOT_RUNTIME
-				throw new NotSupportedException ("User types are not supported under full aot");
-#else
-				return new MonoGenericClass (this, typeArguments);
-#endif
-			}
-
-			Type res = MakeGenericType (this, systemTypes);
-			if (res == null)
-				throw new TypeLoadException ();
-			return res;
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
@@ -612,7 +574,7 @@ namespace System
 		internal extern string getFullName(bool full_name, bool assembly_qualified);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override Type [] GetGenericArguments ();
+		extern Type[] GetGenericArgumentsInternal (bool runtimeArray);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern GenericParameterAttributes GetGenericParameterAttributes ();

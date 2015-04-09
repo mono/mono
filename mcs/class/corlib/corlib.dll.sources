@@ -1130,6 +1130,7 @@ ReferenceSources/MonoRuntimeWorkItem.cs
 ReferenceSources/MethodBase.cs
 ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
+ReferenceSources/TypeBuilderInstantiation.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
