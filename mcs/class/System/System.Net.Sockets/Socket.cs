@@ -3156,6 +3156,18 @@ namespace System.Net.Sockets
 
 			return sockares;
 		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		struct WSABUF {
+			public int len;
+			public IntPtr buf;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void cancel_blocking_socket_operation (Thread thread);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
 	}
 }
 
