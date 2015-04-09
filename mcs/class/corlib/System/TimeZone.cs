@@ -169,62 +169,6 @@ namespace System
 		{
 			currentTimeZone = null;
 		}
-
-		//
-		// This routine returns the TimeDiff that would have to be
-		// added to "time" to turn it into a local time.   This would
-		// be equivalent to call ToLocalTime.
-		//
-		// There is one important consideration:
-		//
-		//    This information is only valid during the minute it
-		//    was called.
-		//
-		//    This only works with a real time, not one of the boundary
-		//    cases like DateTime.MaxValue, so validation must be done
-		//    before.
-		// 
-		//    This is intended to be used by DateTime.Now
-		//
-		// We use a minute, just to be conservative and cope with
-		// any potential time zones that might be defined in the future
-		// that might not nicely fit in hour or half-hour steps. 
-		//    
-		internal TimeSpan GetLocalTimeDiff (DateTime time)
-		{
-			return GetLocalTimeDiff (time, GetUtcOffset (time));
-		}
-
-		//
-		// This routine is intended to be called by GetLocalTimeDiff(DatetTime)
-		// or by ToLocalTime after validation has been performed
-		//
-		// time is the time to map, utc_offset is the utc_offset that
-		// has been computed for calling GetUtcOffset on time.
-		//
-		// When called by GetLocalTime, utc_offset is assumed to come
-		// from a time constructed by new DateTime (DateTime.GetNow ()), that
-		// is a valid time.
-		//
-		// When called by ToLocalTime ranges are checked before this is
-		// called.
-		//
-		internal TimeSpan GetLocalTimeDiff (DateTime time, TimeSpan utc_offset)
-		{
-			DaylightTime dlt = GetDaylightChanges (time.Year);
-
-			if (dlt.Delta.Ticks == 0)
-				return utc_offset;
-
-			DateTime local = time.Add (utc_offset);
-			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
-				return utc_offset;
-
-			if (local >= dlt.Start && dlt.Start.Add (dlt.Delta) > local)
-				return utc_offset - dlt.Delta;
-
-			return GetUtcOffset (local);
-		}
 	}
 
 	[Serializable]
