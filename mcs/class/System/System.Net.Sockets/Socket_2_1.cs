@@ -131,21 +131,6 @@ namespace System.Net.Sockets {
 			((IDisposable) this).Dispose ();
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
-
-		private static bool Poll_internal (SafeSocketHandle safeHandle, SelectMode mode, int timeout, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				return Poll_internal (safeHandle.DangerousGetHandle (), mode, timeout, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
 		

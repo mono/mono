@@ -799,6 +799,48 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Poll
+
+		public bool Poll (int time_us, SelectMode mode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (mode != SelectMode.SelectRead && mode != SelectMode.SelectWrite && mode != SelectMode.SelectError)
+				throw new NotSupportedException ("'mode' parameter is not valid.");
+
+			int error;
+			bool result = Poll_internal (safe_handle, mode, time_us, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+
+			if (mode == SelectMode.SelectWrite && result && !is_connected) {
+				/* Update the is_connected state; for non-blocking Connect()
+				 * this is when we can find out that the connect succeeded. */
+				if ((int) GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0)
+					is_connected = true;
+			}
+
+			return result;
+		}
+
+		static bool Poll_internal (SafeSocketHandle safeHandle, SelectMode mode, int timeout, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Poll_internal (safeHandle.DangerousGetHandle (), mode, timeout, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
+
+#endregion
+
 #region Accept
 
 		public Socket Accept()
@@ -2951,35 +2993,6 @@ namespace System.Net.Sockets
 		public int IOControl (IOControlCode ioControlCode, byte[] optionInValue, byte[] optionOutValue)
 		{
 			return IOControl ((int) ioControlCode, optionInValue, optionOutValue);
-		}
-
-		public bool Poll (int time_us, SelectMode mode)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (mode != SelectMode.SelectRead &&
-			    mode != SelectMode.SelectWrite &&
-			    mode != SelectMode.SelectError)
-				throw new NotSupportedException ("'mode' parameter is not valid.");
-
-			int error;
-			bool result = Poll_internal (safe_handle, mode, time_us, out error);
-			if (error != 0)
-				throw new SocketException (error);
-
-			if (mode == SelectMode.SelectWrite && result && !is_connected) {
-				/* Update the is_connected state; for
-				 * non-blocking Connect()s this is
-				 * when we can find out that the
-				 * connect succeeded.
-				 */
-				if ((int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
-					is_connected = true;
-				}
-			}
-			
-			return result;
 		}
 
 		void ThrowIfDisposedAndClosed (Socket socket)
