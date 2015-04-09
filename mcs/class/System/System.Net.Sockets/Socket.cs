@@ -2652,6 +2652,8 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region DuplicateAndClose
+
 #if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
@@ -2669,6 +2671,8 @@ namespace System.Net.Sockets
 			return si;
 		}
 #endif
+
+#endregion
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetSocketOption_arr_internal(IntPtr socket,
