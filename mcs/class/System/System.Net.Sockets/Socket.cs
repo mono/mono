@@ -2950,27 +2950,7 @@ namespace System.Net.Sockets
 
 #endregion
 
-		// See Socket.IOControl, WSAIoctl documentation in MSDN. The
-		// common options between UNIX and Winsock are FIONREAD,
-		// FIONBIO and SIOCATMARK. Anything else will depend on the
-		// system except SIO_KEEPALIVE_VALS which is properly handled
-		// on both windows and linux.
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input,
-			byte [] output, out int error);
-
-		private static int WSAIoctl (SafeSocketHandle safeHandle, int ioctl_code, byte [] input,
-			byte [] output, out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				return WSAIoctl (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
+#region IOControl
 
 		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
 		{
@@ -2978,12 +2958,10 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			int error;
-			int result = WSAIoctl (safe_handle, ioctl_code, in_value, out_value,
-				out error);
+			int result = IOControl_internal (safe_handle, ioctl_code, in_value, out_value, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
-			
 			if (result == -1)
 				throw new InvalidOperationException ("Must use Blocking property instead.");
 
@@ -2994,6 +2972,26 @@ namespace System.Net.Sockets
 		{
 			return IOControl ((int) ioControlCode, optionInValue, optionOutValue);
 		}
+
+		static int IOControl_internal (SafeSocketHandle safeHandle, int ioctl_code, byte [] input, byte [] output, out int error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return IOControl_internal (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		/* See Socket.IOControl, WSAIoctl documentation in MSDN. The common options between UNIX
+		 * and Winsock are FIONREAD, FIONBIO and SIOCATMARK. Anything else will depend on the system
+		 * except SIO_KEEPALIVE_VALS which is properly handled on both windows and linux. */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int IOControl_internal (IntPtr sock, int ioctl_code, byte [] input, byte [] output, out int error);
+
+#endregion
 
 		void ThrowIfDisposedAndClosed (Socket socket)
 		{
