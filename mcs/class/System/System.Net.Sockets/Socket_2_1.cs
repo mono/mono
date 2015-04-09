@@ -61,11 +61,6 @@ namespace System.Net.Sockets {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void cancel_blocking_socket_operation (Thread thread);
 
-		Exception InvalidAsyncOp (string method)
-		{
-			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
 	}

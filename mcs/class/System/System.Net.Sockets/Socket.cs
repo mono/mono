@@ -3152,7 +3152,7 @@ namespace System.Net.Sockets
 			if (sockares == null)
 				throw new ArgumentException ("Invalid IAsyncResult", argName);
 			if (Interlocked.CompareExchange (ref sockares.EndCalled, 1, 0) == 1)
-				throw InvalidAsyncOp (methodName);
+				throw new InvalidOperationException (methodName + " can only be called once per asynchronous operation");
 
 			return sockares;
 		}
