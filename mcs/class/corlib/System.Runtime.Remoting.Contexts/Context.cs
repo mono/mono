@@ -150,7 +150,13 @@ namespace System.Runtime.Remoting.Contexts {
 					return rp.ObjectIdentity.ClientDynamicProperties;
 				}
 				else
+				{
+#if FEATURE_REMOTING
 					return obj.ObjectIdentity.ServerDynamicProperties;
+#else
+					throw new NotSupportedException ();
+#endif					
+				}
 			}
 			else if (ctx != null && obj == null)
 			{
