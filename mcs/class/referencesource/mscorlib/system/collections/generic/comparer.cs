@@ -63,14 +63,22 @@ namespace System.Collections.Generic
             else
 #endif
                 if (typeof(IComparable<T>).IsAssignableFrom(t)) {
+#if MONO
+                    return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(GenericComparer<>), t);
+#else
                     return (Comparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(GenericComparer<int>), t);
+#endif
                 }
 
             // If T is a Nullable<U> where U implements IComparable<U> return a NullableComparer<U>
             if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>)) {
                 RuntimeType u = (RuntimeType)t.GetGenericArguments()[0];
                 if (typeof(IComparable<>).MakeGenericType(u).IsAssignableFrom(u)) {
+#if MONO
+                    return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableComparer<>), t);
+#else
                     return (Comparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(NullableComparer<int>), u);
+#endif
                 }
             }
             // Otherwise return an ObjectComparer<T>

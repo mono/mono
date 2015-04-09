@@ -53,22 +53,41 @@ namespace System.Collections.Generic
             if (t == typeof(byte)) {
                 return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
             }
+
+#if MOBILE
+            // Breaks .net serialization compatibility
+            if (t == typeof (string))
+                return (EqualityComparer<T>)(object)new InternalStringComparer ();
+#endif
+
             // If T implements IEquatable<T> return a GenericEqualityComparer<T>
             if (typeof(IEquatable<T>).IsAssignableFrom(t)) {
+#if MONO
+                return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(GenericEqualityComparer<>), t);
+#else
                 return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(GenericEqualityComparer<int>), t);
+#endif
             }
             // If T is a Nullable<U> where U implements IEquatable<U> return a NullableEqualityComparer<U>
             if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>)) {
                 RuntimeType u = (RuntimeType)t.GetGenericArguments()[0];
                 if (typeof(IEquatable<>).MakeGenericType(u).IsAssignableFrom(u)) {
+#if MONO
+                    return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableEqualityComparer<>), t);
+#else
                     return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(NullableEqualityComparer<int>), u);
+#endif
                 }
             }
             // If T is an int-based Enum, return an EnumEqualityComparer<T>
             // See the METHOD__JIT_HELPERS__UNSAFE_ENUM_CAST and METHOD__JIT_HELPERS__UNSAFE_ENUM_CAST_LONG cases in getILIntrinsicImplementation
             if (t.IsEnum && Enum.GetUnderlyingType(t) == typeof(int))
             {
+#if MONO
+                return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(EnumEqualityComparer<>), t);
+#else
                 return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(EnumEqualityComparer<int>), t);
+#endif
             }
             // Otherwise return an ObjectEqualityComparer<T>
             return new ObjectEqualityComparer<T>();
@@ -403,6 +422,41 @@ namespace System.Collections.Generic
             return this.GetType().Name.GetHashCode();
         }
     }
+
+#if MOBILE
+    [Serializable]
+    sealed class InternalStringComparer : EqualityComparer<string> {
+    
+        public override int GetHashCode (string obj)
+        {
+            if (obj == null)
+                return 0;
+            return obj.GetHashCode ();
+        }
+    
+        public override bool Equals (string x, string y)
+        {
+            if (x == null)
+                return y == null;
+
+            if ((object) x == (object) y)
+                return true;
+
+            return x.Equals (y);
+        }
+
+        internal override int IndexOf (string[] array, string value, int startIndex, int count)
+        {
+            int endIndex = startIndex + count;
+            for (int i = startIndex; i < endIndex; ++i) {
+                if (Array.UnsafeLoad (array, i) == value)
+                    return i;
+            }
+
+            return -1;
+        }
+    }
+#endif
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
     // This type is not serializeable by design.  It does not exist in previous versions and will be removed 
