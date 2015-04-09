@@ -4283,15 +4283,23 @@ namespace System
         #endregion
 
         #region Generics
-#if !MONO
+
         internal RuntimeType[] GetGenericArgumentsInternal()
         {
+#if MONO
+            return (RuntimeType[]) GetGenericArgumentsInternal (true);
+#else
             return GetRootElementType().GetTypeHandleInternal().GetInstantiationInternal();
+#endif
         }
 
         public override Type[] GetGenericArguments() 
         {
+#if MONO
+            Type[] types = GetGenericArgumentsInternal (false);
+#else
             Type[] types = GetRootElementType().GetTypeHandleInternal().GetInstantiationPublic();
+#endif
 
             if (types == null)
                 types = EmptyArray<Type>.Value;
@@ -4340,6 +4348,11 @@ namespace System
             SanityCheckGenericArguments(instantiationRuntimeType, genericParameters);
 
             Type ret = null;
+#if MONO
+            ret = MakeGenericType (this, instantiationRuntimeType);
+            if (ret == null)
+                throw new TypeLoadException ();
+#else
             try 
             {
                 ret = new RuntimeTypeHandle(this).Instantiate(instantiationRuntimeType);
@@ -4349,10 +4362,10 @@ namespace System
                 ValidateGenericArguments(this, instantiationRuntimeType, e);
                 throw e;
             }
-
+#endif
             return ret;
         }
-#endif
+
         public override bool IsGenericTypeDefinition
         {
 #if !FEATURE_CORECLR
