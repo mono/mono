@@ -115,22 +115,6 @@ namespace System.Net.Sockets {
 			GC.SuppressFinalize (this);
 		}
 
-		// Closes the socket
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void Close_internal(IntPtr socket, out int error);
-
-		public void Close ()
-		{
-			linger_timeout = 0;
-			((IDisposable) this).Dispose ();
-		}
-
-		public void Close (int timeout) 
-		{
-			linger_timeout = timeout;
-			((IDisposable) this).Dispose ();
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
 		

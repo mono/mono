@@ -2993,6 +2993,25 @@ namespace System.Net.Sockets
 
 #endregion
 
+#region Close
+
+		public void Close ()
+		{
+			linger_timeout = 0;
+			Dispose ();
+		}
+
+		public void Close (int timeout)
+		{
+			linger_timeout = timeout;
+			Dispose ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Close_internal (IntPtr socket, out int error);
+
+#endregion
+
 		void ThrowIfDisposedAndClosed (Socket socket)
 		{
 			if (socket.is_disposed && socket.is_closed)
