@@ -2723,14 +2723,58 @@ namespace System.Net.Sockets
 
 #endregion
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_arr_internal(IntPtr socket,
-			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
-			out int error);
+#region GetSocketOption
 
-		private static void GetSocketOption_arr_internal (SafeSocketHandle safeHandle,
-			SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val,
-			out int error)
+		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (optionValue == null)
+				throw new SocketException ((int) SocketError.Fault, "Error trying to dereference an invalid pointer");
+
+			int error;
+			GetSocketOption_arr_internal (safe_handle, optionLevel, optionName, ref optionValue, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+		}
+
+		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int length)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error;
+			byte[] byte_val = new byte [length];
+			GetSocketOption_arr_internal (safe_handle, optionLevel, optionName, ref byte_val, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+
+			return byte_val;
+		}
+
+		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int error;
+			object obj_val;
+			GetSocketOption_obj_internal (safe_handle, optionLevel, optionName, out obj_val, out error);
+
+			if (error != 0)
+				throw new SocketException (error);
+
+			if (optionName == SocketOptionName.Linger)
+				return (LingerOption) obj_val;
+			else if (optionName == SocketOptionName.AddMembership || optionName == SocketOptionName.DropMembership)
+				return (MulticastOption) obj_val;
+			else if (obj_val is int)
+				return (int) obj_val;
+			else
+				return obj_val;
+		}
+
+		static void GetSocketOption_arr_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error)
 		{
 			bool release = false;
 			try {
@@ -2742,38 +2786,25 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
+
+		static void GetSocketOption_obj_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (optionValue == null)
-				throw new SocketException ((int) SocketError.Fault,
-					"Error trying to dereference an invalid pointer");
-
-			int error;
-
-			GetSocketOption_arr_internal (safe_handle, optionLevel, optionName, ref optionValue,
-				out error);
-			if (error != 0)
-				throw new SocketException (error);
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				GetSocketOption_obj_internal (safeHandle.DangerousGetHandle (), level, name, out obj_val, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
 		}
 
-		public byte [] GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int length)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
 
-			byte[] byte_val=new byte[length];
-			int error;
-
-			GetSocketOption_arr_internal (safe_handle, optionLevel, optionName, ref byte_val,
-				out error);
-			if (error != 0)
-				throw new SocketException (error);
-
-			return(byte_val);
-		}
+#endregion
 
 		// See Socket.IOControl, WSAIoctl documentation in MSDN. The
 		// common options between UNIX and Winsock are FIONREAD,

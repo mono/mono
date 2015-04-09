@@ -146,51 +146,6 @@ namespace System.Net.Sockets {
 			}
 		}
 
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void GetSocketOption_obj_internal(IntPtr socket,
-			SocketOptionLevel level, SocketOptionName name, out object obj_val,
-			out int error);
-
-		private static void GetSocketOption_obj_internal (SafeSocketHandle safeHandle,
-			SocketOptionLevel level, SocketOptionName name, out object obj_val,
-			out int error)
-		{
-			bool release = false;
-			try {
-				safeHandle.DangerousAddRef (ref release);
-				GetSocketOption_obj_internal (safeHandle.DangerousGetHandle (), level, name, out obj_val, out error);
-			} finally {
-				if (release)
-					safeHandle.DangerousRelease ();
-			}
-		}
-
-		public object GetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			object obj_val;
-			int error;
-
-			GetSocketOption_obj_internal (safe_handle, optionLevel, optionName, out obj_val,
-				out error);
-			if (error != 0)
-				throw new SocketException (error);
-
-			if (optionName == SocketOptionName.Linger) {
-				return((LingerOption)obj_val);
-			} else if (optionName == SocketOptionName.AddMembership ||
-				   optionName == SocketOptionName.DropMembership) {
-				return((MulticastOption)obj_val);
-			} else if (obj_val is int) {
-				return((int)obj_val);
-			} else {
-				return(obj_val);
-			}
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
 		
