@@ -2652,18 +2652,6 @@ namespace System.Net.Sockets
 
 #endregion
 
-		void CheckRange (byte[] buffer, int offset, int size)
-		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-			if (offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-			if (size > buffer.Length - offset)
-				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
-		}
-
 #if !MOBILE
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
