@@ -2491,17 +2491,89 @@ namespace System.Net.Sockets
 
 #endregion
 
-		void CheckRange (byte[] buffer, int offset, int size)
+#region SendFile
+
+		public void SendFile (string fileName)
 		{
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
-			if (offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
-			if (size > buffer.Length - offset)
-				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_connected)
+				throw new NotSupportedException ();
+			if (!is_blocking)
+				throw new InvalidOperationException ();
+
+			SendFile (fileName, null, null, 0);
 		}
+
+		public void SendFile (string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_connected)
+				throw new NotSupportedException ();
+			if (!is_blocking)
+				throw new InvalidOperationException ();
+
+			if (!SendFile_internal (safe_handle, fileName, preBuffer, postBuffer, flags)) {
+				SocketException exc = new SocketException ();
+				if (exc.ErrorCode == 2 || exc.ErrorCode == 3)
+					throw new FileNotFoundException ();
+				throw exc;
+			}
+		}
+
+		public IAsyncResult BeginSendFile (string fileName, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_connected)
+				throw new NotSupportedException ();
+			if (!File.Exists (fileName))
+				throw new FileNotFoundException ();
+
+			return BeginSendFile (fileName, null, null, 0, callback, state);
+		}
+
+		public IAsyncResult BeginSendFile (string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags, AsyncCallback callback, object state)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (!is_connected)
+				throw new NotSupportedException ();
+			if (!File.Exists (fileName))
+				throw new FileNotFoundException ();
+
+			SendFileHandler handler = new SendFileHandler (SendFile);
+
+			return new SendFileAsyncResult (handler, handler.BeginInvoke (fileName, preBuffer, postBuffer, flags, ar => callback (new SendFileAsyncResult (handler, ar)), state));
+		}
+
+		public void EndSendFile (IAsyncResult asyncResult)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+
+			SendFileAsyncResult ares = asyncResult as SendFileAsyncResult;
+			if (ares == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
+
+			ares.Delegate.EndInvoke (ares.Original);
+		}
+
+		static bool SendFile_internal (SafeSocketHandle safeHandle, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags)
+		{
+			try {
+				safeHandle.RegisterForBlockingSyscall ();
+				return SendFile_internal (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags);
+			} finally {
+				safeHandle.UnRegisterForBlockingSyscall ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool SendFile_internal (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags);
 
 		delegate void SendFileHandler (string fileName, byte [] preBuffer, byte [] postBuffer, TransmitFileOptions flags);
 
@@ -2540,43 +2612,18 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public IAsyncResult BeginSendFile (string fileName,
-						   AsyncCallback callback,
-						   object state)
+#endregion
+
+		void CheckRange (byte[] buffer, int offset, int size)
 		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_connected)
-				throw new NotSupportedException ();
-
-			if (!File.Exists (fileName))
-				throw new FileNotFoundException ();
-
-			return BeginSendFile (fileName, null, null, 0, callback, state);
-		}
-
-		public IAsyncResult BeginSendFile (string fileName,
-						   byte[] preBuffer,
-						   byte[] postBuffer,
-						   TransmitFileOptions flags,
-						   AsyncCallback callback,
-						   object state)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_connected)
-				throw new NotSupportedException ();
-
-			if (!File.Exists (fileName))
-				throw new FileNotFoundException ();
-
-			SendFileHandler d = new SendFileHandler (SendFile);
-			return new SendFileAsyncResult (d, d.BeginInvoke (fileName, preBuffer, postBuffer, flags, ar => {
-				SendFileAsyncResult sfar = new SendFileAsyncResult (d, ar);
-				callback (sfar);
-			}, state));
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be >= 0");
+			if (offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset", "offset must be <= buffer.Length");
+			if (size < 0)
+				throw new ArgumentOutOfRangeException ("size", "size must be >= 0");
+			if (size > buffer.Length - offset)
+				throw new ArgumentOutOfRangeException ("size", "size must be <= buffer.Length - offset");
 		}
 
 		// Creates a new system socket, returning the handle
@@ -2637,22 +2684,6 @@ namespace System.Net.Sockets
 			return si;
 		}
 #endif
-
-
-		public void EndSendFile (IAsyncResult asyncResult)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (asyncResult == null)
-				throw new ArgumentNullException ("asyncResult");
-
-			SendFileAsyncResult ares = asyncResult as SendFileAsyncResult;
-			if (ares == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
-
-			ares.Delegate.EndInvoke (ares.Original);
-		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetSocketOption_arr_internal(IntPtr socket,
@@ -2823,54 +2854,6 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 			
 			throw new NotImplementedException ();
-		}
-
-
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool SendFile (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags);
-
-		private static bool SendFile (SafeSocketHandle safeHandle, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags)
-		{
-			try {
-				safeHandle.RegisterForBlockingSyscall ();
-				return SendFile (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags);
-			} finally {
-				safeHandle.UnRegisterForBlockingSyscall ();
-			}
-		}
-
-		public void SendFile (string fileName)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_connected)
-				throw new NotSupportedException ();
-
-			if (!is_blocking)
-				throw new InvalidOperationException ();
-
-			SendFile (fileName, null, null, 0);
-		}
-
-		public void SendFile (string fileName, byte[] preBuffer, byte[] postBuffer, TransmitFileOptions flags)
-		{
-			if (is_disposed && is_closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			if (!is_connected)
-				throw new NotSupportedException ();
-
-			if (!is_blocking)
-				throw new InvalidOperationException ();
-
-			if (!SendFile (safe_handle, fileName, preBuffer, postBuffer, flags)) {
-				SocketException exc = new SocketException ();
-				if (exc.ErrorCode == 2 || exc.ErrorCode == 3)
-					throw new FileNotFoundException ();
-				throw exc;
-			}
 		}
 
 		public void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, byte [] optionValue)
