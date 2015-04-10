@@ -46,6 +46,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d3).Ticks, "A12");
 		Assert.AreEqual(72000000000L, t1.GetUtcOffset (d4).Ticks, "A13");
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d5).Ticks, "A14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "A15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "A16");
 	}
 
 	private void EST (TimeZone t1) 
@@ -74,6 +79,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d3).Ticks, "B12");
 		Assert.AreEqual(-144000000000L, t1.GetUtcOffset (d4).Ticks, "B13");
 		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d5).Ticks, "B14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "B15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "B16");
 	}
 
 	private void TST (TimeZone t1) 
@@ -120,6 +130,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(0L, t1.GetUtcOffset (d3).Ticks, "D12");
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d4).Ticks, "D13");
 		Assert.AreEqual(0L, t1.GetUtcOffset (d5).Ticks, "D14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "D15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "D16");
 	}
 
 	private void NZST(TimeZone t1) {
@@ -146,6 +161,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d3).Ticks, "E12");
 		Assert.AreEqual(36000000000L /*hour*/ * 12L, t1.GetUtcOffset (d4).Ticks, "E13");
 		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d5).Ticks, "E14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d5.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "E15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "E16");
 	}
 
 	[Test]
