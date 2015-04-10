@@ -38,5 +38,11 @@ namespace System
 			default: return codePage.ToString (CultureInfo.InvariantCulture);
 			}
 		}
+
+		internal static bool IsWindows8OrAbove {
+			get {
+				return false;
+			}
+		}
 	}
 }

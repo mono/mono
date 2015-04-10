@@ -194,12 +194,7 @@ System.Diagnostics.SymbolStore/SymbolToken.cs
 System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
-System.Globalization/CalendarAlgorithmType.cs
-System.Globalization/CalendarWeekRule.cs
 System.Globalization/CultureInfo.cs
-System.Globalization/DateTimeStyles.cs
-System.Globalization/DigitShapes.cs
-System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/IdnMapping.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
@@ -1345,7 +1340,9 @@ ReferenceSources/TextInfo.cs
 
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
+../../../external/referencesource/mscorlib/system/globalization/calendaralgorithmtype.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
+../../../external/referencesource/mscorlib/system/globalization/calendarweekrule.cs
 ../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/compareinfo.cs
@@ -1356,10 +1353,14 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeparse.cs
+../../../external/referencesource/mscorlib/system/globalization/datetimestyles.cs
+../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs
+../../../external/referencesource/mscorlib/system/globalization/digitshapes.cs
 ../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
+../../../external/referencesource/mscorlib/system/globalization/gregoriancalendartypes.cs
 ../../../external/referencesource/mscorlib/system/globalization/hebrewcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/hebrewnumber.cs
 ../../../external/referencesource/mscorlib/system/globalization/hijricalendar.cs
