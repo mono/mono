@@ -468,7 +468,19 @@ namespace System.Resources {
                     }
                     else {
 #endif //IA64
-                    s = new String(charPtr, 0, byteLen/2);
+                    if (!BitConverter.IsLittleEndian) {
+                        byte* bytePtr = (byte*) charPtr;
+                        var dest = new byte[byteLen];
+                        for (int i = 0; i < byteLen; i += 2) {
+                            dest[i] = *(bytePtr+i+1);
+                            dest[i+1] = *(bytePtr+i);
+                        }
+
+                        fixed(byte *pDest = dest) {
+                            s = new String((char *)pDest, 0, byteLen/2);
+                        }
+                    } else
+                        s = new String(charPtr, 0, byteLen/2);
 #if IA64
                     }
 #endif //IA64
