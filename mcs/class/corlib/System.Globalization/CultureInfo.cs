@@ -84,6 +84,16 @@ namespace System.Globalization
 		[NonSerialized]
 		private unsafe readonly void *textinfo_data;
 
+		[StructLayout (LayoutKind.Sequential)]
+		struct Data {
+			public int ansi;
+			public int ebcdic;
+			public int mac;
+			public int oem;
+			public bool right_to_left;
+			public byte list_sep;
+		}
+
 		int m_dataItem;		// MS.NET serializes this.
 #pragma warning restore 169, 649
 
@@ -423,10 +433,17 @@ namespace System.Globalization
 
 			for (int i = 1; i < infos.Length; ++i) {
 				var ci = infos [i];
-				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.number_index, ci.iso2lang);
+				var ti = ci.GetTextInfoData ();
+				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.number_index, ci.iso2lang,
+					ti.ansi, ti.oem, ti.mac, ti.ebcdic, ti.right_to_left, ((char)ti.list_sep).ToString ());
 			}
 
 			return infos;
+		}
+
+		unsafe Data GetTextInfoData ()
+		{
+			return *(Data*) textinfo_data;
 		}
 
 		public override int GetHashCode ()
@@ -624,7 +641,9 @@ namespace System.Globalization
 
 		private unsafe TextInfo CreateTextInfo (bool readOnly)
 		{
-			return new TextInfo (this, cultureID, this.textinfo_data, readOnly);
+			TextInfo tempTextInfo = new TextInfo (this.m_cultureData);
+			tempTextInfo.SetReadOnlyState (readOnly);
+			return tempTextInfo;
 		}
 
 		public CultureInfo (int culture) : this (culture, true) {}
@@ -644,8 +663,8 @@ namespace System.Globalization
 
 			if (culture == InvariantCultureId) {
 				/* Short circuit the invariant culture */
-				ConstructInvariant (read_only);
 				m_cultureData = CultureData.Invariant;
+				ConstructInvariant (read_only);
 				return;
 			}
 
@@ -657,7 +676,9 @@ namespace System.Globalization
 				throw new CultureNotFoundException ("culture", msg);
 			}
 
-			m_cultureData = CultureData.GetCultureData (m_name, m_useUserOverride, datetime_index, CalendarType, number_index, iso2lang);
+			var ti = GetTextInfoData ();
+			m_cultureData = CultureData.GetCultureData (m_name, m_useUserOverride, datetime_index, CalendarType, number_index, iso2lang,
+				ti.ansi, ti.oem, ti.mac, ti.ebcdic, ti.right_to_left, ((char)ti.list_sep).ToString ());
 		}
 
 		public CultureInfo (string name) : this (name, true) {}
@@ -677,8 +698,8 @@ namespace System.Globalization
 
 			if (name.Length == 0) {
 				/* Short circuit the invariant culture */
-				ConstructInvariant (read_only);
 				m_cultureData = CultureData.Invariant;
+				ConstructInvariant (read_only);
 				return;
 			}
 
@@ -686,7 +707,9 @@ namespace System.Globalization
 				throw CreateNotFoundException (name);
 			}
 
-			m_cultureData = CultureData.GetCultureData (m_name, useUserOverride, datetime_index, CalendarType, number_index, iso2lang);
+			var ti = GetTextInfoData ();
+			m_cultureData = CultureData.GetCultureData (m_name, useUserOverride, datetime_index, CalendarType, number_index, iso2lang,
+				ti.ansi, ti.oem, ti.mac, ti.ebcdic, ti.right_to_left, ((char)ti.list_sep).ToString ());
 		}
 
 		// This is used when creating by specific name and creating by
@@ -803,7 +826,10 @@ namespace System.Globalization
 			if (ci.IsNeutralCulture)
 				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
-			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.number_index, ci.iso2lang);
+			var ti = ci.GetTextInfoData ();
+
+			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.number_index, ci.iso2lang,
+				ti.ansi, ti.oem, ti.mac, ti.ebcdic, ti.right_to_left, ((char)ti.list_sep).ToString ());
 			return ci;
 		}
 

@@ -67,6 +67,13 @@ namespace System.Globalization
 
 		int numberIndex;
 
+		int iDefaultAnsiCodePage;
+		int iDefaultOemCodePage;
+		int iDefaultMacCodePage;
+		int iDefaultEbcdicCodePage;
+		bool isRightToLeft;
+		string sListSeparator;
+
 		private CultureData (string name)
 		{
 			this.sRealName = name;
@@ -97,6 +104,13 @@ namespace System.Globalization
 					// Store for specific data about each calendar
 		    		invariant.calendars = new CalendarData[CalendarData.MAX_CALENDARS];
 		    		invariant.calendars[0] = CalendarData.Invariant;
+
+					invariant.iDefaultAnsiCodePage = 1252;                   // default ansi code page ID (ACP)
+					invariant.iDefaultOemCodePage = 437;                    // default oem code page ID (OCP or OEM)
+					invariant.iDefaultMacCodePage = 10000;                  // default macintosh code page
+					invariant.iDefaultEbcdicCodePage = 037;                    // default EBCDIC code page
+
+					invariant.sListSeparator = ",";
 					
 					Interlocked.CompareExchange (ref s_Invariant, invariant, null);
 				}
@@ -115,7 +129,8 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, int numberIndex, string iso2lang)
+		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, int numberIndex, string iso2lang,
+			int ansiCodePage, int oemCodePage, int macCodePage, int ebcdicCodePage, bool rightToLeft, string listSeparator)
 		{
 			if (string.IsNullOrEmpty (cultureName))
 				return Invariant;
@@ -126,6 +141,12 @@ namespace System.Globalization
 			cd.calendarId = calendarId;
 			cd.numberIndex = numberIndex;
 			cd.sISO639Language = iso2lang;
+			cd.iDefaultAnsiCodePage = ansiCodePage;
+			cd.iDefaultOemCodePage = oemCodePage;
+			cd.iDefaultMacCodePage = macCodePage;
+			cd.iDefaultEbcdicCodePage = ebcdicCodePage;
+			cd.isRightToLeft = rightToLeft;
+			cd.sListSeparator = listSeparator;
 			return cd;
 		}
 
@@ -240,15 +261,57 @@ namespace System.Globalization
 			}
 		}
 
-	 internal String SCOMPAREINFO {
-		get {
-			return "";
+		internal String SCOMPAREINFO {
+			get {
+				return "";
+			}
 		}
-	}
+
+		internal String STEXTINFO {
+			get {
+				return sRealName;
+			}
+		}
 
 		internal int ILANGUAGE {
 			get {
 				return 0;
+			}
+		}
+
+		internal int IDEFAULTANSICODEPAGE {
+			get {
+				return iDefaultAnsiCodePage;
+			}
+		}
+
+		internal int IDEFAULTOEMCODEPAGE {
+			get {
+				return iDefaultOemCodePage;
+			}
+		}
+
+		internal int IDEFAULTMACCODEPAGE {
+			get {
+				return iDefaultMacCodePage;
+			}
+		}
+
+		internal int IDEFAULTEBCDICCODEPAGE {
+			get {
+				return iDefaultEbcdicCodePage;
+			}
+		}
+
+		internal bool IsRightToLeft {
+			get {
+				return isRightToLeft;
+			}
+		}
+
+		internal String SLIST {
+			get {
+				return sListSeparator;
 			}
 		}
 

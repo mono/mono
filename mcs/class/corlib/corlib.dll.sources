@@ -203,7 +203,6 @@ System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/IdnMapping.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
-System.Globalization/TextInfo.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DriveInfo.cs
@@ -1129,6 +1128,7 @@ ReferenceSources/RuntimeHandles.cs
 ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
+ReferenceSources/TextInfo.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1378,6 +1378,7 @@ ReferenceSources/Buffer.cs
 ../../../external/referencesource/mscorlib/system/globalization/textelementenumerator.cs
 ../../../external/referencesource/mscorlib/system/globalization/timespanformat.cs
 ../../../external/referencesource/mscorlib/system/globalization/timespanparse.cs
+../../../external/referencesource/mscorlib/system/globalization/textinfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/thaibuddhistcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/umalquracalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/unicodecategory.cs
