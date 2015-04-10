@@ -75,7 +75,7 @@ namespace System.Collections.Generic
                 RuntimeType u = (RuntimeType)t.GetGenericArguments()[0];
                 if (typeof(IComparable<>).MakeGenericType(u).IsAssignableFrom(u)) {
 #if MONO
-                    return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableComparer<>), t);
+                    return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableComparer<>), u);
 #else
                     return (Comparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(NullableComparer<int>), u);
 #endif
