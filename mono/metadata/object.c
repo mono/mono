@@ -6481,7 +6481,7 @@ mono_method_call_message_new (MonoMethod *method, gpointer *params, MonoMethod *
 		mono_array_setref (msg->args, i, arg);
 	}
 
-	if (cb != NULL && state != NULL) {
+	if (params != NULL && cb != NULL && state != NULL) {
 		*cb = *((MonoDelegate **)params [i]);
 		i++;
 		*state = *((MonoObject **)params [i]);
