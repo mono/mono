@@ -5461,8 +5461,11 @@ emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboolean sa
 		MonoMethod *helper = mono_marshal_get_virtual_stelemref (obj_array);
 		MonoInst *iargs [3];
 
-		if (!helper->slot)
-			mono_class_setup_vtable (obj_array);
+		if (!helper->slot) {
+			MonoError error;
+			mono_class_setup_vtable (obj_array, &error);
+			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		}
 		g_assert (helper->slot);
 
 		if (sp [0]->type != STACK_OBJ)
@@ -9031,7 +9034,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						/* Interface method */
 						int ioffset, slot;
 
-						mono_class_setup_vtable (constrained_class);
+						mono_class_setup_vtable (constrained_class, &cfg->error);
+						CHECK_CFG_ERROR;
 						CHECK_TYPELOAD (constrained_class);
 						ioffset = mono_class_interface_offset (constrained_class, cmethod->klass);
 						if (ioffset == -1)
@@ -9132,7 +9136,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 * emit_get_rgctx_method () calls mono_class_vtable () so check 
 					 * for type load errors before.
 					 */
-					mono_class_setup_vtable (cmethod->klass);
+					mono_class_setup_vtable (cmethod->klass, &cfg->error);
+					CHECK_CFG_ERROR;
 					CHECK_TYPELOAD (cmethod->klass);
 				}
 

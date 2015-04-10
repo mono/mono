@@ -319,7 +319,8 @@ cominterop_get_method_interface (MonoMethod* method)
 		g_assert (mono_error_ok (&error));
 		if (ifaces) {
 			int i;
-			mono_class_setup_vtable (method->klass);
+			mono_class_setup_vtable (method->klass, &error);
+			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 			for (i = 0; i < ifaces->len; ++i) {
 				int j, offset;
 				gboolean found = FALSE;
@@ -877,8 +878,11 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 	if ((res = mono_marshal_find_in_cache (cache, method)))
 		return res;
 
-	if (!method->klass->vtable)
-		mono_class_setup_vtable (method->klass);
+	if (!method->klass->vtable) {
+		MonoError error;
+		mono_class_setup_vtable (method->klass, &error);
+		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	}
 	
 	if (!method->klass->methods)
 		mono_class_setup_methods (method->klass);
