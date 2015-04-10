@@ -195,13 +195,19 @@ namespace System
 			return LocalTimeZone.GetDaylightChanges (year);
 		}
 
-		public override TimeSpan GetUtcOffset (DateTime time)
+		public override TimeSpan GetUtcOffset (DateTime dateTime)
 		{
-			return LocalTimeZone.GetUtcOffset (time);
+			if (dateTime.Kind == DateTimeKind.Utc)
+				return TimeSpan.Zero;
+
+			return LocalTimeZone.GetUtcOffset (dateTime);
 		}
 
 		public override bool IsDaylightSavingTime (DateTime dateTime)
 		{
+			if (dateTime.Kind == DateTimeKind.Utc)
+				return false;
+
 			return LocalTimeZone.IsDaylightSavingTime (dateTime);
 		}
 	}
