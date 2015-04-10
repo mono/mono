@@ -32,24 +32,6 @@ namespace System.Net.Sockets {
 		{
 		}
 
-		bool closii;
-
-		/*protected override void Dispose (bool disposing)
-		{
-			lock (this) {
-				if (!closii) {
-
-					closii = true;
-					int error = 0;
-					Socket.Blocking_internal (handle, false, out error);
-					//AbortRegisteredThreads ();
-					Socket.Close_internal (handle, out error);
-					//Console.Error.WriteLine ("Closed "+ handle);
-				}
-			}
-			base.Dispose (disposing);
-		}*/
-
 		protected override bool ReleaseHandle ()
 		{
 			int error = 0;
