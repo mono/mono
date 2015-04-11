@@ -3,6 +3,8 @@ create cross platform applications.  It is an open source
 implementation of Microsoft's .NET Framework based on the ECMA
 standards for C# and the Common Language Runtime.
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mono/mono?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 1. [Compilation and Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
 3. [Directory Roadmap](#directory-roadmap)
