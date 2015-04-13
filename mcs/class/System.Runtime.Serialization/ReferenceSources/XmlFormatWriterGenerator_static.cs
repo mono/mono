@@ -462,9 +462,7 @@ namespace System.Runtime.Serialization
 			{
 				bool isNull;
 				if (isNullableOfT)
-				{
 					memberValue = UnwrapNullableObject(() => memberValue, ref memberType, out isNull); //Leaves !HasValue on stack
-				}
 				else
 					isNull = memberValue == null;
 				if (isNull)
@@ -499,26 +497,28 @@ namespace System.Runtime.Serialization
 
 		void InternalSerialize (MethodInfo methodInfo, Func<object> memberValue, Type memberType, bool writeXsiType)
 		{
-			var typeHandleValue = Type.GetTypeHandle (memberValue);
-			var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (memberValue, memberType, Globals.TypeOfObject));
-			methodInfo.Invoke (ctx, new object [] {writer, memberValue != null ? memberValue () : null, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle});
+			var v = memberValue ();
+			var typeHandleValue = Type.GetTypeHandle (v);
+			var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (v, memberType, Globals.TypeOfObject));
+			methodInfo.Invoke (ctx, new object [] {writer, memberValue != null ? v : null, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle});
 		}
 
 		object UnwrapNullableObject(Func<object> memberValue, ref Type memberType, out bool isNull)// Leaves !HasValue on stack
 		{
-			object nullableUnwrappedMemberValue = null;
+			object v = memberValue ();
 			isNull = false;
 			while (memberType.IsGenericType && memberType.GetGenericTypeDefinition () == Globals.TypeOfNullable) {
 				Type innerType = memberType.GetGenericArguments () [0];
-				if ((bool) XmlFormatGeneratorStatics.GetHasValueMethod.MakeGenericMethod (innerType).Invoke (innerType, new object [0]) == null) {
+				if ((bool) XmlFormatGeneratorStatics.GetHasValueMethod.MakeGenericMethod (innerType).Invoke (null, new object [] {v}))
+					v = XmlFormatGeneratorStatics.GetNullableValueMethod.MakeGenericMethod (innerType).Invoke (null, new object [] {v});
+				else {
 					isNull = true;
-					return XmlFormatGeneratorStatics.GetDefaultValueMethod.MakeGenericMethod (memberType).Invoke (null, new object [0]);
+					v = XmlFormatGeneratorStatics.GetDefaultValueMethod.MakeGenericMethod (memberType).Invoke (null, new object [0]);
 				}
-				nullableUnwrappedMemberValue = XmlFormatGeneratorStatics.GetNullableValueMethod.MakeGenericMethod (innerType).Invoke (memberValue (), new object [0]);
 				memberType = innerType;
 			}
-						
-			return memberValue;
+			
+			return v;
 		}
 
 		bool TryWritePrimitive(Type type, Func<object> value, MemberInfo memberInfo, int? arrayItemIndex, XmlDictionaryString ns, XmlDictionaryString name, int nameIndex)

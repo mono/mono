@@ -300,7 +300,7 @@ namespace System.Runtime.Serialization
                 if (objectId == Globals.NullObjectId) {
 					
 					if (nullables != 0)
-						value = FormatterServices.GetUninitializedObject (valueType);
+						value = Activator.CreateInstance (valueType);
 					else if (type.IsValueType)
 						throw new SerializationException (SR.GetString (SR.ValueTypeCannotBeNull, DataContract.GetClrTypeFullName (type)));
 					else
