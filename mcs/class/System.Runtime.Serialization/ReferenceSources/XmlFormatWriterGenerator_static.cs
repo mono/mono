@@ -289,7 +289,7 @@ namespace System.Runtime.Serialization
 						if (isGenericDictionary || isDictionary)
 							collectionDataContract.ItemContract.WriteXmlValue (writer, currentValue, ctx);
 						else
-							WriteValue (currentValue.GetType (), currentValue, false);
+							WriteValue (elementType, currentValue, false);
 						WriteEndElement();
 					}
 				}
@@ -481,7 +481,6 @@ namespace System.Runtime.Serialization
 							((IList)Globals.TypeOfNullable.GetInterfaces()).Contains(memberType)) {
 							var unwrappedMemberValue = CodeInterpreter.ConvertValue (memberValue, memberType.GetType (), Globals.TypeOfObject);
 							memberValue = unwrappedMemberValue;
-							memberType = memberValue.GetType ();
 							isNull2 = memberValue == null;
 						}
 						if (isNull2) {
