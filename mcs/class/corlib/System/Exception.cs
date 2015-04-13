@@ -407,13 +407,7 @@ namespace System
 		// For ExceptionDispatchInfo
 		internal void RestoreExceptionDispatchInfo (System.Runtime.ExceptionServices.ExceptionDispatchInfo exceptionDispatchInfo)
 		{
-			if (captured_traces != null) {
-				Array.Resize (ref captured_traces, captured_traces.Length + 1);
-			} else {
-				captured_traces = new StackTrace [1];
-			}
-			captured_traces [captured_traces.Length - 1] = new StackTrace (this, 0, true, true);
-
+			captured_traces = (StackTrace[]) exceptionDispatchInfo.BinaryStackTraceArray;
 			trace_ips = null;
 		}
 
