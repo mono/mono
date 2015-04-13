@@ -2392,7 +2392,13 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 
 	if (ARCH_USE_IMT) {
 		/* Now that the vtable is full, we can actually fill up the IMT */
-		build_imt (class, pvt, domain, interface_offsets, extra_interfaces);
+		if (callbacks.get_imt_trampoline) {
+			/* lazy construction of the IMT entries enabled */
+			for (i = 0; i < MONO_IMT_SIZE; ++i)
+				interface_offsets [i] = callbacks.get_imt_trampoline (i);
+		} else {
+			build_imt (class, pvt, domain, interface_offsets, extra_interfaces);
+		}
 		if (extra_interfaces) {
 			g_slist_free (extra_interfaces);
 		}
