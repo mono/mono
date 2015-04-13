@@ -209,14 +209,14 @@ namespace Mono.CSharp
 				Constant c = field_type.Kind == MemberKind.MissingType ?
 					new NullConstant (InternalType.ErrorType, Location.Null) :
 					CreateConstantFromValue (field_type, fi);
-				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
+				return new ConstSpec (declaringType, definition, field_type, fi, mod | Modifiers.STATIC, c);
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
 				if (field_type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
-						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
+						return new ConstSpec (declaringType, definition, field_type, fi, mod | Modifiers.STATIC, dc);
 				}
 
 				mod |= Modifiers.READONLY;

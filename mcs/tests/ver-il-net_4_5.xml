@@ -70158,6 +70158,13 @@
       </method>
     </type>
   </test>
+  <test name="test-static-using-09.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>9</size>
+      </method>
+    </type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
