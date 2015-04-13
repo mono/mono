@@ -226,6 +226,15 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void GetAllCultures_Specific ()
+		{
+			CultureInfo [] infos = CultureInfo.GetCultures (CultureTypes.SpecificCultures);
+			foreach (CultureInfo ci in infos) {
+				Assert.IsNotNull (ci.DateTimeFormat);
+			}
+		}
+
+		[Test]
 #if !NET_4_0
 		[ExpectedException (typeof (NotSupportedException))]
 #endif

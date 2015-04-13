@@ -417,11 +417,12 @@ namespace System.Globalization
 			// The runtime returns a NULL in the first position of the array when
 			// 'neutral' is true. We fill it in with a clone of InvariantCulture
 			// since it must not be read-only
+			int i = 0;
 			if (neutral && infos.Length > 0 && infos [0] == null) {
-				infos [0] = (CultureInfo) InvariantCulture.Clone ();
+				infos [i++] = (CultureInfo) InvariantCulture.Clone ();
 			}
 
-			for (int i = 1; i < infos.Length; ++i) {
+			for (; i < infos.Length; ++i) {
 				var ci = infos [i];
 				infos [i].m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.iso2lang);
 			}
