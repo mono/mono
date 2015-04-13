@@ -2828,8 +2828,6 @@ namespace System.Net.Sockets
 			SetSocketOption_internal (safe_handle, optionLevel, optionName, null, null, optionValue, out error);
 
 			if (error != 0) {
-				if (error == (int) SocketError.InvalidArgument)
-					throw new ArgumentException ();
 				throw new SocketException (error);
 			}
 		}
