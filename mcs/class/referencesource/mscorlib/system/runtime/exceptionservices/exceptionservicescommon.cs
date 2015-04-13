@@ -42,7 +42,9 @@ namespace System.Runtime.ExceptionServices {
         {
             // Copy over the details we need to save.
             m_Exception = exception;
-#if !MONO
+#if MONO
+			m_stackTrace = new System.Diagnostics.StackTrace [1] { new System.Diagnostics.StackTrace (exception, 0, true, true) };
+#else
             m_remoteStackTrace = exception.RemoteStackTrace;
             
             // NOTE: don't be tempted to pass the fields for the out params; the containing object
