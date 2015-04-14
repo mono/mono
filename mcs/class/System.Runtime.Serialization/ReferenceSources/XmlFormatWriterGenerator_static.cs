@@ -169,6 +169,13 @@ namespace System.Runtime.Serialization
 			{
 				Type itemType = collectionContract.ItemType;
 				int i;
+
+				// This check does not exist in the original dynamic code,
+				// but there is no other way to check type mismatch.
+				// CollectionSerialization.ArrayContract() shows that it is required.
+				if (objLocal.GetType ().GetElementType () != itemType)
+					throw new InvalidCastException (string.Format ("Cannot cast array of {0} to array of {1}", objLocal.GetType ().GetElementType (), itemType));
+
 				ctx.IncrementArrayCount (writer, (Array) objLocal);
 
 				if (!TryWritePrimitiveArray(collectionContract.UnderlyingType, itemType, () => objLocal, itemName, itemNamespace))
