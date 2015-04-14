@@ -31,7 +31,7 @@ class StringPrinter:
         while i < len:
             val = (chars.cast(gdb.lookup_type ("gint64")) + (i * 2)).cast(gdb.lookup_type ("gunichar2").pointer ()).dereference ()
             if val >= 256:
-                c = "\u%X".format (val)
+                c = unichr (val)
             else:
                 c = chr (val)
             res.append (c)
