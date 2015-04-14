@@ -51,14 +51,16 @@ namespace System.Runtime.Remoting.Messaging {
 	}
 	
 	internal class CADObjRef {
-		ObjRef objref;
-		public int SourceDomain;
+		internal ObjRef objref;
+		internal int SourceDomain;
+		internal byte[] TypeInfo;
 
 		public CADObjRef (ObjRef o, int sourceDomain) {
 			objref = o;
+			TypeInfo = o.SerializeType ();
 			SourceDomain = sourceDomain;
 		}
-		
+
 		public string TypeName {
 			get { return objref.TypeInfo.TypeName; }
 		}
@@ -257,7 +259,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return new CADArgHolder(args.Count - 1);
 		}
 
-		protected object UnmarshalArgument (object arg, ArrayList args, Type argType) {
+		protected object UnmarshalArgument (object arg, ArrayList args) {
 			if (arg == null) return null;
 			
 			// Check if argument is an holder (then we know that it's a serialized argument)
@@ -268,19 +270,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 			CADObjRef objref = arg as CADObjRef;
 			if (null != objref) {
-				string typeName;
-
-				if (argType != null) {
-					typeName = string.Copy (argType.AssemblyQualifiedName);
-				} else {
-					typeName = string.Copy (objref.TypeName);
-				}
-
-				string uri = string.Copy (objref.URI);
-				int domid = objref.SourceDomain;
-				
-				ChannelInfo cinfo = new ChannelInfo (new CrossAppDomainData (domid));
-				ObjRef localRef = new ObjRef (typeName, uri, cinfo);
+				ObjRef localRef = objref.objref.DeserializeInTheCurrentDomain (objref.SourceDomain, objref.TypeInfo);
 				return RemotingServices.Unmarshal (localRef);
 			}
 			
@@ -350,12 +340,12 @@ namespace System.Runtime.Remoting.Messaging {
 			return marshalledArgs;
 		}
 
-		internal object [] UnmarshalArguments (object [] arguments, ArrayList args, Type [] sig) {
+		internal object [] UnmarshalArguments (object [] arguments, ArrayList args) {
 			object [] unmarshalledArgs = new object [arguments.Length];
 
 			int total = arguments.Length;
 			for (int i = 0; i < total; i++)
-				unmarshalledArgs [i] = UnmarshalArgument (arguments [i], args, sig [i]);
+				unmarshalledArgs [i] = UnmarshalArgument (arguments [i], args);
 
 			return unmarshalledArgs;
 		}
@@ -432,8 +422,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		internal object [] GetArgs (ArrayList args) {
-			Type [] sigs = GetSignature (method, true);
-			return UnmarshalArguments (_args, args, sigs);
+			return UnmarshalArguments (_args, args);
 		}
 
 		internal int PropertiesCount {
@@ -498,17 +487,11 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		internal object [] GetArgs (ArrayList args) {
-			return UnmarshalArguments (_args, args, _sig);
+			return UnmarshalArguments (_args, args);
 		}
 
 		internal object GetReturnValue (ArrayList args) {
-			MethodInfo minfo = method as MethodInfo;
-
-			Type returnType = null;
-			if (minfo != null)
-				returnType = minfo.ReturnType;
-
-			return UnmarshalArgument (_returnValue, args, returnType);
+			return UnmarshalArgument (_returnValue, args);
 		}
 
 		internal Exception GetException(ArrayList args) {

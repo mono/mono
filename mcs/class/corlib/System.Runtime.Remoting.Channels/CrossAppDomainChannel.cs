@@ -318,6 +318,22 @@ namespace System.Runtime.Remoting.Channels
 			return mem;
 		}
 
+		// This wrapper deserializes the objects on
+		// it's input byte array. It's safe for concurrent use
+		// while Deserialize will modify the cursor of the MemoryStream
+		//
+		// It is also the preferred way to deserialize CADMessage
+		// objects because their payload must be stored as byte arrays to avoid
+		// cross-domain references to MemoryStream objects
+		internal static object DeserializeObjectSafe(byte[] mem)
+		{
+			byte [] outstream = new byte [mem.Length];
+			Array.Copy (mem, outstream, mem.Length);
+			MemoryStream objStream = new MemoryStream (outstream);
+			var returnVal = DeserializeObject (objStream);
+			return returnVal;
+		}
+
 		internal static MemoryStream SerializeObject(object obj)
 		{
 			MemoryStream mem = new MemoryStream ();
