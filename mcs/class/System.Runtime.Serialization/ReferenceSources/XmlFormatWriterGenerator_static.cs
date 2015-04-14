@@ -195,6 +195,12 @@ namespace System.Runtime.Serialization
 			}
 			else
 			{
+				// This check does not exist in the original dynamic code,
+				// but there is no other way to check type mismatch.
+				// CollectionSerialization.ArrayContract() shows that it is required.
+				if (!collectionContract.UnderlyingType.IsAssignableFrom (objLocal.GetType ()))
+					throw new InvalidCastException (string.Format ("Cannot cast {0} to {1}", objLocal.GetType (), collectionContract.UnderlyingType));
+				
 				MethodInfo incrementCollectionCountMethod = null;
 				switch (collectionContract.Kind)
 				{
