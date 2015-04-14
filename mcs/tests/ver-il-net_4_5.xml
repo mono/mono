@@ -70158,10 +70158,47 @@
       </method>
     </type>
   </test>
+  <test name="test-static-using-08.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+N">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>4</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-static-using-09.cs">
     <type name="Program">
       <method name="Void Main()" attrs="145">
         <size>9</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-static-using-10.cs">
+    <type name="A.T">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.T+N">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B.Program">
+      <method name="Void Main()" attrs="145">
+        <size>19</size>
       </method>
     </type>
   </test>

@@ -1147,10 +1147,7 @@ namespace Mono.CSharp {
 				var better = Namespace.IsImportedTypeOverride (Module, texpr_match.Type, texpr_fne.Type);
 				if (better == null) {
 					if (mode == LookupMode.Normal) {
-						Compiler.Report.SymbolRelatedToPreviousError (texpr_match.Type);
-						Compiler.Report.SymbolRelatedToPreviousError (texpr_fne.Type);
-						Compiler.Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
-							name, texpr_match.GetSignatureForError (), texpr_fne.GetSignatureForError ());
+						Error_AmbiguousReference (name, texpr_match, texpr_fne, loc);
 					}
 
 					return match;
@@ -1160,7 +1157,54 @@ namespace Mono.CSharp {
 					match = texpr_fne;
 			}
 
+			if (types_using_table != null) {
+				foreach (var using_type in types_using_table) {
+					var members = MemberCache.FindMembers (using_type, name, true);
+					if (members == null)
+						continue;
+
+					foreach (var member in members) {
+						if (arity > 0 && member.Arity != arity)
+							continue;
+						
+						if ((member.Kind & MemberKind.NestedMask) != 0) {
+							// non-static nested type is included with using static
+						} else {
+							if ((member.Modifiers & Modifiers.STATIC) == 0)
+								continue;
+
+							if ((member.Modifiers & Modifiers.METHOD_EXTENSION) != 0)
+								continue;
+
+							if (mode == LookupMode.Normal)
+								throw new NotImplementedException ();
+							
+							return null;
+						}
+
+						fne = new TypeExpression ((TypeSpec) member, loc);
+						if (match == null) {
+							match = fne;
+							continue;
+						}
+
+						if (mode == LookupMode.Normal) {
+							Error_AmbiguousReference (name, match, fne, loc);
+						}
+					}
+				}
+			}
+
 			return match;
+		}
+
+		void Error_AmbiguousReference (string name, FullNamedExpression a, FullNamedExpression b, Location loc)
+		{
+			var report = Compiler.Report;
+			report.SymbolRelatedToPreviousError (a.Type);
+			report.SymbolRelatedToPreviousError (b.Type);
+			report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
+				name, a.GetSignatureForError (), b.GetSignatureForError ());
 		}
 
 		public static Expression LookupStaticUsings (IMemberContext mc, string name, int arity, Location loc)
@@ -1175,26 +1219,27 @@ namespace Mono.CSharp {
 				if (nc.types_using_table != null) {
 					foreach (var using_type in nc.types_using_table) {
 						var members = MemberCache.FindMembers (using_type, name, true);
-						if (members != null) {
-							foreach (var member in members) {
-								if ((member.Kind & MemberKind.NestedMask) != 0) {
-									// non-static nested type is included with using static
-								} else {
-									if ((member.Modifiers & Modifiers.STATIC) == 0)
-										continue;
-
-									if ((member.Modifiers & Modifiers.METHOD_EXTENSION) != 0)
-										continue;
-								}
-
-								if (arity > 0 && member.Arity != arity)
+						if (members == null)
+							continue;
+						
+						foreach (var member in members) {
+							if ((member.Kind & MemberKind.NestedMask) != 0) {
+								// non-static nested type is included with using static
+							} else {
+								if ((member.Modifiers & Modifiers.STATIC) == 0)
 									continue;
 
-								if (candidates == null)
-									candidates = new List<MemberSpec> ();
-
-								candidates.Add (member);
+								if ((member.Modifiers & Modifiers.METHOD_EXTENSION) != 0)
+									continue;
 							}
+
+							if (arity > 0 && member.Arity != arity)
+								continue;
+
+							if (candidates == null)
+								candidates = new List<MemberSpec> ();
+
+							candidates.Add (member);
 						}
 					}
 				}
