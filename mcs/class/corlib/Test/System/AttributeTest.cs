@@ -828,6 +828,22 @@ namespace MonoTests.System
 			Assert.IsFalse (Attribute.IsDefined (typeof (AttributeTest), typeof(SerializableAttribute), true), "#2");
 		}
 
+		[YourCustomAttribute (0)]
+		[Serializable]
+		[MyCustomAttribute ("")]
+		class ClassForOrderIsImportant
+		{
+		}
+
+		[Test]
+		public void OrderIsImportant ()
+		{
+			var custom = typeof (ClassForOrderIsImportant).GetCustomAttributes (false);
+			Assert.IsTrue (custom [0].GetType () == typeof (YourCustomAttribute));
+			Assert.IsTrue (custom [1].GetType () == typeof (MyCustomAttribute));
+			Assert.IsTrue (custom [2].GetType () == typeof (SerializableAttribute));
+		}
+
 #if !MONOTOUCH
 		[Test]
 		public void GetCustomAttributeOnNewSreTypes ()
