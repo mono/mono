@@ -244,7 +244,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (ret, Is.Not.Null, "#2");
 			
 			Assert.That (ret.ArrayRank, Is.EqualTo (0), "#3");
-			Assert.That (ret.BaseType, Is.EqualTo ("TestWCF.Model.MyCollectionOfdouble"), "#4");
+			Assert.That (ret.BaseType, Is.EqualTo ("TestWCF.Model1.MyCollectionOfdouble"), "#4");
 			Assert.That (ret.TypeArguments.Count, Is.EqualTo (0), "#5");
 		}
 
