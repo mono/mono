@@ -514,6 +514,9 @@ namespace System.Reflection {
 				// ignore
 			}
 
+			if (String.IsNullOrEmpty (Location))
+				return null;
+
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
