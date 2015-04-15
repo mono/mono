@@ -1254,7 +1254,6 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeformatinfoscanner.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimeparse.cs
 ../../../external/referencesource/mscorlib/system/globalization/datetimestyles.cs
-../../../external/referencesource/mscorlib/system/globalization/daylighttime.cs
 ../../../external/referencesource/mscorlib/system/globalization/digitshapes.cs
 ../../../external/referencesource/mscorlib/system/globalization/eastasianlunisolarcalendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/globalizationassembly.cs
