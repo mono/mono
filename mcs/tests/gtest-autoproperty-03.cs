@@ -17,9 +17,9 @@ public class Test
 		object [] field_atts = fields[0].GetCustomAttributes (false);
 		if (field_atts.Length != 2)
 			return 2;
-		if (field_atts[0].GetType() != typeof (DebuggerBrowsableAttribute))
+		if (field_atts[1].GetType() != typeof (DebuggerBrowsableAttribute))
 			return 3;
-		if (field_atts[1].GetType() != typeof (CompilerGeneratedAttribute))
+		if (field_atts[0].GetType() != typeof (CompilerGeneratedAttribute))
 			return 4;
 			
 		if (fields [0].Name != "<Foo>k__BackingField")
