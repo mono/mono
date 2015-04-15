@@ -910,4 +910,17 @@ public const string Incorrect_base_type = @"The specified type, '{0}' is not der
 public const string Only_specify_one = @"'switchValue' and 'switchName' cannot both be specified on source '{0}'.";
 public const string Reference_listener_cant_have_properties = @"A listener with no type name specified references the sharedListeners section and cannot have any attributes other than 'Name'.  Listener: '{0}'.";
 public const string Reference_to_nonexistent_listener = @"Listener '{0}' does not exist in the sharedListeners section.";
+
+public const string Argument_NullComment = @"The 'Comment' property of the CodeCommentStatement '{0}' cannot be null.";
+public const string CodeGenOutputWriter = @"The output writer for code generation and the writer supplied don't match and cannot be used. This is generally caused by a bad implementation of a CodeGenerator derived class.";
+public const string CodeGenReentrance = @"This code generation API cannot be called while the generator is being used to generate something else.";
+public const string InvalidElementType = @"Element type {0} is not supported.";
+public const string InvalidIdentifier = @"Identifier '{0}' is not valid.";
+public const string InvalidPrimitiveType = @"Invalid Primitive Type: {0}. Consider using CodeObjectCreateExpression.";
+public const string ArityDoesntMatch = @"The total arity specified in '{0}' does not match the number of TypeArguments supplied.  There were '{1}' TypeArguments supplied.
+";
+public const string InvalidPathCharsInChecksum = @"The CodeChecksumPragma file name '{0}' contains invalid path characters.";
+public const string InvalidLanguageIdentifier = @"The identifier:""{0}"" on the property:""{1}"" of type:""{2}"" is not a valid language-independent identifier name. Check to see if CodeGenerator.IsValidLanguageIndependentIdentifier allows the identifier name.";
+public const string InvalidTypeName = @"The type name:""{0}"" on the property:""{1}"" of type:""{2}"" is not a valid language-independent type name.";
+public const string InvalidRegion = "The region directive '{0}' contains invalid characters.  RegionText cannot contain any new line characters.";
 }

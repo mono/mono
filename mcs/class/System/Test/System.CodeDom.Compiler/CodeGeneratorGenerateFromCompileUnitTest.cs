@@ -39,6 +39,7 @@ namespace MonoTests.System.CodeDom.Compiler
 	[TestFixture]
 	public class CodeGeneratorGenerateFromCompileUnitTest {
 		[Test]
+		[Ignore ("This test is wrong; on .NET, ATTRIBUTE is not written and this attributePosition is always < 0.")]
 		public void When_Having_AssemblyAttribute_And_Using_Namespace_It_Should_Generate_Namespace_First_And_Attribute_Afterwards () {
 			ICodeGenerator generator = new SampleCodeGenerator ();
 			var compileUnit = ACompileUnitWithAttributeAndNamespace ();
