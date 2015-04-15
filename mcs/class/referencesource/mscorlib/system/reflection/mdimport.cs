@@ -168,7 +168,7 @@ namespace System.Reflection
         BaseType             = 0x72000000, 
         Invalid              = 0x7FFFFFFF, 
     }
-
+#if !MONO
     [Serializable]
     internal struct ConstArray
     {
@@ -756,6 +756,7 @@ namespace System.Reflection
             return String.Format(CultureInfo.CurrentCulture, "MetadataException HResult = {0:x}.", m_hr);
         }
     }
+#endif
 }
 
 

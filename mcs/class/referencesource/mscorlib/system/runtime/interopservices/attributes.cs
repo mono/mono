@@ -1,3 +1,6 @@
+#if MONO_COM
+#define FEATURE_COMINTEROP
+#endif
 // ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -538,10 +541,17 @@ namespace System.Runtime.InteropServices{
 #endif //FEATURE_COMINTEROP
     }
 
+#if !MONO
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.ReturnValue, Inherited = false)]
     [System.Runtime.InteropServices.ComVisible(true)]
     public unsafe sealed class MarshalAsAttribute : Attribute
     {
+#if MONO
+        internal MarshalAsAttribute Copy ()
+        {
+            return (MarshalAsAttribute)this.MemberwiseClone ();
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated
         internal static Attribute GetCustomAttribute(RuntimeParameterInfo parameter)
         {
@@ -619,7 +629,7 @@ namespace System.Runtime.InteropServices{
             MarshalTypeRef = marshalTypeRef;
             MarshalCookie = marshalCookie;
         }
-
+#endif
         internal UnmanagedType _val;
         public MarshalAsAttribute(UnmanagedType unmanagedType)
         {
@@ -653,7 +663,7 @@ namespace System.Runtime.InteropServices{
         public Type MarshalTypeRef;           // Type of marshaler class
         public String MarshalCookie;            // cookie to pass to marshaler
     }
-
+#endif
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = false)]
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class ComImportAttribute : Attribute
@@ -799,12 +809,18 @@ namespace System.Runtime.InteropServices{
             if ((method.Attributes & MethodAttributes.PinvokeImpl) == 0)
                 return null;
 
+#if !MONO
             MetadataImport scope = ModuleHandle.GetMetadataImport(method.Module.ModuleHandle.GetRuntimeModule());
+#endif
             string entryPoint, dllName = null;
             int token = method.MetadataToken;
             PInvokeAttributes flags = 0;
 
+#if MONO
+            ((MonoMethod)method).GetPInvoke(out flags, out entryPoint, out dllName);
+#else
             scope.GetPInvokeMap(token, out flags, out entryPoint, out dllName);
+#endif
 
             CharSet charSet = CharSet.None;
 
@@ -891,7 +907,7 @@ namespace System.Runtime.InteropServices{
         private const int DEFAULT_PACKING_SIZE = 8;
 
         [System.Security.SecurityCritical]  // auto-generated
-        internal static Attribute GetCustomAttribute(RuntimeType type)
+        internal static StructLayoutAttribute GetCustomAttribute(RuntimeType type)
         {
             if (!IsDefined(type))
                 return null;
@@ -914,7 +930,12 @@ namespace System.Runtime.InteropServices{
                 case TypeAttributes.UnicodeClass: charSet = CharSet.Unicode; break;
                 default: Contract.Assume(false); break;
             }
+
+#if MONO
+            type.GetPacking (out pack, out size);
+#else
             type.GetRuntimeModule().MetadataImport.GetClassLayout(type.MetadataToken, out pack, out size);
+#endif
 
             // Metadata parameter checking should not have allowed 0 for packing size.
             // The runtime later converts a packing size of 0 to 8 so do the same here
@@ -967,7 +988,11 @@ namespace System.Runtime.InteropServices{
             int fieldOffset;
 
             if (field.DeclaringType != null &&
+#if MONO
+                (fieldOffset = field.GetFieldOffset ()) >= 0)
+#else
                 field.GetRuntimeModule().MetadataImport.GetFieldOffset(field.DeclaringType.MetadataToken, field.MetadataToken, out fieldOffset))
+#endif
                 return new FieldOffsetAttribute(fieldOffset);
 
             return null;
