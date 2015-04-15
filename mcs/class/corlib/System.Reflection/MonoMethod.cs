@@ -382,7 +382,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern DllImportAttribute GetDllImportAttribute (IntPtr mhandle);
+		internal extern void GetPInvoke (out PInvokeAttributes flags, out string entryPoint, out string dllName);
 
 		internal object[] GetPseudoCustomAttributes ()
 		{
@@ -404,10 +404,7 @@ namespace System.Reflection {
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
-				DllImportAttribute attr = GetDllImportAttribute (mhandle);
-				if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
-					attr.PreserveSig = true;
-				attrs [count ++] = attr;
+				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
 			}
 
 			return attrs;

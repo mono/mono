@@ -358,7 +358,7 @@ namespace System
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
-				return GetStructLayoutAttribute ();
+				return StructLayoutAttribute.GetCustomAttribute (this);
 			}
 		}
 
@@ -453,39 +453,8 @@ namespace System
 			}
 		}
 
-		StructLayoutAttribute GetStructLayoutAttribute ()
-		{
-			LayoutKind kind;
-
-			if (IsLayoutSequential)
-				kind = LayoutKind.Sequential;
-			else if (IsExplicitLayout)
-				kind = LayoutKind.Explicit;
-			else
-				kind = LayoutKind.Auto;
-
-			StructLayoutAttribute attr = new StructLayoutAttribute (kind);
-
-			if (IsUnicodeClass)
-				attr.CharSet = CharSet.Unicode;
-			else if (IsAnsiClass)
-				attr.CharSet = CharSet.Ansi;
-			else
-				attr.CharSet = CharSet.Auto;
-
-			if (kind != LayoutKind.Auto) {
-				int packing;
-				GetPacking (out packing, out attr.Size);
-				// 0 means no data provided, we end up with default value
-				if (packing != 0)
-					attr.Pack = packing;
-			}
-
-			return attr;
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern void GetPacking (out int packing, out int size);
+		internal extern void GetPacking (out int packing, out int size);
 
 #if MONO_COM
 		private static Dictionary<Guid, Type> clsid_types;
