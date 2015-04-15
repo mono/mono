@@ -2101,6 +2101,7 @@ fail:
 ICALL_EXPORT void
 ves_icall_Type_GetInterfaceMapData (MonoReflectionType *type, MonoReflectionType *iface, MonoArray **targets, MonoArray **methods)
 {
+	MonoError error;
 	gboolean variance_used;
 	MonoClass *class = mono_class_from_mono_type (type->type);
 	MonoClass *iclass = mono_class_from_mono_type (iface->type);
@@ -2113,7 +2114,8 @@ ves_icall_Type_GetInterfaceMapData (MonoReflectionType *type, MonoReflectionType
 	mono_class_init_or_throw (class);
 	mono_class_init_or_throw (iclass);
 
-	mono_class_setup_vtable (class);
+	mono_class_setup_vtable (class, &error);
+	mono_error_raise_exception (&error);
 
 	ioffset = mono_class_interface_offset_with_variance (class, iclass, &variance_used);
 	if (ioffset == -1)
@@ -3327,6 +3329,7 @@ method_nonpublic (MonoMethod* method, gboolean start_klass)
 GPtrArray*
 mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bflags, gboolean ignore_case, gboolean allow_ctors, MonoException **ex)
 {
+	MonoError error;
 	GPtrArray *array;
 	MonoClass *startklass;
 	MonoMethod *method;
@@ -3343,6 +3346,7 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 
 	if (name != NULL)
 		compare_func = (ignore_case) ? mono_utf8_strcasecmp : strcmp;
+	mono_error_init (&error); /* makes the fail path easy to handle */
 
 	/* An optimization for calls made from Delegate:CreateDelegate () */
 	if (klass->delegate && name && !strcmp (name, "Invoke") && (bflags == (BFLAGS_Public | BFLAGS_Static | BFLAGS_Instance))) {
@@ -3355,8 +3359,8 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 	}
 
 	mono_class_setup_methods (klass);
-	mono_class_setup_vtable (klass);
-	if (klass->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ())
+
+	if (!mono_class_setup_vtable (klass, &error) || mono_loader_get_last_error ())
 		goto loader_error;
 
 	if (is_generic_parameter (&klass->byval_arg))
@@ -3371,8 +3375,8 @@ mono_class_get_methods_by_name (MonoClass *klass, const char *name, guint32 bfla
 	}
 handle_parent:
 	mono_class_setup_methods (klass);
-	mono_class_setup_vtable (klass);
-	if (klass->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ())
+
+	if (mono_class_setup_vtable (klass, &error) || mono_loader_get_last_error ())
 		goto loader_error;		
 
 	iter = NULL;
@@ -3429,7 +3433,9 @@ loader_error:
 		g_free (method_slots);
 	g_ptr_array_free (array, TRUE);
 
-	if (klass->exception_type != MONO_EXCEPTION_NONE) {
+	if (!mono_error_ok (&error)) {
+		*ex = mono_error_convert_to_exception (&error);
+	} else if (klass->exception_type != MONO_EXCEPTION_NONE) {
 		*ex = mono_class_get_exception_for_failure (klass);
 	} else {
 		*ex = mono_loader_error_prepare_exception (mono_loader_get_last_error ());
@@ -3591,6 +3597,7 @@ property_accessor_nonpublic (MonoMethod* accessor, gboolean start_klass)
 ICALL_EXPORT MonoArray*
 ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, guint32 bflags, MonoBoolean ignore_case, MonoReflectionType *reftype)
 {
+	MonoError error;
 	MonoException *ex;
 	MonoDomain *domain; 
 	static MonoClass *System_Reflection_PropertyInfo;
@@ -3607,6 +3614,7 @@ ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, 
 	MonoPtrArray tmp_array;
 
 	mono_ptr_array_init (tmp_array, 8); /*This the average for ASP.NET types*/
+	mono_error_init (&error);
 
 	if (!System_Reflection_PropertyInfo)
 		System_Reflection_PropertyInfo = mono_class_from_name (
@@ -3625,8 +3633,8 @@ ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, 
 	properties = g_hash_table_new (property_hash, (GEqualFunc)property_equal);
 handle_parent:
 	mono_class_setup_methods (klass);
-	mono_class_setup_vtable (klass);
-	if (klass->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ())
+
+	if (!mono_class_setup_vtable (klass, &error) || mono_loader_get_last_error ())
 		goto loader_error;
 
 	iter = NULL;
@@ -3698,7 +3706,9 @@ loader_error:
 		g_free (propname);
 	mono_ptr_array_destroy (tmp_array);
 
-	if (klass->exception_type != MONO_EXCEPTION_NONE) {
+	if (!mono_error_ok (&error)) {
+		ex = mono_error_convert_to_exception (&error);
+	} else if (klass->exception_type != MONO_EXCEPTION_NONE) {
 		ex = mono_class_get_exception_for_failure (klass);
 	} else {
 		ex = mono_loader_error_prepare_exception (mono_loader_get_last_error ());
@@ -3726,6 +3736,7 @@ event_equal (MonoEvent *event1, MonoEvent *event2)
 ICALL_EXPORT MonoArray*
 ves_icall_Type_GetEvents_internal (MonoReflectionType *type, MonoString *name, guint32 bflags, MonoReflectionType *reftype)
 {
+	MonoError error;
 	MonoException *ex;
 	MonoDomain *domain; 
 	static MonoClass *System_Reflection_EventInfo;
@@ -3741,6 +3752,7 @@ ves_icall_Type_GetEvents_internal (MonoReflectionType *type, MonoString *name, g
 	MonoPtrArray tmp_array;
 
 	mono_ptr_array_init (tmp_array, 4);
+	mono_error_init (&error);
 
 	if (!System_Reflection_EventInfo)
 		System_Reflection_EventInfo = mono_class_from_name (
@@ -3754,8 +3766,8 @@ ves_icall_Type_GetEvents_internal (MonoReflectionType *type, MonoString *name, g
 	events = g_hash_table_new (event_hash, (GEqualFunc)event_equal);
 handle_parent:
 	mono_class_setup_methods (klass);
-	mono_class_setup_vtable (klass);
-	if (klass->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ())
+
+	if (!mono_class_setup_vtable (klass, &error) || mono_loader_get_last_error ())
 		goto loader_error;
 
 	iter = NULL;
@@ -3833,7 +3845,9 @@ handle_parent:
 
 loader_error:
 	mono_ptr_array_destroy (tmp_array);
-	if (klass->exception_type != MONO_EXCEPTION_NONE) {
+	if (!mono_error_ok (&error)) {
+		ex = mono_error_convert_to_exception (&error);
+	} else if (klass->exception_type != MONO_EXCEPTION_NONE) {
 		ex = mono_class_get_exception_for_failure (klass);
 	} else {
 		ex = mono_loader_error_prepare_exception (mono_loader_get_last_error ());
@@ -4010,9 +4024,12 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 	if (type->type == MONO_TYPE_CLASS) {
 		MonoClass *klass = mono_type_get_class (type);
 
-		if (mono_security_enabled () && !klass->exception_type)
+		if (mono_security_enabled () && !klass->exception_type) {
+			MonoError error;
 			/* Some security problems are detected during generic vtable construction */
-			mono_class_setup_vtable (klass);
+			mono_class_setup_vtable (klass, &error);
+			mono_error_cleanup (&error); /* FIXME don't swallow this error */
+		}
 
 		/* need to report exceptions ? */
 		if (throwOnError && klass->exception_type) {
@@ -6493,6 +6510,7 @@ ICALL_EXPORT MonoReflectionMethod *
 ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 	MonoReflectionType *rtype, MonoReflectionMethod *rmethod)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoMethod *method;
 	MonoMethod **vtable;
@@ -6518,7 +6536,10 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 			return NULL;
 	}
 
-	mono_class_setup_vtable (klass);
+	if (!mono_class_setup_vtable (klass, &error)) {
+		mono_error_cleanup (&error); /* FIXME don't swallow this error */
+		return NULL;
+	}
 	vtable = klass->vtable;
 
 	if (method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
@@ -6810,6 +6831,7 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionType *type)
 ICALL_EXPORT MonoReflectionMethod *
 ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definition)
 {
+	MonoError error;
 	MonoClass *klass, *parent;
 	MonoMethod *method = m->method;
 	MonoMethod *result = NULL;
@@ -6834,7 +6856,11 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 	if (definition) {
 		/* At the end of the loop, klass points to the eldest class that has this virtual function slot. */
 		for (parent = klass->parent; parent != NULL; parent = parent->parent) {
-			mono_class_setup_vtable (parent);
+			MonoError error;
+			if (!mono_class_setup_vtable (parent, &error)) {
+				mono_error_cleanup (&error); /* FIXME don't swallow this error */
+				break;
+			}
 			if (parent->vtable_size <= slot)
 				break;
 			klass = parent;
@@ -6854,7 +6880,8 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethod *m, gboolean definiti
 	if (slot >= klass->vtable_size)
 		return m;
 
-	mono_class_setup_vtable (klass);
+	if (!mono_class_setup_vtable (klass, &error))
+		mono_error_raise_exception (&error); //FIXME is this the right error path?
 
 	result = klass->vtable [slot];
 	if (result == NULL) {

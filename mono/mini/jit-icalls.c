@@ -1209,8 +1209,10 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		/* Object.GetType () */
 		m = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
 	} else {
+		MonoError error;
 		/* Lookup the virtual method */
-		mono_class_setup_vtable (klass);
+		mono_class_setup_vtable (klass, &error);
+		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 		g_assert (klass->vtable);
 		vt_slot = mono_method_get_vtable_slot (cmethod);
 		if (cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {

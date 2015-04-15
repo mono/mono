@@ -8319,6 +8319,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_GET_INTERFACE_MAP: {
+		MonoError error;
 		int tindex, ioffset;
 		gboolean variance_used;
 		MonoClass *iclass;
@@ -8327,7 +8328,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoMethod *method;
 
 		len = decode_int (p, &p, end);
-		mono_class_setup_vtable (klass);
+		mono_class_setup_vtable (klass, &error);
+		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 
 		for (tindex = 0; tindex < len; ++tindex) {
 			iclass = decode_typeid (p, &p, end, NULL, &err);
