@@ -101,7 +101,7 @@ namespace Monodoc.Generators.Html
 		{
 			if (ecma_transform == null) {
 				ecma_transform = new XslCompiledTransform ();
-				var assembly = System.Reflection.Assembly.GetCallingAssembly ();
+				var assembly = System.Reflection.Assembly.GetAssembly (typeof (Ecma2Html));
 			
 				Stream stream = assembly.GetManifestResourceStream ("mono-ecma-css.xsl");
 				XmlReader xml_reader = new XmlTextReader (stream);
