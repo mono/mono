@@ -508,7 +508,12 @@ namespace MonoTests.System.Reflection
 					Assembly assembly = Assembly.Load (buffer);
 
 					var mm = assembly.GetType ("Program").GetMethod ("TestCall");
-					mm.Invoke (null, null);
+					try {
+						mm.Invoke (null, null);
+						Assert.Fail ();
+					} catch (TargetInvocationException e) {
+						Assert.IsTrue (e.InnerException is MissingManifestResourceException);
+					}
 
 					fs.Close ();
 				}
