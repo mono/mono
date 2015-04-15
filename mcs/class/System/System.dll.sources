@@ -27,7 +27,6 @@ Microsoft.Win32/UserPreferenceChangedEventHandler.cs
 Microsoft.Win32/UserPreferenceChangingEventArgs.cs
 Microsoft.Win32/UserPreferenceChangingEventHandler.cs
 Mono.Http/NtlmClient.cs
-System.CodeDom/ICodeDomVisitor.cs
 System.CodeDom.Compiler/CodeCompiler.cs
 System.CodeDom.Compiler/CodeDomConfigurationHandler.cs
 System.CodeDom.Compiler/CodeDomProvider.cs
