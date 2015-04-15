@@ -42,6 +42,7 @@ using System.Threading;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Linq;
+using System.Resources;
 
 namespace MonoTests.System.Reflection
 {
@@ -457,6 +458,58 @@ namespace MonoTests.System.Reflection
 					fs.Read (buffer, 0, buffer.Length);
 					Assembly assembly = Assembly.Load (buffer);
 					Assert.AreEqual (string.Empty, assembly.Location);
+					fs.Close ();
+				}
+			} finally {
+				File.Delete (assemblyFileName);
+			}
+		}
+
+		[Test]
+		public void SateliteAssemblyForInMemoryAssembly ()
+		{
+			string assemblyFileName = Path.Combine (
+				Path.GetTempPath (), "AssemblyLocation1.dll");
+
+			try {
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "AssemblyLocation1";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+						AssemblyBuilderAccess.Save,
+						Path.GetTempPath ());
+
+				ModuleBuilder moduleBuilder = ab.DefineDynamicModule (assemblyName.Name, assemblyName.Name + ".dll");
+				TypeBuilder typeBuilder = moduleBuilder.DefineType ("Program", TypeAttributes.Public);
+
+				MethodBuilder methodBuilder = typeBuilder.DefineMethod ("TestCall", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+				ILGenerator gen = methodBuilder.GetILGenerator ();
+
+				//
+				// 	var resourceManager = new ResourceManager (typeof (Program));
+				//	resourceManager.GetString ("test");
+				//
+				gen.Emit (OpCodes.Ldtoken, typeBuilder);
+				gen.Emit (OpCodes.Call, typeof(Type).GetMethod ("GetTypeFromHandle"));
+				gen.Emit (OpCodes.Newobj, typeof(ResourceManager).GetConstructor (new Type[] { typeof(Type) }));
+				gen.Emit (OpCodes.Ldstr, "test");
+				gen.Emit (OpCodes.Callvirt, typeof(ResourceManager).GetMethod ("GetString", new Type[] { typeof(string) }));
+				gen.Emit (OpCodes.Pop);
+				gen.Emit (OpCodes.Ret);
+
+				typeBuilder.CreateType ();
+
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				using (FileStream fs = File.OpenRead (assemblyFileName)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					Assembly assembly = Assembly.Load (buffer);
+
+					var mm = assembly.GetType ("Program").GetMethod ("TestCall");
+					mm.Invoke (null, null);
+
 					fs.Close ();
 				}
 			} finally {
