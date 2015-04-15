@@ -137,9 +137,7 @@ namespace MonoTests.System.Runtime.Serialization
 			MemoryStream sw = new MemoryStream ();
 			ser.WriteObject (sw, 1);
 			string expected = "<int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">1</int>";
-			byte[] buf = sw.ToArray ();
-			// Skip the utf8 bom
-			Assert.AreEqual (expected, Encoding.UTF8.GetString (buf, 3, buf.Length - 3));
+			Assert.AreEqual (expected, Encoding.UTF8.GetString (sw.ToArray ()));
 		}
 
 		[Test]
