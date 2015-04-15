@@ -3514,15 +3514,15 @@ namespace MonoTests.System.XmlSerialization
 	[XmlType]
 	public class ContainerTypeForTest
 	{
-		[XmlElement ("XmlFirstType", typeof (FirstDerivedTypeForTest))]
-		[XmlElement ("XmlIntermediateType", typeof (IntermediateTypeForTest))]
 		[XmlElement ("XmlSecondType", typeof (SecondDerivedTypeForTest))]
+		[XmlElement ("XmlIntermediateType", typeof (IntermediateTypeForTest))]
+		[XmlElement ("XmlFirstType", typeof (FirstDerivedTypeForTest))]
 		public AbstractTypeForTest MemberToUseInclude { get; set; }
 	}
 
-	[XmlInclude (typeof (FirstDerivedTypeForTest))]
-	[XmlInclude (typeof (IntermediateTypeForTest))]
 	[XmlInclude (typeof (SecondDerivedTypeForTest))]
+	[XmlInclude (typeof (IntermediateTypeForTest))]
+	[XmlInclude (typeof (FirstDerivedTypeForTest))]
 	public abstract class AbstractTypeForTest
 	{
 	}
