@@ -505,7 +505,14 @@ namespace System.Runtime.Serialization.Json
 			var v = memberValue ();
 			var typeHandleValue = Type.GetTypeHandle (v);
 			var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (v, memberType, Globals.TypeOfObject));
-			methodInfo.Invoke (context, new object [] {writer, memberValue != null ? v : null, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle});
+			try {
+				methodInfo.Invoke (context, new object [] {writer, memberValue != null ? v : null, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle});
+			} catch (TargetInvocationException ex) {
+				if (ex.InnerException != null)
+					throw ex.InnerException;
+				else
+					throw;
+			}
 		}
 
 		object UnwrapNullableObject(Func<object> memberValue, ref Type memberType, out bool isNull)// Leaves !HasValue on stack

@@ -524,8 +524,6 @@ namespace System.Runtime.Serialization.Json
 			}
 		}
 
-			// CONTINUE FROM HERE
-
 		void ReadGetOnlyCollection (CollectionDataContract collectionContract)
 		{
 			Type type = collectionContract.UnderlyingType;
@@ -629,7 +627,8 @@ namespace System.Runtime.Serialization.Json
 		{
 			if (collectionContract.Kind == CollectionKind.Dictionary || collectionContract.Kind == CollectionKind.GenericDictionary) {
 				context.ResetAttributes ();
-				var v = DataContractJsonSerializer.ReadJsonValue (XmlObjectSerializerWriteContextComplexJson.GetRevisedItemContract (collectionContract.ItemContract), xmlReader, context);
+				var revisedContract = XmlObjectSerializerWriteContextComplexJson.GetRevisedItemContract (collectionContract.ItemContract);
+				var v = DataContractJsonSerializer.ReadJsonValue (revisedContract, xmlReader, context);
 				return CodeInterpreter.ConvertValue (v, Globals.TypeOfObject, itemType);
 			}
 			else
@@ -647,7 +646,14 @@ namespace System.Runtime.Serialization.Json
 				object pkey = CodeInterpreter.GetMember (keyMember.MemberInfo, value);
 				object pvalue = CodeInterpreter.GetMember (valueMember.MemberInfo, value);
 				
-				collectionContract.AddMethod.Invoke (collection, new object [] {pkey, pvalue});
+				try {
+					collectionContract.AddMethod.Invoke (collection, new object [] {pkey, pvalue});
+				} catch (TargetInvocationException ex) {
+					if (ex.InnerException != null)
+						throw ex.InnerException;
+					else
+						throw;
+				}
 			}
 			else
 				collectionContract.AddMethod.Invoke (collection, new object [] {value});
