@@ -20,6 +20,26 @@ revocation lists (CRL) or certificate trust lists (CTL) to/from a
 certificate store. Certificate stores are used to build and validate 
 certificate chains for Authenticode(r) code signing validation and SSL 
 server certificates.
+.SH STORES
+The 
+.I store
+represents the certificate store to use.   It can be one of the
+following:
+.TP
+.I "My"
+This is the personal certificate store.
+.TP
+.I "AddressBook"
+This is the store for other people.
+.TP
+.I "CA"
+This is a store for intermediate certificate authorities.
+.TP
+.I "Trust"
+This is for trusted roots.
+.TP
+.I "Disallowed"
+This is for untrusted roots
 .SH ACTIONS
 .TP
 .I "-list"
