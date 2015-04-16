@@ -3,6 +3,9 @@
 // Eberhard Beilharz (eb1@sil.org)
 //
 // Copyright (C) 2012 SIL International
+
+#if FEATURE_COMINTEROP
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Security;
@@ -61,3 +64,5 @@ namespace System.Runtime.InteropServices
 		#endregion
 	}
 }
+
+#endif

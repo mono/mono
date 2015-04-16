@@ -408,10 +408,14 @@ namespace System.Runtime.InteropServices
 #if !FULL_AOT_RUNTIME
 		public static int GetHRForException (Exception e)
 		{
+#if FEATURE_COMINTEROP
 			var errorInfo = new ManagedErrorInfo(e);
 			SetErrorInfo (0, errorInfo);
 
 			return e.hresult;
+#else			
+			return -1;
+#endif
 		}
 
 		[MonoTODO]
@@ -1503,6 +1507,7 @@ namespace System.Runtime.InteropServices
 			return null;
 		}
 
+#if FEATURE_COMINTEROP
 		[DllImport ("oleaut32.dll", CharSet=CharSet.Unicode, EntryPoint = "SetErrorInfo")]
 		static extern int _SetErrorInfo (int dwReserved,
 			[MarshalAs(UnmanagedType.Interface)] IErrorInfo pIErrorInfo);
@@ -1551,7 +1556,7 @@ namespace System.Runtime.InteropServices
 			}
 			return retVal;
 		}
-
+#endif
 		public static Exception GetExceptionForHR (int errorCode)
 		{
 			return GetExceptionForHR (errorCode, IntPtr.Zero);
@@ -1559,7 +1564,7 @@ namespace System.Runtime.InteropServices
 
 		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
 		{
-#if !MOBILE
+#if FEATURE_COMINTEROP
 			IErrorInfo info = null;
 			if (errorInfo != (IntPtr)(-1)) {
 				if (errorInfo == IntPtr.Zero) {

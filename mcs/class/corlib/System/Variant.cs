@@ -324,10 +324,12 @@ namespace System
 			if ((VarEnum)vt == VarEnum.VT_BSTR) {
 				Marshal.FreeBSTR (bstrVal);
 			}
+#if !DISABLE_COM
 			else if ((VarEnum)vt == VarEnum.VT_DISPATCH || (VarEnum)vt == VarEnum.VT_UNKNOWN) {
 				if (pdispVal != IntPtr.Zero)
 					Marshal.Release (pdispVal);
 			}
+#endif
 		}
 	}
 

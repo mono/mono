@@ -363,7 +363,6 @@ System.Runtime.InteropServices/CallingConvention.cs
 System.Runtime.InteropServices/CharSet.cs
 System.Runtime.InteropServices/COMException.cs
 System.Runtime.InteropServices/ComMemberType.cs
-System.Runtime.InteropServices/CONNECTDATA.cs
 System.Runtime.InteropServices/CriticalHandle.cs
 System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DESCKIND.cs
@@ -430,7 +429,6 @@ System.Runtime.InteropServices/UCOMIBindCtx.cs
 System.Runtime.InteropServices/UCOMIConnectionPoint.cs
 System.Runtime.InteropServices/UCOMIConnectionPointContainer.cs
 System.Runtime.InteropServices/UCOMIEnumConnectionPoints.cs
-System.Runtime.InteropServices/UCOMIEnumConnections.cs
 System.Runtime.InteropServices/UCOMIEnumMoniker.cs
 System.Runtime.InteropServices/UCOMIEnumString.cs
 System.Runtime.InteropServices/UCOMIEnumVARIANT.cs
@@ -1371,6 +1369,7 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/attributes.cs
+../../../external/referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ComTypes/ibindctx.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ComTypes/iconnectionpoint.cs

@@ -3,6 +3,9 @@
 // Eberhard Beilharz (eb1@sil.org)
 //
 // Copyright (C) 2011 SIL International
+
+#if FEATURE_COMINTEROP
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Security;
@@ -36,3 +39,5 @@ namespace System.Runtime.InteropServices
 		int GetHelpContext (out uint pdwHelpContext);
 	}
 }
+
+#endif
