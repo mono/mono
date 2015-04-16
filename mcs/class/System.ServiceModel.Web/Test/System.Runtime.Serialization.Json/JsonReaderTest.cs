@@ -566,7 +566,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // hmm, why does it pass?
+		[Ignore ("NotDotNet")] // hmm, why does it pass?
 		public void ReadExtraCloseBrace2 ()
 		{
 			ReadToEnd (CreateReader ("[]]"));
@@ -655,7 +655,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidNumber3 ()
 		{
 			ReadToEnd (CreateReader ("01"));
@@ -670,7 +670,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidNumber5 ()
 		{
 			ReadToEnd (CreateReader ("10."));
@@ -685,7 +685,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidNumber8 ()
 		{
 			ReadToEnd (CreateReader ("-e5"));
@@ -693,7 +693,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidNumber9 ()
 		{
 			ReadToEnd (CreateReader ("-e5.5"));
@@ -714,7 +714,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidObjectContent2 ()
 		{
 			ReadToEnd (CreateReader ("{\"A\": 123 456}"));
@@ -729,7 +729,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidObjectContent4 ()
 		{
 			ReadToEnd (CreateReader ("{\"A\":123, \"B\":456,}"));
@@ -744,7 +744,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidArrayContent2 ()
 		{
 			ReadToEnd (CreateReader ("[123 456]"));
@@ -759,7 +759,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]
-		[Category ("NotDotNet")] // likely .NET bug
+		[Ignore ("NotDotNet")] // likely .NET bug
 		public void ReadInvalidArrayContent4 ()
 		{
 			ReadToEnd (CreateReader ("[123,456,]"));

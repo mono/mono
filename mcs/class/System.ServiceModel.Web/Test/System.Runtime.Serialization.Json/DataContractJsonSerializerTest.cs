@@ -1083,7 +1083,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]
-		[Category ("NotDotNet")] // 0.0 is an invalid Colors value.
+		[Ignore ("NotDotNet")] // 0.0 is an invalid Colors value.
 		public void DeserializeEnumInvalid3 ()
 		{
 			//"0.0" instead of "0"
@@ -1104,7 +1104,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]
-		[Category ("NotDotNet")] // 4 is an invalid Colors value.
+		[Ignore ("NotDotNet")] // 4 is an invalid Colors value.
 		[Category ("NotWorking")]
 		public void DeserializeEnumWithDCInvalid ()
 		{
