@@ -9,6 +9,7 @@ ReferenceSources/SR.cs
 ReferenceSources/SR_missing.cs
 ReferenceSources/XmlExceptionHelper.cs
 
+ReferenceSources/BitFlagsGenerator.cs
 ReferenceSources/CodeInterpreter.cs
 ReferenceSources/JsonFormatReaderGenerator_static.cs
 ReferenceSources/JsonFormatWriterGenerator_static.cs

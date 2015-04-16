@@ -1,7 +1,6 @@
 
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/AppSettings.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/Attributes.cs
-../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/BitFlagsGenerator.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/ClassDataContract.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CodeGenerator.cs
 ../../../external/referencesource/System.Runtime.Serialization/System/Runtime/Serialization/CollectionDataContractAttribute.cs
