@@ -237,7 +237,7 @@ namespace System.Runtime.Serialization.Json
 				Type memberType = dataMember.MemberType;
 				
 				memberIndex = memberCount;
-				if (!expectedElements.Load (memberCount))
+				if (!expectedElements.Load (index))
 					XmlObjectSerializerReadContextComplexJson.ThrowDuplicateMemberException (objectLocal, memberNames, memberIndex);
 
 				if (dataMember.IsGetOnlyCollection) {
@@ -249,7 +249,7 @@ namespace System.Runtime.Serialization.Json
 					CodeInterpreter.SetMember (dataMember.MemberInfo, objectLocal, value);
 				}
 				memberIndex = index;
-				ResetExpectedElements(expectedElements, index);
+				ResetExpectedElements (expectedElements, index);
 			}
 			return memberCount + classContract.Members.Count;
 		}
@@ -418,7 +418,8 @@ namespace System.Runtime.Serialization.Json
 			bool canReadSimpleDictionary = collectionContract.Kind == CollectionKind.Dictionary ||
 			collectionContract.Kind == CollectionKind.GenericDictionary;
 
-			if (canReadSimpleDictionary & context.UseSimpleDictionaryFormat)
+			bool readSimpleDictionary = canReadSimpleDictionary & context.UseSimpleDictionaryFormat;
+			if (readSimpleDictionary)
 				ReadSimpleDictionary (collectionContract, itemType);
 			else {	 
 				string objectId = context.GetObjectId ();
@@ -427,7 +428,7 @@ namespace System.Runtime.Serialization.Json
 				if (isArray && TryReadPrimitiveArray (itemType, out readResult))
 					canReadPrimitiveArray = true;
 
-				if (!readResult) {
+				if (!canReadPrimitiveArray) {
 					object growingCollection = null;
 					if (isArray)
 						growingCollection = Array.CreateInstance (itemType, 32);
@@ -458,7 +459,7 @@ namespace System.Runtime.Serialization.Json
 						context.AddNewObjectWithId (objectId, objectLocal);
 					}
 				}
-				if (canReadPrimitiveArray)
+				else
 					context.AddNewObjectWithId (objectId, objectLocal);
 			}
 		}
