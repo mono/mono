@@ -274,7 +274,7 @@ namespace System.Runtime.Serialization.Json
 
 				bool canWriteSimpleDictionary = isDictionary || isGenericDictionary;
 				
-				bool writeSimpleDictionary = canWriteSimpleDictionary | context.UseSimpleDictionaryFormat;
+				bool writeSimpleDictionary = canWriteSimpleDictionary && context.UseSimpleDictionaryFormat;
 				PropertyInfo genericDictionaryKeyProperty = null, genericDictionaryValueProperty = null;
 				
 				if (canWriteSimpleDictionary)
