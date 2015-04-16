@@ -13,6 +13,7 @@
 **
 =============================================================================*/
 
+#if !MOBILE
 namespace System.Runtime.InteropServices
 {
     using System;
@@ -42,3 +43,4 @@ namespace System.Runtime.InteropServices
         void Clone(out UCOMIEnumConnections ppenum);
     }
 }
+#endif

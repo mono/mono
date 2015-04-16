@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !MOBILE
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -49,3 +49,4 @@ namespace System.Runtime.InteropServices.ComTypes
         void BindType([MarshalAs(UnmanagedType.LPWStr)] String szName, int lHashVal, out ITypeInfo ppTInfo, out ITypeComp ppTComp);
     }
 }
+#endif

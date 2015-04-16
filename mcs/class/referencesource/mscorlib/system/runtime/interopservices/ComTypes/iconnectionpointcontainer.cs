@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !MOBILE
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -26,3 +26,4 @@ namespace System.Runtime.InteropServices.ComTypes
         void FindConnectionPoint([In] ref Guid riid, out IConnectionPoint ppCP);
     }
 }
+#endif

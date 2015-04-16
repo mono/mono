@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !MOBILE
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -45,3 +45,4 @@ namespace System.Runtime.InteropServices.ComTypes
         int RevokeObjectParam([MarshalAs(UnmanagedType.LPWStr)] String pszKey);
     }
 }
+#endif

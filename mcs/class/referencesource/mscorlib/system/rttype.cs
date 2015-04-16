@@ -4720,15 +4720,23 @@ namespace System
                     // pass LCID_ENGLISH_US if no explicit culture is specified to match the behavior of VB
                     int lcid = (culture == null ? 0x0409 : culture.LCID);
 
+#if MONO
+                    throw new NotImplementedException ();
+#else
                     return InvokeDispMethod(name, bindingFlags, target, providedArgs, isByRef, lcid, namedParams);
+#endif
                     #endregion
                 }
 #if FEATURE_REMOTING
                 else
                 {
+#if MONO
+                    throw new NotImplementedException ();
+#else
                     #region TransparentProxy case
                     return ((MarshalByRefObject)target).InvokeMember(name, bindingFlags, binder, providedArgs, modifiers, culture, namedParams);
                     #endregion
+#endif
                 }
 #endif // FEATURE_REMOTING
             }
@@ -5783,7 +5791,7 @@ namespace System
         #endregion
 #endif
         #region COM
-#if FEATURE_COMINTEROP && FEATURE_REMOTING
+#if FEATURE_COMINTEROP && FEATURE_REMOTING && !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         private Object ForwardCallToInvokeMember(String memberName, BindingFlags flags, Object target, int[] aWrapperTypes, ref MessageData msgData)
         {

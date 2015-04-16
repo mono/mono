@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !MOBILE
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -34,3 +34,4 @@ namespace System.Runtime.InteropServices.ComTypes
         void EnumRunning(out IEnumMoniker ppenumMoniker);
     }
 }
+#endif

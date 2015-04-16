@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-
+#if !MOBILE
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -55,3 +55,4 @@ namespace System.Runtime.InteropServices.ComTypes
         void Clone(out IStream ppstm);
     }
 }
+#endif
