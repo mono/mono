@@ -7600,6 +7600,7 @@ namespace Mono.CSharp {
 				ec.Report.Error (815, loc,
 					"An implicitly typed local variable declaration cannot be initialized with `{0}'",
 					type.GetSignatureForError ());
+				type = InternalType.ErrorType;
 				return false;
 			}
 

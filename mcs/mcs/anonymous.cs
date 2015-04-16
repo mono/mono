@@ -1188,6 +1188,9 @@ namespace Mono.CSharp {
 			if (compatibles.TryGetValue (type, out am))
 				return am;
 
+			if (type == InternalType.ErrorType)
+				return null;
+
 			TypeSpec delegate_type = CompatibleChecks (ec, type);
 			if (delegate_type == null)
 				return null;
