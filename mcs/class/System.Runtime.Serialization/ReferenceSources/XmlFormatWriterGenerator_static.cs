@@ -559,10 +559,8 @@ namespace System.Runtime.Serialization
 			// load name
 			if (name != null)
 				args.Add (name);
-			else {
-				if (memberNames.Length <= nameIndex) throw new Exception (string.Format ("@@@@@@@@@@@@@@@@@@@ {0} {1} ({2}/{3})", type, memberInfo, nameIndex, memberNames.Length));
+			else
 				args.Add (memberNames [nameIndex]);
-			}
 			// load namespace
 			args.Add (ns);
 			// call method to write primitive
