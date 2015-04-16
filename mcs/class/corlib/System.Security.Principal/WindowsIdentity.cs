@@ -33,6 +33,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Security.Claims;
 
 namespace System.Security.Principal {
 
@@ -111,6 +112,15 @@ namespace System.Security.Principal {
 		public WindowsIdentity (SerializationInfo info, StreamingContext context)
 		{
 			_info = info;
+		}
+
+		internal WindowsIdentity (ClaimsIdentity claimsIdentity, IntPtr userToken)
+			: base (claimsIdentity)
+		{
+			if (userToken != IntPtr.Zero && userToken.ToInt64() > 0)
+			{
+				SetToken (userToken);
+			}
 		}
 
 		[ComVisible (false)]
@@ -267,6 +277,16 @@ namespace System.Security.Principal {
 			info.AddValue ("m_type", _type);
 			info.AddValue ("m_acctType", _account);
 			info.AddValue ("m_isAuthenticated", _authenticated);
+		}
+
+		internal ClaimsIdentity CloneAsBase ()
+		{
+			return base.Clone();
+		}
+
+		internal IntPtr GetTokenInternal ()
+		{
+			return _token;
 		}
 
 		private void SetToken (IntPtr token) 

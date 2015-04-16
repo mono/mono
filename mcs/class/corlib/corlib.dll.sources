@@ -748,11 +748,6 @@ System.Security.AccessControl/SddlAccessRight.cs
 System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
 System.Security.Cryptography/Aes.cs
-System.Security.Claims/Claim.cs
-System.Security.Claims/ClaimsIdentity.cs
-System.Security.Claims/ClaimsPrincipal.cs
-System.Security.Claims/ClaimTypes.cs
-System.Security.Claims/ClaimValueTypes.cs
 System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/AsymmetricKeyExchangeDeformatter.cs
 System.Security.Cryptography/AsymmetricKeyExchangeFormatter.cs
@@ -942,7 +937,6 @@ System.Security.Policy/Url.cs
 System.Security.Policy/UrlMembershipCondition.cs
 System.Security.Policy/Zone.cs
 System.Security.Policy/ZoneMembershipCondition.cs
-System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
 System.Security.Principal/IdentityNotMappedException.cs
 System.Security.Principal/IdentityReferenceCollection.cs
@@ -1467,6 +1461,15 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/security/claims/Claim.cs
+../../../external/referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
+../../../external/referencesource/mscorlib/system/security/claims/ClaimsPrincipal.cs
+../../../external/referencesource/mscorlib/system/security/claims/ClaimTypes.cs
+../../../external/referencesource/mscorlib/system/security/claims/ClaimValueTypes.cs
+../../../external/referencesource/mscorlib/system/security/claims/RoleClaimProvider.cs
+
+../../../external/referencesource/mscorlib/system/security/principal/genericidentity.cs
 
 ../../../external/referencesource/mscorlib/system/security/util/hex.cs
 
