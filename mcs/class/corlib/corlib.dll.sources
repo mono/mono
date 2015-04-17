@@ -628,13 +628,6 @@ System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
-System.Runtime.Versioning/ComponentGuaranteesAttribute.cs
-System.Runtime.Versioning/ComponentGuaranteesOptions.cs
-System.Runtime.Versioning/ResourceConsumptionAttribute.cs
-System.Runtime.Versioning/ResourceExposureAttribute.cs
-System.Runtime.Versioning/ResourceScope.cs
-System.Runtime.Versioning/TargetFrameworkAttribute.cs
-System.Runtime.Versioning/VersioningHelper.cs
 System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
@@ -1389,10 +1382,6 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib//system/runtime/reliability/prepreparemethodattribute.cs
 ../../../external/referencesource/mscorlib//system/runtime/reliability/reliabilitycontractattribute.cs
 
-../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
-../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
-../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
-
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/accessedthroughpropertyattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/assemblyattributesgohere.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/assemblysettingattributes.cs
@@ -1533,6 +1522,13 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatters/sertrace.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatters/soapfault.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatters/soapmessage.cs
+
+../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/componentguaranteesattribute.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/resourceattributes.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkattribute.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
 
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../../../external/referencesource/mscorlib/system/threading/apartmentstate.cs
