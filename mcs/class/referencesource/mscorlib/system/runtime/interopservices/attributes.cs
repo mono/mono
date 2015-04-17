@@ -246,6 +246,7 @@ namespace System.Runtime.InteropServices{
         }
         public IDispatchImplType Value { get {return _val;} }   
     }
+#endif
 
     [AttributeUsage(AttributeTargets.Class, Inherited = true)] 
     [System.Runtime.InteropServices.ComVisible(true)]
@@ -275,6 +276,7 @@ namespace System.Runtime.InteropServices{
         public String Value { get {return _val;} }  
     }    
 
+#if FEATURE_COMINTEROP
     [AttributeUsage(AttributeTargets.All, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class ComConversionLossAttribute : Attribute
@@ -495,7 +497,7 @@ namespace System.Runtime.InteropServices{
 
         Struct = 0x1b,        // Structure
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF || MONO
         Interface        = 0x1c,        // COM interface
 
         SafeArray        = 0x1d,        // OLE SafeArray
@@ -1072,7 +1074,7 @@ namespace System.Runtime.InteropServices{
         public Type CoClass { get { return _CoClass; } }
     }
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MONO
 
     [AttributeUsage(AttributeTargets.Interface, Inherited = false)]
     [System.Runtime.InteropServices.ComVisible(true)]
@@ -1090,7 +1092,8 @@ namespace System.Runtime.InteropServices{
         public Type SourceInterface { get {return _SourceInterface;} }       
         public Type EventProvider { get {return _EventProvider;} }
     }
-
+#endif
+#if FEATURE_COMINTEROP
     [AttributeUsage(AttributeTargets.Assembly, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class TypeLibVersionAttribute : Attribute

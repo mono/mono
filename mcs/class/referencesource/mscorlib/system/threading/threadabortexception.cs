@@ -39,11 +39,12 @@ namespace System.Threading
             : base(info, context) 
         {
         }
-   
+#if !MONO
         public Object ExceptionState 
         {
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {return Thread.CurrentThread.AbortReason;}
         }
+#endif
     }
 }
