@@ -13,13 +13,6 @@ Microsoft.Win32/RegistryView.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
-Microsoft.Win32.SafeHandles/CriticalHandleZeroOrMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/CriticalHandleMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeHandleZeroOrMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeHandleMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeFileHandle.cs
-Microsoft.Win32.SafeHandles/SafeRegistryHandle.cs
-Microsoft.Win32.SafeHandles/SafeWaitHandle.cs
 Mono.Globalization.Unicode/CodePointIndexer.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTable.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
@@ -1012,6 +1005,7 @@ ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
+ReferenceSources/win32native.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1588,6 +1582,11 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 ReferenceSources/String.cs
 ReferenceSources/Type.cs
