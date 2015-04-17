@@ -39,7 +39,7 @@ namespace System.Threading
             : base(info, context) 
         {
         }
-#if !MONO
+#if !MOBILE
         public Object ExceptionState 
         {
             [System.Security.SecuritySafeCritical]  // auto-generated
