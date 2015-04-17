@@ -60,6 +60,10 @@ namespace Microsoft.Win32.SafeHandles {
         [ResourceConsumption(ResourceScope.Machine)]
         override protected bool ReleaseHandle()
         {
+#if MONO
+            NativeEventCalls.CloseEvent_internal (handle);
+            return true;
+#else
 #if !FEATURE_CORECLR
             if (!bIsMutex || Environment.HasShutdownStarted)
                 return Win32Native.CloseHandle(handle);                
@@ -82,6 +86,7 @@ namespace Microsoft.Win32.SafeHandles {
             return bReturn;
 #else
             return Win32Native.CloseHandle(handle);
+#endif
 #endif
         }
 

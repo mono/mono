@@ -40,7 +40,13 @@ namespace Microsoft.Win32.SafeHandles {
         [ResourceConsumption(ResourceScope.Machine)]
         override protected bool ReleaseHandle()
         {
+#if MONO
+            System.IO.MonoIOError error;
+            System.IO.MonoIO.Close (handle, out error);
+            return error == System.IO.MonoIOError.ERROR_SUCCESS;
+#else
             return Win32Native.CloseHandle(handle);
+#endif
         }
     }
 }
