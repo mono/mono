@@ -628,7 +628,6 @@ System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
-System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
 System.Security/HostSecurityManager.cs
@@ -645,22 +644,13 @@ System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
 System.Security/SecurityContext.cs
 System.Security/SecurityContextSource.cs
-System.Security/SecurityCriticalAttribute.cs
-System.Security/SecurityCriticalScope.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
 System.Security/SecurityManager_mobile.cs
-System.Security/SecurityRuleSet.cs
-System.Security/SecurityRulesAttribute.cs
-System.Security/SecuritySafeCriticalAttribute.cs
 System.Security/SecurityState.cs
-System.Security/SecurityTransparentAttribute.cs
-System.Security/SecurityTreatAsSafeAttribute.cs
 System.Security/SecurityZone.cs
-System.Security/SuppressUnmanagedCodeSecurityAttribute.cs
-System.Security/UnverifiableCodeAttribute.cs
 System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
 System.Security.AccessControl/AccessControlActions.cs
@@ -1439,6 +1429,8 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/security/attributes.cs
 
 ../../../external/referencesource/mscorlib/system/security/claims/Claim.cs
 ../../../external/referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
