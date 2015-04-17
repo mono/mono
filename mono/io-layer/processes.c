@@ -1748,7 +1748,8 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 #ifdef DEBUG
 		g_message ("%s: Can't find process %p", __func__, process);
 #endif
-		
+		/* Process is already gone, better to return a bogus code than to report that it's still alive */
+		*code = 0;
 		return(FALSE);
 	}
 	
@@ -2717,7 +2718,8 @@ TerminateProcess (gpointer process, gint32 exitCode)
 				   process);
 #endif
 			SetLastError (ERROR_INVALID_HANDLE);
-			return FALSE;
+			/* If we can't find the process, MAYBE IT HAS ALREADY BEEN TERMINATED */
+			return TRUE;
 		}
 		pid = process_handle->id;
 	}
@@ -2737,6 +2739,7 @@ TerminateProcess (gpointer process, gint32 exitCode)
 			break;
 		default:
 			SetLastError (ERROR_GEN_FAILURE);
+			break;
 		}
 	}
 	
