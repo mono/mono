@@ -365,7 +365,7 @@ namespace System
 			return tmp;
 		}
 
-		public String ReplaceInternal (String oldValue, String newValue)
+		internal String ReplaceInternal (String oldValue, String newValue)
 		{
 			// LAMESPEC: According to MSDN the following method is culture-sensitive but this seems to be incorrect
 			// LAMESPEC: Result is undefined if result Length is longer than maximum string Length
