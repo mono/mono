@@ -1371,7 +1371,7 @@ namespace System.Threading.Microsoft
     }
 
     [HostProtection(Synchronization=true, ExternalThreading=true)]
-    public static class ThreadPool
+    internal static class ThreadPool
     {
         internal static readonly bool UseMicrosoftThreadPool = Environment.GetEnvironmentVariable ("MONO_THREADPOOL") == "microsoft";
 
