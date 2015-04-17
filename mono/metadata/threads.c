@@ -61,6 +61,16 @@
 #   endif
 #endif
 
+#if !(defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64))
+/*
+  We have a rarely occurring bug where thread static slots that are reused from the freelist
+  appear to get nulled out after they're [re]initialized
+  We'll work around this for now by not reusing thread static slots on windows
+  Case 670223
+*/
+#define UNITY_USE_THREADSTATIC_FREELIST 1
+#endif
+
 struct StartInfo 
 {
 	guint32 (*func)(void *);
@@ -3797,15 +3807,19 @@ do_free_special (gpointer key, gpointer value, gpointer data)
 	/*g_print ("free %s , size: %d, offset: %x\n", field->name, size, offset);*/
 	if (static_type == 0) {
 		TlsOffsetSize data;
-		MonoThreadDomainTls *item = g_new0 (MonoThreadDomainTls, 1);
 		data.offset = offset & 0x7fffffff;
 		data.size = size;
 		if (threads != NULL)
 			mono_g_hash_table_foreach (threads, free_thread_static_data_helper, &data);
-		item->offset = offset;
-		item->size = size;
-		item->next = thread_static_info.freelist;
-		thread_static_info.freelist = item;
+#ifdef UNITY_USE_THREADSTATIC_FREELIST
+		{
+			MonoThreadDomainTls *item = g_new0 (MonoThreadDomainTls, 1);
+			item->offset = offset;
+			item->size = size;
+			item->next = thread_static_info.freelist;
+			thread_static_info.freelist = item;
+		}
+#endif
 	} else {
 		/* FIXME: free context static data as well */
 	}
