@@ -93,6 +93,9 @@ namespace Microsoft.VisualBasic
 			"While", "With", "WithEvents", "WriteOnly", 
 			"Xor" 
 		};
+
+		private CodeAttributeDeclarationCollection assemblyCustomAttributes;
+
 		public VBCodeGenerator()
 		{
 		}
@@ -229,12 +232,16 @@ namespace Microsoft.VisualBasic
 
 		protected override void GenerateCompileUnit (CodeCompileUnit compileUnit)
 		{
+			assemblyCustomAttributes = compileUnit.AssemblyCustomAttributes;
+
 			GenerateCompileUnitStart (compileUnit);
 
-			OutputAttributes (compileUnit.AssemblyCustomAttributes,
-				"Assembly: ", LineHandling.NewLine);
-
 			GenerateNamespaces (compileUnit);
+
+			// In the case there are no namespaces, and hence no Import statements, now 
+			// is the time to emit assembly level attributes.
+			if (assemblyCustomAttributes != null) 
+				GenerateAssemblyAttributes ();
 
 			GenerateCompileUnitEnd (compileUnit);
 		}
@@ -1026,7 +1033,14 @@ namespace Microsoft.VisualBasic
 		protected override void GenerateNamespace(CodeNamespace ns)
 		{
 			GenerateNamespaceImports (ns);
+
+			// Assembly level attributes can't be emitted before the Import statements
+			// in the file.  
+			if (assemblyCustomAttributes != null)
+				GenerateAssemblyAttributes ();
+
 			Output.WriteLine ();
+
 			GenerateCommentStatements (ns.Comments);
 			GenerateNamespaceStart (ns); 
 			GenerateTypes (ns);
@@ -1648,6 +1662,13 @@ namespace Microsoft.VisualBasic
 		static bool IsAbstract (MemberAttributes attributes)
 		{
 			return (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract;
+		}
+
+		private void GenerateAssemblyAttributes ()
+		{
+			OutputAttributes (assemblyCustomAttributes,
+				"Assembly: ", LineHandling.NewLine);
+			assemblyCustomAttributes = null;
 		}
 
 		private enum LineHandling
