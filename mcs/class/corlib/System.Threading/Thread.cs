@@ -622,7 +622,13 @@ namespace System.Threading {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern object GetAbortExceptionState ();
+		extern object GetAbortExceptionState ();
+
+		internal object AbortReason {
+			get {
+				return GetAbortExceptionState ();
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void Interrupt_internal (InternalThread thread);
