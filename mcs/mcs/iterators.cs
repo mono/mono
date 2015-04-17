@@ -575,10 +575,46 @@ namespace Mono.CSharp {
 	// Iterators are implemented as hidden anonymous block
 	//
 	public class Iterator : AnonymousExpression {
+		
+		sealed class TryFinallyBlockProxyStatement : Statement
+		{
+			ExceptionStatement block;
+			Iterator iterator;
+
+			public TryFinallyBlockProxyStatement (Iterator iterator, ExceptionStatement block)
+			{
+				this.iterator = iterator;
+				this.block = block;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotSupportedException ();
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				//
+				// Restore redirection for any captured variables
+				//
+				ec.CurrentAnonymousMethod = iterator;
+
+				using (ec.With (BuilderContext.Options.OmitDebugInfo, false)) {
+					block.EmitFinallyBody (ec);
+				}
+			}
+			
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+			}
+		}
+
+		
 		public readonly IMethodData OriginalMethod;
 		AnonymousMethodMethod method;
 		public readonly TypeContainer Host;
 		public readonly bool IsEnumerable;
+		int finally_hosts_counter;
 
 		//
 		// The state as we generate the iterator
@@ -611,6 +647,21 @@ namespace Mono.CSharp {
 			Uninitialized = -2,
 			After = -1,
 			Start = 0
+		}
+		
+		public Method CreateFinallyHost (ExceptionStatement block)
+		{
+			var method = new Method (IteratorHost, null, TypeManager.system_void_expr, Modifiers.COMPILER_GENERATED,
+				new MemberName (CompilerGeneratedClass.MakeName ("", "", "Finally", finally_hosts_counter++), loc),
+				ParametersCompiled.EmptyReadOnlyParameters, null);
+
+			method.Block = new ToplevelBlock (method.Compiler, method.ParameterInfo, loc);
+			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
+			
+			// Cannot it add to IteratorHost because it'd be emitted before nested
+			// anonoymous methods which could capture shared variable
+
+			return method;
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
