@@ -358,8 +358,10 @@ namespace System.Reflection.Emit {
 					return UnmanagedMarshal.DefineLPArrayInternal (subtype, sizeConst, sizeParamIndex);
 				else
 					return UnmanagedMarshal.DefineLPArray (subtype);
+#if FEATURE_COMINTEROP
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (subtype);
+#endif
 			case UnmanagedType.ByValArray:
 				if (!is_field)
 					throw new ArgumentException ("Specified unmanaged type is only valid on fields");
@@ -367,8 +369,10 @@ namespace System.Reflection.Emit {
 				return UnmanagedMarshal.DefineByValArray (sizeConst);
 			case UnmanagedType.ByValTStr:
 				return UnmanagedMarshal.DefineByValTStr (sizeConst);
+#if FEATURE_COMINTEROP
 			case UnmanagedType.CustomMarshaler:
 				return UnmanagedMarshal.DefineCustom (marshalTypeRef, marshalCookie, marshalTypeName, Guid.Empty);
+#endif
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal ((UnmanagedType)utype);
 			}
