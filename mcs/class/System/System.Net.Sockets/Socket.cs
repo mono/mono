@@ -156,9 +156,14 @@ namespace System.Net.Sockets
 			}
 		}
 
-		[MonoTODO ("Currently hardcoded to IPv4. Ideally, support v4/v6 dual-stack.")]
+		//
+		// This constructor is used by servers that want to listen for instance on both
+		// ipv4 and ipv6.   Mono has historically done that if you use InterNetworkV6 (at
+		// least on Unix), because that is the default behavior unless the IPV6_V6ONLY
+		// option is explicitly set by using setsockopt (sock, IPPROTO_IPV6, IPV6_ONLY)
+		//
 		public Socket (SocketType socketType, ProtocolType protocolType)
-			: this (AddressFamily.InterNetwork, socketType, protocolType)
+			: this (AddressFamily.InterNetworkV6, socketType, protocolType)
 		{
 		}
 		
