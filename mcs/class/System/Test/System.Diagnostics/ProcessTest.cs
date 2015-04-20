@@ -777,10 +777,86 @@ namespace MonoTests.System.Diagnostics
 
 			Assert.AreEqual (true, r, "Null Argument Events Raised");
 		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnableEventsAfterExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			var exitedCalledCounter = 0;
+			p.Exited += (object sender, EventArgs e) => {
+				exitedCalledCounter++;
+				Assert.IsTrue (p.HasExited);
+			};
+
+			p.EnableRaisingEvents = true;
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual (1, exitedCalledCounter);
+			Thread.Sleep (50);
+			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnableEventsBeforeExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			p.EnableRaisingEvents = true;
+
+			var exitedCalledCounter = 0;
+			p.Exited += (object sender, EventArgs e) => {
+				exitedCalledCounter++;
+				Assert.IsTrue (p.HasExited);
+			};
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual (1, exitedCalledCounter);
+			Thread.Sleep (50);
+			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
 		
 		private ProcessStartInfo GetCrossPlatformStartInfo ()
 		{
 			return RunningOnUnix ? new ProcessStartInfo ("/bin/ls", "/") : new ProcessStartInfo ("help", "");
+		}
+
+		[Test] // Covers #26362
+		public void TestExitedEvent ()
+		{
+			var falseExitedEvents = 0;
+			var cp = Process.GetCurrentProcess ();
+			foreach (var p in Process.GetProcesses ()) {
+				if (p.Id != cp.Id && !p.HasExited) {
+					p.EnableRaisingEvents = true;
+					p.Exited += (s, e) => {
+						if (!p.HasExited)
+							falseExitedEvents++;
+					};
+				}
+			}
+			Assert.AreEqual (0, falseExitedEvents);
 		}
 		
 		[Test]
