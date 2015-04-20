@@ -16,7 +16,6 @@ enum {
 	STATUS_CLEANED_UP,
 };
 
-typedef struct _MonoRuntimeWorkItem MonoRuntimeWorkItem;
 typedef struct _MonoNativeOverlapped MonoNativeOverlapped;
 
 static void G_GNUC_UNUSED
@@ -35,9 +34,9 @@ void
 mono_threadpool_ms_cleanup (void);
 
 MonoAsyncResult *
-mono_threadpool_ms_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *async_callback, MonoObject *state);
+mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params);
 MonoObject *
-mono_threadpool_ms_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc);
+mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc);
 
 gboolean
 mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout);
@@ -53,9 +52,6 @@ mono_threadpool_ms_is_queue_array (MonoArray *arr)
 	/* The queue is in managed code */
 	return FALSE;
 }
-
-void
-ves_icall_System_Threading_MonoRuntimeWorkItem_ExecuteWorkItem (MonoRuntimeWorkItem *rwi);
 
 void
 ves_icall_System_Threading_Microsoft_ThreadPool_GetAvailableThreadsNative (gint *worker_threads, gint *completion_port_threads);
@@ -89,8 +85,6 @@ ves_icall_System_Threading_Microsoft_ThreadPool_IsThreadPoolHosted (void);
 
 /* Internals */
 
-void
-mono_threadpool_ms_enqueue_async_result (MonoDomain *domain, MonoAsyncResult *async_result);
 void
 mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item);
 

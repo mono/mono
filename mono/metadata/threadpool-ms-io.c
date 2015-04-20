@@ -37,12 +37,6 @@
 #include <mono/utils/mono-poll.h>
 #include <mono/utils/mono-threads.h>
 
-/* Keep in sync with System.Net.Sockets.MonoSocketRuntimeWorkItem */
-struct _MonoSocketRuntimeWorkItem {
-	MonoObject object;
-	MonoSocketAsyncResult *socket_async_result;
-};
-
 /* Keep in sync with System.Net.Sockets.Socket.SocketOperation */
 enum {
 	AIO_OP_FIRST,
@@ -71,22 +65,8 @@ typedef enum {
 
 typedef struct {
 	gint fd;
-
-	union {
-#if defined(HAVE_EPOLL)
-		struct {
-			struct epoll_event *event;
-			gint op;
-		} epoll;
-#elif defined(HAVE_KQUEUE)
-		struct {
-			struct kevent *event;
-		} kqueue;
-#endif
-		struct {
-			mono_pollfd fd;
-		} poll;
-	};
+	gint events;
+	gboolean is_new;
 } ThreadPoolIOUpdate;
 
 typedef struct {
@@ -292,38 +272,18 @@ epoll_cleanup (void)
 }
 
 static void
-epoll_update (gint fd, gint events, gboolean is_new)
-{
-	ThreadPoolIOUpdate *update;
-	struct epoll_event *event;
-	gchar msg = 'c';
-
-	event = g_new0 (struct epoll_event, 1);
-	event->data.fd = fd;
-	if ((events & MONO_POLLIN) != 0)
-		event->events |= EPOLLIN;
-	if ((events & MONO_POLLOUT) != 0)
-		event->events |= EPOLLOUT;
-
-	mono_mutex_lock (&threadpool_io->updates_lock);
-	threadpool_io->updates_size += 1;
-	threadpool_io->updates = g_renew (ThreadPoolIOUpdate, threadpool_io->updates, threadpool_io->updates_size);
-
-	update = &threadpool_io->updates [threadpool_io->updates_size - 1];
-	update->fd = fd;
-	update->epoll.event = event;
-	update->epoll.op = is_new ? EPOLL_CTL_ADD : EPOLL_CTL_MOD;
-	mono_mutex_unlock (&threadpool_io->updates_lock);
-
-	polling_thread_wakeup ();
-}
-
-static void
 epoll_thread_add_update (ThreadPoolIOUpdate *update)
 {
-	if (epoll_ctl (threadpool_io->epoll.fd, update->epoll.op, update->fd, update->epoll.event) == -1)
-		g_warning ("epoll_thread_add_update: epoll_ctl(%s) failed, error (%d) %s", update->epoll.op == EPOLL_CTL_ADD ? "EPOLL_CTL_ADD" : "EPOLL_CTL_MOD", errno, g_strerror (errno));
-	g_free (update->epoll.event);
+	struct epoll_event event;
+
+	event.data.fd = update->fd;
+	if ((update->events & MONO_POLLIN) != 0)
+		event->events |= EPOLLIN;
+	if ((update->events & MONO_POLLOUT) != 0)
+		event->events |= EPOLLOUT;
+
+	if (epoll_ctl (threadpool_io->epoll.fd, update->is_new ? EPOLL_CTL_ADD : EPOLL_CTL_MOD, event.data.fd, &event) == -1)
+		g_warning ("epoll_thread_add_update: epoll_ctl(%s) failed, error (%d) %s", update->is_new ? "EPOLL_CTL_ADD" : "EPOLL_CTL_MOD", errno, g_strerror (errno));
 }
 
 static gint
@@ -359,28 +319,26 @@ epoll_thread_create_socket_async_results (gint fd, struct epoll_event *epoll_eve
 	g_assert (epoll_event);
 	g_assert (list);
 
-	if (!*list) {
-		epoll_ctl (threadpool_io->epoll.fd, EPOLL_CTL_DEL, fd, epoll_event);
-	} else {
-		gint events;
+	if (*list && (epoll_event->events & (EPOLLIN | EPOLLERR | EPOLLHUP)) != 0) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
+	}
+	if (*list && (epoll_event->events & (EPOLLOUT | EPOLLERR | EPOLLHUP)) != 0) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
+	}
 
-		if ((epoll_event->events & (EPOLLIN | EPOLLERR | EPOLLHUP)) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-		if ((epoll_event->events & (EPOLLOUT | EPOLLERR | EPOLLHUP)) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-
-		events = get_events (*list);
+	if (*list) {
+		gint events; = get_events (*list);
 		epoll_event->events = ((events & MONO_POLLOUT) ? EPOLLOUT : 0) | ((events & MONO_POLLIN) ? EPOLLIN : 0);
 		if (epoll_ctl (threadpool_io->epoll.fd, EPOLL_CTL_MOD, fd, epoll_event) == -1) {
 			if (epoll_ctl (threadpool_io->epoll.fd, EPOLL_CTL_ADD, fd, epoll_event) == -1)
 				g_warning ("epoll_thread_create_socket_async_results: epoll_ctl () failed, error (%d) %s", errno, g_strerror (errno));
 		}
+	} else {
+		epoll_ctl (threadpool_io->epoll.fd, EPOLL_CTL_DEL, fd, epoll_event);
 	}
 
 	return TRUE;
@@ -427,35 +385,17 @@ kqueue_cleanup (void)
 }
 
 static void
-kqueue_update (gint fd, gint events, gboolean is_new)
-{
-	ThreadPoolIOUpdate *update;
-	struct kevent *event;
-
-	event = g_new0 (struct kevent, 1);
-	if ((events & MONO_POLLIN) != 0)
-		EV_SET (event, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
-	if ((events & MONO_POLLOUT) != 0)
-		EV_SET (event, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
-
-	mono_mutex_lock (&threadpool_io->updates_lock);
-	threadpool_io->updates_size += 1;
-	threadpool_io->updates = g_renew (ThreadPoolIOUpdate, threadpool_io->updates, threadpool_io->updates_size);
-
-	update = &threadpool_io->updates [threadpool_io->updates_size - 1];
-	update->fd = fd;
-	update->kqueue.event = event;
-	mono_mutex_unlock (&threadpool_io->updates_lock);
-
-	polling_thread_wakeup ();
-}
-
-static void
 kqueue_thread_add_update (ThreadPoolIOUpdate *update)
 {
-	if (kevent (threadpool_io->kqueue.fd, update->kqueue.event, 1, NULL, 0, NULL) == -1)
+	struct kevent event;
+
+	if ((update->events & MONO_POLLIN) != 0)
+		EV_SET (&event, update->fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+	if ((update->events & MONO_POLLOUT) != 0)
+		EV_SET (&event, update->fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
+
+	if (kevent (threadpool_io->kqueue.fd, &event, 1, NULL, 0, NULL) == -1)
 		g_warning ("kqueue_thread_add_update: kevent(update) failed, error (%d) %s", errno, g_strerror (errno));
-	g_free (update->kqueue.event);
 }
 
 static gint
@@ -491,21 +431,19 @@ kqueue_thread_create_socket_async_results (gint fd, struct kevent *kqueue_event,
 	g_assert (kqueue_event);
 	g_assert (list);
 
+	if (*list && (kqueue_event->filter == EVFILT_READ || (kqueue_event->flags & EV_ERROR) != 0)) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
+	}
+	if (*list && (kqueue_event->filter == EVFILT_WRITE || (kqueue_event->flags & EV_ERROR) != 0)) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
+	}
+
 	if (*list) {
-		gint events;
-
-		if (kqueue_event->filter == EVFILT_READ || (kqueue_event->flags & EV_ERROR) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-		if (kqueue_event->filter == EVFILT_WRITE || (kqueue_event->flags & EV_ERROR) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-
-		events = get_events (*list);
+		gint events = get_events (*list);
 		if (kqueue_event->filter == EVFILT_READ && (events & MONO_POLLIN) != 0) {
 			EV_SET (kqueue_event, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_ONESHOT, 0, 0, 0);
 			if (kevent (threadpool_io->kqueue.fd, kqueue_event, 1, NULL, 0, NULL) == -1)
@@ -555,23 +493,6 @@ poll_cleanup (void)
 	g_free (threadpool_io->poll.fds);
 }
 
-static void
-poll_update (gint fd, gint events, gboolean is_new)
-{
-	ThreadPoolIOUpdate *update;
-
-	mono_mutex_lock (&threadpool_io->updates_lock);
-	threadpool_io->updates_size += 1;
-	threadpool_io->updates = g_renew (ThreadPoolIOUpdate, threadpool_io->updates, threadpool_io->updates_size);
-
-	update = &threadpool_io->updates [threadpool_io->updates_size - 1];
-	update->fd = fd;
-	POLL_INIT_FD (&update->poll.fd, fd, events);
-	mono_mutex_unlock (&threadpool_io->updates_lock);
-
-	polling_thread_wakeup ();
-}
-
 static gint
 poll_mark_bad_fds (mono_pollfd *poll_fds, gint poll_fds_size)
 {
@@ -612,7 +533,7 @@ poll_thread_add_update (ThreadPoolIOUpdate *update)
 
 	for (j = 1; j < threadpool_io->poll.fds_size; ++j) {
 		mono_pollfd *poll_fd = threadpool_io->poll.fds + j;
-		if (poll_fd->fd == update->poll.fd.fd) {
+		if (poll_fd->fd == update->fd) {
 			found = TRUE;
 			break;
 		}
@@ -633,7 +554,7 @@ poll_thread_add_update (ThreadPoolIOUpdate *update)
 			POLL_INIT_FD (threadpool_io->poll.fds + k, -1, 0);
 	}
 
-	POLL_INIT_FD (threadpool_io->poll.fds + j, update->poll.fd.fd, update->poll.fd.events);
+	POLL_INIT_FD (threadpool_io->poll.fds + j, update->fd, update->events);
 
 	if (j >= threadpool_io->poll.fds_max)
 		threadpool_io->poll.fds_max = j + 1;
@@ -708,22 +629,21 @@ poll_thread_create_socket_async_results (gint fd, mono_pollfd *poll_fd, MonoMLis
 	if (fd == -1 || poll_fd->revents == 0)
 		return FALSE;
 
-	if (!*list) {
-		POLL_INIT_FD (poll_fd, -1, 0);
-	} else {
-		if ((poll_fd->revents & (MONO_POLLIN | MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL)) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-		if ((poll_fd->revents & (MONO_POLLOUT | MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL)) != 0) {
-			MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
-			if (io_event)
-				mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) io_event)->vtable->domain, io_event);
-		}
-
-		poll_fd->events = get_events (*list);
+	if (*list && (poll_fd->revents & (MONO_POLLIN | MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL)) != 0) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLIN);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
 	}
+	if (*list && (poll_fd->revents & (MONO_POLLOUT | MONO_POLLERR | MONO_POLLHUP | MONO_POLLNVAL)) != 0) {
+		MonoSocketAsyncResult *io_event = get_state (list, MONO_POLLOUT);
+		if (io_event)
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) io_event)->vtable->domain, (MonoObject*) io_event);
+	}
+
+	if (*list)
+		poll_fd->events = get_events (*list);
+	else
+		POLL_INIT_FD (poll_fd, -1, 0);
 
 	return TRUE;
 }
@@ -808,7 +728,7 @@ polling_thread (gpointer data)
 		mono_mutex_lock (&threadpool_io->states_lock);
 		for (i = 0; i < max && ready > 0; ++i) {
 			MonoMList *list;
-			gboolean created;
+			gboolean valid_fd;
 			gint fd;
 
 			switch (threadpool_io->backend) {
@@ -839,21 +759,21 @@ polling_thread (gpointer data)
 			switch (threadpool_io->backend) {
 #if defined(HAVE_EPOLL)
 			case BACKEND_EPOLL:
-				created = epoll_thread_create_socket_async_results (fd, &threadpool_io->epoll.events [i], &list);
+				valid_fd = epoll_thread_create_socket_async_results (fd, &threadpool_io->epoll.events [i], &list);
 				break;
 #elif defined(HAVE_KQUEUE)
 			case BACKEND_KQUEUE:
-				created = kqueue_thread_create_socket_async_results (fd, &threadpool_io->kqueue.events [i], &list);
+				valid_fd = kqueue_thread_create_socket_async_results (fd, &threadpool_io->kqueue.events [i], &list);
 				break;
 #endif
 			case BACKEND_POLL:
-				created = poll_thread_create_socket_async_results (fd, &threadpool_io->poll.fds [i], &list);
+				valid_fd = poll_thread_create_socket_async_results (fd, &threadpool_io->poll.fds [i], &list);
 				break;
 			default:
 				g_assert_not_reached ();
 			}
 
-			if (!created)
+			if (!valid_fd)
 				continue;
 
 			if (list)
@@ -1113,6 +1033,7 @@ mono_threadpool_ms_io_cleanup (void)
 MonoAsyncResult *
 mono_threadpool_ms_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *sockares)
 {
+	ThreadPoolIOUpdate *update;
 	MonoMList *list;
 	gboolean is_new;
 	gint events;
@@ -1140,27 +1061,19 @@ mono_threadpool_ms_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *sockare
 
 	events = get_events (list);
 
-	switch (threadpool_io->backend) {
-#if defined(HAVE_EPOLL)
-	case BACKEND_EPOLL: {
-		epoll_update (fd, events, is_new);
-		break;
-	}
-#elif defined(HAVE_KQUEUE)
-	case BACKEND_KQUEUE: {
-		kqueue_update (fd, events, is_new);
-		break;
-	}
-#endif
-	case BACKEND_POLL: {
-		poll_update (fd, events, is_new);
-		break;
-	}
-	default:
-		g_assert_not_reached ();
-	}
+	mono_mutex_lock (&threadpool_io->updates_lock);
+	threadpool_io->updates_size += 1;
+	threadpool_io->updates = g_renew (ThreadPoolIOUpdate, threadpool_io->updates, threadpool_io->updates_size);
+
+	update = &threadpool_io->updates [threadpool_io->updates_size - 1];
+	update->fd = fd;
+	update->events = events;
+	update->is_new = is_new;
+	mono_mutex_unlock (&threadpool_io->updates_lock);
 
 	mono_mutex_unlock (&threadpool_io->states_lock);
+
+	polling_thread_wakeup ();
 
 	return ares;
 }
@@ -1191,14 +1104,14 @@ mono_threadpool_ms_io_remove_socket (int fd)
 
 		sockares2 = get_state (&list, MONO_POLLIN);
 		if (sockares2)
-			mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) sockares2)->vtable->domain, sockares2);
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) sockares2)->vtable->domain, (MonoObject*) sockares2);
 
 		if (!list)
 			break;
 
 		sockares2 = get_state (&list, MONO_POLLOUT);
 		if (sockares2)
-			mono_threadpool_io_enqueue_socket_async_result (((MonoObject*) sockares2)->vtable->domain, sockares2);
+			mono_threadpool_ms_enqueue_work_item (((MonoObject*) sockares2)->vtable->domain, (MonoObject*) sockares2);
 	}
 }
 
@@ -1230,71 +1143,6 @@ mono_threadpool_ms_io_remove_domain_jobs (MonoDomain *domain)
 	}
 }
 
-void
-mono_threadpool_io_enqueue_socket_async_result (MonoDomain *domain, MonoSocketAsyncResult *sockares)
-{
-	MonoImage *system_image;
-	MonoClass *socket_runtime_work_item_class;
-	MonoSocketRuntimeWorkItem *srwi;
-
-	g_assert (sockares);
-
-	system_image = mono_image_loaded ("System");
-	g_assert (system_image);
-
-	socket_runtime_work_item_class = mono_class_from_name (system_image, "System.Net.Sockets", "MonoSocketRuntimeWorkItem");
-	g_assert (socket_runtime_work_item_class);
-
-	srwi = (MonoSocketRuntimeWorkItem*) mono_object_new (domain, socket_runtime_work_item_class);
-	MONO_OBJECT_SETREF (srwi, socket_async_result, sockares);
-
-	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) srwi);
-}
-
-void
-ves_icall_System_Net_Sockets_MonoSocketRuntimeWorkItem_ExecuteWorkItem (MonoSocketRuntimeWorkItem *rwi)
-{
-	MonoSocketAsyncResult *sockares;
-	MonoAsyncResult *ares;
-	MonoObject *exc = NULL;
-
-	g_assert (rwi);
-
-	sockares = rwi->socket_async_result;
-	g_assert (sockares);
-	g_assert (sockares->ares);
-
-	switch (sockares->operation) {
-	case AIO_OP_RECEIVE:
-		sockares->total = ves_icall_System_Net_Sockets_Socket_Receive_internal ((SOCKET) (gssize) sockares->handle, sockares->buffer, sockares->offset,
-		                                                                            sockares->size, sockares->socket_flags, &sockares->error);
-		break;
-	case AIO_OP_SEND:
-		sockares->total = ves_icall_System_Net_Sockets_Socket_Send_internal ((SOCKET) (gssize) sockares->handle, sockares->buffer, sockares->offset,
-		                                                                            sockares->size, sockares->socket_flags, &sockares->error);
-		break;
-	}
-
-	ares = sockares->ares;
-	g_assert (ares);
-
-	mono_async_result_invoke (ares, &exc);
-
-	if (sockares->completed && sockares->callback) {
-		MonoAsyncResult *cb_ares;
-
-		/* Don't call mono_async_result_new() to avoid capturing the context */
-		cb_ares = (MonoAsyncResult*) mono_object_new (mono_domain_get (), mono_defaults.asyncresult_class);
-		MONO_OBJECT_SETREF (cb_ares, async_delegate, sockares->callback);
-		MONO_OBJECT_SETREF (cb_ares, async_state, (MonoObject*) sockares);
-
-		mono_threadpool_ms_enqueue_async_result (mono_domain_get (), cb_ares);
-	}
-
-	if (exc)
-		mono_raise_exception ((MonoException*) exc);
-}
-
 #else
 
 gboolean
@@ -1323,18 +1171,6 @@ mono_threadpool_ms_io_remove_socket (int fd)
 
 void
 mono_threadpool_ms_io_remove_domain_jobs (MonoDomain *domain)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_threadpool_io_enqueue_socket_async_result (MonoDomain *domain, MonoSocketAsyncResult *sockares)
-{
-	g_assert_not_reached ();
-}
-
-void
-ves_icall_System_Net_Sockets_MonoSocketRuntimeWorkItem_ExecuteWorkItem (MonoSocketRuntimeWorkItem *rwi)
 {
 	g_assert_not_reached ();
 }

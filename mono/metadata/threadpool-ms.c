@@ -72,12 +72,6 @@
 #define HILL_CLIMBING_ERROR_SMOOTHING_FACTOR 0.01
 #define HILL_CLIMBING_MAX_SAMPLE_ERROR_PERCENT 0.15
 
-/* Keep in sync with System.Threading.RuntimeWorkItem */
-struct _MonoRuntimeWorkItem {
-	MonoObject object;
-	MonoAsyncResult *async_result;
-};
-
 typedef union {
 	struct {
 		gint16 max_working; /* determined by heuristic */
@@ -432,24 +426,6 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 		}
 		mono_thread_pop_appdomain_ref ();
 	}
-}
-
-void
-mono_threadpool_ms_enqueue_async_result (MonoDomain *domain, MonoAsyncResult *ares)
-{
-	static MonoClass *runtime_work_item_class = NULL;
-	MonoRuntimeWorkItem *rwi;
-
-	g_assert (ares);
-
-	if (!runtime_work_item_class)
-		runtime_work_item_class = mono_class_from_name (mono_defaults.corlib, "System.Threading", "MonoRuntimeWorkItem");
-	g_assert (runtime_work_item_class);
-
-	rwi = (MonoRuntimeWorkItem*) mono_object_new (domain, runtime_work_item_class);
-	MONO_OBJECT_SETREF (rwi, async_result, ares);
-
-	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) rwi);
 }
 
 static void
@@ -1253,12 +1229,14 @@ mono_threadpool_ms_cleanup (void)
 }
 
 MonoAsyncResult *
-mono_threadpool_ms_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate *async_callback, MonoObject *state)
+mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params)
 {
 	static MonoClass *async_call_klass = NULL;
-	MonoDomain *domain;
-	MonoAsyncResult *ares;
-	MonoAsyncCall *ac;
+	MonoMethodMessage *message;
+	MonoAsyncResult *async_result;
+	MonoAsyncCall *async_call;
+	MonoDelegate *async_callback = NULL;
+	MonoObject *state = NULL;
 
 	if (!async_call_klass)
 		async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
@@ -1266,31 +1244,32 @@ mono_threadpool_ms_add (MonoObject *target, MonoMethodMessage *msg, MonoDelegate
 
 	ensure_initialized (NULL);
 
-	domain = mono_domain_get ();
+	message = mono_method_call_message_new (method, params, mono_get_delegate_invoke (method->klass), &async_callback, &state);
 
-	ac = (MonoAsyncCall*) mono_object_new (domain, async_call_klass);
-	MONO_OBJECT_SETREF (ac, msg, msg);
-	MONO_OBJECT_SETREF (ac, state, state);
+	async_call = (MonoAsyncCall*) mono_object_new (domain, async_call_klass);
+	MONO_OBJECT_SETREF (async_call, msg, message);
+	MONO_OBJECT_SETREF (async_call, state, state);
 
 	if (async_callback) {
-		MONO_OBJECT_SETREF (ac, cb_method, mono_get_delegate_invoke (((MonoObject*) async_callback)->vtable->klass));
-		MONO_OBJECT_SETREF (ac, cb_target, async_callback);
+		MONO_OBJECT_SETREF (async_call, cb_method, mono_get_delegate_invoke (((MonoObject*) async_callback)->vtable->klass));
+		MONO_OBJECT_SETREF (async_call, cb_target, async_callback);
 	}
 
-	ares = mono_async_result_new (domain, NULL, ac->state, NULL, (MonoObject*) ac);
-	MONO_OBJECT_SETREF (ares, async_delegate, target);
+	async_result = mono_async_result_new (domain, NULL, async_call->state, NULL, (MonoObject*) async_call);
+	MONO_OBJECT_SETREF (async_result, async_delegate, target);
 
 #ifndef DISABLE_SOCKETS
 	if (mono_threadpool_ms_is_io (target, state))
-		return mono_threadpool_ms_io_add (ares, (MonoSocketAsyncResult*) state);
+		return mono_threadpool_ms_io_add (async_result, (MonoSocketAsyncResult*) state);
 #endif
 
-	mono_threadpool_ms_enqueue_async_result (domain, ares);
-	return ares;
+	mono_threadpool_ms_enqueue_work_item (domain, (MonoObject*) async_result);
+
+	return async_result;
 }
 
 MonoObject *
-mono_threadpool_ms_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc)
+mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc)
 {
 	MonoAsyncCall *ac;
 
@@ -1400,21 +1379,6 @@ void
 mono_threadpool_ms_resume (void)
 {
 	threadpool->suspended = FALSE;
-}
-
-void
-ves_icall_System_Threading_MonoRuntimeWorkItem_ExecuteWorkItem (MonoRuntimeWorkItem *rwi)
-{
-	MonoAsyncResult *ares;
-	MonoObject *exc = NULL;
-
-	g_assert (rwi);
-	ares = rwi->async_result;
-	g_assert (ares);
-
-	mono_async_result_invoke (ares, &exc);
-	if (exc)
-		mono_raise_exception ((MonoException*) exc);
 }
 
 void
