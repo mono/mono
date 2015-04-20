@@ -58,13 +58,13 @@ namespace MonoTests.System.Reflection
 
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
 		public string f2;
-
+#if FEATURE_COMINTEROP
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof (Marshal1), MarshalCookie="5")]
 		public int f3;
 
 		[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
 		public object f4;
-
+#endif
 		[Obsolete]
 		public int f5;
 	}
@@ -350,21 +350,27 @@ namespace MonoTests.System.Reflection
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#F1");
 			attr = (MarshalAsAttribute) attrs [0];
+#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#F2");
+#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#F3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#F4");
 
 			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (false);
 			Assert.AreEqual (1, attrs.Length, "#G1");
 			attr = (MarshalAsAttribute) attrs [0];
+#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#G2");
+#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#G3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#G4");
 
 			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#H1");
 			attr = (MarshalAsAttribute) attrs [0];
+#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#H2");
+#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#H3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#H4");
 
@@ -372,7 +378,9 @@ namespace MonoTests.System.Reflection
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#I1");
 			attr = (MarshalAsAttribute) attrs [0];
+#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#I2");
+#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#I3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
 		}
