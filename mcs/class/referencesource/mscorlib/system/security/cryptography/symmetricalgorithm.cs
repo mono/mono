@@ -212,9 +212,13 @@ namespace System.Security.Cryptography {
         }
 
         static public SymmetricAlgorithm Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.RijndaelManaged ();
+#else
             // use the crypto config system to return an instance of
             // the default SymmetricAlgorithm on this machine
             return Create("System.Security.Cryptography.SymmetricAlgorithm");
+#endif
         }
 
         static public SymmetricAlgorithm Create(String algName) {

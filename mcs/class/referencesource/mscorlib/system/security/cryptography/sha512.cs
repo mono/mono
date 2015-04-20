@@ -29,7 +29,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public SHA512 Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.SHA512Managed ();
+#else
             return Create("System.Security.Cryptography.SHA512");
+#endif
         }
 
         new static public SHA512 Create(String hashName) {

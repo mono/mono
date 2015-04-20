@@ -29,7 +29,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public RIPEMD160 Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.RIPEMD160Managed ();
+#else
             return Create("System.Security.Cryptography.RIPEMD160");
+#endif
         }
 
         new static public RIPEMD160 Create(String hashName) {

@@ -75,6 +75,25 @@ namespace System.Security.Cryptography {
         public KeySizes(int minSize, int maxSize, int skipSize) {
             m_minSize = minSize; m_maxSize = maxSize; m_skipSize = skipSize;
         }
+
+
+#if MONO
+        internal bool IsLegal (int keySize)
+        {
+            int ks = keySize - MinSize;
+            bool result = ((ks >= 0) && (keySize <= MaxSize));
+            return ((SkipSize == 0) ? result : (result && (ks % SkipSize == 0)));
+        }
+
+        internal static bool IsLegalKeySize (KeySizes[] legalKeys, int size)
+        {
+            foreach (KeySizes legalKeySize in legalKeys) {
+                if (legalKeySize.IsLegal (size))
+                    return true;
+            }
+            return false;
+        }
+#endif
     }
 
     [Serializable]

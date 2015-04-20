@@ -31,7 +31,11 @@ namespace System.Security.Cryptography {
 
 #if (!FEATURE_CORECLR && !SILVERLIGHT) || FEATURE_LEGACYNETCFCRYPTO
         static public RandomNumberGenerator Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.RNGCryptoServiceProvider ();
+#else
             return Create("System.Security.Cryptography.RandomNumberGenerator");
+#endif
         }
 
         static public RandomNumberGenerator Create(String rngName) {

@@ -23,7 +23,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public SHA1 Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.SHA1CryptoServiceProvider ();
+#else
             return Create("System.Security.Cryptography.SHA1");
+#endif
         }
 
         new static public SHA1 Create(String hashName) {

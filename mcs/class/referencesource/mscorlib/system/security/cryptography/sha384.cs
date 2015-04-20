@@ -29,7 +29,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public SHA384 Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.SHA384Managed ();
+#else
             return Create("System.Security.Cryptography.SHA384");
+#endif
         }
 
         new static public SHA384 Create(String hashName) {
