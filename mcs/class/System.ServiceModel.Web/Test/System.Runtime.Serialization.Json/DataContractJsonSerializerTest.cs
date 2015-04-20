@@ -1360,8 +1360,8 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			var ms = new MemoryStream ();
 			DataContractJsonSerializer serializer = new DataContractJsonSerializer (typeof (Query));
 			Query query = new Query () {
-				StartDate = new DateTime (2010, 3, 4, 5, 6, 7),
-				EndDate = new DateTime (2010, 4, 5, 6, 7, 8)
+				StartDate = DateTime.SpecifyKind (new DateTime (2010, 3, 4, 5, 6, 7), DateTimeKind.Utc),
+				EndDate = DateTime.SpecifyKind (new DateTime (2010, 4, 5, 6, 7, 8), DateTimeKind.Utc)
 				};
 			serializer.WriteObject (ms, query);
 			Assert.AreEqual ("{\"StartDate\":\"\\/Date(1267679167000)\\/\",\"EndDate\":\"\\/Date(1270447628000)\\/\"}", Encoding.UTF8.GetString (ms.ToArray ()), "#1");
@@ -1386,14 +1386,14 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Test]
 		public void BugXamarin163 ()
 		{
-			string json = @"{""should_have_value"":""\/Date(1277355600000-0500)\/""}";
+			string json = @"{""should_have_value"":""\/Date(1277355600000)\/""}";
 
 			byte[] bytes = global::System.Text.Encoding.UTF8.GetBytes(json);
 			Stream inputStream = new MemoryStream(bytes);
 			
 			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DateTest));
 			DateTest t = serializer.ReadObject(inputStream) as DateTest;
-			Assert.AreEqual (634129344000000000, t.ShouldHaveValue.Value.Ticks, "#1");
+			Assert.AreEqual (634129524000000000, t.ShouldHaveValue.Value.Ticks, "#1");
 		}
 
 		[Test]
@@ -2069,6 +2069,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		void Init ()
 		{
 			C = true;
+			ServerTimeUTC = DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
 		}
 
 		[OnDeserializing]
