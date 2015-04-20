@@ -178,12 +178,12 @@ namespace System.ServiceModel.Channels
 				using (XmlWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (new StreamWriter (stream, source.WriteEncoding))))
 					message.WriteMessage (w);
 #else
-				using (XmlWriter w = XmlDictionaryWriter.CreateTextWriter (stream, source.WriteEncoding))
+				using (XmlWriter w = XmlDictionaryWriter.CreateTextWriter (stream, source.WriteEncoding, false))
 					message.WriteMessage (w);
 #endif
 				break;
 			case WebContentFormat.Json:
-				using (XmlWriter w = JsonReaderWriterFactory.CreateJsonWriter (stream, source.WriteEncoding))
+				using (XmlWriter w = JsonReaderWriterFactory.CreateJsonWriter (stream, source.WriteEncoding, false))
 					message.WriteMessage (w);
 				break;
 			case WebContentFormat.Raw:
