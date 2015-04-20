@@ -317,7 +317,6 @@ System.Security.Cryptography/Oid.cs
 System.Security.Cryptography/OidCollection.cs
 System.Security.Cryptography/OidEnumerator.cs
 System.Threading/Semaphore.cs
-System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs

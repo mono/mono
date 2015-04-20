@@ -168,7 +168,7 @@ namespace System
 				vt = (short)VarEnum.VT_BSTR;
 				bstrVal = Marshal.StringToBSTR(((BStrWrapper)obj).WrappedObject);
 			}
-#if !FULL_AOT_RUNTIME
+#if FEATURE_COMINTEROP
 			else if (t == typeof (UnknownWrapper))
 			{
 				vt = (short)VarEnum.VT_UNKNOWN;
@@ -182,7 +182,7 @@ namespace System
 #endif
 			else
 			{
-#if FULL_AOT_RUNTIME
+#if !FEATURE_COMINTEROP
 				throw new NotImplementedException(string.Format("Variant couldn't handle object of type {0}", obj.GetType()));
 #else
 				try 
@@ -301,7 +301,7 @@ namespace System
 			case VarEnum.VT_BSTR:
 				obj = Marshal.PtrToStringBSTR(bstrVal);
 				break;
-#if !FULL_AOT_RUNTIME
+#if FEATURE_COMINTEROP
 			case VarEnum.VT_UNKNOWN:
 			case VarEnum.VT_DISPATCH:
 				if (pdispVal != IntPtr.Zero)
@@ -324,10 +324,12 @@ namespace System
 			if ((VarEnum)vt == VarEnum.VT_BSTR) {
 				Marshal.FreeBSTR (bstrVal);
 			}
+#if !DISABLE_COM
 			else if ((VarEnum)vt == VarEnum.VT_DISPATCH || (VarEnum)vt == VarEnum.VT_UNKNOWN) {
 				if (pdispVal != IntPtr.Zero)
 					Marshal.Release (pdispVal);
 			}
+#endif
 		}
 	}
 

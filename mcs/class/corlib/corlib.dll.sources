@@ -13,13 +13,6 @@ Microsoft.Win32/RegistryView.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
-Microsoft.Win32.SafeHandles/CriticalHandleZeroOrMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/CriticalHandleMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeHandleZeroOrMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeHandleMinusOneIsInvalid.cs
-Microsoft.Win32.SafeHandles/SafeFileHandle.cs
-Microsoft.Win32.SafeHandles/SafeRegistryHandle.cs
-Microsoft.Win32.SafeHandles/SafeWaitHandle.cs
 Mono.Globalization.Unicode/CodePointIndexer.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTable.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
@@ -363,7 +356,6 @@ System.Runtime.InteropServices/CallingConvention.cs
 System.Runtime.InteropServices/CharSet.cs
 System.Runtime.InteropServices/COMException.cs
 System.Runtime.InteropServices/ComMemberType.cs
-System.Runtime.InteropServices/CONNECTDATA.cs
 System.Runtime.InteropServices/CriticalHandle.cs
 System.Runtime.InteropServices/CurrencyWrapper.cs
 System.Runtime.InteropServices/DESCKIND.cs
@@ -430,7 +422,6 @@ System.Runtime.InteropServices/UCOMIBindCtx.cs
 System.Runtime.InteropServices/UCOMIConnectionPoint.cs
 System.Runtime.InteropServices/UCOMIConnectionPointContainer.cs
 System.Runtime.InteropServices/UCOMIEnumConnectionPoints.cs
-System.Runtime.InteropServices/UCOMIEnumConnections.cs
 System.Runtime.InteropServices/UCOMIEnumMoniker.cs
 System.Runtime.InteropServices/UCOMIEnumString.cs
 System.Runtime.InteropServices/UCOMIEnumVARIANT.cs
@@ -637,14 +628,6 @@ System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
 System.Runtime.Versioning/CompatibilitySwitch.cs
-System.Runtime.Versioning/ComponentGuaranteesAttribute.cs
-System.Runtime.Versioning/ComponentGuaranteesOptions.cs
-System.Runtime.Versioning/ResourceConsumptionAttribute.cs
-System.Runtime.Versioning/ResourceExposureAttribute.cs
-System.Runtime.Versioning/ResourceScope.cs
-System.Runtime.Versioning/TargetFrameworkAttribute.cs
-System.Runtime.Versioning/VersioningHelper.cs
-System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
 System.Security/HostProtectionException.cs
 System.Security/HostSecurityManager.cs
@@ -661,22 +644,13 @@ System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
 System.Security/SecurityContext.cs
 System.Security/SecurityContextSource.cs
-System.Security/SecurityCriticalAttribute.cs
-System.Security/SecurityCriticalScope.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
 System.Security/SecurityManager_mobile.cs
-System.Security/SecurityRuleSet.cs
-System.Security/SecurityRulesAttribute.cs
-System.Security/SecuritySafeCriticalAttribute.cs
 System.Security/SecurityState.cs
-System.Security/SecurityTransparentAttribute.cs
-System.Security/SecurityTreatAsSafeAttribute.cs
 System.Security/SecurityZone.cs
-System.Security/SuppressUnmanagedCodeSecurityAttribute.cs
-System.Security/UnverifiableCodeAttribute.cs
 System.Security/VerificationException.cs
 System.Security/XmlSyntaxException.cs
 System.Security.AccessControl/AccessControlActions.cs
@@ -968,7 +942,6 @@ System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
 System.Threading/LockCookie.cs
 System.Threading/LockQueue.cs
-System.Threading/LockRecursionException.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
 System.Threading/NamedDataSlot.cs
@@ -977,11 +950,8 @@ System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
-../System/System.Threading/SemaphoreFullException.cs
 System.Threading/SynchronizationContext.cs
 System.Threading/Thread.cs
-System.Threading/ThreadAbortException.cs
-System.Threading/ThreadInterruptedException.cs
 System.Threading/ThreadPool.cs
 System.Threading/Timer.cs
 System.Threading/TimerCallback.cs
@@ -1018,6 +988,7 @@ ReferenceSources/CompareInfo.cs
 ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
+ReferenceSources/win32native.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1371,6 +1342,7 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/exceptionservices/exceptionservicescommon.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/attributes.cs
+../../../external/referencesource/mscorlib/system/runtime/interopservices/ucomienumconnections.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ComTypes/ibindctx.cs
 ../../../external/referencesource/mscorlib/system/runtime/interopservices/ComTypes/iconnectionpoint.cs
@@ -1399,10 +1371,6 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib//system/runtime/reliability/criticalfinalizerobject.cs
 ../../../external/referencesource/mscorlib//system/runtime/reliability/prepreparemethodattribute.cs
 ../../../external/referencesource/mscorlib//system/runtime/reliability/reliabilitycontractattribute.cs
-
-../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
-../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
-../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
 
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/accessedthroughpropertyattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/assemblyattributesgohere.cs
@@ -1461,6 +1429,8 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/TypeForwardedToAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/unsafevaluetypeattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
+
+../../../external/referencesource/mscorlib/system/security/attributes.cs
 
 ../../../external/referencesource/mscorlib/system/security/claims/Claim.cs
 ../../../external/referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
@@ -1545,6 +1515,13 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatters/soapfault.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatters/soapmessage.cs
 
+../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/componentguaranteesattribute.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/resourceattributes.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkattribute.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
+
 ../../../external/referencesource/mscorlib/system/threading/abandonedmutexexception.cs
 ../../../external/referencesource/mscorlib/system/threading/apartmentstate.cs
 ../../../external/referencesource/mscorlib/system/threading/autoresetevent.cs
@@ -1554,14 +1531,18 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/threading/CountdownEvent.cs
 ../../../external/referencesource/mscorlib/system/threading/eventresetmode.cs
 ../../../external/referencesource/mscorlib/system/threading/LazyInitializer.cs
+../../../external/referencesource/mscorlib/system/threading/lockrecursionexception.cs
 ../../../external/referencesource/mscorlib/system/threading/manualresetevent.cs
 ../../../external/referencesource/mscorlib/system/threading/ManualResetEventSlim.cs
 ../../../external/referencesource/mscorlib/system/threading/parameterizedthreadstart.cs
+../../../external/referencesource/mscorlib/system/threading/semaphorefullexception.cs
 ../../../external/referencesource/mscorlib/system/threading/SemaphoreSlim.cs
 ../../../external/referencesource/mscorlib/system/threading/sendorpostcallback.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinLock.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinWait.cs
 ../../../external/referencesource/mscorlib/system/threading/synchronizationlockexception.cs
+../../../external/referencesource/mscorlib/system/threading/threadabortexception.cs
+../../../external/referencesource/mscorlib/system/threading/threadinterruptedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpriority.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstart.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstartexception.cs
@@ -1589,6 +1570,11 @@ ReferenceSources/TextInfo.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/ProducerConsumerQueues.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskToApm.cs
+
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/safefilehandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/saferegistryhandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/safewaithandle.cs
+../../../external/referencesource/mscorlib/microsoft/win32/safehandles/win32safehandles.cs
 
 ReferenceSources/String.cs
 ReferenceSources/Type.cs

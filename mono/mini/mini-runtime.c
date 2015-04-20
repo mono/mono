@@ -226,28 +226,27 @@ mono_print_method_from_ip (void *ip)
 	FindTrampUserData user_data;
 	MonoGenericSharingContext*gsctx;
 	const char *shared_type;
-	GSList *l;
 
-	ji = mini_jit_info_table_find (domain, ip, &target_domain);
+	ji = mini_jit_info_table_find_ext (domain, ip, TRUE, &target_domain);
+	if (ji && ji->is_trampoline) {
+		MonoTrampInfo *tinfo = ji->d.tramp_info;
+
+		printf ("IP %p is at offset 0x%x of trampoline '%s'.\n", ip, (int)((guint8*)ip - tinfo->code), tinfo->name);
+		return;
+	}
+
 	if (!ji) {
 		user_data.ip = ip;
 		user_data.method = NULL;
 		mono_domain_lock (domain);
 		g_hash_table_foreach (domain_jit_info (domain)->jit_trampoline_hash, find_tramp, &user_data);
 		mono_domain_unlock (domain);
+
 		if (user_data.method) {
 			char *mname = mono_method_full_name (user_data.method, TRUE);
 			printf ("IP %p is a JIT trampoline for %s\n", ip, mname);
 			g_free (mname);
 			return;
-		}
-		for (l = tramp_infos; l; l = l->next) {
-			MonoTrampInfo *tinfo = l->data;
-
-			if ((guint8*)ip >= tinfo->code && (guint8*)ip <= tinfo->code + tinfo->code_size) {
-				printf ("IP %p is at offset 0x%x of trampoline '%s'.\n", ip, (int)((guint8*)ip - tinfo->code), tinfo->name);
-				return;
-			}
 		}
 
 		g_print ("No method at %p\n", ip);
@@ -471,6 +470,20 @@ mono_tramp_info_free (MonoTrampInfo *info)
 	g_free (info);
 }
 
+static void
+register_trampoline_jit_info (MonoDomain *domain, MonoTrampInfo *info)
+{
+	MonoJitInfo *ji;
+
+	ji = mono_domain_alloc0 (domain, mono_jit_info_size (0, 0, 0));
+	mono_jit_info_init (ji, NULL, info->code, info->code_size, 0, 0, 0);
+	ji->d.tramp_info = info;
+	ji->is_trampoline = TRUE;
+	// FIXME: Unwind info
+
+	mono_jit_info_table_add (domain, ji);
+}
+
 /*
  * mono_tramp_info_register:
  *
@@ -497,6 +510,9 @@ mono_tramp_info_register (MonoTrampInfo *info)
 
 	mono_save_trampoline_xdebug_info (info);
 
+	if (mono_get_root_domain ())
+		register_trampoline_jit_info (mono_get_root_domain (), copy);
+
 	if (mono_jit_map_is_enabled ())
 		mono_emit_jit_tramp (info->code, info->code_size, info->name);
 
@@ -514,6 +530,19 @@ mono_tramp_info_cleanup (void)
 		mono_tramp_info_free (info);
 	}
 	g_slist_free (tramp_infos);
+}
+
+/* Register trampolines created before the root domain was created in the jit info tables */
+static void
+register_trampolines (MonoDomain *domain)
+{
+	GSList *l;
+
+	for (l = tramp_infos; l; l = l->next) {
+		MonoTrampInfo *info = l->data;
+
+		register_trampoline_jit_info (domain, info);
+	}
 }
 
 G_GNUC_UNUSED static void
@@ -1175,6 +1204,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_GOT_OFFSET:
+	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return (ji->type << 8) | (ji->data.index);
@@ -1355,6 +1385,15 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = code_slot;
 		break;
 	}
+	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+#if defined(__native_client_codegen__)
+		target = (gpointer)&__nacl_thread_suspension_needed;
+#elif defined (USE_COOP_GC)
+		target = (gpointer)&mono_polling_required;
+#else
+		g_error ("Unsuported patch target");
+#endif
+		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
@@ -3131,6 +3170,8 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_tasklets_init ();
 #endif
 
+	register_trampolines (domain);
+
 	if (mono_compile_aot)
 		/*
 		 * Avoid running managed code when AOT compiling, since the platform
@@ -3205,6 +3246,10 @@ register_icalls (void)
 #if defined(__native_client__) || defined(__native_client_codegen__)
 	register_icall (mono_nacl_gc, "mono_nacl_gc", "void", TRUE);
 #endif
+#if defined(USE_COOP_GC)
+	register_icall (mono_threads_state_poll, "mono_threads_state_poll", "void", TRUE);
+#endif
+
 #ifndef MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 	register_opcode_emulation (OP_LMUL, "__emul_lmul", "long long long", mono_llmult, "mono_llmult", TRUE);
 	register_opcode_emulation (OP_LDIV, "__emul_ldiv", "long long long", mono_lldiv, "mono_lldiv", FALSE);

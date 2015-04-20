@@ -68,8 +68,13 @@ namespace System.Reflection.Emit {
 		
 		public UnmanagedType BaseType {
 			get {
-				if (t == UnmanagedType.LPArray || t == UnmanagedType.SafeArray)
+				if (t == UnmanagedType.LPArray)
 					throw new ArgumentException ();
+
+#if FEATURE_COMINTEROP
+				if (t == UnmanagedType.SafeArray)
+					throw new ArgumentException ();
+#endif
 				return tbase;
 			}
 		}
@@ -97,15 +102,15 @@ namespace System.Reflection.Emit {
 		public static UnmanagedMarshal DefineLPArray( UnmanagedType elemType) {
 			return new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
 		}
-
+#if FEATURE_COMINTEROP
 		public static UnmanagedMarshal DefineSafeArray( UnmanagedType elemType) {
 			return new UnmanagedMarshal (UnmanagedType.SafeArray, elemType);
 		}
-
+#endif
 		public static UnmanagedMarshal DefineUnmanagedMarshal( UnmanagedType unmanagedType) {
 			return new UnmanagedMarshal (unmanagedType, unmanagedType);
 		}
-
+#if FEATURE_COMINTEROP
 		internal static UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.CustomMarshaler, UnmanagedType.CustomMarshaler);
 			res.mcookie = cookie;
@@ -117,7 +122,7 @@ namespace System.Reflection.Emit {
 				res.guid = id.ToString ();
 			return res;
 		}
-		
+#endif		
 		// sizeConst and sizeParamIndex can be -1 meaning they are not specified
 		internal static UnmanagedMarshal DefineLPArrayInternal (UnmanagedType elemType, int sizeConst, int sizeParamIndex) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);

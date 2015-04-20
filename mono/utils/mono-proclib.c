@@ -106,7 +106,7 @@ mono_process_list (int *size)
 		res = sysctl (mib, 4, NULL, &data_len, NULL, 0);
 		if (res)
 			return NULL;
-		processes = malloc (data_len);
+		processes = (struct kinfo_proc *) malloc (data_len);
 		res = sysctl (mib, 4, processes, &data_len, NULL, 0);
 		if (res < 0) {
 			free (processes);
@@ -124,7 +124,7 @@ mono_process_list (int *size)
 #else
 	res = data_len/sizeof (struct kinfo_proc);
 #endif /* KERN_PROC2 */
-	buf = g_realloc (buf, res * sizeof (void*));
+	buf = (void **) g_realloc (buf, res * sizeof (void*));
 	for (i = 0; i < res; ++i)
 		buf [i] = GINT_TO_POINTER (processes [i].kinfo_pid_member);
 	free (processes);
@@ -348,11 +348,17 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	thread_array_t th_array;
 	size_t i;
 
-	if (task_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
-		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	if (pid == getpid ()) {
+		/* task_for_pid () doesn't work on ios, even for the current process */
+		task = mach_task_self ();
+	} else {
+		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	}
 
-	if (task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
-		mach_port_deallocate (mach_task_self (), task);
+	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 	

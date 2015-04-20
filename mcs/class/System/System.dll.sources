@@ -562,7 +562,6 @@ System.Security.Permissions/StorePermission.cs
 System.Security.Permissions/StorePermissionFlags.cs
 System/SRDescriptionAttribute.cs
 System.Threading/Semaphore.cs
-System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs

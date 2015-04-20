@@ -105,7 +105,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 114
+#define MONO_AOT_FILE_VERSION 115
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -2640,6 +2640,7 @@ void     mono_setup_altstack                    (MonoJitTlsData *tls);
 void     mono_free_altstack                     (MonoJitTlsData *tls);
 gpointer mono_altstack_restore_prot             (mgreg_t *regs, guint8 *code, gpointer *tramp_data, guint8* tramp);
 MonoJitInfo* mini_jit_info_table_find           (MonoDomain *domain, char *addr, MonoDomain **out_domain);
+MonoJitInfo* mini_jit_info_table_find_ext       (MonoDomain *domain, char *addr, gboolean allow_trampolines, MonoDomain **out_domain);
 void     mono_resume_unwind                     (MonoContext *ctx) MONO_LLVM_INTERNAL;
 
 MonoJitInfo * mono_find_jit_info                (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInfo *res, MonoJitInfo *prev_ji, MonoContext *ctx, MonoContext *new_ctx, char **trace, MonoLMF **lmf, int *native_offset, gboolean *managed);

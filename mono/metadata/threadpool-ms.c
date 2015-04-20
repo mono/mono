@@ -238,7 +238,7 @@ rand_free (gpointer handle)
 }
 
 static void
-ensure_initialized (gboolean *enable_worker_tracking)
+ensure_initialized (MonoBoolean *enable_worker_tracking)
 {
 	ThreadPoolHillClimbing *hc;
 	const char *threads_per_cpu_env;
@@ -419,7 +419,7 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 	f = FALSE;
 
 	args [0] = (gpointer) work_item;
-	args [1] = (gpointer) mono_value_box (domain, mono_defaults.boolean_class, &f);
+	args [1] = (gpointer) &f;
 
 	current_domain = mono_domain_get ();
 	if (current_domain == domain) {
@@ -1324,7 +1324,9 @@ mono_threadpool_ms_finish (MonoAsyncResult *ares, MonoArray **out_args, MonoObje
 			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) mono_wait_handle_new (mono_object_domain (ares), wait_event));
 		}
 		mono_monitor_exit ((MonoObject*) ares);
+		MONO_PREPARE_BLOCKING
 		WaitForSingleObjectEx (wait_event, INFINITE, TRUE);
+		MONO_FINISH_BLOCKING
 	}
 
 	ac = (MonoAsyncCall*) ares->object_data;
@@ -1370,7 +1372,9 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	mono_memory_write_barrier ();
 
 	while (domain->threadpool_jobs) {
+		MONO_PREPARE_BLOCKING
 		WaitForSingleObject (sem, timeout);
+		MONO_FINISH_BLOCKING
 		if (timeout != -1) {
 			timeout -= mono_msec_ticks () - start;
 			if (timeout <= 0) {
@@ -1449,7 +1453,7 @@ ves_icall_System_Threading_Microsoft_ThreadPool_GetMaxThreadsNative (gint *worke
 	*completion_port_threads = threadpool->limit_io_max;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Threading_Microsoft_ThreadPool_SetMinThreadsNative (gint worker_threads, gint completion_port_threads)
 {
 	ensure_initialized (NULL);
@@ -1465,7 +1469,7 @@ ves_icall_System_Threading_Microsoft_ThreadPool_SetMinThreadsNative (gint worker
 	return TRUE;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Threading_Microsoft_ThreadPool_SetMaxThreadsNative (gint worker_threads, gint completion_port_threads)
 {
 	gint cpu_count = mono_cpu_count ();
@@ -1484,12 +1488,12 @@ ves_icall_System_Threading_Microsoft_ThreadPool_SetMaxThreadsNative (gint worker
 }
 
 void
-ves_icall_System_Threading_Microsoft_ThreadPool_InitializeVMTp (gboolean *enable_worker_tracking)
+ves_icall_System_Threading_Microsoft_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking)
 {
 	ensure_initialized (enable_worker_tracking);
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemComplete (void)
 {
 	ThreadPoolCounter counter;
@@ -1516,19 +1520,19 @@ ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemProgressNative (vo
 }
 
 void
-ves_icall_System_Threading_Microsoft_ThreadPool_ReportThreadStatus (gboolean is_working)
+ves_icall_System_Threading_Microsoft_ThreadPool_ReportThreadStatus (MonoBoolean is_working)
 {
 	// TODO
 	mono_raise_exception (mono_get_exception_not_implemented (NULL));
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Threading_Microsoft_ThreadPool_RequestWorkerThread (void)
 {
 	return worker_request (mono_domain_get ());
 }
 
-gboolean G_GNUC_UNUSED
+MonoBoolean G_GNUC_UNUSED
 ves_icall_System_Threading_Microsoft_ThreadPool_PostQueuedCompletionStatus (MonoNativeOverlapped *native_overlapped)
 {
 	/* This copy the behavior of the current Mono implementation */
@@ -1536,14 +1540,14 @@ ves_icall_System_Threading_Microsoft_ThreadPool_PostQueuedCompletionStatus (Mono
 	return FALSE;
 }
 
-gboolean G_GNUC_UNUSED
+MonoBoolean G_GNUC_UNUSED
 ves_icall_System_Threading_Microsoft_ThreadPool_BindIOCompletionCallbackNative (gpointer file_handle)
 {
 	/* This copy the behavior of the current Mono implementation */
 	return TRUE;
 }
 
-gboolean G_GNUC_UNUSED
+MonoBoolean G_GNUC_UNUSED
 ves_icall_System_Threading_Microsoft_ThreadPool_IsThreadPoolHosted (void)
 {
 	return FALSE;

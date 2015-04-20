@@ -91,6 +91,12 @@ namespace Microsoft.Build.Tasks {
 				else
 					commandLine.AppendSwitch ("/optionstrict-");
 
+			if (Bag ["OptionInfer"] != null)
+				if (OptionInfer)
+					commandLine.AppendSwitch ("/optioninfer+");
+				else
+					commandLine.AppendSwitch ("/optioninfer-");
+
 			// OptionStrictType
 			
 			// Platform
@@ -114,6 +120,9 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/sdkpath:", SdkPath);
 
 			// TargetCompactFramework
+
+			if (String.Compare (VBRuntime, "Embed", StringComparison.OrdinalIgnoreCase) == 0) 
+				commandLine.AppendSwitch ("/vbruntime*");
 			
 			// Verbosity
 
@@ -272,6 +281,12 @@ namespace Microsoft.Build.Tasks {
 			get { return (string) Bag ["OptionStrictType"]; }
 			set { Bag ["OptionStrictType"] = value; }
 		}
+
+		[MonoTODO]
+		public bool OptionInfer {
+			get { return GetBoolParameterWithDefault ("OptionInfer", false); }
+			set { Bag ["OptionInfer"] = value; }
+		}
 		
 		[MonoTODO]
 		public string Platform {
@@ -314,6 +329,12 @@ namespace Microsoft.Build.Tasks {
 		public bool UseHostCompilerIfAvailable {
 			get { return (bool) Bag ["UseHostCompilerIfAvailable"]; }
 			set { Bag ["UseHostCompilerIfAvailable"] = value; }
+		}
+
+		[MonoTODO]
+		public string VBRuntime {
+			get { return (string) Bag ["VBRuntime"]; }
+			set { Bag ["VBRuntime"] = value; }
 		}
 
 		[MonoTODO]

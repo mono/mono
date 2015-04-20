@@ -1416,5 +1416,30 @@ namespace MonoTests.System.Web.Script.Serialization
     ";
 			serializer.DeserializeObject (json_with_newline);
 		}
+
+		class Dummy
+		{
+			public bool t;
+			public bool f;
+			public string s;
+			public int i;
+			public double d;
+			public object o;
+		}
+		
+		[Test]
+		public void DeserializeWhiteSpaces ()
+		{
+			string json = "{\"t\" : true , \"f\" : false , \"s\" : \"s\" , \"i\" : 1337 , \"d\" : 1337.0 , \"o\" : null }";
+			
+			var obj = (new JavaScriptSerializer ()).Deserialize<Dummy>(json);
+			
+			Assert.IsTrue (obj.t);
+			Assert.IsFalse (obj.f);
+			Assert.AreEqual ("s", obj.s);
+			Assert.AreEqual (1337, obj.i);
+			Assert.AreEqual (1337.0, obj.d);
+			Assert.AreEqual (null, obj.o);
+		}
 	}
 }

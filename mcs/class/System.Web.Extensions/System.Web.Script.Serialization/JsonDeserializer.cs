@@ -495,21 +495,21 @@ namespace System.Web.Script.Serialization
 					break;
 
 				case JsonType.TRUE:
-					if (String.Compare (s, "true", StringComparison.Ordinal) == 0)
+					if (String.Compare (s.Trim (), "true", StringComparison.Ordinal) == 0)
 						result = true;
 					else
 						converted = false;
 					break;
 
 				case JsonType.FALSE:
-					if (String.Compare (s, "false", StringComparison.Ordinal) == 0)
+					if (String.Compare (s.Trim (), "false", StringComparison.Ordinal) == 0)
 						result = false;
 					else
 						converted = false;
 					break;
 
 				case JsonType.NULL:
-					if (String.Compare (s, "null", StringComparison.Ordinal) != 0)
+					if (String.Compare (s.Trim (), "null", StringComparison.Ordinal) != 0)
 						converted = false;
 					break;
 
