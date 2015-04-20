@@ -509,7 +509,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		// Read() valid and invalid contents
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
+		[Ignore ("It should throw XmlException for parser error, but .NET fails to report that")]
 		public void ReadTwoTopLevelContents ()
 		{
 			ReadToEnd (CreateReader ("{}{}"));
@@ -537,7 +537,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
+		[Ignore ("It should throw XmlException for parser error, but .NET fails to report that")]
 		public void ReadExtraCloseCurly2 ()
 		{
 			ReadToEnd (CreateReader ("{}}"));
