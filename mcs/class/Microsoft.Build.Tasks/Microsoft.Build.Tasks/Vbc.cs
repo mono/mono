@@ -73,6 +73,8 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
 
 			// NoStandardLib
+			if (Bag ["NoStandardLib"] != null && NoStandardLib)
+				commandLine.AppendSwitch ("/nostdlib");
 			
 			if (NoWarnings)
 				commandLine.AppendSwitch ("/nowarn");
