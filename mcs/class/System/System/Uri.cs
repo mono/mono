@@ -233,6 +233,11 @@ namespace System {
 					success = false;
 					break;
 				}
+
+				if (success && host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
+					// host name present (but not an IPv6 address)
+					host = host.ToLower (CultureInfo.InvariantCulture);
+				}
 			}
 		}
 
@@ -1131,9 +1136,6 @@ namespace System {
 		private void ParseUri (UriKind kind)
 		{
 			Parse (kind, source);
-
-			if (userEscaped)
-				return;
 
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
