@@ -876,7 +876,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 				DataContractJsonSerializer jsonSerializer = new
 					DataContractJsonSerializer(typeof(IEnumerable<string>));
 				var result = jsonSerializer.ReadObject(stream);
-				Assert.AreEqual (typeof (List<string>), result.GetType ());
+				Assert.AreEqual (typeof (string []), result.GetType ());
 			}
 		}
 	}
