@@ -3,6 +3,7 @@
 
 #include "mono/utils/mono-compiler.h"
 #include "mono/metadata/object-internals.h"
+#include "mono/metadata/mempool.h"
 
 /*Keep in sync with MonoError*/
 typedef struct {
@@ -24,7 +25,7 @@ typedef struct {
 } MonoErrorInternal;
 
 void
-mono_error_dup_strings (MonoError *error, gboolean dup_strings);
+mono_error_dup_strings (MonoError *error, MonoMemPool *mempool, gboolean dup_strings);
 
 /* This function is not very useful as you can't provide any details beyond the message.*/
 void
@@ -80,5 +81,8 @@ mono_error_raise_exception (MonoError *error);
 
 void
 mono_loader_set_error_from_mono_error (MonoError *oerror);
+
+MonoError*
+mono_error_box (MonoError *error, MonoMemPool *mempool);
 
 #endif

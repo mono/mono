@@ -14,6 +14,10 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
 
+#define maybe_mempool_strdup(MP,STR) ((MP) ? mono_mempool_strdup (MP, STR) : g_strdup (STR))
+#define maybe_mempool_alloc0(MP,BYTES) ((MP) ? mono_mempool_alloc0 (MP, BYTES) : g_malloc0 (BYTES))
+
+
 #define mono_internal_error_get_message(E) ((E)->full_message ? (E)->full_message : (E)->message)
 
 #define set_error_message() do { \
@@ -132,10 +136,10 @@ mono_error_get_message (MonoError *oerror)
  * otherwise they will just be free'd in mono_error_cleanup.
  */
 void
-mono_error_dup_strings (MonoError *oerror, gboolean dup_strings)
+mono_error_dup_strings (MonoError *oerror, MonoMemPool *mempool, gboolean dup_strings)
 {
 #define DUP_STR(field) do { if (error->field) {\
-	if (!(error->field = g_strdup (error->field))) \
+	if (!(error->field = maybe_mempool_strdup (mempool, error->field))) \
 		error->flags |= MONO_ERROR_INCOMPLETE; \
 	}} while (0);
 
@@ -251,7 +255,7 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 	error->error_code = MONO_ERROR_TYPE_LOAD;
 	mono_error_set_type_name (oerror, type_name);
 	mono_error_set_assembly_name (oerror, assembly_name);
-	mono_error_dup_strings (oerror, FALSE);
+	mono_error_dup_strings (oerror, NULL, FALSE);
 	set_error_message ();
 }
 
@@ -389,7 +393,7 @@ mono_error_set_from_loader_error (MonoError *oerror)
 		break;
 	}
 
-	mono_error_dup_strings (oerror, dup_strings);
+	mono_error_dup_strings (oerror, NULL, dup_strings);
 	mono_loader_clear_error ();
 }
 
@@ -669,4 +673,17 @@ mono_error_convert_to_exception (MonoError *target_error)
 	}
 	mono_error_cleanup (target_error);
 	return ex;
+}
+
+MonoError*
+mono_error_box (MonoError *error, MonoMemPool *mempool)
+{
+	MonoError *result;
+
+	g_assert (!mono_error_ok (error));
+	result = maybe_mempool_alloc0 (mempool, sizeof (MonoError));
+	*result = *error;
+	mono_error_dup_strings (result, mempool, TRUE);
+
+	return result;
 }
