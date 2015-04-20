@@ -1274,6 +1274,9 @@ mono_lookup_jit_icall_symbol (const char *name);
 gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data);
 
+gboolean
+mono_class_set_failure_from_error (MonoClass *klass, MonoError *error);
+
 gpointer
 mono_class_get_exception_data (MonoClass *klass);
 

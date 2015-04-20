@@ -9714,6 +9714,29 @@ mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data)
 	return TRUE;
 }
 
+gboolean
+mono_class_set_failure_from_error (MonoClass *klass, MonoError *error)
+{
+	MonoError *boxed_error;
+	if (klass->exception_type)
+		return FALSE;
+
+	mono_image_lock (klass->image);
+	boxed_error = mono_error_box (error, klass->image->mempool);
+	mono_image_unlock (klass->image);
+
+	mono_loader_lock ();
+	if (klass->exception_type) {
+		mono_loader_unlock ();
+		return FALSE;
+	}
+	klass->exception_type = MONO_EXCEPTION_MONO_ERROR;
+	mono_image_property_insert (klass->image, klass, MONO_CLASS_PROP_EXCEPTION_DATA, boxed_error);
+	mono_loader_unlock ();
+
+	return TRUE;
+}
+
 /*
  * mono_class_get_exception_data:
  *
@@ -9832,6 +9855,21 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	}
 	case MONO_EXCEPTION_BAD_IMAGE: {
 		return mono_get_exception_bad_image_format (exception_data);
+	}
+	case MONO_EXCEPTION_MONO_ERROR: {
+		MonoError error;
+		MonoException *ex;
+		ex = mono_error_prepare_exception ((MonoError*)exception_data, &error);
+		if (!mono_error_ok (&error)) {
+			MonoError second_chance;
+			/*Try to produce the exception for the second error.*/
+			ex = mono_error_prepare_exception (&error, &second_chance);
+
+			g_assert (mono_error_ok (&second_chance)); /*No point into trying to handle a double faults.*/
+			mono_error_cleanup (&error);
+		}
+
+		return ex;
 	}
 	default: {
 		MonoLoaderError *error;
