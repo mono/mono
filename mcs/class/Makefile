@@ -118,6 +118,8 @@ net_4_5_dirs := \
 	IBM.Data.DB2			\
 	CustomMarshalers		\
 	SystemWebTestShim			\
+	System.ServiceModel.Internals	\
+	SMDiagnostics	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq			\
 	System.Data.Linq		\
