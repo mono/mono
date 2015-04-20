@@ -50,12 +50,16 @@ namespace System.Runtime.Caching
 
 		protected void Add (MemoryCacheEntry entry)
 		{
-			entries.Add (entry);
+			lock (entries) {
+				entries.Add (entry);
+			}
 		}
 
 		protected void Remove (MemoryCacheEntry entry)
 		{
-			entries.Remove (entry);
+			lock (entries) {
+				entries.Remove (entry);
+			}
 		}
 
 		protected int FlushItems (DateTime limit, CacheEntryRemovedReason reason, bool blockInsert, int count = int.MaxValue)
