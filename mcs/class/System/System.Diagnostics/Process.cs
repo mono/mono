@@ -80,7 +80,9 @@ namespace System.Diagnostics {
 		EventHandler exited_event;
 		IntPtr stdout_rd;
 		IntPtr stderr_rd;
-		
+
+		object thisLock = new Object ();
+
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
 			process_handle=handle;
@@ -102,7 +104,7 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
-			lock (this) {
+			lock (thisLock) {
 				bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
 				if (start && process_handle != IntPtr.Zero) {
 					WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
@@ -114,7 +116,7 @@ namespace System.Diagnostics {
 
 		void UnregisterExitCallback ()
 		{
-			lock (this) {
+			lock (thisLock) {
 				if (exitWaitHandle != null) {
 					exitWaitHandle.Unregister (null);
 					exitWaitHandle = null;
@@ -124,7 +126,7 @@ namespace System.Diagnostics {
 
 		bool IsExitCallbackPending ()
 		{
-			lock (this) {
+			lock (thisLock) {
 				return exitWaitHandle != null;
 			}
 		}
@@ -1584,7 +1586,7 @@ namespace System.Diagnostics {
 				// dispose all managed resources.
 				if(disposing) {
 					// Do stuff here
-					lock (this) {
+					lock (thisLock) {
 						/* These have open FileStreams on the pipes we are about to close */
 						if (async_output != null)
 							async_output.Close ();
@@ -1610,7 +1612,7 @@ namespace System.Diagnostics {
 				
 				// Release unmanaged resources
 
-				lock(this) {
+				lock (thisLock) {
 					if(process_handle!=IntPtr.Zero) {
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
