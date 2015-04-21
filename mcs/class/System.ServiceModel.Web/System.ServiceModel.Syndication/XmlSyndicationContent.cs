@@ -95,7 +95,7 @@ namespace System.ServiceModel.Syndication
 				if (!(r is XmlDictionaryReader))
 					r = XmlDictionaryReader.CreateDictionaryReader (r);
 				var ms = new MemoryStream ();
-				var xw = XmlDictionaryWriter.CreateBinaryWriter (ms);
+				var xw = XmlDictionaryWriter.CreateBinaryWriter (ms, null, null, false);
 				xw.WriteStartElement ("content", Namespaces.Atom10);
 				xw.WriteAttributeString ("type", "text/xml");
 				while (!r.EOF)
