@@ -293,6 +293,9 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 	} else if (timeout == 0) {
 		/* Just poll */
 		ret = waitpid (pid, &status, WNOHANG);
+		if (0 > ret && ECHILD == errno)
+			/* Process is already gone */
+			return WAIT_OBJECT_0;
 		if (ret != pid) {
 			return (WAIT_TIMEOUT);
 		}
