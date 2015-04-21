@@ -2505,6 +2505,24 @@ namespace MonoTests.System.Net.Sockets
 		public void IOControl ()
 		{
 		}
+
+		[Test]
+		public void TestDefaultsDualMode ()
+		{
+			using (var socket = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)){
+				Assert.IsTrue (socket.DualMode, "In Mono, DualMode must be true when constructing InterNetworkV6 sockets");
+			}
+
+			using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp)){
+				Assert.AreEqual (AddressFamily.InterNetworkV6, socket.AddressFamily, "When creating sockets of type stream/tcp, the address family should be InterNetworkV6");
+				Assert.IsTrue (socket.DualMode, "In Mono, DualMode must be true when constructing InterNetworkV6 sockets");
+
+				socket.DualMode = false;
+
+				Assert.IsFalse (socket.DualMode, "Setting of DualSocket should turn DualSockets off");
+			}
+			
+		}
 		
 		[Test]
 		public void ReceiveGeneric ()

@@ -457,7 +457,7 @@ System.Net.Sockets/SocketInformation.cs
 System.Net.Sockets/SocketInformationOptions.cs
 System.Net.Sockets/SocketOperation.cs
 System.Net.Sockets/SocketOptionLevel.cs
-System.Net.Sockets/SocketOptionName.cs
+../../../external/referencesource/System/net/System/Net/Sockets/SocketOptionName.cs
 System.Net.Sockets/SocketShutdown.cs
 System.Net.Sockets/SocketType.cs
 System.Net.Sockets/TcpClient.cs

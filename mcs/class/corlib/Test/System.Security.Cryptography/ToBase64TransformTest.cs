@@ -75,7 +75,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void TransformBlock_Dispose () 
 		{
 			byte[] input = new byte [3];
@@ -112,7 +111,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void TransformFinalBlock_Dispose () 
 		{
 			byte[] input = new byte [3];

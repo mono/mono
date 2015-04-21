@@ -316,7 +316,11 @@ namespace MonoTests.System.Security.Cryptography {
 				byte[] buffer = new byte [8];
 				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				cs.Clear ();
-				Assert.AreEqual (0, cs.Read (buffer, 0, 8), "Read from disposed");
+				try {
+					cs.Read (buffer, 0, 8);
+					Assert.Fail ();
+				} catch (NotSupportedException) {
+				}
 			}
 		}
 		

@@ -165,6 +165,7 @@ namespace System.Net.Sockets
 		public Socket (SocketType socketType, ProtocolType protocolType)
 			: this (AddressFamily.InterNetworkV6, socketType, protocolType)
 		{
+			DualMode = true;
 		}
 		
 		public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
@@ -468,6 +469,27 @@ namespace System.Net.Sockets
 				default:
 					throw new NotSupportedException ("This property is only valid for InterNetwork and InterNetworkV6 sockets");
 				}
+			}
+		}
+
+		public bool DualMode {
+			get {
+				if (AddressFamily != AddressFamily.InterNetworkV6) 
+					throw new NotSupportedException("This protocol version is not supported");
+
+				return ((int)GetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only) == 0);
+			}
+			set {
+				if (AddressFamily != AddressFamily.InterNetworkV6) 
+					throw new NotSupportedException("This protocol version is not supported");
+
+				SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, value ? 0 : 1);
+			}
+		}
+
+		private bool IsDualMode {
+			get {
+				return AddressFamily == AddressFamily.InterNetworkV6 && DualMode;
 			}
 		}
 
