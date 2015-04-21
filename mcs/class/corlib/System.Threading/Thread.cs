@@ -67,7 +67,6 @@ namespace System.Threading {
 		private IntPtr start_notify;
 		private IntPtr stack_ptr;
 		private UIntPtr static_data; /* GC-tracked */
-		private IntPtr jit_data;
 		private IntPtr runtime_thread_info;
 		/* current System.Runtime.Remoting.Contexts.Context instance
 		   keep as an object to avoid triggering its class constructor when not needed */
@@ -78,14 +77,9 @@ namespace System.Threading {
 		internal int _serialized_principal_version;
 		private IntPtr appdomain_refs;
 		private int interruption_requested;
-		private IntPtr suspend_event;
-		private IntPtr suspended_event;
-		private IntPtr resume_event;
 		private IntPtr synch_cs;
 		internal bool threadpool_thread;
-		private bool thread_dump_requested;
 		private bool thread_interrupt_requested;
-		private IntPtr end_stack;
 		/* These are used from managed code */
 		internal int stack_size;
 		internal byte apartment_state;
@@ -95,14 +89,12 @@ namespace System.Threading {
 		private IntPtr manage_callback;
 		private IntPtr interrupt_on_stop;
 		private IntPtr flags;
-		private IntPtr android_tid;
 		private IntPtr thread_pinning_ref;
-		private int ignore_next_signal;
+		private IntPtr async_invoke_method;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr unused0;
 		private IntPtr unused1;
 		private IntPtr unused2;
 		#endregion
