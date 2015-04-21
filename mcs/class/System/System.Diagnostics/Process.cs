@@ -38,6 +38,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Security;
@@ -1341,7 +1342,7 @@ namespace System.Diagnostics {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		sealed class ProcessAsyncReader
+		sealed class ProcessAsyncReader : IThreadPoolWorkItem
 		{
 			/*
 			   The following fields match those of SocketAsyncResult.
@@ -1378,7 +1379,7 @@ namespace System.Diagnostics {
 			bool err_out; // true -> stdout, false -> stderr
 			internal int error;
 			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
-			public object ares;
+			public AsyncResult async_result;
 			public int EndCalled;
 
 			// These fields are not in SocketAsyncResult
@@ -1481,6 +1482,15 @@ namespace System.Diagnostics {
 
 			public void Close () {
 				stream.Close ();
+			}
+
+			void IThreadPoolWorkItem.ExecuteWorkItem()
+			{
+				async_result.Invoke ();
+			}
+
+			void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
+			{
 			}
 		}
 

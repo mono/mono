@@ -280,8 +280,16 @@ namespace System.Net.Sockets
 				ReceiveGeneric ();
 				return;
 			}
-			// Actual recv() done in the runtime
-			result.Complete ();
+
+			int total = 0;
+			try {
+				total = Socket.Receive_internal (result.socket.safe_handle, result.Buffer, result.Offset, result.Size, result.SockFlags, out result.error);
+			} catch (Exception e) {
+				result.Complete (e);
+				return;
+			}
+
+			result.Complete (total);
 		}
 
 		public void ReceiveFrom ()
@@ -326,11 +334,19 @@ namespace System.Net.Sockets
 				SendGeneric ();
 				return;
 			}
-			// Actual send() done in the runtime
+
+			int total = 0;
+			try {
+				total = Socket.Send_internal (result.socket.safe_handle, result.Buffer, result.Offset, result.Size, result.SockFlags, out result.error);
+			} catch (Exception e) {
+				result.Complete (e);
+				return;
+			}
+
 			if (result.error == 0) {
-				UpdateSendValues (result.Total);
+				UpdateSendValues (total);
 				if (result.socket.is_disposed) {
-					result.Complete ();
+					result.Complete (total);
 					return;
 				}
 
@@ -341,7 +357,7 @@ namespace System.Net.Sockets
 				result.Total = send_so_far;
 				send_so_far = 0;
 			}
-			result.Complete ();
+			result.Complete (total);
 		}
 
 		public void SendTo ()
