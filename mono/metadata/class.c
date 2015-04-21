@@ -2151,10 +2151,11 @@ mono_class_setup_methods (MonoClass *class)
 			methods [i] = mono_class_inflate_generic_method_full_checked (
 				gklass->methods [i], class, mono_class_get_context (class), &error);
 			if (!mono_error_ok (&error)) {
-				char *method = mono_method_full_name (gklass->methods [i], TRUE);
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not inflate method %s due to %s", method, mono_error_get_message (&error)));
-
-				g_free (method);
+				mono_class_set_failure_from_error (class, &error);
+				// char *method = mono_method_full_name (gklass->methods [i], TRUE);
+				// mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not inflate method %s due to %s", method, mono_error_get_message (&error)));
+				// 
+				// g_free (method);
 				mono_error_cleanup (&error);
 				return;				
 			}
@@ -2258,7 +2259,7 @@ mono_class_setup_methods (MonoClass *class)
 			int idx = mono_metadata_translate_token_index (class->image, MONO_TABLE_METHOD, class->method.first + i + 1);
 			methods [i] = mono_get_method_checked (class->image, MONO_TOKEN_METHOD_DEF | idx, class, NULL, &error);
 			if (!methods [i]) {
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not load method %d due to %s", i, mono_error_get_message (&error)));
+				mono_class_set_failure_from_error (class, &error);
 				mono_error_cleanup (&error);
 			}
 		}
@@ -3472,9 +3473,10 @@ setup_interface_offsets (MonoClass *class, int cur_slot, gboolean overwrite)
 		}
 		ifaces = mono_class_get_implemented_interfaces (k, &error);
 		if (!mono_error_ok (&error)) {
-			char *name = mono_type_get_full_name (k);
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Error getting the interfaces of %s due to %s", name, mono_error_get_message (&error)));
-			g_free (name);
+			// char *name = mono_type_get_full_name (k);
+			// mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Error getting the interfaces of %s due to %s", name, mono_error_get_message (&error)));
+			// g_free (name);
+			mono_class_set_failure_from_error (class, &error);
 			mono_error_cleanup (&error);
 			cur_slot = -1;
 			goto end;
