@@ -1482,12 +1482,6 @@ include "clearlooks", "nice" and "win32".
 .Sp
 The default is "win32".  
 .TP
-\fBMONO_THREAPOOL\fR
-This environment variable can be used to choose the implementation of
-the ThreadPool used at runtime.  By default this uses the long term
-Mono threadpool implementation.   But a new "microsoft" value switches
-the threadpool implementation to Microsoft's CoreCLR/ReferenceSource implementation.
-.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very
