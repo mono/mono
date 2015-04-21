@@ -102,11 +102,30 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
-			bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
-			if (start && process_handle != IntPtr.Zero) {
-				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
-				ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
-				exitWaitHandle = ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
+			lock (this) {
+				bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
+				if (start && process_handle != IntPtr.Zero) {
+					WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
+					ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
+					exitWaitHandle = ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
+				}
+			}
+		}
+
+		void UnregisterExitCallback ()
+		{
+			lock (this) {
+				if (exitWaitHandle != null) {
+					exitWaitHandle.Unregister (null);
+					exitWaitHandle = null;
+				}
+			}
+		}
+
+		bool IsExitCallbackPending ()
+		{
+			lock (this) {
+				return exitWaitHandle != null;
 			}
 		}
 
@@ -1610,11 +1629,11 @@ namespace System.Diagnostics {
 		{
 			Process p = (Process) state;
 
+			if (!p.IsExitCallbackPending ())
+				return;
+
 			if (!p.HasExited) {
-				if (p.exitWaitHandle != null) {
-					p.exitWaitHandle.Unregister (null);
-					p.exitWaitHandle = null;
-				}
+				p.UnregisterExitCallback ();
 				p.StartExitCallbackIfNeeded ();
 				return;
 			}
@@ -1626,11 +1645,8 @@ namespace System.Diagnostics {
 		{
 			if (exited_event == null)
 				return;
-
-			if (exitWaitHandle != null) {
-				exitWaitHandle.Unregister (null);
-				exitWaitHandle = null;
-			}
+			
+			UnregisterExitCallback ();
 
 			if (synchronizingObject == null) {
 				foreach (EventHandler d in exited_event.GetInvocationList ()) {
