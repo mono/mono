@@ -2,6 +2,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../../../external/referencesource/System.Xml/System/Xml/Bits.cs
+System.Xml/XsdDateTime2.cs
 Mono.Xml.Schema/XmlSchemaValidatingReader.cs
 Mono.Xml.Schema/XsdIdentityPath.cs
 Mono.Xml.Schema/XsdIdentityState.cs
