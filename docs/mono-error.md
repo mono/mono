@@ -1,8 +1,9 @@
-= MonoError
+# MonoError
+
 MonoError is the latest attempt at cleaning up and sanitizing error handling in the runtime.
 This document highlights some of the design goals and decisions, the implementation and the migration strategy.
 
-== Design goals
+## Design goals
 
 - Replace the majority of the adhoc error handling subsystems present today in the runtime. Each one is broken
 is a subtle way, has slightly different semantics and error conversion between them is spot, at best.
@@ -19,12 +20,12 @@ support nested scopes during type loading, even if reporting is flat.
 - Be as simple as possible. Error handling is the hardest part of the runtime to test so it must be simple. Which means
 complex error reporting, such as chaining, is out of question.
 
-== Current implementation
+## Current implementation
 
 The current implementation exists in mono-error.h and mono-error-internals.h. The split is so API users can consume errors, but they
 are not supported to be able to produce them - such use case has yet to arise.
 
-=== Writing a function that produces errors
+### Writing a function that produces errors
 
 ```
 /**
@@ -51,7 +52,7 @@ Important points from the above:
 - Document that a NULL returns means an error
 
 
-=== Writing a function that consumes errors
+### Writing a function that consumes errors
 
 ```
 void
@@ -85,7 +86,7 @@ Important points from the above:
 - Since all calls that take a MonoError init it, only check it after the first call;
 
 
-== Handling the transition
+## Handling the transition
 
 The transition work is not complete and we're doing it piece-by-piece to ensure we
 don't introduce massive regressions in the runtime. The idea is to move the least
@@ -107,9 +108,7 @@ assert on failure as there's no adequate alternative at this point.
 
 - When possible, change the function signature. If not, add a _checked variant.
 
-
-
-== Design issues
+## Design issues
 
 - Memory management of the error setting functions is not consistent or clear
 - Use a static initializer in the declaration site instead of mono_error_init?
