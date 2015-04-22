@@ -4481,6 +4481,17 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *throw_ctx
 		if (tls && tls->abort_requested)
 			return;
 	}
+	
+	// Breaking on ThreadAbortException can cause a deadlock in domain reload:
+	
+	// 1. Domain reload aborts a managed thread and waits for it to stop.
+	// 2. Aborting the thread throws an ThreadAbortException on the thread.
+	// 3. The debugger agent handles the ThreadAbortException by suspending the vm,
+	//    including the thread that was aborted.
+	// 4. Deadlock: domain reload waits forever on suspended thread to stop running.
+	
+	if (exc && !strcmp (exc->object.vtable->klass->name, "ThreadAbortException"))
+		return;
 
 	memset (&ei, 0, sizeof (EventInfo));
 

@@ -4964,6 +4964,7 @@ SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler)
 {
 	MonoJitInfo *ji;
 	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	gpointer ip;
 
 	GET_CONTEXT;
 
@@ -4991,7 +4992,22 @@ SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler)
 		mono_handle_native_sigsegv (SIGSEGV, ctx);
 	}
 
-	ji = mono_jit_info_table_find (mono_domain_get (), mono_arch_ip_from_context (ctx));
+	ip = mono_arch_ip_from_context (ctx);
+#ifdef _WIN64
+	/* Sometimes on win64 we get null IP, but the previous frame is a valid managed frame */
+	/* So pop and try again */
+	if (!ip && ctx)
+	{
+		MonoContext *context = (MonoContext*)ctx;
+		gpointer *sp = context->rsp;
+		if (sp)
+		{
+			ip = context->rip = *sp;
+			context->rsp += sizeof(gpointer);
+		}
+	}
+#endif
+	ji = mono_jit_info_table_find (mono_domain_get (), ip);
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, (guint8*)info->si_addr))

@@ -129,7 +129,11 @@ static inline void mono_memory_write_barrier (void)
 #elif defined(__arm__)
 static inline void mono_memory_barrier (void)
 {
-	__asm__ __volatile__ ("" : : : "memory");
+#ifdef __GNUC__
+	__sync_synchronize();
+#else
+	__asm__ __volatile__ ("" : : : "memory"); /* just a compiler barrier */
+#endif
 }
 
 static inline void mono_memory_read_barrier (void)
