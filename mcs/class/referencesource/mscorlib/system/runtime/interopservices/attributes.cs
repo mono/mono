@@ -477,7 +477,7 @@ namespace System.Runtime.InteropServices{
 
         Currency = 0xf,         // A currency
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF || MONO
         BStr             = 0x13,        // OLE Unicode BSTR
 #endif //FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
 
@@ -491,7 +491,7 @@ namespace System.Runtime.InteropServices{
 
         IUnknown = 0x19,        // COM IUnknown pointer. 
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF || MONO
         IDispatch        = 0x1a,        // COM IDispatch pointer
 #endif //FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
 
@@ -509,7 +509,7 @@ namespace System.Runtime.InteropServices{
 
         SysUInt = 0x20,
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF || MONO
         VBByRefStr       = 0x22,         
 
         AnsiBStr         = 0x23,        // OLE BSTR containing SBCS characters
@@ -527,7 +527,7 @@ namespace System.Runtime.InteropServices{
 
         LPStruct = 0x2b,        // Pointer to a structure
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF || MONO
         CustomMarshaler  = 0x2c,        
 #endif //FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
 
