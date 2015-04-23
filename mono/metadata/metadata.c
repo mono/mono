@@ -2998,7 +2998,7 @@ cleanup:
 
 MonoGenericInst *
 mono_metadata_parse_generic_inst (MonoImage *m, MonoGenericContainer *container,
-				  int count, const char *ptr, const char **rptr)
+				  int count, const char *ptr, const char **rptr, MonoError *error)
 {
 	MonoType **type_argv;
 	MonoGenericInst *ginst;
@@ -3007,8 +3007,8 @@ mono_metadata_parse_generic_inst (MonoImage *m, MonoGenericContainer *container,
 	type_argv = g_new0 (MonoType*, count);
 
 	for (i = 0; i < count; i++) {
-		MonoType *t = mono_metadata_parse_type_full (m, container, MONO_PARSE_TYPE, 0, ptr, &ptr);
-		if (!t) {
+		MonoType *t = mono_metadata_parse_type_internal (m, container, MONO_PARSE_TYPE, 0, FALSE, ptr, &ptr, error);
+		if (!t || !mono_error_ok (error)) {
 			g_free (type_argv);
 			return NULL;
 		}
@@ -3043,7 +3043,7 @@ do_mono_metadata_parse_generic_class (MonoType *type, MonoImage *m, MonoGenericC
 		return FALSE;
 
 	count = mono_metadata_decode_value (ptr, &ptr);
-	inst = mono_metadata_parse_generic_inst (m, container, count, ptr, &ptr);
+	inst = mono_metadata_parse_generic_inst (m, container, count, ptr, &ptr, error);
 	if (inst == NULL)
 		return FALSE;
 
@@ -3528,7 +3528,7 @@ mono_method_get_header_summary (MonoMethod *method, MonoMethodHeaderSummary *sum
  * Returns: a transient MonoMethodHeader allocated from the heap.
  */
 MonoMethodHeader *
-mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, const char *ptr)
+mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, const char *ptr, MonoError *error)
 {
 	MonoMethodHeader *mh = NULL;
 	unsigned char flags = *(const unsigned char *) ptr;
@@ -3579,6 +3579,7 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		ptr = (char*)code + code_size;
 		break;
 	default:
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
 	}
 
@@ -3606,17 +3607,11 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		mh = g_malloc0 (MONO_SIZEOF_METHOD_HEADER + len * sizeof (MonoType*) + num_clauses * sizeof (MonoExceptionClause));
 		mh->num_locals = len;
 
-		MonoError error;
-		mono_error_init (&error);
 		for (i = 0; i < len; ++i) {
 			mh->locals [i] = mono_metadata_parse_type_internal (m, container,
-																MONO_PARSE_LOCAL, 0, TRUE, locals_ptr, &locals_ptr, &error);
+																MONO_PARSE_LOCAL, 0, TRUE, locals_ptr, &locals_ptr, error);
 
-			if (!mono_error_ok (&error)) {
-				mono_loader_set_error_from_mono_error (&error);
-				mono_error_cleanup (&error);
-			}
-			if (!mh->locals [i]) {
+			if (!mono_error_ok (error) || !mh->locals [i]) {
 				goto fail;
 			}
 		}
@@ -3635,8 +3630,10 @@ mono_metadata_parse_mh_full (MonoImage *m, MonoGenericContainer *container, cons
 		mh->clauses = clausesp;
 		mh->num_clauses = num_clauses;
 	}
+	g_assert (!mono_loader_get_last_error ());
 	return mh;
 fail:
+	g_assert (!mono_loader_get_last_error ());
 	g_free (clauses);
 	g_free (mh);
 	return NULL;
@@ -3656,7 +3653,18 @@ fail:
 MonoMethodHeader *
 mono_metadata_parse_mh (MonoImage *m, const char *ptr)
 {
-	return mono_metadata_parse_mh_full (m, NULL, ptr);
+	MonoError error;
+	mono_error_init (&error);
+
+	MonoMethodHeader* mh = mono_metadata_parse_mh_full (m, NULL, ptr, &error);
+
+
+	if (!mono_error_ok (&error))
+		mono_loader_set_error_from_mono_error (&error);
+
+	mono_error_cleanup (&error);
+
+	return mh;
 }
 
 /*

@@ -1418,4 +1418,7 @@ mono_field_from_token_checked (MonoImage *image, uint32_t token, MonoClass **ret
 gpointer
 mono_ldtoken_checked (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context, MonoError *error);
 
+MonoMethodHeader *
+mono_method_get_header_checked (MonoMethod *method, MonoError *error);
+
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */

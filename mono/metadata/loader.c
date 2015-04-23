@@ -775,9 +775,13 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 		result = find_method_in_class (mono_defaults.object_class, name, qname, fqname, sig, mono_defaults.object_class, error);
 
 	//we did not find the method
-	if (!result && mono_error_ok (error)) {
+	if (!result) {
 		char *desc = mono_signature_get_desc (sig, FALSE);
-		mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s", desc);
+		if (mono_error_ok (error)) {
+			mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s", desc);
+		} else {
+			mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s due to %s", desc, mono_error_get_message (error));
+		}
 		g_free (desc);
 	}
 		
@@ -1181,10 +1185,12 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	ptr++;
 	param_count = mono_metadata_decode_value (ptr, &ptr);
 
-	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
+	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr, error);
 	if (!inst) {
 		g_assert (!mono_loader_get_last_error ());
-		mono_error_set_bad_image (error, image, "Cannot parse generic instance for methodspec 0x%08x", idx);
+		// If we couldn't find it, but encountered no other errors
+		if (mono_error_ok (error))
+			mono_error_set_bad_image (error, image, "Cannot parse generic instance for methodspec 0x%08x", idx);
 		return NULL;
 	}
 
@@ -2714,6 +2720,22 @@ mono_method_get_token (MonoMethod *method)
 MonoMethodHeader*
 mono_method_get_header (MonoMethod *method)
 {
+	MonoError error;
+	mono_error_init (&error);
+
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_loader_set_error_from_mono_error (&error);
+		mono_error_cleanup (&error);
+	}
+
+	return header;
+}
+
+MonoMethodHeader*
+mono_method_get_header_checked (MonoMethod *method, MonoError *error)
+{
 	int idx;
 	guint32 rva;
 	MonoImage* img;
@@ -2721,8 +2743,10 @@ mono_method_get_header (MonoMethod *method)
 	MonoMethodHeader *header;
 	MonoGenericContainer *container;
 
-	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	img = method->klass->image;
 
@@ -2730,9 +2754,11 @@ mono_method_get_header (MonoMethod *method)
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
 		MonoMethodHeader *header, *iheader;
 
-		header = mono_method_get_header (imethod->declaring);
-		if (!header)
+		header = mono_method_get_header_checked (imethod->declaring, error);
+		if (!header) {
+			g_assert (!mono_loader_get_last_error ());
 			return NULL;
+		}
 
 		iheader = inflate_generic_header (header, mono_method_get_context (method));
 		mono_metadata_free_mh (header);
@@ -2742,6 +2768,7 @@ mono_method_get_header (MonoMethod *method)
 		if (imethod->header) {
 			mono_metadata_free_mh (iheader);
 			mono_image_unlock (img);
+			g_assert (!mono_loader_get_last_error ());
 			return imethod->header;
 		}
 
@@ -2750,12 +2777,13 @@ mono_method_get_header (MonoMethod *method)
 
 		mono_image_unlock (img);
 
+		g_assert (!mono_loader_get_last_error ());
 		return imethod->header;
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE || method->sre_method) {
 		MonoMethodWrapper *mw = (MonoMethodWrapper *)method;
-		g_assert (mw->header);
+		g_assert (mw->header && !mono_loader_get_last_error ());
 		return mw->header;
 	}
 
@@ -2767,12 +2795,16 @@ mono_method_get_header (MonoMethod *method)
 	idx = mono_metadata_token_index (method->token);
 	rva = mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_RVA);
 
-	if (!mono_verifier_verify_method_header (img, rva, NULL))
+	if (!mono_verifier_verify_method_header (img, rva, NULL)) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	loc = mono_image_rva_map (img, rva);
-	if (!loc)
+	if (!loc) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	/*
 	 * When parsing the types of local variables, we must pass any container available
@@ -2781,8 +2813,10 @@ mono_method_get_header (MonoMethod *method)
 	container = mono_method_get_generic_container (method);
 	if (!container)
 		container = method->klass->generic_container;
-	header = mono_metadata_parse_mh_full (img, container, loc);
 
+	header = mono_metadata_parse_mh_full (img, container, loc, error);
+
+	g_assert (!mono_loader_get_last_error ());
 	return header;
 }
 
