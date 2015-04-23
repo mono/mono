@@ -73,13 +73,9 @@ namespace Xamarin.ApiDiff {
 			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
 				return;
 			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, name);
-			Output.WriteLine ("<pre>");
-			if (State.Colorize)
-				Output.WriteLine ("<font color='green'>");
+			Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
 			State.Indent = 0;
 			AddedInner (target);
-			if (State.Colorize)
-				Output.WriteLine ("</font>");
 			Output.WriteLine ("</pre>");
 		}
 
