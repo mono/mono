@@ -237,7 +237,10 @@ namespace Xamarin.ApiDiff {
 
 		public override void Removed (XElement source)
 		{
-			Output.WriteLine ("<h3>Removed Type {0}.{1}", State.Namespace, GetTypeName (source));
+			var style = string.Empty;
+			if (State.Colorize)
+				style = "style='color: red'";
+			Output.Write ("<h3>Removed Type <span {0}>{1}.{2}</span></h3>", style, State.Namespace, GetTypeName (source));
 		}
 
 		public virtual string GetTypeName (XElement type)

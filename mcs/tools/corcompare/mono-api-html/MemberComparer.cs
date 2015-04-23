@@ -427,6 +427,17 @@ namespace Xamarin.ApiDiff {
 				change.AnyChange = false;
 				change.HasIgnoredChanges = true;
 			}
+
+			var tgtSecurity = (source & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+			var srcSecurity = (target & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+
+			if (tgtSecurity != srcSecurity)
+				change.HasIgnoredChanges = true;
+
+			var srcPInvoke = (source & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			var tgtPInvoke = (target & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			if (srcPInvoke != tgtPInvoke)
+				change.HasIgnoredChanges = true;
 		}
 
 		protected string GetVisibility (MethodAttributes attr)

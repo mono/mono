@@ -68,8 +68,14 @@ namespace Xamarin.ApiDiff
 		{
 			if (!change.AnyChange) {
 				// This is most likely because the rendering doesn't take into account something that's different (solution: fix rendering).
-				if (!change.HasIgnoredChanges)
-					Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetMethodAttributes (), target.GetMethodAttributes ());
+				if (!change.HasIgnoredChanges) {
+					var isField = source.Name.LocalName == "field";
+					if (isField) {
+						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetFieldAttributes (), target.GetFieldAttributes ());
+					} else {
+						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetMethodAttributes (), target.GetMethodAttributes ());
+					}
+				}
 				return;
 			}
 
