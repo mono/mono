@@ -45,6 +45,17 @@ namespace Xamarin.ApiDiff {
 
 		void RenderFieldAttributes (FieldAttributes source, FieldAttributes target, ApiChange change)
 		{
+			var srcNotSerialized = (source & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+			var tgtNotSerialized = (target & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+			if (srcNotSerialized != tgtNotSerialized) {
+				// this is not a breaking change, so only render it if it changed.
+				if (srcNotSerialized) {
+					change.AppendRemoved ("[NonSerialized]\n");
+				} else {
+					change.AppendAdded ("[NonSerialized]\n");
+				}
+			}
+
 			// the visibility values are the same for MethodAttributes and FieldAttributes, so just use the same method.
 			RenderVisibility ((MethodAttributes) source, (MethodAttributes) target, change);
 			// same for the static flag
@@ -178,9 +189,8 @@ namespace Xamarin.ApiDiff {
 		{
 			first = true;
 			if (State.BaseType == "System.Enum") {
-				Output.WriteLine ("<p>Added value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
-				if (State.Colorize)
-					Output.Write ("<font color='green'>");
+				Output.WriteLine ("<p>Added value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
+				Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
 			} else {
 				base.BeforeAdding (list);
 			}
@@ -190,9 +200,8 @@ namespace Xamarin.ApiDiff {
 		{
 			first = true;
 			if (State.BaseType == "System.Enum") {
-				Output.WriteLine ("<p>Removed value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
-				if (State.Colorize)
-					Output.Write ("<font color='red'>");
+				Output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
+				Output.WriteLine (State.Colorize ? "<pre style='color: red'>" : "<pre>");
 			} else {
 				base.BeforeRemoving (list);
 			}

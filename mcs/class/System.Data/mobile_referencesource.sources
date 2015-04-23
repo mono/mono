@@ -9,6 +9,7 @@
 ../../../external/referencesource/System.Data/System/Data/AggregateType.cs
 ../../../external/referencesource/System.Data/System/Data/BaseCollection.cs
 ../../../external/referencesource/System.Data/System/Data/CatalogLocation.cs
+../../../external/referencesource/System.Data/System/Data/CodeGen/StrongTypingException.cs
 ../../../external/referencesource/System.Data/System/Data/ColumnTypeConverter.cs
 ../../../external/referencesource/System.Data/System/Data/CommandBehavior.cs
 ../../../external/referencesource/System.Data/System/Data/CommandType.cs
@@ -186,6 +187,7 @@
 ../../../external/referencesource/System.Data/System/Data/Merger.cs
 ../../../external/referencesource/System.Data/System/Data/MissingMappingAction.cs
 ../../../external/referencesource/System.Data/System/Data/MissingSchemaAction.cs
+../../../external/referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
 ../../../external/referencesource/System.Data/System/Data/OperationAbortedException.cs
 ../../../external/referencesource/System.Data/System/Data/ParameterDirection.cs
 ../../../external/referencesource/System.Data/System/Data/PrimaryKeyTypeConverter.cs

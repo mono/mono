@@ -182,9 +182,8 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Added {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
-			if (State.Colorize)
-				Output.Write ("<font color='green'>");
+			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
+			Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
 		}
 
 		public override void Added (XElement target)
@@ -198,9 +197,7 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterAdding ()
 		{
-			if (State.Colorize)
-				Output.Write ("</font>");
-			Output.WriteLine ("</pre>");
+			Output.WriteLine ("</pre>");;
 		}
 
 		public override void Modified (XElement source, XElement target, ApiChanges change)
@@ -210,9 +207,8 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeRemoving (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Removed {0}:</p>\n<pre>", list.Count () > 1 ? GroupName : ElementName);
-			if (State.Colorize)
-				Output.Write ("<font color='red'>");
+			Output.WriteLine ("<p>Removed {0}:</p>\n", list.Count () > 1 ? GroupName : ElementName);
+			Output.WriteLine (State.Colorize ? "<pre style='color: red'>" : "<pre>");
 		}
 
 		public override void Removed (XElement source)
@@ -226,9 +222,7 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterRemoving ()
 		{
-			if (State.Colorize)
-				Output.Write ("</font>");
-			Output.WriteLine ("</pre>");
+			Output.WriteLine ("</pre>");;
 		}
 
 		string RenderGenericParameter (XElement gp)
@@ -427,6 +421,17 @@ namespace Xamarin.ApiDiff {
 				change.AnyChange = false;
 				change.HasIgnoredChanges = true;
 			}
+
+			var tgtSecurity = (source & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+			var srcSecurity = (target & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+
+			if (tgtSecurity != srcSecurity)
+				change.HasIgnoredChanges = true;
+
+			var srcPInvoke = (source & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			var tgtPInvoke = (target & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			if (srcPInvoke != tgtPInvoke)
+				change.HasIgnoredChanges = true;
 		}
 
 		protected string GetVisibility (MethodAttributes attr)
@@ -542,14 +547,14 @@ namespace Xamarin.ApiDiff {
 				var change = new ApiChange ();
 				change.Header = "Obsoleted " + GroupName;
 				if (State.Colorize)
-					change.Append ("<font color='gray'>");
+					change.Append ("<span style='color:gray'>");
 				change.Append ("[Obsolete (");
 				if (tgtObsolete != string.Empty)
 					change.Append ("\"").Append (tgtObsolete).Append ("\"");
 				change.Append ("]\n");
 				change.Append (GetDescription (target));
 				if (State.Colorize)
-					change.Append ("</font>");
+					change.Append ("</span>");
 				change.AnyChange = true;
 				changes.Add (source, target, change);
 			} else if (tgtObsolete == null) {

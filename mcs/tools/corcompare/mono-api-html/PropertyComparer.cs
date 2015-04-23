@@ -136,6 +136,36 @@ namespace Xamarin.ApiDiff {
 			}
 		}
 
+		void RenderIndexers (List<XElement> srcIndexers, List<XElement> tgtIndexers, ApiChange change)
+		{
+			change.Append ("this [");
+			for (int i = 0; i < srcIndexers.Count; i++) {
+				var source = srcIndexers [i];
+				var target = tgtIndexers [i];
+
+				if (i > 0)
+					change.Append (", ");
+
+				var srcType = source.GetTypeName ("type");
+				var tgtType = target.GetTypeName ("type");
+				if (srcType == tgtType) {
+					change.Append (tgtType);
+				} else {
+					change.AppendModified (srcType, tgtType, true);
+				}
+				change.Append (" ");
+
+				var srcName = source.GetAttribute ("name");
+				var tgtName = target.GetAttribute ("name");
+				if (srcName == tgtName) {
+					change.Append (tgtName);
+				} else {
+					change.AppendModified (srcName, tgtName, true);
+				}
+			}
+			change.Append ("]");
+		}
+
 		public override bool Equals (XElement source, XElement target, ApiChanges changes)
 		{
 			if (base.Equals (source, target, changes))
@@ -146,11 +176,24 @@ namespace Xamarin.ApiDiff {
 			GetAccessors (source, out srcGetter, out srcSetter);
 			GetAccessors (target, out tgtGetter, out tgtSetter);
 
+			List<XElement> srcIndexers = null;
+			List<XElement> tgtIndexers = null;
+			bool isIndexer = false;
+			if (srcGetter != null) {
+				srcIndexers = srcGetter.DescendantList ("parameters", "parameter");
+				tgtIndexers = tgtGetter.DescendantList ("parameters", "parameter");
+				isIndexer = srcIndexers != null && srcIndexers.Count > 0;
+			}
+
 			var change = new ApiChange ();
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (GetMethodAttributes (srcGetter, srcSetter), GetMethodAttributes (tgtGetter, tgtSetter), change);
 			RenderPropertyType (source, target, change);
-			RenderName (source, target, change);
+			if (isIndexer) {
+				RenderIndexers (srcIndexers, tgtIndexers, change);
+			} else {
+				RenderName (source, target, change);
+			}
 			RenderGenericParameters (source, target, change);
 			RenderAccessors (srcGetter, tgtGetter, srcSetter, tgtSetter, change);
 
