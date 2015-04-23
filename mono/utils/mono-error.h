@@ -58,6 +58,9 @@ mono_error_ok (MonoError *error);
 MONO_API unsigned short
 mono_error_get_error_code (MonoError *error);
 
+MONO_API int
+mono_error_type_to_exception_type (MonoError *oerror);
+
 MONO_API const char*
 mono_error_get_message (MonoError *error);
 

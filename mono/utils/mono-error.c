@@ -402,6 +402,27 @@ mono_error_set_from_loader_error (MonoError *oerror)
 	mono_loader_clear_error ();
 }
 
+int
+mono_error_type_to_exception_type (MonoError *oerror)
+{
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+	switch (error->error_code) {
+	case MONO_ERROR_MISSING_METHOD:
+		return MONO_EXCEPTION_MISSING_METHOD;
+	case MONO_ERROR_MISSING_FIELD:
+		return MONO_EXCEPTION_MISSING_FIELD;
+	case MONO_ERROR_TYPE_LOAD:
+		return MONO_EXCEPTION_TYPE_LOAD;
+	case MONO_ERROR_FILE_NOT_FOUND:
+		return MONO_EXCEPTION_FILE_NOT_FOUND;
+	case MONO_ERROR_BAD_IMAGE:
+		return MONO_EXCEPTION_BAD_IMAGE;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
 void
 mono_loader_set_error_from_mono_error (MonoError *oerror)
 {
