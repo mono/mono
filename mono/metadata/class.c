@@ -6095,7 +6095,7 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 }
 
 static MonoClass*
-make_generic_param_class (MonoGenericParam *param, MonoImage *image, gboolean is_mvar, MonoGenericParamInfo *pinfo)
+make_generic_param_class (MonoGenericParam *param, MonoImage *image, gboolean is_mvar, MonoGenericParamInfo *pinfo, MonoError *error)
 {
 	MonoClass *klass, **ptr;
 	int count, pos, i;
@@ -6140,7 +6140,7 @@ make_generic_param_class (MonoGenericParam *param, MonoImage *image, gboolean is
 		klass->parent = pinfo->constraints [0];
 		pos++;
 	} else if (pinfo && pinfo->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT)
-		klass->parent = mono_class_from_name (mono_defaults.corlib, "System", "ValueType");
+		klass->parent = mono_class_from_name_checked (mono_defaults.corlib, "System", "ValueType", error);
 	else
 		klass->parent = mono_defaults.object_class;
 
@@ -6317,7 +6317,13 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, gb
 		}
 	}
 
-	klass = make_generic_param_class (param, image, is_mvar, pinfo);
+	MonoError error;
+	mono_error_init (&error);
+	klass = make_generic_param_class (param, image, is_mvar, pinfo, &error);
+
+	// FIXME handle failure. Did not handle elsewhere when using loader error
+	g_assert (mono_error_ok (&error));
+	g_assert (!mono_loader_get_last_error ());
 
 	mono_memory_barrier ();
 
