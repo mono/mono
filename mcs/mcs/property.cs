@@ -115,7 +115,7 @@ namespace Mono.CSharp
 
 		public MethodSpec Get {
 			get {
-				return get;
+				return Get;
 			}
 			set {
 				get = value;
@@ -123,19 +123,19 @@ namespace Mono.CSharp
 			}
 		}
 
-		public MethodSpec Set { 
+		public MethodSpec Set {
 			get {
-				return set;
+				return Set;
 			}
 			set {
-				set = value;
-				set.IsAccessor = true;
+				Set = value;
+				Set.IsAccessor = true;
 			}
 		}
 
 		public bool HasDifferentAccessibility {
 			get {
-				return HasGet && HasSet && 
+				return HasGet && HasSet &&
 					(Get.Modifiers & Modifiers.AccessibilityMask) != (Set.Modifiers & Modifiers.AccessibilityMask);
 			}
 		}
@@ -183,7 +183,7 @@ namespace Mono.CSharp
 	}
 
 	//
-	// Properties and Indexers both generate PropertyBuilders, we use this to share 
+	// Properties and Indexers both generate PropertyBuilders, we use this to share
 	// their common bits.
 	//
 	abstract public class PropertyBase : PropertyBasedMember {
@@ -262,7 +262,7 @@ namespace Mono.CSharp
 			public override void Define (TypeContainer parent)
 			{
 				parameters.Resolve (this);
-				
+
 				base.Define (parent);
 
 				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, ParameterInfo, ModFlags);
@@ -294,7 +294,7 @@ namespace Mono.CSharp
 				Modifiers.PROTECTED |
 				Modifiers.INTERNAL |
 				Modifiers.PRIVATE;
-		
+
 			protected readonly PropertyBase method;
 			protected MethodAttributes flags;
 
@@ -618,10 +618,10 @@ namespace Mono.CSharp
 					Report.Error (274, Location, "`{0}': Cannot specify accessibility modifiers for both accessors of the property or indexer",
 						GetSignatureForError ());
 				}
-			} else if ((ModFlags & Modifiers.OVERRIDE) == 0 && 
+			} else if ((ModFlags & Modifiers.OVERRIDE) == 0 &&
 				(Get == null && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) ||
 				(Set == null && (Get.ModFlags & Modifiers.AccessibilityMask) != 0)) {
-				Report.Error (276, Location, 
+				Report.Error (276, Location,
 					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
 					      GetSignatureForError ());
 			}
@@ -747,7 +747,7 @@ namespace Mono.CSharp
 			get { return "P:"; }
 		}
 	}
-			
+
 	public class Property : PropertyBase
 	{
 		public sealed class BackingFieldDeclaration : Field
@@ -937,7 +937,7 @@ namespace Mono.CSharp
 				CheckAbstractAndExtern (block != null);
 				base.Define (ds);
 			}
-			
+
 			public override string GetSignatureForError ()
 			{
 				return method.GetSignatureForError () + "." + prefix.Substring (0, prefix.Length - 1);
@@ -971,7 +971,7 @@ namespace Mono.CSharp
 		{
 			visitor.Visit (this);
 		}
-		
+
 		public override bool Define()
 		{
 			if (!base.Define ())
@@ -1149,7 +1149,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		
+
 		public override void Accept (StructuralVisitor visitor)
 		{
 			visitor.Visit (this);
@@ -1488,7 +1488,7 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public MethodSpec AccessorAdd { 
+		public MethodSpec AccessorAdd {
 			get {
 				return add;
 			}
@@ -1535,7 +1535,7 @@ namespace Mono.CSharp
 			return MemberType.ResolveMissingDependencies (this);
 		}
 	}
- 
+
 	public class Indexer : PropertyBase, IParametersMember
 	{
 		public class GetIndexerMethod : GetMethod, IParametersMember
@@ -1650,7 +1650,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		
+
 		public override void Accept (StructuralVisitor visitor)
 		{
 			visitor.Visit (this);
@@ -1670,7 +1670,7 @@ namespace Mono.CSharp
 		{
 			return Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 		}
-		
+
 		public override bool Define ()
 		{
 			if (!base.Define ())
@@ -1713,7 +1713,7 @@ namespace Mono.CSharp
 			Parent.AddNameToContainer (this, MemberName.Basename);
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
-			
+
 			if (!DefineAccessors ())
 				return false;
 
