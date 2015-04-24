@@ -281,6 +281,7 @@ namespace System.Net.Sockets
 
 #region Properties
 
+		[ObsoleteAttribute ("Use OSSupportsIPv4 instead")]
 		public static bool SupportsIPv4 {
 			get { return ipv4_supported == 1; }
 		}
@@ -293,6 +294,19 @@ namespace System.Net.Sockets
 #if NET_2_1
 		public static bool OSSupportsIPv4 {
 			get { return ipv4_supported == 1; }
+		}
+#else
+		public static bool OSSupportsIPv4 {
+			get {
+				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
+
+				foreach (NetworkInterface adapter in nics) {
+					if (adapter.Supports (NetworkInterfaceComponent.IPv4))
+						return true;
+				}
+
+				return false;
+			}
 		}
 #endif
 
