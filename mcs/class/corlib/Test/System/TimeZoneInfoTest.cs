@@ -802,6 +802,16 @@ namespace MonoTests.System
 				}		
 			}
 		#endif
+
+			[Test]
+			public void Dublin ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					Assert.Ignore ();
+				// Europe/Dublin has a DST offset of 34 minutes and 39 seconds in 1916.
+				TimeZoneInfo.FindSystemTimeZoneById ("Europe/Dublin");
+			}
+
 		}
 		
 		[TestFixture]
