@@ -586,6 +586,15 @@ namespace System.Reflection.Emit {
 
 			return new MethodToken (GetToken (method));
 		}
+		
+		public MethodToken GetMethodToken (MethodInfo method, IEnumerable<Type> optionalParameterTypes)
+		{
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			var optParamTypes = new List<Type> (optionalParameterTypes);
+			return new MethodToken (GetToken (method, optParamTypes.ToArray ()));
+		}
 
 		public MethodToken GetArrayMethodToken (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
 		{
@@ -600,6 +609,17 @@ namespace System.Reflection.Emit {
 			if (con.DeclaringType.Module != this)
 				throw new InvalidOperationException ("The constructor is not in this module");
 			return new MethodToken (GetToken (con));
+		}
+		
+		public MethodToken GetConstructorToken (ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
+		{
+			if (constructor == null)
+				throw new ArgumentNullException ("constructor");
+			if (con.DeclaringType.Module != this)
+				throw new InvalidOperationException ("The constructor is not in this module");
+			
+			var optParamTypes = new List<Type> (optionalParameterTypes);
+			return new MethodToken (GetToken (constructor, optParamTypes.ToArray ()));
 		}
 
 		public FieldToken GetFieldToken (FieldInfo field)
