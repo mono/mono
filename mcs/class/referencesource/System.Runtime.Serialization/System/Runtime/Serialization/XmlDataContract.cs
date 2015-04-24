@@ -375,6 +375,7 @@ namespace System.Runtime.Serialization
         }
 #endif
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - Calculates whether this Xml type requires MemberAccessPermission for deserialization."
             + " Since this information is used to determine whether to give the generated code access"
             + " permissions to private members, any changes to the logic should be reviewed.")]
@@ -404,6 +405,7 @@ namespace System.Runtime.Serialization
 
             return false;
         }
+#endif
 
         internal override bool Equals(object other, Dictionary<DataContractPairKey, object> checkedContracts)
         {

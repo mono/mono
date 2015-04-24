@@ -2267,7 +2267,12 @@ namespace System.Runtime.Serialization
         {
             ThrowInvalidDataContractException(message, UnderlyingType);
         }
-
+#if NO_DYNAMIC_CODEGEN
+        static internal bool IsTypeVisible(Type t)
+        {
+            return true;
+        }
+#else
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - checks type visibility to calculate if access to it requires MemberAccessPermission."
             + " Since this information is used to determine whether to give the generated code access"
             + " permissions to private members, any changes to the logic should be reviewed.")]
@@ -2404,6 +2409,7 @@ namespace System.Runtime.Serialization
             }
             return false;
         }
+#endif
     }
 
     interface IGenericNameProvider

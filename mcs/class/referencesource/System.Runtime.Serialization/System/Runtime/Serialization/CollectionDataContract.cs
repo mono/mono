@@ -1303,6 +1303,7 @@ namespace System.Runtime.Serialization
             return (InvalidCollectionInSharedContractMessage == null);
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous =
             "RequiresReview - Calculates whether this collection requires MemberAccessPermission for deserialization."
             + " Since this information is used to determine whether to give the generated code access"
@@ -1395,6 +1396,7 @@ namespace System.Runtime.Serialization
 
             return false;
         }
+#endif
 
         internal override bool Equals(object other, Dictionary<DataContractPairKey, object> checkedContracts)
         {

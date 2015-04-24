@@ -9,7 +9,9 @@ namespace System.Runtime.Serialization
     using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
+#if !NO_DYNAMIC_CODEGEN
     using System.Reflection.Emit;
+#endif
     using System.Security;
 
     class CodeGenerator

@@ -459,6 +459,7 @@ namespace System.Runtime.Serialization
             return o;
         }
 
+#if !NO_DYNAMIC_CODEGEN
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - calculates whether this class requires MemberAccessPermission for deserialization."
             + "Since this information is used to determine whether to give the generated code access "
             + "permissions to private members, any changes to the logic should be reviewed.")]
@@ -663,6 +664,7 @@ namespace System.Runtime.Serialization
             return false;
 #endif
         }
+#endif
 
         [Fx.Tag.SecurityNote(Critical = "Holds all state used for (de)serializing classes."
             + " Since the data is cached statically, we lock down access to it.")]
