@@ -3091,7 +3091,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 {
 	MonoMethodHeader *header;
 	MonoMethodSignature *sig;
-	MonoError err;
 	MonoCompile *cfg;
 	int dfn, i, code_size_ratio;
 	gboolean try_generic_shared, try_llvm = FALSE;
@@ -3107,6 +3106,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 #endif
 	static gboolean verbose_method_inited;
 	static const char *verbose_method_name;
+
+	MonoError err;
+	mono_error_init (&err);
+	g_assert (!mono_loader_get_last_error ());
 
 	InterlockedIncrement (&mono_jit_stats.methods_compiled);
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
@@ -3175,7 +3178,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 	cfg = g_new0 (MonoCompile, 1);
 	cfg->method = method_to_compile;
-	cfg->header = mono_method_get_header (cfg->method);
+	cfg->header = mono_method_get_header_checked (cfg->method, &err);
 	cfg->mempool = mono_mempool_new ();
 	cfg->opt = opts;
 	cfg->prof_options = mono_profiler_get_events ();
@@ -3258,27 +3261,26 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 	cfg->method_to_register = method_to_register;
 
-	mono_error_init (&err);
-	sig = mono_method_signature_checked (cfg->method, &err);	
-	if (!sig) {
-		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
-		cfg->exception_message = g_strdup (mono_error_get_message (&err));
+	header = cfg->header;
+	if (!header) {
+		if (!mono_error_ok (&err)) {
+			cfg->exception_type = mono_error_type_to_exception_type(&err);
+			cfg->exception_message = g_strdup (mono_error_get_message (&err));
+		} else {
+			cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+			cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
+		}
 		mono_error_cleanup (&err);
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;
 	}
 
-	header = cfg->header;
-	if (!header) {
-		MonoLoaderError *error;
-
-		if ((error = mono_loader_get_last_error ())) {
-			cfg->exception_type = error->exception_type;
-		} else {
-			cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-			cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
-		}
+	sig = mono_method_signature_checked (cfg->method, &err);
+	if (!sig) {
+		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
+		cfg->exception_message = g_strdup (mono_error_get_message (&err));
+		mono_error_cleanup (&err);
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;
@@ -3484,6 +3486,15 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	mono_compile_create_vars (cfg);
 
 	i = mono_method_to_ir (cfg, method_to_compile, NULL, NULL, NULL, NULL, 0, FALSE);
+
+	{
+		// FIXME: Audit above calls and ensure that nothing's leaking a loader error.
+		MonoLoaderError *loader_error;
+		if ((loader_error = mono_loader_get_last_error ())) {
+			cfg->exception_type = loader_error->exception_type;
+			mono_loader_clear_error ();
+		}
+	}
 
 	if (i < 0) {
 		if (try_generic_shared && cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
@@ -4116,6 +4127,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	jit_timer = g_timer_new ();
 
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0);
+	g_assert (!mono_loader_get_last_error ());
+
 	prof_method = cfg->method;
 
 	g_timer_stop (jit_timer);
@@ -4130,28 +4143,21 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	case MONO_EXCEPTION_MISSING_METHOD:
 	case MONO_EXCEPTION_FILE_NOT_FOUND:
 	case MONO_EXCEPTION_BAD_IMAGE: {
-		/* Throw a type load exception if needed */
-		MonoLoaderError *error = mono_loader_get_last_error ();
-
-		if (error) {
-			ex = mono_loader_error_prepare_exception (error);
+		if (cfg->exception_ptr) {
+			ex = mono_class_get_exception_for_failure (cfg->exception_ptr);
 		} else {
-			if (cfg->exception_ptr) {
-				ex = mono_class_get_exception_for_failure (cfg->exception_ptr);
-			} else {
-				if (cfg->exception_type == MONO_EXCEPTION_MISSING_FIELD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingFieldException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_MISSING_METHOD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_TYPE_LOAD)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_FILE_NOT_FOUND)
-					ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "FileNotFoundException", cfg->exception_message);
-				else if (cfg->exception_type == MONO_EXCEPTION_BAD_IMAGE)
-					ex = mono_get_exception_bad_image_format (cfg->exception_message);
-				else
-					g_assert_not_reached ();
-			}
+			if (cfg->exception_type == MONO_EXCEPTION_MISSING_FIELD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingFieldException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_MISSING_METHOD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "MissingMethodException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_TYPE_LOAD)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "TypeLoadException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_FILE_NOT_FOUND)
+				ex = mono_exception_from_name_msg (mono_defaults.corlib, "System", "FileNotFoundException", cfg->exception_message);
+			else if (cfg->exception_type == MONO_EXCEPTION_BAD_IMAGE)
+				ex = mono_get_exception_bad_image_format (cfg->exception_message);
+			else
+				g_assert_not_reached ();
 		}
 		break;
 	}
