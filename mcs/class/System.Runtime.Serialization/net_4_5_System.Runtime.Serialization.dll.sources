@@ -1,5 +1,3 @@
-#include net_4_0_System.Runtime.Serialization.dll.sources
-System.Runtime.Serialization/DateTimeFormat.cs
-System.Runtime.Serialization/EmitTypeInformation.cs
-../System.ServiceModel.Web/System.Runtime.Serialization.Json/DataContractJsonSerializerSettings.cs
-System.Runtime.Serialization/DataContractSerializerSettings.cs
+#include System.Runtime.Serialization.dll.sources
+#include ReferenceSource.common.sources
+#include ReferenceSource.desktop.sources

@@ -70,7 +70,7 @@ namespace System {
 			IntPtr data = monotouch_timezone_get_data (name, ref size);
 			if (size <= 0) {
 				if (throw_on_error)
-					throw new TimeZoneNotFoundException ();
+					throw new TimeZoneNotFoundException (name);
 				return null;
 			}
 

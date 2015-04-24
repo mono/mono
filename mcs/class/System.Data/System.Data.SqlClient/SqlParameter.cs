@@ -64,7 +64,7 @@ namespace System.Data.SqlClient {
                 // LAMESPEC: Implementors should populate the dbTypeMapping accordingly
                 internal Type SystemType {
                         get {
-                                return (Type) dbTypeMapping [DbType];
+                                return (Type) dbTypeMapping [SqlDbType];
                         }
                 }
 #endregion

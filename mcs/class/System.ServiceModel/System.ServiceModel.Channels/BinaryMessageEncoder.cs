@@ -120,7 +120,7 @@ namespace System.ServiceModel.Channels
 		{
 			VerifyMessageVersion (message);
 
-			using (var xw = XmlDictionaryWriter.CreateBinaryWriter (stream, Constants.SoapDictionary, session ? CurrentWriterSession : null))
+			using (var xw = XmlDictionaryWriter.CreateBinaryWriter (stream, Constants.SoapDictionary, session ? CurrentWriterSession : null, false))
 				message.WriteMessage (xw);
 		}
 
