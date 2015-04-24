@@ -258,9 +258,16 @@ namespace System.ServiceModel.Channels
 				WriteBodyContents (body);
 			}
 
+			var nt = new NameTable ();
+			var nsmgr = new XmlNamespaceManager (nt);
+			nsmgr.AddNamespace ("s", Version.Envelope.Namespace);
+			nsmgr.AddNamespace ("a", Version.Addressing.Namespace);
+			var pc = new XmlParserContext (nt, nsmgr, null, XmlSpace.None);
+			
 			var rs = new XmlReaderSettings ();
 			rs.ConformanceLevel = ConformanceLevel.Auto;
-			return XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ()), rs));
+			
+			return XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ()), rs, pc));
 		}
 
 		protected abstract void OnWriteBodyContents (

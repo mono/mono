@@ -2,21 +2,21 @@ thisdir = class/System.Runtime.Serialization
 SUBDIRS = 
 include ../../build/rules.make
 
-RESOURCE_FILES = \
-	resources/mstypes.schema
+RESOURCE_FILES =
 
 LIBRARY = System.Runtime.Serialization.dll
-LIB_REFS = System System.Xml System.Core
+LIB_REFS = System System.Xml System.Core System.ServiceModel.Internals SMDiagnostics
 LIB_MCS_FLAGS = \
 		-unsafe \
+		-d:NO_DYNAMIC_CODEGEN \
 		/nowarn:168,169,219,414 \
 		$(RESOURCE_FILES:%=/resource:%)
-
-RESOURCE_STRINGS = ../../../external/referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration
 LIB_MCS_FLAGS += /d:NET_3_0
+else
+LIB_MCS_FLAGS += /d:NO_CONFIGURATION /d:NO_SECURITY_ATTRIBUTES /d:NO_CODEDOM /d:NO_DESKTOP_SECURITY
 endif
 
 TEST_RESOURCE_FILES = \
