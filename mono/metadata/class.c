@@ -7686,7 +7686,7 @@ return_nested_in (MonoClass *class, char *nested)
 }
 
 static MonoClass*
-search_modules (MonoImage *image, const char *name_space, const char *name)
+search_modules (MonoImage *image, const char *name_space, const char *name, MonoError *error)
 {
 	MonoTableInfo *file_table = &image->tables [MONO_TABLE_FILE];
 	MonoImage *file_image;
@@ -7707,7 +7707,7 @@ search_modules (MonoImage *image, const char *name_space, const char *name)
 
 		file_image = mono_image_load_file_for_image (image, i + 1);
 		if (file_image) {
-			class = mono_class_from_name (file_image, name_space, name);
+			class = mono_class_from_name_checked (file_image, name_space, name, error);
 			if (class)
 				return class;
 		}
@@ -7745,7 +7745,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 		gboolean res = get_class_from_name (image, name_space, name, &class);
 		if (res) {
 			if (!class)
-				class = search_modules (image, name_space, name);
+				class = search_modules (image, name_space, name, error);
 			if (nested)
 				return class ? return_nested_in (class, nested) : NULL;
 			else
@@ -7777,7 +7777,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 	}
 
 	if (!token) {
-		class = search_modules (image, name_space, name);
+		class = search_modules (image, name_space, name, error);
 		if (class)
 			return class;
 	}
