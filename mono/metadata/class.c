@@ -7758,8 +7758,8 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 		for (i = 0; i < image->module_count; ++i) {
 			MonoImage *module = image->modules [i];
 
-			class = mono_class_from_name (module, name_space, name);
-			if (class)
+			class = mono_class_from_name_checked (module, name_space, name, error);
+			if (class || !mono_error_ok (error))
 				return class;
 		}
 	}
@@ -7787,7 +7787,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 			loaded_image = mono_assembly_load_module (image->assembly, impl >> MONO_IMPLEMENTATION_BITS);
 			if (!loaded_image)
 				return NULL;
-			class = mono_class_from_name (loaded_image, name_space, name);
+			class = mono_class_from_name_checked (loaded_image, name_space, name, error);
 			if (nested)
 				return return_nested_in (class, nested);
 			return class;
@@ -7802,7 +7802,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 				return NULL;			
 			else
 				/* FIXME: Cycle detection */
-				return mono_class_from_name (image->references [assembly_idx - 1]->image, name_space, name);
+				return mono_class_from_name_checked (image->references [assembly_idx - 1]->image, name_space, name, error);
 		} else {
 			g_error ("not yet implemented");
 		}
