@@ -300,16 +300,16 @@ namespace System.Net {
 			int used = 0;
 			string line;
 
-			try {
-				line = ReadLine (buffer, position, len - position, ref used);
-				position += used;
-			} catch {
-				context.ErrorMessage = "Bad request";
-				context.ErrorStatus = 400;
-				return true;
-			}
-
 			do {
+				try {
+					line = ReadLine (buffer, position, len - position, ref used);
+					position += used;
+				} catch {
+					context.ErrorMessage = "Bad request";
+					context.ErrorStatus = 400;
+					return true;
+				}
+
 				if (line == null)
 					break;
 				if (line == "") {
@@ -338,15 +338,7 @@ namespace System.Net {
 
 				if (position >= len)
 					break;
-				try {
-					line = ReadLine (buffer, position, len - position, ref used);
-					position += used;
-				} catch {
-					context.ErrorMessage = "Bad request";
-					context.ErrorStatus = 400;
-					return true;
-				}
-			} while (line != null);
+			} while (true);
 
 			if (used == len) {
 				ms.SetLength (0);
