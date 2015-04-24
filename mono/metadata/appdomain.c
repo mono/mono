@@ -248,10 +248,15 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 
 	mono_thread_init (start_cb, attach_cb);
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	MonoError error;
+	mono_error_init (&error);
+	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
+	g_assert (mono_error_ok (&error));
 	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, class);
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomain");
+	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomain", &error);
+	g_assert (mono_error_ok (&error));
+
 	ad = (MonoAppDomain *) mono_object_new_pinned (domain, class);
 	ad->data = domain;
 	domain->domain = ad;
@@ -295,7 +300,11 @@ mono_get_corlib_version (void)
 	MonoClassField *field;
 	MonoObject *value;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System", "Environment");
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "Environment", &error);
+	g_assert (mono_error_ok (&error));
+
 	mono_class_init (klass);
 	field = mono_class_get_field_from_name (klass, "mono_corlib_version");
 	if (!field)
@@ -336,7 +345,11 @@ mono_context_init (MonoDomain *domain)
 	MonoClass *class;
 	MonoAppContext *context;
 
-	class = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
+	MonoError error;
+	mono_error_init (&error);
+	class = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context", &error);
+	g_assert (mono_error_ok (&error));
+
 	context = (MonoAppContext *) mono_object_new_pinned (domain, class);
 	context->domain_id = domain->domain_id;
 	context->context_id = 0;
@@ -401,7 +414,11 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 	MonoAppDomainSetup *setup;
 	MonoClass *class;
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	MonoError error;
+	mono_error_init (&error);
+	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
+	g_assert (mono_error_ok (&error));
+
 	setup = (MonoAppDomainSetup *) mono_object_new (mono_domain_get (), class);
 	setup->configuration_file = configuration_file != NULL ? mono_string_new (mono_domain_get (), configuration_file) : NULL;
 
@@ -433,7 +450,13 @@ static MonoAppDomainSetup*
 copy_app_domain_setup (MonoDomain *domain, MonoAppDomainSetup *setup)
 {
 	MonoDomain *caller_domain = mono_domain_get ();
-	MonoClass *ads_class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	MonoClass *ads_class;
+
+	MonoError error;
+	mono_error_init (&error);
+	ads_class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
+	g_assert (mono_error_ok (&error));
+
 	MonoAppDomainSetup *copy = (MonoAppDomainSetup*)mono_object_new (domain, ads_class);
 
 	mono_domain_set_internal (domain);
@@ -468,12 +491,15 @@ static MonoAppDomain *
 mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *setup)
 {
 	MonoError error;
+	mono_error_init (&error);
+
 	MonoClass *adclass;
 	MonoAppDomain *ad;
 	MonoDomain *data;
 	char *shadow_location;
 	
-	adclass = mono_class_from_name (mono_defaults.corlib, "System", "AppDomain");
+	adclass = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomain", &error);
+	g_assert (mono_error_ok (&error));
 
 	/* FIXME: pin all those objects */
 	data = mono_domain_create();
@@ -869,9 +895,13 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 	int i;
 	GPtrArray *assemblies;
 
-	if (!System_Reflection_Assembly)
-		System_Reflection_Assembly = mono_class_from_name (
-			mono_defaults.corlib, "System.Reflection", "Assembly");
+	if (!System_Reflection_Assembly) {
+		MonoError error;
+		mono_error_init (&error);
+		System_Reflection_Assembly = mono_class_from_name_checked (
+			mono_defaults.corlib, "System.Reflection", "Assembly", &error);
+		g_assert (mono_error_ok (&error));
+	}
 
 	/* 
 	 * Make a copy of the list of assemblies because we can't hold the assemblies
@@ -1050,6 +1080,8 @@ static void
 set_domain_search_path (MonoDomain *domain)
 {
 	MonoError error;
+	mono_error_init (&error);
+
 	MonoAppDomainSetup *setup;
 	gchar **tmp;
 	gchar *search_path = NULL;
@@ -1542,6 +1574,8 @@ gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 {
 	MonoError error;
+	mono_error_init (&error);
+
 	MonoAppDomainSetup *setup;
 	gchar *all_dirs;
 	gchar **dir_ptr;
@@ -1616,6 +1650,8 @@ char *
 mono_make_shadow_copy (const char *filename)
 {
 	MonoError error;
+	mono_error_init (&error);
+
 	gchar *sibling_source, *sibling_target;
 	gint sibling_source_len, sibling_target_len;
 	guint16 *orig, *dest;
@@ -2040,6 +2076,8 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad,
 											MonoReflectionAssembly *refass, MonoArray *args)
 {
 	MonoError error;
+	mono_error_init (&error);
+
 	MonoImage *image;
 	MonoMethod *method;
 
@@ -2049,7 +2087,7 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad,
 
 	method = mono_get_method_checked (image, mono_image_get_entry_point (image), NULL, NULL, &error);
 
-	if (!method)
+	if (!method || !mono_error_ok (&error))
 		g_error ("No entry point method found in %s due to %s", image->name, mono_error_get_message (&error));
 
 	if (!args)
