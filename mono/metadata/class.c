@@ -7752,6 +7752,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 		if (res) {
 			if (!class)
 				class = search_modules (image, name_space, name, error);
+			g_assert (!mono_loader_get_last_error ());
 			if (nested)
 				return class ? return_nested_in (class, nested) : NULL;
 			else
@@ -7777,15 +7778,19 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 			MonoImage *module = image->modules [i];
 
 			class = mono_class_from_name_checked (module, name_space, name, error);
-			if (class || !mono_error_ok (error))
+			if (class) {
+				g_assert (!mono_loader_get_last_error ());
 				return class;
+			}
 		}
 	}
 
 	if (!token) {
 		class = search_modules (image, name_space, name, error);
-		if (class)
+		if (class) {
+			g_assert (!mono_loader_get_last_error ());
 			return class;
+		}
 	}
 
 	if (!token)
@@ -7829,6 +7834,7 @@ mono_class_from_name_checked (MonoImage *image, const char* name_space, const ch
 	token = MONO_TOKEN_TYPE_DEF | token;
 
 	class = mono_class_get_checked (image, token, error);
+	g_assert (!mono_loader_get_last_error ());
 	if (nested)
 		return return_nested_in (class, nested);
 	return class;
