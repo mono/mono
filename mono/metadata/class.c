@@ -3052,16 +3052,24 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 	all_interfaces = eclass->rank && eclass->element_class->rank? FALSE: TRUE;
 
 	if (!generic_icollection_class) {
-		generic_icollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "ICollection`1");
-		generic_ienumerable_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerable`1");
-		generic_ienumerator_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerator`1");
-		generic_ireadonlylist_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyList`1");
-		generic_ireadonlycollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyCollection`1");
+		MonoError class_load_error;
+		mono_error_init (&class_load_error);
+
+		generic_icollection_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "ICollection`1", &class_load_error);
+		g_assert (mono_error_ok (&class_load_error));
+		generic_ienumerable_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IEnumerable`1", &class_load_error);
+		g_assert (mono_error_ok (&class_load_error));
+		generic_ienumerator_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IEnumerator`1", &class_load_error);
+		g_assert (mono_error_ok (&class_load_error));
+		generic_ireadonlylist_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyList`1", &class_load_error);
+		g_assert (mono_error_ok (&class_load_error));
+		generic_ireadonlycollection_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyCollection`1", &class_load_error);
+		g_assert (mono_error_ok (&class_load_error));
 	}
 
 	mono_class_init (eclass);
