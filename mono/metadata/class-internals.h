@@ -1153,8 +1153,10 @@ mono_class_get_##shortname##_class (void)	\
 	static MonoClass *tmp_class;	\
 	MonoClass *class = tmp_class;	\
 	if (!class) {	\
-		class = mono_class_from_name (mono_defaults.corlib, #namespace, #name);	\
-		g_assert (class);	\
+		MonoError error;	\
+		mono_error_init (&error);	\
+		class = mono_class_from_name_checked (mono_defaults.corlib, #namespace, #name, &error);	\
+		g_assert (class && mono_error_ok (&error));	\
 		mono_memory_barrier ();	\
 		tmp_class = class;	\
 	}	\
