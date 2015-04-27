@@ -363,9 +363,12 @@ static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *f
 	 */
 	item=mono_object_new (domain, proc_class);
 
-	filever_class=mono_class_from_name (system_assembly,
+	MonoError error;
+	mono_error_init (&error);
+	filever_class = mono_class_from_name_checked (system_assembly,
 					    "System.Diagnostics",
-					    "FileVersionInfo");
+					    "FileVersionInfo", &error);
+	mono_error_assert_ok (&error);
 	filever=mono_object_new (domain, filever_class);
 
 	process_get_fileversion (filever, filename);
@@ -408,7 +411,12 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 
 	if (EnumProcessModules (process, mods, sizeof(mods), &needed)) {
 		count = needed / sizeof(HMODULE);
-		proc_class = mono_class_from_name (system_assembly, "System.Diagnostics", "ProcessModule");
+
+		MonoError error;
+		mono_error_init (&error);
+		proc_class = mono_class_from_name_checked (system_assembly, "System.Diagnostics", "ProcessModule", &error);
+		mono_error_assert_ok (&error);
+
 		temp_arr = mono_array_new (mono_domain_get (), proc_class, count);
 		for (i = 0; i < count; i++) {
 			if (GetModuleBaseName (process, mods[i], modname, MAX_PATH) &&

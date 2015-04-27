@@ -549,6 +549,7 @@ static MonoType*
 verifier_inflate_type (VerifyContext *ctx, MonoType *type, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoType *result;
 
 	result = mono_class_inflate_generic_type_checked (type, context, &error);
@@ -566,6 +567,7 @@ static gboolean
 is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *context, MonoGenericInst *ginst)
 {
 	MonoError error;
+	mono_error_init (&error);
 	int i;
 
 	if (ginst->type_argc != gc->type_argc)
@@ -938,6 +940,7 @@ mono_method_is_valid_in_context (VerifyContext *ctx, MonoMethod *method)
 static MonoClassField*
 verifier_load_field (VerifyContext *ctx, int token, MonoClass **out_klass, const char *opcode) {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClassField *field;
 	MonoClass *klass = NULL;
 
@@ -982,6 +985,7 @@ verifier_load_method (VerifyContext *ctx, int token, const char *opcode) {
 		method = mono_method_get_wrapper_data (ctx->method, (guint32)token);
 	} else {
 		MonoError error;
+		mono_error_init (&error);
 		if (!IS_METHOD_DEF_OR_REF_OR_SPEC (token) || !token_bounds_check (ctx->image, token)) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid method token 0x%08x for %s at 0x%04x", token, opcode, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return NULL;
@@ -1011,6 +1015,7 @@ verifier_load_type (VerifyContext *ctx, int token, const char *opcode) {
 		type = class ? &class->byval_arg : NULL;
 	} else {
 		MonoError error;
+		mono_error_init (&error);
 		if (!IS_TYPE_DEF_OR_REF_OR_SPEC (token) || !token_bounds_check (ctx->image, token)) {
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid type token 0x%08x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 			return NULL;
@@ -2049,6 +2054,7 @@ static void
 init_stack_with_value_at_exception_boundary (VerifyContext *ctx, ILCodeDesc *code, MonoClass *klass)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoType *type = mono_class_inflate_generic_type_checked (&klass->byval_arg, ctx->generic_context, &error);
 
 	if (!mono_error_ok (&error)) {
@@ -2079,9 +2085,14 @@ get_ienumerable_class (void)
 {
 	static MonoClass* generic_ienumerable_class = NULL;
 
-	if (generic_ienumerable_class == NULL)
-		generic_ienumerable_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IEnumerable`1");
+	if (generic_ienumerable_class == NULL) {
+		MonoError error;
+		mono_error_init (&error);
+		generic_ienumerable_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IEnumerable`1", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+	}
 		return generic_ienumerable_class;
 }
 
@@ -2090,9 +2101,14 @@ get_icollection_class (void)
 {
 	static MonoClass* generic_icollection_class = NULL;
 
-	if (generic_icollection_class == NULL)
-		generic_icollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "ICollection`1");
+	if (generic_icollection_class == NULL) {
+		MonoError error;
+		mono_error_init (&error);
+		generic_icollection_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "ICollection`1", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+	}
 		return generic_icollection_class;
 }
 
@@ -2101,9 +2117,14 @@ get_ireadonlylist_class (void)
 {
 	static MonoClass* generic_ireadonlylist_class = NULL;
 
-	if (generic_ireadonlylist_class == NULL)
-		generic_ireadonlylist_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyList`1");
+	if (generic_ireadonlylist_class == NULL) {
+		MonoError error;
+		mono_error_init (&error);
+		generic_ireadonlylist_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyList`1", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+	}
 	return generic_ireadonlylist_class;
 }
 
@@ -2112,9 +2133,14 @@ get_ireadonlycollection_class (void)
 {
 	static MonoClass* generic_ireadonlycollection_class = NULL;
 
-	if (generic_ireadonlycollection_class == NULL)
-		generic_ireadonlycollection_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Collections.Generic", "IReadOnlyCollection`1");
+	if (generic_ireadonlycollection_class == NULL) {
+		MonoError error;
+		mono_error_init (&error);
+		generic_ireadonlycollection_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyCollection`1", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+	}
 	return generic_ireadonlycollection_class;
 }
 
@@ -2164,6 +2190,7 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 					return TRUE;
 			} else {
 				MonoError error;
+				mono_error_init (&error);
 				int i;
 				while (candidate && candidate != mono_defaults.object_class) {
 					mono_class_setup_interfaces (candidate, &error);
@@ -3146,6 +3173,7 @@ static void
 do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 {
 	MonoError error;
+	mono_error_init (&error);
 	int param_count, i;
 	MonoMethodSignature *sig;
 	ILStackDesc *value;
@@ -4555,6 +4583,7 @@ static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
 	MonoError error;
+	mono_error_init (&error);
 	int i, j;
 	stack_init (ctx, to);
 
@@ -4822,6 +4851,7 @@ GSList*
 mono_method_verify (MonoMethod *method, int level)
 {
 	MonoError error;
+	mono_error_init (&error);
 	const unsigned char *ip, *code_start;
 	const unsigned char *end;
 	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;

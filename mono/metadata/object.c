@@ -4090,7 +4090,6 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 			MonoError error;
 			stathread_attribute = mono_class_from_name_checked (mono_defaults.corlib, "System", "STAThreadAttribute", &error);
 			g_assert (stathread_attribute && mono_error_ok (&error));
-			mono_error_cleanup (&error);
 		}
 		has_stathread_attribute = mono_custom_attrs_has_attr (cinfo, stathread_attribute);
 		if (!cinfo->cached)
@@ -4336,7 +4335,6 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			mono_error_init (&error);
 			pointer_class = mono_class_from_name_cached (mono_defaults.corlib, "System.Reflection", "Pointer", &error);
 			mono_error_assert_ok (&error);
-			mono_error_cleanup (&error);
 
 			if (!box_method)
 				box_method = mono_class_get_method_from_name (pointer_class, "Box", -1);
@@ -4479,7 +4477,10 @@ mono_object_new_specific (MonoVTable *vtable)
 		MonoMethod *im = vtable->domain->create_proxy_for_type_method;
 
 		if (im == NULL) {
-			MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Activation", "ActivationServices");
+			MonoError error;
+			mono_error_init (&error);
+			MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Activation", "ActivationServices", &error);
+			mono_error_assert_ok (&error);
 
 			if (!klass->inited)
 				mono_class_init (klass);

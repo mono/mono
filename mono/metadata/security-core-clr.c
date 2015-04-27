@@ -129,10 +129,11 @@ security_critical_attribute (void)
 	static MonoClass *class = NULL;
 
 	if (!class) {
-		class = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-			"SecurityCriticalAttribute");
+		MonoError error;
+		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+			"SecurityCriticalAttribute", &error);
+		mono_error_assert_ok (&error);
 	}
-	g_assert (class);
 	return class;
 }
 
@@ -142,10 +143,11 @@ security_safe_critical_attribute (void)
 	static MonoClass *class = NULL;
 
 	if (!class) {
-		class = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-			"SecuritySafeCriticalAttribute");
+		MonoError error;
+		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+			"SecuritySafeCriticalAttribute", &error);
+		mono_error_assert_ok (&error);
 	}
-	g_assert (class);
 	return class;
 }
 

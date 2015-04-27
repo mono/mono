@@ -52,7 +52,9 @@ mono_cqitem_alloc (void)
 	MonoDomain *domain = mono_get_root_domain ();
 
 	if (!monocq_item_vtable) {
-		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoCQItem");
+		MonoError error;
+		MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "MonoCQItem", &error);
+		mono_error_assert_ok (&error);
 		monocq_item_vtable = mono_class_vtable (domain, klass);
 		g_assert (monocq_item_vtable);
 	}
