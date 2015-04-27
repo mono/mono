@@ -290,7 +290,16 @@ namespace System.Xml {
 			//return DateTime.Parse(s, d);
 			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
 					       DateTimeStyles.AllowTrailingWhite;			
-			return DateTime.ParseExact (s, format, DateTimeFormatInfo.InvariantInfo, style);
+			try {
+				return DateTime.ParseExact (s, format, DateTimeFormatInfo.InvariantInfo, style);
+			} catch (Exception e) {
+				try {
+					var xsdDateTime = new XsdDateTime2 (s, XsdDateTimeFlags.AllXsd);
+					return (DateTime) xsdDateTime;
+				} catch {
+					throw e;
+				}	
+			}
 		}
 
 		public static DateTime ToDateTime(string s, string[] formats)
@@ -304,6 +313,13 @@ namespace System.Xml {
 				return DateTime.ParseExact (s, formats, DateTimeFormatInfo.InvariantInfo, style);
 			} catch (ArgumentOutOfRangeException) {
 				return DateTime.MinValue;
+			} catch (Exception e) {
+				try {
+					var xsdDateTime = new XsdDateTime2 (s, XsdDateTimeFlags.AllXsd);
+					return (DateTime) xsdDateTime;
+				} catch {
+					throw e;
+				}	
 			}
 		}
 		
@@ -781,15 +797,35 @@ namespace System.Xml {
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string format)
 		{
-			return DateTimeOffset.ParseExact (s, format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			try {
+				return DateTimeOffset.ParseExact (s, format, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			} catch (Exception e) {
+				try {
+					var xsdDateTime = new XsdDateTime2 (s, XsdDateTimeFlags.AllXsd);
+					return (DateTimeOffset) xsdDateTime;
+				} catch {
+					throw e;
+				}	
+			}
+
 		}
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string [] formats)
 		{
-			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
+			try {
+				DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
 					       DateTimeStyles.AllowTrailingWhite |
 					       DateTimeStyles.AssumeUniversal;
-			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, style);
+				return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, style);
+			} catch (Exception e) {
+				try {
+					var xsdDateTime = new XsdDateTime2 (s, XsdDateTimeFlags.AllXsd);
+					return (DateTimeOffset) xsdDateTime;
+				} catch {
+					throw e;
+				}	
+			}
+
 		}
 
 		public static string ToString (DateTimeOffset value)
