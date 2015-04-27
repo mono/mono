@@ -17,10 +17,15 @@ namespace System {
 
     [Serializable]
     [AttributeUsageAttribute(AttributeTargets.All, Inherited = true, AllowMultiple=false)] 
+#if !MOBILE
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Attribute))]
     [System.Runtime.InteropServices.ComVisible(true)]
-    public abstract partial class Attribute : _Attribute
+#endif
+    public abstract partial class Attribute
+#if !MOBILE
+        : _Attribute
+#endif
     {
         #region Private Statics
 #if MONO
