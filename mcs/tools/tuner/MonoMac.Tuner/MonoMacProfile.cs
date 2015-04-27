@@ -23,7 +23,6 @@ namespace MonoMac.Tuner {
 			"Microsoft.Build.Utilities.v4.0",
 			"Microsoft.CSharp",
 			"Microsoft.Web.Infrastructure",
-			"Mono.C5",
 			"Mono.Cairo",
 			"Mono.CodeContracts",
 			"Mono.CompilerServices.SymbolWriter",

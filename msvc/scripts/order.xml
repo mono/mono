@@ -1820,26 +1820,6 @@
       <profile>net_4_5</profile>
       <response>./../../build/deps/Mono.Debugger.Soft_test_net_4_5.dll.response</response>
     </project>
-    <project dir="class/Mono.C5" library="Mono.C5-net_4_5">
-      <boot>false</boot>
-      <flags>/codepage:65001 -d:NET_4_0 -d:NET_4_5 -d:MONO -d:DISABLE_CAS_USE -nowarn:1699 -nostdlib -lib:./../../class/lib/net_4_5 -r:mscorlib.dll -debug -optimize /noconfig /r:mscorlib.dll -nowarn:169,219,414,1030,3001,3005,3006 -r:System</flags>
-      <output>Mono.C5.dll</output>
-      <built_sources></built_sources>
-      <library_output>./../../class/lib/net_4_5/Mono.C5.dll</library_output>
-      <fx_version>4.5</fx_version>
-      <profile>net_4_5</profile>
-      <response>Mono.C5.dll.sources</response>
-    </project>
-    <project dir="class/Mono.C5" library="Mono.C5-tests-net_4_5">
-      <boot>false</boot>
-      <flags>/codepage:65001 -d:NET_4_0 -d:NET_4_5 -d:MONO -d:DISABLE_CAS_USE -nowarn:1699 -nostdlib -lib:./../../class/lib/net_4_5 -r:mscorlib.dll -debug -optimize -r:./../../class/lib/net_4_5/Mono.C5.dll /r:mscorlib.dll -nowarn:169,219,414,1030,3001,3005,3006 -r:System -nowarn:0618 -nowarn:219 -nowarn:169</flags>
-      <output>Mono.C5_test_net_4_5.dll</output>
-      <built_sources></built_sources>
-      <library_output>Mono.C5_test_net_4_5.dll</library_output>
-      <fx_version>4.5</fx_version>
-      <profile>net_4_5</profile>
-      <response>./../../build/deps/Mono.C5_test_net_4_5.dll.response</response>
-    </project>
     <project dir="class/Mono.Management" library="Mono.Management-net_4_5">
       <boot>false</boot>
       <flags>/codepage:65001 -d:NET_4_0 -d:NET_4_5 -d:MONO -d:DISABLE_CAS_USE -nowarn:1699 -nostdlib -lib:./../../class/lib/net_4_5 -r:mscorlib.dll -debug -optimize /noconfig /r:mscorlib.dll -r:System -r:Mono.Posix</flags>

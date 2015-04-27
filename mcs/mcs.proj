@@ -101,7 +101,6 @@
     <MSBuild Projects="class\System.ServiceModel.Web\System.ServiceModel.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Web.Mvc\System.Web.Mvc.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Web.Mvc2\System.Web.Mvc2.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
-    <MSBuild Projects="class\Mono.C5\Mono.C5.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Management\Mono.Management.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Options\Mono.Options.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Simd\Mono.Simd.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>

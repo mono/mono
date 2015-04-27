@@ -166,7 +166,6 @@ net_4_5_parallel_dirs := \
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
 	Mono.Debugger.Soft		\
-	Mono.C5				\
 	Mono.Management			\
 	Mono.Options 			\
 	Mono.Simd			\
