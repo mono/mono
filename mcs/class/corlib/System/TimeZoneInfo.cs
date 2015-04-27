@@ -1233,8 +1233,12 @@ namespace System
 				} else {
 					if (daylightDisplayName != ttype.Name)
 						daylightDisplayName = ttype.Name;
-					if (dstDelta.TotalSeconds != ttype.Offset - baseUtcOffset.TotalSeconds)
-						dstDelta = new TimeSpan(0, 0, ttype.Offset) - baseUtcOffset;
+					if (dstDelta.TotalSeconds != ttype.Offset - baseUtcOffset.TotalSeconds) {
+						// Round to nearest minute, since it's not possible to create an adjustment rule
+						// with sub-minute precision ("The TimeSpan parameter cannot be specified more precisely than whole minutes.")
+						// This happens with Europe/Dublin, which had an offset of 34 minutes and 39 seconds in 1916.
+						dstDelta = new TimeSpan (0, 0, ttype.Offset - ttype.Offset % 60) - baseUtcOffset;
+					}
 
 					dst_start = ttime;
 					dst_observed = true;
