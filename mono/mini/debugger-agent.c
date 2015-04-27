@@ -8319,6 +8319,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_GET_INTERFACE_MAP: {
+		MonoError error;
 		int tindex, ioffset;
 		gboolean variance_used;
 		MonoClass *iclass;
@@ -8327,7 +8328,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoMethod *method;
 
 		len = decode_int (p, &p, end);
-		mono_class_setup_vtable (klass);
+		mono_class_setup_vtable (klass, &error);
+		mono_error_assert_ok (&error);
 
 		for (tindex = 0; tindex < len; ++tindex) {
 			iclass = decode_typeid (p, &p, end, NULL, &err);
@@ -8589,7 +8591,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 						if (mono_class_get_context (klass)) {
 							MonoError error;
 							result = mono_class_inflate_generic_method_full_checked (result, klass, mono_class_get_context (klass), &error);
-							g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+							mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 						}
 					}
 				}
@@ -8780,7 +8782,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		tmp_context.method_inst = ginst;
 
 		inflated = mono_class_inflate_generic_method_checked (method, &tmp_context, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		if (!mono_verifier_is_method_valid_generic_instantiation (inflated))
 			return ERR_INVALID_ARGUMENT;
 		buffer_add_methodid (buf, domain, inflated);

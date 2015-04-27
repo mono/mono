@@ -914,11 +914,11 @@ mono_class_layout_fields   (MonoClass *klass);
 void
 mono_class_setup_interface_offsets (MonoClass *klass);
 
-void
-mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int onum, GList *in_setup);
+gboolean
+mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int onum, GList *in_setup, MonoError *error);
 
-void
-mono_class_setup_vtable (MonoClass *klass);
+gboolean
+mono_class_setup_vtable (MonoClass *klass, MonoError *error);
 
 void
 mono_class_setup_methods (MonoClass *klass);

@@ -2148,16 +2148,19 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 
 	if (!info) {
 		if (mono_security_core_clr_enabled ()) {
+			MonoError error;
 			/*
 			 * This might be redundant since mono_class_vtable () already does this,
 			 * but keep it just in case for moonlight.
 			 */
-			mono_class_setup_vtable (method->klass);
-			if (method->klass->exception_type != MONO_EXCEPTION_NONE) {
+			if (!mono_class_setup_vtable (method->klass, &error)) {
+				MonoException *exception = mono_class_get_exception_for_failure (method->klass);
+				if (!exception)
+					exception = mono_error_convert_to_exception (&error);
 				if (exc)
-					*exc = (MonoObject*)mono_class_get_exception_for_failure (method->klass);
+					*exc = (MonoObject *) exception;
 				else
-					mono_raise_exception (mono_class_get_exception_for_failure (method->klass));
+					mono_raise_exception (exception);
 				return NULL;
 			}
 		}
