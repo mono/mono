@@ -10,7 +10,6 @@ ReferenceSources/SpecifiedAccessor.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/TypeScope.cs
 ReferenceSources/Wsdl.cs
-../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Assembly.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/GenerateHelper.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/IteratorDescriptor.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/OptimizerPatterns.cs

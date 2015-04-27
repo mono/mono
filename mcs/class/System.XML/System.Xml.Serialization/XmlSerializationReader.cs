@@ -1040,7 +1040,14 @@ namespace System.Xml.Serialization
 			object collectionItems;
 			string id;
 
-			public CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
+			public CollectionFixup(object collection, XmlSerializationCollectionFixupCallback callback, object collectionItems)
+			{
+				this.callback = callback;
+				this.collection = collection;
+				this.collectionItems = collectionItems;
+			}
+
+			internal CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
 			{
 				this.callback = callback;
 				this.collection = collection;
@@ -1055,14 +1062,14 @@ namespace System.Xml.Serialization
 				get { return collection; }
 			}
 
-			public object Id {
+			internal object Id {
 				get { return id; }
 			}
 
-			internal object CollectionItems
+			public object CollectionItems
 			{
 				get { return collectionItems; }
-				set { collectionItems = value; }
+				internal set { collectionItems = value; }
 			}
 		}
 
@@ -1100,7 +1107,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		protected class CollectionItemFixup 
+		class CollectionItemFixup 
 		{
 			Array list;
 			int index;
