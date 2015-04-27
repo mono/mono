@@ -50,6 +50,7 @@
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/environment.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internal.h>
 
 #include "mini.h"
@@ -1245,7 +1246,13 @@ wrap_non_exception_throws (MonoMethod *m)
 	if (ass->wrap_non_exception_throws_inited)
 		return ass->wrap_non_exception_throws;
 
-	klass = mono_class_from_name_cached (mono_defaults.corlib, "System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_cached (mono_defaults.corlib, "System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute", &error);
+	if (!mono_error_ok (&error)) {
+		mono_loader_set_error_from_mono_error (&error);
+		mono_error_cleanup (&error);
+	}
 
 	attrs = mono_custom_attrs_from_assembly (ass);
 	if (attrs) {

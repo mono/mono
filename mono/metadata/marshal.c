@@ -397,8 +397,12 @@ parse_unmanaged_function_pointer_attr (MonoClass *klass, MonoMethodPInvoke *piin
 	MonoCustomAttrInfo *cinfo;
 	MonoReflectionUnmanagedFunctionPointerAttribute *attr;
 
-	if (!UnmanagedFunctionPointerAttribute)
-		UnmanagedFunctionPointerAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
+	if (!UnmanagedFunctionPointerAttribute) {
+		MonoError error;
+		mono_error_init (&error);
+		UnmanagedFunctionPointerAttribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute", &error);
+		mono_error_cleanup (&error); // FIXME: We should determine which errors we expect to see here. It may be not loaded for reasons other than being < Net 2.0
+	}
 
 	/* The attribute is only available in Net 2.0 */
 	if (UnmanagedFunctionPointerAttribute) {
@@ -409,6 +413,7 @@ parse_unmanaged_function_pointer_attr (MonoClass *klass, MonoMethodPInvoke *piin
 		cinfo = mono_custom_attrs_from_class (klass);
 		if (cinfo && !mono_runtime_get_no_exec ()) {
 			MonoError error;
+			mono_error_init (&error);
 			attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr_checked (cinfo, UnmanagedFunctionPointerAttribute, &error);
 			if (attr) {
 				piinfo->piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
@@ -718,9 +723,12 @@ mono_string_builder_new (int starting_string_length)
 	if (!sb_ctor) {
 		MonoMethodDesc *desc;
 		MonoMethod *m;
+		MonoError error;
+		mono_error_init (&error);
 
-		string_builder_class = mono_class_from_name (mono_defaults.corlib, "System.Text", "StringBuilder");
-		g_assert (string_builder_class);
+		string_builder_class = mono_class_from_name_checked (mono_defaults.corlib, "System.Text", "StringBuilder", &error);
+		g_assert (string_builder_class && mono_error_ok (&error));
+
 		desc = mono_method_desc_new (":.ctor(int)", FALSE);
 		m = mono_method_desc_search_in_class (desc, string_builder_class);
 		g_assert (m);
@@ -2461,6 +2469,7 @@ mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 			return wrapper;
 		if (wrapper->is_inflated) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoMethod *result;
 			/*
 			 * A method cannot be inflated and a wrapper at the same time, so the wrapper info
@@ -2541,6 +2550,7 @@ static MonoClass*
 get_wrapper_target_class (MonoImage *image)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *klass;
 
 	/*
@@ -2602,6 +2612,7 @@ check_generic_wrapper_cache (GHashTable *cache, MonoMethod *orig_method, gpointe
 	def = mono_marshal_find_in_cache (cache, def_key);
 	if (def) {
 		MonoError error;
+		mono_error_init (&error);
 		inst = mono_class_inflate_generic_method_checked (def, ctx, &error);
 		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		/* Cache it */
@@ -2622,6 +2633,7 @@ static MonoMethod*
 cache_generic_wrapper (GHashTable *cache, MonoMethod *orig_method, MonoMethod *def, MonoGenericContext *ctx, gpointer key)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *inst, *res;
 
 	/*
@@ -2644,6 +2656,7 @@ static MonoMethod*
 check_generic_delegate_wrapper_cache (GHashTable *cache, MonoMethod *orig_method, MonoMethod *def_method, MonoGenericContext *ctx)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *res;
 	MonoMethod *inst, *def;
 
@@ -2680,6 +2693,7 @@ static MonoMethod*
 cache_generic_delegate_wrapper (GHashTable *cache, MonoMethod *orig_method, MonoMethod *def, MonoGenericContext *ctx)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *inst, *res;
 
 	/*
@@ -3194,6 +3208,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		mono_mb_emit_ldarg (mb, i + 1);
 	if (ctx) {
 		MonoError error;
+		mono_error_init (&error);
 		mono_mb_emit_op (mb, CEE_CALLVIRT, mono_class_inflate_generic_method_checked (method, &container->context, &error));
 		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
@@ -4525,7 +4540,11 @@ emit_marshal_vtype (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	klass = mono_class_from_mono_type (t);
 
-	date_time_class = mono_class_from_name_cached (mono_defaults.corlib, "System", "DateTime");
+	MonoError error;
+	mono_error_init (&error);
+	date_time_class = mono_class_from_name_cached (mono_defaults.corlib, "System", "DateTime", &error);
+	mono_error_assert_ok (&error); // FIXME: Don't swallow error
+	mono_error_cleanup (&error);
 
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN:
@@ -7800,6 +7819,7 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
 	if (sig->ret && sig->ret->num_mods) {
 		for (i = 0; i < sig->ret->num_mods; ++i) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoClass *cmod_class = mono_class_get_checked (method->klass->image, sig->ret->modifiers [i].token, &error);
 			mono_error_assert_ok (&error);
 			if ((cmod_class->image == mono_defaults.corlib) && !strcmp (cmod_class->name_space, "System.Runtime.CompilerServices")) {
@@ -7910,6 +7930,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 			gint32 charset = 0;
 			MonoBoolean set_last_error = 0;
 			MonoError error;
+			mono_error_init (&error);
 
 			mono_reflection_create_custom_attr_data_args (mono_defaults.corlib, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
 			mono_error_assert_ok (&error);
@@ -8650,6 +8671,7 @@ mono_marshal_get_synchronized_inner_wrapper (MonoMethod *method)
 	mono_mb_free (mb);
 	if (ctx) {
 		MonoError error;
+		mono_error_init (&error);
 		res = mono_class_inflate_generic_method_checked (res, ctx, &error);
 		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	}
@@ -8795,6 +8817,7 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 
 	if (ctx) {
 		MonoError error;
+		mono_error_init (&error);
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, &error), NULL);
 		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
@@ -9843,6 +9866,7 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 
 	if (ctx) {
 		MonoError error;
+		mono_error_init (&error);
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, &error), NULL);
 		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
