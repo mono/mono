@@ -118,6 +118,12 @@ namespace System.Reflection {
 			}
 		}
 
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
 		RuntimeType ReflectedTypeInternal {
 			get {
 				return (RuntimeType) ReflectedType;
@@ -147,6 +153,11 @@ namespace System.Reflection {
         {
             return ReturnType.FormatTypeName() + " " + FormatNameAndSig(false);
         }
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return ((RuntimeType)DeclaringType).GetRuntimeModule();
+		}
 
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
