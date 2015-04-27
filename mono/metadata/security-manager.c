@@ -53,10 +53,14 @@ mono_security_manager_get_methods (void)
 	if (secman.securitymanager)
 		return &secman;
 
+	MonoError error;
+	mono_error_init (&error);
+
 	/* Initialize */
-	secman.securitymanager = mono_class_from_name (mono_defaults.corlib, 
-		"System.Security", "SecurityManager");
-	g_assert (secman.securitymanager);
+	secman.securitymanager = mono_class_from_name_checked (mono_defaults.corlib, 
+		"System.Security", "SecurityManager", &error);
+	g_assert (secman.securitymanager && mono_error_ok (&error));
+
 	if (!secman.securitymanager->inited)
 		mono_class_init (secman.securitymanager);
 		
@@ -96,13 +100,15 @@ mono_security_manager_get_methods (void)
 		"LinkDemandSecurityException", 2);
 	g_assert (secman.linkdemandsecurityexception);
 
-	secman.allowpartiallytrustedcallers = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-		"AllowPartiallyTrustedCallersAttribute");
-	g_assert (secman.allowpartiallytrustedcallers);
+	secman.allowpartiallytrustedcallers = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+		"AllowPartiallyTrustedCallersAttribute", &error);
+	g_assert (secman.allowpartiallytrustedcallers && mono_error_ok (&error));
 
-	secman.suppressunmanagedcodesecurity = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-		"SuppressUnmanagedCodeSecurityAttribute");
-	g_assert (secman.suppressunmanagedcodesecurity);
+	secman.suppressunmanagedcodesecurity = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+		"SuppressUnmanagedCodeSecurityAttribute", &error);
+	g_assert (secman.suppressunmanagedcodesecurity && mono_error_ok (&error));
+
+	mono_error_cleanup (&error);
 
 	return &secman;
 }
