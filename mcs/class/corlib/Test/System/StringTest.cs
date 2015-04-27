@@ -652,6 +652,13 @@ public class StringTest
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CompareOrdinal_InvalidCount()
+	{
+		string.CompareOrdinal ("a", 0, "b", 0, -1);
+	}
+
+	[Test]
 	public void CompareOrdinalWithOffset ()
 	{
 		string ab1 = "ab";

@@ -324,9 +324,23 @@ namespace System
 			}
 		}
 
-        internal static int nativeCompareOrdinalEx (String strA, int indexA, String strB, int indexB, int count)
-        {
-        	return CompareOrdinalUnchecked (strA, indexA, count, strB, indexB, count);
+		internal static int nativeCompareOrdinalEx (String strA, int indexA, String strB, int indexB, int count)
+		{
+			//
+			// .net does following checks in unmanaged land only which is quite
+			// wrong as it's not always necessary and argument names don't match
+			// but we are compatible
+			//
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NegativeCount"));
+
+			if (indexA < 0 || indexA > strA.Length)
+				throw new ArgumentOutOfRangeException("indexA", Environment.GetResourceString("ArgumentOutOfRange_Index"));
+
+			if (indexB < 0 || indexB > strB.Length)
+				throw new ArgumentOutOfRangeException("indexB", Environment.GetResourceString("ArgumentOutOfRange_Index"));
+
+			return CompareOrdinalUnchecked (strA, indexA, count, strB, indexB, count);
         }
 
 		unsafe String ReplaceInternal (char oldChar, char newChar)
