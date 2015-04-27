@@ -4188,7 +4188,11 @@ emit_marshal_custom (EmitMarshalContext *m, int argnum, MonoType *t,
 	int pos2;
 
 	if (!ICustomMarshaler) {
-		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "ICustomMarshaler");
+		MonoError error;
+		mono_error_init (&error);
+		MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "ICustomMarshaler", &error);
+		mono_error_assert_ok (&error);
+
 		if (!klass) {
 			exception_msg = g_strdup ("Current profile doesn't support ICustomMarshaler");
 			goto handle_exception;
@@ -7898,8 +7902,12 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	mono_marshal_set_callconv_from_modopt (invoke, csig);
 
 	/* Handle the UnmanagedFunctionPointerAttribute */
-	if (!UnmanagedFunctionPointerAttribute)
-		UnmanagedFunctionPointerAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
+	if (!UnmanagedFunctionPointerAttribute) {
+		MonoError error;
+		UnmanagedFunctionPointerAttribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute", &error);
+		if (!mono_error_ok (&error))
+			mono_error_cleanup (&error); // FIXME: Don't discard error here. We allow for it to be missing below, but it may error out for reasons other than being != Net 2.0
+	}
 
 	/* The attribute is only available in Net 2.0 */
 	if (UnmanagedFunctionPointerAttribute) {
