@@ -11,14 +11,16 @@ MONOLITE_MCS = $(topdir)/class/lib/monolite/basic.exe
 ifdef use_monolite
 PROFILE_RUNTIME = $(with_mono_path_monolite) $(RUNTIME)
 BOOTSTRAP_MCS = $(PROFILE_RUNTIME) $(RUNTIME_FLAGS) $(MONOLITE_MCS)
+PROFILE_NAME = monolite
 else
 PROFILE_RUNTIME = $(EXTERNAL_RUNTIME)
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
+PROFILE_NAME = $(PROFILE)
 endif
 
 MCS = $(with_mono_path) $(INTERNAL_GMCS)
 
-PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:BOOTSTRAP_BASIC -nowarn:1699 -d:DISABLE_CAS_USE -lib:$(topdir)/class/lib/$(PROFILE)
+PROFILE_MCS_FLAGS = -d:NET_4_0 -d:NET_4_5 -d:MONO -d:BOOTSTRAP_BASIC -nowarn:1699 -d:DISABLE_CAS_USE -lib:$(topdir)/class/lib/$(PROFILE_NAME)
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 NO_INSTALL = yes
