@@ -88,9 +88,10 @@ namespace System.Security.Cryptography {
 
 			HashCore (buffer, offset, count);
 			HashValue = HashFinal ();
+			byte[] dataToReturn = (byte[])HashValue.Clone ();
 			Initialize ();
 			
-			return HashValue;
+			return dataToReturn;
 		}
 
 		public byte[] ComputeHash (Stream inputStream) 
@@ -106,8 +107,10 @@ namespace System.Security.Cryptography {
 				len = inputStream.Read (buffer, 0, 4096);
 			}
 			HashValue = HashFinal ();
+			byte[] dataToReturn = (byte[])HashValue.Clone ();
 			Initialize ();
-			return HashValue;
+
+			return dataToReturn;
 		}
 	
 		public static HashAlgorithm Create () 
@@ -126,11 +129,13 @@ namespace System.Security.Cryptography {
 	
 		public virtual byte[] Hash {
 			get { 
-				if (HashValue == null) {
+				if (disposed)
+					throw new ObjectDisposedException ("HashAlgorithm");
+				if (State != 0 || HashValue == null) {
 					throw new CryptographicUnexpectedOperationException (
 						Locale.GetText ("No hash value computed."));
 				}
-				return HashValue; 
+				return (byte[])HashValue.Clone ();
 			}
 		}
 	
@@ -190,6 +195,7 @@ namespace System.Security.Cryptography {
 				}
 			}
 
+			State = 1;
 			HashCore (inputBuffer, inputOffset, inputCount);
 
 			if (outputBuffer != null)
@@ -217,7 +223,7 @@ namespace System.Security.Cryptography {
 			
 			HashCore (inputBuffer, inputOffset, inputCount);
 			HashValue = HashFinal ();
-			Initialize ();
+			State = 0;
 			
 			return outputBuffer;
 		}

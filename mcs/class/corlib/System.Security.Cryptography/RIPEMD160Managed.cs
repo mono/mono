@@ -116,6 +116,7 @@ namespace System.Security.Cryptography {
 			} else {
 				Buffer.BlockCopy (_HashValue, 0, hash, 0, 20);
 			}
+			State = 0;
 			return hash;
 		}
 

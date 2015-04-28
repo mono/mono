@@ -46,6 +46,7 @@ namespace System.Security.Cryptography {
 		private TripleDES tdes;
 		private MACAlgorithm mac;
 		private bool m_disposed;
+		private bool _isKeySetupCompleted;
 	
 		public MACTripleDES ()
 		{
@@ -130,8 +131,11 @@ namespace System.Security.Cryptography {
 			if (m_disposed)
 				throw new ObjectDisposedException ("MACTripleDES");
 			if (State == 0) {
-				Initialize ();
 				State = 1;
+			}
+			if (!_isKeySetupCompleted) {
+				mac.Initialize (KeyValue);
+				_isKeySetupCompleted = true;
 			}
 			mac.Core (rgbData, ibStart, cbSize);
 		}
@@ -140,6 +144,10 @@ namespace System.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("MACTripleDES");
+			if (!_isKeySetupCompleted) {
+				mac.Initialize (KeyValue);
+				_isKeySetupCompleted = true;
+			}
 			State = 0;
 			return mac.Final ();
 		}
