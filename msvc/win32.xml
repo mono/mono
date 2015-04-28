@@ -538,20 +538,6 @@
 			<Source type="list">System.EnterpriseServices.dll.sources</Source>
 		</Sources>
 	</Assembly>
-	<Assembly name="Mono.C5" destination="{destdir}\lib\mono\2.0\Mono.C5.dll">
-		<References>
-			<Reference>mscorlib</Reference>
-			<Reference>System</Reference>
-		</References>
-		<OutputType>library</OutputType>
-		<DefineConstants>NET_1_1;NET_2_0</DefineConstants>
-		<IgnoreWarnings>169</IgnoreWarnings>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<SourcePath>{sourcedir}\mono\mcs\class\Mono.C5\</SourcePath>
-		<Sources>
-			<Source type="list">Mono.C5.dll.sources</Source>
-		</Sources>
-	</Assembly>
 	<Assembly name="Mono.Data.Tds" destination="{destdir}\lib\mono\2.0\Mono.Data.Tds.dll">
 		<References>
 			<Reference>mscorlib</Reference>
@@ -1615,7 +1601,6 @@
 	<Sign assembly="{destdir}\lib\mono\2.0\System.Drawing.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
 	<Sign assembly="{destdir}\lib\mono\2.0\System.Transactions.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
 	<Sign assembly="{destdir}\lib\mono\2.0\System.EnterpriseServices.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
-	<Sign assembly="{destdir}\lib\mono\2.0\Mono.C5.dll" key="{sourcedir}\mono\mcs\class\Mono.C5\c5.snk" />
 	<Sign assembly="{destdir}\lib\mono\2.0\Mono.Data.Tds.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
 	<Sign assembly="{destdir}\lib\mono\2.0\System.Data.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
 	<Sign assembly="{destdir}\lib\mono\2.0\Mono.Posix.dll" key="{sourcedir}\mono\mcs\class\mono.snk" />
@@ -1697,7 +1682,6 @@
 	<Gac>{destdir}\lib\mono\2.0\System.Drawing.dll</Gac>
 	<Gac>{destdir}\lib\mono\2.0\System.Transactions.dll</Gac>
 	<Gac>{destdir}\lib\mono\2.0\System.EnterpriseServices.dll</Gac>
-	<Gac>{destdir}\lib\mono\2.0\Mono.C5.dll</Gac>
 	<Gac>{destdir}\lib\mono\2.0\Mono.Data.Tds.dll</Gac>
 	<Gac>{destdir}\lib\mono\2.0\System.Data.dll</Gac>
 	<Gac>{destdir}\lib\mono\2.0\Mono.Posix.dll</Gac>

@@ -197,8 +197,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil.Mdb-net_4_5", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Debugger.Soft-net_4_5", "..\..\mcs\class/Mono.Debugger.Soft\Mono.Debugger.Soft-net_4_5.csproj", "{7DFAE255-C562-4F72-8DE4-4D578491A10A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.C5-net_4_5", "..\..\mcs\class/Mono.C5\Mono.C5-net_4_5.csproj", "{4A54C7EC-01F3-4C6E-9181-84F178FD0F97}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Management-net_4_5", "..\..\mcs\class/Mono.Management\Mono.Management-net_4_5.csproj", "{38262197-48BD-4D8A-9968-4C6E60C814BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Options-net_4_5", "..\..\mcs\class/Mono.Options\Mono.Options-net_4_5.csproj", "{6DAA3E35-6FC9-477B-9D4D-538D9ECE7283}"
