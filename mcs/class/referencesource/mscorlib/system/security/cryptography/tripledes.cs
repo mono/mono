@@ -68,7 +68,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public TripleDES Create() {
+#if FULL_AOT_RUNTIME
+        return new System.Security.Cryptography.TripleDESCryptoServiceProvider ();
+#else
             return Create("System.Security.Cryptography.TripleDES");
+#endif
         }
 
         new static public TripleDES Create(String str) {

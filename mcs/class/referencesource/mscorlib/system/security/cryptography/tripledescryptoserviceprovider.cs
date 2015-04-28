@@ -33,14 +33,22 @@ namespace System.Security.Cryptography {
         public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) {
             if (IsWeakKey(rgbKey))
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_InvalidKey_Weak"),"TripleDES");
+#if MONO
+            return new TripleDESTransform (this, true, rgbKey, rgbIV);
+#else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, FeedbackSizeValue, CryptoAPITransformMode.Encrypt);
+#endif
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) {
             if (IsWeakKey(rgbKey))
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_InvalidKey_Weak"),"TripleDES");
+#if MONO
+            return new TripleDESTransform (this, false, rgbKey, rgbIV);
+#else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, FeedbackSizeValue, CryptoAPITransformMode.Decrypt);
+#endif
         }
 
         public override void GenerateKey () {
@@ -61,7 +69,7 @@ namespace System.Security.Cryptography {
         //
         // private methods
         //
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         private ICryptoTransform _NewEncryptor (byte[] rgbKey, CipherMode mode, byte[] rgbIV, int feedbackSize, CryptoAPITransformMode encryptMode) {
             int cArgs = 0;
@@ -130,5 +138,6 @@ namespace System.Security.Cryptography {
                                           mode, BlockSizeValue, feedbackSize, false,
                                           encryptMode);
         }
+#endif
     }
 }

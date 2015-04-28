@@ -134,7 +134,7 @@ namespace System.Security.Cryptography
     }
 
     internal static class Utils {
-#if !MONO
+
 #if !FEATURE_PAL && FEATURE_CRYPTO
         [SecuritySafeCritical]
 #endif
@@ -162,10 +162,13 @@ namespace System.Security.Cryptography
                 if (!_haveDefaultRsaProviderType)
                 {
                     // The AES CSP is only supported on WinXP and higher
+#if MONO
+                    bool osSupportsAesCsp = true;
+#else
                     bool osSupportsAesCsp = Environment.OSVersion.Platform == PlatformID.Win32NT &&
                                             (Environment.OSVersion.Version.Major > 5 ||
                                             (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1));
-
+#endif
                     _defaultRsaProviderType = osSupportsAesCsp ? Constants.PROV_RSA_AES : Constants.PROV_RSA_FULL;
                     _haveDefaultRsaProviderType = true;
                 }
@@ -173,7 +176,7 @@ namespace System.Security.Cryptography
                 return _defaultRsaProviderType;
             }
         }
-
+#if !MONO
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
 #if !FEATURE_PAL
         [System.Security.SecurityCritical] // auto-generated
@@ -818,7 +821,6 @@ namespace System.Security.Cryptography
             return unchecked(new byte[] { (byte)(i >> 24), (byte)(i >> 16), (byte)(i >> 8), (byte)i });
         }
 
-#if !MONO
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         [System.Security.SecurityCritical]  // auto-generated
         internal static byte[] RsaOaepEncrypt (RSA rsa, HashAlgorithm hash, PKCS1MaskGenerationMethod mgf, RandomNumberGenerator rng, byte[] data) {
@@ -1017,7 +1019,7 @@ namespace System.Security.Cryptography
             }
             return true;
         }
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]  // Creates a process resource, but it can't be scoped.
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
@@ -1132,7 +1134,9 @@ namespace System.Security.Cryptography
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void _GenerateKey(SafeProvHandle hProv, int algid, CspProviderFlags flags, int keySize, ref SafeKeyHandle hKey);
+#endif
 #endif // FEATURE_CRYPTO
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImpl(MethodImplOptions.InternalCall)]

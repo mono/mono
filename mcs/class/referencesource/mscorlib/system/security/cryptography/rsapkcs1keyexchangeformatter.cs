@@ -53,6 +53,11 @@ namespace System.Security.Cryptography {
         }
 
         public override byte[] CreateKeyExchange(byte[] rgbData) {
+#if MONO
+			if (rgbData == null)
+				throw new ArgumentNullException ("rgbData");
+#endif
+
             if (_rsaKey == null)
                 throw new CryptographicUnexpectedOperationException(Environment.GetResourceString("Cryptography_MissingKey"));
 

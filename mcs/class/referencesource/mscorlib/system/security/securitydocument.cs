@@ -24,7 +24,7 @@ namespace System.Security
     using System.IO;
     using System.Diagnostics.Contracts;
     using StringMaker = System.Security.Util.Tokenizer.StringMaker;
-
+#if !MONO
     [Serializable]
     sealed internal class SecurityDocumentElement : ISecurityElementFactory
     {
@@ -58,7 +58,7 @@ namespace System.Security
         }
 
     }
-
+#endif
 
     [Serializable]
     sealed internal class SecurityDocument

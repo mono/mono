@@ -85,9 +85,13 @@ namespace System.Security.Cryptography {
         //
 
         static public AsymmetricAlgorithm Create() {
+#if FULL_AOT_RUNTIME
+            return new RSACryptoServiceProvider ();
+#else
             // Use the crypto config system to return an instance of
             // the default AsymmetricAlgorithm on this machine
             return Create("System.Security.Cryptography.AsymmetricAlgorithm");
+#endif
         }
 
         static public AsymmetricAlgorithm Create(String algName) {

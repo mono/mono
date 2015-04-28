@@ -320,7 +320,7 @@ namespace System.Security.Cryptography {
             }
         }
 
-#if FEATURE_MACL
+#if FEATURE_MACL || MONO
         private CryptoKeySecurity m_cryptoKeySecurity;
         public CryptoKeySecurity CryptoKeySecurity {
             get {
@@ -377,7 +377,7 @@ namespace System.Security.Cryptography {
         public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn) :
             this (dwTypeIn, strProviderNameIn, strContainerNameIn, CspProviderFlags.NoFlags) {}
 
-#if FEATURE_MACL && FEATURE_CRYPTO && FEATURE_X509_SECURESTRINGS
+#if MONO || (FEATURE_MACL && FEATURE_CRYPTO && FEATURE_X509_SECURESTRINGS)
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public CspParameters (int providerType, string providerName, string keyContainerName,
@@ -413,7 +413,7 @@ namespace System.Security.Cryptography {
             KeyContainerName = parameters.KeyContainerName;
             KeyNumber = parameters.KeyNumber;
             Flags = parameters.Flags;
-#if FEATURE_MACL            
+#if FEATURE_MACL || MONO
             m_cryptoKeySecurity = parameters.m_cryptoKeySecurity;
 #endif // FEATURE_MACL
 #if FEATURE_CRYPTO && FEATURE_X509_SECURESTRINGS

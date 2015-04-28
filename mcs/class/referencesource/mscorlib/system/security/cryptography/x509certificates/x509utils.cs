@@ -95,7 +95,7 @@ namespace System.Security.Cryptography.X509Certificates
         CngAlgorithmID = 5,                             // CRYPT_OID_INFO_CNG_ALGID_KEY
         CngSignatureID = 6,                             // CRYPT_OID_INFO_CNG_SIGN_KEY
     }
-
+#if !MONO
     [StructLayout(LayoutKind.Sequential)]
     internal struct CRYPT_OID_INFO {
         internal int cbSize;
@@ -401,4 +401,5 @@ namespace System.Security.Cryptography.X509Certificates
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern uint _QueryCertFileType(string fileName);
     }
+#endif
 }

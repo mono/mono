@@ -60,7 +60,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public RSA Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.RSACryptoServiceProvider ();
+#else
             return Create("System.Security.Cryptography.RSA");
+#endif
         }
 
         new static public RSA Create(String algName) {
