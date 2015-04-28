@@ -69,14 +69,22 @@ namespace System.Security.Cryptography {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) {
+#if MONO
+            return new RC2Transform (this, true, rgbKey, rgbIV);
+#else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, EffectiveKeySizeValue, 
                                  FeedbackSizeValue, CryptoAPITransformMode.Encrypt);
+#endif
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) {
+#if MONO
+            return new RC2Transform (this, false, rgbKey, rgbIV);
+#else
             return _NewEncryptor(rgbKey, ModeValue, rgbIV, EffectiveKeySizeValue,
                                  FeedbackSizeValue, CryptoAPITransformMode.Decrypt);
+#endif
         }
 
         public override void GenerateKey () {
@@ -93,7 +101,7 @@ namespace System.Security.Cryptography {
         //
         // private methods
         //
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         private ICryptoTransform _NewEncryptor (byte[] rgbKey, CipherMode mode, byte[] rgbIV,
                                                 int effectiveKeySize, int feedbackSize, CryptoAPITransformMode encryptMode) {
@@ -172,5 +180,6 @@ namespace System.Security.Cryptography {
                                           mode, BlockSizeValue, feedbackSize, m_use40bitSalt,
                                           encryptMode);
         }
+#endif
     }
 }

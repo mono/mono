@@ -25,8 +25,13 @@ namespace System.Security.Cryptography {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public HMACSHA512 (byte[] key) {
             m_hashName = "SHA512";
+#if FULL_AOT_RUNTIME
+            m_hash1 = new SHA512Managed();
+            m_hash2 = new SHA512Managed();
+#else
             m_hash1 = GetHashAlgorithmWithFipsFallback(() => new SHA512Managed(), () => HashAlgorithm.Create("System.Security.Cryptography.SHA512CryptoServiceProvider"));
             m_hash2 = GetHashAlgorithmWithFipsFallback(() => new SHA512Managed(), () => HashAlgorithm.Create("System.Security.Cryptography.SHA512CryptoServiceProvider"));
+#endif
             HashSizeValue = 512;
             BlockSizeValue = BlockSize;
             base.InitializeKey(key);

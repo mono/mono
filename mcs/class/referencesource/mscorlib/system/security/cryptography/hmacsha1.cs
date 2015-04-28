@@ -23,12 +23,12 @@ namespace System.Security.Cryptography {
 
         public HMACSHA1 (byte[] key, bool useManagedSha1) {
             m_hashName = "SHA1";
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FULL_AOT_RUNTIME
             if (useManagedSha1) {
 #endif // FEATURE_CRYPTO
                 m_hash1 = new SHA1Managed();
                 m_hash2 = new SHA1Managed();
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FULL_AOT_RUNTIME
             } else {
                 m_hash1 = new SHA1CryptoServiceProvider();
                 m_hash2 = new SHA1CryptoServiceProvider();

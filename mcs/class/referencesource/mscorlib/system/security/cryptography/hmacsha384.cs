@@ -25,8 +25,13 @@ namespace System.Security.Cryptography {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public HMACSHA384 (byte[] key) {
             m_hashName = "SHA384";
+#if FULL_AOT_RUNTIME
+            m_hash1 = new SHA384Managed();
+            m_hash2 = new SHA384Managed();
+#else
             m_hash1 = GetHashAlgorithmWithFipsFallback(() => new SHA384Managed(), () => HashAlgorithm.Create("System.Security.Cryptography.SHA384CryptoServiceProvider"));
             m_hash2 = GetHashAlgorithmWithFipsFallback(() => new SHA384Managed(), () => HashAlgorithm.Create("System.Security.Cryptography.SHA384CryptoServiceProvider"));
+#endif
             HashSizeValue = 384;
             BlockSizeValue = BlockSize;
             base.InitializeKey(key);

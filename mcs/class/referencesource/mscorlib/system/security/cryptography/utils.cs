@@ -134,7 +134,7 @@ namespace System.Security.Cryptography
     }
 
     internal static class Utils {
-        
+#if !MONO
 #if !FEATURE_PAL && FEATURE_CRYPTO
         [SecuritySafeCritical]
 #endif
@@ -505,7 +505,7 @@ namespace System.Security.Cryptography
             }
         }
 #endif // FEATURE_CRYPTO
-
+#endif
         private static volatile RNGCryptoServiceProvider _rng = null;
         internal static RNGCryptoServiceProvider StaticRandomNumberGenerator {
             get {
@@ -524,7 +524,7 @@ namespace System.Security.Cryptography
             StaticRandomNumberGenerator.GetBytes(key);
             return key;
         }
-
+#if !MONO
 #if FEATURE_CRYPTO
         /// <summary>
         ///     Read the FIPS policy from the pre-Vista registry key
@@ -570,11 +570,14 @@ namespace System.Security.Cryptography
             }
         }
 #endif //FEATURE_CRYPTO
-
+#endif
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         // dwKeySize = 0 means the default key size
         [System.Security.SecurityCritical]  // auto-generated
         internal static bool HasAlgorithm (int dwCalg, int dwKeySize) {
+#if MONO
+            return true;
+#else
             bool r = false;
             // We need to take a lock here since we are querying the provider handle in a loop.
             // If multiple threads are racing in this code, not all algorithms/key sizes combinations
@@ -583,8 +586,9 @@ namespace System.Security.Cryptography
                 r = SearchForAlgorithm(StaticProvHandle, dwCalg, dwKeySize);
             }
             return r;
+#endif
         }
-
+#if !MONO
         internal static int ObjToAlgId(object hashAlg, OidGroup group) {
             if (hashAlg == null)
                 throw new ArgumentNullException("hashAlg");
@@ -636,7 +640,7 @@ namespace System.Security.Cryptography
 
             return hash;
         }
-
+#endif
         internal static String DiscardWhiteSpaces (string inputBuffer) {
             return DiscardWhiteSpaces(inputBuffer, 0, inputBuffer.Length);
         }
@@ -814,7 +818,7 @@ namespace System.Security.Cryptography
             return unchecked(new byte[] { (byte)(i >> 24), (byte)(i >> 16), (byte)(i >> 8), (byte)i });
         }
 
-
+#if !MONO
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         [System.Security.SecurityCritical]  // auto-generated
         internal static byte[] RsaOaepEncrypt (RSA rsa, HashAlgorithm hash, PKCS1MaskGenerationMethod mgf, RandomNumberGenerator rng, byte[] data) {
@@ -1176,6 +1180,17 @@ namespace System.Security.Cryptography
         [ResourceExposure(ResourceScope.Machine)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void _AcquireCSP(CspParameters param, ref SafeProvHandle hProv);
+
+#else
+        internal static bool _ProduceLegacyHmacValues()
+        {
+#if FULL_AOT_RUNTIME
+            return false;
+#else
+            return Environment.GetEnvironmentVariable ("legacyHMACMode") == "1";
+#endif
+        }
+#endif
     }
 }
 

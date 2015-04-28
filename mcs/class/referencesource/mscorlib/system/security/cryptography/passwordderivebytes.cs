@@ -32,7 +32,7 @@ namespace System.Security.Cryptography {
         private byte[]          _password;
         private HashAlgorithm   _hash;
         private CspParameters   _cspParams;
-
+#if !MONO
         [System.Security.SecurityCritical] // auto-generated
         private SafeProvHandle _safeProvHandle = null;
         private SafeProvHandle ProvHandle {
@@ -50,7 +50,7 @@ namespace System.Security.Cryptography {
                 return _safeProvHandle;
             }
         }
-
+#endif
         //
         // public constructors
         //
@@ -137,6 +137,11 @@ namespace System.Security.Cryptography {
 // disable csharp compiler warning #0809: obsolete member overrides non-obsolete member
 #pragma warning disable 0809
         public override byte[] GetBytes(int cb) {
+#if MONO
+            if (cb < 1)
+                throw new IndexOutOfRangeException ("cb");
+#endif
+
             int         ib = 0;
             byte[]      rgb;
             byte[]      rgbOut = new byte[cb];
@@ -211,7 +216,9 @@ namespace System.Security.Cryptography {
         {
             if (keySize < 0)
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_InvalidKeySize"));
-
+#if MONO
+            throw new NotSupportedException ("CspParameters are not supported by Mono");
+#else
             int algidhash = X509Utils.NameOrOidToAlgId(alghashname, OidGroup.HashAlgorithm);
             if (algidhash == 0) 
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_PasswordDerivedBytes_InvalidAlgorithm"));
@@ -228,19 +235,20 @@ namespace System.Security.Cryptography {
                       _password, _password.Length, keySize << 16, rgbIV, rgbIV.Length, 
                       JitHelpers.GetObjectHandleOnStack(ref key));
             return key;
+#endif
         }
 
         //
         // private methods
         //
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
         private static extern void DeriveKey(SafeProvHandle hProv, int algid, int algidHash, 
                                              byte[] password, int cbPassword, int dwFlags, byte[] IV, int cbIV, 
                                              ObjectHandleOnStack retKey);
-
+#endif
         private byte[] ComputeBaseValue() {
             _hash.Initialize();
             _hash.TransformBlock(_password, 0, _password.Length, _password, 0);

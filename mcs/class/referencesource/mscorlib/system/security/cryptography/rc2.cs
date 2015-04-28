@@ -72,7 +72,11 @@ namespace System.Security.Cryptography {
         //
 
         new static public RC2 Create() {
+#if FULL_AOT_RUNTIME
+            return new System.Security.Cryptography.RC2CryptoServiceProvider ();
+#else
             return Create("System.Security.Cryptography.RC2");
+#endif
         }
 
         new static public RC2 Create(String AlgName) {
