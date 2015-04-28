@@ -371,4 +371,6 @@ System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
 
 System.Xml/XQueryConvert.cs
+../../../external/referencesource/System.Xml/System/Xml/Bits.cs
+System.Xml/XsdDateTime2.cs
 
