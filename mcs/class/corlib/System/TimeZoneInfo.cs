@@ -880,6 +880,68 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
+		internal DaylightTime GetDaylightChanges (int year)
+		{
+			DateTime start = DateTime.MinValue, end = DateTime.MinValue;
+			TimeSpan delta = new TimeSpan ();
+
+			if (transitions != null) {
+				end = DateTime.MaxValue;
+				for (var i =  transitions.Count - 1; i >= 0; i--) {
+					var pair = transitions [i];
+					DateTime ttime = pair.Key;
+					TimeType ttype = pair.Value;
+
+					if (ttype.IsDst) {
+						// DaylightTime.Delta is relative to the current BaseUtcOffset.
+						var d =  new TimeSpan (0, 0, ttype.Offset) - BaseUtcOffset;
+						// Handle DST gradients
+						if (start != DateTime.MinValue && delta != d)
+							end = start;
+
+						start = ttime;
+						delta = d;
+
+						if (ttime.Year <= year)
+							break;
+					} else {
+						if (ttime.Year < year)
+							break;
+
+						end = ttime;
+						start = DateTime.MinValue;
+					}
+				}
+
+				// DaylightTime.Start is relative to the Standard time.
+				if (start != DateTime.MinValue)
+					start += BaseUtcOffset;
+
+				// DaylightTime.End is relative to the DST time.
+				if (end != DateTime.MaxValue)
+					end += BaseUtcOffset + delta;
+			} else {
+				AdjustmentRule rule = null;
+				foreach (var r in GetAdjustmentRules ()) {
+					if (r.DateEnd.Year < year)
+						continue;
+					if (r.DateStart.Year > year)
+						break;
+					rule = r;
+				}
+				if (rule != null) {
+					start = TransitionPoint (rule.DaylightTransitionStart, year);
+					end = TransitionPoint (rule.DaylightTransitionEnd, year);
+					delta = rule.DaylightDelta;
+				}
+			}
+
+			if (start == DateTime.MinValue || end == DateTime.MinValue)
+				return new DaylightTime (new DateTime (), new DateTime (), new TimeSpan ());
+
+			return new DaylightTime (start, end, delta);
+		}
+
 		public bool IsInvalidTime (DateTime dateTime)
 		{
 			if (dateTime.Kind == DateTimeKind.Utc)
