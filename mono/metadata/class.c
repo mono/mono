@@ -2151,10 +2151,11 @@ mono_class_setup_methods (MonoClass *class)
 			methods [i] = mono_class_inflate_generic_method_full_checked (
 				gklass->methods [i], class, mono_class_get_context (class), &error);
 			if (!mono_error_ok (&error)) {
-				char *method = mono_method_full_name (gklass->methods [i], TRUE);
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not inflate method %s due to %s", method, mono_error_get_message (&error)));
-
-				g_free (method);
+				mono_class_set_failure_from_error (class, &error);
+				// char *method = mono_method_full_name (gklass->methods [i], TRUE);
+				// mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not inflate method %s due to %s", method, mono_error_get_message (&error)));
+				// 
+				// g_free (method);
 				mono_error_cleanup (&error);
 				return;				
 			}
@@ -2258,7 +2259,7 @@ mono_class_setup_methods (MonoClass *class)
 			int idx = mono_metadata_translate_token_index (class->image, MONO_TABLE_METHOD, class->method.first + i + 1);
 			methods [i] = mono_get_method_checked (class->image, MONO_TOKEN_METHOD_DEF | idx, class, NULL, &error);
 			if (!methods [i]) {
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not load method %d due to %s", i, mono_error_get_message (&error)));
+				mono_class_set_failure_from_error (class, &error);
 				mono_error_cleanup (&error);
 			}
 		}
@@ -3472,9 +3473,10 @@ setup_interface_offsets (MonoClass *class, int cur_slot, gboolean overwrite)
 		}
 		ifaces = mono_class_get_implemented_interfaces (k, &error);
 		if (!mono_error_ok (&error)) {
-			char *name = mono_type_get_full_name (k);
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Error getting the interfaces of %s due to %s", name, mono_error_get_message (&error)));
-			g_free (name);
+			// char *name = mono_type_get_full_name (k);
+			// mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Error getting the interfaces of %s due to %s", name, mono_error_get_message (&error)));
+			// g_free (name);
+			mono_class_set_failure_from_error (class, &error);
 			mono_error_cleanup (&error);
 			cur_slot = -1;
 			goto end;
@@ -9714,6 +9716,29 @@ mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data)
 	return TRUE;
 }
 
+gboolean
+mono_class_set_failure_from_error (MonoClass *klass, MonoError *error)
+{
+	MonoError *boxed_error;
+	if (klass->exception_type)
+		return FALSE;
+
+	mono_image_lock (klass->image);
+	boxed_error = mono_error_box (error, klass->image->mempool);
+	mono_image_unlock (klass->image);
+
+	mono_loader_lock ();
+	if (klass->exception_type) {
+		mono_loader_unlock ();
+		return FALSE;
+	}
+	klass->exception_type = MONO_EXCEPTION_MONO_ERROR;
+	mono_image_property_insert (klass->image, klass, MONO_CLASS_PROP_EXCEPTION_DATA, boxed_error);
+	mono_loader_unlock ();
+
+	return TRUE;
+}
+
 /*
  * mono_class_get_exception_data:
  *
@@ -9832,6 +9857,21 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	}
 	case MONO_EXCEPTION_BAD_IMAGE: {
 		return mono_get_exception_bad_image_format (exception_data);
+	}
+	case MONO_EXCEPTION_MONO_ERROR: {
+		MonoError error;
+		MonoException *ex;
+		ex = mono_error_prepare_exception ((MonoError*)exception_data, &error);
+		if (!mono_error_ok (&error)) {
+			MonoError second_chance;
+			/*Try to produce the exception for the second error.*/
+			ex = mono_error_prepare_exception (&error, &second_chance);
+
+			g_assert (mono_error_ok (&second_chance)); /*No point into trying to handle a double faults.*/
+			mono_error_cleanup (&error);
+		}
+
+		return ex;
 	}
 	default: {
 		MonoLoaderError *error;
