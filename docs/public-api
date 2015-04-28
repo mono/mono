@@ -292,7 +292,6 @@ mono_free_method
 mono_free_verify_list
 mono_gc_collect
 mono_gc_collection_count
-mono_gc_enable_events
 mono_gc_get_generation
 mono_gc_get_heap_size
 mono_gc_get_used_size
@@ -301,9 +300,7 @@ mono_gchandle_get_target
 mono_gchandle_new
 mono_gchandle_new_weakref
 mono_gc_invoke_finalizers
-mono_gc_is_finalizer_thread
 mono_gc_max_generation
-mono_gc_out_of_memory
 mono_gc_wbarrier_arrayref_copy
 mono_gc_wbarrier_generic_nostore
 mono_gc_wbarrier_generic_store
@@ -604,7 +601,6 @@ mono_object_get_class
 mono_object_get_domain
 mono_object_get_size
 mono_object_get_virtual_method
-mono_object_is_alive
 mono_object_isinst
 mono_object_isinst_mbyref
 mono_object_new
