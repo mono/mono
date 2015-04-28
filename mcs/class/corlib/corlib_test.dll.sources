@@ -245,6 +245,7 @@ System.Security.Cryptography/CipherModeTest.cs
 System.Security.Cryptography/CfbTest.cs
 System.Security.Cryptography/CryptoConfigTest.cs
 System.Security.Cryptography/CryptoStreamTest.cs
+System.Security.Cryptography/CspParametersTest.cs
 System.Security.Cryptography/CspProviderFlagsTest.cs
 System.Security.Cryptography/DesCfbTest.cs
 System.Security.Cryptography/DESCryptoServiceProviderTest.cs

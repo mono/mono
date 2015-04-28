@@ -1,11 +1,10 @@
 //
-// System.Security.Cryptography.RSAParameters.cs
+// CspParametersTest.cs - NUnit Test Cases for CspParameters
 //
-// Authors:
-//   Dan Lewis (dihlewis@yahoo.co.uk)
+// Author:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) 2002
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,27 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
+using System;
+using System.Security.Cryptography;
 
-namespace System.Security.Cryptography {
-	
-	[Serializable]
-	[ComVisible (true)]
-	public struct RSAParameters {
-		[NonSerialized]
-		public byte[] P;
-		[NonSerialized]
-		public byte[] Q;
-		[NonSerialized]
-		public byte[] D;
-		[NonSerialized]
-		public byte[] DP;
-		[NonSerialized]
-		public byte[] DQ;
-		[NonSerialized]
-		public byte[] InverseQ;
+namespace MonoTests.System.Security.Cryptography {
 
-		public byte[] Modulus;
-		public byte[] Exponent;
+	[TestFixture]
+	public class CspParametersTest {
+
+		[Test]
+		public void Ctor () 
+		{
+			var cp = new CspParameters ();
+			Assert.AreEqual (24, cp.ProviderType);
+		}
 	}
 }

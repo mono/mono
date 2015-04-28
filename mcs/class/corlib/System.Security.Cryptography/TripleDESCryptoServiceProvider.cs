@@ -39,34 +39,6 @@ namespace System.Security.Cryptography {
 	//	not free :-(
 	//	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 	
-	[ComVisible (true)]
-	public sealed class TripleDESCryptoServiceProvider : TripleDES {
-	
-		public TripleDESCryptoServiceProvider ()
-		{
-		}
-	
-		public override void GenerateIV () 
-		{
-			IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
-		}
-		
-		public override void GenerateKey () 
-		{
-			KeyValue = TripleDESTransform.GetStrongKey ();
-		}
-		
-		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
-		{
-			return new TripleDESTransform (this, false, rgbKey, rgbIV);
-		}
-		
-		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
-		{
-			return new TripleDESTransform (this, true, rgbKey, rgbIV);
-		}
-	}
-	
 	// TripleDES is just DES-EDE
 	internal class TripleDESTransform : SymmetricTransform {
 	

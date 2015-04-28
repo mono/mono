@@ -655,34 +655,6 @@ namespace System.Security.Cryptography {
 				key = KeyBuilder.Key (DESTransform.KEY_BYTE_SIZE);
 			return key;
 		}
-	} 
-	
-	[ComVisible (true)]
-	public sealed class DESCryptoServiceProvider : DES {
-	
-		public DESCryptoServiceProvider ()
-		{
-		}
-	
-		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
-		{
-			return new DESTransform (this, false, rgbKey, rgbIV);
-		}
-	
-		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
-		{
-			return new DESTransform (this, true, rgbKey, rgbIV);
-		}
-	
-		public override void GenerateIV () 
-		{
-			IVValue = KeyBuilder.IV (DESTransform.BLOCK_BYTE_SIZE);
-		}
-	
-		public override void GenerateKey () 
-		{
-			KeyValue = DESTransform.GetStrongKey ();
-		}
 	}
 }
 

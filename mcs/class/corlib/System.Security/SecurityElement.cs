@@ -33,10 +33,18 @@ using System.Globalization;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 using Mono.Xml;
 
 namespace System.Security {
+
+    internal enum SecurityElementType
+    {
+        Regular = 0,
+        Format = 1,
+        Comment = 2
+    }
 
 	[ComVisible (true)]
 	[Serializable]
@@ -454,5 +462,64 @@ namespace System.Security {
 			}
 			return null;
 		}
+
+		internal string m_strTag {
+			get {
+				return tag;
+			}
+		}
+
+		internal string m_strText {
+			get {
+				return text;
+			}
+			set {
+				text = value;
+			}
+		}
+
+		internal ArrayList m_lAttributes {
+			get {
+				return attributes;
+			}
+		}
+
+		internal ArrayList InternalChildren {
+			get {
+				return children;
+			}
+		}
+
+        internal String SearchForTextOfLocalName(String strLocalName) 
+        {
+            // Search on each child in order and each
+            // child's child, depth-first
+            
+            if (strLocalName == null)
+                throw new ArgumentNullException( "strLocalName" );
+            Contract.EndContractBlock();
+                
+            // Note: we don't check for a valid tag here because
+            // an invalid tag simply won't be found.    
+            
+            // First we check this.
+            
+            if (tag == null) return null;            
+            if (tag.Equals( strLocalName ) || tag.EndsWith( ":" + strLocalName, StringComparison.Ordinal ))
+                return Unescape( text );               
+            if (children == null)
+                return null;
+
+            IEnumerator enumerator = children.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                String current = ((SecurityElement)enumerator.Current).SearchForTextOfLocalName( strLocalName );
+            
+                if (current != null)
+                    return current;
+            }
+            return null;            
+        }		
 	}
 }

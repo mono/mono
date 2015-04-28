@@ -41,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
 
 using Mono.Xml;
 
@@ -509,6 +510,11 @@ public partial class CryptoConfig {
 			// method doesn't throw any exception
 			return null;
 		}
+	}
+
+	internal static string MapNameToOID (string name, OidGroup oidGroup)
+	{
+		return MapNameToOID (name);
 	}
 
 	public static string MapNameToOID (string name)

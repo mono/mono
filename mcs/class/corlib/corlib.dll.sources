@@ -721,37 +721,22 @@ System.Security.AccessControl/ResourceType.cs
 System.Security.AccessControl/SddlAccessRight.cs
 System.Security.AccessControl/SecurityInfos.cs
 System.Security.AccessControl/SystemAcl.cs
-System.Security.Cryptography/AsymmetricAlgorithm.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
 System.Security.Cryptography/CryptoConfig_2_1.cs
 System.Security.Cryptography/CryptoConfig.fullaot.cs
 System.Security.Cryptography/CspKeyContainerInfo.cs
-System.Security.Cryptography/CspParameters.cs
-System.Security.Cryptography/CspProviderFlags.cs
-System.Security.Cryptography/DES.cs
 System.Security.Cryptography/DESCryptoServiceProvider.cs
-System.Security.Cryptography/DSA.cs
 System.Security.Cryptography/DSACryptoServiceProvider.cs
-System.Security.Cryptography/DSAParameters.cs
-System.Security.Cryptography/DSASignatureDeformatter.cs
-System.Security.Cryptography/DSASignatureFormatter.cs
 System.Security.Cryptography/ICspAsymmetricAlgorithm.cs
 System.Security.Cryptography/KeyNumber.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/RC2CryptoServiceProvider.cs
 System.Security.Cryptography/RNGCryptoServiceProvider.cs
-System.Security.Cryptography/RSA.cs
 System.Security.Cryptography/RSACryptoServiceProvider.cs
-System.Security.Cryptography/RSAOAEPKeyExchangeDeformatter.cs
-System.Security.Cryptography/RSAOAEPKeyExchangeFormatter.cs
-System.Security.Cryptography/RSAParameters.cs
-System.Security.Cryptography/RSAPKCS1KeyExchangeDeformatter.cs
-System.Security.Cryptography/RSAPKCS1KeyExchangeFormatter.cs
 System.Security.Cryptography/RSAPKCS1SignatureDeformatter.cs
 System.Security.Cryptography/RSAPKCS1SignatureFormatter.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
-System.Security.Cryptography/TripleDES.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
 System.Security.Cryptography.X509Certificates/X509Certificate20.cs
@@ -938,6 +923,7 @@ ReferenceSources/TypeBuilderInstantiation.cs
 ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
+ReferenceSources/SharedStatics.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
@@ -1380,6 +1366,7 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
 
 ../../../external/referencesource/mscorlib/system/security/attributes.cs
+../../../external/referencesource/mscorlib/system/security/securitydocument.cs
 
 ../../../external/referencesource/mscorlib/system/security/claims/Claim.cs
 ../../../external/referencesource/mscorlib/system/security/claims/ClaimsIdentity.cs
@@ -1389,14 +1376,21 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/security/claims/RoleClaimProvider.cs
 
 ../../../external/referencesource/mscorlib/system/security/cryptography/aes.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/asymmetricalgorithm.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/asymmetrickeyexchangedeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/asymmetrickeyexchangeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/asymmetricsignaturedeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/asymmetricsignatureformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/base64transforms.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/crypto.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/cryptoapitransform.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/cryptostream.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/derivebytes.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/des.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/descryptoserviceprovider.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/dsa.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/dsasignaturedeformatter.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/dsasignatureformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hashalgorithm.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hmac.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hmacmd5.cs
@@ -1421,6 +1415,11 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/rijndaelmanagedtransform.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/ripemd160.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/ripemd160managed.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/rsa.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/rsaoaepkeyexchangedeformatter.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/rsaoaepkeyexchangeformatter.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/rsapkcs1keyexchangedeformatter.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/rsapkcs1keyexchangeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha1.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha1managed.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha256.cs
@@ -1431,11 +1430,17 @@ ReferenceSources/win32native.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha512managed.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/signaturedescription.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/symmetricalgorithm.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/tripledes.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/tripledescryptoserviceprovider.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/utils.cs
+
+../../../external/referencesource/mscorlib/system/security/cryptography/x509certificates/x509utils.cs
 
 ../../../external/referencesource/mscorlib/system/security/principal/genericidentity.cs
 
 ../../../external/referencesource/mscorlib/system/security/util/hex.cs
+../../../external/referencesource/mscorlib/system/security/util/parser.cs
+../../../external/referencesource/mscorlib/system/security/util/tokenizer.cs
 
 ../../../external/referencesource/mscorlib/system/text/asciiencoding.cs
 ../../../external/referencesource/mscorlib/system/text/codepageencoding.cs

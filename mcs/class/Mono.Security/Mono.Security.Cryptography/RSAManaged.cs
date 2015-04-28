@@ -145,7 +145,10 @@ namespace Mono.Security.Cryptography {
 		// overrides from RSA class
 
 		public override int KeySize {
-			get { 
+			get {
+				if (m_disposed)
+					throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
+				
 				// in case keypair hasn't been (yet) generated
 				if (keypairGenerated) {
 					int ks = n.BitCount ();
