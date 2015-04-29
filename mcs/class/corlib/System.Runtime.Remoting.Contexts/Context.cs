@@ -84,7 +84,7 @@ namespace System.Runtime.Remoting.Contexts {
 		public Context ()
 		{
 			domain_id = Thread.GetDomainID();
-			context_id = 1 + global_count++;
+			context_id = Interlocked.Increment (ref global_count);
 		}
 
 		~Context ()
