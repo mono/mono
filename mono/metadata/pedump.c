@@ -361,6 +361,7 @@ dump_verify_info (MonoImage *image, int flags)
 		for (i = 0; i < m->rows; ++i) {
 			MonoMethod *method;
 			MonoError error;
+			mono_error_init (&error);
 			mono_loader_clear_error ();
 
 			method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i+1), NULL, NULL, &error);

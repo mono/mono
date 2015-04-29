@@ -7282,6 +7282,7 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 	 */
 	if (ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
 		MonoError error;
+		mono_error_init (&error);
 		guint32 token = read32 (ip + 7);
 		guint32 field_token = read32 (ip + 2);
 		guint32 field_index = field_token & 0xffffff;

@@ -3432,6 +3432,7 @@ add_wrappers (MonoAotCompile *acfg)
 	 */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		gboolean skip = FALSE;
@@ -3743,6 +3744,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* Synchronized wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
 		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
@@ -3774,6 +3776,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* pinvoke wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 
@@ -3789,6 +3792,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* native-to-managed wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		MonoCustomAttrInfo *cattr;
@@ -4264,6 +4268,7 @@ add_generic_instances (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHODSPEC].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		token = MONO_TOKEN_METHOD_SPEC | (i + 1);
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
 
@@ -8636,6 +8641,7 @@ collect_methods (MonoAotCompile *acfg)
 	/* Collect methods */
 	for (i = 0; i < image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 
@@ -8681,6 +8687,7 @@ collect_methods (MonoAotCompile *acfg)
 	/* gsharedvt methods */
 	for (mindex = 0; mindex < image->tables [MONO_TABLE_METHOD].rows; ++mindex) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (mindex + 1);
 

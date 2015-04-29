@@ -1370,6 +1370,7 @@ static char*
 token_handler (MonoDisHelper *dh, MonoMethod *method, guint32 token)
 {
 	MonoError error;
+	mono_error_init (&error);
 	char *res, *desc;
 	MonoMethod *cmethod;
 	MonoClass *klass;
