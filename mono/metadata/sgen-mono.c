@@ -1087,6 +1087,8 @@ create_allocator (int atype)
 		int pos, pos_leave, pos_error;
 		MonoClass *oom_exc_class;
 		MonoMethod *ctor;
+		MonoError error;
+		mono_error_init (&error);
 
 		/*
 		 * n > MONO_ARRAY_MAX_INDEX => OutOfMemoryException
@@ -1137,13 +1139,15 @@ create_allocator (int atype)
 		/* catch */
 		clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
 		clause->try_len = mono_mb_get_pos (mb) - clause->try_offset;
-		clause->data.catch_class = mono_class_from_name (mono_defaults.corlib,
-				"System", "OverflowException");
+		clause->data.catch_class = mono_class_from_name_checked (mono_defaults.corlib,
+				"System", "OverflowException", &error);
+		/* FIXME: Make this assert about the error when mono_class_from_name_checked always sets error when it returns NULL */
 		g_assert (clause->data.catch_class);
 		clause->handler_offset = mono_mb_get_label (mb);
 
-		oom_exc_class = mono_class_from_name (mono_defaults.corlib,
-				"System", "OutOfMemoryException");
+		oom_exc_class = mono_class_from_name_checked (mono_defaults.corlib,
+				"System", "OutOfMemoryException", &error);
+		/* FIXME: Make this assert about the error when mono_class_from_name_checked always sets error when it returns NULL */
 		g_assert (oom_exc_class);
 		ctor = mono_class_get_method_from_name (oom_exc_class, ".ctor", 0);
 		g_assert (ctor);
