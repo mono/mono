@@ -477,6 +477,7 @@ verify_image_file (const char *fname)
 	table = &image->tables [MONO_TABLE_TYPEDEF];
 	for (i = 1; i <= table->rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		guint32 token = i | MONO_TOKEN_TYPE_DEF;
 		MonoClass *class = mono_class_get_checked (image, token, &error);
 		if (!class) {

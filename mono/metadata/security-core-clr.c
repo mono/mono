@@ -130,6 +130,7 @@ security_critical_attribute (void)
 
 	if (!class) {
 		MonoError error;
+		mono_error_init (&error);
 		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
 			"SecurityCriticalAttribute", &error);
 		mono_error_assert_ok (&error);
@@ -144,6 +145,7 @@ security_safe_critical_attribute (void)
 
 	if (!class) {
 		MonoError error;
+		mono_error_init (&error);
 		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
 			"SecuritySafeCriticalAttribute", &error);
 		mono_error_assert_ok (&error);
@@ -523,6 +525,7 @@ check_field_access (MonoMethod *caller, MonoClassField *field)
 	/* if get_reflection_caller returns NULL then we assume the caller has NO privilege */
 	if (caller) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 
 		/* this check can occur before the field's type is resolved (and that can fail) */

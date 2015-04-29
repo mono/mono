@@ -602,6 +602,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.corlib = mono_assembly_get_image (ass);
 
 	MonoError error;
+	mono_error_init (&error);
 	mono_defaults.object_class = mono_class_from_name_checked (
                 mono_defaults.corlib, "System", "Object", &error);
 	g_assert (mono_defaults.object_class != 0 && mono_error_ok (&error));

@@ -7828,7 +7828,15 @@ mono_reflection_type_from_name (char *name, MonoImage *image)
 	
 	/*g_print ("requested type %s\n", str);*/
 	if (mono_reflection_parse_type (tmp, &info)) {
-		type = _mono_reflection_get_type_from_info (&info, image, FALSE);
+		MonoError error;
+		mono_error_init (&error);
+		type = _mono_reflection_get_type_from_info (&info, image, FALSE, &error);
+
+		g_assert (!mono_loader_get_last_error ());
+
+		if (!mono_error_ok (&error))
+			mono_loader_set_error_from_mono_error (&error);
+		mono_error_cleanup (&error);
 	}
 
 	g_free (tmp);

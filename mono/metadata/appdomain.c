@@ -825,6 +825,7 @@ void
 mono_set_private_bin_path_from_config (MonoDomain *domain)
 {
 	MonoError error;
+	mono_error_init (&error);
 	gchar *config_file_name = NULL, *text = NULL, *config_file_path = NULL;
 	gsize len;
 	GMarkupParseContext *context;
@@ -1340,8 +1341,6 @@ get_shadow_assembly_location_base (MonoDomain *domain, MonoError *error)
 	char *userdir;
 	char *location;
 
-	mono_error_init (error);
-	
 	setup = domain->setup;
 	if (setup->cache_path != NULL && setup->application_name != NULL) {
 		cache_path = mono_string_to_utf8_checked (setup->cache_path, error);
@@ -1384,8 +1383,6 @@ get_shadow_assembly_location (const char *filename, MonoError *error)
 	char *location, *tmploc;
 	MonoDomain *domain = mono_domain_get ();
 
-	mono_error_init (error);
-	
 	hash = get_cstring_hash (bname);
 	hash2 = get_cstring_hash (dirname);
 	g_snprintf (name_hash, sizeof (name_hash), "%08x", hash);

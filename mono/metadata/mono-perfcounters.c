@@ -1470,6 +1470,7 @@ MonoBoolean
 mono_perfcounter_create (MonoString *category, MonoString *help, int type, MonoArray *items)
 {
 	MonoError error;
+	mono_error_init (&error);
 	int result = FALSE;
 	int i, size;
 	int num_counters = mono_array_length (items);

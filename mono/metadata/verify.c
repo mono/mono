@@ -3643,6 +3643,7 @@ static void
 do_load_token (VerifyContext *ctx, int token) 
 {
 	MonoError error;
+	mono_error_init (&error);
 	gpointer handle;
 	MonoClass *handle_class;
 	if (!check_overflow (ctx))

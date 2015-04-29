@@ -526,6 +526,7 @@ MonoClassField*
 mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClassField *res = mono_field_from_token_checked (image, token, retklass, context, &error);
 	g_assert (!mono_loader_get_last_error ());
 	if (!mono_error_ok (&error)) {
@@ -892,6 +893,7 @@ MonoMethodSignature*
 mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, context, &error);
 
 	g_assert (!mono_loader_get_last_error ());
@@ -993,6 +995,7 @@ MonoMethodSignature*
 mono_method_get_signature (MonoMethod *method, MonoImage *image, guint32 token)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, NULL, &error);
 
 	g_assert (!mono_loader_get_last_error ());
@@ -1910,6 +1913,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		      MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *result = mono_get_method_checked (image, token, klass, context, &error);
 	g_assert (!mono_loader_get_last_error ());
 	if (!mono_error_ok (&error)) {
@@ -2686,6 +2690,7 @@ MonoMethodSignature*
 mono_method_signature (MonoMethod *m)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *sig;
 
 	sig = mono_method_signature_checked (m, &error);
