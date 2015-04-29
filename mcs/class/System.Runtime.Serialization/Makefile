@@ -29,6 +29,8 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.ServiceModel.dll /r:System.Web.Servi
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
 	Test/Resources/Schemas/*.xsd \
-	Test/System.Runtime.Serialization/one.xml
+	Test/System.Runtime.Serialization/one.xml \
+	ReferenceSource.common.sources \
+	ReferenceSource.desktop.sources
 
 include ../../build/library.make
