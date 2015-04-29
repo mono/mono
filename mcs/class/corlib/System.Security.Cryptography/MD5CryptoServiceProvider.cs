@@ -50,6 +50,11 @@ namespace System.Security.Cryptography {
 			Initialize();
 		}
 
+		~MD5CryptoServiceProvider ()
+		{
+			Dispose (false);
+		}
+
 		protected override void Dispose (bool disposing) 
 		{
 			if (_ProcessingBuffer != null) {
