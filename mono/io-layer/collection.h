@@ -21,6 +21,7 @@ G_BEGIN_DECLS
 
 extern void _wapi_collection_init (void);
 extern void _wapi_handle_collect (void);
+extern void _wapi_collection_shutdown (void);
 
 G_END_DECLS
 
