@@ -1080,6 +1080,16 @@ typedef struct {
 	int first_filter_idx, filter_idx;
 } ResumeState;
 
+/*
+ * Lists all states in which a thread can be. Used for performance profiling.
+ */
+typedef enum {
+	MONO_PERF_STATE_COMPILE,
+	MONO_PERF_STATE_EXEC,
+	MONO_PERF_STATE_UNKNOWN,
+	MONO_PERF_STATE_NUM = MONO_PERF_STATE_UNKNOWN
+} MonoThreadPerfState;
+
 typedef struct {
 	gpointer          end_of_stack;
 	guint32           stack_size;
@@ -1127,6 +1137,13 @@ typedef struct {
 	 * The current exception in flight
 	 */
 	guint32 thrown_exc;
+
+	/*
+	 * Thread-local state and time tracking.
+	 */
+	gint64 perf_segment_start;
+	gint64 perf_counters [MONO_PERF_STATE_NUM];
+	MonoThreadPerfState state;
 } MonoJitTlsData;
 
 /*
@@ -1831,6 +1848,7 @@ typedef struct {
 	char *biggest_method;
 	double jit_time;
 	gboolean enabled;
+	gint64 perf_counters [MONO_PERF_STATE_NUM];
 } MonoJitStats;
 
 extern MonoJitStats mono_jit_stats;
@@ -3032,4 +3050,29 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #define ARCH_VARARG_ICALLS 0
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef MONO_ARCH_HAVE_DUMMY_INIT
+#define ARCH_HAVE_DUMMY_INIT 1
+#else
+#define ARCH_HAVE_DUMMY_INIT 0
+#endif
+
+#ifdef MONO_CROSS_COMPILE
+#define MONO_IS_CROSS_COMPILE 1
+#else
+#define MONO_IS_CROSS_COMPILE 0
+#endif
+
+#if defined(__mono_ilp32__)
+#define MONO_IS_ILP32 1
+#else
+#define MONO_IS_ILP32 0
+#endif
+
+void mono_change_perf_state (MonoThreadPerfState state);
+void mono_change_perf_state_from_to (MonoThreadPerfState old_state, MonoThreadPerfState new_state);
+void mono_update_perf_counter (MonoJitTlsData *jit_tls);
+
+>>>>>>> [runtime] Add thread-local performance counters to precisely measure compilation and execution time.
 #endif /* __MONO_MINI_H__ */

@@ -48,6 +48,20 @@ mono_100ns_ticks (void)
 	return (cur_time - start_time) * (double)MTICKS_PER_SEC / freq.QuadPart;
 }
 
+/*
+ * Returns user & system time for a thread in 100ns units.
+ */
+gint64
+mono_thread_cpu_time(void)
+{
+	ULARGE_INTEGER kern_time, user_time;
+	FILETIME creation_time, exit_time;
+
+	GetThreadTimes (GetCurrentThread (), &creation_time, &exit_time,
+		       (FILETIME*)&kern_time, (FILETIME*) &user_time);
+	return kern_time.QuadPart + user_time.QuadPart;
+}
+
 /* Returns the number of 100ns ticks since Jan 1, 1601, UTC timezone */
 gint64
 mono_100ns_datetime (void)
@@ -74,6 +88,9 @@ mono_100ns_datetime (void)
 #if defined(PLATFORM_MACOSX)
 #include <mach/mach.h>
 #include <mach/mach_time.h>
+#include <mach/mach_init.h>
+#include <mach/thread_act.h>
+#include <mach/mach_port.h>
 #endif
 
 #include <time.h>
@@ -158,6 +175,31 @@ mono_100ns_ticks (void)
 	if (gettimeofday (&tv, NULL) == 0)
 		return ((gint64)tv.tv_sec * 1000000 + tv.tv_usec) * 10;
 	return 0;
+}
+
+/*
+ * Returns user + system time for a thread in 100ns units.
+ */
+gint64
+mono_thread_cpu_time (void)
+{
+#if defined(__linux__)
+	struct timespec ts;
+	clock_gettime (CLOCK_THREAD_CPUTIME_ID, &ts);
+	return ts.tv_sec * 10000000 + ts.tv_nsec / 100;
+#elif defined(PLATFORM_MACOSX)
+	mach_msg_type_number_t count = THREAD_BASIC_INFO_COUNT;
+	thread_basic_info_data_t info;
+
+	if (thread_info (pthread_mach_thread_np (pthread_self ()), THREAD_BASIC_INFO,
+			 (thread_info_t) &info, &count) != KERN_SUCCESS)
+		g_assert (0);
+
+	return info.user_time.seconds * 10000000 + info.user_time.microseconds * 10 +
+	       info.system_time.seconds * 10000000 + info.system_time.microseconds * 10;
+#else
+	return 0;
+#endif
 }
 
 /*

@@ -57,6 +57,7 @@
 #include <mono/utils/mono-hwcap.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-time.h>
 #include <mono/io-layer/io-layer.h>
 
 #include "mini.h"
@@ -4254,7 +4255,10 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	jit_timer = g_timer_new ();
 
+	mono_change_perf_state_from_to (MONO_PERF_STATE_EXEC, MONO_PERF_STATE_COMPILE);
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0, -1);
+	mono_change_perf_state_from_to (MONO_PERF_STATE_COMPILE, MONO_PERF_STATE_EXEC);
+
 	prof_method = cfg->method;
 
 	g_timer_stop (jit_timer);

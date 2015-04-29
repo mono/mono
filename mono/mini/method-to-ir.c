@@ -5267,8 +5267,11 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 			vtable = mono_class_vtable (cfg->domain, method->klass);
 			if (!vtable)
 				return FALSE;
-			if (!cfg->compile_aot)
+			if (!cfg->compile_aot) {
+				mono_change_perf_state_from_to (MONO_PERF_STATE_COMPILE, MONO_PERF_STATE_EXEC);
 				mono_runtime_class_init (vtable);
+				mono_change_perf_state_from_to (MONO_PERF_STATE_EXEC, MONO_PERF_STATE_COMPILE);
+			}
 		} else if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {
 			if (cfg->run_cctors && method->klass->has_cctor) {
 				/*FIXME it would easier and lazier to just use mono_class_try_get_vtable */
@@ -11356,7 +11359,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							g_assert (vtable);
 							if (! vtable->initialized)
 								INLINE_FAILURE ("class init");
+
+							mono_change_perf_state_from_to (MONO_PERF_STATE_COMPILE, MONO_PERF_STATE_EXEC);
 							ex = mono_runtime_class_init_full (vtable, FALSE);
+							mono_change_perf_state_from_to (MONO_PERF_STATE_EXEC, MONO_PERF_STATE_COMPILE);
+
 							if (ex) {
 								set_exception_object (cfg, ex);
 								goto exception_exit;

@@ -60,6 +60,7 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/checked-build.h>
+#include <mono/utils/mono-time.h>
 #include <mono/io-layer/io-layer.h>
 
 #include "mini.h"
@@ -935,6 +936,37 @@ mono_thread_abort (MonoObject *obj)
 	}
 }
 
+static void
+print_jit_counters ()
+{
+#if (defined(PLATFORM_MACOSX) || defined(__linux__) || defined(HOST_WIN32))
+	if (mono_jit_stats.enabled) {
+		g_print ("\nTotal compilation CPU time:         : %.5f s\n",
+			 mono_jit_stats.perf_counters [MONO_PERF_STATE_COMPILE] / 10000000.);
+		g_print ("Total execution CPU time:           : %.5f s\n",
+			 mono_jit_stats.perf_counters [MONO_PERF_STATE_EXEC] / 10000000.);
+	}
+#endif
+}
+
+static void
+mono_setup_perf_counters (MonoJitTlsData *jit_tls)
+{
+	jit_tls->perf_segment_start = mono_thread_cpu_time ();
+	jit_tls->state = MONO_PERF_STATE_EXEC;
+}
+
+static void
+mono_finalize_perf_counters (MonoJitTlsData *jit_tls)
+{
+	int i;
+
+	mono_update_perf_counter (jit_tls);
+	for (i = 0; i < MONO_PERF_STATE_NUM; i++)
+		InterlockedAdd64 (&mono_jit_stats.perf_counters [i], jit_tls->perf_counters [i]);
+
+}
+
 static void*
 setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 {
@@ -973,6 +1005,8 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 
 	mono_setup_altstack (jit_tls);
 
+	mono_setup_perf_counters (jit_tls);
+
 	return jit_tls;
 }
 
@@ -981,6 +1015,7 @@ free_jit_tls_data (MonoJitTlsData *jit_tls)
 {
 	mono_arch_free_jit_tls_data (jit_tls);
 	mono_free_altstack (jit_tls);
+	mono_finalize_perf_counters (jit_tls);
 
 	g_free (jit_tls->first_lmf);
 	g_free (jit_tls);
@@ -3618,6 +3653,8 @@ mini_cleanup (MonoDomain *domain)
 #ifdef USE_JUMP_TABLES
 	mono_jumptable_cleanup ();
 #endif
+
+	print_jit_counters ();
 }
 
 void
@@ -3829,3 +3866,46 @@ mono_jumptable_get_entry (guint8 *code_ptr)
 	return mono_arch_jumptable_entry_from_code (code_ptr);
 }
 #endif
+
+void
+mono_update_perf_counter (MonoJitTlsData *jit_tls)
+{
+	gint64 delta = mono_thread_cpu_time () - jit_tls->perf_segment_start;
+	jit_tls->perf_counters [jit_tls->state] += delta;
+}
+
+void
+mono_change_perf_state (MonoThreadPerfState state)
+{
+	gint64 time;
+	MonoJitTlsData *jit_tls;
+
+	if (!mono_jit_stats.enabled)
+		return;
+
+	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	g_assert (jit_tls != NULL);
+
+	time = mono_thread_cpu_time ();
+	jit_tls->perf_counters [jit_tls->state] += time - jit_tls->perf_segment_start;
+	jit_tls->perf_segment_start = time;
+	jit_tls->state = state;
+}
+
+void
+mono_change_perf_state_from_to (MonoThreadPerfState old_state, MonoThreadPerfState new_state)
+{
+	MonoJitTlsData *jit_tls;
+	static gboolean bad_counters = FALSE;
+
+	if (!mono_jit_stats.enabled)
+		return;
+
+	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	if ((jit_tls == NULL || jit_tls->state != old_state) && !bad_counters) {
+		g_warning ("Skipped runtime state transition point, execution time stats may be incorrect.");
+		bad_counters = TRUE;
+	}
+
+	mono_change_perf_state (new_state);
+}
