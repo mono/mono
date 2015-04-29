@@ -533,11 +533,6 @@ public partial class CryptoConfig {
 		return result;
 	}
 
-	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
-	public static bool AllowOnlyFipsAlgorithms {
-		get { return false; }
-	}
-
 	public static void AddAlgorithm (Type algorithm, params string[] names)
 	{
 		if (algorithm == null)
