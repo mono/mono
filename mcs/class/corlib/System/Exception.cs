@@ -190,41 +190,6 @@ namespace System
 			}
 		}
 
-		bool AddFrames (StringBuilder sb, string newline, string unknown, StackTrace st)
-		{
-			int i;
-			for (i = 0; i < st.FrameCount; i++) {
-				StackFrame frame = st.GetFrame (i);
-				if (i == 0)
-					sb.AppendFormat ("  {0} ", Locale.GetText ("at"));
-				else
-					sb.Append (newline);
-
-				if (frame.GetMethod () == null) {
-					string internal_name = frame.GetInternalMethodName ();
-					if (internal_name != null)
-						sb.Append (internal_name);
-					else
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
-				} else {
-					GetFullNameForStackTrace (sb, frame.GetMethod ());
-
-					if (frame.GetILOffset () == -1) {
-						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}> ", frame.GetMethodAddress (), frame.GetNativeOffset ());
-						if (frame.GetMethodIndex () != 0xffffff)
-							sb.AppendFormat ("{0} ", frame.GetMethodIndex ());
-					} else {
-						sb.AppendFormat (" [0x{0:x5}] ", frame.GetILOffset ());
-					}
-
-					sb.AppendFormat ("in {0}:{1} ", frame.GetSecureFileName (),
-									 frame.GetFileLineNumber ());
-				}
-			}
-
-			return i != 0;
-		}
-
 		public virtual string StackTrace {
 			get {
 				if (stack_trace != null)
@@ -236,13 +201,10 @@ namespace System
 
 				StringBuilder sb = new StringBuilder ();
 
-				string newline = String.Format ("{0}  {1} ", Environment.NewLine, Locale.GetText ("at"));
-				string unknown = Locale.GetText ("<unknown method>");
-
 				// Add traces captured using ExceptionDispatchInfo
 				if (captured_traces != null) {
 					foreach (var t in captured_traces) {
-						if (!AddFrames (sb, newline, unknown, t))
+						if (!t.AddFrames (sb, true))
 							continue;
 
 						sb.Append (Environment.NewLine);
@@ -252,7 +214,7 @@ namespace System
 				}
 
 				StackTrace st = new StackTrace (this, 0, true, true);
-				AddFrames (sb, newline, unknown, st);
+				st.AddFrames (sb, true);
 
 				stack_trace = sb.ToString ();
 
@@ -347,61 +309,6 @@ namespace System
 			stack_trace = null;
 
 			return this;
-		}
-
-		internal static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
-		{
-			var declaringType = mi.DeclaringType;
-			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
-				declaringType = declaringType.GetGenericTypeDefinition ();
-
-			// Get generic definition
-			var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
-			foreach (var m in declaringType.GetMethods (bindingflags)) {
-				if (m.MetadataToken == mi.MetadataToken) {
-					mi = m;
-					break;
-				}
-			}
-
-			sb.Append (declaringType.ToString ());
-
-			sb.Append (".");
-			sb.Append (mi.Name);
-
-			if (mi.IsGenericMethod) {
-				Type[] gen_params = mi.GetGenericArguments ();
-				sb.Append ("[");
-				for (int j = 0; j < gen_params.Length; j++) {
-					if (j > 0)
-						sb.Append (",");
-					sb.Append (gen_params [j].Name);
-				}
-				sb.Append ("]");
-			}
-
-			ParameterInfo[] p = mi.GetParametersInternal ();
-
-			sb.Append (" (");
-			for (int i = 0; i < p.Length; ++i) {
-				if (i > 0)
-					sb.Append (", ");
-
-				Type pt = p[i].ParameterType;
-				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
-					pt = pt.GetGenericTypeDefinition ();
-
-				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
-					sb.Append (pt.Namespace);
-					sb.Append (".");
-				}
-				sb.Append (pt.Name);
-				if (p [i].Name != null) {
-					sb.Append (" ");
-					sb.Append (p [i].Name);
-				}
-			}
-			sb.Append (")");
 		}
 
 		// For ExceptionDispatchInfo
