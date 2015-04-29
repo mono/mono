@@ -997,6 +997,7 @@ create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMetho
 	MonoDelegateTrampInfo *tramp_data;
 	MonoMethod *invoke;
 	MonoError err;
+	mono_error_init (&err);
 
 	// Precompute the delegate invoke impl and pass it to the delegate trampoline
 	invoke = mono_get_delegate_invoke (klass);
@@ -1040,6 +1041,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	guint8 *impl_this = tramp_info->impl_this;
 	guint8 *impl_nothis = tramp_info->impl_nothis;
 	MonoError err;
+	mono_error_init (&err);
 	MonoMethodSignature *sig;
 	gpointer addr, compiled_method;
 	gboolean is_remote = FALSE;

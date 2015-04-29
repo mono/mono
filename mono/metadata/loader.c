@@ -2528,8 +2528,6 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 
 	/* We need memory barriers below because of the double-checked locking pattern */ 
 
-	mono_error_init (error);
-
 	if (m->signature)
 		return m->signature;
 
