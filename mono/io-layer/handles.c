@@ -215,9 +215,7 @@ void _wapi_cleanup ()
 	
 	_wapi_has_shut_down = TRUE;
 
-#if !defined(DISABLE_SHARED_HANDLES)
 	_wapi_collection_shutdown ();
-#endif
 	_wapi_critical_section_cleanup ();
 	_wapi_error_cleanup ();
 	_wapi_thread_cleanup ();
