@@ -4150,7 +4150,7 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
 	gboolean rv;
 
 	rv = mono_metadata_interfaces_from_typedef_full (meta, index, &interfaces, count, TRUE, NULL, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME dont swallow the error */
+	mono_error_assert_ok (&error); /* FIXME dont swallow the error */
 	if (rv)
 		return interfaces;
 	else

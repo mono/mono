@@ -61,6 +61,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <time.h>
 #ifdef HAVE_SYS_TIME_H

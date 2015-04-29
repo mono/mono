@@ -163,7 +163,7 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 {
 	MonoError error;
 	MonoClass *class = mono_class_from_typeref_checked (image, type_token, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 	return class;
 }
 
@@ -923,7 +923,7 @@ mono_class_inflate_generic_class (MonoClass *gklass, MonoGenericContext *context
 	MonoClass *res;
 
 	res = mono_class_inflate_generic_class_checked (gklass, context, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 	return res;
 }
@@ -2170,7 +2170,7 @@ mono_class_setup_methods (MonoClass *class)
 		count = 3 + (class->rank > 1? 2: 1);
 
 		mono_class_setup_interfaces (class, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME can this fail for array types?*/
+		mono_error_assert_ok (&error); /*FIXME can this fail for array types?*/
 
 		if (class->rank == 1 && class->element_class->rank) {
 			jagged_ctor = TRUE;
@@ -2305,7 +2305,7 @@ mono_class_get_method_by_index (MonoClass *class, int index)
 
 		m = mono_class_inflate_generic_method_full_checked (
 				gklass->methods [index], class, mono_class_get_context (class), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		/*
 		 * If setup_methods () is called later for this class, no duplicates are created,
 		 * since inflate_generic_method guarantees that only one instance of a method
@@ -2349,7 +2349,7 @@ mono_class_get_inflated_method (MonoClass *class, MonoMethod *method)
 			} else {
 				MonoError error;
 				MonoMethod *result = mono_class_inflate_generic_method_full_checked (gklass->methods [i], class, mono_class_get_context (class), &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow this error */
+				mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 				return result;
 			}
 		}
@@ -2386,7 +2386,7 @@ mono_class_get_vtable_entry (MonoClass *class, int offset)
 		m = gklass->vtable [offset];
 
 		m = mono_class_inflate_generic_method_full_checked (m, class, mono_class_get_context (class), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow this error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 	} else {
 		mono_class_setup_vtable (class);
 		if (class->exception_type)
@@ -2455,7 +2455,7 @@ mono_class_setup_properties (MonoClass *class)
 				prop->set = mono_class_inflate_generic_method_full_checked (
 					prop->set, class, mono_class_get_context (class), &error);
 
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			prop->parent = class;
 		}
 
@@ -2543,7 +2543,7 @@ inflate_method_listz (MonoMethod **methods, MonoClass *class, MonoGenericContext
 	for (om = methods, count = 0; *om; ++om, ++count) {
 		MonoError error;
 		retval [count] = mono_class_inflate_generic_method_full_checked (*om, class, context, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 	}
 
 	return retval;
@@ -2591,11 +2591,11 @@ mono_class_setup_events (MonoClass *class)
 			event->parent = class;
 			event->name = gevent->name;
 			event->add = gevent->add ? mono_class_inflate_generic_method_full_checked (gevent->add, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			event->remove = gevent->remove ? mono_class_inflate_generic_method_full_checked (gevent->remove, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			event->raise = gevent->raise ? mono_class_inflate_generic_method_full_checked (gevent->raise, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 #ifndef MONO_SMALL_CONFIG
 			event->other = gevent->other ? inflate_method_listz (gevent->other, class, context) : NULL;
@@ -4982,7 +4982,7 @@ setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, MonoMethod **met
 		MonoMethod *inflated;
 
 		inflated = mono_class_inflate_generic_method_checked (m, &tmp_context, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		methods [pos++] = mono_marshal_get_generic_array_helper (class, iface, generic_array_method_info [i].name, inflated);
 	}
 }
@@ -6322,6 +6322,7 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, gb
 	klass = make_generic_param_class (param, image, is_mvar, pinfo, &error);
 
 	// FIXME handle failure. Did not handle elsewhere when using loader error
+	mono_error_assert_ok (&error);
 	g_assert (mono_error_ok (&error));
 	g_assert (!mono_loader_get_last_error ());
 
@@ -7323,7 +7324,7 @@ mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *c
 	if (class && context && mono_metadata_token_table (type_token) == MONO_TABLE_TYPESPEC)
 		class = mono_class_inflate_generic_class_checked (class, context, &error);
 
-	g_assert (mono_error_ok (&error)); /* FIXME deprecate this function and forbit the runtime from using it. */
+	mono_error_assert_ok (&error); /* FIXME deprecate this function and forbit the runtime from using it. */
 	return class;
 }
 
@@ -8556,7 +8557,7 @@ mono_ldtoken (MonoImage *image, guint32 token, MonoClass **handle_class,
 {
 	MonoError error;
 	gpointer res = mono_ldtoken_checked (image, token, handle_class, context, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	return res;
 }
 
@@ -9679,7 +9680,7 @@ mono_class_get_method_from_name_flags (MonoClass *klass, const char *name, int p
 		if (res) {
 			MonoError error;
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), &error);
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		}
 		return res;
 	}

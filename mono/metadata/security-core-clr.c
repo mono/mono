@@ -17,6 +17,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-logger-internal.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include "security-core-clr.h"
 

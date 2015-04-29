@@ -4539,7 +4539,7 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 		else if (klass->generic_container)
 			ctx.class_inst = klass->generic_container->context.class_inst;
 		result = mono_class_inflate_generic_method_full_checked (inflated->declaring, klass, &ctx, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		return result;
 	}
 

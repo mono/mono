@@ -43,6 +43,7 @@
 #include "mono/utils/mono-memory-model.h"
 #include "mono/utils/atomic.h"
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <string.h>
 #include <errno.h>
@@ -2466,7 +2467,7 @@ mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 			 * contains an uninflated method.
 			 */
 			result = mono_class_inflate_generic_method_checked (res, mono_method_get_context (wrapper), &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 			return result;
 		}
 		return res;
@@ -2559,7 +2560,7 @@ get_wrapper_target_class (MonoImage *image)
 		klass = ((MonoDynamicImage*)image)->wrappers_type;
 	} else {
 		klass = mono_class_get_checked (image, mono_metadata_make_token (MONO_TABLE_TYPEDEF, 1), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	}
 	g_assert (klass);
 
@@ -2602,7 +2603,7 @@ check_generic_wrapper_cache (GHashTable *cache, MonoMethod *orig_method, gpointe
 	if (def) {
 		MonoError error;
 		inst = mono_class_inflate_generic_method_checked (def, ctx, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		/* Cache it */
 		mono_memory_barrier ();
 		mono_marshal_lock ();
@@ -2627,7 +2628,7 @@ cache_generic_wrapper (GHashTable *cache, MonoMethod *orig_method, MonoMethod *d
 	 * We use the same cache for the generic definition and the instances.
 	 */
 	inst = mono_class_inflate_generic_method_checked (def, ctx, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	mono_memory_barrier ();
 	mono_marshal_lock ();
 	res = g_hash_table_lookup (cache, key);
@@ -2659,7 +2660,7 @@ check_generic_delegate_wrapper_cache (GHashTable *cache, MonoMethod *orig_method
 	def = mono_marshal_find_in_cache (cache, def_method->klass);
 	if (def) {
 		inst = mono_class_inflate_generic_method_checked (def, ctx, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 		/* Cache it */
 		mono_memory_barrier ();
@@ -2685,7 +2686,7 @@ cache_generic_delegate_wrapper (GHashTable *cache, MonoMethod *orig_method, Mono
 	 * We use the same cache for the generic definition and the instances.
 	 */
 	inst = mono_class_inflate_generic_method_checked (def, ctx, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 	mono_memory_barrier ();
 	mono_marshal_lock ();
@@ -3194,7 +3195,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	if (ctx) {
 		MonoError error;
 		mono_mb_emit_op (mb, CEE_CALLVIRT, mono_class_inflate_generic_method_checked (method, &container->context, &error));
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
 		mono_mb_emit_op (mb, CEE_CALLVIRT, method);
 	}
@@ -7800,7 +7801,7 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
 		for (i = 0; i < sig->ret->num_mods; ++i) {
 			MonoError error;
 			MonoClass *cmod_class = mono_class_get_checked (method->klass->image, sig->ret->modifiers [i].token, &error);
-			g_assert (mono_error_ok (&error));
+			mono_error_assert_ok (&error);
 			if ((cmod_class->image == mono_defaults.corlib) && !strcmp (cmod_class->name_space, "System.Runtime.CompilerServices")) {
 				if (!strcmp (cmod_class->name, "CallConvCdecl"))
 					csig->call_convention = MONO_CALL_C;
@@ -7911,7 +7912,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 			MonoError error;
 
 			mono_reflection_create_custom_attr_data_args (mono_defaults.corlib, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
-			g_assert (mono_error_ok (&error));
+			mono_error_assert_ok (&error);
 			g_assert (mono_array_length (typed_args) == 1);
 
 			/* typed args */
@@ -8650,7 +8651,7 @@ mono_marshal_get_synchronized_inner_wrapper (MonoMethod *method)
 	if (ctx) {
 		MonoError error;
 		res = mono_class_inflate_generic_method_checked (res, ctx, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	}
 	return res;
 }
@@ -8795,7 +8796,7 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 	if (ctx) {
 		MonoError error;
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, &error), NULL);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
 		mono_mb_emit_managed_call (mb, method, NULL);
 	}
@@ -9843,7 +9844,7 @@ mono_marshal_get_array_accessor_wrapper (MonoMethod *method)
 	if (ctx) {
 		MonoError error;
 		mono_mb_emit_managed_call (mb, mono_class_inflate_generic_method_checked (method, &container->context, &error), NULL);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	} else {
 		mono_mb_emit_managed_call (mb, method, NULL);
 	}

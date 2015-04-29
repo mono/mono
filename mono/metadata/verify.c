@@ -31,6 +31,7 @@
 #include <mono/utils/monobitset.h>
 #include <string.h>
 #include <ctype.h>
+#include <mono/utils/mono-error-internals.h>
 
 static MiniVerifierMode verifier_mode = MONO_VERIFIER_MODE_OFF;
 static gboolean verify_all = FALSE;

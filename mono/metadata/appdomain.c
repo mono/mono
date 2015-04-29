@@ -251,11 +251,11 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 	MonoError error;
 	mono_error_init (&error);
 	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, class);
 
 	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomain", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	ad = (MonoAppDomain *) mono_object_new_pinned (domain, class);
 	ad->data = domain;
@@ -303,7 +303,7 @@ mono_get_corlib_version (void)
 	MonoError error;
 	mono_error_init (&error);
 	klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "Environment", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_class_init (klass);
 	field = mono_class_get_field_from_name (klass, "mono_corlib_version");
@@ -348,7 +348,7 @@ mono_context_init (MonoDomain *domain)
 	MonoError error;
 	mono_error_init (&error);
 	class = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	context = (MonoAppContext *) mono_object_new_pinned (domain, class);
 	context->domain_id = domain->domain_id;
@@ -417,7 +417,7 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 	MonoError error;
 	mono_error_init (&error);
 	class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	setup = (MonoAppDomainSetup *) mono_object_new (mono_domain_get (), class);
 	setup->configuration_file = configuration_file != NULL ? mono_string_new (mono_domain_get (), configuration_file) : NULL;
@@ -455,7 +455,7 @@ copy_app_domain_setup (MonoDomain *domain, MonoAppDomainSetup *setup)
 	MonoError error;
 	mono_error_init (&error);
 	ads_class = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomainSetup", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	MonoAppDomainSetup *copy = (MonoAppDomainSetup*)mono_object_new (domain, ads_class);
 
@@ -499,7 +499,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	char *shadow_location;
 	
 	adclass = mono_class_from_name_checked (mono_defaults.corlib, "System", "AppDomain", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	/* FIXME: pin all those objects */
 	data = mono_domain_create();
@@ -900,7 +900,7 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 		mono_error_init (&error);
 		System_Reflection_Assembly = mono_class_from_name_checked (
 			mono_defaults.corlib, "System.Reflection", "Assembly", &error);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 	}
 
 	/* 

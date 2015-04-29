@@ -25,6 +25,7 @@
 #include <mono/io-layer/io-layer.h>
 /* FIXME: fix this code to not depend so much on the internals */
 #include <mono/metadata/class-internals.h>
+#include <mono/utils/mono-error-internals.h>
 
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */

@@ -38,6 +38,7 @@
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/runtime.h>
 #include <metadata/threads.h>
 #include <metadata/profiler-private.h>
@@ -808,19 +809,19 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	mono_defaults.runtimesecurityframe_class = mono_class_from_name_checked (
 	        mono_defaults.corlib, "System.Security", "RuntimeSecurityFrame", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.executioncontext_class = mono_class_from_name_checked (
 	        mono_defaults.corlib, "System.Threading", "ExecutionContext", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.internals_visible_class = mono_class_from_name_checked (
 	        mono_defaults.corlib, "System.Runtime.CompilerServices", "InternalsVisibleToAttribute", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.critical_finalizer_object = mono_class_from_name_checked (
 		mono_defaults.corlib, "System.Runtime.ConstrainedExecution", "CriticalFinalizerObject", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	/*
 	 * mscorlib needs a little help, only now it can load its friends list (after we have
@@ -830,32 +831,32 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	
 	mono_defaults.safehandle_class = mono_class_from_name_checked (
 		mono_defaults.corlib, "System.Runtime.InteropServices", "SafeHandle", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.handleref_class = mono_class_from_name_checked (
 		mono_defaults.corlib, "System.Runtime.InteropServices", "HandleRef", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.attribute_class = mono_class_from_name_checked (
 		mono_defaults.corlib, "System", "Attribute", &error);
 
 	mono_defaults.customattribute_data_class = mono_class_from_name_checked (
 		mono_defaults.corlib, "System.Reflection", "CustomAttributeData", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_class_init (mono_defaults.array_class);
 
 	mono_defaults.generic_nullable_class = mono_class_from_name_checked (
 		mono_defaults.corlib, "System", "Nullable`1", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.generic_ilist_class = mono_class_from_name_checked (
 	        mono_defaults.corlib, "System.Collections.Generic", "IList`1", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_defaults.generic_ireadonlylist_class = mono_class_from_name_checked (
 	        mono_defaults.corlib, "System.Collections.Generic", "IReadOnlyList`1", &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 
 	mono_error_cleanup (&error);
 	g_assert (!mono_loader_get_last_error ());

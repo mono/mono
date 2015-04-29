@@ -10,6 +10,7 @@
 #include "mono/metadata/mono-mlist.h"
 #include "mono/metadata/appdomain.h"
 #include "mono/metadata/class-internals.h"
+#include "mono/utils/mono-error-internals.h"
 
 /* matches the System.MonoListItem object*/
 struct _MonoMList {

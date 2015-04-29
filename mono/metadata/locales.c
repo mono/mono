@@ -25,6 +25,7 @@
 #include <mono/metadata/culture-info.h>
 #include <mono/metadata/culture-info-tables.h>
 #include <mono/utils/bsearch.h>
+#include <mono/utils/mono-error-internals.h>
 
 #ifndef DISABLE_NORMALIZATION
 #include <mono/metadata/normalization-tables.h>
