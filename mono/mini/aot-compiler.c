@@ -5712,6 +5712,8 @@ emit_klass_info (MonoAotCompile *acfg, guint32 token)
 	g_assert (klass->nested_classes_inited);
 
 	mono_class_setup_vtable (klass);
+	if (klass->exception_type)
+		g_error ("Error setting up %s class vtable\n", klass->name);
 
 	/* 
 	 * Emit all the information which is required for creating vtables so
