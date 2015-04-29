@@ -58,7 +58,7 @@ namespace System {
 
         Type GetType ();
 
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING || MOBILE_LEGACY
         [System.Security.SecurityCritical]  // auto-generated_required
         Object InitializeLifetimeService ();
 
@@ -66,7 +66,7 @@ namespace System {
         Object GetLifetimeService ();
 #endif // FEATURE_REMOTING        
 
-#if FEATURE_CAS_POLICY
+#if FEATURE_CAS_POLICY || MOBILE_LEGACY
         Evidence Evidence { get; }
 #endif // FEATURE_CAS_POLICY
         event EventHandler DomainUnload;
@@ -248,18 +248,18 @@ namespace System {
         #endif
         Object GetData(string name);
 
-#if FEATURE_CAS_POLICY        
+#if FEATURE_CAS_POLICY || MOBILE_LEGACY
         [System.Security.SecurityCritical]  // auto-generated_required
         void SetAppDomainPolicy(PolicyLevel domainPolicy);
 
-#if FEATURE_IMPERSONATION
+#if FEATURE_IMPERSONATION || MOBILE_LEGACY
         void SetThreadPrincipal(IPrincipal principal);
 #endif // FEATURE_IMPERSONATION
 
         void SetPrincipalPolicy(PrincipalPolicy policy);
 #endif
 
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MOBILE_LEGACY
         void DoCallBack(CrossAppDomainDelegate theDelegate);
 #endif
 

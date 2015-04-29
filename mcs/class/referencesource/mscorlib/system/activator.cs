@@ -626,9 +626,9 @@ namespace System {
                                                                    activationAttributes,
                                                                    null);
         }
-#if FEATURE_COMINTEROP || MONO_COM
+#if FEATURE_COMINTEROP || MONO_COM || MOBILE_LEGACY
 
-#if FEATURE_CLICKONCE
+#if FEATURE_CLICKONCE || MOBILE_LEGACY
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static ObjectHandle CreateInstance (ActivationContext activationContext) {
             AppDomainManager domainManager = AppDomain.CurrentDomain.DomainManager;
@@ -700,7 +700,7 @@ namespace System {
         }
 #endif // FEATURE_COMINTEROP                                  
 
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MOBILE_LEGACY
         //  This method is a helper method and delegates to the remoting 
         //  services to do the actual work. 
         [System.Security.SecurityCritical]  // auto-generated_required

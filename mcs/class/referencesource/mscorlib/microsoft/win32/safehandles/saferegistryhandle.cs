@@ -11,7 +11,7 @@
 // Implements Microsoft.Win32.SafeHandles.SafeRegistryHandle
 //
 // ======================================================================================
-#if !FEATURE_PAL || (MONO && !MOBILE)
+#if !FEATURE_PAL || MONO
 namespace Microsoft.Win32.SafeHandles {
     using System;
     using System.Security;
