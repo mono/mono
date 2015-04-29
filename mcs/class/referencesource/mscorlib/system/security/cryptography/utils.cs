@@ -896,11 +896,16 @@ namespace System.Security.Cryptography
             if (zeros < 0 || zeros >= cbHash)
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_OAEPDecoding"));
 
+#if MONO
+            const int bug_fix_offset = 1;
+#else
+            const int bug_fix_offset = 0;
+#endif
             byte[] seed = new byte[cbHash];
-            Buffer.InternalBlockCopy(data, 0, seed, zeros, seed.Length - zeros);
+            Buffer.InternalBlockCopy(data, bug_fix_offset, seed, zeros, seed.Length - zeros);
 
-            byte[] DB = new byte[data.Length - seed.Length + zeros];
-            Buffer.InternalBlockCopy(data, seed.Length - zeros, DB, 0, DB.Length);
+            byte[] DB = new byte[data.Length - seed.Length + zeros - bug_fix_offset];
+            Buffer.InternalBlockCopy(data, seed.Length - zeros + bug_fix_offset, DB, 0, DB.Length);
 
             //  4.  seedMask = MGF(maskedDB, hLen);
             byte[] mask = mgf.GenerateMask(DB, seed.Length);
