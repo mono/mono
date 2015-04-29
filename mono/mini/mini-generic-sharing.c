@@ -501,6 +501,7 @@ mono_class_get_method_generic (MonoClass *klass, MonoMethod *method)
 
 	if (method != declaring) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoGenericContext context;
 
 		context.class_inst = NULL;
@@ -519,6 +520,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	gpointer data = oti->data;
 	MonoRgctxInfoType info_type = oti->info_type;
 	MonoError error;
+	mono_error_init (&error);
 
 	g_assert (data);
 
@@ -571,6 +573,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 				method->name, method->signature);
 		} else {
 			MonoError error;
+			mono_error_init (&error);
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 		}
@@ -628,6 +631,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 				method->name, method->signature);
 		} else {
 			MonoError error;
+			mono_error_init (&error);
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 		}
@@ -657,6 +661,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoMethodSignature *sig = data;
 		MonoMethodSignature *isig;
 		MonoError error;
+		mono_error_init (&error);
 
 		isig = mono_inflate_generic_signature (sig, context, &error);
 		g_assert (mono_error_ok (&error));
@@ -669,6 +674,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoType *t;
 		MonoDomain *domain = mono_domain_get ();
 		MonoError error;
+		mono_error_init (&error);
 
 		// FIXME: Temporary
 		res = mono_domain_alloc0 (domain, sizeof (MonoJumpInfoVirtMethod));
@@ -3019,6 +3025,7 @@ MonoMethod*
 mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gsharedvt)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoGenericContext shared_context;
 	MonoMethod *declaring_method, *res;
 	gboolean partial = FALSE;

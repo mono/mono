@@ -32,6 +32,7 @@ static void*
 ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *res;
 
 	if (obj == NULL) {
@@ -814,6 +815,7 @@ gpointer
 mono_ldtoken_wrapper (MonoImage *image, int token, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *handle_class;
 	gpointer res;
 
@@ -1049,6 +1051,7 @@ MonoObject*
 mono_helper_newobj_mscorlib (guint32 idx)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *klass = mono_class_get_checked (mono_defaults.corlib, MONO_TOKEN_TYPE_DEF | idx, &error);
 
 	if (!mono_error_ok (&error)) {

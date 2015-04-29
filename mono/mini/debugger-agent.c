@@ -7269,6 +7269,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
 	int err;
 	MonoError error;
+	mono_error_init (&error);
 
 	switch (command) {
 	case CMD_EVENT_REQUEST_SET: {
@@ -7771,6 +7772,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 			MonoType *t;
 			CattrNamedArg *arginfo = NULL;
 			MonoError error;
+			mono_error_init (&error);
 
 			mono_reflection_create_custom_attr_data_args (image, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
 			if (!mono_error_ok (&error)) {
@@ -8211,6 +8213,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		MonoClass *parent;
 		GHashTable *iface_hash = g_hash_table_new (NULL, NULL);
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *tclass, *iface;
 		GHashTableIter iter;
 
@@ -8503,6 +8506,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 						/*Generic methods gets the context of the GTD.*/
 						if (mono_class_get_context (klass)) {
 							MonoError error;
+							mono_error_init (&error);
 							result = mono_class_inflate_generic_method_full_checked (result, klass, mono_class_get_context (klass), &error);
 							g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 						}
@@ -8617,6 +8621,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				}
 			} else {
 				MonoError error;
+				mono_error_init (&error);
 				val = mono_ldtoken_checked (method->klass->image, token, &handle_class, NULL, &error);
 				if (!val)
 					g_error ("Could not load token due to %s", mono_error_get_message (&error));
@@ -8667,6 +8672,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 	}
 	case CMD_METHOD_MAKE_GENERIC_METHOD: {
 		MonoError error;
+		mono_error_init (&error);
+
 		MonoType **type_argv;
 		int i, type_argc;
 		MonoDomain *d;

@@ -406,6 +406,7 @@ static MonoClass*
 decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoImage *image;
 	MonoClass *klass = NULL, *eklass;
 	guint32 token, rank, idx;
@@ -1166,6 +1167,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			return FALSE;
 	} else if (image_index == MONO_AOT_METHODREF_GINST) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 		MonoGenericContext ctx;
 
@@ -2342,6 +2344,7 @@ mono_aot_get_class_from_name (MonoImage *image, const char *name_space, const ch
 
 			if (!strcmp (name, name2) && !strcmp (name_space, name_space2)) {
 				MonoError error;
+				mono_error_init (&error);
 				amodule_unlock (amodule);
 				*klass = mono_class_get_checked (image, token, &error);
 				if (!mono_error_ok (&error))
@@ -3999,6 +4002,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 		 */
 		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass == mono_defaults.array_class && !strcmp (method->name, "GetGenericValueImpl")) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];
@@ -4033,6 +4037,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->ret))) ||
 			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->params [1]))))) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];

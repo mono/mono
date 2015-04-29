@@ -556,6 +556,7 @@ static MonoMethod*
 get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoGenericContext context;
 	MonoMethod *method;
 	

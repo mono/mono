@@ -1518,6 +1518,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		gpointer handle;
 		MonoClass *handle_class;
 		MonoError error;
+		mono_error_init (&error);
 
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
@@ -1534,6 +1535,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		gpointer handle;
 		MonoClass *handle_class;
 		MonoError error;
+		mono_error_init (&error);
 
 		handle = mono_ldtoken_checked (patch_info->data.token->image,
 							   patch_info->data.token->token, &handle_class, patch_info->data.token->has_context ? &patch_info->data.token->context : NULL, &error);
@@ -1914,6 +1916,7 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			method = info->d.synchronized_inner.method;
 			if (ctx) {
 				MonoError error;
+				mono_error_init (&error);
 				method = mono_class_inflate_generic_method_checked (method, ctx, &error);
 				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 			}
