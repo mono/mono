@@ -591,7 +591,7 @@ namespace System
 
 		public AdjustmentRule [] GetAdjustmentRules ()
 		{
-			if (!supportsDaylightSavingTime)
+			if (!supportsDaylightSavingTime || adjustmentRules == null)
 				return new AdjustmentRule [0];
 			else
 				return (AdjustmentRule []) adjustmentRules.Clone ();
@@ -1319,8 +1319,10 @@ namespace System
 				tz = CreateCustomTimeZone (id, baseUtcOffset, id, standardDisplayName, daylightDisplayName, ValidateRules (adjustmentRules).ToArray ());
 			}
 
-			if (storeTransition)
+			if (storeTransition && transitions.Count > 0) {
 				tz.transitions = transitions;
+				tz.supportsDaylightSavingTime = true;
+			}
 
 			return tz;
 		}
