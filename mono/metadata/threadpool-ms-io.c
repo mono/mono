@@ -369,7 +369,7 @@ ensure_initialized (void)
 		g_error ("ensure_initialized: mono_thread_create_internal () failed");
 
 	io_thread_status = STATUS_INITIALIZING;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	io_status = STATUS_INITIALIZED;
 }

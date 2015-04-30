@@ -17,7 +17,6 @@
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-conc-hashtable.h>
@@ -1997,7 +1996,7 @@ read_perf_mmap (MonoProfiler* prof, int cpu)
 	int diff, size;
 	unsigned int old;
 
-	mono_memory_read_barrier ();
+	mono_memory_barrier ();
 
 	old = perf->prev_pos;
 	diff = head - old;

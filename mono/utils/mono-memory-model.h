@@ -11,7 +11,6 @@
 #define _MONO_UTILS_MONO_MEMMODEL_H_
 
 #include <config.h>
-#include <mono/utils/mono-membar.h>
 
 /*
 In order to allow for fast concurrent code, we must use fencing to properly order

@@ -25,7 +25,12 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#include <mono/utils/mono-membar.h>
+
+static inline void mono_memory_barrier (void)
+{
+	_ReadWriteBarrier ();
+	MemoryBarrier ();
+}
 
 /* mingw is missing InterlockedCompareExchange64 () from winbase.h */
 #if HAVE_DECL_INTERLOCKEDCOMPAREEXCHANGE64==0
@@ -175,6 +180,11 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 
 /* Prefer GCC atomic ops if the target supports it (see configure.ac). */
 #elif defined(USE_GCC_ATOMIC_OPS)
+
+static inline void mono_memory_barrier (void)
+{
+	__sync_synchronize ();
+}
 
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
 						gint32 exch, gint32 comp)

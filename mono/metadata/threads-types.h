@@ -17,7 +17,7 @@
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/object.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-threads.h"
 
 /* This is a copy of System.Threading.ThreadState */

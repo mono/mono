@@ -51,7 +51,6 @@
 #include <unistd.h>
 #endif
 
-#include <mono/utils/mono-membar.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/atomic.h>
 
@@ -105,7 +104,7 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 #ifdef QUEUE_DEBUG
 	g_assert (!node->in_queue);
 	node->in_queue = TRUE;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 #endif
 
 	g_assert (node->next == FREE_NEXT);
@@ -114,13 +113,13 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 		MonoLockFreeQueueNode *next;
 
 		tail = (MonoLockFreeQueueNode *) get_hazardous_pointer ((gpointer volatile*)&q->tail, hp, 0);
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 		/*
 		 * We never dereference next so we don't need a
 		 * hazardous load.
 		 */
 		next = tail->next;
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 
 		/* Are tail and next consistent? */
 		if (tail == q->tail) {
@@ -143,14 +142,14 @@ mono_lock_free_queue_enqueue (MonoLockFreeQueue *q, MonoLockFreeQueueNode *node)
 			}
 		}
 
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		mono_hazard_pointer_clear (hp, 0);
 	}
 
 	/* Try to advance tail */
 	InterlockedCompareExchangePointer ((gpointer volatile*)&q->tail, node, tail);
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	mono_hazard_pointer_clear (hp, 0);
 }
 
@@ -160,7 +159,7 @@ free_dummy (gpointer _dummy)
 	MonoLockFreeQueueDummy *dummy = (MonoLockFreeQueueDummy *) _dummy;
 	mono_lock_free_queue_node_free (&dummy->node);
 	g_assert (dummy->in_use);
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	dummy->in_use = 0;
 }
 
@@ -220,9 +219,9 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 
 		head = (MonoLockFreeQueueNode *) get_hazardous_pointer ((gpointer volatile*)&q->head, hp, 0);
 		tail = (MonoLockFreeQueueNode*)q->tail;
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 		next = head->next;
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 
 		/* Are head, tail and next consistent? */
 		if (head == q->head) {
@@ -258,7 +257,7 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 			}
 		}
 
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		mono_hazard_pointer_clear (hp, 0);
 	}
 
@@ -266,7 +265,7 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 	 * The head is dequeued now, so we know it's this thread's
 	 * responsibility to free it - no other thread can.
 	 */
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	mono_hazard_pointer_clear (hp, 0);
 
 	g_assert (head->next);
@@ -279,13 +278,13 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 #if QUEUE_DEBUG
 	g_assert (head->in_queue);
 	head->in_queue = FALSE;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 #endif
 
 	if (is_dummy (q, head)) {
 		g_assert (q->has_dummy);
 		q->has_dummy = 0;
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		mono_thread_hazardous_free_or_queue (head, free_dummy, FALSE, TRUE);
 		if (try_reenqueue_dummy (q))
 			goto retry;

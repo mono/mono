@@ -89,7 +89,6 @@
 #else
 #include <mono/utils/mono-mmap.h>
 #endif
-#include <mono/utils/mono-membar.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/lock-free-queue.h>
 
@@ -207,7 +206,7 @@ desc_alloc (void)
 				d = next;
 			}
 
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 
 			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc->next, NULL) == NULL);
 
@@ -239,7 +238,7 @@ desc_enqueue_avail (gpointer _desc)
 	do {
 		old_head = desc_avail;
 		desc->next = old_head;
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 	} while (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc, old_head) != old_head);
 }
 
@@ -382,7 +381,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 
 		addr = (char*)desc->sb + old_anchor.data.avail * desc->slot_size;
 
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 
 		next = *(unsigned int*)addr;
 		g_assert (next < LOCK_FREE_ALLOC_SB_USABLE_SIZE (desc->block_size) / desc->slot_size);
@@ -431,7 +430,7 @@ alloc_from_new_sb (MonoLockFreeAllocator *heap)
 	for (i = 1; i < count - 1; ++i)
 		*(unsigned int*)((char*)desc->sb + i * slot_size) = i + 1;
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	/* Make it active or free it again. */
 	if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) == NULL) {

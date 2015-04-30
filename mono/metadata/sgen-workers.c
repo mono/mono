@@ -27,7 +27,7 @@
 #include "mono/metadata/sgen-gc.h"
 #include "mono/metadata/sgen-workers.h"
 #include "mono/metadata/sgen-thread-pool.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 #include "mono/metadata/sgen-client.h"
 
 static int workers_num;
@@ -345,7 +345,7 @@ sgen_workers_start_all_workers (SgenObjectOperations *object_ops)
 		return;
 
 	idle_func_object_ops = object_ops;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	workers_signal_enqueue_work (FALSE);
 }

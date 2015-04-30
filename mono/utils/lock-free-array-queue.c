@@ -19,7 +19,6 @@
 #include <string.h>
 
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-membar.h>
 #ifdef SGEN_WITHOUT_MONO
 #include <mono/metadata/sgen-gc.h>
 #include <mono/metadata/sgen-client.h>
@@ -65,7 +64,7 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 
 	if (!arr->chunk_list) {
 		chunk = alloc_chunk (arr);
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		if (InterlockedCompareExchangePointer ((volatile gpointer *)&arr->chunk_list, chunk, NULL) != NULL)
 			free_chunk (chunk);
 	}
@@ -77,7 +76,7 @@ mono_lock_free_array_nth (MonoLockFreeArray *arr, int index)
 		Chunk *next = chunk->next;
 		if (!next) {
 			next = alloc_chunk (arr);
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 			if (InterlockedCompareExchangePointer ((volatile gpointer *) &chunk->next, next, NULL) != NULL) {
 				free_chunk (next);
 				next = chunk->next;
@@ -147,11 +146,11 @@ mono_lock_free_array_queue_push (MonoLockFreeArrayQueue *q, gpointer entry_data_
 		entry = (Entry *) mono_lock_free_array_nth (&q->array, index);
 	} while (InterlockedCompareExchange (&entry->state, STATE_BUSY, STATE_FREE) != STATE_FREE);
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	memcpy (entry->data, entry_data_ptr, ENTRY_SIZE (q));
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	entry->state = STATE_USED;
 
@@ -163,7 +162,7 @@ mono_lock_free_array_queue_push (MonoLockFreeArrayQueue *q, gpointer entry_data_
 			break;
 	} while (InterlockedCompareExchange (&q->num_used_entries, index + 1, num_used) != num_used);
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 }
 
 gboolean
@@ -191,7 +190,7 @@ mono_lock_free_array_queue_pop (MonoLockFreeArrayQueue *q, gpointer entry_data_p
 
 	entry->state = STATE_FREE;
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	return TRUE;
 }

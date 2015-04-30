@@ -87,7 +87,7 @@
 #include <mono/utils/mono-path.h>
 #include <mono/io-layer/timefuncs-private.h>
 #include <mono/utils/mono-time.h>
-#include <mono/utils/mono-membar.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-proclib.h>

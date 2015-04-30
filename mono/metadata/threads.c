@@ -33,7 +33,6 @@
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-mmap.h>
-#include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/hazard-pointer.h>
@@ -3562,7 +3561,7 @@ mono_free_static_data (gpointer* static_data, gboolean threadlocal)
 		 * such an already freed array.  See bug #13813.
 		 */
 		static_data [i] = NULL;
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		if (mono_gc_user_markers_supported () && threadlocal)
 			g_free (p);
 		else

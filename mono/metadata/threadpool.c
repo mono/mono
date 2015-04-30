@@ -1342,7 +1342,7 @@ mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout)
 	 * and reading threadpool_jobs.
 	 * Otherwise this thread could read a stale version of threadpool_jobs and wait forever.
 	 */
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	if (domain->threadpool_jobs && timeout != -1)
 		start_time = mono_msec_ticks ();

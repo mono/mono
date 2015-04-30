@@ -40,7 +40,7 @@
 #include "mono/metadata/sgen-workers.h"
 #include "mono/metadata/sgen-thread-pool.h"
 #include "mono/metadata/sgen-client.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 
 #if defined(ARCH_MIN_MS_BLOCK_SIZE) && defined(ARCH_MIN_MS_BLOCK_SIZE_SHIFT)
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE
@@ -1377,7 +1377,7 @@ sweep_block (MSBlockInfo *block)
 	}
 	block->free_list = reversed;
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	set_block_state (block, BLOCK_STATE_SWEPT, BLOCK_STATE_SWEEPING);
 

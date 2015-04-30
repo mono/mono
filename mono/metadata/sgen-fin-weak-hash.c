@@ -32,7 +32,7 @@
 #include "mono/metadata/sgen-protocol.h"
 #include "mono/metadata/sgen-pointer-queue.h"
 #include "mono/metadata/sgen-client.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 
 #define ptr_in_nursery sgen_ptr_in_nursery
 
@@ -407,7 +407,7 @@ process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry 
 		entries [i].obj = NULL;
 		entries [i].user_data = NULL;
 
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 
 		/* USED -> FREE */
 		/*
@@ -416,7 +416,7 @@ process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry 
 		entries [i].state = STAGE_ENTRY_FREE;
 	}
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	*next_entry = 0;
 }
@@ -475,7 +475,7 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 			continue;
 		}
 		/* state is BUSY now */
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		/*
 		 * Incrementing `next_entry` must happen after setting the state to `BUSY`.
 		 * If it were the other way around, it would be possible that after a filler
@@ -510,10 +510,10 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 	entries [index].obj = obj;
 	entries [index].user_data = user_data;
 
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	new_next_entry = *next_entry;
-	mono_memory_read_barrier ();
+	mono_memory_barrier ();
 	/* BUSY -> USED */
 	/*
 	 * A `BUSY` entry will either still be `BUSY` or the drainer will have set it to
@@ -530,7 +530,7 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 	SGEN_ASSERT (0, previous_state == STAGE_ENTRY_INVALID, "Invalid state transition - other thread can only make busy state invalid");
 	entries [index].obj = NULL;
 	entries [index].user_data = NULL;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	/* INVALID -> FREE */
 	entries [index].state = STAGE_ENTRY_FREE;
 
