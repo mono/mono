@@ -505,6 +505,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	UNLOCK_GC;
 	if (G_UNLIKELY (!res))
 		return mono_gc_out_of_memory (size);
+	mono_profiler_allocation ((MonoObject *) res);
 	return res;
 }
 
@@ -544,6 +545,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
  done:
 	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_par_object_get_size (vtable, (MonoObject*)arr)), "Vector has incorrect size.");
+	mono_profiler_allocation (&arr->obj);
 	return arr;
 }
 
@@ -589,6 +591,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 
  done:
 	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_par_object_get_size (vtable, (MonoObject*)arr)), "Array has incorrect size.");
+	mono_profiler_allocation (&arr->obj);
 	return arr;
 }
 
@@ -625,6 +628,7 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 
 	UNLOCK_GC;
 
+	mono_profiler_allocation (&str->object);
 	return str;
 }
 
@@ -659,6 +663,7 @@ mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 		binary_protocol_alloc_pinned (p, vtable, size);
 	}
 	UNLOCK_GC;
+	mono_profiler_allocation ((MonoObject *) p);
 	return p;
 }
 
@@ -678,6 +683,7 @@ mono_gc_alloc_mature (MonoVTable *vtable)
 	if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer ((MonoObject*)res);
 
+	mono_profiler_allocation ((MonoObject *) res);
 	return res;
 }
 

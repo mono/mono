@@ -499,12 +499,12 @@ mono_profiler_code_transition (MonoMethod *method, int result)
 }
 
 void 
-mono_profiler_allocation (MonoObject *obj, MonoClass *klass)
+mono_profiler_allocation (MonoObject *obj)
 {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
 		if ((prof->events & MONO_PROFILE_ALLOCATIONS) && prof->allocation_cb)
-			prof->allocation_cb (prof->profiler, obj, klass);
+			prof->allocation_cb (prof->profiler, obj, obj->vtable->klass);
 	}
 }
 
