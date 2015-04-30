@@ -2668,7 +2668,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, GCObject* value)
 	SGEN_UPDATE_REFERENCE_ALLOW_NULL (ptr, value);
 	if (ptr_in_nursery (value) || concurrent_collection_in_progress)
 		mono_gc_wbarrier_generic_nostore (ptr);
-	mono_gc_dummy_use (value);
+	sgen_dummy_use (value);
 }
 
 /* Same as mono_gc_wbarrier_generic_store () but performs the store
@@ -2686,7 +2686,7 @@ mono_gc_wbarrier_generic_store_atomic (gpointer ptr, GCObject *value)
 	if (ptr_in_nursery (value) || concurrent_collection_in_progress)
 		mono_gc_wbarrier_generic_nostore (ptr);
 
-	mono_gc_dummy_use (value);
+	sgen_dummy_use (value);
 }
 
 void
