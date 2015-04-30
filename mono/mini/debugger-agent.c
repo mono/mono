@@ -2064,7 +2064,15 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			 * remain valid.
 			 */
 			data.last_frame_set = FALSE;
-			if (sigctx) {
+
+			/* mono_jit_walk_stack_from_ctx_in_thread acquires the loader lock in mono_arch_find_jit_info_ext by calling mono_method_signature.
+			 * So we can't call mono_jit_walk_stack_from_ctx_in_thread here if we have interrupted a thread that is waiting for or holding the 
+			 * loader lock as that can cause a deadlock.
+			 * The consequence of this work-around is that we do not get managed stack traces for interrupted threads that have mono_loader_lock()
+			 * in their call stack.
+			 */
+						
+			if (sigctx && !mono_loader_lock_self_is_waiting() && !mono_loader_lock_is_owned_by_self()) {
 				mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 				mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
 			}

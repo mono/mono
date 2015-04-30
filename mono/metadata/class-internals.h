@@ -1055,6 +1055,9 @@ mono_loader_lock_track_ownership (gboolean track) MONO_INTERNAL;
 gboolean
 mono_loader_lock_is_owned_by_self (void) MONO_INTERNAL;
 
+gboolean
+mono_loader_lock_self_is_waiting (void) MONO_INTERNAL;
+
 void
 mono_loader_set_error_assembly_load (const char *assembly_name, gboolean ref_only) MONO_INTERNAL;
 
