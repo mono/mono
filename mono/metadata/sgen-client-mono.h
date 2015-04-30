@@ -582,12 +582,12 @@ extern MonoNativeTlsKey thread_info_key;
 #endif
 
 /* Enter must be visible before anything is done in the critical region. */
-#define ENTER_CRITICAL_REGION do { mono_atomic_store_acquire (&IN_CRITICAL_REGION, 1); } while (0)
+#define ENTER_CRITICAL_REGION do { InterlockedWrite (&IN_CRITICAL_REGION, 1); } while (0)
 
 /* Exit must make sure all critical regions stores are visible before it signal the end of the region. 
  * We don't need to emit a full barrier since we
  */
-#define EXIT_CRITICAL_REGION  do { mono_atomic_store_release (&IN_CRITICAL_REGION, 0); } while (0)
+#define EXIT_CRITICAL_REGION  do { InterlockedWrite (&IN_CRITICAL_REGION, 0); } while (0)
 
 #endif
 

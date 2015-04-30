@@ -59,7 +59,6 @@
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/utils/mono-threads.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
 
 #include <time.h>
@@ -623,7 +622,7 @@ static MonoImage *get_socket_assembly (void)
 				socket_assembly = mono_assembly_get_image (sa);
 			}
 		}
-		mono_atomic_store_release (&domain->socket_assembly, socket_assembly);
+		InterlockedWritePointer ((void *volatile *) &domain->socket_assembly, socket_assembly);
 	}
 	
 	return domain->socket_assembly;

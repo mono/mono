@@ -45,7 +45,6 @@
 #include "mono/metadata/sgen-protocol.h"
 #include "mono/metadata/sgen-memory-governor.h"
 #include "mono/metadata/sgen-client.h"
-#include "mono/utils/mono-memory-model.h"
 
 #define ALIGN_UP		SGEN_ALIGN_UP
 #define ALLOC_ALIGN		SGEN_ALLOC_ALIGN
@@ -217,7 +216,7 @@ sgen_alloc_obj_nolock (GCVTable *vtable, size_t size)
 			SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
 			binary_protocol_alloc (p , vtable, size);
 			g_assert (*p == NULL);
-			mono_atomic_store_seq (p, vtable);
+			InterlockedWritePointer ((void *volatile *) p, vtable);
 
 			return p;
 		}
@@ -323,7 +322,7 @@ sgen_alloc_obj_nolock (GCVTable *vtable, size_t size)
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
 		binary_protocol_alloc (p, vtable, size);
-		mono_atomic_store_seq (p, vtable);
+		InterlockedWritePointer ((void *volatile *) p, vtable);
 	}
 
 	return p;
@@ -412,7 +411,7 @@ sgen_try_alloc_obj_nolock (GCVTable *vtable, size_t size)
 	binary_protocol_alloc (p, vtable, size);
 	g_assert (*p == NULL); /* FIXME disable this in non debug builds */
 
-	mono_atomic_store_seq (p, vtable);
+	InterlockedWritePointer ((void *volatile *) p, vtable);
 
 	return p;
 }

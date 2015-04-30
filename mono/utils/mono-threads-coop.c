@@ -12,7 +12,6 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/hazard-pointer.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-time.h>

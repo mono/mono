@@ -18,6 +18,16 @@
 #include "../../../mono-extensions/mono/utils/atomic.h"
 #endif
 
+/*
+ * Keep in sync with the enum in mini/mini-llvm-cpp.h.
+ */
+enum {
+	MONO_MEMORY_BARRIER_NONE = 0,
+	MONO_MEMORY_BARRIER_ACQ = 1,
+	MONO_MEMORY_BARRIER_REL = 2,
+	MONO_MEMORY_BARRIER_SEQ = 3,
+};
+
 /* On Windows, we always use the functions provided by the Windows API. */
 #if defined(__WIN32__) || defined(_WIN32)
 

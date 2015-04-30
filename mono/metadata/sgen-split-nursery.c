@@ -33,7 +33,6 @@
 #include "mono/metadata/sgen-protocol.h"
 #include "mono/metadata/sgen-layout-stats.h"
 #include "mono/metadata/sgen-client.h"
-#include "mono/utils/mono-memory-model.h"
 
 /*
 The nursery is logically divided into 3 spaces: Allocator space and two Survivor spaces.

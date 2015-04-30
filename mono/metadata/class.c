@@ -40,7 +40,6 @@
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internal.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/bsearch.h>
 
@@ -5646,7 +5645,7 @@ mono_class_setup_supertypes (MonoClass *class)
 	int ms;
 	MonoClass **supertypes;
 
-	mono_atomic_load_acquire (supertypes, void*, &class->supertypes);
+	supertypes = (MonoClass **) InterlockedReadPointer ((void *volatile *) &class->supertypes);
 	if (supertypes)
 		return;
 
@@ -5667,7 +5666,7 @@ mono_class_setup_supertypes (MonoClass *class)
 		supertypes [0] = class;
 	}
 
-	mono_atomic_store_release (&class->supertypes, supertypes);
+	InterlockedWritePointer ((void * volatile*) &class->supertypes, supertypes);
 }
 
 static gboolean

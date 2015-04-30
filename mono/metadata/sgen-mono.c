@@ -34,7 +34,6 @@
 #include "metadata/runtime.h"
 #include "metadata/sgen-bridge-internal.h"
 #include "metadata/gc-internal.h"
-#include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internal.h"
 
 /* If set, mark stacks conservatively, even if precise marking is possible */

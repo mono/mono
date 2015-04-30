@@ -27,7 +27,6 @@
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-mmap.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-hwcap-x86.h>
 #include <mono/utils/mono-threads.h>
 

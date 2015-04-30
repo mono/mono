@@ -11,7 +11,6 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/mono-cq.h>
 #include <mono/metadata/mono-mlist.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
 
 #define CQ_DEBUG(...)
@@ -110,7 +109,7 @@ mono_cq_add_node (MonoCQ *cq)
 	MONO_OBJECT_SETREF (prev_tail, next, n);
 
 	/* prev_tail->next must be visible before the new tail is */
-	STORE_STORE_FENCE;
+	mono_memory_barrier ();
 
 	cq->tail = n;
 }
@@ -133,7 +132,7 @@ mono_cqitem_try_enqueue (MonoCQ *cq, MonoObject *obj)
 
 		if (InterlockedCompareExchange (&queue->last, pos + 1, pos) == pos) {
 			mono_array_setref_fast (queue->array, pos, obj);
-			STORE_STORE_FENCE;
+			mono_memory_barrier ();
 			mono_array_set_fast (queue->array_state, char, pos, TRUE);
 			if ((pos + 1) == CQ_ARRAY_SIZE) {
 				CQ_DEBUG ("enqueue(): pos + 1 == CQ_ARRAY_SIZE, %d. Adding node.", CQ_ARRAY_SIZE);
@@ -211,7 +210,7 @@ mono_cqitem_try_dequeue (MonoCQ *cq, MonoObject **obj)
 			while (mono_array_get (queue->array_state, char, pos) == FALSE) {
 				SleepEx (0, FALSE);
 			}
-			LOAD_LOAD_FENCE;
+			mono_memory_barrier ();
 			*obj = mono_array_get (queue->array, MonoObject *, pos);
 
 			/*

@@ -413,7 +413,7 @@ struct _MonoDomain {
 
 	/* Used by socket-io.c */
 	/* These are domain specific, since the assembly can be unloaded */
-	MonoImage *socket_assembly;
+	MonoImage *volatile socket_assembly;
 	MonoClass *sockaddr_class;
 	MonoClassField *sockaddr_data_field;
 

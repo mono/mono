@@ -38,7 +38,6 @@
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-memory-model.h>
 
 #include <mono/metadata/gc-internal.h>
 
@@ -2267,65 +2266,51 @@ void mono_thread_stop (MonoThread *thread)
 gint8
 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr)
 {
-	gint8 tmp;
-	mono_atomic_load_acquire (tmp, gint8, (volatile gint8 *) ptr);
-	return tmp;
+	return InterlockedRead8 (ptr);
 }
 
 gint16
 ves_icall_System_Threading_Thread_VolatileRead2 (void *ptr)
 {
-	gint16 tmp;
-	mono_atomic_load_acquire (tmp, gint16, (volatile gint16 *) ptr);
-	return tmp;
+	return InterlockedRead16 (ptr);
 }
 
 gint32
 ves_icall_System_Threading_Thread_VolatileRead4 (void *ptr)
 {
-	gint32 tmp;
-	mono_atomic_load_acquire (tmp, gint32, (volatile gint32 *) ptr);
-	return tmp;
+	return InterlockedRead (ptr);
 }
 
 gint64
 ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr)
 {
-	gint64 tmp;
-	mono_atomic_load_acquire (tmp, gint64, (volatile gint64 *) ptr);
-	return tmp;
+	return InterlockedRead64 (ptr);
 }
 
 void *
 ves_icall_System_Threading_Thread_VolatileReadIntPtr (void *ptr)
 {
-	volatile void *tmp;
-	mono_atomic_load_acquire (tmp, volatile void *, (volatile void **) ptr);
-	return (void *) tmp;
+	return InterlockedReadPointer (ptr);
 }
 
 void *
 ves_icall_System_Threading_Thread_VolatileReadObject (void *ptr)
 {
-	volatile MonoObject *tmp;
-	mono_atomic_load_acquire (tmp, volatile MonoObject *, (volatile MonoObject **) ptr);
-	return (MonoObject *) tmp;
+	return InterlockedReadPointer (ptr);
 }
 
 double
 ves_icall_System_Threading_Thread_VolatileReadDouble (void *ptr)
 {
-	double tmp;
-	mono_atomic_load_acquire (tmp, double, (volatile double *) ptr);
-	return tmp;
+	LongDoubleUnion u = { .ival = InterlockedRead64 (ptr) };
+	return u.fval;
 }
 
 float
 ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr)
 {
-	float tmp;
-	mono_atomic_load_acquire (tmp, float, (volatile float *) ptr);
-	return tmp;
+	IntFloatUnion u = { .ival = InterlockedRead (ptr) };
+	return u.fval;
 }
 
 gint8
@@ -2406,31 +2391,31 @@ ves_icall_System_Threading_Volatile_Read_T (void *ptr)
 void
 ves_icall_System_Threading_Thread_VolatileWrite1 (void *ptr, gint8 value)
 {
-	mono_atomic_store_release ((volatile gint8 *) ptr, value);
+	InterlockedWrite8 (ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite2 (void *ptr, gint16 value)
 {
-	mono_atomic_store_release ((volatile gint16 *) ptr, value);
+	InterlockedWrite16 (ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite4 (void *ptr, gint32 value)
 {
-	mono_atomic_store_release ((volatile gint32 *) ptr, value);
+	InterlockedWrite (ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite8 (void *ptr, gint64 value)
 {
-	mono_atomic_store_release ((volatile gint64 *) ptr, value);
+	InterlockedWrite64 (ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWriteIntPtr (void *ptr, void *value)
 {
-	mono_atomic_store_release ((volatile void **) ptr, value);
+	InterlockedWritePointer (ptr, value);
 }
 
 void
@@ -2442,13 +2427,15 @@ ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, MonoObject *va
 void
 ves_icall_System_Threading_Thread_VolatileWriteDouble (void *ptr, double value)
 {
-	mono_atomic_store_release ((volatile double *) ptr, value);
+	LongDoubleUnion u = { .fval = value };
+	InterlockedWrite64 (ptr, u.ival);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float value)
 {
-	mono_atomic_store_release ((volatile float *) ptr, value);
+	IntFloatUnion u = { .fval = value };
+	InterlockedWrite (ptr, u.ival);
 }
 
 void

@@ -18,7 +18,7 @@
 G_BEGIN_DECLS
 
 /*
- * Keep in sync with the enum in utils/mono-memory-model.h.
+ * Keep in sync with the enum in utils/atomic.h.
  */
 typedef enum {
 	LLVM_BARRIER_NONE = 0,
