@@ -12,7 +12,7 @@
  **
  **
  ===========================================================*/
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MOBILE_LEGACY
 namespace System.Runtime.Serialization.Formatters {
 
     using System.Runtime.Remoting;

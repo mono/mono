@@ -165,7 +165,7 @@ namespace System.Runtime.InteropServices{
         public String Value { get { return _importClassName; } }
     }
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
     [AttributeUsage(AttributeTargets.Method, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class LCIDConversionAttribute : Attribute
@@ -1017,7 +1017,7 @@ namespace System.Runtime.InteropServices{
         public int Value { get { return _val; } }
     }
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.ReturnValue, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class ComAliasNameAttribute : Attribute
@@ -1093,7 +1093,7 @@ namespace System.Runtime.InteropServices{
         public Type EventProvider { get {return _EventProvider;} }
     }
 #endif
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
     [AttributeUsage(AttributeTargets.Assembly, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class TypeLibVersionAttribute : Attribute

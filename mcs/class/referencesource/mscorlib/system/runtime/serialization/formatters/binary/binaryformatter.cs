@@ -149,7 +149,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
             return Deserialize(serializationStream, handler, true);
         }
 
-#if FEATURE_REMOTING
+#if FEATURE_REMOTING || MOBILE_LEGACY
         [System.Security.SecuritySafeCritical]  // auto-generated
         public Object DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage) {
             return Deserialize(serializationStream, handler, true, methodCallMessage);
@@ -161,7 +161,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
             return Deserialize(serializationStream, handler, false);
         }
 
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING || MOBILE_LEGACY
         [System.Security.SecurityCritical]  // auto-generated_required
         [System.Runtime.InteropServices.ComVisible(false)]
         public Object UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage) {

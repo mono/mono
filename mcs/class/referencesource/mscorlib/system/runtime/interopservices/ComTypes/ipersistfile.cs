@@ -12,7 +12,7 @@
 **
 **
 =============================================================================*/
-#if !MOBILE
+
 namespace System.Runtime.InteropServices.ComTypes
 {
     using System;
@@ -34,4 +34,3 @@ namespace System.Runtime.InteropServices.ComTypes
         void GetCurFile([MarshalAs(UnmanagedType.LPWStr)] out String ppszFileName);
     }
 }
-#endif
