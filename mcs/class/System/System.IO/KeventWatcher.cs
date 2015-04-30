@@ -420,7 +420,7 @@ namespace System.IO {
 				return pathData;
 
 			if (fdsDict.Count >= maxFds)
-				throw new IOException ("kqueue() FileSystemWatcher has reached the maximum nunmber of files to watch."); 
+				throw new IOException ("kqueue() FileSystemWatcher has reached the maximum number of files to watch."); 
 
 			var fd = open (path, O_EVTONLY, 0);
 
