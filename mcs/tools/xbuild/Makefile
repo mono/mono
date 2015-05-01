@@ -105,6 +105,8 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.5.1.xml \
 	targets/Microsoft.Portable.CSharp_4.0.targets \
 	targets/Microsoft.Portable.CSharp_4.5.targets \
+	targets/Microsoft.Portable.VisualBasic_4.0.targets \
+	targets/Microsoft.Portable.VisualBasic_4.5.targets \
 	targets/Microsoft.Portable.Common.targets \
 	targets/Microsoft.Portable.Core.targets \
 	targets/Microsoft.Portable.Core.props \
