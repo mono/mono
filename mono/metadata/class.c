@@ -69,7 +69,7 @@ static MonoMethod* mono_class_get_virtual_methods (MonoClass* klass, gpointer *i
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
 static void mono_field_resolve_type (MonoClassField *field, MonoError *error);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
-static void mono_class_setup_vtable_full (MonoClass *class, GList *in_setup);
+static gboolean mono_class_setup_vtable_full (MonoClass *class, GList *in_setup, MonoError *error);
 static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass);
 
 /*
@@ -163,7 +163,7 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 {
 	MonoError error;
 	MonoClass *class = mono_class_from_typeref_checked (image, type_token, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 	return class;
 }
 
@@ -923,7 +923,7 @@ mono_class_inflate_generic_class (MonoClass *gklass, MonoGenericContext *context
 	MonoClass *res;
 
 	res = mono_class_inflate_generic_class_checked (gklass, context, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 	return res;
 }
@@ -2170,7 +2170,7 @@ mono_class_setup_methods (MonoClass *class)
 		count = 3 + (class->rank > 1? 2: 1);
 
 		mono_class_setup_interfaces (class, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME can this fail for array types?*/
+		mono_error_assert_ok (&error); /*FIXME can this fail for array types?*/
 
 		if (class->rank == 1 && class->element_class->rank) {
 			jagged_ctor = TRUE;
@@ -2305,7 +2305,7 @@ mono_class_get_method_by_index (MonoClass *class, int index)
 
 		m = mono_class_inflate_generic_method_full_checked (
 				gklass->methods [index], class, mono_class_get_context (class), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error);
 		/*
 		 * If setup_methods () is called later for this class, no duplicates are created,
 		 * since inflate_generic_method guarantees that only one instance of a method
@@ -2349,7 +2349,7 @@ mono_class_get_inflated_method (MonoClass *class, MonoMethod *method)
 			} else {
 				MonoError error;
 				MonoMethod *result = mono_class_inflate_generic_method_full_checked (gklass->methods [i], class, mono_class_get_context (class), &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow this error */
+				mono_error_assert_ok (&error); /* FIXME don't swallow this error */
 				return result;
 			}
 		}
@@ -2367,6 +2367,7 @@ mono_class_get_inflated_method (MonoClass *class, MonoMethod *method)
 MonoMethod*
 mono_class_get_vtable_entry (MonoClass *class, int offset)
 {
+	MonoError error;
 	MonoMethod *m;
 
  	if (class->rank == 1) {
@@ -2374,27 +2375,38 @@ mono_class_get_vtable_entry (MonoClass *class, int offset)
 		 * szarrays do not overwrite any methods of Array, so we can avoid
 		 * initializing their vtables in some cases.
 		 */
-		mono_class_setup_vtable (class->parent);
+		if (!mono_class_setup_vtable (class->parent, &error))
+			goto failure;
+
 		if (offset < class->parent->vtable_size)
 			return class->parent->vtable [offset];
 	}
 
 	if (class->generic_class) {
-		MonoError error;
 		MonoClass *gklass = class->generic_class->container_class;
-		mono_class_setup_vtable (gklass);
+		if (!mono_class_setup_vtable (gklass, &error))
+			goto failure;
+
 		m = gklass->vtable [offset];
 
 		m = mono_class_inflate_generic_method_full_checked (m, class, mono_class_get_context (class), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow this error */
+		if (!m)
+			goto failure;
+		
 	} else {
-		mono_class_setup_vtable (class);
+		if (!mono_class_setup_vtable (class, &error))
+			goto failure;
+
 		if (class->exception_type)
 			return NULL;
 		m = class->vtable [offset];
 	}
 
 	return m;
+
+failure:
+	mono_error_cleanup (&error);
+	return NULL;	
 }
 
 /*
@@ -2405,7 +2417,9 @@ mono_class_get_vtable_entry (MonoClass *class, int offset)
 int
 mono_class_get_vtable_size (MonoClass *klass)
 {
-	mono_class_setup_vtable (klass);
+	MonoError error;
+	mono_class_setup_vtable (klass, &error);
+	mono_error_assert_ok (&error);
 
 	return klass->vtable_size;
 }
@@ -2455,7 +2469,7 @@ mono_class_setup_properties (MonoClass *class)
 				prop->set = mono_class_inflate_generic_method_full_checked (
 					prop->set, class, mono_class_get_context (class), &error);
 
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			prop->parent = class;
 		}
 
@@ -2543,7 +2557,7 @@ inflate_method_listz (MonoMethod **methods, MonoClass *class, MonoGenericContext
 	for (om = methods, count = 0; *om; ++om, ++count) {
 		MonoError error;
 		retval [count] = mono_class_inflate_generic_method_full_checked (*om, class, context, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 	}
 
 	return retval;
@@ -2591,11 +2605,11 @@ mono_class_setup_events (MonoClass *class)
 			event->parent = class;
 			event->name = gevent->name;
 			event->add = gevent->add ? mono_class_inflate_generic_method_full_checked (gevent->add, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			event->remove = gevent->remove ? mono_class_inflate_generic_method_full_checked (gevent->remove, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 			event->raise = gevent->raise ? mono_class_inflate_generic_method_full_checked (gevent->raise, class, context, &error) : NULL;
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 #ifndef MONO_SMALL_CONFIG
 			event->other = gevent->other ? inflate_method_listz (gevent->other, class, context) : NULL;
@@ -3707,15 +3721,23 @@ mono_class_has_gtd_parent (MonoClass *klass, MonoClass *parent)
 gboolean
 mono_class_check_vtable_constraints (MonoClass *class, GList *in_setup)
 {
+	MonoError error;
 	MonoGenericInst *ginst;
 	int i;
 	if (!class->generic_class) {
-		mono_class_setup_vtable_full (class, in_setup);
+		if (!mono_class_setup_vtable_full (class, in_setup, &error)) {
+			mono_error_cleanup (&error);
+			return FALSE;
+		}
 		return class->exception_type == 0;
 	}
 
-	mono_class_setup_vtable_full (mono_class_get_generic_type_definition (class), in_setup);
-	if (class->generic_class->container_class->exception_type) {
+	if (!mono_class_setup_vtable_full (mono_class_get_generic_type_definition (class), in_setup, &error)) {
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (&error)));
+		mono_error_cleanup (&error);
+		return FALSE;
+	}
+	else if (class->generic_class->container_class->exception_type) {
 		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Failed to load generic definition vtable"));
 		return FALSE;
 	}
@@ -3749,14 +3771,14 @@ mono_class_check_vtable_constraints (MonoClass *class, GList *in_setup)
  *
  * LOCKING: Acquires the loader lock.
  */
-void
-mono_class_setup_vtable (MonoClass *class)
+gboolean
+mono_class_setup_vtable (MonoClass *class, MonoError *error)
 {
-	mono_class_setup_vtable_full (class, NULL);
+	return mono_class_setup_vtable_full (class, NULL, error);
 }
 
-static void
-mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
+static gboolean
+mono_class_setup_vtable_full (MonoClass *class, GList *in_setup, MonoError *error)
 {
 	MonoMethod **overrides;
 	MonoGenericContext *context;
@@ -3764,26 +3786,30 @@ mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
 	int onum = 0;
 	gboolean ok = TRUE;
 
+	mono_error_init (error);
+
 	if (class->vtable)
-		return;
+		return TRUE;
 
 	if (MONO_CLASS_IS_INTERFACE (class)) {
 		/* This sets method->slot for all methods if this is an interface */
 		mono_class_setup_methods (class);
-		return;
+		return TRUE;
 	}
 
-	if (class->exception_type)
-		return;
+	if (class->exception_type) {
+		mono_error_set_type_load_class (error, class, "Class has exception_type set to %d", class->exception_type);
+		return FALSE;
+	}
 
 	if (g_list_find (in_setup, class))
-		return;
+		return TRUE;
 
 	mono_loader_lock ();
 
 	if (class->vtable) {
 		mono_loader_unlock ();
-		return;
+		return TRUE;
 	}
 
 	mono_stats.generic_vtable_count ++;
@@ -3793,7 +3819,8 @@ mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
 		if (!mono_class_check_vtable_constraints (class, in_setup)) {
 			mono_loader_unlock ();
 			g_list_remove (in_setup, class);
-			return;
+			mono_error_set_type_load_class (error, class, "Could not verify the vtable constrains");
+			return FALSE;
 		}
 
 		context = mono_class_get_context (class);
@@ -3815,17 +3842,18 @@ mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
 		ok = mono_class_get_overrides_full (class->image, type_token, &overrides, &onum, context);
 	}
 
-	if (ok)
-		mono_class_setup_vtable_general (class, overrides, onum, in_setup);
-	else
+	if (ok) {
+		ok = mono_class_setup_vtable_general (class, overrides, onum, in_setup, error);
+	} else {
 		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Could not load list of method overrides"));
-		
+		mono_error_set_type_load_class (error, class, "Could not load list of method overrides");
+	}	
 	g_free (overrides);
 
 	mono_loader_unlock ();
 	g_list_remove (in_setup, class);
 
-	return;
+	return ok;
 }
 
 #define DEBUG_INTERFACE_VTABLE_CODE 0
@@ -4258,10 +4286,9 @@ mono_class_need_stelemref_method (MonoClass *class)
 /*
  * LOCKING: this is supposed to be called with the loader lock held.
  */
-void
-mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int onum, GList *in_setup)
+gboolean
+mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int onum, GList *in_setup, MonoError *error)
 {
-	MonoError error;
 	MonoClass *k, *ic;
 	MonoMethod **vtable;
 	int i, max_vtsize = 0, max_iid, cur_slot = 0;
@@ -4275,19 +4302,22 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	GSList *virt_methods = NULL, *l;
 	int stelemref_slot = 0;
 
+	mono_error_init (error);
+
 	if (class->vtable)
-		return;
+		return TRUE;
 
-	if (overrides && !verify_class_overrides (class, overrides, onum))
-		return;
+	if (overrides && !verify_class_overrides (class, overrides, onum)) {
+		mono_error_set_type_load_class (error, class, "Failed to verify the class overrides");
+		return FALSE;
+	}
 
-	ifaces = mono_class_get_implemented_interfaces (class, &error);
-	if (!mono_error_ok (&error)) {
+	ifaces = mono_class_get_implemented_interfaces (class, error);
+	if (!mono_error_ok (error)) {
 		char *name = mono_type_get_full_name (class);
-		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not resolve %s interfaces due to %s", name, mono_error_get_message (&error)));
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not resolve %s interfaces due to %s", name, mono_error_get_message (error)));
 		g_free (name);
-		mono_error_cleanup (&error);
-		return;
+		return FALSE;
 	} else if (ifaces) {
 		for (i = 0; i < ifaces->len; i++) {
 			MonoClass *ic = g_ptr_array_index (ifaces, i);
@@ -4299,13 +4329,11 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	
 	if (class->parent) {
 		mono_class_init (class->parent);
-		mono_class_setup_vtable_full (class->parent, in_setup);
-
-		if (class->parent->exception_type) {
+		if (!mono_class_setup_vtable_full (class->parent, in_setup, error)) {
 			char *name = mono_type_get_full_name (class->parent);
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Parent %s failed to load", name));
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Parent %s failed to load due to %s", name, mono_error_get_message (error)));
 			g_free (name);
-			return;
+			return FALSE;
 		}
 
 		max_vtsize += class->parent->vtable_size;
@@ -4327,35 +4355,34 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	/* printf ("METAINIT %s.%s\n", class->name_space, class->name); */
 
 	cur_slot = setup_interface_offsets (class, cur_slot, TRUE);
-	if (cur_slot == -1) /*setup_interface_offsets fails the type.*/
-		return;
+	if (cur_slot == -1) { /*setup_interface_offsets fails the type.*/
+		mono_error_set_type_load_class (error, class, "Failed to setup the interface offsets");
+		return FALSE;
+	}
 
 	max_iid = class->max_interface_id;
 	DEBUG_INTERFACE_VTABLE (first_non_interface_slot = cur_slot);
 
 	/* Optimized version for generic instances */
 	if (class->generic_class) {
-		MonoError error;
 		MonoClass *gklass = class->generic_class->container_class;
 		MonoMethod **tmp;
 
-		mono_class_setup_vtable_full (gklass, in_setup);
-		if (gklass->exception_type != MONO_EXCEPTION_NONE) {
+		if (!mono_class_setup_vtable_full (gklass, in_setup, error)) {
 			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-			return;
+			return FALSE;
 		}
 
 		tmp = mono_class_alloc0 (class, sizeof (gpointer) * gklass->vtable_size);
 		class->vtable_size = gklass->vtable_size;
 		for (i = 0; i < gklass->vtable_size; ++i)
 			if (gklass->vtable [i]) {
-				MonoMethod *inflated = mono_class_inflate_generic_method_full_checked (gklass->vtable [i], class, mono_class_get_context (class), &error);
-				if (!mono_error_ok (&error)) {
-					char *err_msg = g_strdup_printf ("Could not inflate method due to %s", mono_error_get_message (&error));
+				MonoMethod *inflated = mono_class_inflate_generic_method_full_checked (gklass->vtable [i], class, mono_class_get_context (class), error);
+				if (!mono_error_ok (error)) {
+					char *err_msg = g_strdup_printf ("Could not inflate method due to %s", mono_error_get_message (error));
 					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, err_msg);
 					g_free (err_msg);
-					mono_error_cleanup (&error);
-					return;
+					return FALSE;
 				}
 				tmp [i] = inflated;
 				tmp [i]->slot = gklass->vtable [i]->slot;
@@ -4370,7 +4397,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 					class->methods [i]->slot = gklass->methods [i]->slot;
 		}
 
-		return;
+		return TRUE;
 	}
 
 	if (class->parent && class->parent->vtable_size) {
@@ -4427,7 +4454,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 			dslot = mono_method_get_vtable_slot (decl);
 			if (dslot == -1) {
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-				return;
+				mono_error_set_type_load_class (error, class, "Override method %s doesn't have a vtable slot", decl->name);
+				return FALSE;
 			}
 
 			dslot += mono_class_interface_offset (class, decl->klass);
@@ -4604,7 +4632,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 					if (!cmsig || !m1sig) {
 						mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-						return;
+						mono_error_set_type_load_class (error, class, "Failed to get the method signature when resolving new_slot vtable entries");
+						return FALSE;
 					}
 
 					if (!strcmp(cm->name, m1->name) && 
@@ -4711,9 +4740,10 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				char *type_name = mono_type_get_full_name (class);
 				char *method_name = vtable [i] ? mono_method_full_name (vtable [i], TRUE) : g_strdup ("none");
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Type %s has invalid vtable method slot %d with method %s", type_name, i, method_name));
+				mono_error_set_type_load_class (error, class, "Type %s has invalid vtable method slot %d with method %s", type_name, i, method_name);
 				g_free (type_name);
 				g_free (method_name);
-				return;
+				return FALSE;
 			}
 		}
 	}
@@ -4789,18 +4819,22 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	}
 
 	VERIFY_INTERFACE_VTABLE (mono_class_verify_vtable (class));
-	return;
+	return TRUE;
 
 fail:
 	{
 	char *name = mono_type_get_full_name (class);
+	// FIXME: Use MONO_EXCEPTION_MONO_ERROR
 	mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("VTable setup of type %s failed", name));
+	if (mono_error_ok (error))
+		mono_error_set_type_load_class (error, class, "VTable setup of type %s failed", name);	
 	g_free (name);
 	if (override_map)
 		g_hash_table_destroy (override_map);
 	if (virt_methods)
 		g_slist_free (virt_methods);
 	}
+	return FALSE;
 }
 
 /*
@@ -4815,9 +4849,11 @@ int
 mono_method_get_vtable_slot (MonoMethod *method)
 {
 	if (method->slot == -1) {
-		mono_class_setup_vtable (method->klass);
-		if (method->klass->exception_type)
+		MonoError error;
+		if (!mono_class_setup_vtable (method->klass, &error)) {
+			mono_error_cleanup (&error); /* FIXME Don't swallow the error */
 			return -1;
+		}
 		if (method->slot == -1) {
 			MonoClass *gklass;
 			int i;
@@ -4873,7 +4909,9 @@ initialize_object_slots (MonoClass *class)
 	if (default_ghc)
 		return;
 	if (class == mono_defaults.object_class) { 
-		mono_class_setup_vtable (class);		       
+		MonoError error;
+		mono_class_setup_vtable (class, &error);
+		mono_error_assert_ok (&error); /* FIXME Don't swallow the error */
 		for (i = 0; i < class->vtable_size; ++i) {
 			MonoMethod *cm = class->vtable [i];
        
@@ -4974,7 +5012,7 @@ setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, MonoMethod **met
 		MonoMethod *inflated;
 
 		inflated = mono_class_inflate_generic_method_checked (m, &tmp_context, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		methods [pos++] = mono_marshal_get_generic_array_helper (class, iface, generic_array_method_info [i].name, inflated);
 	}
 }
@@ -5197,21 +5235,24 @@ mono_class_init (MonoClass *class)
 
 		/* SZARRAY case */
 		if (!szarray_vtable_size [slot]) {
-			mono_class_setup_vtable (class);
+			MonoError error;
+			if (!mono_class_setup_vtable (class, &error))
+			mono_error_assert_ok (&error); /* FIXME Don't swallow the error */
 			szarray_vtable_size [slot] = class->vtable_size;
 		} else {
 			class->vtable_size = szarray_vtable_size[slot];
 		}
 	} else if (class->generic_class && !MONO_CLASS_IS_INTERFACE (class)) {
+		MonoError error;
 		MonoClass *gklass = class->generic_class->container_class;
 
 		/* Generic instance case */
 		class->ghcimpl = gklass->ghcimpl;
 		class->has_cctor = gklass->has_cctor;
 
-		mono_class_setup_vtable (gklass);
-		if (gklass->exception_type) {
-			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		if (!mono_class_setup_vtable (gklass, &error)) {
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (&error)));
+			mono_error_cleanup (&error); /* FIXME Don't swallow the error */
 			goto leave;
 		}
 
@@ -5268,10 +5309,11 @@ mono_class_init (MonoClass *class)
 		if (mono_loader_get_last_error ())
 			goto leave;
 		if (!class->parent->vtable_size) {
+			MonoError error;
 			/* FIXME: Get rid of this somehow */
-			mono_class_setup_vtable (class->parent);
-			if (class->parent->exception_type) {
+			if (!mono_class_setup_vtable (class->parent, &error)) {
 				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+				mono_error_cleanup (&error); /* FIXME Don't swallow the error */
 				goto leave;
 			}
 			if (mono_loader_get_last_error ())
@@ -5339,14 +5381,15 @@ mono_class_has_finalizer (MonoClass *klass)
 			has_finalize = TRUE;
 		} else {
 			if (class->parent) {
+				MonoError error;
 				/*
 				 * Can't search in metadata for a method named Finalize, because that
 				 * ignores overrides.
 				 */
-				mono_class_setup_vtable (class);
-				if (class->exception_type || mono_loader_get_last_error ())
+				if (!mono_class_setup_vtable (class, &error) || mono_loader_get_last_error ()) {
+					mono_error_cleanup (&error); /* FIXME don't swallow this error */
 					cmethod = NULL;
-				else
+				} else
 					cmethod = class->vtable [finalize_slot];
 			}
 
@@ -6172,11 +6215,13 @@ make_generic_param_class (MonoGenericParam *param, MonoImage *image, gboolean is
 	mono_class_setup_supertypes (klass);
 
 	if (count - pos > 0) {
-		mono_class_setup_vtable (klass->parent);
-		if (klass->parent->exception_type)
+		MonoError error;
+		if (!mono_class_setup_vtable (klass->parent, &error)) {
 			mono_class_set_failure (klass, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Failed to setup parent interfaces"));
-		else
+			mono_error_cleanup (&error); /* FIXME don't swallow this error */
+		} else {
 			setup_interface_offsets (klass, klass->parent->vtable_size, TRUE);
+		}
 	}
 
 	return klass;
@@ -7305,7 +7350,7 @@ mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *c
 	if (class && context && mono_metadata_token_table (type_token) == MONO_TABLE_TYPESPEC)
 		class = mono_class_inflate_generic_class_checked (class, context, &error);
 
-	g_assert (mono_error_ok (&error)); /* FIXME deprecate this function and forbit the runtime from using it. */
+	mono_error_assert_ok (&error); /* FIXME deprecate this function and forbit the runtime from using it. */
 	return class;
 }
 
@@ -8424,7 +8469,9 @@ mono_class_get_finalizer (MonoClass *klass)
 			g_error ("Could not lookup finalizer from cached metadata due to %s", mono_error_get_message (&error));
 		return result;
 	}else {
-		mono_class_setup_vtable (klass);
+		MonoError error;
+		mono_class_setup_vtable (klass, &error);
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		return klass->vtable [finalize_slot];
 	}
 }
@@ -8532,7 +8579,7 @@ mono_ldtoken (MonoImage *image, guint32 token, MonoClass **handle_class,
 {
 	MonoError error;
 	gpointer res = mono_ldtoken_checked (image, token, handle_class, context, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	return res;
 }
 
@@ -9655,7 +9702,7 @@ mono_class_get_method_from_name_flags (MonoClass *klass, const char *name, int p
 		if (res) {
 			MonoError error;
 			res = mono_class_inflate_generic_method_full_checked (res, klass, mono_class_get_context (klass), &error);
-			g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+			mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		}
 		return res;
 	}

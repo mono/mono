@@ -1886,6 +1886,7 @@ alloc_vtable (MonoDomain *domain, size_t vtable_size, size_t imt_table_bytes)
 static MonoVTable *
 mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean raise_on_error)
 {
+	MonoError error;
 	MonoVTable *vt;
 	MonoClassRuntimeInfo *runtime_info, *old_info;
 	MonoClassField *field;
@@ -1922,18 +1923,10 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			mono_class_init (element_class);
 
 		/*mono_class_init can leave the vtable layout to be lazily done and we can't afford this here*/
-		if (element_class->exception_type == MONO_EXCEPTION_NONE && !element_class->vtable_size)
-			mono_class_setup_vtable (element_class);
-		
-		if (element_class->exception_type != MONO_EXCEPTION_NONE) {
-			/*Can happen if element_class only got bad after mono_class_setup_vtable*/
-			if (class->exception_type == MONO_EXCEPTION_NONE)
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
-			mono_domain_unlock (domain);
-			mono_loader_unlock ();
-			if (raise_on_error)
-				mono_raise_exception (mono_class_get_exception_for_failure (class));
-			return NULL;
+		if (element_class->exception_type == MONO_EXCEPTION_NONE && !element_class->vtable_size) {
+			if (!mono_class_setup_vtable (element_class, &error))
+				goto error;
+			mono_error_cleanup (&error);
 		}
 	}
 
@@ -1941,8 +1934,11 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 	 * For some classes, mono_class_init () already computed class->vtable_size, and 
 	 * that is all that is needed because of the vtable trampolines.
 	 */
-	if (!class->vtable_size)
-		mono_class_setup_vtable (class);
+	if (!class->vtable_size) {
+		if (!mono_class_setup_vtable (class, &error))
+			goto error;
+		mono_error_cleanup (&error);
+	}
 
 	if (class->generic_class && !class->vtable)
 		mono_class_check_vtable_constraints (class, NULL);
@@ -2109,7 +2105,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			vt->vtable [i] = callbacks.get_vtable_trampoline (i);
 		}
 	} else {
-		mono_class_setup_vtable (class);
+		if (!mono_class_setup_vtable (class, &error))
+			goto error;
+		mono_error_cleanup (&error);		
 
 		for (i = 0; i < class->vtable_size; ++i) {
 			MonoMethod *cm;
@@ -2207,6 +2205,19 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 		mono_class_vtable_full (domain, class->parent, raise_on_error);
 
 	return vt;
+
+error:
+
+	mono_domain_unlock (domain);
+	mono_loader_unlock ();
+
+	if (class->exception_type == MONO_EXCEPTION_NONE)
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL); // FIXME: Use MONO_EXCEPTION_MONO_ERROR
+
+	if (raise_on_error)
+		mono_error_raise_exception (&error);
+
+	return NULL;
 }
 
 #ifndef DISABLE_REMOTING
@@ -2259,7 +2270,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		method_count = mono_class_num_methods (iclass);
 	
 		ifaces = mono_class_get_implemented_interfaces (iclass, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME do proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME do proper error handling*/
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = g_ptr_array_index (ifaces, i);
@@ -2297,7 +2308,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt->gc_descr = mono_defaults.transparent_proxy_class->gc_descr;
 
 	/* initialize vtable */
-	mono_class_setup_vtable (class);
+	mono_class_setup_vtable (class, &error);
+	mono_error_assert_ok (&error);
 	for (i = 0; i < class->vtable_size; ++i) {
 		MonoMethod *cm;
 		    
@@ -2702,6 +2714,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoCla
 MonoMethod*
 mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoMethod **vtable;
 	gboolean is_proxy = FALSE;
@@ -2718,7 +2731,8 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 	if (!is_proxy && ((method->flags & METHOD_ATTRIBUTE_FINAL) || !(method->flags & METHOD_ATTRIBUTE_VIRTUAL)))
 			return method;
 
-	mono_class_setup_vtable (klass);
+	mono_class_setup_vtable (klass, &error);
+	mono_error_assert_ok (&error);
 	vtable = klass->vtable;
 
 	if (method->slot == -1) {
@@ -2770,7 +2784,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 			MonoError error;
 			/* Have to inflate the result */
 			res = mono_class_inflate_generic_method_checked (res, &((MonoMethodInflated*)method)->context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 	}
 
@@ -4600,7 +4614,7 @@ mono_object_new_from_token  (MonoDomain *domain, MonoImage *image, guint32 token
 	MonoClass *class;
 
 	class = mono_class_get_checked (image, token, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 	return mono_object_new (domain, class);
 }

@@ -1704,7 +1704,7 @@ fieldref_encode_signature (MonoDynamicImage *assembly, MonoImage *field_image, M
 			if (field_image) {
 				MonoError error;
 				MonoClass *class = mono_class_get_checked (field_image, type->modifiers [i].token, &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+				mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 				token = mono_image_typedef_or_ref (assembly, &class->byval_arg);
 			} else {
@@ -2896,7 +2896,7 @@ mono_reflection_method_on_tb_inst_get_handle (MonoReflectionMethodOnTypeBuilderI
 	tmp_context.method_inst = ginst;
 
 	inflated = mono_class_inflate_generic_method_checked (method, &tmp_context, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	return inflated;
 }
 
@@ -3797,7 +3797,7 @@ mono_image_fill_export_table_from_module (MonoDomain *domain, MonoReflectionModu
 	for (i = 0; i < t->rows; ++i) {
 		MonoError error;
 		MonoClass *klass = mono_class_get_checked (image, mono_metadata_make_token (MONO_TABLE_TYPEDEF, i + 1), &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 		if (klass->flags & TYPE_ATTRIBUTE_PUBLIC)
 			mono_image_fill_export_table_from_class (domain, klass, module_index, 0, assembly);
@@ -7487,7 +7487,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 	if (ignorecase) {
 		MonoError error;
 		klass = mono_class_from_name_case_checked (image, info->name_space, info->name, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME Don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME Don't swallow the error */
 	} else {
 		klass = mono_class_from_name (image, info->name_space, info->name);
 	}
@@ -8671,7 +8671,7 @@ mono_custom_attrs_construct (MonoCustomAttrInfo *cinfo)
 {
 	MonoError error;
 	MonoArray *result = mono_custom_attrs_construct_by_type (cinfo, NULL, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 	return result;
 }
@@ -8977,7 +8977,7 @@ mono_custom_attrs_get_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
 {
 	MonoError error;
 	MonoObject *res = mono_custom_attrs_get_attr_checked (ainfo, attr_klass, &error);
-	g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+	mono_error_assert_ok (&error); /*FIXME proper error handling*/
 	return res;
 }
 
@@ -10043,7 +10043,8 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 			(!strcmp (klass->name, "Enum") && !strcmp (klass->name_space, "System"))) {
 		klass->instance_size = sizeof (MonoObject);
 		klass->size_inited = 1;
-		mono_class_setup_vtable_general (klass, NULL, 0, NULL);
+		if (!mono_class_setup_vtable_general (klass, NULL, 0, NULL, &error))
+			goto failure;
 	}
 
 	mono_class_setup_mono_type (klass);
@@ -10143,6 +10144,7 @@ mono_reflection_create_internal_class (MonoReflectionTypeBuilder *tb)
 
 	mono_loader_lock ();
 	if (klass->enumtype && mono_class_enum_basetype (klass) == NULL) {
+		MonoError error;
 		MonoReflectionFieldBuilder *fb;
 		MonoClass *ec;
 		MonoType *enum_basetype;
@@ -10173,7 +10175,8 @@ mono_reflection_create_internal_class (MonoReflectionTypeBuilder *tb)
 		 * to create objects of the enum type (for use in SetConstant).
 		 */
 		/* FIXME: Does this mean enums can't have method overrides ? */
-		mono_class_setup_vtable_general (klass, NULL, 0, NULL);
+		mono_class_setup_vtable_general (klass, NULL, 0, NULL, &error);
+		mono_error_assert_ok (&error);
 	}
 	mono_loader_unlock ();
 }
@@ -10332,9 +10335,9 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 		method_aux = image_g_new0 (image, MonoReflectionMethodAux, 1);
 
 		method_aux->dllentry = rmb->dllentry ? mono_string_to_utf8_image (image, rmb->dllentry, &error) : image_strdup (image, m->name);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 		method_aux->dll = mono_string_to_utf8_image (image, rmb->dll, &error);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 		
 		((MonoMethodPInvoke*)m)->piflags = (rmb->native_cc << 8) | (rmb->charset ? (rmb->charset - 1) * 2 : 0) | rmb->extra_flags;
 
@@ -10495,7 +10498,7 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 
 				if (pb->name) {
 					method_aux->param_names [i] = mono_string_to_utf8_image (image, pb->name, &error);
-					g_assert (mono_error_ok (&error));
+					mono_error_assert_ok (&error);
 				}
 				if (pb->cattrs) {
 					if (!method_aux->param_cattr)
@@ -10591,7 +10594,7 @@ fieldbuilder_to_mono_class_field (MonoClass *klass, MonoReflectionFieldBuilder* 
 	field = g_new0 (MonoClassField, 1);
 
 	field->name = mono_string_to_utf8_image (klass->image, fb->name, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	if (fb->attrs || fb->modreq || fb->modopt) {
 		field->type = mono_metadata_type_dup (NULL, mono_reflection_type_get_handle ((MonoReflectionType*)fb->type));
 		field->type->attrs = fb->attrs;
@@ -10729,7 +10732,7 @@ mono_reflection_bind_generic_method_parameters (MonoReflectionMethod *rmethod, M
 	tmp_context.method_inst = ginst;
 
 	inflated = mono_class_inflate_generic_method_checked (method, &tmp_context, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	imethod = (MonoMethodInflated *) inflated;
 
 	/*FIXME but I think this is no longer necessary*/
@@ -10781,7 +10784,7 @@ inflate_mono_method (MonoClass *klass, MonoMethod *method, MonoObject *obj)
 	} else {
 		MonoError error;
 		imethod = (MonoMethodInflated *) mono_class_inflate_generic_method_full_checked (method, klass, context, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	}
 
 	if (method->is_generic && image_is_dynamic (method->klass->image)) {
@@ -10953,7 +10956,7 @@ fix_partial_generic_class (MonoClass *klass)
 			MonoError error;
 			klass->methods [i] = mono_class_inflate_generic_method_full_checked (
 				gklass->methods [i], klass, mono_class_get_context (klass), &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 	}
 
@@ -11595,7 +11598,7 @@ mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam
 	param = mono_image_new0 (image, MonoGenericParamFull, 1);
 
 	param->info.name = mono_string_to_utf8_image (image, gparam->name, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	param->param.num = gparam->index;
 
 	if (gparam->mbuilder) {
@@ -11937,7 +11940,7 @@ resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, Mon
 		if (context) {
 			MonoError error;
 			result = mono_class_inflate_generic_method_checked (result, context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
@@ -11963,7 +11966,7 @@ resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, Mon
 		if (context) {
 			MonoError error;
 			result = mono_class_inflate_generic_method_checked (result, context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "ConstructorBuilder") == 0) {
@@ -11979,7 +11982,7 @@ resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, Mon
 		if (context) {
 			MonoError error;
 			result = mono_class_inflate_generic_method_checked (result, context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "MonoField") == 0) {
@@ -12135,7 +12138,7 @@ resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, Mon
 			if (context) {
 				MonoError error;
 				result = mono_class_inflate_generic_method_checked (result, context, &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+				mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 			}
 		} else {
 			MonoType *type = mono_class_inflate_generic_type (mono_reflection_type_get_handle ((MonoReflectionType*)m->inst), context);

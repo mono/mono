@@ -507,7 +507,7 @@ mono_class_get_method_generic (MonoClass *klass, MonoMethod *method)
 		context.method_inst = mono_method_get_context (method)->method_inst;
 
 		m = mono_class_inflate_generic_method_checked (m, &context, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 	}
 
 	return m;
@@ -544,7 +544,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
 		gpointer result = mono_class_inflate_generic_type_with_mempool (temporary ? NULL : class->image,
 			data, context, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		return result;
 	}
 
@@ -572,7 +572,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		} else {
 			MonoError error;
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 		mono_class_init (inflated_method->klass);
 		g_assert (inflated_method->klass == inflated_class);
@@ -629,7 +629,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		} else {
 			MonoError error;
 			inflated_method = mono_class_inflate_generic_method_checked (method, context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 		mono_class_init (inflated_method->klass);
 		g_assert (inflated_method->klass == inflated_class);
@@ -659,7 +659,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoError error;
 
 		isig = mono_inflate_generic_signature (sig, context, &error);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 		return isig;
 	}
 	case MONO_RGCTX_INFO_VIRT_METHOD_CODE:
@@ -677,7 +677,7 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		mono_metadata_free_type (t);
 
 		res->method = mono_class_inflate_generic_method_checked (info->method, context, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 		return res;
 	}
@@ -1135,7 +1135,8 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 {
 	gpointer data;
 	gboolean temporary;
-
+	MonoError error;
+	
 	if (!oti->data)
 		return NULL;
 
@@ -1198,7 +1199,8 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		int ioffset, slot;
 		gpointer addr;
 
-		mono_class_setup_vtable (info->klass);
+		mono_class_setup_vtable (info->klass, &error);
+		mono_error_assert_ok (&error);
 		// FIXME: Check type load
 		if (iface_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 			ioffset = mono_class_interface_offset (info->klass, iface_class);
@@ -1221,7 +1223,8 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		MonoClass *impl_class;
 		int ioffset, slot;
 
-		mono_class_setup_vtable (info->klass);
+		mono_class_setup_vtable (info->klass, &error);
+		mono_error_assert_ok (&error);
 		// FIXME: Check type load
 		if (iface_class->flags & TYPE_ATTRIBUTE_INTERFACE) {
 			ioffset = mono_class_interface_offset (info->klass, iface_class);
@@ -3066,7 +3069,7 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 		shared_context.method_inst = get_shared_inst (inst, shared_context.method_inst, method_container, all_vt, gsharedvt, partial);
 
 	res = mono_class_inflate_generic_method_checked (declaring_method, &shared_context, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 	return res;
 }

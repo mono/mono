@@ -491,10 +491,11 @@ verify_image_file (const char *fname)
 			++count;
 		}
 
-		mono_class_setup_vtable (class);
-		if (class->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ()) {
-			printf ("Error verifying class(0x%08x) %s.%s a type load error happened\n", token, class->name_space, class->name);
+		if (!mono_class_setup_vtable (class, &error)) {
+			printf ("Error verifying class(0x%08x) %s.%s a type load error happened due to %s\n",
+				token, class->name_space, class->name, mono_error_get_message (&error));
 			mono_loader_clear_error ();
+			mono_error_cleanup (&error);
 			++count;
 		}
 	}
