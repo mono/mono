@@ -6279,6 +6279,9 @@ mono_print_unhandled_exception (MonoObject *exc)
 	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex) {
 		message = g_strdup ("OutOfMemoryException");
 		free_message = TRUE;
+	} else if (exc == (MonoObject*)mono_object_domain (exc)->stack_overflow_ex) {
+		message = g_strdup ("StackOverflowException"); //if we OVF, we can't expect to have space to JIT the needed space.
+		free_message = TRUE;
 	} else {
 		
 		if (((MonoException*)exc)->native_trace_ips) {
