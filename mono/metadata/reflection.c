@@ -11,7 +11,7 @@
  */
 #include <config.h>
 #include "mono/utils/mono-digest.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/metadata-internals.h"

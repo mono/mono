@@ -8,7 +8,7 @@
 
 #include <glib.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-membar.h>
+#include <mono/utils/atomic.h>
 
 #define HAZARD_POINTER_COUNT 3
 
@@ -28,7 +28,7 @@ gpointer get_hazardous_pointer (gpointer volatile *pp, MonoThreadHazardPointers 
 #define mono_hazard_pointer_set(hp,i,v)	\
 	do { g_assert ((i) >= 0 && (i) < HAZARD_POINTER_COUNT); \
 		(hp)->hazard_pointers [(i)] = (v); \
-		mono_memory_write_barrier (); \
+		mono_memory_barrier (); \
 	} while (0)
 
 #define mono_hazard_pointer_get_val(hp,i)	\

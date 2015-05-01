@@ -16,8 +16,6 @@
 
 #include <mono/utils/mono-linked-list-set.h>
 
-#include <mono/utils/atomic.h>
-
 static inline gpointer
 mask (gpointer n, uintptr_t bit)
 {
@@ -107,7 +105,7 @@ try_again:
 		 * after reading cur->next above, so we need a read
 		 * barrier.
 		 */
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 
 		if (*prev != cur)
 			goto try_again;
@@ -122,7 +120,7 @@ try_again:
 			next = (MonoLinkedListSetNode *) mono_lls_pointer_unmask (next);
 			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, next, cur) == cur) {
 				/* The hazard pointer must be cleared after the CAS. */
-				mono_memory_write_barrier ();
+				mono_memory_barrier ();
 				mono_hazard_pointer_clear (hp, 1);
 				if (list->free_node_func)
 					mono_thread_hazardous_free_or_queue (cur, list->free_node_func, FALSE, TRUE);
@@ -158,7 +156,7 @@ mono_lls_insert (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLink
 		value->next = cur;
 		mono_hazard_pointer_set (hp, 0, value);
 		/* The CAS must happen after setting the hazard pointer. */
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, value, cur) == cur)
 			return TRUE;
 	}
@@ -187,10 +185,10 @@ mono_lls_remove (MonoLinkedListSet *list, MonoThreadHazardPointers *hp, MonoLink
 		if (InterlockedCompareExchangePointer ((volatile gpointer*)&cur->next, mask (next, 1), next) != next)
 			continue;
 		/* The second CAS must happen before the first. */
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, mono_lls_pointer_unmask (next), cur) == cur) {
 			/* The CAS must happen before the hazard pointer clear. */
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 			mono_hazard_pointer_clear (hp, 1);
 			if (list->free_node_func)
 				mono_thread_hazardous_free_or_queue (value, list->free_node_func, FALSE, TRUE);

@@ -40,7 +40,6 @@
 #include "mono/metadata/reflection-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
-#include "mono/utils/mono-memory-model.h"
 #include "mono/utils/atomic.h"
 #include <mono/utils/mono-threads.h>
 
@@ -8136,7 +8135,7 @@ mono_marshal_get_castclass_with_cache (void)
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_CASTCLASS_WITH_CACHE);
 	res = mono_mb_create (mb, sig, 8, info);
-	STORE_STORE_FENCE;
+	mono_memory_barrier ();
 
 	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
 		mono_free_method (res);
@@ -8257,7 +8256,7 @@ mono_marshal_get_isinst_with_cache (void)
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_ISINST_WITH_CACHE);
 	res = mono_mb_create (mb, sig, 8, info);
-	STORE_STORE_FENCE;
+	mono_memory_barrier ();
 
 	if (InterlockedCompareExchangePointer ((volatile gpointer *)&cached, res, NULL)) {
 		mono_free_method (res);

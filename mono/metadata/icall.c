@@ -33,7 +33,7 @@
 #include <wchar.h>
 #endif
 
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>

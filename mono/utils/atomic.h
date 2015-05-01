@@ -18,6 +18,16 @@
 #include "../../../mono-extensions/mono/utils/atomic.h"
 #endif
 
+/*
+ * Keep in sync with the enum in mini/mini-llvm-cpp.h.
+ */
+enum {
+	MONO_MEMORY_BARRIER_NONE = 0,
+	MONO_MEMORY_BARRIER_ACQ = 1,
+	MONO_MEMORY_BARRIER_REL = 2,
+	MONO_MEMORY_BARRIER_SEQ = 3,
+};
+
 /* On Windows, we always use the functions provided by the Windows API. */
 #if defined(__WIN32__) || defined(_WIN32)
 
@@ -25,7 +35,12 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#include <mono/utils/mono-membar.h>
+
+static inline void mono_memory_barrier (void)
+{
+	_ReadWriteBarrier ();
+	MemoryBarrier ();
+}
 
 /* mingw is missing InterlockedCompareExchange64 () from winbase.h */
 #if HAVE_DECL_INTERLOCKEDCOMPAREEXCHANGE64==0
@@ -77,35 +92,6 @@ static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 {
 	return __sync_add_and_fetch (dest, add);
 }
-#endif
-
-#if defined(_MSC_VER) && !defined(InterlockedAdd)
-/* MSVC before 2013 only defines InterlockedAdd* for the Itanium architecture */
-static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
-{
-	return InterlockedExchangeAdd (dest, add) + add;
-}
-#endif
-
-#if defined(_MSC_VER) && !defined(InterlockedAdd64)
-#if defined(InterlockedExchangeAdd64)
-/* This may be defined only on amd64 */
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
-{
-	return InterlockedExchangeAdd64 (dest, add) + add;
-}
-#else
-static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
-{
-	gint64 prev_value;
-
-	do {
-		prev_value = *dest;
-	} while (prev_value != InterlockedCompareExchange64(dest, prev_value + add, prev_value));
-
-	return prev_value + add;
-}
-#endif
 #endif
 
 #ifdef HOST_WIN32
@@ -175,6 +161,11 @@ static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
 
 /* Prefer GCC atomic ops if the target supports it (see configure.ac). */
 #elif defined(USE_GCC_ATOMIC_OPS)
+
+static inline void mono_memory_barrier (void)
+{
+	__sync_synchronize ();
+}
 
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
 						gint32 exch, gint32 comp)
@@ -387,122 +378,6 @@ static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
 {
 	/* Nothing useful from GCC at all, so fall back to CAS. */
 	InterlockedExchange64 (dst, val);
-}
-
-#elif defined(__ia64__)
-
-#ifdef __INTEL_COMPILER
-#include <ia64intrin.h>
-#endif
-
-static inline gint32 InterlockedCompareExchange(gint32 volatile *dest,
-						gint32 exch, gint32 comp)
-{
-	gint32 old;
-	guint64 real_comp;
-
-#ifdef __INTEL_COMPILER
-	old = _InterlockedCompareExchange (dest, exch, comp);
-#else
-	/* cmpxchg4 zero extends the value read from memory */
-	real_comp = (guint64)(guint32)comp;
-	asm volatile ("mov ar.ccv = %2 ;;\n\t"
-				  "cmpxchg4.acq %0 = [%1], %3, ar.ccv\n\t"
-				  : "=r" (old) : "r" (dest), "r" (real_comp), "r" (exch));
-#endif
-
-	return(old);
-}
-
-static inline gpointer InterlockedCompareExchangePointer(gpointer volatile *dest,
-						gpointer exch, gpointer comp)
-{
-	gpointer old;
-
-#ifdef __INTEL_COMPILER
-	old = _InterlockedCompareExchangePointer (dest, exch, comp);
-#else
-	asm volatile ("mov ar.ccv = %2 ;;\n\t"
-				  "cmpxchg8.acq %0 = [%1], %3, ar.ccv\n\t"
-				  : "=r" (old) : "r" (dest), "r" (comp), "r" (exch));
-#endif
-
-	return(old);
-}
-
-static inline gint32 InterlockedIncrement(gint32 volatile *val)
-{
-#ifdef __INTEL_COMPILER
-	return _InterlockedIncrement (val);
-#else
-	gint32 old;
-
-	do {
-		old = *val;
-	} while (InterlockedCompareExchange (val, old + 1, old) != old);
-
-	return old + 1;
-#endif
-}
-
-static inline gint32 InterlockedDecrement(gint32 volatile *val)
-{
-#ifdef __INTEL_COMPILER
-	return _InterlockedDecrement (val);
-#else
-	gint32 old;
-
-	do {
-		old = *val;
-	} while (InterlockedCompareExchange (val, old - 1, old) != old);
-
-	return old - 1;
-#endif
-}
-
-static inline gint32 InterlockedExchange(gint32 volatile *dest, gint32 new_val)
-{
-#ifdef __INTEL_COMPILER
-	return _InterlockedExchange (dest, new_val);
-#else
-	gint32 res;
-
-	do {
-		res = *dest;
-	} while (InterlockedCompareExchange (dest, new_val, res) != res);
-
-	return res;
-#endif
-}
-
-static inline gpointer InterlockedExchangePointer(gpointer volatile *dest, gpointer new_val)
-{
-#ifdef __INTEL_COMPILER
-	return (gpointer)_InterlockedExchange64 ((gint64*)dest, (gint64)new_val);
-#else
-	gpointer res;
-
-	do {
-		res = *dest;
-	} while (InterlockedCompareExchangePointer (dest, new_val, res) != res);
-
-	return res;
-#endif
-}
-
-static inline gint32 InterlockedExchangeAdd(gint32 volatile *val, gint32 add)
-{
-	gint32 old;
-
-#ifdef __INTEL_COMPILER
-	old = _InterlockedExchangeAdd (val, add);
-#else
-	do {
-		old = *val;
-	} while (InterlockedCompareExchange (val, old + add, old) != old);
-
-	return old;
-#endif
 }
 
 #else

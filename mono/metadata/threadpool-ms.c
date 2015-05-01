@@ -1348,7 +1348,7 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	 * and reading threadpool_jobs. Otherwise this thread could read a stale version of threadpool_jobs
 	 * and wait forever.
 	 */
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 
 	while (domain->threadpool_jobs) {
 		MONO_PREPARE_BLOCKING

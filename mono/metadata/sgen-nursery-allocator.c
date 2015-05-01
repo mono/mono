@@ -65,7 +65,7 @@
 #include "mono/metadata/sgen-memory-governor.h"
 #include "mono/metadata/sgen-pinning.h"
 #include "mono/metadata/sgen-client.h"
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 
 /* Enable it so nursery allocation diagnostic data is collected */
 //#define NALLOC_DEBUG 1
@@ -316,7 +316,7 @@ try_again:
 		 * after reading cur->next above, so we need a read
 		 * barrier.
 		 */
-		mono_memory_read_barrier ();
+		mono_memory_barrier ();
 
 		if (*prev != cur)
 			goto try_again;
@@ -330,7 +330,7 @@ try_again:
 			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, next, cur) != cur)
 				goto try_again;
 			/*we must make sure that the next from cur->next happens after*/
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 		}
 
 		cur = unmask (next);
@@ -392,7 +392,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 			/*already deleted*/
 			if (!get_mark (next)) {
 				/*frag->next read must happen before the first CAS*/
-				mono_memory_write_barrier ();
+				mono_memory_barrier ();
 
 				/*Fail if the next node is removed concurrently and its CAS wins */
 				if (InterlockedCompareExchangePointer ((volatile gpointer*)&frag->next, mask (next, 1), next) != next) {
@@ -401,7 +401,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 			}
 
 			/* The second CAS must happen after the first CAS or frag->next. */
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 
 			/* Fail if the previous node was deleted and its CAS wins */
 			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev_ptr, unmask (next), frag) != frag) {

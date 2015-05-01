@@ -3,7 +3,6 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-tls.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
 
 #include <errno.h>

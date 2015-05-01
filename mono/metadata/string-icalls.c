@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
 #include <mono/metadata/string-icalls.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/appdomain.h>

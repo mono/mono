@@ -16,7 +16,7 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-#include <mono/utils/mono-memory-model.h>
+#include <mono/utils/atomic.h>
 
 #ifndef HOST_WIN32
 #include <sys/time.h>
@@ -136,12 +136,12 @@ mono_mutex_init_suspend_safe (mono_mutex_t *mutex)
 #if defined(__APPLE__)
 	int res;
 	pthread_mutexattr_t attr;
-	static gboolean inited;
+	static volatile gint32 inited;
 	static int (*setpolicy_np) (pthread_mutexattr_t *, int);
 
 	if (!inited) {
 		setpolicy_np = (int (*) (pthread_mutexattr_t *, int)) dlsym (RTLD_NEXT, "pthread_mutexattr_setpolicy_np");
-		mono_atomic_store_release (&inited, TRUE);
+		InterlockedWrite (&inited, TRUE);
 	}
 
 	pthread_mutexattr_init (&attr);

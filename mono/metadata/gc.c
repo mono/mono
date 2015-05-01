@@ -32,7 +32,6 @@
 #include <mono/metadata/attach.h>
 #include <mono/metadata/console-io.h>
 #include <mono/utils/mono-semaphore.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-threads.h>
@@ -1353,7 +1352,7 @@ ref_list_push (RefQueueEntry **head, RefQueueEntry *value)
 	do {
 		current = *head;
 		value->next = current;
-		STORE_STORE_FENCE; /*Must make sure the previous store is visible before the CAS. */
+		mono_memory_barrier (); /*Must make sure the previous store is visible before the CAS. */
 	} while (InterlockedCompareExchangePointer ((void*)head, value, current) != current);
 }
 

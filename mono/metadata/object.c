@@ -42,7 +42,6 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
-#include <mono/utils/mono-memory-model.h>
 #include "cominterop.h"
 
 #ifdef HAVE_BOEHM_GC
@@ -6073,7 +6072,7 @@ mono_message_init (MonoDomain *domain,
 		   MonoReflectionMethod *method,
 		   MonoArray *out_args)
 {
-	static MonoClass *object_array_klass;
+	static MonoClass *volatile object_array_klass;
 	static MonoClass *byte_array_klass;
 	static MonoClass *string_array_klass;
 	MonoMethodSignature *sig = mono_method_signature (method->method);
@@ -6096,7 +6095,7 @@ mono_message_init (MonoDomain *domain,
 		klass = mono_array_class_get (mono_defaults.object_class, 1);
 		g_assert (klass);
 
-		mono_atomic_store_release (&object_array_klass, klass);
+		InterlockedWritePointer ((void *volatile *) &object_array_klass, klass);
 	}
 
 	MONO_OBJECT_SETREF (this, method, method);

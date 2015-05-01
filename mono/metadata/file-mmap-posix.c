@@ -34,7 +34,6 @@
 #include <mono/metadata/file-io.h>
 #include <mono/metadata/file-mmap.h>
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-mmap.h>
 
 typedef struct {
@@ -87,7 +86,7 @@ enum {
 #define DEFAULT_FILEMODE 0666
 #endif
 
-static int mmap_init_state;
+static volatile int mmap_init_state;
 static mono_mutex_t named_regions_mutex;
 static GHashTable *named_regions;
 
@@ -117,7 +116,7 @@ retry:
 		named_regions = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
 		mono_mutex_init (&named_regions_mutex);
 
-		mono_atomic_store_release (&mmap_init_state, 2);
+		InterlockedWrite (&mmap_init_state, 2);
 		break;
 
 	case 1:

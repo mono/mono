@@ -61,7 +61,6 @@
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-threads.h>
 #ifdef HOST_WIN32
 #include <direct.h>
@@ -2192,7 +2191,7 @@ zero_static_data (MonoVTable *vtable)
 }
 
 typedef struct unload_data {
-	gboolean done;
+	volatile gint32 done;
 	MonoDomain *domain;
 	char *failure_reason;
 	gint32 refcount;
@@ -2201,9 +2200,9 @@ typedef struct unload_data {
 static void
 unload_data_unref (unload_data *data)
 {
-	gint32 count;
+	volatile gint32 count;
 	do {
-		mono_atomic_load_acquire (count, gint32, &data->refcount);
+		count = InterlockedRead (&data->refcount);
 		g_assert (count >= 1 && count <= 2);
 		if (count == 1) {
 			g_free (data);
@@ -2332,13 +2331,13 @@ unload_thread_main (void *arg)
 
 	mono_gc_collect (mono_gc_max_generation ());
 
-	mono_atomic_store_release (&data->done, TRUE);
+	InterlockedWrite (&data->done, TRUE);
 	unload_data_unref (data);
 	mono_thread_detach (thread);
 	return 0;
 
 failure:
-	mono_atomic_store_release (&data->done, TRUE);
+	InterlockedWrite (&data->done, TRUE);
 	unload_data_unref (data);
 	mono_thread_detach (thread);
 	return 1;

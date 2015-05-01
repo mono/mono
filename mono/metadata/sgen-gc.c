@@ -200,7 +200,6 @@
 #include "mono/metadata/sgen-pointer-queue.h"
 #include "mono/metadata/gc-internal-agnostic.h"
 #include "mono/utils/mono-proclib.h"
-#include "mono/utils/mono-memory-model.h"
 #include "mono/utils/hazard-pointer.h"
 
 #include <mono/utils/memcheck.h>
@@ -2563,11 +2562,11 @@ sgen_gc_invoke_finalizers (void)
 		 */
 		if (!sgen_pointer_queue_is_empty (&fin_ready_queue)) {
 			pending_unqueued_finalizer = TRUE;
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 			obj = sgen_pointer_queue_pop (&fin_ready_queue);
 		} else if (!sgen_pointer_queue_is_empty (&critical_fin_queue)) {
 			pending_unqueued_finalizer = TRUE;
-			mono_memory_write_barrier ();
+			mono_memory_barrier ();
 			obj = sgen_pointer_queue_pop (&critical_fin_queue);
 		} else {
 			obj = NULL;
@@ -2588,7 +2587,7 @@ sgen_gc_invoke_finalizers (void)
 	}
 
 	if (pending_unqueued_finalizer) {
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		pending_unqueued_finalizer = FALSE;
 	}
 

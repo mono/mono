@@ -29,7 +29,6 @@
 #include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-mmap.h>
-#include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-hwcap-x86.h>
 #include <mono/utils/mono-threads.h>

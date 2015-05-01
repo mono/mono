@@ -18,7 +18,6 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-hwcap-arm.h>
-#include <mono/utils/mono-memory-model.h>
 
 #include "mini-arm.h"
 #include "cpu-arm.h"

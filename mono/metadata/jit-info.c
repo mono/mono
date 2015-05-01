@@ -20,7 +20,6 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-logger-internal.h>
-#include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-tls.h>
@@ -621,17 +620,17 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 		chunk->data [num_elements] = chunk->data [num_elements - 1];
 	else
 		chunk->data [0] = ji;
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	chunk->num_elements = ++num_elements;
 
 	/* Shift the elements up one by one. */
 	for (i = num_elements - 2; i >= pos; --i) {
-		mono_memory_write_barrier ();
+		mono_memory_barrier ();
 		chunk->data [i + 1] = chunk->data [i];
 	}
 
 	/* Now we have room and can insert the new item. */
-	mono_memory_write_barrier ();
+	mono_memory_barrier ();
 	chunk->data [pos] = ji;
 
 	/* Set the high code end address chunk entry. */
