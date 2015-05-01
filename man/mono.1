@@ -1663,6 +1663,10 @@ Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
 .TP
+\fBmempool-canaries\FR 
+Places a buffer of values with an unlikely value between internal
+allocations to detect memory overflow and corruption bugs.
+.TP
 \fBinit-stacks\FR 
 Instructs the runtime to initialize the stack with
 some known values (0x2a on x86-64) at the start of a method to assist

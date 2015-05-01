@@ -3138,6 +3138,8 @@ mini_parse_debug_option (const char *option)
 		debug_options.gdb = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		debug_options.explicit_null_checks = TRUE;
+	else if (!strcmp (option, "mempool-canaries"))
+		mono_mempool_enable_canaries ();
 	else if (!strcmp (option, "gen-seq-points"))
 		debug_options.gen_sdb_seq_points = TRUE;
 	else if (!strcmp (option, "gen-compact-seq-points"))

@@ -28,6 +28,12 @@ mono_mempool_alloc         (MonoMemPool *pool, unsigned int size);
 MONO_API void*
 mono_mempool_alloc0        (MonoMemPool *pool, unsigned int size);
 
+MONO_API void
+mono_mempool_enable_canaries (void);
+
+MONO_API void
+mono_mempool_check_canaries (MonoMemPool *pool);
+
 MONO_API mono_bool
 mono_mempool_contains_addr (MonoMemPool *pool, void* addr);
 
