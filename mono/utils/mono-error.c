@@ -381,7 +381,8 @@ mono_error_set_bad_image (MonoError *oerror, MonoImage *image, const char *msg_f
 	mono_error_prepare (error);
 
 	error->error_code = MONO_ERROR_BAD_IMAGE;
-	error->assembly_name = image ? mono_image_get_name (image) : "<no_image>";
+	const gchar *assembly_name = image ? mono_image_get_name (image) : "<no_image>";
+	mono_error_set_assembly_name (oerror, strdup(assembly_name));
 	set_error_message ();
 #ifdef MONO_ERROR_MEMORY_DEBUG
 	mono_error_check_canaries (error);
