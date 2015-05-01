@@ -619,6 +619,29 @@ main (int argc, char *argv[])
 		} else if (!strcmp (arg, "-i") || !strcmp (arg, "--input")) {
 			input_path = next_arg;
 			++i;
+		} else if (!strcmp (arg, "--help")) {
+			printf (
+				"\n"
+				"Usage:\n"
+				"\n"
+				"\tsgen-grep-binprot [options] [pointer...]\n"
+				"\n"
+				"Examples:\n"
+				"\n"
+				"\tsgen-grep-binprot --all </tmp/binprot\n"
+				"\tsgen-grep-binprot --input /tmp/binprot --color 0xdeadbeef\n"
+				"\n"
+				"Options:\n"
+				"\n"
+				"\t--all                    Print all entries.\n"
+				"\t--color, -c              Highlight matches in color.\n"
+				"\t--help                   You're looking at it.\n"
+				"\t--input FILE, -i FILE    Read input from FILE instead of standard input.\n"
+				"\t--pause-times            Print GC pause times.\n"
+				"\t--start-at N, -s N       Begin filtering at the Nth entry.\n"
+				"\t--vtable PTR, -v PTR     Search for vtable pointer PTR.\n"
+				"\n");
+			return 0;
 		} else {
 			nums [num_nums++] = strtoul (arg, NULL, 16);
 		}
