@@ -28,6 +28,41 @@
 	va_end (args); \
 } while (0)
 
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+void
+mono_error_set_canaries (MonoErrorInternal *error)
+{
+	error->type_name_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->assembly_name_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->member_name_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->exception_name_space_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->exception_name_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->klass_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->full_message_canary = (void *)MONO_ERROR_CANARY_VALUE;
+	error->full_message_with_fields_canary = (void *)MONO_ERROR_CANARY_VALUE;
+}
+
+void
+mono_error_check_canaries (MonoErrorInternal *error)
+{
+#define LOGGED_CANARY_ASSERT(pred) do { \
+	if (!(pred)) \
+		g_error ("Assertion %s not met.", #pred); \
+} while(0) \
+
+	LOGGED_CANARY_ASSERT(error->type_name_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->assembly_name_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->member_name_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->exception_name_space_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->exception_name_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->klass_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->full_message_canary == (void *)MONO_ERROR_CANARY_VALUE);
+	LOGGED_CANARY_ASSERT(error->full_message_with_fields_canary == (void *)MONO_ERROR_CANARY_VALUE);
+#undef LOGGED_CANARY_ASSERT
+}
+#endif
+
 static void
 mono_error_prepare (MonoErrorInternal *error)
 {
@@ -37,6 +72,9 @@ mono_error_prepare (MonoErrorInternal *error)
 	error->type_name = error->assembly_name = error->member_name = error->full_message = error->exception_name_space = error->exception_name = error->full_message_with_fields = NULL;
 	error->klass = NULL;
 	error->message [0] = 0;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_set_canaries (error);
+#endif
 }
 
 static const char*
@@ -73,12 +111,21 @@ void
 mono_error_init (MonoError *error)
 {
 	mono_error_init_flags (error, 0);
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	MonoErrorInternal *ierror = (MonoErrorInternal*)error;
+	mono_error_set_canaries (ierror);
+#endif
 }
 
 void
 mono_error_cleanup (MonoError *oerror)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
+
 	if (error->error_code == MONO_ERROR_NONE)
 		return;
 
@@ -97,6 +144,10 @@ mono_error_cleanup (MonoError *oerror)
 gboolean
 mono_error_ok (MonoError *error)
 {
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	MonoErrorInternal *ierror = (MonoErrorInternal *)error;
+	mono_error_check_canaries (ierror);
+#endif
 	return error->error_code == MONO_ERROR_NONE;
 }
 
@@ -121,6 +172,9 @@ const char*
 mono_error_get_message (MonoError *oerror)
 {
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 	if (error->error_code == MONO_ERROR_NONE)
 		return NULL;
 	if (error->full_message_with_fields)
@@ -234,6 +288,11 @@ mono_error_set_assembly_load_simple (MonoError *oerror, const char *assembly_nam
 		mono_error_set_assembly_load (oerror, assembly_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
 	else
 		mono_error_set_assembly_load (oerror, assembly_name, "Could not load file or assembly or one of its dependencies.");
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	MonoErrorInternal *error = (MonoErrorInternal *)oerror;
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -245,6 +304,10 @@ mono_error_set_type_load_class (MonoError *oerror, MonoClass *klass, const char 
 	error->error_code = MONO_ERROR_TYPE_LOAD;
 	mono_error_set_class (oerror, klass);
 	set_error_message ();
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 /*
@@ -262,6 +325,9 @@ mono_error_set_type_load_name (MonoError *oerror, const char *type_name, const c
 	mono_error_set_assembly_name (oerror, assembly_name);
 	mono_error_dup_strings (oerror, FALSE);
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -274,6 +340,9 @@ mono_error_set_method_load (MonoError *oerror, MonoClass *klass, const char *met
 	mono_error_set_class (oerror, klass);
 	mono_error_set_member_name (oerror, method_name);
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -286,6 +355,9 @@ mono_error_set_field_load (MonoError *oerror, MonoClass *klass, const char *fiel
 	mono_error_set_class (oerror, klass);
 	mono_error_set_member_name (oerror, field_name);
 	set_error_message ();	
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -297,6 +369,9 @@ mono_error_set_bad_image_name (MonoError *oerror, const char *assembly_name, con
 	error->error_code = MONO_ERROR_BAD_IMAGE;
 	mono_error_set_assembly_name (oerror, assembly_name);
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -308,6 +383,9 @@ mono_error_set_bad_image (MonoError *oerror, MonoImage *image, const char *msg_f
 	error->error_code = MONO_ERROR_BAD_IMAGE;
 	error->assembly_name = image ? mono_image_get_name (image) : "<no_image>";
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -319,6 +397,9 @@ mono_error_set_generic_error (MonoError *oerror, const char * name_space, const 
 	error->error_code = MONO_ERROR_GENERIC;
 	mono_error_set_corlib_exception (oerror, name_space, name);
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -400,6 +481,9 @@ mono_error_set_from_loader_error (MonoError *oerror)
 
 	mono_error_dup_strings (oerror, dup_strings);
 	mono_loader_clear_error ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 int
@@ -448,6 +532,9 @@ mono_loader_set_error_from_mono_error (MonoError *oerror)
 	default:
 		mono_loader_set_error_bad_image (g_strdup_printf ("Non translatable error: %s", mono_internal_error_get_message (error)));
 	}
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -461,6 +548,9 @@ mono_error_set_out_of_memory (MonoError *oerror, const char *msg_format, ...)
 	va_start (args, msg_format);
 	g_vsnprintf (error->message, sizeof (error->message), msg_format, args);
 	va_end (args);
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -473,6 +563,9 @@ mono_error_set_argument (MonoError *oerror, const char *argument, const char *ms
 	error->type_name = argument; /*use the first available string slot*/
 
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 void
@@ -488,6 +581,9 @@ mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char
 	}
 
 	set_error_message ();
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	mono_error_check_canaries (error);
+#endif
 }
 
 

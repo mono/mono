@@ -11,17 +11,58 @@ typedef struct {
 
 	/*These name are suggestions of their content. MonoError internals might use them for something else.*/
 	const char *type_name;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *type_name_canary;
+#endif
+
 	const char *assembly_name;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *assembly_name_canary;
+#endif
+
 	const char *member_name;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *member_name_canary;
+#endif
+
 	const char *exception_name_space;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *exception_name_space_canary;
+#endif
+
 	const char *exception_name;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *exception_name_canary;
+#endif
+
 	MonoClass *klass;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *klass_canary;
+#endif
+
 	const char *full_message;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *full_message_canary;
+#endif
+
 	const char *full_message_with_fields;
+#ifdef MONO_ERROR_MEMORY_DEBUG
+	void *full_message_with_fields_canary;
+#endif
 
 	void *padding [4];
     char message [128];
 } MonoErrorInternal;
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+
+#define MONO_ERROR_CANARY_VALUE NULL
+void
+mono_error_set_canaries (MonoErrorInternal *error);
+
+void
+mono_error_check_canaries (MonoErrorInternal *error);
+#endif
 
 void
 mono_error_assert_ok (MonoError *error);
