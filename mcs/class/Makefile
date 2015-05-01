@@ -125,6 +125,7 @@ net_4_5_dirs := \
 	System.Data.Linq		\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
+	System.Runtime.DurableInstancing \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	System.ServiceModel		\
@@ -141,7 +142,6 @@ net_4_5_dirs := \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
-	System.Runtime.DurableInstancing \
 	Microsoft.Web.Infrastructure \
 	System.ServiceModel.Web \
 	System.Net.Http	\
