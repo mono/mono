@@ -207,6 +207,7 @@ typedef struct {
 #define TYPE_LONGLONG 1
 #define TYPE_SIZE 2
 #define TYPE_POINTER 3
+#define TYPE_BOOL 4
 
 static void
 print_entry_content (int entries_size, PrintEntry *entries, gboolean color_output)
@@ -229,6 +230,9 @@ print_entry_content (int entries_size, PrintEntry *entries, gboolean color_outpu
 			break;
 		case TYPE_POINTER:
 			printf ("%p", *(gpointer*) entries [i].data);
+			break;
+		case TYPE_BOOL:
+			printf ("%s", *(gboolean*) entries [i].data ? "true" : "false");
 			break;
 		default:
 			assert (0);
