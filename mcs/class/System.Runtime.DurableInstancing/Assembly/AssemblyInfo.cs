@@ -64,4 +64,13 @@ using System.Runtime.InteropServices;
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
 
+[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Activation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Routing, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+
 [assembly: ComVisible (false)]
