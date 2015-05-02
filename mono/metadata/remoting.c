@@ -16,6 +16,7 @@
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/debug-helpers.h"
+#include "mono/utils/mono-error-internals.h"
 
 typedef enum {
 	MONO_MARSHAL_NONE,			/* No marshalling needed */
@@ -147,7 +148,10 @@ mono_remoting_marshal_init (void)
 	if (module_initialized)
 		return;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices");
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices", &error);
+	mono_error_assert_ok (&error);
 	method_rs_serialize = mono_class_get_method_from_name (klass, "SerializeCallData", -1);
 	method_rs_deserialize = mono_class_get_method_from_name (klass, "DeserializeCallData", -1);
 	method_rs_serialize_exc = mono_class_get_method_from_name (klass, "SerializeExceptionData", -1);
@@ -160,10 +164,12 @@ mono_remoting_marshal_init (void)
 	
 	byte_array_class = mono_array_class_get (mono_defaults.byte_class, 1);
 	
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Messaging", "CallContext");
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Messaging", "CallContext", &error);
+	mono_error_assert_ok (&error);
 	method_set_call_context = mono_class_get_method_from_name (klass, "SetCurrentCallContext", -1);
 	
-	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context", &error);
+	mono_error_assert_ok (&error);
 	method_needs_context_sink = mono_class_get_method_from_name (klass, "get_NeedsContextSink", -1);
 
 	mono_loader_lock ();

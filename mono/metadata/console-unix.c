@@ -226,14 +226,18 @@ do_console_cancel_event (void)
 	MonoDelegate *load_value;
 	MonoMethod *method;
 	MonoVTable *vtable;
+	MonoError error;
+	mono_error_init (&error);
 
 	/* FIXME: this should likely iterate all the domains, instead */
 	if (!domain->domain)
 		return;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System", "Console");
-	if (klass == NULL)
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "Console", &error);
+	if (klass == NULL || !mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
 		return;
+	}
 
 	if (cancel_handler_field == NULL) {
 		cancel_handler_field = mono_class_get_field_from_name (klass, "cancel_handler");

@@ -61,6 +61,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/networking.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include <time.h>
 #ifdef HAVE_SYS_TIME_H
@@ -639,7 +640,12 @@ static gint32 get_family_hint(void)
 		gint32 ipv6_enabled = -1, ipv4_enabled = -1;
 		MonoVTable *vtable;
 
-		socket_class = mono_class_from_name (get_socket_assembly (), "System.Net.Sockets", "Socket");
+		MonoError error;
+		mono_error_init (&error);
+		socket_class = mono_class_from_name_checked (get_socket_assembly (), "System.Net.Sockets", "Socket", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+
 		ipv4_field = mono_class_get_field_from_name (socket_class, "ipv4_supported");
 		ipv6_field = mono_class_get_field_from_name (socket_class, "ipv6_supported");
 		vtable = mono_class_vtable (mono_domain_get (), socket_class);
@@ -838,8 +844,11 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 
 	/* Build a System.Net.SocketAddress object instance */
 	if (!domain->sockaddr_class) {
-		domain->sockaddr_class=mono_class_from_name (get_socket_assembly (), "System.Net", "SocketAddress");
-		g_assert (domain->sockaddr_class);
+		MonoError error;
+		mono_error_init (&error);
+		domain->sockaddr_class = mono_class_from_name_checked (get_socket_assembly (), "System.Net", "SocketAddress", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
 	}
 	sockaddr_obj=mono_object_new(domain, domain->sockaddr_class);
 	
@@ -1799,10 +1808,15 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 	
 	switch(name) {
 	case SocketOptionName_Linger:
+	{
 		/* build a System.Net.Sockets.LingerOption */
-		obj_class=mono_class_from_name(get_socket_assembly (),
+		MonoError error;
+		mono_error_init (&error);
+		obj_class = mono_class_from_name_checked (get_socket_assembly (),
 					       "System.Net.Sockets",
-					       "LingerOption");
+					       "LingerOption", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
 		obj=mono_object_new(domain, obj_class);
 		
 		/* Locate and set the fields "bool enabled" and "int
@@ -1815,7 +1829,7 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 		*(guint32 *)(((char *)obj)+field->offset)=linger.l_linger;
 		
 		break;
-		
+	}
 	case SocketOptionName_DontLinger:
 		/* construct a bool int in val - true if linger is off */
 		obj = int_to_object (domain, !linger.l_onoff);
@@ -1827,7 +1841,7 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 		break;
 
 #ifdef SO_PEERCRED
-	case SocketOptionName_PeerCred: 
+	case SocketOptionName_PeerCred:
 	{
 		/* build a Mono.Posix.PeerCred+PeerCredData if
 		 * possible
@@ -1848,9 +1862,14 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 			}
 		}
 		
-		obj_class = mono_class_from_name(mono_posix_image,
+		MonoError error;
+		mono_error_init (&error);
+		obj_class = mono_class_from_name_checked (mono_posix_image,
 						 "Mono.Posix",
-						 "PeerCredData");
+						 "PeerCredData", &error);
+		mono_error_assert_ok (&error);
+		mono_error_cleanup (&error);
+
 		obj = mono_object_new(domain, obj_class);
 		cred_data = (MonoPeerCredData *)obj;
 		cred_data->pid = cred.pid;

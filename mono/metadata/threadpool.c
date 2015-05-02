@@ -938,8 +938,10 @@ mono_thread_pool_init (void)
 	threadpool_init (&async_io_tp, cpu_count * 2, cpu_count * 4, async_invoke_thread);
 	async_io_tp.is_io = TRUE;
 
-	async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
-	g_assert (async_call_klass);
+	MonoError error;
+	mono_error_init (&error);
+	async_call_klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "MonoAsyncCall", &error);
+	g_assert (async_call_klass && mono_error_ok (&error) && !mono_loader_get_last_error ());
 
 	mono_mutex_init (&threads_lock);
 	threads = g_ptr_array_sized_new (thread_count);

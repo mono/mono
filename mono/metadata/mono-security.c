@@ -950,8 +950,13 @@ void invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gboolea
 		}
 	}
 
-	klass = mono_class_from_name (system_security_assembly,
-								  "System.Security.Cryptography", "ProtectedMemory");
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (system_security_assembly,
+								  "System.Security.Cryptography", "ProtectedMemory", &error);
+	mono_error_ok (&error);
+	mono_error_cleanup (&error);
+
 	method = mono_class_get_method_from_name (klass, encrypt ? "Protect" : "Unprotect", 2);
 	params [0] = data;
 	params [1] = scope; /* MemoryProtectionScope.SameProcess */

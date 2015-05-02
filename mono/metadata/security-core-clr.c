@@ -17,6 +17,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-logger-internal.h>
+#include <mono/utils/mono-error-internals.h>
 
 #include "security-core-clr.h"
 
@@ -128,10 +129,12 @@ security_critical_attribute (void)
 	static MonoClass *class = NULL;
 
 	if (!class) {
-		class = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-			"SecurityCriticalAttribute");
+		MonoError error;
+		mono_error_init (&error);
+		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+			"SecurityCriticalAttribute", &error);
+		mono_error_assert_ok (&error);
 	}
-	g_assert (class);
 	return class;
 }
 
@@ -141,10 +144,12 @@ security_safe_critical_attribute (void)
 	static MonoClass *class = NULL;
 
 	if (!class) {
-		class = mono_class_from_name (mono_defaults.corlib, "System.Security", 
-			"SecuritySafeCriticalAttribute");
+		MonoError error;
+		mono_error_init (&error);
+		class = mono_class_from_name_checked (mono_defaults.corlib, "System.Security", 
+			"SecuritySafeCriticalAttribute", &error);
+		mono_error_assert_ok (&error);
 	}
-	g_assert (class);
 	return class;
 }
 
@@ -520,6 +525,7 @@ check_field_access (MonoMethod *caller, MonoClassField *field)
 	/* if get_reflection_caller returns NULL then we assume the caller has NO privilege */
 	if (caller) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 
 		/* this check can occur before the field's type is resolved (and that can fail) */

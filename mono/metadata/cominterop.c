@@ -36,6 +36,7 @@
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/strenc.h"
 #include "mono/utils/atomic.h"
+#include "mono/utils/mono-error-internals.h"
 #include <string.h>
 #include <errno.h>
 
@@ -283,13 +284,17 @@ cominterop_get_com_slot_begin (MonoClass* klass)
 	MonoCustomAttrInfo *cinfo = NULL;
 	MonoInterfaceTypeAttribute* itf_attr = NULL; 
 
-	if (!interface_type_attribute)
-		interface_type_attribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "InterfaceTypeAttribute");
+	MonoError error;
+	// In case neither branch that initializes it is taken.
+	mono_error_init (&error);
+	if (!interface_type_attribute) {
+		interface_type_attribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "InterfaceTypeAttribute", &error);
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
+	}
 	cinfo = mono_custom_attrs_from_class (klass);
 	if (cinfo) {
-		MonoError error;
 		itf_attr = (MonoInterfaceTypeAttribute*)mono_custom_attrs_get_attr_checked (cinfo, interface_type_attribute, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 		if (!cinfo->cached)
 			mono_custom_attrs_free (cinfo);
 	}
@@ -311,12 +316,13 @@ static MonoClass*
 cominterop_get_method_interface (MonoMethod* method)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *ic = method->klass;
 
 	/* if method is on a class, we need to look up interface method exists on */
 	if (!MONO_CLASS_IS_INTERFACE(method->klass)) {
 		GPtrArray *ifaces = mono_class_get_implemented_interfaces (method->klass, &error);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 		if (ifaces) {
 			int i;
 			mono_class_setup_vtable (method->klass);
@@ -389,16 +395,19 @@ cominterop_class_guid (MonoClass* klass, guint8* guid)
 {
 	static MonoClass *GuidAttribute = NULL;
 	MonoCustomAttrInfo *cinfo;
+	MonoError error;
+	mono_error_init (&error);
 
 	/* Handle the GuidAttribute */
-	if (!GuidAttribute)
-		GuidAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "GuidAttribute");
+	if (!GuidAttribute) {
+		GuidAttribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "GuidAttribute", &error);
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
+	}
 
 	cinfo = mono_custom_attrs_from_class (klass);	
 	if (cinfo) {
-		MonoError error;
 		MonoReflectionGuidAttribute *attr = (MonoReflectionGuidAttribute*)mono_custom_attrs_get_attr_checked (cinfo, GuidAttribute, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 		if (!attr)
 			return FALSE;
@@ -416,19 +425,21 @@ cominterop_com_visible (MonoClass* klass)
 {
 	static MonoClass *ComVisibleAttribute = NULL;
 	MonoError error;
+	mono_error_init (&error);
 	MonoCustomAttrInfo *cinfo;
 	GPtrArray *ifaces;
 	MonoBoolean visible = 1;
 
 	/* Handle the ComVisibleAttribute */
-	if (!ComVisibleAttribute)
-		ComVisibleAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "ComVisibleAttribute");
+	if (!ComVisibleAttribute) {
+		ComVisibleAttribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "ComVisibleAttribute", &error);
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
+	}
 
 	cinfo = mono_custom_attrs_from_class (klass);
 	if (cinfo) {
-		MonoError error;
 		MonoReflectionComVisibleAttribute *attr = (MonoReflectionComVisibleAttribute*)mono_custom_attrs_get_attr_checked (cinfo, ComVisibleAttribute, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME proper error handling*/
 
 		if (attr)
 			visible = attr->visible;
@@ -439,7 +450,7 @@ cominterop_com_visible (MonoClass* klass)
 	}
 
 	ifaces = mono_class_get_implemented_interfaces (klass, &error);
-	g_assert (mono_error_ok (&error));
+	mono_error_assert_ok (&error);
 	if (ifaces) {
 		int i;
 		for (i = 0; i < ifaces->len; ++i) {
@@ -615,8 +626,12 @@ mono_cominterop_emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, 
 		mono_mb_emit_icall (mb, cominterop_get_ccw_object);
 		pos_ccw = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
 
-		if (!com_interop_proxy_class)
-			com_interop_proxy_class = mono_class_from_name (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
+		if (!com_interop_proxy_class) {
+			MonoError error;
+			mono_error_init (&error);
+			com_interop_proxy_class = mono_class_from_name_checked (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy", &error);
+			mono_error_assert_ok (&error);
+		}
 		if (!com_interop_proxy_get_proxy)
 			com_interop_proxy_get_proxy = mono_class_get_method_from_name_flags (com_interop_proxy_class, "GetProxy", 2, METHOD_ATTRIBUTE_PRIVATE);
 #ifndef DISABLE_REMOTING
@@ -1026,8 +1041,12 @@ mono_cominterop_get_invoke (MonoMethod *method)
 		static MonoClass *com_interop_proxy_class = NULL;
 		static MonoMethod *cache_proxy = NULL;
 
-		if (!com_interop_proxy_class)
-			com_interop_proxy_class = mono_class_from_name (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
+		if (!com_interop_proxy_class) {
+			MonoError error;
+			mono_error_init (&error);
+			com_interop_proxy_class = mono_class_from_name_checked (mono_defaults.corlib, "Mono.Interop", "ComInteropProxy", &error);
+			mono_error_assert_ok (&error);
+		}
 		if (!cache_proxy)
 			cache_proxy = mono_class_get_method_from_name (com_interop_proxy_class, "CacheProxy", 0);
 
@@ -1888,8 +1907,12 @@ cominterop_get_ccw (MonoObject* object, MonoClass* itf)
 	cinfo = mono_custom_attrs_from_class (itf);
 	if (cinfo) {
 		static MonoClass* coclass_attribute = NULL;
-		if (!coclass_attribute)
-			coclass_attribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "CoClassAttribute");
+		if (!coclass_attribute) {
+			MonoError error;
+			mono_error_init (&error);
+			coclass_attribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "CoClassAttribute", &error);
+			mono_error_assert_ok (&error);
+		}
 		if (mono_custom_attrs_has_attr (cinfo, coclass_attribute)) {
 			g_assert(itf->interface_count && itf->interfaces[0]);
 			itf = itf->interfaces[0];
@@ -2327,6 +2350,7 @@ static int STDCALL
 cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, guint8* riid, gpointer* ppv)
 {
 	MonoError error;
+	mono_error_init (&error);
 	GPtrArray *ifaces;
 	MonoClass *itf = NULL;
 	int i;
@@ -2372,7 +2396,7 @@ cominterop_ccw_queryinterface (MonoCCWInterface* ccwe, guint8* riid, gpointer* p
 	klass_iter = klass;
 	while (klass_iter && klass_iter != mono_defaults.object_class) {
 		ifaces = mono_class_get_implemented_interfaces (klass_iter, &error);
-		g_assert (mono_error_ok (&error));
+		mono_error_assert_ok (&error);
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = NULL;
@@ -2432,9 +2456,12 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 	MonoObject* object = mono_gchandle_get_target (ccw->gc_handle);
 
 	/* Handle DispIdAttribute */
-	if (!ComDispIdAttribute)
-		ComDispIdAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
-
+	if (!ComDispIdAttribute) {
+		MonoError error;
+		mono_error_init (&error);
+		ComDispIdAttribute = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute", &error);
+		mono_error_assert_ok (&error);
+	}
 	g_assert (object);
 	klass = mono_object_class (object);
 
@@ -2449,8 +2476,9 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 			cinfo = mono_custom_attrs_from_method (method);
 			if (cinfo) {
 				MonoError error;
+				mono_error_init (&error);
 				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, &error);
-				g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/;
+				mono_error_assert_ok (&error); /*FIXME proper error handling*/;
 
 				if (result)
 					rgDispId[i] = *(gint32*)mono_object_unbox (result);

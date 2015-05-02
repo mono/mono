@@ -12,6 +12,7 @@
 #include <mono/metadata/mono-cq.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/utils/atomic.h>
 
 #define CQ_DEBUG(...)
@@ -51,7 +52,10 @@ mono_cqitem_alloc (void)
 	MonoDomain *domain = mono_get_root_domain ();
 
 	if (!monocq_item_vtable) {
-		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoCQItem");
+		MonoError error;
+		mono_error_init (&error);
+		MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "MonoCQItem", &error);
+		mono_error_assert_ok (&error);
 		monocq_item_vtable = mono_class_vtable (domain, klass);
 		g_assert (monocq_item_vtable);
 	}

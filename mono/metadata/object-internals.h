@@ -100,12 +100,11 @@
 
 /* namespace and name should be a constant */
 /* image must be mscorlib since other assemblies can be unloaded */
-#define mono_class_from_name_cached(image,namespace,name) ({ \
+#define mono_class_from_name_cached(image,namespace,name,error) ({ \
 			static MonoClass *tmp_klass; \
 			if (!tmp_klass) { \
 				g_assert (image == mono_defaults.corlib); \
-				tmp_klass = mono_class_from_name ((image), (namespace), (name)); \
-				g_assert (tmp_klass); \
+				tmp_klass = mono_class_from_name_checked ((image), (namespace), (name), (error)); \
 			}; \
 			tmp_klass; })
 /* name should be a compile-time constant */
@@ -129,7 +128,7 @@
 
 #else
 
-#define mono_class_from_name_cached(image,namespace,name) mono_class_from_name ((image), (namespace), (name))
+#define mono_class_from_name_cached(image,namespace,name,error) mono_class_from_name_checked ((image), (namespace), (name), (error))
 #define mono_class_get_field_from_name_cached(klass,name) mono_class_get_field_from_name ((klass), (name))
 #define mono_array_class_get_cached(eclass,rank) mono_array_class_get ((eclass), (rank))
 #define mono_array_new_cached(domain, eclass, size) mono_array_new_specific (mono_class_vtable ((domain), mono_array_class_get_cached ((eclass), 1)), (size))

@@ -7111,6 +7111,7 @@ mini_get_method_allow_open (MonoMethod *m, guint32 token, MonoClass *klass, Mono
 		method = mono_method_get_wrapper_data (m, token);
 		if (context) {
 			MonoError error;
+			mono_error_init (&error);
 			method = mono_class_inflate_generic_method_checked (method, context, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 		}
@@ -7136,6 +7137,7 @@ static inline MonoClass*
 mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *klass;
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
@@ -7158,6 +7160,7 @@ mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *conte
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
 		MonoError error;
+		mono_error_init (&error);
 
 		fsig = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
 		if (context) {
@@ -7282,6 +7285,7 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 	 */
 	if (ip [0] == CEE_DUP && ip [1] == CEE_LDTOKEN && ip [5] == 0x4 && ip [6] == CEE_CALL) {
 		MonoError error;
+		mono_error_init (&error);
 		guint32 token = read32 (ip + 7);
 		guint32 field_token = read32 (ip + 2);
 		guint32 field_index = field_token & 0xffffff;
@@ -7713,6 +7717,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		   guint inline_offset, gboolean is_virtual_call)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoInst *ins, **sp, **stack_start;
 	MonoBasicBlock *bblock, *tblock = NULL, *init_localsbb = NULL;
 	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
@@ -8864,6 +8869,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (!((constrained_class->byval_arg.type == MONO_TYPE_VAR ||
 						   constrained_class->byval_arg.type == MONO_TYPE_MVAR) &&
 						  cfg->generic_sharing_context)) {
+						mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 						cmethod = mono_get_method_constrained_with_method (image, cil_method, constrained_class, generic_context, &cfg->error);
 						CHECK_CFG_ERROR;
 					}
@@ -8881,6 +8887,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						if (!mini_is_gsharedvt_klass (cfg, constrained_class))
 							g_assert (!cmethod->klass->valuetype);
 					} else {
+						mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 						cmethod = mono_get_method_constrained_checked (image, token, constrained_class, generic_context, &cil_method, &cfg->error);
 						CHECK_CFG_ERROR;
 					}
@@ -8937,6 +8944,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				fsig = mono_method_signature (wrapper);
 			} else if (constrained_class) {
 			} else {
+				mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 				fsig = mono_method_get_signature_checked (cmethod, image, token, generic_context, &cfg->error);
 				CHECK_CFG_ERROR;
 			}
@@ -10422,6 +10430,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			if (!cmethod || mono_loader_get_last_error ())
 				LOAD_ERROR;
+			mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 			fsig = mono_method_get_signature_checked (cmethod, image, token, generic_context, &cfg->error);
 			CHECK_CFG_ERROR;
 
@@ -10929,6 +10938,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				klass = field->parent;
 			}
 			else {
+				mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 				field = mono_field_from_token_checked (image, token, &klass, generic_context, &cfg->error);
 				CHECK_CFG_ERROR;
 			}
@@ -11820,6 +11830,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					handle = &((MonoClass*)handle)->byval_arg;
 			}
 			else {
+				mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 				handle = mono_ldtoken_checked (image, n, &handle_class, generic_context, &cfg->error);
 				CHECK_CFG_ERROR;
 			}
@@ -11882,7 +11893,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);
 					} else if (cfg->compile_aot) {
 						if (method->wrapper_type) {
-							mono_error_init (&error); //got to do it since there are multiple conditionals below
 							if (mono_class_get_checked (tclass->image, tclass->type_token, &error) == tclass && !generic_context) {
 								/* Special case for static synchronized wrappers */
 								EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, tclass->image, tclass->type_token, generic_context);
@@ -12971,6 +12981,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
 				if (mono_metadata_token_table (token) == MONO_TABLE_TYPESPEC && !image_is_dynamic (method->klass->image) && !generic_context) {
+					mono_error_init (&cfg->error); // FIXME: We reuse this error a lot. Is it necessary to clear it here?
 					MonoType *type = mono_type_create_from_typespec_checked (image, token, &cfg->error);
 					CHECK_CFG_ERROR;
 

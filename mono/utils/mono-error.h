@@ -32,12 +32,27 @@ enum {
 	MONO_ERROR_GENERIC = 9
 };
 
+// Defining this symbol results in canaries being placed between all fields of the MonoError
+// and every MonoError manipulating function checking that the canaries are maintained.
+// As we have a fair amount of string copying to string arrays embedded in errors, and we pass
+// references to these strings to other functions, this is a strategy to tracking down memory
+// corruption.
+// #define MONO_ERROR_MEMORY_DEBUG
+
+#ifdef MONO_ERROR_MEMORY_DEBUG
+// 8 pointers, 4 padding, 8 canaries
+#define NUM_MONO_ERROR_POINTERS_BEFORE_MESSAGE 20
+#else
+// 8 pointers, 4 padding
+#define NUM_MONO_ERROR_POINTERS_BEFORE_MESSAGE 12
+#endif
+
 /*Keep in sync with MonoErrorInternal*/
 typedef struct _MonoError {
 	unsigned short error_code;
     unsigned short hidden_0; /*DON'T TOUCH */
 
-	void *hidden_1 [12]; /*DON'T TOUCH */
+	void *hidden_1 [NUM_MONO_ERROR_POINTERS_BEFORE_MESSAGE]; /*DON'T TOUCH */
     char hidden_2 [128]; /*DON'T TOUCH */
 } MonoError;
 
@@ -57,6 +72,9 @@ mono_error_ok (MonoError *error);
 
 MONO_API unsigned short
 mono_error_get_error_code (MonoError *error);
+
+MONO_API int
+mono_error_type_to_exception_type (MonoError *oerror);
 
 MONO_API const char*
 mono_error_get_message (MonoError *error);

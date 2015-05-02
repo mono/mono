@@ -361,6 +361,7 @@ dump_verify_info (MonoImage *image, int flags)
 		for (i = 0; i < m->rows; ++i) {
 			MonoMethod *method;
 			MonoError error;
+			mono_error_init (&error);
 			mono_loader_clear_error ();
 
 			method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | (i+1), NULL, NULL, &error);
@@ -477,6 +478,7 @@ verify_image_file (const char *fname)
 	table = &image->tables [MONO_TABLE_TYPEDEF];
 	for (i = 1; i <= table->rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		guint32 token = i | MONO_TOKEN_TYPE_DEF;
 		MonoClass *class = mono_class_get_checked (image, token, &error);
 		if (!class) {

@@ -61,7 +61,10 @@ mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image,
 	MonoObject *o;
 	MonoDomain *caller_domain = mono_domain_get ();
 
-	klass = mono_class_from_name (image, name_space, name);
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (image, name_space, name, &error);
+	mono_error_assert_ok (&error);
 
 	o = mono_object_new (domain, klass);
 	g_assert (o != NULL);
@@ -88,12 +91,13 @@ mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image,
 MonoException *
 mono_exception_from_token (MonoImage *image, guint32 token)
 {
-	MonoError error;
 	MonoClass *klass;
 	MonoObject *o;
+	MonoError error;
+	mono_error_init (&error);
 
 	klass = mono_class_get_checked (image, token, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME handle the error. */
+	mono_error_assert_ok (&error); /* FIXME handle the error. */
 
 	o = mono_object_new (mono_domain_get (), klass);
 	g_assert (o != NULL);
@@ -160,7 +164,12 @@ MonoException *
 mono_exception_from_name_two_strings (MonoImage *image, const char *name_space,
 				      const char *name, MonoString *a1, MonoString *a2)
 {
-	MonoClass *klass = mono_class_from_name (image, name_space, name);
+	MonoClass *klass;
+	MonoError error;
+	mono_error_init (&error);
+
+	klass = mono_class_from_name_checked (image, name_space, name, &error);
+	mono_error_assert_ok (&error);
 
 	return create_exception_two_strings (klass, a1, a2);
 }
@@ -201,8 +210,9 @@ mono_exception_from_token_two_strings (MonoImage *image, guint32 token,
 									   MonoString *a1, MonoString *a2)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *klass = mono_class_get_checked (image, token, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME handle the error. */
+	mono_error_assert_ok (&error); /* FIXME handle the error. */
 
 	return create_exception_two_strings (klass, a1, a2);
 }
@@ -574,8 +584,10 @@ mono_get_exception_type_initialization (const gchar *type_name, MonoException *i
 	MonoMethod *method;
 	gpointer iter;
 
-	klass = mono_class_from_name (mono_get_corlib (), "System", "TypeInitializationException");
-	g_assert (klass);
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_get_corlib (), "System", "TypeInitializationException", &error);
+	g_assert (klass && mono_error_ok (&error));
 
 	mono_class_init (klass);
 
@@ -747,8 +759,11 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 	MonoMethod *method;
 	gpointer iter;
 
-	klass = mono_class_from_name (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException");
-	g_assert (klass);
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException", &error);
+	g_assert (klass && mono_error_ok (&error));
+
 	mono_class_init (klass);
 
 	/* Find the Type[], Exception[] ctor */
@@ -782,8 +797,11 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
 	MonoDomain *domain = mono_domain_get ();
 	gpointer params [16];
 
-	klass = mono_class_from_name (mono_get_corlib (), "System.Runtime.CompilerServices", "RuntimeWrappedException");
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_get_corlib (), "System.Runtime.CompilerServices", "RuntimeWrappedException", &error);
 	g_assert (klass);
+	mono_error_assert_ok (&error);
 
 	o = mono_object_new (domain, klass);
 	g_assert (o != NULL);

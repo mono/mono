@@ -18,6 +18,7 @@
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/metadata-internals.h"
 #include "mono/metadata/domain-internals.h"
+#include <mono/utils/mono-error-internals.h>
 #include <string.h>
 #include <errno.h>
 
@@ -549,8 +550,12 @@ void
 mono_mb_emit_exception_full (MonoMethodBuilder *mb, const char *exc_nspace, const char *exc_name, const char *msg)
 {
 	MonoMethod *ctor = NULL;
+	MonoError error;
+	mono_error_init (&error);
 
-	MonoClass *mme = mono_class_from_name (mono_defaults.corlib, exc_nspace, exc_name);
+	MonoClass *mme = mono_class_from_name_checked (mono_defaults.corlib, exc_nspace, exc_name, &error);
+	mono_error_assert_ok (&error);
+
 	mono_class_init (mme);
 	ctor = mono_class_get_method_from_name (mme, ".ctor", 0);
 	g_assert (ctor);

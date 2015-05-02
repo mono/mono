@@ -25,6 +25,7 @@
 #include <mono/metadata/culture-info.h>
 #include <mono/metadata/culture-info-tables.h>
 #include <mono/utils/bsearch.h>
+#include <mono/utils/mono-error-internals.h>
 
 #ifndef DISABLE_NORMALIZATION
 #include <mono/metadata/normalization-tables.h>
@@ -592,8 +593,11 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 			len++;
 	}
 
-	class = mono_class_from_name (mono_get_corlib (),
-			"System.Globalization", "CultureInfo");
+	MonoError error;
+	mono_error_init (&error);
+	class = mono_class_from_name_checked (mono_get_corlib (),
+			"System.Globalization", "CultureInfo", &error);
+	mono_error_assert_ok (&error);
 
 	/* The InvariantCulture is not in culture_entries */
 	/* We reserve the first slot in the array for it */

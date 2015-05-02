@@ -2413,6 +2413,7 @@ find_typespec_for_class (MonoAotCompile *acfg, MonoClass *klass)
 		acfg->typespec_classes = mono_mempool_alloc0 (acfg->mempool, sizeof (MonoClass*) * len);
 		for (i = 0; i < len; ++i) {
 			MonoError error;
+			mono_error_init (&error);
 			acfg->typespec_classes [i] = mono_class_get_and_inflate_typespec_checked (acfg->image, MONO_TOKEN_TYPE_SPEC | (i + 1), NULL, &error);
 			g_assert (mono_error_ok (&error)); /* FIXME error handling */
 		}
@@ -3432,6 +3433,7 @@ add_wrappers (MonoAotCompile *acfg)
 	 */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		gboolean skip = FALSE;
@@ -3618,6 +3620,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* delegate-invoke wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 		MonoCustomAttrInfo *cattr;
 		
@@ -3660,6 +3663,7 @@ add_wrappers (MonoAotCompile *acfg)
 			}
 		} else if ((acfg->opts & MONO_OPT_GSHAREDVT) && klass->generic_container) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoGenericContext ctx;
 			MonoMethod *inst, *gshared;
 
@@ -3711,6 +3715,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* array access wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPESPEC].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 		
 		token = MONO_TOKEN_TYPE_SPEC | (i + 1);
@@ -3743,6 +3748,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* Synchronized wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
 		report_loader_error (acfg, &error, "Failed to load method token 0x%x due to %s\n", i, mono_error_get_message (&error));
@@ -3752,6 +3758,7 @@ add_wrappers (MonoAotCompile *acfg)
 				// FIXME:
 			} else if ((acfg->opts & MONO_OPT_GSHAREDVT) && method->klass->generic_container) {
 				MonoError error;
+				mono_error_init (&error);
 				MonoGenericContext ctx;
 				MonoMethod *inst, *gshared, *m;
 
@@ -3774,6 +3781,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* pinvoke wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 
@@ -3789,6 +3797,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* native-to-managed wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 		MonoCustomAttrInfo *cattr;
@@ -3900,6 +3909,7 @@ add_wrappers (MonoAotCompile *acfg)
 	/* StructureToPtr/PtrToStructure wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 		
 		token = MONO_TOKEN_TYPE_DEF | (i + 1);
@@ -4264,6 +4274,7 @@ add_generic_instances (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHODSPEC].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		token = MONO_TOKEN_METHOD_SPEC | (i + 1);
 		method = mono_get_method_checked (acfg->image, token, NULL, NULL, &error);
 
@@ -4288,6 +4299,7 @@ add_generic_instances (MonoAotCompile *acfg)
 		 */
 		if (context && context->method_inst && context->method_inst->is_open) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoGenericContext shared_context;
 			MonoGenericInst *inst;
 			MonoType **type_argv;
@@ -4373,6 +4385,7 @@ add_generic_instances (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPESPEC].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoClass *klass;
 
 		token = MONO_TOKEN_TYPE_SPEC | (i + 1);
@@ -4444,6 +4457,7 @@ add_generic_instances (MonoAotCompile *acfg)
 
 			if (get_method) {
 				MonoError error;
+				mono_error_init (&error);
 				memset (&ctx, 0, sizeof (ctx));
 				args [0] = &mono_defaults.object_class->byval_arg;
 				ctx.method_inst = mono_metadata_get_generic_inst (1, args);
@@ -4463,6 +4477,7 @@ add_generic_instances (MonoAotCompile *acfg)
 			while ((m = mono_class_get_methods (interlocked_klass, &iter))) {
 				if ((!strcmp (m->name, "CompareExchange") || !strcmp (m->name, "Exchange")) && m->is_generic) {
 					MonoError error;
+					mono_error_init (&error);
 					memset (&ctx, 0, sizeof (ctx));
 					args [0] = &mono_defaults.object_class->byval_arg;
 					ctx.method_inst = mono_metadata_get_generic_inst (1, args);
@@ -4484,6 +4499,7 @@ add_generic_instances (MonoAotCompile *acfg)
 				while ((m = mono_class_get_methods (volatile_klass, &iter))) {
 					if ((!strcmp (m->name, "Read") || !strcmp (m->name, "Write")) && m->is_generic) {
 						MonoError error;
+						mono_error_init (&error);
 						memset (&ctx, 0, sizeof (ctx));
 						args [0] = &mono_defaults.object_class->byval_arg;
 						ctx.method_inst = mono_metadata_get_generic_inst (1, args);
@@ -5720,6 +5736,7 @@ static guint32
 emit_klass_info (MonoAotCompile *acfg, guint32 token)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClass *klass = mono_class_get_checked (acfg->image, token, &error);
 	guint8 *p, *buf;
 	int i, buf_size, res;
@@ -7756,6 +7773,7 @@ mono_aot_get_array_helper_from_wrapper (MonoMethod *method)
 
 	if (m->is_generic) {
 		MonoError error;
+		mono_error_init (&error);
 		memset (&ctx, 0, sizeof (ctx));
 		args [0] = &method->klass->element_class->byval_arg;
 		ctx.method_inst = mono_metadata_get_generic_inst (1, args);
@@ -8039,6 +8057,7 @@ emit_class_name_table (MonoAotCompile *acfg)
 		g_ptr_array_add (table, NULL);
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		token = MONO_TOKEN_TYPE_DEF | (i + 1);
 		klass = mono_class_get_checked (acfg->image, token, &error);
 		if (!klass) {
@@ -8636,6 +8655,7 @@ collect_methods (MonoAotCompile *acfg)
 	/* Collect methods */
 	for (i = 0; i < image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
 
@@ -8681,6 +8701,7 @@ collect_methods (MonoAotCompile *acfg)
 	/* gsharedvt methods */
 	for (mindex = 0; mindex < image->tables [MONO_TABLE_METHOD].rows; ++mindex) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (mindex + 1);
 

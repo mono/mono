@@ -402,9 +402,12 @@ mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
 
 	g_assert (work_item);
 
-	if (!threadpool_class)
-		threadpool_class = mono_class_from_name (mono_defaults.corlib, "System.Threading", "ThreadPool");
-	g_assert (threadpool_class);
+	if (!threadpool_class) {
+		MonoError error;
+		mono_error_init (&error);
+		threadpool_class = mono_class_from_name_checked (mono_defaults.corlib, "System.Threading", "ThreadPool", &error);
+		g_assert (threadpool_class && mono_error_ok (&error) && !mono_loader_get_last_error ());
+	}
 
 	if (!unsafe_queue_custom_work_item_method)
 		unsafe_queue_custom_work_item_method = mono_class_get_method_from_name (threadpool_class, "UnsafeQueueCustomWorkItem", 2);
@@ -589,9 +592,12 @@ worker_thread (gpointer data)
 		return;
 	}
 
-	if (!threadpool_wait_callback_class)
-		threadpool_wait_callback_class = mono_class_from_name (mono_defaults.corlib, "System.Threading.Microsoft", "_ThreadPoolWaitCallback");
-	g_assert (threadpool_wait_callback_class);
+	if (!threadpool_wait_callback_class) {
+		MonoError error;
+		mono_error_init (&error);
+		threadpool_wait_callback_class = mono_class_from_name_checked (mono_defaults.corlib, "System.Threading.Microsoft", "_ThreadPoolWaitCallback", &error);
+		g_assert (threadpool_wait_callback_class && mono_error_ok (&error) && !mono_loader_get_last_error ());
+	}
 
 	if (!perform_wait_callback_method)
 		perform_wait_callback_method = mono_class_get_method_from_name (threadpool_wait_callback_class, "PerformWaitCallback", 0);
@@ -1238,9 +1244,12 @@ mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMet
 	MonoDelegate *async_callback = NULL;
 	MonoObject *state = NULL;
 
-	if (!async_call_klass)
-		async_call_klass = mono_class_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
-	g_assert (async_call_klass);
+	if (!async_call_klass) {
+		MonoError error;
+		mono_error_init (&error);
+		async_call_klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "MonoAsyncCall", &error);
+		g_assert (async_call_klass && mono_error_ok (&error) && !mono_loader_get_last_error ());
+	}
 
 	ensure_initialized (NULL);
 

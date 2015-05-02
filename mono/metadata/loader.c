@@ -453,8 +453,6 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	const char *ptr;
 	guint32 idx = mono_metadata_token_index (token);
 
-	mono_error_init (error);
-
 	mono_metadata_decode_row (&tables [MONO_TABLE_MEMBERREF], idx-1, cols, MONO_MEMBERREF_SIZE);
 	nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
 	class = cols [MONO_MEMBERREF_CLASS] & MONO_MEMBERREF_PARENT_MASK;
@@ -526,6 +524,7 @@ MonoClassField*
 mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoClassField *res = mono_field_from_token_checked (image, token, retklass, context, &error);
 	g_assert (!mono_loader_get_last_error ());
 	if (!mono_error_ok (&error)) {
@@ -541,8 +540,6 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 	MonoClass *k;
 	guint32 type;
 	MonoClassField *field;
-
-	mono_error_init (error);
 
 	if (image_is_dynamic (image)) {
 		MonoClassField *result;
@@ -628,7 +625,6 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
  	int i;
 
 	/* Search directly in the metadata to avoid calling setup_methods () */
-	mono_error_init (error);
 
 	/* FIXME: !from_class->generic_class condition causes test failures. */
 	if (klass->type_token && !image_is_dynamic (klass->image) && !klass->methods && !klass->rank && klass == from_class && !from_class->generic_class) {
@@ -713,7 +709,6 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 	MonoMethod *result = NULL;
 	MonoClass *initial_class = in_class;
 
-	mono_error_init (error);
 	is_interface = MONO_CLASS_IS_INTERFACE (in_class);
 
 	if (ic) {
@@ -775,9 +770,13 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 		result = find_method_in_class (mono_defaults.object_class, name, qname, fqname, sig, mono_defaults.object_class, error);
 
 	//we did not find the method
-	if (!result && mono_error_ok (error)) {
+	if (!result) {
 		char *desc = mono_signature_get_desc (sig, FALSE);
-		mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s", desc);
+		if (mono_error_ok (error)) {
+			mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s", desc);
+		} else {
+			mono_error_set_method_load (error, initial_class, name, "Could not find method with signature %s due to %s", desc, mono_error_get_message (error));
+		}
 		g_free (desc);
 	}
 		
@@ -795,7 +794,6 @@ inflate_generic_signature_checked (MonoImage *image, MonoMethodSignature *sig, M
 	gboolean is_open;
 	int i;
 
-	mono_error_init (error);
 	if (!context)
 		return sig;
 
@@ -888,6 +886,7 @@ MonoMethodSignature*
 mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 token, MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, context, &error);
 
 	g_assert (!mono_loader_get_last_error ());
@@ -909,8 +908,6 @@ mono_method_get_signature_checked (MonoMethod *method, MonoImage *image, guint32
 	guint32 cols [MONO_MEMBERREF_SIZE];
 	MonoMethodSignature *sig;
 	const char *ptr;
-
-	mono_error_init (error);
 
 	/* !table is for wrappers: we should really assign their own token to them */
 	if (!table || table == MONO_TABLE_METHOD)
@@ -989,6 +986,7 @@ MonoMethodSignature*
 mono_method_get_signature (MonoMethod *method, MonoImage *image, guint32 token)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *res = mono_method_get_signature_checked (method, image, token, NULL, &error);
 
 	g_assert (!mono_loader_get_last_error ());
@@ -1029,8 +1027,6 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	const char *mname;
 	MonoMethodSignature *sig;
 	const char *ptr;
-
-	mono_error_init (error);
 
 	mono_metadata_decode_row (&tables [MONO_TABLE_MEMBERREF], idx-1, cols, 3);
 	nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
@@ -1164,8 +1160,6 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	guint32 cols [MONO_METHODSPEC_SIZE];
 	guint32 token, nindex, param_count;
 
-	mono_error_init (error);
-
 	mono_metadata_decode_row (&tables [MONO_TABLE_METHODSPEC], idx - 1, cols, MONO_METHODSPEC_SIZE);
 	token = cols [MONO_METHODSPEC_METHOD];
 	nindex = token >> MONO_METHODDEFORREF_BITS;
@@ -1181,10 +1175,12 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	ptr++;
 	param_count = mono_metadata_decode_value (ptr, &ptr);
 
-	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
+	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr, error);
 	if (!inst) {
 		g_assert (!mono_loader_get_last_error ());
-		mono_error_set_bad_image (error, image, "Cannot parse generic instance for methodspec 0x%08x", idx);
+		// If we couldn't find it, but encountered no other errors
+		if (mono_error_ok (error))
+			mono_error_set_bad_image (error, image, "Cannot parse generic instance for methodspec 0x%08x", idx);
 		return NULL;
 	}
 
@@ -1778,8 +1774,6 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	const char *sig = NULL;
 	guint32 cols [MONO_TYPEDEF_SIZE];
 
-	mono_error_init (error);
-
 	if (image_is_dynamic (image)) {
 		MonoClass *handle_class;
 
@@ -1904,6 +1898,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		      MonoGenericContext *context)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *result = mono_get_method_checked (image, token, klass, context, &error);
 	g_assert (!mono_loader_get_last_error ());
 	if (!mono_error_ok (&error)) {
@@ -1920,8 +1915,6 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 	gboolean used_context = FALSE;
 
 	/* We do everything inside the lock to prevent creation races */
-
-	mono_error_init (error);
 
 	mono_image_lock (image);
 
@@ -1976,8 +1969,6 @@ get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constra
 	MonoClass *ic = NULL;
 	MonoGenericContext *method_context = NULL;
 	MonoMethodSignature *sig, *original_sig;
-
-	mono_error_init (error);
 
 	mono_class_init (constrained_class);
 	original_sig = sig = mono_method_signature_checked (method, error);
@@ -2051,6 +2042,7 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 			     MonoGenericContext *context, MonoMethod **cil_method)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethod *result = mono_get_method_constrained_checked (image, token, constrained_class, context, cil_method, &error);
 
 	g_assert (!mono_loader_get_last_error ());
@@ -2064,8 +2056,6 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 MonoMethod *
 mono_get_method_constrained_checked (MonoImage *image, guint32 token, MonoClass *constrained_class, MonoGenericContext *context, MonoMethod **cil_method, MonoError *error)
 {
-	mono_error_init (error);
-
 	*cil_method = mono_get_method_from_token (image, token, NULL, context, NULL, error);
 	if (!*cil_method)
 		return NULL;
@@ -2538,8 +2528,6 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 
 	/* We need memory barriers below because of the double-checked locking pattern */ 
 
-	mono_error_init (error);
-
 	if (m->signature)
 		return m->signature;
 
@@ -2680,6 +2668,7 @@ MonoMethodSignature*
 mono_method_signature (MonoMethod *m)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoMethodSignature *sig;
 
 	sig = mono_method_signature_checked (m, &error);
@@ -2714,6 +2703,22 @@ mono_method_get_token (MonoMethod *method)
 MonoMethodHeader*
 mono_method_get_header (MonoMethod *method)
 {
+	MonoError error;
+	mono_error_init (&error);
+
+	MonoMethodHeader *header = mono_method_get_header_checked (method, &error);
+
+	if (!mono_error_ok (&error)) {
+		mono_loader_set_error_from_mono_error (&error);
+		mono_error_cleanup (&error);
+	}
+
+	return header;
+}
+
+MonoMethodHeader*
+mono_method_get_header_checked (MonoMethod *method, MonoError *error)
+{
 	int idx;
 	guint32 rva;
 	MonoImage* img;
@@ -2721,8 +2726,10 @@ mono_method_get_header (MonoMethod *method)
 	MonoMethodHeader *header;
 	MonoGenericContainer *container;
 
-	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	img = method->klass->image;
 
@@ -2730,9 +2737,11 @@ mono_method_get_header (MonoMethod *method)
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
 		MonoMethodHeader *header, *iheader;
 
-		header = mono_method_get_header (imethod->declaring);
-		if (!header)
+		header = mono_method_get_header_checked (imethod->declaring, error);
+		if (!header) {
+			g_assert (!mono_loader_get_last_error ());
 			return NULL;
+		}
 
 		iheader = inflate_generic_header (header, mono_method_get_context (method));
 		mono_metadata_free_mh (header);
@@ -2742,6 +2751,7 @@ mono_method_get_header (MonoMethod *method)
 		if (imethod->header) {
 			mono_metadata_free_mh (iheader);
 			mono_image_unlock (img);
+			g_assert (!mono_loader_get_last_error ());
 			return imethod->header;
 		}
 
@@ -2750,12 +2760,13 @@ mono_method_get_header (MonoMethod *method)
 
 		mono_image_unlock (img);
 
+		g_assert (!mono_loader_get_last_error ());
 		return imethod->header;
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE || method->sre_method) {
 		MonoMethodWrapper *mw = (MonoMethodWrapper *)method;
-		g_assert (mw->header);
+		g_assert (mw->header && !mono_loader_get_last_error ());
 		return mw->header;
 	}
 
@@ -2767,12 +2778,16 @@ mono_method_get_header (MonoMethod *method)
 	idx = mono_metadata_token_index (method->token);
 	rva = mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_RVA);
 
-	if (!mono_verifier_verify_method_header (img, rva, NULL))
+	if (!mono_verifier_verify_method_header (img, rva, NULL)) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	loc = mono_image_rva_map (img, rva);
-	if (!loc)
+	if (!loc) {
+		g_assert (!mono_loader_get_last_error ());
 		return NULL;
+	}
 
 	/*
 	 * When parsing the types of local variables, we must pass any container available
@@ -2781,8 +2796,10 @@ mono_method_get_header (MonoMethod *method)
 	container = mono_method_get_generic_container (method);
 	if (!container)
 		container = method->klass->generic_container;
-	header = mono_metadata_parse_mh_full (img, container, loc);
 
+	header = mono_metadata_parse_mh_full (img, container, loc, error);
+
+	g_assert (!mono_loader_get_last_error ());
 	return header;
 }
 

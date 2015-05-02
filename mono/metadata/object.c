@@ -300,6 +300,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception)
 		mono_image_check_for_module_cctor (klass->image);
 		if (klass->image->has_module_cctor) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoClass *module_klass;
 			MonoVTable *module_vtable;
 
@@ -2224,6 +2225,7 @@ static MonoVTable *
 mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, MonoRemotingTarget target_type)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoVTable *vt, *pvt;
 	int i, j, vtsize, max_interface_id, extra_interface_vtsize = 0;
 	MonoClass *k;
@@ -2259,7 +2261,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		method_count = mono_class_num_methods (iclass);
 	
 		ifaces = mono_class_get_implemented_interfaces (iclass, &error);
-		g_assert (mono_error_ok (&error)); /*FIXME do proper error handling*/
+		mono_error_assert_ok (&error); /*FIXME do proper error handling*/
 		if (ifaces) {
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = g_ptr_array_index (ifaces, i);
@@ -2512,6 +2514,7 @@ MonoRemoteClass*
 mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_class)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoRemoteClass *rc;
 	gpointer* key, *mp_key;
 	char *name;
@@ -2768,9 +2771,10 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 	{
 		if (method->is_inflated) {
 			MonoError error;
+			mono_error_init (&error);
 			/* Have to inflate the result */
 			res = mono_class_inflate_generic_method_checked (res, &((MonoMethodInflated*)method)->context, &error);
-			g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+			mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 		}
 	}
 
@@ -3138,6 +3142,7 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 	gboolean is_literal = FALSE;
 	gboolean is_ptr = FALSE;
 	MonoError error;
+	mono_error_init (&error);
 	MonoType *type = mono_field_get_type_checked (field, &error);
 
 	if (!mono_error_ok (&error))
@@ -3213,7 +3218,11 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 		gpointer v;
 
 		if (!m) {
-			MonoClass *ptr_klass = mono_class_from_name_cached (mono_defaults.corlib, "System.Reflection", "Pointer");
+			MonoError error;
+			mono_error_init (&error);
+			MonoClass *ptr_klass = mono_class_from_name_cached (mono_defaults.corlib, "System.Reflection", "Pointer", &error);
+			mono_error_assert_ok (&error);
+
 			m = mono_class_get_method_from_name_flags (ptr_klass, "Box", 2, METHOD_ATTRIBUTE_STATIC);
 			g_assert (m);
 		}
@@ -3728,7 +3737,11 @@ serialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	MonoObject *array;
 
 	if (!serialize_method) {
-		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices");
+		MonoError error;
+		mono_error_init (&error);
+		MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices", &error);
+		mono_error_assert_ok (&error);
+
 		serialize_method = mono_class_get_method_from_name (klass, "SerializeCallData", -1);
 	}
 
@@ -3757,7 +3770,11 @@ deserialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	MonoObject *result;
 
 	if (!deserialize_method) {
-		MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices");
+		MonoError error;
+		mono_error_init (&error);
+		MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting", "RemotingServices", &error);
+		mono_error_assert_ok (&error);
+
 		deserialize_method = mono_class_get_method_from_name (klass, "DeserializeCallData", -1);
 	}
 	if (!deserialize_method) {
@@ -3859,8 +3876,10 @@ create_unhandled_exception_eventargs (MonoObject *exc)
 	MonoBoolean is_terminating = TRUE;
 	MonoObject *obj;
 
-	klass = mono_class_from_name (mono_defaults.corlib, "System", "UnhandledExceptionEventArgs");
-	g_assert (klass);
+	MonoError error;
+	mono_error_init (&error);
+	klass = mono_class_from_name_checked (mono_defaults.corlib, "System", "UnhandledExceptionEventArgs", &error);
+	g_assert (klass && mono_error_ok (&error));
 
 	mono_class_init (klass);
 
@@ -3916,6 +3935,7 @@ call_unhandled_exception_delegate (MonoDomain *domain, MonoObject *delegate, Mon
 
 	if (e) {
 		MonoError error;
+		mono_error_init (&error);
 		gchar *msg = mono_string_to_utf8_checked (((MonoException *) e)->message, &error);
 		if (!mono_error_ok (&error)) {
 			g_warning ("Exception inside UnhandledException handler with invalid message (Invalid characters)\n");
@@ -4072,8 +4092,12 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 	cinfo = mono_custom_attrs_from_method (method);
 	if (cinfo) {
 		static MonoClass *stathread_attribute = NULL;
-		if (!stathread_attribute)
-			stathread_attribute = mono_class_from_name (mono_defaults.corlib, "System", "STAThreadAttribute");
+		if (!stathread_attribute) {
+			MonoError error;
+			mono_error_init (&error);
+			stathread_attribute = mono_class_from_name_checked (mono_defaults.corlib, "System", "STAThreadAttribute", &error);
+			g_assert (stathread_attribute && mono_error_ok (&error));
+		}
 		has_stathread_attribute = mono_custom_attrs_has_attr (cinfo, stathread_attribute);
 		if (!cinfo->cached)
 			mono_custom_attrs_free (cinfo);
@@ -4314,7 +4338,11 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			 * The runtime-invoke wrapper returns a boxed IntPtr, need to 
 			 * convert it to a Pointer object.
 			 */
-			pointer_class = mono_class_from_name_cached (mono_defaults.corlib, "System.Reflection", "Pointer");
+			MonoError error;
+			mono_error_init (&error);
+			pointer_class = mono_class_from_name_cached (mono_defaults.corlib, "System.Reflection", "Pointer", &error);
+			mono_error_assert_ok (&error);
+
 			if (!box_method)
 				box_method = mono_class_get_method_from_name (pointer_class, "Box", -1);
 
@@ -4456,7 +4484,10 @@ mono_object_new_specific (MonoVTable *vtable)
 		MonoMethod *im = vtable->domain->create_proxy_for_type_method;
 
 		if (im == NULL) {
-			MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Activation", "ActivationServices");
+			MonoError error;
+			mono_error_init (&error);
+			MonoClass *klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Runtime.Remoting.Activation", "ActivationServices", &error);
+			mono_error_assert_ok (&error);
 
 			if (!klass->inited)
 				mono_class_init (klass);
@@ -4596,11 +4627,12 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 MonoObject *
 mono_object_new_from_token  (MonoDomain *domain, MonoImage *image, guint32 token)
 {
-	MonoError error;
 	MonoClass *class;
+	MonoError error;
+	mono_error_init (&error);
 
 	class = mono_class_get_checked (image, token, &error);
-	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+	mono_error_assert_ok (&error); /* FIXME don't swallow the error */
 
 	return mono_object_new (domain, class);
 }
@@ -5582,6 +5614,7 @@ char *
 mono_string_to_utf8 (MonoString *s)
 {
 	MonoError error;
+	mono_error_init (&error);
 	char *result = mono_string_to_utf8_checked (s, &error);
 	
 	if (!mono_error_ok (&error))
@@ -5604,8 +5637,6 @@ mono_string_to_utf8_checked (MonoString *s, MonoError *error)
 	long written = 0;
 	char *as;
 	GError *gerror = NULL;
-
-	mono_error_init (error);
 
 	if (s == NULL)
 		return NULL;
@@ -6275,6 +6306,7 @@ mono_print_unhandled_exception (MonoObject *exc)
 	char *message = (char*)"";
 	gboolean free_message = FALSE;
 	MonoError error;
+	mono_error_init (&error);
 
 	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex) {
 		message = g_strdup ("OutOfMemoryException");

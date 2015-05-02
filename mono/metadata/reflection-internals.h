@@ -11,4 +11,7 @@
 MonoObject*
 mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass, MonoError *error);
 
+MonoType*
+mono_reflection_get_type_checked (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error);
+
 #endif

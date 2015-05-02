@@ -177,6 +177,7 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, mgreg_t *regs, guint8 *cod
 
 		if (imt_method->is_inflated && ((MonoMethodInflated*)imt_method)->context.method_inst) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoGenericContext context = { NULL, NULL };
 
 			/* 
@@ -467,6 +468,7 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8
 	 */
 	if (virtual && is_generic_method_definition (m)) {
 		MonoError error;
+		mono_error_init (&error);
 		MonoGenericContext context = { NULL, NULL };
 		MonoMethod *declaring;
 
@@ -547,6 +549,7 @@ common_call_trampoline_inner (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8
 
 		if (method_inst || m->wrapper_type) {
 			MonoError error;
+			mono_error_init (&error);
 			MonoGenericContext context = { NULL, NULL };
 
 			if (m->is_inflated)
@@ -798,6 +801,7 @@ gpointer
 mono_generic_virtual_remoting_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8 *tramp)
 {
 	MonoError error;
+	mono_error_init (&error);
 	MonoGenericContext context = { NULL, NULL };
 	MonoMethod *imt_method, *declaring;
 	gpointer addr;
@@ -997,6 +1001,7 @@ create_delegate_trampoline_data (MonoDomain *domain, MonoClass *klass, MonoMetho
 	MonoDelegateTrampInfo *tramp_data;
 	MonoMethod *invoke;
 	MonoError err;
+	mono_error_init (&err);
 
 	// Precompute the delegate invoke impl and pass it to the delegate trampoline
 	invoke = mono_get_delegate_invoke (klass);
@@ -1040,6 +1045,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	guint8 *impl_this = tramp_info->impl_this;
 	guint8 *impl_nothis = tramp_info->impl_nothis;
 	MonoError err;
+	mono_error_init (&err);
 	MonoMethodSignature *sig;
 	gpointer addr, compiled_method;
 	gboolean is_remote = FALSE;
