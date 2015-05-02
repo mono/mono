@@ -210,15 +210,24 @@ If return non null Hazard Pointer 1 holds the return value.
 MonoThreadInfo*
 mono_thread_info_lookup (MonoNativeThreadId id)
 {
-		MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
+	MonoThreadInfo *info;
+	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();
 
 	if (!mono_lls_find (&thread_list, hp, (uintptr_t)id)) {
 		mono_hazard_pointer_clear_all (hp, -1);
 		return NULL;
 	} 
 
+	info = (MonoThreadInfo *) mono_hazard_pointer_get_val (hp, 1);
+
+	// A thread that didn't fully inited or is shuting down is effectively non-existant as it's not yet operational - so we might as well just return NULL here
+	if (!info || !mono_thread_info_is_live (info)) {
+		mono_hazard_pointer_clear_all (hp, -1);
+		return NULL;
+	}
+
 	mono_hazard_pointer_clear_all (hp, 1);
-	return (MonoThreadInfo *) mono_hazard_pointer_get_val (hp, 1);
+	return info;
 }
 
 static gboolean
@@ -951,7 +960,9 @@ STW to make sure no unsafe pending suspend is in progress.
 void
 mono_thread_info_suspend_lock (void)
 {
+	MONO_PREPARE_BLOCKING
 	MONO_SEM_WAIT_UNITERRUPTIBLE (&global_suspend_semaphore);
+	MONO_FINISH_BLOCKING
 }
 
 void
