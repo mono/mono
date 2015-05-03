@@ -118,11 +118,11 @@ TEST_HARNESS_EXCLUDES_ONDOTNET = -exclude=Interactive,NotDotNet,CAS
 $(the_lib): $(RESOURCES)
 
 $(RESX_RESOURCES): %.resources: %.resx
-	$(RESGEN) $< || cp $@.prebuilt $@
+	$(RESGEN) $< || cp -r $@.prebuilt $@
 
 $(LIBRARY): $(CUR_RESOURCES)
 
 $(PREBUILT): %.prebuilt: %
-	cp $* $@
+	cp -r $* $@
 
 dist-default: $(PREBUILT)
