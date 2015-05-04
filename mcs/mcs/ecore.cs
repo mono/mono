@@ -2864,6 +2864,12 @@ namespace Mono.CSharp {
 
 								pe.Getter = pe.PropertyInfo.Get;
 							} else {
+								if (rc.HasSet (ResolveContext.Options.ConstructorScope) && pe.IsAutoPropertyAccess &&
+									pe.PropertyInfo.DeclaringType == rc.CurrentType && pe.IsStatic == rc.IsStatic) {
+									var p = (Property) pe.PropertyInfo.MemberDefinition;
+									return new FieldExpr (p.BackingField, loc);
+								}
+
 								if (!pe.PropertyInfo.HasSet || !pe.PropertyInfo.Set.IsAccessible (rc)) {
 									variable_found = true;
 									break;

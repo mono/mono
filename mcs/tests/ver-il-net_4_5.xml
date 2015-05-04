@@ -20599,6 +20599,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-18.cs">
+    <type name="A">
+      <method name="Int32 get_Type()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 get_Type()" attrs="2193">
+        <size>13</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>53</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
