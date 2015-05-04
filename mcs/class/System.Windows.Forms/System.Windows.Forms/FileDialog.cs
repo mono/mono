@@ -2667,6 +2667,7 @@ namespace System.Windows.Forms
 		{
 			BeginUpdate ();
 			
+			DeleteOldThumbnails ();	// any existing thumbnail images need to be Dispose()d.
 			Items.Clear ();
 			SelectedItems.Clear ();
 			
@@ -3096,6 +3097,23 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+		private void DeleteOldThumbnails()
+		{
+			foreach (var item in Items) {
+				var fi = item as FileViewListViewItem;
+				if (fi != null && fi.FSEntry != null && fi.FSEntry.IsImageFile())
+					continue;
+				fi.FSEntry.Dispose();
+				fi.FSEntry = null;
+			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			DeleteOldThumbnails();
+			base.Dispose(disposing);
+		}
 	}
 	#endregion
 	
@@ -3145,7 +3163,7 @@ namespace System.Windows.Forms
 					break;
 			}
 		}
-		
+
 		public FSEntry FSEntry {
 			set {
 				fsEntry = value;
@@ -4365,7 +4383,7 @@ namespace System.Windows.Forms
 	#endregion
 	
 	#region FSEntry
-	internal class FSEntry
+	internal class FSEntry : IDisposable
 	{
 		public enum FSEntryType
 		{
@@ -4590,13 +4608,17 @@ namespace System.Windows.Forms
 		}
 
 		internal Image Image { get; set; }
+		private bool fMustDisposeImage;
 
 		internal void SetImage()
 		{
 			try {
 				Image.GetThumbnailImageAbort myCallback = new Image.GetThumbnailImageAbort(ThumbnailCallback);
-				Bitmap myBitmap = new Bitmap(FullName);
-				this.Image = myBitmap.GetThumbnailImage(48, 48, myCallback, IntPtr.Zero);
+				using (Bitmap myBitmap = new Bitmap(FullName))
+				{
+					this.Image = myBitmap.GetThumbnailImage(48, 48, myCallback, IntPtr.Zero);
+					fMustDisposeImage = true;
+				}
 			} catch (Exception) {
 				// cannot handle this image format?  not an image file?
 				this.Image = null;
@@ -4607,6 +4629,16 @@ namespace System.Windows.Forms
 		{
 			return false;
 		}
+
+		#region IDisposable implementation
+		public void Dispose()
+		{
+			if (this.Image != null && fMustDisposeImage) {
+				this.Image.Dispose();
+				this.Image = null;
+			}
+		}
+		#endregion
 	}
 	#endregion
 	
