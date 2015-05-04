@@ -821,9 +821,134 @@ namespace System.Security.Cryptography
             return unchecked(new byte[] { (byte)(i >> 24), (byte)(i >> 16), (byte)(i >> 8), (byte)i });
         }
 
+#if MONO
+        // PKCS #1 v.2.1, Section 4.2
+        // OS2IP converts an octet string to a nonnegative integer.
+        static byte[] OS2IP (byte[] x) 
+        {
+            int i = 0;
+            while ((x [i++] == 0x00) && (i < x.Length)) {
+                // confuse compiler into reporting a warning with {}
+            }
+            i--;
+            if (i > 0) {
+                byte[] result = new byte [x.Length - i];
+                Buffer.BlockCopy (x, i, result, 0, result.Length);
+                return result;
+            }
+            else
+                return x;
+        }
+
+        static byte[] I2OSP (int x, int size) 
+        {
+            byte[] array = Mono.Security.BitConverterLE.GetBytes (x);
+            Array.Reverse (array, 0, array.Length);
+            return I2OSP (array, size);
+        }
+
+        static byte[] I2OSP (byte[] x, int size) 
+        {
+            byte[] result = new byte [size];
+            Buffer.BlockCopy (x, 0, result, (result.Length - x.Length), x.Length);
+            return result;
+        }
+
+        // PKCS #1 v.2.1, Section 5.1.1
+        static byte[] RSAEP (RSA rsa, byte[] m) 
+        {
+            // c = m^e mod n
+            return rsa.EncryptValue (m);
+        }
+
+        // PKCS #1 v.2.1, Section B.2.1
+        static byte[] MGF1 (HashAlgorithm hash, byte[] mgfSeed, int maskLen) 
+        {
+            // 1. If maskLen > 2^32 hLen, output "mask too long" and stop.
+            // easy - this is impossible by using a int (31bits) as parameter ;-)
+            // BUT with a signed int we do have to check for negative values!
+            if (maskLen < 0)
+                throw new OverflowException();
+    
+            int mgfSeedLength = mgfSeed.Length;
+            int hLen = (hash.HashSize >> 3); // from bits to bytes
+            int iterations = (maskLen / hLen);
+            if (maskLen % hLen != 0)
+                iterations++;
+            // 2. Let T be the empty octet string.
+            byte[] T = new byte [iterations * hLen];
+    
+            byte[] toBeHashed = new byte [mgfSeedLength + 4];
+            int pos = 0;
+            // 3. For counter from 0 to \ceil (maskLen / hLen) - 1, do the following:
+            for (int counter = 0; counter < iterations; counter++) {
+                // a.   Convert counter to an octet string C of length 4 octets
+                byte[] C = I2OSP (counter, 4); 
+    
+                // b.   Concatenate the hash of the seed mgfSeed and C to the octet string T:
+                //  T = T || Hash (mgfSeed || C)
+                Buffer.BlockCopy (mgfSeed, 0, toBeHashed, 0, mgfSeedLength);
+                Buffer.BlockCopy (C, 0, toBeHashed, mgfSeedLength, 4);
+                byte[] output = hash.ComputeHash (toBeHashed);
+                Buffer.BlockCopy (output, 0, T, pos, hLen);
+                pos += hLen;
+            }
+            
+            // 4. Output the leading maskLen octets of T as the octet string mask.
+            byte[] mask = new byte [maskLen];
+            Buffer.BlockCopy (T, 0, mask, 0, maskLen);
+            return mask;
+        }
+#endif
+
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         [System.Security.SecurityCritical]  // auto-generated
         internal static byte[] RsaOaepEncrypt (RSA rsa, HashAlgorithm hash, PKCS1MaskGenerationMethod mgf, RandomNumberGenerator rng, byte[] data) {
+#if MONO
+            // It looks like .net managed implementation is buggy. It returns quite different
+            // result compare to old mono code, even PSLength calculation is quite different
+
+            int size = rsa.KeySize / 8;
+            int hLen = hash.HashSize / 8;
+            if (data.Length > size - 2 * hLen - 2)
+                throw new CryptographicException(String.Format(null, Environment.GetResourceString("Cryptography_Padding_EncDataTooBig"), size-2-2*hLen));
+            // empty label L SHA1 hash
+            byte[] lHash = hash.ComputeHash (EmptyArray<Byte>.Value);
+            int PSLength = (size - data.Length - 2 * hLen - 2);
+            // DB = lHash || PS || 0x01 || M
+            byte[] DB = new byte [lHash.Length + PSLength + 1 + data.Length];
+            Buffer.BlockCopy (lHash, 0, DB, 0, lHash.Length);
+            DB [(lHash.Length + PSLength)] = 0x01;
+            Buffer.BlockCopy (data, 0, DB, (DB.Length - data.Length), data.Length);
+
+            byte[] seed = new byte [hLen];
+            rng.GetBytes (seed);
+
+            byte[] dbMask = MGF1 (hash, seed, size - hLen - 1);
+
+            // 5.  Xor maskDB into DB
+            byte[] maskedDB = new byte[DB.Length];
+            for (int i=0; i < DB.Length; i++) {
+                maskedDB[i] = (byte) (DB[i] ^ dbMask[i]);
+            }
+
+            byte[] seedMask = MGF1 (hash, maskedDB, hLen);
+
+            // 7.  Xor mask into seed
+            byte[] maskedSeed = new byte[seed.Length];
+            for (int i=0; i < seed.Length; i++) {
+                maskedSeed[i] = (byte) (seed[i] ^ seedMask[i]);
+            }
+
+            // EM = 0x00 || maskedSeed || maskedDB
+            byte[] EM = new byte [maskedSeed.Length + maskedDB.Length + 1];
+            Buffer.BlockCopy (maskedSeed, 0, EM, 1, maskedSeed.Length);
+            Buffer.BlockCopy (maskedDB, 0, EM, maskedSeed.Length + 1, maskedDB.Length);
+
+            byte[] m = OS2IP (EM);
+            byte[] c = RSAEP (rsa, m);
+            return I2OSP (c, size);
+#else
             int cb = rsa.KeySize / 8;
 
             //  1. Hash the parameters to get PHash
@@ -833,7 +958,7 @@ namespace System.Security.Cryptography
             hash.ComputeHash(EmptyArray<Byte>.Value); // Use an empty octet string
 
             //  2.  Create DB object
-            byte[] DB = new byte[cb - cbHash];
+            byte[] DB = new byte[cb - cbHash + 1];
 
             //  Structure is as follows:
             //      pHash || PS || 01 || M
@@ -869,6 +994,7 @@ namespace System.Security.Cryptography
             Buffer.InternalBlockCopy(DB, 0, pad, seed.Length, DB.Length);
 
             return rsa.EncryptValue(pad);
+#endif
         }
 
         [System.Security.SecurityCritical]  // auto-generated
@@ -897,15 +1023,16 @@ namespace System.Security.Cryptography
                 throw new CryptographicException(Environment.GetResourceString("Cryptography_OAEPDecoding"));
 
 #if MONO
-            const int bug_fix_offset = 1;
+            int leading_zeros = 0;
+            for (leading_zeros = 0; data [leading_zeros] == 0 && leading_zeros < data.Length - 1; ++leading_zeros);
 #else
-            const int bug_fix_offset = 0;
+            const int leading_zeros = 0;
 #endif
             byte[] seed = new byte[cbHash];
-            Buffer.InternalBlockCopy(data, bug_fix_offset, seed, zeros, seed.Length - zeros);
+            Buffer.InternalBlockCopy(data, leading_zeros, seed, zeros, seed.Length - zeros);
 
-            byte[] DB = new byte[data.Length - seed.Length + zeros - bug_fix_offset];
-            Buffer.InternalBlockCopy(data, seed.Length - zeros + bug_fix_offset, DB, 0, DB.Length);
+            byte[] DB = new byte[data.Length - seed.Length + zeros - leading_zeros];
+            Buffer.InternalBlockCopy(data, seed.Length - zeros + leading_zeros, DB, 0, DB.Length);
 
             //  4.  seedMask = MGF(maskedDB, hLen);
             byte[] mask = mgf.GenerateMask(DB, seed.Length);
