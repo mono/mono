@@ -64,7 +64,7 @@ mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image,
 	MonoError error;
 	mono_error_init (&error);
 	klass = mono_class_from_name_checked (image, name_space, name, &error);
-	mono_error_assert_ok (&error);
+	g_assert (klass && mono_error_ok (&error));
 
 	o = mono_object_new (domain, klass);
 	g_assert (o != NULL);

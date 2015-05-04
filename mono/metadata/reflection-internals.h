@@ -14,4 +14,10 @@ mono_custom_attrs_get_attr_checked (MonoCustomAttrInfo *ainfo, MonoClass *attr_k
 MonoType*
 mono_reflection_get_type_checked (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error);
 
+MonoCustomAttrInfo*
+mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, MonoError *error);
+
+
+MonoCustomAttrInfo*
+mono_custom_attrs_from_assembly_checked (MonoAssembly *assembly, MonoError *error);
 #endif

@@ -50,6 +50,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/security-core-clr.h>
@@ -59,6 +60,7 @@
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/mono-basic-block.h>
 
 #include "trace.h"
@@ -5669,9 +5671,13 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	MonoInst *ins = NULL;
 
 	static MonoClass *runtime_helpers_class = NULL;
-	if (! runtime_helpers_class)
-		runtime_helpers_class = mono_class_from_name (mono_defaults.corlib,
-			"System.Runtime.CompilerServices", "RuntimeHelpers");
+	if (! runtime_helpers_class) {
+		MonoError error;
+		mono_error_init (&error);
+		runtime_helpers_class = mono_class_from_name_checked (mono_defaults.corlib,
+			"System.Runtime.CompilerServices", "RuntimeHelpers", &error);
+		mono_error_assert_ok (&error);
+	}
 
 	if (cmethod->klass == mono_defaults.string_class) {
 		if (strcmp (cmethod->name, "get_Chars") == 0 && fsig->param_count + fsig->hasthis == 2) {
@@ -7449,7 +7455,7 @@ is_exception_class (MonoClass *class)
  * IsJITOptimizerDisabled flag set.
  */
 static gboolean
-is_jit_optimizer_disabled (MonoMethod *m)
+is_jit_optimizer_disabled (MonoMethod *m, MonoError *error)
 {
 	MonoAssembly *ass = m->klass->image->assembly;
 	MonoCustomAttrInfo* attrs;
@@ -7462,7 +7468,8 @@ is_jit_optimizer_disabled (MonoMethod *m)
 		return ass->jit_optimizer_disabled;
 
 	if (!klass)
-		klass = mono_class_from_name (mono_defaults.corlib, "System.Diagnostics", "DebuggableAttribute");
+		klass = mono_class_from_name_checked (mono_defaults.corlib, "System.Diagnostics", "DebuggableAttribute", error);
+	// If we can't find the class, or encountered an error
 	if (!klass) {
 		/* Linked away */
 		ass->jit_optimizer_disabled = FALSE;
@@ -7470,8 +7477,10 @@ is_jit_optimizer_disabled (MonoMethod *m)
 		ass->jit_optimizer_disabled_inited = TRUE;
 		return FALSE;
 	}
+	// Should be fine because we found class
+	mono_error_assert_ok (error);
 
-	attrs = mono_custom_attrs_from_assembly (ass);
+	attrs = mono_custom_attrs_from_assembly_checked (ass, error);
 	if (attrs) {
 		for (i = 0; i < attrs->num_attrs; ++i) {
 			MonoCustomAttrEntry *attr = &attrs->attrs [i];
@@ -7486,7 +7495,10 @@ is_jit_optimizer_disabled (MonoMethod *m)
 			p += 2;
 
 			// FIXME: Support named parameters
-			sig = mono_method_signature (attr->ctor);
+			sig = mono_method_signature_checked (attr->ctor, error);
+			if (!mono_error_ok (error))
+				break;
+
 			if (sig->param_count != 2 || sig->params [0]->type != MONO_TYPE_BOOLEAN || sig->params [1]->type != MONO_TYPE_BOOLEAN)
 				continue;
 			/* Two boolean arguments */
@@ -7716,6 +7728,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		   MonoInst *return_var, MonoInst **inline_args, 
 		   guint inline_offset, gboolean is_virtual_call)
 {
+	g_assert (!mono_loader_get_last_error ());
 	MonoError error;
 	mono_error_init (&error);
 	MonoInst *ins, **sp, **stack_start;
@@ -7750,7 +7763,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
 
-	cfg->disable_inline = is_jit_optimizer_disabled (method);
+	cfg->disable_inline = is_jit_optimizer_disabled (method, &error);
+	if (!mono_error_ok (&error)) {
+		mono_cfg_set_exception (cfg, mono_error_type_to_exception_type (&error));
+		goto exception_exit;
+	}
 
 	/* serialization and xdomain stuff may need access to private fields and methods */
 	dont_verify = method->klass->image->assembly->corlib_internal? TRUE: FALSE;
@@ -7769,12 +7786,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_STELEMREF;
 
 	image = method->klass->image;
-	header = mono_method_get_header (method);
-	if (!header) {
-		MonoLoaderError *error;
 
-		if ((error = mono_loader_get_last_error ())) {
-			mono_cfg_set_exception (cfg, error->exception_type);
+	header = mono_method_get_header_checked (method, &error);
+	if (!header) {
+		if (!mono_error_ok (&error)) {
+			mono_cfg_set_exception (cfg, mono_error_type_to_exception_type (&error));
 		} else {
 			mono_cfg_set_exception (cfg, MONO_EXCEPTION_INVALID_PROGRAM);
 			cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);

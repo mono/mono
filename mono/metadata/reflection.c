@@ -8802,6 +8802,23 @@ mono_custom_attrs_data_construct (MonoCustomAttrInfo *cinfo)
 MonoCustomAttrInfo*
 mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 {
+	MonoError error;
+	mono_error_init (&error);
+
+	MonoCustomAttrInfo *info = mono_custom_attrs_from_index_checked (image, idx, &error);
+
+	g_assert (!mono_loader_get_last_error ());
+	if (!mono_error_ok (&error))
+		mono_loader_set_error_from_mono_error (&error);
+
+	mono_error_cleanup (&error);
+
+	return info;
+}
+
+MonoCustomAttrInfo*
+mono_custom_attrs_from_index_checked (MonoImage *image, guint32 idx, MonoError *error)
+{
 	guint32 mtoken, i, len;
 	guint32 cols [MONO_CUSTOM_ATTR_SIZE];
 	MonoTableInfo *ca;
@@ -8843,11 +8860,17 @@ mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 			break;
 		}
 		attr = &ainfo->attrs [i - 1];
-		attr->ctor = mono_get_method (image, mtoken, NULL);
+		attr->ctor = mono_get_method_checked (image, mtoken, NULL, NULL, error);
 		if (!attr->ctor) {
-			g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x", image->name, mtoken);
+			if (mono_error_ok (error))
+				g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x", image->name, mtoken);
+			else
+				g_warning ("Can't find custom attr constructor image: %s mtoken: 0x%08x due to error: [ %s ]",
+					image->name, mtoken, mono_error_get_message (error));
+
 			g_list_free (list);
 			g_free (ainfo);
+			g_assert (!mono_loader_get_last_error ());
 			return NULL;
 		}
 
@@ -8856,6 +8879,7 @@ mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 			g_warning ("Invalid custom attribute blob on image %s for index %x", image->name, idx);
 			g_list_free (list);
 			g_free (ainfo);
+			g_assert (!mono_loader_get_last_error ());
 			return NULL;
 		}
 		data = mono_metadata_blob_heap (image, cols [MONO_CUSTOM_ATTR_VALUE]);
@@ -8864,6 +8888,7 @@ mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
 	}
 	g_list_free (list);
 
+	g_assert (!mono_loader_get_last_error ());
 	return ainfo;
 }
 
@@ -8920,6 +8945,23 @@ mono_custom_attrs_from_class (MonoClass *klass)
 MonoCustomAttrInfo*
 mono_custom_attrs_from_assembly (MonoAssembly *assembly)
 {
+	MonoError error;
+	mono_error_init (&error);
+
+	MonoCustomAttrInfo *info = mono_custom_attrs_from_assembly_checked (assembly, &error);
+
+	g_assert (!mono_loader_get_last_error ());
+	if (!mono_error_ok (&error))
+		mono_loader_set_error_from_mono_error (&error);
+
+	mono_error_cleanup (&error);
+
+	return info;
+}
+
+MonoCustomAttrInfo*
+mono_custom_attrs_from_assembly_checked (MonoAssembly *assembly, MonoError *error)
+{
 	guint32 idx;
 	
 	if (image_is_dynamic (assembly->image))
@@ -8927,7 +8969,7 @@ mono_custom_attrs_from_assembly (MonoAssembly *assembly)
 	idx = 1; /* there is only one assembly */
 	idx <<= MONO_CUSTOM_ATTR_BITS;
 	idx |= MONO_CUSTOM_ATTR_ASSEMBLY;
-	return mono_custom_attrs_from_index (assembly->image, idx);
+	return mono_custom_attrs_from_index_checked (assembly->image, idx, error);
 }
 
 static MonoCustomAttrInfo*
