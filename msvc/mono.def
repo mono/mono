@@ -65,6 +65,7 @@ mono_domain_unload
 mono_verifier_set_mode
 mono_object_get_size
 mono_type_get_name_full
+mono_set_break_policy
 ;temp exports to make pedump compile
 ;mono_marshal_init
 ;g_print
