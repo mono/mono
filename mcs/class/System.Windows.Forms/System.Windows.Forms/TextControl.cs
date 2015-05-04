@@ -1815,7 +1815,6 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				current_color = line.tags.ColorToDisplay;
 				while (tag != null) {
 
 					// Skip empty tags
@@ -1832,7 +1831,6 @@ namespace System.Windows.Forms {
 
 					tag_color = tag.ColorToDisplay;
 					tag_backcolor = tag.BackColor;
-					current_color = tag_color;
 
 					if (!owner.Enabled) {
 						Color a = tag.Color;
@@ -1844,7 +1842,6 @@ namespace System.Windows.Forms {
 					} 
 
 					int tag_pos = tag.Start;
-					current_color = tag_color;
 					while (tag_pos < tag.Start + tag.Length) {
 						int old_tag_pos = tag_pos;
 

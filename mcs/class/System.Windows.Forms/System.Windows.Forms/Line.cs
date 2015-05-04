@@ -46,7 +46,7 @@ namespace System.Windows.Forms
 		internal LineTag		tags;			// Tags describing the text
 		internal int			offset;			// Baseline can be on the X or Y axis depending if we are in multiline mode or not
 		internal int			height;			// Total height of the line, including spacing_before and spacing_after
-		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
+		internal int			ascent;			// Ascent of the line (highest distance above the baseline, including character offset)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
 		internal int			indent;			// Left indent for the first line
@@ -552,7 +552,8 @@ namespace System.Windows.Forms
 			int prev_spacing_before;
 			int max_above_baseline;
 			int max_below_baseline;
-			int added_shift;
+			int total_ascent;
+			int total_descent;
 
 			pos = 0;
 			len = this.text.Length;
@@ -563,7 +564,8 @@ namespace System.Windows.Forms
 			prev_spacing_before = this.SpacingBefore;
 			max_above_baseline = 0;
 			max_below_baseline = 0;
-			added_shift = 0;
+			total_ascent = 0;
+			total_descent = 0;
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;			// Reset shift (which should be stored as pixels, not as points)
@@ -679,57 +681,37 @@ namespace System.Windows.Forms
 					// We just found the end of our current tag
 					tag.Height = tag.MaxHeight ();
 
-					if (tag.CharOffset > 0) {
-						if (tag.Ascent + tag.CharOffset > max_above_baseline) {
-							int moveBy = tag.Ascent + tag.CharOffset - max_above_baseline;
-							added_shift += moveBy;
-							max_above_baseline = tag.Ascent + tag.CharOffset;
+					/* line.ascent is the highest point above the baseline.
+					 * total_ascent will equal the maximum distance of the tag above the baseline.
+					 * total_descent is needed to calculate the line height.
+					 * tag.Shift does not include tag.CharOffset, because Shift puts the tag
+					 * on the baseline, while CharOffset moves the baseline.
+					 * However, we move the normal baseline when CharOffset is trying to push
+					 * stuff off the top.
+					 */
+					total_ascent = tag.Ascent + tag.CharOffset;
+					total_descent = tag.Descent - tag.CharOffset; // gets bigger as CharOffset gets smaller
+					if (total_ascent > max_above_baseline) {
+						int moveBy = total_ascent - max_above_baseline;
+						max_above_baseline = total_ascent;
 
-							LineTag t = tags;
-							while (t != null && t != tag) {
-								t.Shift += moveBy;
-								t = t.Next;
-							}
-						}
-
-						if (tag.Descent > max_below_baseline)
-							max_below_baseline = tag.Descent;
-					} else if (tag.CharOffset < 0) {
-						if (tag.Descent - tag.CharOffset > max_below_baseline)
-							max_below_baseline = tag.Descent - tag.CharOffset;
-
-						if (tag.Ascent > max_above_baseline)
-							max_above_baseline = tag.Ascent;
-					} else {
-						if (tag.Ascent > max_above_baseline)
-							max_above_baseline = tag.Ascent;
-
-						if (tag.Descent > max_below_baseline)
-							max_below_baseline = tag.Descent;
-
-						if (tag.Height > this.height)
-							this.height = tag.Height;
-					}
-
-					if (this.height < max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent)
-						this.height = max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent;
-
-					if (tag.Ascent > this.ascent) {
-						LineTag t;
-
-						// We have a tag that has a taller ascent than the line;
-						t = tags;
-						int moveBy = tag.Ascent - this.ascent;
+						LineTag t = tags;
 						while (t != null && t != tag) {
-							t.Shift += moveBy + added_shift;
+							t.Shift += moveBy;
 							t = t.Next;
 						}
 
-						// Save on our line
-						this.ascent = tag.Ascent;
+						tag.Shift = tag.CharOffset;
+						this.ascent = max_above_baseline;
 					} else {
-						tag.Shift = (this.ascent - tag.Ascent) + added_shift;
+						tag.Shift = (this.ascent - tag.Ascent);
 					}
+
+					if (total_descent > max_below_baseline)
+						max_below_baseline = total_descent;
+
+					if (this.height < max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent)
+						this.height = max_above_baseline + max_below_baseline + tag.Height - tag.Ascent - tag.Descent;
 
 					tag = tag.Next;
 					if (tag != null) {

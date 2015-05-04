@@ -58,7 +58,8 @@ namespace System.Windows.Forms
 		private int		height;		// Height in pixels of the text this tag describes
 		private int		ascent;		// Ascent of the font for this tag
 		private int		descent;	// Descent of the font for this tag
-		private int		shift;		// Shift down for this tag, to stay on baseline
+		private int		shift;		// Shift down for this tag, to stay on baseline.
+							// Measured from top of line to top of tag.
 
 		// Administrative
 		private Line		line;		// The line we're on
