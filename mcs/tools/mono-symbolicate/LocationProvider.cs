@@ -77,7 +77,7 @@ namespace Symbolicate
 			{
 
 				if (methodGetMethodFullName == null)
-					methodGetMethodFullName = typeof (Exception).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
+					methodGetMethodFullName = typeof (StackTrace).GetMethod ("GetFullNameForStackTrace", BindingFlags.NonPublic | BindingFlags.Static);
 
 				if (methodGetMethodFullName == null)
 					throw new Exception ("System.Exception.GetFullNameForStackTrace could not be found, make sure you have an updated mono installed.");
