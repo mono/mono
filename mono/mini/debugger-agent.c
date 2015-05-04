@@ -479,6 +479,8 @@ typedef struct {
 	gpointer start_sp;
 	MonoMethod *last_method;
 	int last_line;
+	MonoMethod *stepover_frame_method;
+	int stepover_frame_count;
 	/* Whenever single stepping is performed using start/stop_single_stepping () */
 	gboolean global;
 	/* The list of breakpoints used to implement step-over */
@@ -2062,7 +2064,15 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			 * remain valid.
 			 */
 			data.last_frame_set = FALSE;
-			if (sigctx) {
+
+			/* mono_jit_walk_stack_from_ctx_in_thread acquires the loader lock in mono_arch_find_jit_info_ext by calling mono_method_signature.
+			 * So we can't call mono_jit_walk_stack_from_ctx_in_thread here if we have interrupted a thread that is waiting for or holding the 
+			 * loader lock as that can cause a deadlock.
+			 * The consequence of this work-around is that we do not get managed stack traces for interrupted threads that have mono_loader_lock()
+			 * in their call stack.
+			 */
+						
+			if (sigctx && !mono_loader_lock_self_is_waiting() && !mono_loader_lock_is_owned_by_self()) {
 				mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 				mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
 			}
@@ -3779,6 +3789,29 @@ breakpoint_matches_assembly (MonoBreakpoint *bp, MonoAssembly *assembly)
 	return bp->method && bp->method->klass->image->assembly == assembly;
 }
 
+static int
+compute_frame_count(DebuggerTlsData *tls, MonoContext *ctx)
+{
+	int frame_count;
+	gboolean had_context = tls->has_context;
+	
+	/* Required for compute_frame_info to work */
+	if(!had_context)
+		save_thread_context(ctx);
+	
+	compute_frame_info (tls->thread, tls);
+	
+	frame_count = tls->frame_count;
+	
+	/* Restore state */
+	if(!had_context)
+		tls->has_context = FALSE;
+	
+	invalidate_frames (tls);
+	
+	return frame_count;
+}
+
 static void
 process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 {
@@ -3887,6 +3920,12 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 		sp = find_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
 		g_assert (sp);
+
+		if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
+		{
+			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner rercursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
+			hit = FALSE;
+		}
 
 		if (ss_req->size == STEP_SIZE_LINE) {
 			/* Have to check whenever a different source line was reached */
@@ -4102,6 +4141,10 @@ process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 	if (il_offset == -1)
 		return;
 
+	/* Check for step-over recursion */
+	if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
+		return;
+	
 	if (ss_req->size == STEP_SIZE_LINE) {
 		/* Step until a different source line is reached */
 		MonoDebugMethodInfo *minfo;
@@ -4317,6 +4360,12 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointI
 				bp = set_breakpoint (method, next_sp->il_offset, ss_req->req);
 				ss_req->bps = g_slist_append (ss_req->bps, bp);
 			}
+		}
+		
+		if(tls && ss_req->stepover_frame_count == 0)
+		{
+			ss_req->stepover_frame_method = method;
+			ss_req->stepover_frame_count = compute_frame_count(tls, &tls->ctx);
 		}
 	}
 
