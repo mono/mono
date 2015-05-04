@@ -2864,8 +2864,10 @@ namespace Mono.CSharp {
 
 								pe.Getter = pe.PropertyInfo.Get;
 							} else {
-								if (!pe.PropertyInfo.HasSet || !pe.PropertyInfo.Set.IsAccessible (rc))
+								if (!pe.PropertyInfo.HasSet || !pe.PropertyInfo.Set.IsAccessible (rc)) {
+									variable_found = true;
 									break;
+								}
 
 								pe.Setter = pe.PropertyInfo.Set;
 							}
