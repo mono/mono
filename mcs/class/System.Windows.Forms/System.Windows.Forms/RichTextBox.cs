@@ -143,12 +143,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void ContentWidthChanged (object sender, EventArgs e) {
-			if (!Multiline)
-				ContentSizeChanged();
+			ContentSizeChanged();
 		}
 		private void ContentHeightChanged (object sender, EventArgs e) {
-			if (Multiline)
-				ContentSizeChanged();
+			ContentSizeChanged();
 		}
 
 		private void ContentSizeChanged () {
@@ -160,7 +158,7 @@ namespace System.Windows.Forms {
 				if (Multiline) {
 					width = Width; // yes, this is the insanity that is the traditional .Net implementation...
 				} else {
-					width = document.Width + document.left_margin + document.left_margin + Width - ClientRectangle.Width;
+					width = document.Width + document.left_margin + document.right_margin + Width - ClientRectangle.Width;
 				}
 
 				ContentsResizedEventArgs args = new ContentsResizedEventArgs (new Rectangle (Left, Top, width, height));
@@ -2594,7 +2592,7 @@ namespace System.Windows.Forms {
 						sb.Append(" ");
 					}
 
-					while (pos < line_len) {
+					while (pos < line_len && tag != null) {
 						length = sb.Length;
 
 						if (tag.Font != font) {
