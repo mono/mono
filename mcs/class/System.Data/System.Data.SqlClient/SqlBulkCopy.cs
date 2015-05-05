@@ -191,7 +191,7 @@ namespace System.Data.SqlClient {
 				  } else if (i == 2) {
 					SqlDataAdapter adapter = new SqlDataAdapter ();
 					adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-					columnMetaDataTables [i - 1] = new DataTable ();
+					columnMetaDataTables [i - 1] = new DataTable (DestinationTableName);
 					adapter.FillInternal (columnMetaDataTables [i - 1], reader);
 				}
 				i++;
