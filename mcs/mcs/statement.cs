@@ -3352,12 +3352,26 @@ namespace Mono.CSharp {
 								}
 
 								if (parent_storey_block.AnonymousMethodStorey == null) {
-									pb.StateMachine.AddCapturedThisField (ec, null);
-									b.HasCapturedThis = true;
+									if (pb.StateMachine.HoistedThis == null) {
+										pb.StateMachine.AddCapturedThisField (ec, null);
+										b.HasCapturedThis = true;
+									}
+
 									continue;
 								}
 
-								pb.StateMachine.AddParentStoreyReference (ec, storey);
+								var parent_this_block = pb;
+								while (parent_this_block.Parent != null) {
+									parent_this_block = parent_this_block.Parent.ParametersBlock;
+									if (parent_this_block.StateMachine != null) {
+										break;
+									}
+								}
+
+								//
+								// Add reference to closest storey which holds captured this
+								//
+								pb.StateMachine.AddParentStoreyReference (ec, parent_this_block.StateMachine ?? storey);
 							}
 
 							//

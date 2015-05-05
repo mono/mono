@@ -64978,6 +64978,75 @@
       </method>
     </type>
   </test>
+  <test name="test-async-78.cs">
+    <type name="ExceptionHelper">
+      <method name="System.Threading.Tasks.Task ConditionalCatchExceptThreadAbortAsync(System.Func`1[System.Threading.Tasks.Task], System.Action`1[System.Exception])" attrs="150">
+        <size>41</size>
+      </method>
+    </type>
+    <type name="ATask">
+      <method name="System.Threading.Tasks.Task`1[System.Boolean] OnDoWorkAsync()" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;OnDoWorkAsync&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Tests">
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ExceptionHelper+&lt;ConditionalCatchExceptThreadAbortAsync&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>73</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="ATask+&lt;OnDoWorkAsync&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>182</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="ATask+&lt;OnDoWorkAsync&gt;c__async4">
+      <method name="Void MoveNext()" attrs="486">
+        <size>248</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="ATask+&lt;OnDoWorkAsync&gt;c__async4+&lt;OnDoWorkAsync&gt;c__AnonStorey7">
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__0()" attrs="131">
+        <size>46</size>
+      </method>
+      <method name="Void &lt;&gt;m__1(System.Exception)" attrs="131">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ATask+&lt;OnDoWorkAsync&gt;c__async4+&lt;OnDoWorkAsync&gt;c__AnonStorey7+&lt;OnDoWorkAsync&gt;c__async6">
+      <method name="Void MoveNext()" attrs="486">
+        <size>82</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
