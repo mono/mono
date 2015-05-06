@@ -40,6 +40,7 @@ using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
@@ -80,11 +81,16 @@ namespace System.Runtime.Remoting.Contexts {
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
 		ContextCallbackObject callback_object = null;
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void RegisterContext (Context ctx);
 		
 		public Context ()
 		{
 			domain_id = Thread.GetDomainID();
-			context_id = 1 + global_count++;
+			context_id = Interlocked.Increment (ref global_count);
+
+			RegisterContext (this);
 		}
 
 		~Context ()
