@@ -3102,7 +3102,7 @@ namespace System.Windows.Forms
 		{
 			foreach (var item in Items) {
 				var fi = item as FileViewListViewItem;
-				if (fi != null && fi.FSEntry != null && fi.FSEntry.IsImageFile())
+				if (fi == null || fi.FSEntry == null)
 					continue;
 				fi.FSEntry.Dispose();
 				fi.FSEntry = null;
