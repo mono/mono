@@ -1069,6 +1069,27 @@ namespace MonoTests.System
 			action_int (42);
 		}
 
+		struct FooStruct {
+			public int i, j, k, l;
+
+			public int GetProp (int a, int b, int c, int d) {
+				return i;
+			}
+		}
+
+		delegate int ByRefDelegate (ref FooStruct s, int a, int b, int c, int d);
+
+#if MONOTOUCH
+		[Category ("NotWorking")]
+#endif
+		[Test]
+		public void CallVirtVType ()
+		{
+			var action = (ByRefDelegate)Delegate.CreateDelegate (typeof (ByRefDelegate), null, typeof (FooStruct).GetMethod ("GetProp"));
+			var s = new FooStruct () { i = 42 };
+			Assert.AreEqual (42, action (ref s, 1, 2, 3, 4));
+		}
+
 		class Foo {
 
 			public void Bar ()
