@@ -288,7 +288,6 @@ struct _MonoImage {
 	GHashTable *cominterop_wrapper_cache; /* LOCKING: marshal lock */
 	GHashTable *thunk_invoke_cache;
 	GHashTable *wrapper_param_names;
-	GHashTable *synchronized_generic_cache;
 	GHashTable *array_accessor_cache;
 
 	/*
@@ -301,9 +300,6 @@ struct _MonoImage {
 	GHashTable *castclass_cache;
 	GHashTable *proxy_isinst_cache;
 	GHashTable *rgctx_template_hash; /* LOCKING: templates lock */
-	GHashTable *delegate_invoke_generic_cache;
-	GHashTable *delegate_begin_invoke_generic_cache;
-	GHashTable *delegate_end_invoke_generic_cache;
 
 	/* Contains rarely used fields of runtime structures belonging to this image */
 	MonoPropertyHash *property_hash;
@@ -369,6 +365,21 @@ typedef struct {
 	MonoImage **images;
 
 	GHashTable *gclass_cache, *ginst_cache, *gmethod_cache, *gsignature_cache;
+
+	/*
+	 * indexed by MonoMethodSignature 
+	 */
+	GHashTable *delegate_invoke_cache;
+	GHashTable *delegate_begin_invoke_cache;
+	GHashTable *delegate_end_invoke_cache;
+	GHashTable *runtime_invoke_cache;
+	GHashTable *runtime_invoke_vtype_cache;
+
+	/*
+	 * indexed by MonoMethod pointers 
+	 */
+	GHashTable *synchronized_cache;
+
 
 	mono_mutex_t    lock;
 
