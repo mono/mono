@@ -19,6 +19,8 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <mono/sgen/sgen-gray.h>
+
 extern guint64 stat_copy_object_called_nursery;
 extern guint64 stat_objects_copied_nursery;
 

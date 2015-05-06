@@ -22,6 +22,7 @@
 #ifdef HAVE_SGEN_GC
 
 #include "mono/sgen/sgen-gc.h"
+#include "mono/sgen/sgen-gray.h"
 #include "mono/sgen/sgen-protocol.h"
 
 #ifdef HEAVY_STATISTICS

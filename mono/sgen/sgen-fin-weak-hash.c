@@ -32,6 +32,7 @@
 #include "mono/sgen/sgen-protocol.h"
 #include "mono/sgen/sgen-pointer-queue.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-membar.h"
 
 #define ptr_in_nursery sgen_ptr_in_nursery

@@ -34,6 +34,7 @@ monosgen_sources = \
 	sgen-gc.h \
 	sgen-gray.c \
 	sgen-gray.h \
+	sgen-gray-forward.h \
 	sgen-hash-table.c \
 	sgen-hash-table.h \
 	sgen-internal.c \

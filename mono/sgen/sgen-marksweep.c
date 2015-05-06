@@ -25,12 +25,8 @@
 
 #ifdef HAVE_SGEN_GC
 
-#include <math.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include "mono/sgen/sgen-gc.h"
+#include "mono/sgen/sgen-gray.h"
 #include "mono/sgen/sgen-protocol.h"
 #include "mono/sgen/sgen-cardtable.h"
 #include "mono/sgen/sgen-memory-governor.h"
@@ -40,7 +36,13 @@
 #include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-thread-pool.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-membar.h"
+
+#include <math.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 
 #if defined(ARCH_MIN_MS_BLOCK_SIZE) && defined(ARCH_MIN_MS_BLOCK_SIZE_SHIFT)
 #define MS_BLOCK_SIZE	ARCH_MIN_MS_BLOCK_SIZE

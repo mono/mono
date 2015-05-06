@@ -33,6 +33,7 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-thread-pool.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 
 #define MIN_MINOR_COLLECTION_ALLOWANCE	((mword)(DEFAULT_NURSERY_SIZE * default_allowance_nursery_size_ratio))
 

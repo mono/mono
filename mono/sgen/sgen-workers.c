@@ -25,8 +25,10 @@
 #include <string.h>
 
 #include "mono/sgen/sgen-gc.h"
+#include "mono/sgen/sgen-gray.h"
 #include "mono/sgen/sgen-workers.h"
 #include "mono/sgen/sgen-thread-pool.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-membar.h"
 #include "mono/sgen/sgen-client.h"
 

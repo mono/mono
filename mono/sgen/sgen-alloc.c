@@ -45,6 +45,7 @@
 #include "mono/sgen/sgen-protocol.h"
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-memory-model.h"
 
 #define ALIGN_UP		SGEN_ALIGN_UP

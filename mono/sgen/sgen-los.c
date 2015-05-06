@@ -40,6 +40,7 @@
 #include "mono/sgen/sgen-cardtable.h"
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 
 #define LOS_SECTION_SIZE	(1024 * 1024)
 
