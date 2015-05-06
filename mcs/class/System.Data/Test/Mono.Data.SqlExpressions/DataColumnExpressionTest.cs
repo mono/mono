@@ -120,18 +120,24 @@ namespace Monotests_Mono.Data.SqlExpressions
 	[TestFixture]
 	public class DataColumnCharTest
 	{
-		private static DataTable _dt = new DataTable();
+		DataTable _dt;
 
-		[Test]
-		public void Test1 ()
+		[SetUp]
+		public void Setup ()
 		{
+			_dt = new DataTable();
+
 			_dt.Columns.Add(new DataColumn("a", typeof(char)));
 
 			AddData('1');
 			AddData('2');
 			AddData('3');
 			AddData('A');
+		}
 
+		[Test]
+		public void Test1 ()
+		{
 			Assert.AreEqual (true, FindRow("'A'"), "Test1-1 failed");
 			Assert.AreEqual (true, FindRow("65"), "Test1-2 failed");
 			Assert.AreEqual (true, FindRow("'1'"), "Test1-3 failed");
@@ -143,13 +149,14 @@ namespace Monotests_Mono.Data.SqlExpressions
 		{
 			FindRow("'65'");
 		}
+
 		[Test]
 		public void Test3 ()
 		{
 			Assert.AreEqual (false, FindRow ("1"), "Test3-1 failed");
 		}
 
-		private static bool FindRow(string f)
+		private bool FindRow(string f)
 		{
 			string filter = string.Format("a = {0}", f);
 
@@ -161,7 +168,7 @@ namespace Monotests_Mono.Data.SqlExpressions
 				return true;
 		}
 
-		private static void AddData(char a)
+		private void AddData(char a)
 		{
 			DataRow row = _dt.NewRow();
 			row["a"] = a;

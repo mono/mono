@@ -54,6 +54,12 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest :  DataSetAssertion
 	{
+		[SetUp]
+		public void Setup ()
+		{
+			MyDataTable.count = 0;
+		}
+
 		string EOL = Environment.NewLine;
 
 		[Test]
@@ -4173,7 +4179,7 @@ namespace MonoTests.System.Data
 
 	public  class MyDataTable : DataTable
 	{
-		public static int count = 0;
+		public static int count;
 
 		public MyDataTable()
 		{

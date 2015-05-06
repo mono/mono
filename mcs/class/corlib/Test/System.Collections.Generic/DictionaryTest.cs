@@ -633,7 +633,7 @@ namespace MonoTests.System.Collections.Generic {
 			}
 		}
 
-#if !MONO
+#if !MOBILE
 		[Test]
 		public void SerializationCompatibilty ()
 		{

@@ -90,6 +90,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		[ExpectedException (typeof (BadImageFormatException))]
 		public void ConstructorString_Bad ()
 		{

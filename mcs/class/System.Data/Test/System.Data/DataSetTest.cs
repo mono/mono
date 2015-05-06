@@ -58,6 +58,7 @@ namespace MonoTests.System.Data
 		public void Setup () {
 			currentCultureBackup = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
+			MyDataSet.count = 0;
 		}
 
 		//[SetUp]
@@ -2565,7 +2566,7 @@ namespace MonoTests.System.Data
 
 	 public  class MyDataSet:DataSet {
 
-	     public static int count = 0;
+	     public static int count;
                                                                                                     
              public MyDataSet() {
 

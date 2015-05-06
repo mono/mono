@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Policy;
 using System.Xml.XPath;
+using System.Xml.XmlConfiguration;
 
 namespace System.Xml.Xsl
 {
@@ -173,18 +174,18 @@ namespace System.Xml.Xsl
 
 		public void Load (XmlReader stylesheet)
 		{
-			Load (stylesheet, null, null);
+			Load (stylesheet, XsltSettings.Default, XsltConfigSection.CreateDefaultResolver());
 		}
 
 		public void Load (IXPathNavigable stylesheet)
 		{
-			Load (stylesheet.CreateNavigator(), null, null);
+			Load (stylesheet.CreateNavigator(), XsltSettings.Default, XsltConfigSection.CreateDefaultResolver());
 		}
 
 		public void Load (IXPathNavigable stylesheet, XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			if (!settings.EnableDocumentFunction)
-				throw new NotSupportedException ("'document' function cannot be disabled on this framework because it just runs XslTransform which does not support XsltSettings");
+//			if (!settings.EnableDocumentFunction)
+//				throw new NotSupportedException ("'document' function cannot be disabled on this framework because it just runs XslTransform which does not support XsltSettings");
 			if (settings.EnableScript)
 				throw new NotSupportedException ("'msxsl:script' element is not supported on this framework because it does not support run-time code generation");
 			impl.Load (stylesheet, stylesheetResolver);

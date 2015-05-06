@@ -347,30 +347,26 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (UnmanagedType.ByValTStr, attr.Value, "#E2");
 			Assert.AreEqual (100, attr.SizeConst, "#E3");
 
+#if FEATURE_COMINTEROP
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#F1");
 			attr = (MarshalAsAttribute) attrs [0];
-#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#F2");
-#endif
+
 			Assert.AreEqual ("5", attr.MarshalCookie, "#F3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#F4");
 
 			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (false);
 			Assert.AreEqual (1, attrs.Length, "#G1");
 			attr = (MarshalAsAttribute) attrs [0];
-#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#G2");
-#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#G3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#G4");
 
 			attrs = typeof (Class3).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#H1");
 			attr = (MarshalAsAttribute) attrs [0];
-#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#H2");
-#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#H3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#H4");
 
@@ -378,11 +374,10 @@ namespace MonoTests.System.Reflection
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#I1");
 			attr = (MarshalAsAttribute) attrs [0];
-#if FEATURE_COMINTEROP
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#I2");
-#endif
 			Assert.AreEqual ("5", attr.MarshalCookie, "#I3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
+#endif
 		}
 
 		// Disable "field not used warning", this is intended.
