@@ -196,7 +196,9 @@ namespace System.Xml {
 #if !SILVERLIGHT // Needed only for XmlTextReader constructors that takes url
         // this is only for constructors that takes url 
         string              url = string.Empty;
+#if !MOBILE
         CompressedStack     compressedStack;
+#endif
 #endif
 
         // settings
@@ -601,9 +603,9 @@ namespace System.Xml {
                 throw new ArgumentException( Res.GetString( Res.Xml_EmptyUrl ), "url" );
             }
             namespaceManager = new XmlNamespaceManager( nt );
-
+#if !MOBILE
             compressedStack = CompressedStack.Capture();
-
+#endif
             this.url = url;
 
             // It is important to have valid resolver here to resolve the Xml url file path. 
@@ -2810,7 +2812,9 @@ namespace System.Xml {
         [ResourceExposure(ResourceScope.None)]        
         private void OpenUrl() {
             Debug.Assert( url != null && url.Length > 0 );
+#if !MOBILE
             Debug.Assert( compressedStack != null );
+#endif
 
             // It is safe to use the resolver here as we don't resolve or expose any DTD to the caller
             XmlResolver tmpResolver = GetTempResolver();
@@ -2823,7 +2827,11 @@ namespace System.Xml {
             }
 
             try {
+#if MOBILE
+                OpenUrlDelegate (tmpResolver);
+#else
                 CompressedStack.Run( compressedStack, new ContextCallback( OpenUrlDelegate ), tmpResolver );
+#endif
             }
             catch {
                 SetErrorState();

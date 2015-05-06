@@ -4,6 +4,7 @@ using System.Xml;
 
 #if CONFIGURATION_DEP
 using System.Configuration;
+#endif
 
 namespace System.Xml.XmlConfiguration {
     internal static class XmlConfigurationString {
@@ -21,7 +22,12 @@ namespace System.Xml.XmlConfiguration {
     }
 
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public sealed class XmlReaderSection : ConfigurationSection {
+    public sealed class XmlReaderSection
+#if CONFIGURATION_DEP
+		: ConfigurationSection
+#endif
+	{
+#if CONFIGURATION_DEP
         [ConfigurationProperty(XmlConfigurationString.ProhibitDefaultResolverName, DefaultValue = "false")]
         public string ProhibitDefaultResolverString {
             get { return (string)this[XmlConfigurationString.ProhibitDefaultResolverName]; }
@@ -36,13 +42,17 @@ namespace System.Xml.XmlConfiguration {
                 return result;
             }
         }
-
+#endif
         //check the config every time, otherwise will have problem in different asp.net pages which have different settings.
         //ConfigurationManager will cache the section result, so expect no perf issue.
         internal static bool ProhibitDefaultUrlResolver {
             get {
+#if CONFIGURATION_DEP
                 XmlReaderSection section = System.Configuration.ConfigurationManager.GetSection(XmlConfigurationString.XmlReaderSectionPath) as XmlReaderSection;
                 return (section != null) ? section._ProhibitDefaultResolver : false;
+#else
+			return false;
+#endif
             }
         }
 
@@ -55,7 +65,12 @@ namespace System.Xml.XmlConfiguration {
     }
 
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public sealed class XsltConfigSection : ConfigurationSection {
+    public sealed class XsltConfigSection
+#if CONFIGURATION_DEP
+		: ConfigurationSection
+#endif
+	{
+#if CONFIGURATION_DEP
         [ConfigurationProperty(XmlConfigurationString.ProhibitDefaultResolverName, DefaultValue = "false")]
         public string ProhibitDefaultResolverString {
             get { return (string)this[XmlConfigurationString.ProhibitDefaultResolverName]; }
@@ -70,11 +85,15 @@ namespace System.Xml.XmlConfiguration {
                 return result;
             }
         }
-
+#endif
         private static bool s_ProhibitDefaultUrlResolver {
             get {
+#if CONFIGURATION_DEP
                 XsltConfigSection section = System.Configuration.ConfigurationManager.GetSection(XmlConfigurationString.XsltSectionPath) as XsltConfigSection;
                 return (section != null) ? section._ProhibitDefaultResolver : false;
+#else
+			return false;
+#endif
             }
         }
 
@@ -84,7 +103,7 @@ namespace System.Xml.XmlConfiguration {
                 else
                     return new XmlUrlResolver();
         }
-
+#if CONFIGURATION_DEP
         [ConfigurationProperty(XmlConfigurationString.LimitXPathComplexityName, DefaultValue = "true")]
         internal string LimitXPathComplexityString
         {
@@ -102,16 +121,20 @@ namespace System.Xml.XmlConfiguration {
                 return result;
             }
         }
-
+#endif
         internal static bool LimitXPathComplexity
         {
             get
             {
+#if CONFIGURATION_DEP
                 XsltConfigSection section = System.Configuration.ConfigurationManager.GetSection(XmlConfigurationString.XsltSectionPath) as XsltConfigSection;
                 return (section != null) ? section._LimitXPathComplexity : true;
+#else
+				return true;
+#endif
             }
         }
-
+#if CONFIGURATION_DEP
         [ConfigurationProperty(XmlConfigurationString.EnableMemberAccessForXslCompiledTransformName, DefaultValue = "False")]
         internal string EnableMemberAccessForXslCompiledTransformString
         {
@@ -129,31 +152,18 @@ namespace System.Xml.XmlConfiguration {
                 return result;
             }
         }
-
+#endif
         internal static bool EnableMemberAccessForXslCompiledTransform
         {
             get
             {
+#if CONFIGURATION_DEP
                 XsltConfigSection section = System.Configuration.ConfigurationManager.GetSection(XmlConfigurationString.XsltSectionPath) as XsltConfigSection;
                 return (section != null) ? section._EnableMemberAccessForXslCompiledTransform : false;
+#else
+				return false;
+#endif
             }
         }
     }
 }
-#else
-namespace System.Xml.XmlConfiguration {
-    public sealed class XsltConfigSection {
-        internal static XmlResolver CreateDefaultResolver() {
-		return XmlNullResolver.Singleton;
-        }
-        internal static bool EnableMemberAccessForXslCompiledTransform = false;
-	internal static bool LimitXPathComplexity = true;
-    }
-    public sealed class XmlReaderSection {
-        internal static XmlResolver CreateDefaultResolver() {
-		return null;
-        }
-	internal static bool ProhibitDefaultUrlResolver = false;
-    }
-}
-#endif
