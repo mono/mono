@@ -24,14 +24,17 @@ namespace System.Data {
         internal static TypeConverter GetConverter(Type type) { 
             HostProtectionAttribute protAttrib = new HostProtectionAttribute();
             protAttrib.SharedState = true;
-
+#if !DISABLE_CAS_USE
             CodeAccessPermission permission = (CodeAccessPermission)protAttrib.CreatePermission();
             permission.Assert(); 
+#endif
             try {
                 return TypeDescriptor.GetConverter(type);
             }
             finally {
+#if !DISABLE_CAS_USE
                 CodeAccessPermission.RevertAssert(); 
+#endif
             }
         }
 
