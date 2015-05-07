@@ -256,9 +256,8 @@ namespace Microsoft.Build.Tasks {
 		{
 			PackageAssemblyInfo pkg = null;
 
-			if (specific_version) {
-				pkg = PcCache.GetAssemblyLocation (reference.ItemSpec);
-			} else {
+			pkg = PcCache.GetAssemblyLocation (reference.ItemSpec);
+			if (pkg == null && !specific_version) {
 				// if not specific version, then just match simple name
 				string name = reference.ItemSpec;
 				if (name.IndexOf (',') > 0)
