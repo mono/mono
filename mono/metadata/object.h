@@ -1,6 +1,8 @@
 #ifndef _MONO_CLI_OBJECT_H_
 #define _MONO_CLI_OBJECT_H_
 
+#include <mono/metadata/object-forward.h>
+#include <mono/metadata/object-internals-forward.h>
 #include <mono/metadata/class.h>
 #include <mono/utils/mono-error-forward.h>
 
@@ -8,28 +10,10 @@ MONO_BEGIN_DECLS
 
 typedef mono_byte MonoBoolean;
 
-typedef struct _MonoString MonoString;
-typedef struct _MonoArray MonoArray;
-typedef struct _MonoReflectionMethod MonoReflectionMethod;
-typedef struct _MonoReflectionAssembly MonoReflectionAssembly;
-typedef struct _MonoReflectionModule MonoReflectionModule;
-typedef struct _MonoReflectionField MonoReflectionField;
-typedef struct _MonoReflectionProperty MonoReflectionProperty;
-typedef struct _MonoReflectionEvent MonoReflectionEvent;
-typedef struct _MonoReflectionType MonoReflectionType;
-typedef struct _MonoDelegate MonoDelegate;
-typedef struct _MonoException MonoException;
-typedef struct _MonoThreadsSync MonoThreadsSync;
-typedef struct _MonoThread MonoThread;
-typedef struct _MonoDynamicAssembly MonoDynamicAssembly;
-typedef struct _MonoDynamicImage MonoDynamicImage;
-typedef struct _MonoReflectionMethodBody MonoReflectionMethodBody;
-typedef struct _MonoAppContext MonoAppContext;
-
-typedef struct _MonoObject {
+struct _MonoObject {
 	MonoVTable *vtable;
 	MonoThreadsSync *synchronisation;
-} MonoObject;
+};
 
 typedef MonoObject* (*MonoInvokeFunc)	     (MonoMethod *method, void *obj, void **params, MonoObject **exc);
 typedef void*    (*MonoCompileFunc)	     (MonoMethod *method);

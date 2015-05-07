@@ -2,6 +2,7 @@
 #define __MONO_MINI_AMD64_H__
 
 #include <mono/arch/amd64/amd64-codegen.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/utils/mono-sigcontext.h>
 #include <mono/utils/mono-context.h>
 #include <glib.h>

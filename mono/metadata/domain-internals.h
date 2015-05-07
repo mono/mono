@@ -5,6 +5,7 @@
 #ifndef __MONO_METADATA_DOMAIN_INTERNALS_H__
 #define __MONO_METADATA_DOMAIN_INTERNALS_H__
 
+#include <mono/metadata/domain-internals-forward.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/lock-tracer.h>
@@ -55,9 +56,6 @@ typedef struct {
 	MonoArray *serialized_non_primitives;
 } MonoAppDomainSetup;
 
-typedef struct _MonoJitInfoTable MonoJitInfoTable;
-typedef struct _MonoJitInfoTableChunk MonoJitInfoTableChunk;
-
 #define MONO_JIT_INFO_TABLE_CHUNK_SIZE		64
 
 struct _MonoJitInfoTableChunk
@@ -79,7 +77,7 @@ struct _MonoJitInfoTable
 
 typedef GArray MonoAotModuleInfoTable;
 
-typedef struct {
+struct _MonoJitExceptionInfo {
 	guint32  flags;
 	gint32   exvar_offset;
 	gpointer try_start;
@@ -95,7 +93,7 @@ typedef struct {
 		gpointer filter;
 		gpointer handler_end;
 	} data;
-} MonoJitExceptionInfo;
+};
 
 /*
  * Contains information about the type arguments for generic shared methods.
@@ -277,15 +275,12 @@ typedef enum {
 	MONO_APPDOMAIN_UNLOADED
 } MonoAppDomainState;
 
-typedef struct _MonoThunkFreeList {
+struct _MonoThunkFreeList {
 	guint32 size;
 	int length;		/* only valid for the wait list */
 	struct _MonoThunkFreeList *next;
-} MonoThunkFreeList;
+};
 
-typedef struct _MonoJitCodeHash MonoJitCodeHash;
-
-typedef struct _MonoTlsDataRecord MonoTlsDataRecord;
 struct _MonoTlsDataRecord {
 	MonoTlsDataRecord *next;
 	guint32 tls_offset;

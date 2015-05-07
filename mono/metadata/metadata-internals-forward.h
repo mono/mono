@@ -1,0 +1,7 @@
+#ifndef __MONO_METADATA_INTERNALS_FORWARD_H__
+#define __MONO_METADATA_INTERNALS_FORWARD_H__
+
+typedef struct _MonoDynamicAssembly MonoDynamicAssembly;
+typedef struct _MonoDynamicImage MonoDynamicImage;
+
+#endif

@@ -14,16 +14,17 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+
 #include <mono/metadata/loader.h>
 #include <mono/metadata/mempool.h>
 #include <mono/utils/monobitset.h>
 #include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/domain-internals.h>
 #include "mono/metadata/class-internals.h"
-#include "mono/metadata/object-internals.h"
+#include "mono/metadata/object-internals-forward.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-compiler.h>

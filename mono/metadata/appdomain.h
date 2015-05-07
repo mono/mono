@@ -12,6 +12,7 @@
 
 #include <mono/utils/mono-publib.h>
 
+#include <mono/metadata/domain-internals-forward.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
 

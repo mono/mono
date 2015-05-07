@@ -1,0 +1,49 @@
+#ifndef __MONO_OBJECT_INTERNALS_FORWARD_H__
+#define __MONO_OBJECT_INTERNALS_FORWARD_H__
+
+struct _MonoAppDomain;
+struct _MonoArray;
+struct _MonoDelegate;
+struct _MonoException;
+struct _MonoIMTCheckItem;
+struct _MonoImtBuilderEntry;
+struct _MonoInternalThread;
+struct _MonoMulticastDelegate;
+struct _MonoReflectionAssembly;
+struct _MonoReflectionEvent;
+struct _MonoReflectionField;
+struct _MonoReflectionGenericClass;
+struct _MonoReflectionGenericMethod;
+struct _MonoReflectionMethod;
+struct _MonoReflectionMethodBody;
+struct _MonoReflectionModule;
+struct _MonoReflectionProperty;
+struct _MonoReflectionType;
+struct _MonoString;
+struct _MonoStringBuilder;
+struct _MonoThread;
+struct _MonoThreadsSync;
+
+typedef struct _MonoArray MonoArray;
+typedef struct _MonoDelegate MonoDelegate;
+typedef struct _MonoException MonoException;
+typedef struct _MonoIMTCheckItem MonoIMTCheckItem;
+typedef struct _MonoImtBuilderEntry MonoImtBuilderEntry;
+typedef struct _MonoInternalThread MonoInternalThread;
+typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
+typedef struct _MonoReflectionAssembly MonoReflectionAssembly;
+typedef struct _MonoReflectionEvent MonoReflectionEvent;
+typedef struct _MonoReflectionField MonoReflectionField;
+typedef struct _MonoReflectionGenericClass MonoReflectionGenericClass;
+typedef struct _MonoReflectionGenericMethod MonoReflectionGenericMethod;
+typedef struct _MonoReflectionMethod MonoReflectionMethod;
+typedef struct _MonoReflectionMethodBody MonoReflectionMethodBody;
+typedef struct _MonoReflectionModule MonoReflectionModule;
+typedef struct _MonoReflectionProperty MonoReflectionProperty;
+typedef struct _MonoReflectionType MonoReflectionType;
+typedef struct _MonoString MonoString;
+typedef struct _MonoStringBuilder MonoStringBuilder;
+typedef struct _MonoThread MonoThread;
+typedef struct _MonoThreadsSync MonoThreadsSync;
+
+#endif

@@ -11,6 +11,7 @@
 #define __MONO_UNWIND_H__
 
 #include "mini.h"
+#include <mono/metadata/domain-internals-forward.h>
 
 /*
  * This is a platform-independent interface for unwinding through stack frames 

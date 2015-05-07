@@ -58,8 +58,6 @@ typedef SECURITY_ATTRIBUTES WapiSecurityAttributes;
 typedef LPTHREAD_START_ROUTINE WapiThreadStart;
 #endif
 
-typedef struct _MonoInternalThread MonoInternalThread;
-
 typedef void (*MonoThreadCleanupFunc) (MonoNativeThreadId tid);
 /* INFO has type MonoThreadInfo* */
 typedef void (*MonoThreadNotifyPendingExcFunc) (gpointer info);

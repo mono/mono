@@ -1,6 +1,7 @@
 #ifndef __MONO_OBJECT_INTERNALS_H__
 #define __MONO_OBJECT_INTERNALS_H__
 
+#include <mono/metadata/object-internals-forward.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/reflection.h>
@@ -209,8 +210,6 @@ struct _MonoAppDomain {
 	MonoMarshalByRefObject mbr;
 	MonoDomain *data;
 };
-
-typedef struct _MonoStringBuilder MonoStringBuilder;
 
 struct _MonoStringBuilder {
 	MonoObject object;
@@ -769,7 +768,6 @@ struct _MonoReflectionMethod {
 	MonoReflectionType *reftype;
 };
 
-typedef struct _MonoReflectionGenericMethod MonoReflectionGenericMethod;
 struct _MonoReflectionGenericMethod {
 	MonoReflectionMethod method;
 };
@@ -793,7 +791,6 @@ struct _MonoDelegate {
 	MonoObject *data;
 };
 
-typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
 struct _MonoMulticastDelegate {
 	MonoDelegate delegate;
 	MonoArray *delegates;
@@ -1217,7 +1214,6 @@ typedef struct {
 	guint32 attrs;
 } MonoReflectionGenericParam;
 
-typedef struct _MonoReflectionGenericClass MonoReflectionGenericClass;
 struct _MonoReflectionGenericClass {
 	MonoReflectionType type;
 	MonoReflectionType *generic_type; /*Can be either a MonoType or a TypeBuilder*/
@@ -1515,15 +1511,13 @@ typedef union {
 	gpointer target_code;
 } MonoImtItemValue;
 
-typedef struct _MonoImtBuilderEntry {
+struct _MonoImtBuilderEntry {
 	gpointer key;
 	struct _MonoImtBuilderEntry *next;
 	MonoImtItemValue value;
 	int children;
 	guint8 has_target_code : 1;
-} MonoImtBuilderEntry;
-
-typedef struct _MonoIMTCheckItem MonoIMTCheckItem;
+};
 
 struct _MonoIMTCheckItem {
 	gpointer          key;

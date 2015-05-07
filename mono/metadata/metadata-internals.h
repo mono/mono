@@ -2,6 +2,7 @@
 #ifndef __MONO_METADATA_INTERNALS_H__
 #define __MONO_METADATA_INTERNALS_H__
 
+#include "mono/metadata/metadata-internals-forward.h"
 #include "mono/metadata/image.h"
 #include "mono/metadata/blob.h"
 #include "mono/metadata/mempool.h"
