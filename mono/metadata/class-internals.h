@@ -10,7 +10,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/utils/mono-error.h"
+#include <mono/utils/mono-error-forward.h>
 
 #define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
 

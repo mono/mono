@@ -27,6 +27,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-machine.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-threads.h>

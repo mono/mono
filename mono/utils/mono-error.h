@@ -1,6 +1,7 @@
 #ifndef __MONO_ERROR_H__
 #define __MONO_ERROR_H__
 
+#include <mono/utils/mono-error-forward.h>
 #include <mono/utils/mono-publib.h>
 
 enum {
@@ -33,13 +34,13 @@ enum {
 };
 
 /*Keep in sync with MonoErrorInternal*/
-typedef struct _MonoError {
+struct _MonoError {
 	unsigned short error_code;
     unsigned short hidden_0; /*DON'T TOUCH */
 
 	void *hidden_1 [12]; /*DON'T TOUCH */
     char hidden_2 [128]; /*DON'T TOUCH */
-} MonoError;
+};
 
 MONO_BEGIN_DECLS
 

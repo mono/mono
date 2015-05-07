@@ -12,7 +12,7 @@
 #include "mono/utils/monobitset.h"
 #include "mono/utils/mono-property-hash.h"
 #include "mono/utils/mono-value-hash.h"
-#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-forward.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
 struct _MonoType {

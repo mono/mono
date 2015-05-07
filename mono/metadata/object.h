@@ -2,7 +2,7 @@
 #define _MONO_CLI_OBJECT_H_
 
 #include <mono/metadata/class.h>
-#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-forward.h>
 
 MONO_BEGIN_DECLS
 

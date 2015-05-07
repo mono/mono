@@ -20,6 +20,7 @@
 #include "mono/metadata/class.h"
 #include "mono/metadata/class-internals.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-error.h"
 
 #if defined(__native_client__) && defined(__GLIBC__)
 volatile int __nacl_thread_suspension_needed = 0;

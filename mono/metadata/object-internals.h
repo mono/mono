@@ -9,7 +9,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/utils/mono-error.h"
+#include <mono/utils/mono-error-forward.h>
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 

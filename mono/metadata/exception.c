@@ -16,6 +16,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <string.h>
 

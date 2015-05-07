@@ -26,6 +26,7 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include "abi-details.h"
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 
