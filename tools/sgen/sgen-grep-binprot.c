@@ -8,7 +8,7 @@
 #define SGEN_BINARY_PROTOCOL
 #define MONO_INTERNAL
 
-#include <mono/metadata/sgen-protocol.h>
+#include <mono/sgen/sgen-protocol.h>
 
 #define SGEN_PROTOCOL_EOF	255
 
@@ -122,7 +122,7 @@ read_entry (EntryStream *stream, void *data)
 #define END_PROTOCOL_ENTRY
 #define END_PROTOCOL_ENTRY_HEAVY
 
-#include <mono/metadata/sgen-protocol-def.h>
+#include <mono/sgen/sgen-protocol-def.h>
 
 	default: assert (0);
 	}
@@ -182,7 +182,7 @@ is_always_match (int type)
 #define END_PROTOCOL_ENTRY
 #define END_PROTOCOL_ENTRY_HEAVY
 
-#include <mono/metadata/sgen-protocol-def.h>
+#include <mono/sgen/sgen-protocol-def.h>
 
 	default: assert (0);
 	}
@@ -420,7 +420,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 
-#include <mono/metadata/sgen-protocol-def.h>
+#include <mono/sgen/sgen-protocol-def.h>
 
 	default: assert (0);
 	}
@@ -503,7 +503,7 @@ match_index (gpointer ptr, int type, void *data)
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 
-#include <mono/metadata/sgen-protocol-def.h>
+#include <mono/sgen/sgen-protocol-def.h>
 
 	default: assert (0);
 	}
@@ -566,7 +566,7 @@ is_vtable_match (gpointer ptr, int type, void *data)
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 
-#include <mono/metadata/sgen-protocol-def.h>
+#include <mono/sgen/sgen-protocol-def.h>
 
 	default: assert (0);
 	}
