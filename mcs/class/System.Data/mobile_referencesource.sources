@@ -187,6 +187,7 @@
 ../../../external/referencesource/System.Data/System/Data/Merger.cs
 ../../../external/referencesource/System.Data/System/Data/MissingMappingAction.cs
 ../../../external/referencesource/System.Data/System/Data/MissingSchemaAction.cs
+../../../external/referencesource/System.Data/System/Data/OleDb/OleDbType.cs
 ../../../external/referencesource/System.Data/System/Data/OleDb/PropertyAttributes.cs
 ../../../external/referencesource/System.Data/System/Data/OperationAbortedException.cs
 ../../../external/referencesource/System.Data/System/Data/ParameterDirection.cs
@@ -254,9 +255,21 @@
 ../../../external/referencesource/System.Data/System/NewXml/XmlDataDocument.cs
 ../../../external/referencesource/System.Data/System/NewXml/XmlDataImplementation.cs
 ../../../external/referencesource/System.Data/System/NewXml/XPathNodePointer.cs
-../../../external/referencesource/System.Data/System/Data/OleDb/OleDbType.cs
+
+../../../external/referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
 
 ../../../external/referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/LocalDBAPI.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlConnectionString.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlConnectionStringBuilder.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlError.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlErrorCollection.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlInfoMessageEvent.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlUtil.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/TdsEnums.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/TdsParserStaticMethods.cs
+
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/INullable.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLBinary.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLBoolean.cs

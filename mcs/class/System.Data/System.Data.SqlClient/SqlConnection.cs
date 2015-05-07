@@ -419,7 +419,10 @@ namespace System.Data.SqlClient
 		
 		private SqlInfoMessageEventArgs CreateSqlInfoMessageEvent (TdsInternalErrorCollection errors)
 		{
-			return new SqlInfoMessageEventArgs (errors);
+			foreach (TdsInternalError e in errors)
+				return new SqlInfoMessageEventArgs (new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State));
+
+			return null;
 		}
 
 		private StateChangeEventArgs CreateStateChangeEvent (ConnectionState originalState, ConnectionState currentState)

@@ -822,6 +822,7 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		[SetCulture("en-US")]
 		public void PropertyExceptions ()
 		{
 			DataSet set = new DataSet ();
@@ -3248,7 +3249,7 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			// Looks like whoever added this test depended on English culture, which is wrong.
-			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Region\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring, "test#03");
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"en-US\" msdata:MainDataTable=\"Region\" name=\"Root\">", substring, "test#03");
 
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
@@ -4211,6 +4212,7 @@ namespace MonoTests.System.Data
 #endif
 
 		[Test]
+		[SetCulture ("en-US")]
 		public void Bug55978 ()
 		{
 			DataTable dt = new DataTable ();

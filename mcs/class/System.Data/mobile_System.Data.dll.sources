@@ -10,6 +10,7 @@ ReferenceSources/ResCategoryAttribute.cs
 ReferenceSources/ResDescriptionAttribute.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
+ReferenceSources/SqlInternalConnectionTds.cs
 
 ReferenceSources/mobile_DbConnectionPoolCounters.cs
 
