@@ -100,18 +100,23 @@ void _wapi_collection_init (void)
 
 extern void _wapi_collection_shutdown (void)
 {
-	// signal and wait for collection thread to fininsh
-	pthread_mutex_lock (&collection_thread_wait_mutex);
 
-	collection_thread_enabled = FALSE;
+	// Only clean up if the thread has been enabled
+	if(collection_thread_enabled != FALSE)
+	{
+		// signal and wait for collection thread to fininsh
+		pthread_mutex_lock (&collection_thread_wait_mutex);
 
-	pthread_cond_signal (&collection_thread_wait_cond);
-	pthread_mutex_unlock (&collection_thread_wait_mutex);
-	pthread_join (collection_thread_id, NULL);
+		collection_thread_enabled = FALSE;
 
-	// cleanup
-	pthread_cond_destroy (&collection_thread_wait_cond);
-	pthread_mutex_destroy (&collection_thread_wait_mutex);
+		pthread_cond_signal (&collection_thread_wait_cond);
+		pthread_mutex_unlock (&collection_thread_wait_mutex);
+		pthread_join (collection_thread_id, NULL);
+
+		// cleanup
+		pthread_cond_destroy (&collection_thread_wait_cond);
+		pthread_mutex_destroy (&collection_thread_wait_mutex);
+	}
 }
 
 
