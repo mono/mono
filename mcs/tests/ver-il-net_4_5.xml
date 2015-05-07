@@ -51494,6 +51494,25 @@
       </method>
     </type>
   </test>
+  <test name="test-923.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Location ByRef)" attrs="150">
+        <size>21</size>
+      </method>
+      <method name="Void Test(LocationWrapper)" attrs="150">
+        <size>39</size>
+      </method>
+      <method name="Void Test(LocationWrapper ByRef)" attrs="150">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">
@@ -68738,6 +68757,12 @@
       <method name="Void set_PropNullable(System.Nullable`1[System.Byte])" attrs="2182">
         <size>8</size>
       </method>
+      <method name="System.Object get_PropReference()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_PropReference(System.Object)" attrs="2182">
+        <size>8</size>
+      </method>
       <method name="Void add_ev1(System.Action)" attrs="2182">
         <size>42</size>
       </method>
@@ -68749,25 +68774,17 @@
       </method>
     </type>
     <type name="C">
-      <method name="Int32 Main()" attrs="145">
-        <size>64</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
       <method name="Int32 TestProperty()" attrs="145">
         <size>359</size>
       </method>
       <method name="Int32 TestField()" attrs="145">
         <size>351</size>
       </method>
-    </type>
-    <type name="CI">
-      <method name="System.Object get_PropReference()" attrs="2182">
-        <size>14</size>
+      <method name="Int32 Main()" attrs="145">
+        <size>64</size>
       </method>
-      <method name="Void set_PropReference(System.Object)" attrs="2182">
-        <size>8</size>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

@@ -6447,14 +6447,37 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (TypeSpec.IsValueType (InstanceExpression.Type) && InstanceExpression is VariableReference)
+				if (TypeSpec.IsValueType (InstanceExpression.Type)) {
+					var le = SkipLeftValueTypeAccess (InstanceExpression);
+					if (le != null)
+						le.FlowAnalysis (fc);
+
 					return;
+				}
 			}
 
 			base.FlowAnalysis (fc);
 
 			if (conditional_access_receiver)
 				fc.ConditionalAccessEnd ();
+		}
+
+		static Expression SkipLeftValueTypeAccess (Expression expr)
+		{
+			if (!TypeSpec.IsValueType (expr.Type))
+				return expr;
+
+			if (expr is VariableReference)
+				return null;
+
+			var fe = expr as FieldExpr;
+			if (fe == null)
+				return expr;
+
+			if (fe.InstanceExpression == null)
+				return expr;
+
+			return SkipLeftValueTypeAccess (fe.InstanceExpression);
 		}
 
 		public override int GetHashCode ()
