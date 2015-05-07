@@ -39,6 +39,9 @@ namespace System.Data.Sql {
         }
 
         override public DataTable GetDataSources() {
+#if MONO
+            throw new NotImplementedException ();
+#else
             (new NamedPermissionSet("FullTrust")).Demand(); // SQLBUDT 244304
             char[] buffer = null;
             StringBuilder strbldr = new StringBuilder();
@@ -84,6 +87,7 @@ namespace System.Data.Sql {
             }
 
             return ParseServerEnumString(strbldr.ToString());
+#endif
         }
         
         private static string _Version = "Version:";

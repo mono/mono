@@ -46,7 +46,7 @@ namespace System.Data
                 return instanceName;
         }
 
-
+#if !MONO
         internal static void ReleaseDLLHandles()
         {
             s_userInstanceDLLHandle = IntPtr.Zero;
@@ -353,7 +353,7 @@ namespace System.Data
             instanceInfo.created=true; // mark instance as created
 
         } // CreateLocalDbInstance
-
+#endif
     }
 
 }
