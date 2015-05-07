@@ -480,6 +480,8 @@ namespace Mono.Data.Tds {
 				return TdsColumnType.BigVarBinary;
 			case "varchar":
 				return TdsColumnType.BigVarChar;
+			case "sql_variant":
+				return TdsColumnType.Variant;
 			default:
 				throw new NotSupportedException ("Unknown Type : " + TypeName);
 			}
