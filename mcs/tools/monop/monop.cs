@@ -301,10 +301,10 @@ class MonoP {
 
 	static Options options = new Options ();
 	
-	static void Main (string [] args)
+	static int Main (string [] args)
 	{
 		if (!options.ProcessArgs (args))
-			return;
+			return 1;
 		
 		if (options.Style == null)
 			mscorlib = universe.LoadFile (typeof (int).Assembly.Location);
@@ -318,14 +318,14 @@ class MonoP {
 
 			if (options.ShowAll){
 				ShowAll (assembly, options.ShowPrivate, options.FilterObsolete);
-				return;
+				return 0;
 			} else {
 				if (options.Type == null) {
 					if (options.PrintRefs)
 						PrintRefs (assembly);
 					else
 						PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
-					return;
+					return 0;
 				}
 			}
 		}
@@ -348,7 +348,7 @@ class MonoP {
 			if (count > 1){
 				Console.WriteLine ("Found " + count + " types that match:");
 				Console.WriteLine (matches);
-				return;
+				return 0;
 			}
 		}
 			
@@ -394,7 +394,7 @@ class MonoP {
 	notfound:
 		if (t == null) {
 			Console.WriteLine ("Could not find {0}", tname);
-			return;
+			return 1;
 		}
 	found:
 		//
@@ -406,6 +406,7 @@ class MonoP {
 
 		if (message != null)
 			Console.WriteLine (message);
+		return 0;
 	}
 }
 
