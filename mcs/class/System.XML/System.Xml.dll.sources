@@ -480,11 +480,15 @@ ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Xml/System/Xml/Schema/XsdValidator.cs
 
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/_Events.cs
+../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeGenerationoptions.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeIdentifier.cs
+../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeIdentifiers.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/ImportContext.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/SchemaObjectWriter.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/XmlSchemas.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/XmlSerializerNamespaces.cs
+
+../../../external/referencesource/System.Xml/System/Xml/Serialization/Advanced/SchemaImporterExtension.cs
 
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/Configuration/ConfigurationStrings.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/Configuration/DateTimeSerializationSection.cs
@@ -601,11 +605,7 @@ ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltException.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XslTransform.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltSettings.cs
-System.Xml.Serialization.Advanced/SchemaImporterExtensionCollection.cs
-System.Xml.Serialization.Advanced/SchemaImporterExtension.cs
 System.Xml.Serialization/CodeExporter.cs
-System.Xml.Serialization/CodeGenerationOptions.cs
-System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/IXmlSerializable.cs
 System.Xml.Serialization/IXmlTextParser.cs
