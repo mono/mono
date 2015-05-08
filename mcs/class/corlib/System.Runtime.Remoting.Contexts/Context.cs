@@ -58,6 +58,12 @@ namespace System.Runtime.Remoting.Contexts {
 		#endregion
 #pragma warning restore 169, 414
 
+		// Name is significant; used by the runtime.
+		[ContextStatic]
+		static object[] local_slots;
+
+		static NamedDataSlot namedDataSlot;
+
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;
 
@@ -67,16 +73,10 @@ namespace System.Runtime.Remoting.Contexts {
 		// The sink chain that has to be used by all calls exiting the context
 		IMessageSink client_context_sink_chain = null;
 
-		object[] datastore;
 		List<IContextProperty> context_properties;
 //		bool frozen;
 		
 		static int global_count;
-
-		/* Wrap this in a nested class so its not constructed during shutdown */
-		class NamedSlots {
-			public static Hashtable namedSlots = new Hashtable ();
-		}
 
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
@@ -367,66 +367,61 @@ namespace System.Runtime.Remoting.Contexts {
 			
 			callback_object.DoCallBack (deleg);
 		}
-		
+
+		static NamedDataSlot NamedDataSlot {
+			get {
+				if (namedDataSlot == null)
+					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (false), null);
+
+				return namedDataSlot;
+			}
+		}
+
 		public static LocalDataStoreSlot AllocateDataSlot ()
 		{
 			return new LocalDataStoreSlot (false);
 		}
-		
+
 		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				LocalDataStoreSlot slot = AllocateDataSlot ();
-				NamedSlots.namedSlots.Add (name, slot);
-				return slot;
-			}
+			return NamedDataSlot.Allocate (name);
 		}
-		
+
 		public static void FreeNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				NamedSlots.namedSlots.Remove (name);
-			}
+			NamedDataSlot.Free (name);
 		}
-		
-		public static object GetData (LocalDataStoreSlot slot)
-		{
-			Context ctx = Thread.CurrentContext;
-			
-			lock (ctx)
-			{
-				if (ctx.datastore != null && slot.slot < ctx.datastore.Length)
-					return ctx.datastore [slot.slot];
-				return null;
-			}
-		}
-		
+
 		public static LocalDataStoreSlot GetNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				LocalDataStoreSlot slot = NamedSlots.namedSlots [name] as LocalDataStoreSlot;
-				if (slot == null) return AllocateNamedDataSlot (name);
-				else return slot;
-			}
+			return NamedDataSlot.Get (name);
 		}
-		
+
+		public static object GetData (LocalDataStoreSlot slot)
+		{
+			object[] slots = local_slots;
+			if (slot == null)
+				throw new ArgumentNullException ("slot");
+			if (slots != null && slot.slot < slots.Length)
+				return slots [slot.slot];
+			return null;
+		}
+
 		public static void SetData (LocalDataStoreSlot slot, object data)
 		{
-			Context ctx = Thread.CurrentContext;
-			lock (ctx)
-			{
-				if (ctx.datastore == null) {
-					ctx.datastore = new object [slot.slot + 2];
-				} else if (slot.slot >= ctx.datastore.Length) {
-					object[] nslots = new object [slot.slot + 2];
-					ctx.datastore.CopyTo (nslots, 0);
-					ctx.datastore = nslots;
-				}
-				ctx.datastore [slot.slot] = data;
+			object[] slots = local_slots;
+			if (slot == null)
+				throw new ArgumentNullException ("slot");
+			if (slots == null) {
+				slots = new object [slot.slot + 2];
+				local_slots = slots;
+			} else if (slot.slot >= slots.Length) {
+				object[] nslots = new object [slot.slot + 2];
+				slots.CopyTo (nslots, 0);
+				slots = nslots;
+				local_slots = slots;
 			}
+			slots [slot.slot] = data;
 		}
 	}
 

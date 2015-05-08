@@ -328,7 +328,7 @@ namespace System.Threading {
 		static NamedDataSlot NamedDataSlot {
 			get {
 				if (namedDataSlot == null)
-					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (), null);
+					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (true), null);
 
 				return namedDataSlot;
 			}
