@@ -12,20 +12,9 @@
 #include <mono/metadata/domain-internals-forward.h>
 #include <mono/metadata/metadata-internals-forward.h>
 
-MONO_BEGIN_DECLS
+#include <mono/utils/mono-publib.h>
 
-/*
- * When embedding, you have to define MONO_ZERO_LEN_ARRAY before including any
- * other Mono header file if you use a different compiler from the one used to
- * build Mono.
- */
-#ifndef MONO_ZERO_LEN_ARRAY
-#ifdef __GNUC__
-#define MONO_ZERO_LEN_ARRAY 0
-#else
-#define MONO_ZERO_LEN_ARRAY 1
-#endif
-#endif
+MONO_BEGIN_DECLS
 
 #define MONO_TYPE_ISSTRUCT(t) mono_type_is_struct (t)
 #define MONO_TYPE_IS_VOID(t) mono_type_is_void (t)
@@ -178,7 +167,7 @@ typedef enum {
 	MONO_MARSHAL_CONV_HANDLEREF
 } MonoMarshalConv;
 
-typedef struct {
+struct _MonoMarshalSpec {
 	MonoMarshalNative native;
 	union {
 		struct {
@@ -197,7 +186,7 @@ typedef struct {
 			int32_t num_elem;
 		} safearray_data;
 	} data;
-} MonoMarshalSpec;
+};
 
 MONO_API void         mono_metadata_init (void);
 

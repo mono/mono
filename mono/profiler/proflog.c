@@ -16,6 +16,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/object.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>

@@ -1,7 +1,13 @@
 #ifndef __METADATA_REFLECTION_H__
 #define __METADATA_REFLECTION_H__
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
+#include <mono/metadata/class-internals-forward.h>
+#include <mono/metadata/domain-internals-forward.h>
+#include <mono/metadata/object-internals-forward.h>
+#include <mono/metadata/metadata-internals-forward.h>
+#include <mono/metadata/metadata-forward.h>
+#include <mono/utils/mono-error-forward.h>
 
 MONO_BEGIN_DECLS
 

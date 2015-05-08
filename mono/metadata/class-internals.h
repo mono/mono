@@ -5,7 +5,7 @@
 #define __MONO_METADATA_CLASS_INTERBALS_H__
 
 #include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/io-layer/io-layer.h>
@@ -442,7 +442,7 @@ int mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf,
 typedef gpointer MonoRuntimeGenericContext;
 
 /* the interface_offsets array is stored in memory before this struct */
-struct MonoVTable {
+struct _MonoVTable {
 	MonoClass  *klass;
 	 /*
 	 * According to comments in gc_gcj.h, this should be the second word in

@@ -12,7 +12,7 @@
 #define _MONO_METADATA_THREADS_H_
 
 #include <mono/utils/mono-publib.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 
 MONO_BEGIN_DECLS

@@ -5,7 +5,8 @@
 #ifndef __METADATA_MONO_GC_H__
 #define __METADATA_MONO_GC_H__
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
+#include <mono/metadata/class-internals-forward.h>
 
 MONO_BEGIN_DECLS
 

@@ -13,7 +13,7 @@
 #define _MONO_METADATA_RAND_H_
 
 #include <glib.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include "mono/utils/mono-compiler.h"
 
 MonoBoolean ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (void);

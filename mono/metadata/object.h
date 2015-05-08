@@ -8,8 +8,6 @@
 
 MONO_BEGIN_DECLS
 
-typedef mono_byte MonoBoolean;
-
 struct _MonoObject {
 	MonoVTable *vtable;
 	MonoThreadsSync *synchronisation;

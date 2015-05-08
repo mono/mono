@@ -16,7 +16,7 @@
 #include <mono/utils/mono-internal-hash.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/mempool-internals.h>
-
+#include <mono/metadata/object.h>
 
 extern mono_mutex_t mono_delegate_section;
 extern mono_mutex_t mono_strtod_mutex;

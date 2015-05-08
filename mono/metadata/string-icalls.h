@@ -12,7 +12,8 @@
 
 #include <glib.h>
 #include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
+#include <mono/metadata/object-internals-forward.h>
 #include "mono/utils/mono-compiler.h"
 
 void

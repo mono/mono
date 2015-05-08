@@ -12,6 +12,8 @@
 
 #include <glib.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/class-internals-forward.h>
+#include <mono/metadata/object.h>
 #include <mono/sgen/gc-internal-agnostic.h>
 #include <mono/utils/gc_wrapper.h>
 

@@ -5,7 +5,7 @@
  * mono-mlist.h: Managed object list implementation
  */
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 
 typedef struct _MonoMList MonoMList;
 MONO_API MonoMList*  mono_mlist_alloc       (MonoObject *data);
