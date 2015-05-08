@@ -34,8 +34,14 @@ namespace System.Threading
 {
 	sealed class NamedDataSlot
 	{
+		bool thread_local;
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
 		Dictionary<string, LocalDataStoreSlot> datastorehash;
+
+		public NamedDataSlot (bool thread_local)
+		{
+			this.thread_local = thread_local;
+		}
 
 		public LocalDataStoreSlot Allocate (string name)
 		{		
@@ -49,7 +55,7 @@ namespace System.Threading
 					throw new ArgumentException ("Named data slot already added");
 				}
 			
-				var slot = new LocalDataStoreSlot (true);
+				var slot = new LocalDataStoreSlot (thread_local);
 				datastorehash.Add (name, slot);
 				return slot;
 			}
@@ -63,7 +69,7 @@ namespace System.Threading
 
 				LocalDataStoreSlot slot;
 				if (!datastorehash.TryGetValue (name, out slot)) {
-					slot = new LocalDataStoreSlot (true);
+					slot = new LocalDataStoreSlot (thread_local);
 					datastorehash.Add (name, slot);
 				}
 			
