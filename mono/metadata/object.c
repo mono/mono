@@ -33,6 +33,7 @@
 #include "mono/metadata/mono-debug-debugger.h"
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error.h>

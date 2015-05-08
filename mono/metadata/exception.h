@@ -2,6 +2,7 @@
 #define _MONO_METADATA_EXCEPTION_H_
 
 #include <mono/metadata/object.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/image.h>
 
 MONO_BEGIN_DECLS

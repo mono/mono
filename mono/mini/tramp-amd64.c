@@ -21,6 +21,7 @@
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/arch/amd64/amd64-codegen.h>
 
 #include <mono/utils/atomic.h>

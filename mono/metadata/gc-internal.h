@@ -11,7 +11,6 @@
 #define __MONO_METADATA_GC_INTERNAL_H__
 
 #include <glib.h>
-#include <mono/metadata/object-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/sgen/gc-internal-agnostic.h>
 #include <mono/utils/gc_wrapper.h>

@@ -21,6 +21,7 @@
 #include <mono/utils/mono-error.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/object-internals.h>
 
 extern gboolean substitute_with_mscorlib_p;
 

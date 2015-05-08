@@ -3,6 +3,9 @@
 
 struct _MonoAppDomain;
 struct _MonoArray;
+struct _MonoAsyncResult;
+struct _MonoComInteropProxy;
+struct _MonoComObject;
 struct _MonoDelegate;
 struct _MonoException;
 struct _MonoIMTCheckItem;
@@ -23,8 +26,13 @@ struct _MonoString;
 struct _MonoStringBuilder;
 struct _MonoThread;
 struct _MonoThreadsSync;
+struct _MonoTypedRef;
+struct _MonoWaitHandle;
 
 typedef struct _MonoArray MonoArray;
+typedef struct _MonoAsyncResult MonoAsyncResult;
+typedef struct _MonoComInteropProxy MonoComInteropProxy;
+typedef struct _MonoComObject MonoComObject;
 typedef struct _MonoDelegate MonoDelegate;
 typedef struct _MonoException MonoException;
 typedef struct _MonoIMTCheckItem MonoIMTCheckItem;
@@ -45,5 +53,7 @@ typedef struct _MonoString MonoString;
 typedef struct _MonoStringBuilder MonoStringBuilder;
 typedef struct _MonoThread MonoThread;
 typedef struct _MonoThreadsSync MonoThreadsSync;
+typedef struct _MonoTypedRef MonoTypedRef;
+typedef struct _MonoWaitHandle MonoWaitHandle;
 
 #endif

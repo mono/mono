@@ -26,8 +26,10 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include "abi-details.h"
+#include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/mono-membar.h>
 #include <mono/utils/bsearch.h>
 
 /* Auxiliary structure used for caching inflated signatures */

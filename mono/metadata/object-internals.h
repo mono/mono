@@ -220,11 +220,11 @@ struct _MonoStringBuilder {
 	int maxCapacity;
 };
 
-typedef struct {
+struct _MonoTypedRef {
 	MonoType *type;
 	gpointer  value;
 	MonoClass *klass;
-} MonoTypedRef;
+};
 
 typedef struct {
 	gpointer args;
@@ -265,7 +265,7 @@ typedef struct {
 	MonoString *param_name;
 } MonoArgumentException;
 
-typedef struct {
+struct _MonoAsyncResult {
 	MonoObject   object;
 	MonoObject  *async_state;
 	MonoObject  *handle;
@@ -279,13 +279,13 @@ typedef struct {
 	MonoObject  *execution_context;
 	MonoObject  *original_context;
 	gint64	     add_time;
-} MonoAsyncResult;
+};
 
-typedef struct {
+struct _MonoWaitHandle {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
 	MonoBoolean  disposed;
-} MonoWaitHandle;
+};
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -318,18 +318,18 @@ typedef struct {
 	MonoObject *stub_data;
 } MonoRealProxy;
 
-typedef struct {
+struct _MonoComObject {
 	MonoMarshalByRefObject object;
 	gpointer iunknown;
 	GHashTable* itf_hash;
 	MonoObject *synchronization_context;
-} MonoComObject;
+};
 
-typedef struct {
+struct _MonoComInteropProxy {
 	MonoRealProxy real_proxy;
 	MonoComObject *com_object;
 	gint32 ref_count;
-} MonoComInteropProxy;
+};
 
 typedef struct {
 	MonoObject	 object;

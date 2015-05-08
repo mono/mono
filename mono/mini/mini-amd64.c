@@ -30,6 +30,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-mmap.h>

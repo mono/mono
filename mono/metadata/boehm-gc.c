@@ -22,6 +22,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/sgen-toggleref.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-memory-model.h>

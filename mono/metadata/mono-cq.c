@@ -8,8 +8,10 @@
  * Copyright 2011 Xamarin Inc
  */
 
-#include <mono/metadata/object.h>
 #include <mono/metadata/mono-cq.h>
+#include <mono/metadata/class-internals.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
