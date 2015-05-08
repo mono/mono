@@ -1,3 +1,4 @@
+#if CONFIGURATION_DEP
 namespace System.Xml.Serialization.Configuration
 {
     using System;
@@ -96,4 +97,4 @@ namespace System.Xml.Serialization.Configuration
     }
 }
 
-
+#endif

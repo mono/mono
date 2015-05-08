@@ -4,7 +4,7 @@
 // </copyright>
 // <owner current="true" primary="true">[....]</owner>                                                                
 //------------------------------------------------------------------------------
-
+#if CONFIGURATION_DEP
 namespace System.Xml.Serialization.Configuration
 {
 
@@ -95,4 +95,4 @@ namespace System.Xml.Serialization.Configuration
 
 }
 
-
+#endif

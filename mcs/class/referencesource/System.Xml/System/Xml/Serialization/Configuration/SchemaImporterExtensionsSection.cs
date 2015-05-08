@@ -4,7 +4,7 @@
 // </copyright>
 // <owner current="true" primary="true">[....]</owner>                                                                
 //------------------------------------------------------------------------------
-
+#if CONFIGURATION_DEP
 namespace System.Xml.Serialization.Configuration
 {
     using System.Configuration;
@@ -105,3 +105,4 @@ namespace System.Xml.Serialization.Configuration
                     ConfigurationPropertyOptions.IsDefaultCollection);
     }
 }
+#endif
