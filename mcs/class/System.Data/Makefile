@@ -41,7 +41,6 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Xml/*.xsd)		\
 	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
-	Mono.Data.SqlExpressions/Parser.jay	\
 	app_test_net_2_0.config			\
 	app_test_net_4_5.config			\
 	Test/System.Data/binserialize/*.bin	\
