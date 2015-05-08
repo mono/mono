@@ -112,7 +112,6 @@ namespace Microsoft.Build.Execution
 				throw new InvalidOperationException ("Build has not started");
 			if (submissions.Count > 0)
 				WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
-			BuildNodeManager.Stop ();
 			ongoing_build_parameters = null;
 		}
 		
