@@ -516,6 +516,8 @@ namespace System.Text
                                 break;
                             default:
                                 result = (Encoding)(EncodingHelper.InvokeI18N ("GetEncoding", codepage));
+								if (result == null)
+									throw new NotSupportedException(Environment.GetResourceString("NotSupported_NoCodepageData", codepage));
                                 break;
                             }
 #else
