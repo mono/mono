@@ -126,8 +126,6 @@ struct _MonoTableInfo {
 
 #define REFERENCE_MISSING ((gpointer) -1)
 
-typedef struct _MonoDllMap MonoDllMap;
-
 struct _MonoImage {
 	/*
 	 * The number of assemblies which reference this MonoImage though their 'image'
@@ -472,7 +470,7 @@ struct _MonoDynamicImage {
 };
 
 /* Contains information about assembly binding */
-typedef struct _MonoAssemblyBindingInfo {
+struct _MonoAssemblyBindingInfo {
 	char *name;
 	char *culture;
 	guchar public_key_token [MONO_PUBLIC_KEY_TOKEN_LENGTH];
@@ -486,7 +484,7 @@ typedef struct _MonoAssemblyBindingInfo {
 	guint has_new_version : 1;
 	guint is_valid : 1;
 	gint32 domain_id; /*Needed to unload per-domain binding*/
-} MonoAssemblyBindingInfo;
+};
 
 struct _MonoMethodHeader {
 	const unsigned char  *code;

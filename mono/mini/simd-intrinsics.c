@@ -14,6 +14,8 @@
 #include "ir-emit.h"
 #include "mono/utils/bsearch.h"
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/object-internals.h>
+#include <mono/metadata/tabledefs.h>
 
 /*
 General notes on SIMD intrinsics

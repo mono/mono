@@ -51,6 +51,8 @@
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
+#include <mono/metadata/exception.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-mmap.h>
 #include "mono/utils/mono-compiler.h"

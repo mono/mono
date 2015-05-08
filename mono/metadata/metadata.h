@@ -7,6 +7,10 @@
 #include <mono/metadata/blob.h>
 #include <mono/metadata/row-indexes.h>
 #include <mono/metadata/image.h>
+#include <mono/metadata/metadata-forward.h>
+#include <mono/metadata/class-internals-forward.h>
+#include <mono/metadata/domain-internals-forward.h>
+#include <mono/metadata/metadata-internals-forward.h>
 
 MONO_BEGIN_DECLS
 
@@ -31,10 +35,6 @@ MONO_BEGIN_DECLS
 #define MONO_CLASS_IS_INTERFACE(c) ((c->flags & TYPE_ATTRIBUTE_INTERFACE) || (c->byval_arg.type == MONO_TYPE_VAR) || (c->byval_arg.type == MONO_TYPE_MVAR))
 
 #define MONO_CLASS_IS_IMPORT(c) ((c->flags & TYPE_ATTRIBUTE_IMPORT))
-
-typedef struct _MonoClass MonoClass;
-typedef struct _MonoDomain MonoDomain;
-typedef struct _MonoMethod MonoMethod;
 
 typedef enum {
 	MONO_EXCEPTION_CLAUSE_NONE,
@@ -292,16 +292,6 @@ typedef struct {
 	} data;
 } MonoExceptionClause;
 
-typedef struct _MonoType MonoType;
-typedef struct _MonoGenericInst MonoGenericInst;
-typedef struct _MonoGenericClass MonoGenericClass;
-typedef struct _MonoDynamicGenericClass MonoDynamicGenericClass;
-typedef struct _MonoGenericContext MonoGenericContext;
-typedef struct _MonoGenericContainer MonoGenericContainer;
-typedef struct _MonoGenericParam MonoGenericParam;
-typedef struct _MonoArrayType MonoArrayType;
-typedef struct _MonoMethodSignature MonoMethodSignature;
-
 /* FIXME: Keeping this name alive for now, since it is part of the exposed API, even though no entrypoint uses it.  */
 typedef struct invalid_name MonoGenericMethod;
 
@@ -318,8 +308,6 @@ struct _MonoArrayType {
 	int *sizes;
 	int *lobounds;
 };
-
-typedef struct _MonoMethodHeader MonoMethodHeader;
 
 typedef enum {
 	MONO_PARSE_TYPE,

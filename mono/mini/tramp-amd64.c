@@ -23,6 +23,7 @@
 #include <mono/metadata/gc-internal.h>
 #include <mono/arch/amd64/amd64-codegen.h>
 
+#include <mono/utils/atomic.h>
 #include <mono/utils/memcheck.h>
 
 #include "mini.h"

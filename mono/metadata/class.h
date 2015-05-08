@@ -10,10 +10,6 @@ MONO_BEGIN_DECLS
 
 typedef struct MonoVTable MonoVTable;
 
-typedef struct _MonoClassField MonoClassField;
-typedef struct _MonoProperty MonoProperty;
-typedef struct _MonoEvent MonoEvent;
-
 MONO_API MonoClass *
 mono_class_get             (MonoImage *image, uint32_t type_token);
 

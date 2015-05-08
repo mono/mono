@@ -98,7 +98,7 @@ struct _MonoJitExceptionInfo {
 /*
  * Contains information about the type arguments for generic shared methods.
  */
-typedef struct {
+struct _MonoGenericSharingContext {
 	/*
 	 * If not NULL, determines whenever the class type arguments of the gshared method are references or vtypes.
 	 * The array length is equal to class_inst->type_argv.
@@ -106,7 +106,7 @@ typedef struct {
 	gboolean *var_is_vt;
 	/* Same for method type parameters */
 	gboolean *mvar_is_vt;
-} MonoGenericSharingContext;
+};
 
 /* Simplified DWARF location list entry */
 typedef struct {

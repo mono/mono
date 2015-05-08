@@ -27,6 +27,10 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/metadata.h>
+#include <mono/metadata/marshal.h>
+#include <mono/metadata/tokentype.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-memory-model.h>

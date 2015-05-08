@@ -16,6 +16,7 @@
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-threads-coop.h>
+#include <mono/utils/mono-threads-forward.h>
 
 #include <glib.h>
 #include <config.h>
@@ -170,7 +171,7 @@ typedef enum {
 	MONO_SERVICE_REQUEST_SAMPLE = 1,
 } MonoAsyncJob;
 
-typedef struct {
+struct _MonoThreadInfo {
 	MonoLinkedListSetNode node;
 	guint32 small_id; /*Used by hazard pointers */
 	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
@@ -243,7 +244,7 @@ typedef struct {
 	volatile gint32 service_requests;
 
 	void *jit_data;
-} MonoThreadInfo;
+};
 
 typedef struct {
 	void* (*thread_register)(THREAD_INFO_TYPE *info, void *baseaddr);

@@ -15,6 +15,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/tabledefs.h>
 
 #include <mono/metadata/mono-debug-debugger.h>
 

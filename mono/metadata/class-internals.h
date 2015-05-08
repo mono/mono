@@ -21,10 +21,6 @@
 extern gboolean mono_print_vtable;
 extern gboolean mono_align_small_structs;
 
-typedef struct _MonoMethodWrapper MonoMethodWrapper;
-typedef struct _MonoMethodInflated MonoMethodInflated;
-typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
-
 /* Properties that applies to a group of structs should better use a higher number
  * to avoid colision with type specific properties.
  * 
@@ -110,7 +106,7 @@ struct _MonoMethodPInvoke {
  * This information is rarely needed, so it is stored separately from 
  * MonoClassField.
  */
-typedef struct MonoFieldDefaultValue {
+struct _MonoFieldDefaultValue {
 	/*
 	 * If the field is constant, pointer to the metadata constant
 	 * value.
@@ -121,7 +117,7 @@ typedef struct MonoFieldDefaultValue {
 
 	/* If the field is constant, the type of the constant. */
 	MonoTypeEnum     def_type;
-} MonoFieldDefaultValue;
+};
 
 /*
  * MonoClassField is just a runtime representation of the metadata for

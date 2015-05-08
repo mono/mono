@@ -18,6 +18,7 @@
 #endif
 #include <string.h>
 #include "mini.h"
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/assembly.h>
 #include <mono/utils/mono-time.h>

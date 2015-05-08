@@ -107,6 +107,7 @@ common_sources = \
 	cil-coff.h		\
 	class.c			\
 	class-internals.h	\
+	class-internals-forward.h	\
 	cominterop.c		\
 	cominterop.h		\
 	console-io.h		\
@@ -290,6 +291,7 @@ libmonoruntimeinclude_HEADERS = \
 	image.h			\
 	loader.h		\
 	metadata.h		\
+	metadata-forward.h		\
 	mono-config.h		\
 	mono-debug.h		\
 	mono-gc.h		\

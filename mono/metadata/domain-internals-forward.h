@@ -3,6 +3,7 @@
 
 struct _MonoAppContext;
 struct _MonoDomain;
+struct _MonoGenericSharingContext;
 struct _MonoJitExceptionInfo;
 struct _MonoJitInfo;
 struct _MonoJitInfoTable;
@@ -11,6 +12,8 @@ struct _MonoThunkFreeList;
 struct _MonoTlsDataRecord;
 
 typedef struct _MonoAppContext MonoAppContext;
+typedef struct _MonoDomain MonoDomain;
+typedef struct _MonoGenericSharingContext MonoGenericSharingContext;
 typedef struct _MonoJitCodeHash MonoJitCodeHash;
 typedef struct _MonoJitExceptionInfo MonoJitExceptionInfo;
 typedef struct _MonoJitInfoTable MonoJitInfoTable;

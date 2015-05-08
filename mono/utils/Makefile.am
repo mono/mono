@@ -70,6 +70,7 @@ monoutils_sources = \
 	mono-error.c	\
 	mono-error-internals.h	\
 	monobitset.h	\
+	monobitset-forward.h	\
 	mono-codeman.h	\
 	mono-counters.h	\
 	mono-digest.h	\
@@ -110,6 +111,7 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads.h	\
+	mono-threads-forward.h	\
 	mono-threads-coop.c	\
 	mono-threads-coop.h	\
 	mono-tls.h	\

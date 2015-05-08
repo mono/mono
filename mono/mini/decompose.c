@@ -14,6 +14,7 @@
 
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/marshal.h>
 
 #ifndef DISABLE_JIT
 
