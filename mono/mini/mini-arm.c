@@ -776,7 +776,32 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 gpointer
 mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
 {
-	return NULL;
+	guint8 *code, *start;
+	int size = 4 + 4 + 4 + (4 + (4 * 4)) + 4 + (4 * 2);
+
+	start = code = mono_global_codeman_reserve (size);
+
+	if (load_imt_reg) {
+		/* Load the IMT reg */
+		ARM_LDR_REG_REG (code, MONO_ARCH_IMT_REG, ARMREG_R0, MONO_STRUCT_OFFSET (MonoDelegate, method));
+	}
+
+	/* Replace the this argument with the target */
+	ARM_LDR_REG_REG (code, ARMREG_R0, ARMREG_R0, MONO_STRUCT_OFFSET (MonoDelegate, target));
+
+	/* Load the vtable */
+	ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_R0, MONO_STRUCT_OFFSET (MonoObject, vtable));
+
+	/* Call the method */
+	code = emit_big_add (code, ARMREG_IP, ARMREG_IP, offset);
+	ARM_LDR_REG_REG (code, ARMREG_IP, ARMREG_IP, 0);
+	code = emit_call_reg (code, ARMREG_IP);
+
+	g_assert (start - code <= size);
+
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
+
+	return start;
 }
 
 gpointer
