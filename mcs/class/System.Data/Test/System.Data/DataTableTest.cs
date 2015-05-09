@@ -3227,6 +3227,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[SetCulture ("en-GB")]
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
