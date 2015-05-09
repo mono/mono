@@ -11,14 +11,17 @@ namespace System.Runtime.Caching {
      */
     internal class SRef {
 
-        private Object _sizedRef;
+//        private Object _sizedRef;
 
         internal SRef (Object target) {
-            _sizedRef = target;
+//            _sizedRef = target;
         }
 
         internal long ApproximateSize {
-            get { return (long) Marshal.SizeOf (_sizedRef.GetType ()); }
+            get {
+                // TODO: .net uses System.SizedReference which contains approximate size after Gen 2 collection
+                return 16;
+            }
         }
 
         internal void Dispose() {
