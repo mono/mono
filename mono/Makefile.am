@@ -30,7 +30,38 @@ monotouch-do-clean:
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
     done;
 else
-SUBDIRS = arch utils io-layer cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+
+mono_subdirs = arch utils io-layer cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+
+SUBDIR_PREFIX = subdir
+
+define SUBDIR_RULE
+.PHONY: $(SUBDIR_PREFIX)-$2-$1
+
+$(SUBDIR_PREFIX)-$2-$1:
+	@echo "Making $2 in $1"; \
+	(cd $1 && $(MAKE) $(AM_MAKEFLAGS) $2)
+endef
+
+define S
+$(addprefix $(SUBDIR_PREFIX)-all-,$1)
+endef
+
+all-local: $(call S,$(mono_subdirs))
+
+$(foreach SUBDIR,$(mono_subdirs),$(eval $(call SUBDIR_RULE,$(SUBDIR),all)))
+
+$(call S,mini): $(call S,metadata utils)
+$(call S,mini): $(call S,arch dis io-layer metadata sgen utils)
+$(call S,profiler): $(call S,mini)
+$(call S,tests): $(call S,io-layer metadata sgen utils)
+$(call S,unit-tests): $(call S,io-layer metadata sgen utils)
+$(call S,dis): $(call S,io-layer metadata sgen utils)
+
+clean-local: $(addprefix $(SUBDIR_PREFIX)-clean-,$(mono_subdirs))
+
+$(foreach SUBDIR,$(mono_subdirs),$(eval $(call SUBDIR_RULE,$(SUBDIR),clean)))
+
 endif
 endif
 DIST_SUBDIRS = arch utils io-layer cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
