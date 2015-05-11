@@ -50,7 +50,11 @@ namespace System.CodeDom.Compiler {
         private bool generateExecutable = false;
         private TempFileCollection tempFiles;
         [NonSerializedAttribute]
+#if MONO
+        IntPtr userToken;
+#else
         private SafeUserTokenHandle userToken;
+#endif
         private Evidence evidence = null;
 
         /// <devdoc>
@@ -305,25 +309,33 @@ namespace System.CodeDom.Compiler {
         /// </devdoc>
         public IntPtr UserToken {
             get {
+#if MONO
+                return userToken;
+#else
                 if (userToken != null)
                     return userToken.DangerousGetHandle();
                 else
                     return IntPtr.Zero;
+#endif
             }
             set {
+#if MONO
+                userToken = value;
+#else
                 if (userToken != null)
                     userToken.Close();
                 
                 userToken = new SafeUserTokenHandle(value, false);
+#endif
             }
         }
-
+#if !MONO
         internal SafeUserTokenHandle SafeUserToken {
             get {
                 return userToken;
             }
         }
-        
+#endif
         /// <devdoc>
         ///    <para>
         ///       Set the evidence for partially trusted scenarios.
