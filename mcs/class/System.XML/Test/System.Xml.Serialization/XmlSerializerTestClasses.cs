@@ -465,7 +465,7 @@ namespace MonoTests.System.Xml.TestClasses
 
 		public ArrayList list2;
 
-		public MyList list3;
+//		public MyList list3;
 
 		public string[] list4;
 
