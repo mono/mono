@@ -40,13 +40,13 @@ namespace System.Runtime.Caching
 		{
 		}
 
-		public void Add (MemoryCacheEntry entry)
+		public new void Add (MemoryCacheEntry entry)
 		{
 			entry.ExpiresEntryRef = new ExpiresEntryRef ();
 			base.Add (entry);
 		}
 
-		public void Remove (MemoryCacheEntry entry)
+		public new void Remove (MemoryCacheEntry entry)
 		{
 			base.Remove (entry);
 			entry.ExpiresEntryRef = ExpiresEntryRef.INVALID;
