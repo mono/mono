@@ -1727,6 +1727,7 @@ namespace System.Xml.Serialization {
         internal static string TempFilesLocation {
             get {
                 if (tempFilesLocation == null) {
+#if CONFIGURATION_DEP
                     // Return different XmlSerializerSection from legacy assembly due to its register config handlers
                     object section = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath);
                     string location = null;
@@ -1736,6 +1737,9 @@ namespace System.Xml.Serialization {
                             location = configSection.TempFilesLocation;
                         }
                     }
+#else
+                    string location = null;
+#endif
                     if (location != null) {
                         tempFilesLocation = location.Trim();
                     }

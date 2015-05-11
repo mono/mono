@@ -25,6 +25,7 @@ namespace System.Xml.Serialization {
         }
 
         static void EnsureSettingsLoaded() {
+#if CONFIGURATION_DEP
             if (!settingsInitalized) {
                 lock (appSettingsLock) {
                     if (!settingsInitalized) {
@@ -48,6 +49,7 @@ namespace System.Xml.Serialization {
                     }
                 }
             }
+#endif
         }
     }
 }

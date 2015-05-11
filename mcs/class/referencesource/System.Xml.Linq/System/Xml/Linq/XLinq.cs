@@ -3432,7 +3432,7 @@ namespace System.Xml.Linq
     ///     <item><see cref="XProcessingInstruction"/></item>
     ///   </list>
     /// </remarks>
-#if MONO
+#if MONO_HYBRID_SYSTEM_XML
     [XmlTypeConvertor ("ConvertForAssignment")]
 #endif
     [XmlSchemaProvider(null, IsAny=true)]

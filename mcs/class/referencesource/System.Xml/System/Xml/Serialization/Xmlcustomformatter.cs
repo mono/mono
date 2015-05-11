@@ -21,6 +21,7 @@ namespace System.Xml.Serialization {
     ///   The <see cref="XmlCustomFormatter"/> class provides a set of static methods for converting
     ///   primitive type values to and from their XML string representations.</summary>
     internal class XmlCustomFormatter {
+#if CONFIGURATION_DEP
         private static DateTimeSerializationSection.DateTimeSerializationMode mode;
 
         static DateTimeSerializationSection.DateTimeSerializationMode Mode {
@@ -38,6 +39,7 @@ namespace System.Xml.Serialization {
                 return mode;
             }
         }
+#endif
         private XmlCustomFormatter() {}
         internal static string FromDefaultValue(object value, string formatter) {
             if (value == null) return null;
@@ -79,13 +81,13 @@ namespace System.Xml.Serialization {
         }
 
         internal static string FromDateTime(DateTime value) {
+#if CONFIGURATION_DEP
             if (Mode == DateTimeSerializationSection.DateTimeSerializationMode.Local) {
                 return XmlConvert.ToString(value, "yyyy-MM-ddTHH:mm:ss.fffffffzzzzzz");
             }
-            else {
+#endif
                 // for mode DateTimeSerializationMode.Roundtrip and DateTimeSerializationMode.Default
                 return XmlConvert.ToString(value, XmlDateTimeSerializationMode.RoundtripKind);
-            }
         }
 
         internal static string FromChar(char value) {
@@ -314,10 +316,13 @@ namespace System.Xml.Serialization {
         };
 
         internal static DateTime ToDateTime(string value) {
+#if CONFIGURATION_DEP
             if (Mode == DateTimeSerializationSection.DateTimeSerializationMode.Local) {
                 return ToDateTime(value, allDateTimeFormats);
             }
-            else {
+            else
+#endif
+            {
                 // for mode DateTimeSerializationMode.Roundtrip and DateTimeSerializationMode.Default
                 return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.RoundtripKind);
             }

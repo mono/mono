@@ -102,8 +102,12 @@ namespace System.Xml.Serialization {
                     return (bool) AppSettings.UseLegacySerializerGeneration; 
                 }
                 else {
+#if CONFIGURATION_DEP
                     XmlSerializerSection configSection = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath) as XmlSerializerSection;
                     return configSection == null ? false : configSection.UseLegacySerializerGeneration;
+#else
+                    return false;
+#endif
                 }
             }
         }
@@ -663,8 +667,10 @@ namespace System.Xml.Serialization {
             parameters.GenerateInMemory = true;
 
             if (string.IsNullOrEmpty(location)) {
+#if CONFIGURATION_DEP
                 XmlSerializerSection configSection = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath) as XmlSerializerSection;
                 location = configSection == null ? location : configSection.TempFilesLocation;
+#endif
                 // Trim leading and trailing white spaces (VSWhidbey 229873)
                 if (!string.IsNullOrEmpty(location)) {
                     location = location.Trim();

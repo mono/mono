@@ -115,13 +115,13 @@ namespace System.Xml.Serialization {
         string guidID;
 
         static bool checkDeserializeAdvances;
-
+#if CONFIGURATION_DEP
         static XmlSerializationReader()
         {
             XmlSerializerSection configSection = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath) as XmlSerializerSection;
             checkDeserializeAdvances = (configSection == null) ? false : configSection.CheckDeserializeAdvances;
         }
-
+#endif
         /// <include file='doc\XmlSerializationReader.uex' path='docs/doc[@for="XmlSerializationReader.InitIDs"]/*' />
         protected abstract void InitIDs();
 
