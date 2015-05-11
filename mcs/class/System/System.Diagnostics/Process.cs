@@ -1653,11 +1653,16 @@ namespace System.Diagnostics {
 			p.OnExited ();
 		}
 
+		int on_exited_called = 0;
+
 		protected void OnExited() 
 		{
 			if (exited_event == null)
 				return;
-			
+
+			if (on_exited_called != 0 || Interlocked.CompareExchange (ref on_exited_called, 1, 0) != 0)
+				return;
+
 			UnregisterExitCallback ();
 
 			if (synchronizingObject == null) {
