@@ -3039,6 +3039,9 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		}
 	}
    
+	if (event == EVENT_KIND_THREAD_DEATH)
+		suspend_policy = SUSPEND_POLICY_NONE;
+	
 	if (event == EVENT_KIND_VM_DEATH) {
 		vm_death_event_sent = TRUE;
 		suspend_policy = SUSPEND_POLICY_NONE;
