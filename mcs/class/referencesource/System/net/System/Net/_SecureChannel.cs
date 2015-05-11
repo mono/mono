@@ -1296,13 +1296,6 @@ namespace System.Net.Security {
             // we don't catch exceptions in this method, so it's safe for "accepted" be initialized with true
             bool success = false;
 
-#if MONO
-            if (IsServer)
-                // FIXME
-                success = true;
-            else
-                success = SSPIWrapper.CheckRemoteCertificate(m_SecurityContext);
-#else
             X509Chain chain = null;
             X509Certificate2 remoteCertificateEx = null;
 
@@ -1316,6 +1309,7 @@ namespace System.Net.Security {
                     GlobalLog.Leave("SecureChannel#" + ValidationHelper.HashString(this) + "::VerifyRemoteCertificate (no remote cert)", (!m_RemoteCertRequired).ToString());
                     sslPolicyErrors |= SslPolicyErrors.RemoteCertificateNotAvailable;
                 }
+#if !MONO
                 else
                 {
                     chain = new X509Chain();
@@ -1368,6 +1362,9 @@ namespace System.Net.Security {
                     else
                         success = (sslPolicyErrors == SslPolicyErrors.None);
                 }
+#else
+		success = SSPIWrapper.CheckRemoteCertificate(m_SecurityContext);
+#endif
 
                 if (Logging.On) {
                     if (sslPolicyErrors != SslPolicyErrors.None)
@@ -1406,7 +1403,6 @@ namespace System.Net.Security {
                     remoteCertificateEx.Reset();
             }
             GlobalLog.Leave("SecureChannel#" + ValidationHelper.HashString(this) + "::VerifyRemoteCertificate", success.ToString());
-#endif
             return success;
         }
 
