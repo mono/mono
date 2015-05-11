@@ -35,7 +35,7 @@ if (NEED_VASPRINTF)
 	list (APPEND SOURCES vasprintf.c)
 endif (NEED_VASPRINTF)
 
-if (HOST_WIN32)
+if (WIN32)
 	list (APPEND SOURCES
 		eglib-config.hw
 		gdate-win32.c
@@ -54,7 +54,7 @@ else ()
 		gmodule-unix.c
 		gtimer-unix.c
 	)
-endif (HOST_WIN32)
+endif (WIN32)
 
 add_library (eglib-obj OBJECT ${SOURCES})
 set_target_properties (eglib-obj PROPERTIES COMPILE_FLAGS "-g -Wall -D_FORTIFY_SOURCE=2")
@@ -62,12 +62,12 @@ set_target_properties (eglib-obj PROPERTIES COMPILE_FLAGS "-g -Wall -D_FORTIFY_S
 add_library (eglib SHARED $<TARGET_OBJECTS:eglib-obj>)
 add_library (eglib-static STATIC $<TARGET_OBJECTS:eglib-obj>)
 
-if (HOST_WIN32)
+if (WIN32)
 	set_target_properties (eglib PROPERTIES LINK_FLAGS "-lm -lpsapi ${LIBICONV}")
 	set_target_properties (eglib-static PROPERTIES LINK_FLAGS "-lm -lpsapi ${LIBICONV}")
-elseif (PLATFORM_ANDROID)
+elseif (ANDROID)
 	set_target_properties (eglib PROPERTIES LINK_FLAGS "-llog")
 	set_target_properties (eglib-static PROPERTIES LINK_FLAGS "-llog ${LIBICONV}")
 else ()
 	set_target_properties (eglib-static PROPERTIES LINK_FLAGS "${LIBICONV}")
-endif (HOST_WIN32)
+endif (WIN32)
