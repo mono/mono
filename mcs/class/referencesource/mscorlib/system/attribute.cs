@@ -47,14 +47,14 @@ namespace System {
             var method = (MethodInfo) parameter.Member;
             var definition = method.GetBaseDefinition ();
 
+			if (attributeType == null)
+				attributeType = typeof (Attribute);
+
             if (method == definition)
 		return (Attribute []) parameter.GetCustomAttributes (attributeType, inherit);
 
             var types = new List<Type> ();
             var custom_attributes = new List<Attribute> ();
-
-            if (attributeType == null)
-                attributeType = typeof (Attribute);
 
             while (true) {
                 var param = method.GetParametersInternal () [parameter.Position];
