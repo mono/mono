@@ -7,6 +7,7 @@ ReferenceSources/Res.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/TypeScope.cs
 ReferenceSources/Wsdl.cs
+ReferenceSources/CodeDom.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ISourceLineInfo.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/ListBase.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/Pair.cs
@@ -373,11 +374,16 @@ ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Xml/System/Xml/Schema/XsdDateTime.cs
 ../../../external/referencesource/System.Xml/System/Xml/Schema/XsdDuration.cs
 ../../../external/referencesource/System.Xml/System/Xml/Schema/XsdValidator.cs
+
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/_Events.cs
+../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeGenerationoptions.cs
+../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeIdentifier.cs
+../../../external/referencesource/System.Xml/System/Xml/Serialization/CodeIdentifiers.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/ImportContext.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/SchemaObjectWriter.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/XmlSchemas.cs
 ../../../external/referencesource/System.Xml/System/Xml/Serialization/XmlSerializerNamespaces.cs
+
 ../../../external/referencesource/System.Xml/System/Xml/ValidateNames.cs
 ../../../external/referencesource/System.Xml/System/Xml/XmlCharType.cs
 ../../../external/referencesource/System.Xml/System/Xml/XmlComplianceUtil.cs
@@ -484,9 +490,6 @@ ReferenceSources/Wsdl.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltException.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XslTransform.cs
 ../../../external/referencesource/System.Xml/System/Xml/Xslt/XsltSettings.cs
-System.Xml.Serialization/CodeGenerationOptions.cs
-System.Xml.Serialization/CodeIdentifier.cs
-System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/IXmlSerializable.cs
 System.Xml.Serialization/IXmlTextParser.cs
