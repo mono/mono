@@ -278,6 +278,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestSerializeEnumeration_FromValue_Encoded ()
 		{
 			SerializeEncoded ((int) SimpleEnumeration.SECOND, typeof (SimpleEnumeration));
@@ -375,6 +376,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestSerializeEnumDefaultValue_Encoded ()
 		{
 			SerializeEncoded (new EnumDefaultValue ());
@@ -727,7 +729,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // MS bug
+		[Category ("NotDotNet")] // MS bug
 		public void TestSerializeField_Encoded ()
 		{
 			Field_Encoded f = new Field_Encoded ();
@@ -1552,6 +1554,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")] // SerializationCodeGenerator outputs wrong xsi:type for flagencoded in #C1
 		public void TestSerializeDefaultValueAttribute_Encoded ()
 		{
 			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();
@@ -1749,6 +1752,7 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void TestSerializeXmlNodeArrayIncludesAttribute ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -2231,12 +2235,14 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void XmlArrayAttributeUnqualifiedWithNamespace ()
 		{
 			new XmlSerializer (typeof (XmlArrayUnqualifiedWithNamespace));
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void XmlArrayItemAttributeUnqualifiedWithNamespace ()
 		{
 			new XmlSerializer (typeof (XmlArrayItemUnqualifiedWithNamespace));
@@ -3352,7 +3358,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category("NotWorking")]
+		[Category("NotDotNet")]
 		public void ShouldSerializeGeneric ()
 		{
 			var ser = new XmlSerializer (typeof (ClassWithShouldSerializeGeneric));
@@ -3537,4 +3543,5 @@ namespace MonoTests.System.XmlSerialization
 		public string SecondMember { get; set; }
 	}
 #endregion
+
 }

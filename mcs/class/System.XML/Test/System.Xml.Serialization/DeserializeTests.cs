@@ -163,7 +163,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotDotNet")]
 		public void DeserializeArrayReferences ()
 		{
 			string s = "<Sample xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">";
@@ -248,6 +248,7 @@ namespace MonoTests.System.XmlSerialization
 			ListDefaults d2 = (ListDefaults) Deserialize (typeof (ListDefaults), "<root/>");
 
 			Assert.IsNotNull (d2.list2, "#A1");
+			Assert.IsNull (d2.list3, "#A2");
 			Assert.IsNull (d2.list4, "#A3");
 			Assert.IsNotNull (d2.list5, "#A4");
 			Assert.IsNotNull (d2.ed, "#A5");
@@ -256,6 +257,7 @@ namespace MonoTests.System.XmlSerialization
 			d2 = (ListDefaults) Deserialize (typeof (ListDefaults), "<root></root>");
 
 			Assert.IsNotNull (d2.list2, "#B1");
+			Assert.IsNull (d2.list3, "#B2");
 			Assert.IsNull (d2.list4, "#B3");
 			Assert.IsNotNull (d2.list5, "#B4");
 			Assert.IsNotNull (d2.ed, "#B5");
@@ -817,6 +819,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestDeserializeObjectWithReadonlyNulCollection ()
 		{
 			string s3 = "";
@@ -827,8 +830,7 @@ namespace MonoTests.System.XmlSerialization
 			s3 += "	</Collection1>";
 			s3 += "</Container>";
 
-			var obj = (ObjectWithReadonlyNulCollection) Deserialize (typeof (ObjectWithReadonlyNulCollection), s3);
-			Assert.IsNull (obj.Collection1);
+			Deserialize (typeof (ObjectWithReadonlyNulCollection), s3);
 		}
 
 		[Test]
@@ -1058,7 +1060,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // MS.NET results in compilation error (probably it generates bogus source.)
+		[Category ("NotDotNet")] // MS.NET results in compilation error (probably it generates bogus source.)
 		public void TestDeserialize_Field_Encoded ()
 		{
 			Field_Encoded f = null;
@@ -1545,12 +1547,11 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void NotExactDateParse ()
 		{
 			XmlSerializer xs = new XmlSerializer (typeof (NotExactDateParseClass));
 			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
-			Assert.AreEqual (new DateTime (2012,2,5,10,0,0), o.SomeDate);
+			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
 		}
 
 
