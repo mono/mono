@@ -709,8 +709,8 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, lngtest3, "BA03");
 				Assert.Fail ("BA03");
-			} catch (FormatException e) {
-				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (FormatException), e.InnerException.GetType (), "#BA03");
 			}
 		}
 	}

@@ -20,10 +20,10 @@ RESOURCE_STRINGS = \
 PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
 LIB_REFS = System
-LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,0612,0642,649 -unsafe -d:ASYNC -d:DISABLE_CAS_USE -d:MONO_HYBRID_SYSTEM_XML
+LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,649,1717 -unsafe -d:ASYNC -d:DISABLE_CAS_USE
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT
+LIB_MCS_FLAGS += -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
