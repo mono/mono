@@ -2,8 +2,8 @@ Assembly/AssemblyInfo.cs
 ReferenceSources/SR.cs
 ../../build/common/SR.cs
 Mono.Http/NtlmClient.cs
-System.CodeDom.Compiler/GeneratedCodeAttribute.cs
-System.CodeDom.Compiler/IndentedTextWriter.cs
+../../../external/referencesource/System/compmod/system/codedom/compiler/GeneratedCodeAttribute.cs
+../../../external/referencesource/System/compmod/system/codedom/compiler/IndentTextWriter.cs
 System.Diagnostics/DataReceivedEventArgs.cs
 System.Diagnostics/DataReceivedEventHandler.cs
 System.Diagnostics/DefaultTraceListener.cs
