@@ -2209,6 +2209,9 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         static internal void CheckVersionMDAC(bool ifodbcelseoledb) {
+			// we don't have that version info on the registry implementation, so it won't work.
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				return;
             int major, minor, build;
             string version;
 
