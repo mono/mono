@@ -293,6 +293,12 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public unsafe static extern Boolean NumberBufferToDecimal(byte* number, ref Decimal value);
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal unsafe static extern Boolean NumberBufferToDouble(byte* number, ref Double value);
+
 #if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -322,11 +328,6 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern String FormatSingle(float value, String format, NumberFormatInfo info);
-    
-        [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal unsafe static extern Boolean NumberBufferToDouble(byte* number, ref Double value);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [System.Runtime.CompilerServices.FriendAccessAllowed]
@@ -367,11 +368,6 @@ namespace System {
         public static String FormatSingle(float value, String format, NumberFormatInfo info)
         {
             return NumberFormatter.NumberToString (format, value, info);
-        }
-
-        internal unsafe static Boolean NumberBufferToDouble(byte* number, ref Double value)
-        {
-            throw new NotImplementedException ();
         }
 
         internal static unsafe string FormatNumberBuffer(byte* number, string format, NumberFormatInfo info, char* allDigits)
