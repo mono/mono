@@ -26,6 +26,7 @@
 #ifdef HOST_WIN32
 #include <ws2tcpip.h>
 #else
+#include <sys/types.h>
 #include <sys/socket.h>
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
