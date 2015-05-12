@@ -2397,16 +2397,16 @@ delete_image_set (MonoImageSet *set)
 	g_hash_table_destroy (set->gmethod_cache);
 	g_hash_table_destroy (set->gsignature_cache);
 
-	if (set->runtime_invoke_cache)
-		g_hash_table_destroy (set->runtime_invoke_cache);
-	if (set->delegate_invoke_cache)
-		g_hash_table_destroy (set->delegate_invoke_cache);
-	if (set->delegate_begin_invoke_cache)
-		g_hash_table_destroy (set->delegate_begin_invoke_cache);
-	if (set->delegate_end_invoke_cache)
-		g_hash_table_destroy (set->delegate_end_invoke_cache);
-	if (set->synchronized_cache)
-		g_hash_table_destroy (set->synchronized_cache);
+	if (set->wrapper_caches.runtime_invoke_cache)
+		g_hash_table_destroy (set->wrapper_caches.runtime_invoke_cache);
+	if (set->wrapper_caches.delegate_invoke_cache)
+		g_hash_table_destroy (set->wrapper_caches.delegate_invoke_cache);
+	if (set->wrapper_caches.delegate_begin_invoke_cache)
+		g_hash_table_destroy (set->wrapper_caches.delegate_begin_invoke_cache);
+	if (set->wrapper_caches.delegate_end_invoke_cache)
+		g_hash_table_destroy (set->wrapper_caches.delegate_end_invoke_cache);
+	if (set->wrapper_caches.synchronized_cache)
+		g_hash_table_destroy (set->wrapper_caches.synchronized_cache);
 
 	image_sets_lock ();
 
