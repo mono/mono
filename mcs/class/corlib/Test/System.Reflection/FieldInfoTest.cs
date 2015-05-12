@@ -171,6 +171,15 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void FieldInfoModule ()
+		{
+			Type type = typeof (FieldInfoTest);
+			FieldInfo field = type.GetField ("i");
+
+			Assert.AreEqual (type.Module, field.Module);
+		}
+
+		[Test]
 		public void GetCustomAttributes ()
 		{
 			object [] attrs;
