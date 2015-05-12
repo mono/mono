@@ -14,3 +14,7 @@ MinLengthAttribute_InvalidMinLength=MinLengthAttribute must have a Length value 
 
 ## ExceptionType=ArgumentException
 ArgumentIsNullOrWhitespace=The argument '{0}' cannot be null, empty or contain only white space.
+
+RequiredAttribute_ValidationError=The {0} field is required.
+
+CompareAttribute_MustMatch='{0}' and '{1}' do not match.
