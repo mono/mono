@@ -150,7 +150,7 @@ namespace Mono.CSharp {
 		public bool BreakOnInternalError;
 		#endregion
 
-		public string GetResourceStrings;
+		public List<string> GetResourceStrings;
 
 		public bool ShowFullPaths;
 
@@ -1485,7 +1485,10 @@ namespace Mono.CSharp {
 						return ParseResult.Error;
 					}
 
-					settings.GetResourceStrings = file;
+					if (settings.GetResourceStrings == null)
+						settings.GetResourceStrings = new List<string> ();
+
+					settings.GetResourceStrings.Add (file);
 					return ParseResult.Success;
 				}
 
