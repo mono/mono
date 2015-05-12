@@ -261,11 +261,11 @@ namespace MonoTests.System.Reflection
 		}
 #endif
 
-		class TestAttribute : Attribute
+		class TestParamAttribute : Attribute
 		{
 		}
 
-		public static int TestCustomAttribute_Method ([Test] string arg)
+		public static int TestCustomAttribute_Method ([TestParamAttribute] string arg)
 		{
 			return arg.Length;
 		}
