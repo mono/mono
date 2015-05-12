@@ -1,6 +1,4 @@
 ../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/AssociatedMetadataTypeTypeDescriptionProvider.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/AssociatedMetadataTypeTypeDescriptor.cs
