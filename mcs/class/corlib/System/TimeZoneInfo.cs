@@ -1298,8 +1298,10 @@ namespace System
 					if (dstDelta.TotalSeconds != ttype.Offset - baseUtcOffset.TotalSeconds) {
 						// Round to nearest minute, since it's not possible to create an adjustment rule
 						// with sub-minute precision ("The TimeSpan parameter cannot be specified more precisely than whole minutes.")
-						// This happens with Europe/Dublin, which had an offset of 34 minutes and 39 seconds in 1916.
-						dstDelta = new TimeSpan (0, 0, ttype.Offset - ttype.Offset % 60) - baseUtcOffset;
+						// This happens for instance with Europe/Dublin, which had an offset of 34 minutes and 39 seconds in 1916.
+						dstDelta = new TimeSpan (0, 0, ttype.Offset - ttype.Offset) - baseUtcOffset;
+						if (dstDelta.Ticks % TimeSpan.TicksPerMinute != 0)
+							dstDelta = TimeSpan.FromMinutes ((long) (dstDelta.TotalMinutes + 0.5f));
 					}
 
 					dst_start = ttime;

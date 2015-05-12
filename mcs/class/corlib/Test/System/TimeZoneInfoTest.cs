@@ -804,14 +804,30 @@ namespace MonoTests.System
 		#endif
 
 			[Test]
-			public void Dublin ()
+			public void SubminuteDSTOffsets ()
 			{
 				if (Environment.OSVersion.Platform != PlatformID.Unix)
 					Assert.Ignore ();
-				// Europe/Dublin has a DST offset of 34 minutes and 39 seconds in 1916.
-				TimeZoneInfo.FindSystemTimeZoneById ("Europe/Dublin");
-			}
 
+				var subMinuteDSTs = new string [] {
+					"Europe/Dublin", // Europe/Dublin has a DST offset of 34 minutes and 39 seconds in 1916.
+					"Europe/Amsterdam",
+					"America/St_Johns",
+					"Canada/Newfoundland",
+					"Europe/Moscow",
+					"Europe/Riga",
+					"N/A", // testing that the test doesn't fail with inexistent TZs
+				};
+				foreach (var tz in subMinuteDSTs) {
+					try {
+						TimeZoneInfo.FindSystemTimeZoneById (tz);
+					} catch (TimeZoneNotFoundException) {
+						// ok;
+					} catch (Exception ex) {
+						Assert.Fail (string.Format ("Failed to load TZ {0}: {1}", tz, ex.ToString ()));
+					}
+				}
+			}
 		}
 		
 		[TestFixture]
