@@ -3,10 +3,8 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 ../../build/common/SR.cs
-Dummy.cs
-System.Xml.Res.cs
-System.Xml.Utils.Res.cs
 ReferenceSources/SpecifiedAccessor.cs
+ReferenceSources/Res.cs
 ReferenceSources/ThisAssembly.cs
 ReferenceSources/TypeScope.cs
 ReferenceSources/Wsdl.cs
