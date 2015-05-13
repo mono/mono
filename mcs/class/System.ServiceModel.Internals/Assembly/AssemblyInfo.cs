@@ -55,6 +55,6 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
-
+[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: ComVisible (false)]
 
