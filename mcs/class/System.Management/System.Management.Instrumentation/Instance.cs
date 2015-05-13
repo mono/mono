@@ -1,10 +1,11 @@
+﻿//
+// AssemblyRef
 //
-// System.Management.Instrumentation.Instance
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,22 +28,75 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management.Instrumentation
 {
-	[InstrumentationClass (InstrumentationType.Instance)]
-	public abstract class Instance : IInstance {
-		bool published;
+	[InstrumentationClass(InstrumentationType.Instance)]
+	public abstract class Instance : IInstance
+	{
+		private ProvisionFunction publishFunction;
 
-		[MonoTODO]
-		protected Instance ()
-		{
-		}
+		private ProvisionFunction revokeFunction;
+
+		private bool published;
 
 		[IgnoreMember]
-		public bool Published {
-			get { return published; }
-			set { published = value; }
+		public bool Published
+		{
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.published;
+			}
+			set
+			{
+				if (!this.published || value)
+				{
+					if (!this.published && value)
+					{
+						this.PublishFunction(this);
+						this.published = true;
+					}
+					return;
+				}
+				else
+				{
+					this.RevokeFunction(this);
+					this.published = false;
+					return;
+				}
+			}
+		}
+
+		private ProvisionFunction PublishFunction
+		{
+			get
+			{
+				if (this.publishFunction == null)
+				{
+					this.publishFunction = Instrumentation.GetPublishFunction(this.GetType());
+				}
+				return this.publishFunction;
+			}
+		}
+
+		private ProvisionFunction RevokeFunction
+		{
+			get
+			{
+				if (this.revokeFunction == null)
+				{
+					this.revokeFunction = Instrumentation.GetRevokeFunction(this.GetType());
+				}
+				return this.revokeFunction;
+			}
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		protected Instance()
+		{
 		}
 	}
 }

@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.DeleteOptions
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,26 +29,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
 
 namespace System.Management
 {
-	public class DeleteOptions : ManagementOptions, ICloneable
+	public class DeleteOptions : ManagementOptions
 	{
-		[MonoTODO]
-		public DeleteOptions ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public DeleteOptions()
 		{
 		}
 
-		[MonoTODO]
-		public DeleteOptions (ManagementNamedValueCollection context, TimeSpan timeout)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public DeleteOptions(ManagementNamedValueCollection context, TimeSpan timeout) : base(context, timeout)
 		{
 		}
 
-		[MonoTODO]
-		public override object Clone ()
+		public override object Clone()
 		{
-			throw new NotImplementedException ();
+			ManagementNamedValueCollection managementNamedValueCollection = null;
+			if (base.Context != null)
+			{
+				managementNamedValueCollection = base.Context.Clone();
+			}
+			return new DeleteOptions(managementNamedValueCollection, base.Timeout);
 		}
 	}
 }
-

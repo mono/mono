@@ -1,10 +1,11 @@
+﻿//
+// AssemblyRef
 //
-// System.Management.Instrumentation.InstrumentationClassAttribute
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,39 +28,85 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management.Instrumentation
 {
-	[AttributeUsage(AttributeTargets.Class | 
-			AttributeTargets.Struct)]
-	public class InstrumentationClassAttribute : Attribute {
-		public InstrumentationClassAttribute (InstrumentationType instrumentationType)
-		{
-			_instrumentationType = instrumentationType;
-		}
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+	public class InstrumentationClassAttribute : Attribute
+	{
+		private InstrumentationType instrumentationType;
 
-		public InstrumentationClassAttribute (InstrumentationType instrumentationType, string managedBaseClassName)
-		{
-			_instrumentationType = instrumentationType;
-			_managedBaseClassName = managedBaseClassName;
-		}
+		private string managedBaseClassName;
 
-		public InstrumentationType InstrumentationType {
-			get {
-				return _instrumentationType;
+		public InstrumentationType InstrumentationType
+		{
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.instrumentationType;
 			}
 		}
 
-		public string ManagedBaseClassName {
-			get {
-				if (_managedBaseClassName == null || _managedBaseClassName.Length == 0)
+		public string ManagedBaseClassName
+		{
+			get
+			{
+				if (this.managedBaseClassName == null || this.managedBaseClassName.Length == 0)
+				{
 					return null;
-
-				return _managedBaseClassName;
+				}
+				else
+				{
+					return this.managedBaseClassName;
+				}
 			}
 		}
 
-		private InstrumentationType _instrumentationType;
-		private string _managedBaseClassName;
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public InstrumentationClassAttribute(InstrumentationType instrumentationType)
+		{
+			this.instrumentationType = instrumentationType;
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public InstrumentationClassAttribute(InstrumentationType instrumentationType, string managedBaseClassName)
+		{
+			this.instrumentationType = instrumentationType;
+			this.managedBaseClassName = managedBaseClassName;
+		}
+
+		internal static InstrumentationClassAttribute GetAttribute(Type type)
+		{
+			if (type == typeof(BaseEvent) || type == typeof(Instance))
+			{
+				return null;
+			}
+			else
+			{
+				object[] customAttributes = type.GetCustomAttributes(typeof(InstrumentationClassAttribute), true);
+				if ((int)customAttributes.Length <= 0)
+				{
+					return null;
+				}
+				else
+				{
+					return (InstrumentationClassAttribute)customAttributes[0];
+				}
+			}
+		}
+
+		internal static Type GetBaseInstrumentationType(Type type)
+		{
+			if (InstrumentationClassAttribute.GetAttribute(type.BaseType) == null)
+			{
+				return null;
+			}
+			else
+			{
+				return type.BaseType;
+			}
+		}
 	}
 }

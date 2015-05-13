@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.QualifierDataCollection
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -29,121 +30,391 @@
 //
 using System;
 using System.Collections;
+using System.Runtime;
+using System.Runtime.InteropServices;
 
 namespace System.Management
 {
 	public class QualifierDataCollection : ICollection, IEnumerable
 	{
-		internal QualifierDataCollection ()
-		{
-		}
+		private ManagementBaseObject parent;
 
-		[MonoTODO]
-		public virtual void Add (string qualifierName, object qualifierValue)
-		{
-			throw new NotImplementedException ();
-		}
+		private string propertyOrMethodName;
 
-		[MonoTODO]
-		public virtual void Add (string qualifierName,
-					 object qualifierValue,
-					 bool isAmended,
-					 bool propagatesToInstance,
-					 bool propagatesToSubclass,
-					 bool isOverridable)
-		{
-			throw new NotImplementedException ();
-		}
+		private QualifierType qualifierSetType;
 
-		[MonoTODO]
-		public void CopyTo (QualifierData [] qualifierArray, int index)
+		public int Count
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void CopyTo (Array array, int index)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public QualifierDataEnumerator GetEnumerator ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void Remove (string qualifierName)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public int Count {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				int num;
+				string[] strArrays = null;
+				try
+				{
+					IWbemQualifierSetFreeThreaded typeQualifierSet = this.GetTypeQualifierSet();
+					int names_ = typeQualifierSet.GetNames_(0, out strArrays);
+					if (names_ < 0)
+					{
+						if (((long)names_ & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(names_);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)names_);
+						}
+					}
+					return (int)strArrays.Length;
+				}
+				catch (ManagementException managementException1)
+				{
+					ManagementException managementException = managementException1;
+					if (this.qualifierSetType != QualifierType.PropertyQualifier || managementException.ErrorCode != ManagementStatus.SystemProperty)
+					{
+						throw;
+					}
+					else
+					{
+						num = 0;
+					}
+				}
+				return num;
 			}
 		}
 
-		public bool IsSynchronized {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public virtual QualifierData this [string qualifierName] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object SyncRoot {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator ()
+		public bool IsSynchronized
 		{
-			throw new NotImplementedException ();
+			get
+			{
+				return false;
+			}
+		}
+
+		public virtual QualifierData this[string qualifierName]
+		{
+			get
+			{
+				if (qualifierName != null)
+				{
+					return new QualifierData(this.parent, this.propertyOrMethodName, qualifierName, this.qualifierSetType);
+				}
+				else
+				{
+					throw new ArgumentNullException("qualifierName");
+				}
+			}
+		}
+
+		public object SyncRoot
+		{
+			get
+			{
+				return this;
+			}
+		}
+
+		internal QualifierDataCollection(ManagementBaseObject parent)
+		{
+			this.parent = parent;
+			this.qualifierSetType = QualifierType.ObjectQualifier;
+			this.propertyOrMethodName = null;
+		}
+
+		internal QualifierDataCollection(ManagementBaseObject parent, string propertyOrMethodName, QualifierType type)
+		{
+			this.parent = parent;
+			this.propertyOrMethodName = propertyOrMethodName;
+			this.qualifierSetType = type;
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public virtual void Add(string qualifierName, object qualifierValue)
+		{
+			this.Add(qualifierName, qualifierValue, false, false, false, true);
+		}
+
+		public virtual void Add(string qualifierName, object qualifierValue, bool isAmended, bool propagatesToInstance, bool propagatesToSubclass, bool isOverridable)
+		{
+			int num = 0;
+			if (isAmended)
+			{
+				num = num | 128;
+			}
+			if (propagatesToInstance)
+			{
+				num = num | 1;
+			}
+			if (propagatesToSubclass)
+			{
+				num = num | 2;
+			}
+			if (!isOverridable)
+			{
+				num = num | 16;
+			}
+			int num1 = this.GetTypeQualifierSet().Put_(qualifierName, ref qualifierValue, num);
+			if (num1 < 0)
+			{
+				if (((long)num1 & (long)-4096) != (long)-2147217408)
+				{
+					Marshal.ThrowExceptionForHR(num1);
+				}
+				else
+				{
+					ManagementException.ThrowWithExtendedInfo((ManagementStatus)num1);
+					return;
+				}
+			}
+		}
+
+		public void CopyTo(Array array, int index)
+		{
+			IWbemQualifierSetFreeThreaded typeQualifierSet;
+			if (array != null)
+			{
+				if (index < array.GetLowerBound(0) || index > array.GetUpperBound(0))
+				{
+					throw new ArgumentOutOfRangeException("index");
+				}
+				else
+				{
+					string[] strArrays = null;
+					try
+					{
+						typeQualifierSet = this.GetTypeQualifierSet();
+					}
+					catch (ManagementException managementException1)
+					{
+						ManagementException managementException = managementException1;
+						if (this.qualifierSetType != QualifierType.PropertyQualifier || managementException.ErrorCode != ManagementStatus.SystemProperty)
+						{
+							throw;
+						}
+						else
+						{
+							return;
+						}
+					}
+					int names_ = typeQualifierSet.GetNames_(0, out strArrays);
+					if (names_ < 0)
+					{
+						if (((long)names_ & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(names_);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)names_);
+						}
+					}
+					if (index + (int)strArrays.Length <= array.Length)
+					{
+						string[] strArrays1 = strArrays;
+						for (int i = 0; i < (int)strArrays1.Length; i++)
+						{
+							string str = strArrays1[i];
+							int num = index;
+							index = num + 1;
+							array.SetValue(new QualifierData(this.parent, this.propertyOrMethodName, str, this.qualifierSetType), num);
+						}
+					}
+					else
+					{
+						throw new ArgumentException(null, "index");
+					}
+					return;
+				}
+			}
+			else
+			{
+				throw new ArgumentNullException("array");
+			}
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void CopyTo(QualifierData[] qualifierArray, int index)
+		{
+			this.CopyTo(qualifierArray, index);
+		}
+
+		public QualifierDataCollection.QualifierDataEnumerator GetEnumerator()
+		{
+			return new QualifierDataCollection.QualifierDataEnumerator(this.parent, this.propertyOrMethodName, this.qualifierSetType);
+		}
+
+		private IWbemQualifierSetFreeThreaded GetTypeQualifierSet()
+		{
+			return this.GetTypeQualifierSet(this.qualifierSetType);
+		}
+
+		private IWbemQualifierSetFreeThreaded GetTypeQualifierSet(QualifierType qualifierSetType)
+		{
+			IWbemQualifierSetFreeThreaded wbemQualifierSetFreeThreaded = null;
+			int qualifierSet_ = 0;
+			QualifierType qualifierType = qualifierSetType;
+			if (qualifierType == QualifierType.ObjectQualifier)
+			{
+				qualifierSet_ = this.parent.wbemObject.GetQualifierSet_(out wbemQualifierSetFreeThreaded);
+			}
+			else if (qualifierType == QualifierType.PropertyQualifier)
+			{
+				qualifierSet_ = this.parent.wbemObject.GetPropertyQualifierSet_(this.propertyOrMethodName, out wbemQualifierSetFreeThreaded);
+			}
+			else if (qualifierType == QualifierType.MethodQualifier)
+			{
+				qualifierSet_ = this.parent.wbemObject.GetMethodQualifierSet_(this.propertyOrMethodName, out wbemQualifierSetFreeThreaded);
+			}
+			else
+			{
+				throw new ManagementException(ManagementStatus.Unexpected, null, null);
+			}
+			if (qualifierSet_ < 0)
+			{
+				if (((long)qualifierSet_ & (long)-4096) != (long)-2147217408)
+				{
+					Marshal.ThrowExceptionForHR(qualifierSet_);
+				}
+				else
+				{
+					ManagementException.ThrowWithExtendedInfo((ManagementStatus)qualifierSet_);
+				}
+			}
+			return wbemQualifierSetFreeThreaded;
+		}
+
+		public virtual void Remove(string qualifierName)
+		{
+			int num = this.GetTypeQualifierSet().Delete_(qualifierName);
+			if (num < 0)
+			{
+				if (((long)num & (long)-4096) != (long)-2147217408)
+				{
+					Marshal.ThrowExceptionForHR(num);
+				}
+				else
+				{
+					ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+					return;
+				}
+			}
+		}
+
+		IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return new QualifierDataCollection.QualifierDataEnumerator(this.parent, this.propertyOrMethodName, this.qualifierSetType);
 		}
 
 		public class QualifierDataEnumerator : IEnumerator
 		{
-			internal QualifierDataEnumerator ()
-			{
-			}
+			private ManagementBaseObject parent;
 
-			[MonoTODO]
-			public bool MoveNext ()
-			{
-				throw new NotImplementedException ();
-			}
+			private string propertyOrMethodName;
 
-			[MonoTODO]
-			public void Reset ()
-			{
-				throw new NotImplementedException ();
-			}
+			private QualifierType qualifierType;
 
-			public QualifierData Current {
-				[MonoTODO]
-				get {
-					throw new NotImplementedException ();
+			private string[] qualifierNames;
+
+			private int index;
+
+			public QualifierData Current
+			{
+				get
+				{
+					if (this.index == -1 || this.index == (int)this.qualifierNames.Length)
+					{
+						throw new InvalidOperationException();
+					}
+					else
+					{
+						return new QualifierData(this.parent, this.propertyOrMethodName, this.qualifierNames[this.index], this.qualifierType);
+					}
 				}
 			}
 
-			object IEnumerator.Current {
-				[MonoTODO]
-				get {
-					throw new NotImplementedException ();
+			object System.Collections.IEnumerator.Current
+			{
+				[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+				get
+				{
+					return this.Current;
 				}
+			}
+
+			internal QualifierDataEnumerator(ManagementBaseObject parent, string propertyOrMethodName, QualifierType qualifierType)
+			{
+				this.index = -1;
+				this.parent = parent;
+				this.propertyOrMethodName = propertyOrMethodName;
+				this.qualifierType = qualifierType;
+				this.qualifierNames = null;
+				IWbemQualifierSetFreeThreaded wbemQualifierSetFreeThreaded = null;
+				int qualifierSet_ = 0;
+				QualifierType qualifierType1 = qualifierType;
+				if (qualifierType1 == QualifierType.ObjectQualifier)
+				{
+					qualifierSet_ = parent.wbemObject.GetQualifierSet_(out wbemQualifierSetFreeThreaded);
+				}
+				else if (qualifierType1 == QualifierType.PropertyQualifier)
+				{
+					qualifierSet_ = parent.wbemObject.GetPropertyQualifierSet_(propertyOrMethodName, out wbemQualifierSetFreeThreaded);
+				}
+				else if (qualifierType1 == QualifierType.MethodQualifier)
+				{
+					qualifierSet_ = parent.wbemObject.GetMethodQualifierSet_(propertyOrMethodName, out wbemQualifierSetFreeThreaded);
+				}
+				else
+				{
+					throw new ManagementException(ManagementStatus.Unexpected, null, null);
+				}
+				if (qualifierSet_ >= 0)
+				{
+					qualifierSet_ = wbemQualifierSetFreeThreaded.GetNames_(0, out this.qualifierNames);
+					if (qualifierSet_ < 0)
+					{
+						if (((long)qualifierSet_ & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(qualifierSet_);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)qualifierSet_);
+							return;
+						}
+					}
+					return;
+				}
+				else
+				{
+					this.qualifierNames = new string[0];
+					return;
+				}
+			}
+
+			public bool MoveNext()
+			{
+				if (this.index != (int)this.qualifierNames.Length)
+				{
+					QualifierDataCollection.QualifierDataEnumerator qualifierDataEnumerator = this;
+					qualifierDataEnumerator.index = qualifierDataEnumerator.index + 1;
+					if (this.index == (int)this.qualifierNames.Length)
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			public void Reset()
+			{
+				this.index = -1;
 			}
 		}
 	}
 }
-

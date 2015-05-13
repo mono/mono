@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ObjectGetOptions
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,43 +29,92 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+
 namespace System.Management
 {
-	public class ObjectGetOptions : ManagementOptions, ICloneable
+	public class ObjectGetOptions : ManagementOptions
 	{
-		[MonoTODO]
-		public ObjectGetOptions ()
-		{
-		}
-
-		[MonoTODO]
-		public ObjectGetOptions (ManagementNamedValueCollection context)
-		{
-		}
-
-		[MonoTODO]
-		public ObjectGetOptions (ManagementNamedValueCollection context,
-					 TimeSpan timeout,
-					 bool useAmendedQualifiers)
-		{
-		}
-
-		[MonoTODO]
-		public override object Clone ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public bool UseAmendedQualifiers
 		{
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				if ((base.Flags & 0x20000) != 0)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			set {
-				throw new NotImplementedException ();
+			set
+			{
+				int flags;
+				ObjectGetOptions objectGetOption = this;
+				if (value)
+				{
+					flags = base.Flags | 0x20000;
+				}
+				else
+				{
+					flags = base.Flags & -131073;
+				}
+				objectGetOption.Flags = flags;
+				base.FireIdentifierChanged();
 			}
+		}
+
+		public ObjectGetOptions() : this(null, ManagementOptions.InfiniteTimeout, false)
+		{
+		}
+
+		public ObjectGetOptions(ManagementNamedValueCollection context) : this(context, ManagementOptions.InfiniteTimeout, false)
+		{
+		}
+
+		public ObjectGetOptions(ManagementNamedValueCollection context, TimeSpan timeout, bool useAmendedQualifiers) : base(context, timeout)
+		{
+			this.UseAmendedQualifiers = useAmendedQualifiers;
+		}
+
+		internal static ObjectGetOptions _Clone(ObjectGetOptions options)
+		{
+			return ObjectGetOptions._Clone(options, null);
+		}
+
+		internal static ObjectGetOptions _Clone(ObjectGetOptions options, IdentifierChangedEventHandler handler)
+		{
+			ObjectGetOptions objectGetOption;
+			if (options == null)
+			{
+				objectGetOption = new ObjectGetOptions();
+			}
+			else
+			{
+				objectGetOption = new ObjectGetOptions(options.context, options.timeout, options.UseAmendedQualifiers);
+			}
+			if (handler == null)
+			{
+				if (options != null)
+				{
+					objectGetOption.IdentifierChanged += new IdentifierChangedEventHandler(options.HandleIdentifierChange);
+				}
+			}
+			else
+			{
+				objectGetOption.IdentifierChanged += handler;
+			}
+			return objectGetOption;
+		}
+
+		public override object Clone()
+		{
+			ManagementNamedValueCollection managementNamedValueCollection = null;
+			if (base.Context != null)
+			{
+				managementNamedValueCollection = base.Context.Clone();
+			}
+			return new ObjectGetOptions(managementNamedValueCollection, base.Timeout, this.UseAmendedQualifiers);
 		}
 	}
 }
-

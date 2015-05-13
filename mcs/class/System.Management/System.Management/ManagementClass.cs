@@ -1,11 +1,13 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ManagementClass
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
-// (C) 2006 Gert Driesen
-//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,209 +28,792 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
 using System.CodeDom;
 using System.Collections.Specialized;
+using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.Management
 {
 	[Serializable]
-	[MonoTODO ("System.Management is not implemented")]
 	public class ManagementClass : ManagementObject
 	{
-		public ManagementClass ()
-		{
-			throw new NotImplementedException ();
-		}
+		private MethodDataCollection methods;
 
-		public ManagementClass (ManagementPath path)
+		public StringCollection Derivation
 		{
-			throw new NotImplementedException ();
-		}
-
-		public ManagementClass (string path)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public ManagementClass (ManagementPath path, ObjectGetOptions options)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public ManagementClass (string path, ObjectGetOptions options)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public ManagementClass (ManagementScope scope, ManagementPath path, ObjectGetOptions options)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public ManagementClass (string scope, string path, ObjectGetOptions options)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected ManagementClass (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public StringCollection Derivation {
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				StringCollection stringCollections = new StringCollection();
+				int num = 0;
+				int num1 = 0;
+				object obj = null;
+				int num2 = base.wbemObject.Get_("__DERIVATION", 0, ref obj, ref num, ref num1);
+				if (num2 < 0)
+				{
+					if (((long)num2 & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num2);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num2);
+					}
+				}
+				if (obj != null)
+				{
+					stringCollections.AddRange((string[])obj);
+				}
+				return stringCollections;
 			}
 		}
 
-		public MethodDataCollection Methods {
-			get {
-				throw new NotImplementedException ();
+		public MethodDataCollection Methods
+		{
+			get
+			{
+				this.Initialize(true);
+				if (this.methods == null)
+				{
+					this.methods = new MethodDataCollection(this);
+				}
+				return this.methods;
 			}
 		}
 
-		public override ManagementPath Path {
-			get {
-				throw new NotImplementedException ();
+		public override ManagementPath Path
+		{
+			get
+			{
+				return base.Path;
 			}
-			set {
-				throw new NotImplementedException ();
+			set
+			{
+				if (value == null || value.IsClass || value.IsEmpty)
+				{
+					base.Path = value;
+					return;
+				}
+				else
+				{
+					throw new ArgumentOutOfRangeException("value");
+				}
 			}
 		}
 
-		public override object Clone ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementClass() : this((ManagementScope)null, (ManagementPath)null, (ObjectGetOptions)null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ManagementObject CreateInstance ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementClass(ManagementPath path) : this(null, path, null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ManagementClass Derive (string newClassName)
+		public ManagementClass(string path) : this(null, new ManagementPath(path), null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ManagementObjectCollection GetInstances ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementClass(ManagementPath path, ObjectGetOptions options) : this(null, path, options)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ManagementObjectCollection GetInstances (EnumerationOptions options)
+		public ManagementClass(string path, ObjectGetOptions options) : this(null, new ManagementPath(path), options)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public void GetInstances (ManagementOperationObserver watcher)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementClass(ManagementScope scope, ManagementPath path, ObjectGetOptions options) : base(scope, path, options)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public void GetInstances (ManagementOperationObserver watcher, EnumerationOptions options)
+		public ManagementClass(string scope, string path, ObjectGetOptions options) : base(new ManagementScope(scope), new ManagementPath(path), options)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ManagementObjectCollection GetRelatedClasses ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		protected ManagementClass(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public void GetRelatedClasses (ManagementOperationObserver watcher)
+		public override object Clone()
 		{
-			throw new NotImplementedException ();
+			IWbemClassObjectFreeThreaded wbemClassObjectFreeThreaded = null;
+			int num = base.wbemObject.Clone_(out wbemClassObjectFreeThreaded);
+			if (num < 0)
+			{
+				if (((long)num & (long)-4096) != (long)-2147217408)
+				{
+					Marshal.ThrowExceptionForHR(num);
+				}
+				else
+				{
+					ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+				}
+			}
+			return ManagementClass.GetManagementClass(wbemClassObjectFreeThreaded, this);
 		}
 
-		public ManagementObjectCollection GetRelatedClasses (string relatedClass)
+		public ManagementObject CreateInstance()
 		{
-			throw new NotImplementedException ();
+			ManagementObject managementObject = null;
+			if (base.PutButNotGot)
+			{
+				base.Get();
+				base.PutButNotGot = false;
+			}
+			IWbemClassObjectFreeThreaded wbemClassObjectFreeThreaded = null;
+			int num = base.wbemObject.SpawnInstance_(0, out wbemClassObjectFreeThreaded);
+			if (num < 0)
+			{
+				if (((long)num & (long)-4096) != (long)-2147217408)
+				{
+					Marshal.ThrowExceptionForHR(num);
+				}
+				else
+				{
+					ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+				}
+			}
+			else
+			{
+				managementObject = ManagementObject.GetManagementObject(wbemClassObjectFreeThreaded, base.Scope);
+			}
+			return managementObject;
 		}
 
-		public void GetRelatedClasses (ManagementOperationObserver watcher, string relatedClass)
+		public ManagementClass Derive(string newClassName)
 		{
-			throw new NotImplementedException ();
+			ManagementClass managementClass = null;
+			if (newClassName != null)
+			{
+				ManagementPath managementPath = new ManagementPath();
+				try
+				{
+					managementPath.ClassName = newClassName;
+				}
+				catch
+				{
+					throw new ArgumentOutOfRangeException("newClassName");
+				}
+				if (managementPath.IsClass)
+				{
+					if (base.PutButNotGot)
+					{
+						base.Get();
+						base.PutButNotGot = false;
+					}
+					IWbemClassObjectFreeThreaded wbemClassObjectFreeThreaded = null;
+					int num = base.wbemObject.SpawnDerivedClass_(0, out wbemClassObjectFreeThreaded);
+					if (num >= 0)
+					{
+						object obj1 = newClassName;
+						num = wbemClassObjectFreeThreaded.Put_("__CLASS", 0, ref obj1, 0);
+						if (num >= 0)
+						{
+							managementClass = ManagementClass.GetManagementClass(wbemClassObjectFreeThreaded, this);
+						}
+					}
+					if (num < 0)
+					{
+						if (((long)num & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(num);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+						}
+					}
+					return managementClass;
+				}
+				else
+				{
+					throw new ArgumentOutOfRangeException("newClassName");
+				}
+			}
+			else
+			{
+				throw new ArgumentNullException("newClassName");
+			}
 		}
 
-		public ManagementObjectCollection GetRelatedClasses (string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetInstances()
 		{
-			throw new NotImplementedException ();
+			return this.GetInstances((EnumerationOptions)null);
 		}
 
-		public void GetRelatedClasses (ManagementOperationObserver watcher, string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
+		public ManagementObjectCollection GetInstances(EnumerationOptions options)
 		{
-			throw new NotImplementedException ();
+			EnumerationOptions enumerationOption;
+			if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			else
+			{
+				this.Initialize(false);
+				IEnumWbemClassObject enumWbemClassObject = null;
+				if (options == null)
+				{
+					enumerationOption = new EnumerationOptions();
+				}
+				else
+				{
+					enumerationOption = (EnumerationOptions)options.Clone();
+				}
+				EnumerationOptions enumerationOption1 = enumerationOption;
+				enumerationOption1.EnsureLocatable = false;
+				enumerationOption1.PrototypeOnly = false;
+				SecurityHandler securityHandler = null;
+				int num = 0;
+				try
+				{
+					securityHandler = base.Scope.GetSecurityHandler();
+					num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).CreateInstanceEnum_(base.ClassName, enumerationOption1.Flags, enumerationOption1.GetContext(), ref enumWbemClassObject);
+				}
+				finally
+				{
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+				}
+				if (num < 0)
+				{
+					if (((long)num & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+					}
+				}
+				return new ManagementObjectCollection(base.Scope, enumerationOption1, enumWbemClassObject);
+			}
 		}
 
-		public ManagementObjectCollection GetRelationshipClasses ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetInstances(ManagementOperationObserver watcher)
 		{
-			throw new NotImplementedException ();
+			this.GetInstances(watcher, null);
 		}
 
-		public void GetRelationshipClasses (ManagementOperationObserver watcher)
+		public void GetInstances(ManagementOperationObserver watcher, EnumerationOptions options)
 		{
-			throw new NotImplementedException ();
+			EnumerationOptions enumerationOption;
+			if (watcher != null)
+			{
+				if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+				{
+					throw new InvalidOperationException();
+				}
+				else
+				{
+					this.Initialize(false);
+					if (options == null)
+					{
+						enumerationOption = new EnumerationOptions();
+					}
+					else
+					{
+						enumerationOption = (EnumerationOptions)options.Clone();
+					}
+					EnumerationOptions enumerationOption1 = enumerationOption;
+					enumerationOption1.EnsureLocatable = false;
+					enumerationOption1.PrototypeOnly = false;
+					enumerationOption1.ReturnImmediately = false;
+					if (watcher.HaveListenersForProgress)
+					{
+						enumerationOption1.SendStatus = true;
+					}
+					WmiEventSink newSink = watcher.GetNewSink(base.Scope, enumerationOption1.Context);
+					SecurityHandler securityHandler = base.Scope.GetSecurityHandler();
+					int num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).CreateInstanceEnumAsync_(base.ClassName, enumerationOption1.Flags, enumerationOption1.GetContext(), newSink.Stub);
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+					if (num < 0)
+					{
+						watcher.RemoveSink(newSink);
+						if (((long)num & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(num);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+							return;
+						}
+					}
+					return;
+				}
+			}
+			else
+			{
+				throw new ArgumentNullException("watcher");
+			}
 		}
 
-		public ManagementObjectCollection GetRelationshipClasses (string relationshipClass)
+		internal static ManagementClass GetManagementClass(IWbemClassObjectFreeThreaded wbemObject, ManagementClass mgObj)
 		{
-			throw new NotImplementedException ();
+			ManagementClass managementClass = new ManagementClass();
+			managementClass.wbemObject = wbemObject;
+			if (mgObj != null)
+			{
+				managementClass.scope = ManagementScope._Clone(mgObj.scope);
+				ManagementPath path = mgObj.Path;
+				if (path != null)
+				{
+					managementClass.path = ManagementPath._Clone(path);
+				}
+				object obj = null;
+				int num = 0;
+				int num1 = wbemObject.Get_("__CLASS", 0, ref obj, ref num, ref num);
+				if (num1 < 0)
+				{
+					if (((long)num1 & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num1);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num1);
+					}
+				}
+				if (obj != DBNull.Value)
+				{
+					managementClass.path.internalClassName = (string)obj;
+				}
+				ObjectGetOptions options = mgObj.Options;
+				if (options != null)
+				{
+					managementClass.options = ObjectGetOptions._Clone(options);
+				}
+			}
+			return managementClass;
 		}
 
-		public void GetRelationshipClasses (ManagementOperationObserver watcher, string relationshipClass)
+		internal static ManagementClass GetManagementClass(IWbemClassObjectFreeThreaded wbemObject, ManagementScope scope)
 		{
-			throw new NotImplementedException ();
+			ManagementClass managementClass = new ManagementClass();
+			managementClass.path = new ManagementPath(ManagementPath.GetManagementPath(wbemObject));
+			if (scope != null)
+			{
+				managementClass.scope = ManagementScope._Clone(scope);
+			}
+			managementClass.wbemObject = wbemObject;
+			return managementClass;
 		}
 
-		public ManagementObjectCollection GetRelationshipClasses (string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
+		protected override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			base.GetObjectData(info, context);
 		}
 
-		public void GetRelationshipClasses (ManagementOperationObserver watcher, string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetRelatedClasses()
 		{
-			throw new NotImplementedException ();
+			return this.GetRelatedClasses((string)null);
 		}
 
-		public CodeTypeDeclaration GetStronglyTypedClassCode (bool includeSystemClassInClassDef, bool systemPropertyClass)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetRelatedClasses(string relatedClass)
 		{
-			throw new NotImplementedException ();
+			return this.GetRelatedClasses(relatedClass, null, null, null, null, null, null);
 		}
 
-		public bool GetStronglyTypedClassCode (CodeLanguage lang, string filePath, string classNamespace)
+		public ManagementObjectCollection GetRelatedClasses(string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
 		{
-			throw new NotImplementedException ();
+			EnumerationOptions enumerationOption;
+			if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			else
+			{
+				this.Initialize(false);
+				IEnumWbemClassObject enumWbemClassObject = null;
+				if (options != null)
+				{
+					enumerationOption = (EnumerationOptions)options.Clone();
+				}
+				else
+				{
+					enumerationOption = new EnumerationOptions();
+				}
+				EnumerationOptions enumerationOption1 = enumerationOption;
+				enumerationOption1.EnumerateDeep = true;
+				RelatedObjectQuery relatedObjectQuery = new RelatedObjectQuery(true, this.Path.Path, relatedClass, relationshipClass, relatedQualifier, relationshipQualifier, relatedRole, thisRole);
+				SecurityHandler securityHandler = null;
+				int num = 0;
+				try
+				{
+					securityHandler = base.Scope.GetSecurityHandler();
+					num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).ExecQuery_(relatedObjectQuery.QueryLanguage, relatedObjectQuery.QueryString, enumerationOption1.Flags, enumerationOption1.GetContext(), ref enumWbemClassObject);
+				}
+				finally
+				{
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+				}
+				if (num < 0)
+				{
+					if (((long)num & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+					}
+				}
+				return new ManagementObjectCollection(base.Scope, enumerationOption1, enumWbemClassObject);
+			}
 		}
 
-		public ManagementObjectCollection GetSubclasses ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetRelatedClasses(ManagementOperationObserver watcher)
 		{
-			throw new NotImplementedException ();
+			this.GetRelatedClasses(watcher, null);
 		}
 
-		public ManagementObjectCollection GetSubclasses (EnumerationOptions options)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetRelatedClasses(ManagementOperationObserver watcher, string relatedClass)
 		{
-			throw new NotImplementedException ();
+			this.GetRelatedClasses(watcher, relatedClass, null, null, null, null, null, null);
 		}
 
-		public void GetSubclasses (ManagementOperationObserver watcher)
+		public void GetRelatedClasses(ManagementOperationObserver watcher, string relatedClass, string relationshipClass, string relationshipQualifier, string relatedQualifier, string relatedRole, string thisRole, EnumerationOptions options)
 		{
-			throw new NotImplementedException ();
+			EnumerationOptions enumerationOption;
+			if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			else
+			{
+				this.Initialize(true);
+				if (watcher != null)
+				{
+					if (options != null)
+					{
+						enumerationOption = (EnumerationOptions)options.Clone();
+					}
+					else
+					{
+						enumerationOption = new EnumerationOptions();
+					}
+					EnumerationOptions enumerationOption1 = enumerationOption;
+					enumerationOption1.EnumerateDeep = true;
+					enumerationOption1.ReturnImmediately = false;
+					if (watcher.HaveListenersForProgress)
+					{
+						enumerationOption1.SendStatus = true;
+					}
+					WmiEventSink newSink = watcher.GetNewSink(base.Scope, enumerationOption1.Context);
+					RelatedObjectQuery relatedObjectQuery = new RelatedObjectQuery(true, this.Path.Path, relatedClass, relationshipClass, relatedQualifier, relationshipQualifier, relatedRole, thisRole);
+					SecurityHandler securityHandler = base.Scope.GetSecurityHandler();
+					int num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).ExecQueryAsync_(relatedObjectQuery.QueryLanguage, relatedObjectQuery.QueryString, enumerationOption1.Flags, enumerationOption1.GetContext(), newSink.Stub);
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+					if (num < 0)
+					{
+						watcher.RemoveSink(newSink);
+						if (((long)num & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(num);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+							return;
+						}
+					}
+					return;
+				}
+				else
+				{
+					throw new ArgumentNullException("watcher");
+				}
+			}
 		}
 
-		public void GetSubclasses (ManagementOperationObserver watcher, EnumerationOptions options)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetRelationshipClasses()
 		{
-			throw new NotImplementedException ();
+			return this.GetRelationshipClasses((string)null);
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetRelationshipClasses(string relationshipClass)
+		{
+			return this.GetRelationshipClasses(relationshipClass, null, null, null);
+		}
+
+		public ManagementObjectCollection GetRelationshipClasses(string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
+		{
+			EnumerationOptions enumerationOption;
+			if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			else
+			{
+				this.Initialize(false);
+				IEnumWbemClassObject enumWbemClassObject = null;
+				if (options != null)
+				{
+					enumerationOption = options;
+				}
+				else
+				{
+					enumerationOption = new EnumerationOptions();
+				}
+				EnumerationOptions enumerationOption1 = enumerationOption;
+				enumerationOption1.EnumerateDeep = true;
+				RelationshipQuery relationshipQuery = new RelationshipQuery(true, this.Path.Path, relationshipClass, relationshipQualifier, thisRole);
+				SecurityHandler securityHandler = null;
+				int num = 0;
+				try
+				{
+					securityHandler = base.Scope.GetSecurityHandler();
+					num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).ExecQuery_(relationshipQuery.QueryLanguage, relationshipQuery.QueryString, enumerationOption1.Flags, enumerationOption1.GetContext(), ref enumWbemClassObject);
+				}
+				finally
+				{
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+				}
+				if (num < 0)
+				{
+					if (((long)num & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+					}
+				}
+				return new ManagementObjectCollection(base.Scope, enumerationOption1, enumWbemClassObject);
+			}
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetRelationshipClasses(ManagementOperationObserver watcher)
+		{
+			this.GetRelationshipClasses(watcher, null);
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetRelationshipClasses(ManagementOperationObserver watcher, string relationshipClass)
+		{
+			this.GetRelationshipClasses(watcher, relationshipClass, null, null, null);
+		}
+
+		public void GetRelationshipClasses(ManagementOperationObserver watcher, string relationshipClass, string relationshipQualifier, string thisRole, EnumerationOptions options)
+		{
+			EnumerationOptions enumerationOption;
+			if (this.Path == null || this.Path.Path == null || this.Path.Path.Length == 0)
+			{
+				throw new InvalidOperationException();
+			}
+			else
+			{
+				if (watcher != null)
+				{
+					this.Initialize(true);
+					if (options != null)
+					{
+						enumerationOption = (EnumerationOptions)options.Clone();
+					}
+					else
+					{
+						enumerationOption = new EnumerationOptions();
+					}
+					EnumerationOptions enumerationOption1 = enumerationOption;
+					enumerationOption1.EnumerateDeep = true;
+					enumerationOption1.ReturnImmediately = false;
+					if (watcher.HaveListenersForProgress)
+					{
+						enumerationOption1.SendStatus = true;
+					}
+					WmiEventSink newSink = watcher.GetNewSink(base.Scope, enumerationOption1.Context);
+					RelationshipQuery relationshipQuery = new RelationshipQuery(true, this.Path.Path, relationshipClass, relationshipQualifier, thisRole);
+					SecurityHandler securityHandler = base.Scope.GetSecurityHandler();
+					int num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).ExecQueryAsync_(relationshipQuery.QueryLanguage, relationshipQuery.QueryString, enumerationOption1.Flags, enumerationOption1.GetContext(), newSink.Stub);
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+					if (num < 0)
+					{
+						watcher.RemoveSink(newSink);
+						if (((long)num & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(num);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+							return;
+						}
+					}
+					return;
+				}
+				else
+				{
+					throw new ArgumentNullException("watcher");
+				}
+			}
+		}
+
+		public CodeTypeDeclaration GetStronglyTypedClassCode(bool includeSystemClassInClassDef, bool systemPropertyClass)
+		{
+			base.Get();
+			ManagementClassGenerator managementClassGenerator = new ManagementClassGenerator(this);
+			return managementClassGenerator.GenerateCode(includeSystemClassInClassDef, systemPropertyClass);
+		}
+
+		public bool GetStronglyTypedClassCode(CodeLanguage lang, string filePath, string classNamespace)
+		{
+			base.Get();
+			ManagementClassGenerator managementClassGenerator = new ManagementClassGenerator(this);
+			return managementClassGenerator.GenerateCode(lang, filePath, classNamespace);
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ManagementObjectCollection GetSubclasses()
+		{
+			return this.GetSubclasses((EnumerationOptions)null);
+		}
+
+		public ManagementObjectCollection GetSubclasses(EnumerationOptions options)
+		{
+			EnumerationOptions enumerationOption;
+			if (this.Path != null)
+			{
+				this.Initialize(false);
+				IEnumWbemClassObject enumWbemClassObject = null;
+				if (options == null)
+				{
+					enumerationOption = new EnumerationOptions();
+				}
+				else
+				{
+					enumerationOption = (EnumerationOptions)options.Clone();
+				}
+				EnumerationOptions enumerationOption1 = enumerationOption;
+				enumerationOption1.EnsureLocatable = false;
+				enumerationOption1.PrototypeOnly = false;
+				SecurityHandler securityHandler = null;
+				int num = 0;
+				try
+				{
+					securityHandler = base.Scope.GetSecurityHandler();
+					num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).CreateClassEnum_(base.ClassName, enumerationOption1.Flags, enumerationOption1.GetContext(), ref enumWbemClassObject);
+				}
+				finally
+				{
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+				}
+				if (num < 0)
+				{
+					if (((long)num & (long)-4096) != (long)-2147217408)
+					{
+						Marshal.ThrowExceptionForHR(num);
+					}
+					else
+					{
+						ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+					}
+				}
+				return new ManagementObjectCollection(base.Scope, enumerationOption1, enumWbemClassObject);
+			}
+			else
+			{
+				throw new InvalidOperationException();
+			}
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public void GetSubclasses(ManagementOperationObserver watcher)
+		{
+			this.GetSubclasses(watcher, null);
+		}
+
+		public void GetSubclasses(ManagementOperationObserver watcher, EnumerationOptions options)
+		{
+			EnumerationOptions enumerationOption;
+			if (watcher != null)
+			{
+				if (this.Path != null)
+				{
+					this.Initialize(false);
+					if (options == null)
+					{
+						enumerationOption = new EnumerationOptions();
+					}
+					else
+					{
+						enumerationOption = (EnumerationOptions)options.Clone();
+					}
+					EnumerationOptions enumerationOption1 = enumerationOption;
+					enumerationOption1.EnsureLocatable = false;
+					enumerationOption1.PrototypeOnly = false;
+					enumerationOption1.ReturnImmediately = false;
+					if (watcher.HaveListenersForProgress)
+					{
+						enumerationOption1.SendStatus = true;
+					}
+					WmiEventSink newSink = watcher.GetNewSink(base.Scope, enumerationOption1.Context);
+					SecurityHandler securityHandler = base.Scope.GetSecurityHandler();
+					int num = this.scope.GetSecuredIWbemServicesHandler(base.Scope.GetIWbemServices()).CreateClassEnumAsync_(base.ClassName, enumerationOption1.Flags, enumerationOption1.GetContext(), newSink.Stub);
+					if (securityHandler != null)
+					{
+						securityHandler.Reset();
+					}
+					if (num < 0)
+					{
+						watcher.RemoveSink(newSink);
+						if (((long)num & (long)-4096) != (long)-2147217408)
+						{
+							Marshal.ThrowExceptionForHR(num);
+						}
+						else
+						{
+							ManagementException.ThrowWithExtendedInfo((ManagementStatus)num);
+							return;
+						}
+					}
+					return;
+				}
+				else
+				{
+					throw new InvalidOperationException();
+				}
+			}
+			else
+			{
+				throw new ArgumentNullException("watcher");
+			}
 		}
 	}
 }

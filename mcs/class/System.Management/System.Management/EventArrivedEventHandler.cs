@@ -1,10 +1,11 @@
-//
-// System.Management.EventArrivedEventHandler
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,9 +28,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
 
 namespace System.Management
 {
-	public delegate void EventArrivedEventHandler (object sender, EventArrivedEventArgs e);
+	public delegate void EventArrivedEventHandler(object sender, EventArrivedEventArgs e);
 }
-

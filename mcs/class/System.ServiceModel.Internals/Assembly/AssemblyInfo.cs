@@ -48,13 +48,19 @@ using System.Runtime.InteropServices;
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 [assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
+[assembly: InternalsVisibleTo ("Microsoft.Activities.Build, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 [assembly: InternalsVisibleTo ("SMDiagnostics, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 [assembly: InternalsVisibleTo ("System.Runtime.DurableInstancing, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel.Services, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
-
+[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.Core.Presentation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.DurableInstancing, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.Presentation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.WorkflowServices, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 [assembly: ComVisible (false)]
 

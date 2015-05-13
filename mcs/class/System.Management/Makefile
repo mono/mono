@@ -3,8 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Management.dll
-LIB_REFS = System System.Configuration.Install
-LIB_MCS_FLAGS = /r:$(corlib)
+LIB_REFS = System System.Configuration.Install System.Core System.Xml
+LIB_MCS_FLAGS = /r:$(corlib) /unsafe
 NO_TEST = yes
 
 include ../../build/library.make

@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ProgressEventArgs
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,38 +29,56 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
+
 namespace System.Management
 {
 	public class ProgressEventArgs : ManagementEventArgs
 	{
-		[MonoTODO]
-		internal ProgressEventArgs ()
-		{
-		}
+		private int upperBound;
+
+		private int current;
+
+		private string message;
 
 		public int Current
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.current;
 			}
 		}
 
 		public string Message
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get
+			{
+				if (this.message != null)
+				{
+					return this.message;
+				}
+				else
+				{
+					return string.Empty;
+				}
 			}
 		}
 
 		public int UpperBound
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.upperBound;
 			}
+		}
+
+		internal ProgressEventArgs(object context, int upperBound, int current, string message) : base(context)
+		{
+			this.upperBound = upperBound;
+			this.current = current;
+			this.message = message;
 		}
 	}
 }
-

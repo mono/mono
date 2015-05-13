@@ -1,10 +1,11 @@
-//
-// System.Management.EventWatcherOptions
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,34 +28,48 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class EventWatcherOptions : ManagementOptions
 	{
-		[MonoTODO]
-		public EventWatcherOptions ()
+		private int blockSize;
+
+		public int BlockSize
 		{
-			throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.blockSize;
+			}
+			set
+			{
+				this.blockSize = value;
+				base.FireIdentifierChanged();
+			}
 		}
 
-		[MonoTODO]
-		public EventWatcherOptions (ManagementNamedValueCollection context, TimeSpan timeout, int blockSize)
+		public EventWatcherOptions() : this(null, ManagementOptions.InfiniteTimeout, 1)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override object Clone ()
+		public EventWatcherOptions(ManagementNamedValueCollection context, TimeSpan timeout, int blockSize) : base(context, timeout)
 		{
-			throw new NotImplementedException ();
+			this.blockSize = 1;
+			base.Flags = 48;
+			this.BlockSize = blockSize;
 		}
 
-		[MonoTODO]
-		public int BlockSize {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public override object Clone()
+		{
+			ManagementNamedValueCollection managementNamedValueCollection = null;
+			if (base.Context != null)
+			{
+				managementNamedValueCollection = base.Context.Clone();
+			}
+			return new EventWatcherOptions(managementNamedValueCollection, base.Timeout, this.blockSize);
 		}
 	}
 }
-

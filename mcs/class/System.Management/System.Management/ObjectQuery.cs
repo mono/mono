@@ -1,11 +1,13 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ObjectQuery
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
-// (C) 2006 Gert Driesen
-//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,24 +28,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class ObjectQuery : ManagementQuery
 	{
-		public ObjectQuery ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ObjectQuery()
 		{
 		}
 
-		public ObjectQuery (string query) : base(query)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ObjectQuery(string query) : base(query)
 		{
 		}
 
-		public ObjectQuery (string language, string query) : base(language, query)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public ObjectQuery(string language, string query) : base(language, query)
 		{
 		}
 
-		public override object Clone ()
+		public override object Clone()
 		{
 			return new ObjectQuery(this.QueryLanguage, this.QueryString);
 		}

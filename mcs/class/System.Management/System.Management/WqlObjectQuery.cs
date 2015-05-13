@@ -1,10 +1,11 @@
-//
-// System.Management.WqlObjectQuery
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,37 +28,33 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class WqlObjectQuery : ObjectQuery
 	{
-		[MonoTODO]
-		public WqlObjectQuery ()
+		public override string QueryLanguage
 		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public WqlObjectQuery (string query)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		// Properties
-		
-		[MonoTODO]
-		public override string QueryLanguage {
-			get { throw new NotImplementedException (); }
+			get
+			{
+				return base.QueryLanguage;
+			}
 		}
 
-		// Methods
-		
-		[MonoTODO]
-		public override object Clone ()
+		public WqlObjectQuery() : base(null)
 		{
-			throw new NotImplementedException ();
+		}
+
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public WqlObjectQuery(string query) : base(query)
+		{
+		}
+
+		public override object Clone()
+		{
+			return new WqlObjectQuery(this.QueryString);
 		}
 	}
 }
-
