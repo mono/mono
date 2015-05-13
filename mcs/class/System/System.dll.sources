@@ -6,7 +6,6 @@ Microsoft.CSharp/CSharpCodeProvider.cs
 Microsoft.VisualBasic/VBCodeCompiler.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeProvider.cs
-Microsoft.Win32/SafeHandles/SafePerfProviderHandle.cs
 Microsoft.Win32/IntranetZoneCredentialPolicy.cs
 Microsoft.Win32/PowerModeChangedEventArgs.cs
 Microsoft.Win32/PowerModeChangedEventHandler.cs
@@ -27,8 +26,6 @@ Microsoft.Win32/UserPreferenceChangedEventArgs.cs
 Microsoft.Win32/UserPreferenceChangedEventHandler.cs
 Microsoft.Win32/UserPreferenceChangingEventArgs.cs
 Microsoft.Win32/UserPreferenceChangingEventHandler.cs
-Microsoft.Win32/SafeLibraryHandle.cs
-Microsoft.Win32/UnsafeNativeMethods.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/CodeCompiler.cs
 System.CodeDom.Compiler/CodeDomConfigurationHandler.cs
