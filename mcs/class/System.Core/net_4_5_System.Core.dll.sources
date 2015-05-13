@@ -2,7 +2,9 @@
 #include dynamic_System.Core.dll.sources
 
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs
-
+Microsoft.Win32.SafeHandles/SafePerfProviderHandle.cs
+Microsoft.Win32/UnsafeNativeMethods.cs
+Microsoft.Win32/SafeLibraryHandle.cs
 System.IO.Pipes/AnonymousPipeClientStream.cs
 System.IO.Pipes/AnonymousPipeServerStream.cs
 System.IO.Pipes/NamedPipeClientStream.cs
