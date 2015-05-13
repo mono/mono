@@ -71,6 +71,13 @@ namespace System.Web.Services.Configuration
 
             // Update paths
             // If we're not running in the context of a web application then skip this setting.
+#if MONO_BROKEN_CONFIGURATION_DLL
+			try {
+				var hack = this.EvaluationContext;
+			} catch (ConfigurationErrorsException) {
+				return;
+			}
+#endif
             ContextInformation context = this.EvaluationContext;
             WebContext webContext = context.HostingContext as WebContext;
             if (webContext == null)
@@ -115,6 +122,14 @@ namespace System.Web.Services.Configuration
             PartialTrustHelpers.FailIfInPartialTrustOutsideAspNet();
 
             WsdlHelpGeneratorElement parent = (WsdlHelpGeneratorElement)parentElement;
+#if MONO_BROKEN_CONFIGURATION_DLL
+			try {
+				var hack = this.EvaluationContext;
+			} catch (ConfigurationErrorsException) {
+				base.Reset(parentElement);
+				return;
+			}
+#endif
             ContextInformation context = this.EvaluationContext;
             WebContext webContext = context.HostingContext as WebContext;
             if (webContext != null)
