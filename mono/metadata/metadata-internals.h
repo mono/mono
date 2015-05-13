@@ -639,6 +639,12 @@ mono_image_set_alloc  (MonoImageSet *set, guint size);
 gpointer
 mono_image_set_alloc0 (MonoImageSet *set, guint size);
 
+void
+mono_image_set_lock (MonoImageSet *set);
+
+void
+mono_image_set_unlock (MonoImageSet *set);
+
 char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
