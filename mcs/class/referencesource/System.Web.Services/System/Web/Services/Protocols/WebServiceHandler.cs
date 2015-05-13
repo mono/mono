@@ -95,12 +95,13 @@ namespace System.Web.Services.Protocols {
             protocol.CreateServerInstance();
 
             string stringBuffer;
+#if !MONO
             RemoteDebugger debugger = null;
             if (!protocol.IsOneWay && RemoteDebugger.IsServerCallInEnabled(protocol, out stringBuffer)) {
                 debugger = new RemoteDebugger();
                 debugger.NotifyServerCallEnter(protocol, stringBuffer);
             }
-
+#endif
             try {
                 TraceMethod caller = Tracing.On ? new TraceMethod(this, "Invoke") : null;
                 TraceMethod userMethod = Tracing.On ? new TraceMethod(protocol.Target, protocol.MethodInfo.Name, this.parameters) : null;
@@ -121,9 +122,10 @@ namespace System.Web.Services.Protocols {
             }
             finally {
                 protocol.DisposeServerInstance();
-
+#if !MONO
                 if (debugger != null)
                     debugger.NotifyServerCallExit(protocol.Response);
+#endif
             }
         }
 
