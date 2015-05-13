@@ -927,11 +927,7 @@ GC_API void (*GC_is_visible_print_proc)
 
 #if !defined(GC_USE_LD_WRAP) && \
     (defined(GC_PTHREADS) || defined(GC_SOLARIS_THREADS) || defined(GC_DARWIN_THREADS) || defined(GC_MACOSX_THREADS))
-#if defined(_IN_LIBGC) || defined(USE_INCLUDED_LIBGC)
 # include "gc_pthread_redirects.h"
-#else
-# include <gc/gc_pthread_redirects.h>
-#endif
 #endif
 
 # if defined(PCR) || defined(GC_SOLARIS_THREADS) || \
