@@ -45,8 +45,6 @@ System.Web.Util/SimpleWebObjectFactory.cs
 System.Web.Util/RequestValidationSource.cs
 System.Web.Util/RequestValidator.cs
 
-../System.Design/System.Data.Design/TypedDataSetGenerator.cs
-
 ../System.Web.Routing/System.Web.Routing/HttpMethodConstraint.cs
 ../System.Web.Routing/System.Web.Routing/IRouteConstraint.cs
 ../System.Web.Routing/System.Web.Routing/IRouteHandler.cs
