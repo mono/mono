@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.CimType
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -50,4 +51,3 @@ namespace System.Management
 		Char16 = 103
 	}
 }
-

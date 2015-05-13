@@ -1,0 +1,43 @@
+﻿//
+// System.Management.AuthenticationLevel
+//
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
+//
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+namespace System.Management
+{
+	internal enum tag_WBEM_COMPARISON_FLAG
+	{
+		WBEM_COMPARISON_INCLUDE_ALL = 0,
+		WBEM_FLAG_IGNORE_QUALIFIERS = 1,
+		WBEM_FLAG_IGNORE_OBJECT_SOURCE = 2,
+		WBEM_FLAG_IGNORE_DEFAULT_VALUES = 4,
+		WBEM_FLAG_IGNORE_CLASS = 8,
+		WBEM_FLAG_IGNORE_CASE = 16,
+		WBEM_FLAG_IGNORE_FLAVOR = 32
+	}
+}

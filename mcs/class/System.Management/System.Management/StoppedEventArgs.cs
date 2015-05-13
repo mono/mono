@@ -1,10 +1,11 @@
-//
-// System.Management.StoppedEventArgs
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,21 +28,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class StoppedEventArgs : ManagementEventArgs
 	{
-		ManagementStatus status;
+		private int status;
 
-		internal StoppedEventArgs (ManagementStatus status)
+		public ManagementStatus Status
+		{
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return (ManagementStatus)this.status;
+			}
+		}
+
+		internal StoppedEventArgs(object context, int status) : base(context)
 		{
 			this.status = status;
 		}
-
-		public ManagementStatus Status {
-			get { return status; }
-		}
 	}
 }
-

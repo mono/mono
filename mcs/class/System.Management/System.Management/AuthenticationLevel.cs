@@ -1,10 +1,11 @@
-//
+﻿//
 // System.Management.AuthenticationLevel
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -41,4 +42,3 @@ namespace System.Management
 		PacketPrivacy = 6
 	}
 }
-

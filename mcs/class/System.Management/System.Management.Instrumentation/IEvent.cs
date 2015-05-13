@@ -1,10 +1,11 @@
+﻿//
+// AssemblyRef
 //
-// System.Management.Instrumentation.IEvent
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,10 +28,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
 
 namespace System.Management.Instrumentation
 {
-        public interface IEvent {
+	public interface IEvent
+	{
 		void Fire();
 	}
 }

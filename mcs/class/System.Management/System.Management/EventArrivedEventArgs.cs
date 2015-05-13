@@ -1,10 +1,11 @@
-//
-// System.Management.EventArrivedEventArgs
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,21 +28,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class EventArrivedEventArgs : ManagementEventArgs
 	{
-		ManagementBaseObject new_event;
+		private ManagementBaseObject eventObject;
 
-		internal EventArrivedEventArgs (ManagementBaseObject newEvent)
+		public ManagementBaseObject NewEvent
 		{
-			this.new_event = newEvent;
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.eventObject;
+			}
 		}
 
-		public ManagementBaseObject NewEvent {
-			get { return new_event; }
+		internal EventArrivedEventArgs(object context, ManagementBaseObject eventObject) : base(context)
+		{
+			this.eventObject = eventObject;
 		}
 	}
 }
-

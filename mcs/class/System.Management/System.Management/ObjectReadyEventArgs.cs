@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ObjectReadyEventArgs
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,21 +29,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
+
 namespace System.Management
 {
 	public class ObjectReadyEventArgs : ManagementEventArgs
 	{
-		internal ObjectReadyEventArgs ()
-		{
-		}
+		private ManagementBaseObject wmiObject;
 
 		public ManagementBaseObject NewObject
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.wmiObject;
 			}
+		}
+
+		internal ObjectReadyEventArgs(object context, ManagementBaseObject wmiObject) : base(context)
+		{
+			this.wmiObject = wmiObject;
 		}
 	}
 }
-

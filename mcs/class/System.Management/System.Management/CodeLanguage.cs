@@ -1,11 +1,13 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.CodeLanguage
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
-// (C) 2006 Gert Driesen
-//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,15 +28,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 namespace System.Management
 {
 	public enum CodeLanguage
 	{
 		CSharp,
+#if JSCRIPT
 		JScript,
+#endif
 		VB,
 		VJSharp,
-		Mcpp,
+		Mcpp
 	}
 }

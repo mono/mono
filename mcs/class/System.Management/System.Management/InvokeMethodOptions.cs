@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.InvokeMethodOptions
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,26 +29,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
 
 namespace System.Management
 {
-	public class InvokeMethodOptions : ManagementOptions, ICloneable
+	public class InvokeMethodOptions : ManagementOptions
 	{
-		[MonoTODO]
-		public InvokeMethodOptions ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public InvokeMethodOptions()
 		{
 		}
 
-		[MonoTODO]
-		public InvokeMethodOptions (ManagementNamedValueCollection context, TimeSpan timeout)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public InvokeMethodOptions(ManagementNamedValueCollection context, TimeSpan timeout) : base(context, timeout)
 		{
 		}
 
-		[MonoTODO]
-		public override object Clone ()
+		public override object Clone()
 		{
-			throw new NotImplementedException ();
+			ManagementNamedValueCollection managementNamedValueCollection = null;
+			if (base.Context != null)
+			{
+				managementNamedValueCollection = base.Context.Clone();
+			}
+			return new InvokeMethodOptions(managementNamedValueCollection, base.Timeout);
 		}
 	}
 }
-

@@ -1,10 +1,11 @@
+﻿//
+// AssemblyRef
 //
-// System.Management.Instrumentation.IgnoreMemberAttribute
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,15 +28,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management.Instrumentation
 {
-	[AttributeUsage (AttributeTargets.Method | 
-			 AttributeTargets.Property | 
-			 AttributeTargets.Field)]
-	public class IgnoreMemberAttribute : Attribute {
-		[MonoTODO]
-		public IgnoreMemberAttribute() 
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field)]
+	public class IgnoreMemberAttribute : Attribute
+	{
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public IgnoreMemberAttribute()
 		{
 		}
 	}

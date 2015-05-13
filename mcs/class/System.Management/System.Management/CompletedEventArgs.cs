@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.CompletedEventArgs
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,31 +29,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class CompletedEventArgs : ManagementEventArgs
 	{
-		[MonoTODO]
-		internal CompletedEventArgs ()
-		{
-		}
+		private readonly int status;
+
+		private readonly ManagementBaseObject wmiObject;
 
 		public ManagementStatus Status
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return (ManagementStatus)this.status;
 			}
 		}
 
 		public ManagementBaseObject StatusObject
 		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.wmiObject;
 			}
+		}
+
+		internal CompletedEventArgs(object context, int status, ManagementBaseObject wmiStatusObject) : base(context)
+		{
+			this.wmiObject = wmiStatusObject;
+			this.status = status;
 		}
 	}
 }
-

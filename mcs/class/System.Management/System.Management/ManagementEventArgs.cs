@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.ManagementEventArgs
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -28,25 +29,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public abstract class ManagementEventArgs : EventArgs
 	{
-		object context;
+		private object context;
 
-		internal ManagementEventArgs ()
+		public object Context
 		{
+			[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+			get
+			{
+				return this.context;
+			}
 		}
 
-		internal ManagementEventArgs (object context)
+		internal ManagementEventArgs(object context)
 		{
 			this.context = context;
 		}
-
-		public object Context {
-			get { return context; }
-		}
 	}
 }
-

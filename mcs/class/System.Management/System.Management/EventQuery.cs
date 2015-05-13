@@ -1,10 +1,11 @@
-//
-// System.Management.EventQuery
+﻿//
+// System.Management.AuthenticationLevel
 //
 // Author:
+//	Bruno Lauze     (brunolauze@msn.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -27,34 +28,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
 namespace System.Management
 {
 	public class EventQuery : ManagementQuery
 	{
-		[MonoTODO]
-		public EventQuery ()
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public EventQuery()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public EventQuery (string query)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public EventQuery(string query) : base(query)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public EventQuery (string language, string query)
+		[TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
+		public EventQuery(string language, string query) : base(language, query)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override object Clone ()
+		public override object Clone()
 		{
-			throw new NotImplementedException ();
+			return new EventQuery(this.QueryLanguage, this.QueryString);
 		}
 	}
 }
-

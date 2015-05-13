@@ -1,10 +1,11 @@
+﻿//
+// System.Management.AuthenticationLevel
 //
-// System.Management.PutType
+// Author:
+//	Bruno Lauze     (brunolauze@msn.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2015 Microsoft (http://www.microsoft.com)
 //
 
 //
@@ -31,10 +32,9 @@ namespace System.Management
 {
 	public enum PutType
 	{
-		None = 0,
-		UpdateOnly = 1,
-		CreateOnly = 2,
-		UpdateOrCreate = 3
+		None,
+		UpdateOnly,
+		CreateOnly,
+		UpdateOrCreate
 	}
 }
-
