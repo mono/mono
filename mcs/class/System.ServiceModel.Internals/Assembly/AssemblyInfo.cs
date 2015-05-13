@@ -53,8 +53,12 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel.Services, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
 [assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
-[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.Core.Presentation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.DurableInstancing, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
+[assembly: InternalsVisibleTo ("System.Activities.Presentation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull)]
 [assembly: ComVisible (false)]
 
