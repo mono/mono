@@ -88,7 +88,7 @@
         [SecurityCritical]
         private void _InternalWriteRaw(StringBuilder writer)
         {
-            if (this.EnsureWriter())
+            if (this.EnsureWriterInternal())
             {
                 this.traceWriter.Write(writer.ToString());
             }
@@ -420,7 +420,7 @@
         }
 
         [SecurityCritical]
-        private bool EnsureWriter()
+        private bool EnsureWriterInternal()
         {
             if (this.traceWriter == null)
             {
@@ -481,13 +481,13 @@
         [SecurityCritical]
         public override void Flush()
         {
-            if (this.EnsureWriter())
+            if (this.EnsureWriterInternal())
             {
                 this.traceWriter.Flush();
             }
         }
 
-        protected override string[] GetSupportedAttributes()
+        protected internal override string[] GetSupportedAttributes()
         {
             return new string[] { "bufferSize", "logRetentionOption", "maximumFileSize", "maximumNumberOfFiles" };
         }
