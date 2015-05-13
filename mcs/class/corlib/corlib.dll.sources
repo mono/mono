@@ -96,7 +96,6 @@ System/CrossAppDomainDelegate.cs
 System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DomainManagerInitializationFlags.cs
-System/Double.cs
 System/EmptyArray.cs
 System/Environment.cs
 System/EnvironmentVariableTarget.cs
@@ -132,7 +131,6 @@ System/RuntimeFieldHandle.cs
 System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
 System/ModuleHandle.cs
-System/Single.cs
 System/StringComparison.cs
 System/TermInfoBooleans.cs
 System/TermInfoDriver.cs
@@ -974,6 +972,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/dbnull.cs
 ../../../external/referencesource/mscorlib/system/dividebyzeroexception.cs
 ../../../external/referencesource/mscorlib/system/dllnotfoundexception.cs
+../../../external/referencesource/mscorlib/system/double.cs
 ../../../external/referencesource/mscorlib/system/duplicatewaitobjectexception.cs
 ../../../external/referencesource/mscorlib/system/empty.cs
 ../../../external/referencesource/mscorlib/system/enum.cs
@@ -1039,6 +1038,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/sbyte.cs
 ../../../external/referencesource/mscorlib/system/serializableattribute.cs
 ../../../external/referencesource/mscorlib/system/stackoverflowexception.cs
+../../../external/referencesource/mscorlib/system/single.cs
 ../../../external/referencesource/mscorlib/system/string.cs
 ../../../external/referencesource/mscorlib/system/stringcomparer.cs
 ../../../external/referencesource/mscorlib/system/stringfreezingattribute.cs
