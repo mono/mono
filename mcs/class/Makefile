@@ -101,8 +101,11 @@ net_4_5_dirs := \
 	System.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
+	Novell.Directory.Ldap		\
+	System.DirectoryServices	\
 	System.Web			\
 	System.Web.Services		\
+	System.Design			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
@@ -113,7 +116,6 @@ net_4_5_dirs := \
 	System.Messaging	        \
 	System.ServiceProcess           \
 	System.Drawing.Design		\
-	System.Design			\
 	ICSharpCode.SharpZipLib		\
 	IBM.Data.DB2			\
 	CustomMarshalers		\
@@ -199,8 +201,6 @@ net_4_5_parallel_dirs := \
 	System.IO.Compression.FileSystem \
 	System.Windows \
 	System.Xml.Serialization \
-	Novell.Directory.Ldap		\
-	System.DirectoryServices	\
 	System.DirectoryServices.Protocols	\
 	RabbitMQ.Client			\
 	Microsoft.VisualC		\
