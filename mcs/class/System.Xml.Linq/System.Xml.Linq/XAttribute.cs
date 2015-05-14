@@ -26,8 +26,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -336,29 +334,34 @@ namespace System.Xml.Linq
 
 		static readonly char [] escapeChars = new char [] {'<', '>', '&', '"', '\r', '\n', '\t'};
 
-		private static string GetPrefixOfNamespace (XNamespace ns)
-		{
-			string namespaceName = ns.NamespaceName;
-			if (namespaceName.Length == 0)
-				return string.Empty;
-			if (namespaceName == XNamespace.Xml.NamespaceName)
-				return "xml";
-			if (namespaceName == XNamespace.Xmlns.NamespaceName)
-				return "xmlns";
-			return null;
-		}
-
 		public override string ToString ()
 		{
-			using (StringWriter sw = new StringWriter (CultureInfo.InvariantCulture)) {
-				XmlWriterSettings ws = new XmlWriterSettings ();
-				ws.ConformanceLevel = ConformanceLevel.Fragment;
-				using (XmlWriter w = XmlWriter.Create (sw, ws)) {
-					w.WriteAttributeString (GetPrefixOfNamespace (Name.Namespace), Name.LocalName,
-						Name.NamespaceName, Value);
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (name.ToString ());
+			sb.Append ("=\"");
+			int start = 0;
+			do {
+				int idx = value.IndexOfAny (escapeChars, start);
+				if (idx < 0) {
+					if (start > 0)
+						sb.Append (value, start, value.Length - start);
+					else
+						sb.Append (value);
+					sb.Append ("\"");
+					return sb.ToString ();
 				}
-				return sw.ToString ().Trim ();
-			}
+				sb.Append (value, start, idx - start);
+				switch (value [idx]) {
+				case '&': sb.Append ("&amp;"); break;
+				case '<': sb.Append ("&lt;"); break;
+				case '>': sb.Append ("&gt;"); break;
+				case '"': sb.Append ("&quot;"); break;
+				case '\r': sb.Append ("&#xD;"); break;
+				case '\n': sb.Append ("&#xA;"); break;
+				case '\t': sb.Append ("&#x9;"); break;
+				}
+				start = idx + 1;
+			} while (true);
 		}
 	}
 }
