@@ -375,3 +375,4 @@
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLString.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLUtility.cs
+../../../external/referencesource/System.Data/System/Data/SQLTypes/SqlXml.cs

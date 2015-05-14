@@ -69,7 +69,6 @@ System.Data.SqlClient/SqlRowsCopiedEventArgs.cs
 System.Data.SqlClient/SqlNotificationEventArgs.cs
 System.Data.SqlClient/OnChangeEventHandler.cs
 System.Data.SqlClient/SqlDecimalExtensions.cs
-System.Data.SqlTypes/SqlXml.cs
 
 System.Data.Common/DbTypes.cs
 System.Data.Common/ExceptionHelper.cs

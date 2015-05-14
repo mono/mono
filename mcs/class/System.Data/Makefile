@@ -6,7 +6,7 @@ LIBRARY = System.Data.dll
 
 LIB_REFS = System System.Xml System.Core System.Numerics
 LIB_MCS_FLAGS = \
-	-nowarn:649 \
+	-nowarn:219,414,649 \
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
@@ -15,7 +15,7 @@ LIB_MCS_FLAGS = \
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_REFS += Mono.Data.Tds System.Transactions
-LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION -nowarn:618
+LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
 LIB_REFS += System.EnterpriseServices Mono.Data.Tds System.Configuration System.Transactions
 BUILT_SOURCES = \
