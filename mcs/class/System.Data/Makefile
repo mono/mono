@@ -34,7 +34,6 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Core.dll -r:Mono.Data.Sqlite.dll -no
 TEST_MONO_PATH = .
 
 EXTRA_DISTFILES = \
-	TODO					\
 	$(wildcard Test/System.Data/*.xml)		\
 	$(wildcard Test/System.Data/*.xsd)		\
 	$(wildcard Test/System.Xml/*.xml)		\
