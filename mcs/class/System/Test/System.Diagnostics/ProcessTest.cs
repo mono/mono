@@ -923,5 +923,29 @@ namespace MonoTests.System.Diagnostics
 			p.StandardOutput.BaseStream.Dispose ();
 			p.Dispose ();
 		}
+
+		public void Modules () {
+			var modules = Process.GetCurrentProcess ().Modules;
+			foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
+				var found = false;
+				foreach (var o in modules) {
+					var m = (ProcessModule) o;
+					var name = a.GetName ();
+
+					if (!m.FileName.StartsWith ("[In Memory] " + name.Name))
+						continue;
+
+					var fv = m.FileVersionInfo;
+					if (fv.FileBuildPart != name.Version.Build ||
+						fv.FileMinorPart != name.Version.Minor ||
+						fv.FileMajorPart != name.Version.Major)
+						continue;
+
+					found = true;
+				}
+
+				Assert.IsTrue (found);
+			}
+		}
 	}
 }
