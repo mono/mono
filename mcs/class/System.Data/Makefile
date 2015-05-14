@@ -6,7 +6,7 @@ LIBRARY = System.Data.dll
 
 LIB_REFS = System System.Xml System.Core System.Numerics
 LIB_MCS_FLAGS = \
-	-nowarn:219,414,649 \
+	-nowarn:169,219,414,649 \
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
@@ -41,7 +41,6 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Xml/*.xsd)		\
 	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
-	app_test_net_2_0.config			\
 	app_test_net_4_5.config			\
 	Test/System.Data/binserialize/*.bin	\
 	SqliteTest.db	\
