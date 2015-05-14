@@ -693,74 +693,22 @@ namespace System
 
 		unsafe string CreateString (char *value)
 		{
-			if (value == null)
-				return Empty;
-			char *p = value;
-			int i = 0;
-			while (*p != 0) {
-				++i;
-				++p;
-			}
-			string result = FastAllocateString (i);
-
-			if (i != 0) {
-				fixed (char *dest = result) {
-					CharCopy (dest, value, i);
-				}
-			}
-			return result;
+			return CtorCharPtr (value);
 		}
 
 		unsafe string CreateString (char *value, int startIndex, int length)
 		{
-			if (length == 0)
-				return Empty;
-			if (value == null)
-				throw new ArgumentNullException ("value");
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex");
-			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length");
-
-			string result = FastAllocateString (length);
-
-			fixed (char *dest = result) {
-				CharCopy (dest, value + startIndex, length);
-			}
-			return result;
+			return CtorCharPtrStartLength (value, startIndex, length);
 		}
 
-		unsafe string CreateString (char [] val, int startIndex, int length)
+		string CreateString (char [] val, int startIndex, int length)
 		{
-			if (val == null)
-				throw new ArgumentNullException ("value");
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative.");
-			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", "Cannot be negative.");
-			if (startIndex > val.Length - length)
-				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative, and should be less than length of string.");
-			if (length == 0)
-				return Empty;
-
-			string result = FastAllocateString (length);
-
-			fixed (char *dest = result, src = val) {
-				CharCopy (dest, src + startIndex, length);
-			}
-			return result;
+			return CtorCharArrayStartLength (val, startIndex, length);
 		}
 
-		unsafe string CreateString (char [] val)
+		string CreateString (char [] val)
 		{
-			if (val == null || val.Length == 0)
-				return Empty;
-			string result = FastAllocateString (val.Length);
-
-			fixed (char *dest = result, src = val) {
-				CharCopy (dest, src, val.Length);
-			}
-			return result;
+			return CtorCharArray (val);
 		}
 
 		unsafe string CreateString (char c, int count)
