@@ -973,8 +973,10 @@ ICALL(THREADP_35, "SetMaxThreads_internal", ves_icall_System_Threading_ThreadPoo
 ICALL(THREADP_4, "SetMinThreads_internal", ves_icall_System_Threading_ThreadPool_SetMinThreads)
 ICALL(THREADP_5, "pool_queue", icall_append_job)
 
-ICALL_TYPE(TTIMER, "System.Threading.Timer", TTIMER_1)
-ICALL(TTIMER_1, "GetTimeMonotonic", mono_100ns_ticks)
+ICALL_TYPE(TTIMER, "System.Threading.TimerQueue", TTIMER_1)
+ICALL(TTIMER_1, "ChangeAppDomainTimer", ves_icall_System_Threading_TimerQueue_ChangeAppDomainTimer)
+ICALL(TTIMER_2, "CreateAppDomainTimer", ves_icall_System_Threading_TimerQueue_CreateAppDomainTimer)
+ICALL(TTIMER_3, "DeleteAppDomainTimer", ves_icall_System_Threading_TimerQueue_DeleteAppDomainTimer)
 
 ICALL_TYPE(VOLATILE, "System.Threading.Volatile", VOLATILE_28)
 ICALL(VOLATILE_28, "Read(T&)", ves_icall_System_Threading_Volatile_Read_T)
