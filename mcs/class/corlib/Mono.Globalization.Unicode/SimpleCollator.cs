@@ -1761,17 +1761,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			}
 		}
 
-		int LastIndexOfOrdinal (string s, char target, int start, int length)
-		{
-			if (s.Length == 0)
-				return -1;
-			int end = start - length;
-			for (int i = start; i > end; i--)
-				if (s [i] == target)
-					return i;
-			return -1;
-		}
-
 		// Searches target byte[] keydata
 		unsafe int LastIndexOfSortKey (string s, int start, int orgStart, int length, byte* sortkey, int ti, bool noLv4, ref Context ctx)
 		{

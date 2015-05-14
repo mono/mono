@@ -868,28 +868,6 @@ namespace System
 			return res;
 		}
 
-		private string FastIntegerToString (int value, IFormatProvider fp)
-		{
-			if (value < 0) {
-				string sign = GetNumberFormatInstance(fp).NegativeSign;
-				ResetCharBuf (8 + sign.Length);
-				value = -value;
-				Append (sign);
-			}
-			else
-				ResetCharBuf (8);
-
-			if (value >= 10000) {
-				int v = value / 10000;
-				FastAppendDigits (v, false);
-				FastAppendDigits (value - v * 10000, true);
-			}
-			else
-				FastAppendDigits (value, false);
-
-			return new string (_cbuf, 0, _ind);
-		}
-
 		private string IntegerToString (string format, IFormatProvider fp)
 		{
 			NumberFormatInfo nfi = GetNumberFormatInstance (fp);
@@ -1622,27 +1600,6 @@ namespace System
 				v = 0;
 			v >>= (start & 0x7) << 2;
 			_cbuf [_ind++] = (char)('0' | v & 0xf);
-		}
-
-		unsafe private void FastAppendDigits (int val, bool force)
-		{
-			int i = _ind;
-			int digits;
-			if (force || val >= 100) {
-				int v = (val * 5243) >> 19;
-				digits = DecHexDigits [v];
-				if (force || val >= 1000)
-					_cbuf [i++] = (char)('0' | digits >> 4);
-				_cbuf [i++] = (char)('0' | (digits & 0xf));
-				digits = DecHexDigits [val - v * 100];
-			}
-			else
-				digits = DecHexDigits [val];
-
-			if (force || val >= 10)
-				_cbuf [i++] = (char)('0' | digits >> 4);
-			_cbuf [i++] = (char)('0' | (digits & 0xf));
-			_ind = i;
 		}
 
 		private void AppendDigits (int start, int end)
