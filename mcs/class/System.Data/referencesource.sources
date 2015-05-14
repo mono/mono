@@ -1,11 +1,11 @@
 ../../../external/referencesource/System.Data/bid/inc/cs/bidPrivateBase.cs
-../../../external/referencesource/System.Data/FxCopSuppressions/Baseline.cs
-../../../external/referencesource/System.Data/FxCopSuppressions/EverettBreaking.cs
-../../../external/referencesource/System.Data/FxCopSuppressions/FxCop40Suppressions.cs
-../../../external/referencesource/System.Data/FxCopSuppressions/Triaged.cs
+
+../../../external/referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
+
 ../../../external/referencesource/System.Data/Misc/ExternDll.cs
 ../../../external/referencesource/System.Data/Misc/HResults.cs
 ../../../external/referencesource/System.Data/Misc/PrivilegedConfigurationManager.cs
+
 ../../../external/referencesource/System.Data/System/Data/AcceptRejectRule.cs
 ../../../external/referencesource/System.Data/System/Data/AggregateType.cs
 ../../../external/referencesource/System.Data/System/Data/BaseCollection.cs
@@ -342,7 +342,19 @@
 ../../../external/referencesource/System.Data/System/NewXml/XmlDataImplementation.cs
 ../../../external/referencesource/System.Data/System/NewXml/XPathNodePointer.cs
 
+../../../external/referencesource/System.Data/System/Data/Sql/IBinarySerialize.cs
+../../../external/referencesource/System.Data/System/Data/Sql/invalidudtexception.cs
 ../../../external/referencesource/System.Data/System/Data/Sql/SqlDataSourceEnumerator.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlFacetAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlFunctionAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlGenericUtil.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlMethodAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlNotificationRequest.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlProcedureAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlTriggerAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlUserDefinedAggregateAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/SqlUserDefinedTypeAttribute.cs
+../../../external/referencesource/System.Data/System/Data/Sql/TriggerAction.cs
 
 ../../../external/referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/LocalDBAPI.cs
@@ -374,5 +386,6 @@
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLResource.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLSingle.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLString.cs
+../../../external/referencesource/System.Data/System/Data/SQLTypes/SqlTypesSchemaImporter.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SQLUtility.cs
 ../../../external/referencesource/System.Data/System/Data/SQLTypes/SqlXml.cs

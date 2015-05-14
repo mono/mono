@@ -12,22 +12,7 @@ ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
 
-System.Data.Sql/SqlNotificationRequest.cs
-Microsoft.SqlServer.Server/Format.cs
-Microsoft.SqlServer.Server/DataAccessKind.cs
-Microsoft.SqlServer.Server/IBinarySerialize.cs
-Microsoft.SqlServer.Server/InvalidUdtException.cs
-Microsoft.SqlServer.Server/SqlFunctionAttribute.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
-Microsoft.SqlServer.Server/SqlMethodAttribute.cs
-Microsoft.SqlServer.Server/SqlUserDefinedAggregateAttribute.cs
-Microsoft.SqlServer.Server/SqlUserDefinedTypeAttribute.cs
-Microsoft.SqlServer.Server/SystemDataAccessKind.cs
-Microsoft.SqlServer.Server/SqlFacetAttribute.cs
-Microsoft.SqlServer.Server/TriggerAction.cs
-Microsoft.SqlServer.Server/SqlTriggerContext.cs
-Microsoft.SqlServer.Server/SqlProcedureAttribute.cs
-Microsoft.SqlServer.Server/SqlTriggerAttribute.cs
 System.Data.SqlClient/SortOrder.cs
 System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs
