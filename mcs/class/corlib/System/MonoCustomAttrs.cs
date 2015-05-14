@@ -144,25 +144,6 @@ namespace System
 			return attrs;
 		}
 
-		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
-								Type attributeType,
-								bool inherit)
-		{
-			object[] res = GetCustomAttributes (obj, attributeType, inherit);
-			if (res.Length == 0)
-			{
-				return null;
-			}
-			else if (res.Length > 1)
-			{
-				string msg = "'{0}' has more than one attribute of type '{1}";
-				msg = String.Format (msg, obj, attributeType);
-				throw new AmbiguousMatchException (msg);
-			}
-
-			return (Attribute) res[0];
-		}
-
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
