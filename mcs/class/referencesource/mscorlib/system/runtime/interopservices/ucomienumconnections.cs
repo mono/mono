@@ -13,7 +13,6 @@
 **
 =============================================================================*/
 
-#if !MOBILE
 namespace System.Runtime.InteropServices
 {
     using System;
@@ -27,7 +26,7 @@ namespace System.Runtime.InteropServices
         public Object pUnk;
         public int dwCookie;
     }
-
+#if !MOBILE
     [Obsolete("Use System.Runtime.InteropServices.ComTypes.IEnumConnections instead. http://go.microsoft.com/fwlink/?linkid=14202", false)]
     [Guid("B196B287-BAB4-101A-B69C-00AA00341D07")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -42,5 +41,5 @@ namespace System.Runtime.InteropServices
         void Reset();
         void Clone(out UCOMIEnumConnections ppenum);
     }
-}
 #endif
+}
