@@ -6,19 +6,20 @@
 //
 // <OWNER>[....]</OWNER>
 
+using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
+
 namespace System.Threading 
 {
     using System;
     using System.Security;
     using System.Security.Permissions;
-    using Microsoft.Win32;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
     using System.Diagnostics.Tracing;
-    using Microsoft.Win32.SafeHandles;
 
 
         
@@ -84,7 +85,7 @@ namespace System.Threading
                 // note: QueryUnbiasedInterruptTime is apparently not supported on CoreSystem currently.
                 // Presumably this will be a problem.  Will follow up with Windows team, but for now this is diabled
                 // for CoreSystem builds.
-#if !FEATURE_PAL && !FEATURE_CORESYSTEM
+#if !FEATURE_PAL && !FEATURE_CORESYSTEM && !MONO
                 if (Environment.IsWindows8OrAbove)
                 {
                     ulong time100ns;
@@ -208,19 +209,19 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SuppressUnmanagedCodeSecurity]
         static extern AppDomainTimerSafeHandle CreateAppDomainTimer(uint dueTime);
 
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SuppressUnmanagedCodeSecurity]
         static extern bool ChangeAppDomainTimer(AppDomainTimerSafeHandle handle, uint dueTime);
 
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SuppressUnmanagedCodeSecurity]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         static extern bool DeleteAppDomainTimer(IntPtr handle);
@@ -577,7 +578,7 @@ namespace System.Threading
                     }
                     else
                     {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
                         if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.ThreadTransfer))
                             FrameworkEventSource.Log.ThreadTransferSendObj(this, 1, string.Empty, true);
 #endif // !FEATURE_CORECLR
@@ -686,13 +687,17 @@ namespace System.Threading
         [SecuritySafeCritical]
         internal void SignalNoCallbacksRunning()
         {
+#if !MONO
             Win32Native.SetEvent(m_notifyWhenNoCallbacksRunning.SafeWaitHandle);
+#else
+            NativeEventCalls.SetEvent_internal (m_notifyWhenNoCallbacksRunning.SafeWaitHandle.DangerousGetHandle ());
+#endif
         }
 
         [SecuritySafeCritical]
         internal void CallCallback()
         {
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
             if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.ThreadTransfer))
                 FrameworkEventSource.Log.ThreadTransferReceiveObj(this, 1, string.Empty);
 #endif // !FEATURE_CORECLR
