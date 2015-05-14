@@ -199,6 +199,7 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/sgen/sgen-pointer-queue.h"
 #include "mono/sgen/gc-internal-agnostic.h"
+#include "mono/sgen/sgen-referring-objects.h"
 #include "mono/utils/mono-proclib.h"
 #include "mono/utils/mono-memory-model.h"
 #include "mono/utils/hazard-pointer.h"
@@ -2976,6 +2977,7 @@ sgen_gc_init (void)
 	sgen_init_descriptors ();
 	sgen_init_gray_queues ();
 	sgen_init_allocator ();
+	sgen_init_referring_objects ();
 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_SECTION, SGEN_SIZEOF_GC_MEM_SECTION);
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_GRAY_QUEUE, sizeof (GrayQueueSection));

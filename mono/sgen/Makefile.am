@@ -59,6 +59,8 @@ monosgen_sources = \
 	sgen-protocol.h \
 	sgen-qsort.c \
 	sgen-qsort.h \
+	sgen-referring-objects.c \
+	sgen-referring-objects.h \
 	sgen-scan-object.h \
 	sgen-simple-nursery.c \
 	sgen-split-nursery.c \
