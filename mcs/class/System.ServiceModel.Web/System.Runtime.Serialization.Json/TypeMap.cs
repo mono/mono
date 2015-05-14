@@ -215,14 +215,26 @@ namespace System.Runtime.Serialization.Json
 			outputter.Writer.WriteAttributeString ("type", type);
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
-				// FIXME: consider EmitDefaultValue
-				outputter.Writer.WriteStartElement (member.Name);
-				outputter.WriteObjectContent (memberObj, false, false);
-				outputter.Writer.WriteEndElement ();
+				bool shouldWrite = (member.EmitDefaultValue || !EqualsDefaultValue (memberObj));
+				if (shouldWrite) {
+					outputter.Writer.WriteStartElement (member.Name);
+					outputter.WriteObjectContent (memberObj, false, false);
+					outputter.Writer.WriteEndElement ();
+				}
 			}
 
 			if (OnSerialized != null)
 				OnSerialized.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
+		}
+
+		static bool EqualsDefaultValue (object obj)
+		{
+			if (obj == null)
+			   return true;
+
+			Type runtimeType = obj.GetType ();
+			object defaultValue = runtimeType.IsValueType ? Activator.CreateInstance (runtimeType) : null;
+			return obj.Equals (defaultValue);
 		}
 
 		internal static object CreateInstance (Type type)
@@ -292,7 +304,7 @@ namespace System.Runtime.Serialization.Json
 		}
 
 		public bool EmitDefaultValue {
-			get { return dma != null && dma.EmitDefaultValue; }
+			get { return dma == null || dma.EmitDefaultValue; }
 		}
 
 		public bool IsRequired {
