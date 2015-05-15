@@ -109,5 +109,7 @@ EXTRA_DISTFILES = \
 	targets/Microsoft.Portable.Core.targets \
 	targets/Microsoft.Portable.Core.props \
 	targets/Microsoft.WebApplication.targets \
+	targets/Microsoft.Portable.VisualBasic_4.0.targets \
+	targets/Microsoft.Portable.VisualBasic_4.5.targets \
 	xbuild.make \
 	xbuild_test.make
