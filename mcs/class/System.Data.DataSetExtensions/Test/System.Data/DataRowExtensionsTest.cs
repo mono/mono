@@ -69,7 +69,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (StrongTypingException))]
+		[ExpectedException (typeof (InvalidCastException))]
 		public void Field_T_DBNullFieldValue_ValueType ()
 		{
 			DataRow row = SetupRow ();
