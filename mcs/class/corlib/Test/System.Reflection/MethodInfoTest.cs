@@ -64,6 +64,11 @@ namespace MonoTests.System.Reflection
 		{
 		}
 
+		public interface InterfaceTest
+		{
+			void Clone ();
+		}
+
 		[Test]
 		public void IsDefined_AttributeType_Null ()
 		{
@@ -304,7 +309,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody_Abstract ()
 		{
-			MethodBody mb = typeof (ICloneable).GetMethod ("Clone").GetMethodBody ();
+			MethodBody mb = typeof (InterfaceTest).GetMethod ("Clone").GetMethodBody ();
 			Assert.IsNull (mb);
 		}
 
