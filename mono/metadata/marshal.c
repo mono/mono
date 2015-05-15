@@ -39,6 +39,7 @@
 #include "mono/metadata/remoting.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/utils/mono-counters.h"
+#include "mono/utils/mono-error.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
 #include "mono/utils/atomic.h"

@@ -27,6 +27,12 @@
 
 #ifdef HAVE_SGEN_GC
 
+#include "mono/sgen/sgen-conf.h"
+#include "mono/sgen/sgen-gray-forward.h"
+#include "mono/sgen/sgen-hash-table.h"
+#include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-mutex.h"
+
 typedef struct _SgenThreadInfo SgenThreadInfo;
 #undef THREAD_INFO_TYPE
 #define THREAD_INFO_TYPE SgenThreadInfo
@@ -37,14 +43,6 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <pthread.h>
 #endif
 #include <stdint.h>
-#include "mono/utils/mono-compiler.h"
-#include "mono/utils/atomic.h"
-#include "mono/utils/mono-mutex.h"
-#include "mono/sgen/sgen-conf.h"
-#include "mono/sgen/sgen-descriptor.h"
-#include "mono/sgen/sgen-gray.h"
-#include "mono/sgen/sgen-hash-table.h"
-#include "mono/sgen/sgen-protocol.h"
 
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.

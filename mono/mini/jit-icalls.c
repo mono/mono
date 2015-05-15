@@ -17,7 +17,12 @@
 #endif
 
 #include "jit-icalls.h"
+#include <mono/metadata/exception.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/metadata/tokentype.h>
+#include <mono/metadata/marshal.h>
+#include <mono/metadata/tabledefs.h>
+
 void*
 mono_ldftn (MonoMethod *method)
 {

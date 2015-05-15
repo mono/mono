@@ -1,7 +1,8 @@
 #ifndef __MONO_OBJECT_INTERNALS_H__
 #define __MONO_OBJECT_INTERNALS_H__
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-internals-forward.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/mempool.h>
@@ -9,7 +10,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/utils/mono-error.h"
+#include <mono/utils/mono-error-forward.h>
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 
@@ -210,8 +211,6 @@ struct _MonoAppDomain {
 	MonoDomain *data;
 };
 
-typedef struct _MonoStringBuilder MonoStringBuilder;
-
 struct _MonoStringBuilder {
 	MonoObject object;
 	MonoArray  *chunkChars;
@@ -221,11 +220,11 @@ struct _MonoStringBuilder {
 	int maxCapacity;
 };
 
-typedef struct {
+struct _MonoTypedRef {
 	MonoType *type;
 	gpointer  value;
 	MonoClass *klass;
-} MonoTypedRef;
+};
 
 typedef struct {
 	gpointer args;
@@ -266,7 +265,7 @@ typedef struct {
 	MonoString *param_name;
 } MonoArgumentException;
 
-typedef struct {
+struct _MonoAsyncResult {
 	MonoObject   object;
 	MonoObject  *async_state;
 	MonoObject  *handle;
@@ -280,13 +279,13 @@ typedef struct {
 	MonoObject  *execution_context;
 	MonoObject  *original_context;
 	gint64	     add_time;
-} MonoAsyncResult;
+};
 
-typedef struct {
+struct _MonoWaitHandle {
 	MonoMarshalByRefObject object;
 	gpointer     handle;
 	MonoBoolean  disposed;
-} MonoWaitHandle;
+};
 
 /* This is a copy of System.Runtime.Remoting.Messaging.CallType */
 typedef enum {
@@ -319,18 +318,18 @@ typedef struct {
 	MonoObject *stub_data;
 } MonoRealProxy;
 
-typedef struct {
+struct _MonoComObject {
 	MonoMarshalByRefObject object;
 	gpointer iunknown;
 	GHashTable* itf_hash;
 	MonoObject *synchronization_context;
-} MonoComObject;
+};
 
-typedef struct {
+struct _MonoComInteropProxy {
 	MonoRealProxy real_proxy;
 	MonoComObject *com_object;
 	gint32 ref_count;
-} MonoComInteropProxy;
+};
 
 typedef struct {
 	MonoObject	 object;
@@ -769,7 +768,6 @@ struct _MonoReflectionMethod {
 	MonoReflectionType *reftype;
 };
 
-typedef struct _MonoReflectionGenericMethod MonoReflectionGenericMethod;
 struct _MonoReflectionGenericMethod {
 	MonoReflectionMethod method;
 };
@@ -793,7 +791,6 @@ struct _MonoDelegate {
 	MonoObject *data;
 };
 
-typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
 struct _MonoMulticastDelegate {
 	MonoDelegate delegate;
 	MonoArray *delegates;
@@ -1217,7 +1214,6 @@ typedef struct {
 	guint32 attrs;
 } MonoReflectionGenericParam;
 
-typedef struct _MonoReflectionGenericClass MonoReflectionGenericClass;
 struct _MonoReflectionGenericClass {
 	MonoReflectionType type;
 	MonoReflectionType *generic_type; /*Can be either a MonoType or a TypeBuilder*/
@@ -1515,15 +1511,13 @@ typedef union {
 	gpointer target_code;
 } MonoImtItemValue;
 
-typedef struct _MonoImtBuilderEntry {
+struct _MonoImtBuilderEntry {
 	gpointer key;
 	struct _MonoImtBuilderEntry *next;
 	MonoImtItemValue value;
 	int children;
 	guint8 has_target_code : 1;
-} MonoImtBuilderEntry;
-
-typedef struct _MonoIMTCheckItem MonoIMTCheckItem;
+};
 
 struct _MonoIMTCheckItem {
 	gpointer          key;

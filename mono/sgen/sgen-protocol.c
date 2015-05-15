@@ -29,6 +29,7 @@
 #include "sgen-memory-governor.h"
 #include "sgen-thread-pool.h"
 #include "sgen-client.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-membar.h"
 
 #include <errno.h>

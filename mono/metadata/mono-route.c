@@ -16,8 +16,10 @@
 #include <sys/sysctl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/mono-route.h>
+#include <glib.h>
 
 extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal(MonoString *iface, MonoArray **gw_addr_list)
 {

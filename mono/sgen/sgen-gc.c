@@ -189,6 +189,7 @@
 #include <stdlib.h>
 
 #include "mono/sgen/sgen-gc.h"
+#include "mono/sgen/sgen-gray.h"
 #include "mono/sgen/sgen-cardtable.h"
 #include "mono/sgen/sgen-protocol.h"
 #include "mono/sgen/sgen-memory-governor.h"
@@ -199,6 +200,7 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/sgen/sgen-pointer-queue.h"
 #include "mono/sgen/gc-internal-agnostic.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-proclib.h"
 #include "mono/utils/mono-memory-model.h"
 #include "mono/utils/hazard-pointer.h"

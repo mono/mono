@@ -23,6 +23,7 @@
 #include <mono/metadata/cil-coff.h>
 #include <mono/metadata/attrdefs.h>
 #include <mono/utils/strenc.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/bsearch.h>
 #include <string.h>

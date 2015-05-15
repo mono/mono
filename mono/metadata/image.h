@@ -2,14 +2,10 @@
 #define _MONONET_METADATA_IMAGE_H_
 
 #include <stdio.h>
+#include <mono/metadata/metadata-internals-forward.h>
 #include <mono/utils/mono-publib.h>
 
 MONO_BEGIN_DECLS
-
-typedef struct _MonoImage MonoImage;
-typedef struct _MonoAssembly MonoAssembly;
-typedef struct _MonoAssemblyName MonoAssemblyName;
-typedef struct _MonoTableInfo MonoTableInfo;
 
 typedef enum {
 	MONO_IMAGE_OK,

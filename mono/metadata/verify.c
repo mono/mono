@@ -28,6 +28,7 @@
 #include <mono/metadata/attrdefs.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/monobitset.h>
 #include <string.h>
 #include <ctype.h>

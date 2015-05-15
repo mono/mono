@@ -9,7 +9,9 @@
  */
 
 #include <string.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/object.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/metadata/mono-wsq.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-tls.h>

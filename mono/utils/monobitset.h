@@ -9,26 +9,15 @@
 #include <mono/utils/mono-publib.h>
 #endif
 
-/*
- * When embedding, you have to define MONO_ZERO_LEN_ARRAY before including any
- * other Mono header file if you use a different compiler from the one used to
- * build Mono.
- */
-#ifndef MONO_ZERO_LEN_ARRAY
-#ifdef __GNUC__
-#define MONO_ZERO_LEN_ARRAY 0
-#else
-#define MONO_ZERO_LEN_ARRAY 1
-#endif
-#endif
+#include <mono/utils/monobitset-forward.h>
 
 #define MONO_BITSET_BITS_PER_CHUNK (8 * sizeof (gsize))
 
-typedef struct {
+struct _MonoBitSet {
 	gsize size;
 	gsize flags;
 	gsize data [MONO_ZERO_LEN_ARRAY];
-} MonoBitSet;
+};
 
 typedef void (*MonoBitSetFunc) (guint idx, gpointer data);
 

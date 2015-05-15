@@ -62,6 +62,11 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/marshal.h>
+#include <mono/metadata/tabledefs.h>
+#include <mono/metadata/tokentype.h>
+#include <mono/metadata/object-internals.h>
+#include <mono/utils/atomic.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-stack-unwinding.h>

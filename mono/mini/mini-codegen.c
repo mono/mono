@@ -15,6 +15,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mempool-internals.h>
+#include <mono/metadata/tabledefs.h>
 #include <mono/utils/mono-math.h>
 
 #include "mini.h"

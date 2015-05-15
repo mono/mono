@@ -31,6 +31,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/utils/bsearch.h>
+#include <mono/utils/mono-error.h>
 
 static void     setup_filter          (MonoImage *image);
 static gboolean should_include_type   (int idx);

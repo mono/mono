@@ -2,6 +2,7 @@
 #ifndef __MONO_METADATA_INTERNALS_H__
 #define __MONO_METADATA_INTERNALS_H__
 
+#include "mono/metadata/metadata-internals-forward.h"
 #include "mono/metadata/image.h"
 #include "mono/metadata/blob.h"
 #include "mono/metadata/mempool.h"
@@ -12,7 +13,7 @@
 #include "mono/utils/monobitset.h"
 #include "mono/utils/mono-property-hash.h"
 #include "mono/utils/mono-value-hash.h"
-#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-forward.h>
 #include "mono/utils/mono-conc-hashtable.h"
 
 struct _MonoType {
@@ -124,8 +125,6 @@ struct _MonoTableInfo {
 };
 
 #define REFERENCE_MISSING ((gpointer) -1)
-
-typedef struct _MonoDllMap MonoDllMap;
 
 struct _MonoImage {
 	/*
@@ -471,7 +470,7 @@ struct _MonoDynamicImage {
 };
 
 /* Contains information about assembly binding */
-typedef struct _MonoAssemblyBindingInfo {
+struct _MonoAssemblyBindingInfo {
 	char *name;
 	char *culture;
 	guchar public_key_token [MONO_PUBLIC_KEY_TOKEN_LENGTH];
@@ -485,7 +484,7 @@ typedef struct _MonoAssemblyBindingInfo {
 	guint has_new_version : 1;
 	guint is_valid : 1;
 	gint32 domain_id; /*Needed to unload per-domain binding*/
-} MonoAssemblyBindingInfo;
+};
 
 struct _MonoMethodHeader {
 	const unsigned char  *code;

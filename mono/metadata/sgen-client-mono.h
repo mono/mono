@@ -20,6 +20,7 @@
 #ifdef SGEN_DEFINE_OBJECT_VTABLE
 
 #include "sgen/sgen-archdep.h"
+#include "sgen/sgen-descriptor.h"
 #include "utils/mono-threads.h"
 #include "utils/mono-mmap.h"
 #include "metadata/object-internals.h"

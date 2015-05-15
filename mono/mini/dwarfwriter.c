@@ -22,6 +22,8 @@
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/metadata/mono-debug-debugger.h>
+#include <mono/metadata/class-internals.h>
+#include <mono/metadata/tabledefs.h>
 #include <mono/utils/mono-compiler.h>
 
 #ifndef HOST_WIN32

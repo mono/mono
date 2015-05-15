@@ -107,6 +107,7 @@ common_sources = \
 	cil-coff.h		\
 	class.c			\
 	class-internals.h	\
+	class-internals-forward.h	\
 	cominterop.c		\
 	cominterop.h		\
 	console-io.h		\
@@ -122,6 +123,7 @@ common_sources = \
 	decimal-ms.c		\
 	decimal-ms.h		\
 	domain-internals.h	\
+	domain-internals-forward.h	\
 	environment.c		\
 	environment.h		\
 	exception.c		\
@@ -148,6 +150,7 @@ common_sources = \
 	metadata.c		\
 	metadata-verify.c	\
 	metadata-internals.h	\
+	metadata-internals-forward.h	\
 	method-builder.h 	\
 	method-builder.c 	\
 	mono-basic-block.c	\
@@ -178,6 +181,7 @@ common_sources = \
 	number-ms.c		\
 	number-ms.h		\
 	object-internals.h	\
+	object-internals-forward.h	\
 	opcodes.c		\
 	socket-io.c		\
 	socket-io.h		\
@@ -289,11 +293,13 @@ libmonoruntimeinclude_HEADERS = \
 	image.h			\
 	loader.h		\
 	metadata.h		\
+	metadata-forward.h		\
 	mono-config.h		\
 	mono-debug.h		\
 	mono-gc.h		\
 	sgen-bridge.h		\
 	object.h		\
+	object-forward.h		\
 	opcodes.h		\
 	profiler.h		\
 	reflection.h		\

@@ -5,12 +5,12 @@
 #define __MONO_METADATA_CLASS_INTERBALS_H__
 
 #include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
-#include "mono/utils/mono-error.h"
+#include <mono/utils/mono-error-forward.h>
 
 #define MONO_CLASS_IS_ARRAY(c) ((c)->rank)
 
@@ -20,10 +20,6 @@
 
 extern gboolean mono_print_vtable;
 extern gboolean mono_align_small_structs;
-
-typedef struct _MonoMethodWrapper MonoMethodWrapper;
-typedef struct _MonoMethodInflated MonoMethodInflated;
-typedef struct _MonoMethodPInvoke MonoMethodPInvoke;
 
 /* Properties that applies to a group of structs should better use a higher number
  * to avoid colision with type specific properties.
@@ -110,7 +106,7 @@ struct _MonoMethodPInvoke {
  * This information is rarely needed, so it is stored separately from 
  * MonoClassField.
  */
-typedef struct MonoFieldDefaultValue {
+struct _MonoFieldDefaultValue {
 	/*
 	 * If the field is constant, pointer to the metadata constant
 	 * value.
@@ -121,7 +117,7 @@ typedef struct MonoFieldDefaultValue {
 
 	/* If the field is constant, the type of the constant. */
 	MonoTypeEnum     def_type;
-} MonoFieldDefaultValue;
+};
 
 /*
  * MonoClassField is just a runtime representation of the metadata for
@@ -446,7 +442,7 @@ int mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf,
 typedef gpointer MonoRuntimeGenericContext;
 
 /* the interface_offsets array is stored in memory before this struct */
-struct MonoVTable {
+struct _MonoVTable {
 	MonoClass  *klass;
 	 /*
 	 * According to comments in gc_gcj.h, this should be the second word in

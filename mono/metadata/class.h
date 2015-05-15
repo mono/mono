@@ -4,15 +4,10 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/loader.h>
-#include <mono/utils/mono-error.h>
+#include <mono/metadata/class-internals-forward.h>
+#include <mono/utils/mono-error-forward.h>
 
 MONO_BEGIN_DECLS
-
-typedef struct MonoVTable MonoVTable;
-
-typedef struct _MonoClassField MonoClassField;
-typedef struct _MonoProperty MonoProperty;
-typedef struct _MonoEvent MonoEvent;
 
 MONO_API MonoClass *
 mono_class_get             (MonoImage *image, uint32_t type_token);

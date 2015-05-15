@@ -42,6 +42,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-ptr-array.h>
 #include <mono/utils/mono-string.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 
 static gboolean is_usertype (MonoReflectionType *ref);

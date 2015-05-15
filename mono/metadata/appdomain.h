@@ -12,7 +12,8 @@
 
 #include <mono/utils/mono-publib.h>
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/domain-internals-forward.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/reflection.h>
 
 MONO_BEGIN_DECLS

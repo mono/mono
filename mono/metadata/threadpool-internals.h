@@ -2,7 +2,7 @@
 #define _MONO_THREADPOOL_INTERNALS_H_
 
 #include <glib.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/mono-hash.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/utils/mono-compiler.h>

@@ -10,12 +10,6 @@
  * Copyright 2001 Xamarin Inc (http://www.xamarin.com)
  */
 #include <config.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/tokentype.h>
@@ -39,11 +33,20 @@
 #include "mono/metadata/mono-debug-debugger.h"
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/verify-internals.h>
+#include <mono/metadata/object-internals.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-memory-model.h>
 #include "cominterop.h"
+
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifdef HAVE_BOEHM_GC
 #define NEED_TO_ZERO_PTRFREE 1

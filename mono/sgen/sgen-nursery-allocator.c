@@ -60,11 +60,13 @@
 #endif
 
 #include "mono/sgen/sgen-gc.h"
+#include "mono/sgen/sgen-gray.h"
 #include "mono/sgen/sgen-cardtable.h"
 #include "mono/sgen/sgen-protocol.h"
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-pinning.h"
 #include "mono/sgen/sgen-client.h"
+#include "mono/utils/atomic.h"
 #include "mono/utils/mono-membar.h"
 
 /* Enable it so nursery allocation diagnostic data is collected */

@@ -3,7 +3,7 @@
 
 #include <config.h>
 #include <glib.h>
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/io-layer/io-layer.h>
 

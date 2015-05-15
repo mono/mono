@@ -4,7 +4,6 @@
 #include <config.h>
 #include <glib.h>
 
-#include <mono/metadata/object-internals.h>
 #include <mono/metadata/socket-io.h>
 
 gboolean

@@ -11,7 +11,11 @@
 #include <config.h>
 
 #include <mono/metadata/class.h>
+#include <mono/metadata/object-internals.h>
+#include <mono/metadata/marshal.h>
+#include <mono/metadata/tabledefs.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-membar.h>
 
 #include "mini.h"
 

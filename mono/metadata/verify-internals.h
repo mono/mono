@@ -4,7 +4,7 @@
 #include <glib.h>
 #include <mono/metadata/metadata.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-forward.h>
 
 G_BEGIN_DECLS
 

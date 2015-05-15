@@ -12,8 +12,6 @@
 #include <net/route.h>
 #endif
 
-#include <mono/metadata/object-internals.h>
-
 in_addr_t gateway_from_rtm (struct rt_msghdr *rtm);
 
 /* Category icalls */

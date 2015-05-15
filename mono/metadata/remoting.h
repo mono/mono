@@ -10,7 +10,6 @@
 
 #include "config.h"
 #include <mono/metadata/class.h>
-#include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
 
 void mono_remoting_init (void);

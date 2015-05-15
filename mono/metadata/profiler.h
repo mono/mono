@@ -1,7 +1,7 @@
 #ifndef __MONO_PROFILER_H__
 #define __MONO_PROFILER_H__
 
-#include <mono/metadata/object.h>
+#include <mono/metadata/object-forward.h>
 #include <mono/metadata/appdomain.h>
 
 MONO_BEGIN_DECLS

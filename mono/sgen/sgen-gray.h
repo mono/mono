@@ -20,6 +20,7 @@
 #ifndef __MONO_SGEN_GRAY_H__
 #define __MONO_SGEN_GRAY_H__
 
+#include "mono/sgen/sgen-gray-forward.h"
 #include "mono/sgen/sgen-protocol.h"
 
 /*
@@ -68,7 +69,6 @@ typedef enum {
 } GrayQueueSectionState;
 #endif
 
-typedef struct _GrayQueueEntry GrayQueueEntry;
 struct _GrayQueueEntry {
 	char *obj;
 	mword desc;
@@ -80,7 +80,6 @@ struct _GrayQueueEntry {
  * This is a stack now instead of a queue, so the most recently added items are removed
  * first, improving cache locality, and keeping the stack size manageable.
  */
-typedef struct _GrayQueueSection GrayQueueSection;
 struct _GrayQueueSection {
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 	/*
@@ -95,8 +94,6 @@ struct _GrayQueueSection {
 	GrayQueueEntry entries [SGEN_GRAY_QUEUE_SECTION_SIZE];
 };
 
-typedef struct _SgenGrayQueue SgenGrayQueue;
-
 typedef void (*GrayQueueAllocPrepareFunc) (SgenGrayQueue*);
 typedef void (*GrayQueueEnqueueCheckFunc) (char*);
 
@@ -110,8 +107,6 @@ struct _SgenGrayQueue {
 #endif
 	void *alloc_prepare_data;
 };
-
-typedef struct _SgenSectionGrayQueue SgenSectionGrayQueue;
 
 struct _SgenSectionGrayQueue {
 	GrayQueueSection *first;

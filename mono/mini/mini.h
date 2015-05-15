@@ -14,24 +14,18 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-#include <mono/metadata/loader.h>
+
+#include <mono/metadata/metadata.h>
 #include <mono/metadata/mempool.h>
-#include <mono/utils/monobitset.h>
-#include <mono/metadata/class.h>
-#include <mono/metadata/object.h>
+#include <mono/utils/monobitset-forward.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/opcodes.h>
-#include <mono/metadata/tabledefs.h>
-#include <mono/metadata/domain-internals.h>
-#include "mono/metadata/class-internals.h"
-#include "mono/metadata/object-internals.h"
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/debug-helpers.h>
-#include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-machine.h>
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-stack-unwinding.h>
-#include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-threads-forward.h>
 #include <mono/utils/mono-tls.h>
-#include <mono/utils/atomic.h>
 #include <mono/utils/mono-conc-hashtable.h>
 #include <mono/utils/mono-signal-handler.h>
 
@@ -42,14 +36,7 @@
 #include "mini-unwind.h"
 #include "jit.h"
 
-#include "mono/metadata/class-internals.h"
-#include "mono/metadata/domain-internals.h"
-#include "mono/metadata/object.h"
-#include "mono/metadata/tabledefs.h"
-#include "mono/metadata/marshal.h"
-#include "mono/metadata/security-manager.h"
-#include "mono/metadata/exception.h"
-#include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-codeman.h"
 
 #ifdef __native_client_codegen__
 #include <nacl/nacl_dyncode.h>

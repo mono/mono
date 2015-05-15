@@ -2,7 +2,9 @@
 #define __MONO_ERROR_INTERNALS_H__
 
 #include "mono/utils/mono-compiler.h"
-#include "mono/metadata/object-internals.h"
+#include "mono/metadata/class-internals-forward.h"
+#include "mono/metadata/object-internals-forward.h"
+#include "mono/metadata/metadata-internals-forward.h"
 
 /*Keep in sync with MonoError*/
 typedef struct {

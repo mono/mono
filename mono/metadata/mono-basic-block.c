@@ -15,6 +15,7 @@
 #include <mono/metadata/mono-basic-block.h>
 #include <mono/metadata/opcodes.h>
 
+#include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-compiler.h>
 
