@@ -1871,7 +1871,28 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""UnknownDerivedType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base"",""DerivedProperty"":""Derived 1""},""Name"":""Parent2""}";
 			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
 		}
-			
+
+		[Test]
+		public void SubclassTest ()
+		{
+			var knownTypes = new List<Type> { typeof(IntList) };
+	                var serializer = new DataContractJsonSerializer(typeof(ListOfNumbers), knownTypes);
+
+			string json = "{\"Numbers\": [85]}";
+			using (var stream = new MemoryStream(UTF8Encoding.Default.GetBytes(json)))
+			{
+				var nums = (ListOfNumbers)serializer.ReadObject(stream);
+				Assert.AreEqual (1, nums.Numbers.Count);
+			}
+		}
+		[DataContract]
+		public class ListOfNumbers
+		{
+			[DataMember]
+			public IntList Numbers;
+		}
+
+		public class IntList : List<int>{}
 		#endregion
 	}
 	
