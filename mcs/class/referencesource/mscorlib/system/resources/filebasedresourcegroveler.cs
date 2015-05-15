@@ -51,7 +51,9 @@ namespace System.Resources {
             // Don't use Assembly manifest, but grovel on disk for a file.
             try
             {
+#if !DISABLE_CAS_USE
                 new System.Security.Permissions.FileIOPermission(System.Security.Permissions.PermissionState.Unrestricted).Assert();
+#endif
 
                 // Create new ResourceSet, if a file exists on disk for it.
                 String tempFileName = _mediator.GetResourceFileName(culture);
@@ -77,7 +79,9 @@ namespace System.Resources {
             }
             finally
             {
+#if !DISABLE_CAS_USE
                 System.Security.CodeAccessPermission.RevertAssert();
+#endif
             }
         }
 

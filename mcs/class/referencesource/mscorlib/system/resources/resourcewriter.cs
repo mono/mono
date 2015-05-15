@@ -350,12 +350,15 @@ namespace System.Resources {
             // write to the temp directory (enforced via a Windows ACL).  Fall back to a MemoryStream.
             Stream dataSection = null;  // Either a FileStream or a MemoryStream
             String tempFile = null;
-
+#if !DISABLE_CAS_USE
             PermissionSet permSet = new PermissionSet(PermissionState.None);
             permSet.AddPermission(new EnvironmentPermission(PermissionState.Unrestricted));
             permSet.AddPermission(new FileIOPermission(PermissionState.Unrestricted));
+#endif
             try {
+#if !DISABLE_CAS_USE
                 permSet.Assert();
+#endif
                 tempFile = Path.GetTempFileName();
                 File.SetAttributes(tempFile, FileAttributes.Temporary | FileAttributes.NotContentIndexed);
                 // Explicitly opening with FileOptions.DeleteOnClose to avoid complicated File.Delete
@@ -372,7 +375,9 @@ namespace System.Resources {
                 dataSection = new MemoryStream();
             }
             finally {
+#if !DISABLE_CAS_USE
                 PermissionSet.RevertAssert();
+#endif
             }
 
             using(dataSection) {
