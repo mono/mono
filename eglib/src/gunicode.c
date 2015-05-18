@@ -217,8 +217,17 @@ g_get_charset (G_CONST_RETURN char **charset)
 		sprintf (buf, "CP%u", GetACP ());
 		my_charset = buf;
 		is_utf8 = FALSE;
+#elif defined(__FreeBSD__)
+
+#if defined(HAVE_LANGINFO_H)
+                my_charset = nl_langinfo (CODESET);
+#elif defined(HAVE_LOCALCHARSET_H)
+		my_charset = locale_charset ();
 #else
+                my_charset = "UTF-8";
+#endif
 		/* These shouldn't be heap allocated */
+#else
 #if HAVE_LOCALCHARSET_H
 		my_charset = locale_charset ();
 #elif defined(HAVE_LANGINFO_H)
