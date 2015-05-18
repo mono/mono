@@ -309,7 +309,13 @@ mono_process_get_times (gpointer pid, gint64 *start_time, gint64 *user_time, gin
 			KINFO_PROC processi;
 
 			if (sysctl_kinfo_proc (pid, &processi))
+#if defined(__FreeBSD__)
+				/* BSD process model: */
+				*start_time = mono_100ns_datetime_from_timeval (processi.ki_start);
+#else
+				/* Mach process model: */
 				*start_time = mono_100ns_datetime_from_timeval (processi.kp_proc.p_starttime);
+#endif
 		}
 #endif
 
