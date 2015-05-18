@@ -43,6 +43,10 @@ profiles-do--%:
 profile-do--%:
 	$(MAKE) PROFILE=$(subst --, ,$*)
 
+# xbuild_12 and xbuild_14 will try to install the same files, so they need
+# to be ordered
+profile-do--xbuild_14--install: profile-do--xbuild_12--install
+
 # We don't want to run the tests in parallel.  We want behaviour like -k.
 profiles-do--run-test:
 	ret=:; $(foreach p,$(PROFILES), { $(MAKE) PROFILE=$(p) run-test || ret=false; }; ) $$ret
