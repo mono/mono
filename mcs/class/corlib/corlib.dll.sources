@@ -101,6 +101,7 @@ System/Environment.cs
 System/EnvironmentVariableTarget.cs
 System/Exception.cs
 System/GC.cs
+System/GCQuery.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
 System/Guid.cs
@@ -123,6 +124,7 @@ System/NumberFormatter.cs
 System/Object.cs
 System/OperatingSystem.cs
 System/PlatformID.cs
+System/ReferringObject.cs
 System/ResolveEventArgs.cs
 System/ResolveEventHandler.cs
 System/RuntimeArgumentHandle.cs

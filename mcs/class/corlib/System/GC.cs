@@ -1,8 +1,9 @@
 //
 // System.GC.cs
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
+//   Alexander Kyte (alexander.kyte@xamarin.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -31,6 +32,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Permissions;
 

@@ -1538,6 +1538,7 @@
     <Compile Include="System\EnvironmentVariableTarget.cs" />
     <Compile Include="System\Exception.cs" />
     <Compile Include="System\GC.cs" />
+    <Compile Include="System\GCQuery.cs" />
     <Compile Include="System\GCCollectionMode.cs" />
     <Compile Include="System\GCNotificationStatus.cs" />
     <Compile Include="System\Guid.cs" />
@@ -1561,6 +1562,7 @@
     <Compile Include="System\Object.cs" />
     <Compile Include="System\OperatingSystem.cs" />
     <Compile Include="System\PlatformID.cs" />
+    <Compile Include="System\ReferringObject.cs" />
     <Compile Include="System\ResolveEventArgs.cs" />
     <Compile Include="System\ResolveEventHandler.cs" />
     <Compile Include="System\RuntimeArgumentHandle.cs" />
