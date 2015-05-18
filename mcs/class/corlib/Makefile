@@ -173,16 +173,24 @@ EXTRA_DISTFILES += \
 # Android TimeZoneInfo testing....
 #
 
-tzi.exe: System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../../build/common/Locale.cs ../Mono.Options/Mono.Options/Options.cs ReferenceSources/TimeZoneInfoOptions.cs
-	mcs /debug+ /out:$@ /unsafe "/d:INSIDE_CORLIB;MONODROID;MOBILE;NET_4_5;NET_4_0;LIBC;SELF_TEST" $^
+TMP_FILE1=tzi1.tmp
+TMP_FILE2=tzi2.tmp
+	
+tzi.exe:System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/common/Consts.cs ../../build/common/Locale.cs ../Mono.Options/Mono.Options/Options.cs
+	# Remove some code that is protected so we don't have to include all the corlib files.
+	trap "rm -f $(TMP_FILE1) $(TMP_FILE2)" EXIT INT QUIT TERM && \
+	sed 's/Environment\.GetResourceString/string.Format/g' ../../../external/referencesource/mscorlib/system/timezoneinfo.cs > $(TMP_FILE1) && \
+	sed 's/StringBuilder\.DefaultCapacity/100/g' ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs > $(TMP_FILE2) && \
+	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
 
 android-pull-tzdb:
 	mkdir -p android/tzdb/usr/share/zoneinfo
 	mkdir -p android/tzdb/misc/zoneinfo/zoneinfo
 	android_root=`adb shell echo '$$ANDROID_ROOT' | tr -d "\r"` ; \
 	android_data=`adb shell echo '$$ANDROID_DATA' | tr -d "\r"` ; \
-	adb $(ADB_TARGET) pull $$android_root/usr/share/zoneinfo    android/tzdb/usr/share/zoneinfo ; \
-	adb $(ADB_TARGET) pull $$android_data/misc/zoneinfo/tzdata  android/tzdb/misc/zoneinfo
+	adb $(ADB_TARGET) pull $$android_root/usr/share/zoneinfo    android/tzdb/usr/share/zoneinfo || true ; \
+	adb $(ADB_TARGET) pull $$android_data/misc/zoneinfo/tzdata  android/tzdb/misc/zoneinfo || true
 
 android-dump-tzdata: tzi.exe android-pull-tzdb
-	__XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT="`pwd`/android/tzdb" ANDROID_DATA="`pwd`/android/tzdb" mono --debug tzi.exe -o android/tzdata
+	export
+	__XA_OVERRIDE_TIMEZONE_ID__=America/New_York ANDROID_ROOT="`pwd`/android/tzdb" ANDROID_DATA="`pwd`/android/tzdb" $(TEST_RUNTIME) tzi.exe -o android/tzdata
