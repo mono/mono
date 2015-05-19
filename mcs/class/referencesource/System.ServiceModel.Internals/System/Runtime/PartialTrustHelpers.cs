@@ -36,6 +36,9 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool IsInFullTrust()
         {
+#if DISABLE_CAS_USE
+            return true;
+#else
             if (!SecurityManager.CurrentThreadRequiresSecurityContextCapture())
             {
                 return true;
@@ -50,6 +53,7 @@ namespace System.Runtime
             {
                 return false;
             }
+#endif
         }
 
         [Fx.Tag.SecurityNote(Critical = "Captures security context with identity flow suppressed, " +
@@ -110,17 +114,25 @@ namespace System.Runtime
         [SecurityCritical]
         internal static bool CheckAppDomainPermissions(PermissionSet permissions)
         {
+#if DISABLE_CAS_USE
+            return true;
+#else
             return AppDomain.CurrentDomain.IsHomogenous &&
                    permissions.IsSubsetOf(AppDomain.CurrentDomain.PermissionSet);
+#endif
         }
 
         [Fx.Tag.SecurityNote(Critical = "used in a security-sensitive decision")]
         [SecurityCritical]
         internal static bool HasEtwPermissions()
         {
+#if DISABLE_CAS_USE
+            return true;
+#else
             //Currently unrestricted permissions are required to create Etw provider. 
             PermissionSet permissions = new PermissionSet(PermissionState.Unrestricted);
             return CheckAppDomainPermissions(permissions);
+#endif
         }
 
         internal static bool AppDomainFullyTrusted
@@ -130,6 +142,9 @@ namespace System.Runtime
             [SecuritySafeCritical]
             get
             {
+#if DISABLE_CAS_USE
+                return true;
+#else
                 if (!checkedForFullTrust)
                 {
                     inFullTrust = AppDomain.CurrentDomain.IsFullyTrusted;
@@ -137,6 +152,7 @@ namespace System.Runtime
                 }
 
                 return inFullTrust;
+#endif
             }
         }
     }
