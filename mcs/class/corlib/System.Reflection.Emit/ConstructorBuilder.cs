@@ -179,9 +179,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public Type ReturnType {
 			get {
 				return null;
@@ -335,7 +333,7 @@ namespace System.Reflection.Emit {
 
 		public override Module Module {
 			get {
-				return base.Module;
+				return GetModule ();
 			}
 		}
 

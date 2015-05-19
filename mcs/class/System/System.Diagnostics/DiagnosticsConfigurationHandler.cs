@@ -42,6 +42,7 @@ using System.Xml;
 #endif
 namespace System.Diagnostics
 {
+/*
 	// It handles following elements in <system.diagnostics> :
 	//	- <sharedListeners> [2.0]
 	//	- <sources>
@@ -81,6 +82,8 @@ namespace System.Diagnostics
 			}
 		}
 	}
+*/
+
 #if (XML_DEP)
 	[Obsolete ("This class is obsoleted")]
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
@@ -94,6 +97,7 @@ namespace System.Diagnostics
 		public DiagnosticsConfigurationHandler ()
 		{
 			elementHandlers ["assert"] = new ElementHandler (AddAssertNode);
+			elementHandlers ["performanceCounters"] = new ElementHandler (AddPerformanceCountersNode);
 			elementHandlers ["switches"] = new ElementHandler (AddSwitchesNode);
 			elementHandlers ["trace"] = new ElementHandler (AddTraceNode);
 			elementHandlers ["sources"] = new ElementHandler (AddSourcesNode);
@@ -175,6 +179,25 @@ namespace System.Diagnostics
 					dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
 				if (logfilename != null)
 					dtl.LogFileName = logfilename;
+			}
+
+			if (node.ChildNodes.Count > 0)
+				ThrowUnrecognizedElement (node.ChildNodes[0]);
+		}
+
+		private void AddPerformanceCountersNode (IDictionary d, XmlNode node)
+		{
+			XmlAttributeCollection c = node.Attributes;
+			string filemappingsize = GetAttribute (c, "filemappingsize", false, node);
+			ValidateInvalidAttributes (c, node);
+			if (filemappingsize != null) {
+				try {
+					d ["filemappingsize"] = int.Parse (filemappingsize);
+				}
+				catch (Exception e) {
+					throw new ConfigurationException ("The `filemappingsize' attribute must be an integral value.",
+							e, node);
+				}
 			}
 
 			if (node.ChildNodes.Count > 0)
@@ -285,7 +308,7 @@ namespace System.Diagnostics
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
 			if (shared_listeners == null) {
-				shared_listeners = new TraceListenerCollection (false);
+				shared_listeners = new TraceListenerCollection ();
 				d ["sharedListeners"] = shared_listeners;
 			}
 			return shared_listeners;
@@ -414,7 +437,8 @@ namespace System.Diagnostics
 						"Listener '{0}' references a shared " +
 						"listener and can only have a 'Name' " +
 						"attribute.", name));
-				listeners.Add (shared, configValues);
+				shared.IndentSize = configValues.IndentSize;
+				listeners.Add (shared);
 				return;
 			}
 #else
@@ -481,7 +505,8 @@ namespace System.Diagnostics
 			}
 #endif
 
-			listeners.Add (l, configValues);
+			l.IndentSize = configValues.IndentSize;
+			listeners.Add (l);
 		}
 
 		private void RemoveTraceListener (string name)

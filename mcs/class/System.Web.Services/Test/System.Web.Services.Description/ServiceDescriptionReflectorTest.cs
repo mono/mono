@@ -27,7 +27,6 @@ namespace MonoTests.System.Web.Services.Description
 	[TestFixture]
 	public class ServiceDescriptionReflectorTest
 	{
-#if NET_2_0
 		[Test]
 		public void ReflectNullableInt ()
 		{
@@ -49,7 +48,6 @@ namespace MonoTests.System.Web.Services.Description
 			XmlSchemaElement e2 = s.Items [0] as XmlSchemaElement;
 			Assert.IsTrue (e2.IsNillable);
 		}
-#endif
 		[Test]
 		[Category ("NotWorking")]
 		public void IncludeTest ()
@@ -70,20 +68,12 @@ namespace MonoTests.System.Web.Services.Description
 
 			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
-#if NET_2_0
 				"<wsdl:definitions xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:tm=\"http://microsoft.com/wsdl/mime/textMatching/\""  +
 				" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\"" +
 				" xmlns:tns=\"http://tempuri.org/\" xmlns:s=\"http://www.w3.org/2001/XMLSchema\"" +
 				" xmlns:soap12=\"http://schemas.xmlsoap.org/wsdl/soap12/\"" +
 				" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" targetNamespace=\"http://tempuri.org/\"" +
 				" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\">{0}" +
-#else
-				"<wsdl:definitions xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\"" +
-				" xmlns:s=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"" +
-				" xmlns:tns=\"http://tempuri.org/\" xmlns:tm=\"http://microsoft.com/wsdl/mime/textMatching/\"" +
-				" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" targetNamespace=\"http://tempuri.org/\"" +
-				" xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\">{0}" +
-#endif
 				"  <wsdl:types>{0}" +
 				"    <s:schema elementFormDefault=\"qualified\" targetNamespace=\"http://tempuri.org/\">{0}" +
 				"      <s:element name=\"EchoString\">{0}" +
@@ -152,11 +142,7 @@ namespace MonoTests.System.Web.Services.Description
 				"    </wsdl:operation>{0}" +
 				"  </wsdl:portType>{0}" +
 				"  <wsdl:binding name=\"IncludeTestServicesSoap\" type=\"tns:IncludeTestServicesSoap\">{0}" +
-#if NET_2_0
 				"    <soap:binding transport=\"http://schemas.xmlsoap.org/soap/http\" />{0}" +
-#else
-				"    <soap:binding transport=\"http://schemas.xmlsoap.org/soap/http\" style=\"document\" />{0}" +
-#endif
 				"    <wsdl:operation name=\"EchoString\">{0}" +
 				"      <soap:operation soapAction=\"http://tempuri.org/EchoString\" style=\"document\" />{0}" +
 				"      <wsdl:input>{0}" +
@@ -176,7 +162,6 @@ namespace MonoTests.System.Web.Services.Description
 				"      </wsdl:output>{0}" +
 				"    </wsdl:operation>{0}" +
 				"  </wsdl:binding>{0}" +
-#if NET_2_0
 				"  <wsdl:binding name=\"IncludeTestServicesSoap12\" type=\"tns:IncludeTestServicesSoap\">{0}" +
 				"    <soap12:binding transport=\"http://schemas.xmlsoap.org/soap/http\" />{0}" +
 				"    <wsdl:operation name=\"EchoString\">{0}" +
@@ -198,19 +183,13 @@ namespace MonoTests.System.Web.Services.Description
 				"      </wsdl:output>{0}" +
 				"    </wsdl:operation>{0}" +
 				"  </wsdl:binding>{0}" +
-#endif
 				"  <wsdl:service name=\"IncludeTestServices\">{0}" +
-#if ONLY_1_1
-				"    <documentation xmlns=\"http://schemas.xmlsoap.org/wsdl/\" />{0}" +
-#endif
 				"    <wsdl:port name=\"IncludeTestServicesSoap\" binding=\"tns:IncludeTestServicesSoap\">{0}" +
 				"      <soap:address location=\"http://localhost/IncludeTestServices.asmx\" />{0}" +
 				"    </wsdl:port>{0}" +
-#if NET_2_0
 				"    <wsdl:port name=\"IncludeTestServicesSoap12\" binding=\"tns:IncludeTestServicesSoap12\">{0}" +
 				"      <soap12:address location=\"http://localhost/IncludeTestServices.asmx\" />{0}" +
 				"    </wsdl:port>{0}" +
-#endif
 				"  </wsdl:service>{0}" +
 				"</wsdl:definitions>", Environment.NewLine), sw.ToString (), "#5");
 		}
@@ -230,13 +209,8 @@ namespace MonoTests.System.Web.Services.Description
 			Assert.IsNotNull (r.ServiceDescriptions ["www.DefaultNamespace.org"], "#1-1");
 			ServiceDescription sd = r.ServiceDescriptions ["urn:localBinding:local"];
 			Assert.IsNotNull (sd, "#1-2");
-#if NET_2_0
 			// Soap and Soap12
 			Assert.AreEqual (2, sd.Bindings.Count, "#2-2.0");
-#else
-			// Soap
-			Assert.AreEqual (1, sd.Bindings.Count, "#2-1.1");
-#endif
 			Binding b = sd.Bindings [0];
 			Assert.AreEqual ("Local", b.Name, "#3");
 		}
@@ -264,7 +238,6 @@ namespace MonoTests.System.Web.Services.Description
 			Assert.AreEqual (String.Empty, sob.SoapAction);
 		}
 
-#if NET_2_0
 		[Test]
 		public void Bug332150 ()
 		{
@@ -307,7 +280,6 @@ namespace MonoTests.System.Web.Services.Description
 			// Make sure the map for service client is properly created
 			new Bug360241SoapHttpClientProtocol ();
 		}
-#endif
 
 		public class IncludeTestServices : WebService
 		{
@@ -343,7 +315,6 @@ namespace MonoTests.System.Web.Services.Description
 		{
 		}
 
-#if NET_2_0
 		public class NullableContainer
 		{
 			[WebMethod (Description="Test nullables")]
@@ -352,7 +323,6 @@ namespace MonoTests.System.Web.Services.Description
 				return null;
 			}
 		}
-#endif
 
 		// bug #78953
 		[WebServiceAttribute (Namespace = "www.DefaultNamespace.org")]
@@ -430,7 +400,6 @@ namespace MonoTests.System.Web.Services.Description
 			}
 		}
 
-#if NET_2_0
 		[WebService (Namespace = "http://tempuri.org/")]
 		[WebServiceBinding (ConformsTo = WsiProfiles.BasicProfile1_1)]
 		public abstract class Bug332150SecureWebService : WebService
@@ -477,7 +446,6 @@ namespace MonoTests.System.Web.Services.Description
 		public class Bug360241SoapHttpClientProtocol : SoapHttpClientProtocol
 		{
 		}
-#endif
 	}
 }
 

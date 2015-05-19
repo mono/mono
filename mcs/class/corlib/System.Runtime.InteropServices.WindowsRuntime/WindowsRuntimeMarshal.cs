@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // WindowsRuntimeMarshal.cs
 //
@@ -66,7 +65,11 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal static bool ReportUnhandledError (Exception e)
+		{
+			return false;
+		}
 	}
 }
-#endif
 

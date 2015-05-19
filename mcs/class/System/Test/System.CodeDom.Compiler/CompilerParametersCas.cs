@@ -76,10 +76,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			cp.WarningLevel = 0;
 			Assert.IsNull (cp.Win32Resource, "Win32Resource");
 			cp.Win32Resource = "*";
-#if NET_2_0
 			Assert.AreEqual (0, cp.EmbeddedResources.Count, "EmbeddedResources");
 			Assert.AreEqual (0, cp.LinkedResources.Count, "LinkedResources");
-#endif
 		}
 
 		[Test]
@@ -109,10 +107,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			cp.WarningLevel = 0;
 			Assert.IsNull (cp.Win32Resource, "Win32Resource");
 			cp.Win32Resource = "*";
-#if NET_2_0
 			Assert.AreEqual (0, cp.EmbeddedResources.Count, "EmbeddedResources");
 			Assert.AreEqual (0, cp.LinkedResources.Count, "LinkedResources");
-#endif
 		}
 
 		[Test]
@@ -142,10 +138,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			cp.WarningLevel = 0;
 			Assert.IsNull (cp.Win32Resource, "Win32Resource");
 			cp.Win32Resource = "*";
-#if NET_2_0
 			Assert.AreEqual (0, cp.EmbeddedResources.Count, "EmbeddedResources");
 			Assert.AreEqual (0, cp.LinkedResources.Count, "LinkedResources");
-#endif
 		}
 
 		[Test]
@@ -175,10 +169,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			cp.WarningLevel = 0;
 			Assert.IsNull (cp.Win32Resource, "Win32Resource");
 			cp.Win32Resource = "*";
-#if NET_2_0
 			Assert.AreEqual (0, cp.EmbeddedResources.Count, "EmbeddedResources");
 			Assert.AreEqual (0, cp.LinkedResources.Count, "LinkedResources");
-#endif
 		}
 
 		[Test]

@@ -39,7 +39,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 [System.Runtime.InteropServices.ComVisible (true)]
 [StructLayout (LayoutKind.Sequential)]
-public class AsyncResult : IAsyncResult, IMessageSink {
+public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 
 #pragma warning disable 169, 414, 649
 	object async_state;
@@ -185,5 +185,17 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 		get { return call_message; }
 		set { call_message = value; }
 	}
+
+	void IThreadPoolWorkItem.ExecuteWorkItem()
+	{
+		Invoke ();
+	}
+
+	void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
+	{
+	}
+
+	[MethodImplAttribute(MethodImplOptions.InternalCall)]
+	internal extern object Invoke ();
 }
 }

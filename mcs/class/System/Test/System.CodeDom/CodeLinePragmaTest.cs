@@ -37,7 +37,6 @@ namespace MonoTests.System.CodeDom
 	[TestFixture]
 	public class CodeLinePragmaTest
 	{
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -58,7 +57,6 @@ namespace MonoTests.System.CodeDom
 			clp.LineNumber = 5;
 			Assert.AreEqual (5, clp.LineNumber, "#8");
 		}
-#endif
 
 		[Test]
 		public void Constructor1 ()

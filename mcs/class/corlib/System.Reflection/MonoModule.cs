@@ -34,32 +34,29 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security;
 using System.Security.Permissions;
-
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
-#if NET_4_0
+	abstract class RuntimeModule : Module
+	{
+		
+	}
+
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	class MonoModule : Module {
-#else
-	public partial class Module {
-#endif
-
+	class MonoModule : RuntimeModule
+	{
 		public
-#if NET_4_0
 		override
-#endif
 		Assembly Assembly {
 			get { return assembly; }
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		// Note: we do not ask for PathDiscovery because no path is returned here.
 		// However MS Fx requires it (see FDBK23572 for details).
 		string Name {
@@ -67,17 +64,13 @@ namespace System.Reflection {
 		}
 	
 		public
-#if NET_4_0
 		override
-#endif
 		string ScopeName {
 			get { return scopename; }
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		int MDStreamVersion {
 			get {
 				if (_impl == IntPtr.Zero)
@@ -87,20 +80,14 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Guid ModuleVersionId {
 			get {
 				return GetModuleVersionId ();
 			}
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		string FullyQualifiedName {
 			get {
 #if !NET_2_1
@@ -113,19 +100,13 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		bool IsResource()
 		{
 			return is_resource;
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		Type[] FindTypes(TypeFilter filter, object filterCriteria) 
 		{
 			var filtered = new List<Type> ();
@@ -136,33 +117,24 @@ namespace System.Reflection {
 			return filtered.ToArray ();
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		object[] GetCustomAttributes(bool inherit) 
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		object[] GetCustomAttributes(Type attributeType, bool inherit) 
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		FieldInfo GetField (string name, BindingFlags bindingAttr) 
 		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
 			if (IsResource ())
 				return null;
 
@@ -170,11 +142,7 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		FieldInfo[] GetFields (BindingFlags bindingFlags)
 		{
 			if (IsResource ())
@@ -184,20 +152,12 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		int MetadataToken {
 			get { return get_MetadataToken (this); }
 		}
 		protected
-#if NET_4_0
 		override
-#else
-		virtual
-#endif	
 		MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
 			if (IsResource ())
@@ -212,9 +172,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		MethodInfo[] GetMethods (BindingFlags bindingFlags) {
 			if (IsResource ())
 				return new MethodInfo [0];
@@ -223,20 +181,12 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
 			ModuleHandle.GetPEKind (out peKind, out machine);
 		}
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		Type GetType(string className, bool throwOnError, bool ignoreCase) 
 		{
 			if (className == null)
@@ -246,20 +196,14 @@ namespace System.Reflection {
 			return assembly.InternalGetType (this, className, throwOnError, ignoreCase);
 		}
 	
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		bool IsDefined (Type attributeType, bool inherit) 
 		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
@@ -271,9 +215,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 
 			ResolveTokenError error;
@@ -286,9 +228,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
@@ -300,9 +240,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		string ResolveString (int metadataToken) {
 			ResolveTokenError error;
 
@@ -314,9 +252,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
@@ -328,9 +264,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		byte[] ResolveSignature (int metadataToken) {
 			ResolveTokenError error;
 
@@ -341,12 +275,18 @@ namespace System.Reflection {
 				return res;
 		}
 
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			UnitySerializationHolder.GetUnitySerializationInfo (info, UnitySerializationHolder.ModuleUnity, this.ScopeName, this.GetRuntimeAssembly ());
+		}
+
 #if !NET_2_1
 
 		public
-#if NET_4_0
 		override
-#endif
 		X509Certificate GetSignerCertificate ()
 		{
 			try {
@@ -358,20 +298,19 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_0
 		public override
-#else
-		public virtual
-#endif
 		Type[] GetTypes() 
 		{
 			return InternalGetTypes ();
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
+
+		internal RuntimeAssembly GetRuntimeAssembly ()
+		{
+			return (RuntimeAssembly)assembly;
+		}
 	}
 }

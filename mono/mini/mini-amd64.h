@@ -33,7 +33,7 @@ void amd64_nacl_membase_handler (guint8** code, gint8 basereg, gint32 offset, gi
 #include <signal.h>
 #endif
 
-
+#if !defined(_MSC_VER)
 /* sigcontext surrogate */
 struct sigcontext {
 	guint64 eax;
@@ -46,6 +46,7 @@ struct sigcontext {
 	guint64 edi;
 	guint64 eip;
 };
+#endif
 
 typedef void (* MonoW32ExceptionHandler) (int _dummy, EXCEPTION_POINTERS *info, void *context);
 void win32_seh_init(void);
@@ -113,7 +114,7 @@ struct sigcontext {
 
 #define MONO_ARCH_HAVE_RESTORE_STACK_SUPPORT 1
 
-#define MONO_ARCH_CPU_SPEC amd64_desc
+#define MONO_ARCH_CPU_SPEC mono_amd64_desc
 
 #define MONO_MAX_IREGS 16
 
@@ -121,14 +122,23 @@ struct sigcontext {
 
 #define MONO_ARCH_FP_RETURN_REG AMD64_XMM0
 
-/* xmm15 is reserved for use by some opcodes */
+#ifdef TARGET_WIN32
+/* xmm5 is used as a scratch register */
+#define MONO_ARCH_CALLEE_FREGS 0x1f
+/* xmm6:xmm15 */
+#define MONO_ARCH_CALLEE_SAVED_FREGS (0xffff - 0x3f)
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM5
+#else
+/* xmm15 is used as a scratch register */
 #define MONO_ARCH_CALLEE_FREGS 0x7fff
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
+#define MONO_ARCH_FP_SCRATCH_REG AMD64_XMM15
+#endif
 
 #define MONO_MAX_XREGS MONO_MAX_FREGS
 
-#define MONO_ARCH_CALLEE_XREGS 0x7fff
-#define MONO_ARCH_CALLEE_SAVED_XREGS 0
+#define MONO_ARCH_CALLEE_XREGS MONO_ARCH_CALLEE_FREGS
+#define MONO_ARCH_CALLEE_SAVED_XREGS MONO_ARCH_CALLEE_SAVED_FREGS
 
 
 #define MONO_ARCH_CALLEE_REGS AMD64_CALLEE_REGS
@@ -137,7 +147,7 @@ struct sigcontext {
 #define MONO_ARCH_USE_FPSTACK FALSE
 #define MONO_ARCH_FPSTACK_SIZE 0
 
-#define MONO_ARCH_INST_FIXED_REG(desc) ((desc == '\0') ? -1 : ((desc == 'i' ? -1 : ((desc == 'a') ? AMD64_RAX : ((desc == 's') ? AMD64_RCX : ((desc == 'd') ? AMD64_RDX : -1))))))
+#define MONO_ARCH_INST_FIXED_REG(desc) ((desc == '\0') ? -1 : ((desc == 'i' ? -1 : ((desc == 'a') ? AMD64_RAX : ((desc == 's') ? AMD64_RCX : ((desc == 'd') ? AMD64_RDX : ((desc == 'A') ? MONO_AMD64_ARG_REG1 : -1)))))))
 
 /* RDX is clobbered by the opcode implementation before accessing sreg2 */
 #define MONO_ARCH_INST_SREG2_MASK(ins) (((ins [MONO_INST_CLOB] == 'a') || (ins [MONO_INST_CLOB] == 'd')) ? (1 << AMD64_RDX) : 0)
@@ -150,9 +160,6 @@ struct sigcontext {
 /* fixme: align to 16byte instead of 32byte (we align to 32byte to get 
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
-
-#define MONO_ARCH_RETREG1 X86_EAX
-#define MONO_ARCH_RETREG2 X86_EDX
 
 /*This is the max size of the locals area of a given frame. I think 1MB is a safe default for now*/
 #define MONO_ARCH_MAX_FRAME_SIZE 0x100000
@@ -191,7 +198,7 @@ typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gint32 sp_fp_offset;
 	guint32 saved_iregs;
-	gboolean omit_fp, omit_fp_computed, no_pushes;
+	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
 	gint32 async_point_count;
 	gpointer vret_addr_loc;
@@ -200,12 +207,13 @@ typedef struct MonoCompileArch {
 #endif
 	gpointer seq_point_info_var;
 	gpointer ss_trigger_page_var;
+	gpointer ss_tramp_var;
 	gpointer lmf_var;
 } MonoCompileArch;
 
 
 
-#ifdef HOST_WIN32
+#ifdef TARGET_WIN32
 #define PARAM_REGS 4
 #else
 #define PARAM_REGS 6
@@ -213,8 +221,7 @@ typedef struct MonoCompileArch {
 
 /* Structure used by the sequence points in AOTed code */
 typedef struct {
-	gpointer ss_trigger_page;
-	gpointer bp_trigger_page;
+	gpointer ss_tramp_addr;
 	gpointer bp_addrs [MONO_ZERO_LEN_ARRAY];
 } SeqPointInfo;
 
@@ -224,8 +231,8 @@ typedef struct {
 	guint8 *ret;
 } DynCallArgs;
 
-
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->rax = (gsize)exc; } while (0)
+#define MONO_CONTEXT_SET_LLVM_EH_SELECTOR_REG(ctx, sel) do { (ctx)->rdx = (gsize)(sel); } while (0)
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
@@ -263,7 +270,7 @@ typedef struct {
  */
 #define MONO_ARCH_VARARG_ICALLS 1
 
-#if !defined( HOST_WIN32 ) && !defined(__native_client__) && !defined(__native_client_codegen__)
+#if (!defined( HOST_WIN32 ) && !defined(__native_client__) && !defined(__native_client_codegen__)) && defined (HAVE_SIGACTION)
 
 #define MONO_ARCH_USE_SIGACTION 1
 
@@ -275,74 +282,20 @@ typedef struct {
 
 #endif /* !HOST_WIN32 && !__native_client__ */
 
-#if defined (__APPLE__)
+#if !defined(__linux__)
+#define MONO_ARCH_NOMAP32BIT 1
+#endif
 
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__NetBSD__)
-
-#define REG_RAX 14
-#define REG_RCX 3
-#define REG_RDX 2
-#define REG_RBX 13
-#define REG_RSP 24
-#define REG_RBP 12
-#define REG_RSI 1
-#define REG_RDI 0
-#define REG_R8 4
-#define REG_R9 5
-#define REG_R10 6
-#define REG_R11 7
-#define REG_R12 8
-#define REG_R13 9
-#define REG_R14 10
-#define REG_R15 11
-#define REG_RIP 21
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__OpenBSD__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__DragonFly__)
-
-#define MONO_ARCH_NOMAP32BIT
-
-#elif defined (__FreeBSD__) || defined(__FreeBSD_kernel__)
-
-#define REG_RAX 7
-#define REG_RCX 4
-#define REG_RDX 3
-#define REG_RBX 8
-#define REG_RSP 23
-#define REG_RBP 9
-#define REG_RSI 2
-#define REG_RDI 1
-#define REG_R8  5
-#define REG_R9  6
-#define REG_R10 10
-#define REG_R11 11
-#define REG_R12 12
-#define REG_R13 13
-#define REG_R14 14
-#define REG_R15 15
-#define REG_RIP 20
-
-/* 
- * FreeBSD does not have MAP_32BIT, so code allocated by the code manager might not have a
- * 32 bit address.
- */
-#define MONO_ARCH_NOMAP32BIT
-
-#endif /* __FreeBSD__ */
-
-#ifdef HOST_WIN32
+#ifdef TARGET_WIN32
 #define MONO_AMD64_ARG_REG1 AMD64_RCX
 #define MONO_AMD64_ARG_REG2 AMD64_RDX
+#define MONO_AMD64_ARG_REG3 AMD64_R8
+#define MONO_AMD64_ARG_REG4 AMD64_R9
 #else
 #define MONO_AMD64_ARG_REG1 AMD64_RDI
 #define MONO_AMD64_ARG_REG2 AMD64_RSI
+#define MONO_AMD64_ARG_REG3 AMD64_RDX
+#define MONO_AMD64_ARG_REG4 AMD64_RCX
 #endif
 
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
@@ -352,7 +305,6 @@ typedef struct {
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 
-#define MONO_ARCH_ENABLE_REGALLOC_IN_EH_BLOCKS 1
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
@@ -367,33 +319,23 @@ typedef struct {
  * clobbered across method call boundaries.
  */
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
+#define MONO_ARCH_EXC_REG AMD64_RAX
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 #define MONO_ARCH_HAVE_NOTIFY_PENDING_EXC 1
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
-#define MONO_ARCH_ENABLE_GLOBAL_RA 1
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 #define MONO_ARCH_HAVE_LIVERANGE_OPS 1
-#define MONO_ARCH_HAVE_XP_UNWIND 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#if !defined(HOST_WIN32)
 #define MONO_ARCH_MONITOR_OBJECT_REG MONO_AMD64_ARG_REG1
-#endif
+#define MONO_ARCH_MONITOR_LOCK_TAKEN_REG MONO_AMD64_ARG_REG2
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
-#if !defined( HOST_WIN32 ) && !defined( __native_client__ )
+#if !defined( __native_client__ )
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #endif
 
-#if !defined(HOST_WIN32) || defined(__sun)
-#define MONO_ARCH_ENABLE_MONITOR_IL_FASTPATH 1
-#endif
-
 #define MONO_ARCH_SUPPORT_TASKLETS 1
-
-#ifndef HOST_WIN32
-#define MONO_AMD64_NO_PUSHES 1
-#endif
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
@@ -401,7 +343,6 @@ typedef struct {
 
 #define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
-#define MONO_ARCH_THIS_AS_FIRST_ARG 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -412,6 +353,9 @@ typedef struct {
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
 #define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
 #define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
+#define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
+#define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_TLS_GET_REG 1
@@ -431,31 +375,31 @@ typedef struct {
        } while (0)
 
 void 
-mono_amd64_patch (unsigned char* code, gpointer target) MONO_INTERNAL;
+mono_amd64_patch (unsigned char* code, gpointer target);
 
 void
 mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 							guint64 dummy5, guint64 dummy6,
 							mgreg_t *regs, mgreg_t rip,
-							MonoObject *exc, gboolean rethrow) MONO_INTERNAL;
+							MonoObject *exc, gboolean rethrow);
 
 void
 mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 								   guint64 dummy5, guint64 dummy6,
 								   mgreg_t *regs, mgreg_t rip,
-								   guint32 ex_token_index, gint64 pc_offset) MONO_INTERNAL;
+								   guint32 ex_token_index, gint64 pc_offset);
 
 guint64
-mono_amd64_get_original_ip (void) MONO_INTERNAL;
+mono_amd64_get_original_ip (void);
 
 guint8*
-mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset) MONO_INTERNAL;
+mono_amd64_emit_tls_get (guint8* code, int dreg, int tls_offset);
 
 gboolean
-mono_amd64_have_tls_get (void) MONO_INTERNAL;
+mono_amd64_have_tls_get (void);
 
 GSList*
-mono_amd64_get_exception_trampolines (gboolean aot) MONO_INTERNAL;
+mono_amd64_get_exception_trampolines (gboolean aot);
 
 int
 mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
@@ -467,7 +411,7 @@ typedef struct {
 
 extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
-#ifdef HOST_WIN32
+#ifdef TARGET_WIN32
 
 void mono_arch_unwindinfo_add_push_nonvol (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg );
 void mono_arch_unwindinfo_add_set_fpreg (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg );

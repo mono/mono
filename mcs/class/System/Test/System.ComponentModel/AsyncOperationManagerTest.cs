@@ -7,7 +7,6 @@
 // Copyright (C) 2007 Novell, Inc.
 //
 
-#if NET_2_0
 
 using System;
 using System.Threading;
@@ -62,4 +61,3 @@ namespace MonoTests.System.ComponentModel
 	}
 }
 
-#endif

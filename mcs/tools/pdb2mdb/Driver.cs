@@ -97,16 +97,20 @@ namespace Pdb2Mdb {
 
 		void ConvertScope (PdbScope scope)
 		{
-			ConvertSlots (scope.slots);
+			ConvertSlots (scope, scope.slots);
 
 			foreach (var s in scope.scopes)
 				ConvertScope (s);
 		}
 
-		void ConvertSlots (IEnumerable<PdbSlot> slots)
+		void ConvertSlots (PdbScope scope, IEnumerable<PdbSlot> slots)
 		{
-			foreach (var slot in slots)
+			int scope_idx = mdb.OpenScope ((int)scope.address);
+			foreach (var slot in slots) {
 				mdb.DefineLocalVariable ((int) slot.slot, slot.name);
+				mdb.DefineScopeVariable (scope_idx, (int)slot.slot);
+			}
+			mdb.CloseScope ((int)(scope.address + scope.length));
 		}
 
 		SourceFile GetSourceFile (MonoSymbolWriter mdb, PdbFunction function)

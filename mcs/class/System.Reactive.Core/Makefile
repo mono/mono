@@ -3,10 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Core.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces
 LIB_MCS_FLAGS = \
 		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
 		-r:System.Reactive.Interfaces.dll
 
 ifeq (true, $(GENERATE_RESOURCES))
@@ -35,7 +34,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
-VALID_PROFILE := $(filter monotouch monodroid xammac net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter monotouch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.Core.dll
 NO_SIGN_ASSEMBLY = yes

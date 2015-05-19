@@ -373,7 +373,6 @@ namespace MonoTests.System
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestDecimalCeiling()
 		{
@@ -384,7 +383,6 @@ namespace MonoTests.System
 			Assert.IsTrue (Decimal.MaxValue == Math.Ceiling(Decimal.MaxValue), "#2");
 			Assert.IsTrue (Decimal.MinValue == Math.Ceiling(Decimal.MinValue), "#3");
 		}
-#endif
 
 		[Test]
 		public void TestFloor ()
@@ -828,7 +826,6 @@ namespace MonoTests.System
 			Assert.IsTrue (Double.MinValue == Math.Round (Double.MinValue), "#4");
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestDoubleTruncate ()
 		{
@@ -866,7 +863,6 @@ namespace MonoTests.System
 			Assert.IsTrue (Decimal.MaxValue == Math.Truncate (Decimal.MaxValue), "#6");
 			Assert.IsTrue (Decimal.MinValue == Math.Truncate (Decimal.MinValue), "#7");
 		}
-#endif
 
 		[Test]
 		public void TestDoubleRound2 ()
@@ -879,7 +875,6 @@ namespace MonoTests.System
 			Assert.AreEqual (-0.1, Math.Round (-0.123456789, 1), "#3");
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestDoubleRound3 ()
 		{
@@ -975,7 +970,6 @@ namespace MonoTests.System
 
 			Assert.AreEqual (1, Math.Round (0.5, 0, MidpointRounding.AwayFromZero));
 		}
-#endif
 		
 		[Test]
 		public void TestDecimalSign ()

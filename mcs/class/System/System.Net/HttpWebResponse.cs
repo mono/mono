@@ -155,9 +155,7 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public CookieCollection Cookies {
 			get {
 				CheckDisposed ();
@@ -202,9 +200,7 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public string Method {
 			get {
 				CheckDisposed ();
@@ -233,18 +229,14 @@ namespace System.Net
 			}
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public HttpStatusCode StatusCode {
 			get {
 				return statusCode; 
 			}
 		}
 		
-#if NET_4_5
 		virtual
-#endif
 		public string StatusDescription {
 			get {
 				CheckDisposed ();
@@ -321,20 +313,11 @@ namespace System.Net
 			Dispose (true);
 		}
 		
-#if NET_4_0
 		protected override void Dispose (bool disposing)
 		{
 			this.disposed = true;
 			base.Dispose (true);
 		}
-#else
-		void Dispose (bool disposing) 
-		{
-			this.disposed = true;
-			if (disposing)
-				Close ();
-		}
-#endif
 		
 		private void CheckDisposed () 
 		{
@@ -351,46 +334,29 @@ namespace System.Net
 			// Don't terminate response reading on bad cookie value
 			//
 			string value;
+			CookieCollection cookies = null;
 			try {
 				value = webHeaders.Get ("Set-Cookie");
-				if (value != null && SetCookie (value))
-					return;
+				if (value != null)
+					cookies = cookie_container.CookieCutter (uri, HttpKnownHeaderNames.SetCookie, value, false);
 			} catch {
 			}
 
 			try {
 				value = webHeaders.Get ("Set-Cookie2");
-				if (value != null)
-					SetCookie (value);
+				if (value != null) {
+					var cookies2 = cookie_container.CookieCutter (uri, HttpKnownHeaderNames.SetCookie2, value, false);
+
+					if (cookies != null && cookies.Count != 0) {
+						cookies.Add (cookies2);
+					} else {
+						cookies = cookies2;
+					}
+				}
 			} catch {
 			}
-		}
 
-		bool SetCookie (string header)
-		{
-			if (cookieCollection == null)
-				cookieCollection = new CookieCollection ();
-
-			bool at_least_one_set = false;
-			var parser = new CookieParser (header);
-			foreach (var cookie in parser.Parse ()) {
-				if (cookie.Domain == "") {
-					cookie.Domain = uri.Host;
-					cookie.HasDomain = false;
-				}
-
-				if (cookie.HasDomain &&
-				    !CookieContainer.CheckSameOrigin (uri, cookie.Domain))
-					continue;
-
-				cookieCollection.Add (cookie);
-				if (cookie_container != null) {
-					cookie_container.Add (uri, cookie);
-					at_least_one_set = true;
-				}
-			}
-
-			return at_least_one_set;
+			this.cookieCollection = cookies;
 		}
 	}	
 }

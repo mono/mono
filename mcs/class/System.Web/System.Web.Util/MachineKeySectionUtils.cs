@@ -36,7 +36,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Configuration;
 
-#if NET_2_0
 
 namespace System.Web.Util {
 
@@ -101,12 +100,10 @@ namespace System.Web.Util {
 				sa = TripleDES.Create ();
 				break;
 			default:
-#if NET_4_0
 				if (name.StartsWith ("alg:")) {
 					sa = SymmetricAlgorithm.Create (name.Substring (4));
 					break;
 				}
-#endif
 				throw new ConfigurationErrorsException ();
 			}
 			return sa;
@@ -127,7 +124,6 @@ namespace System.Web.Util {
 			case MachineKeyValidation.SHA1:
 				kha = new HMACSHA1 ();
 				break;
-#if NET_4_0
 			case MachineKeyValidation.HMACSHA256:
 				kha = new HMACSHA256 ();
 				break;
@@ -143,7 +139,6 @@ namespace System.Web.Util {
 				if (algo.StartsWith ("alg:"))
 					kha = KeyedHashAlgorithm.Create (algo.Substring (4));
 				break;
-#endif
 			}
 			return kha;
 		}
@@ -312,4 +307,3 @@ namespace System.Web.Util {
 	}
 }
 
-#endif

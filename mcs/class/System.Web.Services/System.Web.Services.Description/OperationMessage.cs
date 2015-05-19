@@ -35,18 +35,11 @@ using System.Xml.Serialization;
 namespace System.Web.Services.Description
 {
 	public abstract class OperationMessage :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
 		XmlQualifiedName message;
-#if !NET_2_0
-		string name;
-#endif
 		Operation operation;
 
 		#endregion // Fields
@@ -69,13 +62,6 @@ namespace System.Web.Services.Description
 			set { message = value; }
 		}
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NMTOKEN")]
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 //		[XmlIgnore]
 		public Operation Operation {

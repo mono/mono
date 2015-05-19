@@ -40,7 +40,6 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class CodeIdentifiersTests
 	{
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void IgnoreCase ()
@@ -52,6 +51,5 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsTrue (c.IsInUse ("tEsT"), "#2");
 			Assert.AreEqual ("camelCase", c.MakeRightCase ("CAMELCASE"), "#3");
 		}
-#endif
 	}
 }

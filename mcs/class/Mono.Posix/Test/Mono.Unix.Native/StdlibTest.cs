@@ -30,14 +30,6 @@ namespace MonoTests.Mono.Unix.Native {
 		}
 
 		// [Test]
-#if !NET_2_0
-		// .NET 1.1 marshals delegates as Stdcall functions, while signal(3)
-		// expects a Cdecl function.  Result: stack corruption.
-		// DO NOT USE Stdlib.signal under .NET 1.1!
-		// .NET 2.0 allows us to specify how delegates should be marshaled, so
-		// this isn't an issue there.
-		[Category ("NotDotNet")]
-#endif
 		public void Signal ()
 		{
 			SignalTest st = new SignalTest ();

@@ -34,12 +34,8 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 // Not until we actually have StyleConverter
 //	[TypeConverter(typeof(System.Web.UI.WebControls.StyleConverter))]
-#else
-	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
-#endif
 	[ToolboxItem("")]
 	public class Style : System.ComponentModel.Component, System.Web.UI.IStateManager 
 	{
@@ -75,9 +71,7 @@ namespace System.Web.UI.WebControls {
 		FontInfo	fontinfo;
 		bool		tracking;
 		bool _isSharedViewState;
-#if NET_2_0
 		string		registered_class;
-#endif
 		#endregion	// Fields
 
 		#region Public Constructors
@@ -98,9 +92,6 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -125,9 +116,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -152,9 +140,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(BorderStyle.NotSet)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -181,9 +166,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -254,9 +236,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -281,9 +260,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -312,9 +288,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if !NET_2_0
-		[Bindable(true)]
-#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -345,21 +318,13 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual bool IsEmpty 
-#else
-		protected internal virtual bool IsEmpty 
-#endif
 		{
 			get 
 			{
-#if NET_2_0
 				return (styles == 0 && RegisteredCssClass.Length == 0);
-#else
-				return (styles == 0);
-#endif
 			}
 		}
 
@@ -407,7 +372,6 @@ namespace System.Web.UI.WebControls {
 
 		public virtual void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer, WebControl owner)
 		{
-#if NET_2_0
 			if (RegisteredCssClass.Length > 0) {
 				string cssclass = CssClass;
 				if (!String.IsNullOrEmpty (cssclass))
@@ -416,23 +380,17 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, RegisteredCssClass);
 			}
 			else 
-#endif
 			{
 				string cssclass = CssClass;
 				if (cssclass != null && cssclass.Length > 0)
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, cssclass);
-#if NET_2_0
 				CssStyleCollection col = new CssStyleCollection ();
 				FillStyleAttributes (col, owner);
 				foreach (string key in col.Keys) {
 					writer.AddStyleAttribute (key, col [key]);
 				}
-#else
-				WriteStyleAttributes (writer);
-#endif
 			}
 		}
-#if NET_2_0
 		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
 			Color		color;
@@ -497,7 +455,6 @@ namespace System.Web.UI.WebControls {
 
 			Font.FillStyleAttributes (attributes, AlwaysRenderTextDecoration);
 		}
-#endif
 
 		public virtual void CopyFrom(Style s) 
 		{
@@ -623,12 +580,6 @@ namespace System.Web.UI.WebControls {
 			viewstate.Remove (BitStateKey);
 			stylesTraked = 0;
 		}
-#if ONLY_1_1
-		public override string ToString() 
-		{
-			return string.Empty;
-		}
-#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -717,7 +668,6 @@ namespace System.Web.UI.WebControls {
 		}
 		#endregion	// IStateManager Properties & Methods
 
-#if NET_2_0
 		internal void SetRegisteredCssClass (string name)
 		{
 			registered_class = name;
@@ -767,7 +717,6 @@ namespace System.Web.UI.WebControls {
 			newClass += cssClass;
 			CssClass = newClass;
 		}
-#if NET_4_0
 		internal void PrependCssClass (string cssClass)
 		{
 			if (String.IsNullOrEmpty (cssClass))
@@ -778,13 +727,11 @@ namespace System.Web.UI.WebControls {
 				cssClass += " ";
 			CssClass = cssClass + oldClass;
 		}
-#endif
 		public void SetDirty ()
 		{
 			if (viewstate != null)
 				viewstate.SetDirty (true);
 			stylesTraked = styles;
 		}
-#endif
 	}
 }

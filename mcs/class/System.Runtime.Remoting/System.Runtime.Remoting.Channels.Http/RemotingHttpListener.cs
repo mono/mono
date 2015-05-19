@@ -52,10 +52,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			string address = null;
 			if (addr == IPAddress.Any)
 				address = "*";
-#if NET_2_0
 			else if (addr == IPAddress.IPv6Any)
 				address = "*";
-#endif
 			else
 				address = addr.ToString ();
 

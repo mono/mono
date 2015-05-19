@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Text {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum HotkeyPrefix {
 		Hide = 2,
 		None = 0,

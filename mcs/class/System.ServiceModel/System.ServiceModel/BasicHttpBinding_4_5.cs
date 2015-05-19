@@ -181,9 +181,7 @@ namespace System.ServiceModel
 			h.ProxyAddress = ProxyAddress;
 			h.UseDefaultWebProxy = UseDefaultWebProxy;
 			h.TransferMode = TransferMode;
-#if NET_4_0
 			h.ExtendedProtectionPolicy = Security.Transport.ExtendedProtectionPolicy;
-#endif
 
 			switch (Security.Transport.ClientCredentialType) {
 			case HttpClientCredentialType.Basic:

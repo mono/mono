@@ -41,10 +41,6 @@ namespace Microsoft.Build.Tasks {
 
 		protected internal override void AddResponseFileCommands (CommandLineBuilderExtension commandLine)
 		{
-#if !NET_4_0
-			//pre-MSBuild 2 targets don't support multi-targeting, so tell compiler to use 2.0 corlib
-			commandLine.AppendSwitch ("/sdk:2");
-#endif
 			base.AddResponseFileCommands (commandLine);
 
 			if (AdditionalLibPaths != null && AdditionalLibPaths.Length > 0)

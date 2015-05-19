@@ -275,7 +275,6 @@ public class HashtableTest {
 		Assert.AreEqual (0, h.Count, "Table should be cleared");
 	}
 
-#if NET_2_0
 	public class MyEqualityComparer : IEqualityComparer {
 		bool IEqualityComparer.Equals (object x, object y) { return x == y; }
 		public int GetHashCode (object obj) { return 1; }
@@ -283,10 +282,9 @@ public class HashtableTest {
 
 	static IEqualityComparer GetEqualityComparer (Hashtable h)
 	{
-		return (IEqualityComparer) typeof (Hashtable).GetField ("equalityComparer",
+		return (IEqualityComparer) typeof (Hashtable).GetField ("_keycomparer",
 			BindingFlags.NonPublic | BindingFlags.Instance).GetValue (h);
 	}
-#endif
 	
         [Test]
 	public void TestClone() {
@@ -324,7 +322,6 @@ public class HashtableTest {
 			((char[])h1[c1[0]])[0] = 'z';
 			Assert.AreEqual (h1[c1[0]], h2[c1[0]], "shallow copy");
 
-#if NET_2_0
 			// NET 2.0 stuff
 			MyEqualityComparer a = new MyEqualityComparer ();
 			Hashtable mh1 = new Hashtable (a);
@@ -332,7 +329,6 @@ public class HashtableTest {
 			
 			// warning, depends on the field name.
 			Assert.AreEqual (GetEqualityComparer (mh1), GetEqualityComparer (mh1clone), "EqualityComparer");
-#endif
 		}
 	}
 
@@ -812,6 +808,19 @@ public class HashtableTest {
 			dd.Remove (v);
 		}
 	}
+
+	[Test]
+	public void HashtableCopyWithCustomComparer ()
+	{
+		var ht = new Hashtable ();
+		ht.Add ("a", "b");
+		try {
+			new Hashtable (ht, new IEqualityComparer_ApplicationException ());
+			Assert.Fail ("custom comparer not used");
+		} catch (ApplicationException) {
+
+		}
+	}
 }
 
 class IDHashtable : Hashtable {
@@ -857,5 +866,17 @@ public class Bug :ISerializable {
 	}
 };
 
+	class IEqualityComparer_ApplicationException : IEqualityComparer
+	{
+		public new bool Equals (object x, object y)
+		{
+			return false;
+		}
+
+		public int GetHashCode (object obj)
+		{
+			throw new ApplicationException ();
+		}
+	}
 
 }

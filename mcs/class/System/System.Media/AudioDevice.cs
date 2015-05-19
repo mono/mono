@@ -200,6 +200,8 @@ namespace Mono.Audio {
 				snd_pcm_hw_params_free (hw_param);
 			if (handle != IntPtr.Zero)
 				snd_pcm_close (handle);
+			sw_param = IntPtr.Zero;
+			hw_param = IntPtr.Zero;
 			handle = IntPtr.Zero;
 		}
 
@@ -278,10 +280,14 @@ namespace Mono.Audio {
 				Console.WriteLine ("failed to alloc Alsa sw param struct");
 			}
 
-			if (hw_param != IntPtr.Zero)
+			if (hw_param != IntPtr.Zero) {
 				snd_pcm_hw_params_free (hw_param);  // free hw params
-			if (sw_param != IntPtr.Zero)
+				hw_param = IntPtr.Zero;
+			}
+			if (sw_param != IntPtr.Zero) {
 				snd_pcm_sw_params_free (sw_param);  // free sw params
+				sw_param = IntPtr.Zero;
+			}
 
 			return alsa_err == 0;
 		}

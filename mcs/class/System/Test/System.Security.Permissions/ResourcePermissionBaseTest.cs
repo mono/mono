@@ -123,9 +123,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Constructor_Invalid ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ((PermissionState)Int32.MaxValue);
@@ -282,11 +280,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void FromXml_Null ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -294,9 +288,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTag ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -306,9 +298,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTagCase ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();
@@ -344,9 +334,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongVersion ()
 		{
 			NonAbstractResourcePermissionBase rp = new NonAbstractResourcePermissionBase ();

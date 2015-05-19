@@ -31,10 +31,8 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
-#if NET_2_0
 using System.ComponentModel;
 using System.Diagnostics;
-#endif
 using System.Globalization;
 using System.Xml.Schema;
 
@@ -48,9 +46,7 @@ namespace System.Xml.Serialization {
 		CodeAttributeDeclarationCollection includeMetadata;
 		XmlTypeMapping exportedAnyType;
 		protected bool includeArrayTypes;
-#if NET_2_0		
 		CodeDomProvider codeProvider;
-#endif		
 		CodeGenerationOptions options;
 		CodeIdentifiers identifiers;
 
@@ -70,12 +66,8 @@ namespace System.Xml.Serialization {
 //			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 			this.options = options;
-#if NET_2_0
 			this.codeProvider = codeProvider;
 			this.identifiers = new CodeIdentifiers ((codeProvider.LanguageOptions & LanguageOptions.CaseInsensitive) == 0);
-#else
-			this.identifiers = new CodeIdentifiers ();
-#endif
 //			this.mappings = mappings;
 		}
 
@@ -139,9 +131,7 @@ namespace System.Xml.Serialization {
 				if (codeClass != null) {
 					// Regenerate attributes, since things may have changed
 					codeClass.CustomAttributes.Clear ();
-#if NET_2_0
 					AddClassAttributes (codeClass);
-#endif
 					GenerateClass (map, codeClass, isTopLevel);
 					ExportDerivedTypeAttributes (map, codeClass);
 				}
@@ -166,10 +156,8 @@ namespace System.Xml.Serialization {
 			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
 
-#if NET_2_0
 			codeClass.IsPartial = CodeProvider.Supports(GeneratorSupport.PartialTypes);
 			AddClassAttributes (codeClass);
-#endif
 
 			GenerateClass (map, codeClass, isTopLevel);
 			ExportDerivedTypeAttributes (map, codeClass);
@@ -500,7 +488,6 @@ namespace System.Xml.Serialization {
 			if (emap.IsFlags)
 				codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration ("System.FlagsAttribute"));
 
-#if NET_2_0
 			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
 				new CodeTypeReference (typeof(GeneratedCodeAttribute)));
 			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
@@ -511,7 +498,6 @@ namespace System.Xml.Serialization {
 
 			codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration (
 				new CodeTypeReference (typeof (SerializableAttribute))));
-#endif
 
 			GenerateEnum (map, codeEnum, isTopLevel);
 			
@@ -608,7 +594,6 @@ namespace System.Xml.Serialization {
 			codeNamespace.Types.Add (type);
 		}
 
-#if NET_2_0
 		void AddClassAttributes (CodeTypeDeclaration codeClass)
 		{
 			CodeAttributeDeclaration generatedCodeAttribute = new CodeAttributeDeclaration (
@@ -630,14 +615,11 @@ namespace System.Xml.Serialization {
 				new CodePrimitiveExpression ("code")));
 			codeClass.CustomAttributes.Add (designerCategoryAttribute);
 		}
-#endif
 		
 		CodeTypeReference GetDomType (TypeData data, bool requiresNullable)
 		{
-#if NET_2_0
 			if (data.IsValueType && (data.IsNullable || requiresNullable))
 				return new CodeTypeReference ("System.Nullable", new CodeTypeReference (data.FullTypeName));
-#endif
 			if (data.SchemaType == SchemaTypes.Array)
 				return new CodeTypeReference (GetDomType (data.ListItemTypeData, false),1);
 			else
@@ -648,7 +630,6 @@ namespace System.Xml.Serialization {
 
 		#region Private Properties
 
-#if NET_2_0
 		private CodeDomProvider CodeProvider {
 			get {
 				if (codeProvider == null) {
@@ -657,7 +638,6 @@ namespace System.Xml.Serialization {
 				return codeProvider;
 			}
 		}
-#endif
 
 		#endregion
 

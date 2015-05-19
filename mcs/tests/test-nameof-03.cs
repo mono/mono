@@ -1,4 +1,4 @@
-using T2;
+using static T2;
 
 static class T2
 {

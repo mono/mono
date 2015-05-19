@@ -53,18 +53,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Xml;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
+using System.Security;
 
 namespace System.Data.SqlClient
 {
 	[DefaultEvent ("InfoMessage")]
-#if NET_2_0
 	public sealed class SqlConnection : DbConnection, IDbConnection, ICloneable
-#else
-	public sealed class SqlConnection : Component, IDbConnection, ICloneable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -72,13 +67,8 @@ namespace System.Data.SqlClient
 
 		// The set of SQL connection pools
 		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds80);
-#if NET_2_0
 		const int DEFAULT_PACKETSIZE = 8000;
 		const int MAX_PACKETSIZE = 32768;
-#else
-		const int DEFAULT_PACKETSIZE = 8192;
-		const int MAX_PACKETSIZE = 32767;
-#endif
 		const int MIN_PACKETSIZE = 512;
 		const int DEFAULT_CONNECTIONTIMEOUT = 15;
 		const int DEFAULT_CONNECTIONLIFETIME = 0;
@@ -92,6 +82,9 @@ namespace System.Data.SqlClient
 
 		// The connection string that identifies this connection
 		string connectionString;
+
+		// The connection credentials
+		SqlCredential credentials;
 
 		// The transaction object for the current transaction
 		SqlTransaction transaction;
@@ -133,6 +126,12 @@ namespace System.Data.SqlClient
 			ConnectionString = connectionString;
 		}
 
+		public SqlConnection (string connectionString, SqlCredential cred)
+		{
+			ConnectionString = connectionString;
+			Credentials = cred;
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -155,26 +154,25 @@ namespace System.Data.SqlClient
 			}
 		}
 	
-#if !NET_2_0
-		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
-#endif
+		public SqlCredential Credentials {
+			get {
+				return credentials;
+			}
+			set {
+				credentials = value;
+			}
+		}
+	
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the connection string.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string Database {
 			get {
 				if (State == ConnectionState.Open)
@@ -188,23 +186,14 @@ namespace System.Data.SqlClient
 			set { dataReader = value; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the connection string. ")]
-#else
 		[Browsable(true)]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string DataSource {
 			get { return dataSource; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Network packet size, 'Packet Size=x' in the connection string.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
 			get {
@@ -215,14 +204,9 @@ namespace System.Data.SqlClient
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("Version of the SQL Server accessed by the SqlConnection.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		string ServerVersion {
 			get {
 				if (state == ConnectionState.Closed)
@@ -233,14 +217,9 @@ namespace System.Data.SqlClient
 		}
 
 		[Browsable (false)]
-#if !NET_2_0
-		[DataSysDescription ("The ConnectionState indicating whether the connection is open or closed.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		ConnectionState State {
 			get { return state; }
 		}
@@ -254,9 +233,6 @@ namespace System.Data.SqlClient
 			set { transaction = value; }
 		}
 
-#if !NET_2_0
-		[DataSysDescription ("Workstation Id, 'Workstation ID=x' in the connection string.")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string WorkstationId {
 			get { return parms.Hostname; }
@@ -267,7 +243,6 @@ namespace System.Data.SqlClient
 			set { xmlReader = value; }
 		}
 
-#if NET_2_0
 		public bool FireInfoMessageEventOnUserErrors { 
 			get { return fireInfoMessageEventOnUserErrors; } 
 			set { fireInfoMessageEventOnUserErrors = value; }
@@ -278,9 +253,8 @@ namespace System.Data.SqlClient
 			get { return statisticsEnabled; } 
 			set { statisticsEnabled = value; }
 		}
-#endif
 
-		protected internal override DbProviderFactory DbProviderFactory {
+		protected override DbProviderFactory DbProviderFactory {
 			get {
 				return SqlClientFactory.Instance;
 			}
@@ -290,15 +264,8 @@ namespace System.Data.SqlClient
 
 		#region Events
 
-#if !NET_2_0
-		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
-#endif
 		public event SqlInfoMessageEventHandler InfoMessage;
 
-#if !NET_2_0
-		[DataSysDescription ("Event triggered when the connection changes state.")]
-		public new event StateChangeEventHandler StateChange;
-#endif
 
 		#endregion // Events
 
@@ -363,7 +330,6 @@ namespace System.Data.SqlClient
 			case IsolationLevel.ReadCommitted:
 				isolevel = "READ COMMITTED";
 				break;
-#if NET_2_0
 			case IsolationLevel.Snapshot:
 				isolevel = "SNAPSHOT";
 				break;
@@ -378,16 +344,11 @@ namespace System.Data.SqlClient
 						"value, {0}, is not supported by " +
 						"the .Net Framework SqlClient " +
 						"Data Provider.", (int) iso));
-#endif
 			default:
-#if NET_2_0
 				throw new ArgumentOutOfRangeException ("IsolationLevel",
 					string.Format (CultureInfo.CurrentCulture,
 						"The IsolationLevel enumeration value, {0}, is invalid.",
 						(int) iso));
-#else
-				throw new ArgumentException ("Invalid IsolationLevel parameter: must be ReadCommitted, ReadUncommitted, RepeatableRead, or Serializable.");
-#endif
 			}
 
 			tds.Execute (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
@@ -397,9 +358,7 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void ChangeDatabase (string database)
 		{
 			if (!IsValidDatabaseName (database))
@@ -420,9 +379,7 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Close ()
 		{
 			if (transaction != null && transaction.IsOpen)
@@ -462,7 +419,10 @@ namespace System.Data.SqlClient
 		
 		private SqlInfoMessageEventArgs CreateSqlInfoMessageEvent (TdsInternalErrorCollection errors)
 		{
-			return new SqlInfoMessageEventArgs (errors);
+			foreach (TdsInternalError e in errors)
+				return new SqlInfoMessageEventArgs (new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State));
+
+			return null;
 		}
 
 		private StateChangeEventArgs CreateStateChangeEvent (ConnectionState originalState, ConnectionState currentState)
@@ -497,7 +457,6 @@ namespace System.Data.SqlClient
 			return new SqlConnection (ConnectionString);
 		}
 
-#if NET_2_0
 		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
 			return BeginTransaction (isolationLevel);
@@ -507,27 +466,9 @@ namespace System.Data.SqlClient
 		{
 			return CreateCommand ();
 		}
-#else
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			return BeginTransaction ();
-		}
-
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
-		{
-			return BeginTransaction (iso);
-		}
-
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			return CreateCommand ();
-		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Open ()
 		{
 			string serverName = string.Empty;
@@ -563,6 +504,16 @@ namespace System.Data.SqlClient
 
 			if (!tds.IsConnected) {
 				try {
+					if (Credentials != null) {
+						if (parms.User != String.Empty)
+							throw new ArgumentException("UserID already specified");
+						if (parms.PasswordSet)
+							throw new ArgumentException("Password already specified");
+						if (parms.DomainLogin != false)
+							throw new ArgumentException("Cannot use credentials with DomainLogin");
+						parms.User = Credentials.UserId;
+						parms.Password = Credentials.Password;
+					}
 					tds.Connect (parms);
 				} catch {
 					if (pooling)
@@ -772,9 +723,7 @@ namespace System.Data.SqlClient
 			minPoolSize = DEFAULT_MINPOOLSIZE;
 			packetSize = DEFAULT_PACKETSIZE;
 			port = DEFAULT_PORT;
- #if NET_2_0
 			async = false;
- #endif
 		}
 
 		private void SetProperties (string name , string value)
@@ -852,7 +801,6 @@ namespace System.Data.SqlClient
 				else
 					minPoolSize = tmpMinPoolSize;
 				break;
-#if NET_2_0
 			case "multipleactiveresultsets":
 				// FIXME: not implemented
 				ConvertToBoolean (name, value, false);
@@ -861,7 +809,6 @@ namespace System.Data.SqlClient
 			case "async" :
 				async = ConvertToBoolean (name, value, false);
 				break;
-#endif
 			case "net" :
 			case "network" :
 			case "network library" :
@@ -879,7 +826,10 @@ namespace System.Data.SqlClient
 				break;
 			case "password" :
 			case "pwd" :
-				parms.Password = value;
+				parms.Password = new SecureString();
+				foreach (char c in value)
+					parms.Password.AppendChar(c);
+				parms.PasswordSet = true;
 				break;
 			case "persistsecurityinfo" :
 			case "persist security info" :
@@ -898,11 +848,9 @@ namespace System.Data.SqlClient
 			case "workstation id" :
 				parms.Hostname = value;
 				break;
-#if NET_2_0
 			case "user instance":
 				userInstance = ConvertToBoolean (name, value, false);
 				break;
-#endif
 			default :
 				throw new ArgumentException("Keyword not supported : '" + name + "'.");
 			}
@@ -933,13 +881,6 @@ namespace System.Data.SqlClient
 				InfoMessage (this, value);
 		}
 
-#if !NET_2_0
-		private new void OnStateChange (StateChangeEventArgs value)
-		{
-			if (StateChange != null)
-				StateChange (this, value);
-		}
-#endif
 
 		private sealed class SqlMonitorSocket : UdpClient
 		{
@@ -980,11 +921,7 @@ namespace System.Data.SqlClient
 
 				if (Client.Available <= 0)
 					return -1; // Error
-#if NET_2_0
 				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostEntry ("localhost").AddressList [0], 0);
-#else
-				IPEndPoint endpoint = new IPEndPoint (Dns.GetHostByName ("localhost").AddressList [0], 0);
-#endif
 				Byte [] rawrs;
 
 				rawrs = Receive (ref endpoint);
@@ -1011,7 +948,6 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		struct ColumnInfo
 		{
 			public string name;
@@ -1727,11 +1663,9 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#endif // NET_2_0
 
 		#endregion // Methods
 
-#if NET_2_0
 		#region Fields Net 2
 
 		bool async;
@@ -1748,7 +1682,6 @@ namespace System.Data.SqlClient
 
 		#endregion // Properties Net 2
 
-#endif // NET_2_0
 
 	}
 }

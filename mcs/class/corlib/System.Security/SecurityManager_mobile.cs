@@ -55,9 +55,7 @@ namespace System.Security {
 
 		// properties
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static bool CheckExecutionRights {
 			get { return false; }
 			set { ; }
@@ -91,93 +89,71 @@ namespace System.Security {
 			origin = new ArrayList ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static bool IsGranted (IPermission perm)
 		{
 			return true;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolveSystemPolicy (Evidence evidence)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicy () 
 		{
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
@@ -231,7 +207,6 @@ namespace System.Security {
 			throw new NotSupportedException ();
 		}
 
-#if NET_4_0
 		public static PermissionSet GetStandardSandbox (Evidence evidence)
 		{
 			if (evidence == null)
@@ -244,7 +219,6 @@ namespace System.Security {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
 

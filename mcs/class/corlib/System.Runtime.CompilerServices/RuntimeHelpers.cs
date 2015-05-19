@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Versioning;
 using System.Runtime.ConstrainedExecution;
 using System.Reflection;
 
@@ -88,7 +89,6 @@ namespace System.Runtime.CompilerServices
 			RunClassConstructor (type.Value);
 		}
 
-#if NET_4_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool SufficientExecutionStack ();
 
@@ -99,7 +99,6 @@ namespace System.Runtime.CompilerServices
 				return;
 			throw new InsufficientExecutionStackException ();
 		}
-#endif
 
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
@@ -124,11 +123,40 @@ namespace System.Runtime.CompilerServices
 		{
 		}
 
+		// This method triggers a given delegate to be prepared.  This involves preparing the
+		// delegate's Invoke method and preparing the target of that Invoke.  In the case of
+		// a multi-cast delegate, we rely on the fact that each individual component was prepared
+		// prior to the Combine.  In other words, this service does not navigate through the
+		// entire multicasting list.
+		// If our own reliable event sinks perform the Combine (for example AppDomain.DomainUnload),
+		// then the result is fully prepared.  But if a client calls Combine himself and then
+		// then adds that combination to e.g. AppDomain.DomainUnload, then the client is responsible
+		// for his own preparation.
+		[System.Security.SecurityCritical]  // auto-generated_required
 		[MonoTODO("Currently a no-op")]
 		public static void PrepareDelegate (Delegate d)
 		{
 			if (d == null)
 				throw new ArgumentNullException ("d");
+		}
+
+		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/runtimehelpers.cs
+		//
+		// See comment above for PrepareDelegate
+		//
+		// PrepareContractedDelegate weakens this a bit by only assuring that we prepare 
+		// delegates which also have a ReliabilityContract. This is useful for services that
+		// want to provide opt-in reliability, generally some random event sink providing
+		// always reliable semantics to random event handlers that are likely to have not
+		// been written with relability in mind is a lost cause anyway.
+		//
+		// NOTE: that for the NGen case you can sidestep the required ReliabilityContract
+		// by using the [PrePrepareMethod] attribute.
+		[System.Security.SecurityCritical]  // auto-generated_required
+		[ResourceExposure(ResourceScope.None)]
+		[MonoTODO("Currently a no-op")]
+		public static void PrepareContractedDelegate(Delegate d)
+		{
 		}
 
 		[MonoTODO("Currently a no-op")]

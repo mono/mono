@@ -39,11 +39,7 @@ namespace System.CodeDom.Compiler
 	[ConfigurationCollection (typeof (Compiler), AddItemName = "compiler", CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
-#if NET_4_0
 		static readonly string defaultCompilerVersion = "3.5";
-#else
-		static readonly string defaultCompilerVersion = "2.0";
-#endif
 		static ConfigurationPropertyCollection properties;
 		static List <CompilerInfo> compiler_infos;
 		static Dictionary <string, CompilerInfo> compiler_languages;

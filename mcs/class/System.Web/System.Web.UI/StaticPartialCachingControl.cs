@@ -61,7 +61,6 @@ namespace System.Web.UI {
 		{
 //			this.sqlDependency = sqlDependency;
 		}
-#if NET_4_0
 		public StaticPartialCachingControl (string ctrlID, string guid, int duration, string varyByParams,
 						    string varyByControls, string varyByCustom, string sqlDependency,
 						    BuildMethod buildMethod, string providerName)
@@ -69,7 +68,6 @@ namespace System.Web.UI {
 		{
 			ProviderName = providerName;
 		}
-#endif
 		[MonoTODO("Consider sqlDependency parameter")]
 		public static void BuildCachedControl (Control parent, string ctrlID, string guid,
 						       int duration, string varyByParams, string varyByControls, string varyByCustom,
@@ -88,7 +86,6 @@ namespace System.Web.UI {
 		{
 			BuildCachedControl (parent, ctrlID, guid, duration, varyByParams, varyByControls, varyByCustom, null, buildMethod);
 		}
-#if NET_4_0
 		public static void BuildCachedControl (Control parent, string ctrlID, string guid, int duration,
 						       string varyByParams, string varyByControls, string varyByCustom,
 						       string sqlDependency, BuildMethod buildMethod, string providerName)
@@ -98,7 +95,6 @@ namespace System.Web.UI {
 			if (parent != null)
 				parent.Controls.Add (ctl);
 		}
-#endif
 		internal override Control CreateControl()
 		{
 		       return buildMethod ();

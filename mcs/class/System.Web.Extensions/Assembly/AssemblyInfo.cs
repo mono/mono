@@ -47,13 +47,8 @@ using System.Security.Permissions;
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
-#if NET_3_5
 	[assembly: AssemblyVersion (Consts.FxVersion)]
 	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-#else
-	[assembly: AssemblyVersion ("1.0.61025.0")]
-	[assembly: AssemblyInformationalVersion ("1.0.61025.0")]
-#endif
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
@@ -79,10 +74,6 @@ using System.Security.Permissions;
 [assembly: WebResource ("MicrosoftAjaxWebForms.debug.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.js", "application/x-javascript")]
 [assembly: WebResource ("MicrosoftAjaxTimer.debug.js", "application/x-javascript")]
-#if TARGET_J2EE
-	[assembly: WebResource ("MicrosoftAjaxExtension.js", "application/x-javascript")]
-	[assembly: WebResource ("MicrosoftAjaxWebFormsExtension.js", "application/x-javascript")]
-#endif
 
 // Those entries must not be enabled until the appropriate .resx files with translations for the client scripts are
 // created.

@@ -529,7 +529,7 @@ namespace System.IO.Ports
 				// Probe for Linux-styled devices: /dev/ttyS* or /dev/ttyUSB*
 				// 
 				foreach (string dev in ttys) {
-					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB")){
+					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB") || dev.StartsWith("/dev/ttyACM")) {
 						linux_style = true;
 						break;
 					}
@@ -537,7 +537,7 @@ namespace System.IO.Ports
 
 				foreach (string dev in ttys) {
 					if (linux_style){
-						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
+						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB") || dev.StartsWith("/dev/ttyACM"))
 							serial_ports.Add (dev);
 					} else {
 						if (dev != "/dev/tty" && dev.StartsWith ("/dev/tty") && !dev.StartsWith ("/dev/ttyC"))

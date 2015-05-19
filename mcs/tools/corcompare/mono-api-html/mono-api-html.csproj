@@ -19,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <Commandlineparameters>/Developer/MonoTouch/Source/monotouch/tools/apidiff/references/monotouch.xml /Developer/MonoTouch/Source/monotouch/tools/apidiff/temp/monotouch.xml</Commandlineparameters>
+    <Commandlineparameters>/Developer/MonoTouch/Source/monotouch/tools/apidiff/references/compat/monotouch.xml /Developer/MonoTouch/Source/monotouch/tools/apidiff/temp/compat/monotouch.xml -i INSObjectProtocol /tmp/diff.html</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -52,6 +52,7 @@
     <Compile Include="..\..\..\class\Mono.Options\Mono.Options\Options.cs">
       <Link>Options.cs</Link>
     </Compile>
+    <Compile Include="ApiChange.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,5 @@
-// CS0138: `System.Console' is a type not a namespace. A using namespace directive can only be applied to namespaces
+// CS0138: A `using' directive can only be applied to namespaces but `System.Console' denotes a type. Consider using a `using static' instead
 // Line: 5
-// Compiler options: -langversion:5
 
 using System;
 using System.Console;

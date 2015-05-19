@@ -45,6 +45,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.ConstrainedExecution;
+using System.Diagnostics.Contracts;
 
 namespace System
 {
@@ -200,7 +201,6 @@ namespace System
 			return value.m_value;
 		}
 
-#if NET_4_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr Add (IntPtr pointer, int offset)
 		{
@@ -224,12 +224,13 @@ namespace System
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) - offset));
 		}
-#else
-		/* Needed by Marshal.cs */
-		internal static IntPtr Add (IntPtr pointer, int offset)
+
+		// fast way to compare IntPtr to (IntPtr)0 while IntPtr.Zero doesn't work due to slow statics access
+		[Pure]
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+		internal unsafe bool IsNull()
 		{
-			return (IntPtr) (unchecked (((byte *) pointer) + offset));
+			return m_value == null;
 		}
-#endif
 	}
 }

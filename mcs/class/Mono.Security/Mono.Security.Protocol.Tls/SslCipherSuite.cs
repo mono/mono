@@ -190,59 +190,15 @@ namespace Mono.Security.Protocol.Tls
 			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 
-			if (!this.IsExportable)
+			if (this.IvSize != 0)
 			{
-				if (this.IvSize != 0)
-				{
-					this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
-					this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
-				}
-				else
-				{
-					this.Context.ClientWriteIV = CipherSuite.EmptyArray;
-					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
-				}
+				this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
+				this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
 			}
 			else
 			{
-				HashAlgorithm md5 = MD5.Create();
-
-				int keySize = (md5.HashSize >> 3); //in bytes not bits
-				byte[] temp = new byte [keySize];
-
-				// Generate final write keys
-				md5.TransformBlock(this.Context.ClientWriteKey, 0, this.Context.ClientWriteKey.Length, temp, 0);
-				md5.TransformFinalBlock(this.Context.RandomCS, 0, this.Context.RandomCS.Length);
-				byte[] finalClientWriteKey = new byte[this.ExpandedKeyMaterialSize];
-				Buffer.BlockCopy(md5.Hash, 0, finalClientWriteKey, 0, this.ExpandedKeyMaterialSize);
-
-				md5.Initialize();
-				md5.TransformBlock(this.Context.ServerWriteKey, 0, this.Context.ServerWriteKey.Length, temp, 0);
-				md5.TransformFinalBlock(this.Context.RandomSC, 0, this.Context.RandomSC.Length);
-				byte[] finalServerWriteKey = new byte[this.ExpandedKeyMaterialSize];
-				Buffer.BlockCopy(md5.Hash, 0, finalServerWriteKey, 0, this.ExpandedKeyMaterialSize);
-				
-				this.Context.ClientWriteKey = finalClientWriteKey;
-				this.Context.ServerWriteKey = finalServerWriteKey;
-
-				// Generate IV keys
-				if (this.IvSize > 0) 
-				{
-					md5.Initialize();
-					temp = md5.ComputeHash(this.Context.RandomCS, 0, this.Context.RandomCS.Length);
-					this.Context.ClientWriteIV = new byte[this.IvSize];
-					Buffer.BlockCopy(temp, 0, this.Context.ClientWriteIV, 0, this.IvSize);
-
-					md5.Initialize();
-					temp = md5.ComputeHash(this.Context.RandomSC, 0, this.Context.RandomSC.Length);
-					this.Context.ServerWriteIV = new byte[this.IvSize];
-					Buffer.BlockCopy(temp, 0, this.Context.ServerWriteIV, 0, this.IvSize);
-				}
-				else 
-				{
-					this.Context.ClientWriteIV = CipherSuite.EmptyArray;
-					this.Context.ServerWriteIV = CipherSuite.EmptyArray;
-				}
+				this.Context.ClientWriteIV = CipherSuite.EmptyArray;
+				this.Context.ServerWriteIV = CipherSuite.EmptyArray;
 			}
 
 			DebugHelper.WriteLine(">>>> KeyBlock", keyBlock.ToArray());

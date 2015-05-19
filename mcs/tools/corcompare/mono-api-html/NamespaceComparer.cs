@@ -25,7 +25,9 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
@@ -55,7 +57,11 @@ namespace Xamarin.ApiDiff {
 
 		public override void Added (XElement target)
 		{
-			Output.WriteLine ("<h2>New Namespace {0}</h2>", target.Attribute ("name").Value);
+			string name = target.Attribute ("name").Value;
+			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
+				return;
+
+			Output.WriteLine ("<h2>New Namespace {0}</h2>", name);
 			Output.WriteLine ();
 			// list all new types
 			foreach (var addedType in target.Element ("classes").Elements ("class"))
@@ -63,7 +69,7 @@ namespace Xamarin.ApiDiff {
 			Output.WriteLine ();
 		}
 
-		public override void Modified (XElement source, XElement target)
+		public override void Modified (XElement source, XElement target, ApiChanges differences)
 		{
 			var output = Output;
 			State.Output = new StringWriter ();

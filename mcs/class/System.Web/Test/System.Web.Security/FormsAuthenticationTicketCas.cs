@@ -52,11 +52,7 @@ namespace MonoCasTests.System.Web.Security {
 				ticket = new FormsAuthenticationTicket ("mine", false, Int32.MaxValue);
 			}
 			catch (NullReferenceException) {
-#if NET_2_0
 				Assert.Fail ("this should work on 2.0");
-#else
-				Assert.Ignore ("fails with NullReferenceException on MS 1.x");
-#endif
 			}
 			Assert.AreEqual ("/", ticket.CookiePath, "CookiePath");
 			Assert.IsTrue (ticket.Expiration.Year >= 6088, "Expiration");
@@ -78,11 +74,7 @@ namespace MonoCasTests.System.Web.Security {
 				ticket = new FormsAuthenticationTicket (1, "mine", DateTime.MinValue, DateTime.MaxValue, true, "data");
 			}
 			catch (NullReferenceException) {
-#if NET_2_0
 				Assert.Fail ("this should work on 2.0");
-#else
-				Assert.Ignore ("fails with NullReferenceException on MS 1.x");
-#endif
 			}
 			Assert.AreEqual ("/", ticket.CookiePath, "CookiePath");
 			Assert.AreEqual (DateTime.MaxValue, ticket.Expiration, "Expiration");

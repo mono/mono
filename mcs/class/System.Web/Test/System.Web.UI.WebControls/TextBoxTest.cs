@@ -88,19 +88,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void Defaults ()
 		{
 			Poker p = new Poker ();
-#if NET_2_0
 			Assert.AreEqual (string.Empty, p.ValidationGroup, "ValidationGroup");
 			Assert.AreEqual (false, p.CausesValidation, "CausesValidation");
-#endif
 		}
 
 		[Test]
 		public void Defaults_NotWorking ()
 		{
 			Poker p = new Poker ();
-#if NET_2_0
 			Assert.AreEqual (AutoCompleteType.None, p.AutoCompleteType, "AutoCompleteType");
-#endif
 		}
 
 		[Test]
@@ -119,7 +115,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 
-#if NET_2_0
 		[Test]
 		public void ValidationProperties ()
 		{
@@ -397,7 +392,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }
 

@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -240,12 +241,12 @@ namespace System.IO {
 				return;
 
 			/* Removed files */
-			ArrayList removed = null;
+			List<string> removed = null;
 			foreach (string filename in data.Files.Keys) {
 				FileData fd = (FileData) data.Files [filename];
 				if (fd.NotExists) {
 					if (removed == null)
-						removed = new ArrayList ();
+						removed = new List<string> ();
 
 					removed.Add (filename);
 					DispatchEvents (data.FSW, FileAction.Removed, filename);
@@ -269,7 +270,7 @@ namespace System.IO {
 				} catch {
 					/* Deleted */
 					if (removed == null)
-						removed = new ArrayList ();
+						removed = new List<string> ();
 
 					removed.Add (filename);
 					DispatchEvents (data.FSW, FileAction.Removed, filename);

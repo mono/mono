@@ -261,8 +261,8 @@ namespace MonoTests.System {
 		[Test]
 		public void ParseExactCustomFormat ()
 		{
-			var dt = DateTimeOffset.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
-			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now)), dt);
+			var dt = DateTimeOffset.ParseExact ("Sunday, 06-Nov-94 08:49:37 GMT", "dddd, dd'-'MMM'-'yy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			Assert.AreEqual (new DateTimeOffset (1994, 11, 6, 8, 49, 37, TimeSpan.Zero), dt);
 		}
 		
 		[Test]
@@ -672,7 +672,7 @@ namespace MonoTests.System {
 		[Test]
 		public void TestPartialDateTimeParsing ()
 		{
-			var now = DateTime.Now;
+			var now = DateTime.UtcNow;
 			const DateTimeStyles style = DateTimeStyles.AssumeUniversal;
 
 			//year
@@ -712,6 +712,14 @@ namespace MonoTests.System {
 			var fp = CultureInfo.InvariantCulture;
 			var date = DateTimeOffset.Parse("2013-11-07+11:00", fp, DateTimeStyles.AssumeUniversal);
 			var expected = string.Format ("{0:D2}/{1:D2}/{2} 00:00:00 +11:00", 11, 7, 2013);
+			Assert.AreEqual (expected, date.ToString (CultureInfo.InvariantCulture));
+		}
+
+		[Test]
+		public void GMTDateTime ()
+		{
+			var date = DateTimeOffset.Parse ("Wed, 10 Sep 2014 22:01:40 GMT", CultureInfo.InvariantCulture);
+			var expected = "09/10/2014 22:01:40 +00:00";
 			Assert.AreEqual (expected, date.ToString (CultureInfo.InvariantCulture));
 		}
 	}

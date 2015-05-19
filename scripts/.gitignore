@@ -3,6 +3,7 @@
 /al1
 /al2
 /caspol
+/cert-sync
 /cert2spc
 /certmgr
 /cccheck
@@ -64,6 +65,7 @@
 /mono-service
 /mono-service2
 /mono-shlib-cop
+/mono-symbolicate
 /mono-xmltool
 /mozroots
 /nunit-console

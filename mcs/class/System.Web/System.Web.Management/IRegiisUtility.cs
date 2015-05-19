@@ -29,7 +29,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if NET_2_0
 namespace System.Web.Management
 {
 	[InterfaceTypeAttribute (ComInterfaceType.InterfaceIsIUnknown)]
@@ -60,4 +59,3 @@ namespace System.Web.Management
 		void RemoveBrowserCaps (out IntPtr exception);
         }
 }
-#endif

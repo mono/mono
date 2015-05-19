@@ -40,14 +40,10 @@ using System.Reflection;
 
 namespace System.Xml.Serialization 
 {
-#if NET_2_0
 	[MonoTODO]
 	// FIXME: provide expected elements/attributes on unknown elements/attributs
-#endif
 	public abstract class XmlSerializationReader 
-#if NET_2_0
 		: XmlSerializationGeneratedCode
-#endif
 	{
 
 		#region Fields
@@ -141,11 +137,9 @@ namespace System.Xml.Serialization
 
 		}
 
-#if NET_2_0
 		protected int ReaderCount {
 			get { return readCount; }
 		}
-#endif
 
 		#region Methods
 
@@ -275,13 +269,11 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException (message);
 		}
 
-#if NET_2_0
 		protected void CheckReaderCount (ref int whileIterations, ref int readerCount)
 		{
 			whileIterations = whileIterationCount;
 			readerCount = readCount;
 		}
-#endif
 
 		protected Array EnsureArrayIndex (Array a, int index, Type elementType)
 		{
@@ -805,7 +797,7 @@ namespace System.Xml.Serialization
 			if (wrapped)
 				reader.ReadStartElement ();
 			reader.MoveToContent ();
-			XmlDocument doc = new XmlDocument ();
+			XmlDocument doc = new XmlDocument (reader.NameTable);
 			XmlNode node = doc.ReadNode (reader);
 			doc.AppendChild (node);
 			
@@ -937,9 +929,7 @@ namespace System.Xml.Serialization
 			UnknownAttribute (o, attr, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownAttribute (object o, XmlAttribute attr, string qnames)
 		{
 			int line_number, line_position;
@@ -952,10 +942,7 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 
-			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o);
-#if NET_2_0
-			args.ExpectedAttributes = qnames;
-#endif
+			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o, qnames);
 
 			if (eventSource != null)
 				eventSource.OnUnknownAttribute (args);
@@ -966,9 +953,7 @@ namespace System.Xml.Serialization
 			UnknownElement (o, elem, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownElement (object o, XmlElement elem, string qnames)
 		{
 			int line_number, line_position;
@@ -981,10 +966,7 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 
-			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o);
-#if NET_2_0
-			args.ExpectedElements = qnames;
-#endif
+			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o, qnames);
 
 			if (eventSource != null)
 				eventSource.OnUnknownElement (args);
@@ -995,9 +977,7 @@ namespace System.Xml.Serialization
 			UnknownNode (o, null);
 		}
 
-#if NET_2_0
 		protected
-#endif
 		void UnknownNode (object o, string qnames)
 		{
 			OnUnknownNode (ReadXmlNode (false), o, qnames);
@@ -1028,7 +1008,7 @@ namespace System.Xml.Serialization
 			else
 			{
 				if (eventSource != null)
-					eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, node.LocalName, node.Name, node.NamespaceURI, node.NodeType, o, node.Value));
+					eventSource.OnUnknownNode (new XmlNodeEventArgs(node, line_number, line_position, o));
 	
 				if (Reader.ReadState == ReadState.EndOfFile) 
 					throw new InvalidOperationException ("End of document found");
@@ -1058,7 +1038,14 @@ namespace System.Xml.Serialization
 			object collectionItems;
 			string id;
 
-			public CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
+			public CollectionFixup(object collection, XmlSerializationCollectionFixupCallback callback, object collectionItems)
+			{
+				this.callback = callback;
+				this.collection = collection;
+				this.collectionItems = collectionItems;
+			}
+
+			internal CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
 			{
 				this.callback = callback;
 				this.collection = collection;
@@ -1073,14 +1060,14 @@ namespace System.Xml.Serialization
 				get { return collection; }
 			}
 
-			public object Id {
+			internal object Id {
 				get { return id; }
 			}
 
-			internal object CollectionItems
+			public object CollectionItems
 			{
 				get { return collectionItems; }
-				set { collectionItems = value; }
+				internal set { collectionItems = value; }
 			}
 		}
 
@@ -1118,7 +1105,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		protected class CollectionItemFixup 
+		class CollectionItemFixup 
 		{
 			Array list;
 			int index;
@@ -1147,7 +1134,6 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-#if NET_2_0
 		[MonoTODO]
 		protected bool DecodeName
 		{
@@ -1202,7 +1188,6 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-#endif
 
 	}
 }

@@ -749,11 +749,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("name", ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("key", ex.ParamName, "#5");
-#endif
 			}
 		}
 

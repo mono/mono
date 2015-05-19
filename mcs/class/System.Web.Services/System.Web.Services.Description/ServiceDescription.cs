@@ -39,20 +39,14 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 namespace System.Web.Services.Description
 {
 	[XmlFormatExtensionPoint ("Extensions")]
 	[XmlRoot ("definitions", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
 	public sealed class ServiceDescription :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
@@ -62,9 +56,6 @@ namespace System.Web.Services.Description
 		ServiceDescriptionFormatExtensionCollection extensions;
 		ImportCollection imports;
 		MessageCollection messages;
-#if !NET_2_0
-		string name;
-#endif
 		PortTypeCollection portTypes;
 		string retrievalUrl = String.Empty;
 		ServiceDescriptionCollection serviceDescriptions;
@@ -72,11 +63,9 @@ namespace System.Web.Services.Description
 		string targetNamespace;
 		Types types;
 		static ServiceDescriptionSerializer serializer;
-#if NET_2_0
 		StringCollection validationWarnings;
 
 		static XmlSchema schema;
-#endif
 
 		#endregion // Fields
 
@@ -93,9 +82,6 @@ namespace System.Web.Services.Description
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
 			imports = new ImportCollection (this);
 			messages = new MessageCollection (this);
-#if !NET_2_0
-//			name = String.Empty;		
-#endif
 			portTypes = new PortTypeCollection (this);
 
 			serviceDescriptions = null;
@@ -108,7 +94,6 @@ namespace System.Web.Services.Description
 
 		#region Properties
 
-#if NET_2_0
 		public static XmlSchema Schema {
 			get {
 				if (schema == null) {
@@ -117,7 +102,6 @@ namespace System.Web.Services.Description
 				return schema;
 			}
 		}
-#endif
 
 		[XmlElement ("import")]
 		public ImportCollection Imports {
@@ -147,20 +131,11 @@ namespace System.Web.Services.Description
 
 		[XmlIgnore]
 		public 
-#if NET_2_0
 		override
-#endif
 		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NMTOKEN")]	
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlIgnore]	
 		public string RetrievalUrl {
@@ -191,12 +166,10 @@ namespace System.Web.Services.Description
 			set { targetNamespace = value; }
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public StringCollection ValidationWarnings {
 			get { return validationWarnings; }
 		}
-#endif
 
 		#endregion // Properties
 
@@ -209,7 +182,6 @@ namespace System.Web.Services.Description
 				reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/";
 		}
 
-#if NET_2_0
 		public static ServiceDescription Read (string fileName, bool validate)
 		{
 			if (validate)
@@ -254,7 +226,6 @@ namespace System.Web.Services.Description
 			else
 				return Read (reader);
 		}
-#endif
 
 		public static ServiceDescription Read (Stream stream)
 		{
@@ -306,9 +277,7 @@ namespace System.Web.Services.Description
 			XmlSerializerNamespaces ns;
 			ns = new XmlSerializerNamespaces ();
 			ns.Add ("soap", SoapBinding.Namespace);
-#if NET_2_0
 			ns.Add ("soap12", Soap12Binding.Namespace);
-#endif
 			ns.Add ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/");
 			ns.Add ("s", XmlSchema.Namespace);
 			ns.Add ("http", HttpBinding.Namespace);
@@ -397,7 +366,6 @@ namespace System.Web.Services.Description
 
 			//No XmlFormatExtensionPoint attribute found
 
-#if NET_2_0
 			//Add to DocumentableItem.Extensions property
 			DocumentableItem item = ob as DocumentableItem;
 			if (item == null) {
@@ -406,9 +374,6 @@ namespace System.Web.Services.Description
 			}
 
 			item.Extensions.Add (doc.ReadNode (reader));
-#else
-			reader.Skip ();
-#endif
 		}
 
 		#endregion

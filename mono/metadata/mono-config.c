@@ -375,7 +375,6 @@ aot_cache_start (gpointer user_data,
 	for (i = 0; attribute_names [i]; ++i) {
 		if (!strcmp (attribute_names [i], "app")) {
 			config->apps = g_slist_prepend (config->apps, g_strdup (attribute_values [i]));
-			return;
 		}
 	}
 
@@ -391,6 +390,8 @@ aot_cache_start (gpointer user_data,
 				config->assemblies = g_slist_prepend (config->assemblies, g_strdup (part));
 			}
 			g_strfreev (parts);
+		} else if (!strcmp (attribute_names [i], "options")) {
+			config->aot_options = g_strdup (attribute_values [i]);
 		}
 	}
 }
@@ -550,7 +551,6 @@ mono_config_for_assembly (MonoImage *assembly)
 	int got_it = 0, i;
 	char *aname, *cfg, *cfg_name;
 	const char *bundled_config;
-	const char *home;
 	
 	state.assembly = assembly;
 
@@ -566,14 +566,13 @@ mono_config_for_assembly (MonoImage *assembly)
 
 	cfg_name = g_strdup_printf ("%s.config", mono_image_get_name (assembly));
 
-	home = g_get_home_dir ();
-
 	for (i = 0; (aname = get_assembly_filename (assembly, i)) != NULL; ++i) {
 		cfg = g_build_filename (mono_get_config_dir (), "mono", "assemblies", aname, cfg_name, NULL);
 		got_it += mono_config_parse_file_with_context (&state, cfg);
 		g_free (cfg);
 
 #ifdef TARGET_WIN32
+		const char *home = g_get_home_dir ();
 		cfg = g_build_filename (home, ".mono", "assemblies", aname, cfg_name, NULL);
 		got_it += mono_config_parse_file_with_context (&state, cfg);
 		g_free (cfg);

@@ -4,10 +4,7 @@
 	xmlns:xfw="http://www.croc.ru/Schemas/XmlFramework/Core/Config/1.0" 
 	xmlns:xs="http://www.croc.ru/Schemas/XmlFramework/Core/Config/XStorageFactoryProvider/1.0" 
 
-	xsi:schemaLocation="
-		http://www.croc.ru/Schemas/XmlFramework/Core/Config/1.0 x-net-config-schema.xsd 
-		http://www.croc.ru/Schemas/XmlFramework/Core/Config/XStorageFactoryProvider/1.0 x-net-config-storage-factory-provider-schema.xsd
-	">
+	xsi:schemaLocation="http://www.croc.ru/Schemas/XmlFramework/Core/Config/1.0 x-net-config-schema.xsd http://www.croc.ru/Schemas/XmlFramework/Core/Config/XStorageFactoryProvider/1.0 x-net-config-storage-factory-provider-schema.xsd">
 	<xfw:core debug-mode="true"/>
 	<xfw:storage>
 		<xfw:connections 

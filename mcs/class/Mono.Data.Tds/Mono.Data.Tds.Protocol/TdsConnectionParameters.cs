@@ -31,6 +31,7 @@
 //
 
 using System;
+using System.Security;
 
 namespace Mono.Data.Tds.Protocol
 {
@@ -42,7 +43,8 @@ namespace Mono.Data.Tds.Protocol
 		public string Hostname;
 		public string Language;
 		public string LibraryName;
-		public string Password;
+		public SecureString Password;
+		public bool PasswordSet;
 		public string ProgName;
 		public string User;
 		public bool DomainLogin;
@@ -62,7 +64,8 @@ namespace Mono.Data.Tds.Protocol
 			Hostname = System.Net.Dns.GetHostName();
 			Language = String.Empty;
 			LibraryName = "Mono";
-			Password = String.Empty;
+			Password = new SecureString();
+			PasswordSet = false;
 			ProgName = "Mono";
 			User = String.Empty;
 			DomainLogin = false; 

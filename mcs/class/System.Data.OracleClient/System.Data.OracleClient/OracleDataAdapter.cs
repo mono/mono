@@ -40,9 +40,7 @@ namespace System.Data.OracleClient
 		OracleCommand insertCommand;
 		OracleCommand selectCommand;
 		OracleCommand updateCommand;
-#if NET_2_0
 		int updateBatchSize;
-#endif
 
 		#endregion
 
@@ -55,9 +53,7 @@ namespace System.Data.OracleClient
 		public OracleDataAdapter (OracleCommand selectCommand)
 		{
 			SelectCommand = selectCommand;
-#if NET_2_0
 			UpdateBatchSize = 1;
-#endif
 		}
 
 		public OracleDataAdapter (string selectCommandText, OracleConnection selectConnection)
@@ -77,9 +73,7 @@ namespace System.Data.OracleClient
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
@@ -88,9 +82,7 @@ namespace System.Data.OracleClient
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
@@ -99,9 +91,7 @@ namespace System.Data.OracleClient
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
@@ -110,15 +100,12 @@ namespace System.Data.OracleClient
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}
 
-#if NET_2_0
 		public override int UpdateBatchSize {
 			get { return updateBatchSize; }
 			set {
@@ -127,7 +114,6 @@ namespace System.Data.OracleClient
 				updateBatchSize = value; 
 			}
 		}
-#endif
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }

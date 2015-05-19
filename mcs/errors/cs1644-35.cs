@@ -11,7 +11,7 @@ class X
 		int x = 4;
 		try {
 			throw null;
-		} catch (Exception) if (x > 0) {
+		} catch (Exception) when (x > 0) {
 		}
 	}
 }

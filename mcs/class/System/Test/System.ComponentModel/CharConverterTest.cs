@@ -20,7 +20,6 @@ namespace MonoTests.System.ComponentModel
 	public class CharConverterTest
 	{
 		private CharConverter converter;
-		private string pattern;
 		
 		[SetUp]
 		public void SetUp ()
@@ -28,7 +27,6 @@ namespace MonoTests.System.ComponentModel
 			converter = new CharConverter ();
 
 			DateTimeFormatInfo info = CultureInfo.CurrentCulture.DateTimeFormat;
-			pattern = info.ShortDatePattern + " " + info.ShortTimePattern;
 		}
 
 		[Test]

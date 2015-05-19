@@ -229,7 +229,7 @@ namespace System {
 				length++;
 
 			byte [] result = new byte [length];
-			Buffer.BlockCopyInternal (buffer, offset, result, 0, length);
+			Buffer.InternalBlockCopy (buffer, offset, result, 0, length);
 			return result;
 		}
 

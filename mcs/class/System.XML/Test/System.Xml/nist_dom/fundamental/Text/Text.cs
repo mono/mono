@@ -541,7 +541,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0009T()
         {
             string computedValue = "";

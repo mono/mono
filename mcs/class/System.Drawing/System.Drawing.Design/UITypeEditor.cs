@@ -100,10 +100,8 @@ namespace System.Drawing.Design
 			// but on the other hand the class is not abstract. Could never observe it did paint anything
 			return;
 		}
-#if NET_2_0
 		public virtual bool IsDropDownResizable {
 			get { return false; }
 		}
-#endif
 	}
 }

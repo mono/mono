@@ -26,12 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Web.SessionState {
 	public enum SessionStateActions {
 		None = 0,
 		InitializeItem	= 1
 	}
 }
-#endif
 

@@ -186,7 +186,6 @@ namespace System.ServiceModel.Dispatcher
 			throw new InvalidOperationException ("Cannot change this property after the service host is opened");
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public ICollection<IParameterInspector> ClientParameterInspectors {
 			get { throw new NotImplementedException (); }
@@ -203,7 +202,6 @@ namespace System.ServiceModel.Dispatcher
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 		
 	}
 }

@@ -39,9 +39,7 @@ using PairCollection = System.Collections.Generic.ICollection<System.Collections
 
 namespace System.Web.Routing
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RouteValueDictionary : IDictionary<string, object>

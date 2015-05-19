@@ -29,7 +29,6 @@
 using System.Data.SqlClient;
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System.Data.SqlClient
 {
         [TestFixture]
@@ -54,4 +53,3 @@ namespace MonoTests.System.Data.SqlClient
                 }
         }
 }
-#endif

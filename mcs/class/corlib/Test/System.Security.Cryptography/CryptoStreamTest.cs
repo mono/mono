@@ -144,7 +144,6 @@ namespace MonoTests.System.Security.Cryptography {
 		Stream readStream;
 		Stream writeStream;
 		ICryptoTransform encryptor;
-		ICryptoTransform decryptor;
 		CryptoStream cs;
 		SymmetricAlgorithm aes;
 
@@ -156,7 +155,6 @@ namespace MonoTests.System.Security.Cryptography {
 				writeStream = new MemoryStream (new byte [0], true);
 				aes = SymmetricAlgorithm.Create ();
 				encryptor = aes.CreateEncryptor ();
-				decryptor = aes.CreateEncryptor ();
 			}
 		}
 
@@ -276,9 +274,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
 		public void FlushFinalBlockReadStream () 
 		{
 			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
@@ -301,11 +296,7 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-#if NET_2_0
 		[ExpectedException (typeof (NotSupportedException))]
-#else
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void FlushFinalBlock_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
@@ -318,9 +309,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		// LAMESPEC or MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Read_Disposed () 
 		{
 			// do no corrupt readStream in further tests
@@ -328,20 +316,17 @@ namespace MonoTests.System.Security.Cryptography {
 				byte[] buffer = new byte [8];
 				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				cs.Clear ();
-				Assert.AreEqual (0, cs.Read (buffer, 0, 8), "Read from disposed");
+				try {
+					cs.Read (buffer, 0, 8);
+					Assert.Fail ();
+				} catch (NotSupportedException) {
+				}
 			}
 		}
 		
 #if !NET_2_1
 		[Test]
-		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-#if NET_2_0
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-#else
-		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
-		[ExpectedException (typeof (ArgumentNullException))] // should fail like previous test case
-#endif
+		[ExpectedException (typeof (NotSupportedException))]
 		public void Read_Disposed_Break () 
 		{
 			// do no corrupt readStream in further tests
@@ -436,16 +421,8 @@ namespace MonoTests.System.Security.Cryptography {
 			cs.Read (buffer, Int32.MaxValue, 4);
 		}
 		
-#if !NET_2_1
 		[Test]
-		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-#if NET_2_0
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-#else
-		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
-		[ExpectedException (typeof (ArgumentNullException))] // to match exception throw by Read in a similar case
-#endif
+		[ExpectedException (typeof (NotSupportedException))]
 		public void Write_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
@@ -456,7 +433,6 @@ namespace MonoTests.System.Security.Cryptography {
 				cs.Write (buffer, 0, 8);
 			}
 		}
-#endif
 		
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -841,9 +817,6 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual ("ximian", Encoding.Unicode.GetString (data, 0, len), "Unicode DES Roundtrip");
 		}
 
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif		
 		[Test]
 		public void DecryptPartial_TransformFinalBlock_2Pass () 
 		{
@@ -870,9 +843,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		// based on http://www.c-sharpcorner.com/Code/2002/May/FileEncryption.asp
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif	
 		[Test]
 		public void WriteByteReadByte () 
 		{
@@ -1264,9 +1234,6 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] digest = hash.Hash;
 			Assert.AreEqual ("71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest), "Hash");
 		}
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif	
 		[Test]
 		public void CascadedCryptoStream_Read () 
 		{
@@ -1387,10 +1354,8 @@ namespace MonoTests.System.Security.Cryptography {
 			WriteByte (PaddingMode.None, false);
 			WriteByte (PaddingMode.Zeros, false);
 			WriteByte (PaddingMode.PKCS7, true);	// related to bug #81597
-#if NET_2_0
 			WriteByte (PaddingMode.ANSIX923, true);
 			WriteByte (PaddingMode.ISO10126, true);
-#endif
 		}
 
 		[Test]

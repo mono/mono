@@ -12,11 +12,12 @@ namespace System.Json
 {
 	public class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<JsonPair>
 	{
-		Dictionary<string, JsonValue> map;
+		// Use SortedDictionary to make result of ToString() deterministic
+		SortedDictionary<string, JsonValue> map;
 
 		public JsonObject (params JsonPair [] items)
 		{
-			map = new Dictionary<string, JsonValue> ();
+			map = new SortedDictionary<string, JsonValue> (StringComparer.Ordinal);
 
 			if (items != null)
 				AddRange (items);
@@ -27,7 +28,7 @@ namespace System.Json
 			if (items == null)
 				throw new ArgumentNullException ("items");
 
-			map = new Dictionary<string, JsonValue> ();
+			map = new SortedDictionary<string, JsonValue> (StringComparer.Ordinal);
 			AddRange (items);
 		}
 

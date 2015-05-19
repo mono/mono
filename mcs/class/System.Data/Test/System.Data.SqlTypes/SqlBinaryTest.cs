@@ -295,14 +295,12 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBinary TestBinary = (SqlBinary)TestByteArray;
                         Assert.AreEqual ((byte)15, TestBinary [0], "#O1");
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlBinary.GetXsdType (null);
 			Assert.AreEqual ("base64Binary", qualifiedName.Name, "#A01");
 		}
-#endif
 	}
 }
 

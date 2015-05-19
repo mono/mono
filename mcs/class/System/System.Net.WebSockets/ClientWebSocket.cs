@@ -26,7 +26,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_5
 
 using System;
 using System.Net;
@@ -318,7 +317,7 @@ namespace System.Net.WebSockets
 			var opCode = MessageTypeToWire (type);
 			var length = buffer.Count;
 
-			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0 : 0x80));
+			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0x80 : 0));
 			if (length < 126) {
 				headerBuffer[1] = (byte)length;
 			} else if (length <= ushort.MaxValue) {
@@ -388,4 +387,3 @@ namespace System.Net.WebSockets
 	}
 }
 
-#endif

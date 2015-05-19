@@ -55,7 +55,6 @@ namespace Mono.ILASM {
                                 ps.AddPermission (iper);
                 }
 
-                //Not called by parser for profile != NET_2_0
                 public void AddPermissionSet (PEAPI.SecurityAction sec_action, MIPermissionSet perm_set)
                 {
                         PermissionSet ps = null;

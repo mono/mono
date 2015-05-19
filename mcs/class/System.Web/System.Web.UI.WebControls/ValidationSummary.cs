@@ -35,9 +35,7 @@ namespace System.Web.UI.WebControls {
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
 	public class ValidationSummary : WebControl {
 		#region Public Constructors
 		public ValidationSummary() : base(HtmlTextWriterTag.Div) {
@@ -46,9 +44,6 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(ValidationSummaryDisplayMode.BulletList)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -69,9 +64,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(true)]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public bool EnableClientScript {
@@ -95,13 +88,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
-#if NET_2_0
 		[Localizable (true)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public string HeaderText {
@@ -114,9 +102,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -130,9 +115,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -146,7 +128,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[Themeable (false)]
 		public virtual string ValidationGroup
@@ -158,12 +139,9 @@ namespace System.Web.UI.WebControls {
 				ViewState["ValidationGroup"] = value;
 			}
 		}
-#endif		
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif		
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -173,15 +151,10 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender(HtmlTextWriter writer) {
 			base.AddAttributesToRender (writer);
 
-#if NET_2_0
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel (ValidationGroup)) {
-#else
-			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
-#endif
 				/* force an ID here if we weren't assigned one */
 				if (ID == null)
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-#if NET_2_0
 				if (ValidationGroup != String.Empty)
 					RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
 
@@ -196,26 +169,12 @@ namespace System.Web.UI.WebControls {
 
 				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
 					RegisterExpandoAttribute (ClientID, "displaymode", DisplayMode.ToString ());
-#else
-				if (HeaderText != "")
-					writer.AddAttribute ("headertext", HeaderText);
-
-				if (ShowMessageBox)
-					writer.AddAttribute ("showmessagebox", ShowMessageBox.ToString());
-
-				if (ShowSummary == false)
-					writer.AddAttribute ("showsummary", ShowSummary.ToString());
-
-				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
-					writer.AddAttribute ("displaymode", DisplayMode.ToString());
-#endif
 
 				if (!has_errors)
 					writer.AddStyleAttribute ("display", "none");
 			}
 		}
 
-#if NET_2_0
 		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue) {
 			RegisterExpandoAttribute (controlId, attributeName, attributeValue, false);
 		}
@@ -226,8 +185,6 @@ namespace System.Web.UI.WebControls {
 			else
 				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
-#endif
-#if NET_4_0
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
@@ -237,37 +194,22 @@ namespace System.Web.UI.WebControls {
 			if (ForeColor == Color.Empty)
 				ForeColor = Color.Red;
 		}
-#endif
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void OnPreRender(EventArgs e) {
 			base.OnPreRender (e);
 
 			pre_render_called = true;
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void Render(HtmlTextWriter writer) {
-#if NET_2_0
 			if (!IsEnabled)
 				return;
-#endif
 			ValidatorCollection	validators;
 			ArrayList		errors;
 
 			// First, figure out if there's even data to deal with
-#if NET_2_0
 			validators = Page.GetValidators (ValidationGroup);
-#else
-			validators = Page.Validators;
-#endif
 
 			// We have validators
 			errors = new ArrayList(validators.Count);
@@ -279,12 +221,7 @@ namespace System.Web.UI.WebControls {
 
 			has_errors = errors.Count > 0;
 
-#if NET_2_0
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel (ValidationGroup)) {
-#else
-			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
-#endif
-#if NET_2_0
 				if (Page.ScriptManager != null) {
 					Page.ScriptManager.RegisterArrayDeclarationExternal (this, "Page_ValidationSummaries", String.Concat ("document.getElementById ('", ClientID, "')"));
 					Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), ClientID + "DisposeScript",
@@ -295,7 +232,6 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 ", true);
 					}
 				else
-#endif
 				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
 									    String.Concat ("document.getElementById ('", ClientID, "')"));
 			}
@@ -323,20 +259,12 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 					case ValidationSummaryDisplayMode.List: {
 						if (HeaderText.Length > 0) {
 							writer.Write(HeaderText);
-#if NET_2_0
 							writer.Write("<br />");
-#else
-							writer.Write("<br>");
-#endif
 						}
 
 						for (int i = 0; i < errors.Count; i++) {
 							writer.Write(errors[i]);
-#if NET_2_0
 							writer.Write("<br />");
-#else
-							writer.Write("<br>");
-#endif
 						}
 						break;
 					}
@@ -351,11 +279,7 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 							writer.Write(errors[i]);
 							writer.Write(" ");
 						}
-#if NET_2_0
 						writer.Write("<br />");
-#else
-						writer.Write("<br>");
-#endif
 
 						break;
 					}

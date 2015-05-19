@@ -127,6 +127,23 @@ namespace System.Net.Http.Headers
 				}
 
 				list.Add (element);
+
+				// Separator parsing
+				switch (lexer.PeekChar ()) {
+				case ' ':
+				case '\t':
+					lexer.EatChar ();
+					continue;
+				case -1:
+					if (minimalCount <= list.Count) {
+						result = list;
+						return true;
+					}
+
+					break;
+				}
+					
+				return false;
 			}
 		}
 

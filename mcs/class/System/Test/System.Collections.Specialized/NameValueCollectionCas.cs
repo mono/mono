@@ -70,10 +70,8 @@ namespace MonoCasTests.System.Collections.Specialized {
 			unit.CaseInsensitive ();
 			unit.CopyTo ();
 			unit.Remove ();
-#if NET_2_0
 			unit.Constructor_IEqualityComparer ();
 			unit.Constructor_Int_IEqualityComparer ();
-#endif
 		}
 
 		[Test]

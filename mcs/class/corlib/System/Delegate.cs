@@ -123,9 +123,6 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info, bool throwOnBindFailure);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void SetMulticastInvoke ();
-
 		private static bool arg_type_match (Type delArgType, Type argType) {
 			bool match = delArgType == argType;
 
@@ -186,11 +183,12 @@ namespace System
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
-			if (!return_type_match (invoke.ReturnType, method.ReturnType))
+			if (!return_type_match (invoke.ReturnType, method.ReturnType)) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method return type is incompatible");
 				else
 					return null;
+			}
 
 			ParameterInfo[] delargs = invoke.GetParametersInternal ();
 			ParameterInfo[] args = method.GetParametersInternal ();
@@ -224,11 +222,12 @@ namespace System
 						argLengthMatch = args.Length == delargs.Length + 1;
 				}
 			}
-			if (!argLengthMatch)
+			if (!argLengthMatch) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method argument length mismatch");
 				else
 					return null;
+			}
 
 			bool argsMatch;
 			DelegateData delegate_data = new DelegateData ();
@@ -274,11 +273,12 @@ namespace System
 				}
 			}
 
-			if (!argsMatch)
+			if (!argsMatch) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method arguments are incompatible");
 				else
 					return null;
+			}
 
 			Delegate d = CreateDelegate_internal (type, target, method, throwOnBindFailure);
 			if (d != null)
@@ -524,17 +524,9 @@ namespace System
 		/// </symmary>
 		public static Delegate Combine (Delegate a, Delegate b)
 		{
-			if (a == null) {
-				if (b == null)
-					return null;
+			if (a == null)
 				return b;
-			} else 
-				if (b == null)
-					return a;
 
-			if (a.GetType () != b.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
-			
 			return a.CombineImpl (b);
 		}
 
@@ -617,5 +609,14 @@ namespace System
 			return RemotingServices.IsTransparentProxy (m_target);
 #endif
 		}
+
+		internal static Delegate CreateDelegateNoSecurityCheck (RuntimeType type, Object firstArgument, MethodInfo method)
+		{
+			return CreateDelegate_internal (type, firstArgument, method, true);
+		}
+
+		/* Internal call largely inspired from MS Delegate.InternalAllocLike */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static MulticastDelegate AllocDelegateLike_internal (Delegate d);
 	}
 }

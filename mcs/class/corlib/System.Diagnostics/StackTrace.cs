@@ -45,6 +45,15 @@ namespace System.Diagnostics {
 	[MonoTODO ("Serialized objects are not compatible with .NET")]
 	public class StackTrace {
 
+        // TraceFormat is Used to specify options for how the 
+        // string-representation of a StackTrace should be generated.
+        internal enum TraceFormat 
+        {
+            Normal,
+            TrailingNewLine,        // include a trailing new line character
+            NoResourceLookup    // to prevent infinite resource recusion
+        }
+
 		public const int METHODS_TO_SKIP = 0;
 
 		private StackFrame[] frames;
@@ -148,9 +157,7 @@ namespace System.Diagnostics {
 		}
 
 		[MonoLimitation ("Not possible to create StackTraces from other threads")]
-#if NET_4_5
 		[Obsolete]
-#endif
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
 			if (targetThread == Thread.CurrentThread){
@@ -182,57 +189,131 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
-		public override string ToString ()
+		internal bool AddFrames (StringBuilder sb, bool isException = false)
 		{
-			string newline = String.Format ("{0}   {1} ", Environment.NewLine, Locale.GetText ("at"));
+			bool printOffset;
+			string debugInfo, indentation;
 			string unknown = Locale.GetText ("<unknown method>");
-			string debuginfo = Locale.GetText (" in {0}:line {1}");
-			StringBuilder sb = new StringBuilder ();
-			for (int i = 0; i < FrameCount; i++) {
-				StackFrame frame = GetFrame (i);
-				if (i > 0)
-					sb.Append (newline);
-				else
-					sb.AppendFormat ("   {0} ", Locale.GetText ("at"));
-				MethodBase method = frame.GetMethod ();
-				if (method != null) {
-					// Method information available
-					sb.AppendFormat ("{0}.{1}", method.DeclaringType.FullName, method.Name);
-					/* Append parameter information */
-					sb.Append ("(");
-					ParameterInfo[] p = method.GetParametersInternal ();
-					for (int j = 0; j < p.Length; ++j) {
-						if (j > 0)
-							sb.Append (", ");
-						Type pt = p[j].ParameterType;
-						bool byref = pt.IsByRef;
-						if (byref)
-							pt = pt.GetElementType ();
-						if (pt.IsClass && pt.Namespace != String.Empty) {
-							sb.Append (pt.Namespace);
-							sb.Append (".");
-						}
-						sb.Append (pt.Name);
-						if (byref)
-							sb.Append (" ByRef");
-						sb.AppendFormat (" {0}", p [j].Name);
-					}
-					sb.Append (")");
-				}
-				else {
-					// Method information not available
-					sb.Append (unknown);
-				}
 
-				if (debug_info) {
-					// we were asked for debugging informations
-					// but that doesn't mean we have the debug information available
-					string fname = frame.GetSecureFileName ();
-					if (fname != "<filename unknown>")
-						sb.AppendFormat (debuginfo, fname, frame.GetFileLineNumber ());
+			if (isException) {
+				printOffset = true;
+				indentation = "  ";
+				debugInfo = Locale.GetText (" in {0}:{1} ");
+			} else {
+				printOffset = false;
+				indentation = "   ";
+				debugInfo = Locale.GetText (" in {0}:line {1}");
+			}
+
+			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
+					Locale.GetText ("at"));
+
+			int i;
+			for (i = 0; i < FrameCount; i++) {
+				StackFrame frame = GetFrame (i);
+				if (i == 0)
+					sb.AppendFormat ("{0}{1} ", indentation, Locale.GetText ("at"));
+				else
+					sb.Append (newline);
+
+				if (frame.GetMethod () == null) {
+					string internal_name = frame.GetInternalMethodName ();
+					if (internal_name != null)
+						sb.Append (internal_name);
+					else if (printOffset)
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
+					else
+						sb.AppendFormat (unknown);
+				} else {
+					GetFullNameForStackTrace (sb, frame.GetMethod ());
+
+					if (printOffset) {
+						if (frame.GetILOffset () == -1) {
+							sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
+							if (frame.GetMethodIndex () != 0xffffff)
+								sb.AppendFormat (" {0}", frame.GetMethodIndex ());
+						} else {
+							sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
+						}
+					}
+
+					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
+					                 frame.GetFileLineNumber ());
 				}
 			}
+
+			return i != 0;
+		}
+
+		// This method is also used with reflection by mono-symbolicate tool.
+		// mono-symbolicate tool uses this method to check which method matches
+		// the stack frame method signature.
+		static void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
+		{
+			var declaringType = mi.DeclaringType;
+			if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+				declaringType = declaringType.GetGenericTypeDefinition ();
+
+			// Get generic definition
+			var bindingflags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			foreach (var m in declaringType.GetMethods (bindingflags)) {
+				if (m.MetadataToken == mi.MetadataToken) {
+					mi = m;
+					break;
+				}
+			}
+
+			sb.Append (declaringType.ToString ());
+
+			sb.Append (".");
+			sb.Append (mi.Name);
+
+			if (mi.IsGenericMethod) {
+				Type[] gen_params = mi.GetGenericArguments ();
+				sb.Append ("[");
+				for (int j = 0; j < gen_params.Length; j++) {
+					if (j > 0)
+						sb.Append (",");
+					sb.Append (gen_params [j].Name);
+				}
+				sb.Append ("]");
+			}
+
+			ParameterInfo[] p = mi.GetParametersInternal ();
+
+			sb.Append (" (");
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type pt = p[i].ParameterType;
+				if (pt.IsGenericType && ! pt.IsGenericTypeDefinition)
+					pt = pt.GetGenericTypeDefinition ();
+
+				if (pt.IsClass && !String.IsNullOrEmpty (pt.Namespace)) {
+					sb.Append (pt.Namespace);
+					sb.Append (".");
+				}
+				sb.Append (pt.Name);
+				if (p [i].Name != null) {
+					sb.Append (" ");
+					sb.Append (p [i].Name);
+				}
+			}
+			sb.Append (")");
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			AddFrames (sb);
 			return sb.ToString ();
+		}
+
+		internal String ToString (TraceFormat traceFormat)
+		{
+			// TODO:
+			return ToString ();
 		}
 	}
 }

@@ -217,11 +217,7 @@ namespace MonoTests.System.Web.UI
 			StringWriter sw = new StringWriter ();
 			lf.Serialize (sw, s);
 			string s1 = sw.ToString ();
-#if NET_2_0
 			Assert.AreEqual ("/wEFC0hlbGxvIHdvcmxk", s1, "#1");
-#else
-			Assert.AreEqual ("SGVsbG8gd29ybGQ=", s1, "#1");
-#endif
 			string s2 = lf.Deserialize (s1) as string;
 			Assert.IsNotNull (s2, "#2");
 			Assert.AreEqual (s, s2, "#3");
@@ -253,11 +249,7 @@ namespace MonoTests.System.Web.UI
 			MemoryStream ms = new MemoryStream ();
 			lf.Serialize (ms, s);
 			string s1 = Encoding.UTF8.GetString (ms.GetBuffer (), 0, (int) ms.Length);
-#if NET_2_0
 			Assert.AreEqual ("/wEFC0hlbGxvIHdvcmxk", s1, "#1");
-#else
-			Assert.AreEqual ("SGVsbG8gd29ybGQ=", s1, "#1");
-#endif
 			string s2 = lf.Deserialize (s1) as string;
 			Assert.IsNotNull (s2, "#2");
 			Assert.AreEqual (s, s2, "#3");
@@ -287,20 +279,12 @@ namespace MonoTests.System.Web.UI
 			MemoryStream ms = new MemoryStream ();
 			lf.Serialize (ms, null);
 			string s1 = Encoding.UTF8.GetString (ms.GetBuffer (), 0, (int) ms.Length);
-#if NET_2_0
 			Assert.AreEqual ("/wFk", s1, "#1");
-#else
-			Assert.AreEqual (string.Empty, s1, "#1");
-#endif
 
 			StringWriter sw = new StringWriter ();
 			lf.Serialize (sw, null);
 			string s2 = sw.ToString ();
-#if NET_2_0
 			Assert.AreEqual ("/wFk", s1, "#2");
-#else
-			Assert.AreEqual (string.Empty, s1, "#2");
-#endif
 		}
 
 		class NonSeekableStream : MemoryStream

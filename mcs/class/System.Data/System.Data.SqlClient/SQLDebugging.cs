@@ -36,9 +36,7 @@ namespace System.Data.SqlClient
 	[GuidAttribute ("afef65ad-4577-447a-a148-83acadd3d4b9")]
 	[ClassInterface (ClassInterfaceType.None)]
 	public
-#if NET_2_0
 	sealed
-#endif
 	class SQLDebugging
 	{
 		[MonoTODO]

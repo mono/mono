@@ -33,19 +33,15 @@ using System.ComponentModel.Design;
 
 namespace System.Web.UI.Design
 {
-#if NET_2_0
 	[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 	public class TemplateEditingVerb : DesignerVerb, IDisposable
 	{
-#if NET_2_0
 		[MonoTODO]
 		public TemplateEditingVerb (string text, int index)
 			: base (text, null)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public TemplateEditingVerb (string text, int index, TemplatedControlDesigner designer) : base (text, designer.TemplateEditingVerbHandler)
 		{

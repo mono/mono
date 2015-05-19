@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -44,27 +43,32 @@ namespace System.Data.Design
 	public class TypedDataSetSchemaImporterExtension : SchemaImporterExtension
 	{
 		public TypedDataSetSchemaImporterExtension ()
+			: this (TypedDataSetGenerator.GenerateOption.None)
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected TypedDataSetSchemaImporterExtension (TypedDataSetGenerator.GenerateOption dataSetGenerateOptions)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public override string ImportSchemaType (XmlSchemaType type, XmlSchemaObject context, XmlSchemas schemas, XmlSchemaImporter importer, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeGenerationOptions options, CodeDomProvider codeProvider)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				return null;
+
+			var xe = context as XmlSchemaElement;
+			if (xe == null)
+				return null;
+
+			return null;
 		}
 
 		[MonoTODO]
 		public override string ImportSchemaType (string name, string namespaceName, XmlSchemaObject context, XmlSchemas schemas, XmlSchemaImporter importer, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeGenerationOptions options, CodeDomProvider codeProvider)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 	}
 }
 
-#endif

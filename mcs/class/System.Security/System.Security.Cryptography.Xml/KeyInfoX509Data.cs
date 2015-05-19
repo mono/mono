@@ -59,7 +59,7 @@ namespace System.Security.Cryptography.Xml {
 			AddCertificate (cert);
 		}
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 		public KeyInfoX509Data (X509Certificate cert, X509IncludeOption includeOption)
 		{
 			if (cert == null)
@@ -125,10 +125,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddCertificate (X509Certificate certificate) 
 		{
-#if NET_2_0
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
-#endif
 			if (X509CertificateList == null)
 				X509CertificateList = new ArrayList ();
 			X509CertificateList.Add (certificate);
@@ -136,10 +134,8 @@ namespace System.Security.Cryptography.Xml {
 
 		public void AddIssuerSerial (string issuerName, string serialNumber) 
 		{
-#if NET_2_0
 			if (issuerName == null)
 				throw new ArgumentException ("issuerName");
-#endif
 			if (IssuerSerialList == null)
 				IssuerSerialList = new ArrayList ();
 
@@ -155,7 +151,6 @@ namespace System.Security.Cryptography.Xml {
 			SubjectKeyIdList.Add (subjectKeyId);
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public void AddSubjectKeyId (string subjectKeyId)
 		{
@@ -167,7 +162,6 @@ namespace System.Security.Cryptography.Xml {
 				id = Convert.FromBase64String (subjectKeyId);
 			SubjectKeyIdList.Add (id);
 		}
-#endif
 
 		public void AddSubjectName (string subjectName) 
 		{
@@ -179,20 +173,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public override XmlElement GetXml () 
 		{
-#if !NET_2_0
-			// sanity check
-			int count = 0;
-			if (IssuerSerialList != null)
-				count += IssuerSerialList.Count;
-			if (SubjectKeyIdList != null)
-				count += SubjectKeyIdList.Count;
-			if (SubjectNameList != null)
-				count += SubjectNameList.Count;
-			if (X509CertificateList != null)
-				count += X509CertificateList.Count;
-			if ((x509crl == null) && (count == 0))
-				throw new CryptographicException ("value");
-#endif
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.X509Data, XmlSignature.NamespaceURI);
 			// FIXME: hack to match MS implementation

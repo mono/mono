@@ -136,11 +136,7 @@ namespace MonoTests.System.CodeDom
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor3_NullType ()
 		{
 			CodeCastExpression cce = new CodeCastExpression ((Type) null,

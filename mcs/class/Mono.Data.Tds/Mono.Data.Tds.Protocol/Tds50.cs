@@ -31,6 +31,7 @@
 using Mono.Data.Tds;
 using System;
 using System.Text;
+using System.Security;
 
 namespace Mono.Data.Tds.Protocol
 {
@@ -118,7 +119,7 @@ namespace Mono.Data.Tds.Protocol
 
 			// password (offset 62 0x3e)
 			// 62-92
-			tmp = Comm.Append (connectionParameters.Password, 30, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 30, pad);
 			Comm.Append ((byte) (tmp.Length < 30 ? tmp.Length : 30));
 
 			// hostproc (offset 93 0x5d)
@@ -187,7 +188,7 @@ namespace Mono.Data.Tds.Protocol
 			// remote passwords
 			// 202-457	
 			Comm.Append (empty, 2, pad);
-			tmp = Comm.Append (connectionParameters.Password, 253, pad);
+			tmp = Comm.Append (GetPlainPassword(connectionParameters.Password), 253, pad);
 			Comm.Append ((byte) (tmp.Length < 253 ? tmp.Length + 2 : 253 + 2));
 
 			// tds version
@@ -507,7 +508,6 @@ namespace Mono.Data.Tds.Protocol
 
 				TdsDataColumn col = new TdsDataColumn ();
 				Columns.Add (col);
-#if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
 				col.IsIdentity = isIdentity;
@@ -520,20 +520,6 @@ namespace Mono.Data.Tds.Protocol
 				col.IsKey = isKey;
 				col.AllowDBNull = allowDBNull;
 				col.IsHidden = hidden;
-#else
-				col ["ColumnType"] = columnType;
-				col ["ColumnName"] = columnName;
-				col ["IsIdentity"] = isIdentity;
-				col ["IsRowVersion"] = isRowVersion;
-				col ["ColumnType"] = columnType;
-				col ["ColumnSize"] = bufLength;
-				col ["NumericPrecision"] = precision;
-				col ["NumericScale"] = scale;
-				col ["IsReadOnly"] = !isUpdatable;
-				col ["IsKey"] = isKey;
-				col ["AllowDBNull"] = allowDBNull;
-				col ["IsHidden"] = hidden;
-#endif
 			}
 		}
 

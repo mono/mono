@@ -38,7 +38,6 @@ using System.EnterpriseServices;
 
 // General Information about the System.EnterpriseServices assembly
 
-#if NET_2_0
 	[assembly: AssemblyTitle ("System.EnterpriseServices.dll")]
 	[assembly: AssemblyDescription ("System.EnterpriseServices.dll")]
 	[assembly: AssemblyDefaultAlias ("System.EnterpriseServices.dll")]
@@ -46,7 +45,6 @@ using System.EnterpriseServices;
 	[assembly: AssemblyCompany (Consts.MonoCompany)]
 	[assembly: AssemblyProduct (Consts.MonoProduct)]
 	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
-#endif
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Web;
 using System.Web.UI;
@@ -59,4 +58,3 @@ namespace System.Web.UI.WebControls.Adapters
 	}
 }
 
-#endif

@@ -31,6 +31,11 @@ using System;
 [Serializable]
 internal class Latin1Encoding : Encoding
 {
+	// until we change the callers:
+	internal static string _ (string arg) {
+		return arg;
+	}
+
 	// Magic number used by Windows for the ISO Latin1 code page.
 	internal const int ISOLATIN_CODE_PAGE = 28591;
 
@@ -247,7 +252,7 @@ internal class Latin1Encoding : Encoding
 		    return String.Empty;
 		unsafe {
 			fixed (byte* bytePtr = bytes) {
-				string s = string.InternalAllocateStr (count);
+				string s = string.FastAllocateString (count);
 
 				fixed (char* charPtr = s) {
 					byte* currByte = bytePtr + index;

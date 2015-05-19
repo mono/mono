@@ -70,7 +70,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				};
 
 				client.GetDataAsync ();
-				if (!wait.WaitOne (TimeSpan.FromSeconds (10)))
+				if (!wait.WaitOne (TimeSpan.FromSeconds (20)))
 					Assert.Fail ("timeout");
 			} finally {
 				serviceHost.Close ();

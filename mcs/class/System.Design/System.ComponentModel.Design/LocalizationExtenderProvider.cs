@@ -32,9 +32,7 @@ using System.Globalization;
 
 namespace System.ComponentModel.Design
 {
-#if NET_2_0
 	[Obsolete ("use CodeDomLocalizationProvider")]
-#endif
 	[ProvideProperty("Localizable", typeof(object))]
 	[ProvideProperty("Language", typeof(object))]
 	[ProvideProperty("LoadLanguage", typeof(object))]
@@ -58,13 +56,11 @@ namespace System.ComponentModel.Design
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException();
 		}
-#endif
 
 		[MonoTODO]
 		[Localizable (true)]

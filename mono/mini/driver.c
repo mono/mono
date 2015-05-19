@@ -10,7 +10,9 @@
  */
 
 #include <config.h>
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #if HAVE_SCHED_SETAFFINITY
 #include <sched.h>
 #endif
@@ -140,7 +142,7 @@ extern char *nacl_mono_path;
 	MONO_OPT_ALIAS_ANALYSIS	| \
 	MONO_OPT_AOT)
 
-#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT)
+#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT | MONO_OPT_FLOAT32)
 
 static guint32
 parse_optimizations (const char* p)
@@ -329,9 +331,7 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_CMOV,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_ABCREM,
-       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_ABCREM | MONO_OPT_SSAPRE,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM,
-       MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_SSAPRE,
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_LINEARS | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_ABCREM | MONO_OPT_SHARED,
        DEFAULT_OPTIMIZATIONS, 
 };
@@ -408,8 +408,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 
 			} else {
 				cfailed++;
-				if (verbose)
-					g_print ("Test '%s' failed compilation.\n", method->name);
+				g_print ("Test '%s' failed compilation.\n", method->name);
 			}
 			if (mini_stats_fd)
 				fprintf (mini_stats_fd, "%f, ",
@@ -1723,19 +1722,15 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--security") == 0) {
 #ifndef DISABLE_SECURITY
 			mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
-			mono_security_set_mode (MONO_SECURITY_MODE_CAS);
-			mono_activate_security_manager ();
 #else
 			fprintf (stderr, "error: --security: not compiled with security manager support");
 			return 1;
 #endif
 		} else if (strncmp (argv [i], "--security=", 11) == 0) {
-			/* Note: temporary-smcs-hack, validil, and verifiable need to be
+			/* Note: validil, and verifiable need to be
 			   accepted even if DISABLE_SECURITY is defined. */
 
-			if (strcmp (argv [i] + 11, "temporary-smcs-hack") == 0) {
-				mono_security_set_mode (MONO_SECURITY_MODE_SMCS_HACK);
-			} else if (strcmp (argv [i] + 11, "core-clr") == 0) {
+			if (strcmp (argv [i] + 11, "core-clr") == 0) {
 #ifndef DISABLE_SECURITY
 				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
 				mono_security_set_mode (MONO_SECURITY_MODE_CORE_CLR);
@@ -1754,9 +1749,7 @@ mono_main (int argc, char* argv[])
 #endif
 			} else if (strcmp (argv [i] + 11, "cas") == 0) {
 #ifndef DISABLE_SECURITY
-				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
-				mono_security_set_mode (MONO_SECURITY_MODE_CAS);
-				mono_activate_security_manager ();
+				fprintf (stderr, "warning: --security=cas not supported.");
 #else
 				fprintf (stderr, "error: --security: not compiled with CAS support");
 				return 1;
@@ -1778,16 +1771,8 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--inside-mdb") == 0) {
 			action = DO_DEBUGGER;
 		} else if (strncmp (argv [i], "--wapi=", 7) == 0) {
-			if (strcmp (argv [i] + 7, "hps") == 0) {
-				return mini_wapi_hps (argc - i, argv + i);
-			} else if (strcmp (argv [i] + 7, "semdel") == 0) {
-				return mini_wapi_semdel (argc - i, argv + i);
-			} else if (strcmp (argv [i] + 7, "seminfo") == 0) {
-				return mini_wapi_seminfo (argc - i, argv + i);
-			} else {
-				fprintf (stderr, "Invalid --wapi suboption: '%s'\n", argv [i]);
-				return 1;
-			}
+			fprintf (stderr, "--wapi= option no longer supported\n.");
+			return 1;
 		} else if (strcmp (argv [i], "--no-x86-stack-align") == 0) {
 			mono_do_x86_stack_align = FALSE;
 #ifdef MONO_JIT_INFO_TABLE_TEST
@@ -1859,8 +1844,11 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if SIZEOF_VOID_P == 8 && defined(TARGET_ARM)
-       fprintf (stderr, "Can't cross-compile on 64 bit platforms to arm.\n");
+#if SIZEOF_VOID_P == 8 && (defined(TARGET_ARM) || defined(TARGET_X86))
+       fprintf (stderr, "Can't cross-compile on 64-bit platforms to 32-bit architecture.\n");
+       exit (1);
+#elif SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+       fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif
 #endif
@@ -1868,6 +1856,11 @@ mono_main (int argc, char* argv[])
 	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
 		g_set_prgname (argv[i]);
 	}
+
+	mono_counters_init ();
+
+	/* Set rootdir before loading config */
+	mono_set_rootdir ();
 
 	if (enable_profile)
 		mono_profiler_load (profile_options);
@@ -1998,7 +1991,7 @@ mono_main (int argc, char* argv[])
 			fprintf (stderr, "Corlib not in sync with this runtime: %s\n", error);
 			fprintf (stderr, "Loaded from: %s\n",
 				mono_defaults.corlib? mono_image_get_filename (mono_defaults.corlib): "unknown");
-			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.go-mono.com/daily.\n");
+			fprintf (stderr, "Download a newer corlib or a newer runtime at http://www.mono-project.com/download.\n");
 			exit (1);
 		}
 
@@ -2187,6 +2180,12 @@ void
 mono_jit_set_aot_only (gboolean val)
 {
 	mono_aot_only = val;
+}
+
+void
+mono_jit_set_aot_mode (MonoAotMode mode)
+{
+	mono_aot_mode = mode;
 }
 
 /**

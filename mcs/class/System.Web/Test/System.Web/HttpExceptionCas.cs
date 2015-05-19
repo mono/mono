@@ -90,7 +90,6 @@ namespace MonoCasTests.System.Web {
 			e.GetHtmlErrorMessage (); // null for ms, non-null for mono
 			Assert.AreEqual (500, e.GetHttpCode (), "HttpCode");
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, SerializationFormatter = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -106,7 +105,6 @@ namespace MonoCasTests.System.Web {
 		{
 			he.GetObjectData (null, new StreamingContext ());
 		}
-#endif
 		// LinkDemand
 
 		public override Type Type {

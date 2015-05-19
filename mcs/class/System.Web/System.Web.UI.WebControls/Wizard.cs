@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -49,12 +48,10 @@ namespace System.Web.UI.WebControls
 		public static readonly string MoveNextCommandName = "MoveNext";
 		public static readonly string MovePreviousCommandName = "MovePrevious";
 		public static readonly string MoveToCommandName = "Move";
-#if NET_4_0
 		public static readonly string HeaderPlaceholderId = "headerPlaceholder";
 		public static readonly string NavigationPlaceholderId = "navigationPlaceholder";
 		public static readonly string SideBarPlaceholderId = "sideBarPlaceholder";
 		public static readonly string WizardStepPlaceholderId = "wizardStepPlaceholder";
-#endif
 		protected static readonly string DataListID = "SideBarList";
 
 		static readonly string CancelButtonIDShort = "Cancel";
@@ -524,13 +521,11 @@ namespace System.Web.UI.WebControls
 				ViewState ["HeaderText"] = value;
 			}
 		}
-#if NET_4_0
 	    [DefaultValue (null)]
 	    [TemplateContainerAttribute(typeof(Wizard))]
 		    [PersistenceModeAttribute(PersistenceMode.InnerProperty)]
 		    [BrowsableAttribute(false)]
 		    public virtual ITemplate LayoutTemplate { get; set; }
-#endif
 	    [DefaultValueAttribute (null)]
 	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 	    [NotifyParentPropertyAttribute (true)]
@@ -889,7 +884,6 @@ namespace System.Web.UI.WebControls
 		{
 			CreateControlHierarchy ();
 		}
-#if NET_4_0
 		InvalidOperationException MakeLayoutException (string phName, string phID, string condition = null)
 		{
 			return new InvalidOperationException (
@@ -977,16 +971,13 @@ namespace System.Web.UI.WebControls
 			controls.Remove (placeHolder);
 			controls.AddAt (index, replacement);
 		}
-#endif
 		protected virtual void CreateControlHierarchy ()
 		{
-#if NET_4_0
 			ITemplate layoutTemplate = LayoutTemplate;
 			if (layoutTemplate != null) {
 				CreateControlHierarchy_LayoutTemplate (layoutTemplate);
 				return;
 			}
-#endif
 			styles.Clear ();
 
 			wizardTable = new ContainedTable (this);
@@ -1511,21 +1502,15 @@ namespace System.Web.UI.WebControls
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy ();
-#if NET_4_0
 			if (LayoutTemplate == null)
-#endif
 				wizardTable.Render (writer);
-#if NET_4_0
 			else
 				RenderChildren (writer);
-#endif
 		}
 
 		void PrepareControlHierarchy ()
 		{
-#if NET_4_0
 			if (LayoutTemplate == null) {
-#endif
 				// header
 				if (!_headerCell.Initialized) {
 					if (String.IsNullOrEmpty (HeaderText))
@@ -1536,14 +1521,12 @@ namespace System.Web.UI.WebControls
 
 				if (ActiveStep.StepType == WizardStepType.Complete)
 					_headerCell.Parent.Visible = false;
-#if NET_4_0
 			} else {
 				WizardStepCollection steps = WizardSteps;
 
 				if (steps == null || steps.Count == 0)
 					return;
 			}
-#endif
 			
 			// sidebar
 			if (stepDatalist != null) {
@@ -1918,4 +1901,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

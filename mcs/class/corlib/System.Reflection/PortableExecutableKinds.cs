@@ -41,9 +41,7 @@ namespace System.Reflection {
 		Required32Bit = 2,
 		PE32Plus = 4,
 		Unmanaged32Bit = 8,
-#if NET_4_5
 		Preferred32Bit = 16
-#endif
 	}
 }
 

@@ -54,13 +54,8 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsNull (cg.PolicyStatement, "PolicyStatement");
 			// documented as always null
 			Assert.IsNull (cg.AttributeString, "AttributeString");
-#if NET_2_0
 			// seems it's easier to change code than to change code ;)
 			Assert.AreEqual ("Same site Web", cg.PermissionSetName, "PermissionSetName");
-#else
-			// documented as always "Same site Web" but it's "Same site Web." (missing .)
-			Assert.AreEqual ("Same site Web.", cg.PermissionSetName, "PermissionSetName");
-#endif
 		}
 
 		[Test]

@@ -38,7 +38,6 @@ namespace MonoTests.System.CodeDom
 	[TestFixture]
 	public class CodeSnippetCompileUnitTest
 	{
-#if NET_2_0
 		[Test]
 		public void Constructor0 ()
 		{
@@ -76,7 +75,6 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cscu.LinePragma, "#19");
 			Assert.AreSame (clp, cscu.LinePragma, "#20");
 		}
-#endif
 
 		[Test]
 		public void Constructor1 ()
@@ -99,13 +97,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cscu.ReferencedAssemblies, "#9");
 			Assert.AreEqual (0, cscu.ReferencedAssemblies.Count, "#10");
 
-#if NET_2_0
 			Assert.IsNotNull (cscu.StartDirectives, "#11");
 			Assert.AreEqual (0, cscu.StartDirectives.Count, "#12");
 
 			Assert.IsNotNull (cscu.EndDirectives, "#13");
 			Assert.AreEqual (0, cscu.EndDirectives.Count, "#14");
-#endif
 
 			Assert.IsNotNull (cscu.UserData, "#15");
 			Assert.AreEqual (typeof(ListDictionary), cscu.UserData.GetType (), "#16");

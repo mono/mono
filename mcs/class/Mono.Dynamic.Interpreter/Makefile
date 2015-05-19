@@ -4,12 +4,15 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Dynamic.Interpreter.dll
 
-LIB_MCS_FLAGS = -r:System.dll -r:System.Core.dll \
+LIB_REFS = System System.Core
+LIB_MCS_FLAGS = \
 	-d:FEATURE_CORE_DLR,FEATURE_DBNULL,FEATURE_DEFAULT_PARAMETER_VALUE,FEATURE_GET_TYPE_INFO,FEATURE_VARIANCE,FEATURE_SERIALIZATION,CLR45 \
 	-d:MONO_INTERPRETER \
 	-delaysign -keyfile:../mono.pub
 
-ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
+
+ifdef MOBILE_STATIC
 mono_dynamic_interpreter_deps = $(the_libdir_base)plaincore/System.Core.dll
 LIB_MCS_FLAGS += -lib:$(the_libdir_base)plaincore
 endif

@@ -45,11 +45,7 @@ namespace System.Windows.Forms.Design
 		{
 			PropertyDescriptorCollection properties = new PropertyDescriptorCollection (new PropertyDescriptor[0]);
 			ControlBindingsCollection collection = value as ControlBindingsCollection;
-#if NET_2_0
 			object bindableComponent = collection.BindableComponent;
-#else
-			object bindableComponent = collection.Control;
-#endif
 			if (collection != null && bindableComponent != null) {
 				foreach (PropertyDescriptor property in 
 					 TypeDescriptor.GetProperties (bindableComponent, attributes)) {

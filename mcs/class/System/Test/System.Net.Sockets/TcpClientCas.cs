@@ -29,7 +29,6 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		static ManualResetEvent reset;
 		private string message;
-		private string uri = "http://www.google.com";
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
@@ -51,7 +50,6 @@ namespace MonoCasTests.System.Net.Sockets {
 		}
 
 		// async tests (for stack propagation)
-#if NET_2_0
 /* Oops - not yet implemented in Mono
 		private void ConnectCallback (IAsyncResult ar)
 		{
@@ -118,6 +116,5 @@ namespace MonoCasTests.System.Net.Sockets {
 			Assert.IsNull (message, message);
 		}
 */
-#endif
 	}
 }

@@ -249,6 +249,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		}
 
 		[Test]
+		[Ignore ("This test is flaky: https://bugzilla.xamarin.com/show_bug.cgi?id=27757")]
 		public void FaultExecutingConsume ()
 		{
 			var evt = new ManualResetEventSlim ();

@@ -64,13 +64,8 @@ namespace MonoTests.System.Collections
 		[Test]
 		public void TestCapacity ()
 		{
-#if NET_2_0
 		int default_capacity = 4;
 		int unspecified_capacity = 0;
-#else
-			int default_capacity = 16;
-			int unspecified_capacity = 16;
-#endif
 			for (int i = 1; i < 100; i++) {
 				ArrayList al1 = new ArrayList (i);
 				Assert.AreEqual (i, al1.Capacity, "Bad capacity of " + i);
@@ -1761,12 +1756,8 @@ namespace MonoTests.System.Collections
 		public void TrimToSize ()
 		{
 			ArrayList al1 = new ArrayList ();
-#if NET_2_0
 		// Capacity is 0 under 2.0
 		int capacity = 4;
-#else
-			int capacity = al1.Capacity;
-#endif
 			int size = capacity / 2;
 			for (int i = 1; i <= size; i++) {
 				al1.Add ('?');
@@ -1830,9 +1821,6 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // MS bug
-#endif
 		public void AddRange_GetRange ()
 		{
 			ArrayList source = ArrayList.Adapter (new object [] { "1", "2" });
@@ -1849,9 +1837,6 @@ namespace MonoTests.System.Collections
 		}
 
 		[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // MS bug
-#endif
 		public void IterateSelf ()
 		{
 			ArrayList list = new ArrayList ();

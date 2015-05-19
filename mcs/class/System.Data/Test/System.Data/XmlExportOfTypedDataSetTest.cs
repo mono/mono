@@ -6,7 +6,6 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class XmlExportOfTypedDataSetTest
 	{
-#if NET_2_0
 		[Test]
 		public void ExportXmlSerializable_NestedClassMapping () {
 
@@ -31,6 +30,5 @@ namespace MonoTests.System.Data
 			xmlSchemaExporter.ExportMembersMapping (xmlMembersMapping);
 
 		}
-#endif
 	}
 }

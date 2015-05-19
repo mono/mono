@@ -95,38 +95,14 @@ namespace MonoCasTests.System.Web {
 			Assert.IsNotNull (context.Trace, "Trace");
 			// note: only User setter is protected
 			Assert.IsNull (context.User, "User");
-#if NET_2_0
 			Assert.IsNotNull (context.Application, "Application");
 			Assert.IsNotNull (context.CurrentHandler, "CurrentHandler");
 			Assert.IsNull (context.PreviousHandler, "PreviousHandler");
 //			Assert.IsNull (context.Profile, "Profile");
-#endif
 			// static properties
 			Assert.IsNull (HttpContext.Current, "Current");
 		}
 
-#if ONLY_1_1
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-		[ExpectedException (typeof (SecurityException))]
-		[Ignore ("occurs only in certain conditions - removed in 2.0")]
-		public void Application_Deny_UnmanagedCode ()
-		{
-			// The SecurityException doesn't always occurs (e.g. CAS unit tests
-			// works for HttpContextCas alone but will fail if the whole suit
-			// is executed). This is because the value is cached and may be 
-			// created differently (without the check). This is _probably_ why
-			// this check has been removed in 2.0.
-			Assert.IsNotNull (context.Application, "Application");
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
-		public void Application_PermitOnly_UnmanagedCode ()
-		{
-			Assert.IsNotNull (context.Application, "Application");
-		}
-#endif
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlPrincipal = true)]
@@ -189,7 +165,6 @@ namespace MonoCasTests.System.Web {
 			catch (ArgumentNullException) {
 				// mono
 			}
-#if NET_2_0
 			context.GetSection (String.Empty);
 
 			try {
@@ -201,7 +176,6 @@ namespace MonoCasTests.System.Web {
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		[Test]
@@ -209,7 +183,6 @@ namespace MonoCasTests.System.Web {
 		public void StaticMethods_Deny_Unrestricted ()
 		{
 			HttpContext.GetAppConfig (String.Empty);
-#if NET_2_0
 			HttpContext.GetGlobalResourceObject (String.Empty, String.Empty);
 			HttpContext.GetGlobalResourceObject (String.Empty, String.Empty, CultureInfo.InvariantCulture);
 			try {
@@ -228,7 +201,6 @@ namespace MonoCasTests.System.Web {
 			}
 			catch (NullReferenceException) {
 			}
-#endif
 		}
 
 		// LinkDemand

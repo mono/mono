@@ -316,6 +316,52 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 				tw.WriteLine ("Hello World!");
 			}
 		}
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void CreateViewStreamWithOffsetPastFileEnd ()
+		{
+			string f = Path.Combine (tempDir, "8192-file");
+			File.WriteAllBytes (f, new byte [8192]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open, "myMap", 8192);
+
+			/* Should throw exception when trying to map past end of file */
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8200, 10, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void CreateViewStreamWithOffsetPastFileEnd2 ()
+		{
+			string f = Path.Combine (tempDir, "8192-file");
+			File.WriteAllBytes (f, new byte [8192]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
+
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8191, 8191, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		[Test]
+		public void CreateViewStreamAlignToPageSize ()
+		{
+#if MONOTOUCH
+			// iOS bugs on ARM64 - bnc #27667 - apple #
+			int pageSize = (IntPtr.Size == 4) ? Environment.SystemPageSize : 4096;
+#else
+			int pageSize = Environment.SystemPageSize;
+#endif
+			string f = Path.Combine (tempDir, "p-file");
+			File.WriteAllBytes (f, new byte [pageSize * 2 + 1]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
+
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (pageSize * 2, 0, MemoryMappedFileAccess.ReadWrite);
+#if !MONOTOUCH
+			Assert.AreEqual (stream.Capacity, Environment.SystemPageSize);
+#endif
+			stream.Write (new byte [pageSize], 0, pageSize);
+		}
 	}
 }
 

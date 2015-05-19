@@ -3668,7 +3668,7 @@ mono_arch_register_lowlevel_calls (void)
 }
 
 void
-mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors)
+mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
 
@@ -4354,7 +4354,7 @@ mono_arch_tls_init (void)
 
 	}
 
-	jit_tls = pthread_getspecific (mono_get_jit_tls_key ());
+	jit_tls = mono_get_jit_tls ();
 
 #ifdef MONO_SPARC_THR_TLS
 	thr_setspecific (lmf_addr_key, &jit_tls->lmf);

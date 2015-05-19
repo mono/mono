@@ -74,13 +74,11 @@ namespace System.ServiceModel
 		TransportCredentialOnly,
 	}
 
-#if NET_4_5
 	public enum BasicHttpsSecurityMode
 	{
 		Transport,
 		TransportWithMessageCredential
 	}
-#endif
 
 	public enum CommunicationState
 	{
@@ -241,9 +239,7 @@ namespace System.ServiceModel // used to be S.SM.Ch
 		Ntlm,
 		Windows,
 		Certificate,
-#if NET_4_5
 		InheritedFromHost
-#endif
 	}
 
 	public enum HttpProxyCredentialType
@@ -411,17 +407,6 @@ namespace System.ServiceModel.Security
 		Custom,
 	}
 
-#if !NET_4_5
-
-	public enum X509CertificateValidationMode
-	{
-		None,
-		PeerTrust,
-		ChainTrust,
-		PeerOrChainTrust,
-		Custom,
-	}
-#endif
 }
 
 namespace System.ServiceModel.Security.Tokens

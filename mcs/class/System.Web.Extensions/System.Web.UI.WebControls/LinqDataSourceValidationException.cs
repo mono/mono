@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_3_5
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,4 +82,3 @@ namespace System.Web.UI.WebControls
 		public IDictionary<string, Exception> InnerExceptions { get; private set; }
 	}
 }
-#endif

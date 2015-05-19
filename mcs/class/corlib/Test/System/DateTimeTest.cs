@@ -269,12 +269,18 @@ namespace MonoTests.System
 			Assert.AreEqual (13, t1.Second, "#C4");
 		}
 
+		const long MaxMillis = 315537897600000;
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void AddMillisecondsOutOfRangeException1 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);
-			t1.AddMilliseconds (9E100);
+			// double to long conversion with overflow lead to "unspecified value", 
+			// ref: https://msdn.microsoft.com/en-us/library/yht2cx7b.aspx
+			// so we adapt the test to avoid this condition based on the real limit
+			// see https://github.com/Microsoft/referencesource/blob/master/mscorlib/system/datetime.cs#L90
+			t1.AddMilliseconds (MaxMillis + 1);
 		}
 
 		[Test]
@@ -282,7 +288,7 @@ namespace MonoTests.System
 		public void AddMillisecondsOutOfRangeException2 ()
 		{
 			DateTime t1 = new DateTime (myTicks [1]);
-			t1.AddMilliseconds (-9E100);
+			t1.AddMilliseconds (-MaxMillis-1);
 		}
 
 		[Test]
@@ -1271,6 +1277,9 @@ namespace MonoTests.System
 		public void Parse_Bug53023b ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
+				if (ci.Name == "ar-SA")
+					continue;
+
 				try {
 					DateTime.Parse ("01-Sep-05", ci);
 
@@ -1511,7 +1520,7 @@ namespace MonoTests.System
 			d = new DateTime (599264352000000000);
 			Assert.AreEqual (0.0d, d.ToOADate (), "#2");
 			d = new DateTime (31242239136000000);
-			Assert.AreEqual (-657434.999d, d.ToOADate (), "#3");
+			Assert.AreEqual ("-657434.999", d.ToOADate ().ToString (), "#3");
 			d = new DateTime (3155378975136000000);
 			Assert.AreEqual (2958465.999d, d.ToOADate (), "#4");
 		}
@@ -1521,13 +1530,6 @@ namespace MonoTests.System
 		{
 			DateTime d = new DateTime (3155378975136000001);
 			Assert.AreEqual (2958465.999d, d.ToOADate ());
-		}
-
-		[Test]
-		[Ignore ("This test is probably geo location dependent, at least fails on .NET 4.0 in Japan")]
-		public void ToOADate_MaxValue ()
-		{
-			Assert.AreEqual (2958465.99999999d, DateTime.MaxValue.ToOADate ());
 		}
 
 		[Test]
@@ -2618,6 +2620,14 @@ namespace MonoTests.System
 		{
 			string date = "2014-08-25T01:20:23.601911612343423423465789789365674575676746756747467%Z";
 			DateTime.Parse (date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+		}
+
+		[Test]
+		public void Year_2 ()
+		{
+			var res = DateTime.Parse ("12-002", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.RoundtripKind);			
+			Assert.AreEqual (2, res.Year, "#1");
+			Assert.AreEqual (12, res.Month, "#2");			
 		}
 	}
 }

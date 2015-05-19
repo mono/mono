@@ -51,12 +51,10 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO ("Not implemented")]
 		public static bool CheckFileAccessForUser (string virtualPath, IntPtr token, string verb)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

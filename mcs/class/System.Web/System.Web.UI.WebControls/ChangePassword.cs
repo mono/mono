@@ -43,9 +43,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent ("ChangedPassword")]
 	[Designer ("System.Web.UI.Design.WebControls.ChangePasswordDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ChangePassword : CompositeControl, INamingContainer
-#if NET_4_0
 		, IRenderOuterTable
-#endif
 	{
 		static readonly object cancelButtonClickEvent = new object ();
 		static readonly object changedPasswordEvent = new object ();
@@ -58,9 +56,7 @@ namespace System.Web.UI.WebControls
 		public static readonly string CancelButtonCommandName = "Cancel";
 		public static readonly string ChangePasswordButtonCommandName = "ChangePassword";
 		public static readonly string ContinueButtonCommandName = "Continue";
-#if NET_4_0
 		bool renderOuterTable = true;
-#endif
 		Style _cancelButtonStyle = null;
 		Style _changePasswordButtonStyle = null;
 		Style _continueButtonStyle = null;
@@ -589,14 +585,12 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.GetString ("PasswordRequiredErrorMessage", String.Empty); }
 			set { ViewState ["PasswordRequiredErrorMessage"] = value; }
 		}
-#if NET_4_0
 		// LAMESPEC: MSDN claims it's present in 3.5, but it's not
 		[DefaultValue (true)]
 		public virtual bool RenderOuterTable {
 			get { return renderOuterTable; }
 			set { renderOuterTable = value; }
 		}
-#endif
 		[DefaultValue ("")]
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
@@ -765,9 +759,7 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_4_0
 			VerifyInlinePropertiesNotSet ();
-#endif
 			for (int i = 0; i < Controls.Count; i++)
 				if (Controls [i].Visible)
 					Controls [i].Render (writer);
@@ -1144,9 +1136,7 @@ namespace System.Web.UI.WebControls
 		class BaseChangePasswordContainer : Control, INamingContainer, INonBindingContainer
 		{
 			protected readonly ChangePassword _owner = null;
-#if NET_4_0
 			bool renderOuterTable;
-#endif
 			Table _table = null;
 			TableCell _containerCell = null;
 
@@ -1156,31 +1146,25 @@ namespace System.Web.UI.WebControls
 					throw new ArgumentNullException ("owner");
 				
 				_owner = owner;
-#if NET_4_0
 				renderOuterTable = _owner.RenderOuterTable;
 
 				if (renderOuterTable)
-#endif
 					InitTable ();
 			}
 
 			public void InstantiateTemplate (ITemplate template)
 			{
-#if NET_4_0
 				if (!_owner.RenderOuterTable)
 					template.InstantiateIn (this);
 				else
-#endif
 					template.InstantiateIn (_containerCell);
 			}
 
 			void InitTable ()
 			{
 				_table = new Table ();
-#if NET_4_0
 				string id = _owner.ID;
 				if (!String.IsNullOrEmpty (id))
-#endif
 					_table.Attributes.Add ("id", _owner.ID);
 
 				_table.CellSpacing = 0;
@@ -1327,7 +1311,6 @@ namespace System.Web.UI.WebControls
 			{
 				Table table = new Table ();
 				table.CellPadding = 0;
-#if NET_4_0
 				Style ownerStyle = _owner.ControlStyle;
 				Style tableStyle = table.ControlStyle;
 				FontInfo ownerFont = ownerStyle.Font;
@@ -1340,7 +1323,6 @@ namespace System.Web.UI.WebControls
 					tableStyle.ForeColor = ownerForeColor;
 					ownerStyle.RemoveBit ((int)global::System.Web.UI.WebControls.Style.Styles.ForeColor);
 				}
-#endif
 				// Row #0
 				table.Controls.Add (
 					CreateRow (new LiteralControl (_owner.ChangePasswordTitleText),

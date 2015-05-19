@@ -23,7 +23,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.Data;
 using System.IO;
@@ -285,8 +284,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (tableName, table.TableName, "#6");
 			Assert.AreEqual (2, table.Constraints.Count, "#7");
 			Assert.AreEqual ("", table.Prefix, "#8");
-			Assert.AreEqual ("Constraint1", table.Constraints [0].ToString (), "#9");
-			Assert.AreEqual ("Constraint2", table.Constraints [1].ToString (), "#10");
+			Assert.AreEqual ("Constraint2", table.Constraints [0].ToString (), "#9");
+			Assert.AreEqual ("Constraint1", table.Constraints [1].ToString (), "#10");
 			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [0].GetType (), "#11");
 			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [1].GetType (), "#12");
 			Assert.AreEqual (2, table.PrimaryKey.Length, "#13");
@@ -757,4 +756,3 @@ namespace MonoTests.System.Data
 		}
 	}
 }
-#endif

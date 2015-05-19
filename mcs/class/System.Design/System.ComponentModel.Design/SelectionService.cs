@@ -55,11 +55,7 @@ namespace System.ComponentModel.Design
 		private void OnComponentRemoving (object sender, ComponentEventArgs args)
 		{
 			if (this.GetComponentSelected (args.Component))
-#if NET_2_0
 				this.SetSelectedComponents (new IComponent[] { args.Component }, SelectionTypes.Remove);
-#else
-				this.SetSelectedComponents (new IComponent[] { this.RootComponent }, SelectionTypes.Click);
-#endif
 		}
 		
 		public event EventHandler SelectionChanging;
@@ -120,11 +116,7 @@ namespace System.ComponentModel.Design
 
 		public void SetSelectedComponents (ICollection components) 
 		{
-#if NET_2_0
 			SetSelectedComponents (components, SelectionTypes.Auto);
-#else			
-			SetSelectedComponents (components, SelectionTypes.Normal);
-#endif
 		}
 
 		// If the array is a null reference or does not contain any components,
@@ -147,23 +139,10 @@ namespace System.ComponentModel.Design
 			}
 			
 			if (!Enum.IsDefined (typeof (SelectionTypes), selectionType)) {
-#if NET_2_0	
 				selectionType = SelectionTypes.Auto;
-#else
-				selectionType = SelectionTypes.Normal;	   				
-#endif
 			}
 
-#if NET_2_0		
 			auto = ((selectionType & SelectionTypes.Auto) == SelectionTypes.Auto);
-#else
-			if ((selectionType & SelectionTypes.Normal) == SelectionTypes.Normal ||
-				(selectionType & SelectionTypes.MouseDown) == SelectionTypes.MouseDown ||
-				(selectionType & SelectionTypes.MouseUp) == SelectionTypes.MouseUp) {
-
-					auto = true;
-			}	   	
-#endif			
 			
 			
 			if (auto) {
@@ -187,14 +166,10 @@ namespace System.ComponentModel.Design
 				}
 			}
 			else {
-#if NET_2_0			   
 				primary = ((selectionType & SelectionTypes.Primary) == SelectionTypes.Primary);
 				add = ((selectionType & SelectionTypes.Add) == SelectionTypes.Add);
 				remove = ((selectionType & SelectionTypes.Remove) == SelectionTypes.Remove);
 				toggle = ((selectionType & SelectionTypes.Toggle) == SelectionTypes.Toggle);
-#else
-				primary = ((selectionType & SelectionTypes.Click) == SelectionTypes.Click);
-#endif				
 				replace = ((selectionType & SelectionTypes.Replace) == SelectionTypes.Replace);
 				
 			}

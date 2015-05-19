@@ -6,7 +6,6 @@
 //
 // Copyright (C) 2005 Novell, Inc. http://www.novell.com
 //
-#if NET_2_0
 
 using System;
 using System.Xml;
@@ -342,6 +341,7 @@ namespace MonoTests.System.Xml.XPath
 
 		[Test]
 		[Category ("NotDotNet")] // MS bug
+		[Ignore ("Bug in Microsoft reference source")]
 		public void AttributesAndNamespaces ()
 		{
 			string xml = "<root attr='value' x:a2='v2' xmlns:x='urn:foo' xmlns='urn:default'></root>";
@@ -682,4 +682,3 @@ namespace MonoTests.System.Xml.XPath
 	}
 }
 
-#endif

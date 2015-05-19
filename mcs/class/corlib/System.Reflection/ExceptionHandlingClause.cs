@@ -35,11 +35,7 @@ namespace System.Reflection {
 
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_4_0
 	public
-#else
-	public sealed
-#endif
 	class ExceptionHandlingClause {
 		#region Sync with reflection.h
 		internal Type catch_type;
@@ -51,18 +47,12 @@ namespace System.Reflection {
 		internal int handler_length;
 		#endregion
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		ExceptionHandlingClause () {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		Type CatchType {
 			get {
 				return catch_type;
@@ -70,9 +60,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int FilterOffset {
 			get {
 				return filter_offset;
@@ -80,9 +68,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		ExceptionHandlingClauseOptions Flags {
 			get {
 				return flags;
@@ -90,9 +76,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int HandlerLength {
 			get {
 				return handler_length;
@@ -100,9 +84,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int HandlerOffset {
 			get {
 				return handler_offset;
@@ -110,9 +92,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int TryLength {
 			get {
 				return try_length;
@@ -120,9 +100,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		int TryOffset {
 			get {
 				return try_offset;

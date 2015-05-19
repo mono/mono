@@ -578,7 +578,7 @@ namespace MonoTests.System.Data
 
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
-				"root", 1); // not NewDataSet unlike standalone load
+				"NewDataSet", 1);
 			AssertDataTable ("seq1", ds.Tables [0], "root", 1, 1, 0, 0, 0, 0);
 		}
 
@@ -594,7 +594,7 @@ namespace MonoTests.System.Data
 
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
-				"root", 1); // dataset name will not be overwritten
+				"NewDataSet", 1);
 			AssertDataTable ("#1", ds.Tables [0], "root", 2, 1, 0, 0, 0, 0);
 
 			// simple table -> simple dataset
@@ -695,23 +695,13 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, ds.Tables [0].Columns [0].Ordinal, "#4b");
 			Assert.AreEqual ("FirstName", ds.Tables [0].Columns [1].ColumnName, "#5a");
 			Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
-#if NET_2_0
 			Assert.AreEqual ("Address", ds.Tables [0].Columns [2].ColumnName, "#6a");
 			Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
 			Assert.AreEqual ("Income", ds.Tables [0].Columns [3].ColumnName, "#7a");
 			Assert.AreEqual (3, ds.Tables [0].Columns [3].Ordinal, "#7b");
-#else
-			Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
-			Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
-			Assert.AreEqual ("Address", ds.Tables [0].Columns [3].ColumnName, "#7a");
-			Assert.AreEqual (3, ds.Tables [0].Columns [3].Ordinal, "#7b");
-#endif
 		}
 
 		[Test] // bug #80048
-#if ONLY_1_1
-		[Category ("NotWorking")]
-#endif
 		public void XmlSpace ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
@@ -730,7 +720,6 @@ namespace MonoTests.System.Data
 
  			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
-#if NET_2_0
 			Assert.AreEqual (1, ds.Tables.Count, "#1");
 			Assert.AreEqual ("Table", ds.Tables [0].TableName, "#2");
 			Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#3");
@@ -740,25 +729,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
 			Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
 			Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
-#else
-			Assert.AreEqual (2, ds.Tables.Count, "#1");
-			Assert.AreEqual ("Table", ds.Tables [0].TableName, "#2");
-			Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#3");
-			Assert.AreEqual ("Name", ds.Tables [0].Columns [0].ColumnName, "#4a");
-			Assert.AreEqual (0, ds.Tables [0].Columns [0].Ordinal, "#4b");
-			Assert.AreEqual ("Table_Id", ds.Tables [0].Columns [1].ColumnName, "#5a");
-			Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
-			Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
-			Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
-			Assert.AreEqual ("FirstName", ds.Tables [1].TableName, "#7");
-			Assert.AreEqual (3, ds.Tables [1].Columns.Count, "#8");
-			Assert.AreEqual ("space", ds.Tables [1].Columns [0].ColumnName, "#9a");
-			Assert.AreEqual (0, ds.Tables [1].Columns [0].Ordinal, "#9b");
-			Assert.AreEqual ("FirstName_Text", ds.Tables [1].Columns [1].ColumnName, "#10a");
-			Assert.AreEqual (1, ds.Tables [1].Columns [1].Ordinal, "#10b");
-			Assert.AreEqual ("Table_Id", ds.Tables [1].Columns [2].ColumnName, "#11a");
-			Assert.AreEqual (2, ds.Tables [1].Columns [2].Ordinal, "#11b");
-#endif
 		}
 
 		public void TestSameParentChildName ()
@@ -793,9 +763,8 @@ namespace MonoTests.System.Data
 			DataTable table = new DataTable("TABLE1");
 			table.ExtendedProperties.Add("T1", "extended1");
 			table.Columns.Add("C1", typeof(int));
-			table.Columns[0].MaxLength = 10;
 			table.Columns.Add("C2", typeof(string));
-			table.Columns[0].MaxLength = 20;
+			table.Columns[1].MaxLength = 20;
 			table.Columns[0].ExtendedProperties.Add("C1Ext1", "extended2");
 			table.Columns[1].ExtendedProperties.Add("C2Ext1", "extended3");
 			dataSet1.Tables.Add(table);

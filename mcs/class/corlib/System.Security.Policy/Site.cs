@@ -40,9 +40,7 @@ namespace System.Security.Policy {
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class Site:
-#if NET_4_0
 		EvidenceBase,
-#endif
 		IIdentityPermissionFactory, IBuiltInEvidence {
 
 		internal string origin_site;

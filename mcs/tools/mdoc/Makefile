@@ -47,6 +47,7 @@ MDOC_RESOURCES = \
 	Resources/stylesheet.xsl
 
 MDOC_TEST_FILES = \
+	Test/CLILibraryTypes.dtd				  \
 	Test/DocTest-v1.cs                                        \
 	Test/DocTest-v2.patch                                     \
 	Test/msxdoc-expected.importslashdoc.xml                   \
@@ -90,8 +91,28 @@ cleanup:
 	-rm -Rf Test/en.actual Test/html.actual
 	-rm -f monodocer1.exe*
 
+Test/DocTest-addNonGeneric.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs
+
+Test/DocTest-addNonGeneric-v2.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs /define:V2
+
+Test/DocTest-DropNS-classic-secondary.dll:
+	@echo $(value @)
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic-secondary.cs
+
+Test/DocTest-DropNS-classic.dll:
+	@echo $(value @)
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs
+
+Test/DocTest-DropNS-unified.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
+
 Test/DocTest.dll: 
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest.cs
+
+Test/DocTest-InternalInterface.dll: 
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-InternalInterface.cs
 
 Test/DocTest.dll-v1: 
 	-rm -f Test/DocTest.cs
@@ -105,6 +126,55 @@ Test/DocTest.dll-v2:
 	cd Test && patch -p0 < DocTest-v2.patch
 	-rm -f Test/DocTest.dll
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
+
+check-monodocer-addNonGeneric: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	# first, make a docset with the generic method
+	$(MAKE) Test/DocTest-addNonGeneric.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric.dll
+
+	# now add a non-generic version of the method and update several times
+	$(MAKE) Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	diff --exclude=.svn -rup Test/en.expected-addNonGeneric Test/en.actual
+
+check-monodocer-dropns-classic: $(PROGRAM)
+	# tests the simplest --dropns case, a single class where the root namespace was dropped.
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
+	$(MAKE) update-monodocer-dropns-unified
+	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
+
+check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
+	# tests case where a secondary assembly is included with a --dropns parameter
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-secondary.dll
+	$(MAKE) update-monodocer-dropns-unified-withsecondary
+	diff --exclude=.svn -rup Test/en.expected-dropns-classic-withsecondary Test/en.actual
+
+update-monodocer-dropns-unified: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+
+update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+
+update-monodocer-dropns-classic-secondary: $(PROGRAM)
+	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-secondary.dll
+
+check-monodocer-internal-interface: $(PROGRAM)
+	# Tests to make sure internal interfaces that are explicitly implemented are not documented
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-InternalInterface.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-InternalInterface.dll
+	diff --exclude=.svn -rup Test/en.expected-internal-interface Test/en.actual
 
 check-monodocer-update: $(PROGRAM)
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
@@ -262,8 +332,14 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
+	check-monodocer-dropns-classic \
+	check-monodocer-dropns-classic-withsecondary \
+	check-monodocer-internal-interface \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
-	check-mdoc-validate-update
+	check-mdoc-validate-update 
+
+check: check-doc-tools \
+	check-doc-tools-update
 

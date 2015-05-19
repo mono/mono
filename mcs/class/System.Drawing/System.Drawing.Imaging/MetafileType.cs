@@ -29,9 +29,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum MetafileType {
 		Invalid = 0,
 		Wmf = 1,

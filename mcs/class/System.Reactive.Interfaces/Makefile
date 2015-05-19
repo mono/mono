@@ -3,10 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Interfaces.dll
-LIB_MCS_FLAGS = \
-		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll
+LIB_REFS = System System.Core
+LIB_MCS_FLAGS = @more_build_args
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NO_TASK_DELAY -d:HAS_AWAIT
@@ -21,7 +19,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args
 
-VALID_PROFILE := $(filter monotouch monodroid xammac net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter monotouch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.Interfaces.dll
 NO_SIGN_ASSEMBLY = yes

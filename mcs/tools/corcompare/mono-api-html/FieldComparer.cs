@@ -43,6 +43,107 @@ namespace Xamarin.ApiDiff {
 			get { return "field"; }
 		}
 
+		void RenderFieldAttributes (FieldAttributes source, FieldAttributes target, ApiChange change)
+		{
+			var srcNotSerialized = (source & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+			var tgtNotSerialized = (target & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
+			if (srcNotSerialized != tgtNotSerialized) {
+				// this is not a breaking change, so only render it if it changed.
+				if (srcNotSerialized) {
+					change.AppendRemoved ("[NonSerialized]\n");
+				} else {
+					change.AppendAdded ("[NonSerialized]\n");
+				}
+			}
+
+			// the visibility values are the same for MethodAttributes and FieldAttributes, so just use the same method.
+			RenderVisibility ((MethodAttributes) source, (MethodAttributes) target, change);
+			// same for the static flag
+			RenderStatic ((MethodAttributes) source, (MethodAttributes) target, change);
+
+			var srcLiteral = (source & FieldAttributes.Literal) != 0;
+			var tgtLiteral = (target & FieldAttributes.Literal) != 0;
+
+			if (srcLiteral) {
+				if (tgtLiteral) {
+					change.Append ("const ");
+				} else {
+					change.AppendRemoved ("const", true).Append (" ");
+				}
+			} else if (tgtLiteral) {
+				change.AppendAdded ("const", true).Append (" ");
+			}
+
+			var srcInitOnly = (source & FieldAttributes.InitOnly) != 0;
+			var tgtInitOnly = (target & FieldAttributes.InitOnly) != 0;
+			if (srcInitOnly) {
+				if (tgtInitOnly) {
+					change.Append ("readonly ");
+				} else {
+					change.AppendRemoved ("readonly", false).Append (" ");
+				}
+			} else if (tgtInitOnly) {
+				change.AppendAdded ("readonly", true).Append (" ");
+			}
+		}
+
+		public override bool Equals (XElement source, XElement target, ApiChanges changes)
+		{
+			if (base.Equals (source, target, changes))
+				return true;
+
+			var name = source.GetAttribute ("name");
+			var srcValue = source.GetAttribute ("value");
+			var tgtValue = target.GetAttribute ("value");
+			var change = new ApiChange ();
+			change.Header = "Modified " + GroupName;
+
+			if (State.BaseType == "System.Enum") {
+				change.Append (name).Append (" = ");
+				if (srcValue != tgtValue) {
+					change.AppendModified (srcValue, tgtValue, true);
+				} else {
+					change.Append (srcValue);
+				}
+			} else {
+				RenderFieldAttributes (source.GetFieldAttributes (), target.GetFieldAttributes (), change);
+
+				var srcType = source.GetTypeName ("fieldtype");
+				var tgtType = target.GetTypeName ("fieldtype");
+
+				if (srcType != tgtType) {
+					change.AppendModified (srcType, tgtType, true);
+				} else {
+					change.Append (srcType);
+				}
+				change.Append (" ");
+				change.Append (name);
+
+				if (srcType == "string" && srcValue != null)
+					srcValue = "\"" + srcValue + "\"";
+
+				if (tgtType == "string" && tgtValue != null)
+					tgtValue = "\"" + tgtValue + "\"";
+
+				if (srcValue != tgtValue) {
+					change.Append (" = ");
+					if (srcValue == null)
+						srcValue = "null";
+					if (tgtValue == null)
+						tgtValue = "null";
+					change.AppendModified (srcValue, tgtValue, true);
+				} else if (srcValue != null) {
+					change.Append (" = ");
+					change.Append (srcValue);
+				}
+				change.Append (";");
+			}
+
+			changes.Add (source, target, change);
+
+			return false;
+		}
+
 		public override string GetDescription (XElement e)
 		{
 			var sb = new StringBuilder ();
@@ -87,19 +188,23 @@ namespace Xamarin.ApiDiff {
 		public override void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
-			if (State.BaseType == "System.Enum")
-				Output.WriteLine ("<p>Added value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
-			else
+			if (State.BaseType == "System.Enum") {
+				Output.WriteLine ("<p>Added value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
+				Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
+			} else {
 				base.BeforeAdding (list);
+			}
 		}
 
 		public override void BeforeRemoving (IEnumerable<XElement> list)
 		{
 			first = true;
-			if (State.BaseType == "System.Enum")
-				Output.WriteLine ("<p>Removed value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
-			else
+			if (State.BaseType == "System.Enum") {
+				Output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
+				Output.WriteLine (State.Colorize ? "<pre style='color: red'>" : "<pre>");
+			} else {
 				base.BeforeRemoving (list);
+			}
 		}
 	}
 }

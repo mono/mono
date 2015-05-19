@@ -197,7 +197,6 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (new Size (1, 0).GetHashCode (), sz1_0.GetHashCode (), "#1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void AddTest ()
 		{
@@ -211,7 +210,6 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (sz1_0, Size.Subtract (sz1_1, sz0_1), "SUB#1");
 			Assert.AreEqual (sz0_1, Size.Subtract (sz1_1, sz1_0), "SUB#2");
 		}
-#endif
 
 	}
 }

@@ -1,4 +1,4 @@
-// Compiler options: -warnaserror
+// Compiler options: -warnaserror -langversion:experimental
 
 using System;
 using System.Reflection;

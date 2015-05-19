@@ -132,7 +132,6 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		[MonoTODO("Not implemented")]
 		public static SignatureHelper GetPropertySigHelper (Module mod,
 									CallingConventions callingConvention,
@@ -145,7 +144,6 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		//
 		// Grows the given array, and returns the index where the element

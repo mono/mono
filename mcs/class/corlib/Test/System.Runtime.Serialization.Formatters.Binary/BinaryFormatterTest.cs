@@ -62,6 +62,45 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 	}
 
+	namespace NestedA
+	{
+		[Serializable]
+		public class QualifiedFieldTest
+		{
+			int value = 0;
+
+			public int ValueA {
+				get { return value; }
+				set { this.value = value; }
+			}
+		}
+	}
+
+	namespace NestedB
+	{
+		[Serializable]
+		public class QualifiedFieldTest : NestedA.QualifiedFieldTest
+		{
+			int value = 0;
+
+			public int ValueB {
+				get { return value; }
+				set { this.value = value; }
+			}
+		}
+	}
+
+	[Serializable]
+	public class QualifiedFieldTest : NestedB.QualifiedFieldTest
+	{
+		int value = 0;
+
+		public int Value {
+			get { return value; }
+			set { this.value = value; }
+		}
+	}
+
 	class SurrogateSelector: ISurrogateSelector
 	{
 		public void ChainSelector (ISurrogateSelector selector)
@@ -311,11 +350,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		public void Constructor_Default ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();
-#if NET_2_0
 			Assert.AreEqual (FormatterAssemblyStyle.Simple, bf.AssemblyFormat, "AssemblyFormat");
-#else
-			Assert.AreEqual (FormatterAssemblyStyle.Full, bf.AssemblyFormat, "AssemblyFormat");
-#endif
 			Assert.IsNull (bf.Binder, "Binder");
 			Assert.AreEqual (StreamingContextStates.All, bf.Context.State, "Context");
 			Assert.AreEqual (TypeFilterLevel.Full, bf.FilterLevel, "FilterLevel");
@@ -328,11 +363,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		{
 			SurrogateSelector ss = new SurrogateSelector ();
 			BinaryFormatter bf = new BinaryFormatter (ss, new StreamingContext (StreamingContextStates.CrossMachine));
-#if NET_2_0
 			Assert.AreEqual (FormatterAssemblyStyle.Simple, bf.AssemblyFormat, "AssemblyFormat");
-#else
-			Assert.AreEqual (FormatterAssemblyStyle.Full, bf.AssemblyFormat, "AssemblyFormat");
-#endif
 			Assert.IsNull (bf.Binder, "Binder");
 			Assert.AreEqual (StreamingContextStates.CrossMachine, bf.Context.State, "Context");
 			Assert.AreEqual (TypeFilterLevel.Full, bf.FilterLevel, "FilterLevel");
@@ -458,6 +489,23 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			bf.Serialize (ms, test);
 			ms.Position = 0;
 			return ms;
+		}
+
+		[Test]
+		public void QualifiedField()
+		{
+			QualifiedFieldTest a = new QualifiedFieldTest ();
+			a.ValueA = 1;
+			a.ValueB = 2;
+			a.Value = 3;
+			Stream ms = new MemoryStream ();
+			BinaryFormatter bf = new BinaryFormatter ();
+			bf.Serialize(ms, a);
+			ms.Position = 0;
+			QualifiedFieldTest b = (QualifiedFieldTest)bf.Deserialize (ms);
+			Assert.AreEqual (a.ValueA, b.ValueA, "#1");
+			Assert.AreEqual (a.ValueB, b.ValueB, "#2");
+			Assert.AreEqual (a.Value, b.Value, "#3");
 		}
 
 #if NET_4_0
@@ -609,6 +657,68 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			{
 				info.AddValue ("Name", Name);
 				info.AddValue ("Id", Id);
+			}
+		}
+
+		[Serializable]
+		public class OtherClass
+		{
+		}
+
+		[Serializable]
+		public class BaseClass
+		{
+			public OtherClass Other { get; set; }
+		}
+
+		public class CustomSerBinder: SerializationBinder
+		{
+			public override void BindToName (Type serializedType, out string assemblyName, out string typeName)
+			{
+				assemblyName = null;
+				if (serializedType == typeof (BaseClass))
+					typeName = "base";
+				else if (serializedType == typeof (OtherClass))
+					typeName = "other";
+				else
+					throw new ArgumentException ("Unknown type", "serializedType");
+			}
+
+			public override Type BindToType (string assemblyName, string typeName)
+			{
+				switch (typeName) {
+				case "base":
+					return typeof (BaseClass);
+				case "other":
+					return typeof (OtherClass);
+				default:
+					throw new ArgumentException ("Unknown type name", "typeName");
+				}
+			}
+		}
+
+		[Test]
+		public void BinderShouldBeUsedForProperties ()
+		{
+			using (var serStream = new MemoryStream ()) {
+				var binder = new CustomSerBinder ();
+
+				// serialize
+				var original = new BaseClass () {
+					Other = new OtherClass ()
+				};
+				var formatter = new BinaryFormatter ();
+				formatter.Binder = binder;
+				formatter.Serialize (serStream, original);
+
+				// deserialize, making sure we're using a new formatter, just to be thorough
+				formatter = new BinaryFormatter ();
+				formatter.Binder = binder;
+				serStream.Seek (0, SeekOrigin.Begin);
+				var deserialized = formatter.Deserialize (serStream);
+
+				Assert.AreEqual (original.GetType (), deserialized.GetType ());
+				Assert.AreEqual (original.Other.GetType (), ((BaseClass)deserialized).Other.GetType ());
 			}
 		}
 #endif

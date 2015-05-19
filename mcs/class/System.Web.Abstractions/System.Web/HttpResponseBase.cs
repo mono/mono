@@ -39,16 +39,13 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
+using System.Threading;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web
 {
-#if NET_4_0
         [TypeForwardedFrom ("System.Web.Abstractions, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpResponseBase
@@ -68,6 +65,8 @@ namespace System.Web
 		public virtual string CacheControl { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
 		public virtual string Charset { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual CancellationToken ClientDisconnectedToken { get { NotImplemented (); return CancellationToken.None; } }
 
 		public virtual Encoding ContentEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
 
@@ -104,6 +103,8 @@ namespace System.Web
 		public virtual int SubStatusCode { get { NotImplemented (); return 0; } set { NotImplemented (); } }
 
 		public virtual bool SuppressContent { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+		public virtual bool SuppressFormsAuthenticationRedirect { get { NotImplemented (); return false; } set { NotImplemented (); } }
 
 		public virtual bool TrySkipIisCustomErrors { get { NotImplemented (); return false; } set { NotImplemented (); } }
 
@@ -245,7 +246,6 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
-#if NET_4_0
 		public virtual void RedirectPermanent (string url)
 		{
 			NotImplemented ();
@@ -310,7 +310,6 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
-#endif
 		public virtual void RemoveOutputCacheItem (string path)
 		{
 			NotImplemented ();

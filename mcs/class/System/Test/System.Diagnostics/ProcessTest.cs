@@ -52,6 +52,15 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+		[Test] // Covers #26363
+		public void GetProcesses_StartTime ()
+		{
+			foreach (var p in Process.GetProcesses ()) {
+				if (!p.HasExited && p.StartTime.Year < 1800)
+					Assert.Fail ("Process should not be started since the 18th century.");
+			}
+		}
+
 		[Test]
 		public void PriorityClass_NotStarted ()
 		{
@@ -593,7 +602,6 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
-#if NET_2_0		
 		[Test]
 		public void Start_UseShellExecuteWithEmptyUserName ()
 		{
@@ -629,7 +637,6 @@ namespace MonoTests.System.Diagnostics
 			} catch (Win32Exception) {
 			}
 		}
-#endif
 		
 		[Test] // Start (string, string)
 		public void Start4_FileName_Null ()
@@ -722,9 +729,8 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
-		int bytesRead = -1;
+		public int bytesRead = -1;
 
-#if NET_2_0
 // Not technically a 2.0 only test, but I use lambdas, so I need gmcs
 
 		[Test]
@@ -771,10 +777,86 @@ namespace MonoTests.System.Diagnostics
 
 			Assert.AreEqual (true, r, "Null Argument Events Raised");
 		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnableEventsAfterExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			var exitedCalledCounter = 0;
+			p.Exited += (object sender, EventArgs e) => {
+				exitedCalledCounter++;
+				Assert.IsTrue (p.HasExited);
+			};
+
+			p.EnableRaisingEvents = true;
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual (1, exitedCalledCounter);
+			Thread.Sleep (50);
+			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void TestEnableEventsBeforeExitedEvent ()
+		{
+			Process p = new Process ();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+
+			p.EnableRaisingEvents = true;
+
+			var exitedCalledCounter = 0;
+			p.Exited += (object sender, EventArgs e) => {
+				exitedCalledCounter++;
+				Assert.IsTrue (p.HasExited);
+			};
+
+			p.Start ();
+			p.BeginErrorReadLine ();
+			p.BeginOutputReadLine ();
+			p.WaitForExit ();
+
+			Assert.AreEqual (1, exitedCalledCounter);
+			Thread.Sleep (50);
+			Assert.AreEqual (1, exitedCalledCounter);
+		}
+
 		
 		private ProcessStartInfo GetCrossPlatformStartInfo ()
 		{
 			return RunningOnUnix ? new ProcessStartInfo ("/bin/ls", "/") : new ProcessStartInfo ("help", "");
+		}
+
+		[Test] // Covers #26362
+		public void TestExitedEvent ()
+		{
+			var falseExitedEvents = 0;
+			var cp = Process.GetCurrentProcess ();
+			foreach (var p in Process.GetProcesses ()) {
+				if (p.Id != cp.Id && !p.HasExited) {
+					p.EnableRaisingEvents = true;
+					p.Exited += (s, e) => {
+						if (!p.HasExited)
+							falseExitedEvents++;
+					};
+				}
+			}
+			Assert.AreEqual (0, falseExitedEvents);
 		}
 		
 		[Test]
@@ -827,7 +909,6 @@ namespace MonoTests.System.Diagnostics
 			
 			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
-#endif
 
 		[Test]
 		public void Handle_ThrowsOnNotStarted ()
@@ -836,8 +917,13 @@ namespace MonoTests.System.Diagnostics
 			try {
 				var x = p.Handle;
 				Assert.Fail ("Handle should throw for unstated procs, but returned " + x);
-			} catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException) {
 			}
+		}
+
+		[Test]
+		public void HasExitedCurrent () {
+			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
 		}
 	}
 }

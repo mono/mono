@@ -35,11 +35,9 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Web.Services.Protocols;
 using System.Web.Services.Configuration;
-#if NET_2_0
 using System.Collections.Generic;
 using WSConfig = System.Web.Services.Configuration.WebServicesSection;
 using WSProtocol = System.Web.Services.Configuration.WebServiceProtocols;
-#endif
 
 namespace System.Web.Services.Description {
 	public class ServiceDescriptionReflector 
@@ -57,12 +55,10 @@ namespace System.Web.Services.Description {
 		
 		#endregion // Constructors
 
-#if NET_2_0
 		internal Dictionary<LogicalMethodInfo,Message> MappedMessagesIn =
 			new Dictionary<LogicalMethodInfo,Message> ();
 		internal Dictionary<LogicalMethodInfo,Message> MappedMessagesOut =
 			new Dictionary<LogicalMethodInfo,Message> ();
-#endif
 
 		#region Properties
 
@@ -86,18 +82,12 @@ namespace System.Web.Services.Description {
 
 			if (WSConfig.IsSupported (WSProtocol.HttpSoap))
 				new Soap11ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
-#if NET_2_0
 			if (WSConfig.IsSupported (WSProtocol.HttpSoap12))
 				new Soap12ProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
-#endif
 			if (WSConfig.IsSupported (WSProtocol.HttpGet))
 				new HttpGetProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 			
-#if ONLY_1_1
-			if (WSConfig.IsSupported (WSProtocol.HttpPost) || WSConfig.IsSupported (WSProtocol.HttpPostLocalhost))
-#else
 			if (WSConfig.IsSupported (WSProtocol.HttpPost))
-#endif
 				new HttpPostProtocolReflector ().Reflect (this, type, url, schemaExporter, soapSchemaExporter);
 				
 			int i=0;

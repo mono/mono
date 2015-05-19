@@ -38,6 +38,7 @@ namespace Microsoft.Build.BuildEngine {
 		DirectoryInfo	baseDirectory;
 		ITaskItem[]	includes, excludes;
 		ITaskItem[]	matchedItems;
+		string projectFile;
 
 		static bool _runningOnWindows;
 		
@@ -82,8 +83,11 @@ namespace Microsoft.Build.BuildEngine {
 
 			string name = include_item.ItemSpec;
 			if (!HasWildcard (name)) {
-				if (!excludedItems.ContainsKey (Path.GetFullPath(name)))
+				if (!excludedItems.ContainsKey (Path.GetFullPath (name))) {
 					includedItems.Add (include_item);
+					if (projectFile != null)
+						include_item.SetMetadata ("DefiningProjectFullPath", projectFile);
+				}
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
 					separatedPath = name.Split (new char [] {Path.DirectorySeparatorChar},
@@ -127,6 +131,8 @@ namespace Microsoft.Build.BuildEngine {
 								rec_dir += Path.DirectorySeparatorChar;
 							item.SetMetadata ("RecursiveDir", rec_dir);
 						}
+						if (projectFile != null)
+							item.SetMetadata ("DefiningProjectFullPath", projectFile);
 						includedItems.Add (item);
 					}
 				}
@@ -236,6 +242,11 @@ namespace Microsoft.Build.BuildEngine {
 			set { baseDirectory = value; }
 		}
 		
+		public string ProjectFile {
+			get { return projectFile; }
+			set { projectFile = value; }
+		}
+
 		public ITaskItem[] Includes {
 			get { return includes; }
 			set { includes = value; }

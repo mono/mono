@@ -179,7 +179,6 @@ namespace MonoTests.System.Data
 				byte [] val = new byte [totalsize];
 				int buffer_offset = 1;
 
-#if NET_2_0
 				long ret = reader.GetBytes (0, 0, val, buffer_offset, (int) totalsize);
 				Assert.AreEqual (274, ret, "#B1");
 				Assert.AreEqual (0x00, val [0], "#B2");
@@ -187,19 +186,6 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (long_bytes [i], val [i + buffer_offset], "#B2:" + i);
 				for (long i = (ret + buffer_offset); i < val.Length; i++)
 					Assert.AreEqual (0x00, val [i], "#B3:" + i);
-#else
-				try {
-					reader.GetBytes (0, 0, val, buffer_offset, (int) totalsize);
-					Assert.Fail ("#B1");
-				} catch (ArgumentOutOfRangeException ex) {
-					// Requested range extends past the end
-					// of the array
-					Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
-					Assert.IsNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
-					Assert.IsNull (ex.ParamName, "#B5");
-				}
-#endif
 			}
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult | CommandBehavior.SequentialAccess)) {
@@ -226,28 +212,16 @@ namespace MonoTests.System.Data
 				try {
 					reader.GetBytes (0, 0, null, -1, 0);
 					Assert.Fail ("#2");
-#if NET_2_0
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#3");
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 					Assert.AreEqual ("bufferIndex", ex.ParamName, "#6");
 				}
-#else
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
-					Assert.IsNull (ex.InnerException, "#4");
-					Assert.AreEqual ("bufferIndex", ex.Message, "#5");
-					Assert.IsNull (ex.ParamName, "#6");
-				}
-#endif
 			}
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Ignore ("dataIndex is ignored")]
-#endif
 		public void GetBytes_DataIndex_Negative ()
 		{
 			IDbCommand cmd = conn.CreateCommand ();
@@ -256,7 +230,6 @@ namespace MonoTests.System.Data
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read (), "#A1");
 
-#if NET_2_0
 				try {
 					reader.GetBytes (0, -1L, null, 0, 0);
 					Assert.Fail ("#A2");
@@ -266,32 +239,11 @@ namespace MonoTests.System.Data
 					Assert.IsNotNull (ex.Message, "#A5");
 					Assert.AreEqual ("dataIndex", ex.ParamName, "#A6");
 				}
-#else
-				long totalsize = reader.GetBytes (0, -1L, null, 0, 0);
-				Assert.AreEqual (5, totalsize, "#A2");
-
-				byte [] val = new byte [totalsize];
-				try {
-					reader.GetBytes (0, -1L, val, 0, 3);
-					Assert.Fail ("#A3");
-				} catch (InvalidOperationException ex) {
-					// Invalid GetBytes attempt at dataIndex '-1'.
-					// With CommandBehavior.SequentialAccess, you
-					// may only read from dataIndex '0' or greater
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A4");
-					Assert.IsNull (ex.InnerException, "#A5");
-					Assert.IsNotNull (ex.Message, "#A6");
-					Assert.IsTrue (ex.Message.IndexOf ("CommandBehavior.SequentialAccess") != -1, "#A7:" + ex.Message);
-					Assert.IsTrue (ex.Message.IndexOf ("'" + (-1L).ToString (CultureInfo.InvariantCulture) + "'") != -1, "#A8:" + ex.Message);
-					Assert.IsTrue (ex.Message.IndexOf ("'" + 0L.ToString (CultureInfo.InvariantCulture) + "'") != -1, "#A9:" + ex.Message);
-				}
-#endif
 			}
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
 				Assert.IsTrue (reader.Read (), "#B1");
 
-#if NET_2_0
 				try {
 					reader.GetBytes (0, -1L, null, 0, 0);
 					Assert.Fail ("#B2");
@@ -301,17 +253,6 @@ namespace MonoTests.System.Data
 					Assert.IsNotNull (ex.Message, "#B5");
 					Assert.AreEqual ("dataIndex", ex.ParamName, "#B6");
 				}
-#else
-				long totalsize = reader.GetBytes (0, -1L, null, 0, 0);
-				Assert.AreEqual (5, totalsize, "#B2");
-
-				byte [] val = new byte [totalsize];
-				try {
-					reader.GetBytes (0, -1L, val, 0, 3);
-					Assert.Fail ("#B3");
-				} catch (ArgumentOutOfRangeException) {
-				}
-#endif
 			}
 		}
 
@@ -326,21 +267,12 @@ namespace MonoTests.System.Data
 				try {
 					reader.GetBytes (0, 0, null, 0, -1);
 					Assert.Fail ("#2");
-#if NET_2_0
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#3");
 					Assert.IsNull (ex.InnerException, "#4");
 					Assert.IsNotNull (ex.Message, "#5");
 					Assert.AreEqual ("length", ex.ParamName, "#6");
 				}
-#else
-				} catch (ArgumentException ex) {
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#3");
-					Assert.IsNull (ex.InnerException, "#4");
-					Assert.AreEqual ("length", ex.Message, "#5");
-					Assert.IsNull (ex.ParamName, "#6");
-				}
-#endif
 			}
 		}
 

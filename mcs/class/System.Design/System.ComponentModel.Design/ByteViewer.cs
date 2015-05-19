@@ -34,11 +34,7 @@ namespace System.ComponentModel.Design
 {
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
-#if NET_2_0
 	public class ByteViewer : TableLayoutPanel
-#else
-	public class ByteViewer : Control
-#endif
 	{
 		[MonoTODO]
 		public ByteViewer()
@@ -99,20 +95,12 @@ namespace System.ComponentModel.Design
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 
 		[MonoTODO]
 		protected override void OnLayout (LayoutEventArgs e)
 		{
 			throw new NotImplementedException();
 		}
-#else
-		[MonoTODO]
-		protected override void OnResize (EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-#endif
 
 		[MonoTODO]
 		protected virtual void ScrollChanged (object source, EventArgs e)

@@ -55,7 +55,6 @@ namespace MonoTests.System.Web.Services.Description
 			Assert.AreEqual (String.Empty, sd.RetrievalUrl, "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Namespaces ()
 		{
@@ -189,7 +188,6 @@ namespace MonoTests.System.Web.Services.Description
 			ServiceDescription sd = ServiceDescription.Read (XmlReader.Create (new StringReader ("<definitions xmlns='http://schemas.xmlsoap.org/wsdl/'><hoge/></definitions>")), true);
 			Assert.IsTrue (sd.ValidationWarnings.Count > 0);
 		}
-#endif
 
     }
 

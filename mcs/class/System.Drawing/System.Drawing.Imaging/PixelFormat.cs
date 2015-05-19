@@ -32,9 +32,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum PixelFormat {
 		Alpha = 262144,
 		Canonical = 2097152,

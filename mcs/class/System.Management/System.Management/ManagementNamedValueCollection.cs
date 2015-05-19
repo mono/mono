@@ -40,11 +40,7 @@ namespace System.Management
 		{
 		}
 
-#if NET_2_0
 		protected
-#else
-		public
-#endif
 		ManagementNamedValueCollection (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

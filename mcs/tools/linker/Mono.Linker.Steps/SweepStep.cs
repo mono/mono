@@ -100,7 +100,8 @@ namespace Mono.Linker.Steps {
 			var references = assembly.MainModule.AssemblyReferences;
 			for (int i = 0; i < references.Count; i++) {
 				var reference = references [i];
-				if (!AreSameReference (reference, target.Name))
+				var r = Context.Resolver.Resolve (reference);
+				if (!AreSameReference (r.Name, target.Name))
 					continue;
 
 				references.RemoveAt (i);
@@ -143,6 +144,16 @@ namespace Mono.Linker.Steps {
 				if ((td != null) && Annotations.IsMarked (td))
 					scope = assembly.MainModule.Import (td).Scope;
 				hash.Add (tr, scope);
+			}
+			if (assembly.MainModule.HasExportedTypes) {
+				foreach (var et in assembly.MainModule.ExportedTypes) {
+					var td = et.Resolve ();
+					IMetadataScope scope = et.Scope;
+					if ((td != null) && Annotations.IsMarked (td)) {
+						scope = assembly.MainModule.Import (td).Scope;
+						hash.Add (td, scope);
+					}
+				}
 			}
 
 			// Resolve everything first before updating scopes.

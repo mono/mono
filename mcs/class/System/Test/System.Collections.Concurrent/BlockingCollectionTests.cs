@@ -237,7 +237,7 @@ namespace MonoTests.System.Collections.Concurrent
 			t = Task.Factory.StartNew (() => {
 				try {
 					return BlockingCollection<string>.TakeFromAny (arr, out res, cts.Token);
-				} catch (OperationCanceledException WE_GOT_CANCELED) {
+				} catch (OperationCanceledException) {
 					res = "canceled";
 					return -10;
 				}
@@ -246,6 +246,40 @@ namespace MonoTests.System.Collections.Concurrent
 			cts.Cancel ();
 			Assert.AreEqual (-10, t.Result, "#5");
 			Assert.AreEqual ("canceled", res, "#6");
+		}
+
+		[Test, ExpectedException (typeof(OperationCanceledException))]
+		public void BoundedAddLimit ()
+		{
+			const int elNumber = 5;
+
+			var c = new BlockingCollection <int> (elNumber);
+			var token = new CancellationTokenSource (100);
+
+			for (var i = 0; i < elNumber + 1; i++) {
+				c.Add (1, token.Token);
+			}
+		}
+
+		[Test]
+		public void AddAnyCancellable ()
+		{
+			const int elNumber = 5;
+			const int colNumber = 5;
+
+			var cols = new BlockingCollection <int> [colNumber];
+			for (var i = 0; i < colNumber; i++) {
+				cols[i] = new BlockingCollection <int> (elNumber);
+			}
+
+			var token = new CancellationTokenSource (100);
+			for (var i = 0; i < colNumber * elNumber; i++) {
+				BlockingCollection <int>.AddToAny (cols, 1, token.Token);
+			}
+
+			foreach (var col in cols) {
+				Assert.AreEqual (elNumber, col.Count);
+			}
 		}
 	}
 }

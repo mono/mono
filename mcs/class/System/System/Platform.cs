@@ -28,36 +28,56 @@ using System.Runtime.InteropServices;
 
 namespace System {
 	internal static class Platform {
+		static bool checkedOS;
+		static bool isMacOS;
+		static bool isFreeBSD;
+
 #if MONOTOUCH || XAMMAC
-		public static bool IsMacOS {
-			get { return true; }
+		private static void CheckOS() {
+			isMacOS = true;
+			checkedOS = true;
 		}
 #else
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
-		
-		static bool checkedIsMacOS;
-		static bool isMacOS;
-		
+
+		private static void CheckOS() {
+			if (Environment.OSVersion.Platform != PlatformID.Unix) {
+				checkedOS = true;
+				return;
+			}
+
+			IntPtr buf = Marshal.AllocHGlobal (8192);
+			if (uname (buf) == 0) {
+				string os = Marshal.PtrToStringAnsi (buf);
+				switch (os) {
+				case "Darwin":
+					isMacOS = true;
+					break;
+				case "FreeBSD":
+					isFreeBSD = true;
+					break;
+				}
+			}
+			Marshal.FreeHGlobal (buf);
+			checkedOS = true;
+		}
+#endif
+
 		public static bool IsMacOS {
 			get {
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
-					return false;
-
-				if (!checkedIsMacOS) {
-					IntPtr buf = Marshal.AllocHGlobal (8192);
-					if (uname (buf) == 0) {
-						string os = Marshal.PtrToStringAnsi (buf);
-						if (os == "Darwin")
-							isMacOS = true;
-					}
-					Marshal.FreeHGlobal (buf);
-					checkedIsMacOS = true;
-				}
-				
+				if (!checkedOS)
+					CheckOS();
 				return isMacOS;
 			}
 		}
-#endif
+
+		public static bool IsFreeBSD {
+			get {
+				if (!checkedOS)
+					CheckOS();
+				return isFreeBSD;
+			}
+		}
 	}
 }

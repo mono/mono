@@ -22,6 +22,10 @@ public class TestsBase
 	static string base_static_s = "C";
 #pragma warning restore 0414
 #pragma warning restore 0169
+
+	public virtual string virtual_method () {
+		return "V1";
+	}
 }
 
 public enum AnEnum {
@@ -303,6 +307,7 @@ public class Tests : TestsBase, ITest2
 		regress ();
 		gc_suspend ();
 		set_ip ();
+		step_filters ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -632,14 +637,15 @@ public class Tests : TestsBase, ITest2
 		AStruct[] arr = new AStruct[] { 
 			new AStruct () { i = 1, s = "S1" },
 			new AStruct () { i = 2, s = "S2" } };
-		t.vtypes1 (s, arr);
+		TypedReference typedref = __makeref (s);
+		t.vtypes1 (s, arr, typedref);
 		vtypes2 (s);
 		vtypes3 (s);
 		vtypes4 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public object vtypes1 (AStruct s, AStruct[] arr) {
+	public object vtypes1 (AStruct s, AStruct[] arr, TypedReference typedref) {
 		if (arr != null)
 			return this;
 		else
@@ -815,6 +821,10 @@ public class Tests : TestsBase, ITest2
 		}
 	}
 
+	struct TypedRefTest {
+		public int MaxValue;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void type_info () {
 		Tests t = new Tests () { field_i = 42, field_s = "S", base_field_i = 43, base_field_s = "T", field_enum = AnEnum.B };
@@ -822,8 +832,9 @@ public class Tests : TestsBase, ITest2
 		int val = 0;
 		unsafe {
 			AStruct s = new AStruct () { i = 42, s = "S", k = 43 };
-
-			ti2 (new string [] { "BAR", "BAZ" }, new int[] { 42, 43 }, new int [,] { { 1, 2 }, { 3, 4 }}, ref val, (int*)IntPtr.Zero, 5, s, new Tests (), new Tests2 (), new GClass <int> (), AnEnum.B);
+			TypedRefTest reftest = new TypedRefTest () { MaxValue = 12 };
+			TypedReference typedref = __makeref (reftest);
+			ti2 (new string [] { "BAR", "BAZ" }, new int[] { 42, 43 }, new int [,] { { 1, 2 }, { 3, 4 }}, ref val, (int*)IntPtr.Zero, 5, s, new Tests (), new Tests2 (), new GClass <int> (), AnEnum.B, typedref);
 		}
 	}
 
@@ -836,7 +847,7 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static unsafe string ti2 (string[] s2, int[] s3, int[,] s4, ref int ri, int* ptr, int i, AStruct s, Tests t, Tests2 t2, GClass<int> g, AnEnum ae) {
+	public static unsafe string ti2 (string[] s2, int[] s3, int[,] s4, ref int ri, int* ptr, int i, AStruct s, Tests t, Tests2 t2, GClass<int> g, AnEnum ae, TypedReference typedref) {
 		return s2 [0] + s3 [0] + s4 [0, 0];
 	}
 
@@ -1158,6 +1169,12 @@ public class Tests : TestsBase, ITest2
 		AppDomain.Unload (domain);
 
 		domains_3 ();
+
+		typeof (Tests).GetMethod ("called_from_invoke").Invoke (null, null);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void called_from_invoke () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1357,13 +1374,35 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void set_ip () {
-		int i, j;
+		int i = 0, j;
 
-		i = 1;
+		i ++;
+		i ++;
 		set_ip_1 ();
-		i = 5;
+		i ++;
 		j = 5;
 		set_ip_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_filters () {
+		ClassWithCctor.cctor_filter ();
+	}
+
+	class ClassWithCctor {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static ClassWithCctor () {
+			int i = 1;
+			int j = 2;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void cctor_filter () {
+		}
+	}
+
+	public override string virtual_method () {
+		return "V2";
 	}
 }
 

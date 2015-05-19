@@ -25,18 +25,13 @@ using System.Web.UI.WebControls;
 using System.Collections;
 
 namespace System.Web.UI.Design {
-#if NET_2_0
 	[Obsolete ("Use ContainerControlDesigner instead")]
-#endif
 	[MonoTODO] public class ReadWriteControlDesigner : ControlDesigner {
 		[MonoTODO] public ReadWriteControlDesigner () { throw new NotImplementedException (); }
 		[MonoTODO] protected virtual void MapPropertyToStyle (string propName, object varPropValue) { throw new NotImplementedException (); }
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.Tag instead")]
-#endif
 		[MonoTODO] protected override void OnBehaviorAttached () { throw new NotImplementedException (); }
 		[MonoTODO] public override void OnComponentChanged (object sender, ComponentChangedEventArgs ce) { throw new NotImplementedException (); }
-#if NET_2_0
 		[MonoTODO]
 		public override string GetDesignTimeHtml ()
 		{
@@ -48,7 +43,6 @@ namespace System.Web.UI.Design {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 
 }

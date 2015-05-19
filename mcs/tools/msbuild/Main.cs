@@ -36,7 +36,6 @@ using System.Xml.Schema;
 using System.Linq;
 using System.Collections.Generic;
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -359,4 +358,3 @@ namespace Mono.XBuild.CommandLine {
 
 }
 
-#endif

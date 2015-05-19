@@ -657,22 +657,14 @@ impl_class_refs		: K_IMPLEMENTS generic_class_ref
 formal_typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET formal_typars CLOSE_ANGLE_BRACKET
                           {
-#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
-#else
-				Report.Error ("Use ilasm2 for generics support.");
-#endif
                           }
                         ;
 
 typars_clause           : /* EMPTY */
                         | OPEN_ANGLE_BRACKET typars CLOSE_ANGLE_BRACKET
                           {
-#if NET_2_0 || BOOTSTRAP_NET_2_0
                                 $$ = $2;
-#else
-				Report.Error ("Use ilasm2 for generics support.");
-#endif
                           }
                         ;
 
@@ -2850,11 +2842,7 @@ sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PA
 			  }
 			| D_PERMISSIONSET sec_action ASSIGN OPEN_BRACE permissions CLOSE_BRACE
 			  {
-#if NET_2_0
 				$$ = new MIPermissionSet ((PEAPI.SecurityAction) $2, (ArrayList) $5);
-#else
-				Report.Error ("Use ilasm2 for 2.0 style declarative security attributes.");
-#endif
 			  }
 			;
 

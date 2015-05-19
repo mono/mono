@@ -147,11 +147,7 @@ namespace System.Web.UI.WebControls
 		{
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = (PostBackUrl.Length > 0 ? 
-#if TARGET_J2EE
-				CreateActionUrl(PostBackUrl)
-#else
 				Page.ResolveClientUrl (PostBackUrl) 
-#endif
 				: null);
 			options.ValidationGroup = null;
 			options.Argument = String.Empty;

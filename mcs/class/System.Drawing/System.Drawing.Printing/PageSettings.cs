@@ -37,11 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Printing
 {
-#if NET_2_0
 	[Serializable]
-#else
-	[ComVisible (false)]
-#endif
 	public class PageSettings : ICloneable
 	{
 		internal bool color;
@@ -53,11 +49,9 @@ namespace System.Drawing.Printing
 		// create a new default Margins object (is 1 inch for all margins)
 		Margins margins = new Margins();
 
-#if NET_2_0
 		float hardMarginX;
 		float hardMarginY;
 		RectangleF printableArea;		
-#endif		
 		PrinterSettings printerSettings;
 		
 		public PageSettings() : this(new PrinterSettings())
@@ -182,7 +176,6 @@ namespace System.Drawing.Printing
 				printerSettings = value;
 			}
 		}		
-#if NET_2_0
 		public float HardMarginX {
 			get {
 				return hardMarginX;
@@ -200,7 +193,6 @@ namespace System.Drawing.Printing
 				return printableArea;
 			}
 		}
-#endif
 
 
 		public object Clone ()

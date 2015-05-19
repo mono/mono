@@ -42,7 +42,6 @@ namespace MonoTests.System.Data.SqlClient
 	public class SqlParameterCollectionTest
 	{	
 	
-#if NET_2_0
 		[Test]
 		public void CopyToTest ()
 		{
@@ -62,6 +61,5 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (null, destinationArray[3], "#6 The parameter at index 3 must not change");
 		}
 		
-#endif
 	}
 }

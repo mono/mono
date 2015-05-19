@@ -133,7 +133,6 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = new MemoryCache ("MyCache");
 			Assert.AreEqual ("MyCache", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -152,7 +151,6 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			var mc = MemoryCache.Default;
 			Assert.AreEqual ("Default", mc.Name, "#A1");
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A2");
 			// Value of this property is different from system to system
 			//Assert.AreEqual (0, mc.CacheMemoryLimit, "#A3");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), mc.PollingInterval, "#A4");
@@ -170,12 +168,10 @@ namespace MonoTests.System.Runtime.Caching
 		public void ConstructorValues ()
 		{
 			var config = new NameValueCollection ();
-			config.Add ("PhysicalMemoryLimitPercentage", "0");
 			config.Add ("CacheMemoryLimitMegabytes", "1");
 			config.Add ("pollingInterval", "00:10:00");
 
 			var mc = new MemoryCache ("MyCache", config);
-			Assert.AreEqual (98, mc.PhysicalMemoryLimit, "#A1");
 			Assert.AreEqual (1048576, mc.CacheMemoryLimit, "#A2");
 			Assert.AreEqual (TimeSpan.FromMinutes (10), mc.PollingInterval, "#A3");
 
@@ -837,17 +833,9 @@ namespace MonoTests.System.Runtime.Caching
 		{
 			bool expired = false;
 			CacheEntryRemovedReason reason = CacheEntryRemovedReason.CacheSpecificEviction;
-			NameValueCollection config;
-			int sleepPeriod;
-#if !DOTNET
-			config = new NameValueCollection ();
-			config.Add ("__MonoTimerPeriod", "1");
-			sleepPeriod = 1100;
-#else
-			config = null;
-			sleepPeriod = 20100; // 20s is the .NET period - discovered by experimentation
-#endif
-			var mc = new PokerMemoryCache ("MyCache", config);
+			int sleepPeriod = 1100;
+
+			var mc = new PokerMemoryCache ("MyCache");
 			var cip = new CacheItemPolicy ();
 
 			cip.RemovedCallback = (CacheEntryRemovedArguments args) => {
@@ -875,6 +863,7 @@ namespace MonoTests.System.Runtime.Caching
 			mc.Set ("key", "value", cip);
 			Thread.Sleep (sleepPeriod);
 
+			Assert.IsNull (mc.Get ("key"), "#A3-0");
 			Assert.IsTrue (expired, "#A3-1");
 			Assert.AreEqual (CacheEntryRemovedReason.Expired, reason, "#A3-2");
 
@@ -907,6 +896,10 @@ namespace MonoTests.System.Runtime.Caching
 			mc.Set ("key4", "value4", cip);
 			
 			Thread.Sleep (sleepPeriod);
+			Assert.IsNull (mc.Get ("key1"), "#A4-1");
+			Assert.IsNull (mc.Get ("key2"), "#A4-2");
+			Assert.IsNull (mc.Get ("key3"), "#A4-3");
+			Assert.IsNotNull (mc.Get ("key4"), "#A4-4");
 			Assert.AreEqual (3, expiredCount, "#A4");
 		}
 
@@ -1225,12 +1218,8 @@ namespace MonoTests.System.Runtime.Caching
 			Assert.AreEqual (25, trimmed, "#A4-2");
 			Assert.AreEqual (25, removed.Count, "#A4-3");
 
-			// OK, this is odd... The list is correct in terms of entries removed but the entries
-			// are removed in the _MOST_ frequently used order, within the group selected for removal.
-			for (int i = 24; i >= 0; i--) {
-				int idx = 24 - i;
-				Assert.AreEqual ("key" + i.ToString (), removed [idx], "#A5-" + idx.ToString ());
-			}
+			for (int i = 0; i < 25; i++)
+				Assert.AreEqual ("key" + i.ToString (), removed [i], "#A5-" + i.ToString ());
 		}
 		
 		[Test]
@@ -1243,11 +1232,7 @@ namespace MonoTests.System.Runtime.Caching
 			var config = new NameValueCollection ();
 			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
 			config["physicalMemoryLimitPercentage"] = 100.ToString ();
-			config["__MonoEmulateOneCPU"] = true.ToString ();
-
-			// it appears that pollingInterval does nothing, so we set the Mono timer as well
 			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
-			config["__MonoTimerPeriod"] = 1.ToString ();
 			
 			using (var mc = new MemoryCache ("TestCacheShrink",  config)) {	
 				Assert.AreEqual (0, mc.GetCount (), "#CS1");
@@ -1271,6 +1256,9 @@ namespace MonoTests.System.Runtime.Caching
 				// wait for the cache thread to expire the short duration items, this will also shrink the size of the cache
 				global::System.Threading.Thread.Sleep (5 * 1000);
 				
+				for (int i = 0; i < HEAP_RESIZE_SHORT_ENTRIES; i++) {
+					Assert.IsNull (mc.Get ("short-" + i), "#CS4-" + i);
+				}
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS4");	
 				
 				// add some new items into the cache, this will grow the cache again
@@ -1288,11 +1276,7 @@ namespace MonoTests.System.Runtime.Caching
 			var config = new NameValueCollection ();
 			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
 			config["physicalMemoryLimitPercentage"] = 100.ToString ();
-			config["__MonoEmulateOneCPU"] = true.ToString ();
-
-			// it appears that pollingInterval does nothing, so we set the Mono timer as well
 			config["pollingInterval"] = new TimeSpan (0, 0, 10).ToString ();
-			config["__MonoTimerPeriod"] = 10.ToString ();
 			
 			using (var mc = new MemoryCache ("TestExpiredGetValues",  config)) {
 				Assert.AreEqual (0, mc.GetCount (), "#EGV1");
@@ -1328,11 +1312,7 @@ namespace MonoTests.System.Runtime.Caching
 			var config = new NameValueCollection ();
 			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
 			config["physicalMemoryLimitPercentage"] = 100.ToString ();
-			config["__MonoEmulateOneCPU"] = true.ToString ();
-
-			// it appears that pollingInterval does nothing, so we set the Mono timer as well
 			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
-			config["__MonoTimerPeriod"] = 1.ToString ();
 
 			using (var mc = new MemoryCache ("TestCacheExpiryOrdering",  config)) {
 				Assert.AreEqual (0, mc.GetCount (), "#CEO1");
@@ -1357,6 +1337,9 @@ namespace MonoTests.System.Runtime.Caching
 
 				global::System.Threading.Thread.Sleep (4 * 1000);
 
+				for (int i = 0; i < 100; i++) {
+					Assert.IsNull (mc.Get ("short-" + i), "#CEO4-" + i);
+				}
 				Assert.AreEqual (100, mc.GetCount (), "#CEO4");
 			}
 		}
@@ -1367,17 +1350,16 @@ namespace MonoTests.System.Runtime.Caching
 			var config = new NameValueCollection ();
 			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
 			config["physicalMemoryLimitPercentage"] = 100.ToString ();
-			config["__MonoEmulateOneCPU"] = true.ToString ();
-
-			// it appears that pollingInterval does nothing, so we set the Mono timer as well
 			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
-			config["__MonoTimerPeriod"] = 1.ToString ();
 
 			using (var mc = new MemoryCache ("TestCacheSliding",  config)) {
 				Assert.AreEqual (0, mc.GetCount (), "#CSL1");
 
 				var cip = new CacheItemPolicy();
-				cip.SlidingExpiration = new TimeSpan (0, 0, 1);
+				// The sliding expiration timeout has to be greater than 1 second because
+				// .NET implementation ignores timeouts updates smaller than
+				// CacheExpires.MIN_UPDATE_DELTA which is equal to 1.
+				cip.SlidingExpiration = new TimeSpan (0, 0, 2);
 				mc.Add("slidingtest", "42", cip);
 
 				mc.Add("expire1", "1", cip);
@@ -1395,10 +1377,16 @@ namespace MonoTests.System.Runtime.Caching
 					Assert.AreNotEqual (null, item, "#CSL3-" + i);
 				}
 
+				Assert.IsNull (mc.Get ("expire1"), "#CSL4-1");
+				Assert.IsNull (mc.Get ("expire2"), "#CSL4-2");
+				Assert.IsNull (mc.Get ("expire3"), "#CSL4-3");
+				Assert.IsNull (mc.Get ("expire4"), "#CSL4-4");
+				Assert.IsNull (mc.Get ("expire5"), "#CSL4-5");
 				Assert.AreEqual (1, mc.GetCount (), "#CSL4");
 
 				global::System.Threading.Thread.Sleep (4 * 1000);
 
+				Assert.IsNull (mc.Get ("slidingtest"), "#CSL5a");
 				Assert.AreEqual (0, mc.GetCount (), "#CSL5");
 			}
 		}

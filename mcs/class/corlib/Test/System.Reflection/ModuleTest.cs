@@ -155,7 +155,6 @@ public class ModuleTest
 	}
 #endif
 
-#if NET_2_0
 	[Test]
 	public void ResolveType ()
 	{
@@ -304,7 +303,6 @@ public class ModuleTest
 		MethodBase res = mod.ResolveMethod (method.MetadataToken);
 		Assert.AreEqual (method, res, "#1");
 	}
-#endif
 
 	[Test]
 	public void FindTypes ()

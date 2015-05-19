@@ -40,12 +40,10 @@ namespace System.Web.UI.WebControls {
 	[ParseChildren (true, "Text")]
 	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager
 	{
-#if NET_2_0
 		public ListItem (string text, string value, bool enabled) : this (text, value)
 		{
 			this.enabled = enabled;
 		}
-#endif
 		public ListItem (string text, string value)
 		{
 			this.text = text;
@@ -126,10 +124,8 @@ namespace System.Web.UI.WebControls {
 				value = (string) states [2];
 			if (states [3] != null)
 				selected = (bool) states [3];
-#if NET_2_0
 			if (states [4] != null)
 				enabled = (bool) states [4];
-#endif
 		}
 
 		object IStateManager.SaveViewState () 
@@ -142,18 +138,12 @@ namespace System.Web.UI.WebControls {
 			if (!dirty)
 				return null;
 
-#if NET_2_0
 			object [] state = new object [5];
-#else
-			object [] state = new object [4];
-#endif
 			state [0] = sb != null ? sb.SaveViewState () : null;
 			state [1] = (object) text;
 			state [2] = (object) value;
 			state [3] = (object) selected;
-#if NET_2_0
 			state [4] = (object) enabled;
-#endif			
 			return state;
 		}
 		
@@ -252,7 +242,6 @@ namespace System.Web.UI.WebControls {
 			dirty = true;
 		}
 
-#if NET_2_0
 		[DefaultValue (true)]
 		public bool Enabled
 		{
@@ -263,7 +252,6 @@ namespace System.Web.UI.WebControls {
 					SetDirty ();
 			}
 		}
-#endif
 
 		internal bool HasAttributes {
 			get { return attrs != null && attrs.Count > 0; }
@@ -273,9 +261,7 @@ namespace System.Web.UI.WebControls {
 		string value;
 		bool selected;
 		bool dirty;
-#if NET_2_0
 		bool enabled = true;
-#endif
 		bool tracking;
 		StateBag sb;
 		AttributeCollection attrs;

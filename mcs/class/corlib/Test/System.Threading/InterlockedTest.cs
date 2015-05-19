@@ -66,7 +66,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(obj_2, obj);
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestExchange_Int64 ()
 		{
@@ -90,7 +89,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.Exchange(ref iptr, iptr_2));
 			Assert.AreEqual(iptr_2, iptr);
 		}
-#endif
 
 		[Test]
 		public void TestCompareExchange_Int32 ()
@@ -116,7 +114,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(obj_2, obj);
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestCompareExchange_Int64 ()
 		{
@@ -140,7 +137,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_1));
 			Assert.AreEqual(iptr_2, iptr);
 		}
-#endif
 
 		[Test]
 		public void TestCompareExchange_Failed_Int32 ()
@@ -166,7 +162,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(obj_1, obj);
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestCompareExchange_Failed_Int64 ()
 		{
@@ -190,7 +185,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(iptr_1, Interlocked.CompareExchange(ref iptr, iptr_2, iptr_3));
 			Assert.AreEqual(iptr_1, iptr);
 		}
-#endif
 
 		[Test]
 		public void TestIncrement_Int32 ()
@@ -224,7 +218,6 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual(int64_1 - 1, int64);
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestAdd_Int32 ()
 		{
@@ -275,6 +268,5 @@ namespace MonoTests.System.Threading
 			Assert.AreSame (b, Interlocked.Exchange<object> (ref b, a), "non-null,null");
 			Assert.AreSame (b, Interlocked.Exchange<object> (ref b, b), "non-null,non-null");
 		}
-#endif
 	}
 }

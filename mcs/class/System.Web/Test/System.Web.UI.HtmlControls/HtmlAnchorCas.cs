@@ -51,10 +51,6 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 			unit.HRef ();
 			unit.AbsoluteHRef ();
 			unit.RenderAttributes ();
-#if ONLY_1_1
-			// sadly this started to throw NRE in 2.0 RC
-			unit.IPostBackEventHandler_RaisePostBackEvent ();
-#endif
 		}
 
 		public override Type Type {

@@ -33,13 +33,9 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-#if NET_2_0
 using System.Data.Sql;
-#endif
 using System.Globalization;
-#if NET_2_0
 using System.Xml;
-#endif
 
 using NUnit.Framework;
 
@@ -100,10 +96,8 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreSame (connA, cmd.Connection, "#A4");
 				Assert.IsNull (cmd.Container, "#A5");
 				Assert.IsTrue (cmd.DesignTimeVisible, "#A6");
-#if NET_2_0
 				Assert.IsNull (cmd.Notification, "#A7");
 				Assert.IsTrue (cmd.NotificationAutoEnlist, "#A8");
-#endif
 				Assert.IsNotNull (cmd.Parameters, "#A9");
 				Assert.AreEqual (0, cmd.Parameters.Count, "#A10");
 				Assert.IsNull (cmd.Site, "#A11");
@@ -132,10 +126,8 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreSame (connA, cmd.Connection, "#B4");
 				Assert.IsNull (cmd.Container, "#B5");
 				Assert.IsTrue (cmd.DesignTimeVisible, "#B6");
-#if NET_2_0
 				Assert.IsNull (cmd.Notification, "#B7");
 				Assert.IsTrue (cmd.NotificationAutoEnlist, "#B8");
-#endif
 				Assert.IsNotNull (cmd.Parameters, "#B9");
 				Assert.AreEqual (0, cmd.Parameters.Count, "#B10");
 				Assert.IsNull (cmd.Site, "#B11");
@@ -291,11 +283,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#A5:" + ex.Message);
-#else
-				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#A5:" + ex.Message);
-#endif
 			}
 
 			cmd.CommandText = string.Empty;
@@ -309,11 +297,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#B5:" + ex.Message);
-#else
-				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#B5:" + ex.Message);
-#endif
 			}
 
 			cmd.CommandText = null;
@@ -327,11 +311,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#C4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#C5:" + ex.Message);
-#else
-				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#C5:" + ex.Message);
-#endif
 			}
 		}
 
@@ -357,11 +337,7 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5:" + ex.Message);
-#else
-					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
-#endif
 				}
 			}
 		}
@@ -465,11 +441,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar:"), "#5");
-#else
-				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader:"), "#5");
-#endif
 			} finally {
 				trans.Dispose ();
 			}
@@ -581,11 +553,7 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5:" + ex.Message);
-#else
-					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
-#endif
 				}
 			}
 		}
@@ -811,11 +779,7 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5:" + ex.Message);
-#else
-					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
-#endif
 				}
 			}
 		}
@@ -980,11 +944,7 @@ namespace MonoTests.System.Data.SqlClient
 
 			// Test InvalidOperation Exception is thrown if Parameter Type
 			// is not explicitly set
-#if NET_2_0
 			cmd.Parameters.AddWithValue ("@ID", 2);
-#else
-			cmd.Parameters.Add ("@ID", 2);
-#endif
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#A1");
@@ -1061,11 +1021,7 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.IsTrue (ex.Message.IndexOf ("Prepare") != -1, "#5:" + ex.Message);
-#else
-					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
-#endif
 				}
 
 				// Text, parameters cleared
@@ -1161,15 +1117,11 @@ namespace MonoTests.System.Data.SqlClient
 			// Text, without parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Transaction = trans;
-#if NET_2_0
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#A1");
 			} catch (NullReferenceException) {
 			}
-#else
-			cmd.Prepare ();
-#endif
 
 			// Text, with parameters
 			cmd = new SqlCommand ("select count(*) from whatever");
@@ -1178,63 +1130,40 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (NullReferenceException) {
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Prepare: Connection property has not been
-				// initialized
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.StartsWith ("Prepare:"), "#B5");
-			}
-#endif
 
 			// Text, parameters cleared
 			cmd = new SqlCommand ("select count(*) from whatever");
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters.Clear ();
 			cmd.Transaction = trans;
-#if NET_2_0
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#C1");
 			} catch (NullReferenceException) {
 			}
-#else
-			cmd.Prepare ();
-#endif
 
 			// StoredProcedure, without parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Transaction = trans;
-#if NET_2_0
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#D1");
 			} catch (NullReferenceException) {
 			}
-#else
-			cmd.Prepare ();
-#endif
 
 			// StoredProcedure, with parameters
 			cmd = new SqlCommand ("FindCustomer");
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Transaction = trans;
-#if NET_2_0
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#E1");
 			} catch (NullReferenceException) {
 			}
-#else
-			cmd.Prepare ();
-#endif
 		}
 
 		[Test] // bug #412576
@@ -1307,65 +1236,17 @@ namespace MonoTests.System.Data.SqlClient
 
 				SqlCommand cmdB = new SqlCommand ("select @@version", connA, trans);
 				using (SqlDataReader reader = cmdB.ExecuteReader ()) {
-#if NET_2_0
 					cmdA.Connection = connA;
 					Assert.AreSame (connA, cmdA.Connection, "#A1");
 					Assert.AreSame (trans, cmdA.Transaction, "#A2");
-#else
-					try {
-						cmdA.Connection = connA;
-						Assert.Fail ("#A1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
-						Assert.IsNull (ex.InnerException, "#A3");
-						Assert.IsNotNull (ex.Message, "#A4");
 
-						Assert.AreSame (connA, cmdA.Connection, "#A5");
-						Assert.AreSame (trans, cmdA.Transaction, "#A6");
-					}
-#endif
-
-#if NET_2_0
 					cmdA.Connection = connB;
 					Assert.AreSame (connB, cmdA.Connection, "#B1");
 					Assert.AreSame (trans, cmdA.Transaction, "#B2");
-#else
-					try {
-						cmdA.Connection = connB;
-						Assert.Fail ("#B1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-						Assert.IsNull (ex.InnerException, "#B3");
-						Assert.IsNotNull (ex.Message, "#B4");
 
-						Assert.AreSame (connA, cmdA.Connection, "#B5");
-						Assert.AreSame (trans, cmdA.Transaction, "#B6");
-					}
-#endif
-
-#if NET_2_0
 					cmdA.Connection = null;
 					Assert.IsNull (cmdA.Connection, "#C1");
 					Assert.AreSame (trans, cmdA.Transaction, "#C2");
-#else
-					try {
-						cmdA.Connection = null;
-						Assert.Fail ("#C1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
-						Assert.IsNull (ex.InnerException, "#C3");
-						Assert.IsNotNull (ex.Message, "#C4");
-
-						Assert.AreSame (connA, cmdA.Connection, "#C5");
-						Assert.AreSame (trans, cmdA.Transaction, "#C6");
-					}
-#endif
 				}
 			} finally {
 				if (trans != null)
@@ -1441,59 +1322,14 @@ namespace MonoTests.System.Data.SqlClient
 
 				SqlCommand cmdB = new SqlCommand ("select * from employee", connA, transA);
 				using (SqlDataReader reader = cmdB.ExecuteReader ()) {
-#if NET_2_0
 					cmdA.Transaction = transA;
 					Assert.AreSame (transA, cmdA.Transaction, "#A1");
-#else
-					try {
-						cmdA.Transaction = transA;
-						Assert.Fail ("#A1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
-						Assert.IsNull (ex.InnerException, "#A3");
-						Assert.IsNotNull (ex.Message, "#A4");
 
-						Assert.AreSame (transA, cmdA.Transaction, "#A5");
-					}
-#endif
-
-#if NET_2_0
 					cmdA.Transaction = transB;
 					Assert.AreSame (transB, cmdA.Transaction, "#B1");
-#else
-					try {
-						cmdA.Transaction = transB;
-						Assert.Fail ("#B1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-						Assert.IsNull (ex.InnerException, "#B3");
-						Assert.IsNotNull (ex.Message, "#B4");
 
-						Assert.AreSame (transA, cmdA.Transaction, "#B5");
-					}
-#endif
-
-#if NET_2_0
 					cmdA.Transaction = null;
 					Assert.IsNull (cmdA.Transaction, "#C1");
-#else
-					try {
-						cmdA.Transaction = null;
-						Assert.Fail ("#C1");
-					} catch (InvalidOperationException ex) {
-						// The SqlCommand is currently busy
-						// Open, Fetching
-						Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
-						Assert.IsNull (ex.InnerException, "#C3");
-						Assert.IsNotNull (ex.Message, "#C4");
-
-						Assert.AreSame (transA, cmdA.Transaction, "#C5");
-					}
-#endif
 				}
 
 				cmdA.Transaction = transA;
@@ -1591,7 +1427,6 @@ namespace MonoTests.System.Data.SqlClient
 				idParam = cmd.Parameters.Add ("id", SqlDbType.Int);
 				idParam.Direction = ParameterDirection.ReturnValue;
 
-#if NET_2_0
 				Assert.AreEqual (1, cmd.ExecuteNonQuery (), "#B1");
 				cmd.Dispose ();
 
@@ -1611,30 +1446,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsFalse (dr.Read (), "#B9");
 				cmd.Dispose ();
 				dr.Close ();
-#else
-				try {
-					cmd.ExecuteNonQuery ();
-					Assert.Fail ("#B1");
-				} catch (SqlException ex) {
-					Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
-					Assert.AreEqual ((byte) 16, ex.Class, "#B3");
-					Assert.IsNull (ex.InnerException, "#B4");
-					Assert.IsNotNull (ex.Message, "#B5");
-					Assert.IsTrue (ex.Message.IndexOf ("#sp_temp_insert_employee") != -1, "#B6:"+ ex.Message);
-					if (ClientVersion == 7) {
-						// fname is not a parameter for procedure #sp_temp_insert_employee
-						Assert.IsTrue (ex.Message.IndexOf ("fname") != -1, "#B7: " + ex.Message);
-						Assert.AreEqual (8145, ex.Number, "#B8");
-						Assert.AreEqual ((byte) 2, ex.State, "#B9");
-					} else {
-						// Procedure or Function '#sp_temp_insert_employee' expects
-						// parameter '@fname', which was not supplied
-						Assert.IsTrue (ex.Message.IndexOf ("'@fname'") != -1, "#B7: " + ex.Message);
-						Assert.AreEqual (201, ex.Number, "#B8");
-						Assert.AreEqual ((byte) 4, ex.State, "#B9");
-					}
-				}
-#endif
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -2557,33 +2368,10 @@ namespace MonoTests.System.Data.SqlClient
 			newId.Direction = ParameterDirection.Output;
 			id = cmd.Parameters.Add ("Id", SqlDbType.Int);
 			id.Value = 6;
-#if NET_2_0
 			cmd.ExecuteNonQuery ();
 
 			Assert.AreEqual (8, newId.Value, "#B1");
 			Assert.AreEqual (6, id.Value, "#B2");
-#else
-			try {
-				cmd.ExecuteNonQuery ();
-				Assert.Fail ("#B1");
-			} catch (SqlException ex) {
-				// Incorrect syntax near 'NewId'.
-				// Must declare the scalar variable "@Id"
-				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
-				Assert.AreEqual ((byte) 15, ex.Class, "#B3");
-				Assert.IsNull (ex.InnerException, "#B4");
-				Assert.IsNotNull (ex.Message, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("'NewId'") != -1, "#B6: " + ex.Message);
-				if (ClientVersion == 7) {
-					Assert.IsTrue (ex.Message.IndexOf ("'@Id'") != -1, "#B7: " + ex.Message);
-					Assert.AreEqual (170, ex.Number, "#B8");
-				} else {
-					Assert.IsTrue (ex.Message.IndexOf ("\"@Id\"") != -1, "#B7: " + ex.Message);
-					Assert.AreEqual (102, ex.Number, "#B8");
-				}
-				Assert.AreEqual ((byte) 1, ex.State, "#B9");
-			}
-#endif
 		}
 
 		[Test]
@@ -2615,15 +2403,9 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf (string.Format (
 					CultureInfo.InvariantCulture, "'{0}'",
 					overflow)) != -1, "#5:" + ex.Message);
-#else
-				Assert.IsTrue (ex.Message.IndexOf (string.Format (
-					CultureInfo.CurrentCulture, "'{0}'",
-					overflow)) != -1, "#5:" + ex.Message);
-#endif
 				Assert.IsTrue (ex.Message.IndexOf (string.Format (
 					CultureInfo.InvariantCulture, "{0:N4}",
 					SMALLMONEY_MIN)) != -1, "#6:" + ex.Message);
@@ -2666,15 +2448,9 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf (string.Format (
 					CultureInfo.InvariantCulture, "'{0}'",
 					overflow)) != -1, "#5:" + ex.Message);
-#else
-				Assert.IsTrue (ex.Message.IndexOf (string.Format (
-					CultureInfo.CurrentCulture, "'{0}'",
-					overflow)) != -1, "#5:" + ex.Message);
-#endif
 				Assert.IsTrue (ex.Message.IndexOf (string.Format (
 					CultureInfo.InvariantCulture, "{0:N4}",
 					SMALLMONEY_MIN)) != -1, "#6:" + ex.Message);
@@ -2688,7 +2464,6 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void NotificationTest ()
 		{
@@ -2753,7 +2528,6 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif
 
 		[Test]
 		public void SqlCommandDisposeTest ()

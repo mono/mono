@@ -33,9 +33,7 @@ namespace Microsoft.Build.Framework {
 	[Serializable]
 	public class BuildStartedEventArgs : BuildStatusEventArgs {
 
-#if NET_4_0
 		IDictionary<string, string> buildEnvironment;
-#endif
 	
 		protected BuildStartedEventArgs ()
 		{
@@ -47,7 +45,6 @@ namespace Microsoft.Build.Framework {
 		{
 		}
 
-#if NET_4_0
 		public BuildStartedEventArgs (string message,
 					      string helpKeyword,
 					      IDictionary<string, string> environmentOfBuild)
@@ -74,7 +71,6 @@ namespace Microsoft.Build.Framework {
 		public IDictionary<string, string> BuildEnvironment {
 			get { return buildEnvironment; }
 		}
-#endif
 	}
 }
 

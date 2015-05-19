@@ -41,11 +41,7 @@ namespace System.Reflection {
 		internal ushort position;
 		#endregion
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		LocalVariableInfo () {
 		}
 

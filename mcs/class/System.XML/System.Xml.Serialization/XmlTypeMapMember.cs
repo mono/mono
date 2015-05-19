@@ -46,6 +46,7 @@ namespace System.Xml.Serialization
 		TypeData _typeData;
 		MemberInfo _member;
 		MemberInfo _specifiedMember;
+		MethodInfo _shouldSerialize;
 		object _defaultValue = System.DBNull.Value;
 		string documentation;
 		int _flags;
@@ -118,8 +119,12 @@ namespace System.Xml.Serialization
 			
 			mems = type.GetMember (_name + "Specified", BindingFlags.Instance|BindingFlags.Public);
 			if (mems.Length > 0) _specifiedMember = mems[0];
-			if (_specifiedMember is PropertyInfo && !((PropertyInfo) _specifiedMember).CanWrite)
+			if (_specifiedMember is PropertyInfo && !((PropertyInfo) _specifiedMember).CanRead)
 				_specifiedMember = null;
+
+			var method = type.GetMethod ("ShouldSerialize" + _name, BindingFlags.Instance | BindingFlags.Public, null, Type.EmptyTypes, null);
+			if (method != null && method.ReturnType == typeof (bool) && !method.IsGenericMethod)
+				_shouldSerialize = method;
 		}
 
 		public TypeData TypeData
@@ -167,7 +172,7 @@ namespace System.Xml.Serialization
 		{
 			// Used when reflecting a type
 			if (_member == null) InitMember (type);
-			IsOptionalValueType = (_specifiedMember != null);
+			IsOptionalValueType = (_specifiedMember != null || _shouldSerialize != null);
 		}
 		
 		public void CheckOptionalValueType (XmlReflectionMember[] members)
@@ -182,26 +187,54 @@ namespace System.Xml.Serialization
 				}
 			}
 		}
-		
+
+		public bool HasSpecified {
+			get { return _specifiedMember != null; }
+		}
+
+		public bool HasShouldSerialize {
+			get { return _shouldSerialize != null; }
+		}
+
 		public bool GetValueSpecified (object ob)
 		{
 			if (_specifiedGlobalIndex != -1) {
 				object[] array = (object[])ob;
 				return _specifiedGlobalIndex < array.Length && (bool) array [_specifiedGlobalIndex];
 			}
-			else if (_specifiedMember is PropertyInfo)
-				return (bool) ((PropertyInfo)_specifiedMember).GetValue (ob, null);
-			else
-				return (bool) ((FieldInfo)_specifiedMember).GetValue (ob);
+			bool specified = true;
+
+			if (_specifiedMember != null) {
+				if (_specifiedMember is PropertyInfo)
+					specified = (bool)((PropertyInfo)_specifiedMember).GetValue (ob, null);
+				else
+					specified = (bool)((FieldInfo)_specifiedMember).GetValue (ob);
+			}
+			if (_shouldSerialize != null)
+				specified = specified && (bool)_shouldSerialize.Invoke (ob, new object [] {});
+
+			return specified;
+		}
+
+		public bool IsValueSpecifiedSettable () {
+			if (_specifiedMember is PropertyInfo)
+				return ((PropertyInfo) _specifiedMember).CanWrite;
+
+			if (_specifiedMember is FieldInfo)
+				return ! ((FieldInfo) _specifiedMember).IsInitOnly;
+
+			return false;
 		}
 
 		public void SetValueSpecified (object ob, bool value)
 		{
 			if (_specifiedGlobalIndex != -1)
 				((object[])ob) [_specifiedGlobalIndex] = value;
-			else if (_specifiedMember is PropertyInfo)
+			else if (_specifiedMember is PropertyInfo) {
+				if (!((PropertyInfo) _specifiedMember).CanWrite)
+					return;
 				((PropertyInfo)_specifiedMember).SetValue (ob, value, null);
-			else
+			} else if (_specifiedMember is FieldInfo)
 				((FieldInfo)_specifiedMember).SetValue (ob, value);
 		}
 		

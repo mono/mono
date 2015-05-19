@@ -59,9 +59,7 @@ namespace System.ServiceModel.Description
 			get { return format; }
 		}
 
-#if NET_4_0
 		public DataContractResolver DataContractResolver { get; set; }
-#endif
 
 		public bool IgnoreExtensionDataObject { get; set; }
 

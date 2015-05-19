@@ -46,7 +46,7 @@ namespace System.ServiceModel.Description
 				else if (Reader.LocalName == "Identifier" && Reader.NamespaceURI == "") {
 					ob.@Identifier = Reader.Value;
 				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
+				else if (IsXmlnsAttribute (Reader.LocalName)) {
 				}
 				else {
 					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
@@ -325,13 +325,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o14 = ob.@DocumentationElement;
 				if (o14 is XmlElement) {
-				if ((o14.Name == "documentation" && o14.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o14.LocalName == "documentation" && o14.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o14.WriteTo (Writer);
 					WriteElementLiteral (o14, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o14.Name, o14.NamespaceURI);
+					throw CreateUnknownAnyElementException (o14.LocalName, o14.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -368,13 +368,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o17 = ob.@DocumentationElement;
 				if (o17 is XmlElement) {
-				if ((o17.Name == "documentation" && o17.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o17.LocalName == "documentation" && o17.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o17.WriteTo (Writer);
 					WriteElementLiteral (o17, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o17.Name, o17.NamespaceURI);
+					throw CreateUnknownAnyElementException (o17.LocalName, o17.NamespaceURI);
 			}
 			if (ob.@Schemas != null) {
 				for (int n18 = 0; n18 < ob.@Schemas.Count; n18++) {
@@ -418,13 +418,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o21 = ob.@DocumentationElement;
 				if (o21 is XmlElement) {
-				if ((o21.Name == "documentation" && o21.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o21.LocalName == "documentation" && o21.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o21.WriteTo (Writer);
 					WriteElementLiteral (o21, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o21.Name, o21.NamespaceURI);
+					throw CreateUnknownAnyElementException (o21.LocalName, o21.NamespaceURI);
 			}
 			if (ob.@Parts != null) {
 				for (int n22 = 0; n22 < ob.@Parts.Count; n22++) {
@@ -468,13 +468,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o25 = ob.@DocumentationElement;
 				if (o25 is XmlElement) {
-				if ((o25.Name == "documentation" && o25.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o25.LocalName == "documentation" && o25.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o25.WriteTo (Writer);
 					WriteElementLiteral (o25, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o25.Name, o25.NamespaceURI);
+					throw CreateUnknownAnyElementException (o25.LocalName, o25.NamespaceURI);
 			}
 			if (ob.@Operations != null) {
 				for (int n26 = 0; n26 < ob.@Operations.Count; n26++) {
@@ -519,13 +519,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o29 = ob.@DocumentationElement;
 				if (o29 is XmlElement) {
-				if ((o29.Name == "documentation" && o29.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o29.LocalName == "documentation" && o29.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o29.WriteTo (Writer);
 					WriteElementLiteral (o29, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o29.Name, o29.NamespaceURI);
+					throw CreateUnknownAnyElementException (o29.LocalName, o29.NamespaceURI);
 			}
 			if (ob.@Operations != null) {
 				for (int n30 = 0; n30 < ob.@Operations.Count; n30++) {
@@ -569,13 +569,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o33 = ob.@DocumentationElement;
 				if (o33 is XmlElement) {
-				if ((o33.Name == "documentation" && o33.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o33.LocalName == "documentation" && o33.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o33.WriteTo (Writer);
 					WriteElementLiteral (o33, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o33.Name, o33.NamespaceURI);
+					throw CreateUnknownAnyElementException (o33.LocalName, o33.NamespaceURI);
 			}
 			if (ob.@Ports != null) {
 				for (int n34 = 0; n34 < ob.@Ports.Count; n34++) {
@@ -621,13 +621,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o37 = ob.@DocumentationElement;
 				if (o37 is XmlElement) {
-				if ((o37.Name == "documentation" && o37.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o37.LocalName == "documentation" && o37.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o37.WriteTo (Writer);
 					WriteElementLiteral (o37, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o37.Name, o37.NamespaceURI);
+					throw CreateUnknownAnyElementException (o37.LocalName, o37.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -669,13 +669,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o40 = ob.@DocumentationElement;
 				if (o40 is XmlElement) {
-				if ((o40.Name == "documentation" && o40.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o40.LocalName == "documentation" && o40.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o40.WriteTo (Writer);
 					WriteElementLiteral (o40, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o40.Name, o40.NamespaceURI);
+					throw CreateUnknownAnyElementException (o40.LocalName, o40.NamespaceURI);
 			}
 			if (ob.@Faults != null) {
 				for (int n41 = 0; n41 < ob.@Faults.Count; n41++) {
@@ -731,13 +731,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o45 = ob.@DocumentationElement;
 				if (o45 is XmlElement) {
-				if ((o45.Name == "documentation" && o45.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o45.LocalName == "documentation" && o45.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o45.WriteTo (Writer);
 					WriteElementLiteral (o45, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o45.Name, o45.NamespaceURI);
+					throw CreateUnknownAnyElementException (o45.LocalName, o45.NamespaceURI);
 			}
 			if (ob.@Faults != null) {
 				for (int n46 = 0; n46 < ob.@Faults.Count; n46++) {
@@ -784,13 +784,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o49 = ob.@DocumentationElement;
 				if (o49 is XmlElement) {
-				if ((o49.Name == "documentation" && o49.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o49.LocalName == "documentation" && o49.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o49.WriteTo (Writer);
 					WriteElementLiteral (o49, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o49.Name, o49.NamespaceURI);
+					throw CreateUnknownAnyElementException (o49.LocalName, o49.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -830,13 +830,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o52 = ob.@DocumentationElement;
 				if (o52 is XmlElement) {
-				if ((o52.Name == "documentation" && o52.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o52.LocalName == "documentation" && o52.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o52.WriteTo (Writer);
 					WriteElementLiteral (o52, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o52.Name, o52.NamespaceURI);
+					throw CreateUnknownAnyElementException (o52.LocalName, o52.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -876,13 +876,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o55 = ob.@DocumentationElement;
 				if (o55 is XmlElement) {
-				if ((o55.Name == "documentation" && o55.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o55.LocalName == "documentation" && o55.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o55.WriteTo (Writer);
 					WriteElementLiteral (o55, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o55.Name, o55.NamespaceURI);
+					throw CreateUnknownAnyElementException (o55.LocalName, o55.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -922,13 +922,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o58 = ob.@DocumentationElement;
 				if (o58 is XmlElement) {
-				if ((o58.Name == "documentation" && o58.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o58.LocalName == "documentation" && o58.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o58.WriteTo (Writer);
 					WriteElementLiteral (o58, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o58.Name, o58.NamespaceURI);
+					throw CreateUnknownAnyElementException (o58.LocalName, o58.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -967,13 +967,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o61 = ob.@DocumentationElement;
 				if (o61 is XmlElement) {
-				if ((o61.Name == "documentation" && o61.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o61.LocalName == "documentation" && o61.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o61.WriteTo (Writer);
 					WriteElementLiteral (o61, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o61.Name, o61.NamespaceURI);
+					throw CreateUnknownAnyElementException (o61.LocalName, o61.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1012,13 +1012,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o64 = ob.@DocumentationElement;
 				if (o64 is XmlElement) {
-				if ((o64.Name == "documentation" && o64.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o64.LocalName == "documentation" && o64.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o64.WriteTo (Writer);
 					WriteElementLiteral (o64, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o64.Name, o64.NamespaceURI);
+					throw CreateUnknownAnyElementException (o64.LocalName, o64.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1057,13 +1057,13 @@ namespace System.ServiceModel.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o67 = ob.@DocumentationElement;
 				if (o67 is XmlElement) {
-				if ((o67.Name == "documentation" && o67.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o67.LocalName == "documentation" && o67.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o67.WriteTo (Writer);
 					WriteElementLiteral (o67, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o67.Name, o67.NamespaceURI);
+					throw CreateUnknownAnyElementException (o67.LocalName, o67.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}

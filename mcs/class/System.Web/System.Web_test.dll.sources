@@ -45,6 +45,7 @@ mainsoft/NunitWeb/NunitWeb/Tests/AuthorConverter.cs
 mainsoft/NunitWeb/NunitWeb/Tests/Book.cs
 mainsoft/NunitWeb/NunitWeb/Tests/BookType.cs
 System.Web/AppBrowsersTest.cs
+System.Web/EventHandlerTaskAsyncHelperTest.cs
 System.Web/HttpApplicationTest.cs
 System.Web/HttpBrowserCapabilitiesTest.cs
 System.Web/HttpCacheVaryByContentEncodingsTest.cs
@@ -58,10 +59,12 @@ System.Web/HttpRequestTest.cs
 System.Web/HttpResponseTest.cs
 System.Web/HttpRuntimeTest.cs
 System.Web/HttpServerUtilityTest.cs
+System.Web/HttpTaskAsyncHandlerTest.cs
 System.Web/HttpUtilityTest.cs
 System.Web/SiteMapProviderTest.cs
 System.Web/SiteMapNodeTest.cs
 System.Web/StaticSiteMapProviderTest.cs
+System.Web/TaskAsyncResultTest.cs
 System.Web/TraceContextRecordTest.cs
 System.Web.Compilation/BuildManagerTest.cs
 System.Web.Compilation/ClientBuildManagerParameterTest.cs
@@ -103,6 +106,7 @@ System.Web.Profile/ProfileInfoTest.cs
 System.Web.Security/FormsAuthenticationTest.cs
 System.Web.Security/FormsIdentityTest.cs
 System.Web.Security/MembershipTest.cs
+System.Web.Security/MembershipPasswordAttributeTest.cs
 System.Web.Security/MembershipProviderCollectionTest.cs
 System.Web.Security/MembershipProviderTest.cs
 System.Web.Security/MembershipUserCollectionTest.cs

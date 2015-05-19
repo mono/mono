@@ -82,13 +82,10 @@ namespace MonoTests.System.Net.Sockets
 				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
 				NetworkStream ns = tcpClient.GetStream ();
 				Assert.IsNotNull (ns, "#A1");
-#if NET_2_0
 				Assert.AreEqual (0, tcpClient.Available, "#A2");
 				Assert.IsTrue (tcpClient.Connected, "#A3");
 				// Assert.IsFalse (tcpClient.ExclusiveAddressUse, "#A4");
-#endif
 				tcpClient.Close ();
-#if NET_2_0
 				Assert.IsNotNull (tcpClient.Client, "#A5");
 				try {
 					int available = tcpClient.Available;
@@ -104,20 +101,16 @@ namespace MonoTests.System.Net.Sockets
 				} catch (ObjectDisposedException) {
 				}
 				*/
-#endif
 			}
 
 			using (SocketResponder sr = new SocketResponder (localEP, new SocketRequestHandler (CloseRequestHandler))) {
 				sr.Start ();
 
 				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), 8765);
-#if NET_2_0
 				Assert.AreEqual (0, tcpClient.Available, "#B1");
 				Assert.IsTrue (tcpClient.Connected, "#B2");
 				// Assert.IsFalse (tcpClient.ExclusiveAddressUse, "#B3");
-#endif
 				tcpClient.Close ();
-#if NET_2_0
 				Assert.IsNull (tcpClient.Client, "#B4");
 				try {
 					int available = tcpClient.Available;
@@ -137,7 +130,6 @@ namespace MonoTests.System.Net.Sockets
 				} catch (NullReferenceException) {
 				}
 				*/
-#endif
 			}
 		}
 
@@ -146,7 +138,6 @@ namespace MonoTests.System.Net.Sockets
 			return new byte [0];
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof(ArgumentNullException))]
 		public void ConnectMultiNull ()
@@ -192,6 +183,5 @@ namespace MonoTests.System.Net.Sockets
 				Assert.Fail ("ConnectMultiRefused #3");
 			}
 		}
-#endif
 	}
 }

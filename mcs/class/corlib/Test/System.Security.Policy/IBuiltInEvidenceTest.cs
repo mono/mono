@@ -101,7 +101,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (21, GetRequiredSize (ad, true), "GetRequiredSize-true-2");
 			Assert.AreEqual (19, GetRequiredSize (ad, false), "GetRequiredSize-false-2");
 		}
-#if NET_2_0
 		[Test]
 		public void GacInstalled_GetRequiredSize ()
 		{
@@ -169,7 +168,6 @@ namespace MonoTests.System.Security.Policy {
 			GacInstalled g = new GacInstalled ();
 			OutputToBuffer (g, buffer, 1, false);
 		}
-#endif
 		[Test]
 		public void Hash_GetRequiredSize ()
 		{

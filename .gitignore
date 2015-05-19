@@ -69,6 +69,7 @@ config.status
 config.sub
 configure
 configure.scan
+cygconfig.h
 depcomp
 install-sh
 libtool
@@ -108,6 +109,10 @@ GRTAGS
 GSYMS
 GTAGS
 
+# Doxygen
+docs/doxygen*
+docs/perlmod*
+
 
 ##############################################################################
 # Mono-specific patterns
@@ -117,7 +122,6 @@ GTAGS
 compile
 mono.h
 mono-*.tar.*
-mono.spec
-mono-core.spec
 tmpinst-dir.stamp
+msvc/scripts/inputs/
 

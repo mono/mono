@@ -2495,6 +2495,19 @@ namespace MonoTests.System.Net
 		}
 #endif
 
+#if NET_4_5
+		[Test]
+		public void AllowReadStreamBuffering ()
+		{
+			var hr = WebRequest.CreateHttp ("http://www.google.com");
+			Assert.IsFalse (hr.AllowReadStreamBuffering, "#1");
+			try {
+				hr.AllowReadStreamBuffering = true;
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+		}
+#endif
 
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;

@@ -63,7 +63,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		
-#if NET_2_0
 		public new bool HasFooter
 		{
 			get
@@ -121,7 +120,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			base.RenderItem(itemType,repeatIndex,repeatInfo,writer);
 			return writer.InnerWriter.ToString ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -150,16 +148,13 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (c.RepeatLayout,
 					RepeatLayout.Table, "A5");
 			Assert.AreEqual (c.TextAlign, TextAlign.Right, "A6");
-#if NET_2_0
 			Assert.AreEqual (false, c.HasFooter, "HasFooter");
 			Assert.AreEqual (false, c.HasHeader, "HasHeader");
 			Assert.AreEqual (false, c.HasSeparators, "HasSeparators");
 			Assert.AreEqual (0, c.RepeatedItemCount, "RepeatedItemCount");
 			Assert.AreEqual (null, c.DoGetItemStyle (ListItemType.Item, 0), "GetItemStyle");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void CheckBoxList_Bug377703_1 ()
 		{
@@ -422,7 +417,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (2, c.RepeatedItemCount, "RepeatedItemCount#2");
 		}
 
-#endif
 
 
 		[Test]
@@ -629,39 +623,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			CheckBoxList c = new CheckBoxList ();
 
-#if NET_2_0
 			Render (c, "", "A1");
-#else
-			Render (c, "<table border=\"0\">\n\n</table>", "A1");
-#endif
 			c.CellPadding = 1;
-#if NET_2_0
 			Render (c, "", "A2");
-#else
-			Render (c, "<table border=\"0\" cellpadding=\"1\">\n\n</table>", "A2");
-#endif
 
 			c = new CheckBoxList ();
 			c.CellPadding = 1;
-#if NET_2_0
 			Render (c, "", "A3");
-#else
-			Render (c, "<table border=\"0\" cellpadding=\"1\">\n\n</table>", "A3");
-#endif
 
 			c = new CheckBoxList ();
 			c.TextAlign = TextAlign.Left;
-#if NET_2_0
 			Render (c, "", "A4");
-#else
-			Render (c, "<table border=\"0\">\n\n</table>", "A4");
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
-#endif
 		public void Render ()
 		{
 #if NET_4_0
@@ -684,9 +660,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		// bug 51648
 		[Test]
-#if NET_2_0
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
-#endif
 		public void TestTabIndex ()
 		{
 			CheckBoxList c = new CheckBoxList ();
@@ -710,9 +684,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		// bug 48802
 		[Test]
-#if NET_2_0
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
-#endif
 		public void TestDisabled ()
 		{
 			CheckBoxList c = new CheckBoxList ();
@@ -733,7 +705,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 			Render (c, exp, "C1");
 		}	
-#if NET_2_0
 	class TestCheckBoxList : CheckBoxList
 	{
 	    public void CallVerifyMultiSelect()
@@ -752,7 +723,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }
 

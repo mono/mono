@@ -88,6 +88,8 @@ namespace Mono.Security.Protocol.Tls
 			} else {
 				ctx.StartSwitchingSecurityParameters (false);
 			}
+
+			ctx.ChangeCipherSpecDone = true;
 		}
 
 		public virtual HandshakeMessage GetMessage(HandshakeType type)
@@ -348,9 +350,6 @@ namespace Mono.Security.Protocol.Tls
 				// Try to read the Record Content Type
 				int type = internalResult.InitialBuffer[0];
 
-				// Set last handshake message received to None
-				this.context.LastHandshakeMsg = HandshakeType.ClientHello;
-
 				ContentType	contentType	= (ContentType)type;
 				byte[] buffer = this.ReadRecordBuffer(type, record);
 				if (buffer == null)
@@ -458,9 +457,6 @@ namespace Mono.Security.Protocol.Tls
 			// Try to read the Record Content Type
 			int type = recordTypeBuffer[0];
 
-			// Set last handshake message received to None
-			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
-
 			ContentType	contentType	= (ContentType)type;
 			byte[] buffer = this.ReadRecordBuffer(type, record);
 			if (buffer == null)
@@ -523,87 +519,11 @@ namespace Mono.Security.Protocol.Tls
 
 		private byte[] ReadRecordBuffer (int contentType, Stream record)
 		{
-			switch (contentType)
-			{
-				case 0x80:
-					return this.ReadClientHelloV2(record);
-
-				default:
-					if (!Enum.IsDefined(typeof(ContentType), (ContentType)contentType))
-					{
-						throw new TlsException(AlertDescription.DecodeError);
-					}
-					return this.ReadStandardRecordBuffer(record);
-			}
-		}
-
-		private byte[] ReadClientHelloV2 (Stream record)
-		{
-			int msgLength = record.ReadByte ();
-			// process further only if the whole record is available
-			if (record.CanSeek && (msgLength + 1 > record.Length)) 
-			{
-				return null;
-			}
-
-			byte[] message = new byte[msgLength];
-			record.Read (message, 0, msgLength);
-
-			int msgType		= message [0];
-			if (msgType != 1)
-			{
-				throw new TlsException(AlertDescription.DecodeError);
-			}
-			int protocol = (message [1] << 8 | message [2]);
-			int cipherSpecLength = (message [3] << 8 | message [4]);
-			int sessionIdLength = (message [5] << 8 | message [6]);
-			int challengeLength = (message [7] << 8 | message [8]);
-			int length = (challengeLength > 32) ? 32 : challengeLength;
-
-			// Read CipherSpecs
-			byte[] cipherSpecV2 = new byte[cipherSpecLength];
-			Buffer.BlockCopy (message, 9, cipherSpecV2, 0, cipherSpecLength);
-
-			// Read session ID
-			byte[] sessionId = new byte[sessionIdLength];
-			Buffer.BlockCopy (message, 9 + cipherSpecLength, sessionId, 0, sessionIdLength);
-
-			// Read challenge ID
-			byte[] challenge = new byte[challengeLength];
-			Buffer.BlockCopy (message, 9 + cipherSpecLength + sessionIdLength, challenge, 0, challengeLength);
-		
-			if (challengeLength < 16 || cipherSpecLength == 0 || (cipherSpecLength % 3) != 0)
+			if (!Enum.IsDefined(typeof(ContentType), (ContentType)contentType))
 			{
 				throw new TlsException(AlertDescription.DecodeError);
 			}
 
-			// Updated the Session ID
-			if (sessionId.Length > 0)
-			{
-				this.context.SessionId = sessionId;
-			}
-
-			// Update the protocol version
-			this.Context.ChangeProtocol((short)protocol);
-
-			// Select the Cipher suite
-			this.ProcessCipherSpecV2Buffer(this.Context.SecurityProtocol, cipherSpecV2);
-
-			// Updated the Client Random
-			this.context.ClientRandom = new byte [32]; // Always 32
-			// 1. if challenge is bigger than 32 bytes only use the last 32 bytes
-			// 2. right justify (0) challenge in ClientRandom if less than 32
-			Buffer.BlockCopy (challenge, challenge.Length - length, this.context.ClientRandom, 32 - length, length);
-
-			// Set 
-			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
-			this.context.ProtocolNegotiated = true;
-
-			return message;
-		}
-
-		private byte[] ReadStandardRecordBuffer (Stream record)
-		{
 			byte[] header = new byte[4];
 			if (record.Read (header, 0, 4) != 4)
 				throw new TlsException ("buffer underrun");
@@ -669,14 +589,24 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Alert Methods
 
+		internal void SendAlert(ref Exception ex)
+		{
+			var tlsEx = ex as TlsException;
+			var alert = tlsEx != null ? tlsEx.Alert : new Alert(AlertDescription.InternalError);
+
+			try {
+				SendAlert(alert);
+			} catch (Exception alertEx) {
+				ex = new IOException (string.Format ("Error while sending TLS Alert ({0}:{1}): {2}", alert.Level, alert.Description, ex), ex);
+			}
+		}
+
 		public void SendAlert(AlertDescription description)
 		{
 			this.SendAlert(new Alert(description));
 		}
 
-		public void SendAlert(
-			AlertLevel			level, 
-			AlertDescription	description)
+		public void SendAlert(AlertLevel level, AlertDescription description)
 		{
 			this.SendAlert(new Alert(level, description));
 		}
@@ -1028,97 +958,6 @@ namespace Mono.Security.Protocol.Tls
 					return false;
 			}
 			return true;
-		}
-
-		#endregion
-
-		#region CipherSpecV2 processing
-
-		private void ProcessCipherSpecV2Buffer (SecurityProtocolType protocol, byte[] buffer)
-		{
-			TlsStream codes = new TlsStream(buffer);
-
-			string prefix = (protocol == SecurityProtocolType.Ssl3) ? "SSL_" : "TLS_";
-
-			while (codes.Position < codes.Length)
-			{
-				byte check = codes.ReadByte();
-
-				if (check == 0)
-				{
-					// SSL/TLS cipher spec
-					short code = codes.ReadInt16();	
-					int index = this.Context.SupportedCiphers.IndexOf(code);
-					if (index != -1)
-					{
-						this.Context.Negotiating.Cipher = this.Context.SupportedCiphers[index];
-						break;
-					}
-				}
-				else
-				{
-					byte[] tmp = new byte[2];
-					codes.Read(tmp, 0, tmp.Length);
-
-					int tmpCode = ((check & 0xff) << 16) | ((tmp[0] & 0xff) << 8) | (tmp[1] & 0xff);
-					CipherSuite cipher = this.MapV2CipherCode(prefix, tmpCode);
-
-					if (cipher != null)
-					{
-						this.Context.Negotiating.Cipher = cipher;
-						break;
-					}
-				}
-			}
-
-			if (this.Context.Negotiating == null)
-			{
-				throw new TlsException(AlertDescription.InsuficientSecurity, "Insuficient Security");
-			}
-		}
-
-		private CipherSuite MapV2CipherCode(string prefix, int code)
-		{
-			try
-			{
-				switch (code)
-				{
-					case 65664:
-						// TLS_RC4_128_WITH_MD5
-						return this.Context.SupportedCiphers[prefix + "RSA_WITH_RC4_128_MD5"];
-					
-					case 131200:
-						// TLS_RC4_128_EXPORT40_WITH_MD5
-						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC4_40_MD5"];
-					
-					case 196736:
-						// TLS_RC2_CBC_128_CBC_WITH_MD5
-						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC2_CBC_40_MD5"];
-					
-					case 262272:
-						// TLS_RC2_CBC_128_CBC_EXPORT40_WITH_MD5
-						return this.Context.SupportedCiphers[prefix + "RSA_EXPORT_WITH_RC2_CBC_40_MD5"];
-					
-					case 327808:
-						// TLS_IDEA_128_CBC_WITH_MD5
-						return null;
-					
-					case 393280:
-						// TLS_DES_64_CBC_WITH_MD5
-						return null;
-
-					case 458944:
-						// TLS_DES_192_EDE3_CBC_WITH_MD5
-						return null;
-
-					default:
-						return null;
-				}
-			}
-			catch
-			{
-				return null;
-			}
 		}
 
 		#endregion

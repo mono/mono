@@ -86,9 +86,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("throws a NullReferenceException - but it's (kind of internal)")]
-#endif
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();
@@ -97,17 +95,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void OnlyInner () 
 		{
 			XmlNodeList inner = InnerXml (""); // empty
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (0, xnl.Count, "Count");
-#endif
 		}
 
 		private XmlDocument GetDoc () 
@@ -132,9 +125,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void LoadInputAsXmlDocument () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -142,11 +133,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (73, xnl.Count);
-#else
-			Assert.AreEqual (47, xnl.Count);
-#endif
 		}
 
 		[Test]
@@ -182,9 +169,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void LoadInputAsStream () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -196,11 +181,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlNodeList inner = InnerXml ("//*/title");
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (73, xnl.Count);
-#else
-			Assert.AreEqual (47, xnl.Count);
-#endif
 		}
 
 		[Test]
@@ -291,39 +272,22 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (0, nl.Count, "1");
-#else
-			Assert.AreEqual (1, nl.Count, "1");
-#endif
 
 			doc.LoadXml ("<element xmlns='urn:foo'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (0, nl.Count, "2");
-#else
-			Assert.AreEqual (2, nl.Count, "2");
-#endif
 
 			doc.LoadXml ("<element xmlns='urn:foo' xmlns:x='urn:x'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (0, nl.Count, "3");
-#else
-			Assert.AreEqual (3, nl.Count, "3");
-#endif
 
 			doc.LoadXml ("<envelope><Signature xmlns='http://www.w3.org/2000/09/xmldsig#'><XPath>blah</XPath></Signature></envelope>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-#if NET_2_0
 			Assert.AreEqual (0, nl.Count, "4");
-#else
-			Assert.AreEqual (1, nl.Count, "4");
-			Assert.AreEqual (XmlNodeType.Attribute, nl [0].NodeType, "NodeType");
-#endif
 		}
 	}
 }

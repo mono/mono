@@ -1220,12 +1220,6 @@ namespace Mono.CSharp.Nullable
 				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
-
-			if (TypeSpec.IsValueType (left.Type) && !left.Type.IsNullableType) {
-				Warning_UnreachableExpression (ec, right.Location);
-				return ReducedExpression.Create (left, this, false).Resolve (ec);
-			}
-
 			type = rtype;
 			return this;
 		}
@@ -1285,16 +1279,52 @@ namespace Mono.CSharp.Nullable
 				return;
 			}
 
-			left.Emit (ec);
-			ec.Emit (OpCodes.Dup);
+			//
+			// Null check is done on original expression not after expression is converted to
+			// result type. This is in most cases same but when user conversion is involved
+			// we can end up in situation when use operator does the null handling which is
+			// not what the operator is supposed to do
+			//
+			var op_expr = left as UserCast;
+			if (op_expr != null) {
+				op_expr.Source.Emit (ec);
+				LocalTemporary temp;
 
-			// Only to make verifier happy
-			if (left.Type.IsGenericParameter)
-				ec.Emit (OpCodes.Box, left.Type);
+				// TODO: More load kinds can be special cased
+				if (!(op_expr.Source is VariableReference)) {
+					temp = new LocalTemporary (op_expr.Source.Type);
+					temp.Store (ec);
+					temp.Emit (ec);
+					op_expr.Source = temp;
+				} else {
+					temp = null;
+				}
 
-			ec.Emit (OpCodes.Brtrue, end_label);
+				var right_label = ec.DefineLabel ();
+				ec.Emit (OpCodes.Brfalse_S, right_label);
+				left.Emit (ec);
+				ec.Emit (OpCodes.Br, end_label);
+				ec.MarkLabel (right_label);
 
-			ec.Emit (OpCodes.Pop);
+				if (temp != null)
+					temp.Release (ec);
+			} else {
+				//
+				// Common case where expression is not modified before null check and
+				// we generate better/smaller code
+				//
+				left.Emit (ec);
+				ec.Emit (OpCodes.Dup);
+
+				// Only to make verifier happy
+				if (left.Type.IsGenericParameter)
+					ec.Emit (OpCodes.Box, left.Type);
+
+				ec.Emit (OpCodes.Brtrue, end_label);
+
+				ec.Emit (OpCodes.Pop);
+			}
+
 			right.Emit (ec);
 
 			ec.MarkLabel (end_label);

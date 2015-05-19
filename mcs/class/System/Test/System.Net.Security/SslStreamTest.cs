@@ -177,7 +177,11 @@ public class SslStreamTest {
 						(a1, a2, a3, a4, a5) => m_clientCert);
 			state.ClientStream.AuthenticateAsClient ("test_host");
 			state.ClientAuthenticated.Set ();
-		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/}
+		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
+		} catch (IOException) {
+			if (!state.ServerIOException)
+				throw;
+		}
 	}
 
 	private void StartServerAndAuthenticate (ClientServerState state) {

@@ -22,7 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_4_0
 using System;
 using System.ComponentModel;
 using System.Configuration;
@@ -150,4 +149,3 @@ namespace System.ServiceModel.Discovery.Configuration
 	}
 }
 
-#endif

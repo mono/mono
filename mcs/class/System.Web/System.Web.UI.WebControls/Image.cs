@@ -147,11 +147,9 @@ namespace System.Web.UI.WebControls
 			}
 			set { ViewState ["GenerateEmptyAlternateText"] = value; }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
@@ -195,10 +193,6 @@ namespace System.Web.UI.WebControls
 			}
 #if BUG_78875_FIXED
 			if (Context.Request.Browser.SupportsCss)
-#endif
-#if !NET_4_0
-			if (BorderWidth.IsEmpty)
-				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
 #endif
 		}
 

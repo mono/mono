@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = Mono.Management.dll
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:Mono.Posix.dll
+LIB_REFS = System Mono.Posix
+LIB_MCS_FLAGS = /r:$(corlib)
 NO_TEST = yes
 
 include ../../build/library.make

@@ -1083,7 +1083,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]
-		[Category ("NotDotNet")] // 0.0 is an invalid Colors value.
+		[Ignore ("NotDotNet")] // 0.0 is an invalid Colors value.
 		public void DeserializeEnumInvalid3 ()
 		{
 			//"0.0" instead of "0"
@@ -1104,7 +1104,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]
-		[Category ("NotDotNet")] // 4 is an invalid Colors value.
+		[Ignore ("NotDotNet")] // 4 is an invalid Colors value.
 		[Category ("NotWorking")]
 		public void DeserializeEnumWithDCInvalid ()
 		{
@@ -1189,6 +1189,15 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			DataContractJsonSerializer ser = new DataContractJsonSerializer (type, knownTypes);
 			XmlReader xr = JsonReaderWriterFactory.CreateJsonReader (Encoding.UTF8.GetBytes (xml), new XmlDictionaryReaderQuotas ());
 			return ser.ReadObject (xr);
+		}
+
+		public T Deserialize<T>(string json)
+		{
+			var bytes = Encoding.Unicode.GetBytes (json);
+			using (MemoryStream stream = new MemoryStream (bytes)) {
+				var serializer = new DataContractJsonSerializer (typeof(T));
+				return (T)serializer.ReadObject (stream);	
+			}
 		}
 
 		[Test]
@@ -1351,8 +1360,8 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			var ms = new MemoryStream ();
 			DataContractJsonSerializer serializer = new DataContractJsonSerializer (typeof (Query));
 			Query query = new Query () {
-				StartDate = new DateTime (2010, 3, 4, 5, 6, 7),
-				EndDate = new DateTime (2010, 4, 5, 6, 7, 8)
+				StartDate = DateTime.SpecifyKind (new DateTime (2010, 3, 4, 5, 6, 7), DateTimeKind.Utc),
+				EndDate = DateTime.SpecifyKind (new DateTime (2010, 4, 5, 6, 7, 8), DateTimeKind.Utc)
 				};
 			serializer.WriteObject (ms, query);
 			Assert.AreEqual ("{\"StartDate\":\"\\/Date(1267679167000)\\/\",\"EndDate\":\"\\/Date(1270447628000)\\/\"}", Encoding.UTF8.GetString (ms.ToArray ()), "#1");
@@ -1377,14 +1386,14 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Test]
 		public void BugXamarin163 ()
 		{
-			string json = @"{""should_have_value"":""\/Date(1277355600000-0500)\/""}";
+			string json = @"{""should_have_value"":""\/Date(1277355600000)\/""}";
 
 			byte[] bytes = global::System.Text.Encoding.UTF8.GetBytes(json);
 			Stream inputStream = new MemoryStream(bytes);
 			
 			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DateTest));
 			DateTest t = serializer.ReadObject(inputStream) as DateTest;
-			Assert.AreEqual (634129344000000000, t.ShouldHaveValue.Value.Ticks, "#1");
+			Assert.AreEqual (634129524000000000, t.ShouldHaveValue.Value.Ticks, "#1");
 		}
 
 		[Test]
@@ -1819,6 +1828,71 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			serializer.WriteObject (stream, o);
 		}
 		
+		// properly deserialize object with a polymorphic property (known derived type)
+		[Test]
+		public void Bug23058()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""KnownDerivedType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base"",""DerivedProperty"":""Derived 1""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.KnownDerivedType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+			Assert.AreEqual ((deserializedObj.PolymorphicProperty as KnownDerivedType).DerivedProperty, "Derived 1");
+			Assert.AreEqual (deserializedObj.Name, "Parent2");
+		}
+
+		// properly deserialize object with a polymorphic property (base type with __type hint)
+		[Test]
+		public void DeserializeBaseTypePropHint()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""BaseType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.BaseType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+		}
+
+		// properly deserialize object with a polymorphic property (base type with __type hint)
+		[Test]
+		public void DeserializeBaseTypePropNoHint()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""BaseTypeProperty"":""Base""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.GetType ().FullName, "MonoTests.System.Runtime.Serialization.Json.BaseType");
+			Assert.AreEqual (deserializedObj.PolymorphicProperty.BaseTypeProperty, "Base");
+		}
+
+		// properly fail deserializing object with a polymorphic property (unknown derived type)
+		[ExpectedException (typeof (SerializationException))]
+		[Test]
+		public void FailDeserializingUnknownTypeProp()
+		{
+			string serializedObj = @"{""PolymorphicProperty"":{""__type"":""UnknownDerivedType:#MonoTests.System.Runtime.Serialization.Json"",""BaseTypeProperty"":""Base"",""DerivedProperty"":""Derived 1""},""Name"":""Parent2""}";
+			ParentType deserializedObj = Deserialize<ParentType> (serializedObj);
+		}
+
+		[Test]
+		public void SubclassTest ()
+		{
+			var knownTypes = new List<Type> { typeof(IntList) };
+	                var serializer = new DataContractJsonSerializer(typeof(ListOfNumbers), knownTypes);
+
+			string json = "{\"Numbers\": [85]}";
+			using (var stream = new MemoryStream(UTF8Encoding.Default.GetBytes(json)))
+			{
+				var nums = (ListOfNumbers)serializer.ReadObject(stream);
+				Assert.AreEqual (1, nums.Numbers.Count);
+			}
+		}
+		[DataContract]
+		public class ListOfNumbers
+		{
+			[DataMember]
+			public IntList Numbers;
+		}
+
+		public class IntList : List<int>{}
 		#endregion
 	}
 	
@@ -2016,6 +2090,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		void Init ()
 		{
 			C = true;
+			ServerTimeUTC = DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Utc);
 		}
 
 		[OnDeserializing]
@@ -2037,6 +2112,42 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public long CodedServerTimeUTC { get; set; }
 		public DateTime ServerTimeUTC { get; set; }
 	}
+
+	#region polymorphism test helper classes
+
+	[DataContract]
+	[KnownType (typeof (KnownDerivedType))]
+	public class ParentType
+	{
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public BaseType PolymorphicProperty { get; set; }
+	}
+
+	[DataContract]
+	public class BaseType
+	{
+		[DataMember]
+		public string BaseTypeProperty { get; set; }
+	}
+
+	[DataContract]
+	public class KnownDerivedType : BaseType
+	{
+		[DataMemberAttribute]
+		public string DerivedProperty { get; set; }
+	}
+
+	[DataContract]
+	public class UnknownDerivedType : BaseType
+	{
+		[DataMember]
+		public string DerivedProperty { get; set; }
+	}
+
+	#endregion
 }
 
 [DataContract]

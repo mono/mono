@@ -76,10 +76,8 @@ namespace MonoTests.System.Drawing {
 		private void CheckMono (FontFamily ff)
 		{
 			Assert.IsTrue (ff.Equals (FontFamily.GenericMonospace), "GenericMonospace");
-#if NET_2_0
 			// note: Mono has this behaviour on both 1.1 and 2.0 profiles
 			Assert.AreEqual (ff.Name.GetHashCode (), ff.GetHashCode (), "GetHashCode");
-#endif
 		}
 
 		[Test]
@@ -130,10 +128,8 @@ namespace MonoTests.System.Drawing {
 		{
 			FontFamily ff = new FontFamily (GenericFontFamilies.SansSerif);
 			Assert.IsTrue (ff.Equals (FontFamily.GenericSansSerif), "GenericSansSerif");
-#if NET_2_0
 			// note: Mono has this behaviour on both 1.1 and 2.0 profiles
 			Assert.AreEqual (ff.Name.GetHashCode (), ff.GetHashCode (), "GetHashCode");
-#endif
 		}
 
 		[Test]
@@ -141,10 +137,8 @@ namespace MonoTests.System.Drawing {
 		{
 			FontFamily ff = new FontFamily (GenericFontFamilies.Serif);
 			Assert.IsTrue (ff.Equals (FontFamily.GenericSerif), "GenericSerif");
-#if NET_2_0
 			// note: Mono has this behaviour on both 1.1 and 2.0 profiles
 			Assert.AreEqual (ff.Name.GetHashCode (), ff.GetHashCode (), "GetHashCode");
-#endif
 		}
 
 		[Test]

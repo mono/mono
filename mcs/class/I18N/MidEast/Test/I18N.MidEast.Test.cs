@@ -45,14 +45,10 @@ namespace MonoTests.I18N.MidEast
 			//Encoding enc = Manager.GetEncoding(codepage);
 			Encoding enc;
 			if (fallbackString != null) {
-#if NET_2_0
 				enc = Encoding.GetEncoding(codepage,
 					 new System.Text.EncoderReplacementFallback(fallbackString),
 					 new System.Text.DecoderReplacementFallback("irrelevant")
 					);
-#else
-				throw new InvalidOperationException("DotNet < 2.0 doesn't support encoder fallback");
-#endif
 			} else {
 				enc = Encoding.GetEncoding(codepage);
 			}

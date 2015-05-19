@@ -33,9 +33,7 @@ using System.ComponentModel.Design;
 
 namespace System.Web.UI.Design
 {
-#if NET_2_0
 	[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 	public sealed class TemplateEditingService : ITemplateEditingService, IDisposable
 	{
 		public TemplateEditingService (IDesignerHost designerHost)

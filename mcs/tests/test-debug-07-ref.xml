@@ -37,8 +37,8 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x2" end="0xa" />
-        <entry index="1" start="0x3" end="0xa" />
+        <entry index="0" start="0x1" end="0xa" />
+        <entry index="1" start="0x2" end="0xa" />
       </scopes>
     </method>
   </methods>

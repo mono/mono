@@ -38,8 +38,9 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
-using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Threading;
 
@@ -75,12 +76,14 @@ namespace System.Diagnostics {
 		IntPtr process_handle;
 		int pid;
 		bool enableRaisingEvents;
-		bool already_waiting;
+		RegisteredWaitHandle exitWaitHandle;
 		ISynchronizeInvoke synchronizingObject;
 		EventHandler exited_event;
 		IntPtr stdout_rd;
 		IntPtr stderr_rd;
-		
+
+		object thisLock = new Object ();
+
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
 			process_handle=handle;
@@ -102,12 +105,30 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
-			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
-			if (start && process_handle != IntPtr.Zero) {
-				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
-				ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
-				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
-				already_waiting = true;
+			lock (thisLock) {
+				bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
+				if (start && process_handle != IntPtr.Zero) {
+					WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
+					ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
+					exitWaitHandle = ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
+				}
+			}
+		}
+
+		void UnregisterExitCallback ()
+		{
+			lock (thisLock) {
+				if (exitWaitHandle != null) {
+					exitWaitHandle.Unregister (null);
+					exitWaitHandle = null;
+				}
+			}
+		}
+
+		bool IsExitCallbackPending ()
+		{
+			lock (thisLock) {
+				return exitWaitHandle != null;
 			}
 		}
 
@@ -346,23 +367,21 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[Obsolete ("Use PagedMemorySize64")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		public int PagedMemorySize {
 			get {
-				return(0);
+				return(int)PagedMemorySize64;
 			}
 		}
 
-		[MonoTODO]
 		[Obsolete ("Use PagedSystemMemorySize64")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		public int PagedSystemMemorySize {
 			get {
-				return(0);
+				return(int)PagedMemorySize64;
 			}
 		}
 
@@ -406,23 +425,22 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of bytes that are paged.")]
 		[ComVisible (false)]
 		public long PagedMemorySize64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 12, out error);
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of paged system memory in bytes.")]
 		[ComVisible (false)]
 		public long PagedSystemMemorySize64 {
 			get {
-				return(0);
+				return PagedMemorySize64;
 			}
 		}
 
@@ -832,13 +850,13 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
-		public static Process[] GetProcesses()
+		public static Process[] GetProcesses ()
 		{
 			int [] pids = GetProcesses_internal ();
 			if (pids == null)
 				return new Process [0];
 
-			ArrayList proclist = new ArrayList (pids.Length);
+			var proclist = new List<Process> (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					proclist.Add (GetProcessById (pids [i]));
@@ -851,7 +869,7 @@ namespace System.Diagnostics {
 				}
 			}
 
-			return ((Process []) proclist.ToArray (typeof (Process)));
+			return proclist.ToArray ();
 		}
 
 		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
@@ -871,7 +889,7 @@ namespace System.Diagnostics {
 			if (pids == null)
 				return new Process [0];
 			
-			ArrayList proclist = new ArrayList (pids.Length);
+			var proclist = new List<Process> (pids.Length);
 			for (int i = 0; i < pids.Length; i++) {
 				try {
 					Process p = GetProcessById (pids [i]);
@@ -886,7 +904,7 @@ namespace System.Diagnostics {
 				}
 			}
 
-			return ((Process []) proclist.ToArray (typeof (Process)));
+			return proclist.ToArray ();
 		}
 
 		[MonoTODO]
@@ -940,7 +958,7 @@ namespace System.Diagnostics {
 							       ref proc_info);
 			} finally {
 				if (proc_info.Password != IntPtr.Zero)
-					Marshal.FreeBSTR (proc_info.Password);
+					Marshal.ZeroFreeBSTR (proc_info.Password);
 				proc_info.Password = IntPtr.Zero;
 			}
 			if (!ret) {
@@ -1080,7 +1098,7 @@ namespace System.Diagnostics {
 							      ref proc_info);
 			} finally {
 				if (proc_info.Password != IntPtr.Zero)
-					Marshal.FreeBSTR (proc_info.Password);
+					Marshal.ZeroFreeBSTR (proc_info.Password);
 				proc_info.Password = IntPtr.Zero;
 			}
 			if (!ret) {
@@ -1136,7 +1154,7 @@ namespace System.Diagnostics {
 		// Note that ProcInfo.Password must be freed.
 		private static void FillUserInfo (ProcessStartInfo startInfo, ref ProcInfo proc_info)
 		{
-			if (startInfo.UserName != null) {
+			if (startInfo.UserName.Length != 0) {
 				proc_info.UserName = startInfo.UserName;
 				proc_info.Domain = startInfo.Domain;
 				if (startInfo.Password != null)
@@ -1150,7 +1168,7 @@ namespace System.Diagnostics {
 		private static bool Start_common (ProcessStartInfo startInfo,
 						  Process process)
 		{
-			if (startInfo.FileName == null || startInfo.FileName.Length == 0)
+			if (startInfo.FileName.Length == 0)
 				throw new InvalidOperationException("File name has not been set");
 			
 			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)
@@ -1159,7 +1177,7 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("StandardOutputEncoding is only supported when standard output is redirected");
 			
 			if (startInfo.UseShellExecute) {
-				if (!String.IsNullOrEmpty (startInfo.UserName))
+				if (startInfo.UserName.Length != 0)
 					throw new InvalidOperationException ("UseShellExecute must be false if an explicit UserName is specified when starting a process");
 				return (Start_shell (startInfo, process));
 			} else {
@@ -1260,7 +1278,13 @@ namespace System.Diagnostics {
 						return false;
 				}
 			}
-			return WaitForExit_internal (process_handle, ms);
+
+			bool exited = WaitForExit_internal (process_handle, ms);
+
+			if (exited)
+				OnExited ();
+
+			return exited;
 		}
 
 		/* Waits up to ms milliseconds for process 'handle' to 
@@ -1318,7 +1342,7 @@ namespace System.Diagnostics {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		sealed class ProcessAsyncReader
+		sealed class ProcessAsyncReader : IThreadPoolWorkItem
 		{
 			/*
 			   The following fields match those of SocketAsyncResult.
@@ -1355,7 +1379,7 @@ namespace System.Diagnostics {
 			bool err_out; // true -> stdout, false -> stderr
 			internal int error;
 			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
-			public object ares;
+			public AsyncResult async_result;
 			public int EndCalled;
 
 			// These fields are not in SocketAsyncResult
@@ -1458,6 +1482,15 @@ namespace System.Diagnostics {
 
 			public void Close () {
 				stream.Close ();
+			}
+
+			void IThreadPoolWorkItem.ExecuteWorkItem()
+			{
+				async_result.Invoke ();
+			}
+
+			void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
+			{
 			}
 		}
 
@@ -1563,7 +1596,7 @@ namespace System.Diagnostics {
 				// dispose all managed resources.
 				if(disposing) {
 					// Do stuff here
-					lock (this) {
+					lock (thisLock) {
 						/* These have open FileStreams on the pipes we are about to close */
 						if (async_output != null)
 							async_output.Close ();
@@ -1589,7 +1622,7 @@ namespace System.Diagnostics {
 				
 				// Release unmanaged resources
 
-				lock(this) {
+				lock (thisLock) {
 					if(process_handle!=IntPtr.Zero) {
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
@@ -1607,14 +1640,30 @@ namespace System.Diagnostics {
 		static void CBOnExit (object state, bool unused)
 		{
 			Process p = (Process) state;
-			p.already_waiting = false;
+
+			if (!p.IsExitCallbackPending ())
+				return;
+
+			if (!p.HasExited) {
+				p.UnregisterExitCallback ();
+				p.StartExitCallbackIfNeeded ();
+				return;
+			}
+
 			p.OnExited ();
 		}
+
+		int on_exited_called = 0;
 
 		protected void OnExited() 
 		{
 			if (exited_event == null)
 				return;
+
+			if (on_exited_called != 0 || Interlocked.CompareExchange (ref on_exited_called, 1, 0) != 0)
+				return;
+
+			UnregisterExitCallback ();
 
 			if (synchronizingObject == null) {
 				foreach (EventHandler d in exited_event.GetInvocationList ()) {

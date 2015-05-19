@@ -79,7 +79,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 
 		[Test]
 		// looks like EndpointAddress is *ignored*
-		[Category ("NotOnMac")]
+		[Category ("NotWorking")]
 		public void AnnonceOnlineOfflineAddressSchemeMismatch ()
 		{
 			var ac = new AnnouncementClient (new UdpAnnouncementEndpoint () { Address = new EndpointAddress ("http://localhost:37564")});

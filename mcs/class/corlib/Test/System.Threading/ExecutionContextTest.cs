@@ -27,7 +27,6 @@
 //
 using System.Runtime.Remoting.Messaging;
 
-#if NET_2_0
 
 using System;
 using System.Security;
@@ -292,4 +291,3 @@ namespace MonoTests.System.Threading {
 	}
 }
 
-#endif

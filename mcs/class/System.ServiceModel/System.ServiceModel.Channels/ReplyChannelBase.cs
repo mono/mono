@@ -29,11 +29,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -124,12 +126,29 @@ namespace System.ServiceModel.Channels
 					}
 					try {
 						return TryReceiveRequest (tout, out ctx);
+					} catch (XmlException ex) {
+						Console.WriteLine ("Xml Exception (Dropped Connection?):" + ex.Message);
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
+					} catch (SocketException ex) {
+						Console.WriteLine ("Socket Exception (Dropped Connection?):" + ex.Message);
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
+					} catch (IOException ex) {
+						Console.WriteLine ("I/O Exception (Dropped Connection?):" + ex.Message);
+						//on dropped connection, 
+						//whatever you do don't crash
+						//the whole app.  Ignore for now
 					} finally {
 						lock (async_result_lock) {
 							CurrentAsyncResult = null;
 							CurrentAsyncThread = null;
 						}
 					}
+					ctx = null;
+					return false;
 					});
 			RequestContext dummy;
 			IAsyncResult result;

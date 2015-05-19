@@ -35,42 +35,39 @@ using System.Collections;
 namespace System.Runtime.Remoting.Messaging
 {
 	[Serializable]
-	internal class MethodDictionary : IDictionary
+	internal class MessageDictionary : IDictionary
 	{
 		IDictionary _internalProperties = null;
 		protected IMethodMessage _message;
 		string[] _methodKeys;
 		bool _ownProperties = false;
 
-		public MethodDictionary (IMethodMessage message)
+		public MessageDictionary (IMethodMessage message)
 		{
 			_message = message;
 		}
 
-		internal bool HasInternalProperties 
+		internal bool HasUserData () 
 		{
-			get 
-			{
 				if (null != _internalProperties)
 				{
-					// MethodCallMessageWrapper uses a nested MethodDictionary
-					if (_internalProperties is MethodDictionary)
-						return ((MethodDictionary)_internalProperties).HasInternalProperties;
+					// MethodCallMessageWrapper uses a nested MessageDictionary
+					if (_internalProperties is MessageDictionary)
+						return ((MessageDictionary)_internalProperties).HasUserData ();
 					else 
 						return _internalProperties.Count > 0;
 				}
 				return false;
-			}
 		}
 
-		internal IDictionary InternalProperties
+		internal IDictionary InternalDictionary
 		{
 			get 
 			{
 				if (null != _internalProperties)
 				{
-					if (_internalProperties is MethodDictionary)
-						return ((MethodDictionary)_internalProperties).InternalProperties;
+					if (_internalProperties is MessageDictionary)
+						return ((MessageDictionary)_internalProperties).InternalDictionary;
 				}
 				return _internalProperties;
 			}
@@ -106,7 +103,7 @@ namespace System.Runtime.Remoting.Messaging
 			return false;
 		}
 
-		public MethodDictionary(string[] keys)
+		public MessageDictionary(string[] keys)
 		{
 			_methodKeys = keys;
 		}
@@ -165,10 +162,10 @@ namespace System.Runtime.Remoting.Messaging
 				case "__OutArgs":
 				case "__Return": return;
 
-				case "__MethodName" : 
-				case "__TypeName" : 
-				case "__MethodSignature" : 
-				case "__Args" : throw new ArgumentException ("key was invalid");
+				case "__MethodName" :
+				case "__TypeName" :
+				case "__MethodSignature" :
+				case "__Args" : return; //throw new ArgumentException ("key was invalid " + key);
 				case "__Uri": ((IInternalMessage)_message).Uri = (string) value; return;
 			}
 		}
@@ -284,11 +281,11 @@ namespace System.Runtime.Remoting.Messaging
 
 		class DictionaryEnumerator : IDictionaryEnumerator
 		{
-			MethodDictionary _methodDictionary;
+			MessageDictionary _methodDictionary;
 			IDictionaryEnumerator _hashtableEnum;
 			int _posMethod;
 
-			public DictionaryEnumerator (MethodDictionary methodDictionary)
+			public DictionaryEnumerator (MessageDictionary methodDictionary)
 			{
 				_methodDictionary = methodDictionary;
 				_hashtableEnum = (_methodDictionary._internalProperties != null) ? _methodDictionary._internalProperties.GetEnumerator() : null;
@@ -297,7 +294,7 @@ namespace System.Runtime.Remoting.Messaging
 
 			public object Current 
 			{
-				get {return Entry.Value; }
+				get {return Entry; }
 			}
 
 			public bool MoveNext()

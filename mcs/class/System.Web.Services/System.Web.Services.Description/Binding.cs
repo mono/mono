@@ -36,19 +36,12 @@ namespace System.Web.Services.Description
 {
 	[XmlFormatExtensionPoint ("Extensions")]
 	public sealed class Binding :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 
 		#region Fields
 
 		ServiceDescriptionFormatExtensionCollection extensions;
-#if !NET_2_0
-		string name;
-#endif
 		OperationBindingCollection operations;
 		ServiceDescription serviceDescription;
 		XmlQualifiedName type;
@@ -60,9 +53,6 @@ namespace System.Web.Services.Description
 		public Binding ()
 		{
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#if !NET_2_0
-			name = String.Empty;
-#endif
 			operations = new OperationBindingCollection (this);
 			serviceDescription = null;
 			type = XmlQualifiedName.Empty;
@@ -74,20 +64,11 @@ namespace System.Web.Services.Description
 
 		[XmlIgnore]
 		public 
-#if NET_2_0
 		override
-#endif
 		ServiceDescriptionFormatExtensionCollection Extensions { 	
 			get { return extensions; }
 		}
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NCName")]	
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlElement ("operation")]
 		public OperationBindingCollection Operations {

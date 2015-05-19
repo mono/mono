@@ -35,9 +35,7 @@ using System.Linq;
 
 namespace Microsoft.Build.Execution
 {
-#if NET_4_5
 	public
-#endif
 	sealed class ProjectTargetInstance
 	{
 		internal ProjectTargetInstance (ProjectTargetElement xml)
@@ -64,7 +62,6 @@ namespace Microsoft.Build.Execution
 			Outputs = xml.Outputs;
 			Returns = xml.Returns;
 			Tasks = xml.Tasks.Select (t => new ProjectTaskInstance (t)).ToArray ();
-			#if NET_4_5
 			AfterTargetsLocation = xml.AfterTargetsLocation;
 			BeforeTargetsLocation = xml.BeforeTargetsLocation;
 			ConditionLocation = xml.ConditionLocation;
@@ -74,7 +71,6 @@ namespace Microsoft.Build.Execution
 			Location = xml.Location;
 			OutputsLocation = xml.OutputsLocation;
 			ReturnsLocation = xml.ReturnsLocation;
-			#endif
 		}
 
 		public ElementLocation AfterTargetsLocation { get; private set; }

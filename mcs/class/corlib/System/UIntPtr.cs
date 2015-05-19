@@ -162,7 +162,6 @@ namespace System
 			get { return sizeof (void*); }
 		}
 
-#if NET_4_0
 		public static UIntPtr Add (UIntPtr pointer, int offset)
 		{
 			return (UIntPtr) (unchecked (((byte *) pointer) + offset));
@@ -182,6 +181,5 @@ namespace System
 		{
 			return (UIntPtr) (unchecked (((byte *) pointer) - offset));
 		}
-#endif
 	}
 }

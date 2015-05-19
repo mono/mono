@@ -3,6 +3,7 @@
 // (C) 2002 Ulrich Kunitz
 //
 
+using System.Collections.Generic;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -132,12 +133,10 @@ public class CalendarTest {
 	private TaiwanCalendar tacal;
 	private KoreanCalendar kcal;
 	private ThaiBuddhistCalendar tbcal;
-#if NET_2_0
 	private ChineseLunisolarCalendar clcal;
 	private TaiwanLunisolarCalendar tlcal;
 	private JapaneseLunisolarCalendar jlcal;
 	private KoreanLunisolarCalendar klcal;
-#endif
 
 	[SetUp]
 	protected void SetUp() {
@@ -152,12 +151,10 @@ public class CalendarTest {
 		acal = new Calendar[] {
 			gcal, jucal, hical, hecal, jacal,
 			tacal, kcal, tbcal};
-#if NET_2_0
 		clcal = new ChineseLunisolarCalendar ();
 		tlcal = new TaiwanLunisolarCalendar ();
 		jlcal = new JapaneseLunisolarCalendar ();
 		klcal = new KoreanLunisolarCalendar ();
-#endif
 	}
 
 	private void RowCheck(params Date[] adate) {
@@ -467,11 +464,9 @@ public class CalendarTest {
 		Assert.AreEqual(1, KoreanCalendar.KoreanEra, "B05 KoreanEra");
 		Assert.AreEqual(1, ThaiBuddhistCalendar.ThaiBuddhistEra, "B06 ThaiBuddhistEra");
 			
-#if NET_2_0
 		Assert.AreEqual(1, ChineseLunisolarCalendar.ChineseEra, "CNLunisor");
 		Assert.AreEqual(1, JapaneseLunisolarCalendar.JapaneseEra, "JPLunisor");
 		Assert.AreEqual(1, KoreanLunisolarCalendar.GregorianEra, "KRLunisor");
-#endif
 	}
 
 	[Test]
@@ -507,8 +502,6 @@ public class CalendarTest {
 		}
 	}
 
-#if NET_2_0
-	[Category ("NotWorking")]
 	[Test]
 	public void TestErasProperty2() {
 		Assert.AreEqual(1, clcal.Eras.Length, "cn");
@@ -519,7 +512,6 @@ public class CalendarTest {
 		Assert.AreEqual(4, jlcal.Eras [0], "jp.1");
 		Assert.AreEqual(3, jlcal.Eras [1], "jp.2");
 	}
-#endif
 
 	[Test]
 	public void TestTwoDigitYearMax() {
@@ -547,7 +539,8 @@ public class CalendarTest {
 			catch (ArgumentOutOfRangeException) {
 				exception = true;
 			}
-			Assert.IsTrue(exception,
+
+			Assert.IsFalse(exception,
 				   String.Format("E09 {0}.TwoDigitYearMax 99 " +
 								 " out of range exception", cal));
 
@@ -605,9 +598,7 @@ public class CalendarTest {
 		Assert.AreEqual (2, next.Month, "next");
 	}
 
-#if NET_2_0
 	[Test]
-	[Category ("NotWorking")]
 	public void GetLeapMonth ()
 	{
 		GregorianCalendar gc = new GregorianCalendar ();
@@ -698,7 +689,6 @@ public class CalendarTest {
 		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Sunday), "#5");
 		Assert.AreEqual (52, gc.GetWeekOfYear (new DateTime (2000, 1, 1), CalendarWeekRule.FirstFullWeek, DayOfWeek.Sunday), "#6");
 	}
-#endif
 
 	[Test]
 	public void TestToFourDigitYear() {
@@ -795,6 +785,44 @@ public class CalendarTest {
 		Assert.AreEqual (4263, kc.ToFourDigitYear (63), "#4-2");
 		Assert.AreEqual (4362, kc.ToFourDigitYear (4362), "#4-3");
 		Assert.AreEqual (4363, kc.ToFourDigitYear (4363), "#4-4");
+	}
+
+	public void TestDaysInYear (Calendar calendar, int year)
+	{
+		var daysInYear = calendar.GetDaysInYear (year);
+		var daysInMonths = 0;
+		var monthInYear = calendar.GetMonthsInYear (year);
+		for (var m = 1; m <= monthInYear; m++)
+			daysInMonths += calendar.GetDaysInMonth (year, m);
+
+		Assert.AreEqual (daysInYear, daysInMonths, string.Format("Calendar:{0} Year:{1}",calendar.GetType(), year));
+	}
+
+	[Test]
+	public void DaysInYear ()
+	{
+		var calendars = new List<Calendar> (acal) {
+			new UmAlQuraCalendar ()
+		};
+
+		foreach (var calendar in calendars) {
+			var minYear = calendar.GetYear (calendar.MinSupportedDateTime);
+			var maxYear = calendar.GetYear (calendar.MaxSupportedDateTime) - 1 ;
+			var midYear = calendar.GetYear (DateTime.Now);
+			var yearsTested = Math.Min (1000, (maxYear - minYear) / 2);
+
+			midYear -= yearsTested / 2;
+
+			int y1 = minYear, y2 = maxYear, y3 = midYear;
+			for (var i = 0; i < yearsTested; i++) {
+				TestDaysInYear (calendar, y1);
+				TestDaysInYear (calendar, y2);
+				if (y3 > minYear && y3 < maxYear)
+					TestDaysInYear (calendar, y3);
+
+				y1++; y2--; y3++;
+			}
+		}
 	}
 
 	// TODO: more tests :-)

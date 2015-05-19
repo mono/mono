@@ -34,7 +34,6 @@ using System.Web.UI.HtmlControls;
 
 using NUnit.Framework;
 
-#if NET_2_0
 
 namespace MonoTests.System.Web.UI.HtmlControls {
 
@@ -122,4 +121,3 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	}	
 }
 
-#endif

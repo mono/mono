@@ -34,9 +34,7 @@ namespace System.Management
 		CSharp,
 		JScript,
 		VB,
-#if NET_2_0
 		VJSharp,
 		Mcpp,
-#endif
 	}
 }

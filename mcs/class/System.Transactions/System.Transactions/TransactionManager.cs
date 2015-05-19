@@ -8,7 +8,6 @@
 // (C)2005 Novell Inc,
 // (C)2006 Novell Inc,
 //
-#if NET_2_0
 using System.Configuration;
 #if !MOBILE
 using System.Transactions.Configuration;
@@ -86,4 +85,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

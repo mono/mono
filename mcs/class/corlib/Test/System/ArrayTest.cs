@@ -3618,5 +3618,22 @@ public class ArrayTest
 
 #endif
 
+	[Test]
+	public void JaggedArrayCtor ()
+	{
+        var type = Type.GetType ("System.Object[][]");
+
+		ConstructorInfo ctor = null;
+        foreach (var c in type.GetConstructors ()) {
+			if (c.GetParameters ().Length == 2)
+				ctor = c;
+		}
+		Assert.IsNotNull (ctor);
+		var arr = (object[])ctor.Invoke (new object [] { 4, 10 });
+		for (int i = 0; i < 4; ++i) {
+			Assert.IsNotNull (arr [i]);
+			Assert.AreEqual (10, ((object[])arr [i]).Length);
+		}
+	}
 }
 }

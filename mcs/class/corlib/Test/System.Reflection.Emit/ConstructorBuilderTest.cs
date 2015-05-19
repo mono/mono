@@ -195,9 +195,7 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=341439
-#endif
 	public void DefineParameter_Position_Zero ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -380,9 +378,6 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // ArgumentNullException in GetParameters
-#endif
 	public void GetParameters_Complete2 ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -408,21 +403,12 @@ public class ConstructorBuilderTest
 		try {
 			cb.GetParameters ();
 			Assert.Fail ("#1");
-#if NET_2_0
 		} catch (NotSupportedException ex) {
 			// Type has not been created
 			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 			Assert.IsNull (ex.InnerException, "#3");
 			Assert.IsNotNull (ex.Message, "#4");
 		}
-#else
-		} catch (InvalidOperationException ex) {
-			// Type has not been created
-			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-		}
-#endif
 	}
 
 	[Test]
@@ -433,20 +419,12 @@ public class ConstructorBuilderTest
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		MethodToken tokenA = cb.GetToken ();
-#if NET_2_0
 		Assert.IsFalse (tokenA == MethodToken.Empty, "#1");
-#else
-		Assert.IsFalse (tokenA.Token == MethodToken.Empty.Token, "#1");
-#endif
 
 		genClass.CreateType ();
 
 		MethodToken tokenB = cb.GetToken ();
-#if NET_2_0
 		Assert.AreEqual (tokenA, tokenB, "#2");
-#else
-		Assert.AreEqual (tokenA.Token, tokenB.Token, "#2");
-#endif
 	}
 
 	[Test] // Invoke (Object [])

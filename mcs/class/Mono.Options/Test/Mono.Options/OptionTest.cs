@@ -66,7 +66,7 @@ namespace MonoTests.Mono.Options
 		{
 			object p = null;
 			Utils.AssertException (typeof(ArgumentNullException), 
-					"Argument cannot be null.\nParameter name: prototype", 
+					"Value cannot be null.\nParameter name: prototype", 
 					p, v => { new DefaultOption (null, null); });
 			Utils.AssertException (typeof(ArgumentException), 
 					"Cannot be the empty string.\nParameter name: prototype",
@@ -91,7 +91,7 @@ namespace MonoTests.Mono.Options
 			Utils.AssertException (null, null,
 					p, v => { new DefaultOption ("a|b=", null, 2); });
 			Utils.AssertException (typeof(ArgumentOutOfRangeException),
-					"Argument is out of range.\nParameter name: maxValueCount",
+					"Specified argument was out of the range of valid values.\nParameter name: maxValueCount",
 					p, v => { new DefaultOption ("a", null, -1); });
 			Utils.AssertException (typeof(ArgumentException),
 					"Cannot provide maxValueCount of 0 for OptionValueType.Required or " +

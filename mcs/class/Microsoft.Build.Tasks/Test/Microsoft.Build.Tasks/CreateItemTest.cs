@@ -252,7 +252,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 
 		}
 
-#if NET_3_5 || NET_4_0
 		[Test]
 		public void TestItemsWithWildcards () {
 			Engine engine = new Engine (Consts.BinPath);
@@ -369,7 +368,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Directory.Delete (basedir, true);
 			}
 		}
-#endif
 
 		void CreateDirectoriesAndFiles (string basedir, string[] dirs, string[] files) {
 			foreach (string dir in dirs)

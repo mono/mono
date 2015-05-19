@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -329,11 +328,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-#if NET_4_0
 		public
-#else
-		protected
-#endif
 		void AppendTextUnquoted (string textToAppend)
 		{
 			commandLine.Append (textToAppend);
@@ -377,4 +372,3 @@ namespace Microsoft.Build.Utilities
 	}
 }
 
-#endif

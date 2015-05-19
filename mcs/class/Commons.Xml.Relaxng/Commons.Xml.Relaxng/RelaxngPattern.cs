@@ -38,11 +38,7 @@ using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
 using Commons.Xml.Relaxng.Rnc;
 
-#if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
-#else
-using NSResolver = System.Xml.XmlNamespaceManager;
-#endif
 
 namespace Commons.Xml.Relaxng
 {

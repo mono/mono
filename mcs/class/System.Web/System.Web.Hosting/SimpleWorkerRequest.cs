@@ -127,11 +127,9 @@ namespace System.Web.Hosting {
 				return null;
 			}
 		}
-#if NET_2_0
 		public override string RootWebConfigPath {
 			get { return WebConfigurationManager.OpenWebConfiguration ("~").FilePath; }
 		}
-#endif
 
 		public override void EndOfRequest ()
 		{

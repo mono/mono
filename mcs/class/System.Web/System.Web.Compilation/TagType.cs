@@ -41,9 +41,7 @@ namespace System.Web.Compilation
 		CodeRender,
 		CodeRenderExpression,
 		Include,
-#if NET_4_0
 		CodeRenderEncode
-#endif
 	}
 }
 

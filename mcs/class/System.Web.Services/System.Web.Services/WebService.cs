@@ -41,9 +41,7 @@ namespace System.Web.Services {
 
 		HttpContext _context;
 
-#if NET_2_0
 		SoapProtocolVersion _soapVersion;
-#endif
 
 		#endregion // Fields
 
@@ -52,11 +50,9 @@ namespace System.Web.Services {
 		public WebService ()
 		{
 			_context = HttpContext.Current;
-#if NET_2_0
 			object o = _context != null ? _context.Items ["WebServiceSoapVersion"] : null;
 			if (o is SoapProtocolVersion)
 				_soapVersion = (SoapProtocolVersion) o;
-#endif
 		}
 		
 		#endregion // Constructors
@@ -99,14 +95,12 @@ namespace System.Web.Services {
 			get { return _context.User; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[System.Runtime.InteropServices.ComVisible (false)]
 		public System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
 			get { return _soapVersion; }
 		}
-#endif
 
 		#endregion // Properties
 	}

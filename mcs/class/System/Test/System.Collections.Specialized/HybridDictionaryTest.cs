@@ -72,9 +72,7 @@ namespace MonoTests.System.Collections.Specialized
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Empty () 
 		{
 			HybridDictionary hd = new HybridDictionary ();

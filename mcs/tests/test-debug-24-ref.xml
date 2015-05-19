@@ -37,7 +37,7 @@
       </locals>
       <scopes>
         <entry index="0" start="0x1" end="0x16" />
-        <entry index="1" start="0x9" end="0x9" />
+        <entry index="1" start="0x8" end="0x9" />
       </scopes>
     </method>
     <method token="0x6000004">

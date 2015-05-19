@@ -168,7 +168,6 @@ namespace MonoTests.System.Net.Sockets
 			Assert.IsTrue (sock != listener.GetSocket (), "#08");
 		}
 
-#if NET_2_0
 		[Test]
 		public void StartListenMoreThan5 ()
 		{
@@ -189,6 +188,5 @@ namespace MonoTests.System.Net.Sockets
 			listen.Start (65536);
 			listen.Stop ();
 		}
-#endif
 	}
 }

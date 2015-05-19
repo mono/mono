@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_2_0
 
 using System;
 using System.Runtime.InteropServices;
@@ -55,5 +54,4 @@ namespace System.Drawing
 	}
 }
 
-#endif
 

@@ -129,7 +129,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return _inArgInfo.GetInOutArgName(index);
 		}
 
-		class DictionaryWrapper : MethodCallDictionary
+		class DictionaryWrapper : MCMDictionary
 		{
 			IDictionary _wrappedDictionary;
 			static string[] _keys = new string[] {"__Args"};

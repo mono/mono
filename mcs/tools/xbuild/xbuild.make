@@ -2,6 +2,10 @@ ifneq (2.0, $(XBUILD_VERSION))
 NAME_SUFFIX = .v$(XBUILD_VERSION)
 endif
 
+ifeq (14.0, $(XBUILD_VERSION))
+NAME_SUFFIX = .Core
+endif
+
 XBUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Framework.dll
 XBUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Engine.dll
 XBUILD_UTILITIES := $(topdir)/class/lib/$(PROFILE)/Microsoft.Build.Utilities$(NAME_SUFFIX).dll

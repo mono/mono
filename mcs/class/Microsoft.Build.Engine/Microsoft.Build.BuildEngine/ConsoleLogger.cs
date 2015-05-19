@@ -28,6 +28,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -277,7 +278,7 @@ namespace Microsoft.Build.BuildEngine
 				ParseParameters ();
 		}
 		
-		Dictionary<object,BuildRecord> build_records = new Dictionary<object, BuildRecord> ();
+		ConcurrentDictionary<object,BuildRecord> build_records = new ConcurrentDictionary<object, BuildRecord> ();
 		
 		object dummy_key = new object ();
 		
@@ -291,16 +292,8 @@ namespace Microsoft.Build.BuildEngine
 			// Hence we expect sender as a valid object only if it is IBuildEngine4 -
 			// only Microsoft.Build.Internal.BuildEngine4 implements it so far. 
 			// (Used IBuildEngine3 because it needs to build for NET_4_0).
-#if NET_4_0
 			var key = sender as IBuildEngine3 ?? dummy_key;
-#else
-			var key = dummy_key;
-#endif
-			if (!build_records.TryGetValue (key, out r)) {
-				r = new BuildRecord (this);
-				build_records.Add (key, r);
-			}
-			return r;
+			return build_records.GetOrAdd (key, _ => new BuildRecord (this));
 		}
 
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
@@ -311,7 +304,7 @@ namespace Microsoft.Build.BuildEngine
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
 			GetBuildRecord (sender).BuildFinishedHandler (args);
-			build_records.Remove (sender);
+			((IDictionary) build_records).Remove (sender);
 		}
 		
 		void PushEvent<T> (object sender, T args) where T: BuildStatusEventArgs
@@ -907,7 +900,7 @@ namespace Microsoft.Build.BuildEngine
 			void DumpPerformanceSummary ()
 			{
 				SetColor (eventColor);
-				WriteLine ("Target perfomance summary:");
+				WriteLine ("Target performance summary:");
 				ResetColor ();
 	
 				foreach (var pi in targetPerfTable.OrderBy (pair => pair.Value.Time))
@@ -916,7 +909,7 @@ namespace Microsoft.Build.BuildEngine
 				WriteLine (String.Empty);
 	
 				SetColor (eventColor);
-				WriteLine ("Tasks perfomance summary:");
+				WriteLine ("Tasks performance summary:");
 				ResetColor ();
 	
 				foreach (var pi in tasksPerfTable.OrderBy (pair => pair.Value.Time))
@@ -1018,13 +1011,27 @@ namespace Microsoft.Build.BuildEngine
 			if (!StartHandlerHasExecuted)
 				return;
 
-			if (EventArgs is ProjectStartedEventArgs)
-				ConsoleLogger.ProjectFinishedHandler (Sender, finished_args as ProjectFinishedEventArgs);
-			else if (EventArgs is TargetStartedEventArgs)
-				ConsoleLogger.TargetFinishedHandler (Sender, finished_args as TargetFinishedEventArgs);
-			else if (EventArgs is TaskStartedEventArgs)
-				ConsoleLogger.TaskFinishedHandler (Sender, finished_args as TaskFinishedEventArgs);
-			else if (!(EventArgs is BuildStartedEventArgs))
+			if (EventArgs is ProjectStartedEventArgs) {
+				var pfa = finished_args as ProjectFinishedEventArgs;
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (pfa == null)
+					return;
+
+				ConsoleLogger.ProjectFinishedHandler (Sender, pfa);
+			} else if (EventArgs is TargetStartedEventArgs) {
+				var fa = finished_args as TargetFinishedEventArgs;
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (fa == null)
+					return;
+
+				ConsoleLogger.TargetFinishedHandler (Sender, fa);
+			} else if (EventArgs is TaskStartedEventArgs) {
+				// FIXME: BuildFinishedHandlerActual sends us BuildFinishedEventArgs via PopEvent
+				if (!(finished_args is TaskFinishedEventArgs))
+					return;
+
+				ConsoleLogger.TaskFinishedHandler (Sender, (TaskFinishedEventArgs) finished_args);
+			} else if (!(EventArgs is BuildStartedEventArgs))
 				throw new InvalidOperationException ("Unexpected event on the stack, type: " + EventArgs.GetType ());
 		}
 	}

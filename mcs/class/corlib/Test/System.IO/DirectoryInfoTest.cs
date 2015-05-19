@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -515,9 +516,7 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (0, info.GetDirectories ("test[12]*").Length, "#6");
 				Assert.AreEqual (2, info.GetDirectories ("test2*0").Length, "#7");
 				Assert.AreEqual (4, info.GetDirectories ("*test*").Length, "#8");
-#if NET_2_0
 				Assert.AreEqual (6, info.GetDirectories ("*", SearchOption.AllDirectories).Length, "#9");
-#endif
 			} finally {
 				DeleteDir (path);
 			}
@@ -571,7 +570,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual(directoryToBeLookedFor, directoriesFound[0].Name, "The name of the directory found should match the expected one.");
 		}
 
-#if NET_2_0
 		[Test] // GetDirectories (String, SearchOption)
 		public void GetDirectories3_SearchPattern_Null ()
 		{
@@ -586,7 +584,6 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("searchPattern", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test] // GetFiles ()
 		public void GetFiles1 ()
@@ -691,7 +688,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFiles (String, SearchOption)
 		public void GetFiles3_SearchPattern_Null ()
 		{
@@ -706,7 +702,6 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("searchPattern", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test]
 		public void GetFileSystemInfos2_SearchPattern_Null ()
@@ -1058,6 +1053,23 @@ namespace MonoTests.System.IO
 			info = new DirectoryInfo (TempFolder + DSC + "ToString.Test");
 			Assert.AreEqual (TempFolder + DSC + "ToString.Test", info.ToString ());
 		}
+
+#if NET_4_0
+		[Test]
+		public void EnumerateFileSystemInfosTest ()
+		{
+			var dirInfo = new DirectoryInfo (TempFolder);
+			dirInfo.CreateSubdirectory ("1").CreateSubdirectory ("a");
+			dirInfo.CreateSubdirectory ("2").CreateSubdirectory ("b");
+
+			var l = new List<string> ();
+			foreach (var info in dirInfo.EnumerateFileSystemInfos ("*", SearchOption.AllDirectories))
+				l.Add (info.Name);
+
+			l.Sort ();
+			Assert.AreEqual ("1,2,a,b", string.Join (",", l), "#1");
+		}
+#endif
 
 #if !MOBILE
 		[Test]

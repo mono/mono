@@ -32,18 +32,12 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif			
 		public void NullKeyCtor ()
 		{
 			DictionaryEntry d = new DictionaryEntry (null, "bar");
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif			
 		public void NullKeySetter ()
 		{
 			DictionaryEntry d = new DictionaryEntry ("foo", "bar");

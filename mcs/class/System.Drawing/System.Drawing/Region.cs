@@ -34,9 +34,6 @@ using System.Security.Permissions;
 
 namespace System.Drawing
 {
-#if !NET_2_0
-	[ComVisible (false)]
-#endif
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
                 private IntPtr nativeRegion = IntPtr.Zero;
@@ -641,7 +638,6 @@ namespace System.Drawing
 				nativeRegion = value;
 			}
 		}
-#if NET_2_0
 		// why is this a instance method ? and not static ?
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHrgn (IntPtr regionHandle)		
@@ -660,6 +656,5 @@ namespace System.Drawing
 			}
 			GDIPlus.CheckStatus (status);
 		}
-#endif
 	}
 }

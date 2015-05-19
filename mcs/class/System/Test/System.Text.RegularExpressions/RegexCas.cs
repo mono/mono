@@ -118,10 +118,8 @@ namespace MonoCasTests.System.Text.RegularExpressions {
 
 			Assert.AreEqual (2, Regex.Split (String.Empty, String.Empty).Length, "Split");
 			Assert.AreEqual (2, Regex.Split (String.Empty, String.Empty, RegexOptions.Singleline).Length, "Split2");
-#if NET_2_0
 			Assert.AreEqual (15, Regex.CacheSize, "CacheSize");
 			Regex.CacheSize = 1;
-#endif
 		}
 
 		[Test]

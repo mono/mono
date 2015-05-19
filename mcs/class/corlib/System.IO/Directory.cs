@@ -498,7 +498,6 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_4_0
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:
@@ -632,7 +631,6 @@ namespace System.IO
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
 		}
 		
-#endif
 
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{

@@ -54,16 +54,6 @@ class Test
 		if ((typeof (X2).Attributes & TypeAttributes.BeforeFieldInit) == 0)
 			return 2;
 		
-#if NET_2_0
-		ConstructorInfo mi = typeof(C).GetConstructors ()[0];
-        MethodBody mb = mi.GetMethodBody();
-		
-		if (mb.GetILAsByteArray ().Length != 7) {
-			Console.WriteLine("Optimization failed");
-			return 3;
-		}
-#endif
-			
 		Console.WriteLine ("OK");
 		return 0;
 	}

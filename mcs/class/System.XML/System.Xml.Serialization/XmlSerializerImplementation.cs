@@ -33,11 +33,7 @@ using System.Collections;
 
 namespace System.Xml.Serialization
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	
 	abstract class XmlSerializerImplementation
 	{

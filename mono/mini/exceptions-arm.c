@@ -36,6 +36,7 @@
 #include "mini.h"
 #include "mini-arm.h"
 #include "mono/utils/mono-sigcontext.h"
+#include "mono/utils/mono-compiler.h"
 
 /*
  * arch_get_restore_context:
@@ -153,8 +154,10 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow)
+		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
+			mono_ex->trace_ips = NULL;
+		}
 	}
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
@@ -500,20 +503,6 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	return FALSE;
 }
 
-#if MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-void
-mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
-{
-	mono_sigctx_to_monoctx (sigctx, mctx);
-}
-
-void
-mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
-{
-	mono_monoctx_to_sigctx (mctx, ctx);
-}
-#endif /* MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX */
-
 /*
  * handle_exception:
  *
@@ -536,10 +525,7 @@ handle_signal_exception (gpointer obj)
  * This works around a gcc 4.5 bug:
  * https://bugs.launchpad.net/ubuntu/+source/gcc-4.5/+bug/721531
  */
-#if defined(__GNUC__)
-__attribute__((noinline))
-#endif
-static gpointer
+static MONO_NEVER_INLINE gpointer
 get_handle_signal_exception_addr (void)
 {
 	return handle_signal_exception;
@@ -564,7 +550,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	guint64 sp = UCONTEXT_REG_SP (sigctx);
 
 	/* Pass the ctx parameter in TLS */
-	mono_arch_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
 	/* The others in registers */
 	UCONTEXT_REG_R0 (sigctx) = (gsize)obj;
 
@@ -587,13 +573,13 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	MonoContext mctx;
 	gboolean result;
 
-	mono_arch_sigctx_to_monoctx (ctx, &mctx);
+	mono_sigctx_to_monoctx (ctx, &mctx);
 
 	result = mono_handle_exception (&mctx, obj);
 	/* restore the context so that returning from the signal handler will invoke
 	 * the catch clause 
 	 */
-	mono_arch_monoctx_to_sigctx (&mctx, ctx);
+	mono_monoctx_to_sigctx (&mctx, ctx);
 	return result;
 #endif
 }
@@ -622,9 +608,8 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	/* Allocate a stack frame */
 	sp -= 16;
 	MONO_CONTEXT_SET_SP (ctx, sp);
-	MONO_CONTEXT_SET_IP (ctx, async_cb);
 
-	// FIXME: thumb/arm
+	mono_arch_setup_resume_sighandler_ctx (ctx, async_cb);
 }
 
 /*

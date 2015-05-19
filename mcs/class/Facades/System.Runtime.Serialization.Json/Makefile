@@ -11,7 +11,8 @@ LIBRARY = System.Runtime.Serialization.Json.dll
 
 KEY_FILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
-LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System.Runtime.Serialization
+LIB_REFS = System.Runtime.Serialization
+LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib
 
 PLATFORM_DEBUG_FLAGS =
 

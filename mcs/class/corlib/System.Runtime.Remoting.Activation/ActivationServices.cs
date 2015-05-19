@@ -221,6 +221,16 @@ namespace System.Runtime.Remoting.Activation
 			return null;
 		}
 
+		internal static void PushActivationAttributes (Type serverType, Object[] attributes)
+		{
+			// TODO:
+		}
+
+		internal static void PopActivationAttributes (Type serverType)
+		{
+			// TODO:
+		}
+
 		// Allocates an uninitialized instance. It never creates proxies.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object AllocateUninitializedClassInstance (Type type);

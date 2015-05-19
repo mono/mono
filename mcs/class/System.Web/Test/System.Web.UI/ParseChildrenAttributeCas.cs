@@ -53,9 +53,7 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (pca.IsDefaultAttribute (), "IsDefaultAttribute");
 			// this throws a NullReferenceException on MS 2.0 beta2
 			// Assert.IsTrue (pca.GetHashCode () != 0, "GetHashCode"); // likely
-#if NET_2_0
 			Assert.AreEqual (typeof (Control), pca.ChildControlType, "ChildControlType");
-#endif
 		}
 
 		[Test]
@@ -68,9 +66,7 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (pca.Equals (pca), "Equals");
 			Assert.IsFalse (pca.IsDefaultAttribute (), "IsDefaultAttribute");
 			Assert.IsTrue (pca.GetHashCode () != 0, "GetHashCode"); // likely
-#if NET_2_0
 			Assert.AreEqual (typeof (Control), pca.ChildControlType, "ChildControlType");
-#endif
 		}
 
 		[Test]
@@ -83,12 +79,9 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (pca.Equals (pca), "Equals");
 			Assert.IsFalse (pca.IsDefaultAttribute (), "IsDefaultAttribute");
 			Assert.IsTrue (pca.GetHashCode () != 0, "GetHashCode"); // likely
-#if NET_2_0
 			Assert.AreEqual (typeof (Control), pca.ChildControlType, "ChildControlType");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void CtorType_Deny_Unrestricted ()
@@ -101,17 +94,14 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (pca.GetHashCode () != 0, "GetHashCode"); // likely
 			Assert.AreEqual (typeof (string), pca.ChildControlType, "ChildControlType");
 		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Static_Deny_Unrestricted ()
 		{
 			Assert.IsNotNull (ParseChildrenAttribute.Default, "Default");
-#if NET_2_0
 			Assert.IsNotNull (ParseChildrenAttribute.ParseAsChildren, "ParseAsChildren");
 			Assert.IsNotNull (ParseChildrenAttribute.ParseAsProperties, "ParseAsProperties");
-#endif
 		}
 
 		// LinkDemand

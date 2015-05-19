@@ -59,16 +59,12 @@ namespace MonoCasTests.System.Web {
 
 			Assert.AreEqual (TraceMode.SortByTime, tc.TraceMode, "TraceMode");
 			tc.TraceMode = TraceMode.Default;
-#if NET_2_0
 			tc.TraceFinished += new TraceContextEventHandler (Handler);
 			tc.TraceFinished -= new TraceContextEventHandler (Handler);
-#endif
 		}
-#if NET_2_0
 		private void Handler (object sender, TraceContextEventArgs e)
 		{
 		}
-#endif
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.High)]
 		[ExpectedException (typeof (SecurityException))]

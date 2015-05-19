@@ -34,9 +34,7 @@ using System.Threading;
 namespace System.Security {
 
 	public sealed class SecurityContext
-#if NET_4_0
 		: IDisposable
-#endif
 	{
 		private bool _capture;
 		private IntPtr _winid;
@@ -89,11 +87,9 @@ namespace System.Security {
 			return capture;
 		}
 		
-#if NET_4_0
 		public void Dispose ()
 		{
 		}
-#endif
 
 		// internal stuff
 

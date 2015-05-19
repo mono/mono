@@ -56,7 +56,7 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceDescriptionImportStyle style;
 		
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		CodeGenerationOptions options;
 		CodeDomProvider codeGenerator = new CSharpCodeProvider ();
 		ImportContext context;
@@ -100,7 +100,7 @@ namespace System.Web.Services.Description {
 			set { style = value; }
 		}
 		
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public CodeGenerationOptions CodeGenerationOptions {
 			get { return options; }
@@ -158,16 +158,14 @@ namespace System.Web.Services.Description {
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (new SoapProtocolImporter ());
-#if NET_2_0 
 			list.Add (new Soap12ProtocolImporter ());
-#endif
 			list.Add (new HttpGetProtocolImporter ());
 			list.Add (new HttpPostProtocolImporter ());
 			return list;
 		}
 #endif
 		
-#if NET_2_0 && !MOBILE
+#if !MOBILE
 
 		[MonoTODO] // where to use Verbose and Extensions in options?
 		public static StringCollection GenerateWebReferences (

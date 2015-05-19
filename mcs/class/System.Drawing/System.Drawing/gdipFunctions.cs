@@ -39,11 +39,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Globalization;
 using System.Security;
-#if NET_2_0
 using System.Runtime.InteropServices.ComTypes;
-#else
-using IStream = System.Runtime.InteropServices.UCOMIStream;
-#endif
 
 namespace System.Drawing
 {
@@ -51,11 +47,7 @@ namespace System.Drawing
 	/// GDI+ API Functions
 	/// </summary>
 	[SuppressUnmanagedCodeSecurity]
-#if NET_2_0
 	internal static class GDIPlus {
-#else
-	internal class GDIPlus {
-#endif
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;

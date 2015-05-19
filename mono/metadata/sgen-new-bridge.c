@@ -44,14 +44,13 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "sgen-gc.h"
-#include "sgen-bridge.h"
-#include "sgen-hash-table.h"
-#include "sgen-qsort.h"
+#include "sgen/sgen-gc.h"
+#include "sgen-bridge-internal.h"
+#include "sgen/sgen-hash-table.h"
+#include "sgen/sgen-qsort.h"
+#include "sgen/sgen-client.h"
 #include "tabledefs.h"
 #include "utils/mono-logger-internal.h"
-#include "utils/mono-time.h"
-#include "utils/mono-compiler.h"
 
 //#define NEW_XREFS
 #ifdef NEW_XREFS
@@ -528,7 +527,7 @@ add_source (HashEntry *entry, HashEntry *src)
 static void
 free_data (void)
 {
-	MonoObject *obj;
+	MonoObject *obj G_GNUC_UNUSED;
 	HashEntry *entry;
 	int total_srcs = 0;
 	int max_srcs = 0;
@@ -626,7 +625,7 @@ static int dfs1_passes, dfs2_passes;
 
 #undef HANDLE_PTR
 #define HANDLE_PTR(ptr,obj)	do {					\
-		MonoObject *dst = (MonoObject*)*(ptr);			\
+		GCObject *dst = (GCObject*)*(ptr);			\
 		if (dst && object_needs_expansion (&dst)) {			\
 			++num_links;					\
 			dyn_array_ptr_push (&dfs_stack, obj_entry);	\
@@ -652,6 +651,7 @@ dfs1 (HashEntry *obj_entry)
 		if (obj_entry) {
 			/* obj_entry needs to be expanded */
 			src = dyn_array_ptr_pop (&dfs_stack);
+
 			if (src)
 				g_assert (!src->v.dfs1.forwarded_to);
 
@@ -664,6 +664,7 @@ dfs1 (HashEntry *obj_entry)
 
 			if (!obj_entry->v.dfs1.is_visited) {
 				int num_links = 0;
+				mword desc = sgen_obj_get_descriptor_safe (start);
 
 				obj_entry->v.dfs1.is_visited = 1;
 
@@ -671,7 +672,7 @@ dfs1 (HashEntry *obj_entry)
 				dyn_array_ptr_push (&dfs_stack, obj_entry);
 				dyn_array_ptr_push (&dfs_stack, NULL);
 
-#include "sgen-scan-object.h"
+#include "sgen/sgen-scan-object.h"
 
 				/*
 				 * We can remove non-bridge objects with a single outgoing
@@ -972,7 +973,7 @@ static int fist_pass_links, second_pass_links, sccs_links;
 static int max_sccs_links = 0;
 
 static void
-register_finalized_object (MonoObject *obj)
+register_finalized_object (GCObject *obj)
 {
 	g_assert (sgen_need_bridge_processing ());
 	dyn_array_ptr_push (&registered_bridges, obj);
@@ -989,7 +990,7 @@ processing_stw_step (void)
 {
 	int i;
 	int bridge_count;
-	MonoObject *obj;
+	MonoObject *obj G_GNUC_UNUSED;
 	HashEntry *entry;
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
@@ -1045,8 +1046,7 @@ processing_build_callback_data (int generation)
 	int i, j;
 	int num_sccs, num_xrefs;
 	int max_entries, max_xrefs;
-	int sccs_size;
-	MonoObject *obj;
+	MonoObject *obj G_GNUC_UNUSED;
 	HashEntry *entry;
 	HashEntry **all_entries;
 	MonoGCBridgeSCC **api_sccs;
@@ -1207,8 +1207,6 @@ processing_build_callback_data (int generation)
 		}
 	}
 
-	sccs_size = dyn_array_scc_size (&sccs);
-
 	for (i = 0; i < hash_table.num_entries; ++i) {
 		HashEntry *entry = all_entries [i];
 		second_pass_links += dyn_array_ptr_size (&entry->srcs);
@@ -1326,12 +1324,14 @@ processing_after_callback (int generation)
 
 	if (bridge_accounting_enabled) {
 		for (i = 0; i < num_sccs; ++i) {
-			for (j = 0; j < api_sccs [i]->num_objs; ++j)
+			for (j = 0; j < api_sccs [i]->num_objs; ++j) {
+				GCVTable *vtable = SGEN_LOAD_VTABLE (api_sccs [i]->objs [j]);
 				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC,
 					"OBJECT %s (%p) SCC [%d] %s",
-						sgen_safe_name (api_sccs [i]->objs [j]), api_sccs [i]->objs [j],
+						sgen_client_vtable_get_namespace (vtable), sgen_client_vtable_get_name (vtable), api_sccs [i]->objs [j],
 						i,
 						api_sccs [i]->is_alive  ? "ALIVE" : "DEAD");
+			}
 		}
 	}
 
@@ -1352,7 +1352,7 @@ processing_after_callback (int generation)
 }
 
 static void
-describe_pointer (MonoObject *obj)
+describe_pointer (GCObject *obj)
 {
 	HashEntry *entry;
 	int i;

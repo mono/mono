@@ -275,7 +275,7 @@ namespace System.Net
 			groups.Remove (group.Name);
 		}
 
-		internal bool CheckAvailableForRecycling (out DateTime outIdleSince)
+		bool CheckAvailableForRecycling (out DateTime outIdleSince)
 		{
 			outIdleSince = DateTime.MinValue;
 
@@ -314,7 +314,8 @@ namespace System.Net
 
 				if (removeList != null) {
 					foreach (var group in removeList)
-						RemoveConnectionGroup (group);
+						if (groups.ContainsKey (group.Name))
+							RemoveConnectionGroup (group);
 				}
 
 				if (groups != null && groups.Count == 0)
@@ -400,12 +401,19 @@ namespace System.Net
 		}
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
+			WebConnectionGroup cncGroup = null;
+
 			lock (this) {
-				WebConnectionGroup cncGroup = GetConnectionGroup (connectionGroupName);
+				cncGroup = GetConnectionGroup (connectionGroupName);
 				if (cncGroup != null) {
-					cncGroup.Close ();
-					return true;
+					RemoveConnectionGroup (cncGroup);
 				}
+			}
+
+			// WebConnectionGroup.Close() must *not* be called inside the lock
+			if (cncGroup != null) {
+				cncGroup.Close ();
+				return true;
 			}
 
 			return false;

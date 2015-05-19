@@ -68,16 +68,12 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				long now = DateTime.GetNow ();
+				long now = DateTime.UtcNow.Ticks;
 				TimeZone tz = currentTimeZone;
 				
 				lock (tz_lock) {
 					if (tz == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
-#if MONODROID
-						tz = AndroidPlatform.GetCurrentSystemTimeZone ();
-						if (tz == null)
-#endif
-							tz = new CurrentSystemTimeZone (now);
+						tz = new CurrentSystemTimeZone ();
 						timezone_check = now;
 
 						currentTimeZone = tz;
@@ -144,22 +140,7 @@ namespace System
 					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
 			}
 
-			DateTime local = DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
-			DaylightTime dlt = GetDaylightChanges (time.Year);
-			if (dlt.Delta.Ticks == 0)
-				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-
-			// FIXME: check all of the combination of
-			//	- basis: local-based or UTC-based
-			//	- hemisphere: Northern or Southern
-			//	- offset: positive or negative
-
-			// PST should work fine here.
-			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
-				return DateTime.SpecifyKind (local, DateTimeKind.Local);
-
-			TimeSpan localOffset = GetUtcOffset (local);
-			return DateTime.SpecifyKind (time.Add (localOffset), DateTimeKind.Local);
+			return DateTime.SpecifyKind (time.Add (utcOffset), DateTimeKind.Local);
 		}
 
 		public virtual DateTime ToUniversalTime (DateTime time)
@@ -184,233 +165,50 @@ namespace System
 		{
 			currentTimeZone = null;
 		}
-
-		//
-		// This routine returns the TimeDiff that would have to be
-		// added to "time" to turn it into a local time.   This would
-		// be equivalent to call ToLocalTime.
-		//
-		// There is one important consideration:
-		//
-		//    This information is only valid during the minute it
-		//    was called.
-		//
-		//    This only works with a real time, not one of the boundary
-		//    cases like DateTime.MaxValue, so validation must be done
-		//    before.
-		// 
-		//    This is intended to be used by DateTime.Now
-		//
-		// We use a minute, just to be conservative and cope with
-		// any potential time zones that might be defined in the future
-		// that might not nicely fit in hour or half-hour steps. 
-		//    
-		internal TimeSpan GetLocalTimeDiff (DateTime time)
-		{
-			return GetLocalTimeDiff (time, GetUtcOffset (time));
-		}
-
-		//
-		// This routine is intended to be called by GetLocalTimeDiff(DatetTime)
-		// or by ToLocalTime after validation has been performed
-		//
-		// time is the time to map, utc_offset is the utc_offset that
-		// has been computed for calling GetUtcOffset on time.
-		//
-		// When called by GetLocalTime, utc_offset is assumed to come
-		// from a time constructed by new DateTime (DateTime.GetNow ()), that
-		// is a valid time.
-		//
-		// When called by ToLocalTime ranges are checked before this is
-		// called.
-		//
-		internal TimeSpan GetLocalTimeDiff (DateTime time, TimeSpan utc_offset)
-		{
-			DaylightTime dlt = GetDaylightChanges (time.Year);
-
-			if (dlt.Delta.Ticks == 0)
-				return utc_offset;
-
-			DateTime local = time.Add (utc_offset);
-			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
-				return utc_offset;
-
-			if (local >= dlt.Start && dlt.Start.Add (dlt.Delta) > local)
-				return utc_offset - dlt.Delta;
-
-			return GetUtcOffset (local);
-		}
 	}
 
 	[Serializable]
-	internal class CurrentSystemTimeZone : TimeZone, IDeserializationCallback {
+	internal class CurrentSystemTimeZone : TimeZone {
 
-		// Fields
-		private string m_standardName;
-		private string m_daylightName;
-
-		// A yearwise cache of DaylightTime.
-		private Dictionary<int, DaylightTime> m_CachedDaylightChanges = new Dictionary<int, DaylightTime> (1);
-
-		// the offset when daylightsaving is not on (in ticks)
-		private long m_ticksOffset;
-
-		// the offset when daylightsaving is not on.
-		[NonSerialized]
-		private TimeSpan utcOffsetWithOutDLS;
-  
-		// the offset when daylightsaving is on.
-		[NonSerialized]
-		private TimeSpan utcOffsetWithDLS;
-
-		internal enum TimeZoneData
-		{
-			DaylightSavingStartIdx,
-			DaylightSavingEndIdx,
-			UtcOffsetIdx,
-			AdditionalDaylightOffsetIdx
-		};
-
-		internal enum TimeZoneNames
-		{
-			StandardNameIdx,
-			DaylightNameIdx
-		};
-
-		// Internal method to get timezone data.
-		//    data[0]:  start of daylight saving time (in DateTime ticks).
-		//    data[1]:  end of daylight saving time (in DateTime ticks).
-		//    data[2]:  utcoffset (in TimeSpan ticks).
-		//    data[3]:  additional offset when daylight saving (in TimeSpan ticks).
-		//    name[0]:  name of this timezone when not daylight saving.
-		//    name[1]:  name of this timezone when daylight saving.
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern bool GetTimeZoneData (int year, out Int64[] data, out string[] names);
+		readonly  TimeZoneInfo  LocalTimeZone;
 
 		// Constructor
 		internal CurrentSystemTimeZone ()
 		{
+			LocalTimeZone = TimeZoneInfo.Local;
 		}
 
-		//
-		// Initialized by the constructor
-		//
-		static int this_year;
-		static DaylightTime this_year_dlt;
-		
-		//
-		// The "lnow" parameter must be the current time, I could have moved
-		// the code here, but I do not want to interfere with serialization
-		// which is why I kept the other constructor around
-		//
-		internal CurrentSystemTimeZone (long lnow)
-		{
-			Int64[] data;
-			string[] names;
-
-			DateTime now = new DateTime (lnow);
-			if (!GetTimeZoneData (now.Year, out data, out names))
-				throw new NotSupportedException (Locale.GetText ("Can't get timezone name."));
-
-			m_standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);
-			m_daylightName = Locale.GetText (names[(int)TimeZoneNames.DaylightNameIdx]);
-
-			m_ticksOffset = data[(int)TimeZoneData.UtcOffsetIdx];
-
-			DaylightTime dlt = GetDaylightTimeFromData (data);
-			m_CachedDaylightChanges.Add (now.Year, dlt);
-			OnDeserialization (dlt);
-		}
-
-		// Properties
 		public override string DaylightName {
-			get { return m_daylightName; }
-		}
-
-		public override string StandardName {
-			get { return m_standardName; }
-		}
-
-		// Methods
-		public override DaylightTime GetDaylightChanges (int year)
-		{
-			if (year < 1 || year > 9999)
-				throw new ArgumentOutOfRangeException ("year", year +
-					Locale.GetText (" is not in a range between 1 and 9999."));
-
-			//
-			// First we try the case for this year, very common, and is used
-			// by DateTime.Now (a popular call) indirectly.
-			//
-			if (year == this_year)
-				return this_year_dlt;
-			
-			lock (m_CachedDaylightChanges) {
-				DaylightTime dlt;
-				if (!m_CachedDaylightChanges.TryGetValue (year, out dlt)) {
-					Int64[] data;
-					string[] names;
-
-					if (!GetTimeZoneData (year, out data, out names))
-						throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
-
-					dlt = GetDaylightTimeFromData (data);
-					m_CachedDaylightChanges.Add (year, dlt);
-				}
-				return dlt;
+			get {
+				return LocalTimeZone.DaylightName;
 			}
 		}
 
-		public override TimeSpan GetUtcOffset (DateTime time)
+		public override string StandardName {
+			get {
+				return LocalTimeZone.StandardName;
+			}
+		}
+
+		public override System.Globalization.DaylightTime GetDaylightChanges (int year)
 		{
-			if (time.Kind == DateTimeKind.Utc)
+			return LocalTimeZone.GetDaylightChanges (year);
+		}
+
+		public override TimeSpan GetUtcOffset (DateTime dateTime)
+		{
+			if (dateTime.Kind == DateTimeKind.Utc)
 				return TimeSpan.Zero;
 
-			if (IsDaylightSavingTime (time) && !IsAmbiguousTime (time))
-				return utcOffsetWithDLS;
-
-			return utcOffsetWithOutDLS;
+			return LocalTimeZone.GetUtcOffset (dateTime);
 		}
 
-		private bool IsAmbiguousTime (DateTime time)
+		public override bool IsDaylightSavingTime (DateTime dateTime)
 		{
-			if (time.Kind == DateTimeKind.Utc)
+			if (dateTime.Kind == DateTimeKind.Utc)
 				return false;
 
-			DaylightTime changes = GetDaylightChanges (time.Year);
-
-			return time < changes.End && time >= changes.End - changes.Delta;
+			return LocalTimeZone.IsDaylightSavingTime (dateTime);
 		}
-
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-			OnDeserialization (null);
-		}
-
-		private void OnDeserialization (DaylightTime dlt)
-		{
-			if (dlt == null) {
-				Int64[] data;
-				string[] names;
-
-				this_year = DateTime.Now.Year;
-				if (!GetTimeZoneData (this_year, out data, out names))
-					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + this_year));
-				dlt = GetDaylightTimeFromData (data);
-			} else
-				this_year = dlt.Start.Year;
-			
-			utcOffsetWithOutDLS = new TimeSpan (m_ticksOffset);
-			utcOffsetWithDLS = new TimeSpan (m_ticksOffset + dlt.Delta.Ticks);
-			this_year_dlt = dlt;
-		}
-
-		private DaylightTime GetDaylightTimeFromData (long[] data)
-		{
-			return new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
-				new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
-				new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
-		}
-
 	}
 }

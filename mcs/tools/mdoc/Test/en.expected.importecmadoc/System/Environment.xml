@@ -11,34 +11,34 @@
   <Interfaces />
   <Docs>
     <summary>
-      <para> Provides the current settings for, and information about, the execution environment.</para>
-    </summary>
+					<para> Provides the current settings for, and information about, the execution environment.</para>
+				</summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>Use this class to retrieve the following 
+					<block subset="none" type="note">
+						<para>Use this class to retrieve the following 
  information:</para>
-        <list type="bullet">
-          <item>
-            <term>Command line arguments</term>
-          </item>
-          <item>
-            <term>Exit codes</term>
-          </item>
-          <item>
-            <term>Environment variable settings</term>
-          </item>
-          <item>
-            <term>Contents of the call stack</term>
-          </item>
-          <item>
-            <term>Time since last system boot</term>
-          </item>
-          <item>
-            <term>Version of the execution engine</term>
-          </item>
-        </list>
-      </block>
-    </remarks>
+						<list type="bullet">
+							<item>
+								<term>Command line arguments</term>
+							</item>
+							<item>
+								<term>Exit codes</term>
+							</item>
+							<item>
+								<term>Environment variable settings</term>
+							</item>
+							<item>
+								<term>Contents of the call stack</term>
+							</item>
+							<item>
+								<term>Time since last system boot</term>
+							</item>
+							<item>
+								<term>Version of the execution engine</term>
+							</item>
+						</list>
+					</block>
+				</remarks>
   </Docs>
   <Members>
     <Member MemberName="GetFolderPath">
@@ -56,28 +56,28 @@
       </Parameters>
       <Docs>
         <param name="folder">
-          <para>A <see cref="T:System.Environment+SpecialFolder" />.</para>
-        </param>
+							<para>A <see cref="T:System.Environment+SpecialFolder" />.</para>
+						</param>
         <summary>
-          <para> Returns the arguments specified on the command
+							<para> Returns the arguments specified on the command
       line.</para>
-        </summary>
+						</summary>
         <returns>
-          <para> Returns a <see cref="T:System.String" /> array. Each <see cref="T:System.String" /> in the array
+							<para> Returns a <see cref="T:System.String" /> array. Each <see cref="T:System.String" /> in the array
    contains a single command line argument.</para>
-        </returns>
+						</returns>
         <remarks>
-          <para>The first element in the array contains the filename of
+							<para>The first element in the array contains the filename of
       the executing program. If the filename is not available, the first element is
       equal to <see cref="F:System.String.Empty" />. The remaining elements contain any additional tokens
       entered on the command line.</para>
-          <block subset="none" type="note">
-            <para>The program filename can, but is not required to,
+							<block subset="none" type="note">
+								<para>The program filename can, but is not required to,
          include path information.</para>
-            <para>To obtain the command line as a single <see cref="T:System.String" />, use the <see cref="P:System.Environment.CommandLine" />
+								<para>To obtain the command line as a single <see cref="T:System.String" />, use the <see cref="P:System.Environment.CommandLine" />
    property.</para>
-          </block>
-        </remarks>
+							</block>
+						</remarks>
         <exception cref="T:System.NotSupportedException">To be added; from:
           <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
         <exception cref="T:System.ArgumentException">foo</exception>

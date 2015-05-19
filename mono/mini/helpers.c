@@ -99,6 +99,7 @@ mono_inst_name (int op) {
 	g_error ("unknown opcode name for %d", op);
 	return NULL;
 #else
+	g_error ("unknown opcode name for %d", op);
 	g_assert_not_reached ();
 #endif
 }
@@ -148,7 +149,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	char *as_file;
 	char *o_file;
 	char *cmd;
-	int unused;
+	int unused G_GNUC_UNUSED;
 
 #ifdef HOST_WIN32
 	as_file = g_strdup_printf ("%s/test.s", tmp);    

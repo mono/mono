@@ -158,11 +158,9 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")]
 		// MS throws a NullReferenceException (reported as FDBK25886) but only when executed in NUnit
 		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=3596d1e3-362b-40bd-bca9-2e8be75261ff
-#endif
 		public void AddAllTransforms () 
 		{
 			// adding an empty hash value

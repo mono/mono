@@ -27,4 +27,4 @@ System.Threading.Tasks.Dataflow/OutputAvailableTest.cs
 System.Threading.Tasks.Dataflow/EncapsulateTest.cs
 System.Threading.Tasks.Dataflow/ChooseTest.cs
 ../System.Threading.Tasks.Dataflow/CompletionHelper.cs
-../../corlib/System.Threading/AtomicBoolean.cs
+../../Mono.Parallel/Mono.Threading/AtomicBoolean.cs

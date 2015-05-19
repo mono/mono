@@ -47,9 +47,7 @@ namespace System.ServiceProcess
 		private string username;
 
 		[DefaultValue (ServiceAccount.User)]
-#if NET_2_0
 		[ServiceProcessDescription ("Indicates the account type under which the service will run.")]
-#endif
 		public ServiceAccount Account {
 			get {
 				return account;

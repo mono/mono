@@ -318,7 +318,7 @@ namespace Mono.Debugger.Soft
 						throw new NotSupportedException ();
 
 					locals_0 = stack [--sp];
-				} else if (op == OpCodes.Br) {
+				} else if (op == OpCodes.Br || op == OpCodes.Br_S) {
 					next = (ILInstruction) ins.Operand;
 				} else if (op == OpCodes.Ldloc_0) {
 					if (sp != 0)

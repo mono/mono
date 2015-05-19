@@ -4,12 +4,12 @@ using System;
 
 namespace Bla.Blub
 {
-
 	class Fo‿o
 	{
-		public static void Main(string[] args)
+		public static void Main ()
 		{
-			Console.WriteLine("bla");
+			string \u2161y = "";
+			string y\u2161 = "";
 		}
 	}
 

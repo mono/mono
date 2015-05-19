@@ -43,28 +43,20 @@ namespace MonoTests.System.Data.Odbc
 		{
 			OdbcDataAdapter da = new OdbcDataAdapter ();
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNull (da.SelectCommand, "#11");
 			Assert.IsNull (da.Site, "#12");
 			Assert.IsNotNull (da.TableMappings, "#13");
 			Assert.AreEqual (0, da.TableMappings.Count, "#14");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#15");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#16");
 		}
 
@@ -74,29 +66,21 @@ namespace MonoTests.System.Data.Odbc
 			OdbcCommand cmd = new OdbcCommand ();
 			OdbcDataAdapter da = new OdbcDataAdapter (cmd);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.AreSame (cmd, da.SelectCommand, "#12");
 			Assert.IsNull (da.Site, "#13");
 			Assert.IsNotNull (da.TableMappings, "#14");
 			Assert.AreEqual (0, da.TableMappings.Count, "#15");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#16");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#17");
 		}
 
@@ -105,28 +89,20 @@ namespace MonoTests.System.Data.Odbc
 		{
 			OdbcDataAdapter da = new OdbcDataAdapter ((OdbcCommand) null);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNull (da.SelectCommand, "#11");
 			Assert.IsNull (da.Site, "#12");
 			Assert.IsNotNull (da.TableMappings, "#13");
 			Assert.AreEqual (0, da.TableMappings.Count, "#14");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#15");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#16");
 		}
 
@@ -139,30 +115,22 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter (selectCommandText,
 				selectConnection);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.AreSame (selectCommandText, da.SelectCommand.CommandText, "#12");
 			Assert.AreSame (selectConnection, da.SelectCommand.Connection, "#13");
 			Assert.IsNull (da.Site, "#14");
 			Assert.IsNotNull (da.TableMappings, "#15");
 			Assert.AreEqual (0, da.TableMappings.Count, "#16");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#17");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#18");
 		}
 
@@ -174,21 +142,15 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter ((string) null,
 				selectConnection);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.IsNotNull (da.SelectCommand.CommandText, "#12");
 			Assert.AreEqual (string.Empty, da.SelectCommand.CommandText, "#13");
@@ -196,9 +158,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.Site, "#15");
 			Assert.IsNotNull (da.TableMappings, "#16");
 			Assert.AreEqual (0, da.TableMappings.Count, "#17");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#18");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#19");
 		}
 
@@ -210,30 +170,22 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter (selectCommandText,
 				(OdbcConnection) null);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.AreSame (selectCommandText, da.SelectCommand.CommandText, "#12");
 			Assert.IsNull (da.SelectCommand.Connection, "#13");
 			Assert.IsNull (da.Site, "#14");
 			Assert.IsNotNull (da.TableMappings, "#15");
 			Assert.AreEqual (0, da.TableMappings.Count, "#16");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#17");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#18");
 		}
 
@@ -246,21 +198,15 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter (selectCommandText,
 				selectConnectionString);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.AreSame (selectCommandText, da.SelectCommand.CommandText, "#12");
 			Assert.IsNotNull (da.SelectCommand.Connection, "#13");
@@ -268,9 +214,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.Site, "#15");
 			Assert.IsNotNull (da.TableMappings, "#16");
 			Assert.AreEqual (0, da.TableMappings.Count, "#17");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#18");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#19");
 		}
 
@@ -282,21 +226,15 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter ((string) null,
 				selectConnectionString);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.IsNotNull (da.SelectCommand.CommandText, "#12");
 			Assert.AreEqual (string.Empty, da.SelectCommand.CommandText, "#13");
@@ -305,9 +243,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.Site, "#16");
 			Assert.IsNotNull (da.TableMappings, "#17");
 			Assert.AreEqual (0, da.TableMappings.Count, "#18");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#19");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#20");
 		}
 
@@ -319,21 +255,15 @@ namespace MonoTests.System.Data.Odbc
 			OdbcDataAdapter da = new OdbcDataAdapter (selectCommandText,
 				(string) null);
 			Assert.IsTrue (da.AcceptChangesDuringFill, "#1");
-#if NET_2_0
 			Assert.IsTrue (da.AcceptChangesDuringUpdate, "#2");
-#endif
 			Assert.IsNull (da.Container, "#3");
 			Assert.IsFalse (da.ContinueUpdateOnError, "#4");
 			Assert.IsNull (da.DeleteCommand, "#5");
-#if NET_2_0
 			Assert.AreEqual (LoadOption.OverwriteChanges, da.FillLoadOption, "#6");
-#endif
 			Assert.IsNull (da.InsertCommand, "#7");
 			Assert.AreEqual (MissingMappingAction.Passthrough, da.MissingMappingAction, "#8");
 			Assert.AreEqual (MissingSchemaAction.Add, da.MissingSchemaAction, "#9");
-#if NET_2_0
 			Assert.IsFalse (da.ReturnProviderSpecificTypes, "#10");
-#endif
 			Assert.IsNotNull (da.SelectCommand, "#11");
 			Assert.AreSame (selectCommandText, da.SelectCommand.CommandText, "#12");
 			Assert.IsNotNull (da.SelectCommand.Connection, "#14");
@@ -341,9 +271,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.IsNull (da.Site, "#16");
 			Assert.IsNotNull (da.TableMappings, "#17");
 			Assert.AreEqual (0, da.TableMappings.Count, "#18");
-#if NET_2_0
 			Assert.AreEqual (1, da.UpdateBatchSize, "#19");
-#endif
 			Assert.IsNull (da.UpdateCommand, "#20");
 		}
 
@@ -482,7 +410,6 @@ namespace MonoTests.System.Data.Odbc
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void UpdateBatchSize ()
 		{
@@ -520,7 +447,6 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsNotNull (ex.Message, "#D4");
 			}
 		}
-#endif
 
 		[Test]
 		public void UpdateCommand ()

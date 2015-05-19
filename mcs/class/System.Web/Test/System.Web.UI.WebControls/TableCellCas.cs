@@ -59,9 +59,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.HasControls_Text ();
 			unit.Text_Add_Controls ();
 			unit.NoDefaultID ();
-#if NET_2_0
 			unit.AssociatedHeaderCellID ();
-#endif
 		}
 
 		// LinkDemand

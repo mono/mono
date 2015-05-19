@@ -48,9 +48,7 @@ namespace Microsoft.Build.Evaluation
 		{
 		}
 
-#if NET_4_5
 		public
-#endif
 		Toolset (string toolsVersion, string toolsPath, IDictionary<string, string> buildProperties,
 			ProjectCollection projectCollection, IDictionary<string, SubToolset> subToolsets,
 			string msbuildOverrideTasksPath)
@@ -61,15 +59,11 @@ namespace Microsoft.Build.Evaluation
 				buildProperties == null ?
 				new Dictionary<string, ProjectPropertyInstance> () :
 				buildProperties.Select (p => new ProjectPropertyInstance (p.Key, true, p.Value)).ToDictionary (e => e.Name);
-#if NET_4_5
 			SubToolsets = subToolsets ?? new Dictionary<string, SubToolset> ();
-#endif
 		}
 
-#if NET_4_5
 		public string DefaultSubToolsetVersion { get; private set; }
 		public IDictionary<string, SubToolset> SubToolsets { get; private set; }
-#endif
 
 		public IDictionary<string, ProjectPropertyInstance> Properties { get; private set; }
 

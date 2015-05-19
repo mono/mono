@@ -502,7 +502,6 @@ public class CompareInfoTest
 		Array values = Enum.GetValues (typeof (CompareOptions));
 		foreach (int i in values) {
 			CompareOptions option = (CompareOptions) i;
-#if NET_2_0
 			if (option == CompareOptions.OrdinalIgnoreCase || option == CompareOptions.Ordinal) {
 				try {
 					french.GetSortKey ("foo", option);
@@ -517,16 +516,11 @@ public class CompareInfoTest
 			} else {
 				french.GetSortKey ("foo", option);
 			}
-#else
-			french.GetSortKey ("foo", option);
-#endif
 		}
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void FrenchSort ()
 	{
 		if (!doTest)
@@ -706,9 +700,7 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void CultureSensitiveCompare ()
 	{
 		if (!doTest)
@@ -760,9 +752,7 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void CompareSpecialWeight ()
 	{
 		if (!doTest)
@@ -853,9 +843,7 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void IsPrefix ()
 	{
 		if (!doTest)
@@ -922,9 +910,7 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void IsSuffix ()
 	{
 		if (!doTest)
@@ -1010,9 +996,7 @@ public class CompareInfoTest
 	}
 
 	[Test]
-#if NET_2_0
 	[Category ("NotDotNet")]
-#endif
 	public void IndexOfStringWeird ()
 	{
 // BUG in .NET 2.0 : see GetSortKey() test (mentioned above).
@@ -1170,7 +1154,6 @@ public class CompareInfoTest
 		Assert.AreEqual (0, "MONO".CompareTo ("MONO\0\0\0"), "#4");
 	}
 
-#if NET_2_0
 	[Test]
 	[Category ("NotDotNet")]
 	public void OrdinalIgnoreCaseCompare ()
@@ -1241,7 +1224,6 @@ public class CompareInfoTest
 	{
 		Assert.IsTrue ("aaaa".StartsWith ("A", StringComparison.OrdinalIgnoreCase));
 	}
-#endif
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]

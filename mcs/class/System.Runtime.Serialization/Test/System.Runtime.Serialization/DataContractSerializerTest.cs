@@ -92,6 +92,35 @@ namespace MonoTests.System.Runtime.Serialization
                         var ser = new DataContractSerializer(typeof(MyObject));
 			ser.ReadObject (XmlReader.Create(new StringReader(s)));
 		}
-		
+
+		[Flags ()]
+		[Serializable]
+		public enum FlagsEnum
+		{
+			None = 0,
+			Flag1 = 0x10,
+			Flag2 = 0x20,
+			All = 0xffff,
+		};
+
+		[Serializable]
+		public class ClassWithFlagsEnum
+		{
+			public FlagsEnum Flags = FlagsEnum.All;
+		}
+
+		// Bug #21072
+		[Test]
+		public void FlagsEnumTest ()
+		{
+			var ser = new DataContractSerializer (typeof (ClassWithFlagsEnum));
+
+			using (var m = new MemoryStream ()) {
+				ser.WriteObject (m, new ClassWithFlagsEnum ());
+				var data = m.ToArray ();
+				var s = Encoding.UTF8.GetString (data, 0, (int) data.Length);
+				Assert.IsTrue (s.Contains ("<Flags>All</Flags>"));
+			}
+		}
 	}
 }

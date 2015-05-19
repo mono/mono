@@ -26,28 +26,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System.ComponentModel;
 
 namespace System.Management
 {
-	[MonoTODO ("System.Management is not implemented")]
 	[ToolboxItem (false)]
 	public class ManagementObjectSearcher : Component
 	{
+		ObjectQuery mQueryObject;
+
 		public ManagementObjectSearcher ()
 		{
-			throw new NotImplementedException ();
+			mQueryObject = new ObjectQuery ();
 		}
 
 		public ManagementObjectSearcher (ObjectQuery query)
 		{
-			throw new NotImplementedException ();
+			mQueryObject = (ObjectQuery)query.Clone ();
 		}
 
 		public ManagementObjectSearcher (string queryString)
 		{
-			throw new NotImplementedException ();
+			mQueryObject = new ObjectQuery (queryString);
 		}
 
 		public ManagementObjectSearcher (ManagementScope scope, ObjectQuery query)
@@ -81,10 +81,10 @@ namespace System.Management
 
 		public ObjectQuery Query {
 			get {
-				throw new NotImplementedException ();
+				return mQueryObject;
 			}
 			set {
-				throw new NotImplementedException ();
+				mQueryObject = value;
 			}
 		}
 

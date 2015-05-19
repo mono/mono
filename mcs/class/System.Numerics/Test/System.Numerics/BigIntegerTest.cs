@@ -70,6 +70,7 @@ namespace MonoTests.System.Numerics
 			NfiUser.PercentNegativePattern = 2;
 			NfiUser.PercentPositivePattern = 2;
 			NfiUser.PercentSymbol = "%%%";
+			NfiUser.NumberDecimalSeparator = ".";
 		}
 
 		[Test]
@@ -893,6 +894,13 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (0m, (decimal)new BigInteger (), "#8");
 		}
 
+		[SetCulture ("pt-BR")]
+		[Test]
+		public void Parse_pt_BR () 
+		{
+			Parse ();
+		}
+
 		[Test]
 		public void Parse () {
 			try {
@@ -943,7 +951,8 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (-23, (int)BigInteger.Parse("  -23  ", NumberStyles.AllowLeadingSign | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite), "#19");
 
 			Assert.AreEqual (300000, (int)BigInteger.Parse("3E5", NumberStyles.AllowExponent), "#20");
-			Assert.AreEqual (250, (int)BigInteger.Parse("2"+Nfi.NumberDecimalSeparator+"5E2", NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), "#21");//2.5E2 = 250
+			var dsep = NumberFormatInfo.CurrentInfo.NumberDecimalSeparator;
+			Assert.AreEqual (250, (int)BigInteger.Parse("2" + dsep + "5E2", NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), "#21");//2.5E2 = 250
 			Assert.AreEqual (25, (int)BigInteger.Parse("2500E-2", NumberStyles.AllowExponent), "#22");
 
 			Assert.AreEqual ("136236974127783066520110477975349088954559032721408", BigInteger.Parse("136236974127783066520110477975349088954559032721408", NumberStyles.None).ToString(), "#23");
@@ -956,7 +965,7 @@ namespace MonoTests.System.Numerics
 			}
 
 			try {
-				Int32.Parse ("2.09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
+				Int32.Parse ("2" + dsep + "09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
 				Assert.Fail ("#26");
 			} catch (OverflowException) {
 			}

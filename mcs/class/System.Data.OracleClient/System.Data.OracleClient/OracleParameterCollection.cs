@@ -19,9 +19,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0
 using System.Data.Common;
-#endif
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.Globalization;
@@ -32,11 +30,7 @@ namespace System.Data.OracleClient
 	[ListBindable (false)]
 	[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 	public sealed class OracleParameterCollection :
-#if NET_2_0
 		DbParameterCollection
-#else
-		MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
-#endif
 	{
 		#region Fields
 
@@ -56,41 +50,31 @@ namespace System.Data.OracleClient
 		#region Properties
 
 		public
-#if NET_2_0
 		override
-#endif
 		int Count {
 			get { return list.Count; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsFixedSize {
 			get { return list.IsFixedSize; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsReadOnly {
 			get { return list.IsReadOnly; }
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleParameter this [string parameterName] {
 			get {
 				return (OracleParameter) GetParameter (parameterName);
@@ -101,17 +85,13 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object SyncRoot {
 			get { return this; }
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleParameter this [int index]
 		{
 			get {
@@ -122,33 +102,14 @@ namespace System.Data.OracleClient
 			}
 		}
 
-#if !NET_2_0
-		object IList.this [int index] {
-			get { return this [index]; }
-			set { this [index] = (OracleParameter) value; }
-		}
-
-		object IDataParameterCollection.this [string index] {
-			get { return this [index]; }
-			set {
-				if (!(value is OracleParameter))
-					throw new InvalidCastException ("The parameter was not an OracleParameter.");
-				this [index] = (OracleParameter) value;
-			}
-		}
-#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		int Add (object value)
 		{
 			AssertParameterValid (value);
@@ -159,10 +120,8 @@ namespace System.Data.OracleClient
 
 		public OracleParameter Add (OracleParameter value)
 		{
-#if NET_2_0
 			if (value == null)
 				throw CreateParameterNullException ();
-#endif
 			if (value.Container != null)
 				throw new ArgumentException ("The OracleParameter specified in the value parameter is already added to this or another OracleParameterCollection.");
 			value.Container = this;
@@ -190,7 +149,6 @@ namespace System.Data.OracleClient
 			return Add (new OracleParameter (parameterName, dataType, size, srcColumn));
 		}
 
-#if NET_2_0
 		public override void AddRange (Array values)
 		{
 			if (values == null)
@@ -215,12 +173,9 @@ namespace System.Data.OracleClient
 			foreach (OracleParameter param in values)
 				Add (param);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Clear ()
 		{
 			foreach (OracleParameter param in list)
@@ -229,63 +184,45 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Contains (object value)
 		{
 			return (IndexOf (value) != -1);
 		}
 
-#if NET_2_0
 		public bool Contains (OracleParameter value)
 		{
 			return (IndexOf (value) != -1);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		bool Contains (string parameterName)
 		{
 			return (IndexOf (parameterName) != -1);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}
 
-#if NET_2_0
 		protected override DbParameter GetParameter (int index)
-#else
-		object GetParameter (int index)
-#endif
 		{
 			AssertIndex (index);
 			return (OracleParameter) list [index];
 		}
 
-#if NET_2_0
 		protected override DbParameter GetParameter (string parameterName)
-#else
-		object GetParameter (string parameterName)
-#endif
 		{
 			int index = IndexOf (parameterName);
 			if (index == -1)
@@ -293,11 +230,7 @@ namespace System.Data.OracleClient
 			return (OracleParameter) list [index];
 		}
 
-#if NET_2_0
 		protected override void SetParameter (int index, DbParameter value)
-#else
-		void SetParameter (int index, IDbDataParameter value)
-#endif
 		{
 			AssertIndex (index);
 			AssertParameterValid (value);
@@ -305,9 +238,6 @@ namespace System.Data.OracleClient
 			OracleParameter new_value = (OracleParameter) value;
 			OracleParameter old_value = (OracleParameter) list [index];
 
-#if !NET_2_0
-			old_value.Container = null;
-#endif
 
 			if (new_value.Container != null) {
 				if (new_value.Container != this)
@@ -318,16 +248,10 @@ namespace System.Data.OracleClient
 
 			list [index] = new_value;
 			new_value.Container = this;
-#if NET_2_0
 			old_value.Container = null;
-#endif
 		}
 
-#if NET_2_0
 		protected override void SetParameter (string parameterName, DbParameter value)
-#else
-		void SetParameter (string parameterName, IDbDataParameter value)
-#endif
 		{
 			int index = IndexOf (parameterName);
 			if (index == -1)
@@ -338,9 +262,6 @@ namespace System.Data.OracleClient
 			OracleParameter new_value = (OracleParameter) value;
 			OracleParameter old_value = (OracleParameter) list [index];
 
-#if !NET_2_0
-			old_value.Container = null;
-#endif
 
 			if (new_value.Container != null) {
 				if (new_value.Container != this)
@@ -351,15 +272,11 @@ namespace System.Data.OracleClient
 
 			list [index] = new_value;
 			new_value.Container = this;
-#if NET_2_0
 			old_value.Container = null;
-#endif
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int IndexOf (object value)
 		{
 			if (value != null)
@@ -371,7 +288,6 @@ namespace System.Data.OracleClient
 			return -1;
 		}
 
-#if NET_2_0
 		public int IndexOf (OracleParameter value)
 		{
 			for (int i = 0; i < Count; i += 1)
@@ -379,22 +295,17 @@ namespace System.Data.OracleClient
 					return i;
 			return -1;
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		int IndexOf (string parameterName)
 		{
-#if NET_2_0
 			// case-sensitive lookup
 			for (int i = 0; i < Count; i += 1) {
 				OracleParameter param = (OracleParameter) list [i];
 				if (string.Compare (param.ParameterName, parameterName, false, CultureInfo.CurrentCulture) == 0)
 					return i;
 			}
-#endif
 
 			// case-insensitive lookup
 			for (int i = 0; i < Count; i += 1) {
@@ -407,9 +318,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Insert (int index, object value)
 		{
 			AssertParameterValid (value);
@@ -427,17 +336,13 @@ namespace System.Data.OracleClient
 			new_value.Container = this;
 		}
 
-#if NET_2_0
 		public void Insert (int index, OracleParameter value)
 		{
 			Insert (index, (object) value);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Remove (object value)
 		{
 			AssertParameterValid (value);
@@ -450,7 +355,6 @@ namespace System.Data.OracleClient
 			list.RemoveAt (index);
 		}
 
-#if NET_2_0
 		public void Remove (OracleParameter value)
 		{
 			if (value == null)
@@ -463,12 +367,9 @@ namespace System.Data.OracleClient
 			value.Container = null;
 			list.RemoveAt (index);
 		}
-#endif
 
 		public
-#if NET_2_0
 		override
-#endif
 		void RemoveAt (int index)
 		{
 			AssertIndex (index);
@@ -479,9 +380,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void RemoveAt (string parameterName)
 		{
 			int index = IndexOf (parameterName);
@@ -502,30 +401,21 @@ namespace System.Data.OracleClient
 				return;
 
 			string msg = string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Only non-null {0} instances are valid for " +
 				"the {1}, not {2} instances.",
 				typeof (OracleParameter).Name,
 				typeof (OracleParameterCollection).Name,
 				value.GetType ().Name);
-#else
-				"Value is not {0}.",
-				typeof (OracleParameter).Name);
-#endif
 			throw new InvalidCastException (msg);
 		}
 
 		static Exception CreateParameterNullException ()
 		{
-#if NET_2_0
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"Only non-null {0} instances are valid for " +
 				"{1}.", typeof (OracleParameter).Name,
 				typeof (OracleParameterCollection).Name);
 			return new ArgumentNullException ("value", msg);
-#else
-			return new ArgumentNullException ("value");
-#endif
 		}
 
 		static Exception ParameterAlreadyOwnedException ()
@@ -540,12 +430,8 @@ namespace System.Data.OracleClient
 		Exception ParameterNotFoundException (string name, int index)
 		{
 			string msg = string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"Index {0} is not valid for this {1}.",
 				index, typeof (OracleParameterCollection).Name);
-#else
-				"Parameter '{0}' not found.", name);
-#endif
 			throw new IndexOutOfRangeException (msg);
 		}
 
@@ -561,17 +447,11 @@ namespace System.Data.OracleClient
 
 		Exception ParameterNotOwnedException (string name)
 		{
-#if NET_2_0
 			throw new IndexOutOfRangeException (string.Format (
 				CultureInfo.InvariantCulture,
 				"{0} parameter '{1}' is not contained by " +
 				"this {2}.", typeof (OracleParameter).Name,
 				name, this.GetType ().Name));
-#else
-			throw new IndexOutOfRangeException (string.Format (
-				CultureInfo.InvariantCulture,
-				"Parameter '{0}' does not exist.", name));
-#endif
 		}
 
 		void AssertIndex (int index)

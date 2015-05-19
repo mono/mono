@@ -8,7 +8,7 @@ class X
 			bool x = true;
 			try {
 				throw new ApplicationException ();
-			} catch (NullReferenceException) if (x) {
+			} catch (NullReferenceException) when (x) {
 				throw;
 			}
 

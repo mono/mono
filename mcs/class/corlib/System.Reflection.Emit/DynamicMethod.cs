@@ -162,9 +162,7 @@ namespace System.Reflection.Emit {
 		}
 
 		[ComVisible (true)]
-#if NET_4_5
 		sealed override
-#endif
 		public Delegate CreateDelegate (Type delegateType)
 		{
 			if (delegateType == null)
@@ -179,9 +177,7 @@ namespace System.Reflection.Emit {
 		}
 
 		[ComVisible (true)]
-#if NET_4_5
 		sealed override
-#endif
 		public Delegate CreateDelegate (Type delegateType, object target)
 		{
 			if (delegateType == null)

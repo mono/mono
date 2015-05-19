@@ -89,7 +89,6 @@ public abstract class ISCIIEncoding : MonoEncoding
 
 			public unsafe override int GetByteCountImpl (char* chars, int count)
 			{
-#if NET_2_0
 				int index = 0;
 				int length = 0;
 				char ch;
@@ -124,16 +123,11 @@ public abstract class ISCIIEncoding : MonoEncoding
 
 				// Return the final length of the output.
 				return length;
-#else
-				return count;
-#endif
 			}
 
 	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 			{
-#if NET_2_0
 				EncoderFallbackBuffer buffer = null;
-#endif
 				//int charIndex = 0;
 				int byteIndex = 0;
 				int end = charCount;
@@ -173,12 +167,8 @@ public abstract class ISCIIEncoding : MonoEncoding
 					}
 					else
 					{
-#if NET_2_0
 						HandleFallback (ref buffer, chars, ref i, ref charCount, bytes, ref posn, ref byteCount);
 						continue;
-#else
-						bytes[posn++] = (byte)'?';
-#endif
 					}
 					byteCount--;
 				}

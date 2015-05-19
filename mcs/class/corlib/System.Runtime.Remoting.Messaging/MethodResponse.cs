@@ -35,6 +35,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Runtime.Remoting.Messaging {
 
@@ -124,7 +125,37 @@ namespace System.Runtime.Remoting.Messaging {
 			if (retmsg.PropertiesCount > 0)
 				CADMessageBase.UnmarshalProperties (Properties, retmsg.PropertiesCount, args);
 		}
+#if FEATURE_REMOTING
+        internal MethodResponse(IMethodCallMessage msg,
+                                Object handlerObject,
+                                BinaryMethodReturnMessage smuggledMrm)
+        {
+            if (msg != null)
+            {
+                _methodBase = (MethodBase)msg.MethodBase;
+//                _methodCache = InternalRemotingServices.GetReflectionCachedData(MI);
 
+                _methodName = msg.MethodName;
+                _uri = msg.Uri;
+//                _typeName = msg.TypeName;
+
+//                if (_methodCache.IsOverloaded())
+//                    _methodSignature = (Type[])msg.MethodSignature;
+
+//                argCount = _methodCache.Parameters.Length;
+
+            }
+           
+            _returnValue = smuggledMrm.ReturnValue;
+            _args = smuggledMrm.Args;
+            _exception = smuggledMrm.Exception;
+
+            _callContext = smuggledMrm.LogicalCallContext;
+
+            if (smuggledMrm.HasProperties)
+                smuggledMrm.PopulateMessageProperties(Properties);
+        }
+#endif
 		internal MethodResponse (SerializationInfo info, StreamingContext context) 
 		{
 			foreach (SerializationEntry entry in info)
@@ -342,6 +373,11 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return _targetIdentity; }
 			set { _targetIdentity = value; }
+		}
+
+		bool IInternalMessage.HasProperties()
+		{
+			return (ExternalProperties != null) || (InternalProperties != null);
 		}
 
 	}

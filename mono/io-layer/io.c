@@ -27,8 +27,6 @@
 #include <sys/mount.h>
 #endif
 #include <sys/types.h>
-#include <dirent.h>
-#include <fnmatch.h>
 #include <stdio.h>
 #include <utime.h>
 #ifdef __linux__
@@ -658,7 +656,7 @@ static gboolean file_setendoffile(gpointer handle)
 	struct _WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
-	off_t size, pos;
+	off_t pos;
 	int ret, fd;
 	
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_FILE,
@@ -693,7 +691,6 @@ static gboolean file_setendoffile(gpointer handle)
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
 	}
-	size=statbuf.st_size;
 
 	pos=lseek(fd, (off_t)0, SEEK_CUR);
 	if(pos==-1) {
@@ -705,6 +702,7 @@ static gboolean file_setendoffile(gpointer handle)
 	}
 	
 #ifdef FTRUNCATE_DOESNT_EXTEND
+	off_t size = statbuf.st_size;
 	/* I haven't bothered to write the configure.ac stuff for this
 	 * because I don't know if any platform needs it.  I'm leaving
 	 * this code just in case though
@@ -1035,8 +1033,9 @@ static void console_close (gpointer handle, gpointer data)
 	DEBUG("%s: closing console handle %p", __func__, handle);
 
 	g_free (console_handle->filename);
-	
-	close (fd);
+
+	if (fd > 2)
+		close (fd);
 }
 
 static WapiFileType console_getfiletype(void)
@@ -3904,7 +3903,7 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 }
 #endif
 
-#if (defined(HAVE_STATVFS) || defined(HAVE_STATFS)) && !defined(PLATFORM_ANDROID)
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
 gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_bytes_avail,
 			    WapiULargeInteger *total_number_of_bytes,
 			    WapiULargeInteger *total_number_of_free_bytes)
@@ -3943,7 +3942,11 @@ gboolean GetDiskFreeSpaceEx(const gunichar2 *path_name, WapiULargeInteger *free_
 		block_size = fsstat.f_frsize;
 #elif defined(HAVE_STATFS)
 		ret = statfs (utf8_path_name, &fsstat);
+#if defined (MNT_RDONLY)
 		isreadonly = ((fsstat.f_flags & MNT_RDONLY) == MNT_RDONLY);
+#elif defined (MS_RDONLY)
+		isreadonly = ((fsstat.f_flags & MS_RDONLY) == MS_RDONLY);
+#endif
 		block_size = fsstat.f_bsize;
 #endif
 	} while(ret == -1 && errno == EINTR);

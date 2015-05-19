@@ -38,12 +38,130 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
+	abstract class RuntimeFieldInfo : FieldInfo, ISerializable
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		internal RuntimeType GetDeclaringTypeInternal ()
+		{
+			return (RuntimeType) DeclaringType;
+		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return GetDeclaringTypeInternal ().GetRuntimeModule ();
+		}
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                MemberTypes.Field);
+        }
+        #endregion
+	}
+
+	abstract class RtFieldInfo : RuntimeFieldInfo
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object UnsafeGetValue (object obj);
+
+        internal void CheckConsistency(Object target)
+        {
+            // only test instance fields
+            if ((Attributes & FieldAttributes.Static) != FieldAttributes.Static)
+            {
+                if (!DeclaringType.IsInstanceOfType(target))
+                {
+                    if (target == null)
+                    {
+#if FEATURE_LEGACYNETCF
+                        if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
+                            throw new ArgumentNullException(Environment.GetResourceString("RFLCT.Targ_StatFldReqTarg"));
+                        else
+#endif
+                        throw new TargetException(Environment.GetResourceString("RFLCT.Targ_StatFldReqTarg"));
+                    }
+                    else
+                    {
+                        throw new ArgumentException(
+                            String.Format(CultureInfo.CurrentUICulture, Environment.GetResourceString("Arg_FieldDeclTarget"),
+                                Name, DeclaringType, target.GetType()));
+                    }
+                }
+            }
+        }
+
+		[DebuggerStepThroughAttribute]
+		[Diagnostics.DebuggerHidden]
+		internal void UnsafeSetValue (Object obj, Object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
+		{
+			bool domainInitialized = false;
+			RuntimeFieldHandle.SetValue (this, obj, value, null, Attributes, null, ref domainInitialized);
+		}
+
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        public override void SetValueDirect(TypedReference obj, Object value)
+        {
+            if (obj.IsNull)
+                throw new ArgumentException(Environment.GetResourceString("Arg_TypedReference_Null"));
+            Contract.EndContractBlock();
+
+            unsafe
+            {
+                // Passing TypedReference by reference is easier to make correct in native code
+                RuntimeFieldHandle.SetValueDirect(this, (RuntimeType)FieldType, &obj, value, (RuntimeType)DeclaringType);
+            }
+        }
+
+        [DebuggerStepThroughAttribute]
+        [Diagnostics.DebuggerHidden]
+        public override Object GetValueDirect(TypedReference obj)
+        {
+            if (obj.IsNull)
+                throw new ArgumentException(Environment.GetResourceString("Arg_TypedReference_Null"));
+            Contract.EndContractBlock();
+
+            unsafe
+            {
+                // Passing TypedReference by reference is easier to make correct in native code
+                return RuntimeFieldHandle.GetValueDirect(this, (RuntimeType)FieldType, &obj, (RuntimeType)DeclaringType);
+            }
+        }
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoField : FieldInfo, ISerializable {
+	internal class MonoField : RtFieldInfo {
 		internal IntPtr klass;
 		internal RuntimeFieldHandle fhandle;
 		string name;
@@ -146,10 +264,11 @@ namespace System.Reflection {
 			if (IsLiteral)
 				throw new FieldAccessException ("Cannot set a constant field");
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 			CheckGeneric ();
 			if (val != null) {
-				val = binder.ConvertValue (val, FieldType, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
+				RuntimeType fieldType = (RuntimeType) FieldType;
+				val = fieldType.CheckValue (val, binder, culture, invokeAttr);
 			}
 			SetValueInternal (this, obj, val);
 		}
@@ -165,25 +284,32 @@ namespace System.Reflection {
 			return field;
 		}
 
-		// ISerializable
-		public void GetObjectData (SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
-				ToString(), MemberTypes.Field);
-		}
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern object GetRawConstantValue ();
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 
 		void CheckGeneric () {
 			if (DeclaringType.ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on fields with types for which Type.ContainsGenericParameters is true.");
 	    }
+
+		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int get_core_clr_security_level ();
+
+		public override bool IsSecurityTransparent {
+			get { return get_core_clr_security_level () == 0; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return get_core_clr_security_level () > 0; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return get_core_clr_security_level () == 1; }
+		}
 	}
 }

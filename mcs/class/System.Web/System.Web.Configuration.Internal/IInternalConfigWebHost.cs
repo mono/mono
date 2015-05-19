@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 using System.Configuration;
 using System.Xml;
 
-#if NET_2_0
 
 namespace System.Web.Configuration.Internal {
 
@@ -46,4 +45,3 @@ namespace System.Web.Configuration.Internal {
 	}
 }
 
-#endif

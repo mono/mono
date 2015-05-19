@@ -33,9 +33,7 @@ namespace System.Configuration.Install
 {
 	[Guid("1E233FE7-C16D-4512-8C3B-2E9988F08D38")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-#if NET_2_0
 	[ComImport]
-#endif
 	public interface IManagedInstaller
 	{
 		[return: MarshalAs(UnmanagedType.I4)] 

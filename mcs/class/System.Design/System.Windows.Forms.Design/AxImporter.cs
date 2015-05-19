@@ -155,10 +155,8 @@ namespace System.Windows.Forms.Design
 			public bool silentMode;
 			[MonoTODO]
 			public bool verboseMode;
-#if NET_2_0
 			[MonoTODO]
 			public bool msBuildErrors;
-#endif
 
 			#endregion Public Instance Fields
 		}

@@ -156,21 +156,17 @@ namespace System.Web.Services.Description {
 			List.Remove (serviceDescription);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected override
-#endif
 		void OnInsertComplete (int index, object item)
 		{
 			base.OnInsertComplete (index, item);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected override void SetParent (object value, object parent)
 		{
 		}
-#endif
 
 		#endregion // Methods
 	}

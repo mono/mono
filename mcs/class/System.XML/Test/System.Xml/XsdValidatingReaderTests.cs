@@ -322,15 +322,11 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #79650
-#if NET_2_0
-		// annoyance
-		[ExpectedException (typeof (XmlSchemaValidationException))]
-#else
+		// LAMESPEC: .NET does not throw XmlSchemaValidationException
 		[ExpectedException (typeof (XmlSchemaException))]
-#endif
 		public void EnumerationFacetOnAttribute ()
 		{
-			string xml = "<test mode='NOT A ENUMERATION VALUE' />";
+			string xml = "<test mode='NOT AN ENUMERATION VALUE' />";
 			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/79650.xsd"), null);
 			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			xvr.ValidationType = ValidationType.Schema;
@@ -390,7 +386,6 @@ namespace MonoTests.System.Xml
 				validator.Read ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void Bug81460 ()
 		{
@@ -404,15 +399,10 @@ namespace MonoTests.System.Xml
 			r.MoveToFirstAttribute (); // default attribute
 			Assert.AreEqual (String.Empty, r.Prefix);
 		}
-#endif
 
 		[Test]
-#if NET_2_0
 		// annoyance
 		[ExpectedException (typeof (XmlSchemaValidationException))]
-#else
-		[ExpectedException (typeof (XmlSchemaException))]
-#endif
 		public void Bug82099 ()
 		{
 			string xsd = @"
@@ -426,18 +416,12 @@ namespace MonoTests.System.Xml
 
 			string xml = "<Customer name='Bob'> </Customer>";
 
-#if NET_2_0
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.Schemas.Add (schema);
 			settings.ValidationType = ValidationType.Schema;
 
 			XmlReader reader = XmlReader.Create (new StringReader (xml), settings);
 			
-#else
-			XmlValidatingReader reader = new XmlValidatingReader (xml, XmlNodeType.Document, null);
-			reader.Schemas.Add (schema);
-			reader.ValidationType = ValidationType.Schema;
-#endif
 			reader.Read ();
 			reader.Read ();
 			reader.Read ();
@@ -516,7 +500,6 @@ namespace MonoTests.System.Xml
 			xvr.Schemas.Add (XmlSchema.Read (xsr, null));
 			while (!xvr.EOF)
 				xvr.Read ();
-#if NET_2_0
 			xtr = new XmlTextReader (new StringReader (xml));
 			xsr = new XmlTextReader (new StringReader (xsd));
 			var s = new XmlReaderSettings ();
@@ -525,10 +508,8 @@ namespace MonoTests.System.Xml
 			XmlReader xvr2 = XmlReader.Create (xtr, s);
 			while (!xvr2.EOF)
 				xvr2.Read ();
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void WhitespaceAndElementOnly ()
 		{
@@ -648,6 +629,5 @@ namespace MonoTests.System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
-#endif
 	}
 }

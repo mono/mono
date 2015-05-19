@@ -109,7 +109,6 @@ public class ObjectTest
 		Object y = new Object();
 		Assert.AreEqual(x.ToString(), y.ToString(), "All Objects should have same string rep");
 	}
-#if NET_2_0
 	class Foo<T> {}
 
 	[Test]
@@ -119,6 +118,5 @@ public class ObjectTest
 		Assert.AreEqual ("MonoTests.System.ObjectTest+Foo`1[System.Object]", foo.ToString (), "Bad ToString of generic instance");
 			
 	}
-#endif
 }
 }

@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 
@@ -35,4 +34,3 @@ namespace System.Data.SqlClient {
 	public delegate void SqlRowsCopiedEventHandler(object sender, SqlRowsCopiedEventArgs e);
 }
 
-#endif

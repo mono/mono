@@ -225,6 +225,14 @@ namespace System.Net
 		}
 	}
 
+	internal struct CFStreamClientContext {
+		public IntPtr Version;
+		public IntPtr Info;
+		public IntPtr Retain;
+		public IntPtr Release;
+		public IntPtr CopyDescription;
+	}
+
 	internal class CFString : CFObject
 	{
 		string str;
@@ -358,6 +366,52 @@ namespace System.Net
 				return null;
 
 			return new CFUrl (handle, true);
+		}
+	}
+
+	internal class CFRunLoop : CFObject
+	{
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		static extern void CFRunLoopAddSource (IntPtr rl, IntPtr source, IntPtr mode);
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		static extern void CFRunLoopRemoveSource (IntPtr rl, IntPtr source, IntPtr mode);
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		static extern int CFRunLoopRunInMode (IntPtr mode, double seconds, bool returnAfterSourceHandled);
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		static extern IntPtr CFRunLoopGetCurrent ();
+
+		[DllImport (CFObject.CoreFoundationLibrary)]
+		static extern void CFRunLoopStop (IntPtr rl);
+
+		public CFRunLoop (IntPtr handle, bool own): base (handle, own)
+		{
+		}
+
+		public static CFRunLoop CurrentRunLoop {
+			get { return new CFRunLoop (CFRunLoopGetCurrent (), false); }
+		}
+
+		public void AddSource (IntPtr source, CFString mode)
+		{
+			CFRunLoopAddSource (Handle, source, mode.Handle);
+		}
+
+		public void RemoveSource (IntPtr source, CFString mode)
+		{
+			CFRunLoopRemoveSource (Handle, source, mode.Handle);
+		}
+
+		public int RunInMode (CFString mode, double seconds, bool returnAfterSourceHandled)
+		{
+			return CFRunLoopRunInMode (mode.Handle, seconds, returnAfterSourceHandled);
+		}
+
+		public void Stop ()
+		{
+			CFRunLoopStop (Handle);
 		}
 	}
 
@@ -615,6 +669,10 @@ namespace System.Net
 		// CFArrayRef CFNetworkCopyProxiesForAutoConfigurationScript (CFStringRef proxyAutoConfigurationScript, CFURLRef targetURL, CFErrorRef* error);
 		extern static IntPtr CFNetworkCopyProxiesForAutoConfigurationScriptSequential (IntPtr proxyAutoConfigurationScript, IntPtr targetURL, out IntPtr error);
 
+		[DllImport (CFNetworkLibrary)]
+		extern static IntPtr CFNetworkExecuteProxyAutoConfigurationURL (IntPtr proxyAutoConfigURL, IntPtr targetURL, CFProxyAutoConfigurationResultCallback cb, ref CFStreamClientContext clientContext);
+
+
 		class GetProxyData : IDisposable {
 			public IntPtr script;
 			public IntPtr targetUri;
@@ -735,6 +793,45 @@ namespace System.Net
 			CFProxy[] proxies = GetProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL);
 			targetURL.Dispose ();
 			
+			return proxies;
+		}
+
+		delegate void CFProxyAutoConfigurationResultCallback (IntPtr client, IntPtr proxyList, IntPtr error);
+
+		public static CFProxy[] ExecuteProxyAutoConfigurationURL (IntPtr proxyAutoConfigURL, Uri targetURL)
+		{
+			CFUrl url = CFUrl.Create (targetURL.AbsoluteUri);
+			if (url == null)
+				return null;
+
+			CFProxy[] proxies = null;
+
+			var runLoop = CFRunLoop.CurrentRunLoop;
+
+			// Callback that will be called after executing the configuration script
+			CFProxyAutoConfigurationResultCallback cb = delegate (IntPtr client, IntPtr proxyList, IntPtr error) {
+				if (proxyList != IntPtr.Zero) {
+					var array = new CFArray (proxyList, false);
+					proxies = new CFProxy [array.Count];
+					for (int i = 0; i < proxies.Length; i++) {
+						CFDictionary dict = new CFDictionary (array[i], false);
+						proxies[i] = new CFProxy (dict);
+					}
+					array.Dispose ();
+				}
+				runLoop.Stop ();
+			};
+
+			var clientContext = new CFStreamClientContext ();
+			var loopSource = CFNetworkExecuteProxyAutoConfigurationURL (proxyAutoConfigURL, url.Handle, cb, ref clientContext);
+
+			// Create a private mode
+			var mode = CFString.Create ("Mono.MacProxy");
+
+			runLoop.AddSource (loopSource, mode);
+			runLoop.RunInMode (mode, double.MaxValue, false);
+			runLoop.RemoveSource (loopSource, mode);
+
 			return proxies;
 		}
 		
@@ -859,7 +956,18 @@ namespace System.Net
 			static Uri GetProxyUriFromScript (IntPtr script, Uri targetUri, out NetworkCredential credentials)
 			{
 				CFProxy[] proxies = CFNetwork.GetProxiesForAutoConfigurationScript (script, targetUri);
-				
+				return SelectProxy (proxies, targetUri, out credentials);
+			}
+
+			static Uri ExecuteProxyAutoConfigurationURL (IntPtr proxyAutoConfigURL, Uri targetUri, out NetworkCredential credentials)
+			{
+				CFProxy[] proxies = CFNetwork.ExecuteProxyAutoConfigurationURL (proxyAutoConfigURL, targetUri);
+				return SelectProxy (proxies, targetUri, out credentials);
+			}
+
+
+			static Uri SelectProxy (CFProxy[] proxies, Uri targetUri, out NetworkCredential credentials)
+			{
 				if (proxies == null) {
 					credentials = null;
 					return targetUri;
@@ -907,7 +1015,7 @@ namespace System.Net
 								proxy = GetProxyUriFromScript (proxies[i].AutoConfigurationJavaScript, targetUri, out credentials);
 								break;
 							case CFProxyType.AutoConfigurationUrl:
-								// unsupported proxy type (requires fetching script from remote url)
+								proxy = ExecuteProxyAutoConfigurationURL (proxies[i].AutoConfigurationUrl, targetUri, out credentials);
 								break;
 							case CFProxyType.HTTPS:
 							case CFProxyType.HTTP:

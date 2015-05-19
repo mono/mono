@@ -26,7 +26,6 @@
 //
 //
 
-#if NET_4_5
 
 using System;
 using System.Net;
@@ -105,4 +104,3 @@ namespace System.Net.WebSockets
 	}
 }
 
-#endif

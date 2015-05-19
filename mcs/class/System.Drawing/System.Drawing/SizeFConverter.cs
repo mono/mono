@@ -29,7 +29,6 @@
 //
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -72,6 +71,8 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
 			string[] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 
 			SingleConverter converter = new SingleConverter ();
@@ -130,5 +131,4 @@ namespace System.Drawing
 	}
 }
 
-#endif
 

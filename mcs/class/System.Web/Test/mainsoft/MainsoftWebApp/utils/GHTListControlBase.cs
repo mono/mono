@@ -167,25 +167,6 @@ namespace GHTTests
 
 			#endregion
 			#region "Non existing table in a dataset"
-#if !NET_2_0
-			GHTListContorlSubTestBegin(ctrlType, "Non existing table in a dataset");
-			
-			try
-			{
-				m_lcToTest.DataSource = m_dsData;
-				m_lcToTest.DataMember = "not a table name";
-				m_lcToTest.DataBind();
-				GHTSubTestExpectedExceptionNotCaught("HttpException");
-			}
-			catch (HttpException ex)
-			{
-				GHTSubTestExpectedExceptionCaught(ex);
-			}
-			catch (Exception ex)
-			{
-				GHTSubTestUnexpectedExceptionCaught(ex);
-			}
-#endif
 			#endregion
 			#region "DataSource is not a dataset - set"
 			GHTListContorlSubTestBegin(ctrlType, "DataSource is not a dataset");
@@ -251,12 +232,10 @@ namespace GHTTests
 				m_lcToTest.DataBind();
 				GHTSubTestExpectedExceptionNotCaught("ArgumentException");
 			}
-#if NET_2_0
 			catch (InvalidOperationException ex)
 			{
 				GHTSubTestExpectedExceptionCaught(ex);
 			}
-#endif
 			catch (ArgumentException ex)
 			{
 				GHTSubTestExpectedExceptionCaught(ex);

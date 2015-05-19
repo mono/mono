@@ -29,7 +29,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -227,7 +227,7 @@ namespace System.Diagnostics
 					DateFormat, CultureInfo.InvariantCulture);
 				DateTime timeWritten = File.GetLastWriteTime (file);
 				int stringNums = int.Parse (tr.ReadLine ().Substring (20));
-				ArrayList replacementTemp = new ArrayList ();
+				var replacementTemp = new List<string> ();
 				StringBuilder sb = new StringBuilder ();
 				while (replacementTemp.Count < stringNums) {
 					char c = (char) tr.Read ();
@@ -238,8 +238,7 @@ namespace System.Diagnostics
 						sb.Append (c);
 					}
 				}
-				string [] replacementStrings = new string [replacementTemp.Count];
-				replacementTemp.CopyTo (replacementStrings, 0);
+				string [] replacementStrings = replacementTemp.ToArray ();
 
 				string message = FormatMessage (source, instanceID, replacementStrings);
 				int eventID = EventLog.GetEventID (instanceID);

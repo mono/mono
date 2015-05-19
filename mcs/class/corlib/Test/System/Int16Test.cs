@@ -162,8 +162,16 @@ public class Int16Test
 		}
 
 		Assert.AreEqual (7345, Int16.Parse ("7345\0"), "#1");
-		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0    \0"), "#2");
-		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0    "), "#3");
+		try {
+			Int16.Parse ("7345\0\0\0    \0");
+			Assert.Fail ("#2");
+		} catch (FormatException) {}
+
+		try {		
+			Int16.Parse ("7345\0\0\0    ");
+			Assert.Fail ("#3");
+		} catch (FormatException) {}
+
 		Assert.AreEqual (7345, Int16.Parse ("7345\0\0\0"), "#4");
 
 		Assert.AreEqual (0, Int16.Parse ("0+", NumberStyles.Any), "#5");

@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using MonoTests.stand_alone.WebHarness;
@@ -100,4 +99,3 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	}
 }
 
-#endif

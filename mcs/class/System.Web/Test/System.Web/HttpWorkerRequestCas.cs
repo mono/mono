@@ -138,10 +138,8 @@ namespace MonoCasTests.System.Web {
 			CasHttpWorkerRequest hwr = new CasHttpWorkerRequest ();
 			Assert.IsNull (hwr.MachineConfigPath, "MachineConfigPath");
 			Assert.IsNull (hwr.MachineInstallDirectory, "MachineInstallDirectory");
-#if NET_2_0
 			Assert.IsNotNull (hwr.RequestTraceIdentifier, "RequestTraceIdentifier");
 			Assert.IsNull (hwr.RootWebConfigPath, "RootWebConfigPath");
-#endif
 		}
 
 		private void Callback (HttpWorkerRequest wr, object extraData)
@@ -204,12 +202,10 @@ namespace MonoCasTests.System.Web {
 			Assert.AreEqual (0, hwr.GetConnectionID (), "GetConnectionID");
 			Assert.AreEqual (0, hwr.GetUrlContextID (), "GetUrlContextID");
 			Assert.AreEqual (IntPtr.Zero, hwr.GetVirtualPathToken (), "GetVirtualPathToken");
-#if NET_2_0
 			Assert.AreEqual (0, hwr.GetPreloadedEntityBody (new byte[0], 0), "GetPreloadedEntityBody(byte[],int)");
 			Assert.AreEqual (0, hwr.GetPreloadedEntityBodyLength (), "GetPreloadedEntityBodyLength");
 			Assert.AreEqual (0, hwr.GetTotalEntityBodyLength (), "GetTotalEntityBodyLength");
 			Assert.AreEqual (0, hwr.ReadEntityBody (new byte[1], 0, 1), "ReadEntityBody(byte[],int,int)");
-#endif
 		}
 
 		[Test]

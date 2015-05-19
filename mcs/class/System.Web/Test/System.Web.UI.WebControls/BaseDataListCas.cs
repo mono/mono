@@ -68,7 +68,6 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.Render ();
 			unit.Events ();
 			unit.OnDataBinding ();
-#if NET_2_0
 			unit.DataSourceID ();
 			unit.EnsureDataBound_WithoutDataSourceID ();
 			unit.EnsureDataBound_WithDataSourceID ();
@@ -84,7 +83,6 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.OnLoad_WithPage ();
 			unit.OnLoad_WithPageWithoutViewState ();
 			unit.OnLoad_WithDataSource ();
-#endif
 			unit.IsBindableType ();
 		}
 	}

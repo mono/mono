@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	[Flags]
 	public enum ImageCodecFlags {
 		BlockingDecode = 32,

@@ -206,7 +206,6 @@ namespace MonoTests.System.Drawing {
 		{
 			new Icon (typeof (Icon), null);
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void Constructor_StreamNull_Size ()
@@ -227,7 +226,6 @@ namespace MonoTests.System.Drawing {
 		{
 			new Icon ((string) null, 32, 32);
 		}
-#endif
 
 		[Test]
 		public void TestProperties ()
@@ -510,7 +508,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ExtractAssociatedIcon_Null ()
@@ -531,7 +528,6 @@ namespace MonoTests.System.Drawing {
 		{
 			Icon.ExtractAssociatedIcon ("does-not-exists.png");
 		}
-#endif
 
 		private static bool RunningOnUnix {
 			get {
@@ -544,14 +540,12 @@ namespace MonoTests.System.Drawing {
 
 	[TestFixture]
 	public class IconFullTrustTest {
-#if NET_2_0
 		[Test]
 		public void ExtractAssociatedIcon ()
 		{
 			string filename_dll = Assembly.GetExecutingAssembly ().Location;
 			Assert.IsNotNull (Icon.ExtractAssociatedIcon (filename_dll), "dll");
 		}
-#endif
 
 		[Test]
 		public void HandleRoundtrip ()

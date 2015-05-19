@@ -5,7 +5,8 @@ include ../../build/rules.make
 LIBRARY = Mono.Posix.dll
 # Don't warn about [Obsolete] members, as there are now *lots* of [Obsolete]
 # members, generating volumes of output.
-LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:0618,612
+LIB_REFS = System
+LIB_MCS_FLAGS = /unsafe /r:$(corlib) /nowarn:0618,612
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll /nowarn:0219,0618
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)

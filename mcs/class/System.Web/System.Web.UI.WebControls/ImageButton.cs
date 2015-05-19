@@ -135,11 +135,9 @@ namespace System.Web.UI.WebControls
 			get { return AlternateText; }
 			set { AlternateText = value; }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{			
 			Page page = Page;
@@ -189,11 +187,7 @@ namespace System.Web.UI.WebControls
 			Page page = Page;
 			
 			options.ActionUrl = (PostBackUrl.Length > 0 ?
-#if TARGET_J2EE
-					     CreateActionUrl (PostBackUrl)
-#else
 					     (page != null ? page.ResolveClientUrl (PostBackUrl) : null)
-#endif
 					     : null);
 
 			options.Argument = String.Empty;

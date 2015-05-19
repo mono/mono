@@ -7,11 +7,11 @@
  * (C) 2011 Novell, Inc
  */
 
-#include "config.h"
-
-#if defined(HOST_WIN32)
-
 #include <mono/utils/mono-threads.h>
+
+#if defined(USE_WINDOWS_BACKEND)
+
+#include <mono/utils/mono-compiler.h>
 #include <limits.h>
 
 
@@ -20,40 +20,127 @@ mono_threads_init_platform (void)
 {
 }
 
-void
-mono_threads_core_interrupt (MonoThreadInfo *info)
+static void CALLBACK
+interrupt_apc (ULONG_PTR param)
 {
-	g_assert (0);
 }
 
 void
 mono_threads_core_abort_syscall (MonoThreadInfo *info)
 {
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	QueueUserAPC ((PAPCFUNC)interrupt_apc, handle, (ULONG_PTR)NULL);
+
+	CloseHandle (handle);
 }
 
 gboolean
 mono_threads_core_needs_abort_syscall (void)
 {
-	return FALSE;
-}
-
-void
-mono_threads_core_self_suspend (MonoThreadInfo *info)
-{
-	g_assert_not_reached ();
+	return TRUE;
 }
 
 gboolean
-mono_threads_core_suspend (MonoThreadInfo *info)
+mono_threads_core_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 {
-	g_assert_not_reached ();
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+	DWORD result;
+	gboolean res;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	result = SuspendThread (handle);
+	THREADS_SUSPEND_DEBUG ("SUSPEND %p -> %d\n", (void*)id, ret);
+	if (result == (DWORD)-1) {
+		CloseHandle (handle);
+		return FALSE;
+	}
+
+	/* We're in the middle of a self-suspend, resume and register */
+	if (!mono_threads_transition_finish_async_suspend (info)) {
+		mono_threads_add_to_pending_operation_set (info);
+		result = ResumeThread (handle);
+		g_assert (result == 1);
+		CloseHandle (handle);
+		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/1 %p -> %d\n", (void*)id, 0);
+		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
+		return TRUE;
+	}
+	res = mono_threads_get_runtime_callbacks ()->thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info);
+	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (void*)id, res);
+	if (res) {
+		//FIXME do we need to QueueUserAPC on this case?
+		if (interrupt_kernel)
+			QueueUserAPC ((PAPCFUNC)interrupt_apc, handle, (ULONG_PTR)NULL);
+	} else {
+		mono_threads_transition_async_suspend_compensation (info);
+		result = ResumeThread (handle);
+		g_assert (result == 1);
+		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/2 %p -> %d\n", (void*)info->native_handle, 0);
+	}
+
+	CloseHandle (handle);
+	return res;
 }
 
 gboolean
-mono_threads_core_resume (MonoThreadInfo *info)
+mono_threads_core_check_suspend_result (MonoThreadInfo *info)
 {
-	g_assert_not_reached ();
+	return TRUE;
 }
+
+gboolean
+mono_threads_core_begin_async_resume (MonoThreadInfo *info)
+{
+	DWORD id = mono_thread_info_get_tid (info);
+	HANDLE handle;
+	DWORD result;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, id);
+	g_assert (handle);
+
+	if (info->async_target) {
+		MonoContext ctx;
+		CONTEXT context;
+		gboolean res;
+
+		ctx = info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX].ctx;
+		mono_threads_get_runtime_callbacks ()->setup_async_callback (&ctx, info->async_target, info->user_data);
+		info->async_target = info->user_data = NULL;
+
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+
+		if (!GetThreadContext (handle, &context)) {
+			CloseHandle (handle);
+			return FALSE;
+		}
+
+		g_assert (context.ContextFlags & CONTEXT_INTEGER);
+		g_assert (context.ContextFlags & CONTEXT_CONTROL);
+
+		mono_monoctx_to_sigctx (&ctx, &context);
+
+		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+		res = SetThreadContext (handle, &context);
+		if (!res) {
+			CloseHandle (handle);
+			return FALSE;
+		}
+	}
+
+	result = ResumeThread (handle);
+	CloseHandle (handle);
+
+	return result != (DWORD)-1;
+}
+
 
 void
 mono_threads_platform_register (MonoThreadInfo *info)
@@ -64,6 +151,20 @@ void
 mono_threads_platform_free (MonoThreadInfo *info)
 {
 }
+
+void
+mono_threads_core_begin_global_suspend (void)
+{
+}
+
+void
+mono_threads_core_end_global_suspend (void)
+{
+}
+
+#endif
+
+#if defined (HOST_WIN32)
 
 typedef struct {
 	LPTHREAD_START_ROUTINE start_routine;
@@ -175,8 +276,7 @@ mono_threads_core_resume_created (MonoThreadInfo *info, MonoNativeThreadId tid)
 }
 
 #if HAVE_DECL___READFSDWORD==0
-static __inline__ __attribute__((always_inline))
-unsigned long long
+static MONO_ALWAYS_INLINE unsigned long long
 __readfsdword (unsigned long offset)
 {
 	unsigned long value;
@@ -191,7 +291,7 @@ void
 mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 	MEMORY_BASIC_INFORMATION meminfo;
-#ifdef TARGET_AMD64
+#ifdef _WIN64
 	/* win7 apis */
 	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
 	guint8 *stackTop = (guint8*)tib->StackBase;
@@ -263,8 +363,57 @@ mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 	return OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
 }
 
+#if defined(_MSC_VER)
+const DWORD MS_VC_EXCEPTION=0x406D1388;
+#pragma pack(push,8)
+typedef struct tagTHREADNAME_INFO
+{
+   DWORD dwType; // Must be 0x1000.
+   LPCSTR szName; // Pointer to name (in user addr space).
+   DWORD dwThreadID; // Thread ID (-1=caller thread).
+  DWORD dwFlags; // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+#endif
+
 void
 mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
+{
+#if defined(_MSC_VER)
+	/* http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx */
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = name;
+	info.dwThreadID = tid;
+	info.dwFlags = 0;
+
+	__try {
+		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR),       (ULONG_PTR*)&info );
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER) {
+	}
+#endif
+}
+
+
+gpointer
+mono_threads_core_prepare_interrupt (HANDLE thread_handle)
+{
+	return NULL;
+}
+
+void
+mono_threads_core_finish_interrupt (gpointer wait_handle)
+{
+}
+
+void
+mono_threads_core_self_interrupt (void)
+{
+}
+
+void
+mono_threads_core_clear_interruption (void)
 {
 }
 

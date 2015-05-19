@@ -27,11 +27,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 namespace System.ComponentModel.Design
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public delegate void MenuCommandsChangedEventHandler (object sender, MenuCommandsChangedEventArgs e);
 }
-#endif

@@ -48,14 +48,11 @@ namespace MonoCasTests.System.Web.UI {
 		{
 			PersistChildrenAttribute pca = new PersistChildrenAttribute (true);
 			Assert.IsTrue (pca.Persist, "Persist");
-#if NET_2_0
 			Assert.IsFalse (pca.UsesCustomPersistence, "UsesCustomPersistence");
-#endif
 			Assert.IsTrue (pca.Equals (pca), "Equals");
 			Assert.IsTrue (pca.IsDefaultAttribute (), "IsDefaultAttribute");
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Ctor2_Deny_Unrestricted ()
@@ -66,7 +63,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (pca.Equals (pca), "Equals");
 			Assert.IsFalse (pca.IsDefaultAttribute (), "IsDefaultAttribute");
 		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

@@ -114,14 +114,12 @@ namespace MonoCasTests.System.Web {
 			cache.SetVaryByCustom ("custom");
 			cache.SetAllowResponseInBrowserHistory (true);
 
-#if NET_2_0
 			try {
 				cache.SetOmitVaryStar (false);
 			}
 			catch (NotImplementedException) {
 				// mono
 			}
-#endif
 		}
 
 		// LinkDemand

@@ -110,13 +110,11 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[Category ("Layout")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[DesignOnly (true)]
 		[Localizable (false)]
-#endif
 		[MonoTODO]
 		public Point GetLocation (IComponent receiver)
 		{
@@ -128,7 +126,6 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public IComponent GetNextComponent (IComponent component, bool forward)
 		{
@@ -161,12 +158,6 @@ namespace System.Windows.Forms.Design
 		protected override void OnMouseDoubleClick (MouseEventArgs e)
 		{
 		}
-#else
-		[MonoTODO]
-		protected override void OnDoubleClick (EventArgs e)
-		{
-		}
-#endif
 
 		[MonoTODO]
 		protected override void OnDragDrop (DragEventArgs de)

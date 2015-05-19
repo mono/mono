@@ -39,6 +39,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Configuration.Assemblies;
+using System.Threading;
+using System.Text;
+using System.Diagnostics.Contracts;
 
 using Mono.Security;
 
@@ -51,13 +54,36 @@ namespace System.Reflection {
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
 	public partial class Assembly : ICustomAttributeProvider {
-#elif NET_4_0
-	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
-	public partial class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
 		internal class ResolveEventHolder {
 			public event ModuleResolveEventHandler ModuleResolve;
+		}
+
+		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
+		{
+			Module module;
+
+			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
+				: base (pointer, length)
+			{
+				this.module = module;
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (_isOpen) {
+					/* 
+					 * The returned pointer points inside metadata, so
+					 * we have to increase the refcount of the module, and decrease
+					 * it when the stream is finalized.
+					 */
+					module = null;
+				}
+
+				base.Dispose (disposing);
+			}
 		}
 
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
@@ -79,11 +105,7 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-#if NET_4_0
 		protected
-#else
-		internal
-#endif
 		Assembly () 
 		{
 			resolve_event_holder = new ResolveEventHolder ();
@@ -207,13 +229,9 @@ namespace System.Reflection {
 			}
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
-			UnitySerializationHolder.GetAssemblyData (this, info, context);
+			throw new NotImplementedException ();
 		}
 
 		public virtual bool IsDefined (Type attributeType, bool inherit)
@@ -314,33 +332,66 @@ namespace System.Reflection {
 			else {
 				UnmanagedMemoryStream stream;
 				unsafe {
-					stream = new UnmanagedMemoryStream ((byte*) data, size);
+					stream = new UnmanagedMemoryStreamForModule ((byte*) data, size, module);
 				}
-				/* 
-				 * The returned pointer points inside metadata, so
-				 * we have to increase the refcount of the module, and decrease
-				 * it when the stream is finalized.
-				 */
-				stream.Closed += new EventHandler (new ResourceCloseHandler (module).OnClose);
 				return stream;
 			}
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
-			string ns;
-			if (type != null) {
-				ns = type.Namespace;
-			} else {
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetManifestResourceStream(type, name, false, ref stackMark);
+		}
+
+		internal Stream GetManifestResourceStream (Type type, String name, bool skipSecurityCheck, ref StackCrawlMark stackMark)
+		{
+			StringBuilder sb = new StringBuilder ();
+			if (type == null) {
 				if (name == null)
-					throw new ArgumentNullException ("type");
-				ns = null;
+						throw new ArgumentNullException ("type");
+			} else {
+				String nameSpace = type.Namespace;
+				if (nameSpace != null) {
+					sb.Append (nameSpace);
+					if (name != null)
+						sb.Append (Type.Delimiter);
+				}
 			}
 
-			if (ns == null || ns.Length == 0)
-				return GetManifestResourceStream (name);
-			else
-				return GetManifestResourceStream (ns + "." + name);
+			if (name != null)
+				sb.Append(name);
+
+			return GetManifestResourceStream (sb.ToString());
+		}
+
+		internal unsafe Stream GetManifestResourceStream(String name, ref StackCrawlMark stackMark, bool skipSecurityCheck)
+		{
+			return GetManifestResourceStream (null, name, skipSecurityCheck, ref stackMark);
+		}
+
+		internal String GetSimpleName()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Name;
+		}
+
+		internal byte[] GetPublicKey()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.GetPublicKey ();
+		}
+
+		internal Version GetVersion()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Version;
+		}
+
+		private AssemblyNameFlags GetFlags()
+		{
+			AssemblyName aname = GetName (true);
+			return aname.Flags;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -426,40 +477,53 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		internal Assembly GetSatelliteAssemblyNoThrow (CultureInfo culture, Version version)
-		{
-			return GetSatelliteAssembly (culture, version, false);
-		}
-
 		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
 		{
 			if (culture == null)
-				throw new ArgumentException ("culture");
+				throw new ArgumentNullException("culture");
+			Contract.EndContractBlock();
 
-			AssemblyName aname = GetName (true);
-			if (version != null)
-				aname.Version = version;
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			String name = GetSimpleName() + ".resources";
+			return InternalGetSatelliteAssembly(name, culture, version, true, ref stackMark);
+		}
 
-			aname.CultureInfo = culture;
-			aname.Name = aname.Name + ".resources";
+		internal RuntimeAssembly InternalGetSatelliteAssembly (String name, CultureInfo culture, Version version, bool throwOnFileNotFound, ref StackCrawlMark stackMark)
+		{
+			AssemblyName an = new AssemblyName ();
+
+			an.SetPublicKey (GetPublicKey ());
+			an.Flags = GetFlags () | AssemblyNameFlags.PublicKey;
+
+			if (version == null)
+				an.Version = GetVersion ();
+			else
+				an.Version = version;
+
+			an.CultureInfo = culture;
+			an.Name = name;
+
 			Assembly assembly;
 
 			try {
-				assembly = AppDomain.CurrentDomain.LoadSatellite (aname, false);
+				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false);
 				if (assembly != null)
-					return assembly;
+					return (RuntimeAssembly)assembly;
 			} catch (FileNotFoundException) {
 				assembly = null;
 				// ignore
 			}
 
-			// Try the assembly directory
-			string location = Path.GetDirectoryName (Location);
-			string fullName = Path.Combine (location, Path.Combine (culture.Name, aname.Name + ".dll"));
-			if (!throwOnError && !File.Exists (fullName))
+			if (String.IsNullOrEmpty (Location))
 				return null;
 
-			return LoadFrom (fullName);
+			// Try the assembly directory
+			string location = Path.GetDirectoryName (Location);
+			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
+			if (!throwOnFileNotFound && !File.Exists (fullName))
+				return null;
+
+			return (RuntimeAssembly)LoadFrom (fullName);
 		}
 
 #if !MOBILE
@@ -478,9 +542,7 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, false);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
@@ -493,9 +555,7 @@ namespace System.Reflection {
 			return a;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[MonoTODO("This overload is not currently implemented")]
 		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -503,24 +563,18 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public static Assembly LoadFrom (String assemblyFile, byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
-#if NET_4_0
 		public static Assembly UnsafeLoadFrom (String assemblyFile)
 		{
 			return LoadFrom (assemblyFile);
 		}
-#endif
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
 		{
 			if (path == null)
@@ -541,9 +595,7 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (assemblyString);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif		
 		public static Assembly Load (String assemblyString, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString, assemblySecurity);
@@ -554,9 +606,7 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (assemblyRef);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyRef, assemblySecurity);
@@ -572,22 +622,18 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static Assembly Load (Byte[] rawAssembly, Byte[] rawSymbolStore,
 					     Evidence securityEvidence)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-#if NET_4_0
 		[MonoLimitation ("Argument securityContextSource is ignored")]
 		public static Assembly Load (byte [] rawAssembly, byte [] rawSymbolStore, SecurityContextSource securityContextSource)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
-#endif
 
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
@@ -621,9 +667,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Not implemented")]
 		public
-#if NET_4_0
 		virtual
-#endif
 		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
 		{
 			throw new NotImplementedException ();
@@ -676,9 +720,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		Object CreateInstance (String typeName, Boolean ignoreCase,
 					      BindingFlags bindingAttr, Binder binder,
 					      Object[] args, CultureInfo culture,
@@ -729,7 +771,7 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("resourceName");
 			if (resourceName.Length == 0)
 				throw new ArgumentException ("String cannot have zero length.");
-			ManifestResourceInfo result = new ManifestResourceInfo ();
+			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
 			bool found = GetManifestResourceInfoInternal (resourceName, result);
 			if (found)
 				return result;
@@ -737,27 +779,10 @@ namespace System.Reflection {
 				return null;
 		}
 
-		private class ResourceCloseHandler {
-#pragma warning disable 169, 414
-			Module module;
-#pragma warning restore 169, 414			
-
-			public ResourceCloseHandler (Module module) {
-				this.module = module;
-			}
-
-			public void OnClose (object sender, EventArgs e) {
-				// The module dtor will take care of things
-				module = null;
-			}
-		}
-
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
 		public
-#if NET_4_0
 		virtual
-#endif
 		long HostContext {
 			get { return 0; }
 		}
@@ -875,7 +900,6 @@ namespace System.Reflection {
 			}
 		}
 		
-#if NET_4_0
 		public virtual PermissionSet PermissionSet {
 			get { return this.GrantedPermissionSet; }
 		}
@@ -883,11 +907,9 @@ namespace System.Reflection {
 		public virtual SecurityRuleSet SecurityRuleSet {
 			get { throw CreateNIE (); }
 		}
-#endif
 
 #endif
 
-#if NET_4_0
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");
@@ -968,9 +990,7 @@ namespace System.Reflection {
 				return true;
 			return !left.Equals (right);
 		}
-#endif
 
-#if NET_4_5
 		public virtual IEnumerable<TypeInfo> DefinedTypes {
 			get {
 				foreach (var type in GetTypes ()) {
@@ -990,6 +1010,5 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-#endif
 	}
 }

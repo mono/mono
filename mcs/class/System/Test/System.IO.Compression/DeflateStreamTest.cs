@@ -8,7 +8,6 @@
 // (C) 2004 Novell, Inc. <http://www.novell.com>
 // 
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -89,6 +88,17 @@ namespace MonoTests.System.IO.Compression
 			StreamReader reader = new StreamReader (decompressing);
 			Assert.AreEqual ("Hello", reader.ReadLine ());
 			decompressing.Close();
+		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=22346
+		[Test]
+		public void CheckEmptyRead ()
+		{
+			byte [] dummy = new byte[1];
+			byte [] data = new byte[0];
+			MemoryStream backing = new MemoryStream (data);
+			DeflateStream compressing = new DeflateStream (backing, CompressionMode.Decompress);
+			compressing.Read (dummy, 0, 1);
 		}
 
 		[Test]
@@ -352,8 +362,42 @@ namespace MonoTests.System.IO.Compression
 			backing.Close();
 		}
 #endif	
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CheckBufferOverrun ()
+		{
+			byte[] data = new byte [20];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (data, 0, data.Length + 1);
+			compressing.Close ();
+			backing.Close ();
+		}
+
+		[Test]
+		public void Bug28777_EmptyFlush ()
+		{
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
+		}
+		
+		[Test]
+		public void Bug28777_DoubleFlush ()
+		{
+			byte[] buffer = new byte [4096];
+			MemoryStream backing = new MemoryStream ();
+			DeflateStream compressing = new DeflateStream (backing, CompressionLevel.Fastest, true);
+			compressing.Write (buffer, 0, buffer.Length);
+			compressing.Flush ();
+			compressing.Flush ();
+			compressing.Close ();
+			backing.Close ();
+		}
 	}
 }
 
-#endif
 

@@ -45,13 +45,11 @@ namespace System.Runtime
 			set { ; }
 		}
 
-#if NET_4_5
 		public static GCLargeObjectHeapCompactionMode LargeObjectHeapCompactionMode {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get;
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			set;
 		}
-#endif
 	}
 }

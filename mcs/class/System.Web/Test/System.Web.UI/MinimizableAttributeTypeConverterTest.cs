@@ -39,7 +39,6 @@ using NUnit.Framework;
 
 using MonoTests.Common;
 
-#if NET_2_0
 namespace MonoTests.System.Web.UI {
 
 	[TestFixture]
@@ -139,4 +138,3 @@ namespace MonoTests.System.Web.UI {
 		}
 	}
 }
-#endif

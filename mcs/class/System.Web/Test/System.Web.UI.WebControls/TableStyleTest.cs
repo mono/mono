@@ -86,7 +86,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 	}
 
-#if NET_2_0
 	public class TestResolutionService : IUrlResolutionService {
 
 		public string ResolveClientUrl (string relativeUrl)
@@ -94,7 +93,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return "http://www.mono-project.com";
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class TableStyleTest {
@@ -361,7 +359,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ts.LoadVS (o);
 			Assert.AreEqual (GridLines.Both, ts.GridLines, "GL");
 		}
-#if NET_2_0
 		private CssStyleCollection GetCssCollection ()
 		{
 			return new AttributeCollection (new StateBag ()).CssStyle;
@@ -431,7 +428,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("background-image:url(http://www.mono-project.com);", css.Value, "css.Value");
 			Assert.AreEqual ("http://www.go-mono.com", ts.BackImageUrl, "BackImageUrl");
 		}
-#endif
 		[Test]
 		[Category ("NotWorking")]
 		public void BackImageUrl ()
@@ -445,11 +441,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			htw.RenderBeginTag ("tagName");
 			string res = htw.InnerWriter.ToString ();
 			string expected = "<tagName style=\"background-image:url(";
-#if NET_2_0
 			expected += "test%201.jpg";
-#else
-			expected += "test 1.jpg";
-#endif
 			expected += ");\">\n";
 			Assert.AreEqual (expected, res);
 		}

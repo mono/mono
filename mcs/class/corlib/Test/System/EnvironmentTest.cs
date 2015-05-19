@@ -138,7 +138,7 @@ namespace MonoTests.System
 			Assert.IsFalse (d.IsSynchronized, "IsSynchronized");
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[Test] // bug #333740
 		public void GetEnvironmentVariables_NewlySet ()
 		{
@@ -161,7 +161,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (args [0], "application");
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetEnvironmentVariable_Target_Invalid ()

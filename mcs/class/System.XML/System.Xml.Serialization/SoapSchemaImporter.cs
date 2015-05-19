@@ -35,9 +35,7 @@ using System.CodeDom.Compiler;
 namespace System.Xml.Serialization 
 {
 	public class SoapSchemaImporter 
-#if NET_2_0
 		: SchemaImporter
-#endif
 	{
 
 		#region Fields
@@ -60,7 +58,6 @@ namespace System.Xml.Serialization
 			_importer.UseEncodedFormat = true;
 		}
 
-#if NET_2_0
 
 		public SoapSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
@@ -81,7 +78,6 @@ namespace System.Xml.Serialization
 			_importer.UseEncodedFormat = true;
 		}
 
-#endif
 
 		#endregion // Constructors
 

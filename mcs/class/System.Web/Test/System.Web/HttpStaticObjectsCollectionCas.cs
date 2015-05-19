@@ -50,7 +50,6 @@ namespace MonoCasTests.System.Web {
 			hsoc = new HttpStaticObjectsCollection ();
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor_Deny_Unrestricted ()
@@ -71,22 +70,6 @@ namespace MonoCasTests.System.Web {
 			BinaryReader reader = new BinaryReader (ms);
 			Assert.IsNotNull (HttpStaticObjectsCollection.Deserialize (reader));
 		}
-#else
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void Constructor_Deny_UnmanagedCode ()
-		{
-			new HttpStaticObjectsCollection ();
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
-		public void Constructor_PermitOnly_UnmanagedCode ()
-		{
-			new HttpStaticObjectsCollection ();
-		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
@@ -99,9 +82,7 @@ namespace MonoCasTests.System.Web {
 			Assert.IsTrue (hsoc.IsReadOnly, "IsReadOnly");
 			Assert.IsFalse (hsoc.IsSynchronized, "IsSynchronized");
 			Assert.IsNotNull (hsoc.SyncRoot, "SyncRoot");
-#if NET_2_0
 			Assert.IsTrue (hsoc.NeverAccessed, "NeverAccessed");
-#endif
 		}
 
 		[Test]
@@ -112,13 +93,6 @@ namespace MonoCasTests.System.Web {
 		}
 
 		// LinkDemand
-#if ONLY_1_1
-		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			return base.CreateControl (action, level);
-		}
-#endif
 		public override Type Type {
 			get { return typeof (HttpStaticObjectsCollection); }
 		}

@@ -6,7 +6,7 @@ check:	local compare
 local: $(TESTS)
 	@for i in $(TESTS); do \
 		echo running test $$i; \
-		MONO_PATH=../../../lib/net_2_0 mono --debug $$i > $$i.result; \
+		MONO_PATH=../../../lib/net_4_5 mono --debug $$i > $$i.result; \
 	done
 
 compare:

@@ -32,19 +32,11 @@
 #include <llvm/ExecutionEngine/JITEventListener.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Target/TargetRegisterInfo.h>
-#if LLVM_API_VERSION >= 1
 #include <llvm/IR/Verifier.h>
-#else
-#include <llvm/Analysis/Verifier.h>
-#endif
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Support/CommandLine.h>
-#if LLVM_API_VERSION >= 1
 #include "llvm/IR/LegacyPassNameParser.h"
-#else
-#include "llvm/Support/PassNameParser.h"
-#endif
 #include "llvm/Support/PrettyStackTrace.h"
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/CodeGen/MachineFunctionPass.h>
@@ -59,10 +51,6 @@
 #include "llvm-c/ExecutionEngine.h"
 
 #include "mini-llvm-cpp.h"
-
-#define LLVM_CHECK_VERSION(major,minor) \
-	((LLVM_MAJOR_VERSION > (major)) ||									\
-	 ((LLVM_MAJOR_VERSION == (major)) && (LLVM_MINOR_VERSION >= (minor))))
 
 // extern "C" void LLVMInitializeARMTargetInfo();
 // extern "C" void LLVMInitializeARMTarget ();
@@ -81,6 +69,7 @@ public:
 	/* Callbacks installed by mono */
 	AllocCodeMemoryCb *alloc_cb;
 	DlSymCb *dlsym_cb;
+	ExceptionTableCb *exception_cb;
 
 	MonoJITMemoryManager ();
 	~MonoJITMemoryManager ();
@@ -244,6 +233,7 @@ MonoJITMemoryManager::endExceptionTable(const Function *F, unsigned char *TableS
 					unsigned char *TableEnd, 
 					unsigned char* FrameRegister)
 {
+	exception_cb (FrameRegister);
 }
 
 #else
@@ -265,20 +255,6 @@ public:
 	virtual void NotifyFunctionEmitted(const Function &F,
 									   void *Code, size_t Size,
 									   const EmittedFunctionDetails &Details) {
-		/*
-		 * X86TargetMachine::setCodeModelForJIT() sets the code model to Large on amd64,
-		 * which means the JIT will generate calls of the form
-		 * mov reg, <imm>
-		 * call *reg
-		 * Our trampoline code can't patch this. Passing CodeModel::Small to createJIT
-		 * doesn't seem to work, we need Default. A discussion is here:
-		 * http://lists.cs.uiuc.edu/pipermail/llvmdev/2009-December/027999.html
-		 * There seems to no way to get the TargeMachine used by an EE either, so we
-		 * install a profiler hook and reset the code model here.
-		 * This should be inside an ifdef, but we can't include our config.h either,
-		 * since its definitions conflict with LLVM's config.h.
-		 * The LLVM mono branch contains a workaround.
-		 */
 		emitted_cb (wrap (&F), Code, (char*)Code + Size);
 	}
 };
@@ -322,9 +298,25 @@ mono_llvm_build_alloca (LLVMBuilderRef builder, LLVMTypeRef Ty,
 
 LLVMValueRef 
 mono_llvm_build_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
-					  const char *Name, gboolean is_volatile)
+					  const char *Name, gboolean is_volatile, BarrierKind barrier)
 {
-	return wrap(unwrap(builder)->CreateLoad(unwrap(PointerVal), is_volatile, Name));
+	LoadInst *ins = unwrap(builder)->CreateLoad(unwrap(PointerVal), is_volatile, Name);
+
+	switch (barrier) {
+	case LLVM_BARRIER_NONE:
+		break;
+	case LLVM_BARRIER_ACQ:
+		ins->setOrdering(Acquire);
+		break;
+	case LLVM_BARRIER_SEQ:
+		ins->setOrdering(SequentiallyConsistent);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	return wrap(ins);
 }
 
 LLVMValueRef 
@@ -341,9 +333,25 @@ mono_llvm_build_aligned_load (LLVMBuilderRef builder, LLVMValueRef PointerVal,
 
 LLVMValueRef 
 mono_llvm_build_store (LLVMBuilderRef builder, LLVMValueRef Val, LLVMValueRef PointerVal,
-					  gboolean is_volatile)
+					  gboolean is_volatile, BarrierKind barrier)
 {
-	return wrap(unwrap(builder)->CreateStore(unwrap(Val), unwrap(PointerVal), is_volatile));
+	StoreInst *ins = unwrap(builder)->CreateStore(unwrap(Val), unwrap(PointerVal), is_volatile);
+
+	switch (barrier) {
+	case LLVM_BARRIER_NONE:
+		break;
+	case LLVM_BARRIER_REL:
+		ins->setOrdering(Release);
+		break;
+	case LLVM_BARRIER_SEQ:
+		ins->setOrdering(SequentiallyConsistent);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	return wrap(ins);
 }
 
 LLVMValueRef 
@@ -363,11 +371,7 @@ mono_llvm_build_cmpxchg (LLVMBuilderRef builder, LLVMValueRef ptr, LLVMValueRef 
 {
 	AtomicCmpXchgInst *ins;
 
-#if LLVM_API_VERSION >= 1
 	ins = unwrap(builder)->CreateAtomicCmpXchg (unwrap(ptr), unwrap (cmp), unwrap (val), SequentiallyConsistent, SequentiallyConsistent);
-#else
-	ins = unwrap(builder)->CreateAtomicCmpXchg (unwrap(ptr), unwrap (cmp), unwrap (val), SequentiallyConsistent);
-#endif
 	return wrap (ins);
 }
 
@@ -389,16 +393,34 @@ mono_llvm_build_atomic_rmw (LLVMBuilderRef builder, AtomicRMWOp op, LLVMValueRef
 		break;
 	}
 
-	ins = unwrap (builder)->CreateAtomicRMW (aop, unwrap (ptr), unwrap (val), AcquireRelease);
+	ins = unwrap (builder)->CreateAtomicRMW (aop, unwrap (ptr), unwrap (val), SequentiallyConsistent);
 	return wrap (ins);
 }
 
 LLVMValueRef
-mono_llvm_build_fence (LLVMBuilderRef builder)
+mono_llvm_build_fence (LLVMBuilderRef builder, BarrierKind kind)
 {
 	FenceInst *ins;
+	AtomicOrdering ordering;
 
-	ins = unwrap (builder)->CreateFence (AcquireRelease);
+	g_assert (kind != LLVM_BARRIER_NONE);
+
+	switch (kind) {
+	case LLVM_BARRIER_ACQ:
+		ordering = Acquire;
+		break;
+	case LLVM_BARRIER_REL:
+		ordering = Release;
+		break;
+	case LLVM_BARRIER_SEQ:
+		ordering = SequentiallyConsistent;
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	ins = unwrap (builder)->CreateFence (ordering);
 	return wrap (ins);
 }
 
@@ -589,6 +611,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   MonoJITMemoryManager *mono_mm = new MonoJITMemoryManager ();
   mono_mm->alloc_cb = alloc_cb;
   mono_mm->dlsym_cb = dlsym_cb;
+  mono_mm->exception_cb = exception_cb;
   mono_ee->mm = mono_mm;
 
   /*
@@ -600,39 +623,20 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   TargetOptions opts;
   opts.JITExceptionHandling = 1;
 
-#if LLVM_API_VERSION >= 2
   StringRef cpu_name = sys::getHostCPUName ();
 
   // EngineBuilder no longer has a copy assignment operator (?)
   std::unique_ptr<Module> Owner(unwrap(MP));
   EngineBuilder b (std::move(Owner));
-  EngineBuilder &eb = b;
 #ifdef TARGET_AMD64
   ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true).setMCPU (cpu_name).setCodeModel (CodeModel::Large).create ();
 #else
   ExecutionEngine *EE = b.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true).setMCPU (cpu_name).create ();
 #endif
 
-#else
-
-  EngineBuilder b (unwrap (MP));
-  EngineBuilder &eb = b;
-  eb = eb.setJITMemoryManager (mono_mm).setTargetOptions (opts).setAllocateGVsWithCode (true);
-#if LLVM_API_VERSION >= 1
-  StringRef cpu_name = sys::getHostCPUName ();
-  eb = eb.setMCPU (cpu_name);
-#endif
-#ifdef TARGET_AMD64
-  eb = eb.setCodeModel (CodeModel::Large);
-#endif
-
-  ExecutionEngine *EE = eb.create ();
-#endif
-
   g_assert (EE);
   mono_ee->EE = EE;
 
-  EE->InstallExceptionTableRegister (exception_cb);
   MonoJITEventListener *listener = new MonoJITEventListener (emitted_cb);
   EE->RegisterJITEventListener (listener);
   mono_ee->listener = listener;
@@ -640,11 +644,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   FunctionPassManager *fpm = new FunctionPassManager (unwrap (MP));
   mono_ee->fpm = fpm;
 
-#if LLVM_API_VERSION >= 1
   fpm->add(new DataLayoutPass(*EE->getDataLayout()));
-#else
-  fpm->add(new DataLayout(*EE->getDataLayout()));
-#endif
 
   if (PassList.size() > 0) {
 	  /* Use the passes specified by the env variable */

@@ -34,13 +34,11 @@
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DebugInfoExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DebugViewWriter.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/DefaultExpression.cs
-../dlr/Runtime/Microsoft.Scripting.Core/Ast/DynamicExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ElementInit.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/Expression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/Expression.DebuggerProxy.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ExpressionStringBuilder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ExpressionType.cs
-../dlr/Runtime/Microsoft.Scripting.Core/Ast/ExpressionVisitor.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/GotoExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/IArgumentProvider.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/IndexExpression.cs

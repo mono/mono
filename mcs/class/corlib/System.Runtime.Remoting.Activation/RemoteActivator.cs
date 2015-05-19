@@ -42,7 +42,10 @@ namespace System.Runtime.Remoting.Activation
 			if (!RemotingConfiguration.IsActivationAllowed (msg.ActivationType))
 				throw new RemotingException ("The type " + msg.ActivationTypeName + " is not allowed to be client activated");
 
-			object[] activationAttributes = new object[] { new RemoteActivationAttribute (msg.ContextProperties) };
+			object[] activationAttributes = null;
+			if (msg.ActivationType.IsContextful)
+				activationAttributes = new object[] { new RemoteActivationAttribute (msg.ContextProperties) };
+
 			MarshalByRefObject newObject = (MarshalByRefObject) Activator.CreateInstance (msg.ActivationType, msg.Args, activationAttributes);
 
 			// The activator must return a ConstructionResponse with an ObjRef as return value.

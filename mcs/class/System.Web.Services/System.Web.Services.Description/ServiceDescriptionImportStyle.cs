@@ -31,16 +31,11 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	public enum ServiceDescriptionImportStyle {
-#if NET_2_0
 		[XmlEnum ("client")]
 		Client,
 		[XmlEnum ("server")]
 		Server,
 		[XmlEnum ("serverInterface")]
 		ServerInterface,
-#else
-		Client,
-		Server
-#endif
 	}
 }

@@ -47,7 +47,6 @@ namespace MonoCasTests.System.CodeDom {
 			if (!SecurityManager.SecurityEnabled)
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor0_Deny_Unrestricted ()
@@ -56,7 +55,6 @@ namespace MonoCasTests.System.CodeDom {
 			Assert.IsNull (cgs.Label, "Label");
 			cgs.Label = "mono";
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor1_Deny_Unrestricted ()

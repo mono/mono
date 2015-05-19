@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
-			if (!expl && IsLiteral && 
+			if (!expl && IsLiteral && type.BuiltinType != BuiltinTypeSpec.Type.Double &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
@@ -2090,7 +2090,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.Emit (OpCodes.Ldstr, Value);
+			var str = Value;
+			if (ec.Module.GetResourceStrings != null && !ec.Module.GetResourceStrings.TryGetValue (str, out str)) {
+				str = Value;
+			}
+
+			ec.Emit (OpCodes.Ldstr, str);
 		}
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType, TypeSpec parameterType)
@@ -2144,6 +2149,11 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
+		static void Error_MethodGroupWithTypeArguments (ResolveContext rc, Location loc)
+		{
+			rc.Report.Error (8084, loc, "An argument to nameof operator cannot be method group with type arguments");
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			throw new NotSupportedException ();
@@ -2158,64 +2168,79 @@ namespace Mono.CSharp {
 				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
-				if (sn.HasTypeArguments) {
-					// TODO: csc compatible but unhelpful error message
-					rc.Report.Error (1001, loc, "Identifier expected");
-					return true;
+				var res = sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity | MemberLookupRestrictions.NameOfExcluded);
+				if (sn.HasTypeArguments && res is MethodGroupExpr) {
+					Error_MethodGroupWithTypeArguments (rc, expr.Location);
 				}
 
-				sn.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity);
 				return true;
 			}
 
 			var ma = expr as MemberAccess;
 			if (ma != null) {
-				FullNamedExpression fne = ma.LeftExpression as ATypeNameExpression;
-				if (fne == null) {
-					var qam = ma as QualifiedAliasMember;
-					if (qam == null)
-						return false;
+				var lexpr = ma.LeftExpression;
 
-					fne = qam.CreateExpressionFromAlias (rc);
-					if (fne == null)
-						return true;
+				var res = ma.LookupNameExpression (rc, MemberLookupRestrictions.IgnoreAmbiguity);
+
+				if (res == null) {
+					return false;
 				}
-
-				Value = ma.Name;
 
 				if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_6)
 					rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, Location, "nameof operator");
 
-				if (ma.HasTypeArguments) {
-					// TODO: csc compatible but unhelpful error message
-					rc.Report.Error (1001, loc, "Identifier expected");
-					return true;
-				}
-					
-				var left = fne.ResolveAsTypeOrNamespace (rc, true);
-				if (left == null)
-					return true;
-
-				var ns = left as NamespaceExpression;
-				if (ns != null) {
-					FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, ma.Name, 0, LookupMode.NameOf, loc);
-					if (retval == null)
-						ns.Error_NamespaceDoesNotExist (rc, ma.Name, 0);
-
-					return true;
+				if (ma is QualifiedAliasMember) {
+					rc.Report.Error (8083, loc, "An alias-qualified name is not an expression");
+					return false;
 				}
 
-				if (left.Type.IsGenericOrParentIsGeneric && left.Type.GetDefinition () != left.Type) {
-					rc.Report.Error (8071, loc, "Type arguments are not allowed in the nameof operator");
+				if (!IsLeftExpressionValid (lexpr)) {
+					rc.Report.Error (8082, lexpr.Location, "An argument to nameof operator cannot include sub-expression");
+					return false;
 				}
 
-				var mexpr = MemberLookup (rc, false, left.Type, ma.Name, 0, MemberLookupRestrictions.IgnoreArity | MemberLookupRestrictions.IgnoreAmbiguity, loc);
-				if (mexpr == null) {
-					ma.Error_IdentifierNotFound (rc, left.Type);
-					return true;
+				var mg = res as MethodGroupExpr;
+				if (mg != null) {
+					var emg = res as ExtensionMethodGroupExpr;
+					if (emg != null && !emg.ResolveNameOf (rc, ma)) {
+						return true;
+					}
+
+					if (!mg.HasAccessibleCandidate (rc)) {
+						ErrorIsInaccesible (rc, ma.GetSignatureForError (), loc);
+					}
+
+					if (ma.HasTypeArguments) {
+						Error_MethodGroupWithTypeArguments (rc, ma.Location);
+					}
 				}
 
+				Value = ma.Name;
 				return true;
+			}
+
+			rc.Report.Error (8081, loc, "Expression does not have a name");
+			return false;
+		}
+
+		static bool IsLeftExpressionValid (Expression expr)
+		{
+			if (expr is SimpleName)
+				return true;
+
+			if (expr is This)
+				return true;
+
+			if (expr is NamespaceExpression)
+				return true;
+
+			if (expr is TypeExpr)
+				return true;
+
+			var ma = expr as MemberAccess;
+			if (ma != null) {
+				// TODO: Will conditional access be allowed?
+				return IsLeftExpressionValid (ma.LeftExpression);
 			}
 
 			return false;
@@ -2231,7 +2256,6 @@ namespace Mono.CSharp {
 			var arg = args [0];
 			var res = ResolveArgumentExpression (rc, arg.Expr);
 			if (!res) {
-				name.Error_NameDoesNotExist (rc);
 				return null;
 			}
 

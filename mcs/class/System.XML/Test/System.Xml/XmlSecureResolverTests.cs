@@ -58,6 +58,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore ("This test doesn't work for referencesource anymore.")]
 		public void CreateEvidenceForUrl_Local ()
 		{
 			// "normal" path
@@ -92,6 +93,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore ("This test doesn't work for referencesource anymore.")]
 		public void CreateEvidenceForUrl_Http ()
 		{
 			// http://

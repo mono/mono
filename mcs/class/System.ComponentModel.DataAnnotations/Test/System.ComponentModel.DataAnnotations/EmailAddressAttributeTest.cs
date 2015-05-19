@@ -50,11 +50,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			"$A12345@example.com",
 			"!def!xyz%abc@example.com",
 			"_somename@example.com",
-			"valid.ipv4.addr@[123.1.72.10]",
-			"valid.ipv6.addr@[IPv6:0::1]",
-			"valid.ipv6.addr@[IPv6:2607:f0d0:1002:51::4]",
-			"valid.ipv6.addr@[IPv6:fe80::230:48ff:fe33:bc33]",
-			"valid.ipv6v4.addr@[IPv6:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:127.0.0.1]",
 		};
 
 		static readonly object[] InvalidAddresses = new object[] {
@@ -69,6 +64,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			"invalid@[127.0.0.1.]",
 			"invalid@[127.0.0.1].",
 			"invalid@[127.0.0.1]x",
+
+			"valid.ipv4.addr@[123.1.72.10]",
+			"valid.ipv6.addr@[IPv6:0::1]",
+			"valid.ipv6.addr@[IPv6:2607:f0d0:1002:51::4]",
+			"valid.ipv6.addr@[IPv6:fe80::230:48ff:fe33:bc33]",
+			"valid.ipv6v4.addr@[IPv6:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:127.0.0.1]",
 		};
 
 		[Test]

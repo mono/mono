@@ -258,13 +258,6 @@ DumpSignedXml (s);
 		// some documents references other documents in the directory
 		Directory.SetCurrentDirectory ("phaos-xmldsig-three");
 		foreach (FileInfo fi in new DirectoryInfo (".").GetFiles ("signature-*.xml")) {
-#if !NET_2_0
-			if ((fi.Name.IndexOf ("exclusive") >= 0) && (!exc14n)) {
-				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll cannot validate exclusive-c14n.");
-				skip++;
-				continue;
-			}
-#endif
 			if ((fi.Name.IndexOf ("md5") >= 0) && (!hmacmd5)) {
 				Console.WriteLine ("NOT RUN: " + fi.Name + " : System.Security.dll doesn't support HMAC-MD5.");
 				skip++;

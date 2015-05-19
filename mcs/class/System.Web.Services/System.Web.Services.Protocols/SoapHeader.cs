@@ -43,10 +43,8 @@ namespace System.Web.Services.Protocols {
 		bool didUnderstand;
 		bool mustUnderstand;
 		
-#if NET_2_0
 		string role;
 		bool relay;
-#endif
 
 		#endregion // Fields
 
@@ -64,11 +62,9 @@ namespace System.Web.Services.Protocols {
 			actor = elem.GetAttribute ("actor", WebServiceHelper.SoapEnvelopeNamespace);
 			string me = elem.GetAttribute ("mustUnderstand", WebServiceHelper.SoapEnvelopeNamespace);
 			if (me != "") EncodedMustUnderstand = me;
-#if NET_2_0
 			role = elem.GetAttribute ("role", WebServiceHelper.Soap12EnvelopeNamespace);
 			me = elem.GetAttribute ("mustUnderstand", WebServiceHelper.Soap12EnvelopeNamespace);
 			if (me != "") EncodedMustUnderstand12 = me;
-#endif
 		}
 
 		#endregion // Constructors
@@ -112,7 +108,6 @@ namespace System.Web.Services.Protocols {
 			set { mustUnderstand = value; }
 		}
 		
-#if NET_2_0
 
 		[DefaultValue ("0")]
 		[SoapAttribute ("mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
@@ -164,7 +159,6 @@ namespace System.Web.Services.Protocols {
 			set { role = value; }
 		}
 		
-#endif
 
 		#endregion // Properties
 	}

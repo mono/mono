@@ -140,14 +140,9 @@ namespace MonoTests.System.Collections {
 		[Test]
 		public void TestSyncRoot() 
 		{
-#if !NET_2_0 // umm, why on earth do you expect SyncRoot is the Queue itself?
-			Assert.AreEqual (q1, q1.SyncRoot, "SyncRoot q1");
-			Assert.AreEqual (q2, q2.SyncRoot, "SyncRoot q2");
-			Assert.AreEqual (emptyQueue, emptyQueue.SyncRoot, "SyncRoot emptyQueue");
-#endif
 
 			Queue q1sync = Queue.Synchronized(q1);
-			Assert.AreEqual (q1, q1sync.SyncRoot, "SyncRoot value of a synchronized queue");
+			Assert.AreNotSame (q1, q1sync.SyncRoot, "SyncRoot value of a synchronized queue");
 		}
 
 		[Test]

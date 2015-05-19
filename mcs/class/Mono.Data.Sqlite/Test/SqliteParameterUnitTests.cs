@@ -78,11 +78,9 @@ namespace MonoTests.Mono.Data.Sqlite
 					Assert.AreEqual(reader["i"], integerP.Value);
 					
 					object compareValue;
-#if NET_2_0
 					if (blobP.Value is byte[])
 						compareValue = System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value);
 					else
-#endif
 						compareValue = blobP.Value;
 					Assert.AreEqual(reader["b"], compareValue);
 					Assert.AreEqual(reader.Read(), false);

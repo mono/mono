@@ -1,0 +1,22 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="DocTest-DropNS-classic" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="MyFramework.MyNamespace">
+      <Type Name="MyClass" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>DocTest-DropNS-classic</Title>
+</Overview>

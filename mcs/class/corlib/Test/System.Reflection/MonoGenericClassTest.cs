@@ -178,7 +178,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		public class Bar<T> {
-			public class Foo<T> {}
+			public class Foo<U> {}
 		}
 
 		[Test]

@@ -399,11 +399,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestGetProperties ()
 		{
-#if NET_2_0
 			int basecount = 1;
-#else
-			int basecount = 0;
-#endif
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = imgConv.GetProperties (null, image, null);

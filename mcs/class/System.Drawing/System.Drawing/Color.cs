@@ -39,9 +39,6 @@ using System.Runtime.InteropServices;
 namespace System.Drawing 
 {
 	[TypeConverter(typeof(ColorConverter))]
-#if ONLY_1_1
-	[ComVisible (true)]
-#endif
 	[Editor ("System.Drawing.Design.ColorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[Serializable]
 	public struct Color {

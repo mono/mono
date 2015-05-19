@@ -7,6 +7,7 @@ include $(XBUILD_DIR)/xbuild.make
 
 LIBRARY = Microsoft.Build.dll
 
+LIB_REFS = System System.Core System.Xml Microsoft.Build.Engine Microsoft.Build.Framework
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\
@@ -35,5 +36,4 @@ BUILT_SOURCES = $(EXPR_PARSER).cs
 
 include ../../build/library.make
 
-XBUILD_FRAMEWORK_FOLDERS_PATH=xbuild-testing
 include $(XBUILD_DIR)/xbuild_test.make

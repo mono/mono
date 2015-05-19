@@ -102,9 +102,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")]
-#endif
 		public void AnyUriRelativePathContainsColon ()
 		{
 			XmlValidatingReader vr = new XmlValidatingReader (

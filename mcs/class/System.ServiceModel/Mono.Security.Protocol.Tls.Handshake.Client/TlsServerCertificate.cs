@@ -193,7 +193,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			ClientContext		context			= (ClientContext)this.Context;
 			AlertDescription	description		= AlertDescription.BadCertificate;
 
-#if NET_2_0
 			if (context.SslStream.HaveRemoteValidation2Callback) {
 				ValidationResult res = context.SslStream.RaiseServerCertificateValidation2 (certificates);
 				if (res.Trusted)
@@ -217,7 +216,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				string err = String.Format ("0x{0:x}", error);
 				throw new TlsException (description, "Invalid certificate received from server. Error code: " + err);
 			}
-#endif
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);

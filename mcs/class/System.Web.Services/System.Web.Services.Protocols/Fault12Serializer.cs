@@ -1,4 +1,3 @@
-#if NET_2_0
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -646,4 +645,3 @@ namespace System.Web.Services.Protocols
 	}
 
 }
-#endif

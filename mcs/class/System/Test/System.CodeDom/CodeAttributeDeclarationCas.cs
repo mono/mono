@@ -56,9 +56,7 @@ namespace MonoCasTests.System.CodeDom {
 			Assert.AreEqual (0, cad.Arguments.Count, "Arguments");
 			Assert.AreEqual (String.Empty, cad.Name, "Name");
 			cad.Name = null;
-#if NET_2_0
 			Assert.AreEqual ("System.Void", cad.AttributeType.BaseType, "AttributeType.BaseType");
-#endif
 		}
 
 		[Test]
@@ -69,9 +67,7 @@ namespace MonoCasTests.System.CodeDom {
 			Assert.AreEqual (0, cad.Arguments.Count, "Arguments");
 			Assert.AreEqual ("mono", cad.Name, "Name");
 			cad.Name = null;
-#if NET_2_0
 			Assert.AreEqual ("System.Void", cad.AttributeType.BaseType, "AttributeType.BaseType");
-#endif
 		}
 
 		[Test]
@@ -83,11 +79,8 @@ namespace MonoCasTests.System.CodeDom {
 			Assert.AreEqual (1, cad.Arguments.Count, "Arguments");
 			Assert.AreEqual ("mono", cad.Name, "Name");
 			cad.Name = null;
-#if NET_2_0
 			Assert.AreEqual ("System.Void", cad.AttributeType.BaseType, "AttributeType.BaseType");
-#endif
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Constructor3_Deny_Unrestricted ()
@@ -112,7 +105,6 @@ namespace MonoCasTests.System.CodeDom {
 			cad.Name = null;
 			Assert.AreEqual ("System.Void", cad.AttributeType.BaseType, "AttributeType.BaseType");
 		}
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()

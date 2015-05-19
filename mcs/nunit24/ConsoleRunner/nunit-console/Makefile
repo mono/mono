@@ -13,18 +13,4 @@ NO_TEST = yo
 
 EXTRA_DISTFILES = nunit-console.csproj nunit-console_VS2005.csproj
 
-ifneq (net_2_0, $(PROFILE))
-NO_INSTALL = yes
-install-local: install-symlink
-uninstall-local: uninstall-symlink
-endif
-
 include ../../../build/library.make
-
-symlinkdir = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
-install-symlink:
-	$(MKINSTALLDIRS) $(DESTDIR)$(symlinkdir)
-	cd $(DESTDIR)$(symlinkdir) && rm -f $(LIBRARY_NAME) && ln -s ../2.0/$(LIBRARY_NAME) $(LIBRARY_NAME)
-
-uninstall-symlink:
-	rm -f $(DESTDIR)$(symlinkdir)/$(LIBRARY_NAME)

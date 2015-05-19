@@ -32,7 +32,6 @@
 // Functions implementation. XQueryCliFunction
 // See XQuery 1.0 and XPath 2.0 Functions and Operators.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Globalization;
@@ -1132,4 +1131,3 @@ namespace Mono.Xml.XPath2
 		}
 	}
 }
-#endif

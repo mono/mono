@@ -635,11 +635,11 @@ namespace MonoTests.System.Web.DynamicData
 
 			// Custom type
 			//   It appears that DataTypeAttribute's custom type name is passed to BuildVirtualPath
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			AssertExtensions.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A1");
 			
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			AssertExtensions.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A1-1");
 			Assert.AreEqual (ftf.TemplateFolderVirtualPath + "Boolean.ascx", ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "Boolean"), "#A1-2");
@@ -650,11 +650,11 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.Greater (mc.UIHint.Length, 0, "#A2-1");
 
 			// Proves that UIHint on the column is not used, just the uiHint argument
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			AssertExtensions.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, null);
 			}, "#A2-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			AssertExtensions.Throws<InvalidOperationException> (() => {
 				string path = ftf.GetFieldTemplateVirtualPath (mc, DataBoundControlMode.ReadOnly, "NoSuchTemplate");
 			}, "#A2-3");
 			

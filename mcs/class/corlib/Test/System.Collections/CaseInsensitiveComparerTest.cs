@@ -182,11 +182,7 @@ namespace MonoTests.System.Collections {
 				ms.Position = 0;
 				ms.Read (buffer, 0, buffer.Length);
 
-#if NET_2_0
 				Assert.AreEqual (_serializedCultureV20, buffer);
-#else
-				Assert.AreEqual (_serializedCultureV11, buffer);
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -194,11 +190,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // bug #80082
-#else
-		[Category ("NotWorking")] // bug #80076
-#endif
 		public void Deserialize_Culture ()
 		{
 			CultureInfo originalCulture = Thread.CurrentThread.CurrentCulture;
@@ -215,7 +207,6 @@ namespace MonoTests.System.Collections {
 					bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#1");
 
-#if NET_2_0
 				ms = new MemoryStream ();
 				ms.Write (_serializedCultureV20, 0, _serializedCultureV20.Length);
 				ms.Position = 0;
@@ -223,7 +214,6 @@ namespace MonoTests.System.Collections {
 				bf = new BinaryFormatter ();
 				cic = (CaseInsensitiveComparer) bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#2");
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -249,11 +239,7 @@ namespace MonoTests.System.Collections {
 				ms.Position = 0;
 				ms.Read (buffer, 0, buffer.Length);
 
-#if NET_2_0
 				Assert.AreEqual (_serializedDefaultV20, buffer);
-#else
-				Assert.AreEqual (_serializedDefaultV11, buffer);
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -261,11 +247,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // bug #80082
-#else
-		[Category ("NotWorking")] // bug #80076
-#endif
 		public void Deserialize_Default ()
 		{
 			CultureInfo originalCulture = Thread.CurrentThread.CurrentCulture;
@@ -282,7 +264,6 @@ namespace MonoTests.System.Collections {
 					bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#1");
 
-#if NET_2_0
 				ms = new MemoryStream ();
 				ms.Write (_serializedDefaultV20, 0, _serializedDefaultV20.Length);
 				ms.Position = 0;
@@ -290,7 +271,6 @@ namespace MonoTests.System.Collections {
 				bf = new BinaryFormatter ();
 				cic = (CaseInsensitiveComparer) bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#2");
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -316,11 +296,7 @@ namespace MonoTests.System.Collections {
 				ms.Position = 0;
 				ms.Read (buffer, 0, buffer.Length);
 
-#if NET_2_0
 				Assert.AreEqual (_serializedDefaultInvariantV20, buffer);
-#else
-				Assert.AreEqual (_serializedDefaultInvariantV11, buffer);
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -328,11 +304,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")] // bug #80082
-#else
-		[Category ("NotWorking")] // bug #80076
-#endif
 		public void Deserialize_DefaultInvariant ()
 		{
 			CultureInfo originalCulture = Thread.CurrentThread.CurrentCulture;
@@ -349,7 +321,6 @@ namespace MonoTests.System.Collections {
 					bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#1");
 
-#if NET_2_0
 				ms = new MemoryStream ();
 				ms.Write (_serializedDefaultInvariantV20, 0, _serializedDefaultInvariantV20.Length);
 				ms.Position = 0;
@@ -357,7 +328,6 @@ namespace MonoTests.System.Collections {
 				bf = new BinaryFormatter ();
 				cic = (CaseInsensitiveComparer) bf.Deserialize (ms);
 				Assert.IsNotNull (cic, "#2");
-#endif
 			} finally {
 				// restore original culture
 				Thread.CurrentThread.CurrentCulture = originalCulture;
@@ -424,7 +394,6 @@ namespace MonoTests.System.Collections {
 			0x75, 0x6c, 0x74, 0x75, 0x72, 0x65, 0x00, 0x00, 0x08, 0x08, 0x7f,
 			0x00, 0x00, 0x00, 0x7f, 0x00, 0x00, 0x00, 0x0b };
 
-#if NET_2_0
 		private static byte [] _serializedDefaultV20 = new byte [] {
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00,
@@ -489,6 +458,5 @@ namespace MonoTests.System.Collections {
 			0x6d, 0x65, 0x00, 0x00, 0x01, 0x08, 0x08, 0x1f, 0x04, 0x00, 0x00,
 			0x1f, 0x04, 0x00, 0x00, 0x06, 0x03, 0x00, 0x00, 0x00, 0x05, 0x74,
 			0x72, 0x2d, 0x54, 0x52, 0x0b };
-#endif
 	}
 }

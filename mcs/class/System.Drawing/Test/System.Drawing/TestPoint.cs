@@ -196,7 +196,6 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual ("{X=1,Y=0}", pt1_0.ToString (), "#2");
 			Assert.AreEqual ("{X=0,Y=1}", pt0_1.ToString (), "#3");
 		}
-#if NET_2_0
 
 		[Test]
 		public void AddTest ()
@@ -223,7 +222,6 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (pt1_0, Point.Subtract (pt1_1, new Size (0, 1)), "#1");
 			Assert.AreEqual (pt0_1, Point.Subtract (pt1_1, new Size (1, 0)), "#2");
 		}
-#endif
 
 	}
 }

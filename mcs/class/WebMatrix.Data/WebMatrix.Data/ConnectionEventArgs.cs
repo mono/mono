@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.Data.Common;
@@ -46,4 +45,3 @@ namespace WebMatrix.Data
 	}
 }
 
-#endif

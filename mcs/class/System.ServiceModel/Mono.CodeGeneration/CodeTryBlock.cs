@@ -24,15 +24,10 @@
 #if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#else
-using System.Collections.Specialized;
-#endif
 using System.Reflection;
 using System.Reflection.Emit;
 
-#if NET_2_0
 using DictionaryEntry = System.Collections.Generic.KeyValuePair<
 		Mono.CodeGeneration.CodeVariableDeclaration,
 		Mono.CodeGeneration.CodeBlock>;
@@ -40,7 +35,6 @@ using ArrayList = System.Collections.Generic.List<
 	System.Collections.Generic.KeyValuePair<
 		Mono.CodeGeneration.CodeVariableDeclaration,
 		Mono.CodeGeneration.CodeBlock>>;
-#endif
 
 namespace Mono.CodeGeneration
 {

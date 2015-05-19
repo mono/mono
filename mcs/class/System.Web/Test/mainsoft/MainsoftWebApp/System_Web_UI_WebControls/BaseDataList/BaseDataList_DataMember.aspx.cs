@@ -89,28 +89,6 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 				this.GHTSubTestUnexpectedExceptionCaught(exception4);
 			}
 			this.GHTSubTestEnd();
-#if !NET_2_0
-			try
-			{
-				this.GHTSubTestBegin("BaseDataList_" + CtlType.Name + "_DataMember1");
-				list1 = (BaseDataList) this.GHTElementClone(CtlType);
-				base.GHTActiveSubTest.Controls.Add(list1);
-				CtlBuilder(list1);
-				list1.DataSource = GHTDataListBase.GHTGetSampleDataSourceDS();
-				list1.DataMember = "Unknown";
-				list1.DataBind();
-				this.GHTSubTestExpectedExceptionNotCaught("HttpException");
-			}
-			catch (HttpException exception5)
-			{
-				this.GHTSubTestExpectedExceptionCaught(exception5);
-			}
-			catch (Exception exception6)
-			{
-				this.GHTSubTestUnexpectedExceptionCaught(exception6);
-			}
-			this.GHTSubTestEnd();
-#endif
 		}
  
 	}

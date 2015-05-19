@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum  ColorMatrixFlag{
 		AltGrays = 2,
 		Default = 0,

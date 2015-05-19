@@ -33,19 +33,15 @@ using System.Xml;
 
 namespace System.Web.Services.Protocols 
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class SoapHeaderException : SoapException {
 
 		#region Constructors
 
-#if NET_2_0
 		public SoapHeaderException ()
 			: this ("SOAP header error", XmlQualifiedName.Empty)
 		{
 		}
-#endif
 
 		public SoapHeaderException (string message, XmlQualifiedName code)
 			: base (message, code)
@@ -67,7 +63,6 @@ namespace System.Web.Services.Protocols
 		{
 		}
 		
-#if NET_2_0
 
 		public SoapHeaderException (
 			string message, 
@@ -100,7 +95,6 @@ namespace System.Web.Services.Protocols
 			: base (info, context)
 		{
 		}
-#endif
 
 		#endregion // Constructors
 	}

@@ -35,12 +35,7 @@ using System.Web.Util;
 namespace System.Web.UI.WebControls {
 
 	[TypeConverter(typeof (UnitConverter))]
-#if NET_2_0
 	[Serializable]
-#else
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 	public struct Unit {
 		enum ParsingStage
 		{
@@ -381,7 +376,6 @@ namespace System.Web.UI.WebControls {
 			return ToString (Helpers.InvariantCulture);
 		}
 
-#if NET_2_0
 		public string ToString (IFormatProvider provider)
 		{
 			if (type == 0)
@@ -391,7 +385,6 @@ namespace System.Web.UI.WebControls {
 
 			return value.ToString (provider) + ex;
 		}
-#endif
 	}
 
 }

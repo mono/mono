@@ -50,9 +50,7 @@ namespace System.Reflection
 	, _ParameterInfo
 #endif
 
-#if NET_4_0
 	, IObjectReference
-#endif
  	{
 		protected Type ClassImpl;
 		protected object DefaultValueImpl;
@@ -83,24 +81,31 @@ namespace System.Reflection
 			return result;
 		}
 
-		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p)
+		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
 		{
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
 
-				Type pt = p[i].ParameterType;
-				bool byref = pt.IsByRef;
-				if (byref)
-					pt = pt.GetElementType ();
+				Type t = p[i].ParameterType;
 
-				if (Type.ShouldPrintFullName (pt))
-					sb.Append (pt.ToString ());
-				else
-					sb.Append (pt.Name);
+				string typeName = t.FormatTypeName (serialization);
 
-				if (byref)
+				// Legacy: Why use "ByRef" for by ref parameters? What language is this?
+				// VB uses "ByRef" but it should precede (not follow) the parameter name.
+				// Why don't we just use "&"?
+				if (t.IsByRef && !serialization) {
+					sb.Append (typeName.TrimEnd (new char[] { '&' }));
 					sb.Append (" ByRef");
+				} else {
+					sb.Append (typeName);
+				}
+			}
+
+			if ((callingConvention & CallingConventions.VarArgs) != 0) {
+				if (p.Length > 0)
+					sb.Append (", ");
+				sb.Append ("...");
 			}
 		}
 
@@ -116,13 +121,13 @@ namespace System.Reflection
 				return (Attributes & ParameterAttributes.In) != 0;
 			}
 		}
-
+#if FEATURE_USE_LCID
 		public bool IsLcid {
 			get {
 				return (Attributes & ParameterAttributes.Lcid) != 0;
 			}
 		}
-
+#endif
 		public bool IsOptional {
 			get {
 				return (Attributes & ParameterAttributes.Optional) != 0;
@@ -194,7 +199,6 @@ namespace System.Reflection
 			return DefaultValueImpl;
 		}
 
-#if NET_4_5
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
@@ -202,7 +206,6 @@ namespace System.Reflection
 		public virtual bool HasDefaultValue {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 #if !MOBILE
 		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
@@ -227,7 +230,6 @@ namespace System.Reflection
 		}
 #endif
 
-#if NET_4_0
 		public virtual object DefaultValue {
 			get { throw new NotImplementedException (); }
 		}
@@ -270,44 +272,27 @@ namespace System.Reflection
 		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
 			throw new NotImplementedException ();
 		}
-#endif
 
 #if !FULL_AOT_RUNTIME
 		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pb, type, member, position);
-#else
-			return new ParameterInfo (pb, type, member, position);
-#endif
 		}
 #endif
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pinfo, type, member, position);
-#else
-			return new ParameterInfo (pinfo, type, member, position);
-#endif
 		}
 
 		internal static ParameterInfo New (ParameterInfo pinfo, MemberInfo member)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (pinfo, member);
-#else
-			return new ParameterInfo (pinfo, member);
-#endif
 		}
 
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
-#if NET_4_0
 			return new MonoParameterInfo (type, member, marshalAs);
-#else
-			return new ParameterInfo (type, member, marshalAs);
-#endif	
 		}
 	}
 }

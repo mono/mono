@@ -52,7 +52,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual ("monkeymono", dblc.Text, "Text");
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -63,7 +62,6 @@ namespace MonoCasTests.System.Web.UI {
 			// setter throw
 			tc.Text = "singe";
 		}
-#endif
 
 		// LinkDemand
 

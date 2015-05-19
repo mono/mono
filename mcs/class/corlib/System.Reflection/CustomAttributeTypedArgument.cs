@@ -40,9 +40,7 @@ namespace System.Reflection {
 		Type argumentType;
 		object value;
 
-#if NET_4_0
 		public
-#endif
 		CustomAttributeTypedArgument (Type argumentType, object value)
 		{
 			if (argumentType == null)
@@ -63,7 +61,6 @@ namespace System.Reflection {
 			}
 		}
 		
-#if NET_4_0
 		public CustomAttributeTypedArgument (object value)
 		{
 			if (value == null)
@@ -72,7 +69,6 @@ namespace System.Reflection {
 			this.argumentType = value.GetType ();
 			this.value = value;
 		}
-#endif
 
 		public Type ArgumentType {
 			get {

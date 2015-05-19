@@ -44,8 +44,6 @@
 
 static mono_mutex_t noshm_sems[_WAPI_SHARED_SEM_COUNT];
 
-gboolean _wapi_shm_disabled = TRUE;
-
 static gpointer wapi_storage [16];
 
 static void
@@ -152,12 +150,13 @@ _wapi_shm_detach (_wapi_shm_t type)
 }
 
 gboolean
-_wapi_shm_enabled (void)
+_wapi_shm_enabled_internal (void)
 {
 	return FALSE;
 }
 
-#else
+#else /* DISABLE_SHARED_HANDLES */
+
 /*
  * Use POSIX shared memory if possible, it is simpler, and it has the advantage that 
  * writes to the shared area does not need to be written to disk, avoiding spinning up 
@@ -166,6 +165,8 @@ _wapi_shm_enabled (void)
 #ifdef HAVE_SHM_OPEN
 #define USE_SHM 1
 #endif
+
+static gboolean _wapi_shm_disabled = TRUE;
 
 static gchar *
 _wapi_shm_base_name (_wapi_shm_t type)
@@ -404,7 +405,7 @@ try_again:
 }
 
 gboolean
-_wapi_shm_enabled (void)
+_wapi_shm_enabled_internal (void)
 {
 	static gboolean env_checked;
 

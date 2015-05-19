@@ -913,6 +913,7 @@ class Tests
 		}
 	}
 
+	[Category ("GSHAREDVT")]
 	static int test_0_synchronized_gshared () {
 		var c = new SyncClass<string> ();
 		if (c.getInstance () != typeof (string))
@@ -1087,6 +1088,146 @@ class Tests
 
         var s = f2 (f);
 		return s == "A" ? 0 : 1;
+	}
+
+    public interface ICovariant<out R>
+    {
+    }
+
+    // Deleting the `out` modifier from this line stop the problem
+    public interface IExtCovariant<out R> : ICovariant<R>
+    {
+    }
+
+    public class Sample<R> : ICovariant<R>
+    {
+    }
+
+    public interface IMyInterface
+    {
+    }
+
+	public static int test_0_variant_cast_cache () {
+		object covariant = new Sample<IMyInterface>();
+
+		var foo = (ICovariant<IMyInterface>)(covariant);
+
+		try {
+			var extCovariant = (IExtCovariant<IMyInterface>)covariant;
+			return 1;
+		} catch {
+			return 0;
+		}
+	}
+
+	struct FooStruct2 {
+		public int a1, a2, a3;
+	}
+
+	class MyClass<T> where T: struct {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public MyClass(int a1, int a2, int a3, int a4, int a5, int a6, Nullable<T> a) {
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static MyClass<T> foo () {
+			Nullable<T> a = new Nullable<T> ();
+			return new MyClass<T> (0, 0, 0, 0, 0, 0, a);
+		}
+	}
+
+	public static int test_0_newobj_generic_context () {
+		MyClass<FooStruct2>.foo ();
+		return 0;
+	}
+
+	enum AnEnum {
+		A,
+		B
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static string constrained_tostring<T> (T t) {
+		return t.ToString ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static bool constrained_equals<T> (T t1, T t2) {
+		var c = EqualityComparer<T>.Default;
+
+		return c.Equals (t1, t2);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int constrained_gethashcode<T> (T t) {
+		return t.GetHashCode ();
+	}
+
+	public static int test_0_constrained_partial_sharing () {
+		string s;
+
+		s = constrained_tostring<int> (5);
+		if (s != "5")
+			return 1;
+		s = constrained_tostring<AnEnum> (AnEnum.B);
+		if (s != "B")
+			return 2;
+
+		if (!constrained_equals<int> (1, 1))
+			return 3;
+		if (constrained_equals<int> (1, 2))
+			return 4;
+		if (!constrained_equals<AnEnum> (AnEnum.A, AnEnum.A))
+			return 5;
+		if (constrained_equals<AnEnum> (AnEnum.A, AnEnum.B))
+			return 6;
+
+		int i = constrained_gethashcode<int> (5);
+		if (i != 5)
+			return 7;
+		i = constrained_gethashcode<AnEnum> (AnEnum.B);
+		if (i != 1)
+			return 8;
+		return 0;
+	}
+
+	enum Enum1 {
+		A,
+		B
+	}
+
+	enum Enum2 {
+		A,
+		B
+	}
+
+	public static int test_0_partial_sharing_ginst () {
+		var l1 = new List<KeyValuePair<int, Enum1>> ();
+		l1.Add (new KeyValuePair<int, Enum1>(5, Enum1.A));
+		if (l1 [0].Key != 5)
+			return 1;
+		if (l1 [0].Value != Enum1.A)
+			return 2;
+		var l2 = new List<KeyValuePair<int, Enum2>> ();
+		l2.Add (new KeyValuePair<int, Enum2>(5, Enum2.B));
+		if (l2 [0].Key != 5)
+			return 3;
+		if (l2 [0].Value != Enum2.B)
+			return 4;
+		return 0;
+	}
+
+	static object delegate_8_args_res;
+
+	public static int test_0_delegate_8_args () {
+		delegate_8_args_res = null;
+		Action<string, string, string, string, string, string, string,
+			string> test = (a, b, c, d, e, f, g, h) =>
+            {
+				delegate_8_args_res = h;
+            };
+		test("a", "b", "c", "d", "e", "f", "g", "h");
+		return delegate_8_args_res == "h" ? 0 : 1;
 	}
 }
 

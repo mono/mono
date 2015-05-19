@@ -28,7 +28,6 @@
 
 using System.Resources;
 
-#if NET_2_0
 namespace System.Web.Configuration
 {
         public enum TraceDisplayMode
@@ -37,4 +36,3 @@ namespace System.Web.Configuration
                 SortByCategory = 2
         }
 }
-#endif

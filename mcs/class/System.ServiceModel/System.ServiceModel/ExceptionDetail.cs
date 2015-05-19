@@ -53,45 +53,30 @@ namespace System.ServiceModel
 		[DataMember]
 		public string HelpLink {
 			get;
-#if !NET_4_5
-			private
-#endif
 			set;
 		}
 
 		[DataMember]
 		public ExceptionDetail InnerException {
 			get;
-#if !NET_4_5
-			private
-#endif
 			set;
 		}
 
 		[DataMember]
 		public string Message {
 			get;
-#if !NET_4_5
-			private
-#endif
 			set;
 		}
 
 		[DataMember]
 		public string StackTrace {
 			get;
-#if !NET_4_5
-			private
-#endif
 			set;
 		}
 
 		[DataMember]
 		public string Type {
 			get;
-#if !NET_4_5
-			private
-#endif
 			set;
 		}
 

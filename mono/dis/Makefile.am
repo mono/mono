@@ -4,22 +4,20 @@ if HOST_WIN32
 export HOST_CC
 endif
 
-if JIT_SUPPORTED
-if !SHARED_MONO
-static_libs=	\
-	$(top_builddir)/mono/metadata/libmonoruntime-static.la	\
+if SUPPORT_SGEN
+metadata_lib=$(top_builddir)/mono/metadata/libmonoruntimesgen-static.la
+gc_lib=$(top_builddir)/mono/sgen/libmonosgen-static.la
+else
+metadata_lib=$(top_builddir)/mono/metadata/libmonoruntime-static.a
+gc_lib=$(LIBGC_STATIC_LIBS)
+endif
+
+runtime_lib=	\
+	$(metadata_lib) \
+	$(gc_lib)	\
 	$(top_builddir)/mono/io-layer/libwapi.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
-	$(LIBGC_STATIC_LIBS)
-
-runtime_lib=../mini/$(LIBMONO_LA) $(static_libs)
-else
-runtime_lib=../mini/$(LIBMONO_LA)
-endif
-else
-runtime_lib=../interpreter/libmint.la
-endif
+	$(GLIB_LIBS) $(LIBICONV)
 
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
@@ -27,9 +25,7 @@ else
 if DISABLE_LIBRARIES
 bin_PROGRAMS =
 else
-if SUPPORT_BOEHM
 bin_PROGRAMS = monodis
-endif
 endif
 endif
 
@@ -55,11 +51,12 @@ monodis_LDADD = 			\
 	libmonodis.a			\
 	$(runtime_lib)			\
 	$(LLVM_LIBS)			\
+	$(LLVM_LDFLAGS)			\
 	$(GLIB_LIBS)			\
 	$(LIBICONV)
 
 if PLATFORM_DARWIN
-monodis_LDFLAGS=-framework CoreFoundation
+monodis_LDFLAGS=-framework CoreFoundation -framework Foundation
 endif
 
 man_MANS = monodis.1

@@ -32,7 +32,7 @@
 # define GC_LINUX_THREADS
 #endif
 #if defined(WIN32_THREADS)
-# define GC_WIN32_THREADS
+# define GC_WIN32_THREADS 1
 #endif
 #if defined(USE_LD_WRAP)
 # define GC_USE_LD_WRAP

@@ -166,3 +166,6 @@ $(makefrag): $(topdir)/build/executable.make $(depsdir)/.stamp
 doc-update-local:
 	@:
 
+# Need to be here so it comes after the definition of DEP_DIRS/DEP_LIBS
+gen-deps:
+	@echo "$(DEPS_TARGET_DIR): $(DEP_DIRS) $(DEP_LIBS)" >> $(DEPS_FILE)

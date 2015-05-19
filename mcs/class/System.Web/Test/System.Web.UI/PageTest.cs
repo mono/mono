@@ -36,9 +36,7 @@ using System.Threading;
 using System.Security.Principal;
 using System.Web;
 using System.Web.UI;
-#if NET_2_0
 using System.Web.UI.Adapters;
-#endif
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
@@ -63,7 +61,6 @@ namespace MonoTests.System.Web.UI {
 			}
 		}
 
-		#if NET_2_0 
 		public new bool AsyncMode {
 			get { return base.AsyncMode; }
 			set { base.AsyncMode = value; }
@@ -88,7 +85,6 @@ namespace MonoTests.System.Web.UI {
 				return base.IdSeparator;
 			}
 		}
-		#endif
 	}
 
 	class TestPage2 : Page {
@@ -140,9 +136,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")] // page.User throw NRE in 2.0 RC
-#endif
 		public void User_OverridenContext ()
 		{
 			TestPage page = new TestPage ();
@@ -196,7 +190,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.IsNull (page.Application, "Application");
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderOnPreInit ()
@@ -335,9 +328,7 @@ namespace MonoTests.System.Web.UI {
 			p.Header.Title = "Test";
 			Assert.AreEqual ("Test", p.Title, "CheckHeader#4");
 		}
-#endif
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void Page_ValidationGroup ()
@@ -461,9 +452,7 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual("DeterminePostBackModeTestValue", h.Value, 
 				"DeterminePostBackMode #1");
 		}
-#endif
 
-#if NET_2_0
 		// This test are testing validation fixture using RequiredFieldValidator for example
 		
 		[Test]
@@ -1353,7 +1342,6 @@ namespace MonoTests.System.Web.UI {
 			string html = t.Run ();
 			Assert.AreEqual (HttpStatusCode.Found, t.Response.StatusCode);
 		}
-#endif
 
 		[TestFixtureTearDown]
 		public void TearDown ()
@@ -1362,7 +1350,6 @@ namespace MonoTests.System.Web.UI {
 		}
 	}
 
-#if NET_2_0
 	class TestHtmlInputHidden : global::System.Web.UI.HtmlControls.HtmlInputHidden
 	{
 		protected override bool LoadPostData (string postDataKey, NameValueCollection postCollection)
@@ -1485,5 +1472,4 @@ namespace MonoTests.System.Web.UI {
 			return control_adapter;
 		}
 	}
-#endif
 }

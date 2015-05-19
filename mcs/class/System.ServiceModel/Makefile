@@ -8,38 +8,27 @@ RESOURCE_FILES = \
 
 LIBRARY = System.ServiceModel.dll
 
+LIB_REFS = System System.Xml System.Core System.Runtime.Serialization
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
 		/d:TRACE \
-	        /r:System.dll \
-	        /r:System.Xml.dll \
-		/r:System.Core.dll \
-	        /r:System.Runtime.Serialization.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += /d:NET_3_0 	\
-			/r:System.Configuration.dll \
-			/r:System.Data.dll	\
-			/r:System.Security.dll \
-			/r:System.IdentityModel.dll \
-			/r:System.IdentityModel.Selectors.dll \
-			/r:System.Transactions.dll \
-			/r:System.Messaging.dll \
-			/r:System.Web.dll \
-			/r:System.Web.Services.dll \
-			/r:Mono.Security.dll
+LIB_REFS += System.Configuration System.Data System.Security System.IdentityModel System.IdentityModel.Selectors System.Transactions System.Messaging System.Web System.Web.Services Mono.Security
+LIB_MCS_FLAGS += /d:NET_3_0
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += /r:System.Web.ApplicationServices.dll
+LIB_REFS += System.Web.ApplicationServices
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
+LIB_REFS += System.Web.ApplicationServices
+
 ifneq (plainservice/,$(intermediate))
 LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
-LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
 endif
 

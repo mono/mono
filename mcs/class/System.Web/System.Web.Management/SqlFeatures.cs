@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.Management
 {
         [Flags]
@@ -41,4 +40,3 @@ namespace System.Web.Management
                 All = 1073741855
         }
 }
-#endif

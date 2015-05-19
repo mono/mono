@@ -33,26 +33,15 @@ using System.Web.Services.Configuration;
 
 namespace System.Web.Services.Description
 {
-#if NET_2_0
 	[XmlFormatExtensionPoint ("Extensions")]
-#endif
 	public sealed class PortType :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
-#if !NET_2_0
-		string name;
-#endif
 		OperationCollection operations;
 		ServiceDescription serviceDescription;
-#if NET_2_0
 		ServiceDescriptionFormatExtensionCollection extensions;
-#endif
 
 		#endregion // Fields
 
@@ -62,22 +51,13 @@ namespace System.Web.Services.Description
 		{
 			operations = new OperationCollection (this);
 			serviceDescription = null;
-#if NET_2_0
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#endif
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NCName")]
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlElement ("operation")]
 		public OperationCollection Operations {
@@ -89,12 +69,10 @@ namespace System.Web.Services.Description
 			get { return serviceDescription; }
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public override ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}
-#endif
 
 		#endregion // Properties
 

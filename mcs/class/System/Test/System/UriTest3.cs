@@ -184,6 +184,12 @@ namespace MonoTests.System
 
 			Assert.IsTrue (Uri.TryCreate ("http://mono-project.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
 			Assert.AreEqual("http://mono-project.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
+
+			string mixedCaseUri = "http://mOnO-proJECT.com";
+			uri = new Uri (mixedCaseUri);
+			Uri uri2;
+			Assert.IsTrue (Uri.TryCreate (mixedCaseUri, UriKind.Absolute, out uri2), "mixedcasehost-absolute");
+			Assert.AreEqual (uri.AbsoluteUri, uri2.AbsoluteUri, "mixedcasehost-absoluteuri-absoluteuri");
 		}
 
 		[Test] // TryCreate (String, UriKind, Uri)

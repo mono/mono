@@ -31,8 +31,5 @@ using System.ComponentModel;
 
 namespace System.Drawing.Design {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public delegate void PropertyValueUIHandler (ITypeDescriptorContext context, PropertyDescriptor propDesc, ArrayList valueUIItemList);
 }

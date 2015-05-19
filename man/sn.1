@@ -71,8 +71,8 @@ Convert the input file to a CSV file (using hexadecimal).
 .SH STRONGNAME SIGNING OPTIONS
 .TP
 .I "-D assembly1 assembly2"
-Compare if assembly1 and assembly are the same exception for their signature.
-This is done by comparing the hash of the metadata of both assembly.
+Compare if assembly1 and assembly2 are the same except for their signature.
+This is done by comparing the hash of the metadata of both assemblies.
 .TP
 .I "-k [size] keypair.snk"
 Create a new strongname keypair in the specified file. The default key 
@@ -85,7 +85,7 @@ even if it's possible, to use length lesser than 1024 bits.
 .I "-R assembly keypair.snk"
 Re-sign the specified assembly using the specified strongname keypair file 
 (SNK) or a PKCS#12/PFX password protected file. You can only sign an 
-assembly with the private key that match the public key inside the assembly
+assembly with the private key that matches the public key inside the assembly
 (unless it's public key token has been remapped in machine.config).
 .TP
 .I "-Rc assembly container"
@@ -135,7 +135,7 @@ another public key for verification. This is useful in two scenarios. First,
 assemblies signed with the "ECMA key" need to be verified by the "runtime"
 key (as the ECMA key isn't a public key). Second, many assemblies are signed
 with private keys that Mono can't use (e.g. System.Security.dll assembly).
-A new key cannot be used because it should change thr strongname (a new key 
+A new key cannot be used because it should change the strongname (a new key 
 pair would have a new public key which would produce a new token). Public 
 key token remapping is the solution for both problems. Each token must be
 configured in a "map" entry similar to this one: <map Token="b77a5c561934e089" 

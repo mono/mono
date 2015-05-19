@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 class Simple(int arg)
 {
 	int Property { get; } = arg;

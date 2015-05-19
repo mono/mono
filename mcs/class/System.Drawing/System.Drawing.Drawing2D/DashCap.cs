@@ -30,9 +30,6 @@
 
 namespace System.Drawing.Drawing2D {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum DashCap {
 		Flat,
 		Round = 2,

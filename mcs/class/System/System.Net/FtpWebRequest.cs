@@ -94,6 +94,8 @@ namespace System.Net
 			WebRequestMethods.Ftp.UploadFileWithUniqueName // STUR
 			};
 
+		Encoding dataEncoding = Encoding.UTF8;
+
 		internal FtpWebRequest (Uri uri) 
 		{
 			this.requestUri = uri;
@@ -793,7 +795,11 @@ namespace System.Net
 
 			Authenticate ();
 			FtpStatus status = SendCommand ("OPTS", "utf8", "on");
-			// ignore status for OPTS
+			if ((int)status.StatusCode < 200 || (int)status.StatusCode > 300)
+				dataEncoding = Encoding.Default;
+			else
+				dataEncoding = Encoding.UTF8;
+
 			status = SendCommand (WebRequestMethods.Ftp.PrintWorkingDirectory);
 			initial_path = GetInitialPath (status);
 		}
@@ -1080,7 +1086,7 @@ namespace System.Net
 				commandString += " " + String.Join (" ", parameters);
 
 			commandString += EOL;
-			cmd = Encoding.ASCII.GetBytes (commandString);
+			cmd = dataEncoding.GetBytes (commandString);
 			try {
 				controlStream.Write (cmd, 0, cmd.Length);
 			} catch (IOException) {

@@ -812,11 +812,7 @@ namespace MonoTests.System.IO
 					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#5");
-#else
-					Assert.IsTrue (ex.Message.IndexOf (destFile) != -1, "#5");
-#endif
 				}
 			} finally {
 				DeleteFile (sourceFile);
@@ -1292,7 +1288,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetCreationTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
@@ -1301,18 +1296,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
-#else
-			try {
-				File.GetCreationTime (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1380,7 +1363,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetCreationTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
@@ -1388,18 +1370,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
-#else
-			try {
-				File.GetCreationTimeUtc (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1467,7 +1437,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetLastAccessTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
@@ -1476,18 +1445,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
-#else
-			try {
-				File.GetLastAccessTime (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1555,7 +1512,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetLastAccessTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
@@ -1563,18 +1519,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
-#else
-			try {
-				File.GetLastAccessTimeUtc (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1642,7 +1586,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetLastWriteTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
@@ -1651,18 +1594,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
-#else
-			try {
-				File.GetLastWriteTime (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -1730,7 +1661,6 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
 			DeleteFile (path);
 
-#if NET_2_0
 			DateTime time = File.GetLastWriteTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
@@ -1738,18 +1668,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
-#else
-			try {
-				File.GetLastWriteTimeUtc (path);
-				Assert.Fail ("#1");
-			} catch (IOException ex) {
-				// Could not find a part of the path "..."
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -2625,7 +2543,6 @@ namespace MonoTests.System.IO
 			LockUnlock ((long) Int32.MaxValue + 1);
 		}
 	
-#if NET_2_0
 		[Test]
 		public void ReadWriteAllText ()
 		{
@@ -2679,7 +2596,6 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("replaceFile", txt, "#3");
 			}
 		}
-#endif
 
 		static bool RunningOnUnix {
 			get {
@@ -2700,7 +2616,6 @@ namespace MonoTests.System.IO
 				Directory.Delete (path, true);
 		}
 
-#if NET_2_0
 		void read_all (string s)
 		{
 			string f = Path.GetTempFileName ();
@@ -2712,7 +2627,6 @@ namespace MonoTests.System.IO
 				DeleteFile (f);
 			}
 		}
-#endif
 
 		void MoveTest (FileAccess acc, FileShare share, bool works)
 		{

@@ -61,11 +61,9 @@ namespace MonoTests.System.Configuration
 		{
 			ConfigurationException ce = new ConfigurationException ();
 			Assert.IsNotNull (ce.BareMessage, "#1");
-#if NET_2_0
 			Assert.IsTrue (ce.BareMessage.IndexOf ("'" + typeof (ConfigurationException).FullName + "'") != -1, "#2:" + ce.BareMessage);
 			Assert.IsNotNull (ce.Data, "#3");
 			Assert.AreEqual (0, ce.Data.Count, "#4");
-#endif
 			Assert.IsNull (ce.Filename, "#5");
 			Assert.IsNull (ce.InnerException, "#6");
 			Assert.AreEqual (0, ce.Line, "#7");
@@ -81,10 +79,8 @@ namespace MonoTests.System.Configuration
 			msg = "MSG";
 			ce = new ConfigurationException (msg);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.IsNull (ce.Filename, "#A4");
 			Assert.IsNull (ce.InnerException, "#A5");
 			Assert.AreEqual (0, ce.Line, "#A6");
@@ -93,14 +89,9 @@ namespace MonoTests.System.Configuration
 			msg = null;
 			ce = new ConfigurationException (msg);
 
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B2");
 			Assert.AreEqual (0, ce.Data.Count, "#B3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.IsNull (ce.Filename, "#B4");
 			Assert.IsNull (ce.InnerException, "#B5");
 			Assert.AreEqual (0, ce.Line, "#B6");
@@ -118,10 +109,8 @@ namespace MonoTests.System.Configuration
 			inner = new Exception ();
 			ce = new ConfigurationException (msg, inner);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.IsNull (ce.Filename, "#A4");
 			Assert.AreSame (inner, ce.InnerException, "#A5");
 			Assert.AreEqual (0, ce.Line, "#A6");
@@ -130,14 +119,9 @@ namespace MonoTests.System.Configuration
 			msg = null;
 			inner = null;
 			ce = new ConfigurationException (msg, inner);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B2");
 			Assert.AreEqual (0, ce.Data.Count, "#B3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.IsNull (ce.Filename, "#B4");
 			Assert.AreSame (inner, ce.InnerException, "#B5");
 			Assert.AreEqual (0, ce.Line, "#B6");
@@ -155,10 +139,8 @@ namespace MonoTests.System.Configuration
 			node = new XmlDocument ();
 			ce = new ConfigurationException (msg, node);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.AreEqual (string.Empty, ce.Filename, "#A4");
 			Assert.IsNull (ce.InnerException, "#A5");
 			Assert.AreEqual (0, ce.Line, "#A6");
@@ -167,14 +149,9 @@ namespace MonoTests.System.Configuration
 			msg = null;
 			node = null;
 			ce = new ConfigurationException (msg, node);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B2");
 			Assert.AreEqual (0, ce.Data.Count, "#B3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.AreEqual (string.Empty, ce.Filename, "#B4");
 			Assert.IsNull (ce.InnerException, "#B5");
 			Assert.AreEqual (0, ce.Line, "#B6");
@@ -194,10 +171,8 @@ namespace MonoTests.System.Configuration
 			node = new XmlDocument ();
 			ce = new ConfigurationException (msg, inner, node);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.AreEqual (string.Empty, ce.Filename, "#A4");
 			Assert.AreSame (inner, ce.InnerException, "#A5");
 			Assert.AreEqual (0, ce.Line, "#A6");
@@ -207,14 +182,9 @@ namespace MonoTests.System.Configuration
 			inner = null;
 			node = null;
 			ce = new ConfigurationException (msg, inner, node);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B2");
 			Assert.AreEqual (0, ce.Data.Count, "#B3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.AreEqual (string.Empty, ce.Filename, "#B4");
 			Assert.AreSame (inner, ce.InnerException, "#B5");
 			Assert.AreEqual (0, ce.Line, "#B6");
@@ -234,10 +204,8 @@ namespace MonoTests.System.Configuration
 			line = 7;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#A4");
 			Assert.IsNull (ce.InnerException, "#A5");
 			Assert.AreEqual (line, ce.Line, "#A6");
@@ -247,14 +215,9 @@ namespace MonoTests.System.Configuration
 			filename = null;
 			line = 0;
 			ce = new ConfigurationException (msg, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B3");
 			Assert.AreEqual (0, ce.Data.Count, "#B4");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#B5");
 			Assert.IsNull (ce.InnerException, "#B6");
 			Assert.AreEqual (0, ce.Line, "#B7");
@@ -264,14 +227,9 @@ namespace MonoTests.System.Configuration
 			filename = "abc.txt";
 			line = 5;
 			ce = new ConfigurationException (msg, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#C1");
 			Assert.IsNotNull (ce.Data, "#C2");
 			Assert.AreEqual (0, ce.Data.Count, "#C3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#C1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#C2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#C4");
 			Assert.IsNull (ce.InnerException, "#C5");
 			Assert.AreEqual (5, ce.Line, "#C6");
@@ -282,10 +240,8 @@ namespace MonoTests.System.Configuration
 			line = 5;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#D1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#D2");
 			Assert.AreEqual (0, ce.Data.Count, "#D3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#D4");
 			Assert.IsNull (ce.InnerException, "#D5");
 			Assert.AreEqual (5, ce.Line, "#D6");
@@ -296,10 +252,8 @@ namespace MonoTests.System.Configuration
 			line = 0;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#E1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#E2");
 			Assert.AreEqual (0, ce.Data.Count, "#E3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#E4");
 			Assert.IsNull (ce.InnerException, "#E5");
 			Assert.AreEqual (0, ce.Line, "#E6");
@@ -309,14 +263,9 @@ namespace MonoTests.System.Configuration
 			filename = null;
 			line = 4;
 			ce = new ConfigurationException (msg, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#F1");
 			Assert.IsNotNull (ce.Data, "#F2");
 			Assert.AreEqual (0, ce.Data.Count, "#F3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#F1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#F2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#F4");
 			Assert.IsNull (ce.InnerException, "#F5");
 			Assert.AreEqual (4, ce.Line, "#F6");
@@ -327,10 +276,8 @@ namespace MonoTests.System.Configuration
 			line = 0;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#G1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#G2");
 			Assert.AreEqual (0, ce.Data.Count, "#G3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#G4");
 			Assert.IsNull (ce.InnerException, "#G5");
 			Assert.AreEqual (0, ce.Line, "#G6");
@@ -341,10 +288,8 @@ namespace MonoTests.System.Configuration
 			line = 6;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#H1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#H2");
 			Assert.AreEqual (0, ce.Data.Count, "#H3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#H4");
 			Assert.IsNull (ce.InnerException, "#H5");
 			Assert.AreEqual (6, ce.Line, "#H6");
@@ -355,10 +300,8 @@ namespace MonoTests.System.Configuration
 			line = 6;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#I1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#I2");
 			Assert.AreEqual (0, ce.Data.Count, "#I3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#I4");
 			Assert.IsNull (ce.InnerException, "#I5");
 			Assert.AreEqual (6, ce.Line, "#I6");
@@ -369,10 +312,8 @@ namespace MonoTests.System.Configuration
 			line = 4;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#J1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#J2");
 			Assert.AreEqual (0, ce.Data.Count, "#J3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#J4");
 			Assert.IsNull (ce.InnerException, "#J5");
 			Assert.AreEqual (4, ce.Line, "#J6");
@@ -383,10 +324,8 @@ namespace MonoTests.System.Configuration
 			line = 0;
 			ce = new ConfigurationException (msg, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#K1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#K2");
 			Assert.AreEqual (0, ce.Data.Count, "#K3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#K4");
 			Assert.IsNull (ce.InnerException, "#K5");
 			Assert.AreEqual (0, ce.Line, "#K6");
@@ -408,10 +347,8 @@ namespace MonoTests.System.Configuration
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#A1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#A2");
 			Assert.AreEqual (0, ce.Data.Count, "#A3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#A4");
 			Assert.AreSame (inner, ce.InnerException, "#A5");
 			Assert.AreEqual (line, ce.Line, "#A6");
@@ -422,14 +359,9 @@ namespace MonoTests.System.Configuration
 			filename = null;
 			line = 0;
 			ce = new ConfigurationException (msg, inner, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#B1");
 			Assert.IsNotNull (ce.Data, "#B2");
 			Assert.AreEqual (0, ce.Data.Count, "#B3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#B1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#B2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#B4");
 			Assert.AreSame (inner, ce.InnerException, "#B5");
 			Assert.AreEqual (0, ce.Line, "#B6");
@@ -440,14 +372,9 @@ namespace MonoTests.System.Configuration
 			filename = null;
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#C1");
 			Assert.IsNotNull (ce.Data, "#C2");
 			Assert.AreEqual (0, ce.Data.Count, "#C3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#C1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#C2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#C4");
 			Assert.AreSame (inner, ce.InnerException, "#C5");
 			Assert.AreEqual (line, ce.Line, "#C6");
@@ -459,10 +386,8 @@ namespace MonoTests.System.Configuration
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#D1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#D2");
 			Assert.AreEqual (0, ce.Data.Count, "#D3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#D4");
 			Assert.AreSame (inner, ce.InnerException, "#D5");
 			Assert.AreEqual (line, ce.Line, "#D6");
@@ -474,10 +399,8 @@ namespace MonoTests.System.Configuration
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#E1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#E2");
 			Assert.AreEqual (0, ce.Data.Count, "#E3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#E4");
 			Assert.AreSame (inner, ce.InnerException, "#E5");
 			Assert.AreEqual (line, ce.Line, "#E6");
@@ -489,10 +412,8 @@ namespace MonoTests.System.Configuration
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
 			Assert.AreSame (msg, ce.BareMessage, "#F1");
-#if NET_2_0
 			Assert.IsNotNull (ce.Data, "#F2");
 			Assert.AreEqual (0, ce.Data.Count, "#F3");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#F4");
 			Assert.AreSame (inner, ce.InnerException, "#F5");
 			Assert.AreEqual (line, ce.Line, "#F6");
@@ -503,14 +424,9 @@ namespace MonoTests.System.Configuration
 			filename = "abc.txt";
 			line = 7;
 			ce = new ConfigurationException (msg, inner, filename, line);
-#if NET_2_0
 			Assert.AreEqual (new ConfigurationException ().Message, ce.BareMessage, "#G1");
 			Assert.IsNotNull (ce.Data, "#G2");
 			Assert.AreEqual (0, ce.Data.Count, "#G3");
-#else
-			Assert.IsNotNull (ce.BareMessage, "#G1");
-			Assert.IsTrue (ce.BareMessage.IndexOf (typeof (ConfigurationException).FullName) != -1, "#G2");
-#endif
 			Assert.AreSame (filename, ce.Filename, "#G4");
 			Assert.AreSame (inner, ce.InnerException, "#G5");
 			Assert.AreEqual (line, ce.Line, "#G6");

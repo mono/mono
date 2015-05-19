@@ -66,10 +66,8 @@ namespace MonoTests.System.Data.Common
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
-#if NET_2_0
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
-#endif
 		}
 
 		[Test]
@@ -142,7 +140,6 @@ namespace MonoTests.System.Data.Common
 			try {
 				a.KeyRestrictionBehavior = (KeyRestrictionBehavior) 666;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// The KeyRestrictionBehavior enumeration value, 666, is invalid
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
@@ -153,17 +150,6 @@ namespace MonoTests.System.Data.Common
 				Assert.IsNotNull (ex.ParamName, "#7");
 				Assert.AreEqual ("KeyRestrictionBehavior", ex.ParamName, "#8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// The KeyRestrictionBehavior enumeration value, 666, is invalid
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				//Assert.IsTrue (ex.Message.IndexOf ("KeyRestrictionBehavior") != -1, "#5");
-				//Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#6");
-				//Assert.IsNull (ex.ParamName, "#7");
-			}
-#endif
 		}
 
 		[Test]

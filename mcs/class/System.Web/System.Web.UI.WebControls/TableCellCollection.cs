@@ -31,11 +31,7 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls {
 
-#if NET_2_0
 	[Editor ("System.Web.UI.Design.WebControls.TableCellsCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#else
-	[Editor ("System.Web.UI.Design.WebControls.TableCellsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 	public sealed class TableCellCollection : IList, ICollection, IEnumerable 
 	{
 		ControlCollection cc;

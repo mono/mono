@@ -198,9 +198,9 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR:
 		if (type->data.generic_param) {
-			MonoGenericParamInfo *info = mono_generic_param_info (type->data.generic_param);
-			if (info)
-				g_string_append (res, info->name);
+			const char *name = mono_generic_param_name (type->data.generic_param);
+			if (name)
+				g_string_append (res, name);
 			else
 				g_string_append_printf (res, "%s%d", type->type == MONO_TYPE_VAR ? "!" : "!!", mono_generic_param_num (type->data.generic_param));
 		} else {
@@ -492,7 +492,6 @@ MonoMethod*
 mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 {
 	MonoClass *klass;
-	const MonoTableInfo *tdef;
 	const MonoTableInfo *methods;
 	MonoMethod *method;
 	int i;
@@ -511,7 +510,8 @@ mono_method_desc_search_in_image (MonoMethodDesc *desc, MonoImage *image)
 		return mono_method_desc_search_in_class (desc, klass);
 	}
 
-	tdef = mono_image_get_table_info (image, MONO_TABLE_TYPEDEF);
+	/* FIXME: Is this call necessary?  We don't use its result. */
+	mono_image_get_table_info (image, MONO_TABLE_TYPEDEF);
 	methods = mono_image_get_table_info (image, MONO_TABLE_METHOD);
 	for (i = 0; i < mono_table_info_get_rows (methods); ++i) {
 		guint32 token = mono_metadata_decode_row_col (methods, i, MONO_METHOD_NAME);
@@ -1021,4 +1021,26 @@ mono_class_describe_statics (MonoClass* klass)
 			print_field_value (field_ptr, field, 0);
 		}
 	}
+}
+
+/**
+ * mono_print_method_code
+ * @MonoMethod: a pointer to the method
+ *
+ * This method is used from a debugger to print the code of the method.
+ *
+ * This prints the IL code of the method in the standard output.
+ */
+void
+mono_method_print_code (MonoMethod *method)
+{
+	char *code;
+	MonoMethodHeader *header = mono_method_get_header (method);
+	if (!header) {
+		printf ("METHOD HEADER NOT FOUND\n");
+		return;
+	}
+	code = mono_disasm_code (0, method, header->code, header->code + header->code_size);
+	printf ("CODE FOR %s:\n%s\n", mono_method_full_name (method, TRUE), code);
+	g_free (code);
 }

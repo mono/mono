@@ -31,17 +31,11 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls {
 
-#if NET_2_0
 	[Editor ("System.Web.UI.Design.WebControls.TableRowsCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#else
-	[Editor ("System.Web.UI.Design.WebControls.TableRowsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 	public sealed class TableRowCollection : IList, ICollection, IEnumerable
 	{
 		ControlCollection cc;
-#if NET_2_0
 		Table owner;
-#endif
 		
 		internal TableRowCollection (Table table)
 		{
@@ -49,9 +43,7 @@ namespace System.Web.UI.WebControls {
 				throw new ArgumentNullException ("table");
 			
 			cc = table.Controls;
-#if NET_2_0
 			owner = table;
-#endif
 		}
 
 		public int Count {
@@ -78,11 +70,9 @@ namespace System.Web.UI.WebControls {
 		{
 			if (row == null)
 				throw new NullReferenceException (); // .NET compatibility
-#if NET_2_0
 			if (row.TableRowSectionSet)
 				owner.GenerateTableSections = true;
 			row.Container = this;
-#endif
 			int index = cc.IndexOf (row);
 			if (index < 0) {
 				cc.Add (row);
@@ -97,11 +87,9 @@ namespace System.Web.UI.WebControls {
 				throw new NullReferenceException (); // .NET compatibility
 			
 			if (cc.IndexOf (row) < 0) {
-#if NET_2_0
 				if (row.TableRowSectionSet)
 					owner.GenerateTableSections = true;
 				row.Container = this;
-#endif
 				cc.AddAt (index, row);
 			}
 		}
@@ -113,11 +101,9 @@ namespace System.Web.UI.WebControls {
 					throw new NullReferenceException (); // .NET compatibility
 				
 				if (cc.IndexOf (tr) < 0) {
-#if NET_2_0
 					if (tr.TableRowSectionSet)
 						owner.GenerateTableSections = true;
 					tr.Container = this;
-#endif
 					cc.Add (tr);
 				}
 			}
@@ -125,9 +111,7 @@ namespace System.Web.UI.WebControls {
 
 		public void Clear ()
 		{
-#if NET_2_0
 			owner.GenerateTableSections = false;
-#endif
 			cc.Clear ();
 		}
 
@@ -146,12 +130,10 @@ namespace System.Web.UI.WebControls {
 			return cc.IndexOf (row);
 		}
 
-#if NET_2_0
 		internal void RowTableSectionSet ()
 		{
 			owner.GenerateTableSections = true;
 		}
-#endif
 		
 		public void Remove (TableRow row)
 		{

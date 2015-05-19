@@ -35,11 +35,7 @@ using System.Xml.Schema;
 namespace System.Xml.Serialization
 {
 	[Flags]
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	enum XmlMappingAccess
 	{
 		None,

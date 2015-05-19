@@ -28,8 +28,8 @@ namespace MonoTests.System.Runtime.Serialization
 		MemoryStream ms;
 		string uri;
 
+#if FEATURE_REMOTING
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();
@@ -41,6 +41,7 @@ namespace MonoTests.System.Runtime.Serialization
 
 			RemotingServices.Disconnect (mt);
 		}
+#endif
 
 #if !MONOTOUCH
 		[Test]
@@ -77,6 +78,7 @@ namespace MonoTests.System.Runtime.Serialization
 			return 2;
 		}
 
+#if FEATURE_REMOTING
 		void WriteData ()
 		{
 			StreamingContext context = new StreamingContext (StreamingContextStates.Other);
@@ -148,7 +150,7 @@ namespace MonoTests.System.Runtime.Serialization
 			CheckMessages ("MethodCall", originalMsgData, ProcessMessages (null, calls));
 			CheckMessages ("MethodResponse", originalMsgData, ProcessMessages (null, resps));
 		}
-
+#endif
 		BinderTester_A CreateBinderTestData ()
 		{
 			BinderTester_A bta = new BinderTester_A();
@@ -637,6 +639,8 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (_char, obj._char, context + "._char");
 			Assert.AreEqual (_dateTime, obj._dateTime, context + "._dateTime");
 			Assert.AreEqual (_decimal, obj._decimal, context + "._decimal");
+			Assert.AreEqual (_double, obj._double, context + "._double");
+			Assert.AreEqual (_short, obj._short, context = "._short");
 			Assert.AreEqual (_int, obj._int, context + "._int");
 			Assert.AreEqual (_long, obj._long, context + "._long");
 			Assert.AreEqual (_sbyte, obj._sbyte, context + "._sbyte");

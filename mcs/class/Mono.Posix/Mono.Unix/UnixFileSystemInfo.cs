@@ -192,7 +192,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastAccessTime {
-			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_atime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_atime, stat.st_atime_nsec);}
 		}
 
 		public DateTime LastAccessTimeUtc {
@@ -200,7 +200,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastWriteTime {
-			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_mtime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_mtime, stat.st_mtime_nsec);}
 		}
 
 		public DateTime LastWriteTimeUtc {
@@ -208,7 +208,7 @@ namespace Mono.Unix {
 		}
 
 		public DateTime LastStatusChangeTime {
-			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_ctime);}
+			get {AssertValid (); return Native.NativeConvert.ToDateTime (stat.st_ctime, stat.st_ctime_nsec);}
 		}
 
 		public DateTime LastStatusChangeTimeUtc {

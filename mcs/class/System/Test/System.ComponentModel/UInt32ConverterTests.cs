@@ -232,7 +232,6 @@ namespace MonoTests.System.ComponentModel
 					return base.GetFormat (formatType);
 				}
 			}
-#if NET_2_0
 // adding this override in 1.x shows different result in .NET (it is ignored).
 // Some compatibility kids might want to fix this issue.
 			public override NumberFormatInfo NumberFormat {
@@ -243,7 +242,6 @@ namespace MonoTests.System.ComponentModel
 				}
 				set { throw new NotSupportedException (); }
 			}
-#endif
 		}
 	}
 }

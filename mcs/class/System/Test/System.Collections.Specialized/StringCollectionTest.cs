@@ -74,7 +74,7 @@ namespace MonoTests.System.Collections.Specialized {
 		[Test]
 		public void SimpleSyncRoot() 
 		{
-			Assert.AreEqual(sc, sc.SyncRoot);
+			Assert.AreNotSame(sc, sc.SyncRoot);
 		}
 		
 		[Test]

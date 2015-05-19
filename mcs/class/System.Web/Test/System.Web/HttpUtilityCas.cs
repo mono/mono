@@ -97,7 +97,6 @@ namespace MonoCasTests.System.Web {
 			Assert.AreEqual (0, HttpUtility.UrlEncodeUnicodeToBytes (String.Empty).Length, "UrlEncodeUnicodeToBytes(string)");
 
 			Assert.AreEqual (String.Empty, HttpUtility.UrlPathEncode (String.Empty), "UrlPathEncode(string)");
-#if NET_2_0
 			try {
 				Assert.IsNotNull (HttpUtility.ParseQueryString (String.Empty), "ParseQueryString(string)");
 			}
@@ -110,7 +109,6 @@ namespace MonoCasTests.System.Web {
 			catch (NotImplementedException)	{
 				// mono
 			}
-#endif
 		}
 
 		// LinkDemand

@@ -32,6 +32,7 @@ using System.Xml.Linq;
 
 namespace Xamarin.ApiDiff {
 
+	// MethodComparer inherits from this one
 	public class ConstructorComparer : MemberComparer {
 
 		public override string GroupName {
@@ -45,6 +46,39 @@ namespace Xamarin.ApiDiff {
 		public override bool Find (XElement e)
 		{
 			return (e.Attribute ("name").Value == Source.Attribute ("name").Value);
+		}
+
+		void RenderReturnType (XElement source, XElement target, ApiChange change)
+		{
+			var srcType = source.GetTypeName ("returntype");
+			var tgtType = target.GetTypeName ("returntype");
+
+			if (srcType != tgtType) {
+				change.AppendModified (srcType, tgtType, true);
+				change.Append (" ");
+			} else if (srcType != null) {
+				// ctor don't have a return type
+				change.Append (srcType);
+				change.Append (" ");
+			}
+		}
+
+		public override bool Equals (XElement source, XElement target, ApiChanges changes)
+		{
+			if (base.Equals (source, target, changes))
+				return true;
+				
+			var change = new ApiChange ();
+			change.Header = "Modified " + GroupName;
+			RenderMethodAttributes (source, target, change);
+			RenderReturnType (source, target, change);
+			RenderName (source, target, change);
+			RenderGenericParameters (source, target, change);
+			RenderParameters (source, target, change);
+
+			changes.Add (source, target, change);
+
+			return false;
 		}
 
 		public override string GetDescription (XElement e)
@@ -99,7 +133,10 @@ namespace Xamarin.ApiDiff {
 			if (parameters != null) {
 				var list = new List<string> ();
 				foreach (var p in parameters.Elements ("parameter")) {
-					list.Add (p.GetTypeName ("type") + " " + p.GetAttribute ("name"));
+					var pTypeName   = p.GetTypeName ("type");
+					list.Add (State.IgnoreParameterNameChanges
+						? pTypeName
+						: pTypeName + " " + p.GetAttribute ("name"));
 				}
 				sb.Append (String.Join (", ", list));
 			}

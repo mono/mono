@@ -36,15 +36,10 @@ using System.Collections;
 namespace System.Xml.Serialization 
 {
 	public class SoapCodeExporter
-#if NET_2_0
 		: CodeExporter
-#endif
 	{
 		#region Fields
 
-#if !NET_2_0
-		SoapMapCodeGenerator codeGenerator;
-#endif
 
 		#endregion
 
@@ -59,7 +54,6 @@ namespace System.Xml.Serialization
 			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit);
 		}
 
-#if NET_2_0
 
 		public SoapCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
@@ -87,17 +81,11 @@ namespace System.Xml.Serialization
 			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit, codeProvider, options, mappings);
 		}
 
-#endif
 
 #endregion // Constructors
 
 		#region Properties
 
-#if !NET_2_0
-		public CodeAttributeDeclarationCollection IncludeMetadata {
-			get { return codeGenerator.IncludeMetadata; }
-		}
-#endif
 		
 		#endregion // Properties
 

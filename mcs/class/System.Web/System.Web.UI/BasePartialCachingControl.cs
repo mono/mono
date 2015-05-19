@@ -101,11 +101,9 @@ namespace System.Web.UI
 			get { return slidingExpiration; }
 			set { slidingExpiration = value; }
 		}
-#if NET_4_0
 		internal string ProviderName {
 			get; set;
 		}
-#endif
 		internal abstract Control CreateControl ();
 
 		public override void Dispose ()
@@ -119,15 +117,9 @@ namespace System.Web.UI
 		void RetrieveCachedContents ()
 		{
 			cacheKey = CreateKey ();
-#if NET_4_0
 			OutputCacheProvider provider = GetProvider ();
 			cachedData = provider.Get (cacheKey) as string;
-#else
-			Cache cache = HttpRuntime.InternalCache;
-			cachedData = cache [cacheKey] as string;
-#endif
 		}
-#if NET_4_0
 		OutputCacheProvider GetProvider ()
 		{
 			string providerName = ProviderName;
@@ -161,18 +153,8 @@ namespace System.Web.UI
 			
 			base.InitRecursive (namingContainer);
 		}
-#else
-		protected internal override void OnInit (EventArgs e)
-		{
-			control = CreateControl ();
-			Controls.Add (control);
-		}
-#endif
 		protected internal override void Render (HtmlTextWriter output)
 		{
-#if !NET_4_0
-			RetrieveCachedContents ();
-#endif
 			if (cachedData != null) {
 				output.Write (cachedData);
 				return;
@@ -195,19 +177,12 @@ namespace System.Web.UI
 				context.Response.SetTextWriter (prev);
 				output.Write (text);
 			}
-#if NET_4_0
 			OutputCacheProvider provider = GetProvider ();
 			DateTime utcExpire = DateTime.UtcNow.AddSeconds (duration);
 			provider.Set (cacheKey, text, utcExpire);;
 			context.InternalCache.Insert (cacheKey, text, dependency, utcExpire.ToLocalTime (),
 						      Cache.NoSlidingExpiration, CacheItemPriority.Normal,
 						      null);
-#else
-			context.InternalCache.Insert (cacheKey, text, dependency,
-						      DateTime.Now.AddSeconds (duration),
-						      Cache.NoSlidingExpiration,
-						      CacheItemPriority.Normal, null);
-#endif
 		}
 
 		public ControlCachePolicy CachePolicy 

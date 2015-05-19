@@ -201,11 +201,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			TestDataList dl = new TestDataList ();
 			CheckIRepeatInfoUser (dl);
-#if NET_2_0
 			Assert.AreEqual ("table", dl.Tag, "TagName");
-#else
-			Assert.AreEqual ("span", dl.Tag, "TagName");
-#endif
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-1");
 			Assert.AreEqual (0, dl.StateBag.Count, "ViewState.Count-1");
 
@@ -245,11 +241,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// in BaseDataList but couldn't be totally tested from there
 			Assert.AreEqual (-1, dl.CellPadding, "CellPadding");
 			Assert.AreEqual (0, dl.CellSpacing, "CellSpacing");
-#if NET_2_0
 			Assert.AreEqual (GridLines.None, dl.GridLines, "GridLines");
-#else			
-			Assert.AreEqual (GridLines.Both, dl.GridLines, "GridLines");
-#endif
 			Assert.AreEqual (HorizontalAlign.NotSet, dl.HorizontalAlign, "HorizontalAlign");
 
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-2");
@@ -273,12 +265,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (GridLines.None, dl.GridLines, "GridLines");
 			dl.HorizontalAlign = HorizontalAlign.NotSet;
 			Assert.AreEqual (HorizontalAlign.NotSet, dl.HorizontalAlign, "HorizontalAlign");
-#if NET_2_0
 			int sc = 0;
 			// so the TableStyle isn't kept directly in the ViewState
-#else
-			int sc = 4;
-#endif
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2");
 
 			// now for the DataList properties
@@ -365,12 +353,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (GridLines.Vertical, dl.GridLines, "GridLines");
 			dl.HorizontalAlign = HorizontalAlign.Center;
 			Assert.AreEqual (HorizontalAlign.Center, dl.HorizontalAlign, "HorizontalAlign");
-#if NET_2_0
 			int sc = 0;
 			// so the TableStyle isn't kept directly in the ViewState
-#else
-			int sc = 4;
-#endif
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2");
 
 			// now for the DataList properties
@@ -408,15 +392,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsNotNull (dl.SeparatorTemplate, "SeparatorTemplate");
 			dl.EditItemIndex = 0;
 			Assert.AreEqual (0, dl.EditItemIndex, "EditItemIndex");
-#if NET_2_0
 			dl.EditItemIndex = -1;
-#endif
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2b");
 			dl.SelectedIndex = 0;
 			Assert.AreEqual (0, dl.SelectedIndex, "SelectedIndex");
-#if NET_2_0
 			dl.SelectedIndex = -1;
-#endif
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2c");
 			dl.ExtractTemplateRows = true;
 			Assert.IsTrue (dl.ExtractTemplateRows, "ExtractTemplateRows");
@@ -616,24 +596,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.TrackState ();
 
 			object[] vs = (object[]) dl.SaveState ();
-#if NET_2_0
 			Assert.AreEqual (9, vs.Length, "Size");
-#else
-			Assert.AreEqual (8, vs.Length, "Size");
-#endif
 			// By default the viewstate is all null
 			int i = 0;
 			for (; i < vs.Length; i++)
 				Assert.IsNull (vs [i], "Empty-" + i);
 
 			i = 0;
-#if NET_2_0
 			i++;
-#else
-			dl.GridLines = GridLines.Vertical;
-			vs = (object []) dl.SaveState ();
-			Assert.IsNotNull (vs[i++], "GridLines");
-#endif
 			dl.ItemStyle.HorizontalAlign = HorizontalAlign.Center;
 			vs = (object []) dl.SaveState ();
 			Assert.IsNotNull (vs[i++], "ItemStyle");
@@ -661,15 +631,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.FooterStyle.HorizontalAlign = HorizontalAlign.Center;
 			vs = (object []) dl.SaveState ();
 			Assert.IsNotNull (vs[i++], "FooterStyle");
-#if NET_2_0
 			// GridLines was moved last
 			dl.GridLines = GridLines.Vertical;
 			vs = (object []) dl.SaveState ();
 			Assert.IsNotNull (vs[i++], "GridLines");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void SelectedValue_SelectedIndex ()
 		{
@@ -707,7 +674,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.DataKeyField = "mono";
 			Assert.IsNull (dl.SelectedValue, "SelectedValue");
 		}
-#endif
 		private bool cancelCommandEvent;
 		private bool deleteCommandEvent;
 		private bool editCommandEvent;
@@ -1108,7 +1074,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (11, dl.Controls.Count, "#01");
 		}
 		
-#if NET_2_0
 		[Test]
 		public void DataSourceID ()
 		{
@@ -1126,7 +1091,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.CreateCH ();
 			Assert.AreEqual (16, dl.Controls.Count, "#01");
 		}
-#endif
 
 		[Test]
 		public void NControls6 ()

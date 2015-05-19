@@ -7,7 +7,6 @@
  * Copyright 2002 Ximian, Inc. (www.ximian.com)
  */
 
-
 #ifndef __MONO_MUTEX_H__
 #define __MONO_MUTEX_H__
 
@@ -54,6 +53,11 @@ typedef pthread_cond_t mono_cond_t;
 #define mono_cond_broadcast(cond) pthread_cond_broadcast (cond)
 #define mono_cond_destroy(cond)
 
+/*
+ * This should be used instead of mono_cond_timedwait, since that function is not implemented on windows.
+ */
+int mono_cond_timedwait_ms (mono_cond_t *cond, mono_mutex_t *mutex, int timeout_ms);
+
 /* This is a function so it can be passed to pthread_cleanup_push -
  * that is a macro and giving it a macro as a parameter breaks.
  */
@@ -81,22 +85,61 @@ mono_mutex_init_recursive (mono_mutex_t *mutex)
 #else
 
 typedef CRITICAL_SECTION mono_mutex_t;
-typedef HANDLE mono_cond_t;
+typedef CONDITION_VARIABLE mono_cond_t;
 
 #define mono_mutex_init(mutex) (InitializeCriticalSection((mutex)), 0)
 #define mono_mutex_init_recursive(mutex) (InitializeCriticalSection((mutex)), 0)
 #define mono_mutex_lock(mutex) EnterCriticalSection((mutex))
-#define mono_mutex_trylock(mutex) TryEnterCriticalSection((mutex))
+#define mono_mutex_trylock(mutex) (!TryEnterCriticalSection((mutex)))
 #define mono_mutex_unlock(mutex)  LeaveCriticalSection((mutex))
 #define mono_mutex_destroy(mutex) DeleteCriticalSection((mutex))
 
+static inline int
+mono_cond_init (mono_cond_t *cond, int attr)
+{
+	InitializeConditionVariable (cond);
+	return 0;
+}
 
-#define mono_cond_init(cond,attr) do{*(cond) = CreateEvent(NULL,FALSE,FALSE,NULL); } while (0)
-#define mono_cond_wait(cond,mutex) WaitForSingleObject(*(cond),INFINITE)
-#define mono_cond_timedwait(cond,mutex,timeout) WaitForSingleObject(*(cond),timeout)
-#define mono_cond_signal(cond) SetEvent(*(cond))
-#define mono_cond_broadcast(cond) (!SetEvent(*(cond)))
-#define mono_cond_destroy(cond) CloseHandle(*(cond))
+static inline int
+mono_cond_wait (mono_cond_t *cond, mono_mutex_t *mutex)
+{
+	return SleepConditionVariableCS (cond, mutex, INFINITE) ? 0 : 1;
+}
+
+static inline int
+mono_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, struct timespec *timeout)
+{
+	// FIXME:
+	g_assert_not_reached ();
+	return 0;
+}
+
+static inline int
+mono_cond_signal (mono_cond_t *cond)
+{
+	WakeConditionVariable (cond);
+	return 0;
+}
+
+static inline int
+mono_cond_broadcast (mono_cond_t *cond)
+{
+	WakeAllConditionVariable (cond);
+	return 0;
+}
+
+static inline int
+mono_cond_destroy (mono_cond_t *cond)
+{
+	return 0;
+}
+
+static inline int
+mono_cond_timedwait_ms (mono_cond_t *cond, mono_mutex_t *mutex, int timeout_ms)
+{
+	return SleepConditionVariableCS (cond, mutex, timeout_ms) ? 0 : 1;
+}
 
 #endif
 

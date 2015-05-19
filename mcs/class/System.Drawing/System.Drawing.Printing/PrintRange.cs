@@ -30,15 +30,11 @@
 using System;
 namespace System.Drawing.Printing 
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public enum PrintRange {
 		AllPages = 0,
 		Selection = 1,
 		SomePages = 2,
-#if NET_2_0		
 		CurrentPage = 0x400000
-#endif		
 	}
 }

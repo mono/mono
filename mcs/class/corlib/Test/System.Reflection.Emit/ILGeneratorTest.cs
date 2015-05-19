@@ -58,7 +58,6 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual ("localType", ex.ParamName, "#A");
 			}
 
-#if NET_2_0
 			try {
 				il_gen.DeclareLocal (null, false);
 				Assert.Fail ("#B1");
@@ -69,7 +68,6 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.ParamName, "#B5");
 				Assert.AreEqual ("localType", ex.ParamName, "#B6");
 			}
-#endif
 		}
 
 		[Test]
@@ -187,9 +185,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // Emit (OpCode, ConstructorInfo)
-#if NET_2_0
 		[Category ("NotDotNet")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
-#endif
 		public void Emit3_Constructor_Null ()
 		{
 			DefineBasicMethod ();
@@ -204,7 +200,6 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
-#if NET_2_0
 		[Test] // Emit (OpCode, ConstructorInfo)
 		[Category ("NotWorking")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
 		public void Emit3_Constructor_Null_MS ()
@@ -216,7 +211,6 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (NullReferenceException) {
 			}
 		}
-#endif
 
 		[Test] // Emit (OpCode, FieldInfo)
 		public void Emit5_Field_Null ()
@@ -364,7 +358,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue ((bool) tf.Invoke (null, new object [] { true }));
 		}
 
-#if NET_2_0
 		delegate void FooFoo ();
 
 		static void Foo ()
@@ -386,9 +379,7 @@ namespace MonoTests.System.Reflection.Emit
 			dynt.GetMethod ("F", BindingFlags.Public | BindingFlags.Static).Invoke (
 				null, new object [] { Marshal.GetFunctionPointerForDelegate (new FooFoo (Foo)) });
 		}
-#endif
 
-#if NET_2_0
 		//Test for #509131
 		[Test]
 		public void TestEmitCallIgnoresOptionalArgsForNonVarargMethod ()
@@ -400,18 +391,6 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.Fail ("#1");
 			}
 		}
-#else
-		[Test]
-		public void TestEmitCallThrowsOnOptionalArgsForNonVarargMethod ()
-		{
-			DefineBasicMethod ();
-			try {
-				il_gen.EmitCall (OpCodes.Call, typeof (object).GetMethod ("GetHashCode"), new Type[] { typeof (string) });
-				Assert.Fail ("#1");
-			} catch (InvalidOperationException ex) {
-			}
-		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (Exception))]

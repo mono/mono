@@ -82,7 +82,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		[IsolatedStorageFilePermission (SecurityAction.Deny, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByMachine)]
 		[ExpectedException (typeof (SecurityException))]
@@ -176,7 +175,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForApplication ();
 		}
-#endif
 		[Test]
 		[IsolatedStorageFilePermission (SecurityAction.Deny, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByUser)]
 		[ExpectedException (typeof (SecurityException))]
@@ -291,13 +289,8 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 		{
 			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.MyComputer), "MyComputer");
 			Assert.AreEqual (Int64.MaxValue, MaximumSize (SecurityZone.Intranet), "Intranet");
-#if NET_2_0
 			Assert.AreEqual (512000, MaximumSize (SecurityZone.Internet), "Internet");
 			Assert.AreEqual (512000, MaximumSize (SecurityZone.Trusted), "Trusted");
-#else
-			Assert.AreEqual (10240, MaximumSize (SecurityZone.Internet), "Internet");
-			Assert.AreEqual (10240, MaximumSize (SecurityZone.Trusted), "Trusted");
-#endif
 		}
 
 		[Test]

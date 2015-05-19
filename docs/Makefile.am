@@ -14,7 +14,6 @@ ASSEMBLED_DOCS = \
 EXTRA_DIST = \
 	abc-removal.txt		\
 	api-style.css		\
-	assembly-bundle		\
 	check-exports		\
 	check-coverage		\
 	convert.cs		\
@@ -23,7 +22,6 @@ EXTRA_DIST = \
 	docs.make		\
 	documented		\
 	embedded-api		\
-	exceptions		\
 	exdoc			\
 	file-share-modes	\
 	gc-issues		\
@@ -35,33 +33,25 @@ EXTRA_DIST = \
 	jit-imt			\
 	jit-thoughts		\
 	jit-trampolines		\
-	local-regalloc.txt	\
-	magic.diff		\
 	mini-doc.txt		\
 	mono-api-metadata.html	\
 	mono-file-formats.config\
 	mono-file-formats.source\
-	mono_handle_d		\
 	mono-tools.config       \
 	mono-tools.source       \
 	monoapi.source		\
-	new-regalloc		\
 	object-layout		\
-	opcode-decomp.txt	\
 	precise-gc		\
 	produce-lists		\
 	public			\
 	public-api		\
 	README			\
-	release-notes-1.0.html	\
 	remoting		\
 	ssapre.txt		\
-	stack-alignment		\
 	stack-overflow.txt	\
 	threading		\
 	toc.xml			\
 	TODO			\
-	tree-mover.txt		\
 	unmanaged-calls	
 
 dist-hook:
@@ -99,14 +89,14 @@ mono-file-formats.tree: $(srcdir)/docs.make $(srcdir)/Makefile.am $(srcdir)/depl
 deploy/.stamp: convert.exe Makefile.am 
 	$(mkdir_p) html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
-	MONO_PATH=../mcs/class/lib/net_2_0 perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
+	MONO_PATH=../mcs/class/lib/net_4_5 perl $(srcdir)/exdoc -h $(srcdir) -t . $(srcdir)/../mono/*/*.c
 	touch $@
 
 extract: deploy/.stamp
 
 convert.exe: convert.cs AgilityPack.dll
-	$(TOOL_MAKE) PROFILE=net_2_0 convert.exe
+	$(TOOL_MAKE) PROFILE=net_4_5 convert.exe
 
 AgilityPack.dll: 
-	$(TOOL_MAKE) PROFILE=net_2_0 AgilityPack.dll
+	$(TOOL_MAKE) PROFILE=net_4_5 AgilityPack.dll
 

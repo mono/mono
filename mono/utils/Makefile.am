@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libmonoutils.la
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
 if ENABLE_DTRACE
 
@@ -22,6 +22,9 @@ monoutils_sources = \
 	mono-counters.c		\
 	mono-compiler.h		\
 	mono-dl.c		\
+	mono-dl-windows.c	\
+	mono-dl-darwin.c	\
+	mono-dl-posix.c		\
 	mono-dl.h		\
 	mono-internal-hash.c	\
 	mono-internal-hash.h	\
@@ -32,6 +35,7 @@ monoutils_sources = \
 	mono-math.c  		\
 	mono-mmap.c  		\
 	mono-mmap.h  		\
+	mono-mmap-internal.h	\
 	mono-mutex.c  		\
 	mono-mutex.h  		\
 	mono-networkinterfaces.c		\
@@ -42,8 +46,6 @@ monoutils_sources = \
 	mono-string.h		\
 	mono-time.c  		\
 	mono-time.h  		\
-	strtod.h		\
-	strtod.c		\
 	strenc.h		\
 	strenc.c		\
 	mono-uri.c		\
@@ -95,6 +97,7 @@ monoutils_sources = \
 	mono-linked-list-set.c	\
 	mono-linked-list-set.h	\
 	mono-threads.c	\
+	mono-threads-state-machine.c	\
 	mono-threads-posix.c	\
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
@@ -104,6 +107,8 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads.h	\
+	mono-threads-coop.c	\
+	mono-threads-coop.h	\
 	mono-tls.h	\
 	mono-tls.c	\
 	linux_magic.h	\
@@ -118,7 +123,21 @@ monoutils_sources = \
 	mono-conc-hashtable.h	\
 	mono-conc-hashtable.c	\
 	sha1.h		\
-	sha1.c
+	sha1.c	\
+	json.h	\
+	json.c	\
+	networking.c	\
+	networking-posix.c	\
+	networking-fallback.c	\
+	networking-missing.c	\
+	networking-windows.c	\
+	networking.h	\
+	mono-rand.c	\
+	mono-rand.h \
+	memfuncs.c \
+	memfuncs.h \
+	parse.c \
+	parse.h
 
 arch_sources = 
 

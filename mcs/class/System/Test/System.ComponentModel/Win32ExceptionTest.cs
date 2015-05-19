@@ -77,7 +77,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (int.MaxValue, ex.NativeErrorCode, "#C5");
 		}
 
-#if NET_2_0
 		[Test] // ctor (string)
 		public void Constructor2 ()
 		{
@@ -105,7 +104,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (string.Empty, ex.Message, "#C4");
 			Assert.AreEqual (native_error, ex.NativeErrorCode, "#C5");
 		}
-#endif
 
 		[Test] // ctor (int, string)
 		public void Constructor3 ()
@@ -146,7 +144,6 @@ namespace MonoTests.System.ComponentModel
 			// TODO
 		}
 
-#if NET_2_0
 		[Test] // ctor (string, Exception)
 		public void Constructor5 ()
 		{
@@ -181,6 +178,5 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (string.Empty, ex.Message, "#D4");
 			Assert.AreEqual (native_error, ex.NativeErrorCode, "#D5");
 		}
-#endif
 	}
 }

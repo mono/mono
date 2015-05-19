@@ -277,7 +277,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 			}
 		}
 
-		class InstanceField
+		public class InstanceField
 		{
 			public string Name;
 		}

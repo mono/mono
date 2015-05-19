@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
-
 using System;
 using System.Reflection;
 using System.Threading;
@@ -113,26 +111,37 @@ namespace MonoTests.System
 		static int counter;
 
 		[Test]
-		public void EnsureSingleThreadSafeExecution () {
+		public void EnsureSingleThreadSafeExecution ()
+		{
 			counter = 42;
+			bool started = false;
 
 			var l = new Lazy<int> (delegate () { return counter ++; }, true);
-
+			bool failed = false;
 			object monitor = new object ();
-			var threads = new Thread [10];
-			for (int i = 0; i < 10; ++i) {
+			var threads = new Thread [4];
+			for (int i = 0; i < threads.Length; ++i) {
 				threads [i] = new Thread (delegate () {
 						lock (monitor) {
-							Monitor.Wait (monitor);
+							if (!started) {
+								if (!Monitor.Wait (monitor, 2000))
+									failed = true;
+							}
 						}
 						int val = l.Value;
 					});
 			}
-			for (int i = 0; i < 10; ++i)
+			for (int i = 0; i < threads.Length; ++i)
 				threads [i].Start ();
-			lock (monitor)
+			lock (monitor) {
+				started = true;
 				Monitor.PulseAll (monitor);
-			
+			}
+
+			for (int i = 0; i < threads.Length; ++i)
+				threads [i].Join ();
+
+			Assert.IsFalse (failed);
 			Assert.AreEqual (42, l.Value);
 		}
 		
@@ -315,5 +324,3 @@ namespace MonoTests.System
 
 	}
 }
-
-#endif

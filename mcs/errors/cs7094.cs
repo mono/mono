@@ -9,7 +9,7 @@ class Test
 	{
 		try {
 		}
-		catch if (await Task.Factory.StartNew (() => false)) {
+		catch when (await Task.Factory.StartNew (() => false)) {
 		}
 	}
 }

@@ -293,7 +293,6 @@ namespace System.Web.Services.Description {
 				service.Ports.Add (port);
 			}
 
-#if NET_2_0
 			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.ConformsTo != WsiProfiles.None && String.IsNullOrEmpty (binfo.WebServiceBindingAttribute.Name)) {
 				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
 				desc.Types.Schemas.Add (Schemas);
@@ -309,7 +308,6 @@ namespace System.Web.Services.Description {
 						throw new InvalidOperationException (violations [0].ToString ());
 				}
 			}
-#endif	
 		}
 
 		bool ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
@@ -334,7 +332,6 @@ namespace System.Web.Services.Description {
 			binding = new Binding ();
 			binding.Name = name;
 			binding.Type = new XmlQualifiedName (binding.Name, binfo.Namespace);
-#if NET_2_0
 			if (binfo.WebServiceBindingAttribute != null && binfo.WebServiceBindingAttribute.EmitConformanceClaims) {
 				XmlDocument doc = new XmlDocument ();
 				XmlElement docElement = doc.CreateElement ("wsdl", "documentation", "http://schemas.xmlsoap.org/wsdl/");
@@ -343,7 +340,6 @@ namespace System.Web.Services.Description {
 				docElement.AppendChild (claimsElement);
 				binding.DocumentationElement = docElement;
 			}
-#endif
 			
 			portType = new PortType ();
 			portType.Name = binding.Name;
@@ -392,7 +388,6 @@ namespace System.Web.Services.Description {
 				ImportOperationBinding ();
 				
 				if (!ReflectMethod ()) {
-#if NET_2_0
 					// (It is somewhat hacky) If we don't
 					// add input/output Messages, update
 					// portType/input/@message and
@@ -403,7 +398,6 @@ namespace System.Web.Services.Description {
 					Message dupOut = Parent.MappedMessagesOut [method.MethodInfo];
 					ServiceDescription.Messages.Remove (outputMessage);
 					outOp.Message = new XmlQualifiedName (dupOut.Name, ServiceDescription.TargetNamespace);
-#endif
 				}
 
 				foreach (SoapExtensionReflector reflector in extensionReflectors)
@@ -475,13 +469,11 @@ namespace System.Web.Services.Description {
 			return null;
 		}
 
-#if NET_2_0
 		[MonoNotSupported("Not Implemented")]
 		protected virtual void ReflectDescription () 
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		#endregion
 	}

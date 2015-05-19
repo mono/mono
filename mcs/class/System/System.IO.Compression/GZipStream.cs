@@ -40,16 +40,15 @@ namespace System.IO.Compression {
 	{
 		private DeflateStream deflateStream;
 
-		public GZipStream (Stream compressedStream, CompressionMode mode) :
-			this (compressedStream, mode, false) {
+		public GZipStream (Stream stream, CompressionMode mode) :
+			this (stream, mode, false) {
 		}
 
-		public GZipStream (Stream compressedStream, CompressionMode mode, bool leaveOpen) {
-			this.deflateStream = new DeflateStream (compressedStream, mode, leaveOpen, true);
+		public GZipStream (Stream stream, CompressionMode mode, bool leaveOpen) {
+			this.deflateStream = new DeflateStream (stream, mode, leaveOpen, true);
 		}
 		
 		
-#if NET_4_5
 		public GZipStream (Stream stream, CompressionLevel compressionLevel)
 			: this (stream, compressionLevel, false)
 		{
@@ -59,7 +58,6 @@ namespace System.IO.Compression {
 		{
 			this.deflateStream = new DeflateStream (stream, compressionLevel, leaveOpen, true);
 		}
-#endif
 
 		protected override void Dispose (bool disposing)
 		{

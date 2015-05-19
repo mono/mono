@@ -8,6 +8,7 @@ using System.Reflection;
 [assembly: AssemblyTrademark ("Trademark")]
 [assembly: AssemblyVersion ("5.4.3.1")]
 [assembly: AssemblyFileVersion ("8.9")]
+[assembly: AssemblyTitle ("Title")]
 
 class C
 {
@@ -22,8 +23,8 @@ class C
 		if (fv.CompanyName != "Company")
 			return 2;
 
-//		if (fv.Comments != "Description")
-//			return 3;
+		if (fv.Comments != "Description")
+			return 3;
 
 		if (fv.LegalCopyright != "Copyright")
 			return 4;
@@ -33,6 +34,9 @@ class C
 
 		if (fv.ProductVersion != "8.9")
 			return 6;
+
+		if (fv.FileDescription != "Title")
+			return 7;
 
 		return 0;
 	}

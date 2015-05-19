@@ -50,13 +50,11 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static Control[] ParseControls (IDesignerHost designerHost, string controlText)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static ITemplate ParseTemplate (IDesignerHost designerHost, string templateText)

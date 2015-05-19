@@ -47,15 +47,16 @@ namespace System.Diagnostics {
 #pragma warning restore
 		//public int IndentLevel;
 		public int IndentSize = 4;
-		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
+		public TraceListenerCollection Listeners = new TraceListenerCollection ();
 
 		public TraceImplSettings ()
 		{
-			Listeners.Add (new DefaultTraceListener (), this);
+			Listeners.Add (new DefaultTraceListener () { IndentSize = this.IndentSize });
 		}
 	}
 #endif
 
+/*
 	static class TraceImpl {
 
 #if !MOBILE
@@ -413,5 +414,6 @@ namespace System.Diagnostics {
 				WriteLine (message, category);
 		}
 	}
+*/
 }
 

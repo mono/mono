@@ -49,6 +49,8 @@ namespace System.Diagnostics {
 		#region Keep in sync with object-internals.h
 		private int ilOffset = OFFSET_UNKNOWN;
 		private int nativeOffset = OFFSET_UNKNOWN;
+		private long methodAddress;
+		private uint methodIndex;
 		private MethodBase methodBase;
 		private string fileName;
 		private int lineNumber;
@@ -57,6 +59,9 @@ namespace System.Diagnostics {
 		private string internalMethodName;
 		#pragma warning restore 649
 		#endregion
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int GetILOffsetFromFile (string path, int methodToken, uint methodIndex, int nativeOffset);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool get_frame_info (int skip, bool needFileInfo, out MethodBase method,
@@ -164,6 +169,16 @@ namespace System.Diagnostics {
                 {
                         return nativeOffset;                        
                 }
+
+		internal long GetMethodAddress ()
+		{
+			return methodAddress;
+		}
+
+		internal uint GetMethodIndex ()
+		{
+			return methodIndex;
+		}
 
 		internal string GetInternalMethodName ()
 		{

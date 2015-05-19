@@ -3,13 +3,8 @@
 RUNTIME=mono
 XMLCONF_OPTIONS=
 
-ifeq ($(PROFILE), net_2_0)
-	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
-	CSCOMPILE=gmcs
-else
-	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
-	CSCOMPILE=mcs
-endif
+nunit_MONO_PATH="../../../../../class/lib/net_4_5"
+CSCOMPILE=mcs
 
 REFERENCES=-d:NUNIT_SUPPORT -r:nunit.core -r:nunit.framework
 TEST_ARCHIVE=xmlts20031210.zip

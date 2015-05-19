@@ -226,6 +226,15 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void GetAllCultures_Specific ()
+		{
+			CultureInfo [] infos = CultureInfo.GetCultures (CultureTypes.SpecificCultures);
+			foreach (CultureInfo ci in infos) {
+				Assert.IsNotNull (ci.DateTimeFormat);
+			}
+		}
+
+		[Test]
 #if !NET_4_0
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
@@ -577,6 +586,15 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").LCID);
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").Parent.LCID);
+		}
+
+		[Test]
+		public void ZhHans ()
+		{
+			Assert.AreEqual (4, new CultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, CultureInfo.GetCultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").Parent.LCID);
 		}
 
 		[Test]

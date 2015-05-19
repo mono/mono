@@ -265,15 +265,14 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (InvalidOperationException) {
 			}
 
-			Assert.IsTrue (task.IsCanceled, "#2");
-
-			task = factory.StartNew (() => 1, ct);
 			try {
 				task.Wait ();
+				Assert.Fail ("#2");
 			} catch (AggregateException e) {
-				Assert.IsTrue (task.IsCanceled, "#3");
-				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#4");
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
+
+			Assert.IsTrue (task.IsCanceled, "#4");
 		}
 	}
 }

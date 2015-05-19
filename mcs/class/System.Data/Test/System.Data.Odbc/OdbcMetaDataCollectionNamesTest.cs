@@ -29,7 +29,6 @@
 using System.Data.Odbc;
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System.Data.Odbc
 {
         [TestFixture]
@@ -48,4 +47,3 @@ namespace MonoTests.System.Data.Odbc
                 }
         }
 }
-#endif

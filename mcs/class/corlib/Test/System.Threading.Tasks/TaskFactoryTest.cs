@@ -157,9 +157,9 @@ namespace MonoTests.System.Threading.Tasks
 			var mre = new ManualResetEventSlim (false);
 
 			Task[] tasks = new Task[3];
-			tasks[0] = new Task (() => { Thread.Sleep (0); Assert.IsTrue (mre.Wait (3000)); });
-			tasks[1] = new Task (() => { Assert.IsTrue (mre.Wait (3000)); });
-			tasks[2] = new Task (() => { Assert.IsTrue (mre.Wait (3000)); });
+			tasks[0] = new Task (() => { Thread.Sleep (0); Assert.IsTrue (mre.Wait (5000)); });
+			tasks[1] = new Task (() => { Assert.IsTrue (mre.Wait (5000)); });
+			tasks[2] = new Task (() => { Assert.IsTrue (mre.Wait (5000)); });
 
 			bool ran = false;
 			Task cont = factory.ContinueWhenAll (tasks, ts => {
@@ -172,7 +172,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			mre.Set ();
 
-			Assert.IsTrue (cont.Wait (1000), "#1");
+			Assert.IsTrue (cont.Wait (3000), "#1");
 			Assert.IsTrue (ran, "#2");
 		}
 
@@ -180,7 +180,7 @@ namespace MonoTests.System.Threading.Tasks
 		public void ContinueWhenAll_WithMixedCompletionState ()
 		{
 			var mre = new ManualResetEventSlim ();
-			var task = Task.Factory.StartNew (() => mre.Wait (200));
+			var task = Task.Factory.StartNew (() => mre.Wait (1000));
 			var contFailed = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnFaulted);
 			var contCanceled = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnCanceled);
 			var contSuccess = task.ContinueWith (t => {}, TaskContinuationOptions.OnlyOnRanToCompletion);
@@ -189,7 +189,7 @@ namespace MonoTests.System.Threading.Tasks
 			var cont = Task.Factory.ContinueWhenAll (new Task[] { contFailed, contCanceled, contSuccess }, _ => ran = true);
 
 			mre.Set ();
-			cont.Wait (200);
+			cont.Wait (3000);
 
 			Assert.IsTrue (ran);
 			Assert.AreEqual (TaskStatus.RanToCompletion, cont.Status);
@@ -223,19 +223,20 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				factory.ContinueWhenAll (tasks, null);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
 				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAll (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
 				Assert.Fail ("#6");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -260,8 +261,8 @@ namespace MonoTests.System.Threading.Tasks
 			var t2 = new ManualResetEvent (false);
 
 			var tasks = new Task[2] {
-				Task.Factory.StartNew (() => { t1.WaitOne (3000); }),
-				Task.Factory.StartNew (() => { t2.WaitOne (3000); })
+				Task.Factory.StartNew (() => { t1.WaitOne (5000); }),
+				Task.Factory.StartNew (() => { t2.WaitOne (5000); })
 			};
 
 			bool ran = false;
@@ -275,7 +276,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			t1.Set ();
 
-			Assert.IsTrue (cont.Wait (2000), "#10");
+			Assert.IsTrue (cont.Wait (3000), "#10");
 			Assert.IsTrue (ran, "#11");
 
 			t2.Set ();
@@ -319,19 +320,20 @@ namespace MonoTests.System.Threading.Tasks
 			try {
 				factory.ContinueWhenAny (tasks, null);
 				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.None, null);
 				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
 			}
 
 			try {
 				factory.ContinueWhenAny (tasks, delegate { }, CancellationToken.None, TaskContinuationOptions.OnlyOnCanceled, null);
 				Assert.Fail ("#6");
-			} catch (ArgumentException) {
+			} catch (ArgumentNullException) {
+			} catch (ArgumentOutOfRangeException) {
 			}
 		}
 
@@ -613,15 +615,14 @@ namespace MonoTests.System.Threading.Tasks
 			} catch (InvalidOperationException) {
 			}
 
-			Assert.IsTrue (task.IsCanceled, "#2");
-
-			task = factory.StartNew (() => { }, ct);
 			try {
 				task.Wait ();
+				Assert.Fail ("#2");
 			} catch (AggregateException e) {
-				Assert.IsTrue (task.IsCanceled, "#3");
-				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#4");
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
+
+			Assert.IsTrue (task.IsCanceled, "#4");
 		}
 	}
 }

@@ -86,7 +86,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (f1.Unit.IsEmpty, true, "A11");
 		}
 
-#if NET_2_0
 		[Test]
 		public void FontUnitConstructors6 ()
 		{
@@ -104,7 +103,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (f1.Unit.Type, UnitType.Percentage, "A17");
 			Assert.AreEqual (f1.Unit.Value, 5.0, "A18");
 		}
-#endif
 
 		[Test]
 		public void FontUnitConstructors_Em ()
@@ -312,7 +310,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			new FontUnit ("NotSet");
 		}
 
-#if NET_2_0
 		class MyFormatProvider : IFormatProvider
 		{
 			public object GetFormat (Type format_type)
@@ -366,6 +363,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			f1 = new FontUnit (5.0, UnitType.Percentage);
 			Assert.AreEqual ("5%", f1.ToString (mfp), "T7");
 		}
-#endif
 	}
 }

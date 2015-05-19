@@ -29,11 +29,7 @@
 //
 
 namespace System.Web.Services {
-#if NET_2_0
 	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Interface, Inherited = true)]
-#else
-	[AttributeUsage (AttributeTargets.Class, Inherited = true)]
-#endif
 	public sealed class WebServiceAttribute : Attribute {
 
 		#region Fields

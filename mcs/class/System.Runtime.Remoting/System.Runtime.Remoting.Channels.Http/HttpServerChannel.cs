@@ -47,9 +47,6 @@ namespace System.Runtime.Remoting.Channels.Http
 		int port = -1; // querying GetChannelUri () on .NET indicates this is the default value
 		bool suppressChannelData = false;
 		bool useIPAddress = true;
-#if !NET_2_0
-		bool exclusiveAddressUse = true;
-#endif
 		bool wantsToListen = true;
 
 		HttpServerTransportSink sink;
@@ -102,11 +99,6 @@ namespace System.Runtime.Remoting.Channels.Http
 					case "listen":
 						this.wantsToListen = Convert.ToBoolean (property.Value);
 						break;
-#if !NET_2_0
-					case "exclusiveAddressUse":
-						this.exclusiveAddressUse = Convert.ToBoolean (property.Value);
-						break;
-#endif
 					}
 				}
 			}

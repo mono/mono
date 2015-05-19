@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 namespace System.Web.UI.WebControls.WebParts
 {
@@ -37,5 +36,4 @@ namespace System.Web.UI.WebControls.WebParts
 		PersonalizationScope DesiredScope { get; }
 	}
 }
-#endif
 

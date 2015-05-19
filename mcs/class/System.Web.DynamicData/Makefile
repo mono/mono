@@ -3,25 +3,11 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.DynamicData.dll
-LIB_MCS_FLAGS = \
-	        /r:System.dll \
-	        /r:System.Core.dll \
-	        /r:System.ComponentModel.DataAnnotations.dll \
-		/r:System.Data.dll \
-		/r:System.Data.Linq.dll \
-	        /r:System.Drawing.dll \
-	        /r:System.Web.dll \
-	        /r:System.Web.Extensions.dll \
-		/r:System.Web.Abstractions.dll \
-		/r:System.Web.Routing.dll
-
-ifeq (2.0, $(FRAMEWORK_VERSION))
-# This is a .NET 3.5 only assembly, but built during the 2.0 build
-LIB_MCS_FLAGS += -d:NET_3_5
-endif
+LIB_REFS = System System.Core System.ComponentModel.DataAnnotations System.Data System.Data.Linq System.Drawing System.Web System.Web.Extensions System.Web.Abstractions System.Web.Routing
+LIB_MCS_FLAGS =
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+LIB_REFS += System.Web.ApplicationServices
 endif
 
 # Use genresources.sh to generate the list below
@@ -186,7 +172,7 @@ endif
 EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))
 
 # This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.DynamicData.dll
 NO_INSTALL = yes

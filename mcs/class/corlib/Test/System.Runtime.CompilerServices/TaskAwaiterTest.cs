@@ -72,6 +72,11 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Interlocked.Increment (ref ic);
 				return false;
 			}
+
+			public override string ToString ()
+			{
+				return "Scheduler-" + name;
+			}
 		}
 
 		class SingleThreadSynchronizationContext : SynchronizationContext

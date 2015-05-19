@@ -190,10 +190,18 @@ public class ByteTest
 			Assert.IsTrue (typeof(FormatException) == e.GetType(), NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi");
 		}
 
-		Assert.AreEqual (734, Int64.Parse ("734\0"), "#1");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0    \0"), "#2");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0    "), "#3");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0"), "#4");
+		Assert.AreEqual (34, Byte.Parse ("34\0"), "#1");
+		try {
+			Byte.Parse ("34\0\0\0    \0");
+			Assert.Fail ("#2");
+		} catch (FormatException) {}
+
+		try {
+			Byte.Parse ("34\0\0\0    ");
+			Assert.Fail ("#3");
+		} catch (FormatException) {}
+
+		Assert.AreEqual (34, Byte.Parse ("34\0\0\0"), "#4");
 	}
 
 	[Test]

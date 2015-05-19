@@ -34,6 +34,10 @@
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
+using System.Threading;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Diagnostics.Contracts;
 
 namespace System
 {
@@ -46,6 +50,11 @@ namespace System
 		internal RuntimeTypeHandle (IntPtr val)
 		{
 			value = val;
+		}
+
+		internal RuntimeTypeHandle (RuntimeType type)
+			: this (type._impl.value)
+		{
 		}
 
 		RuntimeTypeHandle (SerializationInfo info, StreamingContext context)
@@ -116,6 +125,9 @@ namespace System
 			return (left == null) || !(left is RuntimeTypeHandle) || !((RuntimeTypeHandle)left).Equals (right);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern TypeAttributes GetAttributes (RuntimeType type);
+
 		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public ModuleHandle GetModuleHandle ()
@@ -128,5 +140,108 @@ namespace System
 
 			return Type.GetTypeFromHandle (this).Module.ModuleHandle;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int GetMetadataToken (RuntimeType type);
+
+		internal static int GetToken (RuntimeType type)
+		{
+			return GetMetadataToken (type);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static Type GetGenericTypeDefinition_impl (RuntimeType type);
+
+		internal static Type GetGenericTypeDefinition (RuntimeType type)
+		{
+			return GetGenericTypeDefinition_impl (type);
+		}
+
+		internal static bool HasElementType (RuntimeType type)
+		{
+			return IsArray (type) || IsByRef (type) || IsPointer (type);
+		}
+
+		internal static bool HasProxyAttribute (RuntimeType type)
+		{
+			throw new NotImplementedException ("HasProxyAttribute");
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool HasInstantiation (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsArray(RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsByRef (RuntimeType type);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static bool IsComObject (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsInstanceOfType (RuntimeType type, Object o);		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsPointer (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsPrimitive (RuntimeType type);
+
+		internal static bool IsComObject (RuntimeType type, bool isGenericCOM)
+		{
+			return isGenericCOM ? false : IsComObject (type);
+		}
+
+		internal static bool IsContextful (RuntimeType type)
+		{
+			return typeof (ContextBoundObject).IsAssignableFrom (type);
+		}
+
+		internal static bool IsEquivalentTo (RuntimeType rtType1, RuntimeType rtType2)
+		{
+			// refence check is done earlier and we don't recognize anything else
+			return false;
+		}		
+
+		internal static bool IsSzArray(RuntimeType type)
+		{
+			// TODO: Better check
+			return IsArray (type) && type.GetArrayRank () == 1;
+		}
+
+		internal static bool IsInterface (RuntimeType type)
+		{
+			return (type.Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static int GetArrayRank(RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static RuntimeAssembly GetAssembly (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static RuntimeType GetElementType (RuntimeType type);
+
+ 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static RuntimeModule GetModule (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsGenericVariable (RuntimeType type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static RuntimeType GetBaseType (RuntimeType type);
+
+		internal static bool CanCastTo (RuntimeType type, RuntimeType target)
+		{
+			return type_is_assignable_from (target, type);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool type_is_assignable_from (Type a, Type b);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool IsGenericTypeDefinition (RuntimeType type);
 	}
 }

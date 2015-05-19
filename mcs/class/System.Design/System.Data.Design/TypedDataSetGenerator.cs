@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -39,6 +38,8 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 using System.IO;
+
+using T = System.Data.TypedDataSetGenerator;
 
 namespace System.Data.Design
 {
@@ -66,26 +67,15 @@ namespace System.Data.Design
 
 		public static string Generate (DataSet dataSet, CodeNamespace codeNamespace, CodeDomProvider codeProvider)
 		{
-			// See CustomDataclassGenerator.cs
-			CustomDataClassGenerator.CreateDataSetClasses (
-				dataSet, codeNamespace, codeProvider, null);
-
+			T.Generate (dataSet, codeNamespace, codeProvider.CreateGenerator ());
 			return null;
 		}
 
 		public static string Generate (string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider)
 		{
-			if (inputFileContent == null || inputFileContent.Length < 5)
-				return null;
-			
-			DataSet ds = new DataSet ();
-			StringReader sr = new StringReader (inputFileContent);
-			ds.ReadXmlSchema (sr as TextReader);
-			
-			// See CustomDataclassGenerator.cs
-			CustomDataClassGenerator.CreateDataSetClasses (
-				ds, compileUnit, mainNamespace, codeProvider, null);
-				
+			var dataSet = new DataSet ();
+			dataSet.ReadXmlSchema (inputFileContent);
+			T.Generate (dataSet, mainNamespace, codeProvider.CreateGenerator ());
 			return null;
 		}
 
@@ -127,4 +117,3 @@ namespace System.Data.Design
 	}
 }
 
-#endif

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 using NUtil = Mono.Globalization.Unicode.NormalizationTableUtil;
 
-namespace Mono.Globalization.Unicode
+namespace System.Text
 {
 	internal enum NormalizationCheck {
 		Yes,
@@ -425,6 +425,20 @@ namespace Mono.Globalization.Unicode
 			return bufIdx;
 		}
 
+		public static bool IsNormalized (string source, NormalizationForm normalizationForm)
+		{
+			switch (normalizationForm) {
+			default:
+				return IsNormalized (source, 0);
+			case NormalizationForm.FormD:
+				return IsNormalized (source, 1);
+			case NormalizationForm.FormKC:
+				return IsNormalized (source, 2);
+			case NormalizationForm.FormKD:
+				return IsNormalized (source, 3);
+			}
+		}
+
 		public static bool IsNormalized (string source, int type)
 		{
 			int prevCC = -1;
@@ -460,6 +474,20 @@ namespace Mono.Globalization.Unicode
 				}
 			}
 			return true;
+		}
+
+		public static string Normalize (string source, NormalizationForm normalizationForm)
+		{
+			switch (normalizationForm) {
+			default:
+				return Normalization.Normalize (source, 0);
+			case NormalizationForm.FormD:
+				return Normalization.Normalize (source, 1);
+			case NormalizationForm.FormKC:
+				return Normalization.Normalize (source, 2);
+			case NormalizationForm.FormKD:
+				return Normalization.Normalize (source, 3);
+			}
 		}
 
 		public static string Normalize (string source, int type)

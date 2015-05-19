@@ -64,7 +64,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			base.AddParsedSubObject (o);
 		}
-#if NET_2_0
 		public bool LoadPost (string key, NameValueCollection nvc)
 		{
 			return base.LoadPostData (key, nvc);
@@ -74,7 +73,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -205,19 +203,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			UserControl ctrl = new UserControl ();
 			ctrl.ID = "UC";
 			Page page = new Page ();
-#if NET_2_0
 			page.EnableEventValidation = false;
-#endif
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
 			page.Controls.Add (ctrl);
 			ctrl.Controls.Add (ta);
 			ta.Name = "mono";
 			ta.ID = "go";
-#if NET_2_0
 			string expected = "<dummy name=\"UC$go\" id=\"UC_go\" />";
-#else
-			string expected = "<dummy name=\"UC:go\" id=\"UC_go\" />";
-#endif
 			Assert.AreEqual (expected, ta.RenderAttributes ());
 		}
 
@@ -330,7 +322,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (pbdh.LoadPostData ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("mono", ta.Value, "Value");
 		}
-#if NET_2_0
 		[Test]
 		public void RaisePostBackEvent ()
 		{
@@ -383,6 +374,5 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (ta.LoadPost ("id1", nvc), "LoadPostData");
 			Assert.AreEqual ("mono", ta.Value, "Value");
 		}
-#endif
 	}
 }

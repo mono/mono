@@ -95,5 +95,19 @@ start = mine";
 				r.Close ();
 			}
 		}
+		
+		[Test]
+		public void SimpleDefaultNamespace ()
+		{
+			var g = RncParser.ParseRnc (new StringReader ("element e { empty }"));
+			var x = XmlReader.Create (new StringReader ("<e/>"));
+			var r = new RelaxngValidatingReader (x, g); 
+			try {
+				while (!r.EOF)
+					r.Read ();
+			} finally {
+				r.Close ();
+			}
+		}
 	}
 }

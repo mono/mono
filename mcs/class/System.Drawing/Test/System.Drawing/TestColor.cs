@@ -1315,7 +1315,6 @@ namespace MonoTests.System.Drawing {
 			Compare (KnownColor.Window, GetSysColorIndex.COLOR_WINDOW);
 			Compare (KnownColor.WindowFrame, GetSysColorIndex.COLOR_WINDOWFRAME);
 			Compare (KnownColor.WindowText, GetSysColorIndex.COLOR_WINDOWTEXT);
-#if NET_2_0
 			Compare (KnownColor.ButtonFace, GetSysColorIndex.COLOR_BTNFACE);
 			Compare (KnownColor.ButtonHighlight, GetSysColorIndex.COLOR_BTNHIGHLIGHT);
 			Compare (KnownColor.ButtonShadow, GetSysColorIndex.COLOR_BTNSHADOW);
@@ -1323,7 +1322,6 @@ namespace MonoTests.System.Drawing {
 			Compare (KnownColor.GradientInactiveCaption, GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
 			Compare (KnownColor.MenuBar, GetSysColorIndex.COLOR_MENUBAR);
 			Compare (KnownColor.MenuHighlight, GetSysColorIndex.COLOR_MENUHIGHLIGHT);
-#endif
 		}
 	}
 }

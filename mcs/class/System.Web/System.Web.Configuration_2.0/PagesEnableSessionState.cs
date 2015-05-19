@@ -30,11 +30,7 @@ using System.Resources;
 
 namespace System.Web.Configuration
 {
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		enum PagesEnableSessionState
 		{
 			False = 0,

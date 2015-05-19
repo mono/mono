@@ -30,9 +30,7 @@
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
-#if NET_2_0
 using Microsoft.Win32.SafeHandles;
-#endif
 
 using NUnit.Framework;
 
@@ -50,9 +48,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (0, isfs.Length, prefix + ".Length");
 			Assert.AreEqual ("[Unknown]", isfs.Name, prefix + ".Name");
 			Assert.AreEqual (0, isfs.Position, prefix + ".Position");
-#if NET_2_0_NOTYET
-			Assert.IsFalse (isfs.CanTimeout, prefix + ".CanTimeout");
-#endif
 		}
 
 		[Test]
@@ -120,31 +115,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			new IsolatedStorageFileStream ("/rootpath", FileMode.Create);
 		}
-#if NET_2_0_NOTYET
-		[Test]
-		[ExpectedException (typeof (IsolatedStorageException))]
-		public void SafeFileHandle_ ()
-		{
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("safeFileHandle", FileMode.Create);
-			SafeFileHandle sfh = isfs.SafeFileHandle;
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReadTimeOut ()
-		{
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("readTimeout", FileMode.Create);
-			int t = isfs.ReadTimeout;
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void WriteTimeOut ()
-		{
-			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("writeTimeout", FileMode.Create);
-			int t = isfs.WriteTimeout;
-		}
-#endif
 
 #if NET_4_0
 		[Test]

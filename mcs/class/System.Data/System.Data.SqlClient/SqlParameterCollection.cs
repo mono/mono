@@ -47,11 +47,7 @@ namespace System.Data.SqlClient
 {
 	[ListBindable (false)]
 	[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#if NET_2_0
 	public sealed class SqlParameterCollection : DbParameterCollection, IDataParameterCollection, IList, ICollection, IEnumerable
-#else
-	public sealed class SqlParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -73,19 +69,12 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-#if ONLY_1_1 || ONLY_1_0
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int Count {
 			get { return list.Count; }
 		}
 
-#if NET_2_0
 		public override bool IsFixedSize {
 			get {
 				return list.IsFixedSize;
@@ -109,44 +98,11 @@ namespace System.Data.SqlClient
 				return list.SyncRoot;
 			}
 		}
-#else
-		object IList.this [int index] {
-			get { return (SqlParameter) this [index]; }
-			set { this [index] = (SqlParameter) value; }
-		}
-
-		bool IList.IsFixedSize {
-			get { return list.IsFixedSize; }
-		}
-
-		bool IList.IsReadOnly {
-			get { return list.IsReadOnly; }
-		}
-
-		bool ICollection.IsSynchronized {
-			get { return list.IsSynchronized; }
-		}
-
-		object ICollection.SyncRoot {
-			get { return list.SyncRoot; }
-		}
-
-		object IDataParameterCollection.this [string index] {
-			get { return this [index]; }
-			set {
-				if (!(value is SqlParameter))
-					throw new InvalidCastException ("Only SQLParameter objects can be used.");
-				this [index] = (SqlParameter) value;
-			}
-		}
-#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlParameter this [int index] {
 			get {
 				if (index < 0 || index >= list.Count)
@@ -163,9 +119,7 @@ namespace System.Data.SqlClient
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]	
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlParameter this [string parameterName] {
 			get {
 				foreach (SqlParameter p in list)
@@ -180,7 +134,6 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		protected  override DbParameter GetParameter (int index)
 		{
 			return this [index];
@@ -200,7 +153,6 @@ namespace System.Data.SqlClient
 		{
 			this [parameterName] = (SqlParameter) value;
 		}
-#endif
 
 		internal TdsMetaParameterCollection MetaParameters {
 			get { return metaParameters; }
@@ -210,13 +162,9 @@ namespace System.Data.SqlClient
 
 		#region Methods
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif // NET_2_0
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int Add (object value)
 		{
 			if (!(value is SqlParameter))
@@ -236,21 +184,17 @@ namespace System.Data.SqlClient
 			return value;
 		}
 		
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Obsolete ("Do not call this method.")]
-#endif // NET_2_0
 		public SqlParameter Add (string parameterName, object value)
 		{
 			return Add (new SqlParameter (parameterName, value));
 		}
 
-#if NET_2_0
 		public SqlParameter AddWithValue (string parameterName, object value)
 		{
 			return Add (new SqlParameter (parameterName, value));
 		}
-#endif // NET_2_0
 
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType)
 		{
@@ -268,9 +212,7 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Clear()
 		{
 			metaParameters.Clear ();
@@ -282,9 +224,7 @@ namespace System.Data.SqlClient
 		}
 		
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool Contains (object value)
 		{
 			if (!(value is SqlParameter))
@@ -293,9 +233,7 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		bool Contains (string value)
 		{
 			foreach (SqlParameter p in list)
@@ -304,35 +242,27 @@ namespace System.Data.SqlClient
 			return false;
 		}
 
-#if NET_2_0
 		public bool Contains (SqlParameter value)
 		{
 			return (this.IndexOf(value) != -1);
 		}
-#endif // NET_2_0
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void CopyTo (Array array, int index)
 		{
 			list.CopyTo (array, index);
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		IEnumerator GetEnumerator()
 		{
 			return list.GetEnumerator ();
 		}
 		
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int IndexOf (object value)
 		{
 			if (!(value is SqlParameter))
@@ -341,9 +271,7 @@ namespace System.Data.SqlClient
 		}
 		
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		int IndexOf (string parameterName)
 		{
 			for (int i = 0; i < Count; i += 1)
@@ -352,33 +280,25 @@ namespace System.Data.SqlClient
 			return -1;
 		}
 
-#if NET_2_0
 		public int IndexOf (SqlParameter value)
 		{
 			return list.IndexOf(value);
 		}
-#endif // NET_2_0
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Insert (int index, object value)
 		{
 			list.Insert (index, value);
 		}
 
-#if NET_2_0
 		public void Insert (int index, SqlParameter value)
 		{
 			list.Insert (index,value);
 		}
-#endif //NET_2_0
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Remove (object value)
 		{
 			//TODO : this neds validation to check if the object is a 
@@ -390,7 +310,6 @@ namespace System.Data.SqlClient
 			list.Remove (value);
 		}
 
-#if NET_2_0
 		public void Remove (SqlParameter value)
 		{
 			//both this and the above code are the same. but need to work with
@@ -399,12 +318,9 @@ namespace System.Data.SqlClient
 			metaParameters.Remove (value.MetaParameter);
 			list.Remove (value);
 		}
-#endif //NET_2_0
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void RemoveAt (int index)
 		{
 			this [index].Container = null;
@@ -413,15 +329,12 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void RemoveAt (string parameterName)
 		{
 			RemoveAt (IndexOf (parameterName));
 		}
 
-#if NET_2_0
 		public override void AddRange (Array values)
 		{
 			if (values == null)
@@ -447,7 +360,6 @@ namespace System.Data.SqlClient
 		{
 			list.CopyTo (array, index);
 		}
-#endif
 
 		#endregion // Methods
 	}

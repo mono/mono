@@ -123,34 +123,36 @@ namespace NUnit.ConsoleRunner
 
 				Console.WriteLine();
 
-				string xmlOutput = CreateXmlOutput( result );
-			
-				if (options.xmlConsole)
-				{
-					Console.WriteLine(xmlOutput);
-				}
-				else
-				{
-					try
-					{
-						//CreateSummaryDocument(xmlOutput, transformReader );
-						XmlResultTransform xform = new XmlResultTransform( transformReader );
-						xform.Transform( new StringReader( xmlOutput ), Console.Out );
-					}
-					catch( Exception ex )
-					{
-						Console.WriteLine( "Error: {0}", ex.Message );
-						return TRANSFORM_ERROR;
-					}
-				}
+				if (result != null) {
+					string xmlOutput = CreateXmlOutput( result );
 
-				// Write xml output here
-				string xmlResultFile = options.xml == null || options.xml == string.Empty
-					? "TestResult.xml" : options.xml;
+					if (options.xmlConsole)
+					{
+						Console.WriteLine(xmlOutput);
+					}
+					else
+					{
+						try
+						{
+							//CreateSummaryDocument(xmlOutput, transformReader );
+							XmlResultTransform xform = new XmlResultTransform( transformReader );
+							xform.Transform( new StringReader( xmlOutput ), Console.Out );
+						}
+						catch( Exception ex )
+						{
+							Console.WriteLine( "Error: {0}", ex.Message );
+							return TRANSFORM_ERROR;
+						}
+					}
 
-				using ( StreamWriter writer = new StreamWriter( xmlResultFile ) ) 
-				{
-					writer.Write(xmlOutput);
+					// Write xml output here
+					string xmlResultFile = options.xml == null || options.xml == string.Empty
+						? "TestResult.xml" : options.xml;
+
+					using ( StreamWriter writer = new StreamWriter( xmlResultFile ) )
+					{
+						writer.Write(xmlOutput);
+					}
 				}
 
 				//if ( testRunner != null )

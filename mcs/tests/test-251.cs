@@ -1,3 +1,4 @@
+// Compiler options: -unsafe
 //
 // Tests the valid value types for volatile fields.
 //
@@ -9,6 +10,9 @@ interface R {
 
 enum XX {
 	A
+}
+
+struct S {
 }
 
 class X {
@@ -26,6 +30,9 @@ class X {
 	volatile XX dd;
 	volatile IntPtr ip;
 	volatile UIntPtr uip;
+	unsafe volatile ushort* uc;
+	unsafe volatile XX* udd;
+	unsafe volatile S* us;
 
 	public static void Main () {}
 }

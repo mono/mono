@@ -925,7 +925,6 @@ namespace MonoTests.System.Xml
 				xtr.Read ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void Settings ()
 		{
@@ -1082,7 +1081,6 @@ namespace MonoTests.System.Xml
 			} catch (XmlException) {
 			}
 		}
-#endif
 
 		[Test]
 		public void SurrogatePair ()
@@ -1213,6 +1211,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Ignore ("bug in Microsoft referencesource")]
 		public void WhitespacesAfterTextDeclaration ()
 		{
 			XmlTextReader xtr = new XmlTextReader (
@@ -1381,6 +1380,95 @@ namespace MonoTests.System.Xml
 			var ms = new MemoryStream (Encoding.Unicode.GetBytes ("<root />"));
 			var xtr = new XmlTextReader (ms);
 			xtr.Read ();
+		}
+		
+		[Test]
+		public void XmlDeclarationReadAttributeValue ()
+		{
+			const string input = "<?xml version=\"1.0\" encoding=\"utf-8\"?><hello />";
+			var reader = new XmlTextReader (new StringReader (input));
+			reader.WhitespaceHandling = WhitespaceHandling.All;
+			reader.Read ();
+			
+			Assert.AreEqual ("1.0", reader.GetAttribute ("version"), "#0");
+			Assert.AreEqual ("utf-8", reader.GetAttribute ("encoding"), "#0-2");
+
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#1");
+			Assert.AreEqual ("1.0", reader.Value, "#1-1");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#2");
+			Assert.AreEqual ("1.0", reader.Value, "#3");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#4");
+
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#5");
+			Assert.AreEqual ("utf-8", reader.Value, "#5-1");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#6");
+			Assert.AreEqual ("utf-8", reader.Value, "#7");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#8");
+
+			Assert.IsFalse (reader.MoveToNextAttribute (), "#9");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#10");
+		}
+		
+		[Test]
+		public void XmlDeclarationReadAttributeValue2 ()
+		{
+			const string input = "<?xml version=\"1.0\" encoding=\"utf-8\"?><hello />";
+			var reader = new XmlTextReader (new StringReader (input));
+			reader.WhitespaceHandling = WhitespaceHandling.All;
+			reader.Read ();
+			Assert.IsTrue (reader.MoveToNextAttribute (), "#1a");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#1b");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#1c");
+			Assert.AreEqual ("1.0", reader.Value, "#1d");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#1e");
+
+			Assert.IsTrue (reader.MoveToNextAttribute(), "#2a");
+			Assert.IsTrue (reader.ReadAttributeValue(), "#2b");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#2c");
+			Assert.AreEqual ("utf-8", reader.Value, "#2d");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#2e");
+
+			Assert.IsFalse (reader.MoveToNextAttribute(), "#3");
+			Assert.IsFalse (reader.ReadAttributeValue(), "#4");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#5");
+		}
+		
+		[Test]
+		public void Whitespaces ()
+		{
+			const string xml = "<?xml version=\"1.0\"?><test> <foo name=\"Hello\"> <value>World</value> </foo> <foo name=\"Foo\"><value>Bar</value></foo></test>";
+			var reader = new XmlTextReader (new StringReader (xml));
+			//reader.WhitespaceHandling = WhitespaceHandling.All;
+
+			reader.Read ();
+			Assert.AreEqual  (XmlNodeType.XmlDeclaration, reader.NodeType, "#1a");
+			reader.Read ();
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#1b");
+			Assert.AreEqual ("test", reader.Name, "#1c");
+
+			reader.Read ();
+			if  (reader.NodeType == XmlNodeType.Whitespace)
+				reader.Read ();
+
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#2a");
+			Assert.AreEqual ("foo", reader.Name, "#2b");
+
+			var doc = new XmlDocument ();
+			//doc.PreserveWhitespace = true;
+			doc.ReadNode (reader);
+
+			Assert.AreEqual (XmlNodeType.Whitespace, reader.NodeType, "#3");
+
+			reader.Read ();
+			if  (reader.NodeType == XmlNodeType.Whitespace)
+				reader.Read ();
+
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType, "#4");
+			Assert.AreEqual ("foo", reader.Name, "#4b");
+
+			doc.ReadNode (reader);
+
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#5");
 		}
 	}
 }

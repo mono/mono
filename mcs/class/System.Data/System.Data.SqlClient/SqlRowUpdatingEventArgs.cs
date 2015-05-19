@@ -57,7 +57,6 @@ namespace System.Data.SqlClient {
 			set { base.Command = value; }
 		}
 
-		#if NET_2_0
 			
 		protected override IDbCommand BaseCommand {
 			get {
@@ -71,7 +70,6 @@ namespace System.Data.SqlClient {
 		}	
 		
 
-		#endif
 
 		#endregion // Properties
 	}

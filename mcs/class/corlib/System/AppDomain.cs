@@ -41,6 +41,7 @@ using System.Reflection.Emit;
 #endif
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
@@ -65,9 +66,9 @@ namespace System {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public sealed class AppDomain : MarshalByRefObject {
+	public sealed partial class AppDomain : MarshalByRefObject {
 #else
-	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
+	public sealed partial class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
         #pragma warning disable 169
         #region Sync with object-internals.h
@@ -245,11 +246,9 @@ namespace System {
 			get { return (PermissionSet)_granted; }
 		}
 
-#if NET_4_0
 		public PermissionSet PermissionSet {
 			get { return (PermissionSet)_granted ?? (PermissionSet)(_granted = new PermissionSet (PermissionState.Unrestricted)); }
 		}
-#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
@@ -325,6 +324,46 @@ namespace System {
 		}
 #endif
 
+		internal ObjectHandle InternalCreateInstanceWithNoSecurity (string assemblyName, string typeName)
+		{
+			return CreateInstance(assemblyName, typeName);
+		}
+
+		internal ObjectHandle InternalCreateInstanceWithNoSecurity (string assemblyName, 
+                                                                    string typeName,
+                                                                    bool ignoreCase,
+                                                                    BindingFlags bindingAttr,
+                                                                    Binder binder,
+                                                                    Object[] args,
+                                                                    CultureInfo culture,
+                                                                    Object[] activationAttributes,
+                                                                    Evidence securityAttributes)
+		{
+#pragma warning disable 618
+		return CreateInstance(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+#pragma warning restore 618
+		}
+
+		internal ObjectHandle InternalCreateInstanceFromWithNoSecurity (string assemblyName, string typeName)
+		{
+			return CreateInstanceFrom(assemblyName, typeName);
+		}
+
+		internal ObjectHandle InternalCreateInstanceFromWithNoSecurity (string assemblyName, 
+                                                                        string typeName,
+                                                                        bool ignoreCase,
+                                                                        BindingFlags bindingAttr,
+                                                                        Binder binder,
+                                                                        Object[] args,
+                                                                        CultureInfo culture,
+                                                                        Object[] activationAttributes,
+                                                                        Evidence securityAttributes)
+		{
+#pragma warning disable 618
+			return CreateInstanceFrom(assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+#pragma warning restore 618
+		}
+
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
 			if (assemblyName == null)
@@ -341,9 +380,7 @@ namespace System {
 			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes,
 		                                    Evidence securityAttributes)
@@ -367,9 +404,7 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
 		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                       object[] activationAttributes, Evidence securityAttributes)
@@ -379,7 +414,6 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#if NET_4_0
 		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes)
 		{
@@ -418,7 +452,6 @@ namespace System {
 
 			return (oh != null) ? oh.Unwrap () : null;
 		}
-#endif
 
 		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
@@ -436,9 +469,7 @@ namespace System {
 			return Activator.CreateInstanceFrom (assemblyFile, typeName, activationAttributes);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                        BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                        object[] activationAttributes, Evidence securityAttributes)
@@ -462,9 +493,7 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object[] args,
 		                                           CultureInfo culture, object[] activationAttributes,
@@ -482,9 +511,7 @@ namespace System {
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence)
 		{
 			return DefineDynamicAssembly (name, access, null, evidence, null, null, null, false);
@@ -495,18 +522,14 @@ namespace System {
 			return DefineDynamicAssembly (name, access, dir, null, null, null, null, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence)
 		{
 			return DefineDynamicAssembly (name, access, dir, evidence, null, null, null, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
@@ -516,9 +539,7 @@ namespace System {
 				refusedPermissions, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
@@ -528,9 +549,7 @@ namespace System {
 				refusedPermissions, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              PermissionSet requiredPermissions,
 		                                              PermissionSet optionalPermissions,
@@ -540,9 +559,7 @@ namespace System {
 				refusedPermissions, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
@@ -553,9 +570,7 @@ namespace System {
 				refusedPermissions, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
@@ -574,9 +589,7 @@ namespace System {
 		}
 
 		// NET 3.5 method
-#if NET_4_0
 		[Obsolete ("Declarative security for assembly level is no longer enforced")]
-#endif
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
@@ -597,7 +610,6 @@ namespace System {
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false, assemblyAttributes);
 		}
 
-#if NET_4_0
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir, bool isSynchronized, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
 		{
 			return DefineDynamicAssembly (name, access, dir, null, null, null, null, isSynchronized, assemblyAttributes);
@@ -608,7 +620,6 @@ namespace System {
 		{
 			return DefineDynamicAssembly (name, access, assemblyAttributes);
 		}
-#endif
 
 		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
@@ -631,26 +642,20 @@ namespace System {
 			return ExecuteAssembly (assemblyFile, (Evidence)null, null);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity)
 		{
 			return ExecuteAssembly (assemblyFile, assemblySecurity, null);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args)
 		{
 			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity);
 			return ExecuteAssemblyInternal (a, args);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity, hashValue, hashAlgorithm);
@@ -658,7 +663,6 @@ namespace System {
 		}
 
 
-#if NET_4_0
 		public int ExecuteAssembly (string assemblyFile, string[] args)
 		{
 			Assembly a = Assembly.LoadFrom (assemblyFile, null);
@@ -670,7 +674,6 @@ namespace System {
 			Assembly a = Assembly.LoadFrom (assemblyFile, null, hashValue, hashAlgorithm);
 			return ExecuteAssemblyInternal (a, args);
 		}
-#endif
 
 		int ExecuteAssemblyInternal (Assembly a, string[] args)
 		{
@@ -722,9 +725,7 @@ namespace System {
 			return result;
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			if (assemblyRef == null)
@@ -781,9 +782,7 @@ namespace System {
 			return Load (assemblyString, null, false);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
 			return Load (assemblyString, assemblySecurity, false);
@@ -816,9 +815,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence, bool refonly);
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
 		{
 			return Load (rawAssembly, rawSymbolStore, securityEvidence, false);
@@ -833,9 +830,7 @@ namespace System {
 			assembly.FromByteArray = true;
 			return assembly;
 		}
-#if NET_4_0
 		[Obsolete ("AppDomain policy levels are obsolete")]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
@@ -1240,7 +1235,7 @@ namespace System {
 			AssemblyLoad (this, new AssemblyLoadEventArgs (assembly));
 		}
 
-		private Assembly DoAssemblyResolve (string name, bool refonly)
+		private Assembly DoAssemblyResolve (string name, Assembly requestingAssembly, bool refonly)
 		{
 			ResolveEventHandler del;
 #if !NET_2_1
@@ -1279,7 +1274,7 @@ namespace System {
 
 				foreach (Delegate eh in invocation_list) {
 					ResolveEventHandler handler = (ResolveEventHandler) eh;
-					Assembly assembly = handler (this, new ResolveEventArgs (name));
+					Assembly assembly = handler (this, new ResolveEventArgs (name, requestingAssembly));
 					if (assembly != null)
 						return assembly;
 				}
@@ -1337,11 +1332,7 @@ namespace System {
 
 			foreach (Delegate eh in invocation_list) {
 				ResolveEventHandler handler = (ResolveEventHandler) eh;
-#if NET_4_0
 				Assembly assembly = handler (this, new ResolveEventArgs (name, requesting));
-#else
-				Assembly assembly = handler (this, new ResolveEventArgs (name));
-#endif
 				if (assembly != null)
 					return assembly;
 			}
@@ -1352,6 +1343,11 @@ namespace System {
 		{
 			if (DomainUnload != null)
 				DomainUnload(this, null);
+		}
+
+		internal void DoUnhandledException (UnhandledExceptionEventArgs args) {
+			if (UnhandledException != null)
+				UnhandledException (this, args);
 		}
 
 		internal byte[] GetMarshalledDomainObjRef ()
@@ -1405,7 +1401,8 @@ namespace System {
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event UnhandledExceptionEventHandler UnhandledException;
 
-#if NET_4_0
+		public event EventHandler<FirstChanceExceptionEventArgs> FirstChanceException;
+
 		[MonoTODO]
 		public bool IsHomogenous {
 			get { return true; }
@@ -1415,7 +1412,6 @@ namespace System {
 		public bool IsFullyTrusted {
 			get { return true; }
 		}
-#endif
 
         #pragma warning disable 649
 #if !MOBILE
@@ -1490,17 +1486,13 @@ namespace System {
 			return ExecuteAssemblyByName (assemblyName, (Evidence)null, null);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity)
 		{
 			return ExecuteAssemblyByName (assemblyName, assemblySecurity, null);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity, params string[] args)
 		{
 			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
@@ -1508,9 +1500,7 @@ namespace System {
 			return ExecuteAssemblyInternal (a, args);
 		}
 
-#if NET_4_0
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
-#endif
 		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, params string[] args)
 		{
 			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
@@ -1518,7 +1508,6 @@ namespace System {
 			return ExecuteAssemblyInternal (a, args);
 		}
 
-#if NET_4_0
 		public int ExecuteAssemblyByName (string assemblyName, params string[] args)
 		{
 			Assembly a = Assembly.Load (assemblyName, null);
@@ -1532,7 +1521,6 @@ namespace System {
 
 			return ExecuteAssemblyInternal (a, args);
 		}
-#endif
 
 		public bool IsDefaultAppDomain ()
 		{
@@ -1567,7 +1555,6 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0
 		List<string> compatibility_switch;
 
 		public bool? IsCompatibilitySwitchSet (string value)
@@ -1611,6 +1598,5 @@ namespace System {
 		public TimeSpan MonitoringTotalProcessorTime {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 	}
 }

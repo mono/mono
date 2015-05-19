@@ -39,9 +39,7 @@ namespace System {
 		Query = 32,
 		Fragment = 64,
 		StrongPort = 128,
-#if NET_4_5
 		NormalizedHost = 256,
-#endif			
 		KeepDelimiter = 0x40000000,
 
 		HostAndPort = Host | StrongPort,

@@ -90,12 +90,10 @@ namespace System.ServiceModel.Channels
 			result.WebRequest = web_request;
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
-#if NET_2_1 || NET_4_0
 			HttpWebRequest hwr = (web_request as HttpWebRequest);
 			var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
 			if (cmgr != null)
 				hwr.CookieContainer = cmgr.CookieContainer;
-#endif
 
 			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)
 			var httpbe = (HttpTransportBindingElement) source.Transport;
@@ -167,11 +165,9 @@ namespace System.ServiceModel.Channels
 						case "Expect":
 							web_request.Expect = hp.Headers [key];
 							break;
-#if NET_4_0
 						case "Host":
 							web_request.Host = hp.Headers [key];
 							break;
-#endif
 						//case "If-Modified-Since":
 						//	web_request.IfModifiedSince = hp.Headers [key];
 						//	break;

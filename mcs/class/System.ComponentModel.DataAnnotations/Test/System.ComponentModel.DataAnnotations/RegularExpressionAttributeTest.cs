@@ -90,26 +90,29 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (rea.IsValid (null), "Null does not match [A-Za-z].");
 			Assert.IsTrue (rea.IsValid ("A"), "'A' does not match [A-Za-z].");
 			Assert.IsTrue (rea.IsValid ("a"), "'a' does not match [A-Za-z].");
-			Assert.IsTrue (rea.IsValid ("Bz"), "'Bz' does not match [A-Za-z].");
-			Assert.IsTrue (rea.IsValid ("string"), "'string' does not match [A-Za-z].");
-			Assert.IsFalse (rea.IsValid (String.Empty), "Empty string matches [A-Za-z].");
+			Assert.IsFalse (rea.IsValid ("Bz"), "'Bz' does not match [A-Za-z].");
+			Assert.IsFalse (rea.IsValid ("string"), "'string' does not match [A-Za-z].");
+			Assert.IsTrue (rea.IsValid (String.Empty), "Empty string matches [A-Za-z].");
 			Assert.IsFalse (rea.IsValid ("0123456789"), "'0123456789' matches [A-Za-z].");
 			Assert.IsFalse (rea.IsValid ("0123456789"), "'0123456789A' matches [A-Za-z].");
-			AssertExtensions.Throws<InvalidCastException> (() => {
-				rea.IsValid (123);
-			}, "Casting does not fails");
-			AssertExtensions.Throws<InvalidCastException> (() => {
-				rea.IsValid (DateTime.Now);
-			}, "Casting does not fails");
+			Assert.IsFalse (rea.IsValid (123), "Casting does not fails");
+			Assert.IsFalse (rea.IsValid (DateTime.Now), "Casting does not fails");
 
 			rea = new RegularExpressionAttributePoker ("");
-			Assert.IsTrue (rea.IsValid (null), "null does not match empty pattern");
-			Assert.IsTrue (rea.IsValid (String.Empty), "empty string does not match empty pattern");
-			Assert.IsTrue (rea.IsValid ("string"), "'string' does not match empty pattern");
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				rea.IsValid (null);
+			}, "null does not match empty pattern");
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				rea.IsValid (String.Empty);
+			}, "empty string does not match empty pattern");
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				rea.IsValid ("string");
+			}, "'string' does not match empty pattern");
 			
-			AssertExtensions.Throws<ArgumentNullException> (() => {
-				rea = new RegularExpressionAttributePoker (null);
-			}, "Null pattern allowed");
+			rea = new RegularExpressionAttributePoker (null);
 		}
 	}
 }

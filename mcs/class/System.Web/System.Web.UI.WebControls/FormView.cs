@@ -42,15 +42,11 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.FormViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("PageIndexChanging")]
-#if NET_4_0
 	[DataKeyProperty ("DataKey")]
-#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FormView: CompositeDataBoundControl, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
-#if NET_4_0
 		, IDataBoundItemControl, IDataBoundControl, IRenderOuterTable
-#endif
 	{
 		object dataItem;
 		
@@ -91,9 +87,7 @@ namespace System.Web.UI.WebControls
 		IOrderedDictionary _keyTable;
 		DataKey key;
 		DataKey oldEditValues;
-#if NET_4_0
 		bool renderOuterTable = true;
-#endif
 		static readonly object PageIndexChangedEvent = new object();
 		static readonly object PageIndexChangingEvent = new object();
 		static readonly object ItemCommandEvent = new object();
@@ -809,7 +803,6 @@ namespace System.Web.UI.WebControls
 			get;
 			set;
 		}
-#if NET_4_0
 		[DefaultValue (true)]
 		public virtual bool RenderOuterTable {
 			get { return renderOuterTable; }
@@ -869,7 +862,6 @@ namespace System.Web.UI.WebControls
 			
 			return baseProps + ", " + props;
 		}
-#endif
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof (string) || type == typeof (DateTime) || type == typeof (Guid) || type == typeof (Decimal);
@@ -1111,9 +1103,7 @@ namespace System.Web.UI.WebControls
 			}
 			cell.ColumnSpan = 2;
 			row.Cells.Add (cell);
-#if NET_4_0
 			row.RenderJustCellContents = !RenderOuterTable;
-#endif
 		}
 		
 		void FillRowDataKey (object dataItem)
@@ -1344,9 +1334,7 @@ namespace System.Web.UI.WebControls
 					break;
 			}
 		}
-#if NET_4_0
 		public
-#endif
 		void SetPageIndex (int index)
 		{
 			FormViewPageEventArgs args = new FormViewPageEventArgs (index);
@@ -1613,17 +1601,13 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_4_0
 			VerifyInlinePropertiesNotSet ();
 			if (RenderOuterTable) {
-#endif
 				PrepareControlHierarchy ();
 				if (table != null)
 					table.Render (writer);
-#if NET_4_0
 			} else if (table != null)
 				table.RenderChildren (writer);
-#endif
 		}
 
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)

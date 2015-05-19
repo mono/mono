@@ -43,12 +43,6 @@ namespace Mono.Security.Cryptography {
 	// * AES 128 bits encryption (separate key for each data protected)
 	// * SHA256 digest to ensure integrity
 
-#if !NET_2_0
-	internal enum DataProtectionScope {
-		CurrentUser,
-		LocalMachine
- 	}
-#endif
 
 	internal static class ManagedProtection {
 

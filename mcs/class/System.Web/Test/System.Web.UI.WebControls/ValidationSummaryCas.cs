@@ -49,9 +49,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 		{
 			ValidationSummaryTest unit = new ValidationSummaryTest ();
 			unit.ValidationSummary_Defaults ();
-#if NET_2_0
 			unit.ValidationSummary_ValidationGroup ();
-#endif
 		}
 
 		[Test]

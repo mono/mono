@@ -54,6 +54,21 @@ namespace System.Data.SqlClient {
 	[TypeConverterAttribute ("System.Data.SqlClient.SqlParameter+SqlParameterConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class SqlParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
 	{
+#region Import from old DbParameter
+		static Hashtable dbTypeMapping = new Hashtable ();
+                internal static Hashtable DbTypeMapping {
+                        get { return dbTypeMapping;}
+                        set { dbTypeMapping = value;}
+                }
+
+                // LAMESPEC: Implementors should populate the dbTypeMapping accordingly
+                internal Type SystemType {
+                        get {
+                                return (Type) dbTypeMapping [SqlDbType];
+                        }
+                }
+#endregion
+
 		#region Fields
 
 		TdsMetaParameter metaParameter;
@@ -97,6 +112,8 @@ namespace System.Data.SqlClient {
 			DbTypeMapping.Add (SqlDbType.NVarChar, typeof (string));
 			DbTypeMapping.Add (SqlDbType.SmallDateTime, typeof (DateTime));
 			DbTypeMapping.Add (SqlDbType.DateTime, typeof (DateTime));
+			DbTypeMapping.Add (SqlDbType.DateTime2, typeof (DateTime));
+			DbTypeMapping.Add (SqlDbType.DateTimeOffset, typeof (DateTimeOffset));
 			DbTypeMapping.Add (SqlDbType.Decimal, typeof (decimal));
 			DbTypeMapping.Add (SqlDbType.Float, typeof (double));
 			DbTypeMapping.Add (SqlDbType.Binary, typeof (byte []));
@@ -162,6 +179,7 @@ namespace System.Data.SqlClient {
 			type_mapping.Add (typeof (SqlTypes.SqlXml), SqlDbType.Xml);
 
 			type_mapping.Add (typeof (object), SqlDbType.Variant);
+			type_mapping.Add (typeof (DateTimeOffset), SqlDbType.DateTimeOffset);
 		}
 		
 		public SqlParameter () 
@@ -206,8 +224,7 @@ namespace System.Data.SqlClient {
 							      scale,
 							      GetFrameworkValue);
 			metaParameter.RawValue =  value;
-			if (dbType != SqlDbType.Variant) 
-				SqlDbType = dbType;
+			SqlDbType = dbType;
 			Direction = direction;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
@@ -483,6 +500,7 @@ namespace System.Data.SqlClient {
 			SetSqlDbType ((SqlDbType) t);
 		}
 
+/*
 		// Returns System.Type corresponding to the underlying SqlDbType
 		internal override Type SystemType {
 			get {
@@ -506,6 +524,7 @@ namespace System.Data.SqlClient {
 				}
 			}
 		}
+*/
 
 		DbType DbTypeFromName (string name)
 		{
@@ -757,6 +776,14 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "smalldatetime";
 				dbType = DbType.DateTime;
 				break;
+			case SqlDbType.DateTime2:
+				MetaParameter.TypeName = "datetime2";
+				dbType = DbType.DateTime2;
+				break;
+			case SqlDbType.DateTimeOffset:
+				MetaParameter.TypeName = "datetimeoffset";
+				dbType = DbType.DateTimeOffset;
+				break;
 			case SqlDbType.Decimal:
 				MetaParameter.TypeName = "decimal";
 				dbType = DbType.Decimal;
@@ -905,7 +932,7 @@ namespace System.Data.SqlClient {
 				if (value == DBNull.Value)
 					return SqlDecimal.Null;
 				if (value is TdsBigDecimal)
-					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+					return SqlDecimalExtensions.FromTdsBigDecimal ((TdsBigDecimal) value);
 				return (SqlDecimal) ((decimal) value);
 			case SqlDbType.Float:
 				if (value == DBNull.Value)
@@ -1050,6 +1077,13 @@ namespace System.Data.SqlClient {
 
 		object ConvertToFrameworkType (object value, Type frameworkType)
 		{
+			if (frameworkType == typeof (string)) {
+				if (value is DateTime)
+					return ((DateTime) value).ToString ("yyyy-MM-dd'T'HH':'mm':'ss.fffffff");
+				if (value is DateTimeOffset)
+					return ((DateTimeOffset) value).ToString ("yyyy-MM-dd'T'HH':'mm':'ss.fffffffzzz");
+			}
+
 			object sqlvalue = Convert.ChangeType (value, frameworkType);
 			switch (sqlDbType) {
 			case SqlDbType.Money:

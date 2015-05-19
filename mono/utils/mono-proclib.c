@@ -5,6 +5,7 @@
 
 #include "config.h"
 #include "utils/mono-proclib.h"
+#include "utils/mono-time.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,10 +20,18 @@
 #include <process.h>
 #endif
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined(_POSIX_VERSION)
+#include <sys/errno.h>
 #include <sys/param.h>
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
+#endif
+#include <sys/resource.h>
+#endif
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
 #include <sys/proc.h>
 #if defined(__APPLE__)
 #include <mach/mach.h>
@@ -31,12 +40,16 @@
 #include <sys/user.h>
 #endif
 #ifdef HAVE_STRUCT_KINFO_PROC_KP_PROC
+#    define kinfo_starttime_member kp_proc.p_starttime
 #    define kinfo_pid_member kp_proc.p_pid
 #    define kinfo_name_member kp_proc.p_comm
 #elif defined(__OpenBSD__)
+// Can not figure out how to get the proc's start time on OpenBSD
+#    undef kinfo_starttime_member 
 #    define kinfo_pid_member p_pid
 #    define kinfo_name_member p_comm
 #else
+#define kinfo_starttime_member ki_start
 #define kinfo_pid_member ki_pid
 #define kinfo_name_member ki_comm
 #endif
@@ -61,17 +74,19 @@ mono_process_list (int *size)
 	struct kinfo_proc2 *processes = malloc (data_len);
 #else
 	int mib [4];
-	size_t data_len = sizeof (struct kinfo_proc) * 400;
-	struct kinfo_proc *processes = malloc (data_len);
+	size_t data_len = sizeof (struct kinfo_proc) * 16;
+	struct kinfo_proc *processes;
+	int limit = 8;
 #endif /* KERN_PROC2 */
 	void **buf = NULL;
 
 	if (size)
 		*size = 0;
+
+#ifdef KERN_PROC2
 	if (!processes)
 		return NULL;
 
-#ifdef KERN_PROC2
 	mib [0] = CTL_KERN;
 	mib [1] = KERN_PROC2;
 	mib [2] = KERN_PROC_ALL;
@@ -80,31 +95,50 @@ mono_process_list (int *size)
 	mib [5] = 400; /* XXX */
 
 	res = sysctl (mib, 6, processes, &data_len, NULL, 0);
-#else
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC;
-	mib [2] = KERN_PROC_ALL;
-	mib [3] = 0;
-	
-	res = sysctl (mib, 4, processes, &data_len, NULL, 0);
-#endif /* KERN_PROC2 */
-
 	if (res < 0) {
 		free (processes);
 		return NULL;
 	}
+#else
+	processes = NULL;
+	while (limit) {
+		mib [0] = CTL_KERN;
+		mib [1] = KERN_PROC;
+		mib [2] = KERN_PROC_ALL;
+		mib [3] = 0;
+
+		res = sysctl (mib, 4, NULL, &data_len, NULL, 0);
+		if (res)
+			return NULL;
+		processes = (struct kinfo_proc *) malloc (data_len);
+		res = sysctl (mib, 4, processes, &data_len, NULL, 0);
+		if (res < 0) {
+			free (processes);
+			if (errno != ENOMEM)
+				return NULL;
+			limit --;
+		} else {
+			break;
+		}
+	}
+#endif /* KERN_PROC2 */
+
 #ifdef KERN_PROC2
 	res = data_len/sizeof (struct kinfo_proc2);
 #else
 	res = data_len/sizeof (struct kinfo_proc);
 #endif /* KERN_PROC2 */
-	buf = g_realloc (buf, res * sizeof (void*));
+	buf = (void **) g_realloc (buf, res * sizeof (void*));
 	for (i = 0; i < res; ++i)
 		buf [i] = GINT_TO_POINTER (processes [i].kinfo_pid_member);
 	free (processes);
 	if (size)
 		*size = res;
 	return buf;
+#elif defined(__HAIKU__)
+	/* FIXME: Add back the code from 9185fcc305e43428d0f40f3ee37c8a405d41c9ae */
+	g_assert_not_reached ();
+	return NULL;
 #else
 	const char *name;
 	void **buf = NULL;
@@ -177,6 +211,47 @@ get_pid_status_item_buf (int pid, const char *item, char *rbuf, int blen, MonoPr
 	return NULL;
 }
 
+#if USE_SYSCTL
+
+#ifdef KERN_PROC2
+#define KINFO_PROC struct kinfo_proc2
+#else
+#define KINFO_PROC struct kinfo_proc
+#endif
+
+static gboolean
+sysctl_kinfo_proc (gpointer pid, KINFO_PROC* processi)
+{
+	int res;
+	size_t data_len = sizeof (KINFO_PROC);
+
+#ifdef KERN_PROC2
+	int mib [6];
+	mib [0] = CTL_KERN;
+	mib [1] = KERN_PROC2;
+	mib [2] = KERN_PROC_PID;
+	mib [3] = GPOINTER_TO_UINT (pid);
+	mib [4] = sizeof(KINFO_PROC);
+	mib [5] = 400; /* XXX */
+
+	res = sysctl (mib, 6, processi, &data_len, NULL, 0);
+#else
+	int mib [4];
+	mib [0] = CTL_KERN;
+	mib [1] = KERN_PROC;
+	mib [2] = KERN_PROC_PID;
+	mib [3] = GPOINTER_TO_UINT (pid);
+
+	res = sysctl (mib, 4, processi, &data_len, NULL, 0);
+#endif /* KERN_PROC2 */
+
+	if (res < 0 || data_len != sizeof (KINFO_PROC))
+		return FALSE;
+
+	return TRUE;
+}
+#endif /* USE_SYSCTL */
+
 /**
  * mono_process_get_name:
  * @pid: pid of the process
@@ -190,44 +265,13 @@ char*
 mono_process_get_name (gpointer pid, char *buf, int len)
 {
 #if USE_SYSCTL
-	int res;
-#ifdef KERN_PROC2
-	int mib [6];
-	size_t data_len = sizeof (struct kinfo_proc2);
-	struct kinfo_proc2 processi;
-#else
-	int mib [4];
-	size_t data_len = sizeof (struct kinfo_proc);
-	struct kinfo_proc processi;
-#endif /* KERN_PROC2 */
+	KINFO_PROC processi;
 
 	memset (buf, 0, len);
 
-#ifdef KERN_PROC2
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC2;
-	mib [2] = KERN_PROC_PID;
-	mib [3] = GPOINTER_TO_UINT (pid);
-	mib [4] = sizeof(struct kinfo_proc2);
-	mib [5] = 400; /* XXX */
+	if (sysctl_kinfo_proc (pid, &processi))
+		strncpy (buf, processi.kinfo_name_member, len - 1);
 
-	res = sysctl (mib, 6, &processi, &data_len, NULL, 0);
-
-	if (res < 0 || data_len != sizeof (struct kinfo_proc2)) {
-		return buf;
-	}
-#else
-	mib [0] = CTL_KERN;
-	mib [1] = KERN_PROC;
-	mib [2] = KERN_PROC_PID;
-	mib [3] = GPOINTER_TO_UINT (pid);
-	
-	res = sysctl (mib, 4, &processi, &data_len, NULL, 0);
-	if (res < 0 || data_len != sizeof (struct kinfo_proc)) {
-		return buf;
-	}
-#endif /* KERN_PROC2 */
-	strncpy (buf, processi.kinfo_name_member, len - 1);
 	return buf;
 #else
 	char fname [128];
@@ -252,11 +296,42 @@ mono_process_get_name (gpointer pid, char *buf, int len)
 #endif
 }
 
+void
+mono_process_get_times (gpointer pid, gint64 *start_time, gint64 *user_time, gint64 *kernel_time)
+{
+	if (user_time)
+		*user_time = mono_process_get_data (pid, MONO_PROCESS_USER_TIME);
+
+	if (kernel_time)
+		*kernel_time = mono_process_get_data (pid, MONO_PROCESS_SYSTEM_TIME);
+
+	if (start_time) {
+		*start_time = 0;
+
+#if USE_SYSCTL && defined(kinfo_starttime_member)
+		{
+			KINFO_PROC processi;
+
+			if (sysctl_kinfo_proc (pid, &processi))
+				*start_time = mono_100ns_datetime_from_timeval (processi.kinfo_starttime_member);
+		}
+#endif
+
+		if (*start_time == 0) {
+			static guint64 boot_time = 0;
+			if (!boot_time)
+				boot_time = mono_100ns_datetime () - ((guint64)mono_msec_ticks ()) * 10000;
+
+			*start_time = boot_time + mono_process_get_data (pid, MONO_PROCESS_ELAPSED);
+		}
+	}
+}
+
 /*
  * /proc/pid/stat format:
  * pid (cmdname) S 
  * 	[0] ppid pgid sid tty_nr tty_pgrp flags min_flt cmin_flt maj_flt cmaj_flt
- * 	[10] utime stime cutime cstime prio nice threads 0 start_time vsize rss
+ * 	[10] utime stime cutime cstime prio nice threads 0 start_time vsize
  * 	[20] rss rsslim start_code end_code start_stack esp eip pending blocked sigign
  * 	[30] sigcatch wchan 0 0 exit_signal cpu rt_prio policy
  */
@@ -277,16 +352,23 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	thread_array_t th_array;
 	size_t i;
 
-	if (task_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
-		RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	if (pid == getpid ()) {
+		/* task_for_pid () doesn't work on ios, even for the current process */
+		task = mach_task_self ();
+	} else {
+		if (task_for_pid (mach_task_self (), pid, &task) != KERN_SUCCESS)
+			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	}
 
-	if (task_info(task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
-		mach_port_deallocate (mach_task_self (), task);
+	if (task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count) != KERN_SUCCESS) {
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 	
 	if (task_threads(task, &th_array, &th_count) != KERN_SUCCESS) {
-		mach_port_deallocate (mach_task_self (), task);
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
 		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
 	}
 		
@@ -309,7 +391,8 @@ get_process_stat_item (int pid, int pos, int sum, MonoProcessError *error)
 	for (i = 0; i < th_count; i++)
 		mach_port_deallocate(task, th_array[i]);
 
-	mach_port_deallocate (mach_task_self (), task);
+	if (pid != getpid ())
+		mach_port_deallocate (mach_task_self (), task);
 
 	process_user_time += t_info.user_time.seconds + t_info.user_time.microseconds / 1e6;
 	process_system_time += t_info.system_time.seconds + t_info.system_time.microseconds / 1e6;
@@ -491,9 +574,11 @@ mono_process_get_data_with_error (gpointer pid, MonoProcessData data, MonoProces
 	case MONO_PROCESS_FAULTS:
 		return get_process_stat_item (rpid, 6, TRUE, error);
 	case MONO_PROCESS_ELAPSED:
-		return get_process_stat_item (rpid, 18, FALSE, error) / get_user_hz ();
+		return get_process_stat_time (rpid, 18, FALSE, error);
 	case MONO_PROCESS_PPID:
 		return get_process_stat_time (rpid, 0, FALSE, error);
+	case MONO_PROCESS_PAGED_BYTES:
+		return get_pid_status_item (rpid, "VmSwap", error, 1024);
 
 		/* Nothing yet */
 	case MONO_PROCESS_END:
@@ -529,6 +614,11 @@ mono_process_current_pid ()
 int
 mono_cpu_count (void)
 {
+#ifdef HOST_WIN32
+	SYSTEM_INFO info;
+	GetSystemInfo (&info);
+	return info.dwNumberOfProcessors;
+#else
 	int count = 0;
 #ifdef PLATFORM_ANDROID
 	/* Android tries really hard to save power by powering off CPUs on SMP phones which
@@ -549,8 +639,8 @@ mono_cpu_count (void)
 	if (count > 0)
 		return count + 1;
 #endif
-#ifdef _SC_NPROCESSORS_ONLN
-	count = sysconf (_SC_NPROCESSORS_ONLN);
+#ifdef _SC_NPROCESSORS_CONF
+	count = sysconf (_SC_NPROCESSORS_CONF);
 	if (count > 0)
 		return count;
 #endif
@@ -564,12 +654,6 @@ mono_cpu_count (void)
 			return count;
 	}
 #endif
-#ifdef HOST_WIN32
-	{
-		SYSTEM_INFO info;
-		GetSystemInfo (&info);
-		return info.dwNumberOfProcessors;
-	}
 #endif
 	/* FIXME: warn */
 	return 1;
@@ -660,3 +744,72 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 	return value;
 }
 
+int
+mono_atexit (void (*func)(void))
+{
+#ifdef PLATFORM_ANDROID
+	/* Some versions of android libc doesn't define atexit () */
+	return 0;
+#else
+	return atexit (func);
+#endif
+}
+
+gint32
+mono_cpu_usage (MonoCpuUsageState *prev)
+{
+	gint32 cpu_usage = 0;
+	gint64 cpu_total_time;
+	gint64 cpu_busy_time;
+
+#ifndef HOST_WIN32
+	struct rusage resource_usage;
+	gint64 current_time;
+	gint64 kernel_time;
+	gint64 user_time;
+
+	if (getrusage (RUSAGE_SELF, &resource_usage) == -1) {
+		g_error ("getrusage() failed, errno is %d (%s)\n", errno, strerror (errno));
+		return -1;
+	}
+
+	current_time = mono_100ns_ticks ();
+	kernel_time = resource_usage.ru_stime.tv_sec * 1000 * 1000 * 10 + resource_usage.ru_stime.tv_usec * 10;
+	user_time = resource_usage.ru_utime.tv_sec * 1000 * 1000 * 10 + resource_usage.ru_utime.tv_usec * 10;
+
+	cpu_busy_time = (user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0));
+	cpu_total_time = (current_time - (prev ? prev->current_time : 0)) * mono_cpu_count ();
+
+	if (prev) {
+		prev->kernel_time = kernel_time;
+		prev->user_time = user_time;
+		prev->current_time = current_time;
+	}
+#else
+	guint64 idle_time;
+	guint64 kernel_time;
+	guint64 user_time;
+
+	if (!GetSystemTimes ((FILETIME*) &idle_time, (FILETIME*) &kernel_time, (FILETIME*) &user_time)) {
+		g_error ("GetSystemTimes() failed, error code is %d\n", GetLastError ());
+		return -1;
+	}
+
+	cpu_total_time = (gint64)((user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0)));
+	cpu_busy_time = (gint64)(cpu_total_time - (idle_time - (prev ? prev->idle_time : 0)));
+
+	if (prev) {
+		prev->idle_time = idle_time;
+		prev->kernel_time = kernel_time;
+		prev->user_time = user_time;
+	}
+#endif
+
+	if (cpu_total_time > 0 && cpu_busy_time > 0)
+		cpu_usage = (gint32)(cpu_busy_time * 100 / cpu_total_time);
+
+	g_assert (cpu_usage >= 0);
+	g_assert (cpu_usage <= 100);
+
+	return cpu_usage;
+}

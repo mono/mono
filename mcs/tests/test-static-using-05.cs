@@ -1,5 +1,5 @@
-using System.Console;
-using System.Linq.Enumerable;
+using static System.Console;
+using static System.Linq.Enumerable;
 
 class Test
 {

@@ -33,9 +33,7 @@ using System.Runtime.Serialization;
 
 namespace System.Management
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	[ToolboxItem (true)]
 	public class ManagementBaseObject : Component, ICloneable, ISerializable
 	{

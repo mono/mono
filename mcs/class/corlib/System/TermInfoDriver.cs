@@ -5,8 +5,9 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2005,2006 Novell, Inc (http://www.novell.com)
+// Copyright (c) Microsoft.
+// Copyright 2014 Xamarin Inc
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,6 +27,11 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// This code contains the ParameterizedStrings implementation from .NET's
+// Core System.Console:
+// https://github.com/dotnet/corefx
+// src/System.Console/src/System/ConsolePal.Unix.cs
 //
 #if !NET_2_1
 
@@ -47,7 +53,7 @@ namespace System {
 		static int terminal_size;
 		
 		//static uint flag = 0xdeadbeef;
-		readonly static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
+		readonly static string [] locations = { "/usr/share/terminfo", "/etc/terminfo", "/usr/lib/terminfo", "/lib/terminfo" };
 
 		TermInfoReader reader;
 		int cursorLeft;
@@ -83,43 +89,50 @@ namespace System {
 		string cursorAddress;
 		ConsoleColor fgcolor = ConsoleColor.White;
 		ConsoleColor bgcolor = ConsoleColor.Black;
-		bool color16 = false; // terminal supports 16 colors
-		string setlfgcolor;
-		string setlbgcolor;
 		string setfgcolor;
 		string setbgcolor;
+		int maxColors;
 		bool noGetPosition;
 		Hashtable keymap;
 		ByteMatcher rootmap;
-		bool home_1_1; // if true, we have to add 1 to x and y when using cursorAddress
 		int rl_startx = -1, rl_starty = -1;
 		byte [] control_characters; // Indexed by ControlCharacters.XXXXXX
 #if DEBUG
 		StreamWriter logger;
 #endif
 
+		static string TryTermInfoDir (string dir, string term )
+		{
+			string path = String.Format ("{0}/{1:x}/{2}", dir, (int)(term [0]), term);
+			if (File.Exists (path))
+				return path;
+				
+			path = Path.Combine (dir, term.Substring (0, 1), term);
+			if (File.Exists (path))
+				return path;
+			return null;
+		}
+
 		static string SearchTerminfo (string term)
 		{
 			if (term == null || term == String.Empty)
 				return null;
 
-			// Ignore TERMINFO and TERMINFO_DIRS by now
-			//string terminfo = Environment.GetEnvironmentVariable ("TERMINFO");
-			//string terminfoDirs = Environment.GetEnvironmentVariable ("TERMINFO_DIRS");
-
+			string path;
+			string terminfo = Environment.GetEnvironmentVariable ("TERMINFO");
+			if (terminfo != null && Directory.Exists (terminfo)){
+				path = TryTermInfoDir (terminfo, term);
+				if (path != null)
+					return path;
+			}
+				    
 			foreach (string dir in locations) {
 				if (!Directory.Exists (dir))
 					continue;
 
-				string path = Path.Combine (dir, term.Substring (0, 1));
-				if (!Directory.Exists (dir))
-					continue;
-
-				path = Path.Combine (path, term);
-				if (!File.Exists (path))
-					continue;
-
-				return path;
+				path = TryTermInfoDir (dir, term);
+				if (path != null)
+					return path;
 			}
 
 			return null;
@@ -146,16 +159,16 @@ namespace System {
 #endif
 			this.term = term;
 
-			if (term == "xterm") {
-				reader = new TermInfoReader (term, KnownTerminals.xterm);
-				color16 = true;
-			} else if (term == "linux") {
-				reader = new TermInfoReader (term, KnownTerminals.linux);
-				color16 = true;
-			} else {
-				string filename = SearchTerminfo (term);
-				if (filename != null)
-					reader = new TermInfoReader (term, filename);
+			string filename = SearchTerminfo (term);
+			if (filename != null)
+				reader = new TermInfoReader (term, filename);
+			else {
+				// fallbacks
+				if (term == "xterm") {
+					reader = new TermInfoReader (term, KnownTerminals.xterm);
+				} else if (term == "linux") {
+					reader = new TermInfoReader (term, KnownTerminals.linux);
+				}
 			}
 
 			if (reader == null)
@@ -163,7 +176,7 @@ namespace System {
 
 			if (!(Console.stdout is CStreamWriter)) {
 				// Application set its own stdout, we need a reference to the real stdout
-				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding);
+				stdout = new CStreamWriter (Console.OpenStandardOutput (0), Console.OutputEncoding, false);
 				((StreamWriter) stdout).AutoFlush = true;
 			} else {
 				stdout = (CStreamWriter) Console.stdout;
@@ -201,12 +214,11 @@ namespace System {
 				
 				origPair = reader.Get (TermInfoStrings.OrigPair);
 				origColors = reader.Get (TermInfoStrings.OrigColors);
-				setfgcolor = MangleParameters (reader.Get (TermInfoStrings.SetAForeground));
-				setbgcolor = MangleParameters (reader.Get (TermInfoStrings.SetABackground));
-				// lighter fg colours are 90 -> 97 rather than 30 -> 37
-				setlfgcolor = color16 ? setfgcolor.Replace ("[3", "[9") : setfgcolor;
-				// lighter bg colours are 100 -> 107 rather than 40 -> 47
-				setlbgcolor = color16 ? setbgcolor.Replace ("[4", "[10") : setbgcolor;
+				setfgcolor = reader.Get (TermInfoStrings.SetAForeground);
+				setbgcolor = reader.Get (TermInfoStrings.SetABackground);
+				maxColors = reader.Get (TermInfoNumbers.MaxColors);
+				maxColors = Math.Max (Math.Min (maxColors, 16), 1);
+				
 				string resetColors = (origColors == null) ? origPair : origColors;
 				if (resetColors != null)
 					endString += resetColors;
@@ -242,11 +254,6 @@ namespace System {
 				}
 				
 				cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
-				if (cursorAddress != null) {
-					string result = cursorAddress.Replace ("%i", String.Empty);
-					home_1_1 = (cursorAddress != result);
-					cursorAddress = MangleParameters (result);
-				}
 				
 				GetCursorPosition ();
 #if DEBUG
@@ -259,77 +266,6 @@ namespace System {
 					cursorTop = 0;
 				}
 			}
-		}
-
-		static string MangleParameters (string str)
-		{
-			if (str == null)
-				return null;
-
-			str = str.Replace ("{", "{{");
-			str = str.Replace ("}", "}}");
-			str = str.Replace ("%p1%d", "{0}");
-			return str.Replace ("%p2%d", "{1}");
-		}
-
-		static int TranslateColor (ConsoleColor desired, out bool light)
-		{
-			switch (desired) {
-			// Dark colours
-			case ConsoleColor.Black:
-				light = false;
-				return 0;
-			case ConsoleColor.DarkRed:
-				light = false;
-				return 1;
-			case ConsoleColor.DarkGreen:
-				light = false;
-				return 2;
-			case ConsoleColor.DarkYellow:
-				light = false;
-				return 3;
-			case ConsoleColor.DarkBlue:
-				light = false;
-				return 4;
-			case ConsoleColor.DarkMagenta:
-				light = false;
-				return 5;
-			case ConsoleColor.DarkCyan:
-				light = false;
-				return 6;
-			case ConsoleColor.Gray:
-				light = false;
-				return 7;
-			// Light colours
-			case ConsoleColor.DarkGray:
-				light = true;
-				return 0;
-			case ConsoleColor.Red:
-				light = true;
-				return 1;
-			case ConsoleColor.Green:
-				light = true;
-				return 2;
-			case ConsoleColor.Yellow:
-				light = true;
-				return 3;
-			case ConsoleColor.Blue:
-				light = true;
-				return 4;
-			case ConsoleColor.Magenta:
-				light = true;
-				return 5;
-			case ConsoleColor.Cyan:
-				light = true;
-				return 6;
-			case ConsoleColor.White:
-				light = true;
-				return 7;
-			}
-
-			light = false;
-
-			return 0;
 		}
 
 		void IncrementX ()
@@ -425,6 +361,45 @@ namespace System {
 			return IsSpecialKey (CreateKeyInfoFromInt (c, false));
 		}
 
+		/// <summary>
+		/// The values of the ConsoleColor enums unfortunately don't map to the 
+		/// corresponding ANSI values.  We need to do the mapping manually.
+		/// See http://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+		/// </summary>
+		private static readonly int[] _consoleColorToAnsiCode = new int[]
+		{
+			// Dark/Normal colors
+			0, // Black,
+			4, // DarkBlue,
+			2, // DarkGreen,
+			6, // DarkCyan,
+			1, // DarkRed,
+			5, // DarkMagenta,
+			3, // DarkYellow,
+			7, // Gray,
+	
+			// Bright colors
+			8,  // DarkGray,
+			12, // Blue,
+			10, // Green,
+			14, // Cyan,
+			9,  // Red,
+			13, // Magenta,
+			11, // Yellow,
+			15  // White
+		};
+
+		void ChangeColor (string format, ConsoleColor color)
+		{
+			int ccValue = (int)color;
+			if ((ccValue & ~0xF) != 0)
+				throw new ArgumentException("Invalid Console Color");
+
+			int ansiCode = _consoleColorToAnsiCode[ccValue] % maxColors;
+
+			WriteConsole (ParameterizedStrings.Evaluate (format, ansiCode));
+		}
+		
 		public ConsoleColor BackgroundColor {
 			get {
 				if (!inited) {
@@ -437,16 +412,8 @@ namespace System {
 				if (!inited) {
 					Init ();
 				}
-
+				ChangeColor (setbgcolor, value);
 				bgcolor = value;
-
-				bool light;
-				int colour = TranslateColor (value, out light);
-
-				if (light)
-					WriteConsole (String.Format (setlbgcolor, colour));
-				else
-					WriteConsole (String.Format (setbgcolor, colour));
 			}
 		}
 
@@ -462,16 +429,8 @@ namespace System {
 				if (!inited) {
 					Init ();
 				}
-
+				ChangeColor (setfgcolor, value);
 				fgcolor = value;
-
-				bool light;
-				int colour = TranslateColor (value, out light);
-
-				if (light)
-					WriteConsole (String.Format (setlfgcolor, colour));
-				else
-					WriteConsole (String.Format (setfgcolor, colour));
 			}
 		}
 
@@ -1230,8 +1189,7 @@ namespace System {
 			if (cursorAddress == null)
 				throw new NotSupportedException ("This terminal does not suport setting the cursor position.");
 
-			int one = (home_1_1 ? 1 : 0);
-			WriteConsole (String.Format (cursorAddress, top + one, left + one));
+			WriteConsole (ParameterizedStrings.Evaluate (cursorAddress, top, left));
 			cursorLeft = left;
 			cursorTop = top;
 		}
@@ -1419,6 +1377,447 @@ namespace System {
 		}
 	}
 
+	/// <summary>Provides support for evaluating parameterized terminfo database format strings.</summary>
+	internal static class ParameterizedStrings
+	{
+                /// <summary>A cached stack to use to avoid allocating a new stack object for every evaluation.</summary>
+                [ThreadStatic]
+                private static LowLevelStack _cachedStack;
+
+                /// <summary>Evaluates a terminfo formatting string, using the supplied arguments.</summary>
+                /// <param name="format">The format string.</param>
+                /// <param name="args">The arguments to the format string.</param>
+                /// <returns>The formatted string.</returns>
+                public static string Evaluate(string format, params FormatParam[] args)
+		{
+			if (format == null)
+				throw new ArgumentNullException("format");
+			if (args == null)
+				throw new ArgumentNullException("args");
+
+			// Initialize the stack to use for processing.
+			LowLevelStack stack = _cachedStack;
+			if (stack == null)
+				_cachedStack = stack = new LowLevelStack();
+			else
+				stack.Clear();
+
+			// "dynamic" and "static" variables are much less often used (the "dynamic" and "static"
+			// terminology appears to just refer to two different collections rather than to any semantic
+			// meaning).  As such, we'll only initialize them if we really need them.
+			FormatParam[] dynamicVars = null, staticVars = null;
+			
+			int pos = 0;
+			return EvaluateInternal(format, ref pos, args, stack, ref dynamicVars, ref staticVars);
+			
+			// EvaluateInternal may throw IndexOutOfRangeException and InvalidOperationException
+			// if the format string is malformed or if it's inconsistent with the parameters provided.
+		}
+		
+                /// <summary>Evaluates a terminfo formatting string, using the supplied arguments and processing data structures.</summary>
+                /// <param name="format">The format string.</param>
+                /// <param name="pos">The position in <paramref name="format"/> to start processing.</param>
+                /// <param name="args">The arguments to the format string.</param>
+                /// <param name="stack">The stack to use as the format string is evaluated.</param>
+                /// <param name="dynamicVars">A lazily-initialized collection of variables.</param>
+                /// <param name="staticVars">A lazily-initialized collection of variables.</param>
+                /// <returns>
+                /// The formatted string; this may be empty if the evaluation didn't yield any output.
+                /// The evaluation stack will have a 1 at the top if all processing was completed at invoked level
+                /// of recursion, and a 0 at the top if we're still inside of a conditional that requires more processing.
+                /// </returns>
+                private static string EvaluateInternal(
+			string format, ref int pos, FormatParam[] args, LowLevelStack stack,
+			ref FormatParam[] dynamicVars, ref FormatParam[] staticVars)
+		{
+			// Create a StringBuilder to store the output of this processing.  We use the format's length as an 
+			// approximation of an upper-bound for how large the output will be, though with parameter processing,
+			// this is just an estimate, sometimes way over, sometimes under.
+			StringBuilder output = new StringBuilder(format.Length);
+
+			// Format strings support conditionals, including the equivalent of "if ... then ..." and
+			// "if ... then ... else ...", as well as "if ... then ... else ... then ..."
+			// and so on, where an else clause can not only be evaluated for string output but also
+			// as a conditional used to determine whether to evaluate a subsequent then clause.
+			// We use recursion to process these subsequent parts, and we track whether we're processing
+			// at the same level of the initial if clause (or whether we're nested).
+			bool sawIfConditional = false;
+
+			// Process each character in the format string, starting from the position passed in.
+			for (; pos < format.Length; pos++){
+				// '%' is the escape character for a special sequence to be evaluated.
+				// Anything else just gets pushed to output.
+				if (format[pos] != '%') {
+					output.Append(format[pos]);
+					continue;
+				}
+				// We have a special parameter sequence to process.  Now we need
+				// to look at what comes after the '%'.
+				++pos;
+				switch (format[pos]) {
+				// Output appending operations
+				case '%': // Output the escaped '%'
+					output.Append('%');
+					break;
+				case 'c': // Pop the stack and output it as a char
+					output.Append((char)stack.Pop().Int32);
+					break;
+				case 's': // Pop the stack and output it as a string
+					output.Append(stack.Pop().String);
+					break;
+				case 'd': // Pop the stack and output it as an integer
+					output.Append(stack.Pop().Int32);
+					break;
+				case 'o':
+				case 'X':
+				case 'x':
+				case ':':
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					// printf strings of the format "%[[:]flags][width[.precision]][doxXs]" are allowed
+					// (with a ':' used in front of flags to help differentiate from binary operations, as flags can
+					// include '-' and '+').  While above we've special-cased common usage (e.g. %d, %s),
+					// for more complicated expressions we delegate to printf.
+					int printfEnd = pos;
+					for (; printfEnd < format.Length; printfEnd++) // find the end of the printf format string
+					{
+						char ec = format[printfEnd];
+						if (ec == 'd' || ec == 'o' || ec == 'x' || ec == 'X' || ec == 's')
+						{
+							break;
+						}
+					}
+					if (printfEnd >= format.Length)
+						throw new InvalidOperationException("Terminfo database contains invalid values");
+					string printfFormat = format.Substring(pos - 1, printfEnd - pos + 2); // extract the format string
+					if (printfFormat.Length > 1 && printfFormat[1] == ':')
+						printfFormat = printfFormat.Remove(1, 1);
+					output.Append(FormatPrintF(printfFormat, stack.Pop().Object)); // do the printf formatting and append its output
+					break;
+
+					// Stack pushing operations
+				case 'p': // Push the specified parameter (1-based) onto the stack
+					pos++;
+					stack.Push(args[format[pos] - '1']);
+					break;
+				case 'l': // Pop a string and push its length
+					stack.Push(stack.Pop().String.Length);
+					break;
+				case '{': // Push integer literal, enclosed between braces
+					pos++;
+					int intLit = 0;
+					while (format[pos] != '}')
+					{
+						intLit = (intLit * 10) + (format[pos] - '0');
+						pos++;
+					}
+					stack.Push(intLit);
+					break;
+				case '\'': // Push literal character, enclosed between single quotes
+					stack.Push((int)format[pos + 1]);
+					pos += 2;
+					break;
+
+					// Storing and retrieving "static" and "dynamic" variables
+				case 'P': // Pop a value and store it into either static or dynamic variables based on whether the a-z variable is capitalized
+					pos++;
+					int setIndex;
+					FormatParam[] targetVars = GetDynamicOrStaticVariables(format[pos], ref dynamicVars, ref staticVars, out setIndex);
+					targetVars[setIndex] = stack.Pop();
+					break;
+				case 'g': // Push a static or dynamic variable; which is based on whether the a-z variable is capitalized
+					pos++;
+					int getIndex;
+					FormatParam[] sourceVars = GetDynamicOrStaticVariables(format[pos], ref dynamicVars, ref staticVars, out getIndex);
+					stack.Push(sourceVars[getIndex]);
+					break;
+
+					// Binary operations
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+				case 'm':
+				case '^': // arithmetic
+				case '&':
+				case '|':                                         // bitwise
+				case '=':
+				case '>':
+				case '<':                               // comparison
+				case 'A':
+				case 'O':                                         // logical
+					int second = stack.Pop().Int32; // it's a stack... the second value was pushed last
+					int first = stack.Pop().Int32;
+					char c = format[pos];
+					stack.Push(
+						c == '+' ? (first + second) :
+						c == '-' ? (first - second) :
+						c == '*' ? (first * second) :
+						c == '/' ? (first / second) :
+						c == 'm' ? (first % second) :
+						c == '^' ? (first ^ second) :
+						c == '&' ? (first & second) :
+						c == '|' ? (first | second) :
+						c == '=' ? AsInt(first == second) :
+						c == '>' ? AsInt(first > second) :
+						c == '<' ? AsInt(first < second) :
+						c == 'A' ? AsInt(AsBool(first) && AsBool(second)) :
+						c == 'O' ? AsInt(AsBool(first) || AsBool(second)) :
+						0); // not possible; we just validated above
+					break;
+
+					// Unary operations
+				case '!':
+				case '~':
+					int value = stack.Pop().Int32;
+					stack.Push(
+						format[pos] == '!' ? AsInt(!AsBool(value)) :
+						~value);
+					break;
+
+					// Augment first two parameters by 1
+				case 'i':
+					args[0] = 1 + args[0].Int32;
+					args[1] = 1 + args[1].Int32;
+					break;
+
+					// Conditional of the form %? if-part %t then-part %e else-part %;
+					// The "%e else-part" is optional.
+				case '?':
+					sawIfConditional = true;
+					break;
+				case 't':
+					// We hit the end of the if-part and are about to start the then-part.
+					// The if-part left its result on the stack; pop and evaluate.
+					bool conditionalResult = AsBool(stack.Pop().Int32);
+
+					// Regardless of whether it's true, run the then-part to get past it.
+					// If the conditional was true, output the then results.
+					pos++;
+					string thenResult = EvaluateInternal(format, ref pos, args, stack, ref dynamicVars, ref staticVars);
+					if (conditionalResult)
+					{
+						output.Append(thenResult);
+					}
+
+					// We're past the then; the top of the stack should now be a Boolean
+					// indicating whether this conditional has more to be processed (an else clause).
+					if (!AsBool(stack.Pop().Int32))
+					{
+						// Process the else clause, and if the conditional was false, output the else results.
+						pos++;
+						string elseResult = EvaluateInternal(format, ref pos, args, stack, ref dynamicVars, ref staticVars);
+						if (!conditionalResult)
+						{
+							output.Append(elseResult);
+						}
+						// Now we should be done (any subsequent elseif logic will have bene handled in the recursive call).
+						if (!AsBool(stack.Pop().Int32))
+						{
+							throw new InvalidOperationException("Terminfo database contains invalid values");
+						}
+					}
+
+					// If we're in a nested processing, return to our parent.
+					if (!sawIfConditional)
+					{
+						stack.Push(1);
+						return output.ToString();
+					}
+					// Otherwise, we're done processing the conditional in its entirety.
+					sawIfConditional = false;
+					break;
+				case 'e':
+				case ';':
+					// Let our caller know why we're exiting, whether due to the end of the conditional or an else branch.
+					stack.Push(AsInt(format[pos] == ';'));
+					return output.ToString();
+
+					// Anything else is an error
+				default:
+					throw new InvalidOperationException("Terminfo database contains invalid values");
+				}
+			}
+			stack.Push(1);
+			return output.ToString();
+		}
+		
+                /// <summary>Converts an Int32 to a Boolean, with 0 meaning false and all non-zero values meaning true.</summary>
+                /// <param name="i">The integer value to convert.</param>
+                /// <returns>true if the integer was non-zero; otherwise, false.</returns>
+                static bool AsBool(Int32 i) { return i != 0; }
+
+                /// <summary>Converts a Boolean to an Int32, with true meaning 1 and false meaning 0.</summary>
+                /// <param name="b">The Boolean value to convert.</param>
+                /// <returns>1 if the Boolean is true; otherwise, 0.</returns>
+                static int AsInt(bool b) { return b ? 1 : 0; }
+
+		static string StringFromAsciiBytes(byte[] buffer, int offset, int length)
+		{
+			// Special-case for empty strings
+			if (length == 0)
+				return string.Empty;
+
+			// new string(sbyte*, ...) doesn't exist in the targeted reference assembly,
+			// so we first copy to an array of chars, and then create a string from that.
+			char[] chars = new char[length];
+			for (int i = 0, j = offset; i < length; i++, j++)
+				chars[i] = (char)buffer[j];
+			return new string(chars);
+		}
+
+		[DllImport("libc")]
+		static extern unsafe int snprintf(byte* str, IntPtr size, string format, string arg1);
+
+		[DllImport("libc")]
+		static extern unsafe int snprintf(byte* str, IntPtr size, string format, int arg1);
+		
+                /// <summary>Formats an argument into a printf-style format string.</summary>
+                /// <param name="format">The printf-style format string.</param>
+                /// <param name="arg">The argument to format.  This must be an Int32 or a String.</param>
+                /// <returns>The formatted string.</returns>
+                static unsafe string FormatPrintF(string format, object arg)
+                {
+			// Determine how much space is needed to store the formatted string.
+			string stringArg = arg as string;
+			int neededLength = stringArg != null ?
+				snprintf(null, IntPtr.Zero, format, stringArg) :
+				snprintf(null, IntPtr.Zero, format, (int)arg);
+			if (neededLength == 0)
+				return string.Empty;
+			if (neededLength < 0)
+				throw new InvalidOperationException("The printf operation failed");
+			
+			// Allocate the needed space, format into it, and return the data as a string.
+			byte[] bytes = new byte[neededLength + 1]; // extra byte for the null terminator
+			fixed (byte* ptr = bytes){
+				int length = stringArg != null ?
+					snprintf(ptr, (IntPtr)bytes.Length, format, stringArg) :
+					snprintf(ptr, (IntPtr)bytes.Length, format, (int)arg);
+				if (length != neededLength)
+				{
+					throw new InvalidOperationException("Invalid printf operation");
+				}
+			}
+			return StringFromAsciiBytes(bytes, 0, neededLength);
+                }
+		
+                /// <summary>Gets the lazily-initialized dynamic or static variables collection, based on the supplied variable name.</summary>
+                /// <param name="c">The name of the variable.</param>
+                /// <param name="dynamicVars">The lazily-initialized dynamic variables collection.</param>
+                /// <param name="staticVars">The lazily-initialized static variables collection.</param>
+                /// <param name="index">The index to use to index into the variables.</param>
+                /// <returns>The variables collection.</returns>
+                private static FormatParam[] GetDynamicOrStaticVariables(
+			char c, ref FormatParam[] dynamicVars, ref FormatParam[] staticVars, out int index)
+                {
+			if (c >= 'A' && c <= 'Z'){
+				index = c - 'A';
+				return staticVars ?? (staticVars = new FormatParam[26]); // one slot for each letter of alphabet
+			} else if (c >= 'a' && c <= 'z') {
+				index = c - 'a';
+				return dynamicVars ?? (dynamicVars = new FormatParam[26]); // one slot for each letter of alphabet
+			}
+			else throw new InvalidOperationException("Terminfo database contains invalid values");
+                }
+
+                /// <summary>
+                /// Represents a parameter to a terminfo formatting string.
+                /// It is a discriminated union of either an integer or a string, 
+                /// with characters represented as integers.
+                /// </summary>
+                public struct FormatParam
+                {
+			/// <summary>The integer stored in the parameter.</summary>
+			private readonly int _int32;
+			/// <summary>The string stored in the parameter.</summary>
+			private readonly string _string; // null means an Int32 is stored
+			
+			/// <summary>Initializes the parameter with an integer value.</summary>
+			/// <param name="value">The value to be stored in the parameter.</param>
+			public FormatParam(Int32 value) : this(value, null) { }
+			
+			/// <summary>Initializes the parameter with a string value.</summary>
+			/// <param name="value">The value to be stored in the parameter.</param>
+			public FormatParam(String value) : this(0, value ?? string.Empty) { }
+			
+			/// <summary>Initializes the parameter.</summary>
+			/// <param name="intValue">The integer value.</param>
+			/// <param name="stringValue">The string value.</param>
+			private FormatParam(Int32 intValue, String stringValue)
+			{
+				_int32 = intValue;
+				_string = stringValue;
+			}
+			
+			/// <summary>Implicit converts an integer into a parameter.</summary>
+			public static implicit operator FormatParam(int value)
+			{
+				return new FormatParam(value);
+			}
+			
+			/// <summary>Implicit converts a string into a parameter.</summary>
+			public static implicit operator FormatParam(string value)
+			{
+				return new FormatParam(value);
+			}
+			
+			/// <summary>Gets the integer value of the parameter. If a string was stored, 0 is returned.</summary>
+			public int Int32 { get { return _int32; } }
+			
+			/// <summary>Gets the string value of the parameter.  If an Int32 or a null String were stored, an empty string is returned.</summary>
+			public string String { get { return _string ?? string.Empty; } }
+			
+			/// <summary>Gets the string or the integer value as an object.</summary>
+			public object Object { get { return _string ?? (object)_int32; } }
+                }
+		
+                /// <summary>Provides a basic stack data structure.</summary>
+                /// <typeparam name="T">Specifies the type of data in the stack.</typeparam>
+                private sealed class LowLevelStack
+		{
+			private const int DefaultSize = 4;
+			private FormatParam[] _arr;
+			private int _count;
+			
+			public LowLevelStack() { _arr = new FormatParam[DefaultSize]; }
+			
+			public FormatParam Pop()
+			{
+				if (_count == 0)
+					throw new InvalidOperationException("Terminfo: Invalid Stack");
+
+				var item = _arr[--_count];
+				_arr[_count] = default(FormatParam);
+				return item;
+			}
+			
+			public void Push(FormatParam item)
+			{
+				if (_arr.Length == _count){
+					var newArr = new FormatParam[_arr.Length * 2];
+					Array.Copy(_arr, 0, newArr, 0, _arr.Length);
+					_arr = newArr;
+				}
+				_arr[_count++] = item;
+			}
+			
+			public void Clear()
+			{
+				Array.Clear(_arr, 0, _count);
+				_count = 0;
+			}
+                }
+	}
+	       
 	class ByteMatcher {
 		Hashtable map = new Hashtable ();
 		Hashtable starts = new Hashtable ();

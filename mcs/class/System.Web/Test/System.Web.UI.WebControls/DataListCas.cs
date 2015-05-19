@@ -60,9 +60,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.SaveViewState ();
 			unit.Events ();
 			unit.BubbleEvent ();
-#if NET_2_0
 			unit.SelectedValue_WithUnexistingDataKeyField ();
-#endif
 		}
 
 		// LinkDemand

@@ -195,11 +195,6 @@ namespace Mono.CSharp {
 
 			return name + "`" + args.Count;
 		}
-
-		public static string MakeName (string name, int count)
-		{
-			return name + "`" + count;
-		}
 	}
 
 	public class SimpleMemberName
@@ -578,8 +573,11 @@ namespace Mono.CSharp {
 							// protected type then the type is accessible
 							//
 							while (mc.Parent != null && mc.Parent.PartialContainer != null) {
-								if (mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent))
+								if (mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent)) {
 									same_access_restrictions = true;
+									break;
+								}
+
 								mc = mc.Parent; 
 							}
 						}
@@ -591,8 +589,15 @@ namespace Mono.CSharp {
 							same_access_restrictions = p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
 						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
 							same_access_restrictions = mc.Parent.PartialContainer.IsBaseTypeDefinition (p_parent) && p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly);
-						else
+						else if (al == Modifiers.PROTECTED)
 							goto case Modifiers.PROTECTED;
+						else if (al == Modifiers.PRIVATE) {
+							if (p.MemberDefinition.IsInternalAsPublic (mc.Module.DeclaringAssembly)) {
+								same_access_restrictions = true;
+							} else {
+								goto case Modifiers.PROTECTED;
+							}
+						}
 
 						break;
 
@@ -675,13 +680,13 @@ namespace Mono.CSharp {
 		// Does extension methods look up to find a method which matches name and extensionType.
 		// Search starts from this namespace and continues hierarchically up to top level.
 		//
-		public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+		public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
 		{
 			var m = Parent;
 			do {
 				var ns = m as NamespaceContainer;
 				if (ns != null)
-					return ns.LookupExtensionMethod (this, extensionType, name, arity, 0);
+					return ns.LookupExtensionMethod (this, name, arity, 0);
 
 				m = m.Parent;
 			} while (m != null);
@@ -1130,7 +1135,7 @@ namespace Mono.CSharp {
 
 		public virtual string GetSignatureForError ()
 		{
-			var bf = MemberDefinition as Property.BackingField;
+			var bf = MemberDefinition as Property.BackingFieldDeclaration;
 			string name;
 			if (bf == null) {
 				name = Name;

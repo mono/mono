@@ -2,8 +2,7 @@
 r='@mono_build_root@'
 MONO_CFG_DIR='@mono_cfg_dir@'
 PATH="$r/runtime/_tmpinst/bin:$PATH"
-MONO_SHARED_DIR=$r/runtime
-export MONO_CFG_DIR MONO_SHARED_DIR PATH
+export MONO_CFG_DIR PATH
 if [ -n "@nacl_self_host@" ]; then
   case "$@" in
     # gacutil.exe and mdoc.exe require filesystem functionality not

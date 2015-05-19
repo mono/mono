@@ -475,7 +475,7 @@ namespace System.Net {
 
 			if (cookies != null) {
 				foreach (Cookie cookie in cookies)
-					headers.SetInternal ("Set-Cookie", cookie.ToClientString ());
+					headers.SetInternal ("Set-Cookie", CookieToClientString (cookie));
 			}
 
 			StreamWriter writer = new StreamWriter (ms, encoding, 256);
@@ -490,6 +490,51 @@ namespace System.Net {
 			/* Assumes that the ms was at position 0 */
 			ms.Position = preamble;
 			HeadersSent = true;
+		}
+
+		static string CookieToClientString (Cookie cookie)
+		{
+			if (cookie.Name.Length == 0)
+				return String.Empty;
+
+			StringBuilder result = new StringBuilder (64);
+
+			if (cookie.Version > 0)
+				result.Append ("Version=").Append (cookie.Version).Append (";");
+
+			result.Append (cookie.Name).Append ("=").Append (cookie.Value);
+
+			if (cookie.Path != null && cookie.Path.Length != 0)
+				result.Append (";Path=").Append (QuotedString (cookie, cookie.Path));
+
+			if (cookie.Domain != null && cookie.Domain.Length != 0)
+				result.Append (";Domain=").Append (QuotedString (cookie, cookie.Domain));			
+
+			if (cookie.Port != null && cookie.Port.Length != 0)
+				result.Append (";Port=").Append (cookie.Port);	
+
+			return result.ToString ();
+		}
+
+		static string QuotedString (Cookie cookie, string value)
+		{
+			if (cookie.Version == 0 || IsToken (value))
+				return value;
+			else 
+				return "\"" + value.Replace("\"", "\\\"") + "\"";
+		}	
+
+		static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
+
+	    static bool IsToken (string value) 
+		{
+			int len = value.Length;
+			for (int i = 0; i < len; i++) {
+			    char c = value [i];
+				if (c < 0x20 || c >= 0x7f || tspecials.IndexOf (c) != -1)
+			      		return false;
+			}
+			return true;
 		}
 
 		public void SetCookie (Cookie cookie)

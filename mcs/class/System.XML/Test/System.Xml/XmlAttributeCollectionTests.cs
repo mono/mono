@@ -193,9 +193,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotDotNet")] // enbug
-#endif
+		[Ignore ("bug in Microsoft sources")]
 		public void RemoveDefaultAttribute ()
 		{
 			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root attr CDATA 'default'>]>";

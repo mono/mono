@@ -1,4 +1,4 @@
-// CS1929: Extension method instance type `int' cannot be converted to `string'
+// CS1929: Type `int' does not contain a member `Check' and the best extension method overload `C.Check(this string)' requires an instance of type `string'
 // Line: 12
 
 static class C

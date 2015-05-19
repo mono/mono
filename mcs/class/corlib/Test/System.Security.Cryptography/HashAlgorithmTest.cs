@@ -268,9 +268,6 @@ public class HashAlgorithmTest {
 	}
 
 	[Test]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // System.ExecutionEngineException on MS runtime (1.1)
-#endif
 	public void TransformBlock_OutputBuffer_Null ()
 	{
 		byte[] input = new byte [8];
@@ -278,11 +275,7 @@ public class HashAlgorithmTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-	[ExpectedException (typeof (IndexOutOfRangeException))]
-#endif
 	public void TransformBlock_OutputOffset_Negative ()
 	{
 		byte[] input = new byte [8];
@@ -291,11 +284,7 @@ public class HashAlgorithmTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentException))]
-#else
-	[ExpectedException (typeof (IndexOutOfRangeException))]
-#endif
 	public void TransformBlock_OutputOffset_Overflow ()
 	{
 		byte[] input = new byte [8];

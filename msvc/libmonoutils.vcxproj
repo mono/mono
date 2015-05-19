@@ -22,6 +22,7 @@
   <ItemGroup>
     <ClCompile Include="..\mono\utils\dlmalloc.c" />
     <ClCompile Include="..\mono\utils\hazard-pointer.c" />
+    <ClCompile Include="..\mono\utils\json.c" />
     <ClCompile Include="..\mono\utils\lock-free-alloc.c" />
     <ClCompile Include="..\mono\utils\lock-free-array-queue.c" />
     <ClCompile Include="..\mono\utils\lock-free-queue.c" />
@@ -33,6 +34,7 @@
     <ClCompile Include="..\mono\utils\mono-conc-hashtable.c" />
     <ClCompile Include="..\mono\utils\mono-context.c" />
     <ClCompile Include="..\mono\utils\mono-counters.c" />
+    <ClCompile Include="..\mono\utils\mono-dl-windows.c" />
     <ClCompile Include="..\mono\utils\mono-dl.c" />
     <ClCompile Include="..\mono\utils\mono-error.c" />
     <ClCompile Include="..\mono\utils\mono-filemap.c" />
@@ -45,6 +47,10 @@
     <ClCompile Include="..\mono\utils\mono-mmap.c" />
     <ClCompile Include="..\mono\utils\mono-mutex.c" />
     <ClCompile Include="..\mono\utils\mono-networkinterfaces.c" />
+    <ClCompile Include="..\mono\utils\networking.c" />
+    <ClCompile Include="..\mono\utils\networking-posix.c" />
+    <ClCompile Include="..\mono\utils\networking-missing.c" />
+    <ClCompile Include="..\mono\utils\networking-windows.c" />
     <ClCompile Include="..\mono\utils\mono-path.c" />
     <ClCompile Include="..\mono\utils\mono-poll.c" />
     <ClCompile Include="..\mono\utils\mono-proclib.c" />
@@ -68,6 +74,8 @@
     <ClCompile Include="..\mono\utils\mono-hwcap.c" />
     <ClCompile Include="..\mono\utils\mono-hwcap-x86.c" />
     <ClCompile Include="..\mono\utils\bsearch.c" />
+    <ClCompile Include="..\mono\utils\memfuncs.c" />
+    <ClCompile Include="..\mono\utils\parse.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\utils\dlmalloc.h" />
@@ -78,6 +86,7 @@
     <ClInclude Include="..\mono\utils\freebsd-elf_common.h" />
     <ClInclude Include="..\mono\utils\gc_wrapper.h" />
     <ClInclude Include="..\mono\utils\hazard-pointer.h" />
+    <ClInclude Include="..\mono\utils\json.h" />
     <ClInclude Include="..\mono\utils\linux_magic.h" />
     <ClInclude Include="..\mono\utils\lock-free-alloc.h" />
     <ClInclude Include="..\mono\utils\lock-free-array-queue.h" />
@@ -129,6 +138,8 @@
     <ClInclude Include="..\mono\utils\mono-hwcap.h" />
     <ClInclude Include="..\mono\utils\mono-hwcap-x86.h" />
     <ClInclude Include="..\mono\utils\bsearch.h" />
+    <ClInclude Include="..\mono\utils\memfuncs.h" />
+    <ClInclude Include="..\mono\utils\parse.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\mono\utils\win64.asm">
@@ -145,25 +156,25 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

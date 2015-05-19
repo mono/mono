@@ -83,6 +83,73 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		class CustomStream : Stream
+		{
+			public override void Flush ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			int pos;
+
+			public override int Read (byte[] buffer, int offset, int count)
+			{
+				++pos;
+				if (pos > 4)
+					return 0;
+
+				return 11;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void SetLength (long value)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void Write (byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override bool CanRead {
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanSeek {
+				get {
+					return false;
+				}
+			}
+
+			public override bool CanWrite {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override long Length {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override long Position {
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+
 		const int WaitTimeout = 5000;
 
 		string port, TestHost, LocalServer;
@@ -170,6 +237,35 @@ namespace MonoTests.System.Net.Http
 			client.SendAsync (request).Wait (WaitTimeout);
 		}
 
+
+		[Test]
+		public void CancelRequestViaProxy ()
+		{
+			var handler = new HttpClientHandler {
+				Proxy = new WebProxy ("192.168.10.25:8888/"), // proxy that doesn't exist
+				UseProxy = true,
+				AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+			};
+
+			var httpClient = new HttpClient (handler) {
+				BaseAddress = new Uri ("https://google.com"),
+				Timeout = TimeSpan.FromMilliseconds (1)
+			};
+
+			try {
+				var restRequest = new HttpRequestMessage {
+					Method = HttpMethod.Post,
+					RequestUri = new Uri("foo", UriKind.Relative),
+					Content = new StringContent("", null, "application/json")
+				};
+
+				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsTrue (e.InnerException is TaskCanceledException, "#2");
+			}
+		}
+
 		[Test]
 		public void Properties ()
 		{
@@ -217,6 +313,24 @@ namespace MonoTests.System.Net.Http
 			};
 
 			Assert.AreEqual (response, client.SendAsync (request).Result, "#1");
+		}
+
+		[Test]
+		public void Send_BaseAddress ()
+		{
+			var mh = new HttpMessageHandlerMock ();
+
+			var client = new HttpClient (mh);
+			client.BaseAddress = new Uri ("http://localhost/");
+			var response = new HttpResponseMessage ();
+
+			mh.OnSend = l => {
+				Assert.AreEqual ("http://localhost/relative", l.RequestUri.ToString (), "#2");
+				return Task.FromResult (response);
+			};
+
+			Assert.AreEqual (response, client.GetAsync ("relative").Result, "#1");
+			Assert.AreEqual (response, client.GetAsync ("/relative").Result, "#2");
 		}
 
 		[Test]
@@ -654,6 +768,31 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Content_Put_CustomStream ()
+		{
+			bool passed = false;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+				passed = 44 == request.ContentLength64;
+				passed &= request.ContentType == null;
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Put, LocalServer);
+				r.Content = new StreamContent (new CustomStream ());
+				var response = client.SendAsync (r).Result;
+
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#1");
+				Assert.IsTrue (passed, "#2");
+			} finally {
+				listener.Abort ();
+
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		public void Send_Timeout ()
 		{
 			var mh = new HttpMessageHandlerMock ();
@@ -727,17 +866,6 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException) {
 			}
-		}
-
-		[Test]
-		public void GetString_RelativeUri ()
-		{
-			var client = new HttpClient ();
-			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
-			var uri = new Uri ("Computer", UriKind.Relative);
-
-			Assert.That (client.GetStringAsync (uri).Result != null);
-			Assert.That (client.GetStringAsync ("Computer").Result != null);
 		}
 
 		[Test]
@@ -816,8 +944,10 @@ namespace MonoTests.System.Net.Http
 				chandler.AllowAutoRedirect = true;
 				var client = new HttpClient (chandler);
 
-				var resp = client.GetAsync (LocalServer).Result;
-				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#1");
+				var r = client.GetAsync (LocalServer);
+				Assert.IsTrue (r.Wait (WaitTimeout), "#1");
+				var resp = r.Result;
+				Assert.AreEqual ("http://xamarin.com/", resp.RequestMessage.RequestUri.AbsoluteUri, "#2");
 			} finally {
 				listener.Abort ();
 				listener.Close ();

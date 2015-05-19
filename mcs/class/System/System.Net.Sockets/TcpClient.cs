@@ -34,9 +34,7 @@
 
 using System;
 using System.Net;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.Sockets
 {
@@ -428,7 +426,6 @@ namespace System.Net.Sockets
 			finally { CheckDisposed (); }
 		}
 
-#if NET_4_5
 		public Task ConnectAsync (IPAddress address, int port)
 		{
 			return Task.Factory.FromAsync (BeginConnect, EndConnect, address, port, null);
@@ -443,7 +440,6 @@ namespace System.Net.Sockets
 		{
 			return Task.Factory.FromAsync (BeginConnect, EndConnect, host, port, null);
 		}
-#endif
 		private void CheckDisposed ()
 		{
 			if (disposed)

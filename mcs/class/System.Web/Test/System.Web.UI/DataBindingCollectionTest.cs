@@ -34,7 +34,6 @@ using System.Security.Permissions;
 using System.Web;
 using System.Web.UI;
 
-#if NET_2_0
 
 namespace MonoCasTests.System.Web.UI {
 
@@ -65,4 +64,3 @@ namespace MonoCasTests.System.Web.UI {
 	}
 }
 	
-#endif

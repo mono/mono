@@ -372,8 +372,6 @@ namespace Mono.CSharp
 				vi_product = a.GetString ();
 			} else if (a.Type == pa.AssemblyCompany) {
 				vi_company = a.GetString ();
-			} else if (a.Type == pa.AssemblyDescription) {
-				// TODO: Needs extra api
 			} else if (a.Type == pa.AssemblyCopyright) {
 				vi_copyright = a.GetString ();
 			} else if (a.Type == pa.AssemblyTrademark) {
@@ -381,6 +379,12 @@ namespace Mono.CSharp
 			} else if (a.Type == pa.Debuggable) {
 				has_user_debuggable = true;
 			}
+
+			//
+			// Win32 version info attributes AssemblyDescription and AssemblyTitle cannot be
+			// set using public API and because we have blob like attributes we need to use
+			// special option DecodeVersionInfoAttributeBlobs to support values extraction
+			//
 
 			SetCustomAttribute (ctor, cdata);
 		}

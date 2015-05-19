@@ -13,7 +13,6 @@
 // (C) 2008 Gert Driesen
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -90,4 +89,3 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 }
 
-#endif

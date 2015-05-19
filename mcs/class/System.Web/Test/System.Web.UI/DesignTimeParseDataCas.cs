@@ -58,7 +58,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.AreEqual (String.Empty, dtpd.DocumentUrl, "DocumentUrl");
 			Assert.AreEqual ("parseText", dtpd.ParseText, "ParseText");
 		}
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Ctor3_Deny_Unrestricted ()
@@ -69,7 +68,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsTrue (dtpd.ShouldApplyTheme, "ShouldApplyTheme");
 			Assert.IsNull (dtpd.UserControlRegisterEntries, "UserControlRegisterEntries");
 		}
-#endif
 		// LinkDemand
 
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)

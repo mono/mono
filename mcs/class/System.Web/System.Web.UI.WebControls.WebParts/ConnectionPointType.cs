@@ -25,11 +25,9 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
         public enum ConnectionPointType {
                 Consumer = 0,
 		Provider = 1		
         }
 }
-#endif

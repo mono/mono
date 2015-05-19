@@ -55,10 +55,8 @@ namespace MonoCasTests.System.CodeDom {
 			CodeStatement cs = new CodeStatement ();
 			Assert.IsNull (cs.LinePragma, "LinePragma");
 			cs.LinePragma = new CodeLinePragma (String.Empty, Int16.MinValue);
-#if NET_2_0
 			Assert.AreEqual (0, cs.StartDirectives.Count, "StartDirectives");
 			Assert.AreEqual (0, cs.EndDirectives.Count, "EndDirectives");
-#endif
 		}
 
 		[Test]

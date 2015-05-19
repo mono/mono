@@ -111,7 +111,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.ExtensionMethodCandidates LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity)
+		public Compiler.ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
 		{
 			// No extension method lookup in this context
 			return null;

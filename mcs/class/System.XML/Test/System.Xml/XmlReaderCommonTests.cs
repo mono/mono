@@ -201,14 +201,12 @@ namespace MonoTests.System.Xml
 			document.LoadXml (xml);
 			xnr = new XmlNodeReader (document);
 			method (xnr);
-#if NET_2_0
 /*
 			// XPathNavigatorReader tests
 			System.Xml.XPath.XPathDocument doc = new System.Xml.XPath.XPathDocument (new StringReader (xml));
 			XmlReader xpr = doc.CreateNavigator ().ReadSubtree ();
 			method (xpr);
 */
-#endif
 		}
 
 
@@ -1348,6 +1346,7 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Ignore ("Bug in Microsoft referencesource")]
 		public void IndexerAndAttributes ()
 		{
 			string xml = @"<?xml version='1.0' standalone='no'?><foo _1='1' _2='2' _3='3' />";
@@ -1513,7 +1512,6 @@ namespace MonoTests.System.Xml
 			reader.Read (); // silently returns false
 		}
 
-#if NET_2_0
 		[Test]
 		public void CreateSimple ()
 		{
@@ -1754,6 +1752,19 @@ namespace MonoTests.System.Xml
 			}
 			while (reader.ReadToNextSibling ("DictionaryEntry"));
 			Assert.AreEqual (3, count, "#3");
+		}
+
+		[Test, Category("NotWorking")]
+		public void ReadToNextSiblingInInitialReadState ()
+		{
+			var xml = "<Text name=\"hello\"><Something></Something></Text>";
+			var ms = new MemoryStream(Encoding.Default.GetBytes(xml));
+			var xtr = XmlReader.Create(ms);
+
+			Assert.AreEqual(xtr.ReadState, ReadState.Initial);
+			xtr.ReadToNextSibling("Text");
+
+			Assert.AreEqual("hello", xtr.GetAttribute("name"));
 		}
 
 		[Test]
@@ -2234,7 +2245,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#2");
 			bytesRead = reader.ReadElementContentAsBase64 (fixedSizeBuffer, 0, fixedSizeBuffer.Length);
 			Assert.AreEqual (0, bytesRead, "#3");
-			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#4");
+			Assert.AreEqual (XmlNodeType.None, reader.NodeType, "#4");
 		}
 
 		[Test]
@@ -2336,7 +2347,6 @@ namespace MonoTests.System.Xml
 			if (task.Result != null)
 				throw task.Result;
 		}
-#endif
 #endif
 	}
 }

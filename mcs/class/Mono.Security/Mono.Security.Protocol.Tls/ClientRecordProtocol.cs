@@ -129,6 +129,7 @@ namespace Mono.Security.Protocol.Tls
 			HandshakeType type, byte[] buffer)
 		{
 			ClientContext context = (ClientContext)this.context;
+			var last = context.LastHandshakeMsg;
 
 			switch (type)
 			{
@@ -148,23 +149,37 @@ namespace Mono.Security.Protocol.Tls
 					return null;
 
 				case HandshakeType.ServerHello:
+					if (last != HandshakeType.HelloRequest)
+						break;
 					return new TlsServerHello(this.context, buffer);
 
+					// Optional
 				case HandshakeType.Certificate:
+					if (last != HandshakeType.ServerHello)
+						break;
 					return new TlsServerCertificate(this.context, buffer);
 
-				case HandshakeType.ServerKeyExchange:
-					return new TlsServerKeyExchange(this.context, buffer);
-
+					// Optional
 				case HandshakeType.CertificateRequest:
-					return new TlsServerCertificateRequest(this.context, buffer);
+					if (last == HandshakeType.ServerKeyExchange || last == HandshakeType.Certificate)
+						return new TlsServerCertificateRequest(this.context, buffer);
+					break;
 
 				case HandshakeType.ServerHelloDone:
-					return new TlsServerHelloDone(this.context, buffer);
+					if (last == HandshakeType.CertificateRequest || last == HandshakeType.Certificate || last == HandshakeType.ServerHello)
+						return new TlsServerHelloDone(this.context, buffer);
+					break;
 
 				case HandshakeType.Finished:
-					return new TlsServerFinished(this.context, buffer);
-
+					// depends if a full (ServerHelloDone) or an abbreviated handshake (ServerHello) is being done
+					bool check = context.AbbreviatedHandshake ? (last == HandshakeType.ServerHello) : (last == HandshakeType.ServerHelloDone);
+					// ChangeCipherSpecDone is not an handshake message (it's a content type) but still needs to be happens before finished
+					if (check && context.ChangeCipherSpecDone) {
+						context.ChangeCipherSpecDone = false;
+						return new TlsServerFinished (this.context, buffer);
+					}
+					break;
+					
 				default:
 					throw new TlsException(
 						AlertDescription.UnexpectedMessage,
@@ -172,6 +187,7 @@ namespace Mono.Security.Protocol.Tls
 							"Unknown server handshake message received ({0})", 
 							type.ToString()));
 			}
+			throw new TlsException (AlertDescription.HandshakeFailiure, String.Format ("Protocol error, unexpected protocol transition from {0} to {1}", last, type));
 		}
 
 		#endregion

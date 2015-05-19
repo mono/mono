@@ -24,7 +24,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections.Generic;
@@ -70,11 +69,7 @@ namespace System.Web.UI.WebControls
 		{
 			return new ProfileParameter (this);
 		}
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		override object Evaluate (HttpContext context, Control control)
 		{
 			if (context == null || context.Profile == null)
@@ -98,4 +93,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

@@ -28,11 +28,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.Web.UI.Design
 {
 	public delegate bool TransactedChangeCallback (object context);
 }
 
-#endif

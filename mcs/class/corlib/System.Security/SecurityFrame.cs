@@ -42,17 +42,6 @@ namespace System.Security {
 		public int index;
 	}
 
-	// Must match MonoSecurityFrame in /mono/mini/declsec.h
-#pragma warning disable 649	
-	internal class RuntimeSecurityFrame {
-		public AppDomain domain;
-		public MethodInfo method;
-		public RuntimeDeclSecurityEntry assert;
-		public RuntimeDeclSecurityEntry deny;
-		public RuntimeDeclSecurityEntry permitonly;
-	}
-#pragma warning restore 649	
-
 	internal struct SecurityFrame {
 
 		private AppDomain _domain;
@@ -60,22 +49,6 @@ namespace System.Security {
 		private PermissionSet _assert;
 		private PermissionSet _deny;
 		private PermissionSet _permitonly;
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static RuntimeSecurityFrame _GetSecurityFrame (int skip);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static Array _GetSecurityStack (int skip);
-
-		internal SecurityFrame (RuntimeSecurityFrame frame)
-		{
-			_domain = null;
-			_method = null;
-			_assert = null;
-			_deny = null;
-			_permitonly = null;
-			InitFromRuntimeFrame (frame);
-		}
 
 		internal SecurityFrame (int skip)
 		{
@@ -85,27 +58,7 @@ namespace System.Security {
 			_deny = null;
 			_permitonly = null;
 
-			InitFromRuntimeFrame (_GetSecurityFrame (skip + 2));
-
-			// TODO - add the imperative informations into the frame
-		}
-
-		// Note: SecurityManager.Decode implements a cache - so not every call
-		// ends up making an icall
-		internal void InitFromRuntimeFrame (RuntimeSecurityFrame frame)
-		{
-			_domain = frame.domain;
-			_method = frame.method;
-
-			if (frame.assert.size > 0) {
-				_assert = SecurityManager.Decode (frame.assert.blob, frame.assert.size);
-			}
-			if (frame.deny.size > 0) {
-				_deny = SecurityManager.Decode (frame.deny.blob, frame.deny.size);
-			}
-			if (frame.permitonly.size > 0) {
-				_permitonly = SecurityManager.Decode (frame.permitonly.blob, frame.permitonly.size);
-			}
+			throw new NotImplementedException ();
 		}
 
 		public Assembly Assembly {
@@ -172,16 +125,7 @@ namespace System.Security {
 
 		static public ArrayList GetStack (int skipFrames)
 		{
-			Array stack = _GetSecurityStack (skipFrames+2);
-			ArrayList al = new ArrayList ();
-			for (int i = 0; i < stack.Length; i++) {
-				object o = stack.GetValue (i);
-				// null are unused slots allocated in the runtime
-				if (o == null)
-					break;
-				al.Add (new SecurityFrame ((RuntimeSecurityFrame)o));
-			}
-			return al;
+			return new ArrayList ();
 		}
 	}
 }

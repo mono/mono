@@ -8,7 +8,7 @@ TEST_ARCHIVE = testSuite.zip
 RNCTESTS = test/RNCTest.xml
 RNCTEST_ARCHIVE = anglia-test-suite.zip
 
-all : relaxngtest.exe anglia-test-runner.exe
+all : relaxngtest.exe #anglia-test-runner.exe
 
 relaxngtest.exe : relaxngtest.cs $(TESTS)
 	$(MCS_RUNTIME) $(MCS) -debug+ relaxngtest.cs -r:Commons.Xml.Relaxng.dll

@@ -96,7 +96,7 @@ namespace System.ServiceModel.Description {
 			 * 
 			 */
 
-			var exactlyOne = element.FirstChild as XmlElement;
+			var exactlyOne = element.SelectSingleNode ("*") as XmlElement;
 			if (exactlyOne == null) {
 				// OOPS
 				return;

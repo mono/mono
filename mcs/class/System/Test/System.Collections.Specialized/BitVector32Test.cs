@@ -189,21 +189,15 @@ namespace MonoTests.System.Collections.Specialized
 		{
 			BitVector32.Section s1 = BitVector32.CreateSection (32767);
 			BitVector32.Section s2 = BitVector32.CreateSection (32767, s1);
-			try {
-				BitVector32.Section s3 = BitVector32.CreateSection (4, s2);
-				Assert.Fail("Illegal section created");
-			} catch (ArgumentException) {}
+
+			BitVector32.Section s3 = BitVector32.CreateSection (4, s2);
 		}
 
                 [Test]
                 public void NegativeIndexer ()
                 {
                         BitVector32 bv = new BitVector32 (-1);
-#if NET_2_0
 			Assert.IsTrue (bv [Int32.MinValue], "Int32.MinValue");
-#else
-			Assert.IsFalse (bv [Int32.MinValue], "Int32.MinValue");
-#endif
                 }
 
                 [Test]

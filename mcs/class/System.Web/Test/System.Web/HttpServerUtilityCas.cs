@@ -121,7 +121,6 @@ namespace MonoCasTests.System.Web {
 			catch (NullReferenceException) {
 				// ms
 			}
-#if NET_2_0
 			try {
 				hsu.Transfer ((IHttpHandler)null, true);
 			}
@@ -134,7 +133,6 @@ namespace MonoCasTests.System.Web {
 			catch (NullReferenceException) {
 				// ms
 			}
-#endif
 			try {
 				Assert.IsNotNull (hsu.UrlDecode (url), "UrlDecode(string)");
 			}
@@ -232,7 +230,6 @@ namespace MonoCasTests.System.Web {
 			hsu.Execute (String.Empty, sw);
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (NullReferenceException))]
@@ -248,7 +245,6 @@ namespace MonoCasTests.System.Web {
 		{
 			hsu.Execute (String.Empty, sw, false);
 		}
-#endif
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Medium)]

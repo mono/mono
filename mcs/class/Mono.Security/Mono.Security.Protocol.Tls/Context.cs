@@ -122,6 +122,8 @@ namespace Mono.Security.Protocol.Tls
 			set { this.protocolNegotiated = value; }
 		}
 
+		public bool ChangeCipherSpecDone { get; set; }
+
 		public SecurityProtocolType SecurityProtocol
 		{
 			get 

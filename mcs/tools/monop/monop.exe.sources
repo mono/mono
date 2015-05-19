@@ -2,3 +2,15 @@ monop.cs
 options.cs
 outline.cs
 TypeSorter.cs
+../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
+../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
+../../class/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
+
+../../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
+../../../external/ikvm/reflect/*.cs
+../../../external/ikvm/reflect/Emit/*.cs
+../../../external/ikvm/reflect/Metadata/*.cs
+../../../external/ikvm/reflect/Reader/*.cs
+../../../external/ikvm/reflect/Writer/*.cs
+../../../external/ikvm/reflect/Impl/ITypeOwner.cs
+../../../external/ikvm/reflect/Impl/SymbolSupport.cs

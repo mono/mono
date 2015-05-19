@@ -12,6 +12,7 @@ System.IdentityModel.Selectors/SecurityTokenResolverTest.cs
 System.IdentityModel.Selectors/TestEvaluationContext.cs
 System.IdentityModel.Selectors/X509SecurityTokenAuthenticatorTest.cs
 System.IdentityModel.Selectors/X509SecurityTokenProviderTest.cs
+System.IdentityModel.Tokens/BootstrapContextTest.cs
 System.IdentityModel.Tokens/EncryptedKeyIdentifierClauseTest.cs
 System.IdentityModel.Tokens/InMemorySymmetricSecurityKeyTest.cs
 System.IdentityModel.Tokens/LocalIdKeyIdentifierClauseTest.cs

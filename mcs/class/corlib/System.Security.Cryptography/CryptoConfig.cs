@@ -41,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
 
 using Mono.Xml;
 
@@ -222,7 +223,6 @@ public partial class CryptoConfig {
 	// new (2.0) X509 Chain
 	private const string nameX509Chain = "X509Chain";
 	private const string defaultX509Chain = defaultNamespace + "X509Certificates.X509Chain, " + Consts.AssemblySystem;
-#if NET_4_0
 	// AES
 	const string system_core_assembly = ", System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 	const string nameAES_1 = "AES";
@@ -273,7 +273,6 @@ public partial class CryptoConfig {
 	// SHA512 provider
 	const string nameSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider";
 	const string defaultSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider" + system_core_assembly;
-#endif
 	static CryptoConfig () 
 	{
 		// lock(this) is bad
@@ -393,7 +392,6 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
 		// note: the default X.509Chain can also be created this way
 		unresolved_algorithms.Add (nameX509Chain, defaultX509Chain);
-#if NET_4_0
 		unresolved_algorithms.Add (nameAES_1, defaultAES_1);
 		unresolved_algorithms.Add (nameAES_2, defaultAES_1);
 		unresolved_algorithms.Add (nameAESManaged_1, defaultAESManaged);
@@ -415,7 +413,6 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
 		unresolved_algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
 		unresolved_algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
-#endif
 		Dictionary<string,string> oid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		// comments here are to match with MS implementation (but not with doc)
@@ -515,6 +512,11 @@ public partial class CryptoConfig {
 		}
 	}
 
+	internal static string MapNameToOID (string name, OidGroup oidGroup)
+	{
+		return MapNameToOID (name);
+	}
+
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
@@ -529,12 +531,6 @@ public partial class CryptoConfig {
 		string result = null;
 		oids.TryGetValue (name, out result);
 		return result;
-	}
-
-#if NET_4_0
-	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
-	public static bool AllowOnlyFipsAlgorithms {
-		get { return false; }
 	}
 
 	public static void AddAlgorithm (Type algorithm, params string[] names)
@@ -564,7 +560,6 @@ public partial class CryptoConfig {
 				oids [oid] = name;
 		}
 	}
-#endif
 
 	class CryptoHandler: SmallXmlParser.IContentHandler {
 

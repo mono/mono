@@ -124,12 +124,12 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateSingle<RangeHeaderValue> ("Range", RangeHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<Uri> ("Referer", Parser.Uri.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<RetryConditionHeaderValue> ("Retry-After", RetryConditionHeaderValue.TryParse, HttpHeaderKind.Response),
-				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("Server", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Response),
+				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("Server", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Response, separator: " "),
 				HeaderInfo.CreateMulti<TransferCodingWithQualityHeaderValue> ("TE", TransferCodingWithQualityHeaderValue.TryParse, HttpHeaderKind.Request, 0),
 				HeaderInfo.CreateMulti<string> ("Trailer", CollectionParser.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<TransferCodingHeaderValue> ("Transfer-Encoding", TransferCodingHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<ProductHeaderValue> ("Upgrade", ProductHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
-				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("User-Agent", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Request),
+				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("User-Agent", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Request, separator: " "),
 				HeaderInfo.CreateMulti<string> ("Vary", CollectionParser.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<ViaHeaderValue> ("Via", ViaHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<WarningHeaderValue> ("Warning", WarningHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
@@ -350,10 +350,17 @@ namespace System.Net.Http.Headers
 				sb.Append (entry.Key);
 				sb.Append (": ");
 
+				string separator = ",";
+				HeaderInfo headerInfo;
+				if (known_headers.TryGetValue (entry.Key, out headerInfo) && headerInfo.AllowsMany)
+					separator = headerInfo.Separator;
+
 				bool first = true;
 				foreach (var v in entry.Value) {
-					if (!first)
-						sb.Append (", ");
+					if (!first) {
+						sb.Append (separator);
+						sb.Append (" ");
+					}
 
 					sb.Append (v);
 					first = false;
@@ -458,7 +465,8 @@ namespace System.Net.Http.Headers
 			HeaderBucket value;
 
 			if (!headers.TryGetValue (name, out value)) {
-				value = new HeaderBucket (new HttpHeaderValueCollection<T> (this, known_headers [name]));
+				var hinfo = known_headers[name];
+				value = new HeaderBucket (new HttpHeaderValueCollection<T> (this, hinfo));
 				headers.Add (name, value);
 			}
 

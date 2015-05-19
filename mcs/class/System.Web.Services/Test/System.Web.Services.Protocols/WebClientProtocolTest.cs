@@ -42,7 +42,6 @@ namespace MonoTests.System.Web.Services.Protocols
 		{
 		}
 
-#if NET_2_0
 		[Test]
 		public void TestUseDefaultCredentials () {
 			Poker client = new Poker ();
@@ -56,6 +55,5 @@ namespace MonoTests.System.Web.Services.Protocols
 			client.Credentials = CredentialCache.DefaultCredentials;
 			Assert.IsTrue (client.UseDefaultCredentials, "#5");
 		}
-#endif
 	}
 }

@@ -65,7 +65,6 @@ namespace MonoTests.System.Xml {
 			ConcreteXmlResolver xr = new ConcreteXmlResolver ();
 			xr.ResolveUri (null, null);
 		}
-#if NET_2_0
 		[Test]
 		public void ResolveUri ()
 		{
@@ -103,7 +102,6 @@ namespace MonoTests.System.Xml {
 			u2 = xr.ResolveUri (null, "file:///mystuff");
 			Assert.IsTrue (u2.IsAbsoluteUri, "null,absolute/file");
 		}
-#endif
 
 #if NET_4_5
 		class AsyncXmlResolver : XmlResolver

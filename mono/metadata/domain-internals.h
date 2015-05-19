@@ -18,7 +18,6 @@
 
 
 extern mono_mutex_t mono_delegate_section;
-extern mono_mutex_t mono_strtod_mutex;
 
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
@@ -85,6 +84,11 @@ typedef struct {
 	gpointer try_start;
 	gpointer try_end;
 	gpointer handler_start;
+	/*
+	 * For LLVM compiled code, this is the index of the il clause
+	 * associated with this handler.
+	 */
+	int clause_index;
 	union {
 		MonoClass *catch_class;
 		gpointer filter;
@@ -179,14 +183,18 @@ typedef struct
 } MonoArchEHJitInfo;
 
 typedef struct {
-	gboolean    cas_inited:1;
-	gboolean    cas_class_assert:1;
-	gboolean    cas_class_deny:1;
-	gboolean    cas_class_permitonly:1;
-	gboolean    cas_method_assert:1;
-	gboolean    cas_method_deny:1;
-	gboolean    cas_method_permitonly:1;
-} MonoMethodCasInfo;
+	/* Relative to code_start */
+	int thunks_offset;
+	int thunks_size;
+} MonoThunkJitInfo;
+
+typedef enum {
+	JIT_INFO_NONE = 0,
+	JIT_INFO_HAS_GENERIC_JIT_INFO = (1 << 0),
+	JIT_INFO_HAS_TRY_BLOCK_HOLES = (1 << 1),
+	JIT_INFO_HAS_ARCH_EH_INFO = (1 << 2),
+	JIT_INFO_HAS_THUNK_INFO = (1 << 3)
+} MonoJitInfoFlags;
 
 struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and
@@ -197,6 +205,7 @@ struct _MonoJitInfo {
 		MonoMethod *method;
 		MonoImage *image;
 		gpointer aot_info;
+		gpointer tramp_info;
 	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
@@ -205,20 +214,23 @@ struct _MonoJitInfo {
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
 	gboolean    domain_neutral:1;
-	gboolean    has_cas_info:1;
 	gboolean    has_generic_jit_info:1;
 	gboolean    has_try_block_holes:1;
 	gboolean    has_arch_eh_info:1;
+	gboolean    has_thunk_info:1;
 	gboolean    from_aot:1;
 	gboolean    from_llvm:1;
-	gboolean    dbg_hidden_inited:1;
+	gboolean    dbg_attrs_inited:1;
 	gboolean    dbg_hidden:1;
 	/* Whenever this jit info was loaded in async context */
 	gboolean    async:1;
-	gboolean    dbg_step_through_inited:1;
 	gboolean    dbg_step_through:1;
-	gboolean    dbg_non_user_code_inited:1;
 	gboolean    dbg_non_user_code:1;
+	/*
+	 * Whenever this jit info refers to a trampoline.
+	 * d.tramp_info contains additional data in this case.
+	 */
+	gboolean    is_trampoline:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -227,6 +239,7 @@ struct _MonoJitInfo {
 	/* There is an optional MonoGenericJitInfo after the clauses */
 	/* There is an optional MonoTryBlockHoleTableJitInfo after MonoGenericJitInfo clauses*/
 	/* There is an optional MonoArchEHJitInfo after MonoTryBlockHoleTableJitInfo */
+	/* There is an optional MonoThunkJitInfo after MonoArchEHJitInfo */
 };
 
 #define MONO_SIZEOF_JIT_INFO (offsetof (struct _MonoJitInfo, clauses))
@@ -425,8 +438,6 @@ typedef struct  {
 	const AssemblyVersionSet version_sets [4];
 } MonoRuntimeInfo;
 
-#define mono_domain_lock(domain) mono_locks_acquire(&(domain)->lock, DomainLock)
-#define mono_domain_unlock(domain) mono_locks_release(&(domain)->lock, DomainLock)
 #define mono_domain_assemblies_lock(domain) mono_locks_acquire(&(domain)->assemblies_lock, DomainAssembliesLock)
 #define mono_domain_assemblies_unlock(domain) mono_locks_release(&(domain)->assemblies_lock, DomainAssembliesLock)
 #define mono_domain_jit_code_hash_lock(domain) mono_locks_acquire(&(domain)->jit_code_hash_lock, DomainJitCodeHashLock)
@@ -434,230 +445,249 @@ typedef struct  {
 
 typedef MonoDomain* (*MonoLoadFunc) (const char *filename, const char *runtime_version);
 
+void mono_domain_lock (MonoDomain *domain);
+void mono_domain_unlock (MonoDomain *domain);
+
 void
-mono_install_runtime_load  (MonoLoadFunc func) MONO_INTERNAL;
+mono_install_runtime_load  (MonoLoadFunc func);
 
 MonoDomain*
-mono_runtime_load (const char *filename, const char *runtime_version) MONO_INTERNAL;
+mono_runtime_load (const char *filename, const char *runtime_version);
 
 typedef void (*MonoCreateDomainFunc) (MonoDomain *domain);
 
 void
-mono_install_create_domain_hook (MonoCreateDomainFunc func) MONO_INTERNAL;
+mono_install_create_domain_hook (MonoCreateDomainFunc func);
 
 typedef void (*MonoFreeDomainFunc) (MonoDomain *domain);
 
 void
-mono_install_free_domain_hook (MonoFreeDomainFunc func) MONO_INTERNAL;
+mono_install_free_domain_hook (MonoFreeDomainFunc func);
 
 void 
-mono_cleanup (void) MONO_INTERNAL;
+mono_cleanup (void);
 
 void
-mono_close_exe_image (void) MONO_INTERNAL;
+mono_close_exe_image (void);
+
+int
+mono_jit_info_size (MonoJitInfoFlags flags, int num_clauses, int num_holes);
 
 void
-mono_jit_info_table_add    (MonoDomain *domain, MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_init (MonoJitInfo *ji, MonoMethod *method, guint8 *code, int code_size,
+					MonoJitInfoFlags flags, int num_clauses, int num_holes);
+
+MonoJitInfoTable *
+mono_jit_info_table_new (MonoDomain *domain);
 
 void
-mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_table_free (MonoJitInfoTable *table);
 
 void
-mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end) MONO_INTERNAL;
+mono_jit_info_table_add    (MonoDomain *domain, MonoJitInfo *ji);
+
+void
+mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji);
+
+void
+mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end);
 
 MonoGenericJitInfo*
-mono_jit_info_get_generic_jit_info (MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_get_generic_jit_info (MonoJitInfo *ji);
 
 MonoGenericSharingContext*
-mono_jit_info_get_generic_sharing_context (MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_get_generic_sharing_context (MonoJitInfo *ji);
 
 void
-mono_jit_info_set_generic_sharing_context (MonoJitInfo *ji, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
+mono_jit_info_set_generic_sharing_context (MonoJitInfo *ji, MonoGenericSharingContext *gsctx);
 
 char *
-mono_make_shadow_copy (const char *filename) MONO_INTERNAL;
+mono_make_shadow_copy (const char *filename);
 
 gboolean
-mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name) MONO_INTERNAL;
+mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name);
 
 gpointer
-mono_domain_alloc  (MonoDomain *domain, guint size) MONO_INTERNAL;
+mono_domain_alloc  (MonoDomain *domain, guint size);
 
 gpointer
-mono_domain_alloc0 (MonoDomain *domain, guint size) MONO_INTERNAL;
+mono_domain_alloc0 (MonoDomain *domain, guint size);
 
 gpointer
-mono_domain_alloc0_lock_free (MonoDomain *domain, guint size) MONO_INTERNAL;
+mono_domain_alloc0_lock_free (MonoDomain *domain, guint size);
 
 void*
 mono_domain_code_reserve (MonoDomain *domain, int size) MONO_LLVM_INTERNAL;
 
 void*
-mono_domain_code_reserve_align (MonoDomain *domain, int size, int alignment) MONO_INTERNAL;
+mono_domain_code_reserve_align (MonoDomain *domain, int size, int alignment);
 
 void
-mono_domain_code_commit (MonoDomain *domain, void *data, int size, int newsize) MONO_INTERNAL;
+mono_domain_code_commit (MonoDomain *domain, void *data, int size, int newsize);
 
 void *
-nacl_domain_get_code_dest (MonoDomain *domain, void *data) MONO_INTERNAL;
+nacl_domain_get_code_dest (MonoDomain *domain, void *data);
 
 void 
-nacl_domain_code_validate (MonoDomain *domain, guint8 **buf_base, int buf_size, guint8 **code_end) MONO_INTERNAL;
+nacl_domain_code_validate (MonoDomain *domain, guint8 **buf_base, int buf_size, guint8 **code_end);
 
 void
-mono_domain_code_foreach (MonoDomain *domain, MonoCodeManagerFunc func, void *user_data) MONO_INTERNAL;
+mono_domain_code_foreach (MonoDomain *domain, MonoCodeManagerFunc func, void *user_data);
 
 void
-mono_domain_unset (void) MONO_INTERNAL;
+mono_domain_unset (void);
 
 void
-mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exception) MONO_INTERNAL;
+mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exception);
 
 MonoTryBlockHoleTableJitInfo*
-mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji);
 
 MonoArchEHJitInfo*
-mono_jit_info_get_arch_eh_info (MonoJitInfo *ji) MONO_INTERNAL;
+mono_jit_info_get_arch_eh_info (MonoJitInfo *ji);
 
-MonoMethodCasInfo*
-mono_jit_info_get_cas_info (MonoJitInfo *ji) MONO_INTERNAL;
+MonoThunkJitInfo*
+mono_jit_info_get_thunk_info (MonoJitInfo *ji);
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside
  * an AOT module.
  */
 typedef MonoJitInfo *(*MonoJitInfoFindInAot)         (MonoDomain *domain, MonoImage *image, gpointer addr);
-void          mono_install_jit_info_find_in_aot (MonoJitInfoFindInAot func) MONO_INTERNAL;
+void          mono_install_jit_info_find_in_aot (MonoJitInfoFindInAot func);
 
 void
-mono_jit_code_hash_init (MonoInternalHashTable *jit_code_hash) MONO_INTERNAL;
+mono_jit_code_hash_init (MonoInternalHashTable *jit_code_hash);
 
 MonoAppDomain *
-ves_icall_System_AppDomain_getCurDomain            (void) MONO_INTERNAL;
+ves_icall_System_AppDomain_getCurDomain            (void);
 
 MonoAppDomain *
-ves_icall_System_AppDomain_getRootDomain           (void) MONO_INTERNAL;
+ves_icall_System_AppDomain_getRootDomain           (void);
 
 MonoAppDomain *
 ves_icall_System_AppDomain_createDomain            (MonoString         *friendly_name,
-						    MonoAppDomainSetup *setup) MONO_INTERNAL;
+						    MonoAppDomainSetup *setup);
 
 MonoObject *
 ves_icall_System_AppDomain_GetData                 (MonoAppDomain *ad, 
-						    MonoString    *name) MONO_INTERNAL;
+						    MonoString    *name);
 
 MonoReflectionAssembly *
 ves_icall_System_AppDomain_LoadAssemblyRaw         (MonoAppDomain *ad,
     						    MonoArray *raw_assembly, 
 						    MonoArray *raw_symbol_store,
 						    MonoObject *evidence,
-						    MonoBoolean refonly) MONO_INTERNAL;
+						    MonoBoolean refonly);
 
 void
 ves_icall_System_AppDomain_SetData                 (MonoAppDomain *ad, 
 						    MonoString    *name, 
-						    MonoObject    *data) MONO_INTERNAL;
+						    MonoObject    *data);
 
 MonoAppDomainSetup *
-ves_icall_System_AppDomain_getSetup                (MonoAppDomain *ad) MONO_INTERNAL;
+ves_icall_System_AppDomain_getSetup                (MonoAppDomain *ad);
 
 MonoString *
-ves_icall_System_AppDomain_getFriendlyName         (MonoAppDomain *ad) MONO_INTERNAL;
+ves_icall_System_AppDomain_getFriendlyName         (MonoAppDomain *ad);
 
 MonoArray *
 ves_icall_System_AppDomain_GetAssemblies           (MonoAppDomain *ad,
-						    MonoBoolean refonly) MONO_INTERNAL;
+						    MonoBoolean refonly);
 
 MonoReflectionAssembly *
 ves_icall_System_Reflection_Assembly_LoadFrom      (MonoString *fname,
-						    MonoBoolean refonly) MONO_INTERNAL;
+						    MonoBoolean refonly);
 
 MonoReflectionAssembly *
 ves_icall_System_AppDomain_LoadAssembly            (MonoAppDomain *ad, 
 						    MonoString *assRef,
 						    MonoObject    *evidence,
-						    MonoBoolean refonly) MONO_INTERNAL;
+						    MonoBoolean refonly);
 
 gboolean
-ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id);
 
 void
-ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id);
 
 gint32
 ves_icall_System_AppDomain_ExecuteAssembly         (MonoAppDomain *ad, 
 													MonoReflectionAssembly *refass,
-													MonoArray     *args) MONO_INTERNAL;
+													MonoArray     *args);
 
 MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomain	   (MonoAppDomain *ad) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalSetDomain	   (MonoAppDomain *ad);
 
 MonoAppDomain * 
-ves_icall_System_AppDomain_InternalSetDomainByID   (gint32 domainid) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalSetDomainByID   (gint32 domainid);
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomain *ad) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalPushDomainRef (MonoAppDomain *ad);
 
 void
-ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalPushDomainRefByID (gint32 domain_id);
 
 void
-ves_icall_System_AppDomain_InternalPopDomainRef (void) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalPopDomainRef (void);
 
 MonoAppContext * 
-ves_icall_System_AppDomain_InternalGetContext      (void) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalGetContext      (void);
 
 MonoAppContext * 
-ves_icall_System_AppDomain_InternalGetDefaultContext      (void) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalGetDefaultContext      (void);
 
 MonoAppContext * 
-ves_icall_System_AppDomain_InternalSetContext	   (MonoAppContext *mc) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalSetContext	   (MonoAppContext *mc);
 
 gint32 
-ves_icall_System_AppDomain_GetIDFromDomain (MonoAppDomain * ad) MONO_INTERNAL;
+ves_icall_System_AppDomain_GetIDFromDomain (MonoAppDomain * ad);
 
 MonoString *
-ves_icall_System_AppDomain_InternalGetProcessGuid (MonoString* newguid) MONO_INTERNAL;
+ves_icall_System_AppDomain_InternalGetProcessGuid (MonoString* newguid);
 
 MonoAssembly *
-mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *status) MONO_INTERNAL;
+mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *status);
 
 const MonoRuntimeInfo*
-mono_get_runtime_info (void) MONO_INTERNAL;
+mono_get_runtime_info (void);
 
 void
-mono_runtime_set_no_exec (gboolean val) MONO_INTERNAL;
+mono_runtime_set_no_exec (gboolean val);
 
 gboolean
-mono_runtime_get_no_exec (void) MONO_INTERNAL;
+mono_runtime_get_no_exec (void);
 
 gboolean
-mono_assembly_name_parse (const char *name, MonoAssemblyName *aname) MONO_INTERNAL;
+mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
 MonoImage *mono_assembly_open_from_bundle (const char *filename,
 					   MonoImageOpenStatus *status,
-					   gboolean refonly) MONO_INTERNAL;
+					   gboolean refonly);
 
 MONO_API void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
 MonoReflectionAssembly *
-mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, gboolean refonly) MONO_INTERNAL;
+mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, MonoAssembly *requesting, gboolean refonly);
+
+MonoAssembly *
+mono_domain_assembly_postload_search (MonoAssemblyName *aname, MonoAssembly *requesting, gboolean refonly);
 
 MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
 						const char       *basedir, 
 						MonoImageOpenStatus *status,
-						gboolean refonly) MONO_INTERNAL;
+						gboolean refonly);
 
-void mono_set_private_bin_path_from_config (MonoDomain *domain) MONO_INTERNAL;
+void mono_set_private_bin_path_from_config (MonoDomain *domain);
 
-int mono_framework_version (void) MONO_INTERNAL;
+int mono_framework_version (void);
 
-void mono_reflection_cleanup_domain (MonoDomain *domain) MONO_INTERNAL;
+void mono_reflection_cleanup_domain (MonoDomain *domain);
 
-void mono_assembly_cleanup_domain_bindings (guint32 domain_id) MONO_INTERNAL;
+void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
-MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot) MONO_INTERNAL;
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
 

@@ -39,9 +39,7 @@ namespace MonoTests.Mono.Security {
 			ASN1 dt = ASN1Convert.FromDateTime (expected);
 			Assert.AreEqual (0x17, dt.Tag, "UTCTIME");
 			DateTime actual = ASN1Convert.ToDateTime (dt);
-#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
-#endif
 			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
@@ -52,9 +50,7 @@ namespace MonoTests.Mono.Security {
 			ASN1 dt = ASN1Convert.FromDateTime (expected);
 			Assert.AreEqual (0x17, dt.Tag, "UTCTIME");
 			DateTime actual = ASN1Convert.ToDateTime (dt);
-#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
-#endif
 			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
@@ -65,9 +61,7 @@ namespace MonoTests.Mono.Security {
 			ASN1 dt = ASN1Convert.FromDateTime (expected);
 			Assert.AreEqual (0x18, dt.Tag, "GENERALIZEDTIME");
 			DateTime actual = ASN1Convert.ToDateTime (dt);
-#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
-#endif
 			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
@@ -77,9 +71,7 @@ namespace MonoTests.Mono.Security {
 			string nosecs = "9912312359Z"; 
 			ASN1 dt = new ASN1 (0x18, Encoding.ASCII.GetBytes (nosecs));
 			DateTime actual = ASN1Convert.ToDateTime (dt);
-#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
-#endif
 			Assert.AreEqual (nosecs, actual.ToUniversalTime ().ToString ("yyMMddHHmm") + "Z", "DateTime");
 		}
 
@@ -173,12 +165,10 @@ namespace MonoTests.Mono.Security {
 		}
 
 		[Test]
-#if NET_2_0
 		// the large X test tries to encode an invalid OID (second part being > 40).
 		// In 1.x CryptoConfig.EncodeOID just encoded the binary (so we copied the 
 		// *bad* behaviour) but 2.0 encode it differently (sigh)
 		[Category ("NotDotNet")]
-#endif
 		public void ConvertOID_LargeX () 
 		{
 			ASN1 asn = new ASN1 (0x06, new byte [] { 0xA8, 0x00, 0x00 });

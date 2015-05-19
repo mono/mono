@@ -247,9 +247,6 @@ namespace System {
 
 
 					if (invalidUnescape
-#if !NET_4_0
-						&& uriFormat == UriFormat.SafeUnescaped && char.IsControl (x)
-#endif
 					) {
 						s.Append (c);
 						i = iStart;
@@ -277,9 +274,7 @@ namespace System {
 				return HexEscapeMultiByte (c);
 
 			if (isEscaped && (
-#if NET_4_0
 				(userEscaped && c < 0xFF) ||
-#endif
 				!NeedToUnescape (c, scheme, component, uriKind, uriFormat, formatFlags))) {
 				if (IriParsing &&
 					(c == '<' || c == '>' || c == '^' || c == '{' || c == '|' || c ==  '}' || c > 0x7F) &&
@@ -486,12 +481,7 @@ namespace System {
 					(formatFlags & FormatFlags.HasFragmentPercentage) != 0)
 					return true;
 
-#if NET_4_5
 				return false;
-#else
-				return uriFormat == UriFormat.UriEscaped ||
-					(uriFormat != UriFormat.Unescaped && (formatFlags & FormatFlags.HasComponentCharactersToNormalize) != 0);
-#endif
 			}
 
 			if (uriFormat == UriFormat.SafeUnescaped || uriFormat == ToStringUnescape) {

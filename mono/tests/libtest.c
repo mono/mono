@@ -33,7 +33,9 @@ typedef int (STDCALL *SimpleDelegate) (int a);
 
 #if defined(WIN32) && defined (_MSC_VER)
 #define LIBTEST_API __declspec(dllexport)
-#else 
+#elif defined(__GNUC__)
+#define LIBTEST_API  __attribute__ ((visibility ("default")))
+#else
 #define LIBTEST_API
 #endif
 
@@ -256,6 +258,28 @@ mono_return_int_su (union su a) {
 	return a.i1;
 }
 
+struct FI {
+	float f1;
+	float f2;
+	float f3;
+};
+
+struct NestedFloat {
+	struct FI fi;
+	float f4;
+};
+
+LIBTEST_API struct NestedFloat STDCALL
+mono_return_nested_float (void)
+{
+	struct NestedFloat f;
+	f.fi.f1 = 1.0;
+	f.fi.f2 = 2.0;
+	f.fi.f3 = 3.0;
+	f.f4 = 4.0;
+	return f;
+}
+
 LIBTEST_API int STDCALL  
 mono_test_many_int_arguments (int a, int b, int c, int d, int e,
 							  int f, int g, int h, int i, int j);
@@ -387,7 +411,6 @@ mono_test_marshal_unicode_char_array (gunichar2 *s)
 	return 0;
 }
 
-
 LIBTEST_API int STDCALL 
 mono_test_empty_pinvoke (int i)
 {
@@ -482,6 +505,22 @@ mono_test_marshal_out_array (int *a1)
 		a1 [i] = i;
 	}
 	
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_out_byref_array_out_size_param (int **out_arr, int *out_len)
+{
+	int *arr;
+	int i, len;
+
+	len = 4;
+	arr = marshal_alloc (sizeof (gint32) * len);
+	for (i = 0; i < len; ++i)
+		arr [i] = i;
+	*out_arr = arr;
+	*out_len = len;
+
 	return 0;
 }
 
@@ -941,10 +980,7 @@ mono_test_marshal_delegate5 (SimpleDelegate5 delegate)
 LIBTEST_API int STDCALL 
 mono_test_marshal_delegate6 (SimpleDelegate5 delegate)
 {
-	int res;
-
-	res = delegate (NULL);
-
+	delegate (NULL);
 	return 0;
 }
 
@@ -1061,12 +1097,18 @@ mono_test_marshal_stringbuilder (char *s, int n)
 }
 
 LIBTEST_API int STDCALL  
-mono_test_marshal_stringbuilder2 (char *s, int n)
+mono_test_marshal_stringbuilder_append (char *s, int length)
 {
-	const char m[] = "EFGH";
+	const char out_sentinel[] = "CSHARP_";
+	const char out_len = strlen (out_sentinel);
 
-	strncpy(s, m, n);
-	s [n] = '\0';
+	for (int i=0; i < length; i++) {
+		s [i] = out_sentinel [i % out_len];
+	}
+
+	s [length] = '\0';
+
+
 	return 0;
 }
 
@@ -3518,7 +3560,6 @@ test_method_thunk (int test_id, gpointer test_method_handle, gpointer create_obj
 	gpointer test_method, ex = NULL;
 	gpointer (STDCALL *CreateObject)(gpointer*);
 
-
 	if (!mono_method_get_unmanaged_thunk)
 		return 1;
 
@@ -5309,6 +5350,20 @@ mono_test_marshal_return_lpwstr (void)
 
 	memcpy (res, tmp, 8);
 	g_free (tmp);
+
+	return res;
+}
+
+typedef struct {
+	double d;
+} SingleDoubleStruct;
+
+LIBTEST_API SingleDoubleStruct STDCALL
+mono_test_marshal_return_single_double_struct (void)
+{
+	SingleDoubleStruct res;
+
+	res.d = 3.0;
 
 	return res;
 }

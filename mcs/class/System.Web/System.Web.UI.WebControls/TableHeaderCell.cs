@@ -41,7 +41,6 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		public virtual string AbbreviatedText {
 			get {
@@ -110,6 +109,5 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 		}
-#endif
 	}
 }

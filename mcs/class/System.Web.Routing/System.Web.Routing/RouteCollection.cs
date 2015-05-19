@@ -39,9 +39,7 @@ using System.Web.Hosting;
 
 namespace System.Web.Routing
 {
-#if NET_4_0
 	[TypeForwardedFrom ("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
-#endif
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RouteCollection : Collection<RouteBase>
@@ -123,20 +121,14 @@ namespace System.Web.Routing
 
 			if (httpContext.Request == null)
 				throw new ArgumentException ("The context does not contain any request data.", "httpContext");
-#if NET_4_0
 			if (Count == 0)
 				return null;
-#endif			
 			if (!RouteExistingFiles) {
 				var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
 				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 				if (path != "~/" && vpp != null && (vpp.FileExists (path) || vpp.DirectoryExists (path)))
 					return null;
 			}
-#if !NET_4_0
-			if (Count == 0)
-				return null;
-#endif
 			foreach (RouteBase rb in this) {
 				var rd = rb.GetRouteData (httpContext);
 				if (rd != null)
@@ -155,19 +147,13 @@ namespace System.Web.Routing
 		{
 			if (requestContext == null)
 				throw new ArgumentNullException ("httpContext");
-#if !NET_4_0
-			if (Count == 0)
-				return null;
-#endif
 			VirtualPathData vp = null;
 			if (!String.IsNullOrEmpty (name)) {
 				RouteBase rb = this [name];
 				if (rb != null)
 					vp = rb.GetVirtualPath (requestContext, values);
-#if NET_4_0
 				else
 					throw new ArgumentException ("A route named '" + name + "' could not be found in the route collection.", "name");
-#endif
 			} else {
 				foreach (RouteBase rb in this) {
 					vp = rb.GetVirtualPath (requestContext, values);
@@ -193,7 +179,6 @@ namespace System.Web.Routing
 		{
 			return write_lock;
 		}
-#if NET_4_0
 		public void Ignore (string url)
 		{
 			Ignore (url, null);
@@ -240,7 +225,6 @@ namespace System.Web.Routing
 
 			return route;
 		}
-#endif
 		protected override void InsertItem (int index, RouteBase item)
 		{
 			// FIXME: what happens wrt its name?

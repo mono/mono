@@ -120,7 +120,7 @@ namespace System.Net.NetworkInformation {
 		long Read (string file)
 		{
 			try {
-				return long.Parse (NetworkInterface.ReadLine (linux.IfacePath + file));
+				return long.Parse (LinuxNetworkInterface.ReadLine (linux.IfacePath + file));
 			} catch {
 				return 0;
 			}

@@ -176,7 +176,7 @@ namespace MonoTests.System.ComponentModel {
 		}
 
 		[Test]
-		[ExpectedException (typeof(NotSupportedException))]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
 		public void RemoveAtIndexFromEmptyCollection ()
 		{
 			var collection = SortDescriptionCollection.Empty;

@@ -197,7 +197,7 @@ public class RSAPKCS1KeyExchangeDeformatterTest {
 	}
 
 	[Test]
-	[ExpectedException (typeof (CryptographicException))]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
 	public void Bug79320 ()
 	{
 		string s = "hdphq/mn8goBi43YGPkmOfPj5vXjHrKPJkT4mLT3l+XzLttHMLC4/yBYkuzlXtbrl2jtAJRb6oA8UcQFalUMnCa09LDZrgNU2yySn7YbiG8raSq7u2nfDCbPu+c8T9fyHxrCHrX0zeqqImX33csIn6rIrQZ8HKcMsoQso4qtS2A=";

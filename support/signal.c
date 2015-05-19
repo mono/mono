@@ -18,10 +18,10 @@
 #ifndef HOST_WIN32
 #include <sys/time.h>
 #include <sys/types.h>
-#if defined(__APPLE__)
-#include "fakepoll.h"
-#else
+#if defined(HAVE_POLL_H)
 #include <poll.h>
+#elif defined(HAVE_SYS_POLL_H)
+#include <sys/poll.h>
 #endif
 #include <unistd.h>
 #include <stdlib.h>

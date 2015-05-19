@@ -51,9 +51,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 		
 		[Test]
-#if !MOBILE
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CTS_NotAllowed ()
 		{
 			// this check is normally (e.g. RijndaelManaged) done later

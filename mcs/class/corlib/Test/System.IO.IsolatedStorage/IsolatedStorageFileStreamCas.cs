@@ -37,9 +37,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Threading;
 
-#if NET_2_0
 using Microsoft.Win32.SafeHandles;
-#endif
 
 namespace MonoCasTests.System.IO.IsolatedStorageTest {
 
@@ -229,7 +227,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 			IntPtr p = isfs.Handle;
 			// Note: The SecurityException for UnmanagedCode cannot be tested here because it's a LinkDemand
 		}
-#if NET_2_0
 		[Test]
 		[IsolatedStorageFilePermission (SecurityAction.PermitOnly, Unrestricted = true)]
 		[ExpectedException (typeof (IsolatedStorageException))]
@@ -239,7 +236,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 			SafeFileHandle sfh = isfs.SafeFileHandle;
 			// Note: The SecurityException for UnmanagedCode cannot be tested here because it's a LinkDemand
 		}
-#endif
 
 		// we use reflection to call IsolatedStorageFileStream as the Handle and SafeFileHandle
 		// properties are protected by LinkDemand (which will be converted into full demand, 
@@ -259,7 +255,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 				isfs.Close ();
 			}
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -274,7 +269,6 @@ namespace MonoCasTests.System.IO.IsolatedStorageTest {
 				isfs.Close ();
 			}
 		}
-#endif
 
 		// async tests (for stack propagation)
 

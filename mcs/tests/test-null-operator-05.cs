@@ -24,6 +24,11 @@ class C
 		if (v3 != 724)
 			return 3;
 
+		string[] ar3 = null;
+		var v4 = ar3?[0].Length;
+		if (v4 != null)
+			return 4;
+
 // TODO: Disabled for now?
 //        arr? [0] += 2;
 		return 0;

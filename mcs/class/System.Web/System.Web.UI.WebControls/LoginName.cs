@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.ComponentModel;
 using System.Security.Permissions;
@@ -60,11 +59,9 @@ namespace System.Web.UI.WebControls {
 					ViewState ["FormatString"] = value;
 			}
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (!Anonymous) {
@@ -113,4 +110,3 @@ namespace System.Web.UI.WebControls {
 	}
 }
 
-#endif

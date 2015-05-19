@@ -40,9 +40,7 @@ namespace MonoTests.System.IO {
 		{
 			FileNotFoundException fnf = new FileNotFoundException ();
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
 			Assert.IsNotNull (fnf.Message, "#4"); // Unable to find the specified file
@@ -55,9 +53,7 @@ namespace MonoTests.System.IO {
 		{
 			FileNotFoundException fnf = new FileNotFoundException ("message");
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
 			Assert.IsNotNull (fnf.Message, "#4");
@@ -72,9 +68,7 @@ namespace MonoTests.System.IO {
 		{
 			FileNotFoundException fnf = new FileNotFoundException (string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
 			Assert.IsNotNull (fnf.Message, "#4");
@@ -89,23 +83,13 @@ namespace MonoTests.System.IO {
 		{
 			FileNotFoundException fnf = new FileNotFoundException ((string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
-#if NET_2_0
 			Assert.IsNull (fnf.Message, "#4");
-#else
-			Assert.IsNotNull (fnf.Message, "#4"); // File or assembly name (null), or ...
-#endif
 			Assert.IsNull (fnf.FusionLog, "#5");
-#if NET_2_0
 			Assert.AreEqual (fnf.GetType ().FullName + ": ",
 				fnf.ToString (), "#6");
-#else
-			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName), "#6");
-#endif
 		}
 
 		[Test]
@@ -115,9 +99,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ("message",
 				ame);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNotNull (fnf.InnerException, "#3");
 			Assert.AreSame (ame, fnf.InnerException, "#4");
@@ -134,9 +116,7 @@ namespace MonoTests.System.IO {
 			ArithmeticException ame = new ArithmeticException ("something");
 			FileNotFoundException fnf = new FileNotFoundException (string.Empty, ame);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNotNull (fnf.InnerException, "#3");
 			Assert.AreSame (ame, fnf.InnerException, "#4");
@@ -153,25 +133,14 @@ namespace MonoTests.System.IO {
 			ArithmeticException ame = new ArithmeticException ("something");
 			FileNotFoundException fnf = new FileNotFoundException ((string) null, ame);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNotNull (fnf.InnerException, "#3");
 			Assert.AreSame (ame, fnf.InnerException, "#4");
-#if NET_2_0
 			Assert.IsNull (fnf.Message, "#5");
-#else
-			Assert.IsNotNull (fnf.Message, "#5"); // File or assembly name (null), or ...
-#endif
 			Assert.IsNull (fnf.FusionLog, "#6");
-#if NET_2_0
 			Assert.AreEqual (fnf.GetType ().FullName + ":  ---> "
 				+ ame.GetType ().FullName + ": something", fnf.ToString (), "#7");
-#else
-			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName), "#7");
-			Assert.IsFalse (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#9");
-#endif
 		}
 
 		[Test]
@@ -180,9 +149,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ("message",
 				(Exception) null);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
 			Assert.IsNotNull (fnf.Message, "#4");
@@ -198,9 +165,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ("message",
 				"file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#2");
 			Assert.AreEqual ("file.txt", fnf.FileName, "#3");
 			Assert.IsNull (fnf.InnerException, "#4");
@@ -209,13 +174,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNull (fnf.FusionLog, "#7");
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": message" + Environment.NewLine), "#8");
-#if NET_2_0
 			Assert.IsTrue (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#9");
 			Assert.IsFalse (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#9");
-#else
-			Assert.IsFalse (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#9");
-			Assert.IsTrue (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#endif
 		}
 
 		[Test]
@@ -224,9 +184,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ("message",
 				string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#2");
 			Assert.AreEqual (string.Empty, fnf.FileName, "#3");
 			Assert.IsNull (fnf.InnerException, "#4");
@@ -243,9 +201,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ("message",
 				(string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#A1");
-#endif
 			Assert.IsNull (fnf.FileName, "#A2");
 			Assert.IsNull (fnf.InnerException, "#A3");
 			Assert.IsNotNull (fnf.Message, "#A4");
@@ -257,9 +213,7 @@ namespace MonoTests.System.IO {
 
 			fnf = new FileNotFoundException (string.Empty, (string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#B1");
-#endif
 			Assert.IsNull (fnf.FileName, "#B2");
 			Assert.IsNull (fnf.InnerException, "#B3");
 			Assert.IsNotNull (fnf.Message, "#B4");
@@ -275,9 +229,7 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException (string.Empty,
 				string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#2");
 			Assert.AreEqual (string.Empty, fnf.FileName, "#3");
 			Assert.IsNull (fnf.InnerException, "#4");
@@ -293,16 +245,10 @@ namespace MonoTests.System.IO {
 			FileNotFoundException fnf = new FileNotFoundException ((string) null,
 				(string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNull (fnf.FileName, "#2");
 			Assert.IsNull (fnf.InnerException, "#3");
-#if NET_2_0
 			Assert.IsNull (fnf.Message, "#4");
-#else
-			Assert.IsNotNull (fnf.Message, "#4");
-#endif
 			Assert.IsNull (fnf.FusionLog, "#5");
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": "), "#6");
@@ -317,9 +263,7 @@ namespace MonoTests.System.IO {
 			
 			fnf = new FileNotFoundException (string.Empty, "file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#2");
 			Assert.AreEqual ("file.txt", fnf.FileName, "#3");
 			Assert.IsNull (fnf.InnerException, "#4");
@@ -328,13 +272,8 @@ namespace MonoTests.System.IO {
 			Assert.IsNull (fnf.FusionLog, "#7");
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": " + Environment.NewLine), "#8");
-#if NET_2_0
 			Assert.IsTrue (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#9");
 			Assert.IsFalse (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#else
-			Assert.IsFalse (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#9");
-			Assert.IsTrue (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#endif
 		}
 
 		[Test]
@@ -344,9 +283,7 @@ namespace MonoTests.System.IO {
 			
 			fnf = new FileNotFoundException ((string) null, "file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#A1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#A2");
 			Assert.AreEqual ("file.txt", fnf.FileName, "#A3");
 			Assert.IsNull (fnf.InnerException, "#A4");
@@ -355,19 +292,12 @@ namespace MonoTests.System.IO {
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": "), "#A7");
 			Assert.IsTrue (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#A8");
-#if NET_2_0
 			Assert.IsTrue (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#A9");
 			Assert.IsFalse (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#A10");
-#else
-			Assert.IsFalse (fnf.ToString ().IndexOf ("'file.txt'") != -1, "#A9");
-			Assert.IsTrue (fnf.ToString ().IndexOf ("\"file.txt\"") != -1, "#A10");
-#endif
 
 			fnf = new FileNotFoundException ((string) null, string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (fnf.Data, "#B1");
-#endif
 			Assert.IsNotNull (fnf.FileName, "#B2");
 			Assert.AreEqual (string.Empty, fnf.FileName, "#B3");
 			Assert.IsNull (fnf.InnerException, "#B4");
@@ -378,12 +308,7 @@ namespace MonoTests.System.IO {
 			Assert.IsTrue (fnf.ToString ().StartsWith (fnf.GetType ().FullName
 				+ ": "), "#B7");
 			Assert.IsFalse (fnf.ToString ().IndexOf (Environment.NewLine) != -1, "#B8");
-#if NET_2_0
 			Assert.IsTrue (fnf.ToString ().IndexOf ("''") != -1, "#B9");
-#else
-			Assert.IsFalse (fnf.ToString ().IndexOf ("''") != -1, "#B9");
-			Assert.IsFalse (fnf.ToString ().IndexOf ("\"\"") != -1, "#B10");
-#endif
 		}
 	}
 }

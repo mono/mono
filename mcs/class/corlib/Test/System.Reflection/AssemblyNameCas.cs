@@ -42,7 +42,6 @@ namespace MonoCasTests.System.Reflection {
 	public class AssemblyNameCas {
 
 		private MonoTests.System.Reflection.AssemblyNameTest ant;
-		private AssemblyName main;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()

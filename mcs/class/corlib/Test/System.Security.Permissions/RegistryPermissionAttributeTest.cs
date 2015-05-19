@@ -45,23 +45,15 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			RegistryPermission perm = (RegistryPermission) a.CreatePermission ();
-#if NET_2_0
 			Assert.AreEqual (String.Empty, perm.GetPathList (RegistryPermissionAccess.Create), "Create");
 			Assert.AreEqual (String.Empty, perm.GetPathList (RegistryPermissionAccess.Read), "Read");
 			Assert.AreEqual (String.Empty, perm.GetPathList (RegistryPermissionAccess.Write), "Write");
-#else
-			Assert.IsNull (perm.GetPathList (RegistryPermissionAccess.Create), "Create");
-			Assert.IsNull (perm.GetPathList (RegistryPermissionAccess.Read), "Read");
-			Assert.IsNull (perm.GetPathList (RegistryPermissionAccess.Write), "Write");
-#endif
 		}
 
 		[Test]
@@ -102,19 +94,15 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("mono", a.Create, "Create");
 			Assert.AreEqual ("mono", a.Read, "Read");
 			Assert.AreEqual ("mono", a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 
 			a.All = null;
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 		}
 
 		[Test]
@@ -134,19 +122,15 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("mono", a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 
 			a.Create = null;
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 		}
 
 		[Test]
@@ -157,22 +141,17 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (a.Create, "Create");
 			Assert.AreEqual ("mono", a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 
 			a.Read = null;
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void ChangeAccessControl ()
 		{
@@ -238,7 +217,6 @@ namespace MonoTests.System.Security.Permissions {
 			a.ViewAndModify = "mono";
 			Assert.AreEqual ("ViewAndModify", "mono", a.ViewAndModify);
 		}
-#endif
 
 		[Test]
 		public void Write ()
@@ -248,19 +226,15 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.AreEqual ("mono", a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 
 			a.Write = null;
 			Assert.IsNull (a.Create, "Create");
 			Assert.IsNull (a.Read, "Read");
 			Assert.IsNull (a.Write, "Write");
-#if NET_2_0
 			Assert.IsNull (a.ChangeAccessControl, "ChangeAccessControl");
 			Assert.IsNull (a.ViewAccessControl, "ViewAccessControl");
-#endif
 		}
 
 		[Test]

@@ -29,7 +29,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-#if NET_2_0
 namespace System.Web.Hosting
 {
         public interface IRegisteredObject
@@ -37,4 +36,3 @@ namespace System.Web.Hosting
                 void Stop (bool immediate);
         }
 }
-#endif

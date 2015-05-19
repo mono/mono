@@ -39,9 +39,7 @@ using System.Net.Configuration;
 using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
@@ -211,6 +209,13 @@ namespace System.Net
 				isDefaultWebProxySet = true;
 			}
 		}
+
+		internal static IWebProxy InternalDefaultWebProxy {
+			get {
+				return DefaultWebProxy;
+			}
+		}
+
 		
 		[MonoTODO("Needs to respect Module, Proxy.AutoDetect, and Proxy.ScriptLocation config settings")]
 		static IWebProxy GetDefaultWebProxy ()
@@ -286,7 +291,6 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
-#if NET_4_0
 		static HttpWebRequest SharedCreateHttp (Uri uri)
 		{
 			if (uri.Scheme != "http" && uri.Scheme != "https")
@@ -308,7 +312,6 @@ namespace System.Net
 				throw new ArgumentNullException ("requestUri");
 			return SharedCreateHttp (requestUri);
 		}
-#endif
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
 			throw GetMustImplement ();
@@ -516,7 +519,6 @@ namespace System.Net
 			prefixes [prefix] = o;
 		}
 
-#if NET_4_5
 		public virtual Task<Stream> GetRequestStreamAsync ()
 		{
 			return Task<Stream>.Factory.FromAsync (BeginGetRequestStream, EndGetRequestStream, null);
@@ -526,7 +528,6 @@ namespace System.Net
 		{
 			return Task<WebResponse>.Factory.FromAsync (BeginGetResponse, EndGetResponse, null);
 		}
-#endif
 
 	}
 }

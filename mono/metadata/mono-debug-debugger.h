@@ -11,19 +11,13 @@
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-compiler.h>
 
+void            mono_debugger_lock                          (void);
+void            mono_debugger_unlock                        (void);
 
-void            mono_debugger_initialize                    (void) MONO_INTERNAL;
+void
+mono_debug_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrArray **source_file_list, int **source_files, MonoSymSeqPoint **seq_points, int *n_seq_points);
 
-void            mono_debugger_lock                          (void) MONO_INTERNAL;
-void            mono_debugger_unlock                        (void) MONO_INTERNAL;
-
-gchar *
-mono_debugger_check_runtime_version (const char *filename) MONO_INTERNAL;
-
-MonoDebugMethodAddressList *
-mono_debugger_insert_method_breakpoint (MonoMethod *method, guint64 idx) MONO_INTERNAL;
-
-int
-mono_debugger_remove_method_breakpoint (guint64 index) MONO_INTERNAL;
+MONO_API void
+mono_debug_free_locals (MonoDebugLocalsInfo *info);
 
 #endif /* __MONO_DEBUG_DEBUGGER_H__ */

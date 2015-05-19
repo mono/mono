@@ -362,10 +362,8 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void PaddingModeEnum ()
 		{
-#if NET_2_0
 			Assert.AreEqual (4, (int)PaddingMode.ANSIX923, "ANSIX923");
 			Assert.AreEqual (5, (int)PaddingMode.ISO10126, "ISO10126");
-#endif
 			Assert.AreEqual (1, (int)PaddingMode.None, "None");
 			Assert.AreEqual (2, (int)PaddingMode.PKCS7, "PKCS7");
 			Assert.AreEqual (3, (int)PaddingMode.Zeros, "Zeros");
@@ -405,7 +403,6 @@ namespace MonoTests.System.Security.Cryptography {
 		// a. encrypt data larger than one block with a padding mode "X"
 		// b. decrypt the data with padding mode "None"
 		// c. compare the last (padding) bytes with the expected padding
-#if NET_2_0
 		private void ANSIX923_Full (SymmetricAlgorithm sa)
 		{
 			int bs = (sa.BlockSize >> 3);
@@ -485,7 +482,6 @@ namespace MonoTests.System.Security.Cryptography {
 			// now validate padding - ISO10126 is all random except last byte (length)
 			Assert.AreEqual (pd, decdata [decdata.Length - 1], "last byte");
 		}
-#endif
 		private void PKCS7_Full (SymmetricAlgorithm sa)
 		{
 			int bs = (sa.BlockSize >> 3);
@@ -569,7 +565,6 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i = 0; i < pd; i++)
 				Assert.AreEqual (0x00, decdata [decdata.Length - pd + i], i.ToString ());
 		}
-#if NET_2_0
 		// ANSI X.923
 
 		[Test]
@@ -669,7 +664,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			ISO10126_Partial (TripleDES.Create ());
 		}
-#endif
 		// PKCS #7
 
 		[Test]
@@ -810,7 +804,6 @@ namespace MonoTests.System.Security.Cryptography {
 			}
 			return result;
 		}
-#if NET_2_0
 		[Test]
 		public void ANSIX923_ISO10126 () 
 		{
@@ -870,15 +863,10 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual (4, Mismatch (PaddingMode.None, PaddingMode.ISO10126));
 		}
-#endif
 		[Test]
 		public void None_PKCS7 ()
 		{
-#if NET_2_0
 			Assert.AreEqual (4, Mismatch (PaddingMode.None, PaddingMode.PKCS7));
-#else
-			Assert.AreEqual (0, Mismatch (PaddingMode.None, PaddingMode.PKCS7));
-#endif
 		}
 
 		[Test]
@@ -886,7 +874,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual (0, Mismatch (PaddingMode.None, PaddingMode.Zeros));
 		}
-#if NET_2_0
 		[Test]
 		public void PKCS7_ANSIX923 ()
 		{
@@ -898,7 +885,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual (0, Mismatch (PaddingMode.PKCS7, PaddingMode.ISO10126));
 		}
-#endif
 		[Test]
 		public void PKCS7_None ()
 		{
@@ -910,7 +896,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual (1, Mismatch (PaddingMode.PKCS7, PaddingMode.Zeros));
 		}
-#if NET_2_0
 		[Test]
 		public void Zeros_ANSIX923 ()
 		{
@@ -922,7 +907,6 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual (4, Mismatch (PaddingMode.Zeros, PaddingMode.ISO10126));
 		}
-#endif
 		[Test]
 		public void Zeros_None ()
 		{
@@ -932,15 +916,10 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void Zeros_PKCS7 ()
 		{
-#if NET_2_0
 			Assert.AreEqual (4, Mismatch (PaddingMode.Zeros, PaddingMode.PKCS7));
-#else
-			Assert.AreEqual (0, Mismatch (PaddingMode.Zeros, PaddingMode.PKCS7));
-#endif
 		}
 
 		// MACTripleDES tests
-#if NET_2_0
 		private string MAC (PaddingMode padding, int length)
 		{
 			byte[] key = new byte [24] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
@@ -1015,6 +994,5 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] decdata = dec.TransformFinalBlock (encdata, 0, encdata.Length);
 			Assert.AreEqual (data, decdata);
 		}
-#endif
 	}
 }

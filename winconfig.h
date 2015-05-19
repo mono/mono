@@ -1,6 +1,10 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+#ifndef _MSC_VER
+#include "cygconfig.h"
+#else
+
 /* The architecture this is running on */
 #if defined(_M_IA64)
 #define ARCHITECTURE "ia64"
@@ -12,13 +16,9 @@
 #error Unknown architecture
 #endif
 
-#if _WIN32_WINNT < 0x0502
-/* Required for Vectored Exception Handling.
-   Interlocked* functions are also not available in XP SP1 and below
-*/
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0502
-#endif /* _WIN32_WINNT < 0x0502 */
+#if _WIN32_WINNT < 0x0600
+#error "Mono requires Windows Vista or later"
+#endif /* _WIN32_WINNT < 0x0600 */
 
 /*
  * Features that are not required in the Windows port
@@ -167,17 +167,14 @@
 /* Define to 1 if you have the `fstatvfs' function. */
 /* #undef HAVE_FSTATVFS */
 
-/* Have GC_enable */
-/* #define HAVE_GC_ENABLE 1 */
+/* Define to 1 if you have the `getaddrinfo' function. */
+#define HAVE_GETADDRINFO 1
 
-/* Have GC_gcj_malloc */
-/* #define HAVE_GC_GCJ_MALLOC 1 */
+/* Define to 1 if you have the `getnameinfo' function. */
+#define HAVE_GETNAMEINFO 1
 
-/* Define to 1 if you have the <gc/gc.h> header file. */
-/* #undef HAVE_GC_GC_H */
-
-/* Have gc.h */
-/* #define HAVE_GC_H 1 */
+/* Define to 1 if you have the `getprotobyname' function. */
+#define HAVE_GETPROTOBYNAME 1
 
 /* Define to 1 if you have the `getdomainname' function. */
 /* #undef HAVE_GETDOMAINNAME */
@@ -198,9 +195,7 @@
 /* #undef HAVE_GETPRIORITY */
 
 /* Define to 1 if you have the `GetProcessId' function. */
-#if (_WIN32_WINNT >= 0x0502)
 #define HAVE_GETPROCESSID 1
-#endif
 
 /* Define to 1 if you have the `getpwnam_r' function. */
 /* #undef HAVE_GETPWNAM_R */
@@ -224,7 +219,7 @@
 /* #undef HAVE_INET_ATON */
 
 /* Define to 1 if you have the `inet_pton' function. */
-/* #undef HAVE_INET_PTON */
+#define HAVE_INET_PTON 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -635,4 +630,5 @@
 /* #undef USE_MONO_MUTEX */
 
 /* Version number of package */
-#define VERSION "2.11"
+#define VERSION "4.1.0"
+#endif

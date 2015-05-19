@@ -101,7 +101,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNull (se.Attribute("Unrestricted"), "ToXml-Unrestricted");
 			Assert.IsNull (p.Certificate, "Certificate==null");
 		}
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
@@ -118,15 +117,6 @@ namespace MonoTests.System.Security.Permissions {
 			// and they aren't equals to None
 			Assert.IsTrue (!p.Equals (new PublisherIdentityPermission (PermissionState.None)));
 		}
-#else
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void PermissionStateUnrestricted () 
-		{
-			// Unrestricted isn't permitted for identity permissions
-			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.Unrestricted);
-		}
-#endif
 		[Test]
 		public void Certificate () 
 		{
@@ -231,16 +221,13 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void Union_DifferentCertificates ()
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
 			X509Certificate x2 = new X509Certificate (cert2);
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (x2);
 			IPermission p = p1.Union (p2);
-#if NET_2_0
 			// new XML format is used to contain more than one X.509 certificate
 			SecurityElement se = p.ToXml ();
 			Assert.AreEqual (2, se.Children.Count, "Childs");
@@ -248,9 +235,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ((se.Children [1] as SecurityElement).Attribute ("X509v3Certificate"), p2.ToXml ().Attribute ("X509v3Certificate"), "Cert#2");
 			// strangely it is still versioned as 'version="1"'.
 			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
-#else
-			Assert.IsNull (p, "cert1 U cert2 == null");
-#endif
 		}
 
 		[Test]

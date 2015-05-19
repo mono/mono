@@ -35,26 +35,15 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
 	[XmlFormatExtensionPoint ("Extensions")]
-#endif
 	public sealed class Message :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
-#if !NET_2_0
-		string name;
-#endif
 		MessagePartCollection parts;
 		ServiceDescription serviceDescription;
-#if NET_2_0
 		ServiceDescriptionFormatExtensionCollection extensions;
-#endif
 
 		#endregion // Fields
 
@@ -62,12 +51,7 @@ namespace System.Web.Services.Description
 		
 		public Message ()
 		{
-#if !NET_2_0
-			name = String.Empty;
-#endif
-#if NET_2_0
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-#endif
 			parts = new MessagePartCollection (this);
 			serviceDescription = null;
 		}
@@ -76,13 +60,6 @@ namespace System.Web.Services.Description
 
 		#region Properties
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NCName")]
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlElement ("part")]
 		public MessagePartCollection Parts {
@@ -94,12 +71,10 @@ namespace System.Web.Services.Description
 			get { return serviceDescription; }
 		}
 
-#if NET_2_0
 		[XmlIgnore]
 		public override ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}
-#endif
 
 		#endregion // Properties
 

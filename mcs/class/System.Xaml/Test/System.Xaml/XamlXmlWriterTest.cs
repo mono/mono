@@ -641,7 +641,7 @@ namespace MonoTests.System.Xaml
 #else
 			string ver = "net_4_0";
 #endif
-			return File.ReadAllText ("Test/XmlFiles/" + name).Trim ().Replace (">\n", ">\r\n").Replace ("net_4_0", ver);
+			return File.ReadAllText ("Test/XmlFiles/" + name).Trim ().Replace (">\n", ">\r\n").Replace ("net_4_0", ver).Replace ("\r\n", Environment.NewLine);
 		}
 
 		[Test]

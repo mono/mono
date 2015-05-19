@@ -35,7 +35,7 @@ namespace Xamarin.ApiDiff {
 	public abstract class Comparer {
 
 		protected List<XElement> removed = new List<XElement> ();
-		protected List<XElement> obsoleted = new List<XElement> ();
+		protected ApiChanges modified = new ApiChanges ();
 
 		public TextWriter Output {
 			get { return State.Output; }
@@ -49,10 +49,10 @@ namespace Xamarin.ApiDiff {
 		}
 
 		public abstract void Added (XElement target);
-		public abstract void Modified (XElement source, XElement target);
+		public abstract void Modified (XElement source, XElement target, ApiChanges changes);
 		public abstract void Removed (XElement source);
 
-		public virtual bool Equals (XElement source, XElement target)
+		public virtual bool Equals (XElement source, XElement target, ApiChanges changes)
 		{
 			return XNode.DeepEquals (source, target);
 		}
@@ -62,6 +62,7 @@ namespace Xamarin.ApiDiff {
 		public virtual void Compare (IEnumerable<XElement> source, IEnumerable<XElement> target)
 		{
 			removed.Clear ();
+			modified.Clear ();
 
 			foreach (var s in source) {
 				SetContext (s);
@@ -73,11 +74,11 @@ namespace Xamarin.ApiDiff {
 				} else {
 					t.Remove ();
 					// possibly modified
-					if (Equals (s, t))
+					if (Equals (s, t, modified))
 						continue;
 
 					// still in target so will be part of Added
-					Modified (s, t);
+					Modified (s, t, modified);
 				}
 			}
 			// delayed, that way we show "Modified", "Added" and then "Removed"

@@ -38,7 +38,6 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Runtime.Remoting assembly
 
-#if NET_2_0
 	[assembly: AssemblyTitle ("System.Runtime.Remoting.dll")]
 	[assembly: AssemblyDescription ("System.Runtime.Remoting.dll")]
 	[assembly: AssemblyDefaultAlias ("System.Runtime.Remoting.dll")]
@@ -48,7 +47,6 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 
 	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
-#endif
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
