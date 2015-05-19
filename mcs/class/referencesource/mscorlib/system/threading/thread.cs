@@ -110,7 +110,7 @@ namespace System.Threading {
             }
         }
     }
-
+#if !MONO
     internal struct ThreadHandle
     {
         private IntPtr m_ptr;
@@ -120,13 +120,17 @@ namespace System.Threading {
             m_ptr = pThread;
         }
     }
-
+#endif
     // deliberately not [serializable]
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Thread))]
 [System.Runtime.InteropServices.ComVisible(true)]
-    public sealed class Thread : CriticalFinalizerObject, _Thread
+    public sealed partial class Thread : CriticalFinalizerObject
+#if !MOBILE
+    , _Thread
+#endif
     {
+#if !MONO
         /*=========================================================================
         ** Data accessed from managed code that needs to be defined in
         ** ThreadBaseObject to maintain alignment between the two classes.
@@ -211,7 +215,7 @@ namespace System.Threading {
             Contract.EndContractBlock();
             SetStartHelper((Delegate)start,0);  //0 will setup Thread with default stackSize
         }
-
+#endif
         [System.Security.SecuritySafeCritical]  // auto-generated
         public Thread(ThreadStart start, int maxStackSize) {
             if (start == null) {
@@ -222,6 +226,7 @@ namespace System.Threading {
             Contract.EndContractBlock();
             SetStartHelper((Delegate)start, maxStackSize);
         }
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public Thread(ParameterizedThreadStart start) {
             if (start == null) {
@@ -241,7 +246,7 @@ namespace System.Threading {
             Contract.EndContractBlock();
             SetStartHelper((Delegate)start, maxStackSize);
         }
-
+#if !MONO
         [ComVisible(false)]
         public override int GetHashCode()
         {
@@ -409,7 +414,8 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void StartInternal(IPrincipal principal, ref StackCrawlMark stackMark);
-#if FEATURE_COMPRESSEDSTACK
+#endif
+#if FEATURE_COMPRESSEDSTACK || MONO
         /// <internalonly/>
         [System.Security.SecurityCritical]  // auto-generated_required
         [DynamicSecurityMethodAttribute()]
@@ -418,7 +424,7 @@ namespace System.Threading {
         {
             throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_ThreadAPIsNotSupported"));
         }
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
@@ -428,7 +434,7 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal extern void RestoreAppDomainStack( IntPtr appDomainStack);
-        
+#endif
 
         /// <internalonly/>
         [System.Security.SecurityCritical]  // auto-generated_required
@@ -438,7 +444,7 @@ namespace System.Threading {
             throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_ThreadAPIsNotSupported"));
         }
 #endif // #if FEATURE_COMPRESSEDSTACK
-
+#if !MONO
 
         // Helper method to get a logical thread ID for StringBuilder (for
         // correctness) and for FileStream's async code path (for perf, to
@@ -758,10 +764,13 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall), ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         private static extern Thread GetCurrentThreadNative();
-
+#endif
         [System.Security.SecurityCritical]  // auto-generated
         private void SetStartHelper(Delegate start, int maxStackSize)
         {
+#if MONO
+            maxStackSize = GetProcessDefaultStackSize(maxStackSize);
+#else
 #if FEATURE_CORECLR
             // We only support default stacks in CoreCLR
             Contract.Assert(maxStackSize == 0);
@@ -769,6 +778,7 @@ namespace System.Threading {
             // Only fully-trusted code is allowed to create "large" stacks.  Partial-trust falls back to
             // the default stack size.
             ulong defaultStackSize = GetProcessDefaultStackSize();
+
             if ((ulong)(uint)maxStackSize > defaultStackSize)
             {
                 try
@@ -781,6 +791,7 @@ namespace System.Threading {
                 }
             }
 #endif
+#endif
 
             ThreadHelper threadStartCallBack = new ThreadHelper(start);
             if(start is ThreadStart)
@@ -792,7 +803,7 @@ namespace System.Threading {
                 SetStart(new ParameterizedThreadStart(threadStartCallBack.ThreadStart), maxStackSize);
             }                
         }
-
+#if !MONO
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1754,7 +1765,7 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern void ClearAbortReason();
-
+#endif
 
     } // End of class Thread
 
