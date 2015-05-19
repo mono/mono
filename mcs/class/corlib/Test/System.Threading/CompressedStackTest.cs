@@ -55,7 +55,6 @@ namespace MonoTests.System.Threading {
 		public void SetUp ()
 		{
 			success = false;
-			Thread.CurrentThread.SetCompressedStack (null);
 		}
 
 		[Test]
@@ -135,7 +134,7 @@ namespace MonoTests.System.Threading {
 		{
 			// this is because Thread.CurrentThread.GetCompressedStack () returns null for an empty
 			// compressed stack while CompressedStack.GetCompressedStack () return "something" empty ;-)
-			CompressedStack.Run (Thread.CurrentThread.GetCompressedStack (), new ContextCallback (Callback), true);
+			CompressedStack.Run (null, new ContextCallback (Callback), true);
 		}
 	}
 }

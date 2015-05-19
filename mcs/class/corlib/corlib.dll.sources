@@ -1540,6 +1540,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinLock.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinWait.cs
 ../../../external/referencesource/mscorlib/system/threading/synchronizationlockexception.cs
+../../../external/referencesource/mscorlib/system/threading/thread.cs
 ../../../external/referencesource/mscorlib/system/threading/threadabortexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadinterruptedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpriority.cs

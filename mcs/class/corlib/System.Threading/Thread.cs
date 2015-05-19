@@ -110,19 +110,12 @@ namespace System.Threading {
 		}
 	}
 
-	[ClassInterface (ClassInterfaceType.None)]
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_Thread))]
 	[StructLayout (LayoutKind.Sequential)]
-#if MOBILE
-	public sealed class Thread : CriticalFinalizerObject {
-#else
-	public sealed class Thread : CriticalFinalizerObject, _Thread {
-#endif
+	public sealed partial class Thread {
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
-		object start_obj;
+		object m_ThreadStartArg;
 		private ExecutionContext ec_to_set;
 		#endregion
 #pragma warning restore 414
@@ -154,7 +147,7 @@ namespace System.Threading {
 		static internal CultureInfo default_ui_culture;
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
-		private MulticastDelegate threadstart;
+		private MulticastDelegate m_Delegate;
 		//private string thread_name=null;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -432,7 +425,7 @@ namespace System.Threading {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
-			threadstart=start;
+			m_Delegate=start;
 		}
 
 		private Thread (InternalThread it) {
@@ -690,10 +683,10 @@ namespace System.Threading {
 		{
 			current_thread = this;
 
-			if (threadstart is ThreadStart) {
-				((ThreadStart) threadstart) ();
+			if (m_Delegate is ThreadStart) {
+				((ThreadStart) m_Delegate) ();
 			} else {
-				((ParameterizedThreadStart) threadstart) (start_obj);
+				((ParameterizedThreadStart) m_Delegate) (m_ThreadStartArg);
 			}
 		}
 
@@ -817,11 +810,8 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int SystemMaxStackStize ();
 
-		static int CheckStackSize (int maxStackSize)
+		static int GetProcessDefaultStackSize (int maxStackSize)
 		{
-			if (maxStackSize < 0)
-				throw new ArgumentOutOfRangeException ("less than zero", "maxStackSize");
-
 			if (maxStackSize < 131072) // make sure stack is at least 128k big
 				return 131072;
 
@@ -834,30 +824,10 @@ namespace System.Threading {
 			return Math.Min (maxStackSize, SystemMaxStackStize ());
 		}
 
-		public Thread (ThreadStart start, int maxStackSize)
+		void SetStart (MulticastDelegate start, int maxStackSize)
 		{
-			if (start == null)
-				throw new ArgumentNullException ("start");
-
-			threadstart = start;
-			Internal.stack_size = CheckStackSize (maxStackSize);;
-		}
-
-		public Thread (ParameterizedThreadStart start)
-		{
-			if (start == null)
-				throw new ArgumentNullException ("start");
-
-			threadstart = start;
-		}
-
-		public Thread (ParameterizedThreadStart start, int maxStackSize)
-		{
-			if (start == null)
-				throw new ArgumentNullException ("start");
-
-			threadstart = start;
-			Internal.stack_size = CheckStackSize (maxStackSize);
+			m_Delegate = start;
+			Internal.stack_size = maxStackSize;
 		}
 
 		public ExecutionContext ExecutionContext {
@@ -962,42 +932,8 @@ namespace System.Threading {
 
 		public void Start (object parameter)
 		{
-			start_obj = parameter;
+			m_ThreadStartArg = parameter;
 			Start ();
-		}
-
-		// NOTE: This method doesn't show in the class library status page because
-		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
-		// But it's there!
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-		[Obsolete ("see CompressedStack class")]
-		public CompressedStack GetCompressedStack ()
-		{
-#if MOBILE
-			throw new NotSupportedException ();
-#else			
-			// Note: returns null if no CompressedStack has been set.
-			// However CompressedStack.GetCompressedStack returns an 
-			// (empty?) CompressedStack instance.
-			CompressedStack cs = ExecutionContext.SecurityContext.CompressedStack;
-			return ((cs == null) || cs.IsEmpty ()) ? null : cs.CreateCopy ();
-#endif
-		}
-
-		// NOTE: This method doesn't show in the class library status page because
-		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
-		// But it's there!
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-		[Obsolete ("see CompressedStack class")]
-		public void SetCompressedStack (CompressedStack stack)
-		{
-#if MOBILE
-			throw new NotSupportedException ();
-#else
-			ExecutionContext.SecurityContext.CompressedStack = stack;
-#endif
 		}
 
 #if !MOBILE
