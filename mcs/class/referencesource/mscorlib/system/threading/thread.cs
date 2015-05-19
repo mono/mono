@@ -172,7 +172,7 @@ namespace System.Threading {
 #if DEBUG
         private bool m_ForbidExecutionContextMutation;
 #endif
-
+#endif
         /*=========================================================================
         ** This manager is responsible for storing the global data that is
         ** shared amongst all the thread local stores.
@@ -184,7 +184,7 @@ namespace System.Threading {
         =========================================================================*/
         [ThreadStatic]
         static private LocalDataStoreHolder s_LocalDataStore;
-
+#if !MONO
         // Do not move! Order of above fields needs to be preserved for alignment
         // with native code
         // See code:#threadCultureInfo
@@ -959,7 +959,7 @@ namespace System.Threading {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void StartupSetApartmentStateInternal();
 #endif // FEATURE_COMINTEROP_APARTMENT_SUPPORT
-
+#endif
         /*=========================================================================
         ** Allocates an un-named data slot. The slot is allocated on ALL the
         ** threads.
@@ -1038,7 +1038,7 @@ namespace System.Threading {
 
             dls.Store.SetData(slot, data);
         }
-
+#if !MONO
 
         // #threadCultureInfo
         //
@@ -1709,7 +1709,7 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern void MemoryBarrier();
-
+#endif
         private static LocalDataStoreMgr LocalDataStoreManager
         {
             get 
@@ -1722,7 +1722,7 @@ namespace System.Threading {
                 return s_LocalDataStoreMgr;
             }
         }
-
+#if !MOBILE
         void _Thread.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -1742,7 +1742,8 @@ namespace System.Threading {
         {
             throw new NotImplementedException();
         }
-
+#endif
+#if !MONO
         // Helper function to set the AbortReason for a thread abort.
         //  Checks that they're not alredy set, and then atomically updates
         //  the reason info (object + ADID).
