@@ -61,6 +61,9 @@ namespace System.Threading {
 
 		public static CompressedStack Capture ()
 		{
+#if MOBILE
+			throw new NotSupportedException ();
+#else
 			CompressedStack cs = new CompressedStack (0);
 			cs._list = SecurityFrame.GetStack (1);
 
@@ -71,6 +74,7 @@ namespace System.Threading {
 					cs._list.Add (currentCs._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
@@ -79,6 +83,9 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public CompressedStack GetCompressedStack ()
 		{
+#if MOBILE
+			throw new NotSupportedException ();
+#else
 			// Note: CompressedStack.GetCompressedStack doesn't return null
 			// like Thread.CurrentThread.GetCompressedStack if no compressed
 			// stack is present.
@@ -95,6 +102,7 @@ namespace System.Threading {
 					cs._list.Add (newstack._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		[MonoTODO ("incomplete")]
@@ -108,6 +116,9 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
+#if MOBILE
+			throw new NotSupportedException ();
+#else	
 			if (compressedStack == null)
 				throw new ArgumentException ("compressedStack");
 
@@ -122,6 +133,7 @@ namespace System.Threading {
 				if (original != null)
 					t.ExecutionContext.SecurityContext.CompressedStack = original;
 			}
+#endif
 		}
 
 		// internal stuff
