@@ -108,7 +108,6 @@ System/Guid.MonoTouch.cs
 System/IConsoleDriver.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
-System/LocalDataStoreSlot.cs
 System/MarshalByRefObject.cs
 System/Math.cs
 System/MonoAsyncCall.cs
@@ -877,7 +876,6 @@ System.Threading/LockCookie.cs
 System.Threading/LockQueue.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
-System.Threading/NamedDataSlot.cs
 System.Threading/NativeEventCalls.cs
 System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
@@ -925,6 +923,8 @@ ReferenceSources/SharedStatics.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
+../../../external/referencesource/mscorlib/system/_localdatastore.cs
+../../../external/referencesource/mscorlib/system/_localdatastoremgr.cs
 ../../../external/referencesource/mscorlib/system/accessviolationexception.cs
 ../../../external/referencesource/mscorlib/system/action.cs
 ../../../external/referencesource/mscorlib/system/activator.cs

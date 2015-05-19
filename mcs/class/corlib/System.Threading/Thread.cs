@@ -141,8 +141,6 @@ namespace System.Threading {
 		[ThreadStatic]
 		static ExecutionContext _ec;
 
-		static NamedDataSlot namedDataSlot;		
-
 		static internal CultureInfo default_culture;
 		static internal CultureInfo default_ui_culture;
 
@@ -317,64 +315,7 @@ namespace System.Threading {
 				return (int)(CurrentThread.internal_thread.thread_id);
 			}
 		}
-		
-		static NamedDataSlot NamedDataSlot {
-			get {
-				if (namedDataSlot == null)
-					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (true), null);
 
-				return namedDataSlot;
-			}
-		}
-		
-		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
-		{
-			return NamedDataSlot.Allocate (name);
-		}
-
-		public static void FreeNamedDataSlot (string name)
-		{
-			NamedDataSlot.Free (name);
-		}
-
-		public static LocalDataStoreSlot AllocateDataSlot ()
-		{
-			return new LocalDataStoreSlot (true);
-		}
-
-		public static object GetData (LocalDataStoreSlot slot) {
-			object[] slots = local_slots;
-			if (slot == null)
-				throw new ArgumentNullException ("slot");
-			if (slots != null && slot.slot < slots.Length)
-				return slots [slot.slot];
-			return null;
-		}
-
-		public static void SetData (LocalDataStoreSlot slot, object data) {
-			object[] slots = local_slots;
-			if (slot == null)
-				throw new ArgumentNullException ("slot");
-			if (slots == null) {
-				slots = new object [slot.slot + 2];
-				local_slots = slots;
-			} else if (slot.slot >= slots.Length) {
-				object[] nslots = new object [slot.slot + 2];
-				slots.CopyTo (nslots, 0);
-				slots = nslots;
-				local_slots = slots;
-			}
-			slots [slot.slot] = data;
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void FreeLocalSlotValues (int slot, bool thread_local);
-
-		public static LocalDataStoreSlot GetNamedDataSlot(string name)
-	 	{
-	 		return NamedDataSlot.Get (name);
-		}
-		
 		public static AppDomain GetDomain() {
 			return AppDomain.CurrentDomain;
 		}
@@ -935,29 +876,6 @@ namespace System.Threading {
 			m_ThreadStartArg = parameter;
 			Start ();
 		}
-
-#if !MOBILE
-		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
-			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		internal CultureInfo GetCurrentUICultureNoAppX ()
 		{
