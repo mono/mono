@@ -35,6 +35,7 @@
 #include "metadata/sgen-bridge-internal.h"
 #include "metadata/gc-internal.h"
 #include "utils/mono-memory-model.h"
+#include "utils/mono-rand.h"
 #include "utils/mono-logger-internal.h"
 
 #ifdef HEAVY_STATISTICS
@@ -2857,6 +2858,19 @@ sgen_client_describe_invalid_pointer (GCObject *ptr)
 	sgen_bridge_describe_pointer (ptr);
 }
 
+static gpointer mono_sgen_rng;
+
+static int
+mono_rng_in_range (guint32 lower, guint32 upper)
+{
+	g_assert (mono_sgen_rng);
+	guint32 val;
+	if (!mono_rand_try_get_uint32 (mono_sgen_rng, &val, lower, upper))
+		g_error ("Error getting rng int\n");
+
+	return val;
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -2873,6 +2887,9 @@ mono_gc_base_init (void)
 #endif
 
 	sgen_gc_init ();
+	mono_rand_open ();
+	mono_sgen_rng = mono_rand_init (NULL, 0);
+	sgen_install_rng ((RngFun)mono_rng_in_range);
 
 	if (nursery_canaries_enabled ())
 		sgen_set_use_managed_allocator (FALSE);
@@ -2881,6 +2898,7 @@ mono_gc_base_init (void)
 void
 mono_gc_base_cleanup (void)
 {
+	mono_rand_close (mono_sgen_rng);
 }
 
 gboolean
