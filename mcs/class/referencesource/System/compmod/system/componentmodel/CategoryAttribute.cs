@@ -287,8 +287,6 @@ namespace System.ComponentModel {
                 return "PropertyCategoryDDE";
             case "Design":
                 return "PropertyCategoryDesign";
-            case "DragDrop":
-                return "PropertyCategoryDragDrop";
             case "Focus":
                 return "PropertyCategoryFocus";
             case "Font":
@@ -299,8 +297,6 @@ namespace System.ComponentModel {
                 return "PropertyCategoryList";
             case "Layout":
                 return "PropertyCategoryLayout";
-            case "Default":
-                return "PropertyCategoryDefault";
             case "Mouse":
                 return "PropertyCategoryMouse";
             case "Position":
@@ -309,10 +305,16 @@ namespace System.ComponentModel {
                 return "PropertyCategoryText";
             case "Scale":
                 return "PropertyCategoryScale";
-            case "WindowStyle":
-                return "PropertyCategoryWindowStyle";
             case "Config":
                 return "PropertyCategoryConfig";
+#if !MOBILE
+            case "Default":
+                return "PropertyCategoryDefault";
+            case "DragDrop":
+                return "PropertyCategoryDragDrop";
+            case "WindowStyle":
+                return "PropertyCategoryWindowStyle";
+#endif
             }
             return value;
 #else
