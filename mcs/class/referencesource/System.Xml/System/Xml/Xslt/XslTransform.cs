@@ -116,12 +116,14 @@ namespace System.Xml.Xsl {
             if (stylesheet == null) {
                 throw new ArgumentNullException("stylesheet");
             }
+#if !DISABLE_CAS_USE
             if (evidence == null) {
                 evidence = new Evidence();
             }
             else {
                 new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
             }
+#endif
             Compile(stylesheet, resolver, evidence);
         }
 
