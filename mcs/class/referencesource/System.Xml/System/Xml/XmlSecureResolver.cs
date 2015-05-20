@@ -52,7 +52,7 @@ namespace System.Xml {
 
         public static Evidence CreateEvidenceForUrl(string securityUrl) {
             Evidence evidence = new Evidence();
-#if DISABLE_CAS_USE
+#if !DISABLE_CAS_USE
             if (securityUrl != null && securityUrl.Length > 0) {
                 evidence.AddHostEvidence(new Url(securityUrl));
                 evidence.AddHostEvidence(Zone.CreateFromUrl(securityUrl));
