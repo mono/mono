@@ -295,12 +295,6 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static InternalThread CurrentInternalThread_internal();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static uint AllocTlsData (Type type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void DestroyTlsData (uint offset);
-
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
