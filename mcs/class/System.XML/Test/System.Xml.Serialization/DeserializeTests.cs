@@ -163,6 +163,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void DeserializeArrayReferences ()
 		{
