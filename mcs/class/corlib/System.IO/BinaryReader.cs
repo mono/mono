@@ -253,6 +253,13 @@ namespace System.IO {
 
 					m_buffer [pos ++] = (byte)read_byte;
 					bytes_read ++;
+					if (m_encoding is UnicodeEncoding) {
+						CheckBuffer (pos + 1);
+						read_byte = m_stream.ReadByte();
+						if (read_byte != -1) {
+							m_buffer [pos++] = (byte)read_byte;
+						}
+					}
 
 					int n = m_encoding.GetChars (m_buffer, 0, pos, buffer, index + chars_read);
 					if (n > 0)

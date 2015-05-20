@@ -274,6 +274,20 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test]
+		public void TestReadUnicode ()
+		{
+			char testChar1 = 'H';
+			using (var stream = new MemoryStream())
+			using (var writer = new BinaryWriter(stream, Encoding.Unicode, true))
+			using (var reader = new BinaryReader(stream, Encoding.Unicode))
+			{
+				writer.Write(testChar1);
+				stream.Position = 0;
+				Assert.AreEqual ('H', reader.ReadChar ());
+			}
+		}
+
 
 		//-TODO: (TestRead[Type]*) Verify the ReadBoolean, ReadByte ....
 		// ReadBoolean, ReadByte, ReadChar, ReadInt32 Done
