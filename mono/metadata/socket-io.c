@@ -1366,7 +1366,7 @@ gint32 ves_icall_System_Net_Sockets_Socket_Receive_internal(SOCKET sock, MonoArr
 		return (0);
 	}
 
-	MONO_PREPARE_BLOCKING
+	MONO_PREPARE_BLOCKING_FORCED
 #ifdef HOST_WIN32
 	{
 		curthread->interrupt_on_stop = (gpointer)TRUE;
@@ -1376,7 +1376,7 @@ gint32 ves_icall_System_Net_Sockets_Socket_Receive_internal(SOCKET sock, MonoArr
 #else
 	ret = _wapi_recv (sock, buf, count, recvflags);
 #endif
-	MONO_FINISH_BLOCKING
+	MONO_FINISH_BLOCKING_FORCED
 
 	if(ret==SOCKET_ERROR) {
 		*error = WSAGetLastError ();
@@ -1442,9 +1442,9 @@ gint32 ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal(SOCKET sock, Mon
 		return (0);
 	}
 
-	MONO_PREPARE_BLOCKING
+	MONO_PREPARE_BLOCKING_FORCED
 	ret = _wapi_recvfrom (sock, buf, count, recvflags, sa, &sa_size);
-	MONO_FINISH_BLOCKING
+	MONO_FINISH_BLOCKING_FORCED
 
 	if(ret==SOCKET_ERROR) {
 		g_free(sa);
