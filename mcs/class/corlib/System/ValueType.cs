@@ -32,9 +32,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+//
+// Files:
+//  - mscorlib/system/valuetype.cs
+//
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System
 {
@@ -52,11 +61,18 @@ namespace System
 		// This is also used by RuntimeHelpers
 		internal static bool DefaultEquals (object o1, object o2)
 		{
-			object[] fields;
-
-			if (o2 == null)
+			if (o1 == null && o2 == null)
+				return true;
+			if (o1 == null || o2 == null)
 				return false;
 
+			RuntimeType o1_type = (RuntimeType) o1.GetType ();
+			RuntimeType o2_type = (RuntimeType) o2.GetType ();
+
+			if (o1_type != o2_type)
+				return false;
+
+			object[] fields;
 			bool res = InternalEquals (o1, o2, out fields);
 			if (fields == null)
 				return res;
@@ -105,6 +121,25 @@ namespace System
 						result ^= fields [i].GetHashCode ();
 				
 			return result;
+		}
+
+		static int hash_code_of_ptr_seed = 0;
+
+		internal static int GetHashCodeOfPtr (IntPtr ptr)
+		{
+			int hash_code = (int) ptr;
+			int seed = hash_code_of_ptr_seed;
+
+			if (seed == 0) {
+				/* We use the first non-0 pointer as the seed, all hashcodes will be
+				 * based off that. This is to make sure that we only reveal relative
+				 * memory addresses and never absolute ones. */
+				seed = hash_code;
+				Interlocked.CompareExchange (ref hash_code_of_ptr_seed, seed, 0);
+				seed = hash_code_of_ptr_seed;
+			}
+
+			return hash_code - seed;
 		}
 
 		// <summary>
