@@ -20,6 +20,7 @@ namespace MonoTests.System.XmlSerialization
 	public class SoapAttributesTests
 	{
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Defaults ()
 		{
 			SoapAttributes atts = new SoapAttributes ();

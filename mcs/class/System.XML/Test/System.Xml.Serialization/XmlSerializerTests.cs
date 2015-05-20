@@ -278,6 +278,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestSerializeEnumeration_FromValue_Encoded ()
 		{
 			SerializeEncoded ((int) SimpleEnumeration.SECOND, typeof (SimpleEnumeration));
@@ -375,6 +376,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestSerializeEnumDefaultValue_Encoded ()
 		{
 			SerializeEncoded (new EnumDefaultValue ());
@@ -1749,6 +1751,7 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("MobileNotWorking")]
 		public void TestSerializeXmlNodeArrayIncludesAttribute ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -2231,12 +2234,14 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void XmlArrayAttributeUnqualifiedWithNamespace ()
 		{
 			new XmlSerializer (typeof (XmlArrayUnqualifiedWithNamespace));
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void XmlArrayItemAttributeUnqualifiedWithNamespace ()
 		{
 			new XmlSerializer (typeof (XmlArrayItemUnqualifiedWithNamespace));

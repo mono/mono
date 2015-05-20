@@ -44,6 +44,7 @@ namespace MonoTests.System.XmlSerialization
 		
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")] // MS.NET results in compilation error (probably it generates bogus source.)
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void ReadLiteral ()
 		{
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());

@@ -817,6 +817,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestDeserializeObjectWithReadonlyNulCollection ()
 		{
 			string s3 = "";
