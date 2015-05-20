@@ -17,11 +17,14 @@ namespace System.Xml {
         XmlResolver resolver;
         PermissionSet permissionSet;
 
-        public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, CreateEvidenceForUrl(securityUrl)) {}
 
 #if DISABLE_CAS_USE
-        public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, new PermissionSet (PermissionState.None)) {}
+        public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, (PermissionSet) null) {}
+
+        public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, (PermissionSet) null) {}
 #else
+        public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, CreateEvidenceForUrl(securityUrl)) {}
+
         public XmlSecureResolver(XmlResolver resolver, Evidence evidence) : this(resolver, SecurityManager.GetStandardSandbox(evidence)) {}
 #endif
 
@@ -35,7 +38,9 @@ namespace System.Xml {
         }
 
         public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn) {
+#if !DISABLE_CAS_USE
             permissionSet.PermitOnly();
+#endif
             return resolver.GetEntity(absoluteUri, role, ofObjectToReturn);
         }
 
@@ -46,8 +51,10 @@ namespace System.Xml {
         }
 
         public static Evidence CreateEvidenceForUrl(string securityUrl) {
+#if DISABLE_CAS_USE
+            return null;
+#else
             Evidence evidence = new Evidence();
-#if !DISABLE_CAS_USE
             if (securityUrl != null && securityUrl.Length > 0) {
                 evidence.AddHostEvidence(new Url(securityUrl));
                 evidence.AddHostEvidence(Zone.CreateFromUrl(securityUrl));
@@ -64,10 +71,11 @@ namespace System.Xml {
                     }
                 }
             }
-#endif
             return evidence;
+#endif
         }
 
+#if !DISABLE_CAS_USE
         [Serializable]
         private class UncDirectory : EvidenceBase, IIdentityPermissionFactory {
             private string uncDir;
@@ -96,5 +104,6 @@ namespace System.Xml {
                 return ToXml().ToString();
             }
         }
+#endif
     }
 }
