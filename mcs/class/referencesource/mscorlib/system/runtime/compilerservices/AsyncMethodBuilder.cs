@@ -825,28 +825,16 @@ namespace System.Runtime.CompilerServices
             // so that they won't "leak" out of the first await.
 
             Thread currentThread = Thread.CurrentThread;
-#if MONO
-            ExecutionContext.Switcher ecs = default (ExecutionContext.Switcher);
-#else
             ExecutionContextSwitcher ecs = default(ExecutionContextSwitcher);
-#endif
             RuntimeHelpers.PrepareConstrainedRegions();
             try
             {
-#if MONO
-                currentThread.BranchExecutionContext (out ecs);
-#else
                 ExecutionContext.EstablishCopyOnWriteScope(currentThread, false, ref ecs);
-#endif
                 stateMachine.MoveNext();
             }
             finally
             {
-#if MONO
-                currentThread.RestoreExecutionContext (ref ecs);
-#else
                 ecs.Undo(currentThread);
-#endif
             }
         }
 
