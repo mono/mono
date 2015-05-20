@@ -15,8 +15,9 @@ namespace System.Xml {
     [PermissionSetAttribute(SecurityAction.InheritanceDemand, Name = "FullTrust")]
     public partial class XmlSecureResolver : XmlResolver {
         XmlResolver resolver;
+#if !DISABLE_CAS_USE
         PermissionSet permissionSet;
-
+#endif
 
 #if DISABLE_CAS_USE
         public XmlSecureResolver(XmlResolver resolver, string securityUrl) : this(resolver, (PermissionSet) null) {}
@@ -30,7 +31,9 @@ namespace System.Xml {
 
         public XmlSecureResolver(XmlResolver resolver, PermissionSet permissionSet) {
             this.resolver = resolver;
+#if !DISABLE_CAS_USE
             this.permissionSet = permissionSet;
+#endif
         }
 
         public override ICredentials Credentials {
