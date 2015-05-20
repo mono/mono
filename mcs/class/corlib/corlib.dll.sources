@@ -891,7 +891,6 @@ System.Threading/WaitHandle.cs
 
 System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
-System.Threading/ThreadLocal.cs
 
 ReferenceSources/__ConsoleStream.cs
 ReferenceSources/Array.cs
@@ -1543,6 +1542,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/threading/thread.cs
 ../../../external/referencesource/mscorlib/system/threading/threadabortexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadinterruptedexception.cs
+../../../external/referencesource/mscorlib/system/threading/ThreadLocal.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpriority.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstart.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstartexception.cs

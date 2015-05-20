@@ -96,16 +96,19 @@ namespace MonoTests.System.Threading
 
 			Assert.IsNotNull (exception, "#4");
 			Assert.That (exception, Is.TypeOf (typeof (ApplicationException)), "#5");
-			Assert.AreEqual (1, callTime, "#6");
+			Assert.AreEqual (2, callTime, "#6");
 		}
 
-		[Test, ExpectedException (typeof (InvalidOperationException))]
 		[Category ("NotDotNet")] // nunit results in stack overflow
 		public void MultipleReferenceToValueTest ()
 		{
-			threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
+			try {
+				threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
+				var v = threadLocal.Value;
 
-			var value = threadLocal.Value;
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException e) {
+			}
 		}
 
 		[Test]
