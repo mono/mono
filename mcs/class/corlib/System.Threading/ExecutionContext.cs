@@ -42,48 +42,14 @@ namespace System.Threading {
 	public sealed partial class ExecutionContext : ISerializable
            , IDisposable
 	{
-		internal struct Switcher
-		{
-			readonly ExecutionContext ec;
-			readonly LogicalCallContext _lcc;
-			readonly bool _suppressFlow;
-			readonly bool _capture;
-			readonly Dictionary<string, object> local_data;
-			readonly bool copy_on_write;
-
-			public Switcher (ExecutionContext ec)
-			{
-				this.ec = ec;
-				this._lcc = ec._lcc;
-				this._suppressFlow = ec._suppressFlow;
-				this._capture = ec._capture;
-				this.local_data = ec.local_data;
-				this.copy_on_write = ec.CopyOnWrite;
-			}
-
-			public bool IsEmpty {
-				get {
-					return ec == null;
-				}
-			}
-
-			public void Restore (ExecutionContext ec)
-			{
-				ec._lcc = this._lcc;
-				ec._suppressFlow = this._suppressFlow;
-				ec._capture = this._capture;
-				ec.local_data = this.local_data;
-				ec.CopyOnWrite = this.copy_on_write;
-			}
-		}
 
 #if !MOBILE
 		private SecurityContext _sc;
 #endif
-		private LogicalCallContext _lcc;
-		private bool _suppressFlow;
-		private bool _capture;
-		Dictionary<string, object> local_data;
+		internal LogicalCallContext _lcc;
+		internal bool _suppressFlow;
+		internal bool _capture;
+		internal Dictionary<string, object> local_data;
 
 		internal ExecutionContext ()
 		{
@@ -293,6 +259,59 @@ namespace System.Threading {
 			}
 
 			return current;
+		}
+
+		static internal void EstablishCopyOnWriteScope (Thread currentThread, bool knownNullWindowsIdentity, ref ExecutionContextSwitcher ecsw)
+		{
+			if (!currentThread.HasExecutionContext) {
+				ecsw = default (ExecutionContextSwitcher);
+			} else {
+				var _ec = currentThread.ExecutionContext;
+				ecsw = new ExecutionContextSwitcher (_ec);
+				_ec.CopyOnWrite = true;
+			}
+		}
+	}
+
+	internal struct ExecutionContextSwitcher
+	{
+		readonly ExecutionContext ec;
+		readonly LogicalCallContext _lcc;
+		readonly bool _suppressFlow;
+		readonly bool _capture;
+		readonly Dictionary<string, object> local_data;
+		readonly bool copy_on_write;
+
+		public ExecutionContextSwitcher (ExecutionContext ec)
+		{
+			this.ec = ec;
+			this._lcc = ec._lcc;
+			this._suppressFlow = ec._suppressFlow;
+			this._capture = ec._capture;
+			this.local_data = ec.local_data;
+			this.copy_on_write = ec.CopyOnWrite;
+		}
+
+		public bool IsEmpty {
+			get {
+				return ec == null;
+			}
+		}
+
+		public void Undo (Thread currentThread)
+		{
+			if (currentThread == null)
+				return;
+
+			if (ec != null) {
+				ec._lcc = this._lcc;
+				ec._suppressFlow = this._suppressFlow;
+				ec._capture = this._capture;
+				ec.local_data = this.local_data;
+				ec.CopyOnWrite = this.copy_on_write;
+			}
+
+			currentThread.ExecutionContext = ec;
 		}
 	}
 }
