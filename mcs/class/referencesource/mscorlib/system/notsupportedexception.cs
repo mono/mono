@@ -19,7 +19,7 @@ namespace System {
     using System.Runtime.Serialization;
 [System.Runtime.InteropServices.ComVisible(true)]
     [Serializable]
-    public class NotSupportedException : SystemException
+    public partial class NotSupportedException : SystemException
     {
         public NotSupportedException() 
             : base(Environment.GetResourceString("Arg_NotSupportedException")) {
