@@ -127,10 +127,8 @@ namespace System.Threading {
 		CultureInfo current_culture;
 		CultureInfo current_ui_culture;
 
-		// the name of local_slots, current_thread and _ec is
+		// the name of current_thread and _ec is
 		// important because they are used by the runtime.
-		[ThreadStatic]
-		static object[] local_slots;
 
 		[ThreadStatic]
 		static Thread current_thread;
