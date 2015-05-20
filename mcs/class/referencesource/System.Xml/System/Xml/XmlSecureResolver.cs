@@ -54,8 +54,8 @@ namespace System.Xml {
         }
 
         public static Evidence CreateEvidenceForUrl(string securityUrl) {
-            Evidence evidence = new Evidence();
 #if !DISABLE_CAS_USE
+            Evidence evidence = new Evidence();
             if (securityUrl != null && securityUrl.Length > 0) {
                 evidence.AddHostEvidence(new Url(securityUrl));
                 evidence.AddHostEvidence(Zone.CreateFromUrl(securityUrl));
@@ -72,8 +72,11 @@ namespace System.Xml {
                     }
                 }
             }
-#endif
+
             return evidence;
+#else
+            return null;
+#endif
         }
 
 #if !DISABLE_CAS_USE
