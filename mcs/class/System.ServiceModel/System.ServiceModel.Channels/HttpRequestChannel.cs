@@ -125,9 +125,7 @@ namespace System.ServiceModel.Channels
 				//web_request.UseDefaultCredentials = false;
 			}
 
-#if !NET_2_1 // FIXME: implement this to not depend on Timeout property
 			web_request.Timeout = (int) timeout.TotalMilliseconds;
-#endif
 
 			// There is no SOAP Action/To header when AddressingVersion is None.
 			if (message.Version.Envelope.Equals (EnvelopeVersion.Soap11) ||
@@ -190,6 +188,7 @@ namespace System.ServiceModel.Channels
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
+
 #if !NET_2_1
 			if (source.ClientCredentials != null) {
 				var cred = source.ClientCredentials;
@@ -205,9 +204,7 @@ namespace System.ServiceModel.Channels
 				if (buffer.Length > int.MaxValue)
 					throw new InvalidOperationException ("The argument message is too large.");
 
-#if !NET_2_1
 				web_request.ContentLength = (int) buffer.Length;
-#endif
 
 				web_request.BeginGetRequestStream (delegate (IAsyncResult r) {
 					try {
@@ -217,9 +214,7 @@ namespace System.ServiceModel.Channels
 						web_request.BeginGetResponse (GotResponse, result);
 					} catch (WebException ex) {
 						switch (ex.Status) {
-#if !NET_2_1
 						case WebExceptionStatus.NameResolutionFailure:
-#endif
 						case WebExceptionStatus.ConnectFailure:
 							result.Complete (new EndpointNotFoundException (new EndpointNotFoundException ().Message, ex));
 							break;
