@@ -910,6 +910,7 @@ ReferenceSources/Buffer.cs
 ReferenceSources/TextInfo.cs
 ReferenceSources/win32native.cs
 ReferenceSources/SharedStatics.cs
+ReferenceSources/SecurityContext.cs
 
 ../../../external/referencesource/mscorlib/system/__filters.cs
 ../../../external/referencesource/mscorlib/system/__hresults.cs
