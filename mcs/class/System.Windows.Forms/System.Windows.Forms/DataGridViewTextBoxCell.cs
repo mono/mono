@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 				throw new InvalidOperationException("There is no associated DataGridView.");
 			}
 
-			if (editingControl == null)
+			if (editingControl == null || editingControl.IsDisposed)
 				CreateEditingControl ();
 
 			DataGridView.EditingControlInternal = editingControl;
