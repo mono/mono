@@ -51,6 +51,15 @@ namespace System
 	[ComVisible (true)]
 	public abstract class ValueType
 	{
+		/*
+		 * Caution: Fields added to ValueType can mess with sub class layouts.
+		 * Causing bugs that appear completely unrelated as #30060
+		 */
+		private static class Internal
+		{
+			public static int hash_code_of_ptr_seed = 0;
+		}
+
 		protected ValueType ()
 		{
 		}
@@ -123,20 +132,18 @@ namespace System
 			return result;
 		}
 
-		static int hash_code_of_ptr_seed = 0;
-
 		internal static int GetHashCodeOfPtr (IntPtr ptr)
 		{
 			int hash_code = (int) ptr;
-			int seed = hash_code_of_ptr_seed;
+			int seed = Internal.hash_code_of_ptr_seed;
 
 			if (seed == 0) {
 				/* We use the first non-0 pointer as the seed, all hashcodes will be
 				 * based off that. This is to make sure that we only reveal relative
 				 * memory addresses and never absolute ones. */
 				seed = hash_code;
-				Interlocked.CompareExchange (ref hash_code_of_ptr_seed, seed, 0);
-				seed = hash_code_of_ptr_seed;
+				Interlocked.CompareExchange (ref Internal.hash_code_of_ptr_seed, seed, 0);
+				seed = Internal.hash_code_of_ptr_seed;
 			}
 
 			return hash_code - seed;
