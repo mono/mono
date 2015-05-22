@@ -3537,10 +3537,11 @@ case "x$libgc" in
 		;;
 esac
 
-AC_ARG_WITH(profile4_5,[  --with-profile4_5=yes,no        If you want to install the 4.5 FX (defaults to yes)],                [], [with_profile4_5=yes])
-AC_ARG_WITH(monodroid, [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],     [], [with_monodroid=no])
-AC_ARG_WITH(monotouch, [  --with-monotouch=yes,no,only    If you want to build the MonoTouch assemblies (defaults to no)],     [], [with_monotouch=no])
-AC_ARG_WITH(xammac,    [  --with-xammac=yes,no,only       If you want to build the Xamarin.Mac assemblies (defaults to no)],   [], [with_xammac=no])
+AC_ARG_WITH(profile4_5,     [  --with-profile4_5=yes,no               If you want to install the 4.5 FX (defaults to yes)],                [], [with_profile4_5=yes])
+AC_ARG_WITH(monodroid,      [  --with-monodroid=yes,no                If you want to build the MonoDroid assemblies (defaults to no)],     [], [with_monodroid=no])
+AC_ARG_WITH(monotouch,      [  --with-monotouch=yes,no,only           If you want to build the MonoTouch assemblies (defaults to no)],     [], [with_monotouch=no])
+AC_ARG_WITH(xammac,         [  --with-xammac=yes,no,only              If you want to build the Xamarin.Mac Mobile assemblies (defaults to no)],   [], [with_xammac=no])
+AC_ARG_WITH(net_4_5_xammac, [  --with-net_4_5_xammac=yes,no,only   If you want to build the Xamarin.Mac XM 4.5 assemblies (defaults to no)],   [], [with_net_4_5_xammac=no])
 
 OPROFILE=no
 AC_ARG_WITH(oprofile,[  --with-oprofile=no,<oprofile install dir>   Enable oprofile support (defaults to no)],[
@@ -3621,6 +3622,7 @@ if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    with_monodroid=no
    with_monotouch=no
    with_xammac=no
+   with_net_4_5_xammac=no
 fi
 
 if test x$DISABLE_MCS_DOCS = xyes; then
@@ -3643,8 +3645,11 @@ AM_CONDITIONAL(INSTALL_4_5, [test "x$with_profile4_5" = xyes])
 AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH, [test "x$with_monotouch" != "xno"])
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
+AM_CONDITIONAL(INSTALL_XAMMAC_45, [test "x$with_net_4_5_xammac" != "xno"])
+
 AM_CONDITIONAL(ONLY_MONOTOUCH, [test "x$with_monotouch" = "xonly"])
 AM_CONDITIONAL(ONLY_XAMMAC, [test "x$with_xammac" = "xonly"])
+AM_CONDITIONAL(ONLY_XAMMAC_45, [test "x$with_net_4_5_xammac" = "xonly"])
 
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
 AM_CONDITIONAL(MIPS_SGI, test ${TARGET}${ac_cv_prog_gcc} = MIPSno)
@@ -4058,13 +4063,14 @@ echo "
 	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm)
 
    Libraries:
-	.NET 4.5:      $with_profile4_5
-	MonoDroid:     $with_monodroid
-	MonoTouch:     $with_monotouch
-	Xamarin.Mac:   $with_xammac
-	JNI support:   $jdk_headers_found
-	libgdiplus:    $libgdiplus_msg
-	zlib:          $zlib_msg
+	.NET 4.5:             $with_profile4_5
+	MonoDroid:            $with_monodroid
+	MonoTouch:            $with_monotouch
+	Xamarin.Mac Mobile:   $with_xammac
+	Xamarin.Mac 4.5:      $with_net_4_5_xammac
+	JNI support:          $jdk_headers_found
+	libgdiplus:           $libgdiplus_msg
+	zlib:                 $zlib_msg
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

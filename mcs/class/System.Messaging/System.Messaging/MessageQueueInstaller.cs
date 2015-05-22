@@ -31,7 +31,9 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 using System.Drawing;
+#endif
 
 namespace System.Messaging 
 {
@@ -88,7 +90,9 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		public long MaximumJournalSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
@@ -96,7 +100,9 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		public long MaximumQueueSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
