@@ -359,6 +359,7 @@ namespace System.Net
 			}
 
 			WebAsyncResult result = new WebAsyncResult (cb, state, buffer, offset, size);
+			result.AsyncObject = request;
 			if (totalRead >= contentLength) {
 				result.SetCompleted (true, -1);
 				result.DoCallback ();
@@ -388,7 +389,7 @@ namespace System.Net
 				size = (int)(contentLength - totalRead);
 
 			if (!read_eof) {
-				result.InnerAsyncResult = cnc.BeginRead (request, buffer, offset, size, cb, result);
+				cnc.ReadAsync (request, buffer, offset, size, result);
 			} else {
 				result.SetCompleted (true, result.NBytes);
 				result.DoCallback ();
@@ -399,42 +400,11 @@ namespace System.Net
 		public override int EndRead (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r;
-			if (result.EndCalled) {
-				int xx = result.NBytes;
-				return (xx >= 0) ? xx : 0;
-			}
+			int nb = result.NBytes;
 
+			if (result.EndCalled)
+				return (nb >= 0) ? nb : 0;
 			result.EndCalled = true;
-
-			if (!result.IsCompleted) {
-				int nbytes = -1;
-				try {
-					nbytes = cnc.EndRead (request, result);
-				} catch (Exception exc) {
-					lock (locker) {
-						pendingReads--;
-						if (pendingReads == 0)
-							pending.Set ();
-					}
-
-					nextReadCalled = true;
-					cnc.Close (true);
-					result.SetCompleted (false, exc);
-					result.DoCallback ();
-					throw;
-				}
-
-				if (nbytes < 0) {
-					nbytes = 0;
-					read_eof = true;
-				}
-
-				totalRead += nbytes;
-				result.SetCompleted (false, nbytes + result.NBytes);
-				result.DoCallback ();
-				if (nbytes == 0)
-					contentLength = totalRead;
-			}
 
 			lock (locker) {
 				pendingReads--;
@@ -442,10 +412,23 @@ namespace System.Net
 					pending.Set ();
 			}
 
+			if (result.GotException) {
+				nextReadCalled = true;
+				cnc.Close (true);
+				throw result.Exception;
+			}
+
+			if (nb < 0) {
+				read_eof = true;
+			} else {
+				totalRead += result.NBytes;
+				if (nb == 0)
+					contentLength = totalRead;
+			}
+
 			if (totalRead >= contentLength && !nextReadCalled)
 				ReadAll ();
 
-			int nb = result.NBytes;
 			return (nb >= 0) ? nb : 0;
 		}
 

@@ -228,6 +228,7 @@ System.Net/SimpleAsyncResult.cs
 System.Net/SocketAddress.cs
 System.Net/TransportContext.cs
 System.Net/TransportType.cs
+System.Net/WebAsyncData.cs
 System.Net/WebAsyncResult.cs
 System.Net/WebConnection.cs
 System.Net/WebConnectionData.cs
