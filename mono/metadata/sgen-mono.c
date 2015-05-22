@@ -1706,7 +1706,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 #ifndef DISABLE_CRITICAL_REGION
 	ENTER_CRITICAL_REGION;
-	arr = sgen_try_alloc_obj_nolock (vtable, size);
+	arr = (MonoArray*)sgen_try_alloc_obj_nolock (vtable, size);
 	if (arr) {
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
 		arr->max_length = (mono_array_size_t)max_length;
@@ -1718,7 +1718,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	LOCK_GC;
 
-	arr = sgen_alloc_obj_nolock (vtable, size);
+	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
 		return mono_gc_out_of_memory (size);
@@ -1748,7 +1748,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 
 #ifndef DISABLE_CRITICAL_REGION
 	ENTER_CRITICAL_REGION;
-	arr = sgen_try_alloc_obj_nolock (vtable, size);
+	arr = (MonoArray*)sgen_try_alloc_obj_nolock (vtable, size);
 	if (arr) {
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
 		arr->max_length = (mono_array_size_t)max_length;
@@ -1763,7 +1763,7 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 
 	LOCK_GC;
 
-	arr = sgen_alloc_obj_nolock (vtable, size);
+	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
 		return mono_gc_out_of_memory (size);
@@ -1795,7 +1795,7 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 
 #ifndef DISABLE_CRITICAL_REGION
 	ENTER_CRITICAL_REGION;
-	str = sgen_try_alloc_obj_nolock (vtable, size);
+	str = (MonoString*)sgen_try_alloc_obj_nolock (vtable, size);
 	if (str) {
 		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
 		str->length = len;
@@ -1807,7 +1807,7 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 
 	LOCK_GC;
 
-	str = sgen_alloc_obj_nolock (vtable, size);
+	str = (MonoString*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!str)) {
 		UNLOCK_GC;
 		return mono_gc_out_of_memory (size);
