@@ -13,7 +13,7 @@ CLEAN_FILES += $(STRING_MESSAGES)
 EXTRA_DISTFILES = \
 	src/ComponentModel/Strings.resx
 	
-VALID_PROFILE := $(filter net_4_5 monotouch monotouch_watch monodroid xammac mobile mobile_static, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5 monotouch monotouch_watch xammac_net_4_5 monodroid xammac mobile mobile_static, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ComponentModel.Composition.dll
 NO_INSTALL = yes
