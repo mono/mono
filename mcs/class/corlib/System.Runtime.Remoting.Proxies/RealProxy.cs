@@ -163,7 +163,7 @@ namespace System.Runtime.Remoting.Proxies
 						      out object [] out_args)
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
-			mMsg.LogicalCallContext = ExecutionContext.CreateLogicalCallContext (true);
+			mMsg.LogicalCallContext = Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext;
 			CallType call_type = mMsg.CallType;
 			bool is_remproxy = (rp is RemotingProxy);
 
@@ -218,8 +218,9 @@ namespace System.Runtime.Remoting.Proxies
 				}
 			}
 			
-			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
-				CallContext.UpdateCurrentLogicalCallContext (res_msg.LogicalCallContext);
+			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo) {
+				Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext.Merge (res_msg.LogicalCallContext);
+			}
 
 			exc = res_msg.Exception;
 

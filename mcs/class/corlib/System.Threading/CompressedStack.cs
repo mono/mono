@@ -61,7 +61,7 @@ namespace System.Threading {
 
 		public static CompressedStack Capture ()
 		{
-#if MOBILE
+#if !FEATURE_COMPRESSEDSTACK
 			throw new NotSupportedException ();
 #else
 			CompressedStack cs = new CompressedStack (0);
@@ -83,7 +83,7 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public CompressedStack GetCompressedStack ()
 		{
-#if MOBILE
+#if !FEATURE_COMPRESSEDSTACK
 			throw new NotSupportedException ();
 #else
 			// Note: CompressedStack.GetCompressedStack doesn't return null
@@ -116,7 +116,7 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
-#if MOBILE
+#if !FEATURE_COMPRESSEDSTACK
 			throw new NotSupportedException ();
 #else	
 			if (compressedStack == null)

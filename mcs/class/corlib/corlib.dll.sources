@@ -541,7 +541,6 @@ System.Runtime.Remoting.Lifetime/LeaseState.cs
 System.Runtime.Remoting.Lifetime/LifetimeServices.cs
 System.Runtime.Remoting.Messaging/ArgInfo.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
-System.Runtime.Remoting.Messaging/CallContext.cs
 System.Runtime.Remoting.Messaging/ClientContextTerminatorSink.cs
 System.Runtime.Remoting.Messaging/ConstructionCall.cs
 System.Runtime.Remoting.Messaging/ConstructionCallDictionary.cs
@@ -560,7 +559,6 @@ System.Runtime.Remoting.Messaging/IMethodReturnMessage.cs
 System.Runtime.Remoting.Messaging/IRemotingFormatter.cs
 System.Runtime.Remoting.Messaging/InternalMessageWrapper.cs
 System.Runtime.Remoting.Messaging/ISerializationRootObject.cs
-System.Runtime.Remoting.Messaging/LogicalCallContext.cs
 System.Runtime.Remoting.Messaging/MessageSurrogateFilter.cs
 System.Runtime.Remoting.Messaging/MethodCall.cs
 System.Runtime.Remoting.Messaging/MethodCallMessageWrapper.cs
@@ -639,8 +637,6 @@ System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
-System.Security/SecurityContext.cs
-System.Security/SecurityContextSource.cs
 System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
@@ -864,11 +860,8 @@ System.Security.Principal/WindowsPrincipal.cs
 System.Text/EncodingHelper.cs
 System.Text/NormalizationForm.cs
 System.Text/Latin1Encoding.cs
-System.Threading/AsyncFlowControl.cs
 System.Threading/CompressedStack.cs
-System.Threading/ContextCallback.cs
 System.Threading/EventWaitHandle.cs
-System.Threading/ExecutionContext.cs
 System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
@@ -881,7 +874,6 @@ System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
-System.Threading/SynchronizationContext.cs
 System.Threading/Thread.cs
 System.Threading/ThreadPool.cs
 System.Threading/Timer.cs
@@ -900,7 +892,6 @@ ReferenceSources/CompatibilitySwitches.cs
 ReferenceSources/CultureData.cs
 ReferenceSources/DefaultBinder.cs
 ReferenceSources/Environment.cs
-ReferenceSources/ExecutionContext.cs
 ReferenceSources/HashHelpers.cs
 ReferenceSources/ParseNumbers.cs
 ReferenceSources/AppDomain.cs
@@ -1365,6 +1356,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/YieldAwaitable.cs
 
 ../../../external/referencesource/mscorlib/system/security/attributes.cs
+../../../external/referencesource/mscorlib/system/security/securitycontext.cs
 ../../../external/referencesource/mscorlib/system/security/securitydocument.cs
 
 ../../../external/referencesource/mscorlib/system/security/claims/Claim.cs
@@ -1467,6 +1459,8 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/text/stringbuilder.cs
 ../../../external/referencesource/mscorlib/system/text/stringbuildercache.cs
 
+../../../external/referencesource/mscorlib/system/runtime/remoting/callcontext.cs
+
 ../../../external/referencesource/mscorlib/system/runtime/serialization/deserializationeventhandler.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatter.cs
 ../../../external/referencesource/mscorlib/system/runtime/serialization/formatterconverter.cs
@@ -1528,6 +1522,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/threading/CancellationTokenSource.cs
 ../../../external/referencesource/mscorlib/system/threading/CountdownEvent.cs
 ../../../external/referencesource/mscorlib/system/threading/eventresetmode.cs
+../../../external/referencesource/mscorlib/system/threading/executioncontext.cs
 ../../../external/referencesource/mscorlib/system/threading/LazyInitializer.cs
 ../../../external/referencesource/mscorlib/system/threading/lockrecursionexception.cs
 ../../../external/referencesource/mscorlib/system/threading/manualresetevent.cs
@@ -1538,6 +1533,7 @@ ReferenceSources/SharedStatics.cs
 ../../../external/referencesource/mscorlib/system/threading/sendorpostcallback.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinLock.cs
 ../../../external/referencesource/mscorlib/system/threading/SpinWait.cs
+../../../external/referencesource/mscorlib/system/threading/synchronizationcontext.cs
 ../../../external/referencesource/mscorlib/system/threading/synchronizationlockexception.cs
 ../../../external/referencesource/mscorlib/system/threading/thread.cs
 ../../../external/referencesource/mscorlib/system/threading/threadabortexception.cs

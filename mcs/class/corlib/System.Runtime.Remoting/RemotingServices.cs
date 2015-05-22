@@ -142,7 +142,7 @@ namespace System.Runtime.Remoting
 				method = gmd.MakeGenericMethod (genericArguments);
 			}
 
-			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
+			var oldContext = CallContext.SetLogicalCallContext (reqMsg.LogicalCallContext);
 			
 			try 
 			{
@@ -168,14 +168,15 @@ namespace System.Runtime.Remoting
 						returnArgs [n++] = null; 
 				}
 				
-				result = new ReturnMessage (rval, returnArgs, n, ExecutionContext.CreateLogicalCallContext (true), reqMsg);
+				var latestCallContext = Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext;
+				result = new ReturnMessage (rval, returnArgs, n, latestCallContext, reqMsg);
 			} 
 			catch (Exception e) 
 			{
 				result = new ReturnMessage (e, reqMsg);
 			}
 			
-			CallContext.RestoreCallContext (oldContext);
+			CallContext.SetLogicalCallContext (oldContext);
 			return result;
 		}
 
@@ -769,11 +770,11 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
-			LogicalCallContext ctx = ExecutionContext.CreateLogicalCallContext (false);
-			if (ctx != null) {
+			var ctx = Thread.CurrentThread.GetExecutionContextReader().LogicalCallContext;
+			if (!ctx.IsNull) {
 				CACD cad = new CACD ();
 				cad.d = obj;
-				cad.c = ctx;
+				cad.c = ctx.Clone ();
 				obj = cad;
 			}
 			
@@ -795,7 +796,10 @@ namespace System.Runtime.Remoting
 			if (obj is CACD) {
 				CACD cad = (CACD) obj;
 				obj = cad.d;
-				CallContext.UpdateCurrentLogicalCallContext ((LogicalCallContext) cad.c);
+
+				var lcc = (LogicalCallContext) cad.c;
+				if (lcc.HasInfo)
+					Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext.Merge (lcc);
 			}
 			return obj;
 		}

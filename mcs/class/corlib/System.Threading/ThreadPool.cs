@@ -142,7 +142,7 @@ namespace System.Threading {
 					if (ar == null)
 						return false;
 				} else {
-					AsyncResult ares = new AsyncResult (callBack, state, true);
+					AsyncResult ares = new AsyncResult (callBack, state, !ExecutionContext.IsFlowSuppressed());
 					pool_queue (ares);
 				}
 				return true;

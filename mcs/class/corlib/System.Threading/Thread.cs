@@ -144,7 +144,10 @@ namespace System.Threading {
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate m_Delegate;
-		//private string thread_name=null;
+
+		private ExecutionContext m_ExecutionContext;    // this call context follows the logical thread
+
+		private bool m_ExecutionContextBelongsToOuterScope;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void ConstructInternalThread ();
@@ -612,9 +615,29 @@ namespace System.Threading {
 			}
 		}
 
+		static internal ContextCallback _ccb = new ContextCallback(ThreadStart_Context);
+
+		static private void ThreadStart_Context(Object state)
+		{
+			var t = (Thread)state;
+			if (t.m_Delegate is ThreadStart)
+			{
+				((ThreadStart)t.m_Delegate)();
+			}
+			else
+			{
+				((ParameterizedThreadStart)t.m_Delegate)(t.m_ThreadStartArg);
+			}
+		}
+
 		private void StartInternal ()
 		{
 			current_thread = this;
+
+			if (_ec != null) {
+				ExecutionContext.Run (_ec, _ccb, (Object)this);
+				return;
+			}
 
 			if (m_Delegate is ThreadStart) {
 				((ThreadStart) m_Delegate) ();
@@ -624,8 +647,10 @@ namespace System.Threading {
 		}
 
 		public void Start() {
-			// propagate informations from the original thread to the new thread
-			ec_to_set = ExecutionContext.Capture (false, true);
+			StackCrawlMark stackMark = default (StackCrawlMark);
+			// TODO: Use SetExecutionContextHelper to remove 2 of 3 levels of indirections
+			ec_to_set = ExecutionContext.Capture (ref stackMark, ExecutionContext.CaptureOptions.IgnoreSyncCtx);
+
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
@@ -761,24 +786,6 @@ namespace System.Threading {
 		{
 			m_Delegate = start;
 			Internal.stack_size = maxStackSize;
-		}
-
-		public ExecutionContext ExecutionContext {
-			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-			get {
-				if (_ec == null)
-					_ec = new ExecutionContext ();
-				return _ec;
-			}
-			internal set {
-				_ec = value;
-			}
-		}
-
-		internal bool HasExecutionContext {
-			get {
-				return _ec != null;
-			}
 		}
 
 		public int ManagedThreadId {

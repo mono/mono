@@ -251,7 +251,7 @@ namespace System.Security {
 				CheckAssembly (current, last);
 				CheckAppDomain (domain, last);
 			}
-
+#if FEATURE_COMPRESSEDSTACK
 			// Is there a CompressedStack to handle ?
 			CompressedStack stack = Thread.CurrentThread.GetCompressedStack ();
 			if ((stack != null) && !stack.IsEmpty ()) {
@@ -262,6 +262,7 @@ namespace System.Security {
 					}
 				}
 			}
+#endif
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]

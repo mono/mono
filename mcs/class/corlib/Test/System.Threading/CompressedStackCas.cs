@@ -29,6 +29,8 @@
 // Note: the class existed in 1.1 but the only thing we know about it is that
 // it has a finalizer ;-)
 
+#if FEATURE_COMPRESSEDSTACK
+
 using System;
 using System.Security;
 using System.Security.Permissions;
@@ -105,3 +107,4 @@ namespace MonoCasTests.System.Threading {
 	}
 }
 
+#endif
