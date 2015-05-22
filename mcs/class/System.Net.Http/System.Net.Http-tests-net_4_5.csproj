@@ -51,6 +51,7 @@
     <Compile Include="Test\System.Net.Http.Headers\EntityTagHeaderValueTest.cs" />
     <Compile Include="Test\System.Net.Http.Headers\HttpHeadersTest.cs" />
     <Compile Include="Test\System.Net.Http.Headers\HttpHeaderValueCollection.cs" />
+    <Compile Include="Test\System.Net.Http.Headers\HttpRequestHeadersTest.cs" />
     <Compile Include="Test\System.Net.Http.Headers\MediaTypeHeaderValueTest.cs" />
     <Compile Include="Test\System.Net.Http.Headers\MediaTypeWithQualityHeaderValueTest.cs" />
     <Compile Include="Test\System.Net.Http.Headers\NameValueHeaderValueTest.cs" />
