@@ -53,6 +53,7 @@ namespace System.ServiceModel.Description
 		EndpointAddress address;
 		SMBinding binding;
 		MetadataExchangeClientMode mode = MetadataExchangeClientMode.MetadataExchange;
+		TimeSpan? operation_timeout = null;
 
 		// constructors
 
@@ -88,7 +89,17 @@ namespace System.ServiceModel.Description
 		[MonoTODO]
 		public int MaximumResolvedReferences { get; set; }
 
-		public TimeSpan OperationTimeout { get; set; }
+		public TimeSpan OperationTimeout {
+			get {
+				if (!this.operation_timeout.HasValue) {
+					this.operation_timeout = DefaultCommunicationTimeouts.Instance.ReceiveTimeout;
+				}
+				return this.operation_timeout.Value;
+			}
+			set {
+				this.operation_timeout = value;
+			}
+		}
 
 		[MonoTODO]
 		public bool ResolveMetadataReferences { get; set; }
