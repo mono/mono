@@ -1,3 +1,4 @@
+#if !XAMMAC_4_5
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -186,4 +187,5 @@ namespace Mono.Xml.XPath
 {
 	class Dummy {}
 }
+#endif
 #endif

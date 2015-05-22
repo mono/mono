@@ -39,7 +39,10 @@ namespace System.Web.Services {
 #endif
 
 	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
-	public sealed class WebMethodAttribute : Attribute {
+#if !XAMMAC_4_5
+	public 
+#endif
+		sealed class WebMethodAttribute : Attribute {
 
 		#region Fields
 
