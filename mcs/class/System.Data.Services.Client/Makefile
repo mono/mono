@@ -17,8 +17,10 @@ LIB_MCS_FLAGS = \
 	-resource:Client/System.Data.Services.Client.resources \
 	-warn:2
 
+ifndef NO_WINDOWS_BASE
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -r:WindowsBase
+endif
 endif
 
 include ../../build/library.make

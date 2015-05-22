@@ -32,7 +32,9 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 using System.Drawing;
+#endif
 using System.Messaging.Design;
 using System.Threading;
 
@@ -258,7 +260,9 @@ namespace System.Messaging
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		[MessagingDescription ("MQ_MaximumJournalSize")]
 		public long MaximumJournalSize {
 			get {
@@ -270,7 +274,9 @@ namespace System.Messaging
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		[MessagingDescription ("MQ_MaximumQueueSize")]
 		public long MaximumQueueSize {
 			get {

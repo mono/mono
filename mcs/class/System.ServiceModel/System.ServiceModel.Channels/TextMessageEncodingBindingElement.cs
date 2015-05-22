@@ -143,7 +143,7 @@ namespace System.ServiceModel.Channels
 			return new TextMessageEncoderFactory (this);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		[MonoTODO]
 		protected override void OnImportPolicy (XmlElement assertion,
 			MessageVersion messageVersion,

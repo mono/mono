@@ -7,12 +7,18 @@ LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
-			-r:System.Configuration.dll \
-			-r:System.Web.Extensions.dll
+			-r:System.Configuration.dll
+
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+LIB_MCS_FLAGS += -r:System.Web.Extensions.dll
 endif
 
+endif
+
+ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += -r:System.ServiceModel.Activation.dll
+endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

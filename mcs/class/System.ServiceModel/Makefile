@@ -18,6 +18,10 @@ LIB_MCS_FLAGS = \
 	        /r:System.Runtime.Serialization.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
+ifdef XAMMAC_4_5
+LIB_REFS += System.ServiceModel.Internals
+endif
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:System.Configuration.dll \
@@ -27,20 +31,39 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:System.IdentityModel.Selectors.dll \
 			/r:System.Transactions.dll \
 			/r:System.Messaging.dll \
-			/r:System.Web.dll \
 			/r:System.Web.Services.dll \
 			/r:Mono.Security.dll
+
+ifdef XAMAMC_4_5			
+LIB_MCS_FLAGS += /r:System.Net.dll
+endif
+
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+LIB_MCS_FLAGS += /r:System.Web.dll
+endif
+
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
 LIB_MCS_FLAGS += /r:System.Web.ApplicationServices.dll
+endif
+
+ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
+endif
 
 ifneq (plainservice/,$(intermediate))
+ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
+endif
+
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY 
 LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
+endif
+
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
