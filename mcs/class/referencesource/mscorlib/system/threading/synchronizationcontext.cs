@@ -16,7 +16,9 @@
 
 namespace System.Threading
 {    
+#if !MONO
     using Microsoft.Win32.SafeHandles;
+#endif
     using System.Security.Permissions;
     using System.Runtime.InteropServices;
     using System.Runtime.CompilerServices;
@@ -160,6 +162,12 @@ namespace System.Threading
                                 
         // Static helper to which the above method can delegate to in order to get the default 
         // COM behavior.
+#if MONO
+        protected static int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
+        {
+            throw new NotImplementedException ();
+        }
+#else
         [System.Security.SecurityCritical]  // auto-generated_required
         [CLSCompliant(false)]
         [PrePrepareMethod]
@@ -167,6 +175,7 @@ namespace System.Threading
         [MethodImplAttribute(MethodImplOptions.InternalCall)]       
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected static extern int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout);
+#endif
 #endif
 
         // set SynchronizationContext on the current thread
@@ -269,6 +278,11 @@ namespace System.Threading
 #if FEATURE_APPX
             if (context == null && Environment.IsWinRTSupported)
                 context = GetWinRTContext();
+#endif
+
+#if MONODROID
+            if (context == null)
+                context = AndroidPlatform.GetDefaultSyncContext ();
 #endif
 
             return context;

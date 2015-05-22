@@ -196,7 +196,7 @@ namespace System.Xml {
 #if !SILVERLIGHT // Needed only for XmlTextReader constructors that takes url
         // this is only for constructors that takes url 
         string              url = string.Empty;
-#if !MOBILE
+#if FEATURE_COMPRESSEDSTACK
         CompressedStack     compressedStack;
 #endif
 #endif
@@ -603,7 +603,7 @@ namespace System.Xml {
                 throw new ArgumentException( Res.GetString( Res.Xml_EmptyUrl ), "url" );
             }
             namespaceManager = new XmlNamespaceManager( nt );
-#if !MOBILE
+#if FEATURE_COMPRESSEDSTACK
             compressedStack = CompressedStack.Capture();
 #endif
             this.url = url;
@@ -2812,7 +2812,7 @@ namespace System.Xml {
         [ResourceExposure(ResourceScope.None)]        
         private void OpenUrl() {
             Debug.Assert( url != null && url.Length > 0 );
-#if !MOBILE
+#if FEATURE_COMPRESSEDSTACK
             Debug.Assert( compressedStack != null );
 #endif
 
@@ -2827,7 +2827,7 @@ namespace System.Xml {
             }
 
             try {
-#if MOBILE
+#if !FEATURE_COMPRESSEDSTACK
                 OpenUrlDelegate (tmpResolver);
 #else
                 CompressedStack.Run( compressedStack, new ContextCallback( OpenUrlDelegate ), tmpResolver );

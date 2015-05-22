@@ -36,6 +36,13 @@ namespace System.Runtime.Remoting.Messaging{
         {
         }
 
+#if MONO
+        internal static object SetCurrentCallContext (LogicalCallContext ctx)
+        {
+            return null;
+        }
+#endif
+
         // Sets the given logical call context object on the thread.
         // Returns the previous one.
         internal static LogicalCallContext SetLogicalCallContext(

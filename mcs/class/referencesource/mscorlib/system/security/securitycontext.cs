@@ -165,7 +165,9 @@ namespace System.Security
 #if !FEATURE_PAL && FEATURE_IMPERSONATION
         private volatile WindowsIdentity             _windowsIdentity;
 #endif
+#if FEATURE_COMPRESSEDSTACK
         private volatile CompressedStack          _compressedStack;
+#endif
         static private volatile SecurityContext _fullTrustSC;
         
         internal volatile bool isNewCapture = false;
@@ -281,6 +283,9 @@ namespace System.Security
         [SecurityCritical]
         internal static AsyncFlowControl SuppressFlow(SecurityContextDisableFlow flags)
         {
+#if MOBILE
+            throw new NotSupportedException ();
+#else
             if (IsFlowSuppressed(flags))
             {
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CannotSupressFlowMultipleTimes"));
@@ -292,24 +297,27 @@ namespace System.Security
             AsyncFlowControl afc = new AsyncFlowControl();
             afc.Setup(flags);
             return afc;
+#endif
         }
 
         [SecuritySafeCritical]
         public static void RestoreFlow()
         {
+#if !MOBILE
             SecurityContext sc = Thread.CurrentThread.GetMutableExecutionContext().SecurityContext;
             if (sc == null || sc._disableFlow == SecurityContextDisableFlow.Nothing)
             {
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_CannotRestoreUnsupressedFlow"));
             }
             sc._disableFlow = SecurityContextDisableFlow.Nothing;        
+#endif
         }
 
         public static bool IsFlowSuppressed()
         {
             return SecurityContext.IsFlowSuppressed(SecurityContextDisableFlow.All);
         }
-#if !FEATURE_PAL && FEATURE_IMPERSONATION
+#if (!FEATURE_PAL && FEATURE_IMPERSONATION) || MONO
         public static bool IsWindowsIdentityFlowSuppressed()
         {
             return (_LegacyImpersonationPolicy|| SecurityContext.IsFlowSuppressed(SecurityContextDisableFlow.WI));
@@ -317,8 +325,12 @@ namespace System.Security
 #endif        
         [SecuritySafeCritical]
         internal static bool IsFlowSuppressed(SecurityContextDisableFlow flags)
-        {           
+        {  
+#if MOBILE
+            return false;
+#else
             return Thread.CurrentThread.GetExecutionContextReader().SecurityContext.IsFlowSuppressed(flags);
+#endif
         }
 
         // This method is special from a security perspective - the VM will not allow a stack walk to
@@ -344,7 +356,7 @@ namespace System.Security
             }
 
             securityContext.isNewCapture = false;
-
+#if !MOBILE
             ExecutionContext.Reader ec = Thread.CurrentThread.GetExecutionContextReader();
             
             // Optimization: do the callback directly if both the current and target contexts are equal to the
@@ -366,6 +378,7 @@ namespace System.Security
                 }
             }
             else
+#endif
             {
                 RunInternal(securityContext, callback, state);
             }
@@ -604,9 +617,10 @@ namespace System.Security
             }
     #endif // !FEATURE_PAL && FEATURE_IMPERSONATION
         
-
+#if FEATURE_COMPRESSEDSTACK
             // Force create CompressedStack
             sc.CompressedStack = new CompressedStack(null);
+#endif
             return sc;
         }
 

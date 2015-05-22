@@ -334,7 +334,7 @@ namespace System.Threading {
             IPrincipal principal = (IPrincipal)CallContext.Principal;
             StartInternal(principal, ref stackMark);
         }
-
+#endif
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal ExecutionContext.Reader GetExecutionContextReader()
@@ -409,7 +409,7 @@ namespace System.Threading {
             m_ExecutionContext = value.DangerousGetRawExecutionContext();
             ExecutionContextBelongsToCurrentScope = belongsToCurrentScope;
         }
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
