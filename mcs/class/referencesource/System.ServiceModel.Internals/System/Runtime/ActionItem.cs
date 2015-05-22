@@ -11,9 +11,11 @@ namespace System.Runtime
 
     abstract class ActionItem
     {
+#if FEATURE_COMPRESSEDSTACK
         [Fx.Tag.SecurityNote(Critical = "Stores the security context, used later in binding back into")]
         [SecurityCritical]
         SecurityContext context;
+#endif
         bool isScheduled;
 
         bool lowPriority;
@@ -76,6 +78,7 @@ namespace System.Runtime
             }
 
             this.isScheduled = true;
+#if FEATURE_COMPRESSEDSTACK
             if (PartialTrustHelpers.ShouldFlowSecurityContext)
             {
                 this.context = PartialTrustHelpers.CaptureSecurityContextNoIdentityFlow();
@@ -85,10 +88,12 @@ namespace System.Runtime
                 ScheduleCallback(CallbackHelper.InvokeWithContextCallback);
             }
             else
+#endif
             {
                 ScheduleCallback(CallbackHelper.InvokeWithoutContextCallback);
             }
         }
+#if FEATURE_COMPRESSEDSTACK
         [Fx.Tag.SecurityNote(Critical = "Access critical field context and critical property " +
             "CallbackHelper.InvokeWithContextCallback, calls into critical method ScheduleCallback; " +
             "since nothing is known about the given context, can't be treated as safe")]
@@ -108,6 +113,8 @@ namespace System.Runtime
             this.context = context.CreateCopy();
             ScheduleCallback(CallbackHelper.InvokeWithContextCallback);
         }
+#endif
+
         [Fx.Tag.SecurityNote(Critical = "Access critical property CallbackHelper.InvokeWithoutContextCallback, " +
             "Calls into critical method ScheduleCallback; not bound to a security context")]
         [SecurityCritical]
@@ -137,7 +144,7 @@ namespace System.Runtime
                 IOThreadScheduler.ScheduleCallbackNoFlow(callback, state);
             }
         }
-
+#if FEATURE_COMPRESSEDSTACK
         [Fx.Tag.SecurityNote(Critical = "Extract the security context stored and reset the critical field")]
         [SecurityCritical]
         SecurityContext ExtractContext()
@@ -148,7 +155,7 @@ namespace System.Runtime
             this.context = null;
             return result;
         }
-
+#endif
         [Fx.Tag.SecurityNote(Critical = "Calls into critical static method ScheduleCallback")]
         [SecurityCritical]
         void ScheduleCallback(Action<object> callback)
@@ -159,12 +166,16 @@ namespace System.Runtime
         [SecurityCritical]
         static class CallbackHelper
         {
+#if FEATURE_COMPRESSEDSTACK
             [Fx.Tag.SecurityNote(Critical = "Stores a delegate to a critical method")]
             static Action<object> invokeWithContextCallback;
+#endif
             [Fx.Tag.SecurityNote(Critical = "Stores a delegate to a critical method")]
             static Action<object> invokeWithoutContextCallback;
             [Fx.Tag.SecurityNote(Critical = "Stores a delegate to a critical method")]
             static ContextCallback onContextAppliedCallback;
+
+#if FEATURE_COMPRESSEDSTACK
             [Fx.Tag.SecurityNote(Critical = "Provides access to a critical field; Initialize it with " +
                 "a delegate to a critical method")]
             public static Action<object> InvokeWithContextCallback
@@ -178,7 +189,7 @@ namespace System.Runtime
                     return invokeWithContextCallback;
                 }
             }
-
+#endif
             [Fx.Tag.SecurityNote(Critical = "Provides access to a critical field; Initialize it with " +
                 "a delegate to a critical method")]
             public static Action<object> InvokeWithoutContextCallback
@@ -205,13 +216,14 @@ namespace System.Runtime
                     return onContextAppliedCallback;
                 }
             }
+#if FEATURE_COMPRESSEDSTACK
             [Fx.Tag.SecurityNote(Critical = "Called by the scheduler without any user context on the stack")]
             static void InvokeWithContext(object state)
             {
                 SecurityContext context = ((ActionItem)state).ExtractContext();
                 SecurityContext.Run(context, OnContextAppliedCallback, state);
             }
-
+#endif
             [Fx.Tag.SecurityNote(Critical = "Called by the scheduler without any user context on the stack")]
             static void InvokeWithoutContext(object state)
             {

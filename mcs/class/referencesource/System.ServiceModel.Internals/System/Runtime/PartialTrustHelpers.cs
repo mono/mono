@@ -55,7 +55,7 @@ namespace System.Runtime
             }
 #endif
         }
-
+#if FEATURE_COMPRESSEDSTACK
         [Fx.Tag.SecurityNote(Critical = "Captures security context with identity flow suppressed, " +
             "this requires satisfying a LinkDemand for infrastructure.")]
         [SecurityCritical]
@@ -74,7 +74,7 @@ namespace System.Runtime
                 }
             }
         }
-                
+#endif
         [Fx.Tag.SecurityNote(Critical = "used in a security-sensitive decision")]
         [SecurityCritical]
         internal static bool IsTypeAptca(Type type)
