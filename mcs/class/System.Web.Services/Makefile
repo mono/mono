@@ -3,6 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_REFS = System System.Xml
@@ -15,8 +17,11 @@ LIB_MCS_FLAGS = \
 	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
 	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd
 else
-LIB_REFS = System System.EnterpriseServices System.Xml System.Web System.DirectoryServices System.Data System.Design
+LIB_REFS = System System.EnterpriseServices System.Xml System.Data
 LIB_MCS_FLAGS = -nowarn:168,169,219,414,612,649 -d:MONO_BROKEN_CONFIGURATION_DLL
+
+ifndef XAMMAC_4_5
+LIB_REFS += System.Web System.Design System.DirectoryServices
 
 plainweb_dir = $(the_libdir_base)plainweb
 plainweb = $(plainweb_dir)/System.Web.dll
@@ -25,6 +30,7 @@ system_web_services_deps = $(plainweb)
 plaindesign_dir = $(the_libdir_base)plaindesign
 plaindesign = $(plaindesign_dir)/System.Design.dll
 system_design_deps = $(plaindesign)
+endif
 
 LOCAL_MCS_FLAGS = -lib:$(plaindesign_dir) -lib:$(plainweb_dir)
 

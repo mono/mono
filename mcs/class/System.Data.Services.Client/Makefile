@@ -13,8 +13,12 @@ LIB_MCS_FLAGS = \
 	-resource:Client/System.Data.Services.Client.resources \
 	-warn:2
 
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
+ifndef XAMMAC_4_5
 LIB_REFS += WindowsBase
+endif
 endif
 
 include ../../build/library.make

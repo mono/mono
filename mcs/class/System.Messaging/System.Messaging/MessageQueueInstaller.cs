@@ -27,11 +27,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !XAMMAC_4_5
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 using System.Drawing;
+#endif
 
 namespace System.Messaging 
 {
@@ -88,7 +91,9 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		public long MaximumJournalSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
@@ -96,7 +101,9 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 
+#if !NO_SYSTEM_DRAWING_DEPENDENCY
 		[TypeConverter (typeof(SizeConverter))]
+#endif
 		public long MaximumQueueSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
@@ -184,3 +191,4 @@ namespace System.Messaging
 		}
 	}
 }
+#endif

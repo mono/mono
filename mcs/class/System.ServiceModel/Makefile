@@ -16,12 +16,18 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += System.Configuration System.Data System.Security System.IdentityModel System.IdentityModel.Selectors System.Transactions System.Messaging System.Web System.Web.Services Mono.Security
+LIB_REFS += System.Configuration System.Data System.Security System.Transactions Mono.Security System.Web.Services System.IdentityModel System.IdentityModel.Selectors System.Messaging
 LIB_MCS_FLAGS += /d:NET_3_0
+
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+ifndef XAMMAC_4_5
+LIB_REFS += System.Web
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.Web.ApplicationServices
+
+ifndef XAMMAC_4_5
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
@@ -30,6 +36,10 @@ LIB_REFS += System.Web.ApplicationServices
 ifneq (plainservice/,$(intermediate))
 LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
 endif
+endif
+
+endif
+
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

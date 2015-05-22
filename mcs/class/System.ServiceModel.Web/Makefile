@@ -6,13 +6,22 @@ LIBRARY = System.ServiceModel.Web.dll
 LIB_REFS = System System.Xml System.Runtime.Serialization System.ServiceModel System.Core
 LIB_MCS_FLAGS =
 
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += System.Configuration System.Web.Extensions
+LIB_REFS += System.Configuration 
+
+ifndef XAMMAC_4_5
+LIB_REFS += System.Web.Extensions
+endif
+
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0
 endif
 
+ifndef XAMMAC_4_5
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.ServiceModel.Activation
+endif
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

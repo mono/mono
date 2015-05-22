@@ -142,7 +142,7 @@ namespace System.Web.Services.Description {
 				schemas.Add (serviceDescription.Types.Schemas);
 		}
 
-#if !MOBILE
+#if !(MOBILE || XAMMAC_4_5)
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
 			foreach (ProtocolImporter importer in GetSupportedImporters ()) {
@@ -165,7 +165,7 @@ namespace System.Web.Services.Description {
 		}
 #endif
 		
-#if !MOBILE
+#if !(MOBILE || XAMMAC_4_5)
 
 		[MonoTODO] // where to use Verbose and Extensions in options?
 		public static StringCollection GenerateWebReferences (

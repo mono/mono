@@ -1,3 +1,4 @@
+#if !NO_SYSTEM_WEB_DEPENDENCY
 //
 // UserNamePasswordValidator.cs
 //
@@ -80,3 +81,4 @@ namespace System.IdentityModel.Selectors
 		}
 	}
 }
+#endif
