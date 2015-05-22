@@ -18,6 +18,7 @@ net_4_5_SUBDIRS = $(monotouch_SUBDIRS) System.Reflection.Emit.ILGeneration Syste
 monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
 
 xammac_SUBDIRS = $(net_4_5_SUBDIRS)
+xammac_net_4_5_SUBDIRS = $(net_4_5_SUBDIRS)
 
 PROFILE_SUBDIRS = $(net_4_5_SUBDIRS)
 

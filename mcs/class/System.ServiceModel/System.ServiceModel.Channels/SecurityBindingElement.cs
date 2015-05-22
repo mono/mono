@@ -30,7 +30,7 @@ using System.Collections.ObjectModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 using System.ServiceModel.Channels.Security;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
@@ -44,7 +44,7 @@ namespace System.ServiceModel.Channels
 	{
 		internal SecurityBindingElement ()
 		{
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 			DefaultAlgorithmSuite = SecurityAlgorithmSuite.Default;
 			MessageSecurityVersion = MessageSecurityVersion.Default;
 			KeyEntropyMode = SecurityKeyEntropyMode.CombinedEntropy;
@@ -60,7 +60,7 @@ namespace System.ServiceModel.Channels
 
 		internal SecurityBindingElement (SecurityBindingElement other)
 		{
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 			alg_suite = other.alg_suite;
 			key_entropy_mode = other.key_entropy_mode;
 			security_header_layout = other.security_header_layout;
@@ -79,7 +79,7 @@ namespace System.ServiceModel.Channels
 			LocalClientSettings = other.LocalClientSettings.Clone ();
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		SecurityAlgorithmSuite alg_suite;
 		SecurityKeyEntropyMode key_entropy_mode;
 		SecurityHeaderLayout security_header_layout;
@@ -93,7 +93,7 @@ namespace System.ServiceModel.Channels
 
 		public LocalClientSecuritySettings LocalClientSettings { get; private set; }
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		public SecurityAlgorithmSuite DefaultAlgorithmSuite {
 			get { return alg_suite; }
 			set { alg_suite = value; }
@@ -138,7 +138,7 @@ namespace System.ServiceModel.Channels
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
-#if NET_2_1
+#if NET_2_1 || XAMMAC_4_5
 			// not sure this should be like this, but there isn't Symmetric/Asymmetric elements in 2.1 anyways.
 			return context.CanBuildInnerChannelFactory<TChannel> ();
 #else
@@ -183,7 +183,7 @@ namespace System.ServiceModel.Channels
 		protected abstract IChannelFactory<TChannel>
 			BuildChannelFactoryCore<TChannel> (BindingContext context);
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		[MonoTODO ("Implement for TransportSecurityBindingElement")]
 		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
@@ -270,7 +270,7 @@ namespace System.ServiceModel.Channels
 #endif
 
 		#region Factory methods
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		public static SymmetricSecurityBindingElement 
 			CreateAnonymousForCertificateBindingElement ()
 		{
@@ -559,14 +559,14 @@ namespace System.ServiceModel.Channels
 			CreateUserNameOverTransportBindingElement ()
 		{
 			var be = new TransportSecurityBindingElement ();
-#if !NET_2_1 // FIXME: there should be whatever else to do for 2.1 instead.
+#if !NET_2_1 && !XAMMAC_4_5 // FIXME: there should be whatever else to do for 2.1 instead.
 			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new UserNameSecurityTokenParameters ());
 #endif
 			return be;
 		}
 		#endregion
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		// It seems almost internal, hardcoded like this (I tried
 		// custom parameters that sets IssuedTokenSecurityTokenParameters
 		// like below ones, but that didn't trigger this method).

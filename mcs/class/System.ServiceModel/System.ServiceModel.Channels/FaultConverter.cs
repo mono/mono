@@ -137,7 +137,7 @@ namespace System.ServiceModel.Channels
 
 			OperationContext ctx = OperationContext.Current;
 			// FIXME: support more fault code depending on the exception type.
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 			// FIXME: set correct fault reason.
 			if (ctx != null && ctx.EndpointDispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults) {
 				ExceptionDetail detail = new ExceptionDetail (error);
