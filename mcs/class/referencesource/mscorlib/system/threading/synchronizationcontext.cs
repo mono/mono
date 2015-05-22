@@ -162,18 +162,18 @@ namespace System.Threading
                                 
         // Static helper to which the above method can delegate to in order to get the default 
         // COM behavior.
+        [System.Security.SecurityCritical]  // auto-generated_required
+        [CLSCompliant(false)]
+        [PrePrepareMethod]
+        [ResourceExposure(ResourceScope.None)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
 #if MONO
         protected static int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
         {
             throw new NotImplementedException ();
         }
 #else
-        [System.Security.SecurityCritical]  // auto-generated_required
-        [CLSCompliant(false)]
-        [PrePrepareMethod]
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]       
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         protected static extern int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout);
 #endif
 #endif
