@@ -185,7 +185,7 @@ namespace System.ServiceModel.Channels
 			return typeof (TChannel) == typeof (IRequestChannel);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -201,7 +201,7 @@ namespace System.ServiceModel.Channels
 			return new HttpChannelFactory<TChannel> (this, context);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		internal static object ListenerBuildLock = new object ();
 
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
@@ -242,7 +242,7 @@ namespace System.ServiceModel.Channels
 			set { throw new NotImplementedException (); }
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
 			PolicyConversionContext context)

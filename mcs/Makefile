@@ -14,6 +14,7 @@ mobile_SUBDIRS := build class
 mobile_static_SUBDIRS := build class
 binary_reference_assemblies_SUBDIRS := build class
 net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
+xammac_net_4_5_SUBDIRS := build class
 xbuild_12_SUBDIRS := build class tools/xbuild
 xbuild_14_SUBDIRS := build class tools/xbuild
 
@@ -57,6 +58,7 @@ $(_boot_:%=profile-do--monodroid--%):         profile-do--monodroid--%:         
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--build--%
 $(_boot_:%=profile-do--monotouch_runtime--%):  profile-do--monotouch_runtime--%:  profile-do--build--%
 $(_boot_:%=profile-do--xammac--%):            profile-do--xammac--%:            profile-do--build--%
+$(_boot_:%=profile-do--xammac_net_4_5--%):    profile-do--xammac_net_4_5--%:           profile-do--build--%
 $(_boot_:%=profile-do--mobile--%):            profile-do--mobile--%:         profile-do--build--%
 $(_boot_:%=profile-do--mobile_static--%):     profile-do--mobile_static--%:     profile-do--build--%
 $(_boot_:%=profile-do--build--%):             profile-do--build--%:             profile-do--basic--%

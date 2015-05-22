@@ -100,7 +100,7 @@ namespace System.Web.Services.Protocols {
 			return pos;
 		}
 
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 		static void InitializeGlobalExtensions ()
 		{
 			globalExtensions = new ArrayList[2];

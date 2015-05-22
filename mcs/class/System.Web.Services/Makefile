@@ -20,13 +20,16 @@ LIB_MCS_FLAGS = \
 	-r:System.dll				\
 	-r:System.EnterpriseServices.dll	\
 	-r:System.Xml.dll			\
-	-r:System.Web.dll
 
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+LIB_MCS_FLAGS += -r:System.Web.dll
 plainweb_dir = $(the_libdir_base)plainweb
 LOCAL_MCS_FLAGS = -lib:$(plainweb_dir)
 
 plainweb = $(plainweb_dir)/System.Web.dll
 system_web_services_deps = $(plainweb)
+LOCAL_MCS_FLAGS += -lib:$(plainweb_dir)
+endif
 
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += \
