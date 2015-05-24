@@ -12092,58 +12092,78 @@ namespace Mono.CSharp
 
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
+			//
+			// Expression is initialized into temporary target then moved
+			// to real one for atomicity
+			//
+			IMemoryLocation temp_target = target;
+
+			LocalTemporary temp = null;
+			bool by_ref = false;
+			if (!initializers.IsEmpty) {
+				temp_target = target as LocalTemporary;
+				if (temp_target == null)
+					temp_target = target as StackFieldExpr;
+
+				if (temp_target == null) {
+					var vr = target as VariableReference;
+					if (vr != null && vr.IsRef) {
+						vr.EmitLoad (ec);
+						by_ref = true;
+					}
+				}
+
+				if (temp_target == null)
+					temp_target = temp = new LocalTemporary (type);
+			}
+
 			bool left_on_stack;
 			if (dynamic != null) {
 				dynamic.Emit (ec);
 				left_on_stack = true;
 			} else {
-				left_on_stack = base.Emit (ec, target);
+				left_on_stack = base.Emit (ec, temp_target);
 			}
 
 			if (initializers.IsEmpty)
 				return left_on_stack;
 
-			LocalTemporary temp = null;
+			StackFieldExpr sf = null;
 
-			instance = target as LocalTemporary;
-			if (instance == null)
-				instance = target as StackFieldExpr;
-
-			if (instance == null) {
-				if (!left_on_stack) {
-					VariableReference vr = target as VariableReference;
-
-					// FIXME: This still does not work correctly for pre-set variables
-					if (vr != null && vr.IsRef)
-						target.AddressOf (ec, AddressOp.Load);
-
-					((Expression) target).Emit (ec);
-					left_on_stack = true;
+			// Move a new instance (reference-type) to local temporary variable
+			if (left_on_stack) {
+				if (by_ref) {
+					temp_target = temp = new LocalTemporary (type);
 				}
 
+				if (temp != null)
+					temp.Store (ec);
+
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
-					instance = new EmptyAwaitExpression (Type).EmitToField (ec) as IMemoryLocation;
-				} else {
-					temp = new LocalTemporary (type);
-					instance = temp;
+					if (temp == null)
+						throw new NotImplementedException ();
+
+					sf = ec.GetTemporaryField (type);
+					sf.EmitAssign (ec, temp, false, false);
+					temp_target = sf;
+					temp.Release (ec);
+					left_on_stack = false;
 				}
 			}
 
-			if (left_on_stack && temp != null)
-				temp.Store (ec);
+			instance = temp_target;
 
 			initializers.Emit (ec);
 
-			if (left_on_stack) {
-				if (temp != null) {
-					temp.Emit (ec);
-					temp.Release (ec);
-				} else {
-					((Expression) instance).Emit (ec);
-				}
-			}
+			((Expression)temp_target).Emit (ec);
 
-			return left_on_stack;
+			if (temp != null)
+				temp.Release (ec);
+
+			if (sf != null)
+				sf.IsAvailableForReuse = true;
+
+			return true;
 		}
 
 		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)
