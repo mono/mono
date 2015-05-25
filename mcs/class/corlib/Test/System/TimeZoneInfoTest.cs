@@ -665,6 +665,12 @@ namespace MonoTests.System
 		public class GetSystemTimeZonesTests
 		{
 			[Test]
+			public void Identity ()
+			{
+				Assert.AreSame (TimeZoneInfo.GetSystemTimeZones (), TimeZoneInfo.GetSystemTimeZones ());
+			}
+
+			[Test]
 			public void NotEmpty ()
 			{
 				if (Environment.OSVersion.Platform != PlatformID.Unix)

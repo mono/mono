@@ -639,16 +639,17 @@ namespace System
 			info.AddValue ("SupportsDaylightSavingTime", SupportsDaylightSavingTime);
 		}
 
-		//FIXME: change this to a generic Dictionary and allow caching for FindSystemTimeZoneById
-		private static List<TimeZoneInfo> systemTimeZones;
+		static ReadOnlyCollection<TimeZoneInfo> systemTimeZones;
+
 		public static ReadOnlyCollection<TimeZoneInfo> GetSystemTimeZones ()
 		{
 			if (systemTimeZones == null) {
-				systemTimeZones = new List<TimeZoneInfo> ();
-				GetSystemTimeZones (systemTimeZones);
+				var tz = new List<TimeZoneInfo> ();
+				GetSystemTimeZones (tz);
+				Interlocked.CompareExchange (ref systemTimeZones, new ReadOnlyCollection<TimeZoneInfo> (tz), null);
 			}
 
-			return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);
+			return systemTimeZones;
 		}
 
 		public TimeSpan GetUtcOffset (DateTime dateTime)
