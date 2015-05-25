@@ -140,7 +140,7 @@ using System.Runtime.Versioning;
 #if !FEATURE_CORECLR
 [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
 #endif
-public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
+public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
 {
     // ! Do not add or rearrange fields as the EE depends on this layout.
     //------------------------------------------------------------------
@@ -187,7 +187,7 @@ public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
         _fullyInitialized = true;
     }
 
-#if FEATURE_CORECLR
+#if FEATURE_CORECLR || MOBILE
     // Migrating InheritanceDemands requires this default ctor, so we can mark it critical
     protected SafeHandle()
     {
@@ -201,12 +201,12 @@ public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
     {
         Dispose(false);
     }
-
+#if !MONO
     [ResourceExposure(ResourceScope.None)]
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     extern void InternalFinalize();
-
+#endif
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
 #if !FEATURE_CORECLR
     [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
@@ -273,7 +273,7 @@ public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
         else
             InternalFinalize();
     }
-
+#if !MONO
     [ResourceExposure(ResourceScope.None)]
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -333,5 +333,6 @@ public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     [MethodImplAttribute(MethodImplOptions.InternalCall)]
     public extern void DangerousRelease();
+#endif
 }
 }
