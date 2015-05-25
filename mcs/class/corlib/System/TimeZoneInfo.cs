@@ -35,11 +35,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Globalization;
-
-#if LIBC || MONODROID
 using System.IO;
-using Mono;
-#endif
 
 using Microsoft.Win32;
 
@@ -93,16 +89,9 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
+#if !MONODROID && !MONOTOUCH
 		static TimeZoneInfo CreateLocal ()
 		{
-#if MONODROID
-			return AndroidTimeZones.Local;
-#elif MONOTOUCH
-			using (Stream stream = GetMonoTouchData (null)) {
-				return BuildFromStream ("Local", stream);
-			}
-#else
-#if !NET_2_1
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				if (name == null)
@@ -111,7 +100,6 @@ namespace System
 				if (name != null)
 					return TimeZoneInfo.FindSystemTimeZoneById (name);
 			}
-#endif
 
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
@@ -133,8 +121,52 @@ namespace System
 					return null;
 				}
 			}
+		}
+
+		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
+		{
+#if LIBC
+			string filepath = Path.Combine (TimeZoneDirectory, id);
+			return FindSystemTimeZoneByFileName (id, filepath);
+#else
+			throw new NotImplementedException ();
 #endif
 		}
+
+		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		{
+			if (TimeZoneKey != null) {
+				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
+					try {
+						systemTimeZones.Add (FindSystemTimeZoneById (id));
+					} catch {}
+				}
+
+				return;
+			}
+
+#if LIBC
+			string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
+			foreach (string continent in continents) {
+				try {
+					foreach (string zonepath in Directory.GetFiles (Path.Combine (TimeZoneDirectory, continent))) {
+						try {
+							string id = String.Format ("{0}/{1}", continent, Path.GetFileName (zonepath));
+							systemTimeZones.Add (FindSystemTimeZoneById (id));
+						} catch (ArgumentNullException) {
+						} catch (TimeZoneNotFoundException) {
+						} catch (InvalidTimeZoneException) {
+						} catch (Exception) {
+							throw;
+						}
+					}
+				} catch {}
+			}
+#else
+			throw new NotImplementedException ("This method is not implemented for this platform");
+#endif
+		}
+#endif
 
 		string standardDisplayName;
 		public string StandardName {
@@ -436,21 +468,8 @@ namespace System
 			// Local requires special logic that already exists in the Local property (bug #326)
 			if (id == "Local")
 				return Local;
-#if MONOTOUCH
-			using (Stream stream = GetMonoTouchData (id)) {
-				return BuildFromStream (id, stream);
-			}
-#elif MONODROID
-			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id, id);
-			if (timeZoneInfo == null)
-				throw new TimeZoneNotFoundException ();
-			return timeZoneInfo;
-#elif LIBC
-			string filepath = Path.Combine (TimeZoneDirectory, id);
-			return FindSystemTimeZoneByFileName (id, filepath);
-#else
-			throw new NotImplementedException ();
-#endif
+
+			return FindSystemTimeZoneByIdCore (id);
 		}
 
 #if LIBC
@@ -461,24 +480,6 @@ namespace System
 
 			using (FileStream stream = File.OpenRead (filepath)) {
 				return BuildFromStream (id, stream);
-			}
-		}
-#endif
-#if LIBC || MONOTOUCH
-		const int BUFFER_SIZE = 16384; //Big enough for any tz file (on Oct 2008, all tz files are under 10k)
-		
-		private static TimeZoneInfo BuildFromStream (string id, Stream stream) 
-		{
-			byte [] buffer = new byte [BUFFER_SIZE];
-			int length = stream.Read (buffer, 0, BUFFER_SIZE);
-			
-			if (!ValidTZFile (buffer, length))
-				throw new InvalidTimeZoneException ("TZ file too big for the buffer");
-
-			try {
-				return ParseTZBuffer (id, buffer, length);
-			} catch (Exception e) {
-				throw new InvalidTimeZoneException (e.Message);
 			}
 		}
 #endif
@@ -644,54 +645,9 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				systemTimeZones = new List<TimeZoneInfo> ();
-#if !NET_2_1
-				if (TimeZoneKey != null) {
-					foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
-						try {
-							systemTimeZones.Add (FindSystemTimeZoneById (id));
-						} catch {}
-					}
+				GetSystemTimeZones (systemTimeZones);
+			}
 
-					return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);
-				}
-#endif
-#if MONODROID
-			foreach (string id in AndroidTimeZones.GetAvailableIds ()) {
-				var tz = AndroidTimeZones.GetTimeZone (id, id);
-				if (tz != null)
-					systemTimeZones.Add (tz);
-			}
-#elif MONOTOUCH
-				if (systemTimeZones.Count == 0) {
-					foreach (string name in GetMonoTouchNames ()) {
-						using (Stream stream = GetMonoTouchData (name, false)) {
-							if (stream == null)
-								continue;
-							systemTimeZones.Add (BuildFromStream (name, stream));
-						}
-					}
-				}
-#elif LIBC
-				string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
-				foreach (string continent in continents) {
-					try {
-						foreach (string zonepath in Directory.GetFiles (Path.Combine (TimeZoneDirectory, continent))) {
-							try {
-								string id = String.Format ("{0}/{1}", continent, Path.GetFileName (zonepath));
-								systemTimeZones.Add (FindSystemTimeZoneById (id));
-							} catch (ArgumentNullException) {
-							} catch (TimeZoneNotFoundException) {
-							} catch (InvalidTimeZoneException) {
-							} catch (Exception) {
-								throw;
-							}
-						}
-					} catch {}
-				}
-#else
-				throw new NotImplementedException ("This method is not implemented for this platform");
-#endif
-			}
 			return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);
 		}
 
@@ -1176,7 +1132,24 @@ namespace System
 			return adjustmentRules;
 		}
 
-#if LIBC || MONODROID
+#if LIBC || MONOTOUCH
+		const int BUFFER_SIZE = 16384; //Big enough for any tz file (on Oct 2008, all tz files are under 10k)
+		
+		private static TimeZoneInfo BuildFromStream (string id, Stream stream)
+		{
+			byte [] buffer = new byte [BUFFER_SIZE];
+			int length = stream.Read (buffer, 0, BUFFER_SIZE);
+			
+			if (!ValidTZFile (buffer, length))
+				throw new InvalidTimeZoneException ("TZ file too big for the buffer");
+
+			try {
+				return ParseTZBuffer (id, buffer, length);
+			} catch (Exception e) {
+				throw new InvalidTimeZoneException (e.Message);
+			}
+		}
+
 		private static bool ValidTZFile (byte [] buffer, int length)
 		{
 			StringBuilder magic = new StringBuilder ();

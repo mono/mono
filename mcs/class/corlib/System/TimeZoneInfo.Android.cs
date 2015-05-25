@@ -253,6 +253,28 @@ namespace System {
 
 	partial class TimeZoneInfo {
 
+		static TimeZoneInfo CreateLocal ()
+		{
+			return AndroidTimeZones.Local;
+		}
+
+		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
+		{
+			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id, id);
+			if (timeZoneInfo == null)
+				throw new TimeZoneNotFoundException ();
+			return timeZoneInfo;
+		}
+
+		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		{
+			foreach (string id in AndroidTimeZones.GetAvailableIds ()) {
+				var tz = AndroidTimeZones.GetTimeZone (id, id);
+				if (tz != null)
+					systemTimeZones.Add (tz);
+			}
+		}
+
 		/*
 		 * Android < v4.3 Timezone support infrastructure.
 		 *

@@ -43,6 +43,31 @@ using System.Runtime.InteropServices;
 namespace System {
 
 	public partial class TimeZoneInfo {
+
+		static TimeZoneInfo CreateLocal ()
+		{
+			using (Stream stream = GetMonoTouchData (null)) {
+				return BuildFromStream ("Local", stream);
+			}
+		}
+
+		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
+		{
+			using (Stream stream = GetMonoTouchData (id)) {
+				return BuildFromStream (id, stream);
+			}
+		}
+
+		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		{
+			foreach (string name in GetMonoTouchNames ()) {
+				using (Stream stream = GetMonoTouchData (name, false)) {
+					if (stream == null)
+						continue;
+					systemTimeZones.Add (BuildFromStream (name, stream));
+				}
+			}
+		}
 		
 		[DllImport ("__Internal")]
 		extern static IntPtr monotouch_timezone_get_names (ref int count);
