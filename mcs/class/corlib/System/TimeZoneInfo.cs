@@ -89,7 +89,7 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
-#if !MONODROID && !MONOTOUCH
+#if !MOBILE
 		static TimeZoneInfo CreateLocal ()
 		{
 			if (IsWindows && LocalZoneKey != null) {
