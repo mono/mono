@@ -110,7 +110,6 @@ System/IConsoleDriver.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
 System/MarshalByRefObject.cs
-System/Math.cs
 System/MonoAsyncCall.cs
 System/MonoCQItem.cs
 System/MonoCustomAttrs.cs
@@ -1000,6 +999,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/iserviceobjectprovider.cs
 ../../../external/referencesource/mscorlib/system/invalidtimezoneexception.cs
 ../../../external/referencesource/mscorlib/system/Lazy.cs
+../../../external/referencesource/mscorlib/system/math.cs
 ../../../external/referencesource/mscorlib/system/memberaccessexception.cs
 ../../../external/referencesource/mscorlib/system/methodaccessexception.cs
 ../../../external/referencesource/mscorlib/system/midpointrounding.cs
