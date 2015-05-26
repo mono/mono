@@ -84,7 +84,7 @@ namespace Mono.MdbRebase
 
 
 			var mdbName = new FileInfo (inputFile).Name;
-			var tmpMdb = Path.Combine (Path.GetTempPath (), mdbName);
+			var tmpMdb = Path.GetTempFileName ();
 			var finalMdb = inputFile;
 			if (settings.OutputDirectory != null)
 				finalMdb = Path.Combine (settings.OutputDirectory, mdbName);
