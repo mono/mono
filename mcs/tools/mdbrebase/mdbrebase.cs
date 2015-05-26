@@ -19,6 +19,7 @@ namespace Mono.MdbRebase
 		public bool InputPatternIsRegex { get; set; }
 		public bool FileNamesOnly { get; set; }
 		public bool Verbose { get; set; }
+		public bool Quiet { get; set; }
 
 		Regex inputPatternRegex;
 
@@ -53,7 +54,8 @@ namespace Mono.MdbRebase
 
 		public void RewriteMdbFile (string inputFile)
 		{
-			Console.WriteLine ("Processing {0}", inputFile);
+			if (!settings.Quiet)
+				Console.WriteLine ("Processing {0}", inputFile);
 			var input = MonoSymbolFile.ReadSymbolFile (inputFile);
 
 			var output = new MonoSymbolFile ();
@@ -122,6 +124,7 @@ namespace Mono.MdbRebase
 				{ "r|regex", "Input pattern is a regular expression", v => s.InputPatternIsRegex = true },
 				{ "i=|input-pattern=", "Input pattern to replace (must not be a prefix to output-pattern)(required)", v => s.InputPattern = v },
 				{ "o=|output-pattern=", "Output pattern to replace (required)", v => s.OutputPattern = v },
+				{ "q|quiet", "Be quiet with output (not show anything but errors)", v => s.Quiet = true },
 				{ "h|?|help", v => showHelp = true },
 			};
 
