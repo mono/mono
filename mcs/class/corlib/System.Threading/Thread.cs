@@ -116,7 +116,6 @@ namespace System.Threading {
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
-		private ExecutionContext ec_to_set;
 		#endregion
 #pragma warning restore 414
 
@@ -127,17 +126,11 @@ namespace System.Threading {
 		CultureInfo current_culture;
 		CultureInfo current_ui_culture;
 
-		// the name of current_thread and _ec is
+		// the name of current_thread is
 		// important because they are used by the runtime.
 
 		[ThreadStatic]
 		static Thread current_thread;
-
-		/* The actual ExecutionContext of the thread.  It's
-		   ThreadStatic so that it's not shared between
-		   AppDomains. */
-		[ThreadStatic]
-		static ExecutionContext _ec;
 
 		static internal CultureInfo default_culture;
 		static internal CultureInfo default_ui_culture;
@@ -321,13 +314,6 @@ namespace System.Threading {
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal (MulticastDelegate start);
-
-		public Thread(ThreadStart start) {
-			if(start==null) {
-				throw new ArgumentNullException("Null ThreadStart");
-			}
-			m_Delegate=start;
-		}
 
 		private Thread (InternalThread it) {
 			internal_thread = it;
@@ -518,49 +504,16 @@ namespace System.Threading {
 			}
 		}
 
-		static internal ContextCallback _ccb = new ContextCallback(ThreadStart_Context);
-
-		static private void ThreadStart_Context(Object state)
+		void StartInternal (IPrincipal principal, ref StackCrawlMark stackMark)
 		{
-			var t = (Thread)state;
-			if (t.m_Delegate is ThreadStart)
-			{
-				((ThreadStart)t.m_Delegate)();
-			}
-			else
-			{
-				((ParameterizedThreadStart)t.m_Delegate)(t.m_ThreadStartArg);
-			}
-		}
-
-		private void StartInternal ()
-		{
-			current_thread = this;
-
-			if (_ec != null) {
-				ExecutionContext.Run (_ec, _ccb, (Object)this);
-				return;
-			}
-
-			if (m_Delegate is ThreadStart) {
-				((ThreadStart) m_Delegate) ();
-			} else {
-				((ParameterizedThreadStart) m_Delegate) (m_ThreadStartArg);
-			}
-		}
-
-		public void Start() {
-			StackCrawlMark stackMark = default (StackCrawlMark);
-			// TODO: Use SetExecutionContextHelper to remove 2 of 3 levels of indirections
-			ec_to_set = ExecutionContext.Capture (ref stackMark, ExecutionContext.CaptureOptions.IgnoreSyncCtx);
-
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
-			if (Thread_internal((ThreadStart) StartInternal) == (IntPtr) 0)
+			if (Thread_internal(m_Delegate) == IntPtr.Zero)
 				throw new SystemException ("Thread creation failed.");
-		}
 
+			m_ThreadStartArg = null;
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern private static void SetState (InternalThread thread, ThreadState set);
@@ -664,6 +617,9 @@ namespace System.Threading {
 
 		static int GetProcessDefaultStackSize (int maxStackSize)
 		{
+			if (maxStackSize == 0)
+				return 0;
+
 			if (maxStackSize < 131072) // make sure stack is at least 128k big
 				return 131072;
 
@@ -742,12 +698,6 @@ namespace System.Threading {
 		public override int GetHashCode ()
 		{
 			return ManagedThreadId;
-		}
-
-		public void Start (object parameter)
-		{
-			m_ThreadStartArg = parameter;
-			Start ();
 		}
 
 		internal CultureInfo GetCurrentUICultureNoAppX ()
