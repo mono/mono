@@ -184,7 +184,7 @@ namespace System.Threading {
         =========================================================================*/
         [ThreadStatic]
         static private LocalDataStoreHolder s_LocalDataStore;
-#if !MONO
+
         // Do not move! Order of above fields needs to be preserved for alignment
         // with native code
         // See code:#threadCultureInfo
@@ -215,7 +215,7 @@ namespace System.Threading {
             Contract.EndContractBlock();
             SetStartHelper((Delegate)start,0);  //0 will setup Thread with default stackSize
         }
-#endif
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public Thread(ThreadStart start, int maxStackSize) {
             if (start == null) {
@@ -275,7 +275,7 @@ namespace System.Threading {
 
             return new ThreadHandle(thread);
         }
-
+#endif
 
         /*=========================================================================
         ** Spawns off a new thread which will begin executing at the ThreadStart
@@ -334,7 +334,7 @@ namespace System.Threading {
             IPrincipal principal = (IPrincipal)CallContext.Principal;
             StartInternal(principal, ref stackMark);
         }
-#endif
+
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal ExecutionContext.Reader GetExecutionContextReader()
