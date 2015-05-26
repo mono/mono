@@ -53,6 +53,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // Covers #26363
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void GetProcesses_StartTime ()
 		{
 			foreach (var p in Process.GetProcesses ()) {
