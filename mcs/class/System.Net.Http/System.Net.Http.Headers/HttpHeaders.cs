@@ -109,7 +109,7 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateMulti<NameValueWithParametersHeaderValue> ("Expect", NameValueWithParametersHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<DateTimeOffset> ("Expires", Parser.DateTime.TryParse, HttpHeaderKind.Content),
 				HeaderInfo.CreateSingle<string> ("From", Parser.EmailAddress.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<Uri> ("Host", Parser.Uri.TryParse, HttpHeaderKind.Request),
+				HeaderInfo.CreateSingle<string> ("Host", Parser.Host.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateMulti<EntityTagHeaderValue> ("If-Match", EntityTagHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<DateTimeOffset> ("If-Modified-Since", Parser.DateTime.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateMulti<EntityTagHeaderValue> ("If-None-Match", EntityTagHeaderValue.TryParse, HttpHeaderKind.Request),
