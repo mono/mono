@@ -318,41 +318,6 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int GetDomainID();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void ResetAbort_internal();
-
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public static void ResetAbort ()
-		{
-			ResetAbort_internal ();
-		}
-
-		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public extern static bool Yield ();
-
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Sleep_internal(int ms);
-
-		public static void Sleep (int millisecondsTimeout)
-		{
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Negative timeout");
-
-			Sleep_internal (millisecondsTimeout);
-		}
-
-		public static void Sleep (TimeSpan timeout)
-		{
-			long ms = (long) timeout.TotalMilliseconds;
-			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-
-			Sleep_internal ((int) ms);
-		}
-
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal (MulticastDelegate start);
@@ -504,17 +469,6 @@ namespace System.Threading {
 			}
 		}
 
-		public ThreadPriority Priority {
-			get {
-				return (ThreadPriority)GetPriority (Internal);
-			}
-			
-			set {
-				// FIXME: This doesn't do anything yet
-				SetPriority (Internal, (int)value);
-			}
-		}
-
 		public ThreadState ThreadState {
 			get {
 				return GetState (Internal);
@@ -523,12 +477,6 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int GetPriority (InternalThread thread);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetPriority (InternalThread thread, int priority);
 
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort () 
@@ -551,53 +499,8 @@ namespace System.Threading {
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void Interrupt_internal (InternalThread thread);
-		
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Interrupt ()
+		void ClearAbortReason ()
 		{
-			Interrupt_internal (Internal);
-		}
-
-		// The current thread joins with 'this'. Set ms to 0 to block
-		// until this actually exits.
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Join_internal(InternalThread thread, int ms, IntPtr handle);
-		
-		public void Join()
-		{
-			Join_internal(Internal, Timeout.Infinite, Internal.system_thread_handle);
-		}
-
-		public bool Join(int millisecondsTimeout)
-		{
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Timeout less than zero");
-
-			return Join_internal (Internal, millisecondsTimeout, Internal.system_thread_handle);
-		}
-
-		public bool Join(TimeSpan timeout)
-		{
-			long ms = (long) timeout.TotalMilliseconds;
-			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-
-			return Join_internal (Internal, (int) ms, Internal.system_thread_handle);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void MemoryBarrier ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void Resume_internal();
-
-		[Obsolete ("")]
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Resume () 
-		{
-			Resume_internal ();
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -658,15 +561,6 @@ namespace System.Threading {
 				throw new SystemException ("Thread creation failed.");
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Suspend_internal(InternalThread thread);
-
-		[Obsolete ("")]
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Suspend ()
-		{
-			Suspend_internal (Internal);
-		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern private static void SetState (InternalThread thread, ThreadState set);
