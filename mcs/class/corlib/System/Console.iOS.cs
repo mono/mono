@@ -20,7 +20,7 @@ namespace System {
 
 		class NSLogWriter : TextWriter {
 			[DllImport ("__Internal", CharSet=CharSet.Unicode)]
-			extern static void monotouch_log (string s);
+			extern static void xamarin_log (string s);
 
 			[DllImport ("/usr/lib/libSystem.dylib")]
 			extern static /* ssize_t */ IntPtr write (int fd, byte [] buffer, /* size_t */ IntPtr n);
@@ -48,7 +48,7 @@ namespace System {
 			{
 				string s = sb.ToString ();
 				try {
-					monotouch_log (s);
+					xamarin_log (s);
 				}
 				catch (Exception) {
 					try {

@@ -70,12 +70,12 @@ namespace System {
 		}
 		
 		[DllImport ("__Internal")]
-		extern static IntPtr monotouch_timezone_get_names (ref int count);
+		extern static IntPtr xamarin_timezone_get_names (ref int count);
 
 		static ReadOnlyCollection<string> GetMonoTouchNames ()
 		{
 			int count = 0;
-			IntPtr array = monotouch_timezone_get_names (ref count);
+			IntPtr array = xamarin_timezone_get_names (ref count);
 			string [] names = new string [count];
 			for (int i = 0, offset = 0; i < count; i++, offset += IntPtr.Size) {
 				IntPtr p = Marshal.ReadIntPtr (array, offset);
@@ -87,12 +87,12 @@ namespace System {
 		}
 
 		[DllImport ("__Internal")]
-		extern static IntPtr monotouch_timezone_get_data (string name, ref int size);
+		extern static IntPtr xamarin_timezone_get_data (string name, ref int size);
 
 		static Stream GetMonoTouchData (string name, bool throw_on_error = true)
 		{
 			int size = 0;
-			IntPtr data = monotouch_timezone_get_data (name, ref size);
+			IntPtr data = xamarin_timezone_get_data (name, ref size);
 			if (size <= 0) {
 				if (throw_on_error)
 					throw new TimeZoneNotFoundException (name);
