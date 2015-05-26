@@ -530,8 +530,8 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void AbortInternal();
-
-#if !FEATURE_CORECLR
+#endif
+#if !FEATURE_CORECLR || MONO
         /*=========================================================================
         ** Resets a thread abort.
         ** Should be called by trusted code only
@@ -627,7 +627,7 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void SetPriorityNative(int priority);
-
+#if !MONO
         /*=========================================================================
         ** Returns true if the thread has been started and is not dead.
         =========================================================================*/
@@ -645,7 +645,7 @@ namespace System.Threading {
             [MethodImpl(MethodImplOptions.InternalCall)]
             get;
         }
-
+#endif
         /*=========================================================================
         ** Waits for the thread to die or for timeout milliseconds to elapse.
         ** Returns true if the thread died, or false if the wait timed out. If
@@ -671,6 +671,10 @@ namespace System.Threading {
         [HostProtection(Synchronization=true, ExternalThreading=true)]
         public bool Join(int millisecondsTimeout)
         {
+#if MONO
+            if (millisecondsTimeout < Timeout.Infinite)
+                throw new ArgumentOutOfRangeException("millisecondsTimeout", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
+#endif
             return JoinInternal(millisecondsTimeout);
         }
 
@@ -700,10 +704,16 @@ namespace System.Threading {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void Sleep(int millisecondsTimeout)
         {
+#if MONO
+            if (millisecondsTimeout < Timeout.Infinite)
+                throw new ArgumentOutOfRangeException("millisecondsTimeout", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
+#endif
             SleepInternal(millisecondsTimeout);
+#if !MONO
             // Ensure we don't return to app code when the pause is underway
             if(AppDomainPauseManager.IsPaused)
                 AppDomainPauseManager.ResumeEvent.WaitOneWithoutFAS();
+#endif
         }
 
         public static void Sleep(TimeSpan timeout)
@@ -714,7 +724,7 @@ namespace System.Threading {
             Sleep((int)tm);
         }
 
-
+#if !MONO
         /* wait for a length of time proportial to 'iterations'.  Each iteration is should
            only take a few machine instructions.  Calling this API is preferable to coding
            a explict busy loop because the hardware can be informed that it is busy waiting. */
@@ -733,7 +743,7 @@ namespace System.Threading {
         {
             SpinWaitInternal(iterations);
         }
-
+#endif
         [System.Security.SecurityCritical]  // auto-generated
         [MethodImplAttribute(MethodImplOptions.InternalCall),
          HostProtection(Synchronization = true, ExternalThreading = true),
@@ -748,7 +758,8 @@ namespace System.Threading {
         {
             return YieldInternal();
         }
-        
+
+#if !MONO
         public static Thread CurrentThread {
             [System.Security.SecuritySafeCritical]  // auto-generated
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -1704,12 +1715,12 @@ namespace System.Threading {
             MemoryBarrier(); // Call MemoryBarrier to ensure the proper semantic in a portable way.
             address = value;
         }
-
+#endif
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern void MemoryBarrier();
-#endif
+
         private static LocalDataStoreMgr LocalDataStoreManager
         {
             get 
