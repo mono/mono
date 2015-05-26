@@ -1937,7 +1937,7 @@ namespace Mono.CSharp
 						// Turn is check into simple null check for implicitly convertible reference types
 						//
 						return ReducedExpression.Create (
-							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc)).Resolve (ec),
+							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc), Binary.State.UserOperatorsExcluded).Resolve (ec),
 							this).Resolve (ec);
 					}
 
@@ -3162,14 +3162,15 @@ namespace Mono.CSharp
 			RelationalMask	= 1 << 13,
 
 			DecomposedMask	= 1 << 19,
-			NullableMask	= 1 << 20,
+			NullableMask	= 1 << 20
 		}
 
 		[Flags]
-		enum State : byte
+		public enum State : byte
 		{
 			None = 0,
 			Compound = 1 << 1,
+			UserOperatorsExcluded = 1 << 2
 		}
 
 		readonly Operator oper;
@@ -3178,10 +3179,14 @@ namespace Mono.CSharp
 		ConvCast.Mode enum_conversion;
 
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
+			: this (oper, left, right, State.Compound)
+		{
+		}
+
+		public Binary (Operator oper, Expression left, Expression right, State state)
 			: this (oper, left, right)
 		{
-			if (isCompound)
-				state |= State.Compound;
+			this.state = state;
 		}
 
 		public Binary (Operator oper, Expression left, Expression right)
@@ -3668,10 +3673,11 @@ namespace Mono.CSharp
 					return ResolveOperatorPointer (rc, l, r);
 
 				// User operators
-				expr = ResolveUserOperator (rc, left, right);
-				if (expr != null)
-					return expr;
-
+				if ((state & State.UserOperatorsExcluded) == 0) {
+					expr = ResolveUserOperator (rc, left, right);
+					if (expr != null)
+						return expr;
+				}
 
 				bool lenum = l.IsEnum;
 				bool renum = r.IsEnum;
