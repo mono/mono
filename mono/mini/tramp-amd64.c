@@ -914,8 +914,9 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4,
 {
 	guint8 *tramp;
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_sync_null, *jump_cmpxchg_failed, *jump_other_owner, *jump_tid, *jump_sync_thin_hash = NULL;
-	guint8 *jump_lock_taken_true = NULL;
+	guint8 *jump_obj_null, *jump_cmpxchg_failed, *jump_other_owner, *jump_tid;
+	guint8 *jump_lock_taken_true = NULL, *jump_not_inflated, *jump_not_flat, *jump_not_free, *jump_max_nest;
+	guint8 *jump_nest_cmpxchg_failed, *jump_flat_cmpxchg_failed, *jump_flat_other_owner;
 	int tramp_size;
 	int status_offset, nest_offset;
 	MonoJumpInfo *ji = NULL;
@@ -939,7 +940,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4,
 	status_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (status_offset);
 	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
 
-	tramp_size = 128;
+	tramp_size = 192;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -951,39 +952,91 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4,
 		amd64_test_reg_reg (code, obj_reg, obj_reg);
 		/* if yes, jump to actual trampoline */
 		jump_obj_null = code;
-		amd64_branch8 (code, X86_CC_Z, -1, 1);
+		amd64_branch32 (code, X86_CC_Z, -1, 1);
 
 		if (is_v4) {
 			amd64_test_membase_imm (code, lock_taken_reg, 0, 1);
 			/* if *lock_taken is 1, jump to actual trampoline */
 			jump_lock_taken_true = code;
-			x86_branch8 (code, X86_CC_NZ, -1, 1);
+			x86_branch32 (code, X86_CC_NZ, -1, 1);
 		}
-
-		/* load obj->synchronization to sync_reg */
-		amd64_mov_reg_membase (code, sync_reg, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), 8);
-
-		if (mono_gc_is_moving ()) {
-			/*if bit zero is set it's a thin hash*/
-			/*FIXME use testb encoding*/
-			amd64_test_reg_imm (code, sync_reg, 0x01);
-			jump_sync_thin_hash = code;
-			amd64_branch8 (code, X86_CC_NE, -1, 1);
-
-			/*clear bits used by the gc*/
-			amd64_alu_reg_imm (code, X86_AND, sync_reg, ~0x3);
-		}
-
-		/* is synchronization null? */
-		amd64_test_reg_reg (code, sync_reg, sync_reg);
-		/* if yes, jump to actual trampoline */
-		jump_sync_null = code;
-		amd64_branch8 (code, X86_CC_Z, -1, 1);
 
 		/* load MonoInternalThread* into tid_reg */
 		code = mono_amd64_emit_tls_get (code, tid_reg, mono_thread_get_tls_offset ());
 		/* load TID into tid_reg */
 		amd64_mov_reg_membase (code, tid_reg, tid_reg, MONO_STRUCT_OFFSET (MonoInternalThread, small_id), 4);
+
+		/* load obj->synchronization to sync_reg */
+		amd64_mov_reg_membase (code, sync_reg, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), 8);
+
+		/* check if the lock word is free */
+		amd64_test_reg_reg (code, sync_reg, sync_reg);
+		jump_not_free = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* FREE LOCK */
+		/* if yes, try a compare-exchange with the TID */
+		/* zero RAX */
+		amd64_alu_reg_reg (code, X86_XOR, AMD64_RAX, AMD64_RAX);
+		/* shift tid_reg by LOCK_WORD_OWNER_SHIFT */
+		amd64_shift_reg_imm (code, X86_SHL, tid_reg, LOCK_WORD_OWNER_SHIFT);
+		/* compare and exchange */
+		amd64_prefix (code, X86_LOCK_PREFIX);
+		amd64_cmpxchg_membase_reg_size (code, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), tid_reg, 8);
+		/* if not successful, jump to the actual trampoline */
+		jump_flat_cmpxchg_failed = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+		/* if successful, return */
+		if (is_v4)
+			amd64_mov_membase_imm (code, lock_taken_reg, 0, 1, 1);
+		amd64_ret (code);
+
+		/* next case: the lock word is not zero */
+		x86_patch (jump_not_free, code);
+
+		/* check whether the lock is flat */
+		amd64_test_reg_imm (code, sync_reg, LOCK_WORD_STATUS_MASK);
+		jump_not_flat = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* FLAT LOCK */
+		/* shift the lock word and compare with tid */
+		amd64_mov_reg_reg (code, AMD64_RAX, sync_reg, 8);
+		amd64_shift_reg_imm (code, X86_SHR, AMD64_RAX, LOCK_WORD_OWNER_SHIFT);
+		amd64_alu_reg_reg (code, X86_CMP, AMD64_RAX, tid_reg);
+		/* if not, jump to actual trampoline */
+		jump_flat_other_owner = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* increment and write nest count */
+		/* have old lock word in rax */
+		amd64_mov_reg_reg (code, AMD64_RAX, sync_reg, 8);
+		/* form new lock word in sync_reg */
+		amd64_alu_reg_imm (code, X86_ADD, sync_reg, 1 << LOCK_WORD_NEST_SHIFT);
+		/* check if we overflowed nest */
+		amd64_test_reg_imm (code, sync_reg, LOCK_WORD_NEST_MASK);
+		jump_max_nest = code;
+		amd64_branch8 (code, X86_CC_Z, -1, 1);
+		/* compare and exchange */
+		amd64_prefix (code, X86_LOCK_PREFIX);
+		amd64_cmpxchg_membase_reg_size (code, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), sync_reg, 8);
+		/* if not successful, jump to actual trampoline */
+		jump_nest_cmpxchg_failed = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+		/* if successful, return */
+		if (is_v4)
+			amd64_mov_membase_imm (code, lock_taken_reg, 0, 1, 1);
+		amd64_ret (code);
+
+		/* test if the lock is inflated */
+		x86_patch (jump_not_flat, code);
+		amd64_test_reg_imm (code, sync_reg, LOCK_WORD_INFLATED);
+		jump_not_inflated = code;
+		amd64_branch8 (code, X86_CC_Z, -1, 1);
+
+		/* INFLATED LOCK */
+		/* clear status bits to be able to dereference the pointer */
+		amd64_alu_reg_imm (code, X86_AND, sync_reg, ~LOCK_WORD_STATUS_MASK);
 
 		/* is synchronization->owner free */
 		amd64_mov_reg_membase (code, status_reg, sync_reg, status_offset, 4);
@@ -1023,11 +1076,13 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4,
 		amd64_ret (code);
 
 		x86_patch (jump_obj_null, code);
-		if (jump_sync_thin_hash)
-			x86_patch (jump_sync_thin_hash, code);
-		x86_patch (jump_sync_null, code);
 		x86_patch (jump_cmpxchg_failed, code);
 		x86_patch (jump_other_owner, code);
+		x86_patch (jump_nest_cmpxchg_failed, code);
+		x86_patch (jump_flat_cmpxchg_failed, code);
+		x86_patch (jump_flat_other_owner, code);
+		x86_patch (jump_not_inflated, code);
+		x86_patch (jump_max_nest, code);
 		if (is_v4)
 			x86_patch (jump_lock_taken_true, code);
 	}
@@ -1071,8 +1126,8 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *tramp;
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_have_waiters, *jump_sync_null, *jump_not_owned, *jump_cmpxchg_failed;
-	guint8 *jump_next, *jump_sync_thin_hash = NULL;
+	guint8 *jump_obj_null, *jump_have_waiters, *jump_not_owned, *jump_cmpxchg_failed, *jump_not_flat;
+	guint8 *jump_next, *jump_flat_not_owned, *jump_flat_cmpxchg_failed, *jump_not_inflated, *jump_release;
 	int tramp_size;
 	int status_offset, nest_offset;
 	MonoJumpInfo *ji = NULL;
@@ -1080,6 +1135,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 	int obj_reg = MONO_AMD64_ARG_REG1;
 	int sync_reg = MONO_AMD64_ARG_REG2;
 	int status_reg = MONO_AMD64_ARG_REG3;
+	int tid_reg = AMD64_RAX;
 
 	g_assert (obj_reg == MONO_ARCH_MONITOR_OBJECT_REG);
 
@@ -1089,7 +1145,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 	status_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (status_offset);
 	nest_offset = MONO_THREADS_SYNC_MEMBER_OFFSET (nest_offset);
 
-	tramp_size = 112;
+	tramp_size = 144;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
@@ -1106,28 +1162,57 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		/* load obj->synchronization to RCX */
 		amd64_mov_reg_membase (code, sync_reg, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), 8);
 
-		if (mono_gc_is_moving ()) {
-			/*if bit zero is set it's a thin hash*/
-			/*FIXME use testb encoding*/
-			amd64_test_reg_imm (code, sync_reg, 0x01);
-			jump_sync_thin_hash = code;
-			amd64_branch8 (code, X86_CC_NE, -1, 1);
+		/* load MonoInternalThread* into RAX */
+		code = mono_amd64_emit_tls_get (code, tid_reg, mono_thread_get_tls_offset ());
+		/* load TID into RAX */
+		amd64_mov_reg_membase (code, tid_reg, tid_reg, MONO_STRUCT_OFFSET (MonoInternalThread, small_id), 4);
 
-			/*clear bits used by the gc*/
-			amd64_alu_reg_imm (code, X86_AND, sync_reg, ~0x3);
-		}
+		/* check if the lock is inflated or the lock word contains the hash code */
+		amd64_test_reg_imm (code, sync_reg, LOCK_WORD_STATUS_MASK);
+		jump_not_flat = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
-		/* is synchronization null? */
-		amd64_test_reg_reg (code, sync_reg, sync_reg);
-		/* if yes, jump to actual trampoline */
-		jump_sync_null = code;
+		/* FLAT LOCK */
+		/* shift the lock word and compare with TID */
+		amd64_shift_reg_imm (code, X86_SHL, tid_reg, LOCK_WORD_OWNER_SHIFT);
+		amd64_alu_reg_reg (code, X86_XOR, tid_reg, sync_reg);
+		amd64_test_reg_imm (code, tid_reg, LOCK_WORD_OWNER_MASK);
+
+		/* if no, jump to actual trampoline */
+		jump_flat_not_owned = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+
+		/* check if we have nested acquires */
+		amd64_test_reg_reg (code, tid_reg, tid_reg);
+		jump_release = code;
 		amd64_branch8 (code, X86_CC_Z, -1, 1);
 
-		/* next case: synchronization is not null */
-		/* load MonoInternalThread* into RAX */
-		code = mono_amd64_emit_tls_get (code, AMD64_RAX, mono_thread_get_tls_offset ());
-		/* load TID into RAX */
-		amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RAX, MONO_STRUCT_OFFSET (MonoInternalThread, small_id), 4);
+		/* decrement the nested acquires count */
+		amd64_mov_reg_reg (code, tid_reg, sync_reg, 8);
+		amd64_alu_reg_imm (code, X86_SUB, tid_reg, 1 << LOCK_WORD_NEST_SHIFT);
+
+		/* unlock */
+		x86_patch (jump_release, code);
+		/* have in RAX (tid_reg) the old value and in sync_reg the new value */
+		amd64_xchg_reg_reg (code, tid_reg, sync_reg, 8);
+		/* compare and exchange */
+		amd64_prefix (code, X86_LOCK_PREFIX);
+		amd64_cmpxchg_membase_reg (code, obj_reg, MONO_STRUCT_OFFSET (MonoObject, synchronisation), sync_reg);
+		/* if not successful, jump to actual trampoline */
+		jump_flat_cmpxchg_failed = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
+		amd64_ret (code);
+
+		/* test if the lock is inflated */
+		x86_patch (jump_not_flat, code);
+		amd64_test_reg_imm (code, sync_reg, LOCK_WORD_INFLATED);
+		jump_not_inflated = code;
+		amd64_branch8 (code, X86_CC_Z, -1, 1);
+
+		/* INFLATED LOCK */
+		/* clear status bits to be able to dereference the pointer */
+		amd64_alu_reg_imm (code, X86_AND, sync_reg, ~LOCK_WORD_STATUS_MASK);
+
 		/* is synchronization->owner == TID */
 		amd64_mov_reg_membase (code, status_reg, sync_reg, status_offset, 4);
 		amd64_alu_reg_reg_size (code, X86_XOR, AMD64_RAX, status_reg, 4);
@@ -1168,13 +1253,13 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 		amd64_dec_membase_size (code, sync_reg, nest_offset, 4);
 		amd64_ret (code);
 
-		if (jump_sync_thin_hash)
-			x86_patch (jump_sync_thin_hash, code);
 		x86_patch (jump_obj_null, code);
 		x86_patch (jump_have_waiters, code);
 		x86_patch (jump_not_owned, code);
+		x86_patch (jump_not_inflated, code);
+		x86_patch (jump_flat_not_owned, code);
 		x86_patch (jump_cmpxchg_failed, code);
-		x86_patch (jump_sync_null, code);
+		x86_patch (jump_flat_cmpxchg_failed, code);
 	}
 
 	/* jump to the actual trampoline */
