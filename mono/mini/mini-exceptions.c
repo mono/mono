@@ -82,6 +82,10 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
+#ifndef MONO_ARCH_STACK_GROWS_UP
+#define MONO_ARCH_STACK_GROWS_UP 0
+#endif
+
 static gpointer restore_context_func, call_filter_func;
 static gpointer throw_exception_func, rethrow_exception_func;
 static gpointer throw_corlib_exception_func;
@@ -1275,12 +1279,6 @@ wrap_non_exception_throws (MonoMethod *m)
 	return val;
 }
 
-#ifndef MONO_ARCH_STACK_GROWS_UP
-#define DOES_STACK_GROWS_UP 1
-#else
-#define DOES_STACK_GROWS_UP 0
-#endif
-
 #define MAX_UNMANAGED_BACKTRACE 128
 static MonoArray*
 build_native_trace (MonoError *error)
@@ -1465,10 +1463,10 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, MonoObject *obj, gi
 			dynamic_methods = g_slist_prepend (dynamic_methods, method);
 
 		if (stack_overflow) {
-			if (DOES_STACK_GROWS_UP)
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
-			else
+			if (MONO_ARCH_STACK_GROWS_UP)
 				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (ctx));
+			else
+				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
 		} else {
 			free_stack = 0xffffff;
 		}
@@ -1805,10 +1803,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 		//printf ("M: %s %d.\n", mono_method_full_name (method, TRUE), frame_count);
 
 		if (stack_overflow) {
-			if (DOES_STACK_GROWS_UP)
-				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
-			else
+			if (MONO_ARCH_STACK_GROWS_UP)
 				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (ctx));
+			else
+				free_stack = (guint8*)(MONO_CONTEXT_GET_SP (ctx)) - (guint8*)(MONO_CONTEXT_GET_SP (&initial_ctx));
 		} else {
 			free_stack = 0xffffff;
 		}
