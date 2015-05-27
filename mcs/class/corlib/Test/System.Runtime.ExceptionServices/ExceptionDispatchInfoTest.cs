@@ -123,6 +123,34 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				Assert.IsTrue (split [1].Contains ("---"), "#2");
 			}
 		}
+
+		[Test]
+		public void ThrowMultipleCaptures ()
+		{
+			Exception e;
+			try {
+				throw new Exception ("test");
+			} catch (Exception e2) {
+				e = e2;
+			}
+
+			var edi = ExceptionDispatchInfo.Capture (e);
+
+			try {
+				edi.Throw ();
+			} catch (Exception e3) {
+				edi = ExceptionDispatchInfo.Capture (e3);
+			}
+
+			try {
+				edi.Throw ();
+			} catch (Exception ex) {
+				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				Assert.AreEqual (7, split.Length, "#1");
+				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				Assert.IsTrue (split [4].Contains ("---"), "#3");
+			}
+		}		
 	}
 }
 
