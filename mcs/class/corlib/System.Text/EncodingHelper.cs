@@ -74,9 +74,6 @@ internal static class EncodingHelper
 	internal static Encoding GetDefaultEncoding ()
 	{
 		Encoding enc = null;
-#if (MONOTOUCH || XAMMAC)
-		enc = EncodingHelper.UTF8Unmarked;
-#else
 						// See if the underlying system knows what
 						// code page handler we should be using.
 						int code_page = 1;
@@ -106,7 +103,6 @@ internal static class EncodingHelper
 							// not supported by underlying OS
 							enc = EncodingHelper.UTF8Unmarked;
 						}
-#endif
 		return enc;
 	}
 
