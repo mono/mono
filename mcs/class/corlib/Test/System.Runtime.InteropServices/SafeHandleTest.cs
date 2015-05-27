@@ -51,15 +51,28 @@ namespace MonoTests.System.Runtime.InteropServices
 				base.Dispose (manual);
 			}
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
+		public void SimpleDispose ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle ();
+			sf.Dispose ();
+		}
+
+		[Test]
 		public void BadDispose1 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
 
 			sf.DangerousRelease ();
-			sf.DangerousRelease ();
+
+			try {
+				sf.DangerousRelease ();
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			GC.SuppressFinalize (sf);
 		}
 
 		[Test]
@@ -130,6 +143,8 @@ namespace MonoTests.System.Runtime.InteropServices
 			Assert.IsTrue (sf.IsClosed, "closed");
 			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
 			Assert.IsFalse (sf.IsInvalid, "invalid");
+
+			GC.SuppressFinalize (sf);
 		}
 
 		[Test]
