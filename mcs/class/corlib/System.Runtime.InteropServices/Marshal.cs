@@ -578,7 +578,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();			
 		}
 
-#if !MOBILE
+#if !FULL_AOT_RUNTIME
 		[Obsolete]
 		[MonoTODO]
 		public static string GetTypeInfoName (UCOMITypeInfo pTI)
