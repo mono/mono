@@ -106,8 +106,8 @@ namespace System.IO.Compression
 				zipFile = mode == ZipArchiveMode.Create ? 
 					SharpCompress.Archive.Zip.ZipArchive.Create() :
 					SharpCompress.Archive.Zip.ZipArchive.Open(stream);
-			} catch (Exception) {
-				throw new InvalidDataException("The contents of the stream are not in the zip archive format.");
+			} catch (Exception e) {
+				throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
 			}
 
 			entries = new Dictionary<string, ZipArchiveEntry>();
