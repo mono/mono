@@ -30,7 +30,7 @@
 
 using System;
 
-#if !MOBILE
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]
