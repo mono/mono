@@ -177,6 +177,42 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (42, threadLocal.Value, "#4");
 			Assert.AreEqual (1, nTimes, "#5");
 		}
+
+		class SetMreOnFinalize
+		{
+			ManualResetEventSlim m_mres;
+
+			public SetMreOnFinalize (ManualResetEventSlim mres)
+			{
+				m_mres = mres;
+			}
+
+			~SetMreOnFinalize()
+			{
+				m_mres.Set();
+			}
+		}
+
+		[Test]
+		public void DisposeOnThreadExit ()
+		{
+			var threadLocal = new ThreadLocal<SetMreOnFinalize>();
+			var mres = new ManualResetEventSlim(false);
+			var thread = new Thread (() => { threadLocal.Value = new SetMreOnFinalize (mres); });
+
+			thread.Start ();
+			thread.Join ();
+
+			SpinWait.SpinUntil (() => {
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				GC.Collect();
+				return mres.IsSet;
+			}, 500);
+
+			if (!mres.IsSet)
+				Assert.Fail ();
+		}
 	}
 }
 #endif
