@@ -66983,7 +66983,7 @@
   <test name="test-interpolation-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>540</size>
+        <size>581</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
