@@ -331,7 +331,11 @@ namespace System.Threading {
                     ExecutionContext.CaptureOptions.IgnoreSyncCtx);
                 t.SetExecutionContextHelper(ec);
             }
+#if FEATURE_ROLE_BASED_SECURITY
             IPrincipal principal = (IPrincipal)CallContext.Principal;
+#else
+            IPrincipal principal = null;
+#endif
             StartInternal(principal, ref stackMark);
         }
 
