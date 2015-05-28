@@ -506,7 +506,9 @@ namespace System.Threading {
 
 		void StartInternal (IPrincipal principal, ref StackCrawlMark stackMark)
 		{
+#if FEATURE_ROLE_BASED_SECURITY
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
+#endif
 
 			// Thread_internal creates and starts the new thread, 
 			if (Thread_internal(m_Delegate) == IntPtr.Zero)
