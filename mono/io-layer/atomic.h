@@ -744,10 +744,37 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 #elif defined(__arm__)
 #define WAPI_ATOMIC_ASM
 
+#if defined(__GNUC__)
+#	if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
+#		define WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS
+#	endif
+#endif
+
+#if defined(WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS)
+#	define WAPI_ATOMIC_ARM_DMB() __sync_synchronize()
+#endif
+
+#if defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__) || (__ARM_ARCH + 0) >= 7
+#	define WAPI_ATOMIC_ARMV6_PLUS 1
+#	ifndef WAPI_ATOMIC_ARM_DMB
+#		define WAPI_ATOMIC_ARM_DMB() __asm__ __volatile__ ("dmb ish" : : : "memory")
+#	endif
+#elif defined(__ARM_ARCH_6__) || (__ARM_ARCH + 0) >= 6
+#	define WAPI_ATOMIC_ARMV6_PLUS 1
+#	ifndef WAPI_ATOMIC_ARM_DMB
+#		define WAPI_ATOMIC_ARM_DMB() __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r"(0) : "memory")
+#	endif
+#else
+#	define WAPI_ATOMIC_ARMV6_PLUS 0
+#endif
+
 static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS)
+	return __sync_val_compare_and_swap(dest, comp, exch);
+#elif WAPI_ATOMIC_ARMV6_PLUS
 	gint32 ret, tmp;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (	"1:\n"
 				"mov	%0, #0\n"
 				"ldrex %1, [%2]\n"
@@ -758,7 +785,7 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 				: "=&r" (tmp), "=&r" (ret)
 				: "r" (dest), "r" (comp), "r" (exch)
 				: "memory", "cc");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gint32 a, b;
@@ -783,8 +810,11 @@ static inline gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 ex
 
 static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS)
+	return __sync_val_compare_and_swap(dest, comp, exch);
+#elif WAPI_ATOMIC_ARMV6_PLUS
 	gpointer ret, tmp;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (	"1:\n"
 				"mov	%0, #0\n"
 				"ldrex %1, [%2]\n"
@@ -795,7 +825,7 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 				: "=&r" (tmp), "=&r" (ret)
 				: "r" (dest), "r" (comp), "r" (exch)
 				: "memory", "cc");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gpointer a, b;
@@ -820,8 +850,11 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 
 static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS)
+	return __sync_add_and_fetch (dest, 1);
+#elif WAPI_ATOMIC_ARMV6_PLUS
 	gint32 ret, flag;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (	"1:\n"
 				"ldrex %0, [%2]\n"
 				"add %0, %0, %3\n"
@@ -831,7 +864,7 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 				: "=&r" (ret), "=&r" (flag)
 				: "r" (dest), "r" (1)
 				: "memory", "cc");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gint32 a, b, c;
@@ -853,8 +886,11 @@ static inline gint32 InterlockedIncrement(volatile gint32 *dest)
 
 static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(WAPI_ATOMIC_ARM_HAVE_GCC_SYNC_BUILTINS)
+	return __sync_sub_and_fetch (dest, 1);
+#elif WAPI_ATOMIC_ARMV6_PLUS
 	gint32 ret, flag;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (	"1:\n"
 				"ldrex %0, [%2]\n"
 				"sub %0, %0, %3\n"
@@ -864,11 +900,11 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 				: "=&r" (ret), "=&r" (flag)
 				: "r" (dest), "r" (1)
 				: "memory", "cc");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gint32 a, b, c;
-
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (  "0:\n\t"
 				"ldr %0, [%3]\n\t"
 				"add %1, %0, %4\n\t"
@@ -879,15 +915,16 @@ static inline gint32 InterlockedDecrement(volatile gint32 *dest)
 				: "=&r" (a), "=&r" (b), "=&r" (c)
 				: "r" (dest), "r" (-1)
 				: "cc", "memory");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return b;
 #endif
 }
 
 static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if WAPI_ATOMIC_ARMV6_PLUS
 	gint32 ret, flag;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (
 			      "1:\n"
 			      "ldrex %0, [%3]\n"
@@ -897,6 +934,7 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 			      : "=&r" (ret), "=&r" (flag)
 			      : "r" (exch), "r" (dest)
 			      : "memory", "cc");
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gint32 a;
@@ -911,8 +949,9 @@ static inline gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 
 static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if WAPI_ATOMIC_ARMV6_PLUS
 	gpointer ret, flag;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (
 			      "1:\n"
 			      "ldrex %0, [%3]\n"
@@ -922,6 +961,7 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 			      : "=&r" (ret), "=&r" (flag)
 			      : "r" (exch), "r" (dest)
 			      : "memory", "cc");
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	gpointer a;
@@ -936,8 +976,11 @@ static inline gpointer InterlockedExchangePointer(volatile gpointer *dest, gpoin
 
 static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__GNUC__)
+	return __sync_fetch_and_add(dest, add);
+#elif WAPI_ATOMIC_ARMV6_PLUS
 	gint32 ret, tmp, flag;
+	WAPI_ATOMIC_ARM_DMB();
 	__asm__ __volatile__ (	"1:\n"
 				"ldrex %0, [%3]\n"
 				"add %1, %0, %4\n"
@@ -947,7 +990,7 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 				: "=&r" (ret), "=&r" (tmp), "=&r" (flag)
 				: "r" (dest), "r" (add)
 				: "memory", "cc");
-
+	WAPI_ATOMIC_ARM_DMB();
 	return ret;
 #else
 	int a, b, c;
