@@ -7454,6 +7454,8 @@ _mono_reflection_get_type_from_info (MonoTypeNameParse *info, MonoImage *image, 
 			 */
 			assembly = image->assembly;
 		if (!assembly) {
+			if (!image) // No image.
+				return NULL;
 			/* then we must load the assembly ourselve - see #60439 */
 			assembly = mono_assembly_load (&info->assembly, image->assembly->basedir, NULL);
 			if (!assembly)

@@ -1571,6 +1571,12 @@ namespace MonoTests.System
 			Assert.AreEqual ("MonoTests.System", s.Namespace);
 		}
 
+		[Test]
+		public void GenericParameterBadAssemblyName ()
+		{
+			Assert.IsNull (Type.GetType ("System.Nullable`1[[System.Int32, mscorlibBAD]]"));
+		}
+
 		public static void Reflected (ref int a)
 		{
 		}
