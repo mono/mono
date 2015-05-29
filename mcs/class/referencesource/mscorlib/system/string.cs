@@ -863,7 +863,7 @@ namespace System {
                         s += 2;
                     }
 #endif
-#if DEBUG
+#if !MONO && DEBUG
                     // We want to ensure we can change our hash function daily.
                     // This is perfectly fine as long as you don't persist the
                     // value from GetHashCode to disk or count on String A 
@@ -920,7 +920,7 @@ namespace System {
                         s += 2;
                     }
 #endif
-#if DEBUG
+#if !MONO && DEBUG
                     // We want to ensure we can change our hash function daily.
                     // This is perfectly fine as long as you don't persist the
                     // value from GetHashCode to disk or count on String A 

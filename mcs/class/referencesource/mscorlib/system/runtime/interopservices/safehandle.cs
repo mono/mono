@@ -173,7 +173,7 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
         if (!ownsHandle)
             GC.SuppressFinalize(this);
 
-#if DEBUG
+#if !MONO && DEBUG
         if (BCLDebug.SafeHandleStackTracesEnabled)
             _stackTrace = Environment.GetStackTrace(null, false);
         else

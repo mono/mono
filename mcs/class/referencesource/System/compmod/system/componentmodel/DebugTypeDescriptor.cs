@@ -1163,9 +1163,11 @@ namespace System.ComponentModel {
             ///      a single object to be re-used for more than one type. 
             /// </devdoc> 
             private object CreateInstance(Type type) {
+#if !DISABLE_CAS_USE
                 if ((!(type.IsPublic || type.IsNestedPublic)) && (type.Assembly == typeof(DebugTypeDescriptor).Assembly)) {
                     IntSecurity.FullReflection.Demand();
                 }
+#endif
 
                 ConstructorInfo ctor = type.GetConstructor(typeConstructor);
                 if (ctor != null) {

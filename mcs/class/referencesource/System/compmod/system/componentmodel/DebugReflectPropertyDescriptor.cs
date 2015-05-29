@@ -380,8 +380,9 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-                    
+#if !DISABLE_CAS_USE
                     IntSecurity.FullReflection.Assert();
+#endif
                     try {
                         resetMethod = FindMethod(componentClass, "Reset" + Name, args, typeof(void), /* publicOnly= */ false);
                     }
@@ -455,8 +456,9 @@ namespace System.ComponentModel {
                     else {
                         args = new Type[] {receiverType};
                     }
-                    
+#if !DISABLE_CAS_USE
                     IntSecurity.FullReflection.Assert();
+#endif
                     try {
                         shouldSerializeMethod = FindMethod(componentClass, "ShouldSerialize" + Name,
                                                          args, typeof(Boolean), /* publicOnly= */ false);

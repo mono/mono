@@ -352,7 +352,7 @@ namespace System.Threading {
             set { m_ExecutionContextBelongsToOuterScope = !value; }
         }
 
-#if DEBUG
+#if !MONO && DEBUG
         internal bool ForbidExecutionContextMutation
         {
             set { m_ForbidExecutionContextMutation = value; }
@@ -381,7 +381,7 @@ namespace System.Threading {
         internal ExecutionContext GetMutableExecutionContext()
         {
             Contract.Assert(Thread.CurrentThread == this);
-#if DEBUG
+#if !MONO && DEBUG
             Contract.Assert(!m_ForbidExecutionContextMutation);
 #endif
             if (m_ExecutionContext == null)

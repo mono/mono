@@ -99,7 +99,7 @@ namespace System.Threading
 #endif
             currentThread.SetExecutionContext(outerEC, outerECBelongsToScope);
 
-#if DEBUG
+#if !MONO && DEBUG
             try
             {
                 currentThread.ForbidExecutionContextMutation = true;
@@ -121,7 +121,7 @@ namespace System.Threading
 #endif
 
                 thread = null; // this will prevent the switcher object being used again
-#if DEBUG
+#if !MONO && DEBUG
             }
             finally
             {
