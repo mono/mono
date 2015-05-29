@@ -40,6 +40,10 @@ namespace System.Security.Cryptography {
 
         public override byte[] GenerateMask(byte[] rgbSeed, int cbReturn)
         {
+#if MONO
+            HashAlgorithm hash = HashAlgorithm.Create (HashNameValue);
+            return Mono.Security.Cryptography.PKCS1.MGF1 (hash, rgbSeed, cbReturn);
+#else
             HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName(HashNameValue);
             byte[] rgbCounter = new byte[4];
             byte[] rgbT = new byte[cbReturn];
@@ -60,6 +64,7 @@ namespace System.Security.Cryptography {
                 ib += hash.Hash.Length;
             }
             return rgbT;
+#endif
         }
     }
 }
