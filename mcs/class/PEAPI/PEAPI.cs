@@ -940,6 +940,12 @@ namespace PEAPI {
 			element.HasCustomAttr = true;
 		}
 
+		public void AddCustomAttribute (Method meth, Constant constant, MetaDataElement element)
+		{
+			metaData.AddCustomAttribute (new CustomAttribute (element, meth, constant));
+			element.HasCustomAttr = true;
+		}
+
 		public void AddDeclSecurity (SecurityAction sec_action, byte [] data, MetaDataElement element)
 		{
 			metaData.AddDeclSecurity (new DeclSecurity (element, (ushort) sec_action, data));

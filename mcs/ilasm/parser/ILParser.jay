@@ -1652,11 +1652,14 @@ field_init_primitive	: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           }
 			;
 
-field_init		: field_init_primitive
+field_init_full : field_init_primitive
 			| K_BYTEARRAY bytes_list
                           {
                                 $$ = new ByteArrConst ((byte[]) $2);
                           }
+			;
+
+field_init : field_init_full
 			| comp_qstring
                           {
                                 // ******** THIS IS NOT IN THE DOCUMENTATION ******** //
@@ -1666,6 +1669,13 @@ field_init		: field_init_primitive
                           {
                                 $$ = new NullConst ();
                           }
+			;
+
+member_init : field_init_full
+			| K_STRING OPEN_PARENS SQSTRING CLOSE_PARENS
+			  {
+				$$ = new StringConst ((string) $3);
+			  }
 			;
 
 data_decl		: data_head data_body
@@ -2781,13 +2791,15 @@ customattr_decl		: D_CUSTOM custom_type
 			| D_CUSTOM custom_type ASSIGN comp_qstring
 			| D_CUSTOM custom_type ASSIGN bytes_list
                           {
-                                $$ = new CustomAttr ((BaseMethodRef) $2,
-                                        (byte[]) $4);
+                                $$ = new CustomAttr ((BaseMethodRef) $2, new ByteArrConst ((byte[]) $4));
                           }
+            | D_CUSTOM custom_type ASSIGN OPEN_BRACE member_init CLOSE_BRACE
+              {
+            	$$ = new CustomAttr ((BaseMethodRef) $2, null);
+              }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
-			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN
-			  bytes_list
+			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN bytes_list
 			;
 			
 custom_type		: call_conv type type_spec DOUBLE_COLON method_name OPEN_PARENS type_list CLOSE_PARENS
@@ -2892,17 +2904,9 @@ permission_member	: prop_or_field primitive_type perm_mbr_nameval_pair
 			  }
 			;
 
-perm_mbr_nameval_pair	: SQSTRING ASSIGN field_init_primitive
+perm_mbr_nameval_pair	: SQSTRING ASSIGN member_init
 			  {
 				$$ = new NameValuePair ((string) $1, (PEAPI.Constant) $3);
-			  }
-			| SQSTRING ASSIGN K_BYTEARRAY bytes_list
-                          {
-                                $$ = new NameValuePair ((string) $1, new ByteArrConst ((byte[]) $4));
-                          }
-			| SQSTRING ASSIGN K_STRING OPEN_PARENS SQSTRING CLOSE_PARENS
-			  {
-				$$ = new NameValuePair ((string) $1, new StringConst ((string) $5));
 			  }
 			;
 
