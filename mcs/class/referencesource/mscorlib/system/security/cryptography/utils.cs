@@ -880,7 +880,10 @@ namespace System.Security.Cryptography
         [System.Security.SecurityCritical]  // auto-generated
         internal static byte[] RsaOaepDecrypt (RSA rsa, HashAlgorithm hash, PKCS1MaskGenerationMethod mgf, byte[] encryptedData) {
 #if MONO
-            return Mono.Security.Cryptography.PKCS1.Decrypt_OAEP (rsa, hash, encryptedData);
+            var result = Mono.Security.Cryptography.PKCS1.Decrypt_OAEP (rsa, hash, encryptedData);
+            if (result == null)
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_OAEPDecoding"));
+            return result;
 #else
             int cb = rsa.KeySize / 8;
 
