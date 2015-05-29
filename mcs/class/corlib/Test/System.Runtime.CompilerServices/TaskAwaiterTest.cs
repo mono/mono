@@ -368,7 +368,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		public void NestedLeakingSynchronizationContext ()
 		{
 			var sc = SynchronizationContext.Current;
-			NestedLeakingSynchronizationContext_MainAsync (sc).GetAwaiter ().GetResult ();
+			Assert.IsTrue (NestedLeakingSynchronizationContext_MainAsync (sc).GetAwaiter ().Wait (5000), "#1");
 		}
 
 		static async Task NestedLeakingSynchronizationContext_MainAsync (SynchronizationContext sc)
