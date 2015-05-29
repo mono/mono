@@ -194,24 +194,24 @@ do_rehash (void *_data)
 	Slot **table;
 
 	/* printf ("Resizing diff=%d slots=%d\n", hash->in_use - hash->last_rehash, hash->table_size); */
-	hash->last_rehash = hash->table_size;
 	current_size = hash->table_size;
-	hash->table_size = data->new_size;
 	/* printf ("New size: %d\n", hash->table_size); */
 	table = hash->table;
-	hash->table = data->table;
 
 	for (i = 0; i < current_size; i++){
 		Slot *s, *next;
 
 		for (s = table [i]; s != NULL; s = next){
-			guint hashcode = ((*hash->hash_func) (s->key)) % hash->table_size;
+                       guint hashcode = ((*hash->hash_func) (s->key)) % data->new_size;
 			next = s->next;
 
-			s->next = hash->table [hashcode];
-			hash->table [hashcode] = s;
+                       s->next = data->table [hashcode];
+                       data->table [hashcode] = s;
 		}
 	}
+       hash->table_size = data->new_size;
+       hash->last_rehash = hash->table_size;
+       hash->table = data->table;
 	return table;
 }
 
