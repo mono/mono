@@ -137,6 +137,8 @@ namespace System.Reflection {
 
 		public override string ToString ()
 		{
+			ResolveArguments ();
+
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append ("[" + ctorInfo.DeclaringType.FullName + "(");
