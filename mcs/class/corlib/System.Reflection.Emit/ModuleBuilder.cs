@@ -605,8 +605,7 @@ namespace System.Reflection.Emit {
 		{
 			if (con == null)
 				throw new ArgumentNullException ("con");
-			if (con.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The constructor is not in this module");
+
 			return new MethodToken (GetToken (con));
 		}
 		
@@ -614,9 +613,7 @@ namespace System.Reflection.Emit {
 		{
 			if (constructor == null)
 				throw new ArgumentNullException ("constructor");
-			if (con.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The constructor is not in this module");
-			
+
 			return new MethodToken (GetToken (constructor, optionalParameterTypes));
 		}
 
@@ -624,8 +621,7 @@ namespace System.Reflection.Emit {
 		{
 			if (field == null)
 				throw new ArgumentNullException ("field");
-			if (field.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The method is not in this module");
+
 			return new FieldToken (GetToken (field));
 		}
 
