@@ -443,6 +443,10 @@ namespace PEAPI {
 			type = constrType;
 			cVal = val;
 			tabIx = MDTable.CustomAttribute;
+
+			var bac = val as ByteArrConst;
+			if (bac != null)
+				byteVal = bac.val;
 		}
 
 		internal CustomAttribute(MetaDataElement paren, Method constrType,
@@ -2945,7 +2949,7 @@ namespace PEAPI {
 	}
 
 	public class ByteArrConst : DataConstant {
-		byte[] val;
+		internal byte[] val;
 
 		public ByteArrConst(byte[] val) 
 		{
