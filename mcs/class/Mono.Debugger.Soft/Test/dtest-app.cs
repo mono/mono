@@ -716,6 +716,7 @@ public class Tests : TestsBase, ITest2
 			astruct = new AStruct ();
 		}
 		rs = "A";
+		List<int> alist = new List<int> () { 12 };
 	}
 
 
