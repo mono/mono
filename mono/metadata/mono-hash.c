@@ -202,16 +202,16 @@ do_rehash (void *_data)
 		Slot *s, *next;
 
 		for (s = table [i]; s != NULL; s = next){
-                       guint hashcode = ((*hash->hash_func) (s->key)) % data->new_size;
+			guint hashcode = ((*hash->hash_func) (s->key)) % data->new_size;
 			next = s->next;
 
-                       s->next = data->table [hashcode];
-                       data->table [hashcode] = s;
+			s->next = data->table [hashcode];
+			data->table [hashcode] = s;
 		}
 	}
-       hash->table_size = data->new_size;
-       hash->last_rehash = hash->table_size;
-       hash->table = data->table;
+	hash->table_size = data->new_size;
+	hash->last_rehash = hash->table_size;
+	hash->table = data->table;
 	return table;
 }
 
