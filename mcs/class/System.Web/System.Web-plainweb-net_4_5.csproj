@@ -90,6 +90,7 @@
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingHandler.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingModule.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\VirtualPathData.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\AssemblyNamesTypeResolutionService.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\FileRefHandler.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\InMemoryHandler.cs" />

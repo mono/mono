@@ -45,21 +45,20 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\DataRowComparer.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\DataRowExtensions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\DataSetUtil.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\DataTableExtensions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\EnumerableRowCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\EnumerableRowCollectionExtensions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\LinqDataView.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\OrderedEnumerableRowCollection.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\SortExpressionBuilder.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\TypedTableBase.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Data.DataSetExtensions\System\Data\TypedTableBaseExtensions.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Data\DataRowComparer.cs" />
-    <Compile Include="System.Data\DataRowComparer_1.cs" />
-    <Compile Include="System.Data\DataRowExtensions.cs" />
-    <Compile Include="System.Data\DataTableExtensions.cs" />
-    <Compile Include="System.Data\EnumerableRowCollection.cs" />
-    <Compile Include="System.Data\EnumerableRowCollection_1.cs" />
-    <Compile Include="System.Data\EnumerableRowCollectionExtensions.cs" />
-    <Compile Include="System.Data\OrderedEnumerableRowCollection.cs" />
-    <Compile Include="System.Data\RowEnumerableDataReader.cs" />
-    <Compile Include="System.Data\TypedTableBase.cs" />
-    <Compile Include="System.Data\TypedTableBaseExtensions.cs" />  </ItemGroup>
+    <Compile Include="ReferenceSources\Strings.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -87,18 +86,6 @@
       <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Data/System.Data-net_4_5.csproj">
-      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
-      <Name>System.Data-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
-      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
-      <Name>System.Xml-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
-      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
-      <Name>System.Web-net_4_5</Name>
-    </ProjectReference>
     <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
       <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core-net_4_5</Name>
@@ -114,10 +101,6 @@
     <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
       <Name>System.Xml-net_4_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
-      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
-      <Name>System.Web-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

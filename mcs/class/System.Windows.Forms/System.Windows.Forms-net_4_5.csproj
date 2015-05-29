@@ -49,6 +49,7 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Assembly\Locale.cs" />
+    <Compile Include="System.Resources\AssemblyNamesTypeResolutionService.cs" />
     <Compile Include="System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="System.Resources\FileRefHandler.cs" />
     <Compile Include="System.Resources\InMemoryHandler.cs" />
