@@ -30,6 +30,8 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using System.Reflection;
+using System.Globalization;
 
 using NUnit.Framework;
 namespace MonoTests.System
@@ -1030,6 +1032,35 @@ namespace MonoTests.System
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0, 1))));
+			}
+		}
+
+		[TestFixture]
+		public class GetDaylightChanges
+		{
+			MethodInfo getChanges;
+
+			[SetUp]
+			public void Setup ()
+			{
+				var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+				getChanges = typeof (TimeZoneInfo).GetMethod ("GetDaylightChanges", flags);
+			}
+
+			[Test]
+			public void TestSydneyDaylightChanges ()
+			{
+				TimeZoneInfo tz;
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("Australia/Sydney");
+				else
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("W. Australia Standard Time");
+
+				var changes = (DaylightTime) getChanges.Invoke (tz, new object [] {2014});
+
+				Assert.AreEqual (new TimeSpan (1, 0, 0), changes.Delta);
+				Assert.AreEqual (new DateTime (2014, 10, 5, 2, 0, 0), changes.Start);
+				Assert.AreEqual (new DateTime (2014, 4, 6, 3, 0, 0), changes.End);
 			}
 		}
 	}
