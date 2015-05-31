@@ -105,7 +105,7 @@ namespace Mono.Tools {
 			RSA subjectKey = (RSA)RSA.Create ();
 
 			bool selfSigned = false;
-			string hashName = "SHA1";
+			string hashName = "SHA512";
 
 			CspParameters subjectParams = new CspParameters ();
 			CspParameters issuerParams = new CspParameters ();
@@ -150,11 +150,18 @@ namespace Mono.Tools {
 						case "-a":
 							// hash algorithm
 							switch (args [i++].ToLower ()) {
+								case "sha512":
+									hashName = "SHA512";
+									break;
+								case "sha256":
+									hashName = "SHA256";
+									break;
 								case "sha1":
+									Console.WriteLine ("WARNING: SHA1 is not safe for this usage.");
 									hashName = "SHA1";
 									break;
 								case "md5":
-									Console.WriteLine ("WARNING: MD5 is no more safe for this usage.");
+									Console.WriteLine ("WARNING: MD5 is not  safe for this usage.");
 									hashName = "MD5";
 									break;
 								default:
