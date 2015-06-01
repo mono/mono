@@ -89,9 +89,10 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
-#if !MOBILE
+#if !MOBILE || MOBILE_STATIC
 		static TimeZoneInfo CreateLocal ()
 		{
+#if !MOBILE_STATIC
 			if (IsWindows && LocalZoneKey != null) {
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
 				if (name == null)
@@ -100,6 +101,7 @@ namespace System
 				if (name != null)
 					return TimeZoneInfo.FindSystemTimeZoneById (name);
 			}
+#endif
 
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
@@ -135,6 +137,7 @@ namespace System
 
 		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
 		{
+#if !MOBILE_STATIC
 			if (TimeZoneKey != null) {
 				foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 					try {
@@ -144,6 +147,7 @@ namespace System
 
 				return;
 			}
+#endif
 
 #if LIBC
 			string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
@@ -202,7 +206,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
-#if !NET_2_1
+#if !NET_2_1 || MOBILE_STATIC
 		/// <summary>
 		/// Determine whether windows of not (taken Stephane Delcroix's code)
 		/// </summary>
@@ -229,6 +233,7 @@ namespace System
 			return str.Substring (Istart, Iend-Istart+1);
 		}
 		
+#if !MOBILE_STATIC
 		static RegistryKey timeZoneKey;
 		static RegistryKey TimeZoneKey {
 			get {
@@ -256,6 +261,7 @@ namespace System
 					"SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", false);
 			}
 		}
+#endif
 #endif
 
 		private static bool TryAddTicks (DateTime date, long ticks, out DateTime result, DateTimeKind kind = DateTimeKind.Unspecified)
