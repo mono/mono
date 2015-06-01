@@ -190,7 +190,7 @@ namespace System.Threading
             ec.SynchronizationContextNoFlow = syncContext;
         }
 
-#if FEATURE_CORECLR
+#if FEATURE_CORECLR || MOBILE_LEGACY
         //
         // This is a framework-internal method for Jolt's use.  The problem is that SynchronizationContexts set inside of a reverse p/invoke
         // into an AppDomain are not persisted in that AppDomain; the next time the same thread calls into the same AppDomain,
@@ -219,7 +219,7 @@ namespace System.Threading
 #endif
 
         [System.Security.SecurityCritical]
-#if FEATURE_LEGACYNETCF
+#if FEATURE_LEGACYNETCF || MOBILE_LEGACY
         public static void SetThreadStaticContext(SynchronizationContext syncContext)
 #else
         internal static void SetThreadStaticContext(SynchronizationContext syncContext)

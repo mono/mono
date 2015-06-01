@@ -276,7 +276,7 @@ namespace System.Runtime.InteropServices{
         public String Value { get {return _val;} }  
     }    
 
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
     [AttributeUsage(AttributeTargets.All, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class ComConversionLossAttribute : Attribute
@@ -285,7 +285,8 @@ namespace System.Runtime.InteropServices{
         {
         }
     }
-    
+#endif
+#if FEATURE_COMINTEROP
 [Serializable]
 [Flags()]
     [System.Runtime.InteropServices.ComVisible(true)]
