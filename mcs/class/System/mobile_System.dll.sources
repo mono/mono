@@ -350,7 +350,7 @@ System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
 ReferenceSources/AssertWrapper.cs
-ReferenceSource/HttpSysSettings.cs
+ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
