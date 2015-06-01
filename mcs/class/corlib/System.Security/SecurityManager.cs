@@ -153,68 +153,6 @@ namespace System.Security {
 			return true;
 		}
 
-		internal static IPermission CheckPermissionSet (Assembly a, PermissionSet ps, bool noncas)
-		{
-			if (ps.IsEmpty ())
-				return null;
-
-			foreach (IPermission p in ps) {
-				// note: this may contains non CAS permissions
-				if ((!noncas) && (p is CodeAccessPermission)) {
-					if (!IsGranted (a, p))
-						return p;
-				} else {
-					// but non-CAS will throw on failure...
-					try {
-						p.Demand ();
-					}
-					catch (SecurityException) {
-						// ... so we catch
-						return p;
-					}
-				}
-			}
-			return null;
-		}
-
-		internal static IPermission CheckPermissionSet (AppDomain ad, PermissionSet ps)
-		{
-			if ((ps == null) || ps.IsEmpty ())
-				return null;
-
-			PermissionSet granted = ad.GrantedPermissionSet;
-			if (granted == null)
-				return null;
-			if (granted.IsUnrestricted ())
-				return null;
-			if (ps.IsUnrestricted ())
-				return new SecurityPermission (SecurityPermissionFlag.NoFlags);
-
-			foreach (IPermission p in ps) {
-				if (p is CodeAccessPermission) {
-					CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (p.GetType ());
-					if (grant == null) {
-						if (!granted.IsUnrestricted () || !(p is IUnrestrictedPermission)) {
-							if (!p.IsSubsetOf (null))
-								return p;
-						}
-					} else if (!p.IsSubsetOf (grant)) {
-						return p;
-					}
-				} else {
-					// but non-CAS will throw on failure...
-					try {
-						p.Demand ();
-					}
-					catch (SecurityException) {
-						// ... so we catch
-						return p;
-					}
-				}
-			}
-			return null;
-		}
-
 		[Obsolete]
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
@@ -526,19 +464,6 @@ namespace System.Security {
 				}
 				return _unmanagedCode;
 			}
-		}
-
-		//  security check when using reflection
-
-		// When using reflection LinkDemand are promoted to full Demand (i.e. stack walk)
-		internal unsafe static void ReflectedLinkDemandInvoke (MethodBase mb)
-		{
-			return;
-		}
-
-		internal unsafe static bool ReflectedLinkDemandQuery (MethodBase mb)
-		{
-			return true;
 		}
 
 		// called by the runtime when CoreCLR is enabled

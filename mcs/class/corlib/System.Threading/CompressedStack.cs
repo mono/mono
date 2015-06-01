@@ -65,7 +65,7 @@ namespace System.Threading {
 			throw new NotSupportedException ();
 #else
 			CompressedStack cs = new CompressedStack (0);
-			cs._list = SecurityFrame.GetStack (1);
+			cs._list = new ArrayList ();
 
 			// include any current CompressedStack inside the new Capture
 			CompressedStack currentCs = Thread.CurrentThread.ExecutionContext.SecurityContext.CompressedStack;
@@ -146,12 +146,6 @@ namespace System.Threading {
 			if (_list.Count != cs._list.Count)
 				return false;
 
-			for (int i=0; i < _list.Count; i++) {
-				SecurityFrame sf1 = (SecurityFrame) _list [i];
-				SecurityFrame sf2 = (SecurityFrame) cs._list [i];
-				if (!sf1.Equals (sf2))
-					return false;
-			}
 			return true;
 		}
 
