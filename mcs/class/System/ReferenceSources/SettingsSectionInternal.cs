@@ -9,7 +9,11 @@ namespace System.Net.Configuration {
 			}
 		}
 
+#if !MOBILE
 		internal UnicodeEncodingConformance WebUtilityUnicodeEncodingConformance = UnicodeEncodingConformance.Auto;
 		internal UnicodeDecodingConformance WebUtilityUnicodeDecodingConformance = UnicodeDecodingConformance.Auto;
+#endif
+
+		internal bool HttpListenerUnescapeRequestUrl = true;
 	}
 }

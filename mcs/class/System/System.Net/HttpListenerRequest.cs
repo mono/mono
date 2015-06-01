@@ -188,6 +188,11 @@ namespace System.Net {
 
 			CreateQueryString (url.Query);
 
+			// Use reference source HttpListenerRequestUriBuilder to process url.
+			// Fixes #29927
+			url = HttpListenerRequestUriBuilder.GetRequestUri (raw_url, url.Scheme,
+								url.Authority, url.LocalPath, url.Query);
+
 			if (version >= HttpVersion.Version11) {
 				string t_encoding = Headers ["Transfer-Encoding"];
 				is_chunked = (t_encoding != null && String.Compare (t_encoding, "chunked", StringComparison.OrdinalIgnoreCase) == 0);
