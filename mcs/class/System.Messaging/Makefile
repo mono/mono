@@ -3,7 +3,13 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Messaging.dll
-LIB_REFS = System System.Configuration.Install System.Drawing System.Windows.Forms System.Xml Mono.Messaging
+LIB_REFS = System System.Configuration.Install System.Xml Mono.Messaging
+
+NO_SYSTEM_DRAWING_OR_FORMS := $(filter net_4_5_xammac, $(PROFILE))
+ifndef NO_SYSTEM_DRAWING_OR_FORMS
+LIB_REFS += System.Drawing System.Windows.Forms
+endif
+
 LIB_MCS_FLAGS = /resource:System.Messaging/MessageQueue.resx
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
 		/r:nunit.mocks.dll

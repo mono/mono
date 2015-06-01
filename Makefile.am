@@ -16,6 +16,7 @@ else
 if ONLY_XAMMAC
 SUBDIRS = $(libgc_dir) eglib/src mono runtime
 else
+# REVIEW - Should there be some magic here? Not sure what the 4.5 only SUBDIRS are? Build performance?
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built

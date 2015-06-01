@@ -50,6 +50,10 @@ if INSTALL_XAMMAC
 build_profiles += xammac
 endif
 
+if INSTALL_XAMMAC_45
+build_profiles += net_4_5_xammac
+endif
+
 test_profiles = $(build_profiles)
 
 endif

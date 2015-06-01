@@ -14,6 +14,11 @@ SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
 LIB_REFS = System.ServiceModel
 LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib
 
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+ifdef XAMMAC_4_5
+LIB_MCS_FLAGS += /d:NET_2_1 /d:MOBILE
+endif
+
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes

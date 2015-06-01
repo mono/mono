@@ -3,7 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
-MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
+
+MOBILE := $(filter monotouch monodroid xammac mobile mobile_static net_4_5_xammac, $(PROFILE))
 ifdef MOBILE
 LIB_REFS = System System.Xml
 LIB_MCS_FLAGS = \
@@ -33,6 +34,11 @@ LIB_MCS_FLAGS += \
 	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \
 	-resource:System.Web.Services.Description/wsdl-1.1-soap.xsd,wsdl-1.1-soap.xsd \
 	-resource:System.Web.Services.Description/web-reference.xsd,web-reference.xsd
+endif
+
+XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
+ifdef XAMMAC_4_5
+LIB_MCS_FLAGS += /d:NET_2_1 /d:MOBILE
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
