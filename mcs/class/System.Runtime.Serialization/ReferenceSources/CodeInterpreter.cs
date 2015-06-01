@@ -3,9 +3,8 @@ using System.Reflection;
 
 namespace System.Runtime.Serialization
 {
-	public class CodeInterpreter
+	static class CodeInterpreter
 	{
-
 		internal static object ConvertValue(object arg, Type source, Type target)
 		{
 			return InternalConvert(arg, source, target, false);
