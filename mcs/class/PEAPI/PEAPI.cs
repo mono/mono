@@ -923,6 +923,11 @@ namespace PEAPI {
 			return file;
 		}
 
+		public PrimitiveTypeRef AddPrimitiveType (PrimitiveType type)
+		{
+			return new PrimitiveTypeRef (type, metaData);
+		}
+
 		/// <summary>
 		/// Add a manifest resource to this PEFile NOT YET IMPLEMENTED
 		/// </summary>

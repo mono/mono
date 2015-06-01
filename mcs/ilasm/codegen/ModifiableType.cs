@@ -104,7 +104,7 @@ namespace Mono.ILASM {
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
-                                BaseClassRef klass)
+                                BaseTypeRef klass)
                 {
                         use_type_spec = true;
                         conversion_list.Add (ConversionMethod.MakeCustomModified);
@@ -143,7 +143,7 @@ namespace Mono.ILASM {
                                         break;
                                 case ConversionMethod.MakeCustomModified:
                                         peapi_type.MakeCustomModified (code_gen, (PEAPI.CustomModifier) conversion_list[++i],
-                                                (BaseClassRef) conversion_list[++i]);
+                                                (BaseTypeRef) conversion_list[++i]);
                                         break;
                                 }
 

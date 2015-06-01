@@ -196,7 +196,7 @@ namespace Mono.ILASM {
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
-                                BaseClassRef klass)
+                                BaseTypeRef klass)
                 {
 			PEAPI.Type type;
 
@@ -205,12 +205,23 @@ namespace Mono.ILASM {
                         Pair p = new Pair (peapi_type, modifier.ToString ());
                         type = type_table [p] as PEAPI.Type;
                         if (type == null) {
-                                klass.Resolve (code_gen);
-                                type = new PEAPI.CustomModifiedType (peapi_type,
-                                        modifier, klass.PeapiClass);
+                                type = GetType (code_gen, modifier, klass);
                                 type_table [p] = type;
                         }
                         peapi_type = type;
+                }
+
+                PEAPI.Type GetType (CodeGen code_gen, PEAPI.CustomModifier modifier, BaseTypeRef klass)
+                {
+                        klass.Resolve (code_gen);
+                        var bcr = klass as BaseClassRef;
+                        if (bcr != null)
+                                return new PEAPI.CustomModifiedType (peapi_type, modifier, bcr.PeapiClass);
+
+                        var pt = klass as PrimitiveTypeRef;
+                                return new PEAPI.CustomModifiedType (peapi_type, modifier, code_gen.PEFile.AddPrimitiveType ((PEAPI.PrimitiveType) pt.PeapiType));
+
+                        throw new NotSupportedException (klass.GetType ().ToString ());
                 }
 
                 public void MakePinned ()

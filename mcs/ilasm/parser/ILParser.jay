@@ -981,18 +981,18 @@ type			: generic_class_ref
                                 base_type.MakePinned ();
                                 $$ = base_type;
                           }
-			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
+			| type K_MODREQ OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
                                 BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
-                                BaseClassRef class_ref = (BaseClassRef) $4;
+                                BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modreq, class_ref);
                                 $$ = base_type;
                           }
-			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
+			| type K_MODOPT OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
                                 BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
-                                BaseClassRef class_ref = (BaseClassRef) $4;
+                                BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modopt, class_ref);
                                 $$ = base_type;
@@ -1483,6 +1483,11 @@ variant_type		: /* EMPTY */
 			| K_BLOB_OBJECT
 			| K_CF
 			| K_CLSID
+			;
+
+custom_modifier_type
+			: primitive_type
+			| class_ref
 			;
 
 field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
