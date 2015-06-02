@@ -246,7 +246,7 @@ namespace Mono.CSharp
 			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
-					parameters[0].ApplyAttributeBuilder (a, ctor, cdata, pa);
+					parameters[parameters.Count - 1].ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 
