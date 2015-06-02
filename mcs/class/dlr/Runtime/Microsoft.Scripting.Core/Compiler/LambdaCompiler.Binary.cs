@@ -275,6 +275,12 @@ namespace System.Linq.Expressions.Compiler {
                     if (rightType != typeof(int)) {
                         throw ContractUtils.Unreachable;
                     }
+                    // Note: If this code is made to handle unsigned
+                    // rightType types, emit the following when rightType:
+                    // is unsigned
+                    //_ilg.EmitInt(0x3f);
+                    _ilg.EmitInt(0x1f);
+                    _ilg.Emit(OpCodes.And);
                     _ilg.Emit(OpCodes.Shl);
                     break;
                 case ExpressionType.RightShift:
