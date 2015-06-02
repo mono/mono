@@ -372,6 +372,11 @@ namespace System.IO {
 
 				for (var i = 0; i < numEvents; i++) {
 					var kevt = eventBuffer [i];
+
+					if (!fdsDict.ContainsKey ((int)kevt.ident))
+						// The event is for a file that was removed
+						continue;
+
 					var pathData = fdsDict [(int)kevt.ident];
 
 					if ((kevt.flags & EventFlags.Error) == EventFlags.Error) {
@@ -382,7 +387,7 @@ namespace System.IO {
 						
 					if ((kevt.fflags & FilterFlags.VNodeDelete) == FilterFlags.VNodeDelete || (kevt.fflags & FilterFlags.VNodeRevoke) == FilterFlags.VNodeRevoke) {
 						if (pathData.Path == fullPathNoLastSlash)
-							//The root path is deleted; exit silently
+							// The root path is deleted; exit silently
 							return;
 								
 						removeQueue.Add (pathData);
