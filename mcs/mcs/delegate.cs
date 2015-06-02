@@ -16,9 +16,11 @@
 using System;
 
 #if STATIC
+using SecurityType = System.Collections.Generic.List<IKVM.Reflection.Emit.CustomAttributeBuilder>;
 using IKVM.Reflection;
 using IKVM.Reflection.Emit;
 #else
+using SecurityType = System.Collections.Generic.Dictionary<System.Security.Permissions.SecurityAction, System.Security.PermissionSet>;
 using System.Reflection;
 using System.Reflection.Emit;
 #endif
@@ -44,6 +46,8 @@ namespace Mono.CSharp {
 		
 		Expression instance_expr;
 		ReturnParameter return_attributes;
+
+		SecurityType declarative_security;
 
 		const Modifiers MethodModifiers = Modifiers.PUBLIC | Modifiers.VIRTUAL;
 
@@ -101,6 +105,11 @@ namespace Mono.CSharp {
 					return_attributes = new ReturnParameter (this, InvokeBuilder.MethodBuilder, Location);
 
 				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				return;
+			}
+
+			if (a.IsValidSecurityAttribute ()) {
+				a.ExtractSecurityPermissionSet (ctor, ref declarative_security);
 				return;
 			}
 
@@ -307,6 +316,16 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			base.Emit ();
+
+			if (declarative_security != null) {
+				foreach (var de in declarative_security) {
+#if STATIC
+					TypeBuilder.__AddDeclarativeSecurity (de);
+#else
+					TypeBuilder.AddDeclarativeSecurity (de.Key, de.Value);
+#endif
+				}
+			}
 
 			if (ReturnType.Type != null) {
 				if (ReturnType.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {

@@ -51278,6 +51278,20 @@
         <size>7</size>
       </method>
     </type>
+    <type name="D">
+      <method name="Void Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
   </test>
   <test name="test-911.cs">
     <type name="N">
