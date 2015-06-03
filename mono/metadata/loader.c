@@ -1294,9 +1294,18 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 
 	if (unity_find_plugin_callback)
 	{
-		new_scope = unity_find_plugin_callback (new_scope);
-		//check if unity wants pinvoke to be totally disabled
-		if (new_scope == 0) return 0;
+		const char* unity_new_scope = unity_find_plugin_callback (new_scope);
+		if (unity_new_scope == NULL)
+		{
+			if (exc_class)
+			{
+				*exc_class = "DllNotFoundException";
+				*exc_arg = new_scope;
+			}
+			return NULL;
+		}
+
+		new_scope = unity_new_scope;
 	}
 
 	/*
