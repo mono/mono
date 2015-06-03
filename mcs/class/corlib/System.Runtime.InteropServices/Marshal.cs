@@ -986,7 +986,7 @@ namespace System.Runtime.InteropServices
 
 		internal static uint AlignedSizeOf<T> () where T : struct
 		{
-			uint size = SizeOfTypei (typeof (T));
+			uint size = SizeOfType (typeof (T));
 			if (size == 1 || size == 2)
 				return size;
 			if (IntPtr.Size == 8 && size == 4)
