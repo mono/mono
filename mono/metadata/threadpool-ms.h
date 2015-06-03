@@ -5,6 +5,7 @@
 #include <glib.h>
 
 #include <mono/metadata/exception.h>
+#include <mono/metadata/object-internals.h>
 
 #define SMALL_STACK (sizeof (gpointer) * 32 * 1024)
 
