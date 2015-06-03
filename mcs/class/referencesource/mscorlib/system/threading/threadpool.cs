@@ -64,6 +64,8 @@ namespace System.Threading
     unsafe public delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped* pOVERLAP);
 }
 
+#if !DISABLE_MS_THREADPOOL
+
 namespace System.Threading.Microsoft
 {
     using System.Security;
@@ -1964,3 +1966,5 @@ namespace System.Threading.Microsoft
         private static extern bool BindIOCompletionCallbackNative(IntPtr fileHandle);
     }
 }
+
+#endif
