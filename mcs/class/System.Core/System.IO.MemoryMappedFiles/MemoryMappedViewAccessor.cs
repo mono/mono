@@ -37,10 +37,17 @@ namespace System.IO.MemoryMappedFiles
 	public sealed class MemoryMappedViewAccessor : UnmanagedMemoryAccessor, IDisposable {
 		IntPtr mmap_handle;
 		SafeMemoryMappedViewHandle safe_handle;
+		long pointerOffset;
 
 		internal MemoryMappedViewAccessor (IntPtr handle, long offset, long size, MemoryMappedFileAccess access)
 		{
+			pointerOffset = offset;
 			Create (handle, offset, size, access);
+		}
+
+		public long PointerOffset
+		{
+			get { return pointerOffset; }
 		}
 
 		static FileAccess ToFileAccess (MemoryMappedFileAccess access)

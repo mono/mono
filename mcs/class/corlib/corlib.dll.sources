@@ -214,7 +214,6 @@ System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
 System.IO/UnexceptionalStreamReader.cs
 System.IO/UnexceptionalStreamWriter.cs
-System.IO/UnmanagedMemoryAccessor.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
@@ -997,6 +996,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/int64.cs
 ../../../external/referencesource/mscorlib/system/iobservable.cs
 ../../../external/referencesource/mscorlib/system/iobserver.cs
+../../../external/referencesource/mscorlib/system/io/unmanagedmemoryaccessor.cs
 ../../../external/referencesource/mscorlib/system/iprogress.cs
 ../../../external/referencesource/mscorlib/system/iserviceobjectprovider.cs
 ../../../external/referencesource/mscorlib/system/invalidtimezoneexception.cs
