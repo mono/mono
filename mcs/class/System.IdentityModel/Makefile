@@ -8,7 +8,6 @@ LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
 
-XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 ifndef XAMMAC_4_5
 LIB_REFS += System.Web
 

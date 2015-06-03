@@ -5,7 +5,6 @@ include ../../build/rules.make
 LIBRARY = System.Messaging.dll
 LIB_REFS = System System.Xml Mono.Messaging
 
-XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 ifndef XAMMAC_4_5
 LIB_REFS += System.Drawing System.Windows.Forms System.Configuration.Install
 endif
