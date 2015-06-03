@@ -2,10 +2,6 @@ thisdir = class/System.IdentityModel
 SUBDIRS = 
 include ../../build/rules.make
 
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
-endif
-
 LIBRARY = System.IdentityModel.dll
 LIB_REFS = System System.Xml System.Security System.Configuration Mono.Security System.Runtime.Serialization
 LIB_MCS_FLAGS = \
@@ -15,6 +11,11 @@ LIB_MCS_FLAGS = \
 XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 ifndef XAMMAC_4_5
 LIB_REFS += System.Web
+
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
+endif
+
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

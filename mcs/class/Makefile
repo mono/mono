@@ -98,7 +98,6 @@ xammac_4_5_dirs := \
 	Mono.Data.Sqlite	\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.ComponentModel.DataAnnotations \
-	System.Web.ApplicationServices	\
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	Mono.Messaging			\
