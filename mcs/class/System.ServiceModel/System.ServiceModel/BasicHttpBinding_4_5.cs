@@ -50,7 +50,7 @@ namespace System.ServiceModel
 		{
 		}
 		
-#if !(NET_2_1 || XAMMAC_4_5)
+#if !NET_2_1 && !XAMMAC_4_5
 		public BasicHttpBinding (string configurationName)
 			: this ()
 		{
@@ -135,7 +135,7 @@ namespace System.ServiceModel
 				return null;
 			}
 			
-#if !(NET_2_1 || XAMMAC_4_5)
+#if !NET_2_1 && !XAMMAC_4_5
 			element.SetKeyDerivation (false);
 			element.SecurityHeaderLayout = SecurityHeaderLayout.Lax;
 #endif

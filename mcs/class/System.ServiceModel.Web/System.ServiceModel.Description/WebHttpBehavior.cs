@@ -84,7 +84,7 @@ namespace System.ServiceModel.Description
 			// clientRuntime.MessageInspectors.Add (something);
 		}
 
-#if !(NET_2_1 || XAMMAC_4_5)
+#if !NET_2_1 && !XAMMAC_4_5
 		protected virtual void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (new WebHttpErrorHandler ());
@@ -146,7 +146,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-#if !(NET_2_1 || XAMMAC_4_5)
+#if !NET_2_1 && !XAMMAC_4_5
 		internal class DispatchPairFormatter : IDispatchMessageFormatter
 		{
 			public DispatchPairFormatter (IDispatchMessageFormatter request, IDispatchMessageFormatter reply)

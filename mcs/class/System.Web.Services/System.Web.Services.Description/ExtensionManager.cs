@@ -71,7 +71,7 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (Soap12HeaderBinding));
 			RegisterExtensionType (typeof (Soap12OperationBinding));
 
-#if !(MOBILE || XAMMAC_4_5)
+#if !MOBILE && !XAMMAC_4_5
 			/*
 			 * Currently, the mobile profile has not support for
 			 * System.Configuration, so there are no external modules
