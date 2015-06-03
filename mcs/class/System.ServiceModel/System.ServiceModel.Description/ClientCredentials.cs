@@ -128,7 +128,7 @@ namespace System.ServiceModel.Description
 			return new ClientCredentials (this);
 		}
 
-#if !(NET_2_1 || XAMMAC_4_5)
+#if !NET_2_1 && !XAMMAC_4_5
 		public override SecurityTokenManager CreateSecurityTokenManager ()
 		{
 			return new ClientCredentialsSecurityTokenManager (this);
