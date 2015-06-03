@@ -1625,8 +1625,8 @@ public class DebuggerTests
 				AssertValue ("AB", vals [i]);
 			if (locals [i].Name == "t")
 				AssertValue ("ABC", vals [i]);
-			if (locals [i].Name == "alist")
-				;
+			if (locals [i].Name == "alist") {
+			}
 		}
 
 		// Argument checking
@@ -2269,6 +2269,17 @@ public class DebuggerTests
 		task = s.InvokeMethodAsyncWithResult (e.Thread, m, null);
 		out_this = task.Result.OutThis as StructMirror;
 		Assert.AreEqual (null, out_this);
+
+		// interface method
+		var cl1 = frame.Method.DeclaringType.Assembly.GetType ("ITest2");
+		m = cl1.GetMethod ("invoke_iface");
+		v = s.InvokeMethod (e.Thread, m, null);
+		AssertValue (42, v);
+
+		// virtual method
+		m = vm.RootDomain.Corlib.GetType ("System.Object").GetMethod ("ToString");
+		v = s.InvokeMethod (e.Thread, m, null, InvokeOptions.Virtual);
+		AssertValue ("42", v);
 #endif
 	}
 
