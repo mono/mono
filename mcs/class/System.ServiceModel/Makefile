@@ -22,12 +22,10 @@ LIB_MCS_FLAGS += /d:NET_3_0
 XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 ifndef XAMMAC_4_5
 LIB_REFS += System.Web
-endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_REFS += System.Web.ApplicationServices
 
-ifndef XAMMAC_4_5
+LIB_REFS += System.Web.ApplicationServices
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
