@@ -10374,7 +10374,7 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (ConditionalAccess)
+			if (HasConditionalAccess ())
 				Error_NullPropagatingLValue (ec);
 
 			return DoResolve (ec);

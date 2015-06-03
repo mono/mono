@@ -6385,7 +6385,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (ConditionalAccess)
+			if (HasConditionalAccess ())
 				Error_NullPropagatingLValue (ec);
 
 			if (spec is FixedFieldSpec) {
@@ -7144,7 +7144,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
-			if (ConditionalAccess)
+			if (HasConditionalAccess ())
 				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
@@ -7390,7 +7390,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (ConditionalAccess)
+			if (HasConditionalAccess ())
 				Error_NullPropagatingLValue (ec);
 
 			op = CandidateToBaseOverride (ec, op);
