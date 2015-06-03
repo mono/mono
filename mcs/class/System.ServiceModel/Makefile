@@ -19,7 +19,6 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Configuration System.Data System.Security System.Transactions Mono.Security System.Web.Services System.IdentityModel System.IdentityModel.Selectors System.Messaging
 LIB_MCS_FLAGS += /d:NET_3_0
 
-XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 ifndef XAMMAC_4_5
 LIB_REFS += System.Web
 
