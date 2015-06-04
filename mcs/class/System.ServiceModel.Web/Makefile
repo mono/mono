@@ -16,7 +16,6 @@ endif
 LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0
 endif
 
-
 ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.ServiceModel.Activation

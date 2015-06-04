@@ -16,7 +16,7 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += System.Configuration System.Data System.Security System.Transactions Mono.Security System.Web.Services System.IdentityModel System.IdentityModel.Selectors System.Messaging
+LIB_REFS += System.Configuration System.Data System.Security System.IdentityModel System.IdentityModel.Selectors System.Transactions System.Messaging System.Web.Services Mono.Security
 LIB_MCS_FLAGS += /d:NET_3_0
 
 ifndef NO_SYSTEM_WEB_DEPENDENCY
