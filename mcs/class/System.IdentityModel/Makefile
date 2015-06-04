@@ -8,9 +8,11 @@ LIB_MCS_FLAGS = \
 		/d:NET_3_0	\
 	        $(OTHER_LIB_MCS_FLAGS)
 
-ifndef XAMMAC_4_5
+ifndef NO_SYSTEM_WEB_DEPENDENCY
 LIB_REFS += System.Web
+endif
 
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
 endif

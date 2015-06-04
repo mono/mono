@@ -19,25 +19,28 @@ ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Configuration System.Data System.Security System.Transactions Mono.Security System.Web.Services System.IdentityModel System.IdentityModel.Selectors System.Messaging
 LIB_MCS_FLAGS += /d:NET_3_0
 
-ifndef XAMMAC_4_5
+ifndef NO_SYSTEM_WEB_DEPENDENCY
 LIB_REFS += System.Web
+endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 
-LIB_REFS += System.Web.ApplicationServices
+ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 activation = $(the_libdir_base)System.ServiceModel.Activation.dll
 servicemodel_deps = $(activation)
 
-LIB_REFS += System.Web.ApplicationServices
-
 ifneq (plainservice/,$(intermediate))
 LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:System.ServiceModel.Activation.dll
-endif
+endif 
+endif # NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
+
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
+LIB_REFS += System.Web.ApplicationServices
 endif
 
-endif
+endif # (4, $(FRAMEWORK_VERSION_MAJOR))
 
-endif
+endif # (2.1, $(FRAMEWORK_VERSION))
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
