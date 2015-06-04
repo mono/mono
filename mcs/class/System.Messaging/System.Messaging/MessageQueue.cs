@@ -45,9 +45,7 @@ namespace System.Messaging
 	[TypeConverter (typeof(MessageQueueConverter))]
 	[Editor ("System.Messaging.Design.QueuePathEditor", "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 //	[Designer ("Microsoft.VisualStudio.Install.MessageQueueInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
-#if !XAMMAC_4_5
 	[InstallerType (typeof(MessageQueueInstaller))]
-#endif
 	[DefaultEvent ("ReceiveCompleted")]
 	public class MessageQueue : Component, IEnumerable
 	{
