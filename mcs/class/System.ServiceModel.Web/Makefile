@@ -9,7 +9,7 @@ LIB_MCS_FLAGS =
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Configuration 
 
-ifndef XAMMAC_4_5
+ifndef NO_SYSTEM_WEB_DEPENDENCY
 LIB_REFS += System.Web.Extensions
 endif
 
@@ -17,7 +17,7 @@ LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0
 endif
 
 
-ifndef XAMMAC_4_5
+ifndef NO_SYSTEM_SERVICEMODEL_ACTIVATION_DEPENDENCY
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.ServiceModel.Activation
 endif

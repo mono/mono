@@ -101,6 +101,7 @@ xammac_4_5_dirs := \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	Mono.Messaging			\
+	System.Configuration.Install 	\
 	System.Messaging	        \
 	System.Web.Services \
 	System.ServiceModel	\
@@ -116,7 +117,6 @@ xammac_4_5_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
 	Mono.CompilerServices.SymbolWriter	\
-	System.Configuration.Install 	\
 	System.Data.Linq		\
 	System.Net.Http \
 	$(pcl_facade_dirs)

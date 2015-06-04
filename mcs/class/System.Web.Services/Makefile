@@ -3,7 +3,6 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
-XAMMAC_4_5 := $(filter net_4_5_xammac, $(PROFILE))
 
 MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
@@ -20,19 +19,25 @@ else
 LIB_REFS = System System.EnterpriseServices System.Xml System.Data
 LIB_MCS_FLAGS = -nowarn:168,169,219,414,612,649 -d:MONO_BROKEN_CONFIGURATION_DLL
 
-ifndef XAMMAC_4_5
-LIB_REFS += System.Web System.Design System.DirectoryServices
-
+ifndef NO_SYSTEM_WEB_DEPENDENCY
+LIB_REFS += System.Web
 plainweb_dir = $(the_libdir_base)plainweb
 plainweb = $(plainweb_dir)/System.Web.dll
 system_web_services_deps = $(plainweb)
+LOCAL_MCS_FLAGS += -lib:$(plainweb_dir)
+endif
 
+ifndef NO_SYSTEM_DESIGN_DEPENDENCY
+LIB_REFS += System.Design
 plaindesign_dir = $(the_libdir_base)plaindesign
 plaindesign = $(plaindesign_dir)/System.Design.dll
 system_design_deps = $(plaindesign)
+LOCAL_MCS_FLAGS += -lib:$(plaindesign_dir)
 endif
 
-LOCAL_MCS_FLAGS = -lib:$(plaindesign_dir) -lib:$(plainweb_dir)
+ifndef NO_SYSTEM_DIRECTORY_SERVICES_DEPENDENCY
+LIB_REFS += System.DirectoryServices
+endif
 
 LIB_REFS += System.Configuration
 LIB_MCS_FLAGS += \
