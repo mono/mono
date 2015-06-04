@@ -31,7 +31,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 #if !NET_2_1
 using System.IdentityModel.Policy;
-#if !NO_SYSTEM_WEB_DEPENDENCY
+#if !XAMMAC_4_5
 using System.Web.Security;
 #endif
 #endif
