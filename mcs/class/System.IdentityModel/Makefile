@@ -2,6 +2,12 @@ thisdir = class/System.IdentityModel
 SUBDIRS = 
 include ../../build/rules.make
 
+ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
+endif
+endif
+
 LIBRARY = System.IdentityModel.dll
 LIB_REFS = System System.Xml System.Security System.Configuration Mono.Security System.Runtime.Serialization
 LIB_MCS_FLAGS = \
@@ -10,13 +16,6 @@ LIB_MCS_FLAGS = \
 
 ifndef NO_SYSTEM_WEB_DEPENDENCY
 LIB_REFS += System.Web
-endif
-
-ifndef NO_SYSTEM_WEB_APPSERVICES_DEPENDENCY
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
-endif
-
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
