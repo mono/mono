@@ -121,7 +121,6 @@ xammac_4_5_dirs := \
 	System.Net.Http \
 	$(pcl_facade_dirs)
 
-
 net_4_5_dirs := \
 	corlib				\
 	System				\
