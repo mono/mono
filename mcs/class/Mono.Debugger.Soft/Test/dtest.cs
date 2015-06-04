@@ -526,7 +526,11 @@ public class DebuggerTests
 		e = step_over ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
-		assert_location (e, "ss_nested_3");
+		assert_location (e, "ss_nested_1");
+		e = step_into ();
+		assert_location (e, "ss_nested_1");
+		e = step_into ();
+		assert_location (e, "ss_nested");
 		req.Disable ();
 
 		// Check DebuggerStepThrough support
