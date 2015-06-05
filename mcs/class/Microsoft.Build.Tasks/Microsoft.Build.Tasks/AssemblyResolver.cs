@@ -311,25 +311,44 @@ namespace Microsoft.Build.Tasks {
 						SearchPath.HintPath, specific_version);
 		}
 
-		static Dictionary<string, AssemblyName> assemblyNameCache = new Dictionary<string, AssemblyName> ();
+		class CachedAssemblyName
+		{
+			public DateTime Time;
+			public AssemblyName Name;
+		}
+
+		static Dictionary<string, CachedAssemblyName> assemblyNameCache = new Dictionary<string, CachedAssemblyName> ();
 		public bool TryGetAssemblyNameFromFile (string filename, out AssemblyName aname)
 		{
-			filename = Path.GetFullPath (filename);
-			if (assemblyNameCache.TryGetValue (filename, out aname))
+			FileInfo info = new FileInfo (filename);
+			if (!info.Exists) {
+				aname = null;
+				LogSearchMessage ("Considered '{0}' as a file, but the file does not exist",
+				                  filename);
+				return false;
+			}
+			filename = info.FullName;
+			CachedAssemblyName cachedName;
+			if (assemblyNameCache.TryGetValue (filename, out cachedName) && cachedName.Time == info.LastWriteTime) {
+				aname = cachedName.Name;
 			    return aname != null;
+			}
 
+			cachedName = new CachedAssemblyName ();
+			cachedName.Time = info.LastWriteTime;
 			aname = null;
 			try {
-				aname = AssemblyName.GetAssemblyName (filename);
+				cachedName.Name = aname = AssemblyName.GetAssemblyName (filename);
 			} catch (FileNotFoundException) {
 				LogSearchMessage ("Considered '{0}' as a file, but the file does not exist",
 						filename);
+				return false;
 			} catch (BadImageFormatException) {
 				LogSearchMessage ("Considered '{0}' as a file, but it is an invalid assembly",
 						filename);
 			}
 
-			assemblyNameCache [filename] = aname;
+			assemblyNameCache [filename] = cachedName;
 			return aname != null;
 		}
 
