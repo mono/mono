@@ -342,6 +342,7 @@ namespace Microsoft.Build.Tasks {
 			} catch (FileNotFoundException) {
 				LogSearchMessage ("Considered '{0}' as a file, but the file does not exist",
 						filename);
+				return false;
 			} catch (BadImageFormatException) {
 				LogSearchMessage ("Considered '{0}' as a file, but it is an invalid assembly",
 						filename);
