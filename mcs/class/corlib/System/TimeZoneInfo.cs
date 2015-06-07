@@ -116,11 +116,11 @@ namespace System
 
 			try {
 				return FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
-			} catch {
+			} catch (TimeZoneNotFoundException) {
 				try {
 					return FindSystemTimeZoneByFileName ("Local", Path.Combine (TimeZoneDirectory, "localtime"));	
-				} catch {
-					return null;
+				} catch (TimeZoneNotFoundException) {
+					return Utc;
 				}
 			}
 		}
