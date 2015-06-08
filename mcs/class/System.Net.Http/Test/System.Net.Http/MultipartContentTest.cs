@@ -134,6 +134,16 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Add_ParseCustomToString ()
+		{
+			var m = new MultipartContent ("a", "b");
+
+			m.Headers.Add ("Expires", "Mon,   30 Nov 2020   19:55:22    GMT");
+
+			Assert.AreEqual ("Mon, 30 Nov 2020 19:55:22 GMT", m.Headers.Skip (1).First().Value.First ());
+		}
+
+		[Test]
 		public void Add_Resursive ()
 		{
 			var m = new MultipartContent ("1", "1a");
