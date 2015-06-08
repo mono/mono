@@ -41,6 +41,21 @@ namespace System.ServiceModel.Dispatcher
 	}
 }
 
+namespace System.ServiceModel.Channels
+{
+	public static class UrlUtility {
+		public static string UrlEncode (string s, Encoding e)
+		{
+			return System.Runtime.UrlUtility.UrlEncode (s, e);
+		}
+
+		public static string UrlDecode (string s, Encoding e)
+		{
+			return System.Runtime.UrlUtility.UrlDecode (s, e);
+		}
+	}
+}
+
 namespace System.ServiceModel.Description
 {
 	public interface IPolicyExportExtension {}
