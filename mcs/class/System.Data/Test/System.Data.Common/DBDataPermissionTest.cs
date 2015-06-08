@@ -500,7 +500,7 @@ namespace MonoTests.System.Data.Common {
 		{
 			NonAbstractDBDataPermission empty = new NonAbstractDBDataPermission (PermissionState.None);
 			NonAbstractDBDataPermission union = (NonAbstractDBDataPermission) empty.Union (empty);
-			Assert.IsNull (union, "Empty U Empty");
+			Assert.IsNotNull (union, "Empty U Empty");
 
 			NonAbstractDBDataPermission dbdp1 = new NonAbstractDBDataPermission (PermissionState.None);
 			dbdp1.Add (defaultConnectString, String.Empty, KeyRestrictionBehavior.AllowOnly);

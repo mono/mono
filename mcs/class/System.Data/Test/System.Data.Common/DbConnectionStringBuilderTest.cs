@@ -1798,7 +1798,7 @@ namespace MonoTests.System.Data.Common
                         Assert.AreEqual (builder.GetType ().ToString (), className, "#1");
 
                         AttributeCollection collection = ictd.GetAttributes ();
-                        Assert.AreEqual (1, collection.Count, "#2");
+                        Assert.AreEqual (2, collection.Count, "#2");
                         object [] attr = builder.GetType ().GetCustomAttributes (typeof (DefaultMemberAttribute), false);
                         if (attr.Length > 0) {
                                 DefaultMemberAttribute defAtt = (DefaultMemberAttribute) attr [0];

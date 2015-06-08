@@ -9,7 +9,6 @@ static class AssemblyRef
 	public const string EcmaPublicKey = "b77a5c561934e089";
 	public const string MicrosoftPublicKey = "b03f5f7f11d50a3a";
  
- 	public const string MicrosoftVSDesigner = Consts.AssemblyMicrosoft_VSDesigner;
 	public const string SystemDesign = Consts.AssemblySystem_Design;
 	public const string SystemDrawing = Consts.AssemblySystem_Drawing;
 	public const string SystemWeb = Consts.AssemblySystem_Web;

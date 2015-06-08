@@ -379,7 +379,7 @@ namespace System.Data.SqlClient
                                 keys.Add("User Instance");
                                 keys.Add("Context Connection");
                                 keys.Add("Transaction Binding");
-				var coll = new System.Collections.ObjectModel.ReadOnlyCollection<string>(keys);
+				ReadOnlyCollection<string> coll = new ReadOnlyCollection<string>(keys);
 				return coll;
 			}
 		}
@@ -528,7 +528,7 @@ namespace System.Data.SqlClient
                                 values.Add(_userInstance);
                                 values.Add(_contextConnection);
                                 values.Add(_transactionBinding);
-				var coll = new System.Collections.ObjectModel.ReadOnlyCollection<object>(values);
+				ReadOnlyCollection<object> coll = new ReadOnlyCollection<object>(values);
 				return coll;		 
 			}
 		}

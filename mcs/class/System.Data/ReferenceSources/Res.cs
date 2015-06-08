@@ -74,7 +74,7 @@ static class Res
 	public const string ADP_InvalidDataType = "ADP_InvalidDataType";
 	public const string ADP_InvalidDateTimeDigits = "ADP_InvalidDateTimeDigits";
 	public const string ADP_InvalidDestinationBufferIndex = "ADP_InvalidDestinationBufferIndex";
-	public const string ADP_InvalidEnumerationValue = "The {0} enumeration value, {1}, is invalid.";
+	public const string ADP_InvalidEnumerationValue = "ADP_InvalidEnumerationValue";
 	public const string ADP_InvalidFormatValue = "ADP_InvalidFormatValue";
 	public const string ADP_InvalidImplicitConversion = "ADP_InvalidImplicitConversion";
 	public const string ADP_InvalidKey = "ADP_InvalidKey";
@@ -99,7 +99,7 @@ static class Res
 	public const string ADP_InvalidUDL = "ADP_InvalidUDL";
 	public const string ADP_InvalidValue = "ADP_InvalidValue";
 	public const string ADP_InvalidXMLBadVersion = "ADP_InvalidXMLBadVersion";
-	public const string ADP_KeywordNotSupported = "Keyword not supported: '{0}'.";
+	public const string ADP_KeywordNotSupported = "ADP_KeywordNotSupported";
 	public const string ADP_LiteralValueIsInvalid = "ADP_LiteralValueIsInvalid";
 	public const string ADP_LocalTransactionPresent = "ADP_LocalTransactionPresent";
 	public const string ADP_MismatchedAsyncResult = "ADP_MismatchedAsyncResult";

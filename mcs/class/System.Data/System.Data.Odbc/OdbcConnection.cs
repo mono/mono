@@ -326,7 +326,7 @@ namespace System.Data.Odbc
 				ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) {
 					OdbcErrorCollection errors = new OdbcErrorCollection ();
-					errors.Add (new OdbcError (SafeDriver, "Error in " + SafeDriver, "", 1));
+					errors.Add (new OdbcError (this));
 					e = new OdbcException (errors);
 					MessageHandler (e);
 					throw e;
@@ -519,7 +519,7 @@ namespace System.Data.Odbc
 				string state = RemoveTrailingNullChar (Encoding.Unicode.GetString (buf_SqlState));
 				string message = Encoding.Unicode.GetString (buf_MsgText, 0, txtlen * 2);
 
-				errors.Add (new OdbcError (SafeDriver, message, state, nativeerror));
+				errors.Add (new OdbcError (message, state, nativeerror));
 			}
 
 			string source = SafeDriver;
