@@ -1603,20 +1603,9 @@ namespace System.Diagnostics {
 						if (async_error != null)
 							async_error.Close ();
 
-						if (input_stream != null) {
-							input_stream.Close();
-							input_stream = null;
-						}
-
-						if (output_stream != null) {
-							output_stream.Close();
-							output_stream = null;
-						}
-
-						if (error_stream != null) {
-							error_stream.Close();
-							error_stream = null;
-						}
+						input_stream = null;
+						output_stream = null;
+						error_stream = null;
 					}
 				}
 				
