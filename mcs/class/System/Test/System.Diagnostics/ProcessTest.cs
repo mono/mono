@@ -840,5 +840,19 @@ namespace MonoTests.System.Diagnostics
 		public void HasExitedCurrent () {
 			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
 		}
+
+		[Test]
+		public void DisposeWithDisposedStreams ()
+		{
+			var psi = GetCrossPlatformStartInfo ();
+			psi.RedirectStandardInput = true;
+			psi.RedirectStandardOutput = true;
+			psi.UseShellExecute = false;
+
+			var p = Process.Start (psi);
+			p.StandardInput.BaseStream.Dispose ();
+			p.StandardOutput.BaseStream.Dispose ();
+			p.Dispose ();
+		}
 	}
 }
