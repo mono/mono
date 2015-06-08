@@ -210,6 +210,12 @@ struct _MonoAppDomain {
 	MonoDomain *data;
 };
 
+typedef struct {
+	MonoObject obj;
+	unsigned long ptr_offset;
+	MonoObject *referring_object;
+} MonoReferringObject;
+
 typedef struct _MonoStringBuilder MonoStringBuilder;
 
 struct _MonoStringBuilder {

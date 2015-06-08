@@ -92,6 +92,8 @@
 #include <mono/utils/bsearch.h>
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/sgen/sgen-gc.h>
+#include <mono/sgen/sgen-referring-objects.h>
 
 #if defined (HOST_WIN32)
 #include <windows.h>
@@ -186,6 +188,63 @@ ves_icall_System_Array_GetValue (MonoObject *this, MonoObject *idxs)
 			ao->bounds [i].lower_bound;
 
 	return ves_icall_System_Array_GetValueImpl (this, pos);
+}
+
+// Returns ReferringObject [] as referring as out parameter
+ICALL_EXPORT void
+ves_icall_System_GCQuery_GetReferringObjects (MonoObject *target, MonoArray **referring)
+{
+#ifndef HAVE_SGEN_GC
+	const gchar msg [] = "Referring object query not supported on configurations without Sgen.";
+	MonoException *ex = mono_get_exception_not_implemented (msg);
+	mono_raise_exception (ex);
+#else
+	static MonoClass *ReferringObjectClass;
+	static MonoVTable *vtable;
+	MonoDomain *this_domain = mono_domain_get ();
+
+	if (!ReferringObjectClass) {
+		const gchar class_name_space [] = "System";
+		const gchar class_name [] = "ReferringObject";
+		MonoError error;
+		mono_error_init (&error);
+
+		ReferringObjectClass = mono_class_from_name_checked (mono_defaults.corlib,
+			class_name_space, class_name, &error);
+
+		if (!mono_error_ok (&error)) {
+			MonoException *ex = mono_error_convert_to_exception (&error);
+			mono_error_cleanup (&error);
+			mono_raise_exception (ex);
+		} else if (!ReferringObjectClass) {
+			MonoString *name = mono_string_new (this_domain, class_name);
+			MonoException *ex = mono_get_exception_type_load (name, mono_defaults.corlib->name);
+			mono_raise_exception (ex);
+		}
+		vtable = mono_class_vtable (this_domain, ReferringObjectClass);
+	}
+
+	ReferringObjects refs;
+	sgen_get_incoming_references (target, TRUE, &refs);
+	ReferringObjectTuple **pointers = (ReferringObjectTuple **)refs.data;
+
+	mono_gc_wbarrier_generic_store (referring, (MonoObject*) mono_array_new (this_domain, ReferringObjectClass, refs.next_slot));
+
+	for (int i = 0; i < refs.next_slot; i++) {
+		ReferringObjectTuple *curr = pointers [i];
+		g_assert (curr->kind == REFERENCE_KIND_OBJECT_FIELD);
+
+		MonoReferringObject *obj = (MonoReferringObject *) mono_object_new_alloc_specific (vtable);
+
+		obj->ptr_offset = (intptr_t)(curr->ptr_location) - (intptr_t)(curr->referring.obj);
+		MONO_OBJECT_SETREF (obj, referring_object, curr->referring.obj);
+
+		mono_array_setref (*referring, i, obj);
+	}
+
+	sgen_free_incoming_references (&refs);
+
+#endif
 }
 
 ICALL_EXPORT void
