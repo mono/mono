@@ -1112,6 +1112,7 @@ namespace System.Net.Security {
             GlobalLog.Enter("SecureChannel#" + ValidationHelper.HashString(this) + "::ProcessHandshakeSuccess");
 #if MONO
             m_HeaderSize = m_TrailerSize = 0;
+            m_ConnectionInfo = SSPIWrapper.GetConnectionInfo(m_SecModule, m_SecurityContext);
 #else
             StreamSizes streamSizes = SSPIWrapper.QueryContextAttributes(m_SecModule, m_SecurityContext, ContextAttribute.StreamSizes) as StreamSizes;
             if (streamSizes != null) {
