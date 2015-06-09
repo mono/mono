@@ -924,13 +924,24 @@ namespace MonoTests.System.Diagnostics
 			p.Dispose ();
 		}
 
+		[Test]
 		public void Modules () {
 			var modules = Process.GetCurrentProcess ().Modules;
 			foreach (var a in AppDomain.CurrentDomain.GetAssemblies ()) {
 				var found = false;
+				var name = a.GetName ();
+
+				StringBuilder sb = new StringBuilder ();
+				sb.AppendFormat ("Could not found: {0} {1}\n", name.Name, name.Version);
+				sb.AppendLine ("Looked in assemblies:");
+
 				foreach (var o in modules) {
 					var m = (ProcessModule) o;
-					var name = a.GetName ();
+
+					sb.AppendFormat ("   {0} {1}.{2}.{3}\n", m.FileName.ToString (),
+							m.FileVersionInfo.FileMajorPart,
+							m.FileVersionInfo.FileMinorPart,
+							m.FileVersionInfo.FileBuildPart);
 
 					if (!m.FileName.StartsWith ("[In Memory] " + name.Name))
 						continue;
@@ -944,7 +955,7 @@ namespace MonoTests.System.Diagnostics
 					found = true;
 				}
 
-				Assert.IsTrue (found);
+				Assert.IsTrue (found, sb.ToString ());
 			}
 		}
 	}
