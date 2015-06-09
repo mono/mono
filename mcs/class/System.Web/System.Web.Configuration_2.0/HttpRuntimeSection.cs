@@ -63,6 +63,7 @@ namespace System.Web.Configuration
 		static ConfigurationProperty encoderTypeProp;
 		static ConfigurationProperty relaxedUrlToFileSystemMappingProp;
 		static ConfigurationProperty targetFrameworkProp;
+		static ConfigurationProperty allowDynamicModuleRegistrationProp;
 		static ConfigurationPropertyCollection properties;
 
 		static HttpRuntimeSection ()
@@ -141,6 +142,8 @@ namespace System.Web.Configuration
 										PropertyHelper.VersionConverter,
 										PropertyHelper.DefaultValidator,
 										ConfigurationPropertyOptions.None);
+			allowDynamicModuleRegistrationProp = new ConfigurationProperty ("allowDynamicModuleRegistration", typeof(bool), true,
+										ConfigurationPropertyOptions.None);
 			
 			properties = new ConfigurationPropertyCollection();
 			properties.Add (apartmentThreadingProp);
@@ -169,6 +172,7 @@ namespace System.Web.Configuration
 			properties.Add (encoderTypeProp);
 			properties.Add (relaxedUrlToFileSystemMappingProp);
 			properties.Add (targetFrameworkProp);
+			properties.Add (allowDynamicModuleRegistrationProp);
 		}
 
 		public HttpRuntimeSection()
@@ -348,6 +352,11 @@ namespace System.Web.Configuration
 		}
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+		[ConfigurationProperty ("allowDynamicModuleRegistration", DefaultValue = "True")]
+		public bool AllowDynamicModuleRegistration {
+			get { return (bool) base [allowDynamicModuleRegistrationProp]; }
+			set { base [allowDynamicModuleRegistrationProp] = value; }
 		}
 	}
 }
