@@ -76,5 +76,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinitionAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "System.Windows")]
 [assembly: XmlnsDefinitionAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "System.Diagnostics")]
 
+#if !MOBILE
 [assembly: TypeForwardedTo (typeof (ValueSerializerAttribute))]
+#endif
 
