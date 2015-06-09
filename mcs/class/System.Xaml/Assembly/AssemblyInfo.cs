@@ -64,3 +64,7 @@ using System.Runtime.InteropServices;
 #endif
 
 [assembly: ComVisible (false)]
+
+#if !MOBILE
+[assembly: TypeForwardedTo (typeof (System.Windows.Markup.ValueSerializerAttribute))]
+#endif
