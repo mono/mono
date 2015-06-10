@@ -14,5 +14,7 @@ char*       mono_dl_build_path (const char *directory, const char *name, void **
 
 MonoDl*     mono_dl_open_runtime_lib (const char *lib_name, int flags, char **error_msg) MONO_INTERNAL;
 
+const char* mono_dl_get_system_dir (void);
+
 #endif /* __MONO_UTILS_DL_H__ */
 
