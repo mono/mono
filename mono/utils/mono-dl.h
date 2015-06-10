@@ -34,7 +34,6 @@ char*       mono_dl_build_path (const char *directory, const char *name, void **
 MonoDl*     mono_dl_open_runtime_lib (const char *lib_name, int flags, char **error_msg) MONO_INTERNAL;
 
 
-//Platform API for mono_dl
 const char* mono_dl_get_so_prefix (void) MONO_INTERNAL;
 const char** mono_dl_get_so_suffixes (void) MONO_INTERNAL;
 void* mono_dl_open_file (const char *file, int flags) MONO_INTERNAL;
@@ -43,6 +42,7 @@ void* mono_dl_lookup_symbol (MonoDl *module, const char *name) MONO_INTERNAL;
 int mono_dl_convert_flags (int flags) MONO_INTERNAL;
 char* mono_dl_current_error_string (void) MONO_INTERNAL;
 int mono_dl_get_executable_path (char *buf, int buflen) MONO_INTERNAL;
+const char* mono_dl_get_system_dir (void);
 
 #endif /* __MONO_UTILS_DL_H__ */
 
