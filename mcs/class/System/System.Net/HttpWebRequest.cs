@@ -110,6 +110,9 @@ namespace System.Net
 		AuthorizationState auth_state, proxy_auth_state;
 		string host;
 
+		[NonSerialized]
+		internal Action<Stream> ResendContentFactory;
+
 		// Constructors
 		static HttpWebRequest ()
 		{
@@ -226,9 +229,15 @@ namespace System.Net
 		
 		internal bool InternalAllowBuffering {
 			get {
-				return (allowBuffering && (method != "HEAD" && method != "GET" &&
-							method != "MKCOL" && method != "CONNECT" &&
-							method != "TRACE"));
+				return allowBuffering && MethodWithBuffer;
+			}
+		}
+
+		bool MethodWithBuffer {
+			get {
+				return method != "HEAD" && method != "GET" &&
+				method != "MKCOL" && method != "CONNECT" &&
+				method != "TRACE";
 			}
 		}
 		
@@ -1306,8 +1315,7 @@ namespace System.Net
 						bodyBuffer = null;
 						writeStream.Close ();
 					}
-				} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
-				          method != "TRACE") {
+				} else if (MethodWithBuffer) {
 					if (getResponseCalled && !writeStream.RequestWritten)
 						return writeStream.WriteRequestAsync (result);
 				}
@@ -1606,12 +1614,28 @@ namespace System.Net
 					(ProxyQuery && !proxy_auth_state.IsCompleted && code == HttpStatusCode.ProxyAuthenticationRequired)) {
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
-						if (InternalAllowBuffering) {
-							if (writeStream.WriteBufferLength > 0) {
-								bodyBuffer = writeStream.WriteBuffer;
-								bodyBufferLength = writeStream.WriteBufferLength;
+						if (MethodWithBuffer) {
+							if (AllowWriteStreamBuffering) {
+								if (writeStream.WriteBufferLength > 0) {
+									bodyBuffer = writeStream.WriteBuffer;
+									bodyBufferLength = writeStream.WriteBufferLength;
+								}
+
+								return true;
 							}
-							return true;
+
+							//
+							// Buffering is not allowed but we have alternative way to get same content (we
+							// need to resent it due to NTLM Authentication).
+					 		//
+							if (ResendContentFactory != null) {
+								using (var ms = new MemoryStream ()) {
+									ResendContentFactory (ms);
+									bodyBuffer = ms.ToArray ();
+									bodyBufferLength = bodyBuffer.Length;
+								}
+								return true;
+							}
 						} else if (method != "PUT" && method != "POST") {
 							bodyBuffer = null;
 							return true;
