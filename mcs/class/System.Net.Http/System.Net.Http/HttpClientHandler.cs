@@ -340,6 +340,8 @@ namespace System.Net.Http
 							wrequest.ContentLength = content.Headers.ContentLength.Value;
 						}
 
+						wrequest.ResendContentFactory = content.CopyTo;
+
 						var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
 						await request.Content.CopyToAsync (stream).ConfigureAwait (false);
 					} else if (HttpMethod.Post.Equals (request.Method) || HttpMethod.Put.Equals (request.Method) || HttpMethod.Delete.Equals (request.Method)) {
