@@ -422,6 +422,7 @@ namespace MonoTests.System {
 		// TODO: Implemente the test methods for all the overriden function using activationAttribute
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Assemblies aren't accessible using filesystem paths (they're either in apk, embedded in native code or not there at all
 		public void CreateInstanceFrom ()
 		{
 			ObjectHandle objHandle = Activator.CreateInstanceFrom (testLocation, "MonoTests.System.ActivatorTestInternal.COMTest");
