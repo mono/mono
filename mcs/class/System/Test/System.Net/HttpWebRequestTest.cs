@@ -2814,6 +2814,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void BeginWrite_Request_Aborted ()
 		{
 			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
