@@ -136,6 +136,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Null ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -152,6 +153,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Empty ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -169,6 +171,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_NullChar ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -188,6 +191,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -224,6 +228,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;
@@ -241,6 +246,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_TypeSize ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -252,6 +258,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
@@ -267,6 +274,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();
