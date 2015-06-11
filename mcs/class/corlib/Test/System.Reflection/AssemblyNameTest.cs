@@ -1112,6 +1112,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();
