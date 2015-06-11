@@ -1110,7 +1110,7 @@ namespace System.Net
 			if (e != null)
 				throw e;
 
-			if (AllowWriteStreamBuffering)
+			if (AllowWriteStreamBuffering || method == "GET")
 				contentLength = -1;
 
 			uriString = webResponse.Headers ["Location"];
