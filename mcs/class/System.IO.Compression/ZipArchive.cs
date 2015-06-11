@@ -202,7 +202,7 @@ namespace System.IO.Compression
 		private void Save()
 		{
 			using (var newZip = new MemoryStream()) {
-				zipFile.SaveTo(newZip, CompressionType.Deflate);
+				zipFile.SaveTo(newZip, CompressionType.Deflate, entryNameEncoding ?? Encoding.UTF8);
 
 				stream.SetLength(0);
 				stream.Position = 0;
