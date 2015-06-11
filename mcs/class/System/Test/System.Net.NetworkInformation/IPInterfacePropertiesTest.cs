@@ -56,6 +56,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+		// The code works as expected when part of a regular app. It fails when executed from within an NUnit test
+		// Might be a problem with the test suite. To investigate.
+		[Category("AndroidNotWorking")]
 		public void AtLeastOneDnsAddress ()
 		{
 			int numDnsAddresses = 0;
@@ -66,6 +69,7 @@ namespace MonoTests.System.Net.NetworkInformation
 				IPAddressCollection dnsAddresses = adapterProperties.DnsAddresses;
 				numDnsAddresses += dnsAddresses.Count;
 			}
+			Console.WriteLine ("numDnsAddresses == {0}", numDnsAddresses);
 			// reading /etc/resolve.conf does not work on iOS devices (but works on simulator)
 			// ref: https://bugzilla.xamarin.com/show_bug.cgi?id=27707
 #if !MONOTOUCH
