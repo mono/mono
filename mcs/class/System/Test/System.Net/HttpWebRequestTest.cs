@@ -130,7 +130,7 @@ namespace MonoTests.System.Net
 			// are stored in both, the CookieCollection in HttpWebResponse and the CookieContainer
 			// in HttpWebRequest.
 			// If this URL stops sending *one* and only one cookie, replace it.
-			string url = "http://www.elmundo.es";
+			string url = "http://xamarin.com";
 			CookieContainer cookies = new CookieContainer ();
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
 			req.KeepAlive = false;
