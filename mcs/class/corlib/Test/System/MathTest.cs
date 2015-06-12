@@ -479,13 +479,24 @@ namespace MonoTests.System
 		[Test]
 		public void TestPow ()
 		{
+			double precision;
 			int iTest = 1;
-
+#if MONODROID
+			// It fails on Nexus 9 with
+			//
+			//   1.3636094460602122 != 1.3636094460602119
+			//
+			// when using double_epsilon. Precision differs between different ARM CPUs, so we
+			// will just use a more conservative value
+			precision = 0.000001;
+#else
+			precision = double_epsilon;
+#endif
 			try {
 				double a = Math.Pow (y, x);
 				double b = 1.363609446060212;
 
-				Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99") + " != " + b.ToString ("G99"));
+				Assert.IsTrue ((Math.Abs (a - b) <= precision), a.ToString ("G99") + " != " + b.ToString ("G99"));
 				iTest++;
 				Assert.IsTrue (double.IsNaN (Math.Pow (y, double.NaN)));
 				iTest++;
