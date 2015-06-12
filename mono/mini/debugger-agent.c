@@ -2965,6 +2965,24 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		return;
 	}
 	
+	if(event == EVENT_KIND_APPDOMAIN_CREATE && arg)
+	{
+		/* 
+		   The debugger client requires System.Int64 to be loaded in the domain
+		   in order to be able to inspect enums, otherwise you get an 
+		   "The requested item has been unloaded" error (the item being System.Int64)
+		   instead of the enum value.
+
+		   Here we are forcing the type load of System.Int64 when a domain is created. 
+		*/
+		MonoDomain *domain = arg;
+		MonoDomain *old_domain = mono_domain_get ();
+		
+		mono_domain_set (domain, TRUE);
+		emit_type_load (NULL, mono_get_int64_class(), NULL);
+		mono_domain_set (old_domain, TRUE);
+	}
+	
 	if (events == NULL) {
 		DEBUG (2, fprintf (log_file, "Empty events list: dropping %s\n", event_to_string (event)));
 		return;
