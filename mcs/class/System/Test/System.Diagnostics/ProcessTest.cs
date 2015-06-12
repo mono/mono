@@ -838,9 +838,18 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		
-		private ProcessStartInfo GetCrossPlatformStartInfo ()
+		ProcessStartInfo GetCrossPlatformStartInfo ()
 		{
-			return RunningOnUnix ? new ProcessStartInfo ("/bin/ls", "/") : new ProcessStartInfo ("help", "");
+			if (RunningOnUnix) {
+				string path;
+#if MONODROID
+				path = "/system/bin/ls";
+#else
+				path = "/bin/ls";
+#endif
+				return new ProcessStartInfo (path, "/");
+			} else
+				return new ProcessStartInfo ("help", "");
 		}
 
 		[Test]
