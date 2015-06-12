@@ -16,6 +16,8 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net
 {
 	[TestFixture]
@@ -1417,8 +1419,8 @@ namespace MonoTests.System.Net
 		[Test]
 		public void UploadValues1 ()
 		{
-			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+			IPEndPoint ep = NetworkHelpers.LocalEphemeralEndPoint ();
+			string url = "http://" + ep.ToString () + "/test/";
 
 			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
 				responder.Start ();
@@ -1783,7 +1785,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void UploadStringAsyncCancelEvent ()
 		{
-			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			UploadAsyncCancelEventTest (9301, (webClient, uri, cancelEvent) =>
 			{
 
 				webClient.UploadStringCompleted += (sender, args) =>
@@ -1799,7 +1801,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void UploadDataAsyncCancelEvent ()
 		{
-			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			UploadAsyncCancelEventTest (9302, (webClient, uri, cancelEvent) =>
 			{
 				webClient.UploadDataCompleted += (sender, args) =>
 				{
@@ -1814,7 +1816,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void UploadValuesAsyncCancelEvent ()
 		{
-			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			UploadAsyncCancelEventTest (9303, (webClient, uri, cancelEvent) =>
 			{
 				webClient.UploadValuesCompleted += (sender, args) =>
 				{
@@ -1829,7 +1831,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void UploadFileAsyncCancelEvent ()
 		{
-			UploadAsyncCancelEventTest ((webClient, uri, cancelEvent) =>
+			UploadAsyncCancelEventTest (9304,(webClient, uri, cancelEvent) =>
 			{
 				string tempFile = Path.Combine (_tempFolder, "upload.tmp");
 				File.Create (tempFile).Close ();
@@ -1868,10 +1870,10 @@ namespace MonoTests.System.Net
 #endif
 
 #if NET_4_0
-		public void UploadAsyncCancelEventTest (Action<WebClient, Uri, EventWaitHandle> uploadAction)
+		public void UploadAsyncCancelEventTest (int port, Action<WebClient, Uri, EventWaitHandle> uploadAction)
 		{
-			var ep = new IPEndPoint (IPAddress.Loopback, 8000);
-			string url = "http://" + IPAddress.Loopback + ":8000/test/";
+			var ep = NetworkHelpers.LocalEphemeralEndPoint ();
+			string url = "http://" + ep.ToString() + "/test/";
 
 			using (var responder = new SocketResponder (ep, EchoRequestHandler))
 			{

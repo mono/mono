@@ -14,5 +14,9 @@ namespace MonoTests.Helpers {
 			l.Stop();
 			return port;
 		}
+		public static IPEndPoint LocalEphemeralEndPoint ()
+		{
+			return new IPEndPoint (IPAddress.Loopback, FindFreePort());
+		}
 	}
 }
