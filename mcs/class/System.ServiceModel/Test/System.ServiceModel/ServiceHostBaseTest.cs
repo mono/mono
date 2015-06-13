@@ -161,8 +161,8 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		public void ChannelDispatchers_NoDebug () {
-			var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://" + ep));
+			var ep = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri (ep));
 			h.AddServiceEndpoint (typeof (AllActions).FullName, new BasicHttpBinding (), "address");
 
 			ServiceDebugBehavior b = h.Description.Behaviors.Find<ServiceDebugBehavior> ();
@@ -176,7 +176,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (channelDispatcher.Endpoints.Count == 1, "#2");
 			EndpointAddressMessageFilter filter = channelDispatcher.Endpoints [0].AddressFilter as EndpointAddressMessageFilter;
 			Assert.IsNotNull (filter, "#3");
-			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://" + ep + "/address")), "#4");
+			Assert.IsTrue (filter.Address.Equals (new EndpointAddress (ep + "/address")), "#4");
 			Assert.IsFalse (filter.IncludeHostNameInComparison, "#5");
 			Assert.IsTrue (channelDispatcher.Endpoints [0].ContractFilter is MatchAllMessageFilter, "#6");
 			} finally {
@@ -186,8 +186,8 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		public void ChannelDispatchers_WithDebug () {
-			var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://" + ep));
+			var ep = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri (ep));
 			h.AddServiceEndpoint (typeof (AllActions).FullName, new BasicHttpBinding (), "address");
 			ServiceMetadataBehavior b = new ServiceMetadataBehavior ();
 			b.HttpGetEnabled = true;
@@ -201,7 +201,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (channelDispatcher.Endpoints.Count == 1, "#3");
 			EndpointAddressMessageFilter filter = channelDispatcher.Endpoints [0].AddressFilter as EndpointAddressMessageFilter;
 			Assert.IsNotNull (filter, "#4");
-			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://" + ep)), "#5");
+			Assert.IsTrue (filter.Address.Equals (new EndpointAddress (ep)), "#5");
 			Assert.IsFalse (filter.IncludeHostNameInComparison, "#6");
 			Assert.IsTrue (channelDispatcher.Endpoints [0].ContractFilter is MatchAllMessageFilter, "#7");
 			h.Close ();
