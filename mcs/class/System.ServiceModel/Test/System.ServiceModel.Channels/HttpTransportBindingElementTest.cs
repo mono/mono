@@ -38,6 +38,8 @@ using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 #if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
 #endif
@@ -203,7 +205,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			var cf = new HttpTransportBindingElement ().BuildChannelFactory<IRequestChannel> (ctx);
 			Assert.IsTrue (cf is ChannelFactoryBase<IRequestChannel>, "#1");
 			cf.Open ();
-			cf.CreateChannel (new EndpointAddress ("http://localhost:8080"), null);
+			cf.CreateChannel (new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()), null);
 		}
 
 		[Test]
@@ -228,7 +230,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		public void EndpointAddressAndViaMustMatchOnAddressingNone ()
 		{
 			try {
-				var ch = ChannelFactory<IFoo>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ("http://localhost:37564/"), new Uri ("http://localhost:8080/HogeService"));
+				var ch = ChannelFactory<IFoo>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort () + "/"), new Uri ("http://localhost:" + NetworkHelpers.FindFreePort () + "/HogeService"));
 				((ICommunicationObject) ch).Close ();
 			} catch (TargetInvocationException) {
 				// we throw this exception so far. Since it is
@@ -338,7 +340,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			BindingContext lbc = new BindingContext (
 				new CustomBinding (),
 				new BindingParameterCollection (),
-				new Uri ("http://localhost:37564"),
+				new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()),
 				String.Empty, ListenUriMode.Explicit);
 			listener = lel.BuildChannelListener<IReplyChannel> (lbc);
 
@@ -370,7 +372,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			factory.Open ();
 
 			IRequestChannel request = factory.CreateChannel (
-				new EndpointAddress ("http://localhost:37564"));
+				new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 
 			request.Open ();
 

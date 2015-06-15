@@ -41,6 +41,8 @@ using System.ServiceModel.Security.Tokens;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Channels
 {
 	[TestFixture]
@@ -428,7 +430,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			ClientCredentials cred = new ClientCredentials ();
 			cred.ClientCertificate.Certificate =
 				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-			IChannelFactory<IReplyChannel> ch = b.BuildChannelFactory<IReplyChannel> (new Uri ("http://localhost:37564"), cred);
+			IChannelFactory<IReplyChannel> ch = b.BuildChannelFactory<IReplyChannel> (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), cred);
 			try {
 				ch.Open ();
 			} finally {
@@ -456,7 +458,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			ServiceCredentials cred = new ServiceCredentials ();
 			cred.ServiceCertificate.Certificate =
 				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-			IChannelListener<IReplyChannel> ch = b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:37564"), cred);
+			IChannelListener<IReplyChannel> ch = b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), cred);
 			try {
 				ch.Open ();
 			} finally {
@@ -478,7 +480,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new UserNameSecurityTokenParameters ());
 			Binding b = new CustomBinding (be, new HttpTransportBindingElement ());
 			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-			EndpointAddress ea = new EndpointAddress (new Uri ("http://localhost:37564"), new X509CertificateEndpointIdentity (cert));
+			EndpointAddress ea = new EndpointAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), new X509CertificateEndpointIdentity (cert));
 			CalcProxy client = new CalcProxy (b, ea);
 			client.ClientCredentials.UserName.UserName = "rupert";
 			client.Sum (1, 2);

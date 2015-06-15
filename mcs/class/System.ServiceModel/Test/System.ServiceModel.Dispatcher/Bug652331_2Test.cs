@@ -37,6 +37,8 @@ using NUnit.Framework;
 
 using WebServiceMoonlightTest.ServiceReference2;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Dispatcher
 {
 	[TestFixture]
@@ -47,7 +49,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		public void Bug652331_3 ()
 		{
 			// Init service
-			ServiceHost serviceHost = new ServiceHost(typeof(Service1), new Uri("http://localhost:37564/Service1"));
+			ServiceHost serviceHost = new ServiceHost(typeof(Service1), new Uri("http://localhost:" + NetworkHelpers.FindFreePort () + "/Service1"));
 			serviceHost.AddServiceEndpoint(typeof(IService1), new BasicHttpBinding(), string.Empty);
 
 			// Enable metadata exchange (WSDL publishing)
@@ -68,7 +70,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		void RunClient ()
 		{
 			var binding = new BasicHttpBinding ();
-			var remoteAddress = new EndpointAddress ("http://localhost:37564/Service1");
+			var remoteAddress = new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort () + "/Service1");
 
 			var normalClient      = new Service1Client (binding, remoteAddress);
 			var collectionClient  = new Service1Client (binding, remoteAddress);

@@ -37,6 +37,8 @@ using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Channels
 {
 	[TestFixture]
@@ -173,8 +175,9 @@ namespace MonoTests.System.ServiceModel.Channels
 				new TcpTransportBindingElement () });
 			bindingS.ReceiveTimeout = TimeSpan.FromSeconds (5);
 			bindingS.OpenTimeout = TimeSpan.FromSeconds (20);
+			int port = NetworkHelpers.FindFreePort ();
 			host.AddServiceEndpoint (typeof (IFoo),
-				bindingS, new Uri ("net.tcp://localhost:37564"));
+				bindingS, new Uri ("net.tcp://localhost:" + port));
 			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
 			host.Open ();
 
@@ -182,7 +185,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				for (int i = 0; i < 2; i++) {
 					var bindingC = new NetTcpBinding ();
 					bindingC.Security.Mode = SecurityMode.None;
-					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
+					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:" + port + "/")).CreateChannel ();
 					proxy.Open ();
 					try {
 						Assert.AreEqual ("TEST FOR ECHO", proxy.Echo ("TEST FOR ECHO"), "#1");
@@ -212,8 +215,9 @@ namespace MonoTests.System.ServiceModel.Channels
 			bindingS.Security.Mode = SecurityMode.None;
 			bindingS.ReceiveTimeout = TimeSpan.FromSeconds (5);
 			bindingS.OpenTimeout = TimeSpan.FromSeconds (20);
+			int port = NetworkHelpers.FindFreePort ();
 			host.AddServiceEndpoint (typeof (IFoo),
-				bindingS, new Uri ("net.tcp://localhost:37564"));
+				bindingS, new Uri ("net.tcp://localhost:" + port));
 			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
 			host.Open ();
 
@@ -222,7 +226,7 @@ namespace MonoTests.System.ServiceModel.Channels
 					var bindingC = new NetTcpBinding ();
 					bindingS.TransferMode = TransferMode.Streamed;
 					bindingC.Security.Mode = SecurityMode.None;
-					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
+					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:" + port + "/")).CreateChannel ();
 					proxy.Open ();
 					try {
 						Assert.AreEqual ("TEST FOR ECHO", proxy.Echo ("TEST FOR ECHO"), "#1");

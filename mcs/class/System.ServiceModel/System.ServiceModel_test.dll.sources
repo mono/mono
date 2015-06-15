@@ -211,3 +211,5 @@ MetadataTests/MetadataSamples.cs
 MetadataTests/TestContext.cs
 MetadataTests/TestLabel.cs
 MetadataTests/ExportTests.cs
+../../test-helpers/NetworkHelpers.cs
+
