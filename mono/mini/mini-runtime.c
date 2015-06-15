@@ -1174,12 +1174,10 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
 	case MONO_PATCH_INFO_CLASS_INIT:
-	case MONO_PATCH_INFO_GENERIC_CLASS_INIT:
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
 	case MONO_PATCH_INFO_IMAGE:
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR:
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
@@ -1225,6 +1223,8 @@ mono_patch_info_hash (gconstpointer data)
 
 		return (ji->type << 8) | (gssize)info->klass | (gssize)info->method;
 	}
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+		return (ji->type << 8) | g_str_hash (ji->data.target);
 	default:
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
@@ -1284,6 +1284,10 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		return ji1->data.index == ji2->data.index;
 	case MONO_PATCH_INFO_VIRT_METHOD:
 		return ji1->data.virt_method->klass == ji2->data.virt_method->klass && ji1->data.virt_method->method == ji2->data.virt_method->method;
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+		if (ji1->data.target == ji2->data.target)
+			return 1;
+		return strcmp (ji1->data.target, ji2->data.target) == 0 ? 1 : 0;
 	default:
 		if (ji1->data.target != ji2->data.target)
 			return 0;
@@ -1647,9 +1651,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mono_create_rgctx_lazy_fetch_trampoline (slot);
 		break;
 	}
-	case MONO_PATCH_INFO_GENERIC_CLASS_INIT:
-		target = mono_create_generic_class_init_trampoline ();
-		break;
 	case MONO_PATCH_INFO_MONITOR_ENTER:
 		target = mono_create_monitor_enter_trampoline ();
 		break;
@@ -2267,7 +2268,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 			for (i = 0; i < sig->param_count; ++i) {
 				MonoType *t = sig->params [i];
 
-				if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
+				if (t->byref && t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t)))
 					supported = FALSE;
 			}
 
@@ -2632,10 +2633,6 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 	if (!method)
 		return NULL;
 
-	/* FIXME Support more cases */
-	if (mono_aot_only)
-		return NULL;
-
 	if (MONO_TYPE_ISSTRUCT (sig->ret))
 		return NULL;
 
@@ -2673,7 +2670,17 @@ mono_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *met
 	if (cache [idx])
 		return cache [idx];
 
-	return cache [idx] = mono_arch_get_delegate_virtual_invoke_impl (sig, method, offset, load_imt_reg);
+	/* FIXME Support more cases */
+	if (mono_aot_only) {
+		char tramp_name [256];
+
+		sprintf (tramp_name, "delegate_virtual_invoke%s_%d", load_imt_reg ? "_imt" : "", offset / SIZEOF_VOID_P);
+		cache [idx] = mono_aot_get_trampoline (tramp_name);
+		g_assert (cache [idx]);
+	} else {
+		cache [idx] = mono_arch_get_delegate_virtual_invoke_impl (sig, method, offset, load_imt_reg);
+	}
+	return cache [idx];
 }
 
 static gpointer
@@ -3315,6 +3322,7 @@ register_icalls (void)
 #ifdef MONO_ARCH_EMULATE_FREM
 #if defined(__default_codegen__)
 	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", fmod, "fmod", FALSE);
+	register_opcode_emulation (OP_RREM, "__emul_rrem", "float float float", fmodf, "fmodf", FALSE);
 #elif defined(__native_client_codegen__)
 	register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", mono_fmod, "mono_fmod", FALSE);
 #endif
@@ -3414,10 +3422,11 @@ register_icalls (void)
 
 	register_icall (mono_object_castclass_with_cache, "mono_object_castclass_with_cache", "object object ptr ptr", FALSE);
 	register_icall (mono_object_isinst_with_cache, "mono_object_isinst_with_cache", "object object ptr ptr", FALSE);
+	register_icall (mono_generic_class_init, "mono_generic_class_init", "void ptr", FALSE);
 
 	register_icall (mono_debugger_agent_user_break, "mono_debugger_agent_user_break", "void", FALSE);
-	register_icall (mono_create_specific_trampoline (NULL, MONO_TRAMPOLINE_GENERIC_CLASS_INIT, mono_get_root_domain (), NULL),
-					"specific_trampoline_generic_class_init", "void", TRUE);
+	register_dyn_icall (mono_create_specific_trampoline (NULL, MONO_TRAMPOLINE_GENERIC_CLASS_INIT, mono_get_root_domain (), NULL),
+						"specific_trampoline_generic_class_init", "void", TRUE);
 
 #ifdef TARGET_IOS
 	register_icall (pthread_getspecific, "pthread_getspecific", "ptr ptr", TRUE);

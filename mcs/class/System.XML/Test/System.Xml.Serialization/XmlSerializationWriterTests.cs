@@ -455,6 +455,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestWritePotentiallyReferencingElement ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1557,6 +1558,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestNullableDatesAndTimes ()
 		{
 			DateTime dt = new DateTime (2012, 1, 3, 10, 0, 0, 0, DateTimeKind.Utc);

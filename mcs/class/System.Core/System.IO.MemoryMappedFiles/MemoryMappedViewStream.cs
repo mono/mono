@@ -36,10 +36,17 @@ namespace System.IO.MemoryMappedFiles
 	public sealed class MemoryMappedViewStream : UnmanagedMemoryStream {
 		IntPtr mmap_handle;
 		object monitor;
-		
+		long pointerOffset;
+
 		internal MemoryMappedViewStream (IntPtr handle, long offset, long size, MemoryMappedFileAccess access) {
+			pointerOffset = offset;
 			monitor = new Object ();
 			CreateStream (handle, offset, size, access);
+		}
+
+		public long PointerOffset
+		{
+			get { return pointerOffset; }
 		}
 
 		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle { 

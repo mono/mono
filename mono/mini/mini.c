@@ -3047,7 +3047,7 @@ static void
 mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 {
 	MonoInst *poll_addr, *ins;
-	if (cfg->verbose_level)
+	if (cfg->verbose_level > 1)
 		printf ("ADDING SAFE POINT TO BB %d\n", bblock->block_num);
 
 #if defined(__native_client_codegen__)
@@ -3062,9 +3062,16 @@ mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	 if (bblock->flags & BB_EXCEPTION_HANDLER) {
 		MonoInst *eh_op = bblock->code;
 
-		// we only skip the ops that start EH blocks.
-		if (eh_op && eh_op->opcode != OP_START_HANDLER && eh_op->opcode != OP_GET_EX_OBJ)
+		if (eh_op && eh_op->opcode != OP_START_HANDLER && eh_op->opcode != OP_GET_EX_OBJ) {
 			eh_op = NULL;
+		} else {
+			MonoInst *next_eh_op = eh_op ? eh_op->next : NULL;
+			// skip all EH relateds ops
+			while (next_eh_op && (next_eh_op->opcode == OP_START_HANDLER || next_eh_op->opcode == OP_GET_EX_OBJ)) {
+				eh_op = next_eh_op;
+				next_eh_op = eh_op->next;
+			}
+		}
 
 		mono_bblock_insert_after_ins (bblock, eh_op, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
@@ -3092,13 +3099,19 @@ mono_insert_safepoints (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 
-	if (cfg->verbose_level)
+	if (cfg->verbose_level > 1)
 		printf ("INSERTING SAFEPOINTS\n");
+	if (cfg->verbose_level > 2)
+		mono_print_code (cfg, "BEFORE SAFEPOINTS");
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		if (bb->loop_body_start || bb == cfg->bb_entry || bb->flags & BB_EXCEPTION_HANDLER)
 			mono_create_gc_safepoint (cfg, bb);
 	}
+
+	if (cfg->verbose_level > 2)
+		mono_print_code (cfg, "AFTER SAFEPOINTS");
+
 }
 
 #else
@@ -3149,21 +3162,30 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (MONO_METHOD_COMPILE_BEGIN_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_BEGIN (method);
 
+	gsharedvt_method = is_gsharedvt_method (method);
+
 	/*
 	 * In AOT mode, method can be the following:
-	 * - the generic method definition. In this case, we are compiling the fully shared
-	 *   version of the method, i.e. the version where all the type parameters are
-	 *   reference types.
 	 * - a gsharedvt method.
-	 * - a method inflated with type parameters. This is for partial sharing.
+	 * - a method inflated with type parameters. This is for ref/partial sharing.
 	 * - a method inflated with concrete types.
 	 */
-	if (compile_aot)
-		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
-			(opts & MONO_OPT_GSHARED) && ((method->is_generic || method->klass->generic_container) || (!method->klass->generic_class && mono_method_is_generic_sharable_full (method, TRUE, FALSE, FALSE)));
-	else
+	if (compile_aot) {
+		if (is_open_method (method)) {
+			try_generic_shared = TRUE;
+			method_is_gshared = TRUE;
+		} else {
+			try_generic_shared = FALSE;
+		}
+		g_assert (opts & MONO_OPT_GSHARED);
+	} else {
 		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
 			(opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable (method, FALSE);
+		if (mini_is_gsharedvt_sharable_method (method)) {
+			if (!mono_debug_count ())
+				try_generic_shared = FALSE;
+		}
+	}
 
 	/*
 	if (try_generic_shared && !mono_debug_count ())
@@ -3175,21 +3197,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 			mono_stats.generics_sharable_methods++;
 		else if (mono_method_is_generic_impl (method))
 			mono_stats.generics_unsharable_methods++;
-	}
-
-	if (mini_is_gsharedvt_sharable_method (method)) {
-		if (!mono_debug_count ())
-			try_generic_shared = FALSE;
-		if (compile_aot)
-			try_generic_shared = FALSE;
-	}
-
-	gsharedvt_method = is_gsharedvt_method (method);
-	if (gsharedvt_method || (compile_aot && is_open_method (method))) {
-		/* We are AOTing a gshared method directly */
-		method_is_gshared = TRUE;
-		g_assert (compile_aot);
-		try_generic_shared = TRUE;
 	}
 
 #ifdef ENABLE_LLVM
@@ -4005,12 +4012,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 				 */
 				return mono_get_addr_from_ftnptr ((gpointer)mono_icall_get_wrapper_full (mi, TRUE));
 			} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 				return mono_create_delegate_trampoline (target_domain, method->klass);
-#else
-				nm = mono_marshal_get_delegate_invoke (method, NULL);
-				return mono_get_addr_from_ftnptr (mono_compile_method (nm));
-#endif
 			} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 				nm = mono_marshal_get_delegate_begin_invoke (method);
 				return mono_get_addr_from_ftnptr (mono_compile_method (nm));

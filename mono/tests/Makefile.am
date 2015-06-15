@@ -411,6 +411,7 @@ BASE_TEST_CS_SRC=		\
 	thread_static_gc_layout.cs \
 	sleep.cs \
 	bug-27147.cs	\
+	bug-30085.cs	\
 	bug-17537.cs
 
 TEST_CS_SRC_DIST=	\
@@ -455,6 +456,11 @@ endif
 if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+endif
+
+if POWERPC64
+# These tests hang
+PLATFORM_DISABLED_TESTS=monitor.exe finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
 endif
 
 if ARM
@@ -730,7 +736,7 @@ test-messages:
 else
 test-messages: w32message.exe
 	> test_messages.zero
-	$(with_mono_path) $(JITTEST_PROG_RUN) w32message.exe >& w32message.allout && cmp test_messages.zero w32message.allout
+	$(with_mono_path) $(JITTEST_PROG_RUN) w32message.exe > w32message.allout 2>&1 && cmp test_messages.zero w32message.allout
 endif
 endif
 

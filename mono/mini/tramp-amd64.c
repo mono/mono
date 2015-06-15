@@ -401,7 +401,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 {
 	char *tramp_name;
 	guint8 *buf, *code, *tramp, *br [2], *r11_save_code, *after_r11_save_code;
-	int i, lmf_offset, offset, res_offset, arg_offset, rax_offset, tramp_offset, saved_regs_offset;
+	int i, lmf_offset, offset, res_offset, arg_offset, rax_offset, tramp_offset, ctx_offset, saved_regs_offset;
 	int saved_fpregs_offset, rbp_offset, framesize, orig_rsp_to_rbp_offset, cfa_offset;
 	gboolean has_caller;
 	GSList *unwind_ops = NULL;
@@ -419,13 +419,36 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	code = buf = mono_global_codeman_reserve (kMaxCodeSize);
 
-	framesize = kMaxCodeSize + sizeof (MonoLMFTramp);
-	framesize = (framesize + (MONO_ARCH_FRAME_ALIGNMENT - 1)) & ~ (MONO_ARCH_FRAME_ALIGNMENT - 1);
+	/* Compute stack frame size and offsets */
+	offset = 0;
+	rbp_offset = -offset;
+
+	offset += sizeof(mgreg_t);
+	rax_offset = -offset;
+
+	offset += sizeof(mgreg_t);
+	tramp_offset = -offset;
+
+	offset += sizeof(gpointer);
+	arg_offset = -offset;
+
+	offset += sizeof(mgreg_t);
+	res_offset = -offset;
+
+	offset += sizeof (MonoContext);
+	ctx_offset = -offset;
+	saved_regs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, gregs);
+	saved_fpregs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, fregs);
+
+	offset += sizeof (MonoLMFTramp);
+	lmf_offset = -offset;
+
+	framesize = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
 
 	orig_rsp_to_rbp_offset = 0;
 	r11_save_code = code;
-	/* Reserve 5 bytes for the mov_membase_reg to save R11 */
-	code += 5;
+	/* Reserve space for the mov_membase_reg to save R11 */
+	code += 8;
 	after_r11_save_code = code;
 
 	// CFA = sp + 16 (the trampoline address is on the stack)
@@ -454,18 +477,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	mono_add_unwind_op_def_cfa_reg (unwind_ops, code, buf, AMD64_RBP);
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, framesize);
 
-	offset = 0;
-	rbp_offset = - offset;
-
-	offset += sizeof(mgreg_t);
-	rax_offset = - offset;
-
-	offset += sizeof(mgreg_t);
-	tramp_offset = - offset;
-
-	offset += sizeof(gpointer);
-	arg_offset = - offset;
-
 	/* Compute the trampoline address from the return address */
 	if (aot) {
 #if defined(__default_codegen__)
@@ -480,18 +491,22 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 	amd64_mov_membase_reg (code, AMD64_RBP, tramp_offset, AMD64_R11, sizeof(gpointer));
 
-	offset += sizeof(mgreg_t);
-	res_offset = - offset;
-
 	/* Save all registers */
-
-	offset += AMD64_NREG * sizeof(mgreg_t);
-	saved_regs_offset = - offset;
 	for (i = 0; i < AMD64_NREG; ++i) {
 		if (i == AMD64_RBP) {
 			/* RAX is already saved */
 			amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RBP, rbp_offset, sizeof(mgreg_t));
 			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), AMD64_RAX, sizeof(mgreg_t));
+		} else if (i == AMD64_RIP) {
+			if (has_caller)
+				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, 8, sizeof(gpointer));
+			else
+				amd64_mov_reg_imm (code, AMD64_R11, 0);
+			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), AMD64_R11, sizeof(mgreg_t));
+		} else if (i == AMD64_RSP) {
+			amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, sizeof(mgreg_t));
+			amd64_alu_reg_imm (code, X86_ADD, AMD64_R11, framesize + 16);
+			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), AMD64_R11, sizeof(mgreg_t));
 		} else if (i != AMD64_R11) {
 			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), i, sizeof(mgreg_t));
 		} else {
@@ -502,8 +517,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 			g_assert (r11_save_code == after_r11_save_code);
 		}
 	}
-	offset += 8 * sizeof(mgreg_t);
-	saved_fpregs_offset = - offset;
 	for (i = 0; i < 8; ++i)
 		amd64_movsd_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)), i);
 
@@ -581,25 +594,19 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	/* Save LMF begin */
 
-	offset += sizeof (MonoLMFTramp);
-	lmf_offset = - offset;
-
 	/* Save ip */
 	if (has_caller)
 		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, 8, sizeof(gpointer));
 	else
 		amd64_mov_reg_imm (code, AMD64_R11, 0);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rip), AMD64_R11, sizeof(mgreg_t));
-	/* Save fp */
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, framesize, sizeof(mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rbp), AMD64_R11, sizeof(mgreg_t));
 	/* Save sp */
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, sizeof(mgreg_t));
 	amd64_alu_reg_imm (code, X86_ADD, AMD64_R11, framesize + 16);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMF, rsp), AMD64_R11, sizeof(mgreg_t));
-	/* Save pointer to registers */
-	amd64_lea_membase (code, AMD64_R11, AMD64_RBP, saved_regs_offset);
-	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMFTramp, regs), AMD64_R11, sizeof(mgreg_t));
+	/* Save pointer to context */
+	amd64_lea_membase (code, AMD64_R11, AMD64_RBP, ctx_offset);
+	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMFTramp, ctx), AMD64_R11, sizeof(mgreg_t));
 
 	if (aot) {
 		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_get_lmf_addr");
@@ -678,7 +685,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	for (i = 0; i < AMD64_NREG; ++i)
 		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10 || i == AMD64_RAX)
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * sizeof(mgreg_t)), sizeof(mgreg_t));
-
 	for (i = 0; i < 8; ++i)
 		amd64_movsd_reg_membase (code, i, AMD64_RBP, saved_fpregs_offset + (i * sizeof(mgreg_t)));
 
@@ -897,14 +903,6 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	g_free (name);
 
 	return buf;
-}
-
-gpointer
-mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	/* Not used on amd64 */
-	g_assert_not_reached ();
-	return NULL;
 }
 
 #ifdef MONO_ARCH_MONITOR_OBJECT_REG
@@ -1325,7 +1323,7 @@ guint8*
 mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gboolean aot)
 {
 	int tramp_size = 256;
-	int framesize, ctx_offset, cfa_offset;
+	int i, framesize, ctx_offset, cfa_offset, gregs_offset;
 	guint8 *code, *buf;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
@@ -1351,29 +1349,19 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, framesize);
 
 	ctx_offset = 0;
+	gregs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, gregs);
 
 	/* Initialize a MonoContext structure on the stack */
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rax), AMD64_RAX, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rbx), AMD64_RBX, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rcx), AMD64_RCX, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rdx), AMD64_RDX, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rsi), AMD64_RSI, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rdi), AMD64_RDI, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r8), AMD64_R8, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r9), AMD64_R9, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r10), AMD64_R10, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r11), AMD64_R11, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r12), AMD64_R12, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r13), AMD64_R13, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r14), AMD64_R14, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r15), AMD64_R15, sizeof (mgreg_t));
-
+	for (i = 0; i < AMD64_NREG; ++i) {
+		if (i != AMD64_RIP && i != AMD64_RSP && i != AMD64_RBP)
+			amd64_mov_membase_reg (code, AMD64_RSP, gregs_offset + (i * sizeof (mgreg_t)), i, sizeof (mgreg_t));
+	}
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, 0, sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rbp), AMD64_R11, sizeof (mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, gregs_offset + (AMD64_RBP * sizeof (mgreg_t)), AMD64_R11, sizeof (mgreg_t));
 	amd64_lea_membase (code, AMD64_R11, AMD64_RBP, 2 * sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rsp), AMD64_R11, sizeof (mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, gregs_offset + (AMD64_RSP * sizeof (mgreg_t)), AMD64_R11, sizeof (mgreg_t));
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, sizeof (mgreg_t), sizeof (mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rip), AMD64_R11, sizeof (mgreg_t));
+	amd64_mov_membase_reg (code, AMD64_RSP, gregs_offset + (AMD64_RIP * sizeof (mgreg_t)), AMD64_R11, sizeof (mgreg_t));
 
 	/* Call the single step/breakpoint function in sdb */
 	amd64_lea_membase (code, AMD64_ARG_REG1, AMD64_RSP, ctx_offset);
@@ -1392,24 +1380,13 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	}
 
 	/* Restore registers from ctx */
-	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rax), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_RBX, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rbx), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rcx), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_RDX, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rdx), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_RSI, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rsi), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_RDI, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rdi), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R8, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r8), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R9, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r9), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R10, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r10), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r11), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R12, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r12), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R13, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r13), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R14, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r14), sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R15, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, r15), sizeof (mgreg_t));
-
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rbp), sizeof (mgreg_t));
+	for (i = 0; i < AMD64_NREG; ++i) {
+		if (i != AMD64_RIP && i != AMD64_RSP && i != AMD64_RBP)
+			amd64_mov_reg_membase (code, AMD64_RSP, i, gregs_offset + (i * sizeof (mgreg_t)), sizeof (mgreg_t));
+	}
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, gregs_offset + (AMD64_RBP * sizeof (mgreg_t)), sizeof (mgreg_t));
 	amd64_mov_membase_reg (code, AMD64_RBP, 0, AMD64_R11, sizeof (mgreg_t));
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, ctx_offset + MONO_STRUCT_OFFSET (MonoContext, rip), sizeof (mgreg_t));
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, gregs_offset + (AMD64_RIP * sizeof (mgreg_t)), sizeof (mgreg_t));
 	amd64_mov_membase_reg (code, AMD64_RBP, sizeof (mgreg_t), AMD64_R11, sizeof (mgreg_t));
 
 	amd64_leave (code);

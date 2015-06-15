@@ -28,7 +28,7 @@
 //
 // (C) 2002 Ximian, Inc.
 
-#if !MOBILE
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]

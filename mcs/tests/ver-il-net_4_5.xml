@@ -24024,7 +24024,7 @@
         <size>57</size>
       </method>
       <method name="Void Foo(Point ByRef)" attrs="145">
-        <size>39</size>
+        <size>33</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -24193,10 +24193,20 @@
         <size>42</size>
       </method>
       <method name="Void Main()" attrs="150">
-        <size>68</size>
+        <size>66</size>
       </method>
       <method name="Void &lt;Main&gt;m__0()" attrs="145">
         <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-initialize-14.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>154</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -51268,6 +51278,20 @@
         <size>7</size>
       </method>
     </type>
+    <type name="D">
+      <method name="Void Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
   </test>
   <test name="test-911.cs">
     <type name="N">
@@ -51507,6 +51531,53 @@
       </method>
       <method name="Void Test(LocationWrapper ByRef)" attrs="150">
         <size>36</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-924.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+DataFrame">
+      <method name="Boolean op_Equality(DataFrame, DataFrame)" attrs="2198">
+        <size>16</size>
+      </method>
+      <method name="Boolean op_Inequality(DataFrame, DataFrame)" attrs="2198">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-925.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>104</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyAttribute2Attribute">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass">
+      <method name="System.String get_Item(Int32, Int32)" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32, System.String)" attrs="2182">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -61278,7 +61349,7 @@
     </type>
     <type name="Tester+&lt;NewInitTest_1&gt;c__async34">
       <method name="Void MoveNext()" attrs="486">
-        <size>1026</size>
+        <size>1030</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -62053,7 +62124,7 @@
     </type>
     <type name="Tester+&lt;NewInitTestGen&gt;c__async0`1[T]">
       <method name="Void MoveNext()" attrs="486">
-        <size>305</size>
+        <size>308</size>
       </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -65066,6 +65137,30 @@
       </method>
     </type>
   </test>
+  <test name="test-async-79.cs">
+    <type name="Test">
+      <method name="System.Threading.Tasks.Task ExecuteCore()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>81</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ExecuteCore&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>380</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;&gt;m__0()" attrs="145">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
@@ -66928,7 +67023,7 @@
   <test name="test-interpolation-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>540</size>
+        <size>581</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

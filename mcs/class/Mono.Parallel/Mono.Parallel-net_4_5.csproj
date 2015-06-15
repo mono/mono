@@ -47,8 +47,8 @@
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\corlib\System.Collections.Concurrent\ConcurrentOrderedList.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Collections.Concurrent\ConcurrentOrderedList.cs" />
     <Compile Include="Mono.Collections.Concurrent\ConcurrentSkipList.cs" />
     <Compile Include="Mono.Threading.Tasks\CyclicDeque.cs" />
     <Compile Include="Mono.Threading.Tasks\IConcurrentDeque.cs" />

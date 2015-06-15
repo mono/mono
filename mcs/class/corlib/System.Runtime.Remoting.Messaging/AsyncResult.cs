@@ -62,6 +62,7 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	IMessageCtrl message_ctrl;
 #pragma warning restore
 	IMessage reply_message;
+	WaitCallback orig_cb;
 	
 	internal AsyncResult ()
 	{
@@ -69,10 +70,28 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 
 	internal AsyncResult (WaitCallback cb, object state, bool capture_context)
 	{
+		orig_cb = cb;
+		if (capture_context) {
+			var stackMark = default (StackCrawlMark);
+			current = ExecutionContext.Capture (
+				ref stackMark,
+				ExecutionContext.CaptureOptions.IgnoreSyncCtx | ExecutionContext.CaptureOptions.OptimizeDefaultCase);
+			cb = delegate {
+				ExecutionContext.Run(current, ccb, this, true);
+			};
+		}
+
 		async_state = state;
 		async_delegate = cb;
-		if (capture_context)
-			current = ExecutionContext.Capture ();
+	}
+
+	static internal ContextCallback ccb = new ContextCallback(WaitCallback_Context);
+
+	static private void WaitCallback_Context(Object state)
+	{
+		AsyncResult obj = (AsyncResult)state;
+		WaitCallback wc = obj.orig_cb as WaitCallback;
+		wc(obj.async_state);
 	}
 
 	public virtual object AsyncState

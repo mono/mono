@@ -6535,12 +6535,21 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 			return ERR_INVALID_ARGUMENT;
 		}
 		m = mono_object_get_virtual_method (this, m);
+		/* Transform this to the format the rest of the code expects it to be */
+		if (m->klass->valuetype) {
+			this_buf = g_alloca (mono_class_instance_size (m->klass));
+			memcpy (this_buf, mono_object_unbox (this), mono_class_instance_size (m->klass));
+		}
 	} else if ((m->flags & METHOD_ATTRIBUTE_VIRTUAL) && !m->klass->valuetype && invoke->flags & INVOKE_FLAG_VIRTUAL) {
 		if (!this) {
 			DEBUG_PRINTF (1, "[%p] Error: invoke with INVOKE_FLAG_VIRTUAL flag set without this argument.\n", (gpointer)GetCurrentThreadId ());
 			return ERR_INVALID_ARGUMENT;
 		}
 		m = mono_object_get_virtual_method (this, m);
+		if (m->klass->valuetype) {
+			this_buf = g_alloca (mono_class_instance_size (m->klass));
+			memcpy (this_buf, mono_object_unbox (this), mono_class_instance_size (m->klass));
+		}
 	}
 
 	DEBUG_PRINTF (1, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer)GetCurrentThreadId (), mono_method_full_name (m, TRUE), this ? this->vtable->klass->name : "<null>");
@@ -8958,11 +8967,23 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (pos < 0) {
 				pos = - pos - 1;
 
+				DEBUG_PRINTF (4, "[dbg]   send arg %d.\n", pos);
+
 				g_assert (pos >= 0 && pos < jit->num_params);
 
 				add_var (buf, jit, sig->params [pos], &jit->params [pos], &frame->ctx, frame->domain, FALSE);
 			} else {
+				MonoDebugLocalsInfo *locals;
+
+				locals = mono_debug_lookup_locals (frame->method);
+				if (locals) {
+					g_assert (pos < locals->num_locals);
+					pos = locals->locals [pos].index;
+					mono_debug_free_locals (locals);
+				}
 				g_assert (pos >= 0 && pos < jit->num_locals);
+
+				DEBUG_PRINTF (4, "[dbg]   send local %d.\n", pos);
 
 				add_var (buf, jit, header->locals [pos], &jit->locals [pos], &frame->ctx, frame->domain, FALSE);
 			}
@@ -9007,6 +9028,14 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				t = sig->params [pos];
 				var = &jit->params [pos];
 			} else {
+				MonoDebugLocalsInfo *locals;
+
+				locals = mono_debug_lookup_locals (frame->method);
+				if (locals) {
+					g_assert (pos < locals->num_locals);
+					pos = locals->locals [pos].index;
+					mono_debug_free_locals (locals);
+				}
 				g_assert (pos >= 0 && pos < jit->num_locals);
 
 				t = header->locals [pos];

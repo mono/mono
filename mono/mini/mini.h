@@ -113,7 +113,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 115
+#define MONO_AOT_FILE_VERSION 117
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -124,6 +124,8 @@
 #endif
 
 #define MONO_TYPE_IS_PRIMITIVE(t) ((!(t)->byref && ((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_R8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
+
+#define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
 /* Constants used to encode different types of methods in AOT */
 enum {
@@ -174,6 +176,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_WITH_LLVM = 1,
 	MONO_AOT_FILE_FLAG_FULL_AOT = 2,
 	MONO_AOT_FILE_FLAG_DEBUG = 4,
+	MONO_AOT_FILE_FLAG_LLVM_THUMB = 8,
 } MonoAotFileFlags;
 
 /* This structure is stored in the AOT file */
@@ -226,10 +229,6 @@ typedef struct MonoAotFileInfo
 	gpointer static_rgctx_trampolines;
 	gpointer imt_thunks;
 	gpointer gsharedvt_arg_trampolines;
-	/*
-	 * The end of LLVM generated thumb code, or NULL.
-	 */
-	gpointer thumb_end;
 	/* In static mode, points to a table of global symbols for trampolines etc */
 	gpointer globals;
 	/* Points to a string containing the assembly name*/
@@ -2360,7 +2359,6 @@ gpointer          mono_create_jump_trampoline (MonoDomain *domain,
 											   MonoMethod *method, 
 											   gboolean add_sync_wrapper);
 gpointer          mono_create_class_init_trampoline (MonoVTable *vtable);
-gpointer          mono_create_generic_class_init_trampoline (void);
 gpointer          mono_create_jit_trampoline (MonoMethod *method);
 gpointer          mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token);
 gpointer          mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method) MONO_LLVM_INTERNAL;
@@ -2468,7 +2466,6 @@ void      mono_arch_exceptions_init             (void);
 guchar*   mono_arch_create_generic_trampoline   (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboolean aot);
-gpointer  mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info);
 guint8*   mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gboolean aot);
 gpointer  mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean is_v4, gboolean aot);
@@ -2958,12 +2955,6 @@ void MONO_SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler) ;
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler);
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigint_signal_handler) ;
 gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
-
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-#define ARCH_HAVE_DELEGATE_TRAMPOLINES 1
-#else
-#define ARCH_HAVE_DELEGATE_TRAMPOLINES 0
-#endif
 
 #ifdef MONO_ARCH_HAVE_OP_TAIL_CALL
 #define ARCH_HAVE_OP_TAIL_CALL 1

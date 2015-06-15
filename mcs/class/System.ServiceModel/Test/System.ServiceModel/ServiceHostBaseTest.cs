@@ -36,6 +36,8 @@ using System.ServiceModel.Dispatcher;
 using SMMessage = System.ServiceModel.Channels.Message;
 using System.ServiceModel.Channels;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -159,7 +161,8 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		public void ChannelDispatchers_NoDebug () {
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:30158"));
+			var ep = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri (ep));
 			h.AddServiceEndpoint (typeof (AllActions).FullName, new BasicHttpBinding (), "address");
 
 			ServiceDebugBehavior b = h.Description.Behaviors.Find<ServiceDebugBehavior> ();
@@ -173,7 +176,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (channelDispatcher.Endpoints.Count == 1, "#2");
 			EndpointAddressMessageFilter filter = channelDispatcher.Endpoints [0].AddressFilter as EndpointAddressMessageFilter;
 			Assert.IsNotNull (filter, "#3");
-			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://localhost:30158/address")), "#4");
+			Assert.IsTrue (filter.Address.Equals (new EndpointAddress (ep + "/address")), "#4");
 			Assert.IsFalse (filter.IncludeHostNameInComparison, "#5");
 			Assert.IsTrue (channelDispatcher.Endpoints [0].ContractFilter is MatchAllMessageFilter, "#6");
 			} finally {
@@ -183,11 +186,12 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		public void ChannelDispatchers_WithDebug () {
-			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:30158"));
+			var ep = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri (ep));
 			h.AddServiceEndpoint (typeof (AllActions).FullName, new BasicHttpBinding (), "address");
 			ServiceMetadataBehavior b = new ServiceMetadataBehavior ();
 			b.HttpGetEnabled = true;
-			b.HttpGetUrl = new Uri( "http://localhost:30158" );
+			b.HttpGetUrl = new Uri( ep );
 			h.Description.Behaviors.Add (b);
 			h.Open ();
 
@@ -197,7 +201,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsTrue (channelDispatcher.Endpoints.Count == 1, "#3");
 			EndpointAddressMessageFilter filter = channelDispatcher.Endpoints [0].AddressFilter as EndpointAddressMessageFilter;
 			Assert.IsNotNull (filter, "#4");
-			Assert.IsTrue (filter.Address.Equals (new EndpointAddress ("http://localhost:30158")), "#5");
+			Assert.IsTrue (filter.Address.Equals (new EndpointAddress (ep)), "#5");
 			Assert.IsFalse (filter.IncludeHostNameInComparison, "#6");
 			Assert.IsTrue (channelDispatcher.Endpoints [0].ContractFilter is MatchAllMessageFilter, "#7");
 			h.Close ();
@@ -207,7 +211,8 @@ namespace MonoTests.System.ServiceModel
 		public void SpecificActionTest ()
 		{
 			//EndpointDispatcher d = new EndpointDispatcher(
-			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://localhost:30158"));
+			var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://" + ep));
 			h.AddServiceEndpoint (typeof (Action1Interface), new BasicHttpBinding (), "address");
 						
 			h.Open ();
@@ -222,7 +227,8 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void InitializeRuntimeBehaviors1 () {
 			HostState st = new HostState ();
-			ServiceHost h = new ServiceHost (typeof (SpecificAction2), new Uri ("http://localhost:30158"));
+			var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (SpecificAction2), new Uri ("http://" + ep));
 			h.AddServiceEndpoint (typeof (SpecificAction2), new BasicHttpBinding (), "temp");			
 
 			h.Description.Behaviors.Add (new MyServiceBehavior (st, h));
@@ -241,7 +247,8 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void InitializeRuntimeBehaviors2 () {
 			HostState st = new HostState ();
-			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://localhost:30158"));
+			var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
+			ServiceHost h = new ServiceHost (typeof (SpecificAction), new Uri ("http://" + ep));
 			h.AddServiceEndpoint (typeof (Action1Interface), new BasicHttpBinding (), "temp");
 			h.AddServiceEndpoint (typeof (Action2Interface), new BasicHttpBinding (), "temp2");
 
@@ -309,8 +316,9 @@ namespace MonoTests.System.ServiceModel
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpointOnlyMex ()
 		{
+            var ep = NetworkHelpers.LocalEphemeralEndPoint().ToString();
 			var host = new ServiceHost (typeof (AllActions),
-				new Uri ("http://localhost:37564"));
+				new Uri ("http://" + ep));
 			host.Description.Behaviors.Add (new ServiceMetadataBehavior ());
 			host.AddServiceEndpoint ("IMetadataExchange",
 				new BasicHttpBinding (), "/wsdl");
@@ -339,7 +347,7 @@ namespace MonoTests.System.ServiceModel
 
 		void RunDestinationUnreachableTest (string label, Binding binding)
 		{
-			string address = "http://localhost:37564/";
+			string address = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
 			var host = OpenHost (address, binding);
 			
 			try {

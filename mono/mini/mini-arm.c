@@ -1386,6 +1386,11 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
 	case MONO_TYPE_R8:
 		cinfo->ret.storage = RegTypeFP;
 
+		if (t->type == MONO_TYPE_R4)
+			cinfo->ret.size = 4;
+		else
+			cinfo->ret.size = 8;
+
 		if (IS_HARD_FLOAT) {
 			cinfo->ret.reg = ARM_VFP_F0;
 		} else {
@@ -2858,7 +2863,23 @@ mono_arch_start_dyn_call (MonoDynCallInfo *info, gpointer **args, guint8 *ret, g
 				p->regs [slot] = (mgreg_t)*arg;
 				break;
 			} else {
-				/* Fall though */
+				if (t->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (t))) {
+					MonoClass *klass = mono_class_from_mono_type (t);
+					guint8 *nullable_buf;
+					int size;
+
+					size = mono_class_value_size (klass, NULL);
+					nullable_buf = g_alloca (size);
+					g_assert (nullable_buf);
+
+					/* The argument pointed to by arg is either a boxed vtype or null */
+					mono_nullable_init (nullable_buf, (MonoObject*)arg, klass);
+
+					arg = (gpointer*)nullable_buf;
+					/* Fall though */
+				} else {
+					/* Fall though */
+				}
 			}
 		case MONO_TYPE_VALUETYPE:
 			g_assert (ainfo->storage == RegTypeStructByVal);
@@ -5000,6 +5021,35 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			code = emit_move_return_value (cfg, ins, code);
+			break;
+		}
+		case OP_GENERIC_CLASS_INIT: {
+			static int byte_offset = -1;
+			static guint8 bitmask;
+			guint32 imm8;
+			guint8 *jump;
+
+			if (byte_offset < 0)
+				mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
+
+			g_assert (arm_is_imm8 (byte_offset));
+			ARM_LDRSB_IMM (code, ARMREG_IP, ins->sreg1, byte_offset);
+			imm8 = mono_arm_is_rotated_imm8 (bitmask, &rot_amount);
+			g_assert (imm8 >= 0);
+			ARM_AND_REG_IMM (code, ARMREG_IP, ARMREG_IP, imm8, rot_amount);
+			ARM_CMP_REG_IMM (code, ARMREG_IP, 0, 0);
+			jump = code;
+			ARM_B_COND (code, ARMCOND_NE, 0);
+
+			/* Uninitialized case */
+			g_assert (ins->sreg1 == ARMREG_R0);
+
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD,
+								 (gpointer)"specific_trampoline_generic_class_init");
+			code = emit_call_seq (cfg, code);
+
+			/* Initialized case */
+			arm_patch (jump, code);
 			break;
 		}
 		case OP_LOCALLOC: {

@@ -493,6 +493,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ReadWriteXmlTest ()
 		{
 			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><int>4556</int>";

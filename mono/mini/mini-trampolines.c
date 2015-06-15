@@ -985,8 +985,6 @@ mono_monitor_exit_trampoline (mgreg_t *regs, guint8 *code, MonoObject *obj, guin
 	mono_monitor_exit (obj);
 }
 
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
-
 /*
  * Precompute data to speed up mono_delegate_trampoline ().
  * METHOD might be NULL.
@@ -1193,8 +1191,6 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	return code;
 }
 
-#endif
-
 #ifdef MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD
 static gpointer
 mono_handler_block_guard_trampoline (mgreg_t *regs, guint8 *code, gpointer *tramp_info, guint8* tramp)
@@ -1276,10 +1272,8 @@ mono_get_trampoline_func (MonoTrampolineType tramp_type)
 	case MONO_TRAMPOLINE_AOT_PLT:
 		return mono_aot_plt_trampoline;
 #endif
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	case MONO_TRAMPOLINE_DELEGATE:
 		return mono_delegate_trampoline;
-#endif
 	case MONO_TRAMPOLINE_RESTORE_STACK_PROT:
 		return mono_altstack_restore_prot;
 #ifndef DISABLE_REMOTING
@@ -1333,9 +1327,7 @@ mono_trampolines_init (void)
 	mono_trampoline_code [MONO_TRAMPOLINE_AOT] = create_trampoline_code (MONO_TRAMPOLINE_AOT);
 	mono_trampoline_code [MONO_TRAMPOLINE_AOT_PLT] = create_trampoline_code (MONO_TRAMPOLINE_AOT_PLT);
 #endif
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	mono_trampoline_code [MONO_TRAMPOLINE_DELEGATE] = create_trampoline_code (MONO_TRAMPOLINE_DELEGATE);
-#endif
 	mono_trampoline_code [MONO_TRAMPOLINE_RESTORE_STACK_PROT] = create_trampoline_code (MONO_TRAMPOLINE_RESTORE_STACK_PROT);
 #ifndef DISABLE_REMOTING
 	mono_trampoline_code [MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING] = create_trampoline_code (MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING);
@@ -1419,35 +1411,6 @@ mono_create_class_init_trampoline (MonoVTable *vtable)
 	mono_trampolines_unlock ();
 
 	return ptr;
-}
-
-gpointer
-mono_create_generic_class_init_trampoline (void)
-{
-#ifndef MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT
-	static gpointer code;
-	MonoTrampInfo *info;
-
-	mono_trampolines_lock ();
-
-	if (!code) {
-		if (mono_aot_only)
-			/* get_named_code () might return an ftnptr, but our caller expects a direct pointer */
-			code = mono_get_addr_from_ftnptr (mono_aot_get_trampoline ("generic_class_init_trampoline"));
-		else {
-			code = mono_arch_create_generic_class_init_trampoline (&info, FALSE);
-			mono_tramp_info_register (info);
-		}
-	}
-
-	mono_trampolines_unlock ();
-
-	return code;
-#else
-	/* Not used */
-	g_assert_not_reached ();
-	return NULL;
-#endif
 }
 
 gpointer
@@ -1561,7 +1524,6 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 MonoDelegateTrampInfo*
 mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
 {
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	MonoDelegateTrampInfo *tramp_info;
 	MonoClassMethodPair pair, *dpair;
 	guint32 code_size = 0;
@@ -1588,32 +1550,21 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	mono_domain_unlock (domain);
 
 	return tramp_info;
-#else
-	return NULL;
-#endif
 }
 
 gpointer
 mono_create_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 {
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	return mono_create_delegate_trampoline_info (domain, klass, NULL)->invoke_impl;
-#else
-	return NULL;
-#endif
 }
 
 gpointer
 mono_create_delegate_virtual_trampoline (MonoDomain *domain, MonoClass *klass, MonoMethod *method)
 {
-#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 	MonoMethod *invoke = mono_get_delegate_invoke (klass);
 	g_assert (invoke);
 
 	return mono_get_delegate_virtual_invoke_impl (mono_method_signature (invoke), method);
-#else
-	return NULL;
-#endif
 }
 
 gpointer
@@ -1871,7 +1822,9 @@ mini_get_nullified_class_init_trampoline (void)
 		MonoTrampInfo *info;
 
 		if (mono_aot_only) {
-			tramp = mono_aot_get_trampoline ("nullified_class_init_trampoline");
+			/* Not used */
+			g_assert_not_reached ();
+			tramp = NULL;
 		} else {
 			tramp = mono_arch_get_nullified_class_init_trampoline (&info);
 			mono_tramp_info_register (info);

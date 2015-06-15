@@ -17,6 +17,7 @@ System.Net.Http.Headers/ContentRangeHeaderValueTest.cs
 System.Net.Http.Headers/EntityTagHeaderValueTest.cs
 System.Net.Http.Headers/HttpHeadersTest.cs
 System.Net.Http.Headers/HttpHeaderValueCollection.cs
+System.Net.Http.Headers/HttpRequestHeadersTest.cs
 System.Net.Http.Headers/MediaTypeHeaderValueTest.cs
 System.Net.Http.Headers/MediaTypeWithQualityHeaderValueTest.cs
 System.Net.Http.Headers/NameValueHeaderValueTest.cs

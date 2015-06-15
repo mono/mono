@@ -5862,6 +5862,11 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		protected virtual void EmitBeginException (EmitContext ec)
+		{
+			ec.BeginExceptionBlock ();
+		}
+
 		protected virtual void EmitTryBodyPrepare (EmitContext ec)
 		{
 			StateMachineInitializer state_machine = null;
@@ -5872,7 +5877,7 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Stloc, state_machine.CurrentPC);
 			}
 
-			ec.BeginExceptionBlock ();
+			EmitBeginException (ec);
 
 			if (resume_points != null) {
 				ec.MarkLabel (resume_point);
@@ -6845,6 +6850,14 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
+		protected override void EmitBeginException (EmitContext ec)
+		{
+			if (fini.HasAwait && stmt is TryCatch)
+				ec.BeginExceptionBlock ();
+
+			base.EmitBeginException (ec);
+		}
+
 		protected override void EmitTryBody (EmitContext ec)
 		{
 			if (fini.HasAwait) {
@@ -6853,6 +6866,10 @@ namespace Mono.CSharp {
 
 				ec.TryFinallyUnwind.Add (this);
 				stmt.Emit (ec);
+
+				if (stmt is TryCatch)
+					ec.EndExceptionBlock ();
+
 				ec.TryFinallyUnwind.Remove (this);
 
 				if (start_fin_label != null)

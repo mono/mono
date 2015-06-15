@@ -116,7 +116,6 @@ namespace System.Threading {
 		#region Sync with metadata/object-internals.h
 		private InternalThread internal_thread;
 		object m_ThreadStartArg;
-		private ExecutionContext ec_to_set;
 		#endregion
 #pragma warning restore 414
 
@@ -127,28 +126,21 @@ namespace System.Threading {
 		CultureInfo current_culture;
 		CultureInfo current_ui_culture;
 
-		// the name of local_slots, current_thread and _ec is
+		// the name of current_thread is
 		// important because they are used by the runtime.
-		[ThreadStatic]
-		static object[] local_slots;
 
 		[ThreadStatic]
 		static Thread current_thread;
-
-		/* The actual ExecutionContext of the thread.  It's
-		   ThreadStatic so that it's not shared between
-		   AppDomains. */
-		[ThreadStatic]
-		static ExecutionContext _ec;
-
-		static NamedDataSlot namedDataSlot;		
 
 		static internal CultureInfo default_culture;
 		static internal CultureInfo default_ui_culture;
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate m_Delegate;
-		//private string thread_name=null;
+
+		private ExecutionContext m_ExecutionContext;    // this call context follows the logical thread
+
+		private bool m_ExecutionContextBelongsToOuterScope;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void ConstructInternalThread ();
@@ -297,12 +289,6 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static InternalThread CurrentInternalThread_internal();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static uint AllocTlsData (Type type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void DestroyTlsData (uint offset);
-
 		public static Thread CurrentThread {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
@@ -317,64 +303,7 @@ namespace System.Threading {
 				return (int)(CurrentThread.internal_thread.thread_id);
 			}
 		}
-		
-		static NamedDataSlot NamedDataSlot {
-			get {
-				if (namedDataSlot == null)
-					Interlocked.CompareExchange (ref namedDataSlot, new NamedDataSlot (true), null);
 
-				return namedDataSlot;
-			}
-		}
-		
-		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
-		{
-			return NamedDataSlot.Allocate (name);
-		}
-
-		public static void FreeNamedDataSlot (string name)
-		{
-			NamedDataSlot.Free (name);
-		}
-
-		public static LocalDataStoreSlot AllocateDataSlot ()
-		{
-			return new LocalDataStoreSlot (true);
-		}
-
-		public static object GetData (LocalDataStoreSlot slot) {
-			object[] slots = local_slots;
-			if (slot == null)
-				throw new ArgumentNullException ("slot");
-			if (slots != null && slot.slot < slots.Length)
-				return slots [slot.slot];
-			return null;
-		}
-
-		public static void SetData (LocalDataStoreSlot slot, object data) {
-			object[] slots = local_slots;
-			if (slot == null)
-				throw new ArgumentNullException ("slot");
-			if (slots == null) {
-				slots = new object [slot.slot + 2];
-				local_slots = slots;
-			} else if (slot.slot >= slots.Length) {
-				object[] nslots = new object [slot.slot + 2];
-				slots.CopyTo (nslots, 0);
-				slots = nslots;
-				local_slots = slots;
-			}
-			slots [slot.slot] = data;
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void FreeLocalSlotValues (int slot, bool thread_local);
-
-		public static LocalDataStoreSlot GetNamedDataSlot(string name)
-	 	{
-	 		return NamedDataSlot.Get (name);
-		}
-		
 		public static AppDomain GetDomain() {
 			return AppDomain.CurrentDomain;
 		}
@@ -382,51 +311,9 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int GetDomainID();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void ResetAbort_internal();
-
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public static void ResetAbort ()
-		{
-			ResetAbort_internal ();
-		}
-
-		[HostProtectionAttribute (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public extern static bool Yield ();
-
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Sleep_internal(int ms);
-
-		public static void Sleep (int millisecondsTimeout)
-		{
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Negative timeout");
-
-			Sleep_internal (millisecondsTimeout);
-		}
-
-		public static void Sleep (TimeSpan timeout)
-		{
-			long ms = (long) timeout.TotalMilliseconds;
-			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-
-			Sleep_internal ((int) ms);
-		}
-
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal (MulticastDelegate start);
-
-		public Thread(ThreadStart start) {
-			if(start==null) {
-				throw new ArgumentNullException("Null ThreadStart");
-			}
-			m_Delegate=start;
-		}
 
 		private Thread (InternalThread it) {
 			internal_thread = it;
@@ -568,17 +455,6 @@ namespace System.Threading {
 			}
 		}
 
-		public ThreadPriority Priority {
-			get {
-				return (ThreadPriority)GetPriority (Internal);
-			}
-			
-			set {
-				// FIXME: This doesn't do anything yet
-				SetPriority (Internal, (int)value);
-			}
-		}
-
 		public ThreadState ThreadState {
 			get {
 				return GetState (Internal);
@@ -587,12 +463,6 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int GetPriority (InternalThread thread);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetPriority (InternalThread thread, int priority);
 
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort () 
@@ -615,53 +485,8 @@ namespace System.Threading {
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void Interrupt_internal (InternalThread thread);
-		
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Interrupt ()
+		void ClearAbortReason ()
 		{
-			Interrupt_internal (Internal);
-		}
-
-		// The current thread joins with 'this'. Set ms to 0 to block
-		// until this actually exits.
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Join_internal(InternalThread thread, int ms, IntPtr handle);
-		
-		public void Join()
-		{
-			Join_internal(Internal, Timeout.Infinite, Internal.system_thread_handle);
-		}
-
-		public bool Join(int millisecondsTimeout)
-		{
-			if (millisecondsTimeout < Timeout.Infinite)
-				throw new ArgumentOutOfRangeException ("millisecondsTimeout", "Timeout less than zero");
-
-			return Join_internal (Internal, millisecondsTimeout, Internal.system_thread_handle);
-		}
-
-		public bool Join(TimeSpan timeout)
-		{
-			long ms = (long) timeout.TotalMilliseconds;
-			if (ms < Timeout.Infinite || ms > Int32.MaxValue)
-				throw new ArgumentOutOfRangeException ("timeout", "timeout out of range");
-
-			return Join_internal (Internal, (int) ms, Internal.system_thread_handle);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void MemoryBarrier ();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void Resume_internal();
-
-		[Obsolete ("")]
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Resume () 
-		{
-			Resume_internal ();
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -679,35 +504,17 @@ namespace System.Threading {
 			}
 		}
 
-		private void StartInternal ()
+		void StartInternal (IPrincipal principal, ref StackCrawlMark stackMark)
 		{
-			current_thread = this;
-
-			if (m_Delegate is ThreadStart) {
-				((ThreadStart) m_Delegate) ();
-			} else {
-				((ParameterizedThreadStart) m_Delegate) (m_ThreadStartArg);
-			}
-		}
-
-		public void Start() {
-			// propagate informations from the original thread to the new thread
-			ec_to_set = ExecutionContext.Capture (false, true);
+#if FEATURE_ROLE_BASED_SECURITY
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
+#endif
 
 			// Thread_internal creates and starts the new thread, 
-			if (Thread_internal((ThreadStart) StartInternal) == (IntPtr) 0)
+			if (Thread_internal(m_Delegate) == IntPtr.Zero)
 				throw new SystemException ("Thread creation failed.");
-		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Suspend_internal(InternalThread thread);
-
-		[Obsolete ("")]
-		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
-		public void Suspend ()
-		{
-			Suspend_internal (Internal);
+			m_ThreadStartArg = null;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -812,6 +619,9 @@ namespace System.Threading {
 
 		static int GetProcessDefaultStackSize (int maxStackSize)
 		{
+			if (maxStackSize == 0)
+				return 0;
+
 			if (maxStackSize < 131072) // make sure stack is at least 128k big
 				return 131072;
 
@@ -828,44 +638,6 @@ namespace System.Threading {
 		{
 			m_Delegate = start;
 			Internal.stack_size = maxStackSize;
-		}
-
-		public ExecutionContext ExecutionContext {
-			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
-			get {
-				if (_ec == null)
-					_ec = new ExecutionContext ();
-				return _ec;
-			}
-			internal set {
-				_ec = value;
-			}
-		}
-
-		internal bool HasExecutionContext {
-			get {
-				return _ec != null;
-			}
-		}
-
-		internal void BranchExecutionContext (out ExecutionContext.Switcher switcher)
-		{
-			if (_ec == null) {
-				switcher =  new ExecutionContext.Switcher ();
-			} else {
-				switcher = new ExecutionContext.Switcher (_ec);
-				_ec.CopyOnWrite = true;
-			}
-		}
-
-		internal void RestoreExecutionContext (ref ExecutionContext.Switcher switcher)
-		{
-			if (switcher.IsEmpty) {
-				_ec = null;
-				return;
-			}
-
-			switcher.Restore (_ec);
 		}
 
 		public int ManagedThreadId {
@@ -929,35 +701,6 @@ namespace System.Threading {
 		{
 			return ManagedThreadId;
 		}
-
-		public void Start (object parameter)
-		{
-			m_ThreadStartArg = parameter;
-			Start ();
-		}
-
-#if !MOBILE
-		void _Thread.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _Thread.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
-			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		internal CultureInfo GetCurrentUICultureNoAppX ()
 		{

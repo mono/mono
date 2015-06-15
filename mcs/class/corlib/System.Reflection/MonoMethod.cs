@@ -282,15 +282,6 @@ namespace System.Reflection {
 			ParameterInfo[] pinfo = GetParametersInternal ();
 			ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
-#if !NET_2_1
-			if (SecurityManager.SecurityEnabled) {
-				// sadly Attributes doesn't tell us which kind of security action this is so
-				// we must do it the hard way - and it also means that we can skip calling
-				// Attribute (which is another an icall)
-				SecurityManager.ReflectedLinkDemandInvoke (this);
-			}
-#endif
-
 			if (ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on types or methods for which ContainsGenericParameters is true.");
 
@@ -633,15 +624,6 @@ namespace System.Reflection {
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
 			MonoMethod.ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
-
-#if !NET_2_1
-			if (SecurityManager.SecurityEnabled) {
-				// sadly Attributes doesn't tell us which kind of security action this is so
-				// we must do it the hard way - and it also means that we can skip calling
-				// Attribute (which is another an icall)
-				SecurityManager.ReflectedLinkDemandInvoke (this);
-			}
-#endif
 
 			if (obj == null && DeclaringType.ContainsGenericParameters)
 				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");

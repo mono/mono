@@ -37,6 +37,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Net;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Web
 {
 	[TestFixture]
@@ -46,7 +48,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category("NotWorking")]
 		public void ServiceDebugBehaviorTest () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString()));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 
 			Assert.AreEqual (true, host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageEnabled, "HttpHelpPageEnabled #1");
@@ -64,7 +66,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category ("NotWorking")]
 		public void WebHttpBehaviorTest1 () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString()));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 			ServiceEndpoint basicHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new BasicHttpBinding (), "BasicHttpBinding");
 
@@ -84,7 +86,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Category("NotWorking")]
 		public void WebHttpBehaviorTest2 () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString()));
 			ServiceEndpoint webHttp = host.AddServiceEndpoint ("MonoTests.System.ServiceModel.Web.WebServiceHostTest+MyService", new WebHttpBinding (), "WebHttpBinding");
 			MyWebHttpBehavior behavior = new MyWebHttpBehavior ();
 			behavior.ApplyDispatchBehaviorBegin += delegate {
@@ -104,7 +106,7 @@ namespace MonoTests.System.ServiceModel.Web
 		[Test]
 		public void ServiceBaseUriTest () {
 
-			var host = new WebServiceHost (typeof (MyService), new Uri ("http://localhost:30158/"));
+			var host = new WebServiceHost (typeof (MyService), new Uri ("http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString()));
 			Assert.AreEqual (0, host.Description.Endpoints.Count, "no endpoints yet");
 			host.Open ();
 			Assert.AreEqual (1, host.Description.Endpoints.Count, "default endpoint after open");
@@ -138,12 +140,13 @@ namespace MonoTests.System.ServiceModel.Web
 		[Test]
 		public void Connect ()
 		{
+			var url = "http://" + NetworkHelpers.LocalEphemeralEndPoint().ToString();
 			var host = new WebServiceHost (typeof (DemoService), new Uri
-						       ("http://localhost:30158/"));
+						       (url));
 			try {
 				host.Open ();
 				var wc = new WebClient();
-				wc.DownloadString("http://localhost:30158/testData");
+				wc.DownloadString(url + "/testData");
 				Console.WriteLine();
 			} finally {
 				host.Close();

@@ -62,6 +62,7 @@ namespace MonoTests.System.XmlSerialization
 		// Testcases.
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void NewXmlAttributes ()
 		{
 			// seems not different from Type specified ctor().

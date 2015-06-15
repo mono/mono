@@ -2026,6 +2026,14 @@ fill_iface_array (gpointer key, gpointer value, gpointer user_data)
 		mono_metadata_free_type (inflated);
 }
 
+static guint
+get_interfaces_hash (gconstpointer v1)
+{
+	MonoClass *k = (MonoClass*)v1;
+
+	return k->type_token;
+}
+
 ICALL_EXPORT MonoArray*
 ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 {
@@ -2035,7 +2043,7 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	FillIfaceArrayData data = { 0 };
 	int len;
 
-	GHashTable *iface_hash = g_hash_table_new (NULL, NULL);
+	GHashTable *iface_hash = g_hash_table_new (get_interfaces_hash, NULL);
 
 	if (class->generic_class && class->generic_class->context.class_inst->is_open) {
 		data.context = mono_class_get_context (class);
@@ -4904,7 +4912,7 @@ mono_module_get_types (MonoDomain *domain, MonoImage *image, MonoArray **excepti
 		if (!exportedOnly || mono_module_type_is_visible (tdef, image, i + 1)) {
 			MonoError error;
 			klass = mono_class_get_checked (image, (i + 1) | MONO_TOKEN_TYPE_DEF, &error);
-			g_assert (!mono_loader_get_last_error ()); /* Plug any leaks */
+			mono_loader_assert_no_error (); /* Plug any leaks */
 			
 			if (klass) {
 				mono_array_setref (res, count, mono_type_get_object (domain, &klass->byval_arg));

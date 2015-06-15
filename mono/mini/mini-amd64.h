@@ -171,7 +171,8 @@ struct MonoLMF {
 	 * the caller ip is saved.
 	 * If the second lowest bit is set, then this is a MonoLMFExt structure, and
 	 * the other fields are not valid.
-	 * If the third lowest bit is set, then this is a MonoLMFTramp structure.
+	 * If the third lowest bit is set, then this is a MonoLMFTramp structure, and
+	 * the 'rbp' field is not valid.
 	 */
 	gpointer    previous_lmf;
 #if defined(__default_codegen__) || defined(HOST_WIN32)
@@ -188,7 +189,7 @@ struct MonoLMF {
 /* LMF structure used by the JIT trampolines */
 typedef struct {
 	struct MonoLMF lmf;
-	guint64 *regs;
+	MonoContext *ctx;
 	gpointer lmf_addr;
 } MonoLMFTramp;
 
@@ -231,8 +232,8 @@ typedef struct {
 	guint8 *ret;
 } DynCallArgs;
 
-#define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->rax = (gsize)exc; } while (0)
-#define MONO_CONTEXT_SET_LLVM_EH_SELECTOR_REG(ctx, sel) do { (ctx)->rdx = (gsize)(sel); } while (0)
+#define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->gregs [AMD64_RAX] = (gsize)exc; } while (0)
+#define MONO_CONTEXT_SET_LLVM_EH_SELECTOR_REG(ctx, sel) do { (ctx)->gregs [AMD64_RDX] = (gsize)(sel); } while (0)
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
@@ -307,7 +308,6 @@ typedef struct {
 
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD 1
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_TLS_GET (mono_amd64_have_tls_get ())
 #define MONO_ARCH_IMT_REG AMD64_R10
@@ -380,14 +380,12 @@ mono_amd64_patch (unsigned char* code, gpointer target);
 void
 mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 							guint64 dummy5, guint64 dummy6,
-							mgreg_t *regs, mgreg_t rip,
-							MonoObject *exc, gboolean rethrow);
+							MonoContext *mctx, MonoObject *exc, gboolean rethrow);
 
 void
 mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 								   guint64 dummy5, guint64 dummy6,
-								   mgreg_t *regs, mgreg_t rip,
-								   guint32 ex_token_index, gint64 pc_offset);
+								   MonoContext *mctx, guint32 ex_token_index, gint64 pc_offset);
 
 guint64
 mono_amd64_get_original_ip (void);

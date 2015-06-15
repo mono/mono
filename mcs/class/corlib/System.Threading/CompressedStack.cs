@@ -61,8 +61,11 @@ namespace System.Threading {
 
 		public static CompressedStack Capture ()
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else
 			CompressedStack cs = new CompressedStack (0);
-			cs._list = SecurityFrame.GetStack (1);
+			cs._list = new ArrayList ();
 
 			// include any current CompressedStack inside the new Capture
 			CompressedStack currentCs = Thread.CurrentThread.ExecutionContext.SecurityContext.CompressedStack;
@@ -71,6 +74,7 @@ namespace System.Threading {
 					cs._list.Add (currentCs._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
@@ -79,6 +83,9 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public CompressedStack GetCompressedStack ()
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else
 			// Note: CompressedStack.GetCompressedStack doesn't return null
 			// like Thread.CurrentThread.GetCompressedStack if no compressed
 			// stack is present.
@@ -95,6 +102,7 @@ namespace System.Threading {
 					cs._list.Add (newstack._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		[MonoTODO ("incomplete")]
@@ -108,6 +116,9 @@ namespace System.Threading {
 		[SecurityCritical]
 		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else	
 			if (compressedStack == null)
 				throw new ArgumentException ("compressedStack");
 
@@ -122,6 +133,7 @@ namespace System.Threading {
 				if (original != null)
 					t.ExecutionContext.SecurityContext.CompressedStack = original;
 			}
+#endif
 		}
 
 		// internal stuff
@@ -134,12 +146,6 @@ namespace System.Threading {
 			if (_list.Count != cs._list.Count)
 				return false;
 
-			for (int i=0; i < _list.Count; i++) {
-				SecurityFrame sf1 = (SecurityFrame) _list [i];
-				SecurityFrame sf2 = (SecurityFrame) cs._list [i];
-				if (!sf1.Equals (sf2))
-					return false;
-			}
 			return true;
 		}
 

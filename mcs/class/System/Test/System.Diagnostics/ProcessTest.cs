@@ -53,6 +53,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // Covers #26363
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void GetProcesses_StartTime ()
 		{
 			foreach (var p in Process.GetProcesses ()) {
@@ -842,23 +843,6 @@ namespace MonoTests.System.Diagnostics
 			return RunningOnUnix ? new ProcessStartInfo ("/bin/ls", "/") : new ProcessStartInfo ("help", "");
 		}
 
-		[Test] // Covers #26362
-		public void TestExitedEvent ()
-		{
-			var falseExitedEvents = 0;
-			var cp = Process.GetCurrentProcess ();
-			foreach (var p in Process.GetProcesses ()) {
-				if (p.Id != cp.Id && !p.HasExited) {
-					p.EnableRaisingEvents = true;
-					p.Exited += (s, e) => {
-						if (!p.HasExited)
-							falseExitedEvents++;
-					};
-				}
-			}
-			Assert.AreEqual (0, falseExitedEvents);
-		}
-		
 		[Test]
 		public void ProcessName_NotStarted ()
 		{
@@ -924,6 +908,20 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void HasExitedCurrent () {
 			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
+		}
+
+		[Test]
+		public void DisposeWithDisposedStreams ()
+		{
+			var psi = GetCrossPlatformStartInfo ();
+			psi.RedirectStandardInput = true;
+			psi.RedirectStandardOutput = true;
+			psi.UseShellExecute = false;
+
+			var p = Process.Start (psi);
+			p.StandardInput.BaseStream.Dispose ();
+			p.StandardOutput.BaseStream.Dispose ();
+			p.Dispose ();
 		}
 	}
 }

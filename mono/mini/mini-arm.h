@@ -124,6 +124,9 @@
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
+/* This needs to hold both a 32 bit int and a 64 bit double */
+#define mono_unwind_reg_t guint64
+
 /* Argument marshallings for calls between gsharedvt and normal code */
 typedef enum {
 	GSHAREDVT_ARG_NONE = 0,
@@ -176,7 +179,7 @@ typedef struct {
 
 
 #define PARAM_REGS 4
-#define DYN_CALL_STACK_ARGS 6
+#define DYN_CALL_STACK_ARGS 10
 
 typedef struct {
 	mgreg_t regs [PARAM_REGS + DYN_CALL_STACK_ARGS];
@@ -257,7 +260,6 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
@@ -268,7 +270,7 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA 24
+#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
 
 #ifndef MONO_CROSS_COMPILE
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
@@ -291,6 +293,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
+#define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 
 #if defined(__native_client__)
 #undef MONO_ARCH_SOFT_DEBUG_SUPPORTED

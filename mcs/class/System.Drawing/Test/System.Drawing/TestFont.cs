@@ -582,8 +582,10 @@ namespace MonoTests.System.Drawing{
             Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
             Font f2 = new Font("Courier New", 8.25F, GraphicsUnit.Point);
 
-            Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
-                "Hashcodes should differ if _name member differs");
+			if (f1.Name != f2.Name) {
+				Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
+							   "Hashcodes should differ if _name member differs");
+			}
         }
 
         [Test]

@@ -50,8 +50,10 @@ namespace Mono.XBuild.CommandLine {
 		Engine		engine;
 		Project		project;
 		ConsoleReportPrinter printer;
-
 		
+		// this does nothing but adds strong reference to Microsoft.Build.Tasks*.dll that we need to load consistently.
+		Microsoft.Build.Tasks.Copy dummy;
+
 		public static void Main (string[] args)
 		{
 			MainClass mc = new MainClass ();

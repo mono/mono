@@ -702,9 +702,6 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	mono_g_hash_table_remove (thread_start_args, start_info->obj);
 	mono_threads_unlock ();
 
-	mono_thread_set_execution_context (start_info->obj->ec_to_set);
-	start_info->obj->ec_to_set = NULL;
-
 	g_free (start_info);
 	THREAD_DEBUG (g_message ("%s: start_wrapper for %"G_GSIZE_FORMAT, __func__,
 							 internal->tid));
@@ -1323,13 +1320,13 @@ ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj
 }
 
 int
-ves_icall_System_Threading_Thread_GetPriority (MonoInternalThread *thread)
+ves_icall_System_Threading_Thread_GetPriority (MonoThread *this)
 {
 	return ThreadPriority_Lowest;
 }
 
 void
-ves_icall_System_Threading_Thread_SetPriority (MonoInternalThread *thread, int priority)
+ves_icall_System_Threading_Thread_SetPriority (MonoThread *this, int priority)
 {
 }
 
@@ -1389,24 +1386,25 @@ mono_thread_internal_current (void)
 }
 
 gboolean
-ves_icall_System_Threading_Thread_Join_internal(MonoInternalThread *this,
-												int ms, HANDLE thread)
+ves_icall_System_Threading_Thread_Join_internal(MonoThread *this, int ms)
 {
+	MonoInternalThread *this_obj = this->internal_thread;
+	HANDLE thread = this_obj->handle;
 	MonoInternalThread *cur_thread = mono_thread_internal_current ();
 	gboolean ret;
 
 	mono_thread_current_check_pending_interrupt ();
 
-	LOCK_THREAD (this);
+	LOCK_THREAD (this_obj);
 	
-	if ((this->state & ThreadState_Unstarted) != 0) {
-		UNLOCK_THREAD (this);
+	if ((this_obj->state & ThreadState_Unstarted) != 0) {
+		UNLOCK_THREAD (this_obj);
 		
 		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started."));
 		return FALSE;
 	}
 
-	UNLOCK_THREAD (this);
+	UNLOCK_THREAD (this_obj);
 
 	if(ms== -1) {
 		ms=INFINITE;
@@ -2025,22 +2023,23 @@ ves_icall_System_Threading_Thread_GetState (MonoInternalThread* this)
 	return state;
 }
 
-void ves_icall_System_Threading_Thread_Interrupt_internal (MonoInternalThread *this)
+void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this)
 {
 	MonoInternalThread *current;
 	gboolean throw;
+	MonoInternalThread *this_obj = this->internal_thread;
 
-	LOCK_THREAD (this);
+	LOCK_THREAD (this_obj);
 
 	current = mono_thread_internal_current ();
 
-	this->thread_interrupt_requested = TRUE;	
-	throw = current != this && (this->state & ThreadState_WaitSleepJoin);	
+	this_obj->thread_interrupt_requested = TRUE;
+	throw = current != this_obj && (this_obj->state & ThreadState_WaitSleepJoin);
 
-	UNLOCK_THREAD (this);
+	UNLOCK_THREAD (this_obj);
 	
 	if (throw) {
-		abort_thread_internal (this, TRUE, FALSE);
+		abort_thread_internal (this_obj, TRUE, FALSE);
 	}
 }
 
@@ -2106,7 +2105,7 @@ ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject 
 }
 
 void
-ves_icall_System_Threading_Thread_ResetAbort (void)
+ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
 	gboolean was_aborting;
@@ -2210,9 +2209,9 @@ mono_thread_suspend (MonoInternalThread *thread)
 }
 
 void
-ves_icall_System_Threading_Thread_Suspend (MonoInternalThread *thread)
+ves_icall_System_Threading_Thread_Suspend (MonoThread *this)
 {
-	if (!mono_thread_suspend (thread)) {
+	if (!mono_thread_suspend (this->internal_thread)) {
 		mono_set_pending_exception (mono_get_exception_thread_state ("Thread has not been started, or is dead."));
 		return;
 	}
@@ -3987,193 +3986,6 @@ mono_special_static_data_free_slot (guint32 offset, guint32 size)
 	mono_threads_unlock ();
 }
 
-/*
- * allocates room in the thread local area for storing an instance of the struct type
- * the allocation is kept track of in domain->tlsrec_list.
- */
-uint32_t
-mono_thread_alloc_tls (MonoReflectionType *type)
-{
-	MonoDomain *domain = mono_domain_get ();
-	MonoClass *klass;
-	MonoTlsDataRecord *tlsrec;
-	int max_set = 0;
-	gsize *bitmap;
-	gsize default_bitmap [4] = {0};
-	uint32_t tls_offset;
-	guint32 size;
-	gint32 align;
-
-	klass = mono_class_from_mono_type (type->type);
-	/* TlsDatum is a struct, so we subtract the object header size offset */
-	bitmap = mono_class_compute_bitmap (klass, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
-	size = mono_type_size (type->type, &align);
-	tls_offset = mono_alloc_special_static_data (SPECIAL_STATIC_THREAD, size, align, (uintptr_t*)bitmap, max_set + 1);
-	if (bitmap != default_bitmap)
-		g_free (bitmap);
-	tlsrec = g_new0 (MonoTlsDataRecord, 1);
-	tlsrec->tls_offset = tls_offset;
-	tlsrec->size = size;
-	mono_domain_lock (domain);
-	tlsrec->next = domain->tlsrec_list;
-	domain->tlsrec_list = tlsrec;
-	mono_domain_unlock (domain);
-	return tls_offset;
-}
-
-static void
-destroy_tls (MonoDomain *domain, uint32_t tls_offset)
-{
-	MonoTlsDataRecord *prev = NULL;
-	MonoTlsDataRecord *cur;
-	guint32 size = 0;
-
-	mono_domain_lock (domain);
-	cur = domain->tlsrec_list;
-	while (cur) {
-		if (cur->tls_offset == tls_offset) {
-			if (prev)
-				prev->next = cur->next;
-			else
-				domain->tlsrec_list = cur->next;
-			size = cur->size;
-			g_free (cur);
-			break;
-		}
-		prev = cur;
-		cur = cur->next;
-	}
-	mono_domain_unlock (domain);
-	if (size)
-		mono_special_static_data_free_slot (tls_offset, size);
-}
-
-void
-mono_thread_destroy_tls (uint32_t tls_offset)
-{
-	destroy_tls (mono_domain_get (), tls_offset);
-}
-
-/*
- * This is just to ensure cleanup: the finalizers should have taken care, so this is not perf-critical.
- */
-void
-mono_thread_destroy_domain_tls (MonoDomain *domain)
-{
-	while (domain->tlsrec_list)
-		destroy_tls (domain, domain->tlsrec_list->tls_offset);
-}
-
-static MonoClassField *thread_local_slots = NULL;
-static MonoClassField *context_local_slots = NULL;
-
-typedef struct {
-	/* local tls data to get locals_slot from a thread */
-	guint32 offset;
-	/* index in the locals_slot array */
-	int slot;
-} LocalSlotID;
-
-/*
- * LOCKING: requires that threads_mutex is held
- */
-static void
-clear_thread_local_slot (gpointer key, gpointer value, gpointer user_data)
-{
-	MonoInternalThread *thread = (MonoInternalThread *) value;
-	LocalSlotID *sid = user_data;
-
-	int idx = ACCESS_SPECIAL_STATIC_OFFSET (sid->offset, index);
-	int off = ACCESS_SPECIAL_STATIC_OFFSET (sid->offset, offset);
-
-	if (!thread->static_data || !thread->static_data [idx])
-		return;
-
-	MonoArray *slots_array = *(MonoArray **)(((char *) thread->static_data [idx]) + off);
-
-	if (!slots_array || sid->slot >= mono_array_length (slots_array))
-		return;
-
-	mono_array_set (slots_array, MonoObject *, sid->slot, NULL);
-}
-
-/*
- * LOCKING: requires that threads_mutex is held
- */
-static void
-clear_context_local_slot (gpointer key, gpointer value, gpointer user_data)
-{
-	uint32_t gch = GPOINTER_TO_UINT (key);
-	MonoAppContext *ctx = (MonoAppContext *) mono_gchandle_get_target (gch);
-
-	if (!ctx) {
-		g_hash_table_remove (contexts, key);
-		mono_gchandle_free (gch);
-		return;
-	}
-
-	LocalSlotID *sid = user_data;
-
-	int idx = ACCESS_SPECIAL_STATIC_OFFSET (sid->offset, index);
-	int off = ACCESS_SPECIAL_STATIC_OFFSET (sid->offset, offset);
-
-	if (!ctx->static_data || !ctx->static_data [idx])
-		return;
-
-	MonoArray *slots_array = *(MonoArray **) (((char *) ctx->static_data [idx]) + off);
-
-	if (!slots_array || sid->slot >= mono_array_length (slots_array))
-		return;
-
-	mono_array_set (slots_array, MonoObject *, sid->slot, NULL);
-}
-
-void
-mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local)
-{
-	if (!thread_local_slots) {
-		thread_local_slots = mono_class_get_field_from_name (mono_defaults.thread_class, "local_slots");
-		if (!thread_local_slots) {
-			g_warning ("local_slots field not found in Thread class");
-			return;
-		}
-	}
-
-	if (!context_local_slots) {
-		MonoClass *ctx_class = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
-		context_local_slots = mono_class_get_field_from_name (ctx_class, "local_slots");
-		if (!context_local_slots) {
-			g_warning ("local_slots field not found in Context class");
-			return;
-		}
-	}
-
-	void *addr = NULL;
-	MonoDomain *domain = mono_domain_get ();
-
-	mono_domain_lock (domain);
-
-	if (domain->special_static_fields)
-		addr = g_hash_table_lookup (domain->special_static_fields, thread_local ? thread_local_slots : context_local_slots);
-
-	mono_domain_unlock (domain);
-
-	if (!addr)
-		return;
-
-	LocalSlotID sid = { .slot = slot, .offset = GPOINTER_TO_UINT (addr) };
-
-	mono_threads_lock ();
-
-	if (thread_local) {
-		mono_g_hash_table_foreach (threads, clear_thread_local_slot, &sid);
-	} else {
-		g_hash_table_foreach (contexts, clear_context_local_slot, &sid);
-	}
-
-	mono_threads_unlock ();
-}
-
 #ifdef HOST_WIN32
 static void CALLBACK dummy_apc (ULONG_PTR param)
 {
@@ -4514,43 +4326,6 @@ mono_thread_test_state (MonoInternalThread *thread, MonoThreadState test)
 	UNLOCK_THREAD (thread);
 	
 	return ret;
-}
-
-//static MonoClassField *execution_context_field;
-
-static MonoObject**
-get_execution_context_addr (void)
-{
-	MonoDomain *domain = mono_domain_get ();
-	guint32 offset = domain->execution_context_field_offset;
-
-	if (!offset) {
-		MonoClassField *field = mono_class_get_field_from_name (mono_defaults.thread_class, "_ec");
-		g_assert (field);
-
-		g_assert (mono_class_try_get_vtable (domain, mono_defaults.appdomain_class));
-
-		mono_domain_lock (domain);
-		offset = GPOINTER_TO_UINT (g_hash_table_lookup (domain->special_static_fields, field));
-		mono_domain_unlock (domain);
-		g_assert (offset);
-
-		domain->execution_context_field_offset = offset;
-	}
-
-	return (MonoObject**) mono_get_special_static_data (offset);
-}
-
-MonoObject*
-mono_thread_get_execution_context (void)
-{
-	return *get_execution_context_addr ();
-}
-
-void
-mono_thread_set_execution_context (MonoObject *ec)
-{
-	*get_execution_context_addr () = ec;
 }
 
 static gboolean has_tls_get = FALSE;

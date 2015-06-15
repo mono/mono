@@ -38,9 +38,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Markup;
 
-// General Information about the WindowsBase assembly
-// v3.0 Assembly
-
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
@@ -78,3 +75,8 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinitionAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "System.Windows.Input")]
 [assembly: XmlnsDefinitionAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "System.Windows")]
 [assembly: XmlnsDefinitionAttribute ("http://schemas.microsoft.com/netfx/2007/xaml/presentation", "System.Diagnostics")]
+
+#if !MOBILE
+[assembly: TypeForwardedTo (typeof (ValueSerializerAttribute))]
+#endif
+

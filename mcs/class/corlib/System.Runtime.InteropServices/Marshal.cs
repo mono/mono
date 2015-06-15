@@ -578,7 +578,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();			
 		}
 
-#if !MOBILE
+#if !FULL_AOT_RUNTIME
 		[Obsolete]
 		[MonoTODO]
 		public static string GetTypeInfoName (UCOMITypeInfo pTI)
@@ -977,6 +977,21 @@ namespace System.Runtime.InteropServices
 
 		public static int SizeOf<T> (T structure) {
 			return SizeOf (structure.GetType ());
+		}
+
+		internal static uint SizeOfType (Type type)
+		{
+			return (uint) SizeOf (type);
+		}
+
+		internal static uint AlignedSizeOf<T> () where T : struct
+		{
+			uint size = SizeOfType (typeof (T));
+			if (size == 1 || size == 2)
+				return size;
+			if (IntPtr.Size == 8 && size == 4)
+				return size;
+			return (size + 3) & (~((uint)3));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

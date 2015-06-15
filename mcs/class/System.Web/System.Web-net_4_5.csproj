@@ -90,6 +90,7 @@
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingHandler.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\UrlRoutingModule.cs" />
     <Compile Include="..\System.Web.Routing\System.Web.Routing\VirtualPathData.cs" />
+    <Compile Include="..\System.Windows.Forms\System.Resources\AssemblyNamesTypeResolutionService.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\ByteArrayFromResXHandler.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\FileRefHandler.cs" />
     <Compile Include="..\System.Windows.Forms\System.Resources\InMemoryHandler.cs" />
@@ -1431,6 +1432,10 @@
     <ProjectReference Include="../System.Web.Services/System.Web.Services-net_4_5.csproj">
       <Project>{251DB111-FEE1-4080-8411-0AD1CC9BA94B}</Project>
       <Name>System.Web.Services-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Design/System.Design-net_4_5.csproj">
+      <Project>{D4E6A482-761B-4B41-8B63-C930CA84D268}</Project>
+      <Name>System.Design-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

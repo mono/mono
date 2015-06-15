@@ -406,9 +406,9 @@
       <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
       <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="../System.Web/System.Web-net_4_5.csproj">
-      <Project>{B489C3DE-3ED3-4EDC-B42B-82B38E101857}</Project>
-      <Name>System.Web-net_4_5</Name>
+    <ProjectReference Include="../System.Web/System.Web-plainweb-net_4_5.csproj">
+      <Project>{21892B00-1C9F-44F3-AE4C-A6A9A210CEC7}</Project>
+      <Name>System.Web-plainweb-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="../System.Windows.Forms/System.Windows.Forms-net_4_5.csproj">
       <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>

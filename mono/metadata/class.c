@@ -280,7 +280,7 @@ done:
 			mono_error_set_type_load_name (error, name, assembly, "Could not resolve type with token %08x", type_token);
 		}
 	}
-	g_assert (!mono_loader_get_last_error ());
+	mono_loader_assert_no_error ();
 	return res;
 }
 
@@ -1335,7 +1335,7 @@ mono_class_find_enum_basetype (MonoClass *class, MonoError *error)
 	mono_error_set_type_load_class (error, class, "Could not find base type");
 
 fail:
-	g_assert (!mono_loader_get_last_error ());
+	mono_loader_assert_no_error ();
 	return NULL;
 }
 
@@ -1597,7 +1597,7 @@ mono_class_setup_fields (MonoClass *class)
 		return;
 	}
 
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT)
+	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT && !(mono_is_corlib_image (class->image) && !strcmp (class->name_space, "System") && !strcmp (class->name, "ValueType")))
 		blittable = FALSE;
 
 	/* Prevent infinite loops if the class references itself */
@@ -1772,6 +1772,20 @@ mono_type_get_basic_type_from_generic (MonoType *type)
 	return type;
 }
 
+static gboolean
+type_has_references (MonoClass *klass, MonoType *ftype)
+{
+	if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (klass, ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype)))))
+		return TRUE;
+	if (!ftype->byref && (ftype->type == MONO_TYPE_VAR || ftype->type == MONO_TYPE_MVAR)) {
+		MonoGenericParam *gparam = ftype->data.generic_param;
+
+		if (gparam->gshared_constraint)
+			return mono_class_has_references (mono_class_from_mono_type (gparam->gshared_constraint));
+	}
+	return FALSE;
+}
+
 /*
  * mono_class_layout_fields:
  * @class: a class
@@ -1832,7 +1846,7 @@ mono_class_layout_fields (MonoClass *class)
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC)) {
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
-			if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype)))))
+			if (type_has_references (class, ftype))
 				class->has_references = TRUE;
 		}
 	}
@@ -1845,7 +1859,7 @@ mono_class_layout_fields (MonoClass *class)
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
-			if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype)))))
+			if (type_has_references (class, ftype))
 				class->has_static_refs = TRUE;
 		}
 	}
@@ -1857,7 +1871,7 @@ mono_class_layout_fields (MonoClass *class)
 
 		ftype = mono_type_get_underlying_type (field->type);
 		ftype = mono_type_get_basic_type_from_generic (ftype);
-		if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype))))) {
+		if (type_has_references (class, ftype)) {
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				class->has_static_refs = TRUE;
 			else
@@ -1908,7 +1922,7 @@ mono_class_layout_fields (MonoClass *class)
 				ftype = mono_type_get_underlying_type (field->type);
 				ftype = mono_type_get_basic_type_from_generic (ftype);
 				if (gc_aware_layout) {
-					if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype))))) {
+					if (type_has_references (class, ftype)) {
 						if (pass == 1)
 							continue;
 					} else {
@@ -1930,7 +1944,7 @@ mono_class_layout_fields (MonoClass *class)
 				/* if the field has managed references, we need to force-align it
 				 * see bug #77788
 				 */
-				if (MONO_TYPE_IS_REFERENCE (ftype) || IS_GC_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype)))))
+				if (type_has_references (class, ftype))
 					align = MAX (align, sizeof (gpointer));
 
 				class->min_align = MAX (align, class->min_align);
@@ -1985,7 +1999,7 @@ mono_class_layout_fields (MonoClass *class)
 			field->offset += sizeof (MonoObject);
 			ftype = mono_type_get_underlying_type (field->type);
 			ftype = mono_type_get_basic_type_from_generic (ftype);
-			if (MONO_TYPE_IS_REFERENCE (ftype) || ((MONO_TYPE_ISSTRUCT (ftype) && mono_class_has_references (mono_class_from_mono_type (ftype))))) {
+			if (type_has_references (class, ftype)) {
 				if (field->offset % sizeof (gpointer)) {
 					mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
 				}
@@ -4814,6 +4828,11 @@ mono_method_get_vtable_slot (MonoMethod *method)
 			MonoClass *gklass;
 			int i;
 
+			if (!method->klass->generic_class) {
+				g_assert (method->is_inflated);
+				return mono_method_get_vtable_slot (((MonoMethodInflated*)method)->declaring);
+			}
+
 			/* This can happen for abstract methods of generic instances due to the shortcut code in mono_class_setup_vtable_general (). */
 			g_assert (method->klass->generic_class);
 			gklass = method->klass->generic_class->container_class;
@@ -5725,7 +5744,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 
 	if (mono_metadata_token_table (type_token) != MONO_TABLE_TYPEDEF || tidx > tt->rows) {
 		mono_error_set_bad_image (error, image, "Invalid typedef token %x", type_token);
-		g_assert (!mono_loader_get_last_error ());
+		mono_loader_assert_no_error ();
 		return NULL;
 	}
 
@@ -5733,7 +5752,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 
 	if ((class = mono_internal_hash_table_lookup (&image->class_cache, GUINT_TO_POINTER (type_token)))) {
 		mono_loader_unlock ();
-		g_assert (!mono_loader_get_last_error ());
+		mono_loader_assert_no_error ();
 		return class;
 	}
 
@@ -5822,7 +5841,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (error)));
 			mono_loader_unlock ();
 			mono_profiler_class_loaded (class, MONO_PROFILE_FAILED);
-			g_assert (!mono_loader_get_last_error ());
+			mono_loader_assert_no_error ();
 			return NULL;
 		}
 	}
@@ -5894,7 +5913,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup (mono_error_get_message (error)));
 			mono_loader_unlock ();
 			mono_profiler_class_loaded (class, MONO_PROFILE_FAILED);
-			g_assert (!mono_loader_get_last_error ());
+			mono_loader_assert_no_error ();
 			return NULL;
 		}
 		class->cast_class = class->element_class = mono_class_from_mono_type (enum_basetype);
@@ -5909,7 +5928,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf ("Could not load generic parameter constrains due to %s", mono_error_get_message (error)));
 		mono_loader_unlock ();
 		mono_profiler_class_loaded (class, MONO_PROFILE_FAILED);
-		g_assert (!mono_loader_get_last_error ());
+		mono_loader_assert_no_error ();
 		return NULL;
 	}
 
@@ -5921,7 +5940,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	mono_loader_unlock ();
 
 	mono_profiler_class_loaded (class, MONO_PROFILE_OK);
-	g_assert (!mono_loader_get_last_error ());
+	mono_loader_assert_no_error ();
 
 	return class;
 
@@ -5929,7 +5948,7 @@ parent_failure:
 	mono_class_setup_mono_type (class);
 	mono_loader_unlock ();
 	mono_profiler_class_loaded (class, MONO_PROFILE_FAILED);
-	g_assert (!mono_loader_get_last_error ());
+	mono_loader_assert_no_error ();
 	return NULL;
 }
 
@@ -6527,7 +6546,7 @@ mono_type_retrieve_from_typespec (MonoImage *image, guint32 type_spec, MonoGener
 		MonoType *inflated = inflate_generic_type (NULL, t, context, error);
 
 		if (!mono_error_ok (error)) {
-			g_assert (!mono_loader_get_last_error ());
+			mono_loader_assert_no_error ();
 			return NULL;
 		}
 
@@ -7389,7 +7408,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 		MonoClass *class = mono_class_get_checked (image, type_token, error);
 
 		if (!class) {
-			g_assert (!mono_loader_get_last_error ());
+			mono_loader_assert_no_error ();
 			return NULL;
 		}
 
@@ -7400,7 +7419,7 @@ mono_type_get_checked (MonoImage *image, guint32 type_token, MonoGenericContext 
 	type = mono_type_retrieve_from_typespec (image, type_token, context, &inflated, error);
 
 	if (!type) {
-		g_assert (!mono_loader_get_last_error ());
+		mono_loader_assert_no_error ();
 		return NULL;
 	}
 

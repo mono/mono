@@ -197,16 +197,6 @@ namespace System.Security {
 			throw new NotSupportedException ();
 		}
 
-		internal static void ReflectedLinkDemandInvoke (MethodBase mb)
-		{
-			throw new NotSupportedException ();
-		}
-
-		internal static bool ReflectedLinkDemandQuery (MethodBase mb)
-		{
-			throw new NotSupportedException ();
-		}
-
 		public static PermissionSet GetStandardSandbox (Evidence evidence)
 		{
 			if (evidence == null)

@@ -68,7 +68,7 @@ namespace System.ServiceModel.MonoInternal
 		IChannel channel;
 		IChannelFactory factory;
 		TimeSpan? operation_timeout = null;
-
+		ChannelFactory channel_factory;
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -88,6 +88,7 @@ namespace System.ServiceModel.MonoInternal
 			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
 			: this (endpoint.CreateClientRuntime (null), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, null, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
 		{
+			channel_factory = channelFactory;
 		}
 
 		public ClientRuntimeChannel (ClientRuntime runtime, ContractDescription contract, TimeSpan openTimeout, TimeSpan closeTimeout, IChannel contextChannel, IChannelFactory factory, MessageVersion messageVersion, EndpointAddress remoteAddress, Uri via)
@@ -324,15 +325,8 @@ namespace System.ServiceModel.MonoInternal
 		}
 
 		public TimeSpan OperationTimeout {
-			get {
-				if (!this.operation_timeout.HasValue) {
-					this.operation_timeout = DefaultCommunicationTimeouts.Instance.ReceiveTimeout;
-				}
-				return this.operation_timeout.Value;
-			}
-			set {
-				this.operation_timeout = value;
-			}
+			get { return this.operation_timeout ?? (channel_factory != null ? channel_factory.Endpoint.Binding.SendTimeout : DefaultCommunicationTimeouts.Instance.SendTimeout); }
+			set { this.operation_timeout = value; }
 		}
 
 		public IOutputSession OutputSession {

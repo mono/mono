@@ -234,34 +234,6 @@ namespace System.Security {
 				// special case when directly called from CodeAccessPermission.Demand
 				_ignored = new bool [list.Count];
 			}
-
-			ArrayList frames = SecurityFrame.GetStack (skip);
-			if ((frames != null) && (frames.Count > 0)) {
-				SecurityFrame first = ((SecurityFrame) frames [0]);
-				current = first.Assembly;
-				domain = first.Domain;
-				// skip ourself, Demand and other security runtime methods
-				foreach (SecurityFrame sf in frames) {
-					if (ProcessFrame (sf, ref current, ref domain)) {
-						if (AllIgnored ())
-							return; // reached Assert
-					}
-				}
-				SecurityFrame last = ((SecurityFrame) frames [frames.Count - 1]);
-				CheckAssembly (current, last);
-				CheckAppDomain (domain, last);
-			}
-
-			// Is there a CompressedStack to handle ?
-			CompressedStack stack = Thread.CurrentThread.GetCompressedStack ();
-			if ((stack != null) && !stack.IsEmpty ()) {
-				foreach (SecurityFrame frame in stack.List) {
-					if (ProcessFrame (frame, ref current, ref domain)) {
-						if (AllIgnored ())
-							return; // reached Assert
-					}
-				}
-			}
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
@@ -679,65 +651,6 @@ namespace System.Security {
 			}
 			// everything is ignored (i.e. non-CAS permission or asserted permission).
 			return true;
-		}
-
-		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current, ref AppDomain domain)
-		{
-			if (IsUnrestricted ()) {
-				// we request unrestricted
-				if (frame.Deny != null) {
-					// but have restrictions (some denied permissions)
-					CodeAccessPermission.ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, null);
-				} else if ((frame.PermitOnly != null) && !frame.PermitOnly.IsUnrestricted ()) {
-					// but have restrictions (only some permitted permissions)
-					CodeAccessPermission.ThrowSecurityException (this, "PermitOnly", frame, SecurityAction.Demand, null);
-				}
-			}
-
-			// skip next steps if no Assert, Deny or PermitOnly are present
-			if (frame.HasStackModifiers) {
-				for (int i = 0; i < list.Count; i++) {
-					CodeAccessPermission cap = (CodeAccessPermission) list [i];
-					if (cap.ProcessFrame (frame)) {
-						_ignored [i] = true; // asserted
-						if (AllIgnored ())
-							return true; // no more, abort stack walk!
-					}
-				}
-			}
-
-			// however the "final" grant set is resolved by assembly, so
-			// there's no need to check it every time (just when we're 
-			// changing assemblies between frames).
-			if (frame.Assembly != current) {
-				CheckAssembly (current, frame);
-				current = frame.Assembly;
-			}
-
-			if (frame.Domain != domain) {
-				CheckAppDomain (domain, frame);
-				domain = frame.Domain;
-			}
-
-			return false;
-		}
-
-		internal void CheckAssembly (Assembly a, SecurityFrame frame)
-		{
-			IPermission p = SecurityManager.CheckPermissionSet (a, this, false);
-			if (p != null) {
-				CodeAccessPermission.ThrowSecurityException (this, "Demand failed assembly permissions checks.",
-					frame, SecurityAction.Demand, p);
-			}
-		}
-
-		internal void CheckAppDomain (AppDomain domain, SecurityFrame frame)
-		{
-			IPermission p = SecurityManager.CheckPermissionSet (domain, this);
-			if (p != null) {
-				CodeAccessPermission.ThrowSecurityException (this, "Demand failed appdomain permissions checks.",
-					frame, SecurityAction.Demand, p);
-			}
 		}
 
 		// 2.0 metadata format

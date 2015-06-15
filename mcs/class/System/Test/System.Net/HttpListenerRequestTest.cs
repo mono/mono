@@ -184,5 +184,31 @@ namespace MonoTests.System.Net
 			Assert.AreEqual ("/RequestUriDecodeTest/?a=b&c=d%26e", request.Url.PathAndQuery);
 			listener.Close ();
 		}
+
+		[Test] // #29927
+		public void HttpRequestUriUnescape ()
+		{
+			var prefix = "http://localhost:12345/";
+			var key = "Product/1";
+
+			var expectedUrl = prefix + key + "/";
+			var rawUrl = prefix + Uri.EscapeDataString (key) + "/";
+
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add (prefix);
+			listener.Start ();
+
+			var contextTask = listener.GetContextAsync ();
+
+			var request = (HttpWebRequest) WebRequest.Create (rawUrl);
+			request.GetResponseAsync ();
+
+			if(!contextTask.Wait (1000))
+				Assert.Fail ("Timeout");
+
+			Assert.AreEqual (expectedUrl, contextTask.Result.Request.Url.AbsoluteUri);
+
+			listener.Close ();
+		}
 	}
 }

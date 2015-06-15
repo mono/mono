@@ -443,6 +443,10 @@ namespace PEAPI {
 			type = constrType;
 			cVal = val;
 			tabIx = MDTable.CustomAttribute;
+
+			var bac = val as ByteArrConst;
+			if (bac != null)
+				byteVal = bac.val;
 		}
 
 		internal CustomAttribute(MetaDataElement paren, Method constrType,
@@ -2945,7 +2949,7 @@ namespace PEAPI {
 	}
 
 	public class ByteArrConst : DataConstant {
-		byte[] val;
+		internal byte[] val;
 
 		public ByteArrConst(byte[] val) 
 		{
@@ -3310,6 +3314,7 @@ namespace PEAPI {
 
 		Type type;
 		Class cmodType;
+		PrimitiveTypeRef cmodPrimType;
 
 		/// <summary>
 		/// Create a new custom modifier for a type
@@ -3324,10 +3329,23 @@ namespace PEAPI {
 			this.cmodType = cmodType;
 		}
 
+		public CustomModifiedType(Type type, CustomModifier cmod, PrimitiveTypeRef cmodType)
+			: base((byte)cmod)
+		{
+			this.type = type;
+			this.cmodPrimType = cmodType;
+		}
+
 		internal sealed override void TypeSig(MemoryStream str) 
 		{
 			str.WriteByte(typeIndex);
-			MetaData.CompressNum(cmodType.TypeDefOrRefToken(),str);
+
+			if (cmodType != null) {
+				MetaData.CompressNum(cmodType.TypeDefOrRefToken(),str);
+			} else {
+				MetaData.CompressNum(cmodPrimType.TypeDefOrRefToken(),str);
+			}
+
 			type.TypeSig(str);
 		}
 
@@ -4464,6 +4482,26 @@ namespace PEAPI {
 			return tS;
 		}
 
+	}
+
+	public class PrimitiveTypeRef : Type
+	{
+		PrimitiveType type;
+		MetaData metaData;
+
+		internal PrimitiveTypeRef(PrimitiveType type, MetaData md)
+			: base (0)
+		{
+			this.type = type;
+			this.metaData = md;
+		}
+
+		internal uint TypeDefOrRefToken()
+		{
+			uint cIx = type.GetTypeSpec (metaData).Row;
+			cIx = (cIx << 2) | 0x2;
+			return cIx;
+		}
 	}
 
 	/**************************************************************************/  

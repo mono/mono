@@ -3368,12 +3368,8 @@ namespace Mono.CSharp
 					return Token.OPEN_BRACE;
 				case '}':
 					if (parsing_string_interpolation > 0) {
-						if (peek_char () != '}') {
-							--parsing_string_interpolation;
-							return TokenizeInterpolatedString ();
-						}
-
-						continue;
+						--parsing_string_interpolation;
+						return TokenizeInterpolatedString ();
 					}
 
 					val = ltb.Create (current_source, ref_line, col);

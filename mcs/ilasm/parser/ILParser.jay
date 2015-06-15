@@ -981,18 +981,18 @@ type			: generic_class_ref
                                 base_type.MakePinned ();
                                 $$ = base_type;
                           }
-			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
+			| type K_MODREQ OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
                                 BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
-                                BaseClassRef class_ref = (BaseClassRef) $4;
+                                BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modreq, class_ref);
                                 $$ = base_type;
                           }
-			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
+			| type K_MODOPT OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
                                 BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
-                                BaseClassRef class_ref = (BaseClassRef) $4;
+                                BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modopt, class_ref);
                                 $$ = base_type;
@@ -1485,6 +1485,11 @@ variant_type		: /* EMPTY */
 			| K_CLSID
 			;
 
+custom_modifier_type
+			: primitive_type
+			| class_ref
+			;
+
 field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                           {
                                 FieldDef field_def = new FieldDef((FieldAttr) $3, 
@@ -1652,11 +1657,14 @@ field_init_primitive	: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           }
 			;
 
-field_init		: field_init_primitive
+field_init_full : field_init_primitive
 			| K_BYTEARRAY bytes_list
                           {
                                 $$ = new ByteArrConst ((byte[]) $2);
                           }
+			;
+
+field_init : field_init_full
 			| comp_qstring
                           {
                                 // ******** THIS IS NOT IN THE DOCUMENTATION ******** //
@@ -1666,6 +1674,13 @@ field_init		: field_init_primitive
                           {
                                 $$ = new NullConst ();
                           }
+			;
+
+member_init : field_init_full
+			| K_STRING OPEN_PARENS SQSTRING CLOSE_PARENS
+			  {
+				$$ = new StringConst ((string) $3);
+			  }
 			;
 
 data_decl		: data_head data_body
@@ -2781,13 +2796,15 @@ customattr_decl		: D_CUSTOM custom_type
 			| D_CUSTOM custom_type ASSIGN comp_qstring
 			| D_CUSTOM custom_type ASSIGN bytes_list
                           {
-                                $$ = new CustomAttr ((BaseMethodRef) $2,
-                                        (byte[]) $4);
+                                $$ = new CustomAttr ((BaseMethodRef) $2, new ByteArrConst ((byte[]) $4));
                           }
+            | D_CUSTOM custom_type ASSIGN OPEN_BRACE member_init CLOSE_BRACE
+              {
+            	$$ = new CustomAttr ((BaseMethodRef) $2, null);
+              }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
-			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN
-			  bytes_list
+			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN bytes_list
 			;
 			
 custom_type		: call_conv type type_spec DOUBLE_COLON method_name OPEN_PARENS type_list CLOSE_PARENS
@@ -2892,17 +2909,9 @@ permission_member	: prop_or_field primitive_type perm_mbr_nameval_pair
 			  }
 			;
 
-perm_mbr_nameval_pair	: SQSTRING ASSIGN field_init_primitive
+perm_mbr_nameval_pair	: SQSTRING ASSIGN member_init
 			  {
 				$$ = new NameValuePair ((string) $1, (PEAPI.Constant) $3);
-			  }
-			| SQSTRING ASSIGN K_BYTEARRAY bytes_list
-                          {
-                                $$ = new NameValuePair ((string) $1, new ByteArrConst ((byte[]) $4));
-                          }
-			| SQSTRING ASSIGN K_STRING OPEN_PARENS SQSTRING CLOSE_PARENS
-			  {
-				$$ = new NameValuePair ((string) $1, new StringConst ((string) $5));
 			  }
 			;
 

@@ -1999,8 +1999,8 @@ namespace Mono.CSharp {
 
 			int[] bits = decimal.GetBits (value);
 			AttributeEncoder encoder = new AttributeEncoder ();
-			encoder.Encode ((byte) (bits[3] >> 16));
-			encoder.Encode ((byte) (bits[3] >> 31));
+			encoder.Encode ((byte) ((bits[3] & 0xFF0000) >> 16)); // Scale
+			encoder.Encode ((byte) ((bits[3] >> 31) << 7)); // Sign encoded as 0x80 for negative, 0x0 for possitive
 			encoder.Encode ((uint) bits[2]);
 			encoder.Encode ((uint) bits[1]);
 			encoder.Encode ((uint) bits[0]);

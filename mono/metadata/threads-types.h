@@ -72,13 +72,13 @@ void ves_icall_System_Threading_Thread_ConstructInternalThread (MonoThread *this
 HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this_obj, MonoObject *start);
 void ves_icall_System_Threading_InternalThread_Thread_free_internal(MonoInternalThread *this_obj, HANDLE thread);
 void ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms);
-gboolean ves_icall_System_Threading_Thread_Join_internal(MonoInternalThread *this_obj, int ms, HANDLE thread);
+gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this, int ms);
 gint32 ves_icall_System_Threading_Thread_GetDomainID (void);
 gboolean ves_icall_System_Threading_Thread_Yield (void);
 MonoString* ves_icall_System_Threading_Thread_GetName_internal (MonoInternalThread *this_obj);
 void ves_icall_System_Threading_Thread_SetName_internal (MonoInternalThread *this_obj, MonoString *name);
-int ves_icall_System_Threading_Thread_GetPriority (MonoInternalThread *thread);
-void ves_icall_System_Threading_Thread_SetPriority (MonoInternalThread *thread, int priority);
+int ves_icall_System_Threading_Thread_GetPriority (MonoThread *this);
+void ves_icall_System_Threading_Thread_SetPriority (MonoThread *this, int priority);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentCulture (MonoInternalThread *this_obj);
 void ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this_obj, MonoObject *culture);
 MonoObject* ves_icall_System_Threading_Thread_GetCachedCurrentUICulture (MonoInternalThread *this_obj);
@@ -136,9 +136,9 @@ gint32 ves_icall_System_Threading_Interlocked_Decrement_Int(gint32 *location);
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long(gint64 * location);
 
 void ves_icall_System_Threading_Thread_Abort (MonoInternalThread *thread, MonoObject *state);
-void ves_icall_System_Threading_Thread_ResetAbort (void);
+void ves_icall_System_Threading_Thread_ResetAbort (MonoThread *this);
 MonoObject* ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread);
-void ves_icall_System_Threading_Thread_Suspend (MonoInternalThread *thread);
+void ves_icall_System_Threading_Thread_Suspend (MonoThread *this);
 void ves_icall_System_Threading_Thread_Resume (MonoThread *thread);
 void ves_icall_System_Threading_Thread_ClrState (MonoInternalThread *thread, guint32 state);
 void ves_icall_System_Threading_Thread_SetState (MonoInternalThread *thread, guint32 state);
@@ -181,7 +181,7 @@ void ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double);
 void ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value);
 
 void ves_icall_System_Threading_Thread_MemoryBarrier (void);
-void ves_icall_System_Threading_Thread_Interrupt_internal (MonoInternalThread *this_obj);
+void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this);
 void ves_icall_System_Threading_Thread_SpinWait_nop (void);
 
 void ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (MonoAppContext *ctx);
@@ -195,10 +195,6 @@ gboolean mono_thread_internal_has_appdomain_ref (MonoInternalThread *thread, Mon
 void mono_thread_internal_reset_abort (MonoInternalThread *thread);
 
 void mono_alloc_special_static_data_free (GHashTable *special_static_fields);
-uint32_t mono_thread_alloc_tls   (MonoReflectionType *type);
-void     mono_thread_destroy_tls (uint32_t tls_offset);
-void     mono_thread_destroy_domain_tls (MonoDomain *domain);
-void mono_thread_free_local_slot_values (int slot, MonoBoolean is_thread_local);
 void mono_thread_current_check_pending_interrupt (void);
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state);
@@ -219,9 +215,6 @@ MonoException* mono_thread_get_and_clear_pending_exception (void);
 void mono_thread_set_name_internal (MonoInternalThread *this_obj, MonoString *name, gboolean managed);
 
 void mono_threads_install_notify_pending_exc (MonoThreadNotifyPendingExcFunc func);
-
-MonoObject* mono_thread_get_execution_context (void);
-void mono_thread_set_execution_context (MonoObject *ec);
 
 void mono_runtime_set_has_tls_get (gboolean val);
 gboolean mono_runtime_has_tls_get (void);

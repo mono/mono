@@ -38,6 +38,10 @@
 #include <sys/syscall.h>
 #endif
 
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
+
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
@@ -694,7 +698,7 @@ ves_icall_get_trace (MonoException *exc, gint32 skip, MonoBoolean need_file_info
 			char *s;
 
 			sf->method = NULL;
-			s = mono_method_full_name (method, TRUE);
+			s = mono_method_get_name_full (method, TRUE, MONO_TYPE_NAME_FORMAT_REFLECTION);
 			MONO_OBJECT_SETREF (sf, internal_method_name, mono_string_new (domain, s));
 			g_free (s);
 		}
@@ -2214,7 +2218,15 @@ mono_handle_native_sigsegv (int signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *i
 		 * it will deadlock. Call the syscall directly instead.
 		 */
 		pid = mono_runtime_syscall_fork ();
-
+#if defined (HAVE_PRCTL) && defined(PR_SET_PTRACER)
+		if (pid > 0) {
+			// Allow gdb to attach to the process even if ptrace_scope sysctl variable is set to
+			// a value other than 0 (the most permissive ptrace scope). Most modern Linux
+			// distributions set the scope to 1 which allows attaching only to direct children of
+			// the current process
+			prctl (PR_SET_PTRACER, pid, 0, 0, 0);
+		}
+#endif
 		if (pid == 0) {
 			dup2 (STDERR_FILENO, STDOUT_FILENO);
 
@@ -2529,6 +2541,10 @@ mono_thread_state_init_from_sigctx (MonoThreadUnwindState *ctx, void *sigctx)
 	ctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = mono_domain_get ();
 	ctx->unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 	ctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = thread->jit_data;
+
+	if (!ctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] || !ctx->unwind_data [MONO_UNWIND_DATA_LMF])
+		return FALSE;
+
 	ctx->valid = TRUE;
 	return TRUE;
 #else

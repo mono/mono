@@ -20,15 +20,10 @@
 // Ported from C++ to C and adjusted to Mono runtime
 
 #include <stdlib.h>
+#define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
 #include <config.h>
 #include <glib.h>
-
-#if !defined (HAVE_COMPLEX_H)
-#include <../../support/libm/complex.h>
-#else
-#include <complex.h>
-#endif
 
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/exception.h>
@@ -40,6 +35,7 @@
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-complex.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-time.h>
@@ -183,14 +179,15 @@ static ThreadPool* threadpool;
 		g_assert (counter._.active >= 0); \
 	} while (0)
 
-#define COUNTER_READ() ((ThreadPoolCounter) InterlockedRead64 (&threadpool->counters.as_gint64))
+#define COUNTER_READ() (InterlockedRead64 (&threadpool->counters.as_gint64))
 
 #define COUNTER_ATOMIC(var,block) \
 	do { \
 		ThreadPoolCounter __old; \
 		do { \
 			g_assert (threadpool); \
-			(var) = __old = COUNTER_READ (); \
+			__old.as_gint64 = COUNTER_READ (); \
+			(var) = __old; \
 			{ block; } \
 			COUNTER_CHECK (var); \
 		} while (InterlockedCompareExchange64 (&threadpool->counters.as_gint64, (var).as_gint64, __old.as_gint64) != __old.as_gint64); \
@@ -201,7 +198,8 @@ static ThreadPool* threadpool;
 		ThreadPoolCounter __old; \
 		do { \
 			g_assert (threadpool); \
-			(var) = __old = COUNTER_READ (); \
+			__old.as_gint64 = COUNTER_READ (); \
+			(var) = __old; \
 			(res) = FALSE; \
 			{ block; } \
 			COUNTER_CHECK (var); \
@@ -345,7 +343,7 @@ ensure_cleanedup (void)
 	g_assert (mono_runtime_is_shutting_down ());
 
 	while (monitor_status != MONITOR_STATUS_NOT_RUNNING)
-		usleep (1000);
+		g_usleep (1000);
 
 	mono_mutex_lock (&threadpool->active_threads_lock);
 
@@ -783,7 +781,8 @@ monitor_sufficient_delay_since_last_dequeue (void)
 	if (threadpool->cpu_usage < CPU_USAGE_LOW) {
 		threshold = MONITOR_INTERVAL;
 	} else {
-		ThreadPoolCounter counter = COUNTER_READ ();
+		ThreadPoolCounter counter;
+		counter.as_gint64 = COUNTER_READ();
 		threshold = counter._.max_working * MONITOR_INTERVAL * 2;
 	}
 
@@ -922,7 +921,7 @@ hill_climbing_force_change (gint16 new_thread_count, ThreadPoolHeuristicStateTra
 	}
 }
 
-static double complex
+static double_complex
 hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble period)
 {
 	ThreadPoolHillClimbing *hc;
@@ -947,7 +946,7 @@ hill_climbing_get_wave_component (gdouble *samples, guint sample_count, gdouble 
 		q1 = q0;
 	}
 
-	return ((q1 - q2 * cosine) + (q2 * sine) * I) / ((gdouble) sample_count);
+	return mono_double_complex_scalar_div (mono_double_complex_make (q1 - q2 * cosine, (q2 * sine)), ((gdouble)sample_count));
 }
 
 static gint16
@@ -964,9 +963,9 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 	gint sample_count;
 	gint new_thread_wave_magnitude;
 	gint new_thread_count;
-	double complex thread_wave_component;
-	double complex throughput_wave_component;
-	double complex ratio;
+	double_complex thread_wave_component;
+	double_complex throughput_wave_component;
+	double_complex ratio;
 
 	g_assert (threadpool);
 	g_assert (adjustment_interval);
@@ -1026,10 +1025,10 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 	hc->total_samples ++;
 
 	/* Set up defaults for our metrics. */
-	thread_wave_component = 0;
-	throughput_wave_component = 0;
+	thread_wave_component = mono_double_complex_make(0, 0);
+	throughput_wave_component = mono_double_complex_make(0, 0);
 	throughput_error_estimate = 0;
-	ratio = 0;
+	ratio = mono_double_complex_make(0, 0);
 	confidence = 0;
 
 	transition = TRANSITION_WARMUP;
@@ -1067,17 +1066,17 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 			/* Get the the three different frequency components of the throughput (scaled by average
 			 * throughput). Our "error" estimate (the amount of noise that might be present in the
 			 * frequency band we're really interested in) is the average of the adjacent bands. */
-			throughput_wave_component = hill_climbing_get_wave_component (hc->samples, sample_count, hc->wave_period) / average_throughput;
-			throughput_error_estimate = cabs (hill_climbing_get_wave_component (hc->samples, sample_count, adjacent_period_1) / average_throughput);
+			throughput_wave_component = mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, hc->wave_period), average_throughput);
+			throughput_error_estimate = cabs (mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->samples, sample_count, adjacent_period_1), average_throughput));
 
 			if (adjacent_period_2 <= sample_count) {
-				throughput_error_estimate = MAX (throughput_error_estimate, cabs (hill_climbing_get_wave_component (
-					hc->samples, sample_count, adjacent_period_2) / average_throughput));
+				throughput_error_estimate = MAX (throughput_error_estimate, cabs (mono_double_complex_scalar_div (hill_climbing_get_wave_component (
+					hc->samples, sample_count, adjacent_period_2), average_throughput)));
 			}
 
 			/* Do the same for the thread counts, so we have something to compare to. We don't
 			 * measure thread count noise, because there is none; these are exact measurements. */
-			thread_wave_component = hill_climbing_get_wave_component (hc->thread_counts, sample_count, hc->wave_period) / average_thread_count;
+			thread_wave_component = mono_double_complex_scalar_div (hill_climbing_get_wave_component (hc->thread_counts, sample_count, hc->wave_period), average_thread_count);
 
 			/* Update our moving average of the throughput noise. We'll use this
 			 * later as feedback to determine the new size of the thread wave. */
@@ -1091,10 +1090,10 @@ hill_climbing_update (gint16 current_thread_count, guint32 sample_duration, gint
 			if (cabs (thread_wave_component) > 0) {
 				/* Adjust the throughput wave so it's centered around the target wave,
 				 * and then calculate the adjusted throughput/thread ratio. */
-				ratio = (throughput_wave_component - (hc->target_throughput_ratio * thread_wave_component)) / thread_wave_component;
+				ratio = mono_double_complex_div (mono_double_complex_sub (throughput_wave_component, mono_double_complex_scalar_mul(thread_wave_component, hc->target_throughput_ratio)), thread_wave_component);
 				transition = TRANSITION_CLIMBING_MOVE;
 			} else {
-				ratio = 0;
+				ratio = mono_double_complex_make (0, 0);
 				transition = TRANSITION_STABILIZING;
 			}
 
@@ -1175,7 +1174,8 @@ heuristic_should_adjust (void)
 	g_assert (threadpool);
 
 	if (threadpool->heuristic_last_dequeue > threadpool->heuristic_last_adjustment + threadpool->heuristic_adjustment_interval) {
-		ThreadPoolCounter counter = COUNTER_READ ();
+		ThreadPoolCounter counter;
+		counter.as_gint64 = COUNTER_READ();
 		if (counter._.working <= counter._.max_working)
 			return TRUE;
 	}
@@ -1197,7 +1197,7 @@ heuristic_adjust (void)
 			ThreadPoolCounter counter;
 			gint16 new_thread_count;
 
-			counter = COUNTER_READ ();
+			counter.as_gint64 = COUNTER_READ ();
 			new_thread_count = hill_climbing_update (counter._.max_working, sample_duration, completions, &threadpool->heuristic_adjustment_interval);
 
 			COUNTER_ATOMIC (counter, { counter._.max_working = new_thread_count; });
@@ -1467,7 +1467,7 @@ ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemComplete (void)
 	if (heuristic_should_adjust ())
 		heuristic_adjust ();
 
-	counter = COUNTER_READ ();
+	counter.as_gint64 = COUNTER_READ ();
 	return counter._.working <= counter._.max_working;
 }
 

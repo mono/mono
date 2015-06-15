@@ -1937,7 +1937,7 @@ namespace Mono.CSharp
 						// Turn is check into simple null check for implicitly convertible reference types
 						//
 						return ReducedExpression.Create (
-							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc)).Resolve (ec),
+							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc), Binary.State.UserOperatorsExcluded).Resolve (ec),
 							this).Resolve (ec);
 					}
 
@@ -3162,14 +3162,15 @@ namespace Mono.CSharp
 			RelationalMask	= 1 << 13,
 
 			DecomposedMask	= 1 << 19,
-			NullableMask	= 1 << 20,
+			NullableMask	= 1 << 20
 		}
 
 		[Flags]
-		enum State : byte
+		public enum State : byte
 		{
 			None = 0,
 			Compound = 1 << 1,
+			UserOperatorsExcluded = 1 << 2
 		}
 
 		readonly Operator oper;
@@ -3178,10 +3179,14 @@ namespace Mono.CSharp
 		ConvCast.Mode enum_conversion;
 
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
+			: this (oper, left, right, State.Compound)
+		{
+		}
+
+		public Binary (Operator oper, Expression left, Expression right, State state)
 			: this (oper, left, right)
 		{
-			if (isCompound)
-				state |= State.Compound;
+			this.state = state;
 		}
 
 		public Binary (Operator oper, Expression left, Expression right)
@@ -3668,10 +3673,11 @@ namespace Mono.CSharp
 					return ResolveOperatorPointer (rc, l, r);
 
 				// User operators
-				expr = ResolveUserOperator (rc, left, right);
-				if (expr != null)
-					return expr;
-
+				if ((state & State.UserOperatorsExcluded) == 0) {
+					expr = ResolveUserOperator (rc, left, right);
+					if (expr != null)
+						return expr;
+				}
 
 				bool lenum = l.IsEnum;
 				bool renum = r.IsEnum;
@@ -10368,7 +10374,7 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (ConditionalAccess)
+			if (HasConditionalAccess ())
 				Error_NullPropagatingLValue (ec);
 
 			return DoResolve (ec);
@@ -12092,58 +12098,78 @@ namespace Mono.CSharp
 
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
+			//
+			// Expression is initialized into temporary target then moved
+			// to real one for atomicity
+			//
+			IMemoryLocation temp_target = target;
+
+			LocalTemporary temp = null;
+			bool by_ref = false;
+			if (!initializers.IsEmpty) {
+				temp_target = target as LocalTemporary;
+				if (temp_target == null)
+					temp_target = target as StackFieldExpr;
+
+				if (temp_target == null) {
+					var vr = target as VariableReference;
+					if (vr != null && vr.IsRef) {
+						vr.EmitLoad (ec);
+						by_ref = true;
+					}
+				}
+
+				if (temp_target == null)
+					temp_target = temp = new LocalTemporary (type);
+			}
+
 			bool left_on_stack;
 			if (dynamic != null) {
 				dynamic.Emit (ec);
 				left_on_stack = true;
 			} else {
-				left_on_stack = base.Emit (ec, target);
+				left_on_stack = base.Emit (ec, temp_target);
 			}
 
 			if (initializers.IsEmpty)
 				return left_on_stack;
 
-			LocalTemporary temp = null;
+			StackFieldExpr sf = null;
 
-			instance = target as LocalTemporary;
-			if (instance == null)
-				instance = target as StackFieldExpr;
-
-			if (instance == null) {
-				if (!left_on_stack) {
-					VariableReference vr = target as VariableReference;
-
-					// FIXME: This still does not work correctly for pre-set variables
-					if (vr != null && vr.IsRef)
-						target.AddressOf (ec, AddressOp.Load);
-
-					((Expression) target).Emit (ec);
-					left_on_stack = true;
+			// Move a new instance (reference-type) to local temporary variable
+			if (left_on_stack) {
+				if (by_ref) {
+					temp_target = temp = new LocalTemporary (type);
 				}
 
+				if (temp != null)
+					temp.Store (ec);
+
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
-					instance = new EmptyAwaitExpression (Type).EmitToField (ec) as IMemoryLocation;
-				} else {
-					temp = new LocalTemporary (type);
-					instance = temp;
+					if (temp == null)
+						throw new NotImplementedException ();
+
+					sf = ec.GetTemporaryField (type);
+					sf.EmitAssign (ec, temp, false, false);
+					temp_target = sf;
+					temp.Release (ec);
+					left_on_stack = false;
 				}
 			}
 
-			if (left_on_stack && temp != null)
-				temp.Store (ec);
+			instance = temp_target;
 
 			initializers.Emit (ec);
 
-			if (left_on_stack) {
-				if (temp != null) {
-					temp.Emit (ec);
-					temp.Release (ec);
-				} else {
-					((Expression) instance).Emit (ec);
-				}
-			}
+			((Expression)temp_target).Emit (ec);
 
-			return left_on_stack;
+			if (temp != null)
+				temp.Release (ec);
+
+			if (sf != null)
+				sf.IsAvailableForReuse = true;
+
+			return true;
 		}
 
 		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)

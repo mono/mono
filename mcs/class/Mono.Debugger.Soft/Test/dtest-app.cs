@@ -80,7 +80,7 @@ public class Tests2 {
 	}
 }
 
-public struct AStruct {
+public struct AStruct : ITest2 {
 	public int i;
 	public string s;
 	public byte k;
@@ -115,6 +115,14 @@ public struct AStruct {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void invoke_mutate () {
 		l = 5;
+	}
+
+	public int invoke_iface () {
+		return i;
+	}
+
+	public override string ToString () {
+		return i.ToString ();
 	}
 }
 
@@ -716,6 +724,7 @@ public class Tests : TestsBase, ITest2
 			astruct = new AStruct ();
 		}
 		rs = "A";
+		List<int> alist = new List<int> () { 12 };
 	}
 
 

@@ -2247,6 +2247,11 @@ mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_va
 	if (!mono_method_is_generic_impl (method))
 		return FALSE;
 
+	/*
+	if (!mono_debug_count ())
+		allow_partial = FALSE;
+	*/
+
 	if (!partial_sharing_supported ())
 		allow_partial = FALSE;
 
@@ -2950,14 +2955,21 @@ get_shared_type (MonoType *t, MonoType *type)
 		k = mono_class_inflate_generic_class (gclass->container_class, &context);
 
 		return get_shared_gparam (t, &k->byval_arg);
+	} else if (MONO_TYPE_ISSTRUCT (type)) {
+		return type;
 	}
-
-	g_assert (!type->byref && (((type->type >= MONO_TYPE_BOOLEAN) && (type->type <= MONO_TYPE_R8)) || (type->type == MONO_TYPE_I) || (type->type == MONO_TYPE_U) || (type->type == MONO_TYPE_VALUETYPE && type->data.klass->enumtype)));
 
 	/* Create a type variable with a constraint which encodes which types can match it */
 	ttype = type->type;
-	if (type->type == MONO_TYPE_VALUETYPE)
+	if (type->type == MONO_TYPE_VALUETYPE) {
 		ttype = mono_class_enum_basetype (type->data.klass)->type;
+	} else if (MONO_TYPE_IS_REFERENCE (type)) {
+		ttype = MONO_TYPE_OBJECT;
+	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {
+		if (type->data.generic_param->gshared_constraint)
+			return get_shared_gparam (t, type->data.generic_param->gshared_constraint);
+		ttype = MONO_TYPE_OBJECT;
+	}
 
 	{
 		MonoType t2;
@@ -2987,18 +2999,11 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 
 	type_argv = g_new0 (MonoType*, inst->type_argc);
 	for (i = 0; i < inst->type_argc; ++i) {
-		if (all_vt) {
-			type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
-		} else if ((MONO_TYPE_IS_REFERENCE (inst->type_argv [i]) || inst->type_argv [i]->type == MONO_TYPE_VAR || inst->type_argv [i]->type == MONO_TYPE_MVAR)) {
-			g_assert (shared_inst);
-			type_argv [i] = get_shared_gparam (shared_inst->type_argv [i], &mono_defaults.object_class->byval_arg);
-		} else if (partial) {
-			/* These types match the ones in generic_inst_is_sharable () */
-			type_argv [i] = get_shared_type (shared_inst->type_argv [i], inst->type_argv [i]);
-		} else if (gsharedvt) {
+		if (all_vt || gsharedvt) {
 			type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
 		} else {
-			type_argv [i] = inst->type_argv [i];
+			/* These types match the ones in generic_inst_is_sharable () */
+			type_argv [i] = get_shared_type (shared_inst->type_argv [i], inst->type_argv [i]);
 		}
 	}
 
@@ -3067,6 +3072,8 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 
 	res = mono_class_inflate_generic_method_checked (declaring_method, &shared_context, &error);
 	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
+	//printf ("%s\n", mono_method_full_name (res, 1));
 
 	return res;
 }

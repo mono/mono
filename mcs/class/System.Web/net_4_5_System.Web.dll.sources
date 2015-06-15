@@ -10,3 +10,4 @@ System.Web/UnvalidatedRequestValuesWrapper.cs
 System.Web/TaskAsyncResult.cs
 System.Web/TaskEventHandler.cs
 System.Web.Security/MembershipPasswordAttribute.cs
+System.Web/DynamicModuleManager.cs

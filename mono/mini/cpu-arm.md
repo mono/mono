@@ -15,7 +15,7 @@
 #
 # register may have the following values:
 #	i  integer register
-#	a  r3 register (output from calls)
+#	a  r0 register (first argument/result reg)
 #	b  base register (used in address references)
 #	f  floating point register
 #	g  floating point register returned in r0:r1 for soft-float mode
@@ -357,7 +357,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 vcall2: len:64 clob:c
 vcall2_reg: src1:i len:64 clob:c
 vcall2_membase: src1:b len:64 clob:c
-dyn_call: src1:i src2:i len:120 clob:c
+dyn_call: src1:i src2:i len:136 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -398,3 +398,5 @@ atomic_store_i4: dest:b src1:i len:28
 atomic_store_u4: dest:b src1:i len:28
 atomic_store_r4: dest:b src1:f len:80
 atomic_store_r8: dest:b src1:f len:32
+
+generic_class_init: src1:a len:44 clob:c

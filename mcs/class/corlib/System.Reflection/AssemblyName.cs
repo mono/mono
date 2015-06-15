@@ -431,11 +431,7 @@ namespace System.Reflection {
 
 		public string CultureName {
 			get {
-				if (cultureinfo == null)
-					return null;
-				if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
-					return "neutral";
-				return cultureinfo.Name;
+				return (cultureinfo == null)? null : cultureinfo.Name;
 			}
 		}
 

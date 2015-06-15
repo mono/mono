@@ -1,8 +1,9 @@
 /*
  * proflog.c: mono log profiler
  *
- * Author:
+ * Authors:
  *   Paolo Molaro (lupus@ximian.com)
+ *   Alex Rønne Petersen (alexrp@xamarin.com)
  *
  * Copyright 2010 Novell, Inc (http://www.novell.com)
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
@@ -109,20 +110,6 @@ static int do_counters = 0;
 static int do_coverage = 0;
 static gboolean debug_coverage = FALSE;
 static MonoProfileSamplingMode sampling_mode = MONO_PROFILER_STAT_MODE_PROCESS;
-
-/* For linux compile with:
- * gcc -fPIC -shared -o libmono-profiler-log.so proflog.c utils.c -Wall -g -lz `pkg-config --cflags --libs mono-2`
- * gcc -o mprof-report decode.c utils.c -Wall -g -lz -lrt -lpthread `pkg-config --cflags mono-2`
- *
- * For osx compile with:
- * gcc -m32 -Dmono_free=free shared -o libmono-profiler-log.dylib proflog.c utils.c -Wall -g -lz `pkg-config --cflags mono-2` -undefined suppress -flat_namespace
- * gcc -m32 -o mprof-report decode.c utils.c -Wall -g -lz -lrt -lpthread `pkg-config --cflags mono-2`
- *
- * Install with:
- * sudo cp mprof-report /usr/local/bin
- * sudo cp libmono-profiler-log.so /usr/local/lib
- * sudo ldconfig
- */
 
 typedef struct _LogBuffer LogBuffer;
 
@@ -389,6 +376,19 @@ typedef struct _LogBuffer LogBuffer;
  *  [partially_covered: uleb128] the number of partially covered methods
  *    currently partially_covered will always be 0, and fully_covered is the
  *    number of methods that are fully and partially covered.
+ */
+
+/*
+ * Format oddities that we ought to fix:
+ *
+ * - Methods written in emit_bt () should be based on the buffer's base
+ *   method instead of the base pointer.
+ * - The TYPE_SAMPLE_HIT event contains (currently) pointless data like
+ *   always-one unmanaged frame count and always-zero IL offsets.
+ *
+ * These are mostly small things and are not worth a format change by
+ * themselves. They should be done when some other major change has to
+ * be done to the format.
  */
 
 struct _LogBuffer {
@@ -668,11 +668,8 @@ find_method (MonoDomain *domain, void *user_data)
 }
 
 static void
-register_method_local (MonoProfiler *prof, MonoDomain *domain, MonoMethod *method, MonoJitInfo *ji)
+register_method_local (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *ji)
 {
-	if (!domain)
-		g_assert (ji);
-
 	if (!mono_conc_hashtable_lookup (prof->method_table, method)) {
 		if (!ji) {
 			MethodSearch search = { method, NULL };
@@ -694,10 +691,17 @@ register_method_local (MonoProfiler *prof, MonoDomain *domain, MonoMethod *metho
 }
 
 static void
-emit_method (MonoProfiler *prof, LogBuffer *logbuffer, MonoDomain *domain, MonoMethod *method)
+emit_method (MonoProfiler *prof, LogBuffer *logbuffer, MonoMethod *method)
 {
-	register_method_local (prof, domain, method, NULL);
+	register_method_local (prof, method, NULL);
 	emit_method_inner (logbuffer, method);
+}
+
+static void
+emit_method_as_ptr (MonoProfiler *prof, LogBuffer *logbuffer, MonoMethod *method)
+{
+	register_method_local (prof, method, NULL);
+	emit_ptr (logbuffer, method);
 }
 
 static void
@@ -1010,7 +1014,7 @@ collect_bt (FrameData *data)
 }
 
 static void
-emit_bt (LogBuffer *logbuffer, FrameData *data)
+emit_bt (MonoProfiler *prof, LogBuffer *logbuffer, FrameData *data)
 {
 	/* FIXME: this is actually tons of data and we should
 	 * just output it the first time and use an id the next
@@ -1022,7 +1026,7 @@ emit_bt (LogBuffer *logbuffer, FrameData *data)
 	//if (*p != data.count) {
 	//	printf ("bad num frames enc at %d: %d -> %d\n", count, data.count, *p); printf ("frames end: %p->%p\n", p, logbuffer->data); exit(0);}
 	while (data->count) {
-		emit_ptr (logbuffer, data->methods [--data->count]);
+		emit_method_as_ptr (prof, logbuffer, data->methods [--data->count]);
 	}
 }
 
@@ -1049,7 +1053,7 @@ gc_alloc (MonoProfiler *prof, MonoObject *obj, MonoClass *klass)
 	emit_obj (logbuffer, obj);
 	emit_value (logbuffer, len);
 	if (do_bt)
-		emit_bt (logbuffer, &data);
+		emit_bt (prof, logbuffer, &data);
 	EXIT_LOG (logbuffer);
 	if (logbuffer->next)
 		safe_send (prof, logbuffer);
@@ -1216,26 +1220,26 @@ class_loaded (MonoProfiler *prof, MonoClass *klass, int result)
 }
 
 #ifndef DISABLE_HELPER_THREAD
-static void process_method_enter (MonoProfiler *prof, MonoMethod *method);
+static void process_method_enter_coverage (MonoProfiler *prof, MonoMethod *method);
 #endif /* DISABLE_HELPER_THREAD */
 
 static void
 method_enter (MonoProfiler *prof, MonoMethod *method)
 {
-	uint64_t now;
+	uint64_t now = current_time ();
+
+#ifndef DISABLE_HELPER_THREAD
+	process_method_enter_coverage (prof, method);
+#endif /* DISABLE_HELPER_THREAD */
+
 	LogBuffer *logbuffer = ensure_logbuf (16);
 	if (logbuffer->call_depth++ > max_call_depth)
 		return;
-	now = current_time ();
 	ENTER_LOG (logbuffer, "enter");
 	emit_byte (logbuffer, TYPE_ENTER | TYPE_METHOD);
 	emit_time (logbuffer, now);
-	emit_method (prof, logbuffer, mono_domain_get (), method);
+	emit_method (prof, logbuffer, method);
 	EXIT_LOG (logbuffer);
-
-#ifndef DISABLE_HELPER_THREAD
-	process_method_enter (prof, method);
-#endif /* DISABLE_HELPER_THREAD */
 
 	process_requests (prof);
 }
@@ -1251,7 +1255,7 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 	ENTER_LOG (logbuffer, "leave");
 	emit_byte (logbuffer, TYPE_LEAVE | TYPE_METHOD);
 	emit_time (logbuffer, now);
-	emit_method (prof, logbuffer, mono_domain_get (), method);
+	emit_method (prof, logbuffer, method);
 	EXIT_LOG (logbuffer);
 	if (logbuffer->next)
 		safe_send (prof, logbuffer);
@@ -1272,7 +1276,7 @@ method_exc_leave (MonoProfiler *prof, MonoMethod *method)
 	ENTER_LOG (logbuffer, "eleave");
 	emit_byte (logbuffer, TYPE_EXC_LEAVE | TYPE_METHOD);
 	emit_time (logbuffer, now);
-	emit_method (prof, logbuffer, mono_domain_get (), method);
+	emit_method (prof, logbuffer, method);
 	EXIT_LOG (logbuffer);
 	process_requests (prof);
 }
@@ -1283,7 +1287,7 @@ method_jitted (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *ji, int resu
 	if (result != MONO_PROFILE_OK)
 		return;
 
-	register_method_local (prof, NULL, method, ji);
+	register_method_local (prof, method, ji);
 }
 
 static void
@@ -1332,7 +1336,7 @@ throw_exc (MonoProfiler *prof, MonoObject *object)
 	emit_time (logbuffer, now);
 	emit_obj (logbuffer, object);
 	if (do_bt)
-		emit_bt (logbuffer, &data);
+		emit_bt (prof, logbuffer, &data);
 	EXIT_LOG (logbuffer);
 	process_requests (prof);
 }
@@ -1348,7 +1352,7 @@ clause_exc (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_
 	emit_time (logbuffer, now);
 	emit_value (logbuffer, clause_type);
 	emit_value (logbuffer, clause_num);
-	emit_method (prof, logbuffer, mono_domain_get (), method);
+	emit_method (prof, logbuffer, method);
 	EXIT_LOG (logbuffer);
 }
 
@@ -1368,7 +1372,7 @@ monitor_event (MonoProfiler *profiler, MonoObject *object, MonoProfilerMonitorEv
 	emit_time (logbuffer, now);
 	emit_obj (logbuffer, object);
 	if (do_bt)
-		emit_bt (logbuffer, &data);
+		emit_bt (profiler, logbuffer, &data);
 	EXIT_LOG (logbuffer);
 	process_requests (profiler);
 }
@@ -1566,7 +1570,9 @@ add_code_pointer (uintptr_t ip)
 	num_code_pages += add_code_page (code_pages, size_code_pages, ip & CPAGE_MASK);
 }
 
-#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
+/* ELF code crashes on some systems. */
+//#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
+#if 0
 static void
 dump_ubin (const char *filename, uintptr_t load_addr, uint64_t offset, uintptr_t size)
 {
@@ -1600,7 +1606,9 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 	logbuffer->data += len;
 }
 
-#ifdef ELFMAG0
+/* ELF code crashes on some systems. */
+//#if defined(ELFMAG0)
+#if 0
 
 #if SIZEOF_VOID_P == 4
 #define ELF_WSIZE 32
@@ -1689,7 +1697,9 @@ read_elf_symbols (MonoProfiler *prof, const char *filename, void *load_addr)
 }
 #endif
 
-#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
+/* ELF code crashes on some systems. */
+//#if defined(HAVE_DL_ITERATE_PHDR) && defined(ELFMAG0)
+#if 0
 static int
 elf_dl_callback (struct dl_phdr_info *info, size_t size, void *data)
 {
@@ -1881,10 +1891,9 @@ dump_sample_hits (MonoProfiler *prof, StatBuffer *sbuf)
 		emit_uvalue (logbuffer, mbt_count);
 		for (i = 0; i < mbt_count; ++i) {
 			MonoMethod *method = (MonoMethod *) sample [i * 4 + 0];
-			MonoDomain *domain = (MonoDomain *) sample [i * 4 + 1];
 			uintptr_t native_offset = sample [i * 4 + 3];
 
-			emit_method (prof, logbuffer, domain, method);
+			emit_method (prof, logbuffer, method);
 			emit_svalue (logbuffer, 0); /* il offset will always be 0 from now on */
 			emit_svalue (logbuffer, native_offset);
 		}
@@ -2874,7 +2883,7 @@ dump_coverage (MonoProfiler *prof)
 }
 
 static void
-process_method_enter (MonoProfiler *prof, MonoMethod *method)
+process_method_enter_coverage (MonoProfiler *prof, MonoMethod *method)
 {
 	MonoClass *klass;
 	MonoImage *image;
@@ -3044,25 +3053,85 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	return TRUE;
 }
 
+#define LINE_BUFFER_SIZE 4096
+/* Max file limit of 128KB */
+#define MAX_FILE_SIZE 128 * 1024
+static char *
+get_file_content (FILE *stream)
+{
+	char *buffer;
+	ssize_t bytes_read;
+	long filesize;
+	int res, offset = 0;
+
+	res = fseek (stream, 0, SEEK_END);
+	if (res < 0)
+	  return NULL;
+
+	filesize = ftell (stream);
+	if (filesize < 0)
+	  return NULL;
+
+	res = fseek (stream, 0, SEEK_SET);
+	if (res < 0)
+	  return NULL;
+
+	if (filesize > MAX_FILE_SIZE)
+	  return NULL;
+
+	buffer = g_malloc ((filesize + 1) * sizeof (char));
+	while ((bytes_read = fread (buffer + offset, 1, LINE_BUFFER_SIZE, stream)) > 0)
+		offset += bytes_read;
+
+	/* NULL terminate our buffer */
+	buffer[filesize] = '\0';
+	return buffer;
+}
+
+static char *
+get_next_line (char *contents, char **next_start)
+{
+	char *p = contents;
+
+	if (p == NULL || *p == '\0') {
+		*next_start = NULL;
+		return NULL;
+	}
+
+	while (*p != '\n' && *p != '\0')
+		p++;
+
+	if (*p == '\n') {
+		*p = '\0';
+		*next_start = p + 1;
+	} else
+		*next_start = NULL;
+
+	return contents;
+}
+
 static void
 init_suppressed_assemblies (void)
 {
-	size_t n;
+	char *content;
 	char *line;
+	FILE *sa_file;
 
 	mono_mutex_init (&suppressed_assemblies_mutex);
 	suppressed_assemblies = mono_conc_hashtable_new (&suppressed_assemblies_mutex, g_str_hash, g_str_equal);
-	FILE *sa_file = fopen (SUPPRESSION_DIR "/mono-profiler-log.suppression", "r");
+	sa_file = fopen (SUPPRESSION_DIR "/mono-profiler-log.suppression", "r");
 	if (sa_file == NULL)
 		return;
 
-	n = 0;
-	line = NULL;
-	while (getline (&line, &n, sa_file) > -1) {
+	/* Don't need to free @content as it is referred to by the lines stored in @suppressed_assemblies */
+	content = get_file_content (sa_file);
+	if (content == NULL) {
+		g_error ("mono-profiler-log.suppression is greater than 128kb - aborting\n");
+	}
+
+	while ((line = get_next_line (content, &content))) {
 		line = g_strchomp (g_strchug (line));
 		mono_conc_hashtable_insert (suppressed_assemblies, line, line);
-		n = 0;
-		line = NULL;
 	}
 
 	fclose (sa_file);
@@ -3149,13 +3218,16 @@ log_shutdown (MonoProfiler *prof)
 		fclose (prof->file);
 
 	destroy_hashtable (prof->method_table, &prof->method_table_mutex);
-	destroy_hashtable (coverage_methods, &coverage_methods_mutex);
-	destroy_hashtable (coverage_assemblies, &coverage_assemblies_mutex);
-	destroy_hashtable (coverage_classes, &coverage_classes_mutex);
-	destroy_hashtable (filtered_classes, &filtered_classes_mutex);
-	destroy_hashtable (entered_methods, &entered_methods_mutex);
-	destroy_hashtable (image_to_methods, &image_to_methods_mutex);
-	destroy_hashtable (suppressed_assemblies, &suppressed_assemblies_mutex);
+
+	if (coverage_initialized) {
+		destroy_hashtable (coverage_methods, &coverage_methods_mutex);
+		destroy_hashtable (coverage_assemblies, &coverage_assemblies_mutex);
+		destroy_hashtable (coverage_classes, &coverage_classes_mutex);
+		destroy_hashtable (filtered_classes, &filtered_classes_mutex);
+		destroy_hashtable (entered_methods, &entered_methods_mutex);
+		destroy_hashtable (image_to_methods, &image_to_methods_mutex);
+		destroy_hashtable (suppressed_assemblies, &suppressed_assemblies_mutex);
+	}
 
 	free (prof);
 }
@@ -3922,8 +3994,7 @@ mono_profiler_startup (const char *desc)
 		}
 		if ((opt = match_option (p, "covfilter-file", &val)) != p) {
 			FILE *filter_file;
-			char *line;
-			size_t n;
+			char *line, *content;
 
 			if (filters == NULL)
 				filters = g_ptr_array_new ();
@@ -3934,13 +4005,13 @@ mono_profiler_startup (const char *desc)
 				exit (0);
 			}
 
-			n = 0;
-			line = NULL;
-			while (getline (&line, &n, filter_file) > -1) {
+			/* Don't need to free content as it is referred to by the lines stored in @filters */
+			content = get_file_content (filter_file);
+			if (content == NULL)
+				fprintf (stderr, "WARNING: %s is greater than 128kb - ignoring\n", val);
+
+			while ((line = get_next_line (content, &content)))
 				g_ptr_array_add (filters, g_strchug (g_strchomp (line)));
-				n = 0;
-				line = NULL;
-			}
 
 			fclose (filter_file);
 			continue;
