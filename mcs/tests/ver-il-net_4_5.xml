@@ -3053,6 +3053,25 @@
       </method>
     </type>
   </test>
+  <test name="dtest-061.cs">
+    <type name="Test.Program">
+      <method name="Void Main()" attrs="150">
+        <size>88</size>
+      </method>
+      <method name="Void AreEqual[A,B](A, B)" attrs="150">
+        <size>54</size>
+      </method>
+      <method name="Void ShiftTest(Int32, Int32)" attrs="134">
+        <size>2459</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>24</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
@@ -19604,6 +19623,53 @@
       <method name="Int32 Main()" attrs="150">
         <size>32</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-631.cs">
+    <type name="BaseClass`1[TSource]">
+      <method name="Void DoStuff[TInput](TInput)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void MyInterface.DoStuff[TInput](TInput)" attrs="993">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-632.cs">
+    <type name="BaseClass`1[TSource]">
+      <method name="Void DoStuff[TInput](TInput)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void MyInterface.DoStuff[TInput](TInput)" attrs="993">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TInterface">
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>

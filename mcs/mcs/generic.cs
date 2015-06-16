@@ -1114,14 +1114,20 @@ namespace Mono.CSharp {
 			//
 			bool found;
 			if (!TypeSpecComparer.Override.IsEqual (BaseType, other.BaseType)) {
-				if (other.targs == null)
-					return false;
-
 				found = false;
-				foreach (var otarg in other.targs) {
-					if (TypeSpecComparer.Override.IsEqual (BaseType, otarg)) {
-						found = true;
-						break;
+				if (other.targs != null) {
+					foreach (var otarg in other.targs) {
+						if (TypeSpecComparer.Override.IsEqual (BaseType, otarg)) {
+							found = true;
+							break;
+						}
+					}
+				} else if (targs != null) {
+					foreach (var targ in targs) {
+						if (TypeSpecComparer.Override.IsEqual (targ, other.BaseType)) {
+							found = true;
+							break;
+						}
 					}
 				}
 
@@ -1164,18 +1170,25 @@ namespace Mono.CSharp {
 
 			// Check interfaces implementation <- definition
 			if (other.InterfacesDefined != null) {
-				if (InterfacesDefined == null)
-					return false;
-
 				//
 				// Iterate over inflated interfaces
 				//
 				foreach (var oiface in other.Interfaces) {
 					found = false;
-					foreach (var iface in Interfaces) {
-						if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
-							found = true;
-							break;
+
+					if (InterfacesDefined != null) {
+						foreach (var iface in Interfaces) {
+							if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
+								found = true;
+								break;
+							}
+						}
+					} else if (targs != null) {
+						foreach (var targ in targs) {
+							if (TypeSpecComparer.Override.IsEqual (targ, oiface)) {
+								found = true;
+								break;
+							}
 						}
 					}
 
@@ -1186,17 +1199,29 @@ namespace Mono.CSharp {
 
 			// Check type parameters implementation -> definition
 			if (targs != null) {
-				if (other.targs == null)
-					return false;
-
 				foreach (var targ in targs) {
 					found = false;
-					foreach (var otarg in other.targs) {
-						if (TypeSpecComparer.Override.IsEqual (targ, otarg)) {
-							found = true;
-							break;
+
+					if (other.targs != null) {
+						foreach (var otarg in other.targs) {
+							if (TypeSpecComparer.Override.IsEqual (targ, otarg)) {
+								found = true;
+								break;
+							}
 						}
 					}
+
+					if (other.InterfacesDefined != null && !found) {
+						foreach (var iface in other.Interfaces) {
+							if (TypeSpecComparer.Override.IsEqual (iface, targ)) {
+								found = true;
+								break;
+							}
+						}
+					}
+
+					if (!found)
+						found = TypeSpecComparer.Override.IsEqual (targ, other.BaseType);
 
 					if (!found)
 						return false;
