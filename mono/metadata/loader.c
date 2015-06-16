@@ -866,22 +866,34 @@ mono_inflate_generic_signature (MonoMethodSignature *sig, MonoGenericContext *co
 }
 
 static MonoMethodHeader*
-inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context)
+inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, gboolean no_sharing)
 {
-	MonoMethodHeader *res;
 	int i;
-	res = g_malloc0 (MONO_SIZEOF_METHOD_HEADER + sizeof (gpointer) * header->num_locals);
+	size_t clause_size = sizeof (MonoExceptionClause) * header->num_clauses;
+	size_t local_size = sizeof (gpointer) * header->num_locals;
+	size_t header_size = MONO_SIZEOF_METHOD_HEADER + clause_size + local_size;
+
+	MonoMethodHeader *res = g_malloc0 (header_size);
+
 	res->code = header->code;
 	res->code_size = header->code_size;
 	res->max_stack = header->max_stack;
 	res->num_clauses = header->num_clauses;
 	res->init_locals = header->init_locals;
 	res->num_locals = header->num_locals;
-	res->clauses = header->clauses;
-	for (i = 0; i < header->num_locals; ++i)
-		res->locals [i] = mono_class_inflate_generic_type (header->locals [i], context);
+
+	for (i = 0; i < res->num_locals; ++i) {
+		MonoError error;
+		mono_error_init (&error);
+		MonoType *inflated = mono_class_inflate_generic_type_with_mempool (NULL, header->locals [i], context, !no_sharing, &error);
+		mono_error_assert_ok (&error);
+		res->locals [i] = inflated;
+	}
+
 	if (res->num_clauses) {
-		res->clauses = g_memdup (header->clauses, sizeof (MonoExceptionClause) * res->num_clauses);
+		MonoExceptionClause *clauseLocation = (MonoExceptionClause*)&res->locals [res->num_locals];
+		memcpy (clauseLocation, header->clauses, clause_size);
+		res->clauses = clauseLocation;
 		for (i = 0; i < header->num_clauses; ++i) {
 			MonoExceptionClause *clause = &res->clauses [i];
 			if (clause->flags != MONO_EXCEPTION_CLAUSE_NONE)
