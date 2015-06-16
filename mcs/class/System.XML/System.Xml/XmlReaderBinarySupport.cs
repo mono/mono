@@ -183,20 +183,23 @@ namespace System.Xml
 
 			int bufIndex = offset;
 			int bufLast = offset + length;
+			int length_to_read = length;
 
 			if (base64CacheStartsAt >= 0) {
-				for (int i = base64CacheStartsAt; i < 3; i++) {
+				for (int ii = base64CacheStartsAt; ii < 3; ii++) {
 					buffer [bufIndex++] = base64Cache [base64CacheStartsAt++];
 					if (bufIndex == bufLast)
 						return bufLast - offset;
 				}
+
+				length_to_read -= (bufIndex - offset);
 			}
 
-			for (int i = 0; i < 3; i++)
-				base64Cache [i] = 0;
+			for (int ii = 0; ii < 3; ii++)
+				base64Cache [ii] = 0;
 			base64CacheStartsAt = -1;
 
-			int max = (int) System.Math.Ceiling (4.0 / 3 * length);
+			int max = (int) System.Math.Ceiling (4.0 / 3 * length_to_read);
 			int additional = max % 4;
 			if (additional > 0)
 				max += 4 - additional;
@@ -207,13 +210,14 @@ namespace System.Xml
 
 			byte b = 0;
 			byte work = 0;
-			for (int i = 0; i < charsLength - 3; i++) {
+			int i = 0;
+			for (; i < charsLength - 3; i++) {
 				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
 					break;
 				b = (byte) (GetBase64Byte (chars [i]) << 2);
 				if (bufIndex < bufLast)
 					buffer [bufIndex] = b;
-				else if (b != 0) {
+				else {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 0;
 					base64Cache [0] = b;
@@ -239,7 +243,7 @@ namespace System.Xml
 				if (bufIndex < bufLast) {
 					buffer [bufIndex] = work;
 				}
-				else if (work != 0) {
+				else {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 1;
 					base64Cache [1] = work;
@@ -264,7 +268,7 @@ namespace System.Xml
 				work = (byte) ((b & 3) << 6);
 				if (bufIndex < bufLast)
 					buffer [bufIndex] = work;
-				else if (work != 0) {
+				else {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 2;
 					base64Cache [2] = work;
@@ -285,10 +289,15 @@ namespace System.Xml
 				}
 			}
 			int ret = System.Math.Min (bufLast - offset, bufIndex - offset);
-			if (ret < length && charsLength > 0)
-				return ret + ReadBase64 (buffer, offset + ret, length - ret);
-			else
-				return ret;
+			if (ret < length && charsLength > 0) {
+				int pos = 0;
+				for (int ii = i; ii < charsLength; ++ii, ++pos)
+					textCache.Insert (pos, chars [ii]);
+
+				ret += ReadBase64 (buffer, offset + ret, length - ret);
+			}
+
+			return ret;
 		}
 
 		// Since ReadBase64() is processed for every 4 chars, it does
