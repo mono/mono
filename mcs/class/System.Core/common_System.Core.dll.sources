@@ -3,8 +3,7 @@
 Assembly/AssemblyInfo.cs
 System/Util.cs
 System.IO.MemoryMappedFiles/MemoryMappedFile.cs
-System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
-System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
+System.IO.MemoryMappedFiles/MemoryMappedView.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 
@@ -34,6 +33,8 @@ ReferenceSources/Strings.cs
 
 ../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/Enums.cs
 ../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedFileSecurity.cs
+../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedViewAccessor.cs
+../../../external/referencesource/System.Core/System/IO/MemoryMappedFiles/MemoryMappedViewStream.cs
 
 ../../../external/referencesource/System.Core/System/Linq/Enumerable.cs
 ../../../external/referencesource/System.Core/System/Linq/IQueryable.cs
