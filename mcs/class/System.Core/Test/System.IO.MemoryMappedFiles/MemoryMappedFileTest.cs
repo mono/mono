@@ -214,6 +214,41 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			}
 		}
 
+		[Test]
+		public unsafe void ViewAccessorReadArrayWithOffset () {
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+			var offset = 3;
+			var expected = "lo!";
+
+			using (var v = file.CreateViewAccessor (offset, expected.Length)) {
+				// PointerOffset Mono implementation is always 0.
+				// Assert.AreEqual (offset, v.PointerOffset);
+
+				var a = new byte [expected.Length];
+				var n = v.ReadArray (0, a, 0, expected.Length);
+				Assert.AreEqual (expected.Length, n);
+				var s = new string (Array.ConvertAll (a, b => (char)b));
+				Assert.AreEqual (expected, s);
+			}
+		}
+
+		[Test]
+		public unsafe void ViewStreamReadWithOffset () {
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+			var offset = 3;
+			var expected = "lo!";
+
+			using (var v = file.CreateViewStream (offset, expected.Length)) {
+				// PointerOffset Mono implementation is always 0.
+				// Assert.AreEqual (offset, v.PointerOffset);
+
+				var a = new byte [expected.Length];
+				var n = v.Read (a, 0, expected.Length);
+				Assert.AreEqual (expected.Length, n);
+				var s = new string (Array.ConvertAll (a, b => (char)b));
+				Assert.AreEqual (expected, s);
+			}
+		}
 
 		[Test]
 		public void NamedMappingToInvalidFile ()
