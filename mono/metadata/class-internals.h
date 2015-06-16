@@ -1044,8 +1044,10 @@ mono_method_inflated_lookup (MonoMethodInflated* method, gboolean cache);
 MONO_API MonoMethodSignature *
 mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericContext *context);
 
-MonoType*
-mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type, MonoGenericContext *context, MonoError *error);
+MonoType *
+mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type,
+					      MonoGenericContext *context, gboolean allow_sharing,
+					      MonoError *error);
 
 MonoClass*
 mono_class_inflate_generic_class (MonoClass *gklass, MonoGenericContext *context);

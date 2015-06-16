@@ -802,29 +802,35 @@ mono_class_get_generic_class (MonoClass *klass)
  * The returned type can potentially be the same as TYPE, so it should not be
  * modified by the caller, and it should be freed using mono_metadata_free_type ().
  */
-MonoType*
-mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type, MonoGenericContext *context, MonoError *error)
+MonoType *
+mono_class_inflate_generic_type_with_mempool (MonoImage *image, MonoType *type,
+					      MonoGenericContext *context, gboolean allow_sharing,
+					      MonoError *error)
 {
 	MonoType *inflated = NULL;
+	MonoType *shared = NULL;
 	mono_error_init (error);
 
 	if (context)
 		inflated = inflate_generic_type (image, type, context, error);
-	if (!mono_error_ok (error))
+
+	if (!mono_error_ok (error)) {
+		if (inflated)
+			mono_metadata_free_type (inflated);
 		return NULL;
-
-	if (!inflated) {
-		MonoType *shared = mono_metadata_get_shared_type (type);
-
-		if (shared) {
-			return shared;
-		} else {
-			return mono_metadata_type_dup (image, type);
-		}
+	} else if (inflated) {
+		mono_stats.inflated_type_count++;
+		return inflated;
 	}
 
-	mono_stats.inflated_type_count++;
-	return inflated;
+	if (allow_sharing)
+		shared = mono_metadata_get_shared_type (type);
+
+	if (shared) {
+		return shared;
+	} else {
+		return mono_metadata_type_dup (image, type);
+	}
 }
 
 /*
@@ -869,7 +875,7 @@ mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 MonoType*
 mono_class_inflate_generic_type_checked (MonoType *type, MonoGenericContext *context, MonoError *error)
 {
-	return mono_class_inflate_generic_type_with_mempool (NULL, type, context, error);
+	return mono_class_inflate_generic_type_with_mempool (NULL, type, context, TRUE, error);
 }
 
 /*
