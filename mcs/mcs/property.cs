@@ -619,8 +619,7 @@ namespace Mono.CSharp
 						GetSignatureForError ());
 				}
 			} else if ((ModFlags & Modifiers.OVERRIDE) == 0 && 
-				(Get == null && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) ||
-				(Set == null && (Get.ModFlags & Modifiers.AccessibilityMask) != 0)) {
+				((Get == null && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) || (Set == null && (Get.ModFlags & Modifiers.AccessibilityMask) != 0))) {
 				Report.Error (276, Location, 
 					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
 					      GetSignatureForError ());
