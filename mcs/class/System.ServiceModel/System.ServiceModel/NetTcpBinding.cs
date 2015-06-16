@@ -43,7 +43,8 @@ namespace System.ServiceModel
 		int max_conn;
 		OptionalReliableSession reliable_session;
 		NetTcpSecurity security;
-		XmlDictionaryReaderQuotas reader_quotas;
+		XmlDictionaryReaderQuotas reader_quotas
+			= new XmlDictionaryReaderQuotas ();
 		bool transaction_flow;
 		TransactionProtocol transaction_protocol;
 		TcpTransportBindingElement transport;
