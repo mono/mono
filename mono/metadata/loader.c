@@ -2742,14 +2742,13 @@ mono_method_get_token (MonoMethod *method)
 	return method->token;
 }
 
-MonoMethodHeader*
-mono_method_get_header (MonoMethod *method)
+static MonoMethodHeader*
+mono_method_get_header_internal (MonoMethod *method, gboolean no_sharing)
 {
 	int idx;
 	guint32 rva;
 	MonoImage* img;
 	gpointer loc;
-	MonoMethodHeader *header;
 	MonoGenericContainer *container;
 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
@@ -2759,29 +2758,42 @@ mono_method_get_header (MonoMethod *method)
 
 	if (method->is_inflated) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-		MonoMethodHeader *header, *iheader;
-
-		header = mono_method_get_header (imethod->declaring);
-		if (!header)
-			return NULL;
-
-		iheader = inflate_generic_header (header, mono_method_get_context (method));
-		mono_metadata_free_mh (header);
-
-		mono_image_lock (img);
+		MonoMethodHeader *parent_header, *iheader;
 
 		if (imethod->header) {
-			mono_metadata_free_mh (iheader);
-			mono_image_unlock (img);
+			g_assert (imethod->header->is_pinned);
 			return imethod->header;
 		}
 
+		parent_header = mono_method_get_header_internal (imethod->declaring, TRUE);
+		if (!parent_header)
+			return NULL;
+
+		iheader = inflate_generic_header (parent_header, mono_method_get_context (method), TRUE /* No shared types */);
+
+		if (parent_header && parent_header->is_transient)
+			mono_metadata_free_mh (parent_header);
+
+		/* If it is not transient it means it's part of a wrapper method,
+		 * or a SRE-generated method, so the lifetime in that case is
+		 * dictated by the method's own lifetime
+		 */
+		if (method->wrapper_type == MONO_WRAPPER_NONE && !method->sre_method)
+			iheader->is_transient = TRUE;
+
+		mono_image_lock (img);
 		mono_memory_barrier ();
-		imethod->header = iheader;
+
+		if (imethod->header)
+			mono_metadata_free_mh (iheader);
+		else {
+			imethod->header = iheader;
+			iheader->is_pinned = TRUE;
+		}
 
 		mono_image_unlock (img);
 
-		return imethod->header;
+		return iheader;
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE || method->sre_method) {
@@ -2812,10 +2824,17 @@ mono_method_get_header (MonoMethod *method)
 	container = mono_method_get_generic_container (method);
 	if (!container)
 		container = method->klass->generic_container;
-	header = mono_metadata_parse_mh_full (img, container, loc);
+	MonoMethodHeader *header = mono_metadata_parse_mh_full (img, container, loc);
 
 	return header;
 }
+
+MonoMethodHeader*
+mono_method_get_header (MonoMethod *method) 
+{
+	return mono_method_get_header_internal (method, FALSE);
+}
+
 
 guint32
 mono_method_get_flags (MonoMethod *method, guint32 *iflags)

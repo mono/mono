@@ -2758,7 +2758,6 @@ free_inflated_method (MonoMethodInflated *imethod)
 			/* Allocated in inflate_generic_header () */
 			for (i = 0; i < header->num_locals; ++i)
 				mono_metadata_free_type (header->locals [i]);
-			g_free (header->clauses);
 			g_free (header);
 		}
 	}
@@ -3703,7 +3702,7 @@ mono_metadata_free_mh (MonoMethodHeader *mh)
 	 * or a SRE-generated method, so the lifetime in that case is
 	 * dictated by the method's own lifetime
 	 */
-	if (mh->is_transient) {
+	if (mh->is_transient && !mh->is_pinned) {
 		for (i = 0; i < mh->num_locals; ++i)
 			mono_metadata_free_type (mh->locals [i]);
 		g_free (mh);
