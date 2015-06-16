@@ -273,9 +273,9 @@ namespace MonoTests.System.ServiceModel
 		{
 			var host = new Poker ();
 			Assert.AreEqual (0, host.BaseAddresses.Count, "#1");
-			host.DoAddBaseAddress (new Uri ("http://localhost:37564"));
+			host.DoAddBaseAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 			Assert.AreEqual (1, host.BaseAddresses.Count, "#1");
-			host.DoAddBaseAddress (new Uri ("net.tcp://localhost:893"));
+			host.DoAddBaseAddress (new Uri ("net.tcp://localhost:" + NetworkHelpers.FindFreePort ()));
 			Assert.AreEqual (2, host.BaseAddresses.Count, "#1");
 		}
 
@@ -285,31 +285,33 @@ namespace MonoTests.System.ServiceModel
 		{
 			var host = new Poker ();
 			Assert.AreEqual (0, host.BaseAddresses.Count, "#1");
-			host.DoAddBaseAddress (new Uri ("http://localhost:37564"));
+			host.DoAddBaseAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 			// http base address is already added.
-			host.DoAddBaseAddress (new Uri ("http://localhost:893"));
+			host.DoAddBaseAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 		}
 
 		[Test]
 		public void AddServiceEndpointUri ()
 		{
+			int port = NetworkHelpers.FindFreePort ();
 			var host = new ServiceHost (typeof (AllActions),
-				new Uri ("http://localhost:37564"));
+				new Uri ("http://localhost:" + port));
 			var se = host.AddServiceEndpoint (typeof (AllActions),
 				new BasicHttpBinding (), "foobar");
-			Assert.AreEqual ("http://localhost:37564/foobar", se.Address.Uri.AbsoluteUri, "#1");
-			Assert.AreEqual ("http://localhost:37564/foobar", se.ListenUri.AbsoluteUri, "#2");
+			Assert.AreEqual ("http://localhost:" + port + "/foobar", se.Address.Uri.AbsoluteUri, "#1");
+			Assert.AreEqual ("http://localhost:" + port + "/foobar", se.ListenUri.AbsoluteUri, "#2");
 		}
 
 		[Test]
 		public void AddServiceEndpointUri2 ()
 		{
+			int port = NetworkHelpers.FindFreePort ();
 			var host = new ServiceHost (typeof (AllActions),
-				new Uri ("http://localhost:37564"));
+				new Uri ("http://localhost:" + port));
 			var se = host.AddServiceEndpoint (typeof (AllActions),
 				new BasicHttpBinding (), String.Empty);
-			Assert.AreEqual ("http://localhost:37564/", se.Address.Uri.AbsoluteUri, "#1");
-			Assert.AreEqual ("http://localhost:37564/", se.ListenUri.AbsoluteUri, "#2");
+			Assert.AreEqual ("http://localhost:" + port + "/", se.Address.Uri.AbsoluteUri, "#1");
+			Assert.AreEqual ("http://localhost:" + port + "/", se.ListenUri.AbsoluteUri, "#2");
 		}
 
 		[Test]

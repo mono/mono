@@ -34,6 +34,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
@@ -73,7 +75,7 @@ namespace MonoTests.System.ServiceModel.Description
 			b.ImpersonateCallerForAllOperations = true;
 			b.PrincipalPermissionMode = PrincipalPermissionMode.None;
 
-			host.AddServiceEndpoint (typeof (TestService), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
+			host.AddServiceEndpoint (typeof (TestService), new BasicHttpBinding (), new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 
 			host.Open ();
 		}
@@ -86,7 +88,7 @@ namespace MonoTests.System.ServiceModel.Description
 			b.ImpersonateCallerForAllOperations = false;
 			b.PrincipalPermissionMode = PrincipalPermissionMode.None;
 
-			host.AddServiceEndpoint (typeof (TestService2), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
+			host.AddServiceEndpoint (typeof (TestService2), new BasicHttpBinding (), new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 
 			host.Open ();
 			var ed = ((ChannelDispatcher) host.ChannelDispatchers [0]).Endpoints [0];
