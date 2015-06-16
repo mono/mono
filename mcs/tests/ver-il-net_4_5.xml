@@ -51584,6 +51584,35 @@
       </method>
     </type>
   </test>
+  <test name="test-926.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass">
+      <method name="Int32 get_Item(Int32)" attrs="2500">
+        <size>10</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)" attrs="2501">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Derived">
+      <method name="Int32 get_Item(Int32)" attrs="2244">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">
