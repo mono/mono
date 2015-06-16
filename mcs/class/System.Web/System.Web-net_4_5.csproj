@@ -1250,6 +1250,7 @@
     <Compile Include="System.Web\CapabilitiesLoader.cs" />
     <Compile Include="System.Web\DefaultExceptionPageTemplate.cs" />
     <Compile Include="System.Web\DefaultHttpHandler.cs" />
+    <Compile Include="System.Web\DynamicModuleManager.cs" />
     <Compile Include="System.Web\EndEventHandler.cs" />
     <Compile Include="System.Web\EventHandlerTaskAsyncHelper.cs" />
     <Compile Include="System.Web\ExceptionPageTemplate.cs" />

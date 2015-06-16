@@ -582,6 +582,7 @@
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+    <Compile Include="ReferenceSources\HttpSysSettings.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />

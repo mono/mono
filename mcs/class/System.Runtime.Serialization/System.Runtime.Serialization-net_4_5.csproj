@@ -195,8 +195,6 @@
     <Compile Include="..\..\..\external\referencesource\System.Runtime.Serialization\System\Xml\XmlWriteBase64AsyncArgs.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Runtime.Serialization\TD.Designer.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\BitFlagsGenerator.cs" />
