@@ -25,12 +25,6 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-if ONLY_MONOTOUCH
-build_profiles = monotouch
-else
-if ONLY_XAMMAC
-build_profiles = xammac
-else
 build_profiles = 
 
 if INSTALL_4_5
@@ -51,9 +45,6 @@ build_profiles += xammac xammac_net_4_5
 endif
 
 test_profiles = $(build_profiles)
-
-endif
-endif
 
 if BUILD_MCS
 
