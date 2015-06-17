@@ -10,7 +10,7 @@ libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
+	$(GLIB_LIBS) \
 	$(libgc_libs)
 
 sgen_libs = \
@@ -18,13 +18,13 @@ sgen_libs = \
 	$(monodir)/mono/sgen/libmonosgen.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(GLIB_LIBS)
 
 static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
+	$(GLIB_LIBS) \
 	$(libgc_static_libs)
 
 sgenstatic_libs = \
@@ -32,7 +32,7 @@ sgenstatic_libs = \
 	$(monodir)/mono/sgen/libmonosgen-static.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(GLIB_LIBS)
 
 CLASS=$(mcs_topdir)/class/lib/net_4_5
 
@@ -226,7 +226,6 @@ mono_boehm_LDADD = \
 	$(MONO_LIB)		\
 	$(GLIB_LIBS)		\
 	$(LLVMMONOF)		\
-	$(LIBICONV)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
@@ -237,7 +236,6 @@ mono_sgen_LDADD = \
 	$(MONO_SGEN_LIB)	\
 	$(GLIB_LIBS)		\
 	$(LLVMMONOF)		\
-	$(LIBICONV)		\
 	-lm			\
 	$(MONO_DTRACE_OBJECT)
 
@@ -286,8 +284,7 @@ genmdesc_SOURCES = \
 # Don't link this against libmonoruntime to speed up rebuilds
 genmdesc_LDADD = \
 	$(monodir)/mono/utils/libmonoutils.la -lm	\
-	$(GLIB_LIBS)					\
-	$(LIBICONV)
+	$(GLIB_LIBS)
 
 x86_sources = \
 	mini-x86.c		\

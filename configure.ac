@@ -426,8 +426,6 @@ AC_SUBST(export_ldflags)
 AC_PROG_LD
 AC_PROG_LD_GNU
 
-AM_ICONV()
-
 AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h)
 AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/sem.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h)
 AC_CHECK_HEADERS([linux/netlink.h linux/rtnetlink.h],
@@ -666,7 +664,7 @@ ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"C
 AC_CONFIG_SUBDIRS(eglib)
 
 GLIB_CFLAGS='-I$(top_srcdir)/eglib/src -I$(top_builddir)/eglib/src'
-GLIB_LIBS='-L$(top_builddir)/eglib/src -leglib -lm'
+GLIB_LIBS='$(top_builddir)/eglib/src/libeglib.la'
 BUILD_GLIB_CFLAGS="$GLIB_CFLAGS"
 BUILD_GLIB_LIBS="$GLIB_LIBS"
 GMODULE_CFLAGS="$GLIB_CFLAGS"
