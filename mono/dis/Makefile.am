@@ -17,7 +17,7 @@ runtime_lib=	\
 	$(gc_lib)	\
 	$(top_builddir)/mono/io-layer/libwapi.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
+	$(GLIB_LIBS)
 
 if DISABLE_EXECUTABLES
 bin_PROGRAMS =
@@ -52,8 +52,7 @@ monodis_LDADD = 			\
 	$(runtime_lib)			\
 	$(LLVM_LIBS)			\
 	$(LLVM_LDFLAGS)			\
-	$(GLIB_LIBS)			\
-	$(LIBICONV)
+	$(GLIB_LIBS)
 
 if PLATFORM_DARWIN
 monodis_LDFLAGS=-framework CoreFoundation -framework Foundation
