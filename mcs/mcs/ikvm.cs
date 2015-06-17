@@ -414,7 +414,11 @@ namespace Mono.CSharp
 
 		public override bool HasObjectType (Assembly assembly)
 		{
-			return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
+			try {
+				return assembly.GetType (compiler.BuiltinTypes.Object.FullName) != null;
+			} catch (Exception e) {
+				throw new InternalErrorException (e, "Failed to load assembly `{0}'", assembly.FullName);
+			}
 		}
 
 		public override Assembly LoadAssemblyFile (string fileName, bool isImplicitReference)
