@@ -663,7 +663,7 @@ AC_SUBST([SHARED_CFLAGS])
 ac_configure_args="$ac_configure_args \"CPPFLAGS_FOR_EGLIB=$EGLIB_CPPFLAGS\" \"CFLAGS_FOR_EGLIB=$CFLAGS_FOR_EGLIB\""
 AC_CONFIG_SUBDIRS(eglib)
 
-GLIB_CFLAGS='-I$(top_srcdir)/eglib/src -I$(top_builddir)/eglib/src'
+GLIB_CFLAGS='-I$(top_srcdir)/eglib/src'
 GLIB_LIBS='$(top_builddir)/eglib/src/libeglib.la'
 BUILD_GLIB_CFLAGS="$GLIB_CFLAGS"
 BUILD_GLIB_LIBS="$GLIB_LIBS"

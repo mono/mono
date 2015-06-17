@@ -63,12 +63,12 @@ libeglib_la_CFLAGS = -g -Wall -D_FORTIFY_SOURCE=2
 AM_CPPFLAGS = -I$(srcdir)
 
 if HOST_WIN32
-libeglib_la_LIBADD = -lm $(LTLIBICONV) -lpsapi
+libeglib_la_LIBADD = -lm $(LTLIBICONV) $(LTLIBCHARSET) -lpsapi
 else
 if PLATFORM_ANDROID
 libeglib_la_LIBADD = -llog
 else
-libeglib_la_LIBADD = $(LTLIBICONV)
+libeglib_la_LIBADD = $(LTLIBICONV) $(LTLIBCHARSET)
 endif
 endif
 
