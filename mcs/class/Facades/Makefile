@@ -20,6 +20,8 @@ monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
 xammac_SUBDIRS = $(net_4_5_SUBDIRS)
 xammac_net_4_5_SUBDIRS = $(net_4_5_SUBDIRS)
 
+monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
+
 PROFILE_SUBDIRS = $(net_4_5_SUBDIRS)
 
 #OVERRIDE_TARGET_ALL = yes

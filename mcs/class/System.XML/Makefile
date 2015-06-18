@@ -17,7 +17,7 @@ RESOURCE_STRINGS = \
 	../../../external/referencesource/System.Xml/System.Xml.txt \
 	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monotouch_watch monodroid xammac mobile mobile_static, $(PROFILE))
 
 LIB_REFS = System
 LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,649,1717 -unsafe -d:ASYNC

@@ -25,7 +25,7 @@ TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:Sy
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monotouch_watch monodroid xammac mobile mobile_static, $(PROFILE))
 
 RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
@@ -33,6 +33,9 @@ ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 endif
 ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
+LIB_MCS_FLAGS += -d:SECURITY_DEP
+endif
+ifeq (monotouch_watch, $(PROFILE))
 LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
 ifeq (monodroid, $(PROFILE))

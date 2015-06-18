@@ -10,7 +10,7 @@ LIB_MCS_FLAGS = \
 	-d:MONO_INTERPRETER \
 	-delaysign -keyfile:../mono.pub
 
-MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime monotouch_watch, $(PROFILE))
 
 ifdef MOBILE_STATIC
 mono_dynamic_interpreter_deps = $(the_libdir_base)plaincore/System.Core.dll
