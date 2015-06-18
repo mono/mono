@@ -26,18 +26,18 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.TransportSecurityBindingElement))]
 #if !MOBILE
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DnsEndpointIdentity))]
+#if !XAMMAC_4_5
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.MessageSecurityVersion))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.BasicSecurityProfileVersion))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.SecureConversationVersion))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.SecurityPolicyVersion))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.SecurityVersion))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.Tokens.SecurityTokenParameters))]
-#if !XAMMAC_4_5
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.Tokens.SecureConversationSecurityTokenParameters))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.Tokens.SecurityTokenParameters))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.Tokens.SupportingTokenParameters))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.Tokens.UserNameSecurityTokenParameters))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Security.TrustVersion))]
+#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.SpnEndpointIdentity))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.UpnEndpointIdentity))]
 #endif
