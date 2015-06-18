@@ -32,6 +32,8 @@ static gboolean partial_supported = FALSE;
 static inline gboolean
 partial_sharing_supported (void)
 {
+	return FALSE;
+
 	if (!ALLOW_PARTIAL_SHARING)
 		return FALSE;
 	/* Enable this when AOT compiling or running in full-aot mode */
