@@ -39,7 +39,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:Mono.Reactive.Tests.dll
 
 EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
-VALID_PROFILE := $(filter monotouch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter monotouch monotouch_watch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.PlatformServices.dll
 NO_SIGN_ASSEMBLY = yes

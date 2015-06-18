@@ -37,7 +37,7 @@ build_profiles += monodroid
 endif
 
 if INSTALL_MONOTOUCH
-build_profiles += monotouch monotouch_runtime
+build_profiles += monotouch monotouch_runtime monotouch_watch
 endif
 
 if INSTALL_XAMMAC

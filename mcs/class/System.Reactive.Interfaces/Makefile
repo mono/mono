@@ -19,7 +19,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args
 
-VALID_PROFILE := $(filter monotouch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter monotouch monotouch_watch monodroid xammac mobile mobile_static net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.System.Reactive.Interfaces.dll
 NO_SIGN_ASSEMBLY = yes

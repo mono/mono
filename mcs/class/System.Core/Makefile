@@ -14,7 +14,7 @@ LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
 MOBILE_DYNAMIC := $(filter monodroid xammac mobile, $(PROFILE))
-MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime, $(PROFILE))
+MOBILE_STATIC := $(filter mobile_static monotouch monotouch_runtime monotouch_watch, $(PROFILE))
 
 ifdef MOBILE_DYNAMIC
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT

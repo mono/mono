@@ -12,7 +12,7 @@ LIB_MCS_FLAGS = \
 	-d:MONO_PARTIAL_DATA_IMPORT \
 	-unsafe
 
-MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
+MOBILE := $(filter monotouch monotouch_watch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_REFS += Mono.Data.Tds System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION

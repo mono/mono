@@ -70,6 +70,8 @@ monodroid_dirs := \
 monotouch_dirs := \
 	$(mobile_static_dirs)
 
+monotouch_watch_dirs := $(monotouch_dirs)
+
 monotouch_runtime_dirs := \
 	corlib \
 	System \
@@ -221,6 +223,7 @@ xbuild_4_0_dirs := \
 
 monodroid_SUBDIRS := $(monodroid_dirs)
 monotouch_SUBDIRS := $(monotouch_dirs)
+monotouch_watch_SUBDIRS := $(monotouch_watch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_static_dirs)
 mobile_SUBDIRS := $(mobile_dynamic_dirs)
