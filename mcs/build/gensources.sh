@@ -34,7 +34,9 @@ rm -f $outfile.makefrag
 process_includes $incfile $outfile.inc
 
 if test x$extfile != x -a -f "$extfile"; then
-	cat $extfile >> $outfile.inc
+	process_includes $extfile $outfile.ext.inc
+	cat $outfile.ext.inc >> $outfile.inc
+	rm -f $outfile.ext.inc
 fi
 
 sort -u $outfile.inc > $outfile.inc_s
