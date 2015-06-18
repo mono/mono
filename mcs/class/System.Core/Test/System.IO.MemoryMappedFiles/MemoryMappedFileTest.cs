@@ -397,6 +397,17 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 #endif
 			stream.Write (new byte [pageSize], 0, pageSize);
 		}
+
+		[Test] // #30741 #30825
+		public void CreateFromFileNullMapName ()
+		{
+			int size = 100;
+			string f = Path.Combine (tempDir, "null-map-name-file");
+			File.WriteAllBytes (f, new byte [size]);
+
+			FileStream file = File.OpenRead (f);
+			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.ReadExecute, null, 0, false);
+		}
 	}
 }
 
