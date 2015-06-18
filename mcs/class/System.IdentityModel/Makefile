@@ -26,7 +26,7 @@ EXTRA_DISTFILES = \
 	Test/Resources/test.pfx \
 	Test/Resources/test2.pfx
 
-VALID_PROFILE := $(filter net_4_5 net_4_5_xammac, $(PROFILE))
+VALID_PROFILE := $(filter net_4_5 xammac_net_4_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.IdentityModel.dll
 NO_INSTALL = yes

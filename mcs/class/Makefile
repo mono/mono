@@ -269,7 +269,7 @@ monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_static_dirs)
 mobile_SUBDIRS := $(mobile_dynamic_dirs)
 xammac_SUBDIRS := $(xammac_dirs)
-net_4_5_xammac_SUBDIRS := $(xammac_4_5_dirs)
+xammac_net_4_5_SUBDIRS := $(xammac_4_5_dirs)
 binary_reference_assemblies_SUBDIRS := reference-assemblies
 net_4_5_SUBDIRS := $(net_4_5_dirs) $(xbuild_4_0_dirs)
 net_4_5_PARALLEL_SUBDIRS := $(net_4_5_parallel_dirs) aot-compiler
@@ -278,7 +278,7 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_5_dirs) $(net_4_5_parallel_dirs) $(net_4_5_xammac_SUBDIRS)
+SUBDIRS = $(mobile_static_dirs) $(mobile_dynamic_dirs) $(monotouch_dirs) $(monodroid_dirs) $(xammac_dirs) $(net_4_5_dirs) $(net_4_5_parallel_dirs) $(xammac_net_4_5_SUBDIRS)
 
 DIST_ONLY_SUBDIRS = dlr aot-compiler reference-assemblies $(xbuild_4_0_dirs)
 
