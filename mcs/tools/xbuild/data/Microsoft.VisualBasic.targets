@@ -114,11 +114,7 @@
 	<Import Project="Microsoft.Common.targets" />
 
 	<PropertyGroup>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' != 'Windows_NT'">vbnc2</VbcToolExe>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' == 'Windows_NT'">vbnc2.bat</VbcToolExe>
-
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' != 'Windows_NT'">vbnc</VbcToolExe>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' == 'Windows_NT'">vbnc.bat</VbcToolExe>
+		<VbcToolExe Condition="'$(VbcToolExe)' == ''">vbnc.exe</VbcToolExe>
 	</PropertyGroup>
 
 </Project>
