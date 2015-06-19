@@ -921,7 +921,7 @@ class_decl		: method_all
 
 type			: generic_class_ref
                           {
-			  	$$ = $1;
+				$$ = GetTypeRef ((BaseTypeRef) $1);
                           }
 			| K_OBJECT
                           {
@@ -952,38 +952,38 @@ type			: generic_class_ref
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 base_type.MakeArray ();
                                 $$ = base_type;
                           }
 			| type OPEN_BRACKET bounds CLOSE_BRACKET
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 ArrayList bound_list = (ArrayList) $3;
                                 base_type.MakeBoundArray (bound_list);
                                 $$ = base_type;
                           }
 			| type AMPERSAND
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 base_type.MakeManagedPointer ();
                                 $$ = base_type;
                           }
 			| type STAR
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 base_type.MakeUnmanagedPointer ();
                                 $$ = base_type;
                           }
 			| type K_PINNED
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 base_type.MakePinned ();
                                 $$ = base_type;
                           }
 			| type K_MODREQ OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modreq, class_ref);
@@ -991,7 +991,7 @@ type			: generic_class_ref
                           }
 			| type K_MODOPT OPEN_PARENS custom_modifier_type CLOSE_PARENS
                           {
-                                BaseTypeRef base_type = GetTypeRef ((BaseTypeRef) $1);
+                                BaseTypeRef base_type = (BaseTypeRef) $1;
                                 BaseTypeRef class_ref = (BaseTypeRef) $4;
                                 base_type.MakeCustomModified (codegen,
                                         CustomModifier.modopt, class_ref);
@@ -1002,8 +1002,6 @@ type			: generic_class_ref
                                 $$ = new MethodPointerTypeRef ((CallConv) $2, (BaseTypeRef) $3, (ArrayList) $6);
                           }
 			| primitive_type
-			;
-
 			;
 
 primitive_type		: K_INT8
