@@ -7036,6 +7036,14 @@ namespace Mono.CSharp {
 			if (!rc.HasSet (ResolveContext.Options.ConstructorScope))
 				return false;
 
+			if (prop.Parent.PartialContainer != rc.CurrentMemberDefinition.Parent.PartialContainer) {
+				var ps = MemberCache.FindMember (rc.CurrentType, MemberFilter.Property (prop.ShortName, prop.MemberType), BindingRestriction.DeclaredOnly) as PropertySpec;
+				if (ps == null)
+					return false;
+
+				prop = (Property) ps.MemberDefinition;
+			}
+
 			var spec = prop.BackingField;
 			if (spec == null)
 				return false;
