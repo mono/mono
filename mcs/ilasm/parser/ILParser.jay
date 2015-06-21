@@ -2798,7 +2798,7 @@ customattr_decl		: D_CUSTOM custom_type
                           }
             | D_CUSTOM custom_type ASSIGN OPEN_BRACE member_init CLOSE_BRACE
               {
-            	$$ = new CustomAttr ((BaseMethodRef) $2, null);
+            	$$ = new CustomAttr ((BaseMethodRef) $2, (PEAPI.Constant) $5);
               }
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
 			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
