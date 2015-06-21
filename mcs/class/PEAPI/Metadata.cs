@@ -444,9 +444,35 @@ namespace PEAPI {
 			cVal = val;
 			tabIx = MDTable.CustomAttribute;
 
-			var bac = val as ByteArrConst;
+			byteVal = ConstantToByteArray (val);
+		}
+
+		static byte[] ConstantToByteArray (Constant c)
+		{
+			var bac = c as ByteArrConst;
 			if (bac != null)
-				byteVal = bac.val;
+				return bac.val;
+
+			var sc = c as StringConst;
+			if (sc != null) {
+				string value = sc.val;
+				if (value == null)
+					throw new NotImplementedException ();
+
+				var ms = new MemoryStream ();
+				// Version info
+				ms.WriteByte (1);
+				ms.WriteByte (0);
+
+				var buf = Encoding.UTF8.GetBytes (value);
+				MetaData.CompressNum ((uint) buf.Length, ms);
+				var byteVal = ms.ToArray ();
+				System.Array.Resize (ref byteVal, (int) ms.Length + buf.Length + 2);
+				System.Array.Copy (buf, 0, byteVal, ms.Length, buf.Length);
+				return byteVal;
+			}
+
+			throw new NotImplementedException (c.GetType ().ToString ());
 		}
 
 		internal CustomAttribute(MetaDataElement paren, Method constrType,
@@ -3169,7 +3195,7 @@ namespace PEAPI {
 	}
 
 	public class StringConst : DataConstant {
-		string val;
+		internal string val;
 
 		public StringConst(string val) 
 		{
