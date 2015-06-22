@@ -453,16 +453,16 @@ namespace PEAPI {
 			if (bac != null)
 				return bac.val;
 
+			var ms = new MemoryStream ();
+			// Version info
+			ms.WriteByte (1);
+			ms.WriteByte (0);
+
 			var sc = c as StringConst;
 			if (sc != null) {
 				string value = sc.val;
 				if (value == null)
 					throw new NotImplementedException ();
-
-				var ms = new MemoryStream ();
-				// Version info
-				ms.WriteByte (1);
-				ms.WriteByte (0);
 
 				var buf = Encoding.UTF8.GetBytes (value);
 				MetaData.CompressNum ((uint) buf.Length, ms);
@@ -470,6 +470,15 @@ namespace PEAPI {
 				System.Array.Resize (ref byteVal, (int) ms.Length + buf.Length + 2);
 				System.Array.Copy (buf, 0, byteVal, ms.Length, buf.Length);
 				return byteVal;
+			}
+
+			var ac = c as ArrayConstant;
+			if (ac != null) {
+				var bw = new BinaryWriter (ms);
+				bw.Write (ac.ExplicitSize.Value);
+				ac.Write (bw);
+				bw.Write ((short)0);
+				return ms.ToArray ();
 			}
 
 			throw new NotImplementedException (c.GetType ().ToString ());
@@ -2942,7 +2951,7 @@ namespace PEAPI {
 	/// <summary>
 	/// Boolean constant
 	/// </summary>
-	public class BoolConst : Constant {
+	public class BoolConst : DataConstant {
 		bool val;
 
 		/// <summary>
@@ -3295,6 +3304,8 @@ namespace PEAPI {
 				size += dataVals[i].GetSize();
 			}
 		}
+
+		public int? ExplicitSize { get; set; }
 
 		internal sealed override void Write(BinaryWriter bw) 
 		{
