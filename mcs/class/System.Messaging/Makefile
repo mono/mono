@@ -15,8 +15,9 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
 
 EXTRA_DISTFILES = System.Messaging/MessageQueue.resx
 
-ifndef NO_WINFORMS_DEPENDENCY
+ifdef NO_WINFORMS_DEPENDENCY
 LIB_MCS_FLAGS += -d:NO_WINFORMS_DEPENDENCY
+else
 LIB_REFS += System.Windows.Forms
 endif
 
