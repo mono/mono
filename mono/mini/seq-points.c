@@ -11,16 +11,27 @@
 #include "seq-points.h"
 
 static void
-collect_pred_seq_points (MonoBasicBlock *bb, MonoInst *ins, GSList **next, int depth)
+collect_pred_seq_points (MonoBasicBlock *init, MonoInst *ins, GSList **next)
 {
 	int i;
-	MonoBasicBlock *in_bb;
 	GSList *l;
+	MonoBasicBlock *curr;
 
-	for (i = 0; i < bb->in_count; ++i) {
-		in_bb = bb->in_bb [i];
+	// Use Iterative DFS to find the incoming bbs which
+	// are the last sequence points
 
-		if (in_bb->last_seq_point) {
+	GQueue *stack = g_queue_new ();
+	g_queue_push_head (stack, init);
+
+	while ((curr = g_queue_pop_head (stack))) {
+		for (i = 0; i < curr->in_count; ++i) {
+			MonoBasicBlock *in_bb = curr->in_bb [i];
+
+			if (!in_bb->last_seq_point) {
+				g_queue_push_head (stack, in_bb);
+				continue;
+			}
+
 			int src_index = in_bb->last_seq_point->backend.size;
 			int dst_index = ins->backend.size;
 
@@ -30,12 +41,11 @@ collect_pred_seq_points (MonoBasicBlock *bb, MonoInst *ins, GSList **next, int d
 					break;
 			if (!l)
 				next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
-		} else {
-			/* Have to look at its predecessors */
-			if (depth < 5)
-				collect_pred_seq_points (in_bb, ins, next, depth + 1);
 		}
 	}
+	// No null BBs caused us to terminate early
+	assert (g_queue_is_empty (stack));
+	g_queue_free (stack);
 }
 
 void
@@ -92,7 +102,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 					next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
 				} else {
 					/* Link with the last bb in the previous bblocks */
-					collect_pred_seq_points (bb, ins, next, 0);
+					collect_pred_seq_points (bb, ins, next);
 				}
 
 				last = ins;
