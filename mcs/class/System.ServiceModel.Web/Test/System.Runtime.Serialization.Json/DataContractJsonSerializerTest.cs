@@ -1894,6 +1894,32 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 		public class IntList : List<int>{}
 		#endregion
+
+		[Test]
+		public void DefaultValueDeserialization ()
+		{
+			// value type
+			var person = new Person { name = "John" };
+			using (var ms = new MemoryStream()) {
+				var serializer = new DataContractJsonSerializer (typeof (Person), new DataContractJsonSerializerSettings {
+					SerializeReadOnlyTypes = true,
+					UseSimpleDictionaryFormat = true
+					});
+				serializer.WriteObject (ms, person);
+			}
+
+			// reference type
+			var person2 = new PersonWithContact {
+				name = "Jane",
+				contact = new Contact { url = "localhost", email = "jane@localhost" } };
+			using (var ms = new MemoryStream ()) {
+				var serializer = new DataContractJsonSerializer (typeof (PersonWithContact), new DataContractJsonSerializerSettings {
+					SerializeReadOnlyTypes = true,
+					UseSimpleDictionaryFormat = true
+					});
+				serializer.WriteObject (ms, person2);
+			}
+		}
 	}
 	
 	public class CharTest
@@ -2685,4 +2711,33 @@ public class Bug13485Type
 		}
 	}	
 
+#endregion
+
+#region DefaultValueDeserialization
+    [DataContract]
+    public class Person
+    {
+        [DataMember(EmitDefaultValue = false)]
+        public string name { get; set; }
+    }
+
+    [DataContract]
+    public class PersonWithContact
+    {
+        [DataMember(EmitDefaultValue = false)]
+        public string name { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public Contact contact { get; set; }
+    }
+
+    [DataContract]
+    public class Contact
+    {
+        [DataMember(EmitDefaultValue = false)]
+        public string url { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public string email{ get; set; }
+    }
 #endregion
