@@ -1679,7 +1679,31 @@ member_init : field_init_full
 			  {
 				$$ = new StringConst ((string) $3);
 			  }
+			| K_BOOL OPEN_BRACKET int32 CLOSE_BRACKET OPEN_PARENS opt_truefalse_list CLOSE_PARENS
+			  {
+			  	var l = (List<BoolConst>) $6;
+			  	$$ = new ArrayConstant (l?.ToArray ()) {
+			  		ExplicitSize = (int) $3
+			  	};
+			  }
 			;
+
+opt_truefalse_list
+				: truefalse_list
+				;
+
+truefalse_list
+				: truefalse
+				  {
+				  	$$ = new List<BoolConst> () { new BoolConst ((bool) $1) };
+				  }
+				| truefalse_list truefalse
+				  {
+				  	var l = (List<BoolConst>) $1;
+				  	l.Add (new BoolConst ((bool) $2));
+				  	$$ = l;
+				  }
+				;
 
 data_decl		: data_head data_body
                           {
