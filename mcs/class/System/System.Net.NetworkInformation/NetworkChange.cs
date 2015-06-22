@@ -404,13 +404,15 @@ namespace System.Net.NetworkInformation {
 		void OnAvailabilityChanged (object unused)
 		{
 			NetworkAvailabilityChangedEventHandler d = AvailabilityChanged;
-			d (null, new NetworkAvailabilityEventArgs (GetAvailability ()));
+			if (d != null)
+				d (null, new NetworkAvailabilityEventArgs (GetAvailability ()));
 		}
 
 		void OnAddressChanged (object unused)
 		{
 			NetworkAddressChangedEventHandler d = AddressChanged;
-			d (null, EventArgs.Empty);
+			if (d != null)
+				d (null, EventArgs.Empty);
 		}
 
 		void OnEventDue (object unused)
