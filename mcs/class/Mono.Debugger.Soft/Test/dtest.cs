@@ -3708,6 +3708,54 @@ public class DebuggerTests
 		// Make sure we are still in the cctor
 		Assert.AreEqual (".cctor", e.Thread.GetFrames ()[0].Location.Method.Name);
 	}
+
+	[Test]
+	public void ComplexStepping () {
+		var assembly = entry_point.DeclaringType.Assembly;
+		var type = assembly.GetType ("ComplexStepping+MainClass");
+		MethodMirror m = type.GetMethod ("bla");
+
+		IList<Location> locations = m.Locations;
+		int method_base_linum = locations [0].LineNumber;
+		int linum_of_complex = method_base_linum + 1;
+		int il_after_complex = 0;
+		int il_of_complex = 0;
+
+		foreach (var loc in locations) {
+			if (il_of_complex == 0 && loc.LineNumber == linum_of_complex)
+				il_of_complex = loc.ILOffset;
+			else if (il_after_complex == 0 && loc.LineNumber == linum_of_complex + 1)
+				il_after_complex = loc.ILOffset;
+		}
+
+		Assert.IsTrue (il_after_complex > 0 && il_of_complex > 0);
+
+		var req = vm.SetBreakpoint (m, il_of_complex);
+
+		Event e = null;
+
+		while (true) {
+			vm.Resume ();
+			e = GetNextEvent ();
+			if (e is BreakpointEvent)
+				break;
+		}
+		req.Disable ();
+
+		var step_req = vm.CreateStepRequest (e.Thread);
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Over;
+		step_req.Size = StepSize.Line;
+		step_req.Enable ();
+
+		vm.Resume ();
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is StepEvent);
+
+		int managed_ip = e2.Thread.GetFrames () [0].ILOffset;
+
+		Assert.AreEqual (il_after_complex, managed_ip);
+	}
 }
 
 }

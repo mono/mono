@@ -185,6 +185,60 @@ struct RecStruct : IRecStruct {
 	}
 }
 
+class ComplexStepping
+{
+	internal interface willy
+	{
+	}
+
+	internal class snarf
+	{
+	}
+
+	internal class flap : snarf, willy
+	{
+	}
+
+	internal class point
+	{
+		public string acme = "";
+		public snarf lst = new flap();
+	}
+
+	internal class zork
+	{
+		public point point = new point();
+	}
+
+	internal class narf
+	{
+		public zork zork = new zork();
+	}
+
+	public class MainClass
+	{
+		static int count = 1;
+		static narf _narf = new narf();
+
+		// DO NOT ALTER THIS FORMATTING.
+		// The lines are long, but the relative line offsets are important for the test that uses this.
+		public static void bla()
+		{
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst); 
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+		}
+
+		static void doStuff(string str, string str2, willy lst, string str3,
+							willy lst2)
+		{
+
+		}
+	}
+}
+
 interface ITest
 {
 	void Foo ();
@@ -343,6 +397,9 @@ public class Tests : TestsBase, ITest2
 		if (args.Length > 0 && args [0] == "invoke-single-threaded")
 			new Tests ().invoke_single_threaded ();
 		new Tests ().evaluate_method ();
+
+		ComplexStepping.MainClass.bla ();
+
 		return 3;
 	}
 
@@ -803,6 +860,7 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals6_2 (int arg) {
 	}
+
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals6_3 () {
