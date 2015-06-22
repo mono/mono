@@ -47,7 +47,7 @@ build_profiles += monotouch monotouch_runtime
 endif
 
 if INSTALL_XAMMAC
-build_profiles += xammac
+build_profiles += xammac net_4_5_xammac
 endif
 
 test_profiles = $(build_profiles)

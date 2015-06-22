@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text;
-#if NET_4_0 && !MOBILE
+#if !NO_SYSTEM_WEB_DEPENDENCY && NET_4_0 && !MOBILE
 using System.Web.Configuration;
 #endif
 
@@ -163,7 +163,7 @@ namespace System.Web.Util
 
 		static HttpEncoder GetCustomEncoderFromConfig ()
 		{
-#if MOBILE
+#if MOBILE || NO_SYSTEM_WEB_DEPENDENCY
 			return defaultEncoder.Value;
 #else
 			var cfg = HttpRuntime.Section;

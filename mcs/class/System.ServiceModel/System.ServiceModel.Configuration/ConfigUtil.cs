@@ -35,7 +35,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+#if !XAMMAC_4_5
 using System.Web.Configuration;
+#endif
 
 using SysConfig = System.Configuration.Configuration;
 
@@ -43,6 +45,7 @@ namespace System.ServiceModel.Configuration
 {
 	internal static class ConfigUtil
 	{
+#if !XAMMAC_4_5
 		static object GetSection (string name)
 		{
 			if (ServiceHostingEnvironment.InAspNet)
@@ -242,6 +245,7 @@ namespace System.ServiceModel.Configuration
 		{
 			return new EndpointAddress (el.Address, el.Identity != null ? el.Identity.CreateInstance () : null, el.Headers.Headers);
 		}
+#endif
 
 		public static EndpointIdentity CreateInstance (this IdentityElement el)
 		{
@@ -299,6 +303,7 @@ namespace System.ServiceModel.Configuration
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);
 		}
 
+#if !XAMMAC_4_5
 		public static BindingCollectionElement FindCollectionElement (Binding binding, SysConfig config)
 		{
 			var section = (BindingsSection) config.GetSection ("system.serviceModel/bindings");
@@ -309,6 +314,7 @@ namespace System.ServiceModel.Configuration
 			
 			return null;
 		}
+#endif
 	}
 
 	enum NamedConfigCategory

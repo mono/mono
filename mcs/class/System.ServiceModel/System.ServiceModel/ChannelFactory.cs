@@ -90,7 +90,7 @@ namespace System.ServiceModel
 			if (endpointConfig == null)
 				return;
 
-#if NET_2_1
+#if NET_2_1 || XAMMAC_4_5
 			try {
 				// It should automatically use XmlXapResolver
 				var cfg = new SilverlightClientConfigLoader ().Load (XmlReader.Create ("ServiceReferences.ClientConfig"));
@@ -160,7 +160,7 @@ namespace System.ServiceModel
 #endif
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		private void ApplyBehavior (string behaviorConfig)
 		{
 			BehaviorsSection behaviorsSection = ConfigUtil.BehaviorsSection;
