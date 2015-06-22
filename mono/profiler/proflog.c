@@ -3045,25 +3045,85 @@ coverage_filter (MonoProfiler *prof, MonoMethod *method)
 	return TRUE;
 }
 
+#define LINE_BUFFER_SIZE 4096
+/* Max file limit of 128KB */
+#define MAX_FILE_SIZE 128 * 1024
+static char *
+get_file_content (FILE *stream)
+{
+	char *buffer;
+	ssize_t bytes_read;
+	long filesize;
+	int res, offset = 0;
+
+	res = fseek (stream, 0, SEEK_END);
+	if (res < 0)
+	  return NULL;
+
+	filesize = ftell (stream);
+	if (filesize < 0)
+	  return NULL;
+
+	res = fseek (stream, 0, SEEK_SET);
+	if (res < 0)
+	  return NULL;
+
+	if (filesize > MAX_FILE_SIZE)
+	  return NULL;
+
+	buffer = g_malloc ((filesize + 1) * sizeof (char));
+	while ((bytes_read = fread (buffer + offset, 1, LINE_BUFFER_SIZE, stream)) > 0)
+		offset += bytes_read;
+
+	/* NULL terminate our buffer */
+	buffer[filesize] = '\0';
+	return buffer;
+}
+
+static char *
+get_next_line (char *contents, char **next_start)
+{
+	char *p = contents;
+
+	if (p == NULL || *p == '\0') {
+		*next_start = NULL;
+		return NULL;
+	}
+
+	while (*p != '\n' && *p != '\0')
+		p++;
+
+	if (*p == '\n') {
+		*p = '\0';
+		*next_start = p + 1;
+	} else
+		*next_start = NULL;
+
+	return contents;
+}
+
 static void
 init_suppressed_assemblies (void)
 {
-	size_t n;
+	char *content;
 	char *line;
+	FILE *sa_file;
 
 	mono_mutex_init (&suppressed_assemblies_mutex);
 	suppressed_assemblies = mono_conc_hashtable_new (&suppressed_assemblies_mutex, g_str_hash, g_str_equal);
-	FILE *sa_file = fopen (SUPPRESSION_DIR "/mono-profiler-log.suppression", "r");
+	sa_file = fopen (SUPPRESSION_DIR "/mono-profiler-log.suppression", "r");
 	if (sa_file == NULL)
 		return;
 
-	n = 0;
-	line = NULL;
-	while (getline (&line, &n, sa_file) > -1) {
+	/* Don't need to free @content as it is referred to by the lines stored in @suppressed_assemblies */
+	content = get_file_content (sa_file);
+	if (content == NULL) {
+		g_error ("mono-profiler-log.suppression is greater than 128kb - aborting\n");
+	}
+
+	while ((line = get_next_line (content, &content))) {
 		line = g_strchomp (g_strchug (line));
 		mono_conc_hashtable_insert (suppressed_assemblies, line, line);
-		n = 0;
-		line = NULL;
 	}
 
 	fclose (sa_file);
@@ -3924,8 +3984,7 @@ mono_profiler_startup (const char *desc)
 		}
 		if ((opt = match_option (p, "covfilter-file", &val)) != p) {
 			FILE *filter_file;
-			char *line;
-			size_t n;
+			char *line, *content;
 
 			if (filters == NULL)
 				filters = g_ptr_array_new ();
@@ -3936,13 +3995,13 @@ mono_profiler_startup (const char *desc)
 				exit (0);
 			}
 
-			n = 0;
-			line = NULL;
-			while (getline (&line, &n, filter_file) > -1) {
+			/* Don't need to free content as it is referred to by the lines stored in @filters */
+			content = get_file_content (filter_file);
+			if (content == NULL)
+				fprintf (stderr, "WARNING: %s is greater than 128kb - ignoring\n", val);
+
+			while ((line = get_next_line (content, &content)))
 				g_ptr_array_add (filters, g_strchug (g_strchomp (line)));
-				n = 0;
-				line = NULL;
-			}
 
 			fclose (filter_file);
 			continue;

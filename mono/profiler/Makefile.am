@@ -100,4 +100,5 @@ suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
 suppression_DATA = mono-profiler-log.suppression
 
 EXTRA_DIST=utils.c utils.h proflog.h log-profiler.txt perf_event.h \
-	$(PLOG_TESTS_SRC) ptestrunner.pl
+	$(PLOG_TESTS_SRC) ptestrunner.pl \
+	$(suppression_DATA)
