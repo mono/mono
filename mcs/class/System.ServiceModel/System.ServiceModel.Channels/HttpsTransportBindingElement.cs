@@ -68,7 +68,7 @@ namespace System.ServiceModel.Channels
 			return base.BuildChannelFactory <TChannel> (context);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
@@ -83,7 +83,7 @@ namespace System.ServiceModel.Channels
 			return new HttpsTransportBindingElement (this);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		public XmlElement GetTransportTokenAssertion ()
 		{
 			var doc = new XmlDocument ();

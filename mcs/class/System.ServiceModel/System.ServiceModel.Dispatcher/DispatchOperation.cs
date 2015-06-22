@@ -214,7 +214,7 @@ namespace System.ServiceModel.Dispatcher
 
 		void ThrowIfOpened ()
 		{
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 			// FIXME: get callback client runtime status when ChannelDispatcher is not available.
 			var state = Parent.ChannelDispatcher != null ? Parent.ChannelDispatcher.State : CommunicationState.Created; // Parent.CallbackClientRuntime.ChannelFactory.State;
 			switch (state) {
