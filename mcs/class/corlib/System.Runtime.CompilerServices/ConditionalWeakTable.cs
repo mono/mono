@@ -231,7 +231,9 @@ namespace System.Runtime.CompilerServices
 				{
 					for (int i = 0; i < data.Length; ++i)
 					{
-						list.Add ((TKey) data [i].key);
+						TKey key = (TKey) data [i].key;
+						if (key != null)
+							list.Add (key);
 					}
 				}
 				return list;
