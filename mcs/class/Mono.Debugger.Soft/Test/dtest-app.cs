@@ -222,6 +222,7 @@ class ComplexStepping
 
 		// DO NOT ALTER THIS FORMATTING.
 		// The lines are long, but the relative line offsets are important for the test that uses this.
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static void bla()
 		{
 			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst); 
@@ -231,6 +232,7 @@ class ComplexStepping
 			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		static void doStuff(string str, string str2, willy lst, string str3,
 							willy lst2)
 		{
@@ -387,6 +389,8 @@ public class Tests : TestsBase, ITest2
 		set_ip ();
 		step_filters ();
 		local_reflect ();
+		ComplexStepping.MainClass.bla ();
+		ComplexStepping2 ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -398,14 +402,27 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_single_threaded ();
 		new Tests ().evaluate_method ();
 
-		ComplexStepping.MainClass.bla ();
-
 		return 3;
 	}
 
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
+	}
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ComplexStepping2 () {
+		Complex2Callee(null);
+	}//5. But ends here
+
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void Complex2Callee (Object arg) {
+		if (arg is IAsyncResult ||// BREAKING HERE: Step over on this doesn't work correctly and gets out of this method
+		    arg is ICloneable ||
+		    arg is IDisposable ||
+		    arg is GenericUriParser)
+			Console.WriteLine("2");
+		Console.WriteLine("3");//4. Step over IF above should end here
 	}
 
 	public static void breakpoints () {
