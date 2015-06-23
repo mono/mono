@@ -179,14 +179,15 @@ namespace Mono.Linker.Steps {
 			if (!type.HasMethods)
 				return null;
 
+			var gp = new Dictionary<string,string> ();
 			foreach (MethodDefinition candidate in type.Methods)
-				if (MethodMatch (candidate, method))
+				if (MethodMatch (candidate, method, gp))
 					return candidate;
 
 			return null;
 		}
 
-		static bool MethodMatch (MethodDefinition candidate, MethodDefinition method)
+		static bool MethodMatch (MethodDefinition candidate, MethodDefinition method, Dictionary<string,string> genericPamateters)
 		{
 			if (!candidate.IsVirtual)
 				return false;
@@ -200,7 +201,10 @@ namespace Mono.Linker.Steps {
 			if (candidate.HasGenericParameters != method.HasGenericParameters)
 				return false;
 
-			if (!TypeMatch (candidate.ReturnType, method.ReturnType))
+			genericPamateters.Clear ();
+			// we need to track what the generic parameter represent - as we cannot allow it to
+			// differ between the return type or any parameter
+			if (!TypeMatch (candidate.ReturnType, method.ReturnType, genericPamateters))
 				return false;
 
 			if (!candidate.HasParameters)
@@ -212,37 +216,37 @@ namespace Mono.Linker.Steps {
 				return false;
 
 			for (int i = 0; i < cp.Count; i++) {
-				if (!TypeMatch (cp [i].ParameterType, mp [i].ParameterType))
+				if (!TypeMatch (cp [i].ParameterType, mp [i].ParameterType, genericPamateters))
 					return false;
 			}
 
 			return true;
 		}
 
-		static bool TypeMatch (IModifierType a, IModifierType b)
+		static bool TypeMatch (IModifierType a, IModifierType b, Dictionary<string,string> gp)
 		{
-			if (!TypeMatch (a.ModifierType, b.ModifierType))
+			if (!TypeMatch (a.ModifierType, b.ModifierType, gp))
 				return false;
 
-			return TypeMatch (a.ElementType, b.ElementType);
+			return TypeMatch (a.ElementType, b.ElementType, gp);
 		}
 
-		static bool TypeMatch (TypeSpecification a, TypeSpecification b)
+		static bool TypeMatch (TypeSpecification a, TypeSpecification b, Dictionary<string,string> gp)
 		{
 			var gita = a as GenericInstanceType;
 			if (gita != null)
-				return TypeMatch (gita, (GenericInstanceType) b);
+				return TypeMatch (gita, (GenericInstanceType) b, gp);
 
 			var mta = a as IModifierType;
 			if (mta != null)
-				return TypeMatch (mta, (IModifierType) b);
+				return TypeMatch (mta, (IModifierType) b, gp);
 
-			return TypeMatch (a.ElementType, b.ElementType);
+			return TypeMatch (a.ElementType, b.ElementType, gp);
 		}
 
-		static bool TypeMatch (GenericInstanceType a, GenericInstanceType b)
+		static bool TypeMatch (GenericInstanceType a, GenericInstanceType b, Dictionary<string,string> gp)
 		{
-			if (!TypeMatch (a.ElementType, b.ElementType))
+			if (!TypeMatch (a.ElementType, b.ElementType, gp))
 				return false;
 
 			if (a.HasGenericArguments != b.HasGenericArguments)
@@ -257,23 +261,32 @@ namespace Mono.Linker.Steps {
 				return false;
 
 			for (int i = 0; i < gaa.Count; i++) {
-				if (!TypeMatch (gaa [i], gab [i]))
+				if (!TypeMatch (gaa [i], gab [i], gp))
 					return false;
 			}
 
 			return true;
 		}
 
-		static bool TypeMatch (TypeReference a, TypeReference b)
+		static bool TypeMatch (TypeReference a, TypeReference b, Dictionary<string,string> gp)
 		{
-			if (a is GenericParameter)
-				return true;
+			var gpa = a as GenericParameter;
+			if (gpa != null) {
+				string match;
+				if (!gp.TryGetValue (gpa.FullName, out match)) {
+					// first use, we assume it will always be used this way
+					gp.Add (gpa.FullName, b.ToString ());
+					return true;
+				}
+				// re-use, it should match the previous usage
+				return match == b.ToString ();
+			}
 
 			if (a is TypeSpecification || b is TypeSpecification) {
 				if (a.GetType () != b.GetType ())
 					return false;
 
-				return TypeMatch ((TypeSpecification) a, (TypeSpecification) b);
+				return TypeMatch ((TypeSpecification) a, (TypeSpecification) b, gp);
 			}
 
 			return a.FullName == b.FullName;
