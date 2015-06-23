@@ -458,6 +458,12 @@ namespace PEAPI {
 			ms.WriteByte (1);
 			ms.WriteByte (0);
 
+			if (c == null) {
+				ms.WriteByte (0);
+				ms.WriteByte (0);
+				return ms.ToArray ();
+			}
+
 			var sc = c as StringConst;
 			if (sc != null) {
 				string value = sc.val;
@@ -475,8 +481,17 @@ namespace PEAPI {
 			var ac = c as ArrayConstant;
 			if (ac != null) {
 				var bw = new BinaryWriter (ms);
-				bw.Write (ac.ExplicitSize.Value);
+				if (ac.ExplicitSize != null)
+					bw.Write (ac.ExplicitSize.Value);
 				ac.Write (bw);
+				bw.Write ((short)0);
+				return ms.ToArray ();
+			}
+
+			var bc = c as DataConstant;
+			if (bc != null) {
+				var bw = new BinaryWriter (ms);
+				bc.Write (bw);
 				bw.Write ((short)0);
 				return ms.ToArray ();
 			}
@@ -3149,7 +3164,7 @@ namespace PEAPI {
 
 	}
 
-	public class UIntConst : Constant {
+	public class UIntConst : DataConstant {
 		ulong val;
 
 		public UIntConst(byte val) 
