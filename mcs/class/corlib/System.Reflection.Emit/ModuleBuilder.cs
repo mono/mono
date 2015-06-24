@@ -902,6 +902,20 @@ namespace System.Reflection.Emit {
 				return m;
 		}
 
+		internal MemberInfo ResolveOrGetRegisteredToken (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			ResolveTokenError error;
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (m != null)
+				return m;
+
+			m = GetRegisteredToken (metadataToken) as MemberInfo;
+			if (m == null)
+				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+			else
+				return m;
+		}
+
 		public override MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 

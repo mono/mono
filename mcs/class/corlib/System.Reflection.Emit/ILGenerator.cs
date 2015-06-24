@@ -1088,7 +1088,7 @@ namespace System.Reflection.Emit {
 					var token = (int) BitConverter.ToUInt32 (il, pos);
 					var tokenInfo = new ILTokenInfo () {
 						code_pos = pos,
-						member = module.ResolveMember (token),
+						member = ((ModuleBuilder) module).ResolveOrGetRegisteredToken (token, null, null)
 					};
 					tokenInfos.Add (tokenInfo);
 				}
