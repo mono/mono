@@ -2801,24 +2801,27 @@ prop_decl		: D_SET method_ref
 			| language_decl
 			;
 
-customattr_decl		: D_CUSTOM custom_type
+customattr_decl
+			: D_CUSTOM customattr_owner_type_opt custom_type
                           {
-                                $$ = new CustomAttr ((BaseMethodRef) $2, null);
+                                $$ = new CustomAttr ((BaseMethodRef) $3, null);
                           }
-			| D_CUSTOM custom_type ASSIGN comp_qstring
-			| D_CUSTOM custom_type ASSIGN bytes_list
+			| D_CUSTOM customattr_owner_type_opt custom_type ASSIGN comp_qstring
+			| D_CUSTOM customattr_owner_type_opt custom_type ASSIGN bytes_list
                           {
-                                $$ = new CustomAttr ((BaseMethodRef) $2, new ByteArrConst ((byte[]) $4));
+                                $$ = new CustomAttr ((BaseMethodRef) $3, new ByteArrConst ((byte[]) $5));
                           }
-            | D_CUSTOM custom_type ASSIGN OPEN_BRACE customattr_values CLOSE_BRACE
+            | D_CUSTOM customattr_owner_type_opt custom_type ASSIGN OPEN_BRACE customattr_values CLOSE_BRACE
               {
-            	$$ = new CustomAttr ((BaseMethodRef) $2, (PEAPI.Constant) $5);
+            	$$ = new CustomAttr ((BaseMethodRef) $3, (PEAPI.Constant) $6);
               }
-			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type
-			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN comp_qstring
-			| D_CUSTOM OPEN_PARENS owner_type CLOSE_PARENS custom_type ASSIGN bytes_list
 			;
 
+// TODO: unused for now
+customattr_owner_type_opt
+			: /* empty */
+			| OPEN_PARENS type CLOSE_PARENS
+			;
 
 customattr_values
 				: /* empty */
@@ -2845,8 +2848,8 @@ customattr_values
 				;
 
 customattr_ctor_args
-				: field_init_primitive
-				| customattr_ctor_args field_init_primitive
+				: customattr_ctor_arg
+				| customattr_ctor_args customattr_ctor_arg
 				  {
 				  	var l = $1 as List<DataConstant>;
 				  	if (l == null) {
@@ -2857,6 +2860,14 @@ customattr_ctor_args
 
 				  	l.Add ((DataConstant) $2);
 				  	$$ = l;
+				  }
+				;
+
+customattr_ctor_arg
+				: field_init_primitive
+				| K_TYPE OPEN_PARENS type CLOSE_PARENS
+				  {
+				  	$$ = new StringConst (((TypeRef) $3).FullName);
 				  }
 				;
 
