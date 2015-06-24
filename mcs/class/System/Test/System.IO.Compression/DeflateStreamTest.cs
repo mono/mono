@@ -376,6 +376,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // system zlib returns Z_STREAM_ERROR
 		public void Bug28777_EmptyFlush ()
 		{
 			MemoryStream backing = new MemoryStream ();
@@ -386,6 +387,7 @@ namespace MonoTests.System.IO.Compression
 		}
 		
 		[Test]
+		[Category ("AndroidNotWorking")] // system zlib returns Z_BUF_ERROR
 		public void Bug28777_DoubleFlush ()
 		{
 			byte[] buffer = new byte [4096];
