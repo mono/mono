@@ -25,12 +25,16 @@ gint64
 mono_100ns_ticks (void)
 {
 	static LARGE_INTEGER freq;
+	static double ticks_with_freq;
 	LARGE_INTEGER value;
 
-	if (!freq.QuadPart && !QueryPerformanceFrequency (&freq))
-		return mono_100ns_datetime ();
+	if (!freq.QuadPart) {
+		if (!QueryPerformanceFrequency (&freq))
+			return mono_100ns_datetime ();
+		ticks_with_freq = (double)MTICKS_PER_SEC / freq.QuadPart;
+	}
 	QueryPerformanceCounter (&value);
-	return value.QuadPart * MTICKS_PER_SEC / freq.QuadPart;
+	return value.QuadPart * ticks_with_freq;
 }
 
 /*
