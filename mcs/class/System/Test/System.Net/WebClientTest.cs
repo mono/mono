@@ -1847,6 +1847,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Test suite hangs
 		public void UploadFileAsyncContentType ()
 		{
 			var serverUri = "http://localhost:13370/";
