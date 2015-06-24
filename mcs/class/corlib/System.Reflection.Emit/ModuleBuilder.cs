@@ -713,6 +713,12 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void RegisterToken (object obj, int token);
 
+		/*
+		 * Returns MemberInfo registered with the given token.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object GetRegisteredToken (int token);
+
 		internal TokenGenerator GetTokenGenerator () {
 			if (token_gen == null)
 				token_gen = new ModuleBuilderTokenGenerator (this);
