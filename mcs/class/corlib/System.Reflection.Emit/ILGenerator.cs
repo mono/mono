@@ -1085,7 +1085,7 @@ namespace System.Reflection.Emit {
 			if (tokenFixups != null) {
 				var tokenInfos = new List<ILTokenInfo> ();
 				foreach (var pos in tokenFixups) {
-					var token = (il [pos] << 24) + (il [pos+1] << 16) + (il [pos+2] << 8) + il [pos+3];
+					var token = (int) BitConverter.ToUInt32 (il, pos);
 					var tokenInfo = new ILTokenInfo () {
 						code_pos = pos,
 						member = module.ResolveMember (token),
