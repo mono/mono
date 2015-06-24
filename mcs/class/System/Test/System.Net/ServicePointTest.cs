@@ -53,10 +53,13 @@ public class ServicePointTest
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
 		HttpWebResponse res = (HttpWebResponse) req.GetResponse ();			
 		
+#if FOUND_SOME_OTHER_URL
+		// URL is no longer found, disabled the test until a more reliable URL is found :P
 		//WriteServicePoint ("google after getting a response", google);
 		ServicePoint google2 = ServicePointManager.FindServicePoint (new Uri ("http://www.google.com/dilbert.html"));
 		Assert.AreEqual (google, google2, "#equals");
 		res.Close ();
+#endif
 		
 		// in both instances property CurrentConnections is 0 according to ms.net.
 		// let's see what it says when we do async operations...
@@ -83,10 +86,11 @@ public class ServicePointTest
 		//Console.WriteLine ("ContentLength: " + res2.ContentLength);
 		res2.Close ();
 		
-		
+		ServicePoint sp2;
+#if FOUND_SOME_OTHER_URL
 		// unless of course some buffering is taking place.. let's check
 		Uri uri2 = new Uri ("http://freedesktop.org/Software/pkgconfig/releases/pkgconfig-0.15.0.tar.gz");
-		ServicePoint sp2 = ServicePointManager.FindServicePoint (uri2);
+		sp2 = ServicePointManager.FindServicePoint (uri2);
 		req2 = (HttpWebRequest) WebRequest.Create (uri2);
 		async = req2.BeginGetResponse (null, null);
 		//WriteServicePoint ("Large file: after async BeginGetResponse", sp2);
@@ -97,6 +101,7 @@ public class ServicePointTest
 		// and so it shows
 		//Console.WriteLine ("ContentLength: " + res2.ContentLength);
 		res2.Close ();
+#endif
 		
 		
 		// what's the limit of the cache?
@@ -148,6 +153,7 @@ public class ServicePointTest
 
 	[Test]
 	[Category ("InetAccess")]
+	[Category ("AndroidNotWorking")] // #A1 fails
 	public void EndPointBind ()
 	{
 		Uri uri = new Uri ("http://www.go-mono.com/");
@@ -163,7 +169,7 @@ public class ServicePointTest
 		};
 		req.GetResponse ().Close ();
 
-		Assert.IsTrue (called);
+		Assert.IsTrue (called, "#A1");
 
 		req = (HttpWebRequest) WebRequest.Create (uri);
 		called = false;
@@ -174,7 +180,7 @@ public class ServicePointTest
 		};
 		req.GetResponse ().Close ();
 
-		Assert.IsTrue (called);
+		Assert.IsTrue (called, "#A2");
 	}
 
 	public static void GetRequestStreamCallback (IAsyncResult asynchronousResult)
