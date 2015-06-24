@@ -5,7 +5,7 @@
 #define LOG_HEADER_ID 0x4D505A01
 #define LOG_VERSION_MAJOR 0
 #define LOG_VERSION_MINOR 4
-#define LOG_DATA_VERSION 10
+#define LOG_DATA_VERSION 8
 /*
  * Changes in data versions:
  * version 2: added offsets in heap walk
@@ -14,8 +14,6 @@
  * version 5: added counters sampling
  * version 6: added optional backtrace in sampling info
  * version 8: added TYPE_RUNTIME and JIT helpers/trampolines
- * version 9: not applicable for Mono 4.0
- * version 10: added TYPE_COVERAGE
  */
 
 enum {
@@ -28,7 +26,6 @@ enum {
 	TYPE_HEAP,
 	TYPE_SAMPLE,
 	TYPE_RUNTIME,
-	TYPE_COVERAGE,
 	/* extended type for TYPE_HEAP */
 	TYPE_HEAP_START  = 0 << 4,
 	TYPE_HEAP_END    = 1 << 4,
@@ -72,11 +69,6 @@ enum {
 	TYPE_SAMPLE_COUNTERS      = 4 << 4,
 	/* extended type for TYPE_RUNTIME */
 	TYPE_JITHELPER = 1 << 4,
-	/* extended type for TYPE_COVERAGE */
-	TYPE_COVERAGE_ASSEMBLY = 0 << 4,
-	TYPE_COVERAGE_METHOD   = 1 << 4,
-	TYPE_COVERAGE_STATEMENT = 2 << 4,
-	TYPE_COVERAGE_CLASS = 3 << 4,
 	TYPE_END
 };
 
@@ -91,3 +83,4 @@ enum {
 };
 
 #endif /* __MONO_PROFLOG_H__ */
+
