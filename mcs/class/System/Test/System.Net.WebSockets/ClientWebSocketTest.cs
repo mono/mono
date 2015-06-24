@@ -102,6 +102,7 @@ namespace MonoTests.System.Net.WebSockets
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // The test hangs
 		public void EchoTest ()
 		{
 			const string Payload = "This is a websocket test";
