@@ -340,6 +340,7 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test] //BNC#323452
+	[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 	public void TestFailedResolution ()
 	{
 		try {
