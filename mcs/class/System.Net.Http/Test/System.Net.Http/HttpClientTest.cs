@@ -573,6 +573,41 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Complete_CustomHeaders_SpecialSeparators ()
+		{
+			bool? failed = null;
+
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				try {
+					Assert.AreEqual ("MLK Android Phone 1.1.9", request.UserAgent, "#1");
+					failed = false;
+				} catch {
+					failed = true;
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				client.DefaultRequestHeaders.Add("User-Agent", "MLK Android Phone 1.1.9");
+
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+
+		[Test]
 		public void Send_Complete_Content ()
 		{
 			var listener = CreateListener (l => {
