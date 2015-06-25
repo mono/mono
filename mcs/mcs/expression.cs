@@ -1485,6 +1485,11 @@ namespace Mono.CSharp
 			expr.FlowAnalysis (fc);
 		}
 
+		public override bool HasConditionalAccess ()
+		{
+			return expr.HasConditionalAccess ();
+		}
+
 		protected abstract string OperatorName { get; }
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
