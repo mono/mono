@@ -69177,6 +69177,54 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-11.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="B get_b()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_b(B)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="C get_c()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_c(C)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="D get_d()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_d(D)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()" attrs="6278">
