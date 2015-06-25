@@ -616,7 +616,8 @@ namespace System.Diagnostics {
 		}
 
 		private StreamReader error_stream=null;
-		
+		bool error_stream_exposed;
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		[MonitoringDescription ("The standard error stream of this process.")]
 		public StreamReader StandardError {
@@ -629,11 +630,13 @@ namespace System.Diagnostics {
 
 				async_mode |= AsyncModes.SyncError;
 
+				error_stream_exposed = true;
 				return(error_stream);
 			}
 		}
 
 		private StreamWriter input_stream=null;
+		bool input_stream_exposed;
 		
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		[MonitoringDescription ("The standard input stream of this process.")]
@@ -642,11 +645,13 @@ namespace System.Diagnostics {
 				if (input_stream == null)
 					throw new InvalidOperationException("Standard input has not been redirected");
 
+				input_stream_exposed = true;
 				return(input_stream);
 			}
 		}
 
 		private StreamReader output_stream=null;
+		bool output_stream_exposed;
 		
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		[MonitoringDescription ("The standard output stream of this process.")]
@@ -660,6 +665,7 @@ namespace System.Diagnostics {
 
 				async_mode |= AsyncModes.SyncOutput;
 
+				output_stream_exposed = true;
 				return(output_stream);
 			}
 		}
@@ -1603,9 +1609,21 @@ namespace System.Diagnostics {
 						if (async_error != null)
 							async_error.Close ();
 
-						input_stream = null;
-						output_stream = null;
-						error_stream = null;
+						if (input_stream != null) {
+							if (!input_stream_exposed)
+								input_stream.Close ();
+							input_stream = null;
+						}
+						if (output_stream != null) {
+							if (!output_stream_exposed)
+								output_stream.Close ();
+							output_stream = null;
+						}
+						if (error_stream != null) {
+							if (!error_stream_exposed)
+								error_stream.Close ();
+							error_stream = null;
+						}
 					}
 				}
 				
