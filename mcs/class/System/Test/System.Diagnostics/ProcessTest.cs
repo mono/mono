@@ -911,7 +911,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")]
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void DisposeWithDisposedStreams ()
 		{
 			var psi = GetCrossPlatformStartInfo ();
