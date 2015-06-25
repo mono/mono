@@ -316,6 +316,7 @@ public class Tests : TestsBase, ITest2
 		gc_suspend ();
 		set_ip ();
 		step_filters ();
+		local_reflect ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -327,6 +328,11 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_single_threaded ();
 		new Tests ().evaluate_method ();
 		return 3;
+	}
+
+	public static void local_reflect () {
+		//Breakpoint line below, and reflect someField via ObjectMirror;
+		LocalReflectClass.RunMe ();
 	}
 
 	public static void breakpoints () {
@@ -1463,3 +1469,23 @@ public class LineNumbers
 		#line 55 "FOO"
 	}
 }
+
+class LocalReflectClass
+{
+	public static void RunMe ()
+	{
+		var reflectMe = new someClass ();
+		reflectMe.someMethod ();
+	}
+
+	class someClass : ContextBoundObject
+	{
+		public object someField;
+
+		public void someMethod ()
+		{
+		}
+	}
+}
+
+

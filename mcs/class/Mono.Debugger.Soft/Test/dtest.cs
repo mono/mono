@@ -384,6 +384,52 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void ClassLocalReflection () {
+		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
+
+		Assert.IsNotNull (m);
+		//Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
+		var offset = -1;
+		int method_base_linum = m.Locations [0].LineNumber;
+		foreach (var location in m.Locations)
+			if (location.LineNumber == method_base_linum + 2) {
+				offset = location.ILOffset;
+				break;
+			}
+
+		var req = vm.SetBreakpoint (m, offset);
+
+		Event e = null;
+
+		while (true) {
+			vm.Resume ();
+			e = GetNextEvent ();
+			if (e is BreakpointEvent)
+				break;
+		}
+
+		req.Disable ();
+
+		Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
+		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
+
+		e = single_step (e.Thread);
+
+		var frame = e.Thread.GetFrames ()[0];
+		Value variable = frame.GetValue (frame.Method.GetLocal ("reflectMe"));
+
+		ObjectMirror thisObj = (ObjectMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		FieldInfoMirror thisFi = null;
+		foreach (var fi in thisType.GetFields ())
+			if (fi.Name == "someField")
+				thisFi = fi;
+
+		var gotVal = thisObj.GetValue (thisFi);
+		// If we got this far, we're good.
+	}
+
+	[Test]
 	public void SingleStepping () {
 		Event e = run_until ("single_stepping");
 
