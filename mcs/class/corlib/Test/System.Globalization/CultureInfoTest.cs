@@ -625,6 +625,16 @@ namespace MonoTests.System.Globalization
 			new CultureInfo ("en-HK");
 		}
 
+		[Test]
+		public void ChineseSimplifiedDontEqual ()
+		{
+			CultureInfo zh1 = new CultureInfo ("zh-Hans");
+			CultureInfo zh2 = new CultureInfo ("zh-CHS");
+
+			Assert.IsFalse (zh1.Equals (zh2), "#1");
+			Assert.IsFalse (zh2.Equals (zh1), "#2");
+		}
+
 #if NET_4_5
 		CountdownEvent barrier = new CountdownEvent (3);
 		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
