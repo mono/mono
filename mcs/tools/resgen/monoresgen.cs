@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
 using System.Xml;
@@ -22,6 +23,7 @@ class ResGen {
 	static Assembly swf;
 	static Type resxr;
 	static Type resxw;
+	static HashSet<string> symbols = new HashSet<string> ();
 
 	/*
 	 * We load the ResX format stuff on demand, since the classes are in 
@@ -61,7 +63,18 @@ Options:
 	output file name (if not set).
 -usesourcepath, /useSourcePath
 	to resolve relative file paths, use the directory of the resource 
-	file as current directory.";
+	file as current directory.
+-define, /define:SYMBOL1,SYMBOL2
+	takes a comma-separated list of symbols that control conditional
+	inclusion of resources file. The source file needs to be in 
+	the '.txt' format.
+
+	Resources enclosed with #ifdef SYMBOL1 ... #endif directives
+	will be included in the destination file when SYMBOL1 has
+	been specified using /define option.
+
+	Resources enclosed with #if ! SYMBOL2 ... #endif directives
+	will be included only if SYMBOL2 has NOT been specified.";
 		Usage += @"
 ";
 		Console.WriteLine( Usage );
@@ -74,7 +87,7 @@ Options:
 			return new PoResourceReader (stream);
 		case ".txt":
 		case ".text":
-			return new TxtResourceReader (stream);
+			return new TxtResourceReader (stream, symbols);
 		case ".resources":
 			return new ResourceReader (stream);
 		case ".resx":
@@ -215,6 +228,22 @@ Options:
 				break;
 
 			default:
+				if (args [i].StartsWith ("/d:")       ||
+				    args [i].StartsWith ("-d:")       ||
+				    args [i].StartsWith ("/define:")  ||
+				    args [i].StartsWith ("-define:")  ||
+				    args [i].StartsWith ("/D:")       ||
+				    args [i].StartsWith ("-D:")       ||
+				    args [i].StartsWith ("/DEFINE:")  ||
+				    args [i].StartsWith ("-DEFINE:")) {
+
+					string defines = args [i].Substring (args [i].IndexOf (':') + 1);
+					foreach (string s in defines.Split (',') ) {
+						symbols.Add(s);
+					}
+					break;
+				}
+
 				if (!IsFileArgument (args [i])) {
 					Usage ();
 					return 1;
@@ -358,10 +387,13 @@ class TxtResourceWriter : IResourceWriter {
 class TxtResourceReader : IResourceReader {
 	Hashtable data;
 	Stream s;
+	HashSet <String> defines;
 	
-	public TxtResourceReader (Stream stream) {
+	public TxtResourceReader (Stream stream, IEnumerable<string> symbols) {
 		data = new Hashtable ();
 		s = stream;
+
+		defines = new HashSet<String> (symbols);
 		Load ();
 	}
 	
@@ -371,17 +403,84 @@ class TxtResourceReader : IResourceReader {
 	public IDictionaryEnumerator GetEnumerator() {
 		return data.GetEnumerator ();
 	}
-	
+
+	static string NextWord(ref string line) {
+		int i, j;
+		string keywd;
+		line = line.TrimStart ();
+		for (i = 0; i < line.Length && !Char.IsWhiteSpace (line [i]) && line [i] != ';'; i++ );
+
+		if (i < line.Length) {
+			for (j = i; j < line.Length && Char.IsWhiteSpace (line [j]) && line [j] != ';'; j++ );
+
+			keywd = line.Substring (0, i);
+			line = line.Substring (j).TrimStart ();
+		} else {
+			keywd = line;
+			line = "";
+		}
+		return keywd;
+	}
+
 	void Load () {
 		StreamReader reader = new StreamReader (s);
 		string line, key, val;
+		Stack<bool> conditional = new Stack<bool> (5);
 		int epos, line_num = 0;
+
+		conditional.Push(true);
 		while ((line = reader.ReadLine ()) != null) {
 			line_num++;
 			line = line.Trim ();
-			if (line.Length == 0 || line [0] == '#' ||
-			    line [0] == ';')
+
+			if (line.Length == 0 || line [0] == ';')
 				continue;
+
+			if (line [0] == '#') {
+				bool stat;
+				bool neg = false;
+				string keywd, symbol;
+
+				line = line.Substring (1);
+				keywd = NextWord (ref line).ToLower ();
+				symbol = "";
+
+				if (line.Length > 0) {
+					if (line[0] == '!') {
+						line = line.Substring (1);
+						neg = true;
+					}
+					symbol = NextWord (ref line);
+				}
+
+				switch (keywd) {
+				case "endif":
+				case "else":
+					stat = conditional.Pop ();
+					if (conditional.Count < 1)
+						throw new Exception (String.Format ("Found an #{0} without matching #ifdef", keywd));
+
+					if (keywd == "else")
+						conditional.Push (conditional.Peek () && !stat);
+					break;
+
+				case "ifdef":
+				case "if":
+					if (symbol.Length == 0)
+						throw new Exception (String.Format ("Missing symbol after {0}", keywd));
+					stat = defines.Contains (symbol);
+					if (neg)
+						stat = !stat;
+
+					conditional.Push (conditional.Peek () && stat);
+					break;
+
+                }
+				continue;
+			}
+			if (conditional.Peek () == false)
+				continue;
+
 			epos = line.IndexOf ('=');
 			if (epos < 0) 
 				throw new Exception ("Invalid format at line " + line_num);
@@ -399,6 +498,8 @@ class TxtResourceReader : IResourceReader {
 
 			data.Add (key, val);
 		}
+		if (conditional.Count > 1)
+			throw new Exception ("Found an #ifdef but not a matching #endif before reaching the end of the file.");
 	}
 
 	// \\n -> \n ...
