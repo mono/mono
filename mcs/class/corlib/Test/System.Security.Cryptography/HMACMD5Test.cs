@@ -211,7 +211,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		public void Create ()
+		public void Create_Incorrect ()
 		{
 			var x = HMACMD5.Create ();
 			Assert.AreEqual ("SHA1", x.HashName, "https://connect.microsoft.com/VisualStudio/feedback/details/838731/all-hmac-create-methods-return-an-instance-of-hmacmd5");
