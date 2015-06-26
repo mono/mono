@@ -10,39 +10,50 @@
 #include "mini.h"
 #include "seq-points.h"
 
-static void
-collect_pred_seq_points (MonoBasicBlock *init, MonoInst *ins, GSList **next)
+void
+mono_propagate_seq_points (MonoBasicBlock *init)
 {
-	int i;
-	GSList *l;
-	MonoBasicBlock *curr;
-
 	// Use Iterative DFS to find the incoming bbs which
 	// are the last sequence points
-
 	GQueue *stack = g_queue_new ();
 	g_queue_push_head (stack, init);
 
+	MonoBasicBlock *curr;
 	while ((curr = g_queue_pop_head (stack))) {
-		for (i = 0; i < curr->in_count; ++i) {
-			MonoBasicBlock *in_bb = curr->in_bb [i];
+		MonoInst *last_seq = curr->last_seq_point;
 
-			if (!in_bb->last_seq_point) {
-				g_queue_push_head (stack, in_bb);
+		for (int i = 0; i < curr->out_count; ++i) {
+			MonoBasicBlock *out_bb = curr->out_bb [i];
+
+			if (!out_bb->last_seq_point) {
+				out_bb->last_seq_point = last_seq;
+				gboolean found = TRUE;
+				GSList *dest = out_bb->sequence_predecessors;
+
+				for( GSList *cursor = dest; cursor; cursor = cursor->next) {
+					if (cursor->data == last_seq) {
+						found = TRUE;
+						break;
+					}
+				}
+
+				if (found)
+					break;
+
+				if (last_seq) {
+					dest = g_slist_append (dest, GUINT_TO_POINTER (last_seq)); 
+					MOSTLY_ASYNC_SAFE_PRINTF ("%s :: %d\n", __FILE__, __LINE__);
+				} else {
+					dest = g_slist_concat (dest, curr->sequence_predecessors); 
+					MOSTLY_ASYNC_SAFE_PRINTF ("%s :: %d\n", __FILE__, __LINE__);
+				}
+				// DFS, to keep the queue smaller.
+				g_queue_push_head (stack, out_bb);
 				continue;
 			}
-
-			int src_index = in_bb->last_seq_point->backend.size;
-			int dst_index = ins->backend.size;
-
-			/* bb->in_bb might contain duplicates */
-			for (l = next [src_index]; l; l = l->next)
-				if (GPOINTER_TO_UINT (l->data) == dst_index)
-					break;
-			if (!l)
-				next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
 		}
 	}
+
 	// No null BBs caused us to terminate early
 	assert (g_queue_is_empty (stack));
 	g_queue_free (stack);
@@ -60,6 +71,8 @@ mono_save_seq_point_info (MonoCompile *cfg)
 	SeqPoint* seq_points;
 	GByteArray* array;
 	gboolean has_debug_data = cfg->gen_sdb_seq_points;
+
+	mono_propagate_seq_points (cfg->bb_entry);
 
 	if (!cfg->seq_points)
 		return;
@@ -97,12 +110,28 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				if (ins->inst_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE)
 					continue;
 
+				GSList *dest = 0;
+
 				if (last != NULL) {
 					/* Link with the previous seq point in the same bb */
-					next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
+					size_t src_index = last->backend.size;
+					dest = next [src_index];
+					dest = g_slist_append (dest, GUINT_TO_POINTER (ins->backend.size)); 
 				} else {
 					/* Link with the last bb in the previous bblocks */
-					collect_pred_seq_points (bb, ins, next);
+					for (GSList *pred = bb->sequence_predecessors; pred; pred = pred->next) {
+						MonoInst *predSeq = (MonoInst *)pred->data;
+						size_t src_index = predSeq->backend.size;
+						int dst_index = ins->backend.size;
+
+						for (l = next [src_index]; l; l = l->next)
+							if (GPOINTER_TO_UINT (l->data) == dst_index)
+								break;
+							if (!l) {
+								dest = next [src_index];
+								dest = g_slist_append (dest, GUINT_TO_POINTER (dst_index)); 
+							}
+					}
 				}
 
 				last = ins;
@@ -134,7 +163,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			}
 		}
 
-		if (cfg->verbose_level > 2) {
+		if (1) {
 			printf ("\nSEQ POINT MAP: \n");
 
 			for (i = 0; i < cfg->seq_points->len; ++i) {
