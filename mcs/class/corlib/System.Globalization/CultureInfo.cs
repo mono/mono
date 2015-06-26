@@ -411,10 +411,7 @@ namespace System.Globalization
 		public override bool Equals (object value)
 		{
 			CultureInfo b = value as CultureInfo;
-			
-			if (b != null)
-				return b.cultureID == cultureID;
-			return false;
+			return b != null && b.cultureID == cultureID && b.m_name == m_name;
 		}
 
 		public static CultureInfo[] GetCultures(CultureTypes types)
