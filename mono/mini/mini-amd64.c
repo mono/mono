@@ -4159,6 +4159,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * This is the address which is saved in seq points, 
 			 */
 			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
+			/*MOSTLY_ASYNC_SAFE_PRINTF ("Added a sequence point at native offset %d to %s. This is part of bb %p and is ins %p\n",*/
+				/*code - cfg->native_code, cfg->method->name, bb, ins);*/
+
 
 			if (cfg->compile_aot) {
 				guint32 offset = code - cfg->native_code;
