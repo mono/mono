@@ -778,7 +778,19 @@ public class ArrayTest
 	{
 		Array.CreateInstance (typeof (Int32), (long[])null);
 	}
-
+	
+	[Test]
+	public void TestEmptyLength ()
+	{
+		Assert.AreEqual(Array.Empty<int>().Length, 0, "The array should be empty!");
+	}
+	
+	[Test]
+	public void TestEmptyRefEquality ()
+	{
+		Assert.IsTrue(object.ReferenceEquals(Array.Empty<int>(), Array.Empty<int>()), "The empty arrays should be the same instance!");
+	}
+	
 	[Test]
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};

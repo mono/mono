@@ -1054,6 +1054,11 @@ namespace System
 
 			Copy (sourceArray, destinationArray, (int) length);
 		}
+		
+		public static T[] Empty<T> ()
+		{
+			return EmptyArray<T>.Value;
+		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int IndexOf (Array array, object value)
