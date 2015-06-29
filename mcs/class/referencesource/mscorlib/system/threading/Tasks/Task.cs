@@ -1660,7 +1660,7 @@ namespace System.Threading.Tasks
 
         /// <summary>Gets a task that's already been completed successfully.</summary>
         /// <remarks>May not always return the same instance.</remarks>        
-        internal static Task CompletedTask
+        public static Task CompletedTask
         {
             [FriendAccessAllowed]
             get
