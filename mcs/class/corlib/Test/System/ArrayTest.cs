@@ -779,6 +779,7 @@ public class ArrayTest
 		Array.CreateInstance (typeof (Int32), (long[])null);
 	}
 	
+	#if NET_4_6
 	[Test]
 	public void TestEmptyLength ()
 	{
@@ -790,6 +791,7 @@ public class ArrayTest
 	{
 		Assert.IsTrue(object.ReferenceEquals(Array.Empty<int>(), Array.Empty<int>()), "The empty arrays should be the same instance!");
 	}
+	#endif
 	
 	[Test]
 	public void TestGetEnumerator() {
