@@ -45,17 +45,22 @@ namespace System.Threading {
 		[Obsolete("This method is obsolete, use BindHandle(SafeHandle) instead")]
 		public static bool BindHandle (IntPtr osHandle)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.BindHandle (osHandle);
 			else
+#endif
 				return true;
 		}
 
 		public static bool BindHandle (SafeHandle osHandle)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
 				return Microsoft.ThreadPool.BindHandle (osHandle);
-			} else {
+			} else
+#endif
+			{
 				if (osHandle == null)
 					throw new ArgumentNullException ("osHandle");
 			
@@ -65,9 +70,11 @@ namespace System.Threading {
 
 		public static void GetAvailableThreads (out int workerThreads, out int completionPortThreads)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 			else
+#endif
 				GetAvailableThreads_internal (out workerThreads, out completionPortThreads);
 		}
 
@@ -76,9 +83,11 @@ namespace System.Threading {
 
 		public static void GetMaxThreads (out int workerThreads, out int completionPortThreads)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.GetMaxThreads (out workerThreads, out completionPortThreads);
 			else
+#endif
 				GetMaxThreads_internal (out workerThreads, out completionPortThreads);
 		}
 
@@ -87,9 +96,11 @@ namespace System.Threading {
 
 		public static void GetMinThreads (out int workerThreads, out int completionPortThreads)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.GetMinThreads (out workerThreads, out completionPortThreads);
 			else
+#endif
 				GetMinThreads_internal (out workerThreads, out completionPortThreads);
 		}
 
@@ -100,9 +111,11 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static bool SetMinThreads (int workerThreads, int completionPortThreads)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.SetMinThreads (workerThreads, completionPortThreads);
 			else
+#endif
 				return SetMinThreads_internal (workerThreads, completionPortThreads);
 		}
 
@@ -112,9 +125,11 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static bool SetMaxThreads (int workerThreads, int completionPortThreads)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.SetMaxThreads (workerThreads, completionPortThreads);
 			else
+#endif
 				return SetMaxThreads_internal (workerThreads, completionPortThreads);
 		}
 
@@ -123,17 +138,22 @@ namespace System.Threading {
 
 		public static bool QueueUserWorkItem (WaitCallback callBack)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.QueueUserWorkItem (callBack, null);
 			else
+#endif
 				return QueueUserWorkItem (callBack, null);
 		}
 
 		public static bool QueueUserWorkItem (WaitCallback callBack, object state)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
 				return Microsoft.ThreadPool.QueueUserWorkItem (callBack, state);
-			} else {
+			} else
+#endif
+			{
 				if (callBack == null)
 					throw new ArgumentNullException ("callBack");
 
@@ -155,9 +175,11 @@ namespace System.Threading {
 		// TODO: It should be interface interface only to avoid extra allocation
 		internal static void QueueWorkItem (WaitCallback callBack, object state)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.QueueUserWorkItem (callBack, state);
 			else
+#endif
 				pool_queue (new AsyncResult (callBack, state, false));
 		}
 
@@ -167,9 +189,11 @@ namespace System.Threading {
 										int millisecondsTimeOutInterval,
 										bool executeOnlyOnce)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.RegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
 			else
+#endif
 				return RegisterWaitForSingleObject (waitObject, callBack, state, (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
@@ -179,9 +203,12 @@ namespace System.Threading {
 										long millisecondsTimeOutInterval,
 										bool executeOnlyOnce)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
 				return Microsoft.ThreadPool.RegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
-			} else {
+			} else
+#endif
+			{
 				if (waitObject == null)
 					throw new ArgumentNullException ("waitObject");
 
@@ -209,9 +236,11 @@ namespace System.Threading {
 										TimeSpan timeout,
 										bool executeOnlyOnce)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.RegisterWaitForSingleObject (waitObject, callBack, state, timeout, executeOnlyOnce);
 			else
+#endif
 				return RegisterWaitForSingleObject (waitObject, callBack, state, (long) timeout.TotalMilliseconds, executeOnlyOnce);
 
 		}
@@ -223,18 +252,22 @@ namespace System.Threading {
 										uint millisecondsTimeOutInterval,
 										bool executeOnlyOnce)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.RegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
 			else
+#endif
 				return RegisterWaitForSingleObject (waitObject, callBack, state, (long) millisecondsTimeOutInterval, executeOnlyOnce);
 		}
 
 		[CLSCompliant (false)]
 		unsafe public static bool UnsafeQueueNativeOverlapped (NativeOverlapped *overlapped)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.UnsafeQueueNativeOverlapped (overlapped);
 			else
+#endif
 				throw new NotImplementedException ();
 		}
 
@@ -243,9 +276,12 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool) {
 				return Microsoft.ThreadPool.UnsafeQueueUserWorkItem (callBack, state);
-			} else {
+			} else
+#endif
+			{
 				if (callBack == null)
 					throw new ArgumentNullException ("callBack");
 
@@ -275,9 +311,11 @@ namespace System.Threading {
 			WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.UnsafeRegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
 			else
+#endif
 				throw new NotImplementedException ();
 		}
 		
@@ -287,9 +325,11 @@ namespace System.Threading {
 			WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.UnsafeRegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
 			else
+#endif
 				throw new NotImplementedException ();
 		}
 
@@ -299,9 +339,11 @@ namespace System.Threading {
 			WaitOrTimerCallback callBack, object state, TimeSpan timeout,
 			bool executeOnlyOnce) 
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.UnsafeRegisterWaitForSingleObject (waitObject, callBack, state, timeout, executeOnlyOnce);
 			else
+#endif
 				throw new NotImplementedException ();
 		}
 
@@ -312,9 +354,11 @@ namespace System.Threading {
 			WaitOrTimerCallback callBack, object state, uint millisecondsTimeOutInterval,
 			bool executeOnlyOnce) 
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.UnsafeRegisterWaitForSingleObject (waitObject, callBack, state, millisecondsTimeOutInterval, executeOnlyOnce);
 			else
+#endif
 				throw new NotImplementedException ();
 		}
 
@@ -324,32 +368,40 @@ namespace System.Threading {
 		// Extracted from ../../../../external/referencesource/mscorlib/system/threading/threadpool.cs
 		internal static void UnsafeQueueCustomWorkItem(IThreadPoolWorkItem workItem, bool forceGlobal)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.UnsafeQueueCustomWorkItem (workItem, forceGlobal);
 			else
+#endif
 				QueueWorkItem ((obj) => ((IThreadPoolWorkItem)obj).ExecuteWorkItem (), workItem);
 		}
 
 		internal static IEnumerable<IThreadPoolWorkItem> GetQueuedWorkItems()
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.GetQueuedWorkItems ();
 			else
+#endif
 				return new IThreadPoolWorkItem [0];
 		}
 
 		internal static bool TryPopCustomWorkItem(IThreadPoolWorkItem workItem)
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				return Microsoft.ThreadPool.TryPopCustomWorkItem (workItem);
 			else
+#endif
 				return false;
 		}
 
 		internal static void NotifyWorkItemProgress()
 		{
+#if FEATURE_MS_THREADPOOL
 			if (Microsoft.ThreadPool.UseMicrosoftThreadPool)
 				Microsoft.ThreadPool.NotifyWorkItemProgress ();
+#endif
 		}
 #endregion
 	}

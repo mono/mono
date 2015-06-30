@@ -19,18 +19,22 @@
 //
 // Ported from C++ to C and adjusted to Mono runtime
 
+#include <config.h>
+#include <glib.h>
+
+#include <mono/metadata/threadpool-ms.h>
+
+#ifndef DISABLE_MS_THREADPOOL
+
 #include <stdlib.h>
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
-#include <config.h>
-#include <glib.h>
 
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
-#include <mono/metadata/threadpool-ms.h>
 #include <mono/metadata/threadpool-ms-io.h>
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/utils/atomic.h>
@@ -1513,3 +1517,135 @@ ves_icall_System_Threading_Microsoft_ThreadPool_IsThreadPoolHosted (void)
 {
 	return FALSE;
 }
+
+#else
+
+void
+mono_threadpool_ms_cleanup (void)
+{
+	g_assert_not_reached ();
+}
+
+MonoAsyncResult *
+mono_threadpool_ms_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params)
+{
+	g_assert_not_reached ();
+}
+
+MonoObject *
+mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObject **exc)
+{
+	g_assert_not_reached ();
+}
+
+gboolean
+mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+mono_threadpool_ms_suspend (void)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+mono_threadpool_ms_resume (void)
+{
+	g_assert_not_reached ();
+}
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_GetAvailableThreadsNative (gint32 *worker_threads, gint32 *completion_port_threads)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_GetMinThreadsNative (gint32 *worker_threads, gint32 *completion_port_threads)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_GetMaxThreadsNative (gint32 *worker_threads, gint32 *completion_port_threads)
+{
+	g_assert_not_reached ();
+}
+
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_SetMinThreadsNative (gint32 worker_threads, gint32 completion_port_threads)
+{
+	g_assert_not_reached ();
+}
+
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_SetMaxThreadsNative (gint32 worker_threads, gint32 completion_port_threads)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking)
+{
+	g_assert_not_reached ();
+}
+
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemComplete (void)
+{
+	g_assert_not_reached ();
+}
+
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_NotifyWorkItemProgressNative (void)
+{
+	g_assert_not_reached ();
+}
+
+void
+ves_icall_System_Threading_Microsoft_ThreadPool_ReportThreadStatus (MonoBoolean is_working)
+{
+	g_assert_not_reached ();
+}
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_RequestWorkerThread (void)
+{
+	g_assert_not_reached ();
+}
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_PostQueuedCompletionStatus (MonoNativeOverlapped *native_overlapped)
+{
+	g_assert_not_reached ();
+}
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_BindIOCompletionCallbackNative (gpointer file_handle)
+{
+	g_assert_not_reached ();
+}
+
+MonoBoolean
+ves_icall_System_Threading_Microsoft_ThreadPool_IsThreadPoolHosted (void)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_threadpool_ms_enqueue_work_item (MonoDomain *domain, MonoObject *work_item)
+{
+	g_assert_not_reached ();
+}
+
+#endif

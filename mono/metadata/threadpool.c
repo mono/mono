@@ -70,12 +70,16 @@ use_ms_threadpool (void)
 	const gchar *mono_threadpool_env;
 	if (use_ms_tp != -1)
 		return use_ms_tp;
-	else if (!(mono_threadpool_env = g_getenv ("MONO_THREADPOOL")))
+	if (!(mono_threadpool_env = g_getenv ("MONO_THREADPOOL")))
 		return use_ms_tp = FALSE;
-	else if (strcmp (mono_threadpool_env, "microsoft") == 0)
+	if (strcmp (mono_threadpool_env, "microsoft") == 0) {
+#ifdef DISABLE_MS_THREADPOOL
+		g_warning ("Microsoft ThreadPool has been disabled at compilation");
+#else
 		return use_ms_tp = TRUE;
-	else
-		return use_ms_tp = FALSE;
+#endif
+	}
+	return use_ms_tp = FALSE;
 }
 
 #define THREAD_WANTS_A_BREAK(t) ((t->state & (ThreadState_StopRequested | \

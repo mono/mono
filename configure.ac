@@ -3566,6 +3566,11 @@ else
 fi
 AC_SUBST(LIBMONO_LA)
 
+AC_ARG_ENABLE(ms-threadpool, [  --disable-ms-threadpool Disable the Microsoft ThreadPool], ms_threadpool=$enableval, ms_threadpool=yes)
+if test x$ms_threadpool = xno; then
+	AC_DEFINE(DISABLE_MS_THREADPOOL, 1, [Microsoft ThreadPool disabled])
+fi
+
 dnl
 dnl Consistency settings
 dnl
@@ -3984,6 +3989,10 @@ fi
     
     if test "x$test_bcl_opt" = "xyes"; then    
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
+    fi
+
+    if test "x$ms_threadpool" = "xyes"; then
+      echo "FEATURE_MS_THREADPOOL = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
   fi
