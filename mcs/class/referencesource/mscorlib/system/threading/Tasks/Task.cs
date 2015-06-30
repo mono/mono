@@ -1660,7 +1660,12 @@ namespace System.Threading.Tasks
 
         /// <summary>Gets a task that's already been completed successfully.</summary>
         /// <remarks>May not always return the same instance.</remarks>        
-        public static Task CompletedTask
+        #if NET_4_6
+        public
+        #else
+        internal
+        #endif
+        static Task CompletedTask
         {
             [FriendAccessAllowed]
             get
@@ -5532,7 +5537,12 @@ namespace System.Threading.Tasks
         /// <param name="exception">The exception with which to complete the task.</param>
         /// <returns>The faulted task.</returns>
         [FriendAccessAllowed]
-        public static Task FromException(Exception exception)
+        #if NET_4_6
+        public
+        #else
+        internal
+        #endif
+        static Task FromException(Exception exception)
         {
             return FromException<VoidTaskResult>(exception);
         }
@@ -5542,7 +5552,12 @@ namespace System.Threading.Tasks
         /// <param name="exception">The exception with which to complete the task.</param>
         /// <returns>The faulted task.</returns>
         [FriendAccessAllowed]
-        public static Task<TResult> FromException<TResult>(Exception exception)
+        #if NET_4_6
+        public
+        #else
+        internal
+        #endif
+        static Task<TResult> FromException<TResult>(Exception exception)
         {
             if (exception == null) throw new ArgumentNullException("exception");
             Contract.EndContractBlock();
@@ -5564,10 +5579,12 @@ namespace System.Threading.Tasks
             return new Task(true, TaskCreationOptions.None, cancellationToken);
         }
         
+        #if NET_4_6
         public static Task FromCanceled(CancellationToken cancellationToken)
         {
         	return FromCancellation(cancellationToken);
         }
+        #endif
 
         /// <summary>Creates a <see cref="Task{TResult}"/> that's completed due to cancellation with the specified token.</summary>
         /// <typeparam name="TResult">The type of the result returned by the task.</typeparam>
@@ -5581,10 +5598,12 @@ namespace System.Threading.Tasks
             return new Task<TResult>(true, default(TResult), TaskCreationOptions.None, cancellationToken);
         }
         
+        #if NET_4_6
         public static Task<TResult> FromCanceled<TResult>(CancellationToken cancellationToken)
         {
         	return FromCancellation<TResult>(cancellationToken);
         }
+        #endif
 
         /// <summary>Creates a <see cref="Task{TResult}"/> that's completed due to cancellation with the specified exception.</summary>
         /// <typeparam name="TResult">The type of the result returned by the task.</typeparam>
