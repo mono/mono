@@ -210,6 +210,8 @@ common_sources = \
 	threadpool-ms.h	\
 	threadpool-ms-io.c	\
 	threadpool-ms-io.h	\
+	timer-ms.c	\
+	timer-ms.h	\
 	tpool-poll.c	\
 	verify.c		\
 	verify-internals.h	\

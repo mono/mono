@@ -875,8 +875,6 @@ System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
 System.Threading/Thread.cs
 System.Threading/ThreadPool.cs
-System.Threading/Timer.cs
-System.Threading/TimerCallback.cs
 System.Threading/Volatile.cs
 System.Threading/WaitHandle.cs
 
@@ -1547,6 +1545,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstate.cs
 ../../../external/referencesource/mscorlib/system/threading/threadstateexception.cs
 ../../../external/referencesource/mscorlib/system/threading/timeout.cs
+../../../external/referencesource/mscorlib/system/threading/timer.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpool.cs
 
