@@ -232,7 +232,6 @@ System.Reflection/CustomAttributeNamedArgument.cs
 System.Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/EventInfo.cs
 System.Reflection/ExceptionHandlingClause.cs
-System.Reflection/ExceptionHandlingClauseOptions.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
@@ -1223,6 +1222,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/reflection/membertypes.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodbase.cs
+../../../external/referencesource/mscorlib/system/reflection/methodbody.cs
 ../../../external/referencesource/mscorlib/system/reflection/methodimplattributes.cs
 ../../../external/referencesource/mscorlib/system/reflection/missing.cs
 ../../../external/referencesource/mscorlib/system/reflection/obfuscateassemblyattribute.cs
@@ -1238,6 +1238,8 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/reflection/typedelegator.cs
 ../../../external/referencesource/mscorlib/system/reflection/typefilter.cs
 ../../../external/referencesource/mscorlib/system/reflection/typeinfo.cs
+
+../../../external/referencesource/mscorlib/system/reflection/emit/methodbuilder.cs
 
 ../../../external/referencesource/mscorlib/system/resources/__fastresourcecomparer.cs
 ../../../external/referencesource/mscorlib/system/resources/__hresults.cs
