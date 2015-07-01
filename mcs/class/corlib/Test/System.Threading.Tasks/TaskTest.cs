@@ -1881,6 +1881,33 @@ namespace MonoTests.System.Threading.Tasks
 			t.Dispose ();
 			t.Dispose ();
 		}
+		
+		#if NET_4_6
+		[Test]
+		public void FromException ()
+		{
+			var e = new Exception("Test Exception");
+			var t = Task.FromException (e);
+			Assert.IsTrue (t.Status == TaskStatus.Faulted, "The Task should be in a faulted state!");
+			Assert.IsTrue (object.ReferenceEquals(t.Exception.InnerException, e), "The exception inside the task should be the same one that was passed in!");
+		}
+		
+		[Test]
+		public void FromCanceled ()
+		{
+			var cts = new CancellationTokenSource();
+			cts.Cancel();
+			var t = Task.FromCanceled (cts.Token);
+			Assert.IsTrue (t.Status == TaskStatus.Canceled, "The Task should be in a canceled state!");
+		}
+		
+		[Test]
+		public void CompletedTask ()
+		{
+			var t = Task.CompletedTask;
+			Assert.IsTrue (t.Status == TaskStatus.RanToCompletion, "The Task should be in a completed state!");
+		}
+		#endif
 
 		[Test]
 		public void LongRunning ()
