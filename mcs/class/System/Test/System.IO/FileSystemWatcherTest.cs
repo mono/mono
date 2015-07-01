@@ -11,6 +11,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace MonoTests.System.IO
 {
@@ -82,6 +83,60 @@ namespace MonoTests.System.IO
 		{
 			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "*");
 			fw.Path = "*";
+		}
+
+		[Test]
+		// Doesn't throw any exceptions
+		public void DeleteSelfTest ()
+		{
+			var path = Path.GetTempPath () + "/Subdir";
+			Directory.CreateDirectory (path);
+			using (var fw = new FileSystemWatcher (path, "*")) {
+				fw.IncludeSubdirectories = true;
+				fw.EnableRaisingEvents = true;
+
+				var file = path + "/file.txt";
+				File.Create (file);
+				Thread.Sleep (500);
+
+				var subdir = new DirectoryInfo (path);
+				subdir.Delete (true);
+
+				Thread.Sleep (500);
+			}
+		}
+
+		[Test]
+		// Doesn't throw any exceptions
+		public void MoveTest ()
+		{
+			var tempPath = Path.GetTempPath ();
+			var root = tempPath + "/Ext";
+			var nested = root + "/n1";
+			var root2 = tempPath + "/n1";
+			try {
+				Directory.CreateDirectory (root);
+				Directory.CreateDirectory (nested);
+				File.Create (nested + "/file.txt");
+
+				using (var fw = new FileSystemWatcher (root, "*")) {
+					fw.IncludeSubdirectories = true;
+					fw.EnableRaisingEvents = true;
+
+					// MOVE TEMP/ext/n to TEMP/n
+					Directory.Move (nested, root2);
+
+					Thread.Sleep (500);
+				}
+			} finally {
+				var rootdir = new DirectoryInfo (root);
+				if (rootdir.Exists)
+					rootdir.Delete (true);
+
+				var root2dir = new DirectoryInfo (root2);
+				if (root2dir.Exists)
+					root2dir.Delete (true);
+			}
 		}
 	}
 }

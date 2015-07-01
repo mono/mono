@@ -584,7 +584,7 @@ namespace System.IO {
 				return;
 
 			// e.Name
-			string name = path.Substring (fullPathNoLastSlash.Length + 1); 
+			string name = fullPathNoLastSlash.Length + 1 < path.Length ? path.Substring (fullPathNoLastSlash.Length + 1) : path;
 
 			// only post events that match filter pattern. check both old and new paths for renames
 			if (!fsw.Pattern.IsMatch (path) && (newPath == null || !fsw.Pattern.IsMatch (newPath)))
@@ -611,7 +611,7 @@ namespace System.IO {
 
 			if (fcntl (fd, F_GETPATH, sb) != -1) {
 				if (fixupPath != null) 
-					sb.Replace (fixupPath, fullPathNoLastSlash, 0, fixupPath.Length); // see Setup()
+					sb.Replace (fixupPath, fullPathNoLastSlash, 0, Math.Min(fixupPath.Length, sb.Length)); // see Setup()
 
 				return sb.ToString ();
 			} else {
