@@ -19,7 +19,7 @@ namespace System.Reflection.Emit
     using System.Security.Permissions;
     using System.Runtime.InteropServices;
     using System.Diagnostics.Contracts;
-
+#if !MONO
     [HostProtection(MayLeakOnAbort = true)]
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_MethodBuilder))]
@@ -1394,6 +1394,7 @@ namespace System.Reflection.Emit
 
         #endregion
     }
+#endif
 
     /// <summary>
     /// Describes exception handler in a method body.

@@ -22,7 +22,7 @@ namespace System.Reflection
         Finally = 0x2,
         Fault = 0x4,
     }
-    
+#if !MONO
     [System.Runtime.InteropServices.ComVisible(true)]
     public class ExceptionHandlingClause
     {
@@ -167,5 +167,6 @@ namespace System.Reflection
         public virtual int LocalIndex { get { return m_localIndex; } }
         #endregion
     }
+#endif
 }
 
