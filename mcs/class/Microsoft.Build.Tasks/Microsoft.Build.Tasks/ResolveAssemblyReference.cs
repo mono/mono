@@ -208,8 +208,31 @@ namespace Microsoft.Build.Tasks {
 			if (!TryGetSpecificVersionValue (item, out specific_version))
 				return null;
 
+			var spath_index  = 0;
 			foreach (string spath in search_paths) {
 				assembly_resolver.LogSearchMessage ("For searchpath {0}", spath);
+				
+				// The first value of search_paths can be the parent assembly directory.
+				// In that case the value would be treated as a directory.
+				// This code checks if we should treat the value as a TargetFramework assembly.
+				// Doing so avoids CopyLocal beeing set to true.
+				if (spath_index++ == 0 && targetFrameworkDirectories != null) {
+					foreach (string fpath in targetFrameworkDirectories) {
+						if (String.Compare (
+								Path.GetFullPath (spath).TrimEnd (Path.DirectorySeparatorChar),
+								Path.GetFullPath (fpath).TrimEnd (Path.DirectorySeparatorChar),
+								StringComparison.InvariantCulture) != 0)
+							continue;
+
+						resolved = assembly_resolver.FindInTargetFramework (item,
+							fpath, specific_version);
+
+						break;
+					}
+
+					if  (resolved != null)
+						break;
+				}
 
 				if (String.Compare (spath, "{HintPathFromItem}") == 0) {
 					resolved = assembly_resolver.ResolveHintPathReference (item, specific_version);
