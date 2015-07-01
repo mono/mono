@@ -317,8 +317,8 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 			MonoObject* object = (MonoObject*)mono_array_addr_with_size (array, elementClassSize, i);
 			mono_traverse_object_internal (object, 1, element_class, state);
 			
-			// Add 64 objects at a time and then traverse
-			if( ((i+1) & 63) == 0)
+			// Add 128 objects at a time and then traverse, 64 seems not be enough
+			if( ((i+1) & 127) == 0)
 				mono_traverse_objects(state);
 		}
 	}
@@ -329,8 +329,8 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 			MonoObject* val =  mono_array_get(array, MonoObject*, i);
 			mono_add_process_object(val, state);
 			
-			// Add 64 objects at a time and then traverse
-			if( ((i+1) & 63) == 0)
+			// Add 128 objects at a time and then traverse, 64 seems not be enough
+			if( ((i+1) & 127) == 0)
 				mono_traverse_objects(state);
 		}
 	}
