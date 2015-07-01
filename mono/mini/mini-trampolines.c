@@ -1066,7 +1066,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 				}
 			}
 		}
-	} else {
+	} else if (delegate->method_ptr) {
 		ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (delegate->method_ptr));
 		if (ji)
 			method = jinfo_get_method (ji);
