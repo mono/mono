@@ -58,6 +58,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Segfault on ARM64
 		public void MakeTypedReference ()
 		{
 			var o = new CClass () { a = new AStruct () { b = "5" }};
