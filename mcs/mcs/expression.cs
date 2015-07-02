@@ -6428,6 +6428,7 @@ namespace Mono.CSharp {
 			
 			Array ret = Array.CreateInstance (array_element_type, array_data.Count);
 			object element_value;
+			for (int i = 0; i < ret.Length; ++i)
 			{
 				Expression e = (Expression)array_data [i];
 
