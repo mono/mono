@@ -6428,7 +6428,6 @@ namespace Mono.CSharp {
 			
 			Array ret = Array.CreateInstance (array_element_type, array_data.Count);
 			object element_value;
-			for (int i = 0; i < ret.Length; ++i)
 			{
 				Expression e = (Expression)array_data [i];
 
@@ -9482,7 +9481,7 @@ namespace Mono.CSharp {
 
 			ArrayList element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
-				Expression initializer = initializers [i];
+				Expression initializer =  (Expression)initializers [i];
 				ElementInitializer element_initializer = initializer as ElementInitializer;
 
 				if (i == 0) {
