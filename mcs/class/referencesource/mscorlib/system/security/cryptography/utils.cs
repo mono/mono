@@ -161,15 +161,19 @@ namespace System.Security.Cryptography
             get {
                 if (!_haveDefaultRsaProviderType)
                 {
-                    // The AES CSP is only supported on WinXP and higher
 #if MONO
-                    bool osSupportsAesCsp = true;
+                    // The default provider value must remain 1 for Mono, otherwise we won't be able
+                    // to locate keypairs that were serialized by Mono versions 4.0 and lower.
+                    // (The ProviderType property in the CspParameters class affects serialization)
+                    _defaultRsaProviderType = 1;
 #else
+                    // The AES CSP is only supported on WinXP and higher
                     bool osSupportsAesCsp = Environment.OSVersion.Platform == PlatformID.Win32NT &&
                                             (Environment.OSVersion.Version.Major > 5 ||
                                             (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1));
-#endif
+
                     _defaultRsaProviderType = osSupportsAesCsp ? Constants.PROV_RSA_AES : Constants.PROV_RSA_FULL;
+#endif
                     _haveDefaultRsaProviderType = true;
                 }
 
