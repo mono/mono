@@ -39,7 +39,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void Ctor () 
 		{
 			var cp = new CspParameters ();
-			Assert.AreEqual (24, cp.ProviderType);
+			Assert.AreEqual (1, cp.ProviderType);
 		}
 	}
 }
