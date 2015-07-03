@@ -844,6 +844,12 @@ mono_fconv_u8 (double v)
 	return (guint64)v;
 }
 
+guint64
+mono_rconv_u8 (float v)
+{
+	return (guint64)v;
+}
+
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
 gint64
 mono_fconv_i8 (double v)
