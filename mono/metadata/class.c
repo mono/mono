@@ -4301,9 +4301,8 @@ mono_class_init (MonoClass *class)
 	}
 
 	if (class->init_pending) {
-		mono_loader_unlock ();
-		/* this indicates a cyclic dependency */
-		g_error ("pending init %s.%s\n", class->name_space, class->name);
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Recursive type definition detected"));
+		goto leave;
 	}
 
 	class->init_pending = 1;
