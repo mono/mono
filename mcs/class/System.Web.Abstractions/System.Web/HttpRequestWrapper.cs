@@ -38,6 +38,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Web.Caching;
 
 using System.Security.Authentication.ExtendedProtection;
@@ -126,6 +127,21 @@ namespace System.Web
 			get { return w.Headers; }
 		}
 
+		public override Stream GetBufferedInputStream ()
+		{
+			return w.GetBufferedInputStream ();
+		}
+
+		public override Stream GetBufferlessInputStream ()
+		{
+			return w.GetBufferlessInputStream ();
+		}
+
+		public override Stream GetBufferlessInputStream (System.Boolean disableMaxRequestLength)
+		{
+			return w.GetBufferlessInputStream (disableMaxRequestLength);
+		}
+
 		public override string HttpMethod {
 			get { return w.HttpMethod; }
 		}
@@ -196,6 +212,10 @@ namespace System.Web
 			get { return w.ServerVariables; }
 		}
 
+		public virtual CancellationToken TimedOutToken {
+			get { return w.TimedOutToken; }
+		}
+
 		public override int TotalBytes {
 			get { return w.TotalBytes; }
 		}
@@ -247,14 +267,19 @@ namespace System.Web
 			return w.MapImageCoordinates (imageFieldName);
 		}
 
-		public override string MapPath (string overridePath)
+		public override string MapPath (string virtualPath)
 		{
-			return w.MapPath (overridePath);
+			return w.MapPath (virtualPath);
 		}
 
-		public override string MapPath (string overridePath, string baseVirtualDir, bool allowCrossAppMapping)
+		public override string MapPath (string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
 		{
-			return w.MapPath (overridePath, baseVirtualDir, allowCrossAppMapping);
+			return w.MapPath (virtualPath, baseVirtualDir, allowCrossAppMapping);
+		}
+
+		public override double [] MapRawImageCoordinates (System.String imageFieldName)
+		{
+			return w.MapRawImageCoordinates (imageFieldName);
 		}
 
 		public override void SaveAs (string filename, bool includeHeaders)
