@@ -176,6 +176,10 @@ namespace Mono.Unix {
 			else if (typeof(UnicodeEncoding).IsAssignableFrom (encodingType)) {
 				len = GetInt16BufferLength (p);
 			}
+			// Encodings that will always end with a 0x00000000 32-bit word
+			else if (typeof(UTF32Encoding).IsAssignableFrom (encodingType)) {
+				len = GetInt32BufferLength (p);
+			}
 			// Some non-public encoding, such as Latin1 or a DBCS charset.
 			// Look for a sequence of encoding.GetMaxByteCount() bytes that are all
 			// 0, which should be the terminating null.
