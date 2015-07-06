@@ -497,3 +497,4 @@ to do at all), first edit `.gitmodules` to point to the new location, then:
 The desired output diff is a change in `.gitmodules` to reflect the
 change in the remote URL, and a change in /<submodule> where you see
 the desired change in the commit hash.
+
