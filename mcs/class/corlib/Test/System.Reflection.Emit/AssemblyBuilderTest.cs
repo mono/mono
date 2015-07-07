@@ -1831,9 +1831,13 @@ public class AssemblyBuilderTest
 				fullName);
 			newDomain.DoCallBack (new CrossAppDomainDelegate (helper.Test));
 		} finally {
+#if !MONODROID
+			// RUNTIME: crash
+			// AppDomain unloading crashes the runtime on Android
 			if (newDomain != null) {
 				AppDomain.Unload (newDomain);
 			}
+#endif
 		}
 	}
 
