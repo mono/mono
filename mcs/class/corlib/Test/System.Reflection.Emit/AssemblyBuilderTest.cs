@@ -410,6 +410,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // DefineResource doesn't allow path in its fileName parameter and the test attempts to write to / in effect
 	public void TestDefineResource ()
 	{
 		ab.DefineResource ("foo", "FOO", "foo.txt", ResourceAttributes.Public);
