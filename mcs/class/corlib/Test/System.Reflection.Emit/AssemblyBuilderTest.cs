@@ -587,6 +587,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // Missing Mono.Compilerservices.SymbolWriter assembly
 	public void TestDefineDynamicModule ()
 	{
 		ab.DefineDynamicModule ("foo", "foo.dll");
