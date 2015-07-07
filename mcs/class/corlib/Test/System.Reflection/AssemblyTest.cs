@@ -140,6 +140,7 @@ namespace MonoTests.System.Reflection
 
 #if !MONOTOUCH // Reflection.Emit is not supported.
 		[Test]
+		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
