@@ -477,6 +477,8 @@ namespace MonoTests.System.Reflection.Emit
 			public string Name;
 		}
 
+#if !MONODROID
+		// RUNTIME: crash
 		[Test]
 		public void TypedRef ()
 		{
@@ -508,6 +510,7 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			Assert.AreEqual (typeof (TypedRefTarget), TypedReference.GetTargetType (tr));
 		}
+#endif
 	}
 }
 
