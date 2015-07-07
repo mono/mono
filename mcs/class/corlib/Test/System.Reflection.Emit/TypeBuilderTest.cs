@@ -11031,6 +11031,10 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")]
+		// It's not possible to save the assembly in the current directory on Android and AssemblyBuilder.DefineDynamicModule will not
+		// allow a full path to the assembly to be passed to it. Trying to change the current directory before saving will not work either as
+		// FileStream will then prepend / to the file name (perhaps it's another bug) and write access to the filesystem root is, obviously, denied
 		public void Ldfld_Encoding_10122 () {
 			Build2<Example<int>> ();
 		}
