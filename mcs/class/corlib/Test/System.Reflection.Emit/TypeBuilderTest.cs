@@ -8434,6 +8434,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Not available in the 2.1 profile
 		public void TestAddDeclarativeSecurityAlreadyCreated ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -8452,6 +8453,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Not available in the 2.1 profile
 		public void TestAddDeclarativeSecurityNullPermissionSet ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -8468,6 +8470,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Not available in the 2.1 profile
 		public void TestAddDeclarativeSecurityInvalidAction ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -8488,6 +8491,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Not available in the 2.1 profile
 		public void TestAddDeclarativeSecurityDuplicateAction ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
