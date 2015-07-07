@@ -190,7 +190,10 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MOBILE
+#if MONODROID
+			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
+			Assert.IsNull (corlib_test.Evidence, "Evidence");
+#elif MOBILE
 			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #else
