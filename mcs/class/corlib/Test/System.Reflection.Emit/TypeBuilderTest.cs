@@ -10883,6 +10883,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		//Test for #572660
         [Test]
+        [Category ("MobileNotWorking")] // Mono.CompilerServices.SymbolWriter not available in XA
         public void CircularArrayType()
         {
 			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("Test"), AssemblyBuilderAccess.RunAndSave);
