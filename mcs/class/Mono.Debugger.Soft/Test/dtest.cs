@@ -2303,6 +2303,13 @@ public class DebuggerTests
 		v = s.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
 
+		// .ctor
+		s = frame.GetArgument (1) as StructMirror;
+		t = s.Type;
+		m = t.GetMethods ().First (method => method.Name == ".ctor" && method.GetParameters ().Length == 1);
+		v = t.InvokeMethod (e.Thread, m, new Value [] { vm.CreateValue (1) });
+		AssertValue (1, (v as StructMirror)["i"]);
+
 #if NET_4_5
 		// Invoke a method which changes state
 		s = frame.GetArgument (1) as StructMirror;

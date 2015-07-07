@@ -87,6 +87,22 @@ public struct AStruct : ITest2 {
 	public IntPtr j;
 	public int l;
 
+	public AStruct () {
+		i = 0;
+		s = null;
+		k = 0;
+		j = IntPtr.Zero;
+		l = 0;
+	}
+
+	public AStruct (int arg) {
+		i = arg;
+		s = null;
+		k = 0;
+		j = IntPtr.Zero;
+		l = 0;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public int foo (int val) {
 		return val;
