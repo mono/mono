@@ -123,6 +123,7 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
+#if !MONODROID
 			string fname = AppDomain.CurrentDomain.FriendlyName;
 			if (fname.EndsWith (".dll")) { // nunit-console
 				Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
@@ -131,6 +132,10 @@ namespace MonoTests.System.Reflection
 				Assert.IsNotNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
 				Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
 			}
+#else
+			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
+			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
+#endif
 		}
 
 #if !MONOTOUCH // Reflection.Emit is not supported.
