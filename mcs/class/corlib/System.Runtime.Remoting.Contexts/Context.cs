@@ -86,6 +86,9 @@ namespace System.Runtime.Remoting.Contexts {
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern static void RegisterContext (Context ctx);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void ReleaseContext (Context ctx);
 		
 		public Context ()
 		{
@@ -97,6 +100,7 @@ namespace System.Runtime.Remoting.Contexts {
 
 		~Context ()
 		{
+			ReleaseContext (this);
 		}
 
 		public static Context DefaultContext {
