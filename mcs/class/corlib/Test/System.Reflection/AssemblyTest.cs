@@ -551,6 +551,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void bug78465 ()
 		{
 			string assemblyFileName = Path.Combine (
@@ -588,6 +589,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void bug78468 ()
 		{
 			string assemblyFileNameA = Path.Combine (Path.GetTempPath (),
@@ -842,6 +844,7 @@ namespace MonoTests.System.Reflection
 
 
 		[Test] // bug #79715
+		[Category("MobileNotWorking")]
 		public void Load_PartialVersion ()
 		{
 			string tempDir = Path.Combine (Path.GetTempPath (),
