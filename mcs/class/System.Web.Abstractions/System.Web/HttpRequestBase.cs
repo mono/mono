@@ -38,6 +38,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Web.Caching;
 
 using System.Security.Authentication.ExtendedProtection;
@@ -76,6 +77,8 @@ namespace System.Web
 		public virtual HttpCookieCollection Cookies { get { NotImplemented (); return null; } }
 
 		public virtual string CurrentExecutionFilePath { get { NotImplemented (); return null; } }
+
+		public virtual string CurrentExecutionFilePathExtension { get { NotImplemented (); return null; } }
 
 		public virtual string FilePath { get { NotImplemented (); return null; } }
 
@@ -126,6 +129,8 @@ namespace System.Web
 		}
 		public virtual NameValueCollection ServerVariables { get { NotImplemented (); return null; } }
 
+		public virtual CancellationToken TimedOutToken { get { NotImplemented (); return default(CancellationToken); } }
+
 		public virtual int TotalBytes { get { NotImplemented (); return 0; } }
 
 		public virtual ReadEntityBodyMode ReadEntityBodyMode { get { NotImplemented(); return ReadEntityBodyMode.Classic; } }
@@ -150,6 +155,40 @@ namespace System.Web
 		}
 
 		public virtual byte [] BinaryRead (int count)
+		{
+			NotImplemented ();
+			return null;
+		}
+
+		public virtual Stream GetBufferedInputStream ()
+		{
+			NotImplemented ();
+			return null;
+		}
+
+		public virtual Stream GetBufferlessInputStream ()
+		{
+			NotImplemented ();
+			return null;
+		}
+
+		public virtual Stream GetBufferlessInputStream (bool disableMaxRequestLength)
+		{
+			NotImplemented ();
+			return null;
+		}
+
+		public virtual void InsertEntityBody()
+		{
+			NotImplemented ();
+		}
+
+		public virtual void InsertEntityBody(byte[] buffer, int offset, int count)
+		{
+			NotImplemented ();
+		}
+
+		public virtual double [] MapRawImageCoordinates (string imageFieldName)
 		{
 			NotImplemented ();
 			return null;
