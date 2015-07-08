@@ -2286,6 +2286,12 @@ public class DebuggerTests
 		v = s.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
 
+		// Pass boxed struct as this
+		var boxed_this = t.NewInstance () as ObjectMirror;
+		m = t.GetMethod ("invoke_return_int");
+		v = boxed_this.InvokeMethod (e.Thread, m, null);
+		AssertValue (0, v);
+
 		// Pass struct as this, receive intptr
 		m = t.GetMethod ("invoke_return_intptr");
 		v = s.InvokeMethod (e.Thread, m, null);
