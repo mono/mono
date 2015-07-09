@@ -496,7 +496,7 @@ namespace System.Net.Http.Headers
 			return (HttpHeaderValueCollection<T>) value.Parsed;
 		}
 
-		void SetValue<T> (string name, T value, Func<object, string> toStringConverter = null)
+		internal void SetValue<T> (string name, T value, Func<object, string> toStringConverter = null)
 		{
 			headers[name] = new HeaderBucket (value, toStringConverter);
 		}
