@@ -2347,40 +2347,27 @@ class MDocUpdater : MDocCommand
 
 	public static string MakeAttributesValueString (object v, TypeReference valueType)
 	{
-		if (v == null)
-			return "null";
-			if (valueType.FullName == "System.Type") {
-				var vTypeRef = v as TypeReference;
-				if (vTypeRef != null)
-					return "typeof(" + NativeTypeManager.GetTranslatedName (vTypeRef) + ")"; // TODO: drop NS handling
-				else
-					return "typeof(" + v.ToString () + ")";
+		var formatters = new [] { 
+			new AttributeValueFormatter (), 
+			new ApplePlatformEnumFormatter (), 
+			new StandardFlagsEnumFormatter (), 
+			new DefaultAttributeValueFormatter (),
+		};
+
+		ResolvedTypeInfo type = new ResolvedTypeInfo (valueType);
+		foreach (var formatter in formatters) {
+			string formattedValue;
+			if (formatter.TryFormatValue (v, type, out formattedValue)) {
+				return formattedValue;
 			}
-		if (valueType.FullName == "System.String")
-			return "\"" + v.ToString () + "\"";
-		if (valueType.FullName == "System.Char")
-			return "'" + v.ToString () + "'";
-		if (v is Boolean)
-			return (bool)v ? "true" : "false";
-		TypeDefinition valueDef = valueType.Resolve ();
-		if (valueDef == null || !valueDef.IsEnum)
-			return v.ToString ();
-		string typename = GetDocTypeFullName (valueType);
-		var values = GetEnumerationValues (valueDef);
-		long c = ToInt64 (v);
-		if (values.ContainsKey (c))
-			return typename + "." + values [c];
-		if (valueDef.CustomAttributes.Any (ca => ca.AttributeType.FullName == "System.FlagsAttribute")) {
-			return string.Join (" | ",
-					(from i in values.Keys
-					 where (c & i) != 0
-					 select typename + "." + values [i])
-					.DefaultIfEmpty (v.ToString ()).ToArray ());
 		}
-		return "(" + GetDocTypeFullName (valueType) + ") " + v.ToString ();
+
+		// this should never occur because the DefaultAttributeValueFormatter will always
+		// successfully format the value ... but this is needed to satisfy the compiler :)
+		throw new InvalidDataException (string.Format ("Unable to format attribute value ({0})", v.ToString ()));
 	}
 
-	private static Dictionary<long, string> GetEnumerationValues (TypeDefinition type)
+	internal static IDictionary<long, string> GetEnumerationValues (TypeDefinition type)
 	{
 		var values = new Dictionary<long, string> ();
 		foreach (var f in 
@@ -2392,7 +2379,7 @@ class MDocUpdater : MDocCommand
 		return values;
 	}
 
-	static long ToInt64 (object value)
+	internal static long ToInt64 (object value)
 	{
 		if (value is ulong)
 			return (long) (ulong) value;
@@ -5662,4 +5649,190 @@ class FileNameMemberFormatter : SlashDocMemberFormatter {
 	}
 }
 
+class ResolvedTypeInfo {
+	TypeDefinition typeDef;
+
+	public ResolvedTypeInfo (TypeReference value) {
+		Reference = value;
+	}
+
+	public TypeReference Reference { get; private set; }
+
+	public TypeDefinition Definition {
+		get {
+			if (typeDef == null) {
+				typeDef = Reference.Resolve ();
+			}
+			return typeDef;
+		}
+	}
+}
+
+/// <summary>Formats attribute values. Should return true if it is able to format the value.</summary>
+class AttributeValueFormatter {
+	public virtual bool TryFormatValue (object v, ResolvedTypeInfo type, out string returnvalue)
+	{
+		TypeReference valueType = type.Reference;
+		if (v == null) {
+			returnvalue = "null";
+			return true;
+		}
+		if (valueType.FullName == "System.Type") {
+			var vTypeRef = v as TypeReference;
+			if (vTypeRef != null) 
+				returnvalue = "typeof(" + NativeTypeManager.GetTranslatedName (vTypeRef) + ")"; // TODO: drop NS handling
+			else
+				returnvalue = "typeof(" + v.ToString () + ")";
+			
+			return true;
+		}
+		if (valueType.FullName == "System.String") {
+			returnvalue = "\"" + v.ToString () + "\"";
+			return true;
+		}
+		if (valueType.FullName == "System.Char") {
+			returnvalue = "'" + v.ToString () + "'";
+			return true;
+		}
+		if (v is Boolean) {
+			returnvalue = (bool)v ? "true" : "false";
+			return true;
+		}
+
+		TypeDefinition valueDef = type.Definition;
+		if (valueDef == null || !valueDef.IsEnum) {
+			returnvalue = v.ToString ();
+			return true;
+		}
+
+		string typename = MDocUpdater.GetDocTypeFullName (valueType);
+		var values = MDocUpdater.GetEnumerationValues (valueDef);
+		long c = MDocUpdater.ToInt64 (v);
+		if (values.ContainsKey (c)) {
+			returnvalue = typename + "." + values [c];
+			return true;
+		}
+
+		returnvalue = null;
+		return false;
+	}
+}
+
+/// <summary>The final value formatter in the pipeline ... if no other formatter formats the value,
+/// then this one will serve as the default implementation.</summary>
+class DefaultAttributeValueFormatter : AttributeValueFormatter {
+	public override bool TryFormatValue (object v, ResolvedTypeInfo type, out string returnvalue)
+	{
+		returnvalue = "(" + MDocUpdater.GetDocTypeFullName (type.Reference) + ") " + v.ToString ();
+		return true;
+	}
+}
+
+/// <summary>Flags enum formatter that assumes powers of two values.</summary>
+/// <remarks>As described here: https://msdn.microsoft.com/en-us/library/vstudio/ms229062(v=vs.100).aspx</remarks>
+class StandardFlagsEnumFormatter : AttributeValueFormatter {
+	public override bool TryFormatValue (object v, ResolvedTypeInfo type, out string returnvalue)
+	{
+		TypeReference valueType = type.Reference;
+		TypeDefinition valueDef = type.Definition;
+		if (valueDef.CustomAttributes.Any (ca => ca.AttributeType.FullName == "System.FlagsAttribute")) {
+
+			string typename = MDocUpdater.GetDocTypeFullName (valueType);
+			var values = MDocUpdater.GetEnumerationValues (valueDef);
+			long c = MDocUpdater.ToInt64 (v);
+			returnvalue = string.Join (" | ",
+				(from i in values.Keys
+				 where (c & i) == i && i != 0
+				 select typename + "." + values [i])
+				.DefaultIfEmpty (c.ToString ()).ToArray ());
+			
+			return true;
+		}
+
+		returnvalue = null;
+		return false;
+	}
+}
+
+/// <summary>A custom formatter for the ObjCRuntime.Platform enumeration.</summary>
+class ApplePlatformEnumFormatter : AttributeValueFormatter {
+	public override bool TryFormatValue (object v, ResolvedTypeInfo type, out string returnvalue)
+	{
+		TypeReference valueType = type.Reference;
+		string typename = MDocUpdater.GetDocTypeFullName (valueType);
+		TypeDefinition valueDef = type.Definition;
+		if (typename.Contains ("ObjCRuntime.Platform") && valueDef.CustomAttributes.Any (ca => ca.AttributeType.FullName == "System.FlagsAttribute")) {
+
+			var values = MDocUpdater.GetEnumerationValues (valueDef);
+			long c = MDocUpdater.ToInt64 (v);
+
+			returnvalue = Format (c, values, typename);
+			return true;
+		}
+
+		returnvalue = null;
+		return false;
+	}
+
+	string Format (long c, IDictionary<long, string> values, string typename)
+	{
+		int iosarch, iosmajor, iosminor, iossubminor;
+		int macarch, macmajor, macminor, macsubminor;
+		GetEncodingiOS (c, out iosarch, out iosmajor, out iosminor, out iossubminor);
+		GetEncodingMac ((ulong)c, out macarch, out macmajor, out macminor, out macsubminor);
+
+		if (iosmajor == 0 & iosminor == 0 && iossubminor == 0) {
+			return FormatValues ("Mac", macarch, macmajor, macminor, macsubminor);
+		}
+
+		if (macmajor == 0 & macminor == 0 && macsubminor == 0) {
+			return FormatValues ("iOS", iosarch, iosmajor, iosminor, iossubminor);
+		}
+
+		return string.Format ("(Platform){0}", c);
+	}
+
+	string FormatValues (string plat, int arch, int major, int minor, int subminor) 
+	{
+		string archstring = "";
+		switch (arch) {
+		case 1:
+			archstring = "32";
+			break;
+		case 2:
+			archstring = "64";
+			break;
+		}
+		return string.Format ("Platform.{4}_{0}_{1}{2} | Platform.{4}_Arch{3}",
+			major,
+			minor,
+			subminor == 0 ? "" : "_" + subminor.ToString (),
+			archstring,
+			plat
+		);
+	}
+
+	void GetEncodingiOS (long entireLong, out int archindex, out int major, out int minor, out int subminor)
+	{
+		long lowerBits = entireLong & 0xffffffff; 
+		int lowerBitsAsInt = (int) lowerBits;
+		GetEncoding (lowerBitsAsInt, out archindex, out major, out minor, out subminor);
+	}
+
+	void GetEncodingMac (ulong entireLong, out int archindex, out int major, out int minor, out int subminor)
+	{
+		ulong higherBits = entireLong & 0xffffffff00000000; 
+		int higherBitsAsInt = (int) ((higherBits) >> 32);
+		GetEncoding (higherBitsAsInt, out archindex, out major, out minor, out subminor);
+	}
+
+	void GetEncoding (Int32 encodedBits, out int archindex, out int major, out int minor, out int subminor)
+	{
+		// format is AAJJNNSS
+		archindex = (int)((encodedBits & 0xFF000000) >> 24);
+		major = (int)((encodedBits & 0x00FF0000) >> 16);
+		minor = (int)((encodedBits & 0x0000FF00) >> 8);
+		subminor = (int)((encodedBits & 0x000000FF) >> 0);
+	}
+}
 }

@@ -127,6 +127,9 @@ Test/DocTest.dll-v2:
 	-rm -f Test/DocTest.dll
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
 
+Test/DocTest-enumerations.dll: 
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-enumerations.cs
+
 check-monodocer-addNonGeneric: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	# first, make a docset with the generic method
@@ -175,6 +178,12 @@ check-monodocer-internal-interface: $(PROGRAM)
 	$(MAKE) Test/DocTest-InternalInterface.dll
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-InternalInterface.dll
 	diff --exclude=.svn -rup Test/en.expected-internal-interface Test/en.actual
+
+check-monodocer-enumerations: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-enumerations.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-enumerations.dll
+	diff --exclude=.svn -rup Test/en.expected-enumerations Test/en.actual
 
 check-monodocer-update: $(PROGRAM)
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
@@ -335,6 +344,7 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-dropns-classic \
 	check-monodocer-dropns-classic-withsecondary \
 	check-monodocer-internal-interface \
+	check-monodocer-enumerations \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
