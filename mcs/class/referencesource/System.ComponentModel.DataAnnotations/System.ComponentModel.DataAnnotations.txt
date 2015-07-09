@@ -18,3 +18,6 @@ ArgumentIsNullOrWhitespace=The argument '{0}' cannot be null, empty or contain o
 RequiredAttribute_ValidationError=The {0} field is required.
 
 CompareAttribute_MustMatch='{0}' and '{1}' do not match.
+
+RegexAttribute_ValidationError=The field {0} must match the regular expression '{1}'.
+
