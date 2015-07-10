@@ -12,10 +12,7 @@
 using System;
 using System.Linq;
 using SLE = System.Linq.Expressions;
-
-#if NET_4_0 || MOBILE_DYNAMIC
 using System.Dynamic;
-#endif
 
 namespace Mono.CSharp
 {
