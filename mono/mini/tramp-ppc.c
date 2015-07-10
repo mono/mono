@@ -626,7 +626,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 	g_assert (code - buf <= tramp_size);
 
 	*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
-	/* It is expected to be a function descriptor on power pre-v2 ABI */
+	// The returned value must be a function descriptor on power (for pre-v2 ABI)
 	buf = mono_create_ftnptr (mono_domain_get (), buf);
 
 	return buf;
