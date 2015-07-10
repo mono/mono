@@ -67,15 +67,15 @@ typedef struct {
 } ThreadPoolIOUpdate;
 
 typedef struct {
-	MonoGHashTable *states;
-	mono_mutex_t states_lock;
-
 	ThreadPoolIOBackend backend;
+
+	mono_mutex_t lock;
+
+	MonoGHashTable *states;
 
 	ThreadPoolIOUpdate *updates;
 	guint updates_size;
 	guint updates_capacity;
-	mono_mutex_t updates_lock;
 
 #if !defined(HOST_WIN32)
 	gint wakeup_pipes [2];
@@ -213,8 +213,7 @@ selector_thread (gpointer data)
 		guint max;
 		gint ready = 0;
 
-		mono_mutex_lock (&threadpool_io->states_lock);
-		mono_mutex_lock (&threadpool_io->updates_lock);
+		mono_mutex_lock (&threadpool_io->lock);
 
 		for (i = 0; i < threadpool_io->updates_size; ++i) {
 			ThreadPoolIOUpdate *update;
@@ -244,8 +243,7 @@ selector_thread (gpointer data)
 			mono_gc_free_fixed (updates_old);
 		}
 
-		mono_mutex_unlock (&threadpool_io->updates_lock);
-		mono_mutex_unlock (&threadpool_io->states_lock);
+		mono_mutex_unlock (&threadpool_io->lock);
 
 		mono_gc_set_skip_thread (TRUE);
 
@@ -256,9 +254,9 @@ selector_thread (gpointer data)
 		if (ready == -1 || mono_runtime_is_shutting_down ())
 			break;
 
-		max = threadpool_io->backend.event_get_fd_max ();
+		mono_mutex_lock (&threadpool_io->lock);
 
-		mono_mutex_lock (&threadpool_io->states_lock);
+		max = threadpool_io->backend.event_get_fd_max ();
 
 		for (i = 0; i < max && ready > 0; ++i) {
 			gint events;
@@ -294,7 +292,7 @@ selector_thread (gpointer data)
 			ready -= 1;
 		}
 
-		mono_mutex_unlock (&threadpool_io->states_lock);
+		mono_mutex_unlock (&threadpool_io->lock);
 	}
 
 	io_thread_status = STATUS_CLEANED_UP;
@@ -373,14 +371,14 @@ ensure_initialized (void)
 	threadpool_io = g_new0 (ThreadPoolIO, 1);
 	g_assert (threadpool_io);
 
+	mono_mutex_init (&threadpool_io->lock);
+
 	threadpool_io->states = mono_g_hash_table_new_type (g_direct_hash, g_direct_equal, MONO_HASH_VALUE_GC);
 	MONO_GC_REGISTER_ROOT_FIXED (threadpool_io->states);
-	mono_mutex_init (&threadpool_io->states_lock);
 
 	threadpool_io->updates = NULL;
 	threadpool_io->updates_size = 0;
 	threadpool_io->updates_capacity = 0;
-	mono_mutex_init (&threadpool_io->updates_lock);
 
 #if defined(HAVE_EPOLL)
 	threadpool_io->backend = backend_epoll;
@@ -432,13 +430,13 @@ ensure_cleanedup (void)
 	while (io_thread_status != STATUS_CLEANED_UP)
 		g_usleep (1000);
 
+	mono_mutex_destroy (&threadpool_io->lock);
+
 	MONO_GC_UNREGISTER_ROOT (threadpool_io->states);
 	mono_g_hash_table_destroy (threadpool_io->states);
-	mono_mutex_destroy (&threadpool_io->states_lock);
 
 	if (threadpool_io->updates)
 		mono_gc_free_fixed (threadpool_io->updates);
-	mono_mutex_destroy (&threadpool_io->updates_lock);
 
 	threadpool_io->backend.cleanup ();
 
@@ -521,7 +519,7 @@ mono_threadpool_ms_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *sockare
 
 	MONO_OBJECT_SETREF (sockares, ares, ares);
 
-	mono_mutex_lock (&threadpool_io->updates_lock);
+	mono_mutex_lock (&threadpool_io->lock);
 
 	threadpool_io->updates_size += 1;
 	if (threadpool_io->updates_size > threadpool_io->updates_capacity) {
@@ -548,7 +546,7 @@ mono_threadpool_ms_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *sockare
 	update = &threadpool_io->updates [threadpool_io->updates_size - 1];
 	update->sockares = sockares;
 
-	mono_mutex_unlock (&threadpool_io->updates_lock);
+	mono_mutex_unlock (&threadpool_io->lock);
 
 	selector_thread_wakeup ();
 
@@ -564,8 +562,7 @@ mono_threadpool_ms_io_remove_socket (int fd)
 	if (io_status != STATUS_INITIALIZED)
 		return;
 
-	mono_mutex_lock (&threadpool_io->states_lock);
-	mono_mutex_lock (&threadpool_io->updates_lock);
+	mono_mutex_lock (&threadpool_io->lock);
 
 	g_assert (threadpool_io->states);
 
@@ -587,8 +584,7 @@ mono_threadpool_ms_io_remove_socket (int fd)
 		}
 	}
 
-	mono_mutex_unlock (&threadpool_io->updates_lock);
-	mono_mutex_unlock (&threadpool_io->states_lock);
+	mono_mutex_unlock (&threadpool_io->lock);
 
 	for (; list; list = mono_mlist_remove_item (list, list)) {
 		MonoSocketAsyncResult *sockares = (MonoSocketAsyncResult*) mono_mlist_get_data (list);
@@ -635,8 +631,7 @@ mono_threadpool_ms_io_remove_domain_jobs (MonoDomain *domain)
 	if (io_status != STATUS_INITIALIZED)
 		return;
 
-	mono_mutex_lock (&threadpool_io->states_lock);
-	mono_mutex_lock (&threadpool_io->updates_lock);
+	mono_mutex_lock (&threadpool_io->lock);
 
 	mono_g_hash_table_foreach_remove (threadpool_io->states, remove_sockstate_for_domain, domain);
 
@@ -654,8 +649,7 @@ mono_threadpool_ms_io_remove_domain_jobs (MonoDomain *domain)
 		}
 	}
 
-	mono_mutex_unlock (&threadpool_io->updates_lock);
-	mono_mutex_unlock (&threadpool_io->states_lock);
+	mono_mutex_unlock (&threadpool_io->lock);
 }
 
 void
