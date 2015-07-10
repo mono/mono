@@ -2346,6 +2346,7 @@ namespace Mono.CSharp {
 			FixedVariable = 1 << 6,
 			UsingVariable = 1 << 7,
 			IsLocked = 1 << 8,
+			SymbolFileHidden = 1 << 9,
 
 			ReadonlyMask = ForeachVariable | FixedVariable | UsingVariable
 		}
@@ -2521,13 +2522,16 @@ namespace Mono.CSharp {
 			// All fixed variabled are pinned, a slot has to be alocated
 			//
 			builder = ec.DeclareLocal (Type, IsFixed);
-			if (!ec.HasSet (BuilderContext.Options.OmitDebugInfo) && (flags & Flags.CompilerGenerated) == 0)
+			if ((flags & Flags.SymbolFileHidden) == 0)
 				ec.DefineLocalVariable (name, builder);
 		}
 
-		public static LocalVariable CreateCompilerGenerated (TypeSpec type, Block block, Location loc)
+		public static LocalVariable CreateCompilerGenerated (TypeSpec type, Block block, Location loc, bool writeToSymbolFile = false)
 		{
 			LocalVariable li = new LocalVariable (block, GetCompilerGeneratedName (block), Flags.CompilerGenerated | Flags.Used, loc);
+			if (!writeToSymbolFile)
+				li.flags |= Flags.SymbolFileHidden;
+			
 			li.Type = type;
 			return li;
 		}

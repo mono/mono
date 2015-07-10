@@ -58,6 +58,7 @@
         <entry il="0x1b" row="37" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
+        <entry name="$locvar0" il_index="0" scope_ref="0" />
         <entry name="a" il_index="1" scope_ref="0" />
       </locals>
       <scopes />
