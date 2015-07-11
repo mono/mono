@@ -954,6 +954,12 @@ mono_setup_perf_counters (MonoJitTlsData *jit_tls)
 {
 	jit_tls->perf_segment_start = mono_thread_cpu_time ();
 	jit_tls->state = MONO_PERF_STATE_EXEC;
+	mono_counters_register ("Total compilation CPU time",
+				MONO_COUNTER_RUNTIME | MONO_COUNTER_LONG | MONO_COUNTER_TIME,
+				&mono_jit_stats.perf_counters [MONO_PERF_STATE_COMPILE]);
+	mono_counters_register ("Total execution CPU time",
+				MONO_COUNTER_RUNTIME | MONO_COUNTER_LONG | MONO_COUNTER_TIME,
+				&mono_jit_stats.perf_counters [MONO_PERF_STATE_EXEC]);
 }
 
 static void
@@ -3639,8 +3645,6 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_trace_cleanup ();
 
-	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
-
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);
 
@@ -3654,7 +3658,7 @@ mini_cleanup (MonoDomain *domain)
 	mono_jumptable_cleanup ();
 #endif
 
-	print_jit_counters ();
+	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 }
 
 void
