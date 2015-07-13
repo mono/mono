@@ -78,7 +78,7 @@ namespace System.Net.Security {
         // This block is used by rehandshake code to buffer data decryptred with the old key
         private byte[]  _QueuedReadData;
         private int     _QueuedReadCount;
-        private bool    _PendingReHandshake;
+        private int    _PendingReHandshake;
         private const int _ConstMaxQueuedReadBytes = 1024 * 128;
 
         //
@@ -614,7 +614,7 @@ namespace System.Net.Security {
                 // Note we are already inside the read, so checking for already going concurent handshake
                 _LockReadState = LockHandshake;
 
-                if (_PendingReHandshake)
+                if (Interlocked.CompareExchange (ref _PendingReHandshake, 1, 0) == 1)
                 {
                     // A concurent handshake is pending, resume
                     FinishRead(buffer);
@@ -764,7 +764,7 @@ namespace System.Net.Security {
                 // Even if we are comleted, there could be a blob for sending.
                 // ONLY for TlsStream we want to delay it if the underlined stream is a NetworkStream that is subject to Nagle algorithm
                 // 
-                if ( message.Done && _ForceBufferingLastHandshakePayload && InnerStream.GetType() == typeof(NetworkStream) && !_PendingReHandshake)
+                if ( message.Done && _ForceBufferingLastHandshakePayload && InnerStream.GetType() == typeof(NetworkStream) && _PendingReHandshake == 0)
                 {
                     _LastPayload = message.Payload;
                 }
@@ -801,7 +801,7 @@ namespace System.Net.Security {
                 StartSendAuthResetSignal(null, asyncRequest, new AuthenticationException(SR.GetString(SR.net_auth_SSPI), message.GetException()));
                 return;
             }
-            else if (message.Done && !_PendingReHandshake)
+            else if (message.Done && _PendingReHandshake == 0)
             {
                 if (!CompleteHandshake())
                 {
@@ -821,13 +821,13 @@ namespace System.Net.Security {
         //
         private void StartReceiveBlob(byte[] buffer, AsyncProtocolRequest asyncRequest)
         {
-            if (_PendingReHandshake)
+            if (_PendingReHandshake == 1)
             {
                 if (CheckEnqueueHandshakeRead(ref buffer, asyncRequest))
                 {
                     return;
                 }
-                if (!_PendingReHandshake)
+                if (_PendingReHandshake == 0)
                 {
                     // read fed us renegotiate proceed to the next step
                     ProcessReceivedBlob(buffer, buffer.Length, asyncRequest);
@@ -914,7 +914,7 @@ namespace System.Net.Security {
                 throw new AuthenticationException(SR.GetString(SR.net_auth_eof), null);
             }
 
-            if (_PendingReHandshake)
+            if (_PendingReHandshake == 1)
             {
                 int offset = 0;
                 SecurityStatus status = PrivateDecryptData(buffer, ref offset, ref count);
@@ -941,7 +941,7 @@ namespace System.Net.Security {
                 }
 
                 // Got it, now we should expect only handshake messages
-                _PendingReHandshake = false;
+                _PendingReHandshake = 0;
                 if (offset != 0)
                 {
                     Buffer.BlockCopy(buffer, offset, buffer, 0, count);
@@ -1152,7 +1152,9 @@ namespace System.Net.Security {
                     return;
                 }
 
-                _LockReadState = LockRead;
+                if (_LockReadState != LockHandshake)
+                    _LockReadState = LockRead;
+
                 object obj = _QueuedReadStateRequest;
                 if (obj == null)
                 {
@@ -1662,7 +1664,7 @@ namespace System.Net.Security {
         {
             AsyncProtocolRequest asyncRequest = (AsyncProtocolRequest)state;
             try {
-                if (_PendingReHandshake)
+                if (_PendingReHandshake == 1)
                 {
                     // resume as read a blob
                     StartReceiveBlob(asyncRequest.Buffer, asyncRequest);
