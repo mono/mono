@@ -644,17 +644,29 @@ namespace System.Net
 			if (headersSent)
 				return false;
 
-			string method = request.Method;
-			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-			                      method == "TRACE");
-			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
-			              method == "COPY" || method == "MOVE" || method == "LOCK" ||
-			              method == "UNLOCK");
+			bool webdav = false;
+			bool writestream = false;
 
-			if (setInternalLength && !no_writestream && writeBuffer != null)
+			switch (request.Method) {
+			case "PROPFIND":
+			case "PROPPATCH":
+			case "MKCOL":
+			case "COPY":
+			case "MOVE":
+			case "LOCK":
+			case "UNLOCK":
+				webdav = true;
+				break;
+			case "POST":
+			case "PUT":
+				writestream = true;
+				break;
+			}
+
+			if (setInternalLength && writestream && writeBuffer != null)
 				request.InternalContentLength = writeBuffer.Length;
 
-			if (!(sendChunked || request.ContentLength > -1 || no_writestream || webdav))
+			if (!(sendChunked || request.ContentLength > -1 || !writestream || webdav))
 				return false;
 
 			headersSent = true;
