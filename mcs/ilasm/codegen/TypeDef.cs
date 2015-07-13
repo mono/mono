@@ -351,6 +351,12 @@ namespace Mono.ILASM {
                                 else if (IsEnumType (parent.PeapiClass.nameSpace, parent.PeapiClass.name))
                                         is_enum_class = true;
 
+                                if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
+                                        is_value_class && !is_enum_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
+
+                                        attr |= PEAPI.TypeAttr.Sealed;
+                                }
+
                                 if (outer != null) {
                                         if (!outer.IsDefined)
                                                 outer.Define (code_gen);
