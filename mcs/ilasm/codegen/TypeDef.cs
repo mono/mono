@@ -352,7 +352,7 @@ namespace Mono.ILASM {
                                         is_enum_class = true;
 
                                 if (!IsValueType (name_space, name) && !IsEnumType (name_space, name) &&
-                                        is_value_class && !is_enum_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
+                                        is_value_class && (attr & PEAPI.TypeAttr.Sealed) == 0) {
 
                                         attr |= PEAPI.TypeAttr.Sealed;
                                 }
@@ -415,6 +415,10 @@ namespace Mono.ILASM {
                 {
                         ArrayList fielddef_list = new ArrayList ();
                         foreach (FieldDef fielddef in field_list) {
+                                if (is_enum_class && fielddef.Name == "value__") {
+                                    fielddef.Attributes |= PEAPI.FieldAttr.SpecialName | PEAPI.FieldAttr.RTSpecialName;
+                                }
+
                                 fielddef.Define (code_gen, classdef);
                                 fielddef_list.Add (fielddef.PeapiFieldDef);
                         }
