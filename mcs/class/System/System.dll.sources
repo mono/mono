@@ -1008,6 +1008,8 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
+../../../external/referencesource/System/net/System/Net/NetworkInformation/IPInterfaceStatistics.cs
+../../../external/referencesource/System/net/System/Net/NetworkInformation/ScopeLevel.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/UnicastIPAddressInformation.cs
 
 ../../../external/referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
