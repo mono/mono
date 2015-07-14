@@ -607,8 +607,7 @@ class_attr		: /* EMPTY */
 			| class_attr K_NESTED K_FAMANDASSEM     { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
 			| class_attr K_NESTED K_FAMORASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
 			| class_attr K_VALUE                    { is_value_class = true; }
-			| class_attr K_ENUM                     { is_enum_class = true; is_value_class = true;
-			  }
+			| class_attr K_ENUM                     { is_enum_class = true; }
 			| class_attr K_INTERFACE                { $$ = (TypeAttr)$1 | TypeAttr.Interface; }
 			| class_attr K_SEALED                   { $$ = (TypeAttr)$1 | TypeAttr.Sealed; }
 			| class_attr K_ABSTRACT                 { $$ = (TypeAttr)$1 | TypeAttr.Abstract; }
