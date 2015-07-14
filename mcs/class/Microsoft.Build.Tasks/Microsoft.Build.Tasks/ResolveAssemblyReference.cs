@@ -210,14 +210,18 @@ namespace Microsoft.Build.Tasks {
 
 			var spath_index  = 0;
 			foreach (string spath in search_paths) {
+				if (string.IsNullOrEmpty (spath))
+					continue;
 				assembly_resolver.LogSearchMessage ("For searchpath {0}", spath);
-				
+
 				// The first value of search_paths can be the parent assembly directory.
 				// In that case the value would be treated as a directory.
 				// This code checks if we should treat the value as a TargetFramework assembly.
 				// Doing so avoids CopyLocal beeing set to true.
 				if (spath_index++ == 0 && targetFrameworkDirectories != null) {
 					foreach (string fpath in targetFrameworkDirectories) {
+						if (string.IsNullOrEmpty (fpath))
+							continue;
 						if (String.Compare (
 								Path.GetFullPath (spath).TrimEnd (Path.DirectorySeparatorChar),
 								Path.GetFullPath (fpath).TrimEnd (Path.DirectorySeparatorChar),
