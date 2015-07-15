@@ -33,3 +33,4 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.StringComparer))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.UriBuilder))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.Versioning.FrameworkName))]

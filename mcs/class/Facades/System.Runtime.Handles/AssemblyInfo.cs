@@ -20,9 +20,22 @@
 // THE SOFTWARE.
 // 
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UnicodeEncoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF8Encoding))]
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.ASCIIEncoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF32Encoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF7Encoding))]
+[assembly: AssemblyTitle ("System.Runtime.Handles.dll")]
+[assembly: AssemblyDescription ("System.Runtime.Handles.dll")]
+[assembly: AssemblyDefaultAlias ("System.Runtime.Handles.dll")]
+[assembly: AssemblyCompany ("Xamarin, Inc.")]
+[assembly: AssemblyProduct ("Mono Common Language Infrastructure")]
+[assembly: AssemblyCopyright ("Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)")]
+[assembly: AssemblyVersion ("4.0.0.0")]
+[assembly: AssemblyInformationalVersion ("4.0.0.0")]
+[assembly: AssemblyFileVersion ("4.0.0.0")]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../../msfinal.pub")]
+
+[assembly: ReferenceAssembly]
+
+

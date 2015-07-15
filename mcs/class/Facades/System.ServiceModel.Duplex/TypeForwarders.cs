@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +20,7 @@
 // THE SOFTWARE.
 // 
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UnicodeEncoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF8Encoding))]
-
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.ASCIIEncoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF32Encoding))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.UTF7Encoding))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.CallbackBehaviorAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexChannelFactory<>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexClientBase<>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.InstanceContext))]

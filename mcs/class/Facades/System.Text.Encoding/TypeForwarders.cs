@@ -26,3 +26,12 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncoderFallbackException))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.Encoding))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.DecoderExceptionFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.DecoderFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.DecoderFallbackBuffer))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.DecoderReplacementFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncoderExceptionFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncoderFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncoderFallbackBuffer))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncoderReplacementFallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.EncodingProvider))]

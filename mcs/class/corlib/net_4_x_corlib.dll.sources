@@ -1,2 +1,9 @@
 #include corlib.dll.sources
 ../../../external/referencesource/mscorlib/system/runtime/compilerservices/idispatchconstantattribute.cs
+
+coreclr/AsyncLocal.cs
+coreclr/DisablePrivateReflectionAttribute.cs
+coreclr/EncodingProvider.cs
+coreclr/FormattableString.cs
+coreclr/FormattableStringFactory.cs
+coreclr/WaitHandleExtensions.cs

@@ -25,3 +25,10 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.ProgressChangedEventArgs))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.ProgressChangedEventHandler))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.AsyncOperation))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.AsyncOperationManager))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.BackgroundWorker))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.DoWorkEventArgs))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.DoWorkEventHandler))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.RunWorkerCompletedEventArgs))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.RunWorkerCompletedEventHandler))]
