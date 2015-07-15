@@ -39,7 +39,7 @@ bin_SCRIPTS = \
 	mono-heapviz		\
 	$(scripts_mono_configuration_crypto)
 
-if INSTALL_4_5
+if INSTALL_4_x
 bin_SCRIPTS += $(scripts_4_0)
 bin_SCRIPTS += dmcs
 bin_SCRIPTS += xbuild
@@ -189,7 +189,7 @@ REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
 REWRITE2 = $(REWRITE) -e 's,@''framework_version@,2.0,g'
 REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
-if INSTALL_4_5
+if INSTALL_4_x
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.5,g'
 REWRITE4_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,4.5,g'
 endif

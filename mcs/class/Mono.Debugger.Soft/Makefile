@@ -9,7 +9,7 @@ LIB_MCS_FLAGS = /r:$(corlib) /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfi
 
 TEST_MCS_FLAGS = /r:Mono.Cecil.dll /r:System.dll /r:System.Core.dll
 
-VALID_TEST_PROFILE := $(filter net_4_5, $(PROFILE))
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
 
 # The test exe is not profile specific, and compiling a 2.0 will make the 4.5 tests fail
 ifdef VALID_TEST_PROFILE
