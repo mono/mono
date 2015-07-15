@@ -19,7 +19,7 @@ PROFILES = \
 	basic \
 	build \
 	binary_reference_assemblies \
-	net_4_5 \
+	net_4_x \
 	xbuild_12 \
 	xbuild_14
 
