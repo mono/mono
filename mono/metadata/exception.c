@@ -104,6 +104,21 @@ mono_exception_from_token (MonoImage *image, guint32 token)
 }
 
 static MonoException *
+mono_exception_from_klass (MonoClass *klass)
+{
+	MonoObject *o;
+
+	g_assert (klass);
+
+	o = mono_object_new (mono_domain_get (), klass);
+	g_assert (o != NULL);
+
+	mono_runtime_object_init (o);
+
+	return (MonoException *)o;
+}
+
+static MonoException *
 create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2)
 {
 	MonoDomain *domain = mono_domain_get ();
@@ -239,8 +254,7 @@ mono_get_exception_security ()
 MonoException *
 mono_get_exception_thread_abort ()
 {
-	return mono_exception_from_name (mono_get_corlib (), "System.Threading",
-					 "ThreadAbortException");
+	return mono_exception_from_klass (mono_defaults.threadabortexception_class);
 }
 
 /**
@@ -632,7 +646,7 @@ mono_get_exception_cannot_unload_appdomain (const char *msg)
 MonoException *
 mono_get_exception_appdomain_unloaded (void)
 {
-	return mono_exception_from_name (mono_get_corlib (), "System", "AppDomainUnloadedException");
+	return mono_exception_from_klass (mono_defaults.appdomainunloadedexception_klass);
 }
 
 /**
