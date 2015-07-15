@@ -123,7 +123,8 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category("InetAccess")]
+		//[Category("InetAccess")]
+		[Category ("NotWorking")] // Disabled until a server that meets requirements is found
 		public void Cookies1 ()
 		{
 			// The purpose of this test is to ensure that the cookies we get from a request
