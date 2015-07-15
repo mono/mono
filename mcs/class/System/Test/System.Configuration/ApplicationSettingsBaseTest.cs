@@ -288,7 +288,7 @@ namespace MonoTests.System.Configuration {
 			// of the test assemblies - so conditionalize it in
 			// such cases.
 #if   NET_4_5
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_5, Version=0.0.0.0";
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_x, Version=0.0.0.0";
 #elif NET_4_0
 			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";
 #else
