@@ -23,7 +23,6 @@
 *.tlb
 *.tlh
 *.bak
-*.[Cc]ache
 *.ilk
 *.log
 *.lib
