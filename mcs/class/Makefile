@@ -139,6 +139,7 @@ net_4_x_dirs := \
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
 	System.Numerics		\
+	System.Numerics.Vectors		\
 	System.Data			\
 	System.ComponentModel.DataAnnotations	\
 	Accessibility			\
