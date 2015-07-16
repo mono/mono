@@ -124,9 +124,6 @@ namespace MonoTests.System.IO
 				Assert.Fail ("#B1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
-				// under OSX 'var' is a symlink to 'private/var'
-				if (MacOSX)
-					path = "/private" + path;
 				Assert.AreEqual (path, ex.FileName, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
@@ -180,9 +177,6 @@ namespace MonoTests.System.IO
 				Assert.Fail ("#B1");
 			} catch (FileNotFoundException ex) {
 				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#B2");
-				// under OSX 'var' is a symlink to 'private/var'
-				if (MacOSX)
-					path = "/private" + path;
 				Assert.AreEqual (path, ex.FileName, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
