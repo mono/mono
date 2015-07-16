@@ -49,6 +49,7 @@ System.Net.Mail/MailPriority.cs
 System.Net.Mail/SendCompletedEventHandler.cs
 System.Net.Mail/SmtpAccess.cs
 System.Net.Mail/SmtpClient.cs
+System.Net.Mail/SmtpDeliveryFormat.cs
 System.Net.Mail/SmtpDeliveryMethod.cs
 System.Net.Mail/SmtpException.cs
 System.Net.Mail/SmtpFailedRecipientException.cs
@@ -107,6 +108,7 @@ System.Net.NetworkInformation/UnicastIPAddressInformationCollection.cs
 System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
 System.Net.Security/AuthenticatedStream.cs
 System.Net.Security/AuthenticationLevel.cs
+System.Net.Security/EncryptionPolicy.cs
 System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
 System.Net.Security/ProtectionLevel.cs
@@ -187,6 +189,7 @@ System.Net/HttpListenerException.cs
 System.Net/HttpListenerPrefixCollection.cs
 System.Net/HttpListenerRequest.cs
 System.Net/HttpListenerResponse.cs
+System.Net/HttpListenerTimeoutManager.cs
 System.Net/HttpRequestCreator.cs
 System.Net/HttpRequestHeader.cs
 System.Net/HttpResponseHeader.cs
@@ -316,6 +319,7 @@ System.Security.Cryptography/AsnEncodedDataEnumerator.cs
 System.Security.Cryptography/Oid.cs
 System.Security.Cryptography/OidCollection.cs
 System.Security.Cryptography/OidEnumerator.cs
+System.Security.Cryptography/OidGroup.cs
 System.Threading/Semaphore.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
@@ -728,6 +732,9 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/IPInterfaceStatistics.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/ScopeLevel.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/UnicastIPAddressInformation.cs
+
+../../../external/referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
+
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 
 ../../../external/referencesource/System/security/system/security/permissions/typedescriptorpermission.cs

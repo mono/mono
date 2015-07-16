@@ -12,6 +12,7 @@ ReferenceSources/ThisAssembly.cs
 ReferenceSources/Win32NativeMethods.cs
 ReferenceSources/SqlInternalConnectionTds.cs
 
+Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
 System.Data.SqlClient/SortOrder.cs
 System.Data.SqlClient/SqlNotificationType.cs

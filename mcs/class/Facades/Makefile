@@ -10,7 +10,19 @@ monotouch_SUBDIRS = System.Collections.Concurrent System.Collections System.Comp
 	System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml System.Runtime System.Security.Principal System.ServiceModel.Http \
 	System.ServiceModel.Primitives System.ServiceModel.Security System.Text.Encoding.Extensions System.Text.Encoding System.Text.RegularExpressions System.Threading.Tasks.Parallel \
 	System.Threading.Tasks System.Threading.Timer System.Threading System.Xml.ReaderWriter System.Xml.XDocument System.Xml.XmlSerializer \
-	System.Runtime.Handles System.ServiceModel.Duplex System.ServiceModel.NetTcp
+	System.Runtime.Handles System.ServiceModel.Duplex System.ServiceModel.NetTcp \
+	Microsoft.Win32.Primitives Microsoft.Win32.Registry System.AppContext System.Collections.NonGeneric System.Collections.Specialized System.ComponentModel.Primitives \
+	System.ComponentModel.TypeConverter System.Console System.Data.Common System.Data.SqlClient System.Diagnostics.FileVersionInfo System.Diagnostics.PerformanceCounter \
+	System.Diagnostics.Process System.Diagnostics.TextWriterTraceListener System.Diagnostics.TraceEvent System.Diagnostics.TraceSource System.Globalization.Calendars \
+	System.IO.Compression System.IO.Compression.ZipFile System.IO.FileSystem System.IO.FileSystem.DriveInfo System.IO.FileSystem.Primitives System.IO.FileSystem.Watcher \
+	System.IO.IsolatedStorage System.IO.MemoryMappedFiles System.IO.Pipes System.IO.UnmanagedMemoryStream System.Net.AuthenticationManager System.Net.Cache \
+	System.Net.Http.WebRequestHandler System.Net.HttpListener System.Net.Mail System.Net.NameResolution System.Net.Security System.Net.ServicePoint System.Net.Sockets \
+	System.Net.Utilities System.Net.WebHeaderCollection System.Net.WebSockets System.Net.WebSockets.Client System.Resources.ReaderWriter System.Runtime.CompilerServices.VisualC \
+	System.Security.AccessControl System.Security.Claims System.Security.Cryptography.DeriveBytes System.Security.Cryptography.Encoding System.Security.Cryptography.Encryption \
+	System.Security.Cryptography.Encryption.Aes System.Security.Cryptography.Encryption.ECDiffieHellman System.Security.Cryptography.Encryption.ECDsa System.Security.Cryptography.Hashing \
+	System.Security.Cryptography.Hashing.Algorithms System.Security.Cryptography.ProtectedData System.Security.Cryptography.RSA System.Security.Cryptography.RandomNumberGenerator \
+	System.Security.Cryptography.X509Certificates System.Security.Principal.Windows System.ServiceProcess.ServiceController System.Threading.Thread System.Threading.ThreadPool \
+	System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives
 
 mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
 
