@@ -25,7 +25,11 @@ namespace System.Security.Cryptography {
         //
 
         public static new ECDsa Create() {
+#if MONO
+            throw new NotImplementedException ();
+#else
             return Create(typeof(ECDsaCng).FullName);
+#endif
         }
 
         public static new ECDsa Create(string algorithm) {

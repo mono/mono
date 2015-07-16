@@ -26,7 +26,11 @@ namespace System.Security.Cryptography {
         //
 
         public static new ECDiffieHellman Create() {
+#if MONO
+            throw new NotImplementedException ();
+#else
             return Create(typeof(ECDiffieHellmanCng).FullName);
+#endif
         }
 
         public static new ECDiffieHellman Create(string algorithm) {
