@@ -14,7 +14,9 @@ ReferenceSources/SqlInternalConnectionTds.cs
 
 ReferenceSources/mobile_DbConnectionPoolCounters.cs
 
+Microsoft.SqlServer.Server/SqlDataRecord.cs
 Microsoft.SqlServer.Server/SqlMetaData.cs
+
 System.Data.SqlClient/SortOrder.cs
 System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs

@@ -49,17 +49,19 @@ mobile_common_dirs := \
 	System.Windows \
 	System.Xml.Serialization \
 	Mono.CSharp	\
-	Microsoft.CSharp \
-	$(pcl_facade_dirs)
+	Microsoft.CSharp
 
 mobile_static_dirs := \
 	$(mobile_common_dirs)	\
-	Mono.Dynamic.Interpreter
+	Mono.Dynamic.Interpreter	\
+	$(pcl_facade_dirs)
 
 mobile_dynamic_dirs := \
 	$(mobile_common_dirs)	\
 	Mono.CompilerServices.SymbolWriter	\
-	System.Net.Http
+	System.Net.Http	\
+	System.Net.Http.WebRequest	\
+	$(pcl_facade_dirs)
 
 xammac_dirs := \
 	$(mobile_dynamic_dirs)

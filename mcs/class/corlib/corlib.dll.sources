@@ -1576,3 +1576,10 @@ ReferenceSources/SecurityContext.cs
 
 ReferenceSources/String.cs
 ReferenceSources/Type.cs
+
+coreclr/AsyncLocal.cs
+coreclr/DisablePrivateReflectionAttribute.cs
+coreclr/EncodingProvider.cs
+coreclr/FormattableString.cs
+coreclr/FormattableStringFactory.cs
+coreclr/WaitHandleExtensions.cs

@@ -695,8 +695,11 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/BooleanSwitch.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/CorrelationManager.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/Debug.cs
+../../../external/referencesource/System/compmod/system/diagnostics/DelimitedListTraceListener.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/DiagnosticsConfiguration.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/ListenerElementsCollection.cs
+../../../external/referencesource/System/compmod/system/diagnostics/SeverityFilter.cs
+../../../external/referencesource/System/compmod/system/diagnostics/SourceFilter.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/SourceLevels.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/SourceSwitch.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/SwitchAttribute.cs
@@ -735,6 +738,8 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/net/System/Net/Sockets/IPProtectionLevel.cs
 
+../../../external/referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
+
 ../../../external/referencesource/System/sys/system/threading/Barrier.cs
 
 ../../../external/referencesource/System/security/system/security/permissions/typedescriptorpermission.cs
@@ -747,3 +752,5 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/misc/invariantcomparer.cs
 ../../../external/referencesource/System/misc/SecurityUtils.cs
 ../../../external/referencesource/System/misc/WeakHashtable.cs
+
+../../../external/referencesource/System/compmod/system/diagnostics/TextWriterTraceListener.cs

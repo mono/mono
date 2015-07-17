@@ -20,7 +20,9 @@
 // THE SOFTWARE.
 // 
 
+#if !MOBILE
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.CallbackBehaviorAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexChannelFactory<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.DuplexClientBase<>))]
+#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.InstanceContext))]

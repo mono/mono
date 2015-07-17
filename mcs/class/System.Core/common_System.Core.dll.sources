@@ -182,6 +182,8 @@ ReferenceSources/Strings.cs
 ../../../external/referencesource/System.Core/System/Runtime/CompilerServices/ExecutionScope.cs
 
 ../../../external/referencesource/System.Core/System/Security/Cryptography/Aes.cs
+../../../external/referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
+../../../external/referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
 
 ../../../external/referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
