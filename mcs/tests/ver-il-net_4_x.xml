@@ -42541,7 +42541,7 @@
   <test name="test-513.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>322</size>
+        <size>326</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -67147,33 +67147,9 @@
     </type>
   </test>
   <test name="test-interpolation-02.cs">
-    <type name="System.FormattableString">
-      <method name="System.String get_Value()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Void set_Value(System.String)" attrs="2182">
-        <size>8</size>
-      </method>
-      <method name="Void .ctor(String, Object[])" attrs="6278">
-        <size>22</size>
-      </method>
-    </type>
-    <type name="System.Runtime.CompilerServices.FormattableStringFactory">
-      <method name="System.Object Create(System.String, System.Object[])" attrs="150">
-        <size>43</size>
-      </method>
-    </type>
-    <type name="MyFormattable">
-      <method name="System.String System.IFormattable.ToString(System.String, System.IFormatProvider)" attrs="481">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
     <type name="ConversionTest">
       <method name="Int32 Main()" attrs="145">
-        <size>120</size>
+        <size>110</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

@@ -1,4 +1,4 @@
-// Compiler options: -r:../class/lib/net_4_5/Mono.Cecil.dll
+// Compiler options: -r:../class/lib/net_4_x/Mono.Cecil.dll
 
 using System;
 using Mono.Cecil;

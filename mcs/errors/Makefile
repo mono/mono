@@ -41,10 +41,12 @@ TEST_SUPPORT_FILES = \
 	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
 	dlls/second/CS1703-lib.dll dlls/second/CS1704-lib.dll
 
+-include $(mcs_topdir)/build/config.make
+
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
 ifdef VALID_PROFILE
 
 qcheck: run-mcs-tests 
