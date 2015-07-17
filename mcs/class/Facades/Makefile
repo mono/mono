@@ -22,7 +22,9 @@ monotouch_SUBDIRS = System.Collections.Concurrent System.Collections System.Comp
 	System.Security.Cryptography.Encryption.Aes System.Security.Cryptography.Encryption.ECDiffieHellman System.Security.Cryptography.Encryption.ECDsa System.Security.Cryptography.Hashing \
 	System.Security.Cryptography.Hashing.Algorithms System.Security.Cryptography.ProtectedData System.Security.Cryptography.RSA System.Security.Cryptography.RandomNumberGenerator \
 	System.Security.Cryptography.X509Certificates System.Security.Principal.Windows System.ServiceProcess.ServiceController System.Threading.Thread System.Threading.ThreadPool \
-	System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives
+	System.Xml.XPath System.Xml.XmlDocument System.Xml.Xsl.Primitives Microsoft.Win32.Registry.AccessControl System.Diagnostics.StackTrace System.Globalization.Extensions \
+	System.IO.FileSystem.AccessControl System.Private.CoreLib.InteropServices System.Private.CoreLib.Threading System.Reflection.TypeExtensions \
+	System.Security.SecureString System.Threading.AccessControl System.Threading.Overlapped System.Xml.XPath.XDocument
 
 mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
 
