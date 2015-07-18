@@ -1320,3 +1320,21 @@ System.Web/TaskEventHandler.cs
 System.Web.Security/MembershipPasswordAttribute.cs
 System.Web/DynamicModuleManager.cs
 
+../../../external/referencesource/System.Web/ISubscriptionToken.cs
+
+../../../external/referencesource/System.Web/ModelBinding/IModelNameProvider.cs
+../../../external/referencesource/System.Web/ModelBinding/BindingBehaviorAttribute.cs
+../../../external/referencesource/System.Web/ModelBinding/BindingBehavior.cs
+../../../external/referencesource/System.Web/ModelBinding/BindNeverAttribute.cs
+../../../external/referencesource/System.Web/ModelBinding/BindRequiredAttribute.cs
+../../../external/referencesource/System.Web/ModelBinding/ExtensibleModelBinderAttribute.cs
+../../../external/referencesource/System.Web/ModelBinding/ModelBinderProviderOptionsAttribute.cs
+
+../../../external/referencesource/System.Web/Security/AntiXss/CodeCharts.cs
+
+../../../external/referencesource/System.Web/UI/WebParts/WebBrowsableAttribute.cs
+../../../external/referencesource/System.Web/UI/WebParts/WebDescriptionAttribute.cs
+../../../external/referencesource/System.Web/UI/WebParts/WebDisplayNameAttribute.cs
+
+../../../external/referencesource/System.Web/WebSockets/AspNetWebSocketOptions.cs
+../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
