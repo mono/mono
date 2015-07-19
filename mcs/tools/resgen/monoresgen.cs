@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
 using System.Xml;
@@ -67,14 +68,14 @@ Options:
 		Console.WriteLine( Usage );
 	}
 	
-	static IResourceReader GetReader (Stream stream, string name, bool useSourcePath) {
+	static IResourceReader GetReader (Stream stream, string name, bool useSourcePath, List<string> defs) {
 		string format = Path.GetExtension (name);
 		switch (format.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
 		case ".po":
 			return new PoResourceReader (stream);
 		case ".txt":
 		case ".text":
-			return new TxtResourceReader (stream);
+			return new TxtResourceReader (stream, defs);
 		case ".resources":
 			return new ResourceReader (stream);
 		case ".resx":
@@ -112,7 +113,7 @@ Options:
 		}
 	}
 	
-	static int CompileResourceFile (string sname, string dname, bool useSourcePath) {
+	static int CompileResourceFile (string sname, string dname, bool useSourcePath, List<string> defs) {
 		FileStream source = null;
 		FileStream dest = null;
 		IResourceReader reader = null;
@@ -120,7 +121,7 @@ Options:
 
 		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
-			reader = GetReader (source, sname, useSourcePath);
+			reader = GetReader (source, sname, useSourcePath, defs);
 
 			dest = new FileStream (dname, FileMode.Create, FileAccess.Write);
 			writer = GetWriter (dest, dname);
@@ -182,6 +183,7 @@ Options:
 		bool compileMultiple = false;
 		bool useSourcePath = false;
 		ArrayList inputFiles = new ArrayList ();
+		List<string> defs = new List<string> ();
 
 		for (int i = 0; i < args.Length; i++) {
 			switch (args [i].ToLower ()) {
@@ -215,6 +217,10 @@ Options:
 				break;
 
 			default:
+			
+				if (TryParseAsDefinition (args [i], defs))
+					break;
+			
 				if (!IsFileArgument (args [i])) {
 					Usage ();
 					return 1;
@@ -267,7 +273,7 @@ Options:
 		}
 
 		foreach (ResourceInfo res in inputFiles) {
-			int ret = CompileResourceFile (res.InputFile, res.OutputFile, useSourcePath);
+			int ret = CompileResourceFile (res.InputFile, res.OutputFile, useSourcePath, defs);
 			if (ret != 0 )
 				return ret;
 		}
@@ -281,6 +287,18 @@ Options:
 			int platform = (int) Environment.OSVersion.Platform;
 			return ((platform == 4) || (platform == 128) || (platform == 6));
 		}
+	}
+
+	private static bool TryParseAsDefinition (string arg, List<string> defs)
+	{
+		arg = arg.ToLower (CultureInfo.InvariantCulture);
+		if (arg.Length < 2 || (arg [0] != '-') && (arg [0] != '/') || arg [1] != 'd')
+			return false;
+		
+		arg = arg.Substring (2);
+		if (!defs.Contains (arg))
+			defs.Add (arg);
+		return true;
 	}
 
 	private static bool IsFileArgument (string arg)
@@ -358,10 +376,12 @@ class TxtResourceWriter : IResourceWriter {
 class TxtResourceReader : IResourceReader {
 	Hashtable data;
 	Stream s;
+	List<string> defs;
 	
-	public TxtResourceReader (Stream stream) {
+	public TxtResourceReader (Stream stream, List<string> defs) {
 		data = new Hashtable ();
 		s = stream;
+		this.defs = defs;
 		Load ();
 	}
 	
@@ -372,16 +392,43 @@ class TxtResourceReader : IResourceReader {
 		return data.GetEnumerator ();
 	}
 	
+	static readonly char [] sep = new char [] {' ', '\t'};
+	
 	void Load () {
 		StreamReader reader = new StreamReader (s);
 		string line, key, val;
 		int epos, line_num = 0;
+		Stack<bool> defStack = new Stack<bool> ();
+		bool skip = false;
 		while ((line = reader.ReadLine ()) != null) {
 			line_num++;
 			line = line.Trim ();
-			if (line.Length == 0 || line [0] == '#' ||
-			    line [0] == ';')
+			if (line.Length == 0)
 				continue;
+			if (line [0] == '#') {
+				var pragma = line.Substring (1).Split (sep);
+				switch (pragma [0]) {
+				case "if":
+					string def = pragma.Length > 1 ? pragma [1] : string.Empty;
+					skip = !defs.Contains (def);
+					defStack.Push (skip);
+					break;
+				case "else":
+					defStack.Push (defStack.Count > 0 ? !defStack.Pop () : false);
+					break;
+				case "endif":
+					defStack.Pop ();
+					skip = defStack.Count > 0 ? defStack.Peek () : false;
+					break;
+				}
+				continue;
+			}
+			if (line [0] == ';')
+				continue;
+
+			if (skip)
+				continue;
+
 			epos = line.IndexOf ('=');
 			if (epos < 0) 
 				throw new Exception ("Invalid format at line " + line_num);
