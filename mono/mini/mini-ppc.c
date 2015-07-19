@@ -1091,8 +1091,10 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 					cinfo->args [n].reg = fr;
 					fr ++;
 					FP_ALSO_IN_REG (gr ++);
+#if !defined(__mono_ppc64__)
 					if (size == 8)
 						FP_ALSO_IN_REG (gr ++);
+#endif
 					ALWAYS_ON_STACK (stack_size += size);
 				} else {
 					cinfo->args [n].offset = PPC_STACK_PARAM_OFFSET + stack_size;
@@ -1160,7 +1162,10 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 			cinfo->args [n].size = 4;
 
 			/* It was 7, now it is 8 in LinuxPPC */
-			if (fr <= PPC_LAST_FPARG_REG) {
+			if (fr <= PPC_LAST_FPARG_REG
+			// For non-native vararg calls the parms must go in storage
+				 && !(!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
+				) {
 				cinfo->args [n].regtype = RegTypeFP;
 				cinfo->args [n].reg = fr;
 				fr ++;
@@ -1177,7 +1182,10 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 		case MONO_TYPE_R8:
 			cinfo->args [n].size = 8;
 			/* It was 7, now it is 8 in LinuxPPC */
-			if (fr <= PPC_LAST_FPARG_REG) {
+			if (fr <= PPC_LAST_FPARG_REG
+			// For non-native vararg calls the parms must go in storage
+				 && !(!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
+				 ) {
 				cinfo->args [n].regtype = RegTypeFP;
 				cinfo->args [n].reg = fr;
 				fr ++;
