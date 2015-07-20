@@ -9726,7 +9726,7 @@ namespace Mono.CSharp
 				}
 
 				if (expr_type.IsNullableType) {
-					expr = Nullable.Unwrap.Create (expr, true).Resolve (rc);
+					expr = Nullable.Unwrap.Create (expr.Resolve (rc), true);
 					expr_type = expr.Type;
 				}
 			}
