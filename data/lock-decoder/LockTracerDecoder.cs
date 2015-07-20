@@ -144,7 +144,8 @@ public enum Lock {
 	AssemblyBindingLock,
 	MarshalLock,
 	ClassesLock,
-	LoaderGlobalDataLock
+	LoaderGlobalDataLock,
+	ThreadsLock,
 }
 
 public class SimLock
@@ -311,6 +312,8 @@ public class Trace {
 		"add_record",
 		"mono_locks_lock_acquired",
 		"mono_locks_lock_released",
+		"mono_threads_lock",
+		"mono_threads_unlock",
 	};
 
 	public Trace (string[] fields) {
