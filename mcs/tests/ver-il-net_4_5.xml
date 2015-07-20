@@ -67226,6 +67226,33 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-07.cs">
+    <type name="CloningTests">
+      <method name="Void Do(System.Action)" attrs="145">
+        <size>8</size>
+      </method>
+      <method name="Void SetupBAD()" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CloningTests+&lt;SetupBAD&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>19</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>38</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">

@@ -12587,6 +12587,7 @@ namespace Mono.CSharp
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			var target = (InterpolatedStringInsert)t;
+			target.expr = expr.Clone (clonectx);
 			if (Alignment != null)
 				target.Alignment = Alignment.Clone (clonectx);
 		}
