@@ -68906,40 +68906,6 @@
       </method>
     </type>
   </test>
-  <test name="test-null-operator-010.cs">
-    <type name="Test">
-      <method name="Void Main()" attrs="145">
-        <size>79</size>
-      </method>
-      <method name="Void Test_1[T](T)" attrs="145">
-        <size>22</size>
-      </method>
-      <method name="Void Test_2[T](T)" attrs="145">
-        <size>21</size>
-      </method>
-      <method name="Void Test_3[T](T[])" attrs="145">
-        <size>28</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Ext">
-      <method name="Void Call[T](T)" attrs="150">
-        <size>17</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-null-operator-011.cs">
-    <type name="Crash">
-      <method name="System.String GetFoo()" attrs="145">
-        <size>10</size>
-      </method>
-      <method name="Void Main()" attrs="145">
-        <size>27</size>
-      </method>
-    </type>
-  </test>
   <test name="test-null-operator-02.cs">
     <type name="CI">
       <method name="Int32 get_Prop()" attrs="2182">
@@ -69208,6 +69174,79 @@
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>34</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-13.cs">
+    <type name="Crash">
+      <method name="X GetFoo()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>49</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Y ToLower()" attrs="134">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Y">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="SS">
+      <method name="Int32 ToUpper(Y)" attrs="150">
+        <size>23</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-14.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="145">
+        <size>79</size>
+      </method>
+      <method name="Void Test_1[T](T)" attrs="145">
+        <size>22</size>
+      </method>
+      <method name="Void Test_2[T](T)" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void Test_3[T](T[])" attrs="145">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Ext">
+      <method name="Void Call[T](T)" attrs="150">
+        <size>17</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-15.cs">
+    <type name="MM">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Int32] get_myEnumerable()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_myEnumerable(System.Collections.Generic.IEnumerable`1[System.Int32])" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>65</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
