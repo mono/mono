@@ -2007,6 +2007,7 @@ mono_image_load_file_for_image (MonoImage *image, int fileidx)
 		mono_image_unlock (image);
 		return image->files [fileidx - 1];
 	}
+	mono_image_unlock (image);
 
 	fname_id = mono_metadata_decode_row_col (t, fileidx - 1, MONO_FILE_NAME);
 	fname = mono_metadata_string_heap (image, fname_id);
@@ -2020,7 +2021,7 @@ mono_image_load_file_for_image (MonoImage *image, int fileidx)
 	if (image->files && image->files [fileidx - 1]) {
 		MonoImage *old = res;
 		res = image->files [fileidx - 1];
-		mono_loader_unlock ();
+		mono_image_unlock (image);
 		mono_image_close (old);
 	} else {
 		int i;
@@ -2034,7 +2035,7 @@ mono_image_load_file_for_image (MonoImage *image, int fileidx)
 		if (!image->files)
 			image->files = g_new0 (MonoImage*, t->rows);
 		image->files [fileidx - 1] = res;
-		mono_loader_unlock ();
+		mono_image_unlock (image);
 		/* vtable fixup can't happen with the image lock held */
 #ifdef HOST_WIN32
 		if (res->is_module_handle)
