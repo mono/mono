@@ -121,6 +121,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // API 21 has getpwnam_r in the NDK headers, but bionic doesn't export it
 		public void InvalidUsers_Constructor_Name ()
 		{
 			string[] badUsers = new string[]{"i'm bad", "so am i", "does-not-exist"};
