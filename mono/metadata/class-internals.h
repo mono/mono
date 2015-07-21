@@ -1076,6 +1076,7 @@ typedef struct {
 	MonoClass *runtimetype_class;
 	MonoClass *exception_class;
 	MonoClass *threadabortexception_class;
+	MonoClass *appdomainunloadedexception_klass;
 	MonoClass *thread_class;
 	MonoClass *internal_thread_class;
 #ifndef DISABLE_REMOTING

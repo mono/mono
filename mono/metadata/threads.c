@@ -722,11 +722,13 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	if (start_func) {
 		start_func (start_arg);
 	} else {
+		MonoException *exc = NULL;
 		void *args [1];
 		g_assert (start_delegate != NULL);
 		args [0] = start_arg;
-		/* we may want to handle the exception here. See comment below on unhandled exceptions */
-		mono_runtime_delegate_invoke (start_delegate, args, NULL);
+		mono_runtime_delegate_invoke (start_delegate, args, &exc);
+		if (exc)
+			mono_thread_internal_unhandled_exception (exc);
 	}
 
 	/* If the thread calls ExitThread at all, this remaining code
@@ -4679,35 +4681,39 @@ mono_thread_internal_check_for_interruption_critical (MonoInternalThread *thread
 		mono_thread_interruption_checkpoint ();
 }
 
-static inline gboolean
-is_appdomainunloaded_exception (MonoClass *klass)
-{
-	static MonoClass *app_domain_unloaded_exception_klass = NULL;
-
-	if (!app_domain_unloaded_exception_klass)
-		app_domain_unloaded_exception_klass = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainUnloadedException");
-	g_assert (app_domain_unloaded_exception_klass);
-
-	return klass == app_domain_unloaded_exception_klass;
-}
-
-static inline gboolean
-is_threadabort_exception (MonoClass *klass)
-{
-	return klass == mono_defaults.threadabortexception_class;
-}
-
+/*
+ * We call this method only the 3 following cases :
+ *  - it is a threadpool thread
+ *  - it is the finalizer thread
+ *  - it was started with Thread.Start method
+ * According to the documentation (https://msdn.microsoft.com/en-us/library/ms228965(v=vs.110).aspx)
+ * we do not want to exit the process in the previous cases, so we need to special case them. For
+ * the threadpool and finalizer cases, we just want to print the exception on the output, and for the
+ * Thread.Start case, we want to exit the thread.
+ */
 void
 mono_thread_internal_unhandled_exception (MonoObject* exc)
 {
 	if (mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT) {
-		MonoClass *klass = exc->vtable->klass;
-		if (is_threadabort_exception (klass)) {
-			mono_thread_internal_reset_abort (mono_thread_internal_current ());
-		} else if (!is_appdomainunloaded_exception (klass)) {
+		MonoClass *klass;
+		MonoInternalThread *thread;
+
+		klass = mono_object_class (exc);
+		thread = mono_thread_internal_current ();
+
+		if (klass == mono_defaults.threadabortexception_class) {
+			mono_thread_internal_reset_abort (thread);
+		} else if (klass == mono_defaults.appdomainunloadedexception_klass) {
+			/* do nothing */
+		} else {
 			mono_unhandled_exception (exc);
-			if (mono_environment_exitcode_get () == 1)
-				exit (255);
+			if (thread->threadpool_thread) {
+				/* do nothing */
+			} else if (mono_gc_is_finalizer_internal_thread (thread)) {
+				/* do nothing */
+			} else {
+				mono_thread_exit ();
+			}
 		}
 	}
 }
