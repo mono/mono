@@ -282,6 +282,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void SetOwner (Attributable owner)
+		{
+			targets [0] = owner;
+		}
+
 		/// <summary>
 		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
 		/// </summary>
@@ -1221,6 +1226,19 @@ namespace Mono.CSharp {
 		public void AddAttributes (List<Attribute> attrs)
 		{
 			Attrs.AddRange (attrs);
+		}
+
+		public static void AttachFromPartial (Attributable target, Attributable partialSrc)
+		{
+			if (target.OptAttributes == null) {
+				target.OptAttributes = partialSrc.OptAttributes;
+			} else {
+				target.OptAttributes.Attrs.AddRange (partialSrc.OptAttributes.Attrs);
+			}
+
+			foreach (var attr in partialSrc.OptAttributes.Attrs) {
+				attr.SetOwner (target);
+			}
 		}
 
 		public void AttachTo (Attributable attributable, IMemberContext context)
