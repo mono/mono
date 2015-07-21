@@ -25,6 +25,7 @@ namespace MonoTests.Mono.Unix {
 	public class UnixUserTest
 	{
 		[Test]
+		[Category ("AndroidNotWorking")] // setpwent is missing from bionic
 		public void ListAllUsers_ToString ()
 		{
 			try {
@@ -80,6 +81,7 @@ namespace MonoTests.Mono.Unix {
 
 		[Test]
 		[Category ("NotOnMac")]
+		[Category ("AndroidNotWorking")] // setpwent is missing from bionic
 		public void NonReentrantSyscalls ()
 		{
 			ArrayList user_ids = new ArrayList (4);
