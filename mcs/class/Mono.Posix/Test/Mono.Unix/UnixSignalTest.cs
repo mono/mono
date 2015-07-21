@@ -377,6 +377,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Android 4.4.4 doesn't have signal(2)
 		public void TestSignalActionInteraction ()
 		{
 			using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {
