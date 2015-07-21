@@ -1411,11 +1411,7 @@ namespace Mono.CSharp {
 				p.Name = md_p.Name;
 				p.DefaultValue = md_p.DefaultValue;
 				if (md_p.OptAttributes != null) {
-					if (p.OptAttributes == null) {
-						p.OptAttributes = md_p.OptAttributes;
-					} else {
-						p.OptAttributes.Attrs.AddRange (md_p.OptAttributes.Attrs);
-					}
+					Attributes.AttachFromPartial (p, md_p);
 				}
 			}
 

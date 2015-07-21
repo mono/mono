@@ -70134,6 +70134,52 @@
       </method>
     </type>
   </test>
+  <test name="test-partial-34.cs">
+    <type name="A">
+      <method name="Void PartialMethodWith_NoAttr_Decl(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_AAttr_Decl(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_BAttr_Decl(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_AAttr_Defn(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_BAttr_Defn(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_ABAttr(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void PartialMethodWith_BAAttr(System.String)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CustomAttributes.AttributeA">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="CustomAttributes.AttributeB">
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-pattern-01.cs">
     <type name="TypePattern">
       <method name="Int32 Main()" attrs="150">
