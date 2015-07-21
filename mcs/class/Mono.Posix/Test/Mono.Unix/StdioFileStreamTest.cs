@@ -857,7 +857,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SetLengthWithClosedBaseStream ()
 		{
-			StdioFileStream fs = new StdioFileStream ("temp", FileMode.Create);
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			StdioFileStream fs = new StdioFileStream (path, FileMode.Create);
 			BufferedStream bs = new BufferedStream (fs);
 			fs.Close ();
 
