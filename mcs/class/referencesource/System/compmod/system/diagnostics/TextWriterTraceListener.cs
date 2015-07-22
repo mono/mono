@@ -12,7 +12,6 @@ namespace System.Diagnostics {
     using System.Text;
     using System.Security.Permissions;
     using System.Runtime.InteropServices;
-    using System.IO.Ports;
     using Microsoft.Win32;
     using System.Runtime.Versioning;
 
