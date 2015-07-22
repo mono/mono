@@ -119,6 +119,9 @@ namespace Microsoft.Build.BuildEngine {
 #if XBUILD_12
 			Toolsets.Add (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0")));
 #endif
+#if XBUILD_14
+			Toolsets.Add (new Toolset ("14.0", ToolLocationHelper.GetPathToBuildTools ("14.0")));
+#endif
 		}
 		
 		[MonoTODO]
