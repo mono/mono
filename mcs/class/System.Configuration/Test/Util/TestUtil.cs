@@ -64,18 +64,6 @@ namespace MonoTests.System.Configuration.Util {
 			}
 		}
 
-		public static string DotNetVersion {
-			get {
-#if NET_4_5
-				return "net_4_5";
-#elif NET_4_0
-				return "net_4_0";
-#else
-				return "net_2_0";
-#endif
-			}
-		}
-
 		public static string ThisDllName {
 			get {
 				var asm = Assembly.GetCallingAssembly ();
