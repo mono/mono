@@ -40,7 +40,7 @@ EXTRA_DISTFILES = \
 	$(wildcard Test/System.Xml/*.xsd)		\
 	Test/System.Data/schemas/ChangeLog	\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
-	app_test_net_4_5.config			\
+	app_test_net_4_x.config			\
 	Test/System.Data/binserialize/*.bin	\
 	SqliteTest.db	\
 	referencesource.sources
