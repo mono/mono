@@ -14,52 +14,14 @@
 
 #ifdef USE_COOP_GC
 
-/* Runtime consumable API */
-
-#define MONO_SUSPEND_CHECK() do {	\
-	if (G_UNLIKELY (mono_threads_polling_required)) mono_threads_state_poll ();	\
-} while (0);
-
-#define MONO_PREPARE_BLOCKING	\
-{	\
-	void *__blocking_cookie = mono_threads_prepare_blocking ();
-
-#define MONO_FINISH_BLOCKING \
-	mono_threads_finish_blocking (__blocking_cookie);	\
+#define MONO_SUSPEND_CHECK MONO_SUSPEND_CHECK_FORCED
+#define MONO_PREPARE_BLOCKING MONO_PREPARE_BLOCKING_FORCED
+#define MONO_FINISH_BLOCKING MONO_FINISH_BLOCKING_FORCED
+#define MONO_PREPARE_RESET_BLOCKING MONO_PREPARE_RESET_BLOCKING_FORCED
+#define MONO_FINISH_RESET_BLOCKING MONO_FINISH_RESET_BLOCKING_FORCED
+#define MONO_TRY_BLOCKING MONO_TRY_BLOCKING_FORCED
+#define MONO_FINISH_TRY_BLOCKING MONO_FINISH_TRY_BLOCKING_FORCED
 }
-
-#define MONO_PREPARE_RESET_BLOCKING	\
-{	\
-	void *__reset_cookie = mono_threads_reset_blocking_start ();
-
-#define MONO_FINISH_RESET_BLOCKING \
-	mono_threads_reset_blocking_end (__reset_cookie);	\
-}
-
-#define MONO_TRY_BLOCKING	\
-{	\
-	void *__try_block_cookie = mono_threads_try_prepare_blocking ();
-
-#define MONO_FINISH_TRY_BLOCKING \
-	mono_threads_finish_try_blocking (__try_block_cookie);	\
-}
-
-/* Internal API */
-
-extern volatile size_t mono_threads_polling_required;
-
-void mono_threads_state_poll (void);
-void* mono_threads_prepare_blocking (void);
-void mono_threads_finish_blocking (void* cookie);
-
-void* mono_threads_reset_blocking_start (void);
-void mono_threads_reset_blocking_end (void* cookie);
-
-void* mono_threads_try_prepare_blocking (void);
-void mono_threads_finish_try_blocking (void* cookie);
-
-/* JIT specific interface */
-extern volatile size_t mono_polling_required ;
 
 #else
 

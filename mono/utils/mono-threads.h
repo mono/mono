@@ -622,6 +622,51 @@ gboolean mono_thread_info_in_critical_location (THREAD_INFO_TYPE *info);
 gboolean mono_thread_info_begin_suspend (THREAD_INFO_TYPE *info, gboolean interrupt_kernel);
 gboolean mono_thread_info_begin_resume (THREAD_INFO_TYPE *info);
 
+/* Runtime consumable API */
+
+#define MONO_SUSPEND_CHECK_FORCED() do {	\
+	if (G_UNLIKELY (mono_threads_polling_required)) mono_threads_state_poll ();	\
+} while (0);
+
+#define MONO_PREPARE_BLOCKING_FORCED	\
+{	\
+	void *__blocking_cookie = mono_threads_prepare_blocking ();
+
+#define MONO_FINISH_BLOCKING_FORCED \
+	mono_threads_finish_blocking (__blocking_cookie);	\
+}
+
+#define MONO_PREPARE_RESET_BLOCKING_FORCED	\
+{	\
+	void *__reset_cookie = mono_threads_reset_blocking_start ();
+
+#define MONO_FINISH_RESET_BLOCKING_FORCED \
+	mono_threads_reset_blocking_end (__reset_cookie);	\
+}
+
+#define MONO_TRY_BLOCKING_FORCED	\
+{	\
+	void *__try_block_cookie = mono_threads_try_prepare_blocking ();
+
+#define MONO_FINISH_TRY_BLOCKING_FORCED \
+	mono_threads_finish_try_blocking (__try_block_cookie);	\
+
+/* Internal API */
+
+extern volatile size_t mono_threads_polling_required;
+
+void mono_threads_state_poll (void);
+void* mono_threads_prepare_blocking (void);
+void mono_threads_finish_blocking (void* cookie);
+
+void* mono_threads_reset_blocking_start (void);
+void mono_threads_reset_blocking_end (void* cookie);
+
+void* mono_threads_try_prepare_blocking (void);
+void mono_threads_finish_try_blocking (void* cookie);
+
+/* JIT specific interface */
+extern volatile size_t mono_polling_required ;
 
 void mono_threads_add_to_pending_operation_set (THREAD_INFO_TYPE* info); //XXX rename to something to reflect the fact that this is used for both suspend and resume
 gboolean mono_threads_wait_pending_operations (void);
