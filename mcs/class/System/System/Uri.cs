@@ -170,9 +170,16 @@ namespace System {
 			}
 		}
 
+		// When used instead of UriKind.RelativeOrAbsolute paths such as "/foo" are assumed relative.
+		const UriKind DotNetRelativeOrAbsolute = (UriKind) 300;
+
 		public Uri (string uriString, UriKind uriKind)
 		{
 			source = uriString;
+
+			if (uriString != null && uriKind == DotNetRelativeOrAbsolute)
+				uriKind = (uriString.StartsWith ("/", StringComparison.Ordinal))? UriKind.Relative : UriKind.RelativeOrAbsolute;
+
 			ParseUri (uriKind);
 
 			switch (uriKind) {
@@ -204,6 +211,9 @@ namespace System {
 				success = false;
 				return;
 			}
+
+			if (uriKind == DotNetRelativeOrAbsolute)
+				uriKind = (uriString.StartsWith ("/", StringComparison.Ordinal))? UriKind.Relative : UriKind.RelativeOrAbsolute;
 
 			if (uriKind != UriKind.RelativeOrAbsolute &&
 				uriKind != UriKind.Absolute &&
