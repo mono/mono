@@ -77,7 +77,7 @@ public class TextInfoTest {
 
 	private void Check (CultureInfo ci, string src, string expected)
 	{
-		Assert.AreEqual (expected, ci.TextInfo.ToTitleCase (src), src + " at culture " + ci.LCID);
+		Assert.AreEqual (expected, ci.TextInfo.ToTitleCase (src), src + " at culture " + ci.Name);
 	}
 
 	private void CompareProperties (TextInfo t1, TextInfo t2, bool compareReadOnly)
