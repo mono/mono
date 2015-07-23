@@ -79,6 +79,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 						<Message Text='Text5' Importance='normal'/>
 						<Message Text='Text6' Importance='high'/>
 						<Message Text='Text7' />
+						<Message Text='%22abc test%22 123 %22def%22' />
 						<Message Text='Text8' Importance='weird_importance'/>
 					</Target>
 				</Project>
@@ -102,7 +103,8 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Assert.AreEqual (0, testLogger.CheckAny ("Text5", MessageImportance.Normal), "A5");
 			Assert.AreEqual (0, testLogger.CheckAny ("Text6", MessageImportance.High), "A6");
 			Assert.AreEqual (0, testLogger.CheckAny ("Text7", MessageImportance.Normal), "A7");
-			Assert.AreEqual (1, testLogger.CheckAny ("Text8", MessageImportance.Normal), "A8");
+			Assert.AreEqual (0, testLogger.CheckAny ("\"abc test\" 123 \"def\"", MessageImportance.Normal), "A8");
+			Assert.AreEqual (1, testLogger.CheckAny ("Text8", MessageImportance.Normal), "A9");
 		}
 	}
 }	
