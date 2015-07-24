@@ -86,7 +86,7 @@ public struct AStruct : ITest2 {
 	public byte k;
 	public IntPtr j;
 	public int l;
-
+/*
 	public AStruct () {
 		i = 0;
 		s = null;
@@ -94,7 +94,7 @@ public struct AStruct : ITest2 {
 		j = IntPtr.Zero;
 		l = 0;
 	}
-
+*/
 	public AStruct (int arg) {
 		i = arg;
 		s = null;
