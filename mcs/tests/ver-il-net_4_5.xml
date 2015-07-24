@@ -20570,22 +20570,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-autoproperty-13.cs">
-    <type name="S">
-      <method name="Int32 get_X()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Int32 get_Y()" attrs="2182">
-        <size>14</size>
-      </method>
-      <method name="Int32 Main()" attrs="150">
-        <size>37</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>21</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-autoproperty-14.cs">
     <type name="S">
       <method name="Int32 get_A()" attrs="2182">
@@ -22010,15 +21994,8 @@
       <method name="Boolean &lt;Main&gt;m__9(Boolean)" attrs="145">
         <size>12</size>
       </method>
-    </type>
-    <type name="StructWithUserConstructor">
-      <method name="Void .ctor()" attrs="6278">
-        <size>2</size>
-      </method>
-    </type>
-    <type name="Tester">
       <method name="Void NewTest_8()" attrs="129">
-        <size>140</size>
+        <size>64</size>
       </method>
       <method name="Void CallTest_10()" attrs="129">
         <size>137</size>
@@ -51235,47 +51212,6 @@
     <type name="X">
       <method name="Void Main()" attrs="150">
         <size>2</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-906.cs">
-    <type name="S1">
-      <method name="Void .ctor()" attrs="6278">
-        <size>10</size>
-      </method>
-    </type>
-    <type name="S2">
-      <method name="Void .ctor()" attrs="6278">
-        <size>9</size>
-      </method>
-    </type>
-    <type name="S3">
-      <method name="Void .ctor()" attrs="6278">
-        <size>17</size>
-      </method>
-    </type>
-    <type name="S4">
-      <method name="Void .ctor(Int32)" attrs="6278">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>9</size>
-      </method>
-    </type>
-    <type name="S5">
-      <method name="Void .ctor(Int32)" attrs="6278">
-        <size>22</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>8</size>
-      </method>
-    </type>
-    <type name="C">
-      <method name="Int32 Main()" attrs="145">
-        <size>161</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
