@@ -41,9 +41,7 @@ using System.Collections;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 #if !MOBILE
 using Mono.Net.Dns;
@@ -58,8 +56,6 @@ namespace System.Net {
 
 		static Dns ()
 		{
-			System.Net.Sockets.Socket.CheckProtocolSupport();
-
 #if !MOBILE
 			if (Environment.GetEnvironmentVariable ("MONO_DNS") != null) {
 				resolver = new SimpleResolver ();
@@ -456,7 +452,6 @@ namespace System.Net {
 			return ret;
 		}
 
-#if NET_4_5
 		public static Task<IPAddress[]> GetHostAddressesAsync (string hostNameOrAddress)
 		{
 			return Task<IPAddress[]>.Factory.FromAsync (BeginGetHostAddresses, EndGetHostAddresses, hostNameOrAddress, null);
@@ -471,7 +466,6 @@ namespace System.Net {
 		{
 			return Task<IPHostEntry>.Factory.FromAsync (BeginGetHostEntry, EndGetHostEntry, hostNameOrAddress, null);
 		}
-#endif
 	}
 }
 

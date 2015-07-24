@@ -2,6 +2,6 @@
 // Line: 5
 // Compiler options: -warnaserror
 
-#pragma warning disable AAA
+#pragma warning disable 1AAA
 class MainClass {
 }

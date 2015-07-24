@@ -35,10 +35,8 @@ using NUnit.Framework;
 using System;
 using System.Xml;
 using System.Data.SqlTypes;
-#if NET_2_0
 using System.Xml.Serialization;
 using System.IO;
-#endif
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -135,11 +133,9 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#19");
 			}
 
-#if NET_2_0
 			// Modulus ()
 			Assert.AreEqual ((SqlInt16)36, SqlInt16.Modulus (Test164, Test64), "Test#20");
 			Assert.AreEqual ((SqlInt16)64, SqlInt16.Modulus (Test64, Test164), "Test#21");
-#endif
 		}
 
 		[Test]
@@ -695,7 +691,6 @@ namespace MonoTests.System.Data.SqlTypes
 			short TestShort = 14;
 			Assert.AreEqual ((short) 14, ((SqlInt16) TestShort).Value, "Test#1");
 		}
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
@@ -732,6 +727,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ReadWriteXmlTest ()
 		{
 			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><short>4556</short>";
@@ -747,10 +743,9 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, test3, "BA03");
 				Assert.Fail ("BA03");
-			} catch (FormatException e) {
-				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (FormatException), e.InnerException.GetType (), "#BA03");
 			}
 		}
-#endif
 	}
 }

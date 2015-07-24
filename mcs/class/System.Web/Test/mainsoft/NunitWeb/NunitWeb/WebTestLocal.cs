@@ -7,7 +7,6 @@ namespace MonoTests.SystemWeb.Framework
 		static partial void CopyResourcesLocal ()
 		{
 			Type myself = typeof (WebTest);
-#if NET_2_0
 			CopyPrefixedResources (myself, "App_GlobalResources/", "App_GlobalResources");
 			CopyPrefixedResources (myself, "App_Code/", "App_Code");
 #if DOTNET
@@ -18,9 +17,6 @@ namespace MonoTests.SystemWeb.Framework
 #else
 			CopyResource (myself, "Web.mono.config", "Web.config");
 #endif
-#endif
-#else
-			CopyResource (myself, "Web.mono.config.1.1", "Web.config");
 #endif
 		}
 	}

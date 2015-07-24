@@ -99,7 +99,6 @@ namespace System.Web.UI
 		internal static List <string> FileDependencies {
 			get { return dependencies; }
 		}		
-#if NET_4_0
 		internal override Type DefaultBaseType {
 			get {
 				Type ret = PageParser.DefaultApplicationBaseType;
@@ -109,7 +108,6 @@ namespace System.Web.UI
 				return ret;
 			}
 		}
-#endif
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.HttpApplication"; }
 		}

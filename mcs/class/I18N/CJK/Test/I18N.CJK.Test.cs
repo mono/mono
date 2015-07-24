@@ -214,18 +214,12 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS is buggy here
-#endif
 		public void CP50222_Encode ()
 		{
 			AssertEncode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50222.txt", 50222);
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS is buggy here
-#endif
 		public void CP50222_Decode ()
 		{
 			AssertDecode ("Test/texts/japanese-utf8.txt", "Test/texts/japanese-50222.txt", 50222);
@@ -252,9 +246,6 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS bug
-#endif
 		public void Bug77723 ()
 		{
 			GetBytesAllSingleChars (51932);
@@ -323,9 +314,6 @@ namespace MonoTests.I18N.CJK
 		}
 
 		[Test]
-#if !NET_2_0
-		[Category ("NotDotNet")] // MS bug
-#endif
 		public void Encoder54936Refresh ()
 		{
 			Encoding e = Manager.GetEncoding ("gb18030");
@@ -355,7 +343,6 @@ namespace MonoTests.I18N.CJK
 					   Manager.GetEncoding (932).GetBytes ("\uFF02"));
 		}
 
-#if NET_2_0
 		[Test]
 		public void Decoder932Refresh ()
 		{
@@ -472,7 +459,6 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual (1, d.GetChars (new byte [] {0xF9}, 0, 1, chars, 0, true), "#5");
 			Assert.AreEqual (new char [] {'?'}, chars, "#6");
 		}
-#endif
 
 
 		[Test]

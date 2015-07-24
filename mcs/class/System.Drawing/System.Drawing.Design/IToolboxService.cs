@@ -35,9 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Design {
 
-#if NET_2_0
 	[ComImport]
-#endif
 	[Guid("4BACD258-DE64-4048-BC4E-FEDBEF9ACB76"),
 	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IToolboxService

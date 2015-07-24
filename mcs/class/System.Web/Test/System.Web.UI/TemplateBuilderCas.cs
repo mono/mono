@@ -51,9 +51,7 @@ namespace MonoCasTests.System.Web.UI {
 			tb.Init (new PageParser (), new ControlBuilder (), null, null, null, null);
 			Assert.IsFalse (tb.NeedsTagInnerText (), "NeedsTagInnerText");
 			tb.SetTagInnerText ("mono");
-#if NET_2_0
 			Assert.IsNotNull (tb.BuildObject (), "BuildObject");
-#endif
 		}
 
 		// LinkDemand

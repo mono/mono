@@ -7,18 +7,16 @@ LIBRARY = System.Data.Services.Client.dll
 Client/System.Data.Services.Client.resources: Client/System.Data.Services.Client.txt
 	$(RESGEN) "$<" "$@"
 
+LIB_REFS = System System.Core System.Xml.Linq System.Data System.Xml
 LIB_MCS_FLAGS = \
 	-d:NET_3_5	\
-	-r:System.dll \
-	-r:System.Core.dll \
-	-r:System.Xml.Linq.dll \
-	-r:System.Data.dll \
-	-r:System.Xml.dll \
 	-resource:Client/System.Data.Services.Client.resources \
 	-warn:2
 
+ifndef NO_WINDOWS_BASE
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -r:WindowsBase
+LIB_REFS += WindowsBase
+endif
 endif
 
 include ../../build/library.make

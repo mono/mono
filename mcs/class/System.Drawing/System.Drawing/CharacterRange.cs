@@ -60,7 +60,6 @@ namespace System.Drawing
 				length = value;
 			}
 		}
-#if NET_2_0
 		public override bool Equals (object obj)
 		{
 			if (!(obj is CharacterRange))
@@ -84,6 +83,5 @@ namespace System.Drawing
 		{
 			return ((cr1.first != cr2.first) || (cr1.length != cr2.length));
 		}
-#endif
 	}
 }

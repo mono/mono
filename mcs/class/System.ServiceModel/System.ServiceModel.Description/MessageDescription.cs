@@ -99,17 +99,6 @@ namespace System.ServiceModel.Description
 
 		#region internals required for moonlight compatibility
 
-#if NET_2_1  // it uses S.R.Serialization internals which is InternalVisible to this assembly only in 2.1. So, DON'T use this member in full 2.0 profile.
-		XmlName msg_name;
-		internal XmlName MessageName {
-			get {
-				if (msg_name == null)
-					msg_name = new XmlName (KnownTypeCollection.GetStaticQName (MessageType).Name);
-				return msg_name;
-			}
-		}
-#endif
-
 		internal bool IsTypedMessage {
 			get { return MessageType == null; }
 		}

@@ -417,7 +417,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 37;
+		internal const int MINOR_VERSION = 40;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -585,7 +585,8 @@ namespace Mono.Debugger.Soft
 		enum CmdStackFrame {
 			GET_VALUES = 1,
 			GET_THIS = 2,
-			SET_VALUES = 3
+			SET_VALUES = 3,
+			GET_DOMAIN = 4,
 		}
 
 		enum CmdArrayRef {
@@ -1215,6 +1216,8 @@ namespace Mono.Debugger.Soft
 
 		bool disconnected;
 
+		internal ManualResetEvent DisconnectedEvent = new ManualResetEvent (false);
+
 		void receiver_thread_main () {
 			while (!closed) {
 				try {
@@ -1231,6 +1234,7 @@ namespace Mono.Debugger.Soft
 
 			lock (reply_packets_monitor) {
 				disconnected = true;
+				DisconnectedEvent.Set ();
 				Monitor.PulseAll (reply_packets_monitor);
 				TransportClose ();
 			}
@@ -1634,13 +1638,14 @@ namespace Mono.Debugger.Soft
 			SendReceive (CommandSet.VM, (int)CmdVM.SET_PROTOCOL_VERSION, new PacketWriter ().WriteInt (major).WriteInt (minor));
 		}
 
-		internal long[] VM_GetThreads () {
-			var res = SendReceive (CommandSet.VM, (int)CmdVM.ALL_THREADS, null);
-			int len = res.ReadInt ();
-			long[] arr = new long [len];
-			for (int i = 0; i < len; ++i)
-				arr [i] = res.ReadId ();
-			return arr;
+		internal void VM_GetThreads (Action<long[]> resultCallaback) {
+			Send (CommandSet.VM, (int)CmdVM.ALL_THREADS, null, (res) => {
+				int len = res.ReadInt ();
+				long[] arr = new long [len];
+				for (int i = 0; i < len; ++i)
+					arr [i] = res.ReadId ();
+				resultCallaback(arr);
+			}, 1);
 		}
 
 		internal void VM_Suspend () {
@@ -2378,6 +2383,10 @@ namespace Mono.Debugger.Soft
 			SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.SET_VALUES, new PacketWriter ().WriteId (thread_id).WriteId (id).WriteInt (len).WriteInts (pos).WriteValues (values));
 		}
 
+		internal long StackFrame_GetDomain (long thread_id, long id) {
+			return SendReceive (CommandSet.STACK_FRAME, (int)CmdStackFrame.GET_DOMAIN, new PacketWriter ().WriteId (thread_id).WriteId (id)).ReadId ();
+		}
+
 		/*
 		 * ARRAYS
 		 */
@@ -2470,6 +2479,7 @@ namespace Mono.Debugger.Soft
 		{
 			closed = true;
 			disconnected = true;
+			DisconnectedEvent.Set ();
 			TransportClose ();
 		}
 	}

@@ -68,15 +68,6 @@ namespace System.Xml.Serialization {
 			get { return _mapping.Length; }
 		}
 
-#if !NET_2_0
-		public string ElementName {	
-			get { return _elementName; }
-		}
-
-		public string Namespace {
-			get { return _namespace; }
-		}
-#endif
 
 		public XmlMemberMapping this [int index] {	
 			get { return _mapping[index]; }

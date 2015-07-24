@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 			3021, 3022, 3023, 3024, 3026, 3027,
 			4014, 4024, 4025, 4026,
 			7035, 7080, 7081, 7082, 7095,
-			8009,
+			8009, 8094
 		};
 
 		static HashSet<int> AllWarningsHashSet;

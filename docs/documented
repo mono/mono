@@ -269,12 +269,9 @@ mono_gc_weak_link_get
 mono_gc_weak_link_remove
 mono_gc_disable
 mono_gc_enable
-mono_gc_is_finalizer_thread
-mono_gc_out_of_memory
 mono_gc_start_world
 mono_gc_stop_world
 mono_gc_alloc_fixed
-mono_gc_enable_events
 mono_gc_free_fixed
 mono_gc_make_descr_from_bitmap
 mono_gc_base_init
@@ -526,7 +523,6 @@ mono_object_isinst
 mono_object_register_finalizer
 mono_object_unbox
 mono_object_castclass_mbyref
-mono_object_is_alive
 mono_object_get_size
 mono_value_box
 mono_value_copy

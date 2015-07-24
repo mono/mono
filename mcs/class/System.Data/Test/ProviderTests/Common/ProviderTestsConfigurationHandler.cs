@@ -48,11 +48,7 @@ namespace MonoTests.System.Data
 					string msg = string.Format (CultureInfo.InvariantCulture,
 						"A engine with name '{0}' already exists.",
 						engine.Name);
-#if NET_2_0
 					throw new ConfigurationErrorsException (msg, engineNode);
-#else
-					throw new ConfigurationException (msg, engineNode);
-#endif
 				}
 				engines.Add (engine.Name, engine);
 			}
@@ -65,11 +61,7 @@ namespace MonoTests.System.Data
 					string msg = string.Format (CultureInfo.InvariantCulture,
 						"A connection with name '{0}' already exists.",
 						conn.Name);
-#if NET_2_0
 					throw new ConfigurationErrorsException (msg, connNode);
-#else
-					throw new ConfigurationException (msg, connNode);
-#endif
 				}
 				connections.Add (conn.Name, conn);
 			}

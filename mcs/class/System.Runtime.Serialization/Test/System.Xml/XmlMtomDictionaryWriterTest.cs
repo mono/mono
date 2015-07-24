@@ -78,11 +78,11 @@ Content-ID: <urn:foo>
 Content-Transfer-Encoding: 8bit
 Content-Type: application/xop+xml;charset=utf-8;type=""sTaRt""
 
-<root>RAW<foo>bcdMjxG<arr>true</arr><arr>false</arr><arr>true</arr>AQIDBAU=999&#xD;
-&#xD;
+<root>RAW<foo>bcdMjxG<arr>true</arr><arr>false</arr><arr>true</arr>AQIDBAU=999&#xD;XXX
+&#xD;XXX
 666</foo></root>
 --myboundary--
-<root/><root/><root/>".Replace ("\n", "\r\n");
+<root/><root/><root/>".Replace ("\n", "\r\n").Replace ("XXX\r\n", "\n");
 	}
 
 	class MyStreamProvider : IStreamProvider

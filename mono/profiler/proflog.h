@@ -5,7 +5,7 @@
 #define LOG_HEADER_ID 0x4D505A01
 #define LOG_VERSION_MAJOR 0
 #define LOG_VERSION_MINOR 4
-#define LOG_DATA_VERSION 6
+#define LOG_DATA_VERSION 11
 /*
  * Changes in data versions:
  * version 2: added offsets in heap walk
@@ -13,6 +13,17 @@
  * version 4: added sample/statistical profiling
  * version 5: added counters sampling
  * version 6: added optional backtrace in sampling info
+ * version 8: added TYPE_RUNTIME and JIT helpers/trampolines
+ * version 9: added MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING
+ * version 10: added TYPE_COVERAGE
+ * version 11: added thread ID to TYPE_SAMPLE_HIT
+               added more load/unload events
+                   unload for class
+                   unload for image
+                   load/unload for appdomain
+                   load/unload for contexts
+                   load/unload/name for assemblies
+               removed TYPE_LOAD_ERR flag (profiler never generated it, now removed from the format itself)
  */
 
 enum {
@@ -24,22 +35,23 @@ enum {
 	TYPE_MONITOR,
 	TYPE_HEAP,
 	TYPE_SAMPLE,
+	TYPE_RUNTIME,
+	TYPE_COVERAGE,
 	/* extended type for TYPE_HEAP */
 	TYPE_HEAP_START  = 0 << 4,
 	TYPE_HEAP_END    = 1 << 4,
 	TYPE_HEAP_OBJECT = 2 << 4,
 	TYPE_HEAP_ROOT   = 3 << 4,
 	/* extended type for TYPE_METADATA */
-	TYPE_START_LOAD   = 1 << 4,
 	TYPE_END_LOAD     = 2 << 4,
-	TYPE_START_UNLOAD = 3 << 4,
 	TYPE_END_UNLOAD   = 4 << 4,
-	TYPE_LOAD_ERR     = 1 << 7,
+	/* metadata type byte for TYPE_METADATA */
 	TYPE_CLASS     = 1,
 	TYPE_IMAGE     = 2,
 	TYPE_ASSEMBLY  = 3,
 	TYPE_DOMAIN    = 4,
 	TYPE_THREAD    = 5,
+	TYPE_CONTEXT   = 6,
 	/* extended type for TYPE_GC */
 	TYPE_GC_EVENT  = 1 << 4,
 	TYPE_GC_RESIZE = 2 << 4,
@@ -65,6 +77,13 @@ enum {
 	TYPE_SAMPLE_UBIN          = 2 << 4,
 	TYPE_SAMPLE_COUNTERS_DESC = 3 << 4,
 	TYPE_SAMPLE_COUNTERS      = 4 << 4,
+	/* extended type for TYPE_RUNTIME */
+	TYPE_JITHELPER = 1 << 4,
+	/* extended type for TYPE_COVERAGE */
+	TYPE_COVERAGE_ASSEMBLY = 0 << 4,
+	TYPE_COVERAGE_METHOD   = 1 << 4,
+	TYPE_COVERAGE_STATEMENT = 2 << 4,
+	TYPE_COVERAGE_CLASS = 3 << 4,
 	TYPE_END
 };
 
@@ -79,4 +98,3 @@ enum {
 };
 
 #endif /* __MONO_PROFLOG_H__ */
-

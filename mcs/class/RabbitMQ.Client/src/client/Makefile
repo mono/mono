@@ -3,8 +3,14 @@ SUBDIRS =
 include ../../../../build/rules.make
 
 LIBRARY = RabbitMQ.Client.dll
-LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -nowarn:618
+LIB_REFS = System System.Xml
+LIB_MCS_FLAGS = -nowarn:618
 NO_TEST = yes
+
+BUILT_SOURCES = ../../docs/specs/$(PROFILE)-api-0-9.cs \
+	../../docs/specs/$(PROFILE)-api-0-8.cs \
+	../../docs/specs/$(PROFILE)-api-qpid-0-8.cs
+
 
 include ../../../../build/library.make
 

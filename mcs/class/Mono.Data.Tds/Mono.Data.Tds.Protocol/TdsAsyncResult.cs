@@ -30,7 +30,6 @@
 //
 
 
-#if NET_2_0
 using System;
 using System.Threading;
 
@@ -125,4 +124,3 @@ namespace Mono.Data.Tds.Protocol
         }
 }
 
-#endif // NET_2_0

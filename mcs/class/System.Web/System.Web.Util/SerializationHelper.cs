@@ -23,7 +23,6 @@
 // Author:
 //	Daniel Nauck		<d.nauck(at)nauck-it.de>
 
-#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -86,4 +85,3 @@ namespace System.Web.Util
 		}
 	}
 }
-#endif

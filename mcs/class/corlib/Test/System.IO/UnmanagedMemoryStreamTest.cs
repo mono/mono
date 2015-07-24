@@ -10,7 +10,6 @@
 // Copyright (C) 2004, 2009 Novell (http://www.novell.com)
 //
 
-#if NET_2_0
 using System;
 using System.Collections;
 using System.IO;
@@ -1073,18 +1072,7 @@ namespace MonoTests.System.IO
 		{
 			UnmanagedMemoryStream ums = new UnmanagedMemoryStream(mem_byteptr,
 				length, capacity, FileAccess.ReadWrite);
-			try {
-				ums.Position = 0x80000000;
-				Assert.Fail ("#1");
-			} catch (ArgumentOutOfRangeException ex) {
-				// MemoryStream length must be non-negative and less than
-				// 2^31 - 1 - origin
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("value", ex.ParamName, "#6");
-			}
+			ums.Position = 0x80000000;
 			ums.Close();
 		}
 
@@ -1315,4 +1303,3 @@ namespace MonoTests.System.IO
 		}
 	}
 }
-#endif

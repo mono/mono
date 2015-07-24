@@ -160,6 +160,11 @@ public class ConditionalParsing
 		var x = 1 > 0  ? table[5, 1] : 0;
 	}
 
+	void Test_20 ()
+	{
+		var t = (Object)string.Empty;
+	}
+
 	static void Helper<T> (T arg)
 	{
 	}

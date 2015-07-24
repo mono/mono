@@ -42,9 +42,7 @@ namespace I18N.CJK
 			int charIndex = 0;
 			int byteIndex = 0;
 			int end = charCount;
-#if NET_2_0
 			EncoderFallbackBuffer buffer = null;
-#endif
 
 			int origIndex = byteIndex;
 			for (int i = charIndex; i < end; i++, charCount--) {
@@ -57,14 +55,9 @@ namespace I18N.CJK
 				byte b1 = gb2312.u2n[((int)c) * 2 + 1];
 				byte b2 = gb2312.u2n[((int)c) * 2];
 				if (b1 == 0 && b2 == 0) {
-#if NET_2_0
 					HandleFallback (ref buffer, chars,
 						ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
-#else
-					int offset = byteIndex++;
-					if (bytes != null) bytes[offset] = (byte)'?';
-#endif
 				} else {
 					if (bytes != null)
 					{
@@ -87,9 +80,7 @@ namespace I18N.CJK
 			int byteCount = bytes != null ? bytes.Length : 0;
 
 			DbcsConvert gb2312 = GetConvert();
-#if NET_2_0
 			EncoderFallbackBuffer buffer = null;
-#endif
 			for (int i = charIndex; i < end; i++, charCount--)
 			{
 				char c = chars[i];
@@ -103,13 +94,8 @@ namespace I18N.CJK
 				byte b2 = gb2312.u2n[((int)c) * 2];
 				if (b1 == 0 && b2 == 0)
 				{
-#if NET_2_0
 					HandleFallback (ref buffer, chars, ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
-#else
-					int offset = byteIndex++;
-					if (bytes != null) bytes[] = (byte)'?';
-#endif
 				}
 				else
 				{
@@ -225,9 +211,7 @@ namespace I18N.CJK
 			return GetCharCount (bytes, index, count, false);
 		}
 
-#if NET_2_0
 		public override
-#endif
 		int GetCharCount (byte [] bytes, int index, int count, bool refresh)
 		{
 			CheckRange (bytes, index, count);
@@ -268,9 +252,7 @@ namespace I18N.CJK
 			return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
 		}
 
-#if NET_2_0
 		public override
-#endif
 		int GetChars (byte [] bytes, int byteIndex, int byteCount,
 			      char [] chars, int charIndex, bool refresh)
 		{

@@ -9,6 +9,7 @@ LIBRARY = Microsoft.Build.Tasks.dll
 
 LIBRARY_NAME = Microsoft.Build.Tasks$(NAME_SUFFIX).dll
 
+LIB_REFS = System System.Core System.Xml System.Windows.Forms
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\

@@ -43,20 +43,16 @@ namespace MonoTests.System.CodeDom
 			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ((string) null);
 			Assert.IsNotNull (cad.Name, "#1");
 			Assert.AreEqual (string.Empty, cad.Name, "#2");
-#if NET_2_0
 			Assert.IsNotNull (cad.AttributeType, "#3");
 			Assert.AreEqual (typeof(void).FullName, cad.AttributeType.BaseType, "#4");
-#endif
 			Assert.IsNotNull (cad.Arguments, "#5");
 			Assert.AreEqual (0, cad.Arguments.Count, "#6");
 
 			cad.Name = null;
 			Assert.IsNotNull (cad.Name, "#7");
 			Assert.AreEqual (string.Empty, cad.Name, "#8");
-#if NET_2_0
 			Assert.IsNotNull (cad.AttributeType, "#9");
 			Assert.AreEqual (typeof(void).FullName, cad.AttributeType.BaseType, "#10");
-#endif
 		}
 
 		[Test]
@@ -65,9 +61,7 @@ namespace MonoTests.System.CodeDom
 			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ();
 			Assert.IsNotNull (cad.Name, "#1");
 			Assert.AreEqual (string.Empty, cad.Name, "#2");
-#if NET_2_0
 			Assert.IsNull (cad.AttributeType, "#3");
-#endif
 			Assert.IsNotNull (cad.Arguments, "#4");
 			Assert.AreEqual (0, cad.Arguments.Count, "#5");
 		}
@@ -78,10 +72,8 @@ namespace MonoTests.System.CodeDom
 			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ("mono");
 			Assert.AreEqual (0, cad.Arguments.Count, "#1");
 			Assert.AreEqual ("mono", cad.Name, "#2");
-#if NET_2_0
 			Assert.IsNotNull (cad.AttributeType, "#3");
 			Assert.AreEqual ("mono", cad.AttributeType.BaseType, "#4");
-#endif
 		}
 
 		[Test]
@@ -90,20 +82,15 @@ namespace MonoTests.System.CodeDom
 			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ("mono", new CodeAttributeArgument ());
 			Assert.AreEqual (1, cad.Arguments.Count, "#1");
 			Assert.AreEqual ("mono", cad.Name, "#2");
-#if NET_2_0
 			Assert.IsNotNull (cad.AttributeType, "#3");
 			Assert.AreEqual ("mono", cad.AttributeType.BaseType, "#4");
-#endif
 			cad.Name = null;
 			Assert.AreEqual (1, cad.Arguments.Count, "#5");
 			Assert.AreEqual (string.Empty, cad.Name, "#6");
-#if NET_2_0
 			Assert.IsNotNull (cad.AttributeType, "#7");
 			Assert.AreEqual (typeof(void).FullName, cad.AttributeType.BaseType, "#8");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor3 ()
 		{
@@ -157,6 +144,5 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (string.Empty, cad.Name, "#13");
 			Assert.IsNull (cad.AttributeType, "#14");
 		}
-#endif
 	}
 }

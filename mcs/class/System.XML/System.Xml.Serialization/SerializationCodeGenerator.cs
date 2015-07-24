@@ -255,9 +255,7 @@ namespace System.Xml.Serialization
 					GenerateWriter (writerClassName, maps);
 				WriteLine ("");
 				
-#if NET_2_0
 				GenerateContract (maps);
-#endif
 
 				WriteLineUni ("}");
 				WriteLine ("");
@@ -295,7 +293,6 @@ namespace System.Xml.Serialization
 		// Contract generation
 		//
 		
-#if NET_2_0
 		public void GenerateContract (ArrayList generatedMaps)
 		{
 			// Write the base serializer
@@ -440,7 +437,6 @@ namespace System.Xml.Serialization
 			WriteLine ("");
 			WriteLine ("#endif");
 		}
-#endif
 
 
 		//*******************************************************
@@ -593,19 +589,13 @@ namespace System.Xml.Serialization
 				// FromEnum actually covers this case too, but we save some cycles here
 				WriteLine ("if (val.ToString () == \"0\") return string.Empty;");
 				Write ("return FromEnum ((long) val, " + xmlNamesArray + ", " + valuesArray);
-#if NET_2_0
 				_writer.Write (", typeof (");
 				_writer.Write (map.TypeData.CSharpFullName);
 				_writer.Write (").FullName");
-#endif
 				_writer.Write (')'); // close FromEnum method call
 				WriteUni (";"); // end statement
 			} else {
-#if NET_2_0
 				WriteLine ("default: throw CreateInvalidEnumValueException ((long) val, typeof (" + map.TypeData.CSharpFullName + ").FullName);");
-#else
-				WriteLine ("default: return ((long)val).ToString(CultureInfo.InvariantCulture);");
-#endif
 			}
 			
 			WriteLineUni ("}");
@@ -2814,9 +2804,7 @@ namespace System.Xml.Serialization
 			if (ob is string) return "\"" + ob.ToString().Replace("\"","\"\"") + "\"";
 			if (ob is char) return (char) ob == '\'' ? "'\\''" : "'" + ob.ToString () + "'";
 			if (ob is DateTime) return "new DateTime (" + ((DateTime) ob).Ticks + ")";
-#if NET_2_0
 			if (ob is DateTimeOffset) return "new DateTimeOffset (" + ((DateTimeOffset) ob).Ticks + ")";
-#endif
 			if (ob is TimeSpan) return "new TimeSpan (" + ((TimeSpan) ob).Ticks + ")";
 			if (ob is bool) return ((bool)ob) ? "true" : "false";
 			if (ob is XmlQualifiedName) {
@@ -2925,9 +2913,7 @@ namespace System.Xml.Serialization
 		public string WriterClassName;
 		public string WriteMethodName;
 		public string Namespace;
-#if NET_2_0		
 		public string SerializerClassName;
-#endif		
 		public string BaseSerializerClassName;
 		public string ImplementationClassName;
 	}

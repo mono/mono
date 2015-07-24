@@ -69,11 +69,7 @@ namespace Microsoft.Build.Evaluation
 
 		static ProjectCollection ()
 		{
-			#if NET_4_5
 			global_project_collection = new ProjectCollection (new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ()));
-			#else
-			global_project_collection = new ProjectCollection (new Dictionary<string, string> ());
-			#endif
 		}
 
 		public static string Escape (string unescapedString)
@@ -251,20 +247,24 @@ namespace Microsoft.Build.Evaluation
 		//FIXME: should also support config file, depending on ToolsetLocations
 		void LoadDefaultToolsets ()
 		{
+			AddToolset (new Toolset ("4.0",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
+#if XBUILD_12
+			AddToolset (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0"), this, null));
+#endif
+#if XBUILD_14
+			AddToolset (new Toolset ("14.0", ToolLocationHelper.GetPathToBuildTools ("14.0"), this, null));
+#endif
+
+			// We don't support these anymore
 			AddToolset (new Toolset ("2.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20), this, null));
 			AddToolset (new Toolset ("3.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30), this, null));
 			AddToolset (new Toolset ("3.5",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35), this, null));
-#if NET_4_0
-			AddToolset (new Toolset ("4.0",
-				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
-#endif
-#if XBUILD_12
-			AddToolset (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0"), this, null));
-#endif
-			default_tools_version = toolsets.First ().ToolsVersion;
+
+			default_tools_version = toolsets [0].ToolsVersion;
 		}
 		
 		[MonoTODO ("not verified at all")]

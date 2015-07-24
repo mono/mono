@@ -26,11 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 namespace System.Web.UI.WebControls {
 
 	public delegate void LoginCancelEventHandler (object sender, LoginCancelEventArgs e);
 }
 
-#endif

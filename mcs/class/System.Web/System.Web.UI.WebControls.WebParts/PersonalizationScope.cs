@@ -25,11 +25,9 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
         public enum PersonalizationScope {
                 User = 0,
 		Shared = 1
         }
 }
-#endif

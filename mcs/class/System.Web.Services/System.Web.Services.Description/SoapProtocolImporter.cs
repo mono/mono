@@ -106,9 +106,7 @@ namespace System.Web.Services.Description {
 			soapBinding = (SoapBinding) Binding.Extensions.Find (typeof(SoapBinding));
 			
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
-#if NET_2_0
 			codeClass.IsPartial = true;
-#endif
 
 			string location = null;
 			
@@ -142,14 +140,12 @@ namespace System.Web.Services.Description {
 				cc.Attributes = MemberAttributes.Public;
 				GenerateServiceUrl (location, cc.Statements);
 
-#if NET_2_0
 				if (ProtocolName.ToUpper () == "SOAP12") {
 					CodeExpression thisSoapVer = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "SoapVersion");
 					CodeFieldReferenceExpression soap12Enum =
 						new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeof (SoapProtocolVersion)), "Soap12");
 					cc.Statements.Add (new CodeAssignStatement (thisSoapVer, soap12Enum));
 				}
-#endif
 				codeClass.Members.Add (cc);
 			}
 			
@@ -160,17 +156,10 @@ namespace System.Web.Services.Description {
 		
 		protected override void BeginNamespace ()
 		{
-#if NET_2_0
 			xmlImporter = new XmlSchemaImporter (LiteralSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
 			soapImporter = new SoapSchemaImporter (EncodedSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null, base.CodeGenerator, base.CodeGenerationOptions, null);
 			soapExporter = new SoapCodeExporter (CodeNamespace, null, base.CodeGenerator, base.CodeGenerationOptions, null);
-#else
-			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
-			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
-			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
-			soapExporter = new SoapCodeExporter (CodeNamespace, null);
-#endif
 		}
 
 		protected override void EndClass ()
@@ -195,12 +184,8 @@ namespace System.Web.Services.Description {
 
 		protected override bool IsBindingSupported ()
 		{
-#if NET_2_0
 			object o = Binding.Extensions.Find (typeof(SoapBinding));
 			return o != null && !(o is Soap12Binding);
-#else
-			return Binding.Extensions.Find (typeof(SoapBinding)) != null;
-#endif
 		}
 
 		[MonoTODO]
@@ -560,11 +545,7 @@ namespace System.Web.Services.Description {
 		
 		CodeParameterDeclarationExpression GenerateParameter (XmlMemberMapping member, FieldDirection dir)
 		{
-#if NET_2_0
 			string type = member.GenerateTypeName (CodeGenerator);
-#else
-			string type = member.TypeFullName;
-#endif
 			CodeParameterDeclarationExpression par = new CodeParameterDeclarationExpression (type, member.MemberName);
 			par.Direction = dir;
 			return par;
@@ -652,15 +633,12 @@ namespace System.Web.Services.Description {
 				else
 					varName = memberIds.AddUnique(CodeIdentifier.MakeValid (hname),hb);
 				
-#if NET_2_0
 				string propName = varName;
 				varName = varName + "Field";
-#endif
 				headerVariables.Add (map, varName);
 				CodeMemberField codeField = new CodeMemberField (map.TypeFullName, varName);
 				CodeTypeDeclaration.Members.Add (codeField);
 				
-#if NET_2_0
 				codeField.Attributes = MemberAttributes.Private;
 				CodeMemberProperty codeProperty = new CodeMemberProperty ();
 				codeProperty.Name = propName;
@@ -673,16 +651,10 @@ namespace System.Web.Services.Description {
 				CodeTypeDeclaration.Members.Add (codeProperty);
 
 				varName = propName;
-#else
-				codeField.Attributes = MemberAttributes.Public;
-#endif
 			}
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapHeaderAttribute");
 			att.Arguments.Add (GetArg (varName));
-#if ONLY_1_0
-			att.Arguments.Add (GetArg ("Required", false));
-#endif
 			if (direction != SoapHeaderDirection.In) att.Arguments.Add (GetEnumArg ("Direction", "System.Web.Services.Protocols.SoapHeaderDirection", direction.ToString ()));
 			AddCustomAttribute (method, att, true);
 		}
@@ -690,7 +662,6 @@ namespace System.Web.Services.Description {
 		#endregion
 	}
 
-#if NET_2_0
 	internal class Soap12ProtocolImporter : SoapProtocolImporter
 	{
 		public override string ProtocolName {
@@ -702,5 +673,4 @@ namespace System.Web.Services.Description {
 			return Binding.Extensions.Find (typeof(Soap12Binding)) != null;
 		}
 	}
-#endif
 }

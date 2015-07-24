@@ -4250,11 +4250,7 @@ namespace MonoTests.System.Data
 				DataSet Lector = new DataSet ();
 
 				Adaptador.SelectCommand = new OdbcCommand ("SELECT ?;", (OdbcConnection) conn);
-#if NET_2_0
 				Adaptador.SelectCommand.Parameters.AddWithValue("@un", DBNull.Value);
-#else
-				Adaptador.SelectCommand.Parameters.Add ("@un", (object) DBNull.Value);
-#endif
 				Adaptador.Fill (Lector);
 				Assert.AreEqual (Lector.Tables[0].Rows[0][0], DBNull.Value, "#1 DBNull parameter not passed correctly");
 			} finally {
@@ -4305,9 +4301,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, p.Scale, "#A:Scale");
 			Assert.AreEqual (0, p.Size, "#A:Size");
 			Assert.AreEqual (String.Empty, p.SourceColumn, "#A:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "#A:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "#A:SourceVersion");
 			Assert.IsNull (p.Value, "#A:Value");
 
@@ -4321,9 +4315,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, p.Scale, "#B:Scale");
 			Assert.AreEqual (0, p.Size, "#B:Size");
 			Assert.AreEqual (String.Empty, p.SourceColumn, "#B:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "#B:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "#B:SourceVersion");
 			Assert.AreEqual (2, p.Value, "#B:Value");
 
@@ -4337,9 +4329,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, p.Scale, "#C:Scale");
 			Assert.AreEqual (0, p.Size, "#C:Size");
 			Assert.AreEqual (String.Empty, p.SourceColumn, "#C:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "#C:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "#C:SourceVersion");
 			Assert.AreEqual (2, p.Value, "#C:Value");
 
@@ -4353,9 +4343,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, p.Scale, "#D:Scale");
 			Assert.AreEqual (0, p.Size, "#D:Size");
 			Assert.AreEqual (String.Empty, p.SourceColumn, "#D:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "#D:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "#D:SourceVersion");
 			Assert.IsNull (p.Value, "#D:Value");
 		}

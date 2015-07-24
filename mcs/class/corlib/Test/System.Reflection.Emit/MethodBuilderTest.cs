@@ -284,11 +284,9 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-#if NET_2_0
 		// MS.NET 2.x no longer allows a zero length method body
 		// to be emitted
 		[ExpectedException (typeof (InvalidOperationException))]
-#endif
 		public void ZeroLengthBodyTest1 ()
 		{
 			MethodBuilder mb = genClass.DefineMethod (
@@ -750,12 +748,8 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (pi [0].IsIn, "#A2");
 			Assert.AreEqual (52, pi [0].DefaultValue, "#A3");
 			object [] cattrs = pi [0].GetCustomAttributes (true);
-#if NET_2_0
 			Assert.AreEqual (1, cattrs.Length, "#A4");
 			Assert.AreEqual (typeof (InAttribute), cattrs [0].GetType (), "#A5");
-#else
-			Assert.AreEqual (0, cattrs.Length, "#A4");
-#endif
 
 			cattrs = pi [1].GetCustomAttributes (true);
 			Assert.AreEqual ("foo", pi [1].DefaultValue, "#B1");

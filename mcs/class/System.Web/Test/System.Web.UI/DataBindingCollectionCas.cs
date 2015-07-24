@@ -71,18 +71,14 @@ namespace MonoCasTests.System.Web.UI {
 			dbc.Add (db);
 			dbc.Remove ("property");
 			dbc.Remove ("property", true);
-#if NET_2_0
 			dbc.Changed += new EventHandler (Handler);
 			Assert.IsFalse (dbc.Contains ("property"), "Contains");
 			dbc.Changed -= new EventHandler (Handler);
-#endif
 		}
 
-#if NET_2_0
 		private void Handler (object sender, EventArgs e)
 		{
 		}
-#endif
 		// LinkDemand
 
 		public override Type Type {

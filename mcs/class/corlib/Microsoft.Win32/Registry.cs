@@ -46,9 +46,7 @@ namespace Microsoft.Win32
 		public static readonly RegistryKey CurrentUser = new RegistryKey (
 				RegistryHive.CurrentUser);
 
-#if NET_4_0
 		[Obsolete ("Use PerformanceData instead")]
-#endif
 		public static readonly RegistryKey DynData = new RegistryKey (
 				RegistryHive.DynData);
 		public static readonly RegistryKey LocalMachine = new RegistryKey (
@@ -93,7 +91,7 @@ namespace Microsoft.Win32
 			}
 
 			for (int i = 1; i < keys.Length; i++){
-				RegistryKey nkey = key.OpenSubKey (keys [i], true);
+				RegistryKey nkey = key.OpenSubKey (keys [i], setting);
 				if (nkey == null){
 					if (!setting)
 						return null;

@@ -49,10 +49,8 @@ namespace MonoTests.System.Data.Odbc {
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
-#if NET_2_0
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
-#endif
 			OdbcPermission odbcp = (OdbcPermission)a.CreatePermission ();
 			Assert.IsFalse (odbcp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -138,11 +136,7 @@ namespace MonoTests.System.Data.Odbc {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			OdbcPermissionAttribute a = new OdbcPermissionAttribute (SecurityAction.Assert);

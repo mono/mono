@@ -26,9 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Runtime.CompilerServices
 {
@@ -68,7 +68,7 @@ namespace System.Runtime.CompilerServices
 
 		/*LOCKING: _lock must be held*/
 		void Rehash () {
-			uint newSize = (uint)HashPrimeNumbers.ToPrime ((data.Length << 1) | 1);
+			uint newSize = (uint)HashHelpers.GetPrime ((data.Length << 1) | 1);
 			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
 
 			Ephemeron[] tmp = new Ephemeron [newSize];
@@ -219,6 +219,25 @@ namespace System.Runtime.CompilerServices
 
 			return res;
 		}
+		
+		// extracted from ../../../../external/referencesource/mscorlib/system/runtime/compilerservices/
+		internal ICollection<TKey> Keys
+		{
+			[System.Security.SecuritySafeCritical]
+			get
+			{
+				List<TKey> list = new List<TKey>(data.Length);
+				lock (_lock)
+				{
+					for (int i = 0; i < data.Length; ++i)
+					{
+						TKey key = (TKey) data [i].key;
+						if (key != null)
+							list.Add (key);
+					}
+				}
+				return list;
+			}
+		}
 	}
 }
-#endif

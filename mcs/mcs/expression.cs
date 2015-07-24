@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SLE = System.Linq.Expressions;
+using System.Text;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -100,18 +101,40 @@ namespace Mono.CSharp
 
 	public class ParenthesizedExpression : ShimExpression
 	{
+		bool conditional_access_receiver;
+
 		public ParenthesizedExpression (Expression expr, Location loc)
 			: base (expr)
 		{
 			this.loc = loc;
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var res = expr.Resolve (ec);
+			Expression res = null;
+
+			if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
+				if (expr.HasConditionalAccess ()) {
+					conditional_access_receiver = true;
+					using (rc.Set (ResolveContext.Options.ConditionalAccessReceiver)) {
+						res = expr.Resolve (rc);
+					}
+				}
+			}
+
+			if (!conditional_access_receiver)
+				res = expr.Resolve (rc);
+
 			var constant = res as Constant;
 			if (constant != null && constant.IsLiteral)
 				return Constant.CreateConstantFromValue (res.Type, constant.GetValue (), expr.Location);
+
+			if (conditional_access_receiver) {
+				expr = res;
+				type = LiftMemberType (rc, res.Type);
+				eclass = expr.eclass;
+				return this;
+			}
 
 			return res;
 		}
@@ -124,6 +147,23 @@ namespace Mono.CSharp
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (!conditional_access_receiver)
+				base.Emit (ec);
+
+			var prev = ec.ConditionalAccess;
+			ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
+			expr.Emit (ec);
+			ec.CloseConditionalAccess (type.IsNullableType ? type : null);
+			ec.ConditionalAccess = prev;
+		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return false;
 		}
 	}
 	
@@ -695,10 +735,8 @@ namespace Mono.CSharp
 				return is_checked ? SLE.Expression.NegateChecked (expr) : SLE.Expression.Negate (expr);
 			case Operator.LogicalNot:
 				return SLE.Expression.Not (expr);
-#if NET_4_0 || MOBILE_DYNAMIC
 			case Operator.OnesComplement:
 				return SLE.Expression.OnesComplement (expr);
-#endif
 			default:
 				throw new NotImplementedException (Oper.ToString ());
 			}
@@ -1479,6 +1517,11 @@ namespace Mono.CSharp
 			expr.FlowAnalysis (fc);
 		}
 
+		public override bool HasConditionalAccess ()
+		{
+			return expr.HasConditionalAccess ();
+		}
+
 		protected abstract string OperatorName { get; }
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1931,7 +1974,7 @@ namespace Mono.CSharp
 						// Turn is check into simple null check for implicitly convertible reference types
 						//
 						return ReducedExpression.Create (
-							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc)).Resolve (ec),
+							new Binary (Binary.Operator.Inequality, expr, new NullLiteral (loc), Binary.State.UserOperatorsExcluded).Resolve (ec),
 							this).Resolve (ec);
 					}
 
@@ -3156,14 +3199,15 @@ namespace Mono.CSharp
 			RelationalMask	= 1 << 13,
 
 			DecomposedMask	= 1 << 19,
-			NullableMask	= 1 << 20,
+			NullableMask	= 1 << 20
 		}
 
 		[Flags]
-		enum State : byte
+		public enum State : byte
 		{
 			None = 0,
 			Compound = 1 << 1,
+			UserOperatorsExcluded = 1 << 2
 		}
 
 		readonly Operator oper;
@@ -3172,10 +3216,14 @@ namespace Mono.CSharp
 		ConvCast.Mode enum_conversion;
 
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
+			: this (oper, left, right, State.Compound)
+		{
+		}
+
+		public Binary (Operator oper, Expression left, Expression right, State state)
 			: this (oper, left, right)
 		{
-			if (isCompound)
-				state |= State.Compound;
+			this.state = state;
 		}
 
 		public Binary (Operator oper, Expression left, Expression right)
@@ -3662,10 +3710,11 @@ namespace Mono.CSharp
 					return ResolveOperatorPointer (rc, l, r);
 
 				// User operators
-				expr = ResolveUserOperator (rc, left, right);
-				if (expr != null)
-					return expr;
-
+				if ((state & State.UserOperatorsExcluded) == 0) {
+					expr = ResolveUserOperator (rc, left, right);
+					if (expr != null)
+						return expr;
+				}
 
 				bool lenum = l.IsEnum;
 				bool renum = r.IsEnum;
@@ -6212,9 +6261,11 @@ namespace Mono.CSharp
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
-					ec.Report.Error (173, true_expr.Location,
-						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
-						true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+					if (false_type != InternalType.ErrorType) {
+						ec.Report.Error (173, true_expr.Location,
+							"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
+							true_type.GetSignatureForError (), false_type.GetSignatureForError ());
+					}
 					return null;
 				}
 			}
@@ -6271,11 +6322,11 @@ namespace Mono.CSharp
 			var expr_true = fc.DefiniteAssignmentOnTrue;
 			var expr_false = fc.DefiniteAssignmentOnFalse;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_true);
+			fc.BranchDefiniteAssignment (expr_true);
 			true_expr.FlowAnalysis (fc);
 			var true_fc = fc.DefiniteAssignment;
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_false);
+			fc.BranchDefiniteAssignment (expr_false);
 			false_expr.FlowAnalysis (fc);
 
 			fc.DefiniteAssignment &= true_fc;
@@ -8923,7 +8974,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class RefValueExpr : ShimExpression, IAssignMethod
+	public class RefValueExpr : ShimExpression, IAssignMethod, IMemoryLocation
 	{
 		FullNamedExpression texpr;
 
@@ -8945,6 +8996,12 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			expr.Emit (ec);
+			ec.Emit (OpCodes.Refanyval, type);
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
@@ -8953,7 +9010,7 @@ namespace Mono.CSharp
 				return null;
 
 			expr = Convert.ImplicitConversionRequired (rc, expr, rc.Module.PredefinedTypes.TypedReference.Resolve (), loc);
-			eclass = ExprClass.Value;
+			eclass = ExprClass.Variable;
 			return this;
 		}
 
@@ -9645,9 +9702,18 @@ namespace Mono.CSharp
 					expr = null;
 				}
 			} else {
-				using (rc.Set (ResolveContext.Options.ConditionalAccessReceiver)) {
-					expr = expr.Resolve (rc, flags);
+				bool resolved = false;
+				if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
+					if (expr.HasConditionalAccess ()) {
+						resolved = true;
+						using (rc.Set (ResolveContext.Options.ConditionalAccessReceiver)) {
+							expr = expr.Resolve (rc, flags);
+						}
+					}
 				}
+
+				if (!resolved)
+					expr = expr.Resolve (rc, flags);
 			}
 
 			if (expr == null)
@@ -9658,12 +9724,16 @@ namespace Mono.CSharp
 				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 					return null;
 				}
 
-				if (HasTypeArguments)
-					return new GenericTypeExpr (retval.Type, targs, loc);
+				if (Arity > 0) {
+					if (HasTypeArguments)
+						return new GenericTypeExpr (retval.Type, targs, loc);
+
+					targs.Resolve (rc, false);
+				}
 
 				return retval;
 			}
@@ -9688,7 +9758,7 @@ namespace Mono.CSharp
 				}
 
 				if (expr_type.IsNullableType) {
-					expr = Nullable.Unwrap.Create (expr, true).Resolve (rc);
+					expr = Nullable.Unwrap.Create (expr.Resolve (rc), true);
 					expr_type = expr.Type;
 				}
 			}
@@ -9708,11 +9778,11 @@ namespace Mono.CSharp
 					// Try to look for extension method when member lookup failed
 					//
 					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
-						var methods = rc.LookupExtensionMethod (expr_type, Name, lookup_arity);
+						var methods = rc.LookupExtensionMethod (Name, lookup_arity);
 						if (methods != null) {
 							var emg = new ExtensionMethodGroupExpr (methods, expr, loc);
 							if (HasTypeArguments) {
-								if (!targs.Resolve (rc))
+								if (!targs.Resolve (rc, false))
 									return null;
 
 								emg.SetTypeArguments (rc, targs);
@@ -9791,7 +9861,7 @@ namespace Mono.CSharp
 			me = me.ResolveMemberAccess (rc, expr, sn);
 
 			if (Arity > 0) {
-				if (!targs.Resolve (rc))
+				if (!targs.Resolve (rc, false))
 					return null;
 
 				me.SetTypeArguments (rc, targs);
@@ -9818,15 +9888,14 @@ namespace Mono.CSharp
 				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
 				} else if (Arity > 0) {
 					if (HasTypeArguments) {
 						retval = new GenericTypeExpr (retval.Type, targs, loc);
 						if (retval.ResolveAsType (rc) == null)
 							return null;
 					} else {
-						if (!allowUnboundTypeArguments)
-							Error_OpenGenericTypeIsNotAllowed (rc);
+						targs.Resolve (rc, allowUnboundTypeArguments);
 
 						retval = new GenericOpenTypeExpr (retval.Type, loc);
 					}
@@ -9887,8 +9956,7 @@ namespace Mono.CSharp
 				if (HasTypeArguments) {
 					texpr = new GenericTypeExpr (nested, targs, loc);
 				} else {
-					if (!allowUnboundTypeArguments || expr_resolved is GenericTypeExpr) // && HasTypeArguments
-						Error_OpenGenericTypeIsNotAllowed (rc);
+					targs.Resolve (rc, allowUnboundTypeArguments && !(expr_resolved is GenericTypeExpr));
 
 					texpr = new GenericOpenTypeExpr (nested, loc);
 				}
@@ -9928,7 +9996,7 @@ namespace Mono.CSharp
 			base.Error_InvalidExpressionStatement (report, LeftExpression.Location);
 		}
 
-		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
+		public override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 		{
 			if (ec.Module.Compiler.Settings.Version > LanguageVersion.ISO_2 && !ec.IsRuntimeBinder && MethodGroupExpr.IsExtensionMethodArgument (expr)) {
 				ec.Report.SymbolRelatedToPreviousError (type);
@@ -10184,13 +10252,13 @@ namespace Mono.CSharp
 				};
 
 			if (type.IsPointer)
-				return MakePointerAccess (ec, type);
+				return Expr.MakePointerAccess (ec, type, Arguments);
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
 				var ff = fe.Spec as FixedFieldSpec;
 				if (ff != null) {
-					return MakePointerAccess (ec, ff.ElementType);
+					return Expr.MakePointerAccess (ec, ff.ElementType, Arguments);
 				}
 			}
 
@@ -10232,27 +10300,6 @@ namespace Mono.CSharp
 			return ConditionalAccess || Expr.HasConditionalAccess ();
 		}
 
-		Expression MakePointerAccess (ResolveContext rc, TypeSpec type)
-		{
-			if (Arguments.Count != 1){
-				rc.Report.Error (196, loc, "A pointer must be indexed by only one value");
-				return null;
-			}
-
-			var arg = Arguments[0];
-			if (arg is NamedArgument)
-				Error_NamedArgument ((NamedArgument) arg, rc.Report);
-
-			var index = arg.Expr.Resolve (rc);
-			if (index == null)
-				return null;
-
-			index = ConvertExpressionToArrayIndex (rc, index, true);
-
-			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, index, type, loc);
-			return new Indirection (p, loc);
-		}
-		
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression expr;
@@ -10287,11 +10334,6 @@ namespace Mono.CSharp
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should never be reached");
-		}
-
-		public static void Error_NamedArgument (NamedArgument na, Report Report)
-		{
-			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
@@ -10378,8 +10420,8 @@ namespace Mono.CSharp
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			if (ConditionalAccess)
-				throw new NotSupportedException ("null propagating operator assignment");
+			if (HasConditionalAccess ())
+				Error_NullPropagatingLValue (ec);
 
 			return DoResolve (ec);
 		}
@@ -10427,6 +10469,11 @@ namespace Mono.CSharp
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			ea.FlowAnalysis (fc);
+		}
+
+		public override bool HasConditionalAccess ()
+		{
+			return ConditionalAccess || ea.Expr.HasConditionalAccess ();
 		}
 
 		//
@@ -10574,11 +10621,7 @@ namespace Mono.CSharp
 
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx, Expression source)
 		{
-#if NET_4_0 || MOBILE_DYNAMIC
 			return SLE.Expression.ArrayAccess (ea.Expr.MakeExpression (ctx), MakeExpressionArguments (ctx));
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -11442,19 +11485,19 @@ namespace Mono.CSharp
 	//
 	public class StackAlloc : Expression {
 		TypeSpec otype;
-		Expression t;
+		Expression texpr;
 		Expression count;
 		
 		public StackAlloc (Expression type, Expression count, Location l)
 		{
-			t = type;
+			texpr = type;
 			this.count = count;
 			loc = l;
 		}
 
 		public Expression TypeExpression {
 			get {
-				return this.t;
+				return texpr;
 			}
 		}
 
@@ -11495,7 +11538,7 @@ namespace Mono.CSharp
 				ec.Report.Error (255, loc, "Cannot use stackalloc in finally or catch");
 			}
 
-			otype = t.ResolveAsType (ec);
+			otype = texpr.ResolveAsType (ec);
 			if (otype == null)
 				return null;
 
@@ -11527,7 +11570,7 @@ namespace Mono.CSharp
 		{
 			StackAlloc target = (StackAlloc) t;
 			target.count = count.Clone (clonectx);
-			target.t = t.Clone (clonectx);
+			target.texpr = texpr.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -11687,7 +11730,7 @@ namespace Mono.CSharp
 			{
 			}
 
-			protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
+			public override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
 			{
 				if (TypeManager.HasElementType (type))
 					return;
@@ -11724,8 +11767,13 @@ namespace Mono.CSharp
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 
 			var expr_initializers = new ArrayInitializer (arguments.Count, loc);
-			foreach (Argument a in arguments)
+			foreach (Argument a in arguments) {
+				if (a.ArgType == Argument.AType.ExtensionType) {
+					ec.Report.Error (8075, a.Expr.Location, "An expression tree cannot contain a collection initializer with extension method");
+					continue;
+				}
 				expr_initializers.Add (a.CreateExpressionTree (ec));
+			}
 
 			args.Add (new Argument (new ArrayCreation (
 				CreateExpressionTypeExpression (ec, loc), expr_initializers, loc)));
@@ -11751,12 +11799,10 @@ namespace Mono.CSharp
 	{
 		readonly Arguments args;
 
-		public DictionaryElementInitializer (List<Expression> arguments, Expression initializer, Location loc)
+		public DictionaryElementInitializer (Arguments arguments, Expression initializer, Location loc)
 			: base (null, initializer, loc)
 		{
-			this.args = new Arguments (arguments.Count);
-			foreach (var arg in arguments)
-				this.args.Add (new Argument (arg));
+			this.args = arguments;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -11769,6 +11815,16 @@ namespace Mono.CSharp
 		{
 			var init = rc.CurrentInitializerVariable;
 			var type = init.Type;
+
+			if (type.IsArray) {
+				target = new ArrayAccess (new ElementAccess (init, args, loc), loc);
+				return true;
+			}
+
+			if (type.IsPointer) {
+				target = init.MakePointerAccess (rc, type, args);
+				return true;
+			}
 
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers == null && type.BuiltinType != BuiltinTypeSpec.Type.Dynamic) {
@@ -12089,58 +12145,78 @@ namespace Mono.CSharp
 
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
+			//
+			// Expression is initialized into temporary target then moved
+			// to real one for atomicity
+			//
+			IMemoryLocation temp_target = target;
+
+			LocalTemporary temp = null;
+			bool by_ref = false;
+			if (!initializers.IsEmpty) {
+				temp_target = target as LocalTemporary;
+				if (temp_target == null)
+					temp_target = target as StackFieldExpr;
+
+				if (temp_target == null) {
+					var vr = target as VariableReference;
+					if (vr != null && vr.IsRef) {
+						vr.EmitLoad (ec);
+						by_ref = true;
+					}
+				}
+
+				if (temp_target == null)
+					temp_target = temp = new LocalTemporary (type);
+			}
+
 			bool left_on_stack;
 			if (dynamic != null) {
 				dynamic.Emit (ec);
 				left_on_stack = true;
 			} else {
-				left_on_stack = base.Emit (ec, target);
+				left_on_stack = base.Emit (ec, temp_target);
 			}
 
 			if (initializers.IsEmpty)
 				return left_on_stack;
 
-			LocalTemporary temp = null;
+			StackFieldExpr sf = null;
 
-			instance = target as LocalTemporary;
-			if (instance == null)
-				instance = target as StackFieldExpr;
-
-			if (instance == null) {
-				if (!left_on_stack) {
-					VariableReference vr = target as VariableReference;
-
-					// FIXME: This still does not work correctly for pre-set variables
-					if (vr != null && vr.IsRef)
-						target.AddressOf (ec, AddressOp.Load);
-
-					((Expression) target).Emit (ec);
-					left_on_stack = true;
+			// Move a new instance (reference-type) to local temporary variable
+			if (left_on_stack) {
+				if (by_ref) {
+					temp_target = temp = new LocalTemporary (type);
 				}
 
+				if (temp != null)
+					temp.Store (ec);
+
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && initializers.ContainsEmitWithAwait ()) {
-					instance = new EmptyAwaitExpression (Type).EmitToField (ec) as IMemoryLocation;
-				} else {
-					temp = new LocalTemporary (type);
-					instance = temp;
+					if (temp == null)
+						throw new NotImplementedException ();
+
+					sf = ec.GetTemporaryField (type);
+					sf.EmitAssign (ec, temp, false, false);
+					temp_target = sf;
+					temp.Release (ec);
+					left_on_stack = false;
 				}
 			}
 
-			if (left_on_stack && temp != null)
-				temp.Store (ec);
+			instance = temp_target;
 
 			initializers.Emit (ec);
 
-			if (left_on_stack) {
-				if (temp != null) {
-					temp.Emit (ec);
-					temp.Release (ec);
-				} else {
-					((Expression) instance).Emit (ec);
-				}
-			}
+			((Expression)temp_target).Emit (ec);
 
-			return left_on_stack;
+			if (temp != null)
+				temp.Release (ec);
+
+			if (sf != null)
+				sf.IsAvailableForReuse = true;
+
+			return true;
 		}
 
 		protected override IMemoryLocation EmitAddressOf (EmitContext ec, AddressOp Mode)
@@ -12351,6 +12427,200 @@ namespace Mono.CSharp
 			: base (expr)
 		{
 			this.loc = loc;
+		}
+	}
+
+	public class InterpolatedString : Expression
+	{
+		readonly StringLiteral start, end;
+		List<Expression> interpolations;
+		Arguments arguments;
+
+		public InterpolatedString (StringLiteral start, List<Expression> interpolations, StringLiteral end)
+		{
+			this.start = start;
+			this.end = end;
+			this.interpolations = interpolations;
+			loc = start.Location;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			InterpolatedString target = (InterpolatedString) t;
+
+			if (interpolations != null) {
+				target.interpolations = new List<Expression> ();
+				foreach (var interpolation in interpolations) {
+					target.interpolations.Add (interpolation.Clone (clonectx));
+				}
+			}
+		}
+
+		public Expression ConvertTo (ResolveContext rc, TypeSpec type)
+		{
+			var factory = rc.Module.PredefinedTypes.FormattableStringFactory.Resolve ();
+			if (factory == null)
+				return null;
+
+			var ma = new MemberAccess (new TypeExpression (factory, loc), "Create", loc);
+			var res = new Invocation (ma, arguments).Resolve (rc);
+			if (res != null && res.Type != type)
+				res = Convert.ExplicitConversion (rc, res, type, loc);
+
+			return res;
+		}
+
+		public override bool ContainsEmitWithAwait ()
+		{
+			if (interpolations == null)
+				return false;
+
+			foreach (var expr in interpolations) {
+				if (expr.ContainsEmitWithAwait ())
+					return true;
+			}
+
+			return false;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext rc)
+		{
+			var best = ResolveBestFormatOverload (rc);
+			if (best == null)
+				return null;
+			
+			Expression instance = new NullLiteral (loc);
+			var args = Arguments.CreateForExpressionTree (rc, arguments, instance, new TypeOfMethod (best, loc));
+			return CreateExpressionFactoryCall (rc, "Call", args);	
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			string str;
+
+			if (interpolations == null) {
+				str = start.Value;
+				arguments = new Arguments (1);
+			} else {
+				for (int i = 0; i < interpolations.Count; i += 2) {
+					var ipi = (InterpolatedStringInsert)interpolations [i];
+					ipi.Resolve (rc);
+				}
+	
+				arguments = new Arguments (interpolations.Count);
+
+				var sb = new StringBuilder (start.Value);
+				for (int i = 0; i < interpolations.Count; ++i) {
+					if (i % 2 == 0) {
+						sb.Append ('{').Append (i / 2);
+						var isi = (InterpolatedStringInsert)interpolations [i];
+						if (isi.Alignment != null) {
+							sb.Append (',');
+							var value = isi.ResolveAligment (rc);
+							if (value != null)
+								sb.Append (value.Value);
+						}
+
+						if (isi.Format != null) {
+							sb.Append (':');
+							sb.Append (isi.Format);
+						}
+
+						sb.Append ('}');
+						arguments.Add (new Argument (interpolations [i]));
+					} else {
+						sb.Append (((StringLiteral)interpolations [i]).Value);
+					}
+				}
+
+				sb.Append (end.Value);
+				str = sb.ToString ();
+			}
+
+			arguments.Insert (0, new Argument (new StringLiteral (rc.BuiltinTypes, str, start.Location)));
+
+			eclass = ExprClass.Value;
+			type = rc.BuiltinTypes.String;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			// No interpolation, convert to simple string result (needs to match string.Format unescaping)
+			if (interpolations == null) {
+				var str = start.Value.Replace ("{{", "{").Replace ("}}", "}");
+				if (str != start.Value)
+					new StringConstant (ec.BuiltinTypes, str, loc).Emit (ec);
+				else
+					start.Emit (ec);
+
+				return;
+			}
+
+			var best = ResolveBestFormatOverload (new ResolveContext (ec.MemberContext));
+			if (best == null)
+				return;
+
+			var ca = new CallEmitter ();
+			ca.Emit (ec, best, arguments, loc);
+		}
+
+		MethodSpec ResolveBestFormatOverload (ResolveContext rc)
+		{
+			var members = MemberCache.FindMembers (rc.BuiltinTypes.String, "Format", true);
+			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
+			return res.ResolveMember<MethodSpec> (rc, ref arguments);
+		}
+	}
+
+	public class InterpolatedStringInsert : CompositeExpression
+	{
+		public InterpolatedStringInsert (Expression expr)
+			: base (expr)
+		{
+		}
+
+		public Expression Alignment { get; set; }
+		public string Format { get; set; }
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var target = (InterpolatedStringInsert)t;
+			target.expr = expr.Clone (clonectx);
+			if (Alignment != null)
+				target.Alignment = Alignment.Clone (clonectx);
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			var expr = base.DoResolve (rc);
+			if (expr == null)
+				return null;
+
+			//
+			// For better error reporting, assumes the built-in implementation uses object
+			// as argument(s)
+			//
+			return Convert.ImplicitConversionRequired (rc, expr, rc.BuiltinTypes.Object, expr.Location);
+		}
+
+		public int? ResolveAligment (ResolveContext rc)
+		{
+			var c = Alignment.ResolveLabelConstant (rc);
+			if (c == null)
+				return null;
+			
+			c = c.ImplicitConversionRequired (rc, rc.BuiltinTypes.Int);
+			if (c == null)
+				return null;
+			
+			var value = (int) c.GetValueAsLong ();
+			if (value > 32767 || value < -32767) {
+				rc.Report.Warning (8094, 1, Alignment.Location, 
+					"Alignment value has a magnitude greater than 32767 and may result in a large formatted string");
+			}
+
+			return value;
 		}
 	}
 }

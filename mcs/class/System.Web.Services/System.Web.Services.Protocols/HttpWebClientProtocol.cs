@@ -37,9 +37,7 @@ using System.Web.Services;
 using System.Collections;
 
 namespace System.Web.Services.Protocols {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public abstract class HttpWebClientProtocol : WebClientProtocol {
 
 		#region Fields
@@ -93,13 +91,11 @@ namespace System.Web.Services.Protocols {
 			set { cookieContainer = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		public bool EnableDecompression {
 			get { return enableDecompression; }
 			set { enableDecompression = value; }
 		}
-#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -190,7 +186,6 @@ namespace System.Web.Services.Protocols {
 			return response;
 		}
 		
-#if NET_2_0
 		Hashtable mappings = new Hashtable ();
 		
 		internal void RegisterMapping (object userState, WebClientAsyncResult result)
@@ -231,20 +226,10 @@ namespace System.Web.Services.Protocols {
 		{
 			throw new NotImplementedException ();
 		}
-#else
-		internal void UnregisterMapping (object userState)
-		{
-		}
-
-		internal void RegisterMapping (object userState, WebClientAsyncResult result)
-		{
-		}
-#endif
 
 		#endregion // Methods
 	}
 	
-#if NET_2_0
 	internal class InvokeAsyncInfo
 	{
 		public SynchronizationContext Context;
@@ -258,5 +243,4 @@ namespace System.Web.Services.Protocols {
 			Context = SynchronizationContext.Current;
 		}
 	}
-#endif
 }

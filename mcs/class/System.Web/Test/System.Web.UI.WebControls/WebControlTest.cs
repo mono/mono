@@ -39,10 +39,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.stand_alone.WebHarness;
-#if NET_2_0
 using System.Web.UI.Adapters;
 using System.Web.UI.WebControls.Adapters;
-#endif
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -612,11 +610,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			wc.BorderWidth = Unit.Pixel (1);
 			wc.RenderBeginTag (writer);
 			string s = writer.InnerWriter.ToString ();
-#if NET_2_0
 			Assert.AreEqual ("<span style=\"display:inline-block;border-width:1px;border-style:solid;\">", s, "BorderWidth");
-#else
-			Assert.AreEqual ("<span style=\"border-width:1px;border-style:solid;\">", s, "BorderWidth");
-#endif
 		}
 
 		[Test]
@@ -685,7 +679,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("hi", c.Attributes ["hoLA"], "#01");
 		}
 
-#if NET_2_0
 		class MyControlAdapter : ControlAdapter
 		{
 			protected internal override void Render (HtmlTextWriter w)
@@ -769,6 +762,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			child.Enabled = false;
 			Assert.IsFalse (child.GetIsEnabled, "IsEnabled #3");
 		}
-#endif
 	}
 }

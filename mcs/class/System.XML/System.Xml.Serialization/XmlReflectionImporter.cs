@@ -109,10 +109,8 @@ namespace System.Xml.Serialization {
 			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, true);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public
-#endif
 		XmlMembersMapping ImportMembersMapping (string elementName, 
 			string ns, 
 			XmlReflectionMember[] members, 
@@ -122,10 +120,8 @@ namespace System.Xml.Serialization {
 			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, true);
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public
-#endif
 		XmlMembersMapping ImportMembersMapping (string elementName, 
 			string ns, 
 			XmlReflectionMember[] members, 
@@ -136,10 +132,8 @@ namespace System.Xml.Serialization {
 			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, rpc, openModel, XmlMappingAccess.Read | XmlMappingAccess.Write);
 		}
 
-#if NET_2_0
 		[MonoTODO] // FIXME: handle writeAccessors, validate, and mapping access
 		public
-#endif
 		XmlMembersMapping ImportMembersMapping (string elementName, 
 			string ns, 
 			XmlReflectionMember[] members, 
@@ -227,10 +221,8 @@ namespace System.Xml.Serialization {
 					default: throw new NotSupportedException ("Type " + typeData.Type.FullName + " not supported for XML stialization");
 				}
 
-#if NET_2_0
 				// bug #372780
 				map.SetKey (typeData.Type.ToString ());
-#endif
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;
@@ -1094,10 +1086,6 @@ namespace System.Xml.Serialization {
 		
 		bool CanBeNull (TypeData type)
 		{
-#if !NET_2_0	// idiotic compatibility
-			if (type.Type == typeof (XmlQualifiedName))
-				return false;
-#endif
 			return !type.Type.IsValueType || type.IsNullable;
 		}
 		

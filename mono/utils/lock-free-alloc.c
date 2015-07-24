@@ -83,7 +83,12 @@
 #include <stdlib.h>
 
 #include <mono/utils/atomic.h>
+#ifdef SGEN_WITHOUT_MONO
+#include <mono/sgen/sgen-gc.h>
+#include <mono/sgen/sgen-client.h>
+#else
 #include <mono/utils/mono-mmap.h>
+#endif
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/lock-free-queue.h>
@@ -150,7 +155,7 @@ alloc_sb (Descriptor *desc)
 		pagesize = mono_pagesize ();
 
 	sb_header = desc->block_size == pagesize ?
-		mono_valloc (0, desc->block_size, prot_flags_for_activate (TRUE)) :
+		mono_valloc (NULL, desc->block_size, prot_flags_for_activate (TRUE)) :
 		mono_valloc_aligned (desc->block_size, desc->block_size, prot_flags_for_activate (TRUE));
 
 	g_assert (sb_header == sb_header_for_addr (sb_header, desc->block_size));
@@ -182,7 +187,7 @@ desc_alloc (void)
 	for (;;) {
 		gboolean success;
 
-		desc = get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
+		desc = (Descriptor *) get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
 		if (desc) {
 			Descriptor *next = desc->next;
 			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, next, desc) == desc);
@@ -191,7 +196,7 @@ desc_alloc (void)
 			Descriptor *d;
 			int i;
 
-			desc = mono_valloc (0, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE));
+			desc = (Descriptor *) mono_valloc (NULL, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE));
 
 			/* Organize into linked list. */
 			d = desc;
@@ -225,7 +230,7 @@ desc_alloc (void)
 static void
 desc_enqueue_avail (gpointer _desc)
 {
-	Descriptor *desc = _desc;
+	Descriptor *desc = (Descriptor *) _desc;
 	Descriptor *old_head;
 
 	g_assert (desc->anchor.data.state == STATE_EMPTY);
@@ -285,7 +290,7 @@ list_get_partial (MonoLockFreeAllocSizeClass *sc)
 static void
 desc_put_partial (gpointer _desc)
 {
-	Descriptor *desc = _desc;
+	Descriptor *desc = (Descriptor *) _desc;
 
 	g_assert (desc->anchor.data.state != STATE_FULL);
 
@@ -366,7 +371,6 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 
 	do {
 		unsigned int next;
-
 		new_anchor = old_anchor = *(volatile Anchor*)&desc->anchor.value;
 		if (old_anchor.data.state == STATE_EMPTY) {
 			/* We must free it because we own it. */

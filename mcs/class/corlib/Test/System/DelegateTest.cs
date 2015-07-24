@@ -17,7 +17,6 @@ namespace MonoTests.System
 	[TestFixture]
 	public class DelegateTest
 	{
-#if NET_2_0
 		
 		public class GenericClass<T> {
 			public void Method<K> (T t, K k) {}
@@ -51,7 +50,6 @@ namespace MonoTests.System
 			Assert.IsNotNull (method, "#1");
 			Assert.AreEqual (target, method, "#2");
 		}
-#endif
 
 		[Test] // CreateDelegate (Type, MethodInfo)
 		public void CreateDelegate1_Method_Static ()
@@ -73,25 +71,11 @@ namespace MonoTests.System
 		{
 			C c = new C ();
 			MethodInfo mi = typeof (C).GetMethod ("M");
-#if NET_2_0
 			Delegate dg = Delegate.CreateDelegate (typeof (D), mi);
 			Assert.AreSame (mi, dg.Method, "#1");
 			Assert.IsNull (dg.Target, "#2");
 			D d = (D) dg;
 			d (c);
-#else
-			try {
-				Delegate.CreateDelegate (typeof (D), mi);
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// Method must be a static method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("method", ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test] // CreateDelegate (Type, MethodInfo)
@@ -584,7 +568,6 @@ namespace MonoTests.System
 			}
 		}
 
-#if NET_2_0
 		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
 		public void CreateDelegate9 ()
 		{
@@ -1086,6 +1069,27 @@ namespace MonoTests.System
 			action_int (42);
 		}
 
+		struct FooStruct {
+			public int i, j, k, l;
+
+			public int GetProp (int a, int b, int c, int d) {
+				return i;
+			}
+		}
+
+		delegate int ByRefDelegate (ref FooStruct s, int a, int b, int c, int d);
+
+#if MONOTOUCH
+		[Category ("NotWorking")]
+#endif
+		[Test]
+		public void CallVirtVType ()
+		{
+			var action = (ByRefDelegate)Delegate.CreateDelegate (typeof (ByRefDelegate), null, typeof (FooStruct).GetMethod ("GetProp"));
+			var s = new FooStruct () { i = 42 };
+			Assert.AreEqual (42, action (ref s, 1, 2, 3, 4));
+		}
+
 		class Foo {
 
 			public void Bar ()
@@ -1177,7 +1181,6 @@ namespace MonoTests.System
 			throw new NotSupportedException ();
 		}
 
-#endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
 		[Test]

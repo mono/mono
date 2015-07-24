@@ -30,15 +30,7 @@
 
 namespace System.Drawing {
 
-#if NET_2_0
 	internal static class KnownColors {
-#else
-	internal class KnownColors {
-
-		private KnownColors ()
-		{
-		}
-#endif
 		// FindColorMatch relies on the index + 1 == KnowColor match
 		static internal uint[] ArgbValues = new uint[] {
 			0x00000000,	/* 000 - Empty */
@@ -209,7 +201,6 @@ namespace System.Drawing {
 			0xFFF5F5F5,	/* 165 - WhiteSmoke */
 			0xFFFFFF00,	/* 166 - Yellow */
 			0xFF9ACD32,	/* 167 - YellowGreen */
-#if NET_2_0
 			0xFFECE9D8,	/* 168 - ButtonFace */
 			0xFFFFFFFF,	/* 169 - ButtonHighlight */
 			0xFFACA899,	/* 170 - ButtonShadow */
@@ -217,7 +208,6 @@ namespace System.Drawing {
 			0xFF9DB9EB,	/* 172 - GradientInactiveCaption */
 			0xFFECE9D8,	/* 173 - MenuBar */
 			0xFF316AC5,	/* 174 - MenuHighlight */
-#endif
 		};
 
 		static KnownColors ()
@@ -266,7 +256,6 @@ namespace System.Drawing {
 			ArgbValues [(int)KnownColor.Window] = GetSysColor (GetSysColorIndex.COLOR_WINDOW);
 			ArgbValues [(int)KnownColor.WindowFrame] = GetSysColor (GetSysColorIndex.COLOR_WINDOWFRAME);
 			ArgbValues [(int)KnownColor.WindowText] = GetSysColor (GetSysColorIndex.COLOR_WINDOWTEXT);
-#if NET_2_0
 			ArgbValues [(int)KnownColor.ButtonFace] = GetSysColor (GetSysColorIndex.COLOR_BTNFACE);
 			ArgbValues [(int)KnownColor.ButtonHighlight] = GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT);
 			ArgbValues [(int)KnownColor.ButtonShadow] = GetSysColor (GetSysColorIndex.COLOR_BTNSHADOW);
@@ -274,7 +263,6 @@ namespace System.Drawing {
 			ArgbValues [(int)KnownColor.GradientInactiveCaption] = GetSysColor (GetSysColorIndex.COLOR_GRADIENTINACTIVECAPTION);
 			ArgbValues [(int)KnownColor.MenuBar] = GetSysColor (GetSysColorIndex.COLOR_MENUBAR);
 			ArgbValues [(int)KnownColor.MenuHighlight] = GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT);
-#endif
 		}
 
 		public static Color FromKnownColor (KnownColor kc)
@@ -284,9 +272,6 @@ namespace System.Drawing {
 			if ((n <= 0) || (n >= ArgbValues.Length)) {
 				// This is what it returns!
 				c = Color.FromArgb (0, 0, 0, 0);
-#if ONLY_1_1
-				c.name = kc.ToString ();
-#endif
 				c.state |= (short) Color.ColorType.Named;
 			} else {
 				c = new Color ();
@@ -294,9 +279,6 @@ namespace System.Drawing {
 				if ((n < 27) || (n > 169))
 					c.state |= (short) Color.ColorType.System;
 				c.Value = ArgbValues [n];
-#if ONLY_1_1
-				c.name = GetName (n);
-#endif
 			}
 			c.knownColor = n;
 			return c;
@@ -472,7 +454,6 @@ namespace System.Drawing {
 			case 165:	return "WhiteSmoke";
 			case 166:	return "Yellow";
 			case 167:	return "YellowGreen";
-#if NET_2_0
 			case 168:	return "ButtonFace";
 			case 169:	return "ButtonHighlight";
 			case 170:	return "ButtonShadow";
@@ -480,7 +461,6 @@ namespace System.Drawing {
 			case 172:	return "GradientInactiveCaption";
 			case 173:	return "MenuBar";
 			case 174:	return "MenuHighlight";
-#endif
 			default:	return String.Empty;
 			}
 		}

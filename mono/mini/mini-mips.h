@@ -17,7 +17,7 @@
 #endif
 
 
-#define MONO_ARCH_CPU_SPEC mips_desc
+#define MONO_ARCH_CPU_SPEC mono_mips_desc
 
 #define MONO_MAX_IREGS 32
 #define MONO_MAX_FREGS 32
@@ -231,7 +231,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_EMULATE_LCONV_TO_R4 1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
-#define MONO_ARCH_BIGMUL_INTRINS 1
 #endif
 
 #if SIZEOF_REGISTER == 8
@@ -268,7 +267,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 
@@ -329,8 +327,6 @@ typedef struct {
 #undef HAVE_BACKTRACE_SYMBOLS
 
 #undef DEBUG_EXCEPTIONS
-
-#define MONO_ZERO_REG		mips_zero
 
 #define	MONO_EMIT_NEW_MIPS_COND_EXC(cfg,cond,sr1,sr2,name) do {	\
                 MonoInst *inst; \

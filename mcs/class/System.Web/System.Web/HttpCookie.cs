@@ -42,10 +42,6 @@ namespace System.Web
 	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if TARGET_J2EE
-	// Cookies must be serializable to be saved in the session for J2EE portal
-	[Serializable]
-#endif
 	public sealed class HttpCookie {
 
 		string path = "/";

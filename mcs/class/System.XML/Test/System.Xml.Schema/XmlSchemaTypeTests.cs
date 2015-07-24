@@ -24,7 +24,6 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlSchemaTypeTests
 	{
-#if NET_2_0
 		string [] all_types = new string [] {
 			"string", "boolean", "float", "double", "decimal", 
 			"duration", "dateTime", "time", "date", "gYearMonth", 
@@ -96,6 +95,5 @@ namespace MonoTests.System.Xml
 			}
 		}
 
-#endif
 	}
 }

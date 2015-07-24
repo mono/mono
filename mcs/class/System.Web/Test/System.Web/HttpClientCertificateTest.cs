@@ -241,11 +241,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (NullReferenceException))]
-#else
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void HttpRequestPublicCtor ()
 		{
 			HttpRequest hr = new HttpRequest ("file", "http://www.mono-project.com/", "");
@@ -259,9 +255,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void DefaultValues ()
 		{
 			HttpClientCertificate hcc = GetHttpClientCertificate ();
@@ -293,9 +286,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void MirrorValues ()
 		{
 			hwr.MirrorVariableName = true;
@@ -317,9 +307,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void MirrorValues_Alternate ()
 		{
 			hwr.MirrorVariableName = true;
@@ -332,9 +319,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void HttpWorkerRequest ()
 		{
 			// required to "activate" later call as IsPresent will return true
@@ -352,9 +336,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void Valid ()
 		{
 			HttpClientCertificate hcc = GetHttpClientCertificate ();
@@ -372,9 +353,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void Add ()
 		{
 			HttpClientCertificate hcc = GetHttpClientCertificate ();
@@ -385,9 +363,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 		public void Get ()
 		{
 			HttpClientCertificate hcc = GetHttpClientCertificate ();

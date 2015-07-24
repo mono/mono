@@ -415,11 +415,7 @@ namespace Mono.CSharp
 				};
 				host.SetBaseTypes (baseclass_list);
 
-#if NET_4_0
 				var access = AssemblyBuilderAccess.RunAndCollect;
-#else
-				var access = AssemblyBuilderAccess.Run;
-#endif
 				var a = new AssemblyDefinitionDynamic (module, "completions");
 				a.Create (AppDomain.CurrentDomain, access);
 				module.SetDeclaringAssembly (a);
@@ -521,6 +517,7 @@ namespace Mono.CSharp
 			// These are toplevels
 			case Token.EXTERN:
 			case Token.OPEN_BRACKET:
+			case Token.OPEN_BRACKET_EXPR:
 			case Token.ABSTRACT:
 			case Token.CLASS:
 			case Token.ENUM:
@@ -560,7 +557,7 @@ namespace Mono.CSharp
 				if (t == Token.EOF)
 					return InputKind.EOF;
 
-				if (t == Token.IDENTIFIER)
+				if (t == Token.IDENTIFIER || t == Token.STATIC)
 					return InputKind.CompilationUnit;
 				return InputKind.StatementOrExpression;
 
@@ -693,11 +690,7 @@ namespace Mono.CSharp
 				assembly = new AssemblyDefinitionDynamic (module, current_debug_name, current_debug_name);
 				assembly.Importer = importer;
 			} else {
-#if NET_4_0
 				access = AssemblyBuilderAccess.RunAndCollect;
-#else
-				access = AssemblyBuilderAccess.Run;
-#endif
 				assembly = new AssemblyDefinitionDynamic (module, current_debug_name);
 			}
 
@@ -863,13 +856,19 @@ namespace Mono.CSharp
 
 		public string GetUsing ()
 		{
+			if (source_file == null || source_file.Usings == null)
+				return string.Empty;
+
 			StringBuilder sb = new StringBuilder ();
 			// TODO:
 			//foreach (object x in ns.using_alias_list)
 			//    sb.AppendFormat ("using {0};\n", x);
 
 			foreach (var ue in source_file.Usings) {
-				sb.AppendFormat ("using {0};", ue.ToString ());
+				if (ue.Alias != null || ue.ResolvedExpression == null)
+					continue;
+
+				sb.AppendFormat("using {0};", ue.ToString ());
 				sb.Append (Environment.NewLine);
 			}
 
@@ -880,7 +879,11 @@ namespace Mono.CSharp
 		{
 			var res = new List<string> ();
 
-			foreach (var ue in source_file.Usings) {
+			if (source_file == null || source_file.Usings == null)
+				return res;
+
+			foreach (var ue in source_file.Usings)
+			{
 				if (ue.Alias != null || ue.ResolvedExpression == null)
 					continue;
 

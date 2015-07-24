@@ -52,9 +52,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.ViewState ();
 			unit.Render1 ();
 			unit.DoubleDataBind ();
-#if NET_2_0
 			unit.RowsTooHigh ();
-#endif
 		}
 
 		// LinkDemand

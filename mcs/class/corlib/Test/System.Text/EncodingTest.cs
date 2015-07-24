@@ -37,7 +37,6 @@ namespace MonoTests.System.Text
 	public class EncodingTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void IsBrowserDisplay ()
 		{
@@ -46,7 +45,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void IsBrowserSave ()
 		{
@@ -55,7 +53,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void IsMailNewsDisplay ()
 		{
@@ -64,7 +61,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void IsMailNewsSave ()
 		{
@@ -125,6 +121,12 @@ namespace MonoTests.System.Text
 		public void GetEncoding_Name_Null ()
 		{
 			Encoding.GetEncoding ((string) null);
+		}
+
+		[Test]
+		public void EncodingName ()
+		{
+			Assert.AreEqual ("Unicode (UTF-8)", Encoding.UTF8.EncodingName);
 		}
 	}
 }

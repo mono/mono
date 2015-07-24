@@ -374,9 +374,6 @@ namespace MonoTests.System.Drawing.Printing {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongClass ()
 		{
 			PrintingPermission pp = new PrintingPermission (PermissionState.None);
@@ -416,9 +413,6 @@ namespace MonoTests.System.Drawing.Printing {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_NoVersion ()
 		{
 			PrintingPermission pp = new PrintingPermission (PermissionState.None);
@@ -463,7 +457,6 @@ namespace MonoTests.System.Drawing.Printing {
 			Unification (String.Format (PermissionPattern, fx20version));
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		[ExpectedException (typeof (FileLoadException))]
@@ -471,12 +464,5 @@ namespace MonoTests.System.Drawing.Printing {
 		{
 			Type.GetType (String.Format (PermissionPattern, "9.99.999.9999"));
 		}
-#else
-		[Test]
-		public void Unification_FromFx99 ()
-		{
-			Unification (String.Format (PermissionPattern, "9.99.999.9999"));
-		}
-#endif
 	}
 }

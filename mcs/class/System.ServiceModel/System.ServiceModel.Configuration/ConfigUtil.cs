@@ -35,7 +35,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+#if !XAMMAC_4_5
 using System.Web.Configuration;
+#endif
 
 using SysConfig = System.Configuration.Configuration;
 
@@ -43,6 +45,7 @@ namespace System.ServiceModel.Configuration
 {
 	internal static class ConfigUtil
 	{
+#if !XAMMAC_4_5
 		static object GetSection (string name)
 		{
 			if (ServiceHostingEnvironment.InAspNet)
@@ -77,7 +80,6 @@ namespace System.ServiceModel.Configuration
 			get { return (ExtensionsSection) GetSection ("system.serviceModel/extensions"); }
 		}
 
-#if NET_4_0
 		public static ProtocolMappingSection ProtocolMappingSection {
 			get {
 				return (ProtocolMappingSection) GetSection ("system.serviceModel/protocolMapping");
@@ -89,7 +91,6 @@ namespace System.ServiceModel.Configuration
 				return (StandardEndpointsSection) GetSection ("system.serviceModel/standardEndpoints");
 			}
 		}
-#endif
 
 		public static Binding CreateBinding (string binding, string bindingConfiguration)
 		{
@@ -124,9 +125,7 @@ namespace System.ServiceModel.Configuration
 
 				if (cached_assemblies.Contains (ass))
 					continue;
-#if NET_4_0
 				if (!ass.IsDynamic)
-#endif
 					cached_assemblies.Add (ass);
 
 				foreach (var t in ass.GetTypes ()) {
@@ -151,7 +150,6 @@ namespace System.ServiceModel.Configuration
 			return null;
 		}
 
-#if NET_4_0
 		public static Binding GetBindingByProtocolMapping (Uri address)
 		{
 			ProtocolMappingElement el = ConfigUtil.ProtocolMappingSection.ProtocolMappingCollection [address.Scheme];
@@ -207,7 +205,6 @@ namespace System.ServiceModel.Configuration
 			
 			return inst;
 		}
-#endif
 
 		public static KeyedByTypeCollection<IEndpointBehavior>  CreateEndpointBehaviors (string bindingConfiguration)
 		{
@@ -248,6 +245,7 @@ namespace System.ServiceModel.Configuration
 		{
 			return new EndpointAddress (el.Address, el.Identity != null ? el.Identity.CreateInstance () : null, el.Headers.Headers);
 		}
+#endif
 
 		public static EndpointIdentity CreateInstance (this IdentityElement el)
 		{
@@ -305,6 +303,7 @@ namespace System.ServiceModel.Configuration
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);
 		}
 
+#if !XAMMAC_4_5
 		public static BindingCollectionElement FindCollectionElement (Binding binding, SysConfig config)
 		{
 			var section = (BindingsSection) config.GetSection ("system.serviceModel/bindings");
@@ -315,6 +314,7 @@ namespace System.ServiceModel.Configuration
 			
 			return null;
 		}
+#endif
 	}
 
 	enum NamedConfigCategory

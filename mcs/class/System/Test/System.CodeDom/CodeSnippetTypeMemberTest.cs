@@ -52,13 +52,11 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cstm.CustomAttributes, "#4");
 			Assert.AreEqual (0, cstm.CustomAttributes.Count, "#5");
 
-#if NET_2_0
 			Assert.IsNotNull (cstm.StartDirectives, "#6");
 			Assert.AreEqual (0, cstm.StartDirectives.Count, "#7");
 
 			Assert.IsNotNull (cstm.EndDirectives, "#8");
 			Assert.AreEqual (0, cstm.EndDirectives.Count, "#9");
-#endif
 
 			Assert.IsNotNull (cstm.Text, "#10");
 			Assert.AreEqual (string.Empty, cstm.Text, "#11");

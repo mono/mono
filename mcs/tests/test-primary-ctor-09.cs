@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 using System;
 
 class A (Func<int, int> barg)

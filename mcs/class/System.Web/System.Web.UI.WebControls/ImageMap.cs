@@ -154,9 +154,7 @@ namespace System.Web.UI.WebControls
 			base.Render (writer);
 
 			if (spots != null && spots.Count > 0) {
-#if NET_4_0				
 				bool enabled = Enabled;
-#endif
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, "ImageMap" + ClientID);
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Map);
@@ -180,18 +178,10 @@ namespace System.Web.UI.WebControls
 							string target = spot.Target.Length > 0 ? spot.Target : Target;
 							if (!String.IsNullOrEmpty (target))
 								writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
-#if NET_4_0
 							if (enabled) {
-#endif
-#if TARGET_J2EE
-								string navUrl = ResolveClientUrl (spot.NavigateUrl, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
-#else
 								string navUrl = ResolveClientUrl (spot.NavigateUrl);
-#endif
 								writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
-#if NET_4_0
 							}
-#endif
 							break;
 						case HotSpotMode.PostBack:
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString(), true));

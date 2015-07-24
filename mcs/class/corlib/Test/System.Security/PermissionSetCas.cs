@@ -45,7 +45,6 @@ namespace MonoCasTests.System.Security {
 				Assert.Ignore ("SecurityManager isn't enabled");
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ExecutionEngineException))]
 		public void RevertAssert_WithoutAssertion ()
@@ -60,6 +59,5 @@ namespace MonoCasTests.System.Security {
 			ups.Assert ();
 			PermissionSet.RevertAssert ();
 		}
-#endif
 	}
 }

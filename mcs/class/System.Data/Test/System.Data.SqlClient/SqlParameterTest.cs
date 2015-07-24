@@ -51,28 +51,20 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.String, p.DbType, "DbType");
 			Assert.AreEqual (ParameterDirection.Input, p.Direction, "Direction");
 			Assert.IsFalse (p.IsNullable, "IsNullable");
-#if NET_2_0
 			Assert.AreEqual (0, p.LocaleId, "LocaleId");
-#endif
 			Assert.AreEqual (string.Empty, p.ParameterName, "ParameterName");
 			Assert.AreEqual (0, p.Precision, "Precision");
 			Assert.AreEqual (0, p.Scale, "Scale");
 			Assert.AreEqual (0, p.Size, "Size");
 			Assert.AreEqual (string.Empty, p.SourceColumn, "SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "SourceVersion");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "SqlDbType");
-#if NET_2_0
 			Assert.IsNull (p.SqlValue, "SqlValue");
-#endif
 			Assert.IsNull (p.Value, "Value");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionDatabase, "XmlSchemaCollectionDatabase");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionName, "XmlSchemaCollectionName");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionOwningSchema, "XmlSchemaCollectionOwningSchema");
-#endif
 		}
 
 		[Test]
@@ -84,29 +76,21 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.DateTime, p.DbType, "B:DbType");
 			Assert.AreEqual (ParameterDirection.Input, p.Direction, "B:Direction");
 			Assert.IsFalse (p.IsNullable, "B:IsNullable");
-#if NET_2_0
 			Assert.AreEqual (0, p.LocaleId, "B:LocaleId");
-#endif
 			Assert.AreEqual ("address", p.ParameterName, "B:ParameterName");
 			Assert.AreEqual (0, p.Precision, "B:Precision");
 			Assert.AreEqual (0, p.Scale, "B:Scale");
 			//Assert.AreEqual (0, p.Size, "B:Size");
 			Assert.AreEqual (string.Empty, p.SourceColumn, "B:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "B:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "B:SourceVersion");
 			Assert.AreEqual (SqlDbType.DateTime, p.SqlDbType, "B:SqlDbType");
-#if NET_2_0
 			// FIXME
 			//Assert.AreEqual (new SqlDateTime (value), p.SqlValue, "B:SqlValue");
-#endif
 			Assert.AreEqual (value, p.Value, "B:Value");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionDatabase, "B:XmlSchemaCollectionDatabase");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionName, "B:XmlSchemaCollectionName");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionOwningSchema, "B:XmlSchemaCollectionOwningSchema");
-#endif
 		}
 
 		[Test]
@@ -116,29 +100,21 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.String, p.DbType, "B:DbType");
 			Assert.AreEqual (ParameterDirection.Input, p.Direction, "B:Direction");
 			Assert.IsFalse (p.IsNullable, "B:IsNullable");
-#if NET_2_0
 			Assert.AreEqual (0, p.LocaleId, "B:LocaleId");
-#endif
 			Assert.AreEqual ("address", p.ParameterName, "B:ParameterName");
 			Assert.AreEqual (0, p.Precision, "B:Precision");
 			Assert.AreEqual (0, p.Scale, "B:Scale");
 			Assert.AreEqual (0, p.Size, "B:Size");
 			Assert.AreEqual (string.Empty, p.SourceColumn, "B:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "B:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "B:SourceVersion");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "B:SqlDbType");
-#if NET_2_0
 			// FIXME
 			//Assert.AreEqual (SqlString.Null, p.SqlValue, "B:SqlValue");
-#endif
 			Assert.AreEqual (DBNull.Value, p.Value, "B:Value");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionDatabase, "B:XmlSchemaCollectionDatabase");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionName, "B:XmlSchemaCollectionName");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionOwningSchema, "B:XmlSchemaCollectionOwningSchema");
-#endif
 		}
 
 		[Test]
@@ -148,31 +124,22 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.String, p.DbType, "A:DbType");
 			Assert.AreEqual (ParameterDirection.Input, p.Direction, "A:Direction");
 			Assert.IsFalse (p.IsNullable, "A:IsNullable");
-#if NET_2_0
 			Assert.AreEqual (0, p.LocaleId, "A:LocaleId");
-#endif
 			Assert.AreEqual ("address", p.ParameterName, "A:ParameterName");
 			Assert.AreEqual (0, p.Precision, "A:Precision");
 			Assert.AreEqual (0, p.Scale, "A:Scale");
 			Assert.AreEqual (0, p.Size, "A:Size");
 			Assert.AreEqual (string.Empty, p.SourceColumn, "A:SourceColumn");
-#if NET_2_0
 			Assert.IsFalse (p.SourceColumnNullMapping, "A:SourceColumnNullMapping");
-#endif
 			Assert.AreEqual (DataRowVersion.Current, p.SourceVersion, "A:SourceVersion");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "A:SqlDbType");
-#if NET_2_0
 			Assert.IsNull (p.SqlValue, "A:SqlValue");
-#endif
 			Assert.IsNull (p.Value, "A:Value");
-#if NET_2_0
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionDatabase, "A:XmlSchemaCollectionDatabase");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionName, "A:XmlSchemaCollectionName");
 			Assert.AreEqual (string.Empty, p.XmlSchemaCollectionOwningSchema, "A:XmlSchemaCollectionOwningSchema");
-#endif
 		}
 
-#if NET_2_0
 		[Test] // .ctor (String, SqlDbType, Int32, ParameterDirection, Byte, Byte, String, DataRowVersion, Boolean, Object, String, String, String)
 		public void Constructor7 ()
 		{
@@ -207,7 +174,6 @@ namespace MonoTests.System.Data.SqlClient
 			parameter.CompareInfo = SqlCompareOptions.IgnoreNonSpace;
 			Assert.AreEqual (SqlCompareOptions.IgnoreNonSpace, parameter.CompareInfo, "#2");
 		}
-#endif
 
 		[Test]
 		public void InferType_Byte ()
@@ -232,14 +198,11 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void InferType_Char ()
 		{
 			Char value = 'X';
 
-#if NET_2_0
 			String string_value = "X";
 
 			SqlParameter p = new SqlParameter ();
@@ -277,30 +240,14 @@ namespace MonoTests.System.Data.SqlClient
 			p.Value = value;
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#F:SqlDbType");
 			Assert.AreEqual (value, p.Value, "#F:Value");
-#else
-			SqlParameter p = new SqlParameter ();
-			try {
-				p.Value = value;
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// The parameter data type of Char is invalid
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void InferType_CharArray ()
 		{
 			Char [] value = new Char [] { 'A', 'X' };
 
-#if NET_2_0
 			String string_value = "AX";
 
 			SqlParameter p = new SqlParameter ();
@@ -339,22 +286,6 @@ namespace MonoTests.System.Data.SqlClient
 			p.Value = value;
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#F:SqlDbType");
 			Assert.AreEqual (value, p.Value, "#F:Value");
-#else
-			SqlParameter p = new SqlParameter ();
-			try {
-				p.Value = value;
-				Assert.Fail ("#1");
-			} catch (FormatException) {
-				// appears to be bug in .NET 1.1 while constructing
-				// exception message
-			} catch (ArgumentException ex) {
-				// The parameter data type of Char[] is invalid
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -535,9 +466,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void InferType_Invalid ()
 		{
 			object [] notsupported = new object [] {
@@ -551,7 +480,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter param = new SqlParameter ();
 
 			for (int i = 0; i < notsupported.Length; i++) {
-#if NET_2_0
 				param.Value = notsupported [i];
 				try {
 					SqlDbType type = param.SqlDbType;
@@ -574,21 +502,6 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsNotNull (ex.Message, "#B4");
 					Assert.IsNull (ex.ParamName, "#B5");
 				}
-#else
-				try {
-					param.Value = notsupported [i];
-					Assert.Fail ("#A1:" + i);
-				} catch (FormatException) {
-					// appears to be bug in .NET 1.1 while
-					// constructing exception message
-				} catch (ArgumentException ex) {
-					// The parameter data type of ... is invalid
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-					Assert.IsNull (ex.InnerException, "#A3");
-					Assert.IsNotNull (ex.Message, "#A4");
-					Assert.IsNull (ex.ParamName, "#A5");
-				}
-#endif
 			}
 		}
 
@@ -626,35 +539,17 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void InferType_TimeSpan ()
 		{
 			TimeSpan value = new TimeSpan (4, 6, 23);
 
 			SqlParameter param = new SqlParameter ();
-#if NET_2_0
 			param.Value = value;
 			Assert.AreEqual (SqlDbType.Time, param.SqlDbType, "#1");
 			Assert.AreEqual (DbType.Time, param.DbType, "#2");
-#else
-			try {
-				param.Value = value;
-				Assert.Fail ("#1");
-			} catch (FormatException) {
-				// appears to be bug in .NET 1.1 while constructing
-				// exception message
-			} catch (ArgumentException ex) {
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void LocaleId ()
 		{
@@ -663,7 +558,6 @@ namespace MonoTests.System.Data.SqlClient
 			parameter.LocaleId = 15;
 			Assert.AreEqual(15, parameter.LocaleId, "#2");
 		}
-#endif
 
 		[Test] // bug #320196
 		public void ParameterNullTest ()
@@ -697,35 +591,20 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.Int32, p.DbType, "#C1");
 			Assert.AreEqual (SqlDbType.Int, p.SqlDbType, "#C2");
 			p.Value = DBNull.Value;
-#if NET_2_0
 			Assert.AreEqual (DbType.String, p.DbType, "#D1");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#D2");
-#else
-			Assert.AreEqual (DbType.Int32, p.DbType, "#D1");
-			Assert.AreEqual (SqlDbType.Int, p.SqlDbType, "#D2");
-#endif
 			p.Value = new byte [] { 0x0a };
 			Assert.AreEqual (DbType.Binary, p.DbType, "#E1");
 			Assert.AreEqual (SqlDbType.VarBinary, p.SqlDbType, "#E2");
 			p.Value = null;
-#if NET_2_0
 			Assert.AreEqual (DbType.String, p.DbType, "#F1");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#F2");
-#else
-			Assert.AreEqual (DbType.Binary, p.DbType, "#F1");
-			Assert.AreEqual (SqlDbType.VarBinary, p.SqlDbType, "#F2");
-#endif
 			p.Value = DateTime.Now;
 			Assert.AreEqual (DbType.DateTime, p.DbType, "#G1");
 			Assert.AreEqual (SqlDbType.DateTime, p.SqlDbType, "#G2");
 			p.Value = null;
-#if NET_2_0
 			Assert.AreEqual (DbType.String, p.DbType, "#H1");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#H2");
-#else
-			Assert.AreEqual (DbType.DateTime, p.DbType, "#H1");
-			Assert.AreEqual (SqlDbType.DateTime, p.SqlDbType, "#H2");
-#endif
 
 			// If DbType is set, then the SqlDbType should not be
 			// inferred from the value assigned.
@@ -796,7 +675,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (string.Empty, p.SourceColumn, "#E:SourceColumn");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ResetDbType ()
 		{
@@ -899,7 +777,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DbType.String, p2.DbType, "#17 Resetting SqlDbType must infer the type from the value");
 			Assert.AreEqual (SqlDbType.NVarChar, p2.SqlDbType, "#18 Resetting SqlDbType must infer the type from the value");
 		}
-#endif
 
 		[Test]
 		public void SourceColumn ()
@@ -926,7 +803,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (string.Empty, p.SourceColumn, "#E:SourceColumn");
 		}
 
-#if NET_2_0
 		[Test]
 		public void SourceColumnNullMapping ()
 		{
@@ -937,7 +813,6 @@ namespace MonoTests.System.Data.SqlClient
 			p.SourceColumnNullMapping = false;
 			Assert.IsFalse (p.SourceColumnNullMapping, "#3");
 		}
-#endif
 
 		[Test]
 		public void SqlDbTypeTest ()
@@ -961,7 +836,6 @@ namespace MonoTests.System.Data.SqlClient
 				p.SqlDbType = (SqlDbType) 666;
 				Assert.Fail ("#1");
 			} catch (ArgumentOutOfRangeException ex) {
-#if NET_2_0
 				// The SqlDbType enumeration value, 666, is
 				// invalid
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
@@ -969,18 +843,9 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5:" + ex.Message);
 				Assert.AreEqual ("SqlDbType", ex.ParamName, "#6");
-#else
-				// Specified argument was out of the range of
-				// valid values
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-#endif
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void SqlValue ()
 		{
@@ -1103,7 +968,6 @@ namespace MonoTests.System.Data.SqlClient
 			// FIXME bug #525321
 			//Assert.AreEqual ("XA", parameter.Value, "Chars:Value");
 		}
-#endif
 
 		[Test]
 		public void SqlTypes_SqlBinary ()
@@ -1111,7 +975,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlBinary value = new SqlBinary (new byte [] { 0x0d, 0x0a });
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#A:SqlDbType");
@@ -1123,14 +986,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlBinary.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlBinary.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.VarBinary, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1140,7 +1000,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlBoolean value = new SqlBoolean (false);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#A:SqlDbType");
@@ -1152,14 +1011,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlBoolean.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlBoolean.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Bit, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1169,7 +1025,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlByte value = new SqlByte (0x0d);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#A:SqlDbType");
@@ -1181,18 +1036,14 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlByte.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlByte.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.TinyInt, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 	        // This doesn't work as SqlBytes are represented as SqlBinary
@@ -1254,7 +1105,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreSame (value, parameter.SqlValue, "#C:SqlValue");
 			Assert.AreSame (value, parameter.Value, "#C:Value");
 		}
-#endif
 
 		[Test]
 		public void SqlTypes_SqlDateTime ()
@@ -1262,7 +1112,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlDateTime value = new SqlDateTime (DateTime.Now);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#A:SqlDbType");
@@ -1274,14 +1123,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlDateTime.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlDateTime.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.DateTime, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1291,7 +1137,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlDecimal value = new SqlDecimal (45m);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#A:SqlDbType");
@@ -1303,14 +1148,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlDecimal.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlDecimal.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Decimal, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1320,7 +1162,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlDouble value = new SqlDouble (4.5D);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#A:SqlDbType");
@@ -1332,14 +1173,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlDouble.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlDouble.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Float, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1349,7 +1187,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlGuid value = new SqlGuid (Guid.NewGuid ());
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#A:SqlDbType");
@@ -1361,14 +1198,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlGuid.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlGuid.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.UniqueIdentifier, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1378,7 +1212,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlInt16 value = new SqlInt16 ((short) 5);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#A:SqlDbType");
@@ -1390,14 +1223,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlInt16.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlInt16.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.SmallInt, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1407,7 +1237,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlInt32 value = new SqlInt32 (5);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#A:SqlDbType");
@@ -1419,14 +1248,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlInt32.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlInt32.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Int, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1436,7 +1262,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlInt64 value = new SqlInt64 (5L);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#A:SqlDbType");
@@ -1448,14 +1273,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlInt64.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlInt64.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.BigInt, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1465,7 +1287,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlMoney value = new SqlMoney (45m);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#A:SqlDbType");
@@ -1477,14 +1298,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlMoney.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlMoney.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Money, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1494,7 +1312,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlSingle value = new SqlSingle (45f);
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#A:SqlDbType");
@@ -1506,14 +1323,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlSingle.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlSingle.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.Real, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
@@ -1523,7 +1337,6 @@ namespace MonoTests.System.Data.SqlClient
 			SqlParameter parameter;
 			SqlString value = new SqlString ("XA");
 
-#if NET_2_0
 			parameter = new SqlParameter ();
 			parameter.SqlValue = value;
 			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#A:SqlDbType");
@@ -1535,18 +1348,14 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#B:SqlDbType");
 			Assert.AreEqual (SqlString.Null, parameter.SqlValue, "#B:SqlValue");
 			Assert.AreEqual (SqlString.Null, parameter.Value, "#B:Value");
-#endif
 
 			parameter = new SqlParameter ();
 			parameter.Value = value;
 			Assert.AreEqual (SqlDbType.NVarChar, parameter.SqlDbType, "#C:SqlDbType");
-#if NET_2_0
 			Assert.AreEqual (value, parameter.SqlValue, "#C:SqlValue");
-#endif
 			Assert.AreEqual (value, parameter.Value, "#C:Value");
 		}
 
-#if NET_2_0
 		[Test]
 		public void SqlTypes_SqlXml ()
 		{
@@ -1575,7 +1384,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreSame (value, parameter.SqlValue, "#C:SqlValue");
 			Assert.AreSame (value, parameter.Value, "#C:Value");
 		}
-#endif
 
 		[Test]
 		public void Value ()
@@ -1589,13 +1397,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (42, p.Value, "#A:Value");
 
 			p.Value = DBNull.Value;
-#if NET_2_0
 			Assert.AreEqual (DbType.String, p.DbType, "#B:DbType");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#B:SqlDbType");
-#else
-			Assert.AreEqual (DbType.Int32, p.DbType, "#B:DbType");
-			Assert.AreEqual (SqlDbType.Int, p.SqlDbType, "#B:SqlDbType");
-#endif
 			Assert.AreEqual (DBNull.Value, p.Value, "#B:Value");
 
 			p.Value = DateTime.MaxValue;
@@ -1604,13 +1407,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DateTime.MaxValue, p.Value, "#C:Value");
 
 			p.Value = null;
-#if NET_2_0
 			Assert.AreEqual (DbType.String, p.DbType, "#D:DbType");
 			Assert.AreEqual (SqlDbType.NVarChar, p.SqlDbType, "#D:SqlDbType");
-#else
-			Assert.AreEqual (DbType.DateTime, p.DbType, "#D:DbType");
-			Assert.AreEqual (SqlDbType.DateTime, p.SqlDbType, "#D:SqlDbType");
-#endif
 			Assert.IsNull (p.Value, "#D:Value");
 
 			p = new SqlParameter ("zipcode", SqlDbType.Int);
@@ -1630,7 +1428,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (DBNull.Value, p.Value, "#G:Value");
 		}
 
-#if NET_2_0
 		[Test]
 		public void XmlSchemaTest ()
 		{
@@ -1695,7 +1492,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual ("  a  ", p1.XmlSchemaCollectionOwningSchema,
 					 "#21 Default value for XmlSchemaCollectionOwningSchema is an empty string");
 		}
-#endif
 
 		private enum ByteEnum : byte
 		{

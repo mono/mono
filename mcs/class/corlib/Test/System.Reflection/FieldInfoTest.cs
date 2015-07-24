@@ -58,13 +58,13 @@ namespace MonoTests.System.Reflection
 
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst=100)]
 		public string f2;
-
+#if FEATURE_COMINTEROP
 		[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof (Marshal1), MarshalCookie="5")]
 		public int f3;
 
 		[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")]
 		public object f4;
-
+#endif
 		[Obsolete]
 		public int f5;
 	}
@@ -171,6 +171,15 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void FieldInfoModule ()
+		{
+			Type type = typeof (FieldInfoTest);
+			FieldInfo field = type.GetField ("i");
+
+			Assert.AreEqual (type.Module, field.Module);
+		}
+
+		[Test]
 		public void GetCustomAttributes ()
 		{
 			object [] attrs;
@@ -232,7 +241,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
 		public void GetFieldFromHandle2_DeclaringType_Zero ()
 		{
@@ -315,7 +323,6 @@ namespace MonoTests.System.Reflection
 
 			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
 		}
-#endif
 
 		[Test]
 		public void PseudoCustomAttributes ()
@@ -349,10 +356,12 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (UnmanagedType.ByValTStr, attr.Value, "#E2");
 			Assert.AreEqual (100, attr.SizeConst, "#E3");
 
+#if FEATURE_COMINTEROP
 			attrs = typeof (Class2).GetField ("f3").GetCustomAttributes (true);
 			Assert.AreEqual (1, attrs.Length, "#F1");
 			attr = (MarshalAsAttribute) attrs [0];
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#F2");
+
 			Assert.AreEqual ("5", attr.MarshalCookie, "#F3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#F4");
 
@@ -377,6 +386,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (UnmanagedType.CustomMarshaler, attr.Value, "#I2");
 			Assert.AreEqual ("5", attr.MarshalCookie, "#I3");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#I4");
+#endif
 		}
 
 		// Disable "field not used warning", this is intended.
@@ -519,6 +529,10 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public unsafe void GetSetValuePointers ()
 		{
+			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+			int *p0i = (int*)Pointer.Unbox (p0);
+			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
+
 			int i = 5;
 			void *p = &i;
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
@@ -1325,6 +1339,27 @@ namespace MonoTests.System.Reflection
 			field.SetValue (instance, null);
 
 			Throws (field, instance, new int[] { 3 });
+		}
+
+		struct TestFields {
+			public int MaxValue;
+			public string str;
+		}
+
+		[Test]
+		public void SetValueDirect ()
+		{
+			TestFields fields = new TestFields { MaxValue = 1234, str = "A" };
+
+			FieldInfo info = fields.GetType ().GetField ("MaxValue");
+			TypedReference reference = __makeref(fields);
+			info.SetValueDirect (reference, 4096);
+			Assert.AreEqual (4096, fields.MaxValue);
+
+			info = fields.GetType ().GetField ("str");
+			reference = __makeref(fields);
+			info.SetValueDirect (reference, "B");
+			Assert.AreEqual ("B", fields.str);
 		}
 
 		public IntEnum PPP;

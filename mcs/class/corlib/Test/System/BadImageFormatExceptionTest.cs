@@ -41,9 +41,7 @@ namespace MonoTests.System
 		{
 			BadImageFormatException bif = new BadImageFormatException ();
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4"); // Format of the executable (.exe) or library (.dll) is invalid
@@ -56,9 +54,7 @@ namespace MonoTests.System
 		{
 			BadImageFormatException bif = new BadImageFormatException ("message");
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4");
@@ -73,9 +69,7 @@ namespace MonoTests.System
 		{
 			BadImageFormatException bif = new BadImageFormatException (string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4");
@@ -90,25 +84,14 @@ namespace MonoTests.System
 		{
 			BadImageFormatException bif = new BadImageFormatException ((string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
-#if NET_2_0
 			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
 			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#5");
-#else
-			Assert.IsNotNull (bif.Message, "#4"); // Format of the executable (.exe) or library ...
-			Assert.IsFalse (bif.Message.IndexOf ("''") != -1, "#5");
-#endif
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#6");
-#if NET_2_0
 			Assert.IsTrue (bif.ToString ().IndexOf ("''") != -1, "#7");
-#else
-			Assert.IsFalse (bif.ToString ().IndexOf ("''") != -1, "#7");
-#endif
 		}
 
 		[Test]
@@ -118,9 +101,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ("message",
 				ame);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNotNull (bif.InnerException, "#3");
 			Assert.AreSame (ame, bif.InnerException, "#4");
@@ -137,9 +118,7 @@ namespace MonoTests.System
 			ArithmeticException ame = new ArithmeticException ("something");
 			BadImageFormatException bif = new BadImageFormatException (string.Empty, ame);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNotNull (bif.InnerException, "#3");
 			Assert.AreSame (ame, bif.InnerException, "#4");
@@ -156,19 +135,12 @@ namespace MonoTests.System
 			ArithmeticException ame = new ArithmeticException ("something");
 			BadImageFormatException bif = new BadImageFormatException ((string) null, ame);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNotNull (bif.InnerException, "#3");
 			Assert.AreSame (ame, bif.InnerException, "#4");
-#if NET_2_0
 			Assert.IsNotNull (bif.Message, "#5"); // Could not load file or assembly '' ...
 			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#6");
-#else
-			Assert.IsNotNull (bif.Message, "#5"); // Format of the executable (.exe) or library ...
-			Assert.IsFalse (bif.Message.IndexOf ("''") != -1, "#6");
-#endif
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName), "#8");
 			Assert.IsTrue (bif.ToString ().IndexOf ("---> " + ame.GetType ().FullName) != -1, "#9");
@@ -181,9 +153,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ("message",
 				(Exception) null);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
 			Assert.IsNotNull (bif.Message, "#4");
@@ -199,9 +169,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ("message",
 				"file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#2");
 			Assert.AreEqual ("file.txt", bif.FileName, "#3");
 			Assert.IsNull (bif.InnerException, "#4");
@@ -210,13 +178,8 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": message" + Environment.NewLine), "#8");
-#if NET_2_0
 			Assert.IsTrue (bif.ToString ().IndexOf ("'file.txt'") != -1, "#9");
 			Assert.IsFalse (bif.ToString ().IndexOf ("\"file.txt\"") != -1, "#9");
-#else
-			Assert.IsFalse (bif.ToString ().IndexOf ("'file.txt'") != -1, "#9");
-			Assert.IsTrue (bif.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#endif
 		}
 
 		[Test]
@@ -225,9 +188,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ("message",
 				string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#2");
 			Assert.AreEqual (string.Empty, bif.FileName, "#3");
 			Assert.IsNull (bif.InnerException, "#4");
@@ -244,9 +205,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ("message",
 				(string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#A1");
-#endif
 			Assert.IsNull (bif.FileName, "#A2");
 			Assert.IsNull (bif.InnerException, "#A3");
 			Assert.IsNotNull (bif.Message, "#A4");
@@ -257,9 +216,7 @@ namespace MonoTests.System
 
 			bif = new BadImageFormatException (string.Empty, (string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#B1");
-#endif
 			Assert.IsNull (bif.FileName, "#B2");
 			Assert.IsNull (bif.InnerException, "#B3");
 			Assert.IsNotNull (bif.Message, "#B4");
@@ -275,9 +232,7 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException (string.Empty,
 				string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#2");
 			Assert.AreEqual (string.Empty, bif.FileName, "#3");
 			Assert.IsNull (bif.InnerException, "#4");
@@ -293,18 +248,11 @@ namespace MonoTests.System
 			BadImageFormatException bif = new BadImageFormatException ((string) null,
 				(string) null);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNull (bif.FileName, "#2");
 			Assert.IsNull (bif.InnerException, "#3");
-#if NET_2_0
 			Assert.IsNotNull (bif.Message, "#4"); // Could not load file or assembly '' ...
 			Assert.IsTrue (bif.Message.IndexOf ("''") != -1, "#5");
-#else
-			Assert.IsNotNull (bif.Message, "#4"); // Format of the executable (.exe) or library ...
-			Assert.IsFalse (bif.Message.IndexOf ("''") != -1, "#5");
-#endif
 			Assert.IsNull (bif.FusionLog, "#5");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": "), "#6");
@@ -318,9 +266,7 @@ namespace MonoTests.System
 			
 			bif = new BadImageFormatException (string.Empty, "file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#2");
 			Assert.AreEqual ("file.txt", bif.FileName, "#3");
 			Assert.IsNull (bif.InnerException, "#4");
@@ -329,13 +275,8 @@ namespace MonoTests.System
 			Assert.IsNull (bif.FusionLog, "#7");
 			Assert.IsTrue (bif.ToString ().StartsWith (bif.GetType ().FullName
 				+ ": " + Environment.NewLine), "#8");
-#if NET_2_0
 			Assert.IsTrue (bif.ToString ().IndexOf ("'file.txt'") != -1, "#9");
 			Assert.IsFalse (bif.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#else
-			Assert.IsFalse (bif.ToString ().IndexOf ("'file.txt'") != -1, "#9");
-			Assert.IsTrue (bif.ToString ().IndexOf ("\"file.txt\"") != -1, "#10");
-#endif
 		}
 
 		[Test]
@@ -345,9 +286,7 @@ namespace MonoTests.System
 			
 			bif = new BadImageFormatException ((string) null, "file.txt");
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#A1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#A2");
 			Assert.AreEqual ("file.txt", bif.FileName, "#A3");
 			Assert.IsNull (bif.InnerException, "#A4");
@@ -360,9 +299,7 @@ namespace MonoTests.System
 
 			bif = new BadImageFormatException ((string) null, string.Empty);
 
-#if NET_2_0
 			Assert.IsNotNull (bif.Data, "#B1");
-#endif
 			Assert.IsNotNull (bif.FileName, "#B2");
 			Assert.AreEqual (string.Empty, bif.FileName, "#B3");
 			Assert.IsNull (bif.InnerException, "#B4");

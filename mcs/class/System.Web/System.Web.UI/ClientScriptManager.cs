@@ -641,9 +641,7 @@ namespace System.Web.UI
 				return;
 
 			writer.WriteLine ();
-#if NET_4_0
 			writer.AddAttribute (HtmlTextWriterAttribute.Class, "aspNetHidden");
-#endif
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			int oldIndent = writer.Indent;
 			writer.Indent = 0;

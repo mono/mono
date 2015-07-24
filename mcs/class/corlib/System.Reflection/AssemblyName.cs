@@ -76,9 +76,7 @@ namespace System.Reflection {
 		#endregion
 #pragma warning restore 169		
 
-#if NET_4_5
 		AssemblyContentType contentType;
-#endif		
 		public AssemblyName ()
 		{
 			// defaults
@@ -431,14 +429,9 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_5
 		public string CultureName {
 			get {
-				if (cultureinfo == null)
-					return null;
-				if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
-					return "neutral";
-				return cultureinfo.Name;
+				return (cultureinfo == null)? null : cultureinfo.Name;
 			}
 		}
 
@@ -451,6 +444,5 @@ namespace System.Reflection {
 				contentType = value;
 			}
 		}
-#endif
 	}
 }

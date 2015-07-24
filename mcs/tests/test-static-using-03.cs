@@ -1,7 +1,7 @@
 // Compiler options: -langversion:6
 
 using System;
-using A.B.X;
+using static A.B.X;
 
 namespace A.B
 {
@@ -27,7 +27,7 @@ namespace A.C
 
 namespace C
 {
-	using A.C.X;
+	using static A.C.X;
 
 	class M
 	{

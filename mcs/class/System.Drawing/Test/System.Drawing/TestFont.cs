@@ -188,20 +188,13 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
-	#if NET_2_0
 		[ExpectedException (typeof (AccessViolationException))]
-	#else
-		[ExpectedException (typeof (NullReferenceException))]
-	#endif
 		public void ToLogFont_Null ()
 		{
 			Font f = new Font ("Arial", 10);
 			f.ToLogFont (null);
 		}
 		[Test]
-#if ONLY_1_1
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Font_StringNull_Float ()
 		{
 			string family = null;
@@ -589,8 +582,10 @@ namespace MonoTests.System.Drawing{
             Font f1 = new Font("Arial", 8.25F, GraphicsUnit.Point);
             Font f2 = new Font("Courier New", 8.25F, GraphicsUnit.Point);
 
-            Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
-                "Hashcodes should differ if _name member differs");
+			if (f1.Name != f2.Name) {
+				Assert.IsFalse(f1.GetHashCode() == f2.GetHashCode(),
+							   "Hashcodes should differ if _name member differs");
+			}
         }
 
         [Test]

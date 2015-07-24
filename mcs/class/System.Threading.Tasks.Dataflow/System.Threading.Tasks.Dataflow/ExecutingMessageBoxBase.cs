@@ -136,7 +136,7 @@ namespace System.Threading.Tasks.Dataflow {
 		protected override void OutgoingQueueComplete ()
 		{
 			if (MessageQueue.IsCompleted
-			    && Thread.VolatileRead (ref degreeOfParallelism) == 1)
+			    && Volatile.Read (ref degreeOfParallelism) == 1)
 				outgoingQueueComplete ();
 		}
 
@@ -145,7 +145,7 @@ namespace System.Threading.Tasks.Dataflow {
 		/// </summary>
 		protected override void VerifyCompleteness ()
 		{
-			if (Thread.VolatileRead (ref degreeOfParallelism) == 1)
+			if (Volatile.Read (ref degreeOfParallelism) == 1)
 				base.VerifyCompleteness ();
 		}
 

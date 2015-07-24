@@ -28,7 +28,8 @@
 
 // Note: the class existed in 1.1 but the only thing we know about it is that
 // it has a finalizer ;-)
-#if NET_2_0
+
+#if FEATURE_COMPRESSEDSTACK
 
 using System;
 using System.Security;

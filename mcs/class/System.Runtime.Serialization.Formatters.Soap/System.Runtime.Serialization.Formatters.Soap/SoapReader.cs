@@ -499,9 +499,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			object objReturn = 
 				FormatterServices.GetUninitializedObject(type);
 
-#if NET_2_0
 			objMgr.RaiseOnDeserializingEvent (objReturn);
-#endif
 			if(objReturn is ISerializable)
 				NeedsSerializationInfo = true;
 
@@ -737,9 +735,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		{
 			if (parentObjectId == 0) indices = null;
 
-			if (!objectInstance.GetType().IsValueType || parentObjectId == 0)
-				objMgr.RegisterObject (objectInstance, objectId, info, 0, null, null);
-			else
+			if (!objectInstance.GetType ().IsValueType || parentObjectId == 0) {
+				if (objMgr.GetObject(objectId) != objectInstance)
+					objMgr.RegisterObject (objectInstance, objectId, info, 0, null, null);
+			} else
 			{
 				if(objMgr.GetObject(objectId) != null)
 					throw new SerializationException("Object already registered");

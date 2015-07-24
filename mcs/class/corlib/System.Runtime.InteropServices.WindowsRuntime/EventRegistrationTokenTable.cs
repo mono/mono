@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // EventRegistrationTokenTable.cs
 //
@@ -64,5 +63,4 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		}
 	}
 }
-#endif
 

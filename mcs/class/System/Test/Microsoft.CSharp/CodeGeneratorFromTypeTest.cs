@@ -110,11 +110,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"internal abstract class Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#else
-				"abstract class Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -160,11 +156,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal event int Click;{0}" +
-#else
-				"    /*FamANDAssem*/ internal event int Click;{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -331,11 +323,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Name {{{0}" +
-#else
-				"    internal int Name {{{0}" +
-#endif
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
@@ -404,11 +392,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Name {{{0}" +
-#else
-				"    internal int Name {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -664,11 +648,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Execute() {{{0}" +
-#else
-				"    internal int Execute() {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -680,11 +660,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Execute() {{{0}" +
-#else
-				"    internal int Execute() {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -762,11 +738,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    public virtual int Something([A()] [B()] params out object value, [C()] ref int ) {{{0}" +
-#else
-				"    public virtual int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int ) {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -780,19 +752,10 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#if NET_2_0
 				"    params{0}" +
-#else
-				"    [System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
-#if !NET_2_0
-				"    [return: System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: D()]{0}" +
-#if NET_2_0
 				"    return: params{0}" +
-#endif
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -928,10 +891,8 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#endif
 				"    static Test1() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -948,10 +909,8 @@ namespace MonoTests.Microsoft.CSharp
 				"public class Test1{0}" + 
 				"{{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#endif
 				"    static Test1(){0}" + 
 				"    {{{0}" +
 				"    }}{0}" +
@@ -965,12 +924,8 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    public static int Main() {{{0}" +
-#else
-				"    public static void Main() {{{0}" +
-#endif
 				"        Test.InnerType x;{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -996,7 +951,6 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.IsTrue (sw.ToString ().IndexOf ("@default") > 0);
 		}
 
-#if NET_2_0
 		[Test]
 		public void GenericCodeTypeReferencesTest ()
 		{
@@ -1009,9 +963,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    private System.Nullable<> Bar;{0}" +
 				"}}{0}", NewLine), code);
 		}
-#endif
 		
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -1020,7 +972,6 @@ namespace MonoTests.Microsoft.CSharp
 				"public partial class Test1 {{{0}" +
 				"}}{0}", NewLine), code);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -1503,17 +1454,12 @@ namespace MonoTests.Microsoft.CSharp
 			string code = GenerateEntryPointMethod (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public delegate void Test1();{0}{0}" +
-#if NET_2_0
 				"[A()]{0}" +
 				"public static int Main() {{{0}" +
-#else
-				"public static void Main() {{{0}" +
-#endif
 				"    Test.InnerType x;{0}" +
 				"}}{0}", NewLine), code);
 		}
 
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -1522,7 +1468,6 @@ namespace MonoTests.Microsoft.CSharp
 				"public delegate void Test1();{0}"
 				, NewLine), code);
 		}
-#endif
 		
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
@@ -1616,11 +1561,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"internal interface Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#else
-				"interface Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -1666,11 +1607,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal event int Click;{0}" +
-#else
-				"    /*FamANDAssem*/ internal event int Click;{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -2131,11 +2068,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    int Something([A()] [B()] params out object value, [C()] ref int );{0}" +
-#else
-				"    int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int );{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -2148,19 +2081,10 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#if NET_2_0
 				"    params{0}" +
-#else
-				"    [System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
-#if !NET_2_0
-				"    [return: System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: D()]{0}" +
-#if NET_2_0
 				"    return: params{0}" +
-#endif
 				"    int Execute();{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2291,18 +2215,13 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" + 
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    public static int Main() {{{0}" +
-#else
-				"    public static void Main() {{{0}" +
-#endif
 				"        Test.InnerType x;{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
 
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -2311,7 +2230,6 @@ namespace MonoTests.Microsoft.CSharp
 				"public partial interface Test1 {{{0}" +
 				"}}{0}", NewLine), code);
 		}
-#endif
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -2404,11 +2322,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"internal struct Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#else
-				"struct Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -2454,11 +2368,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal event int Click;{0}" +
-#else
-				"    /*FamANDAssem*/ internal event int Click;{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -2570,11 +2480,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Name {{{0}" +
-#else
-				"    internal int Name {{{0}" +
-#endif
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
@@ -2643,11 +2549,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Name {{{0}" +
-#else
-				"    internal int Name {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2879,11 +2781,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Execute() {{{0}" +
-#else
-				"    internal int Execute() {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2895,11 +2793,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    internal virtual int Execute() {{{0}" +
-#else
-				"    internal int Execute() {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2965,11 +2859,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    public virtual int Something([A()] [B()] params out object value, [C()] ref int ) {{{0}" +
-#else
-				"    public virtual int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int ) {{{0}" +
-#endif
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2983,19 +2873,10 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#if NET_2_0
 				"    params{0}" +
-#else
-				"    [System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
-#if !NET_2_0
-				"    [return: System.ParamArrayAttribute()]{0}" +
-#endif
 				"    [return: D()]{0}" +
-#if NET_2_0
 				"    return: params{0}" +
-#endif
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -3131,10 +3012,8 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#endif
 				"    static Test1() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code, "#1");
@@ -3151,10 +3030,8 @@ namespace MonoTests.Microsoft.CSharp
 				"public struct Test1{0}" +
 				"{{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    [B()]{0}" +
-#endif
 				"    static Test1(){0}" + 
 				"    {{{0}" +
 				"    }}{0}" +
@@ -3168,18 +3045,13 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    public static int Main() {{{0}" +
-#else
-				"    public static void Main() {{{0}" +
-#endif
 				"        Test.InnerType x;{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
 
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -3188,7 +3060,6 @@ namespace MonoTests.Microsoft.CSharp
 				"public partial struct Test1 {{{0}" +
 				"}}{0}", NewLine), code);
 		}
-#endif
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -3281,11 +3152,7 @@ namespace MonoTests.Microsoft.CSharp
 		{
 			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-#if NET_2_0
 				"internal enum Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#else
-				"enum Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
-#endif
 				"}}{0}", NewLine), code);
 		}
 
@@ -3841,18 +3708,13 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" + 
 				"    {0}" +
-#if NET_2_0
 				"    [A()]{0}" +
 				"    public static int Main() {{{0}" +
-#else
-				"    public static void Main() {{{0}" +
-#endif
 				"        Test.InnerType x;{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
 
-#if NET_2_0
 		[Test]
 		public override void PartialTypeTest ()
 		{
@@ -3861,7 +3723,6 @@ namespace MonoTests.Microsoft.CSharp
 				"public enum Test1 {{{0}" +
 				"}}{0}", NewLine), code);
 		}
-#endif
 		
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}

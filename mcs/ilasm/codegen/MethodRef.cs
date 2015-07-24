@@ -32,13 +32,6 @@ namespace Mono.ILASM {
 			if (owner_def == null)
 				Report.Error ("Reference to undefined class '" + owner.FullName + "'");
 
-                        string write_name;
-
-                        if (name == "<init>")
-                                write_name = ".ctor";
-                        else
-                                write_name = name;
-
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
                                 peapi_method = owner_def.ResolveMethod (ret_type, call_conv, name, 
                                         param, gen_param_count, code_gen);

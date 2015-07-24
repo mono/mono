@@ -206,6 +206,14 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void ToString_Xamarin29935 ()
+		{
+			var doc = XDocument.Parse ("<?xml version='1.0' encoding='utf-8'?><lift xmlns:test='http://test.example.com'></lift>");
+			Assert.AreEqual ("xmlns:test=\"http://test.example.com\"",
+				doc.Root.Attributes ().Select (s => s.ToString ()).First ());
+		}
+
+		[Test]
 		public void DateTimeAttribute ()
 		{
 			var date = DateTime.Now;

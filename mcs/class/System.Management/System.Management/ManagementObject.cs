@@ -34,9 +34,7 @@ using System.Runtime.Serialization;
 
 namespace System.Management
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class ManagementObject : ManagementBaseObject
 	{
 		[MonoTODO]
@@ -75,22 +73,16 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		protected
-#else
-		public
-#endif
 		ManagementObject (SerializationInfo info, StreamingContext context)
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public override object Clone ()

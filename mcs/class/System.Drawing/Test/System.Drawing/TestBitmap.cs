@@ -136,7 +136,6 @@ namespace MonoTests.System.Drawing {
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
-#if NET_2_0
 				BitmapData bd = new BitmapData ();
 				try {
 					bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed, bd);
@@ -146,9 +145,6 @@ namespace MonoTests.System.Drawing {
 					Assert.AreEqual (IntPtr.Zero, bd.Scan0, "Scan0");
 					throw;
 				}
-#else
-				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
-#endif
 			}
 		}
 
@@ -233,7 +229,6 @@ namespace MonoTests.System.Drawing {
 				bmp.UnlockBits (null);
 			}
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void LockBits_BitmapData_Null ()
@@ -303,14 +298,9 @@ namespace MonoTests.System.Drawing {
 				bmp.UnlockBits (data);
 			}
 		}
-#endif
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (InvalidOperationException))]
-#else
-		[ExpectedException (typeof (Exception))]
-#endif
 		public void Format1bppIndexed ()
 		{
 			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format1bppIndexed)) {
@@ -321,11 +311,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (InvalidOperationException))]
-#else
-		[ExpectedException (typeof (Exception))]
-#endif
 		public void Format4bppIndexed ()
 		{
 			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format4bppIndexed)) {
@@ -336,11 +322,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (InvalidOperationException))]
-#else
-		[ExpectedException (typeof (Exception))]
-#endif
 		public void Format8bppIndexed ()
 		{
 			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format8bppIndexed)) {
@@ -1196,11 +1178,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]	// http://bugzilla.ximian.com/show_bug.cgi?id=80558
-#else
-		[ExpectedException (typeof (InvalidOperationException))]
-#endif
 		public void XmlSerialize ()
 		{
 			new XmlSerializer (typeof (Bitmap));
@@ -1529,9 +1507,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (InvalidOperationException))]
-#endif
 		public void XmlSerialization ()
 		{
 			new XmlSerializer (typeof (Bitmap));

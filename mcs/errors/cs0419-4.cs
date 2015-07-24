@@ -1,4 +1,4 @@
-// CS0419: Ambiguous reference in cref attribute `DateTime.ToString'. Assuming `System.DateTime.ToString()' but other overloads including `System.DateTime.ToString(System.IFormatProvider)' have also matched
+// CS0419: Ambiguous reference in cref attribute `DateTime.ToString'. Assuming `System.DateTime.ToString()' but other overloads including `System.DateTime.ToString(string)' have also matched
 // Line: 10
 // Compiler options: -doc:dummy.xml -warnaserror -warn:4
 // 

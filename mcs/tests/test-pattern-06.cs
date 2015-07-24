@@ -15,8 +15,8 @@ class RecursiveNamedPattern
 		if (Switch_1 (1) != 1)
 			return 3;
 
-		if (Switch_1 (new C1 ()) != 3)
-			return 4;
+//		if (Switch_1 (new C1 ()) != 3)
+//			return 4;
 
 		if (Switch_1 ((byte?) 1) != 1)
 			return 5;
@@ -36,10 +36,10 @@ class RecursiveNamedPattern
 		switch (o) {
 			case 1:
 				return 1;
-			case C1 (3):
-				return 2;
-			case C1 (2):
-				return 3;
+//			case C1 (3):
+//				return 2;
+//			case C1 (2):
+//				return 3;
 			case null:
 				return 4;
 			default:

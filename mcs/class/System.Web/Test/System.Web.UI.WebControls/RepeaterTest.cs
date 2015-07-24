@@ -59,7 +59,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				LoadViewState (o);
 			}
 
-#if NET_2_0
 			public DataSourceSelectArguments GetSelectArguments()
 			{
 				return SelectArguments;
@@ -118,10 +117,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				eventChecker = false;
 			}
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void Repeater_DefaultsSelectArguments ()
 		{
@@ -269,7 +266,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				LoadViewState (o);
 			}
 
-#if NET_2_0
 			public DataSourceSelectArguments GetSelectArguments ()
 			{
 				return SelectArguments;
@@ -280,7 +276,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				DataSourceSelectArguments arg = new DataSourceSelectArguments ("SortExp");
 				return arg;
 			}
-#endif
 		}
 		#endregion
 
@@ -297,6 +292,5 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }

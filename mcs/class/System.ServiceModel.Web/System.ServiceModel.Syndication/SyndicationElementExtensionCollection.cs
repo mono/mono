@@ -80,7 +80,7 @@ namespace System.ServiceModel.Syndication
 			Add (new SyndicationElementExtension (xmlReader));
 		}
 
-		new void Add (SyndicationElementExtension item)
+		internal new void Add (SyndicationElementExtension item)
 		{
 			base.Add (item);
 		}

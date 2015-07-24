@@ -40,11 +40,7 @@ using System.Data.Common;
 using System.Text;
 
 namespace System.Data.OracleClient {
-#if NET_2_0
 	public sealed class OracleCommandBuilder : DbCommandBuilder
-#else
-	public sealed class OracleCommandBuilder : Component
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -88,9 +84,7 @@ namespace System.Data.OracleClient {
 		//[DataSysDescription ("The DataAdapter for which to automatically generate OracleCommands")]
 		[DefaultValue (null)]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleDataAdapter DataAdapter {
 			get { return adapter; }
 			set {
@@ -112,9 +106,7 @@ namespace System.Data.OracleClient {
 		//[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 			string QuotePrefix {
 			get { return quotePrefix; }
 			set {
@@ -128,9 +120,7 @@ namespace System.Data.OracleClient {
 		//[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 			string QuoteSuffix {
 			get { return quoteSuffix; }
 			set {
@@ -437,9 +427,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 			OracleCommand GetDeleteCommand ()
 		{
 			BuildCache (true);
@@ -447,9 +435,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 			OracleCommand GetInsertCommand ()
 		{
 			BuildCache (true);
@@ -466,9 +452,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 			OracleCommand GetUpdateCommand ()
 		{
 			BuildCache (true);
@@ -498,16 +482,13 @@ namespace System.Data.OracleClient {
 
 		[MonoTODO ("Figure out what else needs to be cleaned up when we refresh.")]
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 			void RefreshSchema ()
 		{
 			tableName = String.Empty;
 			dbSchemaTable = null;
 		}
 
-#if NET_2_0
                 [MonoTODO]
                 protected override void ApplyParameterInfo (DbParameter dbParameter,
 						   	    DataRow row,
@@ -535,7 +516,6 @@ namespace System.Data.OracleClient {
                         throw new NotImplementedException ();
                 }
 
-#endif // NET_2_0
 		#endregion // Methods
 
 		#region Event Handlers
@@ -562,13 +542,11 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-#if NET_2_0
                 [MonoTODO]
                 protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
                 {
                         throw new NotImplementedException ();
                 }
-#endif // NET_2_0
 
 		#endregion // Event Handlers
 	}

@@ -128,13 +128,11 @@ namespace System.Web
 
 		internal void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm, string exePath, string queryString, bool isTransfer, bool isInclude)
 		{
-#if !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
 			bool is_static = (handler is StaticFileHandler);
 			if (isTransfer && !(handler is Page) && !is_static)
 				throw new HttpException ("Transfer is only allowed to .aspx and static files");
-#endif
 
 			HttpRequest request = context.Request;
 			string oldQuery = request.QueryStringRaw;

@@ -51,14 +51,12 @@ namespace MonoCasTests.System.Web.UI {
 
 		private void Deny_Unrestricted (Html32TextWriter htw)
 		{
-#if NET_2_0
 			htw.ShouldPerformDivTableSubstitution = true;
 			Assert.IsTrue (htw.ShouldPerformDivTableSubstitution, "ShouldPerformDivTableSubstitution");
 			htw.SupportsBold = true;
 			Assert.IsTrue (htw.SupportsBold, "SupportsBold");
 			htw.SupportsItalic = true;
 			Assert.IsTrue (htw.SupportsItalic, "SupportsItalic");
-#endif
 			htw.RenderBeginTag (HtmlTextWriterTag.Table);
 			htw.RenderBeginTag ("<tr>");
 			htw.RenderEndTag ();

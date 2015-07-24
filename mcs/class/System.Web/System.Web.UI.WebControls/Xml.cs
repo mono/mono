@@ -32,10 +32,8 @@ using System.Security.Permissions;
 using System.Xml;
 using System.Xml.Xsl;
 
-#if NET_2_0
 using System.Xml.XPath;
 using System.Collections;
-#endif
 
 namespace System.Web.UI.WebControls {
 
@@ -45,18 +43,12 @@ namespace System.Web.UI.WebControls {
 	// attributes
 	[DefaultProperty ("DocumentSource")]
 	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[PersistChildren (true)]
-#else
-	[PersistChildren (false)]
-#endif
 	[ControlBuilder (typeof (XmlBuilder))] 
 	public class Xml : Control {
 		// Property set variables
 		XmlDocument xml_document;
-#if NET_2_0
 		XPathNavigator xpath_navigator;
-#endif
 		string xml_content;
 		string xml_file;
 
@@ -68,7 +60,6 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[MonoTODO ("Anything else?")]
 		public override string ClientID
@@ -86,14 +77,11 @@ namespace System.Web.UI.WebControls {
 				return base.Controls;
 			}
 		}
-#endif		
 		
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 [Obsolete ("Use the XPathNavigator property instead by creating an XPathDocument and calling CreateNavigator().")]
-#endif
 		public XmlDocument Document {
 			get {
 				return xml_document;
@@ -110,11 +98,7 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentContent {
 			get {
-#if NET_2_0
 				return (xml_content != null)? xml_content : "";
-#else
-				return "";
-#endif
 			}
 
 			set {
@@ -124,16 +108,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue ("")]
-#if NET_2_0
 		[UrlProperty]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#else		
-		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
@@ -152,7 +129,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DefaultValue (false)]
@@ -172,7 +148,6 @@ namespace System.Web.UI.WebControls {
 			// MSDN: Any attempt to set the value of this property throws a NotSupportedException exception.
 			set { throw new NotSupportedException ("SkinID is not supported on Xml control"); }
 		}
-#endif		
 		
 
 		[Browsable (false)]
@@ -204,15 +179,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif		
 		[DefaultValue ("")]
-#if NET_2_0
 		[Editor ("System.Web.UI.Design.XslUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-#else
-		[Editor ("System.Web.UI.Design.XslUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif		
 		[MonoLimitation ("Absolute path to the file system is not supported; use a relative URI instead.")]
 		public string TransformSource {
 			get {
@@ -227,7 +195,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public XPathNavigator XPathNavigator 
@@ -253,20 +220,13 @@ namespace System.Web.UI.WebControls {
 		{
 			return false;
 		}
-#endif		
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void Render (HtmlTextWriter output)
 		{
 			XmlDocument xml_doc = null;
 
-#if NET_2_0
 			if (xpath_navigator == null) {
-#endif
 				if (xml_document != null)
 					xml_doc = xml_document;
 				else {
@@ -281,9 +241,7 @@ namespace System.Web.UI.WebControls {
 					else
 						return;
 				}
-#if NET_2_0
 			}
-#endif
 
 			XslTransform t = xsl_transform;
 			if (transform_file != null){
@@ -292,32 +250,24 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (t != null){
-#if NET_2_0
 				if (xpath_navigator != null) {
 					t.Transform(xpath_navigator, transform_arguments, output);
 				}
 				else {
-#endif
 					t.Transform (xml_doc, transform_arguments, output, null);
-#if NET_2_0
 				}
-#endif
 				return;
 			}
 				
 			XmlTextWriter xmlwriter = new XmlTextWriter (output);
 			xmlwriter.Formatting = Formatting.None;
-#if NET_2_0
 			if (xpath_navigator != null) {
 				xmlwriter.WriteStartDocument ();
 				xpath_navigator.WriteSubtree (xmlwriter);
 			}
 			else {
-#endif
 				xml_doc.Save (xmlwriter);
-#if NET_2_0
 			}
-#endif
 		}
 
 		protected override void AddParsedSubObject (object obj)
@@ -334,7 +284,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new EmptyControlCollection (this);
@@ -345,6 +294,5 @@ namespace System.Web.UI.WebControls {
 		{
 			return null;
 		}
-#endif		
 	}
 }

@@ -57,7 +57,7 @@ namespace MonoTests.System.Text
 		public void GetEncodingForAllInfo ()
 		{
 			foreach (EncodingInfo i in Encoding.GetEncodings ())
-				Assert.IsNotNull (i.GetEncoding (), "codepage " + i);
+				Assert.IsNotNull (i.GetEncoding (), "codepage " + i.CodePage);
 		}
 
 		void GetEncoding (int id, List<int> list) {

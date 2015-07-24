@@ -28,9 +28,6 @@
 
 namespace System.Drawing {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum StringDigitSubstitute {
 		User        = 0,
 		None        = 1,

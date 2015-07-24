@@ -88,6 +88,7 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual (512, algo.HashSize, "HMACSHA512.HashSize");
 			Assert.AreEqual (1, algo.InputBlockSize, "HMACSHA512.InputBlockSize");
 			Assert.AreEqual (1, algo.OutputBlockSize, "HMACSHA512.OutputBlockSize");
+			Assert.AreEqual (128, algo.Key.Length, "HMACSHA512.Key.Length");
 			Assert.AreEqual ("System.Security.Cryptography.HMACSHA512", algo.ToString (), "HMACSHA512.ToString()");
 		}
 

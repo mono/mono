@@ -16,10 +16,11 @@
 #	b  base register (used in address references)
 #	f  floating point register
 #	a  EAX register
-#   d  EDX register
+#  d  EDX register
 #	l  long reg (forced eax:edx)
-#   s  ECX register
-#   c  register which can be used as a byte register (RAX..RDX)
+#  s  ECX register
+#  c  register which can be used as a byte register (RAX..RDX)
+#  A - first arg reg (rdi/rcx)
 #
 # len:number         describe the maximun length in bytes of the instruction
 # 		     number is a positive integer.  If the length is not specified
@@ -65,7 +66,8 @@ break: len:2
 tailcall: len:120 clob:c
 br: len:6
 label: len:0
-seq_point: len:31 clob:c
+seq_point: len:46 clob:c
+il_seq_point: len:0
 
 long_add: dest:i src1:i src2:i len:3 clob:1 nacl:6
 long_sub: dest:i src1:i src2:i len:3 clob:1 nacl:6
@@ -108,6 +110,8 @@ rethrow: src1:i len:18 nacl:50
 start_handler: len:16
 endfinally: len:9 nacl:22
 endfilter: src1:a len:9 nacl:19
+get_ex_obj: dest:a len:16
+
 ckfinite: dest:f src1:f len:43
 ceq: dest:c len:8
 cgt: dest:c len:8
@@ -121,6 +125,7 @@ icompare: src1:i src2:i len:3
 compare_imm: src1:i len:13
 icompare_imm: src1:i len:8
 fcompare: src1:f src2:f clob:a len:13
+rcompare: src1:f src2:f clob:a len:13
 oparglist: src1:b len:11
 checkthis: src1:b len:5 nacl:8
 call: dest:a clob:c len:32 nacl:64
@@ -130,6 +135,9 @@ voidcall_membase: src1:b clob:c len:32 nacl:64
 fcall: dest:f len:64 clob:c
 fcall_reg: dest:f src1:i len:64 clob:c
 fcall_membase: dest:f src1:b len:64 clob:c
+rcall: dest:f len:64 clob:c
+rcall_reg: dest:f src1:i len:64 clob:c
+rcall_membase: dest:f src1:b len:64 clob:c
 lcall: dest:a len:64 clob:c
 lcall_reg: dest:a src1:i len:64 clob:c
 lcall_membase: dest:a src1:b len:64 clob:c
@@ -255,10 +263,40 @@ float_cgt_un_membase: dest:i src1:f src2:b len:48
 float_clt_membase: dest:i src1:f src2:b len:35
 float_clt_un_membase: dest:i src1:f src2:b len:42
 float_conv_to_u: dest:i src1:f len:46
+
+# R4 opcodes
+r4_conv_to_i1: dest:i src1:f len:32
+r4_conv_to_u1: dest:i src1:f len:32
+r4_conv_to_i2: dest:i src1:f len:32
+r4_conv_to_u2: dest:i src1:f len:32
+r4_conv_to_i4: dest:i src1:f len:16
+r4_conv_to_u4: dest:i src1:f len:32
+r4_conv_to_i8: dest:i src1:f len:32
+r4_conv_to_r8: dest:f src1:f len:17
+r4_conv_to_r4: dest:f src1:f len:17
+r4_add: dest:f src1:f src2:f clob:1 len:5
+r4_sub: dest:f src1:f src2:f clob:1 len:5
+r4_mul: dest:f src1:f src2:f clob:1 len:5
+r4_div: dest:f src1:f src2:f clob:1 len:5
+r4_neg: dest:f src1:f clob:1 len:23
+r4_ceq: dest:i src1:f src2:f len:35
+r4_cgt: dest:i src1:f src2:f len:35
+r4_cgt_un: dest:i src1:f src2:f len:48
+r4_clt: dest:i src1:f src2:f len:35
+r4_clt_un: dest:i src1:f src2:f len:42
+r4_cneq: dest:i src1:f src2:f len:42
+r4_cge: dest:i src1:f src2:f len:35
+r4_cle: dest:i src1:f src2:f len:35
+
 fmove: dest:f src1:f len:8
+rmove: dest:f src1:f len:8
+move_f_to_i4: dest:i src1:f len:16
+move_i4_to_f: dest:f src1:i len:16
+move_f_to_i8: dest:i src1:f len:5
+move_i8_to_f: dest:f src1:i len:5
 call_handler: len:14 clob:c nacl:52
 aot_const: dest:i len:10
-nacl_gc_safe_point: clob:c
+gc_safe_point: clob:c src1:i len:40
 x86_test_null: src1:i len:5
 x86_compare_membase_reg: src1:b src2:i len:9
 x86_compare_membase_imm: src1:b len:13
@@ -299,11 +337,31 @@ tls_set: src1:i len:16
 tls_set_reg: src1:i src2:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_i8: src1:b src2:i dest:i len:32
-atomic_exchange_i4: src1:b src2:i dest:a len:32
-atomic_exchange_i8: src1:b src2:i dest:a len:32
+atomic_exchange_i4: src1:b src2:i dest:i len:12
+atomic_exchange_i8: src1:b src2:i dest:i len:12
 atomic_cas_i4: src1:b src2:i src3:a dest:a len:24
 atomic_cas_i8: src1:b src2:i src3:a dest:a len:24
-memory_barrier: len:16
+memory_barrier: len:3
+atomic_load_i1: dest:c src1:b len:9
+atomic_load_u1: dest:c src1:b len:9
+atomic_load_i2: dest:i src1:b len:9
+atomic_load_u2: dest:i src1:b len:9
+atomic_load_i4: dest:i src1:b len:9
+atomic_load_u4: dest:i src1:b len:9
+atomic_load_i8: dest:i src1:b len:9
+atomic_load_u8: dest:i src1:b len:9
+atomic_load_r4: dest:f src1:b len:16
+atomic_load_r8: dest:f src1:b len:16
+atomic_store_i1: dest:b src1:c len:12
+atomic_store_u1: dest:b src1:c len:12
+atomic_store_i2: dest:b src1:i len:12
+atomic_store_u2: dest:b src1:i len:12
+atomic_store_i4: dest:b src1:i len:12
+atomic_store_u4: dest:b src1:i len:12
+atomic_store_i8: dest:b src1:i len:12
+atomic_store_u8: dest:b src1:i len:12
+atomic_store_r4: dest:b src1:f len:18
+atomic_store_r8: dest:b src1:f len:13
 adc: dest:i src1:i src2:i len:3 clob:1
 addcc: dest:i src1:i src2:i len:3 clob:1
 subcc: dest:i src1:i src2:i len:3 clob:1
@@ -701,7 +759,7 @@ extract_i1: dest:i src1:x len:13
 extract_u1: dest:i src1:x len:13
 extract_r8: dest:f src1:x len:5 
 
-iconv_to_r8_raw: dest:f src1:i len:10
+iconv_to_r4_raw: dest:f src1:i len:10
 
 insert_i2: dest:x src1:x src2:i len:6 clob:1
 
@@ -739,3 +797,4 @@ gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 
+generic_class_init: src1:A len:32 clob:c

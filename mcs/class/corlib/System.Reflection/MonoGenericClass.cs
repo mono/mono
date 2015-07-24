@@ -51,11 +51,7 @@ namespace System.Reflection
 	 */
 	[StructLayout (LayoutKind.Sequential)]
 	sealed class MonoGenericClass :
-#if NET_4_5
 		TypeInfo
-#else
-		Type
-#endif	
 	{
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649

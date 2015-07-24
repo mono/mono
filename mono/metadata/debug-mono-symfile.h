@@ -116,6 +116,12 @@ typedef struct {
 	guint8 *guid, *hash;
 } MonoDebugSourceInfo;
 
+typedef struct {
+	int il_offset;
+	int line, column;
+	int end_line, end_column;
+} MonoSymSeqPoint;
+
 #define MONO_SYMBOL_FILE_MAJOR_VERSION		50
 #define MONO_SYMBOL_FILE_MINOR_VERSION		0
 #define MONO_SYMBOL_FILE_MAGIC			0x45e82623fd7fa614ULL
@@ -141,10 +147,6 @@ mono_debug_symfile_lookup_location (MonoDebugMethodInfo      *minfo,
 MONO_API void
 mono_debug_symfile_free_location   (MonoDebugSourceLocation  *location);
 
-int32_t
-_mono_debug_address_from_il_offset (MonoDebugMethodJitInfo   *jit,
-				    uint32_t                  il_offset);
-
 MONO_API MonoDebugMethodInfo *
 mono_debug_symfile_lookup_method   (MonoDebugHandle          *handle,
 				    MonoMethod               *method);
@@ -152,14 +154,11 @@ mono_debug_symfile_lookup_method   (MonoDebugHandle          *handle,
 MONO_API MonoDebugLocalsInfo*
 mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo);
 
-MONO_API void
-mono_debug_symfile_free_locals (MonoDebugLocalsInfo *info);
+void
+mono_debug_symfile_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrArray **source_file_list, int **source_files, MonoSymSeqPoint **seq_points, int *n_seq_points);
 
-MONO_API void
-mono_debug_symfile_get_line_numbers (MonoDebugMethodInfo *minfo, char **source_file, int *n_il_offsets, int **il_offsets, int **line_numbers);
-
-MONO_API void
-mono_debug_symfile_get_line_numbers_full (MonoDebugMethodInfo *minfo, char **source_file, GPtrArray **source_file_list, int *n_il_offsets, int **il_offsets, int **line_numbers, int **column_numbers, int **source_files, int **end_line_numbers, int **end_column_numbers);
+gboolean
+mono_debug_image_has_debug_info (MonoImage *image);
 
 MONO_END_DECLS
 

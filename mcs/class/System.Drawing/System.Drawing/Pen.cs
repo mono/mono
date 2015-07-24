@@ -107,10 +107,8 @@ namespace System.Drawing
                         }
 
 			set {
-#if NET_2_0
 				if (value == null)
 					throw new ArgumentNullException ("Brush");
-#endif
 				if (!isModifiable)
 					throw new ArgumentException (Locale.GetText ("This Pen object can't be modified."));
 

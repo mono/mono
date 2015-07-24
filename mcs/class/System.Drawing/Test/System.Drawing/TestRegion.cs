@@ -1529,9 +1529,7 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (r.IsInfinite (graphic), "!Infinite");
 			IntPtr h = r.GetHrgn (graphic);
 			Assert.IsFalse (h == IntPtr.Zero, "Handle!=0");
-#if NET_2_0
 			r.ReleaseHrgn (h);
-#endif
 		}
 
 		[Test]
@@ -1547,9 +1545,7 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (r.IsEmpty (graphic), "!Empty");
 			Assert.IsTrue (r.IsInfinite (graphic), "Infinite");
 			Assert.AreEqual (IntPtr.Zero, r.GetHrgn (graphic), "Handle==0");
-#if NET_2_0
 			r.ReleaseHrgn (h);
-#endif
 		}
 
 		[Test]
@@ -1559,10 +1555,8 @@ namespace MonoTests.System.Drawing
 			IntPtr h1 = r.GetHrgn (graphic);
 			IntPtr h2 = r.GetHrgn (graphic);
 			Assert.IsFalse (h1 == h2, "Handle_1!=Handle_2");
-#if NET_2_0
 			r.ReleaseHrgn (h1);
 			r.ReleaseHrgn (h2);
-#endif
 		}
 
 		[Test]
@@ -1576,10 +1570,8 @@ namespace MonoTests.System.Drawing
 			IntPtr h2 = r2.GetHrgn (graphic);
 			Assert.IsFalse (h2 == IntPtr.Zero, "Handle_2!=0");
 			Assert.IsFalse (h1 == h2, "Handle_1!=Handle_2");
-#if NET_2_0
 			r1.ReleaseHrgn (h1);
 			r2.ReleaseHrgn (h2);
-#endif
 		}
 
 		[Test]
@@ -1588,7 +1580,6 @@ namespace MonoTests.System.Drawing
 		{
 			Region.FromHrgn (IntPtr.Zero);
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ReleaseHrng_Zero ()
@@ -1605,6 +1596,5 @@ namespace MonoTests.System.Drawing
 			Assert.IsFalse (IntPtr.Zero == ptr, "ptr");
 			r.ReleaseHrgn (ptr);
 		}
-#endif
 	}
 }

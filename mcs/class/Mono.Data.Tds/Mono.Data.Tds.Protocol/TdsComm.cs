@@ -93,7 +93,6 @@ namespace Mono.Data.Tds.Protocol {
 			bool have_exception = false;
 			
 			try {
-#if NET_2_0
 				IPAddress ip;
 				if(IPAddress.TryParse(this.dataSource, out ip)) {
 					endPoint = new IPEndPoint(ip, port);
@@ -101,10 +100,6 @@ namespace Mono.Data.Tds.Protocol {
 					IPHostEntry hostEntry = Dns.GetHostEntry (this.dataSource);
 					endPoint = new IPEndPoint(hostEntry.AddressList [0], port);
 				}
-#else
-				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
-				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
-#endif
 			} catch (SocketException e) {
 				throw new TdsInternalException ("Server does not exist or connection refused.", e);
 			}
@@ -125,9 +120,7 @@ namespace Mono.Data.Tds.Protocol {
 				}
 
 				try {
-#if NET_2_0
 					socket.NoDelay = true;
-#endif
 					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout_ms);
 					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, timeout_ms);
 				} catch {
@@ -226,6 +219,9 @@ namespace Mono.Data.Tds.Protocol {
 			case TypeCode.Object :
 				if (o is byte[])
 					Append ((byte[]) o);
+				else if (o is Guid)
+					Append (((Guid) o).ToByteArray ());
+				else break;
 				return;
 			case TypeCode.Int16 :
 				Append ((short) o);
@@ -848,7 +844,6 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		#endregion // Methods
-#if NET_2_0
                 #region Async Methods
 
                 public IAsyncResult BeginReadPacket (AsyncCallback callback, object stateObject)
@@ -907,7 +902,6 @@ namespace Mono.Data.Tds.Protocol {
                 }
                 
                 #endregion // Async Methods
-#endif // NET_2_0
 
 	}
 

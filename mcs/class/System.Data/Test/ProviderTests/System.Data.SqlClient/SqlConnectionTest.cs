@@ -60,9 +60,7 @@ namespace MonoTests.System.Data
 		{
 			if (conn != null)
 				conn.Dispose ();
-#if NET_2_0
 			SqlConnection.ClearAllPools ();
-#endif
 		}
 
 		[Test]
@@ -214,11 +212,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ((byte) 20, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-#if NET_2_0
 				Assert.AreEqual (53, ex.Number, "#6");
-#else
-				Assert.AreEqual (17, ex.Number, "#6");
-#endif
 				Assert.AreEqual ((byte) 0, ex.State, "#7");
 			} finally {
 				conn.Close ();
@@ -370,16 +364,13 @@ namespace MonoTests.System.Data
 		[Test] // bug #412581
 		public void ChangeDatabase_DatabaseName_Whitespace ()
 		{
-#if NET_2_0
 			Assert.Ignore ("bug #412581");
-#endif
 
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
 			try {
 				conn.ChangeDatabase ("   ");
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (SqlException ex) {
 				// Could not locate entry in sysdatabases for
 				// database '   '. No entry found with that name.
@@ -392,19 +383,8 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (911, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Database cannot be null, the empty string,
-				// or string of only whitespace
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName);
-			}
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void ClearAllPools ()
 		{
@@ -555,7 +535,6 @@ namespace MonoTests.System.Data
 
 			conn4.Close ();
 		}
-#endif
 
 		[Test]
 		public void InterfaceTransactionTest ()
@@ -635,11 +614,7 @@ namespace MonoTests.System.Data
 			conn.ConnectionString = string.Empty;
 			Assert.AreEqual (string.Empty, conn.DataSource, "#C1");
 			Assert.AreEqual ("", conn.Database, "#C2");
-#if NET_2_0
 			Assert.AreEqual (8000, conn.PacketSize, "#C3");
-#else
-			Assert.AreEqual (8192, conn.PacketSize, "#C3");
-#endif
 			Assert.AreEqual (15, conn.ConnectionTimeout, "#C4");
 			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#C5");
 		}
@@ -747,11 +722,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (15, conn.ConnectionTimeout, "#A3");
 			Assert.AreEqual (string.Empty, conn.Database, "#A4");
 			Assert.AreEqual (string.Empty, conn.DataSource, "#A5");
-#if NET_2_0
 			Assert.AreEqual (8000, conn.PacketSize, "#A6");
-#else
-			Assert.AreEqual (8192, conn.PacketSize, "#A6");
-#endif
 			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A7");
 			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#A8");
 			Assert.AreEqual (2, events.Count, "#A9");
@@ -786,7 +757,6 @@ namespace MonoTests.System.Data
 			events.Add (e);
 		}
 
-#if NET_2_0
 		[Test]
 		public void FireInfoMessageEventOnUserErrorsTest ()
 		{
@@ -828,7 +798,6 @@ namespace MonoTests.System.Data
 
 			return connection_count;
 		}
-#endif
 
 		int ClientVersion {
 			get {
@@ -837,7 +806,6 @@ namespace MonoTests.System.Data
 		}
 	}
 
-#if NET_2_0
 	[TestFixture]
 	[Category ("sqlserver")]
 	public class GetSchemaTest
@@ -1440,5 +1408,4 @@ namespace MonoTests.System.Data
 			conn.GetSchema ("Mono", restrictions);
 		}
 	}
-#endif
 }

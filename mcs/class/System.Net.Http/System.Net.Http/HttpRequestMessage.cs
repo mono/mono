@@ -89,11 +89,23 @@ namespace System.Net.Http
 				return uri;
 			}
 			set {
-				if (value != null && (value.IsAbsoluteUri && value.Scheme != Uri.UriSchemeHttp && value.Scheme != Uri.UriSchemeHttps))
+				if (value != null && value.IsAbsoluteUri && !IsAllowedAbsoluteUri (value))
 					throw new ArgumentException ("Only http or https scheme is allowed");
 
 				uri = value;
 			}
+		}
+
+		static bool IsAllowedAbsoluteUri (Uri uri)
+		{
+			if (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+				return true;
+
+			// Mono URI handling which does not distinguish between file and url absolute paths without scheme
+			if (uri.Scheme == Uri.UriSchemeFile && uri.OriginalString.StartsWith ("/", StringComparison.Ordinal))
+				return true;
+
+			return false;
 		}
 
 		public Version Version {

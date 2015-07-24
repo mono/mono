@@ -417,7 +417,6 @@ namespace Commons.Xml.Relaxng.Inference
 
 		private QName InferMergedType (string value, QName typeName)
 		{
-#if NET_2_0
 			// examine value against specified type and
 			// if unacceptable, then return a relaxed type.
 
@@ -436,7 +435,6 @@ namespace Commons.Xml.Relaxng.Inference
 					typeName = st != null ? st.QualifiedName : QName.Empty;
 				}
 			} while (typeName != QName.Empty);
-#endif
 			return QNameString;
 		}
 

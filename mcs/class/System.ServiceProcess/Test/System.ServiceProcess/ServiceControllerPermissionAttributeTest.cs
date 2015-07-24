@@ -128,9 +128,7 @@ namespace MonoTests.System.ServiceProcess {
 						case 13:
 						case 32:
 						case 92:
-#if NET_2_0
 						case 133:
-#endif
 						case 160:
 							// known invalid chars
 							break;
@@ -153,9 +151,7 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void ServiceName_Empty ()
 		{
 			ServiceControllerPermissionAttribute a = new ServiceControllerPermissionAttribute (SecurityAction.Assert);

@@ -120,6 +120,14 @@ namespace System.Net
 		public WebHeaderCollection ()
 		{
 		}
+
+
+        internal WebHeaderCollection(WebHeaderCollectionType type)
+        {
+//            m_Type = type;
+//            if (type == WebHeaderCollectionType.HttpWebResponse)
+//                m_CommonHeaders = new string[s_CommonHeaderNames.Length - 1];  // Minus one for the sentinel.
+        }		
 		
 		protected WebHeaderCollection (SerializationInfo serializationInfo, 
 					       StreamingContext streamingContext)

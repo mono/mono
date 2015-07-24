@@ -229,7 +229,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (OverflowException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TransformBlock_InputCount_Negative () 
 		{
 			byte[] input = new byte [16];
@@ -240,7 +240,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (OutOfMemoryException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TransformBlock_InputCount_Overflow () 
 		{
 			byte[] input = new byte [16];
@@ -312,7 +312,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (OverflowException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TransformFinalBlock_InputCount_Negative () 
 		{
 			byte[] input = new byte [16];
@@ -322,7 +322,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (OutOfMemoryException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TransformFinalBlock_InputCount_Overflow () 
 		{
 			byte[] input = new byte [16];

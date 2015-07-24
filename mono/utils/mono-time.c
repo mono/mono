@@ -4,9 +4,16 @@
  * Copyright (C) 2008 Novell, Inc.
  */
 
-#include <utils/mono-time.h>
+#include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+#include <utils/mono-time.h>
+
 
 #define MTICKS_PER_SEC 10000000
 
@@ -41,12 +48,7 @@ mono_100ns_ticks (void)
 	return (cur_time - start_time) * (double)MTICKS_PER_SEC / freq.QuadPart;
 }
 
-/*
- * Magic number to convert FILETIME base Jan 1, 1601 to DateTime - base Jan, 1, 0001
- */
-#define FILETIME_ADJUST ((guint64)504911232000000000LL)
-
-/* Returns the number of 100ns ticks since 1/1/1, UTC timezone */
+/* Returns the number of 100ns ticks since Jan 1, 1601, UTC timezone */
 gint64
 mono_100ns_datetime (void)
 {
@@ -56,17 +58,16 @@ mono_100ns_datetime (void)
 		g_assert_not_reached ();
 
 	GetSystemTimeAsFileTime ((FILETIME*) &ft);
-	return FILETIME_ADJUST + ft.QuadPart;
+	return ft.QuadPart;
 }
 
 #else
 
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined (HAVE_SYS_PARAM_H)
 #include <sys/param.h>
+#endif
+#if defined(HAVE_SYS_SYSCTL_H)
 #include <sys/sysctl.h>
 #endif
 
@@ -80,7 +81,7 @@ mono_100ns_datetime (void)
 static gint64
 get_boot_time (void)
 {
-#if defined(PLATFORM_MACOSX) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+#if defined (HAVE_SYS_PARAM_H) && defined (KERN_BOOTTIME)
 	int mib [2];
 	size_t size;
 	time_t now;
@@ -160,19 +161,25 @@ mono_100ns_ticks (void)
 }
 
 /*
- * Magic number to convert a time which is relative to
- * Jan 1, 1970 into a value which is relative to Jan 1, 0001.
+ * Magic number to convert unix epoch start to windows epoch start
+ * Jan 1, 1970 into a value which is relative to Jan 1, 1601.
  */
-#define EPOCH_ADJUST    ((guint64)62135596800LL)
+#define EPOCH_ADJUST    ((guint64)11644473600LL)
 
-/* Returns the number of 100ns ticks since 1/1/1, UTC timezone */
+/* Returns the number of 100ns ticks since 1/1/1601, UTC timezone */
 gint64
 mono_100ns_datetime (void)
 {
 	struct timeval tv;
 	if (gettimeofday (&tv, NULL) == 0)
-		return (((gint64)tv.tv_sec + EPOCH_ADJUST) * 1000000 + tv.tv_usec) * 10;
+		return mono_100ns_datetime_from_timeval (tv);
 	return 0;
+}
+
+gint64
+mono_100ns_datetime_from_timeval (struct timeval tv)
+{
+	return (((gint64)tv.tv_sec + EPOCH_ADJUST) * 1000000 + tv.tv_usec) * 10;
 }
 
 #endif

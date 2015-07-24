@@ -38,11 +38,7 @@ namespace System.Web
 	{
 		Dictionary <string, bool> encodings;
 
-#if NET_4_0
 		public
-#else
-		internal
-#endif
 		HttpCacheVaryByContentEncodings ()
 		{
 			encodings = new Dictionary <string, bool> ();

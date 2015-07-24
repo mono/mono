@@ -35,11 +35,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ValidatedControlConverter
-#if NET_2_0
 		: ControlIDConverter
-#else
-		: StringConverter
-#endif
 	{
 		#region Public Constructors
 		public ValidatedControlConverter() {
@@ -79,9 +75,7 @@ namespace System.Web.UI.WebControls {
 			return base.GetStandardValues (context);
 		}
 
-#if NET_2_0
 		protected override 
-#endif
 		bool FilterControl (Control control) 
 		{
 			return BaseValidator.GetValidationProperty (control) != null;

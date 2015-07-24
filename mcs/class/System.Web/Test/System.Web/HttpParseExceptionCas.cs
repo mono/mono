@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 // Note: class exists in 1.x but has no public ctor
 
@@ -123,4 +122,3 @@ namespace MonoCasTests.System.Web {
 	}
 }
 
-#endif

@@ -35,9 +35,7 @@ using System.Xml;
 
 namespace System.Web.Services.Protocols 
 {
-#if NET_2_0
 	[Serializable]
-#endif
 	public class SoapException : SystemException 
 	{
 		#region Fields
@@ -52,21 +50,17 @@ namespace System.Web.Services.Protocols
 		XmlQualifiedName code;
 		XmlNode detail;
 		
-#if NET_2_0
 		string lang;
 		string role;
 		SoapFaultSubCode subcode;
-#endif
 		#endregion
 
 		#region Constructors
 
-#if NET_2_0
 		public SoapException ()
 			: this ("SOAP error", XmlQualifiedName.Empty)
 		{
 		}
-#endif
 
 		public SoapException (string message, XmlQualifiedName code)
 			: base (message)
@@ -110,7 +104,6 @@ namespace System.Web.Services.Protocols
 			this.detail = detail;
 		}
 
-#if NET_2_0
 		public SoapException (string message, XmlQualifiedName code, SoapFaultSubCode subcode)
 			: base (message)
 		{
@@ -134,7 +127,6 @@ namespace System.Web.Services.Protocols
 			this.lang = lang;
 		}
 
-#if NET_2_0
 		protected SoapException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
@@ -157,7 +149,6 @@ namespace System.Web.Services.Protocols
 			info.AddValue ("role", role);
 			info.AddValue ("subcode", subcode);
 		}
-#endif
 
 		public static bool IsClientFaultCode (XmlQualifiedName code)
 		{
@@ -187,7 +178,6 @@ namespace System.Web.Services.Protocols
 			return false;
 		}
 
-#endif
 
 		#endregion // Constructors
 
@@ -205,7 +195,6 @@ namespace System.Web.Services.Protocols
 			get { return detail; }
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public string Lang {
 			get { return lang; }
@@ -226,7 +215,6 @@ namespace System.Web.Services.Protocols
 		public string Node {
 			get { return actor; }
 		}
-#endif
 		#endregion // Properties
 	}
 }

@@ -36,11 +36,7 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Serializable]
-#if NET_4_0
 	public
-#else
-	public sealed
-#endif
 	class FormsIdentity : IIdentity
 	{
 		FormsAuthenticationTicket ticket;

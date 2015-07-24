@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 #region Using directives
 
@@ -182,4 +181,3 @@ namespace MonoTests.System.Data.Common
 	}
 }
 
-#endif // NET_2_0

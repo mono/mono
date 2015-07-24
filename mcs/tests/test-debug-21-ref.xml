@@ -41,7 +41,7 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x42" end="0x5f" />
+        <entry index="0" start="0x41" end="0x5f" />
       </scopes>
     </method>
     <method token="0x6000006">
@@ -83,7 +83,7 @@
       </sequencepoints>
       <locals />
       <scopes>
-        <entry index="0" start="0x1" end="0xb" />
+        <entry index="0" start="0x0" end="0xb" />
       </scopes>
     </method>
   </methods>

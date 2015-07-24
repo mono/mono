@@ -43,11 +43,7 @@ namespace System.Web.Configuration
 			}
 		}
 
-#if NET_3_5
 		[ConfigurationPropertyAttribute ("maxJsonLength", DefaultValue = 2097152)]
-#else
-		[ConfigurationPropertyAttribute ("maxJsonLength", DefaultValue = 102400)]
-#endif
 		public int MaxJsonLength {
 			get {
 				return (int) this ["maxJsonLength"];

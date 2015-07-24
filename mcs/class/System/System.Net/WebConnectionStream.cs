@@ -234,7 +234,8 @@ namespace System.Net
 				return;
 			}
 
-			pending.WaitOne ();
+			if (!pending.WaitOne (ReadTimeout))
+				throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 			lock (locker) {
 				if (totalRead >= contentLength)
 					return;
@@ -592,6 +593,14 @@ namespace System.Net
 			if (result.EndCalled)
 				return;
 
+			if (sendChunked) {
+				lock (locker) {
+					pendingWrites--;
+					if (pendingWrites <= 0)
+						pending.Set ();
+				}
+			}
+
 			result.EndCalled = true;
 			if (result.AsyncWriteAll) {
 				result.WaitUntilComplete ();
@@ -605,14 +614,6 @@ namespace System.Net
 
 			if (result.GotException)
 				throw result.Exception;
-
-			if (sendChunked) {
-				lock (locker) {
-					pendingWrites--;
-					if (pendingWrites == 0)
-						pending.Set ();
-				}
-			}
 		}
 		
 		public override void Write (byte [] buffer, int offset, int size)
@@ -643,17 +644,29 @@ namespace System.Net
 			if (headersSent)
 				return false;
 
-			string method = request.Method;
-			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-			                      method == "TRACE");
-			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
-			              method == "COPY" || method == "MOVE" || method == "LOCK" ||
-			              method == "UNLOCK");
+			bool webdav = false;
+			bool writestream = false;
 
-			if (setInternalLength && !no_writestream && writeBuffer != null)
+			switch (request.Method) {
+			case "PROPFIND":
+			case "PROPPATCH":
+			case "MKCOL":
+			case "COPY":
+			case "MOVE":
+			case "LOCK":
+			case "UNLOCK":
+				webdav = true;
+				break;
+			case "POST":
+			case "PUT":
+				writestream = true;
+				break;
+			}
+
+			if (setInternalLength && writestream && writeBuffer != null)
 				request.InternalContentLength = writeBuffer.Length;
 
-			if (!(sendChunked || request.ContentLength > -1 || no_writestream || webdav))
+			if (!(sendChunked || request.ContentLength > -1 || !writestream || webdav))
 				return false;
 
 			headersSent = true;
@@ -775,7 +788,9 @@ namespace System.Net
 				if (disposed)
 					return;
 				disposed = true;
-				pending.WaitOne ();
+				if (!pending.WaitOne (WriteTimeout)) {
+					throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
+				}
 				byte [] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
 				string err_msg = null;
 				cnc.Write (request, chunk, 0, chunk.Length, ref err_msg);

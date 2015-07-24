@@ -68,6 +68,10 @@ namespace Mono.Security.X509 {
 		private byte[] certhash;
 		private RSA _rsa;
 		private DSA _dsa;
+
+		// from http://msdn.microsoft.com/en-gb/library/ff635835.aspx
+		private const string OID_DSA = "1.2.840.10040.4.1";
+		private const string OID_RSA = "1.2.840.113549.1.1.1";
 		
 		// from http://www.ietf.org/rfc/rfc2459.txt
 		//
@@ -247,7 +251,7 @@ namespace Mono.Security.X509 {
 				if (m_keyalgoparams == null)
 					throw new CryptographicException ("Missing key algorithm parameters.");
 
-				if (_dsa == null) {
+				if (_dsa == null && m_keyalgo == OID_DSA) {
 					DSAParameters dsaParams = new DSAParameters ();
 					// for DSA m_publickey contains 1 ASN.1 integer - Y
 					ASN1 pubkey = new ASN1 (m_publickey);
@@ -327,7 +331,7 @@ namespace Mono.Security.X509 {
 
 		public virtual RSA RSA {
 			get {
-				if (_rsa == null) {
+				if (_rsa == null && m_keyalgo == OID_RSA) {
 					RSAParameters rsaParams = new RSAParameters ();
 					// for RSA m_publickey contains 2 ASN.1 integers
 					// the modulus and the public exponent

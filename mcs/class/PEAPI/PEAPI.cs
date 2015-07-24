@@ -923,6 +923,11 @@ namespace PEAPI {
 			return file;
 		}
 
+		public PrimitiveTypeRef AddPrimitiveType (PrimitiveType type)
+		{
+			return new PrimitiveTypeRef (type, metaData);
+		}
+
 		/// <summary>
 		/// Add a manifest resource to this PEFile NOT YET IMPLEMENTED
 		/// </summary>
@@ -937,6 +942,12 @@ namespace PEAPI {
 		public void AddCustomAttribute (Method meth, byte [] data, MetaDataElement element)
 		{
 			metaData.AddCustomAttribute (new CustomAttribute (element, meth, data));
+			element.HasCustomAttr = true;
+		}
+
+		public void AddCustomAttribute (Method meth, Constant constant, MetaDataElement element)
+		{
+			metaData.AddCustomAttribute (new CustomAttribute (element, meth, constant));
 			element.HasCustomAttr = true;
 		}
 

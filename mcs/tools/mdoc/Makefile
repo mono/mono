@@ -47,6 +47,7 @@ MDOC_RESOURCES = \
 	Resources/stylesheet.xsl
 
 MDOC_TEST_FILES = \
+	Test/CLILibraryTypes.dtd				  \
 	Test/DocTest-v1.cs                                        \
 	Test/DocTest-v2.patch                                     \
 	Test/msxdoc-expected.importslashdoc.xml                   \
@@ -90,6 +91,12 @@ cleanup:
 	-rm -Rf Test/en.actual Test/html.actual
 	-rm -f monodocer1.exe*
 
+Test/DocTest-addNonGeneric.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs
+
+Test/DocTest-addNonGeneric-v2.dll:
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs /define:V2
+
 Test/DocTest-DropNS-classic-secondary.dll:
 	@echo $(value @)
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic-secondary.cs
@@ -119,6 +126,22 @@ Test/DocTest.dll-v2:
 	cd Test && patch -p0 < DocTest-v2.patch
 	-rm -f Test/DocTest.dll
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
+
+Test/DocTest-enumerations.dll: 
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-enumerations.cs
+
+check-monodocer-addNonGeneric: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	# first, make a docset with the generic method
+	$(MAKE) Test/DocTest-addNonGeneric.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric.dll
+
+	# now add a non-generic version of the method and update several times
+	$(MAKE) Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-addNonGeneric-v2.dll
+	diff --exclude=.svn -rup Test/en.expected-addNonGeneric Test/en.actual
 
 check-monodocer-dropns-classic: $(PROGRAM)
 	# tests the simplest --dropns case, a single class where the root namespace was dropped.
@@ -155,6 +178,12 @@ check-monodocer-internal-interface: $(PROGRAM)
 	$(MAKE) Test/DocTest-InternalInterface.dll
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-InternalInterface.dll
 	diff --exclude=.svn -rup Test/en.expected-internal-interface Test/en.actual
+
+check-monodocer-enumerations: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-enumerations.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-enumerations.dll
+	diff --exclude=.svn -rup Test/en.expected-enumerations Test/en.actual
 
 check-monodocer-update: $(PROGRAM)
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
@@ -315,9 +344,12 @@ check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-dropns-classic \
 	check-monodocer-dropns-classic-withsecondary \
 	check-monodocer-internal-interface \
+	check-monodocer-enumerations \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
 	check-mdoc-validate-update 
 
+check: check-doc-tools \
+	check-doc-tools-update
 

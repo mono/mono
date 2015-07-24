@@ -30,6 +30,9 @@ using System;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Util;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace System.Web.Security 
 {
@@ -103,6 +106,60 @@ namespace System.Web.Security
 			}
 			
 			return MachineKeySectionUtils.GetHexString (result);
+		}
+
+		public static byte[] Protect (byte[] userData, params string[] purposes)
+		{
+			if (userData == null)
+				throw new ArgumentNullException ("userData");
+
+			foreach (var purpose in purposes)
+			{
+				if (string.IsNullOrWhiteSpace (purpose))
+					throw new ArgumentException ("all purpose parameters must contain text");
+			}
+
+			var config = WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey") as MachineKeySection;
+			var purposeJoined = string.Join (";", purposes);
+			var purposeBytes = GetHashed (purposeJoined);
+			var bytes = new byte [userData.Length + purposeBytes.Length];
+			purposeBytes.CopyTo (bytes, 0);
+			userData.CopyTo (bytes, purposeBytes.Length);
+			return MachineKeySectionUtils.Encrypt (config, bytes);
+		}
+
+		public static byte[] Unprotect (byte[] protectedData, params string[] purposes)
+		{
+			if (protectedData == null)
+				throw new ArgumentNullException ("protectedData");
+
+			foreach (var purpose in purposes) {
+				if (string.IsNullOrWhiteSpace (purpose))
+					throw new ArgumentException ("all purpose parameters must contain text");
+			}
+
+			var config = WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey") as MachineKeySection;
+			var purposeJoined = string.Join (";", purposes);
+			var purposeBytes = GetHashed (purposeJoined);
+			var unprotected = MachineKeySectionUtils.Decrypt (config, protectedData);
+
+			for (int i = 0; i < purposeBytes.Length; i++) {
+				if (purposeBytes [i] != unprotected [i])
+					throw new CryptographicException ();
+			}
+
+			var dataLength = unprotected.Length - purposeBytes.Length;
+			var result = new byte [dataLength];
+			Array.Copy (unprotected, purposeBytes.Length, result, 0, dataLength);
+			return result;
+		}
+
+		static byte[] GetHashed (string purposes)
+		{
+			using (var hash = SHA512.Create ()) {
+				var bytes = Encoding.UTF8.GetBytes (purposes);
+				return hash.ComputeHash (bytes, 0, bytes.Length);
+			}
 		}
 	}
 }

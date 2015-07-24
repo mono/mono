@@ -3,10 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Runtime.Caching.dll
-LIB_MCS_FLAGS = -r:System.dll \
-	        -r:System.Data.dll \
-		-r:System.Configuration.dll \
-		-r:System.Core.dll
+LIB_REFS = System System.Data System.Configuration System.Core
+LIB_MCS_FLAGS = -nowarn:414
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

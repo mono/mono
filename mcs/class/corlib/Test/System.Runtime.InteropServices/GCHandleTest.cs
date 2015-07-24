@@ -130,6 +130,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 #if !MONOTOUCH
 		[Test]
+		[Category("MobileNotWorking")] // SIGSEGV, probably on AppDomain.Unload
 		public void WeakHandleWorksOnNonRootDomain ()
 		{
 			//Console.WriteLine("current app domain: " + AppDomain.CurrentDomain.Id);

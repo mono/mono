@@ -81,7 +81,6 @@ namespace MonoCasTests.System.Web.UI {
 			DataBinder.GetPropertyValue (null, "Data", "{0}");
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void GetDataItem_Deny_Unrestricted ()
@@ -91,7 +90,6 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsNull (DataBinder.GetDataItem (null, out found), "GetDataItem(object,out bool)");
 			Assert.IsFalse (found, "found");
 		}
-#endif
 
 		// LinkDemand
 

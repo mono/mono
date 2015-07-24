@@ -706,7 +706,7 @@ namespace System.Configuration
 					value.SerializedValue = element.Value.ValueXml.InnerXml;
 					break;
 				case SettingsSerializeAs.String:
-					value.SerializedValue = element.Value.ValueXml.InnerText;
+					value.SerializedValue = element.Value.ValueXml.InnerText.Trim ();
 					break;
 				case SettingsSerializeAs.Binary:
 					value.SerializedValue = Convert.FromBase64String (element.Value.ValueXml.InnerText);

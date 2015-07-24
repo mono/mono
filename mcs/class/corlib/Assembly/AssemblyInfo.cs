@@ -70,7 +70,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: ComVisible (false)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: TypeLibVersion (2, 4)]
 [assembly: DefaultDependency (LoadHint.Always)]
 [assembly: StringFreezing]
 
@@ -81,6 +80,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo ("System, PublicKey=00000000000000000400000000000000")]
 [assembly: InternalsVisibleTo ("System.Core, PublicKey=00000000000000000400000000000000")]
 #endif
+[assembly: InternalsVisibleTo ("System.Numerics, PublicKey=00000000000000000400000000000000")]
 
 [assembly: Guid ("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")]
 

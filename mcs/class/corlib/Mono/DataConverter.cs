@@ -39,6 +39,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Collections.Generic;
 
 #pragma warning disable 3021
 
@@ -462,7 +463,11 @@ namespace Mono {
 					n = 2;
 					break;
 				case '7':
+#if PCL
+					e = Encoding.GetEncoding ("utf-7");
+#else
 					e = Encoding.UTF7;
+#endif
 					n = 1;
 					break;
 				case 'b':
@@ -470,11 +475,19 @@ namespace Mono {
 					n = 2;
 					break;
 				case '3':
+#if PCL
+					e = Encoding.GetEncoding ("utf-32");
+#else
 					e = Encoding.GetEncoding (12000);
+#endif
 					n = 4;
 					break;
 				case '4':
+#if PCL
+					e = Encoding.GetEncoding ("utf-32BE");
+#else
 					e = Encoding.GetEncoding (12001);
+#endif
 					n = 4;
 					break;
 					
@@ -510,7 +523,7 @@ namespace Mono {
 		static public IList Unpack (string description, byte [] buffer, int startIndex)
 		{
 			DataConverter conv = CopyConv;
-			ArrayList result = new ArrayList ();
+			var result = new List<object> ();
 			int idx = startIndex;
 			bool align = false;
 			int repeat = 0, n;

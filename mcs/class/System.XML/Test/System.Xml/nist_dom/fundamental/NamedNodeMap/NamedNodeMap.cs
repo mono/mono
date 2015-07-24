@@ -510,9 +510,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-#if NET_2_0
-	[Category ("NotDotNet")]
-#endif
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
 	public void core0009M()
         {
             string computedValue = "";
@@ -985,7 +983,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0018M()
         {
             string computedValue = "";
@@ -1042,7 +1040,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")] // MS DOM is buggy
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")] // MS DOM is buggy
 	public void core0019M()
         {
             string computedValue = "";
@@ -1100,7 +1098,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	[Category ("NotDotNet")]
+	[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
 	public void core0020M()
         {
             string computedValue= "";
@@ -1194,7 +1192,7 @@ namespace nist_dom.fundamental
                 }
                 catch(System.Exception ex) 
                 {
-                    computedValue = ex.Message; 
+                    computedValue = "EXCEPTION " + ex.GetType () + " : " + ex.Message;
                 }
 
             }

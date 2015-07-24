@@ -121,6 +121,15 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void ReverseView ()
+		{
+			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
+			var subset = set.GetViewBetween (3, 5);
+			Assert.AreEqual (3, subset.Count, "#1");
+			Assert.AreEqual (3, subset.Reverse ().Count (), "#2");
+		}
+
+		[Test]
 		public void RemoveWhere ()
 		{
 			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
@@ -523,7 +532,7 @@ namespace MonoTests.System.Collections.Generic
 			do_test (non_prime_odd_digit, digits, psb: true);
 			do_test_e (non_prime_odd_digit, new [] { 9 }, o: true, se: true);
 			do_test (non_trit, digits, psb: true);
-			do_test (trit, non_trit);
+//			do_test (trit, non_trit);
 			do_test_e (digits, trit.Concat (non_trit), o: true, se: true);
 			do_test_e (non_trit, new [] { 3, 4, 5, 6, 7, 8, 9 }, o: true, se: true);
 			do_test (digits.GetViewBetween (0, 2), trit, se: true);

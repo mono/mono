@@ -1,4 +1,3 @@
-#if NET_2_0
 
 using System;
 using System.Web.Security;
@@ -232,4 +231,3 @@ namespace MonoTests.SystemWeb.Framework
 	}
 }
 
-#endif

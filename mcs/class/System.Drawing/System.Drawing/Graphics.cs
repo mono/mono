@@ -40,13 +40,8 @@ using System.Text;
 
 namespace System.Drawing
 {
-#if !NET_2_0
-	[ComVisible(false)]  
-#endif
 	public sealed class Graphics : MarshalByRefObject, IDisposable
-#if NET_2_0
 	, IDeviceContext
-#endif
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
 		internal IMacContext maccontext;
@@ -55,18 +50,12 @@ namespace System.Drawing
 		private static float defDpiY = 0;
 		private IntPtr deviceContextHdc;
 
-#if !NET_2_0
-		[ComVisible(false)]
-#endif
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
 							    int dataSize,
 							    IntPtr data,
 							    PlayRecordCallback callbackData);
 		
-#if !NET_2_0
-		[ComVisible (false)]
-#endif
 		public delegate bool DrawImageAbort (IntPtr callbackData);
 
 		internal Graphics (IntPtr nativeGraphics)
@@ -158,7 +147,6 @@ namespace System.Drawing
  			status = GDIPlus.GdipGraphicsClear (nativeObject, color.ToArgb ());
  			GDIPlus.CheckStatus (status);
 		}
-#if NET_2_0		
 		[MonoLimitation ("Works on Win32 and on X11 (but not on Cocoa and Quartz)")]
 		public void CopyFromScreen (Point upperLeftSource, Point upperLeftDestination, Size blockRegionSize)
 		{
@@ -289,7 +277,6 @@ namespace System.Drawing
 			GDIPlus.XDestroyImage (image);
 			GDIPlus.XFree (vPtr);
 		}
-#endif
 
 		public void Dispose ()
 		{
@@ -986,7 +973,6 @@ namespace System.Drawing
 			}
 		}
 
-#if NET_2_0
 		public void DrawImageUnscaledAndClipped (Image image, Rectangle rect)
 		{
 			if (image == null)
@@ -997,7 +983,6 @@ namespace System.Drawing
 
 			DrawImageUnscaled (image, rect.X, rect.Y, width, height);			
 		}
-#endif
 
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
@@ -1202,10 +1187,8 @@ namespace System.Drawing
 
 		public void EndContainer (GraphicsContainer container)
 		{
-#if NET_2_0
 			if (container == null)
 				throw new ArgumentNullException ("container");
-#endif
 			Status status = GDIPlus.GdipEndContainer(nativeObject, container.NativeObject);
 			GDIPlus.CheckStatus (status);
 		}
@@ -1804,9 +1787,6 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		public IntPtr GetHdc ()
 		{
 			GDIPlus.CheckStatus (GDIPlus.GdipGetDC (this.nativeObject, out deviceContextHdc));
@@ -2041,20 +2021,14 @@ namespace System.Drawing
 			ReleaseHdcInternal (hdc);
 		}
 
-#if NET_2_0
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdc ()
 		{
 			ReleaseHdcInternal (deviceContextHdc);
 		}
-#endif
 
 		[MonoLimitation ("Can only be used when hdc was provided by Graphics.GetHdc() method")]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#else
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
@@ -2469,7 +2443,6 @@ namespace System.Drawing
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
@@ -2477,6 +2450,5 @@ namespace System.Drawing
 			// only known source of information @ http://blogs.wdevs.com/jdunlap/Default.aspx
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

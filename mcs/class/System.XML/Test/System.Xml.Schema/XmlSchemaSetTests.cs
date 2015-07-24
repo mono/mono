@@ -6,7 +6,6 @@
 //
 // (C) 2004 Novell Inc.
 //
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -164,7 +163,7 @@ namespace MonoTests.System.Xml
 			ss.Compile ();
 			Assert.IsTrue (ss.IsCompiled, "#4");
 			ss.RemoveRecursive (s);
-			Assert.IsTrue (ss.IsCompiled, "#5");
+			Assert.IsFalse (ss.IsCompiled, "#5");
 		}
 
 		[Test] // bug #77489
@@ -316,4 +315,3 @@ type=""xsd:string"" use=""required""/>
 		}
 	}
 }
-#endif

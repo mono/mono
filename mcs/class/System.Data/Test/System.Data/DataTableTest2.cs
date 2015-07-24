@@ -1033,9 +1033,9 @@ namespace MonoTests.System.Data
 			DataTable dt2 = DataProvider.CreateChildDataTable ();
 			dt1.PrimaryKey = new DataColumn [] { dt1.Columns [0] };
 			dt2.PrimaryKey = new DataColumn [] {dt2.Columns [0], dt2.Columns [1]};
-			DataRelation rel = new DataRelation ("Rel", dt1.Columns ["ParentId"], dt2.Columns ["ParentId"]);
 			DataSet ds = new DataSet ();
 			ds.Tables.AddRange (new DataTable [] { dt1, dt2 });
+			DataRelation rel = new DataRelation ("Rel", dt1.Columns ["ParentId"], dt2.Columns ["ParentId"]);
 			ds.Relations.Add (rel);
 
 			dt2.Reset ();
@@ -2404,7 +2404,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (6, result [0][0], "# incorrect sorting order");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DataTable_Clone ()
 		{
@@ -2521,7 +2520,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (2, t3.Rows.Count, "#4");
 			Assert.AreEqual (1, t3.Rows [0][1], "#5");
 		}
-#endif
 
 		internal class DataRowsComparer : IComparer<DataRow>
 		{

@@ -202,11 +202,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    ;;{0}" +
 				"    DoB();{0}" +
 				"    ;{0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC();{0}" +
 				"}}{0}", NewLine), Generate (), "#3");
 
@@ -217,20 +213,12 @@ namespace MonoTests.Microsoft.CSharp
 				"    ;;{0}" +
 				"    DoB();{0}" +
 				"    ;{0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC();{0}" +
 				"}}{0}" +
 				"else {{{0}" +
 				"    DoD();{0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;;{0}" +
 				"    DoE();{0}" +
 				"    ;{0}" +
@@ -245,19 +233,11 @@ namespace MonoTests.Microsoft.CSharp
 				"    ;;{0}" +
 				"    DoB();{0}" +
 				"    ;{0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC();{0}" +
 				"}} else {{{0}" +
 				"    DoD();{0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;;{0}" +
 				"    DoE();{0}" +
 				"    ;{0}" +
@@ -273,11 +253,7 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}" +
 				"else {{{0}" +
 				"    DoD();{0}" +
-#if NET_2_0
 				"B{0}" +
-#else
-				"    B{0}" +
-#endif
 				"    ;;{0}" +
 				"    DoE();{0}" +
 				"    ;{0}" +
@@ -292,11 +268,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    ;;{0}" +
 				"    DoB();{0}" +
 				"    ;{0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC();{0}" +
 				"}}{0}", NewLine), Generate (), "#7");
 		}
@@ -380,17 +352,9 @@ namespace MonoTests.Microsoft.CSharp
 				"    ;;{0}" +
 				"    DoB();{0}" +
 				"test:{0}" +
-#if NET_2_0
 				"C{0}" +
-#else
-				"    C{0}" +
-#endif
 				"    ;{0}" +
-#if NET_2_0
 				"A{0}" +
-#else
-				"    A{0}" +
-#endif
 				"    DoC();{0}" +
 				"}}{0}", NewLine), Generate (), "#5");
 		}
@@ -411,11 +375,7 @@ namespace MonoTests.Microsoft.CSharp
 			cls.Statement = new CodeSnippetStatement ("A");
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"class:{0}" +
-#if NET_2_0
 				"A{0}",
-#else
-				"    A{0}",
-#endif
 				NewLine), Generate (), "#3");
 		}
 
@@ -538,13 +498,8 @@ namespace MonoTests.Microsoft.CSharp
 				"catch (System.ApplicationException ) {{{0}" +
 				"}}{0}" +
 				"finally {{{0}" +
-#if NET_2_0
 				"A{0}" +
 				"B{0}" +
-#else
-				"    A{0}" +
-				"    B{0}" +
-#endif
 				"}}{0}", NewLine), Generate (), "#1");
 
 			options.ElseOnClosing = true;
@@ -555,13 +510,8 @@ namespace MonoTests.Microsoft.CSharp
 				"}} catch (System.ArgumentException ex1) {{{0}" +
 				"}} catch (System.ApplicationException ) {{{0}" +
 				"}} finally {{{0}" +
-#if NET_2_0
 				"A{0}" +
 				"B{0}" +
-#else
-				"    A{0}" +
-				"    B{0}" +
-#endif
 				"}}{0}", NewLine), Generate (), "#2");
 
 			statement = new CodeTryCatchFinallyStatement ();

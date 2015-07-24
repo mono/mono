@@ -26,8 +26,10 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 using NUnit.Framework;
 
@@ -95,6 +97,45 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual ("some-data", pi.Data, "#9-2");
 			Assert.IsNull (el.Parent.NextNode, "#10");
 			Assert.IsNull (el.Parent.Parent.NextNode, "#11");
+		}
+
+		[XmlRoot ("MyRoot", Namespace = "urn:mynamespace")]
+		public class MyData
+		{
+			[XmlElement]
+			public MyElementBase[] Elements;
+		}
+
+		[XmlInclude (typeof(MyElement1))]
+		public abstract class MyElementBase
+		{
+		}
+
+		[XmlType ("MyElement1", Namespace = "urn:mynamespace")]
+		public class MyElement1 : MyElementBase
+		{
+			[XmlAttribute]
+			public int V;
+		}
+
+		[Test]
+		public void Bug24300 ()
+		{
+			XmlSerializer serializer = new XmlSerializer (typeof (MyData));
+			MyData data = new MyData () { Elements = new MyElementBase [] { new MyElement1 { V = 2 } } };
+
+			XDocument doc = new XDocument ();
+			using (var writer = doc.CreateWriter ())
+			{
+			    serializer.Serialize (writer, data);
+			}
+
+			var sb = new StringBuilder ();
+			sb.Append ("<MyRoot xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:mynamespace\">\r\n");
+			sb.Append ("  <Elements xsi:type=\"MyElement1\" V=\"2\" />\r\n");
+			sb.Append ("</MyRoot>");
+
+			Assert.AreEqual (sb.ToString ().Replace ("\r\n", Environment.NewLine), doc.Root.ToString ());
 		}
 	}
 }

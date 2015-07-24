@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
-
 using System;
 using NUnit.Framework;
 using System.Runtime.ExceptionServices;
@@ -91,10 +89,68 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				Assert.Fail ("#0");
 			} catch (OperationCanceledException e) {
 				Assert.IsFalse (e.StackTrace.Contains ("---"));
+				Assert.AreEqual (2, e.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length);
 			}
 		}
 
+		[Test]
+		public void LastThrowWins ()
+		{
+			Exception e;
+			try {
+				throw new Exception ("test");
+			} catch (Exception e2) {
+				e = e2;
+			}
+
+			var edi = ExceptionDispatchInfo.Capture (e);
+
+			try {
+				edi.Throw ();
+			} catch {
+			}
+
+			try {
+				edi.Throw ();
+			} catch (Exception ex) {
+			}
+
+			try {
+				edi.Throw ();
+			} catch (Exception ex) {
+				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				Assert.AreEqual (4, split.Length, "#1");
+				Assert.IsTrue (split [1].Contains ("---"), "#2");
+			}
+		}
+
+		[Test]
+		public void ThrowMultipleCaptures ()
+		{
+			Exception e;
+			try {
+				throw new Exception ("test");
+			} catch (Exception e2) {
+				e = e2;
+			}
+
+			var edi = ExceptionDispatchInfo.Capture (e);
+
+			try {
+				edi.Throw ();
+			} catch (Exception e3) {
+				edi = ExceptionDispatchInfo.Capture (e3);
+			}
+
+			try {
+				edi.Throw ();
+			} catch (Exception ex) {
+				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				Assert.AreEqual (7, split.Length, "#1");
+				Assert.IsTrue (split [1].Contains ("---"), "#2");
+				Assert.IsTrue (split [4].Contains ("---"), "#3");
+			}
+		}		
 	}
 }
 
-#endif

@@ -10,7 +10,7 @@ class X
 	{
 		try {
 			throw new ApplicationException ();
-		} catch if (false) {
+		} catch when (false) {
 			return 0;
 		}
 	}

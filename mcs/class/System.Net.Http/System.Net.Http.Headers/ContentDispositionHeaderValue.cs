@@ -257,6 +257,11 @@ namespace System.Net.Http.Headers
 					continue;
 				}
 
+				if (!Lexer.IsValidCharacter (ch) || ch == '*' || ch == '?' || ch == '%') {
+					sb.Append (Uri.HexEscape (ch));
+					continue;
+				}
+
 				sb.Append (ch);
 			}
 

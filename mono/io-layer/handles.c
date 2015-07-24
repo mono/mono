@@ -13,7 +13,9 @@
 #include <pthread.h>
 #include <errno.h>
 #include <unistd.h>
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #include <string.h>
 #include <sys/types.h>
 #ifdef HAVE_SYS_SOCKET_H
@@ -42,6 +44,7 @@
 #include <mono/io-layer/process-private.h>
 
 #include <mono/utils/mono-mutex.h>
+#include <mono/utils/mono-proclib.h>
 #undef DEBUG_REFS
 
 #if 0
@@ -219,16 +222,7 @@ static void handle_cleanup (void)
 int
 wapi_getdtablesize (void)
 {
-#ifdef HAVE_GETRLIMIT
-	struct rlimit limit;
-	int res;
-
-	res = getrlimit (RLIMIT_NOFILE, &limit);
-	g_assert (res == 0);
-	return limit.rlim_cur;
-#else
-	return getdtablesize ();
-#endif
+	return eg_getdtablesize ();
 }
 
 /*
@@ -285,13 +279,6 @@ wapi_init (void)
 	_wapi_global_signal_mutex = &_WAPI_PRIVATE_HANDLES (GPOINTER_TO_UINT (_wapi_global_signal_handle)).signal_mutex;
 
 	wapi_processes_init ();
-
-	/* Using g_atexit here instead of an explicit function call in
-	 * a cleanup routine lets us cope when a third-party library
-	 * calls exit (eg if an X client loses the connection to its
-	 * server.)
-	 */
-	g_atexit (handle_cleanup);
 }
 
 void
@@ -304,6 +291,7 @@ wapi_cleanup (void)
 	_wapi_error_cleanup ();
 	_wapi_thread_cleanup ();
 	wapi_processes_cleanup ();
+	handle_cleanup ();
 }
 
 static void _wapi_handle_init_shared (struct _WapiHandleShared *handle,
@@ -1515,6 +1503,13 @@ static int timedwait_signal_poll_cond (pthread_cond_t *cond, mono_mutex_t *mutex
 	int ret;
 
 	if (!alertable) {
+		/*
+		 * pthread_cond_(timed)wait() can return 0 even if the condition was not
+		 * signalled.  This happens at least on Darwin.  We surface this, i.e., we
+		 * get spurious wake-ups.
+		 *
+		 * http://pubs.opengroup.org/onlinepubs/007908775/xsh/pthread_cond_wait.html
+		 */
 		if (timeout)
 			ret=mono_cond_timedwait (cond, mutex, timeout);
 		else
@@ -1651,7 +1646,7 @@ wapi_share_info_hash (gconstpointer data)
 	return s->inode;
 }
 
-gboolean _wapi_handle_get_or_set_share (dev_t device, ino_t inode,
+gboolean _wapi_handle_get_or_set_share (guint64 device, guint64 inode,
 					guint32 new_sharemode,
 					guint32 new_access,
 					guint32 *old_sharemode,
@@ -1792,7 +1787,7 @@ static void _wapi_handle_check_share_by_pid (struct _WapiFileShare *share_info)
 {
 #if defined(__native_client__)
 	g_assert_not_reached ();
-#else
+#elif defined(HAVE_KILL)
 	if (kill (share_info->opened_by_pid, 0) == -1 &&
 	    (errno == ESRCH ||
 	     errno == EPERM)) {
@@ -1818,8 +1813,6 @@ static void _wapi_handle_check_share_by_pid (struct _WapiFileShare *share_info)
 void _wapi_handle_check_share (struct _WapiFileShare *share_info, int fd)
 {
 	gboolean found = FALSE, proc_fds = FALSE;
-	pid_t self = _wapi_getpid ();
-	int pid;
 	int thr_ret, i;
 	
 	/* Prevents entries from expiring under us if we remove this

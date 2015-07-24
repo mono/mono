@@ -40,10 +40,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using NUnit.Framework;
 using MonoTests.stand_alone.WebHarness;
-#if NET_2_0
 using System.Collections.Generic;
 using MonoTests.SystemWeb.Framework;
-#endif
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -173,7 +171,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 
-#if NET_2_0
 		public class DS : ObjectDataSource
 		{
 			public static List<string> GetList ()
@@ -246,7 +243,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				WebTest.CurrentTest.UserData = "Data_rebounded";
 		}
 		#endregion
-#endif
+
 		[Test]
 		public void DropDownList_Defaults ()
 		{
@@ -264,11 +261,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void DropDownListBasic () {
 			DropDownListTestClass d = new DropDownListTestClass ();
-#if NET_2_0
+
 			Assert.AreEqual ("<select>\n\n</select>", d.Render (), "B1");
-#else
-			Assert.AreEqual("<select name>\n\n</select>", d.Render(), "B1");
-#endif
 			d.ID = "blah";
 			Assert.AreEqual("<select name=\"blah\" id=\"blah\">\n\n</select>", d.Render(), "B2");
 
@@ -311,11 +305,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual(string.Empty, d.ToolTip, "P9");
 			d.ToolTip = "blah";
-#if NET_2_0
 			Assert.AreEqual ("blah", d.ToolTip, "P10");
-#else
-			Assert.AreEqual(string.Empty, d.ToolTip, "P10");
-#endif
 		}
 
 		[Test]
@@ -352,9 +342,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if ONLY_1_1
-		[ExpectedException(typeof(NullReferenceException))]
-#endif
 		public void DropDownNullWriterTest () {
 			DropDownListTestClass	d;
 
@@ -392,11 +379,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DropDownNamingTest () {
 			NamingContainer container = new NamingContainer ();
 			DropDownListTestClass child = new DropDownListTestClass ();
-#if NET_2_0
 			Assert.AreEqual ("<select>\n\n</select>", child.Render (), "N1");
-#else
-			Assert.AreEqual ("<select name>\n\n</select>", child.Render (), "N1");
-#endif
 			container.Controls.Add (child);
 			// don't assume the generated id
 			string s = child.Render ();
@@ -447,28 +430,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			ddl.DataValueField = "Company";
 			ddl.DataTextFormatString = "This shouldn't show up = {0}";
 			ddl.DataBind ();
-#if NET_2_0
+
 			string exp = @"<select>
 	<option value=""Novell Inc."">Novell Inc.</option>
 	<option value=""Microsoft Corp."">Microsoft Corp.</option>
 	<option value=""Google"">Google</option>
 
 </select>";
-#else
-			string exp = @"<select name>
-	<option value=""Novell Inc."">Novell Inc.</option>
-	<option value=""Microsoft Corp."">Microsoft Corp.</option>
-	<option value=""Google"">Google</option>
 
-</select>";
-#endif
             HtmlDiff.AssertAreEqual(exp, ddl.Render(), "TestValueFieldAndTextFormat");
 		}
 
 		[Test]
-#if ONLY_1_1
-        [Category("NotWorking")]
-#endif
 		public void HtmlEncodeItem ()
 		{
 			DropDownListTestClass d = new DropDownListTestClass ();
@@ -478,7 +451,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (html.IndexOf ("&lt;hola>") != -1, "#02");
 		}
 
-#if NET_2_0
         class VerifyMultiSelectDropDownList : DropDownList
         {
             public new virtual void VerifyMultiSelect()
@@ -494,7 +466,6 @@ namespace MonoTests.System.Web.UI.WebControls
             VerifyMultiSelectDropDownList list = new VerifyMultiSelectDropDownList();
             list.VerifyMultiSelect();
         }
-#endif
         
         
 

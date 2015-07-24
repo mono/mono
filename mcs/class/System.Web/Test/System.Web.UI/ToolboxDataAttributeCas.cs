@@ -50,13 +50,9 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsNull (tda.Data, "Data");
 			Assert.IsTrue (tda.Equals (tda), "Equals");
 			Assert.IsFalse (tda.GetHashCode () == ToolboxDataAttribute.Default.GetHashCode (), "GetHashCode");
-#if NET_2_0
 			// unexpected result as tda hash code is different from default
 			// seems that null and String.Empty are both considered defaults...
 			Assert.IsTrue (tda.IsDefaultAttribute (), "IsDefaultAttribute");
-#else
-			Assert.IsFalse (tda.IsDefaultAttribute (), "IsDefaultAttribute");
-#endif
 		}
 
 		// LinkDemand

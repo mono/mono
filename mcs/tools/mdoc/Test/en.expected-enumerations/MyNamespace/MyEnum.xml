@@ -1,0 +1,59 @@
+<Type Name="MyEnum" FullName="MyNamespace.MyEnum">
+  <TypeSignature Language="C#" Value="public enum MyEnum" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MyEnum extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest-enumerations</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="One">
+      <MemberSignature Language="C#" Value="One" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MyNamespace.MyEnum One = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MyNamespace.MyEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Three">
+      <MemberSignature Language="C#" Value="Three" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MyNamespace.MyEnum Three = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MyNamespace.MyEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Two">
+      <MemberSignature Language="C#" Value="Two" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MyNamespace.MyEnum Two = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MyNamespace.MyEnum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

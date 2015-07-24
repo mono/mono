@@ -38,25 +38,14 @@ namespace Mono.Data.Tds.Protocol {
 
 		public TdsDataColumn ()
 		{
-#if NET_2_0
 			IsAutoIncrement = false;
 			IsIdentity = false;
 			IsRowVersion = false;
 			IsUnique = false;
 			IsHidden = false;
-#else
-			object bool_false = false;
-			
-			this ["IsAutoIncrement"] = bool_false;
-			this ["IsIdentity"] = bool_false;
-			this ["IsRowVersion"] = bool_false;
-			this ["IsUnique"] = bool_false;
-			this ["IsHidden"] = bool_false;
-#endif
 		}
 
 
-#if NET_2_0
 		public TdsColumnType? ColumnType {
 			get;
 			set;
@@ -176,7 +165,6 @@ namespace Mono.Data.Tds.Protocol {
 			get;
 			set;
 		}
-#endif
 		
 		// This allows the storage of arbitrary properties in addition to the predefined ones
 		public object this [string key] {

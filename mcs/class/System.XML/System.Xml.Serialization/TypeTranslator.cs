@@ -116,7 +116,6 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
 			primitiveTypes.Add ("duration", new TypeData (typeof (string), "duration", true));
 
-#if NET_2_0
 			nullableTypes = Hashtable.Synchronized(new Hashtable ());
 			foreach (DictionaryEntry de in primitiveTypes) {
 				TypeData td = (TypeData) de.Value;
@@ -124,7 +123,6 @@ namespace System.Xml.Serialization
 				ntd.IsNullable = true;
 				nullableTypes.Add (de.Key, ntd);
 			}
-#endif
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -139,7 +137,6 @@ namespace System.Xml.Serialization
 
 			Type type = runtimeType;
 			bool nullableOverride = false;
-#if NET_2_0
 			// Nullable<T> is serialized as T
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
 				nullableOverride = true;
@@ -188,7 +185,6 @@ namespace System.Xml.Serialization
 						return tt;
 				}
 			}
-#endif
 			
 				TypeData typeData = nameCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
@@ -199,7 +195,6 @@ namespace System.Xml.Serialization
 					string sufix = GetTypeData (type.GetElementType ()).XmlType;
 					name = GetArrayName (sufix);
 				}
-#if NET_2_0
 				else if (type.IsGenericType && !type.IsGenericTypeDefinition) {
 					name = XmlConvert.EncodeLocalName (type.Name.Substring (0, type.Name.IndexOf ('`'))) + "Of";
 					foreach (Type garg in type.GetGenericArguments ())
@@ -207,7 +202,6 @@ namespace System.Xml.Serialization
 							GetTypeData (garg).XmlType :
 							CodeIdentifier.MakePascal (XmlConvert.EncodeLocalName (garg.Name));
 				}
-#endif
 				else 
 					name = XmlConvert.EncodeLocalName (type.Name);
 

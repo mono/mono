@@ -41,6 +41,7 @@ using System.Security;
 using System.Threading;
 using System.Text;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 	
@@ -109,13 +110,86 @@ namespace System.Reflection {
 		}
 	};
 	
+	abstract class RuntimeMethodInfo : MethodInfo, ISerializable
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+        internal override string FormatNameAndSig (bool serialization)
+        {
+            // Serialization uses ToString to resolve MethodInfo overloads.
+            StringBuilder sbName = new StringBuilder(Name);
+
+            // serialization == true: use unambiguous (except for assembly name) type names to distinguish between overloads.
+            // serialization == false: use basic format to maintain backward compatibility of MethodInfo.ToString().
+            TypeNameFormatFlags format = serialization ? TypeNameFormatFlags.FormatSerialization : TypeNameFormatFlags.FormatBasic;
+
+            if (IsGenericMethod)
+                sbName.Append(RuntimeMethodHandle.ConstructInstantiation(this, format));
+
+            sbName.Append("(");
+            ParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, serialization);
+            sbName.Append(")");
+
+            return sbName.ToString();
+        }
+
+        public override String ToString() 
+        {
+            return ReturnType.FormatTypeName() + " " + FormatNameAndSig(false);
+        }
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return ((RuntimeType)DeclaringType).GetRuntimeModule();
+		}
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                SerializationToString(),
+                MemberTypes.Method,
+                IsGenericMethod & !IsGenericMethodDefinition ? GetGenericArguments() : null);
+        }
+
+        internal string SerializationToString()
+        {
+            return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
+        }
+        #endregion
+	}
+
 	/*
 	 * Note: most of this class needs to be duplicated for the contructor, since
 	 * the .NET reflection class hierarchy is so broken.
 	 */
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethod : MethodInfo, ISerializable
+	internal class MonoMethod : RuntimeMethodInfo
 	{
 #pragma warning disable 649
 		internal IntPtr mhandle;
@@ -202,20 +276,11 @@ namespace System.Reflection {
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = GetParametersInternal ();
-			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
-
-#if !NET_2_1
-			if (SecurityManager.SecurityEnabled) {
-				// sadly Attributes doesn't tell us which kind of security action this is so
-				// we must do it the hard way - and it also means that we can skip calling
-				// Attribute (which is another an icall)
-				SecurityManager.ReflectedLinkDemandInvoke (this);
-			}
-#endif
+			ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
 			if (ContainsGenericParameters)
 				throw new InvalidOperationException ("Late bound operations cannot be performed on types or methods for which ContainsGenericParameters is true.");
@@ -241,6 +306,34 @@ namespace System.Reflection {
 			if (exc != null)
 				throw exc;
 			return o;
+		}
+
+		internal static void ConvertValues (Binder binder, object[] args, ParameterInfo[] pinfo, CultureInfo culture, BindingFlags invokeAttr)
+		{
+			if (args == null) {
+				if (pinfo.Length == 0)
+					return;
+
+				throw new TargetParameterCountException ();
+			}
+
+			if (pinfo.Length != args.Length)
+				throw new TargetParameterCountException ();
+
+			for (int i = 0; i < args.Length; ++i) {
+				var arg = args [i];
+				var pi = pinfo [i];
+				if (arg == Type.Missing) {
+					if (pi.DefaultValue == System.DBNull.Value)
+						throw new ArgumentException(Environment.GetResourceString("Arg_VarMissNull"),"parameters");
+
+					args [i] = pi.DefaultValue;
+					continue;
+				}
+
+				var rt = (RuntimeType) pi.ParameterType;
+				args [i] = rt.CheckValue (arg, binder, culture, invokeAttr);
+			}
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
@@ -291,7 +384,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern DllImportAttribute GetDllImportAttribute (IntPtr mhandle);
+		internal extern void GetPInvoke (out PInvokeAttributes flags, out string entryPoint, out string dllName);
 
 		internal object[] GetPseudoCustomAttributes ()
 		{
@@ -313,56 +406,10 @@ namespace System.Reflection {
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
-				DllImportAttribute attr = GetDllImportAttribute (mhandle);
-				if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
-					attr.PreserveSig = true;
-				attrs [count ++] = attr;
+				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
 			}
 
 			return attrs;
-		}
-
-		public override string ToString () {
-			StringBuilder sb = new StringBuilder ();
-			Type retType = ReturnType;
-			if (Type.ShouldPrintFullName (retType))
-				sb.Append (retType.ToString ());
-			else
-				sb.Append (retType.Name);
-			sb.Append (" ");
-			sb.Append (Name);
-			if (IsGenericMethod) {
-				Type[] gen_params = GetGenericArguments ();
-				sb.Append ("[");
-				for (int j = 0; j < gen_params.Length; j++) {
-					if (j > 0)
-						sb.Append (",");
-					sb.Append (gen_params [j].Name);
-				}
-				sb.Append ("]");
-			}
-			sb.Append ("(");
-
-			var p = GetParametersInternal ();
-			ParameterInfo.FormatParameters (sb, p);
-
-			if ((CallingConvention & CallingConventions.VarArgs) != 0) {
-				if (p.Length > 0)
-					sb.Append (", ");
-				sb.Append ("...");
-			}
-			
-			sb.Append (")");
-			return sb.ToString ();
-		}
-
-	
-		// ISerializable
-		public void GetObjectData(SerializationInfo info, StreamingContext context) 
-		{
-			Type[] genericArguments = IsGenericMethod && !IsGenericMethodDefinition
-				? GetGenericArguments () : null;
-			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method, genericArguments);
 		}
 
 		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
@@ -441,16 +488,85 @@ namespace System.Reflection {
 			return GetMethodBody (mhandle);
 		}
 
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
+
+		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern int get_core_clr_security_level ();
+
+		public override bool IsSecurityTransparent {
+			get { return get_core_clr_security_level () == 0; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return get_core_clr_security_level () > 0; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return get_core_clr_security_level () == 1; }
+		}
 	}
 	
+
+	abstract class RuntimeConstructorInfo : ConstructorInfo, ISerializable
+	{
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return RuntimeTypeHandle.GetModule((RuntimeType)DeclaringType);
+		}
+
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                SerializationToString(),
+                MemberTypes.Constructor,
+                null);
+        }
+
+        internal string SerializationToString()
+        {
+            // We don't need the return type for constructors.
+            return FormatNameAndSig(true);
+        }
+
+		internal void SerializationInvoke (Object target, SerializationInfo info, StreamingContext context)
+		{
+			Invoke (target, new object[] { info, context });
+		}
+       #endregion
+	}
+
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoCMethod : ConstructorInfo, ISerializable
+	internal class MonoCMethod : RuntimeConstructorInfo
 	{
 #pragma warning disable 649		
 		internal IntPtr mhandle;
@@ -503,20 +619,11 @@ namespace System.Reflection {
 		object DoInvoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
-				binder = Binder.DefaultBinder;
+				binder = Type.DefaultBinder;
 
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
-
-#if !NET_2_1
-			if (SecurityManager.SecurityEnabled) {
-				// sadly Attributes doesn't tell us which kind of security action this is so
-				// we must do it the hard way - and it also means that we can skip calling
-				// Attribute (which is another an icall)
-				SecurityManager.ReflectedLinkDemandInvoke (this);
-			}
-#endif
+			MonoMethod.ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
 			if (obj == null && DeclaringType.ContainsGenericParameters)
 				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");
@@ -574,6 +681,12 @@ namespace System.Reflection {
 			}
 		}
 		
+		public override bool ContainsGenericParameters {
+			get {
+				return DeclaringType.ContainsGenericParameters;
+			}
+		}
+
 		public override Type ReflectedType {
 			get {
 				return reftype;
@@ -625,16 +738,8 @@ namespace System.Reflection {
 			return sb.ToString ();
 		}
 
-		// ISerializable
-		public void GetObjectData(SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
-		}
-
-#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
-#endif
 	}
 }

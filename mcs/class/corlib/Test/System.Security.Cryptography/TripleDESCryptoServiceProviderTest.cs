@@ -46,11 +46,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void CreateEncryptor_KeyNull ()
 		{
 			ICryptoTransform encryptor = tdes.CreateEncryptor (null, tdes.IV);
@@ -100,11 +96,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void CreateDecryptor_KeyNull ()
 		{
 			ICryptoTransform encryptor = tdes.CreateEncryptor (tdes.Key, tdes.IV);
@@ -170,9 +162,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CreateEncryptor_IV_Zero ()
 		{
 			int size = (tdes.BlockSize >> 3) - 1;
@@ -180,9 +170,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CreateEncryptor_IV_TooSmall ()
 		{
 			int size = (tdes.BlockSize >> 3) - 1;
@@ -217,9 +205,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CreateDecryptor_IV_Zero ()
 		{
 			int size = (tdes.BlockSize >> 3) - 1;
@@ -227,9 +213,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void CreateDecryptor_IV_TooSmall ()
 		{
 			int size = (tdes.BlockSize >> 3) - 1;

@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // NamespaceResolveEventArgs.cs
 //
@@ -57,4 +56,3 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		}
 	}
 }
-#endif

@@ -19,8 +19,5 @@ using System.IO;
 using System.Data.SqlTypes;
 
 namespace System.Data.OracleClient {
-#if !NET_2_0
-	[Serializable]
-#endif
 	public delegate void OracleInfoMessageEventHandler (object sender, OracleInfoMessageEventArgs e);
 }

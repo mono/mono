@@ -14,6 +14,7 @@ Microsoft.Build.BuildEngine/ImportTest.cs
 Microsoft.Build.BuildEngine/InternalLoggerExceptionTest.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileExceptionTest.cs
 Microsoft.Build.BuildEngine/ProjectTest.cs
+Microsoft.Build.BuildEngine/PredefinedPropertyFunctionsTest.cs
 Microsoft.Build.BuildEngine/TargetCollectionTest.cs
 Microsoft.Build.BuildEngine/TargetTest.cs
 Microsoft.Build.BuildEngine/TestNamespaceManager.cs

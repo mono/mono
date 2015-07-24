@@ -6,4 +6,4 @@ libdir=${exec_prefix}/lib
 Name: Mono NUnit
 Description: Mono's version of NUnit
 Version: @VERSION@
-Libs: -r:${libdir}/mono/2.0/nunit.core.dll -r:${libdir}/mono/2.0/nunit.core.interfaces.dll -r:${libdir}/mono/2.0/nunit.core.extensions.dll -r:${libdir}/mono/2.0/nunit.framework.dll -r:${libdir}/mono/2.0/nunit.framework.extensions.dll -r:${libdir}/mono/2.0/nunit.mocks.dll -r:${libdir}/mono/2.0/nunit.util.dll -r:${libdir}/mono/2.0/nunit-console-runner.dll 
+Libs: -r:${libdir}/mono/4.5/nunit.core.dll -r:${libdir}/mono/4.5/nunit.core.interfaces.dll -r:${libdir}/mono/4.5/nunit.core.extensions.dll -r:${libdir}/mono/4.5/nunit.framework.dll -r:${libdir}/mono/4.5/nunit.framework.extensions.dll -r:${libdir}/mono/4.5/nunit.mocks.dll -r:${libdir}/mono/4.5/nunit.util.dll -r:${libdir}/mono/4.5/nunit-console-runner.dll 

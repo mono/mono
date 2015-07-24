@@ -40,7 +40,6 @@ namespace MonoTests.System.ComponentModel
 			return _services.GetService (serviceType);
 		}
 
-#if NET_2_0
 		public new void RemoveWithoutUnsiting (IComponent component)
 		{
 			base.RemoveWithoutUnsiting (component);
@@ -57,7 +56,6 @@ namespace MonoTests.System.ComponentModel
 				return;
 			base.ValidateName (component, name);
 		}
-#endif
 
 		public bool Contains (IComponent component)
 		{
@@ -352,7 +350,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (1, container2.Components.Count, "#D8");
 			Assert.AreSame (c5, container2.Components [0], "#D9");
 
-#if NET_2_0
 			container.AllowDuplicateNames = true;
 			TestComponent c6 = new TestComponent ();
 			container.Add (c6, "dup");
@@ -362,7 +359,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNotNull (c6.Site, "#E4");
 			Assert.AreEqual ("dup", c6.Site.Name, "#E5");
 			Assert.IsFalse (object.ReferenceEquals (c1.Site, c6.Site), "#E6");
-#endif
 		}
 
 		[Test]
@@ -565,7 +561,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (1, _container.Components.Count);
 		}
 
-#if NET_2_0
 		[Test]
 		public void RemoveWithoutUnsiting ()
 		{
@@ -711,7 +706,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (1, container2.Components.Count, "#C8");
 			Assert.AreSame (compD, container2.Components [0], "#C9");
 		}
-#endif
 
 		class MyComponent : Component
 		{

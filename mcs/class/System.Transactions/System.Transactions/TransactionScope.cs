@@ -9,7 +9,6 @@
 // (C)2006 Novell Inc,
 //
 
-#if NET_2_0
 
 using DTCOption = System.Transactions.EnterpriseServicesInteropOption;
 
@@ -202,4 +201,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

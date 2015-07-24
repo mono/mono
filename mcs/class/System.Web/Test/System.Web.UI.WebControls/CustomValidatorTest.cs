@@ -150,13 +150,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DefaultsNotWorking ()
 		{
 			CustomValidatorTestClass c = new CustomValidatorTestClass ();
-#if NET_2_0
 			Assert.AreEqual (false, c.ValidateEmptyText, "ValidateEmptyText");
-#endif
 		}
 
 
-#if NET_2_0
 		// Variable for checking events 
 		private bool checker;
 
@@ -185,7 +182,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			checker = true;
 		}
-#endif
 
 
 		[Test]
@@ -202,17 +198,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.Enabled = true;
 			c.EnableViewState = true;
 
-#if! NET_2_0
-			Assert.AreEqual("<span style=\"color:Red;\">aw shucks</span>", c.Render(), "R1");
-#endif
 
 			c.ClientValidationFunction = "Father to a sister of thought";
-#if! NET_2_0
-			Assert.AreEqual("<span style=\"color:Red;\">aw shucks</span>", c.Render(), "R2");
-#endif
 		}
 
-#if NET_2_0
 		class Poker : CustomValidator
 		{
 			public string Render ()
@@ -237,7 +226,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		
-#endif
 
 		[Test]
 		public void EmptyControlName ()

@@ -4,7 +4,8 @@ SUBDIRS =
 
 LIBRARY = System.Drawing.dll
 
-LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll \
+LIB_REFS = System
+LIB_MCS_FLAGS = /unsafe /r:$(corlib) \
 	-resource:Assembly/Mono.ico,Mono.ico -resource:Assembly/Information.ico,Information.ico \
 	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
 	-resource:Assembly/Question.ico,Question.ico -resource:Assembly/Shield.ico,Shield.ico

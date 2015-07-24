@@ -38,17 +38,11 @@ namespace System.Xml.Serialization
 {
 
 	public class XmlCodeExporter 
-#if NET_2_0
 		: CodeExporter
-#endif
 	{
 		#region Fields
 
-#if NET_2_0
 		// CodeGenerationOptions options;
-#else
-		XmlMapCodeGenerator codeGenerator;
-#endif
 
 		#endregion
 
@@ -60,14 +54,9 @@ namespace System.Xml.Serialization
 
 		public XmlCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-#if NET_2_0
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, CodeGenerationOptions.GenerateProperties);
-#else
-			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, CodeGenerationOptions.None);
-#endif
 		}
 
-#if NET_2_0
 		public XmlCodeExporter (CodeNamespace codeNamespace, 
 								CodeCompileUnit codeCompileUnit, 
 								CodeGenerationOptions options)
@@ -93,17 +82,11 @@ namespace System.Xml.Serialization
 		{
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, codeProvider, options, mappings);
 		}
-#endif
 
 		#endregion // Constructors
 
 		#region Properties
 
-#if !NET_2_0
-		public CodeAttributeDeclarationCollection IncludeMetadata {
-			get { return codeGenerator.IncludeMetadata; }
-		}
-#endif
 
 		#endregion Properties
 

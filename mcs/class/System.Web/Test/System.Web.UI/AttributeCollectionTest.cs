@@ -251,7 +251,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Count4 ()
 		{
@@ -266,7 +265,6 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (0, ac.Count, "AttributeCollection.Count");
 			Assert.AreEqual (0, ac.CssStyle.Count, "AttributeCollection.Count");
 		}
-#endif
 	}
 }
 

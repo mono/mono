@@ -180,7 +180,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, v.ShowSummary, "D5");
 		}
 
-#if NET_2_0
 		[Test]
 		public void ValidationSummary_ValidationGroup () {
 			ValidationSummaryTestClass v = new ValidationSummaryTestClass ();
@@ -199,7 +198,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual ("group", v2.ValidationGroup, "VG3");
 		}
-#endif
 
 		[Test]
 		public void ValidationSummaryRenderTest () {
@@ -255,18 +253,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<ul><li>aw shucks</li><li>WhamBamThankYouMam</li></ul>\n</div>", v.Render(), "R3");
 
 			v.DisplayMode = ValidationSummaryDisplayMode.List;
-#if NET_2_0
 			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<br />aw shucks<br />WhamBamThankYouMam<br />\n</div>", v.Render(), "R4");
-#else
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<br>aw shucks<br>WhamBamThankYouMam<br>\n</div>", v.Render(), "R4");
-#endif
 
 			v.DisplayMode = ValidationSummaryDisplayMode.SingleParagraph;
-#if NET_2_0
 			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R5");
-#else
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br>\n</div>", v.Render(), "R5");
-#endif
 
 			v.ShowSummary = false;
 			v.DisplayMode = ValidationSummaryDisplayMode.BulletList;
@@ -276,11 +266,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			v.EnableClientScript = true;
 			v.ShowMessageBox = true;
 			v.DisplayMode = ValidationSummaryDisplayMode.SingleParagraph;
-#if NET_2_0
 			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R7");
-#else
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br>\n</div>", v.Render(), "R7");
-#endif
 
 			StopValidationTest();
 		}

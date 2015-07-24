@@ -59,9 +59,7 @@ namespace System.ServiceModel.Description
 			get { return format; }
 		}
 
-#if NET_4_0
 		public DataContractResolver DataContractResolver { get; set; }
-#endif
 
 		public bool IgnoreExtensionDataObject { get; set; }
 
@@ -114,7 +112,7 @@ namespace System.ServiceModel.Description
 		{
 		}
 		
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		//IWsdlExportExtension
 
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,

@@ -173,28 +173,12 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual ("F2-90-00-B6-2A-49-9F-D0-A9-F3-9A-6A-DD-2E-77-80-D4-E9-69-25-C0-BF-CF-FB-52-F8-A1-87-EE-77-4A-AB-C3-28-91-ED-46-6E-6F-98-C1-4D-65-14-ED-9D-1E-5B",
 				Roundtrip (Rijndael.Create (), CipherMode.CBC), "Encrypted data");
 		}
-#if NET_2_0
 		[Test]
 		public void Rijndael_CFB ()
 		{
 			Assert.AreEqual ("F2-90-00-B6-2A-49-9F-D0-A9-F3-9A-6A-DD-2E-77-80-D4-E9-69-25-C0-BF-CF-FB-52-F8-A1-87-EE-77-4A-AB-26-03-7F-B7-B5-88-AE-0A-F8-AF-1E-CF-9C-F5-3A-8A",
 				Roundtrip (Rijndael.Create (), CipherMode.CFB), "Encrypted data");
 		}
-#else
-		// CFB was confused with OFB in Fx 1.0 and 1.1 (and wasn't supported because of that)
-		// However Mono does support it (because the same code is executed for all managed ciphers).
-		[Test]
-		public void Rijndael_CFB ()
-		{
-			try {
-				Assert.AreEqual ("F2-90-00-B6-2A-49-9F-D0-A9-F3-9A-6A-DD-2E-77-80-D4-E9-69-25-C0-BF-CF-FB-52-F8-A1-87-EE-77-4A-AB-26-03-7F-B7-B5-88-AE-0A-F8-AF-1E-CF-9C-F5-3A-8A",
-					Roundtrip (Rijndael.Create (), CipherMode.CFB), "Encrypted data");
-			}
-			catch (CryptographicException) {
-				// we assume this is the bugged MS implementation
-			}
-		}
-#endif
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
 		public void Rijndael_OFB ()

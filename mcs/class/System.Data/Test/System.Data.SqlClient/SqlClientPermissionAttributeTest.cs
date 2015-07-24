@@ -52,10 +52,8 @@ namespace MonoTests.System.Data.SqlClient {
 			Assert.AreEqual (String.Empty, a.ConnectionString, "ConnectionString");
 			Assert.AreEqual (KeyRestrictionBehavior.AllowOnly, a.KeyRestrictionBehavior, "KeyRestrictionBehavior");
 			Assert.AreEqual (String.Empty, a.KeyRestrictions, "KeyRestrictions");
-#if NET_2_0
 			Assert.IsFalse (a.ShouldSerializeConnectionString (), "ShouldSerializeConnectionString");
 			Assert.IsFalse (a.ShouldSerializeKeyRestrictions (), "ShouldSerializeConnectionString");
-#endif
 			SqlClientPermission sp = (SqlClientPermission)a.CreatePermission ();
 			Assert.IsFalse (sp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -141,11 +139,7 @@ namespace MonoTests.System.Data.SqlClient {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			SqlClientPermissionAttribute a = new SqlClientPermissionAttribute (SecurityAction.Assert);

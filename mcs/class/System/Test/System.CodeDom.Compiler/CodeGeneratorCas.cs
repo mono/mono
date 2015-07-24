@@ -279,9 +279,7 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 
 		public void TestProtectedProperties ()
 		{
-#if NET_2_0
 			Assert.IsNull (CurrentClass, "CurrentClass");
-#endif
 			Assert.IsNull (CurrentMember, "CurrentMember");
 			Assert.AreEqual ("<% unknown %>", CurrentMemberName, "CurrentMemberName");
 			Assert.AreEqual ("<% unknown %>", CurrentTypeName, "CurrentTypeName");
@@ -350,22 +348,18 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 			}
 			catch (NullReferenceException) {
 			}
-#if NET_2_0
 			try {
 				GenerateDefaultValueExpression (null);
 			}
 			catch (NotImplementedException) {
 				// both mono & ms
 			}
-#endif
 			try {
 				GenerateDirectionExpression (null); 
 			}
 			catch (NullReferenceException) {
 			}
-#if NET_2_0
 			GenerateDirectives (null);
-#endif
 			try {
 				GenerateDoubleValue (Double.MaxValue); 
 			}
@@ -539,7 +533,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Public ()
@@ -552,7 +545,6 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 				// mono
 			}
 		}
-#endif
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

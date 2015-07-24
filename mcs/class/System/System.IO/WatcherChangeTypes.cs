@@ -30,9 +30,6 @@
 namespace System.IO {
 
 	[Flags]
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum WatcherChangeTypes {
 		All = 0xF,
 		Changed = 4,

@@ -116,6 +116,12 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.IsNull (res.Ranges.Skip (1).First ().From, "#53");
 			Assert.AreEqual (9, res.Ranges.Skip (1).First ().To, "#54");
 			Assert.AreEqual ("bytes=0-, -9", res.ToString (), "#55");
+
+			res = RangeHeaderValue.Parse ("bytes=3637717541-9223372036854775807");
+			Assert.AreEqual ("bytes", res.Unit, "#60");
+			Assert.AreEqual (3637717541, res.Ranges.First ().From, "#61");
+			Assert.AreEqual (9223372036854775807, res.Ranges.First ().To, "#62");
+			Assert.AreEqual ("bytes=3637717541-9223372036854775807", res.ToString (), "#63");
 		}
 
 		[Test]

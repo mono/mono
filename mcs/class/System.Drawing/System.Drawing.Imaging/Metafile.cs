@@ -38,9 +38,6 @@ namespace System.Drawing.Imaging {
 
 	[MonoTODO ("Metafiles, both WMF and EMF formats, are only partially supported.")]
 	[Serializable]
-#if ONLY_1_1
-	[ComVisible (false)]
-#endif
 	[Editor ("System.Drawing.Design.MetafileEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Metafile : Image {
 

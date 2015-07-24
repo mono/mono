@@ -61,36 +61,40 @@ namespace System.Threading {
 
 		public static CompressedStack Capture ()
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else
 			CompressedStack cs = new CompressedStack (0);
-			cs._list = SecurityFrame.GetStack (1);
+			cs._list = new ArrayList ();
 
 			// include any current CompressedStack inside the new Capture
-			CompressedStack currentCs = Thread.CurrentThread.GetCompressedStack ();
+			CompressedStack currentCs = Thread.CurrentThread.ExecutionContext.SecurityContext.CompressedStack;
 			if (currentCs != null) {
 				for (int i=0; i < currentCs._list.Count; i++)
 					cs._list.Add (currentCs._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
-#endif
 		static public CompressedStack GetCompressedStack ()
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else
 			// Note: CompressedStack.GetCompressedStack doesn't return null
 			// like Thread.CurrentThread.GetCompressedStack if no compressed
 			// stack is present.
-			CompressedStack cs = Thread.CurrentThread.GetCompressedStack ();
-			if (cs == null) {
+
+            CompressedStack cs = Thread.CurrentThread.ExecutionContext.SecurityContext.CompressedStack;
+			if (cs == null || cs.IsEmpty ()) {
 				cs = CompressedStack.Capture ();
 			} else {
+				cs = cs.CreateCopy ();
 				// merge the existing compressed stack (from a previous Thread) with the current
 				// Thread stack so we can assign "all of it" to yet another Thread
 				CompressedStack newstack = CompressedStack.Capture ();
@@ -98,41 +102,38 @@ namespace System.Threading {
 					cs._list.Add (newstack._list [i]);
 			}
 			return cs;
+#endif
 		}
 
 		[MonoTODO ("incomplete")]
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[ReflectionPermission (SecurityAction.Demand, MemberAccess = true)]
-#endif
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
 		}
 
-#if NET_4_0
 		[SecurityCritical]
-#else
-		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-#endif
 		static public void Run (CompressedStack compressedStack, ContextCallback callback, object state)
 		{
+#if !FEATURE_COMPRESSEDSTACK
+			throw new NotSupportedException ();
+#else	
 			if (compressedStack == null)
 				throw new ArgumentException ("compressedStack");
 
 			Thread t = Thread.CurrentThread;
 			CompressedStack original = null;
 			try {
-				original = t.GetCompressedStack (); 
-				t.SetCompressedStack (compressedStack);
+				original = t.ExecutionContext.SecurityContext.CompressedStack; 
+				t.ExecutionContext.SecurityContext.CompressedStack = compressedStack;
 				callback (state);
 			}
 			finally {
 				if (original != null)
-					t.SetCompressedStack (original);
+					t.ExecutionContext.SecurityContext.CompressedStack = original;
 			}
+#endif
 		}
 
 		// internal stuff
@@ -145,12 +146,6 @@ namespace System.Threading {
 			if (_list.Count != cs._list.Count)
 				return false;
 
-			for (int i=0; i < _list.Count; i++) {
-				SecurityFrame sf1 = (SecurityFrame) _list [i];
-				SecurityFrame sf2 = (SecurityFrame) cs._list [i];
-				if (!sf1.Equals (sf2))
-					return false;
-			}
 			return true;
 		}
 

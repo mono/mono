@@ -189,12 +189,11 @@ get_typespec (MonoImage *m, guint32 idx, gboolean is_def, MonoGenericContainer *
 	const char *ptr;
 	char *s, *result;
 	GString *res = g_string_new ("");
-	int len;
 	MonoMethodSignature *sig;
 
 	mono_metadata_decode_row (&m->tables [MONO_TABLE_TYPESPEC], idx-1, cols, MONO_TYPESPEC_SIZE);
 	ptr = mono_metadata_blob_heap (m, cols [MONO_TYPESPEC_SIGNATURE]);
-	len = mono_metadata_decode_value (ptr, &ptr);
+	/* len = */ mono_metadata_decode_value (ptr, &ptr);
 
 	switch (*ptr++){
 	case MONO_TYPE_PTR:
@@ -215,14 +214,16 @@ get_typespec (MonoImage *m, guint32 idx, gboolean is_def, MonoGenericContainer *
 		g_string_append (res, "*");
 		break;
 
-	case MONO_TYPE_FNPTR:
-		sig = mono_metadata_parse_method_signature_full (m, container, 0, ptr, &ptr);
+	case MONO_TYPE_FNPTR: {
+		MonoError error;
+		sig = mono_metadata_parse_method_signature_full (m, container, 0, ptr, &ptr, &error);
+		g_assert (mono_error_ok (&error)); /*FIXME don't swallow the error message*/
 		s = dis_stringify_function_ptr (m, sig);
 		g_string_append (res, "method ");
 		g_string_append (res, s);
 		g_free (s);
 		break;
-
+	}
 	case MONO_TYPE_ARRAY:
 		ptr = get_type (m, ptr, &s, is_def, container);
 		g_string_append (res, s);
@@ -899,7 +900,8 @@ dis_stringify_method_signature_full (MonoImage *m, MonoMethodSignature *method, 
 			}
 
 			mono_metadata_decode_blob_size (sig, &sig);
-			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig);
+			method = mono_metadata_parse_method_signature_full (m, container, methoddef_row, sig, &sig, &error);
+			g_assert (mono_error_ok (&error)); /*FIXME don't swallow the error message*/
 			free_method = 1;
 		}
 
@@ -1354,12 +1356,10 @@ get_field_signature (MonoImage *m, guint32 blob_signature, MonoGenericContainer 
 {
 	char *allocated_modifier_string, *allocated_type_string;
 	const char *ptr = mono_metadata_blob_heap (m, blob_signature);
-	const char *base;
 	char *res;
 	int len;
 	
 	len = mono_metadata_decode_value (ptr, &ptr);
-	base = ptr;
 	/* FIELD is 0x06 */
 	g_assert (*ptr == 0x06);
 /*	hex_dump (ptr, 0, len); */
@@ -1668,11 +1668,11 @@ get_methodref_signature (MonoImage *m, guint32 blob_signature, const char *fancy
 	char *allocated_ret_type, *s;
 	const char *cconv_str;
 	gboolean seen_vararg = 0;
-	int param_count, signature_len;
+	int param_count;
 	int i, gen_count = 0;
 	int cconv;
 
-	signature_len = mono_metadata_decode_value (ptr, &ptr);
+	/* signature_len = */ mono_metadata_decode_value (ptr, &ptr);
 
 	if (*ptr & 0x20){
 		if (*ptr & 0x40)
@@ -2565,9 +2565,9 @@ dis_get_custom_attrs (MonoImage *m, guint32 token)
 
 char*
 get_marshal_info (MonoImage *m, const char *blob) {
-	int len, size = 0;
+	int size = 0;
 
-	len = mono_metadata_decode_blob_size (blob, &blob);
+	/* len = */ mono_metadata_decode_blob_size (blob, &blob);
 
 	switch (*blob) {
 	case MONO_NATIVE_BOOLEAN:

@@ -234,7 +234,9 @@ namespace Monodoc.Ecma
 
 			sb.Append ('.');
 			sb.Append (TypeName);
-			if (GenericTypeArguments != null) {
+			if (GenericTypeArguments != null && GenericTypeArgumentsIsNumeric) {
+				sb.AppendFormat ("`{0}", GenericTypeArgumentsCount);
+			} else if (GenericTypeArguments != null) {
 				sb.Append ('<');
 				int i=0;
 				foreach (var t in GenericTypeArguments) {

@@ -44,9 +44,7 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cmie.Method, "#1");
 			Assert.AreEqual (string.Empty, cmie.Method.MethodName, "#2");
 			Assert.IsNull (cmie.Method.TargetObject, "#3");
-#if NET_2_0
 			Assert.AreEqual (0, cmie.Method.TypeArguments.Count, "#4");
-#endif
 			Assert.IsNotNull (cmie.Parameters, "#5");
 			Assert.AreEqual (0, cmie.Parameters.Count, "#6");
 
@@ -59,9 +57,7 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cmie.Method, "#9");
 			Assert.AreEqual (string.Empty, cmie.Method.MethodName, "#10");
 			Assert.IsNull (cmie.Method.TargetObject, "#11");
-#if NET_2_0
 			Assert.AreEqual (0, cmie.Method.TypeArguments.Count, "#12");
-#endif
 		}
 
 		[Test]
@@ -80,9 +76,7 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cmie.Method, "#3");
 			Assert.AreEqual (string.Empty, cmie.Method.MethodName, "#4");
 			Assert.IsNull (cmie.Method.TargetObject, "#5");
-#if NET_2_0
 			Assert.AreEqual (0, cmie.Method.TypeArguments.Count, "#6");
-#endif
 
 			CodeMethodReferenceExpression method2 = new CodeMethodReferenceExpression ();
 			cmie.Method = method2;
@@ -99,9 +93,7 @@ namespace MonoTests.System.CodeDom
 			Assert.IsNotNull (cmie.Method, "#13");
 			Assert.AreEqual (string.Empty, cmie.Method.MethodName, "#14");
 			Assert.IsNull (cmie.Method.TargetObject, "#15");
-#if NET_2_0
 			Assert.AreEqual (0, cmie.Method.TypeArguments.Count, "#16");
-#endif
 
 			Assert.IsNotNull (cmie.Parameters, "#17");
 			Assert.AreEqual (1, cmie.Parameters.Count, "#18");

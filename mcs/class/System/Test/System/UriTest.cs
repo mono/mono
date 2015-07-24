@@ -1983,6 +1983,19 @@ namespace MonoTests.System
 			var uri = new Uri ("https://" + userinfo + "@host");
 			Assert.AreEqual (userinfo, uri.UserInfo);
 		}
+
+		[Test]
+		public void UserInfo_EscapedChars ()
+		{
+			for (var ch = (char) 1; ch < 128; ch++) {
+				var userinfo = Uri.EscapeDataString (ch.ToString ());
+				try {
+					new Uri (string.Format("http://{0}@localhost:80/", userinfo));
+				} catch (Exception e) {
+					Assert.Fail (string.Format("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
+				}
+			}
+		}
 	}
 
 	// Tests non default IriParsing

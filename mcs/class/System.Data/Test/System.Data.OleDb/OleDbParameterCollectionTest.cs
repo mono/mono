@@ -37,8 +37,8 @@ namespace MonoTests.System.Data.OleDb {
 	[TestFixture]
 	public class OleDbParameterCollectionTest {
 
-#if NET_2_0
 		[Test]
+		[Category ("NotWorking")] // it tries to PInvoke LocalAlloc() and fails on non-Windows.
 		public void AddWithValueTest ()
 		{
 			OleDbCommand command = new OleDbCommand();
@@ -54,6 +54,5 @@ namespace MonoTests.System.Data.OleDb {
 			Assert.AreEqual(1, parameters.Count);
 			Assert.AreEqual(parameter, parameters[0]);	
 		}
-#endif
 	}
 }

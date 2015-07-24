@@ -3,13 +3,9 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Reactive.Observable.Aliases.dll
+LIB_REFS = System System.Core System.Reactive.Interfaces System.Reactive.Core System.Reactive.Linq System.Reactive.Providers
 LIB_MCS_FLAGS = \
 		@more_build_args \
-	        -r:System.dll \
-	        -r:System.Core.dll \
-		-r:System.Reactive.Interfaces.dll \
-		-r:System.Reactive.Core.dll \
-		-r:System.Reactive.Linq.dll \
 		-r:System.Reactive.Providers.dll
 
 ifeq (true, $(GENERATE_RESOURCES))
@@ -35,13 +31,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = more_build_args $(RESX_RESOURCES:.resources=.resx) $(PREBUILT)
 
-VALID_PROFILE := $(filter monodroid xammac net_4_0 net_4_5, $(PROFILE))
-ifndef VALID_PROFILE
-LIBRARY_NAME = dummy-System.System.Reactive.Observable.Aliases.dll
-NO_SIGN_ASSEMBLY = yes
-endif
-
-INSTALL_PROFILE := $(filter net_4_5, $(PROFILE))
+INSTALL_PROFILE := $(filter net_4_x, $(PROFILE))
 ifndef INSTALL_PROFILE
 NO_INSTALL = yes
 endif

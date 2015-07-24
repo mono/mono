@@ -115,11 +115,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if NET_2_0
 		[Category ("NotWorking")]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Unrestricted () 
 		{
 			ZoneIdentityPermissionAttribute a = new ZoneIdentityPermissionAttribute (SecurityAction.Assert);

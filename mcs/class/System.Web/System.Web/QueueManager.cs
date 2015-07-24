@@ -96,14 +96,10 @@ namespace System.Web
 			if (disposing)
 				return false;
 				
-#if TARGET_J2EE
-			return true; // The J2EE app server manages the thread pool
-#else
 			int threads, cports;
 			ThreadPool.GetAvailableThreads (out threads, out cports);
 			bool local = (req != null && req.GetLocalAddress () == "127.0.0.1");
 			return (threads > minFree) || (local && threads > minLocalFree);
-#endif
 		}
 
 		public HttpWorkerRequest GetNextRequest (HttpWorkerRequest req)

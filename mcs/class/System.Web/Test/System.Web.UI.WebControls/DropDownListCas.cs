@@ -55,9 +55,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.DropDownNamingTest ();
 			unit.InitialSelectionMade ();
 			unit.TestValueFieldAndTextFormat ();
-#if NET_2_0
 			unit.DropDownNullWriterTest ();
-#endif
 		}
 
 		// LinkDemand

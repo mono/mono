@@ -59,11 +59,7 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		virtual void ReflectDescription ()
 		{
 		}
@@ -82,11 +78,7 @@ namespace System.Web.Services.Description {
 		public abstract SoapBodyBinding CreateSoapBodyBinding ();
 		public abstract string EncodingNS { get; }
 
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		override void ReflectDescription ()
 		{
 			SoapBinding sb = CreateSoapBinding ();
@@ -172,7 +164,6 @@ namespace System.Web.Services.Description {
 		public const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 	}
 
-#if NET_2_0
 	class Soap12BindingExtensionReflector : SoapBindingExtensionReflector
 	{
 		public override SoapBinding CreateSoapBinding ()
@@ -202,5 +193,4 @@ namespace System.Web.Services.Description {
 
 		public const string EncodingNamespace = "http://www.w3.org/2003/05/soap-encoding";
 	}
-#endif
 }

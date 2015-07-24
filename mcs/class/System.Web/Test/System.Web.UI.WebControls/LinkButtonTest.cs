@@ -74,7 +74,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				base.Render (writer);
 				return writer.InnerWriter.ToString ();
 			}		
-#if NET_2_0
 			public new void RaisePostBackEvent (string eventArgument)
 			{
 				base.RaisePostBackEvent (eventArgument);
@@ -84,7 +83,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return base.GetPostBackOptions ();
 			}
-#endif
 
 		}
 
@@ -98,14 +96,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Defaults ()
 		{
 			Poker b = new Poker ();
-#if NET_2_0
 			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick");
 			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
 			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");
-#endif
 		}
 		
-#if NET_2_0
 		[Test]
 		public void OnClientClick ()
 		{
@@ -241,7 +236,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				WebTest.CurrentTest.UserData = list;
 			}
 		}
-#endif
 		[Test]
 		public void ViewState ()
 		{
@@ -375,7 +369,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 
-#if NET_2_0
 		[Test]
 		public void TestValidationGroup ()
 		{
@@ -399,7 +392,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }
 

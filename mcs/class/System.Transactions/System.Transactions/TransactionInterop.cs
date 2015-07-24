@@ -7,7 +7,6 @@
 // (C)2005 Novell Inc,
 //
 
-#if NET_2_0
 
 // OK, everyone knows that am not interested in DTC support ;-)
 
@@ -64,4 +63,3 @@ namespace System.Transactions
 	}
 }
 
-#endif

@@ -12,7 +12,6 @@
 // - dynamic assemblies
 //
 
-#if NET_2_0
 
 using System;
 using System.Threading;
@@ -181,4 +180,3 @@ public class ModuleHandleTest
 }
 }
 
-#endif

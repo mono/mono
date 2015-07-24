@@ -12,6 +12,11 @@
 
 #include "mini.h"
 
+/* This is the same as mgreg_t, except on 32 bit bit platforms with callee saved fp regs */
+#ifndef mono_unwind_reg_t
+#define mono_unwind_reg_t mgreg_t
+#endif
+
 /*
  * This is a platform-independent interface for unwinding through stack frames 
  * based on the Dwarf unwinding interface.
@@ -82,11 +87,11 @@ typedef struct {
  */
 
 /* Set cfa to reg+offset */
-#define mono_emit_unwind_op_def_cfa(cfg,ip,reg,offset) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa, (reg), (offset)); (cfg)->cfa_reg = (reg); (cfg)->cfa_offset = (offset); } while (0)
+#define mono_emit_unwind_op_def_cfa(cfg,ip,reg,offset) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa, (reg), (offset)); (cfg)->cur_cfa_reg = (reg); (cfg)->cur_cfa_offset = (offset); } while (0)
 /* Set cfa to reg+existing offset */
-#define mono_emit_unwind_op_def_cfa_reg(cfg,ip,reg) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa_register, (reg), (0)); (cfg)->cfa_reg = (reg); } while (0)
+#define mono_emit_unwind_op_def_cfa_reg(cfg,ip,reg) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa_register, (reg), (0)); (cfg)->cur_cfa_reg = (reg); } while (0)
 /* Set cfa to existing reg+offset */
-#define mono_emit_unwind_op_def_cfa_offset(cfg,ip,offset) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa_offset, (0), (offset)); (cfg)->cfa_offset = (offset); } while (0)
+#define mono_emit_unwind_op_def_cfa_offset(cfg,ip,offset) do { mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_def_cfa_offset, (0), (offset)); (cfg)->cur_cfa_offset = (offset); } while (0)
 /* Reg is the same as it was on enter to the function */
 #define mono_emit_unwind_op_same_value(cfg,ip,reg) mono_emit_unwind_op (cfg, (ip) - (cfg)->native_code, DW_CFA_same_value, (reg), 0)
 /* Reg is saved at cfa+offset */
@@ -128,34 +133,34 @@ enum {
 };
 
 int
-mono_hw_reg_to_dwarf_reg (int reg) MONO_INTERNAL;
+mono_hw_reg_to_dwarf_reg (int reg);
 
 int
-mono_dwarf_reg_to_hw_reg (int reg) MONO_INTERNAL;
+mono_dwarf_reg_to_hw_reg (int reg);
 
 int
-mono_unwind_get_dwarf_data_align (void) MONO_INTERNAL;
+mono_unwind_get_dwarf_data_align (void);
 
 int
-mono_unwind_get_dwarf_pc_reg (void) MONO_INTERNAL;
+mono_unwind_get_dwarf_pc_reg (void);
 
 guint8*
-mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len) MONO_INTERNAL;
+mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len);
 
 void
 mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len, 
 				   guint8 *start_ip, guint8 *end_ip, guint8 *ip, guint8 **mark_locations,
-				   mgreg_t *regs, int nregs,
+				   mono_unwind_reg_t *regs, int nregs,
 				   mgreg_t **save_locations, int save_locations_len,
-				   guint8 **out_cfa) MONO_INTERNAL;
+				   guint8 **out_cfa);
 
-void mono_unwind_init (void) MONO_INTERNAL;
+void mono_unwind_init (void);
 
-void mono_unwind_cleanup (void) MONO_INTERNAL;
+void mono_unwind_cleanup (void);
 
-guint32 mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len) MONO_INTERNAL;
+guint32 mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len);
 
-guint8* mono_get_cached_unwind_info (guint32 index, guint32 *unwind_info_len) MONO_INTERNAL;
+guint8* mono_get_cached_unwind_info (guint32 index, guint32 *unwind_info_len);
 
 guint8* mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len, MonoJitExceptionInfo **ex_info, guint32 *ex_info_len, gpointer **type_info, int *this_reg, int *this_offset) MONO_LLVM_INTERNAL;
 
@@ -172,9 +177,9 @@ typedef struct {
 } MonoLLVMFDEInfo;
 
 void
-mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res) MONO_INTERNAL;
+mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 *code, MonoLLVMFDEInfo *res);
 
-GSList* mono_unwind_get_cie_program (void) MONO_INTERNAL;
+GSList* mono_unwind_get_cie_program (void);
 
 void mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len) MONO_LLVM_INTERNAL;
 

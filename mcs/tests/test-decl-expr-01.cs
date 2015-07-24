@@ -1,3 +1,4 @@
+// Compiler options: -langversion:experimental
 using System;
 
 class DeclarationExpression
@@ -29,9 +30,9 @@ class DeclarationExpression
 		if (r2 != 8)
 			return 6;
 
-		Out2 (str: "b", v: out var o5);
-		if (o5 != 9)
-			return 7;
+//		Out2 (str: "b", v: out var o5);
+//		if (o5 != 9)
+//			return 7;
 
 		Out3 (out var o6 = 9m);
 		if (o6.GetType () != typeof (decimal))

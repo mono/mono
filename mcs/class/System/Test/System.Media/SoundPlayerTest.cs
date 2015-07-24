@@ -7,7 +7,6 @@
 // (C) 2007 Gert Driesen
 // 
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -104,4 +103,3 @@ namespace MonoTests.System.Media
 	}
 }
 
-#endif

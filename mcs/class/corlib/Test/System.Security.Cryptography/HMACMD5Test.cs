@@ -8,7 +8,6 @@
 // Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -210,8 +209,13 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] digest = { 0x6f, 0x63, 0x0f, 0xad, 0x67, 0xcd, 0xa0, 0xee, 0x1f, 0xb1, 0xf5, 0x62, 0xdb, 0x3a, 0xa5, 0x3e };
 			Check ("RFC2202-TC7", key, data, digest);
 		}
-	}
 
+		[Test]
+		public void Create_Incorrect ()
+		{
+			var x = HMACMD5.Create ();
+			Assert.AreEqual ("SHA1", x.HashName, "https://connect.microsoft.com/VisualStudio/feedback/details/838731/all-hmac-create-methods-return-an-instance-of-hmacmd5");
+		}
+	}
 }
 
-#endif

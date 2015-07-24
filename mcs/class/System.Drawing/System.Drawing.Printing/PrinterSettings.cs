@@ -38,9 +38,6 @@ using System.Drawing.Imaging;
 namespace System.Drawing.Printing
 {
 	[Serializable]
-#if ! NET_2_0
-	[ComVisible(false)]
-#endif	
 	public class PrinterSettings : ICloneable
 	{
 		private string printer_name;
@@ -219,11 +216,7 @@ namespace System.Drawing.Printing
 				return paper_sources;
 			}
 		}
-#if NET_2_0
 		public
-#else
-		internal
-#endif
 		string PrintFileName
 		{
 			get { return print_filename; }
@@ -310,7 +303,6 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		}
-#if NET_2_0
 		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
 		public Graphics CreateMeasurementGraphics(bool honorOriginAtMargins)		
 		{
@@ -328,7 +320,6 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		} 
-#endif		
 
 		[MonoTODO("PrinterSettings.GetHdevmode")]
 		public IntPtr GetHdevmode()
@@ -348,7 +339,6 @@ namespace System.Drawing.Printing
 			throw new NotImplementedException();
 		}
 		
-#if NET_2_0
 
 		[MonoTODO("IsDirectPrintingSupported")]
 		public bool IsDirectPrintingSupported (Image image)
@@ -361,7 +351,6 @@ namespace System.Drawing.Printing
 		{
 			throw new NotImplementedException();
 		}
-#endif
 
 		[MonoTODO("PrinterSettings.SetHdevmode")]
 		public void SetHdevmode(IntPtr hdevmode)
@@ -400,13 +389,9 @@ namespace System.Drawing.Printing
 			int ICollection.Count { get { return _PaperSources.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }			
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
       			public int Add (PaperSource paperSource) {return _PaperSources.Add (paperSource); }
 			public void CopyTo (PaperSource[] paperSources, int index)  {throw new NotImplementedException (); }
-#else
-			internal int Add (PaperSource paperSource) {return _PaperSources.Add (paperSource); }
-#endif
 			
 			public virtual PaperSource this[int index] {
 				get { return _PaperSources[index] as PaperSource; }
@@ -447,13 +432,9 @@ namespace System.Drawing.Printing
 			int ICollection.Count { get { return _PaperSizes.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }			
-#if NET_2_0		
 			[EditorBrowsable(EditorBrowsableState.Never)]
 			public int Add (PaperSize paperSize) {return _PaperSizes.Add (paperSize); }	
 			public void CopyTo (PaperSize[] paperSizes, int index) {throw new NotImplementedException (); }			
-#else
-			internal int Add (PaperSize paperSize) {return _PaperSizes.Add (paperSize); }	
-#endif
 			
 			public virtual PaperSize this[int index] {
 				get { return _PaperSizes[index] as PaperSize; }
@@ -493,13 +474,9 @@ namespace System.Drawing.Printing
 			int ICollection.Count { get { return _PrinterResolutions.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }			
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
 			public int Add (PrinterResolution printerResolution) { return _PrinterResolutions.Add (printerResolution); }
 			public void CopyTo (PrinterResolution[] printerResolutions, int index) {throw new NotImplementedException (); }
-#else
-			internal int Add (PrinterResolution printerResolution) { return _PrinterResolutions.Add (printerResolution); }
-#endif
 						
 			public virtual PrinterResolution this[int index] {
 				get { return _PrinterResolutions[index] as PrinterResolution; }
@@ -543,13 +520,9 @@ namespace System.Drawing.Printing
 			public virtual string this[int index] {
 				get { return _Strings[index] as string; }
 			}
-#if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
       			public int Add (string value) { return _Strings.Add (value); }
       			public void CopyTo (string[] strings, int index) {throw new NotImplementedException (); }      			
-#else
-			internal int Add (string value) { return _Strings.Add (value); }
-#endif
 
 			IEnumerator IEnumerable.GetEnumerator()
 			{

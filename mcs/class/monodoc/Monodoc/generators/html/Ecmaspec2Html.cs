@@ -17,7 +17,7 @@ namespace Monodoc.Generators.Html
 			get {
 				if (css_ecmaspec != null)
 					return css_ecmaspec;
-				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
+				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly (typeof (Ecmaspec2Html));
 				Stream str_css = assembly.GetManifestResourceStream ("ecmaspec.css");
 				css_ecmaspec = (new StreamReader (str_css)).ReadToEnd ();
 				return css_ecmaspec;
@@ -46,7 +46,7 @@ namespace Monodoc.Generators.Html
 		{
 			if (ecma_transform == null){
 				ecma_transform = new XslTransform ();
-				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
+				System.Reflection.Assembly assembly = System.Reflection.Assembly.GetAssembly (typeof (Ecmaspec2Html));
 				Stream stream;
 				stream = assembly.GetManifestResourceStream ("ecmaspec-html-css.xsl");
 

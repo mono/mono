@@ -136,12 +136,8 @@ namespace I18N.CJK
                 byte b1 = convert.u2n[((int)c) * 2];
                 byte b2 = convert.u2n[((int)c) * 2 + 1];
                 if (b1 == 0 && b2 == 0) {
-#if NET_2_0
                     // FIXME: handle fallback for GetByteCountImpl().
                     length++;
-#else
-                    length++;
-#endif
                 }
                 else
                     length += 2;
@@ -157,9 +153,7 @@ namespace I18N.CJK
             int byteIndex = 0;
 			int end = charCount;
             DbcsConvert convert = GetConvert ();
-#if NET_2_0
             EncoderFallbackBuffer buffer = null;
-#endif
 
             // 00 00 - FF FF
             int origIndex = byteIndex;
@@ -172,12 +166,8 @@ namespace I18N.CJK
                 byte b1 = convert.u2n[((int)c) * 2];
                 byte b2 = convert.u2n[((int)c) * 2 + 1];
                 if (b1 == 0 && b2 == 0) {
-#if NET_2_0
                     HandleFallback (ref buffer, chars, ref i, ref charCount,
                         bytes, ref byteIndex, ref byteCount, null);
-#else
-                    bytes[byteIndex++] = (byte)'?';
-#endif
                 } else {
                     bytes[byteIndex++] = b1;
                     bytes[byteIndex++] = b2;
@@ -205,12 +195,8 @@ namespace I18N.CJK
 				byte b2 = convert.u2n[((int)c) * 2 + 1];
 				if (b1 == 0 && b2 == 0)
 				{
-#if NET_2_0
 					// FIXME: handle fallback for GetByteCountImpl().
 					length++;
-#else
-                    length++;
-#endif
 				}
 				else
 					length += 2;
@@ -225,9 +211,7 @@ namespace I18N.CJK
 			int end = charIndex + charCount;
 
 			DbcsConvert convert = GetConvert();
-#if NET_2_0
 			EncoderFallbackBuffer buffer = null;
-#endif
 
 			// 00 00 - FF FF
 			int origIndex = byteIndex;
@@ -243,12 +227,8 @@ namespace I18N.CJK
 				byte b2 = convert.u2n[((int)c) * 2 + 1];
 				if (b1 == 0 && b2 == 0)
 				{
-#if NET_2_0
 					HandleFallback (ref buffer, chars, ref i, ref charCount,
 						bytes, ref byteIndex, ref byteCount, null);
-#else
-                    bytes[byteIndex++] = (byte)'?';
-#endif
 				}
 				else
 				{
@@ -295,9 +275,7 @@ namespace I18N.CJK
                 return GetCharCount (bytes, index, count, false);
             }
 
-#if NET_2_0
             public override
-#endif
             int GetCharCount (byte [] bytes, int index, int count, bool refresh)
             {
                 CheckRange (bytes, index, count);
@@ -387,9 +365,7 @@ namespace I18N.CJK
                 return GetChars (bytes, byteIndex, byteCount, chars, charIndex, false);
             }
 
-#if NET_2_0
             public override
-#endif
             int GetChars(byte[] bytes, int byteIndex,
                                 int byteCount, char[] chars, int charIndex, bool refresh)
             {

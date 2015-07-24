@@ -5,7 +5,6 @@
 // 	Robert Jordan (robertj@gmx.net)
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -115,4 +114,3 @@ namespace MonoTests.Remoting
 	}
 }
 
-#endif

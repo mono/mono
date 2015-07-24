@@ -36,10 +36,8 @@ using System.Net.Sockets;
 using System.Security.Principal;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
-#if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.NetworkInformation {
 	[MonoTODO ("IPv6 support is missing")]
@@ -83,9 +81,7 @@ namespace System.Net.NetworkInformation {
 
 		BackgroundWorker worker;
 		object user_async_state;
-#if NET_4_5
 		CancellationTokenSource cts;
-#endif
 		
 		public event PingCompletedEventHandler PingCompleted;
 		
@@ -155,9 +151,7 @@ namespace System.Net.NetworkInformation {
 		{
 			user_async_state = null;
 			worker = null;
-#if NET_4_5
 			cts = null;
-#endif
 
 			if (PingCompleted != null)
 				PingCompleted (this, e);
@@ -292,7 +286,7 @@ namespace System.Net.NetworkInformation {
 
 		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
-			DateTime sentTime = DateTime.Now;
+			DateTime sentTime = DateTime.UtcNow;
 
 			Process ping = new Process ();
 			string args = BuildPingArgs (address, timeout, options);
@@ -307,6 +301,7 @@ namespace System.Net.NetworkInformation {
 			ping.StartInfo.RedirectStandardOutput = true;
 			ping.StartInfo.RedirectStandardError = true;
 
+			IPStatus status = IPStatus.Unknown;
 			try {
 				ping.Start ();
 
@@ -315,23 +310,21 @@ namespace System.Net.NetworkInformation {
 				string stderr = ping.StandardError.ReadToEnd ();
 #pragma warning restore 219
 				
-				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+				trip_time = (long) (DateTime.UtcNow - sentTime).TotalMilliseconds;
 				if (!ping.WaitForExit (timeout) || (ping.HasExited && ping.ExitCode == 2))
-					return new PingReply (address, buffer, options, trip_time, IPStatus.TimedOut); 
-
-				if (ping.ExitCode == 1)
-					return new PingReply (address, buffer, options, trip_time, IPStatus.TtlExpired);
-			} catch (Exception) {
-				return new PingReply (address, buffer, options, trip_time, IPStatus.Unknown);
+					status = IPStatus.TimedOut;
+				else if (ping.ExitCode == 0)
+					status = IPStatus.Success;
+				else if (ping.ExitCode == 1)
+					status = IPStatus.TtlExpired;
+			} catch {
 			} finally {
-				if (ping != null) {
-					if (!ping.HasExited)
-						ping.Kill ();
-					ping.Dispose ();
-				}
+				if (!ping.HasExited)
+					ping.Kill ();
+				ping.Dispose ();
 			}
 
-			return new PingReply (address, buffer, options, trip_time, IPStatus.Success);
+			return new PingReply (address, buffer, options, trip_time, status);
 		}
 
 		// Async
@@ -374,13 +367,8 @@ namespace System.Net.NetworkInformation {
 
 		public void SendAsync (IPAddress address, int timeout, byte [] buffer, PingOptions options, object userToken)
 		{
-#if NET_4_5
 			if ((worker != null) || (cts != null))
 				throw new InvalidOperationException ("Another SendAsync operation is in progress");
-#else
-			if (worker != null)
-				throw new InvalidOperationException ("Another SendAsync operation is in progress");
-#endif
 
 			worker = new BackgroundWorker ();
 			worker.DoWork += delegate (object o, DoWorkEventArgs ea) {
@@ -403,12 +391,10 @@ namespace System.Net.NetworkInformation {
 
 		public void SendAsyncCancel ()
 		{
-#if NET_4_5
 			if (cts != null) {
 				cts.Cancel ();
 				return;
 			}
-#endif
 
 			if (worker == null)
 				throw new InvalidOperationException ("SendAsync operation is not in progress");
@@ -534,7 +520,7 @@ namespace System.Net.NetworkInformation {
 			CultureInfo culture = CultureInfo.InvariantCulture;
 			StringBuilder args = new StringBuilder ();
 			uint t = Convert.ToUInt32 (Math.Floor ((timeout + 1000) / 1000.0));
-			bool is_mac = ((int) Environment.OSVersion.Platform == 6);
+			bool is_mac = Platform.IsMacOS;
 			if (!is_mac)
 				args.AppendFormat (culture, "-q -n -c {0} -w {1} -t {2} -M ", DefaultCount, t, options.Ttl);
 			else
@@ -549,7 +535,6 @@ namespace System.Net.NetworkInformation {
 			return args.ToString ();
 		}
 
-#if NET_4_5
 		public Task<PingReply> SendPingAsync (IPAddress address, int timeout, byte [] buffer)
 		{
 			return SendPingAsync (address, default_timeout, default_buffer, new PingOptions ());
@@ -605,7 +590,6 @@ namespace System.Net.NetworkInformation {
 
 			return task;
 		}
-#endif
 	}
 }
 

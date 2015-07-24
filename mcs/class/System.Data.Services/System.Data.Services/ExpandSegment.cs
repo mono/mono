@@ -30,9 +30,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-#if NET_4_0
 using System.Data.Services.Providers;
-#endif
 
 namespace System.Data.Services
 {
@@ -47,13 +45,11 @@ namespace System.Data.Services
 			this.Name = name;
 			this.Filter = filter;
 		}
-#if NET_4_0
 		public ResourceProperty ExpandedProperty {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 		public string Name {
 			get;
 			private set;

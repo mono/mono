@@ -257,9 +257,7 @@ namespace MonoTests.System.Web {
 		[SetUp]
 		public void SetUp ()
 		{
-#if NET_2_0
 			AppDomain.CurrentDomain.SetData (".appPath", AppDomain.CurrentDomain.BaseDirectory);
-#endif
 		}
 
 		[Test]
@@ -452,11 +450,9 @@ namespace MonoTests.System.Web {
 			a.Add ("somefile.txt");
 			c.Response.AddFileDependencies (a);
 
-#if NET_2_0
 			string[] sa = new string [1] {"somefile.txt"};
 			c = Cook (1, out f);
 			c.Response.AddFileDependencies (sa);
-#endif
 
 			c = Cook (1, out f);
 			c.Response.AddFileDependency ("somefile.txt");
@@ -626,14 +622,10 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B6");
 			Assert.AreEqual ("text/html", known.Value, "#B7");
 
-#if NET_2_0
 			Assert.AreEqual (1, f.UnknownResponseHeaders.Count, "#C1");
 			UnknownResponseHeader unknown = (UnknownResponseHeader) f.UnknownResponseHeaders ["X-AspNet-Version"];
 			Assert.AreEqual ("X-AspNet-Version", unknown.Name, "#C2");
 			Assert.AreEqual (Environment.Version.ToString (3), unknown.Value, "#C3");
-#else
-			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#C1");
-#endif
 		}
 
 		[Test]
@@ -900,17 +892,12 @@ namespace MonoTests.System.Web {
 			try {
 				out_stream.Write ((byte []) null, 0, 0);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreEqual ("buffer", ex.ParamName, "#5");
 			}
-#else
-			} catch (NullReferenceException) {
-			}
-#endif
 		}
 
 		[Test]
@@ -968,7 +955,6 @@ namespace MonoTests.System.Web {
 			byte [] buffer = new byte [] { 0x0a, 0x1f, 0x2d };
 
 			// offset == buffer length
-#if NET_2_0
 			try {
 				out_stream.Write (buffer, buffer.Length, 0);
 				Assert.Fail ("#A1");
@@ -978,12 +964,8 @@ namespace MonoTests.System.Web {
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.AreEqual ("offset", ex.ParamName, "#A5");
 			}
-#else
-			out_stream.Write (buffer, buffer.Length, 0);
-#endif
 
 			// offset > buffer length
-#if NET_2_0
 			try {
 				out_stream.Write (buffer, buffer.Length + 1, 0);
 				Assert.Fail ("#B1");
@@ -993,9 +975,6 @@ namespace MonoTests.System.Web {
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("offset", ex.ParamName, "#B5");
 			}
-#else
-			out_stream.Write (buffer, buffer.Length + 1, 0);
-#endif
 
 			response.Flush ();
 			Assert.AreEqual (0, worker.data_len);

@@ -38,8 +38,6 @@ namespace System.Reflection {
 		I386 = 332,
 		IA64 = 512,
 		AMD64 = 34404,
-#if NET_4_5
 		ARM = 452,
-#endif
 	}
 }

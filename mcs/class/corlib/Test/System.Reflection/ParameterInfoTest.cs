@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -72,7 +73,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0 && !NET_2_1
+#if !NET_2_1
 		public enum ParamEnum {
 			None = 0,
 			Foo = 1,
@@ -260,6 +261,26 @@ namespace MonoTests.System.Reflection
 		}
 #endif
 
+		class TestParamAttribute : Attribute
+		{
+		}
+
+		public static int TestCustomAttribute_Method ([TestParamAttribute] string arg)
+		{
+			return arg.Length;
+		}
+
+		[Test]
+		public void TestCustomAttribute ()
+		{
+			var metInfo = GetType ().GetMethod ("TestCustomAttribute_Method", new Type[] { typeof(string) });
+			var paramInfos = metInfo.GetParameters ();
+			var argParamInfo = paramInfos[0];
+
+			var custAttrs = argParamInfo.GetCustomAttributes ();
+			Assert.AreEqual (1, custAttrs.Count ());
+		}
+
 		class MyParameterInfo2 : ParameterInfo
 		{
 			public ParameterAttributes MyAttrsImpl;
@@ -332,7 +353,9 @@ namespace MonoTests.System.Reflection
 			}
 #endif
 			Assert.IsFalse (p.IsIn, "#7");
+#if FEATURE_USE_LCID
 			Assert.IsFalse (p.IsLcid, "#8");
+#endif
 			Assert.IsFalse (p.IsOptional, "#9");
 			Assert.IsFalse (p.IsOut, "#10");
 			Assert.IsFalse (p.IsRetval, "#10");

@@ -74,11 +74,7 @@ namespace MonoTests.System.CodeDom.Compiler
 		[TestFixtureTearDown]
 		public void FixtureTearDown ()
 		{
-#if NET_2_0
 			winid.Dispose ();
-#else
-			GC.KeepAlive (winid);
-#endif
 		}
 
 		[Test]

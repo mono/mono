@@ -45,11 +45,13 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
+tailcall: len:120 clob:c
 memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
 break: len:40
 seq_point: len:48
+il_seq_point: len:0
 jmp: len:96
 call: dest:a clob:c len:36
 br: len:4
@@ -380,7 +382,7 @@ vcall2_membase: src1:b len:16 clob:c
 
 jump_table: dest:i len:20
 
-atomic_add_i4: src1:b src2:i dest:i len:20
-atomic_add_i8: src1:b src2:i dest:i len:20
+atomic_add_i4: src1:b src2:i dest:i len:28
+atomic_add_i8: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 atomic_cas_i8: src1:b src2:i src3:i dest:i len:38

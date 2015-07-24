@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -201,4 +200,3 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 
-#endif

@@ -551,7 +551,6 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Relation2", dr.RelationName, "#1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void DataRelationTest()
 		{
@@ -576,6 +575,5 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#1");
 			} catch (InvalidConstraintException) { }
 		}
-#endif
 	}
 }

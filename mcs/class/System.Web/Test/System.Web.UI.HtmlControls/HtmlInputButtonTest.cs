@@ -102,18 +102,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void ViewState ()
 		{
 			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
-#if NET_2_0
 			p.CausesValidation = false;
 			p.ValidationGroup = "VG";
-#endif
 			object s = p.SaveState();
 			HtmlInputButtonPoker copy = new HtmlInputButtonPoker ();
 			copy.LoadState (s);
 
-#if NET_2_0
 			Assert.IsFalse (copy.CausesValidation, "A1");
 			Assert.AreEqual ("VG", p.ValidationGroup, "A2");
-#endif
 		}
 
 		[Test]
@@ -127,22 +123,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			p.Page = new Page ();
 
 			p.CausesValidation = false;
-#if NET_2_0
 			p.ValidationGroup = "VG";
 
 			Assert.AreEqual (3, p.Attributes.Count, "A1");
-#else
-			Assert.AreEqual (2, p.Attributes.Count, "A1");
-#endif
 
 			tw.WriteBeginTag ("dummy");
 			p.DoRenderAttributes (tw);
 			tw.Write ('>');
-#if NET_2_0
 			HtmlDiff.AssertAreEqual ("<dummy name type=\"button\" ValidationGroup=\"VG\" />", sw.ToString (), "A2");
-#else
-			HtmlDiff.AssertAreEqual ("<dummy name type=\"button\" />", sw.ToString (), "A2");
-#endif
 		}
 
 		[Test]
@@ -214,9 +202,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick2 ()
 		{
 			Page page = new Page ();
-#if NET_2_0
 			page.EnableEventValidation = false;
-#endif
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("button");
 			page.Controls.Add (it);
 			it.ID = "id1";
@@ -240,9 +226,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick4 ()
 		{
 			Page page = new Page ();
-#if NET_2_0
 			page.EnableEventValidation = false;
-#endif
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
 			page.Controls.Add (it);
 			it.ID = "id1";
@@ -257,9 +241,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick5 ()
 		{
 			Page page = new Page ();
-#if NET_2_0
 			page.EnableEventValidation = false;
-#endif
 			RequiredFieldValidator val = new RequiredFieldValidator ();
 			val.ControlToValidate = "id1";
 			page.Validators.Add (val);

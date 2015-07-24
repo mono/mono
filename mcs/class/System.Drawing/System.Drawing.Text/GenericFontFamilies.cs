@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Text {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum GenericFontFamilies {
 		Monospace = 2,
 		SansSerif = 1,

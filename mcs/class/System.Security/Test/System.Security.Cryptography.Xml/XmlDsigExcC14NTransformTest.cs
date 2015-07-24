@@ -19,7 +19,6 @@
 //	output XML. So, they are *not* from c14n specification.
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -598,4 +597,3 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}    
 }
 
-#endif

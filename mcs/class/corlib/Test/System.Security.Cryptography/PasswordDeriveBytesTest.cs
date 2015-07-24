@@ -46,9 +46,7 @@ public class PasswordDeriveBytesTest {
 	// Constructors
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void Ctor_PasswordNullSalt ()
 	{
 		string pwd = null;
@@ -74,11 +72,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#else
-	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
-#endif
 	public void Ctor_PasswordNullSaltCspParameters ()
 	{
 		string pwd = null;
@@ -119,9 +113,7 @@ public class PasswordDeriveBytesTest {
 #endif
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#endif
 	public void Ctor_PasswordNullSaltHashIteration ()
 	{
 		string pwd = null;
@@ -177,11 +169,7 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-#if NET_2_0
 	[ExpectedException (typeof (ArgumentNullException))]
-#else
-	[Category ("NotWorking")] // CspParameters aren't supported by Mono (requires CryptoAPI)
-#endif
 	public void Ctor_PasswordNullSaltHashIterationCspParameters ()
 	{
 		string pwd = null;
@@ -266,10 +254,6 @@ public class PasswordDeriveBytesTest {
 	}
 
 	[Test]
-#if !NET_2_0
-	// Fixed in 2.0 beta 1
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void Property_Salt ()
 	{
 		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt);
@@ -290,19 +274,6 @@ public class PasswordDeriveBytesTest {
 
 	// 1.0/1.1 compatibility
 
-#if !NET_2_0
-	// 1.0/1.1 accepted a null password as valid - but throw the 
-	// ArgumentNullException when GetBytes is called
-	// byte stream from the null input. Check that we can do the same...
-	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void GetBytes_PasswordNull ()
-	{
-		string pwd = null;
-		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt);
-		pdb.GetBytes (24);
-	}
-#endif
 
 	// Old tests
 
@@ -674,51 +645,14 @@ public class PasswordDeriveBytesTest {
 		}
 
 		pd.Reset ();
-#if NET_2_0
 		// finally a useful reset :)
 		pd.HashName = "SHA256";
 		pd.Salt = expectedKey;
 		pd.IterationCount = 10;
-#else
-		// same thing after Reset
-		try {
-			pd.HashName = "SHA256";
-			Assert.Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Assert.Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got " + e.ToString ());
-		}
-		try {
-			pd.Salt = expectedKey;
-			Assert.Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Assert.Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got " + e.ToString ());
-		}
-		try {
-			pd.IterationCount = 10;
-			Assert.Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Assert.Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got " + e.ToString ());
-		}
-#endif
 	}
 
 	// FIXME: should we treat this as a bug or as a feature ?
 	[Test]
-#if ! NET_2_0
-	[ExpectedException (typeof (NullReferenceException))]
-#endif
 	public void StrangeBehaviour ()
 	{
 		// create object with a salt...
@@ -732,7 +666,7 @@ public class PasswordDeriveBytesTest {
 	public void CryptDeriveKey_TooLongKey () 
 	{
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
-		pd.CryptDeriveKey ("AlgName", "MD5", 256, new byte [8]);
+		pd.CryptDeriveKey ("AlgName", "MD5", -256, new byte [8]);
 	}
 		
 #if !NET_2_1

@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Globalization;
@@ -103,6 +102,13 @@ namespace System.Web.Hosting {
 
 		public static VirtualPathProvider VirtualPathProvider {
 			get { return vpath_provider; }
+		}
+
+		public static bool InClientBuildManager {
+			get {
+				// Mono doesn't have a ClientBuildManager, so we can't be in it. Simple as that.
+				return false;
+			}
 		}
 
 		public static void DecrementBusyCount ()
@@ -209,4 +215,3 @@ namespace System.Web.Hosting {
 	}
 }
 
-#endif

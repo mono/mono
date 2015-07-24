@@ -145,7 +145,7 @@ mono_trace_push (GLogLevelFlags level, MonoTraceMask mask)
 	if(level_stack == NULL)
 		g_error("%s: cannot use mono_trace_push without calling mono_trace_init first.", __func__);
 	else {
-		MonoLogLevelEntry *entry = g_malloc(sizeof(MonoLogLevelEntry));
+		MonoLogLevelEntry *entry = (MonoLogLevelEntry *) g_malloc(sizeof(MonoLogLevelEntry));
 		entry->level	= current_level;
 		entry->mask		= current_mask;
 
@@ -213,10 +213,10 @@ mono_trace_set_mask_string (const char *value)
 	const char *tok;
 	guint32 flags = 0;
 
-	const char *valid_flags[] = {"asm", "type", "dll", "gc", "cfg", "aot", "security", "all", NULL};
+	const char *valid_flags[] = {"asm", "type", "dll", "gc", "cfg", "aot", "security", "threadpool", "all", NULL};
 	const MonoTraceMask	valid_masks[] = {MONO_TRACE_ASSEMBLY, MONO_TRACE_TYPE, MONO_TRACE_DLLIMPORT,
-						 MONO_TRACE_GC, MONO_TRACE_CONFIG, MONO_TRACE_AOT, MONO_TRACE_SECURITY, 
-						 MONO_TRACE_ALL };
+						 MONO_TRACE_GC, MONO_TRACE_CONFIG, MONO_TRACE_AOT, MONO_TRACE_SECURITY,
+						 MONO_TRACE_THREADPOOL, MONO_TRACE_ALL };
 
 	if(!value)
 		return;
@@ -242,7 +242,7 @@ mono_trace_set_mask_string (const char *value)
 		}
 	}
 
-	mono_trace_set_mask (flags);
+	mono_trace_set_mask ((MonoTraceMask) flags);
 }
 
 /*
@@ -337,5 +337,5 @@ mono_trace_set_printerr_handler (MonoPrintCallback callback)
 {
 	g_assert (callback);
 	printerr_callback = callback;
-	g_set_print_handler (printerr_handler);
+	g_set_printerr_handler (printerr_handler);
 }

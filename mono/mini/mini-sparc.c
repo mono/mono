@@ -480,7 +480,6 @@ get_call_info (MonoCompile *cfg, MonoMethodSignature *sig, gboolean is_pinvoke)
 	guint32 stack_size = 0;
 	CallInfo *cinfo;
 	MonoType *ret_type;
-	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 
 	cinfo = g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
 
@@ -526,8 +525,7 @@ get_call_info (MonoCompile *cfg, MonoMethodSignature *sig, gboolean is_pinvoke)
 			add_general (&gr, &stack_size, ainfo, FALSE);
 			continue;
 		}
-		ptype = mono_type_get_underlying_type (sig->params [i]);
-		ptype = mini_get_basic_type_from_generic (gsctx, ptype);
+		ptype = mini_get_underlying_type (sig->params [i]);
 		switch (ptype->type) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
@@ -615,8 +613,7 @@ get_call_info (MonoCompile *cfg, MonoMethodSignature *sig, gboolean is_pinvoke)
 	}
 
 	/* return value */
-	ret_type = mono_type_get_underlying_type (sig->ret);
-	ret_type = mini_get_basic_type_from_generic (gsctx, ret_type);
+	ret_type = mini_get_underlying_type (sig->ret);
 	switch (ret_type->type) {
 	case MONO_TYPE_BOOLEAN:
 	case MONO_TYPE_I1:
@@ -802,7 +799,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			cfg->ret->inst_c0 = cinfo->ret.reg;
 			break;
 		case ArgInIRegPair: {
-			MonoType *t = mono_type_get_underlying_type (sig->ret);
+			MonoType *t = mini_get_underlying_type (sig->ret);
 			if (((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MonoInst *low = get_vreg_to_inst (cfg, cfg->ret->dreg + 1);
 				MonoInst *high = get_vreg_to_inst (cfg, cfg->ret->dreg + 2);
@@ -871,7 +868,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
 			size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), &align);
 		else
-			size = mini_type_stack_size (cfg->generic_sharing_context, inst->inst_vtype, &align);
+			size = mini_type_stack_size (inst->inst_vtype, &align);
 
 		/* 
 		 * This is needed since structures containing doubles must be doubleword 
@@ -1304,7 +1301,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
-		arg_type = mono_type_get_underlying_type (arg_type);
+		arg_type = mini_get_underlying_type (arg_type);
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis])))
 			emit_pass_vtype (cfg, call, cinfo, ainfo, arg_type, in, sig->pinvoke);
 		else if (!arg_type->byref && ((arg_type->type == MONO_TYPE_I8) || (arg_type->type == MONO_TYPE_U8)))
@@ -1340,7 +1337,7 @@ void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
 	CallInfo *cinfo = get_call_info (cfg, mono_method_signature (method), FALSE);
-	MonoType *ret = mini_type_get_underlying_type (cfg->generic_sharing_context, mono_method_signature (method)->ret);
+	MonoType *ret = mini_get_underlying_type (mono_method_signature (method)->ret);
 
 	switch (cinfo->ret.storage) {
 	case ArgInIReg:
@@ -2014,7 +2011,7 @@ emit_save_sp_to_lmf (MonoCompile *cfg, guint32 *code)
 }
 
 static guint32*
-emit_vret_token (MonoGenericSharingContext *gsctx, MonoInst *ins, guint32 *code)
+emit_vret_token (MonoInst *ins, guint32 *code)
 {
 	MonoCallInst *call = (MonoCallInst*)ins;
 	guint32 size;
@@ -2025,7 +2022,7 @@ emit_vret_token (MonoGenericSharingContext *gsctx, MonoInst *ins, guint32 *code)
 	 */
 	if (call->signature->pinvoke && MONO_TYPE_ISSTRUCT(call->signature->ret)) {
 		if (call->signature->ret->type == MONO_TYPE_TYPEDBYREF)
-			size = mini_type_stack_size (gsctx, call->signature->ret, NULL);
+			size = mini_type_stack_size (call->signature->ret, NULL);
 		else
 			size = mono_class_native_size (call->signature->ret->data.klass, NULL);
 		sparc_unimp (code, size & 0xfff);
@@ -2892,7 +2889,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 			    code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
 
-			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
+			code = emit_vret_token (ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_FCALL_REG:
@@ -2914,7 +2911,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				sparc_nop (code);
 
-			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
+			code = emit_vret_token (ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_FCALL_MEMBASE:
@@ -2937,7 +2934,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				sparc_nop (code);
 
-			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
+			code = emit_vret_token (ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_SETFRET:
@@ -3668,7 +3665,7 @@ mono_arch_register_lowlevel_calls (void)
 }
 
 void
-mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, MonoCodeManager *dyn_code_mp, gboolean run_cctors)
+mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
 
@@ -3682,17 +3679,6 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_NONE:
 			continue;
-		case MONO_PATCH_INFO_CLASS_INIT: {
-			guint32 *ip2 = (guint32*)ip;
-			/* Might already been changed to a nop */
-#ifdef SPARCV9
-			sparc_set_template (ip2, sparc_o7);
-			sparc_jmpl (ip2, sparc_o7, sparc_g0, sparc_o7);
-#else
-			sparc_call_simple (ip2, 0);
-#endif
-			break;
-		}
 		case MONO_PATCH_INFO_METHOD_JUMP: {
 			guint32 *ip2 = (guint32*)ip;
 			/* Might already been patched */
@@ -3782,7 +3768,7 @@ mono_arch_instrument_epilog_full (MonoCompile *cfg, void *func, void *p, gboolea
 	int save_mode = SAVE_NONE;
 	MonoMethod *method = cfg->method;
 
-	switch (mono_type_get_underlying_type (mono_method_signature (method)->ret)->type) {
+	switch (mini_get_underlying_type (mono_method_signature (method)->ret)->type) {
 	case MONO_TYPE_VOID:
 		/* special case string .ctor icall */
 		if (strcmp (".ctor", method->name) && method->klass == mono_defaults.string_class)
@@ -4393,7 +4379,7 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
  * Returns the size of the activation frame.
  */
 int
-mono_arch_get_argument_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
+mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info)
 {
 	int k, align;
 	CallInfo *cinfo;

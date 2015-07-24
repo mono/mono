@@ -30,16 +30,18 @@ namespace SharpCompress.Writer.Zip
 
         private readonly List<ZipCentralDirectoryEntry> entries = new List<ZipCentralDirectoryEntry>();
         private readonly string zipComment;
+        private readonly Encoding encoding;
         private long streamPosition;
 
 #if PPMd
         private readonly PpmdProperties ppmdProperties; // Caching properties to speed up PPMd.
 #endif
 
-        public ZipWriter(Stream destination, CompressionInfo compressionInfo, string zipComment)
+        public ZipWriter(Stream destination, CompressionInfo compressionInfo, string zipComment, Encoding encoding = null)
             : base(ArchiveType.Zip)
         {
             this.zipComment = zipComment ?? string.Empty;
+            this.encoding = encoding ?? ArchiveEncoding.Default;
 
             switch (compressionInfo.Type)
             {
@@ -137,11 +139,11 @@ namespace SharpCompress.Writer.Zip
 
         private int WriteHeader(string filename, DateTime? modificationTime)
         {
-            byte[] encodedFilename = Encoding.UTF8.GetBytes(filename);
+            byte[] encodedFilename = encoding.GetBytes(filename);
 
             OutputStream.Write(BitConverter.GetBytes(ZipHeaderFactory.ENTRY_HEADER_BYTES), 0, 4);
             OutputStream.Write(new byte[] {63, 0}, 0, 2); //version
-            HeaderFlags flags = HeaderFlags.UTF8;
+            HeaderFlags flags = encoding == Encoding.UTF8 ? HeaderFlags.UTF8 : (HeaderFlags)0;
             if (!OutputStream.CanSeek)
             {
                 flags |= HeaderFlags.UsePostDataDescriptor;
@@ -172,7 +174,7 @@ namespace SharpCompress.Writer.Zip
 
         private void WriteEndRecord(uint size)
         {
-            byte[] encodedComment = Encoding.UTF8.GetBytes(zipComment);
+            byte[] encodedComment = encoding.GetBytes(zipComment);
 
             OutputStream.Write(new byte[] {80, 75, 5, 6, 0, 0, 0, 0}, 0, 8);
             OutputStream.Write(BitConverter.GetBytes((ushort) entries.Count), 0, 2);

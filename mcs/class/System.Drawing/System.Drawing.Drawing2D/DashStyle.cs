@@ -29,9 +29,6 @@
 
 namespace System.Drawing.Drawing2D {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum DashStyle {
 		Custom = 5,
 		Dash = 1,

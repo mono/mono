@@ -12,10 +12,7 @@
 using System;
 using System.Linq;
 using SLE = System.Linq.Expressions;
-
-#if NET_4_0 || MOBILE_DYNAMIC
 using System.Dynamic;
-#endif
 
 namespace Mono.CSharp
 {
@@ -787,7 +784,7 @@ namespace Mono.CSharp
 
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
-				if (ta.Resolve (ec)) {
+				if (ta.Resolve (ec, false)) {
 					var targs = new ArrayInitializer (ta.Count, loc);
 					foreach (TypeSpec t in ta.Arguments)
 						targs.Add (new TypeOf (t, loc));

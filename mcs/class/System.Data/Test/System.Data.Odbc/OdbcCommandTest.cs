@@ -217,11 +217,7 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("CommandTimeout", ex.ParamName, "#5");
-#else
-				Assert.IsNull (ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -232,7 +228,6 @@ namespace MonoTests.System.Data.Odbc
 			try {
 				cmd.CommandType = (CommandType) (666);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// The CommandType enumeration value, 666, is invalid
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
@@ -241,16 +236,6 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5:" + ex.Message);
 				Assert.AreEqual ("CommandType", ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// The CommandType enumeration value, 666, is invalid
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -270,11 +255,7 @@ namespace MonoTests.System.Data.Odbc
 
 				cmd.Dispose ();
 
-#if NET_2_0
 				Assert.AreEqual (string.Empty, cmd.CommandText, "CommandText");
-#else
-				Assert.AreEqual ("SELECT 'a'", cmd.CommandText, "CommandText");
-#endif
 				Assert.AreEqual (67, cmd.CommandTimeout, "CommandTimeout");
 				Assert.AreEqual (CommandType.StoredProcedure, cmd.CommandType, "CommandType");
 				Assert.IsNull (cmd.Connection, "Connection");
@@ -431,7 +412,6 @@ namespace MonoTests.System.Data.Odbc
 			try {
 				cmd.UpdatedRowSource = (UpdateRowSource) 666;
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentOutOfRangeException ex) {
 				// The UpdateRowSource enumeration value,666,
 				// is invalid
@@ -440,16 +420,6 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.AreEqual ("UpdateRowSource", ex.ParamName, "#5");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// The UpdateRowSource enumeration value, 666,
-				// is invalid
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 	}
 }

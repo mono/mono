@@ -39,18 +39,14 @@ namespace System.Drawing.Printing
 	public class PrintEventArgs : System.ComponentModel.CancelEventArgs
 	{
 		private GraphicsPrinter graphics_context;
-#if NET_2_0
 		internal PrintAction action;
-#endif		
 		
 		public PrintEventArgs()
 		{
 		}
-#if NET_2_0
 		public PrintAction PrintAction {
 			get { return action; }
 		}
-#endif
 
 		internal GraphicsPrinter GraphicsContext {
 			get { return graphics_context; }

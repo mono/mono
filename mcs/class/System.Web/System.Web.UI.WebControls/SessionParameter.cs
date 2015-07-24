@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Data;
@@ -68,11 +67,7 @@ namespace System.Web.UI.WebControls {
 		{
 			return new SessionParameter (this);
 		}
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		override object Evaluate (HttpContext ctx, Control control)
 		{
 			if (ctx == null || ctx.Session == null)
@@ -100,6 +95,5 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
 
 

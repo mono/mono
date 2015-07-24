@@ -214,6 +214,41 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			}
 		}
 
+		[Test]
+		public unsafe void ViewAccessorReadArrayWithOffset () {
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+			var offset = 3;
+			var expected = "lo!";
+
+			using (var v = file.CreateViewAccessor (offset, expected.Length)) {
+				// PointerOffset Mono implementation is always 0.
+				// Assert.AreEqual (offset, v.PointerOffset);
+
+				var a = new byte [expected.Length];
+				var n = v.ReadArray (0, a, 0, expected.Length);
+				Assert.AreEqual (expected.Length, n);
+				var s = new string (Array.ConvertAll (a, b => (char)b));
+				Assert.AreEqual (expected, s);
+			}
+		}
+
+		[Test]
+		public unsafe void ViewStreamReadWithOffset () {
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
+			var offset = 3;
+			var expected = "lo!";
+
+			using (var v = file.CreateViewStream (offset, expected.Length)) {
+				// PointerOffset Mono implementation is always 0.
+				// Assert.AreEqual (offset, v.PointerOffset);
+
+				var a = new byte [expected.Length];
+				var n = v.Read (a, 0, expected.Length);
+				Assert.AreEqual (expected.Length, n);
+				var s = new string (Array.ConvertAll (a, b => (char)b));
+				Assert.AreEqual (expected, s);
+			}
+		}
 
 		[Test]
 		public void NamedMappingToInvalidFile ()
@@ -315,6 +350,63 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			{
 				tw.WriteLine ("Hello World!");
 			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void CreateViewStreamWithOffsetPastFileEnd ()
+		{
+			string f = Path.Combine (tempDir, "8192-file");
+			File.WriteAllBytes (f, new byte [8192]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open, "myMap", 8192);
+
+			/* Should throw exception when trying to map past end of file */
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8200, 10, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void CreateViewStreamWithOffsetPastFileEnd2 ()
+		{
+			string f = Path.Combine (tempDir, "8192-file");
+			File.WriteAllBytes (f, new byte [8192]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
+
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (8191, 8191, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		[Test]
+		public void CreateViewStreamAlignToPageSize ()
+		{
+#if MONOTOUCH
+			// iOS bugs on ARM64 - bnc #27667 - apple #
+			int pageSize = (IntPtr.Size == 4) ? Environment.SystemPageSize : 4096;
+#else
+			int pageSize = Environment.SystemPageSize;
+#endif
+			string f = Path.Combine (tempDir, "p-file");
+			File.WriteAllBytes (f, new byte [pageSize * 2 + 1]);
+
+			MemoryMappedFile mappedFile = MemoryMappedFile.CreateFromFile (f, FileMode.Open);
+
+			MemoryMappedViewStream stream = mappedFile.CreateViewStream (pageSize * 2, 0, MemoryMappedFileAccess.ReadWrite);
+#if !MONOTOUCH
+			Assert.AreEqual (stream.Capacity, Environment.SystemPageSize);
+#endif
+			stream.Write (new byte [pageSize], 0, pageSize);
+		}
+
+		[Test] // #30741 #30825
+		public void CreateFromFileNullMapName ()
+		{
+			int size = 100;
+			string f = Path.Combine (tempDir, "null-map-name-file");
+			File.WriteAllBytes (f, new byte [size]);
+
+			FileStream file = File.OpenRead (f);
+			MemoryMappedFile.CreateFromFile (file, null, size, MemoryMappedFileAccess.ReadExecute, null, 0, false);
 		}
 	}
 }

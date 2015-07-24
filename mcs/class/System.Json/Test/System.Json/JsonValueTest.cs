@@ -46,6 +46,26 @@ namespace MonoTests.System
 			Assert.AreEqual (str, "[1, 2, 3, null]");
 		}
 
+		// Test that we correctly serialize JsonObject with null elements.
+		[Test]
+		public void ToStringOnJsonObjectWithNulls () {
+			var j = JsonValue.Load (new StringReader ("{\"a\":null,\"b\":2}"));
+			Assert.AreEqual (2, j.Count, "itemcount");
+			Assert.AreEqual (JsonType.Object, j.JsonType, "type");
+			var str = j.ToString ();
+			Assert.AreEqual (str, "{\"a\": null, \"b\": 2}");
+		}
+
+		[Test]
+		public void JsonObjectOrder () {
+			var obj = new JsonObject ();
+			obj["a"] = 1;
+			obj["c"] = 3;
+			obj["b"] = 2;
+			var str = obj.ToString ();
+			Assert.AreEqual (str, "{\"a\": 1, \"b\": 2, \"c\": 3}");
+		}
+
 		[Test]
 		public void QuoteEscapeBug_20869 () 
 		{
@@ -180,6 +200,65 @@ namespace MonoTests.System
 			} finally {
 				Thread.CurrentThread.CurrentCulture = old;
 			}
+		}
+
+		// Convert a string to json and parse the string, then compare the result to the original value
+		void CheckString (string str)
+		{
+			var json = new JsonPrimitive (str).ToString ();
+			// Check whether the string is valid Unicode (will throw for broken surrogate pairs)
+			new UTF8Encoding (false, true).GetBytes (json);
+			string jvalue = (string) JsonValue.Parse (json);
+			Assert.AreEqual (str, jvalue);
+		}
+		
+		// String handling: http://tools.ietf.org/html/rfc7159#section-7
+		[Test]
+		public void CheckStrings () 
+		{
+			Assert.AreEqual ("\"test\"", new JsonPrimitive ("test").ToString ());
+			// Handling of characters
+			Assert.AreEqual ("\"f\"", new JsonPrimitive ('f').ToString ());
+			Assert.AreEqual ('f', (char) JsonValue.Parse ("\"f\""));
+
+			// Control characters with special escape sequence
+			Assert.AreEqual ("\"\\b\\f\\n\\r\\t\"", new JsonPrimitive ("\b\f\n\r\t").ToString ());
+			// Other characters which must be escaped
+			Assert.AreEqual (@"""\""\\""", new JsonPrimitive ("\"\\").ToString ());
+			// Control characters without special escape sequence
+			for (int i = 0; i < 32; i++)
+				if (i != '\b' && i != '\f' && i != '\n' && i != '\r' && i != '\t')
+					Assert.AreEqual ("\"\\u" + i.ToString ("x04") + "\"", new JsonPrimitive ("" + (char) i).ToString ());
+
+			// JSON does not require U+2028 and U+2029 to be escaped, but
+			// JavaScript does require this:
+			// http://stackoverflow.com/questions/2965293/javascript-parse-error-on-u2028-unicode-character/9168133#9168133
+			Assert.AreEqual ("\"\\u2028\\u2029\"", new JsonPrimitive ("\u2028\u2029").ToString ());
+
+			// '/' also does not have to be escaped, but escaping it when
+			// preceeded by a '<' avoids problems with JSON in HTML <script> tags
+			Assert.AreEqual ("\"<\\/\"", new JsonPrimitive ("</").ToString ());
+			// Don't escape '/' in other cases as this makes the JSON hard to read
+			Assert.AreEqual ("\"/bar\"", new JsonPrimitive ("/bar").ToString ());
+			Assert.AreEqual ("\"foo/bar\"", new JsonPrimitive ("foo/bar").ToString ());
+
+			CheckString ("test\b\f\n\r\t\"\\/</\0x");
+			for (int i = 0; i < 65536; i++)
+				CheckString ("x" + ((char) i));
+
+			// Check broken surrogate pairs
+			CheckString ("\ud800");
+			CheckString ("x\ud800");
+			CheckString ("\udfff\ud800");
+			CheckString ("\ude03\ud912");
+			CheckString ("\uc000\ubfff");
+			CheckString ("\udfffx");
+			// Valid strings should not be escaped:
+			Assert.AreEqual ("\"\ud7ff\"", new JsonPrimitive ("\ud7ff").ToString ());
+			Assert.AreEqual ("\"\ue000\"", new JsonPrimitive ("\ue000").ToString ());
+			Assert.AreEqual ("\"\ud800\udc00\"", new JsonPrimitive ("\ud800\udc00").ToString ());
+			Assert.AreEqual ("\"\ud912\ude03\"", new JsonPrimitive ("\ud912\ude03").ToString ());
+			Assert.AreEqual ("\"\udbff\udfff\"", new JsonPrimitive ("\udbff\udfff").ToString ());
 		}
 	}
 }

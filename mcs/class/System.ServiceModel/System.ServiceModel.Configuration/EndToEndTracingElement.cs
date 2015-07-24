@@ -1,4 +1,3 @@
-#if NET_4_0
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -111,4 +110,3 @@ namespace System.ServiceModel.Configuration
 	}
 
 }
-#endif

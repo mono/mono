@@ -472,6 +472,7 @@ namespace System.ServiceModel.Dispatcher
 
 			void WriteObject (XmlObjectSerializer serializer, XmlDictionaryWriter writer, object value)
 			{
+				if (serializer != null){
 #if NET_2_1
 					if (serializer is DataContractJsonSerializer)
 						((DataContractJsonSerializer) serializer).WriteObject (writer, value);
@@ -480,6 +481,7 @@ namespace System.ServiceModel.Dispatcher
 #else
 					serializer.WriteObject (writer, value);
 #endif
+				}
 			}
 		}
 
@@ -642,16 +644,7 @@ namespace System.ServiceModel.Dispatcher
 				var ms = Stream as MemoryStream;
 				if (ms == null) {
 					ms = new MemoryStream ();
-#if NET_4_0
 					Stream.CopyTo (ms);
-#else
-					byte [] tmp = new byte [0x1000];
-					int size;
-					do {
-						size = Stream.Read (tmp, 0, tmp.Length);
-						ms.Write (tmp, 0, size);
-					} while (size > 0);
-#endif
 					this.Stream = ms;
 				}
 				return new RawMessageBuffer (ms.ToArray (), headers, properties);

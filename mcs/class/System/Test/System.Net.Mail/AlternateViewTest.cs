@@ -6,7 +6,6 @@
 //
 // (C) 2005 John Luke
 //
-#if NET_2_0
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -81,4 +80,3 @@ namespace MonoTests.System.Net.Mail
 		}
 	}
 }
-#endif

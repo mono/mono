@@ -35,6 +35,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Channels;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
@@ -58,7 +60,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void ListenUri ()
 		{
-			Uri uri = new Uri ("http://localhost:37564");
+			Uri uri = new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ());
 			var se = new ServiceEndpoint (contract1, null, new EndpointAddress (uri));
 			Assert.AreEqual (uri, se.ListenUri, "#1");
 		}

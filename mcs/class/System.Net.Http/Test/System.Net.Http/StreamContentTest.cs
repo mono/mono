@@ -36,6 +36,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Linq;
+using System.Text;
 
 namespace MonoTests.System.Net.Http
 {
@@ -325,6 +326,15 @@ namespace MonoTests.System.Net.Http
 			headers.ContentMD5 = new byte[] { 3, 5 };
 
 			Assert.AreEqual ("Content-MD5: AwU=\r\n", headers.ToString (), "#1");
+		}
+
+		[Test]
+		public void Headers_ContentLength ()
+		{
+			var content = new StreamContent (new MemoryStream (Encoding.UTF8.GetBytes ("test")));
+			Assert.AreEqual ("", content.Headers.ToString ());
+			var length = content.Headers.ContentLength;
+			Assert.AreEqual ("Content-Length: 4\r\n", content.Headers.ToString ());
 		}
 
 		[Test]

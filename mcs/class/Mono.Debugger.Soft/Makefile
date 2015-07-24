@@ -4,11 +4,12 @@ include ../../build/rules.make
 LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:Mono.Cecil.dll /r:System.Core.dll /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfile:$(LIBRARY_SNK)
+LIB_REFS = System Mono.Cecil System.Core
+LIB_MCS_FLAGS = /r:$(corlib) /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -keyfile:$(LIBRARY_SNK)
 
 TEST_MCS_FLAGS = /r:Mono.Cecil.dll /r:System.dll /r:System.Core.dll
 
-VALID_TEST_PROFILE := $(filter net_4_5, $(PROFILE))
+VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
 
 # The test exe is not profile specific, and compiling a 2.0 will make the 4.5 tests fail
 ifdef VALID_TEST_PROFILE

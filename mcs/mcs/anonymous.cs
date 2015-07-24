@@ -352,7 +352,7 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
-			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine) && hoisted.Storey != null)
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 
@@ -526,7 +526,7 @@ namespace Mono.CSharp {
 				fexpr.EmitAssign (ec, source, false, false);
 				Instance = fexpr;
 			} else {
-				var local = TemporaryVariableReference.Create (source.Type, block, Location);
+				var local = TemporaryVariableReference.Create (source.Type, block, Location, writeToSymbolFile: true);
 				if (source.Type.IsStruct) {
 					local.LocalInfo.CreateBuilder (ec);
 				} else {
@@ -1188,6 +1188,9 @@ namespace Mono.CSharp {
 			if (compatibles.TryGetValue (type, out am))
 				return am;
 
+			if (type == InternalType.ErrorType)
+				return null;
+
 			TypeSpec delegate_type = CompatibleChecks (ec, type);
 			if (delegate_type == null)
 				return null;
@@ -1613,14 +1616,17 @@ namespace Mono.CSharp {
 			fc.ParametersBlock = Block;
 			var da_ontrue = fc.DefiniteAssignmentOnTrue;
 			var da_onfalse = fc.DefiniteAssignmentOnFalse;
+			var prev_tf = fc.TryFinally;
 
 			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
+			fc.TryFinally = null;
 			block.FlowAnalysis (fc);
 
 			fc.ParametersBlock = prev_pb;
 			fc.DefiniteAssignment = das;
 			fc.DefiniteAssignmentOnTrue = da_ontrue;
 			fc.DefiniteAssignmentOnFalse = da_onfalse;
+			fc.TryFinally = prev_tf;
 		}
 
 		public override void MarkReachable (Reachability rc)
@@ -1917,17 +1923,16 @@ namespace Mono.CSharp {
 
 			var delegate_method = method.Spec;
 			if (storey != null && storey.MemberName.IsGeneric) {
-				TypeSpec t = storey.Instance.Type;
-
 				//
 				// Mutate anonymous method instance type if we are in nested
 				// hoisted generic anonymous method storey
 				//
 				if (ec.IsAnonymousStoreyMutateRequired) {
-					t = storey.Mutator.Mutate (t);
+					ec.Emit (OpCodes.Ldftn, delegate_method);
+				} else {
+					TypeSpec t = storey.Instance.Type;
+					ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 				}
-
-				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
 				if (delegate_method.IsGeneric) {
 					TypeParameterSpec[] tparams;

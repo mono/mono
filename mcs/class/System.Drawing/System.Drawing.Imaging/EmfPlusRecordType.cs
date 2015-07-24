@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum EmfPlusRecordType {
 		BeginContainer = 16423,
 		BeginContainerNoParams = 16424,

@@ -359,12 +359,8 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
-		public string GetSignatureForMetadata ()
+		public virtual string GetSignatureForMetadata ()
 		{
-			if (Parent is TypeDefinition) {
-				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (MemberName.Basename);
-			}
-
 			var sb = new StringBuilder ();
 			CreateMetadataName (sb);
 			return sb.ToString ();
@@ -452,7 +448,7 @@ namespace Mono.CSharp
 				return tc.GetSignatureForError ();
 			}
 
-			public ExtensionMethodCandidates LookupExtensionMethod (TypeSpec extensionType, string name, int arity)
+			public ExtensionMethodCandidates LookupExtensionMethod (string name, int arity)
 			{
 				return null;
 			}
@@ -1126,6 +1122,15 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override string GetSignatureForMetadata ()
+		{
+			if (Parent is TypeDefinition) {
+				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (FilterNestedName (MemberName.Basename));
+			}
+
+			return base.GetSignatureForMetadata ();
+		}
+
 		public virtual void SetBaseTypes (List<FullNamedExpression> baseTypes)
 		{
 			type_bases = baseTypes;
@@ -1298,7 +1303,7 @@ namespace Mono.CSharp
 				CreateMetadataName (sb);
 				TypeBuilder = Module.CreateBuilder (sb.ToString (), TypeAttr, type_size);
 			} else {
-				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (MemberName.Basename, TypeAttr, null, type_size);
+				TypeBuilder = parent_def.TypeBuilder.DefineNestedType (FilterNestedName (MemberName.Basename), TypeAttr, null, type_size);
 			}
 
 			if (DeclaringAssembly.Importer != null)
@@ -1326,6 +1331,18 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		public static string FilterNestedName (string name)
+		{
+			//
+			// SRE API does not handle namespaces and types separately but
+			// determine that from '.' in name. That's problematic because 
+			// dot is valid character for type name. By replacing any '.'
+			// in name we avoid any ambiguities and never emit metadata
+			// namespace for nested types
+			//
+			return name.Replace ('.', '_');
 		}
 
 		string[] CreateTypeParameters (TypeParameters parentAllTypeParameters)
@@ -1713,21 +1730,14 @@ namespace Mono.CSharp
 
 			foreach (var member in members) {
 				var pbm = member as PropertyBasedMember;
-				if (pbm != null)
+				if (pbm != null) {
 					pbm.PrepareEmit ();
+					continue;
+				}
 
-				var pm = member as IParametersMember;
-				if (pm != null) {
-					var mc = member as MethodOrOperator;
-					if (mc != null) {
-						mc.PrepareEmit ();
-					}
-
-					var p = pm.Parameters;
-					if (p.IsEmpty)
-						continue;
-
-					((ParametersCompiled) p).ResolveDefaultValues (member);
+				var mc = member as MethodCore;
+				if (mc != null) {
+					mc.PrepareEmit ();
 					continue;
 				}
 
@@ -1792,6 +1802,10 @@ namespace Mono.CSharp
 
 			this.spec = spec;
 			current_type = null;
+			if (class_partial_parts != null) {
+				foreach (var part in class_partial_parts)
+					part.spec = spec;
+			}
 		}
 
 		public override void RemoveContainer (TypeContainer cont)
@@ -3013,7 +3027,7 @@ namespace Mono.CSharp
 					if (ff == null)
 						continue;
 
-					ff.CharSet = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
+					ff.CharSetValue = (CharSet) System.Enum.Parse (typeof (CharSet), value.GetValue ().ToString ());
 				}
 			}
 		}
@@ -3413,7 +3427,7 @@ namespace Mono.CSharp
 					ModFlags |= Modifiers.NEW;
 					if (!IsCompilerGenerated) {
 						Report.SymbolRelatedToPreviousError (base_member);
-						if (!IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
+						if ((base_member.Kind & MemberKind.NestedMask) == 0 && !IsInterface && (base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) != 0) {
 							Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
 								GetSignatureForError (), base_member.GetSignatureForError ());
 						} else {
@@ -3424,9 +3438,16 @@ namespace Mono.CSharp
 				}
 
 				if (!IsInterface && base_member.IsAbstract && !overrides && !IsStatic) {
-					Report.SymbolRelatedToPreviousError (base_member);
-					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
-						GetSignatureForError (), base_member.GetSignatureForError ());
+					switch (base_member.Kind) {
+					case MemberKind.Event:
+					case MemberKind.Indexer:
+					case MemberKind.Method:
+					case MemberKind.Property:
+						Report.SymbolRelatedToPreviousError (base_member);
+						Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
+							GetSignatureForError (), base_member.GetSignatureForError ());
+						break;
+					}
 				}
 			}
 
@@ -3702,7 +3723,7 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			if (IsExplicitImpl)
-				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetExplicitNameSignatureForDocumentation () + "#" + ShortName;
+				return Parent.GetSignatureForDocumentation () + "." + InterfaceType.GetSignatureForDocumentation (true) + "#" + ShortName;
 
 			return Parent.GetSignatureForDocumentation () + "." + ShortName;
 		}

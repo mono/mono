@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.CompilerServices;
 
 namespace System
 {
@@ -106,5 +107,21 @@ namespace System
 		{
 			return !left.Equals (right);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void SetValueInternal (FieldInfo fi, object obj, object value);
+
+		internal static void SetValue (RtFieldInfo field, Object obj, Object value, RuntimeType fieldType, FieldAttributes fieldAttr, RuntimeType declaringType, ref bool domainInitialized)
+		{
+			SetValueInternal (field, obj, value);
+		}
+
+		unsafe internal static Object GetValueDirect (RtFieldInfo field, RuntimeType fieldType, void *pTypedRef, RuntimeType contextType)
+		{
+			throw new NotImplementedException ("GetValueDirect");
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static unsafe extern internal void SetValueDirect (RtFieldInfo field, RuntimeType fieldType, void* pTypedRef, Object value, RuntimeType contextType);
 	}
 }

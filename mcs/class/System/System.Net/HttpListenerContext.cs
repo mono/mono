@@ -32,10 +32,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Security.Principal;
 using System.Text;
-#if NET_4_5
 using System.Threading.Tasks;
 using System.Net.WebSockets;
-#endif
 
 namespace System.Net {
 	public sealed class HttpListenerContext {
@@ -139,7 +137,6 @@ namespace System.Net {
 			} 
 		}
 
-#if NET_4_5
 		public Task<HttpListenerWebSocketContext> AcceptWebSocketAsync (string subProtocol)
 		{
 			throw new NotImplementedException ();
@@ -154,7 +151,6 @@ namespace System.Net {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
 #endif

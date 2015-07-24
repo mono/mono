@@ -38,7 +38,6 @@ namespace MonoTests.System.Data.Odbc
 	[TestFixture]
 	public class OdbcCommandBuilderTest
 	{
-#if NET_2_0
 		[Test]
 		public void CatalogLocationTest ()
 		{
@@ -112,7 +111,6 @@ namespace MonoTests.System.Data.Odbc
 			}
 			Assert.AreEqual (ConflictOption.CompareRowVersion, cb.ConflictOption, "#8");
 		}
-#endif
 
 		[Test]
 		public void QuotePrefix ()
@@ -148,7 +146,6 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual (" ", cb.QuoteSuffix, "#6");
 		}
 
-#if NET_2_0
 		[Test] // QuoteIdentifier (String)
 		public void QuoteIdentifier1 ()
 		{
@@ -407,6 +404,5 @@ namespace MonoTests.System.Data.Odbc
 			cb.SchemaSeparator = " ";
 			Assert.AreEqual (" ", cb.SchemaSeparator, "#6");
 		}
-#endif
 	}
 }

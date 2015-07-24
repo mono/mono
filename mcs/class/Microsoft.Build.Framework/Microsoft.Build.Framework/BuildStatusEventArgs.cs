@@ -32,11 +32,7 @@ namespace Microsoft.Build.Framework
 {
 	[Serializable]
 	public abstract class BuildStatusEventArgs
-#if NET_4_0
 			: LazyFormattedBuildEventArgs {
-#else
-			: BuildEventArgs {
-#endif
 	
 		protected BuildStatusEventArgs ()
 		{
@@ -49,7 +45,6 @@ namespace Microsoft.Build.Framework
 		{
 		}
 
-#if NET_4_0
 		protected BuildStatusEventArgs (string message,
 						string helpKeyword,
 						string senderName,
@@ -66,7 +61,6 @@ namespace Microsoft.Build.Framework
 			: base (message, helpKeyword, senderName, eventTimestamp, messageArgs)
 		{
 		}
-#endif
 	}
 }
 

@@ -108,7 +108,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			writer.AddStyleAttribute ("StyleAttribute", "StyleAttValue");
 			checker = true;
 		}
-#if NET_2_0
 		public new void RaisePostDataChangedEvent ()
 		{
 			base.RaisePostDataChangedEvent ();
@@ -149,7 +148,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}
 			base.OnLoad (e);
 		}
-#endif
 	}
 
 	[TestFixture]
@@ -169,12 +167,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			
 			Assert.AreEqual (0, c.Attributes.Count, "Attributes.Count-2");
 
-#if NET_2_0
 			Assert.IsFalse (c.CausesValidation, "CausesValidation");
 			Assert.AreEqual (String.Empty, c.ValidationGroup, "ValidationGroup");
-#endif
 		}
-#if NET_2_0
 		[Test]
 		public void InputAttributesTest ()
 		{
@@ -238,7 +233,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (true, c.Checker, "AddAttributesToRender dosn't called fail");
 			HtmlDiff.AssertAreEqual ("<input Attribute=\"AttributeValue\" type=\"checkbox\" style=\"StyleAttribute:StyleAttValue;\" />", html, "Add Attributes To Render fail#2");
 		}
-#endif
 
 		[Test]
 		public void NullProperties ()
@@ -363,7 +357,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("", c.Text);
 		}
 
-#if NET_2_0
 		[Test]
 		public void CheckboxViewstateValidation ()
 		{
@@ -449,6 +442,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }

@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Xml;
 
@@ -153,7 +152,6 @@ namespace System.Security.Cryptography.Xml {
 							case XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform:
 								t = new XmlDsigXsltTransform ();
 								break;
-#if NET_2_0
 							case XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform:
 								t = new XmlDsigExcC14NTransform ();
 								break;
@@ -163,7 +161,6 @@ namespace System.Security.Cryptography.Xml {
 							case XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform:
 								t = new XmlDecryptionTransform ();
 								break;
-#endif
 							default:
 								continue;
 							}
@@ -184,4 +181,3 @@ namespace System.Security.Cryptography.Xml {
 	}
 }
 
-#endif

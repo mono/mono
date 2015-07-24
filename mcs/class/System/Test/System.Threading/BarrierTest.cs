@@ -74,9 +74,8 @@ namespace MonoTests.System.Threading {
 		{
 			barrier.RemoveParticipants (participants - 2);
 			Assert.IsFalse (barrier.SignalAndWait (1), "#1");
-			barrier.SignalAndWait ();
-			Assert.IsTrue (triggered, "#3");
-			Assert.AreEqual (1, barrier.CurrentPhaseNumber, "#4");
+			Assert.IsFalse (triggered, "#3");
+			Assert.AreEqual (0, barrier.CurrentPhaseNumber, "#4");
 		}
 		
 		[Test]
@@ -84,8 +83,16 @@ namespace MonoTests.System.Threading {
 		{
 			barrier.RemoveParticipants (participants - 2);
 			barrier.RemoveParticipants (2);
-			Assert.IsTrue (triggered, "#1");
-			Assert.AreEqual (1, barrier.CurrentPhaseNumber, "#2");
+			Assert.IsFalse (triggered, "#1");
+			Assert.AreEqual (0, barrier.CurrentPhaseNumber, "#2");
+		}
+
+		[Test]
+		public void SignalSimple ()
+		{
+			var barrier = new Barrier (0);
+			barrier.AddParticipant ();
+			Assert.IsTrue (barrier.SignalAndWait (500), "#1");
 		}
 	}
 }

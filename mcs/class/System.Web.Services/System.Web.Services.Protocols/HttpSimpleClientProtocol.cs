@@ -35,9 +35,7 @@ using System.IO;
 using System.Threading;
 
 namespace System.Web.Services.Protocols {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public abstract class HttpSimpleClientProtocol : HttpWebClientProtocol {
 
 		#region Fields
@@ -183,7 +181,6 @@ namespace System.Web.Services.Protocols {
 			return returnReader.Read (response, response.GetResponseStream ());
 		}
 		
-#if NET_2_0
 
 		protected void InvokeAsync (string methodName, string requestUrl, object[] parameters, SendOrPostCallback callback)
 		{
@@ -206,7 +203,6 @@ namespace System.Web.Services.Protocols {
 			else
 				info.Callback (args);
 		}
-#endif
 		
 		#endregion // Methods
 	}

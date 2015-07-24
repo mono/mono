@@ -57,9 +57,7 @@ namespace MonoCasTests.System.Web.UI {
 			Assert.IsNotNull (bag["key"], "this[string]");
 			Assert.IsNotNull (bag.Keys, "Keys");
 			Assert.IsNotNull (bag.Values, "Values");
-#if NET_2_0
 			bag.SetDirty (true);
-#endif
 		}
 
 		[Test]

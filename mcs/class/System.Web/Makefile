@@ -226,41 +226,32 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 RESX_RES = $(RESX_DIST:.resx=.resources)
-endif
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
 NUNIT_APP_GLOBALRESOURCES_FILES = $(TEST_APP_GLOBALRESOURCES_FILES)
 
-ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
-endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 OTHER_RES += $(RESOURCE_FILES_4)
 endif
 
+LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap System.ComponentModel.DataAnnotations
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\
 	-r:$(corlib)	 		\
-	-r:System.dll 			\
-	-r:System.Core.dll		\
-	-r:System.Drawing.dll 		\
-	-r:System.Data.dll		\
-	-r:System.Xml.dll		\
-	-r:System.EnterpriseServices.dll \
-	-r:System.Runtime.Serialization.Formatters.Soap \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
 ifneq (plainweb/,$(intermediate))
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:System.Web.Services.dll
+LIB_REFS += System.Web.Services System.Design
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -lib:$(the_libdir_base)plaindesign
 
 all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
 
@@ -270,10 +261,6 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,159
 	$(NUNIT_RESOURCE_FILES:%=/resource:%) \
 	$(foreach file,$(NUNIT_APP_CODE_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_Code/\2 ;g')) \
 	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
-
-ifeq (net_2_0, $(PROFILE))
-TEST_MCS_FLAGS += -r:System.Web.Extensions.dll -d:TEST
-endif
 
 EXTRA_DISTFILES = \
 	$(RESOURCE_FILES_4) \

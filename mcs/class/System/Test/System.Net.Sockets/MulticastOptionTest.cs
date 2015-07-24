@@ -26,17 +26,13 @@ namespace MonoTests.System.Net.Sockets
 			group = IPAddress.Parse ("239.255.255.250");
 			option = new MulticastOption (group);
 			Assert.AreSame (group, option.Group, "#A:Group");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#A:InterfaceIndex");
-#endif
 			Assert.AreEqual (IPAddress.Any, option.LocalAddress, "#A:LocalAddress");
 
 			group = IPAddress.Parse ("ff02::1");
 			option = new MulticastOption (group);
 			Assert.AreSame (group, option.Group, "#B:Group");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#B:InterfaceIndex");
-#endif
 			Assert.AreEqual (IPAddress.Any, option.LocalAddress, "#B:LocalAddress");
 		}
 
@@ -65,18 +61,14 @@ namespace MonoTests.System.Net.Sockets
 			mcint = IPAddress.Any;
 			option = new MulticastOption (group, mcint);
 			Assert.AreSame (group, option.Group, "#A:Group");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#A:InterfaceIndex");
-#endif
 			Assert.AreEqual (mcint, option.LocalAddress, "#A:LocalAddress");
 
 			group = IPAddress.Parse ("ff02::1");
 			mcint = IPAddress.IPv6Any;
 			option = new MulticastOption (group, mcint);
 			Assert.AreSame (group, option.Group, "#B:Group");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#B:InterfaceIndex");
-#endif
 			Assert.AreEqual (mcint, option.LocalAddress, "#B:LocalAddress");
 		}
 
@@ -114,7 +106,6 @@ namespace MonoTests.System.Net.Sockets
 			}
 		}
 
-#if NET_2_0
 		[Test] // .ctor (IPAddress, Int32)
 		public void Constructor3 ()
 		{
@@ -208,7 +199,6 @@ namespace MonoTests.System.Net.Sockets
 				Assert.AreEqual ("interfaceIndex", ex.ParamName, "#B5");
 			}
 		}
-#endif
 
 		[Test]
 		public void Group ()
@@ -217,11 +207,7 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress local;
 			MulticastOption option;
 
-#if NET_2_0
 			local = Dns.GetHostEntry (string.Empty).AddressList [0];
-#else
-			local = IPAddress.Loopback;
-#endif
 			group = IPAddress.Parse ("239.255.255.250");
 			option = new MulticastOption (group, local);
 			group = IPAddress.Parse ("224.0.0.23");
@@ -239,17 +225,14 @@ namespace MonoTests.System.Net.Sockets
 			option.Group = null;
 			Assert.IsNull (option.Group, "#D1");
 			Assert.AreSame (local, option.LocalAddress, "#D2");
-#if NET_2_0
 			option = new MulticastOption (group, 5);
 			group = IPAddress.Parse ("224.0.0.23");
 			option.Group = group;
 			Assert.AreSame (group, option.Group, "#E1");
 			Assert.AreEqual (5, option.InterfaceIndex, "#E2");
 			Assert.IsNull (option.LocalAddress, "#E3");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void InterfaceIndex ()
 		{
@@ -311,7 +294,6 @@ namespace MonoTests.System.Net.Sockets
 			// ensure original value was retained
 			Assert.AreEqual (10, option.InterfaceIndex, "#C");
 		}
-#endif
 
 		[Test]
 		public void LocalAddress ()
@@ -320,45 +302,29 @@ namespace MonoTests.System.Net.Sockets
 			IPAddress local;
 			MulticastOption option;
 
-#if NET_2_0
 			local = Dns.GetHostEntry (string.Empty).AddressList [0];
-#else
-			local = IPAddress.Loopback;
-#endif
 			group = IPAddress.Parse ("239.255.255.250");
 			option = new MulticastOption (group, local);
 			local = IPAddress.Loopback;
 			option.LocalAddress = local;
 			Assert.AreSame (group, option.Group, "#A1");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#A2");
-#endif
 			Assert.AreSame (local, option.LocalAddress, "#A3");
-#if NET_2_0
 			local = Dns.GetHostEntry (string.Empty).AddressList [0];
-#else
-			local = IPAddress.Loopback;
-#endif
 			option.LocalAddress = local;
 			Assert.AreSame (group, option.Group, "#B1");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#B2");
-#endif
 			Assert.AreSame (local, option.LocalAddress, "#B3");
 			option.LocalAddress = null;
 			Assert.AreSame (group, option.Group, "#C1");
-#if NET_2_0
 			Assert.AreEqual (0, option.InterfaceIndex, "#C2");
-#endif
 			Assert.IsNull (option.LocalAddress, "#C3");
-#if NET_2_0
 			option = new MulticastOption (group, 5);
 			local = IPAddress.Loopback;
 			option.LocalAddress = local;
 			Assert.AreSame (group, option.Group, "#D1");
 			Assert.AreEqual (0, option.InterfaceIndex, "#D2");
 			Assert.AreSame (local, option.LocalAddress, "#D3");
-#endif
 		}
 	}
 }

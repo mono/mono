@@ -29,7 +29,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -51,8 +50,10 @@ namespace Mono.XBuild.CommandLine {
 		Engine		engine;
 		Project		project;
 		ConsoleReportPrinter printer;
-
 		
+		// this does nothing but adds strong reference to Microsoft.Build.Tasks*.dll that we need to load consistently.
+		Microsoft.Build.Tasks.Copy dummy;
+
 		public static void Main (string[] args)
 		{
 			MainClass mc = new MainClass ();
@@ -322,4 +323,3 @@ namespace Mono.XBuild.CommandLine {
 
 }
 
-#endif

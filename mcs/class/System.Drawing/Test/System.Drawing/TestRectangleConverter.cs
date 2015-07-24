@@ -305,11 +305,7 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void TestCreateInstance_CaseSensitive ()
 		{
 			Hashtable ht = new Hashtable ();

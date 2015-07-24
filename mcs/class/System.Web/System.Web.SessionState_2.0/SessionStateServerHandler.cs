@@ -28,7 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
@@ -101,24 +100,18 @@ namespace System.Web.SessionState
 			MemoryStream stream = null;
 			BinaryReader reader = null;
 			Stream input = null;
-#if NET_4_0
 			GZipStream gzip = null;
-#endif
 			try {
 				if (item.CollectionData != null && item.CollectionData.Length > 0) {
 					stream = new MemoryStream (item.CollectionData);
-#if NET_4_0					
 					if (config.CompressionEnabled)
 						input = gzip = new GZipStream (stream, CompressionMode.Decompress, true);
 					else
-#endif
 						input = stream;
 					reader = new BinaryReader (input);
 					items = SessionStateItemCollection.Deserialize (reader);
-#if NET_4_0
 					if (gzip != null)
 						gzip.Close ();
-#endif
 					reader.Close ();
 				} else
 					items = new SessionStateItemCollection ();
@@ -131,15 +124,10 @@ namespace System.Web.SessionState
 			} finally {
 				if (stream != null)
 					stream.Dispose ();
-#if NET_4_0
 				if (reader != null)
 					reader.Dispose ();
 				if (gzip != null)
 					gzip.Dispose ();
-#else
-				if (reader != null)
-					((IDisposable)reader).Dispose ();
-#endif
 			}
 				
 			return new SessionStateStoreData (items,
@@ -226,26 +214,20 @@ namespace System.Web.SessionState
 			MemoryStream stream = null;
 			BinaryWriter writer = null;
 			Stream output = null;
-#if NET_4_0
 			GZipStream gzip = null;
-#endif
 			
 			try {
 				SessionStateItemCollection items = item.Items as SessionStateItemCollection;
 				if (items != null && items.Count > 0) {
 					stream = new MemoryStream ();
-#if NET_4_0
 					if (config.CompressionEnabled)
 						output = gzip = new GZipStream (stream, CompressionMode.Compress, true);
 					else
-#endif
 						output = stream;
 					writer = new BinaryWriter (output);
 					items.Serialize (writer);
-#if NET_4_0
 					if (gzip != null)
 						gzip.Close ();
-#endif
 					writer.Close ();
 					collection_data = stream.ToArray ();
 				}
@@ -256,15 +238,10 @@ namespace System.Web.SessionState
 				throw new HttpException ("Failed to store session data.", ex);
 			} finally {
 
-#if NET_4_0
 				if (writer != null)
 					writer.Dispose ();
 				if (gzip != null)
 					gzip.Dispose ();
-#else
-				if (writer != null)
-					((IDisposable)writer).Dispose ();
-#endif
 				if (stream != null)
 					stream.Dispose ();
 			}
@@ -307,4 +284,3 @@ namespace System.Web.SessionState
                 }
 	}
 }
-#endif

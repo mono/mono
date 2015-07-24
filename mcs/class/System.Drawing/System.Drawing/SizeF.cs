@@ -40,9 +40,7 @@ namespace System.Drawing
 {
 	[Serializable]
 	[ComVisible (true)]
-#if NET_2_0
 	[TypeConverter (typeof (SizeFConverter))]
-#endif
 	public struct SizeF
 	{
 		// Private height and width fields.
@@ -295,7 +293,6 @@ namespace System.Drawing
 				height.ToString (CultureInfo.CurrentCulture));
 		}
 
-#if NET_2_0
 		public static SizeF Add (SizeF sz1, SizeF sz2)
 		{
 			return new SizeF (sz1.Width + sz2.Width, 
@@ -307,6 +304,5 @@ namespace System.Drawing
 			return new SizeF (sz1.Width - sz2.Width, 
 					  sz1.Height - sz2.Height);
 		}
-#endif
 	}
 }

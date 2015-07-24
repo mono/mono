@@ -40,24 +40,6 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Description
 {
-#if !NET_4_5	
-	internal static class Extensions
-	{
-		public static T GetCustomAttribute<T> (this MemberInfo mi, bool inherit) where T : Attribute
-		{
-			foreach (T att in mi.GetCustomAttributes (typeof (T), inherit))
-				return att;
-			return null;
-		}
-
-		public static T GetCustomAttribute<T> (this ParameterInfo pi, bool inherit) where T : Attribute
-		{
-			foreach (T att in pi.GetCustomAttributes (typeof (T), inherit))
-				return att;
-			return null;
-		}
-	}
-#endif
 
 	[DebuggerDisplay ("Name={name}, Namespace={ns}, ContractType={contractType}")]
 	public class ContractDescription
@@ -122,12 +104,10 @@ namespace System.ServiceModel.Description
 			get { return behaviors; }
 		}
 
-#if NET_4_5
 		[MonoTODO]
 		public KeyedCollection<Type,IContractBehavior> ContractBehaviors {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
 		public Type CallbackContractType {
 			get { return callback_contract_type; }

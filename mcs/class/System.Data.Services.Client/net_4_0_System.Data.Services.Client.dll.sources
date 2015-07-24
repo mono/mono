@@ -1,5 +1,0 @@
-#include System.Data.Services.Client.dll.sources
-
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs

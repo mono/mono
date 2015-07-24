@@ -51,10 +51,7 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	MonoDl *fam_module;
 	int lib_used = 4; /* gamin */
 	int inotify_instance;
-	void *iter;
 	char *err;
-
-	MONO_ARCH_SAVE_REGS;
 
 	inotify_instance = ves_icall_System_IO_InotifyWatcher_GetInotifyInstance ();
 	if (inotify_instance != -1) {
@@ -62,11 +59,9 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 		return 5; /* inotify */
 	}
 
-	iter = NULL;
 	fam_module = mono_dl_open ("libgamin-1.so", MONO_DL_LAZY, NULL);
 	if (fam_module == NULL) {
 		lib_used = 2; /* FAM */
-		iter = NULL;
 		fam_module = mono_dl_open ("libfam.so", MONO_DL_LAZY, NULL);
 	}
 
@@ -103,8 +98,6 @@ ves_icall_System_IO_FAMW_InternalFAMNextEvent (gpointer conn,
 					       gint *reqnum)
 {
 	FAMEvent ev;
-
-	MONO_ARCH_SAVE_REGS;
 
 	if (FAMNextEvent (conn, &ev) == 1) {
 		*filename = mono_string_new (mono_domain_get (), ev.filename);
@@ -147,8 +140,6 @@ ves_icall_System_IO_InotifyWatcher_AddWatch (int fd, MonoString *name, gint32 ma
 {
 	char *str, *path;
 	int retval;
-
-	MONO_ARCH_SAVE_REGS;
 
 	if (name == NULL)
 		return -1;

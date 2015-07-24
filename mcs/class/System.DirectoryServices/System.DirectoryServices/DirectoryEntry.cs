@@ -408,6 +408,16 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[DSDescription ("The provider-specific options for this entry.")]
+		[Browsable (false)]
+		[MonoTODO]
+		public DirectoryEntryConfiguration Options
+		{ 
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the password to use when authenticating the client.
 		/// </summary>
@@ -946,7 +956,6 @@ namespace System.DirectoryServices
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		/// <summary>
 		/// Gets a property value from the native Active Directory Entry.
 		/// </summary>
@@ -979,7 +988,6 @@ namespace System.DirectoryServices
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		/// <summary>
 		/// Creates a copy of this entry, as a child of the specified parent, with 

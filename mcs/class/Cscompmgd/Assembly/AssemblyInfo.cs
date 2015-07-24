@@ -33,9 +33,7 @@ using System.Reflection;
 using System.Resources;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-#if NET_2_0
 	using System.Runtime.ConstrainedExecution;
-#endif
 using System.Runtime.InteropServices;
 
 // General Information about the cscompmgd assembly

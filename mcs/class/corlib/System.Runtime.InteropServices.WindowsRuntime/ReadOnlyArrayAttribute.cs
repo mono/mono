@@ -1,4 +1,3 @@
-#if NET_4_5
 //
 // ReadOnlyArrayAttribute.cs
 //
@@ -34,4 +33,3 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 	{
 	}
 }
-#endif

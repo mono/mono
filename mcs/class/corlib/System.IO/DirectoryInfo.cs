@@ -204,9 +204,7 @@ namespace System.IO {
 			return GetFileSystemInfos (searchPattern, SearchOption.TopDirectoryOnly);
 		}
 
-#if NET_4_0
 		public
-#endif
 		FileSystemInfo [] GetFileSystemInfos (string searchPattern, SearchOption searchOption)
 		{
 			if (searchPattern == null)
@@ -356,7 +354,6 @@ namespace System.IO {
 			Directory.SetAccessControl (FullPath, directorySecurity);
 		}
 
-#if NET_4_0
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
 		{
@@ -462,6 +459,5 @@ namespace System.IO {
 		}
 		
 		
-#endif
 	}
 }

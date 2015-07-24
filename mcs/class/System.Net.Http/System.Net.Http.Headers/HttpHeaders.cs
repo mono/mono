@@ -48,7 +48,7 @@ namespace System.Net.Http.Headers
 
 			public readonly Func<object, string> CustomToString;
 
-			public HeaderBucket (object parsed, Func<object, string> converter = null)
+			public HeaderBucket (object parsed, Func<object, string> converter)
 			{
 				this.Parsed = parsed;
 				this.CustomToString = converter;
@@ -104,18 +104,18 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateSingle<byte[]> ("Content-MD5", Parser.MD5.TryParse, HttpHeaderKind.Content),
 				HeaderInfo.CreateSingle<ContentRangeHeaderValue> ("Content-Range", ContentRangeHeaderValue.TryParse, HttpHeaderKind.Content),
 				HeaderInfo.CreateSingle<MediaTypeHeaderValue> ("Content-Type", MediaTypeHeaderValue.TryParse, HttpHeaderKind.Content),
-				HeaderInfo.CreateSingle<DateTimeOffset> ("Date", Parser.DateTime.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
+				HeaderInfo.CreateSingle<DateTimeOffset> ("Date", Parser.DateTime.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response, Parser.DateTime.ToString),
 				HeaderInfo.CreateSingle<EntityTagHeaderValue> ("ETag", EntityTagHeaderValue.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<NameValueWithParametersHeaderValue> ("Expect", NameValueWithParametersHeaderValue.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<DateTimeOffset> ("Expires", Parser.DateTime.TryParse, HttpHeaderKind.Content),
+				HeaderInfo.CreateSingle<DateTimeOffset> ("Expires", Parser.DateTime.TryParse, HttpHeaderKind.Content, Parser.DateTime.ToString),
 				HeaderInfo.CreateSingle<string> ("From", Parser.EmailAddress.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<Uri> ("Host", Parser.Uri.TryParse, HttpHeaderKind.Request),
+				HeaderInfo.CreateSingle<string> ("Host", Parser.Host.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateMulti<EntityTagHeaderValue> ("If-Match", EntityTagHeaderValue.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<DateTimeOffset> ("If-Modified-Since", Parser.DateTime.TryParse, HttpHeaderKind.Request),
+				HeaderInfo.CreateSingle<DateTimeOffset> ("If-Modified-Since", Parser.DateTime.TryParse, HttpHeaderKind.Request, Parser.DateTime.ToString),
 				HeaderInfo.CreateMulti<EntityTagHeaderValue> ("If-None-Match", EntityTagHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<RangeConditionHeaderValue> ("If-Range", RangeConditionHeaderValue.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<DateTimeOffset> ("If-Unmodified-Since", Parser.DateTime.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateSingle<DateTimeOffset> ("Last-Modified", Parser.DateTime.TryParse, HttpHeaderKind.Content),
+				HeaderInfo.CreateSingle<DateTimeOffset> ("If-Unmodified-Since", Parser.DateTime.TryParse, HttpHeaderKind.Request, Parser.DateTime.ToString),
+				HeaderInfo.CreateSingle<DateTimeOffset> ("Last-Modified", Parser.DateTime.TryParse, HttpHeaderKind.Content, Parser.DateTime.ToString),
 				HeaderInfo.CreateSingle<Uri> ("Location", Parser.Uri.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateSingle<int> ("Max-Forwards", Parser.Int.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateMulti<NameValueHeaderValue> ("Pragma", NameValueHeaderValue.TryParsePragma, HttpHeaderKind.Request | HttpHeaderKind.Response),
@@ -124,12 +124,12 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateSingle<RangeHeaderValue> ("Range", RangeHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<Uri> ("Referer", Parser.Uri.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<RetryConditionHeaderValue> ("Retry-After", RetryConditionHeaderValue.TryParse, HttpHeaderKind.Response),
-				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("Server", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Response),
+				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("Server", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Response, separator: " "),
 				HeaderInfo.CreateMulti<TransferCodingWithQualityHeaderValue> ("TE", TransferCodingWithQualityHeaderValue.TryParse, HttpHeaderKind.Request, 0),
 				HeaderInfo.CreateMulti<string> ("Trailer", CollectionParser.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<TransferCodingHeaderValue> ("Transfer-Encoding", TransferCodingHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<ProductHeaderValue> ("Upgrade", ProductHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
-				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("User-Agent", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Request),
+				HeaderInfo.CreateMulti<ProductInfoHeaderValue> ("User-Agent", ProductInfoHeaderValue.TryParse, HttpHeaderKind.Request, separator: " "),
 				HeaderInfo.CreateMulti<string> ("Vary", CollectionParser.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<ViaHeaderValue> ("Via", ViaHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<WarningHeaderValue> ("Warning", WarningHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
@@ -198,18 +198,18 @@ namespace System.Net.Http.Headers
 
 					if (headerInfo.AllowsMany) {
 						if (bucket == null)
-							bucket = new HeaderBucket (headerInfo.CreateCollection (this));
+							bucket = new HeaderBucket (headerInfo.CreateCollection (this), headerInfo.CustomToString);
 
 						headerInfo.AddToCollection (bucket.Parsed, parsed_value);
 					} else {
 						if (bucket != null)
 							throw new FormatException ();
 
-						bucket = new HeaderBucket (parsed_value);
+						bucket = new HeaderBucket (parsed_value, headerInfo.CustomToString);
 					}
 				} else {
 					if (bucket == null)
-						bucket = new HeaderBucket (null);
+						bucket = new HeaderBucket (null, null);
 
 					bucket.Values.Add (value ?? string.Empty);
 				}
@@ -343,22 +343,36 @@ namespace System.Net.Http.Headers
 			return true;
 		}
 
+		internal static string GetSingleHeaderString (string key, IEnumerable<string> values)
+		{
+			string separator = ",";
+			HeaderInfo headerInfo;
+			if (known_headers.TryGetValue (key, out headerInfo) && headerInfo.AllowsMany)
+				separator = headerInfo.Separator;
+
+			var sb = new StringBuilder ();
+			bool first = true;
+			foreach (var v in values) {
+				if (!first) {
+					sb.Append (separator);
+					if (separator != " ")
+						sb.Append (" ");
+				}
+
+				sb.Append (v);
+				first = false;
+			}
+
+			return sb.ToString ();
+		}
+
 		public override string ToString ()
 		{
 			var sb = new StringBuilder ();
 			foreach (var entry in this) {
 				sb.Append (entry.Key);
 				sb.Append (": ");
-
-				bool first = true;
-				foreach (var v in entry.Value) {
-					if (!first)
-						sb.Append (", ");
-
-					sb.Append (v);
-					first = false;
-				}
-
+				sb.Append (GetSingleHeaderString (entry.Key, entry.Value));
 				sb.Append ("\r\n");
 			}
 
@@ -458,7 +472,8 @@ namespace System.Net.Http.Headers
 			HeaderBucket value;
 
 			if (!headers.TryGetValue (name, out value)) {
-				value = new HeaderBucket (new HttpHeaderValueCollection<T> (this, known_headers [name]));
+				var hinfo = known_headers[name];
+				value = new HeaderBucket (new HttpHeaderValueCollection<T> (this, hinfo), hinfo.CustomToString);
 				headers.Add (name, value);
 			}
 
@@ -481,7 +496,7 @@ namespace System.Net.Http.Headers
 			return (HttpHeaderValueCollection<T>) value.Parsed;
 		}
 
-		void SetValue<T> (string name, T value, Func<object, string> toStringConverter = null)
+		internal void SetValue<T> (string name, T value, Func<object, string> toStringConverter = null)
 		{
 			headers[name] = new HeaderBucket (value, toStringConverter);
 		}

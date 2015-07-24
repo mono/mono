@@ -8,7 +8,7 @@
 
         public int Count {
             get {
-                return Thread.VolatileRead(ref _count);
+                return Volatile.Read(ref _count);
             }
         }
 

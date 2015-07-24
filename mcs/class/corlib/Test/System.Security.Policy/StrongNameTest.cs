@@ -68,9 +68,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void EmptyNameConstructor ()
 		{
 			StrongName sn = new StrongName (snpkb, String.Empty, version);
@@ -100,11 +98,7 @@ namespace MonoTests.System.Security.Policy {
 
 			string s = String.Format ("<StrongName version=\"1\"{0}{1}Key=\"00240000048000009400000006020000002400005253413100040000010001003DBD7208C62B0EA8C1C058072B635F7C9ABDCB22DB20B2A9DADAEFE800642F5D8DEB7802F7A5367728D7558D1468DBEB2409D02B131B926E2E59544AAC18CFC909023F4FA83E94001FC2F11A27477D1084F514B861621A0C66ABD24C4B9FC90F3CD8920FF5FFCED76E5C6FB1F57DD356F96727A4A5485B079344004AF8FFA4CB\"{0}{1}Name=\"StrongNameName\"{0}{1}Version=\"1.2.3.4\"/>{0}",
 				Environment.NewLine,
-#if NET_2_0
 				String.Empty);
-#else
-				"            ");
-#endif
 			Assert.AreEqual (s, sn.ToString (), "ToString");
 		}
 

@@ -29,9 +29,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 
 
 namespace MonoTests.System {
@@ -87,7 +85,6 @@ namespace MonoTests.System {
 				Assert.Fail ("#8");
 			} catch (ArgumentNullException) {}
 	
-#if NET_2_0
 			try {
 				Array.Sort<object> (null);
 				Assert.Fail ("#9");
@@ -132,7 +129,6 @@ namespace MonoTests.System {
 				Array.Sort<object> (null, new Comparison<object>(ObjComparison));
 				Assert.Fail ("#17");
 			} catch (ArgumentNullException) {}
-#endif
 		}	
 		
 		public static int ObjComparison (object o1, object o2) {
@@ -164,7 +160,6 @@ namespace MonoTests.System {
 				Assert.Fail ("#4");
 			} catch (ArgumentException) {}
 			
-#if NET_2_0
 			try {
 				Array.Sort<object> (arr, 1, 5);
 				Assert.Fail ("#5");
@@ -184,7 +179,6 @@ namespace MonoTests.System {
 				Array.Sort<object, object> (arr, null, 1, 5, null);
 				Assert.Fail ("#8");
 			} catch (ArgumentException) {}
-#endif
 		}
 	
 		[Test]
@@ -230,7 +224,6 @@ namespace MonoTests.System {
 				Assert.Fail ("#4");
 			} catch (ArgumentOutOfRangeException) {}
 	
-#if NET_2_0
 			try {
 				Array.Sort<object> (arr, -1, 1);
 				Assert.Fail ("#5");
@@ -270,7 +263,6 @@ namespace MonoTests.System {
 				Array.Sort<object, object> (arr, null, 0, -1, null);
 				Assert.Fail ("#8");
 			} catch (ArgumentOutOfRangeException) {}
-#endif
 		}
 	
 		[Test]
@@ -362,7 +354,6 @@ namespace MonoTests.System {
 				Assert.Fail ("#8");
 			} catch (InvalidOperationException) {}
 	
-#if NET_2_0
 			try {
 				Array.Sort<object> (arr);
 				Assert.Fail ("#9");
@@ -402,7 +393,6 @@ namespace MonoTests.System {
 				Array.Sort<object, object> (arr, null, 0, 3, null);
 				Assert.Fail ("#16");
 			} catch (InvalidOperationException) {}
-#endif
 		}
 	}		
 }

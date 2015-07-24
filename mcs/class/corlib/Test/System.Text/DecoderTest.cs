@@ -15,7 +15,6 @@ namespace MonoTests.System.Text
 	[TestFixture]
 	public class DecoderTest
 	{
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertNullChars ()
@@ -127,7 +126,6 @@ namespace MonoTests.System.Text
 				throw new NotSupportedException ();
 			}
 		}
-#endif
 
 		[Test]
 		public void Bug10789 ()

@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum EncoderValue {
 		ColorTypeCMYK = 0,
 		ColorTypeYCCK = 1,

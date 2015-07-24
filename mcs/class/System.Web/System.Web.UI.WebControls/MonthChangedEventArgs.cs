@@ -32,12 +32,8 @@ namespace System.Web.UI.WebControls {
 
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MonthChangedEventArgs {
-#else
-	public sealed class MonthChangedEventArgs {
-#endif
 
 		DateTime new_date;
 		DateTime prev_date;

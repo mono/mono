@@ -140,9 +140,7 @@ public class CP1147 : ByteEncoding
 		int ch;
 		int charIndex = 0;
 		int byteIndex = 0;
-#if NET_2_0
 		EncoderFallbackBuffer buffer = null;
-#endif
 		while (charCount > 0)
 		{
 			ch = (int)(chars[charIndex]);

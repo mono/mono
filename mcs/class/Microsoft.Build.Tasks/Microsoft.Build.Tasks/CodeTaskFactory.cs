@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_4_0
 using System;
 using Microsoft.Build.Framework;
 using System.Collections.Generic;
@@ -110,31 +109,85 @@ namespace Microsoft.Build.Tasks
 					break;
 				}
 			}
-			if (language == "vb")
-				throw new NotImplementedException (string.Format ("{0} is not supported language for inline task", language));
-			if (language != "cs")
+
+			if (language != "cs" && language != "vb")
 				throw new InvalidProjectFileException (null, string.Format ("{0} is not supported language for inline task", language), "MSB", "4175", null);
-			string gen = null;
-			// The documentation says "ITask", but the very first example shows "Log" which is not in ITask! It is likely that the generated code uses Task or TaskExtension.
-			string classTemplate = @"public class " + taskName + " : Microsoft.Build.Utilities.Task { @@EXECUTE@@ }";
-			foreach (var ns in namespace_uses)
-				gen += "using " + ns + ";\n";
-			switch (type) {
-			case "Class":
-				gen += code;
-				break;
-			case "Method":
-				gen += classTemplate.Replace ("@@EXECUTE@@", code);
-				break;
-			case "Fragment":
-				gen += classTemplate.Replace ("@@EXECUTE@@", "public override bool Execute () { " + code + " return true; }");
-				break;
+
+			CodeCompileUnit ccu;
+
+			if (type == "Class") {  // 'code' contains the whole class that implements the task
+				ccu = new CodeSnippetCompileUnit (code);
+			}
+			else {  // 'code' contains parts of the class that implements the task
+				ccu = new CodeCompileUnit ();
+				var nsp = new CodeNamespace ();
+				nsp.Imports.AddRange (namespace_uses.Select (x => new CodeNamespaceImport (x)).ToArray ());
+				ccu.Namespaces.Add (nsp);
+
+				var taskClass = new CodeTypeDeclaration {
+					IsClass = true,
+					Name = taskName,
+					TypeAttributes = TypeAttributes.Public
+				};
+
+				var parameters = new List<CodeMemberProperty> ();
+				var parametersBackingFields = new List<CodeMemberField> ();
+
+				// add a public property + backing field for each parameter
+				foreach (var param in parameter_group) {
+					var prop = new CodeMemberProperty {
+						Attributes = MemberAttributes.Public | MemberAttributes.Final,
+						Name = param.Value.Name,
+						Type = new CodeTypeReference (param.Value.PropertyType)
+					};
+
+					var propBf = new CodeMemberField {
+						Attributes = MemberAttributes.Private,
+						Name = "_" + prop.Name,
+						Type = prop.Type
+					};
+
+					// add getter and setter to the property
+					prop.GetStatements.Add (new CodeMethodReturnStatement (new CodeFieldReferenceExpression (new CodeThisReferenceExpression (), propBf.Name)));
+					prop.SetStatements.Add (new CodeAssignStatement (new CodeFieldReferenceExpression (new CodeThisReferenceExpression (), propBf.Name), new CodePropertySetValueReferenceExpression ()));
+
+					parameters.Add (prop);
+					parametersBackingFields.Add (propBf);
+				}
+
+				taskClass.Members.AddRange (parameters.ToArray ());
+				taskClass.Members.AddRange (parametersBackingFields.ToArray ());
+				taskClass.BaseTypes.Add ("Microsoft.Build.Utilities.Task");  // The documentation says "ITask", but the very first example shows "Log" which is not in ITask! It is likely that the generated code uses Task or TaskExtension.
+
+				if (type == "Method") {  // 'code' contains the 'Execute' method directly
+					taskClass.Members.Add (new CodeSnippetTypeMember (code));
+				}
+				else if (type == "Fragment") {  // 'code' contains the body of the 'Execute' method
+					var method = new CodeMemberMethod {
+						Attributes = MemberAttributes.Public | MemberAttributes.Override,
+						Name = "Execute",
+						ReturnType = new CodeTypeReference (typeof (bool))
+					};
+
+					// add the code and a 'return true' at the end of the method
+					method.Statements.Add (new CodeSnippetStatement (code));
+					method.Statements.Add (new CodeMethodReturnStatement (new CodePrimitiveExpression (true)));
+
+					taskClass.Members.Add (method);
+				}
+				else {
+					throw new ArgumentException ("Invalid type: " + type);
+				}
+
+				nsp.Types.Add (taskClass);
 			}
 
 			var cscParams = new CompilerParameters ();
 			cscParams.ReferencedAssemblies.Add ("Microsoft.Build.Framework.dll");
 			cscParams.ReferencedAssemblies.Add ("Microsoft.Build.Utilities.v4.0.dll"); // since we use Task, it depends on this dll.
-			var results = new CSharpCodeProvider ().CompileAssemblyFromSource (cscParams, gen);
+			cscParams.ReferencedAssemblies.AddRange (references.ToArray ());
+			cscParams.GenerateInMemory = true;
+			var results = CodeDomProvider.CreateProvider (language).CompileAssemblyFromDom (cscParams, ccu);
 			var errors = new CompilerError [results.Errors.Count];
 			results.Errors.CopyTo (errors, 0);
 			if (errors.Any (e => !e.IsWarning)) {
@@ -159,4 +212,3 @@ namespace Microsoft.Build.Tasks
 	}
 }
 
-#endif

@@ -31,9 +31,7 @@ namespace System.Management
 {
 	public enum PutType
 	{
-#if NET_2_0
 		None = 0,
-#endif
 		UpdateOnly = 1,
 		CreateOnly = 2,
 		UpdateOrCreate = 3

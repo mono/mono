@@ -201,11 +201,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Add_NVC_Null ()
 		{
 			new NameValueCollection ().Add (null);
@@ -340,11 +336,7 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 		
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (InvalidCastException))]
-#else		
-		[ExpectedException (typeof (ArrayTypeMismatchException))]
-#endif
 		public void CopyTo_WrongTypeArray ()
 		{
 			Array a = Array.CreateInstance (typeof (DateTime), 3);
@@ -385,28 +377,19 @@ namespace MonoTests.System.Collections.Specialized {
 			}
 		}
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif		
 		public void Constructor_Null_NVC ()
 		{
 			NameValueCollection nvc = new NameValueCollection((NameValueCollection)null);
 		}
 		
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif		
 		public void Constructor_Capacity_Null_NVC ()
 		{
 			NameValueCollection nvc = new NameValueCollection(10, (NameValueCollection)null);
 		}
 
-#if NET_2_0
 		[Test]
 		public void Constructor_IEqualityComparer ()
 		{
@@ -448,7 +431,6 @@ namespace MonoTests.System.Collections.Specialized {
 			Assert.AreEqual (c2.Get ("KEY"), "value", "Constructor_NameValueCollection");
 			c2.Remove ("key");
 		}
-#endif
 		class MyNVC : NameValueCollection
 		{
 			List<string> log;

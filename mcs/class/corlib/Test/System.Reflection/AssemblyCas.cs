@@ -239,18 +239,6 @@ namespace MonoCasTests.System.Reflection {
 			// e.g. in this case both assemblies are already loaded in memory
 			at.LoadWithPartialName ();
 		}
-#if !NET_2_0
-		// that one is unclear (undocumented) and doesn't happen in 2.0
-		// will not be implemented in Mono unless if find out why...
-		[Category ("NotWorking")]
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void LoadWithPartialName_Deny_SecurityPermission ()
-		{
-			at.LoadWithPartialName ();
-		}
-#endif
 		// we use reflection to call Assembly as some methods and events are protected 
 		// by LinkDemand (which will be converted into full demand, i.e. a stack walk)
 		// when reflection is used (i.e. it gets testable).

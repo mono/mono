@@ -105,9 +105,6 @@ namespace System
 		object GetData (string name);
 		int GetHashCode();
 
-#if !NET_4_0
-		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-#endif
 		object GetLifetimeService ();
 
 		Type GetType ();

@@ -42,6 +42,7 @@ using System.Threading;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Linq;
+using System.Resources;
 
 namespace MonoTests.System.Reflection
 {
@@ -88,12 +89,8 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #49114
-#if NET_2_0
 		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (TypeLoadException))]
-#endif
 		public void GetType_TypeName_Invalid () 
 		{
 			typeof (int).Assembly.GetType ("&blabla", true, true);
@@ -104,7 +101,6 @@ namespace MonoTests.System.Reflection
 		{
 			Assembly a = typeof (int).Assembly;
 			string typeName = typeof (string).AssemblyQualifiedName;
-#if NET_2_0
 			try {
 				a.GetType (typeName, true, false);
 				Assert.Fail ("#A1");
@@ -114,17 +110,6 @@ namespace MonoTests.System.Reflection
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.IsNull (ex.ParamName, "#A5");
 			}
-#else
-			try {
-				a.GetType (typeName, true, false);
-				Assert.Fail ("#A1");
-			} catch (TypeLoadException ex) {
-				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf (typeName) != -1, "#A5");
-			}
-#endif
 
 			Type type = a.GetType (typeName, false);
 			Assert.IsNull (type, "#B1");
@@ -138,22 +123,24 @@ namespace MonoTests.System.Reflection
 			// note: only available in default appdomain
 			// http://weblogs.asp.net/asanto/archive/2003/09/08/26710.aspx
 			// Not sure we should emulate this behavior.
+#if !MONODROID
 			string fname = AppDomain.CurrentDomain.FriendlyName;
 			if (fname.EndsWith (".dll")) { // nunit-console
 				Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
-#if NET_2_0
 				Assert.IsFalse (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
-#endif
 			} else { // gnunit
 				Assert.IsNotNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
-#if NET_2_0
 				Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
-#endif
 			}
+#else
+			Assert.IsNull (Assembly.GetEntryAssembly (), "GetEntryAssembly");
+			Assert.IsTrue (AppDomain.CurrentDomain.IsDefaultAppDomain (), "!default appdomain");
+#endif
 		}
 
 #if !MONOTOUCH // Reflection.Emit is not supported.
 		[Test]
+		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
@@ -203,7 +190,10 @@ namespace MonoTests.System.Reflection
 		public void Corlib_test ()
 		{
 			Assembly corlib_test = Assembly.GetExecutingAssembly ();
-#if MOBILE
+#if MONODROID
+			Assert.IsNull (corlib_test.EntryPoint, "EntryPoint");
+			Assert.IsNull (corlib_test.Evidence, "Evidence");
+#elif MOBILE
 			Assert.IsNotNull (corlib_test.EntryPoint, "EntryPoint");
 			Assert.IsNull (corlib_test.Evidence, "Evidence");
 #else
@@ -214,11 +204,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.IsTrue (corlib_test.GetReferencedAssemblies ().Length > 0, "GetReferencedAssemblies");
 			Assert.AreEqual (0, corlib_test.HostContext, "HostContext");
-#if NET_4_0 && !MOBILE
 			Assert.AreEqual ("v4.0.30319", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
-#else
-			Assert.AreEqual ("v2.0.50727", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
-#endif
 
 			Assert.IsNotNull (corlib_test.ManifestModule, "ManifestModule");
 			Assert.IsFalse (corlib_test.ReflectionOnly, "ReflectionOnly");
@@ -261,6 +247,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -273,6 +260,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -358,9 +346,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #78517
-#if ONLY_1_1
-		[Category ("NotDotNet")] // MS.NET 1.x throws FileLoadException
-#endif
 		public void LoadFrom_Empty_Assembly ()
 		{
 			string tempFile = Path.GetTempFileName ();
@@ -413,7 +398,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_plattest", "mscorlibtests" };
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_test_net_4_x", "corlib_plattest", "mscorlibtests", "BclTests" };
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
@@ -488,6 +473,63 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void SateliteAssemblyForInMemoryAssembly ()
+		{
+			string assemblyFileName = Path.Combine (
+				Path.GetTempPath (), "AssemblyLocation1.dll");
+
+			try {
+				AssemblyName assemblyName = new AssemblyName ();
+				assemblyName.Name = "AssemblyLocation1";
+
+				AssemblyBuilder ab = AppDomain.CurrentDomain
+					.DefineDynamicAssembly (assemblyName,
+						AssemblyBuilderAccess.Save,
+						Path.GetTempPath ());
+
+				ModuleBuilder moduleBuilder = ab.DefineDynamicModule (assemblyName.Name, assemblyName.Name + ".dll");
+				TypeBuilder typeBuilder = moduleBuilder.DefineType ("Program", TypeAttributes.Public);
+
+				MethodBuilder methodBuilder = typeBuilder.DefineMethod ("TestCall", MethodAttributes.Public | MethodAttributes.Static, typeof(void), Type.EmptyTypes);
+				ILGenerator gen = methodBuilder.GetILGenerator ();
+
+				//
+				// 	var resourceManager = new ResourceManager (typeof (Program));
+				//	resourceManager.GetString ("test");
+				//
+				gen.Emit (OpCodes.Ldtoken, typeBuilder);
+				gen.Emit (OpCodes.Call, typeof(Type).GetMethod ("GetTypeFromHandle"));
+				gen.Emit (OpCodes.Newobj, typeof(ResourceManager).GetConstructor (new Type[] { typeof(Type) }));
+				gen.Emit (OpCodes.Ldstr, "test");
+				gen.Emit (OpCodes.Callvirt, typeof(ResourceManager).GetMethod ("GetString", new Type[] { typeof(string) }));
+				gen.Emit (OpCodes.Pop);
+				gen.Emit (OpCodes.Ret);
+
+				typeBuilder.CreateType ();
+
+				ab.Save (Path.GetFileName (assemblyFileName));
+
+				using (FileStream fs = File.OpenRead (assemblyFileName)) {
+					byte[] buffer = new byte[fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					Assembly assembly = Assembly.Load (buffer);
+
+					var mm = assembly.GetType ("Program").GetMethod ("TestCall");
+					try {
+						mm.Invoke (null, null);
+						Assert.Fail ();
+					} catch (TargetInvocationException e) {
+						Assert.IsTrue (e.InnerException is MissingManifestResourceException);
+					}
+
+					fs.Close ();
+				}
+			} finally {
+				File.Delete (assemblyFileName);
+			}
+		}
+
+		[Test]
 		[Category ("NotWorking")]
 		public void bug78464 ()
 		{
@@ -509,6 +551,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void bug78465 ()
 		{
 			string assemblyFileName = Path.Combine (
@@ -546,6 +589,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void bug78468 ()
 		{
 			string assemblyFileNameA = Path.Combine (Path.GetTempPath (),
@@ -589,15 +633,11 @@ namespace MonoTests.System.Reflection
 				Assert.AreEqual ("readme.txt", resInfo.FileName, "#A6");
 				Assert.IsNull (resInfo.ReferencedAssembly, "#A7");
 				Assert.AreEqual ((ResourceLocation) 0, resInfo.ResourceLocation, "#A8");
-#if NET_2_0
 				try {
 					assembly.GetManifestResourceStream ("read");
 					Assert.Fail ("#A9");
 				} catch (FileNotFoundException) {
 				}
-#else
-				Assert.IsNull (assembly.GetManifestResourceStream ("read"), "#A9");
-#endif
 				try {
 					assembly.GetFile ("readme.txt");
 					Assert.Fail ("#A10");
@@ -621,7 +661,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void ReflectionOnlyLoad ()
@@ -633,6 +672,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be directly as files
 		public void ReflectionOnlyLoadFrom ()
 		{
 			string loc = typeof (AssemblyTest).Assembly.Location;
@@ -650,7 +690,6 @@ namespace MonoTests.System.Reflection
 			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (AssemblyTest).Assembly.FullName);
 			assembly.CreateInstance ("MonoTests.System.Reflection.AssemblyTest");
 		}
-#endif
 
 		[Test]
 		[Category ("NotWorking")] // patch for bug #79720 must be committed first
@@ -760,11 +799,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #79712
-#if NET_2_0
 		[Category ("NotWorking")] // in non-default domain, MS throws FileNotFoundException
-#else
-		[Category ("NotWorking")]
-#endif
 		public void Load_Culture_Mismatch ()
 		{
 			string tempDir = Path.Combine (Path.GetTempPath (),
@@ -787,11 +822,7 @@ namespace MonoTests.System.Reflection
 				aname = new AssemblyName ();
 				aname.Name = "bug79712a";
 				aname.CultureInfo = CultureInfo.InvariantCulture;
-#if NET_2_0
 				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#A1");
-#else
-				Assert.IsTrue (cdt.AssertFileLoadException (aname), "#A2");
-#endif
 
 				// PART B
 
@@ -803,11 +834,7 @@ namespace MonoTests.System.Reflection
 				aname = new AssemblyName ();
 				aname.Name = "bug79712b";
 				aname.CultureInfo = new CultureInfo ("en-US");
-#if NET_2_0
 				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#B1");
-#else
-				Assert.IsTrue (cdt.AssertFileLoadException (aname), "#B2");
-#endif
 			} finally {
 				AppDomain.Unload (ad);
 				if (Directory.Exists (tempDir))
@@ -817,6 +844,7 @@ namespace MonoTests.System.Reflection
 
 
 		[Test] // bug #79715
+		[Category("MobileNotWorking")]
 		public void Load_PartialVersion ()
 		{
 			string tempDir = Path.Combine (Path.GetTempPath (),

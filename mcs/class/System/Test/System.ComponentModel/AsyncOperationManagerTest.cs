@@ -7,7 +7,6 @@
 // Copyright (C) 2007 Novell, Inc.
 //
 
-#if NET_2_0
 
 using System;
 using System.Threading;
@@ -27,7 +26,7 @@ namespace MonoTests.System.ComponentModel
 			SynchronizationContext sc1 = new SynchronizationContext ();
 			SynchronizationContext sc2 = new SynchronizationContext ();
 
-#if MOBILE
+#if MOBILE && !MONODROID
 			Assert.IsNotNull (SynchronizationContext.Current, "A1");
 #else
 			Assert.IsNull (SynchronizationContext.Current, "A1");
@@ -62,4 +61,3 @@ namespace MonoTests.System.ComponentModel
 	}
 }
 
-#endif

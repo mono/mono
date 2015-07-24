@@ -4,7 +4,7 @@ BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PA
 MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 
 # Use system resgen as we don't want local System.Windows.Forms dependency
-RESGEN = resgen2
+RESGEN := $(dir $(shell which $(EXTERNAL_MCS)))resgen2
 
 profile-check:
 	@:
@@ -18,6 +18,8 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_3_5 \
 	-d:NET_4_0 \
 	-d:NET_4_5 \
+	-d:MONO \
+	-d:DISABLE_CAS_USE  \
 	-d:MOBILE \
 	-d:MOBILE_DYNAMIC \
 	-d:XAMMAC \

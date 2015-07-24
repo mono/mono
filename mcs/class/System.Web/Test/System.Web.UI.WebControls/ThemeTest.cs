@@ -30,7 +30,6 @@
 // PageWithStyleSheet.aspx; PageWithStyleSheet.aspx.cs;RunTimeSetTheme.aspx;
 // RunTimeSetTheme.aspx.cs; PageWithTheme.aspx; PageWithTheme.aspx.cs; Theme1.skin
 
-#if NET_2_0
 
 using System;
 using System.Drawing;
@@ -284,4 +283,3 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 }
-#endif

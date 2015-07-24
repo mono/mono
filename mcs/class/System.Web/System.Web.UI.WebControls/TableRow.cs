@@ -38,18 +38,14 @@ namespace System.Web.UI.WebControls {
 	[DefaultProperty ("Cells")]
 	[ParseChildren (true, "Cells")]
 	[ToolboxItem ("")]
-#if NET_2_0
 	[Bindable (false)]
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
 	public class TableRow : WebControl
 	{
 		TableCellCollection cells;
-#if NET_2_0
 		bool tableRowSectionSet;
 
 		internal TableRowCollection Container { get; set; }
-#endif
 		
 		public TableRow ()
 			: base (HtmlTextWriterTag.Tr)
@@ -57,11 +53,9 @@ namespace System.Web.UI.WebControls {
 			AutoID = false;
 		}
 
-#if NET_2_0
 		internal bool TableRowSectionSet {
 			get { return tableRowSectionSet; }
 		}
-#endif
 		
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
@@ -75,9 +69,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -90,9 +81,6 @@ namespace System.Web.UI.WebControls {
 			set { TableItemStyle.HorizontalAlign = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (VerticalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -108,11 +96,9 @@ namespace System.Web.UI.WebControls {
 		TableItemStyle TableItemStyle {
 			get { return (ControlStyle as TableItemStyle); }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new CellControlCollection (this);
@@ -122,7 +108,6 @@ namespace System.Web.UI.WebControls {
 		{
 			return new TableItemStyle (ViewState);
 		}
-#if NET_2_0
 		[DefaultValue (TableRowSection.TableBody)]
 		public virtual TableRowSection TableSection {
 			get {
@@ -139,7 +124,6 @@ namespace System.Web.UI.WebControls {
 					container.RowTableSectionSet ();
 			}
 		}
-#endif
 		// inner class
 		protected class CellControlCollection : ControlCollection {
 

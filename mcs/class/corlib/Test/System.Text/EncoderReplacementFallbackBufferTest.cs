@@ -9,7 +9,6 @@
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
-#if NET_2_0
 
 using System;
 using System.IO;
@@ -97,5 +96,4 @@ namespace MonoTests.System.Text
 	}
 }
 
-#endif
 

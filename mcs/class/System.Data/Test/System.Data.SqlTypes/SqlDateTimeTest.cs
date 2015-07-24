@@ -573,14 +573,12 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (633138985603970000, d1.Value.Ticks, "#R03");
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
 		{
 			XmlQualifiedName qualifiedName = SqlDateTime.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("dateTime", qualifiedName.Name, "#A01");
 		}
-#endif
         }
 }
 

@@ -55,12 +55,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
 		public void SetContext ()
 		{            
 			SetContext (Context);
 		}
-#endif
 	}
 	
 	public class FormPoker : HtmlForm {
@@ -104,12 +102,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			return sw.ToString ();
 		}
-#if NET_2_0
 		public ControlCollection GetControlCollection ()
 		{
 			return CreateControlCollection();
 		}
-#endif
 	}
 
 	class FUControl : UserControl {
@@ -131,9 +127,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			Assert.AreEqual ("form", form.TagName, "TagName");
 
-#if NET_2_0
 			Assert.IsFalse (form.SubmitDisabledControls, "TagName");
-#endif
 		}
 
 		[Test]
@@ -150,13 +144,11 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			form.Target = null;
 			Assert.AreEqual (String.Empty, form.Target, "Target");
 
-#if NET_2_0
 			form.DefaultButton = null;
 			Assert.AreEqual (String.Empty, form.DefaultButton, "DefaultButton");
 
 			form.DefaultFocus = null;
 			Assert.AreEqual (String.Empty, form.DefaultFocus, "DefaultFocus");
-#endif
 			Assert.AreEqual (0, form.Attributes.Count, "Attributes.Count");
 
 		}
@@ -167,7 +159,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlForm form = new HtmlForm ();
 			IAttributeAccessor a = (IAttributeAccessor)form;
 
-#if NET_2_0
 			/* not stored in Attributes */
 			form.DefaultButton = "defaultbutton";
 			Assert.IsNull (a.GetAttribute ("defaultbutton"), "A1");
@@ -175,7 +166,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			/* not stored in Attributes */
 			form.DefaultFocus = "defaultfocus";
 			Assert.IsNull (a.GetAttribute ("defaultfocus"), "A2");
-#endif
 			form.Enctype = "enctype";
 			Assert.AreEqual ("enctype", a.GetAttribute ("enctype"), "A3");
 
@@ -191,16 +181,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			form.ID = "hithere";
 			Assert.AreEqual ("hithere", form.Name, "A9");
 
-#if NET_2_0
 			form.SubmitDisabledControls = true;
 			Assert.IsNull (a.GetAttribute ("submitdisabledcontrols"), "A10");
-#endif
 
 			form.Target = "target";
 			Assert.AreEqual ("target", a.GetAttribute ("target"), "A11");
 		}
 
-#if NET_2_0
 #if !TARGET_DOTNET
 		[Test]
 		public void ActionStringWithQuery ()
@@ -238,7 +225,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #endif
 			Assert.AreEqual (" name=\"aspnetForm\" method=\"post\" action=\"someactionfile.aspx\"", attrs, "A2");
 		}
-#endif
 		
 		[Test]
 		public void ViewState ()
@@ -246,18 +232,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			FormPoker form = new FormPoker();
 			FormPoker copy = new FormPoker();
 
-#if NET_2_0
 			form.DefaultButton = "defaultbutton";
 			form.DefaultFocus = "defaultfocus";
-#endif
 
 			object state = form.SaveState();
 			copy.LoadState (state);
 
-#if NET_2_0
 			Assert.AreEqual ("", copy.DefaultButton, "A1");
 			Assert.AreEqual ("defaultfocus", form.DefaultFocus, "A2");
-#endif
 
 		}
 
@@ -292,14 +274,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Page p = new Page();
 			FormPoker form = new FormPoker ();
 			form.Page = p;
-#if NET_2_0
 			HtmlDiff.AssertAreEqual ("<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
-#else
-			HtmlDiff.AssertAreEqual ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren ().Trim (), "A1");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void ControlCollection ()
 		{
@@ -309,6 +286,5 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsFalse (col.IsReadOnly, "A2");
 			Assert.AreEqual (0, col.Count, "A3");
 		}
-#endif
 	}
 }

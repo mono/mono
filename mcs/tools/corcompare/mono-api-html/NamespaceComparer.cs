@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -68,7 +69,7 @@ namespace Xamarin.ApiDiff {
 			Output.WriteLine ();
 		}
 
-		public override void Modified (XElement source, XElement target)
+		public override void Modified (XElement source, XElement target, ApiChanges differences)
 		{
 			var output = Output;
 			State.Output = new StringWriter ();

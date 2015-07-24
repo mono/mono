@@ -364,8 +364,12 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void TestAverageOverflowOnInt64 ()
 		{
-			var x = new long [] { Int64.MaxValue, Int64.MaxValue };
-			x.Average ();
+			try {
+				var x = new long [] { Int64.MaxValue, Int64.MaxValue };
+				x.Average ();
+				Assert.Fail ("#1");
+			} catch (OverflowException) {
+			}
 		}
 
 		[Test]

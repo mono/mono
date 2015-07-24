@@ -29,7 +29,6 @@
 // ************IMPORTANT**********
 // Note: This test completed ,but cannot be run by Framework limitations!
 
-#if NET_2_0
 
 using System;
 using System.Web;
@@ -71,4 +70,3 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 }
-#endif

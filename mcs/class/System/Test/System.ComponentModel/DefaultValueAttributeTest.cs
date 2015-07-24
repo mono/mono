@@ -56,7 +56,7 @@ namespace MonoTests.System.ComponentModel {
 			Assert.IsFalse (dvat.Equals (true), "Equals(true)");
 			Assert.IsTrue (dvat.Equals (new DefaultValueAttribute (true)), "Equals(new)");
 
-			Assert.AreEqual (true.GetHashCode (), dvat.GetHashCode (), "GetHashCode");
+			Assert.AreEqual (1, dvat.GetHashCode (), "GetHashCode");
 		}
 	}
 }

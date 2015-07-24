@@ -62,13 +62,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			return base.CreateControlStyle ();
 		}
-#if NET_2_0
 		protected override void RaisePostBackEvent (string argument)
 		{
 			WebTest.CurrentTest.UserData = "RaisePostBackEvent";
 			base.RaisePostBackEvent (argument);
 		}
-#endif
 
 	}
 
@@ -104,13 +102,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("table", t.Tag, "TagName");
 			Assert.AreEqual (0, t.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, t.StateBag.Count, "ViewState.Count-2");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, t.Caption, "Caption");
 			Assert.AreEqual (TableCaptionAlign.NotSet, t.CaptionAlign, "CaptionAlign");
-#endif
 
 		}
-#if NET_2_0
 		[Test]
 		public void Caption ()
 		{
@@ -139,7 +134,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 			HtmlDiff.AssertAreEqual (orig, html, "CaptionAlign");
 		}
-#endif
 		[Test]
 		public void NullProperties ()
 		{
@@ -416,7 +410,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.BackImageUrl = String.Empty;
 		}
 
-#if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void RenderInAspxPage ()
@@ -438,7 +431,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.Form.Controls.Add (t);
 			p.Controls.Add (t);
 		}
-#endif
 
 		[Test]
 		public void CreateControlStyle ()
@@ -696,7 +688,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 		}
 
-#if NET_2_0
 		[Test]
 		[Category("NunitWeb")] // Note: No event fired , only flow been checked.
 		public void RaisePostBackEvent ()
@@ -725,6 +716,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest.Unload ();
 		}
-#endif
 	}
 }

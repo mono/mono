@@ -136,6 +136,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Null ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -152,6 +153,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Empty ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -169,6 +171,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_NullChar ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -188,6 +191,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -214,7 +218,6 @@ namespace MonoTests.System.Reflection.Emit
 			}
 
 			// fail on MS .NET 1.1
-#if NET_2_0
 			TypeBuilder tb = mb.DefineType ("ITest2", TypeAttributes.Interface,
 				typeof (object));
 			Assert.AreEqual (typeof (object), tb.BaseType, "#C1");
@@ -222,13 +225,10 @@ namespace MonoTests.System.Reflection.Emit
 			tb = mb.DefineType ("ITest3", TypeAttributes.Interface,
 				typeof (IDisposable));
 			Assert.AreEqual (typeof (IDisposable), tb.BaseType, "#D1");
-#endif
 		}
 
 		[Test]
-#if ONLY_1_1
-		[Category ("NotDotNet")] // Parent type was not extensible by the given type
-#endif
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;
@@ -246,6 +246,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
+		public void DefineType_TypeSize ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
+				typeof (ValueType), 1);
+			Assert.AreEqual (1, tb.Size);
+		}
+
+		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
@@ -261,6 +274,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -304,7 +318,6 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (s1.GetValue (i), s2.GetValue (i), "#2: " + i);
 		}
 
-#if NET_2_0
 		[Test]
 		public void ResolveFieldTokenFieldBuilder ()
 		{
@@ -363,6 +376,32 @@ namespace MonoTests.System.Reflection.Emit
 
 			MethodBase mi = moduleb.ResolveMethod (tok);
 			Assert.IsNotNull (mi);
+			Assert.AreEqual ("Frub", mi.Name);
+		}
+
+		[Test]
+		public void GetMethodTokenCrossMethodBuilders ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder moduleb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = moduleb.DefineType ("foo");
+			MethodBuilder mb = tb.DefineMethod("Frub", MethodAttributes.Static, null, new Type[] { typeof(IntPtr) });
+			int tok = mb.GetToken().Token;
+			mb.SetImplementationFlags(MethodImplAttributes.NoInlining);
+			ILGenerator ilgen = mb.GetILGenerator();
+			ilgen.Emit(OpCodes.Ret);
+
+			tb.CreateType ();
+
+			var mi = (MethodInfo) moduleb.ResolveMember (tok);
+			Assert.IsNotNull (mi);
+
+			ModuleBuilder moduleb2 = ab.DefineDynamicModule ("foo2.dll", "foo2.dll");
+			var tok2 = moduleb2.GetMethodToken (mi).Token;
+
+			MethodBase mi2 = moduleb.ResolveMethod (tok2);
+			Assert.IsNotNull (mi2);
 			Assert.AreEqual ("Frub", mi.Name);
 		}
 
@@ -564,7 +603,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (string), resolved_method.GetParameters () [0].ParameterType);
 			Assert.AreEqual (typeof (int), resolved_method.GetParameters () [1].ParameterType);
 		}
-#endif
 
 		[Test]
 		public void GetTypes ()
@@ -586,9 +624,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // GetTypeToken (Type)
-#if NET_2_0
 		[Category ("NotDotNet")] // http://support.microsoft.com/kb/950986
-#endif
 		public void GetTypeToken2_Type_Array ()
 		{
 			Type type;
@@ -602,21 +638,15 @@ namespace MonoTests.System.Reflection.Emit
 
 			type = typeof (object []);
 			typeToken = mb.GetTypeToken (type);
-#if NET_2_0
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#A1");
 			resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#A2");
-#else
-			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#A1");
-#endif
 
-#if NET_2_0
 			type = typeof (object).MakeArrayType ();
 			typeToken = mb.GetTypeToken (type);
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#B1");
 			resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#B2");
-#endif
 		}
 
 		[Test] // GetTypeToken (Type)
@@ -628,16 +658,11 @@ namespace MonoTests.System.Reflection.Emit
 			ModuleBuilder mb = ab.DefineDynamicModule ("MyModule");
 			Type type = typeof (string);
 			TypeToken typeToken = mb.GetTypeToken (type);
-#if NET_2_0
 			Assert.IsFalse (typeToken == TypeToken.Empty, "#1");
 			Type resolved_type = mb.ResolveType (typeToken.Token);
 			Assert.AreEqual (type, resolved_type, "#2");
-#else
-			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#1");
-#endif
 		}
 
-#if NET_2_0
 		[Test] // bug #471302
 		public void ModuleBuilder_ModuleVersionId ()
 		{
@@ -649,7 +674,6 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreNotEqual (new Guid (), module.ModuleVersionId);
 		}
-#endif
 
 		[Test]
 		public void GetType_String_Null ()

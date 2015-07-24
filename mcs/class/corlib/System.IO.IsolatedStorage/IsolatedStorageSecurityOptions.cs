@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 namespace System.IO.IsolatedStorage
 {
 	public enum IsolatedStorageSecurityOptions
@@ -35,5 +34,4 @@ namespace System.IO.IsolatedStorage
 	}
 }
 
-#endif
 

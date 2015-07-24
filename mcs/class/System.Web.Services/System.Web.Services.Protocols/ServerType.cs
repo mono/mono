@@ -34,11 +34,7 @@ using System.Collections;
 
 namespace System.Web.Services.Protocols
 {
-#if NET_2_0
 	public
-#else
-	internal
-#endif
 	class ServerType
 	{
 		LogicalTypeInfo type;
@@ -70,9 +66,7 @@ namespace System.Web.Services.Protocols
 		SoapServiceRoutingStyle routingStyle;
 
 		TypeStubInfo soapProtocol;
-#if NET_2_0
 		TypeStubInfo soap12Protocol;
-#endif
 		TypeStubInfo httpGetProtocol;
 		TypeStubInfo httpPostProtocol;
 		
@@ -106,11 +100,7 @@ namespace System.Web.Services.Protocols
 			else if (t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true).Length > 0) {
 				o = t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true);
 				SoapRpcServiceAttribute at = (SoapRpcServiceAttribute) o[0];
-#if NET_2_0
 				bindingUse = at.Use;
-#else
-				bindingUse = SoapBindingUse.Encoded;
-#endif
 				routingStyle = at.RoutingStyle;
 				if (bindingUse == SoapBindingUse.Default)
 					bindingUse = SoapBindingUse.Encoded;
@@ -120,7 +110,6 @@ namespace System.Web.Services.Protocols
 			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
 
 			WebServiceAbstractNamespace = WebServiceNamespace + sep + "AbstractTypes";
-#if NET_2_0
 			MethodInfo [] type_methods;
 			if (typeof (WebClientProtocol).IsAssignableFrom (Type))
 				type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
@@ -146,9 +135,6 @@ namespace System.Web.Services.Protocols
 				}
 				type_methods = (MethodInfo []) list.ToArray (typeof (MethodInfo));
 			}
-#else
-			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
-#endif
 			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 		}
 
@@ -221,7 +207,7 @@ namespace System.Web.Services.Protocols
 						soap12Protocol.Initialize ();
 					}
 					return soap12Protocol;
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 				case "HttpGet":
 					if (httpGetProtocol == null){
 						httpGetProtocol = new HttpGetTypeStubInfo (this);

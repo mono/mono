@@ -58,50 +58,6 @@ namespace System.Security {
 			new PermissionSet (this).Assert ();
 		}
 
-		internal bool CheckAssert (CodeAccessPermission asserted)
-		{
-			if (asserted == null)
-				return false;
-			if (asserted.GetType () != this.GetType ())
-				return false;
-			return IsSubsetOf (asserted);
-		}
-
-		internal bool CheckDemand (CodeAccessPermission target)
-		{
-			if (target == null)
-				return false;
-			if (target.GetType () != this.GetType ())
-				return false;
-			return IsSubsetOf (target);
-		}
-
-		internal bool CheckDeny (CodeAccessPermission denied)
-		{
-			if (denied == null)
-				return true;
-			Type t = denied.GetType ();
-			if (t != this.GetType ())
-				return true;
-			IPermission inter = Intersect (denied);
-			if (inter == null)
-				return true;
-			// sadly that's not enough :( at this stage we must also check
-			// if an empty (PermissionState.None) is a subset of the denied
-			// (which is like a empty intersection looks like for flag based
-			// permissions, e.g. AspNetHostingPermission).
-			return denied.IsSubsetOf (PermissionBuilder.Create (t));
-		}
-
-		internal bool CheckPermitOnly (CodeAccessPermission target)
-		{
-			if (target == null)
-				return false;
-			if (target.GetType () != this.GetType ())
-				return false;
-			return IsSubsetOf (target);
-		}
-
 		public abstract IPermission Copy ();
 
 		public void Demand ()
@@ -169,28 +125,7 @@ namespace System.Security {
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
-
-			SecurityFrame sf = new SecurityFrame (1);
-			bool revert = false;
-			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
-				revert = true;
-				throw new NotSupportedException ("Currently only declarative Assert are supported.");
-			}
-			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
-				revert = true;
-				throw new NotSupportedException ("Currently only declarative Deny are supported.");
-			}
-			if ((sf.PermitOnly != null) && !sf.PermitOnly.DeclarativeSecurity) {
-				revert = true;
-				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
-			}
-
-			if (!revert) {
-				string msg = Locale.GetText ("No stack modifiers are present on the current stack frame.");
-				// FIXME: we don't (yet) support imperative stack modifiers
-				msg += Environment.NewLine + "Currently only declarative stack modifiers are supported.";
-				throw new ExecutionEngineException (msg);
-			}
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
@@ -198,14 +133,7 @@ namespace System.Security {
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
-
-			SecurityFrame sf = new SecurityFrame (1);
-			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
-				throw new NotSupportedException ("Currently only declarative Assert are supported.");
-			} else {
-				// we can't revert declarative security (or an empty frame) imperatively
-				ThrowExecutionEngineException (SecurityAction.Assert);
-			}
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
@@ -213,14 +141,7 @@ namespace System.Security {
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
-
-			SecurityFrame sf = new SecurityFrame (1);
-			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
-				throw new NotSupportedException ("Currently only declarative Deny are supported.");
-			} else {
-				// we can't revert declarative security (or an empty frame) imperatively
-				ThrowExecutionEngineException (SecurityAction.Deny);
-			}
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
@@ -228,14 +149,7 @@ namespace System.Security {
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
-
-			SecurityFrame sf = new SecurityFrame (1);
-			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
-				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
-			} else {
-				// we can't revert declarative security (or an empty frame) imperatively
-				ThrowExecutionEngineException (SecurityAction.PermitOnly);
-			}
+			throw new NotImplementedException ();
 		}
 
 		// Internal helpers methods
@@ -313,80 +227,11 @@ namespace System.Security {
 			return (String.Compare (value, Boolean.TrueString, true, CultureInfo.InvariantCulture) == 0);
 		}
 
-		internal bool ProcessFrame (SecurityFrame frame)
-		{ 
-			// 1. CheckPermitOnly
-			if (frame.PermitOnly != null) {
-				// the demanded permission must be in one of the permitted...
-				bool permit = frame.PermitOnly.IsUnrestricted ();
-				if (!permit) {
-					// check individual permissions
-					foreach (IPermission p in frame.PermitOnly) {
-						if (CheckPermitOnly (p as CodeAccessPermission)) {
-							permit = true;
-							break;
-						}
-					}
-				}
-				if (!permit) {
-					// ...or else we throw
-					ThrowSecurityException (this, "PermitOnly", frame, SecurityAction.Demand, null);
-				}
-			}
-
-			// 2. CheckDeny
-			if (frame.Deny != null) {
-				// special case where everything is denied (i.e. no child to be processed)
-				if (frame.Deny.IsUnrestricted ())
-					ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, null);
-				foreach (IPermission p in frame.Deny) {
-					if (!CheckDeny (p as CodeAccessPermission))
-						ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, p);
-				}
-			}
-
-			// 3. CheckAssert
-			if (frame.Assert != null) {
-				if (frame.Assert.IsUnrestricted ())
-					return true; // remove permission and continue stack walk
-				foreach (IPermission p in frame.Assert) {
-					if (CheckAssert (p as CodeAccessPermission)) {
-						return true; // remove permission and continue stack walk
-					}
-				}
-			}
-
-			// continue the stack walk
-			return false; 
-		}
-
 		internal static void ThrowInvalidPermission (IPermission target, Type expected) 
 		{
 			string msg = Locale.GetText ("Invalid permission type '{0}', expected type '{1}'.");
 			msg = String.Format (msg, target.GetType (), expected);
 			throw new ArgumentException (msg, "target");
-		}
-
-		internal static void ThrowExecutionEngineException (SecurityAction stackmod)
-		{
-			string msg = Locale.GetText ("No {0} modifier is present on the current stack frame.");
-			// FIXME: we don't (yet) support imperative stack modifiers
-			msg += Environment.NewLine + "Currently only declarative stack modifiers are supported.";
-			throw new ExecutionEngineException (String.Format (msg, stackmod));
-		}
-
-		internal static void ThrowSecurityException (object demanded, string message, SecurityFrame frame,
-			SecurityAction action, IPermission failed)
-		{
-#if NET_2_1
-			throw new SecurityException (message);
-#else
-			Assembly a = frame.Assembly;
-			throw new SecurityException (Locale.GetText (message), 
-				a.UnprotectedGetName (), a.GrantedPermissionSet, 
-				a.DeniedPermissionSet, frame.Method, action, demanded, 
-				failed, a.UnprotectedGetEvidence ());
-#endif
 		}
 	}
 }

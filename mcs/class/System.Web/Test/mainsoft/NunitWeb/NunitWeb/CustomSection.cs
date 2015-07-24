@@ -1,6 +1,4 @@
-﻿#if NET_2_0
-
-using System;
+﻿using System;
 using System.Configuration;
 
 namespace MonoTests.SystemWeb.Framework
@@ -57,5 +55,3 @@ namespace MonoTests.SystemWeb.Framework
         }
     }
 }
-
-#endif

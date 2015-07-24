@@ -575,7 +575,7 @@ namespace System.IO
 
 		public static void WriteAllText (string path, string contents)
 		{
-			WriteAllText (path, contents, Encoding.UTF8Unmarked);
+			WriteAllText (path, contents, EncodingHelper.UTF8Unmarked);
 		}
 
 		public static void WriteAllText (string path, string contents, Encoding encoding)
@@ -616,7 +616,6 @@ namespace System.IO
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
-#if NET_4_0
 		public static IEnumerable<string> ReadLines (string path)
 		{
 			return ReadLines (File.OpenText (path));
@@ -689,6 +688,5 @@ namespace System.IO
 					w.WriteLine (line);
 			}
 		}
-#endif
 	}
 }

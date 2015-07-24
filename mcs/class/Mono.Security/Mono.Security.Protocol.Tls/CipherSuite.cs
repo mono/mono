@@ -477,12 +477,8 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOBILE || NET_4_0
 					// only AES is really used - and we can use CommonCrypto for iOS and OSX this way
 					this.encryptionAlgorithm = Aes.Create();
-#else
-					this.encryptionAlgorithm = Rijndael.Create();
-#endif
 					break;
 			}
 
@@ -548,12 +544,8 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOBILE || NET_4_0
 					// only AES is really used - and we can use CommonCrypto for iOS and OSX this way
 					this.decryptionAlgorithm = Aes.Create();
-#else
-					this.decryptionAlgorithm = Rijndael.Create();
-#endif
 					break;
 			}
 

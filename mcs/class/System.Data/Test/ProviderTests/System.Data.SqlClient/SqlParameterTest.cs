@@ -380,7 +380,6 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteNonQuery ();
 				Assert.Fail ("#B1");
 			} catch (FormatException ex) {
-#if NET_2_0
 				// Failed to convert parameter value from a String to a Int32
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -393,12 +392,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (FormatException), inner.GetType (), "#B7");
 				Assert.IsNull (inner.InnerException, "#B8");
 				Assert.IsNotNull (inner.Message, "#B9");
-#else
-				// Input string was not in a correct format
-				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-#endif
 			}
 		}
 

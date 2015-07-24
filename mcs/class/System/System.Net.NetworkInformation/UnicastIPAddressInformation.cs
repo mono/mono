@@ -29,22 +29,9 @@
 //
 using System;
 using System.Runtime.InteropServices;
+using System.Net.Sockets;
 
 namespace System.Net.NetworkInformation {
-	public abstract class UnicastIPAddressInformation : IPAddressInformation {
-		protected UnicastIPAddressInformation ()
-		{
-		}
-		
-		public abstract long AddressPreferredLifetime { get; }
-		public abstract long AddressValidLifetime { get; }
-		public abstract long DhcpLeaseLifetime { get; }
-		public abstract DuplicateAddressDetectionState DuplicateAddressDetectionState { get; }
-		public abstract IPAddress IPv4Mask { get; }
-		public abstract PrefixOrigin PrefixOrigin { get; }
-		public abstract SuffixOrigin SuffixOrigin { get; }
-	}
-
 	class Win32UnicastIPAddressInformation : UnicastIPAddressInformation 
 	{
 		int if_index;
@@ -122,6 +109,7 @@ namespace System.Net.NetworkInformation {
 	class LinuxUnicastIPAddressInformation : UnicastIPAddressInformation
 	{
 		IPAddress address;
+		IPAddress ipv4Mask;
 
 		public LinuxUnicastIPAddressInformation (IPAddress address)
 		{
@@ -163,7 +151,16 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override IPAddress IPv4Mask {
-			get { throw new NotImplementedException (); }
+			get {
+				// The IPv6 equivilant (for .net compatibility)
+				if (Address.AddressFamily != AddressFamily.InterNetwork)
+					return IPAddress.Any;
+
+				if (ipv4Mask == null)
+					ipv4Mask = NetworkInterface.GetNetMask (address);
+
+				return ipv4Mask;
+			}
 		}
 
 		public override PrefixOrigin PrefixOrigin {

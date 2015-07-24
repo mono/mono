@@ -41,7 +41,6 @@ namespace System.Diagnostics
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[ComVisible (false)]
 		public int CategoryCount {
@@ -75,7 +74,6 @@ namespace System.Diagnostics
 			get { return _parameterResourceFile; }
 			set { _parameterResourceFile = value; }
 		}
-#endif
 
 		[MonoTODO]
 		public override void CopyFromComponent (IComponent component)
@@ -150,10 +148,8 @@ namespace System.Diagnostics
 		private string _log;
 		private string _source;
 		private UninstallAction _uninstallAction = UninstallAction.Remove;
-#if NET_2_0
 		private string _categoryResourceFile;
 		private string _messageResourceFile;
 		private string _parameterResourceFile;
-#endif
 	}
 }

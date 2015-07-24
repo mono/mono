@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Imaging {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public enum EncoderParameterValueType {
 		ValueTypeAscii = 2,
 		ValueTypeByte = 1,

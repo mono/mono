@@ -41,7 +41,6 @@ namespace System.Web.UI.Design
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override void Initialize (IComponent component)
 		{
@@ -49,70 +48,46 @@ namespace System.Web.UI.Design
 		}
 
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		protected abstract ITemplateEditingFrame CreateTemplateEditingFrame (TemplateEditingVerb verb);
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		protected abstract TemplateEditingVerb[] GetCachedTemplateEditingVerbs ();
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public abstract string GetTemplateContent (ITemplateEditingFrame editingFrame, string templateName, out bool allowEditing);
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public abstract void SetTemplateContent (ITemplateEditingFrame editingFrame, string templateName, string templateContent);
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public void EnterTemplateMode (ITemplateEditingFrame newTemplateEditingFrame)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public void ExitTemplateMode (bool fSwitchingTemplates, bool fNested, bool fSave)
 		{
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		public override string GetPersistInnerHtml ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public virtual string GetTemplateContainerDataItemProperty (string templateName)
 		{
 			return string.Empty;
 		}
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public virtual IEnumerable GetTemplateContainerDataSource (string templateName)
 		{
 			return null;
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public TemplateEditingVerb[] GetTemplateEditingVerbs ()
 		{
 			throw new NotImplementedException ();
@@ -124,9 +99,7 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public virtual Type GetTemplatePropertyParentType (string templateName)
 		{
 			return base.Component.GetType ();
@@ -139,9 +112,7 @@ namespace System.Web.UI.Design
 		}
 
 		[MonoTODO]
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.Tag instead")]
-#endif
 		protected override void OnBehaviorAttached ()
 		{
 			throw new NotImplementedException ();
@@ -165,13 +136,6 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
-		[MonoTODO]
-		protected override void PreFilterProperties (IDictionary properties)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		[MonoTODO]
 		protected void SaveActiveTemplateEditingFrame ()
@@ -185,7 +149,6 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
 		protected override bool DataBindingsEnabled {
 			get { throw new NotImplementedException (); }
 		}
@@ -193,11 +156,8 @@ namespace System.Web.UI.Design
 		public override TemplateGroupCollection TemplateGroups {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("Template editing is supported in ControlDesigner.TemplateGroups with SetViewFlags(ViewFlags.TemplateEditing, true) in 2.0.")]
-#endif
 		public ITemplateEditingFrame ActiveTemplateEditingFrame {
 			get {
 				return _activeTemplateFrame;
@@ -210,17 +170,8 @@ namespace System.Web.UI.Design
 			}
 		}
 
-#if !NET_2_0
-		protected internal virtual bool HidePropertiesInTemplateMode {
-			get {
-				return true;
-			}
-		}
-#endif
 
-#if NET_2_0
 		[Obsolete ("Use ControlDesigner.InTemplateMode instead")]
-#endif
 		public bool InTemplateMode {
 			get {
 				return _templateMode;

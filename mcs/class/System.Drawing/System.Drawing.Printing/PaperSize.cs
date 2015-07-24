@@ -37,9 +37,7 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for PaperSize.
 	/// </summary>
-#if NET_2_0
 	[Serializable]
-#endif
 	public class PaperSize
 	{
 		string name;
@@ -48,12 +46,10 @@ namespace System.Drawing.Printing
 		PaperKind kind;
 		internal bool is_default;
 		
-#if NET_2_0
 		public PaperSize ()
 		{
 
 		}
-#endif		
 		public PaperSize(string name, int width, int height)
 		{
 			this.width = width;
@@ -111,7 +107,6 @@ namespace System.Drawing.Printing
 				return kind;
 			}
 		}
-#if NET_2_0
 		public int RawKind {
 			get {
 				return (int)kind;
@@ -121,7 +116,6 @@ namespace System.Drawing.Printing
 			}
 		}
 
-#endif
 	
 		internal bool IsDefault {
 			get { return this.is_default; }

@@ -40,11 +40,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
 	public class UnitCas : AspNetHostingNone {
-#else
-	public class UnitCas: AspNetHostingMinimal {
-#endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
@@ -54,9 +50,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 			unit.ParseCultures ();
 			unit.UnitEquality ();
 			unit.UnitImplicit ();
-#if NET_2_0
 			unit.Unit_IFormatProviderToString ();
-#endif
 		}
 
 		// LinkDemand

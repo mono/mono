@@ -33,8 +33,9 @@
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/metadata.h>
-#include <mono/metadata/threadpool.h>
+#include <mono/metadata/threadpool-ms.h>
 #include <mono/utils/mono-signal-handler.h>
+#include <mono/utils/mono-proclib.h>
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -93,8 +94,6 @@ static struct termios initial_attr;
 MonoBoolean
 ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return isatty (GPOINTER_TO_INT (handle));
 }
 
@@ -105,8 +104,6 @@ set_property (gint property, gboolean value)
 	gboolean callset = FALSE;
 	gboolean check;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	if (tcgetattr (STDIN_FILENO, &attr) == -1)
 		return FALSE;
 
@@ -150,8 +147,6 @@ ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
 	struct timeval *tvptr;
 	div_t divvy;
 	int ret, nbytes;
-
-	MONO_ARCH_SAVE_REGS;
 
 	do {
 		FD_ZERO (&rfds);
@@ -205,9 +200,7 @@ terminal_get_dimensions (void)
 static void
 tty_teardown (void)
 {
-	int unused;
-
-	MONO_ARCH_SAVE_REGS;
+	int unused G_GNUC_UNUSED;
 
 	if (!setup_finished)
 		return;
@@ -232,8 +225,6 @@ do_console_cancel_event (void)
 	MonoClass *klass;
 	MonoDelegate *load_value;
 	MonoMethod *method;
-	MonoMethodMessage *msg;
-	MonoMethod *im;
 	MonoVTable *vtable;
 
 	/* FIXME: this should likely iterate all the domains, instead */
@@ -259,9 +250,8 @@ do_console_cancel_event (void)
 	klass = load_value->object.vtable->klass;
 	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
 	g_assert (method != NULL);
-	im = mono_get_delegate_invoke (method->klass);
-	msg = mono_method_call_message_new (method, NULL, im, NULL, NULL);
-	mono_thread_pool_add ((MonoObject *) load_value, msg, NULL, NULL);
+
+	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL);
 }
 
 static int need_cancel = FALSE;
@@ -280,7 +270,6 @@ static gboolean in_sigint;
 MONO_SIG_HANDLER_FUNC (static, sigint_handler)
 {
 	int save_errno;
-	MONO_ARCH_SAVE_REGS;
 
 	if (in_sigint)
 		return;
@@ -297,7 +286,7 @@ static struct sigaction save_sigcont, save_sigint, save_sigwinch;
 
 MONO_SIG_HANDLER_FUNC (static, sigcont_handler)
 {
-	int unused;
+	int unused G_GNUC_UNUSED;
 	// Ignore error, there is not much we can do in the sigcont handler.
 	tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr);
 
@@ -347,6 +336,7 @@ MONO_SIG_HANDLER_FUNC (static, sigwinch_handler)
 static void
 console_set_signal_handlers ()
 {
+#if defined(HAVE_SIGACTION)
 	struct sigaction sigcont, sigint, sigwinch;
 
 	memset (&sigcont, 0, sizeof (struct sigaction));
@@ -370,6 +360,7 @@ console_set_signal_handlers ()
 	sigwinch.sa_flags = 0;
 	sigemptyset (&sigwinch.sa_mask);
 	sigaction (SIGWINCH, &sigwinch, &save_sigwinch);
+#endif
 }
 
 #if currently_unuused
@@ -448,8 +439,6 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 {
 	int dims;
 
-	MONO_ARCH_SAVE_REGS;
-
 	dims = terminal_get_dimensions ();
 	if (dims == -1){
 		int cols = 0, rows = 0;
@@ -502,7 +491,7 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardow
 		if (teardown != NULL)
 			teardown_str = mono_string_to_utf8 (teardown);
 
-		atexit (tty_teardown);
+		mono_atexit (tty_teardown);
 	}
 
 	return TRUE;

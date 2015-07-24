@@ -408,7 +408,7 @@ namespace System.ServiceModel.Syndication
 				writer.WriteStartElement ("entry", AtomNamespace);
 
 			if (Item.BaseUri != null)
-				writer.WriteAttributeString ("xml:base", Item.BaseUri.ToString ());
+				writer.WriteAttributeString ("xml", "base", null, Item.BaseUri.ToString ());
 
 			// atom:entry elements MUST contain exactly one atom:id element.
 			writer.WriteElementString ("id", AtomNamespace, Item.Id ?? new UniqueId ().ToString ());

@@ -36,11 +36,7 @@ using System.Data.Common;
 
 namespace System.Data.SqlClient
 {
-#if NET_2_0
 	public sealed class SqlTransaction : DbTransaction, IDbTransaction, IDisposable
-#else
-	public sealed class SqlTransaction : MarshalByRefObject, IDbTransaction, IDisposable
-#endif // NET_2_0
 	{
 		#region Fields
 
@@ -65,9 +61,7 @@ namespace System.Data.SqlClient
 		#region Properties
 
 		public
-#if NET_2_0
 		new
-#endif // NET_2_0
 		SqlConnection Connection {
 			get { return connection; }
 		}
@@ -77,9 +71,7 @@ namespace System.Data.SqlClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif // NET_2_0
 		IsolationLevel IsolationLevel {
 			get {
 				if (!isOpen)
@@ -88,24 +80,16 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		protected override DbConnection DbConnection {
 			get { return Connection; }
 		}
-#else
-		IDbConnection IDbTransaction.Connection {
-			get { return Connection; }
-		}
-#endif
 
 		#endregion // Properties
 
 		#region Methods
 
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Commit ()
 		{
 			if (!isOpen)
@@ -117,9 +101,7 @@ namespace System.Data.SqlClient
 			isOpen = false;
 		}
 
-#if NET_2_0
 		protected override
-#endif
 		void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -131,18 +113,9 @@ namespace System.Data.SqlClient
 			}
 		}
 
-#if !NET_2_0
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-#endif
 
 		public 
-#if NET_2_0
 		override
-#endif // NET_2_0
 		void Rollback ()
 		{
 			Rollback (String.Empty);
@@ -150,10 +123,8 @@ namespace System.Data.SqlClient
 
 		public void Rollback (string transactionName)
 		{
-#if NET_2_0
 			if (disposed)
 				return;
-#endif
 
 			if (!isOpen)
 				throw ExceptionHelper.TransactionNotUsable (GetType ());

@@ -40,7 +40,6 @@ public class Driver
 	bool verbose;
 	string unknownArg;
 	
-#if NET_2_0
 
 	public int Run (string[] args)
 	{
@@ -165,14 +164,6 @@ public class Driver
 		
 		return 0;
 	}
-#else
-	public int Run (string[] args)
-	{
-		Console.WriteLine ("This tool is only supported in 2.0 profile.");
-		return 1;
-	}
-
-#endif
 
 	void ParseArgs (string[] args)
 	{

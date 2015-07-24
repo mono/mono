@@ -92,7 +92,6 @@ namespace System.Data.OracleClient {
 			return Add(param);
 		}
 
-#if NET_2_0
 		public OracleParameter AddWithValue (string parameterName, object value) {
 			return Add (parameterName, value);
 		}
@@ -112,7 +111,6 @@ namespace System.Data.OracleClient {
 		public void Remove (OracleParameter value) {
 			base.Remove (value);
 		}
-#endif
 
 		#endregion // Methods
 

@@ -84,9 +84,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private FormatterAssemblyStyle _assemblyFormat = FormatterAssemblyStyle.Full;
 		private FormatterTypeStyle _typeFormat = FormatterTypeStyle.TypesWhenNeeded;
 		private static string defaultMessageNamespace;
-#if NET_2_0
 		SerializationObjectManager _manager;
-#endif
 
 		#endregion
 		
@@ -106,9 +104,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.Formatting = Formatting.Indented;
 			_surrogateSelector = selector;
 			_context = context;
-#if NET_2_0
 			_manager = new SerializationObjectManager (_context);
-#endif
 		}
 
 		static SoapWriter() 
@@ -207,9 +203,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				Thread.CurrentThread.CurrentCulture = savedCi;
 			}
 
-#if NET_2_0
 			_manager.RaiseOnSerializedEvent ();
-#endif
 		}
 
 		void Serialize_inner (object objGraph, Header[] headers, FormatterTypeStyle typeFormat, FormatterAssemblyStyle assemblyFormat)
@@ -373,9 +367,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			if(currentObject is ISerializable || surrogate != null) needsSerializationInfo = true;
 
-#if NET_2_0
 			_manager.RegisterObject (currentObject);
-#endif
 
 			if(needsSerializationInfo) 
 			{

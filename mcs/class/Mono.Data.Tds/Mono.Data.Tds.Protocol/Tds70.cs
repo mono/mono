@@ -559,8 +559,10 @@ namespace Mono.Data.Tds.Protocol
 			 * If the value is null, not setting the size to 0 will cause varchar
 			 * fields to get inserted as an empty string rather than an null.
 			 */
-			if (param.Value == null || param.Value == DBNull.Value)
-				size = 0;
+			if (colType != TdsColumnType.IntN && colType != TdsColumnType.DateTimeN) {
+				if (param.Value == null || param.Value == DBNull.Value)
+					size = 0;
+			}
 
 			// Change colType according to the following table
 			/* 
@@ -584,6 +586,13 @@ namespace Mono.Data.Tds.Protocol
 			} else if (colType == TdsColumnType.BigVarBinary) {
 				if (size > 8000)
 					colType = TdsColumnType.Image;
+			} else if (colType == TdsColumnType.DateTime2 ||
+				   colType == TdsColumnType.DateTimeOffset) {
+				// HACK: Wire-level DateTime{2,Offset}
+				// require TDS 7.3, which this driver
+				// does not implement correctly--so we
+				// serialize to ASCII instead.
+				colType = TdsColumnType.Char;
 			}
 			// Calculation of TypeInfo field
 			/* 
@@ -693,11 +702,7 @@ namespace Mono.Data.Tds.Protocol
 							CultureInfo.InvariantCulture,
 							"Value '{0}' is not valid for SmallMoney."
 							+ "  Must be between {1:N4} and {2:N4}.",
-#if NET_2_0
 							val,
-#else
-							val.ToString (CultureInfo.CurrentCulture),
-#endif
 							SMALLMONEY_MIN, SMALLMONEY_MAX));
 
 					int[] arr = Decimal.GetBits (val);
@@ -717,6 +722,8 @@ namespace Mono.Data.Tds.Protocol
 				case "nchar" :
 				case "text" :
 				case "ntext" :
+				case "datetime2":
+				case "datetimeoffset":
 					byte [] tmp = param.GetBytes ();
 					Comm.Append (tmp);
 					break;
@@ -886,7 +893,6 @@ namespace Mono.Data.Tds.Protocol
 
 				TdsDataColumn col = new TdsDataColumn ();
 				Columns.Add (col);
-#if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
 				col.IsAutoIncrement = autoIncrement;
@@ -898,19 +904,6 @@ namespace Mono.Data.Tds.Protocol
 				col.AllowDBNull = nullable;
 				col.BaseTableName = tableName;
 				col.DataTypeName = Enum.GetName (typeof (TdsColumnType), xColumnType);
-#else
-				col ["ColumnType"] = columnType;
-				col ["ColumnName"] = columnName;
-				col ["IsAutoIncrement"] = autoIncrement;
-				col ["IsIdentity"] = isIdentity;
-				col ["ColumnSize"] = columnSize;
-				col ["NumericPrecision"] = precision;
-				col ["NumericScale"] = scale;
-				col ["IsReadOnly"] = !writable;
-				col ["AllowDBNull"] = nullable;
-				col ["BaseTableName"] = tableName;
-				col ["DataTypeName"] = Enum.GetName (typeof (TdsColumnType), xColumnType);
-#endif
 			}
 		}
 
@@ -1073,7 +1066,6 @@ namespace Mono.Data.Tds.Protocol
 
 		#endregion // Methods
 
-#if NET_2_0
 		#region Asynchronous Methods
 
 		public override IAsyncResult BeginExecuteNonQuery (string cmdText,
@@ -1136,6 +1128,5 @@ namespace Mono.Data.Tds.Protocol
 		}
 
 		#endregion // Asynchronous Methods
-#endif // NET_2_0
 	}
 }

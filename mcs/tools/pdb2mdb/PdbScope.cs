@@ -16,9 +16,9 @@ namespace Microsoft.Cci.Pdb {
     internal uint address;
     internal uint length;
 
-    internal PdbScope(BlockSym32 block, BitAccess bits, out uint typind) {
+	internal PdbScope(uint funcAddress, BlockSym32 block, BitAccess bits, out uint typind) {
       this.segment = block.seg;
-      this.address = block.off;
+      this.address = block.off - funcAddress;
       this.length = block.len;
       typind = 0;
 
@@ -58,7 +58,7 @@ namespace Microsoft.Cci.Pdb {
               bits.SkipCString(out sub.name);
 
               bits.Position = stop;
-              scopes[scope++] = new PdbScope(sub, bits, out typind);
+              scopes[scope++] = new PdbScope(funcAddress, sub, bits, out typind);
               break;
             }
 

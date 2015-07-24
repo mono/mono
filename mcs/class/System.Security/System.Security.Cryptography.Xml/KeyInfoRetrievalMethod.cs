@@ -38,9 +38,7 @@ namespace System.Security.Cryptography.Xml {
 
 		private string URI;
 		private XmlElement element;
-#if NET_2_0
 		private string type;
-#endif
 
 		public KeyInfoRetrievalMethod ()
 		{
@@ -51,7 +49,6 @@ namespace System.Security.Cryptography.Xml {
 			URI = strUri;
 		}
 
-#if NET_2_0
 		public KeyInfoRetrievalMethod (string strUri, string strType)
 			: this (strUri)
 		{
@@ -66,7 +63,6 @@ namespace System.Security.Cryptography.Xml {
 				type = value;
 			}
 		}
-#endif
 
 		public string Uri {
 			get { return URI; }
@@ -84,15 +80,10 @@ namespace System.Security.Cryptography.Xml {
 
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.RetrievalMethod, XmlSignature.NamespaceURI);
-#if NET_2_0
 			if ((URI != null) && (URI.Length > 0))
 				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
 			if (Type != null)
 				xel.SetAttribute (XmlSignature.AttributeNames.Type, Type);
-#else
-			if (URI != null)
-				xel.SetAttribute (XmlSignature.AttributeNames.URI, URI);
-#endif
 			return xel;
 		}
 
@@ -105,10 +96,8 @@ namespace System.Security.Cryptography.Xml {
 				URI = ""; // not null - so we return URI="" as attribute !!!
 			} else {
 				URI = value.Attributes [XmlSignature.AttributeNames.URI].Value;
-#if NET_2_0
 				if (value.HasAttribute (XmlSignature.AttributeNames.Type))
 					Type = value.Attributes [XmlSignature.AttributeNames.Type].Value;
-#endif
 				element = value;
 			}
 		}

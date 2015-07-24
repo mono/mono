@@ -165,6 +165,11 @@ namespace Mono.CSharp {
 			return s + parameters.GetSignatureForDocumentation ();
 		}
 
+		public virtual void PrepareEmit ()
+		{
+			parameters.ResolveDefaultValues (this);
+		}
+
 		public MethodSpec Spec {
 			get { return spec; }
 		}
@@ -816,8 +821,10 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public virtual void PrepareEmit ()
+		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
+
 			var mb = MethodData.DefineMethodBuilder (Parent);
 
 			if (CurrentTypeParameters != null) {
@@ -1404,11 +1411,7 @@ namespace Mono.CSharp {
 				p.Name = md_p.Name;
 				p.DefaultValue = md_p.DefaultValue;
 				if (md_p.OptAttributes != null) {
-					if (p.OptAttributes == null) {
-						p.OptAttributes = md_p.OptAttributes;
-					} else {
-						p.OptAttributes.Attrs.AddRange (md_p.OptAttributes.Attrs);
-					}
+					Attributes.AttachFromPartial (p, md_p);
 				}
 			}
 
@@ -1696,6 +1699,11 @@ namespace Mono.CSharp {
 					Report.Error (8037, Location, "`{0}': Instance constructor of type with primary constructor must specify `this' constructor initializer",
 						GetSignatureForError ());
 				}
+			}
+
+			if ((ModFlags & Modifiers.EXTERN) != 0 && Initializer != null) {
+				Report.Error (8091, Location, "`{0}': Contructors cannot be extern and have a constructor initializer",
+					GetSignatureForError ());
 			}
 
 			var ca = ModifiersExtensions.MethodAttr (ModFlags) | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName;
@@ -2646,7 +2654,7 @@ namespace Mono.CSharp {
 			else if (OperatorType == OpType.Implicit)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Explicit), parameters);
 
-			TypeSpec declaring_type = Parent.CurrentType;
+			TypeSpec declaring_type = Parent.PartialContainer.CurrentType;
 			TypeSpec return_type = MemberType;
 			TypeSpec first_arg_type = ParameterTypes [0];
 			

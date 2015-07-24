@@ -38,21 +38,17 @@ namespace System
 	public class ResolveEventArgs : EventArgs
 	{
 		private string m_Name;
-#if NET_4_0
 		private Assembly m_Requesting;
-#endif
 
 		public ResolveEventArgs (string name)
 		{
 			m_Name = name;
 		}
 
-#if NET_4_0
 		public ResolveEventArgs (string name, Assembly requestingAssembly) {
 			this.m_Name = name;
 			this.m_Requesting = requestingAssembly;
 		}
-#endif
 
 		public string Name {
 			get {
@@ -60,12 +56,10 @@ namespace System
 			}
 		}
 
-#if NET_4_0
 		public Assembly RequestingAssembly {
 			get {
 				return m_Requesting;
 			}
 		}
-#endif
 	}
 }

@@ -38,9 +38,6 @@ namespace MonoCasTests.System.Web {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if ONLY_1_1
-	[Category ("NotDotNet")] // we don't want to duplicate this
-#endif
 	public class HttpClientCertificateCas : AspNetHostingMinimal {
 
 		private HttpClientCertificate hcc;

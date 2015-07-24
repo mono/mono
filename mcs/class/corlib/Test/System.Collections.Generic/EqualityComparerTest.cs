@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -38,6 +37,11 @@ namespace MonoTests.System.Collections.Generic {
 
 	[TestFixture]
 	public class EqualityComparerTest {
+		enum E
+		{
+			A,
+			B
+		}
 
 		[Test]
 		public void Default_GetHashCode_Null ()
@@ -60,7 +64,13 @@ namespace MonoTests.System.Collections.Generic {
 			IEqualityComparer comparer = EqualityComparer<object>.Default;
 			Assert.IsTrue (comparer.Equals (null, null));
 		}
+
+		[Test]
+		public void EnumComparison ()
+		{
+			Assert.IsFalse (EqualityComparer<E>.Default.Equals (E.A, E.B));
+			Assert.IsFalse (EqualityComparer<object>.Default.Equals (E.A, E.B));
+		}
 	}
 }
 
-#endif

@@ -28,7 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 using System;
 using System.Data;
@@ -180,6 +179,10 @@ namespace System.Data.SqlClient {
 							 "exec sp_tablecollations_90 '" +
 							 DestinationTableName + "'",
 							 connection);
+
+			if (externalTransaction != null)
+				cmd.Transaction = externalTransaction;
+
 			SqlDataReader reader = cmd.ExecuteReader ();
 			int i = 0; // Skipping 1st result
 			do {
@@ -188,7 +191,7 @@ namespace System.Data.SqlClient {
 				  } else if (i == 2) {
 					SqlDataAdapter adapter = new SqlDataAdapter ();
 					adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-					columnMetaDataTables [i - 1] = new DataTable ();
+					columnMetaDataTables [i - 1] = new DataTable (DestinationTableName);
 					adapter.FillInternal (columnMetaDataTables [i - 1], reader);
 				}
 				i++;
@@ -623,4 +626,3 @@ namespace System.Data.SqlClient {
 	}
 }
 
-#endif

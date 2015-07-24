@@ -10,7 +10,6 @@
  */
 
 #include <config.h>
-#include <signal.h>
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
@@ -140,7 +139,7 @@ static int is_filenamechar (char p)
 		return TRUE;
 	if (p >= '0' && p <= '9')
 		return TRUE;
-	if (p == '.' || p == ':' || p == '_' || p == '-')
+	if (p == '.' || p == ':' || p == '_' || p == '-' || p == '`')
 		return TRUE;
 	return FALSE;
 }
@@ -433,7 +432,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
 				return;
@@ -441,7 +440,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 		}
 	}
 
-	mono_arch_get_argument_info (gsctx, sig, sig->param_count, arg_info);
+	mono_arch_get_argument_info (sig, sig->param_count, arg_info);
 
 	if (MONO_TYPE_ISSTRUCT (mono_method_signature (method)->ret)) {
 		g_assert (!mono_method_signature (method)->ret->byref);
@@ -591,7 +590,7 @@ mono_trace_leave_method (MonoMethod *method, ...)
 		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
 				return;

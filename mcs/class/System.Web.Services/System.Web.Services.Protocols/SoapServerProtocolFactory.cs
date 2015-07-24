@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System.Web.Services.Configuration;
 
@@ -48,4 +47,3 @@ namespace System.Web.Services.Protocols
 	}
 }
 
-#endif

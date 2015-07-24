@@ -35,6 +35,7 @@ using NUnit.Framework;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace MonoTests.System.Runtime.CompilerServices
 {
@@ -103,6 +104,43 @@ namespace MonoTests.System.Runtime.CompilerServices
 			public override void Send (SendOrPostCallback d, object state)
 			{
 				throw new NotSupportedException ("Synchronously sending is not supported.");
+			}
+		}
+
+		class NestedSynchronizationContext : SynchronizationContext
+		{
+			Thread thread;
+			readonly ConcurrentQueue<Tuple<SendOrPostCallback, object, ExecutionContext>> workQueue = new ConcurrentQueue<Tuple<SendOrPostCallback, object, ExecutionContext>> ();
+			readonly AutoResetEvent workReady = new AutoResetEvent (false);
+
+			public NestedSynchronizationContext ()
+			{
+				thread = new Thread (WorkerThreadProc) { IsBackground = true };
+				thread.Start ();
+			}
+
+			public override void Post (SendOrPostCallback d, object state)
+			{
+				var context = ExecutionContext.Capture ();
+				workQueue.Enqueue (Tuple.Create (d, state, context));
+				workReady.Set ();
+			}
+
+			void WorkerThreadProc ()
+			{
+				if (!workReady.WaitOne (10000))
+					return;
+
+				Tuple<SendOrPostCallback, object, ExecutionContext> work;
+
+				while (workQueue.TryDequeue (out work)) {
+					ExecutionContext.Run (work.Item3, _ => {
+						var oldSyncContext = SynchronizationContext.Current;
+						SynchronizationContext.SetSynchronizationContext (this);
+						work.Item1 (_);
+						SynchronizationContext.SetSynchronizationContext (oldSyncContext);
+					}, work.Item2);	
+				}
 			}
 		}
 
@@ -324,6 +362,33 @@ namespace MonoTests.System.Runtime.CompilerServices
 			progress += "1";
 
 			SynchronizationContext.SetSynchronizationContext (null);
+		}
+
+		[Test]
+		public void NestedLeakingSynchronizationContext ()
+		{
+			var sc = SynchronizationContext.Current;
+			if (sc == null)
+				Assert.IsTrue (NestedLeakingSynchronizationContext_MainAsync (sc).Wait (5000), "#1");
+			else
+				Assert.Ignore ("NestedSynchronizationContext may never complete on custom context");
+		}
+
+		static async Task NestedLeakingSynchronizationContext_MainAsync (SynchronizationContext sc)
+		{
+			Assert.AreSame (sc, SynchronizationContext.Current, "#1");
+			await NestedLeakingSynchronizationContext_DoWorkAsync ();
+			Assert.AreSame (sc, SynchronizationContext.Current, "#2");
+		}
+
+		static async Task NestedLeakingSynchronizationContext_DoWorkAsync ()
+		{
+			var sc = new NestedSynchronizationContext ();
+			SynchronizationContext.SetSynchronizationContext (sc);
+
+			Assert.AreSame (sc, SynchronizationContext.Current);
+			await Task.Yield ();
+			Assert.AreSame (sc, SynchronizationContext.Current);
 		}
 	}
 }

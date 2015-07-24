@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_4_0
 
 using System;
 using System.IO;
@@ -299,7 +298,8 @@ namespace System.IO.MemoryMappedFiles
 
 		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access)
 		{
-			return new MemoryMappedViewStream (handle, offset, size, access);
+			var view = MemoryMappedView.Create (handle, offset, size, access);
+			return new MemoryMappedViewStream (view);
 		}
 
 		public MemoryMappedViewAccessor CreateViewAccessor ()
@@ -314,7 +314,8 @@ namespace System.IO.MemoryMappedFiles
 
 		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access)
 		{
-			return new MemoryMappedViewAccessor (handle, offset, size, access);
+			var view = MemoryMappedView.Create (handle, offset, size, access);
+			return new MemoryMappedViewAccessor (view);
 		}
 
 		MemoryMappedFile ()
@@ -359,7 +360,34 @@ namespace System.IO.MemoryMappedFiles
 				throw new NotImplementedException ();
 			}
 		}
+
+		// This converts a MemoryMappedFileAccess to a FileAccess. MemoryMappedViewStream and
+		// MemoryMappedViewAccessor subclass UnmanagedMemoryStream and UnmanagedMemoryAccessor, which both use
+		// FileAccess to determine whether they are writable and/or readable.
+		internal static FileAccess GetFileAccess (MemoryMappedFileAccess access) {
+
+			if (access == MemoryMappedFileAccess.Read) {
+				return FileAccess.Read;
+			}
+			if (access == MemoryMappedFileAccess.Write) {
+				return FileAccess.Write;
+			}
+			else if (access == MemoryMappedFileAccess.ReadWrite) {
+				return FileAccess.ReadWrite;
+			}
+			else if (access == MemoryMappedFileAccess.CopyOnWrite) {
+				return FileAccess.ReadWrite;
+			}
+			else if (access == MemoryMappedFileAccess.ReadExecute) {
+				return FileAccess.Read;
+			}
+			else if (access == MemoryMappedFileAccess.ReadWriteExecute) {
+				return FileAccess.ReadWrite;
+			}
+
+			// If we reached here, access was invalid.
+			throw new ArgumentOutOfRangeException ("access");
+		}
 	}
 }
 
-#endif

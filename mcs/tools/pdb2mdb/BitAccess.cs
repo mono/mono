@@ -158,8 +158,14 @@ namespace Microsoft.Cci.Pdb {
 
     internal decimal ReadDecimal() {
       int[] bits = new int[4];
-      this.ReadInt32(bits);
-      return new decimal(bits);
+      this.ReadInt32 (bits);
+      try {
+        bool sign = (bits[3] & 0x80000000) != 0;
+        byte scale = (byte)((bits[3] >> 16) & 0x7F);
+        return new decimal (bits[0], bits[1], bits[2], sign, scale);
+      } catch (ArgumentException) {
+        return new decimal ();
+      }
     }
 
     internal void ReadBString(out string value) {

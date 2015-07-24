@@ -28,7 +28,6 @@
 
 using System;
 
-#if NET_2_0
 namespace System.Web.Management
 {
         public enum EventNotificationType
@@ -39,4 +38,3 @@ namespace System.Web.Management
                 Unbuffered = 3
         }
 }
-#endif

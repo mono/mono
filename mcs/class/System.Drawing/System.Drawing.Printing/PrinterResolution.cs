@@ -36,24 +36,16 @@ using System;
 namespace System.Drawing.Printing 
 {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public class PrinterResolution 
 	{
 		private PrinterResolutionKind kind = PrinterResolutionKind.Custom;
 		private int x;
 		private int y;
 		
-#if NET_2_0
 		public PrinterResolution ()
 		{
 		}
-#else
-		private PrinterResolution () 
-		{
-		}
-#endif
 	
 		internal PrinterResolution (int x, int y, PrinterResolutionKind kind)
 		{
@@ -66,33 +58,27 @@ namespace System.Drawing.Printing
 			get {
 				return x;
 			}
-#if NET_2_0
 			set {
 				x = value;
 			}
-#endif
 		}
 
 		public int Y {
 			get {
 				return y;
 			}
-#if NET_2_0
 			set {
 				y = value;
 			}
-#endif
 		}
 
 		public PrinterResolutionKind Kind {
 			get {
 				return kind;
 			}
-#if NET_2_0
 			set {
 				kind = value;
 			}
-#endif
 		}
 
 		public override string ToString ()

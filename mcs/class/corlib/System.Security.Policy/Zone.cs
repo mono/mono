@@ -40,9 +40,7 @@ namespace System.Security.Policy {
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class Zone :
-#if NET_4_0
 		EvidenceBase,
-#endif
 		IIdentityPermissionFactory, IBuiltInEvidence	{
 
 		private SecurityZone zone;

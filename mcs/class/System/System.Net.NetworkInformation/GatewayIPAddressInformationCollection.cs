@@ -128,18 +128,18 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-	class LinuxGatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
+	class UnixGatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
 	{
-		public static readonly LinuxGatewayIPAddressInformationCollection Empty = new LinuxGatewayIPAddressInformationCollection (true);
+		public static readonly UnixGatewayIPAddressInformationCollection Empty = new UnixGatewayIPAddressInformationCollection (true);
 
 		bool is_readonly;
 
-		private LinuxGatewayIPAddressInformationCollection (bool isReadOnly)
+		private UnixGatewayIPAddressInformationCollection (bool isReadOnly)
 		{
 			this.is_readonly = isReadOnly;
 		}
 
-		public LinuxGatewayIPAddressInformationCollection (IPAddressCollection col)
+		public UnixGatewayIPAddressInformationCollection (IPAddressCollection col)
 		{
 			foreach (IPAddress a in col)
 				Add (new GatewayIPAddressInformationImpl (a));

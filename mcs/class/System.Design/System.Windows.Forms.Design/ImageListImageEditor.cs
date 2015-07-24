@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && DRAWING_DESIGN_DEP
+#if DRAWING_DESIGN_DEP
 
 using System;
 using System.ComponentModel;

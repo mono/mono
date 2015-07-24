@@ -118,66 +118,35 @@ namespace MonoTests.System.Security.Policy {
 		public void Url_NoProtocol () 
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("www.go-mono.com", umc.Url, "Url");
 			Assert.AreEqual ("Url - www.go-mono.com", umc.ToString (), "ToString");
-#else
-			// note: no last slash here
-			Assert.AreEqual ("file://WWW.GO-MONO.COM", umc.Url, "Url");
-			Assert.AreEqual ("Url - file://WWW.GO-MONO.COM", umc.ToString (), "ToString");
-#endif
 		}
 
 		[Test]
 		public void Url_WellKnownProtocol () 
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("http://www.go-mono.com", umc.Url, "http-Url");
 			Assert.AreEqual ("Url - http://www.go-mono.com", umc.ToString (), "http-ToString");
-#else
-			Assert.AreEqual ("http://www.go-mono.com/", umc.Url, "http-Url");
-			Assert.AreEqual ("Url - http://www.go-mono.com/", umc.ToString (), "http-ToString");
-#endif
 			umc = new UrlMembershipCondition ("https://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("https://www.go-mono.com", umc.Url, "https-Url");
 			Assert.AreEqual ("Url - https://www.go-mono.com", umc.ToString (), "https-ToString");
-#else
-			Assert.AreEqual ("https://www.go-mono.com/", umc.Url, "https-Url");
-			Assert.AreEqual ("Url - https://www.go-mono.com/", umc.ToString (), "https-ToString");
-#endif
 
 			umc = new UrlMembershipCondition ("ftp://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("ftp://www.go-mono.com", umc.Url, "ftp-Url");
 			Assert.AreEqual ("Url - ftp://www.go-mono.com", umc.ToString (), "ftp-ToString");
-#else
-			Assert.AreEqual ("ftp://www.go-mono.com/", umc.Url, "ftp-Url");
-			Assert.AreEqual ("Url - ftp://www.go-mono.com/", umc.ToString (), "ftp-ToString");
-#endif
 
 			umc = new UrlMembershipCondition ("file://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("file://www.go-mono.com", umc.Url, "file-Url");
 			Assert.AreEqual ("Url - file://www.go-mono.com", umc.ToString (), "file-ToString");
-#else
-			Assert.AreEqual ("file://WWW.GO-MONO.COM", umc.Url, "file-Url");
-			Assert.AreEqual ("Url - file://WWW.GO-MONO.COM", umc.ToString (), "file-ToString");
-#endif
 		}
 
 		[Test]
 		public void Url_UnknownProtocol () 
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("mono://www.go-mono.com");
-#if NET_2_0
 			Assert.AreEqual ("mono://www.go-mono.com", umc.Url, "Url");
 			Assert.AreEqual ("Url - mono://www.go-mono.com", umc.ToString (), "ToString");
-#else
-			Assert.AreEqual ("mono://www.go-mono.com/", umc.Url, "Url");
-			Assert.AreEqual ("Url - mono://www.go-mono.com/", umc.ToString (), "ToString");
-#endif
 		}
 
 		[Test]

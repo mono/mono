@@ -35,12 +35,7 @@ using System.Windows.Forms.Design;
 namespace System.Web.UI.Design.WebControls {
 
 	public class ListControlDesigner :
-#if NET_2_0
 	DataBoundControlDesigner
-#else
-	ControlDesigner,
-	IDataSourceProvider
-#endif
 	{
 		string data_key_field;
 		string data_member;
@@ -52,7 +47,6 @@ namespace System.Web.UI.Design.WebControls {
 		{
 		}
 
-#if NET_2_0
 		public override DesignerActionListCollection ActionLists {
 			get { throw new NotImplementedException (); }
 		}
@@ -64,7 +58,6 @@ namespace System.Web.UI.Design.WebControls {
 		public string DataSource {
 			get; set;
 		}
-#endif
 		public string DataKeyField {
 			get { return data_key_field; }
 			set { data_key_field = value; }
@@ -85,7 +78,6 @@ namespace System.Web.UI.Design.WebControls {
 			set { data_value_field = value; }
 		}
 
-#if NET_2_0
 		protected override void DataBind (BaseDataBoundControl dataBoundControl)
 		{
 			throw new NotImplementedException ();
@@ -95,7 +87,6 @@ namespace System.Web.UI.Design.WebControls {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		
 		public override string GetDesignTimeHtml ()
 		{

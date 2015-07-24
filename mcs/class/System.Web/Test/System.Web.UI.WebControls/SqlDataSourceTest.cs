@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -509,8 +508,16 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			view.Delete (keys, oldValues);
 
-			Assert.IsNotNull (CustomEventParameterCollection, "KeysAndOldValues_CompareAllValues");
-			Assert.AreEqual ("String:@origin_ProductID=ov_10, String:@origin_Description=ov_Beautifull, String:@origin_Name=ov_ColorTV", PassedParameters, "KeysAndOldValues_CompareAllValues Values");
+			Assert.IsNotNull (CustomEventParameterCollection, "ExecuteDelete_KeysAndOldValues_CompareAllValues");
+			string [] expectedParams = new string []
+						{ 
+							"String:@origin_ProductID=ov_10",
+							"String:@origin_Name=ov_ColorTV",
+							"String:@origin_Description=ov_Beautifull"
+						};
+			string [] actualValues = PassedParameters.Split (new string [] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			Assert.AreEqual (expectedParams.Length, actualValues.Length, "ExecuteDelete_KeysAndOldValues_CompareAllValues Params count");
+			ValidatePassedParams (expectedParams, actualValues, "ExecuteDelete_KeysAndOldValues_CompareAllValues expecte '{0}'");
 		}
 
 		[Test]
@@ -982,4 +989,3 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 
-#endif

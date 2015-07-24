@@ -175,7 +175,6 @@ namespace Mono.Data.Tds.Protocol {
 
 				TdsDataColumn col = new TdsDataColumn ();
 				Columns.Add (col);
-#if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
 				col.IsAutoIncrement = autoIncrement;
@@ -188,20 +187,6 @@ namespace Mono.Data.Tds.Protocol {
 				col.BaseTableName = tableName;
 				col.LCID = lcid;
 				col.SortOrder = sortId;
-#else
-				col ["ColumnType"] = columnType;
-				col ["ColumnName"] = columnName;
-				col ["IsAutoIncrement"] = autoIncrement;
-				col ["IsIdentity"] = isIdentity;
-				col ["ColumnSize"] = columnSize;
-				col ["NumericPrecision"] = precision;
-				col ["NumericScale"] = scale;
-				col ["IsReadOnly"] = !writable;
-				col ["AllowDBNull"] = nullable;
-				col ["BaseTableName"] = tableName;
-				col ["LCID"] = lcid;
-				col ["SortOrder"] = sortId;
-#endif
 			}
 			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... exit");  TDS 8 Debugging
 		}

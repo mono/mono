@@ -3,9 +3,8 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Microsoft.Web.Infrastructure.dll
-LIB_MCS_FLAGS = -r:System.dll \
-		-r:System.Configuration.dll \
-		-r:System.Web.dll
+LIB_REFS = System System.Configuration System.Web
+LIB_MCS_FLAGS =
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 

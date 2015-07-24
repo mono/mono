@@ -45,14 +45,10 @@ namespace System.Security.Permissions {
 		TypeInformation = 0x00000001,
 
 		MemberAccess = 0x00000002,
-#if NET_4_0
 		[Obsolete]
-#endif
 		ReflectionEmit = 0x4,
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		AllFlags = TypeInformation | MemberAccess | ReflectionEmit,
 
 		[ComVisible (false)]

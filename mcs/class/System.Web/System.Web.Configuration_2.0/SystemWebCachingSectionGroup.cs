@@ -31,7 +31,6 @@
 using System;
 using System.Configuration;
 
-#if NET_2_0
 
 namespace System.Web.Configuration {
 
@@ -61,5 +60,4 @@ namespace System.Web.Configuration {
 
 }
 
-#endif
 

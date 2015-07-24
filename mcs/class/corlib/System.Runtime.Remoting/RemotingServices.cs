@@ -52,11 +52,7 @@ using System.Runtime.Serialization.Formatters;
 namespace System.Runtime.Remoting
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
-#if NET_4_0
 	static
-#else
-	sealed
-#endif
 	public class RemotingServices 
 	{
 		// Holds the identities of the objects, using uri as index
@@ -95,9 +91,6 @@ namespace System.Runtime.Remoting
 			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
 			FieldGetterMethod = typeof(object).GetMethod ("FieldGetter", BindingFlags.NonPublic|BindingFlags.Instance);
 		}
-#if !NET_4_0
-		private RemotingServices () {}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static object InternalExecute (MethodBase method, Object obj,
@@ -116,6 +109,12 @@ namespace System.Runtime.Remoting
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool IsTransparentProxy (object proxy);
+
+		internal static bool ProxyCheckCast (RealProxy rp, RuntimeType castType)
+		{
+			// TODO: What should it do?
+			return true;
+		}
 #endif
 
 		internal static IMethodReturnMessage InternalExecuteMessage (
@@ -143,7 +142,7 @@ namespace System.Runtime.Remoting
 				method = gmd.MakeGenericMethod (genericArguments);
 			}
 
-			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
+			var oldContext = CallContext.SetLogicalCallContext (reqMsg.LogicalCallContext);
 			
 			try 
 			{
@@ -169,14 +168,15 @@ namespace System.Runtime.Remoting
 						returnArgs [n++] = null; 
 				}
 				
-				result = new ReturnMessage (rval, returnArgs, n, ExecutionContext.CreateLogicalCallContext (true), reqMsg);
+				var latestCallContext = Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext;
+				result = new ReturnMessage (rval, returnArgs, n, latestCallContext, reqMsg);
 			} 
 			catch (Exception e) 
 			{
 				result = new ReturnMessage (e, reqMsg);
 			}
 			
-			CallContext.RestoreCallContext (oldContext);
+			CallContext.SetLogicalCallContext (oldContext);
 			return result;
 		}
 
@@ -770,11 +770,11 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
-			LogicalCallContext ctx = ExecutionContext.CreateLogicalCallContext (false);
-			if (ctx != null) {
+			var ctx = Thread.CurrentThread.GetExecutionContextReader().LogicalCallContext;
+			if (!ctx.IsNull) {
 				CACD cad = new CACD ();
 				cad.d = obj;
-				cad.c = ctx;
+				cad.c = ctx.Clone ();
 				obj = cad;
 			}
 			
@@ -796,7 +796,10 @@ namespace System.Runtime.Remoting
 			if (obj is CACD) {
 				CACD cad = (CACD) obj;
 				obj = cad.d;
-				CallContext.UpdateCurrentLogicalCallContext ((LogicalCallContext) cad.c);
+
+				var lcc = (LogicalCallContext) cad.c;
+				if (lcc.HasInfo)
+					Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext.Merge (lcc);
 			}
 			return obj;
 		}

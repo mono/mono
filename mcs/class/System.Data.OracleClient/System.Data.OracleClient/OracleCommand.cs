@@ -21,9 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-#if NET_2_0
 using System.Data.Common;
-#endif
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.Text;
@@ -31,17 +29,11 @@ using System.Threading;
 
 namespace System.Data.OracleClient
 {
-#if NET_2_0
 	[DefaultEvent ("RecordsAffected")]
-#endif
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleCommandDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[ToolboxItem (true)]
 	public sealed class OracleCommand :
-#if NET_2_0
 		DbCommand, ICloneable
-#else
-		Component, ICloneable, IDbCommand
-#endif
 	{
 		#region Fields
 
@@ -97,9 +89,7 @@ namespace System.Data.OracleClient
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleCommandTextEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		override
-#endif
 		string CommandText {
 			get {
 				if (commandText == null)
@@ -113,9 +103,7 @@ namespace System.Data.OracleClient
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue (CommandType.Text)]
 		public
-#if NET_2_0
 		override
-#endif
 		CommandType CommandType {
 			get { return commandType; }
 			set {
@@ -128,15 +116,12 @@ namespace System.Data.OracleClient
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleConnection Connection {
 			get { return connection; }
 			set { connection = value; }
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -161,18 +146,13 @@ namespace System.Data.OracleClient
 			get { return Transaction; }
 			set { Transaction = (OracleTransaction) value; }
 		}
-#endif
 
 		[DefaultValue (true)]
 		[Browsable (false)]
 		[DesignOnly (true)]
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 		public
-#if NET_2_0
 		override
-#endif
 		bool DesignTimeVisible {
 			get { return designTimeVisible; }
 			set { designTimeVisible = value; }
@@ -186,40 +166,10 @@ namespace System.Data.OracleClient
 			get { return Connection.ErrorHandle; }
 		}
 
-#if !NET_2_0
-		int IDbCommand.CommandTimeout {
-			get { return 0; }
-			set { }
-		}
-
-		[Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		[DefaultValue (null)]
-		IDbConnection IDbCommand.Connection {
-			get { return Connection; }
-			set {
-				// InvalidCastException is expected when types do not match
-				Connection = (OracleConnection) value;
-			}
-		}
-
-		IDataParameterCollection IDbCommand.Parameters {
-			get { return Parameters; }
-		}
-
-		IDbTransaction IDbCommand.Transaction {
-			get { return Transaction; }
-			set {
-				// InvalidCastException is expected when types do not match
-				Transaction = (OracleTransaction) value;
-			}
-		}
-#endif
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleParameterCollection Parameters {
 			get { return parameters; }
 		}
@@ -227,9 +177,7 @@ namespace System.Data.OracleClient
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public
-#if NET_2_0
 		new
-#endif
 		OracleTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
@@ -237,9 +185,7 @@ namespace System.Data.OracleClient
 
 		[DefaultValue (UpdateRowSource.Both)]
 		public
-#if NET_2_0
 		override
-#endif
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set { updatedRowSource = value; }
@@ -275,9 +221,7 @@ namespace System.Data.OracleClient
 
 		[MonoTODO]
 		public
-#if NET_2_0
 		override
-#endif
 		void Cancel ()
 		{
 			throw new NotImplementedException ();
@@ -326,7 +270,6 @@ namespace System.Data.OracleClient
 			return cmd;
 		}
 
-#if NET_2_0
 		protected override DbParameter CreateDbParameter ()
 		{
 			return CreateParameter ();
@@ -336,7 +279,6 @@ namespace System.Data.OracleClient
 		{
 			return ExecuteReader (behavior);
 		}
-#endif
 
 		internal void UpdateParameterValues ()
 		{
@@ -373,9 +315,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleParameter CreateParameter ()
 		{
 			return new OracleParameter ();
@@ -414,9 +354,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		int ExecuteNonQuery ()
 		{
 			moreResults = -1;
@@ -526,18 +464,14 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
 		public
-#if NET_2_0
 		new
-#endif
 		OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			AssertConnectionIsOpen ();
@@ -601,9 +535,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		object ExecuteScalar ()
 		{
 			moreResults = -1;
@@ -710,22 +642,6 @@ namespace System.Data.OracleClient
 				h.Dispose();
 		}
 
-#if !NET_2_0
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
-			return CreateParameter ();
-		}
-
-		IDataReader IDbCommand.ExecuteReader ()
-		{
-			return ExecuteReader ();
-		}
-
-		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
-		{
-			return ExecuteReader (behavior);
-		}
-#endif
 
 		void PrepareStatement (OciStatementHandle statement)
 		{
@@ -745,9 +661,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0
 		override
-#endif
 		void Prepare ()
 		{
 			AssertConnectionIsOpen ();

@@ -42,7 +42,7 @@
     <MSBuild Projects="class\System.Data\System.Data.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Accessibility\Accessibility.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.WebBrowser\Mono.WebBrowser.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
-    <MSBuild Projects="class\Managed.Windows.Forms\System.Windows.Forms.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Windows.Forms\System.Windows.Forms.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
    <!-- <MSBuild Projects="class\System.Web.ApplicationServices\System.Web.ApplicationServices.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Web\System.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>

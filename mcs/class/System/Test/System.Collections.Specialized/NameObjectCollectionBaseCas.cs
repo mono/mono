@@ -62,11 +62,9 @@ namespace MonoCasTests.System.Collections.Specialized {
 			unit.GetObjectData ();
 			unit.GetAllValues_Type ();
 			unit.GetAllValues ();
-#if NET_2_0
 			unit.Constructor_IEqualityComparer ();
 			unit.Constructor_Int_IEqualityComparer ();
 			unit.GetObjectData_IEqualityComparer ();
-#endif
 		}
 
 		[Test]

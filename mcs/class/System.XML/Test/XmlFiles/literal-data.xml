@@ -246,21 +246,11 @@
   <ttList>
     <anyType xsi:type="xsd:string">two</anyType>
     <anyType xsi:type="xsd:string">strings</anyType>
-  </ttList>
-  <multiList>
-    <ArrayOfAnyType>
-      <anyType xsi:type="xsd:int">22</anyType>
-      <anyType xsi:type="xsd:int">33</anyType>
-    </ArrayOfAnyType>
-    <ArrayOfAnyType>
-      <anyType xsi:type="xsd:int">888</anyType>
-      <anyType xsi:type="xsd:int">999</anyType>
-    </ArrayOfAnyType>
-  </multiList>aa<xmltext>33</xmltext>bb<xmltext>776</xmltext><special>
+  </ttList>aa<xmltext>33</xmltext>bb<xmltext>776</xmltext><special>
     <data>
-      <three>3</three>
-      <one>1</one>
       <two>2</two>
+      <one>1</one>
+      <three>3</three>
     </data>
   </special><dummyStringArray xmlns="mm">
     <ArrayOfString xsi:nil="true" />

@@ -34,6 +34,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
+using System.Text;
 
 namespace System
 {
@@ -114,6 +115,25 @@ namespace System
 		public static bool operator != (RuntimeMethodHandle left, RuntimeMethodHandle right)
 		{
 			return !left.Equals (right);
+		}
+
+		internal static string ConstructInstantiation (RuntimeMethodInfo method, TypeNameFormatFlags format)
+		{
+			var sb = new StringBuilder ();
+			var gen_params = method.GetGenericArguments ();
+			sb.Append ("[");
+			for (int j = 0; j < gen_params.Length; j++) {
+				if (j > 0)
+					sb.Append (",");
+				sb.Append (gen_params [j].Name);
+			}
+			sb.Append ("]");
+			return sb.ToString ();
+		}
+
+		internal bool IsNullHandle ()
+		{
+			return value == IntPtr.Zero;
 		}
 	}
 }

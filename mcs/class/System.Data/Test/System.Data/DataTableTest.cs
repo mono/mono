@@ -43,6 +43,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Xml;
+using System.Text;
 
 using MonoTests.System.Data.Utils;
 
@@ -53,7 +54,13 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest :  DataSetAssertion
 	{
-		string EOL = "\r\n";
+		[SetUp]
+		public void Setup ()
+		{
+			MyDataTable.count = 0;
+		}
+
+		string EOL = Environment.NewLine;
 
 		[Test]
 		public void Ctor()
@@ -337,14 +344,10 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {"\t"});
 			dt.Rows.Add (new object [] {"\\"});
 			
-			Assert.AreEqual (1, dt.Select (@"SomeCol='\t'").Length, "test#01");
-			Assert.AreEqual (1, dt.Select (@"SomeCol='\\'").Length, "test#02");
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\t'").Length, "test#01");
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\\'").Length, "test#02");
 			
-			try {
-				dt.Select (@"SomeCol='\x'");
-				Assert.Fail ("test#03");
-			} catch (SyntaxErrorException) {
-			}
+			Assert.AreEqual (0, dt.Select (@"SomeCol='\x'").Length, "test#03");
 		}
 
 		[Test]
@@ -819,6 +822,7 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		[SetCulture("en-US")]
 		public void PropertyExceptions ()
 		{
 			DataSet set = new DataSet ();
@@ -1998,11 +2002,11 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void ColumnObjectTypeTest() {
 			DataTable dt = new DataTable();
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
 			dt.Rows.Add(new object[] {"sss"});
-			Assert.AreEqual (1, dt.Rows.Count);
 		}
 
 		private bool tableInitialized;
@@ -2013,7 +2017,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.IsFalse (tableInitialized, "TableInitialized #01");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
@@ -2026,7 +2030,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			dt.EndInit ();
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 			Assert.IsTrue (tableInitialized, "TableInitialized #02");
@@ -2039,7 +2043,7 @@ namespace MonoTests.System.Data
 			tableInitialized = true;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.AreEqual (tableInitialized, dt.IsInitialized, "TableInitialized #03");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
@@ -2053,7 +2057,7 @@ namespace MonoTests.System.Data
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
-			dt.Rows.Add(new object[] {"sss"});
+			dt.Rows.Add(new object[] {123});
 			Assert.IsFalse (dt.IsInitialized, "TableInitialized #05");
 			dt.EndInit ();
 			Assert.IsTrue (dt.IsInitialized, "TableInitialized #06");
@@ -3223,6 +3227,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[SetCulture ("en-GB")]
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
@@ -3244,6 +3249,7 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
+			// Looks like whoever added this test depended on English culture, which is wrong.
 			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"en-US\" msdata:MainDataTable=\"Region\" name=\"Root\">", substring, "test#03");
 
 			substring = TextString.Substring (0, TextString.IndexOf (EOL));
@@ -4117,13 +4123,65 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		[Test]
+		public void ReadXmlSchemeWithoutScheme ()
+		{
+			const string xml = @"<CustomElement />";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
+				Assert.AreEqual ("", dt.TableName);
+			}
+		}
+
+		[Test]
+		public void ReadXmlSchemeWithScheme ()
+		{
+			const string xml = @"<CustomElement>
+				  <xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
+					<xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:MainDataTable='row' msdata:Locale=''>
+					  <xs:complexType>
+						<xs:choice minOccurs='0' maxOccurs='unbounded'>
+						  <xs:element name='row' msdata:Locale=''>
+							<xs:complexType>
+							  <xs:sequence>
+								<xs:element name='Text' type='xs:string' minOccurs='0' />
+							  </xs:sequence>
+							</xs:complexType>
+						  </xs:element>
+						</xs:choice>
+					  </xs:complexType>
+					</xs:element>
+				  </xs:schema>
+				</CustomElement>";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
+				Assert.AreEqual ("row", dt.TableName);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ReadXmlSchemeWithBadScheme ()
+		{
+			const string xml = @"<CustomElement>
+				  <xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/BAD' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
+				  </xs:schema>
+				</CustomElement>";
+			using (var s = new StringReader (xml)) {
+				DataTable dt = new DataTable ();
+				dt.ReadXmlSchema (s);
+			}
+		}
+
 		#endregion // Read/Write XML Tests
 
 	}
 
 	public  class MyDataTable : DataTable
 	{
-		public static int count = 0;
+		public static int count;
 
 		public MyDataTable()
 		{
@@ -4155,6 +4213,7 @@ namespace MonoTests.System.Data
 #endif
 
 		[Test]
+		[SetCulture ("en-US")]
 		public void Bug55978 ()
 		{
 			DataTable dt = new DataTable ();

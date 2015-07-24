@@ -1112,6 +1112,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();
@@ -1844,6 +1845,15 @@ public class AssemblyNameTest {
 		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an1, an2));
 		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an3, an4));
 		Assert.IsFalse (AssemblyName.ReferenceMatchesDefinition (an5, an6));
+	}
+
+	[Test]
+	public void CultureNameInvariant ()
+	{
+		var an = new AssemblyName ("TestDll");
+		an.CultureInfo = new CultureInfo (CultureInfo.InvariantCulture.LCID);
+
+		Assert.AreEqual ("", an.CultureName);
 	}
 }
 

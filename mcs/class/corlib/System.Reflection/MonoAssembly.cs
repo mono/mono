@@ -34,22 +34,131 @@ using System.Runtime.InteropServices;
 using System.Reflection.Emit;
 #endif
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Threading;
+using System.Diagnostics.Contracts;
+using System.Security.Policy;
+using System.Security.Permissions;
 
 namespace System.Reflection {
 
-#if NET_4_0
+	abstract class RuntimeAssembly : Assembly
+	{
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			UnitySerializationHolder.GetUnitySerializationInfo (info,
+                                                               UnitySerializationHolder.AssemblyUnity,
+                                                               this.FullName,
+                                                               this);
+		}
+
+		internal static RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark)
+		{
+			// Mono runtime does not support StackCrawlMark, The easiest workaround is to replace use
+			// of StackCrawlMark.LookForMyCaller with GetCallingAssembly
+			throw new NotSupportedException ();
+		}
+
+        // Creates AssemblyName. Fills assembly if AssemblyResolve event has been raised.
+        [System.Security.SecurityCritical]  // auto-generated
+        internal static AssemblyName CreateAssemblyName(
+            String assemblyString, 
+            bool forIntrospection, 
+            out RuntimeAssembly assemblyFromResolveEvent)
+        {
+            if (assemblyString == null)
+                throw new ArgumentNullException("assemblyString");
+            Contract.EndContractBlock();
+
+            if ((assemblyString.Length == 0) ||
+                (assemblyString[0] == '\0'))
+                throw new ArgumentException(Environment.GetResourceString("Format_StringZeroLength"));
+
+            if (forIntrospection)
+                AppDomain.CheckReflectionOnlyLoadSupported();
+
+            AssemblyName an = new AssemblyName();
+
+            an.Name = assemblyString;
+            assemblyFromResolveEvent = null; // instead of an.nInit(out assemblyFromResolveEvent, forIntrospection, true);
+            return an;
+        }
+
+        internal static RuntimeAssembly InternalLoadAssemblyName(
+            AssemblyName assemblyRef, 
+            Evidence assemblySecurity,
+            RuntimeAssembly reqAssembly,
+            ref StackCrawlMark stackMark,
+#if FEATURE_HOSTED_BINDER
+            IntPtr pPrivHostBinder,
+#endif
+            bool throwOnFileNotFound, 
+            bool forIntrospection,
+            bool suppressSecurityChecks)
+        {
+            if (assemblyRef == null)
+                throw new ArgumentNullException("assemblyRef");
+            Contract.EndContractBlock();
+
+            if (assemblyRef.CodeBase != null)
+            {
+                AppDomain.CheckLoadFromSupported();
+            }
+
+            assemblyRef = (AssemblyName)assemblyRef.Clone();
+#if FEATURE_VERSIONING
+            if (!forIntrospection &&
+                (assemblyRef.ProcessorArchitecture != ProcessorArchitecture.None)) {
+                // PA does not have a semantics for by-name binds for execution
+                assemblyRef.ProcessorArchitecture = ProcessorArchitecture.None;
+            }
+#endif
+
+            if (assemblySecurity != null)
+            {
+#if FEATURE_CAS_POLICY
+                if (!AppDomain.CurrentDomain.IsLegacyCasPolicyEnabled)
+                {
+                    throw new NotSupportedException(Environment.GetResourceString("NotSupported_RequiresCasPolicyImplicit"));
+                }
+#endif // FEATURE_CAS_POLICY
+
+                if (!suppressSecurityChecks)
+                {
+#pragma warning disable 618
+                    new SecurityPermission(SecurityPermissionFlag.ControlEvidence).Demand();
+#pragma warning restore 618
+                }
+            }
+
+			return (RuntimeAssembly) Assembly.Load (assemblyRef);
+		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (String partialName, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			// Mono runtime does not support StackCrawlMark
+			//FIXME stackMark should probably change method behavior in some cases.
+			return (RuntimeAssembly) Assembly.LoadWithPartialName (partialName, securityEvidence);
+		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (AssemblyName an, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			return LoadWithPartialNameInternal (an.ToString (), securityEvidence, ref stackMark);
+		}
+
+	}
+
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	class MonoAssembly : Assembly {
-#else
-	public partial class Assembly {
-#endif
+	class MonoAssembly : RuntimeAssembly
+	{
 		public
-#if NET_4_0
 		override
-#endif
 		Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			Type res;
@@ -59,20 +168,11 @@ namespace System.Reflection {
 			throw new ArgumentException ("name", "Name cannot be empty");
 
 			res = InternalGetType (null, name, throwOnError, ignoreCase);
-#if !NET_4_0 && !FULL_AOT_RUNTIME
-			if (res is TypeBuilder) {
-				if (throwOnError)
-					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));
-				return null;
-			}
-#endif
 			return res;
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Module GetModule (String name)
 		{
 			if (name == null)
@@ -90,17 +190,13 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		AssemblyName[] GetReferencedAssemblies () {
 			return GetReferencedAssemblies (this);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Module[] GetModules (bool getResourceModules) {
 			Module[] modules = GetModulesInternal ();
 
@@ -117,27 +213,21 @@ namespace System.Reflection {
 
 		[MonoTODO ("Always returns the same as GetModules")]
 		public
-#if NET_4_0
 		override
-#endif
 		Module[] GetLoadedModules (bool getResourceModules)
 		{
 			return GetModules (getResourceModules);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
 			return GetSatelliteAssembly (culture, null, true);
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
 			return GetSatelliteAssembly (culture, version, true);
@@ -146,9 +236,7 @@ namespace System.Reflection {
 		//FIXME remove GetManifestModule under v4, it's a v2 artifact
 		[ComVisible (false)]
 		public
-#if NET_4_0
 		override
-#endif
 		Module ManifestModule {
 			get {
 				return GetManifestModule ();
@@ -156,9 +244,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		override
-#endif
 		bool GlobalAssemblyCache {
 			get {
 				return get_global_assembly_cache ();

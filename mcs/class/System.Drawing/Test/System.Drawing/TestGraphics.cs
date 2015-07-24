@@ -1236,11 +1236,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void EndContainer_Null ()
 		{
 			Bitmap bitmap = new Bitmap (20, 20);
@@ -2634,7 +2630,6 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
-#if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()
 		{
@@ -2672,7 +2667,6 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
-#endif
 		[Test]
 		public void VisibleClipBound ()
 		{
@@ -3449,7 +3443,6 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void DrawImageUnscaledAndClipped_Null ()
@@ -3481,7 +3474,6 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

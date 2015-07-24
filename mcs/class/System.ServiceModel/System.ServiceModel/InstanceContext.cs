@@ -237,12 +237,10 @@ namespace System.ServiceModel
 		{
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public SynchronizationContext SynchronizationContext {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
 	}
 }

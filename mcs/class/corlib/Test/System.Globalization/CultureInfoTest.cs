@@ -226,6 +226,15 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void GetAllCultures_Specific ()
+		{
+			CultureInfo [] infos = CultureInfo.GetCultures (CultureTypes.SpecificCultures);
+			foreach (CultureInfo ci in infos) {
+				Assert.IsNotNull (ci.DateTimeFormat);
+			}
+		}
+
+		[Test]
 #if !NET_4_0
 		[ExpectedException (typeof (NotSupportedException))]
 #endif
@@ -580,6 +589,15 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void ZhHans ()
+		{
+			Assert.AreEqual (4, new CultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, CultureInfo.GetCultureInfo ("zh-Hans").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").LCID);
+			Assert.AreEqual (4, new CultureInfo ("zh-CHS").Parent.LCID);
+		}
+
+		[Test]
 		[SetCulture ("zh-TW")]
 		public void ParentOfZh ()
 		{
@@ -605,6 +623,16 @@ namespace MonoTests.System.Globalization
 			// and it's international settings set for Hong Kong
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=3471
 			new CultureInfo ("en-HK");
+		}
+
+		[Test]
+		public void ChineseSimplifiedDontEqual ()
+		{
+			CultureInfo zh1 = new CultureInfo ("zh-Hans");
+			CultureInfo zh2 = new CultureInfo ("zh-CHS");
+
+			Assert.IsFalse (zh1.Equals (zh2), "#1");
+			Assert.IsFalse (zh2.Equals (zh1), "#2");
 		}
 
 #if NET_4_5

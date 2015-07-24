@@ -33,14 +33,12 @@ namespace System.ServiceModel
 {
 	public sealed class BasicHttpSecurity
 	{
-#if NET_4_0
 		public BasicHttpSecurity ()
 		{
 			this.mode = BasicHttpSecurityMode.None;
 			this.message = new BasicHttpMessageSecurity ();
 			this.transport = new HttpTransportSecurity ();
 		}
-#endif
 
 		internal BasicHttpSecurity (BasicHttpSecurityMode mode)
 		{
@@ -55,9 +53,7 @@ namespace System.ServiceModel
 
 		public BasicHttpMessageSecurity Message {
 			get { return message; }
-#if NET_4_0
 			set { message = value; }
-#endif
 		}
 
 		public BasicHttpSecurityMode Mode {
@@ -67,9 +63,7 @@ namespace System.ServiceModel
 
 		public HttpTransportSecurity Transport {
 			get { return transport; }
-#if NET_4_0
 			set { transport = value; }
-#endif
 		}
 	}
 }

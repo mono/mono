@@ -1,7 +1,7 @@
-// CS8051: Auto-implemented property `Test.Property' must have set accessor or initializer
+// CS8051: Auto-implemented property `V.P' must have get accessor
 // Line: 6
 
-public abstract class Test
+class V
 {
-	public string Property { get; }
+	public object P { set; } = 1;
 }

@@ -2,7 +2,7 @@ thisdir=class/System.Data/Test/DataProviderTests/datareadertests
 
 include ../../../../../build/rules.make
 
-LIB_MCS_FLAGS = /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml
+LIB_MCS_FLAGS = /r:System.Data,System.Data.OracleClient,System,System.Xml
 
 DATABASE=all
 

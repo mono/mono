@@ -67,7 +67,6 @@ namespace Mono.Http.Modules
 			app.ReleaseRequestState += new EventHandler (new X ("ReleaseRequestState").Hook);
 			app.ResolveRequestCache += new EventHandler (new X ("ResolveRequestCache").Hook);
 			app.UpdateRequestCache += new EventHandler (new X ("UpdateRequestCache").Hook);
-#if NET_2_0
 			app.PostAuthenticateRequest += new EventHandler (new X ("PostAuthenticateRequest").Hook);
 			app.PostAuthorizeRequest += new EventHandler (new X ("PostAuthorizeRequest").Hook);
 			app.PostResolveRequestCache += new EventHandler (new X ("PostResolveRequestCache").Hook);
@@ -75,7 +74,6 @@ namespace Mono.Http.Modules
 			app.PostAcquireRequestState += new EventHandler (new X ("PostAcquireRequestState").Hook);
 			app.PostReleaseRequestState += new EventHandler (new X ("PostReleaseRequestState").Hook);
 			app.PostUpdateRequestCache += new EventHandler (new X ("PostUpdateRequestCache").Hook);
-#endif
 		}
 
 		public void Dispose ()

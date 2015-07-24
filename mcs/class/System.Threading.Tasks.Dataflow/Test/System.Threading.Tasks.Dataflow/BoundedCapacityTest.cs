@@ -133,7 +133,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
-			Assert.AreEqual (2, Thread.VolatileRead (ref n));
+			Assert.AreEqual (2, Volatile.Read (ref n));
 		}
 
 		[Test]
@@ -156,7 +156,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.GreaterOrEqual (scheduler.ExecuteAll (), 1);
 
-			Assert.AreEqual (2, Thread.VolatileRead (ref n));
+			Assert.AreEqual (2, Volatile.Read (ref n));
 		}
 
 		int n;
@@ -181,7 +181,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsFalse (transform.Post (102));
 
-			Assert.AreEqual (10000, Thread.VolatileRead (ref n));
+			Assert.AreEqual (10000, Volatile.Read (ref n));
 		}
 
 		IEnumerable<int> ComputeResults ()

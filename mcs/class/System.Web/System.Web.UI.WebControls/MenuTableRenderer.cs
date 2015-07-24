@@ -419,15 +419,11 @@ namespace System.Web.UI.WebControls
 			
 			if (item.Depth > 0 && !isDynamicItem) {
 				double value;
-#if NET_4_0
 				Unit unit = oc.StaticSubMenuIndent;
 				if (unit == Unit.Empty)
 					value = 16;
 				else
 					value = unit.Value;
-#else
-				value = oc.StaticSubMenuIndent.Value;
-#endif
 				Unit indent = new Unit (value * item.Depth, oc.StaticSubMenuIndent.Type);
 				writer.AddStyleAttribute (HtmlTextWriterStyle.MarginLeft, indent.ToString ());
 			}

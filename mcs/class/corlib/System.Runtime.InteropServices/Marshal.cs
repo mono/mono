@@ -187,11 +187,9 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_5
 		public static IntPtr CreateAggregatedObject<T> (IntPtr pOuter, T o) {
 			return CreateAggregatedObject (pOuter, (object)o);
 		}
-#endif
 
 #if !FULL_AOT_RUNTIME
 		public static object CreateWrapperOfType (object o, Type t)
@@ -211,22 +209,18 @@ namespace System.Runtime.InteropServices
 			return ComInteropProxy.GetProxy (co.IUnknown, t).GetTransparentProxy ();
 		}
 
-#if NET_4_5
 		public static TWrapper CreateWrapperOfType<T, TWrapper> (T o) {
 			return (TWrapper)CreateWrapperOfType ((object)o, typeof (TWrapper));
 		}
-#endif
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ComVisible (true)]
 		public extern static void DestroyStructure (IntPtr ptr, Type structuretype);
 
-#if NET_4_5
 		public static void DestroyStructure<T> (IntPtr ptr) {
 			DestroyStructure (ptr, typeof (T));
 		}
-#endif			
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void FreeBSTR (IntPtr ptr);
@@ -347,11 +341,9 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if NET_4_5
 		public static IntPtr GetComInterfaceForObject<T, TInterface> (T o) {
 			return GetComInterfaceForObject ((object)o, typeof (T));
 		}
-#endif			
 
 		[MonoTODO]
 		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t)
@@ -416,10 +408,14 @@ namespace System.Runtime.InteropServices
 #if !FULL_AOT_RUNTIME
 		public static int GetHRForException (Exception e)
 		{
+#if FEATURE_COMINTEROP
 			var errorInfo = new ManagedErrorInfo(e);
 			SetErrorInfo (0, errorInfo);
 
 			return e.hresult;
+#else			
+			return -1;
+#endif
 		}
 
 		[MonoTODO]
@@ -489,11 +485,9 @@ namespace System.Runtime.InteropServices
 			Marshal.StructureToPtr(vt, pDstNativeVariant, false);
 		}
 
-#if NET_4_5
 		public static void GetNativeVariantForObject<T> (T obj, IntPtr pDstNativeVariant) {
 			GetNativeVariantForObject ((object)obj, pDstNativeVariant);
 		}
-#endif
 
 #if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -521,12 +515,10 @@ namespace System.Runtime.InteropServices
 			return vt.GetValue();
 		}
 
-#if NET_4_5
 		public static T GetObjectForNativeVariant<T> (IntPtr pSrcNativeVariant) {
 			Variant vt = (Variant)Marshal.PtrToStructure(pSrcNativeVariant, typeof(Variant));
 			return (T)vt.GetValue();
 		}
-#endif
 
 		public static object[] GetObjectsForNativeVariants (IntPtr aSrcNativeVariant, int cVars)
 		{
@@ -539,7 +531,6 @@ namespace System.Runtime.InteropServices
 			return objects;
 		}
 
-#if NET_4_5
 		public static T[] GetObjectsForNativeVariants<T> (IntPtr aSrcNativeVariant, int cVars) {
 			if (cVars < 0)
 				throw new ArgumentOutOfRangeException ("cVars", "cVars cannot be a negative number.");
@@ -549,7 +540,6 @@ namespace System.Runtime.InteropServices
 					i * SizeOf (typeof(Variant))));
 			return objects;
 		}
-#endif
 
 		[MonoTODO]
 		public static int GetStartComSlot (Type t)
@@ -583,12 +573,10 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_5
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
 			throw new NotImplementedException ();			
 		}
-#endif
 
 #if !FULL_AOT_RUNTIME
 		[Obsolete]
@@ -697,11 +685,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr OffsetOf (Type t, string fieldName);
 
-#if NET_4_5
 		public static IntPtr OffsetOf<T> (string fieldName) {
 			return OffsetOf (typeof (T), fieldName);
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void Prelink (MethodInfo m);
@@ -751,7 +737,6 @@ namespace System.Runtime.InteropServices
 		[ComVisible (true)]
 		public extern static object PtrToStructure (IntPtr ptr, Type structureType);
 
-#if NET_4_5
 		public static void PtrToStructure<T> (IntPtr ptr, T structure) {
 			PtrToStructure (ptr, (object)structure);
 		}
@@ -759,7 +744,6 @@ namespace System.Runtime.InteropServices
 		public static T PtrToStructure<T> (IntPtr ptr) {
 			return (T) PtrToStructure (ptr, typeof (T));
 		}
-#endif
 
 #if !MOBILE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -808,7 +792,7 @@ namespace System.Runtime.InteropServices
 				return *(short*)addr;
 
 			short s;
-			String.memcpy ((byte*)&s, (byte*)ptr, 2);
+			Buffer.Memcpy ((byte*)&s, (byte*)ptr, 2);
 			return s;
 		}
 
@@ -820,7 +804,7 @@ namespace System.Runtime.InteropServices
 				return *(short*)addr;
 
 			short s;
-			String.memcpy ((byte*)&s, addr, 2);
+			Buffer.Memcpy ((byte*)&s, addr, 2);
 			return s;
 		}
 
@@ -840,7 +824,7 @@ namespace System.Runtime.InteropServices
 				return *(int*)addr;
 
 			int s;
-			String.memcpy ((byte*)&s, addr, 4);
+			Buffer.Memcpy ((byte*)&s, addr, 4);
 			return s;
 		}
 
@@ -853,7 +837,7 @@ namespace System.Runtime.InteropServices
 				return *(int*)addr;
 			else {
 				int s;
-				String.memcpy ((byte*)&s, addr, 4);
+				Buffer.Memcpy ((byte*)&s, addr, 4);
 				return s;
 			}
 		}
@@ -877,7 +861,7 @@ namespace System.Runtime.InteropServices
 				return *(long*)ptr;
 
 			long s;
-			String.memcpy ((byte*)&s, addr, 8);
+			Buffer.Memcpy ((byte*)&s, addr, 8);
 			return s;
 		}
 
@@ -889,7 +873,7 @@ namespace System.Runtime.InteropServices
 				return *(long*)addr;
 			
 			long s;
-			String.memcpy ((byte*)&s, addr, 8);
+			Buffer.Memcpy ((byte*)&s, addr, 8);
 			return s;
 		}
 
@@ -987,7 +971,6 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int SizeOf (Type t);
 
-#if NET_4_5
 		public static int SizeOf<T> () {
 			return SizeOf (typeof (T));
 		}
@@ -995,7 +978,21 @@ namespace System.Runtime.InteropServices
 		public static int SizeOf<T> (T structure) {
 			return SizeOf (structure.GetType ());
 		}
-#endif
+
+		internal static uint SizeOfType (Type type)
+		{
+			return (uint) SizeOf (type);
+		}
+
+		internal static uint AlignedSizeOf<T> () where T : struct
+		{
+			uint size = SizeOfType (typeof (T));
+			if (size == 1 || size == 2)
+				return size;
+			if (IntPtr.Size == 8 && size == 4)
+				return size;
+			return (size + 3) & (~((uint)3));
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToBSTR (string s);
@@ -1143,11 +1140,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-#if NET_4_5
 		public static void StructureToPtr<T> (T structure, IntPtr ptr, bool fDeleteOld) {
 			StructureToPtr ((object)structure, ptr, fDeleteOld);
 		}
-#endif
 
 		public static void ThrowExceptionForHR (int errorCode) {
 			Exception ex = GetExceptionForHR (errorCode);
@@ -1164,11 +1159,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);
 
-#if NET_4_5
 		public static IntPtr UnsafeAddrOfPinnedArrayElement<T> (T[] arr, int index) {
 			return UnsafeAddrOfPinnedArrayElement ((Array)arr, index);
 		}
-#endif
 
 		public static void WriteByte (IntPtr ptr, byte val)
 		{
@@ -1197,7 +1190,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 1) == 0)
 				*(short*)addr = val;
 			else
-				String.memcpy (addr, (byte*)&val, 2);
+				Buffer.Memcpy (addr, (byte*)&val, 2);
 		}
 
 		public static unsafe void WriteInt16 (IntPtr ptr, int ofs, short val)
@@ -1207,7 +1200,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 1) == 0)
 				*(short*)addr = val;
 			else {
-				String.memcpy (addr, (byte*)&val, 2);
+				Buffer.Memcpy (addr, (byte*)&val, 2);
 			}
 		}
 
@@ -1241,7 +1234,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 3) == 0) 
 				*(int*)addr = val;
 			else {
-				String.memcpy (addr, (byte*)&val, 4);
+				Buffer.Memcpy (addr, (byte*)&val, 4);
 			}
 		}
 
@@ -1252,7 +1245,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 3) == 0) 
 				*(int*)addr = val;
 			else {
-				String.memcpy (addr, (byte*)&val, 4);
+				Buffer.Memcpy (addr, (byte*)&val, 4);
 			}
 		}
 
@@ -1272,7 +1265,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 7) == 0) 
 				*(long*)addr = val;
 			else 
-				String.memcpy (addr, (byte*)&val, 8);
+				Buffer.Memcpy (addr, (byte*)&val, 8);
 		}
 
 		public static unsafe void WriteInt64 (IntPtr ptr, int ofs, long val)
@@ -1284,7 +1277,7 @@ namespace System.Runtime.InteropServices
 			if (((uint)addr & 7) == 0) 
 				*(long*)addr = val;
 			else 
-				String.memcpy (addr, (byte*)&val, 8);
+				Buffer.Memcpy (addr, (byte*)&val, 8);
 		}
 
 		[MonoTODO]
@@ -1529,6 +1522,7 @@ namespace System.Runtime.InteropServices
 			return null;
 		}
 
+#if FEATURE_COMINTEROP
 		[DllImport ("oleaut32.dll", CharSet=CharSet.Unicode, EntryPoint = "SetErrorInfo")]
 		static extern int _SetErrorInfo (int dwReserved,
 			[MarshalAs(UnmanagedType.Interface)] IErrorInfo pIErrorInfo);
@@ -1577,7 +1571,7 @@ namespace System.Runtime.InteropServices
 			}
 			return retVal;
 		}
-
+#endif
 		public static Exception GetExceptionForHR (int errorCode)
 		{
 			return GetExceptionForHR (errorCode, IntPtr.Zero);
@@ -1585,6 +1579,7 @@ namespace System.Runtime.InteropServices
 
 		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo)
 		{
+#if FEATURE_COMINTEROP
 			IErrorInfo info = null;
 			if (errorInfo != (IntPtr)(-1)) {
 				if (errorInfo == IntPtr.Zero) {
@@ -1618,6 +1613,9 @@ namespace System.Runtime.InteropServices
 				}
 			}
 			return e;
+#else
+			return ConvertHrToException (errorCode);
+#endif
 		}
 
 #if !FULL_AOT_RUNTIME
@@ -1645,11 +1643,9 @@ namespace System.Runtime.InteropServices
 			return GetDelegateForFunctionPointerInternal (ptr, t);
 		}
 
-#if NET_4_5
 		public static TDelegate GetDelegateForFunctionPointer<TDelegate> (IntPtr ptr) {
 			return (TDelegate) (object) GetDelegateForFunctionPointer (ptr, typeof (TDelegate));
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
@@ -1662,13 +1658,11 @@ namespace System.Runtime.InteropServices
 			return GetFunctionPointerForDelegateInternal (d);
 		}
 
-#if NET_4_5
 		public static IntPtr GetFunctionPointerForDelegate<TDelegate> (TDelegate d) {
 			if (d == null)
 				throw new ArgumentNullException ("d");
 			
 			return GetFunctionPointerForDelegateInternal ((Delegate)(object)d);
 		}
-#endif
 	}
 }

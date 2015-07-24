@@ -53,7 +53,7 @@ namespace MonoTests.System.Xml.Linq
 			// The last '-' causes some glitch...
 			c = new XComment ("--foo--");
 			Assert.AreEqual ("--foo--", c.Value, "#3");
-			Assert.AreEqual ("<!--- -foo- &#2D;-->", c.ToString (), "#4");
+			Assert.AreEqual ("<!--- -foo- - -->", c.ToString (), "#4");
 			XmlReader.Create (new StringReader (c.ToString ())).Read ();
 
 			// What if <!-- appears in the value?

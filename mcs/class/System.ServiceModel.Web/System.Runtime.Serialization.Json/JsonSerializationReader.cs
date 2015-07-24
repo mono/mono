@@ -295,7 +295,9 @@ namespace System.Runtime.Serialization.Json
 		{
 			if (type.IsArray)
 				return type.GetElementType ();
-			
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IEnumerable<>))
+				return type.GetGenericArguments () [0];
 			var inter = type.GetInterface ("System.Collections.Generic.IEnumerable`1", false);
 			if (inter != null)
 				return inter.GetGenericArguments () [0];
@@ -351,8 +353,7 @@ namespace System.Runtime.Serialization.Json
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
-					Type et = elementType == typeof (object) || elementType.IsAbstract ? null : elementType;
-					object elem = ReadObject (et ?? typeof (object));
+					object elem = ReadObject (elementType);
 					c.Add (elem);
 				}
 #if NET_2_1

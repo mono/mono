@@ -1062,8 +1062,11 @@ namespace Mono.CSharp {
 			return effective_base = Convert.FindMostEncompassedType (types);
 		}
 
-		public override string GetSignatureForDocumentation ()
+		public override string GetSignatureForDocumentation (bool explicitName)
 		{
+			if (explicitName)
+				return Name;
+
 			var prefix = IsMethodOwned ? "``" : "`";
 			return prefix + DeclaredPosition;
 		}
@@ -1111,14 +1114,20 @@ namespace Mono.CSharp {
 			//
 			bool found;
 			if (!TypeSpecComparer.Override.IsEqual (BaseType, other.BaseType)) {
-				if (other.targs == null)
-					return false;
-
 				found = false;
-				foreach (var otarg in other.targs) {
-					if (TypeSpecComparer.Override.IsEqual (BaseType, otarg)) {
-						found = true;
-						break;
+				if (other.targs != null) {
+					foreach (var otarg in other.targs) {
+						if (TypeSpecComparer.Override.IsEqual (BaseType, otarg)) {
+							found = true;
+							break;
+						}
+					}
+				} else if (targs != null) {
+					foreach (var targ in targs) {
+						if (TypeSpecComparer.Override.IsEqual (targ, other.BaseType)) {
+							found = true;
+							break;
+						}
 					}
 				}
 
@@ -1161,18 +1170,25 @@ namespace Mono.CSharp {
 
 			// Check interfaces implementation <- definition
 			if (other.InterfacesDefined != null) {
-				if (InterfacesDefined == null)
-					return false;
-
 				//
 				// Iterate over inflated interfaces
 				//
 				foreach (var oiface in other.Interfaces) {
 					found = false;
-					foreach (var iface in Interfaces) {
-						if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
-							found = true;
-							break;
+
+					if (InterfacesDefined != null) {
+						foreach (var iface in Interfaces) {
+							if (TypeSpecComparer.Override.IsEqual (iface, oiface)) {
+								found = true;
+								break;
+							}
+						}
+					} else if (targs != null) {
+						foreach (var targ in targs) {
+							if (TypeSpecComparer.Override.IsEqual (targ, oiface)) {
+								found = true;
+								break;
+							}
 						}
 					}
 
@@ -1183,17 +1199,29 @@ namespace Mono.CSharp {
 
 			// Check type parameters implementation -> definition
 			if (targs != null) {
-				if (other.targs == null)
-					return false;
-
 				foreach (var targ in targs) {
 					found = false;
-					foreach (var otarg in other.targs) {
-						if (TypeSpecComparer.Override.IsEqual (targ, otarg)) {
-							found = true;
-							break;
+
+					if (other.targs != null) {
+						foreach (var otarg in other.targs) {
+							if (TypeSpecComparer.Override.IsEqual (targ, otarg)) {
+								found = true;
+								break;
+							}
 						}
 					}
+
+					if (other.InterfacesDefined != null && !found) {
+						foreach (var iface in other.Interfaces) {
+							if (TypeSpecComparer.Override.IsEqual (iface, targ)) {
+								found = true;
+								break;
+							}
+						}
+					}
+
+					if (!found)
+						found = TypeSpecComparer.Override.IsEqual (targ, other.BaseType);
 
 					if (!found)
 						return false;
@@ -2186,7 +2214,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
-		public virtual bool Resolve (IMemberContext ec)
+		public virtual bool Resolve (IMemberContext ec, bool allowUnbound)
 		{
 			if (atypes != null)
 			    return true;
@@ -2239,9 +2267,12 @@ namespace Mono.CSharp {
 
 	public class UnboundTypeArguments : TypeArguments
 	{
-		public UnboundTypeArguments (int arity)
+		Location loc;
+
+		public UnboundTypeArguments (int arity, Location loc)
 			: base (new FullNamedExpression[arity])
 		{
+			this.loc = loc;
 		}
 
 		public override bool IsEmpty {
@@ -2250,8 +2281,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Resolve (IMemberContext ec)
+		public override bool Resolve (IMemberContext mc, bool allowUnbound)
 		{
+			if (!allowUnbound) {
+				mc.Module.Compiler.Report.Error (7003, loc, "Unbound generic name is not valid in this context");
+			}
+
 			// Nothing to be resolved
 			return true;
 		}
@@ -2437,7 +2472,7 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Unresolved)
 				return type;
 
-			if (!args.Resolve (mc))
+			if (!args.Resolve (mc, allowUnboundTypeArguments))
 				return null;
 
 			TypeSpec[] atypes = args.Arguments;
@@ -2555,6 +2590,9 @@ namespace Mono.CSharp {
 		//
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
+			if (targs == null)
+				return true;
+
 			for (int i = 0; i < tparams.Length; i++) {
 				var targ = targs[i];
 				if (!CheckConstraint (context, targ, tparams [i], loc))
@@ -3209,7 +3247,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each exact bound U of Xi all types Uj which are not identical
@@ -3226,7 +3264,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each lower bound U of Xi all types Uj to which there is not an implicit conversion
@@ -3245,7 +3283,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (!applicable[cii])
-							break;
+							continue;
 
 						//
 						// For each upper bound U of Xi all types Uj from which there is not an implicit conversion

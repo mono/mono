@@ -16,6 +16,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-error-internals.h>
 #include <string.h>
 
 #ifdef HAVE_EXECINFO_H
@@ -775,12 +776,25 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 MonoException *
 mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
 {
-	MonoRuntimeWrappedException *ex = (MonoRuntimeWrappedException*)
-		mono_exception_from_name (mono_get_corlib (), "System.Runtime.CompilerServices",
-								  "RuntimeWrappedException");
+	MonoClass *klass;
+	MonoObject *o;
+	MonoMethod *method;
+	MonoDomain *domain = mono_domain_get ();
+	gpointer params [16];
 
-   MONO_OBJECT_SETREF (ex, wrapped_exception, wrapped_exception);
-   return (MonoException*)ex;
+	klass = mono_class_from_name (mono_get_corlib (), "System.Runtime.CompilerServices", "RuntimeWrappedException");
+	g_assert (klass);
+
+	o = mono_object_new (domain, klass);
+	g_assert (o != NULL);
+
+	method = mono_class_get_method_from_name (klass, ".ctor", 1);
+	g_assert (method);
+
+	params [0] = wrapped_exception;
+	mono_runtime_invoke (method, o, params, NULL);
+
+	return (MonoException *)o;
 }	
 
 static gboolean
@@ -862,4 +876,30 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoException *exc)
 	res = mono_string_new (mono_domain_get (), trace);
 	g_free (trace);
 	return res;
+}
+
+/**
+ * mono_error_raise_exception:
+ * @target_error: the exception to raise
+ *
+ * Raises the exception of @target_error.
+ * Does nothing if @target_error has a success error code.
+ * Aborts in case of a double fault. This happens when it can't recover from an error caused by trying
+ * to construct the first exception object.
+ * The error object @target_error is cleaned up.
+*/
+void
+mono_error_raise_exception (MonoError *target_error)
+{
+	MonoException *ex = mono_error_convert_to_exception (target_error);
+	if (ex)
+		mono_raise_exception (ex);
+}
+
+void
+mono_error_set_pending_exception (MonoError *error)
+{
+	MonoException *ex = mono_error_convert_to_exception (error);
+	if (ex)
+		mono_set_pending_exception (ex);
 }

@@ -140,9 +140,7 @@ namespace System {
 
 		static Uri ()
 		{
-#if NET_4_5
 			IriParsing = true;
-#endif
 
 			var iriparsingVar = Environment.GetEnvironmentVariable ("MONO_URI_IRIPARSING");
 			if (iriparsingVar == "true")
@@ -234,6 +232,11 @@ namespace System {
 				default:
 					success = false;
 					break;
+				}
+
+				if (success && host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
+					// host name present (but not an IPv6 address)
+					host = host.ToLower (CultureInfo.InvariantCulture);
 				}
 			}
 		}
@@ -337,12 +340,6 @@ namespace System {
 				}
 			} else {
 				path = baseEl.path;
-#if !NET_4_0
-				if (relativeEl.query != null) {
-					var pathEnd = path.LastIndexOf ('/');
-					path = (pathEnd > 0)? path.Substring (0, pathEnd+1) : "";
-				}
-#endif
 			}
 
 			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
@@ -950,10 +947,8 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-#endif
 			if (Host != uri.Host || Scheme != uri.Scheme)
 				return uri;
 
@@ -1141,9 +1136,6 @@ namespace System {
 		private void ParseUri (UriKind kind)
 		{
 			Parse (kind, source);
-
-			if (userEscaped)
-				return;
 
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)
@@ -1745,10 +1737,8 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-#endif
 			return Parser.IsBaseOf (this, uri);
 		}
 
@@ -1800,18 +1790,6 @@ namespace System {
 				return false;
 			}
 
-#if !NET_4_5
-			switch (b) {
-			case '!':
-			case '\'':
-			case '(':
-			case ')':
-			case '*':
-			case '-':
-			case '.':
-				return false;
-			}
-#endif
 
 			return true;
 		}
@@ -1865,11 +1843,9 @@ namespace System {
 			case '_':
 			case '~':
 				return false;
-#if NET_4_5
 			case '[':
 			case ']':
 				return false;
-#endif
 			}
 
 			return true;
@@ -1957,10 +1933,8 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0
 			if (relativeUri == null)
 				return false;
-#endif
 			try {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri.OriginalString);

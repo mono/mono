@@ -74,7 +74,6 @@ namespace MonoTests.System
 			Assert.IsFalse (rmhB1.Equals (rmhA1), "#6");
 		}
 
-#if NET_2_0
 #pragma warning disable 1718
 		[Test]
 		public void Operators ()
@@ -102,7 +101,6 @@ namespace MonoTests.System
 			Assert.IsTrue (rmhB1 != rmhA1, "#B6");
 		}
 #pragma warning restore 1718
-#endif
 
 		[Test]
 		[ExpectedException (typeof (SerializationException))]

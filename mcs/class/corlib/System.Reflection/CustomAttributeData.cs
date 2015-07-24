@@ -37,11 +37,7 @@ namespace System.Reflection {
 
 	[ComVisible (true)]
 	[Serializable]
-#if NET_4_0
 	public
-#else
-	public sealed
-#endif
 	class CustomAttributeData {
 		class LazyCAttrData {
 			internal Assembly assembly;
@@ -55,11 +51,9 @@ namespace System.Reflection {
 		LazyCAttrData lazyData;
 
 
-#if NET_4_0
 		protected CustomAttributeData ()
 		{
 		}
-#endif
 
 		internal CustomAttributeData (ConstructorInfo ctorInfo, Assembly assembly, IntPtr data, uint data_length)
 		{
@@ -91,9 +85,7 @@ namespace System.Reflection {
 		
 		[ComVisible (true)]
 		public
-#if NET_4_0
 		virtual
-#endif
 		ConstructorInfo Constructor {
 			get {
 				return ctorInfo;
@@ -102,9 +94,7 @@ namespace System.Reflection {
 
 		[ComVisible (true)]
 		public
-#if NET_4_0
 		virtual
-#endif
 		IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
 				ResolveArguments ();
@@ -113,9 +103,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
 		virtual
-#endif
 		IList<CustomAttributeNamedArgument> NamedArguments {
 			get {
 				ResolveArguments ();
@@ -131,6 +119,10 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
+		internal static IList<CustomAttributeData> GetCustomAttributesInternal (RuntimeType target) {
+			return MonoCustomAttrs.GetCustomAttributesData (target);
+		}
+
 		public static IList<CustomAttributeData> GetCustomAttributes (Module target) {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
@@ -139,14 +131,14 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-#if NET_4_5
 		public Type AttributeType {
 			get { return ctorInfo.DeclaringType; }
 		}
-#endif
 
 		public override string ToString ()
 		{
+			ResolveArguments ();
+
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append ("[" + ctorInfo.DeclaringType.FullName + "(");

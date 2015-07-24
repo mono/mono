@@ -1,3 +1,10 @@
+#include <config.h>
+
+#ifdef HOST_WIN32
+/* For select */
+#include <winsock2.h>
+#endif
+
 #include "mono-poll.h"
 #include <errno.h>
 
@@ -19,11 +26,6 @@ mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 	return poll (ufds, nfds, timeout);
 }
 #else
-
-#ifdef HOST_WIN32
-/* For select */
-#include <winsock2.h>
-#endif
 
 int
 mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)

@@ -372,9 +372,7 @@ namespace MonoTests.System.ComponentModel
 
 		class DisplayName_test
 		{
-#if NET_2_0
 			[DisplayName ("An explicit displayname")]
-#endif
 			public bool Explicit {
 				get { return false; }
 			}
@@ -732,11 +730,7 @@ namespace MonoTests.System.ComponentModel
 			PropertyDescriptor p = TypeDescriptor.GetProperties (typeof (CanResetNoSetter_test))["Prop"];
 			CanResetNoSetter_test test = new CanResetNoSetter_test ();
 
-#if NET_2_0
 			Assert.IsFalse (p.CanResetValue (test), "1");
-#else
-			Assert.IsTrue (p.CanResetValue (test), "1");
-#endif
 			Assert.AreEqual (5, test.Prop, "2");
 			p.ResetValue (test);
 			Assert.AreEqual (10, test.Prop, "3");
@@ -789,11 +783,7 @@ namespace MonoTests.System.ComponentModel
 			PropertyDescriptor p1 = TypeDescriptor.GetProperties (typeof (DisplayName_test)) ["Explicit"];
 			PropertyDescriptor p2 = TypeDescriptor.GetProperties (typeof (DisplayName_test)) ["Implicit"];
 
-#if NET_2_0
 			Assert.AreEqual ("An explicit displayname", p1.DisplayName, "#1");
-#else
-			Assert.AreEqual ("Explicit", p1.DisplayName, "#1");
-#endif
 			Assert.AreEqual ("Implicit", p2.DisplayName, "#2");
 		}
 
@@ -860,7 +850,6 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetInvocationTarget_Instance_Null ()
 		{
@@ -969,7 +958,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (handlerC, handler.GetInvocationList () [1], "#I4");
 			Assert.IsNull (pd.GetValueChangedHandler (compB), "#I5");
 		}
-#endif
 
 		[Test]
 		public void RemoveValueChanged ()
@@ -1154,7 +1142,6 @@ namespace MonoTests.System.ComponentModel
 				base.OnValueChanged (component, e);
 			}
 
-#if NET_2_0
 			public new object GetInvocationTarget (Type type, object instance)
 			{
 				return base.GetInvocationTarget (type, instance);
@@ -1164,7 +1151,6 @@ namespace MonoTests.System.ComponentModel
 			{
 				return base.GetValueChangedHandler (component);
 			}
-#endif
 		}
 
 		[AttributeUsage (AttributeTargets.Field | AttributeTargets.Property)]

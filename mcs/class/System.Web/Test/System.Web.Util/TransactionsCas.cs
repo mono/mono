@@ -60,11 +60,6 @@ namespace MonoCasTests.System.Web.Util {
 			try {
 				Transactions.InvokeTransacted (new TransactedCallback (Callback), TransactionOption.Required);
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// under 1.x, this _can_ trigger initialization of HttpRuntime
-			}
-#endif
 			catch (PlatformNotSupportedException) {
 				// Mono and Windows prior to NT
 			}
@@ -79,11 +74,6 @@ namespace MonoCasTests.System.Web.Util {
 				bool aborted = false;
 				Transactions.InvokeTransacted (new TransactedCallback (Callback), TransactionOption.Required, ref aborted);
 			}
-#if ONLY_1_1
-			catch (TypeInitializationException) {
-				// under 1.x, this _can_ trigger initialization of HttpRuntime
-			}
-#endif
 			catch (PlatformNotSupportedException) {
 				// Mono and Windows prior to NT
 			}

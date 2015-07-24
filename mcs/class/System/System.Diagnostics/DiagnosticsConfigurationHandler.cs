@@ -42,6 +42,7 @@ using System.Xml;
 #endif
 namespace System.Diagnostics
 {
+/*
 	// It handles following elements in <system.diagnostics> :
 	//	- <sharedListeners> [2.0]
 	//	- <sources>
@@ -81,6 +82,8 @@ namespace System.Diagnostics
 			}
 		}
 	}
+*/
+
 #if (XML_DEP)
 	[Obsolete ("This class is obsoleted")]
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
@@ -305,7 +308,7 @@ namespace System.Diagnostics
 		{
 			TraceListenerCollection shared_listeners = d ["sharedListeners"] as TraceListenerCollection;
 			if (shared_listeners == null) {
-				shared_listeners = new TraceListenerCollection (false);
+				shared_listeners = new TraceListenerCollection ();
 				d ["sharedListeners"] = shared_listeners;
 			}
 			return shared_listeners;
@@ -434,7 +437,8 @@ namespace System.Diagnostics
 						"Listener '{0}' references a shared " +
 						"listener and can only have a 'Name' " +
 						"attribute.", name));
-				listeners.Add (shared, configValues);
+				shared.IndentSize = configValues.IndentSize;
+				listeners.Add (shared);
 				return;
 			}
 #else
@@ -501,7 +505,8 @@ namespace System.Diagnostics
 			}
 #endif
 
-			listeners.Add (l, configValues);
+			l.IndentSize = configValues.IndentSize;
+			listeners.Add (l);
 		}
 
 		private void RemoveTraceListener (string name)

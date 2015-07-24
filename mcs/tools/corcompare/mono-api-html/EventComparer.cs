@@ -40,9 +40,31 @@ namespace Xamarin.ApiDiff {
 			get { return "event"; }
 		}
 
+		public override bool Equals (XElement source, XElement target, ApiChanges changes)
+		{
+			if (base.Equals (source, target, changes))
+				return true;
+
+			var change = new ApiChange ();
+			change.Header = "Modified " + GroupName;
+			change.Append ("public event ");
+
+			var srcEventType = source.GetTypeName ("eventtype");
+			var tgtEventType = target.GetTypeName ("eventtype");
+
+			if (srcEventType != tgtEventType) {
+				change.AppendModified (srcEventType, tgtEventType, true);
+			} else {
+				change.Append (srcEventType);
+			}
+			change.Append (" ");
+			change.Append (source.GetAttribute ("name")).Append (";");
+			return false;
+		}
+
 		public override string GetDescription (XElement e)
 		{
-			StringBuilder sb = GetObsoleteMessage (e);
+			StringBuilder sb = new StringBuilder ();
 			// TODO: attribs
 			sb.Append ("public event ");
 			sb.Append (e.GetTypeName ("eventtype")).Append (' ');

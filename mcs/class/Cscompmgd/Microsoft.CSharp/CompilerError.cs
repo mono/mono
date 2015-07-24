@@ -32,9 +32,7 @@ using System.Text;
 
 namespace Microsoft.CSharp {
 
-#if NET_2_0
 	[System.Obsolete]
-#endif 
 	public class CompilerError {
   
 		public ErrorLevel ErrorLevel;

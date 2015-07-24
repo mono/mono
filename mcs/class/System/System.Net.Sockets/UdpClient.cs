@@ -33,9 +33,7 @@
 
 using System;
 using System.Net;
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net.Sockets
 {
@@ -604,7 +602,6 @@ namespace System.Net.Sockets
 		}		
 #endregion
 
-#if NET_4_5
 		
 		public Task<UdpReceiveResult> ReceiveAsync ()
 		{
@@ -634,7 +631,6 @@ namespace System.Net.Sockets
 			}, EndSend, t);
  
 		}
-#endif
 	}
 }
 

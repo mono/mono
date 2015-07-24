@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
 			// namespaces
 			ds = GetDataSet (xml14, null);
 			AssertDataSet ("xml14", ds, "root", 0, 0);
-			Assert.AreEqual ("p", ds.Prefix);
+			Assert.AreEqual (string.Empty, ds.Prefix);
 			Assert.AreEqual ("urn:foo", ds.Namespace);
 
 			ds = GetDataSet (xml17, null);
@@ -324,17 +324,9 @@ namespace MonoTests.System.Data
 			DataSet ds = GetDataSet (xml11, null);
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
 			DataTable dt = ds.Tables [0];
-#if NET_2_0
 			AssertDataTable ("dt", dt, "root", 1, 0, 0, 0, 0, 0);
-#else
-			AssertDataTable ("dt", dt, "root", 2, 0, 0, 0, 0, 0);
-#endif
 			AssertDataColumn ("element", dt.Columns [0], "child_after_significant_space", true, false, 0, 1, "child_after_significant_space", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
-#if NET_2_0
 			Assert.AreEqual (1, dt.Columns.Count, "xml:space is not treated as column");
-#else
-			AssertDataColumn ("xml:space", dt.Columns [1], "space", true, false, 0, 1, "space", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, "http://www.w3.org/XML/1998/namespace", 1, "xml", false, false);
-#endif
 		}
 
 		[Test]

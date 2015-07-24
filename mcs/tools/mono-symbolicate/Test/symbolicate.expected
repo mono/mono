@@ -1,0 +1,43 @@
+System.Exception: Stacktrace with 1 frame
+  at StackTraceDumper.Main () in StackTraceDumper.cs:9 
+System.Exception: Stacktrace with 2 frames
+  at StackTraceDumper.ThrowException (System.String message) in StackTraceDumper.cs:97 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:15 
+System.Exception: Stacktrace with 3 frames
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:110 
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:108 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:21 
+System.Exception: Stack frame with method overload using ref parameter
+  at StackTraceDumper.ThrowException (System.String& message) in StackTraceDumper.cs:102 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:28 
+System.Exception: Stack frame with method overload using out parameter
+  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in StackTraceDumper.cs:115 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:35 
+System.Exception: Stack frame with 1 generic parameter
+  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in StackTraceDumper.cs:120 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:41 
+System.Exception: Stack frame with 2 generic parameters
+  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in StackTraceDumper.cs:140 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:47 
+System.Exception: Stack frame with generic method overload
+  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in StackTraceDumper.cs:125 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:53 
+System.Exception: Stack trace with inner class
+  at StackTraceDumper+InnerClass.ThrowException (System.String message) in StackTraceDumper.cs:146 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:59 
+System.Exception: Stack trace with inner generic class
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in StackTraceDumper.cs:153 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:65 
+Generic to string:string
+System.Exception: Stack trace with inner generic class and method generic parameter
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in StackTraceDumper.cs:159 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:71 
+System.Exception: Stack trace with inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in StackTraceDumper.cs:164 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:77 
+System.Exception: Stack trace with 2 inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in StackTraceDumper.cs:170 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:83 
+System.Exception: Stack trace with 2 inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in StackTraceDumper.cs:175 
+  at StackTraceDumper.Main () in StackTraceDumper.cs:89 

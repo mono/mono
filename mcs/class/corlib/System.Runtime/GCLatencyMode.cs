@@ -35,8 +35,6 @@ namespace System.Runtime
 		Batch = 0,
 		Interactive = 1,
 		LowLatency = 2,
-#if NET_4_5
 		SustainedLowLatency = 3
-#endif			
 	}
 }

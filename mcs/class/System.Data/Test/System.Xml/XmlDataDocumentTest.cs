@@ -286,7 +286,7 @@ namespace MonoTests.System.Data.Xml
 			Nav.MoveToNext ();
 			Assert.AreEqual ("Region", Nav.Name.ToString (), "test#06");
 			
-			Assert.AreEqual ("2Western", Nav.Value.Substring(0, Nav.Value.IndexOf ("\n") - 1), "test#07");
+			Assert.AreEqual ("2Western", Nav.Value.Substring(0, Nav.Value.IndexOf (EOL)), "test#07");
 			Nav.MoveToFirstChild ();
 			Assert.AreEqual ("2", Nav.Value, "test#08");
 			Nav.MoveToRoot ();

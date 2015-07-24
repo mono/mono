@@ -384,13 +384,9 @@ namespace I18N.CJK
 					char ch2 = chars [charIndex++];
 					if (!Char.IsSurrogate (ch2)) {
 						// invalid surrogate
-#if NET_2_0
 						HandleFallback (
 							chars, ref charIndex, ref charCount,
 							bytes, ref byteIndex, ref byteCount, null);
-#else
-						bytes [byteIndex++] = (byte) '?';
-#endif
 						continue;
 					}
 					int cp = (ch - 0xD800) * 0x400 + ch2 - 0xDC00;
@@ -533,12 +529,8 @@ namespace I18N.CJK
 					if (!Char.IsSurrogate(ch2))
 					{
 						// invalid surrogate
-#if NET_2_0
 						HandleFallback (chars, ref charIndex, ref charCount,
 							bytes, ref byteIndex, ref byteCount, null);
-#else
-						bytes [byteIndex++] = (byte) '?';
-#endif
 						continue;
 					}
 					int cp = (ch - 0xD800) * 0x400 + ch2 - 0xDC00;

@@ -79,6 +79,61 @@ Log.LogWarning(""Hello, world!"");
 		}
 
 		[Test]
+		public void HelloWithParameter ()
+		{
+			string project_xml = @"<Project ToolsVersion='4.0' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <UsingTask
+    TaskName='DoNothing'
+    TaskFactory='CodeTaskFactory'
+    AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll' >
+    <ParameterGroup>
+      <Message ParameterType='System.String' Required='true' />
+    </ParameterGroup>
+    <Task>
+      <Code Type='Fragment' Language='cs'>
+<![CDATA[
+Log.LogWarning(""Message: "" + Message);
+]]>      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name='default'>
+    <DoNothing Message='Hello, world!'/>
+  </Target>
+</Project>";
+			var root = ProjectRootElement.Create (XmlReader.Create (new StringReader (project_xml))); 
+			root.FullPath = "CodeTaskFactoryTest.HelloWithParameter.proj";
+			var project = new Project (root);
+			Assert.IsTrue (project.Build (new ConsoleLogger (LoggerVerbosity.Diagnostic)), "Build");
+		}
+
+		[Test]
+		public void Reference ()
+		{
+			string project_xml = @"<Project ToolsVersion='4.0' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <UsingTask
+    TaskName='DoNothing'
+    TaskFactory='CodeTaskFactory'
+    AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll' >
+    <ParameterGroup />
+    <Task>
+      <Reference Include='System.Drawing' />
+      <Code Type='Fragment' Language='cs'>
+<![CDATA[
+Log.LogWarning(""Color: "" + System.Drawing.Color.CornflowerBlue);
+]]>      </Code>
+    </Task>
+  </UsingTask>
+  <Target Name='default'>
+    <DoNothing />
+  </Target>
+</Project>";
+			var root = ProjectRootElement.Create (XmlReader.Create (new StringReader (project_xml))); 
+			root.FullPath = "CodeTaskFactoryTest.Reference.proj";
+			var project = new Project (root);
+			Assert.IsTrue (project.Build (new ConsoleLogger (LoggerVerbosity.Diagnostic)), "Build");
+		}
+
+		[Test]
 		public void MultipleCodeElements ()
 		{
 			string project_xml = @"<Project ToolsVersion='4.0' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>

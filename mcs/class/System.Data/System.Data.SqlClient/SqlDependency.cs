@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Security.Permissions;
 using System.Data;
@@ -35,6 +34,10 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlDependency
 	{
+#region ReferenceSource
+		internal const Bid.ApiGroup NotificationsTracePoints = (Bid.ApiGroup)0x2000;
+#endregion
+
 		string uniqueId =  Guid.NewGuid().ToString();
 
 			[MonoTODO]
@@ -101,4 +104,3 @@ namespace System.Data.SqlClient
 		
 	}
 }
-#endif 

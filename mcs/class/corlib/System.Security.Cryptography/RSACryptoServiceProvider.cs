@@ -168,6 +168,13 @@ namespace System.Security.Cryptography {
 	
 		public byte[] Decrypt (byte[] rgb, bool fOAEP) 
 		{
+			if (rgb == null)
+				throw new ArgumentNullException("rgb");
+
+			// size check -- must be at most the modulus size
+			if (rgb.Length > (KeySize / 8))
+				throw new CryptographicException(Environment.GetResourceString("Cryptography_Padding_DecDataTooBig", KeySize / 8));
+			
 			if (m_disposed)
 				throw new ObjectDisposedException ("rsa");
 			// choose between OAEP or PKCS#1 v.1.5 padding
@@ -220,7 +227,21 @@ namespace System.Security.Cryptography {
 			if ((includePrivateParameters) && (!privateKeyExportable))
 				throw new CryptographicException ("cannot export private key");
 
-			return rsa.ExportParameters (includePrivateParameters);
+			var rsaParams = rsa.ExportParameters (includePrivateParameters);
+			if (includePrivateParameters) {
+				// we want an ArgumentNullException is only the D is missing, but a
+				// CryptographicException if other parameters (CRT) are missings
+				if (rsaParams.D == null) {
+					throw new ArgumentNullException ("Missing D parameter for the private key.");
+				} else if ((rsaParams.P == null) || (rsaParams.Q == null) || (rsaParams.DP == null) ||
+					(rsaParams.DQ == null) || (rsaParams.InverseQ == null)) {
+					// note: we can import a private key, using FromXmlString,
+					// without the CRT parameters but we export it using ToXmlString!
+					throw new CryptographicException ("Missing some CRT parameters for the private key.");
+				}
+			}
+
+			return rsaParams;
 		}
 	
 		public override void ImportParameters (RSAParameters parameters) 

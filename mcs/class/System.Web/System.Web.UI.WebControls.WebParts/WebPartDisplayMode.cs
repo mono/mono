@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 using System.ComponentModel;
 
@@ -72,5 +71,4 @@ namespace System.Web.UI.WebControls.WebParts {
 
 	}
 }
-#endif
 

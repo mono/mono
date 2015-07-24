@@ -34,9 +34,7 @@ public enum SessionStateMode
 	InProc = 1,
 	StateServer = 2,
 	SQLServer = 3,
-#if NET_2_0
 	Custom = 4,
-#endif
 }
 
 }

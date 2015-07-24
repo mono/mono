@@ -249,29 +249,6 @@ This will instruct the compiler to reference the System.* libraries
 available on a typical dotnet framework installation, notice that this
 does not include all of the Mono libraries, only the System.* ones.  This
 is a convenient shortcut for those porting code.
-.TP
-.I \-pkg:olive
-Use this to reference the "Olive" libraries (the 3.0 and 3.5 extended
-libraries).
-.TP
-.I \-pkg:silver
-References the assemblies for creating Moonlight/Silverlight
-applications.
-.TP
-.I \-pkg:silverdesktop
-Use this option to create Moonlight/Silverlight applications that
-target the desktop.   This option allows developers to consume the
-Silverlight APIs with the full 2.0 profile API available to them,
-unlike 
-.I smcs 
-it gives full access to all the APIs that are part of Mono.  The only
-downside is that applications created with silverdesktop will not run
-on the browser.   Typically these applications will be launched
-with the 
-.I mopen
-command line tool.
-.TP
-For more details see the PACKAGE section in this document
 .ne
 .RE
 .TP
@@ -538,13 +515,13 @@ csharp(1), mdb(1), mono(1), mopen(1), pkg-config(1), sn(1)
 .SH BUGS
 To report bugs in the compiler, you must file them on our bug tracking
 system, at:
-http://www.mono-project.com/Bugs 
+http://www.mono-project.com/community/bugs/
 .SH MAILING LIST
-The Mono Mailing lists are listed at http://www.mono-project.com/Mailing_Lists
+The Mono Mailing lists are listed at http://www.mono-project.com/community/help/mailing-lists/
 .SH MORE INFORMATION
 The Mono C# compiler was developed by Novell, Inc
 (http://www.novell.com) and Xamarin Inc (http://www.xamarin.com) is based on the
 ECMA C# language standard available here:
 http://www.ecma.ch/ecma1/STAND/ecma-334.htm
 .PP
-The home page for the Mono C# compiler is at http://www.mono-project.com/CSharp_Compiler
+The home page for the Mono C# compiler is at http://www.mono-project.com/docs/about-mono/languages/csharp/

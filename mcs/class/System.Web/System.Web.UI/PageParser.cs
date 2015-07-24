@@ -44,13 +44,11 @@ namespace System.Web.UI
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PageParser : TemplateControlParser
 	{
-#if NET_4_0
 		static Type defaultPageBaseType;
 		static Type defaultApplicationBaseType;
 		static Type defaultPageParserFilterType;
 		static Type defaultUserControlBaseType;
 		static bool enableLongStringsAsResources = true;
-#endif
 		PagesEnableSessionState enableSessionState = PagesEnableSessionState.True;
 		bool enableViewStateMac;
 		bool enableViewStateMacSet;
@@ -67,10 +65,8 @@ namespace System.Web.UI
 		MainDirectiveAttribute <string> masterPage;
 		MainDirectiveAttribute <string> title;
 		MainDirectiveAttribute <string> theme;
-#if NET_4_0
 		MainDirectiveAttribute <string> metaDescription;
 		MainDirectiveAttribute <string> metaKeywords;
-#endif
 		string culture;
 		string uiculture;
 		string errorPage;
@@ -85,7 +81,6 @@ namespace System.Web.UI
 		int maxPageStateFieldLength = -1;
 		Type previousPageType;
 		string previousPageVirtualPath;
-#if NET_4_0
 		public static bool EnableLongStringsAsResources {
 			get { return enableLongStringsAsResources; }
 			set {
@@ -134,7 +129,6 @@ namespace System.Web.UI
 				defaultUserControlBaseType = value;
 			}
 		}
-#endif
 		public PageParser ()
 		{
 			LoadConfigDefaults ();
@@ -439,7 +433,6 @@ namespace System.Web.UI
 				enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
 				enableViewStateMacSet = true;
 			}
-#if NET_4_0
 			value = GetString (atts, "MetaDescription", null);
 			if (value != null) {
 				if (!BaseParser.IsExpression (value))
@@ -455,7 +448,6 @@ namespace System.Web.UI
 				else
 					metaKeywords = new MainDirectiveAttribute <string> (value);
 			}
-#endif
 			// Ignored by now
 			GetString (atts, "SmartNavigation", null);
 
@@ -566,7 +558,6 @@ namespace System.Web.UI
 		internal TraceMode TraceMode {
 			get { return tracemode; }
 		}		
-#if NET_4_0
 		internal override Type DefaultBaseType {
 			get {
 				Type ret = DefaultPageBaseType;
@@ -576,7 +567,6 @@ namespace System.Web.UI
 				return ret;
 			}
 		}
-#endif
 		internal override string DefaultBaseTypeName {
 			get { return PagesConfig.PageBaseType; }
 		}
@@ -616,7 +606,6 @@ namespace System.Web.UI
 		internal MainDirectiveAttribute <string> Theme {
 			get { return theme; }
 		}
-#if NET_4_0
 		internal MainDirectiveAttribute <string> MetaDescription {
 			get { return metaDescription; }
 		}
@@ -624,7 +613,6 @@ namespace System.Web.UI
 		internal MainDirectiveAttribute <string> MetaKeywords {
 			get { return metaKeywords; }
 		}
-#endif
 		internal string Culture {
 			get { return culture; }
 		}

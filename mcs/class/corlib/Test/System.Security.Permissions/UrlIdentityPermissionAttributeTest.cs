@@ -48,9 +48,6 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void DefaultPermission () 
 		{
 			UrlIdentityPermissionAttribute a = new UrlIdentityPermissionAttribute (SecurityAction.Assert);
@@ -61,14 +58,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsNotNull (perm, "CreatePermission(null url)");
 			// ... but this doesn't!
 			string url = perm.Url;
-#if NET_2_0
 			Assert.AreEqual (String.Empty, url, "Url-2");
-#endif
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Action () 
 		{
@@ -112,11 +105,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (ArgumentException))]
-#else
 		[Category ("NotWorking")]
-#endif
 		public void Unrestricted () 
 		{
 			UrlIdentityPermissionAttribute a = new UrlIdentityPermissionAttribute (SecurityAction.Assert);

@@ -76,7 +76,6 @@ namespace MonoCasTests.System.Drawing {
 		{
 			Region.FromHrgn (IntPtr.Zero);
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -92,6 +91,5 @@ namespace MonoCasTests.System.Drawing {
 		{
 			new Region ().ReleaseHrgn (IntPtr.Zero);
 		}
-#endif
 	}
 }

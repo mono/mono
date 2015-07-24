@@ -63,14 +63,12 @@ namespace MonoCasTests.System.Web.UI {
 			css.Add ("monkey", "mono");
 			css.Remove ("monkey");
 			css.Clear ();
-#if NET_2_0
 			css[HtmlTextWriterStyle.Top] = "1";
 			Assert.AreEqual ("1", css[HtmlTextWriterStyle.Top], "this[HtmlTextWriterStyle]");
 			Assert.IsNotNull (css.Value, "Value");
 			css.Value = String.Empty;
 			css.Add (HtmlTextWriterStyle.Left, "1");
 			css.Remove (HtmlTextWriterStyle.Left);
-#endif
 		}
 
 		// LinkDemand

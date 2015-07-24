@@ -36,7 +36,6 @@ namespace System.Web.Util
 {
 	internal class WebEncoding
 	{
-#if NET_2_0
 		static bool cached;
 		static GlobalizationSection sect;
 		static GlobalizationSection GlobalizationConfig {
@@ -51,13 +50,6 @@ namespace System.Web.Util
 				return sect;
 			}
 		}
-#else
-		static GlobalizationConfiguration GlobalizationConfig {
-			get {
-				return GlobalizationConfiguration.GetInstance (null);
-			}
-		}
-#endif
 
 		static public Encoding FileEncoding {
 			get {

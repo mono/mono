@@ -37,9 +37,7 @@ namespace System.Web.Services.Protocols {
 		#region Fields
 
 		SoapServiceRoutingStyle routingStyle;
-#if NET_2_0
 		SoapBindingUse use;
-#endif
 
 		#endregion // Fields
 
@@ -59,13 +57,11 @@ namespace System.Web.Services.Protocols {
 			set { routingStyle = value; }
 		}
 
-#if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapBindingUse Use {
 			get { return use; }
 			set { use = value; }
 		}
-#endif
 
 		#endregion // Properties
 	}

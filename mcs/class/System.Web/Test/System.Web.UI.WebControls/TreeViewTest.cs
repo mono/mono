@@ -30,7 +30,6 @@
 //
 //
 
-#if NET_2_0
 using System;
 using System.IO;
 using System.Globalization;
@@ -2380,4 +2379,3 @@ namespace MonoTests.System.Web.UI.WebControls {
 	}
 }
 
-#endif

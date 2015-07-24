@@ -67,11 +67,7 @@ namespace System.Web.UI.WebControls
 		{
 			return new FormParameter (this);
 		}
-#if NET_4_0
 		protected internal
-#else
-		protected
-#endif
 		override object Evaluate (HttpContext ctx, Control control)
 		{
 			HttpRequest req = ctx != null ? ctx.Request : null;

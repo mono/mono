@@ -28,7 +28,6 @@
 //
 // It is used to represent that a function needs current nodeset information.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Xml;
@@ -42,4 +41,3 @@ namespace Mono.Xml.XPath2
 	}
 }
 
-#endif

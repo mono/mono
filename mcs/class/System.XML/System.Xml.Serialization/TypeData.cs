@@ -32,9 +32,7 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -89,10 +87,8 @@ namespace System.Xml.Serialization
 
 		public TypeData (Type type, string elementName, bool isPrimitive, TypeData mappedType, XmlSchemaPatternFacet facet)
 		{
-#if NET_2_0
 			if (type.IsGenericTypeDefinition)
 				throw new InvalidOperationException ("Generic type definition cannot be used in serialization. Only specific generic types can be used.");
-#endif
 			this.mappedType = mappedType;
 			this.facet = facet;
 			this.type = type;
@@ -139,12 +135,10 @@ namespace System.Xml.Serialization
 
 		void LookupTypeConvertor ()
 		{
-#if NET_4_5
 			// We only need this for System.Xml.Linq.
 			var convertor = type.GetCustomAttribute<XmlTypeConvertorAttribute> ();
 			if (convertor != null)
 				typeConvertor = type.GetMethod (convertor.Method, BindingFlags.Static | BindingFlags.NonPublic);
-#endif
 		}
 
 		internal void ConvertForAssignment (ref object value)
@@ -217,7 +211,6 @@ namespace System.Xml.Serialization
 				sb.Append (']');
 				return sb.ToString ();
 			}
-#if NET_2_0
 			// Generic nested types return the complete list of type arguments,
 			// including type arguments for the declaring class. This requires
 			// some special handling
@@ -249,7 +242,6 @@ namespace System.Xml.Serialization
 					sb.Insert (0, type.Namespace + ".");
 				return sb.ToString ();
 			}
-#endif
 			if (type.DeclaringType != null) {
 				sb.Append (ToCSharpName (type.DeclaringType, full)).Append ('.');
 				sb.Append (type.Name);
@@ -318,14 +310,10 @@ namespace System.Xml.Serialization
 			{
 				if (nullableOverride)
 					return true;
-#if NET_2_0
 				return !IsValueType ||
 					(type != null &&
 					 type.IsGenericType &&
 					 type.GetGenericTypeDefinition () == typeof (Nullable<>));
-#else
-				return !IsValueType;
-#endif
 			}
 
 			set
@@ -359,11 +347,7 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException (Type.FullName + " is not a collection");
 				else if (type.IsArray) 
 					listItemType = type.GetElementType ();
-#if NET_2_0
 				else if (typeof (ICollection).IsAssignableFrom (type) || (genericArgument = GetGenericListItemType (type)) != null)
-#else
-				else if (typeof (ICollection).IsAssignableFrom (type))
-#endif
 				{
 					if (typeof (IDictionary).IsAssignableFrom (type))
 						throw new NotSupportedException (string.Format (CultureInfo.InvariantCulture,
@@ -480,12 +464,9 @@ namespace System.Xml.Serialization
 			"namespace",
 			"object","bool","byte","float","uint","char","ulong","ushort",
 			"decimal","int","sbyte","short","double","long","string","void",
-#if NET_2_0
 			"partial", "yield", "where"
-#endif
 		};
 
-#if NET_2_0
 		internal static Type GetGenericListItemType (Type type)
 		{
 			if (type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type.GetGenericTypeDefinition ())) {
@@ -499,6 +480,5 @@ namespace System.Xml.Serialization
 					return t;
 			return null;
 		}
-#endif
 	}
 }

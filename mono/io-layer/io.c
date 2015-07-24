@@ -27,8 +27,6 @@
 #include <sys/mount.h>
 #endif
 #include <sys/types.h>
-#include <dirent.h>
-#include <fnmatch.h>
 #include <stdio.h>
 #include <utime.h>
 #ifdef __linux__
@@ -658,7 +656,7 @@ static gboolean file_setendoffile(gpointer handle)
 	struct _WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
-	off_t size, pos;
+	off_t pos;
 	int ret, fd;
 	
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_FILE,
@@ -693,7 +691,6 @@ static gboolean file_setendoffile(gpointer handle)
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
 	}
-	size=statbuf.st_size;
 
 	pos=lseek(fd, (off_t)0, SEEK_CUR);
 	if(pos==-1) {
@@ -705,6 +702,7 @@ static gboolean file_setendoffile(gpointer handle)
 	}
 	
 #ifdef FTRUNCATE_DOESNT_EXTEND
+	off_t size = statbuf.st_size;
 	/* I haven't bothered to write the configure.ac stuff for this
 	 * because I don't know if any platform needs it.  I'm leaving
 	 * this code just in case though
@@ -1035,8 +1033,9 @@ static void console_close (gpointer handle, gpointer data)
 	DEBUG("%s: closing console handle %p", __func__, handle);
 
 	g_free (console_handle->filename);
-	
-	close (fd);
+
+	if (fd > 2)
+		close (fd);
 }
 
 static WapiFileType console_getfiletype(void)

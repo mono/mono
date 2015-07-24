@@ -73,11 +73,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 			Assert.AreEqual (p.GetCutoffYear (), 2029, "E1");
 			Assert.AreEqual (p.GetFullYear (29), 2029, "E2");
-#if NET_2_0
 			Assert.AreEqual (p.GetFullYear (30), 1930, "E3");
-#else
-			Assert.AreEqual (p.GetFullYear (30), 2030, "E3"); // XXX this is broken
-#endif
 			Assert.IsNotNull (p.GetDateElementOrder (), "E4");
 		}
 	}

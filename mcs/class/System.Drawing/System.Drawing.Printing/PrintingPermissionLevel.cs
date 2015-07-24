@@ -29,9 +29,7 @@
 
 namespace System.Drawing.Printing {
 
-#if NET_2_0
 	[Serializable]
-#endif
 	public enum PrintingPermissionLevel {
 		AllPrinting = 3,
 		DefaultPrinting = 2,

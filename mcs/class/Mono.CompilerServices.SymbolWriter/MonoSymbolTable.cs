@@ -205,7 +205,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public static readonly LineNumberEntry Null = new LineNumberEntry (0, 0, 0, 0);
 
 		public LineNumberEntry (int file, int row, int column, int offset)
-			: this (file, row, offset, column, false)
+			: this (file, row, column, offset, false)
 		{
 		}
 

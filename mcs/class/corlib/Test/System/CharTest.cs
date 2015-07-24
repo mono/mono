@@ -470,7 +470,6 @@ public class CharTest
 			case '\x85':
 			case '\xa0':
 			case '\x1680':
-			case '\x180e':
 			case '\x2000':
 			case '\x2001':
 			case '\x2002':
@@ -487,10 +486,10 @@ public class CharTest
 			case '\x202f':
 			case '\x205f':
 			case '\x3000':
-				Assert.IsTrue (char.IsWhiteSpace ((char)i), i.ToString ());
+				Assert.IsTrue (char.IsWhiteSpace ((char)i), "\\x" + i.ToString ("x"));
 				break;
 			default:
-				Assert.IsFalse (char.IsWhiteSpace ((char)i), i.ToString ());
+				Assert.IsFalse (char.IsWhiteSpace ((char)i), "\\x" + i.ToString ("x"));
 				break;
 			}
 		}
@@ -568,6 +567,12 @@ public class CharTest
 		Assert.AreEqual(b4, Char.ToUpper(a4), "char uppered");
 		Assert.AreEqual(b5, Char.ToUpper(a5), "char uppered");
 		Assert.AreEqual(b6, Char.ToUpper(a6), "char uppered");
+	}
+
+	[Test]
+	public void TestToUpperInvariant ()
+	{
+		Assert.AreEqual ('\u01c5', char.ToUpperInvariant ('\u01c5'));
 	}
 
 	[Test]

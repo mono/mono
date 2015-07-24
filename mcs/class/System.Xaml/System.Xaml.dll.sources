@@ -36,7 +36,6 @@ System.Windows.Markup/TypeExtensionConverter.cs
 System.Windows.Markup/UidPropertyAttribute.cs
 System.Windows.Markup/UsableDuringInitializationAttribute.cs
 System.Windows.Markup/ValueSerializer.cs
-System.Windows.Markup/ValueSerializerAttribute.cs
 System.Windows.Markup/WhitespaceSignificantCollectionAttribute.cs
 System.Windows.Markup/XData.cs
 System.Windows.Markup/XamlDeferLoadAttribute.cs

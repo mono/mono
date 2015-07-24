@@ -30,9 +30,7 @@ RESOURCE_FILES_DIST= \
 
 NUNIT_RESOURCE_FILES= \
 	Test/resources/Web.mono.config \
-	Test/resources/profile.config.4.5 \
-	Test/resources/profile.config.4.0 \
-	Test/resources/profile.config.2.0 \
+	Test/resources/profile.config.4.x \
 	$(wildcard Test/resources/*.as?x) \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.cs) \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.as?x) \
@@ -55,22 +53,12 @@ ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 endif
 
+LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-define:NET_3_5			\
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	-r:$(corlib)	 		\
-	-r:System.dll 			\
-	-r:System.Core.dll		\
-	-r:System.Drawing.dll 		\
-	-r:System.Data.dll		\
-	-r:System.Data.Linq.dll		\
-	-r:System.Xml.dll		\
-	-r:System.Web.dll		\
-	-r:System.Web.Services.dll	\
-	-r:System.Configuration.dll	\
-	-r:System.EnterpriseServices.dll \
-	-r:System.ServiceModel.dll	\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
 

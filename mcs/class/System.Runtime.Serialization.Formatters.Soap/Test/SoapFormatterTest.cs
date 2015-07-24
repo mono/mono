@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.IO;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 	
@@ -27,7 +28,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 		private string _string;
 		private string[] _strings = new string[]{};
 		private Queue _queue = new Queue();
-		public Hashtable _table = new Hashtable();
+		public Dictionary<object, object> _table = new Dictionary<object, object> ();
 
 		public string ObjString {
 			get { return _string; }
@@ -56,25 +57,12 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			MoreComplexObject objReturn = obj as MoreComplexObject;
 			if(objReturn == null) return false;
 			if(objReturn._string != this._string) return false;
-			IEnumerator myEnum = this._table.GetEnumerator();
-			foreach(DictionaryEntry e in objReturn._table) {
-				myEnum.MoveNext();
-				DictionaryEntry s = (DictionaryEntry) myEnum.Current;
-				Assertion.AssertEquals("#_table", s.Key, e.Key);
-				Assertion.AssertEquals("#_table", s.Value, e.Value);
-				if(s.Key.ToString() != e.Key.ToString() || s.Value.ToString() != e.Value.ToString()) return false;
+
+			Assert.AreEqual (_table.Count, objReturn._table.Count, "#1");
+			foreach(var e in objReturn._table) {
+				Assert.AreEqual (e.Value, _table[e.Key], e.Key.ToString ());
 			}
-//			Assertion.Assert("#_table is null", objReturn._table != null);
-//			Console.WriteLine("_table[foo]: {0}", objReturn._table["foo"]);
-//			Assertion.AssertEquals("#_table[\"foo\"]", "barr", objReturn._table["foo"]);
-//			Console.WriteLine("_table[1]: {0}", objReturn._table[1]);
-//			Assertion.AssertEquals("#_table[1]", "foo", objReturn._table[1]);
-//			Console.WriteLine("_table['c']: {0}", objReturn._table['c']);
-//			Assertion.AssertEquals("#_table['c']", "barr", objReturn._table['c']);
-//			Console.WriteLine("_table[barr]: {0}", objReturn._table["barr"]);
-//			Assertion.AssertEquals("#_table[\"barr\"]", 1234567890, objReturn._table["barr"]);
 			return SoapFormatterTest.CheckArray(this._queue.ToArray(), objReturn._queue.ToArray());
-			
 		}
 		
 	}

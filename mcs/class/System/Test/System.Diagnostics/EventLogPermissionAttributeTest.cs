@@ -48,11 +48,7 @@ namespace MonoTests.System.Diagnostics {
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 			Assert.AreEqual (".", a.MachineName, "MachineName");
-#if NET_2_0
 			Assert.AreEqual (EventLogPermissionAccess.Write, a.PermissionAccess, "PermissionAccess");
-#else
-			Assert.AreEqual (EventLogPermissionAccess.Browse, a.PermissionAccess, "PermissionAccess");
-#endif
 			EventLogPermission sp = (EventLogPermission)a.CreatePermission ();
 			Assert.IsFalse (sp.IsUnrestricted (), "IsUnrestricted");
 		}
@@ -134,9 +130,7 @@ namespace MonoTests.System.Diagnostics {
 						case 13:
 						case 32:
 						case 92:
-#if NET_2_0
 						case 133:
-#endif
 						case 160:
 							// known invalid chars
 							break;
@@ -162,12 +156,10 @@ namespace MonoTests.System.Diagnostics {
 			Assert.AreEqual (EventLogPermissionAccess.Instrument, a.PermissionAccess, "Instrument");
 			a.PermissionAccess = EventLogPermissionAccess.None;
 			Assert.AreEqual (EventLogPermissionAccess.None, a.PermissionAccess, "None");
-#if NET_2_0
 			a.PermissionAccess = EventLogPermissionAccess.Administer;
 			Assert.AreEqual (EventLogPermissionAccess.Administer, a.PermissionAccess, "Administer");
 			a.PermissionAccess = EventLogPermissionAccess.Write;
 			Assert.AreEqual (EventLogPermissionAccess.Write, a.PermissionAccess, "Write");
-#endif
 		}
 
 		[Test]

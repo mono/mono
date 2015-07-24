@@ -38,10 +38,6 @@ namespace System.Web.Mail
 {
 	// CAS
 	[Obsolete ("The recommended alternative is System.Net.Mail.SmtpClient. http://go.microsoft.com/fwlink/?linkid=14202")]
-#if !NET_4_0
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
     	public class SmtpMail
 	{
 		static string smtpServer = "localhost";

@@ -61,13 +61,11 @@ namespace System.ServiceModel.Description
 			DefaultOutgoingResponseFormat = WebMessageFormat.Xml;
 		}
 
-#if NET_4_0
 		public virtual bool AutomaticFormatSelectionEnabled { get; set; }
 
 		public virtual bool FaultExceptionEnabled { get; set; }
 
 		public virtual bool HelpEnabled { get; set; }
-#endif
 
 		public virtual WebMessageBodyStyle DefaultBodyStyle { get; set; }
 
@@ -86,7 +84,7 @@ namespace System.ServiceModel.Description
 			// clientRuntime.MessageInspectors.Add (something);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		protected virtual void AddServerErrorHandlers (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.ChannelDispatcher.ErrorHandlers.Add (new WebHttpErrorHandler ());
@@ -105,7 +103,7 @@ namespace System.ServiceModel.Description
 
 		public virtual void ApplyDispatchBehavior (ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-#if NET_2_1
+#if NET_2_1 || XAMMAC_4_5
 			throw new NotImplementedException ();
 #else
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
@@ -148,7 +146,7 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		internal class DispatchPairFormatter : IDispatchMessageFormatter
 		{
 			public DispatchPairFormatter (IDispatchMessageFormatter request, IDispatchMessageFormatter reply)

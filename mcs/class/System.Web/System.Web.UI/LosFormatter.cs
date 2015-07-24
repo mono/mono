@@ -75,30 +75,9 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-#if NET_4_0
 			using (StreamReader sr = new StreamReader (stream)) {
 				return Deserialize (sr.ReadToEnd ());
 			}
-#else
-			long streamLength = -1;
-			if (stream.CanSeek)
-				streamLength = stream.Length;
-			MemoryStream ms = null;
-			if (streamLength  != -1 && (stream is MemoryStream) && stream.Position == 0) {
-				// We save allocating a new stream and reading in this case.
-				ms = (MemoryStream) stream;
-			} else {
-				byte [] bytes = new byte [streamLength >= 0 ? streamLength : 2048];
-				ms = new MemoryStream ();
-				int n;
-				while ((n = stream.Read (bytes, 0, bytes.Length)) > 0)
-					ms.Write (bytes, 0, n);
-				streamLength = ms.Length;
-			}
-			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (),
-				0, (int) streamLength);
-			return Deserialize (b64);
-#endif
 		}
 
 		public object Deserialize (TextReader input)
@@ -126,10 +105,8 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-#if NET_4_0
 			if (!stream.CanSeek)
 				throw new NotSupportedException ();
-#endif
 			string b64 = SerializeToBase64 (value);
 			byte [] bytes = Encoding.ASCII.GetBytes (b64);
 			stream.Write (bytes, 0, bytes.Length);

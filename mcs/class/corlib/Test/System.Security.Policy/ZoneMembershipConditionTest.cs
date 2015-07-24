@@ -114,9 +114,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsTrue (zmc.ToString ().StartsWith ("Zone - "), "ToString-1");
 			Assert.IsTrue (zmc.ToString ().EndsWith (zmc.SecurityZone.ToString ()), "ToString-2");
 
-#if NET_2_0
 			Assert.AreEqual (zmc.SecurityZone.GetHashCode (), zmc.GetHashCode (), "GetHashCode");
-#endif
 
 			return zmc; // for further tests
 		}

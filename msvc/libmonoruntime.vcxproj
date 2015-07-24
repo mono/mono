@@ -45,15 +45,16 @@
     <ClCompile Include="..\mono\metadata\console-win32.c" />
     <ClCompile Include="..\mono\metadata\coree.c" />
     <ClCompile Include="..\mono\metadata\debug-helpers.c" />
+    <ClCompile Include="..\mono\metadata\debug-mono-ppdb.c" />
     <ClCompile Include="..\mono\metadata\debug-mono-symfile.c" />
-    <ClCompile Include="..\mono\metadata\decimal.c" />
+    <ClCompile Include="..\mono\metadata\decimal-ms.c" />
     <ClCompile Include="..\mono\metadata\domain.c" />
     <ClCompile Include="..\mono\metadata\environment.c" />
     <ClCompile Include="..\mono\metadata\exception.c" />
     <ClCompile Include="..\mono\metadata\file-io.c" />
     <ClCompile Include="..\mono\metadata\file-mmap-windows.c" />
     <ClCompile Include="..\mono\metadata\filewatcher.c" />
-    <ClCompile Include="..\mono\metadata\gc-memfuncs.c" />
+    <ClCompile Include="..\mono\metadata\gc-stats.c" />
     <ClCompile Include="..\mono\metadata\gc.c" />
     <ClCompile Include="..\mono\metadata\icall.c" />
     <ClCompile Include="..\mono\metadata\image.c" />
@@ -69,8 +70,8 @@
     <ClCompile Include="..\mono\metadata\monitor.c" />
     <ClCompile Include="..\mono\metadata\mono-basic-block.c" />
     <ClCompile Include="..\mono\metadata\mono-config.c" />
+    <ClCompile Include="..\mono\metadata\mono-config-dirs.c" />
     <ClCompile Include="..\mono\metadata\mono-cq.c" />
-    <ClCompile Include="..\mono\metadata\mono-debug-debugger.c" />
     <ClCompile Include="..\mono\metadata\mono-debug.c" />
     <ClCompile Include="..\mono\metadata\mono-endian.c" />
     <ClCompile Include="..\mono\metadata\mono-hash.c" />
@@ -79,6 +80,7 @@
     <ClCompile Include="..\mono\metadata\mono-wsq.c" />
     <ClCompile Include="..\mono\metadata\nacl-stub.c" />
     <ClCompile Include="..\mono\metadata\null-gc.c" />
+    <ClCompile Include="..\mono\metadata\number-ms.c" />
     <ClCompile Include="..\mono\metadata\object.c" />
     <ClCompile Include="..\mono\metadata\opcodes.c" />
     <ClCompile Include="..\mono\metadata\process.c" />
@@ -88,39 +90,47 @@
     <ClCompile Include="..\mono\metadata\runtime.c" />
     <ClCompile Include="..\mono\metadata\security-core-clr.c" />
     <ClCompile Include="..\mono\metadata\security-manager.c" />
-    <ClCompile Include="..\mono\metadata\security.c" />
-    <ClCompile Include="..\mono\metadata\sgen-alloc.c" />
+    <ClCompile Include="..\mono\metadata\mono-security.c" />
+    <ClCompile Include="..\mono\metadata\seq-points-data.c" />
+    <ClCompile Include="..\mono\metadata\sgen-mono.c" />
+    <ClCompile Include="..\mono\metadata\threadpool-ms-io.c" />
+    <ClCompile Include="..\mono\metadata\threadpool-ms.c" />
+    <ClCompile Include="..\mono\sgen\sgen-alloc.c" />
     <ClCompile Include="..\mono\metadata\sgen-bridge.c" />
-    <ClCompile Include="..\mono\metadata\sgen-cardtable.c" />
-    <ClCompile Include="..\mono\metadata\sgen-debug.c" />
-    <ClCompile Include="..\mono\metadata\sgen-descriptor.c" />
-    <ClCompile Include="..\mono\metadata\sgen-gc.c" />
-    <ClCompile Include="..\mono\metadata\sgen-gray.c" />
-    <ClCompile Include="..\mono\metadata\sgen-hash-table.c" />
-    <ClCompile Include="..\mono\metadata\sgen-internal.c" />
-    <ClCompile Include="..\mono\metadata\sgen-los.c" />
-    <ClCompile Include="..\mono\metadata\sgen-marksweep.c" />
-    <ClCompile Include="..\mono\metadata\sgen-memory-governor.c" />
+    <ClCompile Include="..\mono\sgen\sgen-cardtable.c" />
+    <ClCompile Include="..\mono\sgen\sgen-debug.c" />
+    <ClCompile Include="..\mono\sgen\sgen-descriptor.c" />
+    <ClCompile Include="..\mono\sgen\sgen-gc.c" />
+    <ClCompile Include="..\mono\sgen\sgen-gray.c" />
+    <ClCompile Include="..\mono\sgen\sgen-hash-table.c" />
+    <ClCompile Include="..\mono\sgen\sgen-internal.c" />
+    <ClCompile Include="..\mono\sgen\sgen-los.c" />
+    <ClCompile Include="..\mono\sgen\sgen-marksweep.c" />
+    <ClCompile Include="..\mono\sgen\sgen-memory-governor.c" />
     <ClCompile Include="..\mono\metadata\sgen-new-bridge.c" />
-    <ClCompile Include="..\mono\metadata\sgen-nursery-allocator.c" />
+    <ClCompile Include="..\mono\sgen\sgen-nursery-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-old-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-mach.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-posix.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
-    <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
-    <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
-    <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
-    <ClCompile Include="..\mono\metadata\sgen-simple-nursery.c" />
-    <ClCompile Include="..\mono\metadata\sgen-split-nursery.c" />
+    <ClCompile Include="..\mono\sgen\sgen-pinning-stats.c" />
+    <ClCompile Include="..\mono\sgen\sgen-pinning.c" />
+    <ClCompile Include="..\mono\sgen\sgen-pointer-queue.c" />
+    <ClCompile Include="..\mono\sgen\sgen-protocol.c" />
+    <ClCompile Include="..\mono\sgen\sgen-qsort.c" />
+    <ClCompile Include="..\mono\sgen\sgen-simple-nursery.c" />
+    <ClCompile Include="..\mono\sgen\sgen-split-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-tarjan-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
-    <ClCompile Include="..\mono\metadata\sgen-workers.c" />
-    <ClCompile Include="..\mono\metadata\sgen-fin-weak-hash.c" />
+    <ClCompile Include="..\mono\sgen\sgen-thread-pool.c" />
+    <ClCompile Include="..\mono\sgen\sgen-workers.c" />
+    <ClCompile Include="..\mono\sgen\sgen-fin-weak-hash.c" />
     <ClCompile Include="..\mono\metadata\sgen-stw.c" />
     <ClCompile Include="..\mono\metadata\socket-io.c" />
     <ClCompile Include="..\mono\metadata\string-icalls.c" />
     <ClCompile Include="..\mono\metadata\sysmath.c" />
     <ClCompile Include="..\mono\metadata\threadpool.c" />
+    <ClCompile Include="..\mono\metadata\tpool-poll.c" />
     <ClCompile Include="..\mono\metadata\threads.c" />
     <ClCompile Include="..\mono\metadata\verify.c" />
     <ClCompile Include="..\mono\mini\mini-cross-helpers.c" />
@@ -139,6 +149,7 @@
     <ClInclude Include="..\mono\metadata\culture-info-tables.h" />
     <ClInclude Include="..\mono\metadata\culture-info.h" />
     <ClInclude Include="..\mono\metadata\debug-helpers.h" />
+    <ClInclude Include="..\mono\metadata\debug-mono-ppdb.h" />
     <ClInclude Include="..\mono\metadata\debug-mono-symfile.h" />
     <ClInclude Include="..\mono\metadata\decimal.h" />
     <ClInclude Include="..\mono\metadata\domain-internals.h" />
@@ -147,6 +158,11 @@
     <ClInclude Include="..\mono\metadata\file-io.h" />
     <ClInclude Include="..\mono\metadata\filewatcher.h" />
     <ClInclude Include="..\mono\metadata\gc-internal.h" />
+    <ClInclude Include="..\mono\metadata\number-ms.h" />
+    <ClInclude Include="..\mono\metadata\seq-points-data.h" />
+    <ClInclude Include="..\mono\metadata\threadpool-ms-io.h" />
+    <ClInclude Include="..\mono\metadata\threadpool-ms.h" />
+    <ClInclude Include="..\mono\sgen\gc-internal-agnostic.h" />
     <ClInclude Include="..\mono\metadata\icall-def.h" />
     <ClInclude Include="..\mono\metadata\image.h" />
     <ClInclude Include="..\mono\metadata\loader.h" />
@@ -161,6 +177,7 @@
     <ClInclude Include="..\mono\metadata\monitor.h" />
     <ClInclude Include="..\mono\metadata\mono-basic-block.h" />
     <ClInclude Include="..\mono\metadata\mono-config.h" />
+    <ClInclude Include="..\mono\metadata\mono-config-dirs.h" />
     <ClInclude Include="..\mono\metadata\mono-cq.h" />
     <ClInclude Include="..\mono\metadata\mono-debug-debugger.h" />
     <ClInclude Include="..\mono\metadata\mono-debug.h" />
@@ -185,24 +202,26 @@
     <ClInclude Include="..\mono\metadata\security-core-clr.h" />
     <ClInclude Include="..\mono\metadata\security-manager.h" />
     <ClInclude Include="..\mono\metadata\security.h" />
-    <ClInclude Include="..\mono\metadata\sgen-archdep.h" />
+    <ClInclude Include="..\mono\sgen\sgen-archdep.h" />
     <ClInclude Include="..\mono\metadata\sgen-bridge.h" />
-    <ClInclude Include="..\mono\metadata\sgen-cardtable.h" />
-    <ClInclude Include="..\mono\metadata\sgen-conf.h" />
-    <ClInclude Include="..\mono\metadata\sgen-copy-object.h" />
-    <ClInclude Include="..\mono\metadata\sgen-descriptor.h" />
-    <ClInclude Include="..\mono\metadata\sgen-gc.h" />
-    <ClInclude Include="..\mono\metadata\sgen-gray.h" />
-    <ClInclude Include="..\mono\metadata\sgen-major-copy-object.h" />
-    <ClInclude Include="..\mono\metadata\sgen-major-scan-object.h" />
-    <ClInclude Include="..\mono\metadata\sgen-memory-governor.h" />
-    <ClInclude Include="..\mono\metadata\sgen-minor-copy-object.h" />
-    <ClInclude Include="..\mono\metadata\sgen-minor-scan-object.h" />
-    <ClInclude Include="..\mono\metadata\sgen-pinning.h" />
-    <ClInclude Include="..\mono\metadata\sgen-protocol.h" />
-    <ClInclude Include="..\mono\metadata\sgen-scan-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-cardtable.h" />
+    <ClInclude Include="..\mono\sgen\sgen-conf.h" />
+    <ClInclude Include="..\mono\sgen\sgen-copy-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-descriptor.h" />
+    <ClInclude Include="..\mono\sgen\sgen-gc.h" />
+    <ClInclude Include="..\mono\sgen\sgen-gray.h" />
+    <ClInclude Include="..\mono\sgen\sgen-major-copy-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-major-scan-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-memory-governor.h" />
+    <ClInclude Include="..\mono\sgen\sgen-minor-copy-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-minor-scan-object.h" />
+    <ClInclude Include="..\mono\sgen\sgen-pinning.h" />
+    <ClInclude Include="..\mono\sgen\sgen-protocol.h" />
+    <ClInclude Include="..\mono\sgen\sgen-qsort.h" />
+    <ClInclude Include="..\mono\sgen\sgen-scan-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-toggleref.h" />
-    <ClInclude Include="..\mono\metadata\sgen-workers.h" />
+    <ClInclude Include="..\mono\sgen\sgen-thread-pool.h" />
+    <ClInclude Include="..\mono\sgen\sgen-workers.h" />
     <ClInclude Include="..\mono\metadata\socket-io.h" />
     <ClInclude Include="..\mono\metadata\string-icalls.h" />
     <ClInclude Include="..\mono\metadata\sysmath.h" />
@@ -224,49 +243,49 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

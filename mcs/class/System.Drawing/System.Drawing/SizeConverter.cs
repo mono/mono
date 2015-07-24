@@ -116,7 +116,6 @@ namespace System.Drawing {
 		public override object CreateInstance (ITypeDescriptorContext context,
 						       IDictionary propertyValues)
 		{
-#if NET_2_0
 			object ow = propertyValues ["Width"];
 			object oh = propertyValues ["Height"];
 			if ((ow == null) || (oh == null))
@@ -124,10 +123,6 @@ namespace System.Drawing {
 
 			int width = (int) ow;
 			int height = (int) oh;
-#else
-			int width = (int) propertyValues ["Width"];
-			int height = (int) propertyValues ["Height"];
-#endif
 			return new Size (width, height);
 		}
 

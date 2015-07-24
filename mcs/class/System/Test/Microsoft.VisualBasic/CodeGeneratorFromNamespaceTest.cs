@@ -161,7 +161,6 @@ namespace MonoTests.Microsoft.VisualBasic
 				"End Namespace{0}", NewLine), Generate (options), "#B2");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Type_TypeParameters ()
 		{
@@ -478,6 +477,5 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Class{0}" +
 				"End Namespace{0}", NewLine), Generate ());
 		}
-#endif
 	}
 }

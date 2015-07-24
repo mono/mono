@@ -375,60 +375,54 @@ namespace System.IO {
 			ErrorEvent,
 			RenameEvent
 		}
-			
-		protected void OnChanged (FileSystemEventArgs e)
+		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
 		{
-			if (Changed == null)
+			if (ev == null)
 				return;
 
-			if (synchronizingObject == null)
-				Changed (this, e);
-			else
-				synchronizingObject.BeginInvoke (Changed, new object[] { this, e });
+			if (synchronizingObject == null) {
+				foreach (var target in ev.GetInvocationList()) {
+					switch (evtype) {
+					case EventType.RenameEvent:
+						((RenamedEventHandler)target).BeginInvoke (this, (RenamedEventArgs)arg, null, null);
+						break;
+					case EventType.ErrorEvent:
+						((ErrorEventHandler)target).BeginInvoke (this, (ErrorEventArgs)arg, null, null);
+						break;
+					case EventType.FileSystemEvent:
+						((FileSystemEventHandler)target).BeginInvoke (this, (FileSystemEventArgs)arg, null, null);
+						break;
+					}
+				}
+				return;
+			}
+			
+			synchronizingObject.BeginInvoke (ev, new object [] {this, arg});
+		}
+
+		protected void OnChanged (FileSystemEventArgs e)
+		{
+			RaiseEvent (Changed, e, EventType.FileSystemEvent);
 		}
 
 		protected void OnCreated (FileSystemEventArgs e)
 		{
-			if (Created == null)
-				return;
-
-			if (synchronizingObject == null)
-				Created (this, e);
-			else
-				synchronizingObject.BeginInvoke (Created, new object[] { this, e });
+			RaiseEvent (Created, e, EventType.FileSystemEvent);
 		}
 
 		protected void OnDeleted (FileSystemEventArgs e)
 		{
-			if (Deleted == null)
-				return;
-
-			if (synchronizingObject == null)
-				Deleted (this, e);
-			else
-				synchronizingObject.BeginInvoke (Deleted, new object[] { this, e });
+			RaiseEvent (Deleted, e, EventType.FileSystemEvent);
 		}
 
-		internal void OnError (ErrorEventArgs e)
+		protected void OnError (ErrorEventArgs e)
 		{
-			if (Error == null)
-				return;
-
-			if (synchronizingObject == null)
-				Error (this, e);
-			else
-				synchronizingObject.BeginInvoke (Error, new object[] { this, e });
+			RaiseEvent (Error, e, EventType.ErrorEvent);
 		}
 
 		protected void OnRenamed (RenamedEventArgs e)
 		{
-			if (Renamed == null)
-				return;
-
-			if (synchronizingObject == null)
-				Renamed (this, e);
-			else
-				synchronizingObject.BeginInvoke (Renamed, new object[] { this, e });
+			RaiseEvent (Renamed, e, EventType.RenameEvent);
 		}
 
 		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType)
@@ -456,6 +450,11 @@ namespace System.IO {
 				result.TimedOut = true;
 
 			return result;
+		}
+
+		internal void DispatchErrorEvents (ErrorEventArgs args)
+		{
+			OnError (args);
 		}
 
 		internal void DispatchEvents (FileAction act, string filename, ref RenamedEventArgs renamed)

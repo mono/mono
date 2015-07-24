@@ -161,6 +161,8 @@ namespace System.Json
 			case JsonType.String:
 				if (value is string || value == null)
 					return (string) value;
+				if (value is char)
+					return value.ToString ();
 				throw new NotImplementedException ("GetFormattedString from value type " + value.GetType ());
 			case JsonType.Number:
 				string s;

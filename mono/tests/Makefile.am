@@ -1,4 +1,4 @@
-SUBDIRS = cas assemblyresolve gc-descriptors
+SUBDIRS = assemblyresolve gc-descriptors
 
 check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-messages rm-empty-logs
 check-full: test-sgen check-local
@@ -13,24 +13,26 @@ TEST_PROG = ../interpreter/mint
 
 JITTEST_PROG = $(if $(VALGRIND), valgrind $(VALGRIND_ARGS),) $(if $(SGEN),$(top_builddir)/mono/mini/mono-sgen,$(top_builddir)/mono/mini/mono)
 
-TEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(TEST_PROG)
-JITTEST_PROG_RUN = MONO_SHARED_DIR=$(mono_build_root)/runtime MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(JITTEST_PROG)
+TEST_PROG_RUN = MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(TEST_PROG)
+JITTEST_PROG_RUN = MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(JITTEST_PROG)
 
 RUNTIME_ARGS=--config tests-config --optimize=all --debug
 
-with_mono_path = MONO_PATH=$(mcs_topdir)/class/lib/net_4_5
+CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
+
+with_mono_path = MONO_PATH=$(CLASS)
 
 RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
 
 MKBUNDLE = \
 	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
-	$(RUNTIME) $(mcs_topdir)/class/lib/net_4_5/mkbundle.exe
+	$(RUNTIME) $(CLASS)/mkbundle.exe
 
 MCS = $(RUNTIME) $(mcs_topdir)/class/lib/build/mcs.exe -unsafe -debug \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
 	-nowarn:0197
-ILASM = $(RUNTIME) $(mcs_topdir)/class/lib/net_4_5/ilasm.exe
+ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 
 BENCHSRC=fib.cs random.cs nested-loops.cs ackermann.cs tight-loop.cs sieve.cs
 
@@ -57,6 +59,7 @@ BASE_TEST_CS_SRC=		\
 	arraylist.cs		\
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
+	assemblyresolve_event4.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	create-instance.cs	\
@@ -89,6 +92,7 @@ BASE_TEST_CS_SRC=		\
 	exception15.cs		\
 	exception16.cs		\
 	exception17.cs		\
+	exception18.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -109,6 +113,7 @@ BASE_TEST_CS_SRC=		\
 	array.cs		\
 	enum.cs			\
 	enum2.cs		\
+	enum-intrins.cs		\
 	property.cs		\
 	enumcast.cs		\
 	assignable-tests.cs	\
@@ -137,6 +142,7 @@ BASE_TEST_CS_SRC=		\
 	many-locals.cs		\
 	string-compare.cs	\
 	test-prime.cs		\
+	test-tls.cs		\
 	params.cs		\
 	reflection.cs		\
 	interface.cs		\
@@ -176,6 +182,8 @@ BASE_TEST_CS_SRC=		\
 	delegate7.cs		\
 	delegate8.cs		\
 	delegate9.cs		\
+	delegate10.cs		\
+	delegate11.cs		\
 	remoting1.cs		\
 	remoting2.cs		\
 	remoting3.cs		\
@@ -214,6 +222,7 @@ BASE_TEST_CS_SRC=		\
 	array3.cs		\
 	classinit.cs		\
 	classinit2.cs		\
+	classinit3.cs		\
 	synchronized.cs		\
 	async_read.cs		\
 	threadpool.cs		\
@@ -304,6 +313,7 @@ BASE_TEST_CS_SRC=		\
 	generic-typedef.2.cs	\
 	generic-marshalbyref.2.cs	\
 	generic-xdomain.2.cs	\
+	dynamic-generic-size.cs	\
 	bug-431413.2.cs	\
 	bug-459285.2.cs	\
 	generic-virtual-invoke.2.cs	\
@@ -380,6 +390,7 @@ BASE_TEST_CS_SRC=		\
 	bug-599469.cs	\
 	bug-389886-3.cs \
 	monitor.cs	\
+	monitor-resurrection.cs	\
 	dynamic-method-resurrection.cs	\
 	bug-666008.cs	\
 	bug-685908.cs	\
@@ -401,7 +412,10 @@ BASE_TEST_CS_SRC=		\
 	unload-appdomain-on-shutdown.cs	\
 	block_guard_restore_aligment_on_exit.cs	\
 	thread_static_gc_layout.cs \
-	sleep.cs
+	sleep.cs \
+	bug-27147.cs	\
+	bug-30085.cs	\
+	bug-17537.cs
 
 TEST_CS_SRC_DIST=	\
 	$(BASE_TEST_CS_SRC)	\
@@ -445,6 +459,11 @@ endif
 if POWERPC
 # bug #71274
 PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+endif
+
+if POWERPC64
+# These tests hang
+PLATFORM_DISABLED_TESTS=monitor.exe finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
 endif
 
 if ARM
@@ -550,11 +569,13 @@ endif
 # bug-459094.exe creates an extremely deep directory tree
 # delegate-invoke.exe depends on 929c6bc9b6d76a273f251e6f5dfacac36e9c38bd which was
 # reverted.
+# bug-Xamarin-5278.exe got broken by 5d26590e79da139a284459299aee95c25f4cd835
 DISABLED_TESTS=			\
 	delegate-async-exception.exe	\
 	bug-348522.2.exe	\
 	bug-459094.exe \
 	delegate-invoke.exe \
+	bug-Xamarin-5278.exe \
 	$(PLATFORM_DISABLED_TESTS) \
 	$(EXTRA_DISABLED_TESTS)
 
@@ -660,7 +681,7 @@ TESTSI_IL=$(TEST_IL_SRC:.il=.exe)
 TESTBS=$(BENCHSRC:.cs=.exe)
 STRESS_TESTS=$(STRESS_TESTS_SRC:.cs=.exe)
 
-EXTRA_DIST=test-driver $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
+EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 	$(BENCHSRC) $(STRESS_TESTS_SRC) stress-runner.pl $(PREREQ_IL_SRC) $(PREREQ_CS_SRC)
 
 %.exe: %.il
@@ -697,7 +718,7 @@ tests: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_
 #
 # Test that no symbols are missed in eglib-remap.h
 #
-OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc'
+OK_G_SYMBOLS='g_list\|g_slist\|g_concat_dir_and_file\|g_Ctoc\'
 if NACL_CODEGEN
 test-eglib-remap:
 else
@@ -718,7 +739,7 @@ test-messages:
 else
 test-messages: w32message.exe
 	> test_messages.zero
-	$(with_mono_path) $(JITTEST_PROG_RUN) w32message.exe >& w32message.allout && cmp test_messages.zero w32message.allout
+	$(with_mono_path) $(JITTEST_PROG_RUN) w32message.exe > w32message.allout 2>&1 && cmp test_messages.zero w32message.allout
 endif
 endif
 
@@ -835,7 +856,7 @@ runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la 
 	$(RUNTIME) ./test-runner.exe -j a --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 testjit:
-	@if test x$(M) != x; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
+	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
 
 testaot:
 	@$(MAKE) AOT=1 runtest
@@ -878,7 +899,7 @@ stresstest: $(STRESS_TESTS)
 testbundle: console.exe
 	@echo "Testing mkbundle..."
 	@$(MKBUNDLE) --static console.exe > mkbundle.stdout
-	@$(with_mono_path) MONO_CFG_DIR=$(mono_cfg_dir) MONO_SHARED_DIR=$(mono_build_root)/runtime ./a.out >> mkbundle.stdout
+	@$(with_mono_path) MONO_CFG_DIR=$(mono_cfg_dir) ./a.out >> mkbundle.stdout
 	@- rm -rf a.out
 
 EXTRA_DIST += load-missing.il t-missing.cs load-exceptions.cs
@@ -899,12 +920,11 @@ test-cattr-type-load: TestDriver.dll custom-attr-errors.cs custom-attr-errors-li
 	@$(RUNTIME) custom-attr-errors.exe > custom-attr-errors.exe.stdout 2> custom-attr-errors.exe.stderr
 
 EXTRA_DIST += reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
-test-reflection-load-with-context: TestDriver.dll reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.cs
+test-reflection-load-with-context: reflection-load-with-context-lib.cs reflection-load-with-context-second-lib.cs reflection-load-with-context.exe
 	rm -rf reflection-load-dir
 	mkdir reflection-load-dir
 	$(MCS) /t:library $(srcdir)/reflection-load-with-context-second-lib.cs -out:reflection-load-dir/reflection-load-with-context-second-lib.dll
 	$(MCS) /t:library -r:reflection-load-dir/reflection-load-with-context-second-lib.dll $(srcdir)/reflection-load-with-context-lib.cs -out:reflection-load-dir/reflection-load-with-context-lib.dll
-	$(MCS) reflection-load-with-context.cs
 	@echo "Testing reflection-load-with-context.cs.exe..."
 	@$(RUNTIME) reflection-load-with-context.exe > reflection-load-with-context.exe.stdout 2> reflection-load-with-context.exe.stderr
 
@@ -949,10 +969,12 @@ SGEN_CONFIGURATIONS =	\
 SGEN_BRIDGE_CONFIGURATIONS =	\
 	"|plain"	\
 	",major=marksweep-conc|ms-conc"	\
-	",minor=split|ms-split"	\
-	",bridge-implementation=new|plain-new-bridge"	\
-	",bridge-implementation=new,major=marksweep-conc|ms-conc-new-bridge"	\
-	",bridge-implementation=new,minor=split|ms-split-new-bridge"
+	"minor=split|ms-split"	\
+	"bridge-implementation=new|plain-new-bridge"	\
+	"bridge-implementation=new,major=marksweep-conc|ms-conc-new-bridge"	\
+	"bridge-implementation=new,minor=split|ms-split-new-bridge"	\
+	"bridge-implementation=tarjan|plain-tarjan-bridge"	\
+	"bridge-implementation=tarjan,minor=split|ms-split-tarjan-bridge"
 
 sgen-regular-tests: $(SGEN_TESTS)
 	@failed=0; \
@@ -991,7 +1013,7 @@ sgen-bridge-tests1: sgen-bridge.exe sgen-bridge-major-fragmentation.exe
 			name=`echo $$conf | cut -d\| -f 2`;	\
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${test}|$${name}";	\
-			if MONO_GC_DEBUG="bridge=Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
+			if MONO_GC_DEBUG="bridge=Bridge" MONO_GC_PARAMS="$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -1016,7 +1038,7 @@ sgen-bridge-tests2: sgen-bridge-xref.exe
 			name=`echo $$conf | cut -d\| -f 2`;	\
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${test}|$${name}";	\
-			if MONO_GC_DEBUG="bridge=2Bridge$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
+			if MONO_GC_DEBUG="bridge=2Bridge" MONO_GC_PARAMS="$${params}" MONO_ENV_OPTIONS="--gc=sgen" $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$test_name "$(DISABLED_TESTS_SGEN)" "$${dump_action}" $(RUNTIME_ARGS);	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -1072,7 +1094,7 @@ test-aot:
 	@failed=0; \
 	passed=0; \
 	failed_tests="";\
-	profile=net_4_5;	\
+	profile=$(DEFAULT_PROFILE);	\
 	tmpfile=`mktemp -t mono_aot_output` || exit 1;	\
 	rm -f test-aot-$${name}.stdout test-aot-$${name}.stderr; \
 	for assembly in $(mcs_topdir)/class/lib/$$profile/*.dll	; do	\
@@ -1188,6 +1210,14 @@ bug-382986-lib.dll: bug-382986-lib.cs
 bug-382986.exe: bug-382986.cs bug-382986-lib.dll
 	$(MCS) -out:$@ -r:bug-382986-lib.dll $(srcdir)/bug-382986.cs
 
+EXTRA_DIST += bug-17537-helper.cs
+bug-17537-helper.exe: bug-17537-helper.cs
+	$(MCS) -out:$@ $(srcdir)/bug-17537-helper.cs
+	chmod -x $@
+
+bug-17537.exe: bug-17537.cs bug-17537-helper.exe
+	$(MCS) -out:$@ $(srcdir)/bug-17537.cs
+
 EXTRA_DIST += coreclr-security.cs
 
 coreclr-security.exe : coreclr-security.cs
@@ -1258,11 +1288,11 @@ GSHARED_TESTS = \
 test-generic-sharing-normal: $(GSHARED_TESTS)
 	@for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
-		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared                $$fn > $$fn.stdout || exit 1;	\
-		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,shared         $$fn > $$fn.stdout || exit 1;	\
-		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline        $$fn > $$fn.stdout || exit 1;	\
-		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline,shared $$fn > $fn.stdout || exit 1;	\
-		if [ x$(AOT) = x1 ]; then MONO_GENERIC_SHARING=all $(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $$fn > /dev/null || exit 1; MONO_GENERIC_SHARING=all $(RUNTIME) $$fn > $$fn.stdout || exit 1; fi; \
+		$(RUNTIME) -O=gshared                $$fn > $$fn.stdout || exit 1;	\
+		$(RUNTIME) -O=gshared,shared         $$fn > $$fn.stdout || exit 1;	\
+		$(RUNTIME) -O=gshared,-inline        $$fn > $$fn.stdout || exit 1;	\
+		$(RUNTIME) -O=gshared,-inline,shared $$fn > $fn.stdout || exit 1;	\
+		if [ x$(AOT) = x1 ]; then $(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $$fn > /dev/null || exit 1; $(RUNTIME) $$fn > $$fn.stdout || exit 1; fi; \
 	done
 
 test-generic-sharing-managed: test-runner.exe $(GSHARED_TESTS)
@@ -1272,7 +1302,7 @@ if NACL_CODEGEN
 test-generic-sharing:
 else
 test-generic-sharing:
-	@if test x$(M) != x; then $(MAKE) test-generic-sharing-managed; else $(MAKE) test-generic-sharing-normal; fi
+	@if test x$(M) != x0; then $(MAKE) test-generic-sharing-managed; else $(MAKE) test-generic-sharing-normal; fi
 endif
 
 EXTRA_DIST += async-exceptions.cs
@@ -1299,12 +1329,8 @@ patch-libtool:
 if NACL_CODEGEN
 test-process-exit:
 else
-EXTRA_DIST += bug-438454.cs bug-438454.exe.stdout.expected threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
+EXTRA_DIST += threadpool-in-processexit.cs threadpool-in-processexit.exe.stdout.expected
 test-process-exit:
-	@$(MCS) $(srcdir)/bug-438454.cs -out:bug-438454.exe
-	@echo "Testing bug-438454.exe..."
-	@$(RUNTIME) bug-438454.exe > bug-438454.exe.stdout
-	@diff -w bug-438454.exe.stdout $(srcdir)/bug-438454.exe.stdout.expected
 	@$(MCS) $(srcdir)/threadpool-in-processexit.cs -out:threadpool-in-processexit.exe
 	@echo "Testing threadpool-in-processexit.exe..."
 	@$(RUNTIME) threadpool-in-processexit.exe > threadpool-in-processexit.exe.stdout

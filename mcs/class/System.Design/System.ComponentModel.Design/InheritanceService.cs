@@ -60,13 +60,11 @@ namespace System.ComponentModel.Design
 			throw new NotImplementedException();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException();
 		}
-#endif
 
 		[MonoTODO]
 		public InheritanceAttribute GetInheritanceAttribute (IComponent component)

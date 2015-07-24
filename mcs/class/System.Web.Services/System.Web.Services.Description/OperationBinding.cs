@@ -34,11 +34,7 @@ using System.Xml.Serialization;
 namespace System.Web.Services.Description {
 	[XmlFormatExtensionPoint ("Extensions")]
 	public sealed class OperationBinding :
-#if NET_2_0
 		NamedItem
-#else
-		DocumentableItem 
-#endif
 	{
 		#region Fields
 
@@ -46,9 +42,6 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionFormatExtensionCollection extensions;
 		FaultBindingCollection faults;
 		InputBinding input;
-#if !NET_2_0
-		string name;
-#endif
 		OutputBinding output;
 
 		#endregion // Fields
@@ -60,9 +53,6 @@ namespace System.Web.Services.Description {
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
 			faults = new FaultBindingCollection (this);
 			input = null;
-#if !NET_2_0
-			name = String.Empty;
-#endif
 			output = null;
 		}
 		
@@ -77,9 +67,7 @@ namespace System.Web.Services.Description {
 
 		[XmlIgnore]
 		public 
-#if NET_2_0
 		override
-#endif
 		ServiceDescriptionFormatExtensionCollection Extensions {
 			get { return extensions; }
 		}
@@ -99,13 +87,6 @@ namespace System.Web.Services.Description {
 			}
 		}
 
-#if !NET_2_0
-		[XmlAttribute ("name", DataType = "NCName")]
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
 
 		[XmlElement ("output")]
 		public OutputBinding Output {

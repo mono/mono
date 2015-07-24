@@ -167,15 +167,10 @@ namespace MonoTests.System.Security.Permissions {
 		public void GetPathList ()
 		{
 			RegistryPermission ep = new RegistryPermission (PermissionState.None);
-#if NET_2_0
 			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Create-Empty");
 			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Read), "GetPathList-Read-Empty");
 			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Write), "GetPathList-Write-Empty");
-#else
-			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Create-Empty");
-			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Read), "GetPathList-Read-Empty");
-			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Write), "GetPathList-Write-Empty");
-#endif
+
 			ep.AddPathList (RegistryPermissionAccess.Create, keyLocalMachine);
 			ep.AddPathList (RegistryPermissionAccess.Create, keyCurrentUser);
 			Assert.AreEqual (keyLocalMachine + ";" + keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Read");
@@ -235,9 +230,7 @@ namespace MonoTests.System.Security.Permissions {
 			ep.FromXml (se2);
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void FromXml ()
 		{
@@ -279,9 +272,7 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (ep3.IsUnrestricted (), "EP2 U Unrestricted == Unrestricted");
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Union ()
 		{
@@ -294,9 +285,7 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (ep4.ToXml ().ToString (), ep5.ToXml ().ToString (), "EP1 U EP2 U EP3 == EP1+2+3");
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Union_Subset ()
 		{
@@ -364,9 +353,7 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write), "Intersect-AllAccess-Write");
 		}
 
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		[Test]
 		public void Intersect_Subset ()
 		{

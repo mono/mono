@@ -106,7 +106,7 @@ namespace System.Net
 
 #if MONOTOUCH
 		[System.Runtime.InteropServices.DllImport ("__Internal")]
-		static extern void monotouch_start_wwan (string uri);
+		static extern void xamarin_start_wwan (string uri);
 #endif
 
 		internal ChunkStream ChunkStream {
@@ -171,7 +171,7 @@ namespace System.Net
 
 				if (hostEntry == null) {
 #if MONOTOUCH
-					monotouch_start_wwan (sPoint.Address.ToString ());
+					xamarin_start_wwan (sPoint.Address.ToString ());
 					hostEntry = sPoint.HostEntry;
 					if (hostEntry == null) {
 #endif
@@ -1067,6 +1067,8 @@ namespace System.Net
 
 			Stream s = null;
 			lock (this) {
+				if (status == WebExceptionStatus.RequestCanceled)
+					return true;
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
 				if (nstream == null)

@@ -74,9 +74,7 @@ namespace MonoCasTests.System.Web.SessionState {
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
-#endif
 		public void Constructor_Deny_Minimal ()
 		{
 			try {
@@ -88,9 +86,7 @@ namespace MonoCasTests.System.Web.SessionState {
 		}
 
 		[Test]
-#if NET_2_0
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
 		public void Constructor_PermitOnly_UnmanagedCodeMinimal ()
 		{
@@ -133,7 +129,6 @@ namespace MonoCasTests.System.Web.SessionState {
 
 			runtime.ProcessRequest (IntPtr.Zero, 0, null, 0, 0, 0, 0, 0, IntPtr.Zero);
 		}
-#if NET_2_0
 		[Test]
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Medium)]
 		public void ProcessRequest10_PermitOnly_Medium ()
@@ -162,7 +157,6 @@ namespace MonoCasTests.System.Web.SessionState {
 
 			runtime.ProcessRequest (IntPtr.Zero, 0, null, 0, 0, 0, 0, 0, 0, IntPtr.Zero);
 		}
-#endif
 
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]

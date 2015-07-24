@@ -143,6 +143,9 @@ public enum Lock {
 	IcallLock,
 	AssemblyBindingLock,
 	MarshalLock,
+	ClassesLock,
+	LoaderGlobalDataLock,
+	ThreadsLock,
 }
 
 public class SimLock
@@ -240,7 +243,24 @@ public class SimLock
 	}
 
 	public override string ToString () {
-		return String.Format ("{0}", kind);
+		switch (kind) {
+		case Lock.LoaderLock:
+		case Lock.IcallLock:
+		case Lock.AssemblyBindingLock:
+		case Lock.MarshalLock:
+		case Lock.ClassesLock:
+		case Lock.LoaderGlobalDataLock:
+		case Lock.ThreadsLock:
+			return String.Format ("{0}", kind);
+
+		case Lock.ImageDataLock:
+		case Lock.DomainLock:
+		case Lock.DomainAssembliesLock:
+		case Lock.DomainJitCodeHashLock:
+			return String.Format ("{0}[{1}]", kind, id);
+		default:
+			return String.Format ("Unknown({0})[{1}]", kind, id);
+		}
 	}
 }
 
@@ -309,6 +329,10 @@ public class Trace {
 		"add_record",
 		"mono_locks_lock_acquired",
 		"mono_locks_lock_released",
+		"mono_threads_lock",
+		"mono_threads_unlock",
+		"mono_domain_lock",
+		"mono_domain_unlock",
 	};
 
 	public Trace (string[] fields) {

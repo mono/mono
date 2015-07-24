@@ -23,22 +23,8 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
-#if NET_4_0
 
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 [assembly:TypeForwardedTo (typeof (INotifyCollectionChanged))]
 
-#else
-
-using System;
-
-namespace System.Collections.Specialized {
-
-	public interface INotifyCollectionChanged {
-
-		event NotifyCollectionChangedEventHandler CollectionChanged;
-	}
-
-}
-#endif

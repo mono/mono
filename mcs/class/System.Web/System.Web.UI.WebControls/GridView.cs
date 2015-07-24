@@ -43,15 +43,11 @@ namespace System.Web.UI.WebControls
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.GridViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ControlValuePropertyAttribute ("SelectedValue")]
 	[DefaultEventAttribute ("SelectedIndexChanged")]
-#if NET_4_0
 	[DataKeyProperty ("DataKey")]
-#endif
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IPostBackEventHandler, IPostBackContainer, IPersistedSelector
-#if NET_4_0
 		, IDataKeysControl, IDataBoundListControl, IDataBoundControl, IFieldControl
-#endif
 	{
 		Table table;
 		GridViewRowCollection rows;
@@ -66,9 +62,7 @@ namespace System.Web.UI.WebControls
 		ITemplate emptyDataTemplate;
 		
 		PropertyDescriptor[] cachedKeyProperties;
-#if NET_4_0
 		PropertyDescriptor[] cachedSuffixKeyProperties;
-#endif
 		// View state
 		DataControlFieldCollection columns;
 		PagerSettings pagerSettings;
@@ -81,7 +75,6 @@ namespace System.Web.UI.WebControls
 		TableItemStyle pagerStyle;
 		TableItemStyle rowStyle;
 		TableItemStyle selectedRowStyle;
-#if NET_4_0
 		TableItemStyle sortedAscendingCellStyle;
 		TableItemStyle sortedAscendingHeaderStyle;
 		TableItemStyle sortedDescendingCellStyle;
@@ -89,7 +82,6 @@ namespace System.Web.UI.WebControls
 
 		List <DataKey> _dataKeySuffixList;
 		DataKeyArray rowSuffixKeys;
-#endif
 		List <DataKey> _dataKeyList;
 		DataKeyArray keys;
 		DataKey oldEditValues;
@@ -560,9 +552,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[BrowsableAttribute(false)]
-#if NET_4_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#endif
 		public IAutoFieldGenerator ColumnsGenerator {
 			get;
 			set;
@@ -592,7 +582,6 @@ namespace System.Web.UI.WebControls
 				return _dataKeyList;
 			}
 		}
-#if NET_4_0
 		List <DataKey> DataKeySuffixList {
 			get {
 				if (_dataKeySuffixList == null)
@@ -601,7 +590,6 @@ namespace System.Web.UI.WebControls
 				return _dataKeySuffixList;
 			}
 		}
-#endif
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKeyArray DataKeys {
@@ -1104,7 +1092,6 @@ namespace System.Web.UI.WebControls
 				RequireBinding ();
 			}
 		}
-#if NET_4_0
 		[TypeConverter (typeof(StringArrayConverter))]
 		[DefaultValue (null)]
 		public virtual string[] ClientIDRowSuffix {
@@ -1218,7 +1205,6 @@ namespace System.Web.UI.WebControls
 				return sortedDescendingHeaderStyle;
 			}
 		}		
-#endif
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof (string) || type == typeof (decimal) || type == typeof (DateTime) || type == typeof (Guid);
@@ -1463,24 +1449,18 @@ namespace System.Web.UI.WebControls
 			Table mainTable = ContainedTable;
 			List <DataKey> dataKeyList;
 			string[] dataKeyNames;
-#if NET_4_0
 			List <DataKey> dataKeySuffixList;
 			string[] clientIDRowSuffix;
-#endif
 			if (dataBinding) {
 				dataKeyList = DataKeyList;
 				dataKeyNames = DataKeyNames;
-#if NET_4_0
 				dataKeySuffixList = DataKeySuffixList;
 				clientIDRowSuffix = ClientIDRowSuffix;
-#endif
 			} else {
 				dataKeyList = null;
 				dataKeyNames = null;
-#if NET_4_0
 				dataKeySuffixList = null;
 				clientIDRowSuffix = null;
-#endif
 			}
 
 			while (skip_first || enumerator.MoveNext ()) {
@@ -1516,18 +1496,14 @@ namespace System.Web.UI.WebControls
 					if (EditIndex == row.RowIndex)
 						oldEditValues = new DataKey (GetRowValues (row, true, true));
 					dataKeyList.Add (new DataKey (CreateRowDataKey (row), dataKeyNames));
-#if NET_4_0
 					dataKeySuffixList.Add (new DataKey (CreateRowSuffixDataKey (row), clientIDRowSuffix));
-#endif
 					OnRowDataBound (new GridViewRowEventArgs (row));
 				} 
 			}
 
 			if (list.Count == 0) {
-#if NET_4_0
  				if (ShowHeader && ShowHeaderWhenEmpty)
  					CreateHeaderRow (mainTable, fields, dataBinding);
-#endif
 				GridViewRow emptyRow = CreateEmptyrRow (fieldCount);
 				if (emptyRow != null) {
 					OnRowCreated (new GridViewRowEventArgs (emptyRow));
@@ -1537,10 +1513,8 @@ namespace System.Web.UI.WebControls
 						OnRowDataBound (new GridViewRowEventArgs (emptyRow));
 					}
 				}
-#if NET_4_0
 				if (mainTable.Rows.Count == 0)
 					table = null;
-#endif
 				return 0;
 			} else {
 				GridViewRow footerRow = CreateRow (-1, -1, DataControlRowType.Footer, DataControlRowState.Normal);
@@ -1706,14 +1680,12 @@ namespace System.Web.UI.WebControls
 			LoadAndCacheProperties (DataKeyNames, dataItem, ref cachedKeyProperties);
 			return CreateDictionaryFromProperties (cachedKeyProperties, dataItem);
 		}
-#if NET_4_0
 		IOrderedDictionary CreateRowSuffixDataKey (GridViewRow row)
 		{
 			object dataItem = row.DataItem;
 			LoadAndCacheProperties (ClientIDRowSuffix, dataItem, ref cachedSuffixKeyProperties);
 			return CreateDictionaryFromProperties (cachedSuffixKeyProperties, dataItem);
 		}
-#endif
 		IOrderedDictionary GetRowValues (GridViewRow row, bool includeReadOnlyFields, bool includePrimaryKey)
 		{
 			OrderedDictionary dic = new OrderedDictionary ();
@@ -1813,10 +1785,8 @@ namespace System.Web.UI.WebControls
 					default:
 						break;
 				}
-#if NET_4_0
 				string sortExpression = SortExpression;
 				bool haveSorting = !String.IsNullOrEmpty (sortExpression);
-#endif
 				foreach (TableCell cell in row.Cells) {
 					DataControlFieldCell fcell = cell as DataControlFieldCell;
 					if (fcell != null) {
@@ -1832,10 +1802,8 @@ namespace System.Web.UI.WebControls
 							case DataControlRowType.Header:
 								if (field.HeaderStyleCreated && !field.HeaderStyle.IsEmpty)
 									cell.ControlStyle.MergeWith (field.HeaderStyle);
-#if NET_4_0
 								if (haveSorting)
 									MergeWithSortingStyle (sortExpression, sortedAscendingHeaderStyle, sortedDescendingHeaderStyle, field, cell);
-#endif
 								break;
 							case DataControlRowType.Footer:
 								if (field.FooterStyleCreated && !field.FooterStyle.IsEmpty)
@@ -1851,17 +1819,14 @@ namespace System.Web.UI.WebControls
 								}
 								if (field.ItemStyleCreated && !field.ItemStyle.IsEmpty)
 									cell.ControlStyle.MergeWith (field.ItemStyle);
-#if NET_4_0
 								if (haveSorting)
 									MergeWithSortingStyle (sortExpression, sortedAscendingCellStyle, sortedDescendingCellStyle, field, cell);
-#endif
 								break;
 						}
 					}
 				}
 			}
 		}
-#if NET_4_0
 		void MergeWithSortingStyle (string sortExpression, TableItemStyle ascending, TableItemStyle descending, DataControlField field, TableCell cell)
 		{
 			if (String.Compare (field.SortExpression, sortExpression, StringComparison.OrdinalIgnoreCase) != 0)
@@ -1869,7 +1834,6 @@ namespace System.Web.UI.WebControls
 
 			cell.ControlStyle.MergeWith (SortDirection == SortDirection.Ascending ? ascending : descending);
 		}
-#endif
 		protected internal override void OnInit (EventArgs e)
 		{
 			Page page = Page;
@@ -2035,9 +1999,7 @@ namespace System.Web.UI.WebControls
 			
 			OnSorted (EventArgs.Empty);
 		}
-#if NET_4_0
 		public
-#endif
 		void SelectRow (int index)
 		{
 			GridViewSelectEventArgs args = new GridViewSelectEventArgs (index);
@@ -2048,9 +2010,7 @@ namespace System.Web.UI.WebControls
 				OnSelectedIndexChanged (EventArgs.Empty);
 			}
 		}
-#if NET_4_0
 		public
-#endif
 		void SetPageIndex (int newIndex)
 		{
 			GridViewPageEventArgs args = new GridViewPageEventArgs (newIndex);
@@ -2063,9 +2023,7 @@ namespace System.Web.UI.WebControls
 			PageIndex = args.NewPageIndex;
 			OnPageIndexChanged (EventArgs.Empty);
 		}
-#if NET_4_0
 		public
-#endif
 		void SetEditRow (int index)
 		{
 			GridViewEditEventArgs args = new GridViewEditEventArgs (index);
@@ -2193,12 +2151,10 @@ namespace System.Web.UI.WebControls
 			if (state [8] != null)
 				((IStateManager) OldEditValues).LoadViewState (state [8]);
 			pageCount = (int)state [9];
-#if NET_4_0
 			if (state [10] != null)
 				ClientIDRowSuffix = (string[]) state [10];
 			if (state [11] != null)
 				LoadDataKeyArrayState ((object []) state [11], out rowSuffixKeys);
-#endif
 		}
 		
 		protected internal override object SaveControlState ()
@@ -2226,10 +2182,8 @@ namespace System.Web.UI.WebControls
 				SaveDataKeyArrayState (keys),
 				(oldEditValues == null ? null : ((IStateManager)oldEditValues).SaveViewState ()),
 				pageCount,
-#if NET_4_0
 				ClientIDRowSuffix,
 				SaveDataKeyArrayState (rowSuffixKeys)
-#endif
 			};
 		}
 
@@ -2281,7 +2235,6 @@ namespace System.Web.UI.WebControls
 				((IStateManager)editRowStyle).TrackViewState();
 			if (emptyDataRowStyle != null)
 				((IStateManager)emptyDataRowStyle).TrackViewState();
-#if NET_4_0
 			if (sortedAscendingCellStyle != null)
 				((IStateManager)sortedAscendingCellStyle).TrackViewState ();
 			
@@ -2295,7 +2248,6 @@ namespace System.Web.UI.WebControls
 				((IStateManager)sortedDescendingHeaderStyle).TrackViewState ();
 			if (rowSuffixKeys != null)
 				((IStateManager) rowSuffixKeys).TrackViewState ();
-#endif
 			if (keys != null)
 				((IStateManager)keys).TrackViewState();
 			if (autoFieldProperties != null) {
@@ -2333,12 +2285,10 @@ namespace System.Web.UI.WebControls
 				(editRowStyle == null ? null : ((IStateManager)editRowStyle).SaveViewState()), // 9
 				(emptyDataRowStyle == null ? null : ((IStateManager)emptyDataRowStyle).SaveViewState()), // 10
 				autoFieldsData, // 11
-#if NET_4_0
 				sortedAscendingCellStyle == null ? null : ((IStateManager)sortedAscendingCellStyle).SaveViewState (), // 12
 				sortedAscendingHeaderStyle == null ? null : ((IStateManager)sortedAscendingHeaderStyle).SaveViewState (), // 13
 				sortedDescendingCellStyle == null ? null : ((IStateManager)sortedDescendingCellStyle).SaveViewState (), // 14
 				sortedDescendingHeaderStyle == null ? null : ((IStateManager)sortedDescendingHeaderStyle).SaveViewState () // 15
-#endif
 			};
 
 			for (int i = states.Length - 1; i >= 0; i--) {
@@ -2391,7 +2341,6 @@ namespace System.Web.UI.WebControls
 				((IStateManager)EditRowStyle).LoadViewState (states[9]);
 			if (states[10] != null)
 				((IStateManager)EmptyDataRowStyle).LoadViewState (states[10]);
-#if NET_4_0
 			if (states [12] != null)
 				((IStateManager)sortedAscendingCellStyle).LoadViewState (states [12]);
 			if (states [13] != null)
@@ -2400,7 +2349,6 @@ namespace System.Web.UI.WebControls
 				((IStateManager)sortedDescendingCellStyle).LoadViewState (states [14]);
 			if (states [15] != null)
 				((IStateManager)sortedDescendingHeaderStyle).LoadViewState (states [15]);
-#endif
 		}
 		
 		void ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)

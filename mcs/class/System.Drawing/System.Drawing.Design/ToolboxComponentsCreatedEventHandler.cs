@@ -28,9 +28,6 @@
 
 namespace System.Drawing.Design {
 
-#if ONLY_1_1
-	[Serializable]
-#endif
 	public delegate void ToolboxComponentsCreatedEventHandler (object sender, ToolboxComponentsCreatedEventArgs e);
 }
 

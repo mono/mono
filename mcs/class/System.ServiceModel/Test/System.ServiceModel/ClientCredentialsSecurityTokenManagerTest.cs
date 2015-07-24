@@ -42,6 +42,8 @@ using MonoTests.System.ServiceModel.Channels;
 
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -621,7 +623,7 @@ Assert.IsFalse (new MyManager (new MyClientCredentials ()).IsIssued (r), "premis
 			be.EndpointSupportingTokenParameters.Endorsing.Add (
 				new MyEndorsingTokenParameters ());
 			Binding b = new CustomBinding (be, new HttpTransportBindingElement ());
-			EndpointAddress ea = new EndpointAddress (new Uri ("http://localhost:37564"), new X509CertificateEndpointIdentity (cert));
+			EndpointAddress ea = new EndpointAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), new X509CertificateEndpointIdentity (cert));
 			CalcProxy client = new CalcProxy (b, ea);
 			client.Endpoint.Behaviors.RemoveAll<ClientCredentials> ();
 			client.Endpoint.Behaviors.Add (new MyClientCredentials ());

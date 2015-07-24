@@ -82,11 +82,7 @@ namespace System.Drawing.Design
 			}
 			set { SetValue ("Filter", value); }
 		}
-#if NET_2_0
 		public virtual bool Locked {
-#else		
-		protected bool Locked {
-#endif		
 			get { return locked; }
 		}
 
@@ -94,7 +90,6 @@ namespace System.Drawing.Design
 			get { return GetValue ("TypeName"); }
 			set { SetValue ("TypeName", value); }
 		}
-#if NET_2_0
 		public string Company {
 			get { return (string) properties["Company"]; }
 			set { SetValue ("Company", value); }
@@ -135,7 +130,6 @@ namespace System.Drawing.Design
 			get { return string.Empty; }
 		}				
 
-#endif		
 		protected void CheckUnlocked ()
 		{
 			if (locked)
@@ -171,7 +165,6 @@ namespace System.Drawing.Design
 			return components;
 		}
 
-#if NET_2_0
 		protected virtual IComponent[] CreateComponentsCore (IDesignerHost host, IDictionary defaultValues)
 		{
 			IComponent[] components = CreateComponentsCore (host);
@@ -205,7 +198,6 @@ namespace System.Drawing.Design
 				return value;
 			}
 		}
-#endif
 
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{			
@@ -238,12 +230,10 @@ namespace System.Drawing.Design
 			return string.Concat (TypeName, DisplayName).GetHashCode ();
 		}
 
-#if NET_2_0
 		public Type GetType (IDesignerHost host)
 		{
 			return GetType (host, this.AssemblyName,  this.TypeName,  false);
 		}
-#endif
 
 		protected virtual Type GetType (IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)
 		{
@@ -308,11 +298,7 @@ namespace System.Drawing.Design
 			Serialize (info, context);
 		}
 
-#if NET_2_0
 		public virtual void Lock () 
-#else		
-		public void Lock ()
-#endif				
 		{
 			locked = true;
 		}
@@ -344,7 +330,6 @@ namespace System.Drawing.Design
 			return DisplayName;
 		}
 
-#if NET_2_0
 		protected void ValidatePropertyType (string propertyName, object value, Type expectedType, bool allowNull)
 		{
 			if (!allowNull && (value == null))
@@ -396,13 +381,6 @@ namespace System.Drawing.Design
 			CheckUnlocked ();
 			properties [propertyName] = ValidatePropertyValue (propertyName, value);
 		}
-#else
-		private void SetValue (string propertyName, object value)
-		{
-			CheckUnlocked ();
-			properties [propertyName] = value;
-		}
-#endif
 		private string GetValue (string propertyName)
 		{
 			string s = (string) properties [propertyName];

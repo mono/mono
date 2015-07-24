@@ -655,7 +655,7 @@ namespace System.Reflection.Emit
 
 		public override Module Module {
 			get {
-				return base.Module;
+				return GetModule ();
 			}
 		}
 
@@ -679,11 +679,9 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
 		public override ParameterInfo ReturnParameter {
 			get { return base.ReturnParameter; }
 		}
-#endif
 	}
 }
 #endif

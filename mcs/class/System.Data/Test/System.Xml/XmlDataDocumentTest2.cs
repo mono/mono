@@ -287,12 +287,8 @@ namespace MonoTests.System.Xml
 			// No exception shud be thrown
 			XmlDataDocument doc = new XmlDataDocument (ds);
 
-			// Should fail to save as there are no rows
-			try {
-				doc.Save (new StringWriter ());
-				Fail ("#1");
-			} catch (InvalidOperationException) {
-			}
+			// Should not fail to save because of "no rows"
+			doc.Save (new StringWriter ());
 
 			table1.Rows.Add (new object[] {0});
 			table1.Rows.Add (new object[] {1});

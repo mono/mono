@@ -14,7 +14,6 @@
 #include <glib.h>
 #include <string.h>
 #include <pthread.h>
-#include <signal.h>
 #include <sched.h>
 #include <sys/time.h>
 #include <errno.h>
@@ -230,7 +229,6 @@ GetCurrentThreadId (void)
 guint32
 SleepEx (guint32 ms, gboolean alertable)
 {
-	struct timespec req;
 	int ms_quot, ms_rem;
 	int ret;
 	gpointer current_thread = NULL;
@@ -258,9 +256,6 @@ SleepEx (guint32 ms, gboolean alertable)
 	ms_quot = ms / 1000;
 	ms_rem = ms % 1000;
 	
-	req.tv_sec=ms_quot;
-	req.tv_nsec=ms_rem*1000000;
-
 #if defined (__linux__) && !defined(PLATFORM_ANDROID)
 	/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */
 	ret = clock_gettime (CLOCK_MONOTONIC, &start);
@@ -284,6 +279,10 @@ SleepEx (guint32 ms, gboolean alertable)
 	}
 
 #else
+	struct timespec req;
+
+	req.tv_sec=ms_quot;
+	req.tv_nsec=ms_rem*1000000;
 
 again:
 	memset (&rem, 0, sizeof (rem));
@@ -342,22 +341,13 @@ _wapi_thread_apc_pending (gpointer handle)
  * call the wait function again. This essentially means that the target thread will
  * busy wait until it is ready to process the interruption.
  */
-void
-wapi_interrupt_thread (gpointer thread_handle)
-{
-	gpointer wait_handle;
-
-	wait_handle = wapi_prepare_interrupt_thread (thread_handle);
-	wapi_finish_interrupt_thread (wait_handle);
-}
-
 gpointer
 wapi_prepare_interrupt_thread (gpointer thread_handle)
 {
 	WapiHandle_thread *thread;
 	gpointer prev_handle, wait_handle;
 
-	thread = lookup_thread (thread_handle);
+	thread = lookup_thread (thread_handle); /* FIXME this is wrong, move this whole thing to MonoThreads where it can be done lockfree */
 
 	while (TRUE) {
 		wait_handle = thread->wait_handle;

@@ -148,7 +148,6 @@ namespace System.ServiceModel.Syndication
 			{
 				if (serializer == null)
 					serializer = new DataContractSerializer (extension.GetType ());
-#if NET_4_0
 				// FIXME: this is a nasty workaround that mcs somehow fails to resolve InternalVisibleTo(System.ServiceModel) in System.Runtime.Serialization.dll and thus rejects the use of KnownTypeCollection unlike NET_2_0 case (where System.ServiceModel.Web.dll is referenced).
 				XmlQualifiedName qname = null;
 				if (name == null || ns == null) {
@@ -160,9 +159,6 @@ namespace System.ServiceModel.Syndication
 					xr.MoveToContent ();
 					qname = new XmlQualifiedName (xr.LocalName, xr.NamespaceURI);
 				}
-#else
-				var qname = name == null || ns == null ? KnownTypeCollection.GetStaticQName (extension.GetType ()) : null;
-#endif
 				this.Name = name ?? qname.Name;
 				this.Namespace = ns ?? qname.Namespace;
 				this.extension = extension;

@@ -35,6 +35,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
 #endif
@@ -203,7 +204,19 @@ namespace System.IO
 		public extern static bool SetFileAttributes (string path, FileAttributes attrs, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
+		private extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
+
+		public static MonoFileType GetFileType (SafeHandle safeHandle, out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return GetFileType (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		//
 		// Find file methods
@@ -288,45 +301,143 @@ namespace System.IO
 						  FileShare share,
 						  FileOptions options,
 						  out MonoIOError error);
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool Close (IntPtr handle,
 						 out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Read (IntPtr handle, byte [] dest,
+		private extern static int Read (IntPtr handle, byte [] dest,
 					       int dest_offset, int count,
 					       out MonoIOError error);
+
+		public static int Read (SafeHandle safeHandle, byte [] dest,
+					       int dest_offset, int count,
+					       out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Read (safeHandle.DangerousGetHandle (), dest, dest_offset, count, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int Write (IntPtr handle, [In] byte [] src,
+		private extern static int Write (IntPtr handle, [In] byte [] src,
 						int src_offset, int count,
 						out MonoIOError error);
+
+		public static int Write (SafeHandle safeHandle, byte [] src,
+						int src_offset, int count,
+						out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Write (safeHandle.DangerousGetHandle (), src, src_offset, count, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long Seek (IntPtr handle, long offset,
+		private extern static long Seek (IntPtr handle, long offset,
 						SeekOrigin origin,
 						out MonoIOError error);
+
+		public static long Seek (SafeHandle safeHandle, long offset,
+						SeekOrigin origin,
+						out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Seek (safeHandle.DangerousGetHandle (), offset, origin, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool Flush (IntPtr handle,
+		private extern static bool Flush (IntPtr handle,
 						 out MonoIOError error);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static long GetLength (IntPtr handle,
-						     out MonoIOError error);
+		public static bool Flush (SafeHandle safeHandle,
+						 out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Flush (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetLength (IntPtr handle,
+		private extern static long GetLength (IntPtr handle,
+						     out MonoIOError error);
+
+		public static long GetLength (SafeHandle safeHandle,
+						     out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return GetLength (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool SetLength (IntPtr handle,
 						     long length,
 						     out MonoIOError error);
 
+		public static bool SetLength (SafeHandle safeHandle,
+						     long length,
+						     out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return SetLength (safeHandle.DangerousGetHandle (), length, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool SetFileTime (IntPtr handle,
+		private extern static bool SetFileTime (IntPtr handle,
 						       long creation_time,
 						       long last_access_time,
 						       long last_write_time,
 						       out MonoIOError error);
+
+		public static bool SetFileTime (SafeHandle safeHandle,
+						       long creation_time,
+						       long last_access_time,
+						       long last_write_time,
+						       out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return SetFileTime (safeHandle.DangerousGetHandle (), creation_time, last_access_time, last_write_time, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		public static bool SetFileTime (string path,
 						long creation_time,
@@ -393,7 +504,7 @@ namespace System.IO
 				break;
 			}
 
-			result = SetFileTime (handle, creation_time,
+			result = SetFileTime (new SafeFileHandle(handle, false), creation_time,
 					      last_access_time,
 					      last_write_time, out error);
 
@@ -404,14 +515,42 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void Lock (IntPtr handle,
+		private extern static void Lock (IntPtr handle,
 						long position, long length,
 						out MonoIOError error);
 
+		public static void Lock (SafeHandle safeHandle,
+						long position, long length,
+						out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Lock (safeHandle.DangerousGetHandle (), position, length, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void Unlock (IntPtr handle,
+		private extern static void Unlock (IntPtr handle,
 						  long position, long length,
 						  out MonoIOError error);
+
+		public static void Unlock (SafeHandle safeHandle,
+						  long position, long length,
+						  out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				Unlock (safeHandle.DangerousGetHandle (), position, length, out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
 
 		// console handles
 

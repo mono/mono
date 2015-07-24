@@ -32,9 +32,7 @@ namespace MonoTests.System.Net
 			Assert.IsFalse (c.Discard, "#A7");
 			Assert.IsFalse (c.Expired, "#A8");
 			Assert.AreEqual (DateTime.MinValue, c.Expires, "#A9");
-#if NET_2_0
 			Assert.IsFalse (c.HttpOnly, "#A10");
-#endif
 			Assert.AreEqual (string.Empty, c.Path, "#A11");
 			Assert.IsFalse (c.Secure, "#A12");
 			Assert.AreEqual (0, c.Version, "#A13");

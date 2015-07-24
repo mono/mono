@@ -61,9 +61,7 @@ namespace MonoCasTests.System.CodeDom {
 			cmm.ReturnType = new CodeTypeReference ("System.Int32");
 			Assert.AreEqual (0, cmm.Statements.Count, "Statements");
 			Assert.AreEqual (0, cmm.ReturnTypeCustomAttributes.Count, "ReturnTypeCustomAttributes");
-#if NET_2_0
 			Assert.AreEqual (0, cmm.TypeParameters.Count, "TypeParameters");
-#endif
 		}
 
 		[Test]

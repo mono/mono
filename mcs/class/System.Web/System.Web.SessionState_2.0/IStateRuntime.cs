@@ -35,9 +35,7 @@ namespace System.Web.SessionState
 {
 	[Guid ("7297744b-e188-40bf-b7e9-56698d25cf44")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-#if NET_2_0
 	[ComImportAttribute]
-#endif
 	public interface IStateRuntime
 	{
 		void ProcessRequest (
@@ -51,7 +49,6 @@ namespace System.Web.SessionState
 			[In, MarshalAs(UnmanagedType.I4)] int contentLength,
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr content);
 
-#if NET_2_0
 		void ProcessRequest (
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr tracker, 
 			[In, MarshalAs(UnmanagedType.I4)] int verb,
@@ -63,7 +60,6 @@ namespace System.Web.SessionState
 			[In, MarshalAs(UnmanagedType.I4)] int lockCookie,
 			[In, MarshalAs(UnmanagedType.I4)] int contentLength,
 			[In, MarshalAs(UnmanagedType.SysInt)] IntPtr content);
-#endif
 		void StopProcessing ();
 	}
 }

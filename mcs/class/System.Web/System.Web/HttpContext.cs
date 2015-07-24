@@ -102,9 +102,7 @@ namespace System.Web
 			WorkerRequest = wr;
 			request = new HttpRequest (WorkerRequest, this);
 			response = new HttpResponse (WorkerRequest, this);
-#if NET_4_0
 			SessionStateBehavior = SessionStateBehavior.Default;
-#endif
 		}
 
 		public HttpContext (HttpRequest request, HttpResponse response)
@@ -113,9 +111,7 @@ namespace System.Web
 			this.response = response;
 			this.request.Context = this;
 			this.response.Context = this;
-#if NET_4_0
 			SessionStateBehavior = SessionStateBehavior.Default;
-#endif
 		}
 
 		internal bool IsProcessingInclude {
@@ -636,12 +632,10 @@ namespace System.Web
 				req.QueryStringRaw = queryString;
 		}
 
-#if NET_4_0
 		public void SetSessionStateBehavior (SessionStateBehavior sessionStateBehavior)
 		{
 			SessionStateBehavior = sessionStateBehavior;
 		}
-#endif
 		
 #region internals
 		internal void SetSession (HttpSessionState state)
@@ -670,7 +664,6 @@ namespace System.Web
 
 			set {
 				config_timeout = value;
-#if !TARGET_J2EE
 				if (timer != null) {
 					TimeSpan remaining = value - (DateTime.UtcNow - time_stamp);
 					long remaining_ms = Math.Max ((long)remaining.TotalMilliseconds, 0);
@@ -681,18 +674,14 @@ namespace System.Web
 					
 					timer.Change (remaining_ms, (long)Timeout.Infinite);
 				}
-#endif
 			}
 		}
 
-#if NET_4_0
 		internal SessionStateBehavior SessionStateBehavior {
 			get;
 			private set;
 		}
-#endif
 		
-#if !TARGET_J2EE
 		void TimeoutReached(object state) {
 			HttpRuntime.QueuePendingRequest (false);
 			if (Interlocked.CompareExchange (ref timeout_possible, 0, 0) == 0) {
@@ -730,7 +719,6 @@ namespace System.Web
 		{
 			Interlocked.CompareExchange (ref timeout_possible, 0, 1);
 		}
-#endif
 #endregion
 	}
 	

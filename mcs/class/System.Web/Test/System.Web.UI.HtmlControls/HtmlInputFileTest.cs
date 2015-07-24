@@ -106,18 +106,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void ViewState ()
 		{
 			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
-#if NET_2_0
 			p.CausesValidation = false;
 			p.ValidationGroup = "VG";
-#endif
 			object s = p.SaveState();
 			HtmlInputButtonPoker copy = new HtmlInputButtonPoker ();
 			copy.LoadState (s);
 
-#if NET_2_0
 			Assert.IsFalse (copy.CausesValidation, "A1");
 			Assert.AreEqual ("VG", p.ValidationGroup, "A2");
-#endif
 		}
 #endif
 

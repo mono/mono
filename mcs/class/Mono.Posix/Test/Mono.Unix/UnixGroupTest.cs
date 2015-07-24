@@ -25,6 +25,7 @@ namespace MonoTests.Mono.Unix {
 	public class UnixGroupTest
 	{
 		[Test]
+		[Category ("AndroidNotWorking")] // API 21 conditionally has setgrent in the NDK headers, but bionic doesn't export it
 		public void ListAllGroups_ToString ()
 		{
 			try {
@@ -41,6 +42,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // API 21 conditionally has setgrent in the NDK headers, but bionic doesn't export it
 		public void ReentrantConstructors ()
 		{
 			var seen = new Dictionary<string, object> ();
@@ -65,6 +67,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // API 21 conditionally has setgrent in the NDK headers, but bionic doesn't export it
 		public void NonReentrantSyscalls ()
 		{
 			var seen = new Dictionary<string, object> ();
@@ -95,6 +98,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // API 21 conditionally has getgrnam_r in the NDK headers, but bionic doesn't export it
 		public void InvalidGroups_Constructor_Name ()
 		{
 			string[] badGroups = new string[]{"i'm bad", "so am i", "does-not-exist"};

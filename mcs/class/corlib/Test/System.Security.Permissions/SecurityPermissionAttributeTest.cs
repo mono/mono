@@ -46,9 +46,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			Assert.IsFalse (a.Assertion, "Assertion");
-#if NET_2_0
 			Assert.IsFalse (a.BindingRedirects, "BindingRedirects");
-#endif
 			Assert.IsFalse (a.ControlAppDomain, "ControlAppDomain");
 			Assert.IsFalse (a.ControlDomainPolicy, "ControlDomainPolicy");
 			Assert.IsFalse (a.ControlEvidence, "ControlEvidence");
@@ -104,9 +102,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			a.Assertion = false;
-#if NET_2_0
 			a.BindingRedirects = false;
-#endif
 			a.ControlAppDomain = false;
 			a.ControlDomainPolicy = false;
 			a.ControlEvidence = false;
@@ -132,7 +128,6 @@ namespace MonoTests.System.Security.Permissions {
 			a.Assertion = false;
 			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
-#if NET_2_0
 		[Test]
 		public void BindingRedirects ()
 		{
@@ -142,7 +137,6 @@ namespace MonoTests.System.Security.Permissions {
 			a.BindingRedirects = false;
 			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags=NoFlags");
 		}
-#endif
 		[Test]
 		public void ControlAppDomain () 
 		{
@@ -280,10 +274,8 @@ namespace MonoTests.System.Security.Permissions {
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			a.Flags = SecurityPermissionFlag.Assertion;
 			Assert.IsTrue (a.Assertion, "Assertion");
-#if NET_2_0
 			a.Flags |= SecurityPermissionFlag.BindingRedirects;
 			Assert.IsTrue (a.BindingRedirects, "BindingRedirects");
-#endif
 			a.Flags |= SecurityPermissionFlag.ControlAppDomain;
 			Assert.IsTrue (a.ControlAppDomain, "ControlAppDomain");
 			a.Flags |= SecurityPermissionFlag.ControlDomainPolicy;
@@ -313,10 +305,8 @@ namespace MonoTests.System.Security.Permissions {
 
 			a.Flags &= ~SecurityPermissionFlag.Assertion;
 			Assert.IsFalse (a.Assertion, "Assertion-False");
-#if NET_2_0
 			a.Flags &= ~SecurityPermissionFlag.BindingRedirects;
 			Assert.IsFalse (a.BindingRedirects, "BindingRedirects-False");
-#endif
 			a.Flags &= ~SecurityPermissionFlag.ControlAppDomain;
 			Assert.IsFalse (a.ControlAppDomain, "ControlAppDomain-False");
 			a.Flags &= ~SecurityPermissionFlag.ControlDomainPolicy;

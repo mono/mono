@@ -35,9 +35,7 @@ namespace System.Security.Policy {
 	[Serializable]
 	[ComVisible (true)]
 	public sealed class GacInstalled :
-#if NET_4_0
 		EvidenceBase,
-#endif
 		IIdentityPermissionFactory, IBuiltInEvidence {
 
 		public GacInstalled ()

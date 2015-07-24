@@ -56,12 +56,9 @@ namespace MonoCasTests.System.Web.UI {
 			catch (NullReferenceException) {
 				// ms 2.0 - more likely parameters don't change this result
 			}
-#if NET_2_0
 			Assert.IsNotNull (rb.BuiltObjects, "BuiltObjects");
-#endif
 		}
 
-#if NET_2_0
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Ctor0_Deny_Unrestricted ()
@@ -69,7 +66,6 @@ namespace MonoCasTests.System.Web.UI {
 			RootBuilder rb = new RootBuilder ();
 			Assert.IsNotNull (rb.BuiltObjects, "BuiltObjects");
 		}
-#endif
 
 		// LinkDemand
 

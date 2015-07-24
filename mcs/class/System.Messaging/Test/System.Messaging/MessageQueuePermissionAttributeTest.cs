@@ -172,9 +172,7 @@ namespace MonoTests.System.Messaging {
 						case 13:
 						case 32:
 						case 92:
-#if NET_2_0
 						case 133:
-#endif
 						case 160:
 							// known invalid chars
 							break;

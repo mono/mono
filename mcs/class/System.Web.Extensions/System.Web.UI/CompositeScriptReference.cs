@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_3_5
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -148,14 +147,12 @@ namespace System.Web.UI
 			entriesCache.InsertOrUpdate ((uint)ret.GetHashCode (), ret, entries, entries);
 			return ret;
 		}
-#if NET_4_0
 		protected internal override bool IsAjaxFrameworkScript (ScriptManager scriptManager)
 		{
 			return false;
 		}
 		
 		[Obsolete ("Use IsAjaxFrameworkScript(ScriptManager)")]
-#endif
 		protected internal override bool IsFromSystemWebExtensions ()
 		{
 			if (scripts == null || scripts.Count == 0)
@@ -175,4 +172,3 @@ namespace System.Web.UI
 		}
 	}
 }
-#endif

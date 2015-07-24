@@ -36,6 +36,8 @@ using System.ServiceModel.Description;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -217,22 +219,23 @@ namespace MonoTests.System.ServiceModel
 		[Ignore ("With Orcas it does not work fine")]
 		public void UseCase1Test ()
 		{
+			int port = NetworkHelpers.FindFreePort ();
 			// almost equivalent to samples/clientbase/samplesvc.cs
 			using (host = new ServiceHost (typeof (UseCase1))) {
 				Binding binding = new BasicHttpBinding ();
 				binding.ReceiveTimeout = TimeSpan.FromSeconds (15);
-				host.AddServiceEndpoint (typeof (IUseCase1).FullName, binding, new Uri ("http://localhost:37564"));
+				host.AddServiceEndpoint (typeof (IUseCase1).FullName, binding, new Uri ("http://localhost:" + port));
 
 				host.Open ();
 				// almost equivalent to samples/clientbase/samplecli.cs
 				using (UseCase1Proxy proxy = new UseCase1Proxy (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:37564"))) {
+					new EndpointAddress ("http://localhost:" + port))) {
 					proxy.Open ();
 					Assert.AreEqual ("TEST FOR ECHOTEST FOR ECHO", proxy.Echo ("TEST FOR ECHO"));
 				}
 			}
-			EnsurePortNonBlocking (37564);
+			EnsurePortNonBlocking (port);
 		}
 
 		void EnsurePortNonBlocking (int port)
@@ -357,8 +360,9 @@ namespace MonoTests.System.ServiceModel
 			ServiceHost host = new ServiceHost (typeof (UseCase2));
 			Binding binding = new BasicHttpBinding ();
 			binding.ReceiveTimeout = TimeSpan.FromSeconds (15);
+			int port = NetworkHelpers.FindFreePort ();
 			host.AddServiceEndpoint (typeof (IUseCase2).FullName,
-			binding, new Uri ("http://localhost:37564"));
+			binding, new Uri ("http://localhost:" + port));
 
 			try {
 				host.Open ();
@@ -368,7 +372,7 @@ namespace MonoTests.System.ServiceModel
 				b.ReceiveTimeout = TimeSpan.FromSeconds (15);
 				UseCase2Proxy proxy = new UseCase2Proxy (
 					b,
-					new EndpointAddress ("http://localhost:37564/"));
+					new EndpointAddress ("http://localhost:" + port + "/"));
 				proxy.Open ();
 				Message req = Message.CreateMessage (MessageVersion.Soap11, "http://tempuri.org/IUseCase2/Echo");
 				Message res = proxy.Echo (req);
@@ -378,7 +382,7 @@ namespace MonoTests.System.ServiceModel
 			} finally {
 				if (host.State == CommunicationState.Opened)
 					host.Close ();
-				EnsurePortNonBlocking (37564);
+				EnsurePortNonBlocking (port);
 			}
 		}
 
@@ -426,9 +430,10 @@ namespace MonoTests.System.ServiceModel
 			Binding bs = new BasicHttpBinding ();
 			bs.SendTimeout = TimeSpan.FromSeconds (5);
 			bs.ReceiveTimeout = TimeSpan.FromSeconds (5);
+			int port = NetworkHelpers.FindFreePort ();
 			// magic name that does not require fully qualified name ...
 			host.AddServiceEndpoint ("IMetadataExchange",
-			        bs, new Uri ("http://localhost:37564"));
+			        bs, new Uri ("http://localhost:" + port));
 			try {
 				host.Open ();
 				// almost equivalent to samples/clientbase/samplecli3.cs
@@ -437,7 +442,7 @@ namespace MonoTests.System.ServiceModel
 				bc.ReceiveTimeout = TimeSpan.FromSeconds (5);
 				MetadataExchangeProxy proxy = new MetadataExchangeProxy (
 					bc,
-					new EndpointAddress ("http://localhost:37564/"));
+					new EndpointAddress ("http://localhost:" + port + "/"));
 				proxy.Open ();
 
 				Message req = Message.CreateMessage (MessageVersion.Soap11, "http://schemas.xmlsoap.org/ws/2004/09/transfer/Get");
@@ -448,7 +453,7 @@ namespace MonoTests.System.ServiceModel
 			} finally {
 				if (host.State == CommunicationState.Opened)
 					host.Close ();
-				EnsurePortNonBlocking (37564);
+				EnsurePortNonBlocking (port);
 			}
 		}
 

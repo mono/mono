@@ -156,7 +156,7 @@ namespace Microsoft.Build.BuildEngine {
 			for (int i = 0; i < lists.Count; i++) {
 				foreach (object o in lists [i]) {
 					if (o is string)
-						expressionCollection.Add (MSBuildUtils.Unescape ((string) o));
+						expressionCollection.Add ((string) o);
 					else if (!allowItems && o is ItemReference)
 						expressionCollection.Add (((ItemReference) o).OriginalString);
 					else if (!allowMd && o is MetadataReference) {

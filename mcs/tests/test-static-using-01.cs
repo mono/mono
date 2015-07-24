@@ -1,6 +1,6 @@
 // Compiler options: -langversion:6
 
-using A.B.X;
+using static A.B.X;
 
 namespace A.B
 {

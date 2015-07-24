@@ -28,7 +28,6 @@
 
 using System;
 
-#if NET_4_0
 
 namespace System.Diagnostics.CodeAnalysis {
 
@@ -48,4 +47,3 @@ namespace System.Diagnostics.CodeAnalysis {
 	}
 }
 
-#endif

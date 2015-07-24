@@ -36,9 +36,7 @@ using System.Threading;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
-#if NET_2_0
 	[System.Runtime.InteropServices.ComVisible (true)]
-#endif
 	public abstract class WebClientProtocol : Component {
 
 		#region Fields
@@ -123,12 +121,10 @@ namespace System.Web.Services.Protocols {
 			get { return uri == null ? String.Empty : uri.AbsoluteUri; }
 			set { uri = new Uri (value); }
 		}
-#if NET_2_0
 		public bool UseDefaultCredentials {
 			get { return CredentialCache.DefaultCredentials == Credentials; }
 			set { Credentials = value ? CredentialCache.DefaultCredentials : null; }
 		}
-#endif
 
 		#endregion // Properties
 

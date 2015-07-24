@@ -43,9 +43,7 @@ using System.Security.Permissions;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace System.Web
 {	
@@ -126,7 +124,6 @@ namespace System.Web
 			WorkerRequest = worker_request;
 			this.context = context;
 
-#if !TARGET_J2EE
 			if (worker_request != null && worker_request.GetHttpVersion () == "HTTP/1.1") {
 				string gi = worker_request.GetServerVariable ("GATEWAY_INTERFACE");
 				use_chunked = (String.IsNullOrEmpty (gi) ||
@@ -134,7 +131,6 @@ namespace System.Web
 			} else {
 				use_chunked = false;
 			}
-#endif
 			writer = new HttpWriter (this);
 		}
 
@@ -354,9 +350,7 @@ namespace System.Web
 			get {
 				return writer;
 			}
-#if NET_4_0
 			set { writer = value; }
-#endif
 		}
 
 		public Stream OutputStream {
@@ -400,12 +394,10 @@ namespace System.Web
 			set;
 		}
 
-#if NET_4_5
 		public bool SuppressFormsAuthenticationRedirect {
 			get;
 			set;
 		}
-#endif
 
 		public bool TrySkipIisCustomErrors {
 			get;
@@ -516,26 +508,22 @@ namespace System.Web
 		{
 			if (headers_sent)
 				throw new HttpException ("Headers have been already sent");
-#if !TARGET_J2EE
 			if (String.Compare (name, "content-length", StringComparison.OrdinalIgnoreCase) == 0){
 				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
-#endif
 
 			if (String.Compare (name, "content-type", StringComparison.OrdinalIgnoreCase) == 0){
 				ContentType = value;
 				return;
 			}
 
-#if !TARGET_J2EE
 			if (String.Compare (name, "transfer-encoding", StringComparison.OrdinalIgnoreCase) == 0){
 				transfer_encoding = value;
 				use_chunked = false;
 				return;
 			}
-#endif
 
 			if (String.Compare (name, "cache-control", StringComparison.OrdinalIgnoreCase) == 0){
 				user_cache_control = value;
@@ -664,7 +652,6 @@ namespace System.Web
 		//   X-AspNet-Version
 		void AddHeadersNoCache (NameValueCollection write_headers, bool final_flush)
 		{
-#if !TARGET_J2EE
 			//
 			// Transfer-Encoding
 			//
@@ -672,11 +659,9 @@ namespace System.Web
 				write_headers.Add ("Transfer-Encoding", "chunked");
 			else if (transfer_encoding != null)
 				write_headers.Add ("Transfer-Encoding", transfer_encoding);
-#endif
 			if (redirect_location != null)
 				write_headers.Add ("Location", redirect_location);
 			
-#if !TARGET_J2EE
 			string vh = VersionHeader;
 			if (vh != null)
 				write_headers.Add ("X-AspNet-Version", vh);
@@ -714,7 +699,6 @@ namespace System.Web
 					write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderConnection), "close");
 				}
 			}
-#endif
 
 			//
 			// Cache Control, the cache policy takes precedence over the cache_control property.
@@ -743,10 +727,6 @@ namespace System.Web
 				int n = cookies.Count;
 				for (int i = 0; i < n; i++)
 					write_headers.Add ("Set-Cookie", cookies.Get (i).GetCookieHeaderValue ());
-#if TARGET_J2EE
-				// For J2EE Portal support emulate cookies by storing them in the session.
-				context.Request.SetSessionCookiesForPortal (cookies);
-#endif
 			}
 		}
 
@@ -926,7 +906,6 @@ namespace System.Web
 		{
 			Redirect (url, endResponse, 302);
 		}
-#if NET_4_0
 		public void RedirectPermanent (string url)
 		{
 			RedirectPermanent (url, true);
@@ -1014,7 +993,6 @@ namespace System.Web
 
 			OutputCache.RemoveFromProvider (path, providerName);
 		}
-#endif
 		public static void RemoveOutputCacheItem (string path)
 		{
 			if (path == null)
@@ -1026,19 +1004,7 @@ namespace System.Web
 			if (path [0] != '/')
 				throw new ArgumentException ("'" + path + "' is not an absolute virtual path.");
 
-#if NET_4_0
 			RemoveOutputCacheItem (path, OutputCache.DefaultProviderName);
-#else
-			HttpContext context = HttpContext.Current;
-			HttpApplication app_instance = context != null ? context.ApplicationInstance : null;
-			HttpModuleCollection modules = app_instance != null ? app_instance.Modules : null;
-			OutputCacheModule ocm = modules != null ? modules.Get ("OutputCache") as OutputCacheModule : null;
-			OutputCacheProvider internalProvider = ocm != null ? ocm.InternalProvider : null;
-			if (internalProvider == null)
-				return;
-
-			internalProvider.Remove (path);
-#endif
 		}
 
 		public void SetCookie (HttpCookie cookie)
@@ -1049,22 +1015,18 @@ namespace System.Web
 		public void Write (char ch)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (ch);
 		}
 
 		public void Write (object obj)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			if (obj == null)
 				return;
 			
@@ -1074,22 +1036,18 @@ namespace System.Web
 		public void Write (string s)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (s);
 		}
 		
 		public void Write (char [] buffer, int index, int count)
 		{
 			TextWriter writer = Output;
-#if NET_4_0
 			// Emulating .NET
 			if (writer == null)
 				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
-#endif
 			writer.Write (buffer, index, count);
 		}
 
@@ -1379,9 +1337,6 @@ namespace System.Web
 		}
 	}
 
-#if TARGET_J2EE
-	public 
-#endif	
 	static class FlagEnd
 	{
 		public static readonly object Value = new object ();

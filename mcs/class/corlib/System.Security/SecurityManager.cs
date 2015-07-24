@@ -70,16 +70,13 @@ namespace System.Security {
 
 		// properties
 
-#if NET_4_0
 		[Obsolete]
-#endif
-		extern public static bool CheckExecutionRights {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
-
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
-			set;
+		public static bool CheckExecutionRights {
+			get {
+				return false;
+			}
+			set {
+			}
 		}
 
 		[Obsolete ("The security manager cannot be turned off on MS runtime")]
@@ -117,9 +114,7 @@ namespace System.Security {
 			origin = new ArrayList ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static bool IsGranted (IPermission perm)
 		{
 			if (perm == null)
@@ -158,71 +153,7 @@ namespace System.Security {
 			return true;
 		}
 
-		internal static IPermission CheckPermissionSet (Assembly a, PermissionSet ps, bool noncas)
-		{
-			if (ps.IsEmpty ())
-				return null;
-
-			foreach (IPermission p in ps) {
-				// note: this may contains non CAS permissions
-				if ((!noncas) && (p is CodeAccessPermission)) {
-					if (!IsGranted (a, p))
-						return p;
-				} else {
-					// but non-CAS will throw on failure...
-					try {
-						p.Demand ();
-					}
-					catch (SecurityException) {
-						// ... so we catch
-						return p;
-					}
-				}
-			}
-			return null;
-		}
-
-		internal static IPermission CheckPermissionSet (AppDomain ad, PermissionSet ps)
-		{
-			if ((ps == null) || ps.IsEmpty ())
-				return null;
-
-			PermissionSet granted = ad.GrantedPermissionSet;
-			if (granted == null)
-				return null;
-			if (granted.IsUnrestricted ())
-				return null;
-			if (ps.IsUnrestricted ())
-				return new SecurityPermission (SecurityPermissionFlag.NoFlags);
-
-			foreach (IPermission p in ps) {
-				if (p is CodeAccessPermission) {
-					CodeAccessPermission grant = (CodeAccessPermission) granted.GetPermission (p.GetType ());
-					if (grant == null) {
-						if (!granted.IsUnrestricted () || !(p is IUnrestrictedPermission)) {
-							if (!p.IsSubsetOf (null))
-								return p;
-						}
-					} else if (!p.IsSubsetOf (grant)) {
-						return p;
-					}
-				} else {
-					// but non-CAS will throw on failure...
-					try {
-						p.Demand ();
-					}
-					catch (SecurityException) {
-						// ... so we catch
-						return p;
-					}
-				}
-			}
-			return null;
-		}
-
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
@@ -240,9 +171,7 @@ namespace System.Security {
 			return pl;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
@@ -260,18 +189,14 @@ namespace System.Security {
 			return pl;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static IEnumerator PolicyHierarchy ()
 		{
 			return Hierarchy;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
 			// no evidence, no permission
@@ -293,9 +218,7 @@ namespace System.Security {
 			return ps;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[MonoTODO ("(2.0) more tests are needed")]
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
@@ -312,9 +235,7 @@ namespace System.Security {
 			return ps;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolveSystemPolicy (Evidence evidence)
 		{
 			// no evidence, no permission
@@ -338,9 +259,7 @@ namespace System.Security {
 
 		static private SecurityPermission _execution = new SecurityPermission (SecurityPermissionFlag.Execution);
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
 			PermissionSet resolved = ResolvePolicy (evidence);
@@ -375,9 +294,7 @@ namespace System.Security {
 			return resolved;
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
 		{
 			if (evidence == null)
@@ -394,9 +311,7 @@ namespace System.Security {
 			return al.GetEnumerator ();
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicy () 
 		{
@@ -407,9 +322,7 @@ namespace System.Security {
 			}
 		}
 
-#if NET_4_0
 		[Obsolete]
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public static void SavePolicyLevel (PolicyLevel level) 
 		{
@@ -553,179 +466,6 @@ namespace System.Security {
 			}
 		}
 
-		//  security check when using reflection
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static unsafe extern bool GetLinkDemandSecurity (MethodBase method, RuntimeDeclSecurityActions *cdecl, RuntimeDeclSecurityActions *mdecl);
-
-		// When using reflection LinkDemand are promoted to full Demand (i.e. stack walk)
-		internal unsafe static void ReflectedLinkDemandInvoke (MethodBase mb)
-		{
-			RuntimeDeclSecurityActions klass;
-			RuntimeDeclSecurityActions method;
-
-			if (!GetLinkDemandSecurity (mb, &klass, &method))
-				return;
-
-			PermissionSet ps = null;
-
-			if (klass.cas.size > 0) {
-				ps = Decode (klass.cas.blob, klass.cas.size);
-			}
-			if (klass.noncas.size > 0) {
-				PermissionSet p = Decode (klass.noncas.blob, klass.noncas.size);
-				ps = (ps == null) ? p : ps.Union (p);
-			}
-
-			if (method.cas.size > 0) {
-				PermissionSet p = Decode (method.cas.blob, method.cas.size);
-				ps = (ps == null) ? p : ps.Union (p);
-			}
-			if (method.noncas.size > 0) {
-				PermissionSet p = Decode (method.noncas.blob, method.noncas.size);
-				ps = (ps == null) ? p : ps.Union (p);
-			}
-
-			// in this case we union-ed the permission sets because we want to do 
-			// a single stack walk (not up to 4).
-			if (ps != null)
-				ps.Demand ();
-		}
-
-		internal unsafe static bool ReflectedLinkDemandQuery (MethodBase mb)
-		{
-			RuntimeDeclSecurityActions klass;
-			RuntimeDeclSecurityActions method;
-
-			if (!GetLinkDemandSecurity (mb, &klass, &method))
-				return true;
-
-			return LinkDemand (mb.ReflectedType.Assembly, &klass, &method);
-		}
-
-		private unsafe static bool LinkDemand (Assembly a, RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
-		{
-			try {
-				PermissionSet ps = null;
-				bool result = true;
-				if (klass->cas.size > 0) {
-					ps = Decode (klass->cas.blob, klass->cas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
-				}
-				if (result && (klass->noncas.size > 0)) {
-					ps = Decode (klass->noncas.blob, klass->noncas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
-				}
-
-				if (result && (method->cas.size > 0)) {
-					ps = Decode (method->cas.blob, method->cas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
-				}
-				if (result && (method->noncas.size > 0)) {
-					ps = Decode (method->noncas.blob, method->noncas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
-				}
-				return result;
-			}
-			catch (SecurityException) {
-				return false;
-			}
-		}
-
-#pragma warning disable 169
-		private static bool LinkDemandFullTrust (Assembly a)
-		{
-			// FullTrust is immutable (and means Unrestricted) 
-			// so we can skip the subset operations and jump to IsUnrestricted.
-			PermissionSet granted = a.GrantedPermissionSet;
-			if ((granted != null) && !granted.IsUnrestricted ())
-				return false;
-
-			PermissionSet denied = a.DeniedPermissionSet;
-			if ((denied != null) && !denied.IsEmpty ())
-				return false;
-
-			return true;
-		}
-
-		private static bool LinkDemandUnmanaged (Assembly a)
-		{
-			// note: we know that UnmanagedCode (SecurityPermission) implements IUnrestrictedPermission
-			return IsGranted (a, UnmanagedCode);
-		}
-
-		// we try to provide as much details as possible to help debugging
-		private static void LinkDemandSecurityException (int securityViolation, IntPtr methodHandle)
-		{
-			RuntimeMethodHandle runtimeHandle = new RuntimeMethodHandle (methodHandle);
-			MethodInfo method = (MethodInfo)(MethodBase.GetMethodFromHandle (runtimeHandle));
-			Assembly a = method.DeclaringType.Assembly;
-
-			string message = null;
-			AssemblyName an = null;
-			PermissionSet granted = null;
-			PermissionSet refused = null;
-			object demanded = null;
-			IPermission failed = null;
-
-			if (a != null) {
-				an = a.UnprotectedGetName ();
-				granted = a.GrantedPermissionSet;
-				refused = a.DeniedPermissionSet;
-			}
-
-			switch (securityViolation) {
-			case 1: // MONO_JIT_LINKDEMAND_PERMISSION
-				message = Locale.GetText ("Permissions refused to call this method.");
-				break;
-			case 2: // MONO_JIT_LINKDEMAND_APTC
-				message = Locale.GetText ("Partially trusted callers aren't allowed to call into this assembly.");
-				demanded = (object) DefaultPolicies.FullTrust; // immutable
-				break;
-			case 4: // MONO_JIT_LINKDEMAND_ECMA
-				message = Locale.GetText ("Calling internal calls is restricted to ECMA signed assemblies.");
-				break;
-			case 8: // MONO_JIT_LINKDEMAND_PINVOKE
-				message = Locale.GetText ("Calling unmanaged code isn't allowed from this assembly.");
-				demanded = (object) _unmanagedCode;
-				failed = _unmanagedCode;
-				break;
-			default:
-				message = Locale.GetText ("JIT time LinkDemand failed.");
-				break;
-			}
-
-			throw new SecurityException (message, an, granted, refused, method, SecurityAction.LinkDemand, demanded, failed, null);
-		}
-
-		private static void InheritanceDemandSecurityException (int securityViolation, Assembly a, Type t, MethodInfo method)
-		{
-			string message = null;
-			AssemblyName an = null;
-			PermissionSet granted = null;
-			PermissionSet refused = null;
-
-			if (a != null) {
-				an = a.UnprotectedGetName ();
-				granted = a.GrantedPermissionSet;
-				refused = a.DeniedPermissionSet;
-			}
-
-			switch (securityViolation) {
-			case 1: // MONO_METADATA_INHERITANCEDEMAND_CLASS
-				message = String.Format (Locale.GetText ("Class inheritance refused for {0}."), t);
-				break;
-			case 2: // MONO_METADATA_INHERITANCEDEMAND_CLASS
-				message = Locale.GetText ("Method override refused.");
-				break;
-			default:
-				message = Locale.GetText ("Load time InheritDemand failed.");
-				break;
-			}
-
-			throw new SecurityException (message, an, granted, refused, method, SecurityAction.InheritanceDemand, null, null, null);
-		}
-
 		// called by the runtime when CoreCLR is enabled
 
 		private static void ThrowException (Exception ex)
@@ -733,61 +473,8 @@ namespace System.Security {
 			throw ex;
 		}
 
-		// internal - get called by the class loader
-
-		// Called when
-		// - class inheritance
-		// - method overrides
-		private unsafe static bool InheritanceDemand (AppDomain ad, Assembly a, RuntimeDeclSecurityActions *actions)
-		{
-			try {
-				PermissionSet ps = null;
-				bool result = true;
-				if (actions->cas.size > 0) {
-					ps = Decode (actions->cas.blob, actions->cas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
-					if (result) {
-						// also check appdomain
-						result = (SecurityManager.CheckPermissionSet (ad, ps) == null);
-					}
-				}
-				if (actions->noncas.size > 0) {
-					ps = Decode (actions->noncas.blob, actions->noncas.size);
-					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
-					if (result) {
-						// also check appdomain
-						result = (SecurityManager.CheckPermissionSet (ad, ps) == null);
-					}
-				}
-				return result;
-			}
-			catch (SecurityException) {
-				return false;
-			}
-		}
-
-		// internal - get called at JIT time
-
-		private static void DemandUnmanaged ()
-		{
-			UnmanagedCode.Demand ();
-		}
-
-		// internal - get called by JIT generated code
-
-		private static void InternalDemand (IntPtr permissions, int length)
-		{
-			PermissionSet ps = Decode (permissions, length);
-			ps.Demand ();
-		}
-
-		private static void InternalDemandChoice (IntPtr permissions, int length)
-		{
-			throw new SecurityException ("SecurityAction.DemandChoice was removed from 2.0");
-		}
 #pragma warning restore 169
 
-#if NET_4_0
 		public static PermissionSet GetStandardSandbox (Evidence evidence)
 		{
 			if (evidence == null)
@@ -800,7 +487,6 @@ namespace System.Security {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
 

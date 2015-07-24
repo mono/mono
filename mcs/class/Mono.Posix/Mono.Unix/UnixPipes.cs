@@ -34,9 +34,7 @@ using Mono.Unix;
 namespace Mono.Unix {
 
 	public struct UnixPipes
-#if NET_2_0
 		: IEquatable <UnixPipes>
-#endif
 	{
 		public UnixPipes (UnixStream reading, UnixStream writing)
 		{

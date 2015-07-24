@@ -96,16 +96,19 @@ namespace MonoTests.System.Threading
 
 			Assert.IsNotNull (exception, "#4");
 			Assert.That (exception, Is.TypeOf (typeof (ApplicationException)), "#5");
-			Assert.AreEqual (1, callTime, "#6");
+			Assert.AreEqual (2, callTime, "#6");
 		}
 
-		[Test, ExpectedException (typeof (InvalidOperationException))]
 		[Category ("NotDotNet")] // nunit results in stack overflow
 		public void MultipleReferenceToValueTest ()
 		{
-			threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
+			try {
+				threadLocal = new ThreadLocal<int> (() => threadLocal.Value + 1);
+				var v = threadLocal.Value;
 
-			var value = threadLocal.Value;
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException e) {
+			}
 		}
 
 		[Test]
@@ -173,6 +176,42 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (threadLocal.IsValueCreated, "#3");
 			Assert.AreEqual (42, threadLocal.Value, "#4");
 			Assert.AreEqual (1, nTimes, "#5");
+		}
+
+		class SetMreOnFinalize
+		{
+			ManualResetEventSlim m_mres;
+
+			public SetMreOnFinalize (ManualResetEventSlim mres)
+			{
+				m_mres = mres;
+			}
+
+			~SetMreOnFinalize()
+			{
+				m_mres.Set();
+			}
+		}
+
+		[Test]
+		public void DisposeOnThreadExit ()
+		{
+			var threadLocal = new ThreadLocal<SetMreOnFinalize>();
+			var mres = new ManualResetEventSlim(false);
+			var thread = new Thread (() => { threadLocal.Value = new SetMreOnFinalize (mres); });
+
+			thread.Start ();
+			thread.Join ();
+
+			SpinWait.SpinUntil (() => {
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				GC.Collect();
+				return mres.IsSet;
+			}, 500);
+
+			if (!mres.IsSet)
+				Assert.Fail ();
 		}
 	}
 }

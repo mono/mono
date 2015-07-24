@@ -43,17 +43,12 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
-#endif
-#if NET_4_5
 using System.Threading.Tasks;
-#endif
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
-#if NET_4_0
 		class Context : TransportContext
 		{
 			public override ChannelBinding GetChannelBinding (ChannelBindingKind kind)
@@ -61,7 +56,6 @@ namespace System.Net {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		string [] accept_types;
 		Encoding content_encoding;
@@ -168,7 +162,7 @@ namespace System.Net {
 
 			string path;
 			Uri raw_uri = null;
-			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
+			if (Uri.MaybeUri (raw_url.ToLowerInvariant ()) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else
 				path = raw_url;
@@ -193,6 +187,11 @@ namespace System.Net {
 			}
 
 			CreateQueryString (url.Query);
+
+			// Use reference source HttpListenerRequestUriBuilder to process url.
+			// Fixes #29927
+			url = HttpListenerRequestUriBuilder.GetRequestUri (raw_url, url.Scheme,
+								url.Authority, url.LocalPath, url.Query);
 
 			if (version >= HttpVersion.Version11) {
 				string t_encoding = Headers ["Transfer-Encoding"];
@@ -329,6 +328,9 @@ namespace System.Net {
 						return false;
 					if (InputStream.EndRead (ares) <= 0)
 						return true;
+				} catch (ObjectDisposedException e) {
+					input_stream = null;
+					return true;
 				} catch {
 					return false;
 				}
@@ -509,7 +511,6 @@ namespace System.Net {
 			return context.Connection.ClientCertificate;
 		}
 
-#if NET_4_0
 		[MonoTODO]
 		public string ServiceName {
 			get {
@@ -522,9 +523,7 @@ namespace System.Net {
 				return new Context ();
 			}
 		}
-#endif
 		
-#if NET_4_5
 		[MonoTODO]
 		public bool IsWebSocketRequest {
 			get {
@@ -536,7 +535,6 @@ namespace System.Net {
 		{
 			return Task<X509Certificate2>.Factory.FromAsync (BeginGetClientCertificate, EndGetClientCertificate, null);
 		}
-#endif
 	}
 }
 #endif

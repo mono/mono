@@ -37,24 +37,11 @@ namespace MonoTests.System.Data.Common {
 
 	public class NonAbstractDBDataPermission : DBDataPermission {
 
-#if !NET_2_0
-		public NonAbstractDBDataPermission () 
-			: base ()
-		{
-		}
-
-		public NonAbstractDBDataPermission (DBDataPermission permission, bool allowBlankPassword)
-			: base (permission)
-		{
-			AllowBlankPassword = allowBlankPassword;
-		}
-#else
 		// make Copy and CreateInstance work :)
 		public NonAbstractDBDataPermission () 
 			: base (PermissionState.None)
 		{
 		}
-#endif
 		public NonAbstractDBDataPermission (PermissionState state)
 			: base (state)
 		{
@@ -152,11 +139,7 @@ namespace MonoTests.System.Data.Common {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void Constructor_PermissionState_Invalid ()
 		{
 			PermissionState ps = (PermissionState) Int32.MinValue;
@@ -517,7 +500,7 @@ namespace MonoTests.System.Data.Common {
 		{
 			NonAbstractDBDataPermission empty = new NonAbstractDBDataPermission (PermissionState.None);
 			NonAbstractDBDataPermission union = (NonAbstractDBDataPermission) empty.Union (empty);
-			Assert.IsNotNull (union, "Empty U Empty");
+			Assert.IsNull (union, "Empty U Empty");
 
 			NonAbstractDBDataPermission dbdp1 = new NonAbstractDBDataPermission (PermissionState.None);
 			dbdp1.Add (defaultConnectString, String.Empty, KeyRestrictionBehavior.AllowOnly);

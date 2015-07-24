@@ -120,11 +120,7 @@ namespace System.Web.UI.WebControls
 			Page page = Page;
 			
 			options.ActionUrl = (PostBackUrl.Length > 0 ?
-#if TARGET_J2EE
-					     CreateActionUrl (PostBackUrl)
-#else
 					     page != null ? page.ResolveClientUrl (PostBackUrl) : PostBackUrl
-#endif
 					     : null);
 			options.ValidationGroup = null;
 			options.Argument = String.Empty;
@@ -264,11 +260,9 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set { ViewState ["ValidationGroup"] = value; }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 	}
 }
 

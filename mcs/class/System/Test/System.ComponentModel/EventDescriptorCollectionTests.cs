@@ -56,13 +56,8 @@ namespace MonoTests.System.ComponentModel
 			EventDescriptorCollection col = new EventDescriptorCollection (
 				new EventDescriptor [] { descA, descB, descC, descD, descE, descF });
 
-#if NET_2_0
 			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#1");
 			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#2");
-#else
-			Assert.AreSame (descB, col.Find ("heh_\u0061\u030a", false), "#1");
-			Assert.AreSame (descA, col.Find ("hehe_\u00e5", false), "#2");
-#endif
 			Assert.AreSame (descA, col.Find ("hehe_\u0061\u030a", false), "#3");
 			Assert.AreSame (descB, col.Find ("heh_\u00e5", false), "#4");
 			Assert.IsNull (col.Find ("foo", false), "#5");
@@ -96,11 +91,7 @@ namespace MonoTests.System.ComponentModel
 			IList list = ((IList) new EventDescriptorCollection (null));
 
 			Assert.AreEqual (0, list.Count, "#1");
-#if NET_2_0
 			Assert.IsFalse (list.IsFixedSize, "#2");
-#else
-			Assert.IsTrue (list.IsFixedSize, "#2");
-#endif
 			Assert.IsFalse (list.IsReadOnly, "#3");
 			Assert.IsFalse (list.IsSynchronized, "#4");
 			Assert.IsNull (list.SyncRoot, "#5");
@@ -139,13 +130,8 @@ namespace MonoTests.System.ComponentModel
 			EventDescriptorCollection col = new EventDescriptorCollection (
 				new EventDescriptor [] { descA, descB, descC, descD, descE, descF });
 
-#if NET_2_0
 			Assert.IsNull (col ["heh_\u0061\u030a"], "#1");
 			Assert.IsNull (col ["hehe_\u00e5"], "#2");
-#else
-			Assert.AreSame (descB, col ["heh_\u0061\u030a"], "#1");
-			Assert.AreSame (descA, col ["hehe_\u00e5"], "#2");
-#endif
 			Assert.AreSame (descA, col ["hehe_\u0061\u030a"], "#3");
 			Assert.AreSame (descB, col ["heh_\u00e5"], "#4");
 			Assert.IsNull (col ["foo"], "#5");
@@ -157,14 +143,12 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsNull (col [(string) null], "#11");
 		}
 
-#if NET_2_0
 		public void ReadOnly ()
 		{
 			EventDescriptorCollection descriptors = new EventDescriptorCollection (
 				(EventDescriptor []) null, true);
 			AssertReadOnly (descriptors, "ReadOnly");
 		}
-#endif
 
 		[Test] // Sort ()
 		public void Sort1 ()
@@ -478,11 +462,7 @@ namespace MonoTests.System.ComponentModel
 
 			IList list = (IList) descriptors;
 			Assert.IsTrue (((IList) descriptors).IsReadOnly, testCase + "#9");
-#if NET_2_0
 			Assert.IsTrue (((IList) descriptors).IsFixedSize, testCase + "#10");
-#else
-			Assert.IsFalse (((IList) descriptors).IsFixedSize, testCase + "#10");
-#endif
 
 			try {
 				list.Add (desc);

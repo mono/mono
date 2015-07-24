@@ -8,8 +8,8 @@ For comments, corrections and updates, please contact mono@xamarin.com
 
 	Parts of Mono are dual licensed, they are available to the
 	public in GPL or LGPL forms, but we also offer those pieces
-	under commercial terms from Xamarin for the cases wher the GPL
-	and the LGPL are not suitable.
+	under commercial terms from Xamarin for the cases where the
+	GPL and the LGPL are not suitable.
 
 	We have tried to pick the licenses that will maximize adoption
 	of Mono, so we tend to use the MIT X11 or LGPL liceses.

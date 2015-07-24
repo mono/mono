@@ -861,7 +861,7 @@ namespace TestRunner {
 
 				if (md.MethodAttributes != (int) mi.Attributes) {
 					checker.HandleFailure (test.FileName, PositiveChecker.TestResult.MethodAttributesError,
-						string.Format ("{0} ({1} -> {2})", decl_type + ": " + m_name, md.MethodAttributes, mi.Attributes));
+						string.Format ("{0} ({1} -> {2})", decl_type + ": " + m_name, (MethodAttributes) md.MethodAttributes, mi.Attributes));
 				}
 
 				md.MethodAttributes = (int) mi.Attributes;

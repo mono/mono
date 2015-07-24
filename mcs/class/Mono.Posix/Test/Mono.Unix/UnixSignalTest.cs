@@ -8,15 +8,17 @@
 //
 
 using NUnit.Framework;
+#if !MONODROID
 using NUnit.Framework.SyntaxHelpers;
+#endif
 using System;
 using System.Text;
 using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
-
+#if !MONODROID
 namespace NUnit.Framework.SyntaxHelpers { class Dummy {} }
-
+#endif
 namespace MonoTests.Mono.Unix {
 
 	[TestFixture]
@@ -375,6 +377,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Android 4.4.4 doesn't have signal(2)
 		public void TestSignalActionInteraction ()
 		{
 			using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {

@@ -22,7 +22,7 @@ DISTFILES = \
 
 TEST_SUPPORT_FILES = \
 	CS0012-lib.dll CS0012-2-lib.dll CS0012-3-lib.dll CS0012-4-lib.dll CS0012-5-lib.dll CS0012-6-lib.dll CS0012-9-lib.dll CS0012-10-lib.dll CS0012-11-lib.dll CS0012-12-lib.dll CS0012-13-lib.dll CS0012-14-lib.dll CS0012-15-lib.dll CS0012-16-lib.dll CS0012-17-lib.dll CS0012-18-lib.dll CS0012-21-lib.dll CS0012-22-lib.dll CS0012-23-lib.dll CS0012-24-lib.dll CS0019-71-lib.dll CS0029-26-lib.dll \
-	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-8-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0122-36-lib.dll CS0143-lib.dll CS0144-3-lib.dll CS0165-19-lib.dll \
+	CS0103-2-lib.dll CS0118-2-lib.dll CS0122-8-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0122-19-lib.dll CS0122-35-lib.dll CS0122-36-lib.dll CS0122-38-lib.dll CS0143-lib.dll CS0144-3-lib.dll CS0165-19-lib.dll CS0165-51-lib.dll \
 	CS0205-3-lib.dll CS0246-29-lib.dll CS0229-3-lib.dll CS0229-4-lib.dll CS0266-25-lib.dll \
 	CS0315-2-lib.dll \
 	CS0425-7-lib.dll CS0433-lib.dll CS0433-2-lib.dll \
@@ -32,18 +32,21 @@ TEST_SUPPORT_FILES = \
 	CS0730-lib.dll CS0731-1-lib.dll CS0731-2-lib.dll \
 	CS1070-lib.dll \
 	CS1540-15-lib.dll CS1540-17-lib.dll CS1542-lib.dll CS1577-lib.dll \
-	CS1683-lib.dll CS1684-lib.dll CS1685-2-lib.dll \
+	CS1683-lib.dll CS1685-2-lib.dll \
 	dlls/first/CS1701-lib.dll dlls/second/CS1701-lib.dll CS1701-lib.dll dlls/first/CS1702-lib.dll dlls/second/CS1702-lib.dll CS1702-lib.dll dlls/first/CS1705-lib.dll dlls/second/CS1705-lib.dll CS1705-lib.dll \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
+	CS7069-lib.dll \
 	CS8009-lib.dll \
 	CSFriendAssembly-lib.dll \
 	dlls/first/CS1703-lib.dll dlls/first/CS1704-lib.dll \
 	dlls/second/CS1703-lib.dll dlls/second/CS1704-lib.dll
 
+-include $(mcs_topdir)/build/config.make
+
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter $(DEFAULT_PROFILE), $(PROFILE))
 ifdef VALID_PROFILE
 
 qcheck: run-mcs-tests 

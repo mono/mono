@@ -39,6 +39,8 @@ using System.Data;
 using System.Data.Common;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Diagnostics;
+using System.Globalization;
 
 using Mono.Data.Tds.Protocol;
 
@@ -47,6 +49,70 @@ namespace System.Data.SqlClient
 	[Serializable]
 	public sealed class SqlException : DbException
 	{
+#region ReferenceSource
+        internal SqlException InternalClone() {
+		var ret = new SqlException ();
+		foreach (SqlError e in errors)
+			ret.errors.Add (e);
+		return ret;
+        }
+
+        static internal SqlException CreateException(SqlErrorCollection errorCollection, string serverVersion) {
+            return CreateException(errorCollection, serverVersion, Guid.Empty);
+        }
+
+        static internal SqlException CreateException(SqlErrorCollection errorCollection, string serverVersion, SqlInternalConnectionTds internalConnection, Exception innerException = null) {
+            Guid connectionId = Guid.Empty;
+            var exception = CreateException(errorCollection, serverVersion, connectionId, innerException);
+/*
+            if (internalConnection != null) { 
+                if ((internalConnection.OriginalClientConnectionId != Guid.Empty) && (internalConnection.OriginalClientConnectionId != internalConnection.ClientConnectionId)) {
+                    exception.Data.Add(OriginalClientConnectionIdKey, internalConnection.OriginalClientConnectionId);
+                }
+
+                if (!string.IsNullOrEmpty(internalConnection.RoutingDestination)) {
+                    exception.Data.Add(RoutingDestinationKey, internalConnection.RoutingDestination);
+                }
+            }
+*/
+            return exception;
+        }
+
+
+        static internal SqlException CreateException(SqlErrorCollection errorCollection, string serverVersion, Guid conId, Exception innerException = null) {
+            Debug.Assert(null != errorCollection && errorCollection.Count > 0, "no errorCollection?");
+            
+            // concat all messages together MDAC 65533
+            StringBuilder message = new StringBuilder();
+            for (int i = 0; i < errorCollection.Count; i++) {
+                if (i > 0) {
+                    message.Append(Environment.NewLine);
+                }
+                message.Append(errorCollection[i].Message);
+            }
+
+            if (innerException == null && errorCollection[0].Win32ErrorCode != 0 && errorCollection[0].Win32ErrorCode != -1) {
+                innerException = new Win32Exception(errorCollection[0].Win32ErrorCode);
+            }
+
+            SqlException exception = new SqlException(message.ToString(), /*errorCollection, */innerException/*, conId*/);
+
+            exception.Data.Add("HelpLink.ProdName",    "Microsoft SQL Server");
+
+            if (!ADP.IsEmpty(serverVersion)) {
+                exception.Data.Add("HelpLink.ProdVer", serverVersion);
+            }
+            exception.Data.Add("HelpLink.EvtSrc",      "MSSQLServer");
+            exception.Data.Add("HelpLink.EvtID",       errorCollection[0].Number.ToString(CultureInfo.InvariantCulture));
+            exception.Data.Add("HelpLink.BaseHelpUrl", "http://go.microsoft.com/fwlink");
+            exception.Data.Add("HelpLink.LinkId",      "20476");
+
+            return exception;
+        }
+
+        internal bool _doNotReconnect = false;
+#endregion
+
 		#region Fields
 
 		private readonly SqlErrorCollection errors;
@@ -78,9 +144,7 @@ namespace System.Data.SqlClient
 		internal SqlException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
 			: this (null, 
 				null, 
-				new SqlError (theClass, lineNumber, message, 
-					      number, procedure, server, source, 
-					      state)) 
+				new SqlError (number, state, theClass, server, message, procedure, lineNumber, 0))
 		{
 		}
 		
@@ -151,10 +215,9 @@ namespace System.Data.SqlClient
 
 		internal static SqlException FromTdsInternalException (TdsInternalException e)
 		{
-			SqlError sqlError = new SqlError (e.Class, e.LineNumber, e.Message,
+			return new SqlException (e.Class, e.LineNumber, e.Message,
 							  e.Number, e.Procedure, e.Server,
 							  "Mono SqlClient Data Provider", e.State);
-			return new SqlException (null, e, sqlError);
 		}
 
 		public override void GetObjectData (SerializationInfo si, StreamingContext context) 

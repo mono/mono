@@ -110,7 +110,6 @@ namespace System.Web.Services.Protocols {
 			if (!defaultAdded && !isClientSide)
 				AddBindingAt (0, new BindingInfo (null, defaultBindingName, logicalType.WebServiceNamespace));
 
-#if NET_2_0
 			foreach (Type ifaceType in Type.GetInterfaces ()) {
 				o = ifaceType.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
 				if (o.Length > 0) {
@@ -119,17 +118,14 @@ namespace System.Web.Services.Protocols {
 						AddBinding (new BindingInfo (at, defaultBindingName, LogicalType.WebServiceNamespace));
 				}
 			}
-#endif
 		}
 		
-#if NET_2_0
 		public WsiProfiles WsiClaims {
 			get {
 				return (((BindingInfo) Bindings [0]).WebServiceBindingAttribute != null) ?
 					((BindingInfo) Bindings [0]).WebServiceBindingAttribute.ConformsTo : WsiProfiles.None;
 			}
 		}
-#endif
 		
 		public LogicalTypeInfo LogicalType
 		{

@@ -183,22 +183,14 @@ namespace MonoTests.System.Data
 			string msg = string.Format (CultureInfo.InvariantCulture,
 					"Invalid value '{0}' for attribute {1}.",
 					value, name);
-#if NET_2_0
 			throw new ConfigurationErrorsException (msg, cause, node);
-#else
-			throw new ConfigurationException (msg, cause, node);
-#endif
 		}
 
 		static Exception CreateAttributeMissingException (string name, XmlNode node)
 		{
 			string msg = string.Format (CultureInfo.InvariantCulture,
 				"Missing '{0}' attribute.", name);
-#if NET_2_0
 			throw new ConfigurationErrorsException (msg, node);
-#else
-			throw new ConfigurationException (msg, node);
-#endif
 		}
 	}
 }

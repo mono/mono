@@ -263,11 +263,7 @@ namespace Test.Sys.Drawing {
 			sr.Read(buffer, 0, 4);
 			sr.Close();
 
-#if NET_2_0
 			int i = 1;
-#else
-			int i = 0;
-#endif
 			Assert.AreEqual('P', buffer[i++]);
 			Assert.AreEqual('N', buffer[i++]);
 			Assert.AreEqual('G', buffer[i++]);

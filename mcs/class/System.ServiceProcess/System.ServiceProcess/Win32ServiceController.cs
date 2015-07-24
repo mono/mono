@@ -591,13 +591,8 @@ namespace System.ServiceProcess
 			IntPtr buffer = IntPtr.Zero;
 
 			try {
-#if NET_2_0
 				scHandle = OpenServiceControlManager (machineName, 
 					SERVICE_MANAGER_RIGHTS.SC_MANAGER_ENUMERATE_SERVICE);
-#else
-				scHandle = OpenServiceControlManager (machineName,
-					SERVICE_MANAGER_RIGHTS.SC_MANAGER_ENUMERATE_SERVICE, true);
-#endif
 
 				uint bufferSize = 0;
 				uint bytesNeeded = 0;

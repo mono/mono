@@ -425,7 +425,6 @@ namespace MonoTests.System.CodeDom.Compiler
 			return value;
 		}
 
-#if NET_2_0
 		protected override void GenerateDirectives (CodeDirectiveCollection directives)
 		{
 			foreach (CodeDirective d in directives) {
@@ -444,7 +443,6 @@ namespace MonoTests.System.CodeDom.Compiler
 				}
 			}
 		}
-#endif
 
 		#endregion Override implementation of CodeGenerator
 	}

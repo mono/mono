@@ -64,28 +64,21 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (SoapHeaderBinding));
 //			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
-#if NET_2_0
 			RegisterExtensionType (typeof (Soap12AddressBinding));
 			RegisterExtensionType (typeof (Soap12Binding));
 			RegisterExtensionType (typeof (Soap12BodyBinding));
 			RegisterExtensionType (typeof (Soap12FaultBinding));
 			RegisterExtensionType (typeof (Soap12HeaderBinding));
 			RegisterExtensionType (typeof (Soap12OperationBinding));
-#endif
 
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 			/*
 			 * Currently, the mobile profile has not support for
 			 * System.Configuration, so there are no external modules
 			 * defined
 			 */
-#if NET_2_0 
 			foreach (TypeElement el in WebServicesSection.Current.ServiceDescriptionFormatExtensionTypes)
 				RegisterExtensionType (el.Type);
-#else
-			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
-				RegisterExtensionType (type);
-#endif
 #endif
 			CreateExtensionSerializers ();
 		}
@@ -171,7 +164,7 @@ namespace System.Web.Services.Description
 		/*
 		 * The mobile profile lacks support for configuration
 		 */
-#if MOBILE
+#if MOBILE || XAMMAC_4_5
 		public static ArrayList BuildExtensionImporters ()
 		{
 			return new ArrayList (0);
@@ -185,61 +178,28 @@ namespace System.Web.Services.Description
 #else
 		public static ArrayList BuildExtensionImporters ()
 		{
-#if NET_2_0
 			return BuildExtensionList (WebServicesSection.Current.SoapExtensionImporterTypes);
-#else
-			return BuildExtensionList (WSConfig.Instance.ExtensionImporterTypes);
-#endif
 		}
 		
 		public static ArrayList BuildExtensionReflectors ()
 		{
-#if NET_2_0
 			return BuildExtensionList (WebServicesSection.Current.SoapExtensionReflectorTypes);
-#else
-			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
-#endif
 		}
 
-#if NET_2_0
 		public static ArrayList BuildExtensionList (TypeElementCollection exts)
-#else
-		public static ArrayList BuildExtensionList (ArrayList exts)
-#endif
 		{
 			ArrayList extensionTypes = new ArrayList ();
 			
 			if (exts != null)
 			{
-#if NET_2_0 
 				foreach (TypeElement econf in exts)
 				{
 					extensionTypes.Add (econf);
 				}
-#else
-				foreach (WSExtensionConfig econf in exts)
-				{
-					bool added = false;
-					for (int n=0; n<extensionTypes.Count && !added; n++)
-					{
-						WSExtensionConfig cureconf = (WSExtensionConfig) extensionTypes [n];
-	
-						if ((econf.Group < cureconf.Group) || ((econf.Group == cureconf.Group) && (econf.Priority < cureconf.Priority))) {
-							extensionTypes.Insert (n, econf);
-							added = true;
-						}
-					}
-					if (!added) extensionTypes.Add (econf);
-				}
-#endif
 			}
 
 			ArrayList extensions = new ArrayList (extensionTypes.Count);
-#if NET_2_0
 			foreach (TypeElement econf in extensionTypes)
-#else
-			foreach (WSExtensionConfig econf in extensionTypes)
-#endif
 				extensions.Add (Activator.CreateInstance (econf.Type));
 				
 			return extensions;

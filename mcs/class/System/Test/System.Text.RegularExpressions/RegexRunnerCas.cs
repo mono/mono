@@ -114,9 +114,7 @@ namespace MonoCasTests.System.Text.RegularExpressions {
 			TransferCapture (0, 0, 0, 0);
 			Uncapture ();
 			Assert.IsNotNull (Scan (new Regex (String.Empty), "mono", 0, 0, 0, 0, true), "Scan");
-#if NET_2_0
 			Assert.IsTrue (CharInSet ('a', "a", String.Empty), "CharInSet");
-#endif
 		}
 	}
 

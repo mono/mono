@@ -15,7 +15,6 @@ namespace MonoTests.System.Text
 	[TestFixture]
 	public class EncoderTest
 	{
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConvertNullChars ()
@@ -143,6 +142,5 @@ namespace MonoTests.System.Text
 				throw new NotSupportedException ();
 			}
 		}
-#endif
 	}
 }

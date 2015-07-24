@@ -71,7 +71,7 @@ namespace System
 					realTarget = info.GetValue (target.ToString(), typeof(object));
 
 				var key = "method" + index;
-				var method = info.HasKey (key) ? (MethodInfo)info.GetValue (key, typeof (MethodInfo)) : null;
+				var method = (MethodInfo)info.GetValueNoThrow (key, typeof(MethodInfo));
 
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);

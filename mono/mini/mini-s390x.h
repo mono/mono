@@ -5,7 +5,7 @@
 #include <mono/utils/mono-context.h>
 #include <signal.h>
 
-#define MONO_ARCH_CPU_SPEC s390x_cpu_desc
+#define MONO_ARCH_CPU_SPEC mono_s390x_cpu_desc
 
 #define MONO_MAX_IREGS 16
 #define MONO_MAX_FREGS 16
@@ -47,11 +47,10 @@ typedef struct
 #define MONO_ARCH_NEED_DIV_CHECK			1
 #define MONO_ARCH_SIGNAL_STACK_SIZE 			256*1024
 #define MONO_ARCH_HAVE_DECOMPOSE_OPTS 			1
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE	1
 #define MONO_ARCH_HAVE_TLS_GET				1
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR			1
 #define MONO_ARCH_IMT_REG				s390_r9
-#define MONO_ARCH_VTABLE_REG				MONO_ARCH_IMT_REG
+#define MONO_ARCH_VTABLE_REG				S390_FIRST_ARG_REG
 #define MONO_ARCH_RGCTX_REG				MONO_ARCH_IMT_REG
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX		1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED			1
@@ -62,17 +61,16 @@ typedef struct
 #define MONO_ARCH_MONITOR_ENTER_ADJUSTMENT		1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD		1
 #define MONO_ARCH_HAVE_INVALIDATE_METHOD		1
+#define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT		1
+#define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK		1
+#define MONO_ARCH_MONITOR_OBJECT_REG			s390_r2
+#define MONO_ARCH_LOCK_TAKEN_REG			s390_r1
 
 #define S390_STACK_ALIGNMENT		 8
 #define S390_FIRST_ARG_REG 		s390_r2
 #define S390_LAST_ARG_REG 		s390_r6
 #define S390_FIRST_FPARG_REG 		s390_f0
 #define S390_LAST_FPARG_REG 		s390_f6
-#define S390_PASS_STRUCTS_BY_VALUE 	 1
-#define S390_SMALL_RET_STRUCT_IN_REG	 1
-
-#define S390_NUM_REG_ARGS (S390_LAST_ARG_REG-S390_FIRST_ARG_REG+1)
-#define S390_NUM_REG_FPARGS ((S390_LAST_FPARG_REG-S390_FIRST_FPARG_REG)/2)
 
 /*===============================================*/
 /* Definitions used by mini-codegen.c            */
@@ -101,7 +99,8 @@ typedef struct
 #define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? s390_r2 : 		\
-					((desc == 'g') ? s390_f0 : - 1))
+					((desc == 'g') ? s390_f0 : 		\
+					((desc == 'A') ? S390_FIRST_ARG_REG : -1)))
 
 #define MONO_ARCH_INST_IS_FLOAT(desc)  ((desc == 'f') || (desc == 'g'))
 
@@ -114,8 +113,6 @@ typedef struct
 
 #define MONO_ARCH_FRAME_ALIGNMENT 8
 #define MONO_ARCH_CODE_ALIGNMENT 32
-
-#define MONO_ARCH_RETREG1 s390_r2
 
 /*-----------------------------------------------*/
 /* Macros used to generate instructions          */

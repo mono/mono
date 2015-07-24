@@ -1639,6 +1639,34 @@ ncells ) {
 		var s = EmptyClass.s;
 		return 0;
 	}
+
+	// #25487
+	static int test_0_int_to_r4 () {
+		return int_to_r4_inner (255);
+	}
+
+	static int int_to_r4_inner (int value1) {
+		int sub = -value1;
+		float mult = sub * 1f;
+		if (mult != -255.0f)
+			return 1;
+		else
+			return 0;
+	}
+
+	struct HFA4D {
+		public double a, b, c, d;
+	}
+
+	static double arm64_hfa_on_stack_inner (double d1, double d2, double d3, double d4, double d5, double d6, double d7, double d8, HFA4D s) {
+		return s.a + s.b + s.c + s.d;
+	}
+
+	static int test_0_arm64_hfa_on_stack () {
+		var s = new HFA4D () { a = 1.0, b = 2.0, c = 3.0, d = 4.0 };
+		var res = arm64_hfa_on_stack_inner (1, 2, 3, 4, 5, 6, 7, 8, s);
+		return res == 10.0 ? 0 : 1;
+	}
 }
 
 #if MOBILE

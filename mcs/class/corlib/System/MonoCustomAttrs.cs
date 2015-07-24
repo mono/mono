@@ -34,6 +34,7 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 #if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
@@ -79,7 +80,7 @@ namespace System
 			else if (obj is ParameterInfo)
 				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributes ();
 			else if (obj is Type)
-				pseudoAttrs = ((Type)obj).GetPseudoCustomAttributes ();
+				pseudoAttrs = GetPseudoCustomAttributes (((Type)obj));
 
 			if ((attributeType != null) && (pseudoAttrs != null)) {
 				for (int i = 0; i < pseudoAttrs.Length; ++i)
@@ -92,6 +93,30 @@ namespace System
 			}
 
 			return pseudoAttrs;
+		}
+
+		static object[] GetPseudoCustomAttributes (Type type)
+		{
+			int count = 0;
+			var Attributes = type.Attributes;
+
+			/* IsSerializable returns true for delegates/enums as well */
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				count ++;
+			if ((Attributes & TypeAttributes.Import) != 0)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				attrs [count ++] = new SerializableAttribute ();
+			if ((Attributes & TypeAttributes.Import) != 0)
+				attrs [count ++] = new ComImportAttribute ();
+
+			return attrs;
 		}
 
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
@@ -117,25 +142,6 @@ namespace System
 			}
 
 			return attrs;
-		}
-
-		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
-								Type attributeType,
-								bool inherit)
-		{
-			object[] res = GetCustomAttributes (obj, attributeType, inherit);
-			if (res.Length == 0)
-			{
-				return null;
-			}
-			else if (res.Length > 1)
-			{
-				string msg = "'{0}' has more than one attribute of type '{1}";
-				msg = String.Format (msg, obj, attributeType);
-				throw new AmbiguousMatchException (msg);
-			}
-
-			return (Attribute) res[0];
 		}
 
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)

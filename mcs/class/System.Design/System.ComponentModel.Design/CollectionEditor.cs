@@ -382,14 +382,10 @@ namespace System.ComponentModel.Design
 				this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 				this.ResumeLayout (false);
 
-#if NET_2_0
 				if (editor.CollectionType.IsGenericType)
 					this.Text = editor.CollectionItemType.Name + " Collection Editor";
 				else
 					this.Text = editor.CollectionType.Name + " Collection Editor";
-#else
-				this.Text = editor.CollectionType.Name + " Collection Editor";
-#endif
 				foreach (Type type in editor.NewItemTypes)
 					addType.Items.Add (type.Name);
 				if (addType.Items.Count > 0)
@@ -632,11 +628,7 @@ namespace System.ComponentModel.Design
 			}
 
 			if (instance == null) {
-#if NET_2_0
 				instance = TypeDescriptor.CreateInstance (provider, itemType, null, null);
-#else
-				instance =  Activator.CreateInstance (itemType);
-#endif
 			}
 			return instance;
 		}

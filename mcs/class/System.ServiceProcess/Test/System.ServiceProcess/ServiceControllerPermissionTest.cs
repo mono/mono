@@ -83,9 +83,7 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void PermissionState_Bad ()
 		{
 			PermissionState ps = (PermissionState)77;
@@ -214,11 +212,7 @@ namespace MonoTests.System.ServiceProcess {
 		public void IsSubset_Null ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
-#if NET_2_0
 			Assert.IsTrue (scp.IsSubsetOf (null), "null");
-#else
-			Assert.IsFalse (scp.IsSubsetOf (null), "null");
-#endif
 		}
 
 		[Test]
@@ -337,12 +331,7 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		// Problem inherited from ResourcePermissionBase
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void FromXml_Null ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
@@ -350,9 +339,7 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTag ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);
@@ -364,9 +351,7 @@ namespace MonoTests.System.ServiceProcess {
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void FromXml_WrongTagCase ()
 		{
 			ServiceControllerPermission scp = new ServiceControllerPermission (PermissionState.None);

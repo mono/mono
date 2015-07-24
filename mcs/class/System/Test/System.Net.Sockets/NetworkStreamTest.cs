@@ -18,7 +18,6 @@ namespace MonoTests.System.Net.Sockets
 	[TestFixture]
 	public class NetworkStreamTest
 	{
-#if NET_2_0
 	        [Test]
 		// See bug #371923
 		[ExpectedException(typeof(IOException))]
@@ -71,6 +70,5 @@ namespace MonoTests.System.Net.Sockets
 				listen.Close ();
 			}
 		}
-#endif
 	}
 }

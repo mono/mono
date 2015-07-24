@@ -57,7 +57,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
-#if NET_2_0
 		public bool IsDataBoundByDataSourceId {
 			get { return base.IsBoundUsingDataSourceID; }
 		}
@@ -73,7 +72,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public DataSourceSelectArguments Arguments {
 			get { return base.SelectArguments; }
 		}
-#endif
 		public void Add (object o)
 		{
 			base.AddParsedSubObject (o);
@@ -100,7 +98,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			OnSelectedIndexChanged (e);
 		}
-#if NET_2_0
 		public DataSourceSelectArguments CreateArguments ()
 		{
 			return base.CreateDataSourceSelectArguments ();
@@ -120,7 +117,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			base.EnsureDataBound ();
 		}
-#endif
 		public bool DataBindingCalled {
 			get { return dataBindingCalled; }
 			set { dataBindingCalled = value; }
@@ -131,7 +127,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dataBindingCalled = true;
 			base.OnDataBinding (e);
 		}
-#if NET_2_0
 		private bool dataPropertyChangedCalled;
 		private bool dataSourceViewChangedCalled;
 		private bool initCalled;
@@ -212,7 +207,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			base.OnPreRender (e);
 		}
-#endif
 	}
 
 	public class TestDataSource : IListSource {
@@ -236,7 +230,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 	}
 
-#if NET_2_0
 	public class Test2DataSource : WebControl, IDataSource {
 
 		public DataSourceView GetView (string viewName)
@@ -267,7 +260,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return al;
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class BaseDataListTest {
@@ -315,9 +307,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (GridLines.Both, bdl.GridLines, "GridLines");
 			Assert.AreEqual (HorizontalAlign.NotSet, bdl.HorizontalAlign, "HorizontalAlign");
 			Assert.IsFalse (bdl.UseAccessibleHeader, "UseAccessibleHeader");
-#if NET_2_0
 			Assert.AreEqual (String.Empty, bdl.DataSourceID, "DataSourceID");
-#endif
 			Assert.AreEqual (0, bdl.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, bdl.StateBag.Count, "ViewState.Count-2");
 
@@ -351,13 +341,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsNull (bdl.DataSource, "DataSource");
 			bdl.UseAccessibleHeader = false;
 			Assert.IsFalse (bdl.UseAccessibleHeader, "UseAccessibleHeader");
-#if NET_2_0
 			bdl.DataSourceID = String.Empty;
 			Assert.AreEqual (String.Empty, bdl.DataSourceID, "DataSourceID");
 			Assert.AreEqual (3, bdl.StateBag.Count, "ViewState.Count-3");
-#else
-			Assert.AreEqual (2, bdl.StateBag.Count, "ViewState.Count-3");
-#endif
 			Assert.AreEqual (0, bdl.Attributes.Count, "Attributes.Count-2");
 		}
 
@@ -545,7 +531,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			bdl.DataBind ();
 			Assert.IsTrue (bdl.DataBindingCalled, "After DataBind");
 		}
-#if NET_2_0
 		[Test]
 		public void DataSourceID ()
 		{
@@ -792,7 +777,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (bdl.IsInitialized, "IsInitialized");
 			Assert.IsTrue (bdl.RequiresDataBind, "RequiresDataBind");
 		}
-#endif
 		[Test]
 		public void IsBindableType ()
 		{

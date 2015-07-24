@@ -14,38 +14,40 @@ typedef enum {
         MONO_TRACE_CONFIG		= (1<<4),
 	MONO_TRACE_AOT			= (1<<5),
 	MONO_TRACE_SECURITY		= (1<<6),
+	MONO_TRACE_THREADPOOL		= (1<<7),
 	MONO_TRACE_ALL			= MONO_TRACE_ASSEMBLY |
 					  MONO_TRACE_TYPE |
 					  MONO_TRACE_DLLIMPORT |
 					  MONO_TRACE_GC |
 					  MONO_TRACE_CONFIG |
 					  MONO_TRACE_AOT |
-					  MONO_TRACE_SECURITY
+					  MONO_TRACE_SECURITY |
+					  MONO_TRACE_THREADPOOL
 } MonoTraceMask;
 
 void 
-mono_trace_cleanup (void) MONO_INTERNAL;
+mono_trace_cleanup (void);
 
 void 
-mono_trace (GLogLevelFlags level, MonoTraceMask mask, const char *format, ...) MONO_INTERNAL;
+mono_trace (GLogLevelFlags level, MonoTraceMask mask, const char *format, ...);
 
 void 
-mono_tracev (GLogLevelFlags level, MonoTraceMask mask, const char *format, va_list args) MONO_INTERNAL;
+mono_tracev (GLogLevelFlags level, MonoTraceMask mask, const char *format, va_list args);
 
 void 
-mono_trace_set_level (GLogLevelFlags level) MONO_INTERNAL;
+mono_trace_set_level (GLogLevelFlags level);
 
 void 
-mono_trace_set_mask (MonoTraceMask mask) MONO_INTERNAL;
+mono_trace_set_mask (MonoTraceMask mask);
 
 void 
-mono_trace_push (GLogLevelFlags level, MonoTraceMask mask) MONO_INTERNAL;
+mono_trace_push (GLogLevelFlags level, MonoTraceMask mask);
 
 void 
-mono_trace_pop (void) MONO_INTERNAL;
+mono_trace_pop (void);
 
 gboolean
-mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask) MONO_INTERNAL;
+mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask);
 
 #ifdef G_HAVE_ISO_VARARGS
 #define mono_trace_error(...)	mono_trace(G_LOG_LEVEL_ERROR, \
@@ -93,7 +95,7 @@ mono_trace_message(MonoTraceMask mask, const char *format, ...)
 
 #if defined (PLATFORM_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
 
-#define mono_gc_printf(gc_log_file, format, ...) g_log ("mono-gc", G_LOG_LEVEL_MESSAGE, format "\n", ##__VA_ARGS__)
+#define mono_gc_printf(gc_log_file, format, ...) g_log ("mono-gc", G_LOG_LEVEL_MESSAGE, format, ##__VA_ARGS__)
 #define mono_runtime_printf(format, ...) g_log ("mono-rt", G_LOG_LEVEL_MESSAGE, format "\n", ##__VA_ARGS__)
 #define mono_runtime_printf_err(format, ...) g_log ("mono-rt", G_LOG_LEVEL_CRITICAL, format "\n", ##__VA_ARGS__)
 #define mono_runtime_stdout_fflush() do { } while (0)
@@ -101,7 +103,7 @@ mono_trace_message(MonoTraceMask mask, const char *format, ...)
 #else
 
 #define mono_gc_printf(gc_log_file, format, ...) do {	\
-	fprintf (gc_log_file, format "\n", ##__VA_ARGS__);	\
+	fprintf (gc_log_file, format, ##__VA_ARGS__);	\
 	fflush (gc_log_file);	\
 } while (0)
 

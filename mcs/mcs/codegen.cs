@@ -262,9 +262,7 @@ namespace Mono.CSharp
 			if (sf.IsHiddenLocation (loc))
 				return false;
 
-#if NET_4_0
 			methodSymbols.MarkSequencePoint (ig.ILOffset, sf.SourceFileEntry, loc.Row, loc.Column, false);
-#endif
 			return true;
 		}
 
@@ -324,9 +322,7 @@ namespace Mono.CSharp
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return;
 
-#if NET_4_0
 			methodSymbols.StartBlock (CodeBlockEntry.Type.Lexical, ig.ILOffset);
-#endif
 		}
 
 		public void BeginCompilerScope ()
@@ -334,9 +330,7 @@ namespace Mono.CSharp
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return;
 
-#if NET_4_0
 			methodSymbols.StartBlock (CodeBlockEntry.Type.CompilerGenerated, ig.ILOffset);
-#endif
 		}
 
 		public void EndExceptionBlock ()
@@ -349,9 +343,7 @@ namespace Mono.CSharp
 			if ((flags & Options.OmitDebugInfo) != 0)
 				return;
 
-#if NET_4_0
 			methodSymbols.EndBlock (ig.ILOffset);
-#endif
 		}
 
 		public void CloseConditionalAccess (TypeSpec type)
@@ -895,6 +887,9 @@ namespace Mono.CSharp
 					type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
 
 				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
+				break;
+			case MemberKind.PointerType:
+				ig.Emit (OpCodes.Stind_I);
 				break;
 			default:
 				ig.Emit (OpCodes.Stind_Ref);

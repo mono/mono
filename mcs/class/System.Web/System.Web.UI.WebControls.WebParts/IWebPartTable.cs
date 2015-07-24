@@ -28,7 +28,6 @@
 //
 
 
-#if NET_2_0
 
 using System.Collections;
 using System.ComponentModel;
@@ -43,5 +42,4 @@ namespace System.Web.UI.WebControls.WebParts
 
 	public delegate void TableCallback (ICollection tableData);
 }
-#endif
 

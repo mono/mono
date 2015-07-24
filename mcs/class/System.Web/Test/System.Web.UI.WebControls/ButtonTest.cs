@@ -65,7 +65,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}		
-#if NET_2_0
 		public new PostBackOptions GetPostBackOptions ()
 		{
 			return base.GetPostBackOptions ();
@@ -80,7 +79,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.RaisePostBackEvent (eventArgument);
 		}
-#endif
 	}
 
 
@@ -111,19 +109,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, b.CausesValidation, "CausesValidation");
 			Assert.AreEqual (string.Empty, b.CommandArgument, "CommandArgument");
 			Assert.AreEqual (string.Empty, b.CommandName, "CommandName");			
-#if NET_2_0
 			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");
 			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick");
 			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
 			Assert.AreEqual (true, b.UseSubmitBehavior, "UseSubmitBehavior");
-#endif
 		}
 
 		[Test]
 		public void AssignProperties ()
 		{
 			Button b = new Button ();
-#if NET_2_0
 			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick#1");
 			b.OnClientClick = "Test()";
 			Assert.AreEqual ("Test()", b.OnClientClick, "OnClientClick#2");
@@ -136,7 +131,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup#1");
 			b.ValidationGroup = "test";
 			Assert.AreEqual ("test", b.ValidationGroup, "ValidationGroup#2");
-#endif
 		}
 
 		[Test]
@@ -148,7 +142,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Text = "Hello";
 			Assert.AreEqual (p.Text, "Hello", "A2");
 
-#if NET_2_0
 			p.ValidationGroup = "VG1";
 			p.UseSubmitBehavior = false;
 			p.OnClientClick = "ClientClick()";
@@ -157,7 +150,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (false, p.UseSubmitBehavior, "ViewState_UseSubmitBehavior#original");
 			Assert.AreEqual ("ClientClick()", p.OnClientClick, "ViewState_OnClientClick#original");
 			Assert.AreEqual ("PostBackUrl", p.PostBackUrl, "ViewState_PostBackUrl#original");
-#endif
 
 			object state = p.SaveState ();
 
@@ -165,12 +157,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.LoadState (state);
 			Assert.AreEqual (copy.Text, "Hello", "A4");
 
-#if NET_2_0
 			Assert.AreEqual (copy.ValidationGroup, "VG1", "A5");
 			Assert.AreEqual (false, copy.UseSubmitBehavior, "ViewState_UseSubmitBehavior#copy");
 			Assert.AreEqual ("ClientClick()", p.OnClientClick, "ViewState_OnClientClick#copy");
 			Assert.AreEqual ("PostBackUrl", p.PostBackUrl, "ViewState_PostBackUrl#copy");
-#endif
 		}
 
 		[Test]
@@ -201,7 +191,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (-1, str.IndexOf ("hola"), "hola");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Button_Render2 () {
 			StringWriter sw = new StringWriter ();
@@ -311,7 +300,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.Unload ();
 		}
-#endif
 
 	}
 }

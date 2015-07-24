@@ -38,25 +38,17 @@ namespace System.Web.UI.WebControls {
 	[DefaultProperty ("Rows")]
 	[Designer ("System.Web.UI.Design.WebControls.TableDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (true, "Rows")]
-#if NET_2_0
 	[SupportsEventValidation]
 	public class Table : WebControl, IPostBackEventHandler
 	{
-#else
-	public class Table : WebControl
-	{
-#endif
 		TableRowCollection rows;
-#if NET_2_0
 		bool generateTableSections;
-#endif
 
 		public Table ()
 			: base (HtmlTextWriterTag.Table)
 		{
 		}
 
-#if NET_2_0
 		internal bool GenerateTableSections {
 			get { return generateTableSections; }
 			set { generateTableSections = value; }
@@ -64,10 +56,6 @@ namespace System.Web.UI.WebControls {
 		
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlProperty]
-#else
-		[Bindable (true)]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -83,9 +71,7 @@ namespace System.Web.UI.WebControls {
 		// note: it seems that Caption and CaptionAlign appeared in 1.1 SP1
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[Localizable (true)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
 		public virtual string Caption {
@@ -116,9 +102,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -131,9 +114,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellPadding = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -146,9 +126,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellSpacing = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (GridLines.None)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -161,9 +138,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.GridLines = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -190,21 +164,12 @@ namespace System.Web.UI.WebControls {
 		private TableStyle TableStyle {
 			get { return (ControlStyle as TableStyle); }
 		}
-#if NET_4_0
 		public override bool SupportsDisabledAttribute {
 			get { return RenderingCompatibilityLessThan40; }
 		}
-#endif
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
-#if !NET_4_0
-			if (!ControlStyleCreated || TableStyle.IsEmpty) {
-				// for some reason border=X seems to be always present
-				// and isn't rendered as a style attribute
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
-			}
-#endif
 		}
 
 		protected override ControlCollection CreateControlCollection ()
@@ -217,22 +182,15 @@ namespace System.Web.UI.WebControls {
 			return new TableStyle (ViewState);
 		}
 
-#if NET_2_0
 		protected internal
-#else		
-		protected
-#endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-#if NET_2_0
 			TableRowSection currentTableSection = TableRowSection.TableHeader;
 			TableRowSection rowSection;
 			bool sectionStarted = false;
-#endif
 			
 			if (Rows.Count > 0) {
 				foreach (TableRow row in Rows) {
-#if NET_2_0
 					if (generateTableSections) {
 						rowSection = row.TableSection;
 						if (rowSection < currentTableSection)
@@ -264,15 +222,12 @@ namespace System.Web.UI.WebControls {
 							sectionStarted = true;
 						}
 					}
-#endif
 					if (row != null)
 						row.RenderControl (writer);
 				}
 
-#if NET_2_0
 				if (sectionStarted)
 					writer.RenderEndTag ();
-#endif
 			}
 		}
 
@@ -300,7 +255,6 @@ namespace System.Web.UI.WebControls {
 // #endif
 		}
 
-#if NET_2_0
 		void IPostBackEventHandler.RaisePostBackEvent (string argument)
 		{
 			RaisePostBackEvent (argument);
@@ -310,7 +264,6 @@ namespace System.Web.UI.WebControls {
 		{
 			ValidateEvent (UniqueID, argument);
 		}
-#endif
 
 		// inner class
 		protected class RowControlCollection : ControlCollection {
