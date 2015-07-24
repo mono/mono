@@ -980,6 +980,21 @@ namespace Mono.CSharp
 			return found;
 		}
 
+		public ImportedAssemblyDefinition GetImportedAssemblyDefinition (AssemblyName assemblyName)
+		{
+			foreach (var a in Assemblies) {
+				var ia = a as ImportedAssemblyDefinition;
+				if (ia == null)
+					continue;
+				
+				if (a.Name == assemblyName.Name)
+					return ia;
+			}
+
+			return null;
+		}
+
+
 		public void ImportTypeBase (MetaType type)
 		{
 			TypeSpec spec = import_cache[type];

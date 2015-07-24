@@ -220,6 +220,11 @@ namespace Mono.CSharp
 			return Builder.__AddModule (moduleFile);
 		}
 
+		protected override List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		{
+			return loader.GetNotUnifiedReferences (assemblyName);
+		}
+
 		protected override void SaveModule (PortableExecutableKinds pekind, ImageFileMachine machine)
 		{
 			module.Builder.__Save (pekind, machine);
@@ -233,6 +238,7 @@ namespace Mono.CSharp
 		Assembly corlib;
 		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
+		Dictionary<AssemblyName, List<string[]>> resolved_version_mismatches;
 
 		static StaticLoader ()
 		{
@@ -353,11 +359,23 @@ namespace Mono.CSharp
 				var v2 = version_mismatch.GetName ().Version;
 
 				if (v1 > v2) {
-//					compiler.Report.SymbolRelatedToPreviousError (args.RequestingAssembly.Location);
-					compiler.Report.Error (1705, "Assembly `{0}' references `{1}' which has a higher version number than imported assembly `{2}'",
-						args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName);
+					if (resolved_version_mismatches == null)
+						resolved_version_mismatches = new Dictionary<AssemblyName, List<string[]>> ();
 
-					return domain.CreateMissingAssembly (args.Name);
+					var an = args.RequestingAssembly.GetName ();
+					List<string[]> names;
+					if (!resolved_version_mismatches.TryGetValue (an, out names)) {
+						names = new List<string[]> ();
+						resolved_version_mismatches.Add (an, names);
+					}
+
+					names.Add (new[] {
+						args.RequestingAssembly.Location,
+						string.Format ("Assembly `{0}' depends on `{1}' which has a higher version number than referenced assembly `{2}'",
+							args.RequestingAssembly.FullName, refname, version_mismatch.GetName ().FullName)
+					});
+
+					return version_mismatch;
 				}
 
 				if (!is_fx_assembly) {
@@ -410,6 +428,15 @@ namespace Mono.CSharp
 			}
 
 			return default_references.ToArray ();
+		}
+
+		public List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		{
+			List<string[]> list = null;
+			if (resolved_version_mismatches != null)
+				resolved_version_mismatches.TryGetValue (assemblyName, out list);
+
+			return list;
 		}
 
 		public override bool HasObjectType (Assembly assembly)
@@ -591,6 +618,16 @@ namespace Mono.CSharp
 		public override void DefineWin32IconResource (string fileName)
 		{
 			builder.__DefineIconResource (File.ReadAllBytes (fileName));
+		}
+
+		public override AssemblyName[] GetReferencedAssemblies ()
+		{
+			foreach (var m in builder.Modules) {
+				if (m is ModuleBuilder)
+					return m.__GetReferencedAssemblies ();
+			}
+
+			return new AssemblyName [0];
 		}
 
 		public override void SetAlgorithmId (uint value, Location loc)
