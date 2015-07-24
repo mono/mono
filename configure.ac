@@ -1100,6 +1100,7 @@ dnl *** Checks for signals
 dnl ***********************************
 AC_CHECK_HEADERS(signal.h)
 AC_CHECK_FUNCS(sigaction)
+AC_CHECK_FUNCS(signal)
 
 # signal() is declared inline in Android headers
 # so we need to workaround it by overriding the check.
