@@ -2403,12 +2403,7 @@ constructor_declarator
 			}
 		} else {
 			if (current_type.Kind == MemberKind.Struct && current_local_parameters.IsEmpty) {
-				if (lang_version < LanguageVersion.V_6)
-					FeatureIsNotAvailable (GetLocation ($3), "struct parameterless instance constructor");
-
-				if ((mods & Modifiers.PUBLIC) == 0) {
-					report.Error (8075, c.Location, "`{0}': Structs parameterless instance constructor must be public", c.GetSignatureForError ());
-				}
+				report.Error (568, c.Location, "Structs cannot contain explicit parameterless constructors");
 			}
 		}
 

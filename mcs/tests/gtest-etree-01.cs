@@ -210,14 +210,6 @@ struct MyTypeImplicitOnly
 	}
 }
 
-struct StructWithUserConstructor
-{
-	public StructWithUserConstructor ()
-	{
-
-	}
-}
-
 class MemberAccessData
 {
 	public bool BoolValue;
@@ -2210,10 +2202,6 @@ class Tester
 		Expression<Func<DateTime>> e = () => new DateTime ();
 		AssertNodeType (e, ExpressionType.New);
 		Assert (null, ((NewExpression)e.Body).Constructor, "default ctor");
-
-		Expression<Func<StructWithUserConstructor>> e2 = () => new StructWithUserConstructor ();
-		AssertNodeType (e2, ExpressionType.New);
-		Assert ("Void .ctor()", ((NewExpression)e2.Body).Constructor.ToString (), "user ctor");
 	}
 
 	void NotTest ()
