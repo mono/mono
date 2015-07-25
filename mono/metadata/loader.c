@@ -866,22 +866,34 @@ mono_inflate_generic_signature (MonoMethodSignature *sig, MonoGenericContext *co
 }
 
 static MonoMethodHeader*
-inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context)
+inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context, gboolean no_sharing)
 {
-	MonoMethodHeader *res;
 	int i;
-	res = g_malloc0 (MONO_SIZEOF_METHOD_HEADER + sizeof (gpointer) * header->num_locals);
+	size_t clause_size = sizeof (MonoExceptionClause) * header->num_clauses;
+	size_t local_size = sizeof (gpointer) * header->num_locals;
+	size_t header_size = MONO_SIZEOF_METHOD_HEADER + clause_size + local_size;
+
+	MonoMethodHeader *res = g_malloc0 (header_size);
+
 	res->code = header->code;
 	res->code_size = header->code_size;
 	res->max_stack = header->max_stack;
 	res->num_clauses = header->num_clauses;
 	res->init_locals = header->init_locals;
 	res->num_locals = header->num_locals;
-	res->clauses = header->clauses;
-	for (i = 0; i < header->num_locals; ++i)
-		res->locals [i] = mono_class_inflate_generic_type (header->locals [i], context);
+
+	for (i = 0; i < res->num_locals; ++i) {
+		MonoError error;
+		mono_error_init (&error);
+		MonoType *inflated = mono_class_inflate_generic_type_with_mempool (NULL, header->locals [i], context, !no_sharing, &error);
+		mono_error_assert_ok (&error);
+		res->locals [i] = inflated;
+	}
+
 	if (res->num_clauses) {
-		res->clauses = g_memdup (header->clauses, sizeof (MonoExceptionClause) * res->num_clauses);
+		MonoExceptionClause *clauseLocation = (MonoExceptionClause*)&res->locals [res->num_locals];
+		memcpy (clauseLocation, header->clauses, clause_size);
+		res->clauses = clauseLocation;
 		for (i = 0; i < header->num_clauses; ++i) {
 			MonoExceptionClause *clause = &res->clauses [i];
 			if (clause->flags != MONO_EXCEPTION_CLAUSE_NONE)
@@ -2730,14 +2742,13 @@ mono_method_get_token (MonoMethod *method)
 	return method->token;
 }
 
-MonoMethodHeader*
-mono_method_get_header (MonoMethod *method)
+static MonoMethodHeader*
+mono_method_get_header_internal (MonoMethod *method, gboolean no_sharing)
 {
 	int idx;
 	guint32 rva;
 	MonoImage* img;
 	gpointer loc;
-	MonoMethodHeader *header;
 	MonoGenericContainer *container;
 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
@@ -2747,29 +2758,42 @@ mono_method_get_header (MonoMethod *method)
 
 	if (method->is_inflated) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
-		MonoMethodHeader *header, *iheader;
-
-		header = mono_method_get_header (imethod->declaring);
-		if (!header)
-			return NULL;
-
-		iheader = inflate_generic_header (header, mono_method_get_context (method));
-		mono_metadata_free_mh (header);
-
-		mono_image_lock (img);
+		MonoMethodHeader *parent_header, *iheader;
 
 		if (imethod->header) {
-			mono_metadata_free_mh (iheader);
-			mono_image_unlock (img);
+			g_assert (imethod->header->is_pinned);
 			return imethod->header;
 		}
 
+		parent_header = mono_method_get_header_internal (imethod->declaring, TRUE);
+		if (!parent_header)
+			return NULL;
+
+		iheader = inflate_generic_header (parent_header, mono_method_get_context (method), TRUE /* No shared types */);
+
+		if (parent_header && parent_header->is_transient)
+			mono_metadata_free_mh (parent_header);
+
+		/* If it is not transient it means it's part of a wrapper method,
+		 * or a SRE-generated method, so the lifetime in that case is
+		 * dictated by the method's own lifetime
+		 */
+		if (method->wrapper_type == MONO_WRAPPER_NONE && !method->sre_method)
+			iheader->is_transient = TRUE;
+
+		mono_image_lock (img);
 		mono_memory_barrier ();
-		imethod->header = iheader;
+
+		if (imethod->header)
+			mono_metadata_free_mh (iheader);
+		else {
+			imethod->header = iheader;
+			iheader->is_pinned = TRUE;
+		}
 
 		mono_image_unlock (img);
 
-		return imethod->header;
+		return iheader;
 	}
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE || method->sre_method) {
@@ -2800,10 +2824,17 @@ mono_method_get_header (MonoMethod *method)
 	container = mono_method_get_generic_container (method);
 	if (!container)
 		container = method->klass->generic_container;
-	header = mono_metadata_parse_mh_full (img, container, loc);
+	MonoMethodHeader *header = mono_metadata_parse_mh_full (img, container, loc);
 
 	return header;
 }
+
+MonoMethodHeader*
+mono_method_get_header (MonoMethod *method) 
+{
+	return mono_method_get_header_internal (method, FALSE);
+}
+
 
 guint32
 mono_method_get_flags (MonoMethod *method, guint32 *iflags)

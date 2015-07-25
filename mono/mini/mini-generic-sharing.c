@@ -543,7 +543,8 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
 	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
 		gpointer result = mono_class_inflate_generic_type_with_mempool (temporary ? NULL : class->image,
-			data, context, &error);
+			data, context, TRUE, /* Boolean: Type can be shared */
+			&error);
 		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
 		return result;
 	}

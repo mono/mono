@@ -497,6 +497,7 @@ struct _MonoMethodHeader {
 #endif
 	guint16      max_stack   : 15;
 	unsigned int is_transient: 1; /* mono_metadata_free_mh () will actually free this header */
+	unsigned int is_pinned: 1; /* It can only be freed along with referring MonoInflatedMethod */
 	unsigned int num_clauses : 15;
 	/* if num_locals != 0, then the following apply: */
 	unsigned int init_locals : 1;
