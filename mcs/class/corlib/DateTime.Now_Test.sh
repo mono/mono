@@ -1,10 +1,10 @@
 #!/bin/sh
 
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CSHARP=$SCRIPT_PATH/../lib/net_4_5/csharp.exe
+CSHARP=$SCRIPT_PATH/../lib/net_4_x/csharp.exe
 MONO=$SCRIPT_PATH/../../../mono/mini/mono
 
-export MONO_PATH=${MONO_PATH:-$SCRIPT_PATH/../lib/net_4_5}
+export MONO_PATH=${MONO_PATH:-$SCRIPT_PATH/../lib/net_4_x}
 
 TZ_FAILS=0
 TZ_COUNT=0
