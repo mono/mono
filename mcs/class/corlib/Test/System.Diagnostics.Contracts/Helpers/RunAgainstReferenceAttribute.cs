@@ -1,4 +1,3 @@
-#if NET_4_0
 
 using System;
 using System.Collections.Generic;
@@ -15,4 +14,3 @@ namespace MonoTests.System.Diagnostics.Contracts.Helpers {
 
 }
 
-#endif

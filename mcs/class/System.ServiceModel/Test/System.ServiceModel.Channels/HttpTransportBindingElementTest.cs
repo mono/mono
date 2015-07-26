@@ -39,10 +39,7 @@ using System.Xml;
 using NUnit.Framework;
 
 using MonoTests.Helpers;
-
-#if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
-#endif
 
 namespace MonoTests.System.ServiceModel.Channels
 {
@@ -471,10 +468,8 @@ namespace MonoTests.System.ServiceModel.Channels
 			http_binding_element.TransferMode = TransferMode.Streamed;
 			http_binding_element.UnsafeConnectionNtlmAuthentication = !http_binding_element.UnsafeConnectionNtlmAuthentication;
 			http_binding_element.UseDefaultWebProxy = !http_binding_element.UseDefaultWebProxy;
-#if NET_4_0
 			http_binding_element.DecompressionEnabled = !http_binding_element.DecompressionEnabled;
 			http_binding_element.ExtendedProtectionPolicy = new ExtendedProtectionPolicy (PolicyEnforcement.WhenSupported);
-#endif
 
 			// 
 			// Actual call to ExportPolicy

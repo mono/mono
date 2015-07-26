@@ -104,26 +104,16 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			Assert.IsNotNull (attr.Minimum, "#A1-1");
 			Assert.IsNotNull (attr.Maximum, "#A1-2");
-#if NET_4_0
 			Assert.AreEqual (typeof (string), attr.Minimum.GetType (), "#A2-1");
 			Assert.AreEqual (typeof (string), attr.Maximum.GetType (), "#A2-2");
 			Assert.AreEqual ("-10", attr.Minimum, "#A3-1");
 			Assert.AreEqual ("10", attr.Maximum, "#A3-2");
-#else
-			Assert.AreEqual (typeof (int), attr.Minimum.GetType (), "#A2-1");
-			Assert.AreEqual (typeof (int), attr.Maximum.GetType (), "#A2-2");
-			Assert.AreEqual (-10, attr.Minimum, "#A3-1");
-			Assert.AreEqual (10, attr.Maximum, "#A3-2");
-#endif
 			Assert.IsNotNull (attr.OperandType, "#A4-1");
 			Assert.AreEqual (typeof (int), attr.OperandType, "#A4-2");
 		}
 
 		[Test]
 		//LAMESPEC: documented to throw
-#if !NET_4_0
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void Constructor_Type_String_String_Null_Type ()
 		{
 			var attr = new DA.RangeAttribute (null, "-10", "10");
@@ -144,7 +134,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				attr.IsValid ("zero");
 			}, "#A1-5");
 			Assert.IsTrue (attr.IsValid (null), "#A1-6");
-#if NET_4_0
 			attr = new DA.RangeAttribute (typeof (int), "minus ten", "ten");
 			AssertExtensions.Throws<Exception> (() => {
 				attr.IsValid ("0");
@@ -196,31 +185,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.IsValid (12);
 			Assert.AreEqual (typeof (int), attr.Minimum.GetType (), "#A7-1");
 			Assert.AreEqual (typeof (int), attr.Maximum.GetType (), "#A7-2");
-#else
-			AssertExtensions.Throws<Exception> (() => {
-				attr = new DA.RangeAttribute (typeof (int), "minus ten", "ten");
-			}, "#A2");
-
-			AssertExtensions.Throws<ArgumentException> (() => {
-				attr = new DA.RangeAttribute (typeof (RangeAttributeTest), "-10", "10");
-			}, "#A3");
-
-			AssertExtensions.Throws<ArgumentNullException> (() => {
-				attr = new DA.RangeAttribute (null, "-10", "10");
-			}, "#A4");
-
-			AssertExtensions.Throws<NotSupportedException> (() => {
-				attr = new DA.RangeAttribute (typeof (int), null, "10");
-			}, "#A5-1");
-
-			AssertExtensions.Throws<NotSupportedException> (() => {
-				attr = new DA.RangeAttribute (typeof (int), "10", null);
-			}, "#A5-2");
-
-			attr = new DA.RangeAttribute (typeof (int), "-10", "10");
-			Assert.AreEqual (typeof (int), attr.Minimum.GetType (), "#A6-1");
-			Assert.AreEqual (typeof (int), attr.Maximum.GetType (), "#A6-2");
-#endif
 		}
 
 		[Test]
@@ -232,19 +196,10 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			attr.ErrorMessage = "Param 0: {0}";
 			Assert.AreEqual ("Param 0: MyField", attr.FormatErrorMessage ("MyField"), "#A2-1");
-#if !NET_4_0
-			attr = new DA.RangeAttribute (-10, 10);
-#endif
 			attr.ErrorMessage = "Param 0: {0}; Param 1: {1}";
 			Assert.AreEqual ("Param 0: MyField; Param 1: -10", attr.FormatErrorMessage ("MyField"), "#A2-2");
-#if !NET_4_0
-			attr = new DA.RangeAttribute (-10, 10);
-#endif
 			attr.ErrorMessage = "Param 0: {0}; Param 1: {1}; Param 2: {2}";
 			Assert.AreEqual ("Param 0: MyField; Param 1: -10; Param 2: 10", attr.FormatErrorMessage ("MyField"), "#A2-3");
-#if !NET_4_0
-			attr = new DA.RangeAttribute (-10, 10);
-#endif
 			attr.ErrorMessage = "Param 0: {0}; Param 1: {1}; Param 2: {2}; Param 3: {3}";
 			AssertExtensions.Throws<FormatException> (() => {
 				attr.FormatErrorMessage ("MyField");

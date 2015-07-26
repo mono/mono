@@ -3487,7 +3487,6 @@ namespace MonoTests.System
 			Assert.AreSame (typeof (Foo<>), type.DeclaringType, "#1");
 		}
 
-#if NET_4_0
 		interface IGetInterfaceMap<in T>
 		{
 		    string Bar (T t);
@@ -4044,7 +4043,6 @@ namespace MonoTests.System
 		public void IsAssignableFromWithNullable () {
             Console.WriteLine(typeof(IEnumerable<int?>).IsAssignableFrom(typeof(IEnumerable<int>)));
 		}
-#endif
 
 		[Test]
 		public void GetTypeParseGenericCorrectly () { //Bug #15124

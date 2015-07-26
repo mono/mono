@@ -59,11 +59,9 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (WebMessageBodyStyle.Bare, b.DefaultBodyStyle, "#1");
 			Assert.AreEqual (WebMessageFormat.Xml, b.DefaultOutgoingRequestFormat, "#2");
 			Assert.AreEqual (WebMessageFormat.Xml, b.DefaultOutgoingResponseFormat, "#3");
-#if NET_4_0
 			Assert.IsFalse (b.AutomaticFormatSelectionEnabled, "#11");
 			Assert.IsFalse (b.FaultExceptionEnabled, "#12");
 			Assert.IsFalse (b.HelpEnabled, "#13");
-#endif
 		}
 
 		[Test]

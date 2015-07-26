@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // CollectionStressTestHelper.cs
 //  
@@ -131,4 +130,3 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 	}
 }
-#endif

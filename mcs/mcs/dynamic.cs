@@ -60,14 +60,6 @@ namespace Mono.CSharp
 	//
 	public class RuntimeValueExpression : Expression, IDynamicAssign, IMemoryLocation
 	{
-#if !NET_4_0 && !MOBILE_DYNAMIC
-		public class DynamicMetaObject
-		{
-			public TypeSpec RuntimeType;
-			public TypeSpec LimitType;
-			public SLE.Expression Expression;
-		}
-#endif
 
 		readonly DynamicMetaObject obj;
 
@@ -143,7 +135,6 @@ namespace Mono.CSharp
 			return base.MakeExpression (ctx);
 #else
 
-#if NET_4_0 || MOBILE_DYNAMIC
 				if (type.IsStruct && !obj.Expression.Type.IsValueType)
 					return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
 
@@ -151,7 +142,6 @@ namespace Mono.CSharp
 					if (((SLE.ParameterExpression) obj.Expression).IsByRef)
 						return obj.Expression;
 				}
-	#endif
 
 				return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 #endif
@@ -178,7 +168,6 @@ namespace Mono.CSharp
 			return this;
 		}
 
-#if NET_4_0 || MOBILE_DYNAMIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
@@ -187,7 +176,6 @@ namespace Mono.CSharp
 			return SLE.Expression.Block (expr.MakeExpression (ctx), SLE.Expression.Default (type.GetMetaInfo ()));
 #endif
 		}
-#endif
 	}
 
 	#endregion

@@ -45,12 +45,9 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsFalse (attr.IsValid (String.Empty), "#A2");
 			Assert.IsTrue (attr.IsValid ("string"), "#A3");
 			Assert.IsTrue (attr.IsValid (1), "#A4");
-#if NET_4_0
 			attr.AllowEmptyStrings = true;
 			Assert.IsTrue (attr.IsValid (String.Empty), "#A5");
-#endif
 		}
-#if NET_4_0
 		[Test]
 		public void AllowEmptyStrings ()
 		{
@@ -60,6 +57,5 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.AllowEmptyStrings = true;
 			Assert.IsTrue (attr.AllowEmptyStrings, "#A2");
 		}
-#endif
 	}
 }

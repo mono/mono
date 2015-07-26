@@ -180,7 +180,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.DataSource = new Object();
 			Assert.AreEqual (true, p.ValidateDataSourceCalled);
 		}
-#if NET_4_0
 		[Test]
 		public void SupportsDisabledAttribute ()
 		{
@@ -194,6 +193,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (ver35, p.RenderingCompatibility, "#A2-1");
 			Assert.IsTrue (p.SupportsDisabledAttribute, "#A2-2");
 		}
-#endif
 	}
 }

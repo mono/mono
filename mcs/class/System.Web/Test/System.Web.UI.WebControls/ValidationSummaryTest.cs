@@ -270,7 +270,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			StopValidationTest();
 		}
-#if NET_4_0
 		[Test]
 		public void SupportsDisabledAttribute ()
 		{
@@ -284,6 +283,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (ver35, p.RenderingCompatibility, "#A2-1");
 			Assert.IsTrue (p.SupportsDisabledAttribute, "#A2-2");
 		}
-#endif
 	}
 }

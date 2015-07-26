@@ -434,14 +434,12 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual ("callResult", res.val, "#2");
 		}
 
-#if NET_4_0
 		[Test]
 		public void ConstructorServiceEndpoint ()
 		{
 			// It is okay to pass ServiceEndpoint that does not have Binding or EndpointAddress.
 			new ChannelFactory<IRequestChannel> (new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), null, null));
 		}
-#endif
 
 		public T CreateFooComplexMC_Channel<T> (bool isXml)
 		{

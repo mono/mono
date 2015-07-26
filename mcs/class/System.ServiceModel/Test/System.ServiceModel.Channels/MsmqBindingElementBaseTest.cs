@@ -107,11 +107,9 @@ namespace MonoTests.System.ServiceModel.Channels
 			binding_element.TimeToLive = TimeSpan.FromSeconds (60);
 			binding_element.UseMsmqTracing = !binding_element.UseMsmqTracing;
 			binding_element.UseSourceJournal = !binding_element.UseSourceJournal;
-#if NET_4_0
 			// This ones haven't been implemented yet, so comment them for now.
 			//binding_element.ReceiveContextEnabled = !binding_element.ReceiveContextEnabled;
 			//binding_element.ValidityDuration = TimeSpan.FromSeconds (30);
-#endif
 
 			binding_element.MsmqTransportSecurity.MsmqAuthenticationMode = MsmqAuthenticationMode.Certificate;
 			binding_element.MsmqTransportSecurity.MsmqEncryptionAlgorithm = MsmqEncryptionAlgorithm.Aes;

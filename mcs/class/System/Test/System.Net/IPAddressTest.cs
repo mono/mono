@@ -613,7 +613,6 @@ public class IPAddressTest
 		Assert.IsFalse (IPAddress.Parse ("FE00::1").IsIPv6Multicast, "#3");
 	}
 
-#if NET_4_0
 	[Test]
 	public void IsIPv6Teredo ()
 	{
@@ -640,7 +639,6 @@ public class IPAddressTest
 			}
 		}
 	}
-#endif
 }
 }
 

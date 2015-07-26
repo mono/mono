@@ -8,7 +8,6 @@ using System.Reflection;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_0
 	public class AttributeTargetValidation
 	{
 		[Display(ResourceType = typeof(GoodResources), Name = "NameKey")]
@@ -274,5 +273,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.Fail();
 		}
 	}
-#endif
 }

@@ -2336,7 +2336,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullHost ()
@@ -2496,7 +2495,6 @@ namespace MonoTests.System.Net
 				;
 			}
 		}
-#endif
 
 #if NET_4_5
 		[Test]
@@ -3309,7 +3307,6 @@ namespace MonoTests.System.Net
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		// Bug6737
 		// This test is supposed to fail prior to .NET 4.0
@@ -3322,7 +3319,6 @@ namespace MonoTests.System.Net
 			var gr = wr.BeginGetResponse (delegate { }, null);
 			Assert.AreEqual (true, gr.AsyncWaitHandle.WaitOne (5000), "#1");
 		}
-#endif
 	}
 
 	static class StreamExtensions {

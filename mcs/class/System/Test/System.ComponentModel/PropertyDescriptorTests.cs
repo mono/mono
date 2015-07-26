@@ -400,10 +400,8 @@ namespace MonoTests.System.ComponentModel
 
 #if MOBILE
 			[TypeConverter("System.ComponentModel.CharConverter, System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-#elif NET_4_0
-			[TypeConverter("System.ComponentModel.CharConverter, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 #else
-			[TypeConverter("System.ComponentModel.CharConverter, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+			[TypeConverter("System.ComponentModel.CharConverter, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 #endif
 			public virtual Version WithConverterNamedAssmQuald {
 				get { return null; }

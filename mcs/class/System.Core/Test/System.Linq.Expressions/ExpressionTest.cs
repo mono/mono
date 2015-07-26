@@ -133,9 +133,6 @@ namespace MonoTests.System.Linq.Expressions {
 			var p = Expression.Parameter (typeof (string), null);
 			Assert.AreEqual (null, p.Name);
 			Assert.AreEqual (typeof (string), p.Type);
-#if !NET_4_0
-			Assert.AreEqual ("<param>", p.ToString ());
-#endif
 		}
 
 		[Test]
@@ -144,9 +141,6 @@ namespace MonoTests.System.Linq.Expressions {
 			var p = Expression.Parameter (typeof (string), "");
 			Assert.AreEqual ("", p.Name);
 			Assert.AreEqual (typeof (string), p.Type);
-#if !NET_4_0
-			Assert.AreEqual ("", p.ToString ());
-#endif
 		}
 
 		[Test]
@@ -199,9 +193,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
 			Assert.IsNotNull (identity.Target);
-#if !NET_4_0
-			Assert.AreEqual (typeof (ExecutionScope), identity.Target.GetType ());
-#endif
 		}
 
 		class Foo {
@@ -217,39 +208,6 @@ namespace MonoTests.System.Linq.Expressions {
 			}
 		}
 
-#if !NET_4_0
-		[Test]
-		public void GlobalsInScope ()
-		{
-			var foo = new Foo { gazonk = "gazonk" };
-			var bar = new Bar { baz = 42 };
-
-			var l = Expression.Lambda<Func<string>> (
-				Expression.Call (
-					typeof (string).GetMethod ("Concat", new [] { typeof (string), typeof (string) }),
-					Expression.Field (Expression.Constant (foo), typeof (Foo).GetField ("gazonk")),
-					Expression.Call (Expression.Constant (bar), typeof (Bar).GetMethod ("ToString"))));
-
-			var del = l.Compile ();
-
-			var scope = del.Target as ExecutionScope;
-
-			Assert.IsNotNull (scope);
-
-			var globals = scope.Globals;
-
-			Assert.IsNotNull (globals);
-
-			Assert.AreEqual (2, globals.Length);
-			Assert.AreEqual (typeof (StrongBox<Foo>), globals [0].GetType ());
-			Assert.AreEqual (typeof (StrongBox<Bar>), globals [1].GetType ());
-
-			Assert.AreEqual (foo, ((StrongBox<Foo>) globals [0]).Value);
-			Assert.AreEqual (bar, ((StrongBox<Bar>) globals [1]).Value);
-
-			Assert.AreEqual ("gazonk42", del ());
-		}
-#endif
 
 		[Test]
 		public void SimpleHoistedParameter ()

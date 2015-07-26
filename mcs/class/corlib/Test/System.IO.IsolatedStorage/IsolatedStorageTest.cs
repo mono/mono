@@ -245,7 +245,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsolatedStorage_UsedSize ()
@@ -278,6 +277,5 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (false, nais.IncreaseQuotaTo (0), "#A1");
 			Assert.AreEqual (false, nais.IncreaseQuotaTo (100), "#A2");
 		}
-#endif
 	}
 }

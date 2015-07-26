@@ -37,7 +37,6 @@ namespace MonoTests.System.Web
 	[TestFixture]
 	public class HttpApplicationTest
 	{
-#if NET_4_0
 		[Test]
 		public void GetOutputCacheProviderName ()
 		{
@@ -45,6 +44,5 @@ namespace MonoTests.System.Web
 
 			Assert.AreEqual ("AspNetInternalProvider", app.GetOutputCacheProviderName (null), "#A1");
 		}
-#endif
 	}
 }

@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0
 using System;
 using System.Collections.Generic;
 using System.Data.Services.Providers;
@@ -164,4 +163,3 @@ namespace MonoTests.System.Data.Services.Providers
 		}
 	}
 }
-#endif

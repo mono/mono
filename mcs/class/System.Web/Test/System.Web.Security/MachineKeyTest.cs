@@ -28,7 +28,6 @@
 using System.Security.Cryptography;
 
 
-#if NET_4_0
 using System;
 using System.Text;
 using System.Web.Security;
@@ -204,4 +203,3 @@ namespace MonoTests.System.Web.Security
 #endif
 	}
 }
-#endif

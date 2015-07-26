@@ -577,11 +577,7 @@ TextWriter sw = Console.Out;
 
 			Uri merged = new Uri (absolute, "?moon");
 			Assert.AreEqual ("?moon", merged.Query, "merged.Query");
-#if NET_4_0
 			Assert.AreEqual ("http://host/dir/subdir/weird;name?moon", merged.ToString (), "merged.ToString");
-#else
-			Assert.AreEqual ("http://host/dir/subdir/?moon", merged.ToString (), "merged.ToString");
-#endif
 		}
 
 		[Test]

@@ -24,7 +24,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -920,4 +919,3 @@ namespace MonoTests.System.Linq
 	}
 }
 
-#endif

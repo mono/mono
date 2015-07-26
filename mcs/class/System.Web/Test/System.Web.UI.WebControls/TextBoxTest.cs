@@ -105,11 +105,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Poker t = new Poker ();
 			t.TextMode = TextBoxMode.MultiLine;
 			t.Text = "</textarea>";
-#if NET_4_0
 			string exp = "<textarea rows=\"2\" cols=\"20\">\r\n&lt;/textarea&gt;</textarea>";
-#else
-			string exp = "<textarea rows=\"2\" cols=\"20\">&lt;/textarea&gt;</textarea>";
-#endif
 
 			HtmlDiff.AssertAreEqual(exp, t.Render (),"MultilineRenderEscape");
 		}
@@ -164,11 +160,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.ValidationGroup = "VG";
 			t.CausesValidation = true;
 			t.TextMode = TextBoxMode.MultiLine;
-#if NET_4_0
 			string exp = "<textarea rows=\"2\" cols=\"20\">\r\n</textarea>";
-#else
-			string exp = "<textarea rows=\"2\" cols=\"20\"></textarea>";
-#endif
 			HtmlDiff.AssertAreEqual (exp, t.Render (),"ValidationRender");
 		}
 

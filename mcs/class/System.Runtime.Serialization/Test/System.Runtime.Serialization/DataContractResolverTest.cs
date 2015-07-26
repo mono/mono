@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
 
 using System;
 using System.Collections;
@@ -115,4 +114,3 @@ public class ResolvedClass
 	public Guid Baz = Guid.Parse ("c74376f0-5517-4cb7-8a07-35026423f565");
 }
 
-#endif

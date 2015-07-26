@@ -272,7 +272,6 @@ System.Web.UI.WebControls/RangeValidatorTest.cs
 System.Web.UI.WebControls/RectangleHotSpotTest.cs
 System.Web.UI.WebControls/RegularExpressionValidatorTest.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.cs
-System.Web.UI.WebControls/RepeatInfoTest.auto.2.0.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.4.0.cs
 System.Web.UI.WebControls/RepeatInfoTest.cs
 System.Web.UI.WebControls/RepeatInfoUser.cs

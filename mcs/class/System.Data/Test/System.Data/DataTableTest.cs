@@ -1307,7 +1307,6 @@ namespace MonoTests.System.Data
 			}
 		}
 		
-#if NET_4_0
 		[Test]
 		public void ImportRowTypeChangeTest ()
 		{
@@ -1381,7 +1380,6 @@ namespace MonoTests.System.Data
 				}
 			}
 		}
-#endif
 			
 		[Test]
 		public void ClearReset () //To test Clear and Reset methods
