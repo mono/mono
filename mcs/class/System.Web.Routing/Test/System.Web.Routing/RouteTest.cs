@@ -627,7 +627,6 @@ namespace MonoTests.System.Web.Routing
 			var hc = new HttpContextStub ("~/xyzxyzxyzxyzblah", String.Empty);
 			var rd = r.GetRouteData (hc);
 
-#if NET_4_0 || !DOTNET
 			// When running on Mono this test succeeds - it was a bug in .NET routing for 3.5 which
 			// we don't reproduce anymore.
 			Assert.IsNotNull (rd, "#1");
@@ -637,9 +636,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("xyz", rd.Values ["foo"], "#4-1");
 			Assert.AreEqual ("xyz", rd.Values ["bar"], "#4-2");
 			Assert.AreEqual ("blah", rd.Values ["baz"], "#4-3");
-#else
-			Assert.IsNull (rd, "#1");
-#endif
 		}
 
 		[Test]
@@ -738,7 +734,6 @@ namespace MonoTests.System.Web.Routing
 			var hc = new HttpContextStub ("~/xyzxyzxyzxyzxyzxyzblah", String.Empty);
 			var rd = r.GetRouteData (hc);
 
-#if NET_4_0 || !DOTNET
 			// When running on Mono this test succeeds - it was a bug in .NET routing for 3.5 which
 			// we don't reproduce anymore.
 			Assert.IsNotNull (rd, "#1");
@@ -748,9 +743,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("xyzxyzxyz", rd.Values ["foo"], "#4-1");
 			Assert.AreEqual ("xyz", rd.Values ["bar"], "#4-2");
 			Assert.AreEqual ("blah", rd.Values ["baz"], "#4-3");
-#else
-			Assert.IsNull (rd, "#1");
-#endif
 		}
 
 		[Test]
@@ -776,7 +768,6 @@ namespace MonoTests.System.Web.Routing
 			var hc = new HttpContextStub ("~/xyzxyzxyzdabxyzblah", String.Empty);
 			var rd = r.GetRouteData (hc);
 
-#if NET_4_0 || !DOTNET
 			// When running on Mono this test succeeds - it was a bug in .NET routing for 3.5 which
 			// we don't reproduce anymore.
 			Assert.IsNotNull (rd, "#1");
@@ -786,9 +777,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("xyz", rd.Values ["foo"], "#4-1");
 			Assert.AreEqual ("dab", rd.Values ["bar"], "#4-2");
 			Assert.AreEqual ("blah", rd.Values ["baz"], "#4-3");
-#else
-			Assert.IsNull (rd, "#1");
-#endif
 		}
 
 		[Test]
@@ -798,7 +786,6 @@ namespace MonoTests.System.Web.Routing
 			var hc = new HttpContextStub ("~/xyzxyzxyzxyzxyz", String.Empty);
 			var rd = r.GetRouteData (hc);
 
-#if NET_4_0 || !DOTNET
 			// When running on Mono this test succeeds - it was a bug in .NET routing for 3.5 which
 			// we don't reproduce anymore.
 			Assert.IsNotNull (rd, "#1");
@@ -808,9 +795,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("xyz", rd.Values ["foo"], "#4-1");
 			Assert.AreEqual ("xyz", rd.Values ["bar"], "#4-2");
 			Assert.AreEqual ("xyz", rd.Values ["baz"], "#4-3");
-#else
-			Assert.IsNull (rd, "#1");
-#endif
 		}
 
 		[Test]
@@ -1375,7 +1359,6 @@ namespace MonoTests.System.Web.Routing
 
 		}
 		
-#if NET_4_0
 		[Test (Description="Bug #671753")]
 		public void GetVirtualPath15 ()
 		{
@@ -1396,7 +1379,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNotNull (RouteTable.Routes.GetVirtualPath (rc, "TestRoute", new RouteValueDictionary ()), "#A3");
 			Assert.IsNotNull (RouteTable.Routes.GetVirtualPath (rc, "TestRoute", null), "#A4");
 		}
-#endif
 
 		[Test (Description="Xamarin Bug #9116")]
 		public void GetVirtualPath16 ()

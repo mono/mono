@@ -479,7 +479,6 @@ namespace MonoTests.System.ServiceModel
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		public void ConstructorServiceEndpoint ()
 		{
@@ -504,6 +503,5 @@ namespace MonoTests.System.ServiceModel
 			{
 			}
 		}
-#endif
 	}
 }

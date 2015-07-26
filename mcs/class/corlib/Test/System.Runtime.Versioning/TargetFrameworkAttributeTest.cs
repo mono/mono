@@ -31,7 +31,6 @@ using System.Text;
 
 using NUnit.Framework;
 
-#if NET_4_0
 namespace MonoTests.System.Runtime.Versioning
 {
 	[TestFixture]
@@ -92,4 +91,3 @@ namespace MonoTests.System.Runtime.Versioning
 		}
 	}
 }
-#endif

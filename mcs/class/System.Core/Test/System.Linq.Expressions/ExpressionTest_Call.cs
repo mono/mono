@@ -87,11 +87,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-#if NET_4_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void ArgInstanceNullForNonStaticMethod ()
 		{
 			Expression.Call (null, typeof (object).GetMethod ("ToString"));
@@ -292,18 +288,6 @@ namespace MonoTests.System.Linq.Expressions {
 		{
 			return (int) (i as ConstantExpression).Value;
 		}
-#if !NET_4_0 // dlr bug 5875
-		[Test]
-		public void CallMethodWithExpressionParameter ()
-		{
-			var call = Expression.Call (GetType ().GetMethod ("Bang"), Expression.Constant (42));
-			Assert.AreEqual (ExpressionType.Quote, call.Arguments [0].NodeType);
-
-			var l = Expression.Lambda<Func<int>> (call).Compile ();
-
-			Assert.AreEqual (42, l ());
-		}
-#endif
 		static bool fout_called = false;
 
 		public static int FooOut (out int x)

@@ -1114,11 +1114,7 @@ namespace MonoTests.System.Reflection
 			Module module = assembly.ManifestModule;
 			Assert.IsNotNull (module, "#1");
 
-#if NET_4_0
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
-#else
-			Assert.AreEqual (typeof (Module), module.GetType (), "#2");
-#endif
 
 #if !MONOTOUCH
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");

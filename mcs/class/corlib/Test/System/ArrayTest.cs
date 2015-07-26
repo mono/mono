@@ -3449,7 +3449,6 @@ public class ArrayTest
 		Assert.AreEqual (input, expected);
 	}
 
-#if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
 	public void CompareToWithJaggedArray () {
@@ -3616,7 +3615,6 @@ public class ArrayTest
 		Assert.AreEqual (3, c.Counter);		
 	}
 
-#endif
 
 	[Test]
 	public void JaggedArrayCtor ()

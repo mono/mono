@@ -1416,14 +1416,12 @@ namespace Mono.CSharp
 		}
 
 
-#if NET_4_0 || MOBILE_DYNAMIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var target = ((RuntimeValueExpression) expr).MetaObject.Expression;
 			var source = SLE.Expression.Convert (operation.MakeExpression (ctx), target.Type);
 			return SLE.Expression.Assign (target, source);
 		}
-#endif
 
 		public static string OperName (Mode oper)
 		{
@@ -2699,7 +2697,7 @@ namespace Mono.CSharp
 			temp_storage.Release (ec);
 		}
 
-#if (NET_4_0 || MOBILE_DYNAMIC) && !STATIC
+#if !STATIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Default (type.GetMetaInfo ());
@@ -8299,7 +8297,6 @@ namespace Mono.CSharp
 			return data;
 		}
 
-#if NET_4_0 || MOBILE_DYNAMIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
@@ -8316,7 +8313,6 @@ namespace Mono.CSharp
 			return SLE.Expression.NewArrayInit (array_element_type.GetMetaInfo (), initializers);
 #endif
 		}
-#endif
 #if STATIC
 		//
 		// Emits the initializers for the array
@@ -10807,13 +10803,9 @@ namespace Mono.CSharp
 #else
 			var value = new[] { source.MakeExpression (ctx) };
 			var args = Arguments.MakeExpression (arguments, ctx).Concat (value);
-#if NET_4_0 || MOBILE_DYNAMIC
 			return SLE.Expression.Block (
 					SLE.Expression.Call (InstanceExpression.MakeExpression (ctx), (MethodInfo) Setter.GetMetaInfo (), args),
 					value [0]);
-#else
-			return args.First ();
-#endif
 #endif
 		}
 

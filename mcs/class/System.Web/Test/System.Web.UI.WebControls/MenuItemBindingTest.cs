@@ -31,7 +31,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
-#if NET_4_0
 namespace MonoTests.System.Web.UI.WebControls
 {
 	[TestFixture]
@@ -126,4 +125,3 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 }
-#endif

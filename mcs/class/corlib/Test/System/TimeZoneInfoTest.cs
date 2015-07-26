@@ -451,11 +451,7 @@ namespace MonoTests.System
 				DateTime utc = DateTime.UtcNow;
 				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
-			#if NET_4_0
 				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
-			#else
-				Assert.AreEqual(DateTimeKind.Unspecified, converted.Kind);
-			#endif
 				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
 				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual(utc, back);

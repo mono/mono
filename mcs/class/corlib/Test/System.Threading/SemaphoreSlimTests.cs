@@ -1,4 +1,3 @@
-#if NET_4_0
 // SemaphoreSlimTests.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -92,4 +91,3 @@ namespace MonoTests.System.Threading
 		}
 	}
 }
-#endif

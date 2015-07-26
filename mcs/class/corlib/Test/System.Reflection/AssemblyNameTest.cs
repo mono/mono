@@ -385,10 +385,8 @@ public class AssemblyNameTest {
 		string AssemblyCorlib;
 #if MOBILE
 		AssemblyCorlib = "mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-#elif NET_4_0
-		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #else
-		AssemblyCorlib = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #endif
 		Assert.AreEqual (AssemblyCorlib, an.FullName, "#2");
 	}
@@ -1294,19 +1292,8 @@ public class AssemblyNameTest {
 		try {
 			new AssemblyName (assemblyName + ", Culture=aa-AA");
 			Assert.Fail ("#1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name 'aa-aa' is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNotNull (ex.ParamName, "#5");
-			Assert.AreEqual ("name", ex.ParamName, "#6");
-		}
-#endif
 	}
 
 	[Test] // ctor (String)

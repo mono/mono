@@ -1054,7 +1054,6 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (TempFolder + DSC + "ToString.Test", info.ToString ());
 		}
 
-#if NET_4_0
 		[Test]
 		public void EnumerateFileSystemInfosTest ()
 		{
@@ -1069,7 +1068,6 @@ namespace MonoTests.System.IO
 			l.Sort ();
 			Assert.AreEqual ("1,2,a,b", string.Join (",", l), "#1");
 		}
-#endif
 
 #if !MOBILE
 		[Test]

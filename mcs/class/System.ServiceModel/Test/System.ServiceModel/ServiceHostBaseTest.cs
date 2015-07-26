@@ -373,7 +373,6 @@ namespace MonoTests.System.ServiceModel
 			return host;
 		}
 
-#if NET_4_0
 		[Test]
 		public void AddServiceEndpoint_Directly ()
 		{
@@ -422,7 +421,6 @@ namespace MonoTests.System.ServiceModel
 			var contract = ContractDescription.GetContract (typeof (INotImplementedService));
 			host.AddServiceEndpoint (new ServiceEndpoint (contract, binding, address));
 		}
-#endif
 
 		#region helpers
 

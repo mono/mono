@@ -167,13 +167,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void RenderRepeater_BaseControl ()
 		{
-#if NET_4_0
 			string noid = "<table>\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
 			string id_enabled = "<table id=\"foo\" class=\"aspNetDisabled\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
-#else
-			string noid = "<table border=\"0\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
-			string id_enabled = "<table id=\"foo\" disabled=\"disabled\" border=\"0\">\n\t<tr>\n\t\t<td>0</td><td></td><td></td>\n\t</tr>\n</table>";
-#endif
 			RenderRepeater_BaseControl (noid, "Table", new Table ());
 			RenderRepeater_BaseControl (noid, "DataList", new DataList ());
 			RenderRepeater_BaseControl (noid, "DataListItem", new DataListItem (0, ListItemType.Item));

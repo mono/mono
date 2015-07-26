@@ -48,26 +48,16 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (String.Empty, HttpUtility.HtmlAttributeEncode (String.Empty), "#A2");
 			Assert.AreEqual ("&lt;script>", HttpUtility.HtmlAttributeEncode ("<script>"), "#A3");
 			Assert.AreEqual ("&quot;a&amp;b&quot;", HttpUtility.HtmlAttributeEncode ("\"a&b\""), "#A4");
-#if NET_4_0
 			Assert.AreEqual ("&#39;string&#39;", HttpUtility.HtmlAttributeEncode ("'string'"), "#A5");
-#else
-			Assert.AreEqual ("'string'", HttpUtility.HtmlAttributeEncode ("'string'"), "#A5");
-#endif
 		}
 
 		[Test]
 		public void HtmlAttributeEncode_String_TextWriter ()
 		{
 			var sw = new StringWriter ();
-#if NET_4_0
 			AssertExtensions.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlAttributeEncode ("string", null);
 			}, "#A1");
-#else
-			AssertExtensions.Throws<NullReferenceException> (() => {
-				HttpUtility.HtmlAttributeEncode ("string", null);
-			}, "#A1");
-#endif
 
 			HttpUtility.HtmlAttributeEncode ("<script>", sw);
 			Assert.AreEqual ("&lt;script>", sw.ToString (), "#A2");
@@ -78,11 +68,7 @@ namespace MonoTests.System.Web {
 
 			sw = new StringWriter ();
 			HttpUtility.HtmlAttributeEncode ("'string'", sw);
-#if NET_4_0
 			Assert.AreEqual ("&#39;string&#39;", sw.ToString (), "#A4");
-#else
-			Assert.AreEqual ("'string'", sw.ToString (), "#A4");
-#endif
 			sw = new StringWriter ();
 			HttpUtility.HtmlAttributeEncode ("\\string\\", sw);
 			Assert.AreEqual ("\\string\\", sw.ToString (), "#A5");
@@ -110,15 +96,9 @@ namespace MonoTests.System.Web {
 		public void HtmlDecode_String_TextWriter ()
 		{
 			StringWriter sw;
-#if NET_4_0
 			AssertExtensions.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlDecode ("string", null);
 			}, "#A1");
-#else
-			AssertExtensions.Throws<NullReferenceException> (() => {
-				HttpUtility.HtmlDecode ("string", null);
-			}, "#A1");
-#endif
 
 			sw = new StringWriter ();
 			HttpUtility.HtmlDecode (null, sw);
@@ -167,7 +147,6 @@ namespace MonoTests.System.Web {
 			windata = Encoding.Convert (Encoding.UTF8, win1251, utf8data);
 			Assert.AreEqual ("&#65308;script&#65310;", Encoding.ASCII.GetString (windata), "ok");
 		}
-#if NET_4_0
 		[Test]
 		public void JavaScriptStringEncode ()
 		{
@@ -254,20 +233,13 @@ namespace MonoTests.System.Web {
 
 			return sb.ToString ();
 		}
-#endif
 		[Test]
 		public void HtmlEncode_2 ()
 		{
 			StringWriter sw;
-#if NET_4_0
 			AssertExtensions.Throws<ArgumentNullException> (() => {
 				HttpUtility.HtmlEncode ("string", null);
 			}, "#A1");
-#else
-			AssertExtensions.Throws<NullReferenceException> (() => {
-				HttpUtility.HtmlEncode ("string", null);
-			}, "#A1");
-#endif
 
 			sw = new StringWriter ();
 			HttpUtility.HtmlEncode (null, sw);
@@ -293,7 +265,6 @@ namespace MonoTests.System.Web {
 			for (int i = 0; i < encoding_pairs.Length; i += 2)
 				Assert.AreEqual (encoding_pairs [i + 1], HttpUtility.HtmlEncode (encoding_pairs [i]), "#B" + (i / 2).ToString ());
 		}
-#if NET_4_0
 		[Test]
 		public void HtmlEncode_IHtmlString ()
 		{
@@ -301,7 +272,6 @@ namespace MonoTests.System.Web {
 			var hs = new HtmlString (origString);
 			Assert.AreEqual (origString, HttpUtility.HtmlEncode (hs), "#A1");
 		}
-#endif
 		[Test]
 		[Category ("NotWorking")]
 		public void HtmlEncode ()
@@ -322,9 +292,7 @@ namespace MonoTests.System.Web {
 			for (int i = 0; i < s.Length; i++) {
 				char c = s [i];
 				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159
-#if NET_4_0
  || c == '\''
-#endif
 ) {
 					needEncode = true;
 					break;
@@ -351,11 +319,9 @@ namespace MonoTests.System.Web {
 					case '"':
 						output.Append ("&quot;");
 						break;
-#if NET_4_0
 					case '\'':
 						output.Append ("&#39;");
 						break;
-#endif
 					default:
 						// MS starts encoding with &# from 160 and stops at 255.
 						// We don't do that. One reason is the 65308/65310 unicode
@@ -539,9 +505,7 @@ namespace MonoTests.System.Web {
 				string str = new string ((char) i, 1);
 				string encoded = HttpUtility.HtmlEncode (str);
 				if ((i > 159 && i < 256) || i == '&' || i == '<' || i == '>' || i == '"'
-#if NET_4_0
  || i == '\''
-#endif
 ) {
 					if (encoded [0] != '&' || encoded [encoded.Length - 1] != ';')
 						Assert.Fail ("Failed for i = " + i);
@@ -623,11 +587,7 @@ namespace MonoTests.System.Web {
 
 		static char [] hexChars = "0123456789abcdef".ToCharArray ();
 
-#if NET_4_0
 		const string notEncoded = "!()*-._";
-#else
-		const string notEncoded = "!'()*-._";
-#endif
 
 		static void UrlPathEncodeChar (char c, Stream result)
 		{
@@ -822,17 +782,9 @@ namespace MonoTests.System.Web {
 	@"&#160;&#161;&#162;&#163;&#164;&#165;&#166;&#167;&#168;&#169;&#170;&#171;&#172;&#173;&#174;&#175;&#176;&#177;&#178;&#179;&#180;&#181;&#182;&#183;&#184;&#185;&#186;&#187;&#188;&#189;&#190;&#191;&#192;&#193;&#194;&#195;&#196;&#197;&#198;&#199;&#200;&#201;&#202;&#203;&#204;&#205;&#206;&#207;&#208;&#209;&#210;&#211;&#212;&#213;&#214;&#215;&#216;&#217;&#218;&#219;&#220;&#221;&#222;&#223;&#224;&#225;&#226;&#227;&#228;&#229;&#230;&#231;&#232;&#233;&#234;&#235;&#236;&#237;&#238;&#239;&#240;&#241;&#242;&#243;&#244;&#245;&#246;&#247;&#248;&#249;&#250;&#251;&#252;&#253;&#254;&#255;",
 	@" ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
 	@"&#000;&#001;&#002;&#003;&#004;&#005;&#006;&#007;&#008;&#009;&#010;&#011;&#012;&#013;&#014;&#015;&#016;&#017;&#018;&#019;&#020;&#021;&#022;&#023;&#024;&#025;&#026;&#027;&#028;&#029;&#030;&#031;&#032;",
-#if NET_4_0
 	"&#000;\x1\x2\x3\x4\x5\x6\x7\x8\x9\xa\xb\xc\xd\xe\xf\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ",
-#else
-	"\x0\x1\x2\x3\x4\x5\x6\x7\x8\x9\xa\xb\xc\xd\xe\xf\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ",
-#endif
 	@"&#x00;&#x01;&#x02;&#x03;&#x04;&#x05;&#x06;&#x07;&#x08;&#x09;&#x0A;&#x0B;&#x0C;&#x0D;&#x0E;&#x0F;&#x10;&#x11;&#x12;&#x13;&#x14;&#x15;&#x16;&#x17;&#x18;&#x19;&#x1A;&#x1B;&#x1C;&#x1D;&#x1E;&#x1F;&#x20;",
-#if NET_4_0	
 	"&#x00;\x1\x2\x3\x4\x5\x6\x7\x8\x9\xa\xb\xc\xd\xe\xf\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ",
-#else
-	"\x0\x1\x2\x3\x4\x5\x6\x7\x8\x9\xa\xb\xc\xd\xe\xf\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f ",
-#endif
 @"&#xA0;&#xA1;&#xA2;&#xA3;&#xA4;&#xA5;&#xA6;&#xA7;&#xA8;&#xA9;&#xAA;&#xAB;&#xAC;&#xAD;&#xAE;&#xAF;&#xB0;&#xB1;&#xB2;&#xB3;&#xB4;&#xB5;&#xB6;&#xB7;&#xB8;&#xB9;&#xBA;&#xBB;&#xBC;&#xBD;&#xBE;&#xBF;&#xC0;&#xC1;&#xC2;&#xC3;&#xC4;&#xC5;&#xC6;&#xC7;&#xC8;&#xC9;&#xCA;&#xCB;&#xCC;&#xCD;&#xCE;&#xCF;&#xD0;&#xD1;&#xD2;&#xD3;&#xD4;&#xD5;&#xD6;&#xD7;&#xD8;&#xD9;&#xDA;&#xDB;&#xDC;&#xDD;&#xDE;&#xDF;&#xE0;&#xE1;&#xE2;&#xE3;&#xE4;&#xE5;&#xE6;&#xE7;&#xE8;&#xE9;&#xEA;&#xEB;&#xEC;&#xED;&#xEE;&#xEF;&#xF0;&#xF1;&#xF2;&#xF3;&#xF4;&#xF5;&#xF6;&#xF7;&#xF8;&#xF9;&#xFA;&#xFB;&#xFC;&#xFD;&#xFE;&#xFF;",
 	" ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
 };
@@ -840,11 +792,7 @@ namespace MonoTests.System.Web {
 	@"áÁâÂ´æÆàÀℵαΑ&∧∠åÅ≈ãÃäÄ„βΒ¦•∩çÇ¸¢χΧˆ♣≅©↵∪¤†‡↓⇓°δΔ♦÷éÉêÊèÈ∅  εΕ≡ηΗðÐëË€∃ƒ∀½¼¾⁄γΓ≥>↔⇔♥…íÍîÎ¡ìÌℑ∞∫ιΙ¿∈ïÏκΚλΛ〈«←⇐⌈“≤⌊∗◊‎‹‘<¯—µ·−μΜ∇ –≠∋¬∉⊄ñÑνΝóÓôÔœŒòÒ‾ωΩοΟ⊕∨ªºøØõÕ⊗öÖ¶∂‰⊥φΦπΠϖ±£′″∏∝ψΨ""√〉»→⇒⌉”ℜ®⌋ρΡ‏›’‚šŠ⋅§­σΣς∼♠⊂⊆∑⊃¹²³⊇ßτΤ∴θΘϑ þÞ˜×™úÚ↑⇑ûÛùÙ¨ϒυΥüÜ℘ξΞýÝ¥ÿŸζΖ‍‌",
 	@"&#225;&#193;&#226;&#194;&#180;&#230;&#198;&#224;&#192;ℵαΑ&amp;∧∠&#229;&#197;≈&#227;&#195;&#228;&#196;„βΒ&#166;•∩&#231;&#199;&#184;&#162;χΧˆ♣≅&#169;↵∪&#164;†‡↓⇓&#176;δΔ♦&#247;&#233;&#201;&#234;&#202;&#232;&#200;∅  εΕ≡ηΗ&#240;&#208;&#235;&#203;€∃ƒ∀&#189;&#188;&#190;⁄γΓ≥&gt;↔⇔♥…&#237;&#205;&#238;&#206;&#161;&#236;&#204;ℑ∞∫ιΙ&#191;∈&#239;&#207;κΚλΛ〈&#171;←⇐⌈“≤⌊∗◊‎‹‘&lt;&#175;—&#181;&#183;−μΜ∇&#160;–≠∋&#172;∉⊄&#241;&#209;νΝ&#243;&#211;&#244;&#212;œŒ&#242;&#210;‾ωΩοΟ⊕∨&#170;&#186;&#248;&#216;&#245;&#213;⊗&#246;&#214;&#182;∂‰⊥φΦπΠϖ&#177;&#163;′″∏∝ψΨ&quot;√〉&#187;→⇒⌉”ℜ&#174;⌋ρΡ‏›’‚šŠ⋅&#167;&#173;σΣς∼♠⊂⊆∑⊃&#185;&#178;&#179;⊇&#223;τΤ∴θΘϑ &#254;&#222;˜&#215;™&#250;&#218;↑⇑&#251;&#219;&#249;&#217;&#168;ϒυΥ&#252;&#220;℘ξΞ&#253;&#221;&#165;&#255;ŸζΖ‍‌",
 	@"á9cP!qdO#hU@mg1ÁK%0<}*âÂ5[Y;lfMQ$4`´uim7E`%_1zVDkæ[cM{Æt9y:E8Hb;;$;Y'àUa6wÀ<$@W9$4NL*h#'ℵk\zαG}{}hC-Α|=QhyLT%`&wB!@#x51R 4C∧]Z3n∠y>:{JZ'v|c0;N""åzcWM'z""gÅo-JX!r.e≈Z+BT{wF8+ãQ 6P1o?x""ef}vUÃ+</Nt)TI]sä0Eg_'mn&6WY[8Äay+ u[3kqoZ„i6rβUX\:_y1A^x.p>+Β`uf3/HI¦7bCRv%o$X3:•∩ç|(fgiA|MBLf=y@Ç¸¢R,qDW;F9<mχU]$)Q`w^KF^(hΧ?ukX+O!UOftˆZE♣@MLR(vcH]k8≅CU;r#(©7DZ`1>r~.↵4B&R∪+x2T`q[M-lq'¤~3rp%~-Gd†;35wU+II1tQJ‡`NGh[↓Lr>74~yHB=&EI⇓,u@Jx°δcC`2,Δo2B]6PP8♦|{!wZa&,*N'$6÷-{nVSgO]%(Ié6Éêosx-2xDI!Ê_]7Ub%èYG4`Gx{ÈH>vwMPJ∅ :Z-u#ph l,s*8(AεΕOnj|Gy|]iYLPR≡5Wi:(vZUUK.YlηDΗ6TðT!Z:Nq_0797;!Ð4]QNë9+>x9>nm-s8YËwZ}vY€:HHf∃;=0,?ƒIr`I:i5'∀z_$Q<½_sCF;=$43DpDz]¼.aMTIEwx\ogn7A¾CuJD[Hke#⁄E]M%γE:IEk}Γ{qXfzeUS≥kqW yxV>↔AzJ:$fJ⇔3IMDqU\myWjsL♥…Okíjt$NKbGrÍ""+alp<îRÎ%¡yìz2 AÌ-%;jyMK{Umdℑi|}+Za8jyWDS#I∞]NyqN*v:m-∫03Aιf9m.:+z0@OfVoΙ_gfPilLZ¿6qqb0|BQ$H%p+d∈.Wa=YBfS'd-EOïISG+=W;GHÏ3||b-icT""qAκ*/ΚλN>j}""WrqΛt]dm-Xe/v〈\«$F< X←]=8H8⇐c⌈|“JgZ)+(7,}≤s8[""3%C4JvN⌊H55TAKEZ*%Z)d.∗R9z//!q◊D`643eO‎&-L>DsUej‹C[n]Q<%UoyO‘?zUgpr+62sY<T{7n*^¯4CH]6^e/x/—uT->mQh\""µZSTN!F(U%5·17:Cu<−)*c2μTΜ%:6-e&L[ Xos/4∇]Xr 1c=qyv4HSw~HL~–{+qG?/}≠6`S"",+pL∋>¬B9∉G;6P]xc 0Bs⊄7,j0Sj2/&ñFsÑ=νKs*?[54bV1ΝQ%p6P0.Lrc`yóA/*`6sBH?67Ó&ôÔI""Hœ~e9Œ>oò5eZI}iy?}KÒS‾anD1nXωIΩu""ο:Mz$(""joU^[mΟ7M1f$j>N|Q/@(⊕de6(∨WXb<~;tI?bt#ªU:º+wb(*cA=øjb c%*?Uj6<T02Ø/A}j'MõjlfYlR~er7D@3WÕe:XTLF?|""yd7x⊗eV6Mmw2{K<lö%B%/o~r9Öc1Q TJnd^¶;∂|‰_.⊥E_bim;gvA{wqφeΦ^-!Dcπ8LB6k4PΠ(5D |Y3ϖptuh)3Mv±TAvFo+;JE,2?£""'6F9fRp′,0″<∏N∝C%}JC7qY(7))UWψ 7=rmQaΨeD!G5e>S~kO""'4""/i4\>!]H;T^0o√8_G`*8&An\rhc)〉&UEk»-(YtC→(zerUTMTe,'@{⇒mlzVhU<S,5}9DM⌉/%R=10*[{'=:”C0ℜ4HoT?-#+l[SnPs®0 bV⌋TρΡjb1}OJ:,0z6‏oTxP""""FOT[;›'’-:Ll)I0^$p.‚S_šNBr9)K[Š1⋅$-S4/G&u§= _CqlY1O'­qNf|&σGp}ΣP3:8ς∼[ItI♠8⊂BQn~!KO:+~ma⊆FV.u 4wD∑lE+kQ|gZ];Y⊃DK69EEM$D¹KVO²%:~Iq?IUcHr4y³QP@R't!⊇vßYnI@FXxT<τvL[4H95mfΤF0JzQsrxNZry∴Bn#t(θ*OΘw=Z%ϑ+*l^3C)5HCNmR  %`g|*8DECþ_[Þ'8,?˜}gnaz_U×-F^™9ZDO86ú]y\ecHQSÚk-07/AT|0Ce↑F⇑*}e|r$6ln!V`ûA!*8H,mÛ~6G6w&GùsPL6ÙQ¨}J^NO}=._Mnϒ{&υ=ΥWD+f>fy|nNyP*Jüo8,lh\ÜN`'g℘(sJ8h3P]cF ξcdQ_OC]U#ΞBby=Sý9tI_Ý}p(D51=X¥cH8L)$*]~=IÿdbŸf>J^1Dnζ@(drH;91?{6`xJΖ4N4[u+5‍9.W\v‌]GGtKvCC0`A",
-#if NET_4_0	
 	@"&#225;9cP!qdO#hU@mg1&#193;K%0&lt;}*&#226;&#194;5[Y;lfMQ$4`&#180;uim7E`%_1zVDk&#230;[cM{&#198;t9y:E8Hb;;$;Y&#39;&#224;Ua6w&#192;&lt;$@W9$4NL*h#&#39;ℵk\zαG}{}hC-Α|=QhyLT%`&amp;wB!@#x51R 4C∧]Z3n∠y&gt;:{JZ&#39;v|c0;N&quot;&#229;zcWM&#39;z&quot;g&#197;o-JX!r.e≈Z+BT{wF8+&#227;Q 6P1o?x&quot;ef}vU&#195;+&lt;/Nt)TI]s&#228;0Eg_&#39;mn&amp;6WY[8&#196;ay+ u[3kqoZ„i6rβUX\:_y1A^x.p&gt;+Β`uf3/HI&#166;7bCRv%o$X3:•∩&#231;|(fgiA|MBLf=y@&#199;&#184;&#162;R,qDW;F9&lt;mχU]$)Q`w^KF^(hΧ?ukX+O!UOftˆZE♣@MLR(vcH]k8≅CU;r#(&#169;7DZ`1&gt;r~.↵4B&amp;R∪+x2T`q[M-lq&#39;&#164;~3rp%~-Gd†;35wU+II1tQJ‡`NGh[↓Lr&gt;74~yHB=&amp;EI⇓,u@Jx&#176;δcC`2,Δo2B]6PP8♦|{!wZa&amp;,*N&#39;$6&#247;-{nVSgO]%(I&#233;6&#201;&#234;osx-2xDI!&#202;_]7Ub%&#232;YG4`Gx{&#200;H&gt;vwMPJ∅ :Z-u#ph l,s*8(AεΕOnj|Gy|]iYLPR≡5Wi:(vZUUK.YlηDΗ6T&#240;T!Z:Nq_0797;!&#208;4]QN&#235;9+&gt;x9&gt;nm-s8Y&#203;wZ}vY€:HHf∃;=0,?ƒIr`I:i5&#39;∀z_$Q&lt;&#189;_sCF;=$43DpDz]&#188;.aMTIEwx\ogn7A&#190;CuJD[Hke#⁄E]M%γE:IEk}Γ{qXfzeUS≥kqW yxV&gt;↔AzJ:$fJ⇔3IMDqU\myWjsL♥…Ok&#237;jt$NKbGr&#205;&quot;+alp&lt;&#238;R&#206;%&#161;y&#236;z2 A&#204;-%;jyMK{Umdℑi|}+Za8jyWDS#I∞]NyqN*v:m-∫03Aιf9m.:+z0@OfVoΙ_gfPilLZ&#191;6qqb0|BQ$H%p+d∈.Wa=YBfS&#39;d-EO&#239;ISG+=W;GH&#207;3||b-icT&quot;qAκ*/ΚλN&gt;j}&quot;WrqΛt]dm-Xe/v〈\&#171;$F&lt; X←]=8H8⇐c⌈|“JgZ)+(7,}≤s8[&quot;3%C4JvN⌊H55TAKEZ*%Z)d.∗R9z//!q◊D`643eO‎&amp;-L&gt;DsUej‹C[n]Q&lt;%UoyO‘?zUgpr+62sY&lt;T{7n*^&#175;4CH]6^e/x/—uT-&gt;mQh\&quot;&#181;ZSTN!F(U%5&#183;17:Cu&lt;−)*c2μTΜ%:6-e&amp;L[ Xos/4∇]Xr&#160;1c=qyv4HSw~HL~–{+qG?/}≠6`S&quot;,+pL∋&gt;&#172;B9∉G;6P]xc 0Bs⊄7,j0Sj2/&amp;&#241;Fs&#209;=νKs*?[54bV1ΝQ%p6P0.Lrc`y&#243;A/*`6sBH?67&#211;&amp;&#244;&#212;I&quot;Hœ~e9Œ&gt;o&#242;5eZI}iy?}K&#210;S‾anD1nXωIΩu&quot;ο:Mz$(&quot;joU^[mΟ7M1f$j&gt;N|Q/@(⊕de6(∨WXb&lt;~;tI?bt#&#170;U:&#186;+wb(*cA=&#248;jb c%*?Uj6&lt;T02&#216;/A}j&#39;M&#245;jlfYlR~er7D@3W&#213;e:XTLF?|&quot;yd7x⊗eV6Mmw2{K&lt;l&#246;%B%/o~r9&#214;c1Q TJnd^&#182;;∂|‰_.⊥E_bim;gvA{wqφeΦ^-!Dcπ8LB6k4PΠ(5D |Y3ϖptuh)3Mv&#177;TAvFo+;JE,2?&#163;&quot;&#39;6F9fRp′,0″&lt;∏N∝C%}JC7qY(7))UWψ 7=rmQaΨeD!G5e&gt;S~kO&quot;&#39;4&quot;/i4\&gt;!]H;T^0o√8_G`*8&amp;An\rhc)〉&amp;UEk&#187;-(YtC→(zerUTMTe,&#39;@{⇒mlzVhU&lt;S,5}9DM⌉/%R=10*[{&#39;=:”C0ℜ4HoT?-#+l[SnPs&#174;0 bV⌋TρΡjb1}OJ:,0z6‏oTxP&quot;&quot;FOT[;›&#39;’-:Ll)I0^$p.‚S_šNBr9)K[Š1⋅$-S4/G&amp;u&#167;= _CqlY1O&#39;&#173;qNf|&amp;σGp}ΣP3:8ς∼[ItI♠8⊂BQn~!KO:+~ma⊆FV.u 4wD∑lE+kQ|gZ];Y⊃DK69EEM$D&#185;KVO&#178;%:~Iq?IUcHr4y&#179;QP@R&#39;t!⊇v&#223;YnI@FXxT&lt;τvL[4H95mfΤF0JzQsrxNZry∴Bn#t(θ*OΘw=Z%ϑ+*l^3C)5HCNmR  %`g|*8DEC&#254;_[&#222;&#39;8,?˜}gnaz_U&#215;-F^™9ZDO86&#250;]y\ecHQS&#218;k-07/AT|0Ce↑F⇑*}e|r$6ln!V`&#251;A!*8H,m&#219;~6G6w&amp;G&#249;sPL6&#217;Q&#168;}J^NO}=._Mnϒ{&amp;υ=ΥWD+f&gt;fy|nNyP*J&#252;o8,lh\&#220;N`&#39;g℘(sJ8h3P]cF ξcdQ_OC]U#ΞBby=S&#253;9tI_&#221;}p(D51=X&#165;cH8L)$*]~=I&#255;dbŸf&gt;J^1Dnζ@(drH;91?{6`xJΖ4N4[u+5‍9.W\v‌]GGtKvCC0`A",
-#else
-	@"&#225;9cP!qdO#hU@mg1&#193;K%0&lt;}*&#226;&#194;5[Y;lfMQ$4`&#180;uim7E`%_1zVDk&#230;[cM{&#198;t9y:E8Hb;;$;Y'&#224;Ua6w&#192;&lt;$@W9$4NL*h#'ℵk\zαG}{}hC-Α|=QhyLT%`&amp;wB!@#x51R 4C∧]Z3n∠y&gt;:{JZ'v|c0;N&quot;&#229;zcWM'z&quot;g&#197;o-JX!r.e≈Z+BT{wF8+&#227;Q 6P1o?x&quot;ef}vU&#195;+&lt;/Nt)TI]s&#228;0Eg_'mn&amp;6WY[8&#196;ay+ u[3kqoZ„i6rβUX\:_y1A^x.p&gt;+Β`uf3/HI&#166;7bCRv%o$X3:•∩&#231;|(fgiA|MBLf=y@&#199;&#184;&#162;R,qDW;F9&lt;mχU]$)Q`w^KF^(hΧ?ukX+O!UOftˆZE♣@MLR(vcH]k8≅CU;r#(&#169;7DZ`1&gt;r~.↵4B&amp;R∪+x2T`q[M-lq'&#164;~3rp%~-Gd†;35wU+II1tQJ‡`NGh[↓Lr&gt;74~yHB=&amp;EI⇓,u@Jx&#176;δcC`2,Δo2B]6PP8♦|{!wZa&amp;,*N'$6&#247;-{nVSgO]%(I&#233;6&#201;&#234;osx-2xDI!&#202;_]7Ub%&#232;YG4`Gx{&#200;H&gt;vwMPJ∅ :Z-u#ph l,s*8(AεΕOnj|Gy|]iYLPR≡5Wi:(vZUUK.YlηDΗ6T&#240;T!Z:Nq_0797;!&#208;4]QN&#235;9+&gt;x9&gt;nm-s8Y&#203;wZ}vY€:HHf∃;=0,?ƒIr`I:i5'∀z_$Q&lt;&#189;_sCF;=$43DpDz]&#188;.aMTIEwx\ogn7A&#190;CuJD[Hke#⁄E]M%γE:IEk}Γ{qXfzeUS≥kqW yxV&gt;↔AzJ:$fJ⇔3IMDqU\myWjsL♥…Ok&#237;jt$NKbGr&#205;&quot;+alp&lt;&#238;R&#206;%&#161;y&#236;z2 A&#204;-%;jyMK{Umdℑi|}+Za8jyWDS#I∞]NyqN*v:m-∫03Aιf9m.:+z0@OfVoΙ_gfPilLZ&#191;6qqb0|BQ$H%p+d∈.Wa=YBfS'd-EO&#239;ISG+=W;GH&#207;3||b-icT&quot;qAκ*/ΚλN&gt;j}&quot;WrqΛt]dm-Xe/v〈\&#171;$F&lt; X←]=8H8⇐c⌈|“JgZ)+(7,}≤s8[&quot;3%C4JvN⌊H55TAKEZ*%Z)d.∗R9z//!q◊D`643eO‎&amp;-L&gt;DsUej‹C[n]Q&lt;%UoyO‘?zUgpr+62sY&lt;T{7n*^&#175;4CH]6^e/x/—uT-&gt;mQh\&quot;&#181;ZSTN!F(U%5&#183;17:Cu&lt;−)*c2μTΜ%:6-e&amp;L[ Xos/4∇]Xr&#160;1c=qyv4HSw~HL~–{+qG?/}≠6`S&quot;,+pL∋&gt;&#172;B9∉G;6P]xc 0Bs⊄7,j0Sj2/&amp;&#241;Fs&#209;=νKs*?[54bV1ΝQ%p6P0.Lrc`y&#243;A/*`6sBH?67&#211;&amp;&#244;&#212;I&quot;Hœ~e9Œ&gt;o&#242;5eZI}iy?}K&#210;S‾anD1nXωIΩu&quot;ο:Mz$(&quot;joU^[mΟ7M1f$j&gt;N|Q/@(⊕de6(∨WXb&lt;~;tI?bt#&#170;U:&#186;+wb(*cA=&#248;jb c%*?Uj6&lt;T02&#216;/A}j'M&#245;jlfYlR~er7D@3W&#213;e:XTLF?|&quot;yd7x⊗eV6Mmw2{K&lt;l&#246;%B%/o~r9&#214;c1Q TJnd^&#182;;∂|‰_.⊥E_bim;gvA{wqφeΦ^-!Dcπ8LB6k4PΠ(5D |Y3ϖptuh)3Mv&#177;TAvFo+;JE,2?&#163;&quot;'6F9fRp′,0″&lt;∏N∝C%}JC7qY(7))UWψ 7=rmQaΨeD!G5e&gt;S~kO&quot;'4&quot;/i4\&gt;!]H;T^0o√8_G`*8&amp;An\rhc)〉&amp;UEk&#187;-(YtC→(zerUTMTe,'@{⇒mlzVhU&lt;S,5}9DM⌉/%R=10*[{'=:”C0ℜ4HoT?-#+l[SnPs&#174;0 bV⌋TρΡjb1}OJ:,0z6‏oTxP&quot;&quot;FOT[;›'’-:Ll)I0^$p.‚S_šNBr9)K[Š1⋅$-S4/G&amp;u&#167;= _CqlY1O'&#173;qNf|&amp;σGp}ΣP3:8ς∼[ItI♠8⊂BQn~!KO:+~ma⊆FV.u 4wD∑lE+kQ|gZ];Y⊃DK69EEM$D&#185;KVO&#178;%:~Iq?IUcHr4y&#179;QP@R't!⊇v&#223;YnI@FXxT&lt;τvL[4H95mfΤF0JzQsrxNZry∴Bn#t(θ*OΘw=Z%ϑ+*l^3C)5HCNmR  %`g|*8DEC&#254;_[&#222;'8,?˜}gnaz_U&#215;-F^™9ZDO86&#250;]y\ecHQS&#218;k-07/AT|0Ce↑F⇑*}e|r$6ln!V`&#251;A!*8H,m&#219;~6G6w&amp;G&#249;sPL6&#217;Q&#168;}J^NO}=._Mnϒ{&amp;υ=ΥWD+f&gt;fy|nNyP*J&#252;o8,lh\&#220;N`'g℘(sJ8h3P]cF ξcdQ_OC]U#ΞBby=S&#253;9tI_&#221;}p(D51=X&#165;cH8L)$*]~=I&#255;dbŸf&gt;J^1Dnζ@(drH;91?{6`xJΖ4N4[u+5‍9.W\v‌]GGtKvCC0`A",
-#endif
 	@"&aacute&Aacute&acirc&Acirc&acute&aelig&AElig&agrave&Agrave&alefsym&alpha&Alpha&amp&and&ang&aring&Aring&asymp&atilde&Atilde&auml&Auml&bdquo&beta&Beta&brvbar&bull&cap&ccedil&Ccedil&cedil&cent&chi&Chi&circ&clubs&cong&copy&crarr&cup&curren&dagger&Dagger&darr&dArr&deg&delta&Delta&diams&divide&eacute&Eacute&ecirc&Ecirc&egrave&Egrave&empty&emsp&ensp&epsilon&Epsilon&equiv&eta&Eta&eth&ETH&euml&Euml&euro&exist&fnof&forall&frac12&frac14&frac34&frasl&gamma&Gamma&ge&gt&harr&hArr&hearts&hellip&iacute&Iacute&icirc&Icirc&iexcl&igrave&Igrave&image&infin&int&iota&Iota&iquest&isin&iuml&Iuml&kappa&Kappa&lambda&Lambda&lang&laquo&larr&lArr&lceil&ldquo&le&lfloor&lowast&loz&lrm&lsaquo&lsquo&lt&macr&mdash&micro&middot&minus&mu&Mu&nabla&nbsp&ndash&ne&ni&not&notin&nsub&ntilde&Ntilde&nu&Nu&oacute&Oacute&ocirc&Ocirc&oelig&OElig&ograve&Ograve&oline&omega&Omega&omicron&Omicron&oplus&or&ordf&ordm&oslash&Oslash&otilde&Otilde&otimes&ouml&Ouml&para&part&permil&perp&phi&Phi&pi&Pi&piv&plusmn&pound&prime&Prime&prod&prop&psi&Psi&quot&radic&rang&raquo&rarr&rArr&rceil&rdquo&real&reg&rfloor&rho&Rho&rlm&rsaquo&rsquo&sbquo&scaron&Scaron&sdot&sect&shy&sigma&Sigma&sigmaf&sim&spades&sub&sube&sum&sup&sup1&sup2&sup3&supe&szlig&tau&Tau&there4&theta&Theta&thetasym&thinsp&thorn&THORN&tilde&times&trade&uacute&Uacute&uarr&uArr&ucirc&Ucirc&ugrave&Ugrave&uml&upsih&upsilon&Upsilon&uuml&Uuml&weierp&xi&Xi&yacute&Yacute&yen&yuml&Yuml&zeta&Zeta&zwj&zwnj",
 	@"&amp;aacute&amp;Aacute&amp;acirc&amp;Acirc&amp;acute&amp;aelig&amp;AElig&amp;agrave&amp;Agrave&amp;alefsym&amp;alpha&amp;Alpha&amp;amp&amp;and&amp;ang&amp;aring&amp;Aring&amp;asymp&amp;atilde&amp;Atilde&amp;auml&amp;Auml&amp;bdquo&amp;beta&amp;Beta&amp;brvbar&amp;bull&amp;cap&amp;ccedil&amp;Ccedil&amp;cedil&amp;cent&amp;chi&amp;Chi&amp;circ&amp;clubs&amp;cong&amp;copy&amp;crarr&amp;cup&amp;curren&amp;dagger&amp;Dagger&amp;darr&amp;dArr&amp;deg&amp;delta&amp;Delta&amp;diams&amp;divide&amp;eacute&amp;Eacute&amp;ecirc&amp;Ecirc&amp;egrave&amp;Egrave&amp;empty&amp;emsp&amp;ensp&amp;epsilon&amp;Epsilon&amp;equiv&amp;eta&amp;Eta&amp;eth&amp;ETH&amp;euml&amp;Euml&amp;euro&amp;exist&amp;fnof&amp;forall&amp;frac12&amp;frac14&amp;frac34&amp;frasl&amp;gamma&amp;Gamma&amp;ge&amp;gt&amp;harr&amp;hArr&amp;hearts&amp;hellip&amp;iacute&amp;Iacute&amp;icirc&amp;Icirc&amp;iexcl&amp;igrave&amp;Igrave&amp;image&amp;infin&amp;int&amp;iota&amp;Iota&amp;iquest&amp;isin&amp;iuml&amp;Iuml&amp;kappa&amp;Kappa&amp;lambda&amp;Lambda&amp;lang&amp;laquo&amp;larr&amp;lArr&amp;lceil&amp;ldquo&amp;le&amp;lfloor&amp;lowast&amp;loz&amp;lrm&amp;lsaquo&amp;lsquo&amp;lt&amp;macr&amp;mdash&amp;micro&amp;middot&amp;minus&amp;mu&amp;Mu&amp;nabla&amp;nbsp&amp;ndash&amp;ne&amp;ni&amp;not&amp;notin&amp;nsub&amp;ntilde&amp;Ntilde&amp;nu&amp;Nu&amp;oacute&amp;Oacute&amp;ocirc&amp;Ocirc&amp;oelig&amp;OElig&amp;ograve&amp;Ograve&amp;oline&amp;omega&amp;Omega&amp;omicron&amp;Omicron&amp;oplus&amp;or&amp;ordf&amp;ordm&amp;oslash&amp;Oslash&amp;otilde&amp;Otilde&amp;otimes&amp;ouml&amp;Ouml&amp;para&amp;part&amp;permil&amp;perp&amp;phi&amp;Phi&amp;pi&amp;Pi&amp;piv&amp;plusmn&amp;pound&amp;prime&amp;Prime&amp;prod&amp;prop&amp;psi&amp;Psi&amp;quot&amp;radic&amp;rang&amp;raquo&amp;rarr&amp;rArr&amp;rceil&amp;rdquo&amp;real&amp;reg&amp;rfloor&amp;rho&amp;Rho&amp;rlm&amp;rsaquo&amp;rsquo&amp;sbquo&amp;scaron&amp;Scaron&amp;sdot&amp;sect&amp;shy&amp;sigma&amp;Sigma&amp;sigmaf&amp;sim&amp;spades&amp;sub&amp;sube&amp;sum&amp;sup&amp;sup1&amp;sup2&amp;sup3&amp;supe&amp;szlig&amp;tau&amp;Tau&amp;there4&amp;theta&amp;Theta&amp;thetasym&amp;thinsp&amp;thorn&amp;THORN&amp;tilde&amp;times&amp;trade&amp;uacute&amp;Uacute&amp;uarr&amp;uArr&amp;ucirc&amp;Ucirc&amp;ugrave&amp;Ugrave&amp;uml&amp;upsih&amp;upsilon&amp;Upsilon&amp;uuml&amp;Uuml&amp;weierp&amp;xi&amp;Xi&amp;yacute&amp;Yacute&amp;yen&amp;yuml&amp;Yuml&amp;zeta&amp;Zeta&amp;zwj&amp;zwnj",
 	@" ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",

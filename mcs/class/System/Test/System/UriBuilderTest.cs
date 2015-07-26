@@ -88,11 +88,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // ctor (Uri)
-#if NET_4_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor2_Uri_Null ()
 		{
 			new UriBuilder ((Uri) null);

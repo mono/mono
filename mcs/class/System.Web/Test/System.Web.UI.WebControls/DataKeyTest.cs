@@ -67,7 +67,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (2, iDictionary.Count, "AllValuesReferringToKey#1");
 			Assert.AreEqual ("value1", iDictionary[1], "ValueReferringToKey#1");
 		}
-#if NET_4_0
 		[Test]
 		public void DataKey_Equals ()
 		{
@@ -229,6 +228,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsFalse (key1.Equals (key2), "#A17-1");
 			Assert.IsFalse (key2.Equals (key1), "#A17-2");
 		}
-#endif
 	}
 }

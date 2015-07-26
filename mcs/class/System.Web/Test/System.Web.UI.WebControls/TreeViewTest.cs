@@ -686,37 +686,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_Defaults () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadRenderDefaults));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderDefaults");
@@ -743,69 +713,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadRenderLevelStyleCssClass));
 #region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td class=\"TestCssClass1 treeview1_2\" style=\"white-space:nowrap;\"><a class=\"treeview1_0 TestCssClass1 treeview1_1\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\" style=\"border-style:none;font-size:1em;\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td class=\"TestCssClass2 treeview1_4\" style=\"white-space:nowrap;\"><a class=\"treeview1_0 TestCssClass2 treeview1_3\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\" style=\"border-style:none;font-size:1em;\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td class=\"TestCssClass2 treeview1_4\" style=\"white-space:nowrap;\"><a class=\"treeview1_0 TestCssClass2 treeview1_3\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\" style=\"border-style:none;font-size:1em;\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img height=""0"" width=""0"" src=""/WebResource.axd?d=0d4cddf62c21b386a0c479d4b29c5a4c0a78811622d960d7&amp;t=634020843490000000"" alt=""Skip Navigation Links."" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','ec|0')""><img alt=""Collapse Book"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass1 treeview1_2"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass1 treeview1_1"" href=""javascript:__doPostBack('treeview1','sel|0')"">Book</a></td>
-		</tr><tr style=""height:0px;"">
-			<td></td>
-
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr style=""height:0px;"">
-			<td></td>
-		</tr><tr>
-			<td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><a href=""javascript:__doPostBack('treeview1','ec|0_0')""><img alt=""Collapse Chapter"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass2 treeview1_4"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass2 treeview1_3"" href=""javascript:__doPostBack('treeview1','sel|0_0')"">Chapter</a></td>
-		</tr><tr style=""height:0px;"">
-
-			<td></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_0_0')"">Section</a></td>
-
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_0_1')"">Section</a></td>
-		</tr>
-
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr style=""height:0px;"">
-			<td></td>
-		</tr><tr>
-			<td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><a href=""javascript:__doPostBack('treeview1','ec|0_1')""><img alt=""Collapse Chapter"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass2 treeview1_4"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass2 treeview1_3"" href=""javascript:__doPostBack('treeview1','sel|0_1')"">Chapter</a></td>
-		</tr><tr style=""height:0px;"">
-			<td></td>
-
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><div style=""width:20px;height:1px;"">
-
-			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_1_0')"">Section</a></td>
-		</tr>
-
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 #endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "Render_LevelStyle_CssClass");
@@ -850,11 +758,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tv.RenderBeginTag (tw);
 			tv.RenderEndTag (tw);
 			string str = sw.ToString ();
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#endif
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderTags");
 		}
 
@@ -863,37 +767,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_ExpandAll () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadExpandAll));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "ExpandAll");
@@ -920,25 +794,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeExpand () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeExpand));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeExpand");
@@ -966,17 +822,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeExpandAll () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeExpandAll));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeExpandAll");
@@ -1004,17 +850,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_CollapseAll () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadCollapseAll));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "CollapseAll");
@@ -1041,17 +877,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeCollapse () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeCollapse));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeCollapse");
@@ -1078,29 +904,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeCollapseAll () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeCollapseAll));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeCollapseAll");
@@ -1127,33 +931,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeToggleExpandState1 () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeToggleExpandState1));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeToggleExpandState1");
@@ -1180,17 +958,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Method_NodeToggleExpandState2 () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeToggleExpandState2));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeToggleExpandState2");
@@ -1304,25 +1072,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			PageInvoker invoker = new PageInvoker (delegates);
 			WebTest t = new WebTest (invoker);
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "NodeToggleExpandState2");
@@ -1380,25 +1130,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_Bindings () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadBindings));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook Title&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TZbZQJ7rAlJ-YkXM8P7PpIM1&amp;t=634067491135766272\" alt=\"Collapse Book Title\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook Title&#39;)\" id=\"treeview1t0\">Book Title</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TaTo2-lEuHkqGL9mwa70sVQ1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook Title\\\\Chapter 1&#39;)\" id=\"treeview1t1\">Chapter 1</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TaTo2-lEuHkqGL9mwa70sVQ1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook Title\\\\Chapter 2&#39;)\" id=\"treeview1t2\">Chapter 2</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook Title')""><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvPWfVVXMf-ioilxt_CauIRc1&amp;t=632900536532114160"" alt=""Collapse Book Title"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook Title')"" id=""treeview1t0"">Book Title</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvNJinrRt8LmxJBdwpNumnBQ1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook Title\\Chapter 1')"" id=""treeview1t1"">Chapter 1</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvNJinrRt8LmxJBdwpNumnBQ1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook Title\\Chapter 2')"" id=""treeview1t2"">Chapter 2</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderBindings");
@@ -1437,25 +1169,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_Navigate () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNavigate));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tmyNode0&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse myNode0\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl0\" target=\"myTarget\" id=\"treeview1t0\">myNode0</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl00\" target=\"myTarget\" id=\"treeview1t1\">myNode00</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl1\" target=\"myTarget\" id=\"treeview1t2\">myNode1</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tmyNode0')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse myNode0"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl0"" target=""myTarget"" id=""treeview1t0"">myNode0</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl00"" target=""myTarget"" id=""treeview1t1"">myNode00</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl1"" target=""myTarget"" id=""treeview1t2"">myNode1</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderNavigate");
@@ -1487,37 +1201,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_Checkboxes () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadCheckboxes));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n0CheckBox\" id=\"treeview1n0CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n1CheckBox\" id=\"treeview1n1CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n2CheckBox\" id=\"treeview1n2CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n3CheckBox\" id=\"treeview1n3CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n4CheckBox\" id=\"treeview1n4CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n5CheckBox\" id=\"treeview1n5CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n0CheckBox"" id=""treeview1n0CheckBox"" title=""Book"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n1CheckBox"" id=""treeview1n1CheckBox"" title=""Chapter"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n2CheckBox"" id=""treeview1n2CheckBox"" title=""Section"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n3CheckBox"" id=""treeview1n3CheckBox"" title=""Section"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n4CheckBox"" id=""treeview1n4CheckBox"" title=""Chapter"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n5CheckBox"" id=""treeview1n5CheckBox"" title=""Section"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderCheckboxes");
@@ -1545,37 +1229,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_Values () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadValues));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"mySkipLinkText\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TZbZQJ7rAlJ-YkXM8P7PpIM1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:30px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TZbZQJ7rAlJ-YkXM8P7PpIM1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:30px;height:1px\"></div></td><td><div style=\"width:30px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TaTo2-lEuHkqGL9mwa70sVQ1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:30px;height:1px\"></div></td><td><div style=\"width:30px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TaTo2-lEuHkqGL9mwa70sVQ1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:30px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TZbZQJ7rAlJ-YkXM8P7PpIM1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:30px;height:1px\"></div></td><td><div style=\"width:30px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=9M_pBQelEbwLdXyZk6p9TaTo2-lEuHkqGL9mwa70sVQ1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""mySkipLinkText"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvPWfVVXMf-ioilxt_CauIRc1&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:30px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvPWfVVXMf-ioilxt_CauIRc1&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:30px;height:1px""></div></td><td><div style=""width:30px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvNJinrRt8LmxJBdwpNumnBQ1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:30px;height:1px""></div></td><td><div style=""width:30px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvNJinrRt8LmxJBdwpNumnBQ1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:30px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvPWfVVXMf-ioilxt_CauIRc1&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:30px;height:1px""></div></td><td><div style=""width:30px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=tM_G_fTuPrZTezUsMMFtvNJinrRt8LmxJBdwpNumnBQ1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderValues");
@@ -1606,37 +1260,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_ImagesOn () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadImagesOn));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"Test666/dashminus.gif\" alt=\"Test111\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"Test666/tminus.gif\" alt=\"Test111\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"><img src=\"Test666/i.gif\" alt=\"\" /></div></td><td><img src=\"Test666/t.gif\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"><img src=\"Test666/i.gif\" alt=\"\" /></div></td><td><img src=\"Test666/l.gif\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"Test666/lminus.gif\" alt=\"Test111\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"Test666/l.gif\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""Test666/dashminus.gif"" alt=""Test111"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""Test666/tminus.gif"" alt=""Test111"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""><img src=""Test666/i.gif"" alt="""" /></div></td><td><img src=""Test666/t.gif"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""><img src=""Test666/i.gif"" alt="""" /></div></td><td><img src=""Test666/l.gif"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""Test666/lminus.gif"" alt=""Test111"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""Test666/l.gif"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderImagesOn");
@@ -1646,37 +1270,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_ImagesOff () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadImagesOff));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1n0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1n1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1n2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1n3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1n4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1n5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1n0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1n1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1n2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1n3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1n4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1n5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderImagesOff");
@@ -1728,18 +1322,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Category ("NunitWeb")]
 		public void TreeView_Render_WrapOn () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadWrapOn));
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sTreeNode1&#39;)\" onclick=\"TreeView_SelectNode(treeview1_Data, this,&#39;treeview1t0&#39;);\" id=\"treeview1t0\">TreeNode1</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget =
-@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sTreeNode1')"" onclick=""TreeView_SelectNode(treeview1_Data, this,'treeview1t0');"" id=""treeview1t0"">TreeNode1</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderWrapOn");
 		}
@@ -1747,18 +1330,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Category ("NunitWeb")]
 		public void TreeView_Render_WrapOff () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadWrapOff));
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sTreeNode1&#39;)\" onclick=\"TreeView_SelectNode(treeview1_Data, this,&#39;treeview1t0&#39;);\" id=\"treeview1t0\">TreeNode1</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget =
-@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sTreeNode1')"" onclick=""TreeView_SelectNode(treeview1_Data, this,'treeview1t0');"" id=""treeview1t0"">TreeNode1</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderWrapOff");
 		}
@@ -1792,11 +1364,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Category ("NunitWeb")]
 		public void TreeView_Render_Client () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadClient));
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#endif
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderClient");
 		}
@@ -1843,37 +1411,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_NodeStrings () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeStrings));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" title=\"string1\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td><a href=\"string4\" id=\"treeview1t1i\" tabindex=\"-1\"><img src=\"string3\" alt=\"\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"string4\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\string6&#39;)\" id=\"treeview1t3\">string6</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\string7&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\string7&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\string7\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" title=""string1"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td><a href=""string4"" id=""treeview1t1i""><img src=""string3"" alt="""" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""string4"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\string6')"" id=""treeview1t3"">string6</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\string7')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\string7')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\string7\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderNodeStrings");
@@ -1907,37 +1445,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_NodeStates1 () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeStates1));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t2\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><input type=\"checkbox\" name=\"treeview1n3CheckBox\" id=\"treeview1n3CheckBox\" /><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t3\">Section</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t2"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n3CheckBox"" id=""treeview1n3CheckBox"" title=""Section"" /><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t3"">Section</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderNodeStates1");
@@ -1969,29 +1477,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void TreeView_Render_NodeStates2 () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeStates2));
 			#region HTML
-#if NET_4_0
 			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Book\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook&#39;)\" id=\"treeview1t0\">Book</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qsyBHMcxXXKbUwruYE_9Mo1&amp;t=634067491135766272\" alt=\"Expand Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t1\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><a href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;tBook\\\\Chapter&#39;)\"><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2qLe7WfoYyDfWfVSkV5Suzs1&amp;t=634067491135766272\" alt=\"Collapse Chapter\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter&#39;)\" id=\"treeview1t4\">Chapter</a></td>\r\n\t\t</tr>\r\n\t</table><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=Me-CdxEHiTTT3lXTDd0I2ilpe6vhhhJjssENmbNkrSY1&amp;t=634067491135766272\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"javascript:__doPostBack(&#39;treeview1&#39;,&#39;sBook\\\\Chapter\\\\Section&#39;)\" id=\"treeview1t5\">Section</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
-#else
-			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
-	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><a href=""javascript:__doPostBack('treeview1','tBook')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Book"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook')"" id=""treeview1t0"">Book</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKww7ErebG7jw1jueqPriNXg1&amp;t=632900536532114160"" alt=""Expand Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t1"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><a href=""javascript:__doPostBack('treeview1','tBook\\Chapter')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse Chapter"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter')"" id=""treeview1t4"">Chapter</a></td>
-		</tr>
-	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
-		<tr>
-			<td><div style=""width:20px;height:1px""></div></td><td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sBook\\Chapter\\Section')"" id=""treeview1t5"">Section</a></td>
-		</tr>
-	</table>
-</div><a id=""treeview1_SkipLink""></a>";
-#endif
 			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderNodeStates2");

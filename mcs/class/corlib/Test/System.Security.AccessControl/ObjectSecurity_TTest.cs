@@ -3,7 +3,6 @@
 // Authors:
 //	James Bellinger (jfb@zer7.com)
 
-#if NET_4_0
 
 using System;
 using System.Security.AccessControl;
@@ -101,5 +100,4 @@ namespace MonoTests.System.Security.AccessControl
 	}
 }
 
-#endif
 

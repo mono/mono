@@ -167,11 +167,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			img.Enabled = false;
 
 			string html = img.Render ();
-#if NET_4_0
 			Assert.IsTrue (html.IndexOf (" class=\"aspNetDisabled\"") > 0, "#");
-#else
-			Assert.IsTrue (html.IndexOf (" disabled=\"") > 0, "#");
-#endif
 		}
 
 		[Test]
@@ -196,21 +192,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 			s = i.Render ();
 			Assert.IsTrue (i.Render ().IndexOf (" alt=\"alt\"") > 0, "alt");
 			i.AlternateText = String.Empty;
-#if NET_4_0
 			s = i.Render ();
 			Assert.IsTrue (s.IndexOf (" class=\"aspNetDisabled\"") < 0, "enabled");
 			i.Enabled = false;
 			s = i.Render ();
 			Assert.IsTrue (s.IndexOf (" class=\"aspNetDisabled\"") > 0, "disabled");
 			i.Enabled = true;
-#else
-			s = i.Render ();
-			Assert.IsTrue (i.Render ().IndexOf (" disabled=\"disabled\"") < 0, "enabled");
-			i.Enabled = false;
-			s = i.Render ();
-			Assert.IsTrue (i.Render ().IndexOf (" disabled=\"disabled\"") > 0, "disabled");
-			i.Enabled = true;
-#endif
 
 			// note: align is in mixed-case in 1.x so we lower everything to test
 			i.ImageAlign = ImageAlign.AbsBottom;

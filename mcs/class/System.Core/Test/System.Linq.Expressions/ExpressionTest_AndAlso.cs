@@ -80,9 +80,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (ExpressionType.AndAlso, expr.NodeType, "AndAlso#01");
 			Assert.AreEqual (typeof (bool), expr.Type, "AndAlso#02");
 			Assert.IsNull (expr.Method, "AndAlso#03");
-#if !NET_4_0
-			Assert.AreEqual ("(True && False)", expr.ToString(), "AndAlso#04");
-#endif
 		}
 
 		[Test]
@@ -97,10 +94,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (OpClass), expr.Type, "AndAlso#06");
 			Assert.AreEqual (mi, expr.Method, "AndAlso#07");
 			Assert.AreEqual ("op_BitwiseAnd", expr.Method.Name, "AndAlso#08");
-#if !NET_4_0
-			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) && value(MonoTests.System.Linq.Expressions.OpClass))",
-				expr.ToString(), "AndAlso#09");
-#endif
 		}
 
 		[Test]

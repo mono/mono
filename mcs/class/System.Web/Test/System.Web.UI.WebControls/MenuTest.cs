@@ -55,9 +55,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		public MenuTable ()
 		{
-#if NET_4_0
 			RenderingMode = MenuRenderingMode.Table;
-#endif
 		}
 	}
 	
@@ -180,11 +178,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNotNull (p.StaticMenuStyle, "StaticMenuStyle");
 			Assert.AreEqual ("", p.StaticPopOutImageUrl, "StaticPopOutImageUrl");
 			Assert.IsNotNull (p.StaticSelectedStyle, "StaticSelectedStyle");
-#if NET_4_0
 			Assert.IsTrue (p.StaticSubMenuIndent.IsEmpty, "StaticSubMenuIndent");
-#else
-			Assert.AreEqual (Unit.Pixel(16), p.StaticSubMenuIndent, "StaticSubMenuIndent");
-#endif
 			Assert.AreEqual ("", p.StaticTopSeparatorImageUrl, "StaticTopSeparatorImageUrl");
 			Assert.AreEqual ("", p.Target, "Target");
 			Assert.IsNotNull (p.OnTagKey (), "TagKey");
@@ -412,22 +406,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void _BeginTagRender(Page p)
 		{
 			PokerMenu pm = new PokerMenu ();
-#if NET_4_0
 			pm.RenderingCompatibility = new Version (2, 0);
-#endif
 			p.Form.Controls.Add (pm);
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 			pm.RenderBeginTag (tw);
 			string RenderedControlHtml = sw.ToString();
-#if NET_4_0
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n";
-#else
-			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n";
-#endif
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderBeginTag");
 		}
-#if NET_4_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_RenderBeginTag_List ()
@@ -449,7 +436,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderBeginTag_List");
 		}
-#endif
 		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_RenderEndTag ()
@@ -459,23 +445,16 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void _EndTagRender (Page p)
 		{
 			PokerMenu pm = new PokerMenu ();
-#if NET_4_0
 			pm.RenderingCompatibility = new Version (2, 0);
-#endif
 			p.Form.Controls.Add (pm);
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 			pm.RenderBeginTag (tw);
 			pm.RenderEndTag (tw);
 			string RenderedControlHtml = sw.ToString ();
-#if NET_4_0
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n\r\n</table><a id=\"ctl01_SkipLink\"></a>";
-#else
-			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"ctl01\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n\r\n</table><a id=\"ctl01_SkipLink\"></a>";
-#endif
 			HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"RenderEndTag");	
 		}
-#if NET_4_0
 		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_RenderEndTag_List ()
@@ -497,7 +476,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			string OriginControlHtml = "<a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"ctl01\">\r\n\r\n</div><a id=\"ctl01_SkipLink\"></a>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderEndTag");
 		}
-#endif
 		[Test]
 		public void Menu_DataBind () {
 			Page p = new Page ();
@@ -555,9 +533,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (xmlDs);
 
 			Menu m = CreateMenu ();
-#if NET_4_0
 			m.RenderingMode = MenuRenderingMode.Table;
-#endif
 			m.DataSourceID = "XmlDataSource";
 			m.MenuItemDataBound += new MenuEventHandler (m_MenuItemDataBound);
 			p.Form.Controls.Add (m);
@@ -951,250 +927,29 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void Menu_RenderStaticItems () {
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
 			#region OriginControlHtml
-#if NET_4_0
 			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"Menu\" class=\"Menu_2\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n\t<tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun0\">\r\n\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr><tr>\r\n\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t<tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun1\">\r\n\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\" style=\"margin-left:16px;\">two-black-1</a></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun2\">\r\n\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\" style=\"margin-left:32px;\">three-black-1</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr>\r\n\t\t\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun3\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\" style=\"margin-left:48px;\">four-black-1</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun4\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\" style=\"margin-left:48px;\">four-black-2</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun5\">\r\n\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\" style=\"margin-left:32px;\">three-black-2</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr>\r\n\t\t\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun6\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\" style=\"margin-left:48px;\">four-black-3</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun7\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\" style=\"margin-left:48px;\">four-black-4</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr><tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun8\">\r\n\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\" style=\"margin-left:16px;\">two-black-2</a></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun9\">\r\n\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\" style=\"margin-left:32px;\">three-black-3</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr>\r\n\t\t\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun10\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\" style=\"margin-left:48px;\">four-black-5</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun11\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\" style=\"margin-left:48px;\">four-black-6</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun12\">\r\n\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\" style=\"margin-left:32px;\">three-black-4</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr><tr>\r\n\t\t\t\t\t\t<td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun13\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\" style=\"margin-left:48px;\">four-black-7</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr><tr onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun14\">\r\n\t\t\t\t\t\t\t\t<td><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;width:100%;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\" style=\"margin-left:48px;\">four-black-8</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table><a id=\"Menu_SkipLink\"></a>";
-#else
-			OriginControlHtml = @"<a href=""#Menu_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><table id=""Menu"" class=""Menu_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-	<tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun0"">
-		<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-			<tr>
-				<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value')"">one-black</a></td>
-			</tr>
-		</table></td>
-	</tr><tr>
-		<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-			<tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun1"">
-				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-					<tr>
-						<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value')"" style=""margin-left:16px;"">two-black-1</a></td>
-					</tr>
-				</table></td>
-			</tr><tr>
-				<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-					<tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun2"">
-						<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value')"" style=""margin-left:32px;"">three-black-1</a></td>
-							</tr>
-						</table></td>
-					</tr><tr>
-						<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun3"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value\\four-black-1-value')"" style=""margin-left:48px;"">four-black-1</a></td>
-									</tr>
-								</table></td>
-							</tr><tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun4"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value\\four-black-2-value')"" style=""margin-left:48px;"">four-black-2</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr><tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun5"">
-						<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value')"" style=""margin-left:32px;"">three-black-2</a></td>
-							</tr>
-						</table></td>
-					</tr><tr>
-						<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun6"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value\\four-black-3-value')"" style=""margin-left:48px;"">four-black-3</a></td>
-									</tr>
-								</table></td>
-							</tr><tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun7"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value\\four-black-4-value')"" style=""margin-left:48px;"">four-black-4</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr>
-				</table></td>
-			</tr><tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun8"">
-				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-					<tr>
-						<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value')"" style=""margin-left:16px;"">two-black-2</a></td>
-					</tr>
-				</table></td>
-			</tr><tr>
-				<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-					<tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun9"">
-						<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value')"" style=""margin-left:32px;"">three-black-3</a></td>
-							</tr>
-						</table></td>
-					</tr><tr>
-						<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun10"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value\\four-black-5-value')"" style=""margin-left:48px;"">four-black-5</a></td>
-									</tr>
-								</table></td>
-							</tr><tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun11"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value\\four-black-6-value')"" style=""margin-left:48px;"">four-black-6</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr><tr onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun12"">
-						<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value')"" style=""margin-left:32px;"">three-black-4</a></td>
-							</tr>
-						</table></td>
-					</tr><tr>
-						<td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun13"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value\\four-black-7-value')"" style=""margin-left:48px;"">four-black-7</a></td>
-									</tr>
-								</table></td>
-							</tr><tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun14"">
-								<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;width:100%;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value\\four-black-8-value')"" style=""margin-left:48px;"">four-black-8</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr>
-				</table></td>
-			</tr>
-		</table></td>
-	</tr>
-</table><a id=""Menu_SkipLink""></a>";
-#endif
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Vertical");
-#if !NET_4_0 || (NET_4_0 && !DOT_NET)
+#if !DOT_NET
 			// Throws NREX on .NET 4.0, most probably because the adapter's Control is null
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Vertical)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithDefaultAdapter_Vertical");
 #endif
 			#region OriginControlHtml
-#if NET_4_0
 			OriginControlHtml = "<a href=\"#Menu_SkipLink\"><img alt=\"Skip Navigation Links\" src=\"/NunitWeb/WebResource.axd?d=8VpphgAbakKUC_J8R6hR0Q2&amp;t=634067491135766272\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><table id=\"Menu\" class=\"Menu_2\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\r\n\t<tr>\r\n\t\t<td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun0\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value&#39;)\">one-black</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun1\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value&#39;)\" style=\"margin-left:16px;\">two-black-1</a></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun2\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value&#39;)\" style=\"margin-left:32px;\">three-black-1</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun3\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-1-value&#39;)\" style=\"margin-left:48px;\">four-black-1</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun4\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-1-value\\\\four-black-2-value&#39;)\" style=\"margin-left:48px;\">four-black-2</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun5\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value&#39;)\" style=\"margin-left:32px;\">three-black-2</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun6\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-3-value&#39;)\" style=\"margin-left:48px;\">four-black-3</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun7\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-1-value\\\\three-black-2-value\\\\four-black-4-value&#39;)\" style=\"margin-left:48px;\">four-black-4</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td><td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun8\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value&#39;)\" style=\"margin-left:16px;\">two-black-2</a></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun9\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value&#39;)\" style=\"margin-left:32px;\">three-black-3</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun10\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-5-value&#39;)\" style=\"margin-left:48px;\">four-black-5</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun11\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-3-value\\\\four-black-6-value&#39;)\" style=\"margin-left:48px;\">four-black-6</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td onmouseover=\"Menu_HoverRoot(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun12\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value&#39;)\" style=\"margin-left:32px;\">three-black-4</a></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t<td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun13\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-7-value&#39;)\" style=\"margin-left:48px;\">four-black-7</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td><td style=\"width:3px;\"></td><td onmouseover=\"Menu_HoverStatic(this)\" onmouseout=\"Menu_Unhover(this)\" onkeyup=\"Menu_Key(this)\" id=\"Menun14\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\r\n\t\t\t\t\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t\t\t\t\t<td style=\"white-space:nowrap;\"><a class=\"Menu_1\" href=\"javascript:__doPostBack(&#39;Menu&#39;,&#39;one-black-value\\\\two-black-2-value\\\\three-black-4-value\\\\four-black-8-value&#39;)\" style=\"margin-left:48px;\">four-black-8</a></td>\r\n\t\t\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t\t\t</tr>\r\n\t\t\t\t\t\t</table></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table><a id=\"Menu_SkipLink\"></a>";
-#else
-			OriginControlHtml = @"<a href=""#Menu_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><table id=""Menu"" class=""Menu_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-	<tr>
-		<td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun0""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-			<tr>
-				<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value')"">one-black</a></td>
-			</tr>
-		</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-			<tr>
-				<td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun1""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-					<tr>
-						<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value')"" style=""margin-left:16px;"">two-black-1</a></td>
-					</tr>
-				</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-					<tr>
-						<td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun2""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value')"" style=""margin-left:32px;"">three-black-1</a></td>
-							</tr>
-						</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr>
-								<td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun3""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value\\four-black-1-value')"" style=""margin-left:48px;"">four-black-1</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td><td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun4""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-1-value\\four-black-2-value')"" style=""margin-left:48px;"">four-black-2</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td>
-							</tr>
-						</table></td><td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun5""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value')"" style=""margin-left:32px;"">three-black-2</a></td>
-							</tr>
-						</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr>
-								<td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun6""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value\\four-black-3-value')"" style=""margin-left:48px;"">four-black-3</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td><td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun7""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-1-value\\three-black-2-value\\four-black-4-value')"" style=""margin-left:48px;"">four-black-4</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td>
-							</tr>
-						</table></td>
-					</tr>
-				</table></td><td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun8""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-					<tr>
-						<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value')"" style=""margin-left:16px;"">two-black-2</a></td>
-					</tr>
-				</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-					<tr>
-						<td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun9""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value')"" style=""margin-left:32px;"">three-black-3</a></td>
-							</tr>
-						</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr>
-								<td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun10""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value\\four-black-5-value')"" style=""margin-left:48px;"">four-black-5</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td><td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun11""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-3-value\\four-black-6-value')"" style=""margin-left:48px;"">four-black-6</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td>
-							</tr>
-						</table></td><td onmouseover=""Menu_HoverRoot(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun12""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-							<tr>
-								<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value')"" style=""margin-left:32px;"">three-black-4</a></td>
-							</tr>
-						</table></td><td style=""width:3px;""></td><td><table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
-							<tr>
-								<td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun13""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value\\four-black-7-value')"" style=""margin-left:48px;"">four-black-7</a></td>
-									</tr>
-								</table></td><td style=""width:3px;""></td><td onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""Menun14""><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-									<tr>
-										<td style=""white-space:nowrap;""><a class=""Menu_1"" href=""javascript:__doPostBack('Menu','one-black-value\\two-black-2-value\\three-black-4-value\\four-black-8-value')"" style=""margin-left:48px;"">four-black-8</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table></td>
-					</tr>
-				</table></td>
-			</tr>
-		</table></td>
-	</tr>
-</table><a id=""Menu_SkipLink""></a>";
-#endif
 			#endregion
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Horizontal)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItems_Horizontal");
-#if !NET_4_0 || (NET_4_0 && !DOT_NET)
+#if !DOT_NET
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItemsWithBaseAdapter_Horizontal)).Run ();
 			RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithBaseAdapter_Horizontal");
 #endif
 		}
-#if NET_4_0
 		[Test]
 		[Category ("NunitWeb")]
 		[Ignore ("Disabled temporarily")]
@@ -1225,7 +980,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Menu_RenderStaticItemsWithBaseAdapter_Horizontal");
 #endif
 		}
-#endif
 		class MyMenuAdapter : global::System.Web.UI.WebControls.Adapters.MenuAdapter
 		{
 			protected internal override void RenderItem (HtmlTextWriter writer, 
@@ -1240,9 +994,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-#if NET_4_0
 		[Category ("NotDotNet")]
-#endif
 		public void Menu_RenderStaticItemsWithAdapter () 
 		{
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
@@ -1484,7 +1236,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.StaticDisplayLevels = 4;
 			AddMenuToPage (p, m);
 		}
-#if NET_4_0
 		public static void Menu_RenderStaticItems_Vertical_List (Page p)
 		{
 			Menu m = CreateMenuForRenderTests (null, false);
@@ -1503,7 +1254,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			m.RenderingMode = MenuRenderingMode.List;
 			AddMenuToPage (p, m);
 		}
-#endif
 		public static void Menu_RenderStaticItemsWithBaseAdapter_Vertical (Page p) {
 			Menu m = CreateMenuForRenderTests (new MyWebControl.Adapters.MenuAdapter());
 			m.StaticDisplayLevels = 4;
@@ -1560,10 +1310,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		static Menu CreateMenuForRenderTests (MyWebControl.Adapters.MenuAdapter adapter, bool compatibilityRendering) 
 		{
 			Menu menu = new MyMenu (adapter);
-#if NET_4_0
 			if (compatibilityRendering)
 				menu.RenderingCompatibility = new Version (3, 5);
-#endif
 			menu.ID = "Menu";
 			MenuItem R, N1, N2, SN1, SN2, SN3, SN4;
 			R = new MenuItem ("one-black", "one-black-value");
@@ -1728,17 +1476,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		[Test]
 		[Category ("NunitWeb")]
-#if NET_4_0 && !DOT_NET
+#if !DOT_NET
 		[Ignore ("Temporarily ignored on Mono until the Menu control is updated for 4.0")]
 #endif
 		public void MenuClass ()
 		{
 			string res = new WebTest ("menuclass.aspx").Run ();
-#if NET_4_0
 			string menua_pattern="<div[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
-#else
-			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
-#endif
 			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
 				RegexOptions.IgnoreCase|RegexOptions.Singleline),
 				"check that <table class=\"menua\"> is found");
@@ -1771,11 +1515,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public static void Menu_SetTableMode (Page p)
 		{
-#if NET_4_0
 			Menu m = p.Form.FindControl ("Menu1") as Menu;
 			Assert.IsNotNull (m, "Menu present");
 			m.RenderingMode = MenuRenderingMode.Table;
-#endif
 		}
 		
 		public static void _MenuItemsPost (Page p)
@@ -2014,7 +1756,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			item.Text = null;
 			Assert.AreEqual ("VVV", item.Text, "MenuItem_TextValue2#3");
 		}
-#if NET_4_0
 		[Test]
 		public void Menu_RenderingMode ()
 		{
@@ -2041,6 +1782,5 @@ namespace MonoTests.System.Web.UI.WebControls
 				m.RenderingMode = (MenuRenderingMode) (maxValue + 1);
 			}, "#A2-2");
 		}
-#endif
 	}
 }

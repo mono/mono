@@ -41,7 +41,6 @@ namespace MonoTests.System.Web.Compilation
 	[Serializable]
 	public class BuildManagerTest
 	{
-#if NET_4_0
 		[Test]
 		[Ignore ("Pending investigation if it is indeed the correct test.")]
 		public void GetGlobalAsaxType ()
@@ -59,6 +58,5 @@ namespace MonoTests.System.Web.Compilation
 			Assert.AreEqual ("", BuildManager.TargetFramework.Profile, "#A1-3");
 			Assert.AreEqual (new Version (4, 0), BuildManager.TargetFramework.Version, "#A1-4");
 		}
-#endif
 	}
 }

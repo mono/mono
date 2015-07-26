@@ -1,4 +1,4 @@
-﻿#if NET_4_0
+﻿
 using System;
 using System.Collections.Generic;
 
@@ -258,4 +258,3 @@ namespace StandAloneTests.RequestValidator.Generated
 		}
 	}
 }
-#endif

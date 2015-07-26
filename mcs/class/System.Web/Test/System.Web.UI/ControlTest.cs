@@ -44,9 +44,7 @@ using MonoTests.Common;
 
 using System.Web.UI.Adapters;
 
-#if NET_4_0
 using System.Web.Routing;
-#endif
 
 namespace MonoTests.System.Web.UI
 {
@@ -973,11 +971,7 @@ namespace MonoTests.System.Web.UI
 			fr.Controls ["__EVENTTARGET"].Value = "container$children$lb";
 			fr.Controls ["__EVENTARGUMENT"].Value = String.Empty;
 			t.Request = fr;
-#if NET_4_0
 			string originalHtml = "<span id=\"container\"><a id=\"container_children_lb\" href=\"javascript:__doPostBack(&#39;container$children$lb&#39;,&#39;&#39;)\">Woot! I got clicked!</a></span><hr/>";
-#else
-			string originalHtml = @"<span id=""container""><a href=""javascript:__doPostBack('container$children$lb','')"" id=""container_children_lb"">Woot! I got clicked!</a></span><hr/>";
-#endif
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
@@ -998,7 +992,6 @@ namespace MonoTests.System.Web.UI
 			WebTest.CopyResource (GetType (), "OverridenControlsPropertyAndPostBack_Bug594238.aspx", "OverridenControlsPropertyAndPostBack_Bug594238.aspx");
 		}
 
-#if NET_4_0
 		[Test]
 		public void GetRouteUrl_Object ()
 		{
@@ -1116,7 +1109,6 @@ namespace MonoTests.System.Web.UI
 			path = ctl.GetRouteUrl (String.Empty, (RouteValueDictionary) null);
 			Assert.IsNull (path, "#A3-3");
 		}
-#endif
 		#region helpcalsses
 		class ControlWithState : Control
 		{

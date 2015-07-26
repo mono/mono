@@ -37,23 +37,12 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.Quote (null);
 		}
 
-#if !NET_4_0
-		[Test]
-		public void QuoteConstant ()
-		{
-			UnaryExpression expr = Expression.Quote (Expression.Constant (1));
-			Assert.AreEqual (ExpressionType.Quote, expr.NodeType, "Quote#01");
-			Assert.AreEqual (typeof (ConstantExpression), expr.Type, "Quote#02");
-			Assert.AreEqual ("1", expr.ToString(), "Quote#03");
-		}
-#else
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void QuoteConstant ()
 		{
 			Expression.Quote (Expression.Constant (1));
 		}
-#endif
 
 		[Test]
 		public void CompiledQuote ()

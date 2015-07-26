@@ -40,26 +40,16 @@ namespace MonoTests.System.Web.Configuration {
 		public void DefaultValues ()
 		{
 			MachineKeySection section = new MachineKeySection ();
-#if NET_4_0
 			Assert.AreEqual (MachineKeyCompatibilityMode.Framework20SP1, section.CompatibilityMode, "CompatibilityMode");
-#endif
 			Assert.AreEqual ("Auto", section.Decryption, "Decryption");
 			Assert.AreEqual ("AutoGenerate,IsolateApps", section.DecryptionKey, "DecryptionKey");
-#if NET_4_0
 			Assert.AreEqual (MachineKeyValidation.HMACSHA256, section.Validation, "Validation");
 			Assert.AreEqual ("HMACSHA256", section.ValidationAlgorithm, "ValidationAlgorithm");
-#else
-			Assert.AreEqual (MachineKeyValidation.SHA1, section.Validation, "Validation");
-#endif
 			Assert.AreEqual ("AutoGenerate,IsolateApps", section.ValidationKey, "ValidationKey");
 		}
 
 		[Test]
-#if NET_4_0
 		[ExpectedException (typeof (NullReferenceException))]
-#else
-		[ExpectedException (typeof (ConfigurationErrorsException))]
-#endif
 		public void Decryption_Null ()
 		{
 			MachineKeySection section = new MachineKeySection ();
@@ -73,7 +63,6 @@ namespace MonoTests.System.Web.Configuration {
 			MachineKeySection section = new MachineKeySection ();
 			section.Decryption = String.Empty;
 		}
-#if NET_4_0
 		[Test]
 		public void Decryption_RC2 ()
 		{
@@ -172,7 +161,6 @@ namespace MonoTests.System.Web.Configuration {
 			Assert.AreEqual (MachineKeyValidation.Custom, section.Validation, "after");
 			Assert.AreEqual ("alg:UnexistingType", section.ValidationAlgorithm, "ValidationAlgorithm");
 		}
-#endif
 	}
 }
 

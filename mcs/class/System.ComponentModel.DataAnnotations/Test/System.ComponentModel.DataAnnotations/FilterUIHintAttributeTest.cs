@@ -5,7 +5,6 @@
 
 // https://silverlight.svn.codeplex.com/svn/Release/Silverlight4/Source/RiaClient.Tests/System.ComponentModel.DataAnnotations/FilterUIHintAttributeTest.cs
 
-#if NET_4_0
 
 using System;
 using System.ComponentModel;
@@ -90,4 +89,3 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
     }
 }
 
-#endif

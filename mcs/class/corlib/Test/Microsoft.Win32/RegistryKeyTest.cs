@@ -657,7 +657,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		// Unfortunately we can't test that the scenario where a volatile
 		// key is not alive after a reboot, but we can test other bits.
 		[Test]
@@ -818,7 +817,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 
 		}
-#endif
 
 		[Test]
 		public void DeleteSubKey ()
@@ -1109,7 +1107,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		public void DeleteSubKeyTree_Key_DoesNotExist_Overload ()
 		{
@@ -1128,7 +1125,6 @@ namespace MonoTests.Microsoft.Win32
 			// It's enough to know this line is not throwing an exception.
 			Registry.CurrentUser.DeleteSubKey (subKeyName, false);
 		}
-#endif
 
 		[Test]
 		public void DeleteSubKeyTree_Key_ReadOnly ()
@@ -1658,7 +1654,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode)]
 		static extern int RegOpenKeyEx (IntPtr keyBase, string keyName, IntPtr reserved, int access, out IntPtr keyHandle);
         
@@ -1752,7 +1747,6 @@ namespace MonoTests.Microsoft.Win32
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void GetValue ()
