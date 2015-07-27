@@ -652,6 +652,9 @@ mono_image_set_unlock (MonoImageSet *set);
 char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
+void
+mono_delete_wrapper_caches (MonoWrapperCaches *shared);
+
 #define mono_image_set_new0(image,type,size) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size)))
 
 MonoType*

@@ -1643,24 +1643,7 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->native_func_wrapper_cache);
 	free_hash (image->typespec_cache);
 
-	free_hash (image->wrapper_caches.native_wrapper_cache);
-	free_hash (image->wrapper_caches.native_wrapper_aot_cache);
-	free_hash (image->wrapper_caches.native_wrapper_check_cache);
-	free_hash (image->wrapper_caches.native_wrapper_aot_check_cache);
-	free_hash (image->wrapper_caches.managed_wrapper_cache);
-	free_hash (image->wrapper_caches.delegate_begin_invoke_cache);
-	free_hash (image->wrapper_caches.delegate_end_invoke_cache);
-	free_hash (image->wrapper_caches.delegate_invoke_cache);
-	free_hash (image->wrapper_caches.delegate_abstract_invoke_cache);
-	free_hash (image->wrapper_caches.remoting_invoke_cache);
-	free_hash (image->wrapper_caches.runtime_invoke_cache);
-	free_hash (image->wrapper_caches.runtime_invoke_vtype_cache);
-	free_hash (image->wrapper_caches.runtime_invoke_direct_cache);
-	free_hash (image->wrapper_caches.synchronized_cache);
-	free_hash (image->wrapper_caches.unbox_wrapper_cache);
-	free_hash (image->wrapper_caches.cominterop_invoke_cache);
-	free_hash (image->wrapper_caches.cominterop_wrapper_cache);
-	free_hash (image->wrapper_caches.thunk_invoke_cache);
+	mono_delete_wrapper_caches (&image->wrapper_caches);
 
 	for (i = 0; i < image->gshared_types_len; ++i)
 		free_hash (image->gshared_types [i]);
