@@ -1858,6 +1858,9 @@ property_declaration
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", property.GetSignatureForError ());
 
+		if (doc_support)
+			property.DocComment = ConsumeStoredComment ();
+
 		current_type.AddMember (property);
 
 		current_local_parameters = null;
