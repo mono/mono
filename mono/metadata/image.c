@@ -1632,38 +1632,14 @@ mono_image_close_except_pools (MonoImage *image)
 		g_hash_table_destroy (image->name_cache);
 	}
 
-	free_hash (image->native_wrapper_cache);
-	free_hash (image->native_wrapper_aot_cache);
-	free_hash (image->native_wrapper_check_cache);
-	free_hash (image->native_wrapper_aot_check_cache);
-	free_hash (image->native_func_wrapper_cache);
-	free_hash (image->managed_wrapper_cache);
-	free_hash (image->delegate_begin_invoke_cache);
-	free_hash (image->delegate_end_invoke_cache);
-	free_hash (image->delegate_invoke_cache);
-	free_hash (image->delegate_abstract_invoke_cache);
 	free_hash (image->delegate_bound_static_invoke_cache);
-	free_hash (image->delegate_invoke_generic_cache);
-	free_hash (image->delegate_begin_invoke_generic_cache);
-	free_hash (image->delegate_end_invoke_generic_cache);
-	free_hash (image->synchronized_generic_cache);
-	free_hash (image->remoting_invoke_cache);
-	free_hash (image->runtime_invoke_cache);
-	free_hash (image->runtime_invoke_vtype_cache);
-	free_hash (image->runtime_invoke_direct_cache);
 	free_hash (image->runtime_invoke_vcall_cache);
-	free_hash (image->synchronized_cache);
-	free_hash (image->unbox_wrapper_cache);
-	free_hash (image->cominterop_invoke_cache);
-	free_hash (image->cominterop_wrapper_cache);
-	free_hash (image->typespec_cache);
 	free_hash (image->ldfld_wrapper_cache);
 	free_hash (image->ldflda_wrapper_cache);
 	free_hash (image->stfld_wrapper_cache);
 	free_hash (image->isinst_cache);
 	free_hash (image->castclass_cache);
 	free_hash (image->proxy_isinst_cache);
-	free_hash (image->thunk_invoke_cache);
 	free_hash (image->var_cache_slow);
 	free_hash (image->mvar_cache_slow);
 	free_hash (image->var_cache_constrained);
@@ -1671,6 +1647,11 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->wrapper_param_names);
 	free_hash (image->pinvoke_scopes);
 	free_hash (image->pinvoke_scope_filenames);
+	free_hash (image->native_func_wrapper_cache);
+	free_hash (image->typespec_cache);
+
+	mono_delete_wrapper_caches (&image->wrapper_caches);
+
 	for (i = 0; i < image->gshared_types_len; ++i)
 		free_hash (image->gshared_types [i]);
 	g_free (image->gshared_types);
