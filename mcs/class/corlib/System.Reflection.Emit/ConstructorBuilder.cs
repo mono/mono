@@ -32,6 +32,7 @@
 
 #if !FULL_AOT_RUNTIME
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
@@ -269,6 +270,14 @@ namespace System.Reflection.Emit {
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), streamSize);
 			return ilgen;
 		}
+
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			var ilgen = GetILGenerator ();
+			ilgen.Init (il, maxStack, localSignature, exceptionHandlers, tokenFixups);
+		}
+
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{

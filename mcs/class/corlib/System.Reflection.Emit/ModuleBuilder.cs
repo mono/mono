@@ -586,6 +586,14 @@ namespace System.Reflection.Emit {
 
 			return new MethodToken (GetToken (method));
 		}
+		
+		public MethodToken GetMethodToken (MethodInfo method, IEnumerable<Type> optionalParameterTypes)
+		{
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			return new MethodToken (GetToken (method, optionalParameterTypes));
+		}
 
 		public MethodToken GetArrayMethodToken (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
 		{
@@ -597,17 +605,23 @@ namespace System.Reflection.Emit {
 		{
 			if (con == null)
 				throw new ArgumentNullException ("con");
-			if (con.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The constructor is not in this module");
+
 			return new MethodToken (GetToken (con));
+		}
+		
+		public MethodToken GetConstructorToken (ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
+		{
+			if (constructor == null)
+				throw new ArgumentNullException ("constructor");
+
+			return new MethodToken (GetToken (constructor, optionalParameterTypes));
 		}
 
 		public FieldToken GetFieldToken (FieldInfo field)
 		{
 			if (field == null)
 				throw new ArgumentNullException ("field");
-			if (field.DeclaringType.Module != this)
-				throw new InvalidOperationException ("The method is not in this module");
+
 			return new FieldToken (GetToken (field));
 		}
 
@@ -676,6 +690,14 @@ namespace System.Reflection.Emit {
 			return getToken (this, member, create_open_instance);
 		}
 
+		internal int GetToken (MethodBase method, IEnumerable<Type> opt_param_types) {
+			if (opt_param_types == null)
+				return getToken (this, method, true);
+
+			var optParamTypes = new List<Type> (opt_param_types);
+			return  getMethodToken (this, method, optParamTypes.ToArray ());
+		}
+		
 		internal int GetToken (MethodBase method, Type[] opt_param_types) {
 			return getMethodToken (this, method, opt_param_types);
 		}
@@ -690,6 +712,12 @@ namespace System.Reflection.Emit {
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void RegisterToken (object obj, int token);
+
+		/*
+		 * Returns MemberInfo registered with the given token.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object GetRegisteredToken (int token);
 
 		internal TokenGenerator GetTokenGenerator () {
 			if (token_gen == null)
@@ -868,6 +896,20 @@ namespace System.Reflection.Emit {
 			ResolveTokenError error;
 
 			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (m == null)
+				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+			else
+				return m;
+		}
+
+		internal MemberInfo ResolveOrGetRegisteredToken (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			ResolveTokenError error;
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (m != null)
+				return m;
+
+			m = GetRegisteredToken (metadataToken) as MemberInfo;
 			if (m == null)
 				throw resolve_token_exception (metadataToken, error, "MemberInfo");
 			else
