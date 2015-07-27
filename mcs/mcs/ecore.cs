@@ -3079,10 +3079,7 @@ namespace Mono.CSharp {
 			// require type dependencies to be set but we are in process of resolving them
 			//
 			if (!(mc is TypeDefinition.BaseContext) && !(mc is UsingAliasNamespace.AliasContext)) {
-				ObsoleteAttribute obsolete_attr = type.GetAttributeObsolete ();
-				if (obsolete_attr != null && !mc.IsObsolete) {
-					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location, mc.Module.Compiler.Report);
-				}
+				type.CheckObsoleteness (mc, fne.StartLocation);
 			}
 
 			return type;
@@ -3480,11 +3477,7 @@ namespace Mono.CSharp {
 				ImportedTypeDefinition.Error_MissingDependency (rc, dep, loc);
 			}
 
-			if (!rc.IsObsolete) {
-				ObsoleteAttribute oa = member.GetAttributeObsolete ();
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, member.GetSignatureForError (), loc, rc.Report);
-			}
+			member.CheckObsoleteness (rc, loc);
 
 			if (!(member is FieldSpec))
 				member.MemberDefinition.SetIsUsed ();
@@ -3583,10 +3576,7 @@ namespace Mono.CSharp {
 					if (InstanceExpression is TypeExpr) {
 						var t = InstanceExpression.Type;
 						do {
-							ObsoleteAttribute oa = t.GetAttributeObsolete ();
-							if (oa != null && !rc.IsObsolete) {
-								AttributeTester.Report_ObsoleteMessage (oa, t.GetSignatureForError (), loc, rc.Report);
-							}
+							t.CheckObsoleteness (rc, loc);
 
 							t = t.DeclaringType;
 						} while (t != null);
@@ -5623,9 +5613,7 @@ namespace Mono.CSharp {
 				//
 				// Check ObsoleteAttribute on the best method
 				//
-				ObsoleteAttribute oa = best_candidate.GetAttributeObsolete ();
-				if (oa != null && !rc.IsObsolete)
-					AttributeTester.Report_ObsoleteMessage (oa, best_candidate.GetSignatureForError (), loc, rc.Report);
+				best_candidate.CheckObsoleteness (rc, loc);
 
 				best_candidate.MemberDefinition.SetIsUsed ();
 			}
@@ -7360,11 +7348,7 @@ namespace Mono.CSharp {
 
 					spec.MemberDefinition.SetIsUsed ();
 
-					if (!ec.IsObsolete) {
-						ObsoleteAttribute oa = spec.GetAttributeObsolete ();
-						if (oa != null)
-							AttributeTester.Report_ObsoleteMessage (oa, spec.GetSignatureForError (), loc, ec.Report);
-					}
+					spec.CheckObsoleteness (ec, loc);
 
 					if ((spec.Modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 						Error_AssignmentEventOnly (ec);

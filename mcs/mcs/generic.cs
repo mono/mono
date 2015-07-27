@@ -195,9 +195,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (obsoleteCheck) {
-					ObsoleteAttribute obsolete_attr = t.GetAttributeObsolete ();
-					if (obsolete_attr != null)
-						AttributeTester.Report_ObsoleteMessage (obsolete_attr, t.GetSignatureForError (), c.Location, context.Module.Compiler.Report);
+					t.CheckObsoleteness (context, c.Location);
 				}
 
 				ConstraintChecker.Check (context, t, c.Location);
@@ -1938,6 +1936,14 @@ namespace Mono.CSharp {
 			} while (type != null);
 
 			return definition.GetMetaInfo ().MakeGenericType (all.ToArray ());
+		}
+
+		public override void CheckObsoleteness (IMemberContext mc, Location loc)
+		{
+			base.CheckObsoleteness (mc, loc);
+
+			foreach (var ta in TypeArguments)
+				ta.CheckObsoleteness (mc, loc);
 		}
 
 		public override ObsoleteAttribute GetAttributeObsolete ()

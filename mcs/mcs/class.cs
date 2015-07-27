@@ -1913,9 +1913,7 @@ namespace Mono.CSharp
 					if (compiled_iface != null)
 						compiled_iface.Define ();
 
-					ObsoleteAttribute oa = iface_type.GetAttributeObsolete ();
-					if (oa != null && !IsObsolete)
-						AttributeTester.Report_ObsoleteMessage (oa, iface_type.GetSignatureForError (), Location, Report);
+					iface_type.CheckObsoleteness (this, Location);
 
 					if (iface_type.Arity > 0) {
 						// TODO: passing `this' is wrong, should be base type iface instead
@@ -1956,9 +1954,7 @@ namespace Mono.CSharp
 				// Run checks skipped during DefineType (e.g FullNamedExpression::ResolveAsType)
 				//
 				if (base_type_expr != null) {
-					ObsoleteAttribute obsolete_attr = base_type.GetAttributeObsolete ();
-					if (obsolete_attr != null && !IsObsolete)
-						AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), base_type_expr.Location, Report);
+					base_type.CheckObsoleteness (this, base_type_expr.Location);
 
 					if (IsGenericOrParentIsGeneric && base_type.IsAttribute) {
 						Report.Error (698, base_type_expr.Location,

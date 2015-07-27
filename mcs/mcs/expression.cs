@@ -6911,12 +6911,7 @@ namespace Mono.CSharp
 
 			protected override MethodGroupExpr DoResolveOverload (ResolveContext rc)
 			{
-				if (!rc.IsObsolete) {
-					var member = mg.BestCandidate;
-					ObsoleteAttribute oa = member.GetAttributeObsolete ();
-					if (oa != null)
-						AttributeTester.Report_ObsoleteMessage (oa, member.GetSignatureForError (), loc, rc.Report);
-				}
+				mg.BestCandidate.CheckObsoleteness (rc, loc);
 
 				return mg;
 			}
@@ -11198,9 +11193,7 @@ namespace Mono.CSharp
 			
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			ObsoleteAttribute oa = method.GetAttributeObsolete ();
-			if (oa != null)
-				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
+			method.CheckObsoleteness (ec, source.Location);
 
 			eclass = ExprClass.Value;
 			return this;
