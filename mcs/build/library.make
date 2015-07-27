@@ -58,7 +58,7 @@ endif
 endif
 
 ifndef response
-response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
+response = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
 library_CLEAN_FILES += $(response)
 endif
 
@@ -306,7 +306,7 @@ all-local: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 endif
 
-makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 library_CLEAN_FILES += $(makefrag)
 $(makefrag): $(sourcefile)
 #	@echo Creating $@ ...
