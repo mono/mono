@@ -409,7 +409,7 @@ System.Web.Profile/ProfileAutoSaveEventHandler.cs
 System.Web.Profile/ProfileBase.cs
 System.Web.Profile/ProfileEventArgs.cs
 System.Web.Profile/ProfileEventHandler.cs
-System.Web.Profile/ProfileGroupBase.cs
+../../../external/referencesource/System.Web/Profile/HttpProfileGroupBase.cs
 System.Web.Profile/ProfileInfoCollection.cs
 System.Web.Profile/ProfileInfo.cs
 System.Web.Profile/ProfileManager.cs
@@ -1271,7 +1271,7 @@ System.Web.Routing/PatternToken.cs
 System.Web.Routing/PatternTokenType.cs
 System.Web.Routing/RequestContext.cs
 System.Web.Routing/Route.cs
-System.Web.Routing/RouteBase.cs
+../../../external/referencesource/System.Web/Routing/RouteBase.cs
 System.Web.Routing/RouteCollection.cs
 System.Web.Routing/RouteData.cs
 System.Web.Routing/RouteDirection.cs
@@ -1283,28 +1283,28 @@ System.Web.Routing/UrlRoutingHandler.cs
 System.Web.Routing/UrlRoutingModule.cs
 System.Web.Routing/VirtualPathData.cs
 
-System.Web/HttpApplicationStateBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpApplicationStateBase.cs
 System.Web/HttpApplicationStateWrapper.cs
-System.Web/HttpBrowserCapabilitiesBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpBrowserCapabilitiesBase.cs
 System.Web/HttpBrowserCapabilitiesWrapper.cs
-System.Web/HttpCachePolicyBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpCachePolicyBase.cs
 System.Web/HttpCachePolicyWrapper.cs
 System.Web/HttpContextBase.cs
 System.Web/HttpContextWrapper.cs
-System.Web/HttpFileCollectionBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpFileCollectionBase.cs
 System.Web/HttpFileCollectionWrapper.cs
-System.Web/HttpPostedFileBase.cs
-System.Web/HttpPostedFileWrapper.cs
-System.Web/HttpRequestBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpPostedFileBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpPostedFileWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpRequestBase.cs
 System.Web/HttpRequestWrapper.cs
-System.Web/HttpResponseBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpResponseBase.cs
 System.Web/HttpResponseWrapper.cs
-System.Web/HttpServerUtilityBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpServerUtilityBase.cs
 System.Web/HttpServerUtilityWrapper.cs
-System.Web/HttpSessionStateBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpSessionStateBase.cs
 System.Web/HttpSessionStateWrapper.cs
-System.Web/HttpStaticObjectsCollectionBase.cs
-System.Web/HttpStaticObjectsCollectionWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpStaticObjectsCollectionBase.cs
+../../../external/referencesource/System.Web/Abstractions/HttpStaticObjectsCollectionWrapper.cs
 
 System.Collections.Concurrent/SplitOrderedList.cs
 
@@ -1313,8 +1313,8 @@ System.Web/HttpTaskAsyncHandler.cs
 System.Web/MimeMapping.cs
 System.Web/ReadEntityBodyMode.cs
 System.Web/UnvalidatedRequestValues.cs
-System.Web/UnvalidatedRequestValuesBase.cs
-System.Web/UnvalidatedRequestValuesWrapper.cs
+../../../external/referencesource/System.Web/UnvalidatedRequestValuesWrapper.cs
+../../../external/referencesource/System.Web/UnvalidatedRequestValuesBase.cs
 System.Web/TaskAsyncResult.cs
 System.Web/TaskEventHandler.cs
 System.Web.Security/MembershipPasswordAttribute.cs
