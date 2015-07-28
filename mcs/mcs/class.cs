@@ -1729,21 +1729,9 @@ namespace Mono.CSharp
 				return;
 
 			foreach (var member in members) {
-				var pbm = member as PropertyBasedMember;
-				if (pbm != null) {
+				var pbm = member as MemberBase;
+				if (pbm != null)
 					pbm.PrepareEmit ();
-					continue;
-				}
-
-				var mc = member as MethodCore;
-				if (mc != null) {
-					mc.PrepareEmit ();
-					continue;
-				}
-
-				var c = member as Const;
-				if (c != null)
-					c.DefineValue ();
 			}
 
 			base.PrepareEmit ();
@@ -3769,6 +3757,9 @@ namespace Mono.CSharp
 			get {
 				return type_expr;
 			}
+			set {
+				type_expr = value;
+			}
 		}
 
 		#endregion
@@ -3872,6 +3863,12 @@ namespace Mono.CSharp
 		public override string GetSignatureForDocumentation ()
 		{
 			return Parent.GetSignatureForDocumentation () + "." + MemberName.Basename;
+		}
+
+		public virtual void PrepareEmit ()
+		{
+			if (member_type != null && type_expr != null)
+				member_type.CheckObsoleteness (this, type_expr.Location);
 		}
 
 		protected virtual bool ResolveMemberType ()

@@ -1627,6 +1627,11 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public override void CheckObsoleteness (IMemberContext mc, Location loc)
+		{
+			Element.CheckObsoleteness (mc, loc);
+		}
+
 		public override ObsoleteAttribute GetAttributeObsolete ()
 		{
 			return Element.GetAttributeObsolete ();

@@ -165,8 +165,9 @@ namespace Mono.CSharp {
 			return s + parameters.GetSignatureForDocumentation ();
 		}
 
-		public virtual void PrepareEmit ()
+		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
 			parameters.ResolveDefaultValues (this);
 		}
 

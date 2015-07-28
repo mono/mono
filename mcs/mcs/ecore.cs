@@ -3078,8 +3078,10 @@ namespace Mono.CSharp {
 			// Obsolete checks cannot be done when resolving base context as they
 			// require type dependencies to be set but we are in process of resolving them
 			//
-			if (!(mc is TypeDefinition.BaseContext) && !(mc is UsingAliasNamespace.AliasContext)) {
-				type.CheckObsoleteness (mc, fne.StartLocation);
+			if (mc is ResolveContext) {
+				var oa = type.GetAttributeObsolete ();
+				if (oa != null && !mc.IsObsolete)
+					AttributeTester.Report_ObsoleteMessage (oa, type.GetSignatureForError (), fne.Location, mc.Module.Compiler.Report);
 			}
 
 			return type;
