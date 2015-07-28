@@ -1101,7 +1101,7 @@ namespace Mono.CSharp
 	//
 	public class AssemblyBuilderExtension
 	{
-		readonly CompilerContext ctx;
+		protected readonly CompilerContext ctx;
 
 		public AssemblyBuilderExtension (CompilerContext ctx)
 		{
