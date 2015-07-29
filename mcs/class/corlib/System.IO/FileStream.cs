@@ -411,10 +411,8 @@ namespace System.IO
 				return ret;
 			}
 			set {
-				if(value < 0) {
-					throw new ArgumentOutOfRangeException("Attempt to set the position to a negative value");
-				}
-				
+				if (value < 0) throw new ArgumentOutOfRangeException("value", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+
 				Seek (value, SeekOrigin.Begin);
 			}
 		}
