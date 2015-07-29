@@ -653,6 +653,9 @@ namespace System {
 			case SpecialFolder.LocalApplicationData:
 				return data;
 
+			case SpecialFolder.MyDocuments:
+				return ReadXdgUserDir (config, home, "XDG_DOCUMENTS_DIR", "Documents");
+
 			case SpecialFolder.Desktop:
 			case SpecialFolder.DesktopDirectory:
 				return ReadXdgUserDir (config, home, "XDG_DESKTOP_DIR", "Desktop");
