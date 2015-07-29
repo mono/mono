@@ -13,4 +13,4 @@ run-test-local : basic-tests
 
 basic-tests:
 	for type in System.Array System.String 'System.Collections.Generic.List`1'; do \
-	echo $$type; $(RUNTIME) $(build_lib) $$type >/dev/null || exit 1; done
+	echo $$type; MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(build_lib) $$type >/dev/null || exit 1; done
