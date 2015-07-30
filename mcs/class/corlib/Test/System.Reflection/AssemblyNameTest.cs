@@ -1807,6 +1807,28 @@ public class AssemblyNameTest {
 		}
 	}
 
+	[Test] // ctor (String)
+	public void Constructor1_Quoted ()
+	{
+		AssemblyName an;
+
+		an = new AssemblyName ("'System', Version=\"10.0.0.0\", Culture='Neutral', PublicKeyToken='b67a5c561934e089', Retargetable='Yes', ProcessorArchitecture='AMD64'");
+		Assert.AreEqual ("System, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b67a5c561934e089, Retargetable=Yes", an.ToString ());
+		Assert.AreEqual (ProcessorArchitecture.Amd64, an.ProcessorArchitecture, "Amd64");
+	}
+
+	[Test] // ctor (String)
+	public void Constructor1_Quoted_Invalid ()
+	{
+		AssemblyName an;
+
+		try {
+			an = new AssemblyName ("System, Version=\"10.0.0.0'");
+			Assert.Fail ("#1");
+		} catch (FileLoadException) {
+		}
+	}
+
 	[Test (Description="Xamarin bug #99 - whitespaces in key=value")]
 	public void WhiteSpaceInKeyValue ()
 	{
