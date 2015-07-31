@@ -873,8 +873,10 @@ namespace Mono.CSharp
 				} else {
 					Builder.Save (module.Builder.ScopeName, pekind, machine);
 				}
+			} catch (ArgumentOutOfRangeException) {
+				Report.Error (16, "Output file `{0}' exceeds the 4GB limit");
 			} catch (Exception e) {
-				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
+				Report.Error (16, "Could not write to file `{0}'. {1}", name, e.Message);
 			}
 			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
