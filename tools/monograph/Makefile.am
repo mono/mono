@@ -11,7 +11,7 @@ static_libs=	\
 	$(top_builddir)/mono/metadata/libmonoruntime-static.la	\
 	$(top_builddir)/mono/io-layer/libwapi.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
+	$(GLIB_LIBS) \
 	$(LIBGC_STATIC_LIBS)
 
 runtime_lib=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
@@ -40,7 +40,6 @@ monograph_LDADD = \
 	$(runtime_lib)			\
 	$(GLIB_LIBS)			\
 	$(LLVM_LIBS)			\
-	$(LIBICONV)			\
 	-lm
 
 if PLATFORM_DARWIN

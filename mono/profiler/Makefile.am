@@ -44,7 +44,7 @@ static_libs=	\
 	$(top_builddir)/mono/metadata/libmonoruntime-static.la	\
 	$(top_builddir)/mono/io-layer/libwapi.la	\
 	$(top_builddir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV) \
+	$(GLIB_LIBS) \
 	$(LIBGC_STATIC_LIBS)
 
 LIBMONO=$(top_builddir)/mono/mini/$(LIBMONO_LA) $(static_libs)
@@ -57,19 +57,19 @@ LIBMONO=$(top_builddir)/mono/mini/libmonosgen-$(API_VER).la
 endif
 
 libmono_profiler_aot_la_SOURCES = mono-profiler-aot.c
-libmono_profiler_aot_la_LIBADD = $(LIBMONO) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_aot_la_LIBADD = $(LIBMONO) $(GLIB_LIBS)
 libmono_profiler_iomap_la_SOURCES = mono-profiler-iomap.c
-libmono_profiler_iomap_la_LIBADD = $(LIBMONO) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_iomap_la_LIBADD = $(LIBMONO) $(GLIB_LIBS)
 libmono_profiler_log_la_SOURCES = proflog.c
 libmono_profiler_log_la_LIBADD = $(LIBMONO) $(GLIB_LIBS) $(Z_LIBS)
 if HAVE_VTUNE
 libmono_profiler_vtune_la_SOURCES = mono-profiler-vtune.c
 libmono_profiler_vtune_la_CFLAGS = $(VTUNE_CFLAGS)
-libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS) $(LIBICONV)
+libmono_profiler_vtune_la_LIBADD = $(VTUNE_LIBS) $(LIBMONO) $(GLIB_LIBS)
 endif
 
 mprof_report_SOURCES = decode.c
-mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS) $(LIBICONV)
+mprof_report_LDADD = $(Z_LIBS) $(GLIB_LIBS)
 
 PLOG_TESTS_SRC=test-alloc.cs test-busy.cs test-monitor.cs test-excleave.cs \
 	test-heapshot.cs test-traces.cs
