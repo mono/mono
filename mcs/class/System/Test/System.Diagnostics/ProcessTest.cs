@@ -791,9 +791,11 @@ namespace MonoTests.System.Diagnostics
 			p.StartInfo.RedirectStandardError = true;
 
 			var exitedCalledCounter = 0;
+			var exited = new ManualResetEventSlim ();
 			p.Exited += (object sender, EventArgs e) => {
 				exitedCalledCounter++;
 				Assert.IsTrue (p.HasExited);
+				exited.Set ();
 			};
 
 			p.EnableRaisingEvents = true;
@@ -803,6 +805,7 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
+			exited.Wait (10000);
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
@@ -822,9 +825,11 @@ namespace MonoTests.System.Diagnostics
 			p.EnableRaisingEvents = true;
 
 			var exitedCalledCounter = 0;
+			var exited = new ManualResetEventSlim ();
 			p.Exited += (object sender, EventArgs e) => {
 				exitedCalledCounter++;
 				Assert.IsTrue (p.HasExited);
+				exited.Set ();
 			};
 
 			p.Start ();
@@ -832,6 +837,7 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
+			exited.Wait (10000);
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
