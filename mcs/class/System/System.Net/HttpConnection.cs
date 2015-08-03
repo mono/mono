@@ -318,29 +318,28 @@ namespace System.Net {
 			do {
 				if (line == null)
 					break;
-				if (line == "") {
-					if (input_state == InputState.RequestLine)
-						continue;
+				if (line != "") {
+					if (input_state == InputState.RequestLine) {
+                        context.Request.SetRequestLine (line);
+                        input_state = InputState.Headers;
+                    } else {
+                        try {
+                            context.Request.AddHeader (line);
+                        } catch (Exception e) {
+                            context.ErrorMessage = e.Message;
+                            context.ErrorStatus = 400;
+                            return true;
+                        }
+                    }
+
+                    if (context.HaveError)
+                        return true;
+                }
+				else if (input_state != InputState.RequestLine) {
 					current_line = null;
 					ms = null;
 					return true;
 				}
-
-				if (input_state == InputState.RequestLine) {
-					context.Request.SetRequestLine (line);
-					input_state = InputState.Headers;
-				} else {
-					try {
-						context.Request.AddHeader (line);
-					} catch (Exception e) {
-						context.ErrorMessage = e.Message;
-						context.ErrorStatus = 400;
-						return true;
-					}
-				}
-
-				if (context.HaveError)
-					return true;
 
 				if (position >= len)
 					break;
