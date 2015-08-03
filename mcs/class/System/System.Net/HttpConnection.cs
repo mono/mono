@@ -320,21 +320,21 @@ namespace System.Net {
 					break;
 				if (line != "") {
 					if (input_state == InputState.RequestLine) {
-                        context.Request.SetRequestLine (line);
-                        input_state = InputState.Headers;
-                    } else {
-                        try {
-                            context.Request.AddHeader (line);
-                        } catch (Exception e) {
-                            context.ErrorMessage = e.Message;
-                            context.ErrorStatus = 400;
-                            return true;
-                        }
-                    }
+						context.Request.SetRequestLine (line);
+						input_state = InputState.Headers;
+					} else {
+						try {
+							context.Request.AddHeader (line);
+						} catch (Exception e) {
+							context.ErrorMessage = e.Message;
+							context.ErrorStatus = 400;
+							return true;
+						}
+					}
 
-                    if (context.HaveError)
-                        return true;
-                }
+					if (context.HaveError)
+						return true;
+				}
 				else if (input_state != InputState.RequestLine) {
 					current_line = null;
 					ms = null;
