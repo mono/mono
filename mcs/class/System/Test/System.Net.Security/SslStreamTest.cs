@@ -77,9 +77,9 @@ public class SslStreamTest {
 			serverThread.Start ();
 			Thread clientThread = new Thread (() => StartClientAndAuthenticate (state, endPoint));
 			clientThread.Start ();
-			Assert.AreEqual (server, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
+			Assert.AreEqual (server, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"server not authenticated");
-			Assert.AreEqual (client, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
+			Assert.AreEqual (client, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (5)), 
 				"client not authenticated");
 		} finally {
 			if (state.ClientStream != null)
