@@ -35,7 +35,7 @@ Mono_Posix_Stdlib_SetLastError (int error_number)
  * we assume that the XPG version is present.
  */
 
-#ifdef _GNU_SOURCE
+#ifdef _GNU_SOURCE && !PLATFORM_ANDROID
 #define mph_min(x,y) ((x) <= (y) ? (x) : (y))
 
 /* If you pass an invalid errno value to glibc 2.3.2's strerror_r, you get
@@ -80,7 +80,27 @@ Mono_Posix_Syscall_strerror_r (int errnum, char *buf, mph_size_t n)
 	mph_return_if_size_t_overflow (n);
 
 	/* first, check for valid errnum */
+#if PLATFORM_ANDROID
+	/* Android NDK defines _GNU_SOURCE but strerror_r follows the XSI semantics
+	 * not the GNU one. XSI version returns an integer, as opposed to the GNU one
+	 * which returns pointer to the buffer.
+	 */
+	if (strerror_r (errnum, ebuf, sizeof(ebuf)) == -1) {
+		/* XSI strerror_r will return -1 if errno is set, but if we leave the value
+		 * alone it breaks Mono.Posix StdioFileStream tests, so we'll ignore the value
+		 * and set errno as below
+		 */
+		errno = EINVAL;
+		return -1;
+	}
+	r = ebuf;
+#else
 	r = strerror_r (errnum, ebuf, sizeof(ebuf));
+#endif
+	if (!r) {
+		errno = EINVAL;
+		return -1;
+	} 
 	len = strlen (r);
 
 	if (r == ebuf ||
