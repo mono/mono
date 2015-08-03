@@ -1496,7 +1496,7 @@ namespace System.Diagnostics {
 
 			void IThreadPoolWorkItem.ExecuteWorkItem()
 			{
-				async_result.Invoke ();
+				((IThreadPoolWorkItem) async_result).ExecuteWorkItem ();
 			}
 
 			void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)

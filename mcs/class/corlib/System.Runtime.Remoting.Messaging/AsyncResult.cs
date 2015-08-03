@@ -32,6 +32,7 @@
 
 using System;
 using System.Threading;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -46,7 +47,7 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 	WaitHandle handle;
 	object async_delegate;
 	IntPtr data;
-	object object_data;
+	MonoAsyncCall async_call;
 	bool sync_completed;
 	bool completed;
 	bool endinvoke_called;
@@ -207,14 +208,29 @@ public class AsyncResult : IAsyncResult, IMessageSink, IThreadPoolWorkItem {
 
 	void IThreadPoolWorkItem.ExecuteWorkItem()
 	{
-		Invoke ();
+		if (async_call == null) {
+			((WaitCallback) async_delegate) (async_state);
+		} else {
+			try {
+				async_call.result = async_call.message.Invoke (async_delegate, out async_call.out_args);
+				async_call.message.exc = null;
+			} catch (Exception e) {
+				async_call.message.exc = e;
+			}
+
+			lock (this) {
+				completed = true;
+				if (handle != null)
+					((ManualResetEvent) handle).Set ();
+			}
+
+			if (async_call.callback != null)
+				async_call.callback (this);
+		}
 	}
 
 	void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
 	{
 	}
-
-	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	internal extern object Invoke ();
 }
 }
