@@ -1222,7 +1222,7 @@ namespace Mono.CSharp {
 						//
 						// The return type is actually Task<T> type argument
 						//
-						if (expr.Type == async_type) {
+						if (expr.Type == async_type && async_type.TypeArguments [0] != ec.Module.PredefinedTypes.Task.TypeSpec) {
 							ec.Report.Error (4016, loc,
 								"`{0}': The return expression type of async method must be `{1}' rather than `Task<{1}>'",
 								ec.GetSignatureForError (), async_type.TypeArguments[0].GetSignatureForError ());
