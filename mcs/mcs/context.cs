@@ -497,7 +497,7 @@ namespace Mono.CSharp
 			}
 
 			foreach (var existing in das) {
-				if (DefiniteAssignmentBitSet.AreEqual (existing, DefiniteAssignment))
+				if (DefiniteAssignmentBitSet.IsIncluded (existing, DefiniteAssignment))
 					return true;
 			}
 
