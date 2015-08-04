@@ -3,7 +3,7 @@
 //
 // Author:
 //    Zoltan Varga (vargaz@gmail.com)
-//    Ludovic Henry (ludovic@xamarin.com)
+//
 //
 
 //
@@ -30,31 +30,24 @@
 //
 
 //
-// This is the managed counterpart of the MonoAsyncCall structure used by the threadpools.
+// This is the managed counterpart of the ASyncCall structure used by the threadpools.
 //
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
 
 namespace System {
 
 #pragma warning disable 169
 
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoAsyncCall
-	{
-		/*
-		 * Keep in sync with runtime structure MonoAsyncCall
-		 */
-
-		internal MonoMethodMessage message;
-
-		internal AsyncCallback callback;
-
-		internal object state;
-
-		internal object result;
-
-		internal object[] out_args;
+	internal class MonoAsyncCall {
+		#region Sync with the unmanaged ASyncCall structure
+		object     msg;
+		IntPtr     cb_method;
+		object     cb_target;
+		object     state;
+		object     res;
+		object     out_args;
+		#endregion
 	}
 
 #pragma warning restore 169	
