@@ -552,7 +552,7 @@ namespace Mono.CSharp
 
 		public static DefiniteAssignmentBitSet operator & (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
-			if (AreEqual (a, b))
+			if (IsEqual (a, b))
 				return a;
 
 			DefiniteAssignmentBitSet res;
@@ -575,7 +575,7 @@ namespace Mono.CSharp
 
 		public static DefiniteAssignmentBitSet operator | (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
-			if (AreEqual (a, b))
+			if (IsEqual (a, b))
 				return a;
 
 			DefiniteAssignmentBitSet res;
@@ -678,13 +678,28 @@ namespace Mono.CSharp
 				large_bits[index >> 5] |= (1 << (index & 31));
 		}
 
-		public static bool AreEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
+		static bool IsEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
 			if (a.large_bits == null)
 				return (a.bits & ~copy_on_write_flag) == (b.bits & ~copy_on_write_flag);
 
 			for (int i = 0; i < a.large_bits.Length; ++i) {
 				if (a.large_bits[i] != b.large_bits[i])
+					return false;
+			}
+
+			return true;
+		}
+
+		public static bool IsIncluded (DefiniteAssignmentBitSet set, DefiniteAssignmentBitSet test)
+		{
+			var set_bits = set.large_bits;
+			if (set_bits == null)
+				return (set.bits & test.bits & ~copy_on_write_flag) == (set.bits & ~copy_on_write_flag);
+
+			var test_bits = test.large_bits;
+			for (int i = 0; i < set_bits.Length; ++i) {
+				if ((set_bits[i] & test_bits[i]) != set_bits[i])
 					return false;
 			}
 
