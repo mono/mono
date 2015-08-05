@@ -57,6 +57,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			serviceHost.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), "mex");
 
 			serviceHost.Open ();
+			Thread.Sleep (2000);  // let WCF spin up
 
 			try {
 				// client
