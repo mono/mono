@@ -1912,7 +1912,9 @@ save_thread_context (MonoContext *ctx)
 	DebuggerTlsData *tls;
 
 	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
+	
+	if (!tls)
+		return;
 
 	if (ctx) {
 		memcpy (&tls->ctx, ctx, sizeof (MonoContext));
