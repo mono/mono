@@ -4444,7 +4444,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		/* Compute the initial line info */
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
@@ -4472,7 +4478,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (frame->il_offset != -1) {
