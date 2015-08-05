@@ -2047,7 +2047,8 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			// debugger debugging
 			if (sigctx)
 				DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
-			//save_thread_context (&ctx);
+			
+			save_thread_context (&ctx);
 
 			if (!tls->thread)
 				/* Already terminated */
