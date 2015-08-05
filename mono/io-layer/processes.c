@@ -1446,7 +1446,8 @@ guint32 GetCurrentProcessId (void)
 
 	/* No reason to fail this just because of bad handle management */
 	if (0 == id)
-		return _wapi_getpid ();
+		id = _wapi_getpid ();
+	return id;
 }
 
 /* Returns the process id as a convenience to the functions that call this */
