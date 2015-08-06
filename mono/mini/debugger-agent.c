@@ -1912,7 +1912,9 @@ save_thread_context (MonoContext *ctx)
 	DebuggerTlsData *tls;
 
 	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
+	
+	if (!tls)
+		return;
 
 	if (ctx) {
 		memcpy (&tls->ctx, ctx, sizeof (MonoContext));
@@ -2047,7 +2049,8 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			// debugger debugging
 			if (sigctx)
 				DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
-			//save_thread_context (&ctx);
+			
+			save_thread_context (&ctx);
 
 			if (!tls->thread)
 				/* Already terminated */
@@ -4441,7 +4444,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		/* Compute the initial line info */
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
@@ -4469,7 +4478,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (frame->il_offset != -1) {
