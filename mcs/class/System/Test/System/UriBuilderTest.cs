@@ -387,6 +387,13 @@ namespace MonoTests.System
 			// this is what ASP.NET really means (the ?)
 			Assert.AreEqual ("http://192.168.0.21/error404.aspx?aspxerrorpath=/WebResource.axd", ub.Uri.ToString ());
 		}
+
+		[Test]
+		public void NoHostname ()
+		{
+			UriBuilder ub = new UriBuilder ("about", null, -1, "config");
+			Assert.AreEqual ("about:config", ub.ToString ());
+		}
 	}
 }
 
