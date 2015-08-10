@@ -157,6 +157,7 @@ mono_threads_try_prepare_blocking (void)
 	/* If the thread is not attached, it doesn't make sense prepare for suspend. */
 	if (!info || !mono_thread_info_is_live (info) || mono_thread_info_current_state (info) == STATE_BLOCKING) {
 		THREADS_SUSPEND_DEBUG ("PREPARE-TRY-BLOCKING failed %p\n", mono_thread_info_get_tid (info));
+		g_error ("FUUU");
 		return NULL;
 	}
 
