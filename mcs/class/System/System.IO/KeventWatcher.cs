@@ -355,7 +355,7 @@ namespace System.IO {
 			while (!requestStop) {
 				var changes = CreateChangeList (ref newFds);
 
-				int numEvents = kevent_notimeout (conn, changes, changes.Length, eventBuffer, eventBuffer.Length, IntPtr.Zero);
+				int numEvents = kevent_notimeout (ref conn, changes, changes.Length, eventBuffer, eventBuffer.Length);
 
 				if (numEvents == -1) {
 					// Stop () signals us to stop by closing the connection
@@ -660,6 +660,9 @@ namespace System.IO {
 
 		[DllImport ("libc", EntryPoint="kevent")]
 		extern static int kevent_notimeout (int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents, IntPtr ptr);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int kevent_notimeout (ref int kq, [In]kevent[] ev, int nchanges, [Out]kevent[] evtlist, int nevents);
 	}
 
 	class KeventWatcher : IFileWatcher
