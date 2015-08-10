@@ -48,6 +48,7 @@ namespace MonoTests.System.Reflection
 		{
 			Type type = typeof (TestClass);
 			PropertyInfo property = type.GetProperty ("ReadOnlyProperty");
+			Assert.IsNotNull (property.Module, "#0");
 
 			MethodInfo [] methods = property.GetAccessors (true);
 			Assert.AreEqual (1, methods.Length, "#A1");
