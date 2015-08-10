@@ -240,6 +240,7 @@ namespace Mono.CSharp
 		public bool parsing_catch_when;
 
 		int parsing_string_interpolation;
+		int string_interpolation_section;
 		Stack<bool> parsing_string_interpolation_quoted;
 
 		public bool parsing_interpolation_format;
@@ -411,6 +412,7 @@ namespace Mono.CSharp
 			public int current_token;
 			public object val;
 			public int parsing_string_interpolation;
+			public int string_interpolation_section;
 			public Stack<bool> parsing_string_interpolation_quoted;
 
 			public Position (Tokenizer t)
@@ -430,9 +432,11 @@ namespace Mono.CSharp
 					ifstack = new Stack<int> (clone);
 				}
 				parsing_generic_less_than = t.parsing_generic_less_than;
+				string_interpolation_section = t.string_interpolation_section;
 				current_token = t.current_token;
 				val = t.val;
 				parsing_string_interpolation = t.parsing_string_interpolation;
+				string_interpolation_section = t.string_interpolation_section;
 				if (t.parsing_string_interpolation_quoted != null && t.parsing_string_interpolation_quoted.Count != 0) {
 					var clone = t.parsing_string_interpolation_quoted.ToArray ();
 					Array.Reverse (clone);
@@ -3373,18 +3377,26 @@ namespace Mono.CSharp
 
 				case '{':
 					val = ltb.Create (current_source, ref_line, col);
+
+					if (parsing_string_interpolation > 0)
+						++string_interpolation_section;
+
 					return Token.OPEN_BRACE;
 				case '}':
 					if (parsing_string_interpolation > 0) {
-						--parsing_string_interpolation;
-						bool quoted;
-						if (parsing_string_interpolation_quoted != null && parsing_string_interpolation_quoted.Count > 0) {
-							quoted = parsing_string_interpolation_quoted.Pop ();
-						} else {
-							quoted = false;
+						if (string_interpolation_section == 0) {
+							--parsing_string_interpolation;
+							bool quoted;
+							if (parsing_string_interpolation_quoted != null && parsing_string_interpolation_quoted.Count > 0) {
+								quoted = parsing_string_interpolation_quoted.Pop ();
+							} else {
+								quoted = false;
+							}
+
+							return TokenizeInterpolatedString (quoted);
 						}
 
-						return TokenizeInterpolatedString (quoted);
+						--string_interpolation_section;
 					}
 
 					val = ltb.Create (current_source, ref_line, col);
