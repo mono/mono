@@ -67221,6 +67221,16 @@
       </method>
     </type>
   </test>
+  <test name="test-interpolation-08.cs">
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>73</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-iter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
