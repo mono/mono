@@ -14,7 +14,7 @@ monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
 
 # Only include files with /gac/ in path
 #  (Allows packages to contain private assemblies that don't conflict with other packages)
-#monolist=($(printf "%s\n" "${monolist[@]}" | egrep "/gac/"))
+monolist=($(printf "%s\n" "${monolist[@]}" | egrep "/gac/"))
 # Disabled... see ChangeLog
 
 # Set the prefix, unless it is overriden (used when building mono rpms)
