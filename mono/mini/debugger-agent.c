@@ -5174,8 +5174,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	
 	sig = mono_method_signature (m);
 
-	// The client may request the container instead of the inflated method
-	if (sig && sig->ret && MONO_TYPE_MVAR == sig->ret->type)
+	if (m->is_generic && !m->is_inflated)
 		return ERR_NOT_IMPLEMENTED;
 
 	if (m->klass->valuetype)
