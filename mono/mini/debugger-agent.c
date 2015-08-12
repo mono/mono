@@ -4652,7 +4652,13 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 	MonoObject *obj;
 
 	if (t->byref) {
-		g_assert (*(void**)addr);
+		
+		if((*(void**)addr) == NULL)
+		{
+			buffer_add_byte (buf, VALUE_TYPE_ID_NULL);
+			return;
+		}
+		
 		addr = *(void**)addr;
 	}
 
