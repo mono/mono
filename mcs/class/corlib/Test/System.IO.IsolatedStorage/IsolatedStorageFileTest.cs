@@ -1064,7 +1064,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				isf.MoveFile ("  ", "file-new-new");
 				Assert.Fail ("#Exc2");
 			} catch (ArgumentException e) {
-				Console.WriteLine (e);
 			}
 
 			try {
