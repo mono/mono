@@ -4,14 +4,6 @@ namespace System.Globalization
 {
 	partial class TextInfo
 	{
-		unsafe static ushort *to_lower_data_low;
-		unsafe static ushort *to_lower_data_high;
-		unsafe static ushort *to_upper_data_low;
-		unsafe static ushort *to_upper_data_high;
-
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		unsafe static extern void GetDataTablePointersLite (out ushort *to_lower_data_low, out ushort *to_lower_data_high, out ushort *to_upper_data_low, out ushort *to_upper_data_high);
-
 		unsafe string ToUpperInternal (string str)
 		{
 			if (str.Length == 0)
