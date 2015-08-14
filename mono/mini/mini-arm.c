@@ -1408,8 +1408,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
 			cinfo->ret.reg = ARMREG_R0;
 			break;
 		}
-		// FIXME: Only for variable types
-		if (mini_is_gsharedvt_type_gsctx (gsctx, t)) {
+		if (mini_is_gsharedvt_variable_type_gsctx (gsctx, t)) {
 			cinfo->ret.storage = RegTypeStructByAddr;
 			break;
 		}
@@ -1527,7 +1526,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
 				add_general (&gr, &stack_size, ainfo, TRUE);
 				break;
 			}
-			if (mini_is_gsharedvt_type_gsctx (gsctx, t)) {
+			if (mini_is_gsharedvt_variable_type_gsctx (gsctx, t)) {
 				/* gsharedvt arguments are passed by ref */
 				g_assert (mini_is_gsharedvt_type_gsctx (gsctx, t));
 				add_general (&gr, &stack_size, ainfo, TRUE);

@@ -3111,6 +3111,12 @@ mini_is_gsharedvt_variable_type (MonoCompile *cfg, MonoType *t)
 }
 
 gboolean
+mini_is_gsharedvt_variable_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t)
+{
+	return FALSE;
+}
+
+gboolean
 mini_is_gsharedvt_sharable_method (MonoMethod *method)
 {
 	return FALSE;

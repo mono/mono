@@ -2876,6 +2876,7 @@ gboolean mini_is_gsharedvt_signature (MonoCompile *cfg, MonoMethodSignature *sig
 gboolean mini_is_gsharedvt_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t);
 gboolean mini_is_gsharedvt_variable_type (MonoCompile *cfg, MonoType *t) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_variable_klass (MonoCompile *cfg, MonoClass *klass) MONO_LLVM_INTERNAL;
+gboolean mini_is_gsharedvt_variable_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_sharable_method (MonoMethod *method);
 gboolean mini_is_gsharedvt_variable_signature (MonoMethodSignature *sig);
 gboolean mini_is_gsharedvt_sharable_inst (MonoGenericInst *inst);
