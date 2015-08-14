@@ -1162,10 +1162,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 			cinfo->args [n].size = 4;
 
 			/* It was 7, now it is 8 in LinuxPPC */
-			if (fr <= PPC_LAST_FPARG_REG
-			// For non-native vararg calls the parms must go in storage
-				 && !(!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
-				) {
+			if (fr <= PPC_LAST_FPARG_REG) {
 				cinfo->args [n].regtype = RegTypeFP;
 				cinfo->args [n].reg = fr;
 				fr ++;
@@ -1182,10 +1179,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 		case MONO_TYPE_R8:
 			cinfo->args [n].size = 8;
 			/* It was 7, now it is 8 in LinuxPPC */
-			if (fr <= PPC_LAST_FPARG_REG
-			// For non-native vararg calls the parms must go in storage
-				 && !(!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
-				 ) {
+			if (fr <= PPC_LAST_FPARG_REG) {
 				cinfo->args [n].regtype = RegTypeFP;
 				cinfo->args [n].reg = fr;
 				fr ++;
@@ -1703,15 +1697,27 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		} else
 #endif
 			for (i = 0; i < ainfo->vtregs; ++i) {
+	 			dreg = mono_alloc_ireg (cfg);
+#if G_BYTE_ORDER == G_BIG_ENDIAN
 				int antipadding = 0;
 				if (ainfo->bytes) {
 					g_assert (i == 0);
 					antipadding = sizeof (gpointer) - ainfo->bytes;
 				}
-				dreg = mono_alloc_ireg (cfg);
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, src->dreg, soffset);
 				if (antipadding)
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHR_UN_IMM, dreg, dreg, antipadding * 8);
+#else
+				if (ainfo->bytes && mono_class_native_size (ins->klass, NULL) == 1) {
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, src->dreg, soffset);
+				} else if (ainfo->bytes && mono_class_native_size (ins->klass, NULL) == 2) {
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU2_MEMBASE, dreg, src->dreg, soffset);
+				} else if (ainfo->bytes && mono_class_native_size (ins->klass, NULL) == 4) { // WDS -- Maybe <= 4?
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU4_MEMBASE, dreg, src->dreg, soffset);
+				} else {
+					MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, src->dreg, soffset);
+				}
+#endif
 				mono_call_inst_add_outarg_reg (cfg, call, dreg, ainfo->reg + i, FALSE);
 				soffset += sizeof (gpointer);
 			}
@@ -2250,8 +2256,11 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		else
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHR_IMM, ins->dreg, result_shifted_reg, 32);
 		ins->opcode = OP_NOP;
+		break;
 	}
 #endif
+	default:
+		break;
 	}
 }
 
@@ -5048,9 +5057,21 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 #ifdef __mono_ppc64__
 						if (ainfo->bytes) {
 							g_assert (cur_reg == 0);
+#if G_BYTE_ORDER == G_BIG_ENDIAN
 							ppc_sldi (code, ppc_r0, ainfo->reg,
 									(sizeof (gpointer) - ainfo->bytes) * 8);
 							ppc_stptr (code, ppc_r0, doffset, inst->inst_basereg);
+#else
+							if (mono_class_native_size (inst->klass, NULL) == 1) {
+							  ppc_stb (code, ainfo->reg + cur_reg, doffset, inst->inst_basereg);
+							} else if (mono_class_native_size (inst->klass, NULL) == 2) {
+								ppc_sth (code, ainfo->reg + cur_reg, doffset, inst->inst_basereg);
+							} else if (mono_class_native_size (inst->klass, NULL) == 4) {  // WDS -- maybe <=4?
+								ppc_stw (code, ainfo->reg + cur_reg, doffset, inst->inst_basereg);
+							} else {
+								ppc_stptr (code, ainfo->reg + cur_reg, doffset, inst->inst_basereg);  // WDS -- Better way?
+							}
+#endif
 						} else
 #endif
 						{
