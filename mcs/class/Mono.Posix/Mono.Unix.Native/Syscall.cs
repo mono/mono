@@ -727,6 +727,194 @@ namespace Mono.Unix.Native {
 		MREMAP_MAYMOVE = 0x1,
 	}
 
+	[Map]
+	[CLSCompliant (false)]
+	public enum SockType : int {
+		SOCK_STREAM    =  1, // Byte-stream socket
+		SOCK_DGRAM     =  2, // Datagram socket
+		SOCK_RAW       =  3, // Raw protocol interface (linux specific)
+		SOCK_RDM       =  4, // Reliably-delivered messages (linux specific)
+		SOCK_SEQPACKET =  5, // Sequenced-packet socket
+		SOCK_DCCP      =  6, // Datagram Congestion Control Protocol (linux specific)
+		SOCK_PACKET    = 10, // Linux specific
+	}
+
+	[Map][Flags]
+	[CLSCompliant (false)]
+	public enum SockFlags : int {
+		SOCK_CLOEXEC  = 0x80000, /* Atomically set close-on-exec flag for the
+								    new descriptor(s).  */
+		SOCK_NONBLOCK = 0x00800, /* Atomically mark descriptor(s) as
+								    non-blocking.  */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum SockProtocol : int {
+		IPPROTO_IP = 0,			/* Dummy protocol for TCP		*/
+		IPPROTO_ICMP = 1,		/* Internet Control Message Protocol	*/
+		IPPROTO_IGMP = 2,		/* Internet Group Management Protocol	*/
+		IPPROTO_IPIP = 4,		/* IPIP tunnels (older KA9Q tunnels use 94) */
+		IPPROTO_TCP = 6,		/* Transmission Control Protocol	*/
+		IPPROTO_EGP = 8,		/* Exterior Gateway Protocol		*/
+		IPPROTO_PUP = 12,		/* PUP protocol				*/
+		IPPROTO_UDP = 17,		/* User Datagram Protocol		*/
+		IPPROTO_IDP = 22,		/* XNS IDP protocol			*/
+		IPPROTO_TP = 29,		/* SO Transport Protocol Class 4	*/
+		IPPROTO_DCCP = 33,		/* Datagram Congestion Control Protocol */
+		IPPROTO_IPV6 = 41,		/* IPv6-in-IPv4 tunnelling		*/
+		IPPROTO_RSVP = 46,		/* RSVP Protocol			*/
+		IPPROTO_GRE = 47,		/* Cisco GRE tunnels (rfc 1701,1702)	*/
+		IPPROTO_ESP = 50,		/* Encapsulation Security Payload protocol */
+		IPPROTO_AH = 51,		/* Authentication Header protocol	*/
+		IPPROTO_MTP = 92,		/* Multicast Transport Protocol		*/
+		IPPROTO_BEETPH = 94,	/* IP option pseudo header for BEET	*/
+		IPPROTO_ENCAP = 98,		/* Encapsulation Header			*/
+		IPPROTO_PIM = 103,		/* Protocol Independent Multicast	*/
+		IPPROTO_COMP = 108,		/* Compression Header Protocol		*/
+		IPPROTO_SCTP = 132,		/* Stream Control Transport Protocol	*/
+		IPPROTO_UDPLITE = 136,	/* UDP-Lite (RFC 3828)			*/
+		IPPROTO_RAW = 255,		/* Raw IP packets			*/
+
+		// Number used by linux (1) clashes with IPPROTO_ICMP
+		SOL_SOCKET = 1024,		/* For setsockopt() / getsockopt(): Options to be accessed at socket level, not protocol level. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum AddrFamily : ushort {
+		AF_UNSPEC	 = 0,	/* Unspecified.  */
+		AF_UNIX		 = 1,	/* Local to host (pipes and file-domain).  */
+		AF_INET		 = 2,	/* IP protocol family.  */
+		AF_AX25		 = 3,	/* Amateur Radio AX.25.  */
+		AF_IPX		 = 4,	/* Novell Internet Protocol.  */
+		AF_APPLETALK = 5,	/* Appletalk DDP.  */
+		AF_NETROM	 = 6,	/* Amateur radio NetROM.  */
+		AF_BRIDGE	 = 7,	/* Multiprotocol bridge.  */
+		AF_ATMPVC	 = 8,	/* ATM PVCs.  */
+		AF_X25		 = 9,	/* Reserved for X.25 project.  */
+		AF_INET6	 = 10,	/* IP version 6.  */
+		AF_ROSE		 = 11,	/* Amateur Radio X.25 PLP.  */
+		AF_DECnet	 = 12,	/* Reserved for DECnet project.  */
+		AF_NETBEUI	 = 13,	/* Reserved for 802.2LLC project.  */
+		AF_SECURITY	 = 14,	/* Security callback pseudo AF.  */
+		AF_KEY		 = 15,	/* PF_KEY key management API.  */
+		AF_NETLINK	 = 16,
+		AF_PACKET	 = 17,	/* Packet family.  */
+		AF_ASH		 = 18,	/* Ash.  */
+		AF_ECONET	 = 19,	/* Acorn Econet.  */
+		AF_ATMSVC	 = 20,	/* ATM SVCs.  */
+		AF_RDS		 = 21,	/* RDS sockets.  */
+		AF_SNA		 = 22,	/* Linux SNA Project */
+		AF_IRDA		 = 23,	/* IRDA sockets.  */
+		AF_PPPOX	 = 24,	/* PPPoX sockets.  */
+		AF_WANPIPE	 = 25,	/* Wanpipe API sockets.  */
+		AF_LLC		 = 26,	/* Linux LLC.  */
+		AF_CAN		 = 29,	/* Controller Area Network.  */
+		AF_TIPC		 = 30,	/* TIPC sockets.  */
+		AF_BLUETOOTH = 31,	/* Bluetooth sockets.  */
+		AF_IUCV		 = 32,	/* IUCV sockets.  */
+		AF_RXRPC	 = 33,	/* RxRPC sockets.  */
+		AF_ISDN		 = 34,	/* mISDN sockets.  */
+		AF_PHONET	 = 35,	/* Phonet sockets.  */
+		AF_IEEE802154= 36,	/* IEEE 802.15.4 sockets.  */
+		AF_CAIF		 = 37,	/* CAIF sockets.  */
+		AF_ALG		 = 38,	/* Algorithm sockets.  */
+		AF_NFC		 = 39,	/* NFC sockets.  */
+		AF_VSOCK	 = 40,	/* vSockets.  */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum SockOptName : int {
+		SO_DEBUG = 1,
+		SO_REUSEADDR = 2,
+		SO_TYPE	 = 3,
+		SO_ERROR = 4,
+		SO_DONTROUTE = 5,
+		SO_BROADCAST = 6,
+		SO_SNDBUF = 7,
+		SO_RCVBUF = 8,
+		SO_SNDBUFFORCE = 32,
+		SO_RCVBUFFORCE = 33,
+		SO_KEEPALIVE = 9,
+		SO_OOBINLINE = 10,
+		SO_NO_CHECK = 11,
+		SO_PRIORITY = 12,
+		SO_LINGER = 13,
+		SO_BSDCOMPAT = 14,
+		SO_REUSEPORT = 15,
+		SO_PASSCRED = 16,
+		SO_PEERCRED = 17,
+		SO_RCVLOWAT = 18,
+		SO_SNDLOWAT = 19,
+		SO_RCVTIMEO = 20,
+		SO_SNDTIMEO = 21,
+		SO_SECURITY_AUTHENTICATION = 22,
+		SO_SECURITY_ENCRYPTION_TRANSPORT = 23,
+		SO_SECURITY_ENCRYPTION_NETWORK = 24,
+		SO_BINDTODEVICE = 25,
+		SO_ATTACH_FILTER = 26,
+		SO_DETACH_FILTER = 27,
+		SO_PEERNAME = 28,
+		SO_TIMESTAMP = 29,
+		SO_ACCEPTCONN = 30,
+		SO_PEERSEC = 31,
+		SO_PASSSEC = 34,
+		SO_TIMESTAMPNS = 35,
+		SO_MARK = 36,
+		SO_TIMESTAMPING = 37,
+		SO_PROTOCOL = 38,
+		SO_DOMAIN = 39,
+		SO_RXQ_OVFL = 40,
+		SO_WIFI_STATUS = 41,
+		SO_PEEK_OFF = 42,
+		SO_NOFCS = 43,
+		SO_LOCK_FILTER = 44,
+		SO_SELECT_ERR_QUEUE = 45,
+		SO_BUSY_POLL = 46,
+		SO_MAX_PACING_RATE = 47,
+	}
+	
+	[Flags][Map]
+	[CLSCompliant (false)]
+	public enum MessageFlags : int {
+	    MSG_OOB			= 0x01,	/* Process out-of-band data.  */
+		MSG_PEEK		= 0x02,	/* Peek at incoming messages.  */
+		MSG_DONTROUTE	= 0x04,	/* Don't use local routing.  */
+		MSG_CTRUNC		= 0x08,	/* Control data lost before delivery.  */
+		MSG_PROXY		= 0x10,	/* Supply or ask second address.  */
+		MSG_TRUNC		= 0x20,
+		MSG_DONTWAIT	= 0x40, /* Nonblocking IO.  */
+		MSG_EOR			= 0x80, /* End of record.  */
+		MSG_WAITALL		= 0x100, /* Wait for a full request.  */
+		MSG_FIN			= 0x200,
+		MSG_SYN			= 0x400,
+		MSG_CONFIRM		= 0x800, /* Confirm path validity.  */
+		MSG_RST			= 0x1000,
+		MSG_ERRQUEUE	= 0x2000, /* Fetch message from error queue.  */
+		MSG_NOSIGNAL	= 0x4000, /* Do not generate SIGPIPE.  */
+		MSG_MORE		= 0x8000,  /* Sender will send more.  */
+		MSG_WAITFORONE	= 0x10000, /* Wait for at least one packet to return.*/
+		MSG_FASTOPEN	= 0x20000000, /* Send data in TCP SYN.  */
+		MSG_CMSG_CLOEXEC= 0x40000000, /* Set close_on_exit for file descriptor received through SCM_RIGHTS. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum ShutdownOption : int {
+		SHUT_RD = 0,       /* No more receptions.  */
+		SHUT_WR = 1,       /* No more transmissions.  */
+		SHUT_RDWR = 2,     /* No more receptions or transmissions.  */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum SockCtrlMsg : int {
+	    SCM_RIGHTS = 0x01,         /* Transfer file descriptors.  */
+		SCM_CREDENTIALS = 0x02,    /* Credentials passing.  */
+	}
+	
 	#endregion
 
 	#region Structures
@@ -1228,6 +1416,357 @@ namespace Mono.Unix.Native {
 		[FieldOffset (4)]
 		public ulong u64;
 	}
+
+	[Map]
+	[StructLayout (LayoutKind.Explicit, Size=4)]
+	public struct InAddr {
+		[FieldOffset (0)] uint addr;
+
+		public InAddr (byte b0, byte b1, byte b2, byte b3)
+		{
+			addr = 0;
+			this[0] = b0;
+			this[1] = b1;
+			this[2] = b2;
+			this[3] = b3;
+		}
+		
+		public unsafe InAddr (byte[] buffer)
+		{
+			if (buffer.Length != 4)
+				throw new ArgumentException ("buffer", "buffer.Length != 4");
+			addr = 0;
+			fixed (uint* ptr = &addr)
+				Marshal.Copy (buffer, 0, (IntPtr) ptr, 4);
+		}
+
+		public unsafe byte[] ToArray ()
+		{
+			var buffer = new byte[4];
+			fixed (uint* ptr = &addr)
+				Marshal.Copy ((IntPtr) ptr, buffer, 0, 4);
+			return buffer;
+		}
+		
+		public unsafe byte this[int index] {
+			get {
+				if (index < 0 || index >= 4)
+					throw new ArgumentOutOfRangeException ("index", "index < 0 || index >= 4");
+				fixed (uint* ptr = &addr)
+					return ((byte*) ptr)[index];
+			}
+			set {
+				if (index < 0 || index >= 4)
+					throw new ArgumentOutOfRangeException ("index", "index < 0 || index >= 4");
+				fixed (uint* ptr = &addr)
+					((byte*) ptr)[index] = value;
+			}
+		}
+	}
+
+	[Map]
+	[StructLayout (LayoutKind.Explicit, Size=16)]
+	public struct In6Addr {
+		[FieldOffset (0)] ulong addr0;
+		[FieldOffset (1)] ulong addr1;
+
+		public unsafe In6Addr (byte[] buffer)
+		{
+			if (buffer.Length != 16)
+				throw new ArgumentException ("buffer", "buffer.Length != 16");
+			addr0 = addr1 = 0;
+			fixed (ulong* ptr = &addr0)
+				Marshal.Copy (buffer, 0, (IntPtr) ptr, 16);
+		}
+
+		public unsafe byte[] ToArray ()
+		{
+			var buffer = new byte[16];
+			fixed (ulong* ptr = &addr0)
+				Marshal.Copy ((IntPtr) ptr, buffer, 0, 16);
+			return buffer;
+		}
+		
+		public unsafe byte this[int index] {
+			get {
+				if (index < 0 || index >= 16)
+					throw new ArgumentOutOfRangeException ("index", "index < 0 || index >= 16");
+				fixed (ulong* ptr = &addr0)
+					return ((byte*) ptr)[index];
+			}
+			set {
+				if (index < 0 || index >= 16)
+					throw new ArgumentOutOfRangeException ("index", "index < 0 || index >= 16");
+				fixed (ulong* ptr = &addr0)
+					((byte*) ptr)[index] = value;
+			}
+		}
+	}
+
+	[Map ("struct linger")]
+	[CLSCompliant (false)]
+	public struct Linger {
+		public int l_onoff;
+		public int l_linger;
+	}
+	
+	[Map ("struct cmsghdr")]
+	[CLSCompliant (false)]
+	public struct Cmsghdr {
+		public long cmsg_len;
+		public SockProtocol cmsg_level;
+		public SockCtrlMsg cmsg_type;
+
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Cmsghdr_getsize")]
+		static extern int getsize ();
+		static readonly int size = getsize ();
+		public static int Size {
+			get {
+				return size;
+			}
+		}
+
+		public static unsafe Cmsghdr Get (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh", "msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg", "cmsg offset pointing out of buffer");
+
+			Cmsghdr hdr;
+			fixed (byte* ptr = msgh.msg_control)
+				if (!NativeConvert.TryCopy ((IntPtr) (ptr + cmsg), out hdr))
+					throw new ArgumentException ("buffer", "Failed to convert from native struct");
+			// SOL_SOCKET has the same value as IPPROTO_ICMP on linux.
+			// Make sure that cmsg_level is set to SOL_SOCKET in this case.
+			if (NativeConvert.FromSockProtocol (hdr.cmsg_level) == NativeConvert.FromSockProtocol (SockProtocol.SOL_SOCKET))
+				hdr.cmsg_level = SockProtocol.SOL_SOCKET;
+			return hdr;
+		}
+
+		public unsafe void SetTo (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh", "msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg", "cmsg offset pointing out of buffer");
+
+			fixed (byte* ptr = msgh.msg_control)
+				if (!NativeConvert.TryCopy (ref this, (IntPtr) (ptr + cmsg)))
+					throw new ArgumentException ("buffer", "Failed to convert to native struct");
+		}
+	}
+	
+	public interface ISockaddr {
+		byte[] ToNativeArray ();
+	}
+	
+	[Map ("struct sockaddr")]
+	[CLSCompliant (false)]
+	public struct Sockaddr {
+		public AddrFamily sa_family;
+
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Sockaddr_offsetof_sockaddr_sa_data")]
+		static extern int offsetof_sockaddr_sa_data ();
+		static readonly int dataOffset = offsetof_sockaddr_sa_data ();
+		
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Sockaddr_sizeof_sockaddr_storage")]
+		static extern int sizeof_sockaddr_storage ();
+		static readonly int sizeofSockaddrStorage = sizeof_sockaddr_storage ();
+		
+		public static int DataOffset {
+			get {
+				return dataOffset;
+			}
+		}
+		public static int SizeofSockaddrStorage {
+			get {
+				if (sizeofSockaddrStorage == -1)
+					throw new NotImplementedException ("Current platform doesn't support sockaddr_storage.");
+				return sizeofSockaddrStorage;
+			}
+		}
+		public static unsafe Sockaddr FromNativeArray (byte[] buffer) {
+			if (buffer.Length < DataOffset)
+				throw new ArgumentException ("buffer", "Buffer too small for native struct");
+			Sockaddr addr;
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy ((IntPtr) ptr, out addr))
+					throw new ArgumentException ("buffer", "Failed to convert from native struct");
+			return addr;
+		}
+		public unsafe byte[] ToNativeArray (int dataSize) {
+			if (dataSize < 0)
+				throw new ArgumentOutOfRangeException ("dataSize", "dataSize < 0");
+			var buffer = new byte[DataOffset + dataSize];
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy (ref this, (IntPtr) ptr))
+					throw new ArgumentException ("this", "Failed to convert to native struct");
+			return buffer;
+		}
+	}
+	
+	[Map ("struct sockaddr_in")]
+	[CLSCompliant (false)]
+	public struct SockaddrIn : ISockaddr {
+		public AddrFamily sin_family;   // AF_INET.
+		public ushort              sin_port;     // Port number. 
+		public InAddr              sin_addr;     // IP address.
+
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_SockaddrIn_getsize")]
+		static extern int getsize ();
+		static readonly int size = getsize ();
+		public static bool NativeAvailable {
+			get {
+				return size != -1;
+			}
+		}
+		public static int Size {
+			get {
+				if (size == -1)
+					throw new NotImplementedException ("Current platform doesn't support this type.");
+				return size;
+			}
+		}
+		public static unsafe SockaddrIn FromNativeArray (byte[] buffer) {
+			if (buffer.Length < Size)
+				throw new ArgumentException ("buffer", "Buffer too small for native struct");
+			SockaddrIn addr;
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy ((IntPtr) ptr, out addr))
+					throw new ArgumentException ("buffer", "Failed to convert from native struct");
+			return addr;
+		}
+		public unsafe byte[] ToNativeArray () {
+			var buffer = new byte[Size];
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy (ref this, (IntPtr) ptr))
+					throw new ArgumentException ("this", "Failed to convert to native struct");
+			return buffer;
+		}
+	}
+	
+	[Map ("struct sockaddr_in6")]
+	[CLSCompliant (false)]
+	public struct SockaddrIn6 : ISockaddr {
+		public AddrFamily sin6_family;   // AF_INET6.
+		public ushort              sin6_port;     // Port number. 
+		public uint                sin6_flowinfo; // IPv6 traffic class and flow information. 
+		public In6Addr             sin6_addr;     // IPv6 address. 
+		public uint                sin6_scope_id; // Set of interfaces for a scope. 
+
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_SockaddrIn6_getsize")]
+		static extern int getsize ();
+		static readonly int size = getsize ();
+		public static bool NativeAvailable {
+			get {
+				return size != -1;
+			}
+		}
+		public static int Size {
+			get {
+				if (size == -1)
+					throw new NotImplementedException ("Current platform doesn't support this type.");
+				return size;
+			}
+		}
+		public static unsafe SockaddrIn6 FromNativeArray (byte[] buffer) {
+			if (buffer.Length < Size)
+				throw new ArgumentException ("buffer", "Buffer too small for native struct");
+			SockaddrIn6 addr;
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy ((IntPtr) ptr, out addr))
+					throw new ArgumentException ("buffer", "Failed to convert from native struct");
+			return addr;
+		}
+		public unsafe byte[] ToNativeArray () {
+			var buffer = new byte[Size];
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy (ref this, (IntPtr) ptr))
+					throw new ArgumentException ("this", "Failed to convert to native struct");
+			return buffer;
+		}
+	}
+	
+	[CLSCompliant (false)]
+	public struct SockaddrUn : ISockaddr, IEquatable<SockaddrUn> {
+		public AddrFamily sun_family;   // AF_UNIX.
+		public byte[]              sun_path;     // Socket pathname.
+
+		public SockaddrUn (string path, bool @abstract = false)
+		{
+			sun_family = AddrFamily.AF_UNIX;
+			sun_path = UnixEncoding.Instance.GetBytes (path);
+		}
+		
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_SockaddrUn_get_path_offset")]
+		static extern int get_path_offset ();
+		static readonly int path_offset = get_path_offset ();
+		public static bool NativeAvailable {
+			get {
+				return path_offset != -1;
+			}
+		}
+		public static int PathOffset {
+			get {
+				if (path_offset == -1)
+					throw new NotImplementedException ("Current platform doesn't support this type.");
+				return path_offset;
+			}
+		}
+		public static unsafe SockaddrUn FromNativeArray (byte[] buffer) {
+			if (buffer.Length < PathOffset)
+				throw new ArgumentException ("buffer", "Buffer too small for native struct");
+			SockaddrUn addr;
+			addr.sun_family = Sockaddr.FromNativeArray (buffer).sa_family;
+			addr.sun_path = new byte[buffer.Length - PathOffset];
+			Array.Copy (buffer, PathOffset, addr.sun_path, 0, addr.sun_path.Length);
+			return addr;
+		}
+		public unsafe byte[] ToNativeArray () {
+			var buffer = new byte[PathOffset + sun_path.Length];
+			var sockaddr = new Sockaddr { sa_family = sun_family };
+			fixed (void* ptr = buffer)
+				if (!NativeConvert.TryCopy (ref sockaddr, (IntPtr) ptr))
+					throw new ArgumentException ("this", "Failed to convert to native struct");
+			Array.Copy (sun_path, 0, buffer, PathOffset, sun_path.Length);
+			return buffer;
+		}
+
+		public override int GetHashCode ()
+		{
+			int hash = sun_family.GetHashCode () ^ sun_path.Length.GetHashCode ();
+			unchecked {
+				for (int i = 0; i < sun_path.Length; i++)
+					hash += sun_path[i] ^ i;
+			}
+			return hash;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is SockaddrUn))
+				return false;
+			return Equals ((SockaddrUn) obj);
+		}
+
+		public bool Equals (SockaddrUn value)
+		{
+			if (sun_family != value.sun_family || sun_path.Length != value.sun_path.Length)
+				return false;
+			for (int i = 0; i < sun_path.Length; i++)
+				if (sun_path[i] != value.sun_path[i])
+					return false;
+			return true;
+		}
+	}
+	
 	#endregion
 
 	#region Classes
@@ -1520,6 +2059,18 @@ namespace Mono.Unix.Native {
 		{
 			return !Object.Equals (lhs, rhs);
 		}
+	}
+
+	[CLSCompliant (false)]
+	public class Msghdr
+	{
+		public byte[] msg_name;
+		public long msg_namelen;
+		public Iovec[] msg_iov;
+		public int msg_iovlen;
+		public byte[] msg_control;
+		public long msg_controllen;
+		public MessageFlags msg_flags;
 	}
 
 	//
@@ -4355,6 +4906,542 @@ namespace Mono.Unix.Native {
 		{
 			return sys_pwritev (fd, iov, iov.Length, offset);
 		}
+		#endregion
+
+		#region <socket.h> Declarations
+		//
+		// <socket.h> -- COMPLETE
+		//
+       
+		// socket(2)
+		//    int socket(int domain, int type, int protocol);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="socket")]
+		static extern int sys_socket (int domain, int type, int protocol);
+
+		public static int socket (AddrFamily domain, SockType type, SockFlags flags, SockProtocol protocol)
+		{
+			var _domain = NativeConvert.FromAddrFamily (domain);
+			var _type = NativeConvert.FromSockType (type);
+			var _flags = NativeConvert.FromSockFlags (flags);
+			// protocol == 0 is a special case (uses default protocol)
+			var _protocol = protocol == 0 ? 0 : NativeConvert.FromSockProtocol (protocol);
+
+			return sys_socket (_domain, _type | _flags, _protocol);
+		}
+
+		public static int socket (AddrFamily domain, SockType type, SockProtocol protocol)
+		{
+			return socket (domain, type, 0, protocol);
+		}
+
+		// socketpair(2)
+		//    int socketpair(int domain, int type, int protocol, int sv[2]);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_socketpair")]
+		static extern int sys_socketpair (int domain, int type, int protocol, out int sv0, out int sv1);
+
+		public static int socketpair (AddrFamily domain, SockType type, SockFlags flags, SockProtocol protocol, out int sv0, out int sv1)
+		{
+			var _domain = NativeConvert.FromAddrFamily (domain);
+			var _type = NativeConvert.FromSockType (type);
+			var _flags = NativeConvert.FromSockFlags (flags);
+			// protocol == 0 is a special case (uses default protocol)
+			var _protocol = protocol == 0 ? 0 : NativeConvert.FromSockProtocol (protocol);
+
+			return sys_socketpair (_domain, _type | _flags, _protocol, out sv0, out sv1);
+		}
+		
+		public static int socketpair (AddrFamily domain, SockType type, SockProtocol protocol, out int sv0, out int sv1)
+		{
+			return socketpair (domain, type, 0, protocol, out sv0, out sv1);
+		}
+
+		public static int socketpair (AddrFamily domain, SockType type, SockFlags flags, SockProtocol protocol, int[] socket_vector)
+		{
+			if (socket_vector == null || socket_vector.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			int sv0, sv1;
+			int r = socketpair (domain, type, flags, protocol, out sv0, out sv1);
+			socket_vector[0] = sv0;
+			socket_vector[1] = sv1;
+			return r;
+		}
+
+		public static int socketpair (AddrFamily domain, SockType type, SockProtocol protocol, int[] socket_vector)
+		{
+			return socketpair (domain, type, 0, protocol, socket_vector);
+		}
+		
+		// sockatmark(2)
+		//    int sockatmark(int sockfd);
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int sockatmark (int socket);
+		
+		// listen(2)
+		//    int listen(int sockfd, int backlog);
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int listen (int socket, int backlog);
+		
+		// bind(2)
+		//    int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_bind")]
+		public static unsafe extern int bind (int socket, byte* addr, long addrlen);
+
+		public static unsafe int bind (int socket, byte[] addr, long addrlen)
+		{
+			if (addrlen != 0 && addrlen > addr.Length)
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return bind (socket, ptr, addrlen);
+		}
+		
+		public static unsafe int bind (int socket, ISockaddr address)
+		{
+			var buffer = address.ToNativeArray ();
+			return bind (socket, buffer, buffer.Length);
+		}
+
+		// connect(2)
+		//    int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_connect")]
+		public static unsafe extern int connect (int socket, byte* addr, long addrlen);
+
+		public static unsafe int connect (int socket, byte[] addr, long addrlen)
+		{
+			if (addrlen != 0 && addrlen > addr.Length)
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return connect (socket, ptr, addrlen);
+		}
+		
+		public static unsafe int connect (int socket, ISockaddr address)
+		{
+			var buffer = address.ToNativeArray ();
+			return connect (socket, buffer, buffer.Length);
+		}
+
+		// accept(2)
+		//    int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_accept")]
+		public static unsafe extern int accept (int socket, byte* addr, ref long addrlen);
+
+		public static unsafe int accept (int socket, byte[] addr, ref long addrlen)
+		{
+			if (addrlen < 0 || (addrlen != 0 && addrlen > addr.Length))
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return accept (socket, ptr, ref addrlen);
+		}
+		
+		// accept4(2)
+		//    int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_accept4")]
+		static unsafe extern int accept4 (int socket, byte* addr, ref long addrlen, int flags);
+
+		public static unsafe int accept4 (int socket, byte* addr, ref long addrlen, SockFlags flags)
+		{
+			var _flags = NativeConvert.FromSockFlags (flags);
+			return accept4 (socket, addr, ref addrlen, _flags);
+		}
+		
+		public static unsafe int accept4 (int socket, byte[] addr, ref long addrlen, SockFlags flags)
+		{
+			if (addrlen < 0 || (addrlen != 0 && addrlen > addr.Length))
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return accept4 (socket, ptr, ref addrlen, flags);
+		}
+
+		// getpeername(2)
+		//    int getpeername(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getpeername")]
+		public static unsafe extern int getpeername (int socket, byte* addr, ref long addrlen);
+
+		public static unsafe int getpeername (int socket, byte[] addr, ref long addrlen)
+		{
+			if (addrlen < 0 || addrlen > addr.Length)
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return getpeername (socket, ptr, ref addrlen);
+		}
+
+		// getsockname(2)
+		//    int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockname")]
+		public static unsafe extern int getsockname (int socket, byte* addr, ref long addrlen);
+
+		public static unsafe int getsockname (int socket, byte[] addr, ref long addrlen)
+		{
+			if (addrlen < 0 || addrlen > addr.Length)
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr = addr)
+				return getsockname (socket, ptr, ref addrlen);
+		}
+		
+		// getsockopt(2)
+		//    int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt")]
+		static extern unsafe int sys_getsockopt (int socket, int level, int option_name, void *option_value, ref long option_len);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt_timeval")]
+		static extern unsafe int sys_getsockopt_timeval (int socket, int level, int option_name, out Timeval option_value);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt_linger")]
+		static extern unsafe int sys_getsockopt_linger (int socket, int level, int option_name, out Linger option_value);
+
+		public static unsafe int getsockopt (int socket, SockProtocol level, SockOptName option_name, void *option_value, ref long option_len)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_getsockopt (socket, _level, _option_name, option_value, ref option_len);
+		}
+
+		public static unsafe int getsockopt (int socket, SockProtocol level, SockOptName option_name, out int option_value)
+		{
+			int value;
+			long size = sizeof (int);
+			int ret = getsockopt (socket, level, option_name, &value, ref size);
+			if (ret != -1 && size != sizeof (int)) {
+				SetLastError (Errno.EINVAL);
+				ret = -1;
+			}
+			option_value = value;
+			return ret;
+		}
+
+		public static unsafe int getsockopt (int socket, SockProtocol level, SockOptName option_name, byte[] option_value, ref long option_len)
+		{
+			if (option_len > option_value.Length)
+				throw new ArgumentOutOfRangeException ("option_len", "option_len > option_value.Length");
+			fixed (byte* ptr = option_value)
+				return getsockopt (socket, level, option_name, ptr, ref option_len);
+		}
+		
+		public static unsafe int getsockopt (int socket, SockProtocol level, SockOptName option_name, out Timeval option_value)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_getsockopt_timeval (socket, _level, _option_name, out option_value);
+		}
+		
+		public static unsafe int getsockopt (int socket, SockProtocol level, SockOptName option_name, out Linger option_value)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_getsockopt_linger (socket, _level, _option_name, out option_value);
+		}
+		
+		// setsockopt(2)
+		//    int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt")]
+		public static extern unsafe int sys_setsockopt (int socket, int level, int option_name, void *option_value, long option_len);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt_timeval")]
+		public static extern unsafe int sys_setsockopt_timeval (int socket, int level, int option_name, ref Timeval option_value);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt_linger")]
+		public static extern unsafe int sys_setsockopt_linger (int socket, int level, int option_name, ref Linger option_value);
+
+		public static unsafe int setsockopt (int socket, SockProtocol level, SockOptName option_name, void *option_value, long option_len)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_setsockopt (socket, _level, _option_name, option_value, option_len);
+		}
+		
+		public static unsafe int setsockopt (int socket, SockProtocol level, SockOptName option_name, int option_value)
+		{
+			return setsockopt (socket, level, option_name, &option_value, sizeof (int));
+		}
+
+		public static unsafe int setsockopt (int socket, SockProtocol level, SockOptName option_name, byte[] option_value, long option_len)
+		{
+			if (option_len > option_value.Length)
+				throw new ArgumentOutOfRangeException ("option_len", "option_len > option_value.Length");
+			fixed (byte* ptr = option_value)
+				return setsockopt (socket, level, option_name, ptr, option_len);
+		}
+		
+		public static unsafe int setsockopt (int socket, SockProtocol level, SockOptName option_name, Timeval option_value)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_setsockopt_timeval (socket, _level, _option_name, ref option_value);
+		}
+
+		public static unsafe int setsockopt (int socket, SockProtocol level, SockOptName option_name, Linger option_value)
+		{
+			var _level = NativeConvert.FromSockProtocol (level);
+			var _option_name = NativeConvert.FromSockOptName (option_name);
+			return sys_setsockopt_linger (socket, _level, _option_name, ref option_value);
+		}
+
+		// shutdown(2)
+		//    int shutdown(int sockfd, int how);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="shutdown")]
+		static extern int sys_shutdown (int socket, int how);
+
+		public static int shutdown (int socket, ShutdownOption how)
+		{
+			var _how = NativeConvert.FromShutdownOption (how);
+			return sys_shutdown (socket, _how);
+		}
+		
+		// recv(2)
+		//    ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_recv")]
+		static extern unsafe long sys_recv (int socket, void *buffer, ulong length, int flags);
+
+		public static unsafe long recv (int socket, void *buffer, ulong length, MessageFlags flags)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_recv (socket, buffer, length, _flags);
+		}
+		
+		public static unsafe long recv (int socket, byte[] buffer, ulong length, MessageFlags flags)
+		{
+			if (length > (ulong) buffer.LongLength)
+				throw new ArgumentOutOfRangeException ("length", "length > buffer.LongLength");
+			fixed (byte* ptr = buffer)
+				return recv (socket, ptr, length, flags);
+		}
+		
+		// send(2)
+		//    ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_send")]
+		static extern unsafe long sys_send (int socket, void *message, ulong length, int flags);
+
+		public static unsafe long send (int socket, void *message, ulong length, MessageFlags flags)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_send (socket, message, length, _flags);
+		}
+
+		public static unsafe long send (int socket, byte[] message, ulong length, MessageFlags flags)
+		{
+			if (length > (ulong) message.LongLength)
+				throw new ArgumentOutOfRangeException ("length", "length > message.LongLength");
+			fixed (byte* ptr = message)
+				return send (socket, ptr, length, flags);
+		}
+		
+		// recvfrom(2)
+		//    ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_recvfrom")]
+		static extern unsafe long sys_recvfrom (int socket, void *buffer, ulong length, int flags, byte* addr, ref long addrlen);
+
+		public static unsafe long recvfrom (int socket, void *buffer, ulong length, MessageFlags flags, byte* addr, ref long addrlen)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_recvfrom (socket, buffer, length, _flags, addr, ref addrlen);
+		}
+		
+		public static unsafe long recvfrom (int socket, byte[] buffer, ulong length, MessageFlags flags, byte[] addr, ref long addrlen)
+		{
+			if (length > (ulong) buffer.LongLength)
+				throw new ArgumentOutOfRangeException ("length", "length > buffer.LongLength");
+			if (addrlen < 0 || (addrlen != 0 && addrlen > addr.Length))
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr_buf = buffer, ptr_addr = addr)
+				return recvfrom (socket, ptr_buf, length, flags, ptr_addr, ref addrlen);
+		}
+
+		// sendto(2)
+		//    ssize_t sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_sendto")]
+		static extern unsafe long sys_sendto (int socket, void *message, ulong length, int flags, byte* addr, long addrlen);
+
+		public static unsafe long sendto (int socket, void *message, ulong length, MessageFlags flags, byte* addr, long addrlen)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_sendto (socket, message, length, _flags, addr, addrlen);
+		}
+		
+		public static unsafe long sendto (int socket, byte[] message, ulong length, MessageFlags flags, byte[] addr, long addrlen)
+		{
+			if (length > (ulong) message.LongLength)
+				throw new ArgumentOutOfRangeException ("length", "length > message.LongLength");
+			if (addrlen < 0 || (addrlen != 0 && addrlen > addr.Length))
+				throw new ArgumentOutOfRangeException ("addrlen", "addrlen < 0 || addrlen > addr.Length");
+			fixed (byte* ptr_msg = message, ptr_addr = addr)
+				return sendto (socket, ptr_msg, length, flags, ptr_addr, addrlen);
+		}
+		
+		public static long sendto (int socket, byte[] message, ulong length, MessageFlags flags, ISockaddr address)
+		{
+			var addr = address.ToNativeArray ();
+			return sendto (socket, message, length, flags, addr, addr.Length);
+		}
+
+		// structure for recvmsg() and sendmsg()
+		unsafe struct _Msghdr
+		{
+			public byte* msg_name;
+			public long msg_namelen;
+			public Iovec* msg_iov;
+			public int msg_iovlen;
+			public byte* msg_control;
+			public long msg_controllen;
+			public int msg_flags;
+
+			public _Msghdr (Msghdr message, byte* ptr_msg_name, Iovec* ptr_msg_iov, byte* ptr_msg_control)
+			{
+				if (message.msg_name == null && message.msg_namelen != 0)
+					throw new ArgumentException ("message", "message.msg_name == null && message.msg_namelen != 0");
+				if (message.msg_name != null && message.msg_namelen > message.msg_name.Length)
+					throw new ArgumentException ("message", "message.msg_namelen > message.msg_name.Length");
+				msg_name = ptr_msg_name;
+				msg_namelen = message.msg_namelen;
+				
+				if (message.msg_iovlen > message.msg_iov.Length || message.msg_iovlen < 0)
+					throw new ArgumentException ("message", "message.msg_iovlen > message.msg_iov.Length || message.msg_iovlen < 0");
+				msg_iov = ptr_msg_iov;
+				msg_iovlen = message.msg_iovlen;
+				
+				if (message.msg_control == null && message.msg_controllen != 0)
+					throw new ArgumentException ("message", "message.msg_control == null && message.msg_controllen != 0");
+				if (message.msg_control != null && message.msg_controllen > message.msg_control.Length)
+					throw new ArgumentException ("message", "message.msg_controllen > message.msg_control.Length");
+				msg_control = ptr_msg_control;
+				msg_controllen = message.msg_controllen;
+
+				msg_flags = 0; // msg_flags is only passed out of the kernel
+			}
+
+			public void Update (Msghdr message)
+			{
+				message.msg_namelen = msg_namelen;
+				message.msg_controllen = msg_controllen;
+				message.msg_flags = NativeConvert.ToMessageFlags (msg_flags);
+			}
+		}	
+
+		// recvmsg(2)
+		//    ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_recvmsg")]
+		static extern long sys_recvmsg (int socket, ref _Msghdr message, int flags);
+
+		public static unsafe long recvmsg (int socket, Msghdr message, MessageFlags flags)
+		{
+			var _flags = NativeConvert.FromMessageFlags (flags);
+			fixed (byte* ptr_msg_name = message.msg_name, ptr_msg_control = message.msg_control) {
+				fixed (Iovec* ptr_msg_iov = message.msg_iov) {
+					var _message = new _Msghdr (message, ptr_msg_name, ptr_msg_iov, ptr_msg_control);
+					long r = sys_recvmsg (socket, ref _message, _flags);
+					_message.Update (message);
+					return r;
+				}
+			}
+		}
+		
+		// sendmsg(2)
+		//    ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_sendmsg")]
+		static extern long sys_sendmsg (int socket, ref _Msghdr message, int flags);
+
+		public static unsafe long sendmsg (int socket, Msghdr message, MessageFlags flags)
+		{
+			var _flags = NativeConvert.FromMessageFlags (flags);
+			fixed (byte* ptr_msg_name = message.msg_name, ptr_msg_control = message.msg_control) {
+				fixed (Iovec* ptr_msg_iov = message.msg_iov) {
+					var _message = new _Msghdr (message, ptr_msg_name, ptr_msg_iov, ptr_msg_control);
+					return sys_sendmsg (socket, ref _message, _flags);
+				}
+			}
+		}
+
+		// cmsg(3)
+		//    struct cmsghdr *CMSG_FIRSTHDR(struct msghdr *msgh);
+		//    struct cmsghdr *CMSG_NXTHDR(struct msghdr *msgh, struct cmsghdr *cmsg);
+		//    size_t CMSG_ALIGN(size_t length);
+		//    size_t CMSG_SPACE(size_t length);
+		//    size_t CMSG_LEN(size_t length);
+		//    unsigned char *CMSG_DATA(struct cmsghdr *cmsg);
+
+		// Wrapper methods use long offsets into msg_control instead of a
+		// struct cmsghdr *cmsg pointer because pointers into a byte[] aren't
+		// stable when the array is not pinned.
+		// NULL is mapped to -1.
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_FIRSTHDR")]
+		static extern unsafe long CMSG_FIRSTHDR (byte* msg_control, long msg_controllen);
+		
+		public static unsafe long CMSG_FIRSTHDR (Msghdr msgh)
+		{
+			if (msgh.msg_control == null && msgh.msg_controllen != 0)
+				throw new ArgumentException ("msgh", "msgh.msg_control == null && msgh.msg_controllen != 0");
+			if (msgh.msg_control != null && msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh", "msgh.msg_controllen > msgh.msg_control.Length");
+			
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_FIRSTHDR (ptr, msgh.msg_controllen);
+		}
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_NXTHDR")]
+		static extern unsafe long CMSG_NXTHDR (byte* msg_control, long msg_controllen, long cmsg);
+		
+		public static unsafe long CMSG_NXTHDR (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh", "msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg", "cmsg offset pointing out of buffer");
+			
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_NXTHDR (ptr, msgh.msg_controllen, cmsg);
+		}
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_DATA")]
+		static extern unsafe long CMSG_DATA (byte* msg_control, long msg_controllen, long cmsg);
+		
+		public static unsafe long CMSG_DATA (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh", "msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg", "cmsg offset pointing out of buffer");
+			
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_DATA (ptr, msgh.msg_controllen, cmsg);
+		}
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_ALIGN")]
+		public static extern ulong CMSG_ALIGN (ulong length);
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_SPACE")]
+		public static extern ulong CMSG_SPACE (ulong length);
+		
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_LEN")]
+		public static extern ulong CMSG_LEN (ulong length);
+
 		#endregion
 	}
 

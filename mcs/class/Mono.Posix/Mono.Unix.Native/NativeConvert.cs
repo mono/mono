@@ -359,6 +359,18 @@ namespace Mono.Unix.Native {
 		{
 			return ToStatvfs (source, out destination) == 0;
 		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromInAddr")]
+		private static extern int FromInAddr (ref InAddr source, IntPtr destination);
+          
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToInAddr")]
+		private static extern int ToInAddr (IntPtr source, out InAddr destination);
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromIn6Addr")]
+		private static extern int FromIn6Addr (ref In6Addr source, IntPtr destination);
+          
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToIn6Addr")]
+		private static extern int ToIn6Addr (IntPtr source, out In6Addr destination);
 	}
 }
 

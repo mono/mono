@@ -35,6 +35,89 @@ enum Mono_Posix_AccessModes {
 int Mono_Posix_FromAccessModes (int x, int *r);
 int Mono_Posix_ToAccessModes (int x, int *r);
 
+enum Mono_Posix_AddrFamily {
+	Mono_Posix_AddrFamily_AF_ALG              = 0x0026,
+	#define Mono_Posix_AddrFamily_AF_ALG        Mono_Posix_AddrFamily_AF_ALG
+	Mono_Posix_AddrFamily_AF_APPLETALK        = 0x0005,
+	#define Mono_Posix_AddrFamily_AF_APPLETALK  Mono_Posix_AddrFamily_AF_APPLETALK
+	Mono_Posix_AddrFamily_AF_ASH              = 0x0012,
+	#define Mono_Posix_AddrFamily_AF_ASH        Mono_Posix_AddrFamily_AF_ASH
+	Mono_Posix_AddrFamily_AF_ATMPVC           = 0x0008,
+	#define Mono_Posix_AddrFamily_AF_ATMPVC     Mono_Posix_AddrFamily_AF_ATMPVC
+	Mono_Posix_AddrFamily_AF_ATMSVC           = 0x0014,
+	#define Mono_Posix_AddrFamily_AF_ATMSVC     Mono_Posix_AddrFamily_AF_ATMSVC
+	Mono_Posix_AddrFamily_AF_AX25             = 0x0003,
+	#define Mono_Posix_AddrFamily_AF_AX25       Mono_Posix_AddrFamily_AF_AX25
+	Mono_Posix_AddrFamily_AF_BLUETOOTH        = 0x001f,
+	#define Mono_Posix_AddrFamily_AF_BLUETOOTH  Mono_Posix_AddrFamily_AF_BLUETOOTH
+	Mono_Posix_AddrFamily_AF_BRIDGE           = 0x0007,
+	#define Mono_Posix_AddrFamily_AF_BRIDGE     Mono_Posix_AddrFamily_AF_BRIDGE
+	Mono_Posix_AddrFamily_AF_CAIF             = 0x0025,
+	#define Mono_Posix_AddrFamily_AF_CAIF       Mono_Posix_AddrFamily_AF_CAIF
+	Mono_Posix_AddrFamily_AF_CAN              = 0x001d,
+	#define Mono_Posix_AddrFamily_AF_CAN        Mono_Posix_AddrFamily_AF_CAN
+	Mono_Posix_AddrFamily_AF_DECnet           = 0x000c,
+	#define Mono_Posix_AddrFamily_AF_DECnet     Mono_Posix_AddrFamily_AF_DECnet
+	Mono_Posix_AddrFamily_AF_ECONET           = 0x0013,
+	#define Mono_Posix_AddrFamily_AF_ECONET     Mono_Posix_AddrFamily_AF_ECONET
+	Mono_Posix_AddrFamily_AF_IEEE802154       = 0x0024,
+	#define Mono_Posix_AddrFamily_AF_IEEE802154 Mono_Posix_AddrFamily_AF_IEEE802154
+	Mono_Posix_AddrFamily_AF_INET             = 0x0002,
+	#define Mono_Posix_AddrFamily_AF_INET       Mono_Posix_AddrFamily_AF_INET
+	Mono_Posix_AddrFamily_AF_INET6            = 0x000a,
+	#define Mono_Posix_AddrFamily_AF_INET6      Mono_Posix_AddrFamily_AF_INET6
+	Mono_Posix_AddrFamily_AF_IPX              = 0x0004,
+	#define Mono_Posix_AddrFamily_AF_IPX        Mono_Posix_AddrFamily_AF_IPX
+	Mono_Posix_AddrFamily_AF_IRDA             = 0x0017,
+	#define Mono_Posix_AddrFamily_AF_IRDA       Mono_Posix_AddrFamily_AF_IRDA
+	Mono_Posix_AddrFamily_AF_ISDN             = 0x0022,
+	#define Mono_Posix_AddrFamily_AF_ISDN       Mono_Posix_AddrFamily_AF_ISDN
+	Mono_Posix_AddrFamily_AF_IUCV             = 0x0020,
+	#define Mono_Posix_AddrFamily_AF_IUCV       Mono_Posix_AddrFamily_AF_IUCV
+	Mono_Posix_AddrFamily_AF_KEY              = 0x000f,
+	#define Mono_Posix_AddrFamily_AF_KEY        Mono_Posix_AddrFamily_AF_KEY
+	Mono_Posix_AddrFamily_AF_LLC              = 0x001a,
+	#define Mono_Posix_AddrFamily_AF_LLC        Mono_Posix_AddrFamily_AF_LLC
+	Mono_Posix_AddrFamily_AF_NETBEUI          = 0x000d,
+	#define Mono_Posix_AddrFamily_AF_NETBEUI    Mono_Posix_AddrFamily_AF_NETBEUI
+	Mono_Posix_AddrFamily_AF_NETLINK          = 0x0010,
+	#define Mono_Posix_AddrFamily_AF_NETLINK    Mono_Posix_AddrFamily_AF_NETLINK
+	Mono_Posix_AddrFamily_AF_NETROM           = 0x0006,
+	#define Mono_Posix_AddrFamily_AF_NETROM     Mono_Posix_AddrFamily_AF_NETROM
+	Mono_Posix_AddrFamily_AF_NFC              = 0x0027,
+	#define Mono_Posix_AddrFamily_AF_NFC        Mono_Posix_AddrFamily_AF_NFC
+	Mono_Posix_AddrFamily_AF_PACKET           = 0x0011,
+	#define Mono_Posix_AddrFamily_AF_PACKET     Mono_Posix_AddrFamily_AF_PACKET
+	Mono_Posix_AddrFamily_AF_PHONET           = 0x0023,
+	#define Mono_Posix_AddrFamily_AF_PHONET     Mono_Posix_AddrFamily_AF_PHONET
+	Mono_Posix_AddrFamily_AF_PPPOX            = 0x0018,
+	#define Mono_Posix_AddrFamily_AF_PPPOX      Mono_Posix_AddrFamily_AF_PPPOX
+	Mono_Posix_AddrFamily_AF_RDS              = 0x0015,
+	#define Mono_Posix_AddrFamily_AF_RDS        Mono_Posix_AddrFamily_AF_RDS
+	Mono_Posix_AddrFamily_AF_ROSE             = 0x000b,
+	#define Mono_Posix_AddrFamily_AF_ROSE       Mono_Posix_AddrFamily_AF_ROSE
+	Mono_Posix_AddrFamily_AF_RXRPC            = 0x0021,
+	#define Mono_Posix_AddrFamily_AF_RXRPC      Mono_Posix_AddrFamily_AF_RXRPC
+	Mono_Posix_AddrFamily_AF_SECURITY         = 0x000e,
+	#define Mono_Posix_AddrFamily_AF_SECURITY   Mono_Posix_AddrFamily_AF_SECURITY
+	Mono_Posix_AddrFamily_AF_SNA              = 0x0016,
+	#define Mono_Posix_AddrFamily_AF_SNA        Mono_Posix_AddrFamily_AF_SNA
+	Mono_Posix_AddrFamily_AF_TIPC             = 0x001e,
+	#define Mono_Posix_AddrFamily_AF_TIPC       Mono_Posix_AddrFamily_AF_TIPC
+	Mono_Posix_AddrFamily_AF_UNIX             = 0x0001,
+	#define Mono_Posix_AddrFamily_AF_UNIX       Mono_Posix_AddrFamily_AF_UNIX
+	Mono_Posix_AddrFamily_AF_UNSPEC           = 0x0000,
+	#define Mono_Posix_AddrFamily_AF_UNSPEC     Mono_Posix_AddrFamily_AF_UNSPEC
+	Mono_Posix_AddrFamily_AF_VSOCK            = 0x0028,
+	#define Mono_Posix_AddrFamily_AF_VSOCK      Mono_Posix_AddrFamily_AF_VSOCK
+	Mono_Posix_AddrFamily_AF_WANPIPE          = 0x0019,
+	#define Mono_Posix_AddrFamily_AF_WANPIPE    Mono_Posix_AddrFamily_AF_WANPIPE
+	Mono_Posix_AddrFamily_AF_X25              = 0x0009,
+	#define Mono_Posix_AddrFamily_AF_X25        Mono_Posix_AddrFamily_AF_X25
+};
+int Mono_Posix_FromAddrFamily (unsigned short x, unsigned short *r);
+int Mono_Posix_ToAddrFamily (unsigned short x, unsigned short *r);
+
 enum Mono_Posix_AtFlags {
 	Mono_Posix_AtFlags_AT_EMPTY_PATH             = 0x00001000,
 	#define Mono_Posix_AtFlags_AT_EMPTY_PATH       Mono_Posix_AtFlags_AT_EMPTY_PATH
@@ -621,6 +704,49 @@ enum Mono_Posix_LockfCommand {
 int Mono_Posix_FromLockfCommand (int x, int *r);
 int Mono_Posix_ToLockfCommand (int x, int *r);
 
+enum Mono_Posix_MessageFlags {
+	Mono_Posix_MessageFlags_MSG_CMSG_CLOEXEC       = 0x40000000,
+	#define Mono_Posix_MessageFlags_MSG_CMSG_CLOEXEC Mono_Posix_MessageFlags_MSG_CMSG_CLOEXEC
+	Mono_Posix_MessageFlags_MSG_CONFIRM            = 0x00000800,
+	#define Mono_Posix_MessageFlags_MSG_CONFIRM      Mono_Posix_MessageFlags_MSG_CONFIRM
+	Mono_Posix_MessageFlags_MSG_CTRUNC             = 0x00000008,
+	#define Mono_Posix_MessageFlags_MSG_CTRUNC       Mono_Posix_MessageFlags_MSG_CTRUNC
+	Mono_Posix_MessageFlags_MSG_DONTROUTE          = 0x00000004,
+	#define Mono_Posix_MessageFlags_MSG_DONTROUTE    Mono_Posix_MessageFlags_MSG_DONTROUTE
+	Mono_Posix_MessageFlags_MSG_DONTWAIT           = 0x00000040,
+	#define Mono_Posix_MessageFlags_MSG_DONTWAIT     Mono_Posix_MessageFlags_MSG_DONTWAIT
+	Mono_Posix_MessageFlags_MSG_EOR                = 0x00000080,
+	#define Mono_Posix_MessageFlags_MSG_EOR          Mono_Posix_MessageFlags_MSG_EOR
+	Mono_Posix_MessageFlags_MSG_ERRQUEUE           = 0x00002000,
+	#define Mono_Posix_MessageFlags_MSG_ERRQUEUE     Mono_Posix_MessageFlags_MSG_ERRQUEUE
+	Mono_Posix_MessageFlags_MSG_FASTOPEN           = 0x20000000,
+	#define Mono_Posix_MessageFlags_MSG_FASTOPEN     Mono_Posix_MessageFlags_MSG_FASTOPEN
+	Mono_Posix_MessageFlags_MSG_FIN                = 0x00000200,
+	#define Mono_Posix_MessageFlags_MSG_FIN          Mono_Posix_MessageFlags_MSG_FIN
+	Mono_Posix_MessageFlags_MSG_MORE               = 0x00008000,
+	#define Mono_Posix_MessageFlags_MSG_MORE         Mono_Posix_MessageFlags_MSG_MORE
+	Mono_Posix_MessageFlags_MSG_NOSIGNAL           = 0x00004000,
+	#define Mono_Posix_MessageFlags_MSG_NOSIGNAL     Mono_Posix_MessageFlags_MSG_NOSIGNAL
+	Mono_Posix_MessageFlags_MSG_OOB                = 0x00000001,
+	#define Mono_Posix_MessageFlags_MSG_OOB          Mono_Posix_MessageFlags_MSG_OOB
+	Mono_Posix_MessageFlags_MSG_PEEK               = 0x00000002,
+	#define Mono_Posix_MessageFlags_MSG_PEEK         Mono_Posix_MessageFlags_MSG_PEEK
+	Mono_Posix_MessageFlags_MSG_PROXY              = 0x00000010,
+	#define Mono_Posix_MessageFlags_MSG_PROXY        Mono_Posix_MessageFlags_MSG_PROXY
+	Mono_Posix_MessageFlags_MSG_RST                = 0x00001000,
+	#define Mono_Posix_MessageFlags_MSG_RST          Mono_Posix_MessageFlags_MSG_RST
+	Mono_Posix_MessageFlags_MSG_SYN                = 0x00000400,
+	#define Mono_Posix_MessageFlags_MSG_SYN          Mono_Posix_MessageFlags_MSG_SYN
+	Mono_Posix_MessageFlags_MSG_TRUNC              = 0x00000020,
+	#define Mono_Posix_MessageFlags_MSG_TRUNC        Mono_Posix_MessageFlags_MSG_TRUNC
+	Mono_Posix_MessageFlags_MSG_WAITALL            = 0x00000100,
+	#define Mono_Posix_MessageFlags_MSG_WAITALL      Mono_Posix_MessageFlags_MSG_WAITALL
+	Mono_Posix_MessageFlags_MSG_WAITFORONE         = 0x00010000,
+	#define Mono_Posix_MessageFlags_MSG_WAITFORONE   Mono_Posix_MessageFlags_MSG_WAITFORONE
+};
+int Mono_Posix_FromMessageFlags (int x, int *r);
+int Mono_Posix_ToMessageFlags (int x, int *r);
+
 enum Mono_Posix_MlockallFlags {
 	Mono_Posix_MlockallFlags_MCL_CURRENT       = 0x00000001,
 	#define Mono_Posix_MlockallFlags_MCL_CURRENT Mono_Posix_MlockallFlags_MCL_CURRENT
@@ -889,6 +1015,17 @@ enum Mono_Posix_SeekFlags {
 int Mono_Posix_FromSeekFlags (short x, short *r);
 int Mono_Posix_ToSeekFlags (short x, short *r);
 
+enum Mono_Posix_ShutdownOption {
+	Mono_Posix_ShutdownOption_SHUT_RD         = 0x00000000,
+	#define Mono_Posix_ShutdownOption_SHUT_RD   Mono_Posix_ShutdownOption_SHUT_RD
+	Mono_Posix_ShutdownOption_SHUT_RDWR       = 0x00000002,
+	#define Mono_Posix_ShutdownOption_SHUT_RDWR Mono_Posix_ShutdownOption_SHUT_RDWR
+	Mono_Posix_ShutdownOption_SHUT_WR         = 0x00000001,
+	#define Mono_Posix_ShutdownOption_SHUT_WR   Mono_Posix_ShutdownOption_SHUT_WR
+};
+int Mono_Posix_FromShutdownOption (int x, int *r);
+int Mono_Posix_ToShutdownOption (int x, int *r);
+
 enum Mono_Posix_Signum {
 	Mono_Posix_Signum_SIGABRT         = 0x00000006,
 	#define Mono_Posix_Signum_SIGABRT   Mono_Posix_Signum_SIGABRT
@@ -963,6 +1100,197 @@ enum Mono_Posix_Signum {
 };
 int Mono_Posix_FromSignum (int x, int *r);
 int Mono_Posix_ToSignum (int x, int *r);
+
+enum Mono_Posix_SockCtrlMsg {
+	Mono_Posix_SockCtrlMsg_SCM_CREDENTIALS       = 0x00000002,
+	#define Mono_Posix_SockCtrlMsg_SCM_CREDENTIALS Mono_Posix_SockCtrlMsg_SCM_CREDENTIALS
+	Mono_Posix_SockCtrlMsg_SCM_RIGHTS            = 0x00000001,
+	#define Mono_Posix_SockCtrlMsg_SCM_RIGHTS      Mono_Posix_SockCtrlMsg_SCM_RIGHTS
+};
+int Mono_Posix_FromSockCtrlMsg (int x, int *r);
+int Mono_Posix_ToSockCtrlMsg (int x, int *r);
+
+enum Mono_Posix_SockFlags {
+	Mono_Posix_SockFlags_SOCK_CLOEXEC        = 0x00080000,
+	#define Mono_Posix_SockFlags_SOCK_CLOEXEC  Mono_Posix_SockFlags_SOCK_CLOEXEC
+	Mono_Posix_SockFlags_SOCK_NONBLOCK       = 0x00000800,
+	#define Mono_Posix_SockFlags_SOCK_NONBLOCK Mono_Posix_SockFlags_SOCK_NONBLOCK
+};
+int Mono_Posix_FromSockFlags (int x, int *r);
+int Mono_Posix_ToSockFlags (int x, int *r);
+
+enum Mono_Posix_SockOptName {
+	Mono_Posix_SockOptName_SO_ACCEPTCONN                          = 0x0000001e,
+	#define Mono_Posix_SockOptName_SO_ACCEPTCONN                    Mono_Posix_SockOptName_SO_ACCEPTCONN
+	Mono_Posix_SockOptName_SO_ATTACH_FILTER                       = 0x0000001a,
+	#define Mono_Posix_SockOptName_SO_ATTACH_FILTER                 Mono_Posix_SockOptName_SO_ATTACH_FILTER
+	Mono_Posix_SockOptName_SO_BINDTODEVICE                        = 0x00000019,
+	#define Mono_Posix_SockOptName_SO_BINDTODEVICE                  Mono_Posix_SockOptName_SO_BINDTODEVICE
+	Mono_Posix_SockOptName_SO_BROADCAST                           = 0x00000006,
+	#define Mono_Posix_SockOptName_SO_BROADCAST                     Mono_Posix_SockOptName_SO_BROADCAST
+	Mono_Posix_SockOptName_SO_BSDCOMPAT                           = 0x0000000e,
+	#define Mono_Posix_SockOptName_SO_BSDCOMPAT                     Mono_Posix_SockOptName_SO_BSDCOMPAT
+	Mono_Posix_SockOptName_SO_BUSY_POLL                           = 0x0000002e,
+	#define Mono_Posix_SockOptName_SO_BUSY_POLL                     Mono_Posix_SockOptName_SO_BUSY_POLL
+	Mono_Posix_SockOptName_SO_DEBUG                               = 0x00000001,
+	#define Mono_Posix_SockOptName_SO_DEBUG                         Mono_Posix_SockOptName_SO_DEBUG
+	Mono_Posix_SockOptName_SO_DETACH_FILTER                       = 0x0000001b,
+	#define Mono_Posix_SockOptName_SO_DETACH_FILTER                 Mono_Posix_SockOptName_SO_DETACH_FILTER
+	Mono_Posix_SockOptName_SO_DOMAIN                              = 0x00000027,
+	#define Mono_Posix_SockOptName_SO_DOMAIN                        Mono_Posix_SockOptName_SO_DOMAIN
+	Mono_Posix_SockOptName_SO_DONTROUTE                           = 0x00000005,
+	#define Mono_Posix_SockOptName_SO_DONTROUTE                     Mono_Posix_SockOptName_SO_DONTROUTE
+	Mono_Posix_SockOptName_SO_ERROR                               = 0x00000004,
+	#define Mono_Posix_SockOptName_SO_ERROR                         Mono_Posix_SockOptName_SO_ERROR
+	Mono_Posix_SockOptName_SO_KEEPALIVE                           = 0x00000009,
+	#define Mono_Posix_SockOptName_SO_KEEPALIVE                     Mono_Posix_SockOptName_SO_KEEPALIVE
+	Mono_Posix_SockOptName_SO_LINGER                              = 0x0000000d,
+	#define Mono_Posix_SockOptName_SO_LINGER                        Mono_Posix_SockOptName_SO_LINGER
+	Mono_Posix_SockOptName_SO_LOCK_FILTER                         = 0x0000002c,
+	#define Mono_Posix_SockOptName_SO_LOCK_FILTER                   Mono_Posix_SockOptName_SO_LOCK_FILTER
+	Mono_Posix_SockOptName_SO_MARK                                = 0x00000024,
+	#define Mono_Posix_SockOptName_SO_MARK                          Mono_Posix_SockOptName_SO_MARK
+	Mono_Posix_SockOptName_SO_MAX_PACING_RATE                     = 0x0000002f,
+	#define Mono_Posix_SockOptName_SO_MAX_PACING_RATE               Mono_Posix_SockOptName_SO_MAX_PACING_RATE
+	Mono_Posix_SockOptName_SO_NOFCS                               = 0x0000002b,
+	#define Mono_Posix_SockOptName_SO_NOFCS                         Mono_Posix_SockOptName_SO_NOFCS
+	Mono_Posix_SockOptName_SO_NO_CHECK                            = 0x0000000b,
+	#define Mono_Posix_SockOptName_SO_NO_CHECK                      Mono_Posix_SockOptName_SO_NO_CHECK
+	Mono_Posix_SockOptName_SO_OOBINLINE                           = 0x0000000a,
+	#define Mono_Posix_SockOptName_SO_OOBINLINE                     Mono_Posix_SockOptName_SO_OOBINLINE
+	Mono_Posix_SockOptName_SO_PASSCRED                            = 0x00000010,
+	#define Mono_Posix_SockOptName_SO_PASSCRED                      Mono_Posix_SockOptName_SO_PASSCRED
+	Mono_Posix_SockOptName_SO_PASSSEC                             = 0x00000022,
+	#define Mono_Posix_SockOptName_SO_PASSSEC                       Mono_Posix_SockOptName_SO_PASSSEC
+	Mono_Posix_SockOptName_SO_PEEK_OFF                            = 0x0000002a,
+	#define Mono_Posix_SockOptName_SO_PEEK_OFF                      Mono_Posix_SockOptName_SO_PEEK_OFF
+	Mono_Posix_SockOptName_SO_PEERCRED                            = 0x00000011,
+	#define Mono_Posix_SockOptName_SO_PEERCRED                      Mono_Posix_SockOptName_SO_PEERCRED
+	Mono_Posix_SockOptName_SO_PEERNAME                            = 0x0000001c,
+	#define Mono_Posix_SockOptName_SO_PEERNAME                      Mono_Posix_SockOptName_SO_PEERNAME
+	Mono_Posix_SockOptName_SO_PEERSEC                             = 0x0000001f,
+	#define Mono_Posix_SockOptName_SO_PEERSEC                       Mono_Posix_SockOptName_SO_PEERSEC
+	Mono_Posix_SockOptName_SO_PRIORITY                            = 0x0000000c,
+	#define Mono_Posix_SockOptName_SO_PRIORITY                      Mono_Posix_SockOptName_SO_PRIORITY
+	Mono_Posix_SockOptName_SO_PROTOCOL                            = 0x00000026,
+	#define Mono_Posix_SockOptName_SO_PROTOCOL                      Mono_Posix_SockOptName_SO_PROTOCOL
+	Mono_Posix_SockOptName_SO_RCVBUF                              = 0x00000008,
+	#define Mono_Posix_SockOptName_SO_RCVBUF                        Mono_Posix_SockOptName_SO_RCVBUF
+	Mono_Posix_SockOptName_SO_RCVBUFFORCE                         = 0x00000021,
+	#define Mono_Posix_SockOptName_SO_RCVBUFFORCE                   Mono_Posix_SockOptName_SO_RCVBUFFORCE
+	Mono_Posix_SockOptName_SO_RCVLOWAT                            = 0x00000012,
+	#define Mono_Posix_SockOptName_SO_RCVLOWAT                      Mono_Posix_SockOptName_SO_RCVLOWAT
+	Mono_Posix_SockOptName_SO_RCVTIMEO                            = 0x00000014,
+	#define Mono_Posix_SockOptName_SO_RCVTIMEO                      Mono_Posix_SockOptName_SO_RCVTIMEO
+	Mono_Posix_SockOptName_SO_REUSEADDR                           = 0x00000002,
+	#define Mono_Posix_SockOptName_SO_REUSEADDR                     Mono_Posix_SockOptName_SO_REUSEADDR
+	Mono_Posix_SockOptName_SO_REUSEPORT                           = 0x0000000f,
+	#define Mono_Posix_SockOptName_SO_REUSEPORT                     Mono_Posix_SockOptName_SO_REUSEPORT
+	Mono_Posix_SockOptName_SO_RXQ_OVFL                            = 0x00000028,
+	#define Mono_Posix_SockOptName_SO_RXQ_OVFL                      Mono_Posix_SockOptName_SO_RXQ_OVFL
+	Mono_Posix_SockOptName_SO_SECURITY_AUTHENTICATION             = 0x00000016,
+	#define Mono_Posix_SockOptName_SO_SECURITY_AUTHENTICATION       Mono_Posix_SockOptName_SO_SECURITY_AUTHENTICATION
+	Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_NETWORK         = 0x00000018,
+	#define Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_NETWORK   Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_NETWORK
+	Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_TRANSPORT       = 0x00000017,
+	#define Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_TRANSPORT Mono_Posix_SockOptName_SO_SECURITY_ENCRYPTION_TRANSPORT
+	Mono_Posix_SockOptName_SO_SELECT_ERR_QUEUE                    = 0x0000002d,
+	#define Mono_Posix_SockOptName_SO_SELECT_ERR_QUEUE              Mono_Posix_SockOptName_SO_SELECT_ERR_QUEUE
+	Mono_Posix_SockOptName_SO_SNDBUF                              = 0x00000007,
+	#define Mono_Posix_SockOptName_SO_SNDBUF                        Mono_Posix_SockOptName_SO_SNDBUF
+	Mono_Posix_SockOptName_SO_SNDBUFFORCE                         = 0x00000020,
+	#define Mono_Posix_SockOptName_SO_SNDBUFFORCE                   Mono_Posix_SockOptName_SO_SNDBUFFORCE
+	Mono_Posix_SockOptName_SO_SNDLOWAT                            = 0x00000013,
+	#define Mono_Posix_SockOptName_SO_SNDLOWAT                      Mono_Posix_SockOptName_SO_SNDLOWAT
+	Mono_Posix_SockOptName_SO_SNDTIMEO                            = 0x00000015,
+	#define Mono_Posix_SockOptName_SO_SNDTIMEO                      Mono_Posix_SockOptName_SO_SNDTIMEO
+	Mono_Posix_SockOptName_SO_TIMESTAMP                           = 0x0000001d,
+	#define Mono_Posix_SockOptName_SO_TIMESTAMP                     Mono_Posix_SockOptName_SO_TIMESTAMP
+	Mono_Posix_SockOptName_SO_TIMESTAMPING                        = 0x00000025,
+	#define Mono_Posix_SockOptName_SO_TIMESTAMPING                  Mono_Posix_SockOptName_SO_TIMESTAMPING
+	Mono_Posix_SockOptName_SO_TIMESTAMPNS                         = 0x00000023,
+	#define Mono_Posix_SockOptName_SO_TIMESTAMPNS                   Mono_Posix_SockOptName_SO_TIMESTAMPNS
+	Mono_Posix_SockOptName_SO_TYPE                                = 0x00000003,
+	#define Mono_Posix_SockOptName_SO_TYPE                          Mono_Posix_SockOptName_SO_TYPE
+	Mono_Posix_SockOptName_SO_WIFI_STATUS                         = 0x00000029,
+	#define Mono_Posix_SockOptName_SO_WIFI_STATUS                   Mono_Posix_SockOptName_SO_WIFI_STATUS
+};
+int Mono_Posix_FromSockOptName (int x, int *r);
+int Mono_Posix_ToSockOptName (int x, int *r);
+
+enum Mono_Posix_SockProtocol {
+	Mono_Posix_SockProtocol_IPPROTO_AH            = 0x00000033,
+	#define Mono_Posix_SockProtocol_IPPROTO_AH      Mono_Posix_SockProtocol_IPPROTO_AH
+	Mono_Posix_SockProtocol_IPPROTO_BEETPH        = 0x0000005e,
+	#define Mono_Posix_SockProtocol_IPPROTO_BEETPH  Mono_Posix_SockProtocol_IPPROTO_BEETPH
+	Mono_Posix_SockProtocol_IPPROTO_COMP          = 0x0000006c,
+	#define Mono_Posix_SockProtocol_IPPROTO_COMP    Mono_Posix_SockProtocol_IPPROTO_COMP
+	Mono_Posix_SockProtocol_IPPROTO_DCCP          = 0x00000021,
+	#define Mono_Posix_SockProtocol_IPPROTO_DCCP    Mono_Posix_SockProtocol_IPPROTO_DCCP
+	Mono_Posix_SockProtocol_IPPROTO_EGP           = 0x00000008,
+	#define Mono_Posix_SockProtocol_IPPROTO_EGP     Mono_Posix_SockProtocol_IPPROTO_EGP
+	Mono_Posix_SockProtocol_IPPROTO_ENCAP         = 0x00000062,
+	#define Mono_Posix_SockProtocol_IPPROTO_ENCAP   Mono_Posix_SockProtocol_IPPROTO_ENCAP
+	Mono_Posix_SockProtocol_IPPROTO_ESP           = 0x00000032,
+	#define Mono_Posix_SockProtocol_IPPROTO_ESP     Mono_Posix_SockProtocol_IPPROTO_ESP
+	Mono_Posix_SockProtocol_IPPROTO_GRE           = 0x0000002f,
+	#define Mono_Posix_SockProtocol_IPPROTO_GRE     Mono_Posix_SockProtocol_IPPROTO_GRE
+	Mono_Posix_SockProtocol_IPPROTO_ICMP          = 0x00000001,
+	#define Mono_Posix_SockProtocol_IPPROTO_ICMP    Mono_Posix_SockProtocol_IPPROTO_ICMP
+	Mono_Posix_SockProtocol_IPPROTO_IDP           = 0x00000016,
+	#define Mono_Posix_SockProtocol_IPPROTO_IDP     Mono_Posix_SockProtocol_IPPROTO_IDP
+	Mono_Posix_SockProtocol_IPPROTO_IGMP          = 0x00000002,
+	#define Mono_Posix_SockProtocol_IPPROTO_IGMP    Mono_Posix_SockProtocol_IPPROTO_IGMP
+	Mono_Posix_SockProtocol_IPPROTO_IP            = 0x00000000,
+	#define Mono_Posix_SockProtocol_IPPROTO_IP      Mono_Posix_SockProtocol_IPPROTO_IP
+	Mono_Posix_SockProtocol_IPPROTO_IPIP          = 0x00000004,
+	#define Mono_Posix_SockProtocol_IPPROTO_IPIP    Mono_Posix_SockProtocol_IPPROTO_IPIP
+	Mono_Posix_SockProtocol_IPPROTO_IPV6          = 0x00000029,
+	#define Mono_Posix_SockProtocol_IPPROTO_IPV6    Mono_Posix_SockProtocol_IPPROTO_IPV6
+	Mono_Posix_SockProtocol_IPPROTO_MTP           = 0x0000005c,
+	#define Mono_Posix_SockProtocol_IPPROTO_MTP     Mono_Posix_SockProtocol_IPPROTO_MTP
+	Mono_Posix_SockProtocol_IPPROTO_PIM           = 0x00000067,
+	#define Mono_Posix_SockProtocol_IPPROTO_PIM     Mono_Posix_SockProtocol_IPPROTO_PIM
+	Mono_Posix_SockProtocol_IPPROTO_PUP           = 0x0000000c,
+	#define Mono_Posix_SockProtocol_IPPROTO_PUP     Mono_Posix_SockProtocol_IPPROTO_PUP
+	Mono_Posix_SockProtocol_IPPROTO_RAW           = 0x000000ff,
+	#define Mono_Posix_SockProtocol_IPPROTO_RAW     Mono_Posix_SockProtocol_IPPROTO_RAW
+	Mono_Posix_SockProtocol_IPPROTO_RSVP          = 0x0000002e,
+	#define Mono_Posix_SockProtocol_IPPROTO_RSVP    Mono_Posix_SockProtocol_IPPROTO_RSVP
+	Mono_Posix_SockProtocol_IPPROTO_SCTP          = 0x00000084,
+	#define Mono_Posix_SockProtocol_IPPROTO_SCTP    Mono_Posix_SockProtocol_IPPROTO_SCTP
+	Mono_Posix_SockProtocol_IPPROTO_TCP           = 0x00000006,
+	#define Mono_Posix_SockProtocol_IPPROTO_TCP     Mono_Posix_SockProtocol_IPPROTO_TCP
+	Mono_Posix_SockProtocol_IPPROTO_TP            = 0x0000001d,
+	#define Mono_Posix_SockProtocol_IPPROTO_TP      Mono_Posix_SockProtocol_IPPROTO_TP
+	Mono_Posix_SockProtocol_IPPROTO_UDP           = 0x00000011,
+	#define Mono_Posix_SockProtocol_IPPROTO_UDP     Mono_Posix_SockProtocol_IPPROTO_UDP
+	Mono_Posix_SockProtocol_IPPROTO_UDPLITE       = 0x00000088,
+	#define Mono_Posix_SockProtocol_IPPROTO_UDPLITE Mono_Posix_SockProtocol_IPPROTO_UDPLITE
+	Mono_Posix_SockProtocol_SOL_SOCKET            = 0x00000400,
+	#define Mono_Posix_SockProtocol_SOL_SOCKET      Mono_Posix_SockProtocol_SOL_SOCKET
+};
+int Mono_Posix_FromSockProtocol (int x, int *r);
+int Mono_Posix_ToSockProtocol (int x, int *r);
+
+enum Mono_Posix_SockType {
+	Mono_Posix_SockType_SOCK_DCCP            = 0x00000006,
+	#define Mono_Posix_SockType_SOCK_DCCP      Mono_Posix_SockType_SOCK_DCCP
+	Mono_Posix_SockType_SOCK_DGRAM           = 0x00000002,
+	#define Mono_Posix_SockType_SOCK_DGRAM     Mono_Posix_SockType_SOCK_DGRAM
+	Mono_Posix_SockType_SOCK_PACKET          = 0x0000000a,
+	#define Mono_Posix_SockType_SOCK_PACKET    Mono_Posix_SockType_SOCK_PACKET
+	Mono_Posix_SockType_SOCK_RAW             = 0x00000003,
+	#define Mono_Posix_SockType_SOCK_RAW       Mono_Posix_SockType_SOCK_RAW
+	Mono_Posix_SockType_SOCK_RDM             = 0x00000004,
+	#define Mono_Posix_SockType_SOCK_RDM       Mono_Posix_SockType_SOCK_RDM
+	Mono_Posix_SockType_SOCK_SEQPACKET       = 0x00000005,
+	#define Mono_Posix_SockType_SOCK_SEQPACKET Mono_Posix_SockType_SOCK_SEQPACKET
+	Mono_Posix_SockType_SOCK_STREAM          = 0x00000001,
+	#define Mono_Posix_SockType_SOCK_STREAM    Mono_Posix_SockType_SOCK_STREAM
+};
+int Mono_Posix_FromSockType (int x, int *r);
+int Mono_Posix_ToSockType (int x, int *r);
 
 enum Mono_Posix_SysconfName {
 	Mono_Posix_SysconfName__SC_2_CHAR_TERM                        = 0x0000005f,
@@ -1479,14 +1807,22 @@ int Mono_Posix_ToXattrFlags (int x, int *r);
  * Managed Structure Declarations
  */
 
+struct Mono_Posix_Cmsghdr;
 struct Mono_Posix_Flock;
+struct Mono_Posix_In6Addr;
+struct Mono_Posix_InAddr;
 struct Mono_Posix_Iovec;
+struct Mono_Posix_Linger;
 struct Mono_Posix_Pollfd;
+struct Mono_Posix_Sockaddr;
+struct Mono_Posix_SockaddrIn;
+struct Mono_Posix_SockaddrIn6;
 struct Mono_Posix_Stat;
 struct Mono_Posix_Statvfs;
 struct Mono_Posix_Syscall__Dirent;
 struct Mono_Posix_Syscall__Fstab;
 struct Mono_Posix_Syscall__Group;
+struct Mono_Posix_Syscall__Msghdr;
 struct Mono_Posix_Syscall__Passwd;
 struct Mono_Posix_Syscall__Utsname;
 struct Mono_Posix_Timespec;
@@ -1499,9 +1835,14 @@ struct Mono_Unix_UnixSignal_SignalInfo;
  * Inferred Structure Declarations
  */
 
+struct cmsghdr;
 struct flock;
 struct iovec;
+struct linger;
 struct pollfd;
+struct sockaddr;
+struct sockaddr_in;
+struct sockaddr_in6;
 struct timespec;
 struct timeval;
 struct timezone;
@@ -1517,6 +1858,18 @@ typedef int (*Mono_Posix_RuntimeIsShuttingDown) (void);
  * Structures
  */
 
+struct Mono_Posix_Cmsghdr {
+	gint64 cmsg_len;
+	int    cmsg_level;
+	int    cmsg_type;
+};
+
+int
+Mono_Posix_FromCmsghdr (struct Mono_Posix_Cmsghdr* from, struct cmsghdr *to);
+int
+Mono_Posix_ToCmsghdr (struct cmsghdr *from, struct Mono_Posix_Cmsghdr* to);
+
+
 struct Mono_Posix_Flock {
 	short  l_type;
 	short  l_whence;
@@ -1531,6 +1884,15 @@ int
 Mono_Posix_ToFlock (struct flock *from, struct Mono_Posix_Flock* to);
 
 
+struct Mono_Posix_In6Addr {
+	guint64 addr0;
+	guint64 addr1;
+};
+
+struct Mono_Posix_InAddr {
+	unsigned int addr;
+};
+
 struct Mono_Posix_Iovec {
 	void*   iov_base;
 	guint64 iov_len;
@@ -1540,6 +1902,17 @@ int
 Mono_Posix_FromIovec (struct Mono_Posix_Iovec* from, struct iovec *to);
 int
 Mono_Posix_ToIovec (struct iovec *from, struct Mono_Posix_Iovec* to);
+
+
+struct Mono_Posix_Linger {
+	int l_onoff;
+	int l_linger;
+};
+
+int
+Mono_Posix_FromLinger (struct Mono_Posix_Linger* from, struct linger *to);
+int
+Mono_Posix_ToLinger (struct linger *from, struct Mono_Posix_Linger* to);
 
 
 struct Mono_Posix_Pollfd {
@@ -1552,6 +1925,42 @@ int
 Mono_Posix_FromPollfd (struct Mono_Posix_Pollfd* from, struct pollfd *to);
 int
 Mono_Posix_ToPollfd (struct pollfd *from, struct Mono_Posix_Pollfd* to);
+
+
+struct Mono_Posix_Sockaddr {
+	unsigned short sa_family;
+};
+
+int
+Mono_Posix_FromSockaddr (struct Mono_Posix_Sockaddr* from, struct sockaddr *to);
+int
+Mono_Posix_ToSockaddr (struct sockaddr *from, struct Mono_Posix_Sockaddr* to);
+
+
+struct Mono_Posix_SockaddrIn {
+	unsigned short           sin_family;
+	unsigned short           sin_port;
+	struct Mono_Posix_InAddr sin_addr;
+};
+
+int
+Mono_Posix_FromSockaddrIn (struct Mono_Posix_SockaddrIn* from, struct sockaddr_in *to);
+int
+Mono_Posix_ToSockaddrIn (struct sockaddr_in *from, struct Mono_Posix_SockaddrIn* to);
+
+
+struct Mono_Posix_SockaddrIn6 {
+	unsigned short            sin6_family;
+	unsigned short            sin6_port;
+	unsigned int              sin6_flowinfo;
+	struct Mono_Posix_In6Addr sin6_addr;
+	unsigned int              sin6_scope_id;
+};
+
+int
+Mono_Posix_FromSockaddrIn6 (struct Mono_Posix_SockaddrIn6* from, struct sockaddr_in6 *to);
+int
+Mono_Posix_ToSockaddrIn6 (struct sockaddr_in6 *from, struct Mono_Posix_SockaddrIn6* to);
 
 
 struct Mono_Posix_Stat {
@@ -1614,6 +2023,16 @@ struct Mono_Posix_Syscall__Group {
 	int          _gr_nmem_;
 	void*        gr_mem;
 	void*        _gr_buf_;
+};
+
+struct Mono_Posix_Syscall__Msghdr {
+	unsigned char*           msg_name;
+	gint64                   msg_namelen;
+	struct Mono_Posix_Iovec* msg_iov;
+	int                      msg_iovlen;
+	unsigned char*           msg_control;
+	gint64                   msg_controllen;
+	int                      msg_flags;
 };
 
 struct Mono_Posix_Syscall__Passwd {
@@ -1703,11 +2122,19 @@ int map_Mono_Posix_AccessMode (int mode);
 int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
 int map_Mono_Posix_WaitOptions (int wait_options);
+int Mono_Posix_Cmsghdr_getsize (void);
+int Mono_Posix_FromIn6Addr (struct Mono_Posix_In6Addr* source, void* destination);
+int Mono_Posix_FromInAddr (struct Mono_Posix_InAddr* source, void* destination);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
 int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
 int Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs* source, void* destination);
 int Mono_Posix_SIGRTMAX (void);
 int Mono_Posix_SIGRTMIN (void);
+int Mono_Posix_Sockaddr_offsetof_sockaddr_sa_data (void);
+int Mono_Posix_Sockaddr_sizeof_sockaddr_storage (void);
+int Mono_Posix_SockaddrIn_getsize (void);
+int Mono_Posix_SockaddrIn6_getsize (void);
+int Mono_Posix_SockaddrUn_get_path_offset (void);
 int Mono_Posix_Stdlib__IOFBF (void);
 int Mono_Posix_Stdlib__IOLBF (void);
 int Mono_Posix_Stdlib__IONBF (void);
@@ -1746,8 +2173,18 @@ void* Mono_Posix_Stdlib_stdin (void);
 void* Mono_Posix_Stdlib_stdout (void);
 guint64 Mono_Posix_Stdlib_strlen (void* s);
 int Mono_Posix_Stdlib_TMP_MAX (void);
+int Mono_Posix_Syscall_accept (int socket, unsigned char* addr, gint64* addrlen);
+int Mono_Posix_Syscall_accept4 (int socket, unsigned char* addr, gint64* addrlen, int flags);
+int Mono_Posix_Syscall_bind (int socket, unsigned char* addr, gint64 addrlen);
 int Mono_Posix_Syscall_closelog (void);
+guint64 Mono_Posix_Syscall_CMSG_ALIGN (guint64 length);
+gint64 Mono_Posix_Syscall_CMSG_DATA (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg);
+gint64 Mono_Posix_Syscall_CMSG_FIRSTHDR (unsigned char* msg_control, gint64 msg_controllen);
+guint64 Mono_Posix_Syscall_CMSG_LEN (guint64 length);
+gint64 Mono_Posix_Syscall_CMSG_NXTHDR (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg);
+guint64 Mono_Posix_Syscall_CMSG_SPACE (guint64 length);
 guint64 Mono_Posix_Syscall_confstr (int name, char* buf, guint64 len);
+int Mono_Posix_Syscall_connect (int socket, unsigned char* addr, gint64 addrlen);
 int Mono_Posix_Syscall_creat (const char* pathname, unsigned int mode);
 int Mono_Posix_Syscall_endfsent (void);
 int Mono_Posix_Syscall_endgrent (void);
@@ -1755,6 +2192,8 @@ int Mono_Posix_Syscall_endpwent (void);
 int Mono_Posix_Syscall_endusershell (void);
 int Mono_Posix_Syscall_fcntl (int fd, int cmd);
 int Mono_Posix_Syscall_fcntl_arg (int fd, int cmd, gint64 arg);
+int Mono_Posix_Syscall_fcntl_arg_int (int fd, int cmd, int arg);
+int Mono_Posix_Syscall_fcntl_arg_ptr (int fd, int cmd, void* ptr);
 int Mono_Posix_Syscall_fcntl_lock (int fd, int cmd, struct Mono_Posix_Flock* lock);
 int Mono_Posix_Syscall_fgetgrent (void* stream, struct Mono_Posix_Syscall__Group* grbuf);
 int Mono_Posix_Syscall_fgetpwent (void* stream, struct Mono_Posix_Syscall__Passwd* pwbuf);
@@ -1785,11 +2224,16 @@ int Mono_Posix_Syscall_getgrnam_r (const char* name, struct Mono_Posix_Syscall__
 gint64 Mono_Posix_Syscall_gethostid (void);
 int Mono_Posix_Syscall_gethostname (char* name, guint64 len);
 int Mono_Posix_Syscall_getlogin_r (char* name, guint64 bufsize);
+int Mono_Posix_Syscall_getpeername (int socket, unsigned char* addr, gint64* addrlen);
 int Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd* pwbuf);
 int Mono_Posix_Syscall_getpwnam (const char* name, struct Mono_Posix_Syscall__Passwd* passwd);
 int Mono_Posix_Syscall_getpwnam_r (const char* name, struct Mono_Posix_Syscall__Passwd* pwbuf, void** pwbufp);
 int Mono_Posix_Syscall_getpwuid (unsigned int uid, struct Mono_Posix_Syscall__Passwd* passwd);
 int Mono_Posix_Syscall_getpwuid_r (unsigned int uid, struct Mono_Posix_Syscall__Passwd* pwbuf, void** pwbufp);
+int Mono_Posix_Syscall_getsockname (int socket, unsigned char* addr, gint64* addrlen);
+int Mono_Posix_Syscall_getsockopt (int socket, int level, int option_name, void* option_value, gint64* option_len);
+int Mono_Posix_Syscall_getsockopt_linger (int socket, int level, int option_name, struct Mono_Posix_Linger* option_value);
+int Mono_Posix_Syscall_getsockopt_timeval (int socket, int level, int option_name, struct Mono_Posix_Timeval* option_value);
 int Mono_Posix_Syscall_gettimeofday (struct Mono_Posix_Timeval* tv, void* ignore);
 gint64 Mono_Posix_Syscall_getxattr (const char* path, const char* name, unsigned char* value, guint64 size);
 int Mono_Posix_Syscall_L_ctermid (void);
@@ -1833,11 +2277,17 @@ int Mono_Posix_Syscall_readdir_r (void* dirp, struct Mono_Posix_Syscall__Dirent*
 gint64 Mono_Posix_Syscall_readlink (const char* path, unsigned char* buf, guint64 bufsiz);
 gint64 Mono_Posix_Syscall_readlinkat (int dirfd, const char* pathname, unsigned char* buf, guint64 bufsiz);
 gint64 Mono_Posix_Syscall_readv (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
+gint64 Mono_Posix_Syscall_recv (int socket, void* buffer, guint64 length, int flags);
+gint64 Mono_Posix_Syscall_recvfrom (int socket, void* buffer, guint64 length, int flags, unsigned char* addr, gint64* addrlen);
+gint64 Mono_Posix_Syscall_recvmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, int flags);
 int Mono_Posix_Syscall_remap_file_pages (void* start, guint64 size, int prot, gint64 pgoff, int flags);
 int Mono_Posix_Syscall_removexattr (const char* path, const char* name);
 int Mono_Posix_Syscall_rewinddir (void* dir);
 int Mono_Posix_Syscall_seekdir (void* dir, gint64 offset);
+gint64 Mono_Posix_Syscall_send (int socket, void* message, guint64 length, int flags);
 gint64 Mono_Posix_Syscall_sendfile (int out_fd, int in_fd, gint64* offset, guint64 count);
+gint64 Mono_Posix_Syscall_sendmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, int flags);
+gint64 Mono_Posix_Syscall_sendto (int socket, void* message, guint64 length, int flags, unsigned char* addr, gint64 addrlen);
 int Mono_Posix_Syscall_setdomainname (const char* name, guint64 len);
 int Mono_Posix_Syscall_setfsent (void);
 int Mono_Posix_Syscall_setgrent (void);
@@ -1845,9 +2295,13 @@ int Mono_Posix_Syscall_setgroups (guint64 size, unsigned int* list);
 int Mono_Posix_Syscall_sethostid (gint64 hostid);
 int Mono_Posix_Syscall_sethostname (const char* name, guint64 len);
 int Mono_Posix_Syscall_setpwent (void);
+int Mono_Posix_Syscall_setsockopt (int socket, int level, int option_name, void* option_value, gint64 option_len);
+int Mono_Posix_Syscall_setsockopt_linger (int socket, int level, int option_name, struct Mono_Posix_Linger* option_value);
+int Mono_Posix_Syscall_setsockopt_timeval (int socket, int level, int option_name, struct Mono_Posix_Timeval* option_value);
 int Mono_Posix_Syscall_settimeofday (struct Mono_Posix_Timeval* tv, struct Mono_Posix_Timezone* tz);
 int Mono_Posix_Syscall_setusershell (void);
 int Mono_Posix_Syscall_setxattr (const char* path, const char* name, unsigned char* value, guint64 size, int flags);
+int Mono_Posix_Syscall_socketpair (int domain, int type, int protocol, int* sv0, int* sv1);
 int Mono_Posix_Syscall_stat (const char* file_name, struct Mono_Posix_Stat* buf);
 int Mono_Posix_Syscall_statvfs (const char* path, struct Mono_Posix_Statvfs* buf);
 int Mono_Posix_Syscall_stime (gint64* t);
@@ -1872,6 +2326,8 @@ gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 gint64 Mono_Posix_Syscall_writev (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
+int Mono_Posix_ToIn6Addr (void* source, struct Mono_Posix_In6Addr* destination);
+int Mono_Posix_ToInAddr (void* source, struct Mono_Posix_InAddr* destination);
 int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
 void* Mono_Unix_UnixSignal_install (int signum);

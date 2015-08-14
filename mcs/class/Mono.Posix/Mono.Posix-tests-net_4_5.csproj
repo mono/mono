@@ -45,6 +45,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Test\Mono.Unix.Native\RealTimeSignumTests.cs" />
+    <Compile Include="Test\Mono.Unix.Native\SocketTest.cs" />
     <Compile Include="Test\Mono.Unix.Native\StdlibTest.cs" />
     <Compile Include="Test\Mono.Unix\ReadlinkTest.cs" />
     <Compile Include="Test\Mono.Unix\StdioFileStreamTest.cs" />
