@@ -401,6 +401,15 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void MethodInfoModule ()
+		{
+			Type type = typeof (MethodInfoTest);
+			MethodInfo me = type.GetMethod ("return_parameter_test");
+
+			Assert.AreEqual (type.Module, me.Module);
+		}
+
+		[Test]
 			public void InvokeOnRefOnlyAssembly ()
 		{
 			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
