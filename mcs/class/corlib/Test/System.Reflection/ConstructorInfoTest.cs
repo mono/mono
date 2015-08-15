@@ -140,5 +140,14 @@ namespace MonoTests.System.Reflection
 			var ctor = typeof (Gen<>).GetConstructor (Type.EmptyTypes);
 			Assert.IsTrue (ctor.ContainsGenericParameters);
 		}
+
+		[Test]
+		public void ConstructorInfoModule ()
+		{
+			Type type = typeof (Foo);
+			ConstructorInfo co = type.GetConstructors ()[0];
+
+			Assert.AreEqual (type.Module, co.Module);
+		}
 	}
 }
