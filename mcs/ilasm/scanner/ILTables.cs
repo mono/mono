@@ -319,6 +319,7 @@ namespace Mono.ILASM {
 				keywords ["forwarder"] = new ILToken (Token.K_FORWARDER, "forwarder");
                                 keywords ["legacy"] = new ILToken (Token.K_LEGACY, "legacy");
                                 keywords ["library"] = new ILToken (Token.K_LIBRARY, "library");
+                                keywords ["auto"] = new ILToken (Token.K_AUTO, "auto");
 
                                 return keywords;
                         }

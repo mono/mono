@@ -482,6 +482,7 @@ namespace Mono.ILASM {
 %token K_CHARMAPERROR
 %token K_LEGACY
 %token K_LIBRARY
+%token K_AUTO
 
 /* end generated */
 
@@ -3260,6 +3261,7 @@ assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                                 if (codegen.CurrentCustomAttrTarget != null)
                                         codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
+            | K_AUTO  /* MS ilasm uses this keyword to lookup the specified assembly in the GAC and embeds its attributes, we just ignore it */
 			;
 
 exptype_all		: exptype_head OPEN_BRACE exptype_decls CLOSE_BRACE
