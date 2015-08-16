@@ -1,0 +1,88 @@
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <ErrorIfBuildToolsRestoredFromIndividualProject Condition="!Exists('$(ToolsDir)')">true</ErrorIfBuildToolsRestoredFromIndividualProject>
+  </PropertyGroup>
+  
+  <Import Project="..\dir.targets" />
+  
+  <Import Project="$(ToolsDir)Build.Common.targets" Condition="Exists('$(ToolsDir)Build.Common.targets')" />
+  <Import Project="..\override.targets" Condition="Exists('..\override.targets')"/>
+
+  <!-- We enable auto-unification of assembly references after importing the common targets.  Binding redirects are not needed
+       for coreclr since it auto-unifies, so the warnings we get without this setting are just noise -->
+  <PropertyGroup>
+    <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
+  </PropertyGroup>
+
+  <!-- Project language -->
+  <!-- TODO: This might just be the Language property -->
+  <PropertyGroup Condition="'$(ProjectLanguage)' == ''">
+    <ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.ilproj' OR '$(Language)' == 'IL'">IL</ProjectLanguage>
+    <ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.csproj' OR '$(Language)' == 'C#' OR '$(ProjectLanguage)'==''">CSharp</ProjectLanguage>
+  </PropertyGroup>
+  
+  <!-- TODO (#1122): import this from the ToolsDir once it becomes available -->
+  <Import Project="$(ProjectDir)src\IL.targets" Condition="'$(ProjectLanguage)' == 'IL'" />
+
+  <PropertyGroup>
+    <GenerateRunScript Condition="'$(OutputType.ToUpper())' != 'EXE' And '$(GenerateRunScript)' == ''">false</GenerateRunScript>
+  </PropertyGroup>
+
+  <Import Project="CLRTest.Execute.targets" />
+  <Target Name="CreateExecuteScript" 
+          AfterTargets="Build"
+          Condition="'$(GenerateRunScript)' != 'false'"
+          DependsOnTargets="GenerateExecutionScriptsInternal" />
+
+  <PropertyGroup>
+      <OutDir>$(BaseOutputPathWithConfig)$(BuildProjectRelativeDir)\</OutDir>
+  </PropertyGroup>
+
+  <Target Name="CopyNativeProjectBinaries">
+     <ItemGroup>
+        <NativeProjectBinaries Include="$(NativeProjectOutputFolder)\**\*.*" />
+     </ItemGroup>
+
+     <Error  Text="The native project files are missing in $(NativeProjectOutputFolder) please run build from the root of the repo at least once"
+             Condition="'@(NativeProjectBinaries)' == ''" />
+
+     <Copy
+        SourceFiles="@(NativeProjectBinaries)"
+        DestinationFiles="@(NativeProjectBinaries -> '$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')"
+        SkipUnchangedFiles="$(SkipCopyUnchangedFiles)"
+        OverwriteReadOnlyFiles="$(OverwriteReadOnlyFiles)"
+        Retries="$(CopyRetryCount)"
+        RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+        UseHardlinksIfPossible="$(CreateHardLinksForCopyFilesToOutputDirectoryIfPossible)">
+        <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+     </Copy>
+  </Target>
+
+  <Target Name="ResolveCmakeNativeProjectReference"
+          Condition="'@(ProjectReference)' != ''"
+          BeforeTargets="BeforeResolveReferences;BeforeClean" >
+     <ItemGroup>
+        <NativeProjectReference Include="%(ProjectReference.Identity)" Condition="$([System.String]::Copy(%(ProjectReference.FileName)).ToUpper()) == 'CMAKELISTS'" />
+        <ProjectReference Remove="%(NativeProjectReference.Identity)" />
+        <NativeProjectReferenceNormalized Include="@(NativeProjectReference -> '%(FullPath)')" />
+     </ItemGroup>
+  </Target>
+
+  <Target Name="ConsolidateNativeProjectReference"
+          Condition="'@(ProjectReference)' != ''"
+          BeforeTargets="Build" >
+     <ItemGroup>
+        <NativeProjectOutputFoldersToCopy Include="$([System.String]::Copy('%(NativeProjectReferenceNormalized.RelativeDir)').Replace($(SourceDir),$(__NativeTestIntermediatesDir)\src\))$(Configuration)\"/>
+     </ItemGroup>
+
+    <Message Text= "Project files are :$([System.String]::Copy(%(ProjectReference.FileName)).ToUpper()) " />
+    <Message Text= "Project references are :%(ProjectReference.Identity)" />
+    <Message Text= "Native project references are :%(NativeProjectReference.Identity)" />
+    <Message Text= "Full native project references are :%(NativeProjectReferenceNormalized.Identity)" />
+    <Message Text= "Native binaries will be copied from :%(NativeProjectOutputFoldersToCopy.Identity)" />
+   <MSBuild Projects="$(MSBuildProjectFile)" Targets="CopyNativeProjectBinaries" Properties="NativeProjectOutputFolder=%(NativeProjectOutputFoldersToCopy.Identity)" Condition="'@(NativeProjectReference)' != ''" />
+
+  </Target>
+</Project>
+

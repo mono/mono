@@ -1,0 +1,45 @@
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\dir.props" />
+
+ <!-- Set default Configuration and Platform -->
+  <PropertyGroup>
+    <__BuildArch Condition="'$(__BuildArch)' == ''">x64</__BuildArch>
+    <__BuildType Condition="'$(__BuildType)' == ''">Debug</__BuildType>
+    <__BuildOS Condition="'$(__BuildOS)' == ''">Windows_NT</__BuildOS>
+    <BuildArch>$(__BuildArch)</BuildArch>
+    <BuildType>$(__BuildType)</BuildType>
+    <BuildOS>$(__BuildOS)</BuildOS>
+    <Configuration Condition="'$(Configuration)' ==''">$(BuildType)</Configuration>
+    <Platform Condition="'$(Platform)'==''">$(BuildArch)</Platform>
+  </PropertyGroup>
+  
+  <!-- Setup Default symbol and optimization for Configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <Optimize Condition="'$(Optimize)' == ''">false</Optimize>
+    <DebugType Condition="'$(DebugType)' == ''">full</DebugType>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugSymbols Condition="'$(DebugSymbols)' == ''">true</DebugSymbols>
+    <Optimize Condition="'$(Optimize)' == ''">true</Optimize>
+    <DebugType Condition="'$(DebugType)' == ''">pdbonly</DebugType>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+
+<!-- Setup the default output and intermediate paths -->
+  <PropertyGroup>
+    <BaseOutputPathWithConfig>$(ProjectDir)\..\bin\tests\$(BuildOS).$(Platform).$(Configuration)\</BaseOutputPathWithConfig>
+    <BaseOutputPathWithConfig Condition="'$(__TestBinDir)' != ''">$(__TestBinDir)\</BaseOutputPathWithConfig>
+    <BinDir>$(BaseOutputPathWithConfig)\..</BinDir>
+    <BaseIntermediateOutputPath>$(ProjectDir)\..\bin\tests\obj\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(__ManagedTestIntermediatesDir)' != ''">$(__ManagedTestIntermediatesDir)\</BaseIntermediateOutputPath>
+    <__NativeTestIntermediatesDir Condition="'$(__NativeTestIntermediatesDir)' == ''">$([System.IO.Path]::GetFullPath($(BaseOutputPathWithConfig)..\obj\$(BuildOS).$(Platform).$(Configuration)\))</__NativeTestIntermediatesDir>
+    <BuildProjectRelativeDir>$(MSBuildProjectName)\</BuildProjectRelativeDir>
+    <BuildProjectRelativeDir Condition="'$(MSBuildProjectDirectory.Contains($(SourceDir)))'">$([System.String]::Copy('$(MSBuildProjectDirectory)').Replace($(SourceDir),''))</BuildProjectRelativeDir>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(BuildProjectRelativeDir)</IntermediateOutputPath>
+    <OutputPath>$(BaseOutputPathWithConfig)$(BuildProjectRelativeDir)\</OutputPath>
+  </PropertyGroup>
+
+</Project>
+
