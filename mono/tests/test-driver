@@ -64,7 +64,7 @@ if (!defined ($cpid)) {
 	$res = $? >> 8;
 }
 
-if ($res) {
+if ($res && !($test =~ /ms-coreclr-tests/ && $res eq 100)) {
 	printf ("failed $? (%d) signal (%d).\n", $? >> 8, $? & 127);
 	dump_files ();
 	if (($? & 127) == 2) {
