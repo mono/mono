@@ -1338,8 +1338,14 @@ namespace Mono.CSharp {
 				return null;
 
 			ExpressionStatement es = e as ExpressionStatement;
-			if (es == null || e is AnonymousMethodBody)
+			if (es == null || e is AnonymousMethodBody) {
+				var reduced = e as IReducedExpressionStatement;
+				if (reduced != null) {
+					return EmptyExpressionStatement.Instance;
+				}
+
 				Error_InvalidExpressionStatement (ec);
+			}
 
 			//
 			// This is quite expensive warning, try to limit the damage
@@ -1404,6 +1410,10 @@ namespace Mono.CSharp {
 		{
 			EmitStatement (ec);
 		}
+	}
+
+	interface IReducedExpressionStatement
+	{
 	}
 
 	/// <summary>
@@ -2213,7 +2223,7 @@ namespace Mono.CSharp {
 	//
 	public class ReducedExpression : Expression
 	{
-		public sealed class ReducedConstantExpression : EmptyConstantCast
+		public class ReducedConstantExpression : EmptyConstantCast
 		{
 			readonly Expression orig_expr;
 
@@ -2260,6 +2270,14 @@ namespace Mono.CSharp {
 					child.EncodeAttributeValue (rc, enc, targetType,parameterType);
 				else
 					base.EncodeAttributeValue (rc, enc, targetType, parameterType);
+			}
+		}
+
+		sealed class ReducedConstantStatement : ReducedConstantExpression, IReducedExpressionStatement
+		{
+			public ReducedConstantStatement (Constant expr, Expression origExpr)
+				: base (expr, origExpr)
+			{
 			}
 		}
 
@@ -2344,12 +2362,15 @@ namespace Mono.CSharp {
 		//
 		// Creates fully resolved expression switcher
 		//
-		public static Constant Create (Constant expr, Expression original_expr)
+		public static Constant Create (Constant expr, Expression originalExpr)
 		{
 			if (expr.eclass == ExprClass.Unresolved)
 				throw new ArgumentException ("Unresolved expression");
 
-			return new ReducedConstantExpression (expr, original_expr);
+			if (originalExpr is ExpressionStatement)
+				return new ReducedConstantStatement (expr, originalExpr);
+
+			return new ReducedConstantExpression (expr, originalExpr);
 		}
 
 		public static ExpressionStatement Create (ExpressionStatement s, Expression orig)
