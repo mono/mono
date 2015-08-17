@@ -357,14 +357,7 @@ unregister_thread (void *arg)
 	if (threads_callbacks.thread_detach)
 		threads_callbacks.thread_detach (info);
 
-	/*
-	Since the thread info lock is taken from within blocking sections, we can't check from there, so it must be done here.
-	This ensures that we won't lose any suspend requests as a suspend initiator must hold the lock.
-	Once we're holding the suspend lock, no threads can suspend us and once we unregister, no thread can find us. 
-	*/
-	MONO_PREPARE_BLOCKING;
 	mono_thread_info_suspend_lock ();
-	MONO_FINISH_BLOCKING;
 
 	/*
 	Now perform the callback that must be done under locks.
@@ -968,7 +961,9 @@ STW to make sure no unsafe pending suspend is in progress.
 void
 mono_thread_info_suspend_lock (void)
 {
+	MONO_TRY_BLOCKING;
 	MONO_SEM_WAIT_UNITERRUPTIBLE (&global_suspend_semaphore);
+	MONO_FINISH_TRY_BLOCKING;
 }
 
 void
