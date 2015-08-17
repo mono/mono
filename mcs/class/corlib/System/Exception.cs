@@ -199,26 +199,8 @@ namespace System
 					/* Not thrown yet */
 					return null;
 
-				StringBuilder sb = new StringBuilder ();
-
-				// Add traces captured using ExceptionDispatchInfo
-				if (captured_traces != null) {
-					foreach (var t in captured_traces) {
-						if (!t.AddFrames (sb, true))
-							continue;
-
-						sb.Append (Environment.NewLine);
-						sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
-						sb.Append (Environment.NewLine);
-					}
-				}
-
 				StackTrace st = new StackTrace (this, 0, true, true);
-				st.AddFrames (sb, true);
-
-				stack_trace = sb.ToString ();
-
-				return stack_trace;
+				return stack_trace = st.ToString ();
 			}
 		}
 
