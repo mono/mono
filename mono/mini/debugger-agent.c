@@ -2700,7 +2700,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info_with_context (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean has_context, MonoContext *context, MonoLMF *lmf)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -2722,8 +2722,8 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		/* Have to use the state saved by the signal handler */
 		process_frame (&tls->async_last_frame, NULL, &user_data);
 		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->async_ctx, FALSE, thread, tls->async_lmf, &user_data);
-	} else if (tls->has_context) {
-		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->ctx, FALSE, thread, tls->lmf, &user_data);
+	} else if (has_context) {
+		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, context, FALSE, thread, lmf, &user_data);
 	} else {
 		// FIXME:
 		tls->frame_count = 0;
@@ -2760,6 +2760,12 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	tls->frames = new_frames;
 	tls->frame_count = new_frame_count;
 	tls->frames_up_to_date = TRUE;
+}
+
+static void
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+{
+	compute_frame_info_with_context(thread, tls, tls->has_context, &tls->ctx, tls->lmf);
 }
 
 /*
@@ -3799,20 +3805,9 @@ static int
 compute_frame_count(DebuggerTlsData *tls, MonoContext *ctx)
 {
 	int frame_count;
-	gboolean had_context = tls->has_context;
-	
-	/* Required for compute_frame_info to work */
-	if(!had_context)
-		save_thread_context(ctx);
-	
-	compute_frame_info (tls->thread, tls);
-	
+
+	compute_frame_info_with_context (tls->thread, tls, TRUE, ctx, mono_get_lmf());
 	frame_count = tls->frame_count;
-	
-	/* Restore state */
-	if(!had_context)
-		tls->has_context = FALSE;
-	
 	invalidate_frames (tls);
 	
 	return frame_count;
