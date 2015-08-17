@@ -165,7 +165,7 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				}
 			} catch (Exception ex) {
 				var st = new StackTrace (ex, true);
-				var split = ex.StackTrace.Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				var split = st.ToString ().Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 				Assert.AreEqual (4, split.Length, "#1");
 				Assert.IsTrue (split [1].Contains ("---"), "#2");
 			}
