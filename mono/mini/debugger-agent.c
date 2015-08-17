@@ -3929,7 +3929,7 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 		if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
 		{
-			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner rercursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
+			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner recursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
 			hit = FALSE;
 		}
 
