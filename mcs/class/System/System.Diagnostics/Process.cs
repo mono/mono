@@ -43,6 +43,7 @@ using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Diagnostics {
 
@@ -1133,23 +1134,24 @@ namespace System.Diagnostics {
 			process.process_handle = proc_info.process_handle;
 			process.pid = proc_info.pid;
 			
-			if (startInfo.RedirectStandardInput == true) {
+			if (startInfo.RedirectStandardInput) {
 				MonoIO.Close (stdin_rd, out error);
-				process.input_stream = new StreamWriter (new MonoSyncFileStream (stdin_wr, FileAccess.Write, true, 8192), Console.Out.Encoding);
+				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_wr, false), FileAccess.Write, 8192, false), Console.InputEncoding);
 				process.input_stream.AutoFlush = true;
 			}
 
-			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
-			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
+			if (startInfo.RedirectStandardOutput) {
+				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
 
-			if (startInfo.RedirectStandardOutput == true) {
 				MonoIO.Close (stdout_wr, out error);
-				process.output_stream = new StreamReader (new MonoSyncFileStream (process.stdout_rd, FileAccess.Read, true, 8192), stdoutEncoding, true, 8192);
+				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (process.stdout_rd, false), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
 			}
 
-			if (startInfo.RedirectStandardError == true) {
+			if (startInfo.RedirectStandardError) {
+				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
+
 				MonoIO.Close (stderr_wr, out error);
-				process.error_stream = new StreamReader (new MonoSyncFileStream (process.stderr_rd, FileAccess.Read, true, 8192), stderrEncoding, true, 8192);
+				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (process.stderr_rd, false), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
 			}
 
 			process.StartExitCallbackIfNeeded ();
