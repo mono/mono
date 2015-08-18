@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Reflection;
@@ -49,6 +50,26 @@ namespace MonoTests.System
 				TimeZoneInfo local = TimeZoneInfo.Local;
 				Assert.IsNotNull (local);
 				Assert.IsTrue (true);
+			}
+
+			[DllImport ("libc")]
+			private static extern int readlink (string path, byte[] buffer, int buflen);
+
+			[Test] // Covers #24958
+			public void LocalId ()
+			{
+				byte[] buf = new byte [512];
+
+				var path = "/etc/localtime";
+				try {
+					var ret = readlink (path, buf, buf.Length);
+					if (ret == -1)
+						return; // path is not a symbolic link, nothing to test
+				} catch (DllNotFoundException e) {
+					return;
+				}
+
+				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 			}
 		}
 
