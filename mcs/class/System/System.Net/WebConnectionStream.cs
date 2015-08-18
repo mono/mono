@@ -67,6 +67,7 @@ namespace System.Net
 		int write_timeout;
 		AsyncCallback cb_wrapper; // Calls to ReadCallbackWrapper or WriteCallbacWrapper
 		internal bool IgnoreIOErrors;
+		bool isContinuousContent;
 
 		public WebConnectionStream (WebConnection cnc, WebConnectionData data)
 		{          
@@ -97,6 +98,7 @@ namespace System.Net
 				}
 			} else {
 				contentLength = Int32.MaxValue;
+				isContinuousContent = true;
 			}
 
 			// Negative numbers?
@@ -372,7 +374,10 @@ namespace System.Net
 				readBufferOffset += copy;
 				offset += copy;
 				size -= copy;
-				totalRead += copy;
+
+				if (!isContinuousContent)
+					totalRead += copy;
+				
 				if (size == 0 || totalRead >= contentLength) {
 					result.SetCompleted (true, copy);
 					result.DoCallback ();
@@ -429,7 +434,9 @@ namespace System.Net
 					read_eof = true;
 				}
 
-				totalRead += nbytes;
+				if (!isContinuousContent)
+					totalRead += nbytes;
+
 				result.SetCompleted (false, nbytes + result.NBytes);
 				result.DoCallback ();
 				if (nbytes == 0)
