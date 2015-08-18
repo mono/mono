@@ -293,8 +293,13 @@ namespace System.IO
 
 		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
 		{
+			if (safeHandle.IsInvalid)
+				throw new ArgumentException(Environment.GetResourceString("Arg_InvalidHandle"), "handle");
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
+// TODO: enable
+//			if (bufferSize <= 0)
+//				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
 
 			MonoIOError error;
 			MonoFileType ftype = MonoIO.GetFileType (safeHandle, out error);

@@ -209,6 +209,9 @@ namespace System
 
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
+			if (handle == IntPtr.Zero)
+				return Stream.Null;
+
 			try {
 				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
 			} catch (IOException) {
