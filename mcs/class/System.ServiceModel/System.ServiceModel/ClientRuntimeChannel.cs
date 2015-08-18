@@ -456,14 +456,31 @@ namespace System.ServiceModel.MonoInternal
 			if (parameters == null)
 				throw new ArgumentNullException ("parameters");
 
+			var pi = method.GetParameters ();
+			var countInParams = 0;
+			for (int i = 0; i < pi.Length; i++) {
+				if (pi [i].IsIn)
+					countInParams++;
+			}
+
+			if (parameters.Length != countInParams)
+				throw new InvalidOperationException ();
+
 			object[] p = parameters;
 			var retval = _processDelegate.EndInvoke (ref p, result);
 			if (p == parameters)
 				return retval;
 
-			if (p.Length != parameters.Length)
+			int pos = 0;
+			for (int i = 0; i < pi.Length; i++) {
+				if (!pi [i].IsOut && !pi [i].ParameterType.IsByRef)
+					continue;
+				parameters [i] = p [pos++];
+			}
+
+			if (pos != p.Length)
 				throw new InvalidOperationException ();
-			Array.Copy (p, parameters, p.Length);
+
 			return retval;
 		}
 
