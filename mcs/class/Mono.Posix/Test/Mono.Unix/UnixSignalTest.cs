@@ -118,6 +118,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Crashes (silently) the runtime in similar fashion to real-time signals
 		public void TestSignumProperty ()
 		{
 			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
