@@ -3320,6 +3320,20 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void String_GetValue () {
+		// Embedded nulls
+		object val;
+
+		// Reuse this test
+		var e = run_until ("arg2");
+
+		var frame = e.Thread.GetFrames () [0];
+
+		val = frame.GetArgument (6);
+		Assert.AreEqual ('\0'.ToString () + "A", (val as StringMirror).Value);
+	}
+
+	[Test]
 	public void String_GetChars () {
 		object val;
 
