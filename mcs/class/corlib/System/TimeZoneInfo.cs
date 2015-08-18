@@ -33,6 +33,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Globalization;
 using System.IO;
@@ -89,6 +90,58 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
+		private static bool libcNotFound;
+
+		[DllImport ("libc")]
+		private static extern int readlink (string path, byte[] buffer, int buflen);
+
+		private static string readlink (string path)
+		{
+			if (libcNotFound)
+				return null;
+
+			byte[] buf = new byte [512];
+			int ret;
+
+			try {
+				ret = readlink (path, buf, buf.Length);
+			} catch (DllNotFoundException e) {
+				libcNotFound = true;
+				return null;
+			}
+
+			if (ret == -1) return null;
+			char[] cbuf = new char [512];
+			int chars = System.Text.Encoding.Default.GetChars (buf, 0, ret, cbuf, 0);
+			return new String (cbuf, 0, chars);
+		}
+
+		private static bool TryGetNameFromPath (string path, out string name)
+		{
+			name = null;
+			var linkPath = readlink (path);
+			if (linkPath != null)
+				path = linkPath;
+
+			path = Path.GetFullPath (path);
+
+			if (string.IsNullOrEmpty (TimeZoneDirectory))
+				return false;
+
+			var baseDir = TimeZoneDirectory;
+			if (baseDir [baseDir.Length-1] != Path.DirectorySeparatorChar)
+				baseDir += Path.DirectorySeparatorChar;
+
+			if (!path.StartsWith (baseDir, StringComparison.InvariantCulture))
+				return false;
+
+			name = path.Substring (baseDir.Length);
+			if (name == "localtime")
+				name = "Local";
+
+			return true;
+		}
+
 #if !MOBILE || MOBILE_STATIC
 		static TimeZoneInfo CreateLocal ()
 		{
@@ -114,15 +167,22 @@ namespace System
 				}
 			}
 
-			try {
-				return FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
-			} catch (TimeZoneNotFoundException) {
+			var tzFilePaths = new string [] {
+				"/etc/localtime",
+				Path.Combine (TimeZoneDirectory, "localtime")};
+
+			foreach (var tzFilePath in tzFilePaths) {
 				try {
-					return FindSystemTimeZoneByFileName ("Local", Path.Combine (TimeZoneDirectory, "localtime"));	
+					string tzName = null;
+					if (!TryGetNameFromPath (tzFilePath, out tzName))
+						tzName = "Local";
+					return FindSystemTimeZoneByFileName (tzName, tzFilePath);
 				} catch (TimeZoneNotFoundException) {
-					return Utc;
+					continue;
 				}
 			}
+
+			return Utc;
 		}
 
 		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
