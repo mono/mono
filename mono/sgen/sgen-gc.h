@@ -96,9 +96,34 @@ struct _GCMemSection {
 	} while (0)
 #define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
-extern LOCK_DECLARE (sgen_interruption_mutex);
+/*
+This lock can be called from GC unsafe code but wee can't apply
+the same solution of the gc_mutex since this lock is called as part of the
+STW process after the GC lock is taken.
 
-#define LOCK_INTERRUPTION mono_mutex_lock (&sgen_interruption_mutex)
+STW locking order is: lock_gc -> lock_interruption -> mono_thread_info_suspend_lock
+
+The problematic scenario is when another suspend is initiated after the GC lock is taken
+and before sgen STW gets to acquire mono_thread_info_suspend_lock.
+
+In that scenario the thread would be suspend with the GC lock held, which I can't think to be
+a good thing. Well, sort of. A suspend initiator must reason about the suspended thread in what
+accounts as signal context.
+
+We want to get away from this horrible model of harsh restriction over suspended threads. They
+are supposed to be suspended at >SAFE< points.
+
+Anyhow, right now the code that runs with single thread suspend going on had to be async context safe
+which means it expects no locks to work. So, we're fine'ish for now. Hopefully we can later rework those
+cases to use better primitives.
+*/
+extern LOCK_DECLARE (sgen_interruption_mutex);
+#define LOCK_INTERRUPTION do {	\
+		MONO_TRY_BLOCKING;	\
+		mono_mutex_lock (&sgen_interruption_mutex);	\
+		MONO_FINISH_TRY_BLOCKING	\
+	} while (0)
+
 #define UNLOCK_INTERRUPTION mono_mutex_unlock (&sgen_interruption_mutex)
 
 /* FIXME: Use InterlockedAdd & InterlockedAdd64 to reduce the CAS cost. */
