@@ -73,12 +73,12 @@ namespace System.IO
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
+		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
 
-			Init (new SafeFileHandle (handle, false), access, ownsHandle, bufferSize, isAsync, isZeroSize);
+			Init (new SafeFileHandle (handle, false), access, ownsHandle, bufferSize, isAsync, isConsoleWrapper);
 		}
 
 		// construct from filename
@@ -291,15 +291,14 @@ namespace System.IO
 			}
 		}
 
-		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
+		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)
 		{
-			if (safeHandle.IsInvalid)
+			if (!isConsoleWrapper && safeHandle.IsInvalid)
 				throw new ArgumentException(Environment.GetResourceString("Arg_InvalidHandle"), "handle");
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
-// TODO: enable
-//			if (bufferSize <= 0)
-//				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
+			if (!isConsoleWrapper && bufferSize <= 0)
+				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
 
 			MonoIOError error;
 			MonoFileType ftype = MonoIO.GetFileType (safeHandle, out error);
