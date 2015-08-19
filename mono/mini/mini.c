@@ -3040,7 +3040,22 @@ get_basic_block_seq_points(GSList **next, MonoBasicBlock *bb, MonoInst *ins, int
 		MonoBasicBlock *in_bb = bb->in_bb [i];
 
 		if (in_bb->last_seq_point)
-			next [in_bb->last_seq_point->backend.size] = g_slist_append (next [in_bb->last_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+		{
+			GSList *current;
+			int in_bb_index = in_bb->last_seq_point->backend.size;
+			int ins_index = ins->backend.size;
+			gboolean found = FALSE;
+
+			/* Check if we have already inserted ins_index  */
+			for(current = next[in_bb_index]; current != NULL && !found; current = current->next)
+			{
+				if(ins_index == GPOINTER_TO_UINT(current->data))
+					found = TRUE;
+			}
+
+			if(!found)
+				next [in_bb_index] = g_slist_append (next [in_bb_index], GUINT_TO_POINTER (ins_index));
+		}
 		else
 			if(depth < 5)
 				get_basic_block_seq_points(next, in_bb, ins, depth+1);
