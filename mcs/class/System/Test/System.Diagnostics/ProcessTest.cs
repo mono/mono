@@ -732,8 +732,6 @@ namespace MonoTests.System.Diagnostics
 
 		public int bytesRead = -1;
 
-// Not technically a 2.0 only test, but I use lambdas, so I need gmcs
-
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		// This was for bug #459450
@@ -938,6 +936,21 @@ namespace MonoTests.System.Diagnostics
 			p.StandardInput.BaseStream.Dispose ();
 			p.StandardOutput.BaseStream.Dispose ();
 			p.Dispose ();
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void StandardInputWrite ()
+		{
+			var psi = GetCrossPlatformStartInfo ();
+			psi.RedirectStandardInput = true;
+			psi.RedirectStandardOutput = true;
+			psi.UseShellExecute = false;
+
+			using (var p = Process.Start (psi)) {
+				for (int i = 0; i < 1024 * 9; ++i)
+					p.StandardInput.Write ('x');
+			}
 		}
 
 		[Test]

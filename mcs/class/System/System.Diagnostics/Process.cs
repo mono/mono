@@ -1118,7 +1118,11 @@ namespace System.Diagnostics {
 			process.pid = proc_info.pid;
 			
 			if (startInfo.RedirectStandardInput) {
-				MonoIO.Close (stdin_read, out error);
+				//
+				// FIXME: The descriptor needs to be closed but due to wapi io-layer
+				// not coping with duplicated descriptors any StandardInput write fails
+				//
+				// MonoIO.Close (stdin_read, out error);
 
 				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, false), FileAccess.Write, 8192, false), Console.InputEncoding) {
 					AutoFlush = true
