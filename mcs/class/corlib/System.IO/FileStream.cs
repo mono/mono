@@ -113,7 +113,6 @@ namespace System.IO
 		{
 		}
 
-#if !NET_2_1
 		public FileStream (SafeFileHandle handle, FileAccess access)
 			:this(handle, access, DefaultBufferSize, false)
 		{
@@ -130,6 +129,7 @@ namespace System.IO
 			Init (handle, access, false, bufferSize, isAsync, false);
 		}
 
+#if !MOBILE
 		[MonoLimitation ("This ignores the rights parameter")]
 		public FileStream (string path, FileMode mode,
 				   FileSystemRights rights, FileShare share,
