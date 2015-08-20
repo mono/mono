@@ -2942,7 +2942,10 @@ cc_signed_table [] = {
 static unsigned char*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
 {
-	amd64_sse_cvttsd2si_reg_reg (code, dreg, sreg);
+	if(size == 8)
+		amd64_sse_cvttsd2si_reg_reg (code, dreg, sreg); // Convert to long
+	else
+		amd64_sse_cvttsd2si_reg_reg_size (code, dreg, sreg, 4); // Convert to int
 
 	if (size == 1)
 		amd64_widen_reg (code, dreg, dreg, is_signed, FALSE);
