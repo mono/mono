@@ -35,8 +35,8 @@ net_4_5_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS) System.Diagnostics.
 
 monodroid_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS)
 
-xammac_SUBDIRS = $(net_4_5_SUBDIRS)
-xammac_net_4_5_SUBDIRS = $(net_4_5_SUBDIRS)
+xammac_SUBDIRS = $(monotouch_SUBDIRS)
+xammac_net_4_5_SUBDIRS = $(monotouch_SUBDIRS)
 
 monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
 
