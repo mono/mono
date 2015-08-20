@@ -135,7 +135,7 @@ namespace System
 #endif
 		}
 
-		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
 #if !MOBILE_STATIC
 			if (TimeZoneKey != null) {
@@ -651,7 +651,7 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				var tz = new List<TimeZoneInfo> ();
-				GetSystemTimeZones (tz);
+				GetSystemTimeZonesCore (tz);
 				Interlocked.CompareExchange (ref systemTimeZones, new ReadOnlyCollection<TimeZoneInfo> (tz), null);
 			}
 

@@ -690,6 +690,15 @@ namespace MonoTests.System
 				}
 				Assert.Fail ("Europe/Brussels not found in SystemTZ");
 			}
+
+			[Test]
+			public void ReflectionReturnsTheCorrectMethod ()
+			{
+				var method = (MethodInfo) typeof (TimeZoneInfo).GetMember ("GetSystemTimeZones", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)[0];
+
+				var timeZones = (global::System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo>) method.Invoke (null, null);
+				Assert.IsNotEmpty (timeZones);
+			}
 		}
 		
 		[TestFixture]
