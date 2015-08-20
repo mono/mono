@@ -29,6 +29,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -114,13 +115,13 @@ namespace System.Net
 		{
 			int count = chunks.Count;
 			int nread = 0;
+
+			var chunksForRemoving = new List<Chunk>(count);
 			for (int i = 0; i < count; i++) {
 				Chunk chunk = (Chunk) chunks [i];
-				if (chunk == null)
-					continue;
 
 				if (chunk.Offset == chunk.Bytes.Length) {
-					chunks [i] = null;
+					chunksForRemoving.Add(chunk);
 					continue;
 				}
 				
@@ -128,6 +129,9 @@ namespace System.Net
 				if (nread == size)
 					break;
 			}
+
+			foreach (var chunk in chunksForRemoving)
+				chunks.Remove(chunk);
 
 			return nread;
 		}
