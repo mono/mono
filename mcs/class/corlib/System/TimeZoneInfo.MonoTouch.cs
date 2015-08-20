@@ -58,7 +58,7 @@ namespace System {
 			}
 		}
 
-		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
 			foreach (string name in GetMonoTouchNames ()) {
 				using (Stream stream = GetMonoTouchData (name, false)) {
