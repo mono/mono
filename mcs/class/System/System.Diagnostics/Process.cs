@@ -1124,7 +1124,12 @@ namespace System.Diagnostics {
 				//
 				// MonoIO.Close (stdin_read, out error);
 
-				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, false), FileAccess.Write, 8192, false), Console.InputEncoding) {
+#if MOBILE
+				var stdinEncoding = Encoding.Default;
+#else
+				var stdinEncoding = Console.InputEncoding;
+#endif
+				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, false), FileAccess.Write, 8192, false), stdinEncoding) {
 					AutoFlush = true
 				};
 			}
