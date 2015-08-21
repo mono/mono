@@ -48,7 +48,7 @@ namespace System.Runtime.ExceptionServices {
 			if (count != 0)
 				Array.Copy (exception.captured_traces, 0, stack_traces, 0, count);
 
-			stack_traces [count] = new System.Diagnostics.StackTrace (exception, 0, true, true);
+			stack_traces [count] = new System.Diagnostics.StackTrace (exception, 0, true);
 			m_stackTrace = stack_traces;
 #else
             m_remoteStackTrace = exception.RemoteStackTrace;
