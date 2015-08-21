@@ -120,11 +120,6 @@ namespace System.Diagnostics {
 		}
 
 		public StackTrace (Exception e, int skipFrames, bool fNeedFileInfo)
-			: this (e, skipFrames, fNeedFileInfo, false)
-		{
-		}
-
-		internal StackTrace (Exception e, int skipFrames, bool fNeedFileInfo, bool returnNativeFrames)
 		{
 			if (e == null)
 				throw new ArgumentNullException ("e");
@@ -132,23 +127,6 @@ namespace System.Diagnostics {
 				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
 
 			frames = get_trace (e, skipFrames, fNeedFileInfo);
-
-			if (!returnNativeFrames) {
-				bool resize = false;
-				for (int i = 0; i < frames.Length; ++i)
-					if (frames [i].GetMethod () == null)
-						resize = true;
-
-				if (resize) {
-					var l = new List<StackFrame> ();
-
-					for (int i = 0; i < frames.Length; ++i)
-						if (frames [i].GetMethod () != null)
-							l.Add (frames [i]);
-
-					frames = l.ToArray ();
-				}
-			}
 
 			captured_traces = e.captured_traces;
 		}

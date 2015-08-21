@@ -199,7 +199,7 @@ namespace System
 					/* Not thrown yet */
 					return null;
 
-				StackTrace st = new StackTrace (this, 0, true, true);
+				StackTrace st = new StackTrace (this, 0, true);
 				return stack_trace = st.ToString ();
 			}
 		}
@@ -298,6 +298,7 @@ namespace System
 		{
 			captured_traces = (StackTrace[]) exceptionDispatchInfo.BinaryStackTraceArray;
 			trace_ips = null;
+			stack_trace = null;
 		}
 
 		//
