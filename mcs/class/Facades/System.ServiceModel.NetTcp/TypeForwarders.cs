@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 // 
 
-#if !MOBILE
+#if !MOBILE && !XAMMAC_4_5
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.SslStreamSecurityBindingElement))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ServiceModel.Channels.TcpConnectionPoolSettings))]
