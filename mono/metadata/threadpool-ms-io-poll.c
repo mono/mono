@@ -1,24 +1,10 @@
+#include <mono/utils/mono-poll.h>
 
-#if defined(HAVE_POLL)
+/* FIXME
+Pass an array to poll with just the required FDs. This can be done by computing the array
+on every call or by adjusting it on every call.
 
-#if defined(HAVE_POLL_H)
-#include <poll.h>
-#elif defined(HAVE_SYS_POLL_H)
-#include <sys/poll.h>
-#endif
-
-typedef struct pollfd mono_pollfd;
-
-#elif defined(HOST_WIN32)
-
-#include "mswsock.h"
-
-typedef WSAPOLLFD mono_pollfd;
-
-#else
-/* poll is not defined */
-#error
-#endif
+*/
 
 static mono_pollfd *poll_fds;
 static guint poll_fds_capacity;
@@ -39,6 +25,8 @@ poll_init (gint wakeup_pipe_fd)
 
 	poll_fds_size = wakeup_pipe_fd + 1;
 	poll_fds_capacity = 64;
+
+	printf ("wakeup_fd %d\n", wakeup_pipe_fd);
 
 	while (wakeup_pipe_fd >= poll_fds_capacity)
 		poll_fds_capacity *= 4;
@@ -67,6 +55,7 @@ poll_register_fd (gint fd, gint events, gboolean is_new)
 
 	g_assert (fd >= 0);
 	g_assert (poll_fds_size <= poll_fds_capacity);
+	printf ("register %d events %d is_new %d\n", fd, events, is_new);
 
 	if (fd >= poll_fds_capacity) {
 		do {
@@ -98,6 +87,8 @@ poll_remove_fd (gint fd)
 {
 	mono_pollfd *poll_fd;
 
+	printf ("remove FD %d\n", fd);
+
 	g_assert (fd >= 0);
 
 	g_assert (fd < poll_fds_size);
@@ -117,13 +108,7 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 
 	mono_gc_set_skip_thread (TRUE);
 
-#if !defined(HOST_WIN32)
-	ready = poll (poll_fds, poll_fds_size, -1);
-#else
-	ready = WSAPOLLFD (poll_fds, poll_fds_size, -1);
-	if (ready == SOCKET_ERROR)
-		ready = -1;
-#endif
+	ready = mono_poll (poll_fds, poll_fds_size, -1);
 
 	mono_gc_set_skip_thread (FALSE);
 
@@ -141,28 +126,16 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 		 *  ENOMEM: we're doomed anyway
 		 *
 		 */
-#if !defined(HOST_WIN32)
 		switch (errno)
-#else
-		switch (WSAGetLastError ())
-#endif
 		{
-#if !defined(HOST_WIN32)
 		case EINTR:
-#else
-		case WSAEINTR:
-#endif
 		{
 			mono_thread_internal_check_for_interruption_critical (mono_thread_internal_current ());
 			ready = 0;
 			break;
 		}
 		default:
-#if !defined(HOST_WIN32)
 			g_error ("poll_event_wait: mono_poll () failed, error (%d) %s", errno, g_strerror (errno));
-#else
-			g_error ("poll_event_wait: mono_poll () failed, error (%d)\n", WSAGetLastError ());
-#endif
 			break;
 		}
 	}
