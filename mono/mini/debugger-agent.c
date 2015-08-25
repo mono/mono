@@ -575,7 +575,6 @@ static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
 static SingleStepReq *ss_req = NULL;
-static gpointer ss_invoke_addr = NULL;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -3337,28 +3336,6 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 		tls->invoke_addr = g_queue_pop_head(tls->invoke_addr_stack);
 	}
 
-	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ()) {
-		mono_loader_unlock ();
-		return;
-	}
-
-	/*
-	 * We need to stop single stepping when exiting a runtime invoke, since if it is
-	 * a step out, it may return to native code, and thus never end.
-	 */
-	ss_invoke_addr = NULL;
-
-
-	for (i = 0; i < event_requests->len; ++i) {
-		EventRequest *req = g_ptr_array_index (event_requests, i);
-
-		if (req->event_kind == EVENT_KIND_STEP) {
-			ss_destroy (req->info);
-			g_ptr_array_remove_index_fast (event_requests, i);
-			g_free (req);
-			break;
-		}
-	}
 	mono_loader_unlock ();
 }
 
@@ -4259,13 +4236,12 @@ start_single_stepping (void)
 	if (val == 1)
 		mono_arch_start_single_stepping ();
 
-	if (ss_req != NULL && ss_invoke_addr == NULL) {
+	if (ss_req != NULL) {
 		DebuggerTlsData *tls;
 	
 		mono_loader_lock ();
 	
  		tls = mono_g_hash_table_lookup (thread_to_tls, ss_req->thread);
-		ss_invoke_addr = tls->invoke_addr;
 		
 		mono_loader_unlock ();
 	}
