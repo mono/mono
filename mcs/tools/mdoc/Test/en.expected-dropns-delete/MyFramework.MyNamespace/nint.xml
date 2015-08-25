@@ -1,0 +1,17 @@
+<Type Name="nint" FullName="MyFramework.MyNamespace.nint">
+  <TypeSignature Language="C#" Value="public struct nint" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit nint extends System.ValueType" />
+  <AssemblyInfo apistyle="unified">
+    <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>
