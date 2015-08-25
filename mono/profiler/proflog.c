@@ -671,16 +671,8 @@ find_method (MonoDomain *domain, void *user_data)
 	if (search->found)
 		return;
 
-	MonoJitInfo *ji = mono_get_jit_info_from_method (domain, search->method);
-
-	// It could be AOT'd, so we need to get it from the AOT runtime's cache.
-	if (!ji) {
-		void *ip = mono_aot_get_method (domain, search->method);
-
-		// Avoid a slow path in mono_jit_info_table_find ().
-		if (ip)
-			ji = mono_jit_info_table_find (domain, ip);
-	}
+	void *ip = mono_compile_method (search->method);
+	MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 
 	if (ji)
 		search->found = ji;
