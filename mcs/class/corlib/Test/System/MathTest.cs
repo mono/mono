@@ -497,21 +497,21 @@ namespace MonoTests.System
 			/* documentation cases : https://msdn.microsoft.com/en-us/library/system.math.pow%28v=vs.110%29.aspx */
 
 			/* x or y = NaN -> NaN */
-			Assert.IsNaN (Math.Pow (             double.NaN,              double.NaN), "#1");
-			Assert.IsNaN (Math.Pow (             double.NaN, double.NegativeInfinity), "#2");
-			Assert.IsNaN (Math.Pow (             double.NaN,                      -2), "#2");
-			Assert.IsNaN (Math.Pow (             double.NaN,                      -1), "#3");
-			Assert.IsNaN (Math.Pow (             double.NaN,                       0), "#4");
-			Assert.IsNaN (Math.Pow (             double.NaN,                       1), "#5");
-			Assert.IsNaN (Math.Pow (             double.NaN,                       2), "#6");
-			Assert.IsNaN (Math.Pow (             double.NaN, double.PositiveInfinity), "#7");
-			Assert.IsNaN (Math.Pow (double.NegativeInfinity,              double.NaN), "#8");
-			Assert.IsNaN (Math.Pow (                     -2,              double.NaN), "#9");
-			Assert.IsNaN (Math.Pow (                     -1,              double.NaN), "#10");
-			Assert.IsNaN (Math.Pow (                      0,              double.NaN), "#11");
-			Assert.IsNaN (Math.Pow (                      1,              double.NaN), "#12");
-			Assert.IsNaN (Math.Pow (                      2,              double.NaN), "#13");
-			Assert.IsNaN (Math.Pow (double.PositiveInfinity,              double.NaN), "#14");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,              double.NaN)), "#1");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN, double.NegativeInfinity)), "#2");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                      -2)), "#2");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                      -1)), "#3");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       0)), "#4");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       1)), "#5");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       2)), "#6");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN, double.PositiveInfinity)), "#7");
+			Assert.IsTrue (double.IsNaN (Math.Pow (double.NegativeInfinity,              double.NaN)), "#8");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                     -2,              double.NaN)), "#9");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                     -1,              double.NaN)), "#10");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      0,              double.NaN)), "#11");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      1,              double.NaN)), "#12");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      2,              double.NaN)), "#13");
+			Assert.IsTrue (double.IsNaN (Math.Pow (double.PositiveInfinity,              double.NaN)), "#14");
 
 			/* x = Any value except NaN; y = 0 -> 1 */
 			Assert.AreEqual ((double) 1, Math.Pow (2, 0), "#15");
@@ -526,11 +526,11 @@ namespace MonoTests.System
 			Assert.AreEqual (double.PositiveInfinity, Math.Pow (double.NegativeInfinity, 2), "#18");
 
 			/* x < 0 but not NegativeInfinity; y is not an integer, NegativeInfinity, or PositiveInfinity -> NaN */
-			Assert.IsNaN (Math.Pow (-1, 2.5), "#19");
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, 2.5)), "#19");
 
 			/* x = -1; y = NegativeInfinity or PositiveInfinity -> NaN */
-			Assert.IsNaN (Math.Pow (-1, double.PositiveInfinity), "#20");
-			Assert.IsNaN (Math.Pow (-1, double.NegativeInfinity), "#21");
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, double.PositiveInfinity)), "#20");
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, double.NegativeInfinity)), "#21");
 
 			/* -1 < x < 1; y = NegativeInfinity -> PositiveInfinity */
 			Assert.AreEqual (double.PositiveInfinity, Math.Pow (-0.5, double.NegativeInfinity), "#22");
