@@ -2202,6 +2202,11 @@ get_module_filename (gpointer process, gpointer module,
 	char *path;
 	gunichar2 *proc_path;
 	
+	size *= sizeof (gunichar2); /* adjust for unicode characters */
+
+	if (basename == NULL || size == 0)
+		return 0;
+
 	pid = GetProcessId (process);
 
 	path = wapi_process_get_path (pid);
@@ -2209,6 +2214,8 @@ get_module_filename (gpointer process, gpointer module,
 		return 0;
 
 	proc_path = mono_unicode_from_external (path, &bytes);
+	g_free (path);
+
 	if (proc_path == NULL)
 		return 0;
 
@@ -2227,6 +2234,8 @@ get_module_filename (gpointer process, gpointer module,
 
 		memcpy (basename, proc_path, bytes);
 	}
+
+	g_free (proc_path);
 
 	return len;
 }
