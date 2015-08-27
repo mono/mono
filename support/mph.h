@@ -149,6 +149,13 @@ typedef gint64 suseconds_t;
 		return ret; \
 	}}G_STMT_END
 
+#define mph_have_uint_overflow(var) ((var) < 0 || (var) > UINT_MAX)
+
+#define mph_return_val_if_uint_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_uint_overflow)
+
+#define mph_return_if_uint_overflow(var) mph_return_val_if_uint_overflow(var, -1)
+
 #define mph_have_long_overflow(var) ((var) > LONG_MAX || (var) < LONG_MIN)
 
 #define mph_return_val_if_long_overflow(var, ret) \
@@ -156,14 +163,14 @@ typedef gint64 suseconds_t;
 
 #define mph_return_if_long_overflow(var) mph_return_val_if_long_overflow(var, -1)
 
-#define mph_have_ulong_overflow(var) ((var) > ULONG_MAX)
+#define mph_have_ulong_overflow(var) (var) < 0 || ((var) > ULONG_MAX)
 
 #define mph_return_val_if_ulong_overflow(var, ret) \
 	_mph_return_val_if_cb_(var, ret, mph_have_ulong_overflow)
 
 #define mph_return_if_ulong_overflow(var) mph_return_val_if_ulong_overflow(var, -1)
 
-#define mph_have_size_t_overflow(var) ((var) > MPH_SIZE_T_MAX)
+#define mph_have_size_t_overflow(var) ((var) < 0 || (var) > MPH_SIZE_T_MAX)
 
 #define mph_return_val_if_size_t_overflow(var, ret) \
 	_mph_return_val_if_cb_(var, ret, mph_have_size_t_overflow)
@@ -184,6 +191,8 @@ typedef gint64 suseconds_t;
 #define mph_return_if_off_t_overflow(var) mph_return_val_if_size_t_overflow(var, -1)
 
 #define mph_return_if_time_t_overflow(var) mph_return_if_long_overflow(var)
+
+#define mph_return_if_socklen_t_overflow(var) mph_return_if_uint_overflow(var)
 
 #define mph_return_if_val_in_list5(var,a,b,c,d,e) \
 	do {                                                            \
