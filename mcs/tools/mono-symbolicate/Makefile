@@ -39,7 +39,9 @@ BUILD_TEST_EXE = @\
 	mkdir -p $(OUT_DIR); \
 	$(MCS) -debug $(TEST_CS) -out:$(TEST_EXE)
 
-check: all
+check: test-local
+
+test-local: all
 	$(BUILD_TEST_EXE)
 	@echo "Checking $(PROGRAM) without AOT"
 	$(CHECK_DIFF)
