@@ -170,21 +170,14 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
-		bool AddFrames (StringBuilder sb, bool isException = false)
+		bool AddFrames (StringBuilder sb)
 		{
 			bool printOffset;
 			string debugInfo, indentation;
 			string unknown = Locale.GetText ("<unknown method>");
 
-			if (isException) {
-				printOffset = true;
-				indentation = "  ";
-				debugInfo = Locale.GetText (" in {0}:{1} ");
-			} else {
-				printOffset = false;
-				indentation = "   ";
-				debugInfo = Locale.GetText (" in {0}:line {1}");
-			}
+			indentation = "  ";
+			debugInfo = Locale.GetText (" in {0}:{1} ");
 
 			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
 					Locale.GetText ("at"));
@@ -201,21 +194,17 @@ namespace System.Diagnostics {
 					string internal_name = frame.GetInternalMethodName ();
 					if (internal_name != null)
 						sb.Append (internal_name);
-					else if (printOffset)
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 					else
-						sb.AppendFormat (unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
-					if (printOffset) {
-						if (frame.GetILOffset () == -1) {
-							sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
-							if (frame.GetMethodIndex () != 0xffffff)
-								sb.AppendFormat (" {0}", frame.GetMethodIndex ());
-						} else {
-							sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
-						}
+					if (frame.GetILOffset () == -1) {
+						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
+						if (frame.GetMethodIndex () != 0xffffff)
+							sb.AppendFormat (" {0}", frame.GetMethodIndex ());
+					} else {
+						sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
 					}
 
 					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
@@ -293,7 +282,7 @@ namespace System.Diagnostics {
 			//
 			if (captured_traces != null) {
 				foreach (var t in captured_traces) {
-					if (!t.AddFrames (sb, true))
+					if (!t.AddFrames (sb))
 						continue;
 
 					sb.Append (Environment.NewLine);
