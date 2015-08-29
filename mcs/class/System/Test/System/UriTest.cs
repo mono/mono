@@ -1940,6 +1940,20 @@ namespace MonoTests.System
 			Assert.AreEqual ("id=1%262&sort=asc", escaped, "UriEscaped");
 		}
 
+		// When used, paths such as "/foo" are assumed relative.
+		static UriKind DotNetRelativeOrAbsolute = (Type.GetType ("Mono.Runtime") == null)? UriKind.RelativeOrAbsolute : (UriKind) 300;
+
+		[Test]
+		public void DotNetRelativeOrAbsoluteTest ()
+		{
+			var uri1 = new Uri ("/foo", DotNetRelativeOrAbsolute);
+			Assert.IsFalse (uri1.IsAbsoluteUri);
+			
+			Uri uri2;
+			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri2);
+			Assert.IsFalse (uri2.IsAbsoluteUri);
+		}
+
 		[Test]
 		// Bug #12631
 		public void LocalPathWithBaseUrl ()
