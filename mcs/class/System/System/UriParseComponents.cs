@@ -200,13 +200,13 @@ namespace System {
 		{
 			string part = state.remaining;
 
-			if (part.Length < 1 || part [0] != '/' || Path.DirectorySeparatorChar != '/')
+			if (part.Length < 1 || part [0] != '/' || Path.DirectorySeparatorChar != '/' || state.kind != UriKind.Absolute)
 				return state.remaining.Length > 0;
 
 			state.elements.scheme = Uri.UriSchemeFile;
 			state.elements.delimiter = "://";
 			state.elements.isUnixFilePath = true;
-			state.elements.isAbsoluteUri = (state.kind == UriKind.Relative)? false : true;
+			state.elements.isAbsoluteUri = true;
 
 			if (part.Length >= 2 && part [0] == '/' && part [1] == '/') {
 				part = part.TrimStart (new char [] {'/'});
