@@ -131,7 +131,7 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-		public Type AttributeType {
+		public virtual Type AttributeType {
 			get { return ctorInfo.DeclaringType; }
 		}
 
