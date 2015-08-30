@@ -30,6 +30,7 @@ namespace Mono.CSharp {
 		V_5 = 5,
 		V_6 = 6,
 		Experimental = 100,
+		Unsafe = 101,
 
 		Default = LanguageVersion.V_6,
 	}
@@ -232,6 +233,12 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		public void SetUnsafe (bool value)
+		{
+			// If we're using unsafe extensions, unsafe code is always allowed.
+			Unsafe = Version >= LanguageVersion.Unsafe ? true : value;
+		}
 
 		public void AddConditionalSymbol (string symbol)
 		{
@@ -969,11 +976,11 @@ namespace Mono.CSharp {
 
 			case "/unsafe":
 			case "/unsafe+":
-				settings.Unsafe = true;
+				settings.SetUnsafe (true);
 				return ParseResult.Success;
 
 			case "/unsafe-":
-				settings.Unsafe = false;
+				settings.SetUnsafe (false);
 				return ParseResult.Success;
 
 			case "/warnaserror":
@@ -1164,6 +1171,10 @@ namespace Mono.CSharp {
 				case "experimental":
 					settings.Version = LanguageVersion.Experimental;
 					return ParseResult.Success;
+				case "unsafe":
+					settings.SetUnsafe (true);
+					settings.Version = LanguageVersion.Unsafe;
+					return ParseResult.Success;
 				case "future":
 					report.Warning (8000, 1, "Language version `future' is no longer supported");
 					goto case "6";
@@ -1240,7 +1251,7 @@ namespace Mono.CSharp {
 				
 			case "--unsafe":
 				report.Warning (-29, 1, "Compatibility: Use -unsafe instead of --unsafe");
-				settings.Unsafe = true;
+				settings.SetUnsafe (true);
 				return ParseResult.Success;
 				
 			case "/?": case "/h": case "/help":
@@ -1561,7 +1572,7 @@ namespace Mono.CSharp {
 				"   -help                Lists all compiler options (short: -?)\n" +
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, 4, 5, Default or Experimental\n" +
+				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, 3, 4, 5, Default, Experimental or Unsafe\n" +
 				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig            Disables implicitly referenced assemblies\n" +
@@ -1580,7 +1591,7 @@ namespace Mono.CSharp {
 				"                        VERSION can be one of: 2, 4, 4.5 (default) or a custom value\n" +
 				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
 				"                        KIND can be one of: exe, winexe, library, module\n" +
-				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
+				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword (always on if using -langversion:Unsafe)\n" +
 				"   -warnaserror[+|-]    Treats all warnings as errors\n" +
 				"   -warnaserror[+|-]:W1[,Wn] Treats one or more compiler warnings as errors\n" +
 				"   -warn:0-4            Sets warning level, the default is 4 (short -w:)\n" +
