@@ -583,15 +583,21 @@ namespace Mono.CSharp {
 		{
 			bool valid = true;
 			foreach (string wid in text.Split (numeric_value_separator, StringSplitOptions.RemoveEmptyEntries)) {
+				var warning = wid;
+				if (warning.Length == 6 && warning [0] == 'C' && warning [1] == 'S')
+					warning = warning.Substring (2);
+
 				int id;
-				if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
-					report.Error (1904, "`{0}' is not a valid warning number", wid);
-					valid = false;
+				if (!int.TryParse (warning, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
 					continue;
 				}
 
-				if (report.CheckWarningCode (id, Location.Null))
+				if (report.CheckWarningCode (id, Location.Null)) {
 					action (id);
+				} else {
+					report.Error (1904, "`{0}' is not a valid warning number", wid);
+					valid = false;
+				}
 			}
 
 			return valid;
