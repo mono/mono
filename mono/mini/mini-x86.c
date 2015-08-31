@@ -45,6 +45,12 @@ static gboolean optimize_for_xen = TRUE;
 #endif
 #endif
 
+/* The single step trampoline */
+static gpointer ss_trampoline;
+
+/* The breakpoint trampoline */
+static gpointer bp_trampoline;
+
 /* This mutex protects architecture specific caches */
 #define mono_mini_arch_lock() mono_mutex_lock (&mini_arch_mutex)
 #define mono_mini_arch_unlock() mono_mutex_unlock (&mini_arch_mutex)
@@ -63,8 +69,7 @@ static mono_mutex_t mini_arch_mutex;
 
 #define X86_IS_CALLEE_SAVED_REG(reg) (((reg) == X86_EBX) || ((reg) == X86_EDI) || ((reg) == X86_ESI))
 
-MonoBreakpointInfo
-mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
+#define OP_SEQ_POINT_BP_OFFSET 7
 
 static guint8*
 emit_load_aotconst (guint8 *start, guint8 *code, MonoCompile *cfg, MonoJumpInfo **ji, int dreg, int tramp_type, gconstpointer target);
@@ -101,15 +106,6 @@ mono_arch_nacl_skip_nops (guint8 *code)
 }
 
 #endif /* __native_client_codegen__ */
-
-/*
- * The code generated for sequence points reads from this location, which is
- * made read-only when single stepping is enabled.
- */
-static gpointer ss_trigger_page;
-
-/* Enabled breakpoints read from this trigger page */
-static gpointer bp_trigger_page;
 
 const char*
 mono_arch_regname (int reg)
@@ -760,9 +756,8 @@ mono_arch_init (void)
 {
 	mono_mutex_init_recursive (&mini_arch_mutex);
 
-	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ);
-	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
-	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
+	if (!mono_aot_only)
+		bp_trampoline = mini_get_breakpoint_trampoline ();
 
 	mono_aot_register_jit_icall ("mono_x86_throw_exception", mono_x86_throw_exception);
 	mono_aot_register_jit_icall ("mono_x86_throw_corlib_exception", mono_x86_throw_corlib_exception);
@@ -777,10 +772,6 @@ mono_arch_init (void)
 void
 mono_arch_cleanup (void)
 {
-	if (ss_trigger_page)
-		mono_vfree (ss_trigger_page, mono_pagesize ());
-	if (bp_trigger_page)
-		mono_vfree (bp_trigger_page, mono_pagesize ());
 	mono_mutex_destroy (&mini_arch_mutex);
 }
 
@@ -1215,6 +1206,18 @@ mono_arch_create_vars (MonoCompile *cfg)
 		cfg->ret_var_is_local = TRUE;
 	if ((cinfo->ret.storage != ArgValuetypeInReg) && (MONO_TYPE_ISSTRUCT (sig_ret) || mini_is_gsharedvt_variable_type (sig_ret))) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+	}
+
+	if (cfg->gen_sdb_seq_points) {
+		MonoInst *ins;
+
+		ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		ins->flags |= MONO_INST_VOLATILE;
+		cfg->arch.ss_tramp_var = ins;
+
+		ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		ins->flags |= MONO_INST_VOLATILE;
+		cfg->arch.bp_tramp_var = ins;
 	}
 
 	if (cfg->method->save_lmf) {
@@ -2773,22 +2776,53 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (cfg->compile_aot)
 				NOT_IMPLEMENTED;
 
+			/* Have to use ecx as a temp reg since this can occur after OP_SETRET */
+
 			/* 
 			 * Read from the single stepping trigger page. This will cause a
 			 * SIGSEGV when single stepping is enabled.
 			 * We do this _before_ the breakpoint, so single stepping after
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
-			if (ins->flags & MONO_INST_SINGLE_STEP_LOC)
-				x86_alu_reg_mem (code, X86_CMP, X86_EAX, (guint32)ss_trigger_page);
+			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
+				MonoInst *var = cfg->arch.ss_tramp_var;
+				guint8 *br [1];
+
+				g_assert (var);
+				g_assert (var->opcode == OP_REGOFFSET);
+				/* Load ss_tramp_var */
+				/* This is equal to &ss_trampoline */
+				x86_mov_reg_membase (code, X86_ECX, var->inst_basereg, var->inst_offset, sizeof (mgreg_t));
+				x86_alu_membase_imm (code, X86_CMP, X86_ECX, 0, 0);
+				br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+				x86_call_membase (code, X86_ECX, 0);
+				x86_patch (br [0], code);
+			}
+
+			/*
+			 * Many parts of sdb depend on the ip after the single step trampoline call to be equal to the seq point offset.
+			 * This means we have to put the loading of bp_tramp_var after the offset.
+			 */
 
 			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
 
+			MonoInst *var = cfg->arch.bp_tramp_var;
+
+			g_assert (var);
+			g_assert (var->opcode == OP_REGOFFSET);
+			/* Load the address of the bp trampoline */
+			/* This needs to be constant size */
+			guint8 *start = code;
+			x86_mov_reg_membase (code, X86_ECX, var->inst_basereg, var->inst_offset, 4);
+			if (code < start + OP_SEQ_POINT_BP_OFFSET) {
+				int size = start + OP_SEQ_POINT_BP_OFFSET - code;
+				x86_padding (code, size);
+			}
 			/* 
 			 * A placeholder for a possible breakpoint inserted by
 			 * mono_arch_set_breakpoint ().
 			 */
-			for (i = 0; i < 6; ++i)
+			for (i = 0; i < 2; ++i)
 				x86_nop (code);
 			/*
 			 * Add an additional nop so skipping the bp doesn't cause the ip to point
@@ -5402,6 +5436,28 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 
+	{
+		MonoInst *ins;
+
+		if (cfg->arch.ss_tramp_var) {
+			/* Initialize ss_tramp_var */
+			ins = cfg->arch.ss_tramp_var;
+			g_assert (ins->opcode == OP_REGOFFSET);
+
+			g_assert (!cfg->compile_aot);
+			x86_mov_membase_imm (code, ins->inst_basereg, ins->inst_offset, (guint32)&ss_trampoline, 4);
+		}
+
+		if (cfg->arch.bp_tramp_var) {
+			/* Initialize bp_tramp_var */
+			ins = cfg->arch.bp_tramp_var;
+			g_assert (ins->opcode == OP_REGOFFSET);
+
+			g_assert (!cfg->compile_aot);
+			x86_mov_membase_imm (code, ins->inst_basereg, ins->inst_offset, (guint32)&bp_trampoline, 4);
+		}
+	}
+
 	/* load arguments allocated to register from the stack */
 	sig = mono_method_signature (method);
 	pos = 0;
@@ -5762,6 +5818,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 	int i;
 	int size = 0;
 	guint8 *code, *start;
+	GSList *unwind_ops;
 
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
@@ -5798,6 +5855,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 		code = mono_domain_code_reserve (domain, size);
 #endif
 	start = code;
+
+	unwind_ops = mono_arch_get_cie_program ();
+
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
 		item->code_target = code;
@@ -5883,6 +5943,8 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 
 	nacl_domain_code_validate (domain, &start, size, &code);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
+
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, unwind_ops), domain);
 
 	return start;
 }
@@ -6075,10 +6137,13 @@ mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 #define MAX_ARCH_DELEGATE_PARAMS 10
 
 static gpointer
-get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *code_len)
+get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 param_count)
 {
 	guint8 *code, *start;
 	int code_reserve = 64;
+	GSList *unwind_ops;
+
+	unwind_ops = mono_arch_get_cie_program ();
 
 	/*
 	 * The stack contains:
@@ -6139,8 +6204,13 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 
 	nacl_global_codeman_validate (&start, code_reserve, &code);
 
-	if (code_len)
-		*code_len = code - start;
+	if (has_target) {
+		*info = mono_tramp_info_create ("delegate_invoke_impl_has_target", start, code - start, NULL, unwind_ops);
+	} else {
+		char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", param_count);
+		*info = mono_tramp_info_create (name, start, code - start, NULL, unwind_ops);
+		g_free (name);
+	}
 
 	if (mono_jit_map_is_enabled ()) {
 		char *buff;
@@ -6160,10 +6230,15 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 #define MAX_VIRTUAL_DELEGATE_OFFSET 32
 
 static gpointer
-get_delegate_virtual_invoke_impl (gboolean load_imt_reg, int offset, guint32 *code_size)
+get_delegate_virtual_invoke_impl (MonoTrampInfo **info, gboolean load_imt_reg, int offset)
 {
 	guint8 *code, *start;
 	int size = 24;
+	char *tramp_name;
+	GSList *unwind_ops;
+
+	if (offset / (int)sizeof (gpointer) > MAX_VIRTUAL_DELEGATE_OFFSET)
+		return NULL;
 
 	/*
 	 * The stack contains:
@@ -6171,6 +6246,8 @@ get_delegate_virtual_invoke_impl (gboolean load_imt_reg, int offset, guint32 *co
 	 * <return addr>
 	 */
 	start = code = mono_global_codeman_reserve (size);
+
+	unwind_ops = mono_arch_get_cie_program ();
 
 	/* Replace the this argument with the target */
 	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
@@ -6187,8 +6264,13 @@ get_delegate_virtual_invoke_impl (gboolean load_imt_reg, int offset, guint32 *co
 	x86_jump_membase (code, X86_EAX, offset);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
-	if (code_size)
-		*code_size = code - start;
+	if (load_imt_reg)
+		tramp_name = g_strdup_printf ("delegate_virtual_invoke_imt_%d", - offset / sizeof (gpointer));
+	else
+		tramp_name = g_strdup_printf ("delegate_virtual_invoke_%d", offset / sizeof (gpointer));
+	*info = mono_tramp_info_create (tramp_name, start, code - start, NULL, unwind_ops);
+	g_free (tramp_name);
+
 
 	return start;
 }
@@ -6197,31 +6279,23 @@ GSList*
 mono_arch_get_delegate_invoke_impls (void)
 {
 	GSList *res = NULL;
-	guint8 *code;
-	guint32 code_len;
+	MonoTrampInfo *info;
 	int i;
-	char *tramp_name;
 
-	code = get_delegate_invoke_impl (TRUE, 0, &code_len);
-	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
+	get_delegate_invoke_impl (&info, TRUE, 0);
+	res = g_slist_prepend (res, info);
 
-	for (i = 0; i < MAX_ARCH_DELEGATE_PARAMS; ++i) {
-		code = get_delegate_invoke_impl (FALSE, i, &code_len);
-		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
-		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
-		g_free (tramp_name);
+	for (i = 0; i <= MAX_ARCH_DELEGATE_PARAMS; ++i) {
+		get_delegate_invoke_impl (&info, FALSE, i);
+		res = g_slist_prepend (res, info);
 	}
 
-	for (i = 0; i < MAX_VIRTUAL_DELEGATE_OFFSET; ++i) {
-		code = get_delegate_virtual_invoke_impl (TRUE, i * SIZEOF_VOID_P, &code_len);
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_imt_%d", i);
-		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
-		g_free (tramp_name);
+	for (i = 0; i <= MAX_VIRTUAL_DELEGATE_OFFSET; ++i) {
+		get_delegate_virtual_invoke_impl (&info, TRUE, - i * SIZEOF_VOID_P);
+		res = g_slist_prepend (res, info);
 
-		code = get_delegate_virtual_invoke_impl (FALSE, i * SIZEOF_VOID_P, &code_len);
-		tramp_name = g_strdup_printf ("delegate_virtual_invoke_%d", i);
-		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
-		g_free (tramp_name);
+		get_delegate_virtual_invoke_impl (&info, FALSE, i * SIZEOF_VOID_P);
+		res = g_slist_prepend (res, info);
 	}
 
 	return res;
@@ -6250,10 +6324,13 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		if (cached)
 			return cached;
 
-		if (mono_aot_only)
+		if (mono_aot_only) {
 			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
-		else
-			start = get_delegate_invoke_impl (TRUE, 0, NULL);
+		} else {
+			MonoTrampInfo *info;
+			start = get_delegate_invoke_impl (&info, TRUE, 0);
+			mono_tramp_info_register (info, NULL);
+		}
 
 		mono_memory_barrier ();
 
@@ -6275,7 +6352,9 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			start = mono_aot_get_trampoline (name);
 			g_free (name);
 		} else {
-			start = get_delegate_invoke_impl (FALSE, sig->param_count, NULL);
+			MonoTrampInfo *info;
+			start = get_delegate_invoke_impl (&info, FALSE, sig->param_count);
+			mono_tramp_info_register (info, NULL);
 		}
 
 		mono_memory_barrier ();
@@ -6289,7 +6368,13 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 gpointer
 mono_arch_get_delegate_virtual_invoke_impl (MonoMethodSignature *sig, MonoMethod *method, int offset, gboolean load_imt_reg)
 {
-	return get_delegate_virtual_invoke_impl (load_imt_reg, offset, NULL);
+	MonoTrampInfo *info;
+	gpointer code;
+
+	code = get_delegate_virtual_invoke_impl (&info, load_imt_reg, offset);
+	if (code)
+		mono_tramp_info_register (info, NULL);
+	return code;
 }
 
 mgreg_t
@@ -6604,13 +6689,6 @@ mono_arch_get_trampolines (gboolean aot)
 	return tramps;
 }
 
-
-#if __APPLE__
-#define DBG_SIGNAL SIGBUS
-#else
-#define DBG_SIGNAL SIGSEGV
-#endif
-
 /* Soft Debug support */
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 
@@ -6623,15 +6701,10 @@ mono_arch_get_trampolines (gboolean aot)
 void
 mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
-	guint8 *code = ip;
+	guint8 *code = ip + OP_SEQ_POINT_BP_OFFSET;
 
-	/* 
-	 * In production, we will use int3 (has to fix the size in the md 
-	 * file). But that could confuse gdb, so during development, we emit a SIGSEGV
-	 * instead.
-	 */
 	g_assert (code [0] == 0x90);
-	x86_alu_reg_mem (code, X86_CMP, X86_EAX, (guint32)bp_trigger_page);
+	x86_call_membase (code, X86_ECX, 0);
 }
 
 /*
@@ -6642,10 +6715,10 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 void
 mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
-	guint8 *code = ip;
+	guint8 *code = ip + OP_SEQ_POINT_BP_OFFSET;
 	int i;
 
-	for (i = 0; i < 6; ++i)
+	for (i = 0; i < 2; ++i)
 		x86_nop (code);
 }
 	
@@ -6657,7 +6730,7 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 void
 mono_arch_start_single_stepping (void)
 {
-	mono_mprotect (ss_trigger_page, mono_pagesize (), 0);
+	ss_trampoline = mini_get_single_step_trampoline ();
 }
 	
 /*
@@ -6668,7 +6741,7 @@ mono_arch_start_single_stepping (void)
 void
 mono_arch_stop_single_stepping (void)
 {
-	mono_mprotect (ss_trigger_page, mono_pagesize (), MONO_MMAP_READ);
+	ss_trampoline = NULL;
 }
 
 /*
@@ -6680,43 +6753,18 @@ mono_arch_stop_single_stepping (void)
 gboolean
 mono_arch_is_single_step_event (void *info, void *sigctx)
 {
-#ifdef TARGET_WIN32
-	EXCEPTION_RECORD* einfo = ((EXCEPTION_POINTERS*)info)->ExceptionRecord;	/* Sometimes the address is off by 4 */
-
-	if (((gpointer)einfo->ExceptionInformation[1] >= ss_trigger_page && (guint8*)einfo->ExceptionInformation[1] <= (guint8*)ss_trigger_page + 128))
-		return TRUE;
-	else
-		return FALSE;
-#else
-	siginfo_t* sinfo = (siginfo_t*) info;
-	/* Sometimes the address is off by 4 */
-	if (sinfo->si_signo == DBG_SIGNAL && (sinfo->si_addr >= ss_trigger_page && (guint8*)sinfo->si_addr <= (guint8*)ss_trigger_page + 128))
-		return TRUE;
-	else
-		return FALSE;
-#endif
+	/* We use soft breakpoints */
+	return FALSE;
 }
 
 gboolean
 mono_arch_is_breakpoint_event (void *info, void *sigctx)
 {
-#ifdef TARGET_WIN32
-	EXCEPTION_RECORD* einfo = ((EXCEPTION_POINTERS*)info)->ExceptionRecord;	/* Sometimes the address is off by 4 */
-	if (((gpointer)einfo->ExceptionInformation[1] >= bp_trigger_page && (guint8*)einfo->ExceptionInformation[1] <= (guint8*)bp_trigger_page + 128))
-		return TRUE;
-	else
-		return FALSE;
-#else
-	siginfo_t* sinfo = (siginfo_t*)info;
-	/* Sometimes the address is off by 4 */
-	if (sinfo->si_signo == DBG_SIGNAL && (sinfo->si_addr >= bp_trigger_page && (guint8*)sinfo->si_addr <= (guint8*)bp_trigger_page + 128))
-		return TRUE;
-	else
-		return FALSE;
-#endif
+	/* We use soft breakpoints */
+	return FALSE;
 }
 
-#define BREAKPOINT_SIZE 6
+#define BREAKPOINT_SIZE 2
 
 /*
  * mono_arch_skip_breakpoint:
@@ -6726,7 +6774,7 @@ mono_arch_is_breakpoint_event (void *info, void *sigctx)
 void
 mono_arch_skip_breakpoint (MonoContext *ctx, MonoJitInfo *ji)
 {
-	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + BREAKPOINT_SIZE);
+	g_assert_not_reached ();
 }
 
 /*
@@ -6737,7 +6785,7 @@ mono_arch_skip_breakpoint (MonoContext *ctx, MonoJitInfo *ji)
 void
 mono_arch_skip_single_step (MonoContext *ctx)
 {
-	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + 6);
+	g_assert_not_reached ();
 }
 
 /*

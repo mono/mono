@@ -554,6 +554,7 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 			WapiStartupInfo *startup,
 			WapiProcessInformation *process_info)
 {
+#if defined (HAVE_FORK) && defined (HAVE_EXECVE)
 	char *cmd = NULL, *prog = NULL, *full_prog = NULL, *args = NULL, *args_after_prog = NULL;
 	char *dir = NULL, **env_strings = NULL, **argv = NULL;
 	guint32 i, env_count = 0;
@@ -817,11 +818,11 @@ gboolean CreateProcess (const gunichar2 *appname, const gunichar2 *cmdline,
 
 		if (newapp != NULL) {
 			if (appname != NULL) {
-				newcmd = utf16_concat (newapp, utf16_space,
+				newcmd = utf16_concat (utf16_quote, newapp, utf16_quote, utf16_space,
 						       appname, utf16_space,
 						       cmdline, NULL);
 			} else {
-				newcmd = utf16_concat (newapp, utf16_space,
+				newcmd = utf16_concat (utf16_quote, newapp, utf16_quote, utf16_space,
 						       cmdline, NULL);
 			}
 			
@@ -1098,6 +1099,10 @@ free_strings:
 	mono_processes_cleanup ();
 	
 	return ret;
+#else
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+#endif // defined (HAVE_FORK) && defined (HAVE_EXECVE)
 }
 		
 static void
@@ -1864,7 +1869,31 @@ get_process_name_from_proc (pid_t pid)
 	/* No proc name on OSX < 10.5 nor ppc nor iOS */
 	memset (buf, '\0', sizeof(buf));
 	proc_name (pid, buf, sizeof(buf));
-	if (strlen (buf) > 0)
+
+	// Fixes proc_name triming values to 15 characters #32539
+	if (strlen (buf) >= MAXCOMLEN - 1) {
+		char path_buf [PROC_PIDPATHINFO_MAXSIZE];
+		char *name_buf;
+		int path_len;
+
+		memset (path_buf, '\0', sizeof(path_buf));
+		path_len = proc_pidpath (pid, path_buf, sizeof(path_buf));
+
+		if (path_len > 0 && path_len < sizeof(path_buf)) {
+			name_buf = path_buf + path_len;
+			for(;name_buf > path_buf; name_buf--) {
+				if (name_buf [0] == '/') {
+					name_buf++;
+					break;
+				}
+			}
+
+			if (memcmp (buf, name_buf, MAXCOMLEN - 1) == 0)
+				ret = g_strdup (name_buf);
+		}
+	}
+
+	if (ret == NULL && strlen (buf) > 0)
 		ret = g_strdup (buf);
 #else
 	if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0)
@@ -2171,6 +2200,53 @@ get_module_name (gpointer process, gpointer module,
 	return 0;
 }
 
+static guint32
+get_module_filename (gpointer process, gpointer module,
+					 gunichar2 *basename, guint32 size)
+{
+	int pid, len;
+	gsize bytes;
+	char *path;
+	gunichar2 *proc_path;
+	
+	size *= sizeof (gunichar2); /* adjust for unicode characters */
+
+	if (basename == NULL || size == 0)
+		return 0;
+
+	pid = GetProcessId (process);
+
+	path = wapi_process_get_path (pid);
+	if (path == NULL)
+		return 0;
+
+	proc_path = mono_unicode_from_external (path, &bytes);
+	g_free (path);
+
+	if (proc_path == NULL)
+		return 0;
+
+	len = (bytes / 2);
+	
+	/* Add the terminator */
+	bytes += 2;
+
+	if (size < bytes) {
+		DEBUG ("%s: Size %d smaller than needed (%ld); truncating", __func__, size, bytes);
+
+		memcpy (basename, proc_path, size);
+	} else {
+		DEBUG ("%s: Size %d larger than needed (%ld)",
+			   __func__, size, bytes);
+
+		memcpy (basename, proc_path, bytes);
+	}
+
+	g_free (proc_path);
+
+	return len;
+}
+
 guint32
 GetModuleBaseName (gpointer process, gpointer module,
 				   gunichar2 *basename, guint32 size)
@@ -2182,7 +2258,7 @@ guint32
 GetModuleFileNameEx (gpointer process, gpointer module,
 					 gunichar2 *filename, guint32 size)
 {
-	return get_module_name (process, module, filename, size, FALSE);
+	return get_module_filename (process, module, filename, size);
 }
 
 gboolean

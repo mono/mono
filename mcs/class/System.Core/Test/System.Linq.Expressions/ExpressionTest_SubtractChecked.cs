@@ -184,15 +184,6 @@ namespace MonoTests.System.Linq.Expressions
 			MustOverflow<uint>  (0, 1);
 		}
 
-#if !NET_4_0 // fixed in net_4_0
-		[Test]
-		public void TestBugCompatibility ()
-		{
-			// This one does not overflow on .NET (!!!)
-			// Sounds very odd, should file a bug with MS.
-			MustNotOverflow<short> (Int16.MinValue, 1);
-		}
-#endif
 
 		//
 		// These should not overflow

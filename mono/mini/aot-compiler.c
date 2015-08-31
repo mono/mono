@@ -42,7 +42,6 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/gc-internal.h>
-#include <mono/metadata/monitor.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/threads-types.h>
@@ -297,6 +296,9 @@ get_patch_name (int info)
 }
 
 #endif
+
+static guint32
+get_unwind_info_offset (MonoAotCompile *acfg, guint8 *encoded, guint32 encoded_len);
 
 static char*
 get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cache);
@@ -1196,6 +1198,22 @@ arch_emit_llvm_plt_entry (MonoAotCompile *acfg, const char *got_symbol, int offs
 #endif
 }
 
+/* Save unwind_info in the module and emit the offset to the information at symbol */
+static void save_unwind_info (MonoAotCompile *acfg, char *symbol, GSList *unwind_ops)
+{
+	guint32 uw_offset, encoded_len;
+	guint8 *encoded;
+
+	emit_section_change (acfg, RODATA_SECT, 0);
+	emit_global (acfg, symbol, FALSE);
+	emit_label (acfg, symbol);
+
+	encoded = mono_unwind_ops_encode (unwind_ops, &encoded_len);
+	uw_offset = get_unwind_info_offset (acfg, encoded, encoded_len);
+	g_free (encoded);
+	emit_int32 (acfg, uw_offset);
+}
+
 /*
  * arch_emit_specific_trampoline_pages:
  *
@@ -1219,6 +1237,7 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	guint8 *loop_start, *loop_branch_back, *loop_end_check, *imt_found_check;
 	int i;
 	int pagesize = MONO_AOT_TRAMP_PAGE_SIZE;
+	GSList *unwind_ops = NULL;
 #define COMMON_TRAMP_SIZE 16
 	int count = (pagesize - COMMON_TRAMP_SIZE) / 8;
 	int imm8, rot_amount;
@@ -1311,7 +1330,6 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	/* now the imt trampolines: each specific trampolines puts in the ip register
 	 * the instruction pointer address, so the generic trampoline at the start of the page
 	 * subtracts 4096 to get to the data page and loads the values
-	 * We again fit the generic trampiline in 16 bytes.
 	 */
 #define IMT_TRAMP_SIZE 72
 	sprintf (symbol, "%simt_trampolines_page", acfg->user_symbol_prefix);
@@ -1377,6 +1395,53 @@ arch_emit_specific_trampoline_pages (MonoAotCompile *acfg)
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_STATIC_RGCTX] = 16;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_IMT_THUNK] = 72;
 	acfg->tramp_page_code_offsets [MONO_AOT_TRAMP_GSHAREDVT_ARG] = 16;
+
+	/* Unwind info for specifc trampolines */
+	sprintf (symbol, "%sspecific_trampolines_page_gen_p", acfg->user_symbol_prefix);
+	/* We unwind to the original caller, from the stack, since lr is clobbered */
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 14 * sizeof (mgreg_t));
+	mono_add_unwind_op_offset (unwind_ops, 0, 0, ARMREG_LR, -4);
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	sprintf (symbol, "%sspecific_trampolines_page_sp_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, 4, 0, 14 * sizeof (mgreg_t));
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	/* Unwind info for rgctx trampolines */
+	sprintf (symbol, "%srgctx_trampolines_page_gen_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	save_unwind_info (acfg, symbol, unwind_ops);
+
+	sprintf (symbol, "%srgctx_trampolines_page_sp_p", acfg->user_symbol_prefix);
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	/* Unwind info for gsharedvt trampolines */
+	sprintf (symbol, "%sgsharedvt_trampolines_page_gen_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, 4, 0, 4 * sizeof (mgreg_t));
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	sprintf (symbol, "%sgsharedvt_trampolines_page_sp_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	/* Unwind info for imt trampolines */
+	sprintf (symbol, "%simt_trampolines_page_gen_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, 4, 0, 3 * sizeof (mgreg_t));
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
+
+	sprintf (symbol, "%simt_trampolines_page_sp_p", acfg->user_symbol_prefix);
+	mono_add_unwind_op_def_cfa (unwind_ops, 0, 0, ARMREG_SP, 0);
+	save_unwind_info (acfg, symbol, unwind_ops);
+	mono_free_unwind_info (unwind_ops);
 #elif defined(TARGET_ARM64)
 	arm64_emit_specific_trampoline_pages (acfg);
 #endif
@@ -1545,14 +1610,6 @@ arch_emit_specific_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size
 	/* Similar to the PPC code above */
 
 	/* FIXME: Could this clobber the register needed by get_vcall_slot () ? */
-
-	/* We clobber ECX, since EAX is used as MONO_ARCH_MONITOR_OBJECT_REG */
-#ifdef MONO_ARCH_MONITOR_OBJECT_REG
-	g_assert (MONO_ARCH_MONITOR_OBJECT_REG != X86_ECX);
-#ifdef MONO_ARCH_MONITOR_LOCK_TAKEN_REG
-	g_assert (MONO_ARCH_MONITOR_LOCK_TAKEN_REG != X86_ECX);
-#endif
-#endif
 
 	code = buf;
 	/* Load mscorlib got address */
@@ -3138,9 +3195,6 @@ is_plt_patch (MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
-	case MONO_PATCH_INFO_MONITOR_ENTER:
-	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
-	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_LLVM_IMT_TRAMPOLINE:
 		return TRUE;
 	default:
@@ -5372,9 +5426,6 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		encode_patch (acfg, entry->data, p, &p);
 		break;
 	}
-	case MONO_PATCH_INFO_MONITOR_ENTER:
-	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
-	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_SEQ_POINT_INFO:
 		break;
 	case MONO_PATCH_INFO_LLVM_IMT_TRAMPOLINE:
@@ -6194,7 +6245,7 @@ emit_trampoline_full (MonoAotCompile *acfg, int got_offset, MonoTrampInfo *info,
 static G_GNUC_UNUSED void
 emit_trampoline (MonoAotCompile *acfg, int got_offset, MonoTrampInfo *info)
 {
-	emit_trampoline_full (acfg, got_offset, info, FALSE);
+	emit_trampoline_full (acfg, got_offset, info, TRUE);
 }
 
 static void
@@ -6238,17 +6289,6 @@ emit_trampolines (MonoAotCompile *acfg)
 			mono_arch_create_generic_trampoline (tramp_type, &info, acfg->aot_opts.use_trampolines_page? 2: TRUE);
 			emit_trampoline (acfg, acfg->got_offset, info);
 		}
-
-#if defined(MONO_ARCH_MONITOR_OBJECT_REG)
-		mono_arch_create_monitor_enter_trampoline (&info, FALSE, TRUE);
-		emit_trampoline (acfg, acfg->got_offset, info);
-#if defined(MONO_ARCH_MONITOR_LOCK_TAKEN_REG)
-		mono_arch_create_monitor_enter_trampoline (&info, TRUE, TRUE);
-		emit_trampoline (acfg, acfg->got_offset, info);
-#endif
-		mono_arch_create_monitor_exit_trampoline (&info, TRUE);
-		emit_trampoline (acfg, acfg->got_offset, info);
-#endif
 
 		/* Emit the exception related code pieces */
 		mono_arch_get_restore_context (&info, TRUE);
@@ -7543,6 +7583,7 @@ static void
 emit_code (MonoAotCompile *acfg)
 {
 	int oindex, i, prev_index;
+	gboolean saved_unbox_info = FALSE;
 	char symbol [256];
 
 #if defined(TARGET_POWERPC64)
@@ -7610,6 +7651,23 @@ emit_code (MonoAotCompile *acfg)
 
 			if (acfg->thumb_mixed && cfg->compile_llvm)
 				emit_set_arm_mode (acfg);
+
+			if (!saved_unbox_info) {
+				char user_symbol [128];
+				GSList *unwind_ops;
+				sprintf (user_symbol, "%sunbox_trampoline_p", acfg->user_symbol_prefix);
+
+				emit_label (acfg, "ut_end");
+
+				unwind_ops = mono_unwind_get_cie_program ();
+				save_unwind_info (acfg, user_symbol, unwind_ops);
+				mono_free_unwind_info (unwind_ops);
+
+				/* Save the unbox trampoline size */
+				emit_symbol_diff (acfg, "ut_end", symbol, 0);
+
+				saved_unbox_info = TRUE;
+			}
 		}
 
 		if (cfg->compile_llvm)
@@ -9137,7 +9195,7 @@ compile_asm (MonoAotCompile *acfg)
 	tmp_outfile_name = g_strdup_printf ("%s.tmp", outfile_name);
 
 	if (acfg->llvm) {
-		llvm_ofile = g_strdup (acfg->llvm_ofile);
+		llvm_ofile = g_strdup_printf ("\"%s\"", acfg->llvm_ofile);
 	} else {
 		llvm_ofile = g_strdup ("");
 	}
@@ -9146,7 +9204,7 @@ compile_asm (MonoAotCompile *acfg)
 	g_strdelimit (ld_flags, ";", ' ');
 
 #ifdef LD_NAME
-	command = g_strdup_printf ("%s -o %s %s %s.o %s", LD_NAME, tmp_outfile_name, llvm_ofile, acfg->tmpfname, ld_flags);
+	command = g_strdup_printf ("%s -o \"%s\" %s \"%s.o\" %s", LD_NAME, tmp_outfile_name, llvm_ofile, acfg->tmpfname, ld_flags);
 #else
 	command = g_strdup_printf ("\"%sld\" %s -shared -o %s %s %s.o %s", tool_prefix, LD_OPTIONS, tmp_outfile_name, llvm_ofile,
 		acfg->tmpfname, ld_flags);
@@ -9187,7 +9245,7 @@ compile_asm (MonoAotCompile *acfg)
 	rename (tmp_outfile_name, outfile_name);
 
 #if defined(TARGET_MACH)
-	command = g_strdup_printf ("dsymutil %s", outfile_name);
+	command = g_strdup_printf ("dsymutil \"%s\"", outfile_name);
 	aot_printf (acfg, "Executing dsymutil: %s\n", command);
 	if (execute_system (command) != 0) {
 		return 1;

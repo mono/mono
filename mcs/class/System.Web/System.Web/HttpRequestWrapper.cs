@@ -206,7 +206,7 @@ namespace System.Web
 		}
 		public override RequestContext RequestContext {
 			get { return w.RequestContext; }
-			internal set { w.RequestContext = value; }	
+			set { w.RequestContext = value; }	
 		}
 		public override NameValueCollection ServerVariables {
 			get { return w.ServerVariables; }

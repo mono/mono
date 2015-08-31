@@ -248,7 +248,6 @@ namespace MonoTests.System.Web.Routing
 
 		public string RewrittenPath { get; set; }
 	}
-#if NET_4_0
 	class FakeHttpRequestWrapper : HttpRequestWrapper
 	{
 		string requestUrl;
@@ -320,7 +319,6 @@ namespace MonoTests.System.Web.Routing
 			wrapper = new FakeHttpRequestWrapper (requestUrl, path, appPath);
 		}
 	}
-#endif
 	public class MyStopRoutingHandler : StopRoutingHandler
 	{
 		public IHttpHandler CallGetHttpHandler (RequestContext rc)

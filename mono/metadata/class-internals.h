@@ -82,8 +82,6 @@ struct _MonoMethod {
 	unsigned int is_inflated:1; /* whether we're a MonoMethodInflated */
 	unsigned int skip_visibility:1; /* whenever to skip JIT visibility checks */
 	unsigned int verification_success:1; /* whether this method has been verified successfully.*/
-	/* TODO we MUST get rid of this field, it's an ugly hack nobody is proud of. */
-	unsigned int is_mb_open : 1;		/* This is the fully open instantiation of a generic method_builder. Worse than is_tb_open, but it's temporary */
 	signed int slot : 16;
 
 	/*
@@ -522,6 +520,7 @@ struct _MonoMethodInflated {
 	MonoMethodHeader *header;
 	MonoMethod *declaring;		/* the generic method definition. */
 	MonoGenericContext context;	/* The current instantiation */
+	MonoImageSet *owner; /* The image set that the inflated method belongs to. */
 };
 
 /*
@@ -1022,8 +1021,8 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 MonoMethod *
 mono_class_inflate_generic_method_checked (MonoMethod *method, MonoGenericContext *context, MonoError *error);
 
-MonoMethodInflated*
-mono_method_inflated_lookup (MonoMethodInflated* method, gboolean cache);
+MonoImageSet *
+mono_metadata_get_image_set_for_method (MonoMethodInflated *method);
 
 MONO_API MonoMethodSignature *
 mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericContext *context);

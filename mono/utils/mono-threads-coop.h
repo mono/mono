@@ -17,7 +17,7 @@
 /* Runtime consumable API */
 
 #define MONO_SUSPEND_CHECK() do {	\
-	if (G_UNLIKELY (mono_threads_polling_required)) mono_threads_state_poll ();	\
+	if (G_UNLIKELY (mono_polling_required)) mono_threads_state_poll ();	\
 } while (0);
 
 #define MONO_PREPARE_BLOCKING	\
@@ -46,8 +46,6 @@
 
 /* Internal API */
 
-extern volatile size_t mono_threads_polling_required;
-
 void mono_threads_state_poll (void);
 void* mono_threads_prepare_blocking (void);
 void mono_threads_finish_blocking (void* cookie);
@@ -59,11 +57,11 @@ void* mono_threads_try_prepare_blocking (void);
 void mono_threads_finish_try_blocking (void* cookie);
 
 /* JIT specific interface */
-extern volatile size_t mono_polling_required ;
+extern volatile size_t mono_polling_required;
 
 #else
 
-#define MONO_SUSPEND_CHECK do {	} while (0);
+#define MONO_SUSPEND_CHECK() do {	} while (0);
 #define MONO_PREPARE_BLOCKING {
 #define MONO_FINISH_BLOCKING }
 #define MONO_PREPARE_RESET_BLOCKING {

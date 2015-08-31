@@ -121,11 +121,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void InitializeCell () 
 		{
-#if NET_4_0
 			string origHtml = "<table><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#else
-			string origHtml = "<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;
@@ -170,11 +166,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void ThisIsADGTest () 
 		{
-#if NET_4_0
 			string origHtml = "<table id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#else
-			string origHtml = "<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;
@@ -228,11 +220,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void InitializeEditCell () 
 		{
-#if NET_4_0
 			string origHtml = "<table><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td><td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td><td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td><td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#else
-			string origHtml = "<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td><td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td><td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td><td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
-#endif
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
 			EditCommandColumn	e;

@@ -107,7 +107,6 @@ namespace MonoTests.System.Web.Util {
 			section.Validation = MachineKeyValidation.SHA1;
 			Encrypt_RoundTrip (section);
 		}
-#if NET_4_0
 		[Test]
 		public void Encrypt_RoundTrip_HMACSHA256 ()
 		{
@@ -139,7 +138,6 @@ namespace MonoTests.System.Web.Util {
 			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
 			EncryptSign_RoundTrip (section);
 		}
-#endif
 		public void EncryptSign_RoundTrip (MachineKeySection section)
 		{
 			byte [] data = new byte [14];
@@ -196,7 +194,6 @@ namespace MonoTests.System.Web.Util {
 			section.Validation = MachineKeyValidation.SHA1;
 			EncryptSign_RoundTrip (section);
 		}
-#if NET_4_0
 		[Test]
 		public void EncryptSign_RoundTrip_HMACSHA256 ()
 		{
@@ -228,7 +225,6 @@ namespace MonoTests.System.Web.Util {
 			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
 			EncryptSign_RoundTrip (section);
 		}
-#endif
 		public void Validation_RoundTrip (MachineKeySection section)
 		{
 			byte [] data = new byte [] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 };
@@ -282,7 +278,6 @@ namespace MonoTests.System.Web.Util {
 			Validation_RoundTrip (section);
 		}
 
-#if NET_4_0
 		[Test]
 		public void Validation_RoundTrip_HMACSHA256 ()
 		{
@@ -314,7 +309,6 @@ namespace MonoTests.System.Web.Util {
 			section.ValidationAlgorithm = "alg:HMACRIPEMD160";
 			Validation_RoundTrip (section);
 		}
-#endif
 		[Test]
 		public void GetHexString ()
 		{

@@ -16,9 +16,6 @@
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/mempool-internals.h>
 
-
-extern mono_mutex_t mono_delegate_section;
-
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
  * unloaded, and assemblies loaded by the appdomain are not unloaded either. This
@@ -402,6 +399,9 @@ struct _MonoDomain {
 	/* Cache function pointers for architectures  */
 	/* that require wrappers */
 	GHashTable *ftnptrs_hash;
+
+	/* Maps MonoMethod* to weak links to DynamicMethod objects */
+	GHashTable *method_to_dyn_method;
 
 	guint32 execution_context_field_offset;
 };

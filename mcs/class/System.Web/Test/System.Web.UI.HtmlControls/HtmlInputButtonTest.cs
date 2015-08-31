@@ -157,13 +157,8 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		[Test]
 		public void OnClickAttributeWithSpecials ()
 		{
-#if NET_4_0
 			string origHtml = "alert(&#39;&lt;&amp;&#39;);";
 			string origHtml2 = "alert('<&');";
-#else
-			string origHtml = "alert('&lt;&amp;');";
-			string origHtml2 = "alert('<&');";
-#endif
 
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);

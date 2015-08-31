@@ -673,7 +673,6 @@ namespace MonoTests.System
 			Assert.AreEqual (TestingEnum3.Test, Enum.Parse (t1.GetType (), "18446744073709551615", false));
 		}
 
-#if NET_4_0
 		[Test]
 		public void TryParseErrors ()
 		{
@@ -736,7 +735,6 @@ namespace MonoTests.System
 			Assert.AreEqual (true, success, "#E1");
 			Assert.AreEqual (TestingEnum.Is, result, "#E2");
 		}
-#endif
 
 		[Test]
 		public void ToObject_EnumType_Int32 ()
@@ -1139,7 +1137,6 @@ namespace MonoTests.System
 			negative = -1
 		}
 
-#if NET_4_0
 		// Our first implementation used to crash
 		[Test]
 		public void HasFlagTest ()
@@ -1147,7 +1144,6 @@ namespace MonoTests.System
 			Foo f = Foo.negative;
 			bool has = f.HasFlag (Foo.negative);
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

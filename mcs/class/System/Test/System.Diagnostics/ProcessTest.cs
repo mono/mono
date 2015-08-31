@@ -732,8 +732,6 @@ namespace MonoTests.System.Diagnostics
 
 		public int bytesRead = -1;
 
-// Not technically a 2.0 only test, but I use lambdas, so I need gmcs
-
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		// This was for bug #459450
@@ -791,9 +789,11 @@ namespace MonoTests.System.Diagnostics
 			p.StartInfo.RedirectStandardError = true;
 
 			var exitedCalledCounter = 0;
+			var exited = new ManualResetEventSlim ();
 			p.Exited += (object sender, EventArgs e) => {
 				exitedCalledCounter++;
 				Assert.IsTrue (p.HasExited);
+				exited.Set ();
 			};
 
 			p.EnableRaisingEvents = true;
@@ -803,6 +803,7 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
+			exited.Wait (10000);
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
@@ -822,9 +823,11 @@ namespace MonoTests.System.Diagnostics
 			p.EnableRaisingEvents = true;
 
 			var exitedCalledCounter = 0;
+			var exited = new ManualResetEventSlim ();
 			p.Exited += (object sender, EventArgs e) => {
 				exitedCalledCounter++;
 				Assert.IsTrue (p.HasExited);
+				exited.Set ();
 			};
 
 			p.Start ();
@@ -832,6 +835,7 @@ namespace MonoTests.System.Diagnostics
 			p.BeginOutputReadLine ();
 			p.WaitForExit ();
 
+			exited.Wait (10000);
 			Assert.AreEqual (1, exitedCalledCounter);
 			Thread.Sleep (50);
 			Assert.AreEqual (1, exitedCalledCounter);
@@ -932,6 +936,21 @@ namespace MonoTests.System.Diagnostics
 			p.StandardInput.BaseStream.Dispose ();
 			p.StandardOutput.BaseStream.Dispose ();
 			p.Dispose ();
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
+		public void StandardInputWrite ()
+		{
+			var psi = GetCrossPlatformStartInfo ();
+			psi.RedirectStandardInput = true;
+			psi.RedirectStandardOutput = true;
+			psi.UseShellExecute = false;
+
+			using (var p = Process.Start (psi)) {
+				for (int i = 0; i < 1024 * 9; ++i)
+					p.StandardInput.Write ('x');
+			}
 		}
 
 		[Test]

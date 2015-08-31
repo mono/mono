@@ -114,6 +114,15 @@ namespace MonoTests.System.Reflection
 			} catch (InvalidOperationException) {}			
 		}
 
+		[Test]
+		public void EventInfoModule ()
+		{
+			Type type = typeof (TestClass);
+			EventInfo ev = type.GetEvent ("pub");
+
+			Assert.AreEqual (type.Module, ev.Module);
+		}
+
 #pragma warning disable 67
 		public class PrivateEvent
 		{

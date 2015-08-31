@@ -71,7 +71,7 @@ inner_start_thread (void *arg)
 	start_info->handle = handle;
 
 	info = mono_thread_info_attach (&result);
-	MONO_PREPARE_BLOCKING
+	MONO_PREPARE_BLOCKING;
 
 	info->runtime_thread = TRUE;
 	info->handle = handle;
@@ -92,7 +92,7 @@ inner_start_thread (void *arg)
 		MONO_SEM_DESTROY (&info->create_suspended_sem);
 	}
 
-	MONO_FINISH_BLOCKING
+	MONO_FINISH_BLOCKING;
 	/* Run the actual main function of the thread */
 	result = start_func (t_arg);
 
@@ -145,10 +145,13 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 		return NULL;
 	}
 
+	MONO_TRY_BLOCKING;
 	/* Wait until the thread register itself in various places */
 	while (MONO_SEM_WAIT (&(start_info.registered)) != 0) {
 		/*if (EINTR != errno) ABORT("sem_wait failed"); */
 	}
+	MONO_FINISH_TRY_BLOCKING;
+
 	MONO_SEM_DESTROY (&(start_info.registered));
 
 	if (out_tid)
@@ -234,30 +237,6 @@ mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
 	wapi_ref_thread_handle (handle);
 
 	return handle;
-}
-
-gpointer
-mono_threads_core_prepare_interrupt (HANDLE thread_handle)
-{
-	return wapi_prepare_interrupt_thread (thread_handle);
-}
-
-void
-mono_threads_core_finish_interrupt (gpointer wait_handle)
-{
-	wapi_finish_interrupt_thread (wait_handle);
-}
-
-void
-mono_threads_core_self_interrupt (void)
-{
-	wapi_self_interrupt ();
-}
-
-void
-mono_threads_core_clear_interruption (void)
-{
-	wapi_clear_interruption ();
 }
 
 int

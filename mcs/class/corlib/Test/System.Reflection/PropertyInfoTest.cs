@@ -48,6 +48,7 @@ namespace MonoTests.System.Reflection
 		{
 			Type type = typeof (TestClass);
 			PropertyInfo property = type.GetProperty ("ReadOnlyProperty");
+			Assert.IsNotNull (property.Module, "#0");
 
 			MethodInfo [] methods = property.GetAccessors (true);
 			Assert.AreEqual (1, methods.Length, "#A1");
@@ -497,8 +498,20 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (ClassWithNullableDateTime), siblingProperty.DeclaringType, "#3");
 			Assert.AreEqual (typeof (InheritsFromClassWithNullableDateTime), siblingProperty.ReflectedType, "#4");
 		}
-		
-	
+
+		class Super { public long A { get; private set; } }
+
+		class Sub : Super { }
+
+		[Test]
+		public void PrivateSetterFromDerivedType ()
+		{
+			var prop = typeof (Sub).GetProperty ("A");
+			Assert.AreEqual (1, prop.GetAccessors (true).Length, "#1");
+			Assert.IsFalse (prop.CanWrite, "#2");
+			Assert.IsNull (prop.GetSetMethod (true), "#3");
+		}
+
 		public class ClassWithNullableDateTime
 		{
 			public DateTime? Property1 { get; set; }

@@ -43,6 +43,7 @@ using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Diagnostics {
 
@@ -977,15 +978,58 @@ namespace System.Diagnostics {
 			return(ret);
 		}
 
-		private static bool Start_noshell (ProcessStartInfo startInfo,
-						   Process process)
+		//
+		// Creates a pipe with read and write descriptors
+		//
+		static void CreatePipe (out IntPtr read, out IntPtr write, bool writeDirection)
 		{
-			ProcInfo proc_info=new ProcInfo();
-			IntPtr stdin_rd = IntPtr.Zero, stdin_wr = IntPtr.Zero;
-			IntPtr stdout_wr;
-			IntPtr stderr_wr;
-			bool ret;
-			MonoIOError error;
+			//
+			// Creates read/write pipe from parent -> child perspective
+			// a child process uses same descriptors after fork. That's
+			// 4 descriptors in total where only 2. One in child, one in parent
+			// should be active and the other 2 closed. Which ones depends on
+			// comunication direction
+			//
+			// parent  -------->  child   (parent can write, child can read)
+			//
+			// read: closed       read: used
+			// write: used        write: closed
+			//
+			//
+			// parent  <--------  child   (parent can read, child can write)
+			//
+			// read: used         read: closed
+			// write: closed      write: used
+			//
+			// It can still be tricky for predefined descriptiors http://unixwiz.net/techtips/remap-pipe-fds.html
+			//
+			var ret = MonoIO.CreatePipe (out read, out write);
+			if (!ret)
+				throw new IOException ("Error creating process pipe");
+
+			if (IsWindows) {
+				const int DUPLICATE_SAME_ACCESS = 0x00000002;
+				var tmp = writeDirection ? write : read;
+
+				ret = MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, tmp,
+					Process.GetCurrentProcess ().Handle, out tmp, 0, 0, DUPLICATE_SAME_ACCESS);
+				if (!ret)
+					return;
+
+				MonoIOError error;
+				if (writeDirection) {
+					MonoIO.Close (write, out error);
+					write = tmp;
+				} else {
+					MonoIO.Close (read, out error);
+					read = tmp;
+				}
+			}
+		}
+
+		static bool Start_noshell (ProcessStartInfo startInfo, Process process)
+		{
+			var proc_info = new ProcInfo ();
 
 			if (startInfo.HaveEnvVars) {
 				string [] strs = new string [startInfo.EnvironmentVariables.Count];
@@ -997,164 +1041,118 @@ namespace System.Diagnostics {
 				proc_info.envValues = strs;
 			}
 
-			if (startInfo.RedirectStandardInput == true) {
-				if (IsWindows) {
-					int DUPLICATE_SAME_ACCESS = 0x00000002;
-					IntPtr stdin_wr_tmp;
+			MonoIOError error;
+			IntPtr stdin_read = IntPtr.Zero, stdin_write = IntPtr.Zero;
+			IntPtr stdout_read = IntPtr.Zero, stdout_write = IntPtr.Zero;
+			IntPtr stderr_read = IntPtr.Zero, stderr_write = IntPtr.Zero;
 
-					ret = MonoIO.CreatePipe (out stdin_rd,
-									 out stdin_wr_tmp);
-					if (ret) {
-						ret = MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, stdin_wr_tmp,
-						Process.GetCurrentProcess ().Handle, out stdin_wr, 0, 0, DUPLICATE_SAME_ACCESS);
-						MonoIO.Close (stdin_wr_tmp, out error);
-					}
-				}
-				else
-				{
-					ret = MonoIO.CreatePipe (out stdin_rd,
-									 out stdin_wr);
-				}
-				if (ret == false) {
-					throw new IOException ("Error creating standard input pipe");
-				}
-			} else {
-				stdin_rd = MonoIO.ConsoleInput;
-				/* This is required to stop the
-				 * &$*£ing stupid compiler moaning
-				 * that stdin_wr is unassigned, below.
-				 */
-				stdin_wr = (IntPtr)0;
-			}
-
-			if (startInfo.RedirectStandardOutput == true) {
-				IntPtr out_rd = IntPtr.Zero;
-				if (IsWindows) {
-					IntPtr out_rd_tmp;
-					int DUPLICATE_SAME_ACCESS = 0x00000002;
-
-					ret = MonoIO.CreatePipe (out out_rd_tmp,
-									 out stdout_wr);
-					if (ret) {
-						MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, out_rd_tmp,
-						Process.GetCurrentProcess ().Handle, out out_rd, 0, 0, DUPLICATE_SAME_ACCESS);
-						MonoIO.Close (out_rd_tmp, out error);
-					}
-				}
-				else {
-					ret = MonoIO.CreatePipe (out out_rd,
-									 out stdout_wr);
-				}
-
-				process.stdout_rd = out_rd;
-				if (ret == false) {
-					if (startInfo.RedirectStandardInput == true) {
-						MonoIO.Close (stdin_rd, out error);
-						MonoIO.Close (stdin_wr, out error);
-					}
-
-					throw new IOException ("Error creating standard output pipe");
-				}
-			} else {
-				process.stdout_rd = (IntPtr)0;
-				stdout_wr = MonoIO.ConsoleOutput;
-			}
-
-			if (startInfo.RedirectStandardError == true) {
-				IntPtr err_rd = IntPtr.Zero;
-				if (IsWindows) {
-					IntPtr err_rd_tmp;
-					int DUPLICATE_SAME_ACCESS = 0x00000002;
-
-					ret = MonoIO.CreatePipe (out err_rd_tmp,
-									 out stderr_wr);
-					if (ret) {
-						MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, err_rd_tmp,
-						Process.GetCurrentProcess ().Handle, out err_rd, 0, 0, DUPLICATE_SAME_ACCESS);
-						MonoIO.Close (err_rd_tmp, out error);
-					}
-				}
-				else {
-					ret = MonoIO.CreatePipe (out err_rd,
-									 out stderr_wr);
-				}
-
-				process.stderr_rd = err_rd;
-				if (ret == false) {
-					if (startInfo.RedirectStandardInput == true) {
-						MonoIO.Close (stdin_rd, out error);
-						MonoIO.Close (stdin_wr, out error);
-					}
-					if (startInfo.RedirectStandardOutput == true) {
-						MonoIO.Close (process.stdout_rd, out error);
-						MonoIO.Close (stdout_wr, out error);
-					}
-					
-					throw new IOException ("Error creating standard error pipe");
-				}
-			} else {
-				process.stderr_rd = (IntPtr)0;
-				stderr_wr = MonoIO.ConsoleError;
-			}
-
-			FillUserInfo (startInfo, ref proc_info);
 			try {
-				ret = CreateProcess_internal (startInfo,
-							      stdin_rd, stdout_wr, stderr_wr,
-							      ref proc_info);
-			} finally {
-				if (proc_info.Password != IntPtr.Zero)
-					Marshal.ZeroFreeBSTR (proc_info.Password);
-				proc_info.Password = IntPtr.Zero;
-			}
-			if (!ret) {
-				if (startInfo.RedirectStandardInput == true) {
-					MonoIO.Close (stdin_rd, out error);
-					MonoIO.Close (stdin_wr, out error);
+				if (startInfo.RedirectStandardInput) {
+					CreatePipe (out stdin_read, out stdin_write, true);
+				} else {
+					stdin_read = MonoIO.ConsoleInput;
+					stdin_write = IntPtr.Zero;
 				}
 
-				if (startInfo.RedirectStandardOutput == true) {
-					MonoIO.Close (process.stdout_rd, out error);
-					MonoIO.Close (stdout_wr, out error);
+				if (startInfo.RedirectStandardOutput) {
+					CreatePipe (out stdout_read, out stdout_write, false);
+					process.stdout_rd = stdout_read;
+				} else {
+					process.stdout_rd = IntPtr.Zero;
+					stdout_write = MonoIO.ConsoleOutput;
 				}
 
-				if (startInfo.RedirectStandardError == true) {
-					MonoIO.Close (process.stderr_rd, out error);
-					MonoIO.Close (stderr_wr, out error);
+				if (startInfo.RedirectStandardError) {
+					CreatePipe (out stderr_read, out stderr_write, false);
+					process.stderr_rd  = stderr_read;
+				} else {
+					process.stderr_rd = IntPtr.Zero;
+					stderr_write = MonoIO.ConsoleError;
 				}
 
-				throw new Win32Exception (-proc_info.pid,
+				FillUserInfo (startInfo, ref proc_info);
+
+				//
+				// FIXME: For redirected pipes we need to send descriptors of
+				// stdin_write, stdout_read, stderr_read to child process and
+				// close them there (fork makes exact copy of parent's descriptors)
+				//
+				if (!CreateProcess_internal (startInfo, stdin_read, stdout_write, stderr_write, ref proc_info)) {
+					throw new Win32Exception (-proc_info.pid, 
 					"ApplicationName='" + startInfo.FileName +
 					"', CommandLine='" + startInfo.Arguments +
 					"', CurrentDirectory='" + startInfo.WorkingDirectory +
 					"', Native error= " + Win32Exception.W32ErrorMessage (-proc_info.pid));
+				}
+			} catch {
+				if (startInfo.RedirectStandardInput) {
+					if (stdin_read != IntPtr.Zero)
+						MonoIO.Close (stdin_read, out error);
+					if (stdin_write != IntPtr.Zero)
+						MonoIO.Close (stdin_write, out error);
+				}
+
+				if (startInfo.RedirectStandardOutput) {
+					if (stdout_read != IntPtr.Zero)
+						MonoIO.Close (stdout_read, out error);
+					if (stdout_write != IntPtr.Zero)
+						MonoIO.Close (stdout_write, out error);
+				}
+
+				if (startInfo.RedirectStandardError) {
+					if (stderr_read != IntPtr.Zero)
+						MonoIO.Close (stderr_read, out error);
+					if (stderr_write != IntPtr.Zero)
+						MonoIO.Close (stderr_write, out error);
+				}
+
+				throw;
+			} finally {
+				if (proc_info.Password != IntPtr.Zero) {
+					Marshal.ZeroFreeBSTR (proc_info.Password);
+					proc_info.Password = IntPtr.Zero;
+				}
 			}
 
 			process.process_handle = proc_info.process_handle;
 			process.pid = proc_info.pid;
 			
-			if (startInfo.RedirectStandardInput == true) {
-				MonoIO.Close (stdin_rd, out error);
-				process.input_stream = new StreamWriter (new MonoSyncFileStream (stdin_wr, FileAccess.Write, true, 8192), Console.Out.Encoding);
-				process.input_stream.AutoFlush = true;
+			if (startInfo.RedirectStandardInput) {
+				//
+				// FIXME: The descriptor needs to be closed but due to wapi io-layer
+				// not coping with duplicated descriptors any StandardInput write fails
+				//
+				// MonoIO.Close (stdin_read, out error);
+
+#if MOBILE
+				var stdinEncoding = Encoding.Default;
+#else
+				var stdinEncoding = Console.InputEncoding;
+#endif
+				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, false), FileAccess.Write, 8192, false), stdinEncoding) {
+					AutoFlush = true
+				};
 			}
 
-			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
-			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
+			if (startInfo.RedirectStandardOutput) {
+				MonoIO.Close (stdout_write, out error);
 
-			if (startInfo.RedirectStandardOutput == true) {
-				MonoIO.Close (stdout_wr, out error);
-				process.output_stream = new StreamReader (new MonoSyncFileStream (process.stdout_rd, FileAccess.Read, true, 8192), stdoutEncoding, true, 8192);
+				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
+
+				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (stdout_read, false), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
 			}
 
-			if (startInfo.RedirectStandardError == true) {
-				MonoIO.Close (stderr_wr, out error);
-				process.error_stream = new StreamReader (new MonoSyncFileStream (process.stderr_rd, FileAccess.Read, true, 8192), stderrEncoding, true, 8192);
+			if (startInfo.RedirectStandardError) {
+				MonoIO.Close (stderr_write, out error);
+
+				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
+
+				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, false), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
 			}
 
 			process.StartExitCallbackIfNeeded ();
 
-			return(ret);
+			return true;
 		}
 
 		// Note that ProcInfo.Password must be freed.

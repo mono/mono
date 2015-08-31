@@ -1,4 +1,3 @@
-#if NET_4_0
 // ConcurrentQueueTest.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -270,4 +269,3 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 	}
 }
-#endif

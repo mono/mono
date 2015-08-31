@@ -2528,9 +2528,7 @@ namespace MonoTests.System
 			DateTime expected2 = new DateTime (2011, 03, 22, 08, 32, 00, DateTimeKind.Utc);
 
 			string [] cultures = new string [] {"es-ES", "en-US", "en-GB", "de-DE", "fr-FR"
-#if NET_4_0
 				,"es", "en", "de", "fr"
-#endif
 				};
 			
 			foreach (string culture in cultures) {

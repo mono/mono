@@ -82,8 +82,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public abstract void PrepareEmit ();
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -1451,6 +1449,8 @@ namespace Mono.CSharp
 
 		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
+
 			add.PrepareEmit ();
 			remove.PrepareEmit ();
 
@@ -1760,9 +1760,8 @@ namespace Mono.CSharp
 
 		public override void PrepareEmit ()
 		{
-			parameters.ResolveDefaultValues (this);
-
 			base.PrepareEmit ();
+			parameters.ResolveDefaultValues (this);
 		}
 
 		protected override bool VerifyClsCompliance ()

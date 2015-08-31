@@ -23,7 +23,6 @@
 //
 
 
-#if NET_4_0
 
 using NUnit.Framework;
 
@@ -97,4 +96,3 @@ namespace MonoTests.System.Threading {
 	}
 }
 
-#endif

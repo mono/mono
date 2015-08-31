@@ -101,6 +101,43 @@ struct _MonoAssembly {
 };
 
 typedef struct {
+	/*
+	 * indexed by MonoMethodSignature 
+	 * Protected by the marshal lock
+	 */
+	GHashTable *delegate_invoke_cache;
+	GHashTable *delegate_begin_invoke_cache;
+	GHashTable *delegate_end_invoke_cache;
+	GHashTable *runtime_invoke_cache;
+	GHashTable *runtime_invoke_vtype_cache;
+
+	/*
+	 * indexed by SignaturePointerPair
+	 */
+	GHashTable *delegate_abstract_invoke_cache;
+
+	/*
+	 * indexed by MonoMethod pointers
+	 * Protected by the marshal lock
+	 */
+	GHashTable *runtime_invoke_direct_cache;
+	GHashTable *managed_wrapper_cache;
+
+	GHashTable *native_wrapper_cache;
+	GHashTable *native_wrapper_aot_cache;
+	GHashTable *native_wrapper_check_cache;
+	GHashTable *native_wrapper_aot_check_cache;
+
+	GHashTable *native_func_wrapper_aot_cache;
+	GHashTable *remoting_invoke_cache;
+	GHashTable *synchronized_cache;
+	GHashTable *unbox_wrapper_cache;
+	GHashTable *cominterop_invoke_cache;
+	GHashTable *cominterop_wrapper_cache; /* LOCKING: marshal lock */
+	GHashTable *thunk_invoke_cache;
+} MonoWrapperCaches;
+
+typedef struct {
 	const char* data;
 	guint32  size;
 } MonoStreamHeader;
@@ -256,40 +293,16 @@ struct _MonoImage {
 	mono_mutex_t szarray_cache_lock;
 
 	/*
-	 * indexed by MonoMethodSignature 
-	 */
-	GHashTable *delegate_begin_invoke_cache;
-	GHashTable *delegate_end_invoke_cache;
-	GHashTable *delegate_invoke_cache;
-	GHashTable *runtime_invoke_cache;
-	GHashTable *runtime_invoke_vtype_cache;
-
-	/*
 	 * indexed by SignaturePointerPair
 	 */
-	GHashTable *delegate_abstract_invoke_cache;
 	GHashTable *delegate_bound_static_invoke_cache;
 	GHashTable *native_func_wrapper_cache;
 
 	/*
 	 * indexed by MonoMethod pointers 
 	 */
-	GHashTable *runtime_invoke_direct_cache;
 	GHashTable *runtime_invoke_vcall_cache;
-	GHashTable *managed_wrapper_cache;
-	GHashTable *native_wrapper_cache;
-	GHashTable *native_wrapper_aot_cache;
-	GHashTable *native_wrapper_check_cache;
-	GHashTable *native_wrapper_aot_check_cache;
-	GHashTable *native_func_wrapper_aot_cache;
-	GHashTable *remoting_invoke_cache;
-	GHashTable *synchronized_cache;
-	GHashTable *unbox_wrapper_cache;
-	GHashTable *cominterop_invoke_cache;
-	GHashTable *cominterop_wrapper_cache; /* LOCKING: marshal lock */
-	GHashTable *thunk_invoke_cache;
 	GHashTable *wrapper_param_names;
-	GHashTable *synchronized_generic_cache;
 	GHashTable *array_accessor_cache;
 
 	/*
@@ -302,9 +315,6 @@ struct _MonoImage {
 	GHashTable *castclass_cache;
 	GHashTable *proxy_isinst_cache;
 	GHashTable *rgctx_template_hash; /* LOCKING: templates lock */
-	GHashTable *delegate_invoke_generic_cache;
-	GHashTable *delegate_begin_invoke_generic_cache;
-	GHashTable *delegate_end_invoke_generic_cache;
 
 	/* Contains rarely used fields of runtime structures belonging to this image */
 	MonoPropertyHash *property_hash;
@@ -328,9 +338,13 @@ struct _MonoImage {
 	   malloc'ed regions to be freed. */
 	GSList *reflection_info_unregister_classes;
 
-	/* List of image sets containing this image */
+	/* List of dependent image sets containing this image */
 	/* Protected by image_sets_lock */
 	GSList *image_sets;
+
+	/* Caches for wrappers that DO NOT reference generic */
+	/* arguments */
+	MonoWrapperCaches wrapper_caches;
 
 	/* Caches for MonoClass-es representing anon generic params */
 	MonoClass **var_cache_fast;
@@ -369,7 +383,10 @@ typedef struct {
 	int nimages;
 	MonoImage **images;
 
+	// Generic-specific caches
 	GHashTable *gclass_cache, *ginst_cache, *gmethod_cache, *gsignature_cache;
+
+	MonoWrapperCaches wrapper_caches;
 
 	mono_mutex_t    lock;
 
@@ -629,6 +646,12 @@ mono_image_set_alloc  (MonoImageSet *set, guint size);
 gpointer
 mono_image_set_alloc0 (MonoImageSet *set, guint size);
 
+void
+mono_image_set_lock (MonoImageSet *set);
+
+void
+mono_image_set_unlock (MonoImageSet *set);
+
 char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
@@ -753,6 +776,7 @@ void mono_unload_interface_ids (MonoBitSet *bitset);
 MonoType *mono_metadata_type_dup (MonoImage *image, const MonoType *original);
 MonoMethodSignature  *mono_metadata_signature_dup_full (MonoImage *image,MonoMethodSignature *sig);
 MonoMethodSignature  *mono_metadata_signature_dup_mempool (MonoMemPool *mp, MonoMethodSignature *sig);
+MonoMethodSignature  *mono_metadata_signature_dup_add_this (MonoImage *image, MonoMethodSignature *sig, MonoClass *klass);
 
 MonoGenericInst *
 mono_get_shared_generic_inst (MonoGenericContainer *container);
@@ -826,6 +850,15 @@ mono_get_method_checked (MonoImage *image, guint32 token, MonoClass *klass, Mono
 
 guint32
 mono_metadata_localscope_from_methoddef (MonoImage *meta, guint32 index);
+
+void
+mono_wrapper_caches_free (MonoWrapperCaches *cache);
+
+MonoWrapperCaches*
+mono_method_get_wrapper_cache (MonoMethod *method);
+
+MonoWrapperCaches*
+mono_method_get_wrapper_cache (MonoMethod *method);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

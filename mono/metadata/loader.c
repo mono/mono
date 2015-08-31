@@ -600,8 +600,11 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 		}
 	}
 
-	if (field && field->parent && !field->parent->generic_class && !field->parent->generic_container)
+	if (field && field->parent && !field->parent->generic_class && !field->parent->generic_container) {
+		mono_image_lock (image);
 		mono_conc_hashtable_insert (image->field_cache, GUINT_TO_POINTER (token), field);
+		mono_image_unlock (image);
+	}
 
 	mono_loader_assert_no_error ();
 	return field;
@@ -2376,10 +2379,11 @@ stack_walk_adapter (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data)
 	switch (frame->type) {
 	case FRAME_TYPE_DEBUGGER_INVOKE:
 	case FRAME_TYPE_MANAGED_TO_NATIVE:
+	case FRAME_TYPE_TRAMPOLINE:
 		return FALSE;
 	case FRAME_TYPE_MANAGED:
 		g_assert (frame->ji);
-		return d->func (mono_jit_info_get_method (frame->ji), frame->native_offset, frame->il_offset, frame->managed, d->user_data);
+		return d->func (frame->actual_method, frame->native_offset, frame->il_offset, frame->managed, d->user_data);
 		break;
 	default:
 		g_assert_not_reached ();
@@ -2415,14 +2419,16 @@ async_stack_walk_adapter (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer 
 	switch (frame->type) {
 	case FRAME_TYPE_DEBUGGER_INVOKE:
 	case FRAME_TYPE_MANAGED_TO_NATIVE:
+	case FRAME_TYPE_TRAMPOLINE:
 		return FALSE;
 	case FRAME_TYPE_MANAGED:
 		if (!frame->ji)
 			return FALSE;
-		if (frame->ji->async)
+		if (frame->ji->async) {
 			return d->func (NULL, frame->domain, frame->ji->code_start, frame->native_offset, d->user_data);
-		else
+		} else {
 			return d->func (frame->actual_method, frame->domain, frame->ji->code_start, frame->native_offset, d->user_data);
+		}
 		break;
 	default:
 		g_assert_not_reached ();
@@ -2474,9 +2480,9 @@ static gboolean loader_lock_track_ownership = FALSE;
 void
 mono_loader_lock (void)
 {
-	MONO_TRY_BLOCKING
+	MONO_TRY_BLOCKING;
 	mono_locks_acquire (&loader_mutex, LoaderLock);
-	MONO_FINISH_TRY_BLOCKING
+	MONO_FINISH_TRY_BLOCKING;
 		
 	if (G_UNLIKELY (loader_lock_track_ownership)) {
 		mono_native_tls_set_value (loader_lock_nest_id, GUINT_TO_POINTER (GPOINTER_TO_UINT (mono_native_tls_get_value (loader_lock_nest_id)) + 1));

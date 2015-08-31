@@ -338,13 +338,15 @@ mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len)
 }
 
 /*
- * mono_unwind_ops_encode:
+ * mono_unwind_ops_encode_full:
  *
  *   Encode the unwind ops in UNWIND_OPS into the compact DWARF encoding.
  * Return a pointer to malloc'ed memory.
+ * If ENABLE_EXTENSIONS is FALSE, avoid encoding the mono extension
+ * opcode (DW_CFA_mono_advance_loc).
  */
 guint8*
-mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
+mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enable_extensions)
 {
 	GSList *l;
 	MonoUnwindOp *op;
@@ -430,6 +432,8 @@ mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
 			*p ++ = op->op;
 			break;
 		case DW_CFA_mono_advance_loc:
+			if (!enable_extensions)
+				break;
 			/* Only one location is supported */
 			g_assert (op->val == 0);
 			*p ++ = op->op;
@@ -445,6 +449,12 @@ mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
 	res = g_malloc (p - buf);
 	memcpy (res, buf, p - buf);
 	return res;
+}
+
+guint8*
+mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
+{
+	return mono_unwind_ops_encode_full (unwind_ops, out_len, TRUE);
 }
 
 #if 0
@@ -1164,7 +1174,7 @@ mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 
 GSList*
 mono_unwind_get_cie_program (void)
 {
-#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_POWERPC)
+#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_POWERPC) || defined(TARGET_ARM)
 	return mono_arch_get_cie_program ();
 #else
 	return NULL;

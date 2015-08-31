@@ -480,6 +480,9 @@ namespace Mono.ILASM {
 %token K_OFF
 %token K_FORWARDER
 %token K_CHARMAPERROR
+%token K_LEGACY
+%token K_LIBRARY
+%token K_AUTO
 
 /* end generated */
 
@@ -3149,9 +3152,9 @@ assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 			  }
 			;
 
-assembly_head		: D_ASSEMBLY asm_attr slashed_name
+assembly_head		: D_ASSEMBLY legacylibrary_opt asm_attr slashed_name
                           {
-                                codegen.SetThisAssembly ((string) $3, (PEAPI.AssemAttr) $2);
+                                codegen.SetThisAssembly ((string) $4, (PEAPI.AssemAttr) $3);
                                 codegen.CurrentCustomAttrTarget = codegen.ThisAssembly;
 				codegen.CurrentDeclSecurityTarget = codegen.ThisAssembly;
                           }
@@ -3211,19 +3214,19 @@ asm_or_ref_decl		: D_PUBLICKEY ASSIGN bytes_list
 assemblyref_all		: assemblyref_head OPEN_BRACE assemblyref_decls CLOSE_BRACE
 			;
 
-assemblyref_head	: D_ASSEMBLY K_EXTERN asm_attr slashed_name
+assemblyref_head	: D_ASSEMBLY K_EXTERN legacylibrary_opt asm_attr slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
-				asmb_name.Name = (string) $4;
-				codegen.BeginAssemblyRef ((string) $4, asmb_name, (PEAPI.AssemAttr) $3);
+				asmb_name.Name = (string) $5;
+				codegen.BeginAssemblyRef ((string) $5, asmb_name, (PEAPI.AssemAttr) $4);
                           }
-			| D_ASSEMBLY K_EXTERN asm_attr slashed_name K_AS slashed_name
+			| D_ASSEMBLY K_EXTERN legacylibrary_opt asm_attr slashed_name K_AS slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
-				asmb_name.Name = (string) $4;
-				codegen.BeginAssemblyRef ((string) $6, asmb_name, (PEAPI.AssemAttr) $3);
+				asmb_name.Name = (string) $5;
+				codegen.BeginAssemblyRef ((string) $7, asmb_name, (PEAPI.AssemAttr) $4);
                           }
 			;
 
@@ -3258,6 +3261,7 @@ assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                                 if (codegen.CurrentCustomAttrTarget != null)
                                         codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
+            | K_AUTO  /* MS ilasm uses this keyword to lookup the specified assembly in the GAC and embeds its attributes, we just ignore it */
 			;
 
 exptype_all		: exptype_head OPEN_BRACE exptype_decls CLOSE_BRACE
@@ -3423,6 +3427,10 @@ semicolon_opt
 			: /* empty */
 			| SEMICOLON
 			;
+
+legacylibrary_opt	: /* empty */
+					| K_LEGACY K_LIBRARY  /* MS ilasm has these keywords for backwards compatibility, we just ignore them */
+					;
 
 %%
 

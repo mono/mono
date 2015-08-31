@@ -81,11 +81,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void ImageUrlWithoutText ()
 		{
-#if NET_4_0
 			string origHtml = "<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" alt=\"\" /></a>";
-#else
-			string origHtml = "<a><img src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" style=\"border-width:0px;\" /></a>";
-#endif
 			TestHyperLink hl = new TestHyperLink ();
 			hl.ImageUrl = imageUrl;
 			Assert.AreEqual (imageUrl, hl.ImageUrl, "ImageUrl");
@@ -101,11 +97,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void ImageUrlWithoutText_ToolTip ()
 		{
-#if NET_4_0
 			string origHtml = "<a title=\"Some message\"><img title=\"Some message\" src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" alt=\"\" /></a>";
-#else
-			string origHtml = "<a title=\"Some message\"><img title=\"Some message\" src=\"http://www.mono-project.com/stylesheets/images.wiki.png\" style=\"border-width:0px;\" /></a>";
-#endif
 			TestHyperLink hl = new TestHyperLink ();
 			hl.ImageUrl = imageUrl;
 			hl.ToolTip = "Some message";
@@ -136,11 +128,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void ImageUrl_NO_ResolveUrl ()
 		{
-#if NET_4_0
 			string origHtml = "<a><img src=\"~/ben.jpeg\" alt=\"\" /></a>";
-#else
-			string origHtml = "<a><img src=\"~/ben.jpeg\" style=\"border-width:0px;\" /></a>";
-#endif
 			TestHyperLink hl = new TestHyperLink ();
 			hl.ImageUrl = "~/ben.jpeg";
 			Assert.AreEqual ("~/ben.jpeg", hl.ImageUrl, "ImageUrl");

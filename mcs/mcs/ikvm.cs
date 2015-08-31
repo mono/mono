@@ -617,7 +617,15 @@ namespace Mono.CSharp
 
 		public override void DefineWin32IconResource (string fileName)
 		{
-			builder.__DefineIconResource (File.ReadAllBytes (fileName));
+			byte[] bytes;
+			try {
+				bytes = File.ReadAllBytes (fileName);
+			} catch (Exception e) {
+				ctx.Report.Error (7064, Location.Null, "Error opening icon file `{0}'. {1}", fileName, e.Message);
+				return;
+			}
+
+			builder.__DefineIconResource (bytes);
 		}
 
 		public override AssemblyName[] GetReferencedAssemblies ()

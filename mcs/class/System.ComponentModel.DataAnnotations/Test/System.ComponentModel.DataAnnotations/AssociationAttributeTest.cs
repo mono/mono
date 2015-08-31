@@ -35,7 +35,6 @@ using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_0
 	[TestFixture]
 	public class AssociationAttributeTest
 	{
@@ -125,5 +124,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.AreEqual (String.Empty, list [0], "#C4-2");
 		}
 	}
-#endif
 }

@@ -401,6 +401,15 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void MethodInfoModule ()
+		{
+			Type type = typeof (MethodInfoTest);
+			MethodInfo me = type.GetMethod ("return_parameter_test");
+
+			Assert.AreEqual (type.Module, me.Module);
+		}
+
+		[Test]
 			public void InvokeOnRefOnlyAssembly ()
 		{
 			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
@@ -729,7 +738,6 @@ namespace MonoTests.System.Reflection
 			{
 			}
 		}
-#if NET_4_0
 		interface IMethodInvoke<out T>
 		{
 		    T Test ();
@@ -753,7 +761,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("MethodInvoke", m0.Invoke (obj, new Object [0]));
 			Assert.AreEqual ("MethodInvoke", m1.Invoke (obj, new Object [0]));
 		}
-#endif
 
 
 		public int? Bug12856 ()

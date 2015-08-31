@@ -315,10 +315,14 @@ cleanup (void)
 	 * cleaning up only if the runtime is shutting down */
 	g_assert (mono_runtime_is_shutting_down ());
 
+	MONO_PREPARE_BLOCKING;
 	while (monitor_status != MONITOR_STATUS_NOT_RUNNING)
 		g_usleep (1000);
+	MONO_FINISH_BLOCKING;
 
+	MONO_PREPARE_BLOCKING;
 	mono_mutex_lock (&threadpool->active_threads_lock);
+	MONO_FINISH_BLOCKING;
 
 	/* stop all threadpool->working_threads */
 	for (i = 0; i < threadpool->working_threads->len; ++i)
@@ -492,6 +496,8 @@ worker_park (void)
 
 	mono_gc_set_skip_thread (TRUE);
 
+	MONO_PREPARE_BLOCKING;
+
 	mono_mutex_lock (&threadpool->active_threads_lock);
 
 	if (!mono_runtime_is_shutting_down ()) {
@@ -505,6 +511,8 @@ worker_park (void)
 	}
 
 	mono_mutex_unlock (&threadpool->active_threads_lock);
+
+	MONO_FINISH_BLOCKING;
 
 	mono_gc_set_skip_thread (FALSE);
 
@@ -521,6 +529,8 @@ worker_try_unpark (void)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker", GetCurrentThreadId ());
 
+	MONO_PREPARE_BLOCKING;
+
 	mono_mutex_lock (&threadpool->active_threads_lock);
 	len = threadpool->parked_threads->len;
 	if (len > 0) {
@@ -529,6 +539,8 @@ worker_try_unpark (void)
 		res = TRUE;
 	}
 	mono_mutex_unlock (&threadpool->active_threads_lock);
+
+	MONO_FINISH_BLOCKING;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker, success? %s", GetCurrentThreadId (), res ? "yes" : "no");
 
@@ -567,9 +579,11 @@ worker_thread (gpointer data)
 
 	mono_thread_set_name_internal (thread, mono_string_new (mono_domain_get (), "Threadpool worker"), FALSE);
 
+	MONO_PREPARE_BLOCKING;
 	mono_mutex_lock (&threadpool->active_threads_lock);
 	g_ptr_array_add (threadpool->working_threads, thread);
 	mono_mutex_unlock (&threadpool->active_threads_lock);
+	MONO_FINISH_BLOCKING;
 
 	previous_tpdomain = NULL;
 
@@ -653,9 +667,11 @@ worker_thread (gpointer data)
 
 	mono_mutex_unlock (&threadpool->domains_lock);
 
+	MONO_PREPARE_BLOCKING;
 	mono_mutex_lock (&threadpool->active_threads_lock);
 	g_ptr_array_remove_fast (threadpool->working_threads, thread);
 	mono_mutex_unlock (&threadpool->active_threads_lock);
+	MONO_FINISH_BLOCKING;
 
 	COUNTER_ATOMIC (counter, {
 		counter._.working--;
@@ -848,6 +864,7 @@ monitor_thread (void)
 		if (mono_runtime_is_shutting_down () || !domain_any_has_request ())
 			continue;
 
+		MONO_PREPARE_BLOCKING;
 		mono_mutex_lock (&threadpool->active_threads_lock);
 		for (i = 0; i < threadpool->working_threads->len; ++i) {
 			thread = g_ptr_array_index (threadpool->working_threads, i);
@@ -857,6 +874,7 @@ monitor_thread (void)
 			}
 		}
 		mono_mutex_unlock (&threadpool->active_threads_lock);
+		MONO_FINISH_BLOCKING;
 
 		if (all_waitsleepjoin) {
 			ThreadPoolCounter counter;
@@ -1304,7 +1322,7 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 		return NULL;
 	}
 
-	MONO_OBJECT_SETREF (ares, endinvoke_called, 1);
+	ares->endinvoke_called = 1;
 
 	/* wait until we are really finished */
 	if (ares->completed) {
@@ -1319,9 +1337,9 @@ mono_threadpool_ms_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, Mono
 			MONO_OBJECT_SETREF (ares, handle, (MonoObject*) mono_wait_handle_new (mono_object_domain (ares), wait_event));
 		}
 		mono_monitor_exit ((MonoObject*) ares);
-		MONO_PREPARE_BLOCKING
+		MONO_PREPARE_BLOCKING;
 		WaitForSingleObjectEx (wait_event, INFINITE, TRUE);
-		MONO_FINISH_BLOCKING
+		MONO_FINISH_BLOCKING;
 	}
 
 	ac = (MonoAsyncCall*) ares->object_data;
@@ -1370,9 +1388,9 @@ mono_threadpool_ms_remove_domain_jobs (MonoDomain *domain, int timeout)
 	mono_memory_write_barrier ();
 
 	while (domain->threadpool_jobs) {
-		MONO_PREPARE_BLOCKING
+		MONO_PREPARE_BLOCKING;
 		WaitForSingleObject (sem, timeout);
-		MONO_FINISH_BLOCKING
+		MONO_FINISH_BLOCKING;
 		if (timeout != -1) {
 			timeout -= mono_msec_ticks () - start;
 			if (timeout <= 0) {

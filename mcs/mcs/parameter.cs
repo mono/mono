@@ -1336,6 +1336,9 @@ namespace Mono.CSharp {
 			for (int i = 0; i < parameters.Length; ++i) {
 				Parameter p = (Parameter) parameters [i];
 
+				if (p.Type != null)
+					p.Type.CheckObsoleteness (m, p.Location);
+
 				//
 				// Try not to enter default values resolution if there are is not any default value possible
 				//

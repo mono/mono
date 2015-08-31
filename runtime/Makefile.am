@@ -37,7 +37,11 @@ build_profiles += monodroid
 endif
 
 if INSTALL_MONOTOUCH
-build_profiles += monotouch monotouch_runtime monotouch_watch
+build_profiles += monotouch monotouch_runtime
+endif
+
+if INSTALL_MONOTOUCH_WATCH
+build_profiles += monotouch_watch
 endif
 
 if INSTALL_XAMMAC
@@ -140,7 +144,7 @@ CLEANFILES = etc/mono/config
 # depend on $(symlinks) to ensure 'etc/mono' directory exists
 etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
-	sed 's,target="$(prefix)/$(reloc_libdir)/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
+	sed 's,target="$$mono_libdir/libMonoPosixHelper$(libsuffix)",target="'$$d'/libMonoPosixHelper.la",' ../data/config > $@t
 	if test -z "$(libgdiplus_loc)"; then :; else \
 	  sed 's,target="$(libgdiplus_install_loc)",target="$(libgdiplus_loc)",' $@t > $@tt; \
 	  mv -f $@tt $@t; fi

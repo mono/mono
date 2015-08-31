@@ -110,8 +110,6 @@ read_entry (EntryStream *stream, void *data)
 #define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
 
-#define FLUSH()
-
 #define DEFAULT_PRINT()
 #define CUSTOM_PRINT(_)
 
@@ -120,6 +118,7 @@ read_entry (EntryStream *stream, void *data)
 #define IS_VTABLE_MATCH(_)
 
 #define END_PROTOCOL_ENTRY
+#define END_PROTOCOL_ENTRY_FLUSH
 #define END_PROTOCOL_ENTRY_HEAVY
 
 #include <mono/sgen/sgen-protocol-def.h>
@@ -169,8 +168,6 @@ is_always_match (int type)
 #define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
 
-#define FLUSH()
-
 #define DEFAULT_PRINT()
 #define CUSTOM_PRINT(_)
 
@@ -180,6 +177,7 @@ is_always_match (int type)
 #define IS_VTABLE_MATCH(_)
 
 #define END_PROTOCOL_ENTRY
+#define END_PROTOCOL_ENTRY_FLUSH
 #define END_PROTOCOL_ENTRY_HEAVY
 
 #include <mono/sgen/sgen-protocol-def.h>
@@ -402,8 +400,6 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 #define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
 
-#define FLUSH()
-
 #define DEFAULT_PRINT() \
 	print_entry_content (pes_size, pes, color_output);
 #define CUSTOM_PRINT(print) \
@@ -417,6 +413,8 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		printf ("\n"); \
 		break; \
 	}
+#define END_PROTOCOL_ENTRY_FLUSH \
+	END_PROTOCOL_ENTRY
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 
@@ -487,8 +485,6 @@ match_index (gpointer ptr, int type, void *data)
 #define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
 
-#define FLUSH()
-
 #define DEFAULT_PRINT()
 #define CUSTOM_PRINT(_)
 
@@ -500,6 +496,8 @@ match_index (gpointer ptr, int type, void *data)
 #define END_PROTOCOL_ENTRY \
 		break; \
 	}
+#define END_PROTOCOL_ENTRY_FLUSH \
+	END_PROTOCOL_ENTRY
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 
@@ -550,8 +548,6 @@ is_vtable_match (gpointer ptr, int type, void *data)
 #define BEGIN_PROTOCOL_ENTRY_HEAVY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	BEGIN_PROTOCOL_ENTRY6 (method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6)
 
-#define FLUSH()
-
 #define DEFAULT_PRINT()
 #define CUSTOM_PRINT(_)
 
@@ -563,6 +559,8 @@ is_vtable_match (gpointer ptr, int type, void *data)
 #define END_PROTOCOL_ENTRY \
 		break; \
 	}
+#define END_PROTOCOL_ENTRY_FLUSH \
+	END_PROTOCOL_ENTRY
 #define END_PROTOCOL_ENTRY_HEAVY \
 	END_PROTOCOL_ENTRY
 

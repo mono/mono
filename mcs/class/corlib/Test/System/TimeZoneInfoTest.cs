@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.Reflection;
@@ -49,6 +50,26 @@ namespace MonoTests.System
 				TimeZoneInfo local = TimeZoneInfo.Local;
 				Assert.IsNotNull (local);
 				Assert.IsTrue (true);
+			}
+
+			[DllImport ("libc")]
+			private static extern int readlink (string path, byte[] buffer, int buflen);
+
+			[Test] // Covers #24958
+			public void LocalId ()
+			{
+				byte[] buf = new byte [512];
+
+				var path = "/etc/localtime";
+				try {
+					var ret = readlink (path, buf, buf.Length);
+					if (ret == -1)
+						return; // path is not a symbolic link, nothing to test
+				} catch (DllNotFoundException e) {
+					return;
+				}
+
+				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
 			}
 		}
 
@@ -451,11 +472,7 @@ namespace MonoTests.System
 				DateTime utc = DateTime.UtcNow;
 				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
-			#if NET_4_0
 				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
-			#else
-				Assert.AreEqual(DateTimeKind.Unspecified, converted.Kind);
-			#endif
 				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
 				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual(utc, back);
@@ -693,6 +710,15 @@ namespace MonoTests.System
 						return;
 				}
 				Assert.Fail ("Europe/Brussels not found in SystemTZ");
+			}
+
+			[Test]
+			public void ReflectionReturnsTheCorrectMethod ()
+			{
+				var method = (MethodInfo) typeof (TimeZoneInfo).GetMember ("GetSystemTimeZones", MemberTypes.Method, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)[0];
+
+				var timeZones = (global::System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo>) method.Invoke (null, null);
+				Assert.IsTrue (timeZones.Count > 0, "GetSystemTimeZones should not return an empty collection.");
 			}
 		}
 		

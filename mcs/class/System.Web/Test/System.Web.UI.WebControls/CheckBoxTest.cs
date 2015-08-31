@@ -186,11 +186,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			c.InputAttributes.Add ("value", "value1");
 			c.Text = "Title";
 			c.Checked = true;
-#if NET_4_0
 			string origHtml = "<input id=\"\" type=\"checkbox\" checked=\"checked\" value=\"value1\" /><label for=\"\">Title</label>";
-#else
-			string origHtml = "<input type=\"checkbox\" checked=\"checked\" value=\"value1\" /><label for>Title</label>";
-#endif
 			string html = c.Render ();
 			HtmlDiff.AssertAreEqual (origHtml, html, "#A1");
 		}

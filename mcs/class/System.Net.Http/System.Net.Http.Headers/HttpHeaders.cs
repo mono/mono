@@ -363,6 +363,10 @@ namespace System.Net.Http.Headers
 				first = false;
 			}
 
+			// Return null for empty values list
+			if (first)
+				return null;
+
 			return sb.ToString ();
 		}
 

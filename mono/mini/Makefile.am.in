@@ -6,7 +6,7 @@ monodir=$(top_builddir)
 libgc_libs=$(monodir)/libgc/libmonogc.la
 libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
 
-libs=	\
+boehm_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
@@ -20,14 +20,14 @@ sgen_libs = \
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV)
 
-static_libs=	\
+boehm_static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV) \
 	$(libgc_static_libs)
 
-sgenstatic_libs = \
+sgen_static_libs = \
 	$(monodir)/mono/metadata/libmonoruntimesgen-static.la	\
 	$(monodir)/mono/sgen/libmonosgen-static.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
@@ -78,16 +78,16 @@ endif
 if SUPPORT_SGEN
 sgen_binaries = mono-sgen
 sgen_libraries = libmonosgen-2.0.la
-sgen_static_libraries = libmini-static.la $(sgenstatic_libs)
+sgen_static_libraries = libmini-static.la $(sgen_static_libs)
 endif
 
 if SUPPORT_BOEHM
 boehm_libraries = libmonoboehm-2.0.la
-boehm_static_libraries = libmini-static.la $(static_libs)
+boehm_static_libraries = libmini-static.la $(boehm_static_libs)
 boehm_binaries  = mono-boehm
 endif
 
-#The mono uses sgen, while libmono remains boehm
+# The mono executable uses sgen, while libmono remains boehm
 if SUPPORT_SGEN
 mono_bin_suffix = sgen
 else
@@ -152,7 +152,7 @@ libmono_llvm_la_LIBADD = $(GLIB_LIBS) $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if PLATFORM_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 else
-libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmonoboehm-$(API_VER).la $(libs)
+libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmonoboehm-$(API_VER).la $(boehm_libs)
 endif
 endif
 
@@ -543,7 +543,7 @@ libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS)
-libmonoboehm_2_0_la_LIBADD = libmini.la $(libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libmonoboehm_2_0_la_LIBADD = libmini.la $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags)
 
 libmonosgen_2_0_la_SOURCES =
@@ -651,13 +651,12 @@ checktests: $(regtests)
 rcheck: mono $(regtests)
 if NACL_CODEGEN
 	for i in $(regtests); do echo "running test $$i"; $(MINI_RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
-else
+elif JENKINS_URL
 	-($(MINI_RUNTIME) --regression $(regtests); echo $$? > regressionexitcode.out) | $(srcdir)/emitnunit.pl
 	exit $$(cat regressionexitcode.out)
-endif
-
-rcheck2: mono $(regtests)
+else
 	$(MINI_RUNTIME) --regression $(regtests)
+endif
 
 check-seq-points: mono $(regtests)
 	rm -f TestResults_op_il_seq_point.xml
@@ -685,15 +684,35 @@ gsharedvtcheck:
 
 fullaot_regtests = $(regtests) aot-tests.exe $(if $(GSHAREDVT),gshared.exe)
 
+FULLAOT_LIBS = \
+	mscorlib.dll \
+	System.Core.dll \
+	System.dll \
+	Mono.Posix.dll \
+	System.Configuration.dll \
+	System.Security.dll \
+	System.Xml.dll \
+	Mono.Security.dll \
+	Mono.Simd.dll
+
 # This currently only works on amd64/arm
 fullaotcheck: mono $(fullaot_regtests)
 	rm -rf fullaot-tmp
 	mkdir fullaot-tmp
-	cp $(CLASS)/mscorlib.dll $(CLASS)/System.Core.dll $(CLASS)/System.dll $(CLASS)/Mono.Posix.dll $(CLASS)/System.Configuration.dll $(CLASS)/System.Security.dll $(CLASS)/System.Xml.dll $(CLASS)/Mono.Security.dll $(CLASS)/Mono.Simd.dll $(regtests) generics-variant-types.dll TestDriver.dll fullaot-tmp/
-	cp $(fullaot_regtests) fullaot-tmp/
-	MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot=full fullaot-tmp/* || exit 1
+	$(MAKE) fullaot-libs AOT_FLAGS=full
+	cp $(regtests) $(fullaot_regtests) generics-variant-types.dll TestDriver.dll fullaot-tmp/
+	MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot=full fullaot-tmp/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
 	ln -s $$PWD/mono fullaot-tmp/
 	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper --full-aot fullaot-tmp/$$i --exclude '!FULLAOT' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
+
+# This can run in parallel
+fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
+
+fullaot-tmp/%.dylib: $(CLASS)/%
+	cp $(CLASS)/$* fullaot-tmp/
+	mkdir fullaot-tmp/$*-tmp
+	MONO_PATH=fullaot-tmp/:$(CLASS) $(top_builddir)/runtime/mono-wrapper --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
+	rm -rf fullaot-tmp/$*-tmp
 
 llvmfullaotcheck:
 	$(MAKE) fullaotcheck LLVM=1

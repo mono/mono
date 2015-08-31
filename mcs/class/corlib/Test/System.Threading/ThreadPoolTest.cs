@@ -79,7 +79,6 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (sum   == 0, "#2");
 		}
 
-#if NET_4_0
 		event WaitCallback e;
 
 		[Test]
@@ -98,6 +97,5 @@ namespace MonoTests.System.Threading
 			ThreadPool.UnsafeQueueUserWorkItem (e, null);
 			Assert.IsTrue (ev.Wait (3000));
 		}
-#endif
 	}
 }

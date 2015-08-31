@@ -48,7 +48,6 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/gc-internal.h>
-#include <mono/metadata/monitor.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/utils/mono-logger-internal.h>
@@ -889,10 +888,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			int atype = decode_value (p, &p);
 
 			ref->method = mono_gc_get_managed_allocator_by_type (atype, !!(mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS));
-			if (!ref->method) {
-				fprintf (stderr, "Error: No managed allocator, but we need one for AOT.\nAre you using non-standard GC options?\n");
-				exit (1);
-			}
+			if (!ref->method)
+				g_error ("Error: No managed allocator, but we need one for AOT.\nAre you using non-standard GC options?\n");
 			break;
 		}
 		case MONO_WRAPPER_WRITE_BARRIER:
@@ -1834,10 +1831,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	}
 
 	if (!sofile && !globals) {
-		if (mono_aot_only && assembly->image->tables [MONO_TABLE_METHOD].rows) {
-			fprintf (stderr, "Failed to load AOT module '%s' in aot-only mode.\n", aot_name);
-			exit (1);
-		}
+		if (mono_aot_only && assembly->image->tables [MONO_TABLE_METHOD].rows)
+			g_error ("Failed to load AOT module '%s' in aot-only mode.\n", aot_name);
 		g_free (aot_name);
 		return;
 	}
@@ -1864,8 +1859,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	if (!usable) {
 		if (mono_aot_only) {
-			fprintf (stderr, "Failed to load AOT module '%s' while running in aot-only mode: %s.\n", aot_name, msg);
-			exit (1);
+			g_error ("Failed to load AOT module '%s' while running in aot-only mode: %s.\n", aot_name, msg);
 		} else {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable: %s.\n", aot_name, msg);
 		}
@@ -2079,6 +2073,20 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	init_gots (amodule);
 
 	/*
+	 * Register the plt region as a single trampoline so we can unwind from this code
+	 */
+	mono_tramp_info_register (
+		mono_tramp_info_create (
+			NULL,
+			amodule->plt,
+			amodule->plt_end - amodule->plt,
+			NULL,
+			mono_unwind_get_cie_program ()
+			),
+		NULL
+		);
+
+	/*
 	 * Since we store methoddef and classdef tokens when referring to methods/classes in
 	 * referenced assemblies, we depend on the exact versions of the referenced assemblies.
 	 * MS calls this 'hard binding'. This means we have to load all referenced assemblies
@@ -2102,10 +2110,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	if (amodule->out_of_date) {
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: Module %s is unusable because a dependency is out-of-date.\n", assembly->image->name);
-		if (mono_aot_only) {
-			fprintf (stderr, "Failed to load AOT module '%s' while running in aot-only mode because a dependency cannot be found or it is out of date.\n", aot_name);
-			exit (1);
-		}
+		if (mono_aot_only)
+			g_error ("Failed to load AOT module '%s' while running in aot-only mode because a dependency cannot be found or it is out of date.\n", aot_name);
 	}
 	else
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: loaded AOT Module for %s.\n", assembly->image->name);
@@ -2421,10 +2427,8 @@ compute_llvm_code_range (MonoAotModule *amodule, guint8 **code_start, guint8 **c
 	p += 4;
 	table = (gint32*)p;
 
-	if (fde_count > 1) {
-		/* mono_aot_personality () */
-		g_assert (table [0] == -1);
-		*code_start = amodule->methods [table [2]];
+	if (fde_count > 0) {
+		*code_start = amodule->methods [table [0]];
 		*code_end = (guint8*)amodule->methods [table [(fde_count - 1) * 2]] + table [fde_count * 2];
 	} else {
 		*code_start = NULL;
@@ -3359,9 +3363,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		ji->data.offset = decode_value (p, &p);
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
-	case MONO_PATCH_INFO_MONITOR_ENTER:
-	case MONO_PATCH_INFO_MONITOR_ENTER_V4:
-	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_GC_NURSERY_START:
 	case MONO_PATCH_INFO_JIT_TLS_ID:
@@ -3746,7 +3747,11 @@ find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 
 		amodule_unlock (amodule);
 		if (!m) {
 			m = decode_resolve_method_ref_with_target (amodule, method, p, &p);
-			if (m) {
+			/*
+			 * Can't catche runtime invoke wrappers since it would break
+			 * the check in decode_method_ref_with_target ().
+			 */
+			if (m && m->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
 				amodule_lock (amodule);
 				g_hash_table_insert (amodule->method_ref_to_method, orig_p, m);
 				amodule_unlock (amodule);
@@ -4549,15 +4554,6 @@ load_function_full (MonoAotModule *amodule, const char *name, MonoTrampInfo **ou
 					g_assert (res == 1);
 					target = mono_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), NULL);
 					target = mono_create_ftnptr_malloc (target);
-				} else if (!strcmp (ji->data.name, "specific_trampoline_monitor_enter")) {
-					target = mono_create_specific_trampoline (NULL, MONO_TRAMPOLINE_MONITOR_ENTER, mono_get_root_domain (), NULL);
-					target = mono_create_ftnptr_malloc (target);
-				} else if (!strcmp (ji->data.name, "specific_trampoline_monitor_enter_v4")) {
-					target = mono_create_specific_trampoline (NULL, MONO_TRAMPOLINE_MONITOR_ENTER_V4, mono_get_root_domain (), NULL);
-					target = mono_create_ftnptr_malloc (target);
-				} else if (!strcmp (ji->data.name, "specific_trampoline_monitor_exit")) {
-					target = mono_create_specific_trampoline (NULL, MONO_TRAMPOLINE_MONITOR_EXIT, mono_get_root_domain (), NULL);
-					target = mono_create_ftnptr_malloc (target);
 				} else if (!strcmp (ji->data.name, "mono_thread_get_and_clear_pending_exception")) {
 					target = mono_thread_get_and_clear_pending_exception;
 				} else if (!strcmp (ji->data.name, "debugger_agent_single_step_from_context")) {
@@ -4629,13 +4625,61 @@ mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
 gpointer
 mono_aot_get_trampoline (const char *name)
 {
-	return mono_aot_get_trampoline_full (name, NULL);
+	MonoTrampInfo *out_tinfo;
+	gpointer code;
+
+	code =  mono_aot_get_trampoline_full (name, &out_tinfo);
+	mono_tramp_info_register (out_tinfo, NULL);
+
+	return code;
+}
+
+static gpointer
+read_unwind_info (MonoAotModule *amodule, MonoTrampInfo *info, const char *symbol_name)
+{
+	gpointer symbol_addr;
+	guint32 uw_offset, uw_info_len;
+	guint8 *uw_info;
+
+	find_symbol (amodule->sofile, amodule->globals, symbol_name, &symbol_addr);
+
+	if (!symbol_addr)
+		return NULL;
+
+	uw_offset = *(guint32*)symbol_addr;
+	uw_info = amodule->unwind_info + uw_offset;
+	uw_info_len = decode_value (uw_info, &uw_info);
+
+	info->uw_info = uw_info;
+	info->uw_info_len = uw_info_len;
+
+	/* If successful return the address of the following data */
+	return (guint32*)symbol_addr + 1;
 }
 
 #ifdef MONOTOUCH
 #include <mach/mach.h>
 
 static TrampolinePage* trampoline_pages [MONO_AOT_TRAMP_NUM];
+
+static void
+read_page_trampoline_uwinfo (MonoTrampInfo *info, int tramp_type, gboolean is_generic)
+{
+	char symbol_name [128];
+
+	if (tramp_type == MONO_AOT_TRAMP_SPECIFIC)
+		sprintf (symbol_name, "specific_trampolines_page_%s_p", is_generic ? "gen" : "sp");
+	else if (tramp_type == MONO_AOT_TRAMP_STATIC_RGCTX)
+		sprintf (symbol_name, "rgctx_trampolines_page_%s_p", is_generic ? "gen" : "sp");
+	else if (tramp_type == MONO_AOT_TRAMP_IMT_THUNK)
+		sprintf (symbol_name, "imt_trampolines_page_%s_p", is_generic ? "gen" : "sp");
+	else if (tramp_type == MONO_AOT_TRAMP_GSHAREDVT_ARG)
+		sprintf (symbol_name, "gsharedvt_trampolines_page_%s_p", is_generic ? "gen" : "sp");
+	else
+		g_assert_not_reached ();
+
+	read_unwind_info (mono_defaults.corlib->aot_module, info, symbol_name);
+}
 
 static unsigned char*
 get_new_trampoline_from_page (int tramp_type)
@@ -4688,6 +4732,8 @@ get_new_trampoline_from_page (int tramp_type)
 	count = 40;
 	page = NULL;
 	while (page == NULL && count-- > 0) {
+		MonoTrampInfo *gen_info, *sp_info;
+
 		addr = 0;
 		/* allocate two contiguous pages of memory: the first page will contain the data (like a local constant pool)
 		 * while the second will contain the trampolines.
@@ -4728,6 +4774,23 @@ get_new_trampoline_from_page (int tramp_type)
 		code = page->trampolines;
 		page->trampolines += specific_trampoline_size;
 		mono_aot_page_unlock ();
+
+		/* Register the generic part at the beggining of the trampoline page */
+		gen_info = mono_tramp_info_create (NULL, (guint8*)taddr, amodule->info.tramp_page_code_offsets [tramp_type], NULL, NULL);
+		read_page_trampoline_uwinfo (gen_info, tramp_type, TRUE);
+		mono_tramp_info_register (gen_info, NULL);
+		/*
+		 * FIXME
+		 * Registering each specific trampoline produces a lot of
+		 * MonoJitInfo structures. Jump trampolines are also registered
+		 * separately.
+		 */
+		if (tramp_type != MONO_AOT_TRAMP_SPECIFIC) {
+			/* Register the rest of the page as a single trampoline */
+			sp_info = mono_tramp_info_create (NULL, code, page->trampolines_end - code, NULL, NULL);
+			read_page_trampoline_uwinfo (sp_info, tramp_type, FALSE);
+			mono_tramp_info_register (sp_info, NULL);
+		}
 		return code;
 	}
 	g_error ("Cannot allocate more trampoline pages: %d", ret);
@@ -4807,6 +4870,7 @@ get_new_gsharedvt_arg_trampoline_from_page (gpointer tramp, gpointer arg)
 }
 
 /* Return a given kind of trampoline */
+/* FIXME set unwind info for these trampolines */
 static gpointer
 get_numerous_trampoline (MonoAotTrampoline tramp_type, int n_got_slots, MonoAotModule **out_amodule, guint32 *got_offset, guint32 *out_tramp_size)
 {
@@ -4925,6 +4989,8 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	gpointer code;
 	guint32 *ut, *ut_end, *entry;
 	int low, high, entry_index = 0;
+	gpointer symbol_addr;
+	MonoTrampInfo *tinfo;
 
 	if (method->is_inflated && !mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE)) {
 		method_index = find_aot_method (method, &amodule);
@@ -4963,6 +5029,17 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 
 	code = get_call_table_entry (amodule->unbox_trampoline_addresses, entry_index);
 	g_assert (code);
+
+	tinfo = mono_tramp_info_create (NULL, code, 0, NULL, NULL);
+
+	symbol_addr = read_unwind_info (amodule, tinfo, "unbox_trampoline_p");
+	if (!symbol_addr) {
+		mono_tramp_info_free (tinfo);
+		return FALSE;
+	}
+
+	tinfo->code_size = *(guint32*)symbol_addr;
+	mono_tramp_info_register (tinfo, NULL);
 
 	/* The caller expects an ftnptr */
 	return mono_create_ftnptr (mono_domain_get (), code);

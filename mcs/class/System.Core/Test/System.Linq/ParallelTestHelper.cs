@@ -1,4 +1,3 @@
-#if NET_4_0
 // TestHelper.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -91,4 +90,3 @@ namespace MonoTests.System.Linq
 		}
 	}
 }
-#endif

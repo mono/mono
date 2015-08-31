@@ -248,11 +248,6 @@ namespace System.Web.UI.WebControls {
 				writer.Write (s);
 				writer.RenderEndTag ();
 			}
-// #if !NET_4_0
-// 			else if (HasControls ()) {
-// 				writer.Indent++;
-// 			}
-// #endif
 		}
 
 		void IPostBackEventHandler.RaisePostBackEvent (string argument)

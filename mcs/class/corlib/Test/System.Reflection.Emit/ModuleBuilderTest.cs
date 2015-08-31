@@ -728,5 +728,31 @@ namespace MonoTests.System.Reflection.Emit
 			catch (ArgumentException) {
 			}
 		}
+
+		[Test]
+		public void GetMethodTokenNullParam ()
+		{
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = ab.DefineDynamicModule ("mod");
+
+			var method = typeof (object).GetMethod ("GetType");
+
+			// ArgumentNullException should not occur.
+			module.GetMethodToken (method, null);
+		}
+
+		[Test]
+		public void GetConstructorTokenNullParam ()
+		{
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = ab.DefineDynamicModule ("mod");
+
+			var method = typeof (object).GetConstructor (Type.EmptyTypes);
+
+			// ArgumentNullException should not occur.
+			module.GetConstructorToken (method, null);
+		}
 	}
 }

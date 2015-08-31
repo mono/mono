@@ -217,8 +217,14 @@ namespace Mono.CSharp {
 					return false;
 
 				statement = Expr as ExpressionStatement;
-				if (statement == null)
-					Expr.Error_InvalidExpressionStatement (ec);
+				if (statement == null) {
+					var reduced = Expr as IReducedExpressionStatement;
+					if (reduced != null) {
+						statement = EmptyExpressionStatement.Instance;
+					} else {
+						Expr.Error_InvalidExpressionStatement (ec);
+					}
+				}
 
 				return true;
 			}

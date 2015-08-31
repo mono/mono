@@ -127,7 +127,6 @@ namespace MonoCasTests.System {
 			}
 		}
 
-#if !RUN_ONDOTNET || NET_4_0 // Disabled because .net 2 fails to load dll with "Failure decoding embedded permission set object" due to "/" path
 
 		[Test]
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
@@ -157,6 +156,5 @@ namespace MonoCasTests.System {
 			}
 		}
 		
-#endif
 	}
 }

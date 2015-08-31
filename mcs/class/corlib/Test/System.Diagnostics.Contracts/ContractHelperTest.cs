@@ -1,4 +1,3 @@
-#if NET_4_0
 
 #define CONTRACTS_FULL
 #define DEBUG
@@ -255,4 +254,3 @@ namespace MonoTests.System.Diagnostics.Contracts {
 
 }
 
-#endif

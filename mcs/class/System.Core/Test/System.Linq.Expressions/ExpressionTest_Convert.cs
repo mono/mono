@@ -81,16 +81,10 @@ namespace MonoTests.System.Linq.Expressions {
 
 			var conv = Expression.Convert (p, typeof (ITzap));
 			Assert.AreEqual (typeof (ITzap), conv.Type);
-#if !NET_4_0
-			Assert.AreEqual ("Convert(<param>)", conv.ToString ());
-#endif
 			p = Expression.Parameter (typeof (ITzap), null);
 			conv = Expression.Convert (p, typeof (IFoo));
 
 			Assert.AreEqual (typeof (IFoo), conv.Type);
-#if !NET_4_0
-			Assert.AreEqual ("Convert(<param>)", conv.ToString ());
-#endif
 		}
 
 		[Test]

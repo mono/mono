@@ -20,7 +20,7 @@ internal_init (void)
 	if (keepalive_stacks)
 		return;
 	MONO_GC_REGISTER_ROOT_PINNING (keepalive_stacks);
-	keepalive_stacks = mono_g_hash_table_new (NULL, NULL);
+	keepalive_stacks = mono_g_hash_table_new_type (NULL, NULL, MONO_HASH_CONSERVATIVE_GC);
 }
 
 static void*
@@ -69,7 +69,7 @@ continuation_mark_frame (MonoContinuation *cont)
 		ctx = new_ctx;
 		if (endloop)
 			break;
-		if (strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
+		if (!ji->is_trampoline && strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
 			endloop = TRUE;
 	} while (1);
 

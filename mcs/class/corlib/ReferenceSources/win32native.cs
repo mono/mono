@@ -10,5 +10,10 @@ namespace Microsoft.Win32
 		{
 			return "Error " + hr;
 		}
+
+		public class SECURITY_ATTRIBUTES
+		{
+
+		}
 	}
 }

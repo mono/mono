@@ -34,9 +34,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
-#if NET_4_0
 using System.Threading.Tasks;
-#endif
 
 namespace MonoTests.System.Runtime.Remoting.Messaging
 {
@@ -123,7 +121,6 @@ namespace MonoTests.System.Runtime.Remoting.Messaging
 			CallContext.FreeNamedDataSlot (SlotName);
 		}
 
-#if NET_4_0
 		[Test]
 		public void CallContextPropagation_Task ()
 		{
@@ -168,7 +165,6 @@ namespace MonoTests.System.Runtime.Remoting.Messaging
 			CallContext.FreeNamedDataSlot ("d1");
 			CallContext.FreeNamedDataSlot ("d2");
 		}
-#endif
 
 		[Test]
 		public void FreeNamedDataSlot_ShouldClearLogicalData ()

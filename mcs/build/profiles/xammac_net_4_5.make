@@ -1,4 +1,4 @@
-include $(topdir)/build/profiles/net_4_5.make
+include $(topdir)/build/profiles/net_4_x.make
 PROFILE_MCS_FLAGS += -d:NO_SYSTEM_DRAWING_DEPENDENCY -d:NO_WINFORMS_DEPENDENCY -d:NO_SYSTEM_WEB_DEPENDENCY -d:XAMMAC_4_5
 XAMMAC_4_5=1
 NO_WINDOWS_BASE=1

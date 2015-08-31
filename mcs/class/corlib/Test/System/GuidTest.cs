@@ -294,20 +294,10 @@ namespace MonoTests.System {
 			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString (""), "A6");
 			Assert.AreEqual ("00010203-0405-0607-0809-0a0b0c0d0e0f", g.ToString ((string)null), "A7");
 			Assert.AreEqual ("{00010203-0405-0607-0809-0a0b0c0d0e0f}", g.ToString ("B", null), "A10");
-#if NET_4_0
 			Assert.AreEqual ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", g.ToString ("x"), "A11");
 			Assert.AreEqual ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", g.ToString ("X"), "A11");
-#endif
 		}
 
-#if !NET_4_0
-		[Test]
-		[ExpectedException (typeof (FormatException))]
-		public void ToString_UnsupportedFormat ()
-		{
-			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("X");
-		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
@@ -351,7 +341,6 @@ namespace MonoTests.System {
 			new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}aaaa");
 		}
 
-#if NET_4_0
 
 		/*
 			N = new Guid ("000102030405060708090a0b0c0d0e0f"); 
@@ -445,6 +434,5 @@ namespace MonoTests.System {
 			Assert.IsFalse (Guid.TryParseExact("foobar", null, out guid), "A5");
 			Assert.AreEqual (Guid.Empty, guid, "A6");
 		}
-#endif
 	}
 }

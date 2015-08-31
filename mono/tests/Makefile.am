@@ -1,6 +1,6 @@
 SUBDIRS = assemblyresolve gc-descriptors
 
-check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-messages rm-empty-logs
+check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test-cattr-type-load test-reflection-load-with-context test_platform test-process-exit test-messages test-unhandled-exception-2 rm-empty-logs
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
 
@@ -331,6 +331,7 @@ BASE_TEST_CS_SRC=		\
 	bug-80392.2.cs		\
 	dynamic-method-access.2.cs	\
 	dynamic-method-finalize.2.cs	\
+	dynamic-method-stack-traces.cs	\
 	bug-82194.2.cs	\
 	anonarray.2.cs	\
 	ienumerator-interfaces.2.cs	\
@@ -947,6 +948,7 @@ SGEN_TESTS =	\
 	sgen-descriptors.exe	\
 	sgen-gshared-vtype.exe	\
 	sgen-domain-unload.exe	\
+	sgen-domain-unload-2.exe	\
 	sgen-weakref-stress.exe	\
 	sgen-cementing-stress.exe	\
 	sgen-case-23400.exe	\
@@ -1349,10 +1351,23 @@ test-oom: $(OOM_TESTS)
 		MONO_GC_PARAMS=max-heap-size=16m                                                  $(RUNTIME) $$fn > $$fn.stdout || exit 1;	\
 	done
 
+if HOST_WIN32
+test-unhandled-exception-2:
+else
+test-unhandled-exception-2: unhandled-exception.exe
+	@echo "Testing unhandled-exception_1 ..."; $(RUNTIME) $+ 1 1> unhandled-exception_1.exe.stdout 2> unhandled-exception_1.exe.stderr; if test "x$$?" != "x1";   then exit 1; fi;	\
+	 echo "Testing unhandled-exception_2 ..."; $(RUNTIME) $+ 2 1> unhandled-exception_2.exe.stdout 2> unhandled-exception_2.exe.stderr; if test "x$$?" != "x0";   then exit 2; fi;	\
+	 echo "Testing unhandled-exception_3 ..."; $(RUNTIME) $+ 3 1> unhandled-exception_3.exe.stdout 2> unhandled-exception_3.exe.stderr; if test "x$$?" != "x0";   then exit 3; fi;	\
+	 echo "Testing unhandled-exception_4 ..."; $(RUNTIME) $+ 4 1> unhandled-exception_4.exe.stdout 2> unhandled-exception_4.exe.stderr; if test "x$$?" != "x0";   then exit 4; fi;	\
+	 echo "Testing unhandled-exception_5 ..."; $(RUNTIME) $+ 5 1> unhandled-exception_5.exe.stdout 2> unhandled-exception_5.exe.stderr; if test "x$$?" != "x255"; then exit 5; fi;	\
+	 echo "Testing unhandled-exception_6 ..."; $(RUNTIME) $+ 6 1> unhandled-exception_6.exe.stdout 2> unhandled-exception_6.exe.stderr; if test "x$$?" != "x0";   then exit 6; fi;	\
+	 echo "Testing unhandled-exception_7 ..."; $(RUNTIME) $+ 7 1> unhandled-exception_7.exe.stdout 2> unhandled-exception_7.exe.stderr; if test "x$$?" != "x0";   then exit 7; fi;	\
+	 echo "Testing unhandled-exception_8 ..."; $(RUNTIME) $+ 8 1> unhandled-exception_8.exe.stdout 2> unhandled-exception_8.exe.stderr; if test "x$$?" != "x3";   then exit 8; fi
+endif
 
 noinst_LTLIBRARIES = libtest.la
 
-AM_CPPFLAGS = $(GLIB_CFLAGS) $(GMODULE_CFLAGS)
+AM_CPPFLAGS = $(GLIB_CFLAGS)
 
 if HOST_WIN32
 # gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call

@@ -34,6 +34,7 @@
 #if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.InteropServices;
 
@@ -65,9 +66,9 @@ namespace System.Reflection.Emit {
 	internal struct ILExceptionInfo {
 #pragma warning disable 169
 #pragma warning disable 414
-		ILExceptionBlock[] handlers;
+		internal ILExceptionBlock[] handlers;
 		internal int start;
-		int len;
+		internal int len;
 		internal Label end;
 #pragma warning restore 169
 #pragma warning restore 414
@@ -1006,7 +1007,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		// Used by DynamicILGenerator
+		// Used by MethodBuilder.SetMethodBody
+		internal void SetExceptionHandlers (ILExceptionInfo[] exHandlers) {
+			this.ex_handlers = exHandlers;
+		}
+
+		// Used by MethodBuilder.SetMethodBody
+		internal void SetTokenFixups (ILTokenInfo[] tokenFixups) {
+			this.token_fixups = tokenFixups;
+		}
+
+		// Used by DynamicILGenerator and MethodBuilder.SetMethodBody
 		internal void SetCode (byte[] code, int max_stack) {
 			// Make a copy to avoid possible security problems
 			this.code = (byte[])code.Clone ();
@@ -1024,6 +1035,68 @@ namespace System.Reflection.Emit {
 			this.max_stack = max_stack;
 			this.cur_stack = 0;
 		}
+
+		internal void Init (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			SetCode (il, maxStack);
+
+			// FIXME: Process local signature
+
+			// Process exception handlers
+			if (exceptionHandlers != null) {
+				// Group exception handlers by try blocks
+				var tryBlocks = new Dictionary <Tuple<int, int>, List<ExceptionHandler>> ();
+				foreach (var h in exceptionHandlers) {
+					List<ExceptionHandler> list;
+					var key = new Tuple <int, int> (h.TryOffset, h.TryLength);
+					if (!tryBlocks.TryGetValue (key, out list)) {
+						list = new List<ExceptionHandler> ();
+						tryBlocks.Add (key, list);
+					}
+					list.Add (h);
+				}
+
+				// Generate ILExceptionInfo from tryBlocks
+				var infos = new List<ILExceptionInfo> ();
+				foreach (var kv in tryBlocks) {
+					var info = new ILExceptionInfo () {
+						start = kv.Key.Item1,
+						len = kv.Key.Item2,
+						handlers = new ILExceptionBlock [kv.Value.Count],
+					};
+					infos.Add (info);
+					var i = 0;
+					foreach (var b in kv.Value) {
+						info.handlers [i++] = new ILExceptionBlock () {
+							start = b.HandlerOffset,
+							len = b.HandlerLength,
+							filter_offset = b.FilterOffset,
+							type = (int) b.Kind,
+							extype = module.ResolveType (b.ExceptionTypeToken),
+						};
+					}
+				}
+
+				SetExceptionHandlers (infos.ToArray ());
+			}
+
+			// Process token fixups
+			if (tokenFixups != null) {
+				var tokenInfos = new List<ILTokenInfo> ();
+				foreach (var pos in tokenFixups) {
+					var token = (int) BitConverter.ToUInt32 (il, pos);
+					var tokenInfo = new ILTokenInfo () {
+						code_pos = pos,
+						member = ((ModuleBuilder) module).ResolveOrGetRegisteredToken (token, null, null)
+					};
+					tokenInfos.Add (tokenInfo);
+				}
+
+				SetTokenFixups (tokenInfos.ToArray ());
+			}
+		}
+
 
 		internal TokenGenerator TokenGenerator {
 			get {

@@ -168,7 +168,7 @@ namespace System.Net {
 
 			string host = uri.Host;
 			int port = uri.Port;
-			string path = HttpUtility.UrlDecode (uri.AbsolutePath);
+			string path = WebUtility.UrlDecode (uri.AbsolutePath);
 			string path_slash = path [path.Length - 1] == '/' ? path : path + "/";
 			
 			HttpListener best_match = null;

@@ -22,7 +22,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Linq;
@@ -141,4 +140,3 @@ namespace MonoTests.System
 		}
 	}
 }
-#endif

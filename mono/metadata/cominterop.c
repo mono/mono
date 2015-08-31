@@ -872,7 +872,8 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 
 	g_assert (method);
 
-	cache = mono_marshal_get_cache (&method->klass->image->cominterop_wrapper_cache, mono_aligned_addr_hash, NULL);
+	cache = mono_marshal_get_cache (&mono_method_get_wrapper_cache (method)->cominterop_wrapper_cache, mono_aligned_addr_hash, NULL);
+
 	if ((res = mono_marshal_find_in_cache (cache, method)))
 		return res;
 
@@ -981,7 +982,9 @@ mono_cominterop_get_invoke (MonoMethod *method)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	int i;
-	GHashTable* cache = mono_marshal_get_cache (&method->klass->image->cominterop_invoke_cache, mono_aligned_addr_hash, NULL);
+	GHashTable* cache;
+	
+	cache = mono_marshal_get_cache (&mono_method_get_wrapper_cache (method)->cominterop_invoke_cache, mono_aligned_addr_hash, NULL);
 
 	g_assert (method);
 

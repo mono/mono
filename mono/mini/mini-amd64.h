@@ -325,8 +325,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 #define MONO_ARCH_HAVE_LIVERANGE_OPS 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#define MONO_ARCH_MONITOR_OBJECT_REG MONO_AMD64_ARG_REG1
-#define MONO_ARCH_MONITOR_LOCK_TAKEN_REG MONO_AMD64_ARG_REG2
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
@@ -405,13 +403,6 @@ mono_amd64_get_exception_trampolines (gboolean aot);
 
 int
 mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
-
-typedef struct {
-	guint8 *address;
-	guint8 saved_byte;
-} MonoBreakpointInfo;
-
-extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 #ifdef TARGET_WIN32
 

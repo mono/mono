@@ -31,6 +31,7 @@
 #include <glib.h>
 #include "mono-hash.h"
 #include "metadata/gc-internal.h"
+#include <mono/utils/checked-build.h>
 
 #ifdef HAVE_BOEHM_GC
 #define mg_new0(type,n)  ((type *) GC_MALLOC(sizeof(type) * (n)))
@@ -64,6 +65,9 @@ struct _MonoGHashTable {
 	GDestroyNotify value_destroy_func, key_destroy_func;
 	MonoGHashGCType gc_type;
 };
+
+static MonoGHashTable *
+mono_g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func);
 
 #ifdef HAVE_SGEN_GC
 static MonoGCDescriptor table_hash_descr = MONO_GC_DESCRIPTOR_NULL;
@@ -144,7 +148,7 @@ mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, Mono
 	return hash;
 }
 
-MonoGHashTable *
+static MonoGHashTable *
 mono_g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func)
 {
 	MonoGHashTable *hash;
@@ -161,20 +165,6 @@ mono_g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func)
 	hash->table_size = g_spaced_primes_closest (1);
 	hash->table = mg_new0 (Slot *, hash->table_size);
 	hash->last_rehash = hash->table_size;
-	
-	return hash;
-}
-
-MonoGHashTable *
-mono_g_hash_table_new_full (GHashFunc hash_func, GEqualFunc key_equal_func,
-			    GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func)
-{
-	MonoGHashTable *hash = mono_g_hash_table_new (hash_func, key_equal_func);
-	if (hash == NULL)
-		return NULL;
-	
-	hash->key_destroy_func = key_destroy_func;
-	hash->value_destroy_func = value_destroy_func;
 	
 	return hash;
 }
@@ -218,6 +208,8 @@ do_rehash (void *_data)
 static void
 rehash (MonoGHashTable *hash)
 {
+	MONO_REQ_GC_UNSAFE_MODE; //we must run in unsafe mode to make rehash safe
+
 	int diff = ABS (hash->last_rehash - hash->in_use);
 	RehashData data;
 	void *old_table G_GNUC_UNUSED; /* unused on Boehm */
@@ -232,7 +224,12 @@ rehash (MonoGHashTable *hash)
 	data.new_size = g_spaced_primes_closest (hash->in_use);
 	data.table = mg_new0 (Slot *, data.new_size);
 
+#ifdef USE_COOP_GC
+	/* We cannot be preempted */
+	old_table = do_rehash (&data);
+#else
 	old_table = mono_gc_invoke_with_gc_lock (do_rehash, &data);
+#endif
 	mg_free (old_table);
 }
 

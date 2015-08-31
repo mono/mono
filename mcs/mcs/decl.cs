@@ -508,16 +508,6 @@ namespace Mono.CSharp {
 			return obsolete;
 		}
 
-		/// <summary>
-		/// Checks for ObsoleteAttribute presence. It's used for testing of all non-types elements
-		/// </summary>
-		public virtual void CheckObsoleteness (Location loc)
-		{
-			ObsoleteAttribute oa = GetAttributeObsolete ();
-			if (oa != null)
-				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, Report);
-		}
-
 		//
 		// Checks whether the type P is as accessible as this member
 		//
@@ -1070,6 +1060,16 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+
+		public virtual void CheckObsoleteness (IMemberContext mc, Location loc)
+		{
+			var oa = GetAttributeObsolete ();
+			if (oa == null)
+				return;
+
+			if (!mc.IsObsolete)
+				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, mc.Module.Compiler.Report);
+		}
 
 		public virtual ObsoleteAttribute GetAttributeObsolete ()
 		{

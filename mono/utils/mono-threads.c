@@ -149,7 +149,7 @@ dump_threads (void)
 	MonoThreadInfo *info;
 	MonoThreadInfo *cur = mono_thread_info_current ();
 
-	MOSTLY_ASYNC_SAFE_PRINTF ("STATE CUE CARD: (? means a positive number, usually 1 or 2)\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("STATE CUE CARD: (? means a positive number, usually 1 or 2, * means any number)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x0\t- starting (GOOD, unless the thread is running managed code)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x1\t- running (BAD, unless it's the gc thread)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x2\t- detached (GOOD, unless the thread is running managed code)\n");
@@ -157,7 +157,7 @@ dump_threads (void)
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x?04\t- self suspended (GOOD)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x?05\t- async suspend requested (BAD)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x?06\t- self suspend requested (BAD)\n");
-	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x07\t- blocking (GOOD)\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x*07\t- blocking (GOOD)\n");
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x?08\t- blocking with pending suspend (GOOD)\n");
 
 	FOREACH_THREAD_SAFE (info) {
@@ -357,14 +357,7 @@ unregister_thread (void *arg)
 	if (threads_callbacks.thread_detach)
 		threads_callbacks.thread_detach (info);
 
-	/*
-	Since the thread info lock is taken from within blocking sections, we can't check from there, so it must be done here.
-	This ensures that we won't lose any suspend requests as a suspend initiator must hold the lock.
-	Once we're holding the suspend lock, no threads can suspend us and once we unregister, no thread can find us. 
-	*/
-	MONO_PREPARE_BLOCKING
 	mono_thread_info_suspend_lock ();
-	MONO_FINISH_BLOCKING
 
 	/*
 	Now perform the callback that must be done under locks.
@@ -681,7 +674,7 @@ mono_thread_info_end_self_suspend (void)
 		return;
 	THREADS_SUSPEND_DEBUG ("FINISH SELF SUSPEND OF %p\n", info);
 
-	g_assert (mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX], NULL));
+	mono_threads_get_runtime_callbacks ()->thread_state_init (&info->thread_saved_state [SELF_SUSPEND_STATE_INDEX]);
 
 	/* commit the saved state and notify others if needed */
 	switch (mono_threads_transition_state_poll (info)) {
@@ -884,6 +877,7 @@ mono_thread_info_safe_suspend_and_run (MonoNativeThreadId id, gboolean interrupt
 	/*FIXME: unify this with self-suspend*/
 	g_assert (id != mono_native_thread_id_get ());
 
+	/* This can block during stw */
 	mono_thread_info_suspend_lock ();
 	mono_threads_begin_global_suspend ();
 
@@ -968,7 +962,9 @@ STW to make sure no unsafe pending suspend is in progress.
 void
 mono_thread_info_suspend_lock (void)
 {
+	MONO_TRY_BLOCKING;
 	MONO_SEM_WAIT_UNITERRUPTIBLE (&global_suspend_semaphore);
+	MONO_FINISH_TRY_BLOCKING;
 }
 
 void
@@ -1153,42 +1149,204 @@ mono_thread_info_set_name (MonoNativeThreadId tid, const char *name)
 	mono_threads_core_set_name (tid, name);
 }
 
+#define INTERRUPT_STATE ((MonoThreadInfoInterruptToken*) (size_t) -1)
+
+struct _MonoThreadInfoInterruptToken {
+	void (*callback) (gpointer data);
+	gpointer data;
+};
+
+/*
+ * mono_thread_info_install_interrupt: install an interruption token for the current thread.
+ *
+ *  - @callback: must be able to be called from another thread and always cancel the wait
+ *  - @data: passed to the callback
+ *  - @interrupted: will be set to TRUE if a token is already installed, FALSE otherwise
+ *     if set to TRUE, it must mean that the thread is in interrupted state
+ */
+void
+mono_thread_info_install_interrupt (void (*callback) (gpointer data), gpointer data, gboolean *interrupted)
+{
+	MonoThreadInfo *info;
+	MonoThreadInfoInterruptToken *previous_token, *token;
+
+	g_assert (callback);
+
+	g_assert (interrupted);
+	*interrupted = FALSE;
+
+	info = mono_thread_info_current ();
+	g_assert (info);
+
+	/* The memory of this token can be freed at 2 places:
+	 *  - if the token is not interrupted: it will be freed in uninstall, as info->interrupt_token has not been replaced
+	 *     by the INTERRUPT_STATE flag value, and it still contains the pointer to the memory location
+	 *  - if the token is interrupted: it will be freed in finish, as the token is now owned by the prepare/finish
+	 *     functions, and info->interrupt_token does not contains a pointer to the memory anymore */
+	token = g_new0 (MonoThreadInfoInterruptToken, 1);
+	token->callback = callback;
+	token->data = data;
+
+	previous_token = InterlockedCompareExchangePointer ((gpointer*) &info->interrupt_token, token, NULL);
+
+	if (previous_token) {
+		if (previous_token != INTERRUPT_STATE)
+			g_error ("mono_thread_info_install_interrupt: previous_token should be INTERRUPT_STATE (%p), but it was %p", INTERRUPT_STATE, previous_token);
+
+		g_free (token);
+
+		*interrupted = TRUE;
+	}
+
+	THREADS_INTERRUPT_DEBUG ("interrupt install    tid %p token %p previous_token %p interrupted %s\n",
+		mono_thread_info_get_tid (info), token, previous_token, *interrupted ? "TRUE" : "FALSE");
+}
+
+void
+mono_thread_info_uninstall_interrupt (gboolean *interrupted)
+{
+	MonoThreadInfo *info;
+	MonoThreadInfoInterruptToken *previous_token;
+
+	g_assert (interrupted);
+	*interrupted = FALSE;
+
+	info = mono_thread_info_current ();
+	g_assert (info);
+
+	previous_token = InterlockedExchangePointer ((gpointer*) &info->interrupt_token, NULL);
+
+	/* only the installer can uninstall the token */
+	g_assert (previous_token);
+
+	if (previous_token == INTERRUPT_STATE) {
+		/* if it is interrupted, then it is going to be freed in finish interrupt */
+		*interrupted = TRUE;
+	} else {
+		g_free (previous_token);
+	}
+
+	THREADS_INTERRUPT_DEBUG ("interrupt uninstall  tid %p previous_token %p interrupted %s\n",
+		mono_thread_info_get_tid (info), previous_token, *interrupted ? "TRUE" : "FALSE");
+}
+
+static MonoThreadInfoInterruptToken*
+set_interrupt_state (MonoThreadInfo *info)
+{
+	MonoThreadInfoInterruptToken *token, *previous_token;
+
+	g_assert (info);
+
+	/* Atomically obtain the token the thread is
+	* waiting on, and change it to a flag value. */
+
+	do {
+		previous_token = info->interrupt_token;
+
+		/* Already interrupted */
+		if (previous_token == INTERRUPT_STATE) {
+			token = NULL;
+			break;
+		}
+
+		token = previous_token;
+	} while (InterlockedCompareExchangePointer ((gpointer*) &info->interrupt_token, INTERRUPT_STATE, previous_token) != previous_token);
+
+	return token;
+}
+
 /*
  * mono_thread_info_prepare_interrupt:
  *
- *   See wapi_prepare_interrupt ().
+ * The state of the thread info interrupt token is set to 'interrupted' which means that :
+ *  - if the thread calls one of the WaitFor functions, the function will return with
+ *     WAIT_IO_COMPLETION instead of waiting
+ *  - if the thread was waiting when this function was called, the wait will be broken
+ *
+ * It is possible that the wait functions return WAIT_IO_COMPLETION, but the target thread
+ * didn't receive the interrupt signal yet, in this case it should call the wait function
+ * again. This essentially means that the target thread will busy wait until it is ready to
+ * process the interruption.
  */
-gpointer
-mono_thread_info_prepare_interrupt (HANDLE thread_handle)
+MonoThreadInfoInterruptToken*
+mono_thread_info_prepare_interrupt (MonoThreadInfo *info)
 {
-	return mono_threads_core_prepare_interrupt (thread_handle);
+	MonoThreadInfoInterruptToken *token;
+
+	token = set_interrupt_state (info);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt prepare    tid %p token %p\n",
+		mono_thread_info_get_tid (info), token);
+
+	return token;
 }
 
 void
-mono_thread_info_finish_interrupt (gpointer wait_handle)
+mono_thread_info_finish_interrupt (MonoThreadInfoInterruptToken *token)
 {
-	mono_threads_core_finish_interrupt (wait_handle);
+	THREADS_INTERRUPT_DEBUG ("interrupt finish     token %p\n", token);
+
+	if (token == NULL)
+		return;
+
+	g_assert (token->callback);
+
+	token->callback (token->data);
+
+	g_free (token);
 }
 
-void
-mono_thread_info_interrupt (HANDLE thread_handle)
-{
-	gpointer wait_handle;
-
-	wait_handle = mono_thread_info_prepare_interrupt (thread_handle);
-	mono_thread_info_finish_interrupt (wait_handle);
-}
-	
 void
 mono_thread_info_self_interrupt (void)
 {
-	mono_threads_core_self_interrupt ();
+	MonoThreadInfo *info;
+	MonoThreadInfoInterruptToken *token;
+
+	info = mono_thread_info_current ();
+	g_assert (info);
+
+	token = set_interrupt_state (info);
+	g_assert (!token);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt self       tid %p\n",
+		mono_thread_info_get_tid (info));
+}
+
+/* Clear the interrupted flag of the current thread, set with
+ * mono_thread_info_self_interrupt, so it can wait again */
+void
+mono_thread_info_clear_self_interrupt ()
+{
+	MonoThreadInfo *info;
+	MonoThreadInfoInterruptToken *previous_token;
+
+	info = mono_thread_info_current ();
+	g_assert (info);
+
+	previous_token = InterlockedCompareExchangePointer ((gpointer*) &info->interrupt_token, NULL, INTERRUPT_STATE);
+	g_assert (previous_token == NULL || previous_token == INTERRUPT_STATE);
+
+	THREADS_INTERRUPT_DEBUG ("interrupt clear self tid %p previous_token %p\n", mono_thread_info_get_tid (info), previous_token);
+}
+
+gboolean
+mono_thread_info_is_interrupt_state (MonoThreadInfo *info)
+{
+	g_assert (info);
+	return InterlockedReadPointer ((gpointer*) &info->interrupt_token) == INTERRUPT_STATE;
 }
 
 void
-mono_thread_info_clear_interruption (void)
+mono_thread_info_describe_interrupt_token (MonoThreadInfo *info, GString *text)
 {
-	mono_threads_core_clear_interruption ();
+	g_assert (info);
+
+	if (!InterlockedReadPointer ((gpointer*) &info->interrupt_token))
+		g_string_append_printf (text, "not waiting");
+	else if (InterlockedReadPointer ((gpointer*) &info->interrupt_token) == INTERRUPT_STATE)
+		g_string_append_printf (text, "interrupted state");
+	else
+		g_string_append_printf (text, "waiting");
 }
 
 /* info must be self or be held in a hazard pointer. */

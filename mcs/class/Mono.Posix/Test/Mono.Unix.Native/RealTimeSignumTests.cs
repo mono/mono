@@ -15,6 +15,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Mono.Unix;
+using Mono.Unix.Android;
 using Mono.Unix.Native;
 
 namespace MonoTests.Mono.Unix.Native {
@@ -27,6 +28,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TestRealTimeOutOfRange ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts = new RealTimeSignum (int.MaxValue);
 		}
 
@@ -34,12 +37,16 @@ namespace MonoTests.Mono.Unix.Native {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void TestRealTimeSignumNegativeOffset ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts1 = new RealTimeSignum (-1);
 		}
 
 		[Test]
 		public void TestRTSignalEquality ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts1 = new RealTimeSignum (0);
 			RealTimeSignum rts2 = new RealTimeSignum (0);
 			Assert.That (rts1 == rts2, Is.True);
@@ -49,6 +56,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestRTSignalInequality ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts1 = new RealTimeSignum (0);
 			RealTimeSignum rts2 = new RealTimeSignum (1);
 			Assert.That (rts1 == rts2, Is.False);
@@ -58,6 +67,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestRTSignalGetHashCodeEquality ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts1 = new RealTimeSignum (0);
 			RealTimeSignum rts2 = new RealTimeSignum (0);
 			Assert.That (rts1.GetHashCode (), Is.EqualTo(rts2.GetHashCode ()));
@@ -66,6 +77,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestRTSignalGetHashCodeInequality ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			RealTimeSignum rts1 = new RealTimeSignum (0);
 			RealTimeSignum rts2 = new RealTimeSignum (1);
 			Assert.That (rts1.GetHashCode (), Is.Not.EqualTo(rts2.GetHashCode ()));
@@ -74,6 +87,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestIsRTSignalPropertyForRTSignum ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			UnixSignal signal1 = new UnixSignal(new RealTimeSignum (0));
 			Assert.That (signal1.IsRealTimeSignal, Is.True);
 		}
@@ -81,6 +96,8 @@ namespace MonoTests.Mono.Unix.Native {
 		[Test]
 		public void TestIsRTSignalPropertyForSignum ()
 		{
+			if (!TestHelper.CanUseRealTimeSignals ())
+				return;
 			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
 			Assert.That (signal1.IsRealTimeSignal, Is.False);
 		}

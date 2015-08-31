@@ -791,20 +791,20 @@ enum_parmtype:
 			case MONO_TYPE_CLASS :
 			case MONO_TYPE_OBJECT : {
 				MonoObject *obj = *((MonoObject **) curParm);
-				MonoClass *class;
+				MonoClass *klass;
 				if ((obj) && (obj->vtable)) {
 					printf("[CLASS/OBJ:");
-					class = obj->vtable->klass;
+					klass = obj->vtable->klass;
 					printf("%p [%p] ",obj,curParm);
-					if (class == mono_defaults.string_class) {
+					if (klass == mono_defaults.string_class) {
 						printf("[STRING:%p:%s]", 
 						       obj, mono_string_to_utf8 ((MonoString *) obj));
-					} else if (class == mono_defaults.int32_class) { 
+					} else if (klass == mono_defaults.int32_class) { 
 						printf("[INT32:%p:%d]", 
 							obj, *(gint32 *)((char *)obj + sizeof (MonoObject)));
 					} else
 						printf("[%s.%s:%p]", 
-						       class->name_space, class->name, obj);
+						       klass->name_space, klass->name, obj);
 					printf("], ");
 				} else {
 					printf("[OBJECT:null], ");
@@ -893,7 +893,7 @@ static void
 enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 {
 	int i, oParm = 0, iParm = 0;
-	MonoClass *class;
+	MonoClass *klass;
 	MonoObject *obj;
 	MonoMethodSignature *sig;
 	char *fname;
@@ -923,26 +923,26 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	}
 
 	if (sig->hasthis) {
-		gpointer *this = (gpointer *) rParm->gr[iParm];
-		obj = (MonoObject *) this;
+		gpointer *this_arg = (gpointer *) rParm->gr[iParm];
+		obj = (MonoObject *) this_arg;
 		switch(method->klass->this_arg.type) {
 		case MONO_TYPE_VALUETYPE:
 			if (obj) {
-				guint64 *value = (guint64 *) ((uintptr_t)this + sizeof(MonoObject));
-				printf("this:[value:%p:%016lx], ", this, *value);
+				guint64 *value = (guint64 *) ((uintptr_t)this_arg + sizeof(MonoObject));
+				printf("this:[value:%p:%016lx], ", this_arg, *value);
 			} else 
 				printf ("this:[NULL], ");
 			break;
 		case MONO_TYPE_STRING:
 			if (obj) {
 				if (obj->vtable) {
-					class = obj->vtable->klass;
-					if (class == mono_defaults.string_class) {
+					klass = obj->vtable->klass;
+					if (klass == mono_defaults.string_class) {
 						printf ("this:[STRING:%p:%s], ", 
 							obj, mono_string_to_utf8 ((MonoString *)obj));
 					} else {
 						printf ("this:%p[%s.%s], ", 
-							obj, class->name_space, class->name);
+							obj, klass->name_space, klass->name);
 					}
 				} else 
 					printf("vtable:[NULL], ");
@@ -950,7 +950,7 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 				printf ("this:[NULL], ");
 			break;
 		default :
-			printf("this[%s]: %p, ",cvtMonoType(method->klass->this_arg.type),this);
+			printf("this[%s]: %p, ",cvtMonoType(method->klass->this_arg.type),this_arg);
 		}
 		oParm++;
 	}
@@ -5708,7 +5708,7 @@ mono_arch_install_handler_block_guard (MonoJitInfo *ji, MonoJitExceptionInfo *cl
 /*------------------------------------------------------------------*/
 
 static gpointer
-get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *code_len, gboolean aot)
+get_delegate_invoke_impl (MonoTrampInfo **info, gboolean has_target, guint32 param_count, gboolean aot)
 {
 	guint8 *code, *start;
 
@@ -5744,8 +5744,13 @@ get_delegate_invoke_impl (gboolean has_target, guint32 param_count, guint32 *cod
 
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
-	if (code_len)
-		*code_len = code - start;
+	if (has_target) {
+		*info = mono_tramp_info_create ("delegate_invoke_impl_has_target", start, code - start, NULL, NULL);
+	} else {
+		char *name = g_strdup_printf ("delegate_invoke_impl_target_%d", param_count);
+		*info = mono_tramp_info_create (name, start, code - start, NULL, NULL);
+		g_free (name);
+	}
 
 	return start;
 }
@@ -5764,19 +5769,15 @@ GSList*
 mono_arch_get_delegate_invoke_impls (void)
 {
 	GSList *res = NULL;
-	guint8 *code;
-	guint32 code_len;
+	MonoTrampInfo *info;
 	int i;
-	char *tramp_name;
 
-	code = get_delegate_invoke_impl (TRUE, 0, &code_len, TRUE);
-	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
+	get_delegate_invoke_impl (&info, TRUE, 0, TRUE);
+	res = g_slist_prepend (res, info);
 
-	for (i = 0; i < MAX_ARCH_DELEGATE_PARAMS; ++i) {
-		code = get_delegate_invoke_impl (FALSE, i, &code_len, TRUE);
-		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
-		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
-		g_free (tramp_name);
+	for (i = 0; i <= MAX_ARCH_DELEGATE_PARAMS; ++i) {
+		get_delegate_invoke_impl (&info, FALSE, i, TRUE);
+		res = g_slist_prepend (res, info);
 	}
 
 	return res;
@@ -5807,10 +5808,13 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		if (cached)
 			return cached;
 
-		if (mono_aot_only)
+		if (mono_aot_only) {
 			start = mono_aot_get_trampoline ("delegate_invoke_impl_has_target");
-		else
-			start = get_delegate_invoke_impl (TRUE, 0, NULL, FALSE);
+		} else {
+			MonoTrampInfo *info;
+			start = get_delegate_invoke_impl (&info, TRUE, 0, FALSE);
+			mono_tramp_info_register (info, NULL);
+		}
 
 		mono_memory_barrier ();
 
@@ -5835,7 +5839,9 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			start = mono_aot_get_trampoline (name);
 			g_free (name);
 		} else {
-			start = get_delegate_invoke_impl (FALSE, sig->param_count, NULL, FALSE);
+			MonoTrampInfo *info;
+			start = get_delegate_invoke_impl (&info, FALSE, sig->param_count, FALSE);
+			mono_tramp_info_register (info, NULL);
 		}
 
 		mono_memory_barrier ();
@@ -6027,6 +6033,8 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain,
 		mono_stats.imt_thunks_size += (code - start);
 
 	g_assert (code - start <= size);
+
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 
 	return (start);
 }

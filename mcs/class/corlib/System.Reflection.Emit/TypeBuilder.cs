@@ -448,6 +448,12 @@ namespace System.Reflection.Emit
 			return DefineNestedType (name, attr, parent, null, packSize, UnspecifiedTypeSize);
 		}
 
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packSize,
+			                             int typeSize)
+		{
+			return DefineNestedType (name, attr, parent, null, packSize, typeSize);
+		}
+
 		[ComVisible (true)]
 		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes)
 		{

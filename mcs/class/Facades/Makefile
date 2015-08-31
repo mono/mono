@@ -16,7 +16,7 @@ monotouch_SUBDIRS = System.Collections.Concurrent System.Collections System.Comp
 	System.Diagnostics.Process System.Diagnostics.TextWriterTraceListener System.Diagnostics.TraceEvent System.Diagnostics.TraceSource System.Globalization.Calendars \
 	System.IO.Compression System.IO.Compression.ZipFile System.IO.FileSystem System.IO.FileSystem.DriveInfo System.IO.FileSystem.Primitives \
 	System.IO.IsolatedStorage System.IO.MemoryMappedFiles System.IO.UnmanagedMemoryStream System.Net.AuthenticationManager System.Net.Cache \
-	System.Net.Http.WebRequestHandler System.Net.HttpListener System.Net.Mail System.Net.NameResolution System.Net.Security System.Net.ServicePoint System.Net.Sockets \
+	System.Net.HttpListener System.Net.Mail System.Net.NameResolution System.Net.Security System.Net.ServicePoint System.Net.Sockets \
 	System.Net.Utilities System.Net.WebHeaderCollection System.Net.WebSockets System.Net.WebSockets.Client System.Resources.ReaderWriter System.Runtime.CompilerServices.VisualC \
 	System.Security.AccessControl System.Security.Claims System.Security.Cryptography.DeriveBytes System.Security.Cryptography.Encoding System.Security.Cryptography.Encryption \
 	System.Security.Cryptography.Encryption.Aes System.Security.Cryptography.Encryption.ECDiffieHellman System.Security.Cryptography.Encryption.ECDsa System.Security.Cryptography.Hashing \
@@ -31,12 +31,12 @@ reflection_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflection.Emit.
 mobile_static_SUBDIRS = $(monotouch_SUBDIRS)
 
 net_4_5_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS) System.Diagnostics.PerformanceCounter \
-	System.IO.FileSystem.Watcher System.IO.Pipes System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController 
+	System.IO.FileSystem.Watcher System.IO.Pipes System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.Net.Http.WebRequestHandler
 
 monodroid_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS)
 
-xammac_SUBDIRS = $(net_4_5_SUBDIRS)
-xammac_net_4_5_SUBDIRS = $(net_4_5_SUBDIRS)
+xammac_SUBDIRS = $(monotouch_SUBDIRS)
+xammac_net_4_5_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS)
 
 monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
 

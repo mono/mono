@@ -45,13 +45,11 @@ class X {
 
 			case RepeatLayout.Table:
 				return "tbl";
-#if NET_4_0
 			case RepeatLayout.OrderedList:
 				return "ol";
 
 			case RepeatLayout.UnorderedList:
 				return "ul";
-#endif
 			default:
 				throw new InvalidOperationException ("Unsupported layout value: " + layout);
 		}
@@ -59,11 +57,7 @@ class X {
 
 	static void Main ()
 	{
-#if NET_4_0
 		Console.WriteLine ("#if NET_4_0");
-#else
-		Console.WriteLine ("#if NET_2_0 && !NET_4_0");
-#endif
 		bool isMono = Type.GetType ("Mono.Runtime", false) != null;
 
 		Console.WriteLine (@"
@@ -125,12 +119,8 @@ public class RepeatInfo_Autogen {{
 			new int [] {3, 9},
 			new int [] {3, 7}
 		};
-#if NET_4_0
 		int ntests = 1 << 7;
 		int lcount = -1;
-#else
-		int ntests = 1 << 6;
-#endif
 		RepeatDirection d;
 		RepeatLayout l;
 		bool oti, hdr, ftr, sep;
@@ -138,13 +128,9 @@ public class RepeatInfo_Autogen {{
 
 		for (int i = 0; i < ntests; i ++) {
 			d = (RepeatDirection) (i & (1 << 0));
-#if NET_4_0
 			if ((i % 2) == 0)
 				lcount++;
 			l = (RepeatLayout) (lcount % 4);
-#else
-			l = (RepeatLayout) ((i & (1 << 1)) >> 1);
-#endif
 			oti = (i & (1 << 3)) == 0;
 			hdr = (i & (1 << 4)) == 0;
 			ftr = (i & (1 << 5)) == 0;

@@ -192,9 +192,14 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void enter_with_atomic_var (object obj, ref bool lockTaken);
+
+		// Can't make this an icall since it has the same name as the other Enter method
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Enter (object obj, ref bool lockTaken)
 		{
-			TryEnter (obj, Timeout.Infinite, ref lockTaken);
+			enter_with_atomic_var (obj, ref lockTaken);
 		}
 
 		public static void TryEnter (object obj, ref bool lockTaken)

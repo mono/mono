@@ -34,7 +34,6 @@ namespace MonoTests.System.Runtime.Serialization
 	[TestFixture]
 	public class SerializationBinderTest
 	{
-#if NET_4_0
 		[Test]
 		public void BindToName ()
 		{
@@ -46,7 +45,6 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (null, assembly_name, "#A0");
 			Assert.AreEqual (null, type_name, "#A1");
 		}
-#endif
 	}
 
 	class TestSerializationBinder : SerializationBinder

@@ -210,7 +210,8 @@ namespace System
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
 			try {
-				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
+				// TODO: Should use __ConsoleStream from reference sources
+				return new FileStream (handle, access, false, bufferSize, false, true);
 			} catch (IOException) {
 				return Stream.Null;
 			}

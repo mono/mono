@@ -113,7 +113,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 120
+#define MONO_AOT_FILE_VERSION 121
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -307,9 +307,10 @@ typedef struct
 	/* maps MonoMethod -> MonoJitDynamicMethodInfo */
 	GHashTable *dynamic_code_hash;
 	GHashTable *method_code_hash;
-	/* Maps methods to a RuntimeInvokeInfo structure */
+	/* Maps methods to a RuntimeInvokeInfo structure, protected by the associated MonoDomain lock */
 	MonoConcurrentHashTable *runtime_invoke_hash;
 	/* Maps MonoMethod to a GPtrArray containing sequence point locations */
+	/* Protected by the domain lock */
 	GHashTable *seq_points;
 	/* Debugger agent data */
 	gpointer agent_info;
@@ -1326,9 +1327,6 @@ typedef enum {
 	MONO_TRAMPOLINE_DELEGATE,
 	MONO_TRAMPOLINE_RESTORE_STACK_PROT,
 	MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING,
-	MONO_TRAMPOLINE_MONITOR_ENTER,
-	MONO_TRAMPOLINE_MONITOR_ENTER_V4,
-	MONO_TRAMPOLINE_MONITOR_EXIT,
 	MONO_TRAMPOLINE_VCALL,
 	MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD,
 	MONO_TRAMPOLINE_NUM
@@ -1337,17 +1335,11 @@ typedef enum {
 /* These trampolines return normally to their caller */
 #define MONO_TRAMPOLINE_TYPE_MUST_RETURN(t)		\
 	((t) == MONO_TRAMPOLINE_RESTORE_STACK_PROT ||	\
-	 (t) == MONO_TRAMPOLINE_RGCTX_LAZY_FETCH ||	\
-	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER ||	\
-	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER_V4 ||	\
-	 (t) == MONO_TRAMPOLINE_MONITOR_EXIT)
+	 (t) == MONO_TRAMPOLINE_RGCTX_LAZY_FETCH)
 
 /* These trampolines receive an argument directly in a register */
 #define MONO_TRAMPOLINE_TYPE_HAS_ARG(t)		\
-	((t) == MONO_TRAMPOLINE_MONITOR_ENTER ||		\
-	 (t) == MONO_TRAMPOLINE_MONITOR_ENTER_V4 ||		\
-	 (t) == MONO_TRAMPOLINE_MONITOR_EXIT ||			\
-	 (t) == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD)
+	((t) == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD)
 
 /* optimization flags */
 #define OPTFLAG(id,shift,name,descr) MONO_OPT_ ## id = 1 << shift,
@@ -1924,6 +1916,11 @@ typedef struct {
 	 */
 	gboolean gen_sdb_seq_points;
 	gboolean gen_seq_points_compact_data;
+	/*
+	 * Setting single_imm_size should guarantee that each time managed code is compiled
+	 * the same instructions and registers are used, regardless of the size of used values.
+	 */
+	gboolean single_imm_size;
 	gboolean explicit_null_checks;
 	/*
 	 * Fill stack frames with 0x2a in method prologs. This helps with the
@@ -2124,8 +2121,6 @@ void      mono_cprop_local                  (MonoCompile *cfg, MonoBasicBlock *b
 MonoInst* mono_compile_create_var           (MonoCompile *cfg, MonoType *type, int opcode);
 MonoInst* mono_compile_create_var_for_vreg  (MonoCompile *cfg, MonoType *type, int opcode, int vreg);
 void      mono_compile_make_var_load        (MonoCompile *cfg, MonoInst *dest, gssize var_index);
-MonoInst* mono_compile_create_var_load      (MonoCompile *cfg, gssize var_index);
-MonoInst* mono_compile_create_var_store     (MonoCompile *cfg, gssize var_index, MonoInst *value);
 MonoInst* mini_get_int_to_float_spill_area  (MonoCompile *cfg);
 MonoType* mono_type_from_stack_type         (MonoInst *ins);
 guint32   mono_alloc_ireg                   (MonoCompile *cfg) MONO_LLVM_INTERNAL;
@@ -2438,7 +2433,7 @@ void              mono_emit_unwind_op (MonoCompile *cfg, int when,
 									   int val);
 MonoTrampInfo*    mono_tramp_info_create (const char *name, guint8 *code, guint32 code_size, MonoJumpInfo *ji, GSList *unwind_ops);
 void              mono_tramp_info_free (MonoTrampInfo *info);
-void              mono_tramp_info_register (MonoTrampInfo *info);
+void              mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain);
 int               mini_exception_id_by_name (const char *name);
 gboolean          mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize) MONO_LLVM_INTERNAL;
 
@@ -2647,6 +2642,7 @@ void     mono_walk_stack_with_ctx               (MonoJitStackWalk func, MonoCont
 void     mono_walk_stack_with_state             (MonoJitStackWalk func, MonoThreadUnwindState *state, MonoUnwindOptions unwind_options, void *user_data);
 void     mono_walk_stack                        (MonoJitStackWalk func, MonoUnwindOptions options, void *user_data);
 gboolean mono_thread_state_init_from_sigctx     (MonoThreadUnwindState *ctx, void *sigctx);
+void     mono_thread_state_init                 (MonoThreadUnwindState *ctx);
 gboolean mono_thread_state_init_from_current    (MonoThreadUnwindState *ctx);
 gboolean mono_thread_state_init_from_monoctx    (MonoThreadUnwindState *ctx, MonoContext *mctx);
 
@@ -2684,7 +2680,6 @@ MonoBoolean ves_icall_get_frame_info            (gint32 skip, MonoBoolean need_f
 						 MonoReflectionMethod **method, 
 						 gint32 *iloffset, gint32 *native_offset,
 						 MonoString **file, gint32 *line, gint32 *column);
-MonoString *ves_icall_System_Exception_get_trace (MonoException *exc);
 void mono_set_cast_details                      (MonoClass *from, MonoClass *to);
 
 /* Installs a function which is called when the runtime encounters an unhandled exception.

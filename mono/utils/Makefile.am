@@ -109,6 +109,7 @@ monoutils_sources = \
 	mono-threads-openbsd.c	\
 	mono-threads-android.c	\
 	mono-threads.h	\
+	mono-threads-api.h	\
 	mono-threads-coop.c	\
 	mono-threads-coop.h	\
 	mono-tls.h	\
@@ -139,7 +140,9 @@ monoutils_sources = \
 	memfuncs.c \
 	memfuncs.h \
 	parse.c \
-	parse.h
+	parse.h	\
+	checked-build.c \
+	checked-build.h
 
 arch_sources = 
 

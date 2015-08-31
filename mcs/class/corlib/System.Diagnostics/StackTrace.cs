@@ -57,6 +57,7 @@ namespace System.Diagnostics {
 		public const int METHODS_TO_SKIP = 0;
 
 		private StackFrame[] frames;
+		readonly StackTrace[] captured_traces;
 		private bool debug_info;
 
 		public StackTrace ()
@@ -119,11 +120,6 @@ namespace System.Diagnostics {
 		}
 
 		public StackTrace (Exception e, int skipFrames, bool fNeedFileInfo)
-			: this (e, skipFrames, fNeedFileInfo, false)
-		{
-		}
-
-		internal StackTrace (Exception e, int skipFrames, bool fNeedFileInfo, bool returnNativeFrames)
 		{
 			if (e == null)
 				throw new ArgumentNullException ("e");
@@ -132,22 +128,7 @@ namespace System.Diagnostics {
 
 			frames = get_trace (e, skipFrames, fNeedFileInfo);
 
-			if (!returnNativeFrames) {
-				bool resize = false;
-				for (int i = 0; i < frames.Length; ++i)
-					if (frames [i].GetMethod () == null)
-						resize = true;
-
-				if (resize) {
-					var l = new List<StackFrame> ();
-
-					for (int i = 0; i < frames.Length; ++i)
-						if (frames [i].GetMethod () != null)
-							l.Add (frames [i]);
-
-					frames = l.ToArray ();
-				}
-			}
+			captured_traces = e.captured_traces;
 		}
 
 		public StackTrace (StackFrame frame)
@@ -189,21 +170,14 @@ namespace System.Diagnostics {
 			return frames;
 		}
 
-		internal bool AddFrames (StringBuilder sb, bool isException = false)
+		bool AddFrames (StringBuilder sb)
 		{
 			bool printOffset;
 			string debugInfo, indentation;
 			string unknown = Locale.GetText ("<unknown method>");
 
-			if (isException) {
-				printOffset = true;
-				indentation = "  ";
-				debugInfo = Locale.GetText (" in {0}:{1} ");
-			} else {
-				printOffset = false;
-				indentation = "   ";
-				debugInfo = Locale.GetText (" in {0}:line {1}");
-			}
+			indentation = "  ";
+			debugInfo = Locale.GetText (" in {0}:{1} ");
 
 			var newline = String.Format ("{0}{1}{2} ", Environment.NewLine, indentation,
 					Locale.GetText ("at"));
@@ -220,21 +194,17 @@ namespace System.Diagnostics {
 					string internal_name = frame.GetInternalMethodName ();
 					if (internal_name != null)
 						sb.Append (internal_name);
-					else if (printOffset)
-						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 					else
-						sb.AppendFormat (unknown);
+						sb.AppendFormat ("<0x{0:x5} + 0x{1:x5}> {2}", frame.GetMethodAddress (), frame.GetNativeOffset (), unknown);
 				} else {
 					GetFullNameForStackTrace (sb, frame.GetMethod ());
 
-					if (printOffset) {
-						if (frame.GetILOffset () == -1) {
-							sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
-							if (frame.GetMethodIndex () != 0xffffff)
-								sb.AppendFormat (" {0}", frame.GetMethodIndex ());
-						} else {
-							sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
-						}
+					if (frame.GetILOffset () == -1) {
+						sb.AppendFormat (" <0x{0:x5} + 0x{1:x5}>", frame.GetMethodAddress (), frame.GetNativeOffset ());
+						if (frame.GetMethodIndex () != 0xffffff)
+							sb.AppendFormat (" {0}", frame.GetMethodIndex ());
+					} else {
+						sb.AppendFormat (" [0x{0:x5}]", frame.GetILOffset ());
 					}
 
 					sb.AppendFormat (debugInfo, frame.GetSecureFileName (),
@@ -306,6 +276,21 @@ namespace System.Diagnostics {
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
+
+			//
+			// Add traces captured using ExceptionDispatchInfo
+			//
+			if (captured_traces != null) {
+				foreach (var t in captured_traces) {
+					if (!t.AddFrames (sb))
+						continue;
+
+					sb.Append (Environment.NewLine);
+					sb.Append ("--- End of stack trace from previous location where exception was thrown ---");
+					sb.Append (Environment.NewLine);
+				}
+			}
+
 			AddFrames (sb);
 			return sb.ToString ();
 		}

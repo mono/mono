@@ -531,7 +531,6 @@ namespace MonoTests.System.Text {
 	}
 
 
-#if NET_4_0
 	[Test]
 	public void ClearMethod () {
 		StringBuilder sb = new StringBuilder ("Text");
@@ -539,7 +538,6 @@ namespace MonoTests.System.Text {
 		Assert.AreEqual (0, sb.Length, "#1");
 		Assert.AreEqual (String.Empty, sb.ToString (), "#2");
 	}
-#endif
 
 }
 

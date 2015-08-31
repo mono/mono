@@ -584,10 +584,14 @@ namespace System.ServiceModel.Dispatcher
 			{
 				Message msg;
 				var input = (IInputChannel) result.AsyncState;
-				if (input.EndTryReceive (result, out msg))
-					ProcessInput (input, msg);
-				else
+				try {
+					if (input.EndTryReceive (result, out msg))
+						ProcessInput (input, msg);
+					else
+						input.Close ();
+				} catch (ObjectDisposedException) {
 					input.Close ();
+				}
 			}
 
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)

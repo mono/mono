@@ -30,6 +30,7 @@ using System;
 using NUnit.Framework;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace MonoTests.System.Runtime.ExceptionServices
 {
@@ -150,7 +151,25 @@ namespace MonoTests.System.Runtime.ExceptionServices
 				Assert.IsTrue (split [1].Contains ("---"), "#2");
 				Assert.IsTrue (split [4].Contains ("---"), "#3");
 			}
-		}		
+		}
+
+		[Test]
+		public void StackTraceUserCopy ()
+		{
+			try {
+				try {
+					throw new NotImplementedException ();
+				} catch (Exception e) {
+					var edi = ExceptionDispatchInfo.Capture (e);
+					edi.Throw();
+				}
+			} catch (Exception ex) {
+				var st = new StackTrace (ex, true);
+				var split = st.ToString ().Split (new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+				Assert.AreEqual (4, split.Length, "#1");
+				Assert.IsTrue (split [1].Contains ("---"), "#2");
+			}
+		}
 	}
 }
 

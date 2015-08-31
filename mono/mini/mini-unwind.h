@@ -114,6 +114,8 @@ typedef struct {
 #define mono_add_unwind_op_same_value(op_list,code,buf,reg) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_same_value, (reg), 0)); } while (0)
 #define mono_add_unwind_op_offset(op_list,code,buf,reg,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_offset, (reg), (offset))); } while (0)
 
+#define mono_free_unwind_info(op_list) do { GSList *l; for (l = op_list; l; l = l->next) g_free (l->data); g_slist_free (op_list); op_list = NULL; } while (0)
+
 /* Pointer Encoding in the .eh_frame */
 enum {
 	DW_EH_PE_absptr = 0x00,
@@ -143,6 +145,9 @@ mono_unwind_get_dwarf_data_align (void);
 
 int
 mono_unwind_get_dwarf_pc_reg (void);
+
+guint8*
+mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enable_extensions);
 
 guint8*
 mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len);

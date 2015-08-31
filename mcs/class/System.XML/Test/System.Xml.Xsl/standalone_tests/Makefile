@@ -12,8 +12,8 @@
 
 RUNTIME = mono
 
-nunit_MONO_PATH="../../../../../class/lib/net_4_5"
-CSCOMPILE=MONO_PATH=../../../../../class/lib/net_4_5 ../../../../../../runtime/mono-wrapper ../../../../../class/lib/build/mcs.exe
+nunit_MONO_PATH="../../../../../class/lib/net_4_x"
+CSCOMPILE=MONO_PATH=../../../../../class/lib/net_4_x ../../../../../../runtime/mono-wrapper ../../../../../class/lib/build/mcs.exe
 
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
 CATALOG = testsuite/TESTS/catalog.xml

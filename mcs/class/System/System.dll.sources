@@ -188,7 +188,6 @@ System.IO/InternalBufferOverflowException.cs
 System.IO/InvalidDataException.cs
 System.IO/IODescriptionAttribute.cs
 System.IO/KeventWatcher.cs
-System.IO/MonoSyncFileStream.cs
 System.IO/NotifyFilters.cs
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs
@@ -302,7 +301,6 @@ System.Net/HttpRequestHeader.cs
 System.Net/HttpResponseHeader.cs
 System.Net/HttpStatusCode.cs
 System.Net/HttpStreamAsyncResult.cs
-System.Net/HttpUtility.cs
 System.Net/HttpVersion.cs
 System.Net/HttpWebRequest.cs
 System.Net/HttpWebResponse.cs
@@ -472,7 +470,6 @@ System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
-System.Net/WebUtility.cs
 System.Net.WebSockets/ClientWebSocket.cs
 System.Net.WebSockets/ClientWebSocketOptions.cs
 System.Net.WebSockets/HttpListenerWebSocketContext.cs
@@ -1010,6 +1007,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
+../../../external/referencesource/System/net/System/Net/WebUtility.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/IPInterfaceStatistics.cs

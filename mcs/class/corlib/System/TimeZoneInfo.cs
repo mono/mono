@@ -32,8 +32,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Globalization;
 using System.IO;
@@ -118,6 +118,58 @@ namespace System
 		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint GetTimeZoneInformation(out TIME_ZONE_INFORMATION tzi);
 
+		private static bool libcNotFound;
+
+		[DllImport ("libc")]
+		private static extern int readlink (string path, byte[] buffer, int buflen);
+
+		private static string readlink (string path)
+		{
+			if (libcNotFound)
+				return null;
+
+			byte[] buf = new byte [512];
+			int ret;
+
+			try {
+				ret = readlink (path, buf, buf.Length);
+			} catch (DllNotFoundException e) {
+				libcNotFound = true;
+				return null;
+			}
+
+			if (ret == -1) return null;
+			char[] cbuf = new char [512];
+			int chars = System.Text.Encoding.Default.GetChars (buf, 0, ret, cbuf, 0);
+			return new String (cbuf, 0, chars);
+		}
+
+		private static bool TryGetNameFromPath (string path, out string name)
+		{
+			name = null;
+			var linkPath = readlink (path);
+			if (linkPath != null)
+				path = linkPath;
+
+			path = Path.GetFullPath (path);
+
+			if (string.IsNullOrEmpty (TimeZoneDirectory))
+				return false;
+
+			var baseDir = TimeZoneDirectory;
+			if (baseDir [baseDir.Length-1] != Path.DirectorySeparatorChar)
+				baseDir += Path.DirectorySeparatorChar;
+
+			if (!path.StartsWith (baseDir, StringComparison.InvariantCulture))
+				return false;
+
+			name = path.Substring (baseDir.Length);
+			if (name == "localtime")
+				name = "Local";
+
+			return true;
+		}
+
 #if !MOBILE || MOBILE_STATIC
 		static TimeZoneInfo CreateLocal ()
 		{
@@ -148,15 +200,22 @@ namespace System
 				}
 			}
 
-			try {
-				return FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
-			} catch (TimeZoneNotFoundException) {
+			var tzFilePaths = new string [] {
+				"/etc/localtime",
+				Path.Combine (TimeZoneDirectory, "localtime")};
+
+			foreach (var tzFilePath in tzFilePaths) {
 				try {
-					return FindSystemTimeZoneByFileName ("Local", Path.Combine (TimeZoneDirectory, "localtime"));	
+					string tzName = null;
+					if (!TryGetNameFromPath (tzFilePath, out tzName))
+						tzName = "Local";
+					return FindSystemTimeZoneByFileName (tzName, tzFilePath);
 				} catch (TimeZoneNotFoundException) {
-					return Utc;
+					continue;
 				}
 			}
+
+			return Utc;
 		}
 
 		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
@@ -169,7 +228,7 @@ namespace System
 #endif
 		}
 
-		static void GetSystemTimeZones (List<TimeZoneInfo> systemTimeZones)
+		static void GetSystemTimeZonesCore (List<TimeZoneInfo> systemTimeZones)
 		{
 #if !MOBILE_STATIC
 			if (TimeZoneKey != null) {
@@ -184,7 +243,7 @@ namespace System
 #endif
 
 #if LIBC
-			string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
+			string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Australia", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
 			foreach (string continent in continents) {
 				try {
 					foreach (string zonepath in Directory.GetFiles (Path.Combine (TimeZoneDirectory, continent))) {
@@ -685,7 +744,7 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				var tz = new List<TimeZoneInfo> ();
-				GetSystemTimeZones (tz);
+				GetSystemTimeZonesCore (tz);
 				Interlocked.CompareExchange (ref systemTimeZones, new ReadOnlyCollection<TimeZoneInfo> (tz), null);
 			}
 

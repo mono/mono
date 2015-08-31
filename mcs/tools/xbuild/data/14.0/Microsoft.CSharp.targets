@@ -96,7 +96,7 @@
 			WarningLevel="$(WarningLevel)"
 			WarningsAsErrors="$(WarningsAsErrors)"
 			WarningsNotAsErrors="$(WarningsNotAsErrors)"
-			Win32Icon="$(Win32Icon)"
+			Win32Icon="$(ApplicationIcon)"
 			Win32Resource="$(Win32Resource)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ToolExe="$(CscToolExe)"

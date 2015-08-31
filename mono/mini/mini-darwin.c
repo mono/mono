@@ -239,23 +239,30 @@ mono_runtime_install_handlers (void)
 pid_t
 mono_runtime_syscall_fork ()
 {
+#ifdef HAVE_FORK
 	return (pid_t) fork ();
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
+#ifdef HAVE_EXECV
 	const char *argv [5];
 	char template [] = "/tmp/mono-gdb-commands.XXXXXX";
 	FILE *commands;
 	gboolean using_lldb = FALSE;
 
+	using_lldb = TRUE;
+
 	argv [0] = g_find_program_in_path ("gdb");
-	if (!argv [0]) {
-		// FIXME: LLDB doesn't quit when given the 'quit' command
-		//argv [0] = g_find_program_in_path ("lldb");
-		//using_lldb = TRUE;
-	}
+	if (argv [0])
+		using_lldb = FALSE;
+
+	if (using_lldb)
+		argv [0] = g_find_program_in_path ("lldb");
 
 	if (argv [0] == NULL)
 		return;
@@ -277,6 +284,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	} else {
 		fprintf (commands, "attach %ld\n", (long) crashed_pid);
 		fprintf (commands, "info threads\n");
+		fprintf (commands, " t a a info thread\n");
 		fprintf (commands, "thread apply all bt\n");
 		argv [1] = "-batch";
 		argv [2] = "-x";
@@ -286,8 +294,13 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	fflush (commands);
 	fclose (commands);
 
+	fclose (stdin);
+
 	execv (argv [0], (char**)argv);
 	unlink (template);
+#else
+	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
+#endif // HAVE_EXECV
 }
 
 gboolean

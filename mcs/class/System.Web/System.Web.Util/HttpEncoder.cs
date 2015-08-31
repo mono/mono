@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text;
-#if !NO_SYSTEM_WEB_DEPENDENCY && NET_4_0 && !MOBILE
+#if !NO_SYSTEM_WEB_DEPENDENCY && !MOBILE
 using System.Web.Configuration;
 #endif
 

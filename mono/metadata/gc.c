@@ -82,9 +82,9 @@ guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
 {
 	guint32 result;
 
-	MONO_PREPARE_BLOCKING
+	MONO_PREPARE_BLOCKING;
 	result = WaitForSingleObjectEx (handle, timeout, alertable);
-	MONO_FINISH_BLOCKING
+	MONO_FINISH_BLOCKING;
 
 	return result;
 }
@@ -119,6 +119,9 @@ mono_gc_run_finalize (void *obj, void *data)
 	MonoDomain *caller_domain = mono_domain_get ();
 	MonoDomain *domain;
 	RuntimeInvokeFunction runtime_invoke;
+
+	// This function is called from the innards of the GC, so our best alternative for now is to do polling here
+	MONO_SUSPEND_CHECK ();
 
 	o = (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data));
 
@@ -317,8 +320,11 @@ object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 	 * end up running them while or after the domain is being cleared, so
 	 * the objects will not be valid anymore.
 	 */
-	if (!mono_domain_is_unloading (domain))
+	if (!mono_domain_is_unloading (domain)) {
+		MONO_TRY_BLOCKING;
 		mono_gc_register_for_finalization (obj, callback);
+		MONO_FINISH_TRY_BLOCKING;
+	}
 #endif
 }
 
@@ -623,7 +629,12 @@ static HandleData gc_handles [] = {
 	{NULL, NULL, 0, HANDLE_PINNED, 0}
 };
 
-#define lock_handles(handles) mono_mutex_lock (&handle_section)
+#define lock_handles(handles) do {	\
+	MONO_TRY_BLOCKING;	\
+	mono_mutex_lock (&handle_section);	\
+	MONO_FINISH_TRY_BLOCKING;	\
+} while (0)
+
 #define unlock_handles(handles) mono_mutex_unlock (&handle_section)
 
 static int
@@ -1088,7 +1099,7 @@ finalizer_thread (gpointer unused)
 
 		g_assert (mono_domain_get () == mono_get_root_domain ());
 		mono_gc_set_skip_thread (TRUE);
-		MONO_PREPARE_BLOCKING
+		MONO_PREPARE_BLOCKING;
 
 		if (wait) {
 		/* An alertable wait is required so this thread can be suspended on windows */
@@ -1099,7 +1110,7 @@ finalizer_thread (gpointer unused)
 #endif
 		}
 		wait = TRUE;
-		MONO_FINISH_BLOCKING
+		MONO_FINISH_BLOCKING;
 		mono_gc_set_skip_thread (FALSE);
 
 		mono_threads_perform_thread_dump ();

@@ -16,6 +16,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 
 namespace MonoTests.System.IO
 {
@@ -1676,6 +1677,17 @@ namespace MonoTests.System.IO
 				if (fs2 != null)
 					fs2.Close ();
 				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void Ctor_InvalidSafeHandle ()
+		{
+			var sf = new SafeFileHandle (IntPtr.Zero, true);
+			try {
+				new FileStream (sf, FileAccess.ReadWrite);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
 			}
 		}
 #endif
