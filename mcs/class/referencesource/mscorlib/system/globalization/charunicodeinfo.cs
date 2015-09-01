@@ -157,6 +157,22 @@ namespace System.Globalization {
                 return(value);
         }
 
+        unsafe private static double EndianSwap(double value)
+        {
+            if (!BitConverter.IsLittleEndian) {
+                byte *ptr = (byte *) &value;
+                double res;
+                byte *buf = (byte *) &res;
+                ushort t = sizeof(double) - 1;
+
+                for (ushort i = 0; i < sizeof(double); i++)
+                    buf[t-i] = ptr[i];
+
+                return(res);
+            } else
+                return(value);
+        }
+
 
         //We need to allocate the underlying table that provides us with the information that we
         //use.  We allocate this once in the class initializer and then we don't need to worry
@@ -322,7 +338,7 @@ namespace System.Globalization {
             }
             return (((double*)s_pNumericValues)[pBytePtr[(ch & 0x000f)]]);
 #else
-            return (((double*)s_pNumericValues)[pBytePtr[(ch & 0x000f)]]);
+            return EndianSwap(((double*)s_pNumericValues)[pBytePtr[(ch & 0x000f)]]);
 #endif
         }
 
