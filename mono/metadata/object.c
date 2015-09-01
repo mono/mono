@@ -4365,7 +4365,8 @@ mono_object_new_specific (MonoVTable *vtable)
 				mono_class_init (klass);
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
-			g_assert (im);
+			if (!im)
+				mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 	
@@ -5138,6 +5139,8 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 		gpointer pa [2];
 
 		im = mono_class_get_method_from_name (rpklass, "CanCastTo", -1);
+		if (!im)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 		im = mono_object_get_virtual_method (rp, im);
 		g_assert (im);
 	
@@ -5916,7 +5919,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg,
 
 	if (!im) {
 		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", 4);
-		g_assert (im);
+		if (!im)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 		real_proxy->vtable->domain->private_invoke_method = im;
 	}
 
@@ -6295,7 +6299,8 @@ mono_load_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fiel
 	
 	if (!getter) {
 		getter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldGetter", -1);
-		g_assert (getter);
+		if (!getter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 	
 	field_class = mono_class_from_mono_type (field->type);
@@ -6362,7 +6367,8 @@ mono_load_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField *
 
 	if (!getter) {
 		getter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldGetter", -1);
-		g_assert (getter);
+		if (!getter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 	
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
@@ -6423,7 +6429,8 @@ mono_store_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fie
 
 	if (!setter) {
 		setter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldSetter", -1);
-		g_assert (setter);
+		if (!setter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 
 	if (field_class->valuetype)
@@ -6479,7 +6486,8 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 
 	if (!setter) {
 		setter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldSetter", -1);
-		g_assert (setter);
+		if (!setter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
