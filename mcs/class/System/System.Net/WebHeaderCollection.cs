@@ -677,7 +677,7 @@ namespace System.Net
 				return;
 
 			if ((info & headerRestriction.Value) != 0)
-				throw new ArgumentException ("This header must be modified with the appropiate property.");
+				throw new ArgumentException ("This header must be modified with the appropriate property.");
 		}
 
 		void CheckHeaderConsistency (HeaderInfo value)
