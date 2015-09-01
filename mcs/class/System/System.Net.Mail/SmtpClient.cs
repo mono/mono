@@ -581,10 +581,13 @@ namespace System.Net.Mail {
 			
 			// FIXME: parse the list of extensions so we don't bother wasting
 			// our time trying commands if they aren't supported.
-			status = SendCommand ("EHLO " + Dns.GetHostName ());
+			
+			// Get the FQDN of the local machine
+			string fqdn = Dns.GetHostEntry (Dns.GetHostName ()).HostName;
+			status = SendCommand ("EHLO " + fqdn);
 			
 			if (IsError (status)) {
-				status = SendCommand ("HELO " + Dns.GetHostName ());
+				status = SendCommand ("HELO " + fqdn);
 				
 				if (IsError (status))
 					throw new SmtpException (status.StatusCode, status.Description);
@@ -601,10 +604,10 @@ namespace System.Net.Mail {
 				ResetExtensions();
 				writer = new StreamWriter (stream);
 				reader = new StreamReader (stream);
-				status = SendCommand ("EHLO " + Dns.GetHostName ());
+				status = SendCommand ("EHLO " + fqdn);
 			
 				if (IsError (status)) {
-					status = SendCommand ("HELO " + Dns.GetHostName ());
+					status = SendCommand ("HELO " + fqdn);
 				
 					if (IsError (status))
 						throw new SmtpException (status.StatusCode, status.Description);
