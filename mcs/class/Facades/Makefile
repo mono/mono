@@ -40,7 +40,7 @@ xammac_net_4_5_SUBDIRS = $(monotouch_SUBDIRS) $(reflection_SUBDIRS)
 
 monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
 
-PROFILE_SUBDIRS = $(net_4_5_SUBDIRS)
+PARALLEL_SUBDIRS = $(net_4_5_SUBDIRS)
 
 #OVERRIDE_TARGET_ALL = yes
 
@@ -66,10 +66,13 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
-SUBDIRS = $(net_4_5_SUBDIRS)
+#SUBDIRS = $(net_4_5_SUBDIRS)
 
 doc-update-local:
 	@echo "not doing docs"
 
 doc-update-recursive:
 	@echo "do not recurse the Facades folder"
+
+System System.Core System.ComponentModel.DataAnnotations System.Numerics System.Runtime.Serialization System.XML System.ComponentModel.Composition System.ServiceModel System.Xml.Linq:
+
