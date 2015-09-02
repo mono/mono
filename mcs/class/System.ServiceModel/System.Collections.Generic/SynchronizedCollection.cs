@@ -150,10 +150,10 @@ namespace System.Collections.Generic
 		public bool Remove (T item)
 		{
 			lock (root) {
-				int index = list.IndexOf (item);
+				int index = IndexOf (item);
 				if (index < 0)
 					return false;
-				list.RemoveAt (index);
+				RemoveAt (index);
 				return true;
 			}
 		}
