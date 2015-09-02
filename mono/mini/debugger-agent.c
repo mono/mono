@@ -575,7 +575,6 @@ static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
 static SingleStepReq *ss_req = NULL;
-static gpointer ss_invoke_addr = NULL;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -1912,7 +1911,9 @@ save_thread_context (MonoContext *ctx)
 	DebuggerTlsData *tls;
 
 	tls = TlsGetValue (debugger_tls_id);
-	g_assert (tls);
+	
+	if (!tls)
+		return;
 
 	if (ctx) {
 		memcpy (&tls->ctx, ctx, sizeof (MonoContext));
@@ -2047,7 +2048,8 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			// debugger debugging
 			if (sigctx)
 				DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
-			//save_thread_context (&ctx);
+			
+			save_thread_context (&ctx);
 
 			if (!tls->thread)
 				/* Already terminated */
@@ -2697,7 +2699,7 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info_with_context (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean has_context, MonoContext *context, MonoLMF *lmf)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -2719,8 +2721,8 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 		/* Have to use the state saved by the signal handler */
 		process_frame (&tls->async_last_frame, NULL, &user_data);
 		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->async_ctx, FALSE, thread, tls->async_lmf, &user_data);
-	} else if (tls->has_context) {
-		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->ctx, FALSE, thread, tls->lmf, &user_data);
+	} else if (has_context) {
+		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, context, FALSE, thread, lmf, &user_data);
 	} else {
 		// FIXME:
 		tls->frame_count = 0;
@@ -2757,6 +2759,12 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	tls->frames = new_frames;
 	tls->frame_count = new_frame_count;
 	tls->frames_up_to_date = TRUE;
+}
+
+static void
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+{
+	compute_frame_info_with_context(thread, tls, tls->has_context, &tls->ctx, tls->lmf);
 }
 
 /*
@@ -3328,28 +3336,6 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 		tls->invoke_addr = g_queue_pop_head(tls->invoke_addr_stack);
 	}
 
-	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ()) {
-		mono_loader_unlock ();
-		return;
-	}
-
-	/*
-	 * We need to stop single stepping when exiting a runtime invoke, since if it is
-	 * a step out, it may return to native code, and thus never end.
-	 */
-	ss_invoke_addr = NULL;
-
-
-	for (i = 0; i < event_requests->len; ++i) {
-		EventRequest *req = g_ptr_array_index (event_requests, i);
-
-		if (req->event_kind == EVENT_KIND_STEP) {
-			ss_destroy (req->info);
-			g_ptr_array_remove_index_fast (event_requests, i);
-			g_free (req);
-			break;
-		}
-	}
 	mono_loader_unlock ();
 }
 
@@ -3796,20 +3782,9 @@ static int
 compute_frame_count(DebuggerTlsData *tls, MonoContext *ctx)
 {
 	int frame_count;
-	gboolean had_context = tls->has_context;
-	
-	/* Required for compute_frame_info to work */
-	if(!had_context)
-		save_thread_context(ctx);
-	
-	compute_frame_info (tls->thread, tls);
-	
+
+	compute_frame_info_with_context (tls->thread, tls, TRUE, ctx, mono_get_lmf());
 	frame_count = tls->frame_count;
-	
-	/* Restore state */
-	if(!had_context)
-		tls->has_context = FALSE;
-	
 	invalidate_frames (tls);
 	
 	return frame_count;
@@ -3926,7 +3901,7 @@ process_breakpoint_inner (DebuggerTlsData *tls, MonoContext *ctx)
 
 		if(ss_req->stepover_frame_method && ji->method == ss_req->stepover_frame_method && ss_req->stepover_frame_count < compute_frame_count(tls, ctx))
 		{
-			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner rercursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
+			DEBUG(1, fprintf (log_file, "[%p] Hit step-over breakpoint in inner recursive function, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
 			hit = FALSE;
 		}
 
@@ -4261,13 +4236,12 @@ start_single_stepping (void)
 	if (val == 1)
 		mono_arch_start_single_stepping ();
 
-	if (ss_req != NULL && ss_invoke_addr == NULL) {
+	if (ss_req != NULL) {
 		DebuggerTlsData *tls;
 	
 		mono_loader_lock ();
 	
  		tls = mono_g_hash_table_lookup (thread_to_tls, ss_req->thread);
-		ss_invoke_addr = tls->invoke_addr;
 		
 		mono_loader_unlock ();
 	}
@@ -4441,7 +4415,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		/* Compute the initial line info */
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (ss_req->depth == STEP_DEPTH_OUT && !is_parentframe_managed(tls))
@@ -4469,7 +4449,13 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 
 		compute_frame_info (thread, tls);
 
-		g_assert (tls->frame_count);
+		/* Do not try to step if we do not have any stack frames */
+		if(tls->frame_count == 0)
+		{
+			ss_destroy(ss_req);
+			return ERR_NO_INVOCATION;
+		}
+		
 		frame = tls->frames [0];
 
 		if (frame->il_offset != -1) {
@@ -4637,7 +4623,13 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 	MonoObject *obj;
 
 	if (t->byref) {
-		g_assert (*(void**)addr);
+		
+		if((*(void**)addr) == NULL)
+		{
+			buffer_add_byte (buf, VALUE_TYPE_ID_NULL);
+			return;
+		}
+		
 		addr = *(void**)addr;
 	}
 
@@ -5153,8 +5145,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	
 	sig = mono_method_signature (m);
 
-	// The client may request the container instead of the inflated method
-	if (sig && sig->ret && MONO_TYPE_MVAR == sig->ret->type)
+	if (m->is_generic && !m->is_inflated)
 		return ERR_NOT_IMPLEMENTED;
 
 	if (m->klass->valuetype)

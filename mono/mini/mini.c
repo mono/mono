@@ -3030,6 +3030,38 @@ mono_postprocess_patches (MonoCompile *cfg)
 	}
 }
 
+static void 
+get_basic_block_seq_points(GSList **next, MonoBasicBlock *bb, MonoInst *ins, int depth)
+{
+	int i;
+
+	for (i = 0; i < bb->in_count; ++i) 
+	{
+		MonoBasicBlock *in_bb = bb->in_bb [i];
+
+		if (in_bb->last_seq_point)
+		{
+			GSList *current;
+			int in_bb_index = in_bb->last_seq_point->backend.size;
+			int ins_index = ins->backend.size;
+			gboolean found = FALSE;
+
+			/* Check if we have already inserted ins_index  */
+			for(current = next[in_bb_index]; current != NULL && !found; current = current->next)
+			{
+				if(ins_index == GPOINTER_TO_UINT(current->data))
+					found = TRUE;
+			}
+
+			if(!found)
+				next [in_bb_index] = g_slist_append (next [in_bb_index], GUINT_TO_POINTER (ins_index));
+		}
+		else
+			if(depth < 5)
+				get_basic_block_seq_points(next, in_bb, ins, depth+1);
+	}
+}
+
 static void
 mono_save_seq_point_info (MonoCompile *cfg)
 {
@@ -3076,16 +3108,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 				next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
 			} else {
 				/* Link with the last bb in the previous bblocks */
-				/* 
-				 * FIXME: What if the prev bb doesn't have a seq point, but
-				 * one of its predecessors has ?
-				 */
-				for (i = 0; i < bb->in_count; ++i) {
-					in_bb = bb->in_bb [i];
-
-					if (in_bb->last_seq_point)
-						next [in_bb->last_seq_point->backend.size] = g_slist_append (next [in_bb->last_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
-				}
+				get_basic_block_seq_points(next, bb, ins, 0);
 			}
 
 			last = ins;
