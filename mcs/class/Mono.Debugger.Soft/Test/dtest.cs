@@ -2507,53 +2507,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	public void InvokeNested () {
-		Event e = run_until ("invoke1");
-
-		MethodMirror m = entry_point.DeclaringType.GetMethod ("invoke2");
-		Assert.IsNotNull (m);
-		vm.SetBreakpoint (m, 0);
-
-		StackFrame frame = e.Thread.GetFrames () [0];
-		var o = frame.GetThis () as ObjectMirror;
-
-		bool failed = false;
-
-		bool finished = false;
-		object wait = new object ();
-
-		Thread t = new Thread (delegate () {
-				try {
-					o.InvokeMethod (e.Thread, m, null);
-				} catch {
-					failed = true;
-				}
-				lock (wait) {
-					finished = true;
-					Monitor.Pulse (wait);
-				}
-			});
-
-		t.Start ();
-
-		StackFrame invoke_frame = null;
-
-		e = GetNextEvent ();
-		Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
-
-		// Check that nested invokes are not allowed
-		AssertThrows<VMNotSuspendedException> (delegate {
-			o.InvokeMethod (e.Thread, m, null);
-			});
-
-		vm.Resume ();
-		lock (wait) {
-			if (!finished)
-				Monitor.Wait (wait);
-		}
-	}
-
-	[Test]
 	public void GetThreads () {
 		vm.GetThreads ();
 	}
