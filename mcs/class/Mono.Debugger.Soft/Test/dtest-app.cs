@@ -909,10 +909,6 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public void invoke3 () {
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void invoke_ex () {
 		invoke_ex_inner ();
 	}
