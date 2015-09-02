@@ -171,6 +171,21 @@ namespace MonoTests.System.Globalization
 
 			ci = CultureInfo.CreateSpecificCulture ("");
 			Assert.AreEqual (CultureInfo.InvariantCulture, ci, "#5");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hant");
+			Assert.AreEqual ("zh-HK", ci.Name, "#6");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hans");
+			Assert.AreEqual ("zh-CN", ci.Name, "#7");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hans-CN");
+			Assert.AreEqual ("zh-CN", ci.Name, "#8");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hant-US");
+			Assert.AreEqual ("zh-HK", ci.Name, "#9");
+
+			ci = CultureInfo.CreateSpecificCulture ("az-CyrlM-BR");
+			Assert.AreEqual ("az-Latn-AZ", ci.Name, "#10");
 		}
 
 		[Test]
