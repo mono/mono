@@ -6248,9 +6248,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class ExpressionEmitter : Emitter {
-			public ExpressionEmitter (Expression converted, LocalVariable li) :
-				base (converted, li)
+		sealed class ExpressionEmitter : Emitter {
+			public ExpressionEmitter (Expression converted, LocalVariable li)
+				: base (converted, li)
 			{
 			}
 
@@ -6348,14 +6348,24 @@ namespace Mono.CSharp {
 				//
 				// Case 1: Array
 				//
-				if (res.Type.IsArray) {
-					TypeSpec array_type = TypeManager.GetElementType (res.Type);
+				var ac = res.Type as ArrayContainer;
+				if (ac != null) {
+					TypeSpec array_type = ac.Element;
 
 					//
 					// Provided that array_type is unmanaged,
 					//
 					if (!TypeManager.VerifyUnmanaged (bc.Module, array_type, loc))
 						return null;
+
+					Expression res_init;
+					if (ExpressionAnalyzer.IsInexpensiveLoad (res)) {
+						res_init = res;
+					} else {
+						var expr_variable = LocalVariable.CreateCompilerGenerated (ac, bc.CurrentBlock, loc);
+						res_init = new CompilerAssign (expr_variable.CreateReferenceExpression (bc, loc), res, loc);
+						res = expr_variable.CreateReferenceExpression (bc, loc);
+					}
 
 					//
 					// and T* is implicitly convertible to the
@@ -6371,7 +6381,7 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, res, new NullLiteral (loc)),
+						new Binary (Binary.Operator.Equality, res_init, new NullLiteral (loc)),
 						new Binary (Binary.Operator.Equality, new MemberAccess (res, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
 							new NullLiteral (loc),
 							converted, loc);
