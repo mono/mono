@@ -1236,7 +1236,7 @@ namespace Mono.CSharp
 					EmitLoad (ec, !conditionalAccess);
 
 					if (conditionalAccess) {
-						conditional_access_dup = !IsInexpensiveLoad ();
+						conditional_access_dup = !ExpressionAnalyzer.IsInexpensiveLoad (instance);
 						if (conditional_access_dup)
 							ec.Emit (OpCodes.Dup);
 					}
@@ -1309,7 +1309,7 @@ namespace Mono.CSharp
 			instance.Emit (ec);
 
 			// Only to make verifier happy
-			if (boxInstance && RequiresBoxing ()) {
+			if (boxInstance && ExpressionAnalyzer.RequiresBoxing (instance)) {
 				ec.Emit (OpCodes.Box, instance_type);
 			}
 		}
@@ -1327,7 +1327,12 @@ namespace Mono.CSharp
 			return instance_type;
 		}
 
-		bool RequiresBoxing ()
+
+	}
+
+	static class ExpressionAnalyzer
+	{
+		public static bool RequiresBoxing (Expression instance)
 		{
 			var instance_type = instance.Type;
 			if (instance_type.IsGenericParameter && !(instance is This) && TypeSpec.IsReferenceType (instance_type))
@@ -1342,12 +1347,12 @@ namespace Mono.CSharp
 		//
 		// Returns true for cheap race-free load, where we can avoid using dup
 		//
-		bool IsInexpensiveLoad ()
+		public static bool IsInexpensiveLoad (Expression instance)
 		{
 			if (instance is Constant)
 				return instance.IsSideEffectFree;
 
-			if (RequiresBoxing ())
+			if (RequiresBoxing (instance))
 				return false;
 
 			var vr = instance as VariableReference;

@@ -19605,7 +19605,7 @@
   <test name="gtest-629.cs">
     <type name="Program">
       <method name="Void Main()" attrs="150">
-        <size>135</size>
+        <size>116</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -51636,6 +51636,19 @@
       </method>
     </type>
   </test>
+  <test name="test-927.cs">
+    <type name="MainClass">
+      <method name="Double[] GetTempBuffer()" attrs="150">
+        <size>27</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">
@@ -58356,7 +58369,7 @@
     </type>
     <type name="Program+&lt;OnReadHandle&gt;c__AnonStorey0">
       <method name="Int32 &lt;&gt;m__0(Int32)" attrs="131">
-        <size>55</size>
+        <size>47</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
