@@ -146,6 +146,10 @@ namespace MonoTests.Mono.Unix.Native
 		public void SockOpt ()
 		{
 			WithSockets (UnixAddressFamily.AF_UNIX, UnixSocketType.SOCK_STREAM, 0, (so1, so2) => {
+				if (Syscall.getsockopt (so1, UnixSocketProtocol.SOL_SOCKET, UnixSocketOptionName.SO_REUSEADDR, out value) < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+				Assert.AreEqual (0, value);
+
 				// Set SO_REUSEADDR to 1
 				if (Syscall.setsockopt (so1, UnixSocketProtocol.SOL_SOCKET, UnixSocketOptionName.SO_REUSEADDR, 1) < 0)
 					UnixMarshal.ThrowExceptionForLastError ();
@@ -154,7 +158,7 @@ namespace MonoTests.Mono.Unix.Native
 				int value;
 				if (Syscall.getsockopt (so1, UnixSocketProtocol.SOL_SOCKET, UnixSocketOptionName.SO_REUSEADDR, out value) < 0)
 					UnixMarshal.ThrowExceptionForLastError ();
-				Assert.AreEqual (value, 1);
+				Assert.AreNotEqual (0, value);
 
 				// Set SO_REUSEADDR to 0
 				if (Syscall.setsockopt (so1, UnixSocketProtocol.SOL_SOCKET, UnixSocketOptionName.SO_REUSEADDR, new byte[10], 4) < 0)
