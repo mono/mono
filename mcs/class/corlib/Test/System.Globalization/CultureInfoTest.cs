@@ -625,7 +625,7 @@ namespace MonoTests.System.Globalization
 
 #if NET_4_5
 		CountdownEvent barrier = new CountdownEvent (3);
-		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
+		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
 
 		CultureInfo[] initial_culture = new CultureInfo[4];
 		CultureInfo[] changed_culture = new CultureInfo[4];
@@ -668,12 +668,9 @@ namespace MonoTests.System.Globalization
 
 		[Test]
 		public void DefaultThreadCurrentCulture () {
+			Console.WriteLine ("HELLO");
 			var orig_culture = CultureInfo.CurrentCulture;
 			var new_culture = new CultureInfo("fr-FR");
-
-			// The test doesn't work if the current culture is already set
-			if (orig_culture != CultureInfo.InvariantCulture)
-				Assert.Ignore ("The test doesn't work if the current culture is already set.");
 
 			/* Phase 0 - warm up */
 			new Thread (ThreadWithoutChange).Start ();
@@ -688,9 +685,10 @@ namespace MonoTests.System.Globalization
 
 			/* Phase 2 - change the default culture*/
 			CultureInfo.DefaultThreadCurrentCulture = new_culture;
-			evt [0].Set ();
 			evt [1].Set ();
 			evt [2].Set ();
+			evt [3].Set ();
+
 			/* Phase 3 - let everyone witness the new value */
 			changed_culture [0] = CultureInfo.CurrentCulture;
 			barrier.Wait ();
@@ -698,9 +696,9 @@ namespace MonoTests.System.Globalization
 
 			/* Phase 4 - revert the default culture back to null */
 			CultureInfo.DefaultThreadCurrentCulture = null;
-			evt [0].Set ();
 			evt [1].Set ();
 			evt [2].Set ();
+			evt [3].Set ();
 
 			/* Phase 5 - let everyone witness the new value */
 			changed_culture2 [0] = CultureInfo.CurrentCulture;
@@ -719,7 +717,7 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
 			Assert.AreEqual (new_culture, changed_culture [3], "#8");
 
-			Assert.AreEqual (orig_culture, changed_culture [0], "#9");
+			Assert.AreEqual (orig_culture, changed_culture2 [0], "#9");
 			Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
 			Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
 			Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
