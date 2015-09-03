@@ -66,7 +66,7 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
-#SUBDIRS = $(net_4_5_SUBDIRS)
+SUBDIRS = $(net_4_5_PARALLEL_SUBDIRS)
 
 doc-update-local:
 	@echo "not doing docs"
