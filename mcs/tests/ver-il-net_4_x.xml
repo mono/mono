@@ -20707,6 +20707,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-20.cs">
+    <type name="BrokenOverrideProperty.BaseClass">
+      <method name="System.String get_Whatever()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_Whatever(System.String)" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor(String)" attrs="6276">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="BrokenOverrideProperty.DerivedClass">
+      <method name="System.String get_Whatever()" attrs="2246">
+        <size>14</size>
+      </method>
+      <method name="Void set_Whatever(System.String)" attrs="2246">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor(String)" attrs="6278">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="BrokenOverrideProperty.MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>49</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
