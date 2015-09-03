@@ -145,7 +145,7 @@ namespace MonoTests.System.Windows.Forms
 				myTrackBar.Height = 250;
 				myTrackBar.Orientation = Orientation.Vertical;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE03");
-				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE04");
+				Assert.AreEqual(250, myTrackBar.Height, "#SIZE04");
 			}
 
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -163,7 +163,7 @@ namespace MonoTests.System.Windows.Forms
 				myTrackBar.AutoSize = false;
 				myTrackBar.Orientation = Orientation.Vertical;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE11");
-				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE12");
+				Assert.AreEqual(250, myTrackBar.Height, "#SIZE12");
 			}
 
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -175,7 +175,7 @@ namespace MonoTests.System.Windows.Forms
 					handle = myTrackBar.Handle;
 					
 					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE17");
-					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE18");
+					Assert.AreEqual(250, myTrackBar.Height, "#SIZE18");
 				}
 			}
 
@@ -188,7 +188,7 @@ namespace MonoTests.System.Windows.Forms
 					handle = myTrackBar.Handle;
 					
 					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE19");
-					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE20");
+					Assert.AreEqual(250, myTrackBar.Height, "#SIZE20");
 				}
 			}
 
@@ -202,7 +202,7 @@ namespace MonoTests.System.Windows.Forms
 					
 					myTrackBar.Orientation = Orientation.Horizontal;
 					
-					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE23");
+					Assert.AreEqual(250, myTrackBar.Width, "#SIZE23");
 					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE24");
 				}
 			}
