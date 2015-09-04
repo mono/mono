@@ -191,7 +191,9 @@ namespace MonoTests.Mono.Unix.Native
 				Linger value;
 				if (Syscall.getsockopt (so1, UnixSocketProtocol.SOL_SOCKET, UnixSocketOptionName.SO_LINGER, out value) < 0)
 					UnixMarshal.ThrowExceptionForLastError ();
-				Assert.AreEqual (linger, value);
+				if (value.l_onoff == 0)
+					Assert.Fail ("Linger not enabled");
+				Assert.AreEqual (linger.l_linger, value.l_linger);
 			});
 		}
 
