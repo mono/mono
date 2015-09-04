@@ -668,59 +668,63 @@ namespace MonoTests.System.Globalization
 
 		[Test]
 		public void DefaultThreadCurrentCulture () {
-			Console.WriteLine ("HELLO");
-			var orig_culture = CultureInfo.CurrentCulture;
-			var new_culture = new CultureInfo("fr-FR");
 
-			/* Phase 0 - warm up */
-			new Thread (ThreadWithoutChange).Start ();
-			new Thread (ThreadWithChange).Start ();
-			Action x = ThreadPoolWithoutChange;
-			x.BeginInvoke (null, null);
+			Action c = () => {
+				var orig_culture = CultureInfo.CurrentCulture;
+				var new_culture = new CultureInfo("fr-FR");
 
-			/* Phase 1 - let everyone witness initial values */
-			initial_culture [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 0 - warm up */
+				new Thread (ThreadWithoutChange).Start ();
+				new Thread (ThreadWithChange).Start ();
+				Action x = ThreadPoolWithoutChange;
+				x.BeginInvoke (null, null);
 
-			/* Phase 2 - change the default culture*/
-			CultureInfo.DefaultThreadCurrentCulture = new_culture;
-			evt [1].Set ();
-			evt [2].Set ();
-			evt [3].Set ();
+				/* Phase 1 - let everyone witness initial values */
+				initial_culture [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			/* Phase 3 - let everyone witness the new value */
-			changed_culture [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 2 - change the default culture*/
+				CultureInfo.DefaultThreadCurrentCulture = new_culture;
+				evt [1].Set ();
+				evt [2].Set ();
+				evt [3].Set ();
 
-			/* Phase 4 - revert the default culture back to null */
-			CultureInfo.DefaultThreadCurrentCulture = null;
-			evt [1].Set ();
-			evt [2].Set ();
-			evt [3].Set ();
+				/* Phase 3 - let everyone witness the new value */
+				changed_culture [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			/* Phase 5 - let everyone witness the new value */
-			changed_culture2 [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 4 - revert the default culture back to null */
+				CultureInfo.DefaultThreadCurrentCulture = null;
+				evt [1].Set ();
+				evt [2].Set ();
+				evt [3].Set ();
 
-			CultureInfo.DefaultThreadCurrentCulture = null;
+				/* Phase 5 - let everyone witness the new value */
+				changed_culture2 [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			Assert.AreEqual (orig_culture, initial_culture [0], "#1");
-			Assert.AreEqual (orig_culture, initial_culture [1], "#2");
-			Assert.AreEqual (alternative_culture, initial_culture [2], "#3");
-			Assert.AreEqual (orig_culture, initial_culture [3], "#4");
+				CultureInfo.DefaultThreadCurrentCulture = null;
 
-			Assert.AreEqual (new_culture, changed_culture [0], "#5");
-			Assert.AreEqual (new_culture, changed_culture [1], "#6");
-			Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
-			Assert.AreEqual (new_culture, changed_culture [3], "#8");
+				Assert.AreEqual (orig_culture, initial_culture [0], "#1");
+				Assert.AreEqual (orig_culture, initial_culture [1], "#2");
+				Assert.AreEqual (alternative_culture, initial_culture [2], "#3");
+				Assert.AreEqual (orig_culture, initial_culture [3], "#4");
 
-			Assert.AreEqual (orig_culture, changed_culture2 [0], "#9");
-			Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
-			Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
-			Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
+				Assert.AreEqual (new_culture, changed_culture [0], "#5");
+				Assert.AreEqual (new_culture, changed_culture [1], "#6");
+				Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
+				Assert.AreEqual (new_culture, changed_culture [3], "#8");
+
+				Assert.AreEqual (orig_culture, changed_culture2 [0], "#9");
+				Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
+				Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
+				Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
+			};
+			var ar = c.BeginInvoke (null, null);
+			ar.AsyncWaitHandle.WaitOne ();
 		}
 
 		[Test]
