@@ -449,8 +449,10 @@ class MDocUpdater : MDocCommand
 			}
 			if (r == null)
 				continue;
-			c.Remove (n);
-			c.InsertBefore (n, r);
+			if (c [n.Name] != null) {
+				c.RemoveNamedItem (n.Name);
+				c.InsertBefore (n, r);
+			}
 		}
 	}
 	
@@ -1010,32 +1012,49 @@ class MDocUpdater : MDocCommand
 					XmlElement e = doc.SelectSingleNode("/Type") as XmlElement;
 					string assemblyName = doc.SelectSingleNode ("/Type/AssemblyInfo/AssemblyName").InnerText;
 					AssemblyDefinition assembly = assemblies.FirstOrDefault (a => a.Name.Name == assemblyName);
-					if (e != null && !no_assembly_versions && assembly != null && assemblyName != null && UpdateAssemblyVersions(e, assembly, GetAssemblyVersions(assemblyName), false)) {
+
+					Action saveDoc = () => {
 						using (TextWriter writer = OpenWrite (typefile.FullName, FileMode.Truncate))
 							WriteXml(doc.DocumentElement, writer);
+					};
+
+					if (e != null && !no_assembly_versions && assembly != null && assemblyName != null && UpdateAssemblyVersions (e, assembly, GetAssemblyVersions(assemblyName), false)) {
+						saveDoc ();
 						goodfiles.Add (relTypeFile);
 						continue;
 					}
 
 					Action actuallyDelete = () => {
 						string newname = typefile.FullName + ".remove";
-						try { System.IO.File.Delete (newname); } catch (Exception ex) { Warning ("Unable to delete existing file: {0}", newname); }
-						try { typefile.MoveTo (newname); } catch (Exception ex) { Warning ("Unable to rename to: {0}", newname); }
+						try { System.IO.File.Delete (newname); } catch (Exception) { Warning ("Unable to delete existing file: {0}", newname); }
+						try { typefile.MoveTo (newname); } catch (Exception) { Warning ("Unable to rename to: {0}", newname); }
 						Console.WriteLine ("Class no longer present; file renamed: " + Path.Combine (nsdir.Name, typefile.Name));
 					};
 
 					if (string.IsNullOrWhiteSpace (PreserveTag)) { // only do this if there was not a -preserve
-						using (TextWriter writer = OpenWrite (typefile.FullName, FileMode.Truncate))
-							WriteXml (doc.DocumentElement, writer);
-						
+						saveDoc ();
+
 						var unifiedAssemblyNode = doc.SelectSingleNode ("/Type/AssemblyInfo[@apistyle='unified']");
 						var classicAssemblyNode = doc.SelectSingleNode ("/Type/AssemblyInfo[@apistyle='classic']");
+						var unifiedMembers = doc.SelectNodes ("//Member[@apistyle='unified']|//Member/AssemblyInfo[@apistyle='unified']");
+						var classicMembers = doc.SelectNodes ("//Member[@apistyle='classic']|//Member/AssemblyInfo[@apistyle='classic']");
 						bool isUnifiedRun = HasDroppedAnyNamespace ();
 						bool isClassicOrNormalRun = !isUnifiedRun;
+
+						Action<XmlNode, ApiStyle> removeStyles = (x, style) => {
+							var styledNodes = doc.SelectNodes("//*[@apistyle='"+ style.ToString ().ToLowerInvariant () +"']");
+							if (styledNodes != null && styledNodes.Count > 0) {
+								foreach(var node in styledNodes.Cast<XmlNode> ()) {
+									node.ParentNode.RemoveChild (node);
+								}
+							}
+							saveDoc ();
+						};
 						if (isClassicOrNormalRun) {
-							if (unifiedAssemblyNode != null) {
+							if (unifiedAssemblyNode != null || unifiedMembers.Count > 0) {
 								Warning ("*** this type is marked as unified, not deleting during this run: {0}", typefile.FullName);
 								// if truly removed from both assemblies, it will be removed fully during the unified run
+								removeStyles (doc, ApiStyle.Classic);
 								continue;
 							} else {
 								// we should be safe to delete here because it was not marked as a unified assembly
@@ -1043,7 +1062,7 @@ class MDocUpdater : MDocCommand
 							}
 						}
 						if (isUnifiedRun) {
-							if (classicAssemblyNode != null) {
+							if (classicAssemblyNode != null || classicMembers.Count > 0) {
 								Warning ("*** this type is marked as classic, not deleting {0}", typefile.FullName);
 								continue; 
 							} else {
@@ -1341,7 +1360,9 @@ class MDocUpdater : MDocCommand
 		bool unifiedRun = HasDroppedNamespace (type);
 
 		var classicAssemblyInfo = member.SelectSingleNode ("AssemblyInfo[@apistyle='classic']");
-		bool nodeIsClassic = classicAssemblyInfo != null;
+		bool nodeIsClassic = classicAssemblyInfo != null || member.HasApiStyle (ApiStyle.Classic);
+		var unifiedAssemblyInfo = member.SelectSingleNode ("AssemblyInfo[@apistyle='unified']");
+		bool nodeIsUnified = unifiedAssemblyInfo != null || member.HasApiStyle (ApiStyle.Unified);
 
 		Action actuallyDelete = () => {
 			todelete.Add (member);
@@ -1356,14 +1377,15 @@ class MDocUpdater : MDocCommand
 			Warning (message, signature);
 		} else if (unifiedRun && nodeIsClassic) {
 			// this is a unified run, and the member doesn't exist, but is marked as being in the classic assembly.
-				Warning ("Not removing '{0}' since it's still in the classic assembly.", signature);
+			member.RemoveApiStyle (ApiStyle.Unified);
+			Warning ("Not removing '{0}' since it's still in the classic assembly.", signature);
 		} else if (unifiedRun && !nodeIsClassic) {
 			// unified run, and the node is not classic, which means it doesn't exist anywhere.
 			actuallyDelete ();
-		} else {
-			if (!nodeIsClassic) {
+		} else { 
+			if (!nodeIsClassic && !nodeIsUnified) { // regular codepath (ie. not classic/unified)
 				actuallyDelete ();
-			} else {
+			} else { // this is a classic run
 				Warning ("Removing classic from '{0}' ... will be removed in the unified run if not present there.", signature);
 				member.RemoveApiStyle (ApiStyle.Classic);
 				if (classicAssemblyInfo != null) {
@@ -2941,6 +2963,11 @@ static class DocUtils {
 		string styleString = style.ToString ().ToLowerInvariant ();
 		return element.GetAttribute ("apistyle") == styleString;
 	}
+	public static bool HasApiStyle(this XmlNode node, ApiStyle style) 
+	{
+		var attribute = node.Attributes ["apistyle"];
+		return attribute != null && attribute.Value == style.ToString ().ToLowerInvariant ();
+	}
 	public static void AddApiStyle(this XmlElement element, ApiStyle style) {
 		string styleString = style.ToString ().ToLowerInvariant ();
 		var existingValue = element.GetAttribute ("apistyle");
@@ -2950,12 +2977,16 @@ static class DocUtils {
 	}
 	public static void RemoveApiStyle (this XmlElement element, ApiStyle style) 
 	{
-		element.RemoveAttribute (style.ToString ().ToLowerInvariant ());
+		string styleString = style.ToString ().ToLowerInvariant ();
+		string existingValue = element.GetAttribute ("apistyle");
+		if (string.IsNullOrWhiteSpace (existingValue) || existingValue == styleString) {
+			element.RemoveAttribute ("apistyle");
+		}
 	}
 	public static void RemoveApiStyle (this XmlNode node, ApiStyle style) 
 	{
 		var styleAttribute = node.Attributes ["apistyle"];
-		if (styleAttribute != null) {
+		if (styleAttribute != null && styleAttribute.Value == style.ToString ().ToLowerInvariant ()) {
 			node.Attributes.Remove (styleAttribute);
 		}
 	}
