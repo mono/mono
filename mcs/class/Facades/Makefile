@@ -30,7 +30,7 @@ reflection_PARALLEL_SUBDIRS = System.Reflection.Emit.ILGeneration System.Reflect
 
 mobile_static_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-net_4_5_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS) System.Diagnostics.PerformanceCounter \
+net_4_x_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS) System.Diagnostics.PerformanceCounter \
 	System.IO.FileSystem.Watcher System.IO.Pipes System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceController System.Net.Http.WebRequestHandler
 
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
@@ -40,7 +40,7 @@ xammac_net_4_5_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PAR
 
 monotouch_watch_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-PROFILE_SUBDIRS = $(net_4_5_PARALLEL_SUBDIRS)
+PROFILE_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
 
 #OVERRIDE_TARGET_ALL = yes
 
@@ -66,7 +66,7 @@ include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
 
-DIST_SUBDIRS = $(net_4_5_PARALLEL_SUBDIRS)
+DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
 
 doc-update-local:
 	@echo "not doing docs"
