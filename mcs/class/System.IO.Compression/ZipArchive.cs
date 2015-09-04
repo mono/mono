@@ -103,9 +103,9 @@ namespace System.IO.Compression
 				throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
 
 			try {
-				zipFile = mode == ZipArchiveMode.Create ? 
-					SharpCompress.Archive.Zip.ZipArchive.Create() :
-					SharpCompress.Archive.Zip.ZipArchive.Open(stream);
+				zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
+					? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
+					: SharpCompress.Archive.Zip.ZipArchive.Create();
 			} catch (Exception e) {
 				throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
 			}
