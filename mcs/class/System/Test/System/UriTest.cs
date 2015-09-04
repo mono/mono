@@ -1984,6 +1984,20 @@ namespace MonoTests.System
 				}
 			}
 		}
+
+		[Test]
+		public void UserInfo_Spaces ()
+		{
+			const string userinfo = "test 1:pass 1";
+			const string expected = "test%201:pass%201";
+
+			try {
+				var uri = new Uri (string.Format ("rtmp://{0}@test.com:333/live", userinfo));
+				Assert.AreEqual (expected, uri.UserInfo);
+			} catch (Exception e) {
+				Assert.Fail (string.Format ("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
+			}
+		}
 	}
 
 	// Tests non default IriParsing
