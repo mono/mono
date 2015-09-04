@@ -251,5 +251,16 @@ namespace MonoTests.System.IO.Compression
 
 			File.Delete ("test.zip");
 		}
+
+		[Test]
+		public void ZipUpdateEmptyArchive()
+		{
+			File.WriteAllText("empty.zip", string.Empty);
+			using (var archive = new ZipArchive(File.Open("empty.zip", FileMode.Open),
+				ZipArchiveMode.Update))
+			{
+			}
+			File.Delete ("empty.zip");
+		}
 	}
 }
