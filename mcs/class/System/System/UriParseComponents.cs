@@ -326,6 +326,14 @@ namespace System {
 				bool isEscapedChar = false;
 				var oldIndex = index;
 
+				// Spaces should be percentage encoded #31172
+				if (ch == ' ') {
+					if (sb == null)
+						sb = new StringBuilder ();
+					sb.Append ("%20");
+					continue;
+				}
+
 				if (ch == '%'){
 					if (!Uri.IsHexEncoding (part, index))
 						return false;
