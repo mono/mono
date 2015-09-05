@@ -1946,12 +1946,32 @@ namespace MonoTests.System
 		[Test]
 		public void DotNetRelativeOrAbsoluteTest ()
 		{
-			var uri1 = new Uri ("/foo", DotNetRelativeOrAbsolute);
-			Assert.IsFalse (uri1.IsAbsoluteUri);
+			Uri uri;
+
+			uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
+			Assert.IsFalse (uri.IsAbsoluteUri);
 			
-			Uri uri2;
-			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri2);
-			Assert.IsFalse (uri2.IsAbsoluteUri);
+			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+			Assert.IsFalse (uri.IsAbsoluteUri);
+
+			if (Type.GetType ("Mono.Runtime") != null) {
+				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+				Assert.IsTrue (uri.IsAbsoluteUri);
+
+				Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
+				Assert.IsTrue (uri.IsAbsoluteUri);
+
+				var useDotNetRelativeOrAbsoluteField = typeof (Uri).GetField ("useDotNetRelativeOrAbsolute",
+					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+
+				useDotNetRelativeOrAbsoluteField.SetValue (null, true);
+			}
+
+			uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+			Assert.IsFalse (uri.IsAbsoluteUri);
+
+			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+			Assert.IsFalse (uri.IsAbsoluteUri);
 		}
 
 		[Test]
