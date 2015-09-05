@@ -2183,6 +2183,30 @@ coverage_add_coverage (CoverageCoverage *coverage)
 #define OBJ_ADDR(diff) ((obj_base + diff) << 3)
 #define LOG_TIME(base,diff) /*fprintf("outfile, time %llu + %llu near offset %d\n", base, diff, p - ctx->buf)*/
 
+
+/* Stats */
+#define BUFFER_HEADER_SIZE 48
+
+typedef struct {
+	int count, min_size, max_size, bytes;
+} EventStat;
+
+static int buffer_count;
+static EventStat stats [256];
+static int gc_root_type_count [256];
+
+static void
+record_event_stats (int type, int size)
+{
+	++stats [type].count;
+	if (!stats [type].min_size)
+		stats [type].min_size = size;
+	stats [type].min_size = MIN (stats [type].min_size, size);
+	stats [type].max_size = MAX (stats [type].max_size, size);
+	stats [type].bytes += size;
+	// printf ("type %d %d\n", type, size);
+}
+
 static int
 decode_buffer (ProfContext *ctx)
 {
@@ -2224,6 +2248,9 @@ decode_buffer (ProfContext *ctx)
 	thread = load_thread (ctx, thread_id);
 	if (!load_data (ctx, len))
 		return 0;
+
+	++buffer_count;
+
 	if (!startup_time) {
 		startup_time = time_base;
 		if (use_time_filter) {
@@ -2238,7 +2265,9 @@ decode_buffer (ProfContext *ctx)
 	p = ctx->buf;
 	end = p + len;
 	while (p < end) {
-		switch (*p & 0xf) {
+		unsigned char *start = p;
+		unsigned char event = *p;
+		switch (event & 0x0f) {
 		case TYPE_GC: {
 			int subtype = *p & 0xf0;
 			uint64_t tdiff = decode_uleb128 (p + 1, &p);
@@ -2579,6 +2608,7 @@ decode_buffer (ProfContext *ctx)
 						fprintf (outfile, "object %p is a %s root\n", (void*)OBJ_ADDR (objdiff), get_root_name (root_type));
 					if (collect_traces)
 						thread_add_root (thread, OBJ_ADDR (objdiff), root_type, extra_info);
+					gc_root_type_count [root_type & MONO_PROFILE_GC_ROOT_TYPEMASK]++;
 				}
 			} else if (subtype == TYPE_HEAP_END) {
 				uint64_t tdiff = decode_uleb128 (p + 1, &p);
@@ -3010,6 +3040,7 @@ decode_buffer (ProfContext *ctx)
 			fprintf (outfile, "unhandled profiler event: 0x%x at file offset: %llu + %lld (len: %d\n)\n", *p, (unsigned long long) file_offset, (long long) (p - ctx->buf), len);
 			exit (1);
 		}
+		record_event_stats (event, p - start);
 	}
 	thread->last_time = time_base;
 	for (i = 0; i < thread->stack_id; ++i)
@@ -3699,6 +3730,82 @@ dump_coverage (void)
 	}
 }
 
+#define DUMP_EVENT_STAT(EVENT,SUBTYPE) dump_event (#EVENT, #SUBTYPE, EVENT, SUBTYPE);
+
+static void 
+dump_event (const char *event_name, const char *subtype_name, int event, int subtype)
+{
+	int idx = event | subtype;
+	EventStat evt = stats [idx];
+	if (!evt.count)
+		return;
+
+	fprintf (outfile, "\t%16s\t%26s\tcount %6d\tmin %3d\tmax %6d\tbytes %d\n", event_name, subtype_name, evt.count, evt.min_size, evt.max_size, evt.bytes);
+}
+
+static void
+dump_stats (void)
+{
+	fprintf (outfile, "\nMlpd statistics\n");
+	fprintf (outfile, "\tBuffer count %d\toverhead %d (%d bytes per header)\n", buffer_count, buffer_count * BUFFER_HEADER_SIZE, BUFFER_HEADER_SIZE);
+	fprintf (outfile, "\nEvent details:\n");
+
+	DUMP_EVENT_STAT (TYPE_ALLOC, TYPE_ALLOC_NO_BT);
+	DUMP_EVENT_STAT (TYPE_ALLOC, TYPE_ALLOC_BT);
+
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_EVENT);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_RESIZE);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_MOVE);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_CREATED);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_CREATED_BT);
+	DUMP_EVENT_STAT (TYPE_GC, TYPE_GC_HANDLE_DESTROYED_BT);
+
+	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_LOAD);
+	DUMP_EVENT_STAT (TYPE_METADATA, TYPE_END_UNLOAD);
+
+	DUMP_EVENT_STAT (TYPE_METHOD, TYPE_LEAVE);
+	DUMP_EVENT_STAT (TYPE_METHOD, TYPE_ENTER);
+	DUMP_EVENT_STAT (TYPE_METHOD, TYPE_EXC_LEAVE);
+	DUMP_EVENT_STAT (TYPE_METHOD, TYPE_JIT);
+
+	DUMP_EVENT_STAT (TYPE_EXCEPTION, TYPE_THROW);
+	DUMP_EVENT_STAT (TYPE_EXCEPTION, TYPE_CLAUSE);
+	DUMP_EVENT_STAT (TYPE_EXCEPTION, TYPE_EXCEPTION_BT);
+
+	DUMP_EVENT_STAT (TYPE_MONITOR, TYPE_MONITOR_NO_BT);
+	DUMP_EVENT_STAT (TYPE_MONITOR, TYPE_MONITOR_BT);
+
+	DUMP_EVENT_STAT (TYPE_HEAP, TYPE_HEAP_START);
+	DUMP_EVENT_STAT (TYPE_HEAP, TYPE_HEAP_END);
+	DUMP_EVENT_STAT (TYPE_HEAP, TYPE_HEAP_OBJECT);
+	DUMP_EVENT_STAT (TYPE_HEAP, TYPE_HEAP_ROOT);
+
+	DUMP_EVENT_STAT (TYPE_SAMPLE, TYPE_SAMPLE_HIT);
+	DUMP_EVENT_STAT (TYPE_SAMPLE, TYPE_SAMPLE_USYM);
+	DUMP_EVENT_STAT (TYPE_SAMPLE, TYPE_SAMPLE_UBIN);
+	DUMP_EVENT_STAT (TYPE_SAMPLE, TYPE_SAMPLE_COUNTERS_DESC);
+	DUMP_EVENT_STAT (TYPE_SAMPLE, TYPE_SAMPLE_COUNTERS);
+
+	DUMP_EVENT_STAT (TYPE_RUNTIME, TYPE_JITHELPER);
+
+	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_ASSEMBLY);
+	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_METHOD);
+	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_STATEMENT);
+	DUMP_EVENT_STAT (TYPE_COVERAGE, TYPE_COVERAGE_CLASS);
+
+	if (stats [TYPE_HEAP | TYPE_HEAP_ROOT].count) {
+		int i;
+		fprintf(outfile, "\nGC Root breakdown:\n");
+		for (i = 0; i < 0xFF; ++i) {
+			if (gc_root_type_count [i])
+				fprintf (outfile, "\t%20s\t%d\n", get_root_name (i), gc_root_type_count [i]);
+		}
+	}
+}
+
+
+
 static void
 flush_context (ProfContext *ctx)
 {
@@ -3806,6 +3913,11 @@ print_reports (ProfContext *ctx, const char *reps, int parse_only)
 		if ((opt = match_option (p, "coverage")) != p) {
 			if (!parse_only)
 				dump_coverage ();
+			continue;
+		}
+		if ((opt = match_option (p, "stats")) != p) {
+			if (!parse_only)
+				dump_stats ();
 			continue;
 		}
 		return 0;
