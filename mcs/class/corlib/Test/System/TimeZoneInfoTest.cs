@@ -1062,6 +1062,19 @@ namespace MonoTests.System
 				Assert.AreEqual (new DateTime (2014, 10, 5, 2, 0, 0), changes.Start);
 				Assert.AreEqual (new DateTime (2014, 4, 6, 3, 0, 0), changes.End);
 			}
+
+			[Test]
+			public void AllTimeZonesDaylightChanges ()
+			{
+				foreach (var tz in TimeZoneInfo.GetSystemTimeZones ()) {
+					try {
+						for (var year = 1950; year <= DateTime.Now.Year; year++)
+							getChanges.Invoke (tz, new object [] {year} );
+					} catch (Exception e) {
+						Assert.Fail ("TimeZone " + tz.Id + " exception: " + e.ToString ()); 
+					}
+				}
+			}
 		}
 	}
 }

@@ -870,12 +870,12 @@ namespace System
 				}
 
 				// DaylightTime.Start is relative to the Standard time.
-				if (start != DateTime.MinValue)
-					start += BaseUtcOffset;
+				if (!TryAddTicks (start, BaseUtcOffset.Ticks, out start))
+					start = DateTime.MinValue;
 
 				// DaylightTime.End is relative to the DST time.
-				if (end != DateTime.MinValue)
-					end += BaseUtcOffset + delta;
+				if (!TryAddTicks (end, BaseUtcOffset.Ticks + delta.Ticks, out end))
+					end = DateTime.MinValue;
 			} else {
 				AdjustmentRule first = null, last = null;
 
