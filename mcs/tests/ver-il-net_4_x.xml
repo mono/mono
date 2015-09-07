@@ -19688,6 +19688,37 @@
       </method>
     </type>
   </test>
+  <test name="gtest-634.cs">
+    <type name="ThingWithOrganizationId">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Thing">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseService`1[TConstraint]">
+      <method name="Void Save[T](T)" attrs="1478">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="DerivedService">
+      <method name="Void Save[TThing](TThing)" attrs="198">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
