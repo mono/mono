@@ -416,7 +416,7 @@ namespace CorCompare
 
 			XmlNode ifaces = null;
 
-			foreach (TypeReference iface in  TypeHelper.GetInterfaces (type)) {
+			foreach (TypeReference iface in TypeHelper.GetInterfaces (type).OrderBy (s => s.FullName)) {
 				if (!TypeHelper.IsPublic (iface))
 					// we're only interested in public interfaces
 					continue;
