@@ -134,6 +134,7 @@ namespace System.Net
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 100000; // 100 seconds
 		private static int maxServicePoints = 0;
+		private static int dnsRefreshTimeout = 2 * 60 * 1000;
 		private static bool _checkCRL = false;
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
@@ -218,14 +219,13 @@ namespace System.Net
 			return new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public static int DnsRefreshTimeout
 		{
 			get {
-				throw GetMustImplement ();
+				return dnsRefreshTimeout;
 			}
 			set {
-				throw GetMustImplement ();
+				dnsRefreshTimeout = Math.Max (-1, value);
 			}
 		}
 		
