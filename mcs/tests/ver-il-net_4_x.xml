@@ -18522,7 +18522,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>603</size>
+        <size>727</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
