@@ -4533,6 +4533,9 @@ namespace Mono.CSharp
 						expr = Convert.ImplicitConversion (rc, left, Nullable.NullableInfo.GetUnderlyingType (rtype), loc);
 						if (expr == null)
 							return null;
+
+						if ((oper & Operator.BitwiseMask) != 0)
+							type = rtype;
 					}
 
 					if (expr != null) {
@@ -4564,6 +4567,9 @@ namespace Mono.CSharp
 						expr = Convert.ImplicitConversion (rc, right, Nullable.NullableInfo.GetUnderlyingType (ltype), loc);
 						if (expr == null)
 							return null;
+
+						if ((oper & Operator.BitwiseMask) != 0)
+							type = ltype;
 					}
 
 					if (expr != null) {
