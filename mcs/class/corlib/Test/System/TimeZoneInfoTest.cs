@@ -1094,7 +1094,7 @@ namespace MonoTests.System
 			{
 				foreach (var tz in TimeZoneInfo.GetSystemTimeZones ()) {
 					try {
-						for (var year = 1950; year <= DateTime.Now.Year; year++)
+						for (var year = 1950; year <= 2051; year++)
 							getChanges.Invoke (tz, new object [] {year} );
 					} catch (Exception e) {
 						Assert.Fail ("TimeZone " + tz.Id + " exception: " + e.ToString ()); 
