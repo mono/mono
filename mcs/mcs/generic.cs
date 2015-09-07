@@ -649,10 +649,10 @@ namespace Mono.CSharp {
 				var meta_constraints = new List<MetaType> (spec.TypeArguments.Length);
 				foreach (var c in spec.TypeArguments) {
 					//
-					// Inflated type parameters can collide with special constraint types, don't
+					// Inflated type parameters can collide with base type constraint, don't
 					// emit any such type parameter.
 					//
-					if (c.BuiltinType == BuiltinTypeSpec.Type.Object || c.BuiltinType == BuiltinTypeSpec.Type.ValueType)
+					if (c.IsClass && spec.BaseType.BuiltinType != BuiltinTypeSpec.Type.Object)
 						continue;
 
 					meta_constraints.Add (c.GetMetaInfo ());
@@ -1334,12 +1334,26 @@ namespace Mono.CSharp {
 		{
 			cache = new MemberCache ();
 
+			if (targs != null) {
+				foreach (var ta in targs) {
+					var tps = ta as TypeParameterSpec;
+					var b_type = tps == null ? ta : tps.GetEffectiveBase ();
+
+					//
+					// Find the most specific type when base type was inflated from base constraints
+					//
+					if (b_type != null && !b_type.IsStructOrEnum && TypeSpec.IsBaseClass (b_type, BaseType, false))
+						BaseType = b_type;
+				}
+			}
+
 			//
 			// For a type parameter the membercache is the union of the sets of members of the types
 			// specified as a primary constraint or secondary constraint
 			//
-			if (BaseType.BuiltinType != BuiltinTypeSpec.Type.Object && BaseType.BuiltinType != BuiltinTypeSpec.Type.ValueType)
+			if (BaseType.BuiltinType != BuiltinTypeSpec.Type.Object && BaseType.BuiltinType != BuiltinTypeSpec.Type.ValueType) {
 				cache.AddBaseType (BaseType);
+			}
 
 			if (InterfacesDefined != null) {
 				foreach (var iface_type in InterfacesDefined) {
@@ -1347,25 +1361,13 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// Import interfaces after base type to match behavior from ordinary classes
+			//
 			if (targs != null) {
 				foreach (var ta in targs) {
 					var tps = ta as TypeParameterSpec;
-					IList<TypeSpec> ifaces;
-					TypeSpec b_type;
-					if (tps != null) {
-						b_type = tps.GetEffectiveBase ();
-						ifaces = tps.InterfacesDefined;
-					} else {
-						b_type = ta;
-						ifaces = ta.Interfaces;
-					}
-
-					//
-					// Don't add base type which was inflated from base constraints but it's not valid
-					// in C# context
-					//
-					if (b_type != null && b_type.BuiltinType != BuiltinTypeSpec.Type.Object && b_type.BuiltinType != BuiltinTypeSpec.Type.ValueType && !b_type.IsStructOrEnum)
-						cache.AddBaseType (b_type);
+					var ifaces = tps == null ? ta.Interfaces : tps.InterfacesDefined;
 
 					if (ifaces != null) {
 						foreach (var iface_type in ifaces) {
