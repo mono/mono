@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 
 namespace MonoTests.System.Net
@@ -203,6 +204,36 @@ public class ServicePointTest
 			Thread.Sleep (1);
 			req.ServicePoint.CloseConnectionGroup (req.ConnectionGroupName);
 		}
+	}
+
+
+	[Test]
+	public void DnsRefreshTimeout ()
+	{
+		const int dnsRefreshTimeout = 2;
+
+		ServicePoint sp;
+		IPHostEntry host0, host1, host2;
+		Uri uri;
+		PropertyInfo hostEntryProperty;
+
+		ServicePointManager.DnsRefreshTimeout = dnsRefreshTimeout;
+
+		uri = new Uri ("http://ww.google.com/");
+		sp = ServicePointManager.FindServicePoint (uri);
+
+		hostEntryProperty = typeof (ServicePoint).GetProperty ("HostEntry", BindingFlags.NonPublic | BindingFlags.Instance);
+
+		host0 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
+		host1 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
+
+		Assert.AreEqual (host0, host1, "HostEntry should result in the same IPHostEntry object.");
+
+		Thread.Sleep (dnsRefreshTimeout);
+		host2 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
+
+		Assert.AreNotEqual(host0, host2, "HostEntry should result in a new IPHostEntry " +
+				"object when DnsRefreshTimeout is reached.");
 	}
 
 // Debug code not used now, but could be useful later
