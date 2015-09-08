@@ -472,7 +472,7 @@ namespace CorCompare
 
 				MethodDefinition [] methods = GetMethods (type);
 				if (methods.Length > 0) {
-					Array.Sort (methods, MemberReferenceComparer.Default);
+					Array.Sort (methods, MethodDefinitionComparer.Default);
 					members.Add (new MethodData (document, nclass, methods));
 				}
 			}
