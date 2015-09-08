@@ -1260,10 +1260,12 @@ namespace Mono.CSharp
 					instance_address.AddressOf (ec, AddressOp.Load);
 				} else if (unwrap != null) {
 					unwrap.Emit (ec);
-					var tmp = ec.GetTemporaryLocal (unwrap.Type);
-					ec.Emit (OpCodes.Stloc, tmp);
-					ec.Emit (OpCodes.Ldloca, tmp);
-					ec.FreeTemporaryLocal (tmp, unwrap.Type);
+					if (addressRequired) {
+						var tmp = ec.GetTemporaryLocal (unwrap.Type);
+						ec.Emit (OpCodes.Stloc, tmp);
+						ec.Emit (OpCodes.Ldloca, tmp);
+						ec.FreeTemporaryLocal (tmp, unwrap.Type);
+					}
 				} else if (!conditional_access_dup) {
 					instance.Emit (ec);
 				}
