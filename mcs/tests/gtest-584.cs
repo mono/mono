@@ -79,7 +79,7 @@ class C
 			return 18;
 
 		var r2 = E.V & a_n;
-		if (r1 != null)
+		if (r2 != null)
 			return 19;
 
 		Console.WriteLine ("ok");
