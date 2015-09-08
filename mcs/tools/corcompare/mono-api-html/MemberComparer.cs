@@ -546,7 +546,7 @@ namespace Xamarin.ApiDiff {
 				change.Append ("[Obsolete (");
 				if (tgtObsolete != string.Empty)
 					change.Append ("\"").Append (tgtObsolete).Append ("\"");
-				change.Append ("]\n");
+				change.Append (")]\n");
 				change.Append (GetDescription (target));
 				if (State.Colorize)
 					change.Append ("</font>");
