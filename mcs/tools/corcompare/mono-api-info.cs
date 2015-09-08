@@ -228,7 +228,7 @@ namespace CorCompare
 			var typesCollection = ass.MainModule.Types;
 			if (typesCollection == null || typesCollection.Count == 0)
 				return;
-			object [] typesArray = new object [typesCollection.Count];
+			var typesArray = new TypeDefinition [typesCollection.Count];
 			for (int i = 0; i < typesCollection.Count; i++) {
 				typesArray [i] = typesCollection [i];
 			}
@@ -495,11 +495,13 @@ namespace CorCompare
 				nested.RemoveAt (i);
 			}
 
-
 			if (nested.Count > 0) {
+				var nestedArray = nested.ToArray ();
+				Array.Sort (nestedArray, TypeReferenceComparer.Default);
+
 				XmlNode classes = document.CreateElement ("classes", null);
 				nclass.AppendChild (classes);
-				foreach (TypeDefinition t in nested) {
+				foreach (TypeDefinition t in nestedArray) {
 					TypeData td = new TypeData (document, classes, t);
 					td.DoOutput ();
 				}
