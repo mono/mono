@@ -1946,32 +1946,44 @@ namespace MonoTests.System
 		[Test]
 		public void DotNetRelativeOrAbsoluteTest ()
 		{
-			Uri uri;
-
-			uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
-			Assert.IsFalse (uri.IsAbsoluteUri);
-			
-			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-			Assert.IsFalse (uri.IsAbsoluteUri);
+			FieldInfo useDotNetRelativeOrAbsoluteField = null;
+			bool useDotNetRelativeOrAbsoluteOld = false;
 
 			if (Type.GetType ("Mono.Runtime") != null) {
-				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-				Assert.IsTrue (uri.IsAbsoluteUri);
-
-				Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
-				Assert.IsTrue (uri.IsAbsoluteUri);
-
-				var useDotNetRelativeOrAbsoluteField = typeof (Uri).GetField ("useDotNetRelativeOrAbsolute",
+				useDotNetRelativeOrAbsoluteField = typeof (Uri).GetField ("useDotNetRelativeOrAbsolute",
 					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-
-				useDotNetRelativeOrAbsoluteField.SetValue (null, true);
+				useDotNetRelativeOrAbsoluteOld = (bool) useDotNetRelativeOrAbsoluteField.GetValue (null);
+				useDotNetRelativeOrAbsoluteField.SetValue (null, false);
 			}
 
-			uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
-			Assert.IsFalse (uri.IsAbsoluteUri);
+			try {
+				Uri uri;
 
-			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
-			Assert.IsFalse (uri.IsAbsoluteUri);
+				uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+				
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				if (useDotNetRelativeOrAbsoluteField != null) {
+					uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					useDotNetRelativeOrAbsoluteField.SetValue (null, true);
+				}
+
+				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+			} finally {
+				if (useDotNetRelativeOrAbsoluteField != null)
+					useDotNetRelativeOrAbsoluteField.SetValue (null, useDotNetRelativeOrAbsoluteOld);
+			}
 		}
 
 		[Test]
