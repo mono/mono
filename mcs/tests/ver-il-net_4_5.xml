@@ -69105,6 +69105,11 @@
     </type>
   </test>
   <test name="test-null-operator-08.cs">
+    <type name="S">
+      <method name="Void Foo(Boolean)" attrs="486">
+        <size>38</size>
+      </method>
+    </type>
     <type name="Program">
       <method name="Void M[T](T)" attrs="145">
         <size>88</size>
@@ -69118,24 +69123,17 @@
       <method name="Void M3[T](System.Nullable`1[T])" attrs="145">
         <size>106</size>
       </method>
-      <method name="Void Main()" attrs="145">
-        <size>165</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="S">
-      <method name="Void Foo(Boolean)" attrs="486">
-        <size>38</size>
-      </method>
-    </type>
-    <type name="Program">
       <method name="Void TestAddress_1[T](T)" attrs="145">
         <size>56</size>
       </method>
       <method name="Void TestAddress_2[T](T[])" attrs="145">
         <size>82</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>165</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -69354,6 +69352,19 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-18.cs">
+    <type name="MainClass">
+      <method name="Void Main()" attrs="150">
+        <size>7</size>
+      </method>
+      <method name="Void TestBug()" attrs="150">
+        <size>38</size>
+      </method>
+      <method name="Void Test(Int32)" attrs="150">
+        <size>12</size>
       </method>
     </type>
   </test>
