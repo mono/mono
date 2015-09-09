@@ -210,7 +210,7 @@ public class ServicePointTest
 	[Test]
 	public void DnsRefreshTimeout ()
 	{
-		const int dnsRefreshTimeout = 2;
+		const int dnsRefreshTimeout = 200;
 
 		ServicePoint sp;
 		IPHostEntry host0, host1, host2;
@@ -227,12 +227,12 @@ public class ServicePointTest
 		host0 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
 		host1 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
 
-		Assert.AreEqual (host0, host1, "HostEntry should result in the same IPHostEntry object.");
+		Assert.AreSame (host0, host1, "HostEntry should result in the same IPHostEntry object.");
 
-		Thread.Sleep (dnsRefreshTimeout);
+		Thread.Sleep (dnsRefreshTimeout * 2);
 		host2 = hostEntryProperty.GetValue (sp, null) as IPHostEntry;
 
-		Assert.AreNotEqual(host0, host2, "HostEntry should result in a new IPHostEntry " +
+		Assert.AreNotSame(host0, host2, "HostEntry should result in a new IPHostEntry " +
 				"object when DnsRefreshTimeout is reached.");
 	}
 
