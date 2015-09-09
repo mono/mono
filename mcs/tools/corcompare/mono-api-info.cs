@@ -454,7 +454,7 @@ namespace CorCompare
 
 				MethodDefinition [] ctors = GetConstructors (type);
 				if (ctors.Length > 0) {
-					Array.Sort (ctors, MemberReferenceComparer.Default);
+					Array.Sort (ctors, MethodDefinitionComparer.Default);
 					members.Add (new ConstructorData (document, nclass, ctors));
 				}
 
