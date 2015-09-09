@@ -61,6 +61,16 @@ namespace Xamarin.ApiDiff {
 		{
 		}
 
+		string GetContainingType (XElement el)
+		{
+			return el.Ancestors ("class").First ().Attribute ("type").Value;
+		}
+
+		bool IsInInterface (XElement el)
+		{
+			return GetContainingType (el) == "interface";
+		}
+
 		public XElement Source { get; set; }
 
 		public virtual bool Find (XElement e)
@@ -182,9 +192,10 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Added {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
-			if (State.Colorize)
-				Output.Write ("<font color='green'>");
+			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
+
+			bool isInterface = list.Count () > 0 && IsInInterface (list.First ());
+			Output.WriteLine (State.Colorize ? string.Format ("<pre style='color: {0}'>", isInterface ? "red" : "green") : "<pre>");
 		}
 
 		public override void Added (XElement target)
