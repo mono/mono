@@ -68,6 +68,8 @@ namespace System.Windows.Forms {
 		private bool		enable_auto_drag_drop;
 		private RichTextBoxLanguageOptions language_option;
 		private bool		rich_text_shortcuts_enabled;
+
+		private readonly float	dpi; // Store the dpi so we don't have to create a Graphics object to calculate this frequently. Needed to read or write RTF sizes.
 		//private Color		selection_back_color; // We don't actually need this now.
 		#endregion	// Local Variables
 
@@ -108,6 +110,9 @@ namespace System.Windows.Forms {
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
 
 			SetStyle (ControlStyles.StandardDoubleClick, false);
+
+			using (Graphics g = CreateGraphics())
+				dpi = (g.DpiX + g.DpiY) / 2;
 		}
 		#endregion	// Public Constructors
 
@@ -1843,15 +1848,13 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.SuperScript: {
 							FlushText (rtf, false);
-							using (Graphics g = CreateGraphics ())
-								rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * g.DpiX + 0.5F);
+							rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * dpi + 0.5F);
 							break;
 						}
 						
 						case RTF.Minor.SubScript: {
 							FlushText (rtf, false);
-							using (Graphics g = CreateGraphics ())
-								rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * g.DpiX + 0.5F);
+							rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * dpi + 0.5F);
 							break;
 						}
 					}
@@ -1873,23 +1876,19 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.TabPos:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F));
+					rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F));
 					break;
 
 				case RTF.Minor.LeftIndent:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
 					break;
 
 				case RTF.Minor.FirstIndent:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
 					break;
 
 				case RTF.Minor.RightIndent:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
 					break;
 
 				case RTF.Minor.QuadCenter:
@@ -1913,13 +1912,11 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.SpaceAfter:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
 					break;
 
 				case RTF.Minor.SpaceBefore:
-					using (Graphics g = CreateGraphics ())
-						rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * g.DpiX + 0.5F);
+					rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
 					break;
 
 				}
@@ -1941,7 +1938,8 @@ namespace System.Windows.Forms {
 				case RTF.Minor.Row:
 				case RTF.Minor.Line:
 				case RTF.Minor.Par: {
-					FlushText(rtf, true);
+					if (Multiline)
+						FlushText(rtf, true);
 					break;
 				}
 
@@ -2491,200 +2489,198 @@ namespace System.Windows.Forms {
 			prev_left_indent = left_indent;
 			right_indent = line.RightIndent;
 
-			using (Graphics g = CreateGraphics ()) {
-				// Emit initial paragraph settings
-				sb.Append("\\pard");	// Reset to default paragraph properties
-				switch (line.alignment) {
-				case HorizontalAlignment.Left:
-					sb.Append("\\ql");
-					break;
-				case HorizontalAlignment.Center:
-					sb.Append("\\qc");
-					break;
-				case HorizontalAlignment.Right:
-					sb.Append("\\qr");
-					break;
+			// Emit initial paragraph settings
+			sb.Append("\\pard");	// Reset to default paragraph properties
+			switch (line.alignment) {
+			case HorizontalAlignment.Left:
+				sb.Append("\\ql");
+				break;
+			case HorizontalAlignment.Center:
+				sb.Append("\\qc");
+				break;
+			case HorizontalAlignment.Right:
+				sb.Append("\\qr");
+				break;
+			}
+			if (line.spacing_after != 0) {
+				sb.Append("\\sa");
+				sb.Append((line.spacing_after / dpi) * 1440);
+			}
+			if (line.spacing_before != 0) {
+				sb.Append("\\sb");
+				sb.Append((line.spacing_before / dpi) * 1440);
+			}
+			if (left_indent != 0) {
+				sb.Append("\\li");
+				sb.Append(((left_indent) / dpi) * 1440);
+			}
+			if (first_line_indent != 0) {
+				sb.Append("\\fi");
+				sb.Append((first_line_indent / dpi) * 1440);
+			}
+			if (line.right_indent != 0) {
+				sb.Append("\\ri");
+				sb.Append((line.right_indent / dpi) * 1440);
+			}
+			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
+			sb.Append(" ");		// Space separator
+
+			while (line_no <= end_line.line_no) {
+				line = document.GetLine(line_no);
+				line.Streamline(document.Lines);
+				tag = LineTag.FindTag(line, pos);
+
+				if (line_no != end_line.line_no) {
+					line_len = line.text.Length;
+				} else {
+					line_len = end_pos;
 				}
-				if (line.spacing_after != 0) {
+
+				length = sb.Length;
+				if (line.Alignment != line_alignment) {
+					line_alignment = line.Alignment;
+					switch (line_alignment) {
+					case HorizontalAlignment.Left:
+						sb.Append("\\ql");
+						break;
+					case HorizontalAlignment.Center:
+						sb.Append("\\qc");
+						break;
+					case HorizontalAlignment.Right:
+						sb.Append("\\qr");
+						break;
+					}
+				}
+				
+				if (line.spacing_after != spacing_after) {
+					spacing_after = line.spacing_after;
 					sb.Append("\\sa");
-					sb.Append((line.spacing_after / g.DpiX) * 1440);
+					sb.Append((int) ((spacing_after / dpi) * 1440));
 				}
-				if (line.spacing_before != 0) {
+				
+				if (line.spacing_before != spacing_before) {
+					spacing_before = line.spacing_before;
 					sb.Append("\\sb");
-					sb.Append((line.spacing_before / g.DpiX) * 1440);
+					sb.Append((int) ((spacing_before / dpi) * 1440));
 				}
-				if (left_indent != 0) {
+
+				first_line_indent = -line.HangingIndent;
+				left_indent = line.Indent - first_line_indent;
+
+				if (prev_left_indent != left_indent) {
+					prev_left_indent = left_indent;
 					sb.Append("\\li");
-					sb.Append(((left_indent) / g.DpiX) * 1440);
+					sb.Append((left_indent / dpi) * 1440);
 				}
-				if (first_line_indent != 0) {
+
+				if (prev_first_line_indent != first_line_indent) {
+					prev_first_line_indent = first_line_indent;
 					sb.Append("\\fi");
-					sb.Append((first_line_indent / g.DpiX) * 1440);
+					sb.Append((first_line_indent / dpi) * 1440);
 				}
-				if (line.right_indent != 0) {
+
+				if (line.right_indent != right_indent) {
+					right_indent = line.right_indent;
 					sb.Append("\\ri");
-					sb.Append((line.right_indent / g.DpiX) * 1440);
+					sb.Append((right_indent / dpi) * 1440);
 				}
-				EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
-				sb.Append(" ");		// Space separator
 
-				while (line_no <= end_line.line_no) {
-					line = document.GetLine(line_no);
-					line.Streamline(document.Lines);
-					tag = LineTag.FindTag(line, pos);
+				if (length != sb.Length) {
+					sb.Append(" ");
+				}
 
-					if (line_no != end_line.line_no) {
-						line_len = line.text.Length;
-					} else {
-						line_len = end_pos;
+				while (pos < line_len && tag != null) {
+					length = sb.Length;
+
+					if (tag.Font != font) {
+						EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.Font.Name), font, tag.Font);
+						font = tag.Font;
 					}
 
-					length = sb.Length;
-					if (line.Alignment != line_alignment) {
-						line_alignment = line.Alignment;
-						switch (line_alignment) {
-						case HorizontalAlignment.Left:
-							sb.Append("\\ql");
+					if (tag.Color != color) {
+						color = tag.Color;
+						if (color != Color.Empty)
+							sb.Append(String.Format("\\cf{0}", colors.IndexOf(color) + 1));
+						else
+							sb.Append("\\cf0");
+					}
+
+					if (tag.BackColor != back_color) {
+						back_color = tag.BackColor;
+						if (back_color != Color.Empty)
+							sb.Append(String.Format("\\cb{0}", colors.IndexOf(back_color) + 1));
+						else
+							sb.Append("\\cb0");
+					}
+
+					if (tag.TextPosition != text_position) {
+						text_position = tag.TextPosition;
+						switch (tag.TextPosition) {
+						case TextPositioning.Normal: 
+							sb.Append("\\nosupersub");
 							break;
-						case HorizontalAlignment.Center:
-							sb.Append("\\qc");
+						case TextPositioning.Subscript:
+							sb.Append("\\sub");
 							break;
-						case HorizontalAlignment.Right:
-							sb.Append("\\qr");
+						case TextPositioning.Superscript:
+							sb.Append("\\super");
 							break;
 						}
 					}
-					
-					if (line.spacing_after != spacing_after) {
-						spacing_after = line.spacing_after;
-						sb.Append("\\sa");
-						sb.Append((int) ((spacing_after / g.DpiX) * 1440));
-					}
-					
-					if (line.spacing_before != spacing_before) {
-						spacing_before = line.spacing_before;
-						sb.Append("\\sb");
-						sb.Append((int) ((spacing_before / g.DpiX) * 1440));
-					}
 
-					first_line_indent = -line.HangingIndent;
-					left_indent = line.Indent - first_line_indent;
-
-					if (prev_left_indent != left_indent) {
-						prev_left_indent = left_indent;
-						sb.Append("\\li");
-						sb.Append((left_indent / g.DpiX) * 1440);
+					if (tag.CharOffset != char_offset) {
+						char_offset = tag.CharOffset;
+						if (char_offset >= 0) {
+							sb.Append("\\up");
+							sb.Append((int) ((char_offset / dpi) * 144));
+						} else {
+							sb.Append("\\dn");
+							sb.Append(-(int) ((char_offset / dpi) * 144));
+						}
 					}
 
-					if (prev_first_line_indent != first_line_indent) {
-						prev_first_line_indent = first_line_indent;
-						sb.Append("\\fi");
-						sb.Append((first_line_indent / g.DpiX) * 1440);
-					}
-
-					if (line.right_indent != right_indent) {
-						right_indent = line.right_indent;
-						sb.Append("\\ri");
-						sb.Append((right_indent / g.DpiX) * 1440);
+					if (tag.Visible != visible) {
+						visible = tag.Visible;
+						if (visible)
+							sb.Append("\\v0");
+						else
+							sb.Append("\\v");
 					}
 
 					if (length != sb.Length) {
-						sb.Append(" ");
+						sb.Append(" ");	// Emit space to separate keywords from text
 					}
 
-					while (pos < line_len && tag != null) {
-						length = sb.Length;
-
-						if (tag.Font != font) {
-							EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.Font.Name), font, tag.Font);
-							font = tag.Font;
-						}
-
-						if (tag.Color != color) {
-							color = tag.Color;
-							if (color != Color.Empty)
-								sb.Append(String.Format("\\cf{0}", colors.IndexOf(color) + 1));
-							else
-								sb.Append("\\cf0");
-						}
-
-						if (tag.BackColor != back_color) {
-							back_color = tag.BackColor;
-							if (back_color != Color.Empty)
-								sb.Append(String.Format("\\cb{0}", colors.IndexOf(back_color) + 1));
-							else
-								sb.Append("\\cb0");
-						}
-
-						if (tag.TextPosition != text_position) {
-							text_position = tag.TextPosition;
-							switch (tag.TextPosition) {
-							case TextPositioning.Normal: 
-								sb.Append("\\nosupersub");
-								break;
-							case TextPositioning.Subscript:
-								sb.Append("\\sub");
-								break;
-							case TextPositioning.Superscript:
-								sb.Append("\\super");
-								break;
-							}
-						}
-
-						if (tag.CharOffset != char_offset) {
-							char_offset = tag.CharOffset;
-							if (char_offset >= 0) {
-								sb.Append("\\up");
-								sb.Append((int) ((char_offset / g.DpiX) * 144));
-							} else {
-								sb.Append("\\dn");
-								sb.Append(-(int) ((char_offset / g.DpiX) * 144));
-							}
-						}
-
-						if (tag.Visible != visible) {
-							visible = tag.Visible;
-							if (visible)
-								sb.Append("\\v0");
-							else
-								sb.Append("\\v");
-						}
-
-						if (length != sb.Length) {
-							sb.Append(" ");	// Emit space to separate keywords from text
-						}
-
-						// Emit the string itself
-						if (line_no != end_line.line_no) {
-							EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+					// Emit the string itself
+					if (line_no != end_line.line_no) {
+						EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
+					} else {
+						if (end_pos < (tag.Start + tag.Length - 1)) {
+							// Emit partial tag only, end_pos is inside this tag
+							EmitRTFText(sb, tag.Line.text.ToString(pos, end_pos - pos));
 						} else {
-							if (end_pos < (tag.Start + tag.Length - 1)) {
-								// Emit partial tag only, end_pos is inside this tag
-								EmitRTFText(sb, tag.Line.text.ToString(pos, end_pos - pos));
-							} else {
-								EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
-							}
+							EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
 						}
+					}
 
-						pos = tag.Start + tag.Length - 1;
-						tag = tag.Next;
-					}
-					if (pos >= line.text.Length) {
-						if (line.ending != LineEnding.Wrap) {
-							// pos is incremented by the tag length, so it can be after where we want to finish.
-							// If we're on the last line we don't want to output \par when we're stopping before the end of the line.
-							if (!(line_no == end_line.line_no && pos > end_pos))
-								sb.Append("\\par");
-							sb.Append(Environment.NewLine);
-						}
-					}
-					pos = 0;
-					line_no++;
+					pos = tag.Start + tag.Length - 1;
+					tag = tag.Next;
 				}
-
-				sb.Append("}");
-				sb.Append(Environment.NewLine);
+				if (pos >= line.text.Length) {
+					if (line.ending != LineEnding.Wrap) {
+						// pos is incremented by the tag length, so it can be after where we want to finish.
+						// If we're on the last line we don't want to output \par when we're stopping before the end of the line.
+						if (!(line_no == end_line.line_no && pos > end_pos))
+							sb.Append("\\par");
+						sb.Append(Environment.NewLine);
+					}
+				}
+				pos = 0;
+				line_no++;
 			}
+
+			sb.Append("}");
+			sb.Append(Environment.NewLine);
 
 			return sb;
 		}
