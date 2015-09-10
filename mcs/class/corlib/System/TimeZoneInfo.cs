@@ -1235,7 +1235,7 @@ namespace System
 			return (((i >> 24) & 0xff)
 				| ((i >> 8) & 0xff00)
 				| ((i << 8) & 0xff0000)
-				| ((i << 24)));
+				| (((i & 0xff) << 24)));
 		}
 
 		static int ReadBigEndianInt32 (byte [] buffer, int start)
