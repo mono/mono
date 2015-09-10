@@ -212,7 +212,7 @@ public class TestRunner
 				Process dead = (Process)sender;
 
 				lock (monitor) {
-					if (dead.ExitCode == 0) {
+					if (dead.ExitCode == 0 || (test.Contains("ms-coreclr-tests") && dead.ExitCode == 100)) {
 						if (concurrency == 1)
 							Console.WriteLine ("passed.");
 						else
