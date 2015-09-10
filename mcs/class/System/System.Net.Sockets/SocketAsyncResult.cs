@@ -307,7 +307,11 @@ namespace System.Net.Sockets
 			async_result.Invoke ();
 
 			if (completed && callback != null) {
-				ThreadPool.UnsafeQueueCustomWorkItem (new AsyncResult (state => callback ((IAsyncResult) state), this, false), false);
+				try {
+					callback (this);
+				} catch (Exception e) {
+					AppDomain.CurrentDomain.DoUnhandledException (e);
+				}
 			}
 		}
 
