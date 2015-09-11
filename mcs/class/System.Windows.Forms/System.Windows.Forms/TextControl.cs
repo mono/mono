@@ -3234,7 +3234,12 @@ namespace System.Windows.Forms {
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			SuspendRecalc ();
 
-			// First, delete any selected text
+			if (!String.IsNullOrEmpty(s)) {
+				Insert(selection_start.line, selection_start.pos, false, s);
+				undo.RecordInsertString(selection_start.line, selection_start.pos, s);
+			}
+
+			// Then delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (selection_start.line == selection_end.line) {
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
@@ -3277,8 +3282,6 @@ namespace System.Windows.Forms {
 			}
 
 
-			Insert(selection_start.line, selection_start.pos, false, s);
-			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
 
 			Line begin_update_line = selection_start.line;
 			int begin_update_pos = selection_start.pos;
