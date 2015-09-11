@@ -44,6 +44,10 @@ if INSTALL_MONOTOUCH_WATCH
 build_profiles += monotouch_watch
 endif
 
+if INSTALL_MONOTOUCH_TV
+build_profiles += monotouch_tv
+endif
+
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
 endif
