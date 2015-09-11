@@ -210,7 +210,7 @@ public class ServicePointTest
 	[Test]
 	public void DnsRefreshTimeout ()
 	{
-		const int dnsRefreshTimeout = 200;
+		const int dnsRefreshTimeout = 2000;
 
 		ServicePoint sp;
 		IPHostEntry host0, host1, host2;
@@ -219,7 +219,7 @@ public class ServicePointTest
 
 		ServicePointManager.DnsRefreshTimeout = dnsRefreshTimeout;
 
-		uri = new Uri ("http://ww.google.com/");
+		uri = new Uri ("http://www.google.com/");
 		sp = ServicePointManager.FindServicePoint (uri);
 
 		hostEntryProperty = typeof (ServicePoint).GetProperty ("HostEntry", BindingFlags.NonPublic | BindingFlags.Instance);
