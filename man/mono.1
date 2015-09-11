@@ -1523,6 +1523,13 @@ Currently, the following options are supported:
 .RS
 .ne 8
 .TP
+\fBalign-small-structs\fR
+Enables small structs alignment to 4/8 bytes.
+.TP
+\fBarm-use-fallback-tls\fR
+When this option is set on ARM, a fallback TLS will be used instead
+of the default fast TLS.
+.TP
 \fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
 problem, instead of throwing an exception it will break into the
@@ -1533,11 +1540,21 @@ This option can be used to get more detailed information from
 InvalidCast exceptions, it will provide information about the types
 involved.     
 .TP
+\fBcheck-pinvoke-callconv\fR
+This option causes the runtime to check for calling convention
+mismatches when using pinvoke, i.e. mixing cdecl/stdcall. It only
+works on windows. If a mismatch is detected, an
+ExecutionEngineException is thrown.
+.TP
 \fBcollect-pagefault-stats\fR
 Collects information about pagefaults.   This is used internally to
 track the number of page faults produced to load metadata.  To display
 this information you must use this option with "--stats" command line
 option.
+.TP
+\fBdebug-domain-unload\fR
+When this option is set, the runtime will invalidate the domain memory
+pool instead of destroying it.
 .TP
 \fBdont-free-domains\fR
 This is an Optimization for multi-AppDomain applications (most
@@ -1556,6 +1573,12 @@ using this feature).
 Instructs the runtime to try to use a generic runtime-invoke wrapper
 instead of creating one invoke wrapper.
 .TP
+\fBexplicit-null-checks\fR
+Makes the JIT generate an explicit NULL check on variable dereferences
+instead of depending on the operating system to raise a SIGSEGV or
+another form of trap event when an invalid memory location is
+accessed.
+.TP
 \fBgdb\fR 
 Equivalent to setting the \fBMONO_XDEBUG\fR variable, this emits
 symbols into a shared library as the code is JITed that can be loaded
@@ -1566,11 +1589,11 @@ Automatically generates sequence points where the
 IL stack is empty.  These are places where the debugger can set a
 breakpoint.
 .TP
-\fBexplicit-null-checks\fR
-Makes the JIT generate an explicit NULL check on variable dereferences
-instead of depending on the operating system to raise a SIGSEGV or
-another form of trap event when an invalid memory location is
-accessed. 
+\fBgen-compact-seq-points\fR
+This option generates sequence points data that maps native offsets to
+IL offsets. Sequence point data is used to display IL offset in
+stacktraces. Stacktraces with IL offsets can be symbolicated using
+mono-symbolicate tool.
 .TP
 \fBhandle-sigint\fR
 Captures the interrupt signal (Control-C) and displays a stack trace
@@ -1590,6 +1613,14 @@ passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
 .TP
+\fBno-gdb-backtrace\fR
+This option will disable the GDB backtrace emitted by the runtime
+after a SIGSEGV or SIGABRT in unmanaged code.
+.TP
+\fBpartial-sharing\fR
+When this option is set, the runtime can share generated code between
+generic types effectively reducing the amount of code generated.
+.TP
 \fBreverse-pinvoke-exceptions
 This option will cause mono to abort with a descriptive message when
 during stack unwinding after an exception it reaches a native stack
@@ -1600,20 +1631,25 @@ will skip any native stack frames in the process. This leads to
 undefined behaviour (since mono doesn't know how to process native
 frames), leaks, and possibly crashes too.
 .TP
-\fBno-gdb-backtrace\fR
-This option will disable the GDB backtrace emitted by the runtime
-after a SIGSEGV or SIGABRT in unmanaged code.
+\fBsingle-imm-size\fR
+This guarantees that each time managed code is compiled the same
+instructions and registers are used, regardless of the size of used
+values.
+.TP
+\fBsoft-breakpoints\fR
+This option allows using single-steps and breakpoints in hardware
+where we cannot do it with signals.
 .TP
 \fBsuspend-on-sigsegv\fR
 This option will suspend the program when a native SIGSEGV is received.
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
 .TP
-\fBcheck-pinvoke-callconv\fR
-This option causes the runtime to check for calling convention
-mismatches when using pinvoke, i.e. mixing cdecl/stdcall. It only
-works on windows. If a mismatch is detected, an
-ExecutionEngineException is thrown.
+\fBsuspend-on-exception\fR
+This option will suspend the program when an exception occurs.
+.TP
+\fBsuspend-on-unhandled\fR
+This option will suspend the program when an unhadled exception occurs.
 .ne
 .RE
 .TP
