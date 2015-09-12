@@ -1615,7 +1615,7 @@ namespace System.Windows.Forms {
 			internal Color rtf_color;
 			internal Color rtf_back_color;
 			internal RTF.Font rtf_rtffont;
-			internal int rtf_rtffont_size;
+			internal float rtf_rtffont_size;
 			internal FontStyle rtf_rtfstyle;
 			internal HorizontalAlignment rtf_rtfalign;
 			internal int rtf_par_line_left_indent;
@@ -1755,7 +1755,7 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.FontSize: {
 							FlushText(rtf, false);
-							this.rtf_style.rtf_rtffont_size = rtf.Param / 2;
+							this.rtf_style.rtf_rtffont_size = rtf.Param / 2f;
 							break;
 						}
 
