@@ -45,7 +45,8 @@ namespace System.Windows.Forms
 		internal int			line_no;		// Line number
 		internal LineTag		tags;			// Tags describing the text
 		internal int			offset;			// Baseline can be on the X or Y axis depending if we are in multiline mode or not
-		internal int			height;			// Total height of the line, including spacing_before and spacing_after
+		internal int			height;			// Total height of the line, including TotalParagraphSpacing and LineSpacing
+		private int				textHeight;		// Height of the line without spacing.
 		internal int			ascent;			// Ascent of the line (highest distance above the baseline, including character offset)
 		internal HorizontalAlignment	alignment;		// Alignment of the line
 		internal int			align_shift;		// Pixel shift caused by the alignment
@@ -55,6 +56,8 @@ namespace System.Windows.Forms
 		internal LineEnding		ending;
 		internal int			spacing_before;
 		internal int			spacing_after;
+		internal int			line_spacing;
+		internal bool			line_spacing_multiple;
 		internal int[]			tab_stops;		// Custom tabstops for this paragraph.
 
 		// Stuff that's important for the tree
@@ -120,8 +123,8 @@ namespace System.Windows.Forms
 
 		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color,
 		               Color back_color, TextPositioning text_position, int char_offset, int left_indent, int hanging_indent,
-		               int right_indent, int spacing_before, int spacing_after, int[] tab_stops, bool visible, LineEnding ending)
-					   : this(document, ending)
+						int right_indent, int spacing_before, int spacing_after, int line_spacing, bool line_spacing_multiple,
+						int[] tab_stops, bool visible, LineEnding ending) : this(document, ending)
 		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 			
@@ -135,6 +138,8 @@ namespace System.Windows.Forms
 			this.spacing_before = spacing_before;
 			this.spacing_after = spacing_after;
 			this.tab_stops = tab_stops;
+			this.line_spacing = line_spacing;
+			this.line_spacing_multiple = line_spacing_multiple;
 			
 			widths = new float[space + 1];
 			
@@ -190,14 +195,35 @@ namespace System.Windows.Forms
 			set { height = value; }
 		}
 
+		internal int TextHeight {
+			get {
+				return textHeight;
+			}
+		}
+
 		internal int[] TabStops {
 			get { return tab_stops; }
 			set { tab_stops = value; }
 		}
 
-		internal int TotalSpacing {
+		internal int TotalParagraphSpacing {
 			get {
 				return SpacingBefore + SpacingAfter;
+			}
+		}
+
+		internal int LineSpacing {
+			get {
+				if (textHeight == 0) {
+					throw new InvalidOperationException("Can't get LineSpacing when the line height isn't calculated!");
+				}
+				if (line_spacing < 0) {
+					return -line_spacing;
+				} else if (line_spacing_multiple) {
+					return (int)(line_spacing * textHeight * 6f / document.dpi);
+				} else {
+					return Math.Max(line_spacing, textHeight);
+				}
 			}
 		}
 
@@ -750,7 +776,8 @@ namespace System.Windows.Forms
 				tags.Shift = 0;
 			}
 
-			this.height += this.TotalSpacing;
+			this.textHeight = this.height;
+			this.height = this.LineSpacing + this.TotalParagraphSpacing;
 
 			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent ||
 				prev_spacing_before != this.SpacingBefore)
@@ -781,14 +808,14 @@ namespace System.Windows.Forms
 
 			w = TextBoxTextRenderer.MeasureText (g, doc.password_char, tags.Font).Width;
 
-			if (this.height - this.TotalSpacing != (int)tag.Font.Height)
+			if (this.textHeight != (int)tag.Font.Height)
 				ret = true;
 			else
 				ret = false;
 
-			this.height = (int)tag.Font.Height;
-			tag.Height = this.height;
-			this.height += this.TotalSpacing;
+			this.textHeight = (int)tag.Font.Height;
+			tag.Height = this.textHeight;
+			this.height = this.textHeight + this.LineSpacing + this.TotalParagraphSpacing;
 
 			this.ascent = tag.Ascent;
 

@@ -504,7 +504,7 @@ namespace System.Windows.Forms
 			bool retval = false;		// Assume line-height doesn't change
 
 			// Too simple?
-			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height - line.TotalSpacing)
+			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.TextHeight)
 				retval = true;
 
 			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument

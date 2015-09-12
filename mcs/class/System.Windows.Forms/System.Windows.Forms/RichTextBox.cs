@@ -69,7 +69,6 @@ namespace System.Windows.Forms {
 		private RichTextBoxLanguageOptions language_option;
 		private bool		rich_text_shortcuts_enabled;
 
-		private readonly float	dpi; // Store the dpi so we don't have to create a Graphics object to calculate this frequently. Needed to read or write RTF sizes.
 		//private Color		selection_back_color; // We don't actually need this now.
 		#endregion	// Local Variables
 
@@ -110,9 +109,6 @@ namespace System.Windows.Forms {
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
 
 			SetStyle (ControlStyles.StandardDoubleClick, false);
-
-			using (Graphics g = CreateGraphics())
-				dpi = (g.DpiX + g.DpiY) / 2;
 		}
 		#endregion	// Public Constructors
 
@@ -1629,6 +1625,8 @@ namespace System.Windows.Forms {
 			internal int rtf_skip_width;
 			internal int rtf_par_spacing_after;
 			internal int rtf_par_spacing_before;
+			internal int rtf_par_line_spacing;
+			internal bool rtf_par_line_spacing_multiple;
 			internal TextPositioning rtf_text_position;
 			internal int rtf_char_offset;
 			internal ArrayList rtf_par_tab_stops = new ArrayList();
@@ -1650,6 +1648,8 @@ namespace System.Windows.Forms {
 				new_style.rtf_skip_width = rtf_skip_width;
 				new_style.rtf_par_spacing_after = rtf_par_spacing_after;
 				new_style.rtf_par_spacing_before = rtf_par_spacing_before;
+				new_style.rtf_par_line_spacing = rtf_par_line_spacing;
+				new_style.rtf_par_line_spacing_multiple = rtf_par_line_spacing_multiple;
 				new_style.rtf_text_position = rtf_text_position;
 				new_style.rtf_char_offset = rtf_char_offset;
 				new_style.rtf_par_tab_stops.AddRange (rtf_par_tab_stops);
@@ -1848,13 +1848,13 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.SuperScript: {
 							FlushText (rtf, false);
-							rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * dpi + 0.5F);
+							rtf_style.rtf_char_offset = (int) (((float) rtf.Param / 144.0F) * document.dpi + 0.5F);
 							break;
 						}
 						
 						case RTF.Minor.SubScript: {
 							FlushText (rtf, false);
-							rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * dpi + 0.5F);
+							rtf_style.rtf_char_offset = -(int) (((float) rtf.Param / 144.0F) * document.dpi + 0.5F);
 							break;
 						}
 					}
@@ -1865,30 +1865,32 @@ namespace System.Windows.Forms {
 				switch (rtf.Minor) {
 
 				case RTF.Minor.ParDef:
-					FlushText (rtf, false);
+					FlushText(rtf, false);
 					rtf_style.rtf_par_line_left_indent = 0;
 					rtf_style.rtf_par_first_line_indent = 0;
 					rtf_style.rtf_par_line_right_indent = 0;
 					rtf_style.rtf_par_spacing_after = 0;
 					rtf_style.rtf_par_spacing_before = 0;
+					rtf_style.rtf_par_line_spacing = 0;
+					rtf_style.rtf_par_line_spacing_multiple = false;
 					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 					rtf_style.rtf_par_tab_stops.Clear ();
 					break;
 
 				case RTF.Minor.TabPos:
-					rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F));
+					rtf_style.rtf_par_tab_stops.Add((int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F));
 					break;
 
 				case RTF.Minor.LeftIndent:
-					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
+					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
 					break;
 
 				case RTF.Minor.FirstIndent:
-					rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
+					rtf_style.rtf_par_first_line_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
 					break;
 
 				case RTF.Minor.RightIndent:
-					rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
+					rtf_style.rtf_par_line_right_indent = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
 					break;
 
 				case RTF.Minor.QuadCenter:
@@ -1912,13 +1914,20 @@ namespace System.Windows.Forms {
 					break;
 
 				case RTF.Minor.SpaceAfter:
-					rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
+					rtf_style.rtf_par_spacing_after = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
 					break;
 
 				case RTF.Minor.SpaceBefore:
-					rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * dpi + 0.5F);
+					rtf_style.rtf_par_spacing_before = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
 					break;
 
+				case RTF.Minor.SpaceBetween:
+					rtf_style.rtf_par_line_spacing = (int) (((float) rtf.Param / 1440.0F) * document.dpi + 0.5F);
+					break;
+
+				case RTF.Minor.SpaceMultiply:
+					rtf_style.rtf_par_line_spacing_multiple = (rtf.Param == 1);
+					break;
 				}
 				break;
 			}
@@ -2089,6 +2098,7 @@ namespace System.Windows.Forms {
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
 					rtf_style.rtf_back_color, rtf_style.rtf_text_position, rtf_style.rtf_char_offset, left_indent, hanging_indent,
 				    rtf_style.rtf_par_line_right_indent, rtf_style.rtf_par_spacing_before, rtf_style.rtf_par_spacing_after,
+					rtf_style.rtf_par_line_spacing, rtf_style.rtf_par_line_spacing_multiple,
 				    (int[]) rtf_style.rtf_par_tab_stops.ToArray(typeof (int)) , rtf_style.rtf_visible,
 				    newline ? LineEnding.Rich : LineEnding.None);
 			} else {
@@ -2105,6 +2115,8 @@ namespace System.Windows.Forms {
 				line.right_indent = Math.Max (rtf_style.rtf_par_line_right_indent, line.right_indent);
 				line.spacing_after = Math.Max (rtf_style.rtf_par_spacing_after, line.spacing_after);
 				line.spacing_before = Math.Max (rtf_style.rtf_par_spacing_before, line.spacing_before);
+				line.line_spacing = Math.Max (rtf_style.rtf_par_line_spacing, line.line_spacing);
+				line.line_spacing_multiple = rtf_style.rtf_par_line_spacing_multiple;
 				line.alignment = rtf_style.rtf_rtfalign;
 
 				if (rtf_line.Length > 0) {
@@ -2158,6 +2170,8 @@ namespace System.Windows.Forms {
 			rtf_style.rtf_text_position = TextPositioning.Normal;
 			rtf_style.rtf_par_spacing_after = 0;
 			rtf_style.rtf_par_spacing_before = 0;
+			rtf_style.rtf_par_line_spacing = 0;
+			rtf_style.rtf_par_line_spacing_multiple = false;
 			rtf_style.rtf_par_line_left_indent = 0;
 			rtf_style.rtf_par_first_line_indent = 0;
 			rtf_style.rtf_par_line_right_indent = 0;
@@ -2361,6 +2375,8 @@ namespace System.Windows.Forms {
 			HorizontalAlignment line_alignment;
 			int		spacing_after;
 			int		spacing_before;
+			int		line_spacing;
+			bool	line_spacing_multiple;
 			int		left_indent;
 			int		prev_left_indent;
 			int		first_line_indent;
@@ -2482,6 +2498,8 @@ namespace System.Windows.Forms {
 			pos = start_pos;
 			spacing_after = line.spacing_after;
 			spacing_before = line.spacing_before;
+			line_spacing = line.line_spacing;
+			line_spacing_multiple = line.line_spacing_multiple;
 			line_alignment = line.alignment;
 			first_line_indent = -line.HangingIndent;
 			left_indent = line.Indent - first_line_indent;
@@ -2504,23 +2522,29 @@ namespace System.Windows.Forms {
 			}
 			if (line.spacing_after != 0) {
 				sb.Append("\\sa");
-				sb.Append((line.spacing_after / dpi) * 1440);
+				sb.Append((line.spacing_after / document.dpi) * 1440);
 			}
 			if (line.spacing_before != 0) {
 				sb.Append("\\sb");
-				sb.Append((line.spacing_before / dpi) * 1440);
+				sb.Append((line.spacing_before / document.dpi) * 1440);
+			}
+			if (line.line_spacing != 0) {
+				sb.Append("\\sl");
+				sb.Append((line.line_spacing / document.dpi) * 1440);
+				sb.Append("\\slmult");
+				sb.Append(line.line_spacing_multiple ? "1" : "0");
 			}
 			if (left_indent != 0) {
 				sb.Append("\\li");
-				sb.Append(((left_indent) / dpi) * 1440);
+				sb.Append(((left_indent) / document.dpi) * 1440);
 			}
 			if (first_line_indent != 0) {
 				sb.Append("\\fi");
-				sb.Append((first_line_indent / dpi) * 1440);
+				sb.Append((first_line_indent / document.dpi) * 1440);
 			}
 			if (line.right_indent != 0) {
 				sb.Append("\\ri");
-				sb.Append((line.right_indent / dpi) * 1440);
+				sb.Append((line.right_indent / document.dpi) * 1440);
 			}
 			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
 			sb.Append(" ");		// Space separator
@@ -2555,13 +2579,25 @@ namespace System.Windows.Forms {
 				if (line.spacing_after != spacing_after) {
 					spacing_after = line.spacing_after;
 					sb.Append("\\sa");
-					sb.Append((int) ((spacing_after / dpi) * 1440));
+					sb.Append((int) ((spacing_after / document.dpi) * 1440));
 				}
 				
 				if (line.spacing_before != spacing_before) {
 					spacing_before = line.spacing_before;
 					sb.Append("\\sb");
-					sb.Append((int) ((spacing_before / dpi) * 1440));
+					sb.Append((int) ((spacing_before / document.dpi) * 1440));
+				}
+
+				if (line.line_spacing != line_spacing) {
+					line_spacing = line.line_spacing;
+					sb.Append("\\sl");
+					sb.Append((line.line_spacing / document.dpi) * 1440);
+				}
+
+				if (line.line_spacing_multiple != line_spacing_multiple) {
+					line_spacing_multiple = line.line_spacing_multiple;
+					sb.Append("\\slmult");
+					sb.Append(line.line_spacing_multiple ? "1" : "0");
 				}
 
 				first_line_indent = -line.HangingIndent;
@@ -2570,19 +2606,19 @@ namespace System.Windows.Forms {
 				if (prev_left_indent != left_indent) {
 					prev_left_indent = left_indent;
 					sb.Append("\\li");
-					sb.Append((left_indent / dpi) * 1440);
+					sb.Append((left_indent / document.dpi) * 1440);
 				}
 
 				if (prev_first_line_indent != first_line_indent) {
 					prev_first_line_indent = first_line_indent;
 					sb.Append("\\fi");
-					sb.Append((first_line_indent / dpi) * 1440);
+					sb.Append((first_line_indent / document.dpi) * 1440);
 				}
 
 				if (line.right_indent != right_indent) {
 					right_indent = line.right_indent;
 					sb.Append("\\ri");
-					sb.Append((right_indent / dpi) * 1440);
+					sb.Append((right_indent / document.dpi) * 1440);
 				}
 
 				if (length != sb.Length) {
@@ -2632,10 +2668,10 @@ namespace System.Windows.Forms {
 						char_offset = tag.CharOffset;
 						if (char_offset >= 0) {
 							sb.Append("\\up");
-							sb.Append((int) ((char_offset / dpi) * 144));
+							sb.Append((int) ((char_offset / document.dpi) * 144));
 						} else {
 							sb.Append("\\dn");
-							sb.Append(-(int) ((char_offset / dpi) * 144));
+							sb.Append(-(int) ((char_offset / document.dpi) * 144));
 						}
 					}
 
