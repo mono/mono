@@ -250,6 +250,8 @@ namespace System.Windows.Forms {
 		internal int left_margin = 2;  // A left margin for all lines
 		internal int top_margin = 2;
 		internal int right_margin = 2;
+
+		internal float	dpi;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -1351,8 +1353,8 @@ namespace System.Windows.Forms {
 			// font is larger than the line (line recalculations
 			// ignore empty tags) in which case we make it equal
 			// the line height and then when text is entered
-			if (caret.tag.DrawnHeight > caret.tag.Line.Height - caret.tag.Line.TotalSpacing) {
-				caret.height = caret.line.height - caret.tag.Line.TotalSpacing;
+			if (caret.tag.DrawnHeight > caret.tag.Line.TextHeight) {
+				caret.height = caret.line.TextHeight;
 			} else {
 				caret.height = caret.tag.DrawnHeight;
 			}
@@ -1766,10 +1768,10 @@ namespace System.Windows.Forms {
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 						offset_x + selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
-				        offset_y + selection_start.line.Y + selection_start.line.SpacingBefore,
+				        offset_y + selection_start.line.Y,
 						(selection_end.line.X + selection_end.line.widths [selection_end.pos]) -
 						(selection_start.line.X + selection_start.line.widths [selection_start.pos]), 
-				        selection_start.line.height - selection_start.line.TotalSpacing);
+				        selection_start.line.height);
 			}
 
 			while (line_no <= end) {
@@ -2371,7 +2373,7 @@ namespace System.Windows.Forms {
 			if (pos == line.text.Length) {
 				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, tag.BackColor, tag.TextPosition,
 				     tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent, line.spacing_before, line.spacing_after,
-				     line.tab_stops, tag.Visible, line.ending);
+					 line.line_spacing, line.line_spacing_multiple, line.tab_stops, tag.Visible, line.ending);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2406,7 +2408,8 @@ namespace System.Windows.Forms {
 			// We need to move the rest of the text into the new line
 			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color,
 			     tag.BackColor, tag.TextPosition, tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent,
-			     line.spacing_before, line.spacing_after, line.tab_stops, tag.Visible, line.ending);
+				 line.spacing_before, line.spacing_after, line.line_spacing, line.line_spacing_multiple, line.tab_stops,
+				 tag.Visible, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2539,12 +2542,14 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
-			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal, 0, 0, 0, 0, 0, 0, new int[0], true, ending);
+			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal,
+				0, 0, 0, 0, 0, 0, 0, false, new int[0], true, ending);
 		}
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
 		                   TextPositioning text_position, int char_offset, int left_indent, int hanging_indent, int right_indent,
-		                   int spacing_before, int spacing_after, int[] tab_stops, bool visible, LineEnding ending)
+							int spacing_before, int spacing_after, int line_spacing, bool line_spacing_multiple, int[] tab_stops,
+							bool visible, LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -2561,7 +2566,7 @@ namespace System.Windows.Forms {
 			}
 
 			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position, char_offset, left_indent,
-				hanging_indent, right_indent, spacing_before, spacing_after, tab_stops, visible, ending);
+				hanging_indent, right_indent, spacing_before, spacing_after, line_spacing, line_spacing_multiple, tab_stops, visible, ending);
 
 			line = document;
 			while (line != sentinel) {
@@ -3235,8 +3240,8 @@ namespace System.Windows.Forms {
 			SuspendRecalc ();
 
 			if (!String.IsNullOrEmpty(s)) {
-				Insert(selection_start.line, selection_start.pos, false, s);
-				undo.RecordInsertString(selection_start.line, selection_start.pos, s);
+				Insert(selection_end.line, selection_end.pos, false, s);
+				undo.RecordInsertString(selection_end.line, selection_end.pos, s);
 			}
 
 			// Then delete any selected text
