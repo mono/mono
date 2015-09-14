@@ -475,13 +475,15 @@ namespace System
 			return MemberwiseClone ();
 		}
 
-		internal bool Compare (Delegate d)
+		public override bool Equals (object obj)
 		{
+			Delegate d = obj as Delegate;
+
 			if (d == null)
 				return false;
-			
+
 			// Do not compare method_ptr, since it can point to a trampoline
-			if (d.m_target == m_target && d.method == method) {
+			if (d.m_target == m_target && d.Method == Method) {
 				if (d.data != null || data != null) {
 					/* Uncommon case */
 					if (d.data != null && data != null)
@@ -500,14 +502,9 @@ namespace System
 			return false;
 		}
 
-		public override bool Equals (object obj)
-		{
-			return Compare (obj as Delegate);
-		}
-
 		public override int GetHashCode ()
 		{
-			return method.GetHashCode () ^ (m_target != null ? m_target.GetHashCode () : 0);
+			return Method.GetHashCode () ^ (m_target != null ? m_target.GetHashCode () : 0);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
