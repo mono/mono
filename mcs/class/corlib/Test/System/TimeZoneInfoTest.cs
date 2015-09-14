@@ -39,6 +39,17 @@ namespace MonoTests.System
 {
 	public class TimeZoneInfoTest
 	{
+		static FieldInfo localField;
+
+		public static void SetLocal (TimeZoneInfo val)
+		{
+			if (localField == null)
+				localField = typeof (TimeZoneInfo).GetField ("local",
+					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+
+			localField.SetValue (null, val);
+		}
+
 		[TestFixture]
 		public class PropertiesTests
 		{
@@ -467,15 +478,46 @@ namespace MonoTests.System
 			}
 
 			[Test]
+			public void ConvertFromToUtc_Utc ()
+			{
+				DateTime utc = DateTime.UtcNow;
+				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
+				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Utc);
+				Assert.AreEqual (DateTimeKind.Utc, converted.Kind);
+				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Utc);
+				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
+				Assert.AreEqual (utc, back);
+			}
+
+			[Test]
+			public void ConvertFromToUtc_LocalAsUtc ()
+			{
+				var oldLocal = TimeZoneInfo.Local;
+				TimeZoneInfoTest.SetLocal (TimeZoneInfo.Utc);
+
+				try {
+					DateTime utc = DateTime.UtcNow;
+					Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
+					DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
+					Assert.AreEqual (DateTimeKind.Local, converted.Kind);
+					DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
+					Assert.AreEqual (back.Kind, DateTimeKind.Utc);
+					Assert.AreEqual (utc, back);
+				} finally {
+					TimeZoneInfoTest.SetLocal (oldLocal);
+				}
+			}
+
+			[Test]
 			public void ConvertFromToLocal ()
 			{
 				DateTime utc = DateTime.UtcNow;
-				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
-				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
-				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
-				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
-				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
-				Assert.AreEqual(utc, back);
+				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
+				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
+				Assert.AreEqual (DateTimeKind.Local, converted.Kind);
+				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
+				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
+				Assert.AreEqual (utc, back);
 			}
 
 			[Test]
