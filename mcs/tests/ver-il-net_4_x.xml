@@ -69058,19 +69058,6 @@
       </method>
     </type>
   </test>
-  <test name="test-null-operator-04.cs">
-    <type name="D">
-      <method name="Void Foo()" attrs="129">
-        <size>2</size>
-      </method>
-      <method name="Void Main()" attrs="150">
-        <size>26</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="test-null-operator-05.cs">
     <type name="CI">
       <method name="Void set_Item(System.String, System.String)" attrs="2182">
@@ -69385,6 +69372,27 @@
       </method>
       <method name="Void Test(Int32)" attrs="150">
         <size>12</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-null-operator-19.cs">
+    <type name="C">
+      <method name="S get_Acceleration()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Acceleration(S)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>114</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

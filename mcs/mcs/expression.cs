@@ -109,21 +109,25 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		void ResolveConditionalAccessReceiver (ResolveContext rc)
+		{
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && expr.HasConditionalAccess ()) {
+				conditional_access_receiver = true;
+			}			
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression res = null;
 
-			if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
-				if (expr.HasConditionalAccess ()) {
-					conditional_access_receiver = true;
-					using (rc.Set (ResolveContext.Options.ConditionalAccessReceiver)) {
-						res = expr.Resolve (rc);
-					}
+			ResolveConditionalAccessReceiver (rc);
+			if (conditional_access_receiver) {
+				using (rc.Set (ResolveContext.Options.DontSetConditionalAccessReceiver)) {
+					res = expr.Resolve (rc);
 				}
-			}
-
-			if (!conditional_access_receiver)
+			} else {
 				res = expr.Resolve (rc);
+			}
 
 			var constant = res as Constant;
 			if (constant != null && constant.IsLiteral)
@@ -7039,12 +7043,16 @@ namespace Mono.CSharp
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
 
+		void ResolveConditionalAccessReceiver (ResolveContext rc)
+		{
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && expr.HasConditionalAccess ()) {
+				conditional_access_receiver = true;
+			}
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
-				conditional_access_receiver = expr.HasConditionalAccess ();
-			}
-
+			ResolveConditionalAccessReceiver (rc);
 			return DoResolveInvocation (rc);
 		}
 
@@ -7055,7 +7063,7 @@ namespace Mono.CSharp
 
 			var flags = default (ResolveContext.FlagsHandle);
 			if (conditional_access_receiver)
-				flags = ec.Set (ResolveContext.Options.ConditionalAccessReceiver);
+				flags = ec.Set (ResolveContext.Options.DontSetConditionalAccessReceiver);
 
 			if (atn != null) {
 				member_expr = atn.LookupNameExpression (ec, MemberLookupRestrictions.InvocableOnly | MemberLookupRestrictions.ReadAccess);
@@ -9641,7 +9649,7 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var e = LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess);
+			var e = LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.DontSetConditionalAccess);
 			if (e != null)
 				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.MethodGroup);
 
@@ -9704,18 +9712,13 @@ namespace Mono.CSharp
 					expr = null;
 				}
 			} else {
-				bool resolved = false;
-				if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
-					if (expr.HasConditionalAccess ()) {
-						resolved = true;
-						using (rc.Set (ResolveContext.Options.ConditionalAccessReceiver)) {
-							expr = expr.Resolve (rc, flags);
-						}
+				if ((restrictions & MemberLookupRestrictions.DontSetConditionalAccess) != 0) {
+					using (rc.Set (ResolveContext.Options.DontSetConditionalAccessReceiver)) {
+						expr = expr.Resolve (rc, flags);
 					}
-				}
-
-				if (!resolved)
+				} else {
 					expr = expr.Resolve (rc, flags);
+				}
 			}
 
 			if (expr == null)
@@ -10209,6 +10212,7 @@ namespace Mono.CSharp
 	{
 		public Arguments Arguments;
 		public Expression Expr;
+		bool conditional_access_receiver;
 
 		public ElementAccess (Expression e, Arguments args, Location loc)
 		{
@@ -10237,12 +10241,12 @@ namespace Mono.CSharp
 		Expression CreateAccessExpression (ResolveContext ec, bool conditionalAccessReceiver)
 		{
 			if (conditionalAccessReceiver)
-				ec.Set (ResolveContext.Options.ConditionalAccessReceiver);
+				ec.Set (ResolveContext.Options.DontSetConditionalAccessReceiver);
 			
 			Expr = Expr.Resolve (ec);
 
 			if (conditionalAccessReceiver)
-				ec.With (ResolveContext.Options.ConditionalAccessReceiver, false);
+				ec.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false);
 
 			if (Expr == null)
 				return null;
@@ -10314,11 +10318,18 @@ namespace Mono.CSharp
 			return ConditionalAccess || Expr.HasConditionalAccess ();
 		}
 
+		void ResolveConditionalAccessReceiver (ResolveContext rc)
+		{
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && HasConditionalAccess ()) {
+				conditional_access_receiver = true;
+			}
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			bool conditionalAccessReceiver = !rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver) && HasConditionalAccess ();
+			ResolveConditionalAccessReceiver (rc);
 
-			var expr = CreateAccessExpression (rc, conditionalAccessReceiver);
+			var expr = CreateAccessExpression (rc, conditional_access_receiver);
 			if (expr == null)
 				return null;
 
