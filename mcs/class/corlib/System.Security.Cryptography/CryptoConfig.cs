@@ -273,6 +273,12 @@ public partial class CryptoConfig {
 	// SHA512 provider
 	const string nameSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider";
 	const string defaultSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider" + system_core_assembly;
+	
+	// LAMESPEC: directly from Reference Source
+	const string defaultDpapiDataProtector = defaultNamespace + "DpapiDataProtector, " + Consts.AssemblySystem_Security;
+	const string nameDpapiDataProtector_1 = defaultNamespace + "DpapiDataProtector";
+	const string nameDpapiDataProtector_2 = "DpapiDataProtector";
+	
 	static CryptoConfig () 
 	{
 		// lock(this) is bad
@@ -413,6 +419,9 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameSHA384Provider, defaultSHA384Provider);
 		unresolved_algorithms.Add (nameSHA512Cng, defaultSHA512Cng);
 		unresolved_algorithms.Add (nameSHA512Provider, defaultSHA512Provider);
+		unresolved_algorithms.Add (nameDpapiDataProtector_1, defaultDpapiDataProtector);
+		unresolved_algorithms.Add (nameDpapiDataProtector_2, defaultDpapiDataProtector);
+		
 		Dictionary<string,string> oid = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
 
 		// comments here are to match with MS implementation (but not with doc)
@@ -492,24 +501,18 @@ public partial class CryptoConfig {
 				Initialize ();
 			}
 		}
-	
-		try {
-			Type algoClass = null;
-			if (!algorithms.TryGetValue (name, out algoClass)) {
-				string algo = null;
-				if (!unresolved_algorithms.TryGetValue (name, out algo))
-						algo = name;
-				algoClass = Type.GetType (algo);
-			}
-			if (algoClass == null)
-				return null;
-			// call the constructor for the type
-			return Activator.CreateInstance (algoClass, args);
+
+		Type algoClass = null;
+		if (!algorithms.TryGetValue (name, out algoClass)) {
+			string algo = null;
+			if (!unresolved_algorithms.TryGetValue (name, out algo))
+					algo = name;
+			algoClass = Type.GetType (algo);
 		}
-		catch {
-			// method doesn't throw any exception
+		if (algoClass == null)
 			return null;
-		}
+		// call the constructor for the type
+		return Activator.CreateInstance (algoClass, args);
 	}
 
 	internal static string MapNameToOID (string name, OidGroup oidGroup)
