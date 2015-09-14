@@ -413,7 +413,7 @@ namespace System
 				throw new ArgumentException ("Kind property of dateTime is Local");
 
 			if (this == TimeZoneInfo.Utc)
-				return DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
+				return DateTime.SpecifyKind (dateTime, DateTimeKind.Local);
 
 			var utcOffset = GetUtcOffset (dateTime);
 
