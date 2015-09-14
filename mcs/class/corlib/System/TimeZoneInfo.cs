@@ -412,8 +412,11 @@ namespace System
 			if (dateTime.Kind == DateTimeKind.Local)
 				throw new ArgumentException ("Kind property of dateTime is Local");
 
-			if (this == TimeZoneInfo.Utc)
-				return DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
+			if (this == TimeZoneInfo.Utc) {
+				// TimeZoneInfo.Local can be equal to TimeZoneInfo.Utc, fixes #33471
+				var k = (this == TimeZoneInfo.Local)? DateTimeKind.Local : DateTimeKind.Utc;
+				return DateTime.SpecifyKind (dateTime, k);
+			}
 
 			var utcOffset = GetUtcOffset (dateTime);
 
