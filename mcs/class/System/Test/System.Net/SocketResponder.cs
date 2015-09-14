@@ -98,6 +98,9 @@ namespace MonoTests.System.Net
 				if (tcpListener != null) {
 					tcpListener.Stop ();
 					tcpListener = null;
+					listenThread.Abort ();
+					listenThread.Join ();
+					listenThread = null;
 					Thread.Sleep (50);
 				}
 			}
