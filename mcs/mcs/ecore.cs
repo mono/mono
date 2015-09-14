@@ -821,6 +821,7 @@ namespace Mono.CSharp {
 			IgnoreArity = 1 << 5,
 			IgnoreAmbiguity = 1 << 6,
 			NameOfExcluded = 1 << 7,
+			DontSetConditionalAccess = 1 << 8
 		}
 
 		//
@@ -3517,7 +3518,7 @@ namespace Mono.CSharp {
 
 		protected void ResolveConditionalAccessReceiver (ResolveContext rc)
 		{
-			if (!rc.HasSet (ResolveContext.Options.ConditionalAccessReceiver) && HasConditionalAccess ()) {
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && HasConditionalAccess ()) {
 				conditional_access_receiver = true;
 			}
 		}
@@ -4070,8 +4071,10 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
-			ec.Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
-				Name, target.GetSignatureForError ());
+			if (target != InternalType.ErrorType) {
+				ec.Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
+					Name, target.GetSignatureForError ());
+			}
 		}
 
 		public bool HasAccessibleCandidate (ResolveContext rc)
@@ -6243,7 +6246,7 @@ namespace Mono.CSharp {
 				DoBestMemberChecks (ec, spec);
 
 				if (conditional_access_receiver)
-					ec.With (ResolveContext.Options.ConditionalAccessReceiver, false);
+					ec.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false);
 			}
 
 			var fb = spec as FixedFieldSpec;
@@ -6274,13 +6277,11 @@ namespace Mono.CSharp {
 				variable_info = var.VariableInfo.GetStructFieldInfo (Name);
 			}
 
-			if (ConditionalAccess) {
-				if (conditional_access_receiver)
-					type = LiftMemberType (ec, type);
+			if (conditional_access_receiver)
+				type = LiftMemberType (ec, type);
 
-				if (InstanceExpression != null && InstanceExpression.IsNull)
-					return Constant.CreateConstantFromValue (type, null, loc);
-			}
+			if (ConditionalAccess && InstanceExpression != null && InstanceExpression.IsNull)
+				return Constant.CreateConstantFromValue (type, null, loc);
 
 			eclass = ExprClass.Variable;
 			return this;
@@ -7133,7 +7134,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if (expr != this) {
-					using (ec.With (ResolveContext.Options.ConditionalAccessReceiver, conditional_access_receiver))
+					using (ec.With (ResolveContext.Options.DontSetConditionalAccessReceiver, conditional_access_receiver))
 						return expr.Resolve (ec);
 				}
 
