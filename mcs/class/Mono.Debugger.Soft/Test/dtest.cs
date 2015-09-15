@@ -2519,10 +2519,11 @@ public class DebuggerTests
 		var obj = f.GetThis () as ObjectMirror;
 		var t = obj.Type;
 		var m = t.GetMethod ("invoke_abort_2");
-		var res = (IInvokeAsyncResult)obj.BeginInvokeMethod (e.Thread, m, null, InvokeOptions.None, null, null);
+		// Invoke multiple times to check that the subsequent invokes are aborted too
+		var res = (IInvokeAsyncResult)obj.BeginInvokeMultiple (e.Thread, new MethodMirror[] { m, m, m, m }, null, InvokeOptions.None, delegate { }, null);
 		Thread.Sleep (500);
 		res.Abort ();
-		AssertThrows<InvocationException> (delegate {
+		AssertThrows<CommandException> (delegate {
 				obj.EndInvokeMethod (res);
 			});
 	}
