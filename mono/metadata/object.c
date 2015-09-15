@@ -2062,8 +2062,12 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 		} else {
 			vt->vtable [class->vtable_size] = mono_domain_alloc0 (domain, class_size);
 		}
+
 		vt->has_static_fields = TRUE;
 		mono_stats.class_static_data_size += class_size;
+
+		if (mono_profiler_get_events () & MONO_PROFILE_FIELD_EVENTS)
+			mono_profiler_static_fields_allocated (class);
 	}
 
 	iter = NULL;
@@ -2096,7 +2100,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 					bitmap = default_bitmap;
 				}
 				size = mono_type_size (field->type, &align);
-				offset = mono_alloc_special_static_data (special_static, size, align, (uintptr_t*)bitmap, numbits);
+				offset = mono_alloc_special_static_data (field, special_static, size, align, (uintptr_t*)bitmap, numbits);
 				if (!domain->special_static_fields)
 					domain->special_static_fields = g_hash_table_new (NULL, NULL);
 				g_hash_table_insert (domain->special_static_fields, field, GUINT_TO_POINTER (offset));

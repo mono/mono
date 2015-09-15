@@ -31,7 +31,8 @@ typedef enum {
 	MONO_PROFILE_IOMAP_EVENTS     = 1 << 18, /* this should likely be removed, too */
 	MONO_PROFILE_GC_MOVES         = 1 << 19,
 	MONO_PROFILE_GC_ROOTS         = 1 << 20,
-	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21
+	MONO_PROFILE_CONTEXT_EVENTS   = 1 << 21,
+	MONO_PROFILE_FIELD_EVENTS     = 1 << 22
 } MonoProfileFlags;
 
 typedef enum {
@@ -126,6 +127,12 @@ typedef void (*MonoProfileModuleFunc)   (MonoProfiler *prof, MonoImage    *modul
 typedef void (*MonoProfileAssemblyFunc) (MonoProfiler *prof, MonoAssembly *assembly);
 typedef void (*MonoProfileMonitorFunc)  (MonoProfiler *prof, MonoObject *obj, MonoProfilerMonitorEvent event);
 
+typedef void (*MonoProfileStaticFieldFunc) (MonoProfiler *prof, MonoClassField *field);
+typedef void (*MonoProfileStaticFieldsAllocatedFunc) (MonoProfiler *prof, MonoClass *klass);
+
+typedef void (*MonoProfileSpecialStaticAreaAllocatedFunc) (MonoProfiler *prof, MonoObject *owner, int is_thread_local, uintptr_t owner_id, int index, void **addr, uint64_t size);
+typedef void (*MonoProfileSpecialStaticFieldAllocatedFunc) (MonoProfiler *prof, MonoClassField *field, int is_thread_local, int index, int offset);
+
 typedef void (*MonoProfileExceptionFunc) (MonoProfiler *prof, MonoObject *object);
 typedef void (*MonoProfileExceptionClauseFunc) (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_num);
 
@@ -179,6 +186,9 @@ MONO_API void mono_profiler_install_module      (MonoProfileModuleFunc start_loa
                                         MonoProfileModuleFunc start_unload, MonoProfileModuleFunc end_unload);
 MONO_API void mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileClassResult end_load,
                                         MonoProfileClassFunc start_unload, MonoProfileClassFunc end_unload);
+
+MONO_API void mono_profiler_install_static_field (MonoProfileStaticFieldFunc new_field, MonoProfileStaticFieldsAllocatedFunc allocated);
+MONO_API void mono_profiler_install_special_static_field (MonoProfileSpecialStaticAreaAllocatedFunc new_area, MonoProfileSpecialStaticFieldAllocatedFunc new_field);
 
 MONO_API void mono_profiler_install_jit_compile (MonoProfileMethodFunc start, MonoProfileMethodResult end);
 MONO_API void mono_profiler_install_jit_end (MonoProfileJitResult end);

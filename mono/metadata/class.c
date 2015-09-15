@@ -2079,9 +2079,14 @@ mono_class_layout_fields (MonoClass *class)
 
 		size = mono_type_size (field->type, &align);
 		field->offset = class->sizes.class_size;
+
 		/*align is always non-zero here*/
 		field->offset += align - 1;
 		field->offset &= ~(align - 1);
+
+		if (mono_profiler_get_events () & MONO_PROFILE_FIELD_EVENTS)
+			mono_profiler_static_field (field);
+
 		class->sizes.class_size = field->offset + size;
 	}
 

@@ -241,7 +241,7 @@ MonoException* mono_thread_force_interruption_checkpoint_noraise (void);
 void mono_thread_force_interruption_checkpoint (void);
 gint32* mono_thread_interruption_request_flag (void);
 
-uint32_t mono_alloc_special_static_data (uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits);
+uint32_t mono_alloc_special_static_data (MonoClassField *field, uint32_t static_type, uint32_t size, uint32_t align, uintptr_t *bitmap, int numbits);
 void*    mono_get_special_static_data   (uint32_t offset);
 gpointer mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 offset);
 

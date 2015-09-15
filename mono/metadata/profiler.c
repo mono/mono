@@ -64,6 +64,12 @@ struct _ProfilerDesc {
 	MonoProfileClassFunc   class_start_unload;
 	MonoProfileClassFunc   class_end_unload;
 
+	MonoProfileStaticFieldFunc static_field;
+	MonoProfileStaticFieldsAllocatedFunc static_fields_allocated;
+
+	MonoProfileSpecialStaticAreaAllocatedFunc special_static_area;
+	MonoProfileSpecialStaticFieldAllocatedFunc special_static_field;
+
 	MonoProfileMethodFunc   jit_start;
 	MonoProfileMethodResult jit_end;
 	MonoProfileJitResult    jit_end2;
@@ -451,6 +457,26 @@ mono_profiler_install_class       (MonoProfileClassFunc start_load, MonoProfileC
 }
 
 void
+mono_profiler_install_static_field (MonoProfileStaticFieldFunc new_field, MonoProfileStaticFieldsAllocatedFunc allocated)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->static_field = new_field;
+	prof_list->static_fields_allocated = allocated;
+}
+
+void
+mono_profiler_install_special_static_field (MonoProfileSpecialStaticAreaAllocatedFunc new_area, MonoProfileSpecialStaticFieldAllocatedFunc new_field)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->special_static_area = new_area;
+	prof_list->special_static_field = new_field;
+}
+
+void
 mono_profiler_method_enter (MonoMethod *method)
 {
 	ProfilerDesc *prof;
@@ -761,6 +787,38 @@ mono_profiler_class_loaded (MonoClass *klass, int result)
 		if ((prof->events & MONO_PROFILE_CLASS_EVENTS) && prof->class_end_load)
 			prof->class_end_load (prof->profiler, klass, result);
 	}
+}
+
+void
+mono_profiler_static_field (MonoClassField *field)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_FIELD_EVENTS) && prof->static_field)
+			prof->static_field (prof->profiler, field);
+}
+
+void
+mono_profiler_static_fields_allocated (MonoClass *klass)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_FIELD_EVENTS) && prof->static_fields_allocated)
+			prof->static_fields_allocated (prof->profiler, klass);
+}
+
+void
+mono_profiler_special_static_area_allocated (MonoObject *owner, gboolean thread_local, gsize owner_id, int index, void **addr, gsize size)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_FIELD_EVENTS) && prof->special_static_area)
+			prof->special_static_area (prof->profiler, owner, thread_local, owner_id, index, addr, size);
+}
+
+void
+mono_profiler_special_static_field_allocated (MonoClassField *field, gboolean thread_local, int index, int offset)
+{
+	for (ProfilerDesc *prof = prof_list; prof; prof = prof->next)
+		if ((prof->events & MONO_PROFILE_FIELD_EVENTS) && prof->special_static_field)
+			prof->special_static_field (prof->profiler, field, thread_local, index, offset);
 }
 
 void 
