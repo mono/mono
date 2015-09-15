@@ -40,14 +40,28 @@ namespace MonoTests.System
 	public class TimeZoneInfoTest
 	{
 		static FieldInfo localField;
+		static FieldInfo cachedDataField;
+		static object localFieldObj;
 
 		public static void SetLocal (TimeZoneInfo val)
 		{
-			if (localField == null)
-				localField = typeof (TimeZoneInfo).GetField ("local",
-					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+			if (localField == null) {
+				if (Type.GetType ("Mono.Runtime") != null) {
+					localField = typeof (TimeZoneInfo).GetField ("local",
+							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+				} else {
+					cachedDataField = typeof (TimeZoneInfo).GetField ("s_cachedData",
+							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
 
-			localField.SetValue (null, val);
+					localField = cachedDataField.FieldType.GetField ("m_localTimeZone",
+						BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
+				}
+			}
+
+			if (cachedDataField != null)
+				localFieldObj = cachedDataField.GetValue (null);
+
+			localField.SetValue (localFieldObj, val);
 		}
 
 		[TestFixture]
@@ -499,7 +513,7 @@ namespace MonoTests.System
 					DateTime utc = DateTime.UtcNow;
 					Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
 					DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
-					Assert.AreEqual (DateTimeKind.Local, converted.Kind);
+					Assert.AreEqual (DateTimeKind.Utc, converted.Kind);
 					DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
 					Assert.AreEqual (back.Kind, DateTimeKind.Utc);
 					Assert.AreEqual (utc, back);
@@ -514,7 +528,8 @@ namespace MonoTests.System
 				DateTime utc = DateTime.UtcNow;
 				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
-				Assert.AreEqual (DateTimeKind.Local, converted.Kind);
+				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : DateTimeKind.Local;
+				Assert.AreEqual (expectedKind, converted.Kind);
 				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
 				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual (utc, back);
@@ -551,8 +566,9 @@ namespace MonoTests.System
 
 				sdt = new DateTime (2014, 1, 9, 23, 0, 0);
 				ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Local);
-				Assert.AreEqual (ddt.Kind, sdt.Kind, "#3.1");
-				Assert.AreEqual (ddt.Kind, DateTimeKind.Unspecified, "#3.2");
+				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : sdt.Kind;
+				Assert.AreEqual (expectedKind,  ddt.Kind, "#3.1");
+				Assert.AreEqual (DateTimeKind.Unspecified, sdt.Kind, "#3.2");
 			}
 
 			[Test]
