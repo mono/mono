@@ -951,10 +951,7 @@ namespace System.Net.Sockets
 					throw new InvalidOperationException ("AcceptSocket: The socket must not be bound or connected.");
 			}
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.Accept);
-
-			SocketAsyncResult sockares = e.Worker.result;
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Accept);
 
 			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
 
@@ -1250,22 +1247,19 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.Connect);
-
-			SocketAsyncResult result = e.Worker.result;
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Connect);
 
 			try {
 				IPAddress [] addresses;
 				IAsyncResult ares;
 
 				if (!GetCheckedIPs (e, out addresses)) {
-					result.EndPoint = e.RemoteEndPoint;
+					sockares.EndPoint = e.RemoteEndPoint;
 					ares = BeginConnect (e.RemoteEndPoint, SocketAsyncEventArgs.Dispatcher, e);
 				} else {
 					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
-					result.Addresses = addresses;
-					result.Port = dep.Port;
+					sockares.Addresses = addresses;
+					sockares.Port = dep.Port;
 					ares = BeginConnect (addresses, dep.Port, SocketAsyncEventArgs.Dispatcher, e);
 				}
 
@@ -1274,7 +1268,7 @@ namespace System.Net.Sockets
 					return false;
 				}
 			} catch (Exception exc) {
-				result.Complete (exc, true);
+				sockares.Complete (exc, true);
 				return false;
 			}
 
@@ -1517,10 +1511,7 @@ namespace System.Net.Sockets
 
 			ThrowIfDisposedAndClosed ();
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.Disconnect);
-
-			SocketAsyncResult sockares = e.Worker.result;
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Disconnect);
 
 			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
 
@@ -1718,18 +1709,16 @@ namespace System.Net.Sockets
 			if (e.Buffer == null && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, e.Buffer != null ? SocketOperation.Receive : SocketOperation.ReceiveGeneric);
+			SocketAsyncResult sockares;
 
-			SocketAsyncResult sockares = e.Worker.result;
-			sockares.SockFlags = e.SocketFlags;
-
-			if (e.Buffer != null) {
+			if (e.Buffer == null) {
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveGeneric);
+				sockares.Buffers = e.BufferList;
+			} else {
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Receive);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
-			} else {
-				sockares.Buffers = e.BufferList;
 			}
 
 			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
@@ -1925,10 +1914,8 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.ReceiveFrom);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveFrom);
 
-			SocketAsyncResult sockares = e.Worker.result;
 			sockares.Buffer = e.Buffer;
 			sockares.Offset = e.Offset;
 			sockares.Size = e.Count;
@@ -2263,18 +2250,16 @@ namespace System.Net.Sockets
 			if (e.Buffer == null && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, e.Buffer != null ? SocketOperation.Send : SocketOperation.SendGeneric);
+			SocketAsyncResult sockares;
 
-			SocketAsyncResult sockares = e.Worker.result;
-			sockares.SockFlags = e.SocketFlags;
-
-			if (e.Buffer != null) {
+			if (e.Buffer == null) {
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendGeneric);
+				sockares.Buffers = e.BufferList;
+			} else {
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Send);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
-			} else {
-				sockares.Buffers = e.BufferList;
 			}
 
 			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), sockares));
@@ -2486,10 +2471,8 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
-			e.curSocket = this;
-			e.Worker.Init (this, e, SocketOperation.SendTo);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendTo);
 
-			SocketAsyncResult sockares = e.Worker.result;
 			sockares.Buffer = e.Buffer;
 			sockares.Offset = e.Offset;
 			sockares.Size = e.Count;
@@ -3109,6 +3092,46 @@ namespace System.Net.Sockets
 
 			if (count == 1)
 				IOSelector.Add (handle, job);
+		}
+
+		SocketAsyncResult CreateSocketAsyncResultFromSocketAsyncEventArgs (SocketAsyncEventArgs e, SocketOperation op)
+		{
+			SocketAsyncResult sockares = new SocketAsyncResult (this, SocketAsyncEventArgs.Dispatcher, e, op, null);
+			SocketAsyncWorker worker = new SocketAsyncWorker (sockares);
+
+			sockares.Worker = worker;
+
+			e.Worker = sockares.Worker;
+			e.curSocket = this;
+			e.SetLastOperation (SocketOperationToSocketAsyncOperation (op));
+			e.SocketError = SocketError.Success;
+			e.BytesTransferred = 0;
+
+			return sockares;
+		}
+
+		SocketAsyncOperation SocketOperationToSocketAsyncOperation (SocketOperation op)
+		{
+			switch (op) {
+			case SocketOperation.Connect:
+				return SocketAsyncOperation.Connect;
+			case SocketOperation.Accept:
+				return SocketAsyncOperation.Accept;
+			case SocketOperation.Disconnect:
+				return SocketAsyncOperation.Disconnect;
+			case SocketOperation.Receive:
+			case SocketOperation.ReceiveGeneric:
+				return SocketAsyncOperation.Receive;
+			case SocketOperation.ReceiveFrom:
+				return SocketAsyncOperation.ReceiveFrom;
+			case SocketOperation.Send:
+			case SocketOperation.SendGeneric:
+				return SocketAsyncOperation.Send;
+			case SocketOperation.SendTo:
+				return SocketAsyncOperation.SendTo;
+			default:
+				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
+			}
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
