@@ -953,7 +953,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Accept, e.AcceptCallback);
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, sockares));
 
 			return true;
 		}
@@ -967,10 +967,24 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Accept);
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, sockares));
 
 			return sockares;
 		}
+
+		static IOAsyncCallback BeginAcceptCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			Socket socket = null;
+
+			try {
+				socket = sockares.socket.Accept ();
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete (socket);
+		});
 
 		public IAsyncResult BeginAccept (int receiveSize, AsyncCallback callback, object state)
 		{
@@ -986,7 +1000,7 @@ namespace System.Net.Sockets
 				SockFlags = SocketFlags.None,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.AcceptReceive (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
 
 			return sockares;
 		}
@@ -1012,7 +1026,7 @@ namespace System.Net.Sockets
 				if (acceptSocket.ProtocolType != ProtocolType.Tcp)
 					throw new SocketException ((int)SocketError.InvalidArgument);
 			}
-			
+
 			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.AcceptReceive) {
 				Buffer = new byte [receiveSize],
 				Offset = 0,
@@ -1021,10 +1035,45 @@ namespace System.Net.Sockets
 				AcceptSocket = acceptSocket,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.AcceptReceive (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
 
 			return sockares;
 		}
+
+		static IOAsyncCallback BeginAcceptReceiveCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			Socket acc_socket = null;
+
+			try {
+				if (sockares.AcceptSocket == null) {
+					acc_socket = sockares.socket.Accept ();
+				} else {
+					acc_socket = sockares.AcceptSocket;
+					sockares.socket.Accept (acc_socket);
+				}
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			/* It seems the MS runtime special-cases 0-length requested receive data.  See bug 464201. */
+			int total = 0;
+			if (sockares.Size > 0) {
+				try {
+					SocketError error;
+					total = acc_socket.Receive_nochecks (sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, out error);
+					if (error != 0) {
+						sockares.Complete (new SocketException ((int) error));
+						return;
+					}
+				} catch (Exception e) {
+					sockares.Complete (e);
+					return;
+				}
+			}
+
+			sockares.Complete (acc_socket, total);
+		});
 
 		public Socket EndAccept (IAsyncResult result)
 		{
@@ -1053,7 +1102,7 @@ namespace System.Net.Sockets
 			buffer = sockares.Buffer;
 			bytesTransferred = sockares.Total;
 
-			return sockares.Socket;
+			return sockares.AcceptedSocket;
 		}
 
 		static SafeSocketHandle Accept_internal (SafeSocketHandle safeHandle, out int error, bool blocking)
@@ -1369,7 +1418,7 @@ namespace System.Net.Sockets
 			is_bound = false;
 			connect_in_progress = true;
 
-			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Connect (), sockares));
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
 
 			return sockares;
 		}
@@ -1430,6 +1479,57 @@ namespace System.Net.Sockets
 
 			return sockares;
 		}
+
+		static IOAsyncCallback BeginConnectCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+
+			if (sockares.EndPoint == null) {
+				sockares.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
+				return;
+			}
+
+			SocketAsyncResult mconnect = sockares.AsyncState as SocketAsyncResult;
+			bool is_mconnect = mconnect != null && mconnect.Addresses != null;
+
+			try {
+				EndPoint ep = sockares.EndPoint;
+				int error_code = (int) sockares.socket.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+
+				if (error_code == 0) {
+					if (is_mconnect)
+						sockares = mconnect;
+
+					sockares.socket.seed_endpoint = ep;
+					sockares.socket.is_connected = true;
+					sockares.socket.is_bound = true;
+					sockares.socket.connect_in_progress = false;
+					sockares.error = 0;
+					sockares.Complete ();
+					return;
+				}
+
+				if (!is_mconnect) {
+					sockares.socket.connect_in_progress = false;
+					sockares.Complete (new SocketException (error_code));
+					return;
+				}
+
+				if (mconnect.CurrentAddress >= mconnect.Addresses.Length) {
+					mconnect.Complete (new SocketException (error_code));
+					return;
+				}
+
+				mconnect.socket.BeginMConnect (mconnect);
+			} catch (Exception e) {
+				sockares.socket.connect_in_progress = false;
+
+				if (is_mconnect)
+					sockares = mconnect;
+
+				sockares.Complete (e);
+				return;
+			}
+		});
 
 		public void EndConnect (IAsyncResult result)
 		{
@@ -1513,7 +1613,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Disconnect, e.DisconnectCallback);
 
-			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, sockares));
 
 			return true;
 		}
@@ -1527,10 +1627,23 @@ namespace System.Net.Sockets
 				ReuseSocket = reuseSocket,
 			};
 
-			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, sockares));
 
 			return sockares;
 		}
+
+		static IOAsyncCallback BeginDisconnectCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+
+			try {
+				sockares.socket.Disconnect (sockares.ReuseSocket);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete ();
+		});
 
 		public void EndDisconnect (IAsyncResult asyncResult)
 		{
@@ -1714,14 +1827,16 @@ namespace System.Net.Sockets
 			if (e.Buffer == null) {
 				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveGeneric, e.ReceiveCallback);
 				sockares.Buffers = e.BufferList;
+
+				QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, sockares));
 			} else {
 				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Receive, e.ReceiveCallback);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
-			}
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
+				QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, sockares));
+			}
 
 			return true;
 		}
@@ -1739,7 +1854,7 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, sockares));
 
 			return sockares;
 		}
@@ -1752,6 +1867,20 @@ namespace System.Net.Sockets
 			error = SocketError.Success;
 			return BeginReceive (buffer, offset, size, flags, callback, state);
 		}
+
+		static IOAsyncCallback BeginReceiveCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			int total = 0;
+
+			try {
+				total = Receive_internal (sockares.socket.safe_handle, sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, out sockares.error);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete (total);
+		});
 
 		[CLSCompliant (false)]
 		public IAsyncResult BeginReceive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
@@ -1766,7 +1895,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, sockares));
 
 			return sockares;
 		}
@@ -1778,6 +1907,20 @@ namespace System.Net.Sockets
 			errorCode = SocketError.Success;
 			return BeginReceive (buffers, socketFlags, callback, state);
 		}
+
+		static IOAsyncCallback BeginReceiveGenericCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			int total = 0;
+
+			try {
+				total = sockares.socket.Receive (sockares.Buffers, sockares.SockFlags);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete (total);
+		});
 
 		public int EndReceive (IAsyncResult result)
 		{
@@ -1810,7 +1953,7 @@ namespace System.Net.Sockets
 			return sockares.Total;
 		}
 
-		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			int nativeError;
 			int ret = Receive_internal (safe_handle, buf, offset, size, flags, out nativeError);
@@ -1839,7 +1982,7 @@ namespace System.Net.Sockets
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
 
-		internal static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error)
+		static int Receive_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, out int error)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
@@ -1860,24 +2003,16 @@ namespace System.Net.Sockets
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
-			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
+			return ReceiveFrom (buffer, 0, buffer.Length, SocketFlags.None, ref remoteEP);
 		}
 
 		public int ReceiveFrom (byte [] buffer, SocketFlags flags, ref EndPoint remoteEP)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
-			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			return ReceiveFrom_nochecks (buffer, 0, buffer.Length, flags, ref remoteEP);
+			return ReceiveFrom (buffer, 0, buffer.Length, flags, ref remoteEP);
 		}
 
 		public int ReceiveFrom (byte [] buffer, int size, SocketFlags flags, ref EndPoint remoteEP)
@@ -1886,10 +2021,7 @@ namespace System.Net.Sockets
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, 0, size);
 
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP");
-
-			return ReceiveFrom_nochecks (buffer, 0, size, flags, ref remoteEP);
+			return ReceiveFrom (buffer, 0, size, flags, ref remoteEP);
 		}
 
 		public int ReceiveFrom (byte [] buffer, int offset, int size, SocketFlags flags, ref EndPoint remoteEP)
@@ -1901,7 +2033,8 @@ namespace System.Net.Sockets
 			if (remoteEP == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			return ReceiveFrom_nochecks (buffer, offset, size, flags, ref remoteEP);
+			int error;
+			return ReceiveFrom_nochecks_exc (buffer, offset, size, flags, ref remoteEP, true, out error);
 		}
 
 		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
@@ -1922,7 +2055,7 @@ namespace System.Net.Sockets
 			sockares.EndPoint = e.RemoteEndPoint;
 			sockares.SockFlags = e.SocketFlags;
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.ReceiveFrom (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, sockares));
 
 			return true;
 		}
@@ -1944,10 +2077,25 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.ReceiveFrom (), sockares));
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, sockares));
 
 			return sockares;
 		}
+
+		static IOAsyncCallback BeginReceiveFromCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			int total = 0;
+
+			try {
+				int error;
+				total = sockares.socket.ReceiveFrom_nochecks_exc (sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, ref sockares.EndPoint, true, out error);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete (total);
+		});
 
 		public int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
 		{
@@ -1966,12 +2114,6 @@ namespace System.Net.Sockets
 			end_point = sockares.EndPoint;
 
 			return sockares.Total;
-		}
-
-		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags, ref EndPoint remote_end)
-		{
-			int error;
-			return ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref remote_end, true, out error);
 		}
 
 		internal int ReceiveFrom_nochecks_exc (byte [] buf, int offset, int size, SocketFlags flags, ref EndPoint remote_end, bool throwOnError, out int error)
@@ -2219,7 +2361,7 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
-		internal int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			if (size == 0) {
 				error = SocketError.Success;
@@ -2255,14 +2397,16 @@ namespace System.Net.Sockets
 			if (e.Buffer == null) {
 				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendGeneric, e.SendCallback);
 				sockares.Buffers = e.BufferList;
+
+				QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, sockares));
 			} else {
 				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Send, e.SendCallback);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
-			}
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), sockares));
+				QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), sockares));
+			}
 
 			return true;
 		}
@@ -2294,9 +2438,41 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), sockares));
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), sockares));
 
 			return sockares;
+		}
+
+		static void BeginSendCallback (SocketAsyncResult sockares, int sent_so_far)
+		{
+			int total = 0;
+
+			try {
+				total = Socket.Send_internal (sockares.socket.safe_handle, sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, out sockares.error);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			if (sockares.error == 0) {
+				sent_so_far += total;
+				sockares.Offset += total;
+				sockares.Size -= total;
+
+				if (sockares.socket.is_disposed) {
+					sockares.Complete (total);
+					return;
+				}
+
+				if (sockares.Size > 0) {
+					IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, sent_so_far), sockares));
+					return; // Have to finish writing everything. See bug #74475.
+				}
+
+				sockares.Total = sent_so_far;
+			}
+
+			sockares.Complete (total);
 		}
 
 		public IAsyncResult BeginSend (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, AsyncCallback callback, object state)
@@ -2313,7 +2489,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendGeneric (), sockares));
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, sockares));
 
 			return sockares;
 		}
@@ -2329,6 +2505,20 @@ namespace System.Net.Sockets
 			errorCode = SocketError.Success;
 			return BeginSend (buffers, socketFlags, callback, state);
 		}
+
+		static IOAsyncCallback BeginSendGenericCallback = new IOAsyncCallback (ares => {
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			int total = 0;
+
+			try {
+				total = sockares.socket.Send (sockares.Buffers, sockares.SockFlags);
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete (total);
+		});
 
 		public int EndSend (IAsyncResult result)
 		{
@@ -2376,7 +2566,7 @@ namespace System.Net.Sockets
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
 
-		internal static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error)
+		static int Send_internal (SafeSocketHandle safeHandle, byte[] buf, int offset, int count, SocketFlags flags, out int error)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
@@ -2397,36 +2587,21 @@ namespace System.Net.Sockets
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
-			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			return SendTo_nochecks (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
+			return SendTo (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
 		}
 
 		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
 		{
 			ThrowIfDisposedAndClosed ();
 			ThrowIfBufferNull (buffer);
-			ThrowIfBufferOutOfRange (buffer, 0, buffer.Length);
 
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			return SendTo_nochecks (buffer, 0, buffer.Length, flags, remote_end);
+			return SendTo (buffer, 0, buffer.Length, flags, remote_end);
 		}
 
 		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
 		{
-			ThrowIfDisposedAndClosed ();
-			ThrowIfBufferNull (buffer);
-			ThrowIfBufferOutOfRange (buffer, 0, size);
-
-			if (remote_end == null)
-				throw new ArgumentNullException ("remote_end");
-
-			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
+			return SendTo (buffer, 0, size, flags, remote_end);
 		}
 
 		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
@@ -2439,25 +2614,6 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("remote_end");
 
 			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
-		}
-
-		internal int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
-		{
-			int error;
-			int ret = SendTo_internal (safe_handle, buffer, offset, size, flags, remote_end.Serialize (), out error);
-
-			SocketError err = (SocketError) error;
-			if (err != 0) {
-				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
-					is_connected = false;
-				throw new SocketException (error);
-			}
-
-			is_connected = true;
-			is_bound = true;
-			seed_endpoint = remote_end;
-
-			return ret;
 		}
 
 		public bool SendToAsync (SocketAsyncEventArgs e)
@@ -2479,7 +2635,7 @@ namespace System.Net.Sockets
 			sockares.SockFlags = e.SocketFlags;
 			sockares.EndPoint = e.RemoteEndPoint;
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendTo (), sockares));
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), sockares));
 
 			return true;
 		}
@@ -2499,9 +2655,35 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendTo (), sockares));
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), sockares));
 
 			return sockares;
+		}
+
+		static void BeginSendToCallback (SocketAsyncResult sockares, int sent_so_far)
+		{
+			int total = 0;
+			try {
+				total = sockares.socket.SendTo_nochecks (sockares.Buffer, sockares.Offset, sockares.Size, sockares.SockFlags, sockares.EndPoint);
+
+				if (sockares.error == 0) {
+					sent_so_far += total;
+					sockares.Offset += total;
+					sockares.Size -= total;
+				}
+
+				if (sockares.Size > 0) {
+					IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, sent_so_far), sockares));
+					return; // Have to finish writing everything. See bug #74475.
+				}
+
+				sockares.Total = sent_so_far;
+			} catch (Exception e) {
+				sockares.Complete (e);
+				return;
+			}
+
+			sockares.Complete ();
 		}
 
 		public int EndSendTo (IAsyncResult result)
@@ -2516,6 +2698,25 @@ namespace System.Net.Sockets
 			sockares.CheckIfThrowDelayedException();
 
 			return sockares.Total;
+		}
+
+		int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags, EndPoint remote_end)
+		{
+			int error;
+			int ret = SendTo_internal (safe_handle, buffer, offset, size, flags, remote_end.Serialize (), out error);
+
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException (error);
+			}
+
+			is_connected = true;
+			is_bound = true;
+			seed_endpoint = remote_end;
+
+			return ret;
 		}
 
 		static int SendTo_internal (SafeSocketHandle safeHandle, byte[] buffer, int offset, int count, SocketFlags flags, SocketAddress sa, out int error)
@@ -3107,12 +3308,8 @@ namespace System.Net.Sockets
 
 		SocketAsyncResult CreateSocketAsyncResultFromSocketAsyncEventArgs (SocketAsyncEventArgs e, SocketOperation op, AsyncCallback callback)
 		{
-			SocketAsyncResult sockares = new SocketAsyncResult (this, s => SocketAsyncEventArgsCallback (callback, s), e, op, null);
-			SocketAsyncWorker worker = new SocketAsyncWorker (sockares);
+			SocketAsyncResult sockares = new SocketAsyncResult (this, s => SocketAsyncEventArgsCallback (callback, s), e, op);
 
-			sockares.Worker = worker;
-
-			e.Worker = sockares.Worker;
 			e.curSocket = this;
 			e.SetLastOperation (SocketOperationToSocketAsyncOperation (op));
 			e.SocketError = SocketError.Success;

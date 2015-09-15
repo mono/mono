@@ -40,7 +40,6 @@ namespace System.Net.Sockets
 	{
 		bool disposed;
 		internal int in_progress;
-		internal SocketAsyncWorker Worker;
 		EndPoint remote_ep;
 		public Exception ConnectByNameError { get; internal set; }
 
@@ -101,7 +100,6 @@ namespace System.Net.Sockets
 		
 		public SocketAsyncEventArgs ()
 		{
-			Worker = new SocketAsyncWorker (this);
 			AcceptSocket = null;
 			Buffer = null;
 			BufferList = null;
@@ -133,10 +131,6 @@ namespace System.Net.Sockets
 			if (disposing) {
 				if (disposed || Interlocked.CompareExchange (ref in_progress, 0, 0) != 0)
 					return;
-				if (Worker != null) {
-					Worker.Dispose ();
-					Worker = null;
-				}
 			}
 			AcceptSocket = null;
 			Buffer = null;

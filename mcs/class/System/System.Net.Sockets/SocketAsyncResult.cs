@@ -55,15 +55,12 @@ namespace System.Net.Sockets
 		public bool ReuseSocket;                  // Disconnect
 		public int CurrentAddress;                // Connect
 
-		// Return values
-		Socket accept_socket;
-		int total;
+		public Socket AcceptedSocket;
+		public int Total;
 
 		internal int error;
 
 		public int EndCalled;
-
-		public SocketAsyncWorker Worker;
 
 		public SocketAsyncResult ()
 			: base (null, null)
@@ -76,29 +73,6 @@ namespace System.Net.Sockets
 			this.socket = socket;
 			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
 			this.operation = operation;
-
-			Worker = new SocketAsyncWorker (this);
-		}
-
-		public SocketAsyncResult (Socket socket, AsyncCallback callback, object state, SocketOperation operation, SocketAsyncWorker worker)
-			: base (callback, state)
-		{
-			this.socket = socket;
-			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
-			this.operation = operation;
-
-			Worker = worker;
-		}
-
-		public Socket Socket {
-			get {
-				return accept_socket;
-			}
-		}
-
-		public int Total {
-			get { return total; }
-			set { total = value; }
 		}
 
 		public SocketError ErrorCode {
@@ -112,10 +86,6 @@ namespace System.Net.Sockets
 
 				return SocketError.Success;
 			}
-		}
-
-		public void Dispose ()
-		{
 		}
 
 		public void CheckIfThrowDelayedException ()
@@ -195,7 +165,7 @@ namespace System.Net.Sockets
 
 		public void Complete (int total)
 		{
-			this.total = total;
+			Total = total;
 			Complete ();
 		}
 
@@ -214,14 +184,14 @@ namespace System.Net.Sockets
 
 		public void Complete (Socket s)
 		{
-			this.accept_socket = s;
+			AcceptedSocket = s;
 			Complete ();
 		}
 
 		public void Complete (Socket s, int total)
 		{
-			this.accept_socket = s;
-			this.total = total;
+			AcceptedSocket = s;
+			Total = total;
 			Complete ();
 		}
 	}
