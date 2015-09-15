@@ -39,7 +39,7 @@ namespace System.Net.Sockets
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
 		bool disposed;
-		int in_progress;
+		internal int in_progress;
 		internal SocketAsyncWorker Worker;
 		EndPoint remote_ep;
 		public Exception ConnectByNameError { get; internal set; }
@@ -203,48 +203,6 @@ namespace System.Net.Sockets
 		}
 
 #region Internals
-		internal static AsyncCallback Dispatcher = new AsyncCallback (DispatcherCB);
-
-		static void DispatcherCB (IAsyncResult ares)
-		{
-			SocketAsyncEventArgs args = (SocketAsyncEventArgs) ares.AsyncState;
-
-			if (Interlocked.Exchange (ref args.in_progress, 0) != 1)
-				throw new InvalidOperationException ("No operation in progress");
-
-			/* Notes;
-			 *  -SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
-			 *  -SendPackets and ReceiveMessageFrom are not implemented yet */
-			switch (args.LastOperation) {
-			case SocketAsyncOperation.Receive:
-				args.ReceiveCallback (ares);
-				break;
-			case SocketAsyncOperation.Send:
-				args.SendCallback (ares);
-				break;
-			case SocketAsyncOperation.ReceiveFrom:
-				args.ReceiveFromCallback (ares);
-				break;
-			case SocketAsyncOperation.SendTo:
-				args.SendToCallback (ares);
-				break;
-			case SocketAsyncOperation.Accept:
-				args.AcceptCallback (ares);
-				break;
-			case SocketAsyncOperation.Disconnect:
-				args.DisconnectCallback (ares);
-				break;
-			case SocketAsyncOperation.Connect:
-				args.ConnectCallback (ares);
-				break;
-			/*
-			case SocketOperation.ReceiveMessageFrom:
-			case SocketOperation.SendPackets:
-			*/
-			default:
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", args.LastOperation));
-			}
-		}
 
 		internal void ReceiveCallback (IAsyncResult ares)
 		{
@@ -259,7 +217,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-		void ConnectCallback (IAsyncResult ares)
+		internal void ConnectCallback (IAsyncResult ares)
 		{
 			try {
 				curSocket.EndConnect (ares);
