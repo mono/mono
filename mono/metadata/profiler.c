@@ -87,6 +87,7 @@ struct _ProfilerDesc {
 	MonoProfileIomapFunc iomap_cb;
 
 	MonoProfileThreadFunc   thread_start;
+	MonoProfileThreadBoundsFunc thread_bounds;
 	MonoProfileThreadFunc   thread_end;
 	MonoProfileThreadNameFunc   thread_name;
 
@@ -245,6 +246,15 @@ mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc
 		return;
 	prof_list->thread_start = start;
 	prof_list->thread_end = end;
+}
+
+void
+mono_profiler_install_thread_bounds (MonoProfileThreadBoundsFunc bounds)
+{
+	if (!prof_list)
+		return;
+
+	prof_list->thread_bounds = bounds;
 }
 
 void 
@@ -598,8 +608,18 @@ mono_profiler_thread_start (gsize tid)
 {
 	ProfilerDesc *prof;
 	for (prof = prof_list; prof; prof = prof->next) {
-		if ((prof->events & MONO_PROFILE_THREADS) && prof->thread_start)
-			prof->thread_start (prof->profiler, tid);
+		if (prof->events & MONO_PROFILE_THREADS) {
+			if (prof->thread_start)
+				prof->thread_start (prof->profiler, tid);
+
+			if (prof->thread_bounds) {
+				guint8 *start;
+				size_t size;
+
+				mono_thread_info_get_stack_bounds (&start, &size);
+				prof->thread_bounds (prof->profiler, tid, start, size);
+			}
+		}
 	}
 }
 
