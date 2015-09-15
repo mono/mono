@@ -2507,6 +2507,27 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void InvokeAbort () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "invoke-abort" });
+
+		Event e = run_until ("invoke_abort");
+
+		StackFrame f = e.Thread.GetFrames ()[0];
+
+		var obj = f.GetThis () as ObjectMirror;
+		var t = obj.Type;
+		var m = t.GetMethod ("invoke_abort_2");
+		var res = (IInvokeAsyncResult)obj.BeginInvokeMethod (e.Thread, m, null, InvokeOptions.None, null, null);
+		Thread.Sleep (500);
+		res.Abort ();
+		AssertThrows<InvocationException> (delegate {
+				obj.EndInvokeMethod (res);
+			});
+	}
+
+	[Test]
 	public void GetThreads () {
 		vm.GetThreads ();
 	}
