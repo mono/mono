@@ -70,31 +70,24 @@ namespace System.Net.Sockets
 		{
 		}
 
-		public SocketAsyncResult (Socket socket, AsyncCallback callback, object state, SocketOperation operation, SocketAsyncWorker worker = null)
+		public SocketAsyncResult (Socket socket, AsyncCallback callback, object state, SocketOperation operation)
 			: base (callback, state)
 		{
 			this.socket = socket;
 			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
 			this.operation = operation;
 
-			DelayedException = null;
+			Worker = new SocketAsyncWorker (this);
+		}
 
-			EndPoint = null;
-			Buffer = null;
-			Offset = 0;
-			Size = 0;
-			SockFlags = SocketFlags.None;
-			AcceptSocket = null;
-			Addresses = null;
-			Port = 0;
-			Buffers = null;
-			ReuseSocket = false;
-			accept_socket = null;
-			total = 0;
+		public SocketAsyncResult (Socket socket, AsyncCallback callback, object state, SocketOperation operation, SocketAsyncWorker worker)
+			: base (callback, state)
+		{
+			this.socket = socket;
+			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
+			this.operation = operation;
 
-			error = 0;
-			EndCalled = 0;
-			Worker = worker ?? new SocketAsyncWorker (this);
+			Worker = worker;
 		}
 
 		public Socket Socket {

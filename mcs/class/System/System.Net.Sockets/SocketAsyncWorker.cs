@@ -56,55 +56,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-		/* This is called when reusing a SocketAsyncEventArgs */
-		public void Init (Socket sock, SocketAsyncEventArgs args, SocketOperation op)
-		{
-			result = new SocketAsyncResult (sock, SocketAsyncEventArgs.Dispatcher, args, op, this);
-
-			SocketAsyncOperation async_op;
-
-			// Notes;
-			// 	-SocketOperation.AcceptReceive not used in SocketAsyncEventArgs
-			//	-SendPackets and ReceiveMessageFrom are not implemented yet
-			switch (op) {
-			case SocketOperation.Connect:
-				async_op = SocketAsyncOperation.Connect;
-				break;
-			case SocketOperation.Accept:
-				async_op = SocketAsyncOperation.Accept;
-				break;
-			case SocketOperation.Disconnect:
-				async_op = SocketAsyncOperation.Disconnect;
-				break;
-			case SocketOperation.Receive:
-			case SocketOperation.ReceiveGeneric:
-				async_op = SocketAsyncOperation.Receive;
-				break;
-			case SocketOperation.ReceiveFrom:
-				async_op = SocketAsyncOperation.ReceiveFrom;
-				break;
-			// case SocketOperation.ReceiveMessageFrom:
-			// 	async_op = SocketAsyncOperation.ReceiveMessageFrom;
-			// 	break;
-			case SocketOperation.Send:
-			case SocketOperation.SendGeneric:
-				async_op = SocketAsyncOperation.Send;
-				break;
-			// case SocketOperation.SendPackets:
-			// 	async_op = SocketAsyncOperation.SendPackets;
-			// 	break;
-			case SocketOperation.SendTo:
-				async_op = SocketAsyncOperation.SendTo;
-				break;
-			default:
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
-			}
-
-			args.SetLastOperation (async_op);
-			args.SocketError = SocketError.Success;
-			args.BytesTransferred = 0;
-		}
-
 		public void Accept ()
 		{
 			Socket acc_socket = null;
