@@ -435,7 +435,6 @@ System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
-System.Net.Sockets/SocketAsyncCallback.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketAsyncResult.cs
