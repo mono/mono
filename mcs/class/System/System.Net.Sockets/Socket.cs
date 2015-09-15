@@ -951,7 +951,7 @@ namespace System.Net.Sockets
 					throw new InvalidOperationException ("AcceptSocket: The socket must not be bound or connected.");
 			}
 
-			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Accept);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Accept, e.AcceptCallback);
 
 			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
 
@@ -1247,7 +1247,7 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP");
 
-			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Connect);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Connect, e.ConnectCallback);
 
 			try {
 				IPAddress [] addresses;
@@ -1255,12 +1255,12 @@ namespace System.Net.Sockets
 
 				if (!GetCheckedIPs (e, out addresses)) {
 					sockares.EndPoint = e.RemoteEndPoint;
-					ares = BeginConnect (e.RemoteEndPoint, SocketAsyncEventArgs.Dispatcher, e);
+					ares = BeginConnect (e.RemoteEndPoint, s => SocketAsyncEventArgsCallback (e.ConnectCallback, s), e);
 				} else {
 					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
 					sockares.Addresses = addresses;
 					sockares.Port = dep.Port;
-					ares = BeginConnect (addresses, dep.Port, SocketAsyncEventArgs.Dispatcher, e);
+					ares = BeginConnect (addresses, dep.Port, s => SocketAsyncEventArgsCallback (e.ConnectCallback, s), e);
 				}
 
 				if (ares.IsCompleted && ares.CompletedSynchronously) {
@@ -1511,7 +1511,7 @@ namespace System.Net.Sockets
 
 			ThrowIfDisposedAndClosed ();
 
-			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Disconnect);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Disconnect, e.DisconnectCallback);
 
 			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
 
@@ -1712,10 +1712,10 @@ namespace System.Net.Sockets
 			SocketAsyncResult sockares;
 
 			if (e.Buffer == null) {
-				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveGeneric);
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveGeneric, e.ReceiveCallback);
 				sockares.Buffers = e.BufferList;
 			} else {
-				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Receive);
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Receive, e.ReceiveCallback);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
@@ -1914,7 +1914,7 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
-			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveFrom);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.ReceiveFrom, e.ReceiveFromCallback);
 
 			sockares.Buffer = e.Buffer;
 			sockares.Offset = e.Offset;
@@ -2253,10 +2253,10 @@ namespace System.Net.Sockets
 			SocketAsyncResult sockares;
 
 			if (e.Buffer == null) {
-				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendGeneric);
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendGeneric, e.SendCallback);
 				sockares.Buffers = e.BufferList;
 			} else {
-				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Send);
+				sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.Send, e.SendCallback);
 				sockares.Buffer = e.Buffer;
 				sockares.Offset = e.Offset;
 				sockares.Size = e.Count;
@@ -2471,7 +2471,7 @@ namespace System.Net.Sockets
 			if (e.RemoteEndPoint == null)
 				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
 
-			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendTo);
+			SocketAsyncResult sockares = CreateSocketAsyncResultFromSocketAsyncEventArgs (e, SocketOperation.SendTo, e.SendToCallback);
 
 			sockares.Buffer = e.Buffer;
 			sockares.Offset = e.Offset;
@@ -3094,9 +3094,20 @@ namespace System.Net.Sockets
 				IOSelector.Add (handle, job);
 		}
 
-		SocketAsyncResult CreateSocketAsyncResultFromSocketAsyncEventArgs (SocketAsyncEventArgs e, SocketOperation op)
+		void SocketAsyncEventArgsCallback (AsyncCallback callback, IAsyncResult ares)
 		{
-			SocketAsyncResult sockares = new SocketAsyncResult (this, SocketAsyncEventArgs.Dispatcher, e, op, null);
+			SocketAsyncResult sockares = (SocketAsyncResult) ares;
+			SocketAsyncEventArgs args = (SocketAsyncEventArgs) sockares.AsyncState;
+
+			if (Interlocked.Exchange (ref args.in_progress, 0) != 1)
+				throw new InvalidOperationException ("No operation in progress");
+
+			callback (ares);
+		}
+
+		SocketAsyncResult CreateSocketAsyncResultFromSocketAsyncEventArgs (SocketAsyncEventArgs e, SocketOperation op, AsyncCallback callback)
+		{
+			SocketAsyncResult sockares = new SocketAsyncResult (this, s => SocketAsyncEventArgsCallback (callback, s), e, op, null);
 			SocketAsyncWorker worker = new SocketAsyncWorker (sockares);
 
 			sockares.Worker = worker;
