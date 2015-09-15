@@ -360,6 +360,27 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		public class ConvertTimeTests_LocalUtc : ConvertTimeTests
+		{
+			static TimeZoneInfo oldLocal;
+
+			[SetUp]
+			public void SetLocal ()
+			{
+				base.CreateTimeZones ();
+
+				oldLocal = TimeZoneInfo.Local;
+				TimeZoneInfoTest.SetLocal (TimeZoneInfo.Utc);
+			}
+
+			[TearDown]
+			public void RestoreLocal ()
+			{
+				TimeZoneInfoTest.SetLocal (oldLocal);
+			}
+		}
+
+		[TestFixture]
 		public class ConvertTimeTests
 		{
 			TimeZoneInfo london;
@@ -501,25 +522,6 @@ namespace MonoTests.System
 				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Utc);
 				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual (utc, back);
-			}
-
-			[Test]
-			public void ConvertFromToUtc_LocalAsUtc ()
-			{
-				var oldLocal = TimeZoneInfo.Local;
-				TimeZoneInfoTest.SetLocal (TimeZoneInfo.Utc);
-
-				try {
-					DateTime utc = DateTime.UtcNow;
-					Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
-					DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
-					Assert.AreEqual (DateTimeKind.Utc, converted.Kind);
-					DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
-					Assert.AreEqual (back.Kind, DateTimeKind.Utc);
-					Assert.AreEqual (utc, back);
-				} finally {
-					TimeZoneInfoTest.SetLocal (oldLocal);
-				}
 			}
 
 			[Test]
