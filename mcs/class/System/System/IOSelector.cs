@@ -53,6 +53,22 @@ namespace System
 		bool completed_synchronously;
 		bool completed;
 
+		protected IOAsyncResult ()
+		{
+		}
+
+		protected void Init (AsyncCallback async_callback, object async_state)
+		{
+			this.async_callback = async_callback;
+			this.async_state = async_state;
+
+			completed = false;
+			completed_synchronously = false;
+
+			if (wait_handle != null)
+				wait_handle.Reset ();
+		}
+
 		protected IOAsyncResult (AsyncCallback async_callback, object async_state)
 		{
 			this.async_callback = async_callback;
