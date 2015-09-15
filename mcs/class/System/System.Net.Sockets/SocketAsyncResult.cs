@@ -62,9 +62,40 @@ namespace System.Net.Sockets
 
 		public int EndCalled;
 
+		/* Used by SocketAsyncEventArgs */
 		public SocketAsyncResult ()
-			: base (null, null)
+			: base ()
 		{
+		}
+
+		public void Init (Socket socket, AsyncCallback callback, object state, SocketOperation operation)
+		{
+			base.Init (callback, state);
+
+			this.socket = socket;
+			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
+			this.operation = operation;
+
+			DelayedException = null;
+
+			EndPoint = null;
+			Buffer = null;
+			Offset = 0;
+			Size = 0;
+			SockFlags = SocketFlags.None;
+			AcceptSocket = null;
+			Addresses = null;
+			Port = 0;
+			Buffers = null;
+			ReuseSocket = false;
+			CurrentAddress = 0;
+
+			AcceptedSocket = null;
+			Total = 0;
+
+			error = 0;
+
+			EndCalled = 0;
 		}
 
 		public SocketAsyncResult (Socket socket, AsyncCallback callback, object state, SocketOperation operation)

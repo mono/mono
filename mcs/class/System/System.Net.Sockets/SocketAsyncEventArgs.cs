@@ -44,6 +44,8 @@ namespace System.Net.Sockets
 		internal EndPoint remote_ep;
 		internal Socket current_socket;
 
+		internal SocketAsyncResult socket_async_result = new SocketAsyncResult ();
+
 		public Exception ConnectByNameError {
 			get;
 			internal set;
