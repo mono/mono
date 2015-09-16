@@ -1,0 +1,5 @@
+ConsoleDependencyGraph.cs
+Main.cs
+
+LinkerAnalyzerCore/DependencyGraph.cs
+../../class/Mono.Options/Mono.Options/Options.cs
