@@ -86,8 +86,8 @@ namespace System.Net.Sockets
 		 */
 		internal EndPoint seed_endpoint = null;
 
-		internal Queue<SocketAsyncWorker> readQ = new Queue<SocketAsyncWorker> (2);
-		internal Queue<SocketAsyncWorker> writeQ = new Queue<SocketAsyncWorker> (2);
+		internal Queue<KeyValuePair<IntPtr, IOSelectorJob>> readQ = new Queue<KeyValuePair<IntPtr, IOSelectorJob>> (2);
+		internal Queue<KeyValuePair<IntPtr, IOSelectorJob>> writeQ = new Queue<KeyValuePair<IntPtr, IOSelectorJob>> (2);
 
 		internal bool is_blocking = true;
 		internal bool is_bound;
@@ -956,7 +956,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = e.Worker.result;
 
-			QueueSocketAsyncResult (readQ, e.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
 
 			return true;
 		}
@@ -968,9 +968,9 @@ namespace System.Net.Sockets
 			if (!is_bound || !is_listening)
 				throw new InvalidOperationException ();
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Accept);
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Accept (), sockares));
 
 			return sockares;
 		}
@@ -982,14 +982,14 @@ namespace System.Net.Sockets
 			if (receiveSize < 0)
 				throw new ArgumentOutOfRangeException ("receiveSize", "receiveSize is less than zero");
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.AcceptReceive) {
 				Buffer = new byte [receiveSize],
 				Offset = 0,
 				Size = receiveSize,
 				SockFlags = SocketFlags.None,
 			};
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.AcceptReceive (), sockares));
 
 			return sockares;
 		}
@@ -1016,7 +1016,7 @@ namespace System.Net.Sockets
 					throw new SocketException ((int)SocketError.InvalidArgument);
 			}
 			
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.AcceptReceive) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.AcceptReceive) {
 				Buffer = new byte [receiveSize],
 				Offset = 0,
 				Size = receiveSize,
@@ -1024,7 +1024,7 @@ namespace System.Net.Sockets
 				AcceptSocket = acceptSocket,
 			};
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.AcceptReceive (), sockares));
 
 			return sockares;
 		}
@@ -1320,7 +1320,7 @@ namespace System.Net.Sockets
 			if (end_point == null)
 				throw new ArgumentNullException ("end_point");
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Connect) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
 				EndPoint = end_point,
 			};
 
@@ -1375,7 +1375,7 @@ namespace System.Net.Sockets
 			is_bound = false;
 			connect_in_progress = true;
 
-			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Connect (), sockares));
 
 			return sockares;
 		}
@@ -1395,7 +1395,7 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Connect) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
 				Addresses = addresses,
 				Port = port,
 			};
@@ -1407,17 +1407,21 @@ namespace System.Net.Sockets
 
 		internal IAsyncResult BeginMConnect (SocketAsyncResult sockares)
 		{
-			IAsyncResult ares = null;
+			SocketAsyncResult ares = null;
 			Exception exc = null;
+			AsyncCallback callback;
 
 			for (int i = sockares.CurrentAddress; i < sockares.Addresses.Length; i++) {
 				try {
 					sockares.CurrentAddress++;
 
-					ares = BeginConnect (new IPEndPoint (sockares.Addresses [i], sockares.Port), null, sockares);
+					ares = (SocketAsyncResult) BeginConnect (new IPEndPoint (sockares.Addresses [i], sockares.Port), null, sockares);
 					if (ares.IsCompleted && ares.CompletedSynchronously) {
-						((SocketAsyncResult) ares).CheckIfThrowDelayedException ();
-						sockares.DoMConnectCallback ();
+						ares.CheckIfThrowDelayedException ();
+
+						callback = ares.AsyncCallback;
+						if (callback != null)
+							ThreadPool.UnsafeQueueUserWorkItem (_ => callback (ares), null);
 					}
 
 					break;
@@ -1518,7 +1522,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = e.Worker.result;
 
-			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
 
 			return true;
 		}
@@ -1528,11 +1532,11 @@ namespace System.Net.Sockets
 		{
 			ThrowIfDisposedAndClosed ();
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Disconnect) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Disconnect) {
 				ReuseSocket = reuseSocket,
 			};
 
-			socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Disconnect (), sockares));
 
 			return sockares;
 		}
@@ -1728,8 +1732,7 @@ namespace System.Net.Sockets
 				sockares.Buffers = e.BufferList;
 			}
 
-			// Receive takes care of ReceiveGeneric
-			QueueSocketAsyncResult (readQ, e.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
 
 			return true;
 		}
@@ -1740,14 +1743,14 @@ namespace System.Net.Sockets
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Receive) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Receive) {
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
 				SockFlags = socket_flags,
 			};
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
 
 			return sockares;
 		}
@@ -1769,12 +1772,12 @@ namespace System.Net.Sockets
 			if (buffers == null)
 				throw new ArgumentNullException ("buffers");
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveGeneric) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.ReceiveGeneric) {
 				Buffers = buffers,
 				SockFlags = socketFlags,
 			};
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.Receive (), sockares));
 
 			return sockares;
 		}
@@ -1932,7 +1935,7 @@ namespace System.Net.Sockets
 			sockares.EndPoint = e.RemoteEndPoint;
 			sockares.SockFlags = e.SocketFlags;
 
-			QueueSocketAsyncResult (readQ, e.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.ReceiveFrom (), sockares));
 
 			return true;
 		}
@@ -1946,7 +1949,7 @@ namespace System.Net.Sockets
 			if (remote_end == null)
 				throw new ArgumentNullException ("remote_end");
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.ReceiveFrom) {
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
@@ -1954,7 +1957,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueSocketAsyncResult (readQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, s => ((SocketAsyncResult) s).Worker.ReceiveFrom (), sockares));
 
 			return sockares;
 		}
@@ -2274,8 +2277,7 @@ namespace System.Net.Sockets
 				sockares.Buffers = e.BufferList;
 			}
 
-			// Send takes care of SendGeneric
-			QueueSocketAsyncResult (writeQ, e.Worker, sockares);
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), sockares));
 
 			return true;
 		}
@@ -2300,14 +2302,14 @@ namespace System.Net.Sockets
 			if (!is_connected)
 				throw new SocketException ((int)SocketError.NotConnected);
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.Send) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Send) {
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
 				SockFlags = socket_flags,
 			};
 
-			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), sockares));
 
 			return sockares;
 		}
@@ -2321,12 +2323,12 @@ namespace System.Net.Sockets
 			if (!is_connected)
 				throw new SocketException ((int)SocketError.NotConnected);
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.SendGeneric) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.SendGeneric) {
 				Buffers = buffers,
 				SockFlags = socketFlags,
 			};
 
-			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendGeneric (), sockares));
 
 			return sockares;
 		}
@@ -2494,7 +2496,7 @@ namespace System.Net.Sockets
 			sockares.SockFlags = e.SocketFlags;
 			sockares.EndPoint = e.RemoteEndPoint;
 
-			QueueSocketAsyncResult (writeQ, e.Worker, sockares);
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendTo (), sockares));
 
 			return true;
 		}
@@ -2506,7 +2508,7 @@ namespace System.Net.Sockets
 			ThrowIfBufferNull (buffer);
 			ThrowIfBufferOutOfRange (buffer, offset, size);
 
-			SocketAsyncResult sockares = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo) {
+			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.SendTo) {
 				Buffer = buffer,
 				Offset = offset,
 				Size = size,
@@ -2514,7 +2516,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueSocketAsyncResult (writeQ, sockares.Worker, sockares);
+			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendTo (), sockares));
 
 			return sockares;
 		}
@@ -3097,16 +3099,16 @@ namespace System.Net.Sockets
 			return sockares;
 		}
 
-		void QueueSocketAsyncResult (Queue<SocketAsyncWorker> queue, SocketAsyncWorker worker, SocketAsyncResult sockares)
+		void QueueIOSelectorJob (Queue<KeyValuePair<IntPtr, IOSelectorJob>> queue, IntPtr handle, IOSelectorJob job)
 		{
 			int count;
 			lock (queue) {
-				queue.Enqueue (worker);
+				queue.Enqueue (new KeyValuePair<IntPtr, IOSelectorJob> (handle, job));
 				count = queue.Count;
 			}
 
 			if (count == 1)
-				socket_pool_queue (SocketAsyncWorker.Dispatcher, sockares);
+				IOSelector.Add (handle, job);
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
@@ -3117,9 +3119,6 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void cancel_blocking_socket_operation (Thread thread);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
 	}
 }
 

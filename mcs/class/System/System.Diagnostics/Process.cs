@@ -1260,7 +1260,7 @@ namespace System.Diagnostics {
 
 			DateTime start = DateTime.UtcNow;
 			if (async_output != null && !async_output.IsCompleted) {
-				if (false == async_output.WaitHandle.WaitOne (ms, false))
+				if (false == async_output.AsyncWaitHandle.WaitOne (ms, false))
 					return false; // Timed out
 
 				if (ms >= 0) {
@@ -1273,7 +1273,7 @@ namespace System.Diagnostics {
 			}
 
 			if (async_error != null && !async_error.IsCompleted) {
-				if (false == async_error.WaitHandle.WaitOne (ms, false))
+				if (false == async_error.AsyncWaitHandle.WaitOne (ms, false))
 					return false; // Timed out
 
 				if (ms >= 0) {
@@ -1346,70 +1346,44 @@ namespace System.Diagnostics {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		sealed class ProcessAsyncReader : IThreadPoolWorkItem
+		sealed class ProcessAsyncReader : IOAsyncResult
 		{
-			/*
-			   The following fields match those of SocketAsyncResult.
-			   This is so that changes needed in the runtime to handle
-			   asynchronous reads are trivial
-			   Keep this in sync with SocketAsyncResult in 
-			   ./System.Net.Sockets/Socket.cs and MonoSocketAsyncResult
-			   in metadata/socket-io.h.
-			*/
-			/* DON'T shuffle fields around. DON'T remove fields */
-			public object Sock;
-			public IntPtr handle;
-			public object state;
-			public AsyncCallback callback;
-			public ManualResetEvent wait_handle;
-
-			public Exception delayedException;
-
-			public object EndPoint;
-			byte [] buffer = new byte [4196];
-			public int Offset;
-			public int Size;
-			public int SockFlags;
-
-			public object AcceptSocket;
-			public object[] Addresses;
-			public int port;
-			public object Buffers;          // Reserve this slot in older profiles
-			public bool ReuseSocket;        // Disconnect
-			public object acc_socket;
-			public int total;
-			public bool completed_sync;
-			bool completed;
-			bool err_out; // true -> stdout, false -> stderr
-			internal int error;
-			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
-			public AsyncResult async_result;
-			public int EndCalled;
-
 			// These fields are not in SocketAsyncResult
 			Process process;
+			IntPtr handle;
 			Stream stream;
+			bool err_out;
+
 			StringBuilder sb = new StringBuilder ();
-			public AsyncReadHandler ReadHandler;
+			byte[] buffer = new byte [4096];
 
 			public ProcessAsyncReader (Process process, IntPtr handle, bool err_out)
+				: base (null, null)
 			{
 				this.process = process;
 				this.handle = handle;
-				stream = new FileStream (handle, FileAccess.Read, false);
-				this.ReadHandler = new AsyncReadHandler (AddInput);
+				this.stream = new FileStream (handle, FileAccess.Read, false);
 				this.err_out = err_out;
 			}
 
-			public void AddInput ()
+			public void BeginRead ()
+			{
+				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, s => AddInput ((ProcessAsyncReader) s), this));
+			}
+
+			public void AddInput (ProcessAsyncReader reader)
 			{
 				lock (this) {
 					int nread = stream.Read (buffer, 0, buffer.Length);
 					if (nread == 0) {
-						completed = true;
-						if (wait_handle != null)
-							wait_handle.Set ();
-						FlushLast ();
+						IsCompleted = true;
+
+						Flush (true);
+						if (err_out)
+							process.OnOutputDataReceived (null);
+						else
+							process.OnErrorDataReceived (null);
+
 						return;
 					}
 
@@ -1423,82 +1397,49 @@ namespace System.Diagnostics {
 					}
 
 					Flush (false);
-					ReadHandler.BeginInvoke (null, this);
+
+					IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, s => AddInput ((ProcessAsyncReader) s), this));
 				}
 			}
 
-			void FlushLast ()
-			{
-				Flush (true);
-				if (err_out) {
-					process.OnOutputDataReceived (null);
-				} else {
-					process.OnErrorDataReceived (null);
-				}
-			}
-			
 			void Flush (bool last)
 			{
-				if (sb.Length == 0 ||
-				    (err_out && process.output_canceled) ||
-				    (!err_out && process.error_canceled))
+				if (sb.Length == 0 || (err_out && process.output_canceled) || (!err_out && process.error_canceled))
 					return;
 
-				string total = sb.ToString ();
+				string[] strs = sb.ToString ().Split ('\n');
+
 				sb.Length = 0;
-				string [] strs = total.Split ('\n');
-				int len = strs.Length;
-				if (len == 0)
+
+				if (strs.Length == 0)
 					return;
 
-				for (int i = 0; i < len - 1; i++) {
+				for (int i = 0; i < strs.Length - 1; i++) {
 					if (err_out)
 						process.OnOutputDataReceived (strs [i]);
 					else
 						process.OnErrorDataReceived (strs [i]);
 				}
 
-				string end = strs [len - 1];
-				if (last || (len == 1 && end == "")) {
-					if (err_out) {
+				string end = strs [strs.Length - 1];
+				if (last || (strs.Length == 1 && end == "")) {
+					if (err_out)
 						process.OnOutputDataReceived (end);
-					} else {
+					else
 						process.OnErrorDataReceived (end);
-					}
 				} else {
 					sb.Append (end);
 				}
 			}
 
-			public bool IsCompleted {
-				get { return completed; }
-			}
-
-			public WaitHandle WaitHandle {
-				get {
-					lock (this) {
-						if (wait_handle == null)
-							wait_handle = new ManualResetEvent (completed);
-						return wait_handle;
-					}
-				}
-			}
-
 			public void Close () {
-				RemoveFromIOThreadPool (handle);
+				IOSelector.Remove (handle);
 				stream.Close ();
 			}
 
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			extern static void RemoveFromIOThreadPool (IntPtr handle);
-
-			void IThreadPoolWorkItem.ExecuteWorkItem()
+			internal override void CompleteDisposed ()
 			{
-				async_result.Invoke ();
-			}
-
-			void IThreadPoolWorkItem.MarkAborted(ThreadAbortException tae)
-			{
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -1507,7 +1448,6 @@ namespace System.Diagnostics {
 		bool error_canceled;
 		ProcessAsyncReader async_output;
 		ProcessAsyncReader async_error;
-		delegate void AsyncReadHandler ();
 
 		[ComVisibleAttribute(false)] 
 		public void BeginOutputReadLine ()
@@ -1522,7 +1462,7 @@ namespace System.Diagnostics {
 			output_canceled = false;
 			if (async_output == null) {
 				async_output = new ProcessAsyncReader (this, stdout_rd, true);
-				async_output.ReadHandler.BeginInvoke (null, async_output);
+				async_output.BeginRead ();
 			}
 		}
 
@@ -1554,7 +1494,7 @@ namespace System.Diagnostics {
 			error_canceled = false;
 			if (async_error == null) {
 				async_error = new ProcessAsyncReader (this, stderr_rd, false);
-				async_error.ReadHandler.BeginInvoke (null, async_error);
+				async_error.BeginRead ();
 			}
 		}
 

@@ -327,6 +327,7 @@ System/FtpStyleUriParser.cs
 System/GenericUriParser.cs
 System/GenericUriParserOptions.cs
 System/HttpStyleUriParser.cs
+System/IOSelector.cs
 System/NetPipeStyleUriParser.cs
 System/NetTcpStyleUriParser.cs
 System/NewsStyleUriParser.cs

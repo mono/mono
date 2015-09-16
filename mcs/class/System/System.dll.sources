@@ -614,6 +614,8 @@ Mono.Net.Dns/SimpleResolverEventArgs.cs
 System.Net/DnsAsyncResult.cs
 System.Windows.Input/ICommand.cs
 
+System/IOSelector.cs
+
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/BinaryCompatibility.cs
 ReferenceSources/ConfigurationManagerInternalFactory.cs
