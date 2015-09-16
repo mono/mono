@@ -6620,6 +6620,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (check_this) {
+				// MONO_EMIT_NULL_CHECK will only throw an exception for platforms that request explicit-null-check
+				MONO_EMIT_NULL_CHECK(cfg, sp [0]->dreg);
+
 				MonoInst *check;
 
 				MONO_INST_NEW (cfg, check, OP_CHECK_THIS);
