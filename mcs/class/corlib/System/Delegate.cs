@@ -504,7 +504,8 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return Method.GetHashCode () ^ (m_target != null ? m_target.GetHashCode () : 0);
+			/* same implementation as CoreCLR */
+			return GetType ().GetHashCode ();
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
