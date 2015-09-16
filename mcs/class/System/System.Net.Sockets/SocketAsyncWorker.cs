@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Threading;
+
 namespace System.Net.Sockets
 {
 	internal sealed class SocketAsyncWorker
@@ -54,55 +56,10 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public static SocketAsyncCallback Dispatcher = new SocketAsyncCallback (DispatcherCB);
-
-		static void DispatcherCB (SocketAsyncResult sar)
-		{
-			/* SendPackets and ReceiveMessageFrom are not implemented yet */
-			switch (sar.operation) {
-			case SocketOperation.Receive:
-			case SocketOperation.ReceiveGeneric:
-			case SocketOperation.RecvJustCallback:
-				sar.Worker.Receive ();
-				break;
-			case SocketOperation.Send:
-			case SocketOperation.SendGeneric:
-			case SocketOperation.SendJustCallback:
-				sar.Worker.Send ();
-				break;
-			case SocketOperation.ReceiveFrom:
-				sar.Worker.ReceiveFrom ();
-				break;
-			case SocketOperation.SendTo:
-				sar.Worker.SendTo ();
-				break;
-			case SocketOperation.Connect:
-				sar.Worker.Connect ();
-				break;
-			case SocketOperation.Accept:
-				sar.Worker.Accept ();
-				break;
-			case SocketOperation.AcceptReceive:
-				sar.Worker.AcceptReceive ();
-				break;
-			case SocketOperation.Disconnect:
-				sar.Worker.Disconnect ();
-				break;
-			// case SocketOperation.ReceiveMessageFrom
-			// 	sar.Worker.ReceiveMessageFrom ()
-			// 	break;
-			// case SocketOperation.SendPackets:
-			// 	sar.Worker.SendPackets ();
-			// 	break;
-			default:
-				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", sar.operation));
-			}
-		}
-
 		/* This is called when reusing a SocketAsyncEventArgs */
 		public void Init (Socket sock, SocketAsyncEventArgs args, SocketOperation op)
 		{
-			result.Init (sock, args, SocketAsyncEventArgs.Dispatcher, op, this);
+			result = new SocketAsyncResult (sock, SocketAsyncEventArgs.Dispatcher, args, op, this);
 
 			SocketAsyncOperation async_op;
 
@@ -231,8 +188,6 @@ namespace System.Net.Sockets
 					result.socket.connect_in_progress = false;
 					result.error = 0;
 					result.Complete ();
-					if (is_mconnect)
-						result.DoMConnectCallback ();
 					return;
 				}
 
@@ -244,8 +199,6 @@ namespace System.Net.Sockets
 
 				if (mconnect.CurrentAddress >= mconnect.Addresses.Length) {
 					mconnect.Complete (new SocketException (error_code));
-					if (is_mconnect)
-						mconnect.DoMConnectCallback ();
 					return;
 				}
 				mconnect.socket.BeginMConnect (mconnect);
@@ -254,8 +207,6 @@ namespace System.Net.Sockets
 				if (is_mconnect)
 					result = mconnect;
 				result.Complete (e);
-				if (is_mconnect)
-					result.DoMConnectCallback ();
 				return;
 			}
 		}
@@ -351,7 +302,7 @@ namespace System.Net.Sockets
 				}
 
 				if (result.Size > 0) {
-					Socket.socket_pool_queue (SocketAsyncWorker.Dispatcher, result);
+					IOSelector.Add (result.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.Send (), result));
 					return; // Have to finish writing everything. See bug #74475.
 				}
 				result.Total = send_so_far;
@@ -368,7 +319,7 @@ namespace System.Net.Sockets
 
 				UpdateSendValues (total);
 				if (result.Size > 0) {
-					Socket.socket_pool_queue (SocketAsyncWorker.Dispatcher, result);
+					IOSelector.Add (result.handle, new IOSelectorJob (IOOperation.Write, s => ((SocketAsyncResult) s).Worker.SendTo (), result));
 					return; // Have to finish writing everything. See bug #74475.
 				}
 				result.Total = send_so_far;
