@@ -272,6 +272,11 @@ namespace System.Net.Http
 				wr.Proxy = proxy;
 			}
 
+			//Host must be explicitly set for HttpWebRequest
+			if (request.Headers.Host != null) {
+				wr.Host = request.Headers.Host;
+			}
+
 			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
