@@ -1982,6 +1982,13 @@ mono_class_setup_methods (MonoClass *class)
 		for (i = 0; i < class->method.count; ++i) {
 			int idx = mono_metadata_translate_token_index (class->image, MONO_TABLE_METHOD, class->method.first + i + 1);
 			methods [i] = mono_get_method (class->image, MONO_TOKEN_METHOD_DEF | idx, class);
+
+			if (!methods[i]) {
+				mono_class_set_failure(class, MONO_EXCEPTION_TYPE_LOAD, g_strdup_printf("Could not load method %d of class %s", i, mono_class_get_name(class)));
+				mono_loader_unlock();
+
+				return;
+			}
 		}
 	}
 
@@ -4547,6 +4554,12 @@ mono_class_init (MonoClass *class)
 		}
 	} else {
 		mono_class_setup_vtable (class);
+		if (class->exception_type) {
+			goto leave;
+		}
+
+		if (mono_loader_get_last_error())
+			goto leave;
 
 		if (MONO_CLASS_IS_INTERFACE (class))
 			setup_interface_offsets (class, 0);
