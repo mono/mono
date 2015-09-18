@@ -55,15 +55,18 @@ DISTCLEANFILES= mono-uninstalled.pc
 # building with monolite
 mcslib = $(mcs_topdir)/class/lib
 monolite = $(mcslib)/monolite
-mono_corlib_version = $(shell sed -n "s/\#define MONO_CORLIB_VERSION //p" $(srcdir)/mono/metadata/appdomain.c)
-monolite_url = http://storage.bos.xamarin.com/mono-dist-master/latest/monolite-$(mono_corlib_version)-latest.tar.gz
+monolite_url = http://storage.bos.xamarin.com/mono-dist-master/latest/monolite-&-latest.tar.gz
 .PHONY: get-monolite-latest 
 get-monolite-latest:
 	-rm -fr $(mcslib)/monolite-*
 	-mkdir -p $(mcslib)
 	test ! -d $(monolite) || test ! -d $(monolite).old || rm -fr $(monolite).old
 	test ! -d $(monolite) || mv -f $(monolite) $(monolite).old
-	cd $(mcslib) && { (wget -O- $(monolite_url) || curl $(monolite_url)) | gzip -d | tar xf - ; }
+	cd $(mcslib) && { \
+	    sed -n "s,\#define MONO_CORLIB_VERSION ,,p" ../../../mono/metadata/appdomain.c | \
+		sed -n "s,.*,$(monolite_url),p" | \
+		( read monolite_url; wget -O- $$monolite_url || curl $$monolite_url ) | gzip -d | tar xf - ; \
+	}
 	cd $(mcslib) && mv -f monolite-* monolite
 
 .PHONY: validate do-build-mono-mcs mcs-do-clean mcs-do-tests
