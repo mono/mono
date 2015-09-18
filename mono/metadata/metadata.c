@@ -2852,7 +2852,7 @@ do_mono_metadata_parse_type (MonoType *type, MonoImage *m, MonoGenericContainer 
 void
 mono_metadata_free_type (MonoType *type)
 {
-	if (type >= builtin_types && type < builtin_types + NBUILTIN_TYPES ())
+	if (!type || (type >= builtin_types && type < builtin_types + NBUILTIN_TYPES ()))
 		return;
 	
 	switch (type->type){
