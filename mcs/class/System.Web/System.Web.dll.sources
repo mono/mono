@@ -792,8 +792,8 @@ System.Web.UI.WebControls/ControlIDConverter.cs
 System.Web.UI.WebControls/ControlParameter.cs
 System.Web.UI.WebControls/ControlPropertyNameConverter.cs
 System.Web.UI.WebControls/CookieParameter.cs
-System.Web.UI.WebControls/CreateUserErrorEventArgs.cs
-System.Web.UI.WebControls/CreateUserErrorEventHandler.cs
+../../../external/referencesource/System.Web/UI/WebControls/CreateUserErrorEventArgs.cs
+../../../external/referencesource/System.Web/UI/WebControls/CreateUserErrorEventHandler.cs
 System.Web.UI.WebControls/CreateUserWizard.cs
 System.Web.UI.WebControls/CreateUserWizardStep.cs
 System.Web.UI.WebControls/CustomValidator.cs
