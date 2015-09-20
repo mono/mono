@@ -146,7 +146,7 @@ System.Web.Configuration_2.0/AssemblyCollection.cs
 System.Web.Configuration_2.0/AssemblyInfo.cs
 System.Web.Configuration_2.0/AuthenticationMode.cs
 System.Web.Configuration_2.0/AuthenticationSection.cs
-System.Web.Configuration_2.0/AuthorizationRuleAction.cs
+    ../../../external/referencesource/System.Web/Configuration/AuthorizationRuleAction.cs
 System.Web.Configuration_2.0/AuthorizationRule.cs
 System.Web.Configuration_2.0/AuthorizationRuleCollection.cs
 System.Web.Configuration_2.0/AuthorizationSection.cs
