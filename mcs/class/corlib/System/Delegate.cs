@@ -60,6 +60,7 @@ namespace System
 		private object m_target;
 		private IntPtr method;
 		private IntPtr delegate_trampoline;
+		private IntPtr rgctx;
 		private IntPtr method_code;
 		private MethodInfo method_info;
 
