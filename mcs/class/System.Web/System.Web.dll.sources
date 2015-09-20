@@ -96,7 +96,7 @@ System.Web.Compilation/ExpressionPrefixAttribute.cs
 System.Web.Compilation/ForceCopyBuildProvider.cs
 System.Web.Compilation/GenericBuildProvider.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
-System.Web.Compilation/IAssemblyPostProcessor.cs
+../../../external/referencesource/System.Web/Compilation/IAssemblyPostProcessor.cs
 System.Web.Compilation/IgnoreFileBuildProvider.cs
 System.Web.Compilation/IImplicitResourceProvider.cs
 System.Web.Compilation/ILocation.cs
