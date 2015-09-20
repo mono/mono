@@ -98,9 +98,8 @@ System.Web.Compilation/GenericBuildProvider.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 ../../../external/referencesource/System.Web/Compilation/IAssemblyPostProcessor.cs
 System.Web.Compilation/IgnoreFileBuildProvider.cs
-System.Web.Compilation/IImplicitResourceProvider.cs
+../../../external/referencesource/System.Web/Compilation/IImplicitResourceProvider.cs
 System.Web.Compilation/ILocation.cs
-System.Web.Compilation/ImplicitResourceKey.cs
 System.Web.Compilation/IResourceProvider.cs
 System.Web.Compilation/LinePragmaCodeInfo.cs
 System.Web.Compilation/Location.cs
