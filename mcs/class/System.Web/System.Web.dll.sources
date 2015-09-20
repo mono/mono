@@ -250,7 +250,7 @@ System.Web.Configuration_2.0/TagMapCollection.cs
 System.Web.Configuration_2.0/TagMapInfo.cs
 System.Web.Configuration_2.0/TagPrefixCollection.cs
 System.Web.Configuration_2.0/TagPrefixInfo.cs
-System.Web.Configuration_2.0/TraceDisplayMode.cs
+    ../../../external/referencesource/System.Web/Configuration/TraceDisplayMode.cs
 System.Web.Configuration_2.0/TraceSection.cs
 System.Web.Configuration_2.0/TransformerInfo.cs
 System.Web.Configuration_2.0/TransformerInfoCollection.cs
