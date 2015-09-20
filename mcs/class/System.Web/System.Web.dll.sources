@@ -1141,7 +1141,7 @@ System.Web.UI.WebControls.WebParts/IWebPartHttpHandler.cs
 ../../../external/referencesource/System.Web/UI/WebParts/IWebPartField.cs
 System.Web.UI.WebControls.WebParts/IWebPartParameters.cs
 ../../../external/referencesource/System.Web/UI/WebParts/IWebPartRow.cs
-System.Web.UI.WebControls.WebParts/IWebPartTable.cs
+../../../external/referencesource/System.Web/UI/WebParts/IWebPartTable.cs
 System.Web.UI.WebControls.WebParts/Part.cs
 ../../../external/referencesource/System.Web/UI/WebParts/PartChromeState.cs
 System.Web.UI.WebControls.WebParts/PartChromeType.cs
@@ -1340,6 +1340,7 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/UI/WebParts/WebBrowsableAttribute.cs
 ../../../external/referencesource/System.Web/UI/WebParts/WebDescriptionAttribute.cs
 ../../../external/referencesource/System.Web/UI/WebParts/WebDisplayNameAttribute.cs
+../../../external/referencesource/System.Web/UI/WebParts/TableCallback.cs
 ../../../external/referencesource/System.Web/UI/WebParts/RowCallback.cs
 ../../../external/referencesource/System.Web/UI/WebParts/FieldCallback.cs
 
