@@ -1264,7 +1264,7 @@ System.Web.Util/RequestValidator.cs
 
 System.Web.Routing/HttpMethodConstraint.cs
 System.Web.Routing/IRouteConstraint.cs
-System.Web.Routing/IRouteHandler.cs
+../../../external/referencesource/System.Web/Routing/IRouteHandler.cs
 System.Web.Routing/PatternParser.cs
 System.Web.Routing/PatternToken.cs
 System.Web.Routing/PatternTokenType.cs
