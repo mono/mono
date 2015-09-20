@@ -1227,7 +1227,7 @@ System.Web.Caching/IOutputCacheEntry.cs
 System.Web.Caching/MemoryResponseElement.cs
 System.Web.Caching/OutputCache.cs
 System.Web.Caching/OutputCacheProviderCollection.cs
-System.Web.Caching/ResponseElement.cs
+../../../external/referencesource/System.Web/Cache/ResponseElement.cs
 System.Web.Caching/SubstitutionResponseElement.cs
 System.Web.Configuration_2.0/VersionConverter.cs
 System.Web.Configuration_2.0/MachineKeyCompatibilityMode.cs
@@ -1320,6 +1320,7 @@ System.Web.Security/MembershipPasswordAttribute.cs
 System.Web/DynamicModuleManager.cs
 
 ../../../external/referencesource/System.Web/ISubscriptionToken.cs
+
 
 ../../../external/referencesource/System.Web/ModelBinding/IModelNameProvider.cs
 ../../../external/referencesource/System.Web/ModelBinding/BindingBehaviorAttribute.cs
