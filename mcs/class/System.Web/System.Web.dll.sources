@@ -1247,7 +1247,7 @@ System.Web.UI/FileLevelMasterPageControlBuilder.cs
 System.Web.UI/IDataKeysControl.cs
 System.Web.UI/ViewStateMode.cs
 System.Web.UI.WebControls/IDataBoundControl.cs
-System.Web.UI.WebControls/IDataBoundItemControl.cs
+../../../external/referencesource/System.Web/UI/WebControls/IDataBoundItemControl.cs
 System.Web.UI.WebControls/IDataBoundListControl.cs
 ../../../external/referencesource/System.Web/UI/WebControls/IFieldControl.cs
 System.Web.UI.WebControls/IRenderOuterTable.cs
