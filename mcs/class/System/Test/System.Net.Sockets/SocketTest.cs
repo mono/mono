@@ -4327,7 +4327,7 @@ namespace MonoTests.System.Net.Sockets
 
 			Socket listenSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			
-			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 8001));
+			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
 			listenSocket.Listen (1);
 
 			listenSocket.BeginAccept (new AsyncCallback (ReceiveCallback), listenSocket);
