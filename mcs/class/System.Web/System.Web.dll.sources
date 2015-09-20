@@ -167,7 +167,7 @@ System.Web.Configuration_2.0/CustomError.cs
 System.Web.Configuration_2.0/CustomErrorCollection.cs
 ../../../external/referencesource/System.Web/Configuration/CustomErrorsMode.cs
 System.Web.Configuration_2.0/CustomErrorsSection.cs
-System.Web.Configuration_2.0/CustomErrorsRedirectMode.cs
+../../../external/referencesource/System.Web/Configuration/CustomErrorsRedirectMode.cs
 System.Web.Configuration_2.0/DeploymentSection.cs
 System.Web.Configuration_2.0/EventMappingSettings.cs
 System.Web.Configuration_2.0/EventMappingSettingsCollection.cs
