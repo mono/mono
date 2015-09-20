@@ -1331,7 +1331,8 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/ModelBinding/BindRequiredAttribute.cs
 ../../../external/referencesource/System.Web/ModelBinding/ExtensibleModelBinderAttribute.cs
 ../../../external/referencesource/System.Web/ModelBinding/ModelBinderProviderOptionsAttribute.cs
-
+../../../external/referencesource/System.Web/ModelBinding/ModelErrorCollection.cs
+../../../external/referencesource/System.Web/ModelBinding/ModelError.cs
 
 ../../../external/referencesource/System.Web/Security/AntiXss/CodeCharts.cs
 
