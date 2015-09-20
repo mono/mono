@@ -1343,5 +1343,7 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/UI/WebParts/RowCallback.cs
 ../../../external/referencesource/System.Web/UI/WebParts/FieldCallback.cs
 
+../../../external/referencesource/System.Web/UI/UnobtrusiveValidationMode.cs
+
 ../../../external/referencesource/System.Web/WebSockets/AspNetWebSocketOptions.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
