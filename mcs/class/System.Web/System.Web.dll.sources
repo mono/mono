@@ -1134,7 +1134,7 @@ System.Web.UI.WebControls.WebParts/IPersonalizable.cs
 System.Web.UI.WebControls.WebParts/ITrackingPersonalizable.cs
 System.Web.UI.WebControls.WebParts/ITransformerConfigurationControl.cs
 System.Web.UI.WebControls.WebParts/IVersioningPersonalizable.cs
-System.Web.UI.WebControls.WebParts/IWebActionable.cs
+../../../external/referencesource/System.Web/UI/WebParts/IWebActionable.cs
 System.Web.UI.WebControls.WebParts/IWebEditable.cs
 System.Web.UI.WebControls.WebParts/IWebPart.cs
 System.Web.UI.WebControls.WebParts/IWebPartHttpHandler.cs
