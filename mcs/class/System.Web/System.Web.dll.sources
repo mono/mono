@@ -213,7 +213,7 @@ System.Web.Configuration_2.0/OutputCacheProfile.cs
 System.Web.Configuration_2.0/OutputCacheProfileCollection.cs
 System.Web.Configuration_2.0/OutputCacheSection.cs
 System.Web.Configuration_2.0/OutputCacheSettingsSection.cs
-System.Web.Configuration_2.0/PagesEnableSessionState.cs
+../../../external/referencesource/System.Web/Configuration/PagesEnableSessionState.cs
 System.Web.Configuration_2.0/PagesSection.cs
 System.Web.Configuration_2.0/PassportAuthentication.cs
 System.Web.Configuration_2.0/PositiveTimeSpanValidator.cs
