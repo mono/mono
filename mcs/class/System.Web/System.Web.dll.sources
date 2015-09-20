@@ -1138,7 +1138,7 @@ System.Web.UI.WebControls.WebParts/IWebActionable.cs
 System.Web.UI.WebControls.WebParts/IWebEditable.cs
 System.Web.UI.WebControls.WebParts/IWebPart.cs
 System.Web.UI.WebControls.WebParts/IWebPartHttpHandler.cs
-System.Web.UI.WebControls.WebParts/IWebPartField.cs
+../../../external/referencesource/System.Web/UI/WebParts/IWebPartField.cs
 System.Web.UI.WebControls.WebParts/IWebPartParameters.cs
 ../../../external/referencesource/System.Web/UI/WebParts/IWebPartRow.cs
 System.Web.UI.WebControls.WebParts/IWebPartTable.cs
@@ -1341,6 +1341,7 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/UI/WebParts/WebDescriptionAttribute.cs
 ../../../external/referencesource/System.Web/UI/WebParts/WebDisplayNameAttribute.cs
 ../../../external/referencesource/System.Web/UI/WebParts/RowCallback.cs
+../../../external/referencesource/System.Web/UI/WebParts/FieldCallback.cs
 
 ../../../external/referencesource/System.Web/WebSockets/AspNetWebSocketOptions.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
