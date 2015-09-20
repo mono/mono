@@ -139,12 +139,12 @@ System.Web.Configuration_2.0/nBrowser/File.cs
 System.Web.Configuration_2.0/nBrowser/Build.cs
 System.Web.Configuration_2.0/nBrowser/Node.cs
 System.Web.Configuration_2.0/nBrowser/Exception.cs
-System.Web.Configuration_2.0/AdapterDictionary.cs
+../../../external/referencesource/System.Web/Configuration/AdapterDictionary.cs
 System.Web.Configuration_2.0/AnonymousIdentificationSection.cs
 System.Web.Configuration_2.0/ApplicationSettingsConfigurationFileMap.cs
 System.Web.Configuration_2.0/AssemblyCollection.cs
 System.Web.Configuration_2.0/AssemblyInfo.cs
-System.Web.Configuration_2.0/AuthenticationMode.cs
+../../../external/referencesource/System.Web/Configuration/AuthenticationMode.cs
 System.Web.Configuration_2.0/AuthenticationSection.cs
 ../../../external/referencesource/System.Web/Configuration/AuthorizationRuleAction.cs
 System.Web.Configuration_2.0/AuthorizationRule.cs
@@ -202,7 +202,7 @@ System.Web.Configuration_2.0/LowerCaseStringConverter.cs
 System.Web.Configuration_2.0/LruCache.cs
 System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
 System.Web.Configuration_2.0/MachineKeySection.cs
-System.Web.Configuration_2.0/MachineKeyValidation.cs
+../../../external/referencesource/System.Web/Configuration/MachineKeyValidation.cs
 System.Web.Configuration_2.0/MachineKeyValidationConverter.cs
 System.Web.Configuration_2.0/MembershipSection.cs
 System.Web.Configuration_2.0/MonoSettingsSection.cs
@@ -218,8 +218,8 @@ System.Web.Configuration_2.0/PagesSection.cs
 System.Web.Configuration_2.0/PassportAuthentication.cs
 System.Web.Configuration_2.0/PositiveTimeSpanValidator.cs
 System.Web.Configuration_2.0/ProcessModelSection.cs
-System.Web.Configuration_2.0/ProcessModelComAuthenticationLevel.cs
-System.Web.Configuration_2.0/ProcessModelComImpersonationLevel.cs
+../../../external/referencesource/System.Web/Configuration/ProcessModelComAuthenticationLevel.cs
+../../../external/referencesource/System.Web/Configuration/ProcessModelComImpersonationLevel.cs
 ../../../external/referencesource/System.Web/Configuration/ProcessModelLogLevel.cs
 System.Web.Configuration_2.0/ProfileGroupSettings.cs
 System.Web.Configuration_2.0/ProfileGroupSettingsCollection.cs
@@ -244,13 +244,13 @@ System.Web.Configuration_2.0/SiteMapSection.cs
 System.Web.Configuration_2.0/SqlCacheDependencyDatabase.cs
 System.Web.Configuration_2.0/SqlCacheDependencyDatabaseCollection.cs
 System.Web.Configuration_2.0/SqlCacheDependencySection.cs
-System.Web.Configuration_2.0/SystemWebCachingSectionGroup.cs
+../../../external/referencesource/System.Web/Configuration/SystemWebCachingSectionGroup.cs
 System.Web.Configuration_2.0/SystemWebSectionGroup.cs
 System.Web.Configuration_2.0/TagMapCollection.cs
 System.Web.Configuration_2.0/TagMapInfo.cs
 System.Web.Configuration_2.0/TagPrefixCollection.cs
 System.Web.Configuration_2.0/TagPrefixInfo.cs
-    ../../../external/referencesource/System.Web/Configuration/TraceDisplayMode.cs
+../../../external/referencesource/System.Web/Configuration/TraceDisplayMode.cs
 System.Web.Configuration_2.0/TraceSection.cs
 System.Web.Configuration_2.0/TransformerInfo.cs
 System.Web.Configuration_2.0/TransformerInfoCollection.cs
@@ -262,7 +262,7 @@ System.Web.Configuration_2.0/UrlMappingCollection.cs
 System.Web.Configuration_2.0/UrlMappingsSection.cs
 System.Web.Configuration_2.0/VirtualDirectoryMappingCollection.cs
 System.Web.Configuration_2.0/VirtualDirectoryMapping.cs
-System.Web.Configuration_2.0/WebApplicationLevel.cs
+../../../external/referencesource/System.Web/Configuration/WebApplicationLevel.cs
 System.Web.Configuration_2.0/WebConfigurationFileMap.cs
 System.Web.Configuration_2.0/WebConfigurationHost.cs
 System.Web.Configuration_2.0/WebConfigurationManager.cs
@@ -271,7 +271,7 @@ System.Web.Configuration_2.0/WebContext.cs
 System.Web.Configuration_2.0/WebPartsPersonalization.cs
 System.Web.Configuration_2.0/WebPartsPersonalizationAuthorization.cs
 System.Web.Configuration_2.0/WebPartsSection.cs
-System.Web.Configuration_2.0/XhtmlConformanceMode.cs
+../../../external/referencesource/System.Web/Configuration/XhtmlConformanceMode.cs
 System.Web.Configuration_2.0/XhtmlConformanceSection.cs
 System.Web.Configuration.Internal/IInternalConfigWebHost.cs
 System.Web/DefaultHttpHandler.cs
@@ -1347,8 +1347,20 @@ System.Web/DynamicModuleManager.cs
 ../../../external/referencesource/System.Web/UI/UnobtrusiveValidationMode.cs
 ../../../external/referencesource/System.Web/UI/ValidateRequestMode.cs
 
+../../../external/referencesource/System.Web/Configuration/AsyncPreloadModeFlags.cs
+../../../external/referencesource/System.Web/Configuration/BrowserCapsElementType.cs
+../../../external/referencesource/System.Web/Configuration/BrowserTree.cs
+../../../external/referencesource/System.Web/Configuration/CustomWebEventKey.cs
+../../../external/referencesource/System.Web/Configuration/DelayedRegex.cs
 ../../../external/referencesource/System.Web/Configuration/ProfileGuidedOptimizationsFlags.cs
+
+../../../external/referencesource/System.Web/Configuration/RegexMatchTimeoutValidator.cs
+../../../external/referencesource/System.Web/Configuration/RegexMatchTimeoutValidatorAttribute.cs
+../../../external/referencesource/System.Web/Configuration/RpcAuthent.cs
+../../../external/referencesource/System.Web/Configuration/RpcImpers.cs
+../../../external/referencesource/System.Web/Configuration/RpcLevel.cs
 ../../../external/referencesource/System.Web/Configuration/TicketCompatibilityMode.cs
+../../../external/referencesource/System.Web/Configuration/WebLevel.cs
 
 ../../../external/referencesource/System.Web/WebSockets/AspNetWebSocketOptions.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
