@@ -194,13 +194,13 @@
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
 			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)"
-			Condition="'$(BuildingSolutionFile)' == 'true'">
+			Condition="'$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true'">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
 
 		<!-- Else, just -->
-		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true'">
+		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true'">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfiguration"/>
 		</CreateItem>
 
