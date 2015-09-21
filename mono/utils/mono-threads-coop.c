@@ -293,6 +293,18 @@ mono_threads_exit_gc_unsafe_region (void *regions_cookie)
 	mono_threads_reset_blocking_end (regions_cookie);
 }
 
+int
+mono_threads_suspend_signal_num (void)
+{
+	return -1;
+}
+
+int
+mono_threads_restart_signal_num (void)
+{
+	return -1;
+}
+
 #else
 
 void*

@@ -337,45 +337,6 @@ mono_thread_search_alt_signal (int min_signal)
 }
 
 static int
-mono_thread_get_alt_suspend_signal (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGUNUSED;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR1
-	return SIGUSR1;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int suspend_signum = -1;
-	if (suspend_signum == -1)
-		suspend_signum = mono_thread_search_alt_signal (-1);
-	return suspend_signum;
-#endif /* SIGRTMIN */
-}
-
-static int
-mono_thread_get_alt_resume_signal (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGTTOU;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR2
-	return SIGUSR2;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int resume_signum = -1;
-	if (resume_signum == -1)
-		resume_signum = mono_thread_search_alt_signal (mono_thread_get_alt_suspend_signal () + 1);
-	return resume_signum;
-#endif /* SIGRTMIN */
-}
-
-
-static int
 mono_threads_get_abort_signal (void)
 {
 #if defined(PLATFORM_ANDROID)
@@ -389,7 +350,7 @@ mono_threads_get_abort_signal (void)
 #else
 	static int abort_signum = -1;
 	if (abort_signum == -1)
-		abort_signum = mono_thread_search_alt_signal (mono_thread_get_alt_resume_signal () + 1);
+		abort_signum = mono_thread_search_alt_signal (MAX (DEFAULT_RESTART_SIGNAL, DEFAULT_SUSPEND_SIGNAL) + 1);
 	return abort_signum;
 #endif /* SIGRTMIN */
 }
@@ -518,13 +479,8 @@ mono_threads_init_platform (void)
 	sigset_t signal_set;
 
 	abort_signal_num = mono_threads_get_abort_signal ();
-	if (mono_thread_info_unified_management_enabled ()) {
-		suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
-		restart_signal_num = DEFAULT_RESTART_SIGNAL;
-	} else {
-		suspend_signal_num = mono_thread_get_alt_suspend_signal ();
-		restart_signal_num = mono_thread_get_alt_resume_signal ();
-	}
+	suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
+	restart_signal_num = DEFAULT_RESTART_SIGNAL;
 
 	sigfillset (&suspend_signal_mask);
 	sigdelset (&suspend_signal_mask, restart_signal_num);
@@ -614,6 +570,18 @@ mono_threads_core_begin_global_suspend (void)
 void
 mono_threads_core_end_global_suspend (void)
 {
+}
+
+int
+mono_threads_suspend_signal_num (void)
+{
+	return suspend_signal_num;
+}
+
+int
+mono_threads_restart_signal_num (void)
+{
+	return restart_signal_num;
 }
 
 #endif /*defined (USE_POSIX_BACKEND)*/
