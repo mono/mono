@@ -93,7 +93,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			this.binPath = binPath;
 			this.buildEnabled = true;
-			this.projects = new Dictionary <string, Project> ();
+			this.projects = new Dictionary <string, Project> (StringComparer.OrdinalIgnoreCase);
 			this.eventSource = new EventSource ();
 			this.loggers = new List <ILogger> ();
 			this.buildStarted = false;
