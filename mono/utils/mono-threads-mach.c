@@ -170,6 +170,18 @@ mono_threads_core_end_global_suspend (void)
 {
 }
 
+int
+mono_threads_suspend_signal_num (void)
+{
+	return -1;
+}
+
+int
+mono_threads_restart_signal_num (void)
+{
+	return -1;
+}
+
 #endif /* USE_MACH_BACKEND */
 
 #ifdef __MACH__
