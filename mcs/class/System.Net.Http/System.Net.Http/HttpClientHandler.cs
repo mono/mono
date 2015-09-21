@@ -272,15 +272,18 @@ namespace System.Net.Http
 				wr.Proxy = proxy;
 			}
 
-			//Host must be explicitly set for HttpWebRequest
-			if (request.Headers.Host != null) {
-				wr.Host = request.Headers.Host;
-			}
-
 			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
 				var values = header.Value;
+				if (header.Key == "Host") {
+					//
+					// Host must be explicitly set for HttpWebRequest
+					//
+					wr.Host = request.Headers.Host;
+					continue;
+				}
+
 				if (header.Key == "Transfer-Encoding") {
 					// Chunked Transfer-Encoding is never set for HttpWebRequest. It's detected
 					// from ContentLength by HttpWebRequest
