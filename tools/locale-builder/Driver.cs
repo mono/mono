@@ -1170,6 +1170,7 @@ namespace Mono.Tools.LocaleBuilder
 			// .net has incorrect separators for some countries and we want to be compatible
 			switch (ci.Name) {
 			case "es-ES":
+			case "es":
 				// es-ES does not have group separator but .net has '.'
 				value = ".";
 				break;
