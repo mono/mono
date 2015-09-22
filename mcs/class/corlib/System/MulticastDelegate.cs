@@ -83,7 +83,9 @@ namespace System
 		// https://gist.github.com/migueldeicaza/cd99938c2a4372e7e5d5
 		//
 		// Do not remove this API
-		internal bool HasSingleTarget => delegates == null;
+		internal bool HasSingleTarget {
+			get { return delegates == null; }
+		}
 
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
