@@ -641,9 +641,10 @@ namespace System {
 			case SpecialFolder.MyComputer:
 				return String.Empty;
 
-			// personal == ~
-			case SpecialFolder.Personal:
-				return home;
+			// SpecialFolder.Personal==SpecialFolder.MyDocuments
+			// case SpecialFolder.Personal:
+			case SpecialFolder.MyDocuments:
+				return ReadXdgUserDir (config, home, "XDG_DOCUMENTS_DIR", "Documents");
 
 			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
