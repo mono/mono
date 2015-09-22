@@ -581,7 +581,7 @@ namespace System.Windows.Forms
 
 				case UIIcon.PlacesPersonal: {
 					// Default = "My Documents"
-					return Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+					return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				}
 
 				case UIIcon.PlacesMyComputer: {

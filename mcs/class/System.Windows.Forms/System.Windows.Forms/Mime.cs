@@ -677,8 +677,8 @@ namespace System.Windows.Forms
 			if (Directory.Exists ("/usr/local/share/mime"))
 				shared_mime_paths.Add ("/usr/local/share/mime/");
 			
-			if (Directory.Exists (System.Environment.GetFolderPath (Environment.SpecialFolder.Personal) + "/.local/share/mime"))
-				shared_mime_paths.Add (System.Environment.GetFolderPath (Environment.SpecialFolder.Personal) + "/.local/share/mime/");
+			if (Directory.Exists (System.Environment.GetFolderPath (Environment.SpecialFolder.UserProfile) + "/.local/share/mime"))
+				shared_mime_paths.Add (System.Environment.GetFolderPath (Environment.SpecialFolder.UserProfile) + "/.local/share/mime/");
 			
 			if (shared_mime_paths.Count == 0)
 				return;

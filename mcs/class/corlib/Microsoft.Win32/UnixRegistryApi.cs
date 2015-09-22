@@ -805,7 +805,7 @@ namespace Microsoft.Win32 {
 		private static string UserStore {
 			get {
 				if (user_store == null)
-					user_store = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal),
+					user_store = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.UserProfile),
 					".mono/registry");
 
 				return user_store;

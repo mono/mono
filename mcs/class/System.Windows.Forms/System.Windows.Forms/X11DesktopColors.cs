@@ -190,7 +190,7 @@ namespace System.Windows.Forms {
 		}
 		
 		private static bool ReadKDEColorsheme() {
-			string full_kdegloabals_filename = Environment.GetFolderPath(Environment.SpecialFolder.Personal)
+			string full_kdegloabals_filename = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
 				+ "/"
 				+ ".kde/share/config/kdeglobals";
 			

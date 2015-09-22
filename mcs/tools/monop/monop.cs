@@ -169,7 +169,7 @@ class MonoP {
 
 		// if -r:~/foo.dll syntax is used the shell misses it
 		if (assembly.StartsWith ("~/"))
-			assembly = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), assembly.Substring (2));
+			assembly = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.UserProfile), assembly.Substring (2));
 
 		try {
 			// if it exists try to use LoadFrom

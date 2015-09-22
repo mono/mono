@@ -4906,7 +4906,7 @@ namespace System.Windows.Forms
 			static MWFConfigInstance ()
 			{
 				string b = "mwf_config";
-				string dir = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+				string dir = Environment.GetFolderPath (Environment.SpecialFolder.UserProfile);
 
 				if (XplatUI.RunningOnUnix) {
 					dir = Path.Combine (dir, ".mono");
