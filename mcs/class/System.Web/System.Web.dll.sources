@@ -1285,11 +1285,11 @@ System.Web.Routing/UrlRoutingModule.cs
 System.Web.Routing/VirtualPathData.cs
 
 ../../../external/referencesource/System.Web/Abstractions/HttpApplicationStateBase.cs
-System.Web/HttpApplicationStateWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpApplicationStateWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpBrowserCapabilitiesBase.cs
-System.Web/HttpBrowserCapabilitiesWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpBrowserCapabilitiesWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpCachePolicyBase.cs
-System.Web/HttpCachePolicyWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpCachePolicyWrapper.cs
 System.Web/HttpContextBase.cs
 System.Web/HttpContextWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpFileCollectionBase.cs
@@ -1303,7 +1303,7 @@ System.Web/HttpResponseWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpServerUtilityBase.cs
 System.Web/HttpServerUtilityWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpSessionStateBase.cs
-System.Web/HttpSessionStateWrapper.cs
+../../../external/referencesource/System.Web/Abstractions/HttpSessionStateWrapper.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpStaticObjectsCollectionBase.cs
 ../../../external/referencesource/System.Web/Abstractions/HttpStaticObjectsCollectionWrapper.cs
 
