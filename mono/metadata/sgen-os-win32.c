@@ -32,7 +32,7 @@ sgen_suspend_thread (SgenThreadInfo *info)
 	CONTEXT context;
 	DWORD result;
 
-	g_assert (id != mono_native_thread_id_get ());
+	g_assert (id != GetCurrentThreadId ());
 
 	g_assert (handle);
 
