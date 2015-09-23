@@ -12,4 +12,6 @@ EXTRA_DISTFILES = \
 	LICENSE.txt \
 	c5.pub c5.snk c5.xml
 
+NO_INSTALL = yes
+
 include ../../build/library.make
