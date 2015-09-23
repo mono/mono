@@ -843,7 +843,7 @@ namespace System.Drawing.Printing
 			if (!settings.PrintToFile) {
 				StringBuilder sb = new StringBuilder (1024);
 				int length = sb.Capacity;
-				cupsTempFile (sb, length);
+				cupsTempFd (sb, length);
 				name = sb.ToString ();
 				tmpfile = name;
 			}
@@ -889,7 +889,7 @@ namespace System.Drawing.Printing
 		static extern void cupsFreeDests (int num_dests, IntPtr dests);
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
-		static extern IntPtr cupsTempFile (StringBuilder sb, int len);
+		static extern IntPtr cupsTempFd (StringBuilder sb, int len);
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
 		static extern IntPtr cupsGetDefault ();
