@@ -637,7 +637,6 @@ System.Web.UI/IndexedString.cs
 ../../../external/referencesource/System.Web/UI/IPostBackEventHandler.cs
 ../../../external/referencesource/System.Web/UI/IResourceUrlGenerator.cs
 ../../../external/referencesource/System.Web/UI/IStateFormatter.cs
-../../../external/referencesource/System.Web/UI/IStateFormatter2.cs
 ../../../external/referencesource/System.Web/UI/IStateManager.cs
 ../../../external/referencesource/System.Web/UI/IScriptManager.cs
 ../../../external/referencesource/System.Web/UI/IStyleSheet.cs
