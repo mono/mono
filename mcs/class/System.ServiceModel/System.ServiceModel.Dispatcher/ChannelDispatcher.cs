@@ -455,8 +455,11 @@ namespace System.ServiceModel.Dispatcher
 			public void CloseInput ()
 			{
 				foreach (var ch in channels.ToArray ()) {
-					if (ch.State == CommunicationState.Closed)
-						RemoveChannel (ch);
+					if (ch.State == CommunicationState.Closed) {
+						lock (channels) {
+							RemoveChannel (ch);
+						}
+					}
 					else {
 						try {
 							ch.Close (close_timeout - (DateTime.Now - close_started));
