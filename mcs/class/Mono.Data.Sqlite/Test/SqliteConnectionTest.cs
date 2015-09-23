@@ -44,6 +44,26 @@ namespace MonoTests.Mono.Data.Sqlite
                 readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
                 SqliteConnection _conn = new SqliteConnection ();
 
+		[Test]
+		public void ReleaseDatabaseFileHandles ()
+		{
+			_conn.ConnectionString = _connectionString;
+			_conn.Open ();
+			
+			SqliteCommand cmd = _conn.CreateCommand ();
+			cmd.CommandText = "PRAGMA legacy_file_format;";
+			cmd.ExecuteScalar ();
+			
+			// close connection before the command
+			_conn.Dispose ();
+			
+			// then close the command
+			cmd.Dispose ();
+			
+			// the locks should be released, and we should be able to delete the database
+			File.Delete (_uri);
+		}
+
                 [Test]
                 [ExpectedException (typeof (ArgumentNullException))]
                 public void ConnectionStringTest_Null ()
