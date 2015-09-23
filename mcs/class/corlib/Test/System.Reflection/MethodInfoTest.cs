@@ -361,14 +361,20 @@ namespace MonoTests.System.Reflection
 
 			IList<LocalVariableInfo> locals = mb.LocalVariables;
 
-			// This might break with different compilers etc.
-			Assert.AreEqual (2, locals.Count, "#3");
+			bool foundPinnedBytePointer = false;
+			unsafe {
+				foreach (LocalVariableInfo lvi in locals) {
+					if (lvi.LocalType == typeof (byte[]))
+						// This is optimized out by CSC in .NET 4.6
+						Assert.IsFalse (lvi.IsPinned, "#3-1");
 
-			Assert.IsTrue ((locals [0].LocalType == typeof (byte[])) || (locals [1].LocalType == typeof (byte[])), "#4");
-			if (locals [0].LocalType == typeof (byte[]))
-				Assert.AreEqual (false, locals [0].IsPinned, "#5");
-			else
-				Assert.AreEqual (false, locals [1].IsPinned, "#6");
+					if (/* mcs */ lvi.LocalType == typeof (byte*) || /* csc */ lvi.LocalType == typeof (byte).MakeByRefType ()) {
+						foundPinnedBytePointer = true;
+						Assert.IsTrue (lvi.IsPinned, "#3-2");
+					}
+				}
+			}
+			Assert.IsTrue (foundPinnedBytePointer, "#4");
 		}
 
 		public int return_parameter_test ()
@@ -804,21 +810,44 @@ namespace MonoTests.System.Reflection
 			var type = typeof (GenericClass<>).GetMethod("Method").GetMethodBody().LocalVariables[0].LocalType;
 			Assert.AreEqual (typeofT, type);
 			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+		
+			bool foundTypeOfK = false;
+			bool foundExpectedType = false;
+	    
+			MethodBody mb = typeof (GenericClass<>).GetMethod("Method2").GetMethodBody();
+			foreach (LocalVariableInfo lvi in mb.LocalVariables) {
+				if (lvi.LocalType == typeofK) {
+					foundTypeOfK = true;
+					Assert.AreEqual (typeof (GenericClass<>), lvi.LocalType.DeclaringType, "#1-1");
+				} else if (lvi.LocalType == typeofT) {
+					foundExpectedType = true;
+					Assert.AreEqual (typeof (GenericClass<>), lvi.LocalType.DeclaringType, "#1-2");
+				}
+			}
 
-			type = typeof (GenericClass<>).GetMethod("Method2").GetMethodBody().LocalVariables[0].LocalType;
-			Assert.AreEqual (typeofT, type);
-			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
-
-			type = typeof (GenericClass<>).GetMethod("Method2").GetMethodBody().LocalVariables[1].LocalType;
-			Assert.AreEqual (typeofK, type);
-			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
-
-			type = typeof (GenericClass<int>).GetMethod("Method2").GetMethodBody().LocalVariables[0].LocalType;
-			Assert.AreEqual (typeof (int), type);
-
-			type = typeof (GenericClass<int>).GetMethod("Method2").GetMethodBody().LocalVariables[1].LocalType;
-			Assert.AreEqual (typeofK, type);
-			Assert.AreEqual (typeof (GenericClass<>), type.DeclaringType);
+			Assert.IsTrue (foundTypeOfK, "#1-3");
+			if (mb.LocalVariables.Count < 2)
+				Assert.Ignore ("Code built in release mode - 'T var0' optmized out");
+			else
+				Assert.IsTrue (foundExpectedType, "#1-4");
+	    
+			foundTypeOfK = false;
+			foundExpectedType = false;
+			mb = typeof (GenericClass<int>).GetMethod("Method2").GetMethodBody();
+			foreach (LocalVariableInfo lvi in mb.LocalVariables) {
+				if (lvi.LocalType == typeofK) {
+					foundTypeOfK = true;
+					Assert.AreEqual (typeof (GenericClass<>), lvi.LocalType.DeclaringType, "#2-1");
+				} else if (lvi.LocalType == typeof (int)) {
+					foundExpectedType = true;
+				}
+			}
+	    
+			Assert.IsTrue (foundTypeOfK, "#2-3");
+			if (mb.LocalVariables.Count < 2)
+				Assert.Ignore ("Code built in release mode - 'int var0' optmized out");
+			else
+				Assert.IsTrue (foundExpectedType, "#2-4");
 		}
 #endif
 	}
