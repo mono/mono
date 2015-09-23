@@ -58,6 +58,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace System.Net.Mail {
+	[Obsolete ("SmtpClient and its network of types are poorly designed, we strongly recommend you use https://github.com/jstedfast/MailKit and https://github.com/jstedfast/MimeKit instead")]
 	public class SmtpClient
 	: IDisposable
 	{
