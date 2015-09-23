@@ -678,12 +678,6 @@ class MDocUpdater : MDocCommand
 			XmlElement td = StubType(type, output);
 			if (td == null)
 				return null;
-			
-			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo (DocUtils.PathCombine (dest, type.Namespace));
-			if (!dir.Exists) {
-				dir.Create();
-				Console.WriteLine("Namespace Directory Created: " + type.Namespace);
-			}
 		}
 		return reltypefile;
 	}
