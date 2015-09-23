@@ -226,7 +226,7 @@ namespace System.Drawing
 		public Point (int dw)
 		{
 			y = dw >> 16;
-			x = dw & 0xffff;
+			x = unchecked ((short) (dw & 0xffff));
 		}
 
 		/// <summary>
