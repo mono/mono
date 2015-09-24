@@ -410,7 +410,6 @@ namespace MonoTests.Mono.Unix {
 		const int StormCount = 100000;
 
 		[Test]
-		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestRaiseStorm ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);
@@ -424,7 +423,7 @@ namespace MonoTests.Mono.Unix {
 				t.Start ();
 			foreach (Thread t in threads)
 				t.Join ();
-			AssertCount (usignals);
+			AssertCountSet (usignals);
 			CloseSignals (usignals);
 		}
 
@@ -434,6 +433,13 @@ namespace MonoTests.Mono.Unix {
 			foreach (UnixSignal s in usignals)
 				sum += s.Count;
 			Assert.AreEqual (sum, StormCount);
+		}
+
+		static void AssertCountSet (UnixSignal[] usignals)
+		{
+			foreach (UnixSignal s in usignals) {
+				Assert.IsTrue (s.Count > 0);
+			}
 		}
 
 		static UnixSignal[] CreateSignals (Signum[] signals)
@@ -462,7 +468,6 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
-		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestAddRemove ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);
@@ -477,7 +482,7 @@ namespace MonoTests.Mono.Unix {
 			foreach (Thread t in threads)
 				t.Join ();
 
-			AssertCount (usignals);
+			AssertCountSet (usignals);
 			CloseSignals (usignals);
 		}
 
@@ -497,7 +502,6 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
-		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestWaitAny ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);
@@ -515,7 +519,7 @@ namespace MonoTests.Mono.Unix {
 			foreach (Thread t in threads)
 				t.Join ();
 
-			AssertCount (usignals);
+			AssertCountSet (usignals);
 			CloseSignals (usignals);
 		}
 
