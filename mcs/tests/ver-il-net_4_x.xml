@@ -51725,6 +51725,22 @@
       </method>
     </type>
   </test>
+  <test name="test-928.cs">
+    <type name="Program">
+      <method name="Void Test()" attrs="150">
+        <size>25</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>105</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__0(System.Reflection.LocalVariableInfo)" attrs="145">
+        <size>29</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-93.cs">
     <type name="N1.C">
       <method name="Void .ctor()" attrs="6278">

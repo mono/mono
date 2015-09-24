@@ -393,14 +393,20 @@ namespace Mono.CSharp
 			if (pinned) {
 				//
 				// This is for .net compatibility. I am not sure why pinned
-				// temps are converted to & even if they are pointers to
+				// pointer temps are converted to & even if they are pointers to
 				// pointers.
 				//
-				var pt = (PointerContainer)type;
-				return ig.DeclareLocal (pt.Element.GetMetaInfo ().MakeByRefType (), true);
+				var pt = type as PointerContainer;
+				if (pt != null) {
+					type = pt.Element;
+					if (type.Kind == MemberKind.Void)
+						type = Module.Compiler.BuiltinTypes.IntPtr;
+					
+					return ig.DeclareLocal (type.GetMetaInfo ().MakeByRefType (), true);
+				}
 			}
 
-			return ig.DeclareLocal (type.GetMetaInfo (), false);
+			return ig.DeclareLocal (type.GetMetaInfo (), pinned);
 		}
 
 		public Label DefineLabel ()
