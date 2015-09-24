@@ -3367,7 +3367,7 @@ namespace Mono.CSharp {
 								var parent_this_block = pb;
 								while (parent_this_block.Parent != null) {
 									parent_this_block = parent_this_block.Parent.ParametersBlock;
-									if (parent_this_block.StateMachine != null) {
+									if (parent_this_block.StateMachine != null && parent_this_block.StateMachine.HoistedThis != null) {
 										break;
 									}
 								}
