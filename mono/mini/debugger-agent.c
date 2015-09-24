@@ -237,6 +237,9 @@ typedef struct {
 	 * The current mono_runtime_invoke invocation.
 	 */
 	InvokeData *invoke;
+
+	/* Current Mono domain being unloaded, if any */
+	MonoDomain* unload_domain;
 } DebuggerTlsData;
 
 /* 
@@ -589,8 +592,6 @@ static gboolean protocol_version_set;
 
 /* A hash table containing all active domains */
 static GHashTable *domains;
-
-static MonoDomain* unload_domain = NULL;
 
 static void transport_connect (const char *host, int port);
 
@@ -2934,11 +2935,15 @@ event_to_string (EventKind event)
 
 static MonoDomain* get_assembly_unload_domain(MonoAssembly *assembly)
 {
-	if(!unload_domain)
+	DebuggerTlsData *tls;
+
+	tls = TlsGetValue (debugger_tls_id);
+
+	if(!tls->unload_domain)
 		return NULL;
 
-	if(g_slist_find(unload_domain->domain_assemblies, assembly))
-		return unload_domain;
+	if(g_slist_find(tls->unload_domain->domain_assemblies, assembly))
+		return tls->unload_domain;
 
 	return NULL;
 }
@@ -3266,21 +3271,24 @@ appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result)
 static void
 appdomain_unload_start (MonoProfiler *prof, MonoDomain *domain)
 {
-	mono_loader_lock ();
-	unload_domain = domain;
-	mono_loader_unlock ();
+	DebuggerTlsData *tls;
+	tls = TlsGetValue (debugger_tls_id);
+	tls->unload_domain = domain;
 }
 
 static void
 appdomain_unload_end (MonoProfiler *prof, MonoDomain *domain)
 {
+	DebuggerTlsData *tls;
+
+	tls = TlsGetValue (debugger_tls_id);
+	tls->unload_domain = NULL;
+
 	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 
 	clear_breakpoints_for_domain (domain);
 
 	mono_loader_lock ();
-
-	unload_domain = NULL;
 
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
