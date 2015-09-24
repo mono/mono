@@ -390,7 +390,17 @@ namespace Mono.CSharp
 			if (IsAnonymousStoreyMutateRequired)
 				type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
 
-			return ig.DeclareLocal (type.GetMetaInfo (), pinned);
+			if (pinned) {
+				//
+				// This is for .net compatibility. I am not sure why pinned
+				// temps are converted to & even if they are pointers to
+				// pointers.
+				//
+				var pt = (PointerContainer)type;
+				return ig.DeclareLocal (pt.Element.GetMetaInfo ().MakeByRefType (), true);
+			}
+
+			return ig.DeclareLocal (type.GetMetaInfo (), false);
 		}
 
 		public Label DefineLabel ()
