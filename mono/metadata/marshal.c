@@ -2053,7 +2053,7 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 
 	g_assert (delegate);
 	mcast_delegate = (MonoMulticastDelegate *) delegate;
-	if (mcast_delegate->delegates != NULL)
+	if (mcast_delegate->multicast != NULL)
 		mono_raise_exception (mono_get_exception_argument (NULL, "The delegate must have only one target"));
 
 #ifndef DISABLE_REMOTING
@@ -3019,7 +3019,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	gpointer cache_key = NULL;
 	SignaturePointerPair key;
 	SignaturePointerPair *new_key;
-	int local_i, local_len, local_delegates, local_d, local_target, local_res;
+	int local_i, local_last, local_delegates, local_multicast, local_target, local_res;
 	int pos0, pos1, pos2;
 	char *name;
 	MonoClass *target_class = NULL;
@@ -3152,9 +3152,9 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 
 	/* allocate local 0 (object) */
 	local_i = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
-	local_len = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
+	local_last = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 	local_delegates = mono_mb_add_local (mb, &mono_defaults.array_class->byval_arg);
-	local_d = mono_mb_add_local (mb, &mono_defaults.multicastdelegate_class->byval_arg);
+	local_multicast = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
 	local_target = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
 
 	if (!void_ret)
@@ -3164,13 +3164,13 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 
 	/*
 	 * {type: sig->ret} res;
-	 * if (delegates == null) {
+	 * if (this.multicast == null) {
 	 *     return this.<target> ( args .. );
 	 * } else {
-	 *     int i = 0, len = this.delegates.Length;
+	 *     int i = this.multicast.offset, last = i + this.multicast.count;
 	 *     do {
-	 *         res = this.delegates [i].Invoke ( args .. );
-	 *     } while (++i < len);
+	 *         res = this.multicast.delegates [i].Invoke ( args .. );
+	 *     } while (++i < last);
 	 *     return res;
 	 * }
 	 */
@@ -3178,20 +3178,19 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	/* this wrapper can be used in unmanaged-managed transitions */
 	emit_thread_interrupt_checkpoint (mb);
 
-	/* delegates = this.delegates */
+	/* multicast = this.multicast */
 	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoMulticastDelegate, delegates));
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoMulticastDelegate, multicast));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
-	mono_mb_emit_stloc (mb, local_delegates);
+	mono_mb_emit_stloc (mb, local_multicast);
 
-
-	/* if (delegates == null) */
-	mono_mb_emit_ldloc (mb, local_delegates);
+	/* if (multicast == null) */
+	mono_mb_emit_ldloc (mb, local_multicast);
 	pos2 = mono_mb_emit_branch (mb, CEE_BRTRUE);
 
 	/* return target.<target_method|method_ptr> ( args .. ); */
 
-	/* target = d.target; */
+	/* target = this.target; */
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoDelegate, target));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
@@ -3218,7 +3217,7 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 
 			mono_mb_emit_byte (mb, CEE_RET);
 		}
-	
+
 		/* else [target == null] call this->method_ptr static */
 		mono_mb_patch_branch (mb, pos0);
 	}
@@ -3259,29 +3258,36 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	/* else [delegates != null] */
+	/* else [multicast != null] */
 	mono_mb_patch_branch (mb, pos2);
 
-	/* len = delegates.Length; */
-	mono_mb_emit_ldloc (mb, local_delegates);
-	mono_mb_emit_byte (mb, CEE_LDLEN);
-	mono_mb_emit_byte (mb, CEE_CONV_I4);
-	mono_mb_emit_stloc (mb, local_len);
-
-	/* i = 0; */
-	mono_mb_emit_icon (mb, 0);
+	/* i = multicast.offset; */
+	mono_mb_emit_ldloc (mb, local_multicast);
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoMulticastDelegateData, offset));
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
 	mono_mb_emit_stloc (mb, local_i);
+
+	/* last = i + multicast.count; */
+	mono_mb_emit_ldloc (mb, local_i);
+	mono_mb_emit_ldloc (mb, local_multicast);
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoMulticastDelegateData, count));
+	mono_mb_emit_byte (mb, CEE_LDIND_I);
+	mono_mb_emit_byte (mb, CEE_ADD);
+	mono_mb_emit_stloc (mb, local_last);
+
+	/* delegates = multicast.delegates */
+	mono_mb_emit_ldloc (mb, local_multicast);
+	mono_mb_emit_ldflda (mb, MONO_STRUCT_OFFSET (MonoMulticastDelegateData, delegates));
+	mono_mb_emit_byte (mb, CEE_LDIND_REF);
+	mono_mb_emit_stloc (mb, local_delegates);
 
 	pos1 = mono_mb_get_label (mb);
 
-	/* d = delegates [i]; */
+	/* res = delegates [i].Invoke ( args .. ); */
 	mono_mb_emit_ldloc (mb, local_delegates);
 	mono_mb_emit_ldloc (mb, local_i);
 	mono_mb_emit_byte (mb, CEE_LDELEM_REF);
-	mono_mb_emit_stloc (mb, local_d);
 
-	/* res = d.Invoke ( args .. ); */
-	mono_mb_emit_ldloc (mb, local_d);
 	for (i = 0; i < sig->param_count; i++)
 		mono_mb_emit_ldarg (mb, i + 1);
 	if (!ctx) {
@@ -3297,9 +3303,9 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 	/* i += 1 */
 	mono_mb_emit_add_to_local (mb, local_i, 1);
 
-	/* i < l */
+	/* i < last */
 	mono_mb_emit_ldloc (mb, local_i);
-	mono_mb_emit_ldloc (mb, local_len);
+	mono_mb_emit_ldloc (mb, local_last);
 	mono_mb_emit_branch_label (mb, CEE_BLT, pos1);
 
 	/* return res */

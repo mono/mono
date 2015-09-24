@@ -1080,7 +1080,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *arg, guint8* tr
 	/* Necessary for !code condition to fallback to slow path */
 	code = NULL;
 
-	multicast = ((MonoMulticastDelegate*)delegate)->delegates != NULL;
+	multicast = ((MonoMulticastDelegate*)delegate)->multicast != NULL;
 	if (!multicast && !callvirt) {
 		if (method && (method->flags & METHOD_ATTRIBUTE_STATIC) && mono_method_signature (method)->param_count == mono_method_signature (invoke)->param_count + 1)
 			/* Closed static delegate */
