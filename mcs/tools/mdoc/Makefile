@@ -169,6 +169,8 @@ check-monodocer-dropns-classic: $(PROGRAM)
 
 check-monodocer-dropns-delete: $(PROGRAM)
 	-rm -Rf Test/en.actual
+	rm -Rf Test/DocTest-DropNS-classic-deletetest.dll
+	rm -Rf Test/DocTest-DropNS-unified-deletetest.dll
 	$(MAKE) Test/DocTest-DropNS-classic-deletetest.dll
 	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-deletetest.dll
 	$(MAKE) Test/DocTest-DropNS-unified-deletetest.dll
@@ -363,22 +365,21 @@ check-doc-tools: check-monodocer-since \
 	check-mdoc-export-html \
 	check-mdoc-export-html-with-version \
 	check-mdoc-export-msxdoc \
-	check-mdoc-validate
+	check-mdoc-validate \
+	check-monodocer-dropns-classic \
+	check-monodocer-dropns-classic-withsecondary \
+	check-monodocer-dropns-delete \
+	check-monodocer-internal-interface \
+	check-monodocer-enumerations
 
 check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
 	check-monodocer-importslashdoc-update \
 	check-monodocer-update \
-	check-monodocer-dropns-classic \
-	check-monodocer-dropns-classic-withsecondary \
-	check-monodocer-dropns-delete \
-	check-monodocer-internal-interface \
-	check-monodocer-enumerations \
 	check-monodocer-delete-update \
 	check-mdoc-export-html-update \
 	check-mdoc-export-msxdoc-update \
 	check-mdoc-validate-update 
 
-check: check-doc-tools \
-	check-doc-tools-update
+check: check-doc-tools 
 
