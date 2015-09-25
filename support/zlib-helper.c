@@ -187,7 +187,7 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 				stream->eof = TRUE;
 			}
 			zs->next_in = stream->buffer;
-			zs->avail_in = n;
+			zs->avail_in = n < 0 ? 0 : n;
 		}
 
 		if (zs->avail_in == 0 && zs->total_in == 0)
