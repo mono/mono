@@ -700,9 +700,11 @@ namespace System.Net.Sockets
 				}
 
 				// Remove non-signaled sockets before the current one
-				int max = currentList.Count;
-				while ((cur_sock = (Socket) currentList [currentIdx]) != sock) {
-					currentList.RemoveAt (currentIdx);
+				if (currentList.Count > 0)
+				{
+					while ((cur_sock = (Socket) currentList [currentIdx]) != sock) {
+						currentList.RemoveAt (currentIdx);
+					}
 				}
 				currentIdx++;
 			}
