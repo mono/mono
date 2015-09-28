@@ -237,6 +237,9 @@ typedef struct {
 	 * The current mono_runtime_invoke invocation.
 	 */
 	InvokeData *invoke;
+
+	/* Current Mono domain being unloaded, if any */
+	MonoDomain* unload_domain;
 } DebuggerTlsData;
 
 /* 
@@ -604,7 +607,9 @@ static void thread_end (MonoProfiler *prof, gsize tid);
 
 static void appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result);
 
-static void appdomain_unload (MonoProfiler *prof, MonoDomain *domain);
+static void appdomain_unload_start (MonoProfiler *prof, MonoDomain *domain);
+
+static void appdomain_unload_end (MonoProfiler *prof, MonoDomain *domain);
 
 static void emit_appdomain_load (gpointer key, gpointer value, gpointer user_data);
 
@@ -817,7 +822,7 @@ mono_debugger_agent_init (void)
 	mono_profiler_install ((MonoProfiler*)&debugger_profiler, runtime_shutdown);
 	mono_profiler_set_events (MONO_PROFILE_APPDOMAIN_EVENTS | MONO_PROFILE_THREADS | MONO_PROFILE_ASSEMBLY_EVENTS | MONO_PROFILE_JIT_COMPILATION | MONO_PROFILE_METHOD_EVENTS);
 	mono_profiler_install_runtime_initialized (runtime_initialized);
-	mono_profiler_install_appdomain (NULL, appdomain_load, NULL, appdomain_unload);
+	mono_profiler_install_appdomain (NULL, appdomain_load, appdomain_unload_start, appdomain_unload_end);
 	mono_profiler_install_thread (thread_startup, thread_end);
 	mono_profiler_install_assembly (NULL, assembly_load, assembly_unload, NULL);
 	mono_profiler_install_jit_end (jit_end);
@@ -2928,6 +2933,21 @@ event_to_string (EventKind event)
 	}
 }
 
+static MonoDomain* get_assembly_unload_domain(MonoAssembly *assembly)
+{
+	DebuggerTlsData *tls;
+
+	tls = TlsGetValue (debugger_tls_id);
+
+	if(!tls->unload_domain)
+		return NULL;
+
+	if(g_slist_find(tls->unload_domain->domain_assemblies, assembly))
+		return tls->unload_domain;
+
+	return NULL;
+}
+
 /*
  * process_event:
  *
@@ -2941,6 +2961,7 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 {
 	Buffer buf;
 	GSList *l;
+	MonoDomain* assemblyDomain;
 	MonoDomain *domain = mono_domain_get ();
 	MonoThread *thread = NULL,
 	           *main_thread = mono_thread_get_main ();
@@ -3009,8 +3030,17 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			buffer_add_methodid (&buf, domain, arg);
 			break;
 		case EVENT_KIND_ASSEMBLY_LOAD:
-		case EVENT_KIND_ASSEMBLY_UNLOAD:
 			buffer_add_assemblyid (&buf, domain, arg);
+			break;
+		case EVENT_KIND_ASSEMBLY_UNLOAD:
+			/* When an assembly is being unloaded it still exists in one domain (domain->domain_assemblies list).
+			   `domain` is set to the current domain and it might not be the domain from which the assembly is 
+			   unloaded, so we check whether the assembly exists in the domain currently being unloaded.
+			   This is necesarry in order to send the correct type id for the assembly to the client,
+			   as type ids are stored per domain.
+			*/
+			assemblyDomain = get_assembly_unload_domain(arg);
+			buffer_add_assemblyid (&buf, assemblyDomain ? assemblyDomain : domain, arg);
 			break;
 		case EVENT_KIND_TYPE_LOAD:
 			buffer_add_typeid (&buf, domain, arg);
@@ -3239,13 +3269,27 @@ appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result)
 }
 
 static void
-appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
+appdomain_unload_start (MonoProfiler *prof, MonoDomain *domain)
 {
+	DebuggerTlsData *tls;
+	tls = TlsGetValue (debugger_tls_id);
+	tls->unload_domain = domain;
+}
+
+static void
+appdomain_unload_end (MonoProfiler *prof, MonoDomain *domain)
+{
+	DebuggerTlsData *tls;
+
+	tls = TlsGetValue (debugger_tls_id);
+	tls->unload_domain = NULL;
+
 	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 
 	clear_breakpoints_for_domain (domain);
 
 	mono_loader_lock ();
+
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
 
