@@ -71,7 +71,7 @@ namespace System.Threading
         /// actually run the callbacks.
         private volatile int m_threadIDExecutingCallbacks = -1;
 
-        private bool m_disposed;
+        private int m_disposed;
 
         private CancellationTokenRegistration [] m_linkingRegistrations; //lazily initialized if required.
         
@@ -134,7 +134,7 @@ namespace System.Threading
         /// </summary>
         internal bool IsDisposed
         {
-            get { return m_disposed; }
+            get { return m_disposed == 1; }
         }
 
         /// <summary>
@@ -573,7 +573,7 @@ namespace System.Threading
                 //      mutates a sparseArrayFragment and then reads from properties of the CTS that are not
                 //      invalidated by cts.Dispose().
 
-                if (m_disposed)
+                if (m_disposed != 0 || Interlocked.CompareExchange (ref m_disposed, 1, 0) != 0)
                     return;
 
                 if (m_timer != null) m_timer.Dispose();
@@ -598,8 +598,6 @@ namespace System.Threading
                     m_kernelEvent.Close(); // the critical cleanup to release an OS handle
                     m_kernelEvent = null; // free for GC.
                 }
-
-                m_disposed = true;
             }
         }
 
@@ -613,7 +611,7 @@ namespace System.Threading
 #endif
         internal void ThrowIfDisposed()
         {
-            if (m_disposed)
+            if (m_disposed == 1)
                 ThrowObjectDisposedException();
         }
 
