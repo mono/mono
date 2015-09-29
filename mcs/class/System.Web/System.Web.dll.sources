@@ -1367,3 +1367,5 @@ System.Web/DynamicModuleManager.cs
 
 ../../../external/referencesource/System.Web/WebSockets/AspNetWebSocketOptions.cs
 ../../../external/referencesource/System.Web/WebSockets/SubprotocolUtil.cs
+../../build/common/SR.cs
+ReferenceSources/SR.cs
