@@ -404,6 +404,8 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual ("<foo@example.com>", server.mail_from);
 			Assert.AreEqual ("<bar@example.com>", server.rcpt_to);
 
+			task.Wait (10);
+
 			Assert.IsTrue (task.IsCompleted, "task");
 		}
 
