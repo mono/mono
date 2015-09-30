@@ -124,10 +124,11 @@ namespace Mono.Tools
 					try {
 						stores.TrustedRoot.Import (root);
 						WriteLine ("Certificate added: {0}", root.SubjectName);
-					} catch {
-						WriteLine ("Warning: Could not import {0}");
+						additions++;
+					} catch (Exception e) {
+						WriteLine ("Warning: Could not import {0}", root.SubjectName);
+						WriteLine (e.ToString ());
 					}
-					additions++;
 				}
 			}
 			if (additions > 0)
@@ -169,13 +170,13 @@ namespace Mono.Tools
 					quiet = true;
 					break;
 				default:
-					WriteLine ("Unknown option '{0}'.");
+					WriteLine ("Unknown option '{0}'.", args[i]);
 					return false;
 				}
 			}
 			inputFile = args [args.Length - 1];
 			if (!File.Exists (inputFile)) {
-				WriteLine ("Unknown option or file not found '{0}'.");
+				WriteLine ("Unknown option or file not found '{0}'.", inputFile);
 				return false;
 			}
 			return true;
