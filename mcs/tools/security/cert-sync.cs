@@ -49,6 +49,7 @@ namespace Mono.Tools
 	
 		static string inputFile;
 		static bool quiet;
+		static bool userStore;
 
 		static X509Certificate DecodeCertificate (string s)
 		{
@@ -115,7 +116,7 @@ namespace Mono.Tools
 				return 0;
 			}
 				
-			X509Stores stores = (X509StoreManager.LocalMachine);
+			X509Stores stores = userStore ? X509StoreManager.CurrentUser : X509StoreManager.LocalMachine;
 			X509CertificateCollection trusted = stores.TrustedRoot.Certificates;
 			int additions = 0;
 			WriteLine ("I already trust {0}, your new list has {1}", trusted.Count, roots.Count);
@@ -169,6 +170,9 @@ namespace Mono.Tools
 				case "--quiet":
 					quiet = true;
 					break;
+				case "--user":
+					userStore = true;
+					break;
 				default:
 					WriteLine ("Unknown option '{0}'.", args[i]);
 					return false;
@@ -189,7 +193,7 @@ namespace Mono.Tools
 
 		static void Help ()
 		{
-			Console.WriteLine ("Usage: cert-sync [--quiet] system-ca-bundle.crt");
+			Console.WriteLine ("Usage: cert-sync [--quiet] [--user] system-ca-bundle.crt");
 			Console.WriteLine ("Where system-ca-bundle.crt is in PEM format");
 		}
 
