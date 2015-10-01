@@ -31,9 +31,17 @@ RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 endif
+
+#
+# MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
+#
 ifdef MOBILE_PROFILE
+ifneq ($(PROFILE),xammac)
 LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
+endif
+
+
 ifndef MOBILE_PROFILE
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
