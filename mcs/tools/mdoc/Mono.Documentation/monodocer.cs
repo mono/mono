@@ -1159,6 +1159,16 @@ class MDocUpdater : MDocCommand
 		foreach (DocsNodeInfo info in docEnum.GetDocumentationMembers (basefile, type)) {
 			XmlElement oldmember  = info.Node;
 			MemberReference oldmember2 = info.Member;
+
+			if (info.Member != null &&  info.Node != null) {
+				// Check for an error condition where the xml MemberName doesn't match the matched member
+				var memberName = GetMemberName (info.Member);
+				var memberAttribute = info.Node.Attributes ["MemberName"];
+				if (memberAttribute == null || (memberAttribute.Value != memberName && memberAttribute.Value.Split (',').Length != memberName.Split (',').Length)) {
+					oldmember.SetAttribute ("MemberName", memberName);
+				}
+			}
+
 			string sig = oldmember2 != null ? memberFormatters [0].GetDeclaration (oldmember2) : null;
 			
 			// Interface implementations and overrides are deleted from the docs
@@ -3284,7 +3294,7 @@ class DocumentationEnumerator {
 		
 		string docName = member.MemberName;
 
-		string[] docTypeParams = GetTypeParameters (docName);
+		string[] docTypeParams = GetTypeParameters (docName, member.TypeParameters);
 
 		// If we're using 'magic types', then we might get false positives ... in those cases, we keep searching
 		MemberReference likelyCandidate = null;
@@ -3394,7 +3404,7 @@ class DocumentationEnumerator {
 		return likelyCandidate;
 	}
 
-	static string[] GetTypeParameters (string docName)
+	static string[] GetTypeParameters (string docName, IEnumerable<string> knownParameters)
 	{
 		if (docName [docName.Length-1] != '>')
 			return null;
@@ -3411,7 +3421,12 @@ class DocumentationEnumerator {
 		} while (--i >= 0);
 
 		types.Reverse ();
-		return types.ToArray ();
+		var arrayTypes = types.ToArray ();
+
+		if (knownParameters != null && knownParameters.Any () && arrayTypes.Length != knownParameters.Count ())
+			return knownParameters.ToArray ();
+		else
+			return arrayTypes;
 	}
 
 	protected static IEnumerable<MemberReference> GetReflectionMembers (TypeDefinition type, string docName)
