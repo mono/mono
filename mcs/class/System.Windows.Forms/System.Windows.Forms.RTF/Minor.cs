@@ -520,10 +520,12 @@ namespace System.Windows.Forms.RTF {
 		// Major.PictAttr
 		MacQD,
 		PMMetafile,
+		EnhancedMetafile,
 		WinMetafile,
 		DevIndBitmap,
 		WinBitmap,
 		PngBlip,
+		JpegBlip,
 		PixelBits,
 		BitmapPlanes,
 		BitmapWid,

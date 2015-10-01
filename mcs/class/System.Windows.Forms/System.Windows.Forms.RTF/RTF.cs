@@ -943,20 +943,25 @@ SkipCRLF:
 		private void ReadPictGroup(RTF rtf)
 		{
 			bool read_image_data = false;
-
+			int groupDepth = 0;
 			Picture picture = new Picture ();
 			while (true) {
 				rtf.GetToken ();
 
+				if (rtf.CheckCM (TokenClass.Group, Major.BeginGroup))
+					groupDepth++;
+
 				if (rtf.CheckCM (TokenClass.Group, Major.EndGroup))
+					groupDepth--;
+
+				if (groupDepth < 0)
 					break;
 
 				switch (minor) {
 				case Minor.PngBlip:
-					picture.ImageType = minor;
-					read_image_data = true;
-					break;
+				case Minor.JpegBlip:
 				case Minor.WinMetafile:
+				case Minor.EnhancedMetafile:
 					picture.ImageType = minor;
 					read_image_data = true;
 					continue;

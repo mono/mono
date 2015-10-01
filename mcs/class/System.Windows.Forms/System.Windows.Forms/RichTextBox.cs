@@ -2361,6 +2361,59 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
+		private static char[] GetHexChars(byte[] bytes, int length) {
+			if (length > bytes.Length) {
+				throw new ArgumentOutOfRangeException("length");
+			}
+
+			var chars = new char[length * 2];
+			int n;
+			for (int i = 0; i < length; i++) {
+				n = bytes[i] >> 4;
+				chars[i * 2] = (char)('A' - 10 + n + (((n - 10) >> 31) & ('0' - 55)));
+				n = bytes[i] & 0x0F;
+				chars[i * 2 + 1] = (char)('A' - 10 + n + (((n - 10) >> 31) & ('0' - 55)));
+			}
+			return chars;
+		}
+
+		private void EmitRtfPicture(PictureTag picture, StringBuilder sb) {
+			if (!picture.picture.IsValid()) {
+				return;
+			}
+
+			int width = (int)((float)picture.picture.Width / document.dpi * 1440f);
+			int height = (int)((float)picture.picture.Height / document.dpi * 1440f);
+			string type = "";
+			switch (picture.picture.ImageType) {
+			case RTF.Minor.WinMetafile:
+				type = "wmetafile1"; // The number should actually vary, but I don't see how it is used here at all.
+				break;
+			case RTF.Minor.EnhancedMetafile:
+				type = "emfblip";
+				break;
+			case RTF.Minor.PngBlip:
+				type = "pngblip";
+				break;
+			case RTF.Minor.JpegBlip:
+				type = "jpegblip";
+				break;
+			}
+			sb.AppendFormat("{{\\pict\\{0}\\picwgoal{1}\\pichgoal{2} ", type, width, height);
+
+			var data = picture.picture.Data;
+			data.Position = 0;
+			if (sb.Capacity - sb.Length < data.Length) {
+				sb.Capacity += (int)data.Length * 2;
+			}
+			var buffer = new byte[39];
+			int length;
+			while ((length = data.Read(buffer, 0, buffer.Length)) > 0) {
+				sb.AppendLine().Append(GetHexChars(buffer, length));
+			}
+			sb.Append("}");
+		}
+
 		// start_pos and end_pos are 0-based
 		private StringBuilder GenerateRTF(Line start_line, int start_pos, Line end_line, int end_pos) {
 			StringBuilder	sb;
@@ -2551,7 +2604,6 @@ namespace System.Windows.Forms {
 
 			while (line_no <= end_line.line_no) {
 				line = document.GetLine(line_no);
-				line.Streamline(document.Lines);
 				tag = LineTag.FindTag(line, pos);
 
 				if (line_no != end_line.line_no) {
@@ -2688,7 +2740,9 @@ namespace System.Windows.Forms {
 					}
 
 					// Emit the string itself
-					if (line_no != end_line.line_no) {
+					if (tag is PictureTag) {
+						EmitRtfPicture((PictureTag)tag, sb);
+					} else if (line_no != end_line.line_no) {
 						EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
 					} else {
 						if (end_pos < (tag.Start + tag.Length - 1)) {
@@ -2700,7 +2754,9 @@ namespace System.Windows.Forms {
 					}
 
 					pos = tag.Start + tag.Length - 1;
-					tag = tag.Next;
+					do {
+						tag = tag.Next;
+					} while (tag != null && tag.IsTextTag && tag.Length == 0);
 				}
 				if (pos >= line.text.Length) {
 					if (line.ending != LineEnding.Wrap) {

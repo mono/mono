@@ -298,8 +298,7 @@ namespace System.Windows.Forms
 				if (value == actual_border_style)
 					return;
 
-				if (actual_border_style != BorderStyle.Fixed3D || value != BorderStyle.Fixed3D)
-					Invalidate ();
+				Invalidate();
 
 				actual_border_style = value;
 				document.UpdateMargins ();

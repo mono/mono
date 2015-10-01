@@ -535,6 +535,33 @@ namespace System.Windows.Forms
 			// Insert the text into the StringBuilder
 			text.Insert (pos, s);
 
+			// Check that tag is still in use in the line. If not, then we choose the last tag at that position.
+			LineTag t = tags;
+			while (t != null) {
+				if (((t.Start - 1) <= pos) && (pos < (t.End - 1) || (pos == t.End - 1 && t.Length == 0))) {
+					// found the location
+					bool foundTag = false;
+					while (pos < (t.Start + t.Length - 1)) {
+						if (t == tag) {
+							foundTag = true;
+							break;
+						}
+						if (t.Next == null)
+							break;
+						t = t.Next;
+					}
+					if (!foundTag) {
+						if (pos < (t.Start + t.Length - 1)) {
+							tag = t.Previous;
+						} else {
+							tag = t;
+						}
+					}
+					break;
+				}
+				t = t.Next;
+			}
+
 			// Update the start position of every tag after this one
 			tag = tag.Next;
 

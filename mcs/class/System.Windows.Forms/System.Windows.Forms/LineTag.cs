@@ -485,6 +485,11 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		public static bool FormatText (Line line, int formatStart, int length, LineTag copyFrom) {
+			return FormatText(line, formatStart, length, copyFrom.Font, copyFrom.Color, copyFrom.BackColor,
+				copyFrom.TextPosition, copyFrom.CharOffset, copyFrom.Visible, FormatSpecified.All);
+		}
+
 		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
 		{
 			return FormatText (line, formatStart, length, font, color, backColor, TextPositioning.Normal, 0, true, specified);
@@ -550,7 +555,11 @@ namespace System.Windows.Forms
 				return retval;
 			}
 
-			tag = start_tag.Break (formatStart);
+			// Break the tag if needed -- we don't need to break for the start if we're starting at its start.
+			if (start_tag.Start != formatStart)
+				tag = start_tag.Break(formatStart);
+			else
+				tag = start_tag;
 
 			// empty selection style at end of line - its the only situation
 			// where the rest of the tag would be empty, since we moved to the
@@ -568,16 +577,18 @@ namespace System.Windows.Forms
 				return retval;
 			}
 
+			bool atEnd = false;
 			while (tag != null && tag.End <= end) {
 				SetFormat (tag, font, color, backColor, text_position, char_offset, visible, specified);
+				atEnd |= tag.End == end;
 				tag = tag.next;
 			}
 
 			// did the last tag conveniently fit?
-			if (tag != null && tag.End == end)
+			if (atEnd || (tag != null && tag.End == end))
 				return retval;
 
-			/// Now do the last tag
+			// Now do the last tag
 			end_tag = FindTag (line, end-1);
 
 			if (end_tag != null) {
