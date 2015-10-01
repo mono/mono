@@ -9,6 +9,8 @@
 # (C) 2008 Novell (http://www.novell.com)
 #
 
+if [ -n "$DISABLE_MONO_RPM_AUTO_DEPS" ]; then exit 0; fi
+
 IFS=$'\n'
 filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
 monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
