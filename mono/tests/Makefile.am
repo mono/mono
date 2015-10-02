@@ -602,7 +602,6 @@ TEST_IL_SRC=			\
 	cpblkTest.il		\
 	vbinterface.il		\
 	calliTest.il		\
-	calliGenericTest.il		\
 	ckfiniteTest.il		\
 	fault-handler.il		\
 	locallocTest.il		\
