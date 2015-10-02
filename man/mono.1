@@ -1120,6 +1120,16 @@ separated list of words.
 .RS
 .ne 8
 .TP
+\fBmax-heap-size=\fIsize\fR
+Sets the maximum size of the heap. The size is specified in bytes and must
+be a power of two. The suffixes `k', `m' and `g' can be used to
+specify kilo-, mega- and gigabytes, respectively. The limit is the sum
+of the nursery, major heap and large object heap. Once the limit is reached
+the application will receive OutOfMemoryExceptions when trying to allocate.
+Not the full extent of memory set in max-heap-size could be available to
+satisfy a single allocation due to internal fragmentation. By default heap
+limits is disabled and the GC will try to use all available memory.
+.TP
 \fBnursery-size=\fIsize\fR
 Sets the size of the nursery.  The size is specified in bytes and must
 be a power of two.  The suffixes `k', `m' and `g' can be used to
@@ -1213,6 +1223,12 @@ Valid values are integers between 1 and 14. Default is 2.
 Enables or disables cementing.  This can dramatically shorten nursery
 collection times on some benchmarks where pinned objects are referred
 to from the major heap.
+.TP
+\fBallow-synchronous-major\fR
+This forbids the major collector from performing synchronous major collections.
+The major collector might want to do a synchronous collection due to excessive
+fragmentation. Disabling this might trigger OutOfMemory error in situations that
+would otherwise not happen.
 .ne
 .RE
 .TP
@@ -1719,34 +1735,6 @@ with the X11 backend.  This is used to debug problems in Windows.Forms
 as it forces all of the commands send to X11 server to be done
 synchronously.   The default mode of operation is asynchronous which
 makes it hard to isolate the root of certain problems.
-.TP
-\fBMONO_GENERIC_SHARING\fR
-This environment variable controls the kind of generic sharing used.
-This variable is used by internal JIT developers and should not be
-changed in production.  Do not use it.
-.Sp
-The variable controls which classes will have generic code sharing
-enabled.
-.Sp
-Permissible values are:
-.RS
-.TP 
-.I "all" 
-All generated code can be shared. 
-.TP
-.I "collections" 
-Only the classes in System.Collections.Generic will have its code
-shared (this is the default value).
-.TP
-.I "corlib"
-Only code in corlib will have its code shared.
-.TP
-.I "none"
-No generic code sharing will be performed.
-.RE
-.Sp
-Generic code sharing by default only applies to collections.   The
-Mono JIT by default turns this on.
 .TP
 \fBMONO_XDEBUG\fR
 When the the MONO_XDEBUG env var is set, debugging info for JITted
