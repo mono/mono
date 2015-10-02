@@ -774,5 +774,23 @@ namespace MonoTests.System.Net {
 			var c = new TcpClient ("localhost", port);
 			h.Stop ();
 		}
+
+		// Test case for bug #31209
+		[Test]
+		public void Test_EmptyLineAtStart ()
+		{
+			var listener = HttpListener2Test.CreateAndStartListener ("http://127.0.0.1:9124/");
+			var ns = HttpListener2Test.CreateNS (9124);
+
+			HttpListener2Test.Send (ns, "\r\nGET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
+
+			bool timedout;
+			HttpListener2Test.GetContextWithTimeout (listener, 1000, out timedout);
+
+			Assert.IsFalse (timedout, "timed out");
+
+			ns.Close ();
+			listener.Close ();
+		}
 	}
 }
