@@ -2,11 +2,11 @@ namespace System.ComponentModel.DataAnnotations.Resources
 {
 static class DataAnnotationsResources
 {
-	public const string ArgumentIsNullOrWhitespace = "ArgumentIsNullOrWhitespace";
+	public const string ArgumentIsNullOrWhitespace = "The argument '{0}' cannot be null, empty or contain only white space.";
 	public const string AssociatedMetadataTypeTypeDescriptor_MetadataTypeContainsUnknownProperties = "AssociatedMetadataTypeTypeDescriptor_MetadataTypeContainsUnknownProperties";
 	public const string AttributeStore_Unknown_Property = "AttributeStore_Unknown_Property";
 	public const string Common_PropertyNotFound = "Common_PropertyNotFound";
-	public const string CompareAttribute_MustMatch = "CompareAttribute_MustMatch";
+	public const string CompareAttribute_MustMatch = "'{0}' and '{1}' do not match.";
 	public const string CompareAttribute_UnknownProperty = "CompareAttribute_UnknownProperty";
 	public const string CreditCardAttribute_Invalid = "CreditCardAttribute_Invalid";
 	public const string CustomValidationAttribute_Method_Must_Return_ValidationResult = "CustomValidationAttribute_Method_Must_Return_ValidationResult";
@@ -19,16 +19,16 @@ static class DataAnnotationsResources
 	public const string CustomValidationAttribute_ValidatorType_Required = "CustomValidationAttribute_ValidatorType_Required";
 	public const string DataTypeAttribute_EmptyDataTypeString = "DataTypeAttribute_EmptyDataTypeString";
 	public const string DisplayAttribute_PropertyNotSet = "The {0} property has not been set.  Use the {1} method to get the value.";
-	public const string EmailAddressAttribute_Invalid = "EmailAddressAttribute_Invalid";
+	public const string EmailAddressAttribute_Invalid = "The {0} field is not a valid email address";
 	public const string EnumDataTypeAttribute_TypeCannotBeNull = "EnumDataTypeAttribute_TypeCannotBeNull";
 	public const string EnumDataTypeAttribute_TypeNeedsToBeAnEnum = "EnumDataTypeAttribute_TypeNeedsToBeAnEnum";
 	public const string FileExtensionsAttribute_Invalid = "FileExtensionsAttribute_Invalid";
 	public const string LocalizableString_LocalizationFailed = "Cannot retrieve property '{0}' because localization failed. Type '{1}' is not public or does not contain a public static string property with the name '{2}'.";
-	public const string MaxLengthAttribute_InvalidMaxLength = "MaxLengthAttribute_InvalidMaxLength";
-	public const string MaxLengthAttribute_ValidationError = "MaxLengthAttribute_ValidationError";
+	public const string MaxLengthAttribute_InvalidMaxLength = "MaxLengthAttribute must have a Length value that is greater than zero. Use MaxLength() without parameters to indicate that the string or array can have the maximum allowable length.";
+	public const string MaxLengthAttribute_ValidationError = "The field {0} must be a string or array type with a maximum length of '{1}'.";
 	public const string MetadataTypeAttribute_TypeCannotBeNull = "MetadataTypeAttribute_TypeCannotBeNull";
-	public const string MinLengthAttribute_InvalidMinLength = "MinLengthAttribute_InvalidMinLength";
-	public const string MinLengthAttribute_ValidationError = "MinLengthAttribute_ValidationError";
+	public const string MinLengthAttribute_InvalidMinLength = "MinLengthAttribute must have a Length value that is zero or greater.";
+	public const string MinLengthAttribute_ValidationError = "The field {0} must be a string or array type with a minimum length of '{1}'";
 	public const string PhoneAttribute_Invalid = "PhoneAttribute_Invalid";
 	public const string RangeAttribute_ArbitraryTypeNotIComparable = "RangeAttribute_ArbitraryTypeNotIComparable";
 	public const string RangeAttribute_MinGreaterThanMax = "RangeAttribute_MinGreaterThanMax";
@@ -37,7 +37,7 @@ static class DataAnnotationsResources
 	public const string RangeAttribute_ValidationError = "The field {0} must be between {1} and {2}.";
 	public const string RegexAttribute_ValidationError = "The field {0} must match the regular expression {1}.";
 	public const string RegularExpressionAttribute_Empty_Pattern = "The pattern must be set to a valid regular expression.";
-	public const string RequiredAttribute_ValidationError = "RequiredAttribute_ValidationError";
+	public const string RequiredAttribute_ValidationError = "The {0} field is required.";
 	public const string StringLengthAttribute_InvalidMaxLength = "StringLengthAttribute_InvalidMaxLength";
 	public const string StringLengthAttribute_ValidationError = "The field {0} must be a string with a maximum length of {1}.";
 	public const string StringLengthAttribute_ValidationErrorIncludingMinimum = "StringLengthAttribute_ValidationErrorIncludingMinimum";
