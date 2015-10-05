@@ -1,4 +1,4 @@
-// CS1570: XML documentation comment on `Test' is not well-formed XML markup (Unexpected XML declaration. The XML declaration must be the first node in the document, and no white space characters are allowed to appear before it. Line 3, position 3.)
+// CS1570: XML documentation comment on `Test' is not well-formed XML markup (Unexpected XML declaration. The XML declaration must be the first node in the document, and no white space characters are allowed to appear before it. Line 3, position 4.)
 // Line: 13
 // Compiler options: -doc:dummy.xml -warnaserror -warn:1
 

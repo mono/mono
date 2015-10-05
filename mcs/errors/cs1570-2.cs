@@ -6,9 +6,9 @@ using System;
 
 namespace Testing
 {
-	/// <summary>
+	///<summary>
 	/// Incorrect comment markup.
-	/// </incorrect>
+	///</incorrect>
 	public class Test2
 	{
 	}
