@@ -194,7 +194,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     ///    <para>Occurs when an uncaught exception is thrown.</para>
     /// </devdoc>
     [
-    WebSysDescription(SR.Page_Error)
+    WebSysDescription(SR.Page_ErrorDescription)
     ]
     public event EventHandler Error {
         add {
