@@ -6,9 +6,9 @@ using System;
 
 namespace Testing
 {
-	/// <summary>
+	///<summary>
 	/// comment for enum type
-	/// </incorrect>
+	///</incorrect>
 	enum EnumTest2
 	{
 		Foo,

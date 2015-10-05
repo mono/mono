@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-073</name>
+    </assembly>
+    <members>
+        <member name="T:X">
+            <text>
+            A line
+            
+               An indented line
+            </text>
+            </member>
+    </members>
+</doc>

@@ -4101,8 +4101,6 @@ namespace Mono.CSharp
 		private void handle_one_line_xml_comment ()
 		{
 			int c;
-			while ((c = peek_char ()) == ' ')
-				get_char (); // skip heading whitespaces.
 			while ((c = peek_char ()) != -1 && c != '\n' && c != '\r') {
 				xml_comment_buffer.Append ((char) get_char ());
 			}
