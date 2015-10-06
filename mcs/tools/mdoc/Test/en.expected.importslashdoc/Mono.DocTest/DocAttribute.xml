@@ -18,8 +18,8 @@
     <summary>To be added.</summary>
     <remarks>
       <para>
-            cref=<c>T:Mono.DocTest.DocAttribute</c>.
-            </para>
+               cref=<c>T:Mono.DocTest.DocAttribute</c>.
+              </para>
       <format type="text/html">
         <table width="100%">
           <tr>
