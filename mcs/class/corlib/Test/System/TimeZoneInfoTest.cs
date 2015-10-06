@@ -39,6 +39,31 @@ namespace MonoTests.System
 {
 	public class TimeZoneInfoTest
 	{
+		static FieldInfo localField;
+		static FieldInfo cachedDataField;
+		static object localFieldObj;
+
+		public static void SetLocal (TimeZoneInfo val)
+		{
+			if (localField == null) {
+				if (Type.GetType ("Mono.Runtime") != null) {
+					localField = typeof (TimeZoneInfo).GetField ("local",
+							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+				} else {
+					cachedDataField = typeof (TimeZoneInfo).GetField ("s_cachedData",
+							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+
+					localField = cachedDataField.FieldType.GetField ("m_localTimeZone",
+						BindingFlags.Instance | BindingFlags.GetField | BindingFlags.NonPublic);
+				}
+			}
+
+			if (cachedDataField != null)
+				localFieldObj = cachedDataField.GetValue (null);
+
+			localField.SetValue (localFieldObj, val);
+		}
+
 		[TestFixture]
 		public class PropertiesTests
 		{
@@ -335,6 +360,27 @@ namespace MonoTests.System
 		}
 		
 		[TestFixture]
+		public class ConvertTimeTests_LocalUtc : ConvertTimeTests
+		{
+			static TimeZoneInfo oldLocal;
+
+			[SetUp]
+			public void SetLocal ()
+			{
+				base.CreateTimeZones ();
+
+				oldLocal = TimeZoneInfo.Local;
+				TimeZoneInfoTest.SetLocal (TimeZoneInfo.Utc);
+			}
+
+			[TearDown]
+			public void RestoreLocal ()
+			{
+				TimeZoneInfoTest.SetLocal (oldLocal);
+			}
+		}
+
+		[TestFixture]
 		public class ConvertTimeTests
 		{
 			TimeZoneInfo london;
@@ -467,15 +513,28 @@ namespace MonoTests.System
 			}
 
 			[Test]
+			public void ConvertFromToUtc_Utc ()
+			{
+				DateTime utc = DateTime.UtcNow;
+				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
+				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Utc);
+				Assert.AreEqual (DateTimeKind.Utc, converted.Kind);
+				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Utc);
+				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
+				Assert.AreEqual (utc, back);
+			}
+
+			[Test]
 			public void ConvertFromToLocal ()
 			{
 				DateTime utc = DateTime.UtcNow;
-				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
-				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
-				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
-				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
-				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
-				Assert.AreEqual(utc, back);
+				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
+				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, TimeZoneInfo.Local);
+				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : DateTimeKind.Local;
+				Assert.AreEqual (expectedKind, converted.Kind);
+				DateTime back = TimeZoneInfo.ConvertTimeToUtc (converted, TimeZoneInfo.Local);
+				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
+				Assert.AreEqual (utc, back);
 			}
 
 			[Test]
@@ -509,8 +568,9 @@ namespace MonoTests.System
 
 				sdt = new DateTime (2014, 1, 9, 23, 0, 0);
 				ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Local);
-				Assert.AreEqual (ddt.Kind, sdt.Kind, "#3.1");
-				Assert.AreEqual (ddt.Kind, DateTimeKind.Unspecified, "#3.2");
+				var expectedKind = (TimeZoneInfo.Local == TimeZoneInfo.Utc)? DateTimeKind.Utc : sdt.Kind;
+				Assert.AreEqual (expectedKind,  ddt.Kind, "#3.1");
+				Assert.AreEqual (DateTimeKind.Unspecified, sdt.Kind, "#3.2");
 			}
 
 			[Test]
@@ -1087,6 +1147,19 @@ namespace MonoTests.System
 				Assert.AreEqual (new TimeSpan (1, 0, 0), changes.Delta);
 				Assert.AreEqual (new DateTime (2014, 10, 5, 2, 0, 0), changes.Start);
 				Assert.AreEqual (new DateTime (2014, 4, 6, 3, 0, 0), changes.End);
+			}
+
+			[Test]
+			public void AllTimeZonesDaylightChanges ()
+			{
+				foreach (var tz in TimeZoneInfo.GetSystemTimeZones ()) {
+					try {
+						for (var year = 1950; year <= 2051; year++)
+							getChanges.Invoke (tz, new object [] {year} );
+					} catch (Exception e) {
+						Assert.Fail ("TimeZone " + tz.Id + " exception: " + e.ToString ()); 
+					}
+				}
 			}
 		}
 	}

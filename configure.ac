@@ -13,7 +13,11 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects])
+AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects]
+                 m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
+                             *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
+                             esac]))                                     # TODO: remove this hack once we require automake 1.11+
+
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 
@@ -3443,6 +3447,7 @@ AC_ARG_WITH(profile4_x,      [  --with-profile4=yes,no          If you want to i
 AC_ARG_WITH(monodroid,       [  --with-monodroid=yes,no         If you want to build the MonoDroid assemblies (defaults to no)],      [], [with_monodroid=no])
 AC_ARG_WITH(monotouch,       [  --with-monotouch=yes,no         If you want to build the Xamarin.iOS assemblies (defaults to no)],    [], [with_monotouch=no])
 AC_ARG_WITH(monotouch_watch, [  --with-monotouch_watch=yes,no   If you want to build the Xamarin.WatchOS assemblies (defaults to no)],[], [with_monotouch_watch=no])
+AC_ARG_WITH(monotouch_tv,    [  --with-monotouch_tv=yes,no      If you want to build the Xamarin.TVOS assemblies (defaults to no)],   [], [with_monotouch_tv=no])
 AC_ARG_WITH(xammac,          [  --with-xammac=yes,no            If you want to build the Xamarin.Mac assemblies (defaults to no)],    [], [with_xammac=no])
 
 OPROFILE=no
@@ -3531,6 +3536,7 @@ if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    with_monodroid=no
    with_monotouch=no
    with_monotouch_watch=no
+   with_monotouch_tv=no
    with_xammac=no
 fi
 
@@ -3554,6 +3560,7 @@ AM_CONDITIONAL(INSTALL_4_x, [test "x$with_profile4_x" = xyes])
 AM_CONDITIONAL(INSTALL_MONODROID, [test "x$with_monodroid" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH, [test "x$with_monotouch" != "xno"])
 AM_CONDITIONAL(INSTALL_MONOTOUCH_WATCH, [test "x$with_monotouch_watch" != "xno"])
+AM_CONDITIONAL(INSTALL_MONOTOUCH_TV, [test "x$with_monotouch_tv" != "xno"])
 AM_CONDITIONAL(INSTALL_XAMMAC, [test "x$with_xammac" != "xno"])
 
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
@@ -3969,9 +3976,10 @@ echo "
 
    Libraries:
 	.NET 4.6:        $with_profile4_x
-	MonoDroid:       $with_monodroid
+	Xamarin.Android: $with_monodroid
 	Xamarin.iOS:     $with_monotouch
 	Xamarin.WatchOS: $with_monotouch_watch
+	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
 	JNI support:     $jdk_headers_found
 	libgdiplus:      $libgdiplus_msg

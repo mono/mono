@@ -173,7 +173,7 @@ mono_thread_set_main (MonoThread *thread)
 	static gboolean registered = FALSE;
 
 	if (!registered) {
-		MONO_GC_REGISTER_ROOT_SINGLE (main_thread);
+		MONO_GC_REGISTER_ROOT_SINGLE (main_thread, MONO_ROOT_SOURCE_THREADING, "main thread object");
 		registered = TRUE;
 	}
 
@@ -419,7 +419,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception)
 			 */
 			mono_domain_lock (domain);
 			if (!domain->type_init_exception_hash)
-				domain->type_init_exception_hash = mono_g_hash_table_new_type (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC);
+				domain->type_init_exception_hash = mono_g_hash_table_new_type (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, "type initialization exceptions table");
 			mono_g_hash_table_insert (domain->type_init_exception_hash, klass, exc_to_throw);
 			mono_domain_unlock (domain);
 		}
@@ -725,7 +725,8 @@ compute_class_bitmap (MonoClass *class, gsize *bitmap, int size, int offset, int
 			if (field->type->byref)
 				break;
 
-			if (static_fields && (field->offset == -1 || field->offset == -2))
+			// Special static fields do not have a domain-level static slot
+			if (static_fields && (mono_class_field_is_special_static (field) || field->offset == -2))
 				/* special static or RVA */
 				continue;
 
@@ -2055,7 +2056,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			bitmap = compute_class_bitmap (class, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, TRUE);
 			/*g_print ("bitmap 0x%x for %s.%s (size: %d)\n", bitmap [0], class->name_space, class->name, class_size);*/
 			statics_gc_descr = mono_gc_make_descr_from_bitmap (bitmap, max_set + 1);
-			vt->vtable [class->vtable_size] = mono_gc_alloc_fixed (class_size, statics_gc_descr);
+			vt->vtable [class->vtable_size] = mono_gc_alloc_fixed (class_size, statics_gc_descr, MONO_ROOT_SOURCE_STATIC, "managed static variables");
 			mono_domain_add_class_static_data (domain, class, vt->vtable [class->vtable_size], NULL);
 			if (bitmap != default_bitmap)
 				g_free (bitmap);
@@ -2184,7 +2185,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
-			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type);
+			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type, MONO_ROOT_SOURCE_REFLECTION, "vtable reflection type");
 	}
 
 	mono_vtable_set_is_remote (vt, mono_class_is_contextbound (class));
@@ -2238,7 +2239,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			/* This is unregistered in
 			   unregister_vtable_reflection_type() in
 			   domain.c. */
-			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type);
+			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type, MONO_ROOT_SOURCE_REFLECTION, "vtable reflection type");
 	}
 
 	mono_domain_unlock (domain);
@@ -2432,6 +2433,8 @@ mono_class_field_is_special_static (MonoClassField *field)
 	if (mono_field_is_deleted (field))
 		return FALSE;
 	if (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL)) {
+		if (field->offset == -1)
+			return TRUE;
 		if (field_is_special_static (field->parent, field) != SPECIAL_STATIC_NONE)
 			return TRUE;
 	}
@@ -4109,39 +4112,37 @@ mono_unhandled_exception (MonoObject *exc)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoDomain *current_domain = mono_domain_get ();
-	MonoDomain *root_domain = mono_get_root_domain ();
 	MonoClassField *field;
-	MonoObject *current_appdomain_delegate;
-	MonoObject *root_appdomain_delegate;
+	MonoDomain *current_domain, *root_domain;
+	MonoObject *current_appdomain_delegate = NULL, *root_appdomain_delegate = NULL;
 
-	field=mono_class_get_field_from_name(mono_defaults.appdomain_class, 
-					     "UnhandledException");
+	if (mono_class_has_parent (exc->vtable->klass, mono_defaults.threadabortexception_class))
+		return;
+
+	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "UnhandledException");
 	g_assert (field);
 
-	if (exc->vtable->klass != mono_defaults.threadabortexception_class) {
-		gboolean abort_process = (main_thread && (mono_thread_internal_current () == main_thread->internal_thread)) ||
-				(mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT);
-		root_appdomain_delegate = *(MonoObject **)(((char *)root_domain->domain) + field->offset);
-		if (current_domain != root_domain) {
-			current_appdomain_delegate = *(MonoObject **)(((char *)current_domain->domain) + field->offset);
-		} else {
-			current_appdomain_delegate = NULL;
+	current_domain = mono_domain_get ();
+	root_domain = mono_get_root_domain ();
+
+	root_appdomain_delegate = mono_field_get_value_object (root_domain, field, (MonoObject*) root_domain->domain);
+	if (current_domain != root_domain)
+		current_appdomain_delegate = mono_field_get_value_object (current_domain, field, (MonoObject*) current_domain->domain);
+
+	/* set exitcode only if we will abort the process */
+	if (!current_appdomain_delegate && !root_appdomain_delegate) {
+		if ((main_thread && mono_thread_internal_current () == main_thread->internal_thread)
+		     || mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_CURRENT)
+		{
+			mono_environment_exitcode_set (1);
 		}
 
-		/* set exitcode only if we will abort the process */
-		if ((current_appdomain_delegate == NULL) && (root_appdomain_delegate == NULL)) {
-			if (abort_process)
-				mono_environment_exitcode_set (1);
-			mono_print_unhandled_exception (exc);
-		} else {
-			if (root_appdomain_delegate) {
-				call_unhandled_exception_delegate (root_domain, root_appdomain_delegate, exc);
-			}
-			if (current_appdomain_delegate) {
-				call_unhandled_exception_delegate (current_domain, current_appdomain_delegate, exc);
-			}
-		}
+		mono_print_unhandled_exception (exc);
+	} else {
+		if (root_appdomain_delegate)
+			call_unhandled_exception_delegate (root_domain, root_appdomain_delegate, exc);
+		if (current_appdomain_delegate)
+			call_unhandled_exception_delegate (current_domain, current_appdomain_delegate, exc);
 	}
 }
 
@@ -4570,7 +4571,8 @@ mono_object_new_specific (MonoVTable *vtable)
 				mono_class_init (klass);
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
-			g_assert (im);
+			if (!im)
+				mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 	
@@ -5397,6 +5399,8 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 		gpointer pa [2];
 
 		im = mono_class_get_method_from_name (rpklass, "CanCastTo", -1);
+		if (!im)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 		im = mono_object_get_virtual_method (rp, im);
 		g_assert (im);
 	
@@ -6233,7 +6237,8 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg,
 
 	if (!im) {
 		im = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "PrivateInvoke", 4);
-		g_assert (im);
+		if (!im)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 		real_proxy->vtable->domain->private_invoke_method = im;
 	}
 
@@ -6628,7 +6633,8 @@ mono_load_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField *
 	
 	if (!getter) {
 		getter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldGetter", -1);
-		g_assert (getter);
+		if (!getter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 	
 	field_class = mono_class_from_mono_type (field->type);
@@ -6697,7 +6703,8 @@ mono_load_remote_field_new (MonoObject *this_obj, MonoClass *klass, MonoClassFie
 
 	if (!getter) {
 		getter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldGetter", -1);
-		g_assert (getter);
+		if (!getter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 	
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);
@@ -6760,7 +6767,8 @@ mono_store_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField 
 
 	if (!setter) {
 		setter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldSetter", -1);
-		g_assert (setter);
+		if (!setter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 
 	if (field_class->valuetype)
@@ -6818,7 +6826,8 @@ mono_store_remote_field_new (MonoObject *this_obj, MonoClass *klass, MonoClassFi
 
 	if (!setter) {
 		setter = mono_class_get_method_from_name (mono_defaults.object_class, "FieldSetter", -1);
-		g_assert (setter);
+		if (!setter)
+			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
 	}
 
 	msg = (MonoMethodMessage *)mono_object_new (domain, mono_defaults.mono_method_message_class);

@@ -1871,26 +1871,9 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		return;
 	}
 
-#if defined (TARGET_ARM) && defined (TARGET_MACH)
-	{
-		MonoType t;
-		int align = 0;
-
-		memset (&t, 0, sizeof (MonoType));
-		t.type = MONO_TYPE_R8;
-		mono_type_size (&t, &align);
-		align_double = align;
-
-		memset (&t, 0, sizeof (MonoType));
-		t.type = MONO_TYPE_I8;
-		align_int64 = align;
-	}
-#else
+	/* Sanity check */
 	align_double = MONO_ABI_ALIGNOF (double);
 	align_int64 = MONO_ABI_ALIGNOF (gint64);
-#endif
-
-	/* Sanity check */
 	g_assert (info->double_align == align_double);
 	g_assert (info->long_align == align_int64);
 	g_assert (info->generic_tramp_num == MONO_TRAMPOLINE_NUM);
@@ -3180,11 +3163,10 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 	}
 
 	//printf ("F: %s\n", mono_method_full_name (method, TRUE));
-	
+
 	jinfo = decode_exception_debug_info (amodule, domain, method, ex_info, addr, code, code_len);
 
 	g_assert ((guint8*)addr >= (guint8*)jinfo->code_start);
-	g_assert ((guint8*)addr < (guint8*)jinfo->code_start + jinfo->code_size);
 
 	/* Add it to the normal JitInfo tables */
 	if (async) {
@@ -3216,6 +3198,10 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 	} else {
 		mono_jit_info_table_add (domain, jinfo);
 	}
+
+	if ((guint8*)addr >= (guint8*)jinfo->code_start + jinfo->code_size)
+		/* addr is in the padding between methods, see the adjustment of code_size in decode_exception_debug_info () */
+		return NULL;
 	
 	return jinfo;
 }

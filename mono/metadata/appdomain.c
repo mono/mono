@@ -79,7 +79,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 136
+#define MONO_CORLIB_VERSION 138
 
 typedef struct
 {
@@ -2030,6 +2030,12 @@ ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id)
 		return TRUE;
 
 	return mono_domain_is_unloading (domain);
+}
+
+void
+ves_icall_System_AppDomain_DoUnhandledException (MonoException *exc)
+{
+	mono_unhandled_exception ((MonoObject*) exc);
 }
 
 gint32

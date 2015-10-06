@@ -141,6 +141,7 @@ csproj-local: csproj-library csproj-test
 intermediate_clean=$(subst /,-,$(intermediate))
 csproj-library: 
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
+	[[ $(thisdir) == *"Facades"* ]] && config_file=Facades_$$config_file; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \

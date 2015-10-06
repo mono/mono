@@ -700,8 +700,9 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 		tv.tv_usec = (ms % 1000) * 1000;	// micro from milli
 		tmp_val = &tv;
 		optlen = sizeof (tv);
+	}
 #if defined (__linux__)
-	} else if (level == SOL_SOCKET &&
+	else if (level == SOL_SOCKET &&
 		   (optname == SO_SNDBUF || optname == SO_RCVBUF)) {
 		/* According to socket(7) the Linux kernel doubles the
 		 * buffer sizes "to allow space for bookkeeping
@@ -711,8 +712,8 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 
 		bufsize /= 2;
 		tmp_val = &bufsize;
-#endif
 	}
+#endif
 		
 	ret = setsockopt (fd, level, optname, tmp_val, optlen);
 	if (ret == -1) {
@@ -733,7 +734,7 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 		socklen_t type_len = sizeof (type);
 
 		if (!getsockopt (fd, level, SO_TYPE, &type, &type_len)) {
-			if (type == SOCK_DGRAM)
+			if (type == SOCK_DGRAM || type == SOCK_STREAM)
 				setsockopt (fd, level, SO_REUSEPORT, tmp_val, optlen);
 		}
 	}

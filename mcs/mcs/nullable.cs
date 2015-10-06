@@ -1282,7 +1282,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Null check is done on original expression not after expression is converted to
 			// result type. This is in most cases same but when user conversion is involved
-			// we can end up in situation when use operator does the null handling which is
+			// we can end up in situation when user operator does the null handling which is
 			// not what the operator is supposed to do
 			//
 			var op_expr = left as UserCast;

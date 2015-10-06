@@ -17,8 +17,8 @@
             <summary>Possible colors</summary>
             <remarks>
                 <see cref="T:Mono.DocTest.Color" />.
-            Namespace Test: [<see cref="N:Mono.DocTest" />]
-            </remarks>
+               Namespace Test: [<see cref="N:Mono.DocTest" />]
+             </remarks>
         </member>
         <member name="F:Mono.DocTest.Color.AnotherGreen">
             <summary>To be added.</summary>
@@ -50,8 +50,8 @@
             <summary>To be added.</summary>
             <remarks>
                 <para>
-            cref=<c>T:Mono.DocTest.DocAttribute</c>.
-            </para>
+               cref=<c>T:Mono.DocTest.DocAttribute</c>.
+              </para>
                 <format type="text/html">
                     <table width="100%">
                         <tr>
@@ -915,9 +915,9 @@ class Example {
         <member name="M:Mono.DocTest.Generic.Extensions.ToDouble(System.Collections.Generic.IEnumerable{System.Int32})">
             <param name="list">To be added.</param>
             <summary>
-                <see cref="T:System.Collections.Generic.IEnumerable{System.Int32}" />
-            extension method.
-            </summary>
+                <see cref="T:System.Collections.Generic.IEnumerable{System.Int32}" /> 
+               extension method.
+             </summary>
             <returns>To be added.</returns>
             <remarks>
                 <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
@@ -928,7 +928,7 @@ class Example {
             <param name="val">To be added.</param>
             <summary>
                 <see cref="T:Mono.DocTest.Generic.IFoo`1" /> extension method.
-            </summary>
+             </summary>
             <returns>To be added.</returns>
             <remarks>
                 <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
@@ -1567,8 +1567,8 @@ class Example {
         </member>
         <member name="M:System.Environment.GetFolderPath(System.Environment+SpecialFolder)">
             <param name="folder">
-            A <see cref="T:System.Environment+SpecialFolder" /> instance.
-            </param>
+               A <see cref="T:System.Environment+SpecialFolder" /> instance.
+             </param>
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>

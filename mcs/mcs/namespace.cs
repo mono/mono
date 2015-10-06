@@ -1177,7 +1177,7 @@ namespace Mono.CSharp {
 								continue;
 
 							if (mode == LookupMode.Normal)
-								throw new NotImplementedException ();
+								continue;
 							
 							return null;
 						}

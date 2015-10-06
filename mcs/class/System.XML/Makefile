@@ -17,8 +17,6 @@ RESOURCE_STRINGS = \
 	../../../external/referencesource/System.Xml/System.Xml.txt \
 	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monotouch_watch monodroid xammac mobile mobile_static, $(PROFILE))
-
 LIB_REFS = System
 LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,649,1717 -unsafe -d:ASYNC
 
@@ -27,7 +25,7 @@ LIB_MCS_FLAGS += -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XS
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
-ifndef PROFILE_ANY_MOBILE
+ifndef MOBILE_PROFILE
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
@@ -81,7 +79,7 @@ system_xml_library_deps := 				\
 	$(bare_libdir)/System.dll			\
 	$(bare_libdir)/System.Xml.dll
 
-ifndef PROFILE_ANY_MOBILE
+ifndef MOBILE_PROFILE
 system_xml_library_deps += $(the_libdir_base)System.Configuration.dll
 endif
 

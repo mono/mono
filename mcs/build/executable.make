@@ -149,7 +149,7 @@ csproj-local:
 	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
+	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(patsubst %,-r:%,$(LIB_REFS)); \
 	echo $(PROGRAM); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \

@@ -25,6 +25,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using System.Reflection;
 using Mono.Security.Authenticode;
 #if !MOBILE
 using Mono.Security.Protocol.Tls;
@@ -2306,9 +2307,9 @@ namespace MonoTests.System.Net
 		[Test]
 		public void TestLargeDataReading ()
 		{
-			const int internalBufferSize = 16 * 1024 * 1024;
+			int near2GBStartPosition = rand.Next (int.MaxValue - 500, int.MaxValue);
 			AutoResetEvent readyGetLastPortionEvent = new AutoResetEvent (false);
-			AssertionException testException = null;
+			Exception testException = null;
 
 			DoRequest (
 			(request, waitHandle) =>
@@ -2320,30 +2321,24 @@ namespace MonoTests.System.Net
 					request.Timeout = timeoutMs;
 					request.ReadWriteTimeout = timeoutMs;
 
-					if (Type.GetType ("Mono.Runtime") == null)
-						//significantly increases speed of test on MS .NET, because default value	
-						//of receive buffer is about 8192 bytes. doesn't implemented now on Mono.
-						request.ServicePoint.ReceiveBufferSize = internalBufferSize;
-
 					WebResponse webResponse = request.GetResponse ();
 					Stream webResponseStream = webResponse.GetResponseStream ();
 					Assert.IsNotNull (webResponseStream, null, "#1");
-
-					int totalRead = 0;
-					byte[] readBuffer = new byte[internalBufferSize];
-
-					while (totalRead < int.MaxValue) {
-						int read = webResponseStream.Read (readBuffer, 0, readBuffer.Length);
-						Assert.Greater (read, 0, "#2");
-						totalRead += read;
-						Assert.Greater (totalRead, 0, "#3");
-					}
-
-					Assert.AreEqual (totalRead, int.MaxValue, "#4");
+					
+					Type webConnectionStreamType = webResponseStream.GetType ();
+					FieldInfo totalReadField = webConnectionStreamType.GetField ("totalRead", BindingFlags.NonPublic | BindingFlags.Instance);
+					Assert.IsNotNull (totalReadField, "#2");
+					totalReadField.SetValue (webResponseStream, near2GBStartPosition);
+					
+					byte[] readBuffer = new byte[int.MaxValue - near2GBStartPosition];
+					Assert.AreEqual (webResponseStream.Read (readBuffer, 0, readBuffer.Length), readBuffer.Length, "#3");
 					readyGetLastPortionEvent.Set ();
-					Assert.Greater (webResponseStream.Read (readBuffer, 0, readBuffer.Length), 0, "#5");
+					Assert.IsTrue (webResponseStream.Read (readBuffer, 0, readBuffer.Length) > 0);
+					readyGetLastPortionEvent.Set ();
+					
+					webResponse.Close();
 				}
-				catch (AssertionException e)
+				catch (Exception e)
 				{
 					testException = e;
 				}
@@ -2355,31 +2350,19 @@ namespace MonoTests.System.Net
 			processor =>
 			{
 				processor.Request.InputStream.Close ();
-
+				
 				HttpListenerResponse response = processor.Response;
 				response.SendChunked = true;
-
+				
 				Stream outputStream = response.OutputStream;
-
-				long totalWritten = 0;
-				byte[] writeBuffer = new byte[internalBufferSize];
-
-				while (totalWritten < int.MaxValue) {
-					int size;
-
-					if (totalWritten + writeBuffer.Length < int.MaxValue)
-						size = writeBuffer.Length;
-					else
-						size = (int) (int.MaxValue - totalWritten);
-
-					outputStream.Write (writeBuffer, 0, size);
-					totalWritten += size;
-				}
-
+				var writeBuffer = new byte[int.MaxValue - near2GBStartPosition];
+				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
 				readyGetLastPortionEvent.WaitOne ();
 				outputStream.Write (writeBuffer, 0, writeBuffer.Length);
-				response.Close ();
-			}, 60 * 1000);
+				readyGetLastPortionEvent.WaitOne ();
+				
+				response.Close();
+			});
 
 			if (testException != null)
 				throw testException;
@@ -2399,7 +2382,7 @@ namespace MonoTests.System.Net
 				Assert.Fail ("Test hung");
 		}
 
-		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request, Action<HttpListenerContext> processor, int timeoutMs = 10000)
+		void DoRequest (Action<HttpWebRequest, EventWaitHandle> request, Action<HttpListenerContext> processor)
 		{
 			int port = NetworkHelpers.FindFreePort ();
 
@@ -2414,7 +2397,7 @@ namespace MonoTests.System.Net
 
 				ThreadPool.QueueUserWorkItem ((o) => request (client, completed [1]));
 
-				if (!WaitHandle.WaitAll (completed, timeoutMs))
+				if (!WaitHandle.WaitAll (completed, 10000))
 					Assert.Fail ("Test hung.");
 			}
 		}

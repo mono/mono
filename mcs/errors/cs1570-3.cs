@@ -4,9 +4,9 @@
 
 namespace Testing
 {
-	/// <summary> 
+	///<summary> 
 	/// incorrect markup comment for struct
-	/// </incorrect>
+	///</incorrect>
 	public struct StructTest2
 	{
 	}

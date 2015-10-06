@@ -1920,12 +1920,44 @@ namespace MonoTests.System
 		[Test]
 		public void DotNetRelativeOrAbsoluteTest ()
 		{
-			var uri1 = new Uri ("/foo", DotNetRelativeOrAbsolute);
-			Assert.IsFalse (uri1.IsAbsoluteUri);
-			
-			Uri uri2;
-			Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri2);
-			Assert.IsFalse (uri2.IsAbsoluteUri);
+			FieldInfo useDotNetRelativeOrAbsoluteField = null;
+			bool useDotNetRelativeOrAbsoluteOld = false;
+
+			if (Type.GetType ("Mono.Runtime") != null) {
+				useDotNetRelativeOrAbsoluteField = typeof (Uri).GetField ("useDotNetRelativeOrAbsolute",
+					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+				useDotNetRelativeOrAbsoluteOld = (bool) useDotNetRelativeOrAbsoluteField.GetValue (null);
+				useDotNetRelativeOrAbsoluteField.SetValue (null, false);
+			}
+
+			try {
+				Uri uri;
+
+				uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+				
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				if (useDotNetRelativeOrAbsoluteField != null) {
+					uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					useDotNetRelativeOrAbsoluteField.SetValue (null, true);
+				}
+
+				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+			} finally {
+				if (useDotNetRelativeOrAbsoluteField != null)
+					useDotNetRelativeOrAbsoluteField.SetValue (null, useDotNetRelativeOrAbsoluteOld);
+			}
 		}
 
 		[Test]
@@ -1982,6 +2014,20 @@ namespace MonoTests.System
 				} catch (Exception e) {
 					Assert.Fail (string.Format("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
 				}
+			}
+		}
+
+		[Test]
+		public void UserInfo_Spaces ()
+		{
+			const string userinfo = "test 1:pass 1";
+			const string expected = "test%201:pass%201";
+
+			try {
+				var uri = new Uri (string.Format ("rtmp://{0}@test.com:333/live", userinfo));
+				Assert.AreEqual (expected, uri.UserInfo);
+			} catch (Exception e) {
+				Assert.Fail (string.Format ("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
 			}
 		}
 	}

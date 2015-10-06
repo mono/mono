@@ -74,6 +74,19 @@ namespace System
 			}
 		}
 
+		// Some high-performance applications use this internal property
+		// to avoid using a slow path to determine if there is more than one handler
+		// This brings an API that we removed in f410e545e2db0e0dc338673a6b10a5cfd2d3340f
+		// which some users depeneded on
+		//
+		// This is an example of code that used this:
+		// https://gist.github.com/migueldeicaza/cd99938c2a4372e7e5d5
+		//
+		// Do not remove this API
+		internal bool HasSingleTarget {
+			get { return delegates == null; }
+		}
+
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.

@@ -342,6 +342,8 @@ public class Tests : TestsBase, ITest2
 			frames_in_native ();
 		if (args.Length > 0 && args [0] == "invoke-single-threaded")
 			new Tests ().invoke_single_threaded ();
+		if (args.Length > 0 && args [0] == "invoke-abort")
+			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		return 3;
 	}
@@ -909,10 +911,6 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public void invoke3 () {
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void invoke_ex () {
 		invoke_ex_inner ();
 	}
@@ -946,6 +944,15 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void invoke_single_threaded_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_abort () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void invoke_abort_2 () {
+		Thread.Sleep (1000000);
 	}
 
 	public void invoke_return_void () {

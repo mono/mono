@@ -61,6 +61,16 @@ namespace Xamarin.ApiDiff {
 		{
 		}
 
+		string GetContainingType (XElement el)
+		{
+			return el.Ancestors ("class").First ().Attribute ("type").Value;
+		}
+
+		bool IsInInterface (XElement el)
+		{
+			return GetContainingType (el) == "interface";
+		}
+
 		public XElement Source { get; set; }
 
 		public virtual bool Find (XElement e)
@@ -183,7 +193,9 @@ namespace Xamarin.ApiDiff {
 		{
 			first = true;
 			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
-			Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
+
+			bool isInterface = list.Count () > 0 && IsInInterface (list.First ());
+			Output.WriteLine (State.Colorize ? string.Format ("<pre style='color: {0}'>", isInterface ? "red" : "green") : "<pre>");
 		}
 
 		public override void Added (XElement target)
@@ -551,7 +563,7 @@ namespace Xamarin.ApiDiff {
 				change.Append ("[Obsolete (");
 				if (tgtObsolete != string.Empty)
 					change.Append ("\"").Append (tgtObsolete).Append ("\"");
-				change.Append ("]\n");
+				change.Append (")]\n");
 				change.Append (GetDescription (target));
 				if (State.Colorize)
 					change.Append ("</span>");

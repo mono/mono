@@ -1271,7 +1271,7 @@ namespace System.Windows.Forms {
 			if ((long)nitems > 0) {
 				if (property == (IntPtr)Atom.XA_STRING) {
 					// Xamarin-5116: PtrToStringAnsi expects to get UTF-8, but we might have
-					// Latin-1 instead.
+					// Latin-1 instead, in which case it will return null.
 					var s = Marshal.PtrToStringAnsi (prop);
 					if (string.IsNullOrEmpty (s)) {
 						var sb = new StringBuilder ();
@@ -1338,7 +1338,7 @@ namespace System.Windows.Forms {
 				start = pos;
 
 				int length = 0;
-				while (pos < value.Length) {
+				while (pos < value.Length && length < 4) {
 					if (!ValidHexDigit (value [pos]))
 						break;
 					length++;

@@ -632,7 +632,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		MonoType *nt;
 		int num = mono_type_get_generic_param_num (type);
 		MonoGenericInst *inst = context->method_inst;
-		if (!inst || !inst->type_argv)
+		if (!inst)
 			return NULL;
 		if (num >= inst->type_argc) {
 			MonoGenericParamInfo *info = mono_generic_param_info (type->data.generic_param);
@@ -2071,6 +2071,9 @@ mono_class_layout_fields (MonoClass *class)
 		    continue;
 #endif
 		if (mono_field_is_deleted (field))
+			continue;
+		// Special static fields do not need a domain-level static slot
+		if (mono_class_field_is_special_static (field))
 			continue;
 
 		if (mono_type_has_exceptions (field->type)) {

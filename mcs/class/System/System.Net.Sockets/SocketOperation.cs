@@ -38,8 +38,6 @@ namespace System.Net.Sockets
 		SendTo,
 		RecvJustCallback,
 		SendJustCallback,
-		UsedInProcess,
-		UsedInConsole2,
 		Disconnect,
 		AcceptReceive,
 		ReceiveGeneric,

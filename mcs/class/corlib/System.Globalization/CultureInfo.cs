@@ -816,8 +816,15 @@ namespace System.Globalization
 			CultureInfo ci = new CultureInfo ();
 
 			if (!ci.construct_internal_locale_from_name (name)) {
-				int idx = name.IndexOf ('-');
-				if (idx < 1 || !ci.construct_internal_locale_from_name (name.Substring (0, idx)))
+				int idx = name.Length - 1;
+				if (idx > 0) {
+					while ((idx = name.LastIndexOf ('-', idx - 1)) > 0) {
+						if (ci.construct_internal_locale_from_name (name.Substring (0, idx)))
+							break;
+					}
+				}
+
+				if (idx <= 0)
 					throw CreateNotFoundException (src_name);
 			}
 

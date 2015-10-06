@@ -130,11 +130,9 @@ System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
-System.Net.Sockets/SocketAsyncCallback.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketAsyncResult.cs
-System.Net.Sockets/SocketAsyncWorker.cs
 System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs
@@ -327,6 +325,7 @@ System/FtpStyleUriParser.cs
 System/GenericUriParser.cs
 System/GenericUriParserOptions.cs
 System/HttpStyleUriParser.cs
+System/IOSelector.cs
 System/NetPipeStyleUriParser.cs
 System/NetTcpStyleUriParser.cs
 System/NewsStyleUriParser.cs

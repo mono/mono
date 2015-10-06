@@ -6,9 +6,9 @@ using System;
 
 namespace Testing
 {
-	/// <summary>
+	///<summary>
 	/// incorrect markup comment for interface
-	/// </incorrect>
+	///</incorrect>
 	public interface InterfaceTest2
 	{
 	}

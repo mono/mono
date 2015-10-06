@@ -189,7 +189,7 @@ namespace Mono.CSharp
 
 			TryWithCatchScope = 1 << 15,
 
-			ConditionalAccessReceiver = 1 << 16,
+			DontSetConditionalAccessReceiver = 1 << 16,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
@@ -445,7 +445,6 @@ namespace Mono.CSharp
 	public class FlowAnalysisContext
 	{
 		readonly CompilerContext ctx;
-		DefiniteAssignmentBitSet conditional_access;
 
 		public FlowAnalysisContext (CompilerContext ctx, ParametersBlock parametersBlock, int definiteAssignmentLength)
 		{
@@ -521,19 +520,6 @@ namespace Mono.CSharp
 			}
 
 			return da;
-		}
-
-		public void BranchConditionalAccessDefiniteAssignment ()
-		{
-			if (conditional_access == null)
-				conditional_access = BranchDefiniteAssignment ();
-		}
-
-		public void ConditionalAccessEnd ()
-		{
-			Debug.Assert (conditional_access != null);
-			DefiniteAssignment = conditional_access;
-			conditional_access = null;
 		}
 
 		public bool IsDefinitelyAssigned (VariableInfo variable)

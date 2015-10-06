@@ -4975,6 +4975,10 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, MONO_STRUCT_OFFSET (MonoDelegate, method_ptr), dreg);
 	}
 
+	dreg = alloc_preg (cfg);
+	MONO_EMIT_NEW_ICONST (cfg, dreg, virtual ? 1 : 0);
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, obj->dreg, MONO_STRUCT_OFFSET (MonoDelegate, method_is_virtual), dreg);
+
 	/* All the checks which are in mono_delegate_ctor () are done by the delegate trampoline */
 
 	return obj;
@@ -5143,14 +5147,6 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 
 	if (cfg->inline_depth > 10)
 		return FALSE;
-
-#ifdef MONO_ARCH_HAVE_LMF_OPS
-	if (((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
-		 (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) &&
-	    !MONO_TYPE_ISSTRUCT (signature->ret) && !mini_class_is_system_array (method->klass))
-		return TRUE;
-#endif
-
 
 	if (!mono_method_get_header_summary (method, &header))
 		return FALSE;
@@ -7186,16 +7182,15 @@ mini_get_signature (MonoMethod *method, guint32 token, MonoGenericContext *conte
 	MonoMethodSignature *fsig;
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
-		MonoError error;
-
 		fsig = (MonoMethodSignature *)mono_method_get_wrapper_data (method, token);
-		if (context) {
-			fsig = mono_inflate_generic_signature (fsig, context, &error);
-			// FIXME:
-			g_assert (mono_error_ok (&error));
-		}
 	} else {
 		fsig = mono_metadata_parse_signature (method->klass->image, token);
+	}
+	if (context) {
+		MonoError error;
+		fsig = mono_inflate_generic_signature(fsig, context, &error);
+		// FIXME:
+		g_assert(mono_error_ok(&error));
 	}
 	return fsig;
 }
@@ -7365,7 +7360,7 @@ static void
 set_exception_object (MonoCompile *cfg, MonoException *exception)
 {
 	mono_cfg_set_exception (cfg, MONO_EXCEPTION_OBJECT_SUPPLIED);
-	MONO_GC_REGISTER_ROOT_SINGLE (cfg->exception_ptr);
+	MONO_GC_REGISTER_ROOT_SINGLE (cfg->exception_ptr, MONO_ROOT_SOURCE_JIT, "jit exception");
 	cfg->exception_ptr = exception;
 }
 
@@ -7529,34 +7524,6 @@ is_supported_tail_call (MonoCompile *cfg, MonoMethod *method, MonoMethod *cmetho
 #endif
 
 	return supported_tail_call;
-}
-
-/* emits the code needed to access a managed tls var (like ThreadStatic)
- * with the value of the tls offset in offset_reg. thread_ins represents the MonoInternalThread
- * pointer for the current thread.
- * Returns the MonoInst* representing the address of the tls var.
- */
-static MonoInst*
-emit_managed_static_data_access (MonoCompile *cfg, MonoInst *thread_ins, int offset_reg)
-{
-	MonoInst *addr;
-	int static_data_reg, array_reg, dreg;
-	int offset2_reg, idx_reg;
-	// inlined access to the tls data (see threads.c)
-	static_data_reg = alloc_ireg (cfg);
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, static_data_reg, thread_ins->dreg, MONO_STRUCT_OFFSET (MonoInternalThread, static_data));
-	idx_reg = alloc_ireg (cfg);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, idx_reg, offset_reg, 0x3f);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, idx_reg, idx_reg, sizeof (gpointer) == 8 ? 3 : 2);
-	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, static_data_reg, static_data_reg, idx_reg);
-	array_reg = alloc_ireg (cfg);
-	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, array_reg, static_data_reg, 0);
-	offset2_reg = alloc_ireg (cfg);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_UN_IMM, offset2_reg, offset_reg, 6);
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, offset2_reg, offset2_reg, 0x1ffffff);
-	dreg = alloc_ireg (cfg);
-	EMIT_NEW_BIALU (cfg, addr, OP_PADD, dreg, array_reg, offset2_reg);
-	return addr;
 }
 
 /*
@@ -9793,6 +9760,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
 				CHECK_UNVERIFIABLE (cfg);
+
+				/* Undo the links */
+				mono_unlink_bblock (cfg, cfg->cbb, default_bblock);
+				for (i = 0; i < n; ++i)
+					mono_unlink_bblock (cfg, cfg->cbb, targets [i]);
 			}
 
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, src1->dreg, n);
@@ -12189,11 +12161,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 			case CEE_MONO_SAVE_LMF:
 			case CEE_MONO_RESTORE_LMF:
-#ifdef MONO_ARCH_HAVE_LMF_OPS
-				MONO_INST_NEW (cfg, ins, (ip [1] == CEE_MONO_SAVE_LMF) ? OP_SAVE_LMF : OP_RESTORE_LMF);
-				MONO_ADD_INS (cfg->cbb, ins);
-				cfg->need_lmf_area = TRUE;
-#endif
 				ip += 2;
 				break;
 			case CEE_MONO_CLASSCONST:

@@ -145,7 +145,23 @@ and reduce the number of casts drastically.
 #define MONO_THREADS_PLATFORM_REQUIRES_UNIFIED_SUSPEND 0
 #define USE_WINDOWS_BACKEND
 
+#else
+#error "no backend support for current platform"
+#endif /* defined (USE_COOP_GC) */
+
+#if defined (_POSIX_VERSION) || defined (__native_client__)
+#if defined (__MACH__) && !defined (USE_SIGNALS_ON_MACH)
+#define USE_MACH_SYSCALL_ABORT
+#else
+#define USE_POSIX_SYSCALL_ABORT
 #endif
+
+#elif HOST_WIN32
+#define USE_WINDOWS_SYSCALL_ABORT
+
+#else
+#error "no syscall abort support for current platform"
+#endif /* defined (_POSIX_VERSION) || defined (__native_client__) */
 
 enum {
 	STATE_STARTING				= 0x00,
@@ -200,13 +216,12 @@ typedef struct {
 
 	MonoSemType resume_semaphore;
 
-	/* only needed by the posix backend */ 
-#if defined(USE_POSIX_BACKEND)
+	/* only needed by the posix backend */
+#if defined(USE_POSIX_BACKEND) || defined(USE_POSIX_SYSCALL_ABORT)
 	MonoSemType finish_resume_semaphore;
 	gboolean syscall_break_signal;
 	gboolean suspend_can_continue;
 	int signal;
-
 #endif
 
 	/*In theory, only the posix backend needs this, but having it on mach/win32 simplifies things a lot.*/
@@ -472,27 +487,6 @@ mono_threads_pthread_kill (THREAD_INFO_TYPE *info, int signum);
 
 #endif /* !defined(HOST_WIN32) */
 
-/* Plartform specific functions DON'T use them */
-void mono_threads_init_platform (void); //ok
-gboolean mono_threads_core_suspend (THREAD_INFO_TYPE *info, gboolean interrupt_kernel);
-gboolean mono_threads_core_resume (THREAD_INFO_TYPE *info);
-void mono_threads_platform_register (THREAD_INFO_TYPE *info); //ok
-void mono_threads_platform_free (THREAD_INFO_TYPE *info);
-void mono_threads_core_abort_syscall (THREAD_INFO_TYPE *info);
-gboolean mono_threads_core_needs_abort_syscall (void);
-HANDLE mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start, gpointer arg, guint32 stack_size, guint32 creation_flags, MonoNativeThreadId *out_tid);
-void mono_threads_core_resume_created (THREAD_INFO_TYPE *info, MonoNativeThreadId tid);
-void mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize);
-gboolean mono_threads_core_yield (void);
-void mono_threads_core_exit (int exit_code);
-void mono_threads_core_unregister (THREAD_INFO_TYPE *info);
-HANDLE mono_threads_core_open_handle (void);
-HANDLE mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid);
-void mono_threads_core_set_name (MonoNativeThreadId tid, const char *name);
-
-void mono_threads_core_begin_global_suspend (void);
-void mono_threads_core_end_global_suspend (void);
-
 /* Internal API between mono-threads and its backends. */
 
 /* Backend functions - a backend must implement all of the following */
@@ -501,6 +495,8 @@ This is called very early in the runtime, it cannot access any runtime facilitie
 
 */
 void mono_threads_init_platform (void); //ok
+
+void mono_threads_init_abort_syscall (void);
 
 /*
 This begins async suspend. This function must do the following:
@@ -543,6 +539,9 @@ void mono_threads_core_unregister (THREAD_INFO_TYPE *info);
 HANDLE mono_threads_core_open_handle (void);
 HANDLE mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid);
 void mono_threads_core_set_name (MonoNativeThreadId tid, const char *name);
+
+void mono_threads_core_begin_global_suspend (void);
+void mono_threads_core_end_global_suspend (void);
 
 MonoNativeThreadId mono_native_thread_id_get (void);
 

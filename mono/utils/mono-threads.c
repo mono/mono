@@ -10,6 +10,11 @@
 
 #include <config.h>
 
+/* enable pthread extensions */
+#ifdef TARGET_MACH
+#define _DARWIN_C_SOURCE
+#endif
+
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-threads.h>
@@ -70,24 +75,24 @@ void
 mono_threads_notify_initiator_of_abort (MonoThreadInfo* info)
 {
 	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-ABORT] %p\n", mono_thread_info_get_tid (info));
-	MONO_SEM_POST (&suspend_semaphore);
 	InterlockedIncrement (&abort_posts);
+	MONO_SEM_POST (&suspend_semaphore);
 }
 
 void
 mono_threads_notify_initiator_of_suspend (MonoThreadInfo* info)
 {
 	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-SUSPEND] %p\n", mono_thread_info_get_tid (info));
-	MONO_SEM_POST (&suspend_semaphore);
 	InterlockedIncrement (&suspend_posts);
+	MONO_SEM_POST (&suspend_semaphore);
 }
 
 void
 mono_threads_notify_initiator_of_resume (MonoThreadInfo* info)
 {
 	THREADS_SUSPEND_DEBUG ("[INITIATOR-NOTIFY-RESUME] %p\n", mono_thread_info_get_tid (info));
-	MONO_SEM_POST (&suspend_semaphore);
 	InterlockedIncrement (&resume_posts);
+	MONO_SEM_POST (&suspend_semaphore);
 }
 
 static void
@@ -129,8 +134,9 @@ void
 mono_threads_begin_global_suspend (void)
 {
 	g_assert (pending_suspends == 0);
-	THREADS_SUSPEND_DEBUG ("------ BEGIN GLOBAL OP sp %d rp %d ap %d wd %d po %d\n", suspend_posts, resume_posts,
+	THREADS_SUSPEND_DEBUG ("------ BEGIN GLOBAL OP sp %d rp %d ap %d wd %d po %d (sp + rp + ap == wd) (wd == po)\n", suspend_posts, resume_posts,
 		abort_posts, waits_done, pending_ops);
+	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
 	mono_threads_core_begin_global_suspend ();
 }
 
@@ -140,6 +146,7 @@ mono_threads_end_global_suspend (void)
 	g_assert (pending_suspends == 0);
 	THREADS_SUSPEND_DEBUG ("------ END GLOBAL OP sp %d rp %d ap %d wd %d po %d\n", suspend_posts, resume_posts,
 		abort_posts, waits_done, pending_ops);
+	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
 	mono_threads_core_end_global_suspend ();
 }
 
@@ -161,7 +168,15 @@ dump_threads (void)
 	MOSTLY_ASYNC_SAFE_PRINTF ("\t0x?08\t- blocking with pending suspend (GOOD)\n");
 
 	FOREACH_THREAD_SAFE (info) {
+#ifdef TARGET_MACH
+		char thread_name [256] = { 0 };
+		pthread_getname_np (mono_thread_info_get_tid (info), thread_name, 255);
+
+		MOSTLY_ASYNC_SAFE_PRINTF ("--thread %p id %p [%p] (%s) state %x  %s\n", info, (void *) mono_thread_info_get_tid (info), (void*)(size_t)info->native_handle, thread_name, info->thread_state, info == cur ? "GC INITIATOR" : "" );
+#else
 		MOSTLY_ASYNC_SAFE_PRINTF ("--thread %p id %p [%p] state %x  %s\n", info, (void *) mono_thread_info_get_tid (info), (void*)(size_t)info->native_handle, info->thread_state, info == cur ? "GC INITIATOR" : "" );
+#endif
+
 	} END_FOREACH_THREAD_SAFE
 }
 
@@ -172,10 +187,10 @@ mono_threads_wait_pending_operations (void)
 	int c = pending_suspends;
 
 	/* Wait threads to park */
+	THREADS_SUSPEND_DEBUG ("[INITIATOR-WAIT-COUNT] %d\n", c);
 	if (pending_suspends) {
 		MonoStopwatch suspension_time;
 		mono_stopwatch_start (&suspension_time);
-		THREADS_SUSPEND_DEBUG ("[INITIATOR-WAIT-COUNT] %d\n", c);
 		for (i = 0; i < pending_suspends; ++i) {
 			THREADS_SUSPEND_DEBUG ("[INITIATOR-WAIT-WAITING]\n");
 			InterlockedIncrement (&waits_done);
@@ -415,7 +430,7 @@ mono_threads_unregister_current_thread (MonoThreadInfo *info)
 MonoThreadInfo*
 mono_thread_info_current_unchecked (void)
 {
-	return (MonoThreadInfo*)mono_native_tls_get_value (thread_info_key);
+	return mono_threads_inited ? (MonoThreadInfo*)mono_native_tls_get_value (thread_info_key) : NULL;
 }
 
 
@@ -571,6 +586,7 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	res = mono_native_tls_alloc (&thread_info_key, (void *) unregister_thread);
 	res = mono_native_tls_alloc (&thread_exited_key, (void *) thread_exited_dtor);
 #endif
+
 	g_assert (res);
 
 #ifndef HAVE_KW_THREAD
@@ -586,6 +602,7 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_lls_init (&thread_list, NULL);
 	mono_thread_smr_init ();
 	mono_threads_init_platform ();
+	mono_threads_init_abort_syscall ();
 
 #if defined(__MACH__)
 	mono_mach_init (thread_info_key);

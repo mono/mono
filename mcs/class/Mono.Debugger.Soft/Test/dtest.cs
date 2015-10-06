@@ -2507,50 +2507,25 @@ public class DebuggerTests
 	}
 
 	[Test]
-	public void InvokeNested () {
-		Event e = run_until ("invoke1");
+	public void InvokeAbort () {
+		vm.Detach ();
 
-		MethodMirror m = entry_point.DeclaringType.GetMethod ("invoke2");
-		Assert.IsNotNull (m);
-		vm.SetBreakpoint (m, 0);
+		Start (new string [] { "dtest-app.exe", "invoke-abort" });
 
-		StackFrame frame = e.Thread.GetFrames () [0];
-		var o = frame.GetThis () as ObjectMirror;
+		Event e = run_until ("invoke_abort");
 
-		bool failed = false;
+		StackFrame f = e.Thread.GetFrames ()[0];
 
-		bool finished = false;
-		object wait = new object ();
-
-		Thread t = new Thread (delegate () {
-				try {
-					o.InvokeMethod (e.Thread, m, null);
-				} catch {
-					failed = true;
-				}
-				lock (wait) {
-					finished = true;
-					Monitor.Pulse (wait);
-				}
+		var obj = f.GetThis () as ObjectMirror;
+		var t = obj.Type;
+		var m = t.GetMethod ("invoke_abort_2");
+		// Invoke multiple times to check that the subsequent invokes are aborted too
+		var res = (IInvokeAsyncResult)obj.BeginInvokeMultiple (e.Thread, new MethodMirror[] { m, m, m, m }, null, InvokeOptions.None, delegate { }, null);
+		Thread.Sleep (500);
+		res.Abort ();
+		AssertThrows<CommandException> (delegate {
+				obj.EndInvokeMethod (res);
 			});
-
-		t.Start ();
-
-		StackFrame invoke_frame = null;
-
-		e = GetNextEvent ();
-		Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
-
-		// Check that nested invokes are not allowed
-		AssertThrows<VMNotSuspendedException> (delegate {
-			o.InvokeMethod (e.Thread, m, null);
-			});
-
-		vm.Resume ();
-		lock (wait) {
-			if (!finished)
-				Monitor.Wait (wait);
-		}
 	}
 
 	[Test]

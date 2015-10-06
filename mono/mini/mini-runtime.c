@@ -658,6 +658,14 @@ register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpo
 {
 #ifndef DISABLE_JIT
 	mini_register_opcode_emulation (opcode, name, sigstr, func, symbol, no_throw);
+#else
+	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
+
+	g_assert (!sig->hasthis);
+	g_assert (sig->param_count < 3);
+
+	/* Opcode emulation functions are assumed to don't call mono_raise_exception () */
+	mono_register_jit_icall_full (func, name, sig, no_throw, TRUE, symbol);
 #endif
 }
 
@@ -2676,9 +2684,11 @@ mini_parse_debug_options (void)
 			mono_set_partial_sharing_supported (TRUE);
 		else if (!strcmp (arg, "align-small-structs"))
 			mono_align_small_structs = TRUE;
+		else if (!strcmp (arg, "native-debugger-break"))
+			debug_options.native_debugger_break = TRUE;
 		else {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'gen-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'arm-use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs'\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'gen-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'arm-use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break'\n");
 			exit (1);
 		}
 	}
@@ -3443,7 +3453,6 @@ mini_cleanup (MonoDomain *domain)
 
 #ifndef MONO_CROSS_COMPILE
 	mono_domain_free (domain, TRUE);
-	mono_gc_mutex_cleanup ();
 #endif
 
 #ifdef ENABLE_LLVM

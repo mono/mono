@@ -57,7 +57,8 @@ ICALL(KPAIR_4, "_ProtectMachine", ves_icall_Mono_Security_Cryptography_KeyPairPe
 ICALL(KPAIR_5, "_ProtectUser", ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser)
 #endif /* !PLATFORM_RO_FS */
 
-ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_1)
+ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_23)
+ICALL(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException)
 ICALL(APPDOM_1, "ExecuteAssembly", ves_icall_System_AppDomain_ExecuteAssembly)
 ICALL(APPDOM_2, "GetAssemblies", ves_icall_System_AppDomain_GetAssemblies)
 ICALL(APPDOM_3, "GetData", ves_icall_System_AppDomain_GetData)
@@ -152,6 +153,7 @@ ICALL(DECIMAL_13, "ToSingle", mono_decimal_to_float)
 ICALL_TYPE(DELEGATE, "System.Delegate", DELEGATE_1)
 ICALL(DELEGATE_1, "AllocDelegateLike_internal", ves_icall_System_Delegate_AllocDelegateLike_internal)
 ICALL(DELEGATE_2, "CreateDelegate_internal", ves_icall_System_Delegate_CreateDelegate_internal)
+ICALL(DELEGATE_3, "GetVirtualMethod_internal", ves_icall_System_Delegate_GetVirtualMethod_internal)
 
 ICALL_TYPE(DEBUGR, "System.Diagnostics.Debugger", DEBUGR_1)
 ICALL(DEBUGR_1, "IsAttached_internal", ves_icall_System_Diagnostics_Debugger_IsAttached_internal)
@@ -202,9 +204,6 @@ ICALL(PROCESS_14, "StartTime_internal(intptr)", ves_icall_System_Diagnostics_Pro
 ICALL(PROCESS_14M, "Times", ves_icall_System_Diagnostics_Process_Times)
 ICALL(PROCESS_15, "WaitForExit_internal(intptr,int)", ves_icall_System_Diagnostics_Process_WaitForExit_internal)
 ICALL(PROCESS_16, "WaitForInputIdle_internal(intptr,int)", ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal)
-
-ICALL_TYPE (PROCESSREADER, "System.Diagnostics.Process/ProcessAsyncReader", PROCESSREADER_1)
-ICALL (PROCESSREADER_1, "RemoveFromIOThreadPool", ves_icall_System_Diagnostics_Process_ProcessAsyncReader_RemoveFromIOThreadPool)
 
 ICALL_TYPE (PROCESSHANDLE, "System.Diagnostics.Process/ProcessWaitHandle", PROCESSHANDLE_1)
 ICALL (PROCESSHANDLE_1, "ProcessHandle_close(intptr)", ves_icall_System_Diagnostics_Process_ProcessHandle_close)
@@ -323,7 +322,7 @@ ICALL(MONOIO_1, "Close(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_Mono
 #ifndef PLATFORM_RO_FS
 ICALL(MONOIO_2, "CopyFile(string,string,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CopyFile)
 ICALL(MONOIO_3, "CreateDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CreateDirectory)
-ICALL(MONOIO_4, "CreatePipe(intptr&,intptr&)", ves_icall_System_IO_MonoIO_CreatePipe)
+ICALL(MONOIO_4, "CreatePipe", ves_icall_System_IO_MonoIO_CreatePipe)
 ICALL(MONOIO_5, "DeleteFile(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_DeleteFile)
 #endif /* !PLATFORM_RO_FS */
 ICALL(MONOIO_34, "DuplicateHandle", ves_icall_System_IO_MonoIO_DuplicateHandle)
@@ -367,6 +366,10 @@ ICALL(MONOIO_33, "get_VolumeSeparatorChar", ves_icall_System_IO_MonoIO_get_Volum
 
 ICALL_TYPE(IOPATH, "System.IO.Path", IOPATH_1)
 ICALL(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path)
+
+ICALL_TYPE(IOSELECTOR, "System.IOSelector", IOSELECTOR_1)
+ICALL(IOSELECTOR_1, "Add", ves_icall_System_IOSelector_Add)
+ICALL(IOSELECTOR_2, "Remove", ves_icall_System_IOSelector_Remove)
 
 ICALL_TYPE(MATH, "System.Math", MATH_19)
 ICALL(MATH_19, "Abs(double)", ves_icall_System_Math_Abs_double)
@@ -439,7 +442,6 @@ ICALL(SOCK_18, "SetSocketOption_internal(intptr,System.Net.Sockets.SocketOptionL
 ICALL(SOCK_19, "Shutdown_internal(intptr,System.Net.Sockets.SocketShutdown,int&)", ves_icall_System_Net_Sockets_Socket_Shutdown_internal)
 ICALL(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal)
 ICALL(SOCK_21a, "cancel_blocking_socket_operation", icall_cancel_blocking_socket_operation)
-ICALL(SOCK_22, "socket_pool_queue", icall_append_io_job)
 
 ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
 ICALL(SOCKEX_1, "WSAGetLastError_internal", ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal)

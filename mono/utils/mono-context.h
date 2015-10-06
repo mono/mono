@@ -17,10 +17,6 @@
 #include <signal.h>
 #endif
 
-#ifdef HOST_WATCHOS
-#include <libunwind.h>
-#endif
-
 /*
  * General notes about mono-context.
  * Each arch defines a MonoContext struct with all GPR regs + IP/PC.
@@ -183,11 +179,11 @@ extern void mono_context_get_current (void *);
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\
 		"movq $0x0,  %%nacl:0x00(%%r15, %0, 1)\n"	\
-		"movq %%rbx, %%nacl:0x08(%%r15, %0, 1)\n"	\
-		"movq %%rcx, %%nacl:0x10(%%r15, %0, 1)\n"	\
-		"movq %%rdx, %%nacl:0x18(%%r15, %0, 1)\n"	\
-		"movq %%rbp, %%nacl:0x20(%%r15, %0, 1)\n"	\
-		"movq %%rsp, %%nacl:0x28(%%r15, %0, 1)\n"	\
+		"movq %%rcx, %%nacl:0x08(%%r15, %0, 1)\n"	\
+		"movq %%rdx, %%nacl:0x10(%%r15, %0, 1)\n"	\
+		"movq %%rbx, %%nacl:0x18(%%r15, %0, 1)\n"	\
+		"movq %%rsp, %%nacl:0x20(%%r15, %0, 1)\n"	\
+		"movq %%rbp, %%nacl:0x28(%%r15, %0, 1)\n"	\
 		"movq %%rsi, %%nacl:0x30(%%r15, %0, 1)\n"	\
 		"movq %%rdi, %%nacl:0x38(%%r15, %0, 1)\n"	\
 		"movq %%r8,  %%nacl:0x40(%%r15, %0, 1)\n"	\
@@ -204,14 +200,15 @@ extern void mono_context_get_current (void *);
 		: "a" ((int64_t)&(ctx))	\
 		: "rdx", "memory")
 #else
+
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\
 		"movq $0x0,  0x00(%0)\n"	\
-		"movq %%rbx, 0x08(%0)\n"	\
-		"movq %%rcx, 0x10(%0)\n"	\
-		"movq %%rdx, 0x18(%0)\n"	\
-		"movq %%rbp, 0x20(%0)\n"	\
-		"movq %%rsp, 0x28(%0)\n"	\
+		"movq %%rcx, 0x08(%0)\n"	\
+		"movq %%rdx, 0x10(%0)\n"	\
+		"movq %%rbx, 0x18(%0)\n"	\
+		"movq %%rsp, 0x20(%0)\n"	\
+		"movq %%rbp, 0x28(%0)\n"	\
 		"movq %%rsi, 0x30(%0)\n"	\
 		"movq %%rdi, 0x38(%0)\n"	\
 		"movq %%r8,  0x40(%0)\n"	\
@@ -255,26 +252,6 @@ typedef struct {
 #if defined(HOST_WATCHOS)
 
 #define MONO_CONTEXT_GET_CURRENT(ctx) do { \
-	unw_context_t uctx; \
-	unw_cursor_t c; \
-	unw_word_t data; \
-	g_assert (unw_getcontext (&uctx) == 0); \
-	g_assert (unw_init_local (&c, &uctx) == 0); \
-	for (int reg = 0; reg < 13; ++reg) { \
-		unw_get_reg (&c, (unw_regnum_t) UNW_ARM_R0 + reg, &data); \
-		ctx.regs[reg] = data; \
-	} \
-	unw_get_reg (&c, UNW_ARM_SP, &data); \
-	ctx.regs[ARMREG_SP] = data; \
-	unw_get_reg (&c, UNW_ARM_LR, &data); \
-	ctx.regs[ARMREG_LR] = data; \
-	unw_get_reg (&c, UNW_ARM_IP, &data); \
-	ctx.regs[ARMREG_PC] = data; \
-	ctx.pc = ctx.regs[ARMREG_PC]; \
-	for (int reg = 0; reg < 16; ++reg) { \
-		unw_get_reg (&c, (unw_regnum_t) UNW_ARM_D0 + reg, &data); \
-		ctx.fregs[reg] = data; \
-	} \
 } while (0);
 
 #else
@@ -324,6 +301,21 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) (gpointer)((ctx)->regs [ARMREG_FP])
 #define MONO_CONTEXT_GET_SP(ctx) (gpointer)((ctx)->regs [ARMREG_SP])
 
+#if defined (HOST_APPLETVOS)
+
+#define MONO_CONTEXT_GET_CURRENT(ctx) do { \
+	arm_unified_thread_state_t thread_state;	\
+	int state_flavor = ARM_UNIFIED_THREAD_STATE;	\
+	unsigned state_count = ARM_UNIFIED_THREAD_STATE_COUNT;	\
+	thread_port_t self = mach_thread_self ();	\
+	kern_return_t ret = thread_get_state (self, state_flavor, (thread_state_t) &thread_state, &state_count);	\
+	g_assert (ret == 0);	\
+	mono_mach_arch_thread_state_to_mono_context ((thread_state_t)&thread_state, &ctx); \
+	mach_port_deallocate (current_task (), self);	\
+} while (0);
+
+#else
+
 #define MONO_CONTEXT_GET_CURRENT(ctx)	do { 	\
 	__asm__ __volatile__(			\
 		"mov x16, %0\n" \
@@ -357,6 +349,8 @@ typedef struct {
 		: "memory"			 \
 	); \
 } while (0)
+
+#endif
 
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
 

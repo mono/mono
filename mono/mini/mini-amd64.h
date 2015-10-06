@@ -209,16 +209,19 @@ typedef struct MonoCompileArch {
 	gpointer seq_point_info_var;
 	gpointer ss_trigger_page_var;
 	gpointer ss_tramp_var;
+	gpointer bp_tramp_var;
 	gpointer lmf_var;
 } MonoCompileArch;
-
-
 
 #ifdef TARGET_WIN32
 #define PARAM_REGS 4
 #else
 #define PARAM_REGS 6
 #endif
+
+typedef struct {
+	int dummy;
+} GSharedVtCallInfo;
 
 /* Structure used by the sequence points in AOTed code */
 typedef struct {

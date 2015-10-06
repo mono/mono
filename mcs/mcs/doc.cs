@@ -92,22 +92,9 @@ namespace Mono.CSharp
 				el.SetAttribute ("name", name);
 				string normalized = mc.DocComment;
 				el.InnerXml = normalized;
-				// csc keeps lines as written in the sources
-				// and inserts formatting indentation (which 
-				// is different from XmlTextWriter.Formatting
-				// one), but when a start tag contains an 
-				// endline, it joins the next line. We don't
-				// have to follow such a hacky behavior.
-				string [] split =
-					normalized.Split ('\n');
-				int j = 0;
-				for (int i = 0; i < split.Length; i++) {
-					string s = split [i].TrimEnd ();
-					if (s.Length > 0)
-						split [j++] = s;
-				}
-				el.InnerXml = line_head + String.Join (
-					line_head, split, 0, j);
+
+				string [] split = normalized.Split ('\n');
+				el.InnerXml = line_head + String.Join (line_head, split);
 				return el;
 			} catch (Exception ex) {
 				Report.Warning (1570, 1, mc.Location, "XML documentation comment on `{0}' is not well-formed XML markup ({1})",

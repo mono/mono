@@ -126,7 +126,6 @@ typedef struct MonoAotOptions {
 	gboolean stats;
 	char *tool_prefix;
 	char *ld_flags;
-	gboolean autoreg;
 	char *mtriple;
 	char *llvm_path;
 	char *temp_path;
@@ -197,7 +196,6 @@ typedef struct MonoAotCompile {
 	int method_index;
 	char *static_linking_symbol;
 	mono_mutex_t mutex;
-	gboolean use_bin_writer;
 	gboolean gas_line_numbers;
 	/* Whenever to emit an object file directly from llc */
 	gboolean llvm_owriter;
@@ -854,42 +852,22 @@ arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean extern
 {
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 	/* Need to make sure this is exactly 5 bytes long */
-	if (!acfg->use_bin_writer) {
-		emit_unset_mode (acfg);
-		fprintf (acfg->fp, "call %s\n", target);
-	} else {
-		emit_byte (acfg, '\xe8');
-		emit_symbol_diff (acfg, target, ".", -4);
-	}
+	emit_unset_mode (acfg);
+	fprintf (acfg->fp, "call %s\n", target);
 	*call_size = 5;
 #elif defined(TARGET_ARM)
-	if (acfg->use_bin_writer) {
-		guint8 buf [4];
-		guint8 *code;
-
-		code = buf;
-		ARM_BL (code, 0);
-
-		mono_img_writer_emit_reloc (acfg->w, R_ARM_CALL, target, -8);
-		emit_bytes (acfg, buf, 4);
-	} else {
-		emit_unset_mode (acfg);
-		if (thumb)
-			fprintf (acfg->fp, "blx %s\n", target);
-		else
-			fprintf (acfg->fp, "bl %s\n", target);
-	}
+	emit_unset_mode (acfg);
+	if (thumb)
+		fprintf (acfg->fp, "blx %s\n", target);
+	else
+		fprintf (acfg->fp, "bl %s\n", target);
 	*call_size = 4;
 #elif defined(TARGET_ARM64)
 	arm64_emit_direct_call (acfg, target, external, thumb, ji, call_size);
 #elif defined(TARGET_POWERPC)
-	if (acfg->use_bin_writer) {
-		g_assert_not_reached ();
-	} else {
-		emit_unset_mode (acfg);
-		fprintf (acfg->fp, "bl %s\n", target);
-		*call_size = 4;
-	}
+	emit_unset_mode (acfg);
+	fprintf (acfg->fp, "bl %s\n", target);
+	*call_size = 4;
 #else
 	g_assert_not_reached ();
 #endif
@@ -939,7 +917,6 @@ static void
 arch_emit_got_offset (MonoAotCompile *acfg, guint8 *code, int *code_size)
 {
 #if defined(TARGET_POWERPC64)
-	g_assert (!acfg->use_bin_writer);
 	emit_unset_mode (acfg);
 	/* 
 	 * The ppc32 code doesn't seem to work on ppc64, the assembler complains about
@@ -954,7 +931,6 @@ arch_emit_got_offset (MonoAotCompile *acfg, guint8 *code, int *code_size)
 	acfg->label_generator ++;
 	*code_size = 16;
 #elif defined(TARGET_POWERPC)
-	g_assert (!acfg->use_bin_writer);
 	emit_unset_mode (acfg);
 	fprintf (acfg->fp, ".L%d:\n", acfg->label_generator);
 	fprintf (acfg->fp, "lis 0, (%s + 4 - .L%d)@h\n", acfg->got_symbol, acfg->label_generator);
@@ -1098,14 +1074,8 @@ arch_emit_plt_entry (MonoAotCompile *acfg, const char *got_symbol, int offset, i
 #endif /*__native_client_codegen__*/
 #elif defined(TARGET_AMD64)
 #if defined(__default_codegen__)
-		if (acfg->use_bin_writer) {
-			emit_byte (acfg, '\xff');
-			emit_byte (acfg, '\x25');
-			emit_symbol_diff (acfg, got_symbol, ".", offset - 4);
-		} else {
-			emit_unset_mode (acfg);
-			fprintf (acfg->fp, "jmp *%s+%d(%%rip)\n", got_symbol, offset);
-		}
+		emit_unset_mode (acfg);
+		fprintf (acfg->fp, "jmp *%s+%d(%%rip)\n", got_symbol, offset);
 		/* Used by mono_aot_get_plt_info_offset */
 		emit_int32 (acfg, info_offset);
 		acfg->stats.plt_size += 10;
@@ -1145,7 +1115,6 @@ arch_emit_plt_entry (MonoAotCompile *acfg, const char *got_symbol, int offset, i
 		arm64_emit_plt_entry (acfg, got_symbol, offset, info_offset);
 #elif defined(TARGET_POWERPC)
 		/* The GOT address is guaranteed to be in r30 by OP_LOAD_GOTADDR */
-		g_assert (!acfg->use_bin_writer);
 		emit_unset_mode (acfg);
 		fprintf (acfg->fp, "lis 11, %d@h\n", offset);
 		fprintf (acfg->fp, "ori 11, 11, %d@l\n", offset);
@@ -1571,8 +1540,6 @@ arch_emit_specific_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size
 	*tramp_size = 4;
 	code = buf;
 
-	g_assert (!acfg->use_bin_writer);
-
 	/*
 	 * PPC has no ip relative addressing, so we need to compute the address
 	 * of the mscorlib got. That is slow and complex, so instead, we store it
@@ -1696,27 +1663,14 @@ arch_emit_unbox_trampoline (MonoAotCompile *acfg, MonoCompile *cfg, MonoMethod *
 
 	emit_bytes (acfg, buf, code - buf);
 	/* jump to method */
-	if (acfg->use_bin_writer) {
-		guint8 buf [4];
-		guint8 *code;
-
-		code = buf;
-		ARM_B (code, 0);
-
-		mono_img_writer_emit_reloc (acfg->w, R_ARM_JUMP24, call_target, -8);
-		emit_bytes (acfg, buf, 4);
-	} else {
-		if (acfg->thumb_mixed && cfg->compile_llvm)
-			fprintf (acfg->fp, "\n\tbx %s\n", call_target);
-		else
-			fprintf (acfg->fp, "\n\tb %s\n", call_target);
-	}
+	if (acfg->thumb_mixed && cfg->compile_llvm)
+		fprintf (acfg->fp, "\n\tbx %s\n", call_target);
+	else
+		fprintf (acfg->fp, "\n\tb %s\n", call_target);
 #elif defined(TARGET_ARM64)
 	arm64_emit_unbox_trampoline (acfg, cfg, method, call_target);
 #elif defined(TARGET_POWERPC)
 	int this_pos = 3;
-
-	g_assert (!acfg->use_bin_writer);
 
 	fprintf (acfg->fp, "\n\taddi %d, %d, %d\n", this_pos, this_pos, (int)sizeof (MonoObject));
 	fprintf (acfg->fp, "\n\tb %s\n", call_target);
@@ -1812,8 +1766,6 @@ arch_emit_static_rgctx_trampoline (MonoAotCompile *acfg, int offset, int *tramp_
 
 	*tramp_size = 4;
 	code = buf;
-
-	g_assert (!acfg->use_bin_writer);
 
 	/*
 	 * PPC has no ip relative addressing, so we need to compute the address
@@ -2239,73 +2191,6 @@ arch_emit_gsharedvt_arg_trampoline (MonoAotCompile *acfg, int offset, int *tramp
 	g_assert_not_reached ();
 #endif
 }	
-
-static void
-arch_emit_autoreg (MonoAotCompile *acfg, char *symbol)
-{
-#if defined(TARGET_POWERPC) && defined(__mono_ilp32__)
-	/* Based on code generated by gcc */
-	emit_unset_mode (acfg);
-
-	fprintf (acfg->fp,
-#if defined(_MSC_VER) || defined(MONO_CROSS_COMPILE) 
-			 ".section	.ctors,\"aw\",@progbits\n"
-			 ".align 2\n"
-			 ".globl	%s\n"
-			 ".long	%s\n"
-			 ".section	.opd,\"aw\"\n"
-			 ".align 2\n"
-			 "%s:\n"
-			 ".long	.%s,.TOC.@tocbase32\n"
-			 ".size	%s,.-%s\n"
-			 ".section .text\n"
-			 ".type	.%s,@function\n"
-			 ".align 2\n"
-			 ".%s:\n", symbol, symbol, symbol, symbol, symbol, symbol, symbol, symbol);
-#else
-			 ".section	.ctors,\"aw\",@progbits\n"
-			 ".align 2\n"
-			 ".globl	%1$s\n"
-			 ".long	%1$s\n"
-			 ".section	.opd,\"aw\"\n"
-			 ".align 2\n"
-			 "%1$s:\n"
-			 ".long	.%1$s,.TOC.@tocbase32\n"
-			 ".size	%1$s,.-%1$s\n"
-			 ".section .text\n"
-			 ".type	.%1$s,@function\n"
-			 ".align 2\n"
-			 ".%1$s:\n", symbol);
-#endif
-
-
-	fprintf (acfg->fp,
-			 "stdu 1,-128(1)\n"
-			 "mflr 0\n"
-			 "std 31,120(1)\n"
-			 "std 0,144(1)\n"
-
-			 ".Lautoreg:\n"
-			 "lis 3, .Lglobals@h\n"
-			 "ori 3, 3, .Lglobals@l\n"
-			 "bl .mono_aot_register_module\n"
-			 "ld 11,0(1)\n"
-			 "ld 0,16(11)\n"
-			 "mtlr 0\n"
-			 "ld 31,-8(11)\n"
-			 "mr 1,11\n"
-			 "blr\n"
-			 );
-#if defined(_MSC_VER) || defined(MONO_CROSS_COMPILE) 
-		fprintf (acfg->fp,
-			 ".size	.%s,.-.%s\n", symbol, symbol);
-#else
-	fprintf (acfg->fp,
-			 ".size	.%1$s,.-.%1$s\n", symbol);
-#endif
-#else
-#endif
-}
 
 /* END OF ARCH SPECIFIC CODE */
 
@@ -6700,8 +6585,6 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->nimt_trampolines = atoi (arg + strlen ("nimt-trampolines="));
 		} else if (str_begins_with (arg, "ngsharedvt-trampolines=")) {
 			opts->ngsharedvt_arg_trampolines = atoi (arg + strlen ("ngsharedvt-trampolines="));
-		} else if (str_begins_with (arg, "autoreg")) {
-			opts->autoreg = TRUE;
 		} else if (str_begins_with (arg, "tool-prefix=")) {
 			opts->tool_prefix = g_strdup (arg + strlen ("tool-prefix="));
 		} else if (str_begins_with (arg, "ld-flags=")) {
@@ -6768,7 +6651,6 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			printf ("    nrgctx-trampolines=\n");
 			printf ("    nimt-trampolines=\n");
 			printf ("    ngsharedvt-trampolines=\n");
-			printf ("    autoreg\n");
 			printf ("    tool-prefix=\n");
 			printf ("    readonly-value=\n");
 			printf ("    soft-debug\n");
@@ -8614,25 +8496,6 @@ emit_globals (MonoAotCompile *acfg)
 }
 
 static void
-emit_autoreg (MonoAotCompile *acfg)
-{
-	char *symbol;
-
-	/*
-	 * Emit a function into the .ctor section which will be called by the ELF
-	 * loader to register this module with the runtime.
-	 */
-	if (! (!acfg->use_bin_writer && acfg->aot_opts.static_link && acfg->aot_opts.autoreg))
-		return;
-
-	symbol = g_strdup_printf ("_%s_autoreg", acfg->static_linking_symbol);
-
-	arch_emit_autoreg (acfg, symbol);
-
-	g_free (symbol);
-}	
-
-static void
 emit_mem_end (MonoAotCompile *acfg)
 {
 	char symbol [128];
@@ -8665,25 +8528,8 @@ init_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info, int gc_name_off
 		info->trampoline_size [i] = acfg->trampoline_size [i];
 	info->num_rgctx_fetch_trampolines = acfg->aot_opts.nrgctx_fetch_trampolines;
 
-#if defined (TARGET_ARM) && defined (TARGET_MACH)
-	{
-		MonoType t;
-		int align = 0;
-
-		memset (&t, 0, sizeof (MonoType));
-		t.type = MONO_TYPE_R8;
-		mono_type_size (&t, &align);
-		info->double_align = align;
-
-		memset (&t, 0, sizeof (MonoType));
-		t.type = MONO_TYPE_I8;
-		mono_type_size (&t, &align);
-		info->long_align = align;
-	}
-#else
 	info->double_align = MONO_ABI_ALIGNOF (double);
 	info->long_align = MONO_ABI_ALIGNOF (gint64);
-#endif
 	info->generic_tramp_num = MONO_TRAMPOLINE_NUM;
 	info->tramp_page_size = acfg->tramp_page_size;
 	for (i = 0; i < MONO_AOT_TRAMP_NUM; ++i)
@@ -9557,9 +9403,6 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		acfg->logfile = fopen (acfg->aot_opts.logfile, "a+");
 	}
 
-	if (acfg->aot_opts.static_link)
-		acfg->aot_opts.autoreg = TRUE;
-
 	//acfg->aot_opts.print_skipped_methods = TRUE;
 
 #if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || !defined(ENABLE_GSHAREDVT)
@@ -9769,46 +9612,24 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 #endif
 
-	if (!acfg->aot_opts.asm_only && !acfg->aot_opts.asm_writer && mono_bin_writer_supported ()) {
+	if (acfg->aot_opts.asm_only) {
 		if (acfg->aot_opts.outfile)
-			outfile_name = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+			acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
 		else
-			outfile_name = g_strdup_printf ("%s%s", acfg->image->name, MONO_SOLIB_EXT);
-
-		/* 
-		 * Can't use g_file_open_tmp () as it will be deleted at exit, and
-		 * it might be in another file system so the rename () won't work.
-		 */
-		tmp_outfile_name = g_strdup_printf ("%s.tmp", outfile_name);
-
-		acfg->fp = fopen (tmp_outfile_name, "w");
-		if (!acfg->fp) {
-			aot_printf (acfg, "Unable to create temporary file '%s': %s\n", tmp_outfile_name, strerror (errno));
-			return 1;
-		}
-
-		acfg->w = mono_img_writer_create (acfg->fp, TRUE);
-		acfg->use_bin_writer = TRUE;
+			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
+		acfg->fp = fopen (acfg->tmpfname, "w+");
 	} else {
-		if (acfg->aot_opts.asm_only) {
-			if (acfg->aot_opts.outfile)
-				acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
-			else
-				acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
-			acfg->fp = fopen (acfg->tmpfname, "w+");
-		} else {
-			int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
-			acfg->fp = fdopen (i, "w+");
-		}
-		if (acfg->fp == 0) {
-			aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));
-			return 1;
-		}
-		acfg->w = mono_img_writer_create (acfg->fp, FALSE);
-		
-		tmp_outfile_name = NULL;
-		outfile_name = NULL;
+		int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
+		acfg->fp = fdopen (i, "w+");
 	}
+	if (acfg->fp == 0) {
+		aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));
+		return 1;
+	}
+	acfg->w = mono_img_writer_create (acfg->fp, FALSE);
+
+	tmp_outfile_name = NULL;
+	outfile_name = NULL;
 
 	/* Compute symbols for methods */
 	for (i = 0; i < acfg->nmethods; ++i) {
@@ -9882,8 +9703,6 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	emit_globals (acfg);
 
-	emit_autoreg (acfg);
-
 	if (acfg->dwarf) {
 		emit_dwarf_info (acfg);
 		mono_dwarf_writer_close (acfg->dwarf);
@@ -9894,8 +9713,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	if (acfg->need_pt_gnu_stack) {
 		/* This is required so the .so doesn't have an executable stack */
 		/* The bin writer already emits this */
-		if (!acfg->use_bin_writer)
-			fprintf (acfg->fp, "\n.section	.note.GNU-stack,\"\",@progbits\n");
+		fprintf (acfg->fp, "\n.section	.note.GNU-stack,\"\",@progbits\n");
 	}
 
 #ifdef ENABLE_LLVM
@@ -9949,19 +9767,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		acfg_free (acfg);
 		return res;
 	}
-	if (acfg->use_bin_writer) {
-		int err = rename (tmp_outfile_name, outfile_name);
-
-		if (err) {
-			aot_printf (acfg, "Unable to rename '%s' to '%s': %s\n", tmp_outfile_name, outfile_name, strerror (errno));
-			return 1;
-		}
-	} else {
-		res = compile_asm (acfg);
-		if (res != 0) {
-			acfg_free (acfg);
-			return res;
-		}
+	res = compile_asm (acfg);
+	if (res != 0) {
+		acfg_free (acfg);
+		return res;
 	}
 	TV_GETTIME (btv);
 	acfg->stats.link_time = TV_ELAPSED (atv, btv);

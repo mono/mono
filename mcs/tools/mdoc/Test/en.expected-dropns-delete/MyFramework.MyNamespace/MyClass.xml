@@ -1,0 +1,204 @@
+<Type Name="MyClass" FullName="MyFramework.MyNamespace.MyClass">
+  <TypeSignature Language="C#" Value="public class MyClass" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MyClass extends System.Object" />
+  <AssemblyInfo apistyle="classic">
+    <AssemblyName>DocTest-DropNS-classic-deletetest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo apistyle="unified">
+    <AssemblyName>DocTest-DropNS-unified-deletetest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MyClass ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddedInV2">
+      <MemberSignature Language="C#" Value="public string AddedInV2 { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddedInV2Classic">
+      <MemberSignature Language="C#" Value="public string AddedInV2Classic { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2Classic" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddedInV2Unified">
+      <MemberSignature Language="C#" Value="public string AddedInV2Unified { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AddedInV2Unified" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Hello">
+      <MemberSignature Language="C#" Value="public float Hello (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 Hello(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Single</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InBoth">
+      <MemberSignature Language="C#" Value="public string InBoth { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InBoth" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InBothClassic">
+      <MemberSignature Language="C#" Value="public string InBothClassic { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InBothClassic" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InBothMagicType">
+      <MemberSignature Language="C#" Value="public int InBothMagicType { get; set; }" apistyle="classic" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 InBothMagicType" apistyle="classic" />
+      <MemberSignature Language="C#" Value="public MyFramework.MyNamespace.nint InBothMagicType { get; set; }" apistyle="unified" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MyFramework.MyNamespace.nint InBothMagicType" apistyle="unified" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType apistyle="classic">System.Int32</ReturnType>
+        <ReturnType apistyle="unified">MyFramework.MyNamespace.nint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InBothUnified">
+      <MemberSignature Language="C#" Value="public string InBothUnified { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InBothUnified" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MyProperty">
+      <MemberSignature Language="C#" Value="public string MyProperty { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MyProperty" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

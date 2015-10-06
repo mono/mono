@@ -363,7 +363,7 @@ get_array_fill_vtable (void)
 	if (!array_fill_vtable) {
 		static MonoClass klass;
 		static char _vtable[sizeof(MonoVTable)+8];
-		MonoVTable* vtable = (MonoVTable*) ALIGN_TO(_vtable, 8);
+		MonoVTable* vtable = (MonoVTable*) ALIGN_TO((mword)_vtable, 8);
 		gsize bmap;
 
 		MonoDomain *domain = mono_get_root_domain ();
@@ -785,9 +785,9 @@ clear_domain_process_object (GCObject *obj, MonoDomain *domain)
 	remove = need_remove_object_for_domain (obj, domain);
 
 	if (remove && obj->synchronisation) {
-		void **dislink = mono_monitor_get_object_monitor_weak_link (obj);
+		guint32 dislink = mono_monitor_get_object_monitor_gchandle (obj);
 		if (dislink)
-			sgen_register_disappearing_link (NULL, dislink, FALSE, TRUE);
+			mono_gchandle_free (dislink);
 	}
 
 	return remove;
@@ -850,7 +850,6 @@ mono_gc_clear_domain (MonoDomain * domain)
 	major_collector.finish_sweeping ();
 
 	sgen_process_fin_stage_entries ();
-	sgen_process_dislink_stage_entries ();
 
 	sgen_clear_nursery_fragments ();
 
@@ -863,9 +862,7 @@ mono_gc_clear_domain (MonoDomain * domain)
 	/*Ephemerons and dislinks must be processed before LOS since they might end up pointing
 	to memory returned to the OS.*/
 	null_ephemerons_for_domain (domain);
-
-	for (i = GENERATION_NURSERY; i < GENERATION_MAX; ++i)
-		sgen_null_links_if (object_in_domain_predicate, domain, i);
+	sgen_null_links_for_domain (domain);
 
 	for (i = GENERATION_NURSERY; i < GENERATION_MAX; ++i)
 		sgen_remove_finalizers_if (object_in_domain_predicate, domain, i);
@@ -965,13 +962,13 @@ mono_gc_alloc_mature (MonoVTable *vtable)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr)
+mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
 {
 	/* FIXME: do a single allocation */
 	void *res = calloc (1, size);
 	if (!res)
 		return NULL;
-	if (!mono_gc_register_root (res, size, descr)) {
+	if (!mono_gc_register_root (res, size, descr, source, msg)) {
 		free (res);
 		res = NULL;
 	}
@@ -2342,6 +2339,8 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 
 	FOREACH_THREAD (info) {
 		int skip_reason = 0;
+		void *aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+
 		if (info->client_info.skip) {
 			SGEN_LOG (3, "Skipping dead thread %p, range: %p-%p, size: %zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start);
 			skip_reason = 1;
@@ -2361,13 +2360,13 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
 		if (mono_gc_get_gc_callbacks ()->thread_mark_func && !conservative_stack_mark) {
-			mono_gc_get_gc_callbacks ()->thread_mark_func (info->client_info.runtime_data, info->client_info.stack_start, info->client_info.stack_end, precise, &ctx);
+			mono_gc_get_gc_callbacks ()->thread_mark_func (info->client_info.runtime_data, aligned_stack_start, info->client_info.stack_end, precise, &ctx);
 		} else if (!precise) {
 			if (!conservative_stack_mark) {
 				fprintf (stderr, "Precise stack mark not supported - disabling.\n");
 				conservative_stack_mark = TRUE;
 			}
-			sgen_conservatively_pin_objects_from (info->client_info.stack_start, info->client_info.stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
+			sgen_conservatively_pin_objects_from (aligned_stack_start, info->client_info.stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
 		}
 
 		if (!precise) {
@@ -2407,15 +2406,15 @@ mono_gc_set_stack_end (void *stack_end)
  */
 
 int
-mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr)
+mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
 {
-	return sgen_register_root (start, size, descr, descr ? ROOT_TYPE_NORMAL : ROOT_TYPE_PINNED);
+	return sgen_register_root (start, size, descr, descr ? ROOT_TYPE_NORMAL : ROOT_TYPE_PINNED, source, msg);
 }
 
 int
-mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr)
+mono_gc_register_root_wbarrier (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
 {
-	return sgen_register_root (start, size, descr, ROOT_TYPE_WBARRIER);
+	return sgen_register_root (start, size, descr, ROOT_TYPE_WBARRIER, source, msg);
 }
 
 void
@@ -2569,22 +2568,109 @@ mono_gc_get_los_limit (void)
 	return SGEN_MAX_SMALL_OBJ_SIZE;
 }
 
-void
-mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
+gpointer
+sgen_client_default_metadata (void)
 {
-	sgen_register_disappearing_link (obj, link_addr, track, FALSE);
+	return mono_domain_get ();
+}
+
+gpointer
+sgen_client_metadata_for_object (GCObject *obj)
+{
+	return mono_object_domain (obj);
+}
+
+/**
+ * mono_gchandle_is_in_domain:
+ * @gchandle: a GCHandle's handle.
+ * @domain: An application domain.
+ *
+ * Returns: true if the object wrapped by the @gchandle belongs to the specific @domain.
+ */
+gboolean
+mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
+{
+	MonoDomain *gchandle_domain = sgen_gchandle_get_metadata (gchandle);
+	return domain->domain_id == gchandle_domain->domain_id;
+}
+
+/**
+ * mono_gchandle_free_domain:
+ * @unloading: domain that is unloading
+ *
+ * Function used internally to cleanup any GC handle for objects belonging
+ * to the specified domain during appdomain unload.
+ */
+void
+mono_gchandle_free_domain (MonoDomain *unloading)
+{
+}
+
+static gpointer
+null_link_if_in_domain (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user)
+{
+	MonoDomain *unloading_domain = user;
+	MonoDomain *obj_domain;
+	gboolean is_weak = MONO_GC_HANDLE_TYPE_IS_WEAK (handle_type);
+	if (MONO_GC_HANDLE_IS_OBJECT_POINTER (hidden)) {
+		MonoObject *obj = MONO_GC_REVEAL_POINTER (hidden, is_weak);
+		obj_domain = mono_object_domain (obj);
+	} else {
+		obj_domain = MONO_GC_REVEAL_POINTER (hidden, is_weak);
+	}
+	if (unloading_domain->domain_id == obj_domain->domain_id)
+		return NULL;
+	return hidden;
 }
 
 void
-mono_gc_weak_link_remove (void **link_addr, gboolean track)
+sgen_null_links_for_domain (MonoDomain *domain)
 {
-	sgen_register_disappearing_link (NULL, link_addr, track, FALSE);
+	guint type;
+	for (type = HANDLE_TYPE_MIN; type < HANDLE_TYPE_MAX; ++type)
+		sgen_gchandle_iterate (type, GENERATION_OLD, null_link_if_in_domain, domain);
 }
 
-MonoObject*
-mono_gc_weak_link_get (void **link_addr)
+void
+mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 {
-	return sgen_weak_link_get (link_addr);
+	sgen_gchandle_set_target (gchandle, obj);
+}
+
+void
+sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
+{
+#ifndef DISABLE_PERFCOUNTERS
+	mono_perfcounters->gc_num_handles++;
+#endif
+	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handle_type, handle, obj);
+}
+
+void
+sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
+{
+#ifndef DISABLE_PERFCOUNTERS
+	mono_perfcounters->gc_num_handles--;
+#endif
+	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handle_type, handle, NULL);
+}
+
+void
+sgen_client_ensure_weak_gchandles_accessible (void)
+{
+	/*
+	 * During the second bridge processing step the world is
+	 * running again.  That step processes all weak links once
+	 * more to null those that refer to dead objects.  Before that
+	 * is completed, those links must not be followed, so we
+	 * conservatively wait for bridge processing when any weak
+	 * link is dereferenced.
+	 */
+	/* FIXME: A GC can occur after this check fails, in which case we
+	 * should wait for bridge processing but would fail to do so.
+	 */
+	if (G_UNLIKELY (bridge_processing_in_progress))
+		mono_gc_wait_for_bridge_processing ();
 }
 
 gboolean

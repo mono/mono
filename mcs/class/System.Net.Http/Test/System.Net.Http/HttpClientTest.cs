@@ -607,6 +607,39 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Complete_CustomHeaders_Host ()
+		{
+			bool? failed = null;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				try {
+					Assert.AreEqual ("customhost", request.Headers["Host"], "#1");
+					failed = false;
+				} catch {
+					failed = true;
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				client.DefaultRequestHeaders.Add("Host", "customhost");
+
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		public void Send_Transfer_Encoding_Chunked ()
 		{
 			bool? failed = null;

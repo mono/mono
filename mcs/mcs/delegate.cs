@@ -459,7 +459,6 @@ namespace Mono.CSharp {
 	//
 	public abstract class DelegateCreation : Expression, OverloadResolver.IErrorHandler
 	{
-		bool conditional_access_receiver;
 		protected MethodSpec constructor_method;
 		protected MethodGroupExpr method_group;
 
@@ -522,24 +521,24 @@ namespace Mono.CSharp {
 			return e.CreateExpressionTree (ec);
 		}
 
+		void ResolveConditionalAccessReceiver (ResolveContext rc)
+		{
+			// LAMESPEC: Not sure why this is explicitly disalloed with very odd error message
+			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && method_group.HasConditionalAccess ()) {
+				Error_OperatorCannotBeApplied (rc, loc, "?", method_group.Type);
+			}
+		}
+
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			constructor_method = Delegate.GetConstructor (type);
 
 			var invoke_method = Delegate.GetInvokeMethod (type);
 
-			if (!ec.HasSet (ResolveContext.Options.ConditionalAccessReceiver)) {
-				if (method_group.HasConditionalAccess ()) {
-					conditional_access_receiver = true;
-					ec.Set (ResolveContext.Options.ConditionalAccessReceiver);
-				}
-			}
+			ResolveConditionalAccessReceiver (ec);
 
 			Arguments arguments = CreateDelegateMethodArguments (ec, invoke_method.Parameters, invoke_method.Parameters.Types, loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, this, OverloadResolver.Restrictions.CovariantDelegate);
-
-			if (conditional_access_receiver)
-				ec.With (ResolveContext.Options.ConditionalAccessReceiver, false);
 
 			if (method_group == null)
 				return null;
@@ -596,9 +595,6 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (conditional_access_receiver)
-				ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
-
 			if (method_group.InstanceExpression == null) {
 				ec.EmitNull ();
 			} else {
@@ -617,18 +613,12 @@ namespace Mono.CSharp {
 			}
 
 			ec.Emit (OpCodes.Newobj, constructor_method);
-
-			if (conditional_access_receiver)
-				ec.CloseConditionalAccess (null);
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			base.FlowAnalysis (fc);
 			method_group.FlowAnalysis (fc);
-
-			if (conditional_access_receiver)
-				fc.ConditionalAccessEnd ();
 		}
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
