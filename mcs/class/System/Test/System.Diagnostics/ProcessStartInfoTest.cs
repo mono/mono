@@ -8,6 +8,8 @@
 // (c) 2007 Novell, Inc. (http://www.novell.com)
 // 
 
+#if MONO_FEATURE_PROCESS_START
+
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -62,3 +64,5 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
+
+#endif // MONO_FEATURE_PROCESS_START

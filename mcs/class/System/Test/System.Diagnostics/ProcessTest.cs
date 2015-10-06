@@ -104,6 +104,7 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[Test] // Start ()
 		public void Start1_FileName_Empty ()
 		{
@@ -841,7 +842,6 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (1, exitedCalledCounter);
 		}
 
-		
 		ProcessStartInfo GetCrossPlatformStartInfo ()
 		{
 			if (RunningOnUnix) {
@@ -855,6 +855,7 @@ namespace MonoTests.System.Diagnostics
 			} else
 				return new ProcessStartInfo ("help", "");
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		[Test]
 		public void ProcessName_NotStarted ()
@@ -876,6 +877,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
 		
+#if MONO_FEATURE_PROCESS_START
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void ProcessName_AfterExit ()
@@ -906,6 +908,7 @@ namespace MonoTests.System.Diagnostics
 			
 			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		[Test]
 		public void Handle_ThrowsOnNotStarted ()
@@ -923,6 +926,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsFalse (Process.GetCurrentProcess ().HasExited);
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[Test]
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void DisposeWithDisposedStreams ()
@@ -952,6 +956,7 @@ namespace MonoTests.System.Diagnostics
 					p.StandardInput.Write ('x');
 			}
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		[Test]
 		public void Modules () {
