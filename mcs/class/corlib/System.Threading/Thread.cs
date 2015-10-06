@@ -461,6 +461,7 @@ namespace System.Threading {
 			}
 		}
 
+#if MONO_FEATURE_THREAD_ABORT
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Abort_internal (InternalThread thread, object stateInfo);
 
@@ -488,6 +489,7 @@ namespace System.Threading {
 		void ClearAbortReason ()
 		{
 		}
+#endif // MONO_FEATURE_THREAD_ABORT
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static void SpinWait_nop ();

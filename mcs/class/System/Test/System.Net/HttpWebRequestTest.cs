@@ -1468,7 +1468,11 @@ namespace MonoTests.System.Net
 			Thread.Sleep (three_seconds_in_milliseconds * 3);
 
 			if (timeoutWorker.End == null) {
+#if MONO_FEATURE_THREAD_ABORT
 				thread.Abort ();
+#else
+				thread.Interrupt ();
+#endif
 				Assert.Fail ("Thread finished after triple the timeout specified has passed");
 			}
 
