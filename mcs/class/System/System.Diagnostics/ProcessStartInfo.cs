@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if MONO_FEATURE_PROCESS_START
+
 using Microsoft.Win32;
 using System.Collections;
 using System.Collections.Specialized;
@@ -330,3 +332,5 @@ namespace System.Diagnostics
 		}
 	}
 }
+
+#endif // MONO_FEATURE_PROCESS_START

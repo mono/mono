@@ -201,6 +201,7 @@ namespace Mono.CSharp
 
 		public static string GetPackageFlags (string packages, Report report)
 		{
+#if MONO_FEATURE_PROCESS_START
 			ProcessStartInfo pi = new ProcessStartInfo ();
 			pi.FileName = "pkg-config";
 			pi.RedirectStandardOutput = true;
@@ -239,6 +240,9 @@ namespace Mono.CSharp
 
 			p.Close ();
 			return pkgout;
+#else
+			throw new NotSupportedException ("Process.Start is not supported on this platform.");
+#endif // MONO_FEATURE_PROCESS_START
 		}
 
 		//
