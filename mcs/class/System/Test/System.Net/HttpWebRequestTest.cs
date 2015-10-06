@@ -2333,7 +2333,7 @@ namespace MonoTests.System.Net
 					byte[] readBuffer = new byte[int.MaxValue - near2GBStartPosition];
 					Assert.AreEqual (webResponseStream.Read (readBuffer, 0, readBuffer.Length), readBuffer.Length, "#3");
 					readyGetLastPortionEvent.Set ();
-					Assert.Greater (webResponseStream.Read (readBuffer, 0, readBuffer.Length), 0, "#4");
+					Assert.IsTrue (webResponseStream.Read (readBuffer, 0, readBuffer.Length) > 0);
 					readyGetLastPortionEvent.Set ();
 					
 					webResponse.Close();
