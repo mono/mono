@@ -819,7 +819,9 @@ namespace System.Runtime.Remoting
 					}
 					catch (Exception e) {
 						if (e is ThreadAbortException) {
+#if MONO_FEATURE_THREAD_ABORT
 							Thread.ResetAbort ();
+#endif
 							retry = 5;
 							ex = e;
 						}
@@ -840,7 +842,9 @@ namespace System.Runtime.Remoting
 			catch (Exception tex)
 			{
 				byte[] data = SerializeExceptionData (tex);
+#if MONO_FEATURE_THREAD_ABORT
 				Thread.ResetAbort ();
+#endif
 				return data;
 			}
 		}

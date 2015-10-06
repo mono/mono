@@ -192,8 +192,13 @@ namespace Mono.CSharp
 			if (!inited || !invoking)
 				return;
 			
-			if (invoke_thread != null)
+			if (invoke_thread != null) {
+#if MONO_FEATURE_THREAD_ABORT
 				invoke_thread.Abort ();
+#else
+				invoke_thread.Interrupt ();
+#endif
+			}
 		}
 
 		/// <summary>
@@ -367,9 +372,14 @@ namespace Mono.CSharp
 				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
 				compiled (ref retval);
+#if MONO_FEATURE_THREAD_ABORT
 			} catch (ThreadAbortException e){
 				Thread.ResetAbort ();
 				Console.WriteLine ("Interrupted!\n{0}", e);
+#else
+			} catch (ThreadInterruptedException e) {
+				Console.WriteLine ("Interrupted!\n{0}", e);
+#endif
 			} finally {
 				invoking = false;
 

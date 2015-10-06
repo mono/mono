@@ -142,6 +142,7 @@ namespace MonoTests.System.Diagnostics {
 			new StackTrace (t, true);
 		}
 
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
 		[Ignore ("Not supported in Mono")]
 		public void StackTrace_Thread_Suspended ()
@@ -151,6 +152,7 @@ namespace MonoTests.System.Diagnostics {
 			t.Suspend ();
 			new StackTrace (t, true);
 		}
+#endif
 
 		[Test]
 		public void FrameCount ()
