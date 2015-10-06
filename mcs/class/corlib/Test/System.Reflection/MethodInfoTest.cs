@@ -205,6 +205,7 @@ namespace MonoTests.System.Reflection
 			return (int*) 0;
 		}
 
+#if MONO_FEATURE_THREAD_ABORT
 		[Test] // bug #81538
 		public void InvokeThreadAbort ()
 		{
@@ -223,6 +224,7 @@ namespace MonoTests.System.Reflection
 		{
 			Thread.CurrentThread.Abort ();
 		}
+#endif
 
 		[Test] // bug #76541
 		public void ToStringByRef ()
