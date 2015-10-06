@@ -35,7 +35,7 @@ net_4_x_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_S
 
 monodroid_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
 
-xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
+xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
 xammac_net_4_5_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS) $(reflection_PARALLEL_SUBDIRS)
 
 monotouch_watch_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
