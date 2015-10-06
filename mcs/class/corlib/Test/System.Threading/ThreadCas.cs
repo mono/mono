@@ -69,6 +69,7 @@ namespace MonoCasTests.System.Threading {
 
 		// test Demand by denying the caller of the required privileges
 
+#if MONO_FEATURE_THREAD_ABORT
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -84,7 +85,8 @@ namespace MonoCasTests.System.Threading {
 		{
 			Thread.CurrentThread.Abort (new object [0]);
 		}
-
+#endif
+		
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -101,6 +103,7 @@ namespace MonoCasTests.System.Threading {
 			Thread.CurrentThread.Interrupt ();
 		}
 
+#if MONO_FEATURE_THREAD_ABORT
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -108,7 +111,9 @@ namespace MonoCasTests.System.Threading {
 		{
 			Thread.ResetAbort ();
 		}
+#endif
 
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlThread = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -124,6 +129,7 @@ namespace MonoCasTests.System.Threading {
 		{
 			Thread.CurrentThread.Suspend ();
 		}
+#endif
 
 		// we use reflection to call Mutex as it's named constructors are protected by
 		// a LinkDemand (which will be converted into full demand, i.e. a stack walk) 

@@ -46,6 +46,14 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
 
+ifndef NO_THREAD_ABORT
+TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
+endif
+
+ifndef NO_THREAD_SUSPEND_RESUME
+TEST_MCS_FLAGS += -d:MONO_FEATURE_THREAD_SUSPEND_RESUME
+endif
+
 EXTRA_DISTFILES = \
 	System.Web.Services.Description/web-reference.xsd	\
 	System.Web.Services.Description/wsdl-1.1.xsd		\

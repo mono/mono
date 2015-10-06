@@ -341,7 +341,11 @@ namespace MonoTests.System.Net {
 			Thread thread = new Thread (ReadToEnd);
 			thread.Start ();
 			if (test_evt.WaitOne (3000, false) == false) {
+#if MONO_FEATURE_THREAD_ABORT
 				thread.Abort ();
+#else
+				thread.Interrupt ();
+#endif
 				test_evt.Close ();
 				Assert.IsTrue (false, "Timed out");
 			}
