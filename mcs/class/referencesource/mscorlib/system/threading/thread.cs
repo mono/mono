@@ -558,7 +558,7 @@ namespace System.Threading {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void AbortInternal();
 #endif
-#if !FEATURE_CORECLR || MONO
+#if (!FEATURE_CORECLR && !MONO) || MONO_FEATURE_THREAD_ABORT
         /*=========================================================================
         ** Resets a thread abort.
         ** Should be called by trusted code only
@@ -578,7 +578,8 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void ResetAbortNative();
-
+#endif
+#if (!FEATURE_CORECLR && !MONO) || MONO_FEATURE_THREAD_SUSPEND_RESUME
         /*=========================================================================
         ** Suspends the thread. If the thread is already suspended, this call has
         ** no effect.
