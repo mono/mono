@@ -983,6 +983,8 @@ namespace System.Diagnostics {
 		//
 		static void CreatePipe (out IntPtr read, out IntPtr write, bool writeDirection)
 		{
+			MonoIOError error;
+
 			//
 			// Creates read/write pipe from parent -> child perspective
 			// a child process uses same descriptors after fork. That's
@@ -1003,25 +1005,23 @@ namespace System.Diagnostics {
 			//
 			// It can still be tricky for predefined descriptiors http://unixwiz.net/techtips/remap-pipe-fds.html
 			//
-			var ret = MonoIO.CreatePipe (out read, out write);
-			if (!ret)
-				throw new IOException ("Error creating process pipe");
+			if (!MonoIO.CreatePipe (out read, out write, out error))
+				throw MonoIO.GetException (error);
 
 			if (IsWindows) {
 				const int DUPLICATE_SAME_ACCESS = 0x00000002;
 				var tmp = writeDirection ? write : read;
 
-				ret = MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, tmp,
-					Process.GetCurrentProcess ().Handle, out tmp, 0, 0, DUPLICATE_SAME_ACCESS);
-				if (!ret)
-					return;
+				if (!MonoIO.DuplicateHandle (Process.GetCurrentProcess ().Handle, tmp, Process.GetCurrentProcess ().Handle, out tmp, 0, 0, DUPLICATE_SAME_ACCESS, out error))
+					throw MonoIO.GetException (error);
 
-				MonoIOError error;
 				if (writeDirection) {
-					MonoIO.Close (write, out error);
+					if (!MonoIO.Close (write, out error))
+						throw MonoIO.GetException (error);
 					write = tmp;
 				} else {
-					MonoIO.Close (read, out error);
+					if (!MonoIO.Close (read, out error))
+						throw MonoIO.GetException (error);
 					read = tmp;
 				}
 			}
