@@ -1744,13 +1744,14 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 }
 
 static void
-emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
+emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int child_class_min_align)
 {
 	MonoMarshalType *info;
 	int i;
+	int last_field_index = -1;
 
 	if (klass->parent)
-		emit_struct_conv(mb, klass->parent, to_object);
+		emit_struct_conv_full(mb, klass->parent, to_object, klass->min_align);
 
 	info = mono_marshal_load_type_info (klass);
 
@@ -1759,15 +1760,23 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 
 	if (klass->blittable) {
 		int msize = mono_class_value_size (klass, NULL);
+		int usize = msize;
 		g_assert (msize == info->native_size);
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
-		mono_mb_emit_icon (mb, msize);
+		mono_mb_emit_icon (mb, usize);
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
 
+		/* Make sure managed src pointer aligns with child struct address (if any)*/
+		if(child_class_min_align)
+		{
+			msize += child_class_min_align - 1;
+			msize &= ~(child_class_min_align - 1);
+		}
+		
 		mono_mb_emit_add_to_local (mb, 0, msize);
-		mono_mb_emit_add_to_local (mb, 1, msize);
+		mono_mb_emit_add_to_local (mb, 1, usize);
 		return;
 	}
 
@@ -1777,6 +1786,19 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 										 mono_type_full_name (&klass->byval_arg));
 			mono_mb_emit_exception_marshal_directive (mb, msg);
 			return;
+		}
+	}
+	
+	last_field_index = -1;
+
+	for (i = info->num_fields-1; i >= 0; i--)
+	{
+		MonoType *ftype = info->fields [i].field->type;
+
+		if (!(ftype->attrs & FIELD_ATTRIBUTE_STATIC))
+		{
+			last_field_index = i;
+			break;
 		}
 	}
 
@@ -1942,6 +1964,16 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 			mono_mb_emit_stloc (mb, 1);
 		}
 		}
+		
+		if(i == last_field_index)
+		{
+			/* Make sure managed src pointer aligns with child struct address (if any) */
+			if(child_class_min_align)
+			{
+				msize += child_class_min_align - 1;
+				msize &= ~(child_class_min_align - 1);
+			}
+		}
 
 		if (to_object) {
 			mono_mb_emit_add_to_local (mb, 0, usize);
@@ -1951,6 +1983,12 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
 			mono_mb_emit_add_to_local (mb, 1, usize);
 		}				
 	}
+}
+
+static void
+emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object)
+{
+	emit_struct_conv_full(mb, klass, to_object, 0);
 }
 
 static void
