@@ -71,7 +71,8 @@ namespace Microsoft.Build.Utilities
 					// be a complete replacement for 4.0.
 					Path.Combine (lib_mono_dir, "net_4_x"),
 					Path.Combine (lib_mono_dir, "net_4_x"),
-					Path.Combine (lib_mono_dir, "net_4_x")
+					Path.Combine (lib_mono_dir, "net_4_x"),
+					Path.Combine (lib_mono_dir, "net_4_x")					
 				};	
 			} else if (runningOnDotNet) {
 				mono_dir = new string [] {
@@ -81,7 +82,8 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "v3.5"),
 					Path.Combine (lib_mono_dir, "v4.0.30319"),
 					Path.Combine (lib_mono_dir, "v4.0.30319"),
-					Path.Combine (lib_mono_dir, "v4.0.30319")
+					Path.Combine (lib_mono_dir, "v4.0.30319"),
+					Path.Combine (lib_mono_dir, "v4.0.30319")					
 				};
 			} else {
 				mono_dir = new string [] {
@@ -93,6 +95,7 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "4.5"),
 					Path.Combine (lib_mono_dir, "4.5"),
 					Path.Combine (lib_mono_dir, "4.5"),
+					Path.Combine (lib_mono_dir, "4.5")
 				};
 			}
 

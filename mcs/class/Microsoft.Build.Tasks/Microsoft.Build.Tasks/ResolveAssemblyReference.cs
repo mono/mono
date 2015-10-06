@@ -626,6 +626,13 @@ namespace Microsoft.Build.Tasks {
 		public ITaskItem[] CopyLocalFiles {
 			get { return copyLocalFiles; }
 		}
+
+#if XBUILD_14
+		[Output]
+		public string DependsOnSystemRuntime {
+			get; private set;
+		}
+#endif
 		
 		[Output]
 		public ITaskItem[] FilesWritten {
