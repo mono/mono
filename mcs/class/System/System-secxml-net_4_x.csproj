@@ -914,11 +914,9 @@
     <Compile Include="System.Net.Sockets\SelectMode.cs" />
     <Compile Include="System.Net.Sockets\SendPacketsElement.cs" />
     <Compile Include="System.Net.Sockets\Socket.cs" />
-    <Compile Include="System.Net.Sockets\SocketAsyncCallback.cs" />
     <Compile Include="System.Net.Sockets\SocketAsyncEventArgs.cs" />
     <Compile Include="System.Net.Sockets\SocketAsyncOperation.cs" />
     <Compile Include="System.Net.Sockets\SocketAsyncResult.cs" />
-    <Compile Include="System.Net.Sockets\SocketAsyncWorker.cs" />
     <Compile Include="System.Net.Sockets\SocketError.cs" />
     <Compile Include="System.Net.Sockets\SocketException.cs" />
     <Compile Include="System.Net.Sockets\SocketFlags.cs" />

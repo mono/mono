@@ -435,11 +435,9 @@ System.Net.Sockets/SafeSocketHandle.cs
 System.Net.Sockets/SelectMode.cs
 System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
-System.Net.Sockets/SocketAsyncCallback.cs
 System.Net.Sockets/SocketAsyncEventArgs.cs
 System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketAsyncResult.cs
-System.Net.Sockets/SocketAsyncWorker.cs
 System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs
@@ -613,6 +611,8 @@ Mono.Net.Dns/ResolverError.cs
 Mono.Net.Dns/SimpleResolverEventArgs.cs
 System.Net/DnsAsyncResult.cs
 System.Windows.Input/ICommand.cs
+
+System/IOSelector.cs
 
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/BinaryCompatibility.cs
