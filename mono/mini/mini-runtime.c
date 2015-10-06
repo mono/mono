@@ -3480,6 +3480,9 @@ register_icalls (void)
 #ifdef TARGET_IOS
 	register_icall (pthread_getspecific, "pthread_getspecific", "ptr ptr", TRUE);
 #endif
+
+	register_icall (mono_vtable_get_reflection_type, "mono_vtable_get_reflection_type", "object ptr", FALSE);
+
 }
 
 MonoJitStats mono_jit_stats = {0};

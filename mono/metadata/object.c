@@ -2160,20 +2160,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 				interface_offsets [i] = callbacks.get_imt_trampoline (i);
 	}
 
-	/*
-	 * FIXME: Is it ok to allocate while holding the domain/loader locks ? If not, we can release them, allocate, then
-	 * re-acquire them and check if another thread has created the vtable in the meantime.
-	 */
-	/* Special case System.MonoType to avoid infinite recursion */
-	if (class != mono_defaults.monotype_class) {
-		/*FIXME check for OOM*/
-		vt->type = mono_type_get_object (domain, &class->byval_arg);
-		if (mono_object_get_class (vt->type) != mono_defaults.monotype_class)
-			/* This is unregistered in
-			   unregister_vtable_reflection_type() in
-			   domain.c. */
-			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type, MONO_ROOT_SOURCE_REFLECTION, "vtable reflection type");
-	}
+	vt->type_handle = (guint32)0;
 
 	mono_vtable_set_is_remote (vt, mono_class_is_contextbound (class));
 
@@ -2219,15 +2206,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 		class->runtime_info = runtime_info;
 	}
 
-	if (class == mono_defaults.monotype_class) {
-		/*FIXME check for OOM*/
-		vt->type = mono_type_get_object (domain, &class->byval_arg);
-		if (mono_object_get_class (vt->type) != mono_defaults.monotype_class)
-			/* This is unregistered in
-			   unregister_vtable_reflection_type() in
-			   domain.c. */
-			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type, MONO_ROOT_SOURCE_REFLECTION, "vtable reflection type");
-	}
+	vt->type_handle = (guint32)0;
 
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
@@ -3132,6 +3111,17 @@ mono_vtable_get_static_field_data (MonoVTable *vt)
 	if (!vt->has_static_fields)
 		return NULL;
 	return vt->vtable [vt->klass->vtable_size];
+}
+
+MonoReflectionType *
+mono_vtable_get_reflection_type (MonoVTable *vt)
+{
+	if (!vt->type_handle) {
+		MonoReflectionType *type = mono_type_get_object (vt->domain, &vt->klass->byval_arg);
+		vt->type_handle = mono_gchandle_new ((MonoObject *)type, FALSE);
+		return type;
+	}
+	return (MonoReflectionType *)mono_gchandle_get_target (vt->type_handle);
 }
 
 static guint8*

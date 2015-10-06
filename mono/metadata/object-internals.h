@@ -1610,6 +1610,9 @@ mono_field_static_get_value_for_thread (MonoInternalThread *thread, MonoVTable *
 MONO_API void *
 mono_vtable_get_static_field_data (MonoVTable *vt);
 
+MonoReflectionType *
+mono_vtable_get_reflection_type (MonoVTable *vt);
+
 char *
 mono_string_to_utf8_ignore (MonoString *s);
 

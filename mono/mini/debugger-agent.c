@@ -9204,7 +9204,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	switch (command) {
 	case CMD_OBJECT_REF_GET_TYPE:
 		/* This handles transparent proxies too */
-		buffer_add_typeid (buf, obj->vtable->domain, mono_class_from_mono_type (((MonoReflectionType*)obj->vtable->type)->type));
+		buffer_add_typeid (buf, obj->vtable->domain, mono_class_from_mono_type (mono_vtable_get_reflection_type (obj->vtable)->type));
 		break;
 	case CMD_OBJECT_REF_GET_VALUES:
 		len = decode_int (p, &p, end);
@@ -9294,7 +9294,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_domainid (buf, obj->vtable->domain);
 		break;
 	case CMD_OBJECT_REF_GET_INFO:
-		buffer_add_typeid (buf, obj->vtable->domain, mono_class_from_mono_type (((MonoReflectionType*)obj->vtable->type)->type));
+		buffer_add_typeid (buf, obj->vtable->domain, mono_class_from_mono_type (mono_vtable_get_reflection_type (obj->vtable)->type));
 		buffer_add_domainid (buf, obj->vtable->domain);
 		break;
 	default:
