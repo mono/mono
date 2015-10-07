@@ -104,24 +104,24 @@ reset:
 	@make check-versions RESET_VERSIONS=1
 
 __bump-version-%:
-	@if [ "$(REV)" == "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
-	@if [ "$(COMMIT)" == "1" ]; then git pull; fi
+	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
+	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	ruby versions.rb set-rev $* $(REV)
-	@if [ "$(COMMIT)" == "1" ]; then echo "Bump $* to pick up $(REV)." > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
+	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $(REV)." > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
 
 __bump-branch-%:
-	@if [ "$(BRANCH)" == "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
+	@if [ "$(BRANCH)" = "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
 	@if [ "$(REMOTE_BRANCH)" == "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
-	@if [ "$(COMMIT)" == "1" ]; then git pull; fi
+	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	ruby versions.rb set-branch $* $(BRANCH)
 	ruby versions.rb set-remote-branch $* $(REMOTE_BRANCH)
-	@if [ "$(COMMIT)" == "1" ]; then echo "Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
+	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
 
 __bump-current-version-%:
-	@if [ "$(COMMIT)" == "1" ]; then git pull; fi
+	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	REV=$(shell cd $(TOP)/../$* && git log -1 --pretty=format:%H); \
-	ruby versions.rb set-rev $* $$REV
-	if [ "$(COMMIT)" == "1" ]; then echo "Bump $* to pick up $$REV:" > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
+	ruby versions.rb set-rev $* $$REV; \
+	if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $$REV:" > msg; echo >> msg; cat msg | git commit -F - $(README); rm -f msg; fi
 
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
