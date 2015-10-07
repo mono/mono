@@ -1348,7 +1348,6 @@ namespace System.Diagnostics {
 		[StructLayout (LayoutKind.Sequential)]
 		sealed class ProcessAsyncReader : IOAsyncResult
 		{
-			// These fields are not in SocketAsyncResult
 			Process process;
 			IntPtr handle;
 			Stream stream;
@@ -1368,10 +1367,10 @@ namespace System.Diagnostics {
 
 			public void BeginRead ()
 			{
-				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, s => AddInput ((ProcessAsyncReader) s), this));
+				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
 			}
 
-			public void AddInput (ProcessAsyncReader reader)
+			public void AddInput ()
 			{
 				lock (this) {
 					int nread = stream.Read (buffer, 0, buffer.Length);
@@ -1398,7 +1397,7 @@ namespace System.Diagnostics {
 
 					Flush (false);
 
-					IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, s => AddInput ((ProcessAsyncReader) s), this));
+					IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
 				}
 			}
 
@@ -1432,7 +1431,8 @@ namespace System.Diagnostics {
 				}
 			}
 
-			public void Close () {
+			public void Close ()
+			{
 				IOSelector.Remove (handle);
 				stream.Close ();
 			}
