@@ -3,8 +3,10 @@
 // Authors:
 // 	Zoltan Varga (vargaz@freemail.hu)
 //  Patrik Torstensson
+//  Aleksey Kliger (aleksey@xamarin.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2015 Xamarin, Inc. (http://www.xamarin.com)
 // 
 
 using NUnit.Framework;
@@ -3901,6 +3903,43 @@ namespace MonoTests.System
 				}, false, false);
 			Assert.AreEqual (typeof (MyRealEnum).MakePointerType (), res, "#12");
 
+			tname = typeof (MyRealEnum).FullName + "*&";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakePointerType ().MakeByRefType(),
+					 res, "#13");
+
+			tname = typeof (MyRealEnum).FullName + "[,]&";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakeArrayType (2).MakeByRefType (),
+					 res, "#14");
+
+			tname = typeof (MyRealEnum).FullName + "*[]";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakePointerType().MakeArrayType(),
+					 res, "#15");
+
+			// not a very useful type, but ought to be parsed correctly
+			tname = typeof (MyRealEnum).FullName + "[]**[]*&";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakeArrayType().MakePointerType().MakePointerType().MakeArrayType().MakePointerType().MakeByRefType(),
+					 res, "#16");
+
 			// assembly resolve without type resolve
 			res = Type.GetType ("System.String,mscorlib", delegate (AssemblyName aname) { return typeof (int).Assembly; }, null);
 			Assert.AreEqual (typeof (string), res);
@@ -3997,6 +4036,7 @@ namespace MonoTests.System
 		[Test]
 		public void NewGetTypeErrors () {
 			MustANE (null);
+			MustAE ("!@#$%^&*");
 			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}&&", typeof (MyRealEnum).FullName));
