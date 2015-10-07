@@ -1,0 +1,18 @@
+[
+  {
+    "name": "mono-extensions",
+    "directory": "mono-extensions",
+    "url": "git@github.com:xamarin/mono-extensions.git",
+    "branch": "master",
+    "remote-branch": "origin/master",
+    "rev": "45d7121a6d2e717c85522bf8c4cff16bdc9debda"
+  },
+  {
+    "name": "llvm",
+    "directory": "llvm",
+    "url": "git@github.com:mono/llvm.git",
+    "branch": "master",
+    "remote-branch": "origin/master",
+    "rev": "e1b4ee2f4e2ae2b9ebc402255972cec110878011"
+  }
+]
