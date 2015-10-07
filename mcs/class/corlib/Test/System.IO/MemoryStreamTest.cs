@@ -334,39 +334,44 @@ namespace MonoTests.System.IO
 
 			wh.Close ();
 		}
-		
+
 		[Test]
 		public void BeginReadIsBlockingNextRead ()
 		{
 			byte[] readBytes = new byte[5];
 			byte[] readBytes2 = new byte[3];
-			var wh = new ManualResetEvent (false);
-			var end = new ManualResetEvent (false);
+			ManualResetEvent begin_read_unblock = new ManualResetEvent (false);
+			ManualResetEvent begin_read_blocking = new ManualResetEvent (false);
+			Task begin_read_task = null;
 
-			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
-				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			try {
+				using (var testStream = new SignaledMemoryStream (testStreamData, begin_read_unblock)) {
+					IAsyncResult begin_read_1_ares = testStream.BeginRead (readBytes, 0, 5, null, null);
 
-				bool blocking = true;
-				ThreadPool.QueueUserWorkItem (l => {
-					var res2 = testStream.BeginRead (readBytes2, 0, 3, null, null);
-					blocking = false;
-					Assert.IsTrue (res2.AsyncWaitHandle.WaitOne (2000), "#10");
-					Assert.IsTrue (res2.IsCompleted, "#11");
-					Assert.AreEqual (3, testStream.EndRead (res2), "#12");
-					Assert.AreEqual (95, readBytes2[0], "#13");
-					end.Set ();
-				});
+					begin_read_task = Task.Factory.StartNew (() => {
+						IAsyncResult begin_read_2_ares = testStream.BeginRead (readBytes2, 0, 3, null, null);
+						begin_read_blocking.Set ();
 
-				Assert.IsFalse (res.IsCompleted, "#1");
-				Thread.Sleep (500);	// Lame but don't know how to wait for another BeginRead which does not return
-				Assert.IsTrue (blocking, "#2");
+						Assert.IsTrue (begin_read_2_ares.AsyncWaitHandle.WaitOne (2000), "#10");
+						Assert.IsTrue (begin_read_2_ares.IsCompleted, "#11");
+						Assert.AreEqual (3, testStream.EndRead (begin_read_2_ares), "#12");
+						Assert.AreEqual (95, readBytes2[0], "#13");
+					});
 
-				wh.Set ();
-				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
-				Assert.IsTrue (res.IsCompleted, "#4");
-				Assert.AreEqual (5, testStream.EndRead (res), "#5");
-				Assert.IsTrue (end.WaitOne (2000), "#6");
-				Assert.AreEqual (100, readBytes[0], "#7");
+					Assert.IsFalse (begin_read_1_ares.IsCompleted, "#1");
+					Assert.IsFalse (begin_read_blocking.WaitOne (500), "#2");
+
+					begin_read_unblock.Set ();
+
+					Assert.IsTrue (begin_read_1_ares.AsyncWaitHandle.WaitOne (2000), "#3");
+					Assert.IsTrue (begin_read_1_ares.IsCompleted, "#4");
+					Assert.AreEqual (5, testStream.EndRead (begin_read_1_ares), "#5");
+					Assert.IsTrue (begin_read_task.Wait (2000), "#6");
+					Assert.AreEqual (100, readBytes[0], "#7");
+				}
+			} finally {
+				if (begin_read_task != null)
+					begin_read_task.Wait ();
 			}
 		}
 
@@ -395,34 +400,38 @@ namespace MonoTests.System.IO
 		{
 			byte[] readBytes = new byte[5];
 			byte[] readBytes2 = new byte[3] { 1, 2, 3 };
-			var wh = new ManualResetEvent (false);
-			var end = new ManualResetEvent (false);
+			ManualResetEvent begin_read_unblock = new ManualResetEvent (false);
+			ManualResetEvent begin_write_blocking = new ManualResetEvent (false);
+			Task begin_write_task = null;
 
-			using (var testStream = new SignaledMemoryStream (testStreamData, wh)) {
-				var res = testStream.BeginRead (readBytes, 0, 5, null, null);
+			try {
+				using (MemoryStream stream = new SignaledMemoryStream (testStreamData, begin_read_unblock)) {
+					IAsyncResult begin_read_ares = stream.BeginRead (readBytes, 0, 5, null, null);
 
-				bool blocking = true;
-				ThreadPool.QueueUserWorkItem (l => {
-					var res2 = testStream.BeginWrite (readBytes2, 0, 3, null, null);
-					blocking = false;
-					Assert.IsTrue (res2.AsyncWaitHandle.WaitOne (2000), "#10");
-					Assert.IsTrue (res2.IsCompleted, "#11");
-					testStream.EndWrite (res2);
-					end.Set ();
-				});
+					begin_write_task = Task.Factory.StartNew (() => {
+						var begin_write_ares = stream.BeginWrite (readBytes2, 0, 3, null, null);
+						begin_write_blocking.Set ();
+						Assert.IsTrue (begin_write_ares.AsyncWaitHandle.WaitOne (2000), "#10");
+						Assert.IsTrue (begin_write_ares.IsCompleted, "#11");
+						stream.EndWrite (begin_write_ares);
+					});
 
-				Assert.IsFalse (res.IsCompleted, "#1");
-				Thread.Sleep (500);	// Lame but don't know how to wait for another BeginWrite which does not return
-				Assert.IsTrue (blocking, "#2");
+					Assert.IsFalse (begin_read_ares.IsCompleted, "#1");
+					Assert.IsFalse (begin_write_blocking.WaitOne (500), "#2");
 
-				wh.Set ();
-				Assert.IsTrue (res.AsyncWaitHandle.WaitOne (2000), "#3");
-				Assert.IsTrue (res.IsCompleted, "#4");
-				Assert.AreEqual (5, testStream.EndRead (res), "#5");
-				Assert.IsTrue (end.WaitOne (2000), "#6");
+					begin_read_unblock.Set ();
+
+					Assert.IsTrue (begin_read_ares.AsyncWaitHandle.WaitOne (2000), "#3");
+					Assert.IsTrue (begin_read_ares.IsCompleted, "#4");
+					Assert.AreEqual (5, stream.EndRead (begin_read_ares), "#5");
+					Assert.IsTrue (begin_write_task.Wait (2000), "#6");
+				}
+			} finally {
+				if (begin_write_task != null)
+					begin_write_task.Wait ();
 			}
 		}
-		
+
 		[Test]
 		public void BeginWrite ()
 		{
