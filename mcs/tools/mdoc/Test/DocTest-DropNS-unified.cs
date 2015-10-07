@@ -30,4 +30,9 @@ namespace MyNamespace {
 		public string Name {get;set;}
 	}
 	#endif
+
+	#if MULTITEST
+	public class OnlyInMulti {
+	}
+	#endif
 }

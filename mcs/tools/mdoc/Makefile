@@ -60,6 +60,9 @@ EXTRA_DISTFILES = \
 	$(MDOC_RESOURCES) \
 	$(MDOC_TEST_FILES)
 
+MULTI-CLASSIC = Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-multitest.dll
+MULTI-UNIFIED = Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-unified-multitest.dll
+
 $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
 
 PROGRAM_COMPILE = $(CSCOMPILE) -platform:x86
@@ -107,6 +110,14 @@ Test/DocTest-DropNS-classic.dll:
 
 Test/DocTest-DropNS-unified.dll:
 	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
+
+Test/DocTest-DropNS-unified-multitest.dll:
+	rm -f $@
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs /define:MULTITEST
+
+Test/DocTest-DropNS-classic-multitest.dll:
+	rm -f $@
+	$(CSCOMPILE) $(TEST_CSCFLAGS) -debug -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs /define:MULTITEST
 
 Test/DocTest-DropNS-unified-deletetest.dll:
 	rm -f Test/DocTest-DropNS-unified-deletetest.dll
@@ -166,6 +177,23 @@ check-monodocer-dropns-classic: $(PROGRAM)
 	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
 	$(MAKE) update-monodocer-dropns-unified
 	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
+
+check-monodocer-dropns-multi: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MAKE) Test/DocTest-DropNS-classic-multitest.dll
+	$(MAKE) Test/DocTest-DropNS-unified-multitest.dll
+
+	# mdoc update for both classic and unified
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	
+	# now run it again to verify idempotency
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	
+	diff --exclude=.svn -rup Test/en.expected-dropns-multi Test/en.actual
 
 check-monodocer-dropns-delete: $(PROGRAM)
 	-rm -Rf Test/en.actual
@@ -370,7 +398,8 @@ check-doc-tools: check-monodocer-since \
 	check-monodocer-dropns-classic-withsecondary \
 	check-monodocer-dropns-delete \
 	check-monodocer-internal-interface \
-	check-monodocer-enumerations
+	check-monodocer-enumerations \
+	check-monodocer-dropns-multi
 
 check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \
