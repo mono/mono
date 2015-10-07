@@ -1532,15 +1532,23 @@ namespace MonoTests.System.IO
 		static IAsyncResult DoBeginWrite(Stream stream, ManualResetEvent mre, byte[] RandomBuffer)
 		{
 			return stream.BeginWrite (RandomBuffer, 0, RandomBuffer.Length, ar => {
-				stream.EndWrite (ar);
+				IAsyncResult begin_write_recursive_ares;
 
-				// we don't supply an ManualResetEvent so this will throw an NRE on the second run
-				// which nunit-console will ignore (but other test runners don't like that)
-				if (mre == null)
-					return;
+				try {
+					stream.EndWrite (ar);
 
-				DoBeginWrite (stream, null, RandomBuffer).AsyncWaitHandle.WaitOne ();
-				mre.Set ();
+					// we don't supply an ManualResetEvent so this will throw an NRE on the second run
+					// which nunit-console will ignore (but other test runners don't like that)
+					if (mre == null)
+						return;
+
+					begin_write_recursive_ares = DoBeginWrite (stream, null, RandomBuffer);
+					begin_write_recursive_ares.AsyncWaitHandle.WaitOne ();
+
+					mre.Set ();
+				} catch (ObjectDisposedException e) {
+					Console.WriteLine ("stream was disposed: {0}", e);
+				}
 			}, null);
 		}
 
@@ -1549,12 +1557,19 @@ namespace MonoTests.System.IO
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
 			DeleteFile (path);
-	
-			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
-				var mre = new ManualResetEvent (false);	
-				var RandomBuffer = new byte[1024];			
-				DoBeginWrite (stream, mre, RandomBuffer);
-				Assert.IsTrue (mre.WaitOne (5000), "#1");
+
+			IAsyncResult begin_write_ares = null;
+
+			try {
+				using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+					var mre = new ManualResetEvent (false);
+					var RandomBuffer = new byte[1024];
+					begin_write_ares = DoBeginWrite (stream, mre, RandomBuffer);
+					Assert.IsTrue (mre.WaitOne (5000), "#1");
+				}
+			} finally {
+				if (begin_write_ares != null)
+					begin_write_ares.AsyncWaitHandle.WaitOne ();
 			}
 		}
 
