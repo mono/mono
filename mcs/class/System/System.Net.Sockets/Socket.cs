@@ -3283,7 +3283,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
+		internal extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
 
 #endregion
 
