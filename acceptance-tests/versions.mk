@@ -89,6 +89,7 @@ endef
 
 $(eval $(call CheckVersionTemplate,roslyn,ROSLYN))
 $(eval $(call CheckVersionTemplate,coreclr,CORECLR))
+$(eval $(call CheckVersionTemplate,ms-test-suite,MSTESTSUITE))
 
 reset-versions::
 
@@ -128,16 +129,19 @@ __bump-current-version-%:
 # If COMMIT is 1, commit the change
 bump-roslyn: __bump-version-roslyn
 bump-coreclr: __bump-version-coreclr
+bump-ms-test-suite: __bump-version-ms-test-suite
 
 # Bump the given submodule to the branch given by the BRANCH/REMOTE_BRANCH make variables
 # If COMMIT is 1, commit the change
 bump-branch-roslyn: __bump-branch-roslyn
 bump-branch-coreclr: __bump-branch-coreclr
+bump-branch-ms-test-suite: __bump-branch-ms-test-suite
 
 # Bump the given submodule to its current GIT version
 # If COMMIT is 1, commit the change
 bump-current-roslyn: __bump-current-version-roslyn
 bump-current-coreclr: __bump-current-version-coreclr
+bump-current-ms-test-suite: __bump-current-version-ms-test-suite
 
 commit-bump-roslyn:
 	$(MAKE) bump-roslyn COMMIT=1
@@ -145,8 +149,14 @@ commit-bump-roslyn:
 commit-bump-coreclr:
 	$(MAKE) bump-coreclr COMMIT=1
 
+commit-bump-ms-test-suite:
+	$(MAKE) bump-ms-test-suite COMMIT=1
+
 commit-bump-current-roslyn:
 	$(MAKE) bump-current-roslyn COMMIT=1
 
 commit-bump-current-coreclr:
 	$(MAKE) bump-current-coreclr COMMIT=1
+
+commit-bump-current-ms-test-suite:
+	$(MAKE) bump-current-ms-test-suite COMMIT=1
