@@ -73,24 +73,22 @@ namespace System.Diagnostics {
 			public IntPtr Password;
 			public bool LoadUserProfile;
 		};
-		
+
 		IntPtr process_handle;
 		int pid;
-		bool enableRaisingEvents;
-		RegisteredWaitHandle exitWaitHandle;
+		int enable_raising_events;
+		Thread background_wait_for_exit_thread;
 		ISynchronizeInvoke synchronizingObject;
 		EventHandler exited_event;
 		IntPtr stdout_rd;
 		IntPtr stderr_rd;
 
-		object thisLock = new Object ();
-
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
-			process_handle=handle;
+			process_handle = handle;
 			pid=id;
 		}
-		
+
 		public Process ()
 		{
 		}
@@ -99,53 +97,19 @@ namespace System.Diagnostics {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("Base process priority.")]
 		public int BasePriority {
-			get {
-				return(0);
-			}
-		}
-
-		void StartExitCallbackIfNeeded ()
-		{
-			lock (thisLock) {
-				bool start = (exitWaitHandle == null && enableRaisingEvents && exited_event != null);
-				if (start && process_handle != IntPtr.Zero) {
-					WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
-					ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
-					exitWaitHandle = ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
-				}
-			}
-		}
-
-		void UnregisterExitCallback ()
-		{
-			lock (thisLock) {
-				if (exitWaitHandle != null) {
-					exitWaitHandle.Unregister (null);
-					exitWaitHandle = null;
-				}
-			}
-		}
-
-		bool IsExitCallbackPending ()
-		{
-			lock (thisLock) {
-				return exitWaitHandle != null;
-			}
+			get { return 0; }
 		}
 
 		[DefaultValue (false), Browsable (false)]
 		[MonitoringDescription ("Check for exiting of the process to raise the apropriate event.")]
 		public bool EnableRaisingEvents {
 			get {
-				return enableRaisingEvents;
+				return enable_raising_events == 1;
 			}
-			set { 
-				bool prev = enableRaisingEvents;
-				enableRaisingEvents = value;
-				if (enableRaisingEvents && !prev)
-					StartExitCallbackIfNeeded ();
+			set {
+				if (value && Interlocked.Exchange (ref enable_raising_events, 1) == 0)
+					StartBackgroundWaitForExit ();
 			}
-
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -160,8 +124,7 @@ namespace System.Diagnostics {
 
 				int code = ExitCode_internal (process_handle);
 				if (code == 259)
-					throw new InvalidOperationException ("The process must exit before " +
-									"getting the requested information.");
+					throw new InvalidOperationException ("The process must exit before getting the requested information.");
 
 				return code;
 			}
@@ -974,7 +937,7 @@ namespace System.Diagnostics {
 
 			process.process_handle = proc_info.process_handle;
 			process.pid = proc_info.pid;
-			process.StartExitCallbackIfNeeded ();
+			process.StartBackgroundWaitForExit ();
 			return(ret);
 		}
 
@@ -1150,7 +1113,7 @@ namespace System.Diagnostics {
 				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, false), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
 			}
 
-			process.StartExitCallbackIfNeeded ();
+			process.StartBackgroundWaitForExit ();
 
 			return true;
 		}
@@ -1326,14 +1289,16 @@ namespace System.Diagnostics {
 
 		void OnOutputDataReceived (string str)
 		{
-			if (OutputDataReceived != null)
-				OutputDataReceived (this, new DataReceivedEventArgs (str));
+			DataReceivedEventHandler cb = OutputDataReceived;
+			if (cb != null)
+				cb (this, new DataReceivedEventArgs (str));
 		}
 
 		void OnErrorDataReceived (string str)
 		{
-			if (ErrorDataReceived != null)
-				ErrorDataReceived (this, new DataReceivedEventArgs (str));
+			DataReceivedEventHandler cb = ErrorDataReceived;
+			if (cb != null)
+				cb (this, new DataReceivedEventArgs (str));
 		}
 
 		[Flags]
@@ -1372,33 +1337,41 @@ namespace System.Diagnostics {
 
 			public void AddInput ()
 			{
-				lock (this) {
-					int nread = stream.Read (buffer, 0, buffer.Length);
-					if (nread == 0) {
-						IsCompleted = true;
+				int nread = 0;
 
-						Flush (true);
-						if (err_out)
-							process.OnOutputDataReceived (null);
-						else
-							process.OnErrorDataReceived (null);
-
-						return;
-					}
-
-					try {
-						sb.Append (Encoding.Default.GetString (buffer, 0, nread));
-					} catch {
-						// Just in case the encoding fails...
-						for (int i = 0; i < nread; i++) {
-							sb.Append ((char) buffer [i]);
-						}
-					}
-
-					Flush (false);
-
-					IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
+				try {
+					nread = stream.Read (buffer, 0, buffer.Length);
+				} catch (ObjectDisposedException) {
+				} catch (NotSupportedException) {
+					if (stream.CanRead)
+						throw;
 				}
+
+				if (nread == 0) {
+					Flush (true);
+
+					if (err_out)
+						process.OnOutputDataReceived (null);
+					else
+						process.OnErrorDataReceived (null);
+
+					IsCompleted = true;
+
+					return;
+				}
+
+				try {
+					sb.Append (Encoding.Default.GetString (buffer, 0, nread));
+				} catch {
+					// Just in case the encoding fails...
+					for (int i = 0; i < nread; i++) {
+						sb.Append ((char) buffer [i]);
+					}
+				}
+
+				Flush (false);
+
+				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
 			}
 
 			void Flush (bool last)
@@ -1520,64 +1493,60 @@ namespace System.Diagnostics {
 				if (process_handle != IntPtr.Zero && HasExited) {
 					value.BeginInvoke (null, null, null, null);
 				} else {
-					exited_event = (EventHandler) Delegate.Combine (exited_event, value);
+					exited_event += value;
 					if (exited_event != null)
-						StartExitCallbackIfNeeded ();
+						StartBackgroundWaitForExit ();
 				}
 			}
 			remove {
-				exited_event = (EventHandler) Delegate.Remove (exited_event, value);
+				exited_event -= value;
 			}
 		}
 
 		// Closes the system process handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Process_free_internal(IntPtr handle);
-		
-		private bool disposed = false;
-		
+
+		int disposed;
+
 		protected override void Dispose(bool disposing) {
 			// Check to see if Dispose has already been called.
-			if(this.disposed == false) {
-				this.disposed=true;
-				// If this is a call to Dispose,
-				// dispose all managed resources.
-				if(disposing) {
-					// Do stuff here
-					lock (thisLock) {
-						/* These have open FileStreams on the pipes we are about to close */
-						if (async_output != null)
-							async_output.Close ();
-						if (async_error != null)
-							async_error.Close ();
+			if (disposed != 0 || Interlocked.CompareExchange (ref disposed, 1, 0) != 0)
+				return;
 
-						if (input_stream != null) {
-							if (!input_stream_exposed)
-								input_stream.Close ();
-							input_stream = null;
-						}
-						if (output_stream != null) {
-							if (!output_stream_exposed)
-								output_stream.Close ();
-							output_stream = null;
-						}
-						if (error_stream != null) {
-							if (!error_stream_exposed)
-								error_stream.Close ();
-							error_stream = null;
-						}
-					}
+			// If this is a call to Dispose,
+			// dispose all managed resources.
+			if (disposing) {
+				/* These have open FileStreams on the pipes we are about to close */
+				if (async_output != null)
+					async_output.Close ();
+				if (async_error != null)
+					async_error.Close ();
+
+				if (input_stream != null) {
+					if (!input_stream_exposed)
+						input_stream.Close ();
+					input_stream = null;
 				}
-				
-				// Release unmanaged resources
-
-				lock (thisLock) {
-					if(process_handle!=IntPtr.Zero) {
-						Process_free_internal(process_handle);
-						process_handle=IntPtr.Zero;
-					}
+				if (output_stream != null) {
+					if (!output_stream_exposed)
+						output_stream.Close ();
+					output_stream = null;
+				}
+				if (error_stream != null) {
+					if (!error_stream_exposed)
+						error_stream.Close ();
+					error_stream = null;
 				}
 			}
+
+			// Release unmanaged resources
+
+			if (process_handle!=IntPtr.Zero) {
+				Process_free_internal (process_handle);
+				process_handle = IntPtr.Zero;
+			}
+
 			base.Dispose (disposing);
 		}
 
@@ -1586,45 +1555,27 @@ namespace System.Diagnostics {
 			Dispose (false);
 		}
 
-		static void CBOnExit (object state, bool unused)
-		{
-			Process p = (Process) state;
-
-			if (!p.IsExitCallbackPending ())
-				return;
-
-			if (!p.HasExited) {
-				p.UnregisterExitCallback ();
-				p.StartExitCallbackIfNeeded ();
-				return;
-			}
-
-			p.OnExited ();
-		}
-
 		int on_exited_called = 0;
 
-		protected void OnExited() 
+		protected void OnExited()
 		{
-			if (exited_event == null)
-				return;
-
 			if (on_exited_called != 0 || Interlocked.CompareExchange (ref on_exited_called, 1, 0) != 0)
 				return;
 
-			UnregisterExitCallback ();
+			var cb = exited_event;
+			if (cb == null)
+				return;
 
-			if (synchronizingObject == null) {
-				foreach (EventHandler d in exited_event.GetInvocationList ()) {
+			if (synchronizingObject != null) {
+				synchronizingObject.BeginInvoke (cb, new object [] { this, EventArgs.Empty });
+			} else {
+				foreach (EventHandler d in cb.GetInvocationList ()) {
 					try {
 						d (this, EventArgs.Empty);
-					} catch {}
+					} catch {
+					}
 				}
-				return;
 			}
-			
-			object [] args = new object [] {this, EventArgs.Empty};
-			synchronizingObject.BeginInvoke (exited_event, args);
 		}
 
 		static bool IsWindows
@@ -1642,11 +1593,28 @@ namespace System.Diagnostics {
 			}
 		}
 
+		void StartBackgroundWaitForExit ()
+		{
+			if (enable_raising_events == 0)
+				return;
+			if (exited_event == null)
+				return;
+			if (process_handle == IntPtr.Zero)
+				return;
+			if (background_wait_for_exit_thread != null)
+				return;
+
+			Thread t = new Thread (_ => WaitForExit ());
+
+			if (Interlocked.CompareExchange (ref background_wait_for_exit_thread, t, null) == null)
+				t.Start ();
+		}
+
 		class ProcessWaitHandle : WaitHandle
 		{
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			private extern static IntPtr ProcessHandle_duplicate (IntPtr handle);
-			
+
 			public ProcessWaitHandle (IntPtr handle)
 			{
 				// Need to keep a reference to this handle,
