@@ -3216,7 +3216,7 @@ checkout-coreclr:
 
 coreclr-runtest-managed: checkout-coreclr test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) ./test-runner.exe -j a --disabled "$${disabled_tests}" $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
+	$(RUNTIME) ./test-runner.exe -j a --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
