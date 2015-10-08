@@ -792,10 +792,18 @@ struct _MonoDelegate {
 	MonoBoolean method_is_virtual;
 };
 
+typedef struct _MonoMulticastDelegateData MonoMulticastDelegateData;
+struct _MonoMulticastDelegateData {
+	MonoObject object;
+	MonoArray *delegates;
+	gint32 offset;
+	gint32 count;
+};
+
 typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
 struct _MonoMulticastDelegate {
 	MonoDelegate delegate;
-	MonoArray *delegates;
+	MonoObject *multicast;
 };
 
 struct _MonoReflectionField {

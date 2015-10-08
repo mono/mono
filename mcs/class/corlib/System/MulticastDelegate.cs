@@ -43,7 +43,7 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MulticastDelegate : Delegate
 	{
-		Delegate[] delegates;
+		MulticastData multicast;
 
 		protected MulticastDelegate (object target, string method)
 			: base (target, method)
@@ -54,7 +54,7 @@ namespace System
 			: base (target, method)
 		{
 		}
-		
+
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData  (info, context);
@@ -62,14 +62,14 @@ namespace System
 
 		protected sealed override object DynamicInvokeImpl (object[] args)
 		{
-			if (delegates == null) {
+			if (multicast == null) {
 				return base.DynamicInvokeImpl (args);
 			} else {
 				object r;
-				int i = 0, len = delegates.Length;
+				int i = multicast.offset, last = i + multicast.count;
 				do {
-					r = delegates [i].DynamicInvoke (args);
-				} while (++i < len);
+					r = multicast.delegates [i].DynamicInvoke (args);
+				} while (++i < last);
 				return r;
 			}
 		}
@@ -84,7 +84,7 @@ namespace System
 		//
 		// Do not remove this API
 		internal bool HasSingleTarget {
-			get { return delegates == null; }
+			get { return multicast == null; }
 		}
 
 		// <remarks>
@@ -100,16 +100,16 @@ namespace System
 			if (d == null)
 				return false;
 
-			if (delegates == null && d.delegates == null) {
+			if (multicast == null && d.multicast == null) {
 				return true;
-			} else if (delegates == null ^ d.delegates == null) {
+			} else if (multicast == null ^ d.multicast == null) {
 				return false;
 			} else {
-				if (delegates.Length != d.delegates.Length)
+				if (multicast.count != d.multicast.count)
 					return false;
 
-				for (int i = 0; i < delegates.Length; ++i) {
-					if (!delegates [i].Equals (d.delegates [i]))
+				for (int i = 0; i < multicast.count; ++i) {
+					if (!multicast.delegates [multicast.offset + i].Equals (d.multicast.delegates [d.multicast.offset + i]))
 						return false;
 				}
 
@@ -131,10 +131,14 @@ namespace System
 		// </summary>
 		public sealed override Delegate[] GetInvocationList ()
 		{
-			if (delegates != null)
-				return (Delegate[]) delegates.Clone ();
-			else
+			if (this.multicast == null)
 				return new Delegate[1] { this };
+
+			Delegate [] ret = new Delegate [this.multicast.count];
+			for (int i = 0; i < this.multicast.count; ++i)
+				ret [i] = this.multicast.delegates [this.multicast.offset + i];
+
+			return ret;
 		}
 
 		// <summary>
@@ -145,6 +149,8 @@ namespace System
 		// </summary>
 		protected sealed override Delegate CombineImpl (Delegate follow)
 		{
+			int i, len;
+
 			if (follow == null)
 				return this;
 
@@ -152,23 +158,98 @@ namespace System
 
 			MulticastDelegate ret = AllocDelegateLike_internal (this);
 
-			if (delegates == null && other.delegates == null) {
-				ret.delegates = new Delegate [2] { this, other };
-			} else if (delegates == null) {
-				ret.delegates = new Delegate [1 + other.delegates.Length];
+			if (multicast == null && other.multicast == null) {
+				len = GetDelegatesArraySize (2);
 
-				ret.delegates [0] = this;
-				Array.Copy (other.delegates, 0, ret.delegates, 1, other.delegates.Length);
-			} else if (other.delegates == null) {
-				ret.delegates = new Delegate [delegates.Length + 1];
+				ret.multicast = new MulticastData {
+					offset = 0,
+					count = 2,
+					delegates = new Delegate [len],
+				};
 
-				Array.Copy (delegates, 0, ret.delegates, 0, delegates.Length);
-				ret.delegates [ret.delegates.Length - 1] = other;
+				ret.multicast.delegates [0] = this;
+				ret.multicast.delegates [1] = other;
+			} else if (this.multicast == null) {
+				if (other.multicast.offset > 0) {
+					ret.multicast = new MulticastData {
+						delegates = other.multicast.delegates,
+						offset = other.multicast.offset - 1,
+						count = other.multicast.count + 1,
+					};
+
+					ret.multicast.delegates [ret.multicast.offset] = this;
+				} else {
+					len = GetDelegatesArraySize (1 + other.multicast.count);
+
+					ret.multicast = new MulticastData {
+						offset = 0,
+						count = 1 + other.multicast.count,
+						delegates = new Delegate [len],
+					};
+
+					ret.multicast.delegates [0] = this;
+					for (i = 0; i < other.multicast.count; ++i)
+						ret.multicast.delegates [1 + i] = other.multicast.delegates [other.multicast.offset + i];
+				}
+			} else if (other.multicast == null) {
+				if (this.multicast.offset + this.multicast.count < this.multicast.delegates.Length) {
+					ret.multicast = new MulticastData {
+						offset = this.multicast.offset,
+						count = this.multicast.count + 1,
+						delegates = this.multicast.delegates,
+					};
+
+					ret.multicast.delegates [ret.multicast.offset + ret.multicast.count - 1] = other;
+				} else {
+					len = GetDelegatesArraySize (this.multicast.count + 1);
+
+					ret.multicast = new MulticastData {
+						offset = 0,
+						count = this.multicast.count + 1,
+						delegates = new Delegate [len],
+					};
+
+					for (i = 0; i < multicast.count; ++i)
+						ret.multicast.delegates [i] = this.multicast.delegates [this.multicast.offset + i];
+					ret.multicast.delegates [ret.multicast.count - 1] = other;
+				}
 			} else {
-				ret.delegates = new Delegate [delegates.Length + other.delegates.Length];
+				if (this.multicast.offset + this.multicast.count + other.multicast.count < this.multicast.delegates.Length - 1) {
+					/* use this.delegates */
 
-				Array.Copy (delegates, 0, ret.delegates, 0, delegates.Length);
-				Array.Copy (other.delegates, 0, ret.delegates, delegates.Length, other.delegates.Length);
+					ret.multicast = new MulticastData {
+						offset = this.multicast.offset,
+						count = this.multicast.count + other.multicast.count,
+						delegates = this.multicast.delegates,
+					};
+
+					for (i = 0; i < other.multicast.count; ++i)
+						ret.multicast.delegates [this.multicast.offset + this.multicast.count + i] = other.multicast.delegates [other.multicast.offset + i];
+				} else if (this.multicast.count < other.multicast.offset - 1) {
+					/* use other.delegates */
+
+					ret.multicast = new MulticastData {
+						offset = other.multicast.offset - this.multicast.count,
+						count = other.multicast.count + this.multicast.count,
+						delegates = other.multicast.delegates,
+					};
+
+					for (i = 0; i < this.multicast.count; ++i)
+						ret.multicast.delegates [other.multicast.offset - this.multicast.count + i] = this.multicast.delegates [this.multicast.offset + i];
+				} else {
+					len = GetDelegatesArraySize (this.multicast.count + other.multicast.count);
+
+					ret.multicast = new MulticastData {
+						offset = 0,
+						count = this.multicast.count + other.multicast.count,
+						delegates = new Delegate [len],
+					};
+
+					for (i = 0; i < this.multicast.count; ++i)
+						ret.multicast.delegates [i] = this.multicast.delegates [this.multicast.offset + i];
+					for (i = 0; i < other.multicast.count; ++i)
+						ret.multicast.delegates [this.multicast.count + i] = other.multicast.delegates [other.multicast.offset + i];
+				}
 			}
 
 			return ret;
@@ -176,80 +257,118 @@ namespace System
 
 		protected sealed override Delegate RemoveImpl (Delegate value)
 		{
+			int i, j, len;
+
 			if (value == null)
 				return this;
 
 			MulticastDelegate other = (MulticastDelegate) value;
 
-			if (delegates == null && other.delegates == null) {
+			if (this.multicast == null && other.multicast == null) {
 				/* if they are not equal and the current one is not
 				 * a multicastdelegate then we cannot delete it */
 				return this.Equals (other) ? null : this;
-			} else if (delegates == null) {
-				foreach (var d in other.delegates) {
-					if (this.Equals (d))
+			} else if (this.multicast == null) {
+				for (i = 0; i < other.multicast.count; ++i) {
+					if (this.Equals (other.multicast.delegates [other.multicast.offset + i]))
 						return null;
 				}
 				return this;
-			} else if (other.delegates == null) {
-				int idx = Array.LastIndexOf (delegates, other);
+			} else if (other.multicast == null) {
+				int idx = Array.LastIndexOf (this.multicast.delegates, other, this.multicast.offset + this.multicast.count - 1, this.multicast.count);
 				if (idx == -1)
 					return this;
 
-				if (delegates.Length <= 1) {
-					/* delegates.Length should never be equal or
-					 * lower than 1, it should be 2 or greater */
+				if (this.multicast.delegates.Length <= 1) {
+					/* delegates.Length should never be equal or lower than 1, it should be 2 or greater */
 					throw new InvalidOperationException ();
 				}
 
-				if (delegates.Length == 2)
-					return delegates [idx == 0 ? 1 : 0];
+				if (this.multicast.count <= 1) {
+					/* count should never be equal or lower than 1, it should be 2 or greater */
+					throw new InvalidOperationException ();
+				}
+
+				if (this.multicast.count == 2)
+					return this.multicast.delegates [idx == this.multicast.offset ? this.multicast.offset + 1 : this.multicast.offset];
 
 				MulticastDelegate ret = AllocDelegateLike_internal (this);
-				ret.delegates = new Delegate [delegates.Length - 1];
 
-				Array.Copy (delegates, ret.delegates, idx);
-				Array.Copy (delegates, idx + 1, ret.delegates, idx, delegates.Length - idx - 1);
+				if (idx == 0) {
+					ret.multicast = new MulticastData {
+						offset = this.multicast.offset + 1,
+						count = this.multicast.count - 1,
+						delegates = this.multicast.delegates,
+					};
+				} else if (idx == this.multicast.offset + this.multicast.count - 1) {
+					ret.multicast = new MulticastData {
+						offset = this.multicast.offset,
+						count = this.multicast.count - 1,
+						delegates = this.multicast.delegates,
+					};
+				} else {
+					len = GetDelegatesArraySize (this.multicast.count - 1);
+
+					ret.multicast = new MulticastData {
+						offset = 0,
+						count = this.multicast.count - 1,
+						delegates = new Delegate [len],
+					};
+
+					for (i = 0, j = 0; i < this.multicast.count; ++i) {
+						if (i != idx)
+							ret.multicast.delegates [j++] = this.multicast.delegates [this.multicast.offset + i];
+					}
+				}
 
 				return ret;
 			} else {
+				len = GetDelegatesArraySize (this.multicast.count);
+
 				/* wild case : remove MulticastDelegate from MulticastDelegate
 				 * complexity is O(m * n), with n the number of elements in
 				 * this.delegates and m the number of elements in other.delegates */
 				MulticastDelegate ret = AllocDelegateLike_internal (this);
-				ret.delegates = new Delegate [delegates.Length];
+
+				ret.multicast = new MulticastData {
+					offset = 0,
+					count = this.multicast.count,
+					delegates = new Delegate [len],
+				};
 
 				/* we should use a set with O(1) lookup complexity
 				 * but HashSet is implemented in System.Core.dll */
 				List<Delegate> other_delegates = new List<Delegate> ();
-				for (int i = 0; i < other.delegates.Length; ++i)
-					other_delegates.Add (other.delegates [i]);
+				for (i = 0; i < other.multicast.count; ++i)
+					other_delegates.Add (other.multicast.delegates [other.multicast.offset + i]);
 
-				int idx = delegates.Length;
+				int idx = this.multicast.count;
 
 				/* we need to remove elements from the end to the beginning, as
 				 * the addition and removal of delegates behaves like a stack */
-				for (int i = delegates.Length - 1; i >= 0; --i) {
+				for (i = this.multicast.count - 1; i >= 0; --i) {
 					/* if delegates[i] is not in other_delegates,
 					 * then we can safely add it to ret.delegates
 					 * otherwise we remove it from other_delegates */
-					if (!other_delegates.Remove (delegates [i]))
-						ret.delegates [--idx] = delegates [i];
+					if (!other_delegates.Remove (this.multicast.delegates [this.multicast.offset + i]))
+						ret.multicast.delegates [--idx] = this.multicast.delegates [this.multicast.offset + i];
 				}
 
 				/* the elements are at the end of the array, we
 				 * need to move them back to the beginning of it */
-				int count = delegates.Length - idx;
-				Array.Copy (ret.delegates, idx, ret.delegates, 0, count);
+				ret.multicast.count -= idx;
+				Array.Copy (ret.multicast.delegates, idx, ret.multicast.delegates, 0, ret.multicast.count);
 
-				if (count == 0)
+				if (ret.multicast.count == 0)
 					return null;
 
-				if (count == 1)
-					return ret.delegates [0];
+				if (ret.multicast.count == 1)
+					return ret.multicast.delegates [0];
 
-				if (count != delegates.Length)
-					Array.Resize (ref ret.delegates, count);
+				len = GetDelegatesArraySize (ret.multicast.count);
+
+				if (len != ret.multicast.delegates.Length)
+					Array.Resize (ref ret.multicast.delegates, len);
 
 				return ret;
 			}
@@ -262,13 +381,29 @@ namespace System
 
 			return d1.Equals (d2);
 		}
-		
+
 		public static bool operator != (MulticastDelegate d1, MulticastDelegate d2)
 		{
 			if (d1 == null)
 				return d2 != null;
 
 			return !d1.Equals (d2);
+		}
+
+		static int GetDelegatesArraySize (int n)
+		{
+			if (n <= 0)
+				throw new ArgumentException ("n");
+
+			return (int) Math.Pow (2, ((int) Math.Floor (Math.Log (n, 2))) + 1);
+		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		class MulticastData
+		{
+			internal Delegate [] delegates;
+			internal int offset;
+			internal int count;
 		}
 	}
 }

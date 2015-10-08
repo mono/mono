@@ -77,7 +77,11 @@ DECL_OFFSET(MonoInternalThread, tid)
 DECL_OFFSET(MonoInternalThread, small_id)
 DECL_OFFSET(MonoInternalThread, static_data)
 
-DECL_OFFSET(MonoMulticastDelegate, delegates)
+DECL_OFFSET(MonoMulticastDelegate, multicast)
+
+DECL_OFFSET(MonoMulticastDelegateData, delegates)
+DECL_OFFSET(MonoMulticastDelegateData, offset)
+DECL_OFFSET(MonoMulticastDelegateData, count)
 
 DECL_OFFSET(MonoTransparentProxy, rp)
 DECL_OFFSET(MonoTransparentProxy, remote_class)
