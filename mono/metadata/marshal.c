@@ -1748,7 +1748,6 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 {
 	MonoMarshalType *info;
 	int i;
-	int last_field_index = -1;
 
 	if (klass->parent)
 		emit_struct_conv_full(mb, klass->parent, to_object, klass->min_align);
@@ -1788,19 +1787,6 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 			return;
 		}
 	}
-	
-	last_field_index = -1;
-
-	for (i = info->num_fields-1; i >= 0; i--)
-	{
-		MonoType *ftype = info->fields [i].field->type;
-
-		if (!(ftype->attrs & FIELD_ATTRIBUTE_STATIC))
-		{
-			last_field_index = i;
-			break;
-		}
-	}
 
 	for (i = 0; i < info->num_fields; i++) {
 		MonoMarshalNative ntype;
@@ -1818,6 +1804,14 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		if (last_field) {
 			msize = klass->instance_size - info->fields [i].field->offset;
 			usize = info->native_size - info->fields [i].offset;
+
+			/* Make sure managed src pointer aligns with child struct address (if any) */
+			if(child_class_min_align)
+			{
+				msize += child_class_min_align - 1;
+				msize &= ~(child_class_min_align - 1);
+			}
+
 		} else {
 			msize = info->fields [i + 1].field->offset - info->fields [i].field->offset;
 			usize = info->fields [i + 1].offset - info->fields [i].offset;
@@ -1965,16 +1959,6 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		}
 		}
 		
-		if(i == last_field_index)
-		{
-			/* Make sure managed src pointer aligns with child struct address (if any) */
-			if(child_class_min_align)
-			{
-				msize += child_class_min_align - 1;
-				msize &= ~(child_class_min_align - 1);
-			}
-		}
-
 		if (to_object) {
 			mono_mb_emit_add_to_local (mb, 0, usize);
 			mono_mb_emit_add_to_local (mb, 1, msize);
