@@ -1958,7 +1958,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 			mono_mb_emit_stloc (mb, 1);
 		}
 		}
-		
+
 		if (to_object) {
 			mono_mb_emit_add_to_local (mb, 0, usize);
 			mono_mb_emit_add_to_local (mb, 1, msize);
