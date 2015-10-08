@@ -11653,6 +11653,10 @@ namespace Mono.CSharp
 				return null;
 
 			if (source is CollectionOrObjectInitializers) {
+				target = target.Resolve (ec);
+				if (target == null)
+					return null;
+				
 				Expression previous = ec.CurrentInitializerVariable;
 				ec.CurrentInitializerVariable = target;
 				source = source.Resolve (ec);
@@ -11662,6 +11666,7 @@ namespace Mono.CSharp
 					
 				eclass = source.eclass;
 				type = source.Type;
+
 				return this;
 			}
 
@@ -11848,7 +11853,7 @@ namespace Mono.CSharp
 				return false;
 			}
 
-			target = new IndexerExpr (indexers, type, init, args, loc).Resolve (rc);
+			target = new IndexerExpr (indexers, type, init, args, loc);
 			return true;
 		}
 	}
