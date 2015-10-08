@@ -88,6 +88,7 @@ print-versions:: print-$(1)
 endef
 
 $(eval $(call CheckVersionTemplate,roslyn,ROSLYN))
+$(eval $(call CheckVersionTemplate,coreclr,CORECLR))
 
 reset-versions::
 
@@ -126,17 +127,26 @@ __bump-current-version-%:
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
 bump-roslyn: __bump-version-roslyn
+bump-coreclr: __bump-version-coreclr
 
 # Bump the given submodule to the branch given by the BRANCH/REMOTE_BRANCH make variables
 # If COMMIT is 1, commit the change
 bump-branch-roslyn: __bump-branch-roslyn
+bump-branch-coreclr: __bump-branch-coreclr
 
 # Bump the given submodule to its current GIT version
 # If COMMIT is 1, commit the change
 bump-current-roslyn: __bump-current-version-roslyn
+bump-current-coreclr: __bump-current-version-coreclr
 
 commit-bump-roslyn:
 	$(MAKE) bump-roslyn COMMIT=1
 
+commit-bump-coreclr:
+	$(MAKE) bump-coreclr COMMIT=1
+
 commit-bump-current-roslyn:
 	$(MAKE) bump-current-roslyn COMMIT=1
+
+commit-bump-current-coreclr:
+	$(MAKE) bump-current-coreclr COMMIT=1
