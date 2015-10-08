@@ -66894,6 +66894,27 @@
       </method>
     </type>
   </test>
+  <test name="test-dictinit-05.cs">
+    <type name="A">
+      <method name="System.Collections.Generic.Dictionary`2[System.String,System.Int32] get_Info()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Info(System.Collections.Generic.Dictionary`2[System.String,System.Int32])" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>44</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-ex-filter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
