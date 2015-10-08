@@ -1,4 +1,4 @@
-.PHONY: check-versions reset-versions check-mono
+.PHONY: check-versions reset-versions
 
 CONFIG=SUBMODULES.json
 
