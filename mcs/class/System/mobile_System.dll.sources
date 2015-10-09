@@ -727,6 +727,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/Internal.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
+../../../external/referencesource/System/net/System/Net/ServicePointManager.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WebUtility.cs
