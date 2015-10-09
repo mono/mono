@@ -425,7 +425,7 @@ BASE_TEST_CS_SRC=		\
 	pinvoke_ppcf.cs	\
 	pinvoke_ppcd.cs
 
-CORECLR_PATH=$(mono_build_root)/../coreclr
+CORECLR_PATH=$(top_srcdir)/../coreclr
 
 CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/CodeGenBringUpTests/Add1.cs	\
