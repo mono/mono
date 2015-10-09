@@ -33,6 +33,8 @@ namespace System.Net {
 	public
 	enum SecurityProtocolType {
 		Ssl3 = 48,
-		Tls = 192
+		Tls = 192,
+		Tls11 = 768,
+		Tls12 = 3072
 	}
 }
