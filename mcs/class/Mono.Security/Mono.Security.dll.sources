@@ -134,3 +134,14 @@
 ./Mono.Security.Protocol.Tls.Handshake.Server/TlsServerKeyExchange.cs
 ./Mono.Xml/MiniParser.cs
 ./Mono.Xml/SecurityParser.cs
+
+./Mono.Security.Interface/CertificateValidationHelper.cs
+./Mono.Security.Interface/IBufferOffsetSize.cs
+./Mono.Security.Interface/IMonoTlsEventSink.cs
+./Mono.Security.Interface/IMonoTlsContext.cs
+./Mono.Security.Interface/MonoSslStream.cs
+./Mono.Security.Interface/MonoTlsConnectionInfo.cs
+./Mono.Security.Interface/MonoTlsProvider.cs
+./Mono.Security.Interface/MonoTlsProviderFactory.cs
+./Mono.Security.Interface/MonoTlsSettings.cs
+./Mono.Security.Interface/TlsProtocols.cs

@@ -349,7 +349,21 @@ System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
+Mono.Net.Security/CallbackHelpers.cs
+Mono.Net.Security/ChainValidationHelper.cs
+Mono.Net.Security/IMonoTlsProvider.cs
+Mono.Net.Security/IMonoSslStream.cs
+Mono.Net.Security/LegacySslStream.cs
+Mono.Net.Security/MonoDefaultTlsProvider.cs
+Mono.Net.Security/MonoSslStreamImpl.cs
+Mono.Net.Security/MonoSslStreamWrapper.cs
+Mono.Net.Security/MonoTlsProviderFactory.cs
+Mono.Net.Security/MonoTlsProviderImpl.cs
+Mono.Net.Security/MonoTlsProviderWrapper.cs
+Mono.Net.Security/MonoTlsStream.cs
+
 ReferenceSources/AssertWrapper.cs
+ReferenceSources/Internal.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
