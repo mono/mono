@@ -281,6 +281,9 @@ namespace System {
 					name_start = pos + 1;
 					in_modifiers = true;
 					break;
+				case '\\':
+					pos++;
+					break;
 				}
 				if (in_modifiers)
 					break;
