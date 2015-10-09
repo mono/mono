@@ -15,7 +15,7 @@ run-test-roslyn:
 
 run-test-coreclr:
 	@$(MAKE) check-coreclr RESET_VERSIONS=1
-	cd $(TOP)/mono/tests && $(MAKE) check-coreclr
+	$(MAKE) -C $(TOP)/mono/tests check-coreclr
 
 run-test-ms-test-suite:
 	@if $(MAKE) check-ms-test-suite RESET_VERSIONS=1; then \

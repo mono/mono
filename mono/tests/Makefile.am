@@ -3213,7 +3213,7 @@ runtest-managed-serial: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libt
 	$(RUNTIME) ./test-runner.exe -j 1 --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 coreclr-checkout:
-	cd $(mono_build_root)/acceptance-tests && $(MAKE) check-coreclr RESET_VERSIONS=1
+	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr RESET_VERSIONS=1
 
 coreclr-runtest-managed: coreclr-checkout test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
 	$(RUNTIME) ./test-runner.exe -j a --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)

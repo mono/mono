@@ -23,7 +23,7 @@ check-$(1)::
 	@if test x$$(IGNORE_$(2)_VERSION) = "x"; then \
 	    if test ! -d $($(2)_PATH); then \
 			if test x$$(RESET_VERSIONS) != "x"; then \
-				make reset-$(1) || exit 1; \
+				$(MAKE) reset-$(1) || exit 1; \
 			else \
 				echo "Your $(1) checkout is missing, please run 'make reset-$(1)'"; \
 				touch .check-versions-failure; \
@@ -31,7 +31,7 @@ check-$(1)::
 	    else \
 			if test "x$($(2)_VERSION)" != "x$(NEEDED_$(2)_VERSION)" ; then \
 				if test x$$(RESET_VERSIONS) != "x"; then \
-					make reset-$(1) || exit 1; \
+					$(MAKE) reset-$(1) || exit 1; \
 				else \
 				    echo "Your $(1) version is out of date, please run 'make reset-$(1)' (found $($(2)_VERSION), expected $(NEEDED_$(2)_VERSION))"; \
 				    test -z "$(BUILD_REVISION)" || $(MAKE) test-$(1); \
@@ -40,7 +40,7 @@ check-$(1)::
 	        elif test "x$($(2)_BRANCH)" != "x$(NEEDED_$(2)_BRANCH)" ; then \
 				if test x$$(RESET_VERSIONS) != "x"; then \
 					test -z "$(BUILD_REVISION)" || $(MAKE) test-$(1); \
-					make reset-$(1) || exit 1; \
+					$(MAKE) reset-$(1) || exit 1; \
 				else \
 				    echo "Your $(1) branch is out of date, please run 'make reset-$(1)' (found $($(2)_BRANCH), expected $(NEEDED_$(2)_BRANCH))"; \
 			        touch .check-versions-failure; \
@@ -103,7 +103,7 @@ check-versions::
 	fi
 
 reset:
-	@make check-versions RESET_VERSIONS=1
+	@$(MAKE) check-versions RESET_VERSIONS=1
 
 __bump-version-%:
 	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
