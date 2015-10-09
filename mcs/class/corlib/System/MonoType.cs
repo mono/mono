@@ -51,6 +51,9 @@ namespace System
 	// Contains information about the type which is expensive to compute
 	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoTypeInfo {
+		// this is the displayed form: special characters
+		// ,+*&*[]\ in the identifier portions of the names
+		// have been escaped with a leading backslash (\)
 		public string full_name;
 		public MonoCMethod default_ctor;
 	}
