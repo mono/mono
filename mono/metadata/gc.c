@@ -221,7 +221,7 @@ mono_gc_run_finalize (void *obj, void *data)
 	runtime_invoke (o, NULL, &exc, NULL);
 
 	if (exc) {
-		/* fixme: do something useful */
+		mono_unhandled_exception(exc);
 	}
 
 	mono_domain_set_internal (caller_domain);
