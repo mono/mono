@@ -353,6 +353,7 @@ ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
+ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
