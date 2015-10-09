@@ -130,5 +130,3 @@
 ./Mono.Security.Protocol.Tls.Handshake.Server/TlsServerKeyExchange.cs
 ./Mono.Xml/MiniParser.cs
 ./Mono.Xml/SecurityParser.cs
-
-./Mono.Security.Interface/CertificateValidationHelper.cs

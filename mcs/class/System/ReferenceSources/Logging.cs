@@ -1,4 +1,3 @@
-#if !MONO_FEATURE_NEW_TLS
 using System.Diagnostics;
 
 namespace System.Net {
@@ -42,4 +41,3 @@ namespace System.Net {
 
 #endif
 }
-#endif

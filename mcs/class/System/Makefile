@@ -28,18 +28,21 @@ TEST_MCS_FLAGS += -r:System.Configuration
 
 RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
+ifeq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
+endif
+
 #
 # MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
 #
 ifdef MOBILE_PROFILE
-ifeq ($(PROFILE),xammac)
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
-LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
-else
-LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
+ifneq ($(PROFILE),xammac)
+LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
-else
-EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
+endif
+
+
+ifndef MOBILE_PROFILE
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
@@ -49,7 +52,7 @@ endif
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll
 endif
 
 #
@@ -57,7 +60,7 @@ endif
 #
 ifndef intermediate
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS) $(FINAL_MCS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(FINAL_MCS_FLAGS)
 endif
 
 EXTRA_DISTFILES = \
