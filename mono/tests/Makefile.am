@@ -3034,6 +3034,11 @@ STRESS_TESTS=$(STRESS_TESTS_SRC:.cs=.exe)
 EXTRA_DIST=test-driver test-runner.cs $(TEST_CS_SRC_DIST) $(TEST_IL_SRC) \
 	$(BENCHSRC) $(STRESS_TESTS_SRC) stress-runner.pl $(PREREQ_IL_SRC) $(PREREQ_CS_SRC)
 
+# the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
+$(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.il
+	$(ILASM) -out:$@ $<
+	@cp -n "$(CLASS)/Facades/System.Console.dll" "$(dir $@)"
+
 %.exe: %.il
 	$(ILASM) -out:$@ $<
 
