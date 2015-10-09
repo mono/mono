@@ -3216,7 +3216,7 @@ coreclr-checkout:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr RESET_VERSIONS=1
 
 coreclr-runtest-managed: coreclr-checkout test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
-	$(RUNTIME) ./test-runner.exe -j a --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
+	@$(RUNTIME) ./test-runner.exe -j a --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
