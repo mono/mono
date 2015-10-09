@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if SECURITY_DEP && !MONO_FEATURE_NEW_TLS
 namespace System.Net.Security
 {
 	public enum EncryptionPolicy
@@ -35,3 +35,4 @@ namespace System.Net.Security
 		NoEncryption
 	}
 }
+#endif
