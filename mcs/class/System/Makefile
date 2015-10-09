@@ -28,16 +28,14 @@ TEST_MCS_FLAGS += -r:System.Configuration
 
 RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
-ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
-endif
-
 #
 # MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
 #
 ifdef MOBILE_PROFILE
-ifneq ($(PROFILE),xammac)
-LIB_MCS_FLAGS += -d:SECURITY_DEP
+ifeq ($(PROFILE),xammac)
+LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
+else
+LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
 endif
 endif
 
