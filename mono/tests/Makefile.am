@@ -3221,7 +3221,7 @@ coreclr-checkout:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr RESET_VERSIONS=1
 
 coreclr-runtest-managed: coreclr-checkout test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
-	@$(RUNTIME) ./test-runner.exe -j a --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
+	@$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
@@ -3665,7 +3665,7 @@ test-generic-sharing-normal: $(GSHARED_TESTS)
 	done
 
 test-generic-sharing-managed: test-runner.exe $(GSHARED_TESTS)
-	@$(RUNTIME) ./test-runner.exe -j a --opt-sets "gshared gshared,shared gshared,-inline gshared,-inline,shared" $(GSHARED_TESTS)
+	@$(RUNTIME) ./test-runner.exe -j a --testsuite-name "gshared" --opt-sets "gshared gshared,shared gshared,-inline gshared,-inline,shared" $(GSHARED_TESTS)
 
 if NACL_CODEGEN
 test-generic-sharing:
