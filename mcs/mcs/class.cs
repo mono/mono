@@ -92,7 +92,7 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Any unattached attributes during parsing get added here. User
+		// Any unattached attributes during parsing get added here. Used
 		// by FULL_AST mode
 		//
 		public Attributes UnattachedAttributes {
