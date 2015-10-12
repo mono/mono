@@ -32,7 +32,10 @@ using System.IO;
 using System.Reflection;
 
 namespace System {
-	internal class ArraySpec
+	internal interface ModifierSpec {
+		Type Resolve (Type type);
+	}
+        internal class ArraySpec : ModifierSpec
 	{
 		int dimensions;
 		bool bound;
@@ -43,7 +46,7 @@ namespace System {
 			this.bound = bound;
 		}
 
-		internal Type Resolve (Type type)
+		public Type Resolve (Type type)
 		{
 			if (bound)
 				return type.MakeArrayType (1);
@@ -65,17 +68,40 @@ namespace System {
 #endif
 	}
 
+	internal class PointerSpec : ModifierSpec
+	{
+		int pointer_level;
+
+		internal PointerSpec (int pointer_level) {
+			this.pointer_level = pointer_level;
+		}
+
+		public Type Resolve (Type type) {
+			for (int i = 0; i < pointer_level; ++i)
+				type = type.MakePointerType ();
+			return type;
+		}
+#if DEBUG
+		public override string ToString () {
+			string s = "";
+			for (int i = 0; i < pointer_level; ++i)
+				s += "*";
+			return s;
+		}
+#endif
+
+	}
+
 	internal class TypeSpec
 	{
 		string name, assembly_name;
 		List<string> nested;
 		List<TypeSpec> generic_params;
-		List<ArraySpec> array_spec;
-		int pointer_level;
+		List<ModifierSpec> modifier_spec;
 		bool is_byref;
 
-		bool IsArray {
-			get { return array_spec != null; }
+		bool HasModifiers {
+			get { return modifier_spec != null; }
 		}
 
 #if DEBUG
@@ -99,13 +125,10 @@ namespace System {
 				str += "]";
 			}
 
-			if (array_spec != null) {
-				foreach (var ar in array_spec)
-					str += ar;
+			if (modifier_spec != null) {
+				foreach (var md in modifier_spec)
+					str += md;
 			}
-
-			for (int i = 0; i < pointer_level; ++i)
-				str += "*";
 
 			if (is_byref)
 				str += "&";
@@ -185,13 +208,10 @@ namespace System {
 				type = type.MakeGenericType (args);
 			}
 
-			if (array_spec != null) {
-				foreach (var arr in array_spec)
-					type = arr.Resolve (type);
+			if (modifier_spec != null) {
+				foreach (var md in modifier_spec)
+					type = md.Resolve (type);
 			}
-
-			for (int i = 0; i < pointer_level; ++i)
-				type = type.MakePointerType ();
 
 			if (is_byref)
 				type = type.MakeByRefType ();
@@ -210,11 +230,11 @@ namespace System {
 			}
 		}
 
-		void AddArray (ArraySpec array)
+		void AddModifier (ModifierSpec md)
 		{
-			if (array_spec == null)
-				array_spec = new List<ArraySpec> ();
-			array_spec.Add (array);
+			if (modifier_spec == null)
+				modifier_spec = new List<ModifierSpec> ();
+			modifier_spec.Add (md);
 		}
 
 		static void SkipSpace (string name, ref int pos)
@@ -282,7 +302,13 @@ namespace System {
 					case '*':
 						if (data.is_byref)
 							throw new ArgumentException ("Can't have a pointer to a byref type", "typeName");
-						++data.pointer_level;
+						// take subsequent '*'s too
+						int pointer_level = 1;
+						while (pos+1 < name.Length && name[pos+1] == '*') {
+							++pos;
+							++pointer_level;
+						}
+						data.AddModifier (new PointerSpec(pointer_level));
 						break;
 					case ',':
 						if (is_recurse) {
@@ -308,8 +334,8 @@ namespace System {
 
 						if (name [pos] != ',' && name [pos] != '*' && name [pos]  != ']') {//generic args
 							List<TypeSpec> args = new List <TypeSpec> ();
-							if (data.IsArray)
-								throw new ArgumentException ("generic args after array spec", "typeName");
+							if (data.HasModifiers)
+								throw new ArgumentException ("generic args after array spec or pointer type", "typeName");
 
 							while (pos < name.Length) {
 								SkipSpace (name, ref pos);
@@ -352,7 +378,7 @@ namespace System {
 								throw new ArgumentException ("Error parsing array spec", "typeName");
 							if (dimensions > 1 && bound)
 								throw new ArgumentException ("Invalid array spec, multi-dimensional array cannot be bound", "typeName");
-							data.AddArray (new ArraySpec (dimensions, bound));
+							data.AddModifier (new ArraySpec (dimensions, bound));
 						}
 
 						break;
