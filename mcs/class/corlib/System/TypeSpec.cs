@@ -32,8 +32,8 @@ using System.IO;
 using System.Reflection;
 
 namespace System {
-	internal abstract class ModifierSpec {
-		internal abstract Type Resolve (Type type);
+	internal interface ModifierSpec {
+		Type Resolve (Type type);
 	}
         internal class ArraySpec : ModifierSpec
 	{
@@ -46,7 +46,7 @@ namespace System {
 			this.bound = bound;
 		}
 
-		internal override Type Resolve (Type type)
+		public Type Resolve (Type type)
 		{
 			if (bound)
 				return type.MakeArrayType (1);
@@ -76,7 +76,7 @@ namespace System {
 			this.pointer_level = pointer_level;
 		}
 
-		internal override Type Resolve (Type type) {
+		public Type Resolve (Type type) {
 			for (int i = 0; i < pointer_level; ++i)
 				type = type.MakePointerType ();
 			return type;
