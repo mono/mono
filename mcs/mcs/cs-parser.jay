@@ -400,14 +400,14 @@ outer_declaration
 	  }
 	| opt_extern_alias_directives opt_using_directives attribute_sections
 	  {
-
 		Attributes attrs = (Attributes) $3;
 		if (attrs != null) {
 			foreach (var a in attrs.Attrs) {
 				if (a.ExplicitTarget == "assembly" || a.ExplicitTarget == "module")
 					continue;
 
-				report.Error (-1671, a.Location, "Global attributes must have attribute target specified");
+				if (a.ExplicitTarget == null)
+					report.Error (-1671, a.Location, "Global attributes must have attribute target specified");
 			}
 		}
 
