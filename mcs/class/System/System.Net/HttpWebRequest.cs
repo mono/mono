@@ -116,6 +116,7 @@ namespace System.Net
 #if SECURITY_DEP
 		MonoTlsSettings tlsSettings;
 #endif
+		ServerCertValidationCallback certValidationCallback;
 
 		enum NtlmAuthState {
 			None,
@@ -279,15 +280,15 @@ namespace System.Net
 			get {
 				if (certificates == null)
 					certificates = new X509CertificateCollection ();
-
 				return certificates;
 			}
-			[MonoTODO]
 			set {
-				throw GetMustImplement ();
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				certificates = value;
 			}
 		}
-		
+
 		public string Connection {
 			get { return webHeaders ["Connection"]; }
 			set {
@@ -700,7 +701,26 @@ namespace System.Net
 		internal bool ProxyQuery {
 			get { return servicePoint.UsesProxy && !servicePoint.UseConnect; }
 		}
-		
+
+		internal ServerCertValidationCallback ServerCertValidationCallback {
+			get { return certValidationCallback; }
+		}
+
+		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+			get {
+				if (certValidationCallback == null)
+					return null;
+				return certValidationCallback.ValidationCallback;
+			}
+			set
+			{
+				if (value == null)
+					certValidationCallback = null;
+				else
+					certValidationCallback = new ServerCertValidationCallback (value);
+			}
+		}
+
 		// Methods
 		
 		internal ServicePoint GetServicePoint ()
