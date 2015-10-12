@@ -45,7 +45,7 @@ coreclr-runtest: coreclr-validate $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 	for i in $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL); do echo $${i} >> testlist; sort testlist > testlist.sorted; done; \
 	for i in `cat testlist.sorted`; do \
 		rm -f $${i}.so; \
-		if $(top_srcdir)/mono/tests/test-driver '$(RUNTIME)' $$i "$${disabled_tests}" "$${dump_action}" $(RUNTIME_ARGS); \
+		if $(top_srcdir)/mono/tests/test-driver 100 '$(RUNTIME)' $$i "$${disabled_tests}" "$${dump_action}" $(RUNTIME_ARGS); \
 		then \
 			passed=`expr $${passed} + 1`; \
 		else \
