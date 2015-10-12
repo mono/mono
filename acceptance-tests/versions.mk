@@ -1,11 +1,11 @@
-.PHONY: check-versions reset-versions
+.PHONY: validate-versions reset-versions
 
 CONFIG=SUBMODULES.json
 
-# usage $(call CheckVersionTemplate (name,MAKEFILE VAR,repo name))
-# usage $(call CheckVersionTemplate (mono,MONO,mono))
+# usage $(call ValidateVersionTemplate (name,MAKEFILE VAR,repo name))
+# usage $(call ValidateVersionTemplate (mono,MONO,mono))
 
-define CheckVersionTemplate
+define ValidateVersionTemplate
 #$(eval REPOSITORY_$(2):=$(shell test -z $(3) && echo $(1) || echo "$(3)"))
 #$(eval DIRECTORY_$(2):=$(shell ruby versions.rb get-dir $(1)))
 #$(eval DIRECTORY_$(2):=$(shell test -z $(DIRECTORY_$(2)) && echo $(1) || echo $(DIRECTORY_$(2))))
@@ -19,14 +19,14 @@ define CheckVersionTemplate
 #$(eval NEEDED_$(2)_REMOTE:=$(word 1, $(subst /, ,$($(2)_BRANCH_AND_REMOTE))))
 #$(eval $(2)_BRANCH:=$$$$(shell cd $($(2)_PATH) 2>/dev/null && git symbolic-ref --short HEAD 2>/dev/null))
 
-check-$(1)::
+validate-$(1)::
 	@if test x$$(IGNORE_$(2)_VERSION) = "x"; then \
 	    if test ! -d $($(2)_PATH); then \
 			if test x$$(RESET_VERSIONS) != "x"; then \
 				$(MAKE) reset-$(1) || exit 1; \
 			else \
 				echo "Your $(1) checkout is missing, please run 'make reset-$(1)'"; \
-				touch .check-versions-failure; \
+				touch .validate-versions-failure; \
 			fi; \
 	    else \
 			if test "x$($(2)_VERSION)" != "x$(NEEDED_$(2)_VERSION)" ; then \
@@ -35,7 +35,7 @@ check-$(1)::
 				else \
 				    echo "Your $(1) version is out of date, please run 'make reset-$(1)' (found $($(2)_VERSION), expected $(NEEDED_$(2)_VERSION))"; \
 				    test -z "$(BUILD_REVISION)" || $(MAKE) test-$(1); \
-			        touch .check-versions-failure; \
+			        touch .validate-versions-failure; \
 				fi; \
 	        elif test "x$($(2)_BRANCH)" != "x$(NEEDED_$(2)_BRANCH)" ; then \
 				if test x$$(RESET_VERSIONS) != "x"; then \
@@ -43,7 +43,7 @@ check-$(1)::
 					$(MAKE) reset-$(1) || exit 1; \
 				else \
 				    echo "Your $(1) branch is out of date, please run 'make reset-$(1)' (found $($(2)_BRANCH), expected $(NEEDED_$(2)_BRANCH))"; \
-			        touch .check-versions-failure; \
+			        touch .validate-versions-failure; \
 				fi; \
 	       fi; \
 	    fi; \
@@ -79,23 +79,23 @@ reset-$(1)::
 print-$(1)::
 	@printf "*** %-16s %-45s %s (%s)\n" "$(DIRECTORY_$(2))" "$(MODULE_$(2))" "$(NEEDED_$(2)_VERSION)" "$(NEEDED_$(2)_BRANCH)"
 
-.PHONY: check-$(1) reset-$(1) print-$(1)
+.PHONY: validate-$(1) reset-$(1) print-$(1)
 
 reset-versions:: reset-$(1)
-check-versions:: check-$(1)
+validate-versions:: Validate-$(1)
 print-versions:: print-$(1)
 
 endef
 
-$(eval $(call CheckVersionTemplate,roslyn,ROSLYN))
-$(eval $(call CheckVersionTemplate,coreclr,CORECLR))
-$(eval $(call CheckVersionTemplate,ms-test-suite,MSTESTSUITE))
+$(eval $(call ValidateVersionTemplate,roslyn,ROSLYN))
+$(eval $(call ValidateVersionTemplate,coreclr,CORECLR))
+$(eval $(call ValidateVersionTemplate,ms-test-suite,MSTESTSUITE))
 
 reset-versions::
 
-check-versions::
-	@if test -e .check-versions-failure; then  \
-		rm .check-versions-failure; \
+validate-versions::
+	@if test -e .validate-versions-failure; then  \
+		rm .validate-versions-failure; \
 		echo One or more modules needs update;  \
 		exit 1; \
 	else \
@@ -103,7 +103,7 @@ check-versions::
 	fi
 
 reset:
-	@$(MAKE) check-versions RESET_VERSIONS=1
+	@$(MAKE) validate-versions RESET_VERSIONS=1
 
 __bump-version-%:
 	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi

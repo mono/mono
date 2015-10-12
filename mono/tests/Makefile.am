@@ -3217,10 +3217,10 @@ runtest-managed-serial: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libt
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
 	$(RUNTIME) ./test-runner.exe -j 1 --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
-coreclr-checkout:
-	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr RESET_VERSIONS=1
+coreclr-validate:
+	$(MAKE) -C $(mono_build_root)/acceptance-tests validate-coreclr RESET_VERSIONS=1
 
-coreclr-runtest-managed: coreclr-checkout test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
+coreclr-runtest-managed: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) libtest.la
 	@$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 testjit:
