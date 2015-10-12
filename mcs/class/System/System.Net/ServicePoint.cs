@@ -413,10 +413,21 @@ namespace System.Net
 			return false;
 		}
 
+		internal void SetServerCertificate (X509Certificate server)
+		{
+			this.certificate = server;
+		}
+
+		internal void SetClientCertificate (X509Certificate clientCertificate)
+		{
+			this.clientCertificate = clientCertificate;
+		}
+
+		// will be removed shortly
 		internal void SetCertificates (X509Certificate client, X509Certificate server) 
 		{
-			certificate = server;
-			clientCertificate = client;
+			SetClientCertificate (client);
+			SetServerCertificate (server);
 		}
 
 		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)
