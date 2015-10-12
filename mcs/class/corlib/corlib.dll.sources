@@ -142,6 +142,7 @@ System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
 System/TimeZoneInfo.Serialization.cs
 ../../build/common/MonoTODOAttribute.cs
+System/TypeIdentifier.cs
 System/TypeSpec.cs
 System/TypeCode.cs
 System/UIntPtr.cs
