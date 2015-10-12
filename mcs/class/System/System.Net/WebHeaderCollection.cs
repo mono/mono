@@ -206,8 +206,12 @@ namespace System.Net
 			if (split && IsMultiValue (header)) {
 				List<string> separated = null;
 				foreach (var value in values) {
-					if (value.IndexOf (',') < 0)
+					if (value.IndexOf (',') < 0) {
+						if (separated != null)
+							separated.Add (value);
+						
 						continue;
+					}
 
 					if (separated == null) {
 						separated = new List<string> (values.Length + 1);
