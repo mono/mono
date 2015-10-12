@@ -130,8 +130,12 @@ namespace Mono.CSharp
 			}
 
 			var constant = res as Constant;
-			if (constant != null && constant.IsLiteral)
+			if (constant != null && constant.IsLiteral) {
+				if (res is NullLiteral)
+					return res;
+				
 				return Constant.CreateConstantFromValue (res.Type, constant.GetValue (), expr.Location);
+			}
 
 			if (conditional_access_receiver) {
 				expr = res;
