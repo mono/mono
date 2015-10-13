@@ -163,20 +163,35 @@ public class TestRunner
 					test_info.Add (new TestInfo { test = s, opt_set = opt });
 			}
 		}		
+		var previous_nonconcurrent_test_hung = false;
 
 		foreach (TestInfo ti in test_info) {
 			lock (monitor) {
 				while (processes.Count == concurrency) {
-					/* Wait for one process to terminate */
-					Monitor.Wait (monitor);
+					/* Wait for one process to terminate but timeout if it takes too long */
+					bool res = Monitor.Wait (monitor, 1000 * timeout);
+					if (!res) {
+						// Kill and clean up the hung Process
+						if (concurrency == 1) {
+							previous_nonconcurrent_test_hung = true;
+							Process hung = processes[0];
+							ProcessData pd = process_data [hung];
+							pd.CloseStreams ();
+							hung.Kill ();
+							// Wait for the process to finish being killed, but not too long
+							int wait_count=0;
+							while (!hung.HasExited && wait_count < 10) {
+								System.Threading.Thread.Sleep(1000);
+								++wait_count;
+							}
+						}
+						break; // From while loop
+					}
 				}
 
 				/* Cleaup terminated processes */
 				foreach (Process dead in terminated) {
-					if (process_data [dead].stdout != null)
-						process_data [dead].stdout.Close ();
-					if (process_data [dead].stderr != null)
-						process_data [dead].stderr.Close ();
+					process_data [dead].CloseStreams();
 					// This is needed to avoid CreateProcess failed errors :(
 					dead.Close ();
 				}
@@ -186,8 +201,14 @@ public class TestRunner
 			string test = ti.test;
 			string opt_set = ti.opt_set;
 
-			if (concurrency == 1)
+			if (concurrency == 1) {
+				if (previous_nonconcurrent_test_hung) {
+					// The previous test hung and is being cleared up so give it a moment to finish
+					System.Threading.Thread.Sleep(100);
+					previous_nonconcurrent_test_hung=false;
+				}
 				Console.Write ("Testing " + test + "... ");
+			}
 
 			/* Spawn a new process */
 			string process_args;
@@ -219,6 +240,14 @@ public class TestRunner
 							Console.Write (".");
 						passed.Add(process_data [dead]);
 						npassed ++;
+					// SIGKILL (triggered by hung.Kill () above) is exit code 137
+					} else if (dead.ExitCode == 137) {
+						if (concurrency == 1)
+							Console.WriteLine ("hung/failed.");
+						else
+							Console.Write ("H");
+						failed.Add (process_data [dead]);
+						nfailed ++;
 					} else {
 						if (concurrency == 1)
 							Console.WriteLine ("failed.");
