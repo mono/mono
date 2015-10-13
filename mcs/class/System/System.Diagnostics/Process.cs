@@ -1220,18 +1220,25 @@ namespace System.Diagnostics {
 			if (process_handle == IntPtr.Zero)
 				throw new InvalidOperationException ("No process is associated with this object.");
 
-
 			DateTime start = DateTime.UtcNow;
+
+			if (!WaitForExit_internal (process_handle, ms))
+				return false;
+
+			if (ms >= 0) {
+				ms -= (int) (DateTime.UtcNow - start).TotalMilliseconds;
+				if (ms <= 0)
+					return false;
+			}
+
 			if (async_output != null && !async_output.IsCompleted) {
 				if (false == async_output.AsyncWaitHandle.WaitOne (ms, false))
 					return false; // Timed out
 
 				if (ms >= 0) {
-					DateTime now = DateTime.UtcNow;
-					ms -= (int) (now - start).TotalMilliseconds;
+					ms -= (int) (DateTime.UtcNow - start).TotalMilliseconds;
 					if (ms <= 0)
 						return false;
-					start = now;
 				}
 			}
 
@@ -1246,12 +1253,9 @@ namespace System.Diagnostics {
 				}
 			}
 
-			bool exited = WaitForExit_internal (process_handle, ms);
+			OnExited ();
 
-			if (exited)
-				OnExited ();
-
-			return exited;
+			return true;
 		}
 
 		/* Waits up to ms milliseconds for process 'handle' to 
