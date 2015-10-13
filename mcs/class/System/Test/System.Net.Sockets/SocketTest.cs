@@ -12,7 +12,6 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Threading;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Sockets;
@@ -3480,16 +3479,35 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 		}
 
-		static bool? supportsPortReuse;
-		static bool SupportsPortReuse ()
-		{
-			if (supportsPortReuse.HasValue)
-				return supportsPortReuse.Value;
+		static bool supportsTcpReuse = false;
+		static bool supportsTcpReuseSet = false;
 
-			supportsPortReuse = (bool) typeof (Socket).GetMethod ("SupportsPortReuse",
-					BindingFlags.Static | BindingFlags.NonPublic)
-					.Invoke (null, new object [] {});
-			return supportsPortReuse.Value;
+		static bool SupportsTcpReuse ()
+		{
+			if (supportsTcpReuseSet)
+				return supportsTcpReuse;
+
+			if (Path.DirectorySeparatorChar == '/') {
+				/*
+				 * On UNIX OS
+				 * Multiple threads listening to the same address and port are not possible
+				 * before linux 3.9 kernel, where the socket option SO_REUSEPORT was introduced.
+				 */
+				Regex reg = new Regex(@"^#define\s*SO_REUSEPORT");
+				foreach (string directory in Directory.GetDirectories ("/usr/include")) {
+					var f = Directory.GetFiles (directory, "socket.h").SingleOrDefault ();
+					if (f != null && File.ReadLines (f).Any (l => reg.Match (l).Success)) {
+						supportsTcpReuse = true;
+						break;
+					}
+				}
+			} else {
+				supportsTcpReuse = true;
+			}
+
+			supportsTcpReuseSet = true;
+
+			return supportsTcpReuse;
 		}
 
 		// Test case for bug #31557
@@ -3515,7 +3533,7 @@ namespace MonoTests.System.Net.Sockets
 					ex = e;
 				}
 
-				Assert.AreEqual (SupportsPortReuse (), ex == null);
+				Assert.AreEqual (SupportsTcpReuse (), ex == null);
 			}
 		}
 

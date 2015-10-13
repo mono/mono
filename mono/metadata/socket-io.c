@@ -2517,16 +2517,6 @@ ves_icall_System_Net_Sockets_Socket_SendFile_internal (SOCKET sock, MonoString *
 	return TRUE;
 }
 
-gboolean
-ves_icall_System_Net_Sockets_Socket_SupportPortReuse (void)
-{
-#if defined (SO_REUSEPORT) || defined (HOST_WIN32)
-    return TRUE;
-#else
-    return FALSE;
-#endif
-}
-
 void mono_network_init(void)
 {
 	mono_networking_init ();
