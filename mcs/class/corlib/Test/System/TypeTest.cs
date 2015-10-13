@@ -4042,7 +4042,8 @@ namespace MonoTests.System
 			MustAE (string.Format ("{0}&&", typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}&*", typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}&[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
-
+			MustAE (string.Format ("{0}[,", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[*", typeof (MyRealEnum).FullName));
 
 			MustAE (string.Format ("{0}[[{1},", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));

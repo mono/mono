@@ -377,7 +377,7 @@ namespace System {
 								++pos;
 								SkipSpace (name, ref pos);
 							}
-							if (name [pos] != ']')
+							if (pos >= name.Length || name [pos] != ']')
 								throw new ArgumentException ("Error parsing array spec", "typeName");
 							if (dimensions > 1 && bound)
 								throw new ArgumentException ("Invalid array spec, multi-dimensional array cannot be bound", "typeName");
