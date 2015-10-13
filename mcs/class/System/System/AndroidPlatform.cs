@@ -83,6 +83,13 @@ namespace System {
 				certsRawData.Add (cert.RawData);
 			return trustEvaluateSsl (certsRawData);
 		}
+		internal static bool TrustEvaluateSsl (X509Certificate2Collection collection, object sender, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors errors)
+		{
+			var certsRawData = new List <byte[]> (collection.Count);
+			foreach (var cert in collection)
+				certsRawData.Add (cert.RawData);
+			return trustEvaluateSsl (certsRawData);
+		}
 #endif  // SECURITY_DEP
 
 		internal static IWebProxy GetDefaultProxy ()
