@@ -82,7 +82,7 @@ namespace Mono.Net.Security
 			get; set;
 		}
 
-#if SECURITY_DEP && MARTIN_FIXME
+#if SECURITY_DEP
 		readonly ChainValidationHelper validationHelper;
 		readonly MonoTlsSettings settings;
 
