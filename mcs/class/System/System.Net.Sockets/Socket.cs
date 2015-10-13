@@ -3456,6 +3456,9 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void cancel_blocking_socket_operation (Thread thread);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern bool SupportsPortReuse ();
 	}
 }
 
