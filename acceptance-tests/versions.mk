@@ -87,9 +87,7 @@ print-versions:: print-$(1)
 
 endef
 
-ifneq ($(findstring mono-extensions, $(CHECK_VERSIONS)),)
-    $(eval $(call CheckVersionTemplate,mono-extensions,MONO_EXTENSIONS))
-endif
+$(eval $(call CheckVersionTemplate,roslyn,ROSLYN))
 
 reset-versions::
 
@@ -104,17 +102,6 @@ check-versions::
 
 reset:
 	@make check-versions RESET_VERSIONS=1
-
-XAMARIN_SUBMODULES=mono-extensions
-
-check-versions-xamarin:
-	$(MAKE) check-versions CHECK_VERSIONS=$(XAMARIN_SUBMODULES)
-
-reset-versions-xamarin:
-	$(MAKE) reset-versions CHECK_VERSIONS=$(XAMARIN_SUBMODULES)
-
-reset-xamarin:
-	$(MAKE) check-versions CHECK_VERSIONS=$(XAMARIN_SUBMODULES) RESET_VERSIONS=1
 
 __bump-version-%:
 	@if [ "$(REV)" == "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
@@ -138,25 +125,18 @@ __bump-current-version-%:
 
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
-bump-mono-extensions: __bump-version-mono-extensions
-bump-llvm: __bump-version-llvm
+bump-roslyn: __bump-version-roslyn
 
 # Bump the given submodule to the branch given by the BRANCH/REMOTE_BRANCH make variables
 # If COMMIT is 1, commit the change
-bump-branch-mono-extensions: __bump-branch-mono-extensions
-bump-branch-llvm: __bump-branch-llvm
+bump-branch-roslyn: __bump-branch-roslyn
 
 # Bump the given submodule to its current GIT version
 # If COMMIT is 1, commit the change
-bump-current-mono-extensions: __bump-current-version-mono-extensions
-bump-current-llvm: __bump-current-version-llvm
+bump-current-roslyn: __bump-current-version-roslyn
 
-commit-bump-mono-extensions:
-	$(MAKE) bump-mono-extensions COMMIT=1
-commit-bump-llvm:
-	$(MAKE) bump-llvm COMMIT=1
+commit-bump-roslyn:
+	$(MAKE) bump-roslyn COMMIT=1
 
-commit-bump-current-mono-extensions:
-	$(MAKE) bump-current-mono-extensions COMMIT=1
-commit-bump-current-llvm:
-	$(MAKE) bump-current-llvm COMMIT=1
+commit-bump-current-roslyn:
+	$(MAKE) bump-current-roslyn COMMIT=1

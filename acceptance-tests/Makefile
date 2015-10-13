@@ -1,6 +1,4 @@
 TOP=..
-MONO_EXTENSIONS_PATH=$(TOP)/../mono-extensions
-LLVM_PATH=$(TOP)/../llvm
+ROSLYN_PATH=$(TOP)/../roslyn
 
-CHECK_VERSIONS=all
 include versions.mk
