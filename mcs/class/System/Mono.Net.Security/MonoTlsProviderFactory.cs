@@ -169,14 +169,10 @@ namespace Mono.Net.Security
 
 		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
 		{
-#if MARTIN_FIXME
 			lock (locker) {
 				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
 				return new HttpWebRequest (requestUri, internalProvider, settings);
 			}
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 		#endregion
 
