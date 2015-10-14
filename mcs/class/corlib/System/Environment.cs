@@ -549,8 +549,7 @@ namespace System {
 			return GetFolderPath (folder, SpecialFolderOption.None);
 		}
 
-// for monotouch, not monotouch_runtime
-#if !(MONOTOUCH && FULL_AOT_RUNTIME)
+#if !MONOTOUCH
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string GetWindowsFolderPath (int folder);
 
