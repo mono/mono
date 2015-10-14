@@ -82,6 +82,9 @@ namespace System {
         private const int DaysTo1601 = DaysPer400Years * 4;          // 584388
         // Number of days from 1/1/0001 to 12/30/1899
         private const int DaysTo1899 = DaysPer400Years * 4 + DaysPer100Years * 3 - 367;
+        // Number of days from 1/1/0001 to 12/31/1969
+        internal const int DaysTo1970 = DaysPer400Years * 4 + DaysPer100Years * 3 + DaysPer4Years * 17 + DaysPerYear; // 719,162
+
         // Number of days from 1/1/0001 to 12/31/9999
         private const int DaysTo10000 = DaysPer400Years * 25 - 366;  // 3652059
     
