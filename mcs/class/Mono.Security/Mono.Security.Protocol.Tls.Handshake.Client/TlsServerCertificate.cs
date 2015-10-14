@@ -33,6 +33,8 @@ using X509Cert = System.Security.Cryptography.X509Certificates;
 using Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 
+using Mono.Security.Interface;
+
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerCertificate : HandshakeMessage

@@ -318,6 +318,7 @@ namespace Mono.Net.Security
 		#endregion // Properties
 
 		#region Methods
+
 /*
 		AsymmetricAlgorithm GetPrivateKey (X509Certificate cert, string targetHost)
 		{

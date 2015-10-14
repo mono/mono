@@ -31,6 +31,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Protocol.Tls.Handshake;
+using Mono.Security.Interface;
 
 namespace Mono.Security.Protocol.Tls
 {

@@ -48,6 +48,8 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 
+using Mono.Net.Security;
+
 namespace System.Net
 {
 	enum ReadState
@@ -458,8 +460,8 @@ namespace System.Net
 						nstream = (Stream) Activator.CreateInstance (sslStream, args);
 #endif
 						SslClientStream scs = (SslClientStream) nstream;
-						var helper = new ServicePointManager.ChainValidationHelper (request, request.Address.Host);
-						scs.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
+						var helper = new ChainValidationHelper (request);
+						scs.ServerCertValidation2 += (certs) => helper.ValidateChain (request.Address.Host, certs);
 #endif
 						certsAvailable = false;
 					}
