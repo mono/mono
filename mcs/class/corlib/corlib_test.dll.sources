@@ -55,6 +55,7 @@ System.Collections.ObjectModel/ReadOnlyCollectionTest.cs
 System/ConsoleTest.cs
 System/ConvertTest.cs
 System/DateTimeOffsetTest.cs
+System/DateTimeOffsetTestCoreFx.cs
 System/DateTimeTest.cs
 System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
