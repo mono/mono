@@ -1101,6 +1101,12 @@ dnl ***********************************
 AC_CHECK_HEADERS(signal.h)
 AC_CHECK_FUNCS(sigaction)
 
+# signal() is declared inline in Android headers
+# so we need to workaround it by overriding the check.
+if test x$platform_android = xyes; then
+	AC_DEFINE(HAVE_SIGNAL,1)
+fi
+
 if test x$host_win32 = xno; then
 
 	dnl hires monotonic clock support
