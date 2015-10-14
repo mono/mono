@@ -189,7 +189,7 @@ namespace Mono.Net.Security
 				if (certValidationCallback == null)
 					certValidationCallback = request.ServerCertValidationCallback;
 				if (certSelectionCallback == null)
-					certSelectionCallback = new LocalCertSelectionCallback (stream.SelectClientCertificate);
+					certSelectionCallback = new LocalCertSelectionCallback (DefaultSelectionCallback);
 
 				if (settings == null)
 					fallbackToSPM = true;
@@ -197,6 +197,16 @@ namespace Mono.Net.Security
 
 			if (fallbackToSPM && certValidationCallback == null)
 				certValidationCallback = ServicePointManager.ServerCertValidationCallback;
+		}
+
+		static X509Certificate DefaultSelectionCallback (string targetHost, XX509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers)
+		{
+			X509Certificate clientCertificate;
+			if (localCertificates == null || localCertificates.Count == 0)
+				clientCertificate = null;
+			else
+				clientCertificate = localCertificates [0];
+			return clientCertificate;
 		}
 
 		public MonoTlsSettings Settings {
