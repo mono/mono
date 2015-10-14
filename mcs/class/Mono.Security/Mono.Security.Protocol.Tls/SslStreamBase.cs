@@ -31,6 +31,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
+using Mono.Security.Interface;
+
 namespace Mono.Security.Protocol.Tls
 {
 #if INSIDE_SYSTEM
