@@ -42,6 +42,7 @@ using System.Reflection.Emit;
 #endif
 using System.Threading;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using System.Security;
 using System.Linq;
 using System.Resources;
@@ -1231,6 +1232,67 @@ namespace MonoTests.System.Reflection
 				typeof (string).Assembly.GetType ("");
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {}
+		}
+
+		class GetCallingAssemblyCallee {
+			static int _dummy;
+
+			static void sideEffect () {
+				_dummy++;
+			}
+
+			// GetCallingAssembly may see an unpredictable
+			// view of the stack if it's called in tail
+			// position, or if its caller or the caller's
+			// caller is inlined.  So we put in a side
+			// effect to get out of tail position, and we
+			// tag the methods NoInlining to discourage
+			// the inliner.
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly Leaf () {
+				var a = Assembly.GetCallingAssembly ();
+				sideEffect();
+				return a;
+			}
+
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly DirectCall () {
+				var a = Leaf();
+				sideEffect();
+				return a;
+			}
+
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly InvokeCall () {
+				var ty = typeof (GetCallingAssemblyCallee);
+				var mi = ty.GetMethod("Leaf");
+				var o = mi.Invoke(null, null);
+				sideEffect();
+				return (Assembly)o;
+			}
+		}
+
+		[Test]
+		public void GetCallingAssembly_Direct() {
+			var a = GetCallingAssemblyCallee.DirectCall ();
+			Assert.IsNotNull (a);
+
+			Assert.AreEqual (GetType().Assembly, a);
+		}
+
+		[Test]
+		public void GetCallingAssembly_SkipsReflection () {
+			// check that the calling assembly is this
+			// one, not mscorlib (aka, the reflection
+			// API).
+			var a = GetCallingAssemblyCallee.InvokeCall ();
+			Assert.IsNotNull (a);
+
+			var invokeAssembly =
+				typeof (MethodInfo).Assembly;
+			Assert.AreNotEqual (invokeAssembly, a);
+
+			Assert.AreEqual (GetType().Assembly, a);
 		}
 
 #if NET_4_5
