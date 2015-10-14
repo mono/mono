@@ -65,15 +65,6 @@ namespace System.Net
 			this.size = size;
 		}
 
-		internal WebAsyncResult (HttpWebRequest request, byte[] buffer, int offset, int size, SimpleAsyncCallback cb)
-			: base (cb)
-		{
-			this.AsyncObject = request;
-			this.buffer = buffer;
-			this.offset = offset;
-			this.size = size;
-		}
-
 		internal void Reset ()
 		{
 			this.nbytes = 0;

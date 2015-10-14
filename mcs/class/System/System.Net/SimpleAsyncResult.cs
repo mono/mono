@@ -49,7 +49,7 @@ namespace System.Net
 		Exception exc;
 		object locker = new object ();
 
-		protected SimpleAsyncResult (SimpleAsyncCallback cb)
+		SimpleAsyncResult (SimpleAsyncCallback cb)
 		{
 			this.cb = cb;
 		}

@@ -911,126 +911,91 @@ namespace System.Net
 			return true;
 		}
 
-		internal void ReadAsync (HttpWebRequest request, byte [] buffer, int offset, int size, WebAsyncResult result)
+
+		internal IAsyncResult BeginRead (HttpWebRequest request, byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
-			bool error = false;
 			Stream s = null;
 			lock (this) {
 				if (Data.request != request)
-					error = true;
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					return null;
 				s = nstream;
 			}
 
-			if (error) {
-				result.SetCompleted (true, new ObjectDisposedException (typeof(NetworkStream).FullName));
-				result.DoCallback ();
-				return;
-			} else if (s == null) {
-				result.SetCompleted (true);
-				result.DoCallback ();
-				return;
-			}
-
-			var data = new WebAsyncData (request, s, buffer, offset, size);
-			ReadAsync (data, result);
-		}
-
-		void ReadAsync (WebAsyncData data, WebAsyncResult result)
-		{
-			bool running;
-			try {
-				running = ReadAsyncInner (data, result);
-			} catch (Exception ex) {
-				result.SetCompleted (true, ex);
-				running = false;
-			}
-			if (!running)
-				result.DoCallback ();
-		}
-
-		bool ReadAsyncInner (WebAsyncData data, WebAsyncResult result)
-		{
-			if (chunkedRead && (chunkStream.DataAvailable || !chunkStream.WantMore)) {
-				ReadAsyncInnerCB (data, result, null);
-				return false;
-			}
-
-			result.InnerAsyncResult = data.Stream.BeginRead (data.Buffer, data.Offset, data.Size, inner => ReadAsyncInnerCB (data, result, inner), null);
-			return result.InnerAsyncResult != null && !result.InnerAsyncResult.CompletedSynchronously;
-		}
-
-		bool ReadAsyncInnerCB (WebAsyncData data, WebAsyncResult result, IAsyncResult innerResult)
-		{
-			var synch = innerResult != null ? innerResult.CompletedSynchronously : false;
-
-			bool error = false;
-			Stream s = null;
-			lock (this) {
-				if (Data.request != data.Request || nstream == null)
-					error = true;
-				s = nstream;
-			}
-
-			if (error) {
-				result.SetCompleted (synch, new ObjectDisposedException (typeof(NetworkStream).FullName));
-				result.DoCallback ();
-				return false;
-			}
-
-			int nbytes = 0;
-			try {
-				if (innerResult != null)
-					nbytes = s.EndRead (innerResult);
-			} catch (Exception ex) {
-				result.SetCompleted (synch, ex);
-				result.DoCallback ();
-				return false;
-			}
-
-			var done = nbytes == 0;
-
-			if (!chunkedRead) {
-				result.SetCompleted (synch, nbytes);
-				result.DoCallback ();
-				return false;
-			}
-
-			try {
-				chunkStream.WriteAndReadBack (data.Buffer, data.Offset, data.Size, ref nbytes);
-			} catch (Exception e) {
-				if (!(e is WebException))
-					e = new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
-				result.SetCompleted (synch, e);
-				result.DoCallback ();
-				return false;
-			}
-
-			try {
-				if (!done && nbytes == 0 && chunkStream.WantMore)
-					return ReadAsyncInner (data, result);
-			} catch (Exception e) {
-				if (!(e is WebException))
-					e = new WebException ("Invalid chunked data.", e, WebExceptionStatus.ServerProtocolViolation, null);
-				result.SetCompleted (synch, e);
-				result.DoCallback ();
-				return false;
-			}
-
-			if (done || nbytes == 0) {
-				if (chunkStream.ChunkLeft != 0) {
-					result.SetCompleted (synch, new WebException ("Read error", null, WebExceptionStatus.ConnectionClosed, null));
-					result.DoCallback ();
-					return false;
-				} else if (chunkStream.WantMore) {
-					result.SetCompleted (synch, new IOException ("Connection closed"));
-					result.DoCallback ();
-					return false;
+			IAsyncResult result = null;
+			if (!chunkedRead || (!chunkStream.DataAvailable && chunkStream.WantMore)) {
+				try {
+					result = s.BeginRead (buffer, offset, size, cb, state);
+					cb = null;
+				} catch (Exception) {
+					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked BeginRead");
+					throw;
 				}
 			}
 
-			result.SetCompleted (synch, nbytes);
-			result.DoCallback ();
-			return false;
+			if (chunkedRead) {
+				WebAsyncResult wr = new WebAsyncResult (cb, state, buffer, offset, size);
+				wr.InnerAsyncResult = result;
+				if (result == null) {
+					// Will be completed from the data in ChunkStream
+					wr.SetCompleted (true, (Exception) null);
+					wr.DoCallback ();
+				}
+				return wr;
+			}
+
+			return result;
+		}
+		
+		internal int EndRead (HttpWebRequest request, IAsyncResult result)
+		{
+			Stream s = null;
+			lock (this) {
+				if (Data.request != request)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				if (nstream == null)
+					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
+				s = nstream;
+			}
+
+			int nbytes = 0;
+			bool done = false;
+			WebAsyncResult wr = null;
+			IAsyncResult nsAsync = ((WebAsyncResult) result).InnerAsyncResult;
+			if (chunkedRead && (nsAsync is WebAsyncResult)) {
+				wr = (WebAsyncResult) nsAsync;
+				IAsyncResult inner = wr.InnerAsyncResult;
+				if (inner != null && !(inner is WebAsyncResult)) {
+					nbytes = s.EndRead (inner);
+					done = nbytes == 0;
+				}
+			} else if (!(nsAsync is WebAsyncResult)) {
+				nbytes = s.EndRead (nsAsync);
+				wr = (WebAsyncResult) result;
+				done = nbytes == 0;
+			}
+
+			if (chunkedRead) {
+				try {
+					chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
+					if (!done && nbytes == 0 && chunkStream.WantMore)
+						nbytes = EnsureRead (wr.Buffer, wr.Offset, wr.Size);
+				} catch (Exception e) {
+					if (e is WebException)
+						throw e;
+
+					throw new WebException ("Invalid chunked data.", e,
+								WebExceptionStatus.ServerProtocolViolation, null);
+				}
+
+				if ((done || nbytes == 0) && chunkStream.ChunkLeft != 0) {
+					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked EndRead");
+					throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
+				}
+			}
+
+			return (nbytes != 0) ? nbytes : -1;
 		}
 
 		// To be called on chunkedRead when we can read no data from the ChunkStream yet
