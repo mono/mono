@@ -80,6 +80,30 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void PrimitiveNonNumeric ()
+		{
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant ('a'), Expression.Constant ('b'));
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsTrue (eq ());
+		}
+
+		[Test]
+		public void StringWithNull ()
+		{
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant ("a"), Expression.Constant (null));
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsTrue (eq ());
+		}
+
+		[Test]
 		public void Nullable_LiftToNull_SetToFalse ()
 		{
 			int? a = 1;
