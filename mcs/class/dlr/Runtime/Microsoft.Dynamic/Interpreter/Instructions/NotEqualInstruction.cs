@@ -24,7 +24,7 @@ using Microsoft.Scripting.Utils;
 namespace Microsoft.Scripting.Interpreter {
     internal abstract class NotEqualInstruction : ComparisonInstruction {
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
-        private static Instruction _Reference, _Boolean, _SByte, _Int16, _Char, _Int32, _Int64, _Byte, _UInt16, _UInt32, _UInt64, _Single, _Double;
+        private static Instruction _Reference, _Boolean, _SByte, _Int16, _Char, _String, _Int32, _Int64, _Byte, _UInt16, _UInt32, _UInt64, _Single, _Double;
         private static Instruction _BooleanLifted, _SByteLifted, _Int16Lifted, _CharLifted, _Int32Lifted, _Int64Lifted,
             _ByteLifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted, _SingleLifted, _DoubleLifted;
 
@@ -61,6 +61,13 @@ namespace Microsoft.Scripting.Interpreter {
             protected override object DoCalculate (object l, object r)
             {
                 return (Char)l != (Char)r;
+            }
+        }
+
+        internal sealed class NotEqualString : NotEqualInstruction {
+            protected override object DoCalculate (object l, object r)
+            {
+                return (String)l != (String)r;
             }
         }
 
@@ -140,6 +147,7 @@ namespace Microsoft.Scripting.Interpreter {
                 case TypeCode.SByte: return _SByte ?? (_SByte = new NotEqualSByte());
                 case TypeCode.Byte: return _Byte ?? (_Byte = new NotEqualByte());
                 case TypeCode.Char: return _Char ?? (_Char = new NotEqualChar());
+                case TypeCode.String: return _String ?? (_String = new NotEqualString());
                 case TypeCode.Int16: return _Int16 ?? (_Int16 = new NotEqualInt16());
                 case TypeCode.Int32: return _Int32 ?? (_Int32 = new NotEqualInt32());
                 case TypeCode.Int64: return _Int64 ?? (_Int64 = new NotEqualInt64());
