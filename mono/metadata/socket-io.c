@@ -859,14 +859,36 @@ gpointer ves_icall_System_Net_Sockets_Socket_Accept_internal(SOCKET sock,
 	*error = 0;
 #ifdef PLATFORM_WIN32
 	{
-		MonoThread* curthread = mono_thread_current ();
-		curthread->interrupt_on_stop = (gpointer)TRUE;
-		newsock = _wapi_accept (sock, NULL, 0);
-		curthread->interrupt_on_stop = (gpointer)FALSE;
+		/* perform alertable wait on event rather than blocking socket call to avoid deadlock on domain unload */
+		WSAEVENT  hEvent;
+		DWORD result = 0;
+
+		hEvent = WSACreateEvent ();
+		if (hEvent == WSA_INVALID_EVENT) {
+			*error = WSAGetLastError ();
+			return NULL;
+		}
+
+		if (WSAEventSelect (sock, hEvent, FD_ACCEPT) == SOCKET_ERROR) {
+			*error = WSAGetLastError ();
+			WSACloseEvent (hEvent);
+			return NULL;
+		}
+
+		result = WaitForSingleObjectEx (hEvent, INFINITE, TRUE);
+		WSACloseEvent (hEvent);
+
+		if (result == WAIT_IO_COMPLETION) {
+			/* if we were interrupted by an APC, return error indicating interrupt */
+			*error = WSAEINTR;
+			return NULL;
+		}
+
+		/* otherwise we are ready to make accept call that should not block */
 	}
-#else
-	newsock = _wapi_accept (sock, NULL, 0);
 #endif
+
+	newsock = _wapi_accept (sock, NULL, 0);
 	if(newsock==INVALID_SOCKET) {
 		*error = WSAGetLastError ();
 		return(NULL);
