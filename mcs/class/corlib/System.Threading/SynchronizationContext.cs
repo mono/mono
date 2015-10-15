@@ -52,7 +52,7 @@ namespace System.Threading
 		public static SynchronizationContext Current
 		{
 			get {
-#if NET_2_1
+#if NET_2_1 && !UNITY
 				if (currentContext == null)
 					currentContext = new SynchronizationContext ();
 #endif
