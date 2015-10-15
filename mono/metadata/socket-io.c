@@ -861,7 +861,6 @@ gpointer ves_icall_System_Net_Sockets_Socket_Accept_internal(SOCKET sock,
 	{
 		/* perform alertable wait on event rather than blocking socket call to avoid deadlock on domain unload */
 		WSAEVENT  hEvent;
-		int res = 0;
 		DWORD result = 0;
 
 		hEvent = WSACreateEvent ();
@@ -872,6 +871,7 @@ gpointer ves_icall_System_Net_Sockets_Socket_Accept_internal(SOCKET sock,
 
 		if (WSAEventSelect (sock, hEvent, FD_ACCEPT) == SOCKET_ERROR) {
 			*error = WSAGetLastError ();
+			WSACloseEvent (hEvent);
 			return NULL;
 		}
 
