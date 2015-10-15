@@ -1230,7 +1230,7 @@ namespace System
 			return true;
 		}
 
-		static int SwapInt32 (int i)
+		static uint SwapUInt32 (uint i)
 		{
 			return (((i >> 24) & 0xff)
 				| ((i >> 8) & 0xff00)
@@ -1238,30 +1238,35 @@ namespace System
 				| (((i & 0xff) << 24)));
 		}
 
-		static int ReadBigEndianInt32 (byte [] buffer, int start)
+		static uint ReadBigEndianUInt32 (byte [] buffer, uint start)
 		{
-			int i = BitConverter.ToInt32 (buffer, start);
+			uint i = BitConverter.ToUInt32 (buffer, (int)start);
 			if (!BitConverter.IsLittleEndian)
 				return i;
 
-			return SwapInt32 (i);
+			return SwapUInt32 (i);
+		}
+
+		static int ReadBigEndianSignedInt32 (byte [] buffer, uint start)
+		{
+			return (int)ReadBigEndianUInt32(buffer, start);
 		}
 
 		private static TimeZoneInfo ParseTZBuffer (string id, byte [] buffer, int length)
 		{
 			//Reading the header. 4 bytes for magic, 16 are reserved
-			int ttisgmtcnt = ReadBigEndianInt32 (buffer, 20);
-			int ttisstdcnt = ReadBigEndianInt32 (buffer, 24);
-			int leapcnt = ReadBigEndianInt32 (buffer, 28);
-			int timecnt = ReadBigEndianInt32 (buffer, 32);
-			int typecnt = ReadBigEndianInt32 (buffer, 36);
-			int charcnt = ReadBigEndianInt32 (buffer, 40);
+			uint ttisgmtcnt = ReadBigEndianUInt32 (buffer, 20);
+			uint ttisstdcnt = ReadBigEndianUInt32 (buffer, 24);
+			uint leapcnt = ReadBigEndianUInt32 (buffer, 28);
+			uint timecnt = ReadBigEndianUInt32 (buffer, 32);
+			uint typecnt = ReadBigEndianUInt32 (buffer, 36);
+			uint charcnt = ReadBigEndianUInt32 (buffer, 40);
 
 			if (length < 44 + timecnt * 5 + typecnt * 6 + charcnt + leapcnt * 8 + ttisstdcnt + ttisgmtcnt)
 				throw new InvalidTimeZoneException ();
 
-			Dictionary<int, string> abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
-			Dictionary<int, TimeType> time_types = ParseTimesTypes (buffer, 44 + 4 * timecnt + timecnt, typecnt, abbreviations);
+			Dictionary<uint, string> abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
+			Dictionary<uint, TimeType> time_types = ParseTimesTypes (buffer, 44 + 4 * timecnt + timecnt, typecnt, abbreviations);
 			List<KeyValuePair<DateTime, TimeType>> transitions = ParseTransitions (buffer, 44, timecnt, time_types);
 
 			if (time_types.Count == 0)
@@ -1279,7 +1284,7 @@ namespace System
 			List<AdjustmentRule> adjustmentRules = new List<AdjustmentRule> ();
 			bool storeTransition = false;
 
-			for (int i = 0; i < transitions.Count; i++) {
+			for (int i = 0; i < (int)transitions.Count; i++) {
 				var pair = transitions [i];
 				DateTime ttime = pair.Key;
 				TimeType ttype = pair.Value;
@@ -1366,20 +1371,20 @@ namespace System
 			return tz;
 		}
 
-		static Dictionary<int, string> ParseAbbreviations (byte [] buffer, int index, int count)
+		static Dictionary<uint, string> ParseAbbreviations (byte [] buffer, uint index, uint count)
 		{
-			var abbrevs = new Dictionary<int, string> ();
-			int abbrev_index = 0;
+			var abbrevs = new Dictionary<uint, string> ();
+			uint abbrev_index = 0;
 			var sb = new StringBuilder ();
-			for (int i = 0; i < count; i++) {
+			for (uint i = 0; i < count; i++) {
 				char c = (char) buffer [index + i];
 				if (c != '\0')
 					sb.Append (c);
 				else {
 					abbrevs.Add (abbrev_index, sb.ToString ());
 					//Adding all the substrings too, as it seems to be used, at least for Africa/Windhoek
-					for (int j = 1; j < sb.Length; j++)
-						abbrevs.Add (abbrev_index + j, sb.ToString (j, sb.Length - j));
+					for (uint j = 1; j < sb.Length; j++)
+						abbrevs.Add (abbrev_index + j, sb.ToString ((int)j, sb.Length - (int)j));
 					abbrev_index = i + 1;
 					sb = new StringBuilder ();
 				}
@@ -1387,26 +1392,26 @@ namespace System
 			return abbrevs;
 		}
 
-		static Dictionary<int, TimeType> ParseTimesTypes (byte [] buffer, int index, int count, Dictionary<int, string> abbreviations)
+		static Dictionary<uint, TimeType> ParseTimesTypes (byte [] buffer, uint index, uint count, Dictionary<uint, string> abbreviations)
 		{
-			var types = new Dictionary<int, TimeType> (count);
-			for (int i = 0; i < count; i++) {
-				int offset = ReadBigEndianInt32 (buffer, index + 6 * i);
+			var types = new Dictionary<uint, TimeType> ((int)count);
+			for (uint i = 0; i < count; i++) {
+				int offset = ReadBigEndianSignedInt32 (buffer, index + 6 * i);
 				byte is_dst = buffer [index + 6 * i + 4];
 				byte abbrev = buffer [index + 6 * i + 5];
-				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(int)abbrev]));
+				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(uint)abbrev]));
 			}
 			return types;
 		}
 
-		static List<KeyValuePair<DateTime, TimeType>> ParseTransitions (byte [] buffer, int index, int count, Dictionary<int, TimeType> time_types)
+		static List<KeyValuePair<DateTime, TimeType>> ParseTransitions (byte [] buffer, uint index, uint count, Dictionary<uint, TimeType> time_types)
 		{
-			var list = new List<KeyValuePair<DateTime, TimeType>> (count);
-			for (int i = 0; i < count; i++) {
-				int unixtime = ReadBigEndianInt32 (buffer, index + 4 * i);
+			var list = new List<KeyValuePair<DateTime, TimeType>> ((int)count);
+			for (uint i = 0; i < count; i++) {
+				long unixtime = (long)ReadBigEndianUInt32 (buffer, index + 4 * i);
 				DateTime ttime = DateTimeFromUnixTime (unixtime);
 				byte ttype = buffer [index + 4 * count + i];
-				list.Add (new KeyValuePair<DateTime, TimeType> (ttime, time_types [(int)ttype]));
+				list.Add (new KeyValuePair<DateTime, TimeType> (ttime, time_types [(uint)ttype]));
 			}
 			return list;
 		}
