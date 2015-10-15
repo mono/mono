@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Mono.Audio {
 
@@ -75,10 +76,6 @@ namespace Mono.Audio {
 			return num_frames;
 		}
 		
-		public virtual int XRunRecovery (int err) {
-			return err;
-		}
-		
 		public virtual void Wait () {
 		}
 		
@@ -110,6 +107,12 @@ namespace Mono.Audio {
 
 		[DllImport ("libasound.so.2")]
 		static extern int snd_pcm_prepare (IntPtr handle);
+
+		[DllImport ("libasound.so.2")]
+		static extern int snd_pcm_wait (IntPtr handle, int timeout);
+
+		[DllImport ("libasound.so.2")]
+		static extern int snd_pcm_resume (IntPtr handle);
 
 		[DllImport ("libasound.so.2")]
 		static extern int snd_pcm_hw_params (IntPtr handle, IntPtr param);
@@ -293,26 +296,37 @@ namespace Mono.Audio {
 		}
 
 		public override int PlaySample (byte[] buffer, int num_frames) {
-			int frames;
-
-			do {
-				frames = snd_pcm_writei (handle, buffer, num_frames);
-				if (frames < 0)
-					XRunRecovery(frames);
-			}while (frames < 0);
-
-			return frames;
-		}
-		
-		public override int XRunRecovery (int err)
-		{
-			int alsa_err = 0;
-			
-			// when alsa ring buffer UnderRun, snd_pcm_writei return -EPIPE (-32)
-			if (-32 == err) {
-				alsa_err = snd_pcm_prepare (handle);
+			int result = 0;
+			int frames = snd_pcm_writei (handle, buffer, num_frames);
+			if (frames == -11 || (frames >= 0 && frames < num_frames)) {
+				// Received -EAGAIN (-11) or frames were not all played. Wait for PCM to be ready.
+				snd_pcm_wait (handle, 100);
+			} else if (frames == -32) {
+				// Received -EPIPE (-32), meaning there is a buffer underrun
+				result = snd_pcm_prepare (handle);
+				if (result < 0) {
+					Console.WriteLine ("ALSA xrun: failed to prepare, error code {0}", result);
+				}
+			} else if (frames == -86) {
+				// Received -ESTRPIPE (-86), meaning the driver is suspended. Try to resume it.
+				while ((result = snd_pcm_resume (handle)) == -11) {
+					// Wait until suspend flag is released
+					Thread.Sleep (10);
+				}
+				if (result < 0) {
+					result = snd_pcm_prepare (handle);
+				}
+				if (result < 0) {
+					Console.WriteLine ("ALSA suspend: failed to prepare, error code {0}", result);
+				}
+			} else if (frames < 0) {
+				result = frames;
+				Console.WriteLine ("ALSA failed to write, error code {0}", result);
 			}
-			return alsa_err;
+			if (frames >= 0) {
+				result = frames;
+			}
+			return result;
 		}
 		
 		public override void Wait () {

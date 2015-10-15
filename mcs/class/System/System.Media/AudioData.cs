@@ -159,7 +159,7 @@ namespace Mono.Audio {
 		}
 
 		public override void Play (AudioDevice dev) {
-			int    fragment_played = 0;
+			int    fragment_played   = 0;
 			int    total_data_played = 0;
 			int    chunk_size        = (int)dev.ChunkSize;
 			int    count             = data_len;
@@ -182,6 +182,9 @@ namespace Mono.Audio {
 				if (fragment_played > 0) {
 					total_data_played  += (fragment_played * frame_divider * channels);
 					count              -= (fragment_played * frame_divider * channels);
+				} else if (fragment_played < 0) {
+					// Something bad happened during playback, stop sending data to the driver
+					IsStopped = true;
 				}
 			}
 		}
@@ -262,27 +265,30 @@ namespace Mono.Audio {
 		}
 
 		public override void Play (AudioDevice dev) {
-						int    fragment_played = 0;
+			int    fragment_played   = 0;
 			int    total_data_played = 0;
 			int    chunk_size        = (int)dev.ChunkSize;
 			int    count             = data_len;
 			byte[] buffer            = new byte [data_len];
 			byte[] chunk_to_play     = new byte [chunk_size];
-			
+
 			// Read only Au data, don't care about file header here !
 			stream.Position = 0; //(long)data_offset;
 			stream.Read (buffer, 0, data_len); 
-			
+
 			while (!IsStopped && count >= 0){
 				// Copy one chunk from buffer
 				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
 				// play that chunk, !!! the size pass to alsa the number of fragment, a fragment is a sample per channel !!!
 				fragment_played = dev.PlaySample (chunk_to_play, chunk_size / (frame_divider * channels));
-				
+
 				// If alsa played something, inc the total data played and dec the data to be played
 				if (fragment_played > 0) {
 					total_data_played  += (fragment_played * frame_divider * channels);
 					count              -= (fragment_played * frame_divider * channels);
+				} else if (fragment_played < 0) {
+					// Something bad happened during playback, stop sending data to the driver
+					IsStopped = true;
 				}
 			}
 		}
