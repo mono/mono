@@ -38,7 +38,6 @@ namespace System.Net.Sockets
 	internal sealed class SocketAsyncResult: IOAsyncResult
 	{
 		public Socket socket;
-		public IntPtr handle;
 		public SocketOperation operation;
 
 		Exception DelayedException;
@@ -62,6 +61,10 @@ namespace System.Net.Sockets
 
 		public int EndCalled;
 
+		public IntPtr Handle {
+			get { return socket != null ? socket.Handle : IntPtr.Zero; }
+		}
+
 		/* Used by SocketAsyncEventArgs */
 		public SocketAsyncResult ()
 			: base ()
@@ -73,7 +76,6 @@ namespace System.Net.Sockets
 			base.Init (callback, state);
 
 			this.socket = socket;
-			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
 			this.operation = operation;
 
 			DelayedException = null;
@@ -102,7 +104,6 @@ namespace System.Net.Sockets
 			: base (callback, state)
 		{
 			this.socket = socket;
-			this.handle = socket != null ? socket.Handle : IntPtr.Zero;
 			this.operation = operation;
 		}
 

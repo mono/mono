@@ -201,11 +201,9 @@ namespace System.Net.Sockets
 			this.address_family = addressFamily;
 			this.socket_type = socketType;
 			this.protocol_type = protocolType;
-			
-			int error;
-			var handle = Socket_internal (addressFamily, socketType, protocolType, out error);
 
-			this.safe_handle = new SafeSocketHandle (handle, true);
+			int error;
+			this.safe_handle = new SafeSocketHandle (Socket_internal (addressFamily, socketType, protocolType, out error), true);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -953,7 +951,7 @@ namespace System.Net.Sockets
 
 			InitSocketAsyncEventArgs (e, AcceptAsyncCallback, e, SocketOperation.Accept);
 
-			QueueIOSelectorJob (readQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, e.socket_async_result));
+			QueueIOSelectorJob (readQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, e.socket_async_result));
 
 			return true;
 		}
@@ -986,7 +984,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Accept);
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginAcceptCallback, sockares));
 
 			return sockares;
 		}
@@ -1019,7 +1017,7 @@ namespace System.Net.Sockets
 				SockFlags = SocketFlags.None,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
 
 			return sockares;
 		}
@@ -1054,7 +1052,7 @@ namespace System.Net.Sockets
 				AcceptSocket = acceptSocket,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginAcceptReceiveCallback, sockares));
 
 			return sockares;
 		}
@@ -1420,8 +1418,7 @@ namespace System.Net.Sockets
 				// an error. Better to just close the socket and move on.
 				connect_in_progress = false;
 				safe_handle.Dispose ();
-				var handle = Socket_internal (address_family, socket_type, protocol_type, out error);
-				safe_handle = new SafeSocketHandle (handle, true);
+				safe_handle = new SafeSocketHandle (Socket_internal (address_family, socket_type, protocol_type, out error), true);
 				if (error != 0)
 					throw new SocketException (error);
 			}
@@ -1454,7 +1451,7 @@ namespace System.Net.Sockets
 			is_bound = false;
 			connect_in_progress = true;
 
-			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
+			IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginConnectCallback, sockares));
 
 			return sockares;
 		}
@@ -1649,7 +1646,7 @@ namespace System.Net.Sockets
 
 			InitSocketAsyncEventArgs (e, DisconnectAsyncCallback, e, SocketOperation.Disconnect);
 
-			IOSelector.Add (e.socket_async_result.handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, e.socket_async_result));
+			IOSelector.Add (e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, e.socket_async_result));
 
 			return true;
 		}
@@ -1679,7 +1676,7 @@ namespace System.Net.Sockets
 				ReuseSocket = reuseSocket,
 			};
 
-			IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, sockares));
+			IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginDisconnectCallback, sockares));
 
 			return sockares;
 		}
@@ -1879,7 +1876,7 @@ namespace System.Net.Sockets
 
 				e.socket_async_result.Buffers = e.BufferList;
 
-				QueueIOSelectorJob (readQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, e.socket_async_result));
+				QueueIOSelectorJob (readQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, e.socket_async_result));
 			} else {
 				InitSocketAsyncEventArgs (e, ReceiveAsyncCallback, e, SocketOperation.Receive);
 
@@ -1887,7 +1884,7 @@ namespace System.Net.Sockets
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
-				QueueIOSelectorJob (readQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, e.socket_async_result));
+				QueueIOSelectorJob (readQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, e.socket_async_result));
 			}
 
 			return true;
@@ -1923,7 +1920,7 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveCallback, sockares));
 
 			return sockares;
 		}
@@ -1964,7 +1961,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveGenericCallback, sockares));
 
 			return sockares;
 		}
@@ -2124,7 +2121,7 @@ namespace System.Net.Sockets
 			e.socket_async_result.EndPoint = e.RemoteEndPoint;
 			e.socket_async_result.SockFlags = e.SocketFlags;
 
-			QueueIOSelectorJob (readQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, e.socket_async_result));
+			QueueIOSelectorJob (readQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, e.socket_async_result));
 
 			return true;
 		}
@@ -2163,7 +2160,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueIOSelectorJob (readQ, sockares.handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, sockares));
+			QueueIOSelectorJob (readQ, sockares.Handle, new IOSelectorJob (IOOperation.Read, BeginReceiveFromCallback, sockares));
 
 			return sockares;
 		}
@@ -2483,7 +2480,7 @@ namespace System.Net.Sockets
 
 				e.socket_async_result.Buffers = e.BufferList;
 
-				QueueIOSelectorJob (writeQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, e.socket_async_result));
+				QueueIOSelectorJob (writeQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, e.socket_async_result));
 			} else {
 				InitSocketAsyncEventArgs (e, SendAsyncCallback, e, SocketOperation.Send);
 
@@ -2491,7 +2488,7 @@ namespace System.Net.Sockets
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
-				QueueIOSelectorJob (writeQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), e.socket_async_result));
+				QueueIOSelectorJob (writeQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), e.socket_async_result));
 			}
 
 			return true;
@@ -2541,7 +2538,7 @@ namespace System.Net.Sockets
 				SockFlags = socket_flags,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), sockares));
+			QueueIOSelectorJob (writeQ, sockares.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, 0), sockares));
 
 			return sockares;
 		}
@@ -2568,7 +2565,7 @@ namespace System.Net.Sockets
 				}
 
 				if (sockares.Size > 0) {
-					IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, sent_so_far), sockares));
+					IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendCallback ((SocketAsyncResult) s, sent_so_far), sockares));
 					return; // Have to finish writing everything. See bug #74475.
 				}
 
@@ -2592,7 +2589,7 @@ namespace System.Net.Sockets
 				SockFlags = socketFlags,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, sockares));
+			QueueIOSelectorJob (writeQ, sockares.Handle, new IOSelectorJob (IOOperation.Write, BeginSendGenericCallback, sockares));
 
 			return sockares;
 		}
@@ -2738,7 +2735,7 @@ namespace System.Net.Sockets
 			e.socket_async_result.SockFlags = e.SocketFlags;
 			e.socket_async_result.EndPoint = e.RemoteEndPoint;
 
-			QueueIOSelectorJob (writeQ, e.socket_async_result.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), e.socket_async_result));
+			QueueIOSelectorJob (writeQ, e.socket_async_result.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), e.socket_async_result));
 
 			return true;
 		}
@@ -2774,7 +2771,7 @@ namespace System.Net.Sockets
 				EndPoint = remote_end,
 			};
 
-			QueueIOSelectorJob (writeQ, sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), sockares));
+			QueueIOSelectorJob (writeQ, sockares.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, 0), sockares));
 
 			return sockares;
 		}
@@ -2792,7 +2789,7 @@ namespace System.Net.Sockets
 				}
 
 				if (sockares.Size > 0) {
-					IOSelector.Add (sockares.handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, sent_so_far), sockares));
+					IOSelector.Add (sockares.Handle, new IOSelectorJob (IOOperation.Write, s => BeginSendToCallback ((SocketAsyncResult) s, sent_so_far), sockares));
 					return; // Have to finish writing everything. See bug #74475.
 				}
 
@@ -3286,7 +3283,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
+		internal extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
 
 #endregion
 

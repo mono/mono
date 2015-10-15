@@ -37,6 +37,7 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
+			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
 
 			if (blocking_threads != null) {
 				int abort_attempts = 0;
