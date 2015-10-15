@@ -15,8 +15,6 @@ namespace System.Runtime.Serialization
 
     internal class DataContractSet
     {
-        // Same string used in MessageContractImporter of System.ServiceModel.dll
-        const String FailedReferenceTypeExceptionKey = "System.Runtime.Serialization.FailedReferenceType";
         Dictionary<XmlQualifiedName, DataContract> contracts;
         Dictionary<DataContract, object> processedContracts;
         IDataContractSurrogate dataContractSurrogate;
@@ -368,20 +366,7 @@ namespace System.Runtime.Serialization
                         if (type == null)
                             throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ReferencedTypesCannotContainNull)));
 
-                        try
-                        {
-                            AddReferencedType(referencedTypesDictionary, type);
-                        }
-                        catch (InvalidDataContractException ex)
-                        {
-                            ex.Data.Add(FailedReferenceTypeExceptionKey, type);
-                            throw;
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            ex.Data.Add(FailedReferenceTypeExceptionKey, type);
-                            throw;
-                        }
+                        AddReferencedType(referencedTypesDictionary, type);
                     }
                 }
             }
@@ -413,7 +398,22 @@ namespace System.Runtime.Serialization
         {
             if (IsTypeReferenceable(type))
             {
-                XmlQualifiedName stableName = this.GetStableName(type);
+                XmlQualifiedName stableName;
+                try
+                {
+                    stableName = this.GetStableName(type);
+                }
+                catch (InvalidDataContractException)
+                {
+                    // Type not referenceable if we can't get a stable name.
+                    return;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Type not referenceable if we can't get a stable name.
+                    return;
+                }
+
                 object value;
                 if (referencedTypes.TryGetValue(stableName, out value))
                 {
@@ -500,11 +500,20 @@ namespace System.Runtime.Serialization
         static bool IsTypeReferenceable(Type type)
         {
             Type itemType;
-            return (type.IsSerializable ||
-                    type.IsDefined(Globals.TypeOfDataContractAttribute, false) ||
-                    (Globals.TypeOfIXmlSerializable.IsAssignableFrom(type) && !type.IsGenericTypeDefinition) ||
-                    CollectionDataContract.IsCollection(type, out itemType) ||
-                    ClassDataContract.IsNonAttributedTypeValidForSerialization(type));
+
+            try
+            {
+                return (type.IsSerializable ||
+                        type.IsDefined(Globals.TypeOfDataContractAttribute, false) ||
+                        (Globals.TypeOfIXmlSerializable.IsAssignableFrom(type) && !type.IsGenericTypeDefinition) ||
+                        CollectionDataContract.IsCollection(type, out itemType) ||
+                        ClassDataContract.IsNonAttributedTypeValidForSerialization(type));
+            }
+            catch (System.IO.FileLoadException)
+            { // this can happen in Type.IsDefined when trying to load a referenced library that is not available at design time.
+            }
+            
+            return false;
         }
     }
 }

@@ -2,7 +2,7 @@
 // <copyright file="XmlReaderSettings.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System.IO;
@@ -547,6 +547,8 @@ namespace System.Xml {
 
         static XmlResolver CreateDefaultResolver() {
 #if SILVERLIGHT
+            if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5_1)
+                return new XmlSystemPathResolver();
             return new XmlXapResolver();
 #else
             return new XmlUrlResolver();
@@ -606,11 +608,17 @@ namespace System.Xml {
 #pragma warning disable 618
 
 #if SILVERLIGHT
-                if (this.conformanceLevel != ConformanceLevel.Auto) {
+                // Starting from Windows phone 8.1 (TargetsAtLeast_Desktop_V4_5_1) we converge with the desktop behavior so we'll let the reader 
+                // not throw exception if has different conformance level than Auto.
+                if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5_1) {
+                    if (this.conformanceLevel != ConformanceLevel.Auto && this.conformanceLevel != XmlReader.GetV1ConformanceLevel(baseReader)) {
+                        throw new InvalidOperationException(Res.GetString(Res.Xml_IncompatibleConformanceLevel, this.conformanceLevel.ToString()));
+                    }
+                } else if (this.conformanceLevel != ConformanceLevel.Auto) {
                     throw new InvalidOperationException(Res.GetString(Res.Xml_IncompatibleConformanceLevel, this.conformanceLevel.ToString()));
                 }
 #else
-                if (this.conformanceLevel != ConformanceLevel.Auto && this.conformanceLevel != XmlReader.GetV1ConformanceLevel(baseReader)) {
+                                                if (this.conformanceLevel != ConformanceLevel.Auto && this.conformanceLevel != XmlReader.GetV1ConformanceLevel(baseReader)) {
                     throw new InvalidOperationException(Res.GetString(Res.Xml_IncompatibleConformanceLevel, this.conformanceLevel.ToString()));
                 }
 #endif

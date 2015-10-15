@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -28,7 +28,7 @@ namespace System.Security.Principal
     [System.Runtime.InteropServices.ComVisible(true)]
     public class WindowsImpersonationContext : IDisposable {
         [System.Security.SecurityCritical] // auto-generated
-        private SafeTokenHandle m_safeTokenHandle = SafeTokenHandle.InvalidHandle;
+        private SafeAccessTokenHandle m_safeTokenHandle = SafeAccessTokenHandle.InvalidHandle;
         private WindowsIdentity m_wi;
         private FrameSecurityDescriptor m_fsd;
 
@@ -38,7 +38,7 @@ namespace System.Security.Principal
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        internal WindowsImpersonationContext (SafeTokenHandle safeTokenHandle, WindowsIdentity wi, bool isImpersonating, FrameSecurityDescriptor fsd) {
+        internal WindowsImpersonationContext (SafeAccessTokenHandle safeTokenHandle, WindowsIdentity wi, bool isImpersonating, FrameSecurityDescriptor fsd) {
             if (safeTokenHandle.IsInvalid)
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidImpersonationToken"));
             Contract.EndContractBlock();

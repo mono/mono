@@ -57,6 +57,7 @@ namespace System.Web.Hosting {
 
     public sealed class ApplicationManager : MarshalByRefObject {
 
+        private const string _clrQuirkAppSettingsAppContextPrefix = "AppContext.SetSwitch:";
         private const string _regexMatchTimeoutKey = "REGEX_DEFAULT_MATCH_TIMEOUT";
         private static readonly StrongName _mwiV1StrongName = GetMicrosoftWebInfrastructureV1StrongName();
 
@@ -734,6 +735,14 @@ namespace System.Web.Hosting {
             }
         }
 
+        // ApplicationManager is loaded into the default AppDomain
+        // ASP.NET doesn't set string hash randomization for the defaul AppDomain, so we can assume the existing CLR implementation here is unchanged
+        // Note, it won't work if <runtime/UseRandomizedStringHashAlgorithm enabled="1"> is used, because the entire process is subject to string hash randomization
+        internal int GetNonRandomizedStringComparerHashCode(string s, bool ignoreCase) { 
+            StringComparer comparer = ignoreCase ? StringComparer.InvariantCultureIgnoreCase : StringComparer.InvariantCulture;
+            return comparer.GetHashCode(s);
+        }
+
         //
         // communication with hosting environments
         //
@@ -952,7 +961,7 @@ namespace System.Web.Hosting {
                     inClientBuildManager = true;
                     // The default hosting policy in VS has changed (from MultiDomainHost to MultiDomain), 
                     // so we need to specify explicitly to allow generated assemblies 
-                    // to be unloaded subsequently. (Dev10 bug)
+                    // to be unloaded subsequently. (Dev10 
                     setup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
                 }
             }
@@ -972,8 +981,10 @@ namespace System.Web.Hosting {
                         customLoaderException.Throw();
                     }
 
-                    // DevDiv #392603 - disallow running applications when string hash code randomization is enabled
-                    if (EnvironmentInfo.IsStringHashCodeRandomizationEnabled) {
+                    // We support randomized string hash code, but not for the default AppDomain
+                    // Don't allow string hash randomization for the defaul AppDomain (i.e. <runtime/UseRandomizedStringHashAlgorithm enabled="1">)
+                    // Application should use AppSettings instead to opt-in.
+                    if (EnvironmentInfo.IsStringHashCodeRandomizationDetected) {
                         throw new ConfigurationErrorsException(SR.GetString(SR.Require_stable_string_hash_codes));
                     }
 
@@ -1009,7 +1020,7 @@ namespace System.Web.Hosting {
                     // in the AppDomain data guarantees that it is available before the first call to the config system.
                     FrameworkName targetFrameworkName = httpRuntimeSection.GetTargetFrameworkName();
                     if (targetFrameworkName != null) {
-                        appDomainAdditionalData[BinaryCompatibility.TargetFrameworkKey] = targetFrameworkName;
+                        appDomainAdditionalData[System.Web.Util.BinaryCompatibility.TargetFrameworkKey] = targetFrameworkName;
                     }
 
                     if (!skipAdditionalConfigChecks) {
@@ -1028,7 +1039,39 @@ namespace System.Web.Hosting {
                         AppSettingsSection appSettingsSection = appConfig.AppSettings;
                         KeyValueConfigurationElement useTaskFriendlySynchronizationContextElement = appSettingsSection.Settings["aspnet:UseTaskFriendlySynchronizationContext"];
                         if (!(useTaskFriendlySynchronizationContextElement != null && Boolean.TryParse(useTaskFriendlySynchronizationContextElement.Value, out requireHostExecutionContextManager))) {
-                            requireHostExecutionContextManager = new BinaryCompatibility(targetFrameworkName).TargetsAtLeastFramework45 ? true : false;
+                            requireHostExecutionContextManager = new System.Web.Util.BinaryCompatibility(targetFrameworkName).TargetsAtLeastFramework45 ? true : false;
+                        }
+
+                        // DevDiv #390704 - Add support for randomized string hash algorithm
+                        KeyValueConfigurationElement useRandomizedStringHashAlgorithmElement = appSettingsSection.Settings["aspnet:UseRandomizedStringHashAlgorithm"];
+                        bool useRandomizedStringHashAlgorithm = false;
+                        if (useRandomizedStringHashAlgorithmElement != null && Boolean.TryParse(useRandomizedStringHashAlgorithmElement.Value, out useRandomizedStringHashAlgorithm)) {
+                            switches.UseRandomizedStringHashAlgorithm = useRandomizedStringHashAlgorithm;
+                        }
+
+                        // DevDiv #1041102 - Allow specifying quirks via <appSettings> switches
+                        // The keys must begin with "AppContext.SetSwitch" and have a non-zero key name length,
+                        // and the values must be parseable as Booleans.
+                        Dictionary<string, bool> clrQuirks = null;
+                        foreach (KeyValueConfigurationElement element in appSettingsSection.Settings) {
+                            if (element.Key != null && element.Key.Length > _clrQuirkAppSettingsAppContextPrefix.Length && element.Key.StartsWith(_clrQuirkAppSettingsAppContextPrefix, StringComparison.OrdinalIgnoreCase)) {
+                                bool value;
+                                if (Boolean.TryParse(element.Value, out value)) {
+                                    if (clrQuirks == null) {
+                                        clrQuirks = new Dictionary<string, bool>();
+                                    }
+                                    
+                                    clrQuirks[element.Key.Substring(_clrQuirkAppSettingsAppContextPrefix.Length)] = value;
+                                }
+                            }
+                        }
+                        
+                        if (clrQuirks != null && clrQuirks.Count > 0) {
+                            if (hostingParameters == null) {
+                                hostingParameters = new HostingEnvironmentParameters();
+                            }
+                            
+                            hostingParameters.ClrQuirksSwitches = clrQuirks.ToArray();
                         }
 
                         // DevDiv #248126 - Allow configuration of FileChangeMonitor behavior
@@ -1057,8 +1100,10 @@ namespace System.Web.Hosting {
                         // we only do this check if <deployment retail="false" /> [the default value] is specified, since the
                         // <deployment> element can only be set at machine-level in a hosted environment.
                         DeploymentSection deploymentSection = (DeploymentSection)appConfig.GetSection("system.web/deployment");
+                        bool isDevEnvironment = false;
                         if (deploymentSection != null && !deploymentSection.Retail && EnvironmentInfo.WasLaunchedFromDevelopmentEnvironment) {
                             appDomainAdditionalData[".devEnvironment"] = true;
+                            isDevEnvironment = true;
 
                             // DevDiv #275724 - Allow LocalDB support in partial trust scenarios
                             // Normally LocalDB requires full trust since it's the equivalent of unmanaged code execution. If this is
@@ -1092,7 +1137,7 @@ namespace System.Web.Hosting {
                                     SecurityPolicySection securityPolicySection = (SecurityPolicySection)appConfig.GetSection("system.web/securityPolicy");
                                     CompilationSection compilationSection = (CompilationSection)appConfig.GetSection("system.web/compilation");
                                     FullTrustAssembliesSection fullTrustAssembliesSection = (FullTrustAssembliesSection)appConfig.GetSection("system.web/fullTrustAssemblies");
-                                    policyLevel = GetPartialTrustPolicyLevel(trustSection, securityPolicySection, compilationSection, physicalPath, virtualPath);
+                                    policyLevel = GetPartialTrustPolicyLevel(trustSection, securityPolicySection, compilationSection, physicalPath, virtualPath, isDevEnvironment);
                                     permissionSet = policyLevel.GetNamedPermissionSet(trustSection.PermissionSetName);
                                     if (permissionSet == null) {
                                         throw new ConfigurationErrorsException(SR.GetString(SR.Permission_set_not_found, trustSection.PermissionSetName));
@@ -1331,10 +1376,14 @@ setup,
             }
         }
 
+
+         // devdiv 1038337: execution permission cannot be acquired under partial trust with ctrl-f5.
+         // We build the codegen path in default domain. In order to build the right path, 
+         // caller must pass in a flag indicating whether it is under dev environment.
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "We carefully control this method's caller.")]
         private static PolicyLevel GetPartialTrustPolicyLevel(
                 TrustSection trustSection, SecurityPolicySection securityPolicySection,
-                CompilationSection compilationSection, string physicalPath, VirtualPath virtualPath) {
+                CompilationSection compilationSection, string physicalPath, VirtualPath virtualPath, bool isDevEnvironment) {
             if (securityPolicySection == null || securityPolicySection.TrustLevels[trustSection.Level] == null) {
                 throw new ConfigurationErrorsException(SR.GetString(SR.Unable_to_get_policy_file, trustSection.Level), String.Empty, 0);
             }
@@ -1405,7 +1454,7 @@ setup,
                 tempDirectory = Path.Combine(tempDirectory, HttpRuntime.codegenDirName);
             }
             String simpleAppName = System.Web.Hosting.AppManagerAppDomainFactory.ConstructSimpleAppName(
-                VirtualPath.GetVirtualPathStringNoTrailingSlash(virtualPath));
+                VirtualPath.GetVirtualPathStringNoTrailingSlash(virtualPath), isDevEnvironment);
             String binDir = Path.Combine(tempDirectory, simpleAppName);
             binDir = FileUtil.RemoveTrailingDirectoryBackSlash(binDir);
             String binDirUrl = HttpRuntime.MakeFileUrl(binDir);
@@ -1727,6 +1776,7 @@ setup,
 
         private sealed class AppDomainSwitches {
             public bool UseLegacyCas;
+            public bool UseRandomizedStringHashAlgorithm;
 
             public void Apply(AppDomainSetup setup) {
                 List<string> switches = new List<string>();
@@ -1734,6 +1784,10 @@ setup,
                 if (UseLegacyCas) {
                     // Enables the AppDomain to use the legacy CAS model for compatibility <trust/legacyCasModel>
                     switches.Add("NetFx40_LegacySecurityPolicy");
+                }
+
+                if (UseRandomizedStringHashAlgorithm) {
+                    switches.Add("UseRandomizedStringHashAlgorithm");
                 }
 
                 if (switches.Count > 0) {
@@ -1747,10 +1801,10 @@ setup,
         // This prevents accidental misuse of this type via querying the environment after user code has had a chance to
         // run, which could potentially affect the environment itself.
         private static class EnvironmentInfo {
-            public static readonly bool IsStringHashCodeRandomizationEnabled = GetIsStringHashCodeRandomizationEnabled();
+            public static readonly bool IsStringHashCodeRandomizationDetected = GetIsStringHashCodeRandomizationDetected();
             public static readonly bool WasLaunchedFromDevelopmentEnvironment = GetWasLaunchedFromDevelopmentEnvironmentValue();
 
-            private static bool GetIsStringHashCodeRandomizationEnabled() {
+            private static bool GetIsStringHashCodeRandomizationDetected() {
                 // known test vector
                 return (StringComparer.InvariantCultureIgnoreCase.GetHashCode("The quick brown fox jumps over the lazy dog.") != 0x703e662e);
             }

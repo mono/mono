@@ -70,6 +70,7 @@ namespace System {
             return m_value == ((SByte)obj).m_value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(SByte obj)
         {
             return m_value == obj;

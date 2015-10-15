@@ -111,7 +111,7 @@ namespace System.ServiceModel.Configuration
             else if (identity is X509CertificateEndpointIdentity)
             {
                 X509Certificate2Collection certs = ((X509CertificateEndpointIdentity)identity).Certificates;
-#pragma warning suppress 56506 //[....]; this.Certificate can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; this.Certificate can never be null (underlying configuration system guarantees)
                 this.Certificate.EncodedValue = Convert.ToBase64String(certs.Export(certs.Count == 1 ? X509ContentType.SerializedCert : X509ContentType.SerializedStore));
             }
         }

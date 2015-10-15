@@ -7,6 +7,7 @@ namespace System.ServiceModel.Channels
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Security;
+    using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
     [SuppressUnmanagedCodeSecurity]
     internal static class SafeNativeMethods
@@ -20,10 +21,19 @@ namespace System.ServiceModel.Channels
             [Out] out uint increment,
             [Out] out uint adjustmentDisabled
         );
-
+        
         [DllImport(KERNEL32, SetLastError = true)]
         [ResourceExposure(ResourceScope.None)]
-        public static extern void GetSystemTimeAsFileTime(out long time);
+        private static extern void GetSystemTimeAsFileTime([Out] out FILETIME time);
+
+        public static void GetSystemTimeAsFileTime(out long time) {
+            FILETIME fileTime;
+            GetSystemTimeAsFileTime(out fileTime);
+            time = 0;
+            time |= (uint)fileTime.dwHighDateTime;
+            time <<= sizeof(uint) * 8;
+            time |= (uint)fileTime.dwLowDateTime;
+        }
 
         [Fx.Tag.SecurityNote(Critical = "Calls critical method GetSystemTimeAdjustment.",
             Safe = "Method is a SafeNativeMethod.")]

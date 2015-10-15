@@ -44,7 +44,7 @@ namespace System.Text
         //
         // The following methods are copied from EncodingNLS.cs.
         // Unfortunately EncodingNLS.cs is internal and we're public, so we have to reimpliment them here.
-        // These should be kept in [....] for the following classes:
+        // These should be kept in sync for the following classes:
         // EncodingNLS, UTF7Encoding, UTF8Encoding, UTF32Encoding, ASCIIEncoding, UnicodeEncoding
         //
 

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 namespace System.Data.Objects
 {
@@ -3748,7 +3748,7 @@ namespace System.Data.Objects
             {
                 // Added prinipal end.  Fixup FKs on all dependents.
                 // This is necessary because of the case where a PK in an added entity is changed after it and its dependnents
-                // are added to the context--see bug 628752.
+                // are added to the context--see 
                 bool fkOverlapsPk = false; // Set to true if we find out that the FK overlaps the dependent PK
                 bool dependentPropsChecked = false; // Set to true once we have checked whether or not the FK overlaps the PK
                 EntityKey principalKey = WrappedEntity.EntityKey;

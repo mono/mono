@@ -37,7 +37,7 @@ namespace System.ServiceModel.Channels
 
         protected override void CloseItemAsync(TItem item, TimeSpan timeout)
         {
-            // Default behavior is [....]. Derived classes can override.
+            // Default behavior is sync. Derived classes can override.
             this.CloseItem(item, timeout);
         }
 

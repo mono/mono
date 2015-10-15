@@ -7,7 +7,7 @@
 //
 // TaskExceptionHolder.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // An abstraction for holding and aggregating exceptions.
 //

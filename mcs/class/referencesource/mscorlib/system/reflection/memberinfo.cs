@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -82,17 +82,7 @@ namespace System.Reflection
             } 
         }
         
-
-        // this method is required so Object.GetType is not made final virtual by the compiler
-        Type _MemberInfo.GetType() { return base.GetType(); }
-
-        // This name is used for the dynamic type usage scenario ETW logging for ProjectN apps.
-        // It allows us to build names without using the same properties / methods customers
-        // use (which would cause chains of spurious events).
-        internal virtual String GetFullNameForEtw()
-        {
-            return null;
-        }
+        
         
         #endregion
 
@@ -125,13 +115,12 @@ namespace System.Reflection
             return false;
         }
 
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator !=(MemberInfo left, MemberInfo right)
         {
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -141,7 +130,14 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
+
+#if !FEATURE_CORECLR
+        // this method is required so Object.GetType is not made final virtual by the compiler
+        Type _MemberInfo.GetType()
+        { 
+            return base.GetType();
+        }
+
         void _MemberInfo.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -161,6 +157,7 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
 #if CONTRACTS_FULL

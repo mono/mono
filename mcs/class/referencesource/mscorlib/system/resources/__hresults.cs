@@ -7,13 +7,13 @@
 //
 // Class: __HResults
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>jathaine</OWNER>
 //
 // Purpose: Define HResult constants returned by the Windows Modern Resource Manager
 // and consumed by System.Resources.ResourceManager.
 //
 //===========================================================================*/
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
 namespace System.Resources {
     using System;
     // Only static data no need to serialize
@@ -23,4 +23,4 @@ namespace System.Resources {
         public const int ERROR_MRM_MAP_NOT_FOUND = unchecked((int)0x80073B1F);
     }
 }
-#endif //FEATURE_CORECLR
+#endif

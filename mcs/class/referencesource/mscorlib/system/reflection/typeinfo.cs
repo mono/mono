@@ -7,7 +7,7 @@
 **
 ** Class: TypeInfo
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Notion of a type definition
@@ -21,7 +21,6 @@ namespace System.Reflection
     using System.Runtime.CompilerServices;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
 
     //all today's runtime Type derivations derive now from TypeInfo
     //we make TypeInfo implement IRCT - simplifies work
@@ -85,77 +84,24 @@ namespace System.Reflection
 
         public virtual EventInfo GetDeclaredEvent(String name)
         {
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetRuntimeEvent(GetFullNameForEtw(), name != null ? name : "");
-            }
-#endif
-            EventInfo ei = GetEvent(name, Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndGetRuntimeEvent(GetFullNameForEtw(), ei != null ? ei.GetFullNameForEtw() : "");
-            }
-#endif
-            return ei;
+            return GetEvent(name, Type.DeclaredOnlyLookup);
         }
         public virtual FieldInfo GetDeclaredField(String name)
         {
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetRuntimeField(GetFullNameForEtw(), name != null ? name : "");
-            }
-#endif
-            FieldInfo fi = GetField(name, Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndGetRuntimeField(GetFullNameForEtw(), fi != null ? fi.GetFullNameForEtw() : "");
-            }
-#endif
-            return fi;
+            return GetField(name, Type.DeclaredOnlyLookup);
         }
         public virtual MethodInfo GetDeclaredMethod(String name)
         {
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetRuntimeMethod(GetFullNameForEtw(), name != null ? name : "");
-            }
-#endif
-            MethodInfo mi = GetMethod(name, Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndGetRuntimeMethod(GetFullNameForEtw(), mi != null ? mi.GetFullNameForEtw() : "");
-            }
-#endif
-            return mi;
+            return GetMethod(name, Type.DeclaredOnlyLookup);
         }
 
         public virtual IEnumerable<MethodInfo> GetDeclaredMethods(String name)
         {
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetRuntimeMethods(GetFullNameForEtw());
-            }
-#endif
-            
             foreach (MethodInfo method in GetMethods(Type.DeclaredOnlyLookup))
             {
                 if (method.Name == name)
                     yield return method;
             }
-
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndGetRuntimeMethods(GetFullNameForEtw());
-            }
-#endif
         }
         public virtual System.Reflection.TypeInfo GetDeclaredNestedType(String name)
         {
@@ -168,20 +114,7 @@ namespace System.Reflection
         }
         public virtual PropertyInfo GetDeclaredProperty(String name)
         {
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetRuntimeProperty(GetFullNameForEtw(), name != null ? name : "");
-            }
-#endif
-            PropertyInfo pi = GetProperty(name, Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndGetRuntimeProperty(GetFullNameForEtw(), pi != null ? pi.GetFullNameForEtw() : "");
-            }
-#endif
-            return pi;
+            return GetProperty(name, Type.DeclaredOnlyLookup);
         }
 
 
@@ -194,20 +127,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeConstructors(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<ConstructorInfo> constructors = GetConstructors(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeConstructors(GetFullNameForEtw());
-                }
-#endif
-                return constructors;
+                return GetConstructors(Type.DeclaredOnlyLookup);
             }
         }
 
@@ -215,20 +135,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeEvents(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<EventInfo> events = GetEvents(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeEvents(GetFullNameForEtw());
-                }
-#endif
-                return events;
+                return GetEvents(Type.DeclaredOnlyLookup);
             }
         }
 
@@ -236,20 +143,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeFields(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<FieldInfo> fields = GetFields(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeFields(GetFullNameForEtw());
-                }
-#endif
-                return fields;
+                return GetFields(Type.DeclaredOnlyLookup);
             }
         }
 
@@ -257,20 +151,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeMembers(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<MemberInfo> members = GetMembers(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeMembers(GetFullNameForEtw());
-                }
-#endif
-                return members;
+                return GetMembers(Type.DeclaredOnlyLookup);
             }
         }
 
@@ -278,20 +159,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeMethods(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<MethodInfo> methods = GetMethods(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeMethods(GetFullNameForEtw());
-                }
-#endif
-                return methods;
+                return GetMethods(Type.DeclaredOnlyLookup);
             }
         }
         public virtual IEnumerable<System.Reflection.TypeInfo> DeclaredNestedTypes
@@ -308,20 +176,7 @@ namespace System.Reflection
         {
             get
             {
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginGetRuntimeProperties(GetFullNameForEtw());
-                }
-#endif
-                IEnumerable<PropertyInfo> properties = GetProperties(Type.DeclaredOnlyLookup);
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndGetRuntimeProperties(GetFullNameForEtw());
-                }
-#endif
-                return properties;
+                return GetProperties(Type.DeclaredOnlyLookup);
             }
         }
 

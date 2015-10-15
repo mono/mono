@@ -3,7 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <description></description>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">nissimn</owner>
 // <owner current="true" primary="false">adoprov</owner>
 //------------------------------------------------------------------------------
 //

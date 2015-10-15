@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls.Adapters {
                     writer.WriteBreak();
                     break;
                 case BulletedListDisplayMode.HyperLink:
-                    // 
+                    // TODO: if index == 0, set accesskey.  Needs a new RenderBeginHyperlink method.
                     string targetURL = Control.ResolveClientUrl(items[index].Value);
                     if (items[index].Enabled) {
                         PageAdapter.RenderBeginHyperlink(writer, targetURL, true /* encode */, items[index].Text);
@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls.Adapters {
                     break;
                 case BulletedListDisplayMode.LinkButton:
                     if (items[index].Enabled) {
-                        // 
+                        // TODO: if index == 0, set accesskey.  Needs a new RenderPostBackEvent method.               
                         PageAdapter.RenderPostBackEvent(writer, Control.UniqueID, index.ToString(CultureInfo.InvariantCulture),
                                                             items[index].Text, items[index].Text);
                     } else {

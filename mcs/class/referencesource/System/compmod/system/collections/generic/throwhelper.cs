@@ -30,15 +30,15 @@ namespace System {
     // It is very important we do this for generic classes because we can easily generate the same code 
     // multiple times for different instantiation. 
     // 
-    // <STRIP>
-    // Jit will generates the code to throw exception at the end of a method, thus we can reduce working
-    // set if the user code will never throw an exception. However Jit doesn't know anything about the
-    // methods in ThrowHelper, so it will not moves the instructions to the end. 
-    // This is not a problem for ngened code because we will probably move the code based on profile data(hopefully.) 
-    //
-    // For jitted code, it doesn't make much difference. The only advantage of moving the code to the end is to 
-    // improve cache locality. Patrick pointed out this doesn't make much different on newer processor like P4.
-    // </STRIP>
+    // <
+
+
+
+
+
+
+
+
 
 
 #if !SILVERLIGHT

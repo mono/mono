@@ -305,6 +305,18 @@ namespace Microsoft.Win32 {
             return CreateSubKeyInternal(subkey, permissionCheck, null, options);
         }
 
+        [ComVisible(false)]
+        public RegistryKey CreateSubKey(String subkey, bool writable)
+        {
+            return CreateSubKeyInternal(subkey, writable ? RegistryKeyPermissionCheck.ReadWriteSubTree : RegistryKeyPermissionCheck.ReadSubTree, null, RegistryOptions.None);
+        }
+
+        [ComVisible(false)]
+        public RegistryKey CreateSubKey(String subkey, bool writable, RegistryOptions options)
+        {
+            return CreateSubKeyInternal(subkey, writable ? RegistryKeyPermissionCheck.ReadWriteSubTree : RegistryKeyPermissionCheck.ReadSubTree, null, options);
+        }
+
 
 #if FEATURE_MACL
         [ComVisible(false)]
@@ -755,6 +767,13 @@ namespace Microsoft.Win32 {
             return InternalOpenSubKey(name, permissionCheck, GetRegistryKeyAccess(permissionCheck));
         }
 
+        [System.Security.SecuritySafeCritical]
+        [ComVisible(false)]
+        public RegistryKey OpenSubKey(String name, RegistryRights rights)
+        {
+            return InternalOpenSubKey(name, this.checkMode, (int)rights);
+        }
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ComVisible(false)]
         [ResourceExposure(ResourceScope.Machine)]
@@ -795,8 +814,8 @@ namespace Microsoft.Win32 {
             
             return null;                        
         }    
-#endif        
-        
+#endif
+
         // This required no security checks. This is to get around the Deleting SubKeys which only require
         // write permission. They call OpenSubKey which required read. Now instead call this function w/o security checks
         [System.Security.SecurityCritical]  // auto-generated
@@ -830,6 +849,9 @@ namespace Microsoft.Win32 {
          */
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#if FEATURE_CORECLR
+        [System.Security.SecurityCritical] 
+#endif
         public RegistryKey OpenSubKey(String name) {
             return OpenSubKey(name, false);
         }

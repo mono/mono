@@ -54,9 +54,9 @@ namespace System.Collections.Generic {
     [DebuggerDisplay("Count = {Count}")]
 #if !FEATURE_NETCORE
     [Serializable]
-    public class SortedSet<T> : ISet<T>, ICollection<T>, ICollection, ISerializable, IDeserializationCallback {
+    public class SortedSet<T> : ISet<T>, ICollection<T>, ICollection, ISerializable, IDeserializationCallback, IReadOnlyCollection<T> {
 #else
-    public class SortedSet<T> : ISet<T>, ICollection<T>, ICollection {
+    public class SortedSet<T> : ISet<T>, ICollection<T>, ICollection, IReadOnlyCollection<T> {
 #endif //!FEATURE_NETCORE
         #region local variables/constants
         Node root;

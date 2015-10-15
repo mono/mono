@@ -1,4 +1,4 @@
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Security {
     using System.Security.Cryptography;
     using System.Runtime.InteropServices;
@@ -14,7 +14,6 @@ namespace System.Security {
     using Microsoft.Win32.SafeHandles;
     using System.Diagnostics.Contracts;
 
-#if FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS || FEATURE_CORESYSTEM
     public sealed class SecureString: IDisposable {
         [System.Security.SecurityCritical] // auto-generated
         private SafeBSTRHandle m_buffer; 
@@ -544,12 +543,7 @@ namespace System.Security {
                         ptr = Marshal.AllocHGlobal((length + 1) * 2);
                     }
                     else {
-#if FEATURE_COMINTEROP
                         ptr = Marshal.AllocCoTaskMem((length + 1) * 2);
-#else // FEATURE_COMINTEROP
-                        Contract.Assert(false, "allocateFromHeap must never be set to false when FEATURE_COMINTEROP isn't enabled!");                        
-                        throw new NotSupportedException();
-#endif // FEATURE_COMINTEROP
                     }
                 }
 
@@ -579,12 +573,7 @@ namespace System.Security {
                             Marshal.FreeHGlobal(ptr);
                         }
                         else {
-#if FEATURE_COMINTEROP
                             Marshal.FreeCoTaskMem(ptr);
-#else // FEATURE_COMINTEROP
-                            Contract.Assert(false, "allocateFromHeap must never be set to false when FEATURE_COMINTEROP isn't enabled!");                        
-                            throw new NotSupportedException();
-#endif // FEATURE_COMINTEROP
                         }
                     }                    
                 }
@@ -622,13 +611,8 @@ namespace System.Security {
                         ptr = Marshal.AllocHGlobal(byteCount);
                     }
                     else {
-#if FEATURE_COMINTEROP
                         ptr = Marshal.AllocCoTaskMem(byteCount);
-#else // FEATURE_COMINTEROP
-                        Contract.Assert(false, "allocateFromHeap must never be set to false when FEATURE_COMINTEROP isn't enabled!");                        
-                        throw new NotSupportedException();
-#endif // FEATURE_COMINTEROP
-                    }                    
+                   }                    
                 }
 
                 if (ptr == IntPtr.Zero) {
@@ -652,12 +636,7 @@ namespace System.Security {
                             Marshal.FreeHGlobal(ptr);
                         }
                         else {
-#if FEATURE_COMINTEROP
                             Marshal.FreeCoTaskMem(ptr);                            
-#else // FEATURE_COMINTEROP
-                            Contract.Assert(false, "allocateFromHeap must never be set to false when FEATURE_COMINTEROP isn't enabled!");                        
-                            throw new NotSupportedException();
-#endif // FEATURE_COMINTEROP
                         }
                     }                    
                 }                
@@ -696,7 +675,6 @@ namespace System.Security {
             }
         }        
     }
-#endif // FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS || FEATURE_CORESYSTEM
 
     [System.Security.SecurityCritical]  // auto-generated
     [SuppressUnmanagedCodeSecurityAttribute()]

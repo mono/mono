@@ -244,9 +244,6 @@ namespace System {
       **Returns the absolute value of it's argument.
       ============================================================================*/
       [CLSCompliant(false)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static sbyte Abs(sbyte value) {
         if (value >= 0)
             return value;
@@ -254,9 +251,6 @@ namespace System {
             return AbsHelper(value);        
       }
 
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       private static sbyte AbsHelper(sbyte value)
       {
           Contract.Requires(value < 0, "AbsHelper should only be called for negative values! (hack for JIT inlining)");
@@ -266,9 +260,6 @@ namespace System {
           return ((sbyte)(-value));
       }
  
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static short Abs(short value) {
           if (value >= 0)
               return value;
@@ -276,9 +267,6 @@ namespace System {
               return AbsHelper(value);        
       }
         
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       private static short AbsHelper(short value) {
           Contract.Requires(value < 0, "AbsHelper should only be called for negative values! (hack for JIT inlining)");
           if (value == Int16.MinValue)
@@ -287,9 +275,6 @@ namespace System {
           return (short) -value;
       }
     
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static int Abs(int value) {
           if (value >= 0)
               return value;
@@ -297,9 +282,6 @@ namespace System {
               return AbsHelper(value);        
       }
         
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       private static int AbsHelper(int value) {
           Contract.Requires(value < 0, "AbsHelper should only be called for negative values! (hack for JIT inlining)");
           if (value == Int32.MinValue)
@@ -308,9 +290,6 @@ namespace System {
           return -value;
       }
     
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static long Abs(long value) {
           if (value >= 0)
               return value;
@@ -318,9 +297,6 @@ namespace System {
               return AbsHelper(value);        
       }
 
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       private static long AbsHelper(long value) {
           Contract.Requires(value < 0, "AbsHelper should only be called for negative values! (hack for JIT inlining)");
           if (value == Int64.MinValue)
@@ -355,9 +331,6 @@ namespace System {
         // it runs the else case, which returns +value instead of negating it. 
         // return (value < 0) ? -value : value;
 
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static Decimal Abs(Decimal value)
       {
           return Decimal.Abs(value);
@@ -368,76 +341,57 @@ namespace System {
       ============================================================================*/
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static sbyte Max(sbyte val1, sbyte val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static byte Max(byte val1, byte val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static short Max(short val1, short val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static ushort Max(ushort val1, ushort val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static int Max(int val1, int val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif      
+      [System.Runtime.Versioning.NonVersionable]
       public static uint Max(uint val1, uint val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static long Max(long val1, long val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static ulong Max(ulong val1, ulong val2) {
         return (val1>=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static float Max(float val1, float val2) {
         if (val1 > val2)
             return val1;
@@ -449,9 +403,6 @@ namespace System {
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static double Max(double val1, double val2) {
         if (val1 > val2)
             return val1;
@@ -463,9 +414,6 @@ namespace System {
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static Decimal Max(Decimal val1, Decimal val2) {
         return Decimal.Max(val1,val2);
       }
@@ -475,76 +423,57 @@ namespace System {
       ============================================================================*/
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static sbyte Min(sbyte val1, sbyte val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static byte Min(byte val1, byte val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static short Min(short val1, short val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static ushort Min(ushort val1, ushort val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static int Min(int val1, int val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static uint Min(uint val1, uint val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static long Min(long val1, long val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [CLSCompliant(false)]
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+      [System.Runtime.Versioning.NonVersionable]
       public static ulong Min(ulong val1, ulong val2) {
         return (val1<=val2)?val1:val2;
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static float Min(float val1, float val2) {
         if (val1 < val2)
             return val1;
@@ -556,9 +485,6 @@ namespace System {
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static double Min(double val1, double val2) {
         if (val1 < val2)
             return val1;
@@ -570,9 +496,6 @@ namespace System {
       }
     
       [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static Decimal Min(Decimal val1, Decimal val2) {
         return Decimal.Min(val1,val2);
       }
@@ -600,9 +523,6 @@ namespace System {
         // Sign function for VB.  Returns -1, 0, or 1 if the sign of the number
         // is negative, 0, or positive.  Throws for floating point NaN's.
         [CLSCompliant(false)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(sbyte value)
         {
             if (value < 0)
@@ -616,9 +536,6 @@ namespace System {
 
         // Sign function for VB.  Returns -1, 0, or 1 if the sign of the number
         // is negative, 0, or positive.  Throws for floating point NaN's.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(short value)
         {
             if (value < 0)
@@ -631,9 +548,6 @@ namespace System {
 
         // Sign function for VB.  Returns -1, 0, or 1 if the sign of the number
         // is negative, 0, or positive.  Throws for floating point NaN's.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(int value)
         {
             if (value < 0)
@@ -644,9 +558,6 @@ namespace System {
                 return 0;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(long value)
         {
             if (value < 0)
@@ -657,9 +568,6 @@ namespace System {
                 return 0;
         }
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign (float value) 
         {
             if (value < 0)
@@ -671,9 +579,6 @@ namespace System {
             throw new ArithmeticException(Environment.GetResourceString("Arithmetic_NaN"));
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(double value)
         {
             if (value < 0)
@@ -685,9 +590,6 @@ namespace System {
             throw new ArithmeticException(Environment.GetResourceString("Arithmetic_NaN"));
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Sign(Decimal value)
         {
             if (value < 0)
@@ -698,24 +600,15 @@ namespace System {
                 return 0;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long BigMul(int a, int b) {
             return ((long)a) * b;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int DivRem(int a, int b, out int result) {
             result =  a%b;
             return a/b;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long DivRem(long a, long b, out long result) {
             result =  a%b;
             return a/b;

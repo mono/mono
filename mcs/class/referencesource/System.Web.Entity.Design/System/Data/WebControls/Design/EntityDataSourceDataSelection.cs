@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //
 // Manages the properties that can be set on the second page of the wizard
 //------------------------------------------------------------------------------

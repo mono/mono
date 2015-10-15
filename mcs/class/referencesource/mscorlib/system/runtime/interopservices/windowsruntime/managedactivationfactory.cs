@@ -4,13 +4,12 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -48,12 +47,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             // with at least one ActivatableAttribute or StaticAttribute.
             if (!(type is RuntimeType) || !type.IsExportedToWindowsRuntime)
                 throw new ArgumentException(Environment.GetResourceString("Argument_TypeNotActivatableViaWindowsRuntime", type), "type");
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.ManagedActivationFactoryConstructor(type.GetFullNameForEtw());
-            }
-#endif
             
             m_type = type;
         }

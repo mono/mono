@@ -148,7 +148,6 @@ namespace System {
         }
 #endif // FEATURE_CAS_POLICY
 
-#if !FEATURE_CORECLR
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
         private static extern void GetEntryAssembly(ObjectHandleOnStack retAssembly);
@@ -180,7 +179,6 @@ namespace System {
                 return m_entryAssembly;
             }
         }
-#endif // FEATURE_CORECLR
 
         internal static AppDomainManager CurrentAppDomainManager {
             [System.Security.SecurityCritical]  // auto-generated

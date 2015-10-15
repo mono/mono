@@ -2,8 +2,8 @@
 // <copyright file="SqlStream.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 namespace System.Data.SqlClient {
 
@@ -244,8 +244,8 @@ namespace System.Data.SqlClient {
         }
 
         internal XmlReader ToXmlReader() {
-            // Dev11 Bug #315513: Exception type breaking change from 4.0 RTM when calling GetChars on null xml
-            // We need to wrap all exceptions inside a TargetInvocationException to simulate calling CreateSqlReader via MethodInfo.Invoke
+            // Dev11 
+
             return SqlTypes.SqlXml.CreateSqlXmlReader(this, closeInput: true, throwTargetInvocationExceptions: true);
         }
         

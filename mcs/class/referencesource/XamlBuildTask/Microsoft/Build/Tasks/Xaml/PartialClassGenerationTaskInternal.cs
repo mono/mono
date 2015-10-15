@@ -16,6 +16,7 @@ namespace Microsoft.Build.Tasks.Xaml
     using System.Xml;
     using System.Reflection;
     using System.Globalization;
+    using System.Runtime.Remoting.Lifetime;
     using Microsoft.Build.Utilities;
     using XamlBuildTask;
     using Microsoft.Build.Framework;
@@ -36,6 +37,14 @@ namespace Microsoft.Build.Tasks.Xaml
         HashSet<string> markupFileNames;
         IEnumerable<IXamlBuildTypeGenerationExtension> xamlBuildTypeGenerationExtensions;
         XamlBuildTypeGenerationExtensionContext buildContextForExtensions;
+
+        // Set the lease lifetime according to the environment variable with the name defined by RemotingLeaseLifetimeInMinutesEnvironmentVariableName
+        public override object InitializeLifetimeService()
+        {
+            ILease lease = (ILease)base.InitializeLifetimeService();
+            XamlBuildTaskLeaseLifetimeHelper.SetLeaseLifetimeFromEnvironmentVariable(lease);
+            return lease;
+        }
 
         public IList<ITaskItem> ApplicationMarkup
         {
@@ -478,11 +487,11 @@ namespace Microsoft.Build.Tasks.Xaml
                     XamlXmlWriterSettings xamlSettings = new XamlXmlWriterSettings() { CloseOutput = true };
                     
                     // Process EmbeddedResourceXaml to remove xml:space="preserve"
-                    // due to a bug in XamlXmlWriter. XamlXmlWriter throws
-                    // if there are duplicate xml:space attributes.
-                    // It is ok to remove the xml:space attribute
-                    // as the XamlXmlWriter would add it in the next step
-                    // if needed.
+                    // due to a 
+
+
+
+
                     RemoveXamlSpaceAttribute(classData);
 
                     using (XamlReader reader = classData.EmbeddedResourceXaml.GetReader())

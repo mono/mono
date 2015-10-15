@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  simoncav
+// @backupOwner katicad
 //---------------------------------------------------------------------
 
 using System;
@@ -283,7 +283,7 @@ namespace System.Data.Query.InternalTrees
         public override void Visit(SoftCastOp op, Node n)
         {
             VisitScalarOpDefault(op, n);
-            // [....] 9/21/06 - temporarily removing check here 
+            // Aconrad 9/21/06 - temporarily removing check here 
             //  because the assert wrongly fails in some cases where the types are promotable,
             //  but the facets are not.  Put this back when that issue is solved.
             // Assert(TypeSemantics.IsEquivalentOrPromotableTo(n.Child0.Op.Type, op.Type), "Illegal SoftCastOp: Cannot promote input type {0} to target type {1}", n.Child0.Op.Type.Identity, op.Type.Identity);

@@ -74,7 +74,7 @@ namespace System.Activities
         {
             // In the interest of allocating less objects we don't implement
             // the full async pattern here.  Instead, we've flattened it to
-            // do the [....] part and then optionally delegate down to the inner
+            // do the sync part and then optionally delegate down to the inner
             // BeginCommit.            
 
             if (this.contextOwnedTransaction != null)

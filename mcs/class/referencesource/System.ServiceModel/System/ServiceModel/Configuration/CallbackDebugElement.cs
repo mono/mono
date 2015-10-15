@@ -25,7 +25,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             CallbackDebugElement source = (CallbackDebugElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() check for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() check for 'from' being null
             this.IncludeExceptionDetailInFaults = source.IncludeExceptionDetailInFaults;
         }
 

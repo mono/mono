@@ -79,7 +79,6 @@ namespace System {
             }
 #endif //!FEATURE_CORECLR
 
-#if FEATURE_COMINTEROP
             // Use the OA variant lib to convert primitive types.
             try
             {
@@ -108,65 +107,8 @@ namespace System {
 #endif      
                 throw new COMException(Environment.GetResourceString("Interop.COM_TypeMismatch"), unchecked((int)0x80020005));
             }
-            
-#else // !FEATURE_COMINTEROP
-
-            return base.ChangeType(value, type, cultureInfo);
-
-#endif // !FEATURE_COMINTEROP
         }
         
         
-#if !FEATURE_COMINTEROP         
-        // CanChangeType
-        public override bool CanChangeType(Object value, Type type, CultureInfo cultureInfo)
-        {
-            Variant myValue = new Variant(value);
-            if (cultureInfo == null)
-                cultureInfo = CultureInfo.CurrentCulture;
-                
-    #if DISPLAY_DEBUG_INFO      
-            Console.WriteLine("In OleAutBinder::CanChangeType converting variant of type: {0} to type: {1}", myValue.VariantType, type.Name);
-    #endif
-
-            // If we are trying to convert to variant then there is nothing to do.
-            if (type == typeof(Variant))
-            {
-    #if DISPLAY_DEBUG_INFO      
-                Console.WriteLine("Variant being changed to type variant is always legal");
-    #endif      
-                return true;
-            }
-    
-            if (type.IsByRef)
-            {
-    #if DISPLAY_DEBUG_INFO      
-                Console.WriteLine("Stripping byref from the type to convert to.");
-    #endif      
-                type = type.GetElementType();
-            }
-
-            // If we are trying to convert from an object to another type then we don't
-            // need the OLEAUT change type, we can just use the normal COM+ mechanisms.
-            if (!type.IsPrimitive && type.IsInstanceOfType(value))
-            {
-    #if DISPLAY_DEBUG_INFO      
-                Console.WriteLine("Source variant can be assigned to destination type");
-    #endif      
-                return true;
-            }
-
-            // Handle converting primitives to enums.
-            if (type.IsEnum && value.GetType().IsPrimitive)
-            {
-    #if DISPLAY_DEBUG_INFO      
-                Console.WriteLine("Converting primitive to enum");
-    #endif      
-                return true;
-            }
-
-            return base.CanChangeType(value, type, cultureInfo);
-        }
-#endif // FEATURE_COMINTEROP        
     }
 }

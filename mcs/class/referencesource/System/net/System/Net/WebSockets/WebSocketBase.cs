@@ -1608,12 +1608,14 @@ namespace System.Net.WebSockets
 
         private abstract class WebSocketOperation
         {
+            protected bool AsyncOperationCompleted { get; set; }
             private readonly WebSocketBase m_WebSocket;
 
             internal WebSocketOperation(WebSocketBase webSocket)
             {
                 Contract.Assert(webSocket != null, "'webSocket' MUST NOT be NULL.");
                 m_WebSocket = webSocket;
+                AsyncOperationCompleted = false;
             }
 
             public WebSocketReceiveResult ReceiveResult { get; protected set; }
@@ -1646,6 +1648,7 @@ namespace System.Net.WebSockets
                 Contract.Assert(BufferCount >= 1 && BufferCount <= 2, "'bufferCount' MUST ONLY BE '1' or '2'.");
 
                 bool sessionHandleLockTaken = false;
+                AsyncOperationCompleted = false;
                 ReceiveResult = null;
                 try
                 {
@@ -1659,6 +1662,7 @@ namespace System.Net.WebSockets
                         WebSocketProtocolComponent.BufferType bufferType;
 
                         bool completed = false;
+
                         while (!completed)
                         {
                             WebSocketProtocolComponent.Buffer[] dataBuffers =
@@ -1776,6 +1780,7 @@ namespace System.Net.WebSockets
                                     break;
                                 case WebSocketProtocolComponent.Action.IndicateSendComplete:
                                     WebSocketProtocolComponent.WebSocketCompleteAction(m_WebSocket, actionContext, 0);
+                                    AsyncOperationCompleted = true;
                                     ReleaseLock(m_WebSocket.SessionHandle, ref sessionHandleLockTaken);
                                     await m_WebSocket.m_InnerStream.FlushAsync().SuppressContextFlow();
                                     Monitor.Enter(m_WebSocket.SessionHandle, ref sessionHandleLockTaken);
@@ -1803,7 +1808,22 @@ namespace System.Net.WebSockets
                                             // - one for the framing header and one for the payload
                                             if (dataBufferCount == 2)
                                             {
-                                                ArraySegment<byte> payload = m_WebSocket.m_InternalBuffer.ConvertPinnedSendPayloadFromNative(dataBuffers[1], bufferType);
+                                                ArraySegment<byte> payload;
+
+                                                // The second buffer might be from the pinned send payload buffer (1) or from the
+                                                // internal native buffer (2).  In the case of a PONG response being generated, the buffer
+                                                // would be from (2).  Even if the payload is from a WebSocketSend operation, the buffer
+                                                // might be (1) only if no buffer copies were needed (in the case of no masking, for example).
+                                                // Or it might be (2).  So, we need to check.
+                                                if (m_WebSocket.m_InternalBuffer.IsPinnedSendPayloadBuffer(dataBuffers[1], bufferType))
+                                                {
+                                                    payload = m_WebSocket.m_InternalBuffer.ConvertPinnedSendPayloadFromNative(dataBuffers[1], bufferType);
+                                                }
+                                                else
+                                                {
+                                                    payload = m_WebSocket.m_InternalBuffer.ConvertNativeBuffer(action, dataBuffers[1], bufferType);
+                                                }
+
                                                 sendBuffers.Add(payload);
                                                 sendBufferSize += payload.Count;
                                             }
@@ -1833,6 +1853,24 @@ namespace System.Net.WebSockets
                                     throw new InvalidOperationException();
                             }
                         }
+
+                        // WebSocketGetAction has returned NO_ACTION. In general, WebSocketGetAction will return
+                        // NO_ACTION if there is no work item available to process at the current moment. But
+                        // there could be work items on the queue still.  Those work items can't be returned back
+                        // until the current work item (being done by another thread) is complete.
+                        //
+                        // It's possible that another thread might be finishing up an async operation and needs
+                        // to call WebSocketCompleteAction. Once that happens, calling WebSocketGetAction on this
+                        // thread might return something else to do. This happens, for example, if the RECEIVE thread
+                        // ends up having to begin sending out a PONG response (due to it receiving a PING) and the
+                        // current SEND thread has posted a WebSocketSend but it can't be processed yet until the
+                        // RECEIVE thread has finished sending out the PONG response.
+                        // 
+                        // So, we need to release the lock briefly to give the other thread a chance to finish
+                        // processing.  We won't actually exit this outter loop and return from this async method
+                        // until the caller's async operation has been fully completed.
+                        ReleaseLock(m_WebSocket.SessionHandle, ref sessionHandleLockTaken);
+                        Monitor.Enter(m_WebSocket.SessionHandle, ref sessionHandleLockTaken);
                     }
                 }
                 finally
@@ -2024,7 +2062,6 @@ namespace System.Net.WebSockets
 
             public class SendOperation : WebSocketOperation
             {
-                private bool m_Completed;
                 protected bool m_BufferHasBeenPinned;
 
                 public SendOperation(WebSocketBase webSocket)
@@ -2059,7 +2096,6 @@ namespace System.Net.WebSockets
 
                 protected override bool ProcessAction_NoAction()
                 {
-                    m_Completed = true;
                     return false;
                 }
 
@@ -2080,7 +2116,6 @@ namespace System.Net.WebSockets
                     Contract.Assert(!m_BufferHasBeenPinned, "'m_BufferHasBeenPinned' MUST NOT be pinned at this point.");
                     m_WebSocket.ThrowIfDisposed();
                     m_WebSocket.ThrowIfPendingException();
-                    m_Completed = false;
 
                     Nullable<WebSocketProtocolComponent.Buffer> payloadBuffer = CreateBuffer(buffer);
                     if (payloadBuffer != null)
@@ -2096,7 +2131,7 @@ namespace System.Net.WebSockets
                 protected override bool ShouldContinue(CancellationToken cancellationToken)
                 {
                     Contract.Assert(ReceiveResult == null, "'ReceiveResult' MUST be NULL.");
-                    if (m_Completed)
+                    if (AsyncOperationCompleted)
                     {
                         return false;
                     }

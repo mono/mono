@@ -8,7 +8,7 @@
 //
 // MemberTypes is an bit mask marking each type of Member that is defined as
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    a subclass of MemberInfo.  These are returned by MemberInfo.MemberType and 
 //    are useful in switch statements.
 //

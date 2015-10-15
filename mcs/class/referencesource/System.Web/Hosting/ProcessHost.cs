@@ -567,7 +567,7 @@ namespace System.Web.Hosting {
 
                 ISAPIApplicationHost appHost = CreateAppHost(appId, null);
 
-                // get app domaoin protocol handler type from config
+                // get app domain protocol handler type from config
                 Type handlerType = GetAppDomainProtocolHandlerType(protocolId);
 
                 AppDomainProtocolHandler handler = null;
@@ -986,7 +986,7 @@ namespace System.Web.Hosting {
 
         internal static void PreloadApplicationIfNotShuttingdown (string appId, LockableAppDomainContext ac) {
             // If GL_STOP_LISTENING wasn't triggered, the reset is likely due to a configuration change.
-            if (ProcessHost.DefaultHost != null && !HostingEnvironment.StopListeningWasCalled) {
+            if (ProcessHost.DefaultHost != null && !UnsafeIISMethods.MgdIsAppPoolShuttingDown()) {
                 // Start the new app on another thread instead of hijacking the current app unloading thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o) {
                     lock (ac) {
@@ -1007,7 +1007,7 @@ namespace System.Web.Hosting {
                 }));
             }
         }
-        
+
         // New for Dev10. 
         // creates a new AppDomain, preloads and calls user code in it
         internal void PreloadApplicationIfRequired(

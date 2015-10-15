@@ -176,7 +176,7 @@ namespace System.Activities.Presentation.View
             set { SetValue(ExplicitCommitProperty, value); }
         }
 
-        //[....] 
+        //Microsoft 
         public IExpressionEditorService ExpressionEditorService
         {
             [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]

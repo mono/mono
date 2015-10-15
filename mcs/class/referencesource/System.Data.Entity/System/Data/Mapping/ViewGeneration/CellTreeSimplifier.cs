@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Data.Common.Utils;
@@ -277,7 +277,7 @@ namespace System.Data.Mapping.ViewGeneration
         }
         // effects: Given a list of node, produces a new list in which all
         // leaf nodes of the same extent are adjacent to each other. Non-leaf
-        // nodes are also adjacent to each other. CHANGE_[....]_IMPROVE: Merge with GroupByRightExtent
+        // nodes are also adjacent to each other. CHANGE_Microsoft_IMPROVE: Merge with GroupByRightExtent
         private static List<CellTreeNode> GroupLeafChildrenByExtent(List<CellTreeNode> nodes)
         {
             // Keep track of leaf cells for each extent

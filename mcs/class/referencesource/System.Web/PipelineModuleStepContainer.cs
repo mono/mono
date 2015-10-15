@@ -130,7 +130,7 @@ namespace System.Web {
             for (int i = 0; i < stepArray.Count; i++ ) {
 
                 // we don't support removing async event handlers
-                // but the event syntax forces us to handle [....] events
+                // but the event syntax forces us to handle sync events
                 syncStep = stepArray[i] as HttpApplication.SyncEventExecutionStep;
                 if (null != syncStep) {
                     if (syncStep.Handler == (EventHandler)handler) {

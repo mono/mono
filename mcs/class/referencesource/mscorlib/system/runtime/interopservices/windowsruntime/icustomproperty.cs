@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>yzha</OWNER>
 
 using System;
 using System.Diagnostics.Contracts;

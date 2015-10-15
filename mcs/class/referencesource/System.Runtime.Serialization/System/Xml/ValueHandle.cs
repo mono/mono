@@ -539,7 +539,7 @@ namespace System.Xml
             }
         }
 
-        // ASSUMPTION ([....]): all chars in str will be ASCII
+        // ASSUMPTION (Microsoft): all chars in str will be ASCII
         public bool Equals2(string str, bool checkLower)
         {
             if (this.type != ValueHandleType.UTF8)

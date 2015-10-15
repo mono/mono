@@ -1,10 +1,10 @@
-﻿// ==++==
+// ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*============================================================
 **
 ** Class:   ConcurrentDictionary
@@ -57,7 +57,7 @@ namespace System.Collections.Concurrent
     [DebuggerTypeProxy(typeof(Mscorlib_DictionaryDebugView<,>))]
     [DebuggerDisplay("Count = {Count}")]
     [HostProtection(Synchronization = true, ExternalThreading = true)]
-    public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary
+    public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>
     {
         /// <summary>
         /// Tables that hold the internal state of the ConcurrentDictionary
@@ -95,6 +95,12 @@ namespace System.Collections.Concurrent
         // How many times we resized becaused of collisions. 
         // This is used to make sure we don't resize the dictionary because of multi-threaded Add() calls
         // that generate collisions. Whenever a GrowTable() should be the only place that changes this
+#if !FEATURE_CORECLR
+        // The field should be have been marked as NonSerialized but because we shipped it without that attribute in 4.5.1.
+        // we can't add it back without breaking compat. To maximize compat we are going to keep the OptionalField attribute 
+        // This will prevent cases where the field was not serialized.
+        [OptionalField]
+#endif
         private int m_keyRehashCount;
 
 #if !FEATURE_CORECLR
@@ -810,7 +816,9 @@ namespace System.Collections.Concurrent
                 bool resizeDesired = false;
                 bool lockTaken = false;
 #if FEATURE_RANDOMIZED_STRING_HASHING
+#if !FEATURE_CORECLR                
                 bool resizeDueToCollisions = false;
+#endif // !FEATURE_CORECLR
 #endif
 
                 try
@@ -826,7 +834,9 @@ namespace System.Collections.Concurrent
                     }
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
+#if !FEATURE_CORECLR
                     int collisionCount = 0;
+#endif // !FEATURE_CORECLR
 #endif
 
                     // Try to find this key in the bucket
@@ -868,16 +878,20 @@ namespace System.Collections.Concurrent
                         prev = node;
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
+#if !FEATURE_CORECLR
                         collisionCount++;
+#endif // !FEATURE_CORECLR
 #endif
                     }
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
+#if !FEATURE_CORECLR
                     if(collisionCount > HashHelpers.HashCollisionThreshold && HashHelpers.IsWellKnownEqualityComparer(comparer)) 
                     {
                         resizeDesired = true;
                         resizeDueToCollisions = true;
                     }
+#endif // !FEATURE_CORECLR
 #endif
 
                     // The key was not found in the bucket. Insert the key-value pair.
@@ -914,11 +928,13 @@ namespace System.Collections.Concurrent
                 if (resizeDesired)
                 {
 #if FEATURE_RANDOMIZED_STRING_HASHING
+#if !FEATURE_CORECLR
                     if (resizeDueToCollisions)
                     {
                         GrowTable(tables, (IEqualityComparer<TKey>)HashHelpers.GetRandomizedEqualityComparer(comparer), true, m_keyRehashCount);
                     }
                     else
+#endif // !FEATURE_CORECLR
                     {
                         GrowTable(tables, tables.m_comparer, false, m_keyRehashCount);
                     }
@@ -1237,6 +1253,17 @@ namespace System.Collections.Concurrent
         }
 
         /// <summary>
+        /// Gets an <see cref="T:System.Collections.Generic.IEnumerable{TKey}"/> containing the keys of
+        /// the <see cref="T:System.Collections.Generic.IReadOnlyDictionary{TKey,TValue}"/>.
+        /// </summary>
+        /// <value>An <see cref="T:System.Collections.Generic.IEnumerable{TKey}"/> containing the keys of
+        /// the <see cref="T:System.Collections.Generic.IReadOnlyDictionary{TKey,TValue}"/>.</value>
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys
+        {
+            get { return GetKeys(); }
+        }
+
+        /// <summary>
         /// Gets a collection containing the values in the <see
         /// cref="T:System.Collections.Generic.Dictionary{TKey,TValue}"/>.
         /// </summary>
@@ -1244,6 +1271,17 @@ namespace System.Collections.Concurrent
         /// the
         /// <see cref="T:System.Collections.Generic.Dictionary{TKey,TValue}"/>.</value>
         public ICollection<TValue> Values
+        {
+            get { return GetValues(); }
+        }
+
+        /// <summary>
+        /// Gets an <see cref="T:System.Collections.Generic.IEnumerable{TValue}"/> containing the values
+        /// in the <see cref="T:System.Collections.Generic.IReadOnlyDictionary{TKey,TValue}"/>.
+        /// </summary>
+        /// <value>An <see cref="T:System.Collections.Generic.IEnumerable{TValue}"/> containing the
+        /// values in the <see cref="T:System.Collections.Generic.IReadOnlyDictionary{TKey,TValue}"/>.</value>
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
         {
             get { return GetValues(); }
         }

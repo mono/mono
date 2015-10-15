@@ -2,9 +2,9 @@
 // <copyright file="SimpleType.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -38,7 +38,7 @@ namespace System.Data {
         string maxInclusive = "";
         string minExclusive = "";
         string minInclusive = "";
-        //REMOVED: encoding due to [....] 2001 XDS changes
+        //REMOVED: encoding due to Microsoft 2001 XDS changes
 
         // 
         internal string enumeration = "";
@@ -267,7 +267,7 @@ namespace System.Data {
                             type.SetAttribute(Keywords.BASE, baseSimpleType.Name);
                         }
                     }
-                    else { // [....]
+                    else { // Microsoft
                         type.SetAttribute(Keywords.BASE, baseSimpleType.Name);
                     }
                 }
@@ -290,48 +290,48 @@ namespace System.Data {
                 constraint.SetAttribute(Keywords.VALUE, maxLength.ToString(CultureInfo.InvariantCulture));
                 type.AppendChild(constraint);
             }
-/*        // removed due to MDAC bug 83892
-            // will be reactivated in whidbey with the proper handling
-            if (pattern != null && pattern.Length > 0) {
-                constraint = dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_PATTERN, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, pattern);
-                type.AppendChild(constraint);
-            }
-            if (minLength >= 0) {
-                constraint = dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_MINLENGTH, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, minLength.ToString());
-                type.AppendChild(constraint);
-            }
-            if (minInclusive != null && minInclusive.Length > 0) {
-                constraint = dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_MININCLUSIVE, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, minInclusive);
-                type.AppendChild(constraint);
-            }
-            if (minExclusive != null && minExclusive.Length > 0) {
-                constraint =dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_MINEXCLUSIVE, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, minExclusive);
-                type.AppendChild(constraint);
-            }
-            if (maxInclusive != null && maxInclusive.Length > 0) {
-                constraint =dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_MAXINCLUSIVE, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, maxInclusive);
-                type.AppendChild(constraint);
-            }
-            if (maxExclusive != null && maxExclusive.Length > 0) {
-                constraint = dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_MAXEXCLUSIVE, Keywords.XSDNS);
-                constraint.SetAttribute(Keywords.VALUE, maxExclusive);
-                type.AppendChild(constraint);
-            }
-            if (enumeration.Length > 0) {
-                string[] list = enumeration.TrimEnd(null).Split(null);
+/*        // removed due to MDAC 
 
-                for (int i = 0; i < list.Length; i++) {
-                    constraint = dc.CreateElement(Keywords.XSD_PREFIX, Keywords.XSD_ENUMERATION, Keywords.XSDNS);
-                    constraint.SetAttribute(Keywords.VALUE, list[i]);
-                    type.AppendChild(constraint);
-                }
-            }
-            */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
             typeNode.AppendChild(type);
             return typeNode;
         }

@@ -7,7 +7,7 @@
 **
 ** Class:  IResourceWriter
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Default way to write strings to a COM+ resource 

@@ -33,14 +33,14 @@ namespace System.Runtime.Serialization {
 
     [System.Runtime.InteropServices.ComVisible(true)]
     public static class FormatterServices {
-        internal static Dictionary<MemberHolder, MemberInfo[]> m_MemberInfoTable = new Dictionary<MemberHolder, MemberInfo[]>(32);
 #if FEATURE_SERIALIZATION        
+        internal static Dictionary<MemberHolder, MemberInfo[]> m_MemberInfoTable = new Dictionary<MemberHolder, MemberInfo[]>(32);
         [System.Security.SecurityCritical]
         private static bool unsafeTypeForwardersIsEnabled = false;
 
         [System.Security.SecurityCritical]
         private static volatile bool unsafeTypeForwardersIsEnabledInitialized = false;
-#endif        
+
         private static Object s_FormatterServicesSyncObject = null;
 
         private static Object formatterServicesSyncObject
@@ -247,6 +247,7 @@ namespace System.Runtime.Serialization {
                 }                  
             }
         }    
+#endif // FEATURE_SERIALIZATION
     
         // Gets a new instance of the object.  The entire object is initalized to 0 and no 
         // constructors have been run. **THIS MEANS THAT THE OBJECT MAY NOT BE IN A STATE

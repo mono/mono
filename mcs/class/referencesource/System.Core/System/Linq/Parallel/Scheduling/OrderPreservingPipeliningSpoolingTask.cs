@@ -7,7 +7,7 @@
 //
 // OrderPreservingPipeliningSpoolingTask.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

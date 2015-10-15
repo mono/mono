@@ -25,7 +25,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], these properties cannot be null in this context
+#pragma warning suppress 56506 // Microsoft, these properties cannot be null in this context
             if (context.Endpoint.Binding == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context.Endpoint.Binding");

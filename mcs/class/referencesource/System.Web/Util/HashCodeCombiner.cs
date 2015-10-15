@@ -103,7 +103,7 @@ internal class HashCodeCombiner {
 
     internal void AddCaseInsensitiveString(string s) {
         if (s != null)
-            AddInt((StringComparer.InvariantCultureIgnoreCase).GetHashCode(s));
+            AddInt(StringUtil.GetNonRandomizedHashCode(s, ignoreCase:true));
     }
 
     internal void AddDateTime(DateTime dt) {
@@ -131,7 +131,7 @@ internal class HashCodeCombiner {
     }
 
     private void AddFileContentHashKey(string fileContentHashKey) {
-        AddInt(fileContentHashKey.GetHashCode());
+        AddInt(StringUtil.GetNonRandomizedHashCode(fileContentHashKey));
     }
 
     internal void AddFileContentHash(string fileName) {

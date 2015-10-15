@@ -24,7 +24,7 @@ namespace System.Globalization
     //            properties are available without locales using CalendarData.GetCalendar(int)
 
     // StructLayout is needed here otherwise compiler can re-arrange the fields.
-    // We have to keep this in-[....] with the definition in calendardata.h
+    // We have to keep this in-sync with the definition in calendardata.h
     //
     // WARNING WARNING WARNING
     //
@@ -270,6 +270,14 @@ namespace System.Globalization
                 case CalendarId.JAPANESELUNISOLAR:
                     this.saEraNames = JapaneseCalendar.EraNames();
                     break;
+
+                case CalendarId.PERSIAN:
+                    if (this.saEraNames == null || this.saEraNames.Length == 0 || String.IsNullOrEmpty(this.saEraNames[0]))
+                    {
+                        this.saEraNames = new String[] { "\x0647\x002e\x0634" };
+                    }
+                    break;
+
                 default:
                     // Most calendars are just "A.D."
                     this.saEraNames = Invariant.saEraNames;
@@ -324,6 +332,14 @@ namespace System.Globalization
                         this.saAbbrevEraNames[0] = this.saEraNames[0];
                     }                        
                     break;
+
+                case CalendarId.PERSIAN:
+                    if (this.saAbbrevEraNames == null || this.saAbbrevEraNames.Length == 0 || String.IsNullOrEmpty(this.saAbbrevEraNames[0]))
+                    {
+                        this.saAbbrevEraNames = this.saEraNames;
+                    }
+                    break;
+
                 default:
                     // Most calendars just use the full name
                     this.saAbbrevEraNames = this.saEraNames;

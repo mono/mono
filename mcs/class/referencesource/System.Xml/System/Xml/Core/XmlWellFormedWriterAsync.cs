@@ -1013,7 +1013,7 @@ namespace System.Xml {
                     }
                 }
                 else {
-                    // We do not pass the standalone value here - Dev10 Bug #479769
+                    // We do not pass the standalone value here - Dev10 
                     await writer.WriteStartDocumentAsync().ConfigureAwait(false);
                 }
             }

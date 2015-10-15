@@ -8,7 +8,7 @@ namespace System.Runtime.Serialization
     public sealed class DataMemberAttribute : Attribute
     {
         string name;
-        bool isNameSetExplicit;
+        bool isNameSetExplicitly;
         int order = -1;
         bool isRequired;
         bool emitDefaultValue = Globals.DefaultEmitDefaultValue;
@@ -20,12 +20,12 @@ namespace System.Runtime.Serialization
         public string Name
         {
             get { return name; }
-            set { name = value; isNameSetExplicit = true; }
+            set { name = value; isNameSetExplicitly = true; }
         }
 
-        internal bool IsNameSetExplicit
+        public bool IsNameSetExplicitly
         {
-            get { return isNameSetExplicit; }
+            get { return isNameSetExplicitly; }
         }
 
         public int Order

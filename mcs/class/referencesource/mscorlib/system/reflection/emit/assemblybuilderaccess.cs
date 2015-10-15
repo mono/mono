@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 using System;
 
 // This enumeration defines the access modes for a dynamic assembly.
@@ -24,8 +24,8 @@ namespace System.Reflection.Emit
 #if FEATURE_REFLECTION_ONLY_LOAD
         ReflectionOnly = 6, // 4 | Save,
 #endif // FEATURE_REFLECTION_ONLY_LOAD
-#if (FEATURE_COLLECTIBLE_TYPES && !FEATURE_CORECLR) || FEATURE_NETCORE
-            RunAndCollect = 8 | Run
-#endif // FEATURE_COLLECTIBLE_TYPES && !FEATURE_CORECLR
+#if FEATURE_COLLECTIBLE_TYPES
+        RunAndCollect = 8 | Run
+#endif
     }
 }

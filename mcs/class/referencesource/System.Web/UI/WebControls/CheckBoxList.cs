@@ -361,7 +361,7 @@ namespace System.Web.UI.WebControls {
             // strIndex is now definitely the index as a string, regardless of which case postDataKey was in.
             int index = Int32.Parse(strIndex, CultureInfo.InvariantCulture);
 
-            EnsureDataBound();
+            EnsureDataBoundInLoadPostData();
             
             // Maintain state from the form
             if (index >= 0 && index < Items.Count) {

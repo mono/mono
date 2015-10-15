@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceReader
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Default way to read streams of resources on 
@@ -843,7 +843,7 @@ namespace System.Resources {
                 // types which do demand serialization permission in their 
                 // deserialization .cctors will fail.
                 // Also, use a serialization binder to limit bind requests to 
-                // our allowed list of [....] types.
+                // our allowed list of Microsoft types.
                 _objFormatter.Binder = _typeLimitingBinder;
                 _typeLimitingBinder.ExpectingToDeserialize(type);
                 graph = _objFormatter.UnsafeDeserialize(_store.BaseStream, null);
@@ -1140,7 +1140,7 @@ namespace System.Resources {
                 }
                 else {
                     // Enums should be safe to deserialize, and this helps out
-                    // partially trusted, localized [....] apps.
+                    // partially trusted, localized Microsoft apps.
                     if (resourceType.BaseType == typeof(Enum)) {
                         _safeToDeserialize[i] = true;
                         continue;
@@ -1315,7 +1315,7 @@ namespace System.Resources {
                     }
                 }
                 
-                // [....] types may internally use some enums that aren't 
+                // Microsoft types may internally use some enums that aren't 
                 // on our safe to deserialize list, like Font using FontStyle.
                 Type t = ObjectReader.FastBindToType(assemblyName, typeName);
                 if (t.IsEnum)
@@ -1326,7 +1326,7 @@ namespace System.Resources {
 
                 // Throw instead of returning null.
                 // If you're looking at this in a debugger, you've either 
-                // got a hacked .resources file on your hands, or [....] 
+                // got a hacked .resources file on your hands, or Microsoft 
                 // types have taken a new dependency on another type.  Check 
                 // whether assemblyName & typeName refer to a trustworthy type,
                 // & consider adding it to the TypesSafeToDeserialize list.
@@ -1398,22 +1398,24 @@ namespace System.Resources {
 
                     String key;
                     Object value = null;
-                    lock (_reader._resCache) {
-                        key = _reader.AllocateStringForNameIndex(_currentName, out _dataPosition);
-                        ResourceLocator locator;
-                        if (_reader._resCache.TryGetValue(key, out locator)) {
-                            value = locator.Value;
-                        }
-                        if (value == null) {
-                            if (_dataPosition == -1) 
-                                value = _reader.GetValueForNameIndex(_currentName);
-                            else 
-                                value = _reader.LoadObject(_dataPosition);
-                            // If enumeration and subsequent lookups happen very
-                            // frequently in the same process, add a ResourceLocator
-                            // to _resCache here.  But [....] enumerates and
-                            // just about everyone else does lookups.  So caching
-                            // here may bloat working set.
+                    lock (_reader) { // locks should be taken in the same order as in RuntimeResourceSet.GetObject to avoid deadlock
+                        lock (_reader._resCache) {
+                            key = _reader.AllocateStringForNameIndex(_currentName, out _dataPosition); // AllocateStringForNameIndex could lock on _reader
+                            ResourceLocator locator;
+                            if (_reader._resCache.TryGetValue(key, out locator)) {
+                                value = locator.Value;
+                            }
+                            if (value == null) {
+                                if (_dataPosition == -1) 
+                                    value = _reader.GetValueForNameIndex(_currentName);
+                                else 
+                                    value = _reader.LoadObject(_dataPosition);
+                                // If enumeration and subsequent lookups happen very
+                                // frequently in the same process, add a ResourceLocator
+                                // to _resCache here.  But Microsoft enumerates and
+                                // just about everyone else does lookups.  So caching
+                                // here may bloat working set.
+                            }
                         }
                     }
                     return new DictionaryEntry(key, value);

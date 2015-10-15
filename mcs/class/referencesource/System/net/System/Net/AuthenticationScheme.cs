@@ -6,7 +6,7 @@
 
 namespace System.Net {
 
-    // These are not in [....] with the flags IIS uses for the metabase. I guess that's OK.
+    // These are not in sync with the flags IIS uses for the metabase. I guess that's OK.
     // For reference IIS actually uses a combination of flags to figure out what challenge to send out:
     // AuthAnonymous, AuthBasic, AuthMD5, AuthPassport, AuthNTLM: these are bool values
     // NTAuthenticationProviders: this is a string "NTLM", "Kerberos", "Negotiate"

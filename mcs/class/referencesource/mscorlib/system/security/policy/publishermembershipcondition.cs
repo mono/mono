@@ -5,7 +5,7 @@
 // ==--==
 //  PublisherMembershipCondition.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Implementation of membership condition for X509 certificate based publishers
 //

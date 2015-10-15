@@ -8,7 +8,7 @@
 //
 // BindingFlags are a set of flags that control the binding and invocation process
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    in Reflection.  There are two processes.  The first is selection of a Member which
 //    is the binding phase.  The second, is invocation.  These flags control how this
 //    process works.

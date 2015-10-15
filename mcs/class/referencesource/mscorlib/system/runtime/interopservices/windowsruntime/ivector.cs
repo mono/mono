@@ -4,8 +4,8 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>LadiPro</OWNER>
+// <OWNER>ShawnFa</OWNER>
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("913337e9-11a1-4345-a3a2-4e7f956e222d")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IVector<T> : IIterable<T>
     {
         [Pure]
@@ -45,7 +44,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("913337e9-11a1-4345-a3a2-4e7f956e222d")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IVector_Raw<T> : IIterable<T>
     {
         [Pure]
@@ -70,7 +68,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("bbe1fa4c-b0e3-4583-baef-1f1b2e483e56")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IVectorView<T> : IIterable<T>
     {
         [Pure]
@@ -86,7 +83,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("393de7de-6fd0-4c0d-bb71-47244a113e93")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IBindableVector : IBindableIterable
     {
         [Pure]

@@ -59,7 +59,7 @@ namespace System.ServiceModel.Activation
         [SecurityCritical]
         static void CloseInvalidOutSafeHandleCritical(SafeHandle handle)
         {
-            // Workaround for 64-bit CLR bug VSWhidbey 546830 - sometimes invalid SafeHandles come back null.
+            // Workaround for 64-bit CLR 
             if (handle != null)
             {
                 Fx.Assert(handle.IsInvalid, "CloseInvalidOutSafeHandle called with a valid handle!");

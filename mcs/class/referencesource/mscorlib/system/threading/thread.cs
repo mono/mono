@@ -4,7 +4,7 @@
 //
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: Thread
@@ -21,8 +21,8 @@ namespace System.Threading {
     using System.Runtime.InteropServices;
 #if FEATURE_REMOTING    
     using System.Runtime.Remoting.Contexts;
-#endif
     using System.Runtime.Remoting.Messaging;
+#endif
     using System;
     using System.Diagnostics;
     using System.Security.Permissions;
@@ -139,7 +139,9 @@ namespace System.Threading {
 #if FEATURE_REMOTING        
         private Context         m_Context;
 #endif 
+#if !FEATURE_CORECLR
         private ExecutionContext m_ExecutionContext;    // this call context follows the logical thread
+#endif
 
         private String          m_Name;
         private Delegate        m_Delegate;             // Delegate
@@ -190,10 +192,31 @@ namespace System.Threading {
         // See code:#threadCultureInfo
 #if !FEATURE_LEAK_CULTURE_INFO
         [ThreadStatic]
-        private static CultureInfo     m_CurrentCulture;
+        internal static CultureInfo     m_CurrentCulture;
         [ThreadStatic]
-        private static CultureInfo     m_CurrentUICulture;
+        internal static CultureInfo     m_CurrentUICulture;
 #endif
+
+        static AsyncLocal<CultureInfo> s_asyncLocalCurrentCulture; 
+        static AsyncLocal<CultureInfo> s_asyncLocalCurrentUICulture;
+
+        static void AsyncLocalSetCurrentCulture(AsyncLocalValueChangedArgs<CultureInfo> args)
+        {
+#if FEATURE_LEAK_CULTURE_INFO 
+            Thread.CurrentThread.m_CurrentCulture = args.CurrentValue;
+#else
+            m_CurrentCulture = args.CurrentValue;
+#endif // FEATURE_LEAK_CULTURE_INFO
+        }
+
+        static void AsyncLocalSetCurrentUICulture(AsyncLocalValueChangedArgs<CultureInfo> args)
+        {
+#if FEATURE_LEAK_CULTURE_INFO 
+            Thread.CurrentThread.m_CurrentUICulture = args.CurrentValue;
+#else
+            m_CurrentUICulture = args.CurrentValue;
+#endif // FEATURE_LEAK_CULTURE_INFO
+        }
 
 #if FEATURE_CORECLR
         // Adding an empty default ctor for annotation purposes
@@ -331,7 +354,7 @@ namespace System.Threading {
                     ExecutionContext.CaptureOptions.IgnoreSyncCtx);
                 t.SetExecutionContextHelper(ec);
             }
-#if FEATURE_ROLE_BASED_SECURITY
+#if FEATURE_IMPERSONATION
             IPrincipal principal = (IPrincipal)CallContext.Principal;
 #else
             IPrincipal principal = null;
@@ -340,6 +363,7 @@ namespace System.Threading {
         }
 
 
+#if !FEATURE_CORECLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal ExecutionContext.Reader GetExecutionContextReader()
         {
@@ -413,6 +437,8 @@ namespace System.Threading {
             m_ExecutionContext = value.DangerousGetRawExecutionContext();
             ExecutionContextBelongsToCurrentScope = belongsToCurrentScope;
         }
+#endif //!FEATURE_CORECLR
+
 #if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -456,9 +482,6 @@ namespace System.Threading {
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal extern static IntPtr InternalGetCurrentThread();
 
         /*=========================================================================
@@ -749,10 +772,11 @@ namespace System.Threading {
         }
 #endif
         [System.Security.SecurityCritical]  // auto-generated
-        [MethodImplAttribute(MethodImplOptions.InternalCall),
-         HostProtection(Synchronization = true, ExternalThreading = true),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success),
-         ResourceExposure(ResourceScope.None)]
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [SuppressUnmanagedCodeSecurity]
+        [HostProtection(Synchronization = true, ExternalThreading = true),
+         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         private static extern bool YieldInternal();
 
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -767,9 +791,6 @@ namespace System.Threading {
         public static Thread CurrentThread {
             [System.Security.SecuritySafeCritical]  // auto-generated
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<Thread>() != null);
                 return GetCurrentThreadNative();
@@ -1143,18 +1164,30 @@ namespace System.Threading {
                 if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
                 {
                     //
-                    // NetCF had a bug where Thread.Current{UI}Culture would set the culture for every thread in the process.  
-                    // This was because they stored the value in a regular static field (NetCF has no support for ThreadStatic fields).
-                    // Some apps depend on the broken behavior. We will emulate this behavior by redirecting setters to 
-                    // DefaultThreadCurrentUICulture. (Note that this property did not existed in NetCF and so it is fine to piggy back 
-                    // on it for the quirk.)
-                    //
+                    // NetCF had a 
+
+
+
+
+
                     CultureInfo.SetCurrentUICultureQuirk(value);
                     return;
                 }
 #endif
+                if (!AppContextSwitches.NoAsyncCurrentCulture)
+                {
+                    if (s_asyncLocalCurrentUICulture == null)
+                    {
+                        Interlocked.CompareExchange(ref s_asyncLocalCurrentUICulture, new AsyncLocal<CultureInfo>(AsyncLocalSetCurrentUICulture), null);
+                    }
 
-                m_CurrentUICulture = value;
+                    // this one will set m_CurrentUICulture too
+                    s_asyncLocalCurrentUICulture.Value = value;
+                }
+                else
+                {
+                    m_CurrentUICulture = value;
+                }
             }
         }
 
@@ -1214,7 +1247,7 @@ namespace System.Threading {
                     return CultureInfo.GetCultureInfoForUserPreferredLanguageInAppX() ?? GetCurrentCultureNoAppX();
                 } 
                 else 
-#endif 
+#endif
                 {
                     return GetCurrentCultureNoAppX();
                 }
@@ -1252,8 +1285,19 @@ namespace System.Threading {
                     return;
                 }
 #endif
-
-                m_CurrentCulture = value;
+                if (!AppContextSwitches.NoAsyncCurrentCulture)
+                {
+                    if (s_asyncLocalCurrentCulture == null)
+                    {
+                        Interlocked.CompareExchange(ref s_asyncLocalCurrentCulture, new AsyncLocal<CultureInfo>(AsyncLocalSetCurrentCulture), null);
+                    }
+                    // this one will set m_CurrentCulture too
+                    s_asyncLocalCurrentCulture.Value = value;
+                }
+                else
+                {
+                    m_CurrentCulture = value;
+                }
             }
         }
 
@@ -1343,15 +1387,11 @@ namespace System.Threading {
 
             [System.Security.SecuritySafeCritical]  // auto-generated
             [SecurityPermissionAttribute(SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPrincipal)]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             set
             {
                 CallContext.Principal = value;
             }
         }
-#endif // FEATURE_IMPERSONATION
 
         // Private routine called from unmanaged code to set an initial
         // principal for a newly created thread.
@@ -1360,6 +1400,7 @@ namespace System.Threading {
         {
             GetMutableExecutionContext().LogicalCallContext.SecurityData.Principal = principal;
         }
+#endif // FEATURE_IMPERSONATION
 
 #if FEATURE_REMOTING   
 
@@ -1385,7 +1426,7 @@ namespace System.Threading {
         {
             return ftnToCall(args);
         }
-#endif // FEATURE_REMOTING        
+#endif // FEATURE_REMOTING
 
         /*======================================================================
         ** Returns the current domain in which current thread is running.
@@ -1737,7 +1778,8 @@ namespace System.Threading {
                 return s_LocalDataStoreMgr;
             }
         }
-#if !MOBILE
+
+#if !FEATURE_CORECLR && !MOBILE
         void _Thread.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -1758,6 +1800,7 @@ namespace System.Threading {
             throw new NotImplementedException();
         }
 #endif
+
 #if !MONO
         // Helper function to set the AbortReason for a thread abort.
         //  Checks that they're not alredy set, and then atomically updates

@@ -11,7 +11,7 @@
 //    represented by MemberInfo objects.
 //
 // <EMAIL>Author: darylo</EMAIL>
-// Date: [....] 98
+// Date: March 98
 //
 // The IExpando Interface.
 namespace System.Runtime.InteropServices.Expando {

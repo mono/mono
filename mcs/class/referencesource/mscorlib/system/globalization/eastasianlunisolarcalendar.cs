@@ -303,7 +303,7 @@ namespace System.Globalization {
             // convert solar day into lunar day.
             // subtract off the beginning part of the solar year which is not
             // part of the lunar year.  since this part is always in Jan or Feb,
-            // we don't need to handle Leap Year (LY only affects [....]
+            // we don't need to handle Leap Year (LY only affects Microsoft
             // and later).
             nLunarDay -= DaysToMonth365[nJan1Month-1];
             nLunarDay -= (nJan1Date - 1);

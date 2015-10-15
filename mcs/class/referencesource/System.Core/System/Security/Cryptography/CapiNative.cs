@@ -5,14 +5,19 @@
 // ==--==
 
 using System;
+#if FEATURE_CORESYSTEM
+using System.Core;
+#endif
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security;
-using System.Diagnostics.Contracts;
+using System.Text;
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Security.Cryptography {
@@ -171,15 +176,62 @@ namespace System.Security.Cryptography {
             public fixed byte szName[20];
         }
 
+        internal const uint ALG_CLASS_SIGNATURE = (1 << 13);
+        internal const uint ALG_TYPE_RSA = (2 << 9);
+        internal const uint ALG_SID_RSA_ANY = 0;
+        internal const uint ALG_SID_DSS_ANY = 0;
+        internal const uint ALG_TYPE_DSS = (1 << 9);
+        internal const uint ALG_CLASS_KEY_EXCHANGE = (5 << 13);
+
+        internal const uint CALG_RSA_SIGN = (ALG_CLASS_SIGNATURE | ALG_TYPE_RSA | ALG_SID_RSA_ANY);
+        internal const uint CALG_DSS_SIGN = (ALG_CLASS_SIGNATURE | ALG_TYPE_DSS | ALG_SID_DSS_ANY);
+        internal const uint CALG_RSA_KEYX = (ALG_CLASS_KEY_EXCHANGE | ALG_TYPE_RSA | ALG_SID_RSA_ANY);
+        internal const uint CNG_RSA_PUBLIC_KEY_BLOB = 72;
+
+        internal const uint X509_ASN_ENCODING = 0x00000001;
+        internal const uint PKCS_7_ASN_ENCODING = 0x00010000;
+
+        internal const uint CRYPT_OID_INFO_OID_KEY = 1;
+
+        internal const uint LMEM_FIXED = 0x0000;
+        internal const uint LMEM_ZEROINIT = 0x0040;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CRYPT_OID_INFO {
+            internal CRYPT_OID_INFO(int size) {
+                cbSize = (uint)size;
+                pszOID = null;
+                pwszName = null;
+                dwGroupId = 0;
+                Algid = 0;
+                ExtraInfo = new CRYPTOAPI_BLOB();
+            }
+            internal uint cbSize;
+            [MarshalAs(UnmanagedType.LPStr)]
+            internal string pszOID;
+            internal string pwszName;
+            internal uint dwGroupId;
+            internal uint Algid;
+            internal CRYPTOAPI_BLOB ExtraInfo;
+        }
+
+
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#else
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
         [SecurityCritical(SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
         [SuppressUnmanagedCodeSecurity]
         internal static class UnsafeNativeMethods {
             /// <summary>
             ///     Calculate the public key token for a given public key
             /// </summary>
             [DllImport("clr")]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern int _AxlPublicKeyBlobToPublicKeyToken(ref CRYPTOAPI_BLOB pCspPublicKeyBlob,
                                                                        [Out] out SafeAxlBufferHandle ppwszPublicKeyToken);
 
@@ -189,6 +241,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptAcquireContext([Out] out SafeCspHandle phProv,
                                                           string pszContainer,
                                                           string pszProvider,
@@ -200,6 +255,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptCreateHash(SafeCspHandle hProv,
                                                       AlgorithmId Algid,
                                                       SafeCapiKeyHandle hKey,
@@ -211,6 +269,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptDecrypt(SafeCapiKeyHandle hKey,
                                                    SafeCapiHashHandle hHash,
                                                    [MarshalAs(UnmanagedType.Bool)] bool Final,
@@ -222,9 +283,14 @@ namespace System.Security.Cryptography {
             ///     Duplicate a key handle
             /// </summary>
             [DllImport("advapi32")]
+#if !FEATURE_CORESYSTEM
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
             [SuppressUnmanagedCodeSecurity]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptDuplicateKey(SafeCapiKeyHandle hKey,
                                                         IntPtr pdwReserved,
                                                         int dwFlags,
@@ -235,6 +301,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptEncrypt(SafeCapiKeyHandle hKey,
                                                    SafeCapiHashHandle hHash,
                                                    [MarshalAs(UnmanagedType.Bool)] bool Final,
@@ -248,6 +317,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptExportKey(SafeCapiKeyHandle hKey,
                                                      SafeCapiKeyHandle hExpKey,
                                                      int dwBlobType,            // (int)KeyBlobType
@@ -259,6 +331,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptGenKey(SafeCspHandle hProv,
                                                   AlgorithmId Algid,
                                                   KeyFlags dwFlags,
@@ -269,6 +344,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptGenRandom(SafeCspHandle hProv,
                                                      int dwLen,
                                                      [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbBuffer);
@@ -278,6 +356,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptGetHashParam(SafeCapiHashHandle hHash,
                                                         HashParameter dwParam,
                                                         [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbData,
@@ -289,6 +370,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptGetProvParam(SafeCspHandle hProv,
                                                         ProviderParameter dwParam,
                                                         IntPtr pbData,
@@ -300,6 +384,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptHashData(SafeCapiHashHandle hHash,
                                                     [MarshalAs(UnmanagedType.LPArray)] byte[] pbData,
                                                     int dwDataLen,
@@ -310,6 +397,9 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptImportKey(SafeCspHandle hProv,
                                                      [MarshalAs(UnmanagedType.LPArray)] byte[] pbData,
                                                      int dwDataLen,
@@ -322,10 +412,76 @@ namespace System.Security.Cryptography {
             /// </summary>
             [DllImport("advapi32", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
+#if FEATURE_CORESYSTEM
+            [SecurityCritical]
+#endif
             public static extern bool CryptSetKeyParam(SafeCapiKeyHandle hKey,
                                                        KeyParameter dwParam,
                                                        [MarshalAs(UnmanagedType.LPArray)] byte[] pbData,
                                                        int dwFlags);
+
+            //Added for X509Certificate extension support 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
+            [DllImport("CRYPT32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [ResourceExposure(ResourceScope.None)]
+            internal extern static
+            IntPtr CryptFindOIDInfo(
+                [In]     uint dwKeyType,
+                [In]     IntPtr pvKey,
+                [In]     OidGroup dwGroupId);
+
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
+            [DllImport("CRYPT32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [ResourceExposure(ResourceScope.None)]
+            internal extern static
+            IntPtr CryptFindOIDInfo(
+                [In]     uint dwKeyType,
+                [In]     SafeLocalAllocHandle pvKey,
+                [In]     OidGroup dwGroupId);
+
+
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
+            [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [ResourceExposure(ResourceScope.None)]
+            internal static extern
+            bool CryptDecodeObject(
+                [In]     uint dwCertEncodingType,
+                [In]     IntPtr lpszStructType,
+                [In]     IntPtr pbEncoded,
+                [In]     uint cbEncoded,
+                [In]     uint dwFlags,
+                [In, Out] SafeLocalAllocHandle pvStructInfo,
+                [In, Out] IntPtr pcbStructInfo);
+
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
+            [DllImport("Crypt32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [ResourceExposure(ResourceScope.None)]
+            internal static extern
+            bool CryptDecodeObject(
+                [In]     uint dwCertEncodingType,
+                [In]     IntPtr lpszStructType,
+                [In]     byte[] pbEncoded,
+                [In]     uint cbEncoded,
+                [In]     uint dwFlags,
+                [In, Out] SafeLocalAllocHandle pvStructInfo,
+                [In, Out] IntPtr pcbStructInfo);
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
+            [DllImport("KERNEL32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [ResourceExposure(ResourceScope.None)]
+            internal static extern
+            SafeLocalAllocHandle LocalAlloc(
+                [In] uint uFlags,
+                [In] IntPtr sizetdwBytes);
         }
 
         //
@@ -626,6 +782,240 @@ namespace System.Security.Cryptography {
             if (!UnsafeNativeMethods.CryptSetKeyParam(key, parameter, value, 0)) {
                 throw new CryptographicException(Marshal.GetLastWin32Error());
             }
+        }
+
+        //Wrapper methods for certificate extensions
+
+        /// <summary>
+        /// Local alloc wrapper. 
+        /// </summary>
+        /// <param name="uFlags"></param>
+        /// <param name="sizetdwBytes"></param>
+        /// <returns></returns>
+        [SecuritySafeCritical]
+        internal static SafeLocalAllocHandle LocalAlloc(uint uFlags, IntPtr sizetdwBytes) {
+            SafeLocalAllocHandle safeLocalAllocHandle = UnsafeNativeMethods.LocalAlloc(uFlags, sizetdwBytes);
+            if (safeLocalAllocHandle == null || safeLocalAllocHandle.IsInvalid) {
+                throw new OutOfMemoryException();
+            }
+            return safeLocalAllocHandle;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pszStructType"></param>
+        /// <param name="pbEncoded"></param>
+        /// <param name="cbEncoded"></param>
+        /// <param name="decodedValue"></param>
+        /// <param name="cbDecodedValue"></param>
+        /// <returns></returns>
+        [SecuritySafeCritical]
+        internal static unsafe bool DecodeObject(IntPtr pszStructType,
+                  IntPtr pbEncoded,
+                  uint cbEncoded,
+                  out SafeLocalAllocHandle decodedValue,
+                  out uint cbDecodedValue)
+        {
+            // Initialize out parameters
+            decodedValue = SafeLocalAllocHandle.InvalidHandle;
+            cbDecodedValue = 0;
+
+            // Decode
+            uint cbDecoded = 0;
+            SafeLocalAllocHandle ptr = SafeLocalAllocHandle.InvalidHandle;
+            if (!UnsafeNativeMethods.CryptDecodeObject(X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+                                                        pszStructType,
+                                                        pbEncoded,
+                                                        cbEncoded,
+                                                        0,
+                                                        ptr,
+                                                        new IntPtr(&cbDecoded))) {
+                return false;
+            }
+            ptr = LocalAlloc(LMEM_FIXED, new IntPtr(cbDecoded));
+
+            if (!UnsafeNativeMethods.CryptDecodeObject(X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+                                                   pszStructType,
+                                                   pbEncoded,
+                                                   cbEncoded,
+                                                   0,
+                                                   ptr,
+                                                   new IntPtr(&cbDecoded))) {
+                return false;
+            }
+            // Return decoded values
+            decodedValue = ptr;
+            cbDecodedValue = cbDecoded;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pszStructType"></param>
+        /// <param name="pbEncoded"></param>
+        /// <param name="decodedValue"></param>
+        /// <param name="cbDecodedValue"></param>
+        /// <returns></returns>
+        [SecuritySafeCritical]
+        internal static unsafe bool DecodeObject(IntPtr pszStructType,
+                          byte[] pbEncoded,
+                          out SafeLocalAllocHandle decodedValue,
+                          out uint cbDecodedValue)
+        {
+            // Initialize out parameters
+            decodedValue = SafeLocalAllocHandle.InvalidHandle;
+            cbDecodedValue = 0;
+
+            // Decode
+            uint cbDecoded = 0;
+            SafeLocalAllocHandle pbDecoded = SafeLocalAllocHandle.InvalidHandle;
+
+            if (!UnsafeNativeMethods.CryptDecodeObject(X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+                                               pszStructType,
+                                               pbEncoded,
+                                               (uint)pbEncoded.Length,
+                                               0,
+                                               pbDecoded,
+                                               new IntPtr(&cbDecoded))) {
+                return false;
+            }
+            pbDecoded = LocalAlloc(LMEM_FIXED, new IntPtr(cbDecoded));
+            if (!UnsafeNativeMethods.CryptDecodeObject(X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+                                               pszStructType,
+                                               pbEncoded,
+                                               (uint)pbEncoded.Length,
+                                               0,
+                                               pbDecoded,
+                                               new IntPtr(&cbDecoded))) {
+                return false;
+            }
+            // Return decoded values
+            decodedValue = pbDecoded;
+            cbDecodedValue = cbDecoded;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dwKeyType"></param>
+        /// <param name="pvKey"></param>
+        /// <param name="dwGroupId"></param>
+        /// <returns></returns>
+        [SecuritySafeCritical]
+        internal static CRYPT_OID_INFO CryptFindOIDInfo(
+            [In]    uint dwKeyType,
+            [In]    IntPtr pvKey,
+            [In]    OidGroup dwGroupId) {
+
+            if (pvKey == IntPtr.Zero) {
+                throw new ArgumentNullException("pvKey");
+            }
+            CRYPT_OID_INFO pOIDInfo = new CRYPT_OID_INFO(Marshal.SizeOf(typeof(CRYPT_OID_INFO)));
+            IntPtr pv = UnsafeNativeMethods.CryptFindOIDInfo(dwKeyType,
+                                                     pvKey,
+                                                     dwGroupId);
+
+            if (pv != IntPtr.Zero) {
+                pOIDInfo = (CRYPT_OID_INFO)Marshal.PtrToStructure(pv, typeof(CRYPT_OID_INFO));
+            }
+            return pOIDInfo;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dwKeyType"></param>
+        /// <param name="pvKey"></param>
+        /// <param name="dwGroupId"></param>
+        /// <returns></returns>
+        [SecuritySafeCritical]
+        internal static CRYPT_OID_INFO CryptFindOIDInfo(
+            [In]    uint dwKeyType,
+            [In]    SafeLocalAllocHandle pvKey,
+            [In]    OidGroup dwGroupId) {
+
+            if (pvKey == null) {
+                throw new ArgumentNullException("pvKey");
+            }
+            if (pvKey.IsInvalid) {
+                throw new CryptographicException("SR.GetString(SR.Cryptography_InvalidHandle)", "pvKey");
+            }
+            CRYPT_OID_INFO pOIDInfo = new CRYPT_OID_INFO(Marshal.SizeOf(typeof(CRYPT_OID_INFO)));
+            IntPtr pv = UnsafeNativeMethods.CryptFindOIDInfo(dwKeyType,
+                                                     pvKey,
+                                                     dwGroupId);
+
+            if (pv != IntPtr.Zero) {
+                pOIDInfo = (CRYPT_OID_INFO)Marshal.PtrToStructure(pv, typeof(CRYPT_OID_INFO));
+            }
+            return pOIDInfo;
+        }
+    }
+
+    /// <summary>
+    /// Safe local handle class
+    /// </summary>
+    internal sealed class SafeLocalAllocHandle : SafeHandleZeroOrMinusOneIsInvalid {
+        [SecuritySafeCritical]
+        private SafeLocalAllocHandle()
+            : base(true) {
+        }
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr LocalFree(IntPtr hMem);
+
+        [SecuritySafeCritical]
+        internal T Read<T>(int offset) where T : struct {
+            bool addedRef = false;
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try {
+                DangerousAddRef(ref addedRef);
+                unsafe {
+                    IntPtr pBase = new IntPtr((byte*)handle.ToPointer() + offset);
+                    return (T)Marshal.PtrToStructure(pBase, typeof(T));
+                }
+            }
+            finally {
+                if (addedRef) {
+                    DangerousRelease();
+                }
+            }
+        }
+
+        [SecuritySafeCritical]
+        protected override bool ReleaseHandle() {
+            return LocalFree(handle) == IntPtr.Zero;
+        }
+
+        [SecuritySafeCritical]
+        internal SafeLocalAllocHandle(IntPtr handle)
+            : base(true) {
+            SetHandle(handle);
+        }
+
+        internal static SafeLocalAllocHandle InvalidHandle {
+            [SecuritySafeCritical]
+            get { return new SafeLocalAllocHandle(IntPtr.Zero); }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class X509Utils {
+        
+        [SecuritySafeCritical]
+        internal static SafeLocalAllocHandle StringToAnsiPtr(string s) {
+            byte[] arr = new byte[s.Length + 1];
+            Encoding.ASCII.GetBytes(s, 0, s.Length, arr, 0);
+            SafeLocalAllocHandle pb = CapiNative.LocalAlloc(CapiNative.LMEM_FIXED, new IntPtr(arr.Length));
+            Marshal.Copy(arr, 0, pb.DangerousGetHandle(), arr.Length);
+            return pb;
         }
     }
 }

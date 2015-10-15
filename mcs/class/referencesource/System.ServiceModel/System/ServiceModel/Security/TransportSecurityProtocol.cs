@@ -240,6 +240,13 @@ namespace System.ServiceModel.Security
             securityHeader.ExpectEndorsingTokens = expectEndorsingTokens;
             securityHeader.MaxReceivedMessageSize = factory.SecurityBindingElement.MaxReceivedMessageSize;
             securityHeader.ReaderQuotas = factory.SecurityBindingElement.ReaderQuotas;
+
+            // Due to compatibility, only honor this setting if this app setting is enabled
+            if (ServiceModelAppSettings.UseConfiguredTransportSecurityHeaderLayout)
+            {
+                securityHeader.Layout = factory.SecurityHeaderLayout;
+            }
+
             TimeoutHelper timeoutHelper = new TimeoutHelper(timeout);
             if (!factory.ActAsInitiator)
             {

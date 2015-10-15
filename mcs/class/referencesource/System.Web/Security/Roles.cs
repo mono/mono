@@ -93,7 +93,7 @@ namespace System.Web.Security {
         // authorization
 
         static public bool IsUserInRole(string username, string roleName) {
-            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc))
+            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null)
                 EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_BEGIN, HttpContext.Current.WorkerRequest);
 
             EnsureEnabled();
@@ -111,7 +111,7 @@ namespace System.Web.Security {
                     isUserInRole = Provider.IsUserInRole(username, roleName);
                 return isUserInRole;
             } finally {
-                if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc)) {
+                if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null) {
                     if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.AppSvc)) {
                         string status = SR.Resources.GetString(isUserInRole ? SR.Etw_Success : SR.Etw_Failure, CultureInfo.InstalledUICulture);
                         EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_IS_USER_IN_ROLE, HttpContext.Current.WorkerRequest, isRolePrincipal ? "RolePrincipal" : Provider.GetType().FullName, username, roleName, status);
@@ -129,7 +129,7 @@ namespace System.Web.Security {
 
 
         static public string[] GetRolesForUser (string username){
-            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc))
+            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null)
                 EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_BEGIN, HttpContext.Current.WorkerRequest);
 
             EnsureEnabled();
@@ -150,7 +150,7 @@ namespace System.Web.Security {
                 }
                 return roles;
             } finally {
-                if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc)) {
+                if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null) {
                     if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.AppSvc)) {
                         string roleNames = null;
                         if (roles != null && roles.Length > 0)

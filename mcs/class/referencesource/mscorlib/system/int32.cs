@@ -61,9 +61,6 @@ namespace System {
             throw new ArgumentException (Environment.GetResourceString("Arg_MustBeInt32"));
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public int CompareTo(int value) {
             // Need to use compare because subtraction will wrap
             // to positive for very large neg numbers, etc.
@@ -72,9 +69,6 @@ namespace System {
             return 0;
         }
     
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override bool Equals(Object obj) {
             if (!(obj is Int32)) {
                 return false;
@@ -82,26 +76,18 @@ namespace System {
             return m_value == ((Int32)obj).m_value;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(Int32 obj)
         {
             return m_value == obj;
         }
 
         // The absolute value of the int contained.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode() {
             return m_value;
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public override String ToString() {
             Contract.Ensures(Contract.Result<String>() != null);
@@ -109,9 +95,6 @@ namespace System {
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public String ToString(String format) {
             Contract.Ensures(Contract.Result<String>() != null);
@@ -119,9 +102,6 @@ namespace System {
         }
     
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public String ToString(IFormatProvider provider) {
             Contract.Ensures(Contract.Result<String>() != null);
@@ -150,9 +130,6 @@ namespace System {
         // a NumberFormatInfo isn't specified, the current culture's 
         // NumberFormatInfo is assumed.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public static int Parse(String s, IFormatProvider provider) {
             return Number.ParseInt32(s, NumberStyles.Integer, NumberFormatInfo.GetInstance(provider));
@@ -162,9 +139,6 @@ namespace System {
         // a NumberFormatInfo isn't specified, the current culture's 
         // NumberFormatInfo is assumed.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public static int Parse(String s, NumberStyles style, IFormatProvider provider) {
             NumberFormatInfo.ValidateParseStyleInteger(style);
@@ -182,9 +156,6 @@ namespace System {
         // Parses an integer from a String in the given style. Returns false rather
         // than throwing exceptin if input is invalid
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public static bool TryParse(String s, NumberStyles style, IFormatProvider provider, out Int32 result) {
             NumberFormatInfo.ValidateParseStyleInteger(style);
@@ -195,9 +166,6 @@ namespace System {
         // IConvertible implementation
         // 
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public TypeCode GetTypeCode() {
             return TypeCode.Int32;
@@ -234,9 +202,6 @@ namespace System {
         }
 
         /// <internalonly/>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         int IConvertible.ToInt32(IFormatProvider provider) {
             return m_value;
         }
@@ -247,9 +212,6 @@ namespace System {
         }
 
         /// <internalonly/>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         long IConvertible.ToInt64(IFormatProvider provider) {
             return Convert.ToInt64(m_value);
         }

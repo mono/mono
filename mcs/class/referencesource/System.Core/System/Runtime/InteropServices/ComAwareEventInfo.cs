@@ -18,6 +18,9 @@ namespace System.Runtime.InteropServices {
         #endregion
 
         #region protected overrides
+#if FEATURE_NETCORE
+        [System.Security.SecuritySafeCritical]
+#endif//FEATURE_NETCORE
         public override void AddEventHandler(object target, Delegate handler) {
             if (Marshal.IsComObject(target)) {
                 // retrieve sourceIid and dispid
@@ -25,9 +28,11 @@ namespace System.Runtime.InteropServices {
                 int dispid;
                 GetDataForComInvocation(_innerEventInfo, out sourceIid, out dispid);
 
+#if FEATURE_CAS_POLICY
                 // now validate the caller can call into native and redirect to ComEventHelpers.Combine
                 SecurityPermission perm = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                 perm.Demand();
+#endif//FEATURE_CAS_POLICY
                 System.Runtime.InteropServices.ComEventsHelper.Combine(target, sourceIid, dispid, handler);
             } else {
                 // we are dealing with a managed object - just add the delegate through reflection
@@ -35,6 +40,9 @@ namespace System.Runtime.InteropServices {
             }
         }
 
+#if FEATURE_NETCORE
+        [System.Security.SecuritySafeCritical]
+#endif//FEATURE_NETCORE
         public override void RemoveEventHandler(object target, Delegate handler) {
             if (Marshal.IsComObject(target)) {
                 // retrieve sourceIid and dispid
@@ -42,9 +50,11 @@ namespace System.Runtime.InteropServices {
                 int dispid;
                 GetDataForComInvocation(_innerEventInfo, out sourceIid, out dispid);
 
+#if FEATURE_CAS_POLICY
                 // now validate the caller can call into native and redirect to ComEventHelpers.Combine
                 SecurityPermission perm = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                 perm.Demand();
+#endif//FEATURE_CAS_POLICY
                 System.Runtime.InteropServices.ComEventsHelper.Remove(target, sourceIid, dispid, handler);
             } else {
                 // we are dealing with a managed object - just add the delegate through relection

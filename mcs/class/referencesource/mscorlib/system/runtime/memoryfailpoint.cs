@@ -321,7 +321,7 @@ namespace System.Runtime
         {
             bool r;
             Win32Native.MEMORYSTATUSEX memory = new Win32Native.MEMORYSTATUSEX();
-            r = Win32Native.GlobalMemoryStatusEx(memory);
+            r = Win32Native.GlobalMemoryStatusEx(ref memory);
             if (!r)
                 __Error.WinIOError();
             availPageFile = memory.availPageFile;

@@ -258,6 +258,12 @@ namespace System.Web {
             }
         }
 
+        public override ITlsTokenBindingInfo TlsTokenBindingInfo {
+            get {
+                return _httpRequest.TlsTokenBindingInfo;
+            }
+        }
+
         public override int TotalBytes {
             get {
                 return _httpRequest.TotalBytes;
@@ -331,7 +337,7 @@ namespace System.Web {
         public override Stream GetBufferlessInputStream(bool disableMaxRequestLength) {
             return _httpRequest.GetBufferlessInputStream(disableMaxRequestLength);
         }
-
+        
         public override void InsertEntityBody() {
             _httpRequest.InsertEntityBody();
         }

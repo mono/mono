@@ -2,8 +2,8 @@
 // <copyright file="OdbcException.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -66,7 +66,7 @@ namespace System.Data.Odbc {
             base.GetObjectData(si, context);
             }
 
-        // mdac bug 62559 - if we don't have it return nothing (empty string)
+        // mdac 
         override public string Source {
             get {
                 if (0 < Errors.Count) {

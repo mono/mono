@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 namespace System.Data.Objects.DataClasses
 {
@@ -1429,8 +1429,8 @@ namespace System.Data.Objects.DataClasses
 
         // Find properties which are Dependent/Principal ends of some referential constraint
         // Returned lists are never null.
-        // NOTE This method will be removed when bug 505935 is solved
-        // Returns true if any FK relationships were skipped so that they can be checked again after fixup
+        // NOTE This method will be removed when 
+
         internal bool FindNamesOfReferentialConstraintProperties(out List<string> propertiesToRetrieve, out bool propertiesToPropagateExist, bool skipFK)
         {
             IEntityWrapper wrappedOwner = WrappedOwner;

@@ -58,9 +58,6 @@ namespace System.Runtime.CompilerServices {
     // }
     internal class PinningHelper
     {
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         public byte m_data;
     }
 
@@ -73,9 +70,6 @@ namespace System.Runtime.CompilerServices {
         // Wraps object variable into a handle. Used to return managed strings from QCalls.
         // s has to be a local variable on the stack.
         [SecurityCritical]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal StringHandleOnStack GetStringHandleOnStack(ref string s)
         {
             return new StringHandleOnStack(UnsafeCastToStackPointer(ref s));
@@ -84,9 +78,6 @@ namespace System.Runtime.CompilerServices {
         // Wraps object variable into a handle. Used to pass managed object references in and out of QCalls.
         // o has to be a local variable on the stack.
         [SecurityCritical]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal ObjectHandleOnStack GetObjectHandleOnStack<T>(ref T o) where T : class
         {
             return new ObjectHandleOnStack(UnsafeCastToStackPointer(ref o));
@@ -95,9 +86,6 @@ namespace System.Runtime.CompilerServices {
         // Wraps StackCrawlMark into a handle. Used to pass StackCrawlMark to QCalls.
         // stackMark has to be a local variable on the stack.
         [SecurityCritical]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal StackCrawlMarkHandle GetStackCrawlMarkHandle(ref StackCrawlMark stackMark)
         {
             return new StackCrawlMarkHandle(UnsafeCastToStackPointer(ref stackMark));
@@ -181,9 +169,6 @@ namespace System.Runtime.CompilerServices {
         // this method is effectively critical
         [SecurityCritical]
         [FriendAccessAllowed]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal T UnsafeCast<T>(Object o) where T : class
         {
             // The body of this function will be replaced by the EE with unsafe code that just returns o!!!
@@ -191,9 +176,6 @@ namespace System.Runtime.CompilerServices {
             throw new InvalidOperationException();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal int UnsafeEnumCast<T>(T val) where T : struct		// Actually T must be 4 byte (or less) enum
         {
             // should be return (int) val; but C# does not allow, runtime does this magically
@@ -201,9 +183,6 @@ namespace System.Runtime.CompilerServices {
             throw new InvalidOperationException();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal long UnsafeEnumCastLong<T>(T val) where T : struct	// Actually T must be 8 byte enum
         {
             // should be return (long) val; but C# does not allow, runtime does this magically
@@ -212,9 +191,6 @@ namespace System.Runtime.CompilerServices {
         }
 
         [SecurityCritical]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal IntPtr UnsafeCastToStackPointer<T>(ref T val)
         {
             // The body of this function will be replaced by the EE with unsafe code that just returns o!!!

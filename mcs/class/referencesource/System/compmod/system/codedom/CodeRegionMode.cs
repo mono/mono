@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <OWNER>[....]</OWNER>
+// <OWNER>petes</OWNER>
 // 
 // <copyright file="FieldDirection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

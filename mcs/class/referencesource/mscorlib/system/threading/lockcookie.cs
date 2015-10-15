@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*============================================================
 **
 ** Class:    LockCookie
@@ -29,7 +29,7 @@ namespace System.Threading {
 
         public override int GetHashCode()
         {
-            // review - [....]!
+            // review - Microsoft!
             return _dwFlags + _dwWriterSeqNum + _wReaderAndWriterLevel + _dwThreadID;
         }
         

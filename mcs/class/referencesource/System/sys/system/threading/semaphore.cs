@@ -32,17 +32,19 @@ namespace System.Threading
         // creates a nameless semaphore object
         // Win32 only takes maximum count of Int32.MaxValue
         [SecuritySafeCritical]
+#if !FEATURE_NETCORE
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
+#endif // !FEATURE_NETCORE
         public Semaphore(int initialCount, int maximumCount) : this(initialCount,maximumCount,null){}
 
 #if FEATURE_NETCORE
         [SecurityCritical]
 #else
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public Semaphore(int initialCount, int maximumCount, string name)
         {
             if (initialCount < 0)
@@ -82,9 +84,9 @@ namespace System.Threading
         [SecurityCritical]
 #else
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public Semaphore(int initialCount, int maximumCount, string name, out bool createdNew)
 #if !FEATURE_PAL && !FEATURE_NETCORE
             : this(initialCount, maximumCount, name, out createdNew, null)
@@ -148,9 +150,10 @@ namespace System.Threading
 
 #if FEATURE_NETCORE
         [SecurityCritical]
-#endif
+#else
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         private Semaphore(SafeWaitHandle handle)
         {
             this.SafeWaitHandle = handle;
@@ -160,9 +163,9 @@ namespace System.Threading
         [SecurityCritical]
 #else
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public static Semaphore OpenExisting(string name)
         {
 #if !FEATURE_PAL && !FEATURE_NETCORE
@@ -197,9 +200,9 @@ namespace System.Threading
         [SecurityCritical]
 #else
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public static bool TryOpenExisting(string name, out Semaphore result)
         {
 #if !FEATURE_PAL && !FEATURE_NETCORE
@@ -219,7 +222,6 @@ namespace System.Threading
         }
 #endif
 
-#if !FEATURE_NETCORE
         // This exists in WaitHandle, but is oddly ifdefed for some reason...
         private enum OpenExistingResult
         {
@@ -228,15 +230,14 @@ namespace System.Threading
             PathNotFound,
             NameInvalid
         }
-#endif
 
 #if FEATURE_NETCORE
         [SecurityCritical]
 #else
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-#endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         private static OpenExistingResult OpenExistingWorker(
             string name, 
 #if !FEATURE_PAL && !FEATURE_NETCORE
@@ -261,7 +262,10 @@ namespace System.Threading
 
             //Pass false to OpenSemaphore to prevent inheritedHandles
 #if FEATURE_PAL || FEATURE_NETCORE
-            SafeWaitHandle myHandle = SafeNativeMethods.OpenSemaphore(Win32Native.SEMAPHORE_MODIFY_STATE | Win32Native.SYNCHRONIZE, false, name);
+            const int SYNCHRONIZE            = 0x00100000;
+            const int SEMAPHORE_MODIFY_STATE = 0x00000002;
+
+            SafeWaitHandle myHandle = SafeNativeMethods.OpenSemaphore(SEMAPHORE_MODIFY_STATE | SYNCHRONIZE, false, name);
 #else
             SafeWaitHandle myHandle = SafeNativeMethods.OpenSemaphore((int) rights, false, name);
 #endif
@@ -285,8 +289,10 @@ namespace System.Threading
 
 
         // increase the count on a semaphore, returns previous count
+#if !FEATURE_NETCORE
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [PrePrepareMethod]
+#endif
         public int Release()
         {  
             return Release(1);
@@ -295,10 +301,11 @@ namespace System.Threading
         // increase the count on a semaphore, returns previous count
 #if FEATURE_NETCORE
         [SecuritySafeCritical]
-#endif
+#else
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         public int Release(int releaseCount)
         {
             if (releaseCount < 1)

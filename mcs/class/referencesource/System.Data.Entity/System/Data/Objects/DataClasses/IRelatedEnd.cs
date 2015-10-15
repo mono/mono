@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       mirszy
+// @backupOwner sparra
 //---------------------------------------------------------------------
 using System.Data;
 using System.Data.Common;

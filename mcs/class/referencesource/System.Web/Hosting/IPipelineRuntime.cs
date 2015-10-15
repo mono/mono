@@ -573,7 +573,17 @@ namespace System.Web.Hosting {
                     }
                     context.NotificationContext = new NotificationContext(flags /*CurrentNotificationFlags*/, 
                                                                           isReEntry);
+
+                    Action<RequestNotificationStatus> verifierCheck = null;
+                    if (AppVerifier.IsAppVerifierEnabled) {
+                        verifierCheck = AppVerifier.GetRequestNotificationStatusCheckDelegate(context, (RequestNotification)currentNotification, isPostNotification);
+                    }
+
                     status = HttpRuntime.ProcessRequestNotification(wr, context);
+
+                    if (verifierCheck != null) {
+                        AppVerifier.InvokeVerifierCheck(verifierCheck, status);
+                    }
                 }
                 finally {
                     if (status != RequestNotificationStatus.Pending) {

@@ -11,7 +11,7 @@
 //            A writing system is the collection of scripts and
 //            orthographic rules required to represent a language as text.
 //
-//  Date:     [....] 31, 1999
+//  Date:     Microsoft 31, 1999
 //
 ////////////////////////////////////////////////////////////////////////////
 
@@ -249,14 +249,8 @@ namespace System.Globalization {
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
         internal static unsafe int CompareOrdinalIgnoreCase(String str1, String str2)
         {
-#if __APPLE__
-            // ToUpper (invariant) here before going to the PAL since Mac OS 10.4 does this step
-            // wrong (CFCompareString uses the current OS locale and does not let you specify a specific locale)
-            return String.CompareOrdinal(str1.ToUpper(CultureInfo.InvariantCulture), str2.ToUpper(CultureInfo.InvariantCulture));
-#else
             // Compare the whole string and ignore case.
             return InternalCompareStringOrdinalIgnoreCase(str1, 0, str2, 0, str1.Length, str2.Length);
-#endif
         }
 
         // This function doesn't check arguments. Please do check in the caller.
@@ -268,13 +262,7 @@ namespace System.Globalization {
         {
             Contract.Assert(strA.Length >= indexA + lengthA,  "[TextInfo.CompareOrdinalIgnoreCaseEx] Caller should've validated strA.Length >= indexA + lengthA");
             Contract.Assert(strB.Length >= indexB + lengthB, "[TextInfo.CompareOrdinalIgnoreCaseEx]  Caller should've validated strB.Length >= indexB + lengthB");
-#if __APPLE__
-            // ToUpper (invariant) here before going to the PAL since Mac OS 10.4 does this step
-            // wrong (CFCompareString uses the current OS locale and does not let you specify a specific locale)
-            return String.CompareOrdinal(strA.ToUpper(CultureInfo.InvariantCulture), indexA, strB.ToUpper(CultureInfo.InvariantCulture), indexB, Math.Max(lengthA, lengthB));
-#else
             return InternalCompareStringOrdinalIgnoreCase(strA, indexA, strB, indexB, lengthA, lengthB);
-#endif
         }
 
         [ResourceExposure(ResourceScope.None)]
@@ -291,16 +279,11 @@ namespace System.Globalization {
                 return 0;
             }
 
-#if __APPLE__
-            string sourceUpper = source.ToUpper(CultureInfo.InvariantCulture);
-            string valueUpper = value.ToUpper(CultureInfo.InvariantCulture);
-#else
             // fast path
 #if !MONO
             int ret = -1;
             if (TryFastFindStringOrdinalIgnoreCase(Microsoft.Win32.Win32Native.FIND_FROMSTART, source, startIndex, value, count, ref ret))
                 return ret;
-#endif
 #endif
 
             // the search space within [source] starts at offset [startIndex] inclusive and includes
@@ -316,14 +299,10 @@ namespace System.Globalization {
 
             for (; startIndex <= maxStartIndex; startIndex++)
             {
-#if __APPLE__
-                if (String.CompareOrdinal(sourceUpper, startIndex, valueUpper, 0, value.Length)==0)
-#else
                 // We should always have the same or more characters left to search than our actual pattern
                 Contract.Assert(end - startIndex >= value.Length);
                 // since this is an ordinal comparison, we can assume that the lengths must match
                 if (CompareOrdinalIgnoreCaseEx(source, startIndex, value, 0, value.Length, value.Length) == 0)
-#endif
                 {
                     return startIndex;
                 }
@@ -332,16 +311,6 @@ namespace System.Globalization {
             // Not found
             return -1;
         }
-
-#if FEATURE_CORECLR
-        private static bool LegacyMode 
-        {
-            get 
-            {            
-                return CompatibilitySwitches.IsAppEarlierThanSilverlight4;
-            }
-        }
-#endif // FEATURE_CORECLR
 
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
@@ -353,26 +322,16 @@ namespace System.Globalization {
             Contract.Assert(startIndex <= source.Length, "[TextInfo.LastIndexOfStringOrdinalIgnoreCase] Caller should've validated startIndex <= source.Length");
 
             // If value is Empty, the return value is startIndex
-            // <STRIP>we accidently shipped Silverlight 2 and 3 without this if-check</STRIP>
-            if (value.Length == 0
-#if FEATURE_CORECLR
-                && !LegacyMode
-#endif // FEATURE_CORECLR
-               )
+            if (value.Length == 0)
             {
                 return startIndex;
             }
 
-#if __APPLE__
-            string sourceUpper = source.ToUpper(CultureInfo.InvariantCulture);
-            string valueUpper = value.ToUpper(CultureInfo.InvariantCulture);
-#else
             // fast path
 #if !MONO
             int ret = -1;
             if (TryFastFindStringOrdinalIgnoreCase(Microsoft.Win32.Win32Native.FIND_FROMEND, source, startIndex, value, count, ref ret))
                 return ret;
-#endif
 #endif
 
             // the search space within [source] ends at offset [startIndex] inclusive
@@ -388,11 +347,7 @@ namespace System.Globalization {
 
             for (; startIndex >= minIndex; startIndex--)
             {
-#if __APPLE__
-                if (String.CompareOrdinal(sourceUpper, startIndex, valueUpper, 0, value.Length)==0)
-#else
                 if (CompareOrdinalIgnoreCaseEx(source, startIndex, value, 0, value.Length, value.Length) == 0)
-#endif
                 {
                     return startIndex;
                 }
@@ -589,9 +544,6 @@ namespace System.Globalization {
         ////////////////////////////////////////////////////////////////////////
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public unsafe virtual char ToLower(char c) 
         {
             if(IsAscii(c) && IsAsciiCasingSameAsInvariant)
@@ -614,29 +566,7 @@ namespace System.Globalization {
 #if MONO
             return ToLowerInternal (str);
 #else
-            String toLower = InternalChangeCaseString(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, false);
-#if __APPLE__
-            //
-            // Mac OS X has a documented list of "illegal" (precomposed) characters
-            // http://developer.apple.com/technotes/tn/tn1150table.html
-            //
-            // These characters are mostly in the EXTENDED_GREEK range.  Apple decomposes
-            // these characters into a sequence of two or more characters that is a
-            // canonical or compatibility equivalent.
-            //
-            // In the extremely unlikely event that an illegal character is in the String,
-            // fallback to using slower Char routines since they do not decompose
-            // the illegal characters.   
-            //
-            if (toLower.Length != str.Length) {
-                char[] chars = new char[str.Length];
-                for (int i = 0; i < str.Length; i++) {
-                    chars[i] = this.ToLower(str[i]);
-                }
-                toLower = new String(chars);
-            }
-#endif
-            return toLower;
+            return InternalChangeCaseString(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, false);
 #endif
         }
 
@@ -659,9 +589,6 @@ namespace System.Globalization {
         ////////////////////////////////////////////////////////////////////////
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public unsafe virtual char ToUpper(char c) 
         {
             if (IsAscii(c) && IsAsciiCasingSameAsInvariant)
@@ -686,29 +613,7 @@ namespace System.Globalization {
 #if MONO
             return ToUpperInternal (str);
 #else
-            String toUpper = InternalChangeCaseString(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, true);
-#if __APPLE__
-            //
-            // Mac OS X has a documented list of "illegal" (precomposed) characters
-            // http://developer.apple.com/technotes/tn/tn1150table.html
-            //
-            // These characters are mostly in the EXTENDED_GREEK range.  Apple decomposes
-            // these characters into a sequence of two or more characters that is a
-            // canonical or compatibility equivalent.
-            //
-            // In the extremely unlikely event that an illegal character is in the String,
-            // fallback to using slower Char routines since they do not decompose
-            // the illegal characters.   
-            //
-            if (toUpper.Length != str.Length) {
-                char[] chars = new char[str.Length];
-                for (int i = 0; i < str.Length; i++) {
-                    chars[i] = this.ToUpper(str[i]);
-                }
-                toUpper = new String(chars);
-            }
-#endif
-            return toUpper;
+            return InternalChangeCaseString(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, true);
 #endif
         }
 
@@ -1024,7 +929,6 @@ namespace System.Globalization {
 #endif
 
 
-#if !FEATURE_CORECLR
         // IsRightToLeft
         //
         // Returns true if the dominant direction of text and UI such as the relative position of buttons and scroll bars
@@ -1032,13 +936,11 @@ namespace System.Globalization {
         [System.Runtime.InteropServices.ComVisible(false)]
         public bool IsRightToLeft
         {
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get
             {
                 return this.m_cultureData.IsRightToLeft;
             }
         }
-#endif
 
 #if FEATURE_SERIALIZATION
         /// <internalonly/>

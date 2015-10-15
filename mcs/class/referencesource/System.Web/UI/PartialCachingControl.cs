@@ -468,9 +468,9 @@ public abstract class BasePartialCachingControl : Control {
         NameValueCollection reqValCollection;
         HttpRequest request = Page.Request;
         if (request != null && request.HttpVerb == HttpVerb.POST) {
-            // Bug 6129: Partial cache key should include posted form values in postbacks.
-            // Include both QueryString and Form values (but not Cookies or Server Variables like Request.Params does).
-            // Per Request.Params behavior, add QueryString values before Form values
+            // 
+
+
             reqValCollection = new NameValueCollection(request.QueryString);
             reqValCollection.Add(request.Form);
         }
@@ -844,10 +844,8 @@ internal class ControlCachedVary {
     public override int GetHashCode () {
         HashCodeCombiner hashCodeCombiner = new HashCodeCombiner();
         
-        // Cast _varyByCustom to an object, since the HashCodeCombiner.AddObject(string)
-        // overload uses StringUtil.GetStringHashCode().  We want to use String.GetHashCode()
-        // in this method, since we do not require a stable hash code across architectures.
-        hashCodeCombiner.AddObject((object)_varyByCustom);
+        // We need non-randomized hash code for _varyByCustom
+        hashCodeCombiner.AddInt(StringUtil.GetNonRandomizedHashCode(_varyByCustom));
         
         hashCodeCombiner.AddArray(_varyByParams);
         hashCodeCombiner.AddArray(_varyByControls);

@@ -15,6 +15,8 @@ namespace System.ComponentModel {
     ///    <see langword='PropertyChanged'/> event raised when a
     ///       property is changed on a component.</para>
     /// </devdoc>
+#if !SILVERLIGHT
     [HostProtection(SharedState = true)]
+#endif
     public delegate void PropertyChangedEventHandler(object sender, PropertyChangedEventArgs e);
 }

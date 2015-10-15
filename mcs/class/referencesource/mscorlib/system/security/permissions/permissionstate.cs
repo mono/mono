@@ -5,7 +5,7 @@
 // ==--==
 //  PermissionState.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 //  The Runtime policy manager.  Maintains a set of IdentityMapper objects that map 
 //  inbound evidence to groups.  Resolves an identity into a set of permissions

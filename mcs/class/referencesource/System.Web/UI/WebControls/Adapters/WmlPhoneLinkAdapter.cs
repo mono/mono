@@ -11,7 +11,7 @@ namespace System.Web.UI.WebControls.Adapters {
 
     public class WmlPhoneLinkAdapter : PhoneLinkAdapter {
 
-        // 
+        // UNDONE: Add style.
         protected internal override void Render(HtmlTextWriter markupWriter) {
             WmlTextWriter writer = (WmlTextWriter)markupWriter;
             String text, url, phoneNumber;
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls.Adapters {
             if (Page != null && Page.Request != null) {
                 browser = Page.Request.Browser;
             }
-            // 
+            // TODO: Replace hard coded string key.
             if (browser != null && (String)browser["canInitiateVoiceCall"] != "true") {
                 text = String.Format(controlText,
                                      originalNumber);
@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls.Adapters {
                 // showing as text so it can be selected.  If it is not
                 // formatted in the text yet, append it to the end of the
                 // text.
-                // 
+                // TODO: Replace hard coded string key.
                 if (browser != null && browser["requiresPhoneNumbersAsPlainText"] == "true") {
                     text = controlText + " " + phoneNumber;
                     url = String.Empty;

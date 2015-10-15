@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -169,6 +169,20 @@ namespace System.Security.Cryptography {
 
             if (data.Length > 0) {
                 CapiNative.GenerateRandomBytes(m_cspHandle, data);
+            }
+        }
+
+        #if FEATURE_CORECLR
+        [System.Security.SecuritySafeCritical] // auto-generated
+        #endif
+        public override void GetBytes(byte[] data, int offset, int count) {
+            if (data == null) throw new ArgumentNullException("data");
+            if (offset < 0) throw new ArgumentOutOfRangeException("offset", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+            if (count < 0) throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+            if (offset + count > data.Length) throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
+
+            if (count > 0) {
+                CapiNative.GenerateRandomBytes(m_cspHandle, data, offset, count);
             }
         }
 #endif // !FEATURE_CORECLR

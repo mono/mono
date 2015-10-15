@@ -153,7 +153,7 @@ namespace System.Net {
         // Used by our Connection to block on being able to Read from our Connection
         private LazyAsyncResult         _ConnectionReaderAResult;
 
-        // Once set, the Request either works Async or [....] internally
+        // Once set, the Request either works Async or Sync internally
         private TriState                _RequestIsAsync;
 
         // Delegate that can be called on Continue Response
@@ -406,7 +406,7 @@ namespace System.Net {
             }
         }
 
-        // [....] code path only.
+        // Sync code path only.
         // True if ProcessWriteCallDone Should read for an additional response.
         // False if the 100Continue code will do the read in WriteHeaders.
         internal bool NeedsToReadForResponse {
@@ -792,7 +792,7 @@ namespace System.Net {
         }
 
         // True, if the EndGetRequestStream or GetRequestStream call returned
-        // codereview: Used ONLY by [....] code
+        // codereview: Used ONLY by Sync code
         internal bool UserRetrievedWriteStream {
             get {
                 return _WriteAResult != null && _WriteAResult.InternalPeekCompleted;
@@ -1321,99 +1321,101 @@ namespace System.Net {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Async)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream");
-            if(Logging.On)Logging.Enter(Logging.Web, this, "BeginGetRequestStream", "");
-            CheckProtocol(true);
+                bool success = false;
+                try {
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream");
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "BeginGetRequestStream", "");
+                    CheckProtocol(true);
 
-#if !FEATURE_PAL
-            ContextAwareResult asyncResult = new ContextAwareResult(IdentityRequired, true, this, state, callback);
-#else // !FEATURE_PAL
-            ContextAwareResult asyncResult = new ContextAwareResult(false, true, this, state, callback);
-#endif // !FEATURE_PAL
+    #if !FEATURE_PAL
+                    ContextAwareResult asyncResult = new ContextAwareResult(IdentityRequired, true, this, state, callback);
+    #else // !FEATURE_PAL
+                ContextAwareResult asyncResult = new ContextAwareResult(false, true, this, state, callback);
+    #endif // !FEATURE_PAL
 
 
-            lock (asyncResult.StartPostingAsyncOp())
-            {
-                // and have a result (weird but was supported in V1.X as repeated calls for the submit stream.
-                if (_WriteAResult != null && _WriteAResult.InternalPeekCompleted)
-                {
-                    if (_WriteAResult.Result is Exception)
+                    lock (asyncResult.StartPostingAsyncOp())
                     {
-                        throw (Exception)_WriteAResult.Result;
+                        // and have a result (weird but was supported in V1.X as repeated calls for the submit stream.
+                        if (_WriteAResult != null && _WriteAResult.InternalPeekCompleted)
+                        {
+                            if (_WriteAResult.Result is Exception)
+                            {
+                                throw (Exception)_WriteAResult.Result;
+                            }
+
+                            try
+                            {
+                                asyncResult.InvokeCallback(_WriteAResult.Result);
+                            }
+                            catch (Exception e)
+                            {
+                                Abort(e, AbortState.Public);
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            // prevent new requests when low on resources
+                            if (!RequestSubmitted && NclUtilities.IsThreadPoolLow())
+                            {
+                                Exception exception = new InvalidOperationException(SR.GetString(SR.net_needmorethreads));
+                                Abort(exception, AbortState.Public);
+                                throw exception;
+                            }
+
+                            lock (this)
+                            {
+                                if (_WriteAResult != null)
+                                {
+                                    throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                                }
+
+                                // See if we're already submitted a request (e.g. via GetResponse).
+                                if (SetRequestSubmitted())
+                                {
+                                    // Not completed write stream, this is an application error.
+                                    throw new InvalidOperationException(SR.GetString(SR.net_reqsubmitted));
+                                }
+
+                                // If there's already been a _ReadAResult completed, it better have been with an exception, like an abort.
+                                // We need to check within this lock.  Before the lock, _WriteAResult didn't exist so won't have been notified.
+                                // BeginSubmitRequest() will fail silently if we go ahead and call it after an abort.  Since we know this is the
+                                // first call to any of the [Begin]GetRe... methods by the above checks, we know ProcessResponse can't have been
+                                // called or any other valid _ReadAResult created yet.
+                                if (_ReadAResult != null)
+                                {
+                                    GlobalLog.Assert(_ReadAResult.InternalPeekCompleted, "HttpWebRequest#{0}::BeginGetRequestStream()|Incomplete _ReadAResult present on request.", ValidationHelper.HashString(this));
+                                    GlobalLog.Assert(_ReadAResult.Result is Exception, "HttpWebRequest#{0}::BeginGetRequestStream()|_ReadAResult with successful completion already present on request.", ValidationHelper.HashString(this));
+                                    throw (Exception)_ReadAResult.Result;
+                                }
+
+                                // get async going
+                                _WriteAResult = asyncResult;
+                                Async = true;
+                            }
+
+                            // OK, we haven't submitted the request yet, so do so now
+                            // save off verb from origin Verb
+                            GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream() resetting CurrentMethod to " + _OriginVerb);
+                            CurrentMethod = _OriginVerb;
+                            BeginSubmitRequest();
+                        }
+
+                        asyncResult.FinishPostingAsyncOp();
                     }
 
-                    try
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream", ValidationHelper.HashString(asyncResult));
+                    if (Logging.On) Logging.Exit(Logging.Web, this, "BeginGetRequestStream", asyncResult);
+                    success = true;
+                    return asyncResult;
+                }
+                finally {
+                    if (FrameworkEventSource.Log.IsEnabled())
                     {
-                        asyncResult.InvokeCallback(_WriteAResult.Result);
-                    }
-                    catch (Exception e)
-                    {
-                        Abort(e, AbortState.Public);
-                        throw;
+                        LogBeginGetRequestStream(success, synchronous : false);
                     }
                 }
-                else
-                {
-                    // prevent new requests when low on resources
-                    if (!RequestSubmitted && NclUtilities.IsThreadPoolLow())
-                    {
-                        Exception exception = new InvalidOperationException(SR.GetString(SR.net_needmorethreads));
-                        Abort(exception, AbortState.Public);
-                        throw exception;
-                    }
-
-                    lock(this)
-                    {
-                        if (_WriteAResult != null)
-                        {
-                            throw new InvalidOperationException(SR.GetString(SR.net_repcall));
-                        }
-
-                        // See if we're already submitted a request (e.g. via GetResponse).
-                        if (SetRequestSubmitted())
-                        {
-                            // Not completed write stream, this is an application error.
-                            throw new InvalidOperationException(SR.GetString(SR.net_reqsubmitted));
-                        }
-
-                        // If there's already been a _ReadAResult completed, it better have been with an exception, like an abort.
-                        // We need to check within this lock.  Before the lock, _WriteAResult didn't exist so won't have been notified.
-                        // BeginSubmitRequest() will fail silently if we go ahead and call it after an abort.  Since we know this is the
-                        // first call to any of the [Begin]GetRe... methods by the above checks, we know ProcessResponse can't have been
-                        // called or any other valid _ReadAResult created yet.
-                        if (_ReadAResult != null)
-                        {
-                            GlobalLog.Assert(_ReadAResult.InternalPeekCompleted, "HttpWebRequest#{0}::BeginGetRequestStream()|Incomplete _ReadAResult present on request.", ValidationHelper.HashString(this));
-                            GlobalLog.Assert(_ReadAResult.Result is Exception, "HttpWebRequest#{0}::BeginGetRequestStream()|_ReadAResult with successful completion already present on request.", ValidationHelper.HashString(this));
-                            throw (Exception) _ReadAResult.Result;
-                        }
-
-                        // get async going
-                        _WriteAResult = asyncResult;
-                        Async = true;
-                    }
-
-                    // OK, we haven't submitted the request yet, so do so now
-                    // save off verb from origin Verb
-                    GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream() resetting CurrentMethod to " + _OriginVerb);
-                    CurrentMethod = _OriginVerb;
-                    BeginSubmitRequest();
-                }
-
-                asyncResult.FinishPostingAsyncOp();
-            }
-
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream", ValidationHelper.HashString(asyncResult));
-            if(Logging.On)Logging.Exit(Logging.Web, this, "BeginGetRequestStream", asyncResult);
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetRequestStream(suri);
-
-            return asyncResult;
 #if DEBUG
             }
 #endif
@@ -1429,49 +1431,55 @@ namespace System.Net {
         /// </devdoc>
         public Stream EndGetRequestStream(IAsyncResult asyncResult, out TransportContext context)
         {
+            bool success = false;
+            try {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User)) {
+                using (GlobalLog.SetThreadKind(ThreadKinds.User)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetRequestStream", ValidationHelper.HashString(asyncResult));
-            if(Logging.On)Logging.Enter(Logging.Web, this, "EndGetRequestStream", "");
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetRequestStream", ValidationHelper.HashString(asyncResult));
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "EndGetRequestStream", "");
 
-            context = null;
+                    context = null;
 
-            //
-            // parameter validation
-            //
-            if (asyncResult == null) {
-                throw new ArgumentNullException("asyncResult");
-            }
-            LazyAsyncResult castedAsyncResult = asyncResult as LazyAsyncResult;
-            if (castedAsyncResult==null || castedAsyncResult.AsyncObject!=this) {
-                throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
-            }
-            if (castedAsyncResult.EndCalled) {
-                throw new InvalidOperationException(SR.GetString(SR.net_io_invalidendcall, "EndGetRequestStream"));
-            }
+                    //
+                    // parameter validation
+                    //
+                    if (asyncResult == null) {
+                        throw new ArgumentNullException("asyncResult");
+                    }
+                    LazyAsyncResult castedAsyncResult = asyncResult as LazyAsyncResult;
+                    if (castedAsyncResult == null || castedAsyncResult.AsyncObject != this) {
+                        throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
+                    }
+                    if (castedAsyncResult.EndCalled) {
+                        throw new InvalidOperationException(SR.GetString(SR.net_io_invalidendcall, "EndGetRequestStream"));
+                    }
 
-            ConnectStream connectStream = castedAsyncResult.InternalWaitForCompletion() as ConnectStream;
-            castedAsyncResult.EndCalled = true;
+                    ConnectStream connectStream = castedAsyncResult.InternalWaitForCompletion() as ConnectStream;
+                    castedAsyncResult.EndCalled = true;
 
-            if (connectStream == null)
-            {
-                if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetRequestStream", castedAsyncResult.Result as Exception);
-                throw (Exception) castedAsyncResult.Result;
-            }
+                    if (connectStream == null)
+                    {
+                        if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetRequestStream", castedAsyncResult.Result as Exception);
+                        throw (Exception)castedAsyncResult.Result;
+                    }
 
-            context = new ConnectStreamContext(connectStream);
+                    context = new ConnectStreamContext(connectStream);
 
-            // Otherwise it worked, so return the HttpWebResponse.
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetRequestStream", ValidationHelper.HashString(connectStream));
-            if(Logging.On)Logging.Exit(Logging.Web, this, "EndGetRequestStream", connectStream);
-
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetRequestStream();
-
-            return connectStream;
+                    // Otherwise it worked, so return the HttpWebResponse.
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetRequestStream", ValidationHelper.HashString(connectStream));
+                    if (Logging.On) Logging.Exit(Logging.Web, this, "EndGetRequestStream", connectStream);
+                    success = true;
+                    return connectStream;
 #if DEBUG
-            }
+                }
 #endif
+            }
+            finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetRequestStream(success, synchronous : false);
+                }
+            }
         }
 
         public override Stream GetRequestStream() {
@@ -1489,92 +1497,107 @@ namespace System.Net {
         ///</para>
         /// </devdoc>
         public Stream GetRequestStream(out TransportContext context) {
+            bool success = false;
+            try {
+                // this needs to be in the begining in order to correctly log begin request in case of ProtocolViolationException
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogBeginGetRequestStream(success : true, synchronous : true);
+                }
+
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
+                using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream");
-            if(Logging.On)Logging.Enter(Logging.Web, this, "GetRequestStream", "");
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream");
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "GetRequestStream", "");
 
-            context = null;
+                    context = null;
 
-            CheckProtocol(true);
+                    CheckProtocol(true);
 
-            // See if we're already submitted a request and have a result cached.
-            if (_WriteAResult == null || !_WriteAResult.InternalPeekCompleted)
-            {
-                lock(this)
-                {
-                    if (_WriteAResult != null)
+                    // See if we're already submitted a request and have a result cached.
+                    if (_WriteAResult == null || !_WriteAResult.InternalPeekCompleted)
                     {
-                        throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                        lock (this)
+                        {
+                            if (_WriteAResult != null)
+                            {
+                                throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                            }
+
+                            // See if we're already submitted a request (e.g. via GetResponse).
+                            if (SetRequestSubmitted())
+                            {
+                                // Not completed write stream, this is an application error.
+                                throw new InvalidOperationException(SR.GetString(SR.net_reqsubmitted));
+                            }
+
+                            // If there's already been a _ReadAResult completed, it better have been with an exception, like an abort.
+                            // We need to check within this lock.  Before the lock, _WriteAResult didn't exist so won't have been notified.
+                            // BeginSubmitRequest() will fail silently if we go ahead and call it after an abort.  Since we know this is the
+                            // first call to any of the [Begin]GetRe... methods by the above checks, we know ProcessResponse can't have been
+                            // called or any other valid _ReadAResult created yet.
+                            if (_ReadAResult != null)
+                            {
+                                GlobalLog.Assert(_ReadAResult.InternalPeekCompleted, "HttpWebRequest#{0}::GetRequestStream()|Incomplete _ReadAResult present on request.", ValidationHelper.HashString(this));
+                                GlobalLog.Assert(_ReadAResult.Result is Exception, "HttpWebRequest#{0}::GetRequestStream()|_ReadAResult with successful completion already present on request.", ValidationHelper.HashString(this));
+                                throw (Exception)_ReadAResult.Result;
+                            }
+
+                            // use the AsyncResult to return our Stream
+                            _WriteAResult = new LazyAsyncResult(this, null, null);
+
+                            Async = false;
+                        }
+
+                        // OK, we haven't submitted the request yet, so do so now
+                        // save off verb from origin Verb
+                        GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "GetRequestStream() resetting CurrentMethod to " + _OriginVerb);
+                        CurrentMethod = _OriginVerb;
+
+                        // Submit the Request, causes us to queue ourselves to a Connection and may block
+                        // It has happened that Sync path uses this loop the Retry memeber for handling resubmissions.
+                        while (m_Retry && !_WriteAResult.InternalPeekCompleted) {
+                            _OldSubmitWriteStream = null;
+                            _SubmitWriteStream = null;
+                            BeginSubmitRequest();
+                        }
+
+                        while (Aborted && !_WriteAResult.InternalPeekCompleted)
+                        {
+                            // spin untill the _CoreResponse is set
+                            if (!(_CoreResponse is Exception)) 
+                                Thread.SpinWait(1);
+                            else 
+                                CheckWriteSideResponseProcessing();
+                        }
                     }
 
-                    // See if we're already submitted a request (e.g. via GetResponse).
-                    if (SetRequestSubmitted())
+                    ConnectStream connectStream = _WriteAResult.InternalWaitForCompletion() as ConnectStream;
+                    _WriteAResult.EndCalled = true;
+                    success = true;
+
+                    if (connectStream == null)
                     {
-                        // Not completed write stream, this is an application error.
-                        throw new InvalidOperationException(SR.GetString(SR.net_reqsubmitted));
+                        if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetRequestStream", _WriteAResult.Result as Exception);
+                        throw (Exception)_WriteAResult.Result;
                     }
 
-                    // If there's already been a _ReadAResult completed, it better have been with an exception, like an abort.
-                    // We need to check within this lock.  Before the lock, _WriteAResult didn't exist so won't have been notified.
-                    // BeginSubmitRequest() will fail silently if we go ahead and call it after an abort.  Since we know this is the
-                    // first call to any of the [Begin]GetRe... methods by the above checks, we know ProcessResponse can't have been
-                    // called or any other valid _ReadAResult created yet.
-                    if (_ReadAResult != null)
-                    {
-                        GlobalLog.Assert(_ReadAResult.InternalPeekCompleted, "HttpWebRequest#{0}::GetRequestStream()|Incomplete _ReadAResult present on request.", ValidationHelper.HashString(this));
-                        GlobalLog.Assert(_ReadAResult.Result is Exception, "HttpWebRequest#{0}::GetRequestStream()|_ReadAResult with successful completion already present on request.", ValidationHelper.HashString(this));
-                        throw (Exception) _ReadAResult.Result;
-                    }
+                    context = new ConnectStreamContext(connectStream);
 
-                    // use the AsyncResult to return our Stream
-                    _WriteAResult = new LazyAsyncResult(this, null, null);
+                    if (Logging.On) Logging.Exit(Logging.Web, this, "GetRequestStream", connectStream);
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream", ValidationHelper.HashString(connectStream));
 
-                    Async = false;
-                }
-
-                // OK, we haven't submitted the request yet, so do so now
-                // save off verb from origin Verb
-                GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "GetRequestStream() resetting CurrentMethod to " + _OriginVerb);
-                CurrentMethod = _OriginVerb;
-
-                // Submit the Request, causes us to queue ourselves to a Connection and may block
-                // It has happened that [....] path uses this loop the Retry memeber for handling resubmissions.
-                while (m_Retry && !_WriteAResult.InternalPeekCompleted) {
-                    _OldSubmitWriteStream = null;
-                    _SubmitWriteStream = null;
-                    BeginSubmitRequest();
-                }
-
-                while(Aborted && !_WriteAResult.InternalPeekCompleted)
-                {
-                    // spin untill the _CoreResponse is set
-                    if (!(_CoreResponse is Exception))
-                        Thread.SpinWait(1);
-                    else
-                        CheckWriteSideResponseProcessing();
-                }
-            }
-
-            ConnectStream connectStream = _WriteAResult.InternalWaitForCompletion() as ConnectStream;
-            _WriteAResult.EndCalled = true;
-            if (connectStream == null)
-            {
-                if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetRequestStream", _WriteAResult.Result as Exception);
-                throw (Exception) _WriteAResult.Result;
-            }
-
-            context = new ConnectStreamContext(connectStream);
-
-            if(Logging.On)Logging.Exit(Logging.Web, this, "GetRequestStream", connectStream);
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream", ValidationHelper.HashString(connectStream));
-            return connectStream;
+                    return connectStream;
 #if DEBUG
-            }
+                }
 #endif
+            }
+            finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetRequestStream(success, synchronous : true);
+                }
+            }
         }
-
 
         //
         // This read-only propery does a test against the object to verify that
@@ -1802,7 +1825,7 @@ namespace System.Net {
                 {
                     GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::DoSubmitRequestProcessing() resubmiting this request.");
 
-                    // Here is a little hack for [....] looping through BeginSubmitRequest.
+                    // Here is a little hack for sync looping through BeginSubmitRequest.
                     // We want to unlock cache protocol only if this is NOT a retry.
                     if (CacheProtocol != null && _HttpResponse != null)
                         CacheProtocol.Reset();
@@ -1833,7 +1856,7 @@ namespace System.Net {
                         SubmitRequest(servicePoint);
                     }
                     else {
-                        // under [....] conditions, we let GetResponse() loop calling BeginSubmitRequest() until we're done
+                        // under sync conditions, we let GetResponse() loop calling BeginSubmitRequest() until we're done
                         m_Retry = true;
                     }
                     result = HttpProcessingResult.WriteWait;
@@ -1861,133 +1884,134 @@ namespace System.Net {
 #if DEBUG
             using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Async)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse");
-            if(Logging.On)Logging.Enter(Logging.Web, this, "BeginGetResponse", "");
+                bool success = false;
+                try {
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse");
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "BeginGetResponse", "");
 
-            // No need to recheck the request parameters if we already did it in BeginGetRequestStream().
-            // This prevents problems when redirects change verbs.
-            if (!RequestSubmitted)
-            {
-                CheckProtocol(false);
-            }
-
-            ConnectStream stream = _OldSubmitWriteStream != null ? _OldSubmitWriteStream : _SubmitWriteStream;
-
-            // Close the request stream if the user forgot to do so. Throw an exception if user has not written all of
-            // the promised data.
-            if (stream != null && !stream.IsClosed)
-            {
-                if (stream.BytesLeftToWrite > 0)
-                {
-                    throw new ProtocolViolationException(SR.GetString(SR.net_entire_body_not_written));
-                }
-                else
-                {
-                    stream.Close();
-                }
-            }
-            else if (stream == null && HasEntityBody)
-            {
-                throw new ProtocolViolationException(SR.GetString(SR.net_must_provide_request_body));
-            }
-
-#if !FEATURE_PAL
-            ContextAwareResult asyncResult = new ContextAwareResult(IdentityRequired, true, this, state, callback);
-#else // FEATURE_PAL
-            ContextAwareResult asyncResult = new ContextAwareResult(false, true, this, state, callback);
-#endif
-
-            if (!RequestSubmitted && NclUtilities.IsThreadPoolLow())
-            {
-                // prevent new requests when low on resources
-                Exception exception = new InvalidOperationException(SR.GetString(SR.net_needmorethreads));
-                Abort(exception, AbortState.Public);
-                throw exception;
-            }
-
-            // Need to lock the context until it's created (if necessary) in Returning().
-            lock (asyncResult.StartPostingAsyncOp())
-            {
-                bool gotResponse = false;
-                bool requestSubmitted;
-                lock (this)
-                {
-                    requestSubmitted = SetRequestSubmitted();
-
-                    if (HaveResponse)
+                    // No need to recheck the request parameters if we already did it in BeginGetRequestStream().
+                    // This prevents problems when redirects change verbs.
+                    if (!RequestSubmitted)
                     {
-                        gotResponse = true;
+                        CheckProtocol(false);
                     }
-                    else
+
+                    ConnectStream stream = _OldSubmitWriteStream != null ? _OldSubmitWriteStream : _SubmitWriteStream;
+
+                    // Close the request stream if the user forgot to do so. Throw an exception if user has not written all of
+                    // the promised data.
+                    if (stream != null && !stream.IsClosed)
                     {
-                        if (_ReadAResult != null)
+                        if (stream.BytesLeftToWrite > 0)
                         {
-                            throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                            throw new ProtocolViolationException(SR.GetString(SR.net_entire_body_not_written));
                         }
-
-                        _ReadAResult = asyncResult;
-                        Async = true;
+                        else
+                        {
+                            stream.Close();
+                        }
                     }
-                }
-
-                // Must check this after setting _ReadAResult, which holds the context which may be used for permission checks etc.
-                // See if we need to do the call-done processing here.
-                CheckDeferredCallDone(stream);
-
-                if (gotResponse)
-                {
-                    if (Logging.On) Logging.Exit(Logging.Web, this, "BeginGetResponse", _ReadAResult.Result);
-                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse", "Already Completed, response = " + ValidationHelper.HashString(_ReadAResult.Result));
-                    Exception e = _ReadAResult.Result as Exception;
-                    if (e != null)
+                    else if (stream == null && HasEntityBody)
                     {
-                        throw e;
+                        throw new ProtocolViolationException(SR.GetString(SR.net_must_provide_request_body));
                     }
 
-                    try
+    #if !FEATURE_PAL
+                    ContextAwareResult asyncResult = new ContextAwareResult(IdentityRequired, true, this, state, callback);
+    #else // FEATURE_PAL
+                        ContextAwareResult asyncResult = new ContextAwareResult(false, true, this, state, callback);
+    #endif
+
+                    if (!RequestSubmitted && NclUtilities.IsThreadPoolLow())
                     {
-                        asyncResult.InvokeCallback(_ReadAResult.Result);
-                    }
-                    catch (Exception exception)
-                    {
+                        // prevent new requests when low on resources
+                        Exception exception = new InvalidOperationException(SR.GetString(SR.net_needmorethreads));
                         Abort(exception, AbortState.Public);
-                        throw;
+                        throw exception;
                     }
-                }
-                else
-                {
-                    // If we're here it's because we don't have the response yet. We may have
-                    // already submitted the request, but if not do so now.
-                    if (!requestSubmitted)
+
+                    // Need to lock the context until it's created (if necessary) in Returning().
+                    lock (asyncResult.StartPostingAsyncOp())
                     {
-                        // Save Off verb, and use it to make the request
-                        GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + ": resetting CurrentMethod to " + _OriginVerb);
-                        CurrentMethod = _OriginVerb;
+                        bool gotResponse = false;
+                        bool requestSubmitted;
+                        lock (this)
+                        {
+                            requestSubmitted = SetRequestSubmitted();
+
+                            if (HaveResponse)
+                            {
+                                gotResponse = true;
+                            }
+                            else
+                            {
+                                if (_ReadAResult != null)
+                                {
+                                    throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                                }
+
+                                _ReadAResult = asyncResult;
+                                Async = true;
+                            }
+                        }
+
+                        // Must check this after setting _ReadAResult, which holds the context which may be used for permission checks etc.
+                        // See if we need to do the call-done processing here.
+                        CheckDeferredCallDone(stream);
+
+                        if (gotResponse)
+                        {
+                            if (Logging.On) Logging.Exit(Logging.Web, this, "BeginGetResponse", _ReadAResult.Result);
+                            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse", "Already Completed, response = " + ValidationHelper.HashString(_ReadAResult.Result));
+                            Exception e = _ReadAResult.Result as Exception;
+                            if (e != null)
+                            {
+                                throw e;
+                            }
+
+                            try
+                            {
+                                asyncResult.InvokeCallback(_ReadAResult.Result);
+                            }
+                            catch (Exception exception)
+                            {
+                                Abort(exception, AbortState.Public);
+                                throw;
+                            }
+                        }
+                        else
+                        {
+                            // If we're here it's because we don't have the response yet. We may have
+                            // already submitted the request, but if not do so now.
+                            if (!requestSubmitted)
+                            {
+                                // Save Off verb, and use it to make the request
+                                GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + ": resetting CurrentMethod to " + _OriginVerb);
+                                CurrentMethod = _OriginVerb;
+                            }
+
+                            // If we're here it's because we don't have the response yet. We may have
+                            //  already submitted the request, but if not do so now.
+                            if (_RerequestCount > 0 || !requestSubmitted) {
+                                while (m_Retry) {
+                                    // Keep looping in case there are redirects, auth re-requests, etc
+                                    BeginSubmitRequest();
+                                }
+                            }
+                        }
+                        asyncResult.FinishPostingAsyncOp();
                     }
 
-                    // If we're here it's because we don't have the response yet. We may have
-                    //  already submitted the request, but if not do so now.
-                    if (_RerequestCount > 0 || !requestSubmitted) {
-                        while (m_Retry) {
-                            // Keep looping in case there are redirects, auth re-requests, etc
-                            BeginSubmitRequest();
-                        }
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse", ValidationHelper.HashString(asyncResult));
+                    if (Logging.On) Logging.Exit(Logging.Web, this, "BeginGetResponse", asyncResult);
+                    success = true;
+                    return asyncResult;
+                }
+                finally {
+                    if (FrameworkEventSource.Log.IsEnabled()) {
+                        LogBeginGetResponse(success, synchronous : false);
                     }
                 }
-                asyncResult.FinishPostingAsyncOp();
-            }
-
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse", ValidationHelper.HashString(asyncResult));
-            if(Logging.On)Logging.Exit(Logging.Web, this, "BeginGetResponse", asyncResult);
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetResponse(suri);
-
-            return asyncResult;
 #if DEBUG
             }
 #endif
@@ -1997,46 +2021,62 @@ namespace System.Net {
         ///  <para>Retreives the Response Result from an HTTP Result after an Async operation has completed</para>
         /// </devdoc>
         public override WebResponse EndGetResponse(IAsyncResult asyncResult) {
+            bool success = false;
+            int statusCode = -1;
+            
+            try {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User)) {
+                using (GlobalLog.SetThreadKind(ThreadKinds.User)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse", ValidationHelper.HashString(asyncResult));
-            if(Logging.On)Logging.Enter(Logging.Web, this, "EndGetResponse", "");
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse", ValidationHelper.HashString(asyncResult));
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "EndGetResponse", "");
 
-            //
-            // parameter validation
-            //
-            if (asyncResult==null) {
-                throw new ArgumentNullException("asyncResult");
-            }
+                    //
+                    // parameter validation
+                    //
+                    if (asyncResult == null) {
+                        throw new ArgumentNullException("asyncResult");
+                    }
 
-            LazyAsyncResult castedAsyncResult = asyncResult as LazyAsyncResult;
-            if (castedAsyncResult==null || castedAsyncResult.AsyncObject!=this) {
-                throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
-            }
-            if (castedAsyncResult.EndCalled) {
-                throw new InvalidOperationException(SR.GetString(SR.net_io_invalidendcall, "EndGetResponse"));
-            }
-            HttpWebResponse httpWebResponse = castedAsyncResult.InternalWaitForCompletion() as HttpWebResponse;
-            castedAsyncResult.EndCalled = true;
-            if (httpWebResponse == null)
-            {
-                if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetResponse", castedAsyncResult.Result as Exception);
-                NetworkingPerfCounters.Instance.Increment(NetworkingPerfCounterName.HttpWebRequestFailed);
-                throw (Exception) castedAsyncResult.Result;
-            }
-            GlobalLog.Assert(httpWebResponse.ResponseStream != null, "HttpWebRequest#{0}::EndGetResponse()|httpWebResponse.ResponseStream == null", ValidationHelper.HashString(this));
-            // Otherwise it worked, so return the HttpWebResponse.
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse", ValidationHelper.HashString(httpWebResponse));
-            if(Logging.On)Logging.Exit(Logging.Web, this, "EndGetResponse", httpWebResponse);
-            InitLifetimeTracking(httpWebResponse);
+                    LazyAsyncResult castedAsyncResult = asyncResult as LazyAsyncResult;
+                    if (castedAsyncResult == null || castedAsyncResult.AsyncObject != this) {
+                        throw new ArgumentException(SR.GetString(SR.net_io_invalidasyncresult), "asyncResult");
+                    }
+                    if (castedAsyncResult.EndCalled) {
+                        throw new InvalidOperationException(SR.GetString(SR.net_io_invalidendcall, "EndGetResponse"));
+                    }
+                    HttpWebResponse httpWebResponse = castedAsyncResult.InternalWaitForCompletion() as HttpWebResponse;
+                    castedAsyncResult.EndCalled = true;
+            
+                    if (httpWebResponse == null)
+                    {
+                        if (Logging.On) Logging.Exception(Logging.Web, this, "EndGetResponse", castedAsyncResult.Result as Exception);
+                        NetworkingPerfCounters.Instance.Increment(NetworkingPerfCounterName.HttpWebRequestFailed);
+                        throw (Exception) castedAsyncResult.Result;
+                    }
+                    GlobalLog.Assert(httpWebResponse.ResponseStream != null, "HttpWebRequest#{0}::EndGetResponse()|httpWebResponse.ResponseStream == null", ValidationHelper.HashString(this));
+                    // Otherwise it worked, so return the HttpWebResponse.
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse", ValidationHelper.HashString(httpWebResponse));
+                    if(Logging.On)Logging.Exit(Logging.Web, this, "EndGetResponse", httpWebResponse);
+                    InitLifetimeTracking(httpWebResponse);
 
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetResponse();
-
-            return httpWebResponse;
+                    statusCode = GetStatusCode(httpWebResponse);
+                    success = true;
+                    return httpWebResponse;
 #if DEBUG
-            }
+                }
 #endif
+            }
+            catch (WebException we) {
+                HttpWebResponse httpWebResponse = we.Response as HttpWebResponse;
+                statusCode = GetStatusCode(httpWebResponse);
+                throw;
+            }
+            finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetResponse(success, synchronous : false, statusCode : statusCode);
+                }
+            }
         }
 
         private void CheckDeferredCallDone(ConnectStream stream)
@@ -2076,142 +2116,162 @@ namespace System.Net {
         ///    </para>
         /// </devdoc>
         public override WebResponse GetResponse() {
+            bool success = false;
+            int statusCode = -1;
+            try {
 #if DEBUG
-            using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
+                using (GlobalLog.SetThreadKind(ThreadKinds.User | ThreadKinds.Sync)) {
 #endif
-            GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse");
-            if(Logging.On)Logging.Enter(Logging.Web, this, "GetResponse", "");
-
-            // No need to recheck the request parameters if we already did it in GetRequestStream().
-            // This prevents problems when redirects change verbs.
-            if (!RequestSubmitted)
-            {
-                CheckProtocol(false);
-            }
-
-            // Many of these logics require GetResponse() to be called after all write-stream activity is done.  You can't call it
-            // simultaneously on another thread and expect it to block until it can run.  Doing that can cause the request to
-            // hang.
-
-            ConnectStream stream = _OldSubmitWriteStream != null ? _OldSubmitWriteStream : _SubmitWriteStream;
-
-            // Close the request stream if the user forgot to do so. Throw an exception if user has not written all of
-            // the promised data.
-            if (stream != null && !stream.IsClosed)
-            {
-                if (stream.BytesLeftToWrite > 0)
-                {
-                    throw new ProtocolViolationException(SR.GetString(SR.net_entire_body_not_written));
-                }
-                else
-                {
-                    stream.Close();
-                }
-            }
-            else if (stream == null && HasEntityBody)
-            {
-                throw new ProtocolViolationException(SR.GetString(SR.net_must_provide_request_body));
-            }
-
-            // return response, if the response is already set
-            bool gotResponse = false;
-            HttpWebResponse httpWebResponse = null;
-            bool requestSubmitted;
-            lock (this)
-            {
-                requestSubmitted = SetRequestSubmitted();
-                if (HaveResponse)
-                {
-                    gotResponse = true;
-                    httpWebResponse = _ReadAResult.Result as HttpWebResponse;
-                }
-                else
-                {
-                    if (_ReadAResult != null)
-                    {
-                        throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                    if (FrameworkEventSource.Log.IsEnabled()) {
+                        LogBeginGetResponse(success : true, synchronous : true);
                     }
 
-                    Async = false;
+                    GlobalLog.Enter("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse");
+                    if (Logging.On) Logging.Enter(Logging.Web, this, "GetResponse", "");
 
-                    // Since we don't really allow switching between [....] and async, if the request is already async, this needs to
-                    // capture context for use in the ongoing async operations as if it were BeginGetResponse().
-                    if (Async)
+                    // No need to recheck the request parameters if we already did it in GetRequestStream().
+                    // This prevents problems when redirects change verbs.
+                    if (!RequestSubmitted)
                     {
+                        CheckProtocol(false);
+                    }
+
+                    // Many of these logics require GetResponse() to be called after all write-stream activity is done.  You can't call it
+                    // simultaneously on another thread and expect it to block until it can run.  Doing that can cause the request to
+                    // hang.
+
+                    ConnectStream stream = _OldSubmitWriteStream != null ? _OldSubmitWriteStream : _SubmitWriteStream;
+
+                    // Close the request stream if the user forgot to do so. Throw an exception if user has not written all of
+                    // the promised data.
+                    if (stream != null && !stream.IsClosed)
+                    {
+                        if (stream.BytesLeftToWrite > 0)
+                        {
+                            throw new ProtocolViolationException(SR.GetString(SR.net_entire_body_not_written));
+                        }
+                        else
+                        {
+                            stream.Close();
+                        }
+                    }
+                    else if (stream == null && HasEntityBody)
+                    {
+                        throw new ProtocolViolationException(SR.GetString(SR.net_must_provide_request_body));
+                    }
+
+                    // return response, if the response is already set
+                    bool gotResponse = false;
+                    HttpWebResponse httpWebResponse = null;
+                    bool requestSubmitted;
+                    lock (this)
+                    {
+                        requestSubmitted = SetRequestSubmitted();
+                        if (HaveResponse)
+                        {
+                            gotResponse = true;
+                            httpWebResponse = _ReadAResult.Result as HttpWebResponse;
+                        }
+                        else
+                        {
+                            if (_ReadAResult != null)
+                            {
+                                throw new InvalidOperationException(SR.GetString(SR.net_repcall));
+                            }
+
+                            Async = false;
+
+                            // Since we don't really allow switching between sync and async, if the request is already async, this needs to
+                            // capture context for use in the ongoing async operations as if it were BeginGetResponse().
+                            if (Async)
+                            {
 #if !FEATURE_PAL
-                        ContextAwareResult readResult = new ContextAwareResult(IdentityRequired, true, this, null, null);
+                                ContextAwareResult readResult = new ContextAwareResult(IdentityRequired, true, this, null, null);
 #else
-                        ContextAwareResult readResult = new ContextAwareResult(false, true, this, null, null);
+                                ContextAwareResult readResult = new ContextAwareResult(false, true, this, null, null);
 #endif
-                        readResult.StartPostingAsyncOp(false);
-                        readResult.FinishPostingAsyncOp();
-                        _ReadAResult = readResult;
+                                readResult.StartPostingAsyncOp(false);
+                                readResult.FinishPostingAsyncOp();
+                                _ReadAResult = readResult;
+                            }
+                            else
+                            {
+                                _ReadAResult = new LazyAsyncResult(this, null, null);
+                            }
+                        }
                     }
-                    else
+
+                    // See if we need to do the call-done processing here.
+                    CheckDeferredCallDone(stream);
+
+                    if (!gotResponse)
                     {
-                        _ReadAResult = new LazyAsyncResult(this, null, null);
+                        //The previous call may have been async.  If we are now doing a sync call, we should
+                        //use the timeout
+                        if (_Timer == null) {
+                            _Timer = TimerQueue.CreateTimer(s_TimeoutCallback, this);
+                        }
+
+
+                        // Save Off verb, and use it to make the request
+                        if (!requestSubmitted) {
+                            GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + ": resetting CurrentMethod to " + _OriginVerb);
+                            CurrentMethod = _OriginVerb;
+                        }
+
+                        // If we're here it's because we don't have the response yet. We may have
+                        //  already submitted the request, but if not do so now.
+                        while (m_Retry) {
+                            // Keep looping in case there are redirects, auth re-requests, etc
+                            BeginSubmitRequest();
+                        }
+
+                        while (!Async && Aborted && !_ReadAResult.InternalPeekCompleted) 
+                        {
+                            // spin untill the _CoreResponse is set
+                            if (!(_CoreResponse is Exception))
+                                Thread.SpinWait(1);
+                            else
+                                CheckWriteSideResponseProcessing();
+                        }
+
+                        httpWebResponse = _ReadAResult.InternalWaitForCompletion() as HttpWebResponse;
+                        _ReadAResult.EndCalled = true;
                     }
-                }
-            }
 
-            // See if we need to do the call-done processing here.
-            CheckDeferredCallDone(stream);
+                    if (httpWebResponse == null)
+                    {
+                        if (Logging.On) Logging.Exception(Logging.Web, this, "GetResponse", _ReadAResult.Result as Exception);
+                        NetworkingPerfCounters.Instance.Increment(NetworkingPerfCounterName.HttpWebRequestFailed);
+                        throw (Exception) _ReadAResult.Result;
+                    }
 
-            if (!gotResponse)
-            {
-                //The previous call may have been async.  If we are now doing a [....] call, we should
-                //use the timeout
-                if (_Timer == null){
-                    _Timer = TimerQueue.CreateTimer(s_TimeoutCallback, this);
-                }
+                    GlobalLog.Assert(httpWebResponse.ResponseStream != null, "HttpWebRequest#{0}::GetResponse()|httpWebResponse.ResponseStream == null", ValidationHelper.HashString(this));
+                    if(Logging.On)Logging.Exit(Logging.Web, this, "GetResponse", httpWebResponse);
+                    GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse", ValidationHelper.HashString(httpWebResponse));
 
+                    if (!gotResponse)
+                    {
+                        InitLifetimeTracking(httpWebResponse);
+                    }
 
-                // Save Off verb, and use it to make the request
-                if (!requestSubmitted) {
-                    GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + ": resetting CurrentMethod to " + _OriginVerb);
-                    CurrentMethod = _OriginVerb;
-                }
-
-                // If we're here it's because we don't have the response yet. We may have
-                //  already submitted the request, but if not do so now.
-                while (m_Retry) {
-                    // Keep looping in case there are redirects, auth re-requests, etc
-                    BeginSubmitRequest();
-                }
-
-                while(!Async && Aborted && !_ReadAResult.InternalPeekCompleted)
-                {
-                    // spin untill the _CoreResponse is set
-                    if (!(_CoreResponse is Exception))
-                        Thread.SpinWait(1);
-                    else
-                        CheckWriteSideResponseProcessing();
-                }
-
-                httpWebResponse = _ReadAResult.InternalWaitForCompletion() as HttpWebResponse;
-                _ReadAResult.EndCalled = true;
-            }
-
-            if (httpWebResponse == null)
-            {
-                if (Logging.On) Logging.Exception(Logging.Web, this, "GetResponse", _ReadAResult.Result as Exception);
-                NetworkingPerfCounters.Instance.Increment(NetworkingPerfCounterName.HttpWebRequestFailed);
-                throw (Exception) _ReadAResult.Result;
-            }
-
-            GlobalLog.Assert(httpWebResponse.ResponseStream != null, "HttpWebRequest#{0}::GetResponse()|httpWebResponse.ResponseStream == null", ValidationHelper.HashString(this));
-            if(Logging.On)Logging.Exit(Logging.Web, this, "GetResponse", httpWebResponse);
-            GlobalLog.Leave("HttpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse", ValidationHelper.HashString(httpWebResponse));
-
-            if (!gotResponse)
-            {
-                InitLifetimeTracking(httpWebResponse);
-            }
-
-            return httpWebResponse;
+                    statusCode = GetStatusCode(httpWebResponse);
+                    success = true;
+                    return httpWebResponse;
 #if DEBUG
-            }
+                }
 #endif
+            }
+            catch (WebException we) {
+                HttpWebResponse httpWebResponse = we.Response as HttpWebResponse;
+                statusCode = GetStatusCode(httpWebResponse);
+                throw;
+            }
+            finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetResponse(success, synchronous : true, statusCode : statusCode);
+                }
+            }
         }
 
         private void InitLifetimeTracking(HttpWebResponse httpWebResponse)
@@ -3309,7 +3369,7 @@ namespace System.Net {
             //
             // This line is needed ONLY if we got a connect failure (Abort can still happen at random time)
             // CallDone will check for the write side response processing and this is what we want.
-            // Note that [....] case already has a separate path to check for the response
+            // Note that Sync case already has a separate path to check for the response
             //
             if (Async && _CoreResponse != null && (object)_CoreResponse != (object)DBNull.Value)
             {
@@ -3429,7 +3489,7 @@ namespace System.Net {
         //
         internal void CheckWriteSideResponseProcessing()
         {
-            // In [....] case never close the write side window
+            // In Sync case never close the write side window
 
             // Definitions of _CoreResponse:
             // - DBNull.Value - Uploading headers/body is in progress, but we haven't yet received a response.
@@ -3535,7 +3595,7 @@ namespace System.Net {
             {
                 GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::SetAndOrProcessResponse() - Write Thread will procees the response.");
                 //
-                // Note for a [....] request a write side window is always open
+                // Note for a sync request a write side window is always open
                 //
                 if (!Async)
                 {
@@ -3931,7 +3991,7 @@ namespace System.Net {
             }
         }
 
-        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
+        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetConnectingContext()
         {
             if (!Async)
@@ -3954,7 +4014,7 @@ namespace System.Net {
             return context;
         }
 
-        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
+        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetWritingContext()
         {
             if (!Async)
@@ -3979,7 +4039,7 @@ namespace System.Net {
             return context;
         }
 
-        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
+        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetReadingContext()
         {
             if (!Async)
@@ -5965,12 +6025,12 @@ namespace System.Net {
 
                         // The second NTLM request is required to use the same connection, don't close it
                         if (ntlmFollowupRequest) {
-                            // We only want CallDone to do a [....] read now if 100Continue won't later
+                            // We only want CallDone to do a sync read now if 100Continue won't later
                             NeedsToReadForResponse = !ShouldWaitFor100Continue();
                             _SubmitWriteStream.CallDone();
                         }
                         else if (!AllowWriteStreamBuffering) {
-                            // We only want CloseInternal to do a [....] read now if 100Continue won't later
+                            // We only want CloseInternal to do a sync read now if 100Continue won't later
                             NeedsToReadForResponse = !ShouldWaitFor100Continue();
                             _SubmitWriteStream.CloseInternal(true);
                         }
@@ -6034,7 +6094,7 @@ namespace System.Net {
         // Never throws
         //
         private Stream MakeMemoryStream(Stream stream) {
-           // GlobalLog.ThreadContract(ThreadKinds.[....], "HttpWebRequest#" + ValidationHelper.HashString(this) + "::MakeMemoryStream");
+           // GlobalLog.ThreadContract(ThreadKinds.Sync, "HttpWebRequest#" + ValidationHelper.HashString(this) + "::MakeMemoryStream");
 
             if (stream == null || stream is SyncMemoryStream)
                 return stream;
@@ -6203,6 +6263,24 @@ namespace System.Net {
             get {
                 return (Interlocked.Increment(ref s_UniqueGroupId)).ToString(NumberFormatInfo.InvariantInfo);
             }
+        }
+
+        private static int GetStatusCode(HttpWebResponse httpWebResponse)
+        {
+            int result = -1;
+                        
+            // we are calculating statusCode only when FrameworkEventSource logging is enabled.
+            if (FrameworkEventSource.Log.IsEnabled() && httpWebResponse != null) {
+                try {
+                    result = (int)httpWebResponse.StatusCode;
+                }
+                catch (ObjectDisposedException) {
+                    // ObjectDisposedException is expected here in the following sequence: httpWebRequest.GetResponse().Dispose() -> httpWebRequest.GetResponse()
+                    // on the second call to GetResponse() we cannot determine the statusCode.
+                }
+            }
+
+            return result;
         }
 
 #if HTTP_HEADER_EXTENSIONS_SUPPORTED

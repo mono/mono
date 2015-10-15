@@ -106,8 +106,8 @@ namespace System.Web.Configuration
 
         internal byte[] ValidationKeyInternal { get { RuntimeDataInitialize();  return (byte[])_ValidationKey.Clone(); } }
         internal byte[] DecryptionKeyInternal { get { RuntimeDataInitialize(); return (byte[])_DecryptionKey.Clone(); } }
-        internal static int HashSize { get { s_config.RuntimeDataInitialize(); return _HashSize; } }
-        internal static int ValidationKeySize { get { s_config.RuntimeDataInitialize(); return _AutoGenValidationKeySize; } }
+        internal static int HashSize { get { EnsureConfig(); s_config.RuntimeDataInitialize(); return _HashSize; } }
+        internal static int ValidationKeySize { get { EnsureConfig(); s_config.RuntimeDataInitialize(); return _AutoGenValidationKeySize; } }
 
         static MachineKeySection()
         {
@@ -369,7 +369,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppSpecific)
                 {
-                    int dwCode = StringComparer.InvariantCultureIgnoreCase.GetHashCode( appName );
+                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appName);
                     _ValidationKey[0] = (byte)(dwCode & 0xff);
                     _ValidationKey[1] = (byte)((dwCode & 0xff00) >> 8);
                     _ValidationKey[2] = (byte)((dwCode & 0xff0000) >> 16);
@@ -377,7 +377,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppIdSpecific)
                 {
-                    int dwCode = StringComparer.InvariantCultureIgnoreCase.GetHashCode( appId );
+                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appId);
                     _ValidationKey[4] = (byte)(dwCode & 0xff);
                     _ValidationKey[5] = (byte)((dwCode & 0xff00) >> 8);
                     _ValidationKey[6] = (byte)((dwCode & 0xff0000) >> 16);
@@ -425,7 +425,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppSpecific)
                 {
-                    int dwCode = StringComparer.InvariantCultureIgnoreCase.GetHashCode(appName);
+                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appName);
                     _DecryptionKey[0] = (byte)(dwCode & 0xff);
                     _DecryptionKey[1] = (byte)((dwCode & 0xff00) >> 8);
                     _DecryptionKey[2] = (byte)((dwCode & 0xff0000) >> 16);
@@ -433,7 +433,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppIdSpecific)
                 {
-                    int dwCode = StringComparer.InvariantCultureIgnoreCase.GetHashCode(appId);
+                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appId);
                     _DecryptionKey[4] = (byte)(dwCode & 0xff);
                     _DecryptionKey[5] = (byte)((dwCode & 0xff00) >> 8);
                     _DecryptionKey[6] = (byte)((dwCode & 0xff0000) >> 16);

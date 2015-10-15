@@ -764,7 +764,7 @@ namespace System.Workflow.ComponentModel.Design
                     return false;
 
                 ActivityDesigner designerToInsert = null;
-#pragma warning disable 56506//bug in presharp, activity has already been checked for null value
+#pragma warning disable 56506//
                 if (activity.Site != null)
                 {
                     //get an existing designer
@@ -787,7 +787,7 @@ namespace System.Workflow.ComponentModel.Design
                         activity.UserData[typeof(ActivityDesigner)] = designerToInsert;
                     }
                 }
-#pragma warning restore 56506//bug in presharp
+#pragma warning restore 56506//
 
                 if (designerToInsert == null)
                     return false;
@@ -1024,8 +1024,8 @@ namespace System.Workflow.ComponentModel.Design
                 //For details look at,
                 //\\cpvsbuild\drops\whidbey\pd6\raw\40903.19\sources\ndp\fx\src\Designer\Host\UndoEngine.cs
                 //OnComponentRemoving function which retains the references we hold to the parent
-                //This bug can be reproed by deleting a compositeactivity from design surface and then doing an undo
-                //VSWhidbey #312230
+                //This 
+
                 activity.SetParent(null);
                 if (activity is CompositeActivity)
                 {

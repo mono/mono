@@ -5,8 +5,9 @@ using System.Globalization;
 using System.Text;
 
 namespace System.Runtime.Versioning {
-
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public sealed class FrameworkName : IEquatable<FrameworkName> {
 
         // ---- SECTION:  members supporting exposed properties -------------*

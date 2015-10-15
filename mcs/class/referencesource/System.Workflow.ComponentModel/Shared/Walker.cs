@@ -9,7 +9,7 @@
 
 /*********************************************************************
  * NOTE: A copy of this file exists at: WF\Activities\Common
- * The two files must be kept in [....].  Any change made here must also
+ * The two files must be kept in sync.  Any change made here must also
  * be made to WF\Activities\Common\Walker.cs
 *********************************************************************/
 namespace System.Workflow.ComponentModel

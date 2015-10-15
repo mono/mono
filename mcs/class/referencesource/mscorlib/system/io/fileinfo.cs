@@ -5,7 +5,7 @@
 // ==--==
 /*============================================================
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 ** 
 ** Class:  File
 **
@@ -63,11 +63,7 @@ namespace System.IO {
         }
 #endif
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileInfo(String fileName)
@@ -104,14 +100,14 @@ namespace System.IO {
             OriginalPath = fileName;
             // Must fully qualify the path for the security check
             String fullPath = Path.GetFullPathInternal(fileName);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost)
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, fileName, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 #endif
 
             _name = Path.GetFileName(fileName);
@@ -140,11 +136,7 @@ namespace System.IO {
         }
 
 #if FEATURE_CORESYSTEM
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
 #endif //FEATURE_CORESYSTEM
         internal FileInfo(String fullPath, bool ignoreThis)
         {
@@ -179,20 +171,16 @@ namespace System.IO {
         /* Returns the name of the directory that the file is in */
         public String DirectoryName
         {
-#if FEATURE_LEGACYNETCFIOSECURITY
-            [System.Security.SecurityCritical]
-#else
             [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
             get
             {
                 String directoryName = Path.GetDirectoryName(FullPath);
                 if (directoryName != null)
                 {
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                     FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, DisplayPath, FullPath);
                     state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
                     new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { directoryName }, false, false).Demand();
 #endif
                 }
@@ -203,9 +191,6 @@ namespace System.IO {
         /* Creates an instance of the the parent directory */
         public DirectoryInfo Directory
         {
-#if FEATURE_LEGACYNETCFIOSECURITY
-            [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get
@@ -260,9 +245,6 @@ namespace System.IO {
             return new StreamReader(FullPath, Encoding.UTF8, true, StreamReader.DefaultBufferSize, false);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter CreateText()
@@ -270,9 +252,6 @@ namespace System.IO {
             return new StreamWriter(FullPath,false);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter AppendText()
@@ -290,9 +269,6 @@ namespace System.IO {
         // Read permission to sourceFileName 
         // and Write permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileInfo CopyTo(String destFileName) {
@@ -316,9 +292,6 @@ namespace System.IO {
         // Read permission to sourceFileName and Create
         // and Write permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileInfo CopyTo(String destFileName, bool overwrite) {
@@ -332,9 +305,6 @@ namespace System.IO {
             return new FileInfo(destFileName, false);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public FileStream Create() {
@@ -351,19 +321,15 @@ namespace System.IO {
         // 
         // Your application must have Delete permission to the target file.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public override void Delete()
         {
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, DisplayPath, FullPath);
             state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             // For security check, path should be resolved to an absolute path.
             new FileIOPermission(FileIOPermissionAccess.Write, new String[] { FullPath }, false, false).Demand();
 #endif
@@ -424,27 +390,18 @@ namespace System.IO {
       
       
         // User must explicitly specify opening a new file or appending to one.
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileStream Open(FileMode mode) {
             return Open(mode, FileAccess.ReadWrite, FileShare.None);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY        
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileStream Open(FileMode mode, FileAccess access) {
             return Open(mode, access, FileShare.None);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileStream Open(FileMode mode, FileAccess access, FileShare share) {
@@ -464,9 +421,6 @@ namespace System.IO {
         }
 
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public FileStream OpenWrite() {
@@ -487,11 +441,7 @@ namespace System.IO {
         // sourceFileName and Write 
         // permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public void MoveTo(String destFileName) {
@@ -502,14 +452,14 @@ namespace System.IO {
             Contract.EndContractBlock();
 
             String fullDestFileName = Path.GetFullPathInternal(destFileName);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, DisplayPath, FullPath);
             FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destFileName, fullDestFileName);
             sourceState.EnsureState();
             destState.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { FullPath }, false, false).Demand();
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullDestFileName }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 #endif
        
             if (!Win32Native.MoveFile(FullPath, fullDestFileName))

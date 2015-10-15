@@ -2,8 +2,8 @@
 // <copyright file="SqlParameter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -83,6 +83,48 @@ namespace System.Data.SqlClient {
         private bool                  _coercedValueIsSqlType;
         private bool                  _coercedValueIsDataFeed;
         private int                   _actualSize = -1;
+
+        /// <summary>
+        /// Column Encryption Cipher Related Metadata.
+        /// </summary>
+        private SqlCipherMetadata _columnEncryptionCipherMetadata;
+
+        /// <summary>
+        /// Get or set the encryption related metadata of this SqlParameter.
+        /// Should be set to a non-null value only once.
+        /// </summary>
+        internal SqlCipherMetadata CipherMetadata {
+            get {
+                return _columnEncryptionCipherMetadata;
+            }
+
+            set {
+                Debug.Assert(_columnEncryptionCipherMetadata == null || value == null,
+                    "_columnEncryptionCipherMetadata should be set to a non-null value only once.");
+
+                _columnEncryptionCipherMetadata = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the parameter encryption metadata received by sp_describe_parameter_encryption.
+        /// For unencrypted parameters, the encryption metadata should still be sent (and will indicate 
+        /// that no encryption is needed).
+        /// </summary>
+        internal bool HasReceivedMetadata { get; set; }
+
+        /// <summary>
+        /// Returns the normalization rule version number as a byte
+        /// </summary>
+        internal byte NormalizationRuleVersion {
+            get {
+                if (_columnEncryptionCipherMetadata != null) {
+                    return _columnEncryptionCipherMetadata.NormalizationRuleVersion;
+                }
+
+                return 0x00;
+            }
+        }
 
         public SqlParameter() : base() {
         }
@@ -231,6 +273,16 @@ namespace System.Data.SqlClient {
             }
         }
 
+        [
+        DefaultValue(false),
+        ResCategoryAttribute(Res.DataCategory_Data),
+        ResDescriptionAttribute(Res.TCE_SqlParameter_ForceColumnEncryption),
+        ]
+        public bool ForceColumnEncryption {
+            get; 
+            set;
+        }
+
         override public DbType DbType {
             get {
                 return GetMetaTypeOnly().DbType;
@@ -293,7 +345,7 @@ namespace System.Data.SqlClient {
 					maxlen = (long)mt.FixedLength;
 				}
                 else if (Size > 0 || Size < 0) {
-                   	maxlen = Size;   // Bug Fix: 302768, 302695, 302694, 302693
+                   	maxlen = Size;   // 
                 }
 				else {
 					maxlen = MSS.SmiMetaData.GetDefaultForType( mt.SqlDbType ).MaxLength;
@@ -309,6 +361,22 @@ namespace System.Data.SqlClient {
             }
         }
 
+        /// <summary>
+        /// Get SMI Metadata to write out type_info stream.
+        /// </summary>
+        /// <returns></returns>
+        internal MSS.SmiParameterMetaData GetMetadataForTypeInfo() {
+            ParameterPeekAheadValue peekAhead = null;
+
+            if (_internalMetaType == null) {
+                _internalMetaType = GetMetaTypeOnly();
+            }
+
+            return MetaDataForSmi(out peekAhead);
+        }
+
+        // IMPORTANT DEVNOTE: This method is being used for parameter encryption functionality, to get the type_info TDS object from SqlParameter.
+        // Please consider impact to that when changing this method. Refer to the callers of SqlParameter.GetMetadataForTypeInfo().
         internal MSS.SmiParameterMetaData MetaDataForSmi(out ParameterPeekAheadValue peekAhead) {
             peekAhead = null;
             MetaType mt = ValidateTypeLengths( true /* Yukon or newer */ );
@@ -448,7 +516,7 @@ namespace System.Data.SqlClient {
         internal bool ParamaterIsSqlType {
             get {
                 return _isSqlParameterSqlType;
-                }
+            }
             set {
                     _isSqlParameterSqlType = value;
                 }
@@ -998,6 +1066,7 @@ namespace System.Data.SqlClient {
             destination._coercedValueIsDataFeed = _coercedValueIsDataFeed;
             destination._coercedValueIsSqlType = _coercedValueIsSqlType;
             destination._actualSize = _actualSize;
+            destination.ForceColumnEncryption = ForceColumnEncryption;
         }
 
         internal byte GetActualPrecision() {
@@ -1463,32 +1532,32 @@ namespace System.Data.SqlClient {
         // byte length and a parameter length > than that expressable in 2 bytes
         internal MetaType ValidateTypeLengths(bool yukonOrNewer) {
             MetaType mt = InternalMetaType;
-            // MDAC bug #50839 + #52829 : Since the server will automatically reject any
-            // char, varchar, binary, varbinary, nchar, or nvarchar parameter that has a
-            // byte sizeInCharacters > 8000 bytes, we promote the parameter to image, text, or ntext.  This
-            // allows the user to specify a parameter type using a COM+ datatype and be able to
-            // use that parameter against a BLOB column.
+            // MDAC 
+
+
+
+
             if ((SqlDbType.Udt != mt.SqlDbType) && (false == mt.IsFixed) && (false == mt.IsLong)) { // if type has 2 byte length
                 long actualSizeInBytes = this.GetActualSize();
                 long sizeInCharacters = this.Size;
 
-                // Bug: VSTFDevDiv #636867
-                // Notes:
-                // 'actualSizeInBytes' is the size of value passed; 
-                // 'sizeInCharacters' is the parameter size;
-                // 'actualSizeInBytes' is in bytes; 
-                // 'this.Size' is in charaters; 
-                // 'sizeInCharacters' is in characters; 
-                // 'TdsEnums.TYPE_SIZE_LIMIT' is in bytes;
-                // For Non-NCharType and for non-Yukon or greater variables, size should be maintained;
-                // Reverting changes from bug VSTFDevDiv # 479739 as it caused an regression;
-                // Modifed variable names from 'size' to 'sizeInCharacters', 'actualSize' to 'actualSizeInBytes', and 
-                // 'maxSize' to 'maxSizeInBytes'
-                // The idea is to
-                //  1) revert the regression from bug 479739
-                //  2) fix as many scenarios as possible including bug 636867
-                //  3) cause no additional regression from 3.5 sp1
-                // Keeping these goals in mind - the following are the changes we are making
+                // 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 long maxSizeInBytes = 0;
                 if ((mt.IsNCharType) && (yukonOrNewer))

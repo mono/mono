@@ -25,7 +25,7 @@ namespace System.Workflow.ComponentModel.Design
     [Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")]
     public sealed class ThemeConfigurationDialog : System.Windows.Forms.Form
     {
-        #region [....] Generated Members
+        #region Microsoft Generated Members
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TreeView designerTreeView;
         private System.Windows.Forms.Label themeNameLabel;

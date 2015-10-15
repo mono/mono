@@ -7,9 +7,9 @@
 **
 ** Enum:  UltimateResourceFallbackLocation
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
-** <EMAIL>Author: Brian Grunkemeyer ([....])</EMAIL>
+** <EMAIL>Author: Brian Grunkemeyer (BrianGru)</EMAIL>
 **
 ** Purpose: Tells the ResourceManager where to find the
 **          ultimate fallback resources for your assembly.

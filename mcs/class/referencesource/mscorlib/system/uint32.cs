@@ -70,9 +70,6 @@ namespace System {
             return 0;
         }
     
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif    
         public override bool Equals(Object obj) {
             if (!(obj is UInt32)) {
                 return false;
@@ -80,24 +77,19 @@ namespace System {
             return m_value == ((UInt32)obj).m_value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(UInt32 obj)
         {
             return m_value == obj;
         }
 
         // The absolute value of the int contained.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode() {
             return ((int) m_value);
         }
     
         // The base 10 representation of the number with no extra padding.
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override String ToString() {
             Contract.Ensures(Contract.Result<String>() != null);
             return Number.FormatUInt32(m_value, null, NumberFormatInfo.CurrentInfo);
@@ -116,9 +108,6 @@ namespace System {
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public String ToString(String format, IFormatProvider provider) {
             Contract.Ensures(Contract.Result<String>() != null);
             return Number.FormatUInt32(m_value, format, NumberFormatInfo.GetInstance(provider));
@@ -162,9 +151,6 @@ namespace System {
         // IConvertible implementation
         // 
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public TypeCode GetTypeCode() {
             return TypeCode.UInt32;
         }
@@ -215,9 +201,6 @@ namespace System {
         }
 
         /// <internalonly/>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         ulong IConvertible.ToUInt64(IFormatProvider provider) {
             return Convert.ToUInt64(m_value);
         }

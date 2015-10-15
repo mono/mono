@@ -349,7 +349,7 @@ namespace System.ServiceModel.Channels
                 // normalize protection level settings at the operation scope if possible to help avoid typed message generation
                 if (hasProtectionLevel && isProtectionLevelUniform)
                 {
-                    // ([....]) remove the foreach message here
+                    // (Microsoft) remove the foreach message here
                     //  foreach (MessageDescription message in operation.Messages)
 
                     this.ResetProtectionLevelForMessages(operation);
@@ -665,7 +665,7 @@ namespace System.ServiceModel.Channels
                 {
                     // We already have found and imported the message security binding element above. Hence this could be the dual mode security.
                     // Now let us see if there is HttpsTransportBinding assertion also below it .This is to avoid the 
-                    // warning messages while importing wsdl representing the message security over Https transport security scenario. See Bug:136416.
+                    // warning messages while importing wsdl representing the message security over Https transport security scenario. See 
 
                     SecurityBindingElement tbe = null;
                     this.TryImportTransportSecurityBindingElement(importer, policyContext, out tbe, true);

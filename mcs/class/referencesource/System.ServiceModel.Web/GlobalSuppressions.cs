@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "System.ServiceModel.SR2.resources", MessageId = "Infos", Justification = "This represents the ParameterInfo class defined in System.Reflection")]
 [module: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "namespace", Target = "System.Xml.Linq", MessageId = "Linq")]
 
-// [....], BEGIN FxCop violations for code in Microsoft.Web.Script.Services.*
+// krisragh, BEGIN FxCop violations for code in Microsoft.Web.Script.Services.*
 [module: SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceTypeData..cctor()")]
 [module: SuppressMessage("Reliability", "Reliability102:WrapExceptionsRule", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceTypeData.ThrowCannotGenerateProxyForTypeError(System.Xml.XmlQualifiedName):System.Void")]
 [module: SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceClientProxyGenerator..ctor(System.String,System.Boolean)", MessageId = "debug")]
@@ -25,7 +25,7 @@ using System.Diagnostics.CodeAnalysis;
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceParameterData.get_ParameterType():Microsoft.Web.Script.Services.WebServiceTypeData")]
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceTypeData.set_TypeName(System.String):System.Void")]
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "Microsoft.Web.Script.Services.WebServiceTypeData.set_TypeNamespace(System.String):System.Void")]
-// [....], END FxCop violations for code in Microsoft.Web.Script.Services.*
+// krisragh, END FxCop violations for code in Microsoft.Web.Script.Services.*
 
 
 [module: SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Scope = "member", Target = "System.Runtime.Serialization.DataContractContentExtensions.ReadAsDataContract(System.ServiceModel.Web.Client.Http.HttpContent,System.Runtime.Serialization.DataContractSerializer):T")]

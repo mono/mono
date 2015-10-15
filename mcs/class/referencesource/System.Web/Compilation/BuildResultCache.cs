@@ -372,7 +372,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
         // run into a situation where the dependency has changed just
         // when the cache item is about to get inserted, resulting in 
         // the callback deleting only the dll file and leaving behind the 
-        // pdb file. (Dev10 bug 846606)
+        // pdb file. (Dev10 
         var pdbPath = Path.ChangeExtension(f.FullName, ".pdb");
         if (File.Exists(pdbPath)) {
             DiskBuildResultCache.TryDeleteFile(new FileInfo(pdbPath));
@@ -456,7 +456,10 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
         // as it will not be used in future.
         if (HostingEnvironment.ShutdownInitiated) {
             BuildResultCompiledAssemblyBase compiledResult = result as BuildResultCompiledAssemblyBase;
-            if (compiledResult != null)
+
+            // DevDiv2 880034: check if ResultAssembly is null before calling GetName().
+            // UsesExistingAssembly could be true in updatable compilation scenarios.
+            if (compiledResult != null && compiledResult.ResultAssembly != null && !compiledResult.UsesExistingAssembly)
                 MarkAssemblyAndRelatedFilesForDeletion(compiledResult.ResultAssembly.GetName().Name);
             return;
         }

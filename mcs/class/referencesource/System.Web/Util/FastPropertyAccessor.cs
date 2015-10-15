@@ -269,8 +269,8 @@ namespace System.Web.Util {
                 }
                 declaringType = baseCheckMethodInfo.GetBaseDefinition().DeclaringType;
 
-                // DevDiv Bug 27734
-                // Ignore the declaring type if it's generic
+                // DevDiv 
+
                 if (declaringType.IsGenericType)
                     declaringType = type;
 
@@ -379,8 +379,8 @@ namespace System.Web.Util {
                 return accessor.GetProperty(target);
             }
             else {
-                // Dev10 bug 491386 - avoid CLR code path that causes an exception when designer uses two
-                // assemblies of the same name at different locations
+                // Dev10 
+
                 FieldInfo fieldInfo = null;
                 PropertyInfo propInfo = null;
                 Type declaringType;
@@ -419,8 +419,8 @@ namespace System.Web.Util {
                 accessor.SetProperty(target, val);
             }
             else {
-                // Dev10 bug 491386 - avoid CLR code path that causes an exception when designer uses two
-                // assemblies of the same name at different locations
+                // Dev10 
+
                 FieldInfo fieldInfo = null;
                 PropertyInfo propInfo = null;
                 Type declaringType = null;

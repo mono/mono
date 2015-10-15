@@ -185,7 +185,7 @@ namespace System.Workflow.Activities
 
                     if (ContainsState(childState, stateQualifiedName))
                     {
-                        StateActivity dynamicChildState = (StateActivity)state.GetDynamicActivity(childState.QualifiedName);
+                        StateActivity dynamicChildState = (StateActivity)state.GetDynamicActivity(childState);
                         if (dynamicChildState == null)
                             return null;
                         state = dynamicChildState;

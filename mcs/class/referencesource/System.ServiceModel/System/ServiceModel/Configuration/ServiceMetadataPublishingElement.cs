@@ -95,7 +95,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ServiceMetadataPublishingElement source = (ServiceMetadataPublishingElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() check for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() check for 'from' being null
             this.HttpGetEnabled = source.HttpGetEnabled;
             this.HttpGetUrl = source.HttpGetUrl;
             this.HttpsGetEnabled = source.HttpsGetEnabled;

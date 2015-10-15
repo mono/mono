@@ -7,7 +7,7 @@
 //
 // TraceHelpers.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Common routines used to trace information about execution, the state of things, etc.
 //

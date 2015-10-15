@@ -61,7 +61,7 @@ namespace System.Web.Configuration {
             return (o != null && StringUtil.EqualsIgnoreCase(Name, o.Name) && Type == o.Type);
         }
         public override int GetHashCode() {
-            return HashCodeCombiner.CombineHashCodes(Name.ToLower(CultureInfo.InvariantCulture).GetHashCode(),
+            return HashCodeCombiner.CombineHashCodes(StringUtil.GetNonRandomizedHashCode(Name.ToLower(CultureInfo.InvariantCulture)),
                                                      Type.GetHashCode());
         }
 

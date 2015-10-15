@@ -2,8 +2,8 @@
 // <copyright file="TdsEnums.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -57,6 +57,7 @@ namespace System.Data.SqlClient {
 
         // network function string contants
         public const string INIT_SSPI_PACKAGE       = "InitSSPIPackage";
+        public const string INIT_ADAL_PACKAGE       = "InitADALPackage";
         public const string INIT_SESSION            = "InitSession";
         public const string CONNECTION_GET_SVR_USER = "ConnectionGetSvrUser";
         public const string GEN_CLIENT_CONTEXT      = "GenClientContext";
@@ -104,7 +105,7 @@ namespace System.Data.SqlClient {
         public const byte MT_BINARY   = 5;    // Unformatted binary response data (UNUSED)
         public const byte MT_ATTN     = 6;    // Attention (break) signal
         public const byte MT_BULK     = 7;    // Bulk load data
-        public const byte MT_OPEN     = 8;    // Set up subchannel   (UNUSED)
+        public const byte MT_FEDAUTH  = 8;    // Authentication token for federated authentication
         public const byte MT_CLOSE    = 9;    // Close subchannel   (UNUSED)
         public const byte MT_ERROR    = 10;   // Protocol error detected
         public const byte MT_ACK      = 11;   // Protocol acknowledgement   (UNUSED)
@@ -156,6 +157,7 @@ namespace System.Data.SqlClient {
         public const byte SQLCOLMETADATA  = 0x81;    // Column metadata including name
         public const byte SQLALTMETADATA  = 0x88;    // Alt column metadata including name
         public const byte SQLSSPI         = 0xed;    // SSPI data
+        public const byte SQLFEDAUTHINFO  = 0xee;    // Info for client to generate fed auth token
 
         // Environment change notification streams
         // TYPE on TDS ENVCHANGE token stream (from sql\ntdbms\include\odsapi.h)
@@ -196,13 +198,39 @@ namespace System.Data.SqlClient {
         // Feature Extension
         public const byte FEATUREEXT_TERMINATOR = 0xFF;
         public const byte FEATUREEXT_SRECOVERY  = 0x01;
+        public const byte FEATUREEXT_FEDAUTH    = 0x02;
+        public const byte FEATUREEXT_TCE        = 0x04;
 
         [Flags]
         public enum FeatureExtension:uint {
             None=0,
             SessionRecovery=1,
+            FedAuth=2,
+            Tce=4,
         }
 
+        public const byte FEDAUTHLIB_LIVEID        = 0X00;
+        public const byte FEDAUTHLIB_SECURITYTOKEN = 0x01;
+        public const byte FEDAUTHLIB_ADAL          = 0x02;
+        public const byte FEDAUTHLIB_RESERVED      = 0X7F;
+
+        public enum FedAuthLibrary:byte {
+            LiveId=FEDAUTHLIB_LIVEID,
+            SecurityToken=FEDAUTHLIB_SECURITYTOKEN,
+            ADAL=FEDAUTHLIB_ADAL,
+            Default=FEDAUTHLIB_RESERVED
+        }
+
+        public const byte ADALWORKFLOW_ACTIVEDIRECTORYPASSWORD = 0x01;
+        public const byte ADALWORKFLOW_ACTIVEDIRECTORYINTEGRATED = 0x02;
+
+        public enum ActiveDirectoryWorkflow : byte {
+            Password=ADALWORKFLOW_ACTIVEDIRECTORYPASSWORD,
+            Integrated=ADALWORKFLOW_ACTIVEDIRECTORYINTEGRATED,
+        }
+
+        // The string used for username in the error message when Authentication = Active Directory Integrated with FedAuth is used, if authentication fails.
+        public const string NTAUTHORITYANONYMOUSLOGON = @"NT Authority\Anonymous Logon";
 
         //    Loginrec defines
         public const byte   MAX_LOG_NAME       = 30;              // TDS 4.2 login rec max name length
@@ -313,6 +341,7 @@ namespace System.Data.SqlClient {
         //   second byte
         public const byte ClrFixedLen = 0x1;    // Fixed length CLR type
         public const byte IsColumnSet = 0x4;    // Column is an XML representation of an aggregation of other columns
+        public const byte IsEncrypted = 0x8;    // Column is encrypted using TCE
 
         // null values
         public const uint VARLONGNULL = 0xffffffff; // null value for text and image types
@@ -478,7 +507,7 @@ namespace System.Data.SqlClient {
         // RPC parameter class
         public const byte RPC_PARAM_BYREF         = 0x1;
         public const byte RPC_PARAM_DEFAULT       = 0x2;
-        public const byte RPC_PARAM_IS_LOB_COOKIE = 0x8;
+        public const byte RPC_PARAM_ENCRYPTED     = 0x8;
 
         // SQL parameter list text
         public const string PARAM_OUTPUT = "output";
@@ -511,7 +540,7 @@ namespace System.Data.SqlClient {
         public const int LOGON_FAILED     = 18456;
         public const int PASSWORD_EXPIRED = 18488;
         public const int IMPERSONATION_FAILED = 1346;
-		public const int P_TOKENTOOLONG = 103;
+        public const int P_TOKENTOOLONG = 103;
 
         // SNI\Win32 error values
         // NOTE: these are simply windows system error codes, not SNI specific
@@ -862,10 +891,66 @@ namespace System.Data.SqlClient {
             1,
         };
 
+        internal const int MAX_TIME_SCALE = 7; // Maximum scale for time-related types
+        internal const int MAX_TIME_LENGTH = 5; // Maximum length for time
+        internal const int MAX_DATETIME2_LENGTH = 8; // Maximum length for datetime2
         internal const int WHIDBEY_DATE_LENGTH = 10;
         internal static readonly int[] WHIDBEY_TIME_LENGTH = { 8, 10, 11, 12, 13, 14, 15, 16 };
         internal static readonly int[] WHIDBEY_DATETIME2_LENGTH = { 19, 21, 22, 23, 24, 25, 26, 27 };
         internal static readonly int[] WHIDBEY_DATETIMEOFFSET_LENGTH = {26, 28, 29, 30, 31, 32, 33, 34 };
+
+        internal enum FedAuthInfoId:byte {
+            Stsurl = 0x01, // FedAuthInfoData is token endpoint URL from which to acquire fed auth token
+            Spn    = 0x02, // FedAuthInfoData is the SPN to use for acquiring fed auth token
+        }
+
+        // TCE Related constants
+        internal const byte MAX_SUPPORTED_TCE_VERSION = 0x01; // max version
+        internal const ushort MAX_TCE_CIPHERINFO_SIZE = 2048; // max size of cipherinfo blob
+        internal const long MAX_TCE_CIPHERTEXT_SIZE = 2147483648; // max size of encrypted blob- currently 2GB.
+        internal const byte CustomCipherAlgorithmId = 0; // Id used for custom encryption algorithm.
+
+        internal const int AES_256_CBC = 1;
+        internal const int AEAD_AES_256_CBC_HMAC_SHA256 = 2;
+
+        // TCE Param names for exec handling
+        internal const string TCE_PARAM_CIPHERTEXT = "cipherText";
+        internal const string TCE_PARAM_CIPHER_ALGORITHM_ID="cipherAlgorithmId";
+        internal const string TCE_PARAM_COLUMNENCRYPTION_KEY="columnEncryptionKey";
+        internal const string TCE_PARAM_ENCRYPTION_ALGORITHM="encryptionAlgorithm";
+        internal const string TCE_PARAM_ENCRYPTIONTYPE = "encryptionType";
+        internal const string TCE_PARAM_ENCRYPTIONKEY = "encryptionKey";
+        internal const string TCE_PARAM_MASTERKEY_PATH = "masterKeyPath";
+        internal const string TCE_PARAM_ENCRYPTED_CEK = "encryptedColumnEncryptionKey";
+        internal const string TCE_PARAM_CLIENT_KEYSTORE_PROVIDERS="clientKeyStoreProviders";
+        internal const string TCE_PARAM_FORCE_COLUMN_ENCRYPTION="ForceColumnEncryption(true)";
+    }
+
+    internal enum ParsingErrorState {
+        Undefined = 0,
+        FedAuthInfoLengthTooShortForCountOfInfoIds = 1,
+        FedAuthInfoLengthTooShortForData = 2,
+        FedAuthInfoFailedToReadCountOfInfoIds = 3,
+        FedAuthInfoFailedToReadTokenStream = 4,
+        FedAuthInfoInvalidOffset = 5,
+        FedAuthInfoFailedToReadData = 6,
+        FedAuthInfoDataNotUnicode = 7,
+        FedAuthInfoDoesNotContainStsurlAndSpn = 8,
+        FedAuthInfoNotReceived = 9,
+        FedAuthNotAcknowledged = 10,
+        FedAuthFeatureAckContainsExtraData = 11,
+        FedAuthFeatureAckUnknownLibraryType = 12,
+        UnrequestedFeatureAckReceived = 13,
+        UnknownFeatureAck = 14,
+        InvalidTdsTokenReceived = 15,
+        SessionStateLengthTooShort = 16,
+        SessionStateInvalidStatus = 17,
+        CorruptedTdsStream = 18,
+        ProcessSniPacketFailed = 19,
+        FedAuthRequiredPreLoginResponseInvalidValue = 20,
+        TceUnknownVersion = 21,
+        TceInvalidVersion = 22,
+        TceInvalidOrdinalIntoCipherInfoTable = 23,
     }
 
     internal enum SniContext {
@@ -884,5 +969,89 @@ namespace System.Data.SqlClient {
         Snix_Close,
         Snix_SendRows,
     }
-}
 
+    /// <summary>
+    /// Column Encryption Setting to be used for the SqlConnection.
+    /// </summary>
+    public enum SqlConnectionColumnEncryptionSetting {
+        /// <summary>
+        /// Disables column encryption by default on all commands on this connection.
+        /// </summary>
+        Disabled = 0,
+
+        /// <summary>
+        /// Enables column encryption by default on all commands on this connection.
+        /// </summary>
+        Enabled,
+    }
+
+    /// <summary>
+    /// Column Encryption Setting to be used for the SqlCommand.
+    /// </summary>
+    public enum SqlCommandColumnEncryptionSetting {
+        /// <summary>
+        /// if “Column Encryption Setting=Enabled” in the connection string, use Enabled. Otherwise, maps to Disabled.
+        /// </summary>
+        UseConnectionSetting = 0,
+
+        /// <summary>
+        /// Enables TCE for the command. Overrides the connection level setting for this command.
+        /// </summary>
+        Enabled,
+
+        /// <summary>
+        /// Parameters will not be encrypted, only the ResultSet will be decrypted. This is an optimization for queries that do not pass any encrypted input parameters.
+        /// Overrides the connection level setting for this command.
+        /// </summary>
+        ResultSetOnly,
+
+        /// <summary>
+        /// Disables TCE for the command.Overrides the connection level setting for this command.
+        /// </summary>
+        Disabled,
+    }
+
+    public enum SqlAuthenticationMethod {
+        NotSpecified = 0,
+        SqlPassword,
+        ActiveDirectoryPassword,
+        ActiveDirectoryIntegrated,
+    }
+
+    internal class ActiveDirectoryAuthentication
+    {
+        internal const string AdoClientId = "4d079b4c-cab7-4b7c-a115-8fd51b6f8239";
+        internal const string AdalGetAccessTokenFunctionName = "ADALGetAccessToken";
+        internal const int GetAccessTokenSuccess = 0;
+        internal const int GetAccessTokenInvalidGrant = 1;
+        internal const int GetAccessTokenTansisentError = 2;
+        internal const int GetAccessTokenOtherError = 3;
+    }
+
+    // Fields in the first resultset of "sp_describe_parameter_encryption".
+    // We expect the server to return the fields in the resultset in the same order as mentioned below.
+    // If the server changes the below order, then transparent parameter encryption will break.
+    internal enum DescribeParameterEncryptionResultSet1 {
+        KeyOrdinal = 0,
+        DbId,
+        KeyId,
+        KeyVersion,
+        KeyMdVersion,
+        EncryptedKey,
+        ProviderName,
+        KeyPath,
+        KeyEncryptionAlgorithm,
+    }
+
+    // Fields in the second resultset of "sp_describe_parameter_encryption"
+    // We expect the server to return the fields in the resultset in the same order as mentioned below.
+    // If the server changes the below order, then transparent parameter encryption will break.
+    internal enum DescribeParameterEncryptionResultSet2 {
+        ParameterOrdinal = 0,
+        ParameterName,
+        ColumnEncryptionAlgorithm,
+        ColumnEncrytionType,
+        ColumnEncryptionKeyOrdinal,
+        NormalizationRuleVersion,
+    }
+}

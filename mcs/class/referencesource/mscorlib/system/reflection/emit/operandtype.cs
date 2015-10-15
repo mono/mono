@@ -7,7 +7,7 @@
 **
 **Class: OperandType
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>WESU</OWNER>
 **
 **Purpose: Exposes OperandType Attribute of IL .
 **

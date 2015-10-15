@@ -1060,8 +1060,8 @@ namespace System.Web.UI {
             // PERF: Use field directly to avoid creating List if not already created
             if (_scripts != null) {
                 foreach (ScriptReference scriptReference in _scripts) {
-                    // Fix for Dev11 Bug # 406984 : When user explicitly adds the MicrosoftAjax.[debug].js OR MicrosoftAjaxCore.[debug].js, we want to mark them as defining Sys so that
-                    // we can register the FrameworkLoadedCheck scripts after them.
+                    // Fix for Dev11 
+
                     if (scriptReference.IsAjaxFrameworkScript(this) && (scriptReference.Name.StartsWith("MicrosoftAjax.", StringComparison.OrdinalIgnoreCase) || scriptReference.Name.StartsWith("MicrosoftAjaxCore.", StringComparison.OrdinalIgnoreCase))) {
                         scriptReference.IsDefiningSys = true;
                         _scriptPathsDefiningSys.Add(scriptReference.EffectivePath);

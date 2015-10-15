@@ -192,7 +192,6 @@ namespace System.Web.UI {
         ///    </para>
         /// </devdoc>        
         public virtual int Count {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return _size;
             }
@@ -363,14 +362,12 @@ namespace System.Web.UI {
             }
 
             object IEnumerator.Current {
-                [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
                 get {
                     return Current;
                 }
             }
 
             public Control Current {
-                [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
                 get {
                     if (index == -1)
                         throw new InvalidOperationException(SR.GetString(SR.ListEnumCurrentOutOfRange));

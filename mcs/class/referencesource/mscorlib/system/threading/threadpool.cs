@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: ThreadPool
@@ -131,7 +131,7 @@ namespace System.Threading
                             }
                             else if (i == array.Length - 1)
                             {
-                                // Must resize. If we ----d and lost, we start over again.
+                                // Must resize. If we raced and lost, we start over again.
                                 if (array != m_array)
                                     continue;
 
@@ -579,9 +579,7 @@ namespace System.Threading
         // The head and tail of the queue.  We enqueue to the head, and dequeue from the tail.
         internal volatile QueueSegment queueHead;
         internal volatile QueueSegment queueTail;
-#if !FEATURE_CORECLR
         internal bool loggingEnabled;
-#endif
 
         internal static SparseArray<WorkStealingQueue> allThreadQueues = new SparseArray<WorkStealingQueue>(16); //
 
@@ -590,7 +588,7 @@ namespace System.Threading
         public ThreadPoolWorkQueue()
         {
             queueTail = queueHead = new QueueSegment();
-#if !MONO && !FEATURE_CORECLR
+#if !MONO
             loggingEnabled = FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.ThreadPool|FrameworkEventSource.Keywords.ThreadTransfer);
 #endif
         }
@@ -652,11 +650,10 @@ namespace System.Threading
             if (!forceGlobal)
                 tl = ThreadPoolWorkQueueThreadLocals.threadLocals;
 
-#if !MONO && !FEATURE_CORECLR
+#if !MONO
             if (loggingEnabled)
                 System.Diagnostics.Tracing.FrameworkEventSource.Log.ThreadPoolEnqueueWorkObject(callback);
-#endif
-            
+#endif            
             if (null != tl)
             {
                 tl.workStealingQueue.LocalPush(callback);
@@ -764,11 +761,10 @@ namespace System.Threading
             //
             workQueue.MarkThreadRequestSatisfied();
 
-#if !MONO && !FEATURE_CORECLR
+#if !MONO
             // Has the desire for logging changed since the last time we entered?
             workQueue.loggingEnabled = FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.ThreadPool|FrameworkEventSource.Keywords.ThreadTransfer);
 #endif
-
             //
             // Assume that we're going to need another thread if this one returns to the VM.  We'll set this to 
             // false later, but only if we're absolutely certain that the queue is empty.
@@ -826,11 +822,10 @@ namespace System.Threading
                     }
                     else
                     {
-#if !MONO && !FEATURE_CORECLR
+#if !MONO
                         if (workQueue.loggingEnabled)
                             System.Diagnostics.Tracing.FrameworkEventSource.Log.ThreadPoolDequeueWorkObject(workItem);
 #endif
-
                         //
                         // Execute the workitem outside of any finally blocks, so that it can be aborted if needed.
                         //

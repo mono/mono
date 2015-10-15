@@ -432,17 +432,14 @@ namespace System.Web {
             return v1.Combine(v2);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator == (VirtualPath v1, VirtualPath v2) {
             return VirtualPath.Equals(v1, v2);
         }
         
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator != (VirtualPath v1, VirtualPath v2) {
             return !VirtualPath.Equals(v1, v2);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool Equals(VirtualPath v1, VirtualPath v2) {
 
             // Check if it's the same object
@@ -457,7 +454,6 @@ namespace System.Web {
             return EqualsHelper(v1, v2);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override bool Equals(object value) {
 
             if (value == null)
@@ -472,7 +468,6 @@ namespace System.Web {
             return EqualsHelper(virtualPath, this);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         private static bool EqualsHelper(VirtualPath v1, VirtualPath v2) {
             return StringComparer.InvariantCultureIgnoreCase.Compare(
                 v1.VirtualPathString, v2.VirtualPathString) == 0;

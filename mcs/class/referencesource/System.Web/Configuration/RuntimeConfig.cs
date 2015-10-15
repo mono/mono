@@ -59,7 +59,6 @@ namespace System.Web.Configuration {
         // For config implemented with IConfigurationSectionHandler, this 
         // may return null, non-null, or throw an exception.
         //
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         static internal RuntimeConfig GetConfig(HttpContext context) {
             if (!HttpConfigurationSystem.UseHttpConfigurationSystem)  {
                 return GetClientRuntimeConfig();
@@ -359,7 +358,6 @@ namespace System.Web.Configuration {
         }
 
         internal PagesSection Pages {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return (PagesSection) GetSection("system.web/pages", typeof(PagesSection), ResultsIndex.Pages);
             }

@@ -39,6 +39,8 @@ namespace System.Web {
         internal const int MAX_FREE_CHAR_BUFFERS      = 64;         // keep this number of unused buffers
         internal const int MAX_BYTES_TO_COPY          = 128;        // copy results of char conversion vs using recycleable buffers
         internal const int MAX_RESOURCE_BYTES_TO_COPY = 4*1024;       // resource strings below this size are copied to buffers
+        internal const int INT_BUFFER_SIZE            = 128;        // default size for int[] buffers
+        internal const int INTPTR_BUFFER_SIZE         = 128;        // default size for IntPtr[] buffers
     }
 
     /*
@@ -85,11 +87,6 @@ namespace System.Web {
      */
     internal sealed class HttpResponseBufferElement : HttpBaseMemoryResponseBufferElement, IHttpResponseElement {
         private byte[] _data;
-
-        private static UbyteBufferAllocator s_Allocator =
-        new UbyteBufferAllocator(BufferingParams.OUTPUT_BUFFER_SIZE,
-                                 BufferingParams.MAX_FREE_OUTPUT_BUFFERS);
-
 
         /*
          * Constructor that accepts the data buffer and holds on to it
@@ -720,7 +717,7 @@ namespace System.Web {
                 return;
             }
 
-            // Dev10 Bug 507392: Do as Stream does.
+            // Dev10 
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
             if (offset < 0)
@@ -798,9 +795,8 @@ namespace System.Web {
         private int _charBufferFree;
         private ArrayList _substElements = null;
 
-        private static CharBufferAllocator s_Allocator =
-        new CharBufferAllocator(BufferingParams.CHAR_BUFFER_SIZE,
-                                BufferingParams.MAX_FREE_CHAR_BUFFERS);
+        static IAllocatorProvider s_DefaultAllocator = null;
+        IAllocatorProvider _allocator = null; // Use only via HttpWriter.AllocationProvider to ensure proper fallback
 
         // cached data from the response
         // can be invalidated via UpdateResponseXXX methods
@@ -824,9 +820,10 @@ namespace System.Web {
             _buffers = new ArrayList();
             _lastBuffer = null;
 
-            _charBuffer = (char[])s_Allocator.GetBuffer();
-            _charBufferLength = _charBuffer.Length;
-            _charBufferFree = _charBufferLength;
+            // Setup the buffer on demand using CharBuffer property
+            _charBuffer = null;
+            _charBufferLength = 0;
+            _charBufferFree = 0;
 
             UpdateResponseBuffering();
             
@@ -933,7 +930,7 @@ namespace System.Web {
             // recycle char buffers
 
             if (_charBuffer != null) {
-                s_Allocator.ReuseBuffer(_charBuffer);
+                AllocatorProvider.CharBufferAllocator.ReuseBuffer(_charBuffer);
                 _charBuffer = null;
             }
 
@@ -942,11 +939,37 @@ namespace System.Web {
         }
 
         internal static void ReleaseAllPooledBuffers() {
-            s_Allocator.ReleaseAllBuffers();
+            if (s_DefaultAllocator != null) {
+                s_DefaultAllocator.TrimMemory();
+            }
         }
 
         internal void ClearSubstitutionBlocks() {
             _substElements = null;
+        }
+
+        internal IAllocatorProvider AllocatorProvider {
+            private get {
+                if (_allocator == null) {
+                    if (s_DefaultAllocator == null) { 
+                        // Create default static allocator
+                        IBufferAllocator charAllocator = new CharBufferAllocator(BufferingParams.CHAR_BUFFER_SIZE, BufferingParams.MAX_FREE_CHAR_BUFFERS);
+
+                        AllocatorProvider alloc = new AllocatorProvider();
+                        alloc.CharBufferAllocator = new BufferAllocatorWrapper<char>(charAllocator);
+
+                        Interlocked.CompareExchange(ref s_DefaultAllocator, alloc, null);
+                    }
+
+                    _allocator = s_DefaultAllocator;
+                }
+
+                return _allocator;
+            }
+
+            set {
+                _allocator = value;
+            }
         }
 
         private void RecycleBufferElements() {
@@ -968,6 +991,19 @@ namespace System.Web {
             _charBufferFree = _charBufferLength;
         }
 
+        private char[] CharBuffer { 
+            get {
+                if (_charBuffer == null) {
+                    _charBuffer = AllocatorProvider.CharBufferAllocator.GetBuffer();
+
+                    _charBufferLength = _charBuffer.Length;
+                    _charBufferFree = _charBufferLength;
+                }
+
+                return _charBuffer;
+            }
+        }
+
         private void FlushCharBuffer(bool flushEncoder) {
             int numChars = _charBufferLength - _charBufferFree;
 
@@ -986,7 +1022,7 @@ namespace System.Web {
             if (estByteSize <= BufferingParams.MAX_BYTES_TO_COPY || !_responseBufferingOn) {
                 // small size -- allocate intermediate buffer and copy into the output buffer
                 byte[] byteBuffer = new byte[estByteSize];
-                int realByteSize = _responseEncoder.GetBytes(_charBuffer, 0, numChars,
+                int realByteSize = _responseEncoder.GetBytes(CharBuffer, 0, numChars,
                                                              byteBuffer, 0, flushEncoder);
                 BufferData(byteBuffer, 0, realByteSize, false);
             }
@@ -1004,7 +1040,7 @@ namespace System.Web {
 
                 // byte buffers must be long enough to keep everything in char buffer
                 Debug.Assert(free >= estByteSize);
-                _lastBuffer.AppendEncodedChars(_charBuffer, 0, numChars, _responseEncoder, flushEncoder);
+                _lastBuffer.AppendEncodedChars(CharBuffer, 0, numChars, _responseEncoder, flushEncoder);
             }
 
             _charBufferFree = _charBufferLength;
@@ -1397,7 +1433,7 @@ namespace System.Web {
             _lastBuffer = null;
 
             // no content to filter
-            // Allow the filter to be closed (Dev10 Bug 550168).
+            // Allow the filter to be closed (Dev10 
             if (_buffers.Count == 0 && !finalFiltering)
                 return;
 
@@ -1561,11 +1597,13 @@ namespace System.Web {
                 return;
             }
 
+            char[] buffer = CharBuffer;
+
             if (_charBufferFree == 0) {
                 FlushCharBuffer(false);
             }
 
-            _charBuffer[_charBufferLength - _charBufferFree] = ch;
+            buffer[_charBufferLength - _charBufferFree] = ch;
             _charBufferFree--;
 
             if (!_responseBufferingOn) {
@@ -1583,7 +1621,7 @@ namespace System.Web {
                 return;
             }
 
-            // Dev10 Bug 507392: Do as TextWriter does.
+            // Dev10 
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
             if (index < 0)
@@ -1595,13 +1633,15 @@ namespace System.Web {
             if (count == 0)
                 return;
 
+            char[] charBuffer = CharBuffer;
+
             while (count > 0) {
                 if (_charBufferFree == 0) {
                     FlushCharBuffer(false);
                 }
 
                 int n = (count < _charBufferFree) ? count : _charBufferFree;
-                System.Array.Copy(buffer, index, _charBuffer, _charBufferLength - _charBufferFree, n);
+                System.Array.Copy(buffer, index, charBuffer, _charBufferLength - _charBufferFree, n);
                 _charBufferFree -= n;
                 index += n;
                 count -= n;
@@ -1623,13 +1663,15 @@ namespace System.Web {
             if (s == null)
                 return;
 
+            char[] buffer = CharBuffer;
+
             if (s.Length == 0) {
                 // Ensure flush if string is empty
             }
             else if (s.Length < _charBufferFree) {
                 // fast path - 99% of string writes will not overrun the buffer
                 // avoid redundant arg checking in string.CopyTo
-                StringUtil.UnsafeStringCopy(s, 0, _charBuffer, _charBufferLength - _charBufferFree, s.Length);
+                StringUtil.UnsafeStringCopy(s, 0, buffer, _charBufferLength - _charBufferFree, s.Length);
                 _charBufferFree -= s.Length;
             }
             else {
@@ -1645,7 +1687,7 @@ namespace System.Web {
                     n = (count < _charBufferFree) ? count : _charBufferFree;
 
                     // avoid redundant arg checking in string.CopyTo
-                    StringUtil.UnsafeStringCopy(s, index, _charBuffer, _charBufferLength - _charBufferFree, n);
+                    StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
 
                     _charBufferFree -= n;
                     index += n;
@@ -1682,13 +1724,15 @@ namespace System.Web {
                 return;
             }
 
+            char[] buffer = CharBuffer;
+
             if (count == 0) {
                 // Ensure flush if string is empty
             }
             else if (count < _charBufferFree) {
                 // fast path - 99% of string writes will not overrun the buffer
                 // avoid redundant arg checking in string.CopyTo
-                StringUtil.UnsafeStringCopy(s, index, _charBuffer, _charBufferLength - _charBufferFree, count);
+                StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, count);
                 _charBufferFree -= count;
             }
             else {
@@ -1702,7 +1746,7 @@ namespace System.Web {
                     n = (count < _charBufferFree) ? count : _charBufferFree;
     
                     // avoid redundant arg checking in string.CopyTo
-                    StringUtil.UnsafeStringCopy(s, index, _charBuffer, _charBufferLength - _charBufferFree, n);
+                    StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
 
                     _charBufferFree -= n;
                     index += n;
@@ -1756,12 +1800,14 @@ namespace System.Web {
             // It turns out this is way more efficient than the TextWriter version of
             // WriteLine which ends up calling Write with a 2 char array
 
+            char[] buffer = CharBuffer;
+
             if (_charBufferFree < 2)
                 FlushCharBuffer(false);
 
             int pos = _charBufferLength - _charBufferFree;
-            _charBuffer[pos] = '\r';
-            _charBuffer[pos + 1] = '\n';
+            buffer[pos] = '\r';
+            buffer[pos + 1] = '\n';
             _charBufferFree -= 2;
 
             if (!_responseBufferingOn)

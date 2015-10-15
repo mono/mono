@@ -409,7 +409,7 @@ namespace System.Web.UI.MobileControls.Adapters.XhtmlAdapters
             Style labelStyle = Control.LabelStyle;
             Color foreColor = (Color)style[Style.ForeColorKey, true];
 
-            // Note: table width is not supported in DTD (the text of the rec says it's supported; a bug in the rec).
+            // Note: table width is not supported in DTD (the text of the rec says it's supported; a 
             ClearPendingBreakIfDeviceBreaksOnBlockLevel(writer); // we are writing a block level element in all cases.
             ConditionalEnterLayout(writer, Style);
             RenderOpeningListTag(writer, "table");

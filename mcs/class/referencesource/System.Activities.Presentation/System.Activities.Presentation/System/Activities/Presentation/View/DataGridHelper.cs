@@ -185,7 +185,7 @@ namespace System.Activities.Presentation.View
             e.Handled = true;
         }
 
-        //Hook KeyDown event on DataGrid row to workaround DataGrid bug with customized NewItemPlaceHolder        
+        //Hook KeyDown event on DataGrid row to workaround DataGrid 
         void OnDataGridRowKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Handled)
@@ -519,8 +519,8 @@ namespace System.Activities.Presentation.View
 
         void OnAddNewRowGotFocus(object sender, RoutedEventArgs e)
         {
-            //When tab over the last row, the last column won't get commit by default, which is a bug of DataGrid with
-            //customized new place holder template. Call commit explicitly here to workaround this issue
+            //When tab over the last row, the last column won't get commit by default, which is a 
+
             this.CommitDataGrid();
             this.dataGrid.SelectedItem = null;
         }

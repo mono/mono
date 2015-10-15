@@ -7,7 +7,7 @@
 **
 **Class: StackBehaviour
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>WESU</OWNER>
 **
 **Purpose: Exposes StackBehaviour Attribute of IL .
 **

@@ -251,7 +251,7 @@ namespace System.Net {
             abortSocket6 = socket6;
 
             //
-            // Setup socket timeouts for [....] requests
+            // Setup socket timeouts for sync requests
             //
             // 
 
@@ -1224,8 +1224,8 @@ namespace System.Net {
         private void BindUsingDelegate(Socket socket, IPEndPoint remoteIPEndPoint)
         {
             IPEndPoint clonedRemoteIPEndPoint = new IPEndPoint(remoteIPEndPoint.Address, remoteIPEndPoint.Port);
-
             int retryCount;
+
             for (retryCount=0; retryCount<int.MaxValue; retryCount++) {
                 IPEndPoint localIPEndPoint = BindIPEndPointDelegate(this, clonedRemoteIPEndPoint, retryCount);
                 if (localIPEndPoint == null)
@@ -1243,6 +1243,52 @@ namespace System.Net {
                 throw new OverflowException("Reached maximum number of BindIPEndPointDelegate retries");
         }
 
+
+        /// <summary>
+        ///    <para>Set SocketOptionName.ReuseUnicastPort (SO_REUSE_UNICASTPORT) socket option on the outbound connection.</para>
+        /// </summary>
+        private void SetUnicastReusePortForSocket(Socket socket)
+        {
+            bool reusePort;
+         
+            if (ServicePointManager.ReusePortSupported.HasValue && !ServicePointManager.ReusePortSupported.Value) {
+                // We tried to set the socket option before and it isn't supported on this system.  So, we'll save some
+                // time by not trying again.
+                reusePort = false;
+            }
+            else {
+                reusePort = ServicePointManager.ReusePort;
+            }
+
+            if (reusePort) {
+                // This socket option is defined in Windows 10.0 or later.  It is also
+                // available if an LDR servicing patch has been installed on downlevel OS.
+                try {
+                    socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseUnicastPort, 0x1);
+                    if (Logging.On) { 
+                        Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_set_socketoption_reuseport, 
+                            "Socket", socket.GetHashCode()));
+                    }
+                    
+                    ServicePointManager.ReusePortSupported = true;
+                }
+                catch (SocketException) {
+                    // The socket option is not supported.  We will ignore this error and fail gracefully.
+                    if (Logging.On) { 
+                        Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_set_socketoption_reuseport_not_supported, 
+                            "Socket", socket.GetHashCode()));
+                    }                    
+                    ServicePointManager.ReusePortSupported = false;
+                }
+                catch (Exception ex) {
+                    // We want to preserve app compat and trap any other unusual exceptions.
+                    if (Logging.On) { 
+                        Logging.PrintInfo(Logging.Web, this, SR.GetString(SR.net_log_unexpected_exception, ex.Message));
+                    }
+                }
+            }            
+        }
+        
         /// <summary>
         ///    <para>This is the real logic for doing the Connect with IPv4 and IPv6 addresses, see ConnectSocket for details</para>
         /// </summary>
@@ -1327,8 +1373,14 @@ namespace System.Net {
                                 state.unsuccessfulAttempts = unsuccessfulAttempts;
                                 state.connectFailure = connectFailure;
 
-                                if (BindIPEndPointDelegate != null && !attemptSocket.IsBound) {
-                                    BindUsingDelegate(attemptSocket, remoteIPEndPoint);
+                                if (!attemptSocket.IsBound) {
+                                    if (ServicePointManager.ReusePort) {
+                                        SetUnicastReusePortForSocket(attemptSocket);
+                                    }
+                                
+                                    if (BindIPEndPointDelegate != null) {
+                                        BindUsingDelegate(attemptSocket, remoteIPEndPoint);
+                                    }
                                 }
 
                                 attemptSocket.UnsafeBeginConnect(remoteIPEndPoint, m_ConnectCallbackDelegate, state);
@@ -1336,8 +1388,14 @@ namespace System.Net {
                             }
                         }
                         else {
-                            if (BindIPEndPointDelegate != null && !attemptSocket.IsBound) {
-                                BindUsingDelegate(attemptSocket, remoteIPEndPoint);
+                            if (!attemptSocket.IsBound) {
+                                    if (ServicePointManager.ReusePort) {
+                                        SetUnicastReusePortForSocket(attemptSocket);
+                                    }
+                                
+                                if (BindIPEndPointDelegate != null) {
+                                    BindUsingDelegate(attemptSocket, remoteIPEndPoint);
+                                }
                             }
 
                             attemptSocket.InternalConnect(remoteIPEndPoint);

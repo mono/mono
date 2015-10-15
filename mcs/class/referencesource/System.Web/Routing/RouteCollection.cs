@@ -162,9 +162,9 @@
             // a read lock when the collection is empty.  Without this check, the UrlRoutingModule causes a 25%-50%
             // regression in HelloWorld RPS due to lock contention.  The UrlRoutingModule is now in the root web.config,
             // so we need to ensure the module is performant, especially when you are not using routing.
-            // This check does introduce a slight bug, in that if a writer clears the collection as part of a write
-            // transaction, a reader may see the collection when it's empty, which the read lock is supposed to prevent.
-            // We will investigate a better fix in Dev10 Beta2.  The Beta1 bug is Dev10 652986.
+            // This check does introduce a slight 
+
+
             if (Count == 0) {
                 return null;
             }

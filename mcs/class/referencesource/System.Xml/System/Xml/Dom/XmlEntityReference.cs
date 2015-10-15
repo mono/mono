@@ -2,7 +2,7 @@
 // <copyright file="XmlEntityReference.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 // <code>EntityReference</code> objects may be inserted into the structure 

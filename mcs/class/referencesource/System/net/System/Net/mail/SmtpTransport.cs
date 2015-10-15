@@ -235,7 +235,7 @@ namespace System.Net.Mail
             catch(Exception innerException){
                 throw new SmtpException(SR.GetString(SR.MailHostNotFound), innerException);
             }
-            GlobalLog.Leave("SmtpTransport#" + ValidationHelper.HashString(this) + "::BeginConnect [....] Completion");
+            GlobalLog.Leave("SmtpTransport#" + ValidationHelper.HashString(this) + "::BeginConnect Sync Completion");
             return result;
         }
 

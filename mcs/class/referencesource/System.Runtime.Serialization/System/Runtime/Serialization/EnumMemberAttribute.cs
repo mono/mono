@@ -8,7 +8,7 @@ namespace System.Runtime.Serialization
     public sealed class EnumMemberAttribute : Attribute
     {
         string value;
-        bool isValueSetExplicit;
+        bool isValueSetExplicitly;
 
         public EnumMemberAttribute()
         {
@@ -17,12 +17,12 @@ namespace System.Runtime.Serialization
         public string Value
         {
             get { return this.value; }
-            set { this.value = value; this.isValueSetExplicit = true; }
+            set { this.value = value; this.isValueSetExplicitly = true; }
         }
 
-        internal bool IsValueSetExplicit
+        public bool IsValueSetExplicitly
         {
-            get { return this.isValueSetExplicit; }
+            get { return this.isValueSetExplicitly; }
         }
     }
 }

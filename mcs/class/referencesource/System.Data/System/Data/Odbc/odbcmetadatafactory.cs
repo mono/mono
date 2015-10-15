@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //
 //------------------------------------------------------------------------------
 
@@ -579,7 +579,7 @@ namespace System.Data.Odbc{
             dataSourceInformation[DbMetaDataColumnNames.DataSourceProductVersionNormalized] = ServerVersionNormalized;
 
             
-            // values that are the same for all ODBC drivers. See bug 105333
+            // values that are the same for all ODBC drivers. See 
             dataSourceInformation[DbMetaDataColumnNames.ParameterMarkerFormat] =  "?";
             dataSourceInformation[DbMetaDataColumnNames.ParameterMarkerPattern] =  "\\?";
             dataSourceInformation[DbMetaDataColumnNames.ParameterNameMaxLength] = 0;

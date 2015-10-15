@@ -29,7 +29,7 @@ namespace System.Web.ModelBinding {
             //Following code taken from ControlParameter - code duplicated because ControlPrameter throws exceptions whereas we do not.
             string propertyName = PropertyName;
 
-            //Bug Fix # 280051 : First try to find it on dataControl as DataBoundControlHelper.FindControl only walks up starting from dataControl's NamingContainer.
+            //
             Control foundControl = dataControl.FindControl(controlId) ?? DataBoundControlHelper.FindControl(dataControl, controlId);
 
             if (foundControl == null) {

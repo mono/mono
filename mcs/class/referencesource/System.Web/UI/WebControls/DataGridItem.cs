@@ -71,7 +71,6 @@ namespace System.Web.UI.WebControls {
         /// <para>Indicates the type of the item in the <see cref='System.Web.UI.WebControls.DataGrid'/>.</para>
         /// </devdoc>
         public virtual ListItemType ItemType {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return itemType;
             }

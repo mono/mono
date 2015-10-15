@@ -214,7 +214,7 @@ namespace System.Text
                         Environment.GetResourceString("Arg_OutOfMemoryException"));
                 default:
                     throw new InvalidOperationException(
-                        Environment.GetRuntimeResourceString("UnknownError_Num", iError));
+                        Environment.GetResourceString("UnknownError_Num", iError));
             }
 
             return result;
@@ -249,7 +249,7 @@ namespace System.Text
 
                 // Who knows what happened?  Not us!
                 throw new InvalidOperationException(
-                    Environment.GetRuntimeResourceString("UnknownError_Num", iError));
+                    Environment.GetResourceString("UnknownError_Num", iError));
             }
 
             // Don't break for empty strings (only possible for D & KD and not really possible at that)
@@ -295,7 +295,7 @@ namespace System.Text
                     default:
                         // We shouldn't get here...
                         throw new InvalidOperationException(
-                            Environment.GetRuntimeResourceString("UnknownError_Num", iError));
+                            Environment.GetResourceString("UnknownError_Num", iError));
                 }
             }
 

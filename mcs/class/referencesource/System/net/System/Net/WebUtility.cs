@@ -343,7 +343,7 @@ namespace System.Net {
                 catch {
                     // DevDiv: 642025
                     // ASP.NET uses own ConfigurationManager which can throw in more situations than config errors (i.e. BadRequest)
-                    // It's ok to ---- the exception here and continue using the default value
+                    // It's ok to swallow the exception here and continue using the default value
                     // Try to initialize again the next time
                     return defaultDecodeConformance;
                 }
@@ -382,7 +382,7 @@ namespace System.Net {
                 catch {
                     // DevDiv: 642025
                     // ASP.NET uses own ConfigurationManager which can throw in more situations than config errors (i.e. BadRequest)
-                    // It's ok to ---- the exception here and continue using the default value
+                    // It's ok to swallow the exception here and continue using the default value
                     // Try to initialize again the next time
                     return defaultEncodeConformance;
                 }
@@ -431,8 +431,17 @@ namespace System.Net {
             }
 
             // nothing to expand?
-            if (cSpaces == 0 && cUnsafe == 0)
-                return bytes;
+            if (cSpaces == 0 && cUnsafe == 0) {
+                // DevDiv 912606: respect "offset" and "count"
+                if (0 == offset && bytes.Length == count) {
+                    return bytes;
+                }
+                else {
+                    var subarray = new byte[count];
+                    Buffer.BlockCopy(bytes, offset, subarray, 0, count);
+                    return subarray;
+                }
+            }
 
             // expand not 'safe' characters into %XX, spaces to +s
             byte[] expandedBytes = new byte[count + cUnsafe * 2];

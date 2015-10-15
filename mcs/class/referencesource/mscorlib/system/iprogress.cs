@@ -7,7 +7,7 @@
 **
 ** Class:  IProgress<T>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>stoub</OWNER>
 **
 **
 ** Purpose: Interface for providing progress updates.

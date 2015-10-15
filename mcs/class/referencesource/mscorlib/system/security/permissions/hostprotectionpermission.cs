@@ -5,7 +5,7 @@
 // ==--==
 // HostProtectionPermission.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 
 namespace System.Security.Permissions
@@ -22,7 +22,7 @@ namespace System.Security.Permissions
     using System.Globalization;
     using System.Diagnostics.Contracts;
 
-    // Keep this enum in [....] with tools\ngen\ngen.cpp and inc\mscoree.idl
+    // Keep this enum in sync with tools\ngen\ngen.cpp and inc\mscoree.idl
 
 [Serializable]
     [Flags]
@@ -47,6 +47,11 @@ namespace System.Security.Permissions
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly | AttributeTargets.Delegate, AllowMultiple = true, Inherited = false )] 
     [System.Runtime.InteropServices.ComVisible(true)]
     [Serializable]
+#if FEATURE_CORECLR
+    // This needs to be in the asmmeta to enable SecAnnotate to successfully resolve and run the security rules. It gets marked
+    // as internal by BCLRewriter so we are simply marking it as FriendAccessAllowed so it stays in the asmmeta.
+    [System.Runtime.CompilerServices.FriendAccessAllowedAttribute]
+#endif // FEATURE_CORECLR
 #pragma warning disable 618
     sealed public class HostProtectionAttribute : CodeAccessSecurityAttribute
 #pragma warning restore 618

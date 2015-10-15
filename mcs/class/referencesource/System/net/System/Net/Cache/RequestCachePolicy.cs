@@ -32,7 +32,7 @@ namespace System.Net.Cache {
         BypassCache         = 1,
         // Only serve requests from cache, an exception is thrown if not found
         CacheOnly           = 2,
-        // Serve from the cache, but will [....] up with the server if not found
+        // Serve from the cache, but will sync up with the server if not found
         CacheIfAvailable    = 3,
         // Attempt to revalidate cache with the server, reload if unable to
         Revalidate          = 4,
@@ -105,7 +105,7 @@ namespace System.Net.Cache {
         BypassCache         = 1,
         // Only serve requests from cache, an exception is thrown if not found
         CacheOnly           = 2,
-        // Serve from the cache, but will [....] up with the server if not found
+        // Serve from the cache, but will sync up with the server if not found
         CacheIfAvailable    = 3,
         // Validate cached data with the server even if it looks fresh
         Revalidate          = 4,

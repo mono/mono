@@ -136,7 +136,13 @@ namespace System.Net.Sockets {
         Type                    = 0x1008,           // get socket type
         /// <devdoc>
         ///    <para>
-        ///       Maximum queue length that can be specified by <see cref='System.Net.Sockets.Socket.Listen'/>.
+        ///       Get socket type.
+        ///    </para>
+        /// </devdoc>
+        ReuseUnicastPort        = 0x3007,           // defer ephemeral port allocation for outbound connections        
+        /// <devdoc>
+        ///    <para>
+        ///       Defer ephemeral port allocation for outbound connections.
         ///    </para>
         /// </devdoc>
         MaxConnections          = 0x7fffffff,       // Maximum queue length specifiable by listen.

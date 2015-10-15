@@ -7,7 +7,7 @@
 //
 // NullableLongMinMaxAggregationOperator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

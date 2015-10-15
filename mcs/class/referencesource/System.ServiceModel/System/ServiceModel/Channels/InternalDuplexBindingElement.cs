@@ -69,7 +69,7 @@ namespace System.ServiceModel.Channels
             }
             else
             {
-#pragma warning suppress 56506 // [....], context.RemainingBindingElements will never be null
+#pragma warning suppress 56506 // Microsoft, context.RemainingBindingElements will never be null
                 context.RemainingBindingElements.Clear();
             }
             LocalAddressProvider localAddressProvider = context.BindingParameters.Remove<LocalAddressProvider>();

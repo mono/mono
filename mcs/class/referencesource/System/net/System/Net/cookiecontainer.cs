@@ -4,9 +4,56 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+// Relevant cookie specs:
+//
+// PERSISTENT CLIENT STATE HTTP COOKIES (1996)
+// From <http://web.archive.org/web/20020803110822/http://wp.netscape.com/newsref/std/cookie_spec.html> 
+//
+// RFC2109 HTTP State Management Mechanism (February 1997)
+// From <http://tools.ietf.org/html/rfc2109> 
+//
+// RFC2965 HTTP State Management Mechanism (October 2000)
+// From <http://tools.ietf.org/html/rfc2965> 
+//
+// RFC6265 HTTP State Management Mechanism (April 2011)
+// From <http://tools.ietf.org/html/rfc6265> 
+//
+// The Version attribute of the cookie header is defined and used only in RFC2109 and RFC2965 cookie
+// specs and specifies Version=1. The Version attribute is not used in the  Netscape cookie spec
+// (considered as Version=0). Nor is it used in the most recent cookie spec, RFC6265, introduced in 2011.
+// RFC6265 deprecates all previous cookie specs including the Version attribute.
+//
+// Cookies without an explicit Domain attribute will only match a potential uri that matches the original
+// uri from where the cookie came from.
+//
+// For explicit Domain attribute in the cookie, the following rules apply:
+//
+// Version=0 (Netscape, RFC6265) allows the Domain attribute of the cookie to match any tail substring
+// of the host uri.
+//
+// Version=1 related cookie specs only allows the Domain attribute to match the host uri based on a
+// more restricted set of rules.
+//
+// According to RFC2109/RFC2965, the cookie will be rejected for matching if:
+// * The value for the Domain attribute contains no embedded dots or does not start with a dot.
+// * The value for the request-host does not domain-match the Domain attribute.
+// " The request-host is a FQDN (not IP address) and has the form HD, where D is the value of the Domain 
+//   attribute, and H is a string that contains one or more dots.
+//
+// Examples:
+// * A cookie from request-host y.x.foo.com for Domain=.foo.com would be rejected, because H is y.x 
+//   and contains a dot.
+// 
+// * A cookie from request-host x.foo.com for Domain=.foo.com would be accepted.
+//
+// * A cookie with Domain=.com or Domain=.com., will always be rejected, because there is no embedded dot.
+//
+// * A cookie with Domain=ajax.com will be rejected because the value for Domain does not begin with a dot.
+
 namespace System.Net {
 
     using System.Collections;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Globalization;
     using System.Net.NetworkInformation;
@@ -656,37 +703,31 @@ namespace System.Net {
             bool isSecure = (uri.Scheme == Uri.UriSchemeHttps);
             int  port = uri.Port;
             CookieCollection cookies = new CookieCollection();
-            ArrayList nameKeys = new ArrayList();
-            int firstCompatibleVersion0SpecKey = 0;
+
+            List<string> domainAttributeMatchAnyCookieVariant = new List<string>();
+            List<string> domainAttributeMatchOnlyCookieVariantPlain = new List<string>();
 
             string fqdnRemote = uri.Host;
+
+            // Add initial candidates to match Domain attribute of possible cookies.
+            // For these Domains, cookie can have any CookieVariant enum value.
+            domainAttributeMatchAnyCookieVariant.Add(fqdnRemote);
+            domainAttributeMatchAnyCookieVariant.Add("." + fqdnRemote);
 
             int dot = fqdnRemote.IndexOf('.');
             if (dot == -1) {
                 // DNS.resolve may return short names even for other inet domains ;-(
                 // We _don't_ know what the exact domain is, so try also grab short hostname cookies.
-                nameKeys.Add(fqdnRemote);
-                // add a preceding dot (null host)
-                nameKeys.Add("." + fqdnRemote);
                 // grab long name from the local domain
                 if (m_fqdnMyDomain != null && m_fqdnMyDomain.Length != 0) {
-                    nameKeys.Add(fqdnRemote + m_fqdnMyDomain);
+                    domainAttributeMatchAnyCookieVariant.Add(fqdnRemote + m_fqdnMyDomain);
                     // grab the local domain itself
-                    nameKeys.Add(m_fqdnMyDomain);
-                    firstCompatibleVersion0SpecKey = 3;
-                }
-                else {
-                    firstCompatibleVersion0SpecKey = 1;
+                    domainAttributeMatchAnyCookieVariant.Add(m_fqdnMyDomain);
                 }
             }
             else {
-                // grab the host itself
-                nameKeys.Add(fqdnRemote);
-                // add a preceding dot (null host)
-                nameKeys.Add("." + fqdnRemote);
                 // grab the host domain
-                nameKeys.Add(fqdnRemote.Substring(dot));
-                firstCompatibleVersion0SpecKey = 2;
+                domainAttributeMatchAnyCookieVariant.Add(fqdnRemote.Substring(dot));
                 // The following block is only for compatibility with Version0 spec.
                 // Still, we'll add only Plain-Variant cookies if found under below keys
                 if (fqdnRemote.Length > 2) {
@@ -698,20 +739,27 @@ namespace System.Net {
                     }
                     if (last != -1) {
                         while ((dot < last) && (dot = fqdnRemote.IndexOf('.', dot+1)) != -1) {
-                            nameKeys.Add(fqdnRemote.Substring(dot));
+                            // These candidates can only match CookieVariant.Plain cookies.
+                            domainAttributeMatchOnlyCookieVariantPlain.Add(fqdnRemote.Substring(dot));
                         }
                     }
                 }
             }
 
-            foreach (string key in nameKeys) {
+            BuildCookieCollectionFromDomainMatches(uri, isSecure, port, cookies, domainAttributeMatchAnyCookieVariant, false);
+            BuildCookieCollectionFromDomainMatches(uri, isSecure, port, cookies, domainAttributeMatchOnlyCookieVariantPlain, true);
+
+            return cookies;
+        }
+
+        private void BuildCookieCollectionFromDomainMatches(Uri uri, bool isSecure, int port, CookieCollection cookies, List<string> domainAttribute, bool matchOnlyPlainCookie) {
+            for (int i = 0; i < domainAttribute.Count; i++) {
                 bool found = false;
                 bool defaultAdded = false;
                 PathList pathList;
                 lock (m_domainTable.SyncRoot) {
-                    pathList = (PathList)m_domainTable[key];
+                    pathList = (PathList)m_domainTable[domainAttribute[i]];
                 }
-                --firstCompatibleVersion0SpecKey;
 
                 if (pathList == null) {
                     continue;
@@ -725,7 +773,7 @@ namespace System.Net {
 
                             CookieCollection cc = (CookieCollection)entry.Value;
                             cc.TimeStamp(CookieCollection.Stamp.Set);
-                            MergeUpdateCollections(cookies, cc, port, isSecure, (firstCompatibleVersion0SpecKey<0));
+                            MergeUpdateCollections(cookies, cc, port, isSecure, matchOnlyPlainCookie);
 
                             if (path == "/") {
                                 defaultAdded = true;
@@ -742,21 +790,19 @@ namespace System.Net {
 
                     if (cc != null) {
                         cc.TimeStamp(CookieCollection.Stamp.Set);
-                        MergeUpdateCollections(cookies, cc, port, isSecure, (firstCompatibleVersion0SpecKey<0));
+                        MergeUpdateCollections(cookies, cc, port, isSecure, matchOnlyPlainCookie);
                     }
                 }
 
                 // Remove unused domain
                 // (This is the only place that does domain removal)
-                if(pathList.Count == 0) {
-                    AddRemoveDomain(key, null);
+                if (pathList.Count == 0) {
+                    AddRemoveDomain(domainAttribute[i], null);
                 }
             }
-            return cookies;
         }
 
         private void MergeUpdateCollections(CookieCollection destination, CookieCollection source, int port, bool isSecure, bool isPlainOnly) {
-
             // we may change it
             lock (source) {
 

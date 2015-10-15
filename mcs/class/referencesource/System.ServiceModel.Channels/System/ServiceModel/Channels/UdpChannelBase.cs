@@ -481,7 +481,7 @@ namespace System.ServiceModel.Channels
                 // AsyncResult.AsyncCompletionWrapperCallback takes care of catching the exceptions for us. 
                 IAsyncResult result = this.channel.UdpOutputChannel.BeginClose(this.timeoutHelper.RemainingTime(), this.PrepareAsyncCompletion(completeCloseOutputChannelCallback), this);
                 
-                // SyncContinue calls CompleteCloseOutputChannel for us in [....] case. 
+                // SyncContinue calls CompleteCloseOutputChannel for us in sync case. 
                 return this.SyncContinue(result);
             }
 
@@ -490,7 +490,7 @@ namespace System.ServiceModel.Channels
                 // AsyncResult.AsyncCompletionWrapperCallback takes care of catching the exceptions for us. 
                 IAsyncResult result = this.baseBeginClose(this.timeoutHelper.RemainingTime(), this.PrepareAsyncCompletion(completeBaseCloseCallback), this);
                 
-                // SyncContinue calls CompleteBaseClose for us in [....] case. 
+                // SyncContinue calls CompleteBaseClose for us in sync case. 
                 return this.SyncContinue(result);
             }
         }

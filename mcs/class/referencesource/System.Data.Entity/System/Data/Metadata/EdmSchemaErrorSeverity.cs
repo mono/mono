@@ -3,14 +3,14 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       leil
+// @backupOwner anpete
 //---------------------------------------------------------------------
 
 namespace System.Data.Metadata.Edm
 {
     // if you edit this file be sure you change GeneratorErrorSeverity
-    // also, they must stay in [....]
+    // also, they must stay in sync
 
     /// <summary>
     /// 

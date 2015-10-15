@@ -37,7 +37,7 @@ namespace System.ServiceModel.Web
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("operationContext");
             }
             this.operationContext = operationContext;
-#pragma warning disable 56506 // [....], operationContext.Extensions is never null
+#pragma warning disable 56506 // Microsoft, operationContext.Extensions is never null
             if (operationContext.Extensions.Find<WebOperationContext>() == null)
             {
                 operationContext.Extensions.Add(this);

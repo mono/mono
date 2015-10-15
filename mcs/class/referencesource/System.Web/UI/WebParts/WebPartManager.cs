@@ -571,7 +571,7 @@ if (zoneElement != null) {{
         }
 
         // Only call PermitOnly() in legacy CAS mode.  In the v4 CAS model, calling PermitOnly() would prevent us from calling
-        // Activator.CreateInstance() on types in App_Code (assuming it is non-APTCA). (Dev10 Bug 807117)
+        // Activator.CreateInstance() on types in App_Code (assuming it is non-APTCA). (Dev10 
         private bool UsePermitOnly {
             get {
                 if (!_usePermitOnly.HasValue) {
@@ -1584,8 +1584,8 @@ if (zoneElement != null) {{
             StaticConnections.SetReadOnly(SR.WebPartManager_StaticConnectionsReadOnly);
 
             // The user can't directly change the DynamicConnections property since it is internal.
-            // Make it read-only in case we have a bug and try to change it after activation.
-            // We check the read-only status of this collection in ConnectWebParts() and DisconnectWebParts().
+            // Make it read-only in case we have a 
+
             DynamicConnections.SetReadOnly(SR.WebPartManager_DynamicConnectionsReadOnly);
 
             return (WebPartConnection[])finalConnectionsToActivate.ToArray(typeof(WebPartConnection));
@@ -2691,7 +2691,7 @@ if (zoneElement != null) {{
 
         /// <devdoc>
         /// Never throws except for null arguments. Returns an error message in the out parameter instead.
-        /// [[....]] I investigated whether this could be refactored to share common code with
+        /// [Microsoft] I investigated whether this could be refactored to share common code with
         ///           LoadDynamicWebPart(), but it seems the methods are too different.
         /// </devdoc>
         public virtual WebPart ImportWebPart(XmlReader reader, out string errorMessage) {

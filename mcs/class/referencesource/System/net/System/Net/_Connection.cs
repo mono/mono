@@ -702,7 +702,7 @@ namespace System.Net {
             if (startRequestResult != TriState.Unspecified) {
                 CompleteStartRequest(true, request, startRequestResult);
             }
-            // On [....], we wait for the Connection to be come availble here,
+            // On Sync, we wait for the Connection to be come availble here,
             if (!request.Async)
             {
                 object responseObject = request.ConnectionAsyncResult.InternalWaitForCompletion();
@@ -912,7 +912,7 @@ namespace System.Net {
 
             //
             // From now on the request.SetRequestSubmitDone must be called or it may hang
-            // For a [....] request the write side reponse windowwas opened in HttpWebRequest.SubmitRequest
+            // For a sync request the write side reponse windowwas opened in HttpWebRequest.SubmitRequest
             if (request.Async)
                 request.OpenWriteSideResponseWindow();
 
@@ -1078,7 +1078,7 @@ namespace System.Net {
             WebExceptionStatus ws = WebExceptionStatus.ConnectFailure;
             //
             // From now on the request.SetRequestSubmitDone must be called or it may hang
-            // For a [....] request the write side reponse windowwas opened in HttpWebRequest.SubmitRequest
+            // For a sync request the write side reponse windowwas opened in HttpWebRequest.SubmitRequest
             if (request.Async)
                 request.OpenWriteSideResponseWindow();
 
@@ -1372,7 +1372,7 @@ namespace System.Net {
                                     if (nextRequest != null )
                                     {
                                         // We cannot have HeadersCompleted on the request that was not placed yet on the write list
-                                        if(nextRequest.HeadersCompleted) // TODO: change to be Assert but only when stress got stable-stable
+                                        if(nextRequest.HeadersCompleted) // 
                                             throw new InternalException();
 
                                         // This codepath doesn't handle the case where the server has closed the
@@ -2124,7 +2124,7 @@ quit:
                 //    IIS6 does not close the connection on 403 so all subsequent requests will fail to be authorized on THAT connection.
                 //-----------------------------------------------------------------------------------------------
                 //5/15/2006
-                //[....]
+                //Microsoft
                 //The DTS Issue 595216 claims that we are unnecessarily closing the
                 //connection on 403 - even if it is a non SSL request. It seems
                 //that the original intention is to close the request for SSL requests
@@ -2153,7 +2153,7 @@ quit:
                 else
                 {
                     //QFE: 4599.
-                    //Author: [....]
+                    //Author: Microsoft
                     //in v2.0, in case of SSL Requests through proxy that require NTLM authentication,
                     //we are not honoring the Proxy-Connection: Keep-Alive header and
                     //closing the connection.
@@ -2928,7 +2928,7 @@ quit:
                         {
                             if (m_Error == WebExceptionStatus.Success)
                             {
-                                throw new InternalException();              // TODO: replace it with a generic error for the product bits
+                                throw new InternalException();              // 
                                 //m_Error = WebExceptionStatus.UnknownError;
                             }
 
@@ -3163,7 +3163,7 @@ quit:
             }
         }
         //
-        //    Peforms a [....] Read and calls the ReadComplete to process the result
+        //    Peforms a Sync Read and calls the ReadComplete to process the result
         //    The reads are done iteratively, until the Request has received enough
         //    data to contruct a response, or a 100-Continue is read, allowing the HttpWebRequest
         //    to return a write stream
@@ -3272,7 +3272,7 @@ quit:
 
             if (probeRead)
             {
-                // [....] 100-Continue wait only
+                // Sync 100-Continue wait only
                 request.FinishContinueWait();
                 if (pollSuccess)
                 {
@@ -3468,7 +3468,7 @@ quit:
             }
             //
             // Any exception is processed by HandleError() and ----ed to avoid throwing on a thread pool
-            // In the [....] case the HandleError() will abort the request so the caller will pick up the result.
+            // In the sync case the HandleError() will abort the request so the caller will pick up the result.
             //
             catch (Exception exception) {
                 if (NclUtilities.IsFatal(exception)) throw;

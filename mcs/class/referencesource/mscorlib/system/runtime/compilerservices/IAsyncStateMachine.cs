@@ -7,7 +7,7 @@
 //
 // IAsyncStateMachine.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>stoub</OWNER>
 //
 // Represents state machines generated for asynchronous methods.
 //

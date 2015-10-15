@@ -2,7 +2,7 @@
 // <copyright file="ConfigurationStrings.cs" company="Microsoft Corporation">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 namespace System.Xml.Serialization.Configuration
 {

@@ -7,8 +7,8 @@
 **
 ** Class:  FileLoadException
 **
-** <OWNER>[....]</OWNER>
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception for failure to load a file that was successfully found.

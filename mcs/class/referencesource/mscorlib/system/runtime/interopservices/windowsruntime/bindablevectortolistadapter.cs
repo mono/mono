@@ -5,7 +5,7 @@
 // ==--==
 //
 // <OWNER>GPaperin</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Runtime;
@@ -35,7 +35,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // object this[int index] { get }
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal object Indexer_Get(int index)
         {
             if (index < 0)
@@ -47,7 +46,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // object this[int index] { set }
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void Indexer_Set(int index, object value)
         {
             if (index < 0)
@@ -59,7 +57,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // int Add(object value)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal int Add(object value)
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -76,7 +73,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // bool Contains(object item)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal bool Contains(object item)
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -87,7 +83,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // void Clear()
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void Clear()
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -97,7 +92,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // bool IsFixedSize { get }
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal bool IsFixedSize()
         {
             return false;
@@ -106,7 +100,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // bool IsReadOnly { get }
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal bool IsReadOnly()
         {
             return false;
@@ -114,7 +107,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // int IndexOf(object item)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal int IndexOf(object item)
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -135,7 +127,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // void Insert(int index, object item)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void Insert(int index, object item)
         {
             if (index < 0)
@@ -147,7 +138,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // bool Remove(object item)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void Remove(object item)
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -168,7 +158,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         // void RemoveAt(int index)
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void RemoveAt(int index)
         {
             if (index < 0)

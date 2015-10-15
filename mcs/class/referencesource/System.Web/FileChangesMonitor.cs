@@ -149,7 +149,7 @@ namespace System.Web {
          }
 
         [SuppressMessage("Microsoft.Interoperability", "CA1404:CallGetLastErrorImmediatelyAfterPInvoke",
-                         Justification="[....]: Call to GetLastWin32Error() does follow P/Invoke call that is outside the if/else block.")]
+                         Justification="Microsoft: Call to GetLastWin32Error() does follow P/Invoke call that is outside the if/else block.")]
         static internal byte[] GetDacl(string filename) {
             // DevDiv #322858 - allow skipping DACL step for perf gain
             if (HostingEnvironment.FcnSkipReadAndCacheDacls) {
@@ -305,7 +305,7 @@ namespace System.Web {
             }
             else {
 #if DBG
-                // Needs the lock to [....] with DebugDescription
+                // Needs the lock to sync with DebugDescription
                 lock (_targets) {
 #endif                
                     _targets.Add(callback.Target, new FileMonitorTarget(callback, alias));
@@ -330,7 +330,7 @@ namespace System.Web {
 #endif
             if (target != null && target.Release() == 0) {
 #if DBG
-                // Needs the lock to [....] with DebugDescription
+                // Needs the lock to sync with DebugDescription
                 lock (_targets) {
 #endif                
                     _targets.Remove(callbackTarget);
@@ -1574,7 +1574,7 @@ namespace System.Web {
                     }
                 }
             }
-            // Dev10 Bug 663511: Deletes, moves, and renames of the App_LocalResources folder may be ignored
+            // Dev10 
             if (dirName.IndexOf(HttpRuntime.LocalResourcesDirectoryName, StringComparison.OrdinalIgnoreCase) > -1) {
                 return true;
             }

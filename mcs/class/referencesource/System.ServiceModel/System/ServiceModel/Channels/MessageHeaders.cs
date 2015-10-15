@@ -490,7 +490,7 @@ namespace System.ServiceModel.Channels
 
             if (collection.version != version)
             {
-#pragma warning suppress 56506 // [....], collection.version is never null
+#pragma warning suppress 56506 // Microsoft, collection.version is never null
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentException(SR.GetString(SR.MessageHeaderVersionMismatch, collection.version.ToString(), version.ToString()), "collection"));
             }
 
@@ -507,7 +507,7 @@ namespace System.ServiceModel.Channels
             switch (header.HeaderType)
             {
                 case HeaderType.BufferedMessageHeader:
-                    AddHeader(new Header(header.HeaderKind, CaptureBufferedHeader(collection.bufferedMessageData,
+                    AddHeader(new Header(header.HeaderKind, collection.CaptureBufferedHeader(collection.bufferedMessageData,
                         header.HeaderInfo, headerIndex), processing));
                     break;
                 case HeaderType.ReadableHeader:

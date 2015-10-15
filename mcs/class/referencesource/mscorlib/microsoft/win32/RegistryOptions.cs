@@ -6,7 +6,7 @@
 //
 // File: RegistryOptions.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>JFREE</OWNER>
 //
 // Implements Microsoft.Win32.RegistryOptions
 //

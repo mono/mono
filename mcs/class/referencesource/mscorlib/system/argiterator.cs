@@ -13,7 +13,7 @@ namespace System {
 
     // This class will not be marked serializable
     // Note: This type must have the same layout as the CLR's VARARGS type in CLRVarArgs.h.
-    // It also contains an inline SigPointer data structure - must keep those fields in [....].
+    // It also contains an inline SigPointer data structure - must keep those fields in sync.
     [StructLayout(LayoutKind.Sequential)]
     public struct ArgIterator
     {

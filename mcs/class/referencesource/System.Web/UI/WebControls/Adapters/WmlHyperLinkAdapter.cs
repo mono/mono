@@ -20,8 +20,8 @@ namespace System.Web.UI.WebControls.Adapters {
 
             String text = Control.Text;
             if (text.Length == 0) {
-                // Whidbey 18195 
-
+                // Whidbey 18195 UNDONE: This solution is somewhat ad hoc, awaiting spec resolution on IStaticTextControl
+                // in M2.  For now, take text from first IStaticTextControl or DataboundLiteralControl.
                 foreach(Control child in Control.Controls) {
                     if (child is IStaticTextControl) {
                         text = ((IStaticTextControl)child).Text;

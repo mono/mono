@@ -26,6 +26,7 @@ namespace System.Runtime.InteropServices {
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Exception
     {
+#if !FEATURE_CORECLR
         // This contains all of our V1 Exception class's members.
 
         // From Object
@@ -62,14 +63,23 @@ namespace System.Runtime.InteropServices {
         }
         [System.Security.SecurityCritical]  // auto-generated_required
         void GetObjectData(SerializationInfo info, StreamingContext context);
+#endif
 
+        //
+        // This method is intentionally included in CoreCLR to make Exception.get_InnerException "newslot virtual final".
+        // Some phone apps include MEF from desktop Silverlight. MEF's ComposablePartException depends on implicit interface 
+        // implementations of get_InnerException to be provided by the base class. It works only if Exception.get_InnerException
+        // is virtual.
+        //
         Exception InnerException {
             get;
         }
-        
+
+#if !FEATURE_CORECLR        
         MethodBase TargetSite {
             get;
         }
+#endif
    }
 
 }

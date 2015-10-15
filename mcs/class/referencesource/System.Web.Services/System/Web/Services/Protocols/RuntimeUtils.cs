@@ -86,5 +86,13 @@ namespace System.Web.Services.Protocols {
                 return true;
             return false;
         }
+
+        internal static string EscapeUri(Uri uri) {
+            if (null == uri) {
+                throw new ArgumentNullException("uri");
+            }
+
+            return uri.GetComponents(UriComponents.SerializationInfoString, UriFormat.UriEscaped).Replace("#", "%23");
+        }
     }
 }

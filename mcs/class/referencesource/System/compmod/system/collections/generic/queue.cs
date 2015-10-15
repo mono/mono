@@ -27,7 +27,8 @@ namespace System.Collections.Generic {
 #endif
     [System.Runtime.InteropServices.ComVisible(false)]
     public class Queue<T> : IEnumerable<T>,
-        System.Collections.ICollection {
+        System.Collections.ICollection,
+        IReadOnlyCollection<T> {
         private T[] _array;
         private int _head;       // First valid element in the queue
         private int _tail;       // Last valid element in the queue

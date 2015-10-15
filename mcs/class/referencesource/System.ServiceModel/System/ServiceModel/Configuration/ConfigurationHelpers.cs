@@ -37,7 +37,7 @@ namespace System.ServiceModel.Configuration
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigBindingExtensionNotFound,
                         ConfigurationHelpers.GetBindingsSectionPath(bindingCollectionName))));
                 }
-                catch (NullReferenceException) // System.Configuration.ConfigurationElement bug
+                catch (NullReferenceException) // System.Configuration.ConfigurationElement 
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigBindingExtensionNotFound,
@@ -69,7 +69,7 @@ namespace System.ServiceModel.Configuration
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigBindingExtensionNotFound,
                         ConfigurationHelpers.GetBindingsSectionPath(bindingCollectionName))));
                 }
-                catch (NullReferenceException) // System.Configuration.ConfigurationElement bug
+                catch (NullReferenceException) // System.Configuration.ConfigurationElement 
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigBindingExtensionNotFound,
@@ -99,7 +99,7 @@ namespace System.ServiceModel.Configuration
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigEndpointExtensionNotFound,
                         ConfigurationHelpers.GetEndpointsSectionPath(endpointCollectionName))));
                 }
-                catch (NullReferenceException) // System.Configuration.ConfigurationElement bug
+                catch (NullReferenceException) // System.Configuration.ConfigurationElement 
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigEndpointExtensionNotFound,
@@ -131,7 +131,7 @@ namespace System.ServiceModel.Configuration
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigEndpointExtensionNotFound,
                         ConfigurationHelpers.GetEndpointsSectionPath(endpointCollectionName))));
                 }
-                catch (NullReferenceException) // System.Configuration.ConfigurationElement bug
+                catch (NullReferenceException) // System.Configuration.ConfigurationElement 
                 {
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
                         new ConfigurationErrorsException(SR.GetString(SR.ConfigEndpointExtensionNotFound,

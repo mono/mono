@@ -33,11 +33,67 @@ namespace System.ServiceModel.Diagnostics
             get;
         }
 
+        private static string GetInstanceNameWithHash(string instanceName, string fullInstanceName)
+        {
+            return String.Format("{0}{1}", instanceName, StringUtil.GetNonRandomizedHashCode(fullInstanceName).ToString("X", CultureInfo.InvariantCulture));
+        }
+
+        protected static string EnsureUniqueInstanceName(string categoryName, string instanceName, string fullInstanceName)
+        {
+            if (String.IsNullOrEmpty(categoryName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("categoryName");
+            if (String.IsNullOrEmpty(instanceName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("instanceName");
+            if (String.IsNullOrEmpty(fullInstanceName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("fullInstanceName");
+
+            try
+            {
+                // If the instance name is already used, append a hash of the full name to it.
+                if (PerformanceCounterCategory.InstanceExists(instanceName, categoryName))
+                {
+                    return GetInstanceNameWithHash(instanceName, fullInstanceName);
+                }
+            }
+            catch 
+            { 
+                // If an exception is thrown, return the instance name without modification.
+            }
+
+            return instanceName;
+        }
+
+        protected static string GetUniqueInstanceName(string categoryName, string instanceName, string fullInstanceName)
+        {
+            if (String.IsNullOrEmpty(categoryName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("categoryName");
+            if (String.IsNullOrEmpty(instanceName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("instanceName");
+            if (String.IsNullOrEmpty(fullInstanceName))
+                throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNullOrEmptyString("fullInstanceName");
+
+            try
+            {
+                // If the instance name with the hash appended exists, return it.
+                string nameWithHash = GetInstanceNameWithHash(instanceName, fullInstanceName);
+                if (PerformanceCounterCategory.InstanceExists(nameWithHash, categoryName))
+                {
+                    return nameWithHash;
+                }
+            }
+            catch
+            {
+                // If an exception is thrown, return the instance name without modification.
+            }
+
+            return instanceName;            
+        }
+
         // remove count chars from string and add a 2 char hash code to beginning or end, as specified.
         protected static string GetHashedString(string str, int startIndex, int count, bool hashAtEnd)
         {
             string returnVal = str.Remove(startIndex, count);
-            string hash = ((uint)str.GetHashCode() % 99).ToString("00", CultureInfo.InvariantCulture);
+            string hash = ((uint)StringUtil.GetNonRandomizedHashCode(str) % 99).ToString("00", CultureInfo.InvariantCulture);
             return hashAtEnd ? returnVal + hash : hash + returnVal;
         }
 
@@ -59,9 +115,9 @@ namespace System.ServiceModel.Diagnostics
 
         // A CounterSetInstance is not disposed immediately when a service, endpoint or operation perf counter is disposed. Because messages 
         // can be processed while a ServiceHost is being closed, and such messages can try to update perf counters data, resulting in AVs or 
-        // corruptions (see bug 249132 @ CSDMain). So instead of disposing a CounterSetInstance, we hold a WeakReference to it, until either 
-        // GC reclaims it or a new service/endpoint/operation perf counter is started with the same name (and re-uses the CounterSetInstance).
-        // The CounterSetInstance finalizer will free up the perf counters memory, so we don't have a leak.
+        // corruptions (see 
+
+
         protected class CounterSetInstanceCache
         {
             // instance name -> WeakReference of CounterSetInstance

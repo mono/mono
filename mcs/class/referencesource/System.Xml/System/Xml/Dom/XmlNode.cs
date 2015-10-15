@@ -2,7 +2,7 @@
 // <copyright file="XmlNode.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml {
@@ -156,7 +156,6 @@ namespace System.Xml {
 
         // Gets the first child of this node.
         public virtual XmlNode FirstChild {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 XmlLinkedNode linkedNode = LastNode;
                 if (linkedNode != null)
@@ -180,7 +179,6 @@ namespace System.Xml {
             set {}
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         internal bool AncestorNode(XmlNode node) {
             XmlNode n = this.ParentNode;
 
@@ -724,7 +722,6 @@ namespace System.Xml {
 
         // Gets a value indicating whether the node is read-only.
         public virtual bool IsReadOnly {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 XmlDocument doc = OwnerDocument;
                 return HasReadOnlyParent( this );
@@ -888,7 +885,6 @@ namespace System.Xml {
 
         // Removes all the children and/or attributes
         // of the current node.
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public virtual void RemoveAll() {
             XmlNode child = FirstChild;
             XmlNode sibling = null;
@@ -1061,7 +1057,6 @@ namespace System.Xml {
             }
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         internal virtual void SetParent( XmlNode node ) {
             if (node == null) {
                 this.parentNode = OwnerDocument;
@@ -1180,7 +1175,7 @@ namespace System.Xml {
             }
         }
 
-        internal virtual XmlNode PreviousText {
+        public virtual XmlNode PreviousText {
             get {
                 return null;
             }

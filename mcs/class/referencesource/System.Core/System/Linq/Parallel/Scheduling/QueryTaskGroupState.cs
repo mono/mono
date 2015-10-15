@@ -7,7 +7,7 @@
 //
 // QueryTaskGroupState.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -98,9 +98,9 @@ namespace System.Linq.Parallel
                 // There are four cases:
                 // Case #1: Wait produced an exception that is not OCE(ct), or an AggregateException which is not full of OCE(ct) ==>  We rethrow.
                 // Case #2: External cancellation has been requested ==> we'll manually throw OCE(externalToken).
-                // Case #3a: We are servicing a call to Dispose() (and possibly also external cancellation has been requested).. simply return. See bug 695173
-                // Case #3b: The enumerator has already been disposed (and possibly also external cancellation was requested).  Throw an ODE.
-                // Case #4: No exceptions or explicit call to Dispose() by this caller ==> we just return.
+                // Case #3a: We are servicing a call to Dispose() (and possibly also external cancellation has been requested).. simply return. See 
+
+
 
                 // See also "InlinedAggregationOperator" which duplicates some of this logic for the aggregators.
                 // See also "QueryOpeningEnumerator" which duplicates some of this logic.
@@ -153,7 +153,7 @@ namespace System.Linq.Parallel
                     //   2. tokenCancellationRequested is backed by a volatile field, hence the reads below
                     //   won't get reordered about the read of token.IsCancellationRequested.
 
-                    // If the query has already been disposed, we don't want to throw an OCE (this is a fix for bug 695173.)
+                    // If the query has already been disposed, we don't want to throw an OCE (this is a fix for 
                     if (!m_cancellationState.TopLevelDisposedFlag.Value)
                     {
                         CancellationState.ThrowWithStandardMessageIfCanceled(m_cancellationState.ExternalCancellationToken); // Case #2

@@ -44,8 +44,8 @@ namespace System.Web.UI.WebControls.Adapters {
 
         private string Escape(string path) {
             // This function escapes \\ so that they don't get replaced because of
-            // a Netscape 4 bug. Other escapable characters will be escaped by .
-            // _ becomes __ and \\ becomes \_\
+            // a Netscape 4 
+
             StringBuilder b = null;
 
             if (String.IsNullOrEmpty(path)) {

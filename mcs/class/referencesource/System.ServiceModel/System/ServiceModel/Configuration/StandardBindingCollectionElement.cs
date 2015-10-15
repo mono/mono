@@ -44,7 +44,7 @@ namespace System.ServiceModel.Configuration
         {
             // This line needed because of the IBindingSection implementation
             StandardBindingCollectionElement<TStandardBinding, TBindingConfiguration> me = (StandardBindingCollectionElement<TStandardBinding, TBindingConfiguration>)this;
-#pragma warning suppress 56506 //[....]; me.Bindings can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; me.Bindings can never be null (underlying configuration system guarantees)
             return me.Bindings.ContainsKey(name);
         }
         protected internal override Binding GetDefault()

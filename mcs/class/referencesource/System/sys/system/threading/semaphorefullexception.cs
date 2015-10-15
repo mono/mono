@@ -7,7 +7,7 @@
 **
 ** Class: SemaphoreFullException
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>emadali</OWNER>
 **
 =============================================================================*/
 

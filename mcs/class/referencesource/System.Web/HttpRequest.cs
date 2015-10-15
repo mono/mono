@@ -94,6 +94,8 @@ namespace System.Web {
         private Uri _referrer;
         private HttpInputStream _inputStream;
         private HttpClientCertificate _clientCertificate;
+        private bool _tlsTokenBindingInfoResolved;
+        private ITlsTokenBindingInfo _tlsTokenBindingInfo;
         private WindowsIdentity _logonUserIdentity;
         [DoNotReset]
         private RequestContext _requestContext;
@@ -143,9 +145,11 @@ namespace System.Web {
         private const int needToValidatePathInfo        = 0x0200;
         private const int hasValidateInputBeenCalled    = 0x8000;
         private const int needToValidateCookielessHeader = 0x10000;
-
         // True if granular request validation is enabled (validationmode >= 4.5); false if all collections validated eagerly.
-        private bool _enableGranularValidation;
+        private const int granularValidationEnabled     = 0x40000000;
+        // True if request validation is suppressed (validationMode == 0.0); false if validation can be enabled via a call to ValidateInput().
+        private const int requestValidationSuppressed   = unchecked((int)0x80000000);
+
 
         // Browser caps one-time evaluator objects
         internal static object s_browserLock = new object();
@@ -530,7 +534,6 @@ namespace System.Web {
             return value;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         private void AddServerVariableToCollection(String name, DynamicServerVariable var) {
             // dynamic server var
             _serverVariables.AddDynamic(name, var);
@@ -2537,10 +2540,19 @@ namespace System.Web {
             }
         }
 
+        private bool GranularValidationEnabled {
+            get { return _flags[granularValidationEnabled]; }
+        }
+
+        private bool RequestValidationSuppressed {
+            get { return _flags[requestValidationSuppressed]; }
+        }
+
         //  Validate that the input from the browser is safe.
         public void ValidateInput() {
-            // it doesn't make sense to call this multiple times per request
-            if (ValidateInputWasCalled) {
+            // It doesn't make sense to call this multiple times per request.
+            // Additionally, if validation was suppressed, no-op now.
+            if (ValidateInputWasCalled || RequestValidationSuppressed) {
                 return;
             }
 
@@ -2620,12 +2632,19 @@ namespace System.Web {
             }
 
             // only enable request validation for the entire pipeline in v4.0+ of the framework
-            Version targetVersion = runtimeSection.RequestValidationMode;
-            if (targetVersion >= VersionUtil.Framework40) {
+            Version requestValidationMode = runtimeSection.RequestValidationMode;
+            if (requestValidationMode == VersionUtil.Framework00) {
+                // DevDiv #412689: <httpRuntime requestValidationMode="0.0" /> should suppress validation for
+                // the entire request, even if a call to ValidateInput() takes place. The request path
+                // characters and cookieless header (see 'needToValidateCookielessHeader') are still validated
+                // if necessary. These can be suppressed via <httpRuntime requestPathInvalidChars="" />.
+                _flags[requestValidationSuppressed] = true;
+            }
+            else if (requestValidationMode >= VersionUtil.Framework40) {
                 ValidateInput();
 
                 // Mode v4.5+ implies granular request validation
-                if (targetVersion >= VersionUtil.Framework45) {
+                if (requestValidationMode >= VersionUtil.Framework45) {
                     EnableGranularRequestValidation();
                 }
             }
@@ -2694,7 +2713,7 @@ namespace System.Web {
         }
 
         internal void EnableGranularRequestValidation() {
-            _enableGranularValidation = true;
+            _flags[granularValidationEnabled] = true;
         }
 
         private static string GetRequestValidationSourceName(RequestValidationSource requestCollection) {
@@ -2714,7 +2733,7 @@ namespace System.Web {
         }
 
         private void ValidateHttpValueCollection(HttpValueCollection collection, RequestValidationSource requestCollection) {
-            if (_enableGranularValidation) {
+            if (GranularValidationEnabled) {
                 // Granular request validation is enabled - validate collection entries only as they're accessed.
                 collection.EnableGranularValidation((key, value) => ValidateString(value, key, requestCollection));
             }
@@ -2739,7 +2758,7 @@ namespace System.Web {
         }
 
         private void ValidateCookieCollection(HttpCookieCollection cc) {
-            if (_enableGranularValidation) {
+            if (GranularValidationEnabled) {
                 // Granular request validation is enabled - validate collection entries only as they're accessed.
                 cc.EnableGranularValidation((key, value) => ValidateString(value, key, RequestValidationSource.Cookies));
             }
@@ -2758,7 +2777,7 @@ namespace System.Web {
         }
 
         private void ValidatePostedFileCollection(HttpFileCollection col) {
-            if (_enableGranularValidation) {
+            if (GranularValidationEnabled) {
                 // Granular request validation is enabled - validate collection entries only as they're accessed.
                 col.EnableGranularValidation((key, value) => ValidateString(value, "filename", RequestValidationSource.Files));
             }
@@ -3007,8 +3026,8 @@ namespace System.Web {
             _url = null;
             Unvalidated.InvalidateUrl();
 
-            // DevDiv Bug 164390: calling the worker request's RawUrl method here
-            // to ensure we cache the original request Url in Url Mapping scenarios.
+            // DevDiv 
+
             string temp = RawUrl;
 
             // remember the new path
@@ -3047,8 +3066,8 @@ namespace System.Web {
             _url = null;
             Unvalidated.InvalidateUrl();
 
-            // DevDiv Bug 164390: calling the worker request's RawUrl method here
-            // to ensure we cache the original request Url in Url Mapping scenarios.
+            // DevDiv 
+
             string temp = RawUrl;
 
             if (newPathInfo == null) {
@@ -3131,6 +3150,31 @@ namespace System.Web {
                 else if (_wr is ISAPIWorkerRequestInProc)
                     return ((ISAPIWorkerRequestInProc)_wr).HttpChannelBindingToken;
                 throw new PlatformNotSupportedException();
+            }
+        }
+
+        // Retrieves the TLS token bindings for the current request.
+        // TLS token bindings help mitigate the risk of impersonation by an
+        // attacker in the event an authenticated client's bearer tokens are
+        // somehow exfiltrated from the client's machine.
+        // More info: https://datatracker.ietf.org/doc/draft-popov-token-binding/
+        //
+        // This API requires that the server be running the IIS integrated mode
+        // pipeline and that the server be Win10 or later. If these conditions
+        // do not hold, this API will return null. This API could also return
+        // null if the client doesn't support the TLS token binding protocol or
+        // if the server has disabled support for the protocol.
+        public ITlsTokenBindingInfo TlsTokenBindingInfo {
+            get {
+                if (!_tlsTokenBindingInfoResolved) {
+                    IIS7WorkerRequest iis7wr = _wr as IIS7WorkerRequest;
+                    if (iis7wr != null) {
+                        _tlsTokenBindingInfo = iis7wr.GetTlsTokenBindingInfo(); // could return null
+                    }
+                    _tlsTokenBindingInfoResolved = true;
+                }
+
+                return _tlsTokenBindingInfo;
             }
         }
 

@@ -291,12 +291,12 @@ namespace System.Linq.Expressions.Compiler {
                 // if it is null, and then call the conversion.
                 //
                 // We cannot fix this in C# but there is no reason why we need to
-                // propagate this bug into the expression tree API.  Unfortunately
-                // this means that when the C# compiler generates the lambda
-                // (int? i)=>(MyClass)i, we will get different results for converting
-                // that lambda to a delegate directly and converting that lambda to
-                // an expression tree and then compiling it.  We can live with this
-                // discrepancy however.
+                // propagate this 
+
+
+
+
+
 
                 if (node.IsLifted && (!node.Type.IsValueType || !node.Operand.Type.IsValueType)) {
                     ParameterInfo[] pis = node.Method.GetParametersCached();

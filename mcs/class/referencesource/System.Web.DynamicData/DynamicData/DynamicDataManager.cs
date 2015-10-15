@@ -189,7 +189,7 @@ namespace System.Web.DynamicData {
 
         internal static void EnablePersistedSelection(BaseDataBoundControl baseDataBoundControl, IMetaTable table) {
             Debug.Assert(baseDataBoundControl != null, "NULL!");
-            // Make the persisted selection [....] up with the selected index if possible
+            // Make the persisted selection sync up with the selected index if possible
             if (!table.IsReadOnly) {
                 DynamicDataExtensions.EnablePersistedSelectionInternal(baseDataBoundControl);
             }

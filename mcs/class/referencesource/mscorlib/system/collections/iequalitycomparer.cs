@@ -7,7 +7,7 @@
 **
 ** Interface:  IEqualityComparer
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 ** 
 **
 ** Purpose: A mechanism to expose a simplified infrastructure for 

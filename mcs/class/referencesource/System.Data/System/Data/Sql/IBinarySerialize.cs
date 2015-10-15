@@ -3,12 +3,12 @@
 //     Copyright (c) Microsoft Corporation. All Rights Reserved.
 //     Information Contained Herein is Proprietary and Confidential.
 //  </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">alazela</owner>
+// <owner current="true" primary="true">blained</owner>
 // <owner current="true" primary="true">daltudov</owner>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">stevesta</owner>
 // <owner current="true" primary="false">beysims</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">laled</owner>
 // <owner current="true" primary="false">vadimt</owner>
 //------------------------------------------------------------------------------
 

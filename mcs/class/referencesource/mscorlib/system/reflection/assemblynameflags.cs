@@ -7,8 +7,8 @@
 **
 ** File:    AssemblyNameFlags
 ** 
-** <OWNER>[....]</OWNER>
-** <OWNER>[....]</OWNER>
+** <OWNER>mray</OWNER>
+** <OWNER>WESU</OWNER>
 **
 **
 ** Purpose: Flags controlling how an AssemblyName is used

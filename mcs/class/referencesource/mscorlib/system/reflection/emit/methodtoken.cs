@@ -7,7 +7,7 @@
 **
 ** Class:  MethodToken
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Represents a Method to the ILGenerator class.

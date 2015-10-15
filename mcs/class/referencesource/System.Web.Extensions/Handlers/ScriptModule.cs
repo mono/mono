@@ -143,6 +143,10 @@ namespace System.Web.Handlers {
                 response.Cache.SetCacheability(HttpCacheability.NoCache);
                 response.ContentType = "text/plain";
 
+                // DevDiv#961281
+                // Allow apps to access to the redirect location
+                context.Items[PageRequestManager.AsyncPostBackRedirectLocationKey] = redirectLocation;
+
                 // Preserve redirected state: TFS#882879
                 response.IsRequestBeingRedirected = true;
 

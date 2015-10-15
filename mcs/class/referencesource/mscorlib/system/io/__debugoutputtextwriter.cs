@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>kimhamil</OWNER>
 // 
 
 #if _DEBUG
@@ -12,7 +12,7 @@
 // output for some good old-fashioned console spew in MSDEV's debug output window.
 
 // <STRIP>This really shouldn't ship at all, but is intended as a quick, inefficient hack
-// for debugging.  -- [....], 9/26/2000</STRIP>
+// for debugging.  -- BrianGru, 9/26/2000</STRIP>
 
 using System;
 using System.IO;

@@ -7,7 +7,7 @@
 //
 // AsyncMethodBuilder.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Compiler-targeted types that build tasks for use as the return types of asynchronous methods.
 //
@@ -31,22 +31,15 @@ using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace System.Runtime.CompilerServices
 {
-    /// <summary>Represents an asynchronous method builder.</summary>
-    internal interface IAsyncMethodBuilder
-    {
-        void PreBoxInitialization<TStateMachine>(ref TStateMachine stateMachine);
-        object ObjectIdForDebugger { get; }
-    }
-
     /// <summary>
     /// Provides a builder for asynchronous methods that return void.
     /// This type is intended for compiler use only.
     /// </summary>
     [HostProtection(Synchronization = true, ExternalThreading = true)]
-    public struct AsyncVoidMethodBuilder : IAsyncMethodBuilder
+    public struct AsyncVoidMethodBuilder
     {
         /// <summary>The synchronization context associated with this operation.</summary>
-        private readonly SynchronizationContext m_synchronizationContext;
+        private SynchronizationContext m_synchronizationContext;
         /// <summary>State related to the IAsyncStateMachine.</summary>
         private AsyncMethodBuilderCore m_coreState; // mutable struct: must not be readonly
         /// <summary>Task used for debugging and logging purposes only.  Lazily initialized.</summary>
@@ -56,31 +49,44 @@ namespace System.Runtime.CompilerServices
         /// <returns>The initialized <see cref="AsyncVoidMethodBuilder"/>.</returns>
         public static AsyncVoidMethodBuilder Create()
         {
-            // Capture the current [....] context.  If there isn't one, use the dummy s_noContextCaptured
+            // Capture the current sync context.  If there isn't one, use the dummy s_noContextCaptured
             // instance; this allows us to tell the state of no captured context apart from the state
             // of an improperly constructed builder instance.
-            return new AsyncVoidMethodBuilder(SynchronizationContext.CurrentNoFlow);
-        }
-
-        /// <summary>Initializes the <see cref="AsyncVoidMethodBuilder"/>.</summary>
-        /// <param name="synchronizationContext">The synchronizationContext associated with this operation. This may be null.</param>
-        private AsyncVoidMethodBuilder(SynchronizationContext synchronizationContext)
-        {
-            m_synchronizationContext = synchronizationContext;
-            if (synchronizationContext != null) synchronizationContext.OperationStarted();
-
-            m_coreState = default(AsyncMethodBuilderCore);
-            m_task = null;
+            SynchronizationContext sc = SynchronizationContext.CurrentNoFlow;
+            if (sc != null)
+                sc.OperationStarted();
+            return new AsyncVoidMethodBuilder() { m_synchronizationContext = sc };
         }
 
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
         /// <exception cref="System.ArgumentNullException">The <paramref name="stateMachine"/> argument was null (Nothing in Visual Basic).</exception>
+        [SecuritySafeCritical]
         [DebuggerStepThrough]
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            m_coreState.Start(ref stateMachine); // argument validation handled by AsyncMethodBuilderCore
+            // See comment on AsyncMethodBuilderCore.Start
+            // AsyncMethodBuilderCore.Start(ref stateMachine);
+
+            if (stateMachine == null) throw new ArgumentNullException("stateMachine");
+            Contract.EndContractBlock();
+
+            // Run the MoveNext method within a copy-on-write ExecutionContext scope.
+            // This allows us to undo any ExecutionContext changes made in MoveNext,
+            // so that they won't "leak" out of the first await.
+
+            ExecutionContextSwitcher ecs = default(ExecutionContextSwitcher);
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try
+            {
+                ExecutionContext.EstablishCopyOnWriteScope(ref ecs);
+                stateMachine.MoveNext();
+            }
+            finally
+            {
+                ecs.Undo();
+            }
         }
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
@@ -90,17 +96,6 @@ namespace System.Runtime.CompilerServices
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
             m_coreState.SetStateMachine(stateMachine); // argument validation handled by AsyncMethodBuilderCore
-        }
-
-        /// <summary>Perform any initialization necessary prior to lifting the builder to the heap.</summary>
-        void IAsyncMethodBuilder.PreBoxInitialization<TStateMachine>(ref TStateMachine stateMachine) 
-        { 
-            
-#if !FEATURE_PAL && !FEATURE_CORECLR
-            //If logging or tracing is turned on then we have to init the Task
-            if (AsyncCausalityTracer.LoggingOn)
-                AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, this.Task.Id, "Async: " + stateMachine.GetType().Name, 0);
-#endif
         }
 
         /// <summary>
@@ -117,8 +112,22 @@ namespace System.Runtime.CompilerServices
         {
             try
             {
-                var continuation = m_coreState.GetCompletionAction(ref this, ref stateMachine);
+                AsyncMethodBuilderCore.MoveNextRunner runnerToInitialize = null;
+                var continuation = m_coreState.GetCompletionAction(AsyncCausalityTracer.LoggingOn ? this.Task : null, ref runnerToInitialize);
                 Contract.Assert(continuation != null, "GetCompletionAction should always return a valid action.");
+
+                // If this is our first await, such that we've not yet boxed the state machine, do so now.
+                if (m_coreState.m_stateMachine == null)
+                {
+                    if (AsyncCausalityTracer.LoggingOn)
+                        AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, this.Task.Id, "Async: " + stateMachine.GetType().Name, 0);
+
+                    // Box the state machine, then tell the boxed instance to call back into its own builder,
+                    // so we can cache the boxed reference.
+                    Contract.Assert(!Object.ReferenceEquals((object)stateMachine, (object)stateMachine), "Expected an unboxed state machine reference");
+                    m_coreState.PostBoxInitialization(stateMachine, runnerToInitialize, null);
+                }
+
                 awaiter.OnCompleted(continuation);
             }
             catch (Exception exc)
@@ -149,8 +158,22 @@ namespace System.Runtime.CompilerServices
         {
             try
             {
-                var continuation = m_coreState.GetCompletionAction(ref this, ref stateMachine);
+                AsyncMethodBuilderCore.MoveNextRunner runnerToInitialize = null;
+                var continuation = m_coreState.GetCompletionAction(AsyncCausalityTracer.LoggingOn ? this.Task : null, ref runnerToInitialize);
                 Contract.Assert(continuation != null, "GetCompletionAction should always return a valid action.");
+
+                // If this is our first await, such that we've not yet boxed the state machine, do so now.
+                if (m_coreState.m_stateMachine == null)
+                {
+                    if (AsyncCausalityTracer.LoggingOn)
+                        AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, this.Task.Id, "Async: " + stateMachine.GetType().Name, 0);
+
+                    // Box the state machine, then tell the boxed instance to call back into its own builder,
+                    // so we can cache the boxed reference.
+                    Contract.Assert(!Object.ReferenceEquals((object)stateMachine, (object)stateMachine), "Expected an unboxed state machine reference");
+                    m_coreState.PostBoxInitialization(stateMachine, runnerToInitialize, null);
+                }
+
                 awaiter.UnsafeOnCompleted(continuation);
             }
             catch (Exception e)
@@ -162,10 +185,9 @@ namespace System.Runtime.CompilerServices
         /// <summary>Completes the method builder successfully.</summary>
         public void SetResult()
         {
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, this.Task.Id, AsyncCausalityStatus.Completed);
-#endif
+
             if (m_synchronizationContext != null)
             {
                 NotifySynchronizationContextOfCompletion();
@@ -181,10 +203,8 @@ namespace System.Runtime.CompilerServices
             if (exception == null) throw new ArgumentNullException("exception");
             Contract.EndContractBlock();
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, this.Task.Id, AsyncCausalityStatus.Error);
-#endif
 
             if (m_synchronizationContext != null)
             {
@@ -242,13 +262,6 @@ namespace System.Runtime.CompilerServices
         /// It must only be used by the debugger and AsyncCausalityTracer in a single-threaded manner.
         /// </remarks>
         private object ObjectIdForDebugger { get { return this.Task; } }
-
-        /// <summary>
-        /// This internal property is for logging purposes.
-        /// The private property ObjectIdForDebugger is kept for compat reasons
-        /// </summary>
-        object IAsyncMethodBuilder.ObjectIdForDebugger { get { return this.ObjectIdForDebugger; } }
-
     }
 
     /// <summary>
@@ -261,7 +274,7 @@ namespace System.Runtime.CompilerServices
     /// or else the copies may end up building distinct Task instances.
     /// </remarks>
     [HostProtection(Synchronization = true, ExternalThreading = true)]
-    public struct AsyncTaskMethodBuilder : IAsyncMethodBuilder
+    public struct AsyncTaskMethodBuilder
     {
         /// <summary>A cached VoidTaskResult task used for builders that complete synchronously.</summary>
         private readonly static Task<VoidTaskResult> s_cachedCompleted = AsyncTaskMethodBuilder<VoidTaskResult>.s_defaultResultTask;
@@ -281,10 +294,31 @@ namespace System.Runtime.CompilerServices
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
+        [SecuritySafeCritical]
         [DebuggerStepThrough]
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            m_builder.Start(ref stateMachine); // argument validation handled by AsyncMethodBuilderCore
+            // See comment on AsyncMethodBuilderCore.Start
+            // AsyncMethodBuilderCore.Start(ref stateMachine);
+
+            if (stateMachine == null) throw new ArgumentNullException("stateMachine");
+            Contract.EndContractBlock();
+
+            // Run the MoveNext method within a copy-on-write ExecutionContext scope.
+            // This allows us to undo any ExecutionContext changes made in MoveNext,
+            // so that they won't "leak" out of the first await.
+
+            ExecutionContextSwitcher ecs = default(ExecutionContextSwitcher);
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try
+            {
+                ExecutionContext.EstablishCopyOnWriteScope(ref ecs);
+                stateMachine.MoveNext();
+            }
+            finally
+            {
+                ecs.Undo();
+            }
         }
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
@@ -294,25 +328,6 @@ namespace System.Runtime.CompilerServices
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
             m_builder.SetStateMachine(stateMachine); // argument validation handled by AsyncMethodBuilderCore
-        }
-
-        /// <summary>Perform any initialization necessary prior to lifting the builder to the heap.</summary>
-        void IAsyncMethodBuilder.PreBoxInitialization<TStateMachine>(ref TStateMachine stateMachine)
-        {
-            // Force the Task to be initialized prior to the first suspending await so 
-            // that the original stack-based builder has a reference to the right Task.
-            var builtTask = this.Task;
-
-#if !FEATURE_PAL && !FEATURE_CORECLR
-            if (AsyncCausalityTracer.LoggingOn)
-                AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, builtTask.Id, "Async: " + stateMachine.GetType().Name, 0);
-
-            if (System.Threading.Tasks.Task.s_asyncDebuggingEnabled)
-            {
-                System.Threading.Tasks.Task.AddToActiveTasks(builtTask);
-            }
-#endif
-
         }
 
         /// <summary>
@@ -394,13 +409,6 @@ namespace System.Runtime.CompilerServices
         /// when no other threads are in the middle of accessing this property or this.Task.
         /// </remarks>
         private object ObjectIdForDebugger { get { return this.Task; } }
-
-        /// <summary>
-        /// This internal property is for logging purposes.
-        /// The private property ObjectIdForDebugger is kept for compat reasons
-        /// </summary>
-        object IAsyncMethodBuilder.ObjectIdForDebugger { get { return this.ObjectIdForDebugger; } }
-
     }
 
     /// <summary>
@@ -413,7 +421,7 @@ namespace System.Runtime.CompilerServices
     /// or else the copies may end up building distinct Task instances.
     /// </remarks>
     [HostProtection(Synchronization = true, ExternalThreading = true)]
-    public struct AsyncTaskMethodBuilder<TResult> : IAsyncMethodBuilder
+    public struct AsyncTaskMethodBuilder<TResult>
     {
         /// <summary>A cached task for default(TResult).</summary>
         internal readonly static Task<TResult> s_defaultResultTask = AsyncTaskCache.CreateCacheableTask(default(TResult));
@@ -441,10 +449,31 @@ namespace System.Runtime.CompilerServices
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
+        [SecuritySafeCritical]
         [DebuggerStepThrough]
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            m_coreState.Start(ref stateMachine); // argument validation handled by AsyncMethodBuilderCore
+            // See comment on AsyncMethodBuilderCore.Start
+            // AsyncMethodBuilderCore.Start(ref stateMachine);
+
+            if (stateMachine == null) throw new ArgumentNullException("stateMachine");
+            Contract.EndContractBlock();
+
+            // Run the MoveNext method within a copy-on-write ExecutionContext scope.
+            // This allows us to undo any ExecutionContext changes made in MoveNext,
+            // so that they won't "leak" out of the first await.
+
+            ExecutionContextSwitcher ecs = default(ExecutionContextSwitcher);
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try
+            {
+                ExecutionContext.EstablishCopyOnWriteScope(ref ecs);
+                stateMachine.MoveNext();
+            }
+            finally
+            {
+                ecs.Undo();
+            }
         }
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
@@ -454,24 +483,6 @@ namespace System.Runtime.CompilerServices
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
             m_coreState.SetStateMachine(stateMachine); // argument validation handled by AsyncMethodBuilderCore
-        }
-
-        /// <summary>Perform any initialization necessary prior to lifting the builder to the heap.</summary>
-        void IAsyncMethodBuilder.PreBoxInitialization<TStateMachine>(ref TStateMachine stateMachine)
-        {
-            // Force the Task to be initialized prior to the first suspending await so 
-            // that the original stack-based builder has a reference to the right Task.
-            var builtTask = this.Task;
-
-#if !FEATURE_PAL && !FEATURE_CORECLR
-            if (AsyncCausalityTracer.LoggingOn)
-                AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, builtTask.Id, "Async: " + stateMachine.GetType().Name, 0);
-
-            if (System.Threading.Tasks.Task.s_asyncDebuggingEnabled)
-            {
-                System.Threading.Tasks.Task.AddToActiveTasks(builtTask);
-            }
-#endif
         }
 
         /// <summary>
@@ -488,8 +499,23 @@ namespace System.Runtime.CompilerServices
         {
             try
             {
-                var continuation = m_coreState.GetCompletionAction(ref this, ref stateMachine);
+                AsyncMethodBuilderCore.MoveNextRunner runnerToInitialize = null;
+                var continuation = m_coreState.GetCompletionAction(AsyncCausalityTracer.LoggingOn ? this.Task : null, ref runnerToInitialize);
                 Contract.Assert(continuation != null, "GetCompletionAction should always return a valid action.");
+
+                // If this is our first await, such that we've not yet boxed the state machine, do so now.
+                if (m_coreState.m_stateMachine == null)
+                {
+                    // Force the Task to be initialized prior to the first suspending await so 
+                    // that the original stack-based builder has a reference to the right Task.
+                    var builtTask = this.Task;
+
+                    // Box the state machine, then tell the boxed instance to call back into its own builder,
+                    // so we can cache the boxed reference.
+                    Contract.Assert(!Object.ReferenceEquals((object)stateMachine, (object)stateMachine), "Expected an unboxed state machine reference");
+                    m_coreState.PostBoxInitialization(stateMachine, runnerToInitialize, builtTask);
+                }
+
                 awaiter.OnCompleted(continuation);
             }
             catch (Exception e)
@@ -513,8 +539,23 @@ namespace System.Runtime.CompilerServices
         {
             try
             {
-                var continuation = m_coreState.GetCompletionAction(ref this, ref stateMachine);
+                AsyncMethodBuilderCore.MoveNextRunner runnerToInitialize = null;
+                var continuation = m_coreState.GetCompletionAction(AsyncCausalityTracer.LoggingOn ? this.Task : null, ref runnerToInitialize);
                 Contract.Assert(continuation != null, "GetCompletionAction should always return a valid action.");
+
+                // If this is our first await, such that we've not yet boxed the state machine, do so now.
+                if (m_coreState.m_stateMachine == null)
+                {
+                    // Force the Task to be initialized prior to the first suspending await so 
+                    // that the original stack-based builder has a reference to the right Task.
+                    var builtTask = this.Task;
+
+                    // Box the state machine, then tell the boxed instance to call back into its own builder,
+                    // so we can cache the boxed reference.
+                    Contract.Assert(!Object.ReferenceEquals((object)stateMachine, (object)stateMachine), "Expected an unboxed state machine reference");
+                    m_coreState.PostBoxInitialization(stateMachine, runnerToInitialize, builtTask);
+                }
+
                 awaiter.UnsafeOnCompleted(continuation);
             }
             catch (Exception e)
@@ -555,7 +596,6 @@ namespace System.Runtime.CompilerServices
             // Slow path: complete the existing task.
             else
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 if (AsyncCausalityTracer.LoggingOn)
                     AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, task.Id, AsyncCausalityStatus.Completed);
 
@@ -564,7 +604,7 @@ namespace System.Runtime.CompilerServices
                 {
                     System.Threading.Tasks.Task.RemoveFromActiveTasks(task.Id);
                 }
-#endif
+
                 if (!task.TrySetResult(result))
                 {
                     throw new InvalidOperationException(Environment.GetResourceString("TaskT_TransitionToFinal_AlreadyCompleted"));
@@ -662,12 +702,6 @@ namespace System.Runtime.CompilerServices
         /// when no other threads are in the middle of accessing this property or this.Task.
         /// </remarks>
         private object ObjectIdForDebugger { get { return this.Task; } }
-
-        /// <summary>
-        /// This internal property is for logging purposes.
-        /// The private property ObjectIdForDebugger is kept for compat reasons
-        /// </summary>
-        object IAsyncMethodBuilder.ObjectIdForDebugger { get { return this.ObjectIdForDebugger; } }
 
         /// <summary>
         /// Gets a task for the specified result.  This will either
@@ -809,13 +843,17 @@ namespace System.Runtime.CompilerServices
         /// <summary>A cached Action delegate used when dealing with a default ExecutionContext.</summary>
         internal Action m_defaultContextAction;
 
+        // This method is copy&pasted into the public Start methods to avoid size overhead of valuetype generic instantiations.
+        // Ideally, we would build intrinsics to get the raw ref address and raw code address of MoveNext, and just use the shared implementation.
+#if false
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
         /// <exception cref="System.ArgumentNullException">The <paramref name="stateMachine"/> argument is null (Nothing in Visual Basic).</exception>
         [SecuritySafeCritical]
         [DebuggerStepThrough]
-        internal void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        internal static void Start<TStateMachine>(ref TStateMachine stateMachine)
+            where TStateMachine : IAsyncStateMachine
         {
             if (stateMachine == null) throw new ArgumentNullException("stateMachine");
             Contract.EndContractBlock();
@@ -829,14 +867,15 @@ namespace System.Runtime.CompilerServices
             RuntimeHelpers.PrepareConstrainedRegions();
             try
             {
-                ExecutionContext.EstablishCopyOnWriteScope(currentThread, false, ref ecs);
+                ExecutionContext.EstablishCopyOnWriteScope(ref ecs);
                 stateMachine.MoveNext();
             }
             finally
             {
-                ecs.Undo(currentThread);
+                ecs.Undo();
             }
         }
+#endif
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
         /// <param name="stateMachine">The heap-allocated state machine object.</param>
@@ -860,13 +899,8 @@ namespace System.Runtime.CompilerServices
         /// <param name="stateMachine">The state machine.</param>
         /// <returns>An Action to provide to the awaiter.</returns>
         [SecuritySafeCritical]
-        internal Action GetCompletionAction<TMethodBuilder, TStateMachine>(
-            ref TMethodBuilder builder, ref TStateMachine stateMachine)
-            where TMethodBuilder : IAsyncMethodBuilder
-            where TStateMachine : IAsyncStateMachine
+        internal Action GetCompletionAction(Task taskForTracing, ref MoveNextRunner runnerToInitialize)
         {
-            Contract.Requires(builder != null, "Expected valid builder");
-            Contract.Requires(stateMachine != null, "Expected valid state machine reference");
             Contract.Assert(m_defaultContextAction == null || m_stateMachine != null,
                 "Expected non-null m_stateMachine on non-null m_defaultContextAction");
 
@@ -896,16 +930,14 @@ namespace System.Runtime.CompilerServices
 
                 // There wasn't a cached delegate, so create one and cache it.
                 // The delegate won't be usable until we set the MoveNextRunner's target state machine.
-                runner = new MoveNextRunner(capturedContext);
+                runner = new MoveNextRunner(capturedContext, m_stateMachine);
 
                 action = new Action(runner.Run);
-#if !FEATURE_PAL && !FEATURE_CORECLR
-                if (AsyncCausalityTracer.LoggingOn)
+                if (taskForTracing != null)
                 {
-                    m_defaultContextAction = action = OutputAsyncCausalityEvents(ref builder, action);
+                    m_defaultContextAction = action = OutputAsyncCausalityEvents(taskForTracing, action);
                 }
                 else
-#endif
                 {
                     m_defaultContextAction = action;
                 }
@@ -914,33 +946,51 @@ namespace System.Runtime.CompilerServices
             // The delegate won't be usable until we set the MoveNextRunner's target state machine.
             else
             {
-                runner = new MoveNextRunner(capturedContext);
+                runner = new MoveNextRunner(capturedContext, m_stateMachine);
                 action = new Action(runner.Run);
-#if !FEATURE_PAL && !FEATURE_CORECLR
-                if (AsyncCausalityTracer.LoggingOn)
+
+                if (taskForTracing != null)
                 {
-                    action = OutputAsyncCausalityEvents(ref builder, action);
+                    action = OutputAsyncCausalityEvents(taskForTracing, action);
                 }
-#endif
 
                 // NOTE: If capturedContext is null, we could create the Action to point directly
                 // to m_stateMachine.MoveNext.  However, that follows a much more expensive
                 // delegate creation path.
             }
 
-            // If this is our first await, such that we've not yet boxed the state machine, do so now.
             if (m_stateMachine == null)
-            {
-                // This is our first await, and we're not boxed yet.  First perform any work that
-                // must affect both the non-boxed and boxed builders.
-                builder.PreBoxInitialization(ref stateMachine);
+                runnerToInitialize = runner;
 
-                // Box the state machine, then tell the boxed instance to call back into its own builder,
-                // so we can cache the boxed reference.
-                Contract.Assert(!Object.ReferenceEquals((object)stateMachine, (object)stateMachine), "Expected an unboxed state machine reference");
-                m_stateMachine = (IAsyncStateMachine)stateMachine;
-                m_stateMachine.SetStateMachine(m_stateMachine);
+            return action;
+        }
+
+        private Action OutputAsyncCausalityEvents(Task innerTask, Action continuation)
+        {
+            return CreateContinuationWrapper(continuation, () =>
+            {
+                AsyncCausalityTracer.TraceSynchronousWorkStart(CausalityTraceLevel.Required, innerTask.Id, CausalitySynchronousWork.Execution);
+
+                // Invoke the original continuation
+                continuation.Invoke();
+
+                AsyncCausalityTracer.TraceSynchronousWorkCompletion(CausalityTraceLevel.Required, CausalitySynchronousWork.Execution);
+            }, innerTask);
+        }
+
+        internal void PostBoxInitialization(IAsyncStateMachine stateMachine, MoveNextRunner runner, Task builtTask)
+        {
+            if (builtTask != null)
+            {
+                if (AsyncCausalityTracer.LoggingOn)
+                    AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, builtTask.Id, "Async: " + stateMachine.GetType().Name, 0);
+
+                if (System.Threading.Tasks.Task.s_asyncDebuggingEnabled)
+                    System.Threading.Tasks.Task.AddToActiveTasks(builtTask);
             }
+
+            m_stateMachine = stateMachine;
+            m_stateMachine.SetStateMachine(m_stateMachine);
 
             Contract.Assert(runner.m_stateMachine == null, "The runner's state machine should not yet have been populated.");
             Contract.Assert(m_stateMachine != null, "The builder's state machine field should have been initialized.");
@@ -948,33 +998,7 @@ namespace System.Runtime.CompilerServices
             // Now that we have the state machine, store it into the runner that the action delegate points to.
             // And return the action.
             runner.m_stateMachine = m_stateMachine; // only after this line is the Action delegate usable
-
-            return action;
         }
-
-#if !FEATURE_PAL && !FEATURE_CORECLR
-        private Action OutputAsyncCausalityEvents<TBuilder>(ref TBuilder builder, Action continuation)
-            where TBuilder : IAsyncMethodBuilder
-        {
-            Task innerTask = builder.ObjectIdForDebugger as Task;
-            if (innerTask == null)
-            {
-                return continuation;
-            }
-            else
-            {
-                return CreateContinuationWrapper(continuation, () =>
-                {
-                    AsyncCausalityTracer.TraceSynchronousWorkStart(CausalityTraceLevel.Required, innerTask.Id, CausalitySynchronousWork.Execution);
-
-                    // Invoke the original continuation
-                    continuation.Invoke();
-
-                    AsyncCausalityTracer.TraceSynchronousWorkCompletion(CausalityTraceLevel.Required, CausalitySynchronousWork.Execution);
-                });
-            }
-        }
-#endif
 
         /// <summary>Throws the exception on the ThreadPool.</summary>
         /// <param name="exception">The exception to propagate.</param>
@@ -1012,7 +1036,7 @@ namespace System.Runtime.CompilerServices
         }
 
         /// <summary>Provides the ability to invoke a state machine's MoveNext method under a supplied ExecutionContext.</summary>
-        private sealed class MoveNextRunner
+        internal sealed class MoveNextRunner
         {
             /// <summary>The context with which to run MoveNext.</summary>
             private readonly ExecutionContext m_context;
@@ -1022,9 +1046,10 @@ namespace System.Runtime.CompilerServices
             /// <summary>Initializes the runner.</summary>
             /// <param name="context">The context with which to run MoveNext.</param>
             [SecurityCritical] // Run needs to be SSC to map to Action delegate, so to prevent misuse, we only allow construction through SC
-            internal MoveNextRunner(ExecutionContext context)
+            internal MoveNextRunner(ExecutionContext context, IAsyncStateMachine stateMachine)
             {
                 m_context = context;
+                m_stateMachine = stateMachine;
             }
 
             /// <summary>Invokes MoveNext under the provided context.</summary>
@@ -1065,17 +1090,30 @@ namespace System.Runtime.CompilerServices
             }
         }
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
+        /// <summary>
+        /// Logically we pass just an Action (delegate) to a task for its action to 'ContinueWith' when it completes.
+        /// However debuggers and profilers need more information about what that action is. (In particular what 
+        /// the action after that is and after that.   To solve this problem we create a 'ContinuationWrapper 
+        /// which when invoked just does the original action (the invoke action), but also remembers other information
+        /// (like the action after that (which is also a ContinuationWrapper and thus form a linked list).  
+        //  We also store that task if the action is associate with at task.  
+        /// </summary>
         private class ContinuationWrapper
         {
-            internal readonly Action m_continuation;
-            private readonly Action m_invokeAction;
+            internal readonly Action m_continuation;        // This is continuation which will happen after m_invokeAction  (and is probably a ContinuationWrapper)
+            private readonly Action m_invokeAction;         // This wrapper is an action that wraps another action, this is that Action.  
+            internal readonly Task m_innerTask;             // If the continuation is logically going to invoke a task, this is that task (may be null)
 
-            internal ContinuationWrapper(Action continuation, Action invokeAction)
+            internal ContinuationWrapper(Action continuation, Action invokeAction, Task innerTask)
             {
                 Contract.Requires(continuation != null, "Expected non-null continuation");
 
+                // If we don't have a task, see if our continuation is a wrapper and use that. 
+                if (innerTask == null)
+                    innerTask = TryGetContinuationTask(continuation);
+
                 m_continuation = continuation;
+                m_innerTask = innerTask;
                 m_invokeAction = invokeAction;
             }
 
@@ -1085,11 +1123,10 @@ namespace System.Runtime.CompilerServices
             }
         }
 
-        internal static Action CreateContinuationWrapper(Action continuation, Action invokeAction)
+        internal static Action CreateContinuationWrapper(Action continuation, Action invokeAction, Task innerTask = null)
         {
-            return new ContinuationWrapper(continuation, invokeAction).Invoke;
+            return new ContinuationWrapper(continuation, invokeAction, innerTask).Invoke;
         }
-#endif
 
         internal static Action TryGetStateMachineForDebugger(Action action)
         {
@@ -1100,15 +1137,27 @@ namespace System.Runtime.CompilerServices
                 return new Action(runner.m_stateMachine.MoveNext);
             }
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             var continuationWrapper = target as ContinuationWrapper;
             if (continuationWrapper != null)
             {
                 return TryGetStateMachineForDebugger(continuationWrapper.m_continuation);
             }
-#endif
 
             return action;
+        }
+
+    ///<summary>
+    /// Given an action, see if it is a contiunation wrapper and has a Task associated with it.  If so return it (null otherwise)
+    ///</summary>
+        internal static Task TryGetContinuationTask(Action action)
+        {
+            if (action != null) 
+            {
+                var asWrapper = action.Target as ContinuationWrapper;
+                if (asWrapper != null)
+                    return asWrapper.m_innerTask;
+            }
+            return null;
         }
     }
 }

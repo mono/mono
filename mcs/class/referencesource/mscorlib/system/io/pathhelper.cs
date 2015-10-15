@@ -37,7 +37,7 @@ namespace System.IO {
     //   than Path.MaxPath if they can be normalized down to Path.MaxPath. This
     //   can happen if the path contains escape characters "..".
     // 
-    unsafe internal class PathHelper {   // should not be serialized
+    unsafe internal struct PathHelper {   // should not be serialized
 
         // maximum size, max be greater than max path if contains escape sequence
         private int m_capacity;
@@ -65,6 +65,8 @@ namespace System.IO {
             Contract.Requires(charArrayPtr != null);
             // force callers to be aware of this
             Contract.Requires(length == Path.MaxPath);
+            this.m_length = 0;
+            this.m_sb = null;
 
             this.m_arrayPtr = charArrayPtr;
             this.m_capacity = length;
@@ -74,7 +76,13 @@ namespace System.IO {
         }
 
         // Instantiates a PathHelper with a heap alloc'd array of ints. Will create a StringBuilder
-        internal PathHelper(int capacity, int maxPath) {
+        [System.Security.SecurityCritical]
+        internal PathHelper(int capacity, int maxPath)
+        {
+            this.m_length = 0;
+            this.m_arrayPtr = null;
+            this.useStackAlloc = false;
+
             this.m_sb = new StringBuilder(capacity);
             this.m_capacity = capacity;
             this.m_maxPath = maxPath;

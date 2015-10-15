@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -332,7 +332,7 @@ namespace System.Security.Cryptography {
         }
 #endif
 
-#if FEATURE_CRYPTO && FEATURE_X509_SECURESTRINGS
+#if (FEATURE_CRYPTO && FEATURE_X509_SECURESTRINGS) || FEATURE_CORECLR
         private SecureString m_keyPassword;
         public SecureString KeyPassword {
             get {

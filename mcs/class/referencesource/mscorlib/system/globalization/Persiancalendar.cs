@@ -12,12 +12,16 @@ namespace System.Globalization {
     //  Notes about PersianCalendar
     //
     ////////////////////////////////////////////////////////////////////////////
-     /*
+    // Modern Persian calendar is a solar observation based calendar. Each new year begins on the day when the vernal equinox occurs before noon.
+    // The epoch is the date of the vernal equinox prior to the epoch of the Islamic calendar (Microsoft 19, 622 Julian or Microsoft 22, 622 Gregorian)
+
+    // There is no Persian year 0. Ordinary years have 365 days. Leap years have 366 days with the last month (Esfand) gaining the extra day.
+    /*
      **  Calendar support range:
      **      Calendar    Minimum     Maximum
      **      ==========  ==========  ==========
-     **      Gregorian   0622/03/21   9999/12/31
-     **      Persian     0001/01/01   9378/10/10
+     **      Gregorian   0622/03/22   9999/12/31
+     **      Persian     0001/01/01   9378/10/13
      */
 
     [Serializable]
@@ -26,35 +30,24 @@ namespace System.Globalization {
 
         public static readonly int PersianEra = 1;
 
-        internal const int DateCycle = 33;
+        internal static long PersianEpoch = new DateTime(622, 3, 22).Ticks / GregorianCalendar.TicksPerDay;
+        const int ApproximateHalfYear = 180;
+
         internal const int DatePartYear = 0;
         internal const int DatePartDayOfYear = 1;
         internal const int DatePartMonth = 2;
         internal const int DatePartDay = 3;
+        internal const int MonthsPerYear = 12;
 
-        internal static int[] DaysToMonth = {0,31,62,93,124,155,186,216,246,276,306,336};
-        //Leap years, if Y%33 is 1,5,9,13,17,22,26,30
-        internal static int[] LeapYears33 = {0,1,0,0,0,  //  0  [1]  2   3   4
-                                             1,0,0,0,1,  // [5]  6   7   8  [9]
-                                             0,0,0,1,0,  // 10  11  12 [13] 14
-                                             0,0,1,0,0,  // 15  16 [17] 18  19
-                                             0,0,1,0,0,     // 20  21 [22] 23  24
-                                             0,1,0,0,0,  // 25 [26] 27  28  29
-                                             1,0,0};     //[30] 31  32
+        internal static int[] DaysToMonth = { 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366 };
 
-        internal const int LeapYearsPerCycle = 8;
-        internal const long GregorianOffset = 226894; //GregorianCalendar.GetAbsoluteDate(622, 3, 21);
-        internal const long DaysPerCycle = DateCycle * 365 + LeapYearsPerCycle;
-
-        //internal static Calendar m_defaultInstance;
-
-        // DateTime.MaxValue = Persian calendar (year:9378, month: 10, day: 10).
         internal const int MaxCalendarYear = 9378;
         internal const int MaxCalendarMonth = 10;
-        internal const int MaxCalendarDay = 10;
-        // Persian calendar (year: 1, month: 1, day:1 ) = Gregorian (year: 622, month: 3, day: 21)
+        internal const int MaxCalendarDay = 13;
+
+        // Persian calendar (year: 1, month: 1, day:1 ) = Gregorian (year: 622, month: 3, day: 22)
         // This is the minimal Gregorian date that we support in the PersianCalendar.
-        internal static DateTime minDate = new DateTime(622, 3, 21);
+        internal static DateTime minDate = new DateTime(622, 3, 22);
         internal static DateTime maxDate = DateTime.MaxValue;
 
         /*=================================GetDefaultInstance==========================
@@ -120,6 +113,7 @@ namespace System.Globalization {
             }
         }
 
+
         /*=================================GetAbsoluteDatePersian==========================
         **Action: Gets the Absolute date for the given Persian date.  The absolute date means
         **       the number of days from January 1st, 1 A.D.
@@ -131,56 +125,14 @@ namespace System.Globalization {
         long GetAbsoluteDatePersian(int year, int month, int day) {
             if (year >= 1 && year <= MaxCalendarYear && month >= 1 && month <= 12)
             {
-                return DaysUpToPersianYear(year) + DaysToMonth[month-1] + day - 1;
+                int ordinalDay = DaysInPreviousMonths(month) + day - 1; // day is one based, make 0 based since this will be the number of days we add to beginning of year below
+                int approximateDaysFromEpochForYearStart = (int)(CalendricalCalculationsHelper.MeanTropicalYearInDays * (year - 1));
+                long yearStart = CalendricalCalculationsHelper.PersianNewYearOnOrBefore(PersianEpoch + approximateDaysFromEpochForYearStart + ApproximateHalfYear);
+                yearStart += ordinalDay;
+                return yearStart;
             }
             throw new ArgumentOutOfRangeException(null, Environment.GetResourceString("ArgumentOutOfRange_BadYearMonthDay"));
         }
-
-        /*=================================DaysUpToPersianYear==========================
-        **Action: Gets the total number of days (absolute date) up to the given Persian Year.
-        **       The absolute date means the number of days from January 1st, 1 A.D.
-        **Returns: Gets the total number of days (absolute date) up to the given Persian Year.
-        **Arguments: PersianYear year value in Persian calendar.
-        **Exceptions: None
-        **Notes:
-        ============================================================================*/
-
-        long DaysUpToPersianYear(int PersianYear) {
-
-            long NumDays;          // number of absolute days
-            int NumCycles;         // number of 33 year cycles
-            int NumYearsLeft;      // number of years into 33 year cycle
-
-            //
-            //  Compute the number of 33 years cycles.
-            //
-            NumCycles = (PersianYear - 1) / DateCycle;
-
-            //
-            //  Compute the number of years left.  This is the number of years
-            //  into the 33 year cycle for the given year.
-            //
-            NumYearsLeft = (PersianYear-1) % DateCycle;
-
-            //
-            //  Compute the number of absolute days up to the given year.
-            //
-            NumDays = NumCycles * DaysPerCycle + GregorianOffset;
-            while (NumYearsLeft > 0) {
-                NumDays += 365;
-                // Common year is 365 days, and leap year is 366 days.
-                if(IsLeapYear(NumYearsLeft, CurrentEra)) {
-                    NumDays++;
-                }
-                NumYearsLeft--;
-            }
-
-            //
-            //  Return the number of absolute days.
-            //
-            return (NumDays);
-        }
-
 
         static internal void CheckTicksRange(long ticks) {
             if (ticks < minDate.Ticks || ticks > maxDate.Ticks) {
@@ -232,23 +184,32 @@ namespace System.Globalization {
             }
         }
 
+        static int MonthFromOrdinalDay(int ordinalDay)
+        {
+            Contract.Assert(ordinalDay <= 366);
+            int index = 0;
+            while (ordinalDay > DaysToMonth[index])
+                index++;
+
+            return index;
+        }
+
+        static int DaysInPreviousMonths(int month)
+        {
+            Contract.Assert(1 <= month && month <= 12);
+            --month; // months are one based but for calculations use 0 based
+            return DaysToMonth[month];
+        }
+
         /*=================================GetDatePart==========================
         **Action: Returns a given date part of this <i>DateTime</i>. This method is used
         **       to compute the year, day-of-year, month, or day part.
         **Returns:
         **Arguments:
         **Exceptions:  ArgumentException if part is incorrect.
-        **Notes:
-        **      First, we get the absolute date (the number of days from January 1st, 1 A.C) for the given ticks.
-        **      Use the formula (((AbsoluteDate - 226894) * 33) / (33 * 365 + 8)) + 1, we can a rough value for the Persian year.
-        **      In order to get the exact Persian year, we compare the exact absolute date for PersianYear and (PersianYear + 1).
-        **      From here, we can get the correct Persian year.
         ============================================================================*/
 
         internal int GetDatePart(long ticks, int part) {
-            int PersianYear;              // Persian year
-            int PersianMonth;             // Persian month
-            int PersianDay;               // Persian day
             long NumDays;                 // The calculation buffer in number of days.
 
             CheckTicksRange(ticks);
@@ -259,59 +220,51 @@ namespace System.Globalization {
             //
             NumDays = ticks / GregorianCalendar.TicksPerDay + 1;
 
-
             //
-            //  Calculate the appromixate Persian Year from this magic formula.
+            //  Calculate the appromixate Persian Year.
             //
-            PersianYear = (int)(((NumDays - GregorianOffset) * DateCycle) / DaysPerCycle) + 1;
 
-            long daysToPersianYear = DaysUpToPersianYear(PersianYear);          // The absoulte date for PersianYear
-            long daysOfPersianYear = GetDaysInYear(PersianYear, CurrentEra);    // The number of days for (PersianYear+1) year.
+            long yearStart = CalendricalCalculationsHelper.PersianNewYearOnOrBefore(NumDays);
+            int y = (int)(Math.Floor(((yearStart - PersianEpoch) / CalendricalCalculationsHelper.MeanTropicalYearInDays) + 0.5)) + 1;
+            Contract.Assert(y >= 1);
 
-            if (NumDays < daysToPersianYear) {
-                daysToPersianYear -= daysOfPersianYear;
-                PersianYear--;
-            } else if (NumDays == daysToPersianYear) {
-                PersianYear--;
-                daysToPersianYear -= GetDaysInYear(PersianYear, CurrentEra);
-            } else {
-                if (NumDays > daysToPersianYear + daysOfPersianYear) {
-                    daysToPersianYear += daysOfPersianYear;
-                    PersianYear++;
-                }
-            }
-            if (part == DatePartYear) {
-                return (PersianYear);
+            if (part == DatePartYear)
+            {
+                return y;
             }
 
             //
             //  Calculate the Persian Month.
             //
 
-            NumDays -= daysToPersianYear;
+            int ordinalDay = (int)(NumDays - CalendricalCalculationsHelper.GetNumberOfDays(this.ToDateTime(y, 1, 1, 0, 0, 0, 0, 1)));
 
-            if (part == DatePartDayOfYear) {
-                return ((int)NumDays);
-            }
-
-            PersianMonth = 0;
-            while ((PersianMonth < 12) && (NumDays > DaysToMonth[PersianMonth]))
+            if (part == DatePartDayOfYear)
             {
-                PersianMonth++;
+                return ordinalDay;
             }
 
-            if (part == DatePartMonth) {
-                return (PersianMonth);
+            int m = MonthFromOrdinalDay(ordinalDay);
+            Contract.Assert(ordinalDay >= 1);
+            Contract.Assert(m >= 1 && m <= 12);
+            if (part == DatePartMonth)
+            {
+                return m;
             }
+
+            int d = ordinalDay - DaysInPreviousMonths(m);
+            Contract.Assert(1 <= d);
+            Contract.Assert(d <= 31);
 
             //
             //  Calculate the Persian Day.
             //
-            PersianDay = (int)(NumDays - DaysToMonth[PersianMonth-1]);
 
-            if (part == DatePartDay) {
-                return (PersianDay);
+            if (part == DatePartDay)
+            {
+                return (d);
             }
+
             // Incorrect part value.
             throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_DateTimeParsing"));
         }
@@ -422,17 +375,17 @@ namespace System.Globalization {
                 return MaxCalendarDay;
             }
 
-            if (month == 12) {
-                // For the 12th month, leap year has 30 days, and common year has 29 days.
-                return (IsLeapYear(year, CurrentEra) ? 30 : 29);
+            int daysInMonth = DaysToMonth[month] - DaysToMonth[month - 1];
+            if ((month == MonthsPerYear) && !IsLeapYear(year))
+            {
+                Contract.Assert(daysInMonth == 30);
+                --daysInMonth;
             }
-            // Other months first 6 months are 31 and the reset are 30 days.
-            return ((month > 6) ? 30 : 31);
+            return daysInMonth;
         }
 
         // Returns the number of days in the year given by the year argument for the current era.
         //
-
 
         public override int GetDaysInYear(int year, int era) {
             CheckYearRange(year, era);
@@ -533,10 +486,15 @@ namespace System.Globalization {
         // year is a leap year, or false if not.
         //
 
-
         public override bool IsLeapYear(int year, int era) {
             CheckYearRange(year, era);
-            return (LeapYears33[year%DateCycle]==1);
+
+            if (year == MaxCalendarYear)
+            {
+                return false;
+            }
+
+            return (GetAbsoluteDatePersian(year + 1, 1, 1) - GetAbsoluteDatePersian(year, 1, 1)) == 366;
         }
 
         // Returns the date and time converted to a DateTime value.  Throws an exception if the n-tuple is invalid.
@@ -567,8 +525,6 @@ namespace System.Globalization {
         }
 
         private const int DEFAULT_TWO_DIGIT_YEAR_MAX = 1410;
-
-
 
         public override int TwoDigitYearMax {
             get {

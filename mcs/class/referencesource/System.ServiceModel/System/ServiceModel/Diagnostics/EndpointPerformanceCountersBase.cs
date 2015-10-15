@@ -77,9 +77,14 @@ namespace System.ServiceModel.Diagnostics
             this.instanceName = CreateFriendlyInstanceName(service, contract, uri);
         }
 
-        static internal string CreateFriendlyInstanceName(string service, string contract, string uri)
+        private static string GetFullInstanceName(string service, string contract, string uri)
         {
             // instance name is: serviceName.interfaceName.operationName@uri
+            return String.Format("{0}.{1}@{2}", service, contract, uri);
+        }
+
+        private static string GetShortInstanceName(string service, string contract, string uri)
+        {
             int length = service.Length + contract.Length + uri.Length + 2;
 
             if (length > maxCounterLength)
@@ -113,6 +118,32 @@ namespace System.ServiceModel.Diagnostics
 
             // replace '/' with '|' because perfmon fails when '/' is in perfcounter instance name
             return service + "." + contract + "@" + uri.Replace('/', '|');
+        }
+
+        internal static string CreateFriendlyInstanceName(string service, string contract, string uri)
+        {
+            string shortInstanceName = GetShortInstanceName(service, contract, uri);
+            if (!ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+            {
+                return shortInstanceName;
+            }
+
+            string fullInstanceName = GetFullInstanceName(service, contract, uri);
+
+            return EnsureUniqueInstanceName(PerformanceCounterStrings.SERVICEMODELENDPOINT.EndpointPerfCounters, shortInstanceName, fullInstanceName);
+        }
+
+        internal static string GetFriendlyInstanceName(string service, string contract, string uri)
+        {
+            string shortInstanceName = GetShortInstanceName(service, contract, uri);
+            if (!ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+            {
+                return shortInstanceName;
+            }
+
+            string fullInstanceName = GetFullInstanceName(service, contract, uri);
+
+            return GetUniqueInstanceName(PerformanceCounterStrings.SERVICEMODELENDPOINT.EndpointPerfCounters, shortInstanceName, fullInstanceName);
         }
 
         private static truncOptions GetCompressionTasks(int totalLen, int serviceLen, int contractLen, int uriLen)

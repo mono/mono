@@ -7,7 +7,7 @@
 **
 ** Class:  PropertyBuilder
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Propertybuilder is for client to define properties for a class
@@ -258,6 +258,7 @@ namespace System.Reflection.Emit {
             throw new NotSupportedException(Environment.GetResourceString("NotSupported_DynamicModule"));
         }
 
+#if !FEATURE_CORECLR
         void _PropertyBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -277,7 +278,7 @@ namespace System.Reflection.Emit {
         {
             throw new NotImplementedException();
         }
-
+#endif
 
         public override String Name {
             get { return m_name; }

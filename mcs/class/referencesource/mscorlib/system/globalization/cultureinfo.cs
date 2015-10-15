@@ -14,7 +14,7 @@
 //            as well as methods for common operations such as printing
 //            dates and sorting strings.
 //
-//  Date:     [....] 31, 1999
+//  Date:     Microsoft 31, 1999
 //
 //
 //  !!!! NOTE WHEN CHANGING THIS CLASS !!!!
@@ -155,7 +155,7 @@ namespace System.Globalization {
         private static volatile Hashtable s_LcidCachedCultures;
         private static volatile Hashtable s_NameCachedCultures;
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
         // When running under AppX, we use this to get some information about the language list
         [SecurityCritical]
         private static volatile WindowsRuntimeResourceManagerBase s_WindowsRuntimeResourceManager;
@@ -245,7 +245,7 @@ namespace System.Globalization {
             return (temp);
         }
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
         [SecuritySafeCritical]
         internal static CultureInfo GetCultureInfoForUserPreferredLanguageInAppX()
         {
@@ -291,6 +291,28 @@ namespace System.Globalization {
  
             return toReturn;
         }
+
+        [SecuritySafeCritical]
+        internal static bool SetCultureInfoForUserPreferredLanguageInAppX(CultureInfo ci)
+        {
+            // If running within a compilation process (mscorsvw.exe, for example), it is illegal to
+            // load any non-mscorlib assembly for execution. Since WindowsRuntimeResourceManager lives
+            // in System.Runtime.WindowsRuntime, caller will need to fall back to default Win32 value,
+            // which should be fine because we should only ever need to access FX resources during NGEN.
+            // FX resources are always loaded from satellite assemblies - even in AppX processes (see the
+            // comments in code:System.Resources.ResourceManager.SetAppXConfiguration for more details).
+            if (AppDomain.IsAppXNGen)
+            {
+                return false;
+            }
+
+            if (s_WindowsRuntimeResourceManager == null)
+            {
+                s_WindowsRuntimeResourceManager = ResourceManager.GetWinRTResourceManager();
+            }
+
+            return s_WindowsRuntimeResourceManager.SetGlobalResourceContextDefaultCulture(ci);
+        }
 #endif
 
         ////////////////////////////////////////////////////////////////////////
@@ -300,9 +322,6 @@ namespace System.Globalization {
         ////////////////////////////////////////////////////////////////////////
 
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public CultureInfo(String name) : this(name, true) {
         }
 
@@ -673,12 +692,49 @@ namespace System.Globalization {
 
         public static CultureInfo CurrentCulture
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
+
+#if !FEATURE_CORECLR
                 return Thread.CurrentThread.CurrentCulture;
+#else
+                // In the case of CoreCLR, Thread.m_CurrentCulture and
+                // Thread.m_CurrentUICulture are thread static so as not to let
+                // CultureInfo objects leak across AppDomain boundaries. The
+                // fact that these fields are thread static introduces overhead
+                // in accessing them (through Thread.CurrentCulture). There is
+                // also overhead in accessing Thread.CurrentThread. In this
+                // case, we can avoid the overhead of Thread.CurrentThread
+                // because these fields are thread static, and so do not
+                // require a Thread instance to be accessed.
+#if FEATURE_APPX
+                if(AppDomain.IsAppXModel()) {
+                    CultureInfo culture = GetCultureInfoForUserPreferredLanguageInAppX();
+                    if (culture != null)
+                        return culture;
+                }
+#endif
+                return Thread.m_CurrentCulture ??
+                    s_DefaultThreadCurrentCulture ??
+                    s_userDefaultCulture ??
+                    UserDefaultCulture;
+#endif
+            }
+
+            set {
+#if FEATURE_APPX
+                    if (value == null) {
+                        throw new ArgumentNullException("value");
+                    }                    
+
+                    if (AppDomain.IsAppXModel()) {
+                        if (SetCultureInfoForUserPreferredLanguageInAppX(value)) {
+                            // successfully set the culture, otherwise fallback to legacy path
+                            return; 
+                        }
+                    }
+#endif
+                    Thread.CurrentThread.CurrentCulture = value;
             }
         }
 
@@ -734,12 +790,49 @@ namespace System.Globalization {
 
 
         public static CultureInfo CurrentUICulture {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
+
+#if !FEATURE_CORECLR
                 return Thread.CurrentThread.CurrentUICulture;
+#else
+                // In the case of CoreCLR, Thread.m_CurrentCulture and
+                // Thread.m_CurrentUICulture are thread static so as not to let
+                // CultureInfo objects leak across AppDomain boundaries. The
+                // fact that these fields are thread static introduces overhead
+                // in accessing them (through Thread.CurrentCulture). There is
+                // also overhead in accessing Thread.CurrentThread. In this
+                // case, we can avoid the overhead of Thread.CurrentThread
+                // because these fields are thread static, and so do not
+                // require a Thread instance to be accessed.
+#if FEATURE_APPX
+                if(AppDomain.IsAppXModel()) {
+                    CultureInfo culture = GetCultureInfoForUserPreferredLanguageInAppX();
+                    if (culture != null)
+                        return culture;
+                }
+#endif
+                return Thread.m_CurrentUICulture ??
+                    s_DefaultThreadCurrentUICulture ??
+                    s_userDefaultUICulture ??
+                    UserDefaultUICulture;
+#endif
+            }
+
+            set {
+#if FEATURE_APPX
+                    if (value == null) {
+                        throw new ArgumentNullException("value");
+                    }                    
+
+                    if (AppDomain.IsAppXModel()) {
+                        if (SetCultureInfoForUserPreferredLanguageInAppX(value)) {
+                            // successfully set the culture, otherwise fallback to legacy path
+                            return; 
+                        }
+                    }
+#endif
+                    Thread.CurrentThread.CurrentUICulture = value;
             }
         }
 
@@ -844,9 +937,6 @@ namespace System.Globalization {
 
         public static CultureInfo InvariantCulture {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
                 return (s_InvariantCultureInfo);
@@ -907,9 +997,6 @@ namespace System.Globalization {
 
 #if FEATURE_USE_LCID
         public virtual int LCID {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 return (this.m_cultureData.ILANGUAGE);
             }
@@ -1231,9 +1318,6 @@ namespace System.Globalization {
         //
         ////////////////////////////////////////////////////////////////////////
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode()
         {
             return (this.Name.GetHashCode() + this.CompareInfo.GetHashCode());
@@ -1421,7 +1505,6 @@ namespace System.Globalization {
                     return (new HebrewCalendar());
                 case Calendar.CAL_UMALQURA:
                     return (new UmAlQuraCalendar());
-#if !FEATURE_ONLY_CORE_CALENDARS
                 case Calendar.CAL_PERSIAN:
                     return (new PersianCalendar());
                 case Calendar.CAL_CHINESELUNISOLAR:
@@ -1432,7 +1515,6 @@ namespace System.Globalization {
                     return (new KoreanLunisolarCalendar());
                 case Calendar.CAL_TAIWANLUNISOLAR:
                     return (new TaiwanLunisolarCalendar());
-#endif // !FEATURE_ONLY_CORE_CALENDARS                    
             }
             return (new GregorianCalendar());
         }

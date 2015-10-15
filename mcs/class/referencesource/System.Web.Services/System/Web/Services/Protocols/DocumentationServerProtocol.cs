@@ -119,7 +119,7 @@ namespace System.Web.Services.Protocols {
                         //
                         // 
                         bool excludeSchemeHostPortFromCachingKey = this.IsCacheUnderPressure(typeof(DocumentationServerProtocol), Type);
-                        string escapedUri = Uri.EscapeUriString(Request.Url.ToString()).Replace("#", "%23");
+                        string escapedUri = RuntimeUtils.EscapeUri(Request.Url);
                         serverType = new DocumentationServerType(Type, escapedUri, excludeSchemeHostPortFromCachingKey);
                         AddToCache(typeof(DocumentationServerProtocol), Type, serverType, excludeSchemeHostPortFromCachingKey);
                     }

@@ -7,7 +7,7 @@
 **
 ** Interface:  IEnumerator
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Base interface for all generic enumerators.

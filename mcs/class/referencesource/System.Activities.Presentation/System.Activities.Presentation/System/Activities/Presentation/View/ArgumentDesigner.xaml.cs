@@ -556,7 +556,7 @@ namespace System.Activities.Presentation.View
             DataGridHelper.OnEditingControlUnloaded(sender, args);
         }
 
-        // This is to workaround a bug that updating ModelItem from outside of ArgumentDesigner will not update ArgumentDesigner.
+        // This is to workaround a 
         internal void NotifyAnnotationTextChanged()
         {
             foreach (object item in this.argumentsDataGrid.Items)

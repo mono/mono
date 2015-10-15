@@ -150,38 +150,25 @@ namespace System.IO
             Init(stream, encoding, bufferSize, leaveOpen);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter(String path) 
             : this(path, false, UTF8NoBOM, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter(String path, bool append) 
             : this(path, append, UTF8NoBOM, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter(String path, bool append, Encoding encoding) 
             : this(path, append, encoding, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamWriter(String path, bool append, Encoding encoding, int bufferSize): this(path, append, encoding, bufferSize, true) { 

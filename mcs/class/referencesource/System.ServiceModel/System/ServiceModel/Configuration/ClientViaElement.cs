@@ -25,7 +25,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ClientViaElement source = (ClientViaElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() check for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() check for 'from' being null
             this.ViaUri = source.ViaUri;
         }
 

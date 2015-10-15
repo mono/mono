@@ -44,9 +44,7 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe IntPtr(int value)
         {
             #if WIN32
@@ -58,9 +56,7 @@ namespace System {
     
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe IntPtr(long value)
         {
             #if WIN32
@@ -73,6 +69,7 @@ namespace System {
         [System.Security.SecurityCritical]
         [CLSCompliant(false)]
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe IntPtr(void* value)
         {
             m_value = value;
@@ -113,18 +110,13 @@ namespace System {
         }
     
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public unsafe override int GetHashCode() {
             return unchecked((int)((long)m_value));
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe int ToInt32() {
             #if WIN32
                 return (int)m_value;
@@ -136,9 +128,7 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe long ToInt64() {
             #if WIN32
                 return (long)(int)m_value;
@@ -170,18 +160,14 @@ namespace System {
 
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static explicit operator IntPtr (int value) 
         {
             return new IntPtr(value);
         }
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static explicit operator IntPtr (long value) 
         {
             return new IntPtr(value);
@@ -189,9 +175,7 @@ namespace System {
 
         [System.Security.SecurityCritical]
         [CLSCompliant(false), ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static unsafe explicit operator IntPtr (void* value)
         {
             return new IntPtr(value);
@@ -199,18 +183,14 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [CLSCompliant(false)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif        
+        [System.Runtime.Versioning.NonVersionable]
         public static unsafe explicit operator void* (IntPtr value)
         {
-            return value.ToPointer();
+            return value.m_value;
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static explicit operator int (IntPtr  value) 
         {
             #if WIN32
@@ -222,9 +202,7 @@ namespace System {
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static explicit operator long (IntPtr  value) 
         {
             #if WIN32
@@ -236,9 +214,7 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool operator == (IntPtr value1, IntPtr value2) 
         {
             return value1.m_value == value2.m_value;
@@ -246,27 +222,21 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool operator != (IntPtr value1, IntPtr value2) 
         {
             return value1.m_value != value2.m_value;
         }
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static IntPtr Add(IntPtr pointer, int offset)
         {
             return pointer + offset;
         }
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static IntPtr operator +(IntPtr pointer, int offset) 
         {
             #if WIN32
@@ -277,17 +247,13 @@ namespace System {
         }
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static IntPtr Subtract(IntPtr pointer, int offset) {
             return pointer - offset;
         }
 
         [ReliabilityContract(Consistency.MayCorruptInstance, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public static IntPtr operator -(IntPtr pointer, int offset) {
             #if WIN32
                 return new IntPtr(pointer.ToInt32() - offset);
@@ -300,9 +266,7 @@ namespace System {
         {
             [Pure]
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+            [System.Runtime.Versioning.NonVersionable]
             get
             {
                 #if WIN32
@@ -317,9 +281,7 @@ namespace System {
         [System.Security.SecuritySafeCritical]  // auto-generated
         [CLSCompliant(false)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe void* ToPointer()
         {
             return m_value;

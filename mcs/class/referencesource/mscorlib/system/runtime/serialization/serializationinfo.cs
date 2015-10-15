@@ -17,6 +17,7 @@ namespace System.Runtime.Serialization
 {
 
     using System;
+    using System.Collections.Generic;
     using System.Reflection;
     using System.Runtime.Remoting;
 #if FEATURE_REMOTING
@@ -30,18 +31,18 @@ namespace System.Runtime.Serialization
 #endif 
 
     [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_CORECLR
-    [FriendAccessAllowed]
-#endif 
     public sealed class SerializationInfo
     {
         private const int defaultSize = 4;
         private const string s_mscorlibAssemblySimpleName = "mscorlib";
         private const string s_mscorlibFileName = s_mscorlibAssemblySimpleName + ".dll";
         
+        // Even though we have a dictionary, we're still keeping all the arrays around for back-compat. 
+        // Otherwise we may run into potentially breaking behaviors like GetEnumerator() not returning entries in the same order they were added.
         internal String[] m_members;
         internal Object[] m_data;
         internal Type[] m_types;
+        private Dictionary<string, int> m_nameToIndex;
         internal int m_currMember;
         internal IFormatterConverter m_converter;
         private String m_fullTypeName;
@@ -82,6 +83,8 @@ namespace System.Runtime.Serialization
             m_members = new String[defaultSize];
             m_data = new Object[defaultSize];
             m_types = new Type[defaultSize];
+
+            m_nameToIndex = new Dictionary<string, int>();
 
             m_converter = converter;
 
@@ -298,22 +301,7 @@ namespace System.Runtime.Serialization
             }
             Contract.EndContractBlock();
 
-            //
-            // Walk until we find a member by the same name or until
-            // we reach the end.  If we find a member by the same name,
-            // throw.
-            for (int i = 0; i < m_currMember; i++)
-            {
-                if (m_members[i].Equals(name))
-                {
-                    BCLDebug.Trace("SER", "[SerializationInfo.AddValue]Tried to add ", name, " twice to the SI.");
-
-                    throw new SerializationException(Environment.GetResourceString("Serialization_SameNameTwice"));
-                }
-            }
-
-            AddValue(name, value, type, m_currMember);
-
+            AddValueInternal(name, value, type);
         }
 
         public void AddValue(String name, Object value)
@@ -403,12 +391,19 @@ namespace System.Runtime.Serialization
             AddValue(name, (Object)value, typeof(DateTime));
         }
 
-        internal void AddValue(String name, Object value, Type type, int index)
+        internal void AddValueInternal(String name, Object value, Type type)
         {
+            if (m_nameToIndex.ContainsKey(name))
+            {
+                BCLDebug.Trace("SER", "[SerializationInfo.AddValue]Tried to add ", name, " twice to the SI.");
+                throw new SerializationException(Environment.GetResourceString("Serialization_SameNameTwice"));
+            }
+            m_nameToIndex.Add(name, m_currMember);
+
             //
             // If we need to expand the arrays, do so.
             //
-            if (index >= m_members.Length)
+            if (m_currMember >= m_members.Length)
             {
                 ExpandArrays();
             }
@@ -416,9 +411,9 @@ namespace System.Runtime.Serialization
             //
             // Add the data and then advance the counter.
             //
-            m_members[index] = name;
-            m_data[index] = value;
-            m_types[index] = type;
+            m_members[m_currMember] = name;
+            m_data[m_currMember] = value;
+            m_types[m_currMember] = type;
             m_currMember++;
         }
 
@@ -443,11 +438,10 @@ namespace System.Runtime.Serialization
             int index = FindElement(name);
             if (index < 0)
             {
-                AddValue(name, value, type, m_currMember);
+                AddValueInternal(name, value, type);
             }
             else
             {
-                m_members[index] = name;
                 m_data[index] = value;
                 m_types[index] = type;
             }
@@ -462,13 +456,10 @@ namespace System.Runtime.Serialization
             }
             Contract.EndContractBlock();
             BCLDebug.Trace("SER", "[SerializationInfo.FindElement]Looking for ", name, " CurrMember is: ", m_currMember);
-            for (int i = 0; i < m_currMember; i++)
+            int index;
+            if (m_nameToIndex.TryGetValue(name, out index))
             {
-                Contract.Assert(m_members[i] != null, "[SerializationInfo.FindElement]Null Member in String array.");
-                if (m_members[i].Equals(name))
-                {
-                    return i;
-                }
+                return index;
             }
             return -1;
         }

@@ -28,7 +28,8 @@ namespace System.Security.Cryptography {
         private static volatile CngAlgorithm s_sha256;
         private static volatile CngAlgorithm s_sha384;
         private static volatile CngAlgorithm s_sha512;
-        
+        private static volatile CngAlgorithm s_rsa;
+
         private string m_algorithm;
 
         public CngAlgorithm(string algorithm) {
@@ -98,6 +99,16 @@ namespace System.Security.Cryptography {
         //
         // Well known algorithms
         //
+
+        public static CngAlgorithm Rsa {
+            get {
+                Contract.Ensures(Contract.Result<CngAlgorithm>() != null);
+                if (s_rsa == null) {
+                    s_rsa = new CngAlgorithm(BCryptNative.AlgorithmName.Rsa);
+                }
+                return s_rsa;
+            }
+        }
 
         public static CngAlgorithm ECDiffieHellmanP256 {
             get {

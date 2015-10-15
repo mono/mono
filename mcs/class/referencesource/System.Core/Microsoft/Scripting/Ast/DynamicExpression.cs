@@ -38,7 +38,8 @@ namespace System.Linq.Expressions {
 #if !SILVERLIGHT
     [DebuggerTypeProxy(typeof(Expression.DynamicExpressionProxy))]
 #endif
-    public class DynamicExpression : Expression, IArgumentProvider {
+    public class DynamicExpression : Expression, IDynamicExpression
+    {
         private readonly CallSiteBinder _binder;
         private readonly Type _delegateType;
 
@@ -413,6 +414,16 @@ namespace System.Linq.Expressions {
         }
 #endif // !SILVERLIGHT || FEATURE_NETCORE
         #endregion
+
+        Expression IDynamicExpression.Rewrite(Expression[] args)
+        {
+            return this.Rewrite(args);
+        }
+
+        object IDynamicExpression.CreateCallSite()
+        {
+            return CallSite.Create(this.DelegateType, this.Binder);
+        }
     }
 
     #region Specialized Subclasses

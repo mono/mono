@@ -86,11 +86,11 @@ namespace System.Text.RegularExpressions
              * if char "i" is the first one from the right that doesn't match,
              * then we know the matcher can advance by _positive[i].
              *
-             * <STRIP>  This algorithm appears to be a simplified variant of the 
-             *          standard Boyer-Moore good suffix calculation.  It could
-             *          be one of D.M. Sunday's variations, but I have not found which one.
-             * </STRIP>
              * <
+
+
+
+
 
 
 */
@@ -143,15 +143,15 @@ namespace System.Text.RegularExpressions
 
             // scan for the chars for which there are no shifts that yield a different candidate
 
-            /* <STRIP>
-             *  The inside of the if statement used to say 
-             *  "_positive[match] = last - beforefirst;"
-             *  I've changed it to the below code.  This
-             *  is slightly less agressive in how much we skip, but at worst it 
-             *  should mean a little more work rather than skipping a potential
-             *  match.
-             * </STRIP>
-             */
+            /* <
+
+
+
+
+
+
+
+*/
             while (match != beforefirst) {
                 if (_positive[match] == 0)
                     _positive[match] = bump;

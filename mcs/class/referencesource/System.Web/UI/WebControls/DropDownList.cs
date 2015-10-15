@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls {
 
             string [] selectedItems = postCollection.GetValues(postDataKey);
 
-            EnsureDataBound();
+            EnsureDataBoundInLoadPostData();
             if (selectedItems != null) {
 
                 ValidateEvent(postDataKey, selectedItems[0]);

@@ -3,7 +3,7 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
+// @owner  Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.Objects.ELinq
@@ -1069,8 +1069,8 @@ namespace System.Data.Objects.ELinq
         /// </summary>
         private static void VerifyTypeSupportedForComparison(Type clrType, TypeUsage edmType, Stack<EdmMember> memberPath)
         {
-            // NOTE: due to bug in null handling for complex types, complex types are currently not supported
-            // for comparisons (see SQL BU 543956)
+            // NOTE: due to 
+
             switch (edmType.EdmType.BuiltInTypeKind)
             {
                 case BuiltInTypeKind.PrimitiveType:

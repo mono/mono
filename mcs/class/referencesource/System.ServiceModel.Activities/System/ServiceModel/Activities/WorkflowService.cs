@@ -295,6 +295,10 @@ namespace System.ServiceModel.Activities
                 SkipValidatingRootConfiguration = source.SkipValidatingRootConfiguration,
                 PrepareForRuntime = source.PrepareForRuntime,
                 Environment = source.Environment,
+                // Retain the same cancellation token. Otherwise we can't cancel the validation of WorkflowService objects
+                // which can make the designer unreponsive if the validation takes a long time.
+                CancellationToken = source.CancellationToken
+
             };
 
             foreach (KeyValuePair<Type, IList<Constraint>> constrants in source.AdditionalConstraints)

@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -12,7 +12,6 @@ namespace System.Reflection
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
     using System.Runtime.ConstrainedExecution;
@@ -51,7 +50,7 @@ namespace System.Reflection
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -61,7 +60,7 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
+
         #region MemberInfo Overrides
         public override MemberTypes MemberType { get { return MemberTypes.Event; } }
         #endregion
@@ -196,6 +195,7 @@ namespace System.Reflection
         }
         #endregion
 
+#if !FEATURE_CORECLR
         Type _EventInfo.GetType()
         {
             return base.GetType();
@@ -222,6 +222,7 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
     [Serializable]
@@ -349,26 +350,10 @@ namespace System.Reflection
             {
                 if (m_name == null)
                     m_name = new Utf8String(m_utf8name).ToString();
-
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EventName(DeclaringType.GetFullNameForEtw(), GetFullNameForEtw());
-                }
-#endif
+                
                 return m_name; 
             } 
         }
-
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            if (m_name == null)
-                return new Utf8String(m_utf8name).ToString();
-
-            return m_name; 
-        }
-        
         public override Type DeclaringType { get { return m_declaringType; } }
         public override Type ReflectedType
         {
@@ -389,7 +374,6 @@ namespace System.Reflection
         public override int MetadataToken { get { return m_token; } }
         public override Module Module { get { return GetRuntimeModule(); } }
         internal RuntimeModule GetRuntimeModule() { return m_declaringType.GetRuntimeModule(); }
-        
         #endregion
 
         #region ISerializable

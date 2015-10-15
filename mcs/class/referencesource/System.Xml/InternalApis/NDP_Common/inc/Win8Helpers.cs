@@ -2,7 +2,7 @@
 // <copyright file="Compilation.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 
 namespace Microsoft.Win32 {
@@ -16,6 +16,11 @@ namespace Microsoft.Win32 {
     [System.Security.SuppressUnmanagedCodeSecurity]
     internal static class UnsafeNativeMethods
     {
+#if !FEATURE_CORECLR
+        // On CoreCLR this is not the way to determine if a process is a tailored application (which means APPX).
+        // On CoreCLR AppX is determined by a flag past to the host which is exposed by AppDomain.IsAppXProcess in mscorlib.
+        // The reason for this if-def is to ensure nobody takes a dependency on this on CoreCLR.
+        
         internal const String KERNEL32 = "kernel32.dll";
 
         // WinError.h codes:
@@ -77,6 +82,7 @@ namespace Microsoft.Win32 {
 
         [System.Security.SecuritySafeCritical]
         internal static Lazy<bool> IsPackagedProcess = new Lazy<bool>(() => _IsPackagedProcess());
+#endif //!FEATURE_CORECLR
     }
 }
 

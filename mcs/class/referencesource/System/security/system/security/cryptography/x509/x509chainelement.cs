@@ -18,6 +18,10 @@ namespace System.Security.Cryptography.X509Certificates {
         private string m_description;
 
         private X509ChainElement () {}
+
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal unsafe X509ChainElement (IntPtr pChainElement) {
             CAPI.CERT_CHAIN_ELEMENT chainElement = new CAPI.CERT_CHAIN_ELEMENT(Marshal.SizeOf(typeof(CAPI.CERT_CHAIN_ELEMENT)));
             uint cbSize = (uint) Marshal.ReadInt32(pChainElement);
@@ -64,6 +68,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_elements = new X509ChainElement[0];
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal unsafe X509ChainElementCollection (IntPtr pSimpleChain) {
             CAPI.CERT_SIMPLE_CHAIN simpleChain = new CAPI.CERT_SIMPLE_CHAIN(Marshal.SizeOf(typeof(CAPI.CERT_SIMPLE_CHAIN)));
             uint cbSize = (uint) Marshal.ReadInt32(pSimpleChain);

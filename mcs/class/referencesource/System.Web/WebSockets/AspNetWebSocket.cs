@@ -489,8 +489,8 @@ namespace System.Web.WebSockets {
             }
 
             if (closeStatus == WebSocketCloseStatus.Empty) {
-                // Fix Bug : 312472, we would like to allow empty strings to be passed to our APIs when status code is 1005.
-                // Since WSPC requires the statusDescription to be null, we convert.
+                // Fix 
+
                 if (statusDescription == String.Empty) {
                     statusDescription = null;
                 }

@@ -472,7 +472,7 @@ namespace System.ServiceModel.Security
                 }
             }
 
-            // PreSharp Bug: Parameter 'element' to this public method must be validated: A null-dereference can occur here.
+            // PreSharp 
 #pragma warning suppress 56506
             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new XmlException(SR.GetString(SR.CannotReadToken, element.LocalName, element.NamespaceURI, element.GetAttribute(SecurityJan2004Strings.ValueType, null))));
         }

@@ -7,7 +7,7 @@
 **
 ** Interface:  IAppDomainSetup
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>mray</OWNER>
 **
 **
 ** Purpose: Properties exposed to COM

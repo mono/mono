@@ -392,7 +392,8 @@ namespace System.Web.SessionState {
             if (s_usePartition) {
                 throw new HttpException(
                     SR.GetString(SR.Cant_connect_sql_session_database_partition_resolver,
-                                s_configPartitionResolverType, conn.DataSource, conn.Database));
+                                s_configPartitionResolverType, conn.DataSource, conn.Database),
+                                e);
             }
             else {
                 throw new HttpException(

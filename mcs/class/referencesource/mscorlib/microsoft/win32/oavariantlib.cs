@@ -60,7 +60,7 @@ namespace Microsoft.Win32 {
             typeof(DBNull),
         };
 
-    	// Keep these numbers in [....] w/ the above array.
+    	// Keep these numbers in sync w/ the above array.
         private const int CV_OBJECT=0x12;
         
         #endregion

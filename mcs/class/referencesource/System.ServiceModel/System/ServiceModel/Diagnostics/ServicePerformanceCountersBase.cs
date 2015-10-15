@@ -143,16 +143,31 @@ namespace System.ServiceModel.Diagnostics
             get { return (int)PerfCounters.TotalCounters; }
         }
 
-        static internal string CreateFriendlyInstanceName(ServiceHostBase serviceHost)
+        private static string GetServiceUri(ServiceHostBase serviceHost, ServiceInfo serviceInfo)
         {
-            // instance name is: serviceName@uri
-            ServiceInfo serviceInfo = new ServiceInfo(serviceHost);
-            string serviceName = serviceInfo.ServiceName;
             string uri;
             if (!TryGetFullVirtualPath(serviceHost, out uri))
             {
                 uri = serviceInfo.FirstAddress;
             }
+            return uri;
+        }
+
+        private static string GetFullInstanceName(ServiceHostBase serviceHost)
+        {
+            // instance name is: serviceName@uri
+            ServiceInfo serviceInfo = new ServiceInfo(serviceHost);
+            string serviceName = serviceInfo.ServiceName;
+            string uri = GetServiceUri(serviceHost, serviceInfo);
+            return String.Format("{0}@{1}", serviceName, uri);
+        }
+
+        private static string GetShortInstanceName(ServiceHostBase serviceHost)
+        {
+            ServiceInfo serviceInfo = new ServiceInfo(serviceHost);
+            string serviceName = serviceInfo.ServiceName;
+            string uri = GetServiceUri(serviceHost, serviceInfo);
+
             int length = serviceName.Length + uri.Length + 2;
 
             if (length > maxCounterLength)
@@ -179,6 +194,32 @@ namespace System.ServiceModel.Diagnostics
 
             // replace '/' with '|' because perfmon fails when '/' is in perfcounter instance name
             return serviceName + "@" + uri.Replace('/', '|');
+        }
+
+        internal static string CreateFriendlyInstanceName(ServiceHostBase serviceHost)
+        {
+            string shortInstanceName = GetShortInstanceName(serviceHost);
+            if (!ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+            {
+                return shortInstanceName;
+            }
+
+            string fullInstanceName = GetFullInstanceName(serviceHost);
+
+            return EnsureUniqueInstanceName(PerformanceCounterStrings.SERVICEMODELSERVICE.ServicePerfCounters, shortInstanceName, fullInstanceName);
+        }
+
+        internal static string GetFriendlyInstanceName(ServiceHostBase serviceHost)
+        {
+            string shortInstanceName = GetShortInstanceName(serviceHost);
+            if (!ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+            {
+                return shortInstanceName;
+            }
+
+            string fullInstanceName = GetFullInstanceName(serviceHost);
+
+            return GetUniqueInstanceName(PerformanceCounterStrings.SERVICEMODELSERVICE.ServicePerfCounters, shortInstanceName, fullInstanceName);
         }
 
         static bool TryGetFullVirtualPath(ServiceHostBase serviceHost, out string uri)

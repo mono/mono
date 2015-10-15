@@ -1,4 +1,4 @@
-//------------------------------------------------------------
+﻿//------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
 namespace System.ServiceModel.Web
@@ -9,9 +9,9 @@ namespace System.ServiceModel.Web
     // DO NOT EDIT THIS CODE. 
     //
     // All of the code from this class was taken from build 20717.00 
-    // of System.Net.HttpDateParse.  If there is a bug with this code 
-    // it should be fixed  in the original System.Net.HttpDateParse 
-    // and then ported here. [[....]]
+    // of System.Net.HttpDateParse.  If there is a 
+
+
 
     internal static class HttpDateParse
     {
@@ -48,7 +48,7 @@ namespace System.ServiceModel.Web
 
         private const int DATE_TOKEN_JANUARY = 1;
         private const int DATE_TOKEN_FEBRUARY = 2;
-        private const int DATE_TOKEN_MARCH = 3;
+        private const int DATE_TOKEN_Microsoft = 3;
         private const int DATE_TOKEN_APRIL = 4;
         private const int DATE_TOKEN_MAY = 5;
         private const int DATE_TOKEN_JUNE = 6;
@@ -145,7 +145,7 @@ namespace System.ServiceModel.Web
                             switch (MakeUpper(lpszDay[index + 2]))
                             {
                                 case 'R':
-                                    return DATE_TOKEN_MARCH;
+                                    return DATE_TOKEN_Microsoft;
                                 case 'Y':
                                     return DATE_TOKEN_MAY;
                             }

@@ -41,9 +41,12 @@ namespace System.Security.Cryptography.X509Certificates {
         TrustedPublisher,       // trusted publishers (used in Authenticode).
     }
 
-    public sealed class X509Store {
+    public sealed class X509Store : IDisposable{
         private string m_storeName;
         private StoreLocation m_location;
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private SafeCertStoreHandle m_safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
 
         public X509Store () : this("MY", StoreLocation.CurrentUser) {}
@@ -54,6 +57,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
         public X509Store (StoreLocation storeLocation) : this ("MY", storeLocation) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Store (StoreName storeName, StoreLocation storeLocation) {
             if (storeLocation != StoreLocation.CurrentUser && storeLocation != StoreLocation.LocalMachine)
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.Arg_EnumIllegalVal), "storeLocation"));
@@ -90,6 +96,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_location = storeLocation;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Store (string storeName, StoreLocation storeLocation) {
             if (storeLocation != StoreLocation.CurrentUser && storeLocation != StoreLocation.LocalMachine)
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.Arg_EnumIllegalVal), "storeLocation"));
@@ -128,8 +137,13 @@ namespace System.Security.Cryptography.X509Certificates {
             get { return m_storeName; }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
+#endif
         public void Open(OpenFlags flags) {
             if (m_location != StoreLocation.CurrentUser && m_location != StoreLocation.LocalMachine)
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.Arg_EnumIllegalVal), "m_location"));
@@ -158,12 +172,22 @@ namespace System.Security.Cryptography.X509Certificates {
                                   CAPI.CERT_STORE_CTRL_AUTO_RESYNC,
                                   IntPtr.Zero);
         }
-
+        
+        public void Dispose() {
+            Close();
+        }
+        
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public void Close() {
             if (m_safeCertStoreHandle != null && !m_safeCertStoreHandle.IsClosed)
                 m_safeCertStoreHandle.Dispose();
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public void Add(X509Certificate2 certificate) {
             if (certificate == null)
                 throw new ArgumentNullException("certificate");
@@ -196,6 +220,9 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public void Remove(X509Certificate2 certificate) {
             if (certificate == null)
                 throw new ArgumentNullException("certificate");
@@ -222,6 +249,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public X509Certificate2Collection Certificates { 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertStoreHandle.IsInvalid || m_safeCertStoreHandle.IsClosed)
                     return new X509Certificate2Collection();
@@ -233,6 +263,9 @@ namespace System.Security.Cryptography.X509Certificates {
         // private static methods
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static void RemoveCertificateFromStore(SafeCertStoreHandle safeCertStoreHandle, SafeCertContextHandle safeCertContext) {
             if (safeCertContext == null || safeCertContext.IsInvalid)
                 return;

@@ -7,7 +7,7 @@
 **
 ** Class:  IObservable<T>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Interface for exposing an Observable in the 

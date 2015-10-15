@@ -666,7 +666,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
                         hashCodeCombiner = new HashCodeCombiner();
                     }
 
-                    hashCodeCombiner.AddInt(_stringDictionary[virtualDependency].GetHashCode());
+                    hashCodeCombiner.AddInt(StringUtil.GetNonRandomizedHashCode((string)_stringDictionary[virtualDependency]));
                     continue;
                 }
 

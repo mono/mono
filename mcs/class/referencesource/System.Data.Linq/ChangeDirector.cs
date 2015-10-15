@@ -45,14 +45,14 @@ namespace System.Data.Linq {
             private enum AutoSyncBehavior { ApplyNewAutoSync, RollbackSavedValues }            
 
             DataContext context;
-            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="[....]: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
+            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="Microsoft: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
             List<KeyValuePair<TrackedObject, object[]>> syncRollbackItems;
             
             internal StandardChangeDirector(DataContext context) {
                 this.context = context;
             }
 
-            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="[....]: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
+            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="Microsoft: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
             private List<KeyValuePair<TrackedObject, object[]>> SyncRollbackItems {
                 get {
                     if (syncRollbackItems == null) {
@@ -89,7 +89,7 @@ namespace System.Data.Linq {
                     IEnumerable<object> facts = (IEnumerable<object>)this.context.Provider.Execute(cmd).ReturnValue;
                     object[] syncResults = (object[])facts.FirstOrDefault();
                     if (syncResults != null) {
-                        // [....] any auto gen or computed members
+                        // sync any auto gen or computed members
                         AutoSyncMembers(syncResults, item, UpdateType.Insert, AutoSyncBehavior.ApplyNewAutoSync);
                         return 1;
                     }
@@ -142,7 +142,7 @@ namespace System.Data.Linq {
                     IEnumerable<object> facts = (IEnumerable<object>)this.context.Provider.Execute(cmd).ReturnValue;
                     object[] syncResults = (object[])facts.FirstOrDefault();
                     if (syncResults != null) {
-                        // [....] any auto gen or computed members
+                        // sync any auto gen or computed members
                         AutoSyncMembers(syncResults, item, UpdateType.Update, AutoSyncBehavior.ApplyNewAutoSync);
                         return 1;
                     }
@@ -204,7 +204,7 @@ namespace System.Data.Linq {
                 }
             }
 
-            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="[....]: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
+            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="Microsoft: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
             internal override void  RollbackAutoSync() {
                 // Rolls back any AutoSync values that may have been set already
                 // Those values are no longer valid since the transaction will be rolled back on the server
@@ -222,7 +222,7 @@ namespace System.Data.Linq {
                 }
             }
 
-            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="[....]: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
+            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="Microsoft: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
             internal override void  ClearAutoSyncRollback() {
                 this.syncRollbackItems = null;
             }
@@ -260,7 +260,7 @@ namespace System.Data.Linq {
             private static List<MetaDataMember> GetAutoSyncMembers(MetaType metaType, UpdateType updateType) {
                 List<MetaDataMember> membersToSync = new List<MetaDataMember>();
                 foreach (MetaDataMember metaMember in metaType.PersistentDataMembers.OrderBy(m => m.Ordinal)) {
-                    // add all auto generated members for the specified update type to the auto-[....] list
+                    // add all auto generated members for the specified update type to the auto-sync list
                     if ((updateType == UpdateType.Insert && metaMember.AutoSync == AutoSync.OnInsert) ||
                         (updateType == UpdateType.Update && metaMember.AutoSync == AutoSync.OnUpdate) ||
                          metaMember.AutoSync == AutoSync.Always) {
@@ -272,14 +272,14 @@ namespace System.Data.Linq {
 
             /// <summary>
             /// Synchronize the specified item by copying in data from the specified results.
-            /// Used to [....] members after successful insert or update, but also used to rollback to previous values if a failure
+            /// Used to sync members after successful insert or update, but also used to rollback to previous values if a failure
             /// occurs on other entities in the same SubmitChanges batch.
             /// </summary>
             /// <param name="autoSyncBehavior">
-            /// If AutoSyncBehavior.ApplyNewAutoSync, the current value of the property is saved before the [....] occurs. This is used for normal synchronization after a successful update/insert.
-            /// Otherwise, the current value is not saved. This is used for rollback operations when something in the SubmitChanges batch failed, rendering the previously-[....]'d values invalid.
+            /// If AutoSyncBehavior.ApplyNewAutoSync, the current value of the property is saved before the sync occurs. This is used for normal synchronization after a successful update/insert.
+            /// Otherwise, the current value is not saved. This is used for rollback operations when something in the SubmitChanges batch failed, rendering the previously-sync'd values invalid.
             /// </param>
-            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="[....]: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
+            [SuppressMessage("Microsoft.MSInternal", "CA908:AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies", Justification="Microsoft: FxCop bug Dev10:423110 -- List<KeyValuePair<object, object>> is not supposed to be flagged as a violation.")]
             private void AutoSyncMembers(object[] syncResults, TrackedObject item, UpdateType updateType, AutoSyncBehavior autoSyncBehavior) {
                 System.Diagnostics.Debug.Assert(item != null);
                 System.Diagnostics.Debug.Assert(item.IsNew || item.IsPossiblyModified, "AutoSyncMembers should only be called for new and modified objects.");

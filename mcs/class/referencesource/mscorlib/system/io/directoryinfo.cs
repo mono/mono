@@ -7,7 +7,7 @@
 **
 ** Class:  DirectoryInfo
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exposes routines for enumerating through a 
@@ -64,11 +64,7 @@ namespace System.IO {
         }
 #endif
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public DirectoryInfo(String path)
@@ -99,13 +95,13 @@ namespace System.IO {
             String fullPath = Path.GetFullPathInternal(path);
 
             demandDir = new String[] {Directory.GetDemandDir(fullPath, true)};
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost)
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, OriginalPath, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
+#else
             new FileIOPermission(FileIOPermissionAccess.Read, demandDir, false, false ).Demand();
 #endif
 
@@ -116,11 +112,7 @@ namespace System.IO {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
 #if FEATURE_CORESYSTEM
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
 #endif //FEATURE_CORESYSTEM
         internal DirectoryInfo(String fullPath, bool junk)
         {
@@ -159,11 +151,7 @@ namespace System.IO {
         }
 
         public DirectoryInfo Parent {
-#if FEATURE_LEGACYNETCFIOSECURITY
-            [System.Security.SecurityCritical]
-#else
             [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get {
@@ -177,10 +165,10 @@ namespace System.IO {
                 if (parentName==null)
                     return null;
                 DirectoryInfo dir = new DirectoryInfo(parentName,false);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.PathDiscovery | FileSecurityStateAccess.Read, String.Empty, dir.demandDir[0]);
                 state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery | FileIOPermissionAccess.Read, dir.demandDir, false, false).Demand();
 #endif
                 return dir;
@@ -191,11 +179,7 @@ namespace System.IO {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
 #if FEATURE_CORECLR
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
 #endif
         public DirectoryInfo CreateSubdirectory(String path) {
             if (path == null)
@@ -246,10 +230,10 @@ namespace System.IO {
 
             // Ensure we have permission to create this subdirectory.
             String demandDirForCreation = Directory.GetDemandDir(fullPath, true);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, OriginalPath, demandDirForCreation);
             state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             new FileIOPermission(FileIOPermissionAccess.Write, new String[] { demandDirForCreation }, false, false).Demand();
 #endif
 
@@ -261,9 +245,6 @@ namespace System.IO {
 
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         public void Create()
         {
             Directory.InternalCreateDirectory(FullPath, OriginalPath, null, true);
@@ -330,9 +311,6 @@ namespace System.IO {
         // given search criteria (ie, "*.txt").
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
         public FileInfo[] GetFiles(String searchPattern)
         {
             if (searchPattern == null)
@@ -359,9 +337,6 @@ namespace System.IO {
 
         // Returns an array of Files in the current DirectoryInfo matching the 
         // given search criteria (ie, "*.txt").
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private FileInfo[] InternalGetFiles(String searchPattern, SearchOption searchOption)
@@ -377,10 +352,6 @@ namespace System.IO {
         // Returns an array of Files in the DirectoryInfo specified by path
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
-
         public FileInfo[] GetFiles()
         {
             return InternalGetFiles("*", SearchOption.TopDirectoryOnly);
@@ -389,9 +360,6 @@ namespace System.IO {
         // Returns an array of Directories in the current directory.
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
         public DirectoryInfo[] GetDirectories()
         {
             return InternalGetDirectories("*", SearchOption.TopDirectoryOnly);
@@ -401,9 +369,6 @@ namespace System.IO {
         // given search criteria (ie, "*.txt").
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
         public FileSystemInfo[] GetFileSystemInfos(String searchPattern)
         {
             if (searchPattern == null)
@@ -430,9 +395,6 @@ namespace System.IO {
 
         // Returns an array of strongly typed FileSystemInfo entries in the path with the
         // given search criteria (ie, "*.txt").
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private FileSystemInfo[] InternalGetFileSystemInfos(String searchPattern, SearchOption searchOption)
@@ -449,9 +411,6 @@ namespace System.IO {
         // of all the files and directories.
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
         public FileSystemInfo[] GetFileSystemInfos()
         {
             return InternalGetFileSystemInfos("*", SearchOption.TopDirectoryOnly);
@@ -462,9 +421,6 @@ namespace System.IO {
         // directories).
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [SecurityCritical]
-#endif
         public DirectoryInfo[] GetDirectories(String searchPattern)
         {
             if (searchPattern == null)
@@ -493,9 +449,6 @@ namespace System.IO {
         // Returns an array of Directories in the current DirectoryInfo matching the 
         // given search criteria (ie, "System*" could match the System & System32
         // directories).
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private DirectoryInfo[] InternalGetDirectories(String searchPattern, SearchOption searchOption)
@@ -508,9 +461,6 @@ namespace System.IO {
             return fileList.ToArray();
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<DirectoryInfo> EnumerateDirectories()
@@ -518,9 +468,6 @@ namespace System.IO {
             return InternalEnumerateDirectories("*", SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<DirectoryInfo> EnumerateDirectories(String searchPattern)
@@ -532,9 +479,6 @@ namespace System.IO {
             return InternalEnumerateDirectories(searchPattern, SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<DirectoryInfo> EnumerateDirectories(String searchPattern, SearchOption searchOption)
@@ -548,9 +492,6 @@ namespace System.IO {
             return InternalEnumerateDirectories(searchPattern, searchOption);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private IEnumerable<DirectoryInfo> InternalEnumerateDirectories(String searchPattern, SearchOption searchOption)
@@ -561,9 +502,6 @@ namespace System.IO {
             return FileSystemEnumerableFactory.CreateDirectoryInfoIterator(FullPath, OriginalPath, searchPattern, searchOption);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileInfo> EnumerateFiles()
@@ -571,9 +509,6 @@ namespace System.IO {
             return InternalEnumerateFiles("*", SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileInfo> EnumerateFiles(String searchPattern)
@@ -585,9 +520,6 @@ namespace System.IO {
             return InternalEnumerateFiles(searchPattern, SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileInfo> EnumerateFiles(String searchPattern, SearchOption searchOption)
@@ -601,9 +533,6 @@ namespace System.IO {
             return InternalEnumerateFiles(searchPattern, searchOption);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private IEnumerable<FileInfo> InternalEnumerateFiles(String searchPattern, SearchOption searchOption)
@@ -614,9 +543,6 @@ namespace System.IO {
             return FileSystemEnumerableFactory.CreateFileInfoIterator(FullPath, OriginalPath, searchPattern, searchOption);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos()
@@ -624,9 +550,6 @@ namespace System.IO {
             return InternalEnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos(String searchPattern)
@@ -638,9 +561,6 @@ namespace System.IO {
             return InternalEnumerateFileSystemInfos(searchPattern, SearchOption.TopDirectoryOnly);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos(String searchPattern, SearchOption searchOption)
@@ -654,9 +574,6 @@ namespace System.IO {
             return InternalEnumerateFileSystemInfos(searchPattern, searchOption);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private IEnumerable<FileSystemInfo> InternalEnumerateFileSystemInfos(String searchPattern, SearchOption searchOption)
@@ -667,7 +584,6 @@ namespace System.IO {
             return FileSystemEnumerableFactory.CreateFileSystemInfoIterator(FullPath, OriginalPath, searchPattern, searchOption);
         }
         
-#if !PLATFORM_UNIX
         // Returns the root portion of the given path. The resulting string
         // consists of those rightmost characters of the path that constitute the
         // root of the path. Possible patterns for the resulting string are: An
@@ -677,22 +593,9 @@ namespace System.IO {
         // and "\\server\share" (a UNC path for a given server and share name).
         // The resulting string is null if path is null.
         //
-#else
-        // Returns the root portion of the given path. The resulting string
-        // consists of those rightmost characters of the path that constitute the
-        // root of the path. Possible patterns for the resulting string are: An
-        // empty string (a relative path on the current drive), "\" (an absolute
-        // path on the current drive)
-        // The resulting string is null if path is null.
-        //
-#endif // !PLATFORM_UNIX
 
         public DirectoryInfo Root {
-#if FEATURE_LEGACYNETCFIOSECURITY
-            [System.Security.SecurityCritical]
-#else
             [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
             [ResourceExposure(ResourceScope.None)]
             [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
             get
@@ -702,21 +605,17 @@ namespace System.IO {
                 String rootPath = FullPath.Substring(0, rootLength);
                 demandPath = Directory.GetDemandDir(rootPath, true);
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPath);
                 sourceState.EnsureState();
-#elif !FEATURE_CORECLR
+#else
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, new String[] { demandPath }, false, false).Demand();
 #endif
                 return new DirectoryInfo(rootPath);
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public void MoveTo(String destDirName) {
@@ -726,10 +625,10 @@ namespace System.IO {
                 throw new ArgumentException(Environment.GetResourceString("Argument_EmptyFileName"), "destDirName");
             Contract.EndContractBlock();
             
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, DisplayPath, Directory.GetDemandDir(FullPath, true));
             sourceState.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandDir, false, false).Demand();
 #endif
             String fullDestDirName = Path.GetFullPathInternal(destDirName);
@@ -745,10 +644,10 @@ namespace System.IO {
             // had the ability to read the file contents in the old location,
             // but you technically also need read permissions to the new 
             // location as well, and write is not a true superset of read.
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destDirName, demandPath);
             destState.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, demandPath).Demand();
 #endif
             
@@ -790,11 +689,7 @@ namespace System.IO {
             _dataInitialised = -1;
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public override void Delete()
@@ -802,11 +697,7 @@ namespace System.IO {
             Directory.Delete(FullPath, OriginalPath, false, true);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         public void Delete(bool recursive)

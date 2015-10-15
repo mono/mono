@@ -116,6 +116,7 @@ namespace System {
         return (m_value==((Char)obj).m_value);
       }
 
+      [System.Runtime.Versioning.NonVersionable]
       public bool Equals(Char obj)
       {
         return m_value == obj;
@@ -145,9 +146,6 @@ namespace System {
       }
     
       // Overrides System.Object.ToString.
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       [Pure]
       public override String ToString() {
           Contract.Ensures(Contract.Result<String>() != null);
@@ -270,9 +268,6 @@ namespace System {
     **character c is considered to be a whitespace character.                     **
     ==============================================================================*/
     // Determines whether a character is whitespace.
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     [Pure]
     public static bool IsWhiteSpace(char c) {
               
@@ -361,9 +356,6 @@ namespace System {
       }
     
         // Determines whether a character is a letter or a digit.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public static bool IsLetterOrDigit(char c) {
             if (IsLatin1(c)) {
@@ -377,9 +369,6 @@ namespace System {
       ==============================================================================*/
       // Converts a character to upper-case for the specified culture.
       // <;<;Not fully implemented>;>;
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static char ToUpper(char c, CultureInfo culture) {
         if (culture==null)
             throw new ArgumentNullException("culture");
@@ -395,14 +384,11 @@ namespace System {
       // Converts a character to upper-case for the default culture.
       //
       public static char ToUpper(char c) {
-          return ToUpper(c, String.LegacyMode ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture);
+          return ToUpper(c, CultureInfo.CurrentCulture);
       }
 
 
       // Converts a character to upper-case for invariant culture.
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static char ToUpperInvariant(char c) {
           return ToUpper(c, CultureInfo.InvariantCulture);
       }
@@ -412,9 +398,6 @@ namespace System {
       ==============================================================================*/
       // Converts a character to lower-case for the specified culture.
       // <;<;Not fully implemented>;>;
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static char ToLower(char c, CultureInfo culture) {
         if (culture==null)
             throw new ArgumentNullException("culture");
@@ -429,14 +412,11 @@ namespace System {
       ==============================================================================*/
       // Converts a character to lower-case for the default culture.
       public static char ToLower(char c) {
-        return ToLower(c, String.LegacyMode ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture);
+        return ToLower(c, CultureInfo.CurrentCulture);
       }
 
 
       // Converts a character to lower-case for invariant culture.
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public static char ToLowerInvariant(char c) {
           return ToLower(c, CultureInfo.InvariantCulture);
       }
@@ -819,9 +799,6 @@ namespace System {
             return CharUnicodeInfo.IsWhiteSpace(s, index);
         }
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static UnicodeCategory GetUnicodeCategory(char c)
         {
             if (IsLatin1(c)) {

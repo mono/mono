@@ -9,6 +9,8 @@ namespace System.ServiceModel.Diagnostics
 
     static class PerformanceCountersFactory
     {
+        private static bool categoriesExist = false;
+
         static internal ServicePerformanceCountersBase CreateServiceCounters(ServiceHostBase serviceHost)
         {
             if (!CheckPermissions())
@@ -20,6 +22,7 @@ namespace System.ServiceModel.Diagnostics
             {
                 try
                 {
+                    EnsureCategoriesExistIfNeeded();
                     var counters = new ServicePerformanceCountersV2(serviceHost);
                     // Workaround Sys.Diag.PerformanceData problem:
                     // Ensure that all three categories are initialized so other processes can still 
@@ -60,6 +63,7 @@ namespace System.ServiceModel.Diagnostics
             {
                 try
                 {
+                    EnsureCategoriesExistIfNeeded();
                     return new EndpointPerformanceCountersV2(service, contract, uri);
                 }
 #pragma warning suppress 56500 // covered by FxCOP
@@ -94,6 +98,7 @@ namespace System.ServiceModel.Diagnostics
             {
                 try
                 {
+                    EnsureCategoriesExistIfNeeded();
                     return new OperationPerformanceCountersV2(service, contract, operationName, uri);
                 }
 #pragma warning suppress 56500 // covered by FxCOP
@@ -138,6 +143,82 @@ namespace System.ServiceModel.Diagnostics
             }
 
             return false;
+        }
+
+        // If EnsureUniquePerformanceCounterInstanceName is enabled, PerformanceCountersBase.cs will be checking if instances
+        // exist in each of these categories, so we need to ensure the categories all exist. This works around System.Diagnostics 
+        // calls using PerformanceCounterLib to cache which categories do/don't exist.
+        private static void EnsureCategoriesExistIfNeeded()
+        {
+            if (categoriesExist || !ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+            {
+                return;
+            }
+
+            OperationPerformanceCountersV2 operationCounter = null;
+            EndpointPerformanceCountersV2 endpointCounter = null;
+            ServicePerformanceCountersV2 serviceCounter = null;
+
+            try
+            {
+                if (PerformanceCounterCategory.Exists(PerformanceCounterStrings.SERVICEMODELOPERATION.OperationPerfCounters) &&
+                    PerformanceCounterCategory.Exists(PerformanceCounterStrings.SERVICEMODELENDPOINT.EndpointPerfCounters) &&
+                    PerformanceCounterCategory.Exists(PerformanceCounterStrings.SERVICEMODELSERVICE.ServicePerfCounters))
+                {
+                    categoriesExist = true;
+                    return;
+                }
+
+                // Categories do not exist. Update PerformanceCounterLib's cache using dummy counters.
+                const string dummyValue = "_WCF_Admin";
+
+            
+                // Older operating systems (such as windows 7) report the category as not existing unless a counter instance
+                // has been created in it. Create one instance in each of the categories to ensure they will exist in the cache 
+                // that System.Diagnostics calls use. 
+                ServiceHost dummyServiceHost = new ServiceHost(typeof(object), new Uri("http://" + dummyValue));
+                operationCounter = new OperationPerformanceCountersV2(dummyValue, dummyValue, dummyValue, dummyValue);
+                endpointCounter = new EndpointPerformanceCountersV2(dummyValue, dummyValue, dummyValue);
+                serviceCounter = new ServicePerformanceCountersV2(dummyServiceHost);
+
+                // Throw away cached categories, then read from the categories to cause the cache to be repopulated.
+                PerformanceCounter.CloseSharedResources();
+                PerformanceCounterCategory.Exists(dummyValue);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Don't have permission to read performance counters. Trace a warning.
+                if (DiagnosticUtility.ShouldTraceWarning)
+                {
+                    TraceUtility.TraceEvent(TraceEventType.Warning,
+                                            TraceCode.PerformanceCountersFailedForService,
+                                            SR.GetString(SR.EnsureCategoriesExistFailedPermission));
+                }
+            }
+            catch
+            {
+                // Failed to ensure all of the categories exist. Catch the exception and try to create the counter anyway.
+            }
+            finally
+            {
+                // Delete the dummy counters, we don't need them anymore.
+                if (operationCounter != null)
+                {
+                    operationCounter.DeleteInstance();
+                }
+
+                if (endpointCounter != null)
+                {
+                    endpointCounter.DeleteInstance();
+                }
+
+                if (serviceCounter != null)
+                {
+                    serviceCounter.DeleteInstance();
+                }
+                
+                categoriesExist = true;
+            }
         }
     }
 }

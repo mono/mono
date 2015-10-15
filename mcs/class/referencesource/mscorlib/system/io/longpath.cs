@@ -7,7 +7,7 @@
 **
 ** Class:  File
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Long paths
@@ -482,11 +482,9 @@ namespace System.IO {
 
             int lengthRoot = LongPath.GetRootLength(fullPath); 
 
-#if !PLATFORM_UNIX
             // For UNC paths that are only // or /// 
             if (length == 2 && Path.IsDirectorySeparator(fullPath[1]))
                 throw new IOException(Environment.GetResourceString("IO.IO_CannotCreateDirectory", path));
-#endif // !PLATFORM_UNIX
 
             List<string> stackDir = new List<string>();
 

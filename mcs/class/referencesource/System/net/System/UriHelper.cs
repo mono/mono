@@ -1,9 +1,9 @@
-using System.Globalization;
-using System.Text;
-
 namespace System 
 {
-
+    using System.Globalization;
+    using System.Text;
+    using System.Diagnostics;
+    
     internal static class UriHelper
     {
         private static readonly char[] HexUpperChars = {
@@ -344,7 +344,7 @@ namespace System
                                         continue;
                                     }
                                     else if (iriParsing && ((ch <='\x9F' && IsNotSafeForUnescape(ch)) || 
-                                                            (ch >'\x9F' &&!Uri.CheckIriUnicodeRange(ch, isQuery))))
+                                                            (ch >'\x9F' &&!IriHelper.CheckIriUnicodeRange(ch, isQuery))))
                                     {
                                         // check if unenscaping gives a char ouside iri range 
                                         // if it does then keep it escaped
@@ -521,11 +521,11 @@ done:       return dest;
                     if (iriParsing) 
                     {
                         if (!isHighSurr)
-                            inIriRange = Uri.CheckIriUnicodeRange(unescapedChars[j], isQuery);
+                            inIriRange = IriHelper.CheckIriUnicodeRange(unescapedChars[j], isQuery);
                         else 
                         {
                             bool surrPair = false;
-                            inIriRange = Uri.CheckIriUnicodeRange(unescapedChars[j], unescapedChars[j + 1],
+                            inIriRange = IriHelper.CheckIriUnicodeRange(unescapedChars[j], unescapedChars[j + 1],
                                                                    ref surrPair, isQuery);
                         }
                     }
@@ -535,6 +535,7 @@ done:       return dest;
                         // Escape any invalid bytes that were before this character
                         while (bytes[count] != encodedBytes[0])
                         {
+                            Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                             EscapeAsciiChar((char)bytes[count++], dest, ref destOffset);
                         }
 
@@ -560,32 +561,43 @@ done:       return dest;
                                     // need to keep chars not allowed as escaped
                                     for (int l = 0; l < encodedBytes.Length; ++l)
                                     {
+                                        Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                                         EscapeAsciiChar((char)encodedBytes[l], dest, ref destOffset);
                                     }
                                 }
                                 else if (!Uri.IsBidiControlCharacter(unescapedCharsPtr[j]))
                                 {
                                     //copy chars
+                                    Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                                     pDest[destOffset++] = unescapedCharsPtr[j];
+                                    if (isHighSurr)
+                                    {
+                                        Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
+                                        pDest[destOffset++] = unescapedCharsPtr[j + 1];
+                                    }
                                 }
-                                if (isHighSurr)
-                                    pDest[destOffset++] = unescapedCharsPtr[j + 1];
                             }
                             else
                             {
                                 //copy chars
+                                Debug.Assert(dest.Length > destOffset);
                                 pDest[destOffset++] = unescapedCharsPtr[j];
 
                                 if (isHighSurr)
+                                {
+                                    Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                                     pDest[destOffset++] = unescapedCharsPtr[j + 1];
+                                }
                             }
-                                break; // break out of while (true) since we've matched this char bytes
+
+                            break; // break out of while (true) since we've matched this char bytes
                         }
                         else
                         {
                             // copy bytes till place where bytes dont match
                             for (int l = 0; l < k; ++l)
                             {
+                                Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                                 EscapeAsciiChar((char)bytes[count++], dest, ref destOffset);
                             }
                         }
@@ -599,6 +611,7 @@ done:       return dest;
             // Include any trailing invalid sequences
             while (count < byteCount) 
             {
+                Debug.Assert(dest.Length > destOffset, "Buffer overrun detected");
                 EscapeAsciiChar((char)bytes[count++], dest, ref destOffset);
             }
         }

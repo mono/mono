@@ -22,7 +22,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
     using Microsoft.Win32;
 
     // <summary>
-    // Helper class that is responsible for opening a [....] Form that hosts the WPF
+    // Helper class that is responsible for opening a Microsoft Form that hosts the WPF
     // PropertyValueDialogControl that ultimately hosts a DialogPropertyValueEditor.
     // Both PropertyInspector control as well as PropertyValueDialogControl use this class.
     // </summary>
@@ -71,7 +71,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
 
         // <summary>
         // Called in response to OpenDialogWindow command firing. The method opens a
-        // [....] Form that contains an ElementHost that, in turn, contains
+        // Microsoft Form that contains an ElementHost that, in turn, contains
         // PropertyValueDialogControl.
         // </summary>
         // <param name="sender"></param>

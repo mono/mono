@@ -278,7 +278,7 @@ namespace System.Net.Mime
         // formats a date only.  Does not include time zone
         internal string FormatDate(DateTime value)
         {
-            string output = value.ToString("ddd, dd MMM yyyy H:mm:ss", CultureInfo.InvariantCulture);
+            string output = value.ToString("ddd, dd MMM yyyy HH:mm:ss", CultureInfo.InvariantCulture);
             return output;
         }
 

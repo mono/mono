@@ -8,11 +8,11 @@
 //
 // MemberFilter is a delegate used to filter Members.  This delegate is used
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    as a callback from Type.FindMembers.
 //
 // <EMAIL>Author: darylo</EMAIL>
-// Date: [....] 98
+// Date: March 98
 //
 namespace System.Reflection {
     

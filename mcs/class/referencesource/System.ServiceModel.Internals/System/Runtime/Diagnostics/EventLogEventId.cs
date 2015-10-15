@@ -18,7 +18,7 @@ namespace System.Runtime.Diagnostics
     // The Severity and Facility assigned in EventLog.mc must match those assigned via the EventId here.
     // If the EventId's do not match, the EventViewer will not be able to display the strings defined in EventLog.mc correctly.  In this case, the following error message will be included in the logged event:
     //     "The description for Event ID XX from source System.ServiceModel 4.0.0.0 cannot be found..."
-    // To inspect the value ----igend to the enum elements below, build 'ndp\cdf\src\System.ServiceModel.Internals', and inspect System.ServiceModel.Internals\System.ServiceModel.Internals.asmmeta
+    // To inspect the value assigend to the enum elements below, build 'ndp\cdf\src\System.ServiceModel.Internals', and inspect System.ServiceModel.Internals\System.ServiceModel.Internals.asmmeta
     // To inspect the EventId generated from EventLog.mc, build 'ndp\cdf\src\WCF\EventLog', and open ServiceModelEvents.dll.mui with \\indigofs\PrivateLabDebugShare\sarada\RPFRecorder\RPFRecorder.exe (convert EventId from decimal to hex).
     // You could also use any other method of viewing ServiceModelEvents.dll.mui which would allow you to inspect the EventId
     enum EventLogEventId : uint

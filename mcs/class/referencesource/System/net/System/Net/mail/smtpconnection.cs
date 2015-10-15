@@ -417,7 +417,7 @@ namespace System.Net.Mail
                 for (int i = 0; i < authenticationModules.Length; i++) 
                 {
 
-                    //only authenticate if the auth protocol is supported  - [....]
+                    //only authenticate if the auth protocol is supported  - Microsoft
                     if (!AuthSupported(authenticationModules[i])) {
                         continue;
                     }
@@ -650,7 +650,7 @@ namespace System.Net.Mail
             internal void GetConnection(bool synchronous)
             {
 
-                GlobalLog.Enter("ConnectAndHandshakeAsyncResult#" + ValidationHelper.HashString(this) + "::Connect: [....]=" + (synchronous ? "true" : "false"));
+                GlobalLog.Enter("ConnectAndHandshakeAsyncResult#" + ValidationHelper.HashString(this) + "::Connect: sync=" + (synchronous ? "true" : "false"));
                 if (connection.isConnected)
                 {
                     throw new InvalidOperationException(SR.GetString(SR.SmtpAlreadyConnected));

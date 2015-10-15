@@ -346,16 +346,16 @@ namespace System.Security.AccessControl
     {
         #region Constructors
 
-        internal AuthorizationRuleCollection()
+        public AuthorizationRuleCollection()
             : base()
         {
         }
 
         #endregion
 
-        #region Internal methods
+        #region Public methods
 
-        internal void AddRule( AuthorizationRule rule )
+        public void AddRule( AuthorizationRule rule )
         {
             InnerList.Add( rule );
         }

@@ -14,7 +14,7 @@
 //            preferences of the user and does not depend on the user's
 //            language or culture.
 //
-//  Date:     [....] 31, 1999
+//  Date:     Microsoft 31, 1999
 //
 ////////////////////////////////////////////////////////////////////////////
 
@@ -74,12 +74,6 @@ namespace System.Globalization {
             
             Contract.EndContractBlock();
 
-#if FEATURE_CORECLR      
-            //
-            // For CoreCLR we only want the region names that are full culture names
-            //
-            this.m_cultureData = CultureData.GetCultureData(name,true);
-#else
             //
             // First try it as an entire culture. We must have user override as true here so
             // that we can pick up custom cultures *before* built-in ones (if they want to
@@ -87,7 +81,7 @@ namespace System.Globalization {
             //
             this.m_cultureData = CultureData.GetCultureDataForRegion(name,true);
             // this.m_name = name.ToUpper(CultureInfo.InvariantCulture);
-#endif // FEATURE_CORECLR
+
             if (this.m_cultureData == null)
                 throw new ArgumentException(
                     String.Format(

@@ -23,7 +23,6 @@ namespace System {
     using System.Security;
     using System.Security.Permissions;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
 
     // Note that we make a T[] (single-dimensional w/ zero as the lower bound) implement both 
     // IList<U> and IReadOnlyList<U>, where T : U dynamically.  See the SZArrayHelper class for details.
@@ -151,13 +150,7 @@ namespace System {
             RuntimeType t = elementType.UnderlyingSystemType as RuntimeType;
             if (t == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "elementType");
-            
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.ArrayCreateInstance(t.GetFullNameForEtw());
-            }
-#endif
+
             // Check to make sure the lenghts are all positive. Note that we check this here to give
             // a good exception message if they are not; however we check this again inside the execution 
             // engine's low level allocation function after having made a copy of the array to prevent a 
@@ -216,12 +209,6 @@ namespace System {
             if (t == null)
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "elementType");
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.ArrayCreateInstance(t.GetFullNameForEtw());
-            }
-#endif
             // Check to make sure the lenghts are all positive. Note that we check this here to give
             // a good exception message if they are not; however we check this again inside the execution 
             // engine's low level allocation function after having made a copy of the array to prevent a 
@@ -631,8 +618,11 @@ namespace System {
 
         // We impose limits on maximum array lenght in each dimension to allow efficient 
         // implementation of advanced range check elimination in future.
-        // Keep in [....] with vm\gcscan.cpp and HashHelpers.MaxPrimeArrayLength.
+        // Keep in sync with vm\gcscan.cpp and HashHelpers.MaxPrimeArrayLength.
+        // The constants are defined in this method: inline SIZE_T MaxArrayLength(SIZE_T componentSize) from gcscan
+        // We have different max sizes for arrays with elements of size 1 for backwards compatibility
         internal const int MaxArrayLength = 0X7FEFFFFF;
+        internal const int MaxByteArrayLength = 0x7FFFFFC7;
 
         [ComVisible(false)]
         public extern long LongLength {
@@ -680,9 +670,6 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public extern int GetLowerBound(int dimension);
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [ResourceExposure(ResourceScope.None)]
@@ -830,7 +817,7 @@ namespace System {
             int ret = 0;
 
             for (int i = (this.Length >= 8 ? this.Length - 8 : 0); i < this.Length; i++) {
-                ret = CombineHashCodes(ret, comparer.GetHashCode(GetValue(0)));
+                ret = CombineHashCodes(ret, comparer.GetHashCode(GetValue(i)));
             }
 
             return ret;
@@ -1086,6 +1073,17 @@ namespace System {
             Contract.EndContractBlock();
 
             this.CopyTo(array, (int) index);
+        }
+
+        [Pure]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+        public static T[] Empty<T>()
+        {
+            Contract.Ensures(Contract.Result<T[]>() != null);
+            Contract.Ensures(Contract.Result<T[]>().Length == 0);
+            Contract.EndContractBlock();
+
+            return EmptyArray<T>.Value;
         }
 
         public static bool Exists<T>(T[] array, Predicate<T> match) {
@@ -1831,10 +1829,10 @@ namespace System {
             Contract.EndContractBlock();
 
             if (length > 1) {
-                // <STRIP>
-                // TrySZSort is still faster than the generic implementation.
-                // The reason is Int32.CompareTo is still expensive than just using "<" or ">".
-                // </STRIP>
+                // <
+
+
+
                 if ( comparer == null || comparer == Comparer<T>.Default ) {
                     if(TrySZSort(array, null, index, index + length - 1)) {
                         return;
@@ -1982,6 +1980,13 @@ namespace System {
 
             internal void Sort(int left, int length)
             {
+#if FEATURE_CORECLR
+                // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                IntrospectiveSort(left, length);
+#else
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
                     IntrospectiveSort(left, length);
@@ -1990,6 +1995,7 @@ namespace System {
                 {
                     DepthLimitedQuickSort(left, length + left - 1, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                 }
+#endif
             }
 
             private void DepthLimitedQuickSort(int left, int right, int depthLimit)
@@ -2293,6 +2299,13 @@ namespace System {
 
             internal void Sort(int left, int length)
             {
+#if FEATURE_CORECLR
+                // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                IntrospectiveSort(left, length);
+#else
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
                     IntrospectiveSort(left, length);
@@ -2301,6 +2314,7 @@ namespace System {
                 {
                     DepthLimitedQuickSort(left, length + left - 1, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                 }
+#endif
             }
 
             private void DepthLimitedQuickSort(int left, int right, int depthLimit)
@@ -2724,7 +2738,6 @@ namespace System {
             Contract.Assert(false, "Hey! How'd I get here?");
         }
 
-
         // -----------------------------------------------------------
         // ------- Implement IEnumerable<T> interface methods --------
         // -----------------------------------------------------------
@@ -2732,7 +2745,9 @@ namespace System {
         internal IEnumerator<T> GetEnumerator<T>() {
             //! Warning: "this" is an array, not an SZArrayHelper. See comments above
             //! or you may introduce a security hole!
-            return new SZGenericArrayEnumerator<T>(JitHelpers.UnsafeCast<T[]>(this));
+            T[] _this = JitHelpers.UnsafeCast<T[]>(this);
+            int length = _this.Length;
+            return length == 0 ? SZGenericArrayEnumerator<T>.Empty : new SZGenericArrayEnumerator<T>(_this, length);
         }
 
         // -----------------------------------------------------------
@@ -2839,12 +2854,17 @@ namespace System {
             private T[] _array;
             private int _index;
             private int _endIndex; // cache array length, since it's a little slow.
-    
-            internal SZGenericArrayEnumerator(T[] array) {
-                Contract.Assert(array.Rank == 1 && array.GetLowerBound(0) == 0, "SZArrayEnumerator<T> only works on single dimension arrays w/ a lower bound of zero.");
+
+            // Passing -1 for endIndex so that MoveNext always returns false without mutating _index
+            internal static readonly SZGenericArrayEnumerator<T> Empty = new SZGenericArrayEnumerator<T>(null, -1);
+
+            internal SZGenericArrayEnumerator(T[] array, int endIndex) {
+                // We allow passing null array in case of empty enumerator. 
+                Contract.Assert((array == null && endIndex == -1) || (array.Rank == 1 && array.GetLowerBound(0) == 0), 
+                   "SZArrayEnumerator<T> only works on single dimension arrays w/ a lower bound of zero or with empty array for null enumerator.");
                 _array = array;
                 _index = -1;
-                _endIndex = array.Length;
+                _endIndex = endIndex;
             }
     
             public bool MoveNext() {

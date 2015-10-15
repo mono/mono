@@ -282,7 +282,7 @@ namespace System.ServiceModel.Security
                 public void ApplyClientBehavior(ServiceEndpoint serviceEndpoint, ClientRuntime behavior)
                 {
                     // it is very unlikely that InteractiveChannelInitializers will be null, this is defensive in case ClientRuntime every has a 
-                    // bug.  I am OK with this as ApplyingClientBehavior is a one-time channel setup.
+                    // 
                     if (behavior != null && behavior.InteractiveChannelInitializers != null)
                     {
                         // clear away any interactive initializer

@@ -632,9 +632,9 @@ namespace System.Runtime.Remoting {
             if (oldChannelData == null)
                 return oldChannelInfo;
 
-            // <STRIP>This will work for the IIS scenario since the machine name + application name
-            //   will differentiate the url. If we generalize this mechanism in the future,
-            //   we should only [....] the url if the ObjRef is from the current appdomain.</STRIP>
+            // <
+
+
             String[] bashInfo = (String[])CallContext.GetData("__bashChannelUrl");
             if (bashInfo == null)
                 return oldChannelInfo;
@@ -642,21 +642,21 @@ namespace System.Runtime.Remoting {
             String urlToBash = bashInfo[0];
             String replacementUrl = bashInfo[1];
 
-            // Copy channel info and go [....] urls.
+            // Copy channel info and go Microsoft urls.
             ChannelInfo newChInfo = new ChannelInfo();
             newChInfo.ChannelData = new Object[oldChannelData.Length];
             for (int co = 0; co < oldChannelData.Length; co++)
             {
                 newChInfo.ChannelData[co] = oldChannelData[co];
 
-                // see if this is one of the ones that we need to [....]
+                // see if this is one of the ones that we need to Microsoft
                 ChannelDataStore channelDataStore = newChInfo.ChannelData[co] as ChannelDataStore;
                 if (channelDataStore != null)
                 {
                     String[] urls = channelDataStore.ChannelUris;
                     if ((urls != null) && (urls.Length == 1) && urls[0].Equals(urlToBash))
                     {
-                        // We want to [....] just the url, so we do a shallow copy
+                        // We want to Microsoft just the url, so we do a shallow copy
                         // and replace the url array with the replacementUrl.
                         ChannelDataStore newChannelDataStore = channelDataStore.InternalShallowCopy();
                         newChannelDataStore.ChannelUris = new String[1];
@@ -759,7 +759,6 @@ namespace System.Runtime.Remoting {
         [System.Security.SecurityCritical]  // auto-generated
         private Object GetCustomMarshaledCOMObject(Object ret)
         {
-#if FEATURE_COMINTEROP
             // Some special work we need to do for __COMObject 
             // (Note that we use typeInfo to detect this case instead of
             // calling GetType on 'ret' so as to not refine the proxy)
@@ -817,7 +816,6 @@ namespace System.Runtime.Remoting {
                     }                        
                 }
             }
-#endif // FEATURE_COMINTEROP
             return ret;
         }
 
@@ -997,7 +995,6 @@ namespace System.Runtime.Remoting {
                         requestedType.ToString())); ;
             }
 
-#if FEATURE_COMINTEROP
             // Create the type info
             if(serverType.IsCOMObject)
             {
@@ -1006,7 +1003,6 @@ namespace System.Runtime.Remoting {
                 TypeInfo = (IRemotingTypeInfo) dt;
             }
             else
-#endif // FEATURE_COMINTEROP
             {
                 RemotingTypeCachedData cache = (RemotingTypeCachedData)
                     InternalRemotingServices.GetReflectionCachedData(typeOfObj);
@@ -1027,7 +1023,7 @@ namespace System.Runtime.Remoting {
                     Object[] channelData = chan.ChannelData;
                     int channelDataLength = channelData.Length;
                     Object[] newChannelData = new Object[channelDataLength];
-                    // Clone the data so that we dont [....] the current appdomain data which is stored
+                    // Clone the data so that we dont Microsoft the current appdomain data which is stored
                     // as a static
                     Array.Copy(channelData, newChannelData, channelDataLength);
                     for (int i = 0; i < channelDataLength; i++)

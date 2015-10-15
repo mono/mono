@@ -73,7 +73,6 @@ namespace System.Web.UI.HtmlControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         ]
         public AttributeCollection Attributes {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 if (_attributes == null)
                     _attributes = new AttributeCollection(ViewState);

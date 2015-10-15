@@ -42,7 +42,6 @@ namespace System.Security.AccessControl
         SelfRelative                        = 0x8000, // must always be on
     }
 
-
     public abstract class GenericSecurityDescriptor
     {
         #region Protected Members
@@ -914,7 +913,7 @@ namespace System.Security.AccessControl
             ControlFlags actualFlags = flags | ControlFlags.DiscretionaryAclPresent;
             
             //
-            // Keep SACL and the flag bit in [....].
+            // Keep SACL and the flag bit in sync.
             //
 
             if (systemAcl == null)
@@ -1241,6 +1240,18 @@ namespace System.Security.AccessControl
             }
         }
 
+        public void AddDiscretionaryAcl(byte revision, int trusted)
+        {
+            this.DiscretionaryAcl = new DiscretionaryAcl(this.IsContainer, this.IsDS, revision, trusted);
+            this.AddControlFlags(ControlFlags.DiscretionaryAclPresent);
+        }
+
+        public void AddSystemAcl(byte revision, int trusted)
+        {
+            this.SystemAcl = new SystemAcl(this.IsContainer, this.IsDS, revision, trusted);
+            this.AddControlFlags(ControlFlags.SystemAclPresent);
+        }
+
         #endregion
 
         #region internal Methods
@@ -1252,7 +1263,7 @@ namespace System.Security.AccessControl
 
         //
         // These two add/remove method must be called with great care (and thus it is internal)
-        // The caller is responsible for keeping the SaclPresent and DaclPresent bits in [....]
+        // The caller is responsible for keeping the SaclPresent and DaclPresent bits in sync
         // with the actual SACL and DACL.
         //
 

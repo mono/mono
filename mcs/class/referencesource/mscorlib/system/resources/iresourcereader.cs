@@ -7,7 +7,7 @@
 **
 ** Class:  IResourceReader
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Abstraction to read streams of resources.

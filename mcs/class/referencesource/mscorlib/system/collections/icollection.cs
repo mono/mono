@@ -7,7 +7,7 @@
 **
 ** Interface:  ICollection
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Base interface for all collections.

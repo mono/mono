@@ -7,7 +7,7 @@
 **
 ** Class:  ManifestBasedResourceGroveler
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Searches for resources in Assembly manifest, used
@@ -91,9 +91,6 @@ namespace System.Resources {
                 if (satellite == null)
                 {
                     bool raiseException = (culture.HasInvariantCultureName && (_mediator.FallbackLoc == UltimateResourceFallbackLocation.Satellite));
-#if FEATURE_SPLIT_RESOURCES
-                    raiseException &= !_mediator.IsDebugSatellite;
-#endif
                     // didn't find satellite, give error if necessary
                     if (raiseException)
                     {
@@ -158,9 +155,6 @@ namespace System.Resources {
             {
                 // 4b. Didn't find stream; give error if necessary
                 bool raiseException = culture.HasInvariantCultureName;
-#if FEATURE_SPLIT_RESOURCES
-                raiseException &= !_mediator.IsDebugSatellite; 
-#endif // FEATURE_SPLIT_RESOURCES
                 if (raiseException)
                 {
                     HandleResourceStreamMissing(fileName);
@@ -199,19 +193,6 @@ namespace System.Resources {
 
         private CultureInfo UltimateFallbackFixup(CultureInfo lookForCulture)
         {
-
-#if FEATURE_SPLIT_RESOURCES
-            // special-case for mscorlib debug resources only
-            if (_mediator.IsDebugSatellite)
-            {
-                if (lookForCulture.HasInvariantCultureName &&
-                    _mediator.FallbackLoc == UltimateResourceFallbackLocation.MainAssembly)
-                {
-                    return _mediator.NeutralResourcesCulture;
-                }
-                return lookForCulture;
-            }
-#endif
 
             CultureInfo returnCulture = lookForCulture;
 
@@ -541,11 +522,11 @@ namespace System.Resources {
             // if the stream is private and we're trying to access it from another
             // assembly (ie, ResMgr in mscorlib accessing anything else), we 
             // require Reflection TypeInformation permission to be able to read 
-            // this.  <STRIP>This meaning of private in satellite assemblies is a really
-            // odd concept, and is orthogonal to the ResourceManager.  
-            // We should not assume we can skip this security check,
-            // which means satellites must always use public manifest resources
-            // if you want to support semi-trusted code.  </STRIP>
+            // this.  <
+
+
+
+
 #if !FEATURE_CORECLR && !MONO
             if (s!=null) {
                 if (FrameworkEventSource.IsInitialized)
@@ -658,17 +639,7 @@ namespace System.Resources {
         private String GetSatelliteAssemblyName()
         {
             String satAssemblyName = _mediator.MainAssembly.GetSimpleName();
-#if FEATURE_SPLIT_RESOURCES
-            if (_mediator.IsDebugSatellite) 
-            {
-                satAssemblyName = satAssemblyName + ".debug";
-            }
-            if (!satAssemblyName.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
-#endif
                 satAssemblyName += ".resources";
-#if FEATURE_SPLIT_RESOURCES
-            }
-#endif
             return satAssemblyName;
         }
 

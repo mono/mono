@@ -8,7 +8,7 @@
 //
 // ReflectionTypeLoadException is thrown when multiple TypeLoadExceptions may occur.  
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //  Specifically, when you call Module.GetTypes() this causes multiple class loads to occur.
 //  If there are failures, we continue to load classes and build an array of the successfully
 //  loaded classes.  We also build an array of the errors that occur.  Then we throw this exception

@@ -2,8 +2,8 @@
 // <copyright file="dbenumerator.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -18,7 +18,7 @@ namespace System.Data.Common {
     public class DbEnumerator : IEnumerator {
 
         internal IDataReader _reader;
-        internal IDataRecord _current;
+        internal DbDataRecord _current;
         internal SchemaInfo[] _schemaInfo; // shared schema info among all the data records
         internal PropertyDescriptorCollection _descriptors; // cached property descriptors
         private FieldNameLookup _fieldNameLookup; // MDAC 69015
@@ -39,30 +39,21 @@ namespace System.Data.Common {
             _reader = reader;
             this.closeReader = closeReader;
         }
+        
+        public DbEnumerator(DbDataReader reader)
+            : this((IDataReader)reader) {
+        }
 
+        public DbEnumerator(DbDataReader reader, bool closeReader) 
+            : this((IDataReader)reader, closeReader) {
+        }
 
         public object Current {
             get {
                 return _current;
             }
         }
-
-        /*public IDataRecord Current {
-            get {
-                return _current;
-            }
-        }*/
-
-/*
-        virtual internal IDataRecord NewRecord(SchemaInfo[] si, object[] values, PropertyDescriptorCollection descriptors) {
-            return new DbDataRecord(si, values, descriptors);
-        }
-
-        virtual internal void GetValues(object[] values) {
-            _reader.GetValues(values);
-        }
-*/
-
+        
         public bool MoveNext() {
 
             if (null == _schemaInfo) {

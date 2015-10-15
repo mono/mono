@@ -25,23 +25,22 @@ using System.Runtime.Versioning;
 
 namespace Microsoft.Win32.SafeHandles {
     [SuppressUnmanagedCodeSecurityAttribute]
-    internal sealed class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
+    public sealed class SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid
     { 
         internal static SafeProcessHandle InvalidHandle = new SafeProcessHandle(IntPtr.Zero); 
     
         // Note that OpenProcess returns 0 on failure
 
-        internal SafeProcessHandle() : base(true) {} 
+        internal SafeProcessHandle() : base(true) {}
 
-        internal SafeProcessHandle(IntPtr handle) : base (true) {
+        internal SafeProcessHandle(IntPtr handle) : base(true) {
             SetHandle(handle);
         }
         
-        // Not currently called
-        //[SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode=true)]
-        //internal SafeProcessHandle(IntPtr existingHandle, bool ownsHandle) : base(ownsHandle) {
-        //    SetHandle(existingHandle);
-        //}
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        public SafeProcessHandle(IntPtr existingHandle, bool ownsHandle) : base(ownsHandle) {
+            SetHandle(existingHandle);
+        }
 
         [DllImport(ExternDll.Kernel32, CharSet=System.Runtime.InteropServices.CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.Machine)]

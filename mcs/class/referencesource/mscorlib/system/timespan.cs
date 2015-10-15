@@ -80,9 +80,6 @@ namespace System {
             this._ticks = ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public TimeSpan(int hours, int minutes, int seconds) {
             _ticks = TimeToTicks(hours, minutes, seconds);
         }
@@ -150,9 +147,6 @@ namespace System {
         }
 
         public double TotalSeconds {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return (double)_ticks * SecondsPerTick; }
         }
 
@@ -271,9 +265,6 @@ namespace System {
             return new TimeSpan(result);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static TimeSpan FromTicks(long value) {
             return new TimeSpan(value);
         }
@@ -352,9 +343,6 @@ namespace System {
             return new TimeSpan(-t._ticks);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static TimeSpan operator -(TimeSpan t1, TimeSpan t2) {
             return t1.Subtract(t2);
         }
@@ -367,44 +355,26 @@ namespace System {
             return t1.Add(t2);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator ==(TimeSpan t1, TimeSpan t2) {
             return t1._ticks == t2._ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator !=(TimeSpan t1, TimeSpan t2) {
             return t1._ticks != t2._ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator <(TimeSpan t1, TimeSpan t2) {
             return t1._ticks < t2._ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator <=(TimeSpan t1, TimeSpan t2) {
             return t1._ticks <= t2._ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator >(TimeSpan t1, TimeSpan t2) {
             return t1._ticks > t2._ticks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator >=(TimeSpan t1, TimeSpan t2) {
             return t1._ticks >= t2._ticks;
         }

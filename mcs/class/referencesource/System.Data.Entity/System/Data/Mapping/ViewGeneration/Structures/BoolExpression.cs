@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -366,7 +366,7 @@ namespace System.Data.Mapping.ViewGeneration.Structures
 
         // effects: Given a list of bools, returns a list of boolean expressions where each
         // boolean in bools has been ANDed with conjunct
-        // CHANGE_[....]_IMPROVE: replace with lambda pattern
+        // CHANGE_Microsoft_IMPROVE: replace with lambda pattern
         internal static List<BoolExpression> AddConjunctionToBools(List<BoolExpression> bools,
                                                                    BoolExpression conjunct)
         {

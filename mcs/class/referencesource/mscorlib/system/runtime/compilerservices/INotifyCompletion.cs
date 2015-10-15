@@ -7,7 +7,7 @@
 //
 // INotifyCompletion.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>stoub</OWNER>
 //
 // Interfaces used to represent instances that notify listeners of their completion via continuations.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

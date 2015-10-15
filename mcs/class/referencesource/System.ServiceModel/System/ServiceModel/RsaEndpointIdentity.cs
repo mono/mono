@@ -41,7 +41,7 @@ namespace System.ServiceModel
             if (identity == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("identity");
 
-            // PreSharp Bug: Parameter 'identity.ClaimType' to this public method must be validated: A null-dereference can occur here.
+            // PreSharp 
 #pragma warning suppress 56506 // Claim.ClaimType will never return null
             if (!identity.ClaimType.Equals(ClaimTypes.Rsa))
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UnrecognizedClaimTypeForIdentity, identity.ClaimType, ClaimTypes.Rsa));

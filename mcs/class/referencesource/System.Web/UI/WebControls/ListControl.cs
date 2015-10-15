@@ -39,6 +39,7 @@ namespace System.Web.UI.WebControls {
         private string cachedSelectedValue;
         private ArrayList cachedSelectedIndices;
         private bool _stateLoaded;
+        private bool _asyncSelectPending;
 
 
         /// <devdoc>
@@ -582,10 +583,48 @@ namespace System.Web.UI.WebControls {
             _stateLoaded = true;
         }
 
+
+        private void OnDataSourceViewSelectCallback(IEnumerable data) {
+            _asyncSelectPending = false;
+            PerformDataBinding(data);
+            PostPerformDataBindingAction();
+        }
+
         protected override void OnDataBinding(EventArgs e) {
             base.OnDataBinding(e);
-            IEnumerable data = GetData().ExecuteSelect(DataSourceSelectArguments.Empty);
-            PerformDataBinding(data);
+            DataSourceView view = GetData();
+
+            // view could be null when a user implements his own GetData().
+            if (null == view) {
+                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+            }
+
+            // DevDiv 1036362: enable async model binding for ListControl
+            bool useAsyncSelect = false;
+            if (AppSettings.EnableAsyncModelBinding) {
+                var modelDataView = view as ModelDataSourceView;
+                useAsyncSelect = modelDataView != null && modelDataView.IsSelectMethodAsync;
+            }
+
+            if (useAsyncSelect) {
+                _asyncSelectPending = true; // disable post data binding action until the callback is invoked
+                view.Select(SelectArguments, OnDataSourceViewSelectCallback);
+            }
+            else {
+                IEnumerable data = view.ExecuteSelect(DataSourceSelectArguments.Empty);
+                PerformDataBinding(data);
+            }
+        }
+
+        internal void EnsureDataBoundInLoadPostData() {
+            if (!SkipEnsureDataBoundInLoadPostData) {
+                EnsureDataBound();
+            }
+        }
+
+        internal bool SkipEnsureDataBoundInLoadPostData {
+            get;
+            set;
         }
 
 
@@ -715,6 +754,13 @@ namespace System.Web.UI.WebControls {
             // performed the databind, and we need to maintain backward compat.  OnDataBinding will retrieve the
             // data from the view synchronously and call PerformDataBinding with the data, preserving the OM.
             OnDataBinding(EventArgs.Empty);
+            PostPerformDataBindingAction();
+        }
+
+        private void PostPerformDataBindingAction() {
+            if (_asyncSelectPending)
+                return;
+
             RequiresDataBinding = false;
             MarkAsDataBound();
             OnDataBound(EventArgs.Empty);

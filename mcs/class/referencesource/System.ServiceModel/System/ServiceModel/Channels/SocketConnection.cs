@@ -941,7 +941,7 @@ namespace System.ServiceModel.Channels
             {
                 this.asyncWriteException = ConvertSendException(socketException, TimeSpan.MaxValue);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1274,7 +1274,7 @@ namespace System.ServiceModel.Channels
             {
                 this.asyncReadException = ConvertObjectDisposedException(objectDisposedException, TransferOperation.Read);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1306,7 +1306,7 @@ namespace System.ServiceModel.Channels
             {
                 asyncReadException = ConvertReceiveException(socketException, TimeSpan.MaxValue);
             }
-#pragma warning suppress 56500 // [....], transferring exception to caller
+#pragma warning suppress 56500 // Microsoft, transferring exception to caller
             catch (Exception exception)
             {
                 if (Fx.IsFatal(exception))
@@ -1927,7 +1927,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.StartConnect();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2234,7 +2234,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.StartAccept();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

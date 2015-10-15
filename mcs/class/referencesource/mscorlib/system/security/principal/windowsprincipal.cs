@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -232,13 +232,13 @@ namespace System.Security.Principal
             Contract.EndContractBlock();
 
             // special case the anonymous identity.
-            if (m_identity.TokenHandle.IsInvalid)
+            if (m_identity.AccessToken.IsInvalid)
                 return false;
 
             // CheckTokenMembership expects an impersonation token
-            SafeTokenHandle token = SafeTokenHandle.InvalidHandle;
+            SafeAccessTokenHandle token = SafeAccessTokenHandle.InvalidHandle;
             if (m_identity.ImpersonationLevel == TokenImpersonationLevel.None) {
-                if (!Win32Native.DuplicateTokenEx(m_identity.TokenHandle,
+                if (!Win32Native.DuplicateTokenEx(m_identity.AccessToken,
                                                   (uint) TokenAccessLevels.Query,
                                                   IntPtr.Zero,
                                                   (uint) TokenImpersonationLevel.Identification,
@@ -249,7 +249,7 @@ namespace System.Security.Principal
 
             bool isMember = false;
             // CheckTokenMembership will check if the SID is both present and enabled in the access token.
-            if (!Win32Native.CheckTokenMembership((m_identity.ImpersonationLevel != TokenImpersonationLevel.None ? m_identity.TokenHandle : token),
+            if (!Win32Native.CheckTokenMembership((m_identity.ImpersonationLevel != TokenImpersonationLevel.None ? m_identity.AccessToken : token),
                                                   sid.BinaryForm,
                                                   ref isMember))
                 throw new SecurityException(Win32Native.GetMessage(Marshal.GetLastWin32Error()));

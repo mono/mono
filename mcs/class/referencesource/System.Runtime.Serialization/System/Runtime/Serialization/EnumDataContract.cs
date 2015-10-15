@@ -290,7 +290,7 @@ namespace System.Runtime.Serialization
                             EnumMemberAttribute memberAttribute = (EnumMemberAttribute)memberAttributes[0];
 
                             DataMember memberContract = new DataMember(field);
-                            if (memberAttribute.IsValueSetExplicit)
+                            if (memberAttribute.IsValueSetExplicitly)
                             {
                                 if (memberAttribute.Value == null || memberAttribute.Value.Length == 0)
                                     ThrowInvalidDataContractException(SR.GetString(SR.InvalidEnumMemberValue, field.Name, DataContract.GetClrTypeFullName(type)));

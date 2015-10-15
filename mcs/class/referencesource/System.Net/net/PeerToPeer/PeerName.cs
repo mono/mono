@@ -433,7 +433,7 @@ namespace System.Net.PeerToPeer
         /// I have considered using regular expressions. However, the regular expressions offer 
         /// poor performance and or startup cost. Really there is no substiture for custom 
         /// parsing logic. I decided to write this piece of code to parse the peername for now 
-        /// - [....] 6/6/2005
+        /// - Microsoft 6/6/2005
         /// </summary>
         /// <param name="peerName"></param>
         /// <param name="authority"></param>

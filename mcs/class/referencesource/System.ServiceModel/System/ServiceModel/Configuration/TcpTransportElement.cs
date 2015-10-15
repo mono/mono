@@ -19,7 +19,7 @@ namespace System.ServiceModel.Configuration
         public override void ApplyConfiguration(BindingElement bindingElement)
         {
             base.ApplyConfiguration(bindingElement);
-#pragma warning suppress 56506 // [....], base.ApplyConfiguration() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.ApplyConfiguration() validates the argument
             TcpTransportBindingElement binding = (TcpTransportBindingElement)bindingElement;
             PropertyInformationCollection propertyInfo = this.ElementInformation.Properties;
             if (this.ListenBacklog != TcpTransportDefaults.ListenBacklogConst)
@@ -28,7 +28,7 @@ namespace System.ServiceModel.Configuration
             }
             binding.PortSharingEnabled = this.PortSharingEnabled;
             binding.TeredoEnabled = this.TeredoEnabled;
-#pragma warning suppress 56506 // [....], base.ApplyConfiguration() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.ApplyConfiguration() validates the argument
             this.ConnectionPoolSettings.ApplyConfiguration(binding.ConnectionPoolSettings);
             binding.ExtendedProtectionPolicy = ChannelBindingUtility.BuildPolicy(this.ExtendedProtectionPolicy);
         }
@@ -43,7 +43,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             TcpTransportElement source = (TcpTransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.ListenBacklog = source.ListenBacklog;
             this.PortSharingEnabled = source.PortSharingEnabled;
             this.TeredoEnabled = source.TeredoEnabled;
@@ -59,7 +59,7 @@ namespace System.ServiceModel.Configuration
         protected internal override void InitializeFrom(BindingElement bindingElement)
         {
             base.InitializeFrom(bindingElement);
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             TcpTransportBindingElement binding = (TcpTransportBindingElement)bindingElement;
             if (binding.IsListenBacklogSet)
             {

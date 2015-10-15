@@ -2,8 +2,8 @@
 // <copyright file="DataTable.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -1893,7 +1893,7 @@ namespace System.Data {
                     }
                 }
             }
-            fInitInProgress = false; // [....] : 77890. It is must that we set off this flag after calling FinishInitxxx();
+            fInitInProgress = false; // Microsoft : 77890. It is must that we set off this flag after calling FinishInitxxx();
             if (delayedSetPrimaryKey != null) {
                 PrimaryKey = delayedSetPrimaryKey;
                 delayedSetPrimaryKey = null;
@@ -2150,7 +2150,7 @@ namespace System.Data {
             Bid.ScopeEnter(out hscp, "<ds.DataTable.Clone|INFO> %d#, cloneDS=%d\n", ObjectID, (cloneDS != null) ? cloneDS.ObjectID : 0);
             try {
                 DataTable clone = CreateInstance();
-                if (clone.Columns.Count > 0) // [....] : To clean up all the schema in strong typed dataset.
+                if (clone.Columns.Count > 0) // Microsoft : To clean up all the schema in strong typed dataset.
                     clone.Reset();
                 return CloneTo(clone, cloneDS, false);
             }
@@ -2225,8 +2225,8 @@ namespace System.Data {
             clone._caseSensitiveUserSet = _caseSensitiveUserSet;
 
             clone.displayExpression = displayExpression;
-            clone.typeName = typeName; //[....]
-            clone.repeatableElement = repeatableElement; //[....]
+            clone.typeName = typeName; //Microsoft
+            clone.repeatableElement = repeatableElement; //Microsoft
             clone.MinimumCapacity = MinimumCapacity;
             clone.RemotingFormat = RemotingFormat;
 //            clone.SerializeHierarchy = SerializeHierarchy;
@@ -3548,7 +3548,7 @@ namespace System.Data {
 
             bool equalValues = false;
             if (DataStorage.IsTypeCustomType(dc.DataType) && newValue != dc[record]) {
-                // if UDT storage, need to check if reference changed. See bug 385182
+                // if UDT storage, need to check if reference changed. See 
                 equalValues = false;
             }
             else {
@@ -3924,12 +3924,12 @@ namespace System.Data {
                 }
             }
 
-            // Dev10 Bug 688779: DataRowView.PropertyChanged are not raised on RejectChanges
-            // if the newRecord is changing, the propertychanged event should be allowed to triggered for ListChangedType.Changed or .Moved
-            // unless the specific condition is known that no data has changed, like DataRow.SetModified()
+            // Dev10 
+
+
             if (!suppressEnsurePropertyChanged && !row.HasPropertyChanged && (row.newRecord != proposedRecord)
-                && (-1 != proposedRecord) // explictly not fixing Dev10 Bug 692044: DataRowView.PropertyChanged are not raised on DataTable.Delete when mixing current and original records in RowStateFilter
-                && (-1 != row.newRecord)) // explictly not fixing parts of Dev10 Bug 697909: when mixing current and original records in RowStateFilter
+                && (-1 != proposedRecord) // explictly not fixing Dev10 
+                && (-1 != row.newRecord)) // explictly not fixing parts of Dev10 
             {
                 // DataRow will believe multiple edits occured and
                 // DataView.ListChanged event w/ ListChangedType.ItemChanged will raise DataRowView.PropertyChanged event and
@@ -3942,7 +3942,7 @@ namespace System.Data {
                 // Check whether we need to update indexes
                 if (LiveIndexes.Count != 0) {
 
-                    // Dev10 bug #463087: DataTable internal index is currupted: '5'
+                    // Dev10 
                     if ((-1 == currentRecord) && (-1 != proposedRecord) && (-1 != row.oldRecord) && (proposedRecord != row.oldRecord)) {
                         // the transition from DataRowState.Deleted -> DataRowState.Modified
                         // with same orginal record but new current record
@@ -3971,8 +3971,8 @@ namespace System.Data {
                         this.recordManager[proposedRecord] = row;
                 }
 
-                // Dev10 Bug 461199 - reset the last changed column here, after all
-                // DataViews have raised their DataRowView.PropertyChanged event
+                // Dev10 
+
                 row.ResetLastChangedColumn();
 
                 // SQLBU 278737: Record manager corruption when reentrant write operations
@@ -4043,7 +4043,7 @@ namespace System.Data {
                 // Check whether we need to update indexes
                 if (LiveIndexes.Count != 0) {
 
-                    // Dev10 bug #463087: DataTable internal index is currupted: '5'
+                    // Dev10 
                     if ((-1 == originalRecord) && (-1 != proposedRecord) && (-1 != row.newRecord) && (proposedRecord != row.newRecord)) {
                         // the transition from DataRowState.Added -> DataRowState.Modified
                         // with same current record but new original record
@@ -4349,7 +4349,7 @@ namespace System.Data {
 
             if (position == -1)
                 Columns.Add(key);
-            else { // we do have a problem and Imy idea is it is bug. Ask Enzo while Code review. Why we do not set ordinal when we call AddAt?
+            else { // we do have a problem and Imy idea is it is 
                 for(int i = Columns.Count -1; i >= position; i--) {
                     this.Columns[i].SetOrdinalInternal(i+1);
                 }
@@ -5526,8 +5526,8 @@ namespace System.Data {
                             throw ExceptionBuilder.DataTableInferenceNotSupported();
                         }
 
-    // [....]                    xmlload.InferSchema(xdoc, null);
-    // [....]                    xmlload.LoadData(xdoc);
+    // Microsoft                    xmlload.InferSchema(xdoc, null);
+    // Microsoft                    xmlload.LoadData(xdoc);
                     }
                 }
                 RestoreConstraint(originalEnforceConstraint);
@@ -5741,7 +5741,7 @@ namespace System.Data {
                     currentTable = ds.Tables[CurrentTableName, CurrentTableNamespace];
                 }
 
-                if (currentTable == null) { // bug fix :99186
+                if (currentTable == null) { // 
                     string qTableName = string.Empty;
                     if (!Common.ADP.IsEmpty(this.tableName)) {
                         qTableName = (this.Namespace.Length > 0)? (this.Namespace + ":" + this.tableName):this.tableName;

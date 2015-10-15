@@ -7,7 +7,7 @@
 **
 ** Class:  ArrayList
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Implements a dynamically sized List as an array,
@@ -21,10 +21,8 @@ namespace System.Collections {
     using System.Runtime;
     using System.Security;
     using System.Security.Permissions;
-    using System.Diagnostics;    
-#if FEATURE_NETCORE
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
-#endif
     using System.Runtime.Serialization;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
@@ -35,7 +33,7 @@ namespace System.Collections {
     // of the ArrayList is automatically increased as required by reallocating the
     // internal array.
     // 
-#if FEATURE_NETCORE
+#if FEATURE_CORECLR
     [FriendAccessAllowed]
 #endif
     [DebuggerTypeProxy(typeof(System.Collections.ArrayList.ArrayListDebugView))]   
@@ -63,9 +61,6 @@ namespace System.Collections {
         // Constructs a ArrayList. The list is initially empty and has a capacity
         // of zero. Upon adding the first element to the list the capacity is
         // increased to _defaultCapacity, and then increased in multiples of two as required.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public ArrayList() {
             _items = emptyArray;  
         }
@@ -217,9 +212,6 @@ namespace System.Collections {
         // required, the capacity of the list is increased to twice the previous
         // capacity or the new size, whichever is larger.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual void AddRange(ICollection c) {
             InsertRange(_size, c);
         }
@@ -388,9 +380,6 @@ namespace System.Collections {
         // while an enumeration is in progress, the MoveNext and 
         // GetObject methods of the enumerator will throw an exception.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual IEnumerator GetEnumerator() {
             Contract.Ensures(Contract.Result<IEnumerator>() != null);
             return new ArrayListEnumeratorSimple(this);
@@ -401,9 +390,6 @@ namespace System.Collections {
         // while an enumeration is in progress, the MoveNext and 
         // GetObject methods of the enumerator will throw an exception.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual IEnumerator GetEnumerator(int index, int count) {
             if (index < 0)
                 throw new ArgumentOutOfRangeException("index", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
@@ -425,9 +411,6 @@ namespace System.Collections {
         // This method uses the Array.IndexOf method to perform the
         // search.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual int IndexOf(Object value) {
             Contract.Ensures(Contract.Result<int>() < Count);
             return Array.IndexOf((Array)_items, value, 0, _size);
@@ -573,7 +556,7 @@ namespace System.Collections {
     
         // Returns a read-only IList wrapper for the given IList.
         //
-#if FEATURE_NETCORE
+#if FEATURE_CORECLR
         [FriendAccessAllowed]
 #endif
         public static IList ReadOnly(IList list) {
@@ -597,9 +580,6 @@ namespace System.Collections {
         // Removes the element at the given index. The size of the list is
         // decreased by one.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual void Remove(Object obj) {
             Contract.Ensures(Count >= 0);
 
@@ -1872,9 +1852,6 @@ namespace System.Collections {
             }
     
             public virtual int Count { 
-#if !FEATURE_CORECLR
-                [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
                 get { return _list.Count; }
             }
     
@@ -1891,9 +1868,6 @@ namespace System.Collections {
             }
             
              public virtual Object this[int index] {
-#if !FEATURE_CORECLR
-                [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
                 get {
                     return _list[index];
                 }
@@ -1922,9 +1896,6 @@ namespace System.Collections {
                 _list.CopyTo(array, index);
             }
     
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             public virtual IEnumerator GetEnumerator() {
                 return _list.GetEnumerator();
             }
@@ -1956,9 +1927,6 @@ namespace System.Collections {
             }
     
             public override int Count { 
-#if !FEATURE_CORECLR
-                [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
                 get { return _list.Count; }
             }
     
@@ -1975,9 +1943,6 @@ namespace System.Collections {
             }
             
              public override Object this[int index] {
-#if !FEATURE_CORECLR
-                [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
                 get {
                     return _list[index];
                 }

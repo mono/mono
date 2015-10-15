@@ -18,12 +18,7 @@ namespace System.Runtime
         }
     }
 
-// This attribute seems particularly prone to accidental inclusion in bcl.small
-// We would only want to do so intentionally (if targeted patching were enabled there)
-#if !FEATURE_CORECLR
-
     //============================================================================================================
-    // [TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")] - 
     // Sacrifices cheap servicing of a method body in order to allow unrestricted inlining.  Certain types of
     // trivial methods (e.g. simple property getters) are automatically attributed by ILCA.EXE during the build.
     // For other performance critical methods, it should be added manually.
@@ -45,22 +40,5 @@ namespace System.Runtime
         }
 
         private TargetedPatchingOptOutAttribute() { }
-    }
-
-#endif
-
-    //============================================================================================================
-    // [ForceTokenStabilization] - Using this CA forces ILCA.EXE to stabilize the attached type, method or field.
-    // We use this to identify private helper methods invoked by IL stubs.
-    //
-    // NOTE: Attaching this to a type is NOT equivalent to attaching it to all of its methods!
-    //============================================================================================================
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Delegate |
-                    AttributeTargets.Method | AttributeTargets.Constructor |
-                    AttributeTargets.Field
-                   , AllowMultiple = false, Inherited = false)]
-    sealed class ForceTokenStabilizationAttribute : Attribute
-    {
-        public ForceTokenStabilizationAttribute() { }
     }
 }

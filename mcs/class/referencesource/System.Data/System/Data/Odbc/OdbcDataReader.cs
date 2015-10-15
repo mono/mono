@@ -2,8 +2,8 @@
 // <copyright file="OdbcDataReader.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -545,12 +545,12 @@ namespace System.Data.Odbc
             //  item for GetInt32.  This actually improves perf anyway, (even if the driver could
             //  support it), since we are not making a seperate interop call...
             
-            // Bug SQLBUVSTS01:110664 - available cases:
-            // 1. random access - always cache the value (as before the fix), to minimize regression risk 
-            // 2. sequential access, fixed-size value: continue caching the value as before, again to minimize regression risk 
-            // 3. sequential access, variable-length value: this scenario did not work properly before the fix. Fix
-            //                                              it now by calling GetData(length = 0).
-            // 4. sequential access, cache value exists: just check the cache for DbNull (no validations done, again to minimize regressions)
+            // 
+
+
+
+
+
 
             if (!IsCommandBehavior(CommandBehavior.SequentialAccess))
                 return Convert.IsDBNull(GetValue(i)); // case 1, cache the value
@@ -1012,7 +1012,7 @@ namespace System.Data.Odbc
                 if (dataIndex >= cachedObjectLength)
                 {
                     // no more bytes to read
-                    // see also MDAC bug 73298
+                    // see also MDAC 
                     return 0;
                 }
 
@@ -1021,7 +1021,7 @@ namespace System.Data.Odbc
 
                 // silently reduce the length to avoid regression from EVERETT
                 lengthOfCopy = Math.Min(lengthOfCopy, buffer.Length - bufferIndex);
-                if (lengthOfCopy <= 0) return 0;                    // MDAC Bug 73298
+                if (lengthOfCopy <= 0) return 0;                    // MDAC 
 
                 if (isCharsBuffer)
                     ((string)cachedObj).CopyTo((int)dataIndex, (char[])buffer, bufferIndex, lengthOfCopy);
@@ -1944,7 +1944,7 @@ namespace System.Data.Odbc
             columns.Add(new DataColumn("BaseTableName",     typeof(System.String)));
             columns.Add(new DataColumn("BaseColumnName",    typeof(System.String)));
 
-            // MDAC Bug 79231
+            // MDAC 
             foreach (DataColumn column in columns) {
                 column.ReadOnly = true;
             }
@@ -2197,8 +2197,8 @@ namespace System.Data.Odbc
             // devnote: this test is already done by calling method ...
             // if (IsClosed) return;   // protect against dead connection
 
-            // MDAC Bug 75928 - SQLStatisticsW damages the string passed in
-            // To protect the tablename we need to pass in a copy of that string
+            // MDAC 
+
             String tablename1 = String.Copy(qualifiedTableName.GetTable(quoted));
 
             // Select only unique indexes

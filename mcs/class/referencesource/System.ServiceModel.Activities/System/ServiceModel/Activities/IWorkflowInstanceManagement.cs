@@ -76,7 +76,7 @@ namespace System.ServiceModel.Activities
         void EndUnsuspend(IAsyncResult result);
 
         //Transacted Operation
-        // 
+        // TODO, 21237, Post One-Way Tx flow support below operations should be changed to Oneway.        
 
         [OperationContract(Name = XD2.WorkflowInstanceManagementService.TransactedCancel)]
         [TransactionFlow(TransactionFlowOption.Allowed)]

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -280,7 +280,7 @@ namespace System.Globalization {
                     return m_negLoc;
                 }
             }
-            //<STRIP>
+            //<
             internal Boolean FullAppCompatMatch(TimeSpanFormat.FormatLiterals pattern) {
                 return SepCount                  == 5
                     && NumCount                  == 4
@@ -290,7 +290,7 @@ namespace System.Globalization {
                     && pattern.AppCompatLiteral  == literals[3]
                     && pattern.End               == literals[4];
             }
-            //<STRIP>
+            //<
             internal Boolean PartialAppCompatMatch(TimeSpanFormat.FormatLiterals pattern) {
                 return SepCount                  == 4
                     && NumCount                  == 3

@@ -135,6 +135,7 @@ namespace System.Configuration {
                 ilGen.Emit(OpCodes.Ldarg_0); // stack = { type }
                 ilGen.Emit(OpCodes.Ldc_I4_1); // stack = { type, TRUE }
                 ilGen.Emit(OpCodes.Call, typeof(Activator).GetMethod("CreateInstance", new Type[] { typeof(Type), typeof(bool) })); // stack = { retVal }
+                PreventTailCall(ilGen); // stack = { retVal }
                 ilGen.Emit(OpCodes.Ret);
                 var createInstanceDel = (Func<Type, object>)dm.CreateDelegate(typeof(Func<Type, object>));
                 return createInstanceDel(targetType);
@@ -163,6 +164,7 @@ namespace System.Configuration {
                 ilGen.Emit(OpCodes.Ldarg_0); // stack = { type }
                 ilGen.Emit(OpCodes.Ldarg_1); // stack = { type, method }
                 ilGen.Emit(OpCodes.Call, typeof(Delegate).GetMethod("CreateDelegate", new Type[] { typeof(Type), typeof(MethodInfo) })); // stack = { retVal }
+                PreventTailCall(ilGen); // stack = { retVal }
                 ilGen.Emit(OpCodes.Ret);
                 var createDelegateDel = (Func<Type, MethodInfo, Delegate>)dm.CreateDelegate(typeof(Func<Type, MethodInfo, Delegate>));
                 return createDelegateDel(delegateType, targetMethod);
@@ -186,6 +188,17 @@ namespace System.Configuration {
         private static DynamicMethod CreateDynamicMethodWithUnrestrictedPermission(Type owner, Type returnType, Type[] parameterTypes) {
             Debug.Assert(owner != null);
             return new DynamicMethod("temp-dynamic-method", returnType, parameterTypes, owner);
+        }
+
+        // DevDiv #736562: If a dynamic method tail-calls into Activator.CreateInstance or Delegate.CreateDelegate, it could
+        // modify stack frames in such a way that a stack walk fails when it should have succeeded. A volatile field read
+        // prevents reordering so ensures that the dynamic method cannot tail-call into these methods.
+        //
+        // Stack transitional behavior: unchanged.
+        private static void PreventTailCall(ILGenerator ilGen) {
+            ilGen.Emit(OpCodes.Volatile);
+            ilGen.Emit(OpCodes.Ldsfld, typeof(String).GetField("Empty"));
+            ilGen.Emit(OpCodes.Pop);
         }
 
         static internal ConstructorInfo GetConstructorWithReflectionPermission(Type type, Type baseType, bool throwOnError) {

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit
@@ -799,7 +799,7 @@ namespace System.Reflection.Emit
             }
         }
 
-        // Keep in [....] with vm/dynamicmethod.h
+        // Keep in sync with vm/dynamicmethod.h
         [Flags]
         internal enum SecurityControlFlags
         {

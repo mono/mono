@@ -792,7 +792,7 @@ namespace System.Runtime.Serialization.Json
             WriteString(new string(buffer, index, count));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // [....], ToLowerInvariant is just used in Json error message
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // Microsoft, ToLowerInvariant is just used in Json error message
         public override void WriteStartAttribute(string prefix, string localName, string ns)
         {
             if (IsClosed)
@@ -1374,7 +1374,7 @@ namespace System.Runtime.Serialization.Json
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // [....], ToLowerInvariant is just used in Json error message
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")] // Microsoft, ToLowerInvariant is just used in Json error message
         void ThrowInvalidAttributeContent()
         {
             if (HasOpenAttribute)

@@ -10,7 +10,7 @@ namespace System.Runtime
     using System.Diagnostics;
 
     /// <remarks>
-    /// [....] (11/15/10, CSDMain 194940) - Previously, this code first checked that the opcode was set to informational.  If not, it would check
+    /// Microsoft (11/15/10, CSDMain 194940) - Previously, this code first checked that the opcode was set to informational.  If not, it would check
     /// the opcode name for start, stop, suspend, or resume and use that or return Information otherwise.  This does not work well with the latest 
     /// ETW changes where almost every event has a task and opcode.  With the old logic, if an opcode is set on the event with a level such as 
     /// warning or error, the level would be incorrectly reported in diagnostic tracing as informational.  Also, start/stop/suspend/resume events 

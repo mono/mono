@@ -844,7 +844,7 @@ namespace System.Runtime.Remoting {
             lock (Info)
             {            
                 // We make an entry in our config tables so as to keep
-                // both the file-based and programmatic config in [....].
+                // both the file-based and programmatic config in sync.
                 Info.AddWellKnownEntry(entry);
             }
         } // RegisterWellKnownServiceType
@@ -1592,7 +1592,11 @@ namespace System.Runtime.Remoting {
                                 // type, and forwards incoming messages to the actual proxy.
                                 RedirectionProxy redirectedProxy = new RedirectionProxy(obj, serverType);
                                 redirectedProxy.ObjectMode = mode;
-                                RemotingServices.MarshalInternal(redirectedProxy, URI, serverType);
+
+                                // DevDiv 720951 and 911924:
+                                // 'isInitializing' is propagated into the new ServerIdentity so that other concurrent
+                                // operations that find it in URITable do not use it prematurely.
+                                RemotingServices.MarshalInternal(redirectedProxy, URI, serverType, updateChannelData: true, isInitializing: true);
 
                                 srvID = (ServerIdentity)IdentityHolder.ResolveIdentity(URI);
                                 Contract.Assert(null != srvID, "null != srvID");
@@ -1608,7 +1612,9 @@ namespace System.Runtime.Remoting {
                                 //   recreated when an RPC server not available is thrown
                                 //   if dllhost.exe is killed.
                                 ComRedirectionProxy comRedirectedProxy = new ComRedirectionProxy(obj, serverType);
-                                RemotingServices.MarshalInternal(comRedirectedProxy, URI, serverType);
+
+                                // DevDiv 720951 and 911924: isInitializing = true
+                                RemotingServices.MarshalInternal(comRedirectedProxy, URI, serverType, updateChannelData: true, isInitializing: true);
 
                                 srvID = (ServerIdentity)IdentityHolder.ResolveIdentity(URI);
                                 Contract.Assert(null != srvID, "null != srvID");
@@ -1628,8 +1634,9 @@ namespace System.Runtime.Remoting {
                                                 "Remoting_WellKnown_CtorCantMarshal"),
                                             URI));
                                 }
-                        
-                                RemotingServices.MarshalInternal(obj, URI, serverType);
+
+                                // DevDiv 720951 and 911924: isInitializing = true
+                                RemotingServices.MarshalInternal(obj, URI, serverType, updateChannelData: true, isInitializing: true);
 
                                 srvID = (ServerIdentity)IdentityHolder.ResolveIdentity(URI);
                                 Contract.Assert(null != srvID, "null != srvID");
@@ -1646,12 +1653,31 @@ namespace System.Runtime.Remoting {
                                     srvID.SetSingletonObjectMode();
                                 }
                             }
+
                         }
                         catch
                         {
+                            // DevDiv 720951 and 911924:
+                            // An exception thrown in the scope of this attempt to create a
+                            // new ServerIdentity may leave a ServerIdentity instance in the
+                            // URITable that has not been properly initialized.  This condition
+                            // has been true for all versions of the framework but was first
+                            // recognized in making this fix in 4.5.3.  Ideally, a damaged
+                            // ServerIdentity should be removed from URITable.  But due to risk
+                            // and lack of customer reports of a problem, we chose not to fix it.
                             throw;
                         }
                         finally {
+
+                            // DevDiv 720951 and 911924:
+                            // This flag is cleared only after the new ServerIdentity is completely
+                            // initialized and ready for use.  It is done here in the 'finally' to
+                            // ensure all exit paths reset the flag, including exceptions.
+                            if (srvID != null)
+                            {
+                                srvID.IsInitializing = false;
+                            }
+
                             SecurityPermission.RevertAssert();
                         }
                     }

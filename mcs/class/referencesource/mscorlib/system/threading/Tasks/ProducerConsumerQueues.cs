@@ -7,7 +7,7 @@
 //
 // ProducerConsumerQueues.cs
 //
-// <OWNER>[....], [....]</OWNER>
+// <OWNER>Microsoft, Microsoft</OWNER>
 //
 // Specialized producer/consumer queues.
 //
@@ -58,7 +58,7 @@ namespace System.Threading.Tasks
         int Count { get; }
 
         /// <summary>A thread-safe way to get the number of items in the collection. May synchronize access by locking the provided synchronization object.</summary>
-        /// <param name="syncObj">The [....] object used to lock</param>
+        /// <param name="syncObj">The sync object used to lock</param>
         /// <returns>The collection count</returns>
         int GetCountSafe(object syncObj);
     }

@@ -7,7 +7,7 @@
 **
 ** Class:  EmptyReadOnlyDictionaryInternal
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: List for exceptions.

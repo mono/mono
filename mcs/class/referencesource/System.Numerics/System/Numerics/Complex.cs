@@ -290,7 +290,7 @@ namespace System.Numerics {
             return new Complex(Math.Sin(a) * Math.Cosh(b), Math.Cos(a) * Math.Sinh(b));
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sinh", Justification = "[....]: Existing Name")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sinh", Justification = "Microsoft: Existing Name")]
         public static Complex Sinh(Complex value) /* Hyperbolic sin */
         {
             double a = value.m_real;
@@ -309,7 +309,7 @@ namespace System.Numerics {
             return new Complex(Math.Cos(a) * Math.Cosh(b), - (Math.Sin(a) * Math.Sinh(b)));
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cosh", Justification = "[....]: Existing Name")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cosh", Justification = "Microsoft: Existing Name")]
         public static Complex Cosh(Complex value) /* Hyperbolic cos */
         {
             double a = value.m_real;
@@ -325,7 +325,7 @@ namespace System.Numerics {
             return (Sin(value) / Cos(value));
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Tanh", Justification = "[....]: Existing Name")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Tanh", Justification = "Microsoft: Existing Name")]
         public static Complex Tanh(Complex value) /* Hyperbolic tan */
         {
             return (Sinh(value) / Cosh(value));
@@ -362,7 +362,7 @@ namespace System.Numerics {
             return (new Complex(result_re, result_im));
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sqrt", Justification = "[....]: Existing Name")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Sqrt", Justification = "Microsoft: Existing Name")]
         public static Complex Sqrt(Complex value) /* Square root ot the complex number */
         {
             return Complex.FromPolarCoordinates(Math.Sqrt(value.Magnitude), value.Phase / 2.0);

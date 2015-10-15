@@ -48,7 +48,7 @@ namespace System.Runtime.Remoting.Messaging {
     {
 
         // *** NOTE ***
-        // Keep these in [....] with the flags in Message.h
+        // Keep these in sync with the flags in Message.h
         // flags
         internal const int Sync = 0;        // Synchronous call
         internal const int BeginAsync = 1;  // Async Begin call
@@ -2018,7 +2018,7 @@ namespace System.Runtime.Remoting.Messaging {
                 }
                 return null;
             }
-            [System.Security.SecuritySafeCritical] // TODO: review - implements transparent public method
+            [System.Security.SecuritySafeCritical] // 
             set
             {
                 if (ContainsSpecialKey(key))
@@ -5502,7 +5502,7 @@ namespace System.Runtime.Remoting.Messaging {
         
         // 
         // Helper methods for expanding and contracting argument lists
-        //   when translating from async methods to [....] methods and back.
+        //   when translating from async methods to sync methods and back.
         //
 
         internal static Object[] ExpandAsyncEndArgsToSyncArgs(RemotingMethodCachedData syncMethod,

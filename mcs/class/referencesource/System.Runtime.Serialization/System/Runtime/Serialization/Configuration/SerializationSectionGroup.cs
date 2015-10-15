@@ -13,7 +13,7 @@ namespace System.Runtime.Serialization.Configuration
             {
                 throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("config");
             }
-#pragma warning suppress 56506 // [....], config is checked above
+#pragma warning suppress 56506 // Microsoft, config is checked above
             return (SerializationSectionGroup)config.SectionGroups[ConfigurationStrings.SectionGroupName];
         }
 

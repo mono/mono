@@ -7,7 +7,7 @@
 **
 ** Interface:  IComparer
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Interface for comparing two generic Objects.

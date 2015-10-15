@@ -317,7 +317,6 @@ namespace System.Web.UI.WebControls {
         WebSysDescription(SR.WebControl_Enabled)
         ]
         public virtual bool Enabled {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return !flags[isWebControlDisabled];
             }
@@ -511,7 +510,6 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         protected virtual HtmlTextWriterTag TagKey {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return tagKey;
             }

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupowner [....]
+// @owner       srimand
+// @backupowner adoshi
 //---------------------------------------------------------------------
 
 // comment this line out to see dead code:

@@ -191,7 +191,7 @@ namespace System.Web.UI.WebControls {
             string[] selectedItems = postCollection.GetValues(postDataKey);
             bool selectionChanged = false;
 
-            EnsureDataBound();
+            EnsureDataBoundInLoadPostData();
             if (selectedItems != null) {
                 if (SelectionMode == ListSelectionMode.Single) {
 

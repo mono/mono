@@ -42,9 +42,6 @@ namespace System.IO {
         private bool     m_isMemoryStream; // "do we sit on MemoryStream?" for Read/ReadInt32 perf
         private bool     m_leaveOpen;
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public BinaryReader(Stream input) : this(input, new UTF8Encoding(), false) {
         }
 
@@ -133,9 +130,6 @@ namespace System.IO {
             return InternalReadOneChar();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual bool ReadBoolean(){
             FillBuffer(1);
             return (m_buffer[0]!=0);
@@ -152,9 +146,6 @@ namespace System.IO {
         }
 
         [CLSCompliant(false)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual sbyte ReadSByte() {
             FillBuffer(1);
             return (sbyte)(m_buffer[0]);
@@ -168,9 +159,6 @@ namespace System.IO {
             return (char)value;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual short ReadInt16() {
             FillBuffer(2);
             return (short)(m_buffer[0] | m_buffer[1] << 8);

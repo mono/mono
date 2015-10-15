@@ -165,7 +165,7 @@ namespace System.ServiceModel.Dispatcher
             {
                 if (error != null)
                 {
-                    //TFS Bug 500275: it is not necessary to HtmlEncode the error.Message string here because XElement ctor will encode it.
+                    //TFS 
                     div.Add(new XElement(HtmlPElementName, SR2.GetString(SR2.HelpServerErrorProcessingRequestWithDetails, error.Message)));
                     div.Add(new XElement(HtmlPElementName, error.StackTrace ?? String.Empty));
                 }
@@ -179,7 +179,7 @@ namespace System.ServiceModel.Dispatcher
                 string encodedHelpLink = HttpUtility.HtmlEncode(helpUri.AbsoluteUri);
                 if (error != null)
                 {
-                    //TFS Bug 500275: XElement.Parse does not HtmlEncode the string passed to it, so we need to encode it before calling Parse.
+                    //TFS 
                     string errorMessage = AppSettings.DisableHtmlErrorPageExceptionHtmlEncoding ? error.Message : HttpUtility.HtmlEncode(error.Message);
                     div.Add(XElement.Parse(SR2.GetString(SR2.HelpServerErrorProcessingRequestWithDetailsAndLink, encodedHelpLink, errorMessage)));
                     div.Add(new XElement(HtmlPElementName, error.StackTrace ?? String.Empty));
@@ -363,7 +363,7 @@ namespace System.ServiceModel.Dispatcher
             else
             {
                 return new XElement(HtmlPElementName,
-                    new XElement(HtmlAElementName, new XAttribute(HtmlNameAttributeName, "#" + label), title),
+                    new XElement(HtmlAElementName, new XAttribute(HtmlNameAttributeName, label), title),
                     new XElement(HtmlPreElementName, new XAttribute(HtmlClassAttributeName, label), content));
             }
         }

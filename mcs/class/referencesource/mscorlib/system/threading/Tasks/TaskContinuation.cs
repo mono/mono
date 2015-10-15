@@ -7,7 +7,7 @@
 //
 // TaskContinuation.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implementation of task continuations, TaskContinuation, and its descendants.
 //
@@ -223,7 +223,7 @@ namespace System.Threading.Tasks
     //     - StandardTaskContinuation: wraps a task,options,and scheduler, and overrides Run to process the task with that configuration
     //     - AwaitTaskContinuation: base for continuations created through TaskAwaiter; targets default scheduler by default
     //         - TaskSchedulerAwaitTaskContinuation: awaiting with a non-default TaskScheduler
-    //         - SynchronizationContextAwaitTaskContinuation: awaiting with a "current" [....] ctx
+    //         - SynchronizationContextAwaitTaskContinuation: awaiting with a "current" sync ctx
 
     /// <summary>Represents a continuation.</summary>
     internal abstract class TaskContinuation
@@ -307,7 +307,6 @@ namespace System.Threading.Tasks
             m_task = task;
             m_options = options;
             m_taskScheduler = scheduler;
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, m_task.Id, "Task.ContinueWith: " + ((Delegate)task.m_action).Method.Name, 0);
 
@@ -315,7 +314,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(m_task);
             }
-#endif
         }
 
         /// <summary>Invokes the continuation for the target completion task.</summary>
@@ -340,8 +338,6 @@ namespace System.Threading.Tasks
             Task continuationTask = m_task;
             if (isRightKind)
             {
-
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 //If the task was cancel before running (e.g a ContinueWhenAll with a cancelled caancelation token)
                 //we will still flow it to ScheduleAndStart() were it will check the status before running
                 //We check here to avoid faulty logs that contain a join event to an operation that was already set as completed.
@@ -350,7 +346,6 @@ namespace System.Threading.Tasks
                     // Log now that we are sure that this continuation is being ran
                     AsyncCausalityTracer.TraceOperationRelation(CausalityTraceLevel.Important, continuationTask.Id, CausalityRelation.AssignDelegate);
                 }
-#endif
                 continuationTask.m_taskScheduler = m_taskScheduler;
 
                 // Either run directly or just queue it up for execution, depending
@@ -426,14 +421,12 @@ namespace System.Threading.Tasks
             // Otherwise, Post the action back to the SynchronizationContext.
             else
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
                 TplEtwProvider etwLog = TplEtwProvider.Log;
                 if (etwLog.IsEnabled())
                 {
                     m_continuationId = Task.NewId();
                     etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
                 }
-#endif
                 RunCallback(GetPostActionCallback(), this, ref Task.t_currentTask);
             }
             // Any exceptions will be handled by RunCallback.
@@ -446,20 +439,17 @@ namespace System.Threading.Tasks
         {
             var c = (SynchronizationContextAwaitTaskContinuation)state;
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
             TplEtwProvider etwLog = TplEtwProvider.Log;
-            if (etwLog.IsEnabled() && c.m_continuationId != 0)
+            if (etwLog.TasksSetActivityIds && c.m_continuationId != 0)
             {
                 c.m_syncContext.Post(s_postCallback, GetActionLogDelegate(c.m_continuationId, c.m_action));
             }
             else
-#endif
             {
                 c.m_syncContext.Post(s_postCallback, c.m_action); // s_postCallback is manually cached, as the compiler won't in a SecurityCritical method
             }
         }
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
         private static Action GetActionLogDelegate(int continuationId, Action action)
         {
             return () =>
@@ -471,16 +461,13 @@ namespace System.Threading.Tasks
                     finally { System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId); }
                 };
         }
-#endif
 
         /// <summary>Gets a cached delegate for the PostAction method.</summary>
         /// <returns>
         /// A delegate for PostAction, which expects a SynchronizationContextAwaitTaskContinuation 
         /// to be passed as state.
         /// </returns>
-#if !FEATURE_CORECLR
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         [SecurityCritical]
         private static ContextCallback GetPostActionCallback()
         {
@@ -560,9 +547,7 @@ namespace System.Threading.Tasks
         /// <summary>The action to invoke.</summary>
         protected readonly Action m_action;
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
         protected int m_continuationId;
-#endif
 
         /// <summary>Initializes the continuation.</summary>
         /// <param name="action">The action to invoke. Must not be null.</param>
@@ -630,14 +615,13 @@ namespace System.Threading.Tasks
             }
             else
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
                 TplEtwProvider etwLog = TplEtwProvider.Log;
                 if (etwLog.IsEnabled())
                 {
                     m_continuationId = Task.NewId();
                     etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
                 }
-#endif
+
                 // We couldn't inline, so now we need to schedule it
                 ThreadPool.UnsafeQueueCustomWorkItem(this, forceGlobal: false);
            }
@@ -679,54 +663,47 @@ namespace System.Threading.Tasks
         [SecurityCritical]
         void ExecuteWorkItemHelper()
         {
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
             var etwLog = TplEtwProvider.Log;
             Guid savedActivityId = Guid.Empty;
-            if (etwLog.IsEnabled() && m_continuationId != 0)
+            if (etwLog.TasksSetActivityIds && m_continuationId != 0)
             {
                 Guid activityId = TplEtwProvider.CreateGuidForTaskID(m_continuationId);
                 System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(activityId, out savedActivityId);
             }
             try
             {
-#endif
-            // We're not inside of a task, so t_currentTask doesn't need to be specially maintained.
-            // We're on a thread pool thread with no higher-level callers, so exceptions can just propagate.
+                // We're not inside of a task, so t_currentTask doesn't need to be specially maintained.
+                // We're on a thread pool thread with no higher-level callers, so exceptions can just propagate.
 
-            // If there's no execution context, just invoke the delegate.
-            if (m_capturedContext == null)
-            {
-                m_action();
-            }
-                // If there is an execution context, get the cached delegate and run the action under the context.
-            else
-            {
-                try
+                // If there's no execution context, just invoke the delegate.
+                if (m_capturedContext == null)
                 {
-                    ExecutionContext.Run(m_capturedContext, GetInvokeActionCallback(), m_action, true);
+                    m_action();
                 }
-                finally { m_capturedContext.Dispose(); }
-            }
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
+                    // If there is an execution context, get the cached delegate and run the action under the context.
+                else
+                {
+                    try
+                    {
+                        ExecutionContext.Run(m_capturedContext, GetInvokeActionCallback(), m_action, true);
+                    }
+                    finally { m_capturedContext.Dispose(); }
+                }
             }
             finally
             {
-                if (etwLog.IsEnabled() && m_continuationId != 0)
+                if (etwLog.TasksSetActivityIds && m_continuationId != 0)
                 {
                     System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId);
                 }
             }
-#endif
         }
 
         [SecurityCritical]
         void IThreadPoolWorkItem.ExecuteWorkItem()
         {
             // inline the fast path
-            if (m_capturedContext == null
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
-                && !TplEtwProvider.Log.IsEnabled()
-#endif
+            if (m_capturedContext == null && !TplEtwProvider.Log.IsEnabled()
             )
             {
                 m_action();
@@ -752,9 +729,7 @@ namespace System.Threading.Tasks
         [SecurityCritical]
         private static void InvokeAction(object state) { ((Action)state)(); }
 
-#if !FEATURE_CORECLR
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
         [SecurityCritical]
         protected static ContextCallback GetInvokeActionCallback()
         {
@@ -851,14 +826,12 @@ namespace System.Threading.Tasks
         {
             AwaitTaskContinuation atc = new AwaitTaskContinuation(action, flowExecutionContext: false);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
             var etwLog = TplEtwProvider.Log;
             if (etwLog.IsEnabled() && task != null)
             {
                 atc.m_continuationId = Task.NewId();
                 etwLog.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, atc.m_continuationId);
             }
-#endif
 
             ThreadPool.UnsafeQueueCustomWorkItem(atc, forceGlobal: false);
         }
@@ -890,11 +863,7 @@ namespace System.Threading.Tasks
         internal override Delegate[] GetDelegateContinuationsForDebugger()
         {
             Contract.Assert(m_action != null);
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
             return new Delegate[] { AsyncMethodBuilderCore.TryGetStateMachineForDebugger(m_action) };
-#else
-            return new Delegate[] { m_action };
-#endif
         }
     }
 

@@ -2,8 +2,8 @@
 // <copyright file="SqlConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
     using System;
@@ -55,6 +55,8 @@ namespace System.Data.SqlClient {
             PacketSize,
             TypeSystemVersion,
 
+            Authentication,
+
             ApplicationName,
             CurrentLanguage,
             WorkstationID,
@@ -72,6 +74,8 @@ namespace System.Data.SqlClient {
             ConnectRetryCount,
 
             ConnectRetryInterval,
+
+            ColumnEncryptionSetting,
 
             // keep the count value last
             KeywordsCount
@@ -105,20 +109,21 @@ namespace System.Data.SqlClient {
         private int _connectRetryCount   = DbConnectionStringDefaults.ConnectRetryCount;
         private int _connectRetryInterval = DbConnectionStringDefaults.ConnectRetryInterval;
 
-        private bool _asynchronousProcessing   = DbConnectionStringDefaults.AsynchronousProcessing;
-        private bool _connectionReset          = DbConnectionStringDefaults.ConnectionReset;
-        private bool _contextConnection        = DbConnectionStringDefaults.ContextConnection;
-        private bool _encrypt                  = DbConnectionStringDefaults.Encrypt;
-        private bool _trustServerCertificate   = DbConnectionStringDefaults.TrustServerCertificate;
-        private bool _enlist                   = DbConnectionStringDefaults.Enlist;
-        private bool _integratedSecurity       = DbConnectionStringDefaults.IntegratedSecurity;
-        private bool _multipleActiveResultSets = DbConnectionStringDefaults.MultipleActiveResultSets;
-        private bool _multiSubnetFailover      = DbConnectionStringDefaults.MultiSubnetFailover;
-        private bool _persistSecurityInfo      = DbConnectionStringDefaults.PersistSecurityInfo;
-        private bool _pooling                  = DbConnectionStringDefaults.Pooling;
-        private bool _replication              = DbConnectionStringDefaults.Replication;
-        private bool _userInstance             = DbConnectionStringDefaults.UserInstance;
-
+        private bool _asynchronousProcessing       = DbConnectionStringDefaults.AsynchronousProcessing;
+        private bool _connectionReset              = DbConnectionStringDefaults.ConnectionReset;
+        private bool _contextConnection            = DbConnectionStringDefaults.ContextConnection;
+        private bool _encrypt                      = DbConnectionStringDefaults.Encrypt;
+        private bool _trustServerCertificate       = DbConnectionStringDefaults.TrustServerCertificate;
+        private bool _enlist                       = DbConnectionStringDefaults.Enlist;
+        private bool _integratedSecurity           = DbConnectionStringDefaults.IntegratedSecurity;
+        private bool _multipleActiveResultSets     = DbConnectionStringDefaults.MultipleActiveResultSets;
+        private bool _multiSubnetFailover          = DbConnectionStringDefaults.MultiSubnetFailover;
+        private bool _persistSecurityInfo          = DbConnectionStringDefaults.PersistSecurityInfo;
+        private bool _pooling                      = DbConnectionStringDefaults.Pooling;
+        private bool _replication                  = DbConnectionStringDefaults.Replication;
+        private bool _userInstance                 = DbConnectionStringDefaults.UserInstance;
+        private SqlAuthenticationMethod _authentication     = DbConnectionStringDefaults.Authentication;
+        private SqlConnectionColumnEncryptionSetting _columnEncryptionSetting = DbConnectionStringDefaults.ColumnEncryptionSetting;
 
         static SqlConnectionStringBuilder() {
             string[] validKeywords = new string[KeywordsCount];
@@ -156,7 +161,9 @@ namespace System.Data.SqlClient {
             validKeywords[(int)Keywords.WorkstationID]            = DbConnectionStringKeywords.WorkstationID;
             validKeywords[(int)Keywords.ConnectRetryCount]        = DbConnectionStringKeywords.ConnectRetryCount;
             validKeywords[(int)Keywords.ConnectRetryInterval]     = DbConnectionStringKeywords.ConnectRetryInterval;
-            _validKeywords = validKeywords;
+            validKeywords[(int)Keywords.Authentication]           = DbConnectionStringKeywords.Authentication;
+            validKeywords[(int)Keywords.ColumnEncryptionSetting] = DbConnectionStringKeywords.ColumnEncryptionSetting;
+           _validKeywords = validKeywords;
 
             Dictionary<string, Keywords> hash = new Dictionary<string, Keywords>(KeywordsCount + SqlConnectionString.SynonymCount, StringComparer.OrdinalIgnoreCase);
             hash.Add(DbConnectionStringKeywords.ApplicationIntent,        Keywords.ApplicationIntent);
@@ -193,7 +200,8 @@ namespace System.Data.SqlClient {
             hash.Add(DbConnectionStringKeywords.WorkstationID,            Keywords.WorkstationID);
             hash.Add(DbConnectionStringKeywords.ConnectRetryCount,        Keywords.ConnectRetryCount);
             hash.Add(DbConnectionStringKeywords.ConnectRetryInterval,     Keywords.ConnectRetryInterval);
-
+            hash.Add(DbConnectionStringKeywords.Authentication,           Keywords.Authentication);
+            hash.Add(DbConnectionStringKeywords.ColumnEncryptionSetting, Keywords.ColumnEncryptionSetting);
             hash.Add(DbConnectionStringSynonyms.APP,                      Keywords.ApplicationName);
             hash.Add(DbConnectionStringSynonyms.Async,                    Keywords.AsynchronousProcessing);
             hash.Add(DbConnectionStringSynonyms.EXTENDEDPROPERTIES,       Keywords.AttachDBFilename);
@@ -261,6 +269,8 @@ namespace System.Data.SqlClient {
 
                     case Keywords.IntegratedSecurity:       IntegratedSecurity = ConvertToIntegratedSecurity(value); break;
 
+                    case Keywords.Authentication:           Authentication = ConvertToAuthenticationType(keyword, value); break;
+                    case Keywords.ColumnEncryptionSetting: ColumnEncryptionSetting = ConvertToColumnEncryptionSetting(keyword, value); break;
                     case Keywords.AsynchronousProcessing:   AsynchronousProcessing = ConvertToBoolean(value); break;
 #pragma warning disable 618 // Obsolete ConnectionReset
                     case Keywords.ConnectionReset:          ConnectionReset = ConvertToBoolean(value); break;
@@ -420,6 +430,22 @@ namespace System.Data.SqlClient {
                 _encrypt = value;
             }
         }
+
+        [DisplayName(DbConnectionStringKeywords.ColumnEncryptionSetting)]
+        [ResCategoryAttribute(Res.DataCategory_Security)]
+        [ResDescriptionAttribute(Res.TCE_DbConnectionString_ColumnEncryptionSetting)]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting {
+            get { return _columnEncryptionSetting; }
+            set {
+                if (!DbConnectionStringBuilderUtil.IsValidColumnEncryptionSetting(value)) {
+                    throw ADP.InvalidEnumerationValue(typeof(SqlConnectionColumnEncryptionSetting), (int)value);
+                }
+
+                 SetColumnEncryptionSettingValue(value);
+                _columnEncryptionSetting = value;
+            }
+        }
         
         [DisplayName(DbConnectionStringKeywords.TrustServerCertificate)]
         [ResCategoryAttribute(Res.DataCategory_Security)]
@@ -480,6 +506,22 @@ namespace System.Data.SqlClient {
             set {
                 SetValue(DbConnectionStringKeywords.IntegratedSecurity, value);
                 _integratedSecurity = value;
+            }
+        }
+
+        [DisplayName(DbConnectionStringKeywords.Authentication)]
+        [ResCategoryAttribute(Res.DataCategory_Security)]
+        [ResDescriptionAttribute(Res.DbConnectionString_Authentication)]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public SqlAuthenticationMethod Authentication {
+            get { return _authentication; }
+            set {
+                if (!DbConnectionStringBuilderUtil.IsValidAuthenticationTypeValue(value)) {
+                    throw ADP.InvalidEnumerationValue(typeof(SqlAuthenticationMethod), (int)value);
+                }
+
+                SetAuthenticationValue(value);
+                _authentication = value;
             }
         }
 
@@ -816,6 +858,27 @@ namespace System.Data.SqlClient {
         private static ApplicationIntent ConvertToApplicationIntent(string keyword, object value) {
             return DbConnectionStringBuilderUtil.ConvertToApplicationIntent(keyword, value);
         }
+        private static SqlAuthenticationMethod ConvertToAuthenticationType(string keyword, object value) {
+            return DbConnectionStringBuilderUtil.ConvertToAuthenticationType(keyword, value);
+        }
+
+        /// <summary>
+        /// Convert to SqlConnectionColumnEncryptionSetting.
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="value"></param>
+        private static SqlConnectionColumnEncryptionSetting ConvertToColumnEncryptionSetting(string keyword, object value) {
+            return DbConnectionStringBuilderUtil.ConvertToColumnEncryptionSetting(keyword, value);
+        }
+
+        internal override string ConvertValueToString(object value) {
+            if (value is SqlAuthenticationMethod) {
+                return DbConnectionStringBuilderUtil.AuthenticationTypeToString((SqlAuthenticationMethod)value);
+            }
+            else {
+                return base.ConvertValueToString(value);
+            }
+        }
 
         private object GetAt(Keywords index) {
             switch(index) {
@@ -855,7 +918,8 @@ namespace System.Data.SqlClient {
             case Keywords.WorkstationID:            return WorkstationID;
             case Keywords.ConnectRetryCount:        return ConnectRetryCount;
             case Keywords.ConnectRetryInterval:     return ConnectRetryInterval;
-
+            case Keywords.Authentication:           return Authentication;
+            case Keywords.ColumnEncryptionSetting: return ColumnEncryptionSetting;
             default:
                 Debug.Assert(false, "unexpected keyword");
                 throw ADP.KeywordNotSupported(_validKeywords[(int)index]);
@@ -923,6 +987,9 @@ namespace System.Data.SqlClient {
                 break;
             case Keywords.AttachDBFilename:
                 _attachDBFilename = DbConnectionStringDefaults.AttachDBFilename;
+                break;
+            case Keywords.Authentication:
+                _authentication = DbConnectionStringDefaults.Authentication;
                 break;
             case Keywords.ConnectTimeout:
                 _connectTimeout = DbConnectionStringDefaults.ConnectTimeout;
@@ -1014,6 +1081,9 @@ namespace System.Data.SqlClient {
             case Keywords.WorkstationID:
                 _workstationID = DbConnectionStringDefaults.WorkstationID;
                 break;
+            case Keywords.ColumnEncryptionSetting:
+                _columnEncryptionSetting = DbConnectionStringDefaults.ColumnEncryptionSetting;
+                break;
             default:
                 Debug.Assert(false, "unexpected keyword");
                 throw ADP.KeywordNotSupported(_validKeywords[(int)index]);
@@ -1031,8 +1101,16 @@ namespace System.Data.SqlClient {
             base[keyword] = value;
         }
         private void SetApplicationIntentValue(ApplicationIntent value) {
-            Debug.Assert(DbConnectionStringBuilderUtil.IsValidApplicationIntentValue(value), "invalid value");
+            Debug.Assert(DbConnectionStringBuilderUtil.IsValidApplicationIntentValue(value), "Invalid value for ApplicationIntent");
             base[DbConnectionStringKeywords.ApplicationIntent] = DbConnectionStringBuilderUtil.ApplicationIntentToString(value);
+        }
+        private void SetAuthenticationValue(SqlAuthenticationMethod value) {
+            Debug.Assert(DbConnectionStringBuilderUtil.IsValidAuthenticationTypeValue(value), "Invalid value for AuthenticationType");
+            base[DbConnectionStringKeywords.Authentication] = DbConnectionStringBuilderUtil.AuthenticationTypeToString(value);
+        }
+        private void SetColumnEncryptionSettingValue(SqlConnectionColumnEncryptionSetting value) {
+            Debug.Assert(DbConnectionStringBuilderUtil.IsValidColumnEncryptionSetting(value), "Invalid value for SqlConnectionColumnEncryptionSetting");
+            base[DbConnectionStringKeywords.ColumnEncryptionSetting] = DbConnectionStringBuilderUtil.ColumnEncryptionSettingToString(value);
         }
 
         public override bool ShouldSerialize(string keyword) {

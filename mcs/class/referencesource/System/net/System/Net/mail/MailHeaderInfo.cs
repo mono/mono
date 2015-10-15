@@ -67,7 +67,7 @@ namespace System.Net.Mail {
 
 
         // Table of well-known mail headers.
-        // Keep the initializers in [....] with the enum above.
+        // Keep the initializers in sync with the enum above.
         private static readonly HeaderInfo[] m_HeaderInfo = {
             //             ID                                     NormalizedString             IsSingleton      IsUserSettable      AllowsUnicode
             new HeaderInfo(MailHeaderID.Bcc,                      "Bcc",                       true,            false,              true),
@@ -110,10 +110,10 @@ namespace System.Net.Mail {
         static MailHeaderInfo() {
 
 #if DEBUG
-            // Check that enum and header info array are in [....]
+            // Check that enum and header info array are in sync
             for(int i = 0; i < m_HeaderInfo.Length; i++) {
                 if((int)m_HeaderInfo[i].ID != i) {
-                    throw new Exception("Header info data structures are not in [....]");
+                    throw new Exception("Header info data structures are not in sync");
                 }
             }
 #endif

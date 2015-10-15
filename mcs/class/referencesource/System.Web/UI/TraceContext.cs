@@ -759,7 +759,7 @@ namespace System.Web {
         private void InitRequest() {
             // Master request is assumed to be initialized first
             System.Web.Util.Debug.Assert(_masterRequest != null);
-        
+
             DataSet requestData = _masterRequest.Clone();
 
             // request info
@@ -786,19 +786,19 @@ namespace System.Web {
             AddRow(requestData, SR.Trace_Request, row);
 
             // header info
-            int i;
-            String[] keys = _context.Request.Headers.AllKeys;
-            for (i=0; i<keys.Length; i++) {
-                row = NewRow(requestData, SR.Trace_Headers_Collection);
-                row[SR.Trace_Name] = keys[i];
-                row[SR.Trace_Value] = _context.Request.Headers[keys[i]];
-                AddRow(requestData, SR.Trace_Headers_Collection, row);
+            try {
+                // 
+
+                AddCollectionToRequestData(requestData, SR.Trace_Headers_Collection, _context.Request.Unvalidated.Headers);
+            }
+            catch {
+                // ---- exceptions when we fail to get the unvalidated collection
             }
 
             // response header info
             ArrayList headers = _context.Response.GenerateResponseHeaders(false);
             int n = (headers != null) ? headers.Count : 0;
-            for (i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++) {
                 HttpResponseHeader h = (HttpResponseHeader)headers[i];
                 row = NewRow(requestData, SR.Trace_Response_Headers_Collection);
                 row[SR.Trace_Name] = h.Name;
@@ -807,34 +807,26 @@ namespace System.Web {
             }
 
             //form info
-            keys = _context.Request.Form.AllKeys;
-            for (i=0; i<keys.Length; i++) {
-                row = NewRow(requestData, SR.Trace_Form_Collection);
-                row[SR.Trace_Name] = keys[i];
-                row[SR.Trace_Value] = _context.Request.Form[keys[i]];
-                AddRow(requestData, SR.Trace_Form_Collection, row);
+            try {
+                AddCollectionToRequestData(requestData, SR.Trace_Form_Collection, _context.Request.Unvalidated.Form);
+            }
+            catch {
+                // ---- exceptions when we fail to get the unvalidated collection
             }
 
             //QueryString info
-            keys = _context.Request.QueryString.AllKeys;
-            for (i=0; i<keys.Length; i++) {
-                row = NewRow(requestData, SR.Trace_Querystring_Collection);
-                row[SR.Trace_Name] = keys[i];
-                row[SR.Trace_Value] = _context.Request.QueryString[keys[i]];
-                AddRow(requestData, SR.Trace_Querystring_Collection, row);
+            try {
+                AddCollectionToRequestData(requestData, SR.Trace_Querystring_Collection, _context.Request.Unvalidated.QueryString);
+            }
+            catch {
+                // ---- exceptions when we fail to get the unvalidated collection
             }
 
             //Server Variable info
             if (HttpRuntime.HasAppPathDiscoveryPermission()) {
-                keys = _context.Request.ServerVariables.AllKeys;
-                for (i=0; i<keys.Length; i++) {
-                    row = NewRow(requestData, SR.Trace_Server_Variables);
-                    row[SR.Trace_Name] = keys[i];
-                    row[SR.Trace_Value] = _context.Request.ServerVariables.Get(keys[i]);
-                    AddRow(requestData, SR.Trace_Server_Variables, row);
-                }
+                AddCollectionToRequestData(requestData, SR.Trace_Server_Variables, _context.Request.ServerVariables);
             }
-            
+
             _requestData = requestData;
 
             if (HttpRuntime.UseIntegratedPipeline) {
@@ -845,6 +837,18 @@ namespace System.Web {
                 // to access the entity.  I decided not to check the current handler, since
                 // that can be changed if someone sets the IIS script map.
                 _context.Request.InsertEntityBody();
+            }
+        }
+
+        private void AddCollectionToRequestData(DataSet requestData, string traceCollectionTitle, NameValueCollection collection) {
+            if (null != collection) {
+                var keys = collection.AllKeys;
+                for (int i = 0; i < keys.Length; i++) {
+                    var row = NewRow(requestData, traceCollectionTitle);
+                    row[SR.Trace_Name] = keys[i];
+                    row[SR.Trace_Value] = collection[keys[i]];
+                    AddRow(requestData, traceCollectionTitle, row);
+                }
             }
         }
     }

@@ -84,18 +84,12 @@ namespace System.Text
         // Maximum number of characters that this instance of this fallback could return
         public override int MaxCharCount
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 return strDefault.Length;
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override bool Equals(Object value)
         {
             EncoderReplacementFallback that = value as EncoderReplacementFallback;

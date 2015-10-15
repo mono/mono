@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Reflection.Emit
 {
     using System.Runtime.InteropServices;
@@ -25,10 +25,8 @@ namespace System.Reflection.Emit
         public static UnmanagedMarshal DefineUnmanagedMarshal(UnmanagedType unmanagedType)
         {
             if (unmanagedType == UnmanagedType.ByValTStr ||
-#if FEATURE_COMINTEROP
                 unmanagedType == UnmanagedType.SafeArray ||
                 unmanagedType == UnmanagedType.CustomMarshaler ||
-#endif //FEATURE_COMINTEROP
                 unmanagedType == UnmanagedType.ByValArray ||
                 unmanagedType == UnmanagedType.LPArray)
             {
@@ -42,12 +40,10 @@ namespace System.Reflection.Emit
             return new UnmanagedMarshal(UnmanagedType.ByValTStr, Guid.Empty, elemCount, (UnmanagedType) 0);
         }
   
-#if FEATURE_COMINTEROP
         public static UnmanagedMarshal DefineSafeArray(UnmanagedType elemType)
         {
             return new UnmanagedMarshal(UnmanagedType.SafeArray, Guid.Empty, 0, elemType);
         }
-#endif //FEATURE_COMINTEROP
 
         public static UnmanagedMarshal DefineByValArray(int elemCount)
         {
@@ -74,10 +70,8 @@ namespace System.Reflection.Emit
         {
             get 
             { 
-#if FEATURE_COMINTEROP
                 if (m_unmanagedType == UnmanagedType.CustomMarshaler) 
                     return m_guid; 
-#endif // FEATURE_COMINTEROP
 
                 // throw exception here. There is Guid only if CustomMarshaler
                 throw new ArgumentException(Environment.GetResourceString("Argument_NotACustomMarshaler"));
@@ -100,11 +94,7 @@ namespace System.Reflection.Emit
         {
             get 
             { 
-#if FEATURE_COMINTEROP
                 if (m_unmanagedType != UnmanagedType.LPArray && m_unmanagedType != UnmanagedType.SafeArray) 
-#else
-                if (m_unmanagedType != UnmanagedType.LPArray)                     
-#endif //!FEATURE_COMINTEROP
                 {
                     // throw exception here. There is NestedUnmanagedType only if LPArray or SafeArray
                     throw new ArgumentException(Environment.GetResourceString("Argument_NoNestedMarshal"));
@@ -138,11 +128,7 @@ namespace System.Reflection.Emit
         internal byte[] InternalGetBytes()
         {
             byte[] buf;
-#if FEATURE_COMINTEROP
             if (m_unmanagedType == UnmanagedType.SafeArray || m_unmanagedType == UnmanagedType.LPArray)
-#else
-            if (m_unmanagedType == UnmanagedType.LPArray)
-#endif //!FEATURE_COMINTEROP
             {
     
                 // syntax for NativeTypeSafeArray is 

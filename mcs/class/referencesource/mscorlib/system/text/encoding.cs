@@ -109,7 +109,7 @@ namespace System.Text
 
         //
         // The following values are from mlang.idl.  These values
-        // should be in [....] with those in mlang.idl.
+        // should be in sync with those in mlang.idl.
         //
         private const int MIMECONTF_MAILNEWS          = 0x00000001;
         private const int MIMECONTF_BROWSER           = 0x00000002;
@@ -219,19 +219,32 @@ namespace System.Text
             this.SetDefaultFallbacks();
         }
 
+        // This constructor is needed to allow any sub-classing implementation to provide encoder/decoder fallback objects 
+        // because the encoding object is always created as read-only object and don’t allow setting encoder/decoder fallback 
+        // after the creation is done. 
+        protected Encoding(int codePage, EncoderFallback encoderFallback, DecoderFallback decoderFallback)
+        {
+            // Validate code page
+            if (codePage < 0)
+            {
+                throw new ArgumentOutOfRangeException("codePage");
+            }
+            Contract.EndContractBlock();
+
+            // Remember code page
+            m_codePage = codePage;
+
+            this.encoderFallback = encoderFallback ?? new InternalEncoderBestFitFallback(this);
+            this.decoderFallback = decoderFallback ?? new InternalDecoderBestFitFallback(this);
+        }
+
         // Default fallback that we'll use.
         internal virtual void SetDefaultFallbacks()
         {
-#if FEATURE_CORECLR
-            // For coreclr we only have Unicode, so we don't have best fit fallbacks
-            this.encoderFallback = new EncoderReplacementFallback("\xFFFD");
-            this.decoderFallback = new DecoderReplacementFallback("\xFFFD");
-#else // !FEATURE_CORECLR
             // For UTF-X encodings, we use a replacement fallback with an "\xFFFD" string,
             // For ASCII we use "?" replacement fallback, etc.
             this.encoderFallback = new InternalEncoderBestFitFallback(this);
             this.decoderFallback = new InternalDecoderBestFitFallback(this);
-#endif // FEATURE_CORECLR            
         }
 
 
@@ -389,12 +402,25 @@ namespace System.Text
             }
         }
 
+#if !FEATURE_CORECLR
+        [System.Security.SecurityCritical]
+#endif
+        public static void RegisterProvider(EncodingProvider provider) 
+        {
+            // Parameters validated inside EncodingProvider
+            EncodingProvider.AddProvider(provider);
+        }
+
         [Pure]
 #if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
 #endif
         public static Encoding GetEncoding(int codepage)
         {
+            Encoding result = EncodingProvider.GetEncodingFromProvider(codepage);
+            if (result != null)
+                return result;
+
             //
             // NOTE: If you add a new encoding that can be get by codepage, be sure to
             // add the corresponding item in EncodingTable.
@@ -410,7 +436,6 @@ namespace System.Text
             Contract.EndContractBlock();
 
             // Our Encoding
-            Encoding result = null;
 
             // See if we have a hash table with our encoding in it already.
             if (encodings != null) {
@@ -460,7 +485,16 @@ namespace System.Text
                             break;
 #endif 
 
-#endif                            
+#if FEATURE_UTF32        
+                        case CodePageUTF32:             // 12000
+                            result = UTF32;
+                            break;
+                        case CodePageUTF32BE:           // 12001
+                            result = new UTF32Encoding(true, true);
+                            break;
+#endif
+
+#endif
                         case CodePageUTF8:                      // 65001, UTF8
                             result = UTF8;
                             break;
@@ -538,8 +572,13 @@ namespace System.Text
         public static Encoding GetEncoding(int codepage,
             EncoderFallback encoderFallback, DecoderFallback decoderFallback)
         {
+            Encoding baseEncoding = EncodingProvider.GetEncodingFromProvider(codepage, encoderFallback, decoderFallback);
+
+            if (baseEncoding != null)
+                return baseEncoding;
+
             // Get the default encoding (which is cached and read only)
-            Encoding baseEncoding = GetEncoding(codepage);
+            baseEncoding = GetEncoding(codepage);
 
             // Clone it and set the fallback
             Encoding fallbackEncoding = (Encoding)baseEncoding.Clone();
@@ -644,6 +683,10 @@ namespace System.Text
         [Pure]
         public static Encoding GetEncoding(String name)
         {
+            Encoding baseEncoding = EncodingProvider.GetEncodingFromProvider(name);
+            if (baseEncoding != null)
+                return baseEncoding;
+
             //
             // NOTE: If you add a new encoding that can be requested by name, be sure to
             // add the corresponding item in EncodingTable.
@@ -659,6 +702,10 @@ namespace System.Text
         public static Encoding GetEncoding(String name,
             EncoderFallback encoderFallback, DecoderFallback decoderFallback)
         {
+            Encoding baseEncoding = EncodingProvider.GetEncodingFromProvider(name, encoderFallback, decoderFallback);
+            if (baseEncoding != null)
+                return baseEncoding;
+
             //
             // NOTE: If you add a new encoding that can be requested by name, be sure to
             // add the corresponding item in EncodingTable.
@@ -738,9 +785,6 @@ namespace System.Text
 
         public virtual String WebName
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 if (dataItem==null) {
@@ -894,9 +938,6 @@ namespace System.Text
 
         public static Encoding ASCII
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 if (asciiEncoding == null) asciiEncoding = new ASCIIEncoding();
@@ -1013,9 +1054,6 @@ namespace System.Text
         // of characters in a character array.
         //
         [Pure]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual byte[] GetBytes(char[] chars, int index, int count)
         {
             byte[] result = new byte[GetByteCount(chars, index, count)];
@@ -1117,7 +1155,7 @@ namespace System.Text
             // Do the work
             int result = GetBytes(arrChar, 0, charCount, arrByte, 0);
 
-            // The only way this could fail is a bug in GetBytes
+            // The only way this could fail is a 
             Contract.Assert(result <= byteCount, "[Encoding.GetBytes]Returned more bytes than we have space for");
 
             // Copy the byte array
@@ -1277,7 +1315,7 @@ namespace System.Text
             // Do the work
             int result = GetChars(arrByte, 0, byteCount, arrChar, 0);
 
-            // The only way this could fail is a bug in GetChars
+            // The only way this could fail is a 
             Contract.Assert(result <= charCount, "[Encoding.GetChars]Returned more chars than we have space for");
 
             // Copy the char array
@@ -1303,6 +1341,22 @@ namespace System.Text
                                                 char* chars, int charCount, DecoderNLS decoder)
         {
             return GetChars(bytes, byteCount, chars, charCount);
+        }
+
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [CLSCompliant(false)]
+        [System.Runtime.InteropServices.ComVisible(false)]
+        public unsafe string GetString(byte* bytes, int byteCount)
+        {
+            if (bytes == null)
+                throw new ArgumentNullException("bytes", Environment.GetResourceString("ArgumentNull_Array"));
+
+            if (byteCount < 0)
+                throw new ArgumentOutOfRangeException("byteCount", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+            Contract.EndContractBlock();
+
+            return String.CreateStringFromEncoding(bytes, byteCount, this);
         }
 
         // Returns the code page identifier of this encoding. The returned value is
@@ -1401,9 +1455,6 @@ namespace System.Text
 
         public static Encoding Default {
             [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 if (defaultEncoding == null) {
                     defaultEncoding = CreateDefaultEncoding();
@@ -1489,9 +1540,6 @@ namespace System.Text
         //
 
         public static Encoding Unicode {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 if (unicodeEncoding == null) unicodeEncoding = new UnicodeEncoding(false, true);
                 return unicodeEncoding;
@@ -1528,9 +1576,6 @@ namespace System.Text
         //
 
         public static Encoding UTF8 {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 if (utf8Encoding == null) utf8Encoding = new UTF8Encoding(true);
                 return utf8Encoding;

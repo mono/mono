@@ -5,7 +5,7 @@
 // ==--==
 //  SecurityZone.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 //  Enumeration of the zones code can come from
 //

@@ -53,6 +53,9 @@ namespace System.Diagnostics {
         private Queue messageQueue;
         private StringBuilder sb;
         private bool bLastCarriageReturn;
+
+        // Cache the last position scanned in sb when searching for lines.
+        private int currentLinePos;
 		
         internal AsyncStreamReader(Process process, Stream stream, UserCallBack callback, Encoding encoding) 
             : this(process, stream, callback, encoding, DefaultBufferSize) {
@@ -203,48 +206,57 @@ namespace System.Diagnostics {
         //
 
         private void GetLinesFromStringBuilder() {
-            int i = 0;
+            int currentIndex = currentLinePos;
             int lineStart = 0;
             int len = sb.Length;
 
             // skip a beginning '\n' character of new block if last block ended 
             // with '\r'
             if (bLastCarriageReturn && (len > 0) && sb[0] == '\n')
-            {            
-                i = 1;
+            {
+                currentIndex = 1;
                 lineStart = 1;
                 bLastCarriageReturn = false;
             }
-		 
-            while(i < len) {
-                char ch = sb[i];
+
+            while (currentIndex < len) {
+                char ch = sb[currentIndex];
                 // Note the following common line feed chars:
                 // \n - UNIX   \r\n - DOS   \r - Mac
                 if (ch == '\r' || ch == '\n') {
-                    string s = sb.ToString(lineStart, i - lineStart);
-                    lineStart = i + 1;
+                    string s = sb.ToString(lineStart, currentIndex - lineStart);
+                    lineStart = currentIndex + 1;
                     // skip the "\n" character following "\r" character
                     if ((ch == '\r') && (lineStart < len) && (sb[lineStart] == '\n'))
                     {
                         lineStart++;
-                        i++;                
+                        currentIndex++;                
                     }
                                         
                     lock(messageQueue) {
                         messageQueue.Enqueue(s);
                     }
                 }
-                i++;
+                currentIndex++;
             }             
             if (sb[len - 1] == '\r') {
                 bLastCarriageReturn = true;
-            } 
+            }
             // Keep the rest characaters which can't form a new line in string builder.
-            if( lineStart < len) {
-                sb.Remove(0, lineStart);
+            if (lineStart < len) {
+                if (lineStart == 0) {
+                    // we found no breaklines, in this case we cache the position
+                    // so next time we don't have to restart from the beginning
+                    currentLinePos = currentIndex;
+                }
+                else {
+                    sb.Remove(0, lineStart);
+                    currentLinePos = 0;
+                }
             }
             else {
                 sb.Length = 0;
+                currentLinePos = 0;
             }
 
             FlushMessageQueue();

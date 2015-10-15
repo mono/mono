@@ -76,6 +76,7 @@ namespace System {
             return m_value == ((Byte)obj).m_value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(Byte obj)
         {
             return m_value == obj;

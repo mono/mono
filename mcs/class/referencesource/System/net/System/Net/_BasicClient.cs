@@ -120,9 +120,9 @@ namespace System.Net {
             //
             // in order to know if there will not be any '?' translations (which means
             // we should use the Default Encoding) we need to attempt encoding and then decoding.
-            // <STRIP>this is a limitation only on win9x, if we ever drop support for this platform there might be
-            // a more efficient way of doing this.</STRIP>
-            //
+            // <
+
+
             GlobalLog.Print("BasicClient::EncodingRightGetBytes(): Default Encoding is:" + Encoding.Default.EncodingName);
 
             byte[] bytes = Encoding.Default.GetBytes(rawString);
@@ -131,15 +131,15 @@ namespace System.Net {
 
             GlobalLog.Print("BasicClient::EncodingRightGetBytes(): canMapToCurrentCodePage:" + canMapToCurrentCodePage.ToString());
 
-            //<STRIP>
-            // if mapping to the current code page leaves characters out of the
-            // [0x00, 0xFF] range, then we need to use the new encoding that IIS6.0
-            // will support. do it when they decide it's good enough.
-            // </STRIP>
+            //<
+
+
+
+
             if (!canMapToCurrentCodePage) {
-                //<STRIP>
-                // for now throw. when IIS 6.0 adds support test it.
-                //</STRIP>
+                //<
+
+
                 GlobalLog.LeaveException("BasicClient::EncodingRightGetBytes", ExceptionHelper.MethodNotSupportedException);
                 throw ExceptionHelper.MethodNotSupportedException;
                 /*

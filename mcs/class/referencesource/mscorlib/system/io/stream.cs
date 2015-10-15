@@ -509,7 +509,7 @@ namespace System.IO {
         private void RunReadWriteTaskWhenReady(Task asyncWaiter, ReadWriteTask readWriteTask)
         {
             Contract.Assert(readWriteTask != null);  // Should be Contract.Requires, but CCRewrite is doing a poor job with
-                                                     // preconditions in async methods that await.  Mike & Manuel are aware. (10/6/2011, bug 290222)
+                                                     // preconditions in async methods that await.  Mike & Manuel are aware. (10/6/2011, 
             Contract.Assert(asyncWaiter != null);    // Ditto
 
             // If the wait has already complete, run the task.
@@ -744,9 +744,6 @@ namespace System.IO {
         // byte[] each time you call it, and should be overridden by any 
         // subclass that maintains an internal buffer.  Then, it can help perf
         // significantly for people who are reading one byte at a time.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual int ReadByte()
         {
             Contract.Ensures(Contract.Result<int>() >= -1);

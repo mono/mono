@@ -152,9 +152,6 @@ public abstract class CriticalHandle : CriticalFinalizerObject, IDisposable
 #if DEBUG
     private String _stackTrace; // Where we allocated this CriticalHandle.
 #endif
-    #if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-    #endif //!FEATURE_CORECLR
     protected IntPtr handle;    // This must be protected so derived classes can use out params. 
     private bool _isClosed;     // Set by SetHandleAsInvalid or Close/Dispose/finalization.
 

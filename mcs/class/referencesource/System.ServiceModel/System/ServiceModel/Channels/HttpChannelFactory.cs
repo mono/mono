@@ -35,6 +35,7 @@ namespace System.ServiceModel.Channels
     {
         static bool httpWebRequestWebPermissionDenied = false;
         static RequestCachePolicy requestCachePolicy = new RequestCachePolicy(RequestCacheLevel.BypassCache);
+        static long connectionGroupNamePrefix = 0;
 
         readonly ClientWebSocketFactory clientWebSocketFactory;
 
@@ -65,6 +66,7 @@ namespace System.ServiceModel.Channels
         WebSocketTransportSettings webSocketSettings;
         ConnectionBufferPool bufferPool;
         Lazy<string> webSocketSoapContentType;
+        string uniqueConnectionGroupNamePrefix;
 
         internal HttpChannelFactory(HttpTransportBindingElement bindingElement, BindingContext context)
             : base(bindingElement, context, HttpTransportDefaults.GetDefaultMessageEncoderFactory())
@@ -183,6 +185,15 @@ namespace System.ServiceModel.Channels
             }
 
             this.webSocketSoapContentType = new Lazy<string>(() => { return this.MessageEncoderFactory.CreateSessionEncoder().ContentType; }, LazyThreadSafetyMode.ExecutionAndPublication);
+
+            if (ServiceModelAppSettings.HttpTransportPerFactoryConnectionPool)
+            {
+                this.uniqueConnectionGroupNamePrefix = Interlocked.Increment(ref connectionGroupNamePrefix).ToString();
+            }
+            else
+            {
+                this.uniqueConnectionGroupNamePrefix = string.Empty;
+            }
         }
 
         public bool AllowCookies
@@ -665,7 +676,7 @@ namespace System.ServiceModel.Channels
             }
 
             string prefix = this.OnGetConnectionGroupPrefix(httpWebRequest, clientCertificateToken);
-            inputString = string.Concat(prefix, inputString);
+            inputString = string.Concat(this.uniqueConnectionGroupNamePrefix, prefix, inputString);
 
             string credentialHash = null;
 
@@ -1170,6 +1181,7 @@ namespace System.ServiceModel.Channels
                 ChannelBinding channelBinding;
                 int webRequestCompleted;
                 EventTraceActivity eventTraceActivity;
+                const string ConnectionGroupPrefixMessagePropertyName = "HttpTransportConnectionGroupNamePrefix";
 
                 public HttpChannelRequest(HttpRequestChannel channel, HttpChannelFactory<IRequestChannel> factory)
                 {
@@ -1179,11 +1191,27 @@ namespace System.ServiceModel.Channels
                     this.factory = factory;
                 }
 
+                private string GetConnectionGroupPrefix(Message message)
+                {
+                    object property;
+                    if (message.Properties.TryGetValue(ConnectionGroupPrefixMessagePropertyName, out property))
+                    {
+                        string prefix = property as string;
+                        if (prefix != null)
+                        {
+                            return prefix;
+                        }
+                    }
+
+                    return string.Empty;
+                }
+
                 public void SendRequest(Message message, TimeSpan timeout)
                 {
                     TimeoutHelper timeoutHelper = new TimeoutHelper(timeout);
                     factory.ApplyManualAddressing(ref this.to, ref this.via, message);
                     this.webRequest = channel.GetWebRequest(this.to, this.via, ref timeoutHelper);
+                    this.webRequest.ConnectionGroupName = GetConnectionGroupPrefix(message) + this.webRequest.ConnectionGroupName;
 
                     Message request = message;
 
@@ -1277,7 +1305,7 @@ namespace System.ServiceModel.Channels
                         }
                         catch (NullReferenceException nullReferenceException)
                         {
-                            // workaround for Whidbey bug #558605 - only happens in streamed case.
+                            // workaround for Whidbey 
                             if (TransferModeHelper.IsRequestStreamed(this.factory.transferMode))
                             {
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
@@ -1468,7 +1496,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.OnGetWebRequestCompleted(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1582,7 +1610,7 @@ namespace System.ServiceModel.Channels
                         }
                         catch (NullReferenceException nullReferenceException)
                         {
-                            // workaround for Whidbey bug #558605 - only happens in streamed case.
+                            // workaround for Whidbey 
                             if (TransferModeHelper.IsRequestStreamed(this.factory.transferMode))
                             {
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
@@ -1639,7 +1667,7 @@ namespace System.ServiceModel.Channels
                             }
                             catch (NullReferenceException nullReferenceException)
                             {
-                                // workaround for Whidbey bug #558605 - only happens in streamed case.
+                                // workaround for Whidbey 
                                 if (TransferModeHelper.IsRequestStreamed(this.factory.transferMode))
                                 {
                                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(
@@ -1782,7 +1810,7 @@ namespace System.ServiceModel.Channels
                     {
                         thisPtr.CompleteParseIncomingMessage(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1809,7 +1837,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = thisPtr.CompleteSend(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -1854,7 +1882,7 @@ namespace System.ServiceModel.Channels
                         completeSelf = true;
                         completionException = new CommunicationException(webException.Message, webException);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2040,7 +2068,7 @@ namespace System.ServiceModel.Channels
                         thisPtr.CompleteGetSspiCredential(result);
                         thisPtr.CloseTokenProvidersIfRequired();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -2068,7 +2096,7 @@ namespace System.ServiceModel.Channels
                         thisPtr.CompleteGetUserNameCredential(result);
                         thisPtr.CloseTokenProvidersIfRequired();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

@@ -2279,7 +2279,15 @@ namespace System.Web.UI.WebControls {
                 if (pagedDataSourceEnumerator != null) {
                     if (pagedDataSource.IsPagingEnabled) {
                         _pageCount = pagedDataSource.PageCount;
-                        createdRowsCount = pagedDataSource.DataSourceCount;
+                        if (pagedDataSource.IsCustomPagingEnabled) {
+                            // DevDiv 782891: We didn't well handle GridView paging in the scenario 
+                            // in which custom paging was enabled. The root cause was that we mixed up 
+                            // createdRowsCount with pagedDataSource.DataSourceCount.
+                            createdRowsCount = count;
+                        }
+                        else {
+                            createdRowsCount = pagedDataSource.DataSourceCount;
+                        }
                     }
                     else {
                         _pageCount = 1;
@@ -2896,7 +2904,19 @@ namespace System.Web.UI.WebControls {
             if (affectedRows > 0) {
                 // Patch up the current page.  We might have deleted the last records on the last page, so move
                 // to the right page.
-                int rowCount = (int)ViewState[ItemCountViewStateKey];
+                // DevDiv 782891: We didn't handle GridView paging well in the scenario 
+                // in which custom paging was enabled. The root cause was that we mixed up 
+                // createdRowsCount with pagedDataSource.DataSourceCount.
+                int rowCount;
+                if (this.AllowPaging && this.AllowCustomPaging) {
+                    // Under this condition, the value of ViewState[ItemCountViewStateKey] indicates
+                    // created rows count other than total row count.
+                    rowCount = (int)VirtualItemCount;
+                }
+                else {
+                    rowCount = (int)ViewState[ItemCountViewStateKey];
+                }
+
                 // Can't have negative rowCount
                 int expectedRowCount = Math.Max(0, rowCount - affectedRows);
 

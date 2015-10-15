@@ -7,7 +7,7 @@
 **
 ** Class:  UnmanagedMemoryStreamWrapper
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Create a Memorystream over an UnmanagedMemoryStream
 **
@@ -64,6 +64,11 @@ namespace System.IO {
     
         public override byte[] GetBuffer() {
             throw new UnauthorizedAccessException(Environment.GetResourceString("UnauthorizedAccess_MemStreamBuffer"));
+        }
+
+        public override bool TryGetBuffer(out ArraySegment<byte> buffer) {
+            buffer = default(ArraySegment<byte>);
+            return false;
         }
 
         public override int Capacity {
@@ -147,7 +152,7 @@ namespace System.IO {
 
         public override Task CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken) {
 
-            // The parameter checks must be in [....] with the base version:
+            // The parameter checks must be in sync with the base version:
             if (destination == null)
                 throw new ArgumentNullException("destination");
             

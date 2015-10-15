@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       leil
+// @backupOwner anpete
 //---------------------------------------------------------------------
 
 namespace System.Data.Metadata.Edm

@@ -35,7 +35,7 @@ namespace System.Data.Linq {
     /// <summary>
     /// An interface for representing the result of a mapped function with a single return sequence.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="[....]: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="tadam: Meant to represent a database table which is delayed loaded and doesn't provide collection semantics.")]
     public interface ISingleResult<T> : IEnumerable<T>, IFunctionResult, IDisposable { }
 
     /// <summary>
@@ -47,7 +47,7 @@ namespace System.Data.Linq {
         /// </summary>
         /// <typeparam name="TElement"></typeparam>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "tadam: Generic parameters are required for strong-typing of the return type.")]
         IEnumerable<TElement> GetResult<TElement>();
     }
 }

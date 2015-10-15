@@ -15,6 +15,7 @@ namespace System.Web {
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Remoting.Messaging;
@@ -178,13 +179,15 @@ namespace System.Web {
         // this is the per instance list that contains the events for each module
         private PipelineModuleStepContainer[] _moduleContainers;
 
-        // Byte array to be used by HttpRequest.GetEntireRawContent. Windows OS Bug 1632921
+        // Byte array to be used by HttpRequest.GetEntireRawContent. Windows OS 
         private byte[] _entityBuffer;
 
         // Counts the number of code paths consuming this HttpApplication instance. When the counter hits zero,
         // it is safe to release this HttpApplication instance back into the HttpApplication pool.
         // This counter can be null if we're not using the new Task-friendly code paths.
         internal CountdownTask ApplicationInstanceConsumersCounter;
+
+        private IAllocatorProvider _allocator;
 
         //
         // Public Application properties
@@ -301,7 +304,7 @@ namespace System.Web {
 
         }
 
-        // Used by HttpRequest.GetEntireRawContent. Windows OS Bug 1632921
+        // Used by HttpRequest.GetEntireRawContent. Windows OS 
         internal byte[] EntityBuffer
         {
             get
@@ -311,6 +314,27 @@ namespace System.Web {
                     _entityBuffer = new byte[8 * 1024];
                 }
                 return _entityBuffer;
+            }
+        }
+
+        // Provides fixed size reusable buffers per request
+        // Benefit:
+        //   1) Eliminates global locks - access to HttpApplication instance is lock free and no concurrent access is expected (by design).
+        //      36+ cores show really bad spin lock characteristics for short locks.
+        //   2) Better lifetime dynamics - Buffers increase/decrease as HttpApplication instances grow/shrink on demand.
+        internal IAllocatorProvider AllocatorProvider {
+            get {
+                if (_allocator == null) {
+                    AllocatorProvider alloc = new AllocatorProvider();
+
+                    alloc.CharBufferAllocator = new SimpleBufferAllocator<char>(BufferingParams.CHAR_BUFFER_SIZE);
+                    alloc.IntBufferAllocator = new SimpleBufferAllocator<int>(BufferingParams.INT_BUFFER_SIZE);
+                    alloc.IntPtrBufferAllocator = new SimpleBufferAllocator<IntPtr>(BufferingParams.INTPTR_BUFFER_SIZE);
+
+                    Interlocked.CompareExchange(ref _allocator, alloc, null);
+                }
+
+                return _allocator;
             }
         }
 
@@ -533,6 +557,42 @@ namespace System.Web {
             Monitor.Exit(_stepManager);
         }
 
+        // Some frameworks built on top of the integrated pipeline call Flush() on background thread which will trigger nested 
+        // RQ_SEND_RESPONSE notification and replace the old context.NotificationContext with the new context.NotificationContext.
+        // In order to maintain proper synchronization logic at the time when the completion callback is called we need to make sure 
+        // we access the original context.NotificationContext (and don't touch the nested one).
+        // It will make sure that we read the correct NotificationContext
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void GetNotifcationContextPropertiesUnderLock(ref bool isReentry, ref int eventCount) {
+            bool locked = false;
+            try {
+                AcquireNotifcationContextLock(ref locked);
+                isReentry = Context.NotificationContext.IsReEntry;
+                eventCount = CurrentModuleContainer.GetEventCount(Context.CurrentNotification, Context.IsPostNotification) - 1;
+            }
+            finally {
+                if (locked) {
+                    ReleaseNotifcationContextLock();
+                }
+            }
+        }
+        
+        [MethodImpl(MethodImplOptions.NoInlining)] // Iniling this causes throughtput regression in ResumeStep
+        private void GetNotifcationContextProperties(ref bool isReentry, ref int eventCount) {
+            // Read optimistically (without lock)
+            var nc = Context.NotificationContext;
+            isReentry = nc.IsReEntry;
+            // We can continue optimistic read only if this is not reentry
+            if (!isReentry) {
+                eventCount = ModuleContainers[nc.CurrentModuleIndex].GetEventCount(nc.CurrentNotification, nc.IsPostNotification) - 1;
+                // Check if the optimistic read was consistent
+                if (object.ReferenceEquals(nc, Context.NotificationContext)) {
+                    return;
+                }
+            }
+            GetNotifcationContextPropertiesUnderLock(ref isReentry, ref eventCount);
+        }
+
         private void RaiseOnError() {
             EventHandler handler = (EventHandler)Events[EventErrorRecorded];
             if (handler != null) {
@@ -709,7 +769,7 @@ namespace System.Web {
         }
 
         //
-        // [....] event hookup
+        // Sync event hookup
         //
 
 
@@ -1647,7 +1707,7 @@ namespace System.Web {
                 asyncHandler.CreateExecutionSteps(this, steps);
             }
 
-            // [....]
+            // sync
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -1748,6 +1808,11 @@ namespace System.Web {
                 }
 
                 _moduleCollection = null;
+            }
+
+            // Release buffers
+            if (_allocator != null) {
+                _allocator.TrimMemory();
             }
         }
 
@@ -2333,7 +2398,7 @@ namespace System.Web {
                 Debug.Trace("PipelineRuntime", "RegisterEventSubscriptionsWithIIS: name=" + CurrentModuleCollectionKey
                             + ", type=" + httpModule.GetType().FullName + "\n");
 
-                // make sure collections are in [....]
+                // make sure collections are in sync
                 Debug.Assert(moduleInfo.Name == _currentModuleCollectionKey, "moduleInfo.Name == _currentModuleCollectionKey");
 #endif
 
@@ -2481,7 +2546,7 @@ namespace System.Web {
                 hasEvents = true;
             }
 
-            // [....]
+            // sync
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -2666,7 +2731,7 @@ namespace System.Web {
                    HttpRuntime.InitializationException == null && 
                    _context.FirstRequest && 
                    _context.Error == null) {
-                        UnsafeNativeMethods.EndPrefetchActivity((uint)HttpRuntime.AppDomainAppId.GetHashCode());
+                       UnsafeNativeMethods.EndPrefetchActivity((uint)StringUtil.GetNonRandomizedHashCode(HttpRuntime.AppDomainAppId));
                 }
             }
             RecycleHandlers();
@@ -2956,12 +3021,10 @@ namespace System.Web {
             }
 
             bool IExecutionStep.CompletedSynchronously {
-                [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
                 get { return true;}
             }
 
             bool IExecutionStep.IsCancellable {
-                [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
                 get { return true; }
             }
         }
@@ -3917,14 +3980,16 @@ namespace System.Web {
                 bool isSynchronousCompletion = false;
                 bool needToComplete = false;
                 bool stepCompletedSynchronously = false;
-                int currentModuleLastEventIndex = _application.CurrentModuleContainer.GetEventCount(context.CurrentNotification, context.IsPostNotification) - 1;
+                bool isReEntry = false;
+                int currentModuleLastEventIndex = -1;
+                _application.GetNotifcationContextProperties(ref isReEntry, ref currentModuleLastEventIndex);
+
                 CountdownTask appInstanceConsumersCounter = _application.ApplicationInstanceConsumersCounter;
 
                 using (context.RootedObjects.WithinTraceBlock()) {
                     // DevDiv Bugs 187441: IIS7 Integrated Mode: Problem flushing Response from background threads in IIS7 integrated mode
-                    bool isReEntry = context.NotificationContext.IsReEntry;
                     if (!isReEntry) // currently we only re-enter for SendResponse
-                {
+                    {
                         syncContext.AssociateWithCurrentThread();
                     }
                     try {
@@ -3944,10 +4009,10 @@ namespace System.Web {
                             // a SendResponse, at which point it blocks until the SendResponse notification completes.
 
                             if (!isReEntry) { // currently we only re-enter for SendResponse
-                                // DevDiv 482614 (Sharepoint Bug 3137123)
-                                // Async completion or SendResponse can happen on a background thread while the thread that called IndicateCompletion has not unwound yet
-                                // Therefore (InIndicateCompletion == true) is not a sufficient evidence that we can use the ThreadContext stored in IndicateCompletionContext
-                                // To avoid using other thread's ThreadContext we use IndicateCompletionContext only if ThreadInsideIndicateCompletion is indeed our thread
+                                // DevDiv 482614 (Sharepoint 
+
+
+
                                 if (context.InIndicateCompletion && context.ThreadInsideIndicateCompletion == Thread.CurrentThread) {
                                     // we already have a ThreadContext
                                     threadContext = context.IndicateCompletionContext;
@@ -3988,7 +4053,14 @@ namespace System.Web {
                                 }
 
                                 // check for any outstanding async operations
-                                if (syncContext.PendingCompletion(_resumeStepsWaitCallback)) {
+                                // DevDiv 1020085: User code may leave pending async completions on the synchronization context
+                                // while processing nested (isReEntry == true) and not nested (isReEntry == false) notifications.
+                                // In both cases only the non nested notification which has proper synchronization should handle it.
+                                if (!isReEntry && syncContext.PendingCompletion(_resumeStepsWaitCallback)) {
+                                    // Background flushes may trigger RQ_SEND_RESPONSE notifications which will set new context.NotificationContext
+                                    // Synchronize access to context.NotificationContext to make sure we update the correct NotificationContext instance
+                                    _application.AcquireNotifcationContextLock(ref locked);
+
                                     // Since the step completed asynchronously, this thread must return RequestNotificationStatus.Pending to IIS,
                                     // and the async completion of this step must call IIS7WorkerRequest::PostCompletion.  The async completion of
                                     // this step will call ResumeSteps again.
@@ -4015,7 +4087,7 @@ namespace System.Web {
                                         break;
                                     }
 
-                                    // [....] case (we might be able to stay in managed code and execute another notification)
+                                    // sync case (we might be able to stay in managed code and execute another notification)
                                     if (needToFinishRequest || UnsafeIISMethods.MgdGetNextNotification(wr.RequestContext, RequestNotificationStatus.Continue) != 1) {
                                         isSynchronousCompletion = true;
                                         needToComplete = true;
@@ -4079,14 +4151,14 @@ namespace System.Web {
                             if (threadContext != null) {
                                 if (context.InIndicateCompletion) {
                                     if (isSynchronousCompletion) {
-                                        // this is a [....] completion on an IIS thread
+                                        // this is a sync completion on an IIS thread
                                         threadContext.Synchronize();
                                         // Note for DevDiv 482614 fix:
                                         // If this threadContext is from IndicateCompletionContext (e.g. this thread called IndicateCompletion)
                                         // then we continue reusing this thread and only undo impersonation before unwinding back to IIS.
                                         //
                                         // If this threadContext was created while another thread was and still is in IndicateCompletion call
-                                        // (e.g. [....] or async flush on a background thread from native code, not managed since isReEnty==false)
+                                        // (e.g. sync or async flush on a background thread from native code, not managed since isReEnty==false)
                                         // then we can not reuse this thread and this threadContext will be cleaned before we leave ResumeSteps
                                         // (because needToDisassociateThreadContext was set to true when we created this threadContext)
 
@@ -4118,7 +4190,7 @@ namespace System.Web {
                                 }
                                 else if (isSynchronousCompletion) {
                                     Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
-                                    // this is a [....] completion on an IIS thread
+                                    // this is a sync completion on an IIS thread
                                     threadContext.Synchronize();
                                     // get ready to call IndicateCompletion
                                     context.IndicateCompletionContext = threadContext;

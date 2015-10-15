@@ -110,7 +110,7 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope="member", Target="System.ComponentModel.PropertyDescriptorCollection.System.Collections.IList.set_Item(System.Int32,System.Object):System.Void")]
 [assembly: SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope="member", Target="System.ComponentModel.PropertyDescriptorCollection.System.Collections.IDictionary.set_Item(System.Object,System.Object):System.Void")]
 
-// 
+// CONSIDER: In future releases we may want to provide a strongly typed implementation of IList.
 [assembly: SuppressMessage("Microsoft.Design", "CA1039:ListsAreStronglyTyped", Scope="type", Target="System.ComponentModel.Design.DesignerOptionService+DesignerOptionCollection")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1039:ListsAreStronglyTyped", Scope="type", Target="System.ComponentModel.ListSortDescriptionCollection")]
 

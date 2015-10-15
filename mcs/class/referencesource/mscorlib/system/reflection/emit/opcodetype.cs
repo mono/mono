@@ -7,7 +7,7 @@
 **
 **Class: OpCodeType
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>WESU</OWNER>
 **
 **Purpose: Exposes OpCodeType Attribute of IL .
 **

@@ -7,7 +7,7 @@
 **
 ** Class:  FileSystemEnumerable
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Enumerates files and dirs
@@ -37,9 +37,6 @@ namespace System.IO
     // additional required permission demands. 
     internal static class FileSystemEnumerableFactory
     {
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         internal static IEnumerable<String> CreateFileNameIterator(String path, String originalUserPath, String searchPattern,
                                                                     bool includeFiles, bool includeDirs, SearchOption searchOption, bool checkHost)
         {
@@ -51,9 +48,6 @@ namespace System.IO
             return new FileSystemEnumerableIterator<String>(path, originalUserPath, searchPattern, searchOption, handler, checkHost);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         internal static IEnumerable<FileInfo> CreateFileInfoIterator(String path, String originalUserPath, String searchPattern, SearchOption searchOption)
         {
             Contract.Requires(path != null);
@@ -64,9 +58,6 @@ namespace System.IO
             return new FileSystemEnumerableIterator<FileInfo>(path, originalUserPath, searchPattern, searchOption, handler, true);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         internal static IEnumerable<DirectoryInfo> CreateDirectoryInfoIterator(String path, String originalUserPath, String searchPattern, SearchOption searchOption)
         {
 
@@ -78,9 +69,6 @@ namespace System.IO
             return new FileSystemEnumerableIterator<DirectoryInfo>(path, originalUserPath, searchPattern, searchOption, handler, true);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         internal static IEnumerable<FileSystemInfo> CreateFileSystemInfoIterator(String path, String originalUserPath, String searchPattern, SearchOption searchOption)
         {
             Contract.Requires(path != null);
@@ -201,11 +189,7 @@ namespace System.IO
         private int oldMode;
         private bool _checkHost;
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         internal FileSystemEnumerableIterator(String path, String originalUserPath, String searchPattern, SearchOption searchOption, SearchResultHandler<TSource> resultHandler, bool checkHost)
         {
             Contract.Requires(path != null);
@@ -241,7 +225,7 @@ namespace System.IO
                 // Do a demand on the combined path so that we can fail early in case of deny
                 demandPaths[1] = Directory.GetDemandDir(normalizedSearchPath, true);
                 _checkHost = checkHost;
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 if (checkHost)
                 {
                     FileSecurityState state1 = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPaths[0]);
@@ -249,7 +233,7 @@ namespace System.IO
                     FileSecurityState state2 = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPaths[1]);
                     state2.EnsureState();
                 }
-#elif !FEATURE_CORECLR
+#else
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
 #endif
 
@@ -325,11 +309,7 @@ namespace System.IO
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         private FileSystemEnumerableIterator(String fullPath, String normalizedSearchPath, String searchCriteria, String userPath, SearchOption searchOption, SearchResultHandler<TSource> resultHandler, bool checkHost)
         {
             this.fullPath = fullPath;
@@ -351,7 +331,7 @@ namespace System.IO
                 // For filters like foo\*.cs we need to verify if the directory foo is not denied access.
                 // Do a demand on the combined path so that we can fail early in case of deny
                 demandPaths[1] = Directory.GetDemandDir(normalizedSearchPath, true);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 if (checkHost) 
                 {
                     FileSecurityState state1 = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPaths[0]);
@@ -359,7 +339,7 @@ namespace System.IO
                     FileSecurityState state2 = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandPaths[1]);
                     state2.EnsureState();
                 }
-#elif !FEATURE_CORECLR
+#else
                 new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
 #endif
                 searchData = new Directory.SearchData(normalizedSearchPath, userPath, searchOption);
@@ -371,9 +351,6 @@ namespace System.IO
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         protected override Iterator<TSource> Clone()
         {
             return new FileSystemEnumerableIterator<TSource>(fullPath, normalizedSearchPath, searchCriteria, userPath, searchOption, _resultHandler, _checkHost);
@@ -606,13 +583,13 @@ namespace System.IO
         [System.Security.SecurityCritical]
         internal void DoDemand(String fullPathToDemand)
         {
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY      
+#if FEATURE_CORECLR
             if(_checkHost) {
                 String demandDir = Directory.GetDemandDir(fullPathToDemand, true);
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.PathDiscovery, String.Empty, demandDir);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
+#else
             String demandDir = Directory.GetDemandDir(fullPathToDemand, true);
             String[] demandPaths = new String[] { demandDir };
             new FileIOPermission(FileIOPermissionAccess.PathDiscovery, demandPaths, false, false).Demand();
@@ -725,10 +702,10 @@ namespace System.IO
         internal override FileInfo CreateObject(SearchResult result)
         {
             String name = result.FullPath;
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
             state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             String[] names = new String[] { name };
             new FileIOPermission(FileIOPermissionAccess.Read, names, false, false).Demand();
 #endif
@@ -752,10 +729,10 @@ namespace System.IO
             String name = result.FullPath;
             String permissionName = name + "\\.";
             
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
             state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             String[] permissionNames = new String[] { permissionName };
             new FileIOPermission(FileIOPermissionAccess.Read, permissionNames, false, false).Demand();
 #endif
@@ -789,10 +766,10 @@ namespace System.IO
                 String name = result.FullPath;
                 String permissionName = name + "\\.";
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, permissionName);
                 state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
                 String[] permissionNames = new String[] { permissionName };
                 new FileIOPermission(FileIOPermissionAccess.Read, permissionNames, false, false).Demand();
 #endif
@@ -805,10 +782,10 @@ namespace System.IO
                 Contract.Assert(isFile);
                 String name = result.FullPath;
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, name);
                 state.EnsureState();
-#elif !FEATURE_CORECLR
+#else
                 String[] names = new String[] { name };
                 new FileIOPermission(FileIOPermissionAccess.Read, names, false, false).Demand();
 #endif

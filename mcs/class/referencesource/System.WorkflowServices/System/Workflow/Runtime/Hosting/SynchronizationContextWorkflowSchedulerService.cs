@@ -84,7 +84,7 @@ namespace System.Workflow.Runtime.Hosting
 
             public static void Post(SynchronizationContext synchronizationContext, SendOrPostCallback callback, object state)
             {
-                Fx.Assert(synchronizationContext != null, "Null [....] Context");
+                Fx.Assert(synchronizationContext != null, "Null Sync Context");
                 Fx.Assert(callback != null, "Null Callback");
 
                 synchronizationContext.OperationStarted();

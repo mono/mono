@@ -102,7 +102,7 @@ namespace System.IO.MemoryMappedFiles {
             // if request is >= than total virtual, then MapViewOfFile will fail with meaningless error message 
             // "the parameter is incorrect"; this provides better error message in advance
             UnsafeNativeMethods.MEMORYSTATUSEX memStatus = new UnsafeNativeMethods.MEMORYSTATUSEX();
-            bool result = UnsafeNativeMethods.GlobalMemoryStatusEx(memStatus);
+            bool result = UnsafeNativeMethods.GlobalMemoryStatusEx(ref memStatus);
             ulong totalVirtual = memStatus.ullTotalVirtual; 
             if (nativeSize >= totalVirtual) {
                 throw new IOException(SR.GetString(SR.IO_NotEnoughMemory));
@@ -125,14 +125,32 @@ namespace System.IO.MemoryMappedFiles {
             ulong viewSize = (ulong)viewInfo.RegionSize;
             
 
-            // allocate the pages if we were using the MemoryMappedFileOptions.DelayAllocatePages option
-            if ((viewInfo.State & UnsafeNativeMethods.MEM_RESERVE) != 0) {
-                IntPtr tempHandle = UnsafeNativeMethods.VirtualAlloc(viewHandle, (UIntPtr)viewSize, UnsafeNativeMethods.MEM_COMMIT, 
+            // Allocate the pages if we were using the MemoryMappedFileOptions.DelayAllocatePages option
+            // OR check if the allocated view size is smaller than the expected native size
+            // If multiple overlapping views are created over the file mapping object, the pages in a given region
+            // could have different attributes(MEM_RESERVE OR MEM_COMMIT) as MapViewOfFile preserves coherence between 
+            // views created on a mapping object backed by same file.
+            // In which case, the viewSize will be smaller than nativeSize required and viewState could be MEM_COMMIT 
+            // but more pages may need to be committed in the region.
+            // This is because, VirtualQuery function(that internally invokes VirtualQueryEx function) returns the attributes 
+            // and size of the region of pages with matching attributes starting from base address.
+            // VirtualQueryEx: http://msdn.microsoft.com/en-us/library/windows/desktop/aa366907(v=vs.85).aspx
+            if (((viewInfo.State & UnsafeNativeMethods.MEM_RESERVE) != 0) || (viewSize < nativeSize)) {
+                ulong allocSize = (nativeSize == 0) ? viewSize : nativeSize;
+                IntPtr tempHandle = UnsafeNativeMethods.VirtualAlloc(viewHandle, (UIntPtr)allocSize, UnsafeNativeMethods.MEM_COMMIT, 
                                                         MemoryMappedFile.GetPageAccess(access));
                 int lastError = Marshal.GetLastWin32Error();
-                if (viewHandle.IsInvalid) {
-                    __Error.WinIOError(lastError, String.Empty);
-                }
+                // The following is commented out for backward compatibility.
+                // Previously releases failed to check for this error so introducing this check
+                // could cause new/different exceptions in existing code paths.
+                // if (tempHandle == IntPtr.Zero) {
+                //     __Error.WinIOError(lastError, String.Empty);
+                // }
+                
+                // again query the view for its new size
+                viewInfo = new UnsafeNativeMethods.MEMORY_BASIC_INFORMATION();
+                UnsafeNativeMethods.VirtualQuery(viewHandle, ref viewInfo, (IntPtr)Marshal.SizeOf(viewInfo)); 
+                viewSize = (ulong)viewInfo.RegionSize;
             }
 
             // if the user specified DefaultSize as the size, we need to get the actual size
@@ -149,7 +167,7 @@ namespace System.IO.MemoryMappedFiles {
 
         }
 
-        // Flushes the changes such that they are in [....] with the FileStream bits (ones obtained
+        // Flushes the changes such that they are in sync with the FileStream bits (ones obtained
         // with the win32 ReadFile and WriteFile functions).  Need to call FileStream's Flush to 
         // flush to the disk.
         // NOTE: This will flush all bytes before and after the view up until an offset that is a multiple

@@ -2,9 +2,9 @@
 // <copyright file="ForeignKeyConstraint.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -343,7 +343,7 @@ namespace System.Data {
             Index childIndex = childKey.GetSortIndex(      row.RowState == DataRowState.Deleted  ? DataViewRowState.OriginalRows : DataViewRowState.CurrentRows);
             object[] key     = row.GetKeyValues(parentKey, row.RowState == DataRowState.Modified ? DataRowVersion.Current        : DataRowVersion.Default      );
 
-            // Bug : This is definitely not a proper fix. (Ref. MDAC Bug 73592)
+            // 
             if (IsKeyNull(key)) {
                 return;
             }

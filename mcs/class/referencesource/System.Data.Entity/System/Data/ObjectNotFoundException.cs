@@ -3,7 +3,7 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....], nkline
+// @owner  Microsoft, nkline
 //---------------------------------------------------------------------
 
 namespace System.Data

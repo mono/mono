@@ -252,7 +252,7 @@ namespace System {
         //
         // Unescapes entire string and checks if it has unicode chars
         //
-        private unsafe bool CheckForUnicode(String data)
+        private bool CheckForUnicode(String data)
         {
             bool hasUnicode = false;
             char[] chars = new char[data.Length];
@@ -261,16 +261,11 @@ namespace System {
             chars = UriHelper.UnescapeString(data, 0, data.Length, chars, ref count, c_DummyChar, c_DummyChar, 
                 c_DummyChar, UnescapeMode.Unescape | UnescapeMode.UnescapeAll, null, false);
 
-            String tempStr = new string(chars, 0, count);
-            int length = tempStr.Length;
-            
-            fixed (char* tempPtr = tempStr){
-                for (int i = 0; i < length; ++i){
-                    if (tempPtr[i] > '\x7f'){
-                        // Unicode 
-                        hasUnicode = true;
-                        break;
-                    }
+            for (int i = 0; i < count; ++i){
+                if (chars[i] > '\x7f'){
+                    // Unicode 
+                    hasUnicode = true;
+                    break;
                 }
             }
             return hasUnicode;
@@ -297,72 +292,6 @@ namespace System {
             return false;
         }
         
-        //
-        // Check if the char (potentially surrogate) at given offset is in the iri range
-        // Takes in isQuery because because iri restrictions for query are different
-        //
-        internal static bool CheckIriUnicodeRange(string uri, int offset, ref bool surrogatePair, bool isQuery)
-        {
-            char invalidLowSurr = '\uFFFF';
-            return CheckIriUnicodeRange(uri[offset],(offset + 1 < uri.Length) ? uri[offset + 1] : invalidLowSurr, 
-                                        ref surrogatePair, isQuery);
-        }
-
-        //
-        // Checks if provided non surrogate char lies in iri range
-        //
-        internal static bool CheckIriUnicodeRange(char unicode, bool isQuery)
-        {
-            if ((unicode >= '\u00A0' && unicode <= '\uD7FF') ||
-               (unicode >= '\uF900' && unicode <= '\uFDCF') ||
-               (unicode >= '\uFDF0' && unicode <= '\uFFEF') ||
-               (isQuery && unicode >= '\uE000' && unicode <= '\uF8FF')){
-                return true;
-            }else{
-                return false;
-            }
-        }
-
-        //
-        // Check if the highSurr is in the iri range or if highSurr and lowSurr are a surr pair then 
-        // it checks if the combined char is in the range
-        // Takes in isQuery because because iri restrictions for query are different
-        //
-        internal static bool CheckIriUnicodeRange(char highSurr, char lowSurr, ref bool surrogatePair, bool isQuery)
-        {   
-            bool inRange = false;
-            surrogatePair = false;
-
-            if (CheckIriUnicodeRange(highSurr, isQuery)){
-                inRange = true;
-            }
-            else if (Char.IsHighSurrogate(highSurr)){
-                if (Char.IsSurrogatePair(highSurr, lowSurr)){
-                    surrogatePair = true;
-                    char[] chars = new char[2] { highSurr, lowSurr };
-                    string surrPair = new string(chars);
-                    if (((surrPair.CompareTo("\U00010000") >= 0) && (surrPair.CompareTo("\U0001FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00020000") >= 0) && (surrPair.CompareTo("\U0002FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00030000") >= 0) && (surrPair.CompareTo("\U0003FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00040000") >= 0) && (surrPair.CompareTo("\U0004FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00050000") >= 0) && (surrPair.CompareTo("\U0005FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00060000") >= 0) && (surrPair.CompareTo("\U0006FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00070000") >= 0) && (surrPair.CompareTo("\U0007FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00080000") >= 0) && (surrPair.CompareTo("\U0008FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00090000") >= 0) && (surrPair.CompareTo("\U0009FFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U000A0000") >= 0) && (surrPair.CompareTo("\U000AFFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U000B0000") >= 0) && (surrPair.CompareTo("\U000BFFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U000C0000") >= 0) && (surrPair.CompareTo("\U000CFFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U000D0000") >= 0) && (surrPair.CompareTo("\U000DFFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U000E0000") >= 0) && (surrPair.CompareTo("\U000EFFFD") <= 0)) ||
-                        (isQuery && (((surrPair.CompareTo("\U000F0000") >= 0) && (surrPair.CompareTo("\U000FFFFD") <= 0)) ||
-                        ((surrPair.CompareTo("\U00100000") >= 0) && (surrPair.CompareTo("\U0010FFFD") <= 0)))))
-                        inRange = true;
-                }
-            }
-
-            return inRange;
-        }
         //
         //
         //  Returns true if the string represents a valid argument to the Uri ctor
@@ -482,9 +411,7 @@ namespace System {
                                     comparisonType
                                   );
         }
-
         
-
         public bool IsWellFormedOriginalString()
         {
             if (IsNotAbsoluteUri || Syntax.IsSimple)
@@ -703,52 +630,6 @@ namespace System {
         }
 
         //
-        // Check reserved chars according to rfc 3987 in a sepecific component
-        //
-        internal bool CheckIsReserved(char ch, UriComponents component)
-        {
-            if ((component != UriComponents.Scheme) ||
-                    (component != UriComponents.UserInfo) ||
-                    (component != UriComponents.Host) ||
-                    (component != UriComponents.Port) ||
-                    (component != UriComponents.Path) ||
-                    (component != UriComponents.Query) ||
-                    (component != UriComponents.Fragment)
-                )
-                return (component == (UriComponents)0)? IsGenDelim(ch): false;
-            else 
-            {
-                switch(component)
-                {
-                    // Reserved chars according to rfc 3987
-                    case UriComponents.UserInfo:
-                        if( ch == '/' || ch == '?' || ch == '#' || ch == '[' || ch == ']' || ch == '@' )
-                            return true;
-                        break;
-                    case UriComponents.Host:
-                        if( ch == ':' || ch == '/' || ch == '?' || ch == '#' || ch == '[' || ch == ']' || ch == '@' )
-                            return true;
-                        break;
-                    case UriComponents.Path:
-                        if( ch == '/' || ch == '?' || ch == '#' || ch == '[' || ch == ']' )
-                            return true;
-                        break;
-                    case UriComponents.Query:
-                        if(ch == '#' || ch == '[' || ch == ']')
-                            return true;
-                        break;
-                    case UriComponents.Fragment:
-                        if(ch == '#' || ch == '[' || ch == ']')
-                            return true;
-                        break;
-                    default:
-                        break;
-                }
-                return false;
-            }
-        }
-
-        //
         // Cleans up the specified component according to Iri rules
         // a) Chars allowed by iri in a component are unescaped if found escaped
         // b) Bidi chars are stripped
@@ -758,197 +639,10 @@ namespace System {
         {
             fixed (char *pInput = input)
             {
-                return EscapeUnescapeIri(pInput, start, end, component);
+                return IriHelper.EscapeUnescapeIri(pInput, start, end, component);
             }
         }
         
-        //
-        // See above explanation
-        //
-        internal unsafe string EscapeUnescapeIri(char* pInput, int start, int end, UriComponents component)
-        {
-
-            char [] dest = new char[ end - start ];
-            byte[] bytes = null;
-
-            // Pin the array to do pointer accesses
-            GCHandle destHandle = GCHandle.Alloc(dest, GCHandleType.Pinned);
-            char* pDest = (char*)destHandle.AddrOfPinnedObject();
-
-            int escapedReallocations = 0;
-            const int bufferCapacityIncrease = 30;
-
-            int next = start;
-            int destOffset = 0;
-            char ch;
-            bool escape = false;
-            bool surrogatePair = false;
-            bool isUnicode = false;
-
-            for (;next < end; ++next)
-            {
-                escape = false;
-                surrogatePair = false;
-                isUnicode = false;
-
-                if ((ch = pInput[next]) == '%'){
-                    if (next + 2 < end){
-                        ch = UriHelper.EscapedAscii(pInput[next + 1], pInput[next + 2]);
-                        // Do not unescape a reserved char
-                        if (ch == c_DummyChar || ch == '%' || CheckIsReserved(ch, component) || UriHelper.IsNotSafeForUnescape(ch)){
-                            // keep as is
-                            pDest[destOffset++] = pInput[next++];
-                            pDest[destOffset++] = pInput[next++];
-                            pDest[destOffset++] = pInput[next];
-                            continue;
-                        }
-                        else if (ch <= '\x7F'){
-                            //ASCII
-                            pDest[destOffset++] = ch;
-                            next += 2;
-                            continue;
-                        }else{
-                            // possibly utf8 encoded sequence of unicode
-
-                            // check if safe to unescape according to Iri rules
-
-                            int startSeq = next;
-                            int byteCount = 1;
-                            // lazy initialization of max size, will reuse the array for next sequences
-                            if ((object)bytes == null)
-                                bytes = new byte[end - next];
-
-                            bytes[0] = (byte)ch;
-                            next += 3;
-                            while (next < end)
-                            {
-                                // Check on exit criterion
-                                if ((ch = pInput[next]) != '%' || next + 2 >= end)
-                                    break;
-
-                                // already made sure we have 3 characters in str
-                                ch = UriHelper.EscapedAscii(pInput[next + 1], pInput[next + 2]);
-
-                                //invalid hex sequence ?
-                                if (ch == c_DummyChar)
-                                    break;
-                                // character is not part of a UTF-8 sequence ?
-                                else if (ch < '\x80')
-                                    break;
-                                else
-                                {
-                                    //a UTF-8 sequence
-                                    bytes[byteCount++] = (byte)ch;
-                                    next += 3;
-                                }
-                            }
-                            next--; // for loop will increment
-
-                            Encoding noFallbackCharUTF8 = (Encoding)Encoding.UTF8.Clone();
-                            noFallbackCharUTF8.EncoderFallback = new EncoderReplacementFallback("");
-                            noFallbackCharUTF8.DecoderFallback = new DecoderReplacementFallback("");
-
-                            char[] unescapedChars = new char[bytes.Length];
-                            int charCount = noFallbackCharUTF8.GetChars(bytes, 0, byteCount, unescapedChars, 0);
-
- 
-                            if (charCount != 0){
-                                
-                                // need to check for invalid utf sequences that may not have given any chars
-                                
-                                // check if unicode value is allowed
-                                UriHelper.MatchUTF8Sequence(  pDest, dest, ref destOffset, unescapedChars, charCount, bytes, 
-                                    byteCount, component == UriComponents.Query, true);
-                            }
-                            else
-                            {
-                                // copy escaped sequence as is
-                                for (int i = startSeq; i <= next; ++i)
-                                    pDest[destOffset++] = pInput[i];
-                            }
-
-                        }
-
-                    }else{
-                        pDest[destOffset++] = pInput[next];
-                    }
-                }
-                else if (ch > '\x7f'){
-                    // unicode
-
-                    char ch2;
-
-                    if ((Char.IsHighSurrogate(ch)) && (next + 1 < end)){
-                        ch2 = pInput[next + 1];
-                        escape = !CheckIriUnicodeRange(ch, ch2, ref surrogatePair, component == UriComponents.Query);
-                        if (!escape){
-                            // copy the two chars
-                            pDest[destOffset++] = pInput[next++];
-                            pDest[destOffset++] = pInput[next];
-                        }else{
-                            isUnicode = true;
-                        }
-                    }else{
-                        if(CheckIriUnicodeRange(ch, component == UriComponents.Query)){
-                            if (!IsBidiControlCharacter(ch)){
-                                // copy it
-                                pDest[destOffset++] = pInput[next];
-                            }
-                        }else{
-                            // escape it
-                            escape = true;
-                            isUnicode = true;
-                        }
-                    }
-                }else{
-                    // just copy the character
-                    pDest[destOffset++] = pInput[next];
-                }
-
-                if (escape){
-                    if (escapedReallocations < 4){
-                        // may need more memory since we didn't anticipate escaping
-                        int newBufferLength = dest.Length + (bufferCapacityIncrease - escapedReallocations) * 3;
-                        escapedReallocations = bufferCapacityIncrease;
-
-                        char[] newDest = new char[newBufferLength];
-
-                        fixed (char* pNewDest = newDest){
-                            Buffer.Memcpy((byte *)pNewDest, (byte *)pDest, destOffset * sizeof(char));
-                        }
-                        if (destHandle.IsAllocated)
-                            destHandle.Free();
-                        dest = newDest;
-
-                        // re-pin new dest[] array
-                        destHandle = GCHandle.Alloc(dest, GCHandleType.Pinned);
-                        pDest = (char*)destHandle.AddrOfPinnedObject();
-                    }else{
-                        if (isUnicode){
-                            if (surrogatePair)
-                                escapedReallocations -= 4;
-                            else
-                                escapedReallocations -= 3;
-                        }
-                        else
-                            --escapedReallocations;
-                    }
-
-                    byte[] encodedBytes = new byte[4];
-                    fixed (byte* pEncodedBytes = encodedBytes){
-                        int encodedBytesCount = Encoding.UTF8.GetBytes(pInput + next, surrogatePair ? 2 : 1, pEncodedBytes, 4);
-
-                        for (int count = 0; count < encodedBytesCount; ++count)
-                            UriHelper.EscapeAsciiChar((char)encodedBytes[count], dest, ref destOffset);
-                    }
-                }
-            }
-
-            if (destHandle.IsAllocated)
-                destHandle.Free();
-            return new string(dest, 0 , destOffset );
-        }
-
         // Should never be used except by the below method
         private Uri(Flags flags, UriParser uriParser, string uri)
         {

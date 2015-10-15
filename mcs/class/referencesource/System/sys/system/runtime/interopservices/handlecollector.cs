@@ -61,6 +61,9 @@ namespace System.Runtime.InteropServices
         public string Name { get {return name;} }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]  // Keep call to GC.Collect()
+#if FEATURE_LEGACYNETCF
+        [System.Security.SecuritySafeCritical] 
+#endif// FEATURE_LEGACYNETCF
         public void Add () {
             int gen_collect = -1;
             Interlocked.Increment( ref handleCount);

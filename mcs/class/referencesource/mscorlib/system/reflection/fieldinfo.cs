@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -12,7 +12,6 @@ namespace System.Reflection
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.CompilerServices;
@@ -40,25 +39,10 @@ namespace System.Reflection
         {
             if (handle.IsNullHandle())
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidHandle"));
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetFieldFromHandle();
-            }
-#endif
-            
+                
             FieldInfo f = RuntimeType.GetFieldInfo(handle.GetRuntimeFieldInfo());
-
+                       
             Type declaringType = f.DeclaringType;
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && declaringType != null && f != null)
-            {
-                FrameworkEventSource.Log.EndGetFieldFromHandle(declaringType.GetFullNameForEtw(), f.GetFullNameForEtw());
-            }
-#endif
-            
             if (declaringType != null && declaringType.IsGenericType)
                 throw new ArgumentException(String.Format(
                     CultureInfo.CurrentCulture, Environment.GetResourceString("Argument_FieldDeclaringTypeGeneric"), 
@@ -73,23 +57,7 @@ namespace System.Reflection
             if (handle.IsNullHandle())
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidHandle"));
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginGetFieldFromHandle();
-            }
-#endif
-
-            FieldInfo f = RuntimeType.GetFieldInfo(declaringType.GetRuntimeType(), handle.GetRuntimeFieldInfo());
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && declaringType != null && f != null)
-            {
-                FrameworkEventSource.Log.EndGetFieldFromHandle(declaringType.GetRuntimeType().GetFullNameForEtw(), f.GetFullNameForEtw());
-            }
-#endif
-
-            return f;
+            return RuntimeType.GetFieldInfo(declaringType.GetRuntimeType(), handle.GetRuntimeFieldInfo());
         }           
         #endregion
 
@@ -111,13 +79,12 @@ namespace System.Reflection
             return left.Equals(right);
         }
 
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator !=(FieldInfo left, FieldInfo right)
         {
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -127,7 +94,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
 
         #region MemberInfo Overrides
         public override MemberTypes MemberType { get { return System.Reflection.MemberTypes.Field; } }
@@ -225,6 +191,7 @@ namespace System.Reflection
 
         #endregion
 
+#if !FEATURE_CORECLR
         Type _FieldInfo.GetType()
         {
             return base.GetType();
@@ -251,6 +218,7 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
     [Serializable]
@@ -429,9 +397,6 @@ namespace System.Reflection
 
         #region Private Data Members
         // agressive caching
-#if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
         private IntPtr m_fieldHandle;
         private FieldAttributes m_fieldAttributes;
         // lazy caching
@@ -573,9 +538,6 @@ namespace System.Reflection
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal override bool CacheEquals(object o)
         {
             RtFieldInfo m = o as RtFieldInfo;
@@ -742,24 +704,8 @@ namespace System.Reflection
                 if (m_name == null)
                     m_name = RuntimeFieldHandle.GetName(this);
 
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.FieldName(GetRuntimeType().GetFullNameForEtw(), GetFullNameForEtw());
-                }
-#endif
-                
                 return m_name;
             }
-        }
-
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            if (m_name == null)
-                return RuntimeFieldHandle.GetName(this);
-
-            return m_name;
         }
 
         internal String FullName
@@ -781,6 +727,7 @@ namespace System.Reflection
         {
             return RuntimeTypeHandle.GetModule(RuntimeFieldHandle.GetApproxDeclaringType(this));
         }
+
         #endregion
 
         #region FieldInfo Overrides        
@@ -929,24 +876,8 @@ namespace System.Reflection
                 if (m_name == null)
                     m_name = GetRuntimeModule().MetadataImport.GetName(m_tkField).ToString();
 
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.FieldName(GetRuntimeType().GetFullNameForEtw(), GetFullNameForEtw());
-                }
-#endif
-                
                 return m_name;
             }
-        }
-
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            if (m_name == null)
-                return GetRuntimeModule().MetadataImport.GetName(m_tkField).ToString();
-
-            return m_name;
         }
 
         public override int MetadataToken { get { return m_tkField; } }

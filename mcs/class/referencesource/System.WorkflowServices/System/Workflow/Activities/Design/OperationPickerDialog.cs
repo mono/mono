@@ -303,7 +303,7 @@ namespace System.Workflow.Activities.Design
 
 
             // This is to make the selected operation the selected item in the operationsListBox.
-            // This needs to be done to work around the [....] bug causing selection events to not fire till form is loaded.
+            // This needs to be done to work around the Microsoft 
             if (this.selectedOperation != null)
             {
                 SelectServiceOperation(this.selectedOperation);

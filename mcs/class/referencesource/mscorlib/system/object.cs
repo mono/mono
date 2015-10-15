@@ -41,6 +41,7 @@ public class Object
 {
     // Creates a new instance of an Object.
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+    [System.Runtime.Versioning.NonVersionable]
     public Object()
     {            
     }
@@ -59,17 +60,11 @@ public class Object
     // replace Equals with EqualsValue for value types).
     // 
     
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     public virtual bool Equals(Object obj)
     {
         return RuntimeHelpers.Equals(this, obj);
     }
 
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     public static bool Equals(Object objA, Object objB) 
     {
         if (objA==objB) {
@@ -82,9 +77,7 @@ public class Object
     }
 
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+    [System.Runtime.Versioning.NonVersionable]
     public static bool ReferenceEquals (Object objA, Object objB) {
         return objA == objB;
     }
@@ -93,14 +86,11 @@ public class Object
     // Based on the contents of the object, the hash function will return a suitable
     // value with a relatively random distribution over the various inputs.
     //
-    // The default implementation returns the [....] block index for this instance.
+    // The default implementation returns the sync block index for this instance.
     // Calling it on the same object multiple times will return the same value, so
     // it will technically meet the needs of a hash function, but it's less than ideal.
     // Objects (& especially value classes) should override this method.
     // 
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     public virtual int GetHashCode()
     {
         return RuntimeHelpers.GetHashCode(this);
@@ -117,6 +107,7 @@ public class Object
     // Allow an object to free resources before the object is reclaimed by the GC.
     // 
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+    [System.Runtime.Versioning.NonVersionable]
     ~Object()
     {
     }

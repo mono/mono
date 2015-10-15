@@ -6,7 +6,7 @@
 // 
 // File: RemotingServices.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 // Author(s):   <EMAIL>Gopal Kakivaya (GopalK)</EMAIL>
 // 
@@ -198,8 +198,8 @@ namespace System.Runtime.Remoting {
         // Note: for each of these calls that take a RuntimeXXX reflection
         // structure, there is a wrapper that takes XXX and throws if it is
         // not a RuntimeXXX. This is to avoid clutter in code where these 
-        // methods are called. <BUGNUM>(48721)</BUGNUM> <STRIP> Ideally this should have been done
-        // as a breaking change to the public APIs that use them!</STRIP>
+        // methods are called. <BUGNUM>(48721)</BUGNUM> <
+
 
         [System.Security.SecurityCritical]  // auto-generated
         internal static Object CreateTransparentProxy(
@@ -488,7 +488,14 @@ namespace System.Runtime.Remoting {
         // Internal flavor without security!
         [System.Security.SecurityCritical]  // auto-generated
         internal static ObjRef MarshalInternal(MarshalByRefObject Obj, String ObjURI, Type RequestedType, bool updateChannelData)
-        {        
+        {
+            return MarshalInternal(Obj, ObjURI, RequestedType, updateChannelData, isInitializing: false);
+        }
+
+        // Internal flavor without security!
+        [System.Security.SecurityCritical]  // auto-generated
+        internal static ObjRef MarshalInternal(MarshalByRefObject Obj, String ObjURI, Type RequestedType, bool updateChannelData, bool isInitializing)
+        {     
             BCLDebug.Trace("REMOTE", "Entered Marshal for URI" +  ObjURI + "\n");
 
             if (null == Obj)
@@ -497,7 +504,7 @@ namespace System.Runtime.Remoting {
             ObjRef objectRef = null;
             Identity idObj = null;
 
-            idObj = GetOrCreateIdentity(Obj, ObjURI);
+            idObj = GetOrCreateIdentity(Obj, ObjURI, isInitializing);
             if (RequestedType != null)
             {
                 ServerIdentity srvIdObj = idObj as ServerIdentity;
@@ -609,7 +616,7 @@ namespace System.Runtime.Remoting {
                     {
                         int channelDataLength = channelData.Length;
                         Object[] newChannelData = new Object[channelDataLength];
-                        // Clone the data so that we dont [....] the current appdomain data which is stored
+                        // Clone the data so that we dont Microsoft the current appdomain data which is stored
                         // as a static
                         Array.Copy(channelData, newChannelData, channelDataLength);
                         for (int i = 0; i < channelDataLength; i++)
@@ -658,8 +665,20 @@ namespace System.Runtime.Remoting {
         [System.Security.SecurityCritical]  // auto-generated
         private static Identity GetOrCreateIdentity(
             MarshalByRefObject Obj,
-            String ObjURI)
+            String ObjURI,
+            bool isInitializing)
         {
+            int idOpsFlags = IdOps.StrongIdentity;
+
+            // DevDiv 720951 and 911924:
+            // This flag is propagated into the new ServerIdentity to indicate
+            // it is not yet ready for use.  CreateWellKnownObject is the only
+            // code path that sets it to 'true'.
+            if (isInitializing)
+            {
+                idOpsFlags |= IdOps.IsInitializing;
+            }
+
             Identity idObj = null;
             if (IsTransparentProxy(Obj))
             {
@@ -679,7 +698,7 @@ namespace System.Runtime.Remoting {
                     idObj = IdentityHolder.FindOrCreateServerIdentity(
                                                 Obj,
                                                 ObjURI,
-                                                IdOps.StrongIdentity);
+                                                idOpsFlags);
 
                     idObj.RaceSetTransparentProxy(Obj);
                 }
@@ -712,7 +731,7 @@ namespace System.Runtime.Remoting {
                     idObj = IdentityHolder.FindOrCreateServerIdentity(
                                 srvID.TPOrObject,
                                 ObjURI,
-                                IdOps.StrongIdentity);
+                                idOpsFlags);
 
                     // if an objURI was specified we need to make sure that
                     //   the same one was used.
@@ -776,7 +795,7 @@ namespace System.Runtime.Remoting {
                 idObj = IdentityHolder.FindOrCreateServerIdentity(
                                             Obj,
                                             ObjURI,
-                                            IdOps.StrongIdentity);
+                                            idOpsFlags);
 
                 // If the object had an ID to begin with that is the one 
                 // we must have set in the table.                                                    
@@ -2477,9 +2496,9 @@ namespace System.Runtime.Remoting {
         //   A qualified type name describes the name that we use in the ObjRef and
         //   message TypeName. It consists either of the actual type name or 
         //   "<typeId>:typename" where for now "soap:<soap type name>" is the only
-        //   supported alternative.  <STRIP>In the future, we may make this type resolution
-        //   extensible and publicly exposed.</STRIP>
-        //
+        //   supported alternative.  <
+
+
 
         // This is used by the cached type data to figure out which type name
         //   to use (this should never be publicly exposed; GetDefaultQualifiedTypeName should,

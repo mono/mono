@@ -238,7 +238,7 @@ namespace System.Web.Services.Protocols {
                         // if not create a new DiscoveryServerType and cache it
                         //
                         bool excludeSchemeHostPortFromCachingKey = this.IsCacheUnderPressure(typeof(DiscoveryServerProtocol), Type);
-                        string escapedUri = Uri.EscapeUriString(Request.Url.ToString()).Replace("#", "%23");
+                        string escapedUri = RuntimeUtils.EscapeUri(Request.Url);
                         serverType = new DiscoveryServerType(Type, escapedUri, excludeSchemeHostPortFromCachingKey);
                         AddToCache(typeof(DiscoveryServerProtocol), Type, serverType, excludeSchemeHostPortFromCachingKey);
                     }

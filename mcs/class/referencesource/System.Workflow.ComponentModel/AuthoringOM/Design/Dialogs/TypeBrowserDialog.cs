@@ -1230,7 +1230,7 @@ namespace System.Workflow.ComponentModel.Design
                         catch (NullReferenceException)
                         {
                             // Work around: for some reason RuntimeType.Namespace throws exception for array of generic
-                            //       Remove the try-catch when the bug is fixed.
+                            //       Remove the try-catch when the 
                         }
                         keywords[1] = "{" + keywords[1] + "}";
                         keywords[2] = (selectedType.Assembly != null) ? selectedType.Assembly.GetName().FullName : "<Current Project>";

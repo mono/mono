@@ -42,7 +42,7 @@ namespace System.Reflection
     using __HResults = System.__HResults;
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
+
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
@@ -102,7 +102,7 @@ namespace System.Reflection
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR               
+
         public override bool Equals(object o)
         {
             return base.Equals(o);
@@ -112,7 +112,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR       
 
         // Locate an assembly by the name of the file containing the manifest.
 #if FEATURE_CORECLR
@@ -623,7 +622,6 @@ namespace System.Reflection
             return RuntimeAssembly.GetExecutingAssembly(ref stackMark);
         }
        
-#if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static Assembly GetEntryAssembly() {
             AppDomainManager domainManager = AppDomain.CurrentDomain.DomainManager;
@@ -631,7 +629,6 @@ namespace System.Reflection
                 domainManager = new AppDomainManager();
             return domainManager.EntryAssembly;
         }
-#endif // !FEATURE_CORECLR
     
         #endregion // public static methods
 
@@ -698,12 +695,6 @@ namespace System.Reflection
             }
         }
 
-        // This name is used for the dynamic type usage scenario ETW logging for ProjectN apps.
-        internal virtual String GetFullNameForEtw()
-        {
-            return null;
-        }
-        
         public virtual MethodInfo EntryPoint
         {
             get
@@ -712,21 +703,16 @@ namespace System.Reflection
             }
         }
 
+#if !FEATURE_CORECLR
         Type _Assembly.GetType()
         {
             return base.GetType();
         }
+#endif
 
         public virtual Type GetType(String name)
         {
-            Type t = GetType(name, false, false);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && t != null)
-            {
-                FrameworkEventSource.Log.AssemblyGetType(t.GetFullNameForEtw());
-            }
-#endif
-            return t;
+            return GetType(name, false, false);
         }
 
         public virtual Type GetType(String name, bool throwOnError)
@@ -752,7 +738,6 @@ namespace System.Reflection
             throw new NotImplementedException();
         }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public virtual IEnumerable<TypeInfo> DefinedTypes
         {
             get
@@ -774,7 +759,6 @@ namespace System.Reflection
                 return typeinfos;
             }
         }
-#endif //!FEATURE_CORECLR || FEATURE_NETCORE
 
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine | ResourceScope.Assembly, ResourceScope.Machine | ResourceScope.Assembly)]
@@ -1162,7 +1146,7 @@ namespace System.Reflection
 
     }
 
-    // Keep this in [....] with LOADCTX_TYPE defined in fusionpriv.idl
+    // Keep this in sync with LOADCTX_TYPE defined in fusionpriv.idl
     internal enum LoadContext
     {
        DEFAULT,
@@ -1171,35 +1155,30 @@ namespace System.Reflection
        HOSTED,
     }
 
-#if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
     [Serializable]
     internal class RuntimeAssembly : Assembly
-#if FEATURE_COMINTEROP
+#if !FEATURE_CORECLR
         , ICustomQueryInterface
 #endif
     {
-#if FEATURE_COMINTEROP
+#if !FEATURE_CORECLR
         #region ICustomQueryInterface
         [System.Security.SecurityCritical]
         CustomQueryInterfaceResult ICustomQueryInterface.GetInterface([In]ref Guid iid, out IntPtr ppv)
         {
-#if FEATURE_CLASSIC_COMINTEROP
             if (iid == typeof(NativeMethods.IDispatch).GUID)
             {
                 ppv = Marshal.GetComInterfaceForObject(this, typeof(_Assembly));
                 return CustomQueryInterfaceResult.Handled;
             }
-#endif // FEATURE_CLASSIC_COMINTEROP
 
             ppv = IntPtr.Zero;
             return CustomQueryInterfaceResult.NotHandled;
         }
         #endregion
-#endif // FEATURE_COMINTEROP
+#endif // !FEATURE_CORECLR
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
         // The highest byte is the flags and the lowest 3 bytes are 
         // the cached ctor token of [DynamicallyInvocableAttribute].
         private enum ASSEMBLY_FLAGS : uint
@@ -1207,12 +1186,10 @@ namespace System.Reflection
             ASSEMBLY_FLAGS_UNKNOWN =            0x00000000,
             ASSEMBLY_FLAGS_INITIALIZED =        0x01000000,
             ASSEMBLY_FLAGS_FRAMEWORK =          0x02000000,
-#if FEATURE_APPX
             ASSEMBLY_FLAGS_SAFE_REFLECTION =    0x04000000,
             ASSEMBLY_FLAGS_TOKEN_MASK =         0x00FFFFFF,
-#endif // FEATURE_APPX
         }
-#endif // !FEATURE_CORECLR
+#endif // FEATURE_APPX
 
         private const uint COR_E_LOADING_REFERENCE_ASSEMBLY = 0x80131058U;
 
@@ -1223,12 +1200,9 @@ namespace System.Reflection
         private event ModuleResolveEventHandler _ModuleResolve;
         private string m_fullname;
         private object m_syncRoot;   // Used to keep collectible types alive and as the syncroot for reflection.emit
-#if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
         private IntPtr m_assembly;    // slack for ptr datum on unmanaged side
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
         private ASSEMBLY_FLAGS m_flags;
 #endif
         #endregion
@@ -1243,9 +1217,7 @@ namespace System.Reflection
                 return token | (int)MetadataTokenType.MethodDef;
             }
         }
-#endif
 
-#if !FEATURE_CORECLR
         private ASSEMBLY_FLAGS Flags
         {
             [SecuritySafeCritical]
@@ -1255,11 +1227,14 @@ namespace System.Reflection
                 {
                     ASSEMBLY_FLAGS flags = ASSEMBLY_FLAGS.ASSEMBLY_FLAGS_UNKNOWN;
 
+#if !FEATURE_CORECLR
                     if (RuntimeAssembly.IsFrameworkAssembly(GetName()))
+#else
+                    if (IsProfileAssembly)
+#endif
                     {
                         flags |= ASSEMBLY_FLAGS.ASSEMBLY_FLAGS_FRAMEWORK | ASSEMBLY_FLAGS.ASSEMBLY_FLAGS_SAFE_REFLECTION;
 
-#if FEATURE_APPX
                         foreach (string name in s_unsafeFrameworkAssemblyNames)
                         {
                             if (String.Compare(GetSimpleName(), name, StringComparison.OrdinalIgnoreCase) == 0)
@@ -1288,7 +1263,6 @@ namespace System.Reflection
 
                             flags |= (ASSEMBLY_FLAGS)token & ASSEMBLY_FLAGS.ASSEMBLY_FLAGS_TOKEN_MASK;
                         }
-#endif // FEATURE_APPX
                     }
                     else if (IsDesignerBindingContext())
                     {
@@ -1301,7 +1275,7 @@ namespace System.Reflection
                 return m_flags;
             }
         }
-#endif // !FEATURE_CORECLR
+#endif // FEATURE_APPX
 
         internal object SyncRoot
         {
@@ -1446,20 +1420,6 @@ namespace System.Reflection
             }
         }
 
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            // If called by Object.ToString(), return val may be NULL.
-            if (m_fullname == null)
-            {
-                string s = null;
-                GetFullName(GetNativeHandle(), JitHelpers.GetStringHandleOnStack(ref s));
-                Interlocked.CompareExchange<string>(ref m_fullname, s, null);
-            }
-            
-            return m_fullname;
-        }
-
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -1522,7 +1482,6 @@ namespace System.Reflection
             return types;
         }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public override IEnumerable<TypeInfo> DefinedTypes
         {
             [System.Security.SecuritySafeCritical]
@@ -1540,7 +1499,6 @@ namespace System.Reflection
                 return rtTypes.ToArray();
             }
         }
-#endif //!FEATURE_CORECLR
 
         // Load a resource based on the NameSpace of the type.
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -1883,16 +1841,14 @@ namespace System.Reflection
             "Microsoft.VisualBasic"
         };
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
         [System.Security.SecuritySafeCritical]
         internal bool IsFrameworkAssembly()
         {
             ASSEMBLY_FLAGS flags = Flags;
             return (flags & ASSEMBLY_FLAGS.ASSEMBLY_FLAGS_FRAMEWORK) != 0;
         }
-#endif 
 
-#if FEATURE_APPX
         // Returns true if we want to allow this assembly to invoke non-W8P
         // framework APIs through reflection.
         internal bool IsSafeForReflection()
@@ -1929,7 +1885,6 @@ namespace System.Reflection
                                                      bool throwOnFileNotFound,        
                                                      bool forIntrospection,
                                                      bool suppressSecurityChecks);
-
 
 #if !FEATURE_CORECLR
         // The NGEN task uses this method, so please do not modify its signature
@@ -2466,15 +2421,10 @@ namespace System.Reflection
                 ((codebase[j+1] == '/') || (codebase[j+1] == '\\')) &&
                 ((codebase[j+2] == '/') || (codebase[j+2] == '\\')) )
                 return codebase;
-#if !PLATFORM_UNIX
             else if ((len > 2) && (codebase[0] == '\\') && (codebase[1] == '\\'))
                 return "file://" + codebase;
             else
                 return "file:///" + Path.GetFullPathInternal( codebase );
-#else
-            else
-                return "file://" + Path.GetFullPathInternal( codebase );
-#endif // !PLATFORM_UNIX
         }
 
         [System.Security.SecurityCritical]  // auto-generated
@@ -2539,17 +2489,17 @@ namespace System.Reflection
                 if (length > Int64.MaxValue)
                     throw new NotImplementedException(Environment.GetResourceString("NotImplemented_ResourcesLongerThan2^63"));
 
-                // <STRIP>For cases where we're loading an embedded resource from an assembly,
-                // in V1 we do not have any serious lifetime issues with the 
-                // UnmanagedMemoryStream.  If the Stream is only used
-                // in the AppDomain that contains the assembly, then if that AppDomain
-                // is unloaded, we will collect all of the objects in the AppDomain first
-                // before unloading assemblies.  If the Stream is shared across AppDomains,
-                // then the original AppDomain was unloaded, accesses to this Stream will
-                // throw an exception saying the appdomain was unloaded.  This is 
-                // guaranteed be EE AppDomain goo.  And for shared assemblies like 
-                // mscorlib, their lifetime is the lifetime of the process, so the 
-                // assembly will NOT be unloaded, so the resource will always be in memory.</STRIP>
+                // <
+
+
+
+
+
+
+
+
+
+
                 return new UnmanagedMemoryStream(pbInMemoryResource, (long)length, (long)length, FileAccess.Read, true);
             }
 
@@ -2965,9 +2915,9 @@ namespace System.Reflection
                         if (e.IsTransient)
                             throw;
 
-                        // See Dev11 bug 298776 (DevDiv2 TFS database). Sometimes
-                        // UnauthorizedAccessException will be thrown by the call to
-                        // Fusion.ReadCache.
+                        // See Dev11 
+
+
 
                         // We also catch any other exception types we haven't come across yet,
                         // not just UnauthorizedAccessException.

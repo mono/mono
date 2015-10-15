@@ -29,7 +29,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ServiceTimeoutsElement source = (ServiceTimeoutsElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.TransactionTimeout = source.TransactionTimeout;
         }
 

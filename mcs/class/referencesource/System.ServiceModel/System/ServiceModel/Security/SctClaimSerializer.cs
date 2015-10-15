@@ -428,7 +428,7 @@ namespace System.ServiceModel.Security
                     writer.WriteStartElement(dictionary.WindowsSidIdentity, dictionary.EmptyString);
                     WriteSidAttribute(wid.User, dictionary, writer);
 
-                    // This is to work around WOW64 bug Windows OS 1491447
+                    // This is to work around WOW64 
                     string authenticationType = null;
                     using (WindowsIdentity self = WindowsIdentity.GetCurrent())
                     {

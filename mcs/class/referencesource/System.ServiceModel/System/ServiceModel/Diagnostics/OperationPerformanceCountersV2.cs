@@ -139,6 +139,18 @@ namespace System.ServiceModel.Diagnostics
             get { return this.operationCounterSetInstance != null; }
         }
 
+        // Immediately disposes and nulls the CounterSetInstance. This differs from Dispose because Dispose is "lazy" in that
+        // it holds weak references to the instances so we don't get corrupted state if the values are updated later. This
+        // method is used in situations when we need to delete the instance immediately and know the values won't be updated.
+        internal void DeleteInstance()
+        {
+            if (this.operationCounterSetInstance != null)
+            {
+                this.operationCounterSetInstance.Dispose();
+                this.operationCounterSetInstance = null;
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             try

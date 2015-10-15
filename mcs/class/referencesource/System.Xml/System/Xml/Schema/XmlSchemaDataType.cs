@@ -2,7 +2,7 @@
 // <copyright file="XmlSchemaDatatype.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright> 
-// <owner current="true" primary="true">[....]</owner>                                                               
+// <owner current="true" primary="true">Microsoft</owner>                                                               
 //------------------------------------------------------------------------------
 using System.Collections;
 using System.Diagnostics;
@@ -337,7 +337,7 @@ namespace System.Xml.Schema {
             return canonicalUri;
         }
 
-#if PRIYAL
+#if Microsoft
         private bool CanConvert(object value, System.Type inputType, System.Type defaultType, out string resId) {
             resId = null;
             decimal decimalValue;

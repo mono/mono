@@ -5,7 +5,7 @@
 // ==--==
 // ISecurityEncodable.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 // All encodable security classes that support encoding need to
 // implement this interface

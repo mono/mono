@@ -7,7 +7,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -18,6 +18,7 @@ namespace System.Security.Claims
 {
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.IO;
     using System.Runtime.InteropServices;
     using System.Runtime.Serialization;
     
@@ -36,6 +37,9 @@ namespace System.Security.Claims
         string m_value;
         string m_valueType;
         
+        [NonSerialized]
+        byte[] m_userSerializationData;
+
         Dictionary<string, string> m_properties;
 
         [NonSerialized]
@@ -43,8 +47,47 @@ namespace System.Security.Claims
 
         [NonSerialized]
         ClaimsIdentity m_subject;
-                
+
+        private enum SerializationMask
+        {
+            None = 0,
+            NameClaimType = 1,
+            RoleClaimType = 2,
+            StringType = 4,
+            Issuer = 8,
+            OriginalIssuerEqualsIssuer = 16,
+            OriginalIssuer = 32,
+            HasProperties = 64,
+            UserData = 128,
+        }
+
         #region Claim Constructors
+
+        /// <summary>
+        /// Initializes an instance of <see cref="Claim"/> using a <see cref="BinaryReader"/>.
+        /// Normally the <see cref="BinaryReader"/> is constructed using the bytes from <see cref="WriteTo(BinaryWriter)"/> and initialized in the same way as the <see cref="BinaryWriter"/>.
+        /// </summary>
+        /// <param name="reader">a <see cref="BinaryReader"/> pointing to a <see cref="Claim"/>.</param>
+        /// <exception cref="ArgumentNullException">if 'reader' is null.</exception>
+        public Claim(BinaryReader reader)
+            : this(reader, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="Claim"/> using a <see cref="BinaryReader"/>.
+        /// Normally the <see cref="BinaryReader"/> is constructed using the bytes from <see cref="WriteTo(BinaryWriter)"/> and initialized in the same way as the <see cref="BinaryWriter"/>.
+        /// </summary>
+        /// <param name="reader">a <see cref="BinaryReader"/> pointing to a <see cref="Claim"/>.</param>
+        /// <param name="subject"> the value for <see cref="Claim.Subject"/>, which is the <see cref="ClaimsIdentity"/> that has these claims.</param>
+        /// <exception cref="ArgumentNullException">if 'reader' is null.</exception>
+        public Claim(BinaryReader reader, ClaimsIdentity subject)
+        {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+
+            Initialize(reader, subject);
+        }
 
         /// <summary>
         /// Creates a <see cref="Claim"/> with the specified type and value.
@@ -203,7 +246,62 @@ namespace System.Security.Claims
             }
         }
 
+        /// <summary>
+        /// Copy constructor for <see cref="Claim"/>
+        /// </summary>
+        /// <param name="other">the <see cref="Claim"/> to copy.</param>
+        /// <remarks><see cref="Claim.Subject"/>will be set to 'null'.</remarks>
+        /// <exception cref="ArgumentNullException">if 'other' is null.</exception>
+        protected Claim(Claim other)
+            : this(other, (other == null ? (ClaimsIdentity)null : other.m_subject))
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor for <see cref="Claim"/>
+        /// </summary>
+        /// <param name="other">the <see cref="Claim"/> to copy.</param>
+        /// <param name="subject">the <see cref="ClaimsIdentity"/> to assign to <see cref="Claim.Subject"/>.</param>
+        /// <remarks><see cref="Claim.Subject"/>will be set to 'subject'.</remarks>
+        /// <exception cref="ArgumentNullException">if 'other' is null.</exception>
+        protected Claim(Claim other, ClaimsIdentity subject)
+        {
+            if (other == null)
+                throw new ArgumentNullException("other");
+
+            m_issuer = other.m_issuer;
+            m_originalIssuer = other.m_originalIssuer;
+            m_subject = subject;
+            m_type = other.m_type;
+            m_value = other.m_value;
+            m_valueType = other.m_valueType;
+            if (other.m_properties != null)
+            {
+                m_properties = new Dictionary<string, string>();
+                foreach (var key in other.m_properties.Keys)
+                {
+                    m_properties.Add(key, other.m_properties[key]);
+                }
+            }
+
+            if (other.m_userSerializationData != null)
+            {
+                m_userSerializationData = other.m_userSerializationData.Clone() as byte[];
+            }
+        }
+
         #endregion
+
+        /// <summary>
+        /// Contains any additional data provided by a derived type, typically set when calling <see cref="WriteTo(BinaryWriter, byte[])"/>.</param>
+        /// </summary>
+        protected virtual byte[] CustomSerializationData
+        {
+            get
+            {
+                return m_userSerializationData;
+            }
+        }
 
         /// <summary>
         /// Gets the issuer of the <see cref="Claim"/>.
@@ -266,6 +364,7 @@ namespace System.Security.Claims
         /// <summary>
         /// Gets the claim type of the <see cref="Claim"/>.
         /// </summary>
+        /// <seealso cref="ClaimTypes"/>.
         public string Type
         {
             get { return m_type; }
@@ -282,39 +381,233 @@ namespace System.Security.Claims
         /// <summary>
         /// Gets the value type of the <see cref="Claim"/>.
         /// </summary>
+        /// <seealso cref="ClaimValueTypes"/>
         public string ValueType
         {
             get { return m_valueType; }
         }
 
         /// <summary>
-        /// Returns a new <see cref="Claim"/> object copied from this object. The subject of the new claim object is set to null.
+        /// Creates a new instance <see cref="Claim"/> with values copied from this object.
         /// </summary>
-        /// <returns>A new <see cref="Claim"/> object copied from this object.</returns>
-        /// <remarks>This is a shallow copy operation.</remarks>
         public virtual Claim Clone()
         {
             return Clone((ClaimsIdentity)null);
         }
 
         /// <summary>
-        /// Returns a new <see cref="Claim"/> object copied from this object. The subject of the new claim object is set to identity.
+        /// Creates a new instance <see cref="Claim"/> with values copied from this object.
         /// </summary>
-        /// <param name="identity">The <see cref="ClaimsIdentity"/> that this <see cref="Claim"/> is associated with.</param>
-        /// <returns>A new <see cref="Claim"/> object copied from this object.</returns>
-        /// <remarks>This is a shallow copy operation.</remarks>
+        /// <param name="identity">the value for <see cref="Claim.Subject"/>, which is the <see cref="ClaimsIdentity"/> that has these claims.
+        /// <remarks><see cref="Claim.Subject"/> will be set to 'identity'.</remarks>
         public virtual Claim Clone(ClaimsIdentity identity)
         {
-            Claim newClaim = new Claim(m_type, m_value, m_valueType, m_issuer, m_originalIssuer, identity);
-            if (m_properties != null)
+            return new Claim(this, identity);
+        }
+
+        private void Initialize(BinaryReader reader, ClaimsIdentity subject)
+        {
+            if (reader == null)
             {
-                foreach (string key in m_properties.Keys)
+                throw new ArgumentNullException("reader");
+            }
+
+            m_subject = subject;
+
+            SerializationMask mask = (SerializationMask)reader.ReadInt32();
+            int numPropertiesRead = 1;
+            int numPropertiesToRead = reader.ReadInt32();
+            m_value = reader.ReadString();
+
+            if ((mask & SerializationMask.NameClaimType) == SerializationMask.NameClaimType)
+            {
+                m_type = ClaimsIdentity.DefaultNameClaimType;
+            }
+            else if ((mask & SerializationMask.RoleClaimType) == SerializationMask.RoleClaimType)
+            {
+                m_type = ClaimsIdentity.DefaultRoleClaimType;
+            }
+            else
+            {
+                m_type = reader.ReadString();
+                numPropertiesRead++;
+            }
+
+            if ((mask & SerializationMask.StringType) == SerializationMask.StringType)
+            {
+                m_valueType = reader.ReadString();
+                numPropertiesRead++;
+            }
+            else
+            {
+                m_valueType = ClaimValueTypes.String;
+            }
+
+            if ((mask & SerializationMask.Issuer) == SerializationMask.Issuer)
+            {
+                m_issuer = reader.ReadString();
+                numPropertiesRead++;
+            }
+            else
+            {
+                m_issuer = ClaimsIdentity.DefaultIssuer;
+            }
+
+            if ((mask & SerializationMask.OriginalIssuerEqualsIssuer) == SerializationMask.OriginalIssuerEqualsIssuer)
+            {
+                m_originalIssuer = m_issuer;
+            }
+            else if ((mask & SerializationMask.OriginalIssuer) == SerializationMask.OriginalIssuer)
+            {
+                m_originalIssuer = reader.ReadString();
+                numPropertiesRead++;
+            }
+            else
+            {
+                m_originalIssuer = ClaimsIdentity.DefaultIssuer;
+            }
+
+            if ((mask & SerializationMask.HasProperties) == SerializationMask.HasProperties)
+            {
+                // 
+                int numProperties = reader.ReadInt32();
+                for (int i = 0; i < numProperties; i++)
                 {
-                    newClaim.Properties[key] = m_properties[key];
+                    Properties.Add(reader.ReadString(), reader.ReadString());
                 }
             }
 
-            return newClaim;
+            if ((mask & SerializationMask.UserData) == SerializationMask.UserData)
+            {
+                // 
+                int cb = reader.ReadInt32();
+                m_userSerializationData = reader.ReadBytes(cb);
+                numPropertiesRead++;
+            }
+
+            for (int i = numPropertiesRead; i < numPropertiesToRead; i++)
+            {
+                reader.ReadString();
+            }
+        }
+
+        /// <summary>
+        /// Serializes using a <see cref="BinaryWriter"/>
+        /// </summary>
+        /// <param name="writer">the <see cref="BinaryWriter"/> to use for data storage.</param>
+        /// <exception cref="ArgumentNullException">if 'writer' is null.</exception>
+        public virtual void WriteTo(BinaryWriter writer)
+        {
+            WriteTo(writer, null);
+        }
+
+        /// <summary>
+        /// Serializes using a <see cref="BinaryWriter"/>
+        /// </summary>
+        /// <param name="writer">the <see cref="BinaryWriter"/> to use for data storage.</param>
+        /// <param name="userData">additional data provided by derived type.</param>
+        /// <exception cref="ArgumentNullException">if 'writer' is null.</exception>
+        protected virtual void WriteTo(BinaryWriter writer, byte[] userData)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException("writer");
+            }
+
+            // 
+
+
+            int numberOfPropertiesWritten = 1;
+            SerializationMask mask = SerializationMask.None;
+            if (string.Equals(m_type, ClaimsIdentity.DefaultNameClaimType))
+            {
+                mask |= SerializationMask.NameClaimType;
+            }
+            else if (string.Equals(m_type, ClaimsIdentity.DefaultRoleClaimType))
+            {
+                mask |= SerializationMask.RoleClaimType;
+            }
+            else
+            {
+                numberOfPropertiesWritten++;
+            }
+
+            if (!string.Equals(m_valueType, ClaimValueTypes.String, StringComparison.Ordinal))
+            {
+                numberOfPropertiesWritten++;
+                mask |= SerializationMask.StringType;
+            }
+
+            if (!string.Equals(m_issuer, ClaimsIdentity.DefaultIssuer, StringComparison.Ordinal))
+            {
+                numberOfPropertiesWritten++;
+                mask |= SerializationMask.Issuer;
+            }
+
+            if (string.Equals(m_originalIssuer, m_issuer, StringComparison.Ordinal))
+            {
+                mask |= SerializationMask.OriginalIssuerEqualsIssuer;
+            }
+            else if (!string.Equals(m_originalIssuer, ClaimsIdentity.DefaultIssuer, StringComparison.Ordinal))
+            {
+                numberOfPropertiesWritten++;
+                mask |= SerializationMask.OriginalIssuer;
+            }
+
+            if (Properties.Count > 0)
+            {
+                numberOfPropertiesWritten++;
+                mask |= SerializationMask.HasProperties;
+            }
+
+            // 
+            if (userData != null && userData.Length > 0)
+            {
+                numberOfPropertiesWritten++;
+                mask |= SerializationMask.UserData;
+            }
+
+            writer.Write((Int32)mask);
+            writer.Write((Int32)numberOfPropertiesWritten);
+            writer.Write(m_value);
+
+            if (((mask & SerializationMask.NameClaimType) != SerializationMask.NameClaimType) && ((mask & SerializationMask.RoleClaimType) != SerializationMask.RoleClaimType))
+            {
+                writer.Write(m_type);
+            }
+
+            if ((mask & SerializationMask.StringType) == SerializationMask.StringType)
+            {
+                writer.Write(m_valueType);
+            }
+
+            if ((mask & SerializationMask.Issuer) == SerializationMask.Issuer)
+            {
+                writer.Write(m_issuer);
+            }
+
+            if ((mask & SerializationMask.OriginalIssuer) == SerializationMask.OriginalIssuer)
+            {
+                writer.Write(m_originalIssuer);
+            }
+
+            if ((mask & SerializationMask.HasProperties) == SerializationMask.HasProperties)
+            {
+                writer.Write(Properties.Count);
+                foreach (var key in Properties.Keys)
+                {
+                    writer.Write(key);
+                    writer.Write(Properties[key]);
+                }
+            }
+
+            if ((mask & SerializationMask.UserData) == SerializationMask.UserData)
+            {
+                writer.Write((Int32)userData.Length);
+                writer.Write(userData);
+            }
+
+            writer.Flush();
         }
 
         /// <summary>

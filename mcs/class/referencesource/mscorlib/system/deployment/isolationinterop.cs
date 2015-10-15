@@ -1,7 +1,3 @@
-#if !ISOLATION_IN_MSCORLIB
-#define FEATURE_COMINTEROP
-#endif
-
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
@@ -12,7 +8,6 @@ using CMS=System.Deployment.Internal.Isolation.Manifest;
 
 namespace System.Deployment.Internal.Isolation
 {
-#if FEATURE_COMINTEROP
     [StructLayout(LayoutKind.Sequential)]
     internal struct BLOB : IDisposable
     {
@@ -3333,6 +3328,5 @@ namespace System.Deployment.Internal.Isolation
             [Out] out UInt32 Disposition
             );
     };
-#endif
 }
 

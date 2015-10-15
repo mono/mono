@@ -124,6 +124,12 @@ namespace System.Web.Util {
                             if (settings == null || !Boolean.TryParse(settings["aspnet:EnsureSessionStateLockedOnFlush"], out _ensureSessionStateLockedOnFlush))
                                 _ensureSessionStateLockedOnFlush = false;
 
+                            if (settings == null || !Boolean.TryParse(settings["aspnet:UseRandomizedStringHashAlgorithm"], out _useRandomizedStringHashAlgorithm))
+                                _useRandomizedStringHashAlgorithm = false;
+
+                            if (settings == null || !Boolean.TryParse(settings["aspnet:EnableAsyncModelBinding"], out _enableAsyncModelBinding))
+                                _enableAsyncModelBinding = BinaryCompatibility.Current.TargetsAtLeastFramework46;
+
                             _settingsInitialized = true;
                         }
                     }
@@ -463,6 +469,27 @@ namespace System.Web.Util {
            get {
                EnsureSettingsLoaded();
                return _ensureSessionStateLockedOnFlush;
+           }
+       }
+
+       // false [default] - don't force randomized hash code algorithm. Exisiting behavior
+       // true - use randomized hash code algorithm
+       private static bool _useRandomizedStringHashAlgorithm;
+       internal static bool UseRandomizedStringHashAlgorithm {
+           get {
+               EnsureSettingsLoaded();
+               return _useRandomizedStringHashAlgorithm;
+           }
+       }
+
+       // false - disable async model binding
+       // true - enable async model binding
+       // defaults to true when targeting >= 4.6, otherwise false
+       private static bool _enableAsyncModelBinding;
+       internal static bool EnableAsyncModelBinding {
+           get {
+               EnsureSettingsLoaded();
+               return _enableAsyncModelBinding;
            }
        }
     }

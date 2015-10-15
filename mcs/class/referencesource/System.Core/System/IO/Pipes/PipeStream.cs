@@ -256,7 +256,7 @@ namespace System.IO.Pipes {
             CheckReadOperations();
 
             if (!m_isAsync) {
-                // special case when this is called for [....] broken pipes because otherwise Stream's
+                // special case when this is called for sync broken pipes because otherwise Stream's
                 // Begin/EndRead hang. Reads return 0 bytes in this case so we can call the user's
                 // callback immediately
                 if (m_state == PipeState.Broken) {
@@ -645,7 +645,7 @@ namespace System.IO.Pipes {
             }
 
             if (r == 0) {
-                // We should never silently ---- an error here without some
+                // We should never silently swallow an error here without some
                 // extra work.  We must make sure that BeginReadCore won't return an 
                 // IAsyncResult that will cause EndRead to block, since the OS won't
                 // call AsyncPSCallback for us.  
@@ -695,7 +695,7 @@ namespace System.IO.Pipes {
             }
 
             if (r == 0) {
-                // We should never silently ---- an error here without some
+                // We should never silently swallow an error here without some
                 // extra work.  We must make sure that BeginWriteCore won't return an 
                 // IAsyncResult that will cause EndWrite to block, since the OS won't
                 // call AsyncPSCallback for us.  

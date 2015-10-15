@@ -13,6 +13,7 @@ namespace System.Web {
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Web.Caching;
     using System.Web.Routing;
 
@@ -361,6 +362,10 @@ namespace System.Web {
             throw new NotImplementedException();
         }
 
+        public virtual Task FlushAsync() {
+            throw new NotImplementedException();
+        }
+
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly",
             Justification = "Matches HttpResponse class")]
         public virtual void Pics(String value) {
@@ -502,6 +507,14 @@ namespace System.Web {
         }
 
         public virtual void WriteSubstitution(HttpResponseSubstitutionCallback callback) {
+            throw new NotImplementedException();
+        }
+
+        public virtual void PushPromise(string path) {
+            throw new NotImplementedException();
+        }
+
+        public virtual void PushPromise(string path, string method, NameValueCollection headers) {
             throw new NotImplementedException();
         }
     }

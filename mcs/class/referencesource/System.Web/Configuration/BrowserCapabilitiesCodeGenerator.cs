@@ -133,7 +133,7 @@ namespace System.Web.Configuration {
                     else {
                         // If we are targeting pre-4.0, we should be using version 2.0 of the assembly
                         // ASP.BrowserCapsFactory, so we need to read the token file from the 2.0 path.
-                        // (Dev10 bug 795509)
+                        // (Dev10 
                         string subPath = @"config\browsers\" + _publicKeyTokenFileName;
                         publicKeyTokenFile = ToolLocationHelper.GetPathToDotNetFrameworkFile(subPath, TargetDotNetFrameworkVersion.Version20);
                     }

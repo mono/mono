@@ -49,7 +49,7 @@ namespace System.Diagnostics {
             if (NativeMethods.GetWindow(new HandleRef(this, handle), NativeMethods.GW_OWNER) != (IntPtr)0 || !NativeMethods.IsWindowVisible(new HandleRef(this, handle)))
                 return false;
             
-            // [....]: should we use no window title to mean not a main window? (task man does)
+            // Microsoft: should we use no window title to mean not a main window? (task man does)
             
             /*
             int length = NativeMethods.GetWindowTextLength(handle) * 2;
@@ -1032,36 +1032,46 @@ namespace System.Diagnostics {
         
         #pragma warning disable 169        
         public static ProcessInfo[] GetProcessInfos() {
-            // On a normal machine, 30k to 40K will be enough.
-            // We use 128K here to tolerate mutilple connections to a machine.
-            int bufferSize = 128 * 1024;
-#if DEBUG
-            // on debug build, use a smaller buffer size to make sure we hit the retrying code path  
-           bufferSize = 1024;       
-#endif
+
             int requiredSize = 0;
             int status; 
 
             ProcessInfo[] processInfos;
             GCHandle bufferHandle = new GCHandle();
 
+            // Start with the default buffer size.
+            int bufferSize = DefaultCachedBufferSize;
+
+            // Get the cached buffer.
+            long[] buffer = Interlocked.Exchange(ref CachedBuffer, null);
+
             try {
                 // Retry until we get all the data
                 do {
-                    // Allocate buffer of longs since some platforms require the buffer to be 64-bit aligned.
-                    long[] buffer = new long[(bufferSize + 7) /8];
+                    if (buffer == null)
+                    {
+                        // Allocate buffer of longs since some platforms require the buffer to be 64-bit aligned.
+                        buffer = new long[(bufferSize + 7) / 8];
+                    }
+                    else
+                    {
+                        // If we have cached buffer, set the size properly.
+                        bufferSize = buffer.Length * sizeof(long);
+                    }
                     bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
 
-                status = NativeMethods.NtQuerySystemInformation(
-                    NativeMethods.NtQuerySystemProcessInformation,
+                    status = NativeMethods.NtQuerySystemInformation(
+                        NativeMethods.NtQuerySystemProcessInformation,
                         bufferHandle.AddrOfPinnedObject(),
-                    bufferSize,
-                    out requiredSize);
+                        bufferSize,
+                        out requiredSize);
 
-                    if ((uint)status == NativeMethods.STATUS_INFO_LENGTH_MISMATCH) {
+                    if ((uint)status == NativeMethods.STATUS_INFO_LENGTH_MISMATCH)
+                    {
                         if (bufferHandle.IsAllocated) bufferHandle.Free();
-                    bufferSize = GetNewBufferSize( bufferSize, requiredSize);
-                }
+                        buffer = null;
+                        bufferSize = GetNewBufferSize(bufferSize, requiredSize);
+                    }
                 } while ((uint)status == NativeMethods.STATUS_INFO_LENGTH_MISMATCH);
 
                 if (status < 0) { // see definition of NT_SUCCESS(Status) in SDK
@@ -1072,11 +1082,24 @@ namespace System.Diagnostics {
                 processInfos = GetProcessInfos(bufferHandle.AddrOfPinnedObject());
             }
             finally {
+                // Cache the final buffer for use on the next call.
+                Interlocked.Exchange(ref CachedBuffer, buffer);
+
                 if (bufferHandle.IsAllocated) bufferHandle.Free();
             }
 
             return processInfos;
         }
+
+        // Use a smaller buffer size on debug to ensure we hit the retry path.
+#if DEBUG
+        private const int DefaultCachedBufferSize = 1024;
+#else
+        private const int DefaultCachedBufferSize = 128 * 1024;
+#endif
+
+        // Cache a single buffer for use in GetProcessInfos().
+        private static long[] CachedBuffer;
 
        static ProcessInfo[] GetProcessInfos(IntPtr dataPtr) {
             // 60 is a reasonable number for processes on a normal machine.

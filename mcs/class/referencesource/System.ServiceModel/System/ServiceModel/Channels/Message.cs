@@ -34,7 +34,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
 
                 return false;
@@ -46,7 +46,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
 
                 return false;
@@ -978,7 +978,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return bodyWriter.IsFault;
             }
@@ -989,7 +989,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return bodyWriter.IsEmpty;
             }
@@ -1000,7 +1000,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return headers;
             }
@@ -1011,7 +1011,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 if (properties == null)
                     properties = new MessageProperties();
@@ -1024,7 +1024,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return headers.MessageVersion;
             }
@@ -1306,7 +1306,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return headers;
             }
@@ -1522,7 +1522,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return headers;
             }
@@ -1541,7 +1541,7 @@ namespace System.ServiceModel.Channels
             get
             {
                 if (IsDisposed)
-#pragma warning suppress 56503 // [....], Invalid State after dispose
+#pragma warning suppress 56503 // Microsoft, Invalid State after dispose
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 return properties;
             }

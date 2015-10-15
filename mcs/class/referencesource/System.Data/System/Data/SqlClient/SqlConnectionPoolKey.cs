@@ -2,8 +2,8 @@
 // <copyright file="ConnectionPoolKey.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient
@@ -12,6 +12,7 @@ namespace System.Data.SqlClient
     using System;
     using System.Collections;
     using System.Data.Common;
+    using System.Diagnostics;
 
     // SqlConnectionPoolKey: Implementation of a key to connection pool groups for specifically to be used for SqlConnection
     //  Connection string and SqlCredential are used as a key
@@ -19,16 +20,20 @@ namespace System.Data.SqlClient
     {
         private SqlCredential _credential;
         private int _hashValue;
+        private readonly string _accessToken;
 
-        internal SqlConnectionPoolKey(string connectionString, SqlCredential credential) : base(connectionString)
+        internal SqlConnectionPoolKey(string connectionString, SqlCredential credential, string accessToken) : base(connectionString)
         {
+            Debug.Assert(_credential == null || _accessToken == null, "Credential and AccessToken can't have the value at the same time.");
             _credential = credential;
+            _accessToken = accessToken;
             CalculateHashCode();
         }
 
         private SqlConnectionPoolKey(SqlConnectionPoolKey key) : base (key)
         {
              _credential = key.Credential;
+             _accessToken = key.AccessToken;
              CalculateHashCode();
         }
 
@@ -59,12 +64,19 @@ namespace System.Data.SqlClient
             }
         }
 
+        internal string AccessToken
+        {
+            get
+            {
+                return _accessToken;
+            }
+        }
 
         public override bool Equals(object obj)
         {
             SqlConnectionPoolKey key = obj as SqlConnectionPoolKey;
 
-            return (key != null && _credential == key._credential && ConnectionString == key.ConnectionString);
+            return (key != null && _credential == key._credential && ConnectionString == key.ConnectionString && Object.ReferenceEquals(_accessToken, key._accessToken));
         }
 
         public override int GetHashCode()
@@ -81,6 +93,13 @@ namespace System.Data.SqlClient
                 unchecked
                 {
                     _hashValue = _hashValue * 17 + _credential.GetHashCode();
+                }
+            }
+            else if (_accessToken != null)
+            {
+                unchecked
+                {
+                    _hashValue = _hashValue * 17 + _accessToken.GetHashCode();
                 }
             }
         }

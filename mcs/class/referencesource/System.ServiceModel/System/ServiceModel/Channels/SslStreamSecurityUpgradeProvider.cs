@@ -34,17 +34,19 @@ namespace System.ServiceModel.Channels
         bool requireClientCertificate;
         string scheme;
         bool enableChannelBinding;
+        SslProtocols sslProtocols;
 
-        SslStreamSecurityUpgradeProvider(IDefaultCommunicationTimeouts timeouts, SecurityTokenManager clientSecurityTokenManager, bool requireClientCertificate, string scheme, IdentityVerifier identityVerifier)
+        SslStreamSecurityUpgradeProvider(IDefaultCommunicationTimeouts timeouts, SecurityTokenManager clientSecurityTokenManager, bool requireClientCertificate, string scheme, IdentityVerifier identityVerifier, SslProtocols sslProtocols)
             : base(timeouts)
         {
             this.identityVerifier = identityVerifier;
             this.scheme = scheme;
             this.clientSecurityTokenManager = clientSecurityTokenManager;
             this.requireClientCertificate = requireClientCertificate;
+            this.sslProtocols = sslProtocols;
         }
 
-        SslStreamSecurityUpgradeProvider(IDefaultCommunicationTimeouts timeouts, SecurityTokenProvider serverTokenProvider, bool requireClientCertificate, SecurityTokenAuthenticator clientCertificateAuthenticator, string scheme, IdentityVerifier identityVerifier)
+        SslStreamSecurityUpgradeProvider(IDefaultCommunicationTimeouts timeouts, SecurityTokenProvider serverTokenProvider, bool requireClientCertificate, SecurityTokenAuthenticator clientCertificateAuthenticator, string scheme, IdentityVerifier identityVerifier, SslProtocols sslProtocols)
             : base(timeouts)
         {
             this.serverTokenProvider = serverTokenProvider;
@@ -52,6 +54,7 @@ namespace System.ServiceModel.Channels
             this.clientCertificateAuthenticator = clientCertificateAuthenticator;
             this.identityVerifier = identityVerifier;
             this.scheme = scheme;
+            this.sslProtocols = sslProtocols;
         }
 
         public static SslStreamSecurityUpgradeProvider CreateClientProvider(
@@ -65,7 +68,7 @@ namespace System.ServiceModel.Channels
             }
             SecurityTokenManager tokenManager = credentialProvider.CreateSecurityTokenManager();
 
-            return new SslStreamSecurityUpgradeProvider(context.Binding, tokenManager, bindingElement.RequireClientCertificate, context.Binding.Scheme, bindingElement.IdentityVerifier);
+            return new SslStreamSecurityUpgradeProvider(context.Binding, tokenManager, bindingElement.RequireClientCertificate, context.Binding.Scheme, bindingElement.IdentityVerifier, bindingElement.SslProtocols);
         }
 
         public static SslStreamSecurityUpgradeProvider CreateServerProvider(
@@ -99,7 +102,7 @@ namespace System.ServiceModel.Channels
                 TransportSecurityHelpers.GetCertificateTokenAuthenticator(tokenManager, context.Binding.Scheme, listenUri);
 
             return new SslStreamSecurityUpgradeProvider(context.Binding, tokenProvider, bindingElement.RequireClientCertificate,
-                certificateAuthenticator, context.Binding.Scheme, bindingElement.IdentityVerifier);
+                certificateAuthenticator, context.Binding.Scheme, bindingElement.IdentityVerifier, bindingElement.SslProtocols);
         }
 
         public override EndpointIdentity Identity
@@ -162,6 +165,11 @@ namespace System.ServiceModel.Channels
         public string Scheme
         {
             get { return this.scheme; }
+        }
+
+        public SslProtocols SslProtocols
+        {
+            get { return this.sslProtocols; }
         }
 
         public override T GetProperty<T>()
@@ -431,7 +439,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleOpenAuthenticatorComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -462,7 +470,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleOpenTokenProviderComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -493,7 +501,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleGetTokenComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -524,7 +532,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleCloseTokenProviderComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -589,7 +597,7 @@ namespace System.ServiceModel.Channels
             try
             {
                 sslStream.AuthenticateAsServer(this.parent.ServerCertificate, this.parent.RequireClientCertificate,
-                    SslProtocols.Default, false);
+                    this.parent.SslProtocols, false);
             }
             catch (AuthenticationException exception)
             {
@@ -703,7 +711,7 @@ namespace System.ServiceModel.Channels
 
                 this.sslStream = new SslStream(stream, false, this.acceptor.ValidateRemoteCertificate);
                 return this.sslStream.BeginAuthenticateAsServer(this.acceptor.parent.ServerCertificate,
-                    this.acceptor.parent.RequireClientCertificate, SslProtocols.Default, false, callback, this);
+                    this.acceptor.parent.RequireClientCertificate, this.acceptor.parent.SslProtocols, false, callback, this);
             }
 
             protected override Stream OnCompleteAuthenticateAsServer(IAsyncResult result)
@@ -910,7 +918,7 @@ namespace System.ServiceModel.Channels
             SslStream sslStream = new SslStream(stream, false, this.ValidateRemoteCertificate, selectionCallback);
             try
             {
-                sslStream.AuthenticateAsClient(string.Empty, clientCertificates, SslProtocols.Default, false);
+                sslStream.AuthenticateAsClient(string.Empty, clientCertificates, this.parent.SslProtocols, false);
             }
             catch (SecurityTokenValidationException tokenValidationException)
             {
@@ -995,7 +1003,7 @@ namespace System.ServiceModel.Channels
                 try
                 {
                     return this.sslStream.BeginAuthenticateAsClient(string.Empty, this.clientCertificates,
-                        SslProtocols.Default, false, callback, this);
+                        this.initiator.parent.SslProtocols, false, callback, this);
                 }
                 catch (SecurityTokenValidationException tokenValidationException)
                 {
@@ -1134,7 +1142,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleBaseOpenComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1165,7 +1173,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleOpenTokenProviderComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1196,7 +1204,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleGetTokenComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1286,7 +1294,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = this.HandleBaseCloseComplete(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1316,7 +1324,7 @@ namespace System.ServiceModel.Channels
                 {
                     SecurityUtils.EndCloseTokenProviderIfRequired(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

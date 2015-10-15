@@ -303,9 +303,9 @@ namespace System.Web.SessionState {
             DateTime        localLockDate;
             long            lockAge;
 
-            // Note that due to a bug in the RTM state server client, 
-            // we cannot add to body of the response when sending this
-            // message, otherwise the client will leak memory.
+            // Note that due to a 
+
+
             response = context.Response;
             response.StatusCode = 423;
             localLockDate = DateTimeUtil.ConvertToLocalTime(content._utcLockDate);
@@ -318,9 +318,9 @@ namespace System.Web.SessionState {
         private void ReportActionFlags(HttpContext context, int flags) {
             HttpResponse    response;
 
-            // Note that due to a bug in the RTM state server client, 
-            // we cannot add to body of the response when sending this
-            // message, otherwise the client will leak memory.
+            // Note that due to a 
+
+
             response = context.Response;
             response.AppendHeader(StateHeaders.ACTIONFLAGS_NAME_RAW, flags.ToString(CultureInfo.InvariantCulture));
         }

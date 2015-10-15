@@ -5,7 +5,7 @@
 // ==--==
 //  IMembershipCondition.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 //  Interface that all MembershipConditions must implement
 //

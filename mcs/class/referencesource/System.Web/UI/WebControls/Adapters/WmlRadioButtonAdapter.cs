@@ -141,14 +141,14 @@ namespace System.Web.UI.WebControls.Adapters {
         // RenderAsGroup returns a RadioButtonGroup object if the group should be 
         // rendered in a single <select> statement, or null if autopostback should
         // be enabled.
-        // 
+        // UNDONE: Check more general case when radiobuttons do not all share the same parent
         private RadioButtonGroup RenderAsGroup(RadioButton r) {
             bool startedSequence = false;
             bool finishedSequence = false;
 
             RadioButtonGroup group = new RadioButtonGroup();
 
-            //
+            //TODO : Check all controls on page
             foreach (Control c in r.Parent.Controls) {
                 RadioButton radioSibling = c as RadioButton;
                 LiteralControl literalSibling = c as LiteralControl;

@@ -329,7 +329,7 @@ internal static class Util {
             string assembly = "system_web";
 
             // QFE number is not included in client path
-            string version = VersionInfo.EngineVersion.Substring(0, VersionInfo.EngineVersion.LastIndexOf('.')).Replace('.', '_');
+            string version = VersionInfo.SystemWebVersion.Substring(0, VersionInfo.SystemWebVersion.LastIndexOf('.')).Replace('.', '_');
             location = String.Format(CultureInfo.InvariantCulture, location, assembly, version);
         }
 

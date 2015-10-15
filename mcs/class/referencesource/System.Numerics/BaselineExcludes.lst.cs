@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 
-[module: SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", Scope="namespace", Target="System.Numerics", Justification="[....] - by design")]
-[module: SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", Scope="assembly", Target="System.Numerics", Justification="[....] - by design")]
+[module: SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", Scope="namespace", Target="System.Numerics", Justification="jfree - by design")]
+[module: SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", Scope="assembly", Target="System.Numerics", Justification="jfree - by design")]
 
 [module: SuppressMessage("Microsoft.Performance","CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.SR.GetObject(System.String):System.Object")]
 [module: SuppressMessage("Microsoft.Performance","CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Numerics.BigInteger.ObjectInvariant():System.Void")]

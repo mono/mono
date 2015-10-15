@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -790,14 +790,14 @@ namespace System.Data.EntityClient
         protected override void Dispose(bool disposing)
         {
             // It is possible for the EntityConnection to be finalized even if the object was not actually
-            // created due to a "won't fix" bug in the x86 JITer--see Dev10 bug 892884.
-            // Even without this bug, a stack overflow trying to allocate space to run the constructor can
-            // result in effectively the same situation.  This means we can end up finalizing objects that
-            // have not even been fully initialized.  In order for this to work we have to be very careful
-            // what we do in Dispose and we need to stick rigidly to the "only dispose unmanaged resources
-            // if disposing is false" rule.  We don't actually have any unmanaged resources--these are
-            // handled by the base class or other managed classes that we have references to.  These classes
-            // will dispose of their unmanaged resources on finalize, so we shouldn't try to do it here.
+            // created due to a "won't fix" 
+
+
+
+
+
+
+
             if (disposing)
             {
                 ClearTransactions();

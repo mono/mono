@@ -258,7 +258,7 @@ namespace System.Net
 
         internal WebProxyData GetWebProxyData()
         {
-            // PS DevDiv bug #217205 / TFS Dev10 #588370: use winhttp.WinhttpGetIEProxyConfigForCurrentUser
+            // PS DevDiv 
             WebProxyDataBuilder builder = null;
 
             if (ComNetOS.IsWin7orLater)

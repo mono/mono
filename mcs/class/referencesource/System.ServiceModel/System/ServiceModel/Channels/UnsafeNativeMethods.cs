@@ -1099,6 +1099,12 @@ namespace System.ServiceModel.Channels
             [MarshalAs(UnmanagedType.U1), Out] out bool pfEnabled
             );
 
+
+#if !FEATURE_CORECLR
+        // On CoreCLR this is not the way to determine if a process is a tailored application (which means APPX).
+        // On CoreCLR AppX is determined by a flag past to the host which is exposed by AppDomain.IsAppXProcess in mscorlib.
+        // The reason for this if-def is to ensure nobody takes a dependency on this on CoreCLR.
+        
         // AppModel.h functions (Win8+)
         [DllImport(KERNEL32, CharSet = CharSet.None, EntryPoint = "GetCurrentPackageId")]
         [SecurityCritical]
@@ -1128,6 +1134,7 @@ namespace System.ServiceModel.Channels
         /// Indicates weather the running application is an immersive (or modern) Windows 8 (or later) application.
         /// </summary>
         internal static Lazy<bool> IsTailoredApplication = new Lazy<bool>(() => _IsTailoredApplication());
+#endif //!FEATURE_CORECLR
     }
 
     [SuppressUnmanagedCodeSecurity]
@@ -1145,7 +1152,7 @@ namespace System.ServiceModel.Channels
         internal int GetClientPid()
         {
             int pid;
-#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
             bool success = UnsafeNativeMethods.GetNamedPipeClientProcessId(this, out pid);
             if (!success)
             {

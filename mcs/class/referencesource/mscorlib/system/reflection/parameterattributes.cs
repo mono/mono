@@ -8,7 +8,7 @@
 //
 // ParameterAttributes is an enum defining the attributes that may be 
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    associated with a Parameter.  These are defined in CorHdr.h.
 //
 // <EMAIL>Author: darylo</EMAIL>

@@ -13,7 +13,7 @@ except the conversion of the key to lower case. So its fully usable for UNIX sys
 This class is used to create the StringDictionary object everywhere 
 its used for environment settings storage (only ProcessStartInfo.cs and Executor.cs). 
 This change enables the correct UNIX behavior along with not changing public API.
-Author: [....]
+Author: vitkaras
 */
 
 #if PLATFORM_UNIX

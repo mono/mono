@@ -146,32 +146,5 @@ namespace System {
                 return (ulong) Volatile.Read(ref _sharedStatics._memFailPointReservedMemory);
             }
         }
-
-#if FEATURE_CORECLR
-        // Silverlight2 implementation restriction (all hosts must specify the same PLATFORM_ASSEMBLIES list.)
-        internal static bool ConflictsWithPriorPlatformList(String platformListString)
-        {
-            if (platformListString == null)
-            {
-                platformListString = "";   // null is valid but collides with _platformListString sentinel so convert to semantically equivalent "".
-            }
-            String prior = Interlocked.CompareExchange<String>(ref _sharedStatics._platformListString, platformListString, null);
-
-            if (prior == null)
-            {
-                return false;
-            }
-            if (prior == platformListString)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private String _platformListString;
-
-#endif //FEATURE_CORECLR
-
     }
 }

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       avickers
+// @backupOwner jeffders
 //---------------------------------------------------------------------
 using System.Collections;
 using System.Data.Objects.DataClasses;
@@ -67,7 +67,7 @@ namespace System.Data.Objects.Internal
         ObjectContext Context { get; set; }
 
         /// <summary>
-        /// The merge option ----oicated with the wrapped entity.
+        /// The merge option assoicated with the wrapped entity.
         /// </summary>
         MergeOption MergeOption { get; }
 

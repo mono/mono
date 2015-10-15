@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -12,7 +12,6 @@ namespace System.Reflection
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.InteropServices;
@@ -56,13 +55,12 @@ namespace System.Reflection
             return left.Equals(right);
         }
 
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator !=(MethodInfo left, MethodInfo right)
         {
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR        
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -72,7 +70,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
 
         #region MemberInfo Overrides
         public override MemberTypes MemberType { get { return System.Reflection.MemberTypes.Method; } }
@@ -99,6 +96,7 @@ namespace System.Reflection
         public virtual Delegate CreateDelegate(Type delegateType, Object target) { throw new NotSupportedException(Environment.GetResourceString("NotSupported_SubclassOverride")); }
         #endregion
 
+#if !FEATURE_CORECLR
         Type _MethodInfo.GetType()
         {
             return base.GetType();
@@ -125,6 +123,7 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
     [Serializable]
@@ -355,9 +354,6 @@ namespace System.Reflection
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal override bool CacheEquals(object o) 
         { 
             RuntimeMethodInfo m = o as RuntimeMethodInfo;
@@ -528,24 +524,8 @@ namespace System.Reflection
                 if (m_name == null)
                     m_name = RuntimeMethodHandle.GetName(this);
 
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.MethodName(GetDeclaringTypeInternal().GetFullNameForEtw(), GetFullNameForEtw());
-                }
-#endif
-                
                 return m_name;
             }
-        }
-        
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            if (m_name == null)
-                return RuntimeMethodHandle.GetName(this);
-
-            return m_name;
         }
 
         public override Type DeclaringType 
@@ -597,9 +577,6 @@ namespace System.Reflection
 
         #region MethodBase Overrides
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal override ParameterInfo[] GetParametersNoCopy()
         {
             FetchNonReturnParameters();
@@ -658,9 +635,11 @@ namespace System.Reflection
         }
 
         [System.Security.SecuritySafeCritical] // overrides SafeCritical member
+#if !FEATURE_CORECLR
 #pragma warning disable 618
         [ReflectionPermissionAttribute(SecurityAction.Demand, Flags = ReflectionPermissionFlag.MemberAccess)]
 #pragma warning restore 618
+#endif
         public override MethodBody GetMethodBody()
         {
             MethodBody mb = RuntimeMethodHandle.GetMethodBody(this, ReflectedTypeInternal);
@@ -757,13 +736,6 @@ namespace System.Reflection
             }
             #endregion
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MethodInfoInvoke(GetRuntimeType() != null ? GetRuntimeType().GetFullNameForEtw() : "", GetFullNameForEtw());
-            }
-#endif
-
             return UnsafeInvokeInternal(obj, parameters, arguments);
         }
 
@@ -773,13 +745,6 @@ namespace System.Reflection
         internal object UnsafeInvoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
         {
             object[] arguments = InvokeArgumentsCheck(obj, invokeAttr, binder, parameters, culture);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MethodInfoInvoke(GetRuntimeType() != null ? GetRuntimeType().GetFullNameForEtw() : "", GetFullNameForEtw());
-            }
-#endif
 
             return UnsafeInvokeInternal(obj, parameters, arguments);
         }
@@ -936,25 +901,11 @@ namespace System.Reflection
             if (!rtType.IsDelegate())
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeDelegate"), "delegateType");
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginMethodInfoCreateDelegate(GetRuntimeType() != null ? GetRuntimeType().GetFullNameForEtw() : "", GetFullNameForEtw(),rtType.GetFullNameForEtw());
-            }
-#endif
-
             Delegate d = Delegate.CreateDelegateInternal(rtType, this, firstArgument, bindingFlags, ref stackMark);
             if (d == null)
             {
                 throw new ArgumentException(Environment.GetResourceString("Arg_DlgtTargMeth"));
             }
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndMethodInfoCreateDelegate(GetRuntimeType() != null ? GetRuntimeType().GetFullNameForEtw() : "", GetFullNameForEtw(),rtType.GetFullNameForEtw());
-            }
-#endif
 
             return d;
         }

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -11,7 +11,7 @@
 //
 
 namespace System.Security.Cryptography {
-[System.Runtime.InteropServices.ComVisible(true)]
+    [System.Runtime.InteropServices.ComVisible(true)]
     public abstract class AsymmetricAlgorithm : IDisposable {
         protected int KeySizeValue;
         protected KeySizes[] LegalKeySizesValue;
@@ -71,13 +71,19 @@ namespace System.Security.Cryptography {
         public virtual KeySizes[] LegalKeySizes { 
             get { return (KeySizes[]) LegalKeySizesValue.Clone(); }
         }
-
-        public abstract String SignatureAlgorithm {
-            get;
+        
+        // This method must be implemented by derived classes. In order to conform to the contract, it cannot be abstract.
+        public virtual String SignatureAlgorithm {
+            get {
+                throw new NotImplementedException();
+            }
         }
 
-        public abstract String KeyExchangeAlgorithm {
-            get;
+        // This method must be implemented by derived classes. In order to conform to the contract, it cannot be abstract.
+        public virtual String KeyExchangeAlgorithm {
+            get {
+                throw new NotImplementedException();
+            }
         }
         
         //
@@ -98,7 +104,14 @@ namespace System.Security.Cryptography {
             return (AsymmetricAlgorithm) CryptoConfig.CreateFromName(algName);
         }
 
-        public abstract void FromXmlString(String xmlString);
-        public abstract String ToXmlString(bool includePrivateParameters);
+        // This method must be implemented by derived classes. In order to conform to the contract, it cannot be abstract.
+        public virtual void FromXmlString(String xmlString) {
+            throw new NotImplementedException();
+        }
+
+        // This method must be implemented by derived classes. In order to conform to the contract, it cannot be abstract.
+        public virtual String ToXmlString(bool includePrivateParameters) {
+            throw new NotImplementedException();
+        }
     }
 }    

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -315,7 +315,7 @@ namespace System.Data.Common.Utils.Boolean
             {
                 if (x.IsSink())
                 {
-                    // [....] nodes '1' and '0' each have one static instance; use reference
+                    // sync nodes '1' and '0' each have one static instance; use reference
                     return x.Equals(y);
                 }
 
@@ -338,7 +338,7 @@ namespace System.Data.Common.Utils.Boolean
 
             public int GetHashCode(Vertex vertex)
             {
-                // [....] nodes '1' and '0' each have one static instance; use reference
+                // sync nodes '1' and '0' each have one static instance; use reference
                 if (vertex.IsSink())
                 {
                     return vertex.GetHashCode();

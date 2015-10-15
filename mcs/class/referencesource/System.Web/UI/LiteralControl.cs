@@ -74,7 +74,6 @@ namespace System.Web.UI {
         /// <devdoc>
         ///    <para>Saves any state that was modified after mark.</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected internal override void Render(HtmlTextWriter output) {
             output.Write(_text);
         }

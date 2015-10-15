@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Threading
 {
     using System;
@@ -29,9 +29,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Increment(ref int location)
         {
             return Add(ref location, 1);
@@ -39,9 +36,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long Increment(ref long location)
         {
             return Add(ref location, 1);
@@ -55,18 +49,12 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Decrement(ref int location)
         {
             return Add(ref location, -1);
         }
 
         [ResourceExposure(ResourceScope.None)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long Decrement(ref long location)
         {
             return Add(ref location, -1);
@@ -103,13 +91,11 @@ namespace System.Threading
         [System.Security.SecuritySafeCritical]
         public static extern double Exchange(ref double location1, double value);
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [System.Security.SecuritySafeCritical]
         public static extern Object Exchange(ref Object location1, Object value);
-#endif
 
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -242,18 +228,12 @@ namespace System.Threading
         internal static extern long ExchangeAdd(ref long location1, long value);
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Add(ref int location1, int value) 
         {
             return ExchangeAdd(ref location1, value) + value;
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long Add(ref long location1, long value) 
         {
             return ExchangeAdd(ref location1, value) + value;
@@ -268,9 +248,6 @@ namespace System.Threading
         }
 
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void MemoryBarrier()
         {
             Thread.MemoryBarrier();

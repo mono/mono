@@ -168,7 +168,7 @@ namespace System.Web.UI.Design.MobileControls.Util
         }
     }
 
-    // Copied from ndp\fx\src\Designer\[....]\System\[....]\Design\RTLAwareMessageBox.cs
+    // Copied from ndp\fx\src\Designer\Microsoft\System\Microsoft\Design\RTLAwareMessageBox.cs
     [Obsolete("The System.Web.Mobile.dll assembly has been deprecated and should no longer be used. For information about how to develop ASP.NET mobile applications, see http://go.microsoft.com/fwlink/?LinkId=157231.")]
     internal sealed class RTLAwareMessageBox {
 

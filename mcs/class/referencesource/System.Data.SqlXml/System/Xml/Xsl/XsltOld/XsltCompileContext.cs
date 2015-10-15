@@ -2,7 +2,7 @@
 // <copyright file="XsltCompileContext.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -53,7 +53,6 @@ namespace System.Xml.Xsl.XsltOld {
             get { return string.Empty; }
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public override string LookupNamespace(string prefix) {
             return this.manager.ResolveXPathNamespace(prefix);
         }
@@ -468,7 +467,7 @@ namespace System.Xml.Xsl.XsltOld {
                 if (typeof(XPathNodeIterator).IsAssignableFrom(type)) {
                     return XPathResultType.NodeSet;
                 }
-                // [....]: It be better to check that type is realy object and otherwise return XPathResultType.Error
+                // Microsoft: It be better to check that type is realy object and otherwise return XPathResultType.Error
                 return XPathResultType.Any;
             case TypeCode.DateTime :
                 return XPathResultType.Error;

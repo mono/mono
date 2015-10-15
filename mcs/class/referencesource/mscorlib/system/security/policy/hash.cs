@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -424,25 +424,8 @@ namespace System.Security.Policy
             else if (hashAlgorithm.IsAssignableFrom(typeof(SHA256)))
             {
                 // The managed SHA256 implementation is not a FIPS certified implementation, however on
-                // Windows 2003 and higher we have a FIPS alternative.  If we're on Windows 2003 or better,
-                // use the CAPI implementation - otherwise, we fall back to the managed implementation if
-                // FIPS is not enabled.
-                Version osVersion = Environment.OSVersion.Version;
-                bool isWin2k3OrHigher = Environment.RunningOnWinNT &&
-                                        (osVersion.Major > 5 || (osVersion.Major == 5 && osVersion.Minor >= 2));
-
-                if (isWin2k3OrHigher)
-                {
-                    return Type.GetType("System.Security.Cryptography.SHA256CryptoServiceProvider, " + AssemblyRef.SystemCore);
-                }
-                else if (!CryptoConfig.AllowOnlyFipsAlgorithms)
-                {
-                    return typeof(SHA256Managed);
-                }
-                else
-                {
-                    return null;
-                }
+                // we have a FIPS alternative.
+                return Type.GetType("System.Security.Cryptography.SHA256CryptoServiceProvider, " + AssemblyRef.SystemCore);
             }
             else
             {

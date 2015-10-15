@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: Monitor
@@ -52,9 +52,6 @@ namespace System.Threading {
         // could be uninitialized if we threw an exception in our prolog.
         // The JIT should inline this method to allow check of lockTaken argument to be optimized out
         // in the typical case. Note that the method has to be transparent for inlining to be allowed by the VM.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Enter(Object obj, ref bool lockTaken)
         {
             if (lockTaken)
@@ -107,9 +104,6 @@ namespace System.Threading {
 
         // The JIT should inline this method to allow check of lockTaken argument to be optimized out
         // in the typical case. Note that the method has to be transparent for inlining to be allowed by the VM.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void TryEnter(Object obj, ref bool lockTaken)
         {
             if (lockTaken)
@@ -128,9 +122,6 @@ namespace System.Threading {
         =========================================================================*/
         // The JIT should inline this method to allow check of lockTaken argument to be optimized out
         // in the typical case. Note that the method has to be transparent for inlining to be allowed by the VM.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool TryEnter(Object obj, int millisecondsTimeout)
         {
             bool lockTaken = false;
@@ -153,9 +144,6 @@ namespace System.Threading {
 
         // The JIT should inline this method to allow check of lockTaken argument to be optimized out
         // in the typical case. Note that the method has to be transparent for inlining to be allowed by the VM.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void TryEnter(Object obj, int millisecondsTimeout, ref bool lockTaken)
         {
             if (lockTaken)

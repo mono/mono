@@ -217,5 +217,8 @@ namespace System.IO {
             throw new NotSupportedException(SR.GetString(SR.NotSupported_UnwritableStream));
         }
 
+        internal static void OperationAborted() {
+            throw new IOException(SR.GetString(SR.IO_OperationAborted));
+        }
     }
 }

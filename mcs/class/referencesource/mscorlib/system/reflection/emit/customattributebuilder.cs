@@ -5,7 +5,7 @@
 // ==--==
 /*============================================================
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 ** 
 ** Class:  CustomAttrbuteBuilder
 **
@@ -555,6 +555,7 @@ namespace System.Reflection.Emit {
                                                       typeof(System.Diagnostics.DebuggableAttribute) == m_con.DeclaringType);
         }
 
+#if !FEATURE_CORECLR
         void _CustomAttributeBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -574,6 +575,7 @@ namespace System.Reflection.Emit {
         {
             throw new NotImplementedException();
         }
+#endif
 
         internal ConstructorInfo    m_con;
         internal Object[]           m_constructorArgs;

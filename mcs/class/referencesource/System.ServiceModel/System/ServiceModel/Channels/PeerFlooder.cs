@@ -938,7 +938,7 @@ namespace System.ServiceModel.Channels
 
 
         //this is the callback routine for async completion on channel BeginSend() operations.
-        //if we are done, simply return. This can happen if user called [....] EndX.
+        //if we are done, simply return. This can happen if user called sync EndX.
         //if the flooder is still processing BeginSend(), then we probably cant complete. In this case, add the result to pending and return
         //main thread will flush the pending completions in MarkEnd().
         //otherwise, call EndX on the result and remove it from results.

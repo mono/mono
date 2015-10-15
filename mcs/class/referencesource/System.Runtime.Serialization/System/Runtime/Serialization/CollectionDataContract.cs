@@ -539,14 +539,14 @@ namespace System.Runtime.Serialization
                     string itemName = null, keyName = null, valueName = null;
                     if (collectionContractAttribute != null)
                     {
-                        if (collectionContractAttribute.IsItemNameSetExplicit)
+                        if (collectionContractAttribute.IsItemNameSetExplicitly)
                         {
                             if (collectionContractAttribute.ItemName == null || collectionContractAttribute.ItemName.Length == 0)
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidDataContractException(SR.GetString(SR.InvalidCollectionContractItemName, DataContract.GetClrTypeFullName(UnderlyingType))));
                             itemName = DataContract.EncodeLocalName(collectionContractAttribute.ItemName);
                             itemNameSetExplicit = true;
                         }
-                        if (collectionContractAttribute.IsKeyNameSetExplicit)
+                        if (collectionContractAttribute.IsKeyNameSetExplicitly)
                         {
                             if (collectionContractAttribute.KeyName == null || collectionContractAttribute.KeyName.Length == 0)
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidDataContractException(SR.GetString(SR.InvalidCollectionContractKeyName, DataContract.GetClrTypeFullName(UnderlyingType))));
@@ -554,7 +554,7 @@ namespace System.Runtime.Serialization
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidDataContractException(SR.GetString(SR.InvalidCollectionContractKeyNoDictionary, DataContract.GetClrTypeFullName(UnderlyingType), collectionContractAttribute.KeyName)));
                             keyName = DataContract.EncodeLocalName(collectionContractAttribute.KeyName);
                         }
-                        if (collectionContractAttribute.IsValueNameSetExplicit)
+                        if (collectionContractAttribute.IsValueNameSetExplicitly)
                         {
                             if (collectionContractAttribute.ValueName == null || collectionContractAttribute.ValueName.Length == 0)
                                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidDataContractException(SR.GetString(SR.InvalidCollectionContractValueName, DataContract.GetClrTypeFullName(UnderlyingType))));

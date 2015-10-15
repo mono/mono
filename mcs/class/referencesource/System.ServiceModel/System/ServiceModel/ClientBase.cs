@@ -376,7 +376,7 @@ namespace System.ServiceModel
                                         }
                                         else
                                         {
-#pragma warning suppress 56503 // [....], We throw only for unknown exceptions.
+#pragma warning suppress 56503 // Microsoft, We throw only for unknown exceptions.
                                             throw;
                                         }
                                     }

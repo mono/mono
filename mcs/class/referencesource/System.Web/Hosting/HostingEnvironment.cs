@@ -86,6 +86,11 @@ namespace System.Web.Hosting {
             get;
             set;
         }
+
+        public KeyValuePair<string, bool>[] ClrQuirksSwitches {
+            get;
+            set;
+        }
     }
 
     public sealed class HostingEnvironment : MarshalByRefObject {
@@ -279,6 +284,10 @@ namespace System.Web.Hosting {
                 BuildManagerHost.SupportsMultiTargeting = true;
             }
 
+            // Set CLR quirks switches before the config system is initialized since config might depend on them
+            if (_hostingParameters != null && _hostingParameters.ClrQuirksSwitches != null && _hostingParameters.ClrQuirksSwitches.Length > 0) {
+                SetClrQuirksSwitches(_hostingParameters.ClrQuirksSwitches);
+            }
 
             //
             // init config system using private config if applicable
@@ -434,6 +443,32 @@ namespace System.Web.Hosting {
             }
         }
 
+        private static void SetClrQuirksSwitches(KeyValuePair<string, bool>[] switches) {
+            // First, see if the static API AppContext.SetSwitch even exists.
+            // Type.GetType will return null if the type doesn't exist; it will throw on catastrophic failure.
+
+            Type appContextType = Type.GetType("System.AppContext, " + AssemblyRef.Mscorlib);
+            if (appContextType == null) {
+                return; // wrong version of mscorlib - do nothing
+            }
+
+            Action<string, bool> setter = (Action<string, bool>)Delegate.CreateDelegate(
+                typeof(Action<string, bool>),
+                appContextType,
+                "SetSwitch",
+                ignoreCase: false,
+                throwOnBindFailure: false);
+            if (setter == null) {
+                return; // wrong version of mscorlib - do nothing
+            }
+
+            // Finally, set each switch individually.
+
+            foreach (var sw in switches) {
+                setter(sw.Key, sw.Value);
+            }
+        }
+
 
         // If an exception was thrown during initialization, return it.
         public static Exception InitializationException {
@@ -555,7 +590,7 @@ namespace System.Web.Hosting {
 
             HttpRuntime.SetShutdownReason(ApplicationShutdownReason.HostingEnvironment, "HostingEnvironment initiated shutdown");
 
-            // Avoid calling Environment.StackTrace if we are in the ClientBuildManager (Dev10 bug 824659)
+            // Avoid calling Environment.StackTrace if we are in the ClientBuildManager (Dev10 
             if (!BuildManagerHost.InClientBuildManager) {
                 new EnvironmentPermission(PermissionState.Unrestricted).Assert();
                 try {
@@ -566,7 +601,7 @@ namespace System.Web.Hosting {
                 }
             }
 
-            // waitChangeNotification need not be honored in ClientBuildManager (Dev11 bug 264894)
+            // waitChangeNotification need not be honored in ClientBuildManager (Dev11 
             if (!BuildManagerHost.InClientBuildManager) {
                 // this should only be called once, before the cache is disposed, and
                 // the config records are released.

@@ -610,10 +610,6 @@ namespace System
 
         [System.Security.SecurityCritical]
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-        #endif //!FEATURE_CORECLR
         private void CtorClosed(Object target, IntPtr methodPtr)
         {
             if (target == null) 
@@ -624,9 +620,6 @@ namespace System
 
         [System.Security.SecurityCritical]
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorClosedStatic(Object target, IntPtr methodPtr)
         {
             this._target = target;
@@ -635,9 +628,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorRTClosed(Object target, IntPtr methodPtr)
         {
             this._target = target;
@@ -646,10 +636,6 @@ namespace System
 
         [System.Security.SecurityCritical]
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-        #endif //!FEATURE_CORECLR
         private void CtorOpened(Object target, IntPtr methodPtr, IntPtr shuffleThunk)
         {
             this._target = this;
@@ -659,9 +645,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorSecureClosed(Object target, IntPtr methodPtr, IntPtr callThunk, IntPtr creatorMethod)
         {
             MulticastDelegate realDelegate = (MulticastDelegate)Delegate.InternalAllocLike(this);
@@ -675,9 +658,6 @@ namespace System
     
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorSecureClosedStatic(Object target, IntPtr methodPtr, IntPtr callThunk, IntPtr creatorMethod)
         {
             MulticastDelegate realDelegate = (MulticastDelegate)Delegate.InternalAllocLike(this);
@@ -691,9 +671,6 @@ namespace System
     
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorSecureRTClosed(Object target, IntPtr methodPtr, IntPtr callThunk, IntPtr creatorMethod)
         {
             MulticastDelegate realDelegate = Delegate.InternalAllocLike(this);
@@ -707,9 +684,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorSecureOpened(Object target, IntPtr methodPtr, IntPtr shuffleThunk, IntPtr callThunk, IntPtr creatorMethod)
         {
             MulticastDelegate realDelegate = Delegate.InternalAllocLike(this);
@@ -723,9 +697,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorVirtualDispatch(Object target, IntPtr methodPtr, IntPtr shuffleThunk)
         {
             this._target = this;
@@ -735,9 +706,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorSecureVirtualDispatch(Object target, IntPtr methodPtr, IntPtr shuffleThunk, IntPtr callThunk, IntPtr creatorMethod)
         {
             MulticastDelegate realDelegate = Delegate.InternalAllocLike(this);
@@ -751,9 +719,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorCollectibleClosedStatic(Object target, IntPtr methodPtr, IntPtr gchandle)
         {
             this._target = target;
@@ -763,9 +728,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorCollectibleOpened(Object target, IntPtr methodPtr, IntPtr shuffleThunk, IntPtr gchandle)
         {
             this._target = this;
@@ -776,9 +738,6 @@ namespace System
 
         [System.Security.SecurityCritical]  // auto-generated
         [System.Diagnostics.DebuggerNonUserCode]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private void CtorCollectibleVirtualDispatch(Object target, IntPtr methodPtr, IntPtr shuffleThunk, IntPtr gchandle)
         {
             this._target = this;

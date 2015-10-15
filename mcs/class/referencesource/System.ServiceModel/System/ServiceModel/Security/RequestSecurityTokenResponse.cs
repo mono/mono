@@ -334,7 +334,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRSTR, "EntropyToken")));
                 }
@@ -348,7 +348,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRSTR, "IssuedToken")));
                 }
@@ -368,7 +368,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRSTR, "ProofToken")));
                 }
@@ -388,7 +388,7 @@ namespace System.ServiceModel.Security
             {
                 if (!this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemAvailableInDeserializedRSTROnly, "RequestSecurityTokenXml")));
                 }
@@ -402,7 +402,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRST, "AppliesTo")));
                 }
@@ -416,7 +416,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRST, "AppliesToSerializer")));
                 }
@@ -430,7 +430,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRST, "AppliesToType")));
                 }
@@ -444,7 +444,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.isReceiver)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ItemNotAvailableInDeserializedRSTR, "IsLifetimeSet")));
                 }

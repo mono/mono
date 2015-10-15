@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.SqlClient.SqlGen
@@ -1608,7 +1608,7 @@ namespace System.Data.SqlClient.SqlGen
                 // consistently return NULL as the result.
                 //      However, if instead we use the optimized LIKE translation when the search param is a DbNullExpression,
                 //      only SQL Server 2005 yields a True instead of a DbNull as compared to SQL Server 2008 and 2000. This is
-                //      bug 32315 in LIKE in SQL Server 2005.
+                //      
                 result.Append("CHARINDEX( ");
                 result.Append(args[1].Accept(sqlgen));
                 result.Append(", ");

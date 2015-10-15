@@ -285,14 +285,14 @@ namespace System.Net {
         private static readonly int RequestChannelBindStatusSize =
             Marshal.SizeOf(typeof(UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_CHANNEL_BIND_STATUS));
 
-        // Win8# 559317 fixed a bug in Http.sys's HttpReceiveClientCertificate method.
-        // Without this fix IOCP callbacks were not being called although ERROR_IO_PENDING was
-        // returned from HttpReceiveClientCertificate when using the 
-        // FileCompletionNotificationModes.SkipCompletionPortOnSuccess flag.
-        // This bug was only hit when the buffer passed into HttpReceiveClientCertificate
-        // (1500 bytes initially) is tool small for the certificate.
-        // Due to this bug in downlevel operating systems the FileCompletionNotificationModes.SkipCompletionPortOnSuccess
-        // flag is only used on Win8 and later.
+        // Win8# 559317 fixed a 
+
+
+
+
+
+
+
         internal static readonly bool SkipIOCPCallbackOnSuccess = ComNetOS.IsWin8orLater;
 
         // Mitigate potential DOS attacks by limiting the number of unknown headers we accept.  Numerous header names 
@@ -1564,8 +1564,8 @@ namespace System.Net {
                             outBlob = context.GetOutgoingDigestBlob(inBlob, verb, null, Realm, false, false, out statusCodeNew);
                             GlobalLog.Print("HttpListener#" + ValidationHelper.HashString(this) + "::HandleAuthentication() GetOutgoingDigestBlob() returned IsCompleted:" + context.IsCompleted + " statusCodeNew:" + statusCodeNew + " outBlob:[" + outBlob + "]");
 
-                            // WDigest bug: sometimes when AcceptSecurityContext returns success, it provides a bogus, empty 4k buffer.
-                            // Ignore it.  (Should find out what's going on here from WDigest people.)
+                            // WDigest 
+
                             if (statusCodeNew == SecurityStatus.OK)
                             {
                                 outBlob = null;
@@ -1654,9 +1654,9 @@ namespace System.Net {
                                 error = !context.IsValidContext;
                                 if (error)
                                 {
-                                    // Bug #474228: SSPI Workaround
-                                    // If a client sends up a blob on the initial request, Negotiate returns SEC_E_INVALID_HANDLE
-                                    // when it should return SEC_E_INVALID_TOKEN.
+                                    // 
+
+
                                     if (statusCodeNew == SecurityStatus.InvalidHandle && oldContext == null && bytes != null && bytes.Length > 0)
                                     {
                                         statusCodeNew = SecurityStatus.InvalidToken;

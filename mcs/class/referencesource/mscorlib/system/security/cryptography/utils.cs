@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -87,7 +87,7 @@ namespace System.Security.Cryptography
         internal const int CALG_RC4               = (ALG_CLASS_DATA_ENCRYPT | ALG_TYPE_STREAM | 1);
 #endif // FEATURE_CRYPTO
 
-                                        internal const int PROV_RSA_FULL          = 1;
+        internal const int PROV_RSA_FULL          = 1;
         internal const int PROV_DSS_DH            = 13;
         internal const int PROV_RSA_AES           = 24;
 
@@ -142,6 +142,10 @@ namespace System.Security.Cryptography
         {
         }
 
+        // Provider type to use by default for RSA operations. We want to use RSA-AES CSP
+        // since it enables access to SHA-2 operations. All currently supported OSes support RSA-AES.
+        internal const int DefaultRsaProviderType = Constants.PROV_RSA_AES;
+#if !MONO
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
         // Private object for locking instead of locking on a public type for SQL reliability work.
         private static Object s_InternalSyncObject = new Object();
@@ -149,40 +153,7 @@ namespace System.Security.Cryptography
         private static Object InternalSyncObject {
             get { return s_InternalSyncObject; }
         }
-#endif // FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
 
-        // Provider type to use by default for RSA operations.  On systems which support the RSA-AES CSP, we
-        // want to use that since it enables access to SHA-2 operations, downlevel we fall back to the
-        // RSA-FULL CSP.
-        private static volatile int _defaultRsaProviderType;
-        private static volatile bool _haveDefaultRsaProviderType;
-        internal static int DefaultRsaProviderType
-        {
-            get {
-                if (!_haveDefaultRsaProviderType)
-                {
-#if MONO
-                    // The default provider value must remain 1 for Mono, otherwise we won't be able
-                    // to locate keypairs that were serialized by Mono versions 4.0 and lower.
-                    // (The ProviderType property in the CspParameters class affects serialization)
-                    _defaultRsaProviderType = 1;
-#else
-                    // The AES CSP is only supported on WinXP and higher
-                    bool osSupportsAesCsp = Environment.OSVersion.Platform == PlatformID.Win32NT &&
-                                            (Environment.OSVersion.Version.Major > 5 ||
-                                            (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1));
-
-                    _defaultRsaProviderType = osSupportsAesCsp ? Constants.PROV_RSA_AES : Constants.PROV_RSA_FULL;
-#endif
-                    _haveDefaultRsaProviderType = true;
-                }
-
-                return _defaultRsaProviderType;
-            }
-        }
-#if !MONO
-#if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
-#if !FEATURE_PAL
         [System.Security.SecurityCritical] // auto-generated
         private static volatile SafeProvHandle _safeProvHandle;
         internal static SafeProvHandle StaticProvHandle {
@@ -191,16 +162,13 @@ namespace System.Security.Cryptography
                 if (_safeProvHandle == null) {
                     lock (InternalSyncObject) {
                         if (_safeProvHandle == null) {
-                            SafeProvHandle safeProvHandle = AcquireProvHandle(new CspParameters(DefaultRsaProviderType));
-                            Thread.MemoryBarrier();
-                            _safeProvHandle = safeProvHandle;
+                            _safeProvHandle = AcquireProvHandle(new CspParameters(DefaultRsaProviderType));
                         }
                     }
                 }
                 return _safeProvHandle;
             }
         }
-#endif // !FEATURE_PAL
 
         [System.Security.SecurityCritical] // auto-generated
         private static volatile SafeProvHandle _safeDssProvHandle;
@@ -210,9 +178,7 @@ namespace System.Security.Cryptography
                 if (_safeDssProvHandle == null) {
                     lock (InternalSyncObject) {
                         if (_safeDssProvHandle == null) {
-                            SafeProvHandle safeProvHandle = CreateProvHandle(new CspParameters(Constants.PROV_DSS_DH), true);
-                            Thread.MemoryBarrier();
-                            _safeDssProvHandle = safeProvHandle;
+                            _safeDssProvHandle = CreateProvHandle(new CspParameters(Constants.PROV_DSS_DH), true);
                         }
                     }
                 }
@@ -512,8 +478,9 @@ namespace System.Security.Cryptography
             }
         }
 #endif // FEATURE_CRYPTO
+
 #endif
-        private static volatile RNGCryptoServiceProvider _rng = null;
+        private static volatile RNGCryptoServiceProvider _rng;
         internal static RNGCryptoServiceProvider StaticRandomNumberGenerator {
             get {
                 if (_rng == null)

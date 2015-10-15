@@ -150,9 +150,6 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     [MarshalAs(UnmanagedType.LPWStr)] 
     private String _stackTrace;  // Where we allocated this SafeHandle.
 #endif
-#if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-    #endif //!FEATURE_CORECLR
     protected IntPtr handle;   // this must be protected so derived classes can use out params. 
     private int _state;   // Combined ref count and closed/disposed flags (so we can atomically modify them).
     private bool _ownsHandle;  // Whether we can release this handle.
@@ -208,9 +205,6 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     extern void InternalFinalize();
 #endif
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     protected void SetHandle(IntPtr handle) {
         this.handle = handle;
     }
@@ -231,9 +225,6 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     //     and get back information for an entirely unrelated resource).
     [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
     [ResourceExposure(ResourceScope.None)]
-#if !FEATURE_CORECLR
-    [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
     public IntPtr DangerousGetHandle()
     {
         return handle;
@@ -241,9 +232,6 @@ public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
 
     public bool IsClosed {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         get { return (_state & 1) == 1; }
     }
 

@@ -4,6 +4,7 @@
 namespace System.ServiceModel
 {
     using System;
+    using System.Security.Authentication;
     using System.Security.Authentication.ExtendedProtection;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Security;
@@ -19,12 +20,14 @@ namespace System.ServiceModel
         TcpClientCredentialType clientCredentialType;
         ProtectionLevel protectionLevel;
         ExtendedProtectionPolicy extendedProtectionPolicy;
+        SslProtocols sslProtocols;
 
         public TcpTransportSecurity()
         {
             this.clientCredentialType = DefaultClientCredentialType;
             this.protectionLevel = DefaultProtectionLevel;
             this.extendedProtectionPolicy = ChannelBindingUtility.DefaultPolicy;
+            this.sslProtocols = TransportDefaults.SslProtocols;
         }
 
         [DefaultValue(DefaultClientCredentialType)]
@@ -78,6 +81,17 @@ namespace System.ServiceModel
             }
         }
 
+        [DefaultValue(TransportDefaults.SslProtocols)]
+        public SslProtocols SslProtocols
+        {
+            get { return this.sslProtocols; }
+            set
+            {
+                SslProtocolsHelper.Validate(value);
+                this.sslProtocols = value;
+            }
+        }
+
         SslStreamSecurityBindingElement CreateSslBindingElement(bool requireClientCertificate)
         {
             if (this.protectionLevel != ProtectionLevel.EncryptAndSign)
@@ -88,17 +102,20 @@ namespace System.ServiceModel
 
             SslStreamSecurityBindingElement result = new SslStreamSecurityBindingElement();
             result.RequireClientCertificate = requireClientCertificate;
+            result.SslProtocols = sslProtocols;
             return result;
         }
 
-        static bool IsSslBindingElement(BindingElement element, TcpTransportSecurity transportSecurity, out bool requireClientCertificate)
+        static bool IsSslBindingElement(BindingElement element, TcpTransportSecurity transportSecurity, out bool requireClientCertificate, out SslProtocols sslProtocols)
         {
             requireClientCertificate = false;
+            sslProtocols = TransportDefaults.SslProtocols;
             SslStreamSecurityBindingElement ssl = element as SslStreamSecurityBindingElement;
             if (ssl == null)
                 return false;
             transportSecurity.ProtectionLevel = ProtectionLevel.EncryptAndSign;
             requireClientCertificate = ssl.RequireClientCertificate;
+            sslProtocols = ssl.SslProtocols;
             return true;
         }
 
@@ -110,7 +127,8 @@ namespace System.ServiceModel
         internal static bool SetTransportProtectionOnly(BindingElement transport, TcpTransportSecurity transportSecurity)
         {
             bool requireClientCertificate;
-            return IsSslBindingElement(transport, transportSecurity, out requireClientCertificate);
+            SslProtocols sslProtocols;
+            return IsSslBindingElement(transport, transportSecurity, out requireClientCertificate, out sslProtocols);
         }
 
         internal BindingElement CreateTransportProtectionAndAuthentication()
@@ -130,15 +148,17 @@ namespace System.ServiceModel
         internal static bool SetTransportProtectionAndAuthentication(BindingElement transport, TcpTransportSecurity transportSecurity)
         {
             bool requireClientCertificate = false;
+            SslProtocols sslProtocols = TransportDefaults.SslProtocols;
             if (transport is WindowsStreamSecurityBindingElement)
             {
                 transportSecurity.ClientCredentialType = TcpClientCredentialType.Windows;
                 transportSecurity.ProtectionLevel = ((WindowsStreamSecurityBindingElement)transport).ProtectionLevel;
                 return true;
             }
-            else if (IsSslBindingElement(transport, transportSecurity, out requireClientCertificate))
+            else if (IsSslBindingElement(transport, transportSecurity, out requireClientCertificate, out sslProtocols))
             {
                 transportSecurity.ClientCredentialType = requireClientCertificate ? TcpClientCredentialType.Certificate : TcpClientCredentialType.None;
+                transportSecurity.SslProtocols = sslProtocols;
                 return true;
             }
             return false;
@@ -148,6 +168,7 @@ namespace System.ServiceModel
         {
             return this.ClientCredentialType != TcpTransportSecurity.DefaultClientCredentialType
                 || this.ProtectionLevel != TcpTransportSecurity.DefaultProtectionLevel
+                || this.SslProtocols != TransportDefaults.SslProtocols
                 || ShouldSerializeExtendedProtectionPolicy();
         }
 

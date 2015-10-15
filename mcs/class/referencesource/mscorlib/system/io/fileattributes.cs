@@ -37,8 +37,8 @@ namespace System.IO {
         Offline = 0x1000,
         NotContentIndexed = 0x2000,
         Encrypted = 0x4000,
-        
-#if !FEATURE_NETCORE
+
+#if !FEATURE_CORECLR
 #if FEATURE_COMINTEROP
         [System.Runtime.InteropServices.ComVisible(false)]        
 #endif // FEATURE_COMINTEROP

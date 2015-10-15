@@ -1649,7 +1649,7 @@ internal class ISAPIWorkerRequestInProc : ISAPIWorkerRequest {
     protected const int NUM_BASIC_SERVER_VARIABLES = 12; // needed on every request
     protected const int NUM_ADDITIONAL_SERVER_VARIABLES = 23; // needed when HttpRequest.ServerVariables is populated
 
-    // These constants must be kept in [....] with g_szServerVariables and g_szUnicodeServerVariables in ecbdirect.cxx
+    // These constants must be kept in sync with g_szServerVariables and g_szUnicodeServerVariables in ecbdirect.cxx
 
     protected const int LOGON_USER = 0;
     protected const int AUTH_TYPE = 1;
@@ -1887,7 +1887,6 @@ internal class ISAPIWorkerRequestInProc : ISAPIWorkerRequest {
         }
     }
 
-    [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
     private String GetAdditionalServerVar(int index) {
         if (_additionalServerVars == null)
             GetAdditionalServerVariables();
@@ -2408,7 +2407,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             CallEndOfRequestCallbackOnceAfterAllIoComplete();
         }
         else if (rc != 0 && async) {
-            // on async failure default to [....] path
+            // on async failure default to sync path
             async = false;
             
             if (!inAsyncFlush) {

@@ -22,6 +22,11 @@ namespace System
         private static bool s_isAppEarlierThanWindowsPhoneMango;
 #endif //FEATURE_LEGACYNETCF
 
+#if FEATURE_CORECLR
+        private static bool s_isAppSilverlight81;  // The app targets SL8.1 version
+        private static bool s_useLatestBehaviorWhenTFMNotSpecified; // Which behavior to use when the TFM is not specified.
+#endif //FEATURE_CORECLR
+
 #if !FEATURE_CORECLR
         private static bool s_isNetFx40TimeSpanLegacyFormatMode;
         private static bool s_isNetFx40LegacySecurityPolicy;
@@ -48,6 +53,12 @@ namespace System
             s_isAppEarlierThanSilverlight4 = IsCompatibilitySwitchSet("APP_EARLIER_THAN_SL4.0");
 #endif //FEATURE_CORECLR && !FEATURE_CORESYSTEM
 
+
+#if FEATURE_CORECLR
+            s_isAppSilverlight81 = IsCompatibilitySwitchSet("WindowsPhone_5.1.0.0");
+            s_useLatestBehaviorWhenTFMNotSpecified = IsCompatibilitySwitchSet("UseLatestBehaviorWhenTFMMissing");
+#endif //FEATURE_CORECLR
+
 #if FEATURE_LEGACYNETCF
             s_isAppEarlierThanWindowsPhoneMango = IsCompatibilitySwitchSet("WindowsPhone_3.7.0.0");
             s_isAppEarlierThanWindowsPhone8 = s_isAppEarlierThanWindowsPhoneMango || 
@@ -66,9 +77,6 @@ namespace System
 
         public static bool IsAppEarlierThanSilverlight4
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if FEATURE_CORECLR && !FEATURE_CORESYSTEM
@@ -79,11 +87,33 @@ namespace System
             }
         }
 
+#if FEATURE_CORECLR
+        /// <summary>
+        /// This property returns whether the app is hosted under SL 8.1 version
+        /// </summary>
+        internal static bool IsAppSilverlight81
+        {
+            get
+            {
+                // PS - Do not use this property for adding quirks. Please use the exposed properties of BinaryCompatiblity class instead.
+                return s_isAppSilverlight81;
+            }
+        }
+
+        /// <summary>
+        /// This property returns whether to give the latest behavior when the TFM is missing
+        /// </summary>
+        internal static bool UseLatestBehaviorWhenTFMNotSpecified
+        {
+            get
+            {
+                return s_useLatestBehaviorWhenTFMNotSpecified;
+            }
+        }
+#endif //FEATURE_CORECLR
+
         public static bool IsAppEarlierThanWindowsPhone8
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if FEATURE_LEGACYNETCF
@@ -96,9 +126,6 @@ namespace System
 
         public static bool IsAppEarlierThanWindowsPhoneMango
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if FEATURE_LEGACYNETCF
@@ -111,9 +138,6 @@ namespace System
 
         public static bool IsNetFx40TimeSpanLegacyFormatMode
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if !FEATURE_CORECLR
@@ -126,9 +150,6 @@ namespace System
 
         public static bool IsNetFx40LegacySecurityPolicy
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if !FEATURE_CORECLR
@@ -141,9 +162,6 @@ namespace System
 
         public static bool IsNetFx45LegacyManagedDeflateStream
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
 #if !FEATURE_CORECLR

@@ -247,6 +247,12 @@ namespace System.Web {
             }
         }
 
+        public virtual ITlsTokenBindingInfo TlsTokenBindingInfo {
+            get {
+                throw new NotImplementedException();
+            }
+        }
+
         public virtual int TotalBytes {
             get {
                 throw new NotImplementedException();

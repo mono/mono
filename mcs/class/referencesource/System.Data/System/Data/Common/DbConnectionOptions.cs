@@ -2,8 +2,8 @@
 // <copyright file="DBConnectionOptions.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -109,6 +109,7 @@ namespace System.Data.Common {
         private readonly Hashtable     _parsetable;
         internal readonly NameValuePair KeyChain;
         internal readonly bool HasPasswordKeyword;
+        internal readonly bool HasUserIdKeyword;
 
         // differences between OleDb and Odbc
         // ODBC:
@@ -144,12 +145,14 @@ namespace System.Data.Common {
             if (0 < _usersConnectionString.Length) {
                 KeyChain = ParseInternal(_parsetable, _usersConnectionString, true, synonyms, UseOdbcRules);
                 HasPasswordKeyword = (_parsetable.ContainsKey(KEY.Password) || _parsetable.ContainsKey(SYNONYM.Pwd));
+                HasUserIdKeyword = (_parsetable.ContainsKey(KEY.User_ID) || _parsetable.ContainsKey(SYNONYM.UID));
             }
         }
 
         protected DbConnectionOptions(DbConnectionOptions connectionOptions) { // Clone used by SqlConnectionString
             _usersConnectionString = connectionOptions._usersConnectionString;
             HasPasswordKeyword = connectionOptions.HasPasswordKeyword;
+            HasUserIdKeyword = connectionOptions.HasUserIdKeyword;
             UseOdbcRules = connectionOptions.UseOdbcRules;
             _parsetable = connectionOptions._parsetable;
             KeyChain = connectionOptions.KeyChain;

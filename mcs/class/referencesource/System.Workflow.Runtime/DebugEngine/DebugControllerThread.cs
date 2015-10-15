@@ -159,8 +159,8 @@ namespace System.Workflow.Runtime.DebugEngine
                 {
                     try
                     {
-                        // Expression eval on x64 does not work (bug 18143) so 
-                        // don't let the thread spin.
+                        // Expression eval on x64 does not work (
+
                         if (IntPtr.Size == 8)
                         {
                             Thread.Sleep(Timeout.Infinite);

@@ -599,7 +599,7 @@ namespace System.Activities.Runtime
             }
 
             // We need to null this out once we've recreated the dictionary to avoid
-            // having out of [....] data
+            // having out of sync data
             this.rawDeserializedLists = null;
 
             // then walk our instance list, fixup parent references, and perform basic validation

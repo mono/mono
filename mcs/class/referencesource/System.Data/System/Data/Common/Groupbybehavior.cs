@@ -2,8 +2,8 @@
 // <copyright file="Groupbybehavior.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">rickfe</owner>
+// <owner current="true" primary="false">stevesta</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {

@@ -7,7 +7,7 @@
 **
 ** Class:  IObserver<T>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Interface for exposing an Observer in the 

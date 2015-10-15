@@ -4,7 +4,7 @@
 // <copyright file="XmlCharCheckingWriter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 
@@ -445,7 +445,7 @@ namespace System.Xml {
         // Interleave 2 adjacent invalid chars with a space. This is used for fixing invalid values of comments and PIs. 
         // Any "--" in comment must be replaced with "- -" and any "-" at the end must be appended with " ".
         // Any "?>" in PI value must be replaced with "? >". 
-        // This code has a bug SQL BU Defect Tracking #480848, which was triaged as Won't Fix because it is a breaking change
+        // This code has a 
         private string InterleaveInvalidChars( string text, char invChar1, char invChar2 ) {
             StringBuilder sb = null;
             int start = 0;

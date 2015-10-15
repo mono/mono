@@ -7,7 +7,7 @@
 **
 ** Interface:  IDictionaryEnumerator
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Base interface for dictionary enumerators.

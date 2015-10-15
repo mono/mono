@@ -6,7 +6,7 @@
 /*
  * Hex.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
  *
  * Operations to convert to and from Hex
  *

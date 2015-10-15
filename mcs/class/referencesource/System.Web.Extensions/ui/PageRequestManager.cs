@@ -49,6 +49,7 @@ namespace System.Web.UI {
         internal const string AsyncPostBackErrorKey = "System.Web.UI.PageRequestManager:AsyncPostBackError";
         internal const string AsyncPostBackErrorMessageKey = "System.Web.UI.PageRequestManager:AsyncPostBackErrorMessage";
         internal const string AsyncPostBackErrorHttpCodeKey = "System.Web.UI.PageRequestManager:AsyncPostBackErrorHttpCode";
+        internal const string AsyncPostBackRedirectLocationKey = "System.Web.UI.PageRequestManager:AsyncPostBackRedirectLocation";
         private const string PageTitleToken = "pageTitle";
         private const string FocusToken = "focus";
         private const string AsyncPostFormField = "__ASYNCPOST";

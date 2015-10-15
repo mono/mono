@@ -642,7 +642,7 @@ namespace System.Runtime.Diagnostics
                 {
                     this.etwProvider.Dispose();
                     //no need to set this.etwProvider as null as Dispose() provides the necessary guard
-                    //leaving it non-null protects trace calls from NullReferenceEx, CSDMain Bug 136228
+                    //leaving it non-null protects trace calls from NullReferenceEx, CSDMain 
                 }
             }
             catch (Exception exception)

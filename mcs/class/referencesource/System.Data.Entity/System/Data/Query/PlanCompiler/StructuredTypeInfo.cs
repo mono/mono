@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -113,11 +113,11 @@ namespace System.Data.Query.PlanCompiler
         private StructuredTypeInfo(HashSet<string> typesNeedingNullSentinel)
         {
 
-            // Bug 428351: Make the type->typeInfo dictionary use ref equality for
-            // types. The problem is that records (and other transient types) can 
-            // compare equal, even if they are not reference-equal, and this causes
-            // us trouble down the road when we try to compare properties.
-            // Type unification is a good thing, but it needs to happen earlier somewhere
+            // 
+
+
+
+
             m_typeInfoMap = new Dictionary<md.TypeUsage, TypeInfo>(TypeUsageEqualityComparer.Instance);
             m_typeInfoMapPopulated = false;
             m_typesNeedingNullSentinel = typesNeedingNullSentinel;

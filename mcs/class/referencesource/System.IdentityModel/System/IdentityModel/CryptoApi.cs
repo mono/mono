@@ -363,7 +363,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // We are not interested in throwing an exception here if CloseHandle fails.
             return CAPI.CertCloseStore(handle, 0);
         }
@@ -390,7 +390,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // We are not interested in throwing an exception here if CloseHandle fails.
             return CAPI.CertFreeCertificateContext(handle);
         }
@@ -416,7 +416,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // We are not interested in throwing an exception here if CloseHandle fails.
             CAPI.CertFreeCertificateChain(handle);
             return true;

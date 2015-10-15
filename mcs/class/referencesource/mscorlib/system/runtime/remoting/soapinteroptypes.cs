@@ -231,7 +231,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
     {
         // Convert from ISO/xsd TimeDuration to urt TimeSpan
         // The form of the time duration is PxxYxxDTxxHxxMxx.xxxS or PxxYxxDTxxHxxMxxS
-        // Keep in [....] with Message.cs
+        // Keep in sync with Message.cs
 
 
         public static String XsdType

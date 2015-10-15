@@ -2758,7 +2758,7 @@ namespace System.ServiceModel.Security
                     {
                         if (this.sessionId == null)
                         {
-                            // PreSharp Bug: Property get methods should not throw exceptions.
+                            // PreSharp 
 #pragma warning suppress 56503
                             throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.ChannelMustBeOpenedToGetSessionId)));
                         }

@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -12,7 +12,6 @@ namespace System.Reflection
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.ConstrainedExecution;
@@ -49,13 +48,12 @@ namespace System.Reflection
             return left.Equals(right);
         }
 
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public static bool operator !=(PropertyInfo left, PropertyInfo right)
         {
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR        
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -65,7 +63,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
 
         #region MemberInfo Overrides
         public override MemberTypes MemberType { get { return System.Reflection.MemberTypes.Property; } }
@@ -118,9 +115,6 @@ namespace System.Reflection
 
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public void SetValue(Object obj, Object value)
         {
             SetValue(obj, value, null);
@@ -164,6 +158,7 @@ namespace System.Reflection
         public bool IsSpecialName { get { return(Attributes & PropertyAttributes.SpecialName) != 0; } }
         #endregion
 
+#if !FEATURE_CORECLR
         Type _PropertyInfo.GetType()
         {
             return base.GetType();
@@ -190,6 +185,7 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
     [Serializable]
@@ -427,16 +423,6 @@ namespace System.Reflection
                 return m_name; 
             } 
         }
-
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            if (m_name == null)
-                return new Utf8String(m_utf8name).ToString();
-            
-            return m_name; 
-        }
-        
         public override Type DeclaringType 
         { 
             get 
@@ -531,9 +517,6 @@ namespace System.Reflection
             return m_getterMethod;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override MethodInfo GetSetMethod(bool nonPublic) 
         {
             if (!Associates.IncludeAccessor(m_setterMethod, nonPublic))
@@ -630,9 +613,6 @@ namespace System.Reflection
         #region Dynamic
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override Object GetValue(Object obj,Object[] index) 
         {
             return GetValue(obj, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, 
@@ -652,9 +632,6 @@ namespace System.Reflection
 
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override void SetValue(Object obj, Object value, Object[] index)
         {
             SetValue(obj,

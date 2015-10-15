@@ -71,13 +71,13 @@ namespace System.Collections.Specialized {
         /// </devdoc>
         public object this[object key] {
             get {
-                // <STRIP>
-                // Hashtable supports multiple read, one writer thread safety.
-                // Although we never made the same guarantee for HybridDictionary,
-                // it is still nice to do the same thing here since we have recommended 
-                // HybridDictioary as replacement for Hashtable.
-                //
-                // </STRIP>
+                // <
+
+
+
+
+
+
                 
                 ListDictionary cachedList = list;
                 if (hashtable != null) {
@@ -85,14 +85,14 @@ namespace System.Collections.Specialized {
                 } else if (cachedList != null) {
                     return cachedList[key];
                 } else {
-                    // <STRIP>                
-                    // cachedList can be null in too cases:
-                    //   (1) The dictionary is empty, we will return null in this case
-                    //   (2) There is writer which is doing ChangeOver. However in that case
-                    //       we should see the change to hashtable as well. 
-                    //       So it should work just fine.
-                    // </STRIP>                    
-                    //
+                    // <
+
+
+
+
+
+
+
                     if (key == null) {
                         throw new ArgumentNullException("key", SR.GetString(SR.ArgumentNull_Key));
                     }
@@ -138,11 +138,11 @@ namespace System.Collections.Specialized {
             while (en.MoveNext()) {
                 newTable.Add(en.Key, en.Value);
             }
-            // <STRIP>
-            // Keep the order of writing to hashtable and list.
-            // We assume we will see the change in hashtable if list is set to null in 
-            // this method in another reader thread. 
-            // </STRIP>
+            // <
+
+
+
+
             hashtable = newTable;
             list = null;
         }

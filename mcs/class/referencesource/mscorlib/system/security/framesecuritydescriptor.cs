@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Security {
     using System.Text;
     using System.Runtime.CompilerServices;
@@ -45,10 +45,10 @@ namespace System.Security {
         // Used during exceptionstackwalks to revert impersonation before calling filters        
         [System.Security.SecurityCritical] // auto-generated
         [NonSerialized]
-        private SafeTokenHandle     m_callerToken; 
+        private SafeAccessTokenHandle     m_callerToken; 
         [System.Security.SecurityCritical] // auto-generated
         [NonSerialized]
-        private SafeTokenHandle     m_impToken;                               
+        private SafeAccessTokenHandle     m_impToken;                               
 #endif
 
         private bool                m_AssertFT;
@@ -198,10 +198,10 @@ namespace System.Security {
         }
 #if !FEATURE_PAL        
         //-----------------------------------------------------------+
-        // SafeTokenHandle (Impersonation + EH purposes)
+        // SafeAccessTokenHandle (Impersonation + EH purposes)
         //-----------------------------------------------------------+
         [System.Security.SecurityCritical]  // auto-generated
-        internal void SetTokenHandles (SafeTokenHandle callerToken, SafeTokenHandle impToken)
+        internal void SetTokenHandles (SafeAccessTokenHandle callerToken, SafeAccessTokenHandle impToken)
         {
             m_callerToken = callerToken;
             m_impToken = impToken;

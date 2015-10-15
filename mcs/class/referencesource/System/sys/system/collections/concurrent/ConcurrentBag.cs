@@ -1,4 +1,4 @@
-﻿// ==++==
+// ==++==
 //
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -7,7 +7,7 @@
 //
 // ConcurrentBag.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // 
 //An unordered collection that allows duplicates and that provides add and get operations.
@@ -55,7 +55,7 @@ namespace System.Collections.Concurrent
 #if !(FEATURE_NETCORE || DISABLE_CAS_USE)
     [HostProtection(Synchronization = true, ExternalThreading = true)]
 #endif
-    public class ConcurrentBag<T> : IProducerConsumerCollection<T>
+    public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IReadOnlyCollection<T>
     {
 
         // ThreadLocalList object that contains the data per thread

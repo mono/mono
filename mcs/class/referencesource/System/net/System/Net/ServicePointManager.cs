@@ -246,17 +246,20 @@ namespace System.Net {
         private static volatile CertPolicyValidationCallback s_CertPolicyValidationCallback = new CertPolicyValidationCallback();
         private static volatile ServerCertValidationCallback s_ServerCertValidationCallback = null;
 
-        private const string strongCryptoKeyUnversioned = @"SOFTWARE\Microsoft\.NETFramework";
-        private const string strongCryptoKeyVersionedPattern = strongCryptoKeyUnversioned + @"\v{0}";
-        private const string strongCryptoKeyPath = @"HKEY_LOCAL_MACHINE\" + strongCryptoKeyUnversioned;
         private const string strongCryptoValueName = "SchUseStrongCrypto";
-        private static string secureProtocolAppSetting = "System.Net.ServicePointManager.SecurityProtocol";
+        private const string secureProtocolAppSetting = "System.Net.ServicePointManager.SecurityProtocol";
 
         private static object disableStrongCryptoLock = new object();
         private static volatile bool disableStrongCryptoInitialized = false;
         private static bool disableStrongCrypto = false;
 
         private static SecurityProtocolType s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+
+        private const string reusePortValueName = "HWRPortReuseOnSocketBind";
+        private static object reusePortLock = new object();
+        private static volatile bool reusePortSettingsInitialized = false;
+        private static bool reusePort = false;
+        private static bool? reusePortSupported = null;
 #endif // !FEATURE_PAL
         private static volatile Hashtable s_ConfigTable = null;
         private static volatile int s_ConnectionLimit = PersistentConnectionLimit;
@@ -641,7 +644,6 @@ namespace System.Net {
             }
         }
 
-        [RegistryPermission(SecurityAction.Assert, Read = strongCryptoKeyPath)]
         private static void EnsureStrongCryptoSettingsInitialized() {
             
             if (disableStrongCryptoInitialized) {
@@ -653,54 +655,112 @@ namespace System.Net {
                     return;
                 }
 
-                bool disableStrongCryptoInternal = true;
-
                 try {
-                    string strongCryptoKey = String.Format(CultureInfo.InvariantCulture, strongCryptoKeyVersionedPattern, Environment.Version.ToString(3));
+                    bool disableStrongCryptoInternal = false;
+                    int schUseStrongCryptoKeyValue = 0;
 
-                    // We read reflected keys on WOW64.
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(strongCryptoKey)) {
+                    if (LocalAppContextSwitches.DontEnableSchUseStrongCrypto)
+                    {
+                        //.Net 4.5.2 and below will default to false unless the registry key is specifically set to 1.
+                        schUseStrongCryptoKeyValue =
+                            RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 0);
+
+                        disableStrongCryptoInternal = schUseStrongCryptoKeyValue != 1;
+                    }
+                    else
+                    {
+                        // .Net 4.6 and above will default to true unless the registry key is specifically set to 0.
+                        schUseStrongCryptoKeyValue = 
+                            RegistryConfiguration.GlobalConfigReadInt(strongCryptoValueName, 1);
+
+                        disableStrongCryptoInternal = schUseStrongCryptoKeyValue == 0;
+                    }
+                    
+                    if (disableStrongCryptoInternal) {
+                        // Revert the SecurityProtocol selection to the legacy combination.
+                        s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+                    }
+                    else {
+                        s_SecurityProtocolType =
+                            SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                        string appSetting = RegistryConfiguration.AppConfigReadString(secureProtocolAppSetting, null);
+
+                        SecurityProtocolType value;
                         try {
-                            object schUseStrongCryptoKeyValue =
-                                key.GetValue(strongCryptoValueName, null);
-
-                            // Setting the value to 1 will enable the MSRC behavior. 
-                            // All other values are ignored.
-                            if ((schUseStrongCryptoKeyValue != null)
-                                && (key.GetValueKind(strongCryptoValueName) == RegistryValueKind.DWord)) {
-                                disableStrongCryptoInternal = ((int)schUseStrongCryptoKeyValue) != 1;
-                            }
+                            value = (SecurityProtocolType)Enum.Parse(typeof(SecurityProtocolType), appSetting);
+                            ValidateSecurityProtocol(value);
+                            s_SecurityProtocolType = value;
                         }
-                        catch (UnauthorizedAccessException) { }
-                        catch (IOException) { }
+                        // Ignore all potential exceptions caused by Enum.Parse.
+                        catch (ArgumentNullException) { }
+                        catch (ArgumentException) { }
+                        catch (NotSupportedException) { }
+                        catch (OverflowException) { }
+                    }
+
+                    disableStrongCrypto = disableStrongCryptoInternal;
+                    disableStrongCryptoInitialized = true;
+                }
+                catch (Exception e) {
+                    if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
+                        throw;
                     }
                 }
-                catch (SecurityException) { }
-                catch (ObjectDisposedException) { }
+            }
+        }
+        
+        public static bool ReusePort {
+            get {
+                EnsureReusePortSettingsInitialized();
+                return reusePort;
+            }
+            set {
+                EnsureReusePortSettingsInitialized();
+                reusePort = value;
+            }
+        }
+        
+        internal static bool? ReusePortSupported {
+            get {
+                return reusePortSupported;
+            }
+            set {
+                reusePortSupported = value;
+            }
+        }
 
-                if (disableStrongCryptoInternal) {
-                    // Revert the SecurityProtocol selection to the legacy combination.
-                    s_SecurityProtocolType = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+        private static void EnsureReusePortSettingsInitialized() {
+            
+            if (reusePortSettingsInitialized) {
+                return;
+            }
+
+            lock (reusePortLock) {
+                if (reusePortSettingsInitialized) {
+                    return;
                 }
-                else {
-                    s_SecurityProtocolType = 
-                        SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
-                    // Attempt to read this from the AppSettings config section
-                    string appSetting = ConfigurationManager.AppSettings[secureProtocolAppSetting];
-                    SecurityProtocolType value;
-                    try {
-                        value = (SecurityProtocolType)Enum.Parse(typeof(SecurityProtocolType), appSetting);
-                        ValidateSecurityProtocol(value);
-                        s_SecurityProtocolType = value;
+                int reusePortKeyValue = 0;
+                try {
+                    reusePortKeyValue = RegistryConfiguration.GlobalConfigReadInt(reusePortValueName, 0);
+                }
+                catch (Exception e) {
+                    if (e is ThreadAbortException || e is StackOverflowException || e is OutOfMemoryException) {
+                        throw;
                     }
-                    catch (ArgumentNullException) { }
-                    catch (ArgumentException) { }
-                    catch (NotSupportedException) { }
                 }
 
-                disableStrongCrypto = disableStrongCryptoInternal;
-                disableStrongCryptoInitialized = true;
+                bool reusePortInternal = false;
+                if (reusePortKeyValue == 1) {
+                    if (Logging.On) { 
+                        Logging.PrintInfo(Logging.Web, typeof(ServicePointManager), SR.GetString(SR.net_log_set_socketoption_reuseport_default_on));
+                    }
+                    reusePortInternal = true;
+                }
+
+                reusePort = reusePortInternal;
+                reusePortSettingsInitialized = true;
             }
         }
 #endif // !FEATURE_PAL

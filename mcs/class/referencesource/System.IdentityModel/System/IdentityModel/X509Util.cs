@@ -165,7 +165,7 @@ namespace System.IdentityModel
         /// <param name="revocationMode">The revocation mode to use.</param>
         /// <param name="trustedStoreLocation">The store to use.</param>
         /// <returns>The X509CertificateValidator.</returns>
-        /// <remarks>Due to a WCF bug, X509CertificateValidatorEx must be used rather than WCF's validators directly</remarks>
+        /// <remarks>Due to a WCF 
         internal static X509CertificateValidator CreateCertificateValidator(
             System.ServiceModel.Security.X509CertificateValidationMode certificateValidationMode,
             X509RevocationMode revocationMode,

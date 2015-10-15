@@ -15,6 +15,7 @@
 namespace System {
 
     using System.Diagnostics.Contracts;
+    using System.Text;
     using CultureInfo = System.Globalization.CultureInfo;
     using NumberStyles = System.Globalization.NumberStyles;
 
@@ -36,6 +37,7 @@ namespace System {
         private int _Minor;
         private int _Build = -1;
         private int _Revision = -1;
+        private static readonly char[] SeparatorsArray = new char[] { '.' };
     
         public Version(int major, int minor, int build, int revision) {
             if (major < 0) 
@@ -280,27 +282,73 @@ namespace System {
         }
         
         public String ToString(int fieldCount) {
+            StringBuilder sb;
             switch (fieldCount) {
             case 0: 
                 return(String.Empty);
             case 1: 
-                return(String.Concat(_Major));
-            case 2: 
-                return(String.Concat(_Major,".",_Minor));
+                return(_Major.ToString());
+            case 2:
+                sb = StringBuilderCache.Acquire();
+                AppendPositiveNumber(_Major, sb);
+                sb.Append('.');
+                AppendPositiveNumber(_Minor, sb);
+                return StringBuilderCache.GetStringAndRelease(sb);
             default:
                 if (_Build == -1)
                     throw new ArgumentException(Environment.GetResourceString("ArgumentOutOfRange_Bounds_Lower_Upper", "0", "2"), "fieldCount");
+
                 if (fieldCount == 3)
-                    return( _Major + "." + _Minor + "." + _Build );
+                {
+                    sb = StringBuilderCache.Acquire();
+                    AppendPositiveNumber(_Major, sb);
+                    sb.Append('.');
+                    AppendPositiveNumber(_Minor, sb);
+                    sb.Append('.');
+                    AppendPositiveNumber(_Build, sb);
+                    return StringBuilderCache.GetStringAndRelease(sb);
+                }
 
                 if (_Revision == -1)
                     throw new ArgumentException(Environment.GetResourceString("ArgumentOutOfRange_Bounds_Lower_Upper", "0", "3"), "fieldCount");
 
                 if (fieldCount == 4)
-                    return( Major + "." + _Minor + "." + _Build + "." + _Revision );
+                {
+                    sb = StringBuilderCache.Acquire();
+                    AppendPositiveNumber(_Major, sb);
+                    sb.Append('.');
+                    AppendPositiveNumber(_Minor, sb);
+                    sb.Append('.');
+                    AppendPositiveNumber(_Build, sb);
+                    sb.Append('.');
+                    AppendPositiveNumber(_Revision, sb);
+                    return StringBuilderCache.GetStringAndRelease(sb);
+                }
 
                 throw new ArgumentException(Environment.GetResourceString("ArgumentOutOfRange_Bounds_Lower_Upper", "0", "4"), "fieldCount");
             }
+        }
+
+        //
+        // AppendPositiveNumber is an optimization to append a number to a StringBuilder object without
+        // doing any boxing and not even creating intermediate string.
+        // Note: as we always have positive numbers then it is safe to convert the number to string 
+        // regardless of the current culture as we’ll not have any punctuation marks in the number
+        //
+        private const int ZERO_CHAR_VALUE = (int) '0';
+        private static void AppendPositiveNumber(int num, StringBuilder sb)
+        {
+            Contract.Assert(num >= 0, "AppendPositiveNumber expect positive numbers");
+
+            int index = sb.Length;
+            int reminder;
+
+            do
+            {
+                reminder = num % 10;
+                num = num / 10;
+                sb.Insert(index, (char)(ZERO_CHAR_VALUE + reminder));
+            } while (num > 0);
         }
 
         public static Version Parse(string input) {
@@ -333,7 +381,7 @@ namespace System {
                 return false;
             }
 
-            String[] parsedComponents = version.Split(new char[] { '.' });
+            String[] parsedComponents = version.Split(SeparatorsArray);
             int parsedComponentsLength = parsedComponents.Length;
             if ((parsedComponentsLength < 2) || (parsedComponentsLength > 4)) {
                 result.SetFailure(ParseFailureKind.ArgumentException);

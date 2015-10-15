@@ -111,7 +111,7 @@ namespace System.Web.Caching {
 
             // Prevent a conflict between using SQL9 outputcache and an explicit 
             // SQL9 SqlCacheDependency at the same time.  See VSWhidey 396429 and
-            // the attached email in the bug.
+            // the attached email in the 
             if (context != null && context.SqlDependencyCookie != null &&  // That means We have already setup SQL9 dependency for output cache
                 sqlCmd.NotificationAutoEnlist) {    // This command will auto-enlist in that output cache dependency
                 throw new HttpException(SR.GetString(SR.SqlCacheDependency_OutputCache_Conflict));
@@ -868,7 +868,7 @@ namespace System.Web.Caching {
 
                         if (obj == null) {
                             Debug.Assert(!dbState._tables.ContainsKey(tableName), 
-                                        "DatabaseNotifStae._tables and internal cache keys should be in-[....]");
+                                        "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
                             Debug.Trace("SqlCacheDependencyManagerPolling", 
                                 "Add Database=" + dbState._database+ "; tableName=" + tableName + "; changeId=" + changeId);
@@ -881,7 +881,7 @@ namespace System.Web.Caching {
                         }
                         else if (changeId != (int)obj) {
                             Debug.Assert(dbState._tables.ContainsKey(tableName), 
-                                        "DatabaseNotifStae._tables and internal cache keys should be in-[....]");
+                                        "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
                             Debug.Trace("SqlCacheDependencyManagerPolling", 
                                     "Change Database=" + dbState._database+ "; tableName=" + tableName + "; old=" + (int)obj + "; new=" + changeId);

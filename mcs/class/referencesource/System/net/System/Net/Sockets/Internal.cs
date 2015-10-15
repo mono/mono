@@ -42,7 +42,7 @@ namespace System.Net.Sockets {
         public const int SIOGETEXTENSIONFUNCTIONPOINTER = unchecked((int)0xC8000006);
 
         //
-        // not likely to block ([....] IO ok)
+        // not likely to block (sync IO ok)
         //
         // FIONBIO
         // FIONREAD

@@ -278,10 +278,6 @@ namespace System.Runtime.Serialization
             DataContract dataContract = PrimitiveDataContract.GetPrimitiveDataContract(typeName.Name, typeName.Namespace);
             if (dataContract == null)
             {
-                if (typeName.Name == Globals.SafeSerializationManagerName && typeName.Namespace == Globals.SafeSerializationManagerNamespace && Globals.TypeOfSafeSerializationManager != null)
-                {
-                    return GetDataContract(Globals.TypeOfSafeSerializationManager);
-                }
                 dataContract = scopedKnownTypes.GetDataContract(typeName);
                 if (dataContract == null)
                 {

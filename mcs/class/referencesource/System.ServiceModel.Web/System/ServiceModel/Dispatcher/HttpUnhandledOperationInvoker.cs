@@ -36,7 +36,7 @@ namespace System.ServiceModel.Dispatcher
         {            
             Message message = inputs[0] as Message;
             outputs = null;
-#pragma warning disable 56506 // [....], message.Properties is never null
+#pragma warning disable 56506 // Microsoft, message.Properties is never null
             if (message == null)
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(

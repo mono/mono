@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -27,7 +27,7 @@ namespace System.Data.Metadata.Edm
         int IndexOf(T item);
     }
 
-#pragma warning disable 1711 // compiler bug: reports TDerived and TBase as type parameters for non-existing IsReadOnly property
+#pragma warning disable 1711 // compiler 
     /// <summary>
     /// Class to filter stuff out from a metadata collection
     /// </summary>

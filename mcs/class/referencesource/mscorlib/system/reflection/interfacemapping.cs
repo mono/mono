@@ -6,13 +6,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 // 
 // Interface Map.  This struct returns the mapping of an interface into the actual methods on a class
 //    that implement that interface.
 //
 // <EMAIL>Author: darylo</EMAIL>
-// Date: [....] 2000
+// Date: March 2000
 //
 namespace System.Reflection {
     using System;

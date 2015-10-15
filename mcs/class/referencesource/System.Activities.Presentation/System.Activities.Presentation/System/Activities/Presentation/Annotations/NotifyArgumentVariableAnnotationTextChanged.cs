@@ -10,7 +10,7 @@ namespace System.Activities.Presentation.Annotations
     using System.Activities.Presentation.Model;
     using System.Activities.Presentation.View;
 
-    // This is to workaround a bug that updating ModelItem from outside of ArgumentDesigner/VariableDesigner will not update it.
+    // This is to workaround a 
     internal class NotifyArgumentVariableAnnotationTextChanged : Change
     {
         public ArgumentDesigner ArgumentDesigner { get; set; }

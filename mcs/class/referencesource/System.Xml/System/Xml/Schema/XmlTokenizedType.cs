@@ -2,13 +2,13 @@
 // <copyright file="XmlTokenizedType.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">helenak</owner>
 //------------------------------------------------------------------------------
 
  
 namespace System.Xml {
 
-    // NOTE: Absolute numbering is utilized in DtdParser. -[....]
+    // NOTE: Absolute numbering is utilized in DtdParser. -HelenaK
     public enum XmlTokenizedType {
         CDATA       = 0,
         ID          = 1,

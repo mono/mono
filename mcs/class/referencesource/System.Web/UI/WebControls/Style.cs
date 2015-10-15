@@ -304,7 +304,6 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public virtual bool IsEmpty {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return ((setBits == 0) && (RegisteredCssClass.Length == 0));
             }
@@ -672,7 +671,6 @@ namespace System.Web.UI.WebControls {
         /// Returns a value indicating whether the specified style
         /// property has been defined in the state bag.
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal bool IsSet(int propKey) {
             return (setBits & propKey) != 0;
         }
@@ -704,7 +702,6 @@ namespace System.Web.UI.WebControls {
         ///    state changes on the control. Any changes made after "mark" will be tracked and
         ///    saved as part of the control viewstate.
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected internal virtual void TrackViewState() {
             if (ownStateBag) {
                 ViewState.TrackViewState();

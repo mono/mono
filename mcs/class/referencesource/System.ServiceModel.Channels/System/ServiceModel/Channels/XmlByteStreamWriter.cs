@@ -7,6 +7,7 @@ namespace System.ServiceModel.Channels
     using System;
     using System.IO;
     using System.Runtime;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
 
@@ -15,6 +16,7 @@ namespace System.ServiceModel.Channels
         bool ownsStream; 
         ByteStreamWriterState state;
         Stream stream;
+        XmlWriterSettings settings;
 
         public XmlByteStreamWriter(Stream stream, bool ownsStream)
         {
@@ -28,6 +30,24 @@ namespace System.ServiceModel.Channels
         public override WriteState WriteState
         {
             get { return ByteStreamWriterStateToWriteState(this.state); }
+        }
+
+        public override XmlWriterSettings Settings
+        {
+            get
+            {
+                if (settings == null)
+                {
+                    XmlWriterSettings newSettings = new XmlWriterSettings()
+                    {
+                        Async = true
+                    };
+
+                    Interlocked.CompareExchange<XmlWriterSettings>(ref this.settings, newSettings, null);
+                }
+
+                return this.settings;
+            }
         }
 
         public override void Close()

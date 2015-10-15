@@ -62,9 +62,6 @@ namespace System.Runtime.CompilerServices {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void _RunClassConstructor(RuntimeType type);
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void RunClassConstructor(RuntimeTypeHandle type) 
         {
             _RunClassConstructor(type.GetRuntimeType());
@@ -164,15 +161,15 @@ namespace System.Runtime.CompilerServices {
 
         public static int OffsetToStringData
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+            // This offset is baked in by string indexer intrinsic, so there is no harm
+            // in getting it baked in here as well.
+            [System.Runtime.Versioning.NonVersionable] 
             get {
                 // Number of bytes from the address pointed to by a reference to
                 // a String to the first 16-bit character in the String.  Skip 
                 // over the MethodTable pointer, & String 
                 // length.  Of course, the String reference points to the memory 
-                // after the [....] block, so don't count that.  
+                // after the sync block, so don't count that.  
                 // This property allows C#'s fixed statement to work on Strings.
                 // On 64 bit platforms, this should be 12 (8+4) and on 32 bit 8 (4+4).
 #if WIN32
@@ -212,9 +209,6 @@ namespace System.Runtime.CompilerServices {
         // as we don't need to probe.
         [System.Security.SecurityCritical]  // auto-generated_required
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void PrepareConstrainedRegionsNoOP()
         {
         }

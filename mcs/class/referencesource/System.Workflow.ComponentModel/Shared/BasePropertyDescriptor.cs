@@ -21,7 +21,7 @@ using System.Workflow.ComponentModel.Compiler;
 
 /*********************************************************************
  * NOTE: A copy of this file exists at: WF\Activities\Common
- * The two files must be kept in [....].  Any change made here must also
+ * The two files must be kept in sync.  Any change made here must also
  * be made to WF\Activities\Common\BasePropertyDescriptor.cs
 *********************************************************************/
 
@@ -413,8 +413,8 @@ namespace System.Workflow.ComponentModel.Design
             {
                 if (this.avoidDuplication)
                 {
-                    // WinOE Bug 10442: should only prefix with "(Parameter)" if there is and existing
-                    // member of the same name.
+                    // WinOE 
+
                     return GetParameterPropertyName(this.componentType, base.Name);
                 }
                 else

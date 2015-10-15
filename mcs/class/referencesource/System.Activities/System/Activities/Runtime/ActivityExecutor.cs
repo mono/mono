@@ -1833,6 +1833,65 @@ namespace System.Activities.Runtime
             return extension;
         }
 
+        internal Scheduler.RequestedAction TryExecuteNonEmptyWorkItem(WorkItem workItem)
+        {
+            Exception setupOrCleanupException = null;
+            ActivityInstance propertyManagerOwner = workItem.PropertyManagerOwner;
+            try
+            {
+                if (propertyManagerOwner != null && propertyManagerOwner.PropertyManager != null)
+                {
+                    try
+                    {
+                        propertyManagerOwner.PropertyManager.SetupWorkflowThread();
+                    }
+                    catch (Exception e)
+                    {
+                        if (Fx.IsFatal(e))
+                        {
+                            throw;
+                        }
+
+                        setupOrCleanupException = e;
+                    }
+                }
+
+                if (setupOrCleanupException == null)
+                {
+                    if (!workItem.Execute(this, this.bookmarkManager))
+                    {
+                        return Scheduler.YieldSilently;
+                    }
+                }
+            }
+            finally
+            {
+                // We might be multi-threaded when we execute code in
+                // this finally block.  The work item might have gone
+                // async and may already have called back into FinishWorkItem.
+                if (propertyManagerOwner != null && propertyManagerOwner.PropertyManager != null)
+                {
+                    // This throws only fatal exceptions
+                    propertyManagerOwner.PropertyManager.CleanupWorkflowThread(ref setupOrCleanupException);
+                }
+
+                if (setupOrCleanupException != null)
+                {
+                    // This API must allow the runtime to be
+                    // multi-threaded when it is called.
+                    AbortWorkflowInstance(new OperationCanceledException(SR.SetupOrCleanupWorkflowThreadThrew, setupOrCleanupException));
+                }
+            }
+
+            if (setupOrCleanupException != null)
+            {
+                // We already aborted the instance in the finally block so
+                // now we just need to return early.
+                return Scheduler.Continue;
+            }
+            return null;
+        }
+
         // callback from scheduler to process a work item
         internal Scheduler.RequestedAction OnExecuteWorkItem(WorkItem workItem)
         {
@@ -1846,59 +1905,13 @@ namespace System.Activities.Runtime
 
             if (!workItem.IsEmpty)
             {
-                Exception setupOrCleanupException = null;
-                ActivityInstance propertyManagerOwner = workItem.PropertyManagerOwner;
-                try
+                // The try/catch/finally block used in executing a workItem prevents ryujit from performing
+                // some optimizations. Moving the functionality back into this method may cause a performance
+                // regression.
+                var result = TryExecuteNonEmptyWorkItem(workItem);
+                if (result != null)
                 {
-                    if (propertyManagerOwner != null && propertyManagerOwner.PropertyManager != null)
-                    {
-                        try
-                        {
-                            propertyManagerOwner.PropertyManager.SetupWorkflowThread();
-                        }
-                        catch (Exception e)
-                        {
-                            if (Fx.IsFatal(e))
-                            {
-                                throw;
-                            }
-
-                            setupOrCleanupException = e;
-                        }
-                    }
-
-                    if (setupOrCleanupException == null)
-                    {
-                        if (!workItem.Execute(this, this.bookmarkManager))
-                        {
-                            return Scheduler.YieldSilently;
-                        }
-                    }
-                }
-                finally
-                {
-                    // We might be multi-threaded when we execute code in
-                    // this finally block.  The work item might have gone
-                    // async and may already have called back into FinishWorkItem.
-                    if (propertyManagerOwner != null && propertyManagerOwner.PropertyManager != null)
-                    {
-                        // This throws only fatal exceptions
-                        propertyManagerOwner.PropertyManager.CleanupWorkflowThread(ref setupOrCleanupException);
-                    }
-
-                    if (setupOrCleanupException != null)
-                    {
-                        // This API must allow the runtime to be
-                        // multi-threaded when it is called.
-                        AbortWorkflowInstance(new OperationCanceledException(SR.SetupOrCleanupWorkflowThreadThrew, setupOrCleanupException));
-                    }
-                }
-
-                if (setupOrCleanupException != null)
-                {
-                    // We already aborted the instance in the finally block so
-                    // now we just need to return early.
-                    return Scheduler.Continue;
+                    return result;
                 }
             }
 
@@ -1908,7 +1921,7 @@ namespace System.Activities.Runtime
                 return Scheduler.Continue;
             }
 
-            // We only check this in the [....] path because there are no ways of changing the keys collections from the work items that can
+            // We only check this in the sync path because there are no ways of changing the keys collections from the work items that can
             // go async.  There's an assert to this effect in FinishWorkItem.
             if (this.bookmarkScopeManager != null && this.bookmarkScopeManager.HasKeysToUpdate)
             {

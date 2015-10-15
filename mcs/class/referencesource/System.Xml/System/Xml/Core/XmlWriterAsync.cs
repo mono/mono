@@ -64,7 +64,6 @@ namespace System.Xml {
 
         // Writes out the attribute with the specified LocalName, value, and NamespaceURI.
 #if !SILVERLIGHT
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
 #endif
         // Writes out the attribute with the specified prefix, LocalName, NamespaceURI and value.
         public Task WriteAttributeStringAsync(string prefix, string localName, string ns, string value) {
@@ -264,7 +263,7 @@ namespace System.Xml {
 
         // Copies the current node from the given reader to the writer (including child nodes), and if called on an element moves the XmlReader 
         // to the corresponding end element.
-        //use [....] methods on the reader
+        //use sync methods on the reader
         internal async Task WriteNodeAsync_CallSyncReader(XmlReader reader, bool defattr) {
         
             bool canReadChunk = reader.CanReadValueChunk;

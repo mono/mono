@@ -11,9 +11,9 @@ namespace System.IdentityModel.Tokens
     
     /// <summary>
     /// This class wraps a Saml2AssertionKeyIdentifierClause and delegates to the wrapped clause.
-    /// It derives off the SamlAssertionKeyIdentifierClause to get around a specific bug in WCF
-    /// where the WCF runtime will call the Saml2SecurityToken to create a SamlAssertionKeyIdentifierClause.
-    /// </summary>
+    /// It derives off the SamlAssertionKeyIdentifierClause to get around a specific 
+
+
     internal class WrappedSaml2AssertionKeyIdentifierClause : SamlAssertionKeyIdentifierClause
     {
         private Saml2AssertionKeyIdentifierClause clause;

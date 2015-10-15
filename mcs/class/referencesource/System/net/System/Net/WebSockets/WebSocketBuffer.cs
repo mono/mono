@@ -275,7 +275,7 @@ namespace System.Net.WebSockets
         }
 
         // This method is not thread safe. It must only be called after enforcing at most 1 outstanding send operation
-        private bool IsPinnedSendPayloadBuffer(WebSocketProtocolComponent.Buffer buffer,
+        internal bool IsPinnedSendPayloadBuffer(WebSocketProtocolComponent.Buffer buffer,
             WebSocketProtocolComponent.BufferType bufferType)
         {
             if (m_SendBufferState != SendBufferState.SendPayloadSpecified)

@@ -28,12 +28,18 @@ namespace System.Runtime.Remoting {
     internal struct IdOps
     {
         internal const int None           = 0x00000000;
-        internal const int GenerateURI         = 0x00000001;
-        internal const int StrongIdentity    = 0x00000002;
+        internal const int GenerateURI    = 0x00000001;
+        internal const int StrongIdentity = 0x00000002;
+        internal const int IsInitializing = 0x00000004;    // Identity has not been fully initialized yet
 
         internal static bool bStrongIdentity(int flags)
         {
             return (flags&StrongIdentity)!=0;
+        }
+
+        internal static bool bIsInitializing(int flags)
+        {
+            return (flags & IsInitializing) != 0;
         }
     }
 
@@ -201,7 +207,16 @@ namespace System.Runtime.Remoting {
             Identity id = CasualResolveReference(URITable[MakeURIKeyNoLower(uri)]);
             if (id == null) {
                 id = CasualResolveReference(URITable[MakeURIKey(uri)]);
-                if(id == null)
+
+                // DevDiv 720951 and 911924:
+                // CreateWellKnownObject inserts the Identity into the URITable before
+                // it is fully initialized.  This can cause a race condition if another
+                // concurrent operation re-enters this code and attempts to use it. 
+                // If we discover this situation, behave as if it is not in the URITable.
+                // This falls into the code below to call CreateWellKnownObject again.
+                // That method operates under a lock and will not return until it
+                // has been fully initialized.  It will not create or initialize twice.
+                if (id == null || id.IsInitializing)
                 {
                     // Check if this a well-known object which needs to be faulted in
                     id = RemotingConfigHandler.CreateWellKnownObject(uri);                
@@ -288,6 +303,16 @@ namespace System.Runtime.Remoting {
 
                     rp.IdentityObject = serverID;
                     srvID = (ServerIdentity) rp.IdentityObject;
+                }
+
+                // DevDiv 720951 and 911924:
+                // CreateWellKnownObject creates a ServerIdentity and places it in URITable
+                // before it is fully initialized.  This transient flag is set to to prevent
+                // other concurrent operations from using it.  CreateWellKnownObject is the
+                // only code path that sets this flag, and by default it is false.
+                if (IdOps.bIsInitializing(flags))
+                {
+                    srvID.IsInitializing = true;
                 }
 
                 Message.DebugOut("Created ServerIdentity \n");
@@ -424,7 +449,7 @@ namespace System.Runtime.Remoting {
                     if (takeAndRelease)
                         rwlock.AcquireWriterLock(INFINITE);
 
-                    // SetIdentity will give the correct Id if we ----d
+                    // SetIdentity will give the correct Id if we raced
                     // between the ResolveIdentity call above and now.
                     //   (we are unmarshaling, and the server should guarantee
                     //    that the uri is unique, so we will use an existing identity

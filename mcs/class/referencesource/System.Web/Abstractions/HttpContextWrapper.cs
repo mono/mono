@@ -125,7 +125,7 @@ namespace System.Web {
 
         public override bool IsPostNotification {
             get {
-                return _context.IsDebuggingEnabled;
+                return _context.IsPostNotification;
             }
         }
 

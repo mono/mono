@@ -41,7 +41,10 @@ namespace System.Resources {
     //
     // This is implemented in System.Runtime.WindowsRuntime as function System.Resources.WindowsRuntimeResourceManager,
     // allowing us to ask for a WinRT-specific ResourceManager.
-    // Ideally this would be an interface, or at least an abstract class - but neither seems to play nice with FriendAccessAllowed.
+    // It is important to have WindowsRuntimeResourceManagerBase as regular class with virtual methods and default implementations. 
+    // Defining WindowsRuntimeResourceManagerBase as abstract class or interface will cause issues when adding more methods to it 
+    // because it�ll create dependency between mscorlib and System.Runtime.WindowsRuntime which will require always shipping both DLLs together. 
+    // Also using interface or abstract class will not play nice with FriendAccessAllowed.
     //
     [FriendAccessAllowed]
     [SecurityCritical]
@@ -57,10 +60,13 @@ namespace System.Resources {
             [SecurityCritical]
             get { return null; } 
         }
+        
+        [SecurityCritical]
+        public virtual bool SetGlobalResourceContextDefaultCulture(CultureInfo ci) { return false; }
     }
 
     [FriendAccessAllowed]
-    // [[....] 3/9/2012] This class should be named PRIErrorInfo.
+    // [Microsoft 3/9/2012] This class should be named PRIErrorInfo.
     //
     // During Dev11 CLR RC Ask mode, the Windows Modern Resource Manager
     // made a breaking change such that ResourceMap.GetSubtree returns null when a subtree is
@@ -141,27 +147,27 @@ namespace System.Resources {
     // which is key for maintainability. 
     // - Makes the ResourceManager more extensible by identifying and
     // encapsulating what varies
-    // - Unearthed a bug that's been lurking a while in file-based 
-    // lookup paths for InternalGetResourceSet if createIfNotExists is
-    // false.
-    // - Reuses logic, e.g. by breaking apart the culture fallback into 
-    // the fallback iterator class, we don't have to repeat the 
-    // sometimes confusing fallback logic across multiple methods
-    // - Fxcop violations reduced to 1/5th of original count. Most 
-    // importantly, code complexity violations disappeared.
-    // - Finally, it got rid of dead code paths. Because the big loop was
-    // so confusing, it masked unused chunks of code. Also, dividing 
-    // between file-based and manifest-based allowed functionaliy 
-    // unused in silverlight to fall out.
-    // 
-    // Note: this type is integral to the construction of exception objects,
-    // and sometimes this has to be done in low memory situtations (OOM) or
-    // to create TypeInitializationExceptions due to failure of a static class
-    // constructor. This type needs to be extremely careful and assume that 
-    // any type it references may have previously failed to construct, so statics
-    // belonging to that type may not be initialized. FrameworkEventSource.Log
-    // is one such example.
-    //
+    // - Unearthed a 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
@@ -200,9 +206,6 @@ namespace System.Resources {
         [OptionalField(VersionAdded = 1)]
         private bool UseSatelliteAssem;  // Are all the .resources files in the 
                   // main assembly, or in satellite assemblies for each culture?
-#if FEATURE_SPLIT_RESOURCES
-        private bool _isDebugSatellite;
-#endif // FEATURE_SPLIT_RESOURCES
 #if RESOURCE_SATELLITE_CONFIG
         private static volatile Hashtable _installedSatelliteInfo;  // Give the user the option  
                // to prevent certain satellite assembly probes via a config file.
@@ -439,12 +442,6 @@ namespace System.Resources {
             }
         }
 
-#if FEATURE_SPLIT_RESOURCES
-        internal ResourceManager(String baseName, Assembly assembly, bool isDebugSatellite) : this(baseName, assembly) {
-            _isDebugSatellite = isDebugSatellite;
-        }
-#endif // FEATURE_SPLIT_RESOURCES
-
         [OnDeserializing]
         private void OnDeserializing(StreamingContext ctx)
         {
@@ -648,7 +645,7 @@ namespace System.Resources {
             return sb.ToString();
         }
 
-        // WARNING: This function must be kept in [....] with ResourceFallbackManager.GetEnumerator()
+        // WARNING: This function must be kept in sync with ResourceFallbackManager.GetEnumerator()
         // Return the first ResourceSet, based on the first culture ResourceFallbackManager would return
         internal ResourceSet GetFirstResourceSet(CultureInfo culture)
         {
@@ -736,7 +733,7 @@ namespace System.Resources {
             // method, so the entire idea of a security check written this way is ----.
             // So if we happen to return some resources in cases where we should really be
             // doing a demand for member access permissions, we're not overly concerned.
-            // <STRIP>I verified this with our CAS expert.  -- Brian, 2/11/2010</STRIP>
+            // <
             return InternalGetResourceSet(culture, createIfNotExists, tryParents);
         }
 
@@ -1036,6 +1033,57 @@ namespace System.Resources {
         [NonSerialized]
         private PRIExceptionInfo _PRIExceptionInfo; // Written only by SetAppXConfiguration
 
+        // When running under AppX, the following rules apply for resource lookup:
+        //
+        // Desktop
+        // -------
+        //
+        // 1) For Framework assemblies, we always use satellite assembly based lookup.
+        // 2) For non-FX assemblies, we use modern resource manager, with the premise being that app package
+        //    contains the PRI resources since such assemblies are expected to be application assemblies.
+        //
+        // CoreCLR
+        // -------
+        //
+        // 1) For Framework assemblies, we always use satellite assembly based lookup.
+        // 2) For non-FX assemblies:
+        //    
+        //    a) If the assembly lives under PLATFORM_RESOURCE_ROOTS (as specified by the host during AppDomain creation),
+        //       then we will use satellite assembly based lookup in assemblies like *.resources.dll.
+        //   
+        //    b) For any other non-FX assembly, we will use the modern resource manager with the premise that app package
+        //       contains the PRI resources.
+        [SecuritySafeCritical]
+        private bool ShouldUseSatelliteAssemblyResourceLookupUnderAppX(RuntimeAssembly resourcesAssembly)
+        {
+            bool fUseSatelliteAssemblyResourceLookupUnderAppX = resourcesAssembly.IsFrameworkAssembly();
+            
+#if FEATURE_CORECLR     
+            if (!fUseSatelliteAssemblyResourceLookupUnderAppX)
+            {
+                // Check to see if the assembly is under PLATFORM_RESOURCE_ROOTS. If it is, then we should use satellite assembly lookup for it.
+                String platformResourceRoots = (String)(AppDomain.CurrentDomain.GetData("PLATFORM_RESOURCE_ROOTS"));
+                if ((platformResourceRoots != null) && (platformResourceRoots != String.Empty))
+                {
+                    string resourceAssemblyPath = resourcesAssembly.Location;
+                    
+                    // Loop through the PLATFORM_RESOURCE_ROOTS and see if the assembly is contained in it.
+                    foreach(string pathPlatformResourceRoot in platformResourceRoots.Split(Path.PathSeparator))
+                    {
+                        if (resourceAssemblyPath.StartsWith(pathPlatformResourceRoot, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            // Found the resource assembly to be present in one of the PLATFORM_RESOURCE_ROOT, so stop the enumeration loop.
+                            fUseSatelliteAssemblyResourceLookupUnderAppX = true;
+                            break;
+                        }
+                    }
+                }
+            }
+#endif // FEATURE_CORECLR
+            return fUseSatelliteAssemblyResourceLookupUnderAppX;
+            
+        }
+        
         [SecuritySafeCritical]
 #endif // FEATURE_APPX
         // Only call SetAppXConfiguration from ResourceManager constructors, and nowhere else.
@@ -1104,7 +1152,7 @@ namespace System.Resources {
                         {
                             // See AssemblyNative::IsFrameworkAssembly for details on which kinds of assemblies are considered Framework assemblies.
                             // The Modern Resource Manager is not used for such assemblies - they continue to use satellite assemblies (i.e. .resources.dll files).
-                            _bUsingModernResourceManagement = !resourcesAssembly.IsFrameworkAssembly();
+                            _bUsingModernResourceManagement = !ShouldUseSatelliteAssemblyResourceLookupUnderAppX(resourcesAssembly); 
 
                             if (_bUsingModernResourceManagement)
                             {
@@ -1321,7 +1369,7 @@ namespace System.Resources {
                 throw new ArgumentNullException("name");
             Contract.EndContractBlock();
 
-#if !FEATURE_CORECLR
+#if FEATURE_APPX
             if(s_IsAppXModel)
             {
                  // If the caller explictily passed in a culture that was obtained by calling CultureInfo.CurrentUICulture,
@@ -1630,13 +1678,6 @@ namespace System.Resources {
             {
                 get { return _rm.m_callingAssembly; }
             }
-
-#if FEATURE_SPLIT_RESOURCES
-            internal bool IsDebugSatellite
-            {
-                get { return _rm._isDebugSatellite; }
-            }
-#endif
 
             internal RuntimeAssembly MainAssembly
             {

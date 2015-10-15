@@ -13,6 +13,7 @@
 namespace System.Web {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using System.Security.Permissions;
@@ -24,6 +25,7 @@ namespace System.Web {
         private bool _populated;
         private HttpRequest _request;
         private IIS7WorkerRequest _iis7workerRequest;
+        private List<HttpServerVarsCollectionEntry> _unsyncedEntries;
 
         // We preallocate the base collection with a size that should be sufficient
         // to store all server variables w/o having to expand
@@ -47,7 +49,6 @@ namespace System.Web {
             _request = null;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal void AddStatic(String name, String value) {
             if (value == null)
                 value = String.Empty;
@@ -61,7 +62,6 @@ namespace System.Web {
             BaseAdd(name, new HttpServerVarsCollectionEntry(name, var));
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         private String GetServerVar(Object e) {
             HttpServerVarsCollectionEntry entry = (HttpServerVarsCollectionEntry)e;
             return (entry != null) ? entry.GetValue(_request) : null;
@@ -76,6 +76,22 @@ namespace System.Web {
                 if (_request != null) {
                     MakeReadWrite();
                     _request.FillInServerVariablesCollection();
+
+                    // Add all unsynchronized entries, if any
+                    if (_unsyncedEntries != null) {
+                        foreach (var entry in _unsyncedEntries) { 
+                            var existingEntry = (HttpServerVarsCollectionEntry)BaseGet(entry.Name);
+                            if (existingEntry != null && existingEntry.IsDynamic) {
+                                // Exisiting dynamic server variables cannot be modified - ignore the new value
+                                continue; 
+                            }
+
+                            InvalidateCachedArrays();
+                            BaseSet(entry.Name, entry); // Update an existing entry, or create one if it's new
+                        }
+
+                        _unsyncedEntries.Clear();
+                    }
 
                     if (_iis7workerRequest == null) {
                         MakeReadOnly();
@@ -239,13 +255,23 @@ namespace System.Web {
         }
 
         // updates managed copy of server variable with current value from native header block
-        internal void SynchronizeServerVariable(String name, String value) {
+        internal void SynchronizeServerVariable(String name, String value, bool ensurePopulated = true) {
             if (name == null) {
                 throw new ArgumentNullException("name");
             }
             
             if (value != null) {
-                SetServerVariableManagedOnly(name, value);
+                if (this._populated || ensurePopulated) {
+                    SetServerVariableManagedOnly(name, value);
+                }
+                else {
+                    // Lazy synchronization - when populate is indeed required
+                    if (_unsyncedEntries == null) {
+                        _unsyncedEntries = new List<HttpServerVarsCollectionEntry>();
+                    }
+
+                    _unsyncedEntries.Add(new HttpServerVarsCollectionEntry(name, value));
+                }
             }
             else {
                 base.Remove(name);
@@ -295,19 +321,16 @@ namespace System.Web {
             _request.InvalidateParams();
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override String Get(int index)  {
             Populate();
             return GetServerVar(BaseGet(index));
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override String[] GetValues(int index) {
             String s = Get(index);
             return(s != null) ? new String[1] { s} : null;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override String GetKey(int index) {
             Populate();
             return base.GetKey(index);

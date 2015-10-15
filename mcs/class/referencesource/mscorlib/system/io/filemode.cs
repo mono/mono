@@ -7,7 +7,7 @@
 **
 ** Enum:   FileMode
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Enum describing whether to create a new file or 

@@ -2,8 +2,8 @@
 // <copyright file="SqlConnectionString.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -57,6 +57,8 @@ namespace System.Data.SqlClient {
             internal const  bool   Replication            = false;
             internal const  int    Connect_Retry_Count    = 1;
             internal const  int    Connect_Retry_Interval = 10;
+            internal static readonly SqlAuthenticationMethod Authentication = SqlAuthenticationMethod.NotSpecified;
+            internal static readonly SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting = SqlConnectionColumnEncryptionSetting.Disabled;
         }
 
         // SqlConnection ConnectionString Options
@@ -66,6 +68,7 @@ namespace System.Data.SqlClient {
             internal const string Application_Name       = "application name";
             internal const string AsynchronousProcessing = "asynchronous processing";
             internal const string AttachDBFilename       = "attachdbfilename";
+            internal const string ColumnEncryptionSetting = "column encryption setting";
             internal const string Connect_Timeout        = "connect timeout";
             internal const string Connection_Reset       = "connection reset";
             internal const string Context_Connection     = "context connection";
@@ -95,6 +98,7 @@ namespace System.Data.SqlClient {
             internal const string Replication            = "replication";
             internal const string Connect_Retry_Count    = "connectretrycount";
             internal const string Connect_Retry_Interval = "connectretryinterval";
+            internal const string Authentication         = "authentication";
         }
 
         // Constant for the number of duplicate options in the connnection string
@@ -194,6 +198,8 @@ namespace System.Data.SqlClient {
         private readonly bool _replication;
         private readonly bool _userInstance;
         private readonly bool _multiSubnetFailover;
+        private readonly SqlAuthenticationMethod _authType;
+        private readonly SqlConnectionColumnEncryptionSetting _columnEncryptionSetting;
 
         private readonly int _connectTimeout;
         private readonly int _loadBalanceTimeout;
@@ -213,7 +219,6 @@ namespace System.Data.SqlClient {
         private readonly string _initialCatalog;
         private readonly string _password;
         private readonly string _userID;
-
         private readonly string _networkLibrary;
         private readonly string _workstationId;
 
@@ -240,7 +245,7 @@ namespace System.Data.SqlClient {
             // SQLPT 41700: Ignore ResetConnection=False (still validate the keyword/value)
             _connectionReset     = ConvertValueToBoolean(KEY.Connection_Reset,      DEFAULT.Connection_Reset);
             _contextConnection   = ConvertValueToBoolean(KEY.Context_Connection,    DEFAULT.Context_Connection);
-            _encrypt             = ConvertValueToBoolean(KEY.Encrypt,               DEFAULT.Encrypt);
+            _encrypt             = ConvertValueToEncrypt();
             _enlist              = ConvertValueToBoolean(KEY.Enlist,                ADP.IsWindowsNT);
             _mars                = ConvertValueToBoolean(KEY.MARS,                  DEFAULT.MARS);
             _persistSecurityInfo = ConvertValueToBoolean(KEY.Persist_Security_Info, DEFAULT.Persist_Security_Info);
@@ -268,6 +273,8 @@ namespace System.Data.SqlClient {
             _networkLibrary   = ConvertValueToString(KEY.Network_Library,  null);
             _password         = ConvertValueToString(KEY.Password,         DEFAULT.Password);
             _trustServerCertificate  = ConvertValueToBoolean(KEY.TrustServerCertificate,  DEFAULT.TrustServerCertificate);
+            _authType = ConvertValueToAuthenticationType();
+            _columnEncryptionSetting = ConvertValueToColumnEncryptionSetting();
 
             // Temporary string - this value is stored internally as an enum.
             string typeSystemVersionString = ConvertValueToString(KEY.Type_System_Version, null);
@@ -446,6 +453,14 @@ namespace System.Data.SqlClient {
             if ((_connectRetryInterval < 1) || (_connectRetryInterval > 60)) {
                 throw ADP.InvalidConnectRetryIntervalValue();
             }
+
+            if (Authentication != SqlAuthenticationMethod.NotSpecified && _integratedSecurity == true) {
+                throw SQL.AuthenticationAndIntegratedSecurity();
+            }
+
+            if (Authentication == SqlClient.SqlAuthenticationMethod.ActiveDirectoryIntegrated && (HasUserIdKeyword || HasPasswordKeyword)) {
+                throw SQL.IntegratedWithUserIDAndPassword();
+            }
         }
 
         // This c-tor is used to create SSE and user instance connection strings when user instance is set to true
@@ -492,7 +507,8 @@ namespace System.Data.SqlClient {
             _applicationIntent        = connectionOptions._applicationIntent;
             _connectRetryCount        = connectionOptions._connectRetryCount;
             _connectRetryInterval     = connectionOptions._connectRetryInterval;
-
+            _authType                 = connectionOptions._authType;
+            _columnEncryptionSetting = connectionOptions._columnEncryptionSetting;
             ValidateValueLength(_dataSource, TdsEnums.MAXLEN_SERVERNAME, KEY.Data_Source);
         }
 
@@ -511,7 +527,8 @@ namespace System.Data.SqlClient {
         internal bool Enlist { get { return _enlist; } }
         internal bool MARS { get { return _mars; } }
         internal bool MultiSubnetFailover { get { return _multiSubnetFailover; } }
-
+        internal SqlAuthenticationMethod Authentication { get { return _authType; } }
+        internal SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting { get { return _columnEncryptionSetting; } }
         internal bool PersistSecurityInfo { get { return _persistSecurityInfo; } }
         internal bool Pooling { get { return _pooling; } }
         internal bool Replication { get { return _replication; } }
@@ -619,11 +636,13 @@ namespace System.Data.SqlClient {
                 hash.Add(KEY.TrustServerCertificate, KEY.TrustServerCertificate);
                 hash.Add(KEY.TransactionBinding,     KEY.TransactionBinding);
                 hash.Add(KEY.Type_System_Version,    KEY.Type_System_Version);
+                hash.Add(KEY.ColumnEncryptionSetting, KEY.ColumnEncryptionSetting);
                 hash.Add(KEY.User_ID,                KEY.User_ID);
                 hash.Add(KEY.User_Instance,          KEY.User_Instance);
                 hash.Add(KEY.Workstation_Id,         KEY.Workstation_Id);
                 hash.Add(KEY.Connect_Retry_Count,    KEY.Connect_Retry_Count);
                 hash.Add(KEY.Connect_Retry_Interval, KEY.Connect_Retry_Interval);
+                hash.Add(KEY.Authentication,         KEY.Authentication);
 
                 hash.Add(SYNONYM.APP,                 KEY.Application_Name);
                 hash.Add(SYNONYM.Async,               KEY.AsynchronousProcessing);
@@ -749,6 +768,56 @@ namespace System.Data.SqlClient {
                 throw ADP.InvalidConnectionOptionValue(KEY.ApplicationIntent, e);
             }
             // ArgumentException and other types are raised as is (no wrapping)
+        }
+
+        internal SqlAuthenticationMethod ConvertValueToAuthenticationType() {
+            object value = base.Parsetable[KEY.Authentication];
+
+            string valStr = value as string;
+            if (valStr == null) {
+                return DEFAULT.Authentication;
+            }
+
+            try {
+                return DbConnectionStringBuilderUtil.ConvertToAuthenticationType(KEY.Authentication, valStr);
+            }
+            catch (FormatException e) {
+                throw ADP.InvalidConnectionOptionValue(KEY.Authentication, e);
+            }
+            catch (OverflowException e) {
+                throw ADP.InvalidConnectionOptionValue(KEY.Authentication, e);
+            }
+        }
+
+        /// <summary>
+        /// Convert the value to SqlConnectionColumnEncryptionSetting.
+        /// </summary>
+        /// <returns></returns>
+        internal SqlConnectionColumnEncryptionSetting ConvertValueToColumnEncryptionSetting() {
+            object value = base.Parsetable[KEY.ColumnEncryptionSetting];
+
+            string valStr = value as string;
+            if (valStr == null) {
+                return DEFAULT.ColumnEncryptionSetting;
+            }
+
+            try {
+                return DbConnectionStringBuilderUtil.ConvertToColumnEncryptionSetting(KEY.ColumnEncryptionSetting, valStr);
+            }
+            catch (FormatException e) {
+                throw ADP.InvalidConnectionOptionValue(KEY.ColumnEncryptionSetting, e);
+            }
+            catch (OverflowException e) {
+                throw ADP.InvalidConnectionOptionValue(KEY.ColumnEncryptionSetting, e);
+            }
+        }
+
+        internal bool ConvertValueToEncrypt() {
+            // If the Authentication keyword is provided, default to Encrypt=true;
+            // otherwise keep old default for backwards compatibility
+            object authValue = base.Parsetable[KEY.Authentication];
+            bool defaultEncryptValue = (authValue == null) ? DEFAULT.Encrypt : true;
+            return ConvertValueToBoolean(KEY.Encrypt, defaultEncryptValue);
         }
     }
 }

@@ -8,11 +8,11 @@
 //
 // TypeFilter defines a delegate that is as a callback function for filtering
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    a list of Types.
 //
 // <EMAIL>Author: darylo</EMAIL>
-// Date: [....] 98
+// Date: March 98
 //
 namespace System.Reflection {
     

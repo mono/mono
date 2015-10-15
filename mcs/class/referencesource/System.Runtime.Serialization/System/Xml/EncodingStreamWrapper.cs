@@ -11,9 +11,9 @@ namespace System.Xml
     // This wrapper does not support seek.
     // Constructors consume/emit byte order mark.
     // Supports: UTF-8, Unicode, BigEndianUnicode
-    // ASSUMPTION ([....]): This class will only be used for EITHER reading OR writing.  It can be done, it would just mean more buffers.
-    // ASSUMPTION ([....]): The byte buffer is large enough to hold the declaration
-    // ASSUMPTION ([....]): The buffer manipulation methods (FillBuffer/Compare/etc.) will only be used to parse the declaration
+    // ASSUMPTION (Microsoft): This class will only be used for EITHER reading OR writing.  It can be done, it would just mean more buffers.
+    // ASSUMPTION (Microsoft): The byte buffer is large enough to hold the declaration
+    // ASSUMPTION (Microsoft): The buffer manipulation methods (FillBuffer/Compare/etc.) will only be used to parse the declaration
     //                      during construction.
     class EncodingStreamWrapper : Stream
     {
@@ -749,7 +749,7 @@ namespace System.Xml
 
     // Add format exceptions
     // Do we need to modify the stream position/Seek to account for the buffer?
-    // ASSUMPTION ([....]): This class will only be used for EITHER reading OR writing.
+    // ASSUMPTION (Microsoft): This class will only be used for EITHER reading OR writing.
 #if NO
     class UTF16Stream : Stream
     {

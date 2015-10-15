@@ -31,7 +31,7 @@ namespace System.Security.Cryptography {
         InvalidTimePeriodNesting        = unchecked((int)0x800b0102),   // CERT_E_VALIDITYPERIODNESTING
         InvalidCertificateRole          = unchecked((int)0x800b0103),   // CERT_E_ROLE
         PathLengthConstraintViolated    = unchecked((int)0x800b0104),   // CERT_E_PATHLENCONST
-        UnknownCriticalExtension        = unchecked((int)0x800b0105),   // CERT_E_
+        UnknownCriticalExtension        = unchecked((int)0x800b0105),   // CERT_E_CRITICAL
         CertificateUsageNotAllowed      = unchecked((int)0x800b0106),   // CERT_E_PURPOSE
         IssuerChainingError             = unchecked((int)0x800b0107),   // CERT_E_ISSUERCHAINING
         CertificateMalformed            = unchecked((int)0x800b0108),   // CERT_E_MALFORMED

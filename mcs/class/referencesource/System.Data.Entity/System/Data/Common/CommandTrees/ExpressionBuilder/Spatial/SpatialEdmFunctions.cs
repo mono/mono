@@ -5,7 +5,7 @@
 // </copyright>
 //
 // @owner  willa
-// @backupOwner [....]
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.Common.CommandTrees.ExpressionBuilder.Spatial

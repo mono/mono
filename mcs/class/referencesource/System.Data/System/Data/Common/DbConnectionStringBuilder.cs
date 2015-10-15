@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -128,7 +128,7 @@ namespace System.Data.Common {
                     foreach(string keyword in Keys) {
                         object value;
                         if (ShouldSerialize(keyword) && TryGetValue(keyword, out value)) {
-                            string keyvalue = (null != value) ? Convert.ToString(value, CultureInfo.InvariantCulture) : (string)null;
+                            string keyvalue = ConvertValueToString(value);
                             AppendKeyValuePair(builder, keyword, keyvalue, UseOdbcRules);
                         }
                     }
@@ -211,6 +211,10 @@ namespace System.Data.Common {
                 }
                 return new System.Data.Common.ReadOnlyCollection<object>(values);
             }
+        }
+
+        internal virtual string ConvertValueToString(object value) {
+            return (value == null) ? (string)null : Convert.ToString(value, CultureInfo.InvariantCulture);
         }
 
         void System.Collections.IDictionary.Add(object keyword, object value) {
@@ -378,7 +382,7 @@ namespace System.Data.Common {
                 }
 
                 // all keywords in Keys list that do not have strongly typed property, ODBC case
-                // ignore 'Workaround Oracle Bug 914652' via IsFixedSize
+                // ignore 'Workaround Oracle 
                 if (!IsFixedSize) {
                     attributes = null;
                     foreach(string keyword in Keys) {

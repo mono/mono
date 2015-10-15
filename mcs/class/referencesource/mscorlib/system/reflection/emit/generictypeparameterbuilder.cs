@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit
@@ -16,19 +16,13 @@ namespace System.Reflection.Emit
     using System.Diagnostics.Contracts;
 
 [System.Runtime.InteropServices.ComVisible(true)]
-    public sealed class GenericTypeParameterBuilder: 
-#if FEATURE_CORECLR	&& !FEATURE_NETCORE    
-	    Type
-#else		    
-	    TypeInfo
-#endif	    
+    public sealed class GenericTypeParameterBuilder: TypeInfo
     {
-#if !FEATURE_CORECLR || FEATURE_NETCORE       
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;            
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif        
+
         #region Private Data Mebers
         internal TypeBuilder m_type;
         #endregion

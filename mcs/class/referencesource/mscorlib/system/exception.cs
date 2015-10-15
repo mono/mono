@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // ==--==
 /*=============================================================================
@@ -32,7 +32,6 @@ namespace System {
     using System.Globalization;
     using System.Diagnostics.Contracts;
 
-        
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Exception))]
     [Serializable]
@@ -140,7 +139,7 @@ namespace System {
                     if (_className==null) {
                         _className = GetClassName();
                     }
-                    return Environment.GetRuntimeResourceString("Exception_WasThrown", _className);
+                    return Environment.GetResourceString("Exception_WasThrown", _className);
 
                 } else {
                     return _message;
@@ -449,7 +448,7 @@ namespace System {
 
             if (_innerException!=null) {
                 s = s + " ---> " + _innerException.ToString(needFileLineInfo, needMessage) + Environment.NewLine + 
-                "   " + Environment.GetRuntimeResourceString("Exception_EndOfInnerExceptionStack");
+                "   " + Environment.GetResourceString("Exception_EndOfInnerExceptionStack");
 
             }
 
@@ -876,21 +875,13 @@ namespace System {
         // @MANAGED: HResult is used from within the EE!  Rename with care - check VM directory
         internal int _HResult;     // HResult
 
-#if FEATURE_CORECLR && !FEATURE_NETCORE
-        protected int HResult
-#else
         public int HResult
-#endif
         {
             get
             {
                 return _HResult;
             }
-#if FEATURE_CORECLR && !FEATURE_NETCORE
-            set
-#else
             protected set
-#endif
             {
                 _HResult = value;
             }
@@ -912,15 +903,7 @@ namespace System {
 #endif // FEATURE_SERIALIZATION
 
     // See clr\src\vm\excep.h's EXCEPTION_COMPLUS definition:
-#if FEATURE_PAL && !FEATURE_CORECLR
-        private const int _COMPlusExceptionCode = unchecked((int)0xe0524f54);   // Win32 exception code for COM+ exceptions
-#else
-#if FEATURE_USE_INSTANCE_TAGGED_SEH_CODES
         private const int _COMPlusExceptionCode = unchecked((int)0xe0434352);   // Win32 exception code for COM+ exceptions
-#else //FEATURE_USE_INSTANCE_TAGGED_SEH_CODES
-        private const int _COMPlusExceptionCode = unchecked((int)0xe0434f4d);   // Win32 exception code for COM+ exceptions
-#endif //FEATURE_USE_INSTANCE_TAGGED_SEH_CODES
-#endif
 
         // InternalToString is called by the runtime to get the exception text 
         // and create a corresponding CrossAppDomainMarshaledException
@@ -955,12 +938,14 @@ namespace System {
             return ToString(fGetFileLineInfo, true);
         }
 
+#if !FEATURE_CORECLR
         // this method is required so Object.GetType is not made virtual by the compiler
         // _Exception.GetType()
         public new Type GetType()
         {
             return base.GetType();
         }
+#endif
 
         internal bool IsTransient
         {

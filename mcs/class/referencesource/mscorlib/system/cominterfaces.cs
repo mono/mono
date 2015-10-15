@@ -22,6 +22,7 @@ namespace System.Runtime.InteropServices
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Activator
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
 
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -29,6 +30,7 @@ namespace System.Runtime.InteropServices
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
 
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 
     [GuidAttribute("917B14D0-2D9E-38B8-92A9-381ACF52F7C0")]
@@ -38,6 +40,7 @@ namespace System.Runtime.InteropServices
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Attribute
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
 
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -45,6 +48,7 @@ namespace System.Runtime.InteropServices
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
 
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 
     [GuidAttribute("C281C7F1-4AA9-3517-961A-463CFED57E75")]
@@ -54,6 +58,7 @@ namespace System.Runtime.InteropServices
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Thread
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
 
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -61,5 +66,6 @@ namespace System.Runtime.InteropServices
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
 
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 }

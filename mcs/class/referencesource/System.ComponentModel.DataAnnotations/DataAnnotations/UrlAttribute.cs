@@ -12,7 +12,10 @@
 
         public UrlAttribute()
             : base(DataType.Url) {
-            ErrorMessage = DataAnnotationsResources.UrlAttribute_Invalid;
+
+            // DevDiv 468241: set DefaultErrorMessage not ErrorMessage, allowing user to set
+            // ErrorMessageResourceType and ErrorMessageResourceName to use localized messages.
+            DefaultErrorMessage = DataAnnotationsResources.UrlAttribute_Invalid;
         }
 
         public override bool IsValid(object value) {

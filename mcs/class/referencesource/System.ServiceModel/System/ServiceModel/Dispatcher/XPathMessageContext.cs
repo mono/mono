@@ -162,7 +162,7 @@ namespace System.ServiceModel.Dispatcher
             if (argTypes == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("argTypes");
 
-            // PERF, [....], factor ns if all same
+            // PERF, Microsoft, factor ns if all same
             string ns = LookupNamespace(prefix);
             for (int i = 0; i < functions.Length; ++i)
             {
@@ -1254,7 +1254,7 @@ namespace System.ServiceModel.Dispatcher
                 {
                     do
                     {
-                        // PERF, [....], this will be faster if I cache the envelope namespace to do the
+                        // PERF, Microsoft, this will be faster if I cache the envelope namespace to do the
                         //               actor lookup by hand
                         long pos = nav.CurrentPosition;
                         string navActor = XPathMessageFunctionActor.ExtractFromNavigator(nav);
@@ -1283,9 +1283,9 @@ namespace System.ServiceModel.Dispatcher
             return docContext.Evaluate(expr);
 
 #if NO
-            // PERF, [....], I drafted this implementation before we found out that a bug in the Fx implementation would 
-            //               prevent us from constructing an XPathNodeIterator that they would accept.  I'm keeping it
-            //               around in the hope that I will be able to use it by M5.4.  If not, it will be deleted.
+            // PERF, Microsoft, I drafted this implementation before we found out that a 
+
+
             
             XPathNavigator basicNav = docContext.Clone();
             SeekableXPathNavigator nav = basicNav as SeekableXPathNavigator;

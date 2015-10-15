@@ -1,4 +1,4 @@
-﻿// ==++==
+// ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -353,7 +353,7 @@ namespace System.Collections.ObjectModel
         [DebuggerTypeProxy(typeof(Mscorlib_CollectionDebugView<>))]
         [DebuggerDisplay("Count = {Count}")]
         [Serializable]
-        public sealed class KeyCollection : ICollection<TKey>, ICollection {
+        public sealed class KeyCollection : ICollection<TKey>, ICollection, IReadOnlyCollection<TKey> {
             private readonly ICollection<TKey> m_collection;
             [NonSerialized]
             private Object m_syncRoot;
@@ -452,7 +452,7 @@ namespace System.Collections.ObjectModel
         [DebuggerTypeProxy(typeof(Mscorlib_CollectionDebugView<>))]
         [DebuggerDisplay("Count = {Count}")]
         [Serializable]
-        public sealed class ValueCollection : ICollection<TValue>, ICollection {
+        public sealed class ValueCollection : ICollection<TValue>, ICollection, IReadOnlyCollection<TValue> {
             private readonly ICollection<TValue> m_collection;
             [NonSerialized]
             private Object m_syncRoot;

@@ -20,7 +20,7 @@ namespace System.Data.Linq.SqlClient {
         }
 
         class Visitor : SqlVisitor {
-            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "[....]: part of our standard visitor pattern")]
+            [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Microsoft: part of our standard visitor pattern")]
             SqlFactory sql;
             SqlColumnizer columnizer;
             bool isTopLevel;

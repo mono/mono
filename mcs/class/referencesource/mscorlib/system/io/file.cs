@@ -7,7 +7,7 @@
 **
 ** Class:  File
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: A collection of methods for manipulating Files.
@@ -40,9 +40,6 @@ namespace System.IO {
     {
         private const int GetFileExInfoStandard = 0;
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static StreamReader OpenText(String path)
@@ -55,9 +52,6 @@ namespace System.IO {
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         public static StreamWriter CreateText(String path)
         {
             if (path == null)
@@ -66,9 +60,6 @@ namespace System.IO {
             return new StreamWriter(path,false);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static StreamWriter AppendText(String path)
@@ -89,9 +80,6 @@ namespace System.IO {
         // Read permission to sourceFileName and Create
         // and Write permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void Copy(String sourceFileName, String destFileName) {
@@ -117,9 +105,6 @@ namespace System.IO {
         // Read permission to sourceFileName 
         // and Write permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void Copy(String sourceFileName, String destFileName, bool overwrite) {
@@ -156,11 +141,7 @@ namespace System.IO {
         /// <devdoc>
         ///    Note: This returns the fully qualified name of the destination file.
         /// </devdoc>
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         internal static String InternalCopy(String sourceFileName, String destFileName, bool overwrite, bool checkHost) {
@@ -172,16 +153,16 @@ namespace System.IO {
             String fullSourceFileName = Path.GetFullPathInternal(sourceFileName);
             String fullDestFileName = Path.GetFullPathInternal(destFileName);
             
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost) {
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Read, sourceFileName, fullSourceFileName);
                 FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destFileName, fullDestFileName);
                 sourceState.EnsureState();
                 destState.EnsureState();
             }
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullSourceFileName }, false, false ).Demand();
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullDestFileName }, false, false ).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullSourceFileName, false, false);
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 #endif
        
             bool r = Win32Native.CopyFile(fullSourceFileName, fullDestFileName, !overwrite);
@@ -220,9 +201,6 @@ namespace System.IO {
         // Your application must have Create, Read, and Write permissions to
         // the file.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream Create(String path) {
@@ -239,9 +217,6 @@ namespace System.IO {
         // 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         public static FileStream Create(String path, int bufferSize) {
             return new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSize);
         }
@@ -269,11 +244,7 @@ namespace System.IO {
         // 
         // Your application must have Delete permission to the target file.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void Delete(String path) {
@@ -318,15 +289,15 @@ namespace System.IO {
         {
             String fullPath = Path.GetFullPathInternal(path);
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost)
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Write, path, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
+#else
             // For security check, path should be resolved to an absolute path.
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullPath, false, false);
 
 #endif
             bool r = Win32Native.DeleteFile(fullPath);
@@ -354,7 +325,7 @@ namespace System.IO {
 #else
 
             String fullPath = Path.GetFullPathInternal(path);
-            new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, new String[] { fullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, fullPath, false, false);
 
             bool r = Win32Native.DecryptFile(fullPath, 0);
             if (!r) {
@@ -385,7 +356,7 @@ namespace System.IO {
 #else
 
             String fullPath = Path.GetFullPathInternal(path);
-            new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, new String[] { fullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, fullPath, false, false);
 
             bool r = Win32Native.EncryptFile(fullPath);
             if (!r) {
@@ -409,11 +380,7 @@ namespace System.IO {
         //
         // Your application must have Read permission for the target directory.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static bool Exists(String path)
@@ -465,14 +432,14 @@ namespace System.IO {
                     return false;
                 }
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
                 if (checkHost)
                 {
                     FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, String.Empty, path);
                     state.EnsureState();
                 }
-#elif !FEATURE_CORECLR
-                new FileIOPermission(FileIOPermissionAccess.Read, new String[] { path }, false, false).Demand();
+#else
+                FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, path, false, false);
 #endif
 
                 return InternalExists(path);
@@ -495,27 +462,18 @@ namespace System.IO {
                     && ((data.fileAttributes  & Win32Native.FILE_ATTRIBUTE_DIRECTORY) == 0);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream Open(String path, FileMode mode) {
             return Open(path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.None);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream Open(String path, FileMode mode, FileAccess access) {
             return Open(path,mode, access, FileShare.None);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream Open(String path, FileMode mode, FileAccess access, FileShare share) {
@@ -546,11 +504,7 @@ namespace System.IO {
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static DateTime GetCreationTime(String path)
@@ -572,14 +526,14 @@ namespace System.IO {
         private static DateTime InternalGetCreationTimeUtc(String path, bool checkHost)
         {
             String fullPath = Path.GetFullPathInternal(path);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost) 
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, path, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR      
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 #endif
 
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -615,11 +569,7 @@ namespace System.IO {
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static DateTime GetLastAccessTime(String path)
@@ -641,14 +591,14 @@ namespace System.IO {
         private static DateTime InternalGetLastAccessTimeUtc(String path, bool checkHost)
         {       
             String fullPath = Path.GetFullPathInternal(path);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost) 
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, path, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 #endif
 
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -684,11 +634,7 @@ namespace System.IO {
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static DateTime GetLastWriteTime(String path)
@@ -710,14 +656,14 @@ namespace System.IO {
         private static DateTime InternalGetLastWriteTimeUtc(String path, bool checkHost)
         {
             String fullPath = Path.GetFullPathInternal(path);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost)
             {
                 FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, path, fullPath);
                 state.EnsureState();
             }
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false ).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 #endif
 
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -729,21 +675,17 @@ namespace System.IO {
             return DateTime.FromFileTimeUtc(dt);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileAttributes GetAttributes(String path) 
         {
             String fullPath = Path.GetFullPathInternal(path);
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState state = new FileSecurityState(FileSecurityStateAccess.Read, path, fullPath);
             state.EnsureState();
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Read, new String[] { fullPath }, false, false).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Read, fullPath, false, false);
 #endif
 
             Win32Native.WIN32_FILE_ATTRIBUTE_DATA data = new Win32Native.WIN32_FILE_ATTRIBUTE_DATA();
@@ -765,7 +707,7 @@ namespace System.IO {
         {
             String fullPath = Path.GetFullPathInternal(path);
 #if !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullPath }, false, false).Demand();
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullPath, false, false);
 #endif
             bool r = Win32Native.SetFileAttributes(fullPath, (int) fileAttributes);
             if (!r) {
@@ -807,11 +749,9 @@ namespace System.IO {
         }
 #endif
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#elif FEATURE_LEGACYNETCF
+#if FEATURE_LEGACYNETCF
         [System.Security.SecuritySafeCritical]
-#endif // FEATURE_LEGACYNETCFIOSECURITY
+#endif // FEATURE_LEGACYNETCF
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream OpenRead(String path) {
@@ -833,9 +773,6 @@ namespace System.IO {
         }
 
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static FileStream OpenWrite(String path) {
@@ -900,11 +837,7 @@ namespace System.IO {
                 return sr.ReadToEnd();
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else //FEATURE_LEGACYNETCFIOSECURITY
         [System.Security.SecuritySafeCritical]  // auto-generated
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllText(String path, String contents)
@@ -918,11 +851,7 @@ namespace System.IO {
             InternalWriteAllText(path, contents, StreamWriter.UTF8NoBOM, true);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else //FEATURE_LEGACYNETCFIOSECURITY
         [System.Security.SecuritySafeCritical]  // auto-generated
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllText(String path, String contents, Encoding encoding)
@@ -1102,9 +1031,6 @@ namespace System.IO {
             return lines.ToArray();
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static IEnumerable<String> ReadLines(String path)
@@ -1118,9 +1044,6 @@ namespace System.IO {
             return ReadLinesIterator.CreateIterator(path, Encoding.UTF8);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static IEnumerable<String> ReadLines(String path, Encoding encoding)
@@ -1136,9 +1059,6 @@ namespace System.IO {
             return ReadLinesIterator.CreateIterator(path, encoding);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllLines(String path, String[] contents)
@@ -1154,9 +1074,6 @@ namespace System.IO {
             InternalWriteAllLines(new StreamWriter(path, false, StreamWriter.UTF8NoBOM), contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllLines(String path, String[] contents, Encoding encoding)
@@ -1174,9 +1091,6 @@ namespace System.IO {
             InternalWriteAllLines(new StreamWriter(path, false, encoding), contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllLines(String path, IEnumerable<String> contents)
@@ -1192,9 +1106,6 @@ namespace System.IO {
             InternalWriteAllLines(new StreamWriter(path, false, StreamWriter.UTF8NoBOM), contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void WriteAllLines(String path, IEnumerable<String> contents, Encoding encoding)
@@ -1212,9 +1123,6 @@ namespace System.IO {
             InternalWriteAllLines(new StreamWriter(path, false, encoding), contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private static void InternalWriteAllLines(TextWriter writer, IEnumerable<String> contents)
@@ -1231,9 +1139,6 @@ namespace System.IO {
             }
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void AppendAllText(String path, String contents)
@@ -1247,9 +1152,6 @@ namespace System.IO {
             InternalAppendAllText(path, contents, StreamWriter.UTF8NoBOM);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void AppendAllText(String path, String contents, Encoding encoding)
@@ -1265,9 +1167,6 @@ namespace System.IO {
             InternalAppendAllText(path, contents, encoding);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private static void InternalAppendAllText(String path, String contents, Encoding encoding)
@@ -1280,9 +1179,6 @@ namespace System.IO {
                 sw.Write(contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void AppendAllLines(String path, IEnumerable<String> contents)
@@ -1298,9 +1194,6 @@ namespace System.IO {
             InternalWriteAllLines(new StreamWriter(path, true, StreamWriter.UTF8NoBOM), contents);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void AppendAllLines(String path, IEnumerable<String> contents, Encoding encoding)
@@ -1326,11 +1219,7 @@ namespace System.IO {
         // sourceFileName and Write 
         // permissions to destFileName.
         // 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public static void Move(String sourceFileName, String destFileName) {
@@ -1361,16 +1250,16 @@ namespace System.IO {
             String fullSourceFileName = Path.GetFullPathInternal(sourceFileName);
             String fullDestFileName = Path.GetFullPathInternal(destFileName);
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             if (checkHost) {
                 FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Write | FileSecurityStateAccess.Read, sourceFileName, fullSourceFileName);
                 FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Write, destFileName, fullDestFileName);
                 sourceState.EnsureState();
                 destState.EnsureState();
             }
-#elif !FEATURE_CORECLR
-            new FileIOPermission(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, new String[] { fullSourceFileName }, false, false).Demand();
-            new FileIOPermission(FileIOPermissionAccess.Write, new String[] { fullDestFileName }, false, false).Demand();
+#else
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write | FileIOPermissionAccess.Read, fullSourceFileName, false, false);
+            FileIOPermission.QuickDemand(FileIOPermissionAccess.Write, fullDestFileName, false, false);
 #endif
 
             if (!InternalExists(fullSourceFileName))
@@ -1409,11 +1298,7 @@ namespace System.IO {
             InternalReplace(sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         private static void InternalReplace(String sourceFileName, String destinationFileName, String destinationBackupFileName, bool ignoreMetadataErrors)
@@ -1429,14 +1314,14 @@ namespace System.IO {
             if (destinationBackupFileName != null)
                 fullBackupPath = Path.GetFullPathInternal(destinationBackupFileName);
 
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCFIOSECURITY
+#if FEATURE_CORECLR
             FileSecurityState sourceState = new FileSecurityState(FileSecurityStateAccess.Read | FileSecurityStateAccess.Write, sourceFileName, fullSrcPath);
             FileSecurityState destState = new FileSecurityState(FileSecurityStateAccess.Read | FileSecurityStateAccess.Write, destinationFileName, fullDestPath);
             FileSecurityState backupState = new FileSecurityState(FileSecurityStateAccess.Read | FileSecurityStateAccess.Write, destinationBackupFileName, fullBackupPath);
             sourceState.EnsureState();
             destState.EnsureState();
             backupState.EnsureState();
-#elif !FEATURE_CORECLR
+#else
             FileIOPermission perm = new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, new String[] { fullSrcPath, fullDestPath});
             if (destinationBackupFileName != null)
                 perm.AddPathList(FileIOPermissionAccess.Write, fullBackupPath);

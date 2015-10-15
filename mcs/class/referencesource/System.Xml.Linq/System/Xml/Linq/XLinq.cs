@@ -3561,7 +3561,7 @@ namespace System.Xml.Linq
         }
 
         /// <summary>
-        /// Gets a value indicating whether the element as at least one attribute.
+        /// Gets a value indicating whether the element has at least one attribute.
         /// </summary>
         public bool HasAttributes {
             get { return lastAttr != null; }

@@ -7,7 +7,7 @@
 **
 ** Enum:   FileAccess
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Enum describing whether you want read and/or write

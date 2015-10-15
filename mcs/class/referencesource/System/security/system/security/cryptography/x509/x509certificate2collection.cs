@@ -168,7 +168,11 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2Collection Find(X509FindType findType, Object findValue, bool validOnly) {
+#if !FEATURE_CORESYSTEM
             //
             // We need to Assert all StorePermission flags since this is a memory store and we want 
             // semi-trusted code to be able to find certificates in a memory store.
@@ -176,6 +180,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
             StorePermission sp = new StorePermission(StorePermissionFlags.AllFlags);
             sp.Assert();
+#endif
 
             SafeCertStoreHandle safeSourceStoreHandle = X509Utils.ExportToMemoryStore(this);
 
@@ -192,10 +197,14 @@ namespace System.Security.Cryptography.X509Certificates {
             Import(rawData, null, X509KeyStorageFlags.DefaultKeySet);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public void Import(byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) {
             uint dwFlags = X509Utils.MapKeyStorageFlags(keyStorageFlags);
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
 
+#if !FEATURE_CORESYSTEM
             //
             // We need to Assert all StorePermission flags since this is a memory store and we want 
             // semi-trusted code to be able to import certificates to a memory store.
@@ -203,6 +212,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
             StorePermission sp = new StorePermission(StorePermissionFlags.AllFlags);
             sp.Assert();
+#endif
 
             safeCertStoreHandle = LoadStoreFromBlob(rawData, password, dwFlags, (keyStorageFlags & X509KeyStorageFlags.PersistKeySet) != 0);
 
@@ -215,17 +225,25 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public void Import(string fileName) {
             Import(fileName, null, X509KeyStorageFlags.DefaultKeySet);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public void Import(string fileName, string password, X509KeyStorageFlags keyStorageFlags) {
             uint dwFlags = X509Utils.MapKeyStorageFlags(keyStorageFlags);
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
 
+#if !FEATURE_CORESYSTEM
             //
             // We need to Assert all StorePermission flags since this is a memory store and we want 
             // semi-trusted code to be able to import certificates to a memory store.
@@ -233,6 +251,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
             StorePermission sp = new StorePermission(StorePermissionFlags.AllFlags);
             sp.Assert();
+#endif
 
             safeCertStoreHandle = LoadStoreFromFile(fileName, password, dwFlags, (keyStorageFlags & X509KeyStorageFlags.PersistKeySet) != 0);
 
@@ -244,11 +263,18 @@ namespace System.Security.Cryptography.X509Certificates {
             this.AddRange(x509Certs);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public byte[] Export(X509ContentType contentType) {
             return Export(contentType, null);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public byte[] Export(X509ContentType contentType, string password) {
+#if !FEATURE_CORESYSTEM
             //
             // We need to Assert all StorePermission flags since this is a memory store and we want 
             // semi-trusted code to be able to export certificates to a memory store.
@@ -256,6 +282,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
             StorePermission sp = new StorePermission(StorePermissionFlags.AllFlags);
             sp.Assert();
+#endif
 
             SafeCertStoreHandle safeCertStoreHandle = X509Utils.ExportToMemoryStore(this);
 
@@ -264,6 +291,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return result;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private unsafe static byte[] ExportCertificatesToBlob(SafeCertStoreHandle safeCertStoreHandle, X509ContentType contentType, string password) {
             SafeCertContextHandle safeCertContextHandle = SafeCertContextHandle.InvalidHandle;
             uint dwSaveAs = CAPI.CERT_STORE_SAVE_AS_PKCS7;
@@ -361,7 +391,13 @@ namespace System.Security.Cryptography.X509Certificates {
             return pbBlob;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal delegate int FindProcDelegate (SafeCertContextHandle safeCertContextHandle, object pvCallbackData);
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private unsafe static SafeCertStoreHandle FindCertInStore(SafeCertStoreHandle safeSourceStoreHandle, X509FindType findType, Object findValue, bool validOnly) {
             if (findValue == null)
                 throw new ArgumentNullException("findValue");
@@ -576,6 +612,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return safeTargetStoreHandle;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static void FindByCert(SafeCertStoreHandle safeSourceStoreHandle, 
                                         uint dwFindType, 
                                         IntPtr pvFindPara, 
@@ -666,6 +705,9 @@ skip:
         // Callback method to find certificates by subject DN.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindSubjectDistinguishedNameCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             string rdn = CAPI.GetCertNameInfo(safeCertContextHandle, 0, CAPI.CERT_NAME_RDN_TYPE);
             if (String.Compare(rdn, (string) pvCallbackData, StringComparison.OrdinalIgnoreCase) != 0)
@@ -677,6 +719,9 @@ skip:
         // Callback method to find certificates by issuer DN.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindIssuerDistinguishedNameCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             string rdn = CAPI.GetCertNameInfo(safeCertContextHandle, CAPI.CERT_NAME_ISSUER_FLAG, CAPI.CERT_NAME_RDN_TYPE);
             if (String.Compare(rdn, (string) pvCallbackData, StringComparison.OrdinalIgnoreCase) != 0)
@@ -689,6 +734,9 @@ skip:
         // This can be useful when using XML Digital Signature and X509Data.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindSerialNumberCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
             CAPI.CERT_INFO pCertInfo = (CAPI.CERT_INFO) Marshal.PtrToStructure(pCertContext.pCertInfo, typeof(CAPI.CERT_INFO));
@@ -714,6 +762,9 @@ skip:
         // The callback data has to be a UTC FILETEME.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindTimeValidCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             _FILETIME ft = (_FILETIME) pvCallbackData;
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
@@ -728,6 +779,9 @@ skip:
         // The callback data has to be a UTC FILETEME.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindTimeNotAfterCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             _FILETIME ft = (_FILETIME) pvCallbackData;
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
@@ -742,6 +796,9 @@ skip:
         // The callback data has to be a UTC FILETEME.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindTimeNotBeforeCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             _FILETIME ft = (_FILETIME) pvCallbackData;
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
@@ -758,6 +815,9 @@ skip:
         // An example of Template Name can be "ClientAuth".
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindTemplateNameCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             IntPtr pV1Template = IntPtr.Zero;
             IntPtr pV2Template = IntPtr.Zero;
@@ -826,6 +886,9 @@ skip:
         // An example of application policy can be: "Encrypting File System"
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindApplicationPolicyCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             string eku = (string) pvCallbackData;
             if (eku.Length == 0)
@@ -860,6 +923,9 @@ skip:
         // This is only recognized in XP platforms. However, passing in an OID value should work on downlevel platforms as well.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindCertificatePolicyCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             string certPolicy = (string) pvCallbackData;
             if (certPolicy.Length == 0)
@@ -902,6 +968,9 @@ skip:
         // The callback data can be either an OID friendly name or value (all should be ANSI strings).
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindExtensionCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
             CAPI.CERT_INFO pCertInfo = (CAPI.CERT_INFO) Marshal.PtrToStructure(pCertContext.pCertInfo, typeof(CAPI.CERT_INFO));
@@ -922,6 +991,9 @@ skip:
         // further restricting the set of selected certificates.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindKeyUsageCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
             uint dwUsages = 0;
@@ -943,6 +1015,9 @@ skip:
         // This can be useful when using XML Digital Signature and X509Data.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private static unsafe int FindSubjectKeyIdentifierCallback(SafeCertContextHandle safeCertContextHandle, object pvCallbackData) {
             SafeLocalAllocHandle ptr = SafeLocalAllocHandle.InvalidHandle;
             // We look for the Key Id extended property 
@@ -987,8 +1062,13 @@ skip:
                                         CAPI.CERT_QUERY_CONTENT_FLAG_PFX |
                                         CAPI.CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE);
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
+#endif
         private unsafe static SafeCertStoreHandle LoadStoreFromBlob(byte[] rawData, string password, uint dwFlags, bool persistKeyContainers) {
             uint contentType = 0;
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
@@ -1020,8 +1100,13 @@ skip:
             return safeCertStoreHandle;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         private unsafe static SafeCertStoreHandle LoadStoreFromFile(string fileName, string password, uint dwFlags, bool persistKeyContainers) {
             uint contentType = 0;
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;

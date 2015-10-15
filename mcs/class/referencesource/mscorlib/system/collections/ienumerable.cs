@@ -7,7 +7,7 @@
 **
 ** Interface:  IEnumerable
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Interface for classes providing IEnumerators

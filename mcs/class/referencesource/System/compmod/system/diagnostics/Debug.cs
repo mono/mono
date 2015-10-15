@@ -380,6 +380,16 @@ namespace System.Diagnostics {
             }
         }
 
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Fail(string message) {
+            Assert(false, message, String.Empty);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Fail(string message, string detailMessage) {
+            Assert(false, message, detailMessage);
+        }
+
         // Given a stack trace and start and end frame indexes, construct a
         // callstack that contains method, file and line number information.
         [System.Security.SecuritySafeCritical]
@@ -441,6 +451,11 @@ namespace System.Diagnostics {
         [System.Diagnostics.Conditional("DEBUG")]       
         public static void WriteLine(string message) {
             message = message + "\r\n"; // Use Windows end line on *all* Platforms
+            Write(message);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Write(string message) {
 
             // We don't want output from multiple threads to be interleaved.
             lock (s_ForLock) {
@@ -479,8 +494,85 @@ namespace System.Diagnostics {
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteLine(object value, string category) {
+            WriteLine((value == null) ? String.Empty : value.ToString(), category);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
         public static void WriteLine(string format, params object[] args) {
             WriteLine(String.Format(null, format, args));
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteLine(string message, string category) {
+            if(category == null) {
+                WriteLine(message);
+            }
+            else {
+                WriteLine(category + ":" + ((message == null) ? String.Empty: message));
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Write(object value) {
+            Write((value == null) ? String.Empty : value.ToString());
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Write(string message, string category) {
+            if(category == null) {
+                Write(message);
+            }
+            else {
+                Write(category + ":" + ((message == null) ? String.Empty: message));
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Write(object value, string category) {
+            Write((value == null) ? String.Empty : value.ToString(), category);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]        
+        public static void WriteIf(bool condition, string message) {
+            if(condition) {
+                Write(message);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteIf(bool condition, object value) {
+           if(condition) {
+                Write(value);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteIf(bool condition, string message, string category) {
+           if(condition) {
+                Write(message, category);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteIf(bool condition, object value, string category) {
+           if(condition) {
+                Write(value, category);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteLineIf(bool condition, object value) {
+               if(condition) {
+                WriteLine(value);
+            }
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void WriteLineIf(bool condition, object value, string category) {
+               if(condition) {
+                WriteLine(value, category);
+            }
         }
 
 #if FEATURE_NETCORE
@@ -495,11 +587,11 @@ namespace System.Diagnostics {
 
         [System.Diagnostics.Conditional("DEBUG")]
         // This is used by our compression code.
-        internal static void WriteLineIf(bool condition, string message, string category)
+        public static void WriteLineIf(bool condition, string message, string category)
         {
             if (condition)
             {
-                WriteLine(message);
+                WriteLine(message, category);
             }
         }
 #endif // FEATURE_NETCORE

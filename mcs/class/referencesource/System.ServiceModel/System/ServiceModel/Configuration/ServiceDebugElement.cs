@@ -86,7 +86,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ServiceDebugElement source = (ServiceDebugElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() check for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() check for 'from' being null
             this.HttpHelpPageEnabled = source.HttpHelpPageEnabled;
             this.HttpHelpPageUrl = source.HttpHelpPageUrl;
             this.HttpsHelpPageEnabled = source.HttpsHelpPageEnabled;

@@ -8,7 +8,7 @@
 //
 // Lazy.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // --------------------------------------------------------------------------------------
 //
@@ -51,7 +51,7 @@ namespace System
     /// </remarks>
     [Serializable]
     [ComVisible(false)]
-#if !FEATURE_CORECLR && !FEATURE_NETCORE
+#if !FEATURE_CORECLR
     [HostProtection(Synchronization = true, ExternalThreading = true)]
 #endif
     [DebuggerTypeProxy(typeof(System_LazyDebugView<>))]
@@ -283,9 +283,6 @@ namespace System
         /// </remarks>
         public bool IsValueCreated
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 return m_boxed != null && m_boxed is Boxed;
@@ -434,7 +431,7 @@ namespace System
                     }
                     else if (factory == ALREADY_INVOKED_SENTINEL)
                     {
-                        // Another thread ----d with us and beat us to successfully invoke the factory.
+                        // Another thread raced with us and beat us to successfully invoke the factory.
                         return null;
                     }
                     boxed = new Boxed(factory());

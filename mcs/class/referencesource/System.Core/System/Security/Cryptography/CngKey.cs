@@ -126,10 +126,19 @@ namespace System.Security.Cryptography {
                 Contract.Assert(m_keyHandle != null);
 
                 bool foundProperty;
-                byte[] ephemeralProperty = NCryptNative.GetProperty(m_keyHandle,
-                                                                    NCryptNative.KeyPropertyName.ClrIsEphemeral,
-                                                                    CngPropertyOptions.CustomProperty,
-                                                                    out foundProperty);
+                byte[] ephemeralProperty = null;
+                try {
+                    ephemeralProperty = NCryptNative.GetProperty(m_keyHandle,
+                                                                        NCryptNative.KeyPropertyName.ClrIsEphemeral,
+                                                                        CngPropertyOptions.CustomProperty,
+                                                                        out foundProperty);
+                }
+                catch (CryptographicException) { 
+                    // Third party Key providers, and Windows PCP KSP won't recognize this property;
+                    // and Win32 layer does not enforce error return contract.
+                    // Therefore, they can return whatever error code they think appropriate.
+                    return false;
+                }
 
                 return foundProperty &&
                        ephemeralProperty != null &&

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 //////////////////////////////////////////////////////////////////////////////
 // Date: June 4, 2009
 // Description: Temporarily suppress System.dll v4 violations
-// User: REDMOND\[....]
+// User: REDMOND\kimhamil
 //////////////////////////////////////////////////////////////////////////////
 #if CODE_ANALYSIS_BASELINE
 
@@ -20,7 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 // System.Collections.Concurrent
 //
 [module: SuppressMessage("Microsoft.Naming","CA1710:IdentifiersShouldHaveCorrectSuffix", Scope="type", Target="System.Collections.Concurrent.ConcurrentBag`1", Justification="We do not want to rename this class at this point.")]
-[module: SuppressMessage("Microsoft.Security","CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Scope="member", Target="System.Collections.Concurrent.ConcurrentBag`1.#System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)", Justification="From [....]: leave the attribute in place and suppress the FxCop warning until we can get the rule updated to understand that this is valid")]
+[module: SuppressMessage("Microsoft.Security","CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Scope="member", Target="System.Collections.Concurrent.ConcurrentBag`1.#System.Runtime.Serialization.ISerializable.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)", Justification="From ShawnFa: leave the attribute in place and suppress the FxCop warning until we can get the rule updated to understand that this is valid")]
 [module: SuppressMessage("Microsoft.Naming","CA1710:IdentifiersShouldHaveCorrectSuffix", Scope="type", Target="System.Collections.Generic.ISet`1", Justification="PFX: Not fixing this, not even sure that we own this.")]
 [module: SuppressMessage("Microsoft.Usage","CA1816:CallGCSuppressFinalizeCorrectly", Scope="member", Target="System.Collections.Concurrent.BlockingCollection`1.#Dispose()", Justification="batch baselining v4 violations")]
 [module: SuppressMessage("Microsoft.Usage","CA2208:InstantiateArgumentExceptionsCorrectly", Scope="member", Target="System.Collections.Concurrent.BlockingCollection`1.#ValidateCollectionsArray(System.Collections.Concurrent.BlockingCollection`1<!0>[],System.Collections.Concurrent.BlockingCollection`1<!0>+OperationMode)", Justification="batch baselining v4 violations")]

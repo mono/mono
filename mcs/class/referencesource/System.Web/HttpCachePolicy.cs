@@ -315,9 +315,10 @@ namespace System.Web {
                 HttpCacheValidateHandler handler = _validationCallbackInfo[i].handler;
                 string targetTypeName = System.Web.UI.Util.GetAssemblyQualifiedTypeName(handler.Method.ReflectedType);
                 string methodName = handler.Method.Name;
-                callbackInfos[i] = targetTypeName;
-                callbackInfos[i+1] = methodName;
+                callbackInfos[2 * i] = targetTypeName;
+                callbackInfos[2 * i + 1] = methodName;
             }
+
             _validationCallbackInfoForSerialization = callbackInfos;
         }
 
@@ -339,7 +340,7 @@ namespace System.Web {
                     throw new SerializationException(SR.GetString(SR.Type_cannot_be_resolved, targetTypeName));
                 }
                 HttpCacheValidateHandler handler = (HttpCacheValidateHandler) Delegate.CreateDelegate(typeof(HttpCacheValidateHandler), target, methodName);
-                callbackInfos[i] = new ValidationCallbackInfo(handler, null);
+                callbackInfos[i / 2] = new ValidationCallbackInfo(handler, null);
             }
             _validationCallbackInfo = callbackInfos;
         }   
@@ -772,7 +773,7 @@ namespace System.Web {
 
             Debug.Assert((_utcTimestampCreated == DateTime.MinValue && _utcTimestampRequest == DateTime.MinValue) ||
                          (_utcTimestampCreated != DateTime.MinValue && _utcTimestampRequest != DateTime.MinValue),
-                        "_utcTimestampCreated and _utcTimestampRequest are out of [....] in UpdateCachedHeaders");
+                        "_utcTimestampCreated and _utcTimestampRequest are out of sync in UpdateCachedHeaders");
 
             if (_utcTimestampCreated == DateTime.MinValue) {
                 _utcTimestampCreated = _utcTimestampRequest = response.Context.UtcTimestamp;
@@ -945,8 +946,8 @@ namespace System.Web {
                     }
                     
                     if (!omitVaryStar) {
-                        // Dev10 Bug 425047 - OutputCache Location="ServerAndClient" (HttpCacheability.ServerAndPrivate) should 
-                        // not use "Vary: *" so the response can be cached on the client
+                        // Dev10 
+
                         if (_varyByCustom != null || (_varyByParams.IsModified() && !_varyByParams.IgnoreParams)) {
                             varyByHeaders = "*";
                         }
@@ -1154,7 +1155,7 @@ namespace System.Web {
 
         internal bool   IsKernelCacheable(HttpRequest request, bool enableKernelCacheForVaryByStar) {
             return  _cacheability == HttpCacheability.Public
-                && !_hasUserProvidedDependencies // Consider ([....]): rework dependency model to support user-provided dependencies
+                && !_hasUserProvidedDependencies // Consider (Microsoft): rework dependency model to support user-provided dependencies
                 && !_hasSetCookieHeader
                 && !_noServerCaching
                 && HasExpirationPolicy()

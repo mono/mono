@@ -104,9 +104,6 @@ namespace System
         
 
         // This is the RuntimeType for the type
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private RuntimeType m_type;
 
         public override int GetHashCode()
@@ -141,9 +138,6 @@ namespace System
             }
         }
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImpl(MethodImplOptions.InternalCall)]
@@ -657,9 +651,6 @@ namespace System
         internal extern static void GetInstantiation(RuntimeTypeHandle type, ObjectHandleOnStack types, bool fAsRuntimeTypeArray);
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal RuntimeType[] GetInstantiationInternal()
         {
             RuntimeType[] types = null;
@@ -788,9 +779,6 @@ namespace System
         private extern static void GetGenericTypeDefinition(RuntimeTypeHandle type, ObjectHandleOnStack retType);
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal static RuntimeType GetGenericTypeDefinition(RuntimeType type)
         {
             RuntimeType retType = type;
@@ -961,9 +949,6 @@ namespace System
         internal IntPtr m_handle;
     }
 
-    #if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-    #endif //!FEATURE_CORECLR
     internal class RuntimeMethodInfoStub : IRuntimeMethodInfo
     {
         public RuntimeMethodInfoStub(RuntimeMethodHandleInternal methodHandleValue, object keepalive)
@@ -994,9 +979,6 @@ namespace System
         object m_h;
 #endif
 #pragma warning restore 169
-#if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
         public RuntimeMethodHandleInternal m_value;
 
         RuntimeMethodHandleInternal IRuntimeMethodInfo.Value
@@ -1033,9 +1015,6 @@ namespace System
             get { return new RuntimeMethodHandle(); }
         }
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private IRuntimeMethodInfo m_value;
         
         internal RuntimeMethodHandle(IRuntimeMethodInfo method)
@@ -1049,9 +1028,6 @@ namespace System
         }
 
         // Used by EE
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [SecurityCritical]
         private static IntPtr GetValueInternal(RuntimeMethodHandle rmh)
         {
@@ -1303,9 +1279,6 @@ namespace System
         static extern internal void PerformSecurityCheck(Object obj, RuntimeMethodHandleInternal method, RuntimeType parent, uint invocationFlags);
 
         [System.Security.SecurityCritical]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         static internal void PerformSecurityCheck(Object obj, IRuntimeMethodInfo method, RuntimeType parent, uint invocationFlags)
         {
             RuntimeMethodHandle.PerformSecurityCheck(obj, method.Value, parent, invocationFlags);
@@ -1624,9 +1597,6 @@ namespace System
             return new RuntimeFieldHandle(field);
         }
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private IRuntimeFieldInfo m_ptr;
 
         internal RuntimeFieldHandle(IRuntimeFieldInfo fieldInfo)
@@ -1921,9 +1891,6 @@ namespace System
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern int GetToken(RuntimeModule module);
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         private static void ValidateModulePointer(RuntimeModule module)
         {
             // Make sure we have a valid Module to resolve against.
@@ -2139,9 +2106,6 @@ namespace System
         private extern static IntPtr _GetMetadataImport(RuntimeModule module);
 
         [System.Security.SecurityCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal static MetadataImport GetMetadataImport(RuntimeModule module)
         {
             return new MetadataImport(_GetMetadataImport(module.GetNativeHandle()), module);
@@ -2185,7 +2149,7 @@ namespace System
 
         #region Private Data Members
         //
-        // Keep the layout in [....] with SignatureNative in the VM
+        // Keep the layout in sync with SignatureNative in the VM
         //
         internal RuntimeType[] m_arguments;
         internal RuntimeType m_declaringType;

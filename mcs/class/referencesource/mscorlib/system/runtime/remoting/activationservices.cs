@@ -198,7 +198,6 @@ namespace System.Runtime.Remoting.Activation {
             return retObj;
         }
 
-#if FEATURE_COMINTEROP
         [System.Security.SecurityCritical]  // auto-generated
         private static MarshalByRefObject CreateObjectForCom(
             RuntimeType serverType, Object[] props, bool bNewObj)
@@ -230,7 +229,6 @@ namespace System.Runtime.Remoting.Activation {
             Contract.Assert(null != retObj, "null != retObj");
             return retObj;
         }
-#endif // FEATURE_COMINTEROP
 
         // For types with no proxy attribute, we take the default route of 
         // querying attributes if the current context is suitable for 
@@ -1747,7 +1745,7 @@ namespace System.Runtime.Remoting.Activation {
                 // Need to grow our arrays ... this will be exceedingly rare
                 Object[] newTypes = new Object[activationTypes.Length * 2];
                 Object[] newAttr = new Object[activationAttributes.Length * 2];
-                Contract.Assert(newAttr.Length == newTypes.Length,"These should be in [....]!");
+                Contract.Assert(newAttr.Length == newTypes.Length,"These should be in sync!");
                 Array.Copy(activationTypes, newTypes, activationTypes.Length);
                 Array.Copy(activationAttributes, newAttr, activationAttributes.Length);    
                 activationTypes = newTypes;

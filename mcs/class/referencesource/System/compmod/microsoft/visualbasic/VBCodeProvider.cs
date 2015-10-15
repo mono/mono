@@ -580,12 +580,12 @@ namespace Microsoft.VisualBasic {
 
             foreach (string s in options.ReferencedAssemblies) {
 
-                // Ignore any Microsoft.VisualBasic.dll, since Visual Basic implies it (bug 72785)
+                // Ignore any Microsoft.VisualBasic.dll, since Visual Basic implies it (
                 string fileName = Path.GetFileName(s);
                 if (string.Compare(fileName, "Microsoft.VisualBasic.dll", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 
-                // Same deal for mscorlib (bug ASURT 81568)
+                // Same deal for mscorlib (
                 if (string.Compare(fileName, "mscorlib.dll", StringComparison.OrdinalIgnoreCase) == 0)
                     continue;
 

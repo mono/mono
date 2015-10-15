@@ -8,6 +8,7 @@ namespace System.ServiceModel.Channels
     using System.IO;
     using System.Net.Http;
     using System.Runtime;
+    using System.Threading.Tasks;
     using System.Xml;
 
     public static class ByteStreamMessage
@@ -552,6 +553,13 @@ namespace System.ServiceModel.Channels
 
                     static bool HandleWriteBodyContents(IAsyncResult result)
                     {
+                        // If result is a task, we need to get the result so that exceptions are bubbled up in case the task is faulted.
+                        Task t = result as Task;
+                        if (t != null)
+                        {
+                            t.GetAwaiter().GetResult();
+                        }
+
                         WriteBodyContentsAsyncResult thisPtr = (WriteBodyContentsAsyncResult)result.AsyncState;
                         thisPtr.writer.WriteEndElement();
                         return true;

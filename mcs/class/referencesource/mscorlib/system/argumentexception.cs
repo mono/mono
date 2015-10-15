@@ -72,7 +72,7 @@ namespace System {
             get {
                 String s = base.Message;
                 if (!String.IsNullOrEmpty(m_paramName)) {
-                    String resourceString = Environment.GetRuntimeResourceString("Arg_ParamName_Name", m_paramName);
+                    String resourceString = Environment.GetResourceString("Arg_ParamName_Name", m_paramName);
                     return s + Environment.NewLine + resourceString;
                 }
                 else

@@ -5,7 +5,7 @@
 // ==--==
 // StringExpressionSet
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
  
 namespace System.Security.Util {    
@@ -44,13 +44,9 @@ namespace System.Security.Util {
         
         protected static readonly char[] m_separators = { ';' };
         protected static readonly char[] m_trimChars = { ' ' };
-#if !PLATFORM_UNIX
+
         protected static readonly char m_directorySeparator = '\\';
         protected static readonly char m_alternateDirectorySeparator = '/';
-#else
-        protected static readonly char m_directorySeparator = '/';
-        protected static readonly char m_alternateDirectorySeparator = '\\';
-#endif // !PLATFORM_UNIX
         
         public StringExpressionSet()
             : this( true, null, false )
@@ -653,14 +649,10 @@ namespace System.Security.Util {
                     return false;
                 }
 
-#if !PLATFORM_UNIX
                 if (shortString.Length == 3 &&
                     shortString.EndsWith( ":\\", StringComparison.Ordinal ) &&
                     ((shortString[0] >= 'A' && shortString[0] <= 'Z') ||
                     (shortString[0] >= 'a' && shortString[0] <= 'z')))
-#else
-                if (shortString.Length == 1 && shortString[0]== m_directorySeparator)
-#endif // !PLATFORM_UNIX
                      return true;
 
                 return longString[shortString.Length] == m_directorySeparator;
@@ -756,8 +748,6 @@ namespace System.Security.Util {
         [ResourceConsumption(ResourceScope.Machine)]
         internal static String CanonicalizePath( String path, bool needFullPath )
         {
-
-#if !PLATFORM_UNIX
             if (path.IndexOf( '~' ) != -1)
             {
                 string longPath = null;
@@ -767,7 +757,6 @@ namespace System.Security.Util {
 
             if (path.IndexOf( ':', 2 ) != -1)
                 throw new NotSupportedException( Environment.GetResourceString( "Argument_PathFormatNotSupported" ) );
-#endif // !PLATFORM_UNIX               
 
             if (needFullPath)
             {

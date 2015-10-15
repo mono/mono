@@ -2,12 +2,12 @@
 // <copyright file="TriggerAction.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">alazela</owner>
+// <owner current="true" primary="true">blained</owner>
 // <owner current="true" primary="true">daltudov</owner>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">stevesta</owner>
 // <owner current="true" primary="false">beysims</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">laled</owner>
 // <owner current="true" primary="false">vadimt</owner>
 //------------------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ namespace Microsoft.SqlServer.Server {
         // 1000 - 1999 is reserved for SQLTrace.
         x_eet_Trace_Start       = 1000,
         x_eet_Trace_End     = 1999,
-        // WHEN ADDING, PLEASE 
+        // WHEN ADDING, PLEASE CHECK WITH FILE-OWNER FOR WHICH NUMBERS TO USE.  THANKS!
     };
     
     public enum TriggerAction {

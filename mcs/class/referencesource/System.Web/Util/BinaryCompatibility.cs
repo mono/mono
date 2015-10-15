@@ -30,11 +30,13 @@ namespace System.Web.Util {
             TargetsAtLeastFramework45 = (version >= VersionUtil.Framework45);
             TargetsAtLeastFramework451 = (version >= VersionUtil.Framework451);
             TargetsAtLeastFramework452 = (version >= VersionUtil.Framework452);
+            TargetsAtLeastFramework46 = (version >= VersionUtil.Framework46);
         }
 
         public bool TargetsAtLeastFramework45 { get; private set; }
         public bool TargetsAtLeastFramework451 { get; private set; }
         public bool TargetsAtLeastFramework452 { get; private set; }
+        public bool TargetsAtLeastFramework46 { get; private set; }
 
         public Version TargetFramework { get; private set; }
 

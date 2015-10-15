@@ -1341,7 +1341,7 @@ namespace System.Web.Management {
 
             Exception   ex = _exception;
 
-            // Please note we arbitrary pick a level limit per bug VSWhidbey 143859
+            // Please note we arbitrary pick a level limit per 
             for (int level = 0;
                   ex != null && level <= 2;
                   ex = ex.InnerException, level++)  {
@@ -1946,14 +1946,14 @@ namespace System.Web.Management {
 
                 _iprincipal = context.User;
 
-                // Dev11 #80084 - DTS Bug
-                // In integrated pipeline, we are very aggressive about disposing
-                // WindowsIdentity's.  If this WebRequestInformation is being used
-                // post-request (eg, while formatting data for an email provider
-                // that is reporting batched events), then the User.Identity is
-                // likely to be disposed.  So lets create a clone that will stick
-                // around.  This condition should vaguely match that found in
-                // HttpContext.DisposePrincipal().
+                // Dev11 #80084 - DTS 
+
+
+
+
+
+
+
                 if (_iprincipal is WindowsPrincipal
                     && _iprincipal != WindowsAuthenticationModule.AnonymousPrincipal
                     && (context.WorkerRequest is IIS7WorkerRequest)) {

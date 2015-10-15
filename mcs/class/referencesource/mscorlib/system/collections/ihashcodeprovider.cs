@@ -7,7 +7,7 @@
 **
 ** Interface: IHashCodeProvider
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: A bunch of strings.

@@ -7,7 +7,7 @@
 **
 ** Class:  SafeFileMapViewHandle
 **
-** <EMAIL>Author: Brian Grunkemeyer ([....]) </EMAIL>
+** <EMAIL>Author: Brian Grunkemeyer (Microsoft) </EMAIL>
 **
 ** A wrapper for handles returned from MapViewOfFile, used
 ** for shared memory.

@@ -28,7 +28,7 @@ namespace System.ServiceModel.Channels
             {
                 if (IsDisposed)
                 {
-#pragma warning suppress 56503 // [....], required by base class contract
+#pragma warning suppress 56503 // Microsoft, required by base class contract
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 }
 
@@ -42,7 +42,7 @@ namespace System.ServiceModel.Channels
             {
                 if (IsDisposed)
                 {
-#pragma warning suppress 56503 // [....], required by base class contract
+#pragma warning suppress 56503 // Microsoft, required by base class contract
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 }
 

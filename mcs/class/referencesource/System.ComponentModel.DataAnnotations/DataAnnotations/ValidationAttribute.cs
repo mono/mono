@@ -21,8 +21,9 @@ namespace System.ComponentModel.DataAnnotations {
         private Func<string> _errorMessageResourceAccessor;
         private string _errorMessageResourceName;
         private Type _errorMessageResourceType;
-        private bool _isCallingOverload;
-        private object _syncLock = new object();
+        private string _defaultErrorMessage;
+
+        private volatile bool _hasBaseIsValid;
 
         #endregion
 
@@ -60,6 +61,31 @@ namespace System.ComponentModel.DataAnnotations {
 
         #endregion
 
+        #region Internal Properties
+        /// <summary>
+        /// Gets or sets and the default error message string.
+        /// This message will be used if the user has not set <see cref="ErrorMessage"/>
+        /// or the <see cref="ErrorMessageResourceType"/> and <see cref="ErrorMessageResourceName"/> pair.
+        /// This property was added after the public contract for DataAnnotations was created.
+        /// It was added to fix DevDiv issue 468241.
+        /// It is internal to avoid changing the DataAnnotations contract.
+        /// </summary>
+        internal string DefaultErrorMessage
+        {
+            get
+            {
+                return this._defaultErrorMessage;
+            }
+            set
+            {
+                this._defaultErrorMessage = value;
+                this._errorMessageResourceAccessor = null;
+                this.CustomErrorMessageSet = true;
+            }
+        }
+
+        #endregion
+
         #region Protected Properties
 
         /// <summary>
@@ -75,7 +101,7 @@ namespace System.ComponentModel.DataAnnotations {
 
         /// <summary>
         /// A flag indicating whether a developer has customized the attribute's error message by setting any one of 
-        /// ErrorMessage, ErrorMessageResourceName, or ErrorMessageResourceType.
+        /// ErrorMessage, ErrorMessageResourceName, ErrorMessageResourceType or DefaultErrorMessage.
         /// </summary>
         internal bool CustomErrorMessageSet {
             get;
@@ -105,12 +131,23 @@ namespace System.ComponentModel.DataAnnotations {
         /// </value>
         public string ErrorMessage {
             get {
-                return this._errorMessage;
+                // DevDiv: 468241
+                // If _errorMessage is not set, return the default. This is done to preserve
+                // behavior prior to the fix where ErrorMessage showed the non-null message to use.
+                return this._errorMessage ?? this._defaultErrorMessage;
             }
             set {
                 this._errorMessage = value;
                 this._errorMessageResourceAccessor = null;
                 this.CustomErrorMessageSet = true;
+
+                // DevDiv: 468241
+                // Explicitly setting ErrorMessage also sets DefaultErrorMessage if null.
+                // This prevents subsequent read of ErrorMessage from returning default.
+                if (value == null)
+                {
+                    this._defaultErrorMessage = null;
+                }
             }
         }
 
@@ -163,14 +200,16 @@ namespace System.ComponentModel.DataAnnotations {
         /// <exception cref="InvalidOperationException"> is thrown if the current attribute is malformed.</exception>
         private void SetupResourceAccessor() {
             if (this._errorMessageResourceAccessor == null) {
-                string localErrorMessage = this._errorMessage;
+                string localErrorMessage = this.ErrorMessage;
                 bool resourceNameSet = !string.IsNullOrEmpty(this._errorMessageResourceName);
-                bool errorMessageSet = !string.IsNullOrEmpty(localErrorMessage);
+                bool errorMessageSet = !string.IsNullOrEmpty(this._errorMessage);
                 bool resourceTypeSet = this._errorMessageResourceType != null;
+                bool defaultMessageSet = !string.IsNullOrEmpty(this._defaultErrorMessage);
 
-                // Either ErrorMessageResourceName or ErrorMessage may be set, but not both.
-                // The following test checks both being set as well as both being not set.
-                if (resourceNameSet == errorMessageSet) {
+                // The following combinations are illegal and throw InvalidOperationException:
+                //   1) Both ErrorMessage and ErrorMessageResourceName are set, or
+                //   2) None of ErrorMessage, ErrorMessageReourceName, and DefaultErrorMessage are set.
+                if ((resourceNameSet && errorMessageSet) || !(resourceNameSet || errorMessageSet || defaultMessageSet)) {
                     throw new InvalidOperationException(DataAnnotationsResources.ValidationAttribute_Cannot_Set_ErrorMessage_And_Resource);
                 }
 
@@ -281,20 +320,14 @@ namespace System.ComponentModel.DataAnnotations {
 #else
         internal
 #endif
- virtual bool IsValid(object value) {
-            lock (this._syncLock) {
-                if (this._isCallingOverload) {
-                    throw new NotImplementedException(DataAnnotationsResources.ValidationAttribute_IsValid_NotImplemented);
-                } else {
-                    this._isCallingOverload = true;
-
-                    try {
-                        return this.IsValid(value, null) == null;
-                    } finally {
-                        this._isCallingOverload = false;
-                    }
-                }
+         virtual bool IsValid(object value) {
+            if(!this._hasBaseIsValid) {
+                // track that this method overload has not been overridden.
+                this._hasBaseIsValid = true;
             }
+
+            // call overridden method.
+            return this.IsValid(value, null) == null;
         }
 
 #if !SILVERLIGHT
@@ -336,25 +369,20 @@ namespace System.ComponentModel.DataAnnotations {
         /// </exception>
 #endif
         protected virtual ValidationResult IsValid(object value, ValidationContext validationContext) {
-            lock (this._syncLock) {
-                if (this._isCallingOverload) {
-                    throw new NotImplementedException(DataAnnotationsResources.ValidationAttribute_IsValid_NotImplemented);
-                } else {
-                    this._isCallingOverload = true;
+            if (this._hasBaseIsValid) {
+                // this means neither of the IsValid methods has been overriden, throw.
+                throw new NotImplementedException(DataAnnotationsResources.ValidationAttribute_IsValid_NotImplemented);
+            } 
+ 
+            ValidationResult result = ValidationResult.Success;
 
-                    try {
-                        ValidationResult result = ValidationResult.Success;
-
-                        if (!this.IsValid(value)) {
-                            string[] memberNames = validationContext.MemberName != null ? new string[] { validationContext.MemberName } : null;
-                            result = new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName), memberNames);
-                        }
-                        return result;
-                    } finally {
-                        this._isCallingOverload = false;
-                    }
-                }
+            // call overridden method.
+            if (!this.IsValid(value)) {
+                string[] memberNames = validationContext.MemberName != null ? new string[] { validationContext.MemberName } : null;
+                result = new ValidationResult(this.FormatErrorMessage(validationContext.DisplayName), memberNames);
             }
+
+            return result;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceTypeCode
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Marker for types in .resources files

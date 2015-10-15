@@ -231,7 +231,7 @@ namespace System.Web.Configuration {
                     cacheInfo = new MapPathCacheInfo();
                     // Add to the cache.
                     // No need to have a lock here. UtcAdd will add the entry if it doesn't exist. 
-                    // If it does exist, the existing value will be returned (Dev10 Bug 755034).
+                    // If it does exist, the existing value will be returned (Dev10 
                     object existingEntry = HttpRuntime.CacheInternal.UtcAdd(
                         cacheKey, cacheInfo, null, Cache.NoAbsoluteExpiration, slidingExpiration, CacheItemPriority.Default, null);
                     if (existingEntry != null) {

@@ -49,7 +49,8 @@ namespace System.Web.Hosting {
 
             ApplicationManager appManager = ApplicationManager.GetApplicationManager();
 
-            String appId = (String.Concat(virtualDir, physicalDir).GetHashCode()).ToString("x");
+            String appId = StringUtil.GetNonRandomizedHashCode(String.Concat(virtualDir, physicalDir)).ToString("x");
+
 
             ObjectHandle h = appManager.CreateInstanceInNewWorkerAppDomain(
                                 hostType, appId, VirtualPath.CreateNonRelative(virtualDir), physicalDir);

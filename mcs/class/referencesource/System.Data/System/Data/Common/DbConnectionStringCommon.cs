@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
     using System;
@@ -236,17 +236,21 @@ namespace System.Data.Common {
         }
     }
 
-    internal static class DbConnectionStringBuilderUtil {
+    internal static class DbConnectionStringBuilderUtil
+    {
 
-        internal static bool ConvertToBoolean(object value) {
+        internal static bool ConvertToBoolean(object value)
+        {
             Debug.Assert(null != value, "ConvertToBoolean(null)");
             string svalue = (value as string);
-            if (null != svalue) {
+            if (null != svalue)
+            {
                 if (StringComparer.OrdinalIgnoreCase.Equals(svalue, "true") || StringComparer.OrdinalIgnoreCase.Equals(svalue, "yes"))
                     return true;
                 else if (StringComparer.OrdinalIgnoreCase.Equals(svalue, "false") || StringComparer.OrdinalIgnoreCase.Equals(svalue, "no"))
                     return false;
-                else {
+                else
+                {
                     string tmp = svalue.Trim();  // Remove leading & trailing white space.
                     if (StringComparer.OrdinalIgnoreCase.Equals(tmp, "true") || StringComparer.OrdinalIgnoreCase.Equals(tmp, "yes"))
                         return true;
@@ -255,23 +259,28 @@ namespace System.Data.Common {
                 }
                 return Boolean.Parse(svalue);
             }
-            try {
+            try
+            {
                 return ((IConvertible)value).ToBoolean(CultureInfo.InvariantCulture);
             }
-            catch(InvalidCastException e) {
+            catch (InvalidCastException e)
+            {
                 throw ADP.ConvertFailed(value.GetType(), typeof(Boolean), e);
             }
         }
 
-        internal static bool ConvertToIntegratedSecurity(object value) {
+        internal static bool ConvertToIntegratedSecurity(object value)
+        {
             Debug.Assert(null != value, "ConvertToIntegratedSecurity(null)");
             string svalue = (value as string);
-            if (null != svalue) {
+            if (null != svalue)
+            {
                 if (StringComparer.OrdinalIgnoreCase.Equals(svalue, "sspi") || StringComparer.OrdinalIgnoreCase.Equals(svalue, "true") || StringComparer.OrdinalIgnoreCase.Equals(svalue, "yes"))
                     return true;
                 else if (StringComparer.OrdinalIgnoreCase.Equals(svalue, "false") || StringComparer.OrdinalIgnoreCase.Equals(svalue, "no"))
                     return false;
-                else {
+                else
+                {
                     string tmp = svalue.Trim();  // Remove leading & trailing white space.
                     if (StringComparer.OrdinalIgnoreCase.Equals(tmp, "sspi") || StringComparer.OrdinalIgnoreCase.Equals(tmp, "true") || StringComparer.OrdinalIgnoreCase.Equals(tmp, "yes"))
                         return true;
@@ -280,28 +289,36 @@ namespace System.Data.Common {
                 }
                 return Boolean.Parse(svalue);
             }
-            try {
+            try
+            {
                 return ((IConvertible)value).ToBoolean(CultureInfo.InvariantCulture);
             }
-            catch(InvalidCastException e) {
+            catch (InvalidCastException e)
+            {
                 throw ADP.ConvertFailed(value.GetType(), typeof(Boolean), e);
             }
         }
 
-        internal static int ConvertToInt32(object value) {
-            try {
+        internal static int ConvertToInt32(object value)
+        {
+            try
+            {
                 return ((IConvertible)value).ToInt32(CultureInfo.InvariantCulture);
             }
-            catch(InvalidCastException e) {
+            catch (InvalidCastException e)
+            {
                 throw ADP.ConvertFailed(value.GetType(), typeof(Int32), e);
             }
         }
 
-        internal static string ConvertToString(object value) {
-            try {
+        internal static string ConvertToString(object value)
+        {
+            try
+            {
                 return ((IConvertible)value).ToString(CultureInfo.InvariantCulture);
             }
-            catch(InvalidCastException e) {
+            catch (InvalidCastException e)
+            {
                 throw ADP.ConvertFailed(value.GetType(), typeof(String), e);
             }
         }
@@ -309,35 +326,43 @@ namespace System.Data.Common {
         const string ApplicationIntentReadWriteString = "ReadWrite";
         const string ApplicationIntentReadOnlyString = "ReadOnly";
 
-        internal static bool TryConvertToApplicationIntent(string value, out ApplicationIntent result) {
+        internal static bool TryConvertToApplicationIntent(string value, out ApplicationIntent result)
+        {
             Debug.Assert(Enum.GetNames(typeof(ApplicationIntent)).Length == 2, "ApplicationIntent enum has changed, update needed");
             Debug.Assert(null != value, "TryConvertToApplicationIntent(null,...)");
 
-            if (StringComparer.OrdinalIgnoreCase.Equals(value, ApplicationIntentReadOnlyString)) {
+            if (StringComparer.OrdinalIgnoreCase.Equals(value, ApplicationIntentReadOnlyString))
+            {
                 result = ApplicationIntent.ReadOnly;
                 return true;
             }
-            else if (StringComparer.OrdinalIgnoreCase.Equals(value, ApplicationIntentReadWriteString)) {
+            else if (StringComparer.OrdinalIgnoreCase.Equals(value, ApplicationIntentReadWriteString))
+            {
                 result = ApplicationIntent.ReadWrite;
                 return true;
             }
-            else {
+            else
+            {
                 result = DbConnectionStringDefaults.ApplicationIntent;
                 return false;
             }
         }
 
-        internal static bool IsValidApplicationIntentValue(ApplicationIntent value) {
+        internal static bool IsValidApplicationIntentValue(ApplicationIntent value)
+        {
             Debug.Assert(Enum.GetNames(typeof(ApplicationIntent)).Length == 2, "ApplicationIntent enum has changed, update needed");
             return value == ApplicationIntent.ReadOnly || value == ApplicationIntent.ReadWrite;
         }
 
-        internal static string ApplicationIntentToString(ApplicationIntent value) {
+        internal static string ApplicationIntentToString(ApplicationIntent value)
+        {
             Debug.Assert(IsValidApplicationIntentValue(value));
-            if (value == ApplicationIntent.ReadOnly) {
+            if (value == ApplicationIntent.ReadOnly)
+            {
                 return ApplicationIntentReadOnlyString;
             }
-            else {
+            else
+            {
                 return ApplicationIntentReadWriteString;
             }
         }
@@ -352,22 +377,283 @@ namespace System.Data.Common {
         /// in any case above, if the conerted value is out of valid range, the method raises ArgumentOutOfRangeException.
         /// </summary>
         /// <returns>applicaiton intent value in the valid range</returns>
-        internal static ApplicationIntent ConvertToApplicationIntent(string keyword, object value) {
+        internal static ApplicationIntent ConvertToApplicationIntent(string keyword, object value)
+        {
             Debug.Assert(null != value, "ConvertToApplicationIntent(null)");
             string sValue = (value as string);
             ApplicationIntent result;
-            if (null != sValue) {
+            if (null != sValue)
+            {
                 // We could use Enum.TryParse<ApplicationIntent> here, but it accepts value combinations like
                 // "ReadOnly, ReadWrite" which are unwelcome here
                 // Also, Enum.TryParse is 100x slower than plain StringComparer.OrdinalIgnoreCase.Equals method.
 
-                if (TryConvertToApplicationIntent(sValue, out result)) {
+                if (TryConvertToApplicationIntent(sValue, out result))
+                {
                     return result;
                 }
 
                 // try again after remove leading & trailing whitespaces.
                 sValue = sValue.Trim();
-                if (TryConvertToApplicationIntent(sValue, out result)) {
+                if (TryConvertToApplicationIntent(sValue, out result))
+                {
+                    return result;
+                }
+
+                // string values must be valid
+                throw ADP.InvalidConnectionOptionValue(keyword);
+            }
+            else
+            {
+                // the value is not string, try other options
+                ApplicationIntent eValue;
+
+                if (value is ApplicationIntent)
+                {
+                    // quick path for the most common case
+                    eValue = (ApplicationIntent)value;
+                }
+                else if (value.GetType().IsEnum)
+                {
+                    // explicitly block scenarios in which user tries to use wrong enum types, like:
+                    // builder["ApplicationIntent"] = EnvironmentVariableTarget.Process;
+                    // workaround: explicitly cast non-ApplicationIntent enums to int
+                    throw ADP.ConvertFailed(value.GetType(), typeof(ApplicationIntent), null);
+                }
+                else
+                {
+                    try
+                    {
+                        // Enum.ToObject allows only integral and enum values (enums are blocked above), rasing ArgumentException for the rest
+                        eValue = (ApplicationIntent)Enum.ToObject(typeof(ApplicationIntent), value);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // to be consistent with the messages we send in case of wrong type usage, replace 
+                        // the error with our exception, and keep the original one as inner one for troubleshooting
+                        throw ADP.ConvertFailed(value.GetType(), typeof(ApplicationIntent), e);
+                    }
+                }
+
+                // ensure value is in valid range
+                if (IsValidApplicationIntentValue(eValue))
+                {
+                    return eValue;
+                }
+                else
+                {
+                    throw ADP.InvalidEnumerationValue(typeof(ApplicationIntent), (int)eValue);
+                }
+            }
+        }
+
+        const string SqlPasswordString = "Sql Password";
+        const string ActiveDirectoryPasswordString = "Active Directory Password";
+        const string ActiveDirectoryIntegratedString = "Active Directory Integrated";
+
+        internal static bool TryConvertToAuthenticationType(string value, out SqlAuthenticationMethod result)
+        {
+            Debug.Assert(Enum.GetNames(typeof(SqlAuthenticationMethod)).Length == 4, "SqlAuthenticationMethod enum has changed, update needed");
+
+            bool isSuccess = false;
+
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(value, SqlPasswordString))
+            {
+                result = SqlAuthenticationMethod.SqlPassword;
+                isSuccess = true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, ActiveDirectoryPasswordString))
+            {
+                result = SqlAuthenticationMethod.ActiveDirectoryPassword;
+                isSuccess = true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, ActiveDirectoryIntegratedString))
+            {
+                result = SqlAuthenticationMethod.ActiveDirectoryIntegrated;
+                isSuccess = true;
+            }
+            else
+            {
+                result = DbConnectionStringDefaults.Authentication;
+            }
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// Column Encryption Setting.
+        /// </summary>
+        const string ColumnEncryptionSettingEnabledString = "Enabled";
+        const string ColumnEncryptionSettingDisabledString = "Disabled";
+
+        /// <summary>
+        /// Convert a string value to the corresponding SqlConnectionColumnEncryptionSetting.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        internal static bool TryConvertToColumnEncryptionSetting(string value, out SqlConnectionColumnEncryptionSetting result) {
+            bool isSuccess = false;
+
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(value, ColumnEncryptionSettingEnabledString)) {
+                result = SqlConnectionColumnEncryptionSetting.Enabled;
+                isSuccess = true;
+            }
+            else if (StringComparer.InvariantCultureIgnoreCase.Equals(value, ColumnEncryptionSettingDisabledString)) {
+                result = SqlConnectionColumnEncryptionSetting.Disabled;
+                isSuccess = true;
+            }
+            else {
+                result = DbConnectionStringDefaults.ColumnEncryptionSetting;
+            }
+
+            return isSuccess;
+        }
+
+        /// <summary>
+        /// Is it a valid connection level column encryption setting ?
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static bool IsValidColumnEncryptionSetting(SqlConnectionColumnEncryptionSetting value) {
+            Debug.Assert(Enum.GetNames(typeof(SqlConnectionColumnEncryptionSetting)).Length == 2, "SqlConnectionColumnEncryptionSetting enum has changed, update needed");
+            return value == SqlConnectionColumnEncryptionSetting.Enabled || value == SqlConnectionColumnEncryptionSetting.Disabled;
+        }
+
+        /// <summary>
+        /// Convert connection level column encryption setting value to string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static string ColumnEncryptionSettingToString(SqlConnectionColumnEncryptionSetting value) {
+            Debug.Assert(IsValidColumnEncryptionSetting(value), "value is not a valid connection level column encryption setting.");
+
+            switch (value) {
+                case SqlConnectionColumnEncryptionSetting.Enabled:
+                    return ColumnEncryptionSettingEnabledString;
+                case SqlConnectionColumnEncryptionSetting.Disabled:
+                    return ColumnEncryptionSettingDisabledString;
+
+                default:
+                    return null;
+            }
+        }
+
+        internal static bool IsValidAuthenticationTypeValue(SqlAuthenticationMethod value) {
+            Debug.Assert(Enum.GetNames(typeof(SqlAuthenticationMethod)).Length == 4, "SqlAuthenticationMethod enum has changed, update needed");
+            return value == SqlAuthenticationMethod.SqlPassword
+                || value == SqlAuthenticationMethod.ActiveDirectoryPassword
+                || value == SqlAuthenticationMethod.ActiveDirectoryIntegrated
+                || value == SqlAuthenticationMethod.NotSpecified;
+        }
+
+        internal static string AuthenticationTypeToString(SqlAuthenticationMethod value)
+        {
+            Debug.Assert(IsValidAuthenticationTypeValue(value));
+
+            switch (value)
+            {
+                case SqlAuthenticationMethod.SqlPassword:
+                    return SqlPasswordString;
+                case SqlAuthenticationMethod.ActiveDirectoryPassword:
+                    return ActiveDirectoryPasswordString;
+                case SqlAuthenticationMethod.ActiveDirectoryIntegrated:
+                    return ActiveDirectoryIntegratedString;
+                default:
+                    return null;
+            }
+        }
+
+        internal static SqlAuthenticationMethod ConvertToAuthenticationType(string keyword, object value)
+        {
+            if (null == value)
+            {
+                return DbConnectionStringDefaults.Authentication;
+            }
+
+            string sValue = (value as string);
+            SqlAuthenticationMethod result;
+            if (null != sValue)
+            {
+                if (TryConvertToAuthenticationType(sValue, out result))
+                {
+                    return result;
+                }
+
+                // try again after remove leading & trailing whitespaces.
+                sValue = sValue.Trim();
+                if (TryConvertToAuthenticationType(sValue, out result))
+                {
+                    return result;
+                }
+
+                // string values must be valid
+                throw ADP.InvalidConnectionOptionValue(keyword);
+            }
+            else
+            {
+                // the value is not string, try other options
+                SqlAuthenticationMethod eValue;
+
+                if (value is SqlAuthenticationMethod)
+                {
+                    // quick path for the most common case
+                    eValue = (SqlAuthenticationMethod)value;
+                }
+                else if (value.GetType().IsEnum)
+                {
+                    // explicitly block scenarios in which user tries to use wrong enum types, like:
+                    // builder["ApplicationIntent"] = EnvironmentVariableTarget.Process;
+                    // workaround: explicitly cast non-ApplicationIntent enums to int
+                    throw ADP.ConvertFailed(value.GetType(), typeof(SqlAuthenticationMethod), null);
+                }
+                else
+                {
+                    try
+                    {
+                        // Enum.ToObject allows only integral and enum values (enums are blocked above), rasing ArgumentException for the rest
+                        eValue = (SqlAuthenticationMethod)Enum.ToObject(typeof(SqlAuthenticationMethod), value);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // to be consistent with the messages we send in case of wrong type usage, replace 
+                        // the error with our exception, and keep the original one as inner one for troubleshooting
+                        throw ADP.ConvertFailed(value.GetType(), typeof(SqlAuthenticationMethod), e);
+                    }
+                }
+
+                // ensure value is in valid range
+                if (IsValidAuthenticationTypeValue(eValue))
+                {
+                    return eValue;
+                }
+                else
+                {
+                    throw ADP.InvalidEnumerationValue(typeof(SqlAuthenticationMethod), (int)eValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Convert the provided value to a SqlConnectionColumnEncryptionSetting.
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static SqlConnectionColumnEncryptionSetting ConvertToColumnEncryptionSetting(string keyword, object value) {
+            if (null == value) {
+                return DbConnectionStringDefaults.ColumnEncryptionSetting;
+            }
+
+            string sValue = (value as string);
+            SqlConnectionColumnEncryptionSetting result;
+            if (null != sValue) {
+                if (TryConvertToColumnEncryptionSetting(sValue, out result)) {
+                    return result;
+                }
+
+                // try again after remove leading & trailing whitespaces.
+                sValue = sValue.Trim();
+                if (TryConvertToColumnEncryptionSetting(sValue, out result)) {
                     return result;
                 }
 
@@ -376,36 +662,36 @@ namespace System.Data.Common {
             }
             else {
                 // the value is not string, try other options
-                ApplicationIntent eValue;
+                SqlConnectionColumnEncryptionSetting eValue;
 
-                if (value is ApplicationIntent) {
+                if (value is SqlConnectionColumnEncryptionSetting) {
                     // quick path for the most common case
-                    eValue = (ApplicationIntent)value;
+                    eValue = (SqlConnectionColumnEncryptionSetting)value;
                 }
                 else if (value.GetType().IsEnum) {
                     // explicitly block scenarios in which user tries to use wrong enum types, like:
-                    // builder["ApplicationIntent"] = EnvironmentVariableTarget.Process;
-                    // workaround: explicitly cast non-ApplicationIntent enums to int
-                    throw ADP.ConvertFailed(value.GetType(), typeof(ApplicationIntent), null);
+                    // builder["SqlConnectionColumnEncryptionSetting"] = EnvironmentVariableTarget.Process;
+                    // workaround: explicitly cast non-SqlConnectionColumnEncryptionSetting enums to int
+                    throw ADP.ConvertFailed(value.GetType(), typeof(SqlConnectionColumnEncryptionSetting), null);
                 }
                 else {
                     try {
                         // Enum.ToObject allows only integral and enum values (enums are blocked above), rasing ArgumentException for the rest
-                        eValue = (ApplicationIntent)Enum.ToObject(typeof(ApplicationIntent), value);
+                        eValue = (SqlConnectionColumnEncryptionSetting)Enum.ToObject(typeof(SqlConnectionColumnEncryptionSetting), value);
                     }
                     catch (ArgumentException e) {
                         // to be consistent with the messages we send in case of wrong type usage, replace 
                         // the error with our exception, and keep the original one as inner one for troubleshooting
-                        throw ADP.ConvertFailed(value.GetType(), typeof(ApplicationIntent), e);
+                        throw ADP.ConvertFailed(value.GetType(), typeof(SqlConnectionColumnEncryptionSetting), e);
                     }
                 }
 
                 // ensure value is in valid range
-                if (IsValidApplicationIntentValue(eValue)) {
+                if (IsValidColumnEncryptionSetting(eValue)) {
                     return eValue;
                 }
                 else {
-                    throw ADP.InvalidEnumerationValue(typeof(ApplicationIntent), (int)eValue);
+                    throw ADP.InvalidEnumerationValue(typeof(SqlConnectionColumnEncryptionSetting), (int)eValue);
                 }
             }
         }
@@ -431,38 +717,40 @@ namespace System.Data.Common {
 
         // SqlClient
         internal const ApplicationIntent ApplicationIntent = System.Data.SqlClient.ApplicationIntent.ReadWrite;
-        internal const string ApplicationName           = ".Net SqlClient Data Provider";
-        internal const bool   AsynchronousProcessing    = false;
-        internal const string AttachDBFilename          = "";
-        internal const int    ConnectTimeout            = 15;
-        internal const bool   ConnectionReset           = true;
-        internal const bool   ContextConnection         = false;
-        internal const string CurrentLanguage           = "";
-        internal const string DataSource                = "";
-        internal const bool   Encrypt                   = false;
-        internal const bool   Enlist                    = true;
-        internal const string FailoverPartner           = "";
-        internal const string InitialCatalog            = "";
-        internal const bool   IntegratedSecurity        = false;
-        internal const int    LoadBalanceTimeout        = 0; // default of 0 means don't use
-        internal const bool   MultipleActiveResultSets  = false;
-        internal const bool   MultiSubnetFailover       = false;
-        internal const int    MaxPoolSize               = 100;
-        internal const int    MinPoolSize               = 0;
-        internal const string NetworkLibrary            = "";
-        internal const int    PacketSize                = 8000;
-        internal const string Password                  = "";
-        internal const bool   PersistSecurityInfo       = false;
-        internal const bool   Pooling                   = true;
-        internal const bool   TrustServerCertificate    = false;
-        internal const string TypeSystemVersion         = "Latest";
-        internal const string UserID                    = "";
-        internal const bool   UserInstance              = false;
-        internal const bool   Replication               = false;
-        internal const string WorkstationID             = "";
-        internal const string TransactionBinding        = "Implicit Unbind";
-        internal const int    ConnectRetryCount         = 1;
-        internal const int    ConnectRetryInterval      = 10;
+        internal const string ApplicationName            = ".Net SqlClient Data Provider";
+        internal const bool   AsynchronousProcessing     = false;
+        internal const string AttachDBFilename           = "";
+        internal const int    ConnectTimeout             = 15;
+        internal const bool   ConnectionReset            = true;
+        internal const bool   ContextConnection          = false;
+        internal const string CurrentLanguage            = "";
+        internal const string DataSource                 = "";
+        internal const bool   Encrypt                    = false;
+        internal const bool   Enlist                     = true;
+        internal const string FailoverPartner            = "";
+        internal const string InitialCatalog             = "";
+        internal const bool   IntegratedSecurity         = false;
+        internal const int    LoadBalanceTimeout         = 0; // default of 0 means don't use
+        internal const bool   MultipleActiveResultSets   = false;
+        internal const bool   MultiSubnetFailover        = false;
+        internal const int    MaxPoolSize                = 100;
+        internal const int    MinPoolSize                = 0;
+        internal const string NetworkLibrary             = "";
+        internal const int    PacketSize                 = 8000;
+        internal const string Password                   =  "";
+        internal const bool   PersistSecurityInfo        = false;
+        internal const bool   Pooling                    = true;
+        internal const bool   TrustServerCertificate     = false;
+        internal const string TypeSystemVersion          = "Latest";
+        internal const string UserID                     = "";
+        internal const bool   UserInstance               = false;
+        internal const bool   Replication                = false;
+        internal const string WorkstationID              = "";
+        internal const string TransactionBinding         = "Implicit Unbind";
+        internal const int    ConnectRetryCount          = 1;
+        internal const int    ConnectRetryInterval       = 10;
+        internal static readonly SqlAuthenticationMethod Authentication = SqlAuthenticationMethod.NotSpecified;
+        internal static readonly SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting = SqlConnectionColumnEncryptionSetting.Disabled;
     }
 
     internal static class DbConnectionOptionKeywords {
@@ -526,7 +814,9 @@ namespace System.Data.Common {
         internal const string WorkstationID             = "Workstation ID";
         internal const string ConnectRetryCount         = "ConnectRetryCount";
         internal const string ConnectRetryInterval      = "ConnectRetryInterval";
-
+        internal const string Authentication            = "Authentication";
+        internal const string ColumnEncryptionSetting   = "Column Encryption Setting";
+        
         // common keywords (OleDb, OracleClient, SqlClient)
         internal const string DataSource                = "Data Source";
         internal const string IntegratedSecurity        = "Integrated Security";

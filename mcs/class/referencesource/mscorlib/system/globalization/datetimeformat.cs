@@ -709,11 +709,11 @@ namespace System {
 #if FEATURE_CORECLR
                     offset = TimeSpan.Zero;
 #else // FEATURE_CORECLR
-                    // This code path points to a bug in user code. It would make sense to return a 0 offset in this case.
-                    // However, because it was only possible to detect this in Whidbey, there is user code that takes a 
-                    // dependency on being serialize a UTC DateTime using the 'z' format, and it will work almost all the
-                    // time if it is offset by an incorrect conversion to local time when parsed. Therefore, we need to 
-                    // explicitly emit the local time offset, which we can do by removing the UTC flag.
+                    // This code path points to a 
+
+
+
+
                     InvalidFormatForUtc(format, dateTime);
                     dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Local);
                     offset = TimeZoneInfo.GetLocalUtcOffset(dateTime, TimeZoneInfoOptions.NoThrowOnInvalidTime);
@@ -931,6 +931,7 @@ namespace System {
                         case Calendar.CAL_HEBREW:
                         case Calendar.CAL_JULIAN:
                         case Calendar.CAL_UMALQURA:
+                        case Calendar.CAL_PERSIAN:
                             timeOnlySpecialCase = true;
                             dtfi = DateTimeFormatInfo.InvariantInfo;
                             break;                        

@@ -689,8 +689,8 @@ namespace System.Runtime.Remoting.Activation {
 
         private static void ReportError(String errorStr, RemotingXmlConfigFileData configData)
         {
-            // <STRIP>NOTE: In the future, this might log all errors to the configData object
-            //   instead of throwing immediately.</STRIP>
+            // <
+
         
             throw new RemotingException(errorStr);
         } // ReportError

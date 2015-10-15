@@ -64,9 +64,6 @@ namespace System.IO {
             _encoder = _encoding.GetEncoder();
         }
     
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public BinaryWriter(Stream output) : this(output, new UTF8Encoding(false, true), false)
         {
         }
@@ -150,9 +147,6 @@ namespace System.IO {
         // Writes a byte to this stream. The current position of the stream is
         // advanced by one.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual void Write(byte value) 
         {
             OutStream.WriteByte(value);

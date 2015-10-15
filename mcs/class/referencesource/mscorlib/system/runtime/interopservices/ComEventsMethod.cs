@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 
-#if FEATURE_COMINTEROP
 
 namespace System.Runtime.InteropServices {
 
@@ -249,5 +248,3 @@ namespace System.Runtime.InteropServices {
         #endregion
     }
 }
-
-#endif

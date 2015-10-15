@@ -214,7 +214,7 @@ namespace System.Net {
         public override IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state)
         {
             GlobalLog.Enter("FileWebRequest::BeginGetRequestStream");
-
+            bool success = true;
             try {
                 if (Aborted)
                     throw ExceptionHelper.RequestAbortedException;
@@ -242,18 +242,15 @@ namespace System.Net {
                 m_ReadAResult = new LazyAsyncResult(this, state, callback);
                 ThreadPool.QueueUserWorkItem(s_GetRequestStreamCallback, m_ReadAResult);
             } catch (Exception exception) {
+                success = false; 
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetRequestStream", exception);
                 throw;
             } finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogBeginGetRequestStream(success, synchronous: false);
+                }
                 GlobalLog.Leave("FileWebRequest::BeginGetRequestSteam");
             }
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetRequestStream(suri);
 
             return m_ReadAResult;
         }
@@ -262,6 +259,7 @@ namespace System.Net {
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
         {
             GlobalLog.Enter("FileWebRequest::BeginGetResponse");
+            bool success = true;
 
             try {
                 if (Aborted)
@@ -278,18 +276,15 @@ namespace System.Net {
                 m_WriteAResult = new LazyAsyncResult(this,state,callback);
                 ThreadPool.QueueUserWorkItem(s_GetResponseCallback,m_WriteAResult);
             } catch (Exception exception) {
+                success = false;
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetResponse", exception);
                 throw;
             } finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogBeginGetResponse(success, synchronous: false);
+                }
                 GlobalLog.Leave("FileWebRequest::BeginGetResponse");
             }
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetResponse(suri);
 
             return m_WriteAResult;
         }
@@ -303,6 +298,7 @@ namespace System.Net {
             GlobalLog.Enter("FileWebRequest::EndGetRequestStream");
 
             Stream stream;
+            bool success = false;
             try {
                 LazyAsyncResult  ar = asyncResult as LazyAsyncResult;
                 if (asyncResult == null || ar == null) {
@@ -317,14 +313,16 @@ namespace System.Net {
                 }
                 stream = (Stream) result;
                 m_writePending = false;
+                success = true;
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetRequestStream", exception);
                 throw;
             } finally {
                 GlobalLog.Leave("FileWebRequest::EndGetRequestStream");
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetRequestStream(success, synchronous: false);
+                }
             }
-
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetRequestStream();
 
             return stream;
         }
@@ -334,6 +332,7 @@ namespace System.Net {
             GlobalLog.Enter("FileWebRequest::EndGetResponse");
 
             WebResponse response;
+            bool success = false;
             try {
                 LazyAsyncResult  ar = asyncResult as LazyAsyncResult;
                 if (asyncResult == null || ar == null) {
@@ -349,14 +348,18 @@ namespace System.Net {
                 }
                 response = (WebResponse) result;
                 m_readPending = false;
+                success = true;
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetResponse", exception);
                 throw;
             } finally {
                 GlobalLog.Leave("FileWebRequest::EndGetResponse");
-            }
 
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetResponse();
+                // there is no statusCode in FileWebRequest object, defaulting it to zero.
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetResponse(success, synchronous: false, statusCode: 0);
+                }
+            }
 
             return response;
         }

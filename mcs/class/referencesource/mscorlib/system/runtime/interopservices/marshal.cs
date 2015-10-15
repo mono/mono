@@ -32,10 +32,7 @@ namespace System.Runtime.InteropServices
     using Win32Native = Microsoft.Win32.Win32Native;
     using Microsoft.Win32.SafeHandles;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
-#if FEATURE_CLASSIC_COMINTEROP
     using System.Runtime.InteropServices.ComTypes;
-#endif
 
     [Serializable]
     public enum CustomQueryInterfaceMode
@@ -53,7 +50,7 @@ namespace System.Runtime.InteropServices
     #if FEATURE_CORECLR
     [System.Security.SecurityCritical] // auto-generated
     #endif
-    public static class Marshal
+    public static partial class Marshal
     { 
         //====================================================================
         // Defines used inside the Marshal class.
@@ -204,12 +201,7 @@ namespace System.Runtime.InteropServices
                 throw new ArgumentNullException("structure");
             // we never had a check for generics here
             Contract.EndContractBlock();
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalSizeOf(structure.GetType().GetFullNameForEtw());
-            }
-#endif
+
             return SizeOfHelper(structure.GetType(), true);
         }
 
@@ -229,13 +221,6 @@ namespace System.Runtime.InteropServices
             if (t.IsGenericType)
                 throw new ArgumentException(Environment.GetResourceString("Argument_NeedNonGenericType"), "t");
             Contract.EndContractBlock();
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalSizeOf(t.GetFullNameForEtw());
-            }
-#endif
 
             return SizeOfHelper(t, true);
         }
@@ -296,13 +281,6 @@ namespace System.Runtime.InteropServices
             if (t == null)
                 throw new ArgumentNullException("t");
             Contract.EndContractBlock();
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginMarshalOffsetOf(t.GetFullNameForEtw(), fieldName != null ? fieldName : "");
-            }
-#endif
             
             FieldInfo f = t.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (f == null)
@@ -310,15 +288,9 @@ namespace System.Runtime.InteropServices
             RtFieldInfo rtField = f as RtFieldInfo;
             if (rtField == null)
                 throw new ArgumentException(Environment.GetResourceString("Argument_MustBeRuntimeFieldInfo"), "fieldName");
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndMarshalOffsetOf(t.GetFullNameForEtw(), fieldName != null ? fieldName : "");
-            }
-#endif
+
             return OffsetOfHelper(rtField);
         }
-
         public static IntPtr OffsetOf<T>(string fieldName)
         {
             return OffsetOf(typeof(T), fieldName);
@@ -339,21 +311,8 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern IntPtr InternalUnsafeAddrOfPinnedArrayElement(Array arr, int index);
+        public static extern IntPtr UnsafeAddrOfPinnedArrayElement(Array arr, int index);
 
-        [System.Security.SecurityCritical]
-        public static IntPtr UnsafeAddrOfPinnedArrayElement(Array arr, int index)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && arr != null && arr.Length > index && arr.GetValue(index) != null)
-            {
-                // Not a strongly-typed array, use the type of the element index being requested.
-                FrameworkEventSource.Log.MarshalUnsafeAddrOfPinnedArrayElement(arr.GetValue(index).GetType().GetFullNameForEtw());
-            }
-#endif
-            return InternalUnsafeAddrOfPinnedArrayElement(arr, index);
-        }
-        
         [System.Security.SecurityCritical]
         public static IntPtr UnsafeAddrOfPinnedArrayElement<T>(T[] arr, int index)
         {
@@ -968,19 +927,7 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern int InternalGetExceptionCode();
-
-        [System.Security.SecurityCritical]
-        public static int GetExceptionCode()
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalGetExceptionCode();
-            }
-#endif
-            return InternalGetExceptionCode();
-        }
+        public static extern int GetExceptionCode();
 
 
         //====================================================================
@@ -991,22 +938,8 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall), ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern void InternalStructureToPtr(Object structure, IntPtr ptr, bool fDeleteOld);
-
-        [System.Security.SecurityCritical]
         [System.Runtime.InteropServices.ComVisible(true)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        public static void StructureToPtr(Object structure, IntPtr ptr, bool fDeleteOld)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && structure != null)
-            {
-                FrameworkEventSource.Log.MarshalStructureToPtr(structure.GetType().GetFullNameForEtw(), fDeleteOld.ToString());
-            }
-#endif
-            InternalStructureToPtr(structure, ptr, fDeleteOld);
-        }
-    
+        public static extern void StructureToPtr(Object structure, IntPtr ptr, bool fDeleteOld);
 
         [System.Security.SecurityCritical]
         public static void StructureToPtr<T>(T structure, IntPtr ptr, bool fDeleteOld)
@@ -1021,19 +954,7 @@ namespace System.Runtime.InteropServices
         [System.Runtime.InteropServices.ComVisible(true)]
         public static void PtrToStructure(IntPtr ptr, Object structure)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && structure != null)
-            {
-                FrameworkEventSource.Log.BeginMarshalPtrToStructure(structure.GetType().GetFullNameForEtw());
-            }
-#endif
             PtrToStructureHelper(ptr, structure, false);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && structure != null)
-            {
-                FrameworkEventSource.Log.EndMarshalPtrToStructure(structure.GetType().GetFullNameForEtw());
-            }
-#endif
         }
 
         [System.Security.SecurityCritical]
@@ -1066,26 +987,11 @@ namespace System.Runtime.InteropServices
 
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginMarshalPtrToStructure(rt.GetFullNameForEtw());
-            }
-#endif
-            
             Object structure = rt.CreateInstanceDefaultCtor(false /*publicOnly*/, false /*skipCheckThis*/, false /*fillCache*/, ref stackMark);
             PtrToStructureHelper(ptr, structure, true);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndMarshalPtrToStructure(rt.GetFullNameForEtw());
-            }
-#endif
-            
             return structure;
         }
-    
+
         [System.Security.SecurityCritical]
         public static T PtrToStructure<T>(IntPtr ptr)
         {
@@ -1107,20 +1013,8 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern void InternalDestroyStructure(IntPtr ptr, Type structuretype);
-
         [System.Runtime.InteropServices.ComVisible(true)]
-        [System.Security.SecurityCritical]
-        public static void DestroyStructure(IntPtr ptr, Type structuretype)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && structuretype != null)
-            {
-                FrameworkEventSource.Log.MarshalDestroyStructure(structuretype.GetFullNameForEtw());
-            }
-#endif
-            InternalDestroyStructure(ptr, structuretype);
-        }
+        public static extern void DestroyStructure(IntPtr ptr, Type structuretype);
 
         [System.Security.SecurityCritical]
         public static void DestroyStructure<T>(IntPtr ptr)
@@ -1168,24 +1062,12 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         public static void ThrowExceptionForHR(int errorCode)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalThrowExceptionForHR();
-            }
-#endif
             if (errorCode < 0)
                 ThrowExceptionForHRInternal(errorCode, IntPtr.Zero);
         }
         [System.Security.SecurityCritical]  // auto-generated_required
         public static void ThrowExceptionForHR(int errorCode, IntPtr errorInfo)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && (int)errorInfo != -1)
-            {
-                FrameworkEventSource.Log.MarshalThrowExceptionForHR2();
-            }
-#endif
             if (errorCode < 0)
                 ThrowExceptionForHRInternal(errorCode, errorInfo);
         }
@@ -1201,12 +1083,6 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         public static Exception GetExceptionForHR(int errorCode)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalGetExceptionForHR();
-            }
-#endif
             if (errorCode < 0)
                 return GetExceptionForHRInternal(errorCode, IntPtr.Zero);
             else 
@@ -1215,12 +1091,6 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         public static Exception GetExceptionForHR(int errorCode, IntPtr errorInfo)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && (int)errorInfo != -1)
-            {
-                FrameworkEventSource.Log.MarshalGetExceptionForHR2();
-            }
-#endif
             if (errorCode < 0)
                 return GetExceptionForHRInternal(errorCode, errorInfo);
             else 
@@ -1250,7 +1120,6 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        [ForceTokenStabilization]
         internal static extern int GetHRForException_WinRT(Exception e);
 
 #if !FEATURE_PAL
@@ -1435,8 +1304,6 @@ namespace System.Runtime.InteropServices
 #endif //!FEATURE_PAL
 
 #if FEATURE_COMINTEROP
-
-#if FEATURE_CLASSIC_COMINTEROP
 
 		internal static readonly Guid ManagedNameGuid = new Guid("{0F21F359-AB84-41E8-9A78-36D110E6D2F9}"); 
        
@@ -1654,13 +1521,6 @@ namespace System.Runtime.InteropServices
 
             typeInfo.GetDocumentation(-1, out strTypeLibName, out strDocString, out dwHelpContext, out strHelpFile);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalGetTypeInfoName(typeInfo.GetType().GetFullNameForEtw());
-            }
-#endif
-
             return strTypeLibName;
         }
 
@@ -1812,19 +1672,12 @@ namespace System.Runtime.InteropServices
 
         // This method is identical to Type.GetTypeFromCLSID. Since it's interop specific, we expose it
         // on Marshal for more consistent API surface.
+#if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]
+#endif //!FEATURE_CORECLR
         public static Type GetTypeFromCLSID(Guid clsid)
         {
-            Type t = RuntimeType.GetTypeFromCLSIDImpl(clsid, null, false);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && t != null && clsid != null)
-            {
-                FrameworkEventSource.Log.MarshalGetTypeFromCLSID(t.GetFullNameForEtw(), clsid.ToString());
-            }
-#endif
-            
-            return t;
+            return RuntimeType.GetTypeFromCLSIDImpl(clsid, null, false);
         }
 
         //====================================================================
@@ -1835,8 +1688,6 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern IntPtr /* ITypeInfo* */ GetITypeInfoForType(Type t);
 
-#endif // FEATURE_CLASSIC_COMINTEROP
-
         //====================================================================
         // return the IUnknown* for an Object if the current context
         // is the one where the RCW was first seen. Will return null 
@@ -1845,12 +1696,6 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr /* IUnknown* */ GetIUnknownForObject(Object o)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null)
-            {
-                FrameworkEventSource.Log.MarshalGetIUnknownForObject(o.GetType().GetFullNameForEtw());
-            }
-#endif
             return GetIUnknownForObjectNative(o, false);
         }
 
@@ -1904,14 +1749,6 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr /* IUnknown* */ GetComInterfaceForObject(Object o, Type T)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null && T != null)
-            {
-                // The managed ETW class only allows three parameters, so we have to improvise in passing all four
-                string interfaceAndMode = o.GetType().ImplementInterface(typeof(System.Runtime.InteropServices.ICustomQueryInterface)) ? "1:1" : "0:1";
-                FrameworkEventSource.Log.MarshalGetComInterfaceForObject(o.GetType().GetFullNameForEtw(), T.GetFullNameForEtw(), interfaceAndMode);
-            }
-#endif
             return GetComInterfaceForObjectNative(o, T, false, true);
         }
 
@@ -1930,16 +1767,6 @@ namespace System.Runtime.InteropServices
         public static IntPtr /* IUnknown* */ GetComInterfaceForObject(Object o, Type T, CustomQueryInterfaceMode mode)
         {
             bool bEnableCustomizedQueryInterface = ((mode == CustomQueryInterfaceMode.Allow) ? true : false);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null && T != null)
-            {
-                // The managed ETW class only allows three parameters, so we have to improvise in passing all four
-                string interfaceAndMode = o.GetType().ImplementInterface(typeof(System.Runtime.InteropServices.ICustomQueryInterface)) ? "1:" : "0:";
-                interfaceAndMode += bEnableCustomizedQueryInterface ? "1" : "0";
-                FrameworkEventSource.Log.MarshalGetComInterfaceForObject(o.GetType().GetFullNameForEtw(), T.GetFullNameForEtw(), interfaceAndMode);
-            }
-#endif
             return GetComInterfaceForObjectNative(o, T, false, bEnableCustomizedQueryInterface);
         }
 
@@ -1965,21 +1792,7 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern Object InternalGetObjectForIUnknown(IntPtr /* IUnknown* */ pUnk);
-
-        [System.Security.SecurityCritical]
-        public static Object GetObjectForIUnknown(IntPtr /* IUnknown* */ pUnk)
-        {
-            Object o = InternalGetObjectForIUnknown(pUnk);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null)
-            {
-                FrameworkEventSource.Log.MarshalGetObjectForIUnknown(o.GetType().GetFullNameForEtw());
-            }
-#endif
-            return o;
-        }
+        public static extern Object GetObjectForIUnknown(IntPtr /* IUnknown* */ pUnk);
 
         //====================================================================
         // Return a unique Object given an IUnknown.  This ensures that you
@@ -1991,22 +1804,7 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern Object InternalGetUniqueObjectForIUnknown(IntPtr unknown);
-
-        [System.Security.SecurityCritical]
-        public static Object GetUniqueObjectForIUnknown(IntPtr unknown)
-        {
-            Object o = InternalGetUniqueObjectForIUnknown(unknown);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null)
-            {
-                FrameworkEventSource.Log.MarshalGetUniqueObjectForIUnknown(o.GetType().GetFullNameForEtw());
-            }
-#endif
-            
-            return o;
-        }
+        public static extern Object GetUniqueObjectForIUnknown(IntPtr unknown);
 
         //====================================================================
         // return an Object for IUnknown, using the Type T, 
@@ -2022,20 +1820,8 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern IntPtr InternalCreateAggregatedObject(IntPtr pOuter, Object o);
-        
-        [System.Security.SecurityCritical]
-        public static IntPtr CreateAggregatedObject(IntPtr pOuter, Object o)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null)
-            {
-                FrameworkEventSource.Log.MarshalCreateAggregatedObject(o.GetType().GetFullNameForEtw());
-            }
-#endif
-            return InternalCreateAggregatedObject(pOuter,o);
-        }
-        
+        public static extern IntPtr CreateAggregatedObject(IntPtr pOuter, Object o);
+
         [System.Security.SecurityCritical]
         public static IntPtr CreateAggregatedObject<T>(IntPtr pOuter, T o)
         {
@@ -2052,24 +1838,16 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern bool AreComObjectsAvailableForCleanup();
 
-#endif // FEATURE_COMINTEROP
-
-
         //====================================================================
         // check if the object is classic COM component
         //====================================================================
 #if !FEATURE_CORECLR // with FEATURE_CORECLR, the whole type is SecurityCritical
         [System.Security.SecuritySafeCritical]
 #endif
-#if FEATURE_COMINTEROP
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern bool IsComObject(Object o);
-#else
-        public static bool IsComObject(Object o)
-        {
-            return false;        
-        }
+
 #endif // FEATURE_COMINTEROP
 
         [System.Security.SecurityCritical]  // auto-generated_required
@@ -2083,7 +1861,6 @@ namespace System.Runtime.InteropServices
             return pNewMem;
         }
 
-#if FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
         [System.Security.SecurityCritical]  // auto-generated_required
         unsafe public static IntPtr StringToCoTaskMemUni(String s)
         {
@@ -2160,7 +1937,17 @@ namespace System.Runtime.InteropServices
             }
         }
 
-#endif //FEATURE_COMINTEROP || FEATURE_LEGACYNETCF
+        [System.Security.SecurityCritical]  // auto-generated_required
+        public static IntPtr ReAllocCoTaskMem(IntPtr pv, int cb)
+        {
+            IntPtr pNewMem = Win32Native.CoTaskMemRealloc(pv, new UIntPtr((uint)cb));
+            if (pNewMem == IntPtr.Zero && cb != 0)
+            {
+                throw new OutOfMemoryException();
+            }
+            return pNewMem;
+        }
+
 
 #if FEATURE_COMINTEROP
         //====================================================================
@@ -2316,13 +2103,6 @@ namespace System.Runtime.InteropServices
             if (o == null)
                 return null;
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalCreateWrapperOfType(o.GetType().GetFullNameForEtw(), t.GetFullNameForEtw());
-            }
-#endif
-            
             // Make sure the object is a COM object.
             if (!o.GetType().IsCOMObject)
                 throw new ArgumentException(Environment.GetResourceString("Argument_ObjNotComObject"), "o");
@@ -2406,23 +2186,12 @@ namespace System.Runtime.InteropServices
         // BSTR allocation and dealocation.
         //====================================================================      
         [System.Security.SecurityCritical]  // auto-generated_required
-        public static IntPtr ReAllocCoTaskMem(IntPtr pv, int cb)
-        {
-            IntPtr pNewMem = Win32Native.CoTaskMemRealloc(pv, new UIntPtr((uint)cb));
-            if (pNewMem == IntPtr.Zero && cb != 0) {
-                throw new OutOfMemoryException();
-            }
-            return pNewMem;
-        }
-
-        [System.Security.SecurityCritical]  // auto-generated_required
         public static void FreeBSTR(IntPtr ptr)
         {
             if (IsNotWin32Atom(ptr)) {
                 Win32Native.SysFreeString(ptr);
             }
         }
-
 
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr StringToBSTR(String s)
@@ -2450,19 +2219,7 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern void InternalGetNativeVariantForObject(Object obj, /* VARIANT * */ IntPtr pDstNativeVariant);
-
-        [System.Security.SecurityCritical]
-        public static void GetNativeVariantForObject(Object obj, /* VARIANT * */ IntPtr pDstNativeVariant)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && obj != null)
-            {
-                FrameworkEventSource.Log.MarshalGetNativeVariantForObject(obj.GetType().GetFullNameForEtw());
-            }
-#endif
-            InternalGetNativeVariantForObject(obj, pDstNativeVariant);
-        }
+        public static extern void GetNativeVariantForObject(Object obj, /* VARIANT * */ IntPtr pDstNativeVariant);
 
         [System.Security.SecurityCritical]
         public static void GetNativeVariantForObject<T>(T obj, IntPtr pDstNativeVariant)
@@ -2473,50 +2230,23 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern Object InternalGetObjectForNativeVariant(/* VARIANT * */ IntPtr pSrcNativeVariant );
-
-        [System.Security.SecurityCritical]
-        public static Object GetObjectForNativeVariant(/* VARIANT * */ IntPtr pSrcNativeVariant )
-        {
-            return InternalGetObjectForNativeVaraintLogging(pSrcNativeVariant);
-        }
+        public static extern Object GetObjectForNativeVariant(/* VARIANT * */ IntPtr pSrcNativeVariant );
 
         [System.Security.SecurityCritical]
         public static T GetObjectForNativeVariant<T>(IntPtr pSrcNativeVariant)
         {
-            return (T)InternalGetObjectForNativeVaraintLogging(pSrcNativeVariant);
-        }
-
-        [System.Security.SecurityCritical]
-        internal static object InternalGetObjectForNativeVaraintLogging(IntPtr pSrcNativeVariant)
-        {
-            Object o = InternalGetObjectForNativeVariant(pSrcNativeVariant);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && o != null)
-            {
-                FrameworkEventSource.Log.MarshalGetObjectForNativeVariant(o.GetType().GetFullNameForEtw());
-            }
-#endif
-
-            return o;
+            return (T)GetObjectForNativeVariant(pSrcNativeVariant);
         }
 
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern Object[] InternalGetObjectsForNativeVariants(/* VARIANT * */ IntPtr aSrcNativeVariant, int cVars );
-
-        [System.Security.SecurityCritical]
-        public static Object[] GetObjectsForNativeVariants(/* VARIANT * */ IntPtr aSrcNativeVariant, int cVars )
-        {
-            return InternalGetObjectsForNativeVariantsLogging(aSrcNativeVariant, cVars);
-        }
+        public static extern Object[] GetObjectsForNativeVariants(/* VARIANT * */ IntPtr aSrcNativeVariant, int cVars );
 
         [System.Security.SecurityCritical]
         public static T[] GetObjectsForNativeVariants<T>(IntPtr aSrcNativeVariant, int cVars)
         {
-            object[] objects = InternalGetObjectsForNativeVariantsLogging(aSrcNativeVariant, cVars);
+            object[] objects = GetObjectsForNativeVariants(aSrcNativeVariant, cVars);
             T[] result = null;
             
             if (objects != null)
@@ -2528,40 +2258,6 @@ namespace System.Runtime.InteropServices
             return result;
         }
 
-        [System.Security.SecurityCritical]
-        internal static Object[] InternalGetObjectsForNativeVariantsLogging(/* VARIANT * */ IntPtr aSrcNativeVariant, int cVars)
-        {
-            Object[] objects = InternalGetObjectsForNativeVariants(aSrcNativeVariant, cVars);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && objects != null)
-            {
-                // Since we can only return up to 3 parameters with the managed ETW library, create a formatted string with all
-                // the object type names in it.  The format of the string is:
-                // <length of type name 1>:<type name 1>:<length of type name 2>:<type name 2>...
-                StringBuilder sb = new StringBuilder();
-                foreach (Object o in objects)
-                {
-                    if (sb.Length > 0)
-                        sb.Append(":");
-
-                    if (o != null)
-                    {
-                        String typeName = o.GetType().GetFullNameForEtw();
-                        sb.Append(typeName.Length);
-                        sb.Append(":");
-                        sb.Append(typeName);
-                    }
-                }
-                
-                FrameworkEventSource.Log.MarshalGetObjectsForNativeVariants(sb.ToString());
-            }
-#endif
-            
-            return objects;
-        }
-
-
         /// <summary>
         /// <para>Returns the first valid COM slot that GetMethodInfoForSlot will work on
         /// This will be 3 for IUnknown based interfaces and 7 for IDispatch based interfaces. </para>
@@ -2569,19 +2265,7 @@ namespace System.Runtime.InteropServices
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern int InternalGetStartComSlot(Type t);
-
-        [System.Security.SecurityCritical]
-        public static int GetStartComSlot(Type t)
-        {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && t != null)
-            {
-                FrameworkEventSource.Log.MarshalGetStartComSlot(t.GetFullNameForEtw());
-            }
-#endif
-            return InternalGetStartComSlot(t);
-        }
+        public static extern int GetStartComSlot(Type t);
 
         /// <summary>
         /// <para>Returns the last valid COM slot that GetMethodInfoForSlot will work on. </para>
@@ -2648,7 +2332,6 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void FCallGenerateGuidForType(ref Guid result, Type type);
 
-#if FEATURE_CLASSIC_COMINTEROP
         //====================================================================
         // This method generates a PROGID for the specified type. If the type
         // has a PROGID in the metadata then it is returned otherwise a stable
@@ -2774,7 +2457,6 @@ namespace System.Runtime.InteropServices
         [SuppressUnmanagedCodeSecurity]
         [System.Security.SecurityCritical]  // auto-generated
         private static extern void GetActiveObject(ref Guid rclsid, IntPtr reserved, [MarshalAs(UnmanagedType.Interface)] out Object ppunk);
-#endif // FEATURE_CLASSIC_COMINTEROP
 
         //========================================================================
         // Private method called from remoting to support ServicedComponents.
@@ -2806,15 +2488,12 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern void ChangeWrapperHandleStrength(Object otp, bool fIsWeak);
 
-#if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern void InitializeWrapperForWinRT(object o, ref IntPtr pUnk);
 
-#if FEATURE_COMINTEROP_MANAGED_ACTIVATION
+#if FEATURE_COMINTEROP_WINRT_MANAGED_ACTIVATION
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -2942,13 +2621,6 @@ namespace System.Runtime.InteropServices
             if (c == null || (c != typeof(Delegate) && c != typeof(MulticastDelegate)))
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeDelegate"), "t");
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.MarshalGetDelegateForFunctionPointer(t.GetFullNameForEtw());
-            }
-#endif
-            
             return GetDelegateForFunctionPointerInternal(ptr, t);
         }
 
@@ -2969,14 +2641,6 @@ namespace System.Runtime.InteropServices
                 throw new ArgumentNullException("d");
             Contract.EndContractBlock();
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage)
-                && d.Target != null
-                && d.Method != null)
-            {
-                FrameworkEventSource.Log.MarshalGetFunctionPointerForDelegate(d.Target.GetType().GetFullNameForEtw(), d.Method.GetFullNameForEtw());
-            }
-#endif
             return GetFunctionPointerForDelegateInternal(d);
         }
 
@@ -2990,7 +2654,7 @@ namespace System.Runtime.InteropServices
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern IntPtr GetFunctionPointerForDelegateInternal(Delegate d);
 
-#if FEATURE_COMINTEROP && (FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS || FEATURE_CORESYSTEM)
+#if FEATURE_COMINTEROP
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr SecureStringToBSTR(SecureString s) {
             if( s == null) {
@@ -3000,6 +2664,7 @@ namespace System.Runtime.InteropServices
             
             return s.ToBSTR();
         }
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr SecureStringToCoTaskMemAnsi(SecureString s) {
@@ -3023,13 +2688,14 @@ namespace System.Runtime.InteropServices
             return s.ToUniStr(false);
         }
 
-
+#if FEATURE_COMINTEROP
         [System.Security.SecurityCritical]  // auto-generated_required
         public static void ZeroFreeBSTR(IntPtr s)
         {
             Win32Native.ZeroMemory(s, (UIntPtr)(Win32Native.SysStringLen(s) * 2));
             FreeBSTR(s);
         }
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated_required
         public static void ZeroFreeCoTaskMemAnsi(IntPtr s)
@@ -3044,9 +2710,7 @@ namespace System.Runtime.InteropServices
             Win32Native.ZeroMemory(s, (UIntPtr)(Win32Native.lstrlenW(s) * 2));
             FreeCoTaskMem(s);
         }
-#endif // FEATURE_COMINTEROP && (FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS)
 
-#if FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS || FEATURE_CORESYSTEM
         [System.Security.SecurityCritical]  // auto-generated_required
         public static IntPtr SecureStringToGlobalAllocAnsi(SecureString s) {
             if( s == null) {
@@ -3066,7 +2730,6 @@ namespace System.Runtime.InteropServices
 
             return s.ToUniStr(true);
         }
-#endif // FEATURE_CRYPTO || FEATURE_X509_SECURESTRINGS
 
         [System.Security.SecurityCritical]  // auto-generated_required
         public static void ZeroFreeGlobalAllocAnsi(IntPtr s) {
@@ -3118,10 +2781,4 @@ namespace System.Runtime.InteropServices
     }
 #endif // FEATURE_COMINTEROP && !FEATURE_CORECLR 
 }
-
-
-
-
-
-
 

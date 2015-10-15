@@ -122,11 +122,10 @@ namespace System.Globalization {
             this.m_name = culture.m_name;
             this.m_sortName = culture.SortName;
 
-#if !FEATURE_CORECLR && !MONO
+#if !MONO
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
-#endif
         }
 
         /*=================================GetCompareInfo==========================
@@ -283,11 +282,11 @@ namespace System.Globalization {
                 ci = CultureInfo.GetCultureInfo(m_name);
             }
             this.m_sortName = ci.SortName;
-#if !FEATURE_CORECLR && !MONO
+#if !MONO
             IntPtr handleOrigin;
             this.m_dataHandle = InternalInitSortHandle(m_sortName, out handleOrigin);
             this.m_handleOrigin = handleOrigin;
-#endif
+
         }
 
         [OnDeserialized]
@@ -1228,6 +1227,35 @@ namespace System.Globalization {
             return (this.Name.GetHashCode());
         }
 
+        //
+        // return hash value for the string according to the input CompareOptions 
+        //
+
+        public virtual int GetHashCode(string source, CompareOptions options)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException("source");
+            }
+
+            if (options == CompareOptions.Ordinal)
+            {
+                return source.GetHashCode();
+            }
+
+            if (options == CompareOptions.OrdinalIgnoreCase)
+            {
+                return TextInfo.GetHashCodeOrdinalIgnoreCase(source);
+            }
+
+            //
+            // GetHashCodeOfString does more parameters validation. basically will throw when  
+            // having Ordinal, OrdinalIgnoreCase and StringSort
+            //
+
+            return GetHashCodeOfString(source, options, false, 0);
+        }
+
         ////////////////////////////////////////////////////////////////////////
         //
         //  GetHashCodeOfString
@@ -1313,13 +1341,14 @@ namespace System.Globalization {
         }
 #endif
 
-#if !FEATURE_CORECLR && !MONO
+#if !MONO
         [System.Security.SecuritySafeCritical]
         internal static IntPtr InternalInitSortHandle(String localeName, out IntPtr handleOrigin)
         {
             return NativeInternalInitSortHandle(localeName, out handleOrigin);
         }
 
+#if !FEATURE_CORECLR
         private const int SORT_VERSION_WHIDBEY = 0x00001000;
         private const int SORT_VERSION_V4 = 0x00060101;
 
@@ -1373,13 +1402,13 @@ namespace System.Globalization {
         [SuppressUnmanagedCodeSecurity]
         private static extern uint InternalGetSortVersion();
 
+#endif
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
         private static extern IntPtr NativeInternalInitSortHandle(String localeName, out IntPtr handleOrigin);
-#endif
-#if !MONO
+
         // Get a locale sensitive sort hash code from native code -- COMNlsInfo::InternalGetGlobalizedHashCode
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]

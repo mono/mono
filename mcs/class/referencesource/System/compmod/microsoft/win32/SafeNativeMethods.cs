@@ -83,6 +83,8 @@ namespace Microsoft.Win32 {
             FORMAT_MESSAGE_FROM_STRING = 0x00000400,
             FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000,
             FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
+
+        public const int ERROR_INSUFFICIENT_BUFFER = 0x7A;
 			
 #if FEATURE_NETCORE
         [SecurityCritical]
@@ -107,10 +109,11 @@ namespace Microsoft.Win32 {
 #if FEATURE_NETCORE
         [SecurityCritical]
         [System.Security.SuppressUnmanagedCodeSecurity]
-#endif
-        [DllImport(ExternDll.Kernel32, ExactSpelling=true, CharSet=System.Runtime.InteropServices.CharSet.Auto, SetLastError=true)]
+#else
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [ResourceExposure(ResourceScope.None)]
+#endif
+        [DllImport(ExternDll.Kernel32, ExactSpelling=true, CharSet=System.Runtime.InteropServices.CharSet.Auto, SetLastError=true)]
         public static extern bool CloseHandle(IntPtr handle);
 #endif // !SILVERLIGHT || FEATURE_NETCORE
 
@@ -228,11 +231,13 @@ namespace Microsoft.Win32 {
 
 #if FEATURE_NETCORE
         [SecurityCritical]
-#endif
-        [DllImport(ExternDll.Kernel32, SetLastError=true)]
+#else
         [ResourceExposure(ResourceScope.Machine)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
+        [DllImport(ExternDll.Kernel32, SetLastError=true)]
         internal static extern bool ReleaseSemaphore(SafeWaitHandle handle, int releaseCount, out int previousCount);
+
 #endif  //!SILVERLIGHT || FEATURE_NETCORE
     }
 }

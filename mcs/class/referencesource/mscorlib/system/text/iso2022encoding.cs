@@ -11,7 +11,7 @@
 //  Abstract:
 //
 //      Managed implimentation of ISO 2022 code pages, ported from the implimentation in c_is2022.dll
-//      This code should be kept in [....] with the other implimentations
+//      This code should be kept in sync with the other implimentations
 //      This encoding wraps the basic encodings in code that adds the shift in/out wrapper methods
 //
 //  Notes:

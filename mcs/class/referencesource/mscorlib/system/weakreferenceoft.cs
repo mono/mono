@@ -64,14 +64,7 @@ namespace System
         //      if (ref.Target != null)
         //          DoSomething(ref.Target)
         //
-#if !FEATURE_CORECLR
-        // It is important for JIT to inline this method to avoid cost of write barrier for out T target argument.
-        // 
         [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
-#endif
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public bool TryGetTarget(out T target)
         {
             // Call the worker method that has more performant but less user friendly signature.
@@ -80,9 +73,6 @@ namespace System
             return o != null;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public void SetTarget(T target)
         {
             this.Target = target;

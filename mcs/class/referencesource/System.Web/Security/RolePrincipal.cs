@@ -98,7 +98,7 @@ namespace System.Web.Security {
 
         private void InitFromEncryptedTicket( string encryptedTicket )
         {
-            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc))
+            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null)
                 EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_BEGIN, HttpContext.Current.WorkerRequest);
 
             if (string.IsNullOrEmpty(encryptedTicket))
@@ -140,14 +140,14 @@ namespace System.Web.Security {
 
             RenewIfOld();
 
-            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc))
+            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null)
                 EtwTrace.Trace( EtwTraceType.ETW_TYPE_ROLE_END, HttpContext.Current.WorkerRequest, "RolePrincipal", _Identity.Name);
 
             return;
         Exit:
             Init();
             _CachedListChanged = true;
-            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc))
+            if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null)
                 EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_END, HttpContext.Current.WorkerRequest, "RolePrincipal", _Identity.Name);
             return;
         }

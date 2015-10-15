@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit 
@@ -23,19 +23,13 @@ namespace System.Reflection.Emit
     }
 
     // This is a kind of Type object that will represent the compound expression of a parameter type or field type.
-    internal sealed class SymbolType : 
-#if FEATURE_CORECLR && !FEATURE_NETCORE
-	    Type
-#else
-	    TypeInfo
-#endif	    
+    internal sealed class SymbolType : TypeInfo
     {
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;            
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif        
+
         #region Static Members
         internal static Type FormCompoundType(char[] bFormat, Type baseType, int curIndex)
         {

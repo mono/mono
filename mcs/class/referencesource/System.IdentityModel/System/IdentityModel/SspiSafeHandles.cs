@@ -391,7 +391,7 @@ namespace System.IdentityModel
                 {
 
                     SSPIHandle credentialHandle = inCredentials._handle;
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // This API does not set Win32 Last Error.
                     errorCode = InitializeSecurityContextW(
                         ref credentialHandle,
@@ -661,7 +661,7 @@ namespace System.IdentityModel
                 {
 
                     SSPIHandle credentialHandle = inCredentials._handle;
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // This API does not set Win32 Last Error.
                     errorCode = AcceptSecurityContext(
                         ref credentialHandle,
@@ -741,7 +741,7 @@ namespace System.IdentityModel
 
                 if (b)
                 {
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                     status = ImpersonateSecurityContext(ref context._handle);
                     context.DangerousRelease();
@@ -777,7 +777,7 @@ namespace System.IdentityModel
             {
                 if (b)
                 {
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                     status = EncryptMessage(ref context._handle, 0, inputOutput, sequenceNumber);
                     context.DangerousRelease();
@@ -857,7 +857,7 @@ namespace System.IdentityModel
             {
                 if (b)
                 {
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. The API returns a error code.
                     status = QuerySecurityContextToken(ref _handle, out safeHandle);
                     DangerousRelease();
@@ -875,7 +875,7 @@ namespace System.IdentityModel
             if (this._EffectiveCredential != null)
                 this._EffectiveCredential.DangerousRelease();
 
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
             return DeleteSecurityContext(ref _handle) == 0;
         }
@@ -992,7 +992,7 @@ namespace System.IdentityModel
             try { }
             finally
             {
-                // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                 errorCode = AcquireCredentialsHandleW(
                     null,
@@ -1027,7 +1027,7 @@ namespace System.IdentityModel
             try { }
             finally
             {
-                // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                 errorCode = AcquireCredentialsHandleW(
                                 null,
@@ -1073,7 +1073,7 @@ namespace System.IdentityModel
                 try { }
                 finally
                 {
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                     errorCode = AcquireCredentialsHandleW(
                                     null,
@@ -1114,7 +1114,7 @@ namespace System.IdentityModel
             try { }
             finally
             {
-                // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
                 errorCode = AcquireCredentialsHandleW(
                                     null,
@@ -1138,7 +1138,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. It returns a error code.
             return FreeCredentialsHandle(ref _handle) == 0;
         }
@@ -1220,7 +1220,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error.
             return CertFreeCertificateContext(handle);
         }
@@ -1242,7 +1242,7 @@ namespace System.IdentityModel
         internal static int EnumeratePackages(out int pkgnum, out SafeFreeContextBuffer pkgArray)
         {
             int res = -1;
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. The API returns a error code.
             res = SafeFreeContextBuffer.EnumerateSecurityPackagesW(out pkgnum, out pkgArray);
 
@@ -1295,7 +1295,7 @@ namespace System.IdentityModel
             {
                 if (b)
                 {
-                    // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+                    // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. The API returns a error code.
                     status = SafeFreeContextBuffer.QueryContextAttributesW(ref phContext._handle, contextAttribute, buffer);
                     phContext.DangerousRelease();
@@ -1330,7 +1330,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // The API does not set Win32 Last Error. The API returns a error code.
             return FreeContextBuffer(handle) == 0;
         }
@@ -1371,7 +1371,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // We are not interested to throw an exception here. We can ignore the Last Error code.
             return CloseHandle(handle);
         }

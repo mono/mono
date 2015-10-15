@@ -5,7 +5,7 @@
 // ==--==
 //  IIdentityPermissionFactory.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 //  All Identities will implement this interface.
 //

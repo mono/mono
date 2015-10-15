@@ -132,7 +132,7 @@ namespace System.ServiceModel.Administration
             Fx.Assert(null != instance, "");
             Fx.Assert(null != info, "");
             ProviderBase.FillCollectionInfo(info.Service.BaseAddresses, instance, AdministrationStrings.BaseAddresses);
-            instance.SetProperty(AdministrationStrings.CounterInstanceName, PerformanceCounters.PerformanceCountersEnabled ? ServicePerformanceCounters.CreateFriendlyInstanceName(info.Service) : String.Empty);
+            instance.SetProperty(AdministrationStrings.CounterInstanceName, PerformanceCounters.PerformanceCountersEnabled ? ServicePerformanceCounters.GetFriendlyInstanceName(info.Service) : String.Empty);
             instance.SetProperty(AdministrationStrings.ConfigurationName, info.ConfigurationName);
             instance.SetProperty(AdministrationStrings.DistinguishedName, info.DistinguishedName);
             instance.SetProperty(AdministrationStrings.Name, info.Name);

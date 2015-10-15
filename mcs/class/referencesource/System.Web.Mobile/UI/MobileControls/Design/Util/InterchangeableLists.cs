@@ -45,7 +45,7 @@ namespace System.Web.UI.Design.MobileControls.Util
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();
 
-            // 
+            // TODO: Add any initialization after the InitForm call
             _downButton.Image = GenericUI.SortDownIcon;
             _upButton.Image = GenericUI.SortUpIcon;
             UpdateButtonEnabling();

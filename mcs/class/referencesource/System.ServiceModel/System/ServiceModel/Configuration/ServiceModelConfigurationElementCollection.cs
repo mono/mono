@@ -239,7 +239,7 @@ namespace System.ServiceModel.Configuration
                 }
                 else
                 {
-#pragma warning disable 56506 //[....]; Variable 'key' checked for null previously
+#pragma warning disable 56506 //Microsoft; Variable 'key' checked for null previously
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.ConfigKeysDoNotMatch,
                         this.GetElementKey(value).ToString(),
                         key.ToString()));

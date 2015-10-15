@@ -7,7 +7,7 @@
 **
 ** Class:  ArraySortHelper
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: class to sort arrays
@@ -139,6 +139,13 @@ namespace System.Collections.Generic
                     comparer = Comparer<T>.Default;
                 }
 
+#if FEATURE_CORECLR
+                // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                IntrospectiveSort(keys, index, length, comparer);
+#else
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
                     IntrospectiveSort(keys, index, length, comparer);
@@ -147,6 +154,7 @@ namespace System.Collections.Generic
                 {
                     DepthLimitedQuickSort(keys, index, length + index - 1, comparer, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                 }
+#endif
             }
             catch (IndexOutOfRangeException)
             {
@@ -473,6 +481,14 @@ namespace System.Collections.Generic
 #else
                 if (comparer == null || comparer == Comparer<T>.Default) {
 #endif
+
+#if FEATURE_CORECLR
+                    // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                    // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                    // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                    IntrospectiveSort(keys, index, length);
+#else
                     // call the faster version of our sort algorithm if the user doesn't provide a comparer
                     if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                     {
@@ -482,9 +498,17 @@ namespace System.Collections.Generic
                     {
                         DepthLimitedQuickSort(keys, index, length + index - 1, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                     }
+#endif
                 }
                 else
                 {
+#if FEATURE_CORECLR
+                    // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                    // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                    // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                    ArraySortHelper<T>.IntrospectiveSort(keys, index, length, comparer);
+#else
                     if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                     {
                         ArraySortHelper<T>.IntrospectiveSort(keys, index, length, comparer);
@@ -493,6 +517,7 @@ namespace System.Collections.Generic
                     {
                         ArraySortHelper<T>.DepthLimitedQuickSort(keys, index, length + index - 1, comparer, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                     }
+#endif
                 }
             }
             catch (IndexOutOfRangeException)
@@ -890,6 +915,13 @@ namespace System.Collections.Generic
                     comparer = Comparer<TKey>.Default;
                 }
 
+#if FEATURE_CORECLR
+                // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                IntrospectiveSort(keys, values, index, length, comparer);
+#else
                 if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                 {
                     IntrospectiveSort(keys, values, index, length, comparer);
@@ -898,6 +930,7 @@ namespace System.Collections.Generic
                 {
                     DepthLimitedQuickSort(keys, values, index, length + index - 1, comparer, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                 }
+#endif
             }
             catch (IndexOutOfRangeException)
             {
@@ -1211,6 +1244,13 @@ namespace System.Collections.Generic
             {
                 if (comparer == null || comparer == Comparer<TKey>.Default)
                 {
+#if FEATURE_CORECLR
+                    // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                    // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                    // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                    IntrospectiveSort(keys, values, index, length);
+#else
                     // call the faster version of our sort algorithm if the user doesn't provide a comparer
                     if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                     {
@@ -1220,9 +1260,17 @@ namespace System.Collections.Generic
                     {
                         DepthLimitedQuickSort(keys, values, index, length + index - 1, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                     }
+#endif
                 }
                 else
                 {
+#if FEATURE_CORECLR
+                    // Since QuickSort and IntrospectiveSort produce different sorting sequence for equal keys the upgrade 
+                    // to IntrospectiveSort was quirked. However since the phone builds always shipped with the new sort aka 
+                    // IntrospectiveSort and we would want to continue using this sort moving forward CoreCLR always uses the new sort.
+
+                    ArraySortHelper<TKey, TValue>.IntrospectiveSort(keys, values, index, length, comparer);
+#else
                     if (BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)
                     {
                         ArraySortHelper<TKey, TValue>.IntrospectiveSort(keys, values, index, length, comparer);
@@ -1231,6 +1279,7 @@ namespace System.Collections.Generic
                     {
                         ArraySortHelper<TKey, TValue>.DepthLimitedQuickSort(keys, values, index, length + index - 1, comparer, IntrospectiveSortUtilities.QuickSortDepthThreshold);
                     }
+#endif
                 }
 
             }                    

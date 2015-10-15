@@ -2,7 +2,7 @@
 // <copyright file="XmlCharacterData.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 namespace System.Xml {
     using System.Diagnostics;
@@ -33,7 +33,6 @@ namespace System.Xml {
 
         // Contains this node's data.
         public virtual string Data {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 if (data != null) {
                     return data;

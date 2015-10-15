@@ -13,6 +13,7 @@ namespace System.Runtime.Interop
     using System.Runtime.InteropServices;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Diagnostics;
+    using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
     [SuppressUnmanagedCodeSecurity]    
     static class UnsafeNativeMethods
@@ -34,7 +35,7 @@ namespace System.Runtime.Interop
             internal uint Size;
             [FieldOffset(12)]
             internal int Reserved;
-        }       
+        }
 
         [SuppressMessage(FxCop.Category.Security, FxCop.Rule.ReviewSuppressUnmanagedCodeSecurityUsage,
             Justification = "This PInvoke call has been reviewed")]
@@ -73,7 +74,17 @@ namespace System.Runtime.Interop
         [DllImport(KERNEL32, SetLastError = true)]
         [ResourceExposure(ResourceScope.None)]
         [SecurityCritical]
-        public static extern void GetSystemTimeAsFileTime([Out] out long time);
+        private static extern void GetSystemTimeAsFileTime([Out] out FILETIME time);
+
+        [SecurityCritical]
+        public static void GetSystemTimeAsFileTime(out long time) {
+            FILETIME fileTime;
+            GetSystemTimeAsFileTime(out fileTime);
+            time = 0;
+            time |= (uint)fileTime.dwHighDateTime;
+            time <<= sizeof(uint) * 8;
+            time |= (uint)fileTime.dwLowDateTime;
+        }
 
         [SuppressMessage(FxCop.Category.Security, FxCop.Rule.SpecifyMarshalingForPInvokeStringArguments, Justification = "")]
         [DllImport(KERNEL32, SetLastError = true, CharSet = CharSet.Auto)]

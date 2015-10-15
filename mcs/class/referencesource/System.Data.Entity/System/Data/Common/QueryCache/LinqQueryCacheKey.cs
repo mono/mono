@@ -3,7 +3,7 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
+// @owner  Microsoft
 // @backupOwner venkatja
 //------------------------------------------------------------------------------
 

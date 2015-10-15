@@ -531,7 +531,22 @@ namespace System.Net.WebSockets
 
             this.receiveBufferSize = receiveBufferSize;
             this.sendBufferSize = sendBufferSize;
-            this.buffer = buffer;
+            
+            // Only full-trust applications can specify their own buffer to be used as the
+            // internal buffer for the WebSocket object.  This is because the contents of the
+            // buffer are used internally by the WebSocket as it marshals data with embedded
+            // pointers to native code.  A malicious application could use this to corrupt
+            // native memory.
+            if (AppDomain.CurrentDomain.IsFullyTrusted)
+            {
+                this.buffer = buffer;
+            }
+            else
+            {
+                // We silently ignore the passed in buffer and will create an internal
+                // buffer later.
+                this.buffer = null;
+            }
         }
 
         internal int ReceiveBufferSize { get { return receiveBufferSize; } }

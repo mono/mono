@@ -22,7 +22,7 @@ namespace System.Web.UI {
         private string _cdnPathSecureConnection;
         private bool _cdnSupportsSecureConnection;
 
-        internal const string _microsoftCdnBasePath = "http://ajax.aspnetcdn.com/ajax/4.5.1/1/"; // "/4.5/6/" = 4.5 RTM
+        internal const string _microsoftCdnBasePath = "http://ajax.aspnetcdn.com/ajax/4.6/1/";
 
         public WebResourceAttribute(string webResource, string contentType) {
             if (String.IsNullOrEmpty(webResource)) {

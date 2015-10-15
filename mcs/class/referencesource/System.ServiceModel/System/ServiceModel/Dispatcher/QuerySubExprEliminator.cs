@@ -278,8 +278,8 @@ namespace System.ServiceModel.Dispatcher
 
     internal class SubExprHeader : SubExpr
     {
-        // WS, [....], Can probably combine these
-        // WS, [....], Make this data structure less ugly (if possible)
+        // WS, Microsoft, Can probably combine these
+        // WS, Microsoft, Make this data structure less ugly (if possible)
         Dictionary<string, Dictionary<string, List<SubExpr>>> nameLookup;
         Dictionary<SubExpr, MyInt> indexLookup;
 
@@ -329,7 +329,7 @@ namespace System.ServiceModel.Dispatcher
                 context.SaveVariable(this.var, context.Processor.ElapsedCount(marker));
             }
 
-            // WS, [....], see if we can put this array in the processor to save
+            // WS, Microsoft, see if we can put this array in the processor to save
             //             an allocation.  Perhaps we can use the variables slot we're going to fill
             NodeSequence[] childSequences = new NodeSequence[this.children.Count];
             NodeSequence seq = context.Sequences[context.TopSequenceArg.basePtr].Sequence;

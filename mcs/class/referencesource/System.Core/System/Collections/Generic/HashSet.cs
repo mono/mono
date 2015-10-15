@@ -56,11 +56,11 @@ namespace System.Collections.Generic {
     [DebuggerDisplay("Count = {Count}")]
     [SuppressMessage("Microsoft.Naming","CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="By design")]
 #if SILVERLIGHT
-    public class HashSet<T> : ICollection<T>, ISet<T>
+    public class HashSet<T> : ICollection<T>, ISet<T>, IReadOnlyCollection<T>
 #else
     [Serializable()]
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
-    public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback, ISet<T>
+    public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback, ISet<T>, IReadOnlyCollection<T>
 #endif
     {
 
@@ -303,7 +303,7 @@ namespace System.Collections.Generic {
             // need to serialize version to avoid problems with serializing while enumerating
             info.AddValue(VersionName, m_version);
 
-#if FEATURE_RANDOMIZED_STRING_HASHING
+#if FEATURE_RANDOMIZED_STRING_HASHING && !FEATURE_NETCORE
             info.AddValue(ComparerName, HashHelpers.GetEqualityComparerForSerialization(m_comparer), typeof(IEqualityComparer<T>));
 #else
             info.AddValue(ComparerName, m_comparer, typeof(IEqualityComparer<T>));
@@ -962,14 +962,14 @@ namespace System.Collections.Generic {
 
             int hashCode = InternalGetHashCode(value);
             int bucket = hashCode % m_buckets.Length;
-#if FEATURE_RANDOMIZED_STRING_HASHING
+#if FEATURE_RANDOMIZED_STRING_HASHING && !FEATURE_NETCORE
             int collisionCount = 0;
 #endif
             for (int i = m_buckets[hashCode % m_buckets.Length] - 1; i >= 0; i = m_slots[i].next) {
                 if (m_slots[i].hashCode == hashCode && m_comparer.Equals(m_slots[i].value, value)) {
                     return false;
                 }
-#if FEATURE_RANDOMIZED_STRING_HASHING
+#if FEATURE_RANDOMIZED_STRING_HASHING && !FEATURE_NETCORE
                 collisionCount++;
 #endif
             }
@@ -995,7 +995,7 @@ namespace System.Collections.Generic {
             m_count++;
             m_version++;
 
-#if FEATURE_RANDOMIZED_STRING_HASHING
+#if FEATURE_RANDOMIZED_STRING_HASHING && !FEATURE_NETCORE
             if(collisionCount > HashHelpers.HashCollisionThreshold && HashHelpers.IsWellKnownEqualityComparer(m_comparer)) {
                 m_comparer = (IEqualityComparer<T>) HashHelpers.GetRandomizedEqualityComparer(m_comparer);
                 SetCapacity(m_buckets.Length, true);

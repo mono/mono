@@ -14,7 +14,9 @@ namespace System.ComponentModel {
     /// <para>Provides data for the <see langword='PropertyChanged'/>
     /// event.</para>
     /// </devdoc>
+#if !SILVERLIGHT
     [HostProtection(SharedState = true)]
+#endif
     public class PropertyChangedEventArgs : EventArgs {
         private readonly string propertyName;
 

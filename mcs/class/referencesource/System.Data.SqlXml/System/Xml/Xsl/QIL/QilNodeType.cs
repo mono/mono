@@ -2,7 +2,7 @@
 // <copyright file="QilNodeType.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">akimball</owner>
 //------------------------------------------------------------------------------
 namespace System.Xml.Xsl.Qil {
     /// <summary>An enumeration of all the possible QilExpression node types.</summary>

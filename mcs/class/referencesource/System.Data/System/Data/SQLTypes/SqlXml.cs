@@ -2,8 +2,8 @@
 // <copyright file="SqlXmlReader.cs" company="Microsoft">
 //	   Copyright (c) Microsoft Corporation.  All rights reserved.
 //	</copyright>																
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -114,8 +114,8 @@ namespace System.Data.SqlTypes
             try {
                 return sqlReaderDelegate(stream, settingsToUse, null);
             }
-            // Dev11 Bug #315513: Exception type breaking change from 4.0 RTM when calling GetChars on null xml
-            // For particular callers, we need to wrap all exceptions inside a TargetInvocationException to simulate calling CreateSqlReader via MethodInfo.Invoke
+            // Dev11 
+
             catch (Exception ex) {
                 if ((!throwTargetInvocationExceptions) || (!ADP.IsCatchableExceptionType(ex))) {
                     throw;
@@ -244,9 +244,9 @@ namespace System.Data.SqlTypes
 			}
 			else 
             {
-                // VSTFDevDiv Bug 197567 - [SqlXml Column Read from SQL Server 2005 Fails to XML Serialize (writes raw binary)]
-                // Instead of the WriteRaw use the WriteNode. As Tds sends a binary stream - Create a XmlReader to convert 
-                // get the Xml string value from the binary and call WriteNode to pass that out to the XmlWriter.
+                // VSTFDevDiv 
+
+
                 XmlReader reader = this.CreateReader();
                 if (reader.ReadState == ReadState.Initial)
                     reader.Read();

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Collections.ObjectModel
@@ -24,9 +24,6 @@ namespace System.Collections.ObjectModel
         [NonSerialized]
         private Object _syncRoot;
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public Collection() {
             items = new List<T>();
         }
@@ -39,9 +36,6 @@ namespace System.Collections.ObjectModel
         }
 
         public int Count {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return items.Count; }
         }
 
@@ -50,9 +44,6 @@ namespace System.Collections.ObjectModel
         }
 
         public T this[int index] {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return items[index]; }
             set {
                 if( items.IsReadOnly) {
@@ -76,9 +67,6 @@ namespace System.Collections.ObjectModel
             InsertItem(index, item);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public void Clear() {
             if( items.IsReadOnly) {
                 ThrowHelper.ThrowNotSupportedException(ExceptionResource.NotSupported_ReadOnlyCollection);
@@ -87,16 +75,10 @@ namespace System.Collections.ObjectModel
             ClearItems();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public void CopyTo(T[] array, int index) {
             items.CopyTo(array, index);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public bool Contains(T item) {
             return items.Contains(item);
         }
@@ -105,9 +87,6 @@ namespace System.Collections.ObjectModel
             return items.GetEnumerator();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public int IndexOf(T item) {
             return items.IndexOf(item);
         }
@@ -147,23 +126,14 @@ namespace System.Collections.ObjectModel
             RemoveItem(index);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected virtual void ClearItems() {
             items.Clear();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected virtual void InsertItem(int index, T item) {
             items.Insert(index, item);
         }
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected virtual void RemoveItem(int index) {
             items.RemoveAt(index);
         }

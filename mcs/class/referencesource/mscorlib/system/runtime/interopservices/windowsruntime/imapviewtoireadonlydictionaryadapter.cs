@@ -5,7 +5,7 @@
 // ==--==
 //
 // <OWNER>GPaperin</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Security;
@@ -98,7 +98,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 value = _this.Lookup(key);
                 return true;
             }
-            catch (Exception ex)  // Still may hit this case due to a ----, or a potential bug.
+            catch (Exception ex)  // Still may hit this case due to a ----, or a potential 
             {
                 if (__HResults.E_BOUNDS == ex._HResult)
                 {

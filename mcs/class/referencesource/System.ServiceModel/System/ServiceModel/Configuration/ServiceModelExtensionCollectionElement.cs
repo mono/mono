@@ -48,7 +48,7 @@ namespace System.ServiceModel.Configuration
 
                 if (!this.CollectionElementBaseType.IsAssignableFrom(extensionType))
                 {
-#pragma warning disable 56506 //[....]; Variable 'extensionType' checked for null previously
+#pragma warning disable 56506 //Microsoft; Variable 'extensionType' checked for null previously
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument("extensionType",
                         SR.GetString(SR.ConfigInvalidExtensionType,
                         extensionType.ToString(),
@@ -326,8 +326,8 @@ namespace System.ServiceModel.Configuration
             }
             catch (ConfigurationErrorsException e)
             {
-                // Work-around for bug 219506@CSDMain: if the extension type cannot be loaded, we'll ignore 
-                // the exception when running in win8 app container and reading from machine.config.
+                // Work-around for 
+
                 if (System.ServiceModel.Channels.AppContainerInfo.IsRunningInAppContainer && evaluationContext.IsMachineLevel)
                 {
                     DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);

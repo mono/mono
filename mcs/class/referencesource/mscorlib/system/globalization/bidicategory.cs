@@ -33,5 +33,9 @@ namespace System.Globalization {
         SegmentSeparator = 16,
         Whitespace = 17,
         OtherNeutrals = 18,
+        LeftToRightIsolate = 19,
+        RightToLeftIsolate = 20, 
+        FirstStrongIsolate = 21,
+        PopDirectionIsolate = 22,
     }
 }

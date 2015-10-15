@@ -9,10 +9,10 @@ namespace System.Runtime.Serialization
     {
         string name;
         string ns;
-        bool isNameSetExplicit;
-        bool isNamespaceSetExplicit;
+        bool isNameSetExplicitly;
+        bool isNamespaceSetExplicitly;
         bool isReference;
-        bool isReferenceSetExplicit;
+        bool isReferenceSetExplicitly;
 
         public DataContractAttribute()
         {
@@ -24,13 +24,13 @@ namespace System.Runtime.Serialization
             set
             {
                 isReference = value;
-                isReferenceSetExplicit = true;
+                isReferenceSetExplicitly = true;
             }
         }
 
-        internal bool IsReferenceSetExplicit
+        public bool IsReferenceSetExplicitly
         {
-            get { return isReferenceSetExplicit; }
+            get { return isReferenceSetExplicitly; }
         }
 
         public string Namespace
@@ -39,13 +39,13 @@ namespace System.Runtime.Serialization
             set
             {
                 ns = value;
-                isNamespaceSetExplicit = true;
+                isNamespaceSetExplicitly = true;
             }
         }
 
-        internal bool IsNamespaceSetExplicit
+        public bool IsNamespaceSetExplicitly
         {
-            get { return isNamespaceSetExplicit; }
+            get { return isNamespaceSetExplicitly; }
         }
 
         public string Name
@@ -54,13 +54,13 @@ namespace System.Runtime.Serialization
             set
             {
                 name = value;
-                isNameSetExplicit = true;
+                isNameSetExplicitly = true;
             }
         }
 
-        internal bool IsNameSetExplicit
+        public bool IsNameSetExplicitly
         {
-            get { return isNameSetExplicit; }
+            get { return isNameSetExplicitly; }
         }
 
     }

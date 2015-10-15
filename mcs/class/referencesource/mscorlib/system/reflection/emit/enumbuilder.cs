@@ -7,7 +7,7 @@
 **
 ** Class:  EnumBuilder
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** EnumBuilder is a helper class to build Enum ( a special type ). 
@@ -29,21 +29,13 @@ namespace System.Reflection.Emit {
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_EnumBuilder))]
 [System.Runtime.InteropServices.ComVisible(true)]
-    sealed public class EnumBuilder : 
-#if FEATURE_CORECLR	&& !FEATURE_NETCORE    
-	    Type, 
-#else
-        TypeInfo,
-#endif
-	    _EnumBuilder
+    sealed public class EnumBuilder : TypeInfo, _EnumBuilder
     {
-
-        #if !FEATURE_CORECLR || FEATURE_NETCORE
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif
+
         // Define literal for enum
 
         public FieldBuilder DefineLiteral(String literalName, Object literalValue)
@@ -59,13 +51,11 @@ namespace System.Reflection.Emit {
             return fieldBuilder;
         }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public TypeInfo CreateTypeInfo()
         {
             BCLDebug.Log("DYNIL", "## DYNIL LOGGING: EnumBuilder.CreateType() ");
             return m_typeBuilder.CreateTypeInfo();
         }
-#endif
 
         // CreateType cause EnumBuilder to be baked.
         public Type CreateType() 
@@ -426,6 +416,7 @@ namespace System.Reflection.Emit {
             m_underlyingField = m_typeBuilder.DefineField("value__", underlyingType, FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
         }
 
+#if !FEATURE_CORECLR
         void _EnumBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -445,6 +436,7 @@ namespace System.Reflection.Emit {
         {
             throw new NotImplementedException();
         }
+#endif
 
 
         /*****************************************************

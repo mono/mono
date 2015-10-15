@@ -554,7 +554,7 @@ namespace System.ServiceModel.Channels
                 IConnection upgradedConnection = this.serverSingletonPreambleReader.EndCompletePreamble(result);
                 ServerSingletonConnectionReader singletonReader = new ServerSingletonConnectionReader(serverSingletonPreambleReader, upgradedConnection, this.demuxer);
 
-                //singletonReader doesn't have async version of ReceiveRequest, so just call the [....] method for now.
+                //singletonReader doesn't have async version of ReceiveRequest, so just call the sync method for now.
                 RequestContext requestContext = singletonReader.ReceiveRequest(this.timeoutHelper.RemainingTime());
                 singletonChannelListener.ReceiveRequest(requestContext, serverSingletonPreambleReader.ConnectionDequeuedCallback, true);
 

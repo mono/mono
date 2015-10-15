@@ -67,7 +67,7 @@ namespace System.Security.AccessControl
 
         #region Constructors
 
-        private ObjectSecurity()
+        protected ObjectSecurity()
         {
         }
         
@@ -79,7 +79,7 @@ namespace System.Security.AccessControl
              _securityDescriptor = new CommonSecurityDescriptor( isContainer, isDS, ControlFlags.None, null, null, null, dacl );
         }
 
-        internal ObjectSecurity( CommonSecurityDescriptor securityDescriptor )
+        protected ObjectSecurity( CommonSecurityDescriptor securityDescriptor )
             : this()
         {
             if ( securityDescriptor == null )

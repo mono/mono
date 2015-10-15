@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -393,7 +393,7 @@ namespace System.Data.Query.PlanCompiler
             ScalarOp childOp = n.Child0.Op as ScalarOp;
             PlanCompiler.Assert(childOp != null, "input to GetEntityRefOp is not a ScalarOp?");
 
-            // bug 428542 - the child is of the entity type; not this op
+            // 
             md.EntityType entityType = TypeHelpers.GetEdmType<md.EntityType>(childOp.Type);
 
             PropertyRefList desiredProperties = GetIdentityProperties(entityType);

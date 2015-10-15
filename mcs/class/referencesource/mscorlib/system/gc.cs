@@ -47,6 +47,7 @@ namespace System {
         NonBlocking = 0x00000001,
         Blocking = 0x00000002,
         Optimized = 0x00000004,
+        Compacting = 0x00000008,
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!
@@ -72,7 +73,19 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern void SetGCLatencyMode(int newLatencyMode);
+        internal static extern int SetGCLatencyMode(int newLatencyMode);
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [SuppressUnmanagedCodeSecurity]
+        internal static extern int _StartNoGCRegion(long totalSize, bool lohSizeKnown, long lohSize, bool disallowFullBlockingGC);
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
+        [SuppressUnmanagedCodeSecurity]
+        internal static extern int _EndNoGCRegion();
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -198,6 +211,12 @@ namespace System {
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void Collect(int generation, GCCollectionMode mode, bool blocking) 
         {
+            Collect(generation, mode, blocking, false);
+        }
+
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        public static void Collect(int generation, GCCollectionMode mode, bool blocking, bool compacting)
+        {
             if (generation<0) 
             {
                 throw new ArgumentOutOfRangeException("generation", Environment.GetResourceString("ArgumentOutOfRange_GenericPositive"));
@@ -217,11 +236,14 @@ namespace System {
                 iInternalModes |= (int)InternalGCCollectionMode.Optimized;
             }
 
+            if (compacting)
+                iInternalModes |= (int)InternalGCCollectionMode.Compacting;
+
             if (blocking)
             {
                 iInternalModes |= (int)InternalGCCollectionMode.Blocking;
             }
-            else
+            else if (!compacting)
             {
                 iInternalModes |= (int)InternalGCCollectionMode.NonBlocking;
             }
@@ -330,9 +352,6 @@ namespace System {
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void SuppressFinalize(Object obj) {
             if (obj == null)
                 throw new ArgumentNullException("obj");
@@ -463,6 +482,80 @@ namespace System {
             if (millisecondsTimeout < -1)
                 throw new ArgumentOutOfRangeException("millisecondsTimeout", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegOrNegative1"));
             return (GCNotificationStatus)_WaitForFullGCComplete(millisecondsTimeout);
+        }
+
+        enum StartNoGCRegionStatus
+        {
+            Succeeded = 0,
+            NotEnoughMemory = 1,
+            AmountTooLarge = 2,
+            AlreadyInProgress = 3
+        }
+
+        enum EndNoGCRegionStatus
+        {
+            Succeeded = 0,
+            NotInProgress = 1,
+            GCInduced = 2,
+            AllocationExceeded = 3
+        }
+
+        [SecurityCritical]
+        static bool StartNoGCRegionWorker(long totalSize, bool hasLohSize, long lohSize, bool disallowFullBlockingGC)
+        {
+            StartNoGCRegionStatus status = (StartNoGCRegionStatus)_StartNoGCRegion(totalSize, hasLohSize, lohSize, disallowFullBlockingGC);
+            if (status == StartNoGCRegionStatus.AmountTooLarge)
+                throw new ArgumentOutOfRangeException("totalSize", 
+                    "totalSize is too large. For more information about setting the maximum size, see \"Latency Modes\" in http://go.microsoft.com/fwlink/?LinkId=522706");
+            else if (status == StartNoGCRegionStatus.AlreadyInProgress)
+                throw new InvalidOperationException("The NoGCRegion mode was already in progress");
+            else if (status == StartNoGCRegionStatus.NotEnoughMemory)
+                return false;
+            return true;
+        }
+
+        [SecurityCritical]
+        public static bool TryStartNoGCRegion(long totalSize)
+        {
+            return StartNoGCRegionWorker(totalSize, false, 0, false);
+        }
+
+        [SecurityCritical]
+        public static bool TryStartNoGCRegion(long totalSize, long lohSize)
+        {
+            return StartNoGCRegionWorker(totalSize, true, lohSize, false);
+        }
+
+        [SecurityCritical]
+        public static bool TryStartNoGCRegion(long totalSize, bool disallowFullBlockingGC)
+        {
+            return StartNoGCRegionWorker(totalSize, false, 0, disallowFullBlockingGC);
+        }
+
+        [SecurityCritical]
+        public static bool TryStartNoGCRegion(long totalSize, long lohSize, bool disallowFullBlockingGC)
+        {
+            return StartNoGCRegionWorker(totalSize, true, lohSize, disallowFullBlockingGC);
+        }
+
+        [SecurityCritical]
+        static EndNoGCRegionStatus EndNoGCRegionWorker()
+        {
+            EndNoGCRegionStatus status = (EndNoGCRegionStatus)_EndNoGCRegion();
+            if (status == EndNoGCRegionStatus.NotInProgress)
+                throw new InvalidOperationException("NoGCRegion mode must be set");
+            else if (status == EndNoGCRegionStatus.GCInduced)
+                throw new InvalidOperationException("Garbage collection was induced in NoGCRegion mode");
+            else if (status == EndNoGCRegionStatus.AllocationExceeded)
+                throw new InvalidOperationException("Allocated memory exceeds specified memory for NoGCRegion mode");
+
+            return EndNoGCRegionStatus.Succeeded;
+        }
+
+        [SecurityCritical]
+        public static void EndNoGCRegion()
+        {
+            EndNoGCRegionWorker();
         }
     }
 

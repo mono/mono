@@ -10,7 +10,7 @@ namespace System.Workflow.ComponentModel
     using System.ComponentModel.Design.Serialization;
     using System.Reflection;
 
-    //
+    //TODO: remove this inheritence, when event binding service line UseMethod and FreeMethod methods are fixed. 
     [DesignerSerializer(typeof(WorkflowMarkupSerializer), typeof(WorkflowMarkupSerializer))]
     [DesignerSerializer(typeof(DependencyObjectCodeDomSerializer), typeof(CodeDomSerializer))]
     [TypeConverter(typeof(ConditionTypeConverter))]

@@ -222,8 +222,8 @@ namespace System.ServiceModel.Channels
 
             if (socketException.ErrorCode == UnsafeNativeMethods.ERROR_INVALID_HANDLE)
             {
-                //This would likely indicate a bug in our ref-counting 
-                //for instance, a channel is closing the socket multiple times...
+                //This would likely indicate a 
+
                 Fx.Assert("The socket appears to have been closed unexpectedly.  This probably indicates incorrect ref counting (i.e. a channel is closing the socket multiple times)");
                 result = new CommunicationObjectAbortedException(socketException.Message, socketException);
             }

@@ -28,7 +28,7 @@ namespace System.ServiceModel.Diagnostics
         [SuppressMessage(FxCop.Category.Security, FxCop.Rule.TransparentMethodsMustNotReferenceCriticalCode)] // we got APTCA approval with no requirement to fix this transparency warning
         internal static void CloseInvalidOutSafeHandle(SafeHandle handle)
         {
-            // Workaround for 64-bit CLR bug VSWhidbey 546830 - sometimes invalid SafeHandles come back null.
+            // Workaround for 64-bit CLR 
             if (handle != null)
             {
 #pragma warning disable 618

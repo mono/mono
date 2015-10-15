@@ -1,4 +1,4 @@
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace Microsoft.Win32.SafeHandles {
     using System;
     using System.Runtime.CompilerServices;
@@ -6,6 +6,41 @@ namespace Microsoft.Win32.SafeHandles {
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.Versioning;
     using System.Security;
+
+    // Introduce this handle to replace internal SafeTokenHandle,
+    // which is mainly used to hold Windows thread or process access token
+    [SecurityCritical]
+    public sealed class SafeAccessTokenHandle : SafeHandle
+    {
+        private SafeAccessTokenHandle()
+            : base(IntPtr.Zero, true)
+        { }
+
+        // 0 is an Invalid Handle
+        public SafeAccessTokenHandle(IntPtr handle)
+            : base(IntPtr.Zero, true)
+        {
+            SetHandle(handle);
+        }
+
+        public static SafeAccessTokenHandle InvalidHandle
+        {
+            [SecurityCritical]
+            get { return new SafeAccessTokenHandle(IntPtr.Zero); }
+        }
+
+        public override bool IsInvalid
+        {
+            [SecurityCritical]
+            get { return handle == IntPtr.Zero || handle == new IntPtr(-1); }
+        }
+
+        [SecurityCritical]
+        protected override bool ReleaseHandle()
+        {
+            return Win32Native.CloseHandle(handle);
+        }
+    }
 
 #if !FEATURE_PAL
     [System.Security.SecurityCritical]  // auto-generated
@@ -119,28 +154,6 @@ namespace Microsoft.Win32.SafeHandles {
         // 0 is an Invalid Handle
         internal SafeThreadHandle(IntPtr handle) : base (true) {
             SetHandle(handle);
-        }
-
-        [System.Security.SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
-        [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        override protected bool ReleaseHandle()
-        {
-            return Win32Native.CloseHandle(handle);
-        }
-    }
-
-    [System.Security.SecurityCritical]  // auto-generated
-    internal sealed class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid {
-        private SafeTokenHandle() : base (true) {}
-
-        // 0 is an Invalid Handle
-        internal SafeTokenHandle(IntPtr handle) : base (true) {
-            SetHandle(handle);
-        }
-
-        internal static SafeTokenHandle InvalidHandle {
-            get { return new SafeTokenHandle(IntPtr.Zero); }
         }
 
         [System.Security.SecurityCritical]

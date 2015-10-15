@@ -64,6 +64,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         internal uint AlgorithmId {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_aiPubKey == 0)
                     m_aiPubKey = X509Utils.OidToAlgId(m_oid.Value);
@@ -72,6 +75,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         private byte[] CspBlobData {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_cspBlobData == null)
                     DecodePublicKeyObject(AlgorithmId, m_encodedKeyValue.RawData, m_encodedParameters.RawData, out m_cspBlobData);
@@ -80,6 +86,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public AsymmetricAlgorithm Key {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_key == null) {
                     switch (AlgorithmId) {
@@ -90,11 +99,13 @@ namespace System.Security.Cryptography.X509Certificates {
                         m_key = rsa;
                         break;
 
+#if !FEATURE_CORESYSTEM
                     case CAPI.CALG_DSS_SIGN:
                         DSACryptoServiceProvider dsa = new DSACryptoServiceProvider();
                         dsa.ImportCspBlob(CspBlobData);
                         m_key = dsa;
                         break;
+#endif
 
                     default:
                         throw new NotSupportedException(SR.GetString(SR.NotSupported_KeyAlgorithm));
@@ -120,6 +131,9 @@ namespace System.Security.Cryptography.X509Certificates {
         // private static methods.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static void DecodePublicKeyObject(uint aiPubKey, byte[] encodedKeyValue, byte[] encodedParameters, out byte[] decodedData) {
             // Initialize the out parameter
             decodedData = null;
@@ -174,6 +188,9 @@ namespace System.Security.Cryptography.X509Certificates {
             decodedKeyValue.Dispose();
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static byte[] ConstructDSSPubKeyCspBlob (SafeLocalAllocHandle decodedKeyValue,
                                                          SafeLocalAllocHandle decodedParameters) {
 
@@ -256,7 +273,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
     }
 
+#if !FEATURE_CORESYSTEM
     [Serializable]
+#endif
     public class X509Certificate2 : X509Certificate {
         private int m_version; 
         private DateTime m_notBefore;
@@ -267,6 +286,9 @@ namespace System.Security.Cryptography.X509Certificates {
         private Oid m_signatureAlgorithm;
         private X500DistinguishedName m_subjectName;
         private X500DistinguishedName m_issuerName;
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         private SafeCertContextHandle m_safeCertContext = SafeCertContextHandle.InvalidHandle;
         
         private static int s_publicKeyOffset;
@@ -275,58 +297,96 @@ namespace System.Security.Cryptography.X509Certificates {
         // public constructors
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2 () : base() {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2 (byte[] rawData) : base (rawData) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2 (byte[] rawData, string password) : base (rawData, password) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if !FEATURE_CORESYSTEM
         public X509Certificate2 (byte[] rawData, SecureString password) : base (rawData, password) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
+#endif
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) : base (rawData, password, keyStorageFlags) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if !FEATURE_CORESYSTEM
         public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags) : base (rawData, password, keyStorageFlags) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
+#endif
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public X509Certificate2 (string fileName) : base (fileName) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public X509Certificate2 (string fileName, string password) : base (fileName, password) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if !FEATURE_CORESYSTEM
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public X509Certificate2 (string fileName, SecureString password) : base (fileName, password) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
+#endif
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags) : base (fileName, password, keyStorageFlags) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if !FEATURE_CORESYSTEM
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) : base (fileName, password, keyStorageFlags) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
+#endif
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         // Package protected constructor for creating a certificate from a PCCERT_CONTEXT
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
         [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
@@ -334,108 +394,165 @@ namespace System.Security.Cryptography.X509Certificates {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509Certificate2 (X509Certificate certificate) : base(certificate) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
 
+#if !FEATURE_CORESYSTEM
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         protected X509Certificate2(SerializationInfo info, StreamingContext context) : base(info, context) {
             m_safeCertContext = CAPI.CertDuplicateCertificateContext(this.Handle);
         }
+#endif
 
         public override string ToString() {
             return base.ToString(true);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public override string ToString(bool verbose) {
             if (verbose == false || m_safeCertContext.IsInvalid)
                 return ToString();
 
             StringBuilder sb = new StringBuilder();
+            string newLine = Environment.NewLine;
+            string newLine2 = newLine + newLine;
+            string newLinesp2 = newLine + "  ";
 
             // Version
-            sb.Append("[Version]" + Environment.NewLine + "  ");
+            sb.Append("[Version]");
+            sb.Append(newLinesp2);
             sb.Append("V" + this.Version);
 
             // Subject
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Subject]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Subject]");
+            sb.Append(newLinesp2);
             sb.Append(this.SubjectName.Name);
             string simpleName = GetNameInfo(X509NameType.SimpleName, false);
             if (simpleName.Length > 0) {
-                sb.Append(Environment.NewLine + "  Simple Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("Simple Name: ");
                 sb.Append(simpleName);
             }
-            string emailName = GetNameInfo(X509NameType.EmailName, false); 
+            string emailName = GetNameInfo(X509NameType.EmailName, false);
             if (emailName.Length > 0) {
-                sb.Append(Environment.NewLine + "  Email Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("Email Name: ");
                 sb.Append(emailName);
             }
-            string upnName = GetNameInfo(X509NameType.UpnName, false); 
+            string upnName = GetNameInfo(X509NameType.UpnName, false);
             if (upnName.Length > 0) {
-                sb.Append(Environment.NewLine + "  UPN Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("UPN Name: ");
                 sb.Append(upnName);
             }
             string dnsName = GetNameInfo(X509NameType.DnsName, false);
             if (dnsName.Length > 0) {
-                sb.Append(Environment.NewLine + "  DNS Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("DNS Name: ");
                 sb.Append(dnsName);
             }
 
             // Issuer
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Issuer]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Issuer]");
+            sb.Append(newLinesp2);
             sb.Append(this.IssuerName.Name);
             simpleName = GetNameInfo(X509NameType.SimpleName, true);
             if (simpleName.Length > 0) {
-                sb.Append(Environment.NewLine + "  Simple Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("Simple Name: ");
                 sb.Append(simpleName);
             }
-            emailName = GetNameInfo(X509NameType.EmailName, true); 
+            emailName = GetNameInfo(X509NameType.EmailName, true);
             if (emailName.Length > 0) {
-                sb.Append(Environment.NewLine + "  Email Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("Email Name: ");
                 sb.Append(emailName);
             }
-            upnName = GetNameInfo(X509NameType.UpnName, true); 
+            upnName = GetNameInfo(X509NameType.UpnName, true);
             if (upnName.Length > 0) {
-                sb.Append(Environment.NewLine + "  UPN Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("UPN Name: ");
                 sb.Append(upnName);
             }
             dnsName = GetNameInfo(X509NameType.DnsName, true);
             if (dnsName.Length > 0) {
-                sb.Append(Environment.NewLine + "  DNS Name: ");
+                sb.Append(newLinesp2);
+                sb.Append("DNS Name: ");
                 sb.Append(dnsName);
             }
 
             // Serial Number
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Serial Number]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Serial Number]");
+            sb.Append(newLinesp2);
             sb.Append(this.SerialNumber);
 
             // NotBefore
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Not Before]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Not Before]");
+            sb.Append(newLinesp2);
             sb.Append(FormatDate(this.NotBefore));
 
             // NotAfter
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Not After]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Not After]");
+            sb.Append(newLinesp2);
             sb.Append(FormatDate(this.NotAfter));
 
             // Thumbprint
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Thumbprint]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Thumbprint]");
+            sb.Append(newLinesp2);
             sb.Append(this.Thumbprint);
 
             // Signature Algorithm
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Signature Algorithm]" + Environment.NewLine + "  ");
+            sb.Append(newLine2);
+            sb.Append("[Signature Algorithm]");
+            sb.Append(newLinesp2);
             sb.Append(this.SignatureAlgorithm.FriendlyName + "(" + this.SignatureAlgorithm.Value + ")");
 
             // Public Key
-            PublicKey pubKey = this.PublicKey;
-            sb.Append(Environment.NewLine + Environment.NewLine + "[Public Key]" + Environment.NewLine + "  Algorithm: ");
-            sb.Append(pubKey.Oid.FriendlyName);
-            sb.Append(Environment.NewLine + "  Length: ");
-            sb.Append(pubKey.Key.KeySize);
-            sb.Append(Environment.NewLine + "  Key Blob: ");
-            sb.Append(pubKey.EncodedKeyValue.Format(true));
-            sb.Append(Environment.NewLine + "  Parameters: ");
-            sb.Append(pubKey.EncodedParameters.Format(true));
+            sb.Append(newLine2);
+            sb.Append("[Public Key]");
+            // It could throw if it's some user-defined CryptoServiceProvider
+            try {
+                PublicKey pubKey = this.PublicKey;
+
+                string temp = pubKey.Oid.FriendlyName;
+                sb.Append(newLinesp2);
+                sb.Append("Algorithm: ");
+                sb.Append(temp);
+                // So far, we only support RSACryptoServiceProvider & DSACryptoServiceProvider Keys
+                try {
+                    temp = pubKey.Key.KeySize.ToString();
+                    sb.Append(newLinesp2);
+                    sb.Append("Length: ");
+                    sb.Append(temp);
+                }
+                catch (NotSupportedException) {
+                }
+
+                temp = pubKey.EncodedKeyValue.Format(true);
+                sb.Append(newLinesp2);
+                sb.Append("Key Blob: ");
+                sb.Append(temp);
+
+                temp = pubKey.EncodedParameters.Format(true);
+                sb.Append(newLinesp2);
+                sb.Append("Parameters: ");
+                sb.Append(temp);
+            }
+            catch (CryptographicException) {
+            }
 
             // Private key
             AppendPrivateKeyInfo(sb);
@@ -443,17 +560,33 @@ namespace System.Security.Cryptography.X509Certificates {
             // Extensions
             X509ExtensionCollection extensions = this.Extensions;
             if (extensions.Count > 0) {
-                sb.Append(Environment.NewLine + Environment.NewLine + "[Extensions]");
-                foreach(X509Extension extension in extensions) {
-                    sb.Append(Environment.NewLine + "* " + extension.Oid.FriendlyName + "(" + extension.Oid.Value + "):" + Environment.NewLine + "  " + extension.Format(true));
+                sb.Append(newLine2);
+                sb.Append("[Extensions]");
+                string temp;
+                foreach (X509Extension extension in extensions) {
+                    try {
+                        temp = extension.Oid.FriendlyName;
+                        sb.Append(newLine);
+                        sb.Append("* " + temp);
+                        sb.Append("(" + extension.Oid.Value + "):");
+
+                        temp = extension.Format(true);
+                        sb.Append(newLinesp2);
+                        sb.Append(temp);
+                    }
+                    catch (CryptographicException) {
+                    }
                 }
             }
 
-            sb.Append(Environment.NewLine);
+            sb.Append(newLine);
             return sb.ToString();
         }
 
         public bool Archived {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -464,6 +597,9 @@ namespace System.Security.Cryptography.X509Certificates {
                                                               SafeLocalAllocHandle.InvalidHandle, 
                                                               ref cbData);
             }
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             set {
                 SafeLocalAllocHandle ptr = SafeLocalAllocHandle.InvalidHandle;
                 if (value == true) 
@@ -479,6 +615,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public X509ExtensionCollection Extensions {
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -491,6 +630,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public string FriendlyName {
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -514,6 +656,9 @@ namespace System.Security.Cryptography.X509Certificates {
                 ptr.Dispose();
                 return friendlyName;
             }
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             set {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -526,6 +671,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public X500DistinguishedName IssuerName {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -543,6 +691,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public DateTime NotAfter {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -561,6 +712,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public DateTime NotBefore {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -579,6 +733,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public bool HasPrivateKey {
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -592,6 +749,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public AsymmetricAlgorithm PrivateKey {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (!this.HasPrivateKey)
                     return null;
@@ -609,9 +769,11 @@ namespace System.Security.Cryptography.X509Certificates {
                         m_privateKey = new RSACryptoServiceProvider(parameters);
                         break;
 
+#if !FEATURE_CORESYSTEM
                     case CAPI.CALG_DSS_SIGN:
                         m_privateKey = new DSACryptoServiceProvider(parameters);
                         break;
+#endif
 
                     default:
                         throw new NotSupportedException(SR.GetString(SR.NotSupported_KeyAlgorithm));
@@ -620,6 +782,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
                 return m_privateKey;
             }
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             [SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "Reviewed for thread-safety")]
             set {
                 if (m_safeCertContext.IsInvalid)
@@ -669,6 +834,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public PublicKey PublicKey {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -698,6 +866,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public X500DistinguishedName SubjectName {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -715,6 +886,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public Oid SignatureAlgorithm {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -733,6 +907,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         public int Version {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (m_safeCertContext.IsInvalid)
                     throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "m_safeCertContext");
@@ -744,6 +921,9 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         public unsafe string GetNameInfo(X509NameType nameType, bool forIssuer) {
             uint issuerFlag = forIssuer ? CAPI.CERT_NAME_ISSUER_FLAG : 0;
             uint type = X509Utils.MapNameType(nameType);
@@ -841,6 +1021,7 @@ namespace System.Security.Cryptography.X509Certificates {
             return name;
         }
 
+#if !FEATURE_CORESYSTEM
         [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Justification = "System.dll is still using pre-v4 security model and needs this demand")]
         [PermissionSetAttribute(SecurityAction.LinkDemand, Unrestricted=true)]
         [PermissionSetAttribute(SecurityAction.InheritanceDemand, Unrestricted=true)]
@@ -921,6 +1102,7 @@ namespace System.Security.Cryptography.X509Certificates {
             }
             base.Reset();
         }
+#endif // !FEATURE_CORESYSTEM
 
         public bool Verify () {
             if (m_safeCertContext.IsInvalid)
@@ -952,13 +1134,17 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         public static X509ContentType GetCertContentType (string fileName) {
             if (fileName == null)
                 throw new ArgumentNullException("fileName");
 
             string fullPath = Path.GetFullPath(fileName);
+#if !FEATURE_CORESYSTEM
             new FileIOPermission (FileIOPermissionAccess.Read, fullPath).Demand();
+#endif
             uint contentType = QueryCertFileType(fileName);
             return X509Utils.MapContentType(contentType);
         }
@@ -968,11 +1154,17 @@ namespace System.Security.Cryptography.X509Certificates {
         //
 
         internal SafeCertContextHandle CertContext {
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 return m_safeCertContext;
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static bool GetPrivateKeyInfo (SafeCertContextHandle safeCertContext, ref CspParameters parameters) {
             SafeLocalAllocHandle ptr = SafeLocalAllocHandle.InvalidHandle;
             uint cbData = 0;
@@ -1014,6 +1206,9 @@ namespace System.Security.Cryptography.X509Certificates {
         // Private
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private void AppendPrivateKeyInfo (StringBuilder sb) {
             CspKeyContainerInfo cspKeyContainerInfo = null;
             try {
@@ -1075,20 +1270,31 @@ namespace System.Security.Cryptography.X509Certificates {
             catch (NotSupportedException) {}
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe Oid GetSignatureAlgorithm (SafeCertContextHandle safeCertContextHandle) {
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
             CAPI.CERT_INFO pCertInfo = (CAPI.CERT_INFO) Marshal.PtrToStructure(pCertContext.pCertInfo, typeof(CAPI.CERT_INFO));
             return new Oid(pCertInfo.SignatureAlgorithm.pszObjId, OidGroup.SignatureAlgorithm, false);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe uint GetVersion (SafeCertContextHandle safeCertContextHandle) {
             CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) safeCertContextHandle.DangerousGetHandle());
             CAPI.CERT_INFO pCertInfo = (CAPI.CERT_INFO) Marshal.PtrToStructure(pCertContext.pCertInfo, typeof(CAPI.CERT_INFO));
             return (pCertInfo.dwVersion + 1);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
+#endif
         private static unsafe uint QueryCertBlobType(byte[] rawData) {
             uint contentType = 0;
             if (!CAPI.CryptQueryObject(CAPI.CERT_QUERY_OBJECT_BLOB,
@@ -1107,8 +1313,13 @@ namespace System.Security.Cryptography.X509Certificates {
             return contentType;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         private static unsafe uint QueryCertFileType(string fileName) {
             uint contentType = 0;
             if (!CAPI.CryptQueryObject(CAPI.CERT_QUERY_OBJECT_FILE,
@@ -1127,6 +1338,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return contentType;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe void SetFriendlyNameExtendedProperty (SafeCertContextHandle safeCertContextHandle, string name) {
             SafeLocalAllocHandle ptr = X509Utils.StringToUniPtr(name);
             using (ptr) {
@@ -1142,6 +1356,9 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe void SetPrivateKeyProperty (SafeCertContextHandle safeCertContextHandle, ICspAsymmetricAlgorithm asymmetricAlgorithm) {
             SafeLocalAllocHandle ptr = SafeLocalAllocHandle.InvalidHandle;
             if (asymmetricAlgorithm != null) {

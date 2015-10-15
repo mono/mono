@@ -284,7 +284,7 @@ namespace System.Runtime.Remoting.Channels {
             //          warning in CrossAppDomainSink::.ctor above
             //
             lock(staticSyncObject) {        
-                // Note: keep this in [....] with DomainUnloaded below 
+                // Note: keep this in sync with DomainUnloaded below 
                 int key = xadData.DomainID;
                 if (_sinks == null)
                 {
@@ -321,7 +321,7 @@ namespace System.Runtime.Remoting.Channels {
                 {
                     return;
                 }
-                // Note: keep this in [....] with FindOrCreateSink
+                // Note: keep this in sync with FindOrCreateSink
                 int i = 0;
                 int remove = -1;
                 while (_sinks[i] != null)
@@ -476,7 +476,7 @@ namespace System.Runtime.Remoting.Channels {
         [System.Security.SecurityCritical]  // auto-generated
         public virtual IMessage SyncProcessMessage(IMessage reqMsg) 
         {
-            Message.DebugOut("\n::::::::::::::::::::::::: CrossAppDomain Channel: [....] call starting");
+            Message.DebugOut("\n::::::::::::::::::::::::: CrossAppDomain Channel: Sync call starting");
             IMessage errMsg = InternalSink.ValidateMessage(reqMsg);
             if (errMsg != null)
             {
@@ -520,7 +520,7 @@ namespace System.Runtime.Remoting.Channels {
                     // will terminate the security stackwalk caused when 
                     // serialization checks for the correct permissions at the 
                     // remoting stack frame so the check won't continue on to 
-                    // the user and fail. <EMAIL>[from [....]]</EMAIL>
+                    // the user and fail. <EMAIL>[from Microsoft]</EMAIL>
                     // We will hold off from doing this for x-process channels
                     // until the big picture of distributed security is finalized.
 
@@ -560,7 +560,7 @@ namespace System.Runtime.Remoting.Channels {
                     if (responseBytes != null) {
                         retStm = new MemoryStream(responseBytes);
     
-                        Message.DebugOut("::::::::::::::::::::::::::: CrossAppDomain Channel: [....] call returning!!\n");
+                        Message.DebugOut("::::::::::::::::::::::::::: CrossAppDomain Channel: Sync call returning!!\n");
                         //*********************** DESERIALIZE RET-MSG **************
                         desRetMsg = CrossAppDomainSerializer.DeserializeMessage(retStm, reqMsg as IMethodCallMessage);
                     }

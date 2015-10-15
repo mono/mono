@@ -2,8 +2,8 @@
 // <copyright file="DbProviderFactoriesConfigurationHandler.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -17,9 +17,9 @@ namespace System.Data.Common {
     using System.Xml;
 
     // VSTFDevDiv # 624213: System.Data.Common.DbProviderFactories.GetFactoryClasses() still gets OracleClient provider in ClientSku environment.
-    // NOTES: As part of this bug fix, the decision was taken to make it consistent and to remove all the framework 
-    //      providers from the list in the machine.config file. The DbProviderFactories section of the machine.config will contain only
-    //      custom providers names and details.
+    // NOTES: As part of this 
+
+
     internal enum DbProvidersIndex : int
     {
         Odbc = 0,

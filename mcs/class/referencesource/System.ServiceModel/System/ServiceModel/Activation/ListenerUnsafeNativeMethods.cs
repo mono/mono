@@ -257,7 +257,7 @@ namespace System.ServiceModel.Activation
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
+            // PreSharp 
 #pragma warning suppress 56523 // We are not interested to throw an exception here. We can ignore the Last Error code.
             return CloseHandle(handle);
         }
@@ -279,7 +279,7 @@ namespace System.ServiceModel.Activation
 
         override protected bool ReleaseHandle()
         {
-#pragma warning suppress 56523 // [....], should only fail if there is a bug (invalid handle); MDA will be raised
+#pragma warning suppress 56523 // Microsoft, should only fail if there is a 
             return ListenerUnsafeNativeMethods.CloseServiceHandle(handle);
         }
     }

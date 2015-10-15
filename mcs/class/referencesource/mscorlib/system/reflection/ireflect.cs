@@ -8,7 +8,7 @@
 //
 // IReflect is an interface that defines a subset of the Type reflection methods.
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    This interface is used to access and invoke members of a Type.  It can be either
 //    type based (like Type) or instance based (like Expando). This interface is used in 
 //    combination with IExpando to model the IDispatchEx expando capibilities in

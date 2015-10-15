@@ -7,7 +7,7 @@
 **
 ** Class:  BinaryCompatibility
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: This class is used to determine which binary compatibility
@@ -67,9 +67,9 @@ namespace System.Runtime.Versioning
     //      .NET Framework 3.5
     //                               Silverlight 3
     //                               Silverlight 4
-    //      .NET Framework 4
-    //  Expected additions:
-    //      .NET Framework 4.5  <->  Silverlight 5    <->    Phone 7.1
+    //      .NET Framework 4                                   Phone 8.0
+    //      .NET Framework 4.5                                 Phone 8.1
+    //      .NET Framework 4.5.1                               Phone 8.1
     //           
     // (Note: Windows Phone 7.0 was built using the .NET Compact Framework, which forked around v1 or v1.1)
     // 
@@ -145,25 +145,8 @@ namespace System.Runtime.Versioning
         // Version number is major * 10000 + minor * 100 + build (ie, 4.5.1.0 would be version 40501).
         private static int s_AppWasBuiltForVersion;
 
-        readonly static BinaryCompatibilityMap s_map;
+        readonly static BinaryCompatibilityMap s_map = new BinaryCompatibilityMap();
         
-        // Consider initializing the field directly instead of declaring a .cctor.  There is a perf
-        // tradeoff to either choice.  The tradeoff is some startup perf if you compile code
-        // that references this type, vs. a bit of a hit every time you use one of these methods
-        // because we must verify that the .cctor ran.  For now, we'll make this class slower
-        // to use, but you can write code with quirks in it that only triggers iff you need legacy
-        // behavior (ie, if you need to not throw an exception, see if you need to throw it first
-        // via normal logic then check the compatibility flag).
-
-        // Initialize the s_map field right before it's going to be used, not the moment we 
-        // JITs code that contains a call to this class.  For this reason, explicitly create a
-        // .cctor instead of letting the compiler generate one with different initialization
-        // semantics.
-        static BinaryCompatibility()
-        {
-            s_map = new BinaryCompatibilityMap();
-        }
-
         // For parsing a target Framework moniker, from the FrameworkName class
         private const char c_componentSeparator = ',';
         private const char c_keyValueSeparator = '=';
@@ -180,6 +163,7 @@ namespace System.Runtime.Versioning
             // A bit for each property 
             internal bool TargetsAtLeast_Phone_V7_1;
             internal bool TargetsAtLeast_Phone_V8_0;
+            internal bool TargetsAtLeast_Phone_V8_1;
             internal bool TargetsAtLeast_Desktop_V4_5;
             internal bool TargetsAtLeast_Desktop_V4_5_1;
             internal bool TargetsAtLeast_Desktop_V4_5_2;
@@ -234,10 +218,15 @@ namespace System.Runtime.Versioning
                     case TargetFrameworkId.Phone:
                         if (buildAgainstVersion >= 80000)
                         {
+                            // This is for Apollo apps. For Apollo apps we don't want to enable any of the 4.5 or 4.5.1 quirks
                             TargetsAtLeast_Phone_V8_0 = true;
-                            // @
-
-
+                            //TargetsAtLeast_Desktop_V4_5 = true;
+                        }
+                        if (buildAgainstVersion >= 80100)
+                        {
+                            // For WindowsPhone 8.1 and SL 8.1 scenarios we want to enable both 4.5 and 4.5.1 quirks.
+                            TargetsAtLeast_Desktop_V4_5 = true;
+                            TargetsAtLeast_Desktop_V4_5_1 = true;
                         }
 
                         if (buildAgainstVersion >= 710)
@@ -299,6 +288,24 @@ namespace System.Runtime.Versioning
 
                 case ".NETCore":
                     targetFramework = TargetFrameworkId.NetCore;
+                    break;
+
+                case "WindowsPhone":
+                    if (targetFrameworkVersion >= 80100)
+                    {
+                        // A TFM of the form WindowsPhone,Version=v8.1 corresponds to SL 8.1 scenario
+                        // and gets the same quirks as WindowsPhoneApp\v8.1 store apps.
+                        targetFramework = TargetFrameworkId.Phone;
+                    }
+                    else
+                    {
+                        // There is no TFM for Apollo or below and hence we assign the targetFramework to Unspecified. 
+                        targetFramework = TargetFrameworkId.Unspecified;
+                    }
+                    break;
+
+                case "WindowsPhoneApp":
+                    targetFramework = TargetFrameworkId.Phone;
                     break;
 
                 case "Silverlight":
@@ -443,15 +450,69 @@ namespace System.Runtime.Versioning
             }
         }
 
+#if FEATURE_CORECLR
+        /// <summary>
+        /// This method checks for CompatibilitySwitches for SL8.1 scenarios.
+        /// PS - This is used only for SL 8.1
+        /// </summary>
+        [System.Security.SecuritySafeCritical]
+        private static bool IsAppUnderSL81CompatMode()
+        {
+            Contract.Assert(s_AppWasBuiltForFramework == TargetFrameworkId.NotYetChecked);
 
+            if (CompatibilitySwitches.IsAppSilverlight81)
+            {
+                // This is an SL8.1 scenario and hence it gets the same quirks as WPBlue+ settings.
+                s_AppWasBuiltForFramework = TargetFrameworkId.Phone;
+                s_AppWasBuiltForVersion = 80100;
+
+                return true;
+            }
+
+            return false;
+        }
+#endif //FEATURE_CORECLR
+
+        [System.Security.SecuritySafeCritical]
         private static void ReadTargetFrameworkId()
         {
+#if FEATURE_CORECLR
+            if (IsAppUnderSL81CompatMode())
+            {
+                // Since the SL does not have any Main() the reading of the TFM will not work and as a workaround we use the CompatibilitySwitch.IsAppSilverlight81 
+                // to identify if the given app targets SL 8.1 and accordingly give it the value TargetFrameworkId.Phone;80100
+
+                // PS - This also means that the CompatMode set by AppDomain m_compatFlags with AppDomainCompatMode.APPDOMAINCOMPAT_APP_SL81
+                // will override any other mechanism like TFM, RegistryKey, env variable or config file settings. Since this option
+                // is only used by SL8.1 scenario's I don't think this is an issue and is rather desirable.
+
+                return;
+            }
+#endif //FEATURE_CORECLR
             String targetFrameworkName = AppDomain.CurrentDomain.GetTargetFrameworkName();
+
+            var overrideValue = System.Runtime.Versioning.CompatibilitySwitch.GetValueInternal("TargetFrameworkMoniker");
+            if (!string.IsNullOrEmpty(overrideValue))
+            {
+                targetFrameworkName = overrideValue;
+            }
+
             // Write to a local then to _targetFramework, after writing the version number.
             TargetFrameworkId fxId;
             int fxVersion = 0;
             if (targetFrameworkName == null)
-                fxId = TargetFrameworkId.Unspecified;
+            {
+#if FEATURE_CORECLR
+                // if we don't have a value for targetFrameworkName we need to figure out if we should give the newest behavior or not.
+                if (CompatibilitySwitches.UseLatestBehaviorWhenTFMNotSpecified)
+                {
+                    fxId = TargetFrameworkId.NetFramework;
+                    fxVersion = 50000; // We are going to default to the latest value for version that we have in our code.
+                }
+                else
+#endif
+                    fxId = TargetFrameworkId.Unspecified;
+            }
             else if (!ParseTargetFrameworkMonikerIntoEnum(targetFrameworkName, out fxId, out fxVersion))
                 fxId = TargetFrameworkId.Unrecognized;
 

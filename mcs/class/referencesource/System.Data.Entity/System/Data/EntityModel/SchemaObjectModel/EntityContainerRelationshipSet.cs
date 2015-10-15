@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.EntityModel.SchemaObjectModel
@@ -131,21 +131,21 @@ namespace System.Data.EntityModel.SchemaObjectModel
 
             // Enabling Association between subtypes in case of Referential Constraints, since 
             // CSD is blocked on this. We need to make a long term call about whether we should
-            // really allow this. Bug #520216
-            //foreach (ReferentialConstraint constraint in Relationship.Constraints)
-            //{
-            //    IRelationshipEnd dependentEnd = constraint.DependentRole.End;
-            //    EntityContainerRelationshipSetEnd setEnd = GetEnd(dependentEnd.Name);
-            //    Debug.Assert(setEnd != null);
-            //    //Make sure that the EntityType of the dependant role in a referential constraint
-            //    //covers the whole EntitySet( i.e. not  a subtype of the EntitySet's type).
-            //    if (!setEnd.EntitySet.EntityType.IsOfType(constraint.DependentRole.End.Type))
-            //    {
-            //        AddError(ErrorCode.InvalidDependentRoleType, EdmSchemaErrorSeverity.Error,
-            //            System.Data.Entity.Strings.InvalidDependentRoleType(dependentEnd.Type.FQName, dependentEnd.Name, 
-            //                                dependentEnd.Parent.FQName, setEnd.EntitySet.Name, setEnd.ParentElement.Name));
-            //    }
-            //}
+            // really allow this. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             // Validate Number of ends is correct
             //    What we know:

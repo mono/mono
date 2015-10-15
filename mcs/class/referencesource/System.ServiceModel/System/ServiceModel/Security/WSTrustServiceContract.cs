@@ -1351,7 +1351,7 @@ namespace System.ServiceModel.Security
         internal class ProcessCoreAsyncResult : AsyncResult
         {
             //
-            // Encapsulate the local variables in the [....] version of ProcessCore as fields.
+            // Encapsulate the local variables in the sync version of ProcessCore as fields.
             //
             WSTrustServiceContract _trustServiceContract;
             DispatchContext _dispatchContext;

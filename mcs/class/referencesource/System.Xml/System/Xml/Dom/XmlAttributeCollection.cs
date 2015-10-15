@@ -2,7 +2,7 @@
 // <copyright file="XmlAttributeCollection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 
@@ -355,7 +355,6 @@ namespace System.Xml {
         //  for xml attributes within the collection with the same full name.
         //  This means that any caller of this function must be sure that
         //  a duplicate attribute does not exist.
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         internal XmlAttribute InternalAppendAttribute( XmlAttribute node ) {
             // a duplicate node better not exist
             Debug.Assert( -1 == FindNodeOffset( node ));    

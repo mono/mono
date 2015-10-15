@@ -7,7 +7,7 @@
 **
 ** Class: TypeInfoExtension
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: go from type to type info
@@ -18,7 +18,6 @@
 namespace System.Reflection
 {
     using System.Reflection;
-    using System.Diagnostics.Tracing;
 
     public static class IntrospectionExtensions
     {
@@ -30,12 +29,6 @@ namespace System.Reflection
             if(rcType==null){
                 return null;
             }else{
-#if !FEATURE_CORECLR && !MONO
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.IntrospectionExtensionsGetTypeInfo(type.GetFullNameForEtw());
-                }
-#endif
                 return rcType.GetTypeInfo();
             }
         }   

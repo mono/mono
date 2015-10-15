@@ -7,7 +7,7 @@
 **
 ** Class:  EventToken    
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Propertybuilder is for client to define properties for a class

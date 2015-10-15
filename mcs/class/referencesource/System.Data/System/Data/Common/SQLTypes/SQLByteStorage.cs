@@ -2,9 +2,9 @@
 // <copyright file="SQLByteStorage.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -188,7 +188,7 @@ namespace System.Data.Common {
 
         override public object ConvertXmlToObject(string s) {
             SqlByte newValue = new SqlByte();
-            string tempStr =string.Concat("<col>", s, "</col>"); // this is done since you can give fragmet to reader, bug 98767
+            string tempStr =string.Concat("<col>", s, "</col>"); // this is done since you can give fragmet to reader, 
             StringReader strReader = new  StringReader(tempStr);
 
             IXmlSerializable tmp = newValue;

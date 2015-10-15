@@ -5,7 +5,7 @@
 // ==--==
 //
 // <OWNER>GPaperin</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Runtime;
@@ -36,7 +36,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // int Count { get }
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal int Count()
         {
             IBindableVector _this = JitHelpers.UnsafeCast<IBindableVector>(this);
@@ -52,7 +51,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // bool IsSynchronized { get }
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal bool IsSynchronized()
         {
             return false;
@@ -61,7 +59,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // object SyncRoot { get }
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal object SyncRoot()
         {
             return this;
@@ -70,7 +67,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // void CopyTo(Array array, int index)
         [Pure]
         [SecurityCritical]
-        [ForceTokenStabilization]
         internal void CopyTo(Array array, int arrayIndex)
         {
             if (array == null)
@@ -89,7 +85,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 throw new ArgumentOutOfRangeException("arrayIndex");
 
             // Does the dimension in question have sufficient space to copy the expected number of entries?
-            // We perform this check before valid index check to ensure the exception message is in [....] with
+            // We perform this check before valid index check to ensure the exception message is in sync with
             // the following snippet that uses regular framework code:
             //
             // ArrayList list = new ArrayList();

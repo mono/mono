@@ -39,7 +39,7 @@ namespace System.Runtime {
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
-        internal static extern void InternalStartProfile(string profile);
+        internal static extern void InternalStartProfile(string profile, IntPtr ptrNativeAssemblyLoadContext);
 
         [SecurityCritical]
         public static void SetProfileRoot(string directoryPath)
@@ -50,7 +50,7 @@ namespace System.Runtime {
         [SecurityCritical]
         public static void StartProfile(string profile)
         {
-            InternalStartProfile(profile);
+            InternalStartProfile(profile, IntPtr.Zero);
         }
     }
 

@@ -3143,17 +3143,17 @@ namespace System.Configuration {
                 locationSubPath = NormalizeLocationSubPath(locationSubPath, xmlUtil);
 
                 // VSWhidbey 535595
-                // See attached email in the bug.  Basically, we decided to throw if we see one of these
-                // in machine.config or root web.config:
-                //  <location path="." inheritInChildApplications="false" >
-                //  <location inheritInChildApplications="false" >
-                //
-                // To detect whetherewe're machine.config or root web.config, the current fix is to use
-                // Host.IsDefinitionAllowed.  Instead of this we should invent a new method in
-                // IInternalConfigHost to return whether a configPath can be part of an app or not.
-                // But since it's Whidbey RC "Ask Mode" I chose not to do it due to bigger code churn.
-                //
-                // 
+                // See attached email in the 
+
+
+
+
+
+
+
+
+
+
                 if (locationSubPath == null &&
                     !inheritInChildApp &&
                     Host.IsDefinitionAllowed(_configPath, ConfigurationAllowDefinition.MachineToWebRoot, ConfigurationAllowExeDefinition.MachineOnly)) {

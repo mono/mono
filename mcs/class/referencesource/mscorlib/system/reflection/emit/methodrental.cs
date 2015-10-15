@@ -7,7 +7,7 @@
 **
 ** Class:  MethodRental
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** MethodRental class is to provide a fast way to swap method body implementation

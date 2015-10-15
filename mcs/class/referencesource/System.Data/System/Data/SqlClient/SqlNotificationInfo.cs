@@ -2,9 +2,9 @@
 // <copyright file="SqlNotificationInfo.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="true">[....]</owner>
+// <owner current="true" primary="true">mithomas</owner>
+// <owner current="true" primary="false">blained</owner>
+// <owner current="false" primary="true">ramp</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {

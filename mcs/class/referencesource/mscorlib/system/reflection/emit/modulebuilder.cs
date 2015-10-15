@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit 
@@ -2440,6 +2440,7 @@ namespace System.Reflection.Emit
 
         #endregion    
 
+#if !FEATURE_CORECLR
         void _ModuleBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -2459,5 +2460,6 @@ namespace System.Reflection.Emit
         {
             throw new NotImplementedException();
         }
+#endif
     }
 }

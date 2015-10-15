@@ -33,7 +33,7 @@ namespace System.Web.UI.WebControls.Adapters {
 
             if (Control.TextMode == TextBoxMode.Password) {
                 value = String.Empty;
-                // 
+                // UNDONE: Consider adding property or wml adapter property to set requiresRandomID to true.
                 requiresRandomID = true;
             }
 
@@ -53,8 +53,8 @@ namespace System.Web.UI.WebControls.Adapters {
                 writer.MapClientIDToShortName(Control.ClientID, requiresRandomID);
             }
 
-            // 
-
+            // UNDONE: There are some wml-specific properties (format, title, size, maxLength) which
+            // we should consider for Whidbey.
             RenderTextBox((WmlTextWriter)writer, Control.ClientID, 
                           value,
                           null /* format */, 
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls.Adapters {
         // Renders the TextBox.
         public virtual void RenderTextBox(WmlTextWriter writer, String id, String value, String format, String title, bool password, int size, int maxLength, bool generateRandomID) {
             if (!writer.AnalyzeMode) {
-                // 
+                // UNDONE: Handle rendersBreakBeforeWmlSelectAndInput, if this capability is still needed for Whidbey devices                
                                 
                 // VSWhidbey 147458.  Close any style tags.
                 writer.CloseCurrentStyleTags();

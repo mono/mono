@@ -2,9 +2,9 @@
 // <copyright file="DataRelationCollection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -250,7 +250,7 @@ namespace System.Data {
                 OnCollectionChanging(RefreshEventArgs);
                 for (int i = count - 1; i >= 0; i--) {
                     inTransition = this[i];
-                    RemoveCore(inTransition); // [....] : No need to go for try catch here and this will surely not throw any exception
+                    RemoveCore(inTransition); // Microsoft : No need to go for try catch here and this will surely not throw any exception
                 }
                 OnCollectionChanged(RefreshEventArgs);
                 inTransition = null;

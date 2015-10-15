@@ -94,17 +94,17 @@ namespace System.ServiceModel.Configuration
             this.MaxIssuedTokenCachingTime = from.MaxIssuedTokenCachingTime;
             this.IssuedTokenRenewalThresholdPercentage = from.IssuedTokenRenewalThresholdPercentage;
 
-#pragma warning suppress 56506 //[....]; from.ElementInformation.Properties[ConfigurationStrings.LocalIssuerIssuedTokenParameters] can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; from.ElementInformation.Properties[ConfigurationStrings.LocalIssuerIssuedTokenParameters] can never be null (underlying configuration system guarantees)
             if (PropertyValueOrigin.Default != from.ElementInformation.Properties[ConfigurationStrings.LocalIssuer].ValueOrigin)
             {
                 this.LocalIssuer.Copy(from.LocalIssuer);
             }
-#pragma warning suppress 56506 //[....]; from.ElementInformation.Properties[ConfigurationStrings.LocalIssuerChannelBehaviors] can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; from.ElementInformation.Properties[ConfigurationStrings.LocalIssuerChannelBehaviors] can never be null (underlying configuration system guarantees)
             if (PropertyValueOrigin.Default != from.ElementInformation.Properties[ConfigurationStrings.LocalIssuerChannelBehaviors].ValueOrigin)
             {
                 this.LocalIssuerChannelBehaviors = from.LocalIssuerChannelBehaviors;
             }
-#pragma warning suppress 56506 //[....]; from.ElementInformation.Properties[ConfigurationStrings.IssuerChannelBehaviors] can never be null (underlying configuration system guarantees)
+#pragma warning suppress 56506 //Microsoft; from.ElementInformation.Properties[ConfigurationStrings.IssuerChannelBehaviors] can never be null (underlying configuration system guarantees)
             if (PropertyValueOrigin.Default != from.ElementInformation.Properties[ConfigurationStrings.IssuerChannelBehaviors].ValueOrigin)
             {
                 foreach (IssuedTokenClientBehaviorsElement element in from.IssuerChannelBehaviors)

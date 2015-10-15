@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -57,6 +57,7 @@ namespace System.Security.Cryptography {
                     // on Vista and the FIPS registry key downlevel.
                     //
 
+#if !FEATURE_CORECLR
                     if (Utils._GetEnforceFipsPolicySetting()) {
                         if (Environment.OSVersion.Version.Major >= 6) {
                             bool fipsEnabled;
@@ -73,7 +74,9 @@ namespace System.Security.Cryptography {
                             s_haveFipsAlgorithmPolicy = true;
                         }
                     }
-                    else {
+                    else
+#endif // !FEATURE_CORECLR
+                    {
                         s_fipsAlgorithmPolicy = false;
                         s_haveFipsAlgorithmPolicy = true;
                     }
@@ -194,7 +197,7 @@ namespace System.Security.Cryptography {
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
                     Type RSACryptoServiceProviderType = typeof(System.Security.Cryptography.RSACryptoServiceProvider); 
 #endif //FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FEATURE_CORECLR
                     Type DSACryptoServiceProviderType = typeof(System.Security.Cryptography.DSACryptoServiceProvider); 
                     Type DESCryptoServiceProviderType = typeof(System.Security.Cryptography.DESCryptoServiceProvider); 
                     Type TripleDESCryptoServiceProviderType = typeof(System.Security.Cryptography.TripleDESCryptoServiceProvider); 
@@ -308,7 +311,7 @@ namespace System.Security.Cryptography {
                     ht.Add("System.Security.Cryptography.RSA", RSACryptoServiceProviderType);
                     ht.Add("System.Security.Cryptography.AsymmetricAlgorithm", RSACryptoServiceProviderType);
 #endif //FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FEATURE_CORECLR
                     ht.Add("DSA", DSACryptoServiceProviderType);
                     ht.Add("System.Security.Cryptography.DSA", DSACryptoServiceProviderType);
                     ht.Add("ECDsa", ECDsaCngType);
@@ -362,7 +365,7 @@ namespace System.Security.Cryptography {
 #if FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
                     ht.Add("http://www.w3.org/2001/04/xmlenc#sha256", SHA256ManagedType);
 #endif //FEATURE_CRYPTO || FEATURE_LEGACYNETCFCRYPTO
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FEATURE_CORECLR
                     ht.Add("http://www.w3.org/2001/04/xmlenc#sha512", SHA512ManagedType);
                     ht.Add("http://www.w3.org/2001/04/xmlenc#ripemd160", RIPEMD160ManagedType);
 
@@ -461,7 +464,7 @@ namespace System.Security.Cryptography {
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         private static void InitializeConfigInfo()
         {
-#if FEATURE_CRYPTO
+#if FEATURE_CRYPTO && !FEATURE_CORECLR
             if (machineNameHT == null)
             {
                 lock(InternalSyncObject)

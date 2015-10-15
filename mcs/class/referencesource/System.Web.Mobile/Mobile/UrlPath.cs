@@ -85,7 +85,7 @@ namespace System.Web.Mobile
         {
             String path;
 
-            // Make sure the relative path is not a physical path (bug 73641)
+            // Make sure the relative path is not a physical path (
             FailIfPhysicalPath(relative);
 
             if (IsRooted(relative))
@@ -99,7 +99,7 @@ namespace System.Web.Mobile
             else
             {
                 // If the relative path starts with "~/" or "~\", treat it as app root
-                // relative (bug 68628)
+                // relative (
                 if (relative.Length >=3 && relative[0] == appRelativeCharacter && (relative[1] == '/' || relative[1] == '\\'))
                 {
                     String appPath = HttpRuntime.AppDomainAppVirtualPath;

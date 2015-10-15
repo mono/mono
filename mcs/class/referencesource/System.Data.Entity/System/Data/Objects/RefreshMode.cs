@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       markash
+// @backupOwner dsimmons
 //------------------------------------------------------------------------------
 
 namespace System.Data.Objects

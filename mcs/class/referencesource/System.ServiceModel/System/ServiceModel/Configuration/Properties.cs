@@ -20,11 +20,11 @@ using System.Configuration;
 using System.Globalization;
 
 
-// configType.Name: StandardBindingElement
+// configType.Name: DiagnosticSection
 
-namespace System.ServiceModel.Configuration
+namespace System.ServiceModel.Activation.Configuration
 {
-    public partial class StandardBindingElement
+    public sealed partial class DiagnosticSection
     {
         ConfigurationPropertyCollection properties;
 
@@ -35,11 +35,7 @@ namespace System.ServiceModel.Configuration
                 if (this.properties == null)
                 {
                     ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("name", typeof(System.String), string.Empty, null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.IsKey));
-                    properties.Add(new ConfigurationProperty("closeTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("openTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:10:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("sendTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("performanceCountersEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -48,11 +44,11 @@ namespace System.ServiceModel.Configuration
     }
 }
 
-// configType.Name: NetTcpBindingElement
+// configType.Name: NetPipeSection
 
-namespace System.ServiceModel.Configuration
+namespace System.ServiceModel.Activation.Configuration
 {
-    public partial class NetTcpBindingElement
+    public sealed partial class NetPipeSection
     {
         ConfigurationPropertyCollection properties;
 
@@ -62,20 +58,40 @@ namespace System.ServiceModel.Configuration
             {
                 if (this.properties == null)
                 {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("transactionFlow", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("transferMode", typeof(System.ServiceModel.TransferMode), System.ServiceModel.TransferMode.Buffered, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.TransferModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("transactionProtocol", typeof(System.ServiceModel.TransactionProtocol), "OleTransactions", new System.ServiceModel.Configuration.TransactionProtocolConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("allowAccounts", typeof(System.ServiceModel.Activation.Configuration.SecurityIdentifierElementCollection), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxPendingConnections", typeof(System.Int32), 100, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxPendingAccepts", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:00:30", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: NetTcpSection
+
+namespace System.ServiceModel.Activation.Configuration
+{
+    public sealed partial class NetTcpSection
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("allowAccounts", typeof(System.ServiceModel.Activation.Configuration.SecurityIdentifierElementCollection), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("listenBacklog", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferSize", typeof(System.Int32), 65536, null, new System.Configuration.IntegerValidator(1, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxConnections", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("portSharingEnabled", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("reliableSession", typeof(System.ServiceModel.Configuration.StandardBindingOptionalReliableSessionElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.NetTcpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxPendingConnections", typeof(System.Int32), 100, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxPendingAccepts", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:00:30", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("teredoEnabled", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -84,11 +100,11 @@ namespace System.ServiceModel.Configuration
     }
 }
 
-// configType.Name: WSHttpBindingBaseElement
+// configType.Name: SecurityIdentifierElement
 
-namespace System.ServiceModel.Configuration
+namespace System.ServiceModel.Activation.Configuration
 {
-    public partial class WSHttpBindingBaseElement
+    public sealed partial class SecurityIdentifierElement
     {
         ConfigurationPropertyCollection properties;
 
@@ -98,43 +114,8 @@ namespace System.ServiceModel.Configuration
             {
                 if (this.properties == null)
                 {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("bypassProxyOnLocal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("transactionFlow", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("messageEncoding", typeof(System.ServiceModel.WSMessageEncoding), System.ServiceModel.WSMessageEncoding.Text, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.WSMessageEncodingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("proxyAddress", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("reliableSession", typeof(System.ServiceModel.Configuration.StandardBindingOptionalReliableSessionElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("textEncoding", typeof(System.Text.Encoding), "utf-8", new System.ServiceModel.Configuration.EncodingConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("useDefaultWebProxy", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: WSHttpBindingElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class WSHttpBindingElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("allowCookies", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.WSHttpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("securityIdentifier", typeof(System.Security.Principal.SecurityIdentifier), null, new System.ServiceModel.Activation.Configuration.SecurityIdentifierConverter(), null, System.Configuration.ConfigurationPropertyOptions.IsKey));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -162,30 +143,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("contextExchangeMechanism", typeof(System.ServiceModel.Channels.ContextExchangeMechanism), System.ServiceModel.Channels.ContextExchangeMechanism.ContextSoapHeader, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Channels.ContextExchangeMechanismHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("protectionLevel", typeof(System.Net.Security.ProtectionLevel), System.Net.Security.ProtectionLevel.Sign, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.ProtectionLevelHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("contextManagementEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: StandardBindingCollectionElement`2
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class StandardBindingCollectionElement<TStandardBinding, TBindingConfiguration>
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("", typeof(System.ServiceModel.Configuration.StandardBindingElementCollection<TBindingConfiguration>), null, null, null, System.Configuration.ConfigurationPropertyOptions.IsDefaultCollection));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -238,65 +195,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("clientCallbackAddress", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("contextManagementEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("contextProtectionLevel", typeof(System.Net.Security.ProtectionLevel), System.Net.Security.ProtectionLevel.Sign, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.ProtectionLevelHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: HttpBindingBaseElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class HttpBindingBaseElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("allowCookies", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("bypassProxyOnLocal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferSize", typeof(System.Int32), 65536, null, new System.Configuration.IntegerValidator(1, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("proxyAddress", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("textEncoding", typeof(System.Text.Encoding), "utf-8", new System.ServiceModel.Configuration.EncodingConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("transferMode", typeof(System.ServiceModel.TransferMode), System.ServiceModel.TransferMode.Buffered, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.TransferModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("useDefaultWebProxy", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: BasicHttpBindingElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class BasicHttpBindingElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("messageEncoding", typeof(System.ServiceModel.WSMessageEncoding), System.ServiceModel.WSMessageEncoding.Text, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.WSMessageEncodingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.BasicHttpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -491,6 +389,31 @@ namespace System.ServiceModel.Configuration
                 {
                     ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
                     properties.Add(new ConfigurationProperty("prefix", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.IsRequired | System.Configuration.ConfigurationPropertyOptions.IsKey));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: BasicHttpBindingElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class BasicHttpBindingElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("messageEncoding", typeof(System.ServiceModel.WSMessageEncoding), System.ServiceModel.WSMessageEncoding.Text, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.WSMessageEncodingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.BasicHttpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -968,32 +891,6 @@ namespace System.ServiceModel.Configuration
     }
 }
 
-// configType.Name: TransportElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class TransportElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("manualAddressing", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
 // configType.Name: ConnectionOrientedTransportElement
 
 namespace System.ServiceModel.Configuration
@@ -1337,6 +1234,40 @@ namespace System.ServiceModel.Configuration
     }
 }
 
+// configType.Name: HttpBindingBaseElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class HttpBindingBaseElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("allowCookies", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("bypassProxyOnLocal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferSize", typeof(System.Int32), 65536, null, new System.Configuration.IntegerValidator(1, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("proxyAddress", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("textEncoding", typeof(System.Text.Encoding), "utf-8", new System.ServiceModel.Configuration.EncodingConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("transferMode", typeof(System.ServiceModel.TransferMode), System.ServiceModel.TransferMode.Buffered, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.TransferModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("useDefaultWebProxy", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
 // configType.Name: HttpDigestClientElement
 
 namespace System.ServiceModel.Configuration
@@ -1386,6 +1317,30 @@ namespace System.ServiceModel.Configuration
     }
 }
 
+// configType.Name: HttpsTransportElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class HttpsTransportElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("requireClientCertificate", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
 // configType.Name: HttpTransportElement
 
 namespace System.ServiceModel.Configuration
@@ -1419,30 +1374,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("useDefaultWebProxy", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("extendedProtectionPolicy", typeof(System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("webSocketSettings", typeof(System.ServiceModel.Configuration.WebSocketTransportSettingsElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: HttpsTransportElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class HttpsTransportElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("requireClientCertificate", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -1916,43 +1847,6 @@ namespace System.ServiceModel.Configuration
     }
 }
 
-// configType.Name: MsmqElementBase
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class MsmqElementBase
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Add(new ConfigurationProperty("customDeadLetterQueue", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("deadLetterQueue", typeof(System.ServiceModel.DeadLetterQueue), System.ServiceModel.DeadLetterQueue.System, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.DeadLetterQueueHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("durable", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("exactlyOnce", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxRetryCycles", typeof(System.Int32), 2, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveContextEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveErrorHandling", typeof(System.ServiceModel.ReceiveErrorHandling), System.ServiceModel.ReceiveErrorHandling.Fault, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.ReceiveErrorHandlingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveRetryCount", typeof(System.Int32), 5, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("retryCycleDelay", typeof(System.TimeSpan), System.TimeSpan.Parse("00:30:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("msmqTransportSecurity", typeof(System.ServiceModel.Configuration.MsmqTransportSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("timeToLive", typeof(System.TimeSpan), System.TimeSpan.Parse("1.00:00:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("useSourceJournal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("useMsmqTracing", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("validityDuration", typeof(System.TimeSpan), System.TimeSpan.Parse("00:05:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
 // configType.Name: MsmqIntegrationElement
 
 namespace System.ServiceModel.Configuration
@@ -1994,6 +1888,43 @@ namespace System.ServiceModel.Configuration
                     ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
                     properties.Add(new ConfigurationProperty("mode", typeof(System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode), System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode.Transport, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("transport", typeof(System.ServiceModel.Configuration.MsmqTransportSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: MsmqElementBase
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class MsmqElementBase
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("customDeadLetterQueue", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("deadLetterQueue", typeof(System.ServiceModel.DeadLetterQueue), System.ServiceModel.DeadLetterQueue.System, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.DeadLetterQueueHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("durable", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("exactlyOnce", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxRetryCycles", typeof(System.Int32), 2, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveContextEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveErrorHandling", typeof(System.ServiceModel.ReceiveErrorHandling), System.ServiceModel.ReceiveErrorHandling.Fault, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.ReceiveErrorHandlingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveRetryCount", typeof(System.Int32), 5, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("retryCycleDelay", typeof(System.TimeSpan), System.TimeSpan.Parse("00:30:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("msmqTransportSecurity", typeof(System.ServiceModel.Configuration.MsmqTransportSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("timeToLive", typeof(System.TimeSpan), System.TimeSpan.Parse("1.00:00:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("useSourceJournal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("useMsmqTracing", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("validityDuration", typeof(System.TimeSpan), System.TimeSpan.Parse("00:05:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -2261,6 +2192,33 @@ namespace System.ServiceModel.Configuration
     }
 }
 
+// configType.Name: NetHttpWebSocketTransportSettingsElement
+
+namespace System.ServiceModel.Configuration
+{
+    public sealed partial class NetHttpWebSocketTransportSettingsElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Remove("transportUsage");
+                    properties.Add(new ConfigurationProperty("transportUsage", typeof(System.ServiceModel.Channels.WebSocketTransportUsage), System.ServiceModel.Channels.WebSocketTransportUsage.WhenDuplex, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Channels.WebSocketTransportUsageHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Remove("subProtocol");
+                    properties.Add(new ConfigurationProperty("subProtocol", typeof(System.String), "soap", null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
 // configType.Name: WebSocketTransportSettingsElement
 
 namespace System.ServiceModel.Configuration
@@ -2282,33 +2240,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("subProtocol", typeof(System.String), string.Empty, null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("disablePayloadMasking", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("maxPendingConnections", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: NetHttpWebSocketTransportSettingsElement
-
-namespace System.ServiceModel.Configuration
-{
-    public sealed partial class NetHttpWebSocketTransportSettingsElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = base.Properties;
-                    properties.Remove("transportUsage");
-                    properties.Add(new ConfigurationProperty("transportUsage", typeof(System.ServiceModel.Channels.WebSocketTransportUsage), System.ServiceModel.Channels.WebSocketTransportUsage.WhenDuplex, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Channels.WebSocketTransportUsageHelper)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Remove("subProtocol");
-                    properties.Add(new ConfigurationProperty("subProtocol", typeof(System.String), "soap", null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -2372,54 +2303,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.NetNamedPipeSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: StandardEndpointElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class StandardEndpointElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("name", typeof(System.String), string.Empty, null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.IsKey));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: StandardEndpointCollectionElement`2
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class StandardEndpointCollectionElement<TStandardEndpoint, TEndpointConfiguration>
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("", typeof(System.ServiceModel.Configuration.StandardEndpointElementCollection<TEndpointConfiguration>), null, null, null, System.Configuration.ConfigurationPropertyOptions.IsDefaultCollection));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -2507,6 +2390,42 @@ namespace System.ServiceModel.Configuration
     }
 }
 
+// configType.Name: NetTcpBindingElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class NetTcpBindingElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("transactionFlow", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("transferMode", typeof(System.ServiceModel.TransferMode), System.ServiceModel.TransferMode.Buffered, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.TransferModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("transactionProtocol", typeof(System.ServiceModel.TransactionProtocol), "OleTransactions", new System.ServiceModel.Configuration.TransactionProtocolConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("listenBacklog", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferSize", typeof(System.Int32), 65536, null, new System.Configuration.IntegerValidator(1, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxConnections", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("portSharingEnabled", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("reliableSession", typeof(System.ServiceModel.Configuration.StandardBindingOptionalReliableSessionElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.NetTcpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
 // configType.Name: NetTcpSecurityElement
 
 namespace System.ServiceModel.Configuration
@@ -2525,31 +2444,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("mode", typeof(System.ServiceModel.SecurityMode), System.ServiceModel.SecurityMode.Transport, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.SecurityModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("transport", typeof(System.ServiceModel.Configuration.TcpTransportSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("message", typeof(System.ServiceModel.Configuration.MessageSecurityOverTcpElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: StandardBindingReliableSessionElement
-
-namespace System.ServiceModel.Configuration
-{
-    public partial class StandardBindingReliableSessionElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("ordered", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("inactivityTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:10:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00.0000001", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -2781,6 +2675,216 @@ namespace System.ServiceModel.Configuration
                     ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
                     properties.Add(new ConfigurationProperty("url", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("version", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: StandardBindingElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class StandardBindingElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("name", typeof(System.String), string.Empty, null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.IsKey));
+                    properties.Add(new ConfigurationProperty("closeTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("openTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:10:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("sendTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:01:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: WSHttpBindingBaseElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class WSHttpBindingBaseElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("bypassProxyOnLocal", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("transactionFlow", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("hostNameComparisonMode", typeof(System.ServiceModel.HostNameComparisonMode), System.ServiceModel.HostNameComparisonMode.StrongWildcard, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.HostNameComparisonModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(0, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("messageEncoding", typeof(System.ServiceModel.WSMessageEncoding), System.ServiceModel.WSMessageEncoding.Text, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.WSMessageEncodingHelper)), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("proxyAddress", typeof(System.Uri), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("readerQuotas", typeof(System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("reliableSession", typeof(System.ServiceModel.Configuration.StandardBindingOptionalReliableSessionElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("textEncoding", typeof(System.Text.Encoding), "utf-8", new System.ServiceModel.Configuration.EncodingConverter(), null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("useDefaultWebProxy", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: WSHttpBindingElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class WSHttpBindingElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = base.Properties;
+                    properties.Add(new ConfigurationProperty("allowCookies", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("security", typeof(System.ServiceModel.Configuration.WSHttpSecurityElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: StandardBindingCollectionElement`2
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class StandardBindingCollectionElement<TStandardBinding, TBindingConfiguration>
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("", typeof(System.ServiceModel.Configuration.StandardBindingElementCollection<TBindingConfiguration>), null, null, null, System.Configuration.ConfigurationPropertyOptions.IsDefaultCollection));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: TransportElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class TransportElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("manualAddressing", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxBufferPoolSize", typeof(System.Int64), (long)524288, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("maxReceivedMessageSize", typeof(System.Int64), (long)65536, null, new System.Configuration.LongValidator(1, 9223372036854775807, false), System.Configuration.ConfigurationPropertyOptions.None));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: StandardEndpointElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class StandardEndpointElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("name", typeof(System.String), string.Empty, null, new System.Configuration.StringValidator(0, 2147483647, null), System.Configuration.ConfigurationPropertyOptions.IsKey));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: StandardEndpointCollectionElement`2
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class StandardEndpointCollectionElement<TStandardEndpoint, TEndpointConfiguration>
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("", typeof(System.ServiceModel.Configuration.StandardEndpointElementCollection<TEndpointConfiguration>), null, null, null, System.Configuration.ConfigurationPropertyOptions.IsDefaultCollection));
+                    this.properties = properties;
+                }
+                return this.properties;
+            }
+        }
+    }
+}
+
+// configType.Name: StandardBindingReliableSessionElement
+
+namespace System.ServiceModel.Configuration
+{
+    public partial class StandardBindingReliableSessionElement
+    {
+        ConfigurationPropertyCollection properties;
+
+        protected override ConfigurationPropertyCollection Properties
+        {
+            get
+            {
+                if (this.properties == null)
+                {
+                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
+                    properties.Add(new ConfigurationProperty("ordered", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("inactivityTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:10:00", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00.0000001", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -3368,6 +3472,7 @@ namespace System.ServiceModel.Configuration
                 {
                     ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
                     properties.Add(new ConfigurationProperty("requireClientCertificate", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("sslProtocols", typeof(System.Security.Authentication.SslProtocols), System.Security.Authentication.SslProtocols.Ssl3 | System.Security.Authentication.SslProtocols.Tls | System.Security.Authentication.SslProtocols.Default | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls12, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.SslProtocolsHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -3422,6 +3527,7 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("clientCredentialType", typeof(System.ServiceModel.TcpClientCredentialType), System.ServiceModel.TcpClientCredentialType.Windows, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.TcpClientCredentialTypeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("protectionLevel", typeof(System.Net.Security.ProtectionLevel), System.Net.Security.ProtectionLevel.EncryptAndSign, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.ProtectionLevelHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("extendedProtectionPolicy", typeof(System.Security.Authentication.ExtendedProtection.Configuration.ExtendedProtectionPolicyElement), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
+                    properties.Add(new ConfigurationProperty("sslProtocols", typeof(System.Security.Authentication.SslProtocols), System.Security.Authentication.SslProtocols.Ssl3 | System.Security.Authentication.SslProtocols.Tls | System.Security.Authentication.SslProtocols.Default | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls12, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.SslProtocolsHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     this.properties = properties;
                 }
                 return this.properties;
@@ -4110,110 +4216,6 @@ namespace System.ServiceModel.Configuration
                     properties.Add(new ConfigurationProperty("certificateValidationMode", typeof(System.ServiceModel.Security.X509CertificateValidationMode), System.ServiceModel.Security.X509CertificateValidationMode.ChainTrust, null, new System.ServiceModel.Configuration.ServiceModelEnumValidator(typeof(System.ServiceModel.Security.X509CertificateValidationModeHelper)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("revocationMode", typeof(System.Security.Cryptography.X509Certificates.X509RevocationMode), System.Security.Cryptography.X509Certificates.X509RevocationMode.Online, null, new System.ServiceModel.Configuration.StandardRuntimeEnumValidator(typeof(System.Security.Cryptography.X509Certificates.X509RevocationMode)), System.Configuration.ConfigurationPropertyOptions.None));
                     properties.Add(new ConfigurationProperty("trustedStoreLocation", typeof(System.Security.Cryptography.X509Certificates.StoreLocation), System.Security.Cryptography.X509Certificates.StoreLocation.CurrentUser, null, new System.ServiceModel.Configuration.StandardRuntimeEnumValidator(typeof(System.Security.Cryptography.X509Certificates.StoreLocation)), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: DiagnosticSection
-
-namespace System.ServiceModel.Activation.Configuration
-{
-    public sealed partial class DiagnosticSection
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("performanceCountersEnabled", typeof(System.Boolean), true, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: NetPipeSection
-
-namespace System.ServiceModel.Activation.Configuration
-{
-    public sealed partial class NetPipeSection
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("allowAccounts", typeof(System.ServiceModel.Activation.Configuration.SecurityIdentifierElementCollection), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxPendingConnections", typeof(System.Int32), 100, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxPendingAccepts", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:00:30", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: NetTcpSection
-
-namespace System.ServiceModel.Activation.Configuration
-{
-    public sealed partial class NetTcpSection
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("allowAccounts", typeof(System.ServiceModel.Activation.Configuration.SecurityIdentifierElementCollection), null, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("listenBacklog", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxPendingConnections", typeof(System.Int32), 100, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("maxPendingAccepts", typeof(System.Int32), 0, null, new System.Configuration.IntegerValidator(0, 2147483647, false), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("receiveTimeout", typeof(System.TimeSpan), System.TimeSpan.Parse("00:00:30", CultureInfo.InvariantCulture), new System.ServiceModel.Configuration.TimeSpanOrInfiniteConverter(), new System.ServiceModel.Configuration.TimeSpanOrInfiniteValidator(System.TimeSpan.Parse("00:00:00", CultureInfo.InvariantCulture), System.TimeSpan.Parse("24.20:31:23.6470000", CultureInfo.InvariantCulture)), System.Configuration.ConfigurationPropertyOptions.None));
-                    properties.Add(new ConfigurationProperty("teredoEnabled", typeof(System.Boolean), false, null, null, System.Configuration.ConfigurationPropertyOptions.None));
-                    this.properties = properties;
-                }
-                return this.properties;
-            }
-        }
-    }
-}
-
-// configType.Name: SecurityIdentifierElement
-
-namespace System.ServiceModel.Activation.Configuration
-{
-    public sealed partial class SecurityIdentifierElement
-    {
-        ConfigurationPropertyCollection properties;
-
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                if (this.properties == null)
-                {
-                    ConfigurationPropertyCollection properties = new ConfigurationPropertyCollection();
-                    properties.Add(new ConfigurationProperty("securityIdentifier", typeof(System.Security.Principal.SecurityIdentifier), null, new System.ServiceModel.Activation.Configuration.SecurityIdentifierConverter(), null, System.Configuration.ConfigurationPropertyOptions.IsKey));
                     this.properties = properties;
                 }
                 return this.properties;

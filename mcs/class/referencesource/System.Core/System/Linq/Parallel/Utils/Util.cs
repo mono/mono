@@ -7,7 +7,7 @@
 //
 // Util.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -33,12 +33,12 @@ namespace System.Linq.Parallel
         }
 
         //-----------------------------------------------------------------------------------
-        // This is a temporary workaround for a VSWhidbey bug 601998 in the X64 JIT compiler.
-        // Unlike the X86 JIT, null checks on value types aren't optimized away in Whidbey.
-        // That means using the GenericComparer<K> infrastructure results in boxing value
-        // types. This kills performance all over the place. This bug has been fixed in
-        // Orcas (2.0 SP1), so once we're on the SP1 runtime, this can be removed.
-        //
+        // This is a temporary workaround for a VSWhidbey 
+
+
+
+
+
 
         internal static Comparer<TKey> GetDefaultComparer<TKey>()
         {

@@ -1,7 +1,3 @@
-#if !ISOLATION_IN_MSCORLIB
-#define FEATURE_COMINTEROP
-#endif
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -17,7 +13,6 @@ using System.Threading;
 
 namespace System.Deployment.Internal.Isolation
 {
-#if FEATURE_COMINTEROP
     [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown),Guid("285a8862-c84a-11d7-850f-005cd062464f")]
     internal interface ISection
     {
@@ -69,5 +64,4 @@ namespace System.Deployment.Internal.Isolation
         uint Count { get; }
         object GetItem(uint SectionId);
     }
-#endif
 }

@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionInternal.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.ProviderBase {
@@ -58,7 +58,7 @@ namespace System.Data.ProviderBase {
         private SysTx.Transaction _enlistedTransactionOriginal;     
 
 #if DEBUG
-        private int                      _activateCount;            // debug only counter to verify activate/deactivates are in [....].
+        private int                      _activateCount;            // debug only counter to verify activate/deactivates are in sync.
 #endif //DEBUG
 
         protected DbConnectionInternal() : this(ConnectionState.Open, true, false) { // V1.1.3300
@@ -259,15 +259,15 @@ namespace System.Data.ProviderBase {
                 //
                 // That means that:
                 //
-                //    _pooledCount > 1    connection is in the pool multiple times (this is a serious bug...)
-                //    _pooledCount == 1   connection is in the pool
-                //    _pooledCount == 0   connection is out of the pool
-                //    _pooledCount == -1  connection is not a pooled connection; we shouldn't be here for non-pooled connections.
-                //    _pooledCount < -1   connection out of the pool multiple times (not sure how this could happen...)
-                //
-                // Now, our job is to return TRUE when the connection is out
-                // of the pool and it's owning object is no longer around to
-                // return it.
+                //    _pooledCount > 1    connection is in the pool multiple times (this is a serious 
+
+
+
+
+
+
+
+
 
                 bool value = !IsTxRootWaitingForTxEnd && (_pooledCount < 1) && !_owningObject.IsAlive;
                 return value;
@@ -323,7 +323,7 @@ namespace System.Data.ProviderBase {
             get;
         }
 
-        // this should be abstract but untill it is added to all the providers virtual will have to do [....]
+        // this should be abstract but untill it is added to all the providers virtual will have to do Microsoft
         virtual public string ServerVersionNormalized {
             get{
                 throw ADP.NotSupported();

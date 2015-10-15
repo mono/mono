@@ -32,7 +32,7 @@ namespace System.Configuration
 
             xmlDocument.PreserveWhitespace = true;
             xmlDocument.LoadXml(encryptedNode.OuterXml);
-            exml = new EncryptedXml(xmlDocument);
+            exml = new FipsAwareEncryptedXml(xmlDocument);
             exml.AddKeyNameMapping(_KeyName, rsa);
             exml.DecryptDocument();
             rsa.Clear();
@@ -46,12 +46,10 @@ namespace System.Configuration
             byte[]              rgbOutput;
             EncryptedData       ed;
             KeyInfoName         kin;
-            SymmetricAlgorithm  symAlg;
             EncryptedKey        ek;
             KeyInfoEncryptedKey kek;
             XmlElement          inputElement;
             RSACryptoServiceProvider rsa = GetCryptoServiceProvider(false, false);
-
 
             // Encrypt the node with the new key
             xmlDocument = new XmlDocument();
@@ -60,23 +58,20 @@ namespace System.Configuration
             exml = new EncryptedXml(xmlDocument);
             inputElement = xmlDocument.DocumentElement;
 
-            // Create a new 3DES key
-            symAlg = new TripleDESCryptoServiceProvider();
-            byte[] rgbKey1 = GetRandomKey();
-            symAlg.Key = rgbKey1;
-            symAlg.Mode = CipherMode.ECB;
-            symAlg.Padding = PaddingMode.PKCS7;
-            rgbOutput = exml.EncryptData(inputElement, symAlg, true);
-            ed = new EncryptedData();
-            ed.Type = EncryptedXml.XmlEncElementUrl;
-            ed.EncryptionMethod = new EncryptionMethod(EncryptedXml.XmlEncTripleDESUrl);
-            ed.KeyInfo = new KeyInfo();
+            using (SymmetricAlgorithm symAlg = GetSymAlgorithmProvider()) {
+                rgbOutput = exml.EncryptData(inputElement, symAlg, true);
+                ed = new EncryptedData();
+                ed.Type = EncryptedXml.XmlEncElementUrl;
+                ed.EncryptionMethod = GetSymEncryptionMethod();
+                ed.KeyInfo = new KeyInfo();
 
-            ek = new EncryptedKey();
-            ek.EncryptionMethod = new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
-            ek.KeyInfo = new KeyInfo();
-            ek.CipherData = new CipherData();
-            ek.CipherData.CipherValue = EncryptedXml.EncryptKey(symAlg.Key, rsa, UseOAEP);
+                ek = new EncryptedKey();
+                ek.EncryptionMethod = new EncryptionMethod(EncryptedXml.XmlEncRSA15Url);
+                ek.KeyInfo = new KeyInfo();
+                ek.CipherData = new CipherData();
+                ek.CipherData.CipherValue = EncryptedXml.EncryptKey(symAlg.Key, rsa, UseOAEP);
+            }
+
             kin = new KeyInfoName();
             kin.Value = _KeyName;
             ek.KeyInfo.AddClause(kin);
@@ -85,6 +80,9 @@ namespace System.Configuration
             ed.CipherData = new CipherData();
             ed.CipherData.CipherValue = rgbOutput;
             EncryptedXml.ReplaceElement(inputElement, ed, true);
+
+            rsa.Clear();
+
                 // Get node from the document
             foreach (XmlNode node2 in xmlDocument.ChildNodes)
                 if (node2.NodeType == XmlNodeType.Element)
@@ -129,6 +127,8 @@ namespace System.Configuration
         public string   CspProviderName     { get { return _CspProviderName; } }
         public bool     UseMachineContainer { get { return _UseMachineContainer; } }
         public bool UseOAEP { get { return _UseOAEP; } }
+        public bool UseFIPS { get { return _UseFIPS; } }
+
         public override void Initialize(string name, NameValueCollection configurationValues)
         {
             base.Initialize(name, configurationValues);
@@ -143,6 +143,7 @@ namespace System.Configuration
             configurationValues.Remove("cspProviderName");
             _UseMachineContainer = GetBooleanValue(configurationValues, "useMachineContainer", true);
             _UseOAEP = GetBooleanValue(configurationValues, "useOAEP", false);
+            _UseFIPS = GetBooleanValue(configurationValues, "useFIPS", false);
             if (configurationValues.Count > 0)
                 throw new ConfigurationErrorsException(SR.GetString(SR.Unrecognized_initialization_value, configurationValues.GetKey(0)));
         }
@@ -153,6 +154,7 @@ namespace System.Configuration
         private string _CspProviderName;
         private bool _UseMachineContainer;
         private bool _UseOAEP;
+        private bool _UseFIPS;
 
         public RSAParameters RsaPublicKey { get { return GetCryptoServiceProvider(false, false).ExportParameters(false); } }
 
@@ -162,7 +164,7 @@ namespace System.Configuration
                 CspParameters csp = new CspParameters();
                 csp.KeyContainerName = KeyContainerName;
                 csp.KeyNumber = 1;
-                csp.ProviderType = 1; // Dev10 Bug #548719: Explicitly require "RSA Full (Signature and Key Exchange)"
+                csp.ProviderType = 1; // Dev10 
 
                 if (CspProviderName != null && CspProviderName.Length > 0)
                     csp.ProviderName = CspProviderName;
@@ -233,6 +235,31 @@ namespace System.Configuration
             if (s == "false")
                 return false;
             throw new ConfigurationErrorsException(SR.GetString(SR.Config_invalid_boolean_attribute, valueName));
+        }
+
+        private SymmetricAlgorithm GetSymAlgorithmProvider() {
+            SymmetricAlgorithm symAlg;
+
+            if (UseFIPS) {
+                // AesCryptoServiceProvider implementation is FIPS certified
+                symAlg = new AesCryptoServiceProvider();
+            }
+            else {
+                // Use the 3DES. FIPS obsolated 3DES
+                symAlg = new TripleDESCryptoServiceProvider();
+
+                byte[] rgbKey1 = GetRandomKey();
+                symAlg.Key = rgbKey1;
+                symAlg.Mode = CipherMode.ECB;
+                symAlg.Padding = PaddingMode.PKCS7;
+            }
+
+            return symAlg;
+        }
+
+        private EncryptionMethod GetSymEncryptionMethod() {
+            return UseFIPS ? new EncryptionMethod(EncryptedXml.XmlEncAES256Url) :
+                             new EncryptionMethod(EncryptedXml.XmlEncTripleDESUrl);
         }
     }
 }

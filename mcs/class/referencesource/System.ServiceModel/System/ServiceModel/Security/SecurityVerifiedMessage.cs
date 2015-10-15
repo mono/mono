@@ -70,7 +70,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.IsDisposed)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 }
@@ -91,7 +91,7 @@ namespace System.ServiceModel.Security
             {
                 if (this.IsDisposed)
                 {
-                    // PreSharp Bug: Property get methods should not throw exceptions.
+                    // PreSharp 
                     #pragma warning suppress 56503
                     throw TraceUtility.ThrowHelperError(CreateMessageDisposedException(), this);
                 }

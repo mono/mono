@@ -2,7 +2,7 @@
 // <copyright file="CopyOfAction.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -48,8 +48,8 @@ namespace System.Xml.Xsl.XsltOld {
                 object result = query.Evaluate(frame.NodeSet);
 
                 if (result is XPathNodeIterator) {
-                    // we cash this query because otherwise current() works incorrectly. Bug#382166.
-                    // To be perfect we should use frame.NewNodeSet here
+                    // we cash this query because otherwise current() works incorrectly. 
+
                     processor.PushActionFrame(CopyNodeSetAction.GetAction(), new XPathArrayIterator(query));
                     frame.State = NodeSetCopied;
                     break;

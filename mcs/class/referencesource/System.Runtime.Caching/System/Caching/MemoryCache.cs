@@ -466,6 +466,9 @@ namespace System.Runtime.Caching {
         }
 
         public long Trim(int percent) {
+            if (percent > 100) {
+                percent = 100;
+            }
             long trimmed = 0;
             if (_disposed == 0) {
                 foreach (MemoryCacheStore store in _stores) {
@@ -491,7 +494,7 @@ namespace System.Runtime.Caching {
             return (GetInternal(key, regionName) != null);
         }
 
-        // Dev10 907758: Breaking bug in System.RuntimeCaching.MemoryCache.AddOrGetExisting (CacheItem, CacheItemPolicy)
+        // Dev10 907758: Breaking 
         public override bool Add(CacheItem item, CacheItemPolicy policy) {
             CacheItem existingEntry = AddOrGetExisting(item, policy);
             return (existingEntry == null || existingEntry.Value == null);

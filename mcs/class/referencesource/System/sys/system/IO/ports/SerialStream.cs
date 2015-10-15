@@ -7,7 +7,7 @@
 **
 ** Class: SerialStream
 **
-** Purpose: Class for enabling low-level [....] and async control over a serial
+** Purpose: Class for enabling low-level sync and async control over a serial
 **        : communications resource.
 **
 ** Date: August, 2002

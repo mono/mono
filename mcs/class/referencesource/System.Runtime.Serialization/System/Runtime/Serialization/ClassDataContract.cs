@@ -820,7 +820,7 @@ namespace System.Runtime.Serialization
 
                 if (BaseContract != null)
                 {
-                    if (hasDataContractAttribute && dataContractAttribute.IsReferenceSetExplicit)
+                    if (hasDataContractAttribute && dataContractAttribute.IsReferenceSetExplicitly)
                     {
                         bool baseIsReference = this.BaseContract.IsReference;
                         if ((baseIsReference && !dataContractAttribute.IsReference) ||
@@ -920,7 +920,7 @@ namespace System.Runtime.Serialization
                                 ThrowInvalidDataContractException(SR.GetString(SR.InvalidMember, DataContract.GetClrTypeFullName(type), member.Name));
 
                             DataMemberAttribute memberAttribute = (DataMemberAttribute)memberAttributes[0];
-                            if (memberAttribute.IsNameSetExplicit)
+                            if (memberAttribute.IsNameSetExplicitly)
                             {
                                 if (memberAttribute.Name == null || memberAttribute.Name.Length == 0)
                                     ThrowInvalidDataContractException(SR.GetString(SR.InvalidDataMemberName, member.Name, DataContract.GetClrTypeFullName(type)));

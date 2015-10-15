@@ -968,7 +968,7 @@ namespace System.ServiceModel.Administration
                     int hResult = this.wbemObject.Put(name, 0, ref val, (int)type);
                     if ((int)WbemNative.WbemStatus.WBEM_E_TYPE_MISMATCH == hResult || (int)WbemNative.WbemStatus.WBEM_E_NOT_FOUND == hResult)
                     {
-                        //This would be most likely a product bug (somebody changed type without updating MOF), improper installation or tampering with MOF
+                        //This would be most likely a product 
                         System.Runtime.Diagnostics.EventLogEventId eventId;
                         if ((int)WbemNative.WbemStatus.WBEM_E_TYPE_MISMATCH == hResult)
                         {

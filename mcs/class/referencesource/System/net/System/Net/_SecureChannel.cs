@@ -795,7 +795,8 @@ namespace System.Net.Security {
                 {
                     SecureCredential.Flags flags = SecureCredential.Flags.ValidateManual | SecureCredential.Flags.NoDefaultCred;
                     if (!ServicePointManager.DisableStrongCrypto 
-                        && ((m_ProtocolFlags & (SchProtocols.Tls10 | SchProtocols.Tls11 | SchProtocols.Tls12)) != 0))
+                        && ((m_ProtocolFlags & (SchProtocols.Tls10 | SchProtocols.Tls11 | SchProtocols.Tls12)) != 0)
+                        && (m_EncryptionPolicy != EncryptionPolicy.AllowNoEncryption) && (m_EncryptionPolicy != EncryptionPolicy.NoEncryption))
                     {
                         flags |= SecureCredential.Flags.UseStrongCrypto;
                     }

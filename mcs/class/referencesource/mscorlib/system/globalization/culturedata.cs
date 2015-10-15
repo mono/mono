@@ -55,7 +55,7 @@ namespace System.Globalization
     //
 
     // StructLayout is needed here otherwise compiler can re-arrange the fields.
-    // We have to keep this in-[....] with the definition in comnlsinfo.h
+    // We have to keep this in-sync with the definition in comnlsinfo.h
     //
     // WARNING WARNING WARNING
     //
@@ -63,9 +63,7 @@ namespace System.Globalization
     // WARNING: The type loader will rearrange class member offsets so the mscorwks!CultureDataBaseObject
     // WARNING: must be manually structured to match the true loaded class layout
     //
-#if !FEATURE_CORECLR
     [FriendAccessAllowed]
-#endif
     internal class CultureData
     {
         const int undef = -1;
@@ -154,13 +152,12 @@ namespace System.Globalization
         private CalendarData[] calendars; // Store for specific calendar data
 
         // Text information
-#if !FEATURE_CORECLR
         private int iReadingLayout = undef; // Reading layout data
         // 0 - Left to right (eg en-US)
         // 1 - Right to left (eg arabic locales)
         // 2 - Vertical top to bottom with columns to the left and also left to right (ja-JP locales)
         // 3 - Vertical top to bottom with columns proceeding to the right
-#endif
+
         private String sTextInfo; // Text info name to use for custom
         private String sCompareInfo; // Compare info name (including sorting key) to use if custom
         private String sScripts; // Typical Scripts for this locale (latn;cyrl; etc)
@@ -458,9 +455,8 @@ namespace System.Globalization
 		    invariant.calendars[0] = CalendarData.Invariant;
 
 		    // Text information
-	#if !FEATURE_CORECLR
 		    invariant.iReadingLayout = 0;                      // Reading Layout = RTL
-	#endif
+
 		    invariant.sTextInfo = "";                     // Text info name to use for custom
 		    invariant.sCompareInfo = "";                     // Compare info name (including sorting key) to use if custom
 		    invariant.sScripts = "Latn;";                // Typical Scripts for this locale (latn,cyrl, etc)
@@ -511,9 +507,7 @@ namespace System.Globalization
         // Cache of cultures we've already looked up
         private static volatile Dictionary<String, CultureData> s_cachedCultures;
 
-#if !FEATURE_CORECLR
         [FriendAccessAllowed]
-#endif
         internal static CultureData GetCultureData(String cultureName, bool useUserOverride)
         {
             // First do a shortcut for Invariant
@@ -737,12 +731,13 @@ namespace System.Globalization
             return true;
         }
 
-        // Cache of regions we've already looked up
-        private static volatile Dictionary<String, CultureData> s_cachedRegions;
-
 #if FEATURE_WIN32_REGISTRY
         private static String s_RegionKey = @"System\CurrentControlSet\Control\Nls\RegionMapping";
 #endif // FEATURE_WIN32_REGISTRY
+
+#endif // !FEATURE_CORECLR
+        // Cache of regions we've already looked up
+        private static volatile Dictionary<String, CultureData> s_cachedRegions;
 
         [System.Security.SecurityCritical]  // auto-generated
         internal static CultureData GetCultureDataForRegion(String cultureName, bool useUserOverride)
@@ -788,6 +783,7 @@ namespace System.Globalization
                 }
             }
 
+#if !FEATURE_CORECLR
             //
             // Not found in the hash table, look it up the hard way
             //
@@ -835,7 +831,7 @@ namespace System.Globalization
                     retVal = GetCultureData(RegionNames[cultureName], useUserOverride);
                 }
             }
-
+#endif // !FEATURE_CORECLR
             // If not found in the hard coded table we'll have to find a culture that works for us
             if (retVal == null || (retVal.IsNeutralCulture == true))
             {
@@ -877,7 +873,6 @@ namespace System.Globalization
             // Return the found culture to use, null, or the neutral culture.
             return retVal;
         }
-#endif
 
 #if FEATURE_USE_LCID
         // Obtain locale name from LCID
@@ -965,7 +960,6 @@ namespace System.Globalization
 #endif
         }
 
-#if !FEATURE_CORECLR
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal static CultureInfo[] GetCultures(CultureTypes types)
         {
@@ -1054,7 +1048,7 @@ namespace System.Globalization
             }
         }
 
-
+#if !FEATURE_CORECLR
         internal bool IsReplacementCulture
         {
             get
@@ -1329,7 +1323,7 @@ namespace System.Globalization
 #if !FEATURE_CORECLR
                         if (IsIncorrectNativeLanguageForSinhala())
                         {
-                            // work around bug in Windows 7 for native name of Sinhala
+                            // work around 
                             this.sNativeDisplayName ="\x0dc3\x0dd2\x0d82\x0dc4\x0dbd (\x0DC1\x0DCA\x200D\x0DBB\x0DD3\x0020\x0DBD\x0D82\x0D9A\x0DCF)";
                         }
                         else
@@ -1458,7 +1452,7 @@ namespace System.Globalization
 #if !FEATURE_CORECLR
                     if (IsIncorrectNativeLanguageForSinhala())
                     {
-                        // work around bug in Windows 7 for native language of Sinhala
+                        // work around 
                         this.sNativeLanguage = "\x0dc3\x0dd2\x0d82\x0dc4\x0dbd";
                     }
                     else
@@ -2054,10 +2048,7 @@ namespace System.Globalization
                     )
                 {
                     // Try to get the short times from the OS/culture.dll
-                    String[] shortTimes = null;
-#if !__APPLE__
-                    shortTimes = DoEnumShortTimeFormats();
-#endif // !__APPLE__
+                    String[] shortTimes = DoEnumShortTimeFormats();
 
                     if (shortTimes == null || shortTimes.Length == 0)
                     {
@@ -2068,56 +2059,11 @@ namespace System.Globalization
                         shortTimes = DeriveShortTimesFromLong();
                     }
 
-                    /* The above logic doesn't make sense on Mac, since the OS can provide us a "short time pattern".
-                     * currently this is the 4th element in the array returned by LongTimes.  We'll add this to our array
-                     * if it doesn't exist.
-                     */
-                    shortTimes = AdjustShortTimesForMac(shortTimes);
-
                     // Found short times, use them
                     this.saShortTimes = shortTimes;
                 }
                 return this.saShortTimes;
             }
-        }
-
-        private string[] AdjustShortTimesForMac(string[] shortTimes)
-        {
-#if __APPLE__
-            /*
-             * NOTE: This code depends on the data from the OS being returned in a *specific* order.  The
-             * short time pattern must be the 4th element in the 4 element array returned by the data.  If
-             * change the way the data is returned from the OS be sure to update this code.
-             */
-
-            string[] longTimes = (string[])LongTimes.Clone();
-            Contract.Assert(longTimes.Length == 4, "[System.Globalization.CultureData] LongTimes does not have exactly 4");
-
-            if (longTimes.Length == 4) {
-                string shortTimePattern = longTimes[3];
-                int foundIndex = -1;
-                for (int i = 0; i < shortTimes.Length; i++) {
-                    if (shortTimePattern.Equals(shortTimes[i])) {
-                        foundIndex = i;
-                        break;
-                    }
-                }
-
-                if (foundIndex == -1) {
-                    // The OS short time didn't exist in the list we constructed, add it.
-                    string[] t = new string[shortTimes.Length + 1];
-                    t[0] = shortTimePattern;
-                    Array.Copy(shortTimes, 0, t, 1, shortTimes.Length);
-                    shortTimes = t;
-                } else {
-                    // The OS short time did exist, move it to the front.
-                    string t = shortTimes[0];
-                    shortTimes[0] = shortTimes[foundIndex];
-                    shortTimes[foundIndex] = t;
-                }
-            }
-#endif // __APPLE__
-            return shortTimes;
         }
 
         private string[] DeriveShortTimesFromLong()
@@ -2507,7 +2453,6 @@ namespace System.Globalization
         ///////////////////
 
         // IsRightToLeft
-#if !FEATURE_CORECLR
         internal bool IsRightToLeft
         {
             get
@@ -2542,7 +2487,6 @@ namespace System.Globalization
                 return (this.iReadingLayout);
             }
         }
-#endif // !FEATURE_CORECLR
 
         // The TextInfo name never includes that alternate sort and is always specific
         // For customs, it uses the SortLocale (since the textinfo is not exposed in Win7)
@@ -3576,13 +3520,10 @@ namespace System.Globalization
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern String[] nativeEnumTimeFormats(String localeName, uint dwFlags, bool useUserOverride);
 
-#if !FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         [SuppressUnmanagedCodeSecurityAttribute()]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         internal static extern int nativeEnumCultureNames(int cultureTypes, ObjectHandleOnStack retStringArray);
-#endif
-
     }
 }

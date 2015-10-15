@@ -23,7 +23,7 @@ namespace System.ServiceModel.Channels
                         where TChannel : class, IChannel
     {
         readonly bool useCustomClientCertificateVerification;
-        readonly bool shouldValidateClientCertificate;
+        bool shouldValidateClientCertificate;
         bool useHostedClientCertificateMapping;
         bool requireClientCertificate;
         SecurityTokenAuthenticator certificateAuthenticator;
@@ -125,6 +125,12 @@ namespace System.ServiceModel.Channels
         {
             base.ApplyHostedContext(virtualPath, isMetadataListener);
             useHostedClientCertificateMapping = AspNetEnvironment.Current.ValidateHttpsSettings(virtualPath, ref this.requireClientCertificate);
+
+            // We want to validate the certificate if IIS is set to require a client certificate
+            if (this.requireClientCertificate)
+            {
+                this.shouldValidateClientCertificate = true;
+            }
         }
 
         internal override ITransportManagerRegistration CreateTransportManagerRegistration(Uri listenUri)

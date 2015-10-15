@@ -207,11 +207,11 @@ namespace System.Workflow.ComponentModel.Serialization
                                     continue;
                                 if (codeDomProvider.IsValidIdentifier(codeDomSerializationManager.GetName(activity)))
                                 {
-                                    // WinOE Bug 14561.  This is to fix a performance problem.  When an activity is added to the activity
-                                    // tree at the runtime, it's much faster if the ID of the activity is already set.  The code that
-                                    // the CodeDomSerializer generates will add the activity first before it sets the ID for the child
-                                    // activity.  We can change that order by always serializing the children first.  Therefore, we 
-                                    // construct a list where we guarantee that the child will be serialized before its parent.
+                                    // WinOE 
+
+
+
+
                                     allActivities.Insert(0, activity);
                                 }
                                 else

@@ -2,8 +2,8 @@
 // <copyright file="SqlBatchCommand.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -35,13 +35,15 @@ namespace System.Data.SqlClient {
             internal readonly SqlParameterCollection Parameters;
             internal readonly int ReturnParameterIndex;
             internal readonly CommandType CmdType;
+            internal readonly SqlCommandColumnEncryptionSetting ColumnEncryptionSetting;
 
-            internal LocalCommand(string commandText, SqlParameterCollection parameters,  int returnParameterIndex, CommandType cmdType) {
+            internal LocalCommand(string commandText, SqlParameterCollection parameters,  int returnParameterIndex, CommandType cmdType, SqlCommandColumnEncryptionSetting columnEncryptionSetting) {
                 Debug.Assert(0 <= commandText.Length, "no text");
                 this.CommandText = commandText;
                 this.Parameters = parameters;
                 this.ReturnParameterIndex = returnParameterIndex;
                 this.CmdType = cmdType;
+                this.ColumnEncryptionSetting = columnEncryptionSetting;
             }
         }
 
@@ -197,7 +199,7 @@ namespace System.Data.SqlClient {
                     }
                 }
             }
-            LocalCommand cmd = new LocalCommand(cmdText, parameters, returnParameterIndex, command.CommandType);
+            LocalCommand cmd = new LocalCommand(cmdText, parameters, returnParameterIndex, command.CommandType, command.ColumnEncryptionSetting);
             CommandList.Add(cmd);
         }
 
@@ -260,7 +262,7 @@ namespace System.Data.SqlClient {
                 BatchCommand.Parameters.Clear();
                 for (int ii = 0 ; ii < _commandList.Count; ii++) {
                     LocalCommand cmd = _commandList[ii];
-                    BatchCommand.AddBatchCommand(cmd.CommandText, cmd.Parameters, cmd.CmdType);
+                    BatchCommand.AddBatchCommand(cmd.CommandText, cmd.Parameters, cmd.CmdType, cmd.ColumnEncryptionSetting);
                 }
                 return BatchCommand.ExecuteBatchRPCCommand();
             }

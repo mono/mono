@@ -164,7 +164,7 @@ namespace System.Web {
                 }
             }
             else {
-                // perform a [....] read
+                // perform a sync read
                 return base.BeginRead(buffer, offset, count, callback, state);
             }
         }

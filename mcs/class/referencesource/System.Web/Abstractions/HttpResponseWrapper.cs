@@ -12,6 +12,7 @@ namespace System.Web {
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Web.Caching;
     using System.Web.Routing;
 
@@ -356,6 +357,10 @@ namespace System.Web {
             _httpResponse.Flush();
         }
 
+        public override Task FlushAsync() {
+            return _httpResponse.FlushAsync();
+        }
+
         public override void Pics(string value) {
             _httpResponse.Pics(value);
         }
@@ -470,6 +475,14 @@ namespace System.Web {
 
         public override void WriteSubstitution(HttpResponseSubstitutionCallback callback) {
             _httpResponse.WriteSubstitution(callback);
+        }
+
+        public override void PushPromise(string path) {
+            _httpResponse.PushPromise(path);
+        }
+
+        public override void PushPromise(string path, string method, NameValueCollection headers) {
+            _httpResponse.PushPromise(path, method, headers);
         }
     }
 }

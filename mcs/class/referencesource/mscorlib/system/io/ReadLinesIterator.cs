@@ -58,9 +58,6 @@ namespace System.IO
             return false;
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         protected override Iterator<string> Clone()
         {
             // NOTE: To maintain the same behavior with the previous yield-based
@@ -96,9 +93,6 @@ namespace System.IO
             return CreateIterator(path, encoding, (StreamReader)null);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         private static ReadLinesIterator CreateIterator(string path, Encoding encoding, StreamReader reader)
         {
             return new ReadLinesIterator(path, encoding, reader ?? new StreamReader(path, encoding));

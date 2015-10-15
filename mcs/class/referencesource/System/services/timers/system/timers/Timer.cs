@@ -93,7 +93,7 @@ namespace System.Timers {
         /// is able
         /// to raise events at a defined interval.</para>
         /// </devdoc>
-        //[....] - The default value by design is false, don't change it.
+        //Microsoft - The default value by design is false, don't change it.
         [Category("Behavior"), TimersDescription(SR.TimerEnabled), DefaultValue(false)]
         public bool Enabled {
             get {

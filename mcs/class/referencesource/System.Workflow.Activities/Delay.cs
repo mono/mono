@@ -349,8 +349,8 @@ namespace System.Workflow.Activities
             if (wfQueue != null && wfQueue.Count != 0)
                 wfQueue.Dequeue();
 
-            // WinOE Bug 16929: In the case of dynamic update, if this activity is being removed,
-            // we can not trace back to the root activity from "this".  
+            // WinOE 
+
             Activity root = parentContext.Activity;
             while (root.Parent != null)
                 root = root.Parent;

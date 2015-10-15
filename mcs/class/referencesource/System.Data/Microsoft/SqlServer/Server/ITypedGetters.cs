@@ -2,8 +2,8 @@
 // <copyright file="ITypedGetters.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">alazela</owner>
+// <owner current="true" primary="false">stevesta</owner>
 //------------------------------------------------------------------------------
 
 namespace Microsoft.SqlServer.Server {

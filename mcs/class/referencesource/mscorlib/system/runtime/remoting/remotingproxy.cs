@@ -233,7 +233,7 @@ namespace System.Runtime.Remoting.Proxies {
         
 
         // This is called for all remoted calls on a TP except Ctors
-        // The method called may be [....], Async or OneWay(special case of Async)
+        // The method called may be Sync, Async or OneWay(special case of Async)
         // In the Async case we come here for both BeginInvoke & EndInvoke
         internal virtual IMessage InternalInvoke(
             IMethodCallMessage reqMcmMsg, bool useDispatchMessage, int callType)
@@ -588,7 +588,6 @@ namespace System.Runtime.Remoting.Proxies {
             }
         }
 
-#if FEATURE_COMINTEROP
         // interop methods
         [System.Security.SecurityCritical]
         public override IntPtr GetCOMIUnknown(bool fIsBeingMarshalled)
@@ -634,7 +633,6 @@ namespace System.Runtime.Remoting.Proxies {
         {
             // for now ignore this
         }
-#endif // FEATURE_COMINTEROP
 
         // Check whether we can cast the transparent proxy to the given type
         [System.Security.SecurityCritical]

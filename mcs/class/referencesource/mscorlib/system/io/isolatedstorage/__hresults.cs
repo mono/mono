@@ -7,9 +7,9 @@
  *
  * Class:  __HResults
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>kimhamil</OWNER>
  *
- * <EMAIL>Author: Sh----n Dasan</EMAIL>
+ * <EMAIL>Author: Shajan Dasan</EMAIL>
  *
  * Purpose: The HRESULTS used by IsolatedStorage
  *

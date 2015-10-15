@@ -2,9 +2,9 @@
 // <copyright file="IXmlDataVirtualNode.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">amirhmy</owner>
+// <owner current="true" primary="false">markash</owner>
+// <owner current="false" primary="false">danield</owner>
 //------------------------------------------------------------------------------
 namespace System.Xml {
 

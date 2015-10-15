@@ -537,7 +537,7 @@ namespace System.ServiceModel.Dispatcher
             }
         }
 
-        // ASSUMPTION: ([....]) caller holds lock (this.mutex)
+        // ASSUMPTION: (Microsoft) caller holds lock (this.mutex)
         void RequestStarting(Message message, IDuplexRequest request)
         {
             if (request != null)
@@ -552,7 +552,7 @@ namespace System.ServiceModel.Dispatcher
 
         }
 
-        // ASSUMPTION: ([....]) caller holds lock (this.mutex)
+        // ASSUMPTION: (Microsoft) caller holds lock (this.mutex)
         void RequestCompleting(IDuplexRequest request)
         {
             this.pending--;
@@ -1473,7 +1473,7 @@ namespace System.ServiceModel.Dispatcher
 
             public void EndClose(IAsyncResult result)
             {
-                // don't need to lock here since BeginClose is the [....]-point
+                // don't need to lock here since BeginClose is the sync-point
                 if (this.closeState.TryUserClose())
                 {
                     this.innerChannel.EndClose(result);

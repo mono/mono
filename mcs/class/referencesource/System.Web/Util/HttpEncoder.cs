@@ -89,7 +89,7 @@ namespace System.Web.Util {
                 || c == '\'' // HTML-sensitive chars encoded for safety
                 || c == '<'
                 || c == '>'
-                || (c == '&' && JavaScriptEncodeAmpersand) // Bug Dev11 #133237. Encode '&' to provide additional security for people who incorrectly call the encoding methods (unless turned off by backcompat switch)
+                || (c == '&' && JavaScriptEncodeAmpersand) // 
                 || c == '\u0085' // newline chars (see Unicode 6.2, Table 5-1 [http://www.unicode.org/versions/Unicode6.2.0/ch05.pdf]) have to be encoded (DevDiv #663531)
                 || c == '\u2028'
                 || c == '\u2029';
@@ -633,8 +633,17 @@ namespace System.Web.Util {
             }
 
             // nothing to expand?
-            if (cSpaces == 0 && cUnsafe == 0)
-                return bytes;
+            if (cSpaces == 0 && cUnsafe == 0) {
+                // DevDiv 912606: respect "offset" and "count"
+                if (0 == offset && bytes.Length == count) {
+                    return bytes;
+                }
+                else {
+                    var subarray = new byte[count];
+                    Buffer.BlockCopy(bytes, offset, subarray, 0, count);
+                    return subarray;
+                }
+            }
 
             // expand not 'safe' characters into %XX, spaces to +s
             byte[] expandedBytes = new byte[count + cUnsafe * 2];
@@ -748,6 +757,37 @@ namespace System.Web.Util {
         [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings",
             Justification = "Does not represent an entire URL, just a portion.")]
         protected internal virtual string UrlPathEncode(string value) {
+            // DevDiv 995259: HttpUtility.UrlPathEncode should not encode IDN part of the url
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework46) {
+                if (String.IsNullOrEmpty(value)) {
+                    return value;
+                }
+
+                string schemeAndAuthority;
+                string path;
+                string queryAndFragment;
+                bool isValidUrl = UriUtil.TrySplitUriForPathEncode(value, out schemeAndAuthority, out path, out queryAndFragment, checkScheme: false);
+
+                if (!isValidUrl) {
+                    // If the value is not a valid url, we treat it as a relative url.
+                    // We don't need to extract query string from the url since UrlPathEncode() 
+                    // does not encode query string.
+                    schemeAndAuthority = null;
+                    path = value;
+                    queryAndFragment = null;
+                }
+
+                return schemeAndAuthority + UrlPathEncodeImpl(path) + queryAndFragment;
+            }
+            else {
+                return UrlPathEncodeImpl(value);
+            }
+        }
+
+        // This is the original UrlPathEncode(string)
+        [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings",
+            Justification = "Does not represent an entire URL, just a portion.")]
+        private string UrlPathEncodeImpl(string value) {
             if (String.IsNullOrEmpty(value)) {
                 return value;
             }
@@ -755,7 +795,7 @@ namespace System.Web.Util {
             // recurse in case there is a query string
             int i = value.IndexOf('?');
             if (i >= 0)
-                return UrlPathEncode(value.Substring(0, i)) + value.Substring(i);
+                return UrlPathEncodeImpl(value.Substring(0, i)) + value.Substring(i);
 
             // encode DBCS characters and spaces only
             return HttpEncoderUtility.UrlEncodeSpaces(UrlEncodeNonAscii(value, Encoding.UTF8));

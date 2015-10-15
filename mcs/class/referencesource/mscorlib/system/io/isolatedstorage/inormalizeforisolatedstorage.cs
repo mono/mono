@@ -7,9 +7,9 @@
  *
  * Class:  INormalizeForIsolatedStorage
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>kimhamil</OWNER>
  *
- * <EMAIL>Author: Sh----n Dasan</EMAIL>
+ * <EMAIL>Author: Shajan Dasan</EMAIL>
  *
  * Purpose: Evidence types can optionaly implement this interface.
  *          IsolatedStorage calls Normalize method before evidence

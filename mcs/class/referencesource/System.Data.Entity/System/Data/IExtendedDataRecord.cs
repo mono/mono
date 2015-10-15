@@ -2,8 +2,8 @@
 // <copyright file="IExtendedDataRecord.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">sheetgu</owner>
+// <owner current="true" primary="false">simoncav</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {

@@ -52,7 +52,7 @@ namespace System.ServiceModel.Configuration
         {
             base.CopyFrom(from);
             ServiceSecurityAuditElement source = (ServiceSecurityAuditElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.AuditLogLocation = source.AuditLogLocation;
             this.SuppressAuditFailure = source.SuppressAuditFailure;
             this.ServiceAuthorizationAuditLevel = source.ServiceAuthorizationAuditLevel;

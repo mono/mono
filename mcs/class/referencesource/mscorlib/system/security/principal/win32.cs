@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 using Microsoft.Win32;
@@ -436,12 +436,12 @@ namespace System.Security.Principal
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Process)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
-        internal static extern int ImpersonateLoggedOnUser (SafeTokenHandle hToken);
+        internal static extern int ImpersonateLoggedOnUser (SafeAccessTokenHandle hToken);
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Process)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern int OpenThreadToken (TokenAccessLevels dwDesiredAccess, WinSecurityContext OpenAs, out SafeTokenHandle phThreadToken);
+        internal static extern int OpenThreadToken (TokenAccessLevels dwDesiredAccess, WinSecurityContext OpenAs, out SafeAccessTokenHandle phThreadToken);
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -451,7 +451,7 @@ namespace System.Security.Principal
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
-        internal static extern int SetThreadToken(SafeTokenHandle hToken);
+        internal static extern int SetThreadToken(SafeAccessTokenHandle hToken);
 #endif        
     }
 }

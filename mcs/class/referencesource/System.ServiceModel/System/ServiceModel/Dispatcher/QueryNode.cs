@@ -140,7 +140,7 @@ namespace System.ServiceModel.Dispatcher
         NodesetLast = 0x01,
     }
 
-    // PERF, [....], Remove when generic sort works
+    // PERF, Microsoft, Remove when generic sort works
     // Used to sort in document order
 #if NO
     internal class NodeSequenceItemObjectComparer : IComparer
@@ -908,7 +908,7 @@ namespace System.ServiceModel.Dispatcher
         {
             this.Merge(false);
 
-            // PERF, [....], make this work
+            // PERF, Microsoft, make this work
             //Array.Sort<NodeSequenceItem>(this.items, 0, this.count, NodeSequence.Comparer);
             Array.Sort(this.items, 0, this.count, NodeSequence.ObjectComparer);
 
@@ -974,7 +974,7 @@ namespace System.ServiceModel.Dispatcher
             return seq;
 
             /*
-            // PERF, [....], I think we can do the merge ourselves and avoid the sort.
+            // PERF, Microsoft, I think we can do the merge ourselves and avoid the sort.
             //               Need to verify that the sequences are always in document order.
             for(int i = 0; i < this.count; ++i)
             {
@@ -1055,13 +1055,13 @@ namespace System.ServiceModel.Dispatcher
             {
                 if (this.index == 0)
                 {
-#pragma warning suppress 56503 // [....], postponing the public change
+#pragma warning suppress 56503 // Microsoft, postponing the public change
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new QueryProcessingException(QueryProcessingError.Unexpected, SR.GetString(SR.QueryContextNotSupportedInSequences)));
                 }
 
                 if (this.index > this.data.seq.Count)
                 {
-#pragma warning suppress 56503 // [....], postponing the public change
+#pragma warning suppress 56503 // Microsoft, postponing the public change
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.QueryAfterNodes)));
                 }
                 //
@@ -1156,13 +1156,13 @@ namespace System.ServiceModel.Dispatcher
             {
                 if (this.iter.CurrentPosition == 0)
                 {
-#pragma warning suppress 56503 // [....], postponing the public change
+#pragma warning suppress 56503 // Microsoft, postponing the public change
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.QueryBeforeNodes)));
                 }
 
                 if (this.iter.CurrentPosition > this.iter.Count)
                 {
-#pragma warning suppress 56503 // [....], postponing the public change
+#pragma warning suppress 56503 // Microsoft, postponing the public change
                     throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.QueryAfterNodes)));
                 }
 

@@ -788,6 +788,12 @@ namespace System.ServiceModel.Description
                     }
                 } // end foreach "endpoint"
 
+                // Clear performance counter cache.
+                if ((PerformanceCounters.PerformanceCountersEnabled || PerformanceCounters.MinimalPerformanceCountersEnabled) && ServiceModelAppSettings.EnsureUniquePerformanceCounterInstanceNames)
+                {
+                    System.Diagnostics.PerformanceCounter.CloseSharedResources();
+                }
+
                 if (canReceiveInTransaction)
                 {
                     BindingElementCollection bindingElements = binding.CreateBindingElements();

@@ -9,7 +9,7 @@
 // IReflectableType is an interface that is implemented by a Type produced 
 // by a ReflectionContext
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 
 //
 namespace System.Reflection {

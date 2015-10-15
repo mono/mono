@@ -327,8 +327,9 @@ namespace System.Web {
                 path = path.Substring(0, iqs);
             }
 
-            if (!UrlPath.IsValidVirtualPathWithoutProtocol(path))
+            if (!UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
                 throw new ArgumentException(SR.GetString(SR.Invalid_path_for_child_request, path));
+            }
 
             VirtualPath virtualPath = VirtualPath.Create(path);
 
@@ -491,7 +492,7 @@ namespace System.Web {
                             targetPage.SmartNavigation = true;
 #pragma warning restore 0618
 
-                        // If the target page is async need to save/restore [....] context
+                        // If the target page is async need to save/restore sync context
                         if (targetPage is IHttpAsyncHandler) {
                             savedSyncContext = _context.InstallNewAspNetSynchronizationContext();
                         }

@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 // ==--==
 //  SiteMembershipCondition.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Implementation of membership condition for zones
 //

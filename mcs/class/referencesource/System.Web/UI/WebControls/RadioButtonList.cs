@@ -249,7 +249,8 @@ namespace System.Web.UI.WebControls {
             string post = postCollection[postDataKey];
             int currentSelectedIndex = SelectedIndex;
 
-            EnsureDataBound();
+            EnsureDataBoundInLoadPostData();
+
             int n = Items.Count;
             for (int i=0; i < n; i++) {
                 if (post == Items[i].Value && Items[i].Enabled) {

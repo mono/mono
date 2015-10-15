@@ -7,7 +7,7 @@
 **
 ** Class:  UnmanagedMemoryStream
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Create a stream over unmanaged memory, mostly
 **          useful for memory-mapped files.
@@ -260,25 +260,16 @@ namespace System.IO {
 
         public override bool CanRead {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return _isOpen && (_access & FileAccess.Read) != 0; }
         }
 
         public override bool CanSeek {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return _isOpen; }
         }
 
         public override bool CanWrite {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return _isOpen && (_access & FileAccess.Write) != 0; }
         }
 
@@ -320,9 +311,6 @@ namespace System.IO {
 
 
         public override long Length {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 if (!_isOpen) __Error.StreamIsClosed();
                 return Interlocked.Read(ref _length);
@@ -337,9 +325,6 @@ namespace System.IO {
         }
 
         public override long Position {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { 
                 if (!CanSeek) __Error.StreamIsClosed();
                 Contract.EndContractBlock();
@@ -416,7 +401,7 @@ namespace System.IO {
                 throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
             if (buffer.Length - offset < count)
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
-            Contract.EndContractBlock();  // Keep this in [....] with contract validation in ReadAsync
+            Contract.EndContractBlock();  // Keep this in sync with contract validation in ReadAsync
 
             if (!_isOpen) __Error.StreamIsClosed();
             if (!CanRead) __Error.ReadNotSupported();
@@ -595,7 +580,7 @@ namespace System.IO {
                 throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
             if (buffer.Length - offset < count)
                 throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
-            Contract.EndContractBlock();  // Keep contract validation in [....] with WriteAsync(..)
+            Contract.EndContractBlock();  // Keep contract validation in sync with WriteAsync(..)
 
             if (!_isOpen) __Error.StreamIsClosed();
             if (!CanWrite) __Error.WriteNotSupported();

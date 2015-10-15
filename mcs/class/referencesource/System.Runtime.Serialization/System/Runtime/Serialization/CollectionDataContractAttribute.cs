@@ -13,12 +13,12 @@ namespace System.Runtime.Serialization
         string keyName;
         string valueName;
         bool isReference;
-        bool isNameSetExplicit;
-        bool isNamespaceSetExplicit;
-        bool isReferenceSetExplicit;
-        bool isItemNameSetExplicit;
-        bool isKeyNameSetExplicit;
-        bool isValueNameSetExplicit;
+        bool isNameSetExplicitly;
+        bool isNamespaceSetExplicitly;
+        bool isReferenceSetExplicitly;
+        bool isItemNameSetExplicitly;
+        bool isKeyNameSetExplicitly;
+        bool isValueNameSetExplicitly;
 
         public CollectionDataContractAttribute()
         {
@@ -30,13 +30,13 @@ namespace System.Runtime.Serialization
             set
             {
                 ns = value;
-                isNamespaceSetExplicit = true;
+                isNamespaceSetExplicitly = true;
             }
         }
 
-        internal bool IsNamespaceSetExplicit
+        public bool IsNamespaceSetExplicitly
         {
-            get { return isNamespaceSetExplicit; }
+            get { return isNamespaceSetExplicitly; }
         }
 
         public string Name
@@ -45,13 +45,13 @@ namespace System.Runtime.Serialization
             set
             {
                 name = value;
-                isNameSetExplicit = true;
+                isNameSetExplicitly = true;
             }
         }
 
-        internal bool IsNameSetExplicit
+        public bool IsNameSetExplicitly
         {
-            get { return isNameSetExplicit; }
+            get { return isNameSetExplicitly; }
         }
 
         public string ItemName
@@ -60,13 +60,13 @@ namespace System.Runtime.Serialization
             set
             {
                 itemName = value;
-                isItemNameSetExplicit = true;
+                isItemNameSetExplicitly = true;
             }
         }
 
-        internal bool IsItemNameSetExplicit
+        public bool IsItemNameSetExplicitly
         {
-            get { return isItemNameSetExplicit; }
+            get { return isItemNameSetExplicitly; }
         }
 
         public string KeyName
@@ -75,7 +75,7 @@ namespace System.Runtime.Serialization
             set
             {
                 keyName = value;
-                isKeyNameSetExplicit = true;
+                isKeyNameSetExplicitly = true;
             }
         }
 
@@ -85,18 +85,18 @@ namespace System.Runtime.Serialization
             set
             {
                 isReference = value;
-                isReferenceSetExplicit = true;
+                isReferenceSetExplicitly = true;
             }
         }
 
-        internal bool IsReferenceSetExplicit
+        public bool IsReferenceSetExplicitly
         {
-            get { return isReferenceSetExplicit; }
+            get { return isReferenceSetExplicitly; }
         }
 
-        internal bool IsKeyNameSetExplicit
+        public bool IsKeyNameSetExplicitly
         {
-            get { return isKeyNameSetExplicit; }
+            get { return isKeyNameSetExplicitly; }
         }
 
         public string ValueName
@@ -105,13 +105,13 @@ namespace System.Runtime.Serialization
             set
             {
                 valueName = value;
-                isValueNameSetExplicit = true;
+                isValueNameSetExplicitly = true;
             }
         }
 
-        internal bool IsValueNameSetExplicit
+        public bool IsValueNameSetExplicitly
         {
-            get { return isValueNameSetExplicit; }
+            get { return isValueNameSetExplicitly; }
         }
 
     }

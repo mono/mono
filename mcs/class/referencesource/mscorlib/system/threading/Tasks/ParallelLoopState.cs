@@ -7,7 +7,7 @@
 //
 // ParallelState.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A non-generic and generic parallel state class, used by the Parallel helper class
 // for parallel loop management.

@@ -7,7 +7,7 @@
 **
 ** Interface:  IReadOnlyDictionary<TKey, TValue>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>matell</OWNER>
 **
 ** Purpose: Base interface for read-only generic dictionaries.
 ** 

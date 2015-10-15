@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -18,6 +18,10 @@ namespace System.Security.Cryptography {
     using System.IO;
     using System.Text;
     using System.Diagnostics.Contracts;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
+    using System.Runtime.Versioning;
+    using System.Security.Cryptography.X509Certificates;
 
     [System.Runtime.InteropServices.ComVisible(true)]
     public class Rfc2898DeriveBytes : DeriveBytes
@@ -25,6 +29,8 @@ namespace System.Security.Cryptography {
         private byte[] m_buffer;
         private byte[] m_salt;
         private HMACSHA1 m_hmacsha1;  // The pseudo-random generator function used in PBKDF2
+        private byte[] m_password;
+        private CspParameters m_cspParams = new CspParameters();
 
         private uint m_iterations;
         private uint m_block;
@@ -39,6 +45,10 @@ namespace System.Security.Cryptography {
 
         public Rfc2898DeriveBytes(string password, int saltSize) : this(password, saltSize, 1000) {}
 
+        // This method needs to be safe critical, because in debug builds the C# compiler will include null
+        // initialization of the _safeProvHandle field in the method.  Since SafeProvHandle is critical, a
+        // transparent reference triggers an error using PasswordDeriveBytes.
+        [SecuritySafeCritical]
         public Rfc2898DeriveBytes(string password, int saltSize, int iterations) {
             if (saltSize < 0) 
                 throw new ArgumentOutOfRangeException("saltSize", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
@@ -49,7 +59,8 @@ namespace System.Security.Cryptography {
 
             Salt = salt;
             IterationCount = iterations;
-            m_hmacsha1 = new HMACSHA1(new UTF8Encoding(false).GetBytes(password));
+            m_password = new UTF8Encoding(false).GetBytes(password);
+            m_hmacsha1 = new HMACSHA1(m_password);
             Initialize();
         }
 
@@ -57,9 +68,14 @@ namespace System.Security.Cryptography {
 
         public Rfc2898DeriveBytes(string password, byte[] salt, int iterations) : this (new UTF8Encoding(false).GetBytes(password), salt, iterations) {}
 
+        // This method needs to be safe critical, because in debug builds the C# compiler will include null
+        // initialization of the _safeProvHandle field in the method.  Since SafeProvHandle is critical, a
+        // transparent reference triggers an error using PasswordDeriveBytes.
+        [SecuritySafeCritical]
         public Rfc2898DeriveBytes(byte[] password, byte[] salt, int iterations) {
             Salt = salt;
             IterationCount = iterations;
+            m_password = password;
             m_hmacsha1 = new HMACSHA1(password);
             Initialize();
         }
@@ -191,5 +207,61 @@ namespace System.Security.Cryptography {
             m_block++;
             return ret;
         }
+
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        public byte[] CryptDeriveKey(string algname, string alghashname, int keySize, byte[] rgbIV)
+        {
+            if (keySize < 0)
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_InvalidKeySize"));
+
+            int algidhash = X509Utils.NameOrOidToAlgId(alghashname, OidGroup.HashAlgorithm);
+            if (algidhash == 0)
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_PasswordDerivedBytes_InvalidAlgorithm"));
+
+            int algid = X509Utils.NameOrOidToAlgId(algname, OidGroup.AllGroups);
+            if (algid == 0)
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_PasswordDerivedBytes_InvalidAlgorithm"));
+
+            // Validate the rgbIV array
+            if (rgbIV == null)
+                throw new CryptographicException(Environment.GetResourceString("Cryptography_PasswordDerivedBytes_InvalidIV"));
+
+            byte[] key = null;
+            DeriveKey(ProvHandle, algid, algidhash,
+                      m_password, m_password.Length, keySize << 16, rgbIV, rgbIV.Length,
+                      JitHelpers.GetObjectHandleOnStack(ref key));
+            return key;
+        }
+
+        [System.Security.SecurityCritical] // auto-generated
+        private SafeProvHandle _safeProvHandle = null;
+        private SafeProvHandle ProvHandle
+        {
+            [System.Security.SecurityCritical]  // auto-generated
+            get
+            {
+                if (_safeProvHandle == null)
+                {
+                    lock (this)
+                    {
+                        if (_safeProvHandle == null)
+                        {
+                            SafeProvHandle safeProvHandle = Utils.AcquireProvHandle(m_cspParams);
+                            System.Threading.Thread.MemoryBarrier();
+                            _safeProvHandle = safeProvHandle;
+                        }
+                    }
+                }
+                return _safeProvHandle;
+            }
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
+        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
+        private static extern void DeriveKey(SafeProvHandle hProv, int algid, int algidHash,
+                                      byte[] password, int cbPassword, int dwFlags, byte[] IV, int cbIV,
+                                      ObjectHandleOnStack retKey);
+
     }
 }

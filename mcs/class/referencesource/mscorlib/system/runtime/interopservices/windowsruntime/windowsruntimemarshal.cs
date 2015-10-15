@@ -4,14 +4,13 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -1203,7 +1202,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             return false;
         }
 
-#if FEATURE_COMINTEROP_MANAGED_ACTIVATION
+#if FEATURE_COMINTEROP_WINRT_MANAGED_ACTIVATION
         // Get an IActivationFactory * for a managed type
         [SecurityCritical]
         internal static IntPtr GetActivationFactoryForType(Type type)
@@ -1279,25 +1278,18 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             if (type == null)
                 throw new ArgumentNullException("type");
 
-#if !FEATURE_CORECLR           
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.WindowsRuntimeMarshalGetActivationFactory(type.GetFullNameForEtw());
-            }
-#endif
-
             if (type.IsWindowsRuntimeObject && type.IsImport)
             {
                 return (IActivationFactory)Marshal.GetNativeActivationFactory(type);
             }
             else
             {
-#if !FEATURE_CORECLR
+#if FEATURE_COMINTEROP_WINRT_MANAGED_ACTIVATION
                 return GetManagedActivationFactory(type);
-#else // FEATURE_CORECLR                
+#else 
                 // Managed factories are not supported so as to minimize public surface (and test effort)
                 throw new NotSupportedException();
-#endif // !FEATURE_CORECLR
+#endif
             }
         }
 

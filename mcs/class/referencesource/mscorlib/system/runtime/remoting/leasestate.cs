@@ -10,7 +10,7 @@
 //
 // Contents:    Lease States
 //
-// History:     1/5/00   <EMAIL>[....]</EMAIL>        Created
+// History:     1/5/00   <EMAIL>pdejong</EMAIL>        Created
 //
 //+----------------------------------------------------------------------------
 

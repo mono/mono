@@ -2,7 +2,7 @@
 // <copyright file="XmlCDATASection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml {
@@ -86,7 +86,7 @@ namespace System.Xml {
             }
         }
 
-        internal override XmlNode PreviousText {
+        public override XmlNode PreviousText {
             get {
                 if (parentNode.IsText) {
                     return parentNode;

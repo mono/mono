@@ -7,7 +7,7 @@
 **
 ** Class:  ParameterBuilder
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** ParameterBuilder is used to create/associate parameter information
@@ -123,6 +123,7 @@ namespace System.Reflection.Emit {
             return m_pdToken;
         } 
 
+#if !FEATURE_CORECLR
         void _ParameterBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -142,6 +143,7 @@ namespace System.Reflection.Emit {
         {
             throw new NotImplementedException();
         }
+#endif
     
         internal int MetadataTokenInternal { get { return m_pdToken.Token; } }
         

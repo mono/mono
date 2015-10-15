@@ -6,8 +6,8 @@
 //
 // ResourcesEtwProvider.cs
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Managed event source for things that can version with MSCORLIB.  
 //
@@ -131,6 +131,68 @@ namespace System.Diagnostics.Tracing {
                     descrs[2].Size = ((arg3.Length + 1) * 2);
                     WriteEventCore(eventId, 3, descrs);
                 }
+            }
+        }
+
+        // optimized for common signatures (used by the BeginGetResponse/BeginGetRequestStream events)
+        [NonEvent, System.Security.SecuritySafeCritical]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "This does not need to be correct when racing with other threads")]
+        private unsafe void WriteEvent(int eventId, long arg1, string arg2, bool arg3, bool arg4)
+        {
+            if (IsEnabled())
+            {
+                if (arg2 == null) arg2 = "";
+                fixed (char* string2Bytes = arg2)
+                {
+                    EventSource.EventData* descrs = stackalloc EventSource.EventData[4];
+                    descrs[0].DataPointer = (IntPtr)(&arg1);
+                    descrs[0].Size = 8;
+                    descrs[1].DataPointer = (IntPtr)string2Bytes;
+                    descrs[1].Size = ((arg2.Length + 1) * 2);
+                    descrs[2].DataPointer = (IntPtr)(&arg3);
+                    descrs[2].Size = 4;
+                    descrs[3].DataPointer = (IntPtr)(&arg4);
+                    descrs[3].Size = 4;
+                    WriteEventCore(eventId, 4, descrs);
+                }
+            }
+        }
+
+        // optimized for common signatures (used by the EndGetRequestStream event)
+        [NonEvent, System.Security.SecuritySafeCritical]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "This does not need to be correct when racing with other threads")]
+        private unsafe void WriteEvent(int eventId, long arg1, bool arg2, bool arg3)
+        {
+            if (IsEnabled())
+            {
+                EventSource.EventData* descrs = stackalloc EventSource.EventData[3];
+                descrs[0].DataPointer = (IntPtr)(&arg1);
+                descrs[0].Size = 8;
+                descrs[1].DataPointer = (IntPtr)(&arg2);
+                descrs[1].Size = 4;
+                descrs[2].DataPointer = (IntPtr)(&arg3);
+                descrs[2].Size = 4;
+                WriteEventCore(eventId, 3, descrs);
+            }
+        }
+
+        // optimized for common signatures (used by the EndGetResponse event)
+        [NonEvent, System.Security.SecuritySafeCritical]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "This does not need to be correct when racing with other threads")]
+        private unsafe void WriteEvent(int eventId, long arg1, bool arg2, bool arg3, int arg4)
+        {
+            if (IsEnabled())
+            {
+                EventSource.EventData* descrs = stackalloc EventSource.EventData[4];
+                descrs[0].DataPointer = (IntPtr)(&arg1);
+                descrs[0].Size = 8;
+                descrs[1].DataPointer = (IntPtr)(&arg2);
+                descrs[1].Size = 4;
+                descrs[2].DataPointer = (IntPtr)(&arg3);
+                descrs[2].Size = 4;
+                descrs[3].DataPointer = (IntPtr)(&arg4);
+                descrs[3].Size = 4;
+                WriteEventCore(eventId, 4, descrs);
             }
         }
 
@@ -437,635 +499,56 @@ namespace System.Diagnostics.Tracing {
             ThreadPoolDequeueWork((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref workID)));
         }
 
-#region Dynamic Type Usage Events - These should not be documented!
-#if !FEATURE_CORECLR
-        [Event(32, Keywords = Keywords.DynamicTypeUsage)]
-        public void ActivatorCreateInstance(String typeName)
-        {
-            WriteEvent(32, typeName);
+        // In the desktop runtime they don't use Tasks for the point at which the response happens, which means that the
+        // Activity ID created by start using implicit activity IDs does not match.   Thus disable implicit activities (until we fix that)
+        [Event(140, Level = EventLevel.Informational, Keywords = Keywords.NetClient, ActivityOptions=EventActivityOptions.Disable,
+         Task = Tasks.GetResponse, Opcode = EventOpcode.Start, Version = 1)]
+        private void GetResponseStart(long id, string uri, bool success, bool synchronous) {
+            WriteEvent(140, id, uri, success, synchronous);
         }
 
-        [Event(33, Keywords = Keywords.DynamicTypeUsage)]
-        public void ActivatorCreateInstanceT(String typeName)
-        {
-            WriteEvent(33, typeName);
+        [Event(141, Level = EventLevel.Informational, Keywords = Keywords.NetClient, ActivityOptions=EventActivityOptions.Disable, 
+         Task = Tasks.GetResponse, Opcode = EventOpcode.Stop, Version = 1)]
+        private void GetResponseStop(long id, bool success, bool synchronous, int statusCode) {
+            WriteEvent(141, id, success, synchronous, statusCode);
         }
 
-        [Event(34, Keywords = Keywords.DynamicTypeUsage)]
-        public void ArrayCreateInstance(String typeName)
-        {
-            WriteEvent(34, typeName);
+        // In the desktop runtime they don't use Tasks for the point at which the response happens, which means that the
+        // Activity ID created by start using implicit activity IDs does not match.   Thus disable implicit activities (until we fix that)
+        [Event(142, Level = EventLevel.Informational, Keywords = Keywords.NetClient, ActivityOptions=EventActivityOptions.Disable,
+         Task = Tasks.GetRequestStream, Opcode = EventOpcode.Start, Version = 1)]
+        private void GetRequestStreamStart(long id, string uri, bool success, bool synchronous) {
+            WriteEvent(142, id, uri, success, synchronous);
         }
-        
-        [Event(35, Keywords = Keywords.DynamicTypeUsage)]
-        public void TypeGetType(String typeName)
-        {
-            WriteEvent(35, typeName);
-        }
-
-        [Event(36, Keywords = Keywords.DynamicTypeUsage)]
-        public void AssemblyGetType(String typeName)
-        {
-            WriteEvent(36, typeName);
-        }
-
-        [Event(37, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetMethodFromHandle()
-        {
-            WriteEvent(37);
-        }
-
-        [Event(38, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetMethodFromHandle(String typeName, String method)
-        {
-            WriteEvent(38, typeName, method);
-        }
-
-        [Event(39, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetFieldFromHandle()
-        {
-            WriteEvent(39);
-        }
-
-        [Event(40, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetFieldFromHandle(String typeName, String field)
-        {
-            WriteEvent(40, typeName, field);
-        }
-
-        [Event(41, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumTryParseEnum(String typeName, String value)
-        {
-            WriteEvent(41, typeName, value);
-        }
-
-        [Event(42, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumGetUnderlyingType(String typeName)
-        {
-            WriteEvent(42, typeName);
-        }
-
-        [Event(43, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumGetValues(String typeName)
-        {
-            WriteEvent(43, typeName);
-        }
-
-        [Event(44, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumGetName(String typeName)
-        {
-            WriteEvent(44, typeName);
-        }
-
-        [Event(45, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumGetNames(String typeName)
-        {
-            WriteEvent(45, typeName);
-        }
-
-        [Event(46, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumIsDefined(String typeName)
-        {
-            WriteEvent(46, typeName);
-        }
-
-        [Event(47, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginEnumFormat(String typeName)
-        {
-            WriteEvent(47, typeName);
-        }
-
-        [Event(48, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndEnumFormat(String typeName)
-        {
-            WriteEvent(48, typeName);
-        }
-
-        [Event(49, Keywords = Keywords.DynamicTypeUsage)]
-        public void EnumToObject(String typeName)
-        {
-            WriteEvent(49, typeName);
-        }
-
-        [Event(50, Keywords = Keywords.DynamicTypeUsage)]
-        public void TypeFullName(String typeName)
-        {
-            WriteEvent(50, typeName);
-        }
-
-        [Event(51, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginTypeAssemblyQualifiedName(String typeName)
-        {
-            WriteEvent(51, typeName);
-        }
-
-        [Event(52, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndTypeAssemblyQualifiedName(String typeName)
-        {
-            WriteEvent(52, typeName);
-        }
-
-        [Event(53, Keywords = Keywords.DynamicTypeUsage)]
-        public void TypeNamespace(String typeName)
-        {
-            WriteEvent(53, typeName);
-        }
-
-        [Event(54, Keywords = Keywords.DynamicTypeUsage)]
-        public void MethodName(String typeName, String methodName)
-        {
-            WriteEvent(54, typeName, methodName);
-        }
-
-        [Event(55, Keywords = Keywords.DynamicTypeUsage)]
-        public void FieldName(String typeName, String fieldName)
-        {
-            WriteEvent(55, typeName, fieldName);
-        }
-
-        [Event(56, Keywords = Keywords.DynamicTypeUsage)]
-        public void TypeName(String typeName)
-        {
-            WriteEvent(56, typeName);
-        }
-        
-        [Event(57, Keywords = Keywords.DynamicTypeUsage)]
-        public void IntrospectionExtensionsGetTypeInfo(String typeName)
-        {
-            WriteEvent(57, typeName);
-        }
-
-        [Event(58, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeProperties(String typeName)
-        {
-            WriteEvent(58, typeName);
-        }
-
-        [Event(59, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeProperties(String typeName)
-        {
-            WriteEvent(59, typeName);
-        }
-
-        [Event(60, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeEvents(String typeName)
-        {
-            WriteEvent(60, typeName);
-        }
-
-        [Event(61, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeEvents(String typeName)
-        {
-            WriteEvent(61, typeName);
-        }
-
-        [Event(62, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeMethods(String typeName)
-        {
-            WriteEvent(62, typeName);
-        }
-
-        [Event(63, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeMethods(String typeName)
-        {
-            WriteEvent(63, typeName);
-        }
-
-        [Event(64, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeFields(String typeName)
-        {
-            WriteEvent(64, typeName);
-        }
-
-        [Event(65, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeFields(String typeName)
-        {
-            WriteEvent(65, typeName);
-        }
-        
-        [Event(66, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeProperty(String typeName, String propertyName)
-        {
-            WriteEvent(66, typeName, propertyName);
-        }
-
-        [Event(67, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeProperty(String typeName, String propertyName)
-        {
-            WriteEvent(67, typeName, propertyName);
-        }
-
-        [Event(68, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeEvent(String typeName, String eventName)
-        {
-            WriteEvent(68, typeName, eventName);
-        }
-
-        [Event(69, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeEvent(String typeName, String eventName)
-        {
-            WriteEvent(69, typeName, eventName);
-        }
-
-        [Event(70, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeMethod(String typeName, String methodName)
-        {
-            WriteEvent(70, typeName, methodName);
-        }
-
-        [Event(71, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeMethod(String typeName, String methodName)
-        {
-            WriteEvent(71, typeName, methodName);
-        }
-
-        [Event(72, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeField(String typeName, String fieldName)
-        {
-            WriteEvent(72, typeName, fieldName);
-        }
-
-        [Event(73, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeField(String typeName, String fieldName)
-        {
-            WriteEvent(73, typeName, fieldName);
-        }
-
-        [Event(79, Keywords = Keywords.DynamicTypeUsage)]
-        public void MethodInfoInvoke(String typeName, String methodName)
-        {
-            WriteEvent(79, typeName, methodName);
-        }
-
-        [Event(80, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginMethodInfoCreateDelegate(String typeName, String methodName, String delegateTypeName)
-        {
-            WriteEvent(80, typeName, methodName, delegateTypeName);
-        }
-
-        [Event(81, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndMethodInfoCreateDelegate(String typeName, String methodName, String delegateTypeName)
-        {
-            WriteEvent(81, typeName, methodName, delegateTypeName);
-        }
-
-        [Event(82, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginCreateIReference()
-        {
-            WriteEvent(82);
-        }
-
-        [Event(83, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndCreateIReference(String typeName)
-        {
-            WriteEvent(83, typeName);
-        }
-        
-        [Event(84, Keywords = Keywords.DynamicTypeUsage)]
-        public void ConstructorInfoInvoke(String typeName, String methodName)
-        {
-            WriteEvent(84, typeName, methodName);
-        }
-
-        [Event(85, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalAsAnyConvertToNative(String typeName)
-        {
-            WriteEvent(85, typeName);
-        }
-
-        [Event(86, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalAsAnyConvertToManaged(String typeName)
-        {
-            WriteEvent(86, typeName);
-        }
-
-        [Event(87, Keywords = Keywords.DynamicTypeUsage)]
-        public void ManagedActivationFactoryConstructor(String typeName)
-        {
-            WriteEvent(87, typeName);
-        }
-
-        [Event(88, Keywords = Keywords.DynamicTypeUsage)]
-        public void WindowsRuntimeMarshalGetActivationFactory(String typeName)
-        {
-            WriteEvent(88, typeName);
-        }
-
-        [Event(89, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalCreateAggregatedObject(String typeName)
-        {
-            WriteEvent(89, typeName);
-        }
-
-        [Event(90, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalCreateWrapperOfType(String comObjectTypeName, String wrapperTypeName)
-        {
-            WriteEvent(90, comObjectTypeName, wrapperTypeName);
-        }
-
-        [Event(91, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalDestroyStructure(String typeName)
-        {
-            WriteEvent(91, typeName);
-        }
-
-        [Event(92, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetComInterfaceForObject(String objectTypeName, String typeName, String implementsAndMode)
-        {
-            WriteEvent(92, objectTypeName, typeName, implementsAndMode);
-        }
-
-        [Event(93, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetDelegateForFunctionPointer(String typeName)
-        {
-            WriteEvent(93, typeName);
-        }
-
-        [Event(94, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetExceptionCode()
-        {
-            WriteEvent(94);
-        }
-
-        [Event(95, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetExceptionForHR()
-        {
-            WriteEvent(95);
-        }
-        
-        [Event(96, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetExceptionForHR2()
-        {
-            WriteEvent(96);
-        }
-
-        [Event(97, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetFunctionPointerForDelegate(String typeName, String methodName)
-        {
-            WriteEvent(97, typeName, methodName);
-        }
-
-        [Event(98, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetIUnknownForObject(String typeName)
-        {
-            WriteEvent(98, typeName);
-        }
-
-        [Event(99, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetNativeVariantForObject(String typeName)
-        {
-            WriteEvent(99, typeName);
-        }
-
-        [Event(100, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetObjectForIUnknown(String typeName)
-        {
-            WriteEvent(100, typeName);
-        }
-
-        [Event(101, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetObjectForNativeVariant(String typeName)
-        {
-            WriteEvent(101, typeName);
-        }
-
-        [Event(102, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetObjectsForNativeVariants(String typeNames)
-        {
-            WriteEvent(102, typeNames);
-        }
-
-        [Event(103, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetStartComSlot(String typeName)
-        {
-            WriteEvent(103, typeName);
-        }
-
-        [Event(104, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetTypeFromCLSID(String typeName, String guid)
-        {
-            WriteEvent(104, typeName, guid);
-        }
-
-        [Event(105, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetTypeInfoName(String typeName)
-        {
-            WriteEvent(105, typeName);
-        }
-
-        [Event(106, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalGetUniqueObjectForIUnknown(String typeName)
-        {
-            WriteEvent(106, typeName);
-        }
-
-        [Event(107, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginMarshalOffsetOf(String typeName, String fieldName)
-        {
-            WriteEvent(107, typeName, fieldName);
-        }
-
-        [Event(108, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndMarshalOffsetOf(String typeName, String fieldName)
-        {
-            WriteEvent(108, typeName, fieldName);
-        }
-
-        [Event(109, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginMarshalPtrToStructure(String typeName)
-        {
-            WriteEvent(109, typeName);
-        }
-
-        [Event(110, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndMarshalPtrToStructure(String typeName)
-        {
-            WriteEvent(110, typeName);
-        }
 
-        [Event(111, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalSizeOf(String typeName)
-        {
-            WriteEvent(111, typeName);
+        [Event(143, Level = EventLevel.Informational, Keywords = Keywords.NetClient, ActivityOptions=EventActivityOptions.Disable,
+         Task = Tasks.GetRequestStream, Opcode = EventOpcode.Stop, Version = 1)]
+        private void GetRequestStreamStop(long id, bool success, bool synchronous) {
+            WriteEvent(143, id, success, synchronous);
         }
 
-        [Event(112, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalStructureToPtr(String typeName, String deleteOld)
-        {
-            WriteEvent(112, typeName, deleteOld);
-        }
-
-        [Event(113, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalThrowExceptionForHR()
-        {
-            WriteEvent(113);
-        }
-
-        [Event(114, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalUnsafeAddrOfPinnedArrayElement(String typeName)
-        {
-            WriteEvent(114, typeName);
-        }
-
-        [Event(115, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginICustomPropertyProviderCreateProperty(String typeName, String propertyName)
-        {
-            WriteEvent(115, typeName, propertyName);
-        }
-
-        [Event(116, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndICustomPropertyProviderCreateProperty(String typeName, String propertyName)
-        {
-            WriteEvent(116, typeName, propertyName);
-        }
-
-        [Event(117, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginICustomPropertyProviderCreateIndexedProperty(String typeName, String propertyName, String indexedParamTypeName)
-        {
-            WriteEvent(117, typeName, propertyName, indexedParamTypeName);
-        }
-
-        [Event(118, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndICustomPropertyProviderCreateIndexedProperty(String typeName, String propertyName, String indexedParamTypeName)
-        {
-            WriteEvent(118, typeName, propertyName, indexedParamTypeName);
-        }
-
-        [Event(119, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginCustomPropertyImplGetValue(String typeName, String propertyTypeName)
-        {
-            WriteEvent(119, typeName, propertyTypeName);
-        }
-
-        [Event(120, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndCustomPropertyImplGetValue(String typeName, String propertyTypeName)
-        {
-            WriteEvent(120, typeName, propertyTypeName);
-        }
-
-        [Event(121, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginCustomPropertyImplGetValueIndexValue(String typeName, String propertyTypeName)
-        {
-            WriteEvent(121, typeName, propertyTypeName);
-        }
-
-        [Event(122, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndCustomPropertyImplGetValueIndexValue(String typeName, String propertyTypeName)
-        {
-            WriteEvent(122, typeName, propertyTypeName);
-        }
-
-        [Event(123, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginCustomPropertyImplSetValue(String typeName, String valueTypeName)
-        {
-            WriteEvent(123, typeName, valueTypeName);
-        }
-
-        [Event(124, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndCustomPropertyImplSetValue(String typeName, String valueTypeName)
-        {
-            WriteEvent(124, typeName, valueTypeName);
-        }
-
-        [Event(125, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginCustomPropertyImplSetValueIndexValue(String typeName, String propertyTypeName, String indexValueTypeName)
-        {
-            WriteEvent(125, typeName, propertyTypeName, indexValueTypeName);
-        }
-
-        [Event(126, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndCustomPropertyImplSetValueIndexValue(String typeName, String propertyTypeName, String indexValueTypeName)
-        {
-            WriteEvent(126, typeName, propertyTypeName, indexValueTypeName);
-        }
-        
-        [Event(127, Keywords = Keywords.DynamicTypeUsage)]
-        public void MarshalThrowExceptionForHR2()
-        {
-            WriteEvent(127);
-        }
-        
-        [Event(128, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeConstructors(String typeName)
-        {
-            WriteEvent(128, typeName);
-        }
-
-        [Event(129, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeConstructors(String typeName)
-        {
-            WriteEvent(129, typeName);
-        }
-
-        [Event(130, Keywords = Keywords.DynamicTypeUsage)]
-        public void BeginGetRuntimeMembers(String typeName)
-        {
-            WriteEvent(130, typeName);
-        }
-
-        [Event(131, Keywords = Keywords.DynamicTypeUsage)]
-        public void EndGetRuntimeMembers(String typeName)
-        {
-            WriteEvent(131, typeName);
-        }
-
-        [Event(132, Keywords = Keywords.DynamicTypeUsage)]
-        public void EventName(String typeName, String eventName)
-        {
-            WriteEvent(132, typeName, eventName);
-        }
-
-        [Event(133, Keywords = Keywords.DynamicTypeUsage)]
-        public void QueryAttributeIsDefined(String typeName)
-        {
-            WriteEvent(133, typeName);
-        }
-#endif
-#endregion
-
-    
-        [Event(140, Level = EventLevel.Informational, Keywords = Keywords.NetClient, Task = Tasks.GetResponse, Opcode = EventOpcode.Start)]
-        private void BeginGetResponse(long id, string uri) {
-            if (IsEnabled())
-                WriteEvent(140, id, uri);
-        }
-        
-        [Event(141, Level = EventLevel.Informational, Keywords = Keywords.NetClient, Task = Tasks.GetResponse, Opcode = EventOpcode.Stop)]
-        private void EndGetResponse(long id) {
-            if (IsEnabled())
-                WriteEvent(141, id);
-        }
-        
-        [Event(142, Level = EventLevel.Informational, Keywords = Keywords.NetClient, Task = Tasks.GetRequestStream, Opcode = EventOpcode.Start)]
-        private void BeginGetRequestStream(long id, string uri) {
-            if (IsEnabled())
-                WriteEvent(142, id, uri);
-        }
-        
-        [Event(143, Level = EventLevel.Informational, Keywords = Keywords.NetClient, Task = Tasks.GetRequestStream, Opcode = EventOpcode.Stop)]
-        private void EndGetRequestStream(long id) {
-            if (IsEnabled())
-                WriteEvent(143, id);
-        }
-        
         [NonEvent, System.Security.SecuritySafeCritical]
-        public unsafe void BeginGetResponse(object id, string uri) {
-            BeginGetResponse((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref id)), uri);
+        public unsafe void BeginGetResponse(object id, string uri, bool success, bool synchronous) {
+            if (IsEnabled())
+                GetResponseStart(IdForObject(id), uri, success, synchronous);
         }
             
         [NonEvent, System.Security.SecuritySafeCritical]
-        public unsafe void EndGetResponse(object id) {
-            EndGetResponse((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref id)));
+        public unsafe void EndGetResponse(object id, bool success, bool synchronous, int statusCode) {
+            if (IsEnabled())
+                GetResponseStop(IdForObject(id), success, synchronous, statusCode);
         }
-        
+
         [NonEvent, System.Security.SecuritySafeCritical]
-        public unsafe void BeginGetRequestStream(object id, string uri) {
-            BeginGetRequestStream((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref id)), uri);
+        public unsafe void BeginGetRequestStream(object id, string uri, bool success, bool synchronous) {
+            if (IsEnabled())
+                GetRequestStreamStart(IdForObject(id), uri, success, synchronous);
         }
-        
+
         [NonEvent, System.Security.SecuritySafeCritical]
-        public unsafe void EndGetRequestStream(object id) {
-            EndGetRequestStream((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref id)));
+        public unsafe void EndGetRequestStream(object id, bool success, bool synchronous) {
+            if (IsEnabled())
+                GetRequestStreamStop(IdForObject(id), success, synchronous);
         }
 
         // id -   represents a correlation ID that allows correlation of two activities, one stamped by 
@@ -1128,6 +611,13 @@ namespace System.Diagnostics.Tracing {
             ThreadTransferReceive((long) *((void**) JitHelpers.UnsafeCastToStackPointer(ref id)), kind, info);
         }
 
+        // return a stable ID for a an object.  We use the hash code which is not truely unique but is 
+        // close enough for now at least. we add to it 0x7FFFFFFF00000000 to make it distinguishable
+        // from the style of ID that simply casts the object reference to a long (since old versions of the 
+        // runtime will emit IDs of that form).  
+        private static long IdForObject(object obj) {
+            return obj.GetHashCode() + 0x7FFFFFFF00000000;
+        }
     }
 }
 

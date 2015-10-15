@@ -2,7 +2,7 @@
 // <copyright file="MTNameTable.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">helenak</owner>
 //------------------------------------------------------------------------------
 
 #if MTNAMETABLE
@@ -387,7 +387,7 @@ namespace System.Xml {
             if (fLock) {
                 LockCookie lc = rwLock.UpgradeToWriterLock(timeout);
 
-                // recheck for failsafe against -----condition
+                // recheck for failsafe against race-condition
                 if (rootNode == null) {
                     rootNode = newNode = new MTNameTableNode( ref name );
                 }
@@ -413,7 +413,7 @@ namespace System.Xml {
             if (fLock) {
                 LockCookie lc = rwLock.UpgradeToWriterLock(timeout);
 
-                // recheck for failsafe against -----condition
+                // recheck for failsafe against race-condition
                 if (node.leftNode == null) {
                     newNode = new MTNameTableNode( ref name );
                     node.leftNode = newNode;
@@ -443,7 +443,7 @@ namespace System.Xml {
             if (fLock) {
                 LockCookie lc = rwLock.UpgradeToWriterLock(timeout);
 
-                // recheck for failsafe against -----condition
+                // recheck for failsafe against race-condition
                 if (node.rightNode == null) {
                     newNode = new MTNameTableNode( ref name );
                     node.rightNode = newNode;
@@ -479,7 +479,7 @@ namespace System.Xml {
                 if (rwLock != null) {
                     LockCookie lc = rwLock.UpgradeToWriterLock(timeout);
 
-                    // recheck for failsafe against -----condition
+                    // recheck for failsafe against race-condition
                     if (node != rootNode && 
                         node.counter > threshhold &&
                         node.counter > node.parentNode.counter * 2) {

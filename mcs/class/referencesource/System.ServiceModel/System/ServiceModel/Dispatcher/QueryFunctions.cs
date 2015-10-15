@@ -55,7 +55,7 @@ namespace System.ServiceModel.Dispatcher
         List<NodeSequenceIterator> iterList;
 
 
-        // REFACTOR, [....], make this a function on QueryValueModel
+        // REFACTOR, Microsoft, make this a function on QueryValueModel
         internal XsltFunctionCallOpcode(XsltContext context, IXsltContextFunction function, int argCount)
             : base(OpcodeID.XsltFunction)
         {
@@ -138,7 +138,7 @@ namespace System.ServiceModel.Dispatcher
             }
             else
             {
-                // PERF, [....], see if we can cache these arrays to avoid allocations
+                // PERF, Microsoft, see if we can cache these arrays to avoid allocations
                 object[] xsltArgs = new object[this.argCount];
                 int iterationCount = context.TopArg.Count;
                 for (int iteration = 0; iteration < iterationCount; ++iteration)
@@ -1210,7 +1210,7 @@ namespace System.ServiceModel.Dispatcher
             StackFrame argKeys = context.SecondArg;
             StackFrame argValues = context[2];
 
-            // PERF, [....], this is really slow.
+            // PERF, Microsoft, this is really slow.
             StringBuilder builder = new StringBuilder();
             while (argSource.basePtr <= argSource.endPtr)
             {

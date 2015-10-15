@@ -2,7 +2,7 @@
 // <copyright file="EntityUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -2071,8 +2071,8 @@ namespace System.Data {
         /// <summary>
         /// This method uses the .net Fx target framework moniker (introduced in .net 4.0 Multitargeting feature)
         /// to provide a 'quirks' mode that serves as a compatibility flag for features that can be considered
-        /// breaking changes from 4.0 to 4.5 which is a in-place upgrade to 4.0.  For details see DevDiv2 bug#488375.
-        /// </summary>
+        /// breaking changes from 4.0 to 4.5 which is a in-place upgrade to 4.0.  For details see DevDiv2 
+
         static bool? useFx40CompatMode;
         static public bool UseFx40CompatMode
         {

@@ -81,7 +81,7 @@ namespace System.Web.Services.Discovery {
                     // Determine start url path for search
                     DynamicDiscoSearcher searcher;
                     Uri searchStartUrl = context.Request.Url;
-                    string escapedUri = Uri.EscapeUriString(searchStartUrl.ToString()).Replace("#", "%23");
+                    string escapedUri = RuntimeUtils.EscapeUri(searchStartUrl);
                     string searchStartUrlDir = GetDirPartOfPath( escapedUri );  // URL path without file name
                     string strLocalPath = GetDirPartOfPath(searchStartUrl.LocalPath);
 

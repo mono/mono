@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 using System;
 using System.Reflection;
 using System.Security.Permissions;
@@ -127,6 +127,7 @@ namespace System.Reflection.Emit
         }
         #endregion
 
+#if !FEATURE_CORECLR
         void _LocalBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -146,6 +147,7 @@ namespace System.Reflection.Emit
         {
             throw new NotImplementedException();
         }
+#endif
     }
 }
 

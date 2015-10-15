@@ -181,6 +181,12 @@ namespace System.IO.MemoryMappedFiles {
             return new MemoryMappedFile(handle, fileStream, false);
         }
 
+        public static MemoryMappedFile CreateFromFile(FileStream fileStream, String mapName, Int64 capacity,
+                                                        MemoryMappedFileAccess access,
+                                                        HandleInheritability inheritability, bool leaveOpen) {
+            return CreateFromFile(fileStream, mapName, capacity, access, null, inheritability, leaveOpen);
+        }
+
         [System.Security.SecurityCritical]
         [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public static MemoryMappedFile CreateFromFile(FileStream fileStream, String mapName, Int64 capacity,
@@ -250,6 +256,12 @@ namespace System.IO.MemoryMappedFiles {
                    HandleInheritability.None);
         }
 
+        public static MemoryMappedFile CreateNew(String mapName, Int64 capacity, MemoryMappedFileAccess access,
+                                                    MemoryMappedFileOptions options,
+                                                    HandleInheritability inheritability) {
+            return CreateNew(mapName, capacity, access, options, null, inheritability);
+        }
+
         [System.Security.SecurityCritical]
         [SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         public static MemoryMappedFile CreateNew(String mapName, Int64 capacity, MemoryMappedFileAccess access,
@@ -303,6 +315,12 @@ namespace System.IO.MemoryMappedFiles {
         public static MemoryMappedFile CreateOrOpen(String mapName, Int64 capacity,
                                                     MemoryMappedFileAccess access) {
             return CreateOrOpen(mapName, capacity, access, MemoryMappedFileOptions.None, null, HandleInheritability.None);
+        }
+
+        public static MemoryMappedFile CreateOrOpen(String mapName, Int64 capacity,
+                                                    MemoryMappedFileAccess access, MemoryMappedFileOptions options,
+                                                    HandleInheritability inheritability) {
+            return CreateOrOpen(mapName, capacity, access, options, null, inheritability);
         }
 
         [System.Security.SecurityCritical]

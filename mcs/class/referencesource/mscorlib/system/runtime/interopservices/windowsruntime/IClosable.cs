@@ -18,7 +18,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("30d5a829-7fa4-4026-83bb-d75bae4ea99e")]
     [WindowsRuntimeImport]
-    [ForceTokenStabilization]        
     internal interface IClosable
     {
         void Close();
@@ -33,7 +32,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         }
 
         [SecurityCritical]
-        [ForceTokenStabilization]        
         public void Close()
         {
             IDisposable _this = JitHelpers.UnsafeCast<IDisposable>(this);
@@ -50,7 +48,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             Contract.Assert(false, "This class is never instantiated");
         }
 
-        [ForceTokenStabilization]        
         [SecurityCritical]
         private void Dispose()
         {

@@ -911,7 +911,7 @@ namespace System.Workflow.ComponentModel
             }
             else if (!this.DesignMode)
             {
-                // WinOE Bug 20584: Fix this for dynamic updates only.  See bug description for details.
+                // WinOE 
                 CompositeActivity parent = (withinThisActivityOnly ? this : this.RootActivity) as CompositeActivity;
                 if (parent != null)
                 {

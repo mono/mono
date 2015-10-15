@@ -12,7 +12,10 @@
 
         public EmailAddressAttribute()
             : base(DataType.EmailAddress) {
-            ErrorMessage = DataAnnotationsResources.EmailAddressAttribute_Invalid;
+            
+            // DevDiv 468241: set DefaultErrorMessage not ErrorMessage, allowing user to set
+            // ErrorMessageResourceType and ErrorMessageResourceName to use localized messages.
+            DefaultErrorMessage = DataAnnotationsResources.EmailAddressAttribute_Invalid;
         }
 
         public override bool IsValid(object value) {

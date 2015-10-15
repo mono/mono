@@ -751,7 +751,7 @@ namespace System.Activities.Presentation.Model
 
                 if (updateInstance)
                 {
-                    //no need to [....] if the ItemsCollection is not DictionaryItemsCollection wrapped by ModelItemCollectionImpl
+                    //no need to sync if the ItemsCollection is not DictionaryItemsCollection wrapped by ModelItemCollectionImpl
                     ModelItemCollectionImpl itemsCollectionImpl = this.ItemsCollectionModelItemCollection as ModelItemCollectionImpl;
                     if (ItemsCollectionObject != null && itemsCollectionImpl != null)
                     {
@@ -810,7 +810,7 @@ namespace System.Activities.Presentation.Model
                 IList removed = this.modelItems.ToList<KeyValuePair<ModelItem, ModelItem>>();
                 if (updateInstance)
                 {
-                    //no need to [....] if the ItemsCollection is not DictionaryItemsCollection wrapped by ModelItemCollectionImpl
+                    //no need to sync if the ItemsCollection is not DictionaryItemsCollection wrapped by ModelItemCollectionImpl
                     ModelItemCollectionImpl itemsCollectionImpl = this.ItemsCollectionModelItemCollection as ModelItemCollectionImpl;
                     if (ItemsCollectionObject != null && itemsCollectionImpl != null)
                     {

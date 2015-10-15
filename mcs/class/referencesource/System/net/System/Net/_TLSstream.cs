@@ -106,7 +106,7 @@ namespace System.Net {
         }
 
         //
-        // [....] Read version
+        // Sync Read version
         //
         public override int Read(byte[] buffer, int offset, int size) {
             GlobalLog.Print("TlsStream#" + ValidationHelper.HashString(this) + "::Read() SecureWorker#" + ValidationHelper.HashString(m_Worker) + " offset:" + offset.ToString() + " size:" + size.ToString());
@@ -401,11 +401,11 @@ namespace System.Net {
 
         //
         // This methods ensures that IO is only issued when the handshake is completed in ether way
-        // The very first coming IO will initiate the handshake and define it's flavor ([....]/async).
+        // The very first coming IO will initiate the handshake and define it's flavor (sync/async).
         //
         // Returns false if the handshake was already done.
         // Returns true  if the user IO is queued and the handshake is started.
-        // Return value is not applicable in [....] case.
+        // Return value is not applicable in sync case.
         //
         private ArrayList m_PendingIO = new ArrayList();
         internal bool ProcessAuthentication(LazyAsyncResult result)
@@ -483,7 +483,7 @@ namespace System.Net {
                             {
                                 if(m_PendingIO.Count > 1)
                                 {
-                                    // It was a real [....] handshake (now completed) and another IO came in.
+                                    // It was a real sync handshake (now completed) and another IO came in.
                                     // It's now waiting on us so resume.
                                     ThreadPool.QueueUserWorkItem(new WaitCallback(StartWakeupPendingIO), null);
                                 }
@@ -496,7 +496,7 @@ namespace System.Net {
                 }
                 else if (isSyncCall)
                 {
-                    GlobalLog.Assert(result != null, "TlsStream::ProcessAuthentication() this is a [....] call and it did not started the handshake hence null result must be wrapped into LazyAsyncResult");
+                    GlobalLog.Assert(result != null, "TlsStream::ProcessAuthentication() this is a Sync call and it did not started the handshake hence null result must be wrapped into LazyAsyncResult");
                     Exception e = result.InternalWaitForCompletion() as Exception;
                     if (e != null)
                         throw e;
@@ -516,7 +516,7 @@ namespace System.Net {
             }
 
             // Here in the async case a user IO has been queued (and may be already completed)
-            // For [....] case it does not matter since the caller will resume IO upon return
+            // For sync case it does not matter since the caller will resume IO upon return
             return true;
         }
         //
@@ -581,7 +581,7 @@ namespace System.Net {
                     }
                     else
                     {
-                        //resume [....] IO waiting on other thread or signal waiting async handshake result.
+                        //resume sync IO waiting on other thread or signal waiting async handshake result.
                         try {
                             lazyResult.InvokeCallback(exception);
                         }

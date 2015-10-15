@@ -2016,16 +2016,14 @@ namespace System.Linq
         }
     }
 
+
+    //
+    // We have added some optimization in SZArrayHelper class to cache the enumerator of zero length arrays so  
+    // the enumerator will be created once per type.
+    // 
     internal class EmptyEnumerable<TElement>
     {
-        static volatile TElement[] instance;
-
-        public static IEnumerable<TElement> Instance {
-            get {
-                if (instance == null) instance = new TElement[0];
-                return instance;
-            }
-        }
+        public static readonly TElement[] Instance = new TElement[0];
     }
 
     internal class IdentityFunction<TElement>
@@ -2130,7 +2128,7 @@ namespace System.Linq
 
         internal int InternalGetHashCode(TKey key)
         {
-            //[....] DevDivBugs 171937. work around comparer implementations that throw when passed null
+            //Microsoft DevDivBugs 171937. work around comparer implementations that throw when passed null
             return (key == null) ? 0 : comparer.GetHashCode(key) & 0x7FFFFFFF;
         }
 
@@ -2348,7 +2346,7 @@ namespace System.Linq
 
         internal int InternalGetHashCode(TElement value)
         {
-            //[....] DevDivBugs 171937. work around comparer implementations that throw when passed null
+            //Microsoft DevDivBugs 171937. work around comparer implementations that throw when passed null
             return (value == null) ? 0 : comparer.GetHashCode(value) & 0x7FFFFFFF;
         }
 

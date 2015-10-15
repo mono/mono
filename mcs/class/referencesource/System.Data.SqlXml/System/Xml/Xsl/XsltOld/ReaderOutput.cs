@@ -2,7 +2,7 @@
 // <copyright file="ReaderOutput.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -56,7 +56,6 @@ namespace System.Xml.Xsl.XsltOld {
 
         // XmlReader abstract methods implementation
         public override XmlNodeType NodeType {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.NodeType;
@@ -84,7 +83,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override string LocalName {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.LocalName;
@@ -92,7 +90,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override string NamespaceURI {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.NamespaceURI;
@@ -100,7 +97,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override string Prefix {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.Prefix;
@@ -114,7 +110,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override string Value {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.Value;
@@ -122,7 +117,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override int Depth {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.Depth;
@@ -136,7 +130,6 @@ namespace System.Xml.Xsl.XsltOld {
         }
 
         public override bool IsEmptyElement {
-            [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
             get {
                 CheckCurrentInfo();
                 return this.currentInfo.IsEmptyTag;
@@ -239,7 +232,6 @@ namespace System.Xml.Xsl.XsltOld {
             SetAttribute(i);
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public override bool MoveToFirstAttribute() {
             if (this.attributeCount <= 0) {
                 Debug.Assert(this.attributeCount == 0);
@@ -503,7 +495,6 @@ namespace System.Xml.Xsl.XsltOld {
             return Processor.OutputResult.Interrupt;
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public void TheEnd() {
             // nothing here, was taken care of by RecordBuilder
         }
@@ -517,7 +508,6 @@ namespace System.Xml.Xsl.XsltOld {
             this.currentInfo    = this.mainNode;
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         private void SetAttribute(int attrib) {
             Debug.Assert(0 <= attrib && attrib < this.attributeCount);
             Debug.Assert(0 <= attrib && attrib < this.attributeList.Count);

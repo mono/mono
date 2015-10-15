@@ -169,7 +169,8 @@ internal static class CompilationLock {
 
         // Create the mutex (or just get it if another process created it).
         // Make the mutex unique per application
-        int hashCode = ("CompilationLock" + HttpRuntime.AppDomainAppId.ToLower(CultureInfo.InvariantCulture)).GetHashCode();
+        int hashCode = StringUtil.GetNonRandomizedHashCode("CompilationLock" + HttpRuntime.AppDomainAppId.ToLower(CultureInfo.InvariantCulture));
+
 
         _mutex = new CompilationMutex(
                         "CL" + hashCode.ToString("x", CultureInfo.InvariantCulture), 
@@ -187,7 +188,7 @@ internal static class CompilationLock {
             // Always take the BuildManager lock *before* taking the mutex, to avoid possible
             // deadlock situations (VSWhidbey 530732)
 #pragma warning disable 0618
-            //@TODO: This overload of Monitor.Enter is obsolete.  Please change this to use Monitor.Enter(ref bool), and remove the pragmas   -- [....]
+            //@TODO: This overload of Monitor.Enter is obsolete.  Please change this to use Monitor.Enter(ref bool), and remove the pragmas   -- Microsoft
             Monitor.Enter(BuildManager.TheBuildManager);
 #pragma warning restore 0618
             _mutex.WaitOne();

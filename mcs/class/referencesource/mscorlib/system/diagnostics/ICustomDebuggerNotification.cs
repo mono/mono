@@ -17,7 +17,7 @@ namespace System.Diagnostics {
     // conditions. Users should implement this interface to be used as an argument to 
     // System.Diagnostics.Debugger.CustomNotification.  
     // 
-    // @dbgtodo [....]: when this goes public, it must be replaced by a custom attribute
+    // @dbgtodo dlaw: when this goes public, it must be replaced by a custom attribute
     internal interface ICustomDebuggerNotification
     {
         // Interface does not need to be marked with the serializable attribute

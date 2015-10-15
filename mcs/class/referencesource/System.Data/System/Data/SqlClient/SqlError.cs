@@ -2,8 +2,8 @@
 // <copyright file="SqlError.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -15,8 +15,8 @@ namespace System.Data.SqlClient {
     [Serializable]
     public sealed class SqlError {
 
-        // bug fix - MDAC 48965 - missing source of exception
-        // fixed by [....]
+        // 
+
         private string source = TdsEnums.SQL_PROVIDER_NAME;
         private int    number;
         private byte   state;
@@ -51,17 +51,17 @@ namespace System.Data.SqlClient {
             this.win32ErrorCode = 0;
         }
 
-        // bug fix - MDAC #49280 - SqlError does not implement ToString();
-        // I did not include an exception stack because the correct exception stack is only available 
-        // on SqlException, and to obtain that the SqlError would have to have backpointers all the
-        // way back to SqlException.  If the user needs a call stack, they can obtain it on SqlException.
+        // 
+
+
+
         public override string ToString() {
             //return this.GetType().ToString() + ": " + this.message;
             return typeof(SqlError).ToString() + ": " + this.message; // since this is sealed so we can change GetType to typeof
         }
 
-        // bug fix - MDAC #48965 - missing source of exception
-        // fixed by [....]
+        // 
+
         public string Source {
             get { return this.source;}
         }

@@ -112,7 +112,7 @@ namespace System.Diagnostics {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         [SecurityPermission(SecurityAction.Assert, ControlPrincipal = true)]
-        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "[....]: We pass fixed data into sec.AddAccessRule")]
+        [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "Microsoft: We pass fixed data into sec.AddAccessRule")]
         internal static void EnterMutexWithoutGlobal(string mutexName, ref Mutex mutex) {
             bool createdNew;
             MutexSecurity sec = new MutexSecurity();

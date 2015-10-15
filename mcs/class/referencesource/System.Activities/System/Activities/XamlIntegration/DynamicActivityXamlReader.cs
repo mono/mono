@@ -566,8 +566,8 @@ namespace System.Activities.XamlIntegration
             }
 
             // GetXamlNamespaces is a superset of PreferredXamlNamespace, it's not a must for the above code
-            // to check for preferredXamlNamespace, but since the old code uses .Contains(), which was a minor bug,
-            // we decide to use StartsWith in new code and keep the old code for back compatible reason.
+            // to check for preferredXamlNamespace, but since the old code uses .Contains(), which was a minor 
+
             IList<string> namespaces = xamlType.GetXamlNamespaces();
             foreach (string ns in namespaces)
             {

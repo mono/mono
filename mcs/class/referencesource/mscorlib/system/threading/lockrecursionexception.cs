@@ -13,8 +13,8 @@
 // acquire a lock, because the particular lock kind doesn't
 // support it in its current state.
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 ============================================================*/
 

@@ -14,7 +14,10 @@ namespace System.ComponentModel.DataAnnotations {
 
         public FileExtensionsAttribute()
             : base(DataType.Upload) {
-            ErrorMessage = DataAnnotationsResources.FileExtensionsAttribute_Invalid;
+
+            // DevDiv 468241: set DefaultErrorMessage not ErrorMessage, allowing user to set
+            // ErrorMessageResourceType and ErrorMessageResourceName to use localized messages.
+            DefaultErrorMessage = DataAnnotationsResources.FileExtensionsAttribute_Invalid;
         }
 
         public string Extensions {

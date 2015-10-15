@@ -5,7 +5,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -115,9 +115,6 @@ namespace System.Threading
         /// </remarks>
         public bool IsCancellationRequested
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return m_state >= NOTIFYING; }
         }
 
@@ -156,9 +153,6 @@ namespace System.Threading
         /// disposed.</exception>
         public CancellationToken Token
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 ThrowIfDisposed();
@@ -174,9 +168,6 @@ namespace System.Threading
         /// </summary>
         internal bool CanBeCanceled
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return m_state != CANNOT_BE_CANCELED; }
         }
 
@@ -260,9 +251,6 @@ namespace System.Threading
         /// <summary>
         /// Initializes the <see cref="T:System.Threading.CancellationTokenSource"/>.
         /// </summary>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public CancellationTokenSource()
         {
             m_state = NOT_CANCELED;
@@ -572,6 +560,15 @@ namespace System.Threading
                 //      This is safe without locks because the reg.Dispose() only
                 //      mutates a sparseArrayFragment and then reads from properties of the CTS that are not
                 //      invalidated by cts.Dispose().
+                //     
+                //      We also tolerate that a callback can be registered after the CTS has been
+                //      disposed.  This is safe without locks because InternalRegister is tolerant
+                //      of m_registeredCallbacksLists becoming null during its execution.  However,
+                //      we run the acceptable risk of m_registeredCallbacksLists getting reinitialized
+                //      to non-null if there is a ---- between Dispose and Register, in which case this
+                //      instance may unnecessarily hold onto a registered callback.  But that's no worse
+                //      than if Dispose wasn't safe to use concurrently, as Dispose would never be called,
+                //      and thus no handlers would be dropped.
 
                 if (m_disposed != 0 || Interlocked.CompareExchange (ref m_disposed, 1, 0) != 0)
                     return;
@@ -606,9 +603,6 @@ namespace System.Threading
         /// <summary>
         /// Throws an exception if the source has been disposed.
         /// </summary>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal void ThrowIfDisposed()
         {
             if (m_disposed == 1)
@@ -638,7 +632,10 @@ namespace System.Threading
         internal CancellationTokenRegistration InternalRegister(
             Action<object> callback, object stateForCallback, SynchronizationContext targetSyncContext, ExecutionContext executionContext)
         {
-            ThrowIfDisposed();
+            if (AppContextSwitches.ThrowExceptionIfDisposedCancellationTokenSource)
+            {
+                ThrowIfDisposed();
+            }
 
             // the CancellationToken has already checked that the token is cancelable before calling this method.
             Contract.Assert(CanBeCanceled, "Cannot register for uncancelable token src");
@@ -650,6 +647,20 @@ namespace System.Threading
 
             if (!IsCancellationRequested)
             {
+                // In order to enable code to not leak too many handlers, we allow Dispose to be called concurrently
+                // with Register.  While this is not a recommended practice, consumers can and do use it this way.
+                // We don't make any guarantees about whether the CTS will hold onto the supplied callback
+                // if the CTS has already been disposed when the callback is registered, but we try not to
+                // while at the same time not paying any non-negligible overhead.  The simple compromise
+                // is to check whether we're disposed (not volatile), and if we see we are, to return an empty
+                // registration, just as if CanBeCanceled was false for the check made in CancellationToken.Register.
+                // If there's a ---- and m_disposed is false even though it's been disposed, or if the disposal request
+                // comes in after this line, we simply run the minor risk of having m_registeredCallbacksLists reinitialized
+                // (after it was cleared to null during Dispose).
+
+                if (m_disposed && !AppContextSwitches.ThrowExceptionIfDisposedCancellationTokenSource)
+                    return new CancellationTokenRegistration();
+
                 int myIndex = Thread.CurrentThread.ManagedThreadId % s_nLists;
 
                 CancellationCallbackInfo callbackInfo = new CancellationCallbackInfo(callback, stateForCallback, targetSyncContext, executionContext, this);
@@ -776,7 +787,7 @@ namespace System.Threading
                                 m_executingCallback = currArrayFragment[i];
                                 if (m_executingCallback != null)
                                 {
-                                    //Transition to the target [....] context (if necessary), and continue our work there.
+                                    //Transition to the target sync context (if necessary), and continue our work there.
                                     CancellationCallbackCoreWorkArguments args = new CancellationCallbackCoreWorkArguments(currArrayFragment, i);
 
                                     // marshal exceptions: either aggregate or perform an immediate rethrow
@@ -842,7 +853,7 @@ namespace System.Threading
             {
                 if (callback.TargetExecutionContext != null)
                 {
-                    // we are running via a custom [....] context, so update the executing threadID
+                    // we are running via a custom sync context, so update the executing threadID
                     callback.CancellationTokenSource.ThreadIDExecutingCallbacks = Thread.CurrentThread.ManagedThreadId;
                 }
                 callback.ExecuteCallback();
@@ -858,9 +869,6 @@ namespace System.Threading
         /// <param name="token2">The second <see cref="T:System.Threading.CancellationToken">CancellationToken</see> to observe.</param>
         /// <returns>A <see cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> that is linked 
         /// to the source tokens.</returns>
-        /// <exception cref="T:System.ObjectDisposedException">A <see
-        /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> associated with
-        /// one of the source tokens has been disposed.</exception>
         public static CancellationTokenSource CreateLinkedTokenSource(CancellationToken token1, CancellationToken token2)
         {
             CancellationTokenSource linkedTokenSource = new CancellationTokenSource();
@@ -895,9 +903,6 @@ namespace System.Threading
         /// <returns>A <see cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> that is linked 
         /// to the source tokens.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="tokens"/> is null.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">A <see
-        /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> associated with
-        /// one of the source tokens has been disposed.</exception>
         public static CancellationTokenSource CreateLinkedTokenSource(params CancellationToken[] tokens)
         {
             if (tokens == null)
@@ -944,7 +949,7 @@ namespace System.Threading
     // ----------------------------------------------------------
     // -- CancellationCallbackCoreWorkArguments --
     // ----------------------------------------------------------
-    // Helper struct for passing data to the target [....] context
+    // Helper struct for passing data to the target sync context
     internal struct CancellationCallbackCoreWorkArguments
     {
         internal SparselyPopulatedArrayFragment<CancellationCallbackInfo> m_currArrayFragment;

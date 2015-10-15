@@ -12,78 +12,78 @@
 //  Abstract:
 //
 //      Managed implimentation of GB18030-2000 (code page 54936) ported from implimentation in c_g18030.dll
-//      If you find a bug here you should check there (in windows) as well and visa versa.
-//      This file contains functions to convert GB18030-2000 (code page 54936) into Unicode, and vice versa.
-//
-//  Notes:
-//      GB18030-2000 (aka GBK2K) is designed to be mostly compatible with GBK (codepage 936),
-//      while supports the full range of Unicode code points (BMP + 16 supplementary planes).
-//
-//      The structure for GB18030 is:
-//          * Single byte:
-//              0x00 ~ 0x7f
-//          * Two-byte:
-//              0x81 ~ 0xfe, 0x40 ~ 0x7e    (leading byte, trailing byte)
-//              0x81 ~ 0xfe, 0x80 ~ 0xfe    (leading byte, trailing byte)
-//          * Four-byte:
-//              0x81 ~ 0xfe, 0x30 ~ 0x39, 0x81 ~ 0xfe, 0x30 ~ 0x39.
-//              The surrogare pair will be encoded from 0x90, 0x30, 0x81, 0x30
-//
-//      The BMP range is fully supported in GB18030 using 1-byte, 2-byte and 4-byte sequences.
-//      In valid 4-byte GB18030, there are two gaps that can not be mapped to Unicode characters.
-//          0x84, 0x31, 0xa5, 0x30 (just after the GB18030 bytes for U+FFFF(*)) ~ 0x8f, 0x39, 0xfe, 0x39 (just before the first GB18030 bytes for U+D800,U+DC00)
-//          0xe3, 0x32, 0x9a, 0x36 (just after the GB18030 bytes for U+DBFF U+DFFF(**)) ~ 0xfe, 0x39, 0xfe, 0x39
-//
-//
-//          Note1: U+FFFF = 0x84, 0x31, 0xa4, 0x39
-//          Note2: U+DBFF U+DFFF = 0xe3, 0x32, 0x9a, 0x35
-//
-//      Tables used in GB18030Encoding:
-//
-//          Our data is similar to the 936 Code Page, so we start from there to build our tables.  We build the
-//          normal double byte mapUnicodeToBytes and mapBytesToUnicode tables by applying differences from 936.
-//          We also build a map4BytesToUnicode table and a mapUnicodeTo4BytesFlags
-//
-//          * mapUnicodeTo4BytesFlags
-//              This is an array of bytes, so we have to do a / 8 and << %8 to check the appropriate bit (see Is4Byte())
-//              If the bit is set its true.
-//
-//              true    - If set/true this is a 4 byte code.  The value in mapUnicodeToBytes will be the 4 byte offset
-//              false   - If cleared/false this is a 1 or 2 byte code.  The value in mapUnicodeToBytes will be the 2 bytes.
-//
-//          * mapUnicodeToBytes
-//              Contains either the 2 byte value of double byte GB18030 or the 4 byte offset for 4 byte GB18030,
-//              depending on the value of the flag in mapUnicodeTo4BytesFlags
-//
-//          * mapBytesToUnicode
-//              mapBytesToUnicode maps 2 byte GB 18030 to Unicode like other DBCS code pages.
-//
-//          * map4BytesToUnicode
-//              map4BytesToUnicode is indexed by the 4 byte offset and contains the unicode value for each 4 byte offset
-//
-//
-//      4 Byte sequences
-//          We generally use the offset for the 4 byte sequence, such as:
-//
-//          The index value is the offset of the 4-byte GB18030.
-//
-//          4-byte GB18030      Index value
-//          ==============      ===========
-//          81,30,81,30         0
-//          81,30,81,31         1
-//          81,30,81,32         2
-//          ...                 ...
-//
-//          The value of map4BytesToUnicode cotains the Unicode codepoint for the offset of the
-//          corresponding 4-byte GB18030.
-//
-//          E.g. map4BytesToUnicode[0] = 0x0080.  This means that GB18030 0x81, 0x30, 0x81, 0x30 will be converted to Unicode U+0800.
-//
-//      4 Byte Surrogate Sequences
-//          Those work similarly to the normal 4 byte sequences, but start at a different offset
-//
-//  We don't override IsAlwaysNormalized because GB18030 covers all of the unicode space, so isn't guaranteed to be normal.
-//
+//      If you find a 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #if FEATURE_CODEPAGES_FILE // requires BaseCodePageEncooding
 namespace System.Text
 {

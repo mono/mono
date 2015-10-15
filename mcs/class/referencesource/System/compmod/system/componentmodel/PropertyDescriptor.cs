@@ -347,7 +347,7 @@ namespace System.ComponentModel {
         }
 
         /// <devdoc>
-        ///     Try to keep this reasonable in [....] with Equals(). Specifically, 
+        ///     Try to keep this reasonable in sync with Equals(). Specifically, 
         ///     if A.Equals(B) returns true, A & B should have the same hash code.
         /// </devdoc>
         public override int GetHashCode() {

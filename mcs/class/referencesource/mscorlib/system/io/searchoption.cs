@@ -7,7 +7,7 @@
 **
 ** Enum:   SearchOption
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Enum describing whether the search operation should  

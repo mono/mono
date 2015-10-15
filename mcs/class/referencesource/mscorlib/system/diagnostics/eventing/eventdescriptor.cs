@@ -2,19 +2,34 @@
 // <copyright file="etwprovider.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //------------------------------------------------------------------------------
 using System;
 using System.Runtime.InteropServices;
-using System.Diagnostics.Contracts;
 
+#if ES_BUILD_STANDALONE
+using Environment = Microsoft.Diagnostics.Tracing.Internal.Environment;
+#endif
+
+#if !ES_BUILD_AGAINST_DOTNET_V35
+using Contract = System.Diagnostics.Contracts.Contract;
+#else
+using Contract = Microsoft.Diagnostics.Contracts.Internal.Contract;
+#endif
+
+#if ES_BUILD_STANDALONE
+namespace Microsoft.Diagnostics.Tracing
+#else
 namespace System.Diagnostics.Tracing
+#endif
 {
     [StructLayout(LayoutKind.Explicit, Size = 16)]
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     internal struct EventDescriptor
     {
         # region private
+        [FieldOffset(0)]
+        private int m_traceloggingId;
         [FieldOffset(0)]
         private ushort m_id;
         [FieldOffset(2)]
@@ -30,6 +45,23 @@ namespace System.Diagnostics.Tracing
         [FieldOffset(8)]
         private long m_keywords;
         #endregion
+
+        public EventDescriptor(
+                int traceloggingId,
+                byte level,
+                byte opcode,
+                long keywords
+                )
+        {
+            this.m_id = 0;
+            this.m_version = 0;
+            this.m_channel = 0;
+            this.m_traceloggingId = traceloggingId;
+            this.m_level = level;
+            this.m_opcode = opcode;
+            this.m_task = 0;
+            this.m_keywords = keywords;
+        }
 
         public EventDescriptor(
                 int id,
@@ -51,6 +83,7 @@ namespace System.Diagnostics.Tracing
                 throw new ArgumentOutOfRangeException("id", Environment.GetResourceString("ArgumentOutOfRange_NeedValidId", 1, ushort.MaxValue));
             }
 
+            m_traceloggingId = 0;
             m_id = (ushort)id;
             m_version = version;
             m_channel = channel;
@@ -58,12 +91,12 @@ namespace System.Diagnostics.Tracing
             m_opcode = opcode;
             m_keywords = keywords;
 
-            if (id < 0)
+            if (task < 0)
             {
                 throw new ArgumentOutOfRangeException("task", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
             }
 
-            if (id > ushort.MaxValue)
+            if (task > ushort.MaxValue)
             {
                 throw new ArgumentOutOfRangeException("task", Environment.GetResourceString("ArgumentOutOfRange_NeedValidId", 1, ushort.MaxValue));
             }

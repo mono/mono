@@ -2,8 +2,8 @@
 // <copyright file="SqlConnectionFactory.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient
@@ -63,7 +63,7 @@ namespace System.Data.SqlClient
 
                 // Pass DbConnectionPoolIdentity to SqlInternalConnectionTds if using integrated security.
                 // Used by notifications.
-                if (opt.IntegratedSecurity) {
+                if (opt.IntegratedSecurity || opt.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated) {
                     if (pool != null) {
                         identity = pool.Identity;
                     }
@@ -122,7 +122,7 @@ namespace System.Data.SqlClient
                     opt = new SqlConnectionString(opt, instanceName, false /* user instance=false */, null /* do not modify the Enlist value */);
                     poolGroupProviderInfo = null; // null so we do not pass to constructor below...
                 }
-                result = new SqlInternalConnectionTds(identity, opt, key.Credential, poolGroupProviderInfo, "", null, redirectedUserInstance, userOpt, recoverySessionData);            
+                result = new SqlInternalConnectionTds(identity, opt, key.Credential, poolGroupProviderInfo, "", null, redirectedUserInstance, userOpt, recoverySessionData, pool, key.AccessToken);
             }
             return result;
         }
@@ -157,7 +157,7 @@ namespace System.Data.SqlClient
                     connectionTimeout = Int32.MaxValue;
 
                 poolingOptions = new DbConnectionPoolGroupOptions(
-                                                    opt.IntegratedSecurity,
+                                                    opt.IntegratedSecurity || opt.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated,
                                                     opt.MinPoolSize,
                                                     opt.MaxPoolSize,
                                                     connectionTimeout,

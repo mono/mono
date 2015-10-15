@@ -283,8 +283,7 @@ namespace System.Net.Sockets {
             m_CleanedUp = true;
         }
 
-        /// <internalonly/>
-        void IDisposable.Dispose() {
+        public void Dispose() {
             Dispose(true);
         }
 

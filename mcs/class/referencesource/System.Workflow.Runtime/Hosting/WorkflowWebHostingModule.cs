@@ -10,7 +10,7 @@
 // REVISIONS
 // Date          Ver     By           Remarks
 // ~~~~~~~~~~    ~~~     ~~~~~~~~     ~~~~~~~~~~~~~~
-// 02/22/05      1.0     [....]       Implementation.
+// 02/22/05      1.0     Microsoft       Implementation.
  * ****************************************************************************/
 
 #region Using directives

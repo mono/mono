@@ -1851,6 +1851,7 @@ namespace System.Web {
         protected string _message;
         private Exception _e;
         private StringCollection _adaptiveMiscContent = new StringCollection();
+        private bool _allowSourceCode;
 
         internal ConfigErrorFormatter(System.Configuration.ConfigurationException e)
         : base(null /*virtualPath*/, e.Filename, null, e.Line) {
@@ -1859,6 +1860,11 @@ namespace System.Web {
             PerfCounters.IncrementCounter(AppPerfCounter.ERRORS_TOTAL);
             _message = HttpUtility.FormatPlainTextAsHtml(e.BareMessage);
             _adaptiveMiscContent.Add(_message);
+        }
+
+        public bool AllowSourceCode {
+            get { return _allowSourceCode; }
+            set { _allowSourceCode = value; }
         }
 
         protected override Encoding SourceFileEncoding {
@@ -1891,6 +1897,16 @@ namespace System.Web {
 
         protected override StringCollection AdaptiveMiscContent {
             get { return _adaptiveMiscContent;}
+        }
+
+        protected override string ColoredSquareContent {
+            get {
+                if (!AllowSourceCode) {
+                    return SR.GetString(SR.Generic_Err_Remote_Desc);
+                }
+
+                return base.ColoredSquareContent;
+            }
         }
     }
 

@@ -682,5 +682,30 @@ namespace System.Web.Hosting {
             [In, MarshalAs(UnmanagedType.BStr)] string sectionName,
             [In, MarshalAs(UnmanagedType.BStr)] string propertyName,
             [Out, MarshalAs(UnmanagedType.Struct)] out object value); // marshaled as VARIANT
+
+        [DllImport(_IIS_NATIVE_DLL)]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "We carefully control this method's callers.")]
+        internal static extern int MgdPushPromise(
+            [In] IntPtr context,
+            [In, MarshalAs(UnmanagedType.LPWStr)] string path,
+            [In, MarshalAs(UnmanagedType.LPWStr)] string queryString,
+            [In, MarshalAs(UnmanagedType.LPStr)] string method,
+            [In] int numHeaders,
+            [In, MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)] string[] headersNames,
+            [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)] string[] headersValues);
+
+        [DllImport(_IIS_NATIVE_DLL)]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "We carefully control this method's callers.")]
+        internal static extern bool MgdIsAppPoolShuttingDown();
+
+        [DllImport(_IIS_NATIVE_DLL)]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "We carefully control this method's callers.")]
+        internal static extern int MgdGetTlsTokenBindingIdentifiers(
+            [In] IntPtr pHandler,
+            [In, Out] ref IntPtr tokenBindingHandle,
+            [Out] out IntPtr providedTokenIdentifier,
+            [Out] out uint providedTokenIdentifierSize,
+            [Out] out IntPtr referredTokenIdentifier,
+            [Out] out uint referredTokenIdentifierSize);
     }
 }

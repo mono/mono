@@ -21,8 +21,8 @@ namespace System.Web.UI.Adapters {
         protected internal override void EndRender(HtmlTextWriter writer) {
         }
         
-        // 
-
+        // BUGBUG: This override is for compatibility with MMIT.
+        // MMIT legacy pages also use this adapter -UNDONE: Review once MMIT legacy plan is complete.
         protected internal override void Render(HtmlTextWriter writer) {
             WmlTextWriter wmlWriter = writer as WmlTextWriter;
             if (wmlWriter == null) {

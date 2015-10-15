@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma warning disable 0420 // turn off 'a reference to a volatile field will not be treated as volatile' during CAS.
@@ -61,9 +61,6 @@ namespace System.Threading
         /// </remarks>
         public static CancellationToken None
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return default(CancellationToken); }
         }
 
@@ -88,9 +85,6 @@ namespace System.Threading
         /// </remarks>
         public bool IsCancellationRequested 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 return m_source != null && m_source.IsCancellationRequested;
@@ -107,9 +101,6 @@ namespace System.Threading
         /// </remarks>
         public bool CanBeCanceled
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 return m_source != null && m_source.CanBeCanceled;
@@ -146,9 +137,6 @@ namespace System.Threading
         /// <summary>
         /// Internal constructor only a CancellationTokenSource should create a CancellationToken
         /// </summary>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal CancellationToken(CancellationTokenSource source)
         {
             m_source = source;
@@ -203,8 +191,6 @@ namespace System.Threading
         /// <returns>The <see cref="T:System.Threading.CancellationTokenRegistration"/> instance that can 
         /// be used to deregister the callback.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="callback"/> is null.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The associated <see
-        /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> has been disposed.</exception>
         public CancellationTokenRegistration Register(Action callback)
         {
             if (callback == null)
@@ -240,8 +226,6 @@ namespace System.Threading
         /// <returns>The <see cref="T:System.Threading.CancellationTokenRegistration"/> instance that can 
         /// be used to deregister the callback.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="callback"/> is null.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The associated <see
-        /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> has been disposed.</exception>
         public CancellationTokenRegistration Register(Action callback, bool useSynchronizationContext)
         {
             if (callback == null)
@@ -275,8 +259,6 @@ namespace System.Threading
         /// <returns>The <see cref="T:System.Threading.CancellationTokenRegistration"/> instance that can 
         /// be used to deregister the callback.</returns>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="callback"/> is null.</exception>
-        /// <exception cref="T:System.ObjectDisposedException">The associated <see
-        /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> has been disposed.</exception>
         public CancellationTokenRegistration Register(Action<Object> callback, Object state)
         {
             if (callback == null)
@@ -352,8 +334,8 @@ namespace System.Threading
                 return new CancellationTokenRegistration(); // nothing to do for tokens than can never reach the canceled state. Give them a dummy registration.
             }
 
-            // Capture [....]/execution contexts if required.
-            // Note: Only capture [....]/execution contexts if IsCancellationRequested = false
+            // Capture sync/execution contexts if required.
+            // Note: Only capture sync/execution contexts if IsCancellationRequested = false
             // as we know that if it is true that the callback will just be called synchronously.
 
             SynchronizationContext capturedSyncContext = null;
@@ -481,9 +463,6 @@ namespace System.Threading
         /// <exception cref="System.OperationCanceledException">The token has had cancellation requested.</exception>
         /// <exception cref="T:System.ObjectDisposedException">The associated <see
         /// cref="T:System.Threading.CancellationTokenSource">CancellationTokenSource</see> has been disposed.</exception>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public void ThrowIfCancellationRequested()
         {
             if (IsCancellationRequested) 

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 namespace System.Reflection {
     using System.Runtime.InteropServices;
     using System;
@@ -44,10 +44,8 @@ namespace System.Reflection {
         // Implementation attributes.
         Import            =   0x00001000,     // Class / interface is imported
         Serializable      =   0x00002000,     // The class is Serializable.
-#if FEATURE_COMINTEROP || MONO
         [ComVisible(false)]
         WindowsRuntime    =   0x00004000,     // Type is a Windows Runtime type.
-#endif // FEATURE_COMINTEROP
 
         // Use tdStringFormatMask to retrieve string information for native interop
         StringFormatMask  =   0x00030000,     

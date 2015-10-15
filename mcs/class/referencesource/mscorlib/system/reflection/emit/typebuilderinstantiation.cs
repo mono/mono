@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit
@@ -14,19 +14,13 @@ namespace System.Reflection.Emit
     using System.Globalization;
     using System.Diagnostics.Contracts;
 
-    internal sealed class TypeBuilderInstantiation : 
-#if FEATURE_CORECLR && !FEATURE_NETCORE
-	Type
-#else
-	TypeInfo
-#endif	
+    internal sealed class TypeBuilderInstantiation : TypeInfo
     {
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;            
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif        
+
         #region Static Members
         internal static Type MakeGenericType(Type type, Type[] typeArguments)
         {

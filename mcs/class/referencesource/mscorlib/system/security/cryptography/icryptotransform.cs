@@ -7,9 +7,9 @@
  *
  * ICryptoTransform.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
  *
- * Author: [....]
+ * Author: bal
  *
  */
 

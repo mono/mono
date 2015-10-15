@@ -4,7 +4,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit {
@@ -41,20 +41,13 @@ namespace System.Reflection.Emit {
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_TypeBuilder))]
     [System.Runtime.InteropServices.ComVisible(true)]
-    public sealed class TypeBuilder : 
-#if FEATURE_CORECLR && !FEATURE_NETCORE 
-	    Type,
-#else	    
-	    TypeInfo, 
-#endif	    
-	    _TypeBuilder
+    public sealed class TypeBuilder : TypeInfo, _TypeBuilder
     {
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;            
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif        
+
         #region Declarations
         private class CustAttr
         {
@@ -522,7 +515,11 @@ namespace System.Reflection.Emit {
             else
             {
                 if (destType.IsValueType)
-                    throw new ArgumentException(Environment.GetResourceString("Argument_ConstantNull"));
+                {
+                    // nullable types can hold null value.
+                    if (!(destType.IsGenericType && destType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+                        throw new ArgumentException(Environment.GetResourceString("Argument_ConstantNull"));
+                }
 
                 SetConstantValue(module.GetNativeHandle(), tk, (int)CorElementType.Class, null);
             }
@@ -2261,7 +2258,7 @@ namespace System.Reflection.Emit {
         #endregion
 
         #region Create Type
-#if !FEATURE_CORECLR || FEATURE_NETCORE
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public TypeInfo CreateTypeInfo()
         {
@@ -2270,7 +2267,6 @@ namespace System.Reflection.Emit {
                 return CreateTypeNoLock();
             }
         }
-#endif
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         public Type CreateType()
@@ -2291,11 +2287,7 @@ namespace System.Reflection.Emit {
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         private TypeInfo CreateTypeNoLock()
-#else
-        private Type CreateTypeNoLock()
-#endif
         {
             if (IsCreated())
                 return m_bakedRuntimeType;
@@ -2628,6 +2620,7 @@ public TypeToken TypeToken
 
         #endregion
 
+#if !FEATURE_CORECLR
         void _TypeBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -2647,5 +2640,6 @@ public TypeToken TypeToken
         {
             throw new NotImplementedException();
         }
+#endif
     }
 }

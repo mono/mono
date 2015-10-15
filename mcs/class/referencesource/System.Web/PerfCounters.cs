@@ -86,7 +86,6 @@ namespace System.Web {
 
         // Make sure webengine.dll is loaded before attempting to call into it (ASURT 98531)
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal static void IncrementCounter(AppPerfCounter counter) {
             if (_instance != null)
                 UnsafeNativeMethods.PerfIncrementCounter(_instance.UnsafeHandle, (int) counter);
@@ -97,13 +96,11 @@ namespace System.Web {
                 UnsafeNativeMethods.PerfDecrementCounter(_instance.UnsafeHandle, (int) counter);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal static void IncrementCounterEx(AppPerfCounter counter, int delta) {
             if (_instance != null)
                 UnsafeNativeMethods.PerfIncrementCounterEx(_instance.UnsafeHandle, (int) counter, delta);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal static void SetCounter(AppPerfCounter counter, int value) {
             if (_instance != null)
                 UnsafeNativeMethods.PerfSetCounter(_instance.UnsafeHandle, (int) counter, value);
@@ -127,7 +124,6 @@ namespace System.Web {
                 return -1;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal static void IncrementGlobalCounter(GlobalPerfCounter counter) {
             if (_global != IntPtr.Zero)
                 UnsafeNativeMethods.PerfIncrementCounter(_global, (int) counter);

@@ -492,8 +492,7 @@ namespace System.Net.Sockets {
             if(Logging.On)Logging.Exit(Logging.Sockets, this, "Dispose", "");
         }
 
-        /// <internalonly/>
-        void IDisposable.Dispose() {
+        public void Dispose() {
             Dispose(true);
         }
 

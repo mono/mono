@@ -58,7 +58,7 @@ namespace System.Web.Services.Protocols {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public override string Url {
-            get { return Uri.EscapeUriString(protocol.Request.Url.ToString()).Replace("#", "%23"); }
+            get { return RuntimeUtils.EscapeUri(protocol.Request.Url); }
         }
 
         /// <include file='doc\SoapServerMessage.uex' path='docs/doc[@for="SoapServerMessage.Action"]/*' />

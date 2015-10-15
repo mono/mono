@@ -223,6 +223,10 @@ namespace System.Web.UI.WebControls {
             }
         }
 
+        internal void InternalEnsureDataBound() {
+            EnsureDataBound();
+        }
+
 
         protected virtual void OnDataBound(EventArgs e) {
             EventHandler handler = Events[EventDataBound] as EventHandler;

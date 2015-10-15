@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -30,9 +30,6 @@ namespace System.Threading
     {
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool Read(ref bool location)
         {
             // 
@@ -45,9 +42,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static sbyte Read(ref sbyte location)
         {
@@ -61,9 +55,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static byte Read(ref byte location)
         {
             // 
@@ -76,9 +67,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static short Read(ref short location)
         {
             // 
@@ -91,9 +79,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static ushort Read(ref ushort location)
         {
@@ -107,9 +92,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static int Read(ref int location)
         {
             // 
@@ -122,9 +104,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static uint Read(ref uint location)
         {
@@ -138,9 +117,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static long Read(ref long location)
         {
             //
@@ -154,9 +130,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         [SecuritySafeCritical] // contains unsafe code
         public static ulong Read(ref ulong location)
@@ -176,9 +149,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static IntPtr Read(ref IntPtr location)
         {
             // 
@@ -191,9 +161,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static UIntPtr Read(ref UIntPtr location)
         {
@@ -207,9 +174,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static float Read(ref float location)
         {
             // 
@@ -222,9 +186,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static double Read(ref double location)
         {
             //
@@ -239,9 +200,6 @@ namespace System.Threading
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SecuritySafeCritical] //the intrinsic implementation of this method contains unverifiable code
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static T Read<T>(ref T location) where T : class
         {
             // 
@@ -257,9 +215,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref bool location, bool value)
         {
             // 
@@ -271,9 +226,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static void Write(ref sbyte location, sbyte value)
         {
@@ -286,9 +238,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref byte location, byte value)
         {
             // 
@@ -300,9 +249,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref short location, short value)
         {
             // 
@@ -314,9 +260,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static void Write(ref ushort location, ushort value)
         {
@@ -329,9 +272,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref int location, int value)
         {
             // 
@@ -343,9 +283,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static void Write(ref uint location, uint value)
         {
@@ -358,9 +295,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref long location, long value)
         {
             //
@@ -374,9 +308,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         [SecuritySafeCritical] // contains unsafe code
         public static void Write(ref ulong location, ulong value)
@@ -402,9 +333,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref IntPtr location, IntPtr value)
         {
             // 
@@ -416,9 +344,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [CLSCompliant(false)]
         public static void Write(ref UIntPtr location, UIntPtr value)
         {
@@ -431,9 +356,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref float location, float value)
         {
             // 
@@ -445,9 +367,6 @@ namespace System.Threading
 
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write(ref double location, double value)
         {
             //
@@ -462,9 +381,6 @@ namespace System.Threading
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SecuritySafeCritical] //the intrinsic implementation of this method contains unverifiable code
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static void Write<T>(ref T location, T value) where T : class
         {
             // 

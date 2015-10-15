@@ -98,7 +98,7 @@ namespace System.Web.UI {
         public const char StyleEqualsChar = ':';
         public const string DefaultTabString = "\t";
 
-        // The DesignerRegion attribute name must be kept in [....] with
+        // The DesignerRegion attribute name must be kept in sync with
         // System.Web.UI.Design.DesignerRegion.DesignerRegionNameAttribute
         internal const string DesignerRegionAttributeName = "_designerRegion";
 
@@ -139,7 +139,9 @@ namespace System.Web.UI {
             RegisterTag("big",        HtmlTextWriterTag.Big,            TagType.Inline);
             RegisterTag("blockquote", HtmlTextWriterTag.Blockquote,     TagType.Other);
             RegisterTag("body",       HtmlTextWriterTag.Body,           TagType.Other);
-            RegisterTag("br",         HtmlTextWriterTag.Br,             TagType.Other);
+            // Devdiv 852940, BR is a self-closing tag            
+            RegisterTag("br",         HtmlTextWriterTag.Br,
+                BinaryCompatibility.Current.TargetsAtLeastFramework46 ? TagType.NonClosing : TagType.Other);
             RegisterTag("button",     HtmlTextWriterTag.Button,         TagType.Inline);
             RegisterTag("caption",    HtmlTextWriterTag.Caption,        TagType.Other);
             RegisterTag("center",     HtmlTextWriterTag.Center,         TagType.Other);
@@ -373,7 +375,6 @@ namespace System.Web.UI {
         }
 
         //Writes a string to the text stream.
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override void Write(string s) {
             if (tabsPending) {
                 OutputTabs();
@@ -390,7 +391,6 @@ namespace System.Web.UI {
         }
 
         //Writes a character to the text stream.
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public override void Write(char value) {
             if (tabsPending) {
                 OutputTabs();
@@ -1128,22 +1128,18 @@ namespace System.Web.UI {
             }
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual string RenderBeforeTag() {
             return null;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual string RenderBeforeContent() {
             return null;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual string RenderAfterContent() {
             return null;
         }
      
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual string RenderAfterTag() {
             return null;
         }

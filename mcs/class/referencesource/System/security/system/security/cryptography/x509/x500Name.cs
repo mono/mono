@@ -70,6 +70,9 @@ namespace System.Security.Cryptography.X509Certificates {
         // Public methods.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public string Decode (X500DistinguishedNameFlags flag) {
             uint dwStrType = CAPI.CERT_X500_NAME_STR | MapNameToStrFlag(flag);
             unsafe {
@@ -101,6 +104,9 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public override string Format (bool multiLine) {
             //
             // We must override to use the "numeric" pointer version of
@@ -121,6 +127,9 @@ namespace System.Security.Cryptography.X509Certificates {
         // Private methods.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private unsafe static byte[] Encode (string distinguishedName, X500DistinguishedNameFlags flag) {
             if (distinguishedName == null)
                 throw new ArgumentNullException("distinguishedName");

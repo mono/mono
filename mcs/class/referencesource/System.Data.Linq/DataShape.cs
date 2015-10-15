@@ -17,8 +17,8 @@ namespace System.Data.Linq {
         /// <summary>
         /// Describe a property that is automatically loaded when the containing instance is loaded
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "[....]: Generic types are an important part of Linq APIs and they could not exist without nested generic support.")]
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "[....]: Need to provide static typing.")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Microsoft: Generic types are an important part of Linq APIs and they could not exist without nested generic support.")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Microsoft: Need to provide static typing.")]
         public void LoadWith<T>(Expression<Func<T, object>> expression) {
             if (expression == null) {
                 throw Error.ArgumentNull("expression");
@@ -41,8 +41,8 @@ namespace System.Data.Linq {
         /// <summary>
         /// Place a subquery on the given association.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "[....]: Generic types are an important part of Linq APIs and they could not exist without nested generic support.")]
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "[....]: Need to provide static typing.")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Microsoft: Generic types are an important part of Linq APIs and they could not exist without nested generic support.")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Microsoft: Need to provide static typing.")]
         public void AssociateWith<T>(Expression<Func<T, object>> expression) {
             if (expression == null) {
                 throw Error.ArgumentNull("expression");
@@ -234,7 +234,7 @@ namespace System.Data.Linq {
                 }
                 edges = newEdges;
             }
-            throw new InvalidOperationException("Bug in ValidateTypeGraphAcyclic"); // Getting here means a bug.
+            throw new InvalidOperationException("Bug in ValidateTypeGraphAcyclic"); // Getting here means a 
         }
 
         private static Type GetIncludeTarget(MemberInfo mi) {

@@ -4,8 +4,8 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>LadiPro</OWNER>
+// <OWNER>ShawnFa</OWNER>
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("3c2925fe-8519-45c1-aa79-197b6718c1c1")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IMap<K, V> : IIterable<IKeyValuePair<K, V>>
     {
         [Pure]
@@ -38,7 +37,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("e480ce40-a338-4ada-adcf-272272e48cb9")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IMapView<K, V> : IIterable<IKeyValuePair<K, V>>
     {
         [Pure]
@@ -54,7 +52,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
     [ComImport]
     [Guid("02b51929-c1c4-4a7e-8940-0312b5c18500")]
     [WindowsRuntimeImport]
-    [System.Runtime.ForceTokenStabilization]
     internal interface IKeyValuePair<K, V>
     {
         [Pure]

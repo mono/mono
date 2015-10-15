@@ -453,7 +453,7 @@ namespace System.Workflow.Runtime.Hosting
                         WorkflowTrace.Host.TraceEvent(TraceEventType.Information, 0, "SqlWorkflowPersistenceService.RetrieveInstanceState retrying.");
                         continue;
                     }
-                    else if (e is RetryReadException)    // ### hardcoded retry to work around sql ADM64 read bug ###
+                    else if (e is RetryReadException)    // ### hardcoded retry to work around sql ADM64 read 
                     {
                         count++;
                         if (count < 10)
@@ -510,7 +510,7 @@ namespace System.Workflow.Runtime.Hosting
                         WorkflowTrace.Host.TraceEvent(TraceEventType.Information, 0, "SqlWorkflowPersistenceService.RetrieveCompletedScope retrying.");
                         continue;
                     }
-                    else if (e is RetryReadException)    // ### hardcoded retry to work around sql ADM64 read bug ###
+                    else if (e is RetryReadException)    // ### hardcoded retry to work around sql ADM64 read 
                     {
                         count++;
                         if (count < 10)
@@ -617,7 +617,7 @@ namespace System.Workflow.Runtime.Hosting
                     {
                         WorkflowTrace.Host.TraceEvent(TraceEventType.Information, 0, "SqlWorkflowPersistenceService.RetrieveStateFromDB Failed to read results {0}", instanceId);
                     }
-                    else if ((int)resultParam.Value > 0)    // found results but failed to read - sql bug - retry the query
+                    else if ((int)resultParam.Value > 0)    // found results but failed to read - sql 
                     {
                         WorkflowTrace.Host.TraceEvent(TraceEventType.Error, 0, "SqlWorkflowPersistenceService.RetrieveStateFromDB Failed to read results {1}, @result == {0}", (int)resultParam.Value, instanceId);
                         throw new RetryReadException();

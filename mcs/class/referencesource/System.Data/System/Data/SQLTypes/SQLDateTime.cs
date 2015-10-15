@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -198,9 +198,9 @@ namespace System.Data.SqlTypes {
                 // ISSUE: Is this code reachable?  For this code to be reached there
                 //    must be a value for dblVal such that:
                 //        dblVal - (long)dblVal = 1.0
-                //    This seems odd, but there was a bug (51261) that resulted because
-                //    there was a negative value for dblVal such that dblVal + 1.0 = 1.0
-                //
+                //    This seems odd, but there was a 
+
+
                 day ++;
                 time -= SQLTicksPerDay;
             }

@@ -32,7 +32,7 @@ namespace System.ServiceModel.Security
         {
             SamlAssertionDirectKeyIdentifierClause that = keyIdentifierClause as SamlAssertionDirectKeyIdentifierClause;
 
-            // PreSharp Bug: Parameter 'that' to this public method must be validated: A null-dereference can occur here.
+            // PreSharp 
 #pragma warning suppress 56506
             return (ReferenceEquals(this, that) || (that != null && that.SamlUri == this.SamlUri));
         }

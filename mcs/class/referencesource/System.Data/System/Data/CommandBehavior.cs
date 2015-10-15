@@ -2,8 +2,8 @@
 // <copyright file="CommandBehavior.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">markash</owner>
+// <owner current="true" primary="false">laled</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -14,7 +14,7 @@ namespace System.Data {
         SingleResult     = 1,  // with data, force single result, may affect database
         SchemaOnly       = 2,  // column info, no data, no effect on database
         KeyInfo          = 4,  // column info + primary key information (if available)
-        // 
+        // UNDONE: SingleRow = 8 | SingleResult,
         SingleRow        = 8, // data, hint single row and single result, may affect database - doesn't apply to child(chapter) results
         SequentialAccess = 0x10,
         CloseConnection  = 0x20,

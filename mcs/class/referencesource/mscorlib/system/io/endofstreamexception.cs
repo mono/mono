@@ -7,7 +7,7 @@
 **
 ** Class:  EndOfStreamException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception to be thrown when reading past end-of-file.

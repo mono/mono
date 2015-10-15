@@ -127,9 +127,9 @@ namespace System.Runtime.Remoting.Messaging{
             }
         }
         
-        // <STRIP>For callContexts we intend to expose only name, value dictionary
-        // type of behavior for now. We will re-consider if we need to expose
-        // the other functions above for Beta-2.</STRIP>
+        // <
+
+
         [System.Security.SecurityCritical]  // auto-generated
         public static Object GetData(String name)
         {
@@ -644,7 +644,7 @@ namespace System.Runtime.Remoting.Messaging{
             }
             return currentPrincipal;
         }
-#if FEATURE_REMOTING
+
         // Takes outgoing headers and inserts them        
         [System.Security.SecurityCritical]  // auto-generated
         internal void PropagateOutgoingHeadersToMessage(IMessage msg)
@@ -672,7 +672,7 @@ namespace System.Runtime.Remoting.Messaging{
                 }
             }
         } // PropagateOutgoingHeadersToMessage
-#endif
+
         // Retrieve key to use for header.
         internal static String GetPropertyKeyForHeader(Header header)
         {
@@ -685,7 +685,6 @@ namespace System.Runtime.Remoting.Messaging{
                 return header.Name;                
         } // GetPropertyKeyForHeader
 
-#if FEATURE_REMOTING
         // Take headers out of message and stores them in call context
         [System.Security.SecurityCritical]  // auto-generated
         internal void PropagateIncomingHeadersToCallContext(IMessage msg)
@@ -747,7 +746,6 @@ namespace System.Runtime.Remoting.Messaging{
             _recvHeaders = headers;
             _sendHeaders = null;
         } // PropagateIncomingHeadersToCallContext
-#endif // FEATURE_REMOTING        
     } // class LogicalCallContext
 
     

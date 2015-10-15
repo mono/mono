@@ -338,7 +338,7 @@ namespace System.ServiceModel.Channels
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream.Length contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream.Length contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupported)));
             }
         }
@@ -347,7 +347,7 @@ namespace System.ServiceModel.Channels
         {
             get
             {
-#pragma warning suppress 56503 // [....], required by the Stream.Position contract
+#pragma warning suppress 56503 // Microsoft, required by the Stream.Position contract
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException(SR.GetString(SR.SeekNotSupported)));
             }
             set
@@ -470,7 +470,7 @@ namespace System.ServiceModel.Channels
                 {
                     thisPtr.HandleIO(thisPtr.connection);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

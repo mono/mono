@@ -2,12 +2,18 @@
 // <copyright file="XmlQualifiedName.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml {
     using System.Collections;
     using System.Diagnostics;
+#if !SILVERLIGHT
+    using Microsoft.Win32;
+    using System.Reflection;
+    using System.Security;
+    using System.Security.Permissions;
+#endif
 
     /// <include file='doc\XmlQualifiedName.uex' path='docs/doc[@for="XmlQualifiedName"]/*' />
     /// <devdoc>
@@ -17,6 +23,10 @@ namespace System.Xml {
     [Serializable]
 #endif
     public class XmlQualifiedName {
+#if !SILVERLIGHT
+        delegate int HashCodeOfStringDelegate(string s, int sLen, long additionalEntropy);
+        static HashCodeOfStringDelegate hashCodeDelegate = null;
+#endif
         string name;
         string ns;
 
@@ -74,7 +84,16 @@ namespace System.Xml {
         /// </devdoc>
         public override int GetHashCode() {
             if(hash == 0) {
+#if !SILVERLIGHT
+                if (hashCodeDelegate == null) {
+                    hashCodeDelegate = GetHashCodeDelegate();
+                }
+
+                hash = hashCodeDelegate(Name, Name.Length, 0);
+#else
+
                 hash = Name.GetHashCode() /*+ Namespace.GetHashCode()*/; // for perf reasons we are not taking ns's hashcode.
+#endif
             }
             return hash;
         }
@@ -144,6 +163,59 @@ namespace System.Xml {
         }
 
 #if !SILVERLIGHT // These methods are not used in Silverlight
+        [SecuritySafeCritical]
+        [ReflectionPermission(SecurityAction.Assert, Unrestricted = true)]
+        private static HashCodeOfStringDelegate GetHashCodeDelegate() {
+             // If we are using randomized hashing and we find the Marving hash method, we use that
+             // Otherwise, we use the old string hashing function.
+ 
+             if (!IsRandomizedHashingDisabled())
+             {
+                MethodInfo getHashCodeMethodInfo = typeof(String).GetMethod("InternalMarvin32HashString", BindingFlags.NonPublic | BindingFlags.Static);
+                 if (getHashCodeMethodInfo != null)
+                 {
+                    return (HashCodeOfStringDelegate)Delegate.CreateDelegate(typeof(HashCodeOfStringDelegate), getHashCodeMethodInfo);
+                 }
+                // This will fall through and return a delegate to the old hash function
+                Debug.Assert(false, "Randomized hashing is not supported.");
+            }
+            return new HashCodeOfStringDelegate(GetHashCodeOfString);
+        }
+
+        [SecuritySafeCritical]
+        [RegistryPermission(SecurityAction.Assert, Unrestricted = true)]
+        private static bool IsRandomizedHashingDisabled() {
+            const string regValueName = "DisableRandomizedHashingOnXmlQualifiedName";
+            bool disableHashing = false; // default value
+            if (!ReadBoolFromXmlRegistrySettings(Registry.CurrentUser, regValueName, ref disableHashing)) {
+                ReadBoolFromXmlRegistrySettings(Registry.LocalMachine, regValueName, ref disableHashing);
+            }
+            return disableHashing;
+        }
+
+        [SecurityCritical]
+        private static bool ReadBoolFromXmlRegistrySettings(RegistryKey hive, string regValueName, ref bool value) {
+            const string regValuePath = @"SOFTWARE\Microsoft\.NETFramework\XML";
+            try {
+                using (RegistryKey xmlRegKey = hive.OpenSubKey(regValuePath, false)) {
+                    if (xmlRegKey != null) {
+                        if (xmlRegKey.GetValueKind(regValueName) == RegistryValueKind.DWord) {
+                            value = ((int)xmlRegKey.GetValue(regValueName)) == 1;
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch { /* use the default if we couldn't read the key */ }
+            return false;
+        }
+
+        private static int GetHashCodeOfString(string s, int length, long additionalEntropy)
+        {
+            // This is the fallback method for calling the regular hashcode method
+            return s.GetHashCode();
+        }
+		
         // --------- Some useful internal stuff -----------------
         internal void Init(string name, string ns) {
             Debug.Assert(name != null && ns != null);

@@ -2,7 +2,7 @@
 // <copyright file="FunctionQuery.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace MS.Internal.Xml.XPath {
@@ -62,7 +62,7 @@ namespace MS.Internal.Xml.XPath {
             object[] argVals = new object[args.Count];
             for (int i = 0; i < args.Count; i ++) {
                 argVals[i] = args[i].Evaluate(nodeIterator);
-                if (argVals[i] is XPathNodeIterator) {// ForBack Compat. To protect our queries from users. bug#372077 & 20006123 
+                if (argVals[i] is XPathNodeIterator) {// ForBack Compat. To protect our queries from users. 
                     argVals[i] = new XPathSelectionIterator(nodeIterator.Current, args[i]);
                 }
             }

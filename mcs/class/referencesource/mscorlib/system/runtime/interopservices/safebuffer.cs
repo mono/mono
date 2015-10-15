@@ -135,7 +135,6 @@ using System.Diagnostics.Contracts;
             _numBytes = checked((UIntPtr) (numElements * sizeOfEachElement));
         }
 
-#if !FEATURE_CORECLR
         /// <summary>
         /// Specifies the the size of the region in memory, as the number of 
         /// elements in an array.  Must be called before using the SafeBuffer.
@@ -145,7 +144,6 @@ using System.Diagnostics.Contracts;
         {
             Initialize(numElements, Marshal.AlignedSizeOf<T>());
         }
-#endif
 
         // Callers should ensure that they check whether the pointer ref param
         // is null when AcquirePointer returns.  If it is not null, they must 

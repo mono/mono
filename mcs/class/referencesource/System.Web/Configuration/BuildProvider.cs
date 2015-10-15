@@ -70,7 +70,7 @@ namespace System.Web.Configuration {
             return (o != null && StringUtil.EqualsIgnoreCase(Extension, o.Extension) && Type == o.Type);
         }
         public override int GetHashCode() {
-            return HashCodeCombiner.CombineHashCodes(Extension.ToLower(CultureInfo.InvariantCulture).GetHashCode(),
+            return HashCodeCombiner.CombineHashCodes(StringUtil.GetNonRandomizedHashCode(Extension.ToLower(CultureInfo.InvariantCulture)),
                                                      Type.GetHashCode());
         }
 

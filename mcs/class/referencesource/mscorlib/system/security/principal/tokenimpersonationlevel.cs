@@ -3,12 +3,12 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 // 
 
 namespace System.Security.Principal
 {
-#if !FEATURE_NETCORE
+#if !FEATURE_CORECLR
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
 #endif

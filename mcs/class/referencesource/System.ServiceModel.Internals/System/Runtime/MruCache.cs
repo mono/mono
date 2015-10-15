@@ -60,7 +60,7 @@ namespace System.Runtime
             Fx.Assert(null != key, "");
 
             // if anything goes wrong (duplicate entry, etc) we should 
-            // clear our caches so that we don't get out of [....]
+            // clear our caches so that we don't get out of sync
             bool success = false;
             try
             {

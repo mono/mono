@@ -5,7 +5,7 @@
 // ==--==
 //  FileIOPermission.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 
 namespace System.Security.Permissions {
@@ -940,6 +940,40 @@ namespace System.Security.Permissions {
             // This implementation is only to silence a compiler warning.
             return base.GetHashCode();
         }
+
+        /// <summary>
+        /// Call this method if you don't need a the FileIOPermission for anything other than calling Demand() once.
+        /// 
+        /// This method tries to verify full access before allocating a FileIOPermission object.
+        /// If full access is there, then we still have to emulate the checks that creating the 
+        /// FileIOPermission object would have performed.
+        /// 
+        /// IMPORTANT: This method should only be used after calling GetFullPath on the path to verify
+        /// 
+        /// </summary>
+        /// <param name="access"></param>
+        /// <param name="path"></param>
+        /// <param name="checkForDuplicates"></param>
+        /// <param name="needFullPath"></param>
+        [System.Security.SecuritySafeCritical]
+        internal static void QuickDemand(FileIOPermissionAccess access, string fullPath, bool checkForDuplicates, bool needFullPath)
+        {
+            if (!CodeAccessSecurityEngine.QuickCheckForAllDemands())
+            {
+                new FileIOPermission(access, new string[] { fullPath }, checkForDuplicates, needFullPath).Demand();
+            }
+            else
+            {
+                //Emulate FileIOPermission checks
+                Path.CheckInvalidPathChars(fullPath, true);
+
+                if (fullPath.Length > 2 && fullPath.IndexOf(':', 2) != -1)
+                {
+                    throw new NotSupportedException(Environment.GetResourceString("Argument_PathFormatNotSupported"));
+                }
+            }
+        }
+
     }
     
     [Serializable]
@@ -1214,13 +1248,8 @@ namespace System.Security.Permissions {
         
         private static String GetRoot( String path )
         {
-#if !PLATFORM_UNIX            
             String str = path.Substring( 0, 3 );
             if (str.EndsWith( ":\\", StringComparison.Ordinal))
-#else
-            String str = path.Substring( 0, 1 );
-            if(str ==  "/")
-#endif // !PLATFORM_UNIX                        
             {
                 return str;
             }

@@ -29,11 +29,11 @@ namespace System.Xml
             if (binaryCompatabilityType == null)
                 return false;
 
-            PropertyInfo runningOnV4_5_2_Property = binaryCompatabilityType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            if (runningOnV4_5_2_Property == null)
+            PropertyInfo property = binaryCompatabilityType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            if (property  == null)
                 return false;
 
-            return (bool)runningOnV4_5_2_Property.GetValue(null);
+            return (bool)property.GetValue(null);
         }
     }
 }

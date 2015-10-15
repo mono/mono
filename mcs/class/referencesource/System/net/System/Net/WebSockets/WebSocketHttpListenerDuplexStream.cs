@@ -203,8 +203,8 @@ namespace System.Net.WebSockets
             return bytesRead;
         }
 
-        // return value indicates [....] vs async completion
-        // false: [....] completion
+        // return value indicates sync vs async completion
+        // false: sync completion
         // true: async completion
         private unsafe bool ReadAsyncFast(HttpListenerAsyncEventArgs eventArgs)
         {
@@ -480,8 +480,8 @@ namespace System.Net.WebSockets
             }
         }
 
-        // return value indicates [....] vs async completion
-        // false: [....] completion
+        // return value indicates sync vs async completion
+        // false: sync completion
         // true: async completion
         private bool WriteAsyncFast(HttpListenerAsyncEventArgs eventArgs)
         {
@@ -649,7 +649,7 @@ namespace System.Net.WebSockets
                 }
 
                 // throw OperationCancelledException when canceled by the caller
-                // otherwise ---- the exception
+                // otherwise swallow the exception
                 cancellationToken.ThrowIfCancellationRequested();
             }
             finally
@@ -1160,7 +1160,7 @@ namespace System.Net.WebSockets
                 }
             }
 
-            // Method to update internal state after [....] or async completion.
+            // Method to update internal state after sync or async completion.
             private void SetResults(Exception exception, int bytesTransferred)
             {
                 m_Exception = exception;

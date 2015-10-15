@@ -2,8 +2,8 @@
 // <copyright file="OleDbHResult.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">markash</owner>
+// <owner current="true" primary="false">laled</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.OleDb {
@@ -452,7 +452,7 @@ namespace System.Data.OleDb {
         //  Method is not supported by this provider.
         DB_E_NOTSUPPORTED                = unchecked((int)0x80040E53),
 
-        // MessageId: DB_E_MAXPENDCHANGE----CEEDED
+        // MessageId: DB_E_MAXPENDCHANGESEXCEEDED
         // MessageText:
         //  Number of rows with pending changes exceeded the limit.
         DB_E_MAXPENDCHANGESEXCEEDED      = unchecked((int)0x80040E54),

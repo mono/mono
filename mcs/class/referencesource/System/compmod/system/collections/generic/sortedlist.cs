@@ -59,10 +59,12 @@ namespace System.Collections.Generic {
     // 
     [DebuggerTypeProxy(typeof(System_DictionaryDebugView<,>))]
     [DebuggerDisplay("Count = {Count}")]
-    [Serializable()]    
+#if !FEATURE_NETCORE
+    [Serializable()]
+#endif
     [System.Runtime.InteropServices.ComVisible(false)]
     public class SortedList<TKey, TValue> : 
-        IDictionary<TKey, TValue>, System.Collections.IDictionary
+        IDictionary<TKey, TValue>, System.Collections.IDictionary, IReadOnlyDictionary<TKey, TValue>
     {
         private TKey[] keys;
         private TValue[] values;
@@ -71,7 +73,9 @@ namespace System.Collections.Generic {
         private IComparer<TKey> comparer;
         private KeyList keyList;
         private ValueList valueList;
+#if !FEATURE_NETCORE
         [NonSerialized]
+#endif
         private Object _syncRoot;        
 
         static TKey[] emptyKeys = new TKey[0]; 
@@ -205,7 +209,7 @@ namespace System.Collections.Generic {
         // of entries the list can contain before a reallocation of the internal
         // arrays is required.
         // 
-         public int Capacity {
+        public int Capacity {
             get {
                 return keys.Length;
             }
@@ -292,6 +296,12 @@ namespace System.Collections.Generic {
             }
         }
 
+        IEnumerable<TKey> IReadOnlyDictionary<TKey,TValue>.Keys {
+            get {
+                return GetKeyListHelper();
+            }
+        }
+
         // Returns a collection representing the values of this sorted list. This
         // method returns the same object as GetValueList, but typed as an
         // ICollection instead of an IList.
@@ -309,6 +319,12 @@ namespace System.Collections.Generic {
         }
     
         System.Collections.ICollection System.Collections.IDictionary.Values {
+            get {
+                return GetValueListHelper();
+            }
+        }
+
+        IEnumerable<TValue> IReadOnlyDictionary<TKey,TValue>.Values {
             get {
                 return GetValueListHelper();
             }
@@ -664,7 +680,9 @@ namespace System.Collections.Generic {
 
 
         /// <include file='doc\SortedList.uex' path='docs/doc[@for="SortedListEnumerator"]/*' />
+#if !FEATURE_NETCORE
         [Serializable()]
+#endif
         private struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>, System.Collections.IDictionaryEnumerator
         {
             private SortedList<TKey, TValue> _sortedList;
@@ -676,7 +694,7 @@ namespace System.Collections.Generic {
 
             internal const int KeyValuePair = 1;
             internal const int DictEntry = 2;
-			
+            
             internal Enumerator(SortedList<TKey, TValue> sortedList, int getEnumeratorRetType) {
                 this._sortedList = sortedList;
                 this.index = 0;
@@ -745,8 +763,8 @@ namespace System.Collections.Generic {
                     if (getEnumeratorRetType == DictEntry) {
                         return new System.Collections.DictionaryEntry(key, value);
                     } else {
-                        return new KeyValuePair<TKey, TValue>(key, value);		  
-                    }					
+                        return new KeyValuePair<TKey, TValue>(key, value);        
+                    }                   
                 }
             }
                 
@@ -771,8 +789,9 @@ namespace System.Collections.Generic {
             }
         }
 
-
+#if !FEATURE_NETCORE
         [Serializable()]
+#endif
         private sealed class SortedListKeyEnumerator : IEnumerator<TKey>, System.Collections.IEnumerator
         {
             private SortedList<TKey, TValue> _sortedList;
@@ -831,8 +850,9 @@ namespace System.Collections.Generic {
             }
         }
 
-
+#if !FEATURE_NETCORE
         [Serializable()]
+#endif
         private sealed class SortedListValueEnumerator : IEnumerator<TValue>, System.Collections.IEnumerator
         {
             private SortedList<TKey, TValue> _sortedList;
@@ -891,10 +911,11 @@ namespace System.Collections.Generic {
             }
         }
 
-
         [DebuggerTypeProxy(typeof(System_DictionaryKeyCollectionDebugView<,>))]
         [DebuggerDisplay("Count = {Count}")]
+#if !FEATURE_NETCORE
         [Serializable()]
+#endif
         private sealed class KeyList : IList<TKey>, System.Collections.ICollection
         {
             private SortedList<TKey, TValue> _dict;
@@ -992,7 +1013,9 @@ namespace System.Collections.Generic {
     
         [DebuggerTypeProxy(typeof(System_DictionaryValueCollectionDebugView<,>))]
         [DebuggerDisplay("Count = {Count}")]
+#if !FEATURE_NETCORE
         [Serializable()]
+#endif
         private sealed class ValueList : IList<TValue>, System.Collections.ICollection
         {
             private SortedList<TKey, TValue> _dict;

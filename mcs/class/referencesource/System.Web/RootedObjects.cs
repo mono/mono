@@ -164,9 +164,9 @@ namespace System.Web {
                 }
             }
 
-            // Fix Bug 640366: Setting the Principal to null (irrespective of Identity) 
-            // only if framework version is above .NetFramework 4.5 as this change is new and 
-            // we want to keep the functionality same for previous versions.
+            // Fix 
+
+
             if (BinaryCompatibility.Current.TargetsAtLeastFramework45) {
                 Principal = null;
             }

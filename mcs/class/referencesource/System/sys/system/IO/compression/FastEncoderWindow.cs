@@ -109,9 +109,9 @@ namespace System.IO.Compression {
             }
 
 #if DEBUG
-            // For debugging, wipe the window clean, so that if there is a bug in our hashing,
-            // the hash pointers will now point to locations which are not valid for the hash value
-            // (and will be caught by our ASSERTs).
+            // For debugging, wipe the window clean, so that if there is a 
+
+
             Array.Clear(window, FastEncoderWindowSize, window.Length - FastEncoderWindowSize);  
 #endif
 

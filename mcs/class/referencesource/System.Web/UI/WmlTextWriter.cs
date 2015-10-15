@@ -32,7 +32,7 @@ namespace System.Web.UI {
         private bool            _analyzeMode = false;
         private const String    _boldTag   = "b";
         private bool            _boldTagOpen   = false;
-        // 
+        // UNDONE: This HttpBrowserCapabilities instance couples the writer with the HttpContext and can be removed.
         private HttpBrowserCapabilities _browser = null;
         private IDictionary     _controlShortNames = null;
         private HtmlForm        _currentForm = null;
@@ -85,7 +85,7 @@ namespace System.Web.UI {
             }
         }
 
-        // 
+        // UNDONE: This property couples the writer to the HttpContext and can be removed.
         private HttpBrowserCapabilities Browser {
             get {
                 if (_browser == null && HttpContext.Current != null) {
@@ -186,7 +186,7 @@ namespace System.Web.UI {
         /// <devdoc>
         /// <para>[To be supplied.]</para>
         /// </devdoc>
-        // 
+        // UNDONE: See whether this method can be replaced by calls to RenderBeginTag.
         public override void BeginRender() {
             if (AnalyzeMode) {
                 return;
@@ -684,7 +684,7 @@ namespace System.Web.UI {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         internal String ReplaceFormsCookieWithVariable(String queryString) {
-            // 
+            // UNDONE: MMIT FormsAuthentication not integrated yet
             return queryString;
         }
 
@@ -779,8 +779,8 @@ namespace System.Web.UI {
                 // MapClientIDToShortName for details.
                 WriteAttribute("iname", MapClientIDToShortName(iname, false));
             }
-            // 
-
+            // UNDONE: The FormAdapter WrittenFormVariables property couples this writer with the form adapter.  Consider
+            // removing the property somehow.
             if (!((WmlPageAdapter)CurrentForm.Page.Adapter).WrittenFormVariables && ivalue != null && ivalue.Length > 0) {
                 WriteTextEncodedAttribute("ivalue", ivalue);
             }

@@ -7,8 +7,8 @@
 **
 ** File:    AssemblyName
 ** 
-** <OWNER>[....]</OWNER>
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Used for binding and retrieving info about an assembly
@@ -46,7 +46,10 @@ namespace System.Reflection {
         private Version         _Version;
         
         private StrongNameKeyPair            _StrongNameKeyPair;
+
+#if FEATURE_SERIALIZATION
         private SerializationInfo m_siInfo; //A temporary variable which we need during deserialization.
+#endif
 
         private byte[]                _HashForControl;
         private AssemblyHashAlgorithm _HashAlgorithm;
@@ -94,9 +97,11 @@ namespace System.Reflection {
 
         public String CultureName
         {
-            get
-            {
+            get {
                 return (_CultureInfo == null) ? null : _CultureInfo.Name;
+            }
+            set {
+                _CultureInfo = (value == null) ? null : new CultureInfo(value);
             }
         }
     
@@ -309,6 +314,7 @@ namespace System.Reflection {
                 return s;
         }
 
+#if FEATURE_SERIALIZATION
         [System.Security.SecurityCritical]  // auto-generated_required
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -367,6 +373,14 @@ namespace System.Reflection {
             m_siInfo = null;
         }
 
+        // Constructs a new AssemblyName during deserialization.
+        internal AssemblyName(SerializationInfo info, StreamingContext context)
+        {
+            //The graph is not valid until OnDeserialization() has been called.
+            m_siInfo = info; 
+        }
+#endif // FEATURE_SERIALIZATION
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public AssemblyName(String assemblyName)
         {
@@ -416,13 +430,6 @@ namespace System.Reflection {
         {
             RuntimeAssembly dummy = null;
             nInit(out dummy, false, false);
-        }
-
-        // Constructs a new AssemblyName during deserialization.
-        internal AssemblyName(SerializationInfo info, StreamingContext context)
-        {
-            //The graph is not valid until OnDeserialization() has been called.
-            m_siInfo = info; 
         }
 
         internal void SetProcArchIndex(PortableExecutableKinds pek, ImageFileMachine ifm)
@@ -503,6 +510,7 @@ namespace System.Reflection {
             _StrongNameKeyPair = keyPair;
         }
 
+#if !FEATURE_CORECLR
         void _AssemblyName.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -522,6 +530,7 @@ namespace System.Reflection {
         {
             throw new NotImplementedException();
         }
+#endif
 
 #if FEATURE_APTCA
         internal string GetNameWithPublicKey()

@@ -246,7 +246,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         /// <devdoc>
-        /// Called by the Zone when the EditorPart should [....] its values because other EditorParts
+        /// Called by the Zone when the EditorPart should sync its values because other EditorParts
         /// may have changed control properties.  This is only called after all the ApplyChanges have returned.
         /// </devdoc>
         public abstract void SyncChanges();

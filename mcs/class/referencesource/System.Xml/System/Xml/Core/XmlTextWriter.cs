@@ -2,7 +2,7 @@
 // <copyright file="XmlTextWriter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -1364,8 +1364,8 @@ namespace System.Xml {
 
             // Namespaces supported
             if (namespaces) {
-                // We can't use ValidateNames.ParseQName here because of backwards compatibility bug we need to preserve.
-                // The bug is that the character after ':' is validated only as a NCName characters instead of NCStartName.
+                // We can't use ValidateNames.ParseQName here because of backwards compatibility 
+
                 int colonPosition = -1;
 
                 // Parse NCName (may be prefix, may be local name)
@@ -1384,7 +1384,7 @@ namespace System.Xml {
                             // make sure it is not the first or last characters
                             if (position > 0 && position + 1 < nameLength) {
                                 colonPosition = position;
-                                // Because of the back-compat bug (described above) parse the rest as Nmtoken
+                                // Because of the back-compat 
                                 position++;
                                 position += ValidateNames.ParseNmtoken(name, position);
                                 goto Continue;

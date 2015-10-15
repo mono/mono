@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 //
@@ -18,7 +18,7 @@ namespace System.Security.Cryptography {
     // On Orcas RandomNumberGenerator is not disposable, so we cannot add the IDisposable implementation to the
     // CoreCLR mscorlib.  However, this type does need to be disposable since subtypes can and do hold onto
     // native resources. Therefore, on desktop mscorlibs we add an IDisposable implementation.
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR || FEATURE_CORESYSTEM
     : IDisposable
 #endif // !FEATURE_CORECLR
     {
@@ -53,6 +53,19 @@ namespace System.Security.Cryptography {
         }
 
         public abstract void GetBytes(byte[] data);
+
+        public virtual void GetBytes(byte[] data, int offset, int count) {
+            if (data == null) throw new ArgumentNullException("data");
+            if (offset < 0) throw new ArgumentOutOfRangeException("offset", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+            if (count < 0) throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+            if (offset + count > data.Length) throw new ArgumentException(Environment.GetResourceString("Argument_InvalidOffLen"));
+
+            if (count > 0) {
+                byte[] tempData = new byte[count];
+                GetBytes(tempData);
+                Array.Copy(tempData, 0, data, offset, count);
+            }
+        }
 
 #if (!FEATURE_CORECLR && !SILVERLIGHT) || FEATURE_LEGACYNETCFCRYPTO
         public virtual void GetNonZeroBytes(byte[] data)

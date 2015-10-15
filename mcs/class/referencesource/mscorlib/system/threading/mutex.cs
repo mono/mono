@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: Mutex
@@ -39,18 +39,6 @@ namespace System.Threading
     public sealed class Mutex : WaitHandle
     {
         static bool dummyBool;
-
-#if FEATURE_MACL
-        // Enables workaround for known OS bug at 
-        // http://support.microsoft.com/default.aspx?scid=kb;en-us;889318
-        // Calls to OpenMutex and CloseHandle on a mutex must essentially be serialized
-        // to avoid a bug in which the mutex allows multiple entries.
-        static Mutex s_ReservedMutex = null;
-
-        // an arbitrary, reserved name.
-        // 
-        const string c_ReservedMutexName = "Global\\CLR_RESERVED_MUTEX_NAME";
-#endif
 
 #if !FEATURE_MACL
         public class MutexSecurity {
@@ -113,6 +101,9 @@ namespace System.Threading
 #if FEATURE_LEGACYNETCF
         static string WinCEObjectNameQuirk(string name)
         {
+            if (name == null)
+                return null;
+
             // WinCE allowed backslashes in kernel object names, but WinNT does not allow them.
             // Replace all backslashes with a rare unicode character if we are in NetCF compat mode.
             // Mutex was the only named kernel object exposed to phone apps, so we do not have
@@ -205,7 +196,6 @@ namespace System.Threading
                 }
                 m_newMutex = errorCode != Win32Native.ERROR_ALREADY_EXISTS;
                 m_mutex.SetHandleInternal(mutexHandle);
-                mutexHandle.SetAsMutex();
 
                 m_mutex.hasThreadAffinity = true;
 
@@ -292,7 +282,6 @@ namespace System.Threading
         private Mutex(SafeWaitHandle handle)
         {
             SetHandleInternal(handle);
-            handle.SetAsMutex();
             hasThreadAffinity = true;
         }
 
@@ -444,7 +433,6 @@ namespace System.Threading
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         static int CreateMutexHandle(bool initiallyOwned, String name, Win32Native.SECURITY_ATTRIBUTES securityAttribute, out SafeWaitHandle mutexHandle) {            
             int errorCode;  
-            bool fReservedMutexObtained = false;
             bool fAffinity = false;
             
             while(true) {
@@ -472,7 +460,6 @@ namespace System.Threading
 #endif
                             fAffinity = true;
                         }
-                        AcquireReservedMutex(ref fReservedMutexObtained);
                         mutexHandle = Win32Native.OpenMutex(Win32Native.MUTEX_MODIFY_STATE | Win32Native.SYNCHRONIZE, false, name);
                         if(!mutexHandle.IsInvalid)
                         {
@@ -485,9 +472,6 @@ namespace System.Threading
                     }
                     finally 
                     {
-                        if (fReservedMutexObtained)
-                            ReleaseReservedMutex();
-
                         if (fAffinity) {
 #if !FEATURE_CORECLR
                             Thread.EndThreadAffinity();
@@ -529,98 +513,5 @@ namespace System.Threading
         }
 #endif
 
-        // Enables workaround for known OS bug at 
-        // http://support.microsoft.com/default.aspx?scid=kb;en-us;889318
-        // One machine-wide mutex serializes all OpenMutex and CloseHandle operations.
-        [System.Security.SecurityCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
-        [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-#if !FEATURE_CORECLR
-        [SecurityPermission(SecurityAction.Assert, ControlPrincipal = true)]
-#endif
-        internal static unsafe void AcquireReservedMutex(ref bool bHandleObtained)
-        {
-#if FEATURE_MACL
-            SafeWaitHandle mutexHandle = null;
-            int errorCode;
-
-            bHandleObtained = false;
-
-            if (!Environment.IsW2k3) {
-                return;
-            }
-            
-            if (s_ReservedMutex == null) {        
-
-                // Create a maximally-permissive security descriptor, to ensure we never get an
-                // ACCESS_DENIED error when calling CreateMutex
-                MutexSecurity sec = new MutexSecurity();
-                SecurityIdentifier everyoneSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-                sec.AddAccessRule(new MutexAccessRule(everyoneSid, MutexRights.FullControl, AccessControlType.Allow));
-                
-                // For ACL's, get the security descriptor from the MutexSecurity.
-                Win32Native.SECURITY_ATTRIBUTES secAttrs = new Win32Native.SECURITY_ATTRIBUTES();
-                secAttrs.nLength = (int)Marshal.SizeOf(secAttrs);
-                
-                byte[] sd = sec.GetSecurityDescriptorBinaryForm();
-                byte * bytesOnStack = stackalloc byte[sd.Length];
-                Buffer.Memcpy(bytesOnStack, 0, sd, 0, sd.Length);
-                secAttrs.pSecurityDescriptor = bytesOnStack;
-
-                RuntimeHelpers.PrepareConstrainedRegions();
-                try {} 
-                finally {
-                    mutexHandle = Win32Native.CreateMutex(secAttrs, false, c_ReservedMutexName);
-
-                    // need to set specially, since this mutex cannot lock on itself while closing itself.
-                    mutexHandle.SetAsReservedMutex(); 
-                }
-                
-                errorCode = Marshal.GetLastWin32Error();
-                if (mutexHandle.IsInvalid) {
-                    mutexHandle.SetHandleAsInvalid();
-                    __Error.WinIOError(errorCode, c_ReservedMutexName);
-                }
-
-                Mutex m = new Mutex(mutexHandle);
-                Interlocked.CompareExchange(ref s_ReservedMutex, m, null);
-               
-            }
-                
-
-            RuntimeHelpers.PrepareConstrainedRegions();
-            try { }
-            finally {
-                 try {
-                     s_ReservedMutex.WaitOne();
-                     bHandleObtained = true;
-                 }
-                 catch (AbandonedMutexException)
-                 {
-                     // we don't care if another process holding the Mutex was killed
-                     bHandleObtained = true;
-                 }
-            }
-#else
-            bHandleObtained = true;
-#endif
-        }
-
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        internal static void ReleaseReservedMutex()
-        {
-#if FEATURE_MACL
-            if (!Environment.IsW2k3) 
-            {
-                return;
-            }
-            
-            Contract.Assert(s_ReservedMutex != null, 
-                "ReleaseReservedMutex called without prior call to AcquireReservedMutex!");
-            
-            s_ReservedMutex.ReleaseMutex();
-#endif
-        }
     }
 }

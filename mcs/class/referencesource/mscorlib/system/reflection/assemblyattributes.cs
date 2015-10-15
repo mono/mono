@@ -7,7 +7,7 @@
 **
 ** File: AssemblyAttributes
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: For Assembly-related custom attributes.
@@ -362,8 +362,7 @@ namespace System.Reflection {
         }
     }   
 
-    // We don't support key migration on Silverlight, as libraries should all be distributed with the application.
-#if FEATURE_STRONGNAME_MIGRATION || FEATURE_NETCORE
+#if FEATURE_STRONGNAME_MIGRATION
     [AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple=false)]
     public sealed class AssemblySignatureKeyAttribute : Attribute
     {
@@ -388,7 +387,6 @@ namespace System.Reflection {
     }
 #endif
 
-#if FEATURE_CORECLR || !FEATURE_PAL || MONO
     [AttributeUsage (AttributeTargets.Assembly, Inherited=false)]  
 [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class AssemblyKeyNameAttribute : Attribute 
@@ -405,7 +403,6 @@ namespace System.Reflection {
             get { return m_keyName; }
         }
     }
-#endif // FEATURE_CORECLR || !FEATURE_PAL
 
 }
 

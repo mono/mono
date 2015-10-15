@@ -10,9 +10,6 @@ namespace System {
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
 
-    #if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-    #endif //!FEATURE_CORECLR
     [Serializable]
     internal struct Currency
     {
@@ -20,9 +17,6 @@ namespace System {
         
         // Constructs a Currency from a Decimal value.
         //
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         public Currency(Decimal value) {
             m_value = Decimal.ToCurrency(value).m_value;
         }

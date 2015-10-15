@@ -35,18 +35,18 @@ namespace System.Data.Linq.SqlClient {
         [SuppressMessage("Microsoft.Design", "CA1012:AbstractTypesShouldNotHaveConstructors", Justification = "Unknown reason.")]
         public abstract class ObjectMaterializer<TDataReader> where TDataReader : DbDataReader {
             // These are public fields rather than properties for access speed
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public int[] Ordinals;
             [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Globals", Justification = "Spelling is correct.")]
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public object[] Globals;
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public object[] Locals;
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public object[] Arguments;
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public TDataReader DataReader;
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "[....]: This is a public type that is not intended for public use.")]
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields", Justification = "Microsoft: This is a public type that is not intended for public use.")]
             public DbDataReader BufferReader;
 
             public ObjectMaterializer() {
@@ -57,16 +57,16 @@ namespace System.Data.Linq.SqlClient {
             public abstract void SendEntityMaterialized(int globalMetaType, object instance);
             public abstract IEnumerable ExecuteSubQuery(int iSubQuery, object[] args);
 
-            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
             public abstract IEnumerable<T> GetLinkSource<T>(int globalLink, int localFactory, object[] keyValues);
 
-            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
             public abstract IEnumerable<T> GetNestedLinkSource<T>(int globalLink, int localFactory, object instance);
             public abstract bool Read();
             public abstract bool CanDeferLoad { get; }
 
             [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes", Justification = "xiaoruda: The method has to be static because it's used in our generated code and there is no instance of the type.")]
-            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "[....]: Generic parameters are required for strong-typing of the return type.")]
+            [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Microsoft: Generic parameters are required for strong-typing of the return type.")]
             public static IEnumerable<TOutput> Convert<TOutput>(IEnumerable source) {
                 foreach (object value in source) {
                     yield return DBConvert.ChangeType<TOutput>(value);
@@ -717,7 +717,7 @@ namespace System.Data.Linq.SqlClient {
                 return this.Generate(node, null);
             }
 
-            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "[....]: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
+            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Microsoft: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
             [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "These issues are related to our use of if-then and case statements for node types, which adds to the complexity count however when reviewed they are easy to navigate and understand.")]
             private Type Generate(SqlNode node, LocalBuilder locInstance) {
 #if DEBUG
@@ -2212,7 +2212,7 @@ namespace System.Data.Linq.SqlClient {
                 }
             }
 
-            [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", Justification = "[....]: The variable tc for which the rule fires is used in both a Debug.Assert and in a switch statement")]
+            [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", Justification = "Microsoft: The variable tc for which the rule fires is used in both a Debug.Assert and in a switch statement")]
             private void GenerateArrayAssign(Type type) {
                 // This method was copied out of the expression compiler codebase.  
                 // Since DLINQ doesn't currently consume array indexers most of this 
@@ -2263,7 +2263,7 @@ namespace System.Data.Linq.SqlClient {
                 }
             }
 
-            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "address", Justification = "[....]: See comments in source. Usage commented out to improve code coverage test")]
+            [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "address", Justification = "Microsoft: See comments in source. Usage commented out to improve code coverage test")]
             private Type GenerateArrayAccess(Type type, bool address) {
                 // This method was copied out of the expression compiler codebase.  
                 // Since DLINQ doesn't currently consume array indexers most of this 
@@ -2517,7 +2517,7 @@ namespace System.Data.Linq.SqlClient {
                 get { return this.BufferReader != null; }
             }
 
-            [SuppressMessage("Microsoft.Globalization", "CA1306:SetLocaleForDataTypes", Justification = "[....]: Used only as a buffer and never used for string comparison.")]
+            [SuppressMessage("Microsoft.Globalization", "CA1306:SetLocaleForDataTypes", Justification = "Microsoft: Used only as a buffer and never used for string comparison.")]
             internal void Buffer() {
                 if (this.BufferReader == null && (this.hasCurrentRow || !this.hasRead)) {
                     if (this.session.IsBuffered) {
@@ -2801,7 +2801,7 @@ namespace System.Data.Linq.SqlClient {
                 get { return this.buffer != null; }
             }
 
-            [SuppressMessage("Microsoft.Globalization", "CA1306:SetLocaleForDataTypes", Justification = "[....]: Used only as a buffer and never used for string comparison.")]
+            [SuppressMessage("Microsoft.Globalization", "CA1306:SetLocaleForDataTypes", Justification = "Microsoft: Used only as a buffer and never used for string comparison.")]
             public void Buffer() {
                 if (this.buffer == null) {
                     if (this.currentReader != null && !this.currentReader.IsBuffered) {

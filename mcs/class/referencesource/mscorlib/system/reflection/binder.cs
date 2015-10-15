@@ -5,7 +5,7 @@
 // ==--==
 ////////////////////////////////////////////////////////////////////////////////
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 // 
 // This interface defines a set of methods which interact with reflection
 //    during the binding process.  This control allows systems to apply language

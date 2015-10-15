@@ -1323,7 +1323,7 @@ namespace System.ServiceModel.Activities.Dispatcher
 
         // This async result waits for store events and handle them (currently only support HasRunnableWorkflowEvent).
         // It is intended to always complete async to simplify caller usage. 
-        // 1) no code to handle [....] completion. 
+        // 1) no code to handle sync completion. 
         // 2) recursive call will be safe from StackOverflow.
         // For simplicity, we handle (load/run) each event one-by-one.
         // We ---- certain set of exception (see HandleException).  Other will crash the process.

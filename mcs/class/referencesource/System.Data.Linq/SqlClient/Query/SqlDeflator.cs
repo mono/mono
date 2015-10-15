@@ -236,7 +236,7 @@ namespace System.Data.Linq.SqlClient {
                 return select;
             }
 
-            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification="[....]: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
+            [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification="Microsoft: Cast is dependent on node type and casts do not happen unecessarily in a single code path.")]
             private void CheckJoinCondition(SqlExpression expr) {
                 switch (expr.NodeType) {
                     case SqlNodeType.And: {

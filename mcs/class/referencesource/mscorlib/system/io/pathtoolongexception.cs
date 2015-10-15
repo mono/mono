@@ -7,7 +7,7 @@
 **
 ** Class:  PathTooLongException
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exception for paths and/or filenames that are 

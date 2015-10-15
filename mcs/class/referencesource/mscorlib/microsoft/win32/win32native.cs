@@ -112,19 +112,19 @@ namespace Microsoft.Win32 {
      */
     // Remove the default demands for all P/Invoke methods with this
     // global declaration on the class.
-    // <STRIP>Developers - please do not mark this type with the FriendAccessAllowedAttribute.
-    // Do it on a per-method basis if necessary.  There's just too much surface area here
-    // to accidentally take dependencies on, and it may have a few subtle bugs or some 
-    // liberties taken with the definition for our specific purposes.  We can
-    // tackle a global FX P/Invoke definitions feature at some point for size reasons, but  
-    // let's review that set in detail for correctness.  This code is generally solid
-    // but may have a few lingering issues:
-    //   * Using signed ints for the unsigned SIZE_T and DWORD types (use UIntPtr & UInt32)
-    //   * Consider using real pointer types where appropriate (byte*, void*, etc)
-    //   * Consider using SafeHandles in more places
-    //   * the mustBeZero parameters are simplifications for mscorlib's usages and may not
-    //     be appropriate for other FX teams.
-    //   -- Brian, 8/25/2010</STRIP>
+    // <
+
+
+
+
+
+
+
+
+
+
+
+
     [System.Security.SecurityCritical]
     [SuppressUnmanagedCodeSecurityAttribute()]
     internal static class Win32Native {
@@ -687,11 +687,7 @@ namespace Microsoft.Win32 {
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class MEMORYSTATUSEX {
-            internal MEMORYSTATUSEX() {
-                length = (int) Marshal.SizeOf(this);
-            }
-
+        internal struct MEMORYSTATUSEX {
             // The length field must be set to the size of this data structure.
             internal int length;
             internal int memoryLoad;
@@ -716,7 +712,6 @@ namespace Microsoft.Win32 {
         }
 #endif  // !FEATURE_PAL
 
-#if !FEATURE_PAL
         internal const String KERNEL32 = "kernel32.dll";
         internal const String USER32   = "user32.dll";
         internal const String ADVAPI32 = "advapi32.dll";
@@ -732,51 +727,6 @@ namespace Microsoft.Win32 {
 #else //FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME
         internal const String MSCORWKS = "clr.dll";
 #endif //FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME
-
-#else // !FEATURE_PAL
-
- #if !PLATFORM_UNIX
-        internal const String DLLPREFIX = "";
-        internal const String DLLSUFFIX = ".dll";
- #else // !PLATFORM_UNIX
-  #if __APPLE__
-        internal const String DLLPREFIX = "lib";
-        internal const String DLLSUFFIX = ".dylib";
-  #else
-        internal const String DLLPREFIX = "lib";
-        internal const String DLLSUFFIX = ".so";
-  #endif
- #endif // !PLATFORM_UNIX
-
-#if FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME && __APPLE__
-        internal const String KERNEL32 = "coreclr";
-        internal const String USER32   = "coreclr";
-        internal const String ADVAPI32 = "coreclr";
-        internal const String OLE32    = "coreclr";
-        internal const String OLEAUT32 = "coreclr";
-        internal const String SHELL32  = "coreclr";
-        internal const String SHIM     = "coreclr";
-#else // FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME && __APPLE__
-        internal const String KERNEL32 = DLLPREFIX + "rotor_pal" + DLLSUFFIX;
-        internal const String USER32   = DLLPREFIX + "rotor_pal" + DLLSUFFIX;
-        internal const String ADVAPI32 = DLLPREFIX + "rotor_pal" + DLLSUFFIX;
-        internal const String OLE32    = DLLPREFIX + "rotor_palrt" + DLLSUFFIX;
-        internal const String OLEAUT32 = DLLPREFIX + "rotor_palrt" + DLLSUFFIX;
-        internal const String SHELL32  = DLLPREFIX + "rotor_pal" + DLLSUFFIX;
-        internal const String SHIM     = DLLPREFIX + "sscoree" + DLLSUFFIX;
-#endif // FEATURE_CORECLR && __APPLE__
-
-#if FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME
-  #if __APPLE__
-        internal const String MSCORWKS = "coreclr";
-  #else // __APPLE__
-        internal const String MSCORWKS = DLLPREFIX + "coreclr" + DLLSUFFIX;
-  #endif // __APPLE__
-#else //FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME
-        internal const String MSCORWKS = DLLPREFIX + "clr" + DLLSUFFIX;
-#endif //FEATURE_MAIN_CLR_MODULE_USES_CORE_NAME
-
-#endif // !FEATURE_PAL
 
         // From WinBase.h
         internal const int SEM_FAILCRITICALERRORS = 1;
@@ -803,7 +753,7 @@ namespace Microsoft.Win32 {
             }
             else {
                 StringBuilderCache.Release(sb);
-                return Environment.GetRuntimeResourceString("UnknownError_Num", errorCode);
+                return Environment.GetResourceString("UnknownError_Num", errorCode);
             }
         }
         
@@ -836,9 +786,15 @@ namespace Microsoft.Win32 {
         internal static extern void ZeroMemory(IntPtr address, UIntPtr length);
 
 #if !FEATURE_PAL
-        [DllImport(KERNEL32, SetLastError=true)]
+        internal static bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX buffer)
+        {
+            buffer.length = Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+            return GlobalMemoryStatusExNative(ref buffer);
+        }
+
+        [DllImport(KERNEL32, SetLastError=true, EntryPoint="GlobalMemoryStatusEx")]
         [ResourceExposure(ResourceScope.None)]
-        internal static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX buffer);
+        private static extern bool GlobalMemoryStatusExNative([In, Out] ref MEMORYSTATUSEX buffer);
 
         [DllImport(KERNEL32, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
@@ -1103,7 +1059,7 @@ namespace Microsoft.Win32 {
         // simultaneously: overlapped IO, free the memory for the overlapped 
         // struct in a callback (or an EndRead method called by that callback), 
         // and pass in an address for the numBytesRead parameter.  
-        // <STRIP> See Windows Bug 105512 for details.  -- </STRIP>
+        // <
 
         [DllImport(KERNEL32, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
@@ -1119,7 +1075,7 @@ namespace Microsoft.Win32 {
         // simultaneously: overlapped IO, free the memory for the overlapped 
         // struct in a callback (or an EndWrite method called by that callback),
         // and pass in an address for the numBytesRead parameter.  
-        // <STRIP> See Windows Bug 105512 for details.  -- </STRIP>
+        // <
 
         [DllImport(KERNEL32, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
@@ -1449,11 +1405,9 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern bool SetFileAttributes(String name, int attr);
 
-#if !PLATFORM_UNIX
         [DllImport(KERNEL32, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern int GetLogicalDrives();
-#endif // !PLATFORM_UNIX
 
         [DllImport(KERNEL32, CharSet=CharSet.Auto, SetLastError=true, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.None)]
@@ -1486,12 +1440,6 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.Machine)]
         internal static extern bool SetCurrentDirectory(String path);
 
-#if __APPLE__
-        // interop on the Mac doesn't play well with EntryPointAttribute on PAL-defined functions yet
-        [DllImport(KERNEL32, SetLastError=false)]
-        [ResourceExposure(ResourceScope.Process)]
-        internal static extern int SetErrorMode(int newMode);
-#else // __APPLE__
         [DllImport(KERNEL32, SetLastError=false, EntryPoint="SetErrorMode", ExactSpelling=true)]
         [ResourceExposure(ResourceScope.Process)]
         private static extern int SetErrorMode_VistaAndOlder(int newMode);
@@ -1519,7 +1467,6 @@ namespace Microsoft.Win32 {
 #endif
             return SetErrorMode_VistaAndOlder(newMode);
         }
-#endif // __APPLE__
 
         internal const int LCID_SUPPORTED = 0x00000002;  // supported locale ids
 
@@ -1569,9 +1516,6 @@ namespace Microsoft.Win32 {
 
         [DllImport(Win32Native.OLE32)]
         [ResourceExposure(ResourceScope.None)]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal static extern IntPtr CoTaskMemAlloc(UIntPtr cb);
 
         [DllImport(Win32Native.OLE32)]
@@ -1580,9 +1524,6 @@ namespace Microsoft.Win32 {
 
         [DllImport(Win32Native.OLE32)]
         [ResourceExposure(ResourceScope.None)]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal static extern void CoTaskMemFree(IntPtr ptr);
 
 #if !FEATURE_PAL
@@ -1782,14 +1723,6 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.Process)]
         internal static extern bool SetConsoleOutputCP(uint codePage);
 
-
-        internal const int VER_PLATFORM_WIN32s = 0;
-        internal const int VER_PLATFORM_WIN32_WINDOWS = 1;
-        internal const int VER_PLATFORM_WIN32_NT = 2;
-        internal const int VER_PLATFORM_WINCE = 3;
-        internal const int VER_PLATFORM_UNIX = 10;
-        internal const int VER_PLATFORM_MACOSX = 11;
-
 #if !FEATURE_PAL
         [DllImport(ADVAPI32, CharSet=CharSet.Auto, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.Machine)]
@@ -1926,32 +1859,32 @@ namespace Microsoft.Win32 {
 //////!!!!!! 3) rotor\pal\inc\rotor_pal.h                         !!!!!!////////
 //////!!!!!! 4) rotor\pal\corunix\shfolder\shfolder.cpp           !!!!!!////////
 //////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!////////
-/*<STRIP>
-        // .NET Framework 4.0 and newer - Vista+                 ||| \public\sdk\inc\knownfolders.h
-        internal const Guid FOLDERID_Contacts               = new Guid("{56784854-C6CB-462b-8169-88E350ACB882}");
-        internal const Guid FOLDERID_Downloads              = new Guid("{374DE290-123F-4565-9164-39C4925E467B}");
-        internal const Guid FOLDERID_GameTasks              = new Guid("{054FAE61-4DD8-4787-80B6-090220C4B700}");
-        internal const Guid FOLDERID_Links                  = new Guid("{bfb9d5e0-c6a9-404c-b2b2-ae6db6af4968}");
-        internal const Guid FOLDERID_LocalAppDataLow        = new Guid("{A520A1A4-1780-4FF6-BD18-167343C5AF16}");
-        internal const Guid FOLDERID_OriginalImages         = new Guid("{2C36C0AA-5812-4b87-BFD0-4CD0DFB19B39}");
-        internal const Guid FOLDERID_PhotoAlbums            = new Guid("{69D2CF90-FC33-4FB7-9A0C-EBB0F0FCB43C}");
-        internal const Guid FOLDERID_Playlists              = new Guid("{DE92C1C7-837F-4F69-A3BB-86E631204A23}");
-        internal const Guid FOLDERID_QuickLaunch            = new Guid("{52a4f021-7b75-48a9-9f6b-4b87a210bc8f}");
-        internal const Guid FOLDERID_SavedGames             = new Guid("{4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4}");
-        internal const Guid FOLDERID_SavedSearches          = new Guid("{7d1d3a04-debb-4115-95cf-2f29da2920da}");
-        internal const Guid FOLDERID_SidebarParts           = new Guid("{A75D362E-50FC-4fb7-AC2C-A8BEAA314493}");
-        internal const Guid FOLDERID_PublicDownloads        = new Guid("{3D644C9B-1FB8-4f30-9B45-F670235F79C0}");
-        internal const Guid FOLDERID_PublicGameTasks        = new Guid("{DEBF2536-E1A8-4c59-B6A2-414586476AEA}");
-        internal const Guid FOLDERID_SampleMusic            = new Guid("{B250C668-F57D-4EE1-A63C-290EE7D1AA1F}");
-        internal const Guid FOLDERID_SamplePictures         = new Guid("{C4900540-2379-4C75-844B-64E6FAF8716B}");
-        internal const Guid FOLDERID_SamplePlaylists        = new Guid("{15CA69B3-30EE-49C1-ACE1-6B5EC372AFB5}");
-        internal const Guid FOLDERID_SampleVideos           = new Guid("{859EAD94-2E85-48AD-A71A-0969CB56A6CD}");
-        internal const Guid FOLDERID_SidebarDefaultParts    = new Guid("{7B396E54-9EC5-4300-BE0A-2482EBAE1A26}");
-        internal const Guid FOLDERID_ProgramFilesCommonX64  = new Guid("{6365D5A7-0F0D-45e5-87F6-0DA56B6A4F7D}");
-        internal const Guid FOLDERID_ProgramFilesX64        = new Guid("{6D809377-6AF0-444b-8957-A3773F02200E}");
-        internal const Guid FOLDERID_Public                 = new Guid("{DFDF76A2-C82A-4D63-906A-5644AC457385}");
-        internal const Guid FOLDERID_UserProfiles           = new Guid("{0762D272-C50A-4BB0-A382-697DCD729B80}");
-</STRIP>*/
+/*<
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
         // .NET Framework 4.0 and newer - all versions of windows ||| \public\sdk\inc\shlobj.h
         internal const int CSIDL_FLAG_CREATE                = 0x8000; // force folder creation in SHGetFolderPath
         internal const int CSIDL_FLAG_DONT_VERIFY           = 0x4000; // return an unverified folder path
@@ -2101,7 +2034,7 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
         bool AdjustTokenPrivileges (
-            [In]     SafeTokenHandle       TokenHandle,
+            [In]     SafeAccessTokenHandle TokenHandle,
             [In]     bool                  DisableAllPrivileges,
             [In]     ref TOKEN_PRIVILEGE   NewState,
             [In]     uint                  BufferLength,
@@ -2118,9 +2051,9 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
         bool CheckTokenMembership(
-            [In]     SafeTokenHandle TokenHandle,
-            [In]     byte[]          SidToCheck,
-            [In,Out] ref bool        IsMember);
+            [In]     SafeAccessTokenHandle  TokenHandle,
+            [In]     byte[]                 SidToCheck,
+            [In,Out] ref bool               IsMember);
 
         [DllImport(
              ADVAPI32,
@@ -2200,7 +2133,7 @@ namespace Microsoft.Win32 {
             [In]     IntPtr                     hSourceProcessHandle,
             [In]     IntPtr                     hSourceHandle,
             [In]     IntPtr                     hTargetProcessHandle,
-            [In,Out] ref SafeTokenHandle        lpTargetHandle,
+            [In,Out] ref SafeAccessTokenHandle  lpTargetHandle,
             [In]     uint                       dwDesiredAccess,
             [In]     bool                       bInheritHandle,
             [In]     uint                       dwOptions);
@@ -2211,9 +2144,9 @@ namespace Microsoft.Win32 {
         internal static extern 
         bool DuplicateHandle (
             [In]     IntPtr                     hSourceProcessHandle,
-            [In]     SafeTokenHandle            hSourceHandle,
+            [In]     SafeAccessTokenHandle      hSourceHandle,
             [In]     IntPtr                     hTargetProcessHandle,
-            [In,Out] ref SafeTokenHandle        lpTargetHandle,
+            [In,Out] ref SafeAccessTokenHandle  lpTargetHandle,
             [In]     uint                       dwDesiredAccess,
             [In]     bool                       bInheritHandle,
             [In]     uint                       dwOptions);
@@ -2224,23 +2157,23 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
         bool DuplicateTokenEx (
-            [In]     SafeTokenHandle             ExistingTokenHandle,
+            [In]     SafeAccessTokenHandle       ExistingTokenHandle,
             [In]     TokenAccessLevels           DesiredAccess,
             [In]     IntPtr                      TokenAttributes,
             [In]     SECURITY_IMPERSONATION_LEVEL ImpersonationLevel,
             [In]     System.Security.Principal.TokenType TokenType,
-            [In,Out] ref SafeTokenHandle         DuplicateTokenHandle );
+            [In,Out] ref SafeAccessTokenHandle   DuplicateTokenHandle );
 
         [DllImport(ADVAPI32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
         bool DuplicateTokenEx (
-            [In]     SafeTokenHandle            hExistingToken,
+            [In]     SafeAccessTokenHandle      hExistingToken,
             [In]     uint                       dwDesiredAccess,
             [In]     IntPtr                     lpTokenAttributes,   // LPSECURITY_ATTRIBUTES
             [In]     uint                       ImpersonationLevel,
             [In]     uint                       TokenType,
-            [In,Out] ref SafeTokenHandle        phNewToken);
+            [In,Out] ref SafeAccessTokenHandle  phNewToken);
 #endif
         [DllImport(
              ADVAPI32,
@@ -2324,7 +2257,7 @@ namespace Microsoft.Win32 {
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
         bool GetTokenInformation (
-            [In]  SafeTokenHandle       TokenHandle,
+            [In]  SafeAccessTokenHandle TokenHandle,
             [In]  uint                  TokenInformationClass,
             [In]  SafeLocalAllocHandle  TokenInformation,
             [In]  uint                  TokenInformationLength,
@@ -2624,7 +2557,7 @@ namespace Microsoft.Win32 {
             [In,Out] ref SafeLsaReturnBufferHandle  ProfileBuffer,
             [In,Out] ref uint                       ProfileBufferLength,
             [In,Out] ref LUID                       LogonId,
-            [In,Out] ref SafeTokenHandle            Token,
+            [In,Out] ref SafeAccessTokenHandle      Token,
             [In,Out] ref QUOTA_LIMITS               Quotas,
             [In,Out] ref int                        SubStatus);
 
@@ -2659,26 +2592,26 @@ namespace Microsoft.Win32 {
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern int LsaFreeReturnBuffer(IntPtr handle);
 
-#if FEATURE_IMPERSONATION || (FEATURE_CORECLR && !__APPLE__)
+#if FEATURE_IMPERSONATION || FEATURE_CORECLR
         [DllImport (ADVAPI32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.Process)]
         internal static extern 
         bool OpenProcessToken (
-            [In]     IntPtr              ProcessToken,
-            [In]     TokenAccessLevels   DesiredAccess,
-            [Out]    out SafeTokenHandle TokenHandle);
+            [In]     IntPtr                     ProcessToken,
+            [In]     TokenAccessLevels          DesiredAccess,
+            [Out]    out SafeAccessTokenHandle  TokenHandle);
 #endif
 
-#if FEATURE_CORECLR && !__APPLE__
+#if FEATURE_CORECLR
         [DllImport (ADVAPI32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.Process)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern 
         bool OpenThreadToken (
-            [In]     IntPtr              ThreadHandle,           
-            [In]     TokenAccessLevels   DesiredAccess,
-            [In, MarshalAs(UnmanagedType.Bool)]     bool OpenAsSelf, 
-            [Out]    out SafeTokenHandle TokenHandle);
+            [In]     IntPtr                     ThreadHandle,
+            [In]     TokenAccessLevels          DesiredAccess,
+            [In, MarshalAs(UnmanagedType.Bool)]     bool OpenAsSelf,
+            [Out]    out SafeAccessTokenHandle  TokenHandle);
 #endif
 
         [DllImport(
@@ -2783,8 +2716,7 @@ namespace Microsoft.Win32 {
 #endif // FEATURE_PAL
 
         // Fusion APIs
-#if FEATURE_COMINTEROP && FEATURE_FUSION
-
+#if FEATURE_FUSION
         [DllImport(MSCORWKS, CharSet=CharSet.Unicode)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern int CreateAssemblyNameObject(out IAssemblyName ppEnum, String szAssemblyName, uint dwFlags, IntPtr pvReserved);
@@ -2792,18 +2724,7 @@ namespace Microsoft.Win32 {
         [DllImport(MSCORWKS, CharSet=CharSet.Auto)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern int CreateAssemblyEnum(out IAssemblyEnum ppEnum, IApplicationContext pAppCtx, IAssemblyName pName, uint dwFlags, IntPtr pvReserved);
-#else // FEATURE_COMINTEROP && FEATURE_FUSION
-
-#if FEATURE_FUSION
-        [DllImport(MSCORWKS, CharSet=CharSet.Unicode)]
-        [ResourceExposure(ResourceScope.None)]
-        internal static extern int CreateAssemblyNameObject(out SafeFusionHandle ppEnum, String szAssemblyName, uint dwFlags, IntPtr pvReserved);
-
-        [DllImport(MSCORWKS, CharSet=CharSet.Auto)]
-        [ResourceExposure(ResourceScope.None)]
-        internal static extern int CreateAssemblyEnum(out SafeFusionHandle ppEnum, SafeFusionHandle pAppCtx, SafeFusionHandle pName, uint dwFlags, IntPtr pvReserved);
 #endif // FEATURE_FUSION
-#endif // FEATURE_COMINTEROP && FEATURE_FUSION
 
 #if FEATURE_CORECLR
         [DllImport(KERNEL32, CharSet=CharSet.Unicode)]
@@ -2829,10 +2750,8 @@ namespace Microsoft.Win32 {
             int      cchWideChar);
 #endif  // FEATURE_CORECLR
 
-#if !FEATURE_PAL && !FEATURE_CORESYSTEM
         [DllImport(KERNEL32, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal extern static bool QueryUnbiasedInterruptTime(out ulong UnbiasedTime);
-#endif
     }
 }

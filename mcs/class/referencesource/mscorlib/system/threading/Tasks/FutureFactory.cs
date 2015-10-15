@@ -7,7 +7,7 @@
 //
 // FutureFactory.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // As with TaskFactory, TaskFactory<TResult> encodes common factory patterns into helper methods.
 //
@@ -68,9 +68,7 @@ namespace System.Threading.Tasks
         {
             if (m_defaultScheduler != null) return m_defaultScheduler;
             else if ((currTask != null)
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                 && ((currTask.CreationOptions & TaskCreationOptions.HideScheduler) == 0)
-#endif
                 )
                 return currTask.ExecutingTaskScheduler;
             else return TaskScheduler.Default;
@@ -574,7 +572,6 @@ namespace System.Threading.Tasks
                 }
                 else
                 {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                     if (AsyncCausalityTracer.LoggingOn)
                         AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, promise.Id, AsyncCausalityStatus.Completed);
 
@@ -582,7 +579,6 @@ namespace System.Threading.Tasks
                     {
                         Task.RemoveFromActiveTasks(promise.Id);
                     }
-#endif
                     if (requiresSynchronization)
                     {
                         promise.TrySetResult(result);
@@ -710,7 +706,6 @@ namespace System.Threading.Tasks
 
             Task<TResult> promise = new Task<TResult>((object)null, creationOptions);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, promise.Id, "TaskFactory.FromAsync", 0);
 
@@ -718,7 +713,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(promise);
             }
-#endif
 
             // Just specify this task as detached. No matter what happens, we want endMethod 
             // to be called -- even if the parent is canceled.  So we don't want to flow 
@@ -730,7 +724,6 @@ namespace System.Threading.Tasks
                 (object)null, null,
                 default(CancellationToken), TaskCreationOptions.None, InternalTaskOptions.None, null, ref stackMark);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Verbose, t.Id, "TaskFactory.FromAsync Callback", 0);
 
@@ -738,7 +731,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(t);
             }
-#endif
 
             if (asyncResult.IsCompleted)
             {
@@ -833,7 +825,6 @@ namespace System.Threading.Tasks
 
             Task<TResult> promise = new Task<TResult>(state, creationOptions);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, promise.Id, "TaskFactory.FromAsync: " + beginMethod.Method.Name, 0);
 
@@ -841,7 +832,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(promise);
             }
-#endif
 
             try
             {
@@ -876,7 +866,6 @@ namespace System.Threading.Tasks
             }
             catch
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 if (AsyncCausalityTracer.LoggingOn)
                     AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, promise.Id, AsyncCausalityStatus.Error);
 
@@ -884,7 +873,7 @@ namespace System.Threading.Tasks
                 {
                     Task.RemoveFromActiveTasks(promise.Id);
                 }
-#endif
+
                 // Make sure we don't leave promise "dangling".
                 promise.TrySetResult(default(TResult));
                 throw;
@@ -974,7 +963,6 @@ namespace System.Threading.Tasks
 
             Task<TResult> promise = new Task<TResult>(state, creationOptions);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, promise.Id, "TaskFactory.FromAsync: " + beginMethod.Method.Name, 0);
 
@@ -982,7 +970,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(promise);
             }
-#endif
 
             try
             {
@@ -1016,7 +1003,7 @@ namespace System.Threading.Tasks
             }
             catch
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
+
                 if (AsyncCausalityTracer.LoggingOn)
                     AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, promise.Id, AsyncCausalityStatus.Error);
 
@@ -1024,7 +1011,7 @@ namespace System.Threading.Tasks
                 {
                     Task.RemoveFromActiveTasks(promise.Id);
                 }
-#endif
+
                 // Make sure we don't leave promise "dangling".
                 promise.TrySetResult(default(TResult));
                 throw;
@@ -1122,7 +1109,6 @@ namespace System.Threading.Tasks
 
             Task<TResult> promise = new Task<TResult>(state, creationOptions);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, promise.Id, "TaskFactory.FromAsync: " + beginMethod.Method.Name, 0);
 
@@ -1130,7 +1116,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(promise);
             }
-#endif
 
             try
             {
@@ -1164,7 +1149,6 @@ namespace System.Threading.Tasks
             }
             catch
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 if (AsyncCausalityTracer.LoggingOn)
                     AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, promise.Id, AsyncCausalityStatus.Error);
 
@@ -1172,7 +1156,7 @@ namespace System.Threading.Tasks
                 {
                     Task.RemoveFromActiveTasks(promise.Id);
                 }
-#endif
+
                 // Make sure we don't leave promise "dangling".
                 promise.TrySetResult(default(TResult));
                 throw;
@@ -1278,7 +1262,6 @@ namespace System.Threading.Tasks
 
             Task<TResult> promise = new Task<TResult>(state, creationOptions);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             if (AsyncCausalityTracer.LoggingOn)
                 AsyncCausalityTracer.TraceOperationCreation(CausalityTraceLevel.Required, promise.Id, "TaskFactory.FromAsync: " + beginMethod.Method.Name, 0);
 
@@ -1286,7 +1269,6 @@ namespace System.Threading.Tasks
             {
                 Task.AddToActiveTasks(promise);
             }
-#endif
 
             try
             {
@@ -1320,7 +1302,6 @@ namespace System.Threading.Tasks
             }
             catch
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 if (AsyncCausalityTracer.LoggingOn)
                     AsyncCausalityTracer.TraceOperationCompletion(CausalityTraceLevel.Required, promise.Id, AsyncCausalityStatus.Error);
 
@@ -1328,7 +1309,7 @@ namespace System.Threading.Tasks
                 {
                     Task.RemoveFromActiveTasks(promise.Id);
                 }
-#endif
+
                 // Make sure we don't leave the promise "dangling".
                 promise.TrySetResult(default(TResult));
                 throw;
@@ -1808,9 +1789,7 @@ namespace System.Threading.Tasks
 
             // Bail early if cancellation has been requested.
             if (cancellationToken.IsCancellationRequested
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                 && ((continuationOptions & TaskContinuationOptions.LazyCancellation) == 0)
-#endif
                 )
             {
                 return CreateCanceledTask(continuationOptions, cancellationToken);
@@ -1857,9 +1836,7 @@ namespace System.Threading.Tasks
 
             // Bail early if cancellation has been requested.
             if (cancellationToken.IsCancellationRequested
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                 && ((continuationOptions & TaskContinuationOptions.LazyCancellation) == 0)
-#endif
                 )
             {
                 return CreateCanceledTask(continuationOptions, cancellationToken);
@@ -2213,9 +2190,7 @@ namespace System.Threading.Tasks
 
             // Bail early if cancellation has been requested.
             if (cancellationToken.IsCancellationRequested
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                 && ((continuationOptions & TaskContinuationOptions.LazyCancellation) == 0)
-#endif
                 )
             {
                 return CreateCanceledTask(continuationOptions, cancellationToken);
@@ -2262,9 +2237,7 @@ namespace System.Threading.Tasks
 
             // Bail early if cancellation has been requested.
             if (cancellationToken.IsCancellationRequested
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                 && ((continuationOptions & TaskContinuationOptions.LazyCancellation) == 0)
-#endif
                 )
             {
                 return CreateCanceledTask(continuationOptions, cancellationToken);

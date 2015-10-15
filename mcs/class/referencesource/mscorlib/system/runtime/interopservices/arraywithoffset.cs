@@ -70,17 +70,8 @@ namespace System.Runtime.InteropServices {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern int CalculateCount();
     
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private Object m_array;
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private int    m_offset;
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         private int    m_count;
     }
 

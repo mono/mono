@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner  willa
-// @backupOwner [....]
+// @backupOwner srimand
 //---------------------------------------------------------------------
 
 namespace System.Data.Spatial

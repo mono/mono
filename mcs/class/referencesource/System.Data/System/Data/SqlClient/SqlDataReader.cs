@@ -2,8 +2,8 @@
 // <copyright file="SqlDataReader.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -44,7 +44,7 @@ namespace System.Data.SqlClient {
 
         internal SharedState _sharedState = new SharedState();
 
-        private TdsParser                      _parser;                 // TODO: Probably don't need this, since it's on the stateObj
+        private TdsParser                      _parser;                 // 
         private TdsParserStateObject           _stateObj;
         private SqlCommand                     _command;
         private SqlConnection                  _connection;
@@ -516,11 +516,17 @@ namespace System.Data.SqlClient {
                 // col.length is always byte count so for unicode types, half the length
                 //
                 // For MAX and XML datatypes, we get 0x7fffffff from the server. Do not divide this.
-                schemaRow[Size] = (col.metaType.IsSizeInCharacters && (col.length != 0x7fffffff)) ? (col.length / 2) : col.length;
+                if (col.cipherMD != null) {
+                    Debug.Assert(col.baseTI != null && col.baseTI.metaType != null, "col.baseTI and col.baseTI.metaType should not be null.");
+                    schemaRow[Size] = (col.baseTI.metaType.IsSizeInCharacters && (col.baseTI.length != 0x7fffffff)) ? (col.baseTI.length / 2) : col.baseTI.length;
+                }
+                else {
+                    schemaRow[Size] = (col.metaType.IsSizeInCharacters && (col.length != 0x7fffffff)) ? (col.length / 2) : col.length;
+                }
 
                 schemaRow[DataType]                 = GetFieldTypeInternal(col);
                 schemaRow[ProviderSpecificDataType] = GetProviderSpecificFieldTypeInternal(col);
-                schemaRow[NonVersionedProviderType] = (int) col.type; // SqlDbType enum value - does not change with TypeSystem.
+                schemaRow[NonVersionedProviderType] = (int) (col.cipherMD != null ? col.baseTI.type : col.type); // SqlDbType enum value - does not change with TypeSystem.
                 schemaRow[DataTypeName]             = GetDataTypeNameInternal(col);
 
                 if (_typeSystem <= SqlConnectionString.TypeSystem.SQLServer2005 && col.IsNewKatmaiDateTimeType) {
@@ -556,7 +562,7 @@ namespace System.Data.SqlClient {
                     // TypeSystem.SQLServer2005 and above
 
                     // SqlDbType enum value - always the actual type for SQLServer2005.
-                    schemaRow[ProviderType] = (int) col.type; 
+                    schemaRow[ProviderType] = (int) (col.cipherMD != null ? col.baseTI.type : col.type);
 
                     if (col.type == SqlDbType.Udt) { // Additional metadata for UDTs.
                         Debug.Assert(Connection.IsYukonOrNewer, "Invalid Column type received from the server");
@@ -576,8 +582,16 @@ namespace System.Data.SqlClient {
                     schemaRow[ProviderType] = GetVersionedMetaType(col.metaType).SqlDbType; 
                 }
     
-
-                if (TdsEnums.UNKNOWN_PRECISION_SCALE != col.precision) {
+                if (col.cipherMD != null) {
+                    Debug.Assert(col.baseTI != null, @"col.baseTI should not be null.");
+                    if (TdsEnums.UNKNOWN_PRECISION_SCALE != col.baseTI.precision) {
+                        schemaRow[Precision] = col.baseTI.precision;
+                    }
+                    else {
+                        schemaRow[Precision] = col.baseTI.metaType.Precision;
+                    }
+                }
+                else if (TdsEnums.UNKNOWN_PRECISION_SCALE != col.precision) {
                     schemaRow[Precision] = col.precision;
                 }
                 else {
@@ -586,6 +600,15 @@ namespace System.Data.SqlClient {
 
                 if (_typeSystem <= SqlConnectionString.TypeSystem.SQLServer2005 && col.IsNewKatmaiDateTimeType) {
                     schemaRow[Scale] = MetaType.MetaNVarChar.Scale;
+                }
+                else if (col.cipherMD != null) {
+                    Debug.Assert(col.baseTI != null, @"col.baseTI should not be null.");
+                    if (TdsEnums.UNKNOWN_PRECISION_SCALE != col.baseTI.scale) {
+                        schemaRow[Scale] = col.baseTI.scale;
+                    }
+                    else {
+                        schemaRow[Scale] = col.baseTI.metaType.Scale;
+                    }
                 }
                 else if (TdsEnums.UNKNOWN_PRECISION_SCALE != col.scale) {
                     schemaRow[Scale] = col.scale;
@@ -606,7 +629,15 @@ namespace System.Data.SqlClient {
 
                 schemaRow[IsIdentity] = col.isIdentity;
                 schemaRow[IsAutoIncrement] = col.isIdentity;
-                schemaRow[IsLong] = col.metaType.IsLong;
+
+                if (col.cipherMD != null) {
+                    Debug.Assert(col.baseTI != null, @"col.baseTI should not be null.");
+                    Debug.Assert(col.baseTI.metaType != null, @"col.baseTI.metaType should not be null.");
+                    schemaRow[IsLong] = col.baseTI.metaType.IsLong;
+                }
+                else {
+                    schemaRow[IsLong] = col.metaType.IsLong;
+                }
 
                 // mark unique for timestamp columns
                 if (SqlDbType.Timestamp == col.type) {
@@ -1074,7 +1105,7 @@ namespace System.Data.SqlClient {
                         // CleanWire will do cleanup - so we don't really care about the snapshot
                         CleanupAfterAsyncInvocationInternal(stateObj, resetNetworkPacketTaskSource: false);
                     }
-                    // Switch to [....] to prepare for cleanwire
+                    // Switch to sync to prepare for cleanwire
                     stateObj._syncOverAsync = true;
                     // Remove owner (this will allow the stateObj to be disposed after the connection is closed)
                     stateObj.RemoveOwner();
@@ -1163,14 +1194,20 @@ namespace System.Data.SqlClient {
                     dataTypeName = metaData.udtDatabaseName + "." + metaData.udtSchemaName + "." + metaData.udtTypeName;
                 }
                 else { // For all other types, including Xml - use data in MetaType.
-                    dataTypeName = metaData.metaType.TypeName;  
+                        if (metaData.cipherMD != null) {
+                            Debug.Assert(metaData.baseTI != null && metaData.baseTI.metaType != null, "metaData.baseTI and metaData.baseTI.metaType should not be null.");
+                            dataTypeName = metaData.baseTI.metaType.TypeName;
+                        }
+                        else {
+                            dataTypeName = metaData.metaType.TypeName;  
+                        }
                 }
             }
             else {
                 // TypeSystem.SQLServer2000
-        
-                dataTypeName = GetVersionedMetaType(metaData.metaType).TypeName;  
-            }            
+
+                    dataTypeName = GetVersionedMetaType(metaData.metaType).TypeName;
+            }
 
             return dataTypeName;
         }
@@ -1183,7 +1220,7 @@ namespace System.Data.SqlClient {
         }
 
         override public IEnumerator GetEnumerator() {
-            return new DbEnumerator((IDataReader)this, IsCommandBehavior(CommandBehavior.CloseConnection));
+            return new DbEnumerator(this, IsCommandBehavior(CommandBehavior.CloseConnection));
         }
         
         override public Type GetFieldType(int i) {
@@ -1224,7 +1261,13 @@ namespace System.Data.SqlClient {
                     fieldType = metaData.udtType;
                 }
                 else { // For all other types, including Xml - use data in MetaType.
-                    fieldType = metaData.metaType.ClassType; // Com+ type.
+                    if (metaData.cipherMD != null) {
+                        Debug.Assert(metaData.baseTI != null && metaData.baseTI.metaType != null, "metaData.baseTI and metaData.baseTI.metaType should not be null.");
+                        fieldType = metaData.baseTI.metaType.ClassType;
+                    }
+                    else {
+                        fieldType = metaData.metaType.ClassType; // Com+ type.
+                    }
                 }
             }
             else {
@@ -1292,8 +1335,16 @@ namespace System.Data.SqlClient {
                     Connection.CheckGetExtendedUDTInfo(metaData, false);
                     providerSpecificFieldType = metaData.udtType;
                 }
-                else { // For all other types, including Xml - use data in MetaType.
-                    providerSpecificFieldType = metaData.metaType.SqlType; // SqlType type.
+                else {
+                    // For all other types, including Xml - use data in MetaType.
+                    if (metaData.cipherMD != null) {
+                        Debug.Assert(metaData.baseTI != null && metaData.baseTI.metaType != null,
+                            "metaData.baseTI and metaData.baseTI.metaType should not be null.");
+                        providerSpecificFieldType = metaData.baseTI.metaType.SqlType; // SqlType type.
+                    }
+                    else {
+                        providerSpecificFieldType = metaData.metaType.SqlType; // SqlType type.
+                    }
                 }
             }
             else {
@@ -1395,6 +1446,11 @@ namespace System.Data.SqlClient {
         override public Stream GetStream(int i) {
             CheckDataIsReady(columnIndex: i, methodName: "GetStream");
 
+            // Streaming is not supported on encrypted columns.
+            if (_metaData[i] != null && _metaData[i].cipherMD != null) {
+                throw SQL.StreamNotSupportOnEncryptedColumn(_metaData[i].column);
+            }
+
             // Stream is only for Binary, Image, VarBinary, Udt and Xml types
             // NOTE: IsBinType also includes Timestamp for some reason...
             MetaType mt = _metaData[i].metaType;
@@ -1489,6 +1545,10 @@ namespace System.Data.SqlClient {
                     // sequential reading
                     if (IsCommandBehavior(CommandBehavior.SequentialAccess)) {
                         Debug.Assert(!HasActiveStreamOrTextReaderOnColumn(i), "Column has an active Stream or TextReader");
+
+                        if (_metaData[i] != null && _metaData[i].cipherMD != null) {
+                            throw SQL.SequentialAccessNotSupportedOnEncryptedColumn(_metaData[i].column);
+                        }
 
                         if (_sharedState._nextColumnHeaderToRead <= i) {
                             if (!TryReadColumnHeader(i)) {
@@ -1798,13 +1858,28 @@ namespace System.Data.SqlClient {
             CheckDataIsReady(columnIndex: i, methodName: "GetTextReader");
             
             // Xml type is not supported
-            MetaType mt = _metaData[i].metaType;
+            MetaType mt = null;
+
+            if (_metaData[i].cipherMD != null) {
+                Debug.Assert(_metaData[i].baseTI != null, "_metaData[i].baseTI should not be null.");
+                mt = _metaData[i].baseTI.metaType;
+            }
+            else {
+                mt = _metaData[i].metaType;
+            }
+
+            Debug.Assert(mt != null, @"mt should not be null.");
+
             if (((!mt.IsCharType) && (mt.SqlDbType != SqlDbType.Variant)) || (mt.SqlDbType == SqlDbType.Xml)) {
                 throw SQL.TextReaderNotSupportOnColumnType(_metaData[i].column);
             }
 
             // For non-variant types with sequential access, we support proper streaming
             if ((mt.SqlDbType != SqlDbType.Variant) && (IsCommandBehavior(CommandBehavior.SequentialAccess))) {
+                if (_metaData[i].cipherMD != null) {
+                    throw SQL.SequentialAccessNotSupportedOnEncryptedColumn(_metaData[i].column);
+                }
+
                 System.Text.Encoding encoding;
                 if (mt.IsNCharType)
                 {
@@ -1852,14 +1927,38 @@ namespace System.Data.SqlClient {
             if (_currentTask != null) {
                 throw ADP.AsyncOperationPending();
             }
-           
+
+            MetaType mt = null;
+            if (_metaData[i].cipherMD != null) {
+                Debug.Assert(_metaData[i].baseTI != null, @"_metaData[i].baseTI should not be null.");
+                mt = _metaData[i].baseTI.metaType;
+            }
+            else {
+                mt = _metaData[i].metaType;
+            }
+
+            Debug.Assert(mt != null, "mt should not be null.");
+
+            SqlDbType sqlDbType;
+            if (_metaData[i].cipherMD != null) {
+                Debug.Assert(_metaData[i].baseTI != null, @"_metaData[i].baseTI should not be null.");
+                sqlDbType = _metaData[i].baseTI.type;
+            }
+            else {
+                sqlDbType = _metaData[i].type;
+            }
+            
             try {
                 statistics = SqlStatistics.StartTimer(Statistics);
                 SetTimeout(_defaultTimeoutMilliseconds);
-                if ((_metaData[i].metaType.IsPlp) &&
+                if ((mt.IsPlp) &&
                     (IsCommandBehavior(CommandBehavior.SequentialAccess)) ) {
                     if (length < 0) {
                         throw ADP.InvalidDataLength(length);
+                    }
+
+                    if (_metaData[i].cipherMD != null) {
+                        throw SQL.SequentialAccessNotSupportedOnEncryptedColumn(_metaData[i].column);
                     }
 
                     // if bad buffer index, throw
@@ -1872,13 +1971,13 @@ namespace System.Data.SqlClient {
                         throw ADP.InvalidBufferSizeOrIndex(length, bufferIndex);
                     }
                     long charsRead = 0;
-                    if ( _metaData[i].type == SqlDbType.Xml ) {
+                    if ( sqlDbType == SqlDbType.Xml ) {
                         try {
                             CheckDataIsReady(columnIndex: i, allowPartiallyReadColumn: true, methodName: "GetChars");
                         }
                         catch (Exception ex) {
-                            // Dev11 Bug #315513: Exception type breaking change from 4.0 RTM when calling GetChars on null xml
-                            // We need to wrap all exceptions inside a TargetInvocationException to simulate calling CreateSqlReader via MethodInfo.Invoke
+                            // Dev11 
+
                             if (ADP.IsCatchableExceptionType(ex)) {
                                 throw new TargetInvocationException(ex);
                             }
@@ -2012,7 +2111,7 @@ namespace System.Data.SqlClient {
                     // In both cases we will clean decoder
                     if (dataIndex == 0) 
                         _stateObj._plpdecoder = null;
-                    
+
                     bool isUnicode = _metaData[i].metaType.IsNCharType;
 
                     // If there are an unknown (-1) number of bytes left for a PLP, read its size
@@ -2314,8 +2413,8 @@ namespace System.Data.SqlClient {
         // NOTE: This method is called by the fast-paths in Async methods and, therefore, should be resilient to the DataReader being closed
         //       Always make sure to take reference copies of anything set to null in TryCloseInternal()
         private object GetSqlValueFromSqlBufferInternal(SqlBuffer data, _SqlMetaData metaData) {
-            // Dev11 Bug #336820, Dev10 Bug #479607 (SqlClient: IsDBNull always returns false for timestamp datatype)
-            // Due to a bug in TdsParser.GetNullSqlValue, Timestamps' IsNull is not correctly set - so we need to bypass the following check
+            // Dev11 
+
             Debug.Assert(!data.IsEmpty || data.IsNull || metaData.type == SqlDbType.Timestamp, "Data has been read, but the buffer is empty");
 
             // Convert Katmai types to string
@@ -2467,8 +2566,8 @@ namespace System.Data.SqlClient {
         // NOTE: This method is called by the fast-paths in Async methods and, therefore, should be resilient to the DataReader being closed
         //       Always make sure to take reference copies of anything set to null in TryCloseInternal()
         private object GetValueFromSqlBufferInternal(SqlBuffer data, _SqlMetaData metaData) {
-            // Dev11 Bug #336820, Dev10 Bug #479607 (SqlClient: IsDBNull always returns false for timestamp datatype)
-            // Due to a bug in TdsParser.GetNullSqlValue, Timestamps' IsNull is not correctly set - so we need to bypass the following check
+            // Dev11 
+
             Debug.Assert(!data.IsEmpty || data.IsNull || metaData.type == SqlDbType.Timestamp, "Data has been read, but the buffer is empty");
 
             if (_typeSystem <= SqlConnectionString.TypeSystem.SQLServer2005 && metaData.IsNewKatmaiDateTimeType) {
@@ -2673,9 +2772,9 @@ namespace System.Data.SqlClient {
                             moreResults = true;
                             return true;
                         
-                        // VSTFDEVDIV 926281: DONEINPROC case is missing here; we have decided to reject this bug as it would result in breaking change
-                        // from Orcas RTM/SP1 and Dev10 RTM. See the bug for more details.
-                        // case TdsEnums.DONEINPROC:
+                        // VSTFDEVDIV 926281: DONEINPROC case is missing here; we have decided to reject this 
+
+
                         case TdsEnums.SQLDONE:
                             Debug.Assert(_altRowStatus == ALTROWSTATUS.Done || _altRowStatus == ALTROWSTATUS.Null, "invalid AltRowStatus");
                             _altRowStatus = ALTROWSTATUS.Null;
@@ -2688,10 +2787,10 @@ namespace System.Data.SqlClient {
                             return true;
                     }
 
-                    // Dev11 Bug 316483:Hang on SqlDataReader::TryHasMoreResults using MARS
-                    // http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=316483
-                    // TryRun() will immediately return if the TdsParser is closed\broken, causing us to enter an infinite loop
-                    // Instead, we will throw a closed connection exception
+                    // Dev11 
+
+
+
                     if (_parser.State == TdsParserState.Broken || _parser.State == TdsParserState.Closed) {
                         throw ADP.ClosedConnectionError();
                     }
@@ -2727,8 +2826,8 @@ namespace System.Data.SqlClient {
                 }
                 if (_stateObj._pendingData) {
                     // Consume error's, info's, done's on HasMoreRows, so user obtains error on Read.
-                    // Previous bug where Read() would return false with error on the wire in the case
-                    // of metadata and error immediately following.  See MDAC 78285 and 75225.
+                    // Previous 
+
 
                     // 
 
@@ -2763,10 +2862,10 @@ namespace System.Data.SqlClient {
                             ParsedDoneToken = true;
                         }
 
-                        // Dev11 Bug 316483:Hang on SqlDataReader::TryHasMoreResults using MARS
-                        // http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=316483
-                        // TryRun() will immediately return if the TdsParser is closed\broken, causing us to enter an infinite loop
-                        // Instead, we will throw a closed connection exception
+                        // Dev11 
+
+
+
                         if (_parser.State == TdsParserState.Broken || _parser.State == TdsParserState.Closed) {
                             throw ADP.ClosedConnectionError();
                         }
@@ -2804,10 +2903,10 @@ namespace System.Data.SqlClient {
 
         override public bool IsDBNull(int i) {
             if ((IsCommandBehavior(CommandBehavior.SequentialAccess)) && ((_sharedState._nextColumnHeaderToRead > i + 1) || (_lastColumnWithDataChunkRead > i))) {
-                // Bug 447026 : A breaking change in System.Data .NET 4.5 for calling IsDBNull on commands in SequentialAccess mode
-                // http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=447026
-                // In .Net 4.0 and previous, it was possible to read a previous column using IsDBNull when in sequential mode
-                // However, since it had already gone past the column, the current IsNull value is simply returned
+                // 
+
+
+
 
                 // To replicate this behavior we will skip CheckHeaderIsReady\ReadColumnHeader and instead just check that the reader is ready and the column is valid
                 CheckMetaDataIsReady(columnIndex: i);
@@ -3264,7 +3363,9 @@ namespace System.Data.SqlClient {
             if (!_data[_sharedState._nextColumnDataToRead].IsNull) {
                 _SqlMetaData columnMetaData = _metaData[_sharedState._nextColumnDataToRead];
 
-                if (!_parser.TryReadSqlValue(_data[_sharedState._nextColumnDataToRead], columnMetaData, (int)_sharedState._columnDataBytesRemaining, _stateObj)) { // will read UDTs as VARBINARY.
+                if (!_parser.TryReadSqlValue(_data[_sharedState._nextColumnDataToRead], columnMetaData, (int)_sharedState._columnDataBytesRemaining, _stateObj,
+                                             _command != null ? _command.ColumnEncryptionSetting : SqlCommandColumnEncryptionSetting.UseConnectionSetting,
+                                             columnMetaData.column)) { // will read UDTs as VARBINARY.
                     return false;
                 }
                 _sharedState._columnDataBytesRemaining = 0;
@@ -3338,8 +3439,8 @@ namespace System.Data.SqlClient {
                     Debug.Assert(i == _sharedState._nextColumnDataToRead ||                                                          // Either we haven't read the column yet
                         ((i + 1 < _sharedState._nextColumnDataToRead) && (IsCommandBehavior(CommandBehavior.SequentialAccess))) ||   // Or we're in sequential mode and we've read way past the column (i.e. it was not the last column we read)
                         (!_data[i].IsEmpty || _data[i].IsNull) ||                                                       // Or we should have data stored for the column (unless the column was null)
-                        (_metaData[i].type == SqlDbType.Timestamp),                                                     // Or Dev11 Bug #336820, Dev10 Bug #479607 (SqlClient: IsDBNull always returns false for timestamp datatype)
-                                                                                                                        //    Due to a bug in TdsParser.GetNullSqlValue, Timestamps' IsNull is not correctly set - so we need to bypass the check
+                        (_metaData[i].type == SqlDbType.Timestamp),                                                     // Or Dev11 
+                                                                                                                        //    Due to a 
                         "Gone past column, be we have no data stored for it");
                     return true;
                 }
@@ -3396,9 +3497,12 @@ namespace System.Data.SqlClient {
                     _sharedState._nextColumnDataToRead = _sharedState._nextColumnHeaderToRead;
                     _sharedState._nextColumnHeaderToRead++;  // We read this one
 
-                    if (isNull && columnMetaData.type != SqlDbType.Timestamp /* Maintain behavior for known bug (Dev10 479607) rejected as breaking change - See comments in GetNullSqlValue for timestamp */)
+                    if (isNull && columnMetaData.type != SqlDbType.Timestamp /* Maintain behavior for known */)
                     {
-                        _parser.GetNullSqlValue(_data[_sharedState._nextColumnDataToRead], columnMetaData);
+                        TdsParser.GetNullSqlValue(_data[_sharedState._nextColumnDataToRead], 
+                            columnMetaData,
+                            _command != null ? _command.ColumnEncryptionSetting : SqlCommandColumnEncryptionSetting.UseConnectionSetting,
+                            _parser.Connection);
                         
                         if (!readHeaderOnly) {
                             _sharedState._nextColumnDataToRead++;
@@ -3409,7 +3513,9 @@ namespace System.Data.SqlClient {
                             // If we're not in sequential access mode, we have to
                             // save the data we skip over so that the consumer
                             // can read it out of order
-                            if (!_parser.TryReadSqlValue(_data[_sharedState._nextColumnDataToRead], columnMetaData, (int)dataLength, _stateObj)) { // will read UDTs as VARBINARY.
+                            if (!_parser.TryReadSqlValue(_data[_sharedState._nextColumnDataToRead], columnMetaData, (int)dataLength, _stateObj,
+                                                         _command != null ? _command.ColumnEncryptionSetting : SqlCommandColumnEncryptionSetting.UseConnectionSetting,
+                                                         columnMetaData.column)) { // will read UDTs as VARBINARY.
                                 return false;
                             }
                             _sharedState._nextColumnDataToRead++;
@@ -4236,7 +4342,7 @@ namespace System.Data.SqlClient {
                     return ADP.CreatedTaskWithCancellation<bool>();
                 }
                 
-                // Shortcut - if we have enough data, then run [....]
+                // Shortcut - if we have enough data, then run sync
                 try {
                     if (WillHaveEnoughData(i, headerOnly: true)) {
 #if DEBUG
@@ -4338,7 +4444,7 @@ namespace System.Data.SqlClient {
                 return ADP.CreatedTaskWithCancellation<T>();
             }
 
-            // Shortcut - if we have enough data, then run [....]
+            // Shortcut - if we have enough data, then run sync
             try {
                 if (WillHaveEnoughData(i)) {
 #if DEBUG
@@ -4509,7 +4615,7 @@ namespace System.Data.SqlClient {
                 }
 
                 if (task.IsCompleted) {
-                    // If we've completed [....], then don't bother handling the TaskCompletionSource - we'll just return the completed task
+                    // If we've completed sync, then don't bother handling the TaskCompletionSource - we'll just return the completed task
                     CompleteRetryable(task, source, objectToDispose);
                     return task;
                 }

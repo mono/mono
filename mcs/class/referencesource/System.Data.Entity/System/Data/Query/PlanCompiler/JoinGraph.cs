@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -1126,8 +1126,8 @@ namespace System.Data.Query.PlanCompiler
         /// queries faster when at least one OUTER JOIN statement is still present in the SQL query. If we
         /// convert all OUTER JOIN statements into INNER JOINS then these optimizations don't kick in. In
         /// order to maintain compatibility to .NET 4.0 we had to create a special case for SQL CE. 
-        /// See DevDiv bug #462067 for more details.  Also see bug DevDev2 bug#488375 for the UseFx40CompatMode check.
-        /// </summary>
+        /// See DevDiv 
+
         private void TryTurnLeftOuterJoinsIntoInnerJoins()
         {
             foreach (AugmentedJoinNode augmentedJoinNode in m_vertexes.OfType<AugmentedJoinNode>().Where(j => j.Node.Op.OpType == OpType.LeftOuterJoin && j.JoinEdges.Count > 0))
@@ -1503,9 +1503,9 @@ namespace System.Data.Query.PlanCompiler
             for (int i = 0; i < tableVars.Count; i++)
             {
                 //
-                // Bug 446708: Make sure that the "replacement" column is 
-                //   referenced, if the the current column is referenced
-                //
+                // 
+
+
                 if (tableNode.Table.ReferencedColumns.IsSet(tableVars[i]))
                 {
                     m_varMap[tableVars[i]] = replacementVars[i];

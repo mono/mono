@@ -9,7 +9,10 @@
     public sealed class CreditCardAttribute : DataTypeAttribute {
         public CreditCardAttribute()
             : base(DataType.CreditCard) {
-            ErrorMessage = DataAnnotationsResources.CreditCardAttribute_Invalid;
+
+            // DevDiv 468241: set DefaultErrorMessage not ErrorMessage, allowing user to set
+            // ErrorMessageResourceType and ErrorMessageResourceName to use localized messages.
+            DefaultErrorMessage = DataAnnotationsResources.CreditCardAttribute_Invalid;
         }
 
         public override bool IsValid(object value) {

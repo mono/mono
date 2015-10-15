@@ -129,7 +129,8 @@ namespace System.Security.Cryptography {
             BadSignature = unchecked((int)0x80090006),              // NTE_BAD_SIGNATURE
             NotFound = unchecked((int)0x80090011),                  // NTE_NOT_FOUND
             KeyDoesNotExist = unchecked((int)0x80090016),           // NTE_BAD_KEYSET
-            BufferTooSmall = unchecked((int)0x80090028)             // NTE_BUFFER_TOO_SMALL
+            BufferTooSmall = unchecked((int)0x80090028),             // NTE_BUFFER_TOO_SMALL
+            NoMoreItems = unchecked((int)0x8009002a)               // NTE_NO_MORE_ITEMS
         }
 
         /// <summary>
@@ -380,7 +381,136 @@ namespace System.Security.Cryptography {
                                                                    [MarshalAs(UnmanagedType.LPArray)] byte[] pbSignature,
                                                                    int cbSignature,
                                                                    int dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptSignHash(SafeNCryptKeyHandle hKey,
+                                                            [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pPaddingInfo,
+                                                            [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbHashValue,
+                                                            int cbHashValue,
+                                                            [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbSignature,
+                                                            int cbSignature,
+                                                            [Out] out int pcbResult,
+                                                            AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptSignHash(SafeNCryptKeyHandle hKey,
+                                                            [In] ref BCryptNative.BCRYPT_PSS_PADDING_INFO pPaddingInfo,
+                                                            [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbHashValue,
+                                                            int cbHashValue,
+                                                            [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbSignature,
+                                                            int cbSignature,
+                                                            [Out] out int pcbResult,
+                                                            AsymmetricPaddingMode dwFlags);
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptVerifySignature(SafeNCryptKeyHandle hKey,
+                                                                   [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pPaddingInfo,
+                                                                   [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbHashValue,
+                                                                   int cbHashValue,
+                                                                   [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbSignature,
+                                                                   int cbSignature,
+                                                                   AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptVerifySignature(SafeNCryptKeyHandle hKey,
+                                                                   [In] ref BCryptNative.BCRYPT_PSS_PADDING_INFO pPaddingInfo,
+                                                                   [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbHashValue,
+                                                                   int cbHashValue,
+                                                                   [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbSignature,
+                                                                   int cbSignature,
+                                                                   AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptDecrypt(SafeNCryptKeyHandle hKey,
+                                                           [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
+                                                           int cbInput,
+                                                           [In] ref BCryptNative.BCRYPT_OAEP_PADDING_INFO pvPadding,
+                                                           [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
+                                                           int cbOutput,
+                                                           [Out] out int pcbResult,
+                                                           AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptDecrypt(SafeNCryptKeyHandle hKey,
+                                                           [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
+                                                           int cbInput,
+                                                           [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                           [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
+                                                           int cbOutput,
+                                                           [Out] out int pcbResult,
+                                                           AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptEncrypt(SafeNCryptKeyHandle hKey,
+                                                           [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
+                                                           int cbInput,
+                                                           [In] ref BCryptNative.BCRYPT_OAEP_PADDING_INFO pvPadding,
+                                                           [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
+                                                           int cbOutput,
+                                                           [Out] out int pcbResult,
+                                                           AsymmetricPaddingMode dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            internal static extern ErrorCode NCryptEncrypt(SafeNCryptKeyHandle hKey,
+                                                           [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbInput,
+                                                           int cbInput,
+                                                           [In] ref BCryptNative.BCRYPT_PKCS1_PADDING_INFO pvPadding,
+                                                           [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pbOutput,
+                                                           int cbOutput,
+                                                           [Out] out int pcbResult,
+                                                           AsymmetricPaddingMode dwFlags);
         }
+
+
+        /// <summary>
+        ///     Adapter to wrap specific NCryptDecrypt P/Invokes with specific padding info
+        /// </summary>
+        [SecuritySafeCritical]
+        private delegate ErrorCode NCryptDecryptor<T>(SafeNCryptKeyHandle hKey,
+                                                      byte[] pbInput,
+                                                      int cbInput,
+                                                      ref T pvPadding,
+                                                      byte[] pbOutput,
+                                                      int cbOutput,
+                                                      out int pcbResult,
+                                                      AsymmetricPaddingMode dwFlags);
+
+        /// <summary>
+        ///     Adapter to wrap specific NCryptEncrypt P/Invokes with specific padding info
+        /// </summary>
+        [SecuritySafeCritical]
+        private delegate ErrorCode NCryptEncryptor<T>(SafeNCryptKeyHandle hKey,
+                                                      byte[] pbInput,
+                                                      int cbInput,
+                                                      ref T pvPadding,
+                                                      byte[] pbOutput,
+                                                      int cbOutput,
+                                                      out int pcbResult,
+                                                      AsymmetricPaddingMode dwFlags);
+
+        /// <summary>
+        ///     Adapter to wrap specific NCryptSignHash P/Invokes with a specific padding info
+        /// </summary>
+        [SecuritySafeCritical]
+        private delegate ErrorCode NCryptHashSigner<T>(SafeNCryptKeyHandle hKey,
+                                                       ref T pvPaddingInfo,
+                                                       byte[] pbHashValue,
+                                                       int cbHashValue,
+                                                       byte[] pbSignature,
+                                                       int cbSignature,
+                                                       out int pcbResult,
+                                                       AsymmetricPaddingMode dwFlags);
+
+        /// <summary>
+        ///     Adapter to wrap specific NCryptVerifySignature P/Invokes with a specific padding info
+        /// </summary>
+        [SecuritySafeCritical]
+        private delegate ErrorCode NCryptSignatureVerifier<T>(SafeNCryptKeyHandle hKey,
+                                                              ref T pvPaddingInfo,
+                                                              byte[] pbHashValue,
+                                                              int cbHashValue,
+                                                              byte[] pbSignature,
+                                                              int cbSignature,
+                                                              AsymmetricPaddingMode dwFlags) where T : struct;
 
         //
         // Utility and wrapper functions
@@ -388,6 +518,335 @@ namespace System.Security.Cryptography {
 
         private static volatile bool s_haveNcryptSupported;
         private static volatile bool s_ncryptSupported;
+
+
+        /// <summary>
+        ///     Generic decryption method, wrapped by decryption calls for specific padding modes
+        /// </summary>
+        [SecuritySafeCritical]
+        private static byte[] DecryptData<T>(SafeNCryptKeyHandle key,
+                                             byte[] data,
+                                             ref T paddingInfo,
+                                             AsymmetricPaddingMode paddingMode,
+                                             NCryptDecryptor<T> decryptor) where T : struct {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(data != null, "data != null");
+            Debug.Assert(decryptor != null, "decryptor != null");
+
+            // Figure out how big of a buffer is needed to store the decrypted data
+            int decryptedSize = 0;
+            ErrorCode error = decryptor(key,
+                                        data,
+                                        data.Length,
+                                        ref paddingInfo,
+                                        null,
+                                        0,
+                                        out decryptedSize,
+                                        paddingMode);
+            if (error != ErrorCode.Success && error != ErrorCode.BufferTooSmall) {
+                throw new CryptographicException((int)error);
+            }
+
+            // Do the decryption
+            byte[] decrypted = new byte[decryptedSize];
+            error = decryptor(key,
+                              data,
+                              data.Length,
+                              ref paddingInfo,
+                              decrypted,
+                              decrypted.Length,
+                              out decryptedSize,
+                              paddingMode);
+            if (error != ErrorCode.Success) {
+                throw new CryptographicException((int)error);
+            }
+            return decrypted;
+        }
+
+        /// <summary>
+        ///     Decrypt data using PKCS1 padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static byte[] DecryptDataPkcs1(SafeNCryptKeyHandle key, byte[] data) {
+            BCryptNative.BCRYPT_PKCS1_PADDING_INFO pkcs1Info = new BCryptNative.BCRYPT_PKCS1_PADDING_INFO();
+
+            return DecryptData(key,
+                               data,
+                               ref pkcs1Info,
+                               AsymmetricPaddingMode.Pkcs1,
+                               UnsafeNativeMethods.NCryptDecrypt);
+        }
+
+        /// <summary>
+        ///     Decrypt data using OAEP padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static byte[] DecryptDataOaep(SafeNCryptKeyHandle key,
+                                               byte[] data,
+                                               string hashAlgorithm) {
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+
+            BCryptNative.BCRYPT_OAEP_PADDING_INFO oaepInfo = new BCryptNative.BCRYPT_OAEP_PADDING_INFO();
+            oaepInfo.pszAlgId = hashAlgorithm;
+
+            return DecryptData(key,
+                               data,
+                               ref oaepInfo,
+                               AsymmetricPaddingMode.Oaep,
+                               UnsafeNativeMethods.NCryptDecrypt);
+        }
+
+        /// <summary>
+        ///     Generic encryption method, wrapped by decryption calls for specific padding modes
+        /// </summary>        
+        [SecuritySafeCritical]
+        private static byte[] EncryptData<T>(SafeNCryptKeyHandle key,
+                                             byte[] data,
+                                             ref T paddingInfo,
+                                             AsymmetricPaddingMode paddingMode,
+                                             NCryptEncryptor<T> encryptor) where T : struct {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(data != null, "data != null");
+            Debug.Assert(encryptor != null, "encryptor != null");
+
+            // Figure out how big of a buffer is to encrypt the data
+            int encryptedSize = 0;
+            ErrorCode error = encryptor(key,
+                                        data,
+                                        data.Length,
+                                        ref paddingInfo,
+                                        null,
+                                        0,
+                                        out encryptedSize,
+                                        paddingMode);
+            if (error != ErrorCode.Success && error != ErrorCode.BufferTooSmall) {
+                throw new CryptographicException((int)error);
+            }
+
+            // Do the encryption
+            byte[] encrypted = new byte[encryptedSize];
+            error = encryptor(key,
+                              data,
+                              data.Length,
+                              ref paddingInfo,
+                              encrypted,
+                              encrypted.Length,
+                              out encryptedSize,
+                              paddingMode);
+            if (error != ErrorCode.Success) {
+                throw new CryptographicException((int)error);
+            }
+
+            return encrypted;
+        }
+
+        /// <summary>
+        ///     Encrypt data using OAEP padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static byte[] EncryptDataOaep(SafeNCryptKeyHandle key,
+                                               byte[] data,
+                                               string hashAlgorithm) {
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+
+            BCryptNative.BCRYPT_OAEP_PADDING_INFO oaepInfo = new BCryptNative.BCRYPT_OAEP_PADDING_INFO();
+            oaepInfo.pszAlgId = hashAlgorithm;
+
+            return EncryptData(key,
+                               data,
+                               ref oaepInfo,
+                               AsymmetricPaddingMode.Oaep,
+                               UnsafeNativeMethods.NCryptEncrypt);
+        }
+
+        /// <summary>
+        ///     Encrypt data using PKCS1 padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static byte[] EncryptDataPkcs1(SafeNCryptKeyHandle key, byte[] data) {
+            BCryptNative.BCRYPT_PKCS1_PADDING_INFO pkcs1Info = new BCryptNative.BCRYPT_PKCS1_PADDING_INFO();
+
+            return EncryptData(key,
+                               data,
+                               ref pkcs1Info,
+                               AsymmetricPaddingMode.Pkcs1,
+                               UnsafeNativeMethods.NCryptEncrypt);
+        }
+
+        /// <summary>
+        ///     Generic signature method, wrapped by signature calls for specific padding modes
+        /// </summary>
+        [SecuritySafeCritical]
+        private static byte[] SignHash<T>(SafeNCryptKeyHandle key,
+                                          byte[] hash,
+                                          ref T paddingInfo,
+                                          AsymmetricPaddingMode paddingMode,
+                                          NCryptHashSigner<T> signer) where T : struct {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsInvalid && !key.IsClosed, "!key.IsInvalid && !key.IsClosed");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(signer != null, "signer != null");
+
+            // Figure out how big the signature is
+            int signatureSize = 0;
+            ErrorCode error = signer(key,
+                                     ref paddingInfo,
+                                     hash,
+                                     hash.Length,
+                                     null,
+                                     0,
+                                     out signatureSize,
+                                     paddingMode);
+            if (error != ErrorCode.Success && error != ErrorCode.BufferTooSmall) {
+                throw new CryptographicException((int)error);
+            }
+
+            // Sign the hash
+            byte[] signature = new byte[signatureSize];
+            error = signer(key,
+                           ref paddingInfo,
+                           hash,
+                           hash.Length,
+                           signature,
+                           signature.Length,
+                           out signatureSize,
+                           paddingMode);
+            if (error != ErrorCode.Success) {
+                throw new CryptographicException((int)error);
+            }
+            return signature;
+        }
+
+        /// <summary>
+        ///     Sign a hash, using PKCS1 padding
+        /// </summary>
+        [SecuritySafeCritical]
+        internal static byte[] SignHashPkcs1(SafeNCryptKeyHandle key,
+                                             byte[] hash,
+                                             string hashAlgorithm) {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+
+            BCryptNative.BCRYPT_PKCS1_PADDING_INFO pkcs1Info = new BCryptNative.BCRYPT_PKCS1_PADDING_INFO();
+            pkcs1Info.pszAlgId = hashAlgorithm;
+
+            return SignHash(key,
+                            hash,
+                            ref pkcs1Info,
+                            AsymmetricPaddingMode.Pkcs1,
+                            UnsafeNativeMethods.NCryptSignHash);
+        }
+
+        /// <summary>
+        ///     Sign a hash, using PSS padding
+        /// </summary>
+        [SecuritySafeCritical]
+        internal static byte[] SignHashPss(SafeNCryptKeyHandle key,
+                                           byte[] hash,
+                                           string hashAlgorithm,
+                                           int saltBytes) {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+            Debug.Assert(saltBytes >= 0, "saltBytes >= 0");
+
+            BCryptNative.BCRYPT_PSS_PADDING_INFO pssInfo = new BCryptNative.BCRYPT_PSS_PADDING_INFO();
+            pssInfo.pszAlgId = hashAlgorithm;
+            pssInfo.cbSalt = saltBytes;
+
+            return SignHash(key,
+                            hash,
+                            ref pssInfo,
+                            AsymmetricPaddingMode.Pss,
+                            UnsafeNativeMethods.NCryptSignHash);
+        }
+
+        /// <summary>
+        ///     Generic signature verification method, wrapped by verification calls for specific padding modes
+        /// </summary>        
+        [SecuritySafeCritical]
+        private static bool VerifySignature<T>(SafeNCryptKeyHandle key,
+                                               byte[] hash,
+                                               byte[] signature,
+                                               ref T paddingInfo,
+                                               AsymmetricPaddingMode paddingMode,
+                                               NCryptSignatureVerifier<T> verifier) where T : struct {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(signature != null, "signature != null");
+            Debug.Assert(verifier != null, "verifier != null");
+
+            ErrorCode error = verifier(key,
+                                       ref paddingInfo,
+                                       hash,
+                                       hash.Length,
+                                       signature,
+                                       signature.Length,
+                                       paddingMode);
+            if (error != ErrorCode.Success && error != ErrorCode.BadSignature) {
+                throw new CryptographicException((int)error);
+            }
+
+            return error == ErrorCode.Success;
+        }
+
+        /// <summary>
+        ///     Verify the signature of a hash using PKCS #1 padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static bool VerifySignaturePkcs1(SafeNCryptKeyHandle key,
+                                                  byte[] hash,
+                                                  string hashAlgorithm,
+                                                  byte[] signature) {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+            Debug.Assert(signature != null, "signature != null");
+
+            BCryptNative.BCRYPT_PKCS1_PADDING_INFO pkcs1Info = new BCryptNative.BCRYPT_PKCS1_PADDING_INFO();
+            pkcs1Info.pszAlgId = hashAlgorithm;
+
+            return VerifySignature(key,
+                                   hash,
+                                   signature,
+                                   ref pkcs1Info,
+                                   AsymmetricPaddingMode.Pkcs1,
+                                   UnsafeNativeMethods.NCryptVerifySignature);
+        }
+
+        /// <summary>
+        ///     Verify the signature of a hash using PSS padding
+        /// </summary>        
+        [SecuritySafeCritical]
+        internal static bool VerifySignaturePss(SafeNCryptKeyHandle key,
+                                                byte[] hash,
+                                                string hashAlgorithm,
+                                                int saltBytes,
+                                                byte[] signature) {
+            Debug.Assert(key != null, "key != null");
+            Debug.Assert(!key.IsClosed && !key.IsInvalid, "!key.IsClosed && !key.IsInvalid");
+            Debug.Assert(hash != null, "hash != null");
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm), "!String.IsNullOrEmpty(hashAlgorithm)");
+            Debug.Assert(signature != null, "signature != null");
+
+            BCryptNative.BCRYPT_PSS_PADDING_INFO pssInfo = new BCryptNative.BCRYPT_PSS_PADDING_INFO();
+            pssInfo.pszAlgId = hashAlgorithm;
+            pssInfo.cbSalt = saltBytes;
+
+            return VerifySignature(key,
+                                   hash,
+                                   signature,
+                                   ref pssInfo,
+                                   AsymmetricPaddingMode.Pss,
+                                   UnsafeNativeMethods.NCryptVerifySignature);
+        }
 
         /// <summary>
         ///     Determine if NCrypt is supported on the current machine
@@ -484,9 +943,7 @@ namespace System.Security.Cryptography {
             if (error != ErrorCode.Success) {
                 throw new CryptographicException((int)error);
             }
-
-            // Key handles are no longer valid after deleting
-            key.Dispose();
+            key.SetHandleAsInvalid();
         }
 
         /// <summary>

@@ -11,7 +11,7 @@
 // repeatedly checking until the lock becomes available. As the thread remains active performing a non-useful task,
 // the use of such a lock is a kind of busy waiting and consumes CPU resources without performing real work. 
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 using System;

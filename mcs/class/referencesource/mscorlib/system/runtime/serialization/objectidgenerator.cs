@@ -52,9 +52,9 @@ namespace System.Runtime.Serialization {
         // we set found to false and return the position where the object should be inserted.
         //
         private int FindElement(Object obj, out bool found) {
-            //<STRIP>This double-hashing algorithm is recomended by CLR, pg 236.
-            //We're hosed if somebody rehashes the table while we're doing the lookup, but that's
-            //generally true for most of these operations.</STRIP>
+            //<
+
+
             int hashcode = RuntimeHelpers.GetHashCode(obj);
             int hashIncrement = (1+((hashcode&0x7FFFFFFF)%(m_currentSize-2)));        
             do {

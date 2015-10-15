@@ -771,13 +771,13 @@ namespace System.ServiceModel.Description
             return defaultFormatAttribute;
         }
 
-        //[....] and Async should follow the rules:
+        //Sync and Async should follow the rules:
         //    1. Parameter match
         //    2. Async cannot have behaviors (verification happens later in ProcessOpMethod - behaviors haven't yet been loaded here)
         //    3. Async cannot have known types
         //    4. Async cannot have known faults
-        //    5. [....] and Async have to match on OneWay status
-        //    6. [....] and Async have to match Action and ReplyAction
+        //    5. Sync and Async have to match on OneWay status
+        //    6. Sync and Async have to match Action and ReplyAction
         void VerifyConsistency(OperationConsistencyVerifier verifier)
         {
             verifier.VerifyParameterLength();
@@ -860,7 +860,7 @@ namespace System.ServiceModel.Description
                         existingOp.TaskTResult = newOp.TaskTResult;
                         if (existingOp.SyncMethod != null)
                         {
-                            // Task vs. [....] 
+                            // Task vs. Sync 
                             VerifyConsistency(new SyncTaskOperationConsistencyVerifier(existingOp, newOp));
                         }
                         else
@@ -876,7 +876,7 @@ namespace System.ServiceModel.Description
                         existingOp.EndMethod = newOp.EndMethod;
                         if (existingOp.SyncMethod != null)
                         {
-                            // Async vs. [....]
+                            // Async vs. Sync
                             VerifyConsistency(new SyncAsyncOperationConsistencyVerifier(existingOp, newOp));
                         }
                         else
@@ -894,12 +894,12 @@ namespace System.ServiceModel.Description
                         newOp.TaskTResult = existingOp.TaskTResult;
                         if (existingOp.TaskMethod != null)
                         {
-                            // [....] vs. Task
+                            // Sync vs. Task
                             VerifyConsistency(new SyncTaskOperationConsistencyVerifier(newOp, existingOp));
                         }
                         else
                         {
-                            // [....] vs. Async
+                            // Sync vs. Async
                             VerifyConsistency(new SyncAsyncOperationConsistencyVerifier(newOp, existingOp));
                         }
                         return newOp;

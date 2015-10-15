@@ -17,6 +17,7 @@ namespace System {
     [StructLayout(LayoutKind.Sequential)]
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
+    [System.Runtime.Versioning.NonVersionable] // This only applies to field layout
     public partial struct Guid : IFormattable, IComparable
 #if GENERICS_WORK
         , IComparable<Guid>, IEquatable<Guid>
@@ -748,7 +749,7 @@ namespace System {
 
         //
         // StringToShort, StringToInt, and StringToLong are wrappers around COMUtilNative integer parsing routines;
-        //<STRIP>
+        //<
 
         [System.Security.SecuritySafeCritical]
         private static unsafe bool StringToShort(String str, int requiredLength, int flags, out short result, ref GuidResult parseResult) {
@@ -1162,11 +1163,14 @@ namespace System {
             return (char) ((a > 9) ? a - 10 + 0x61 : a + 0x30);
         }
 
-        private static int HexsToChars(char[] guidChars, int offset, int a, int b)
+        [System.Security.SecurityCritical]
+        unsafe private static int HexsToChars(char* guidChars, int offset, int a, int b)
         {
             return HexsToChars(guidChars, offset, a, b, false);
         }
-        private static int HexsToChars(char[] guidChars, int offset, int a, int b, bool hex)
+
+        [System.Security.SecurityCritical]
+        unsafe private static int HexsToChars(char* guidChars, int offset, int a, int b, bool hex)
         {
             if (hex) {
                 guidChars[offset++] = '0';
@@ -1186,14 +1190,14 @@ namespace System {
 
         // IFormattable interface
         // We currently ignore provider
+        [System.Security.SecuritySafeCritical]
         public String ToString(String format, IFormatProvider provider)
         {
             if (format == null || format.Length == 0)
                 format = "D";
 
-            char[] guidChars;
+            string guidString;
             int offset = 0;
-            int strLength = 38;
             bool dash = true;
             bool hex = false;
 
@@ -1204,29 +1208,38 @@ namespace System {
             
             char formatCh = format[0];
             if (formatCh == 'D' || formatCh == 'd') {
-                guidChars = new char[36];
-                strLength = 36;
+                guidString = string.FastAllocateString(36);
             }            
             else if (formatCh == 'N' || formatCh == 'n') {
-                guidChars = new char[32];
-                strLength = 32;
+                guidString = string.FastAllocateString(32);
                 dash = false;
             }
             else if (formatCh == 'B' || formatCh == 'b') {
-                guidChars = new char[38];
-                guidChars[offset++] = '{';
-                guidChars[37] = '}';
+                guidString = string.FastAllocateString(38);
+                unsafe {
+                    fixed (char* guidChars = guidString) {
+                        guidChars[offset++] = '{';
+                        guidChars[37] = '}';
+                    }
+                }
             }
             else if (formatCh == 'P' || formatCh == 'p') {
-                guidChars = new char[38];
-                guidChars[offset++] = '(';
-                guidChars[37] = ')';
+                guidString = string.FastAllocateString(38);
+                unsafe {
+                    fixed (char* guidChars = guidString) {
+                        guidChars[offset++] = '(';
+                        guidChars[37] = ')';
+                    }
+                }
             }
             else if (formatCh == 'X' || formatCh == 'x') {
-                guidChars = new char[68];
-                guidChars[offset++] = '{';
-                guidChars[67] = '}';
-                strLength=68;
+                guidString = string.FastAllocateString(68);
+                unsafe {
+                    fixed (char* guidChars = guidString) {
+                        guidChars[offset++] = '{';
+                        guidChars[67] = '}';
+                    }
+                }
                 dash = false;
                 hex = true;
             }
@@ -1234,47 +1247,51 @@ namespace System {
                 throw new FormatException(Environment.GetResourceString("Format_InvalidGuidFormatSpecification"));
             }
 
-            if (hex) {
-                // {0xdddddddd,0xdddd,0xdddd,{0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd}}
-                guidChars[offset++] = '0';
-                guidChars[offset++] = 'x';
-                offset = HexsToChars(guidChars, offset, _a >> 24, _a >> 16);
-                offset = HexsToChars(guidChars, offset, _a >> 8, _a);
-                guidChars[offset++] = ',';
-                guidChars[offset++] = '0';
-                guidChars[offset++] = 'x';
-                offset = HexsToChars(guidChars, offset, _b >> 8, _b);
-                guidChars[offset++] = ',';
-                guidChars[offset++] = '0';
-                guidChars[offset++] = 'x';
-                offset = HexsToChars(guidChars, offset, _c >> 8, _c);
-                guidChars[offset++] = ',';
-                guidChars[offset++] = '{';
-                offset = HexsToChars(guidChars, offset, _d, _e, true);
-                guidChars[offset++] = ',';
-                offset = HexsToChars(guidChars, offset, _f, _g, true);
-                guidChars[offset++] = ',';
-                offset = HexsToChars(guidChars, offset, _h, _i, true);
-                guidChars[offset++] = ',';
-                offset = HexsToChars(guidChars, offset, _j, _k, true);
-                guidChars[offset++] = '}';
+            unsafe {
+                fixed (char* guidChars = guidString) {
+                    if (hex) {
+                        // {0xdddddddd,0xdddd,0xdddd,{0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd,0xdd}}
+                        guidChars[offset++] = '0';
+                        guidChars[offset++] = 'x';
+                        offset = HexsToChars(guidChars, offset, _a >> 24, _a >> 16);
+                        offset = HexsToChars(guidChars, offset, _a >> 8, _a);
+                        guidChars[offset++] = ',';
+                        guidChars[offset++] = '0';
+                        guidChars[offset++] = 'x';
+                        offset = HexsToChars(guidChars, offset, _b >> 8, _b);
+                        guidChars[offset++] = ',';
+                        guidChars[offset++] = '0';
+                        guidChars[offset++] = 'x';
+                        offset = HexsToChars(guidChars, offset, _c >> 8, _c);
+                        guidChars[offset++] = ',';
+                        guidChars[offset++] = '{';
+                        offset = HexsToChars(guidChars, offset, _d, _e, true);
+                        guidChars[offset++] = ',';
+                        offset = HexsToChars(guidChars, offset, _f, _g, true);
+                        guidChars[offset++] = ',';
+                        offset = HexsToChars(guidChars, offset, _h, _i, true);
+                        guidChars[offset++] = ',';
+                        offset = HexsToChars(guidChars, offset, _j, _k, true);
+                        guidChars[offset++] = '}';
+                    }
+                    else {
+                        // [{|(]dddddddd[-]dddd[-]dddd[-]dddd[-]dddddddddddd[}|)]
+                        offset = HexsToChars(guidChars, offset, _a >> 24, _a >> 16);
+                        offset = HexsToChars(guidChars, offset, _a >> 8, _a);
+                        if (dash) guidChars[offset++] = '-';
+                        offset = HexsToChars(guidChars, offset, _b >> 8, _b);
+                        if (dash) guidChars[offset++] = '-';
+                        offset = HexsToChars(guidChars, offset, _c >> 8, _c);
+                        if (dash) guidChars[offset++] = '-';
+                        offset = HexsToChars(guidChars, offset, _d, _e);
+                        if (dash) guidChars[offset++] = '-';
+                        offset = HexsToChars(guidChars, offset, _f, _g);
+                        offset = HexsToChars(guidChars, offset, _h, _i);
+                        offset = HexsToChars(guidChars, offset, _j, _k);
+                    }
+                }
             }
-            else {
-                // [{|(]dddddddd[-]dddd[-]dddd[-]dddd[-]dddddddddddd[}|)]
-                offset = HexsToChars(guidChars, offset, _a >> 24, _a >> 16);
-                offset = HexsToChars(guidChars, offset, _a >> 8, _a);
-                if (dash) guidChars[offset++] = '-';
-                offset = HexsToChars(guidChars, offset, _b >> 8, _b);
-                if (dash) guidChars[offset++] = '-';
-                offset = HexsToChars(guidChars, offset, _c >> 8, _c);
-                if (dash) guidChars[offset++] = '-';
-                offset = HexsToChars(guidChars, offset, _d, _e);
-                if (dash) guidChars[offset++] = '-';
-                offset = HexsToChars(guidChars, offset, _f, _g);
-                offset = HexsToChars(guidChars, offset, _h, _i);
-                offset = HexsToChars(guidChars, offset, _j, _k);
-            }
-            return new String(guidChars, 0, strLength);
+            return guidString;
         }
     }
 }

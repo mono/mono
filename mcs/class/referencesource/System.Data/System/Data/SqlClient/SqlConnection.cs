@@ -2,8 +2,8 @@
 // <copyright file="SqlConnection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("System.Data.DataSetExtensions, PublicKey="+AssemblyRef.EcmaPublicKeyFull)] // DevDiv Bugs 92166
@@ -12,6 +12,9 @@ namespace System.Data.SqlClient
 {
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Configuration.Assemblies;
     using System.ComponentModel;
     using System.Data;
@@ -22,6 +25,7 @@ namespace System.Data.SqlClient
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.InteropServices;
@@ -44,6 +48,163 @@ namespace System.Data.SqlClient
 
         static private readonly object EventInfoMessage = new object();
 
+        // System column encryption key store providers are added by default
+        static private readonly Dictionary<string, SqlColumnEncryptionKeyStoreProvider> _SystemColumnEncryptionKeyStoreProviders
+            = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>(capacity: 1, comparer: StringComparer.OrdinalIgnoreCase)
+        {
+            {SqlColumnEncryptionCertificateStoreProvider.ProviderName, new SqlColumnEncryptionCertificateStoreProvider()}
+        };
+
+        /// <summary>
+        /// Custom provider list should be provided by the user. We shallow copy the user supplied dictionary into a ReadOnlyDictionary.
+        /// Custom provider list can only supplied once per application.
+        /// </summary>
+        static private ReadOnlyDictionary<string, SqlColumnEncryptionKeyStoreProvider> _CustomColumnEncryptionKeyStoreProviders;
+
+        // Lock to control setting of _CustomColumnEncryptionKeyStoreProviders
+        static private readonly Object _CustomColumnEncryptionKeyProvidersLock = new Object();
+
+        /// <summary>
+        /// Dictionary object holding trusted key paths for various SQL Servers.
+        /// Key to the dictionary is a SQL Server Name
+        /// IList contains a list of trusted key paths.
+        /// </summary>
+        static private readonly ConcurrentDictionary<string, IList<string>> _ColumnEncryptionTrustedMasterKeyPaths
+            = new ConcurrentDictionary<string, IList<string>>(concurrencyLevel: 4 * Environment.ProcessorCount /* default value in ConcurrentDictionary*/,
+                                                            capacity: 1,
+                                                            comparer: StringComparer.OrdinalIgnoreCase);
+
+        [
+        DefaultValue(null),
+        ResCategoryAttribute(Res.DataCategory_Data),
+        ResDescriptionAttribute(Res.TCE_SqlConnection_TrustedColumnMasterKeyPaths),
+        ]
+        static public IDictionary<string, IList<string>> ColumnEncryptionTrustedMasterKeyPaths
+        {
+            get
+            {
+                return _ColumnEncryptionTrustedMasterKeyPaths;
+            }
+        }
+        
+        /// <summary>
+        /// This function should only be called once in an app. This does shallow copying of the dictionary so that 
+        /// the app cannot alter the custom provider list once it has been set.
+        /// 
+        /// Example:
+        /// 
+        /// Dictionary<string, SqlColumnEncryptionKeyStoreProvider> customKeyStoreProviders = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>();
+        /// MySqlClientHSMProvider myProvider = new MySqlClientHSMProvider();
+        /// customKeyStoreProviders.Add(@"HSM Provider", myProvider);
+        /// SqlConnection.RegisterColumnEncryptionKeyStoreProviders(customKeyStoreProviders);
+        /// </summary>
+        /// <param name="customProviders">Custom column encryption key provider dictionary</param>
+        static public void RegisterColumnEncryptionKeyStoreProviders(IDictionary<string, SqlColumnEncryptionKeyStoreProvider> customProviders)
+        {
+
+            // Return when the provided dictionary is null.
+            if (customProviders == null)
+            {
+                throw SQL.NullCustomKeyStoreProviderDictionary();
+            }
+
+            // Validate that custom provider list doesn't contain any of system provider list
+            foreach (string key in customProviders.Keys)
+            {
+                // Validate the provider name
+                //
+                // Check for null or empty
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    throw SQL.EmptyProviderName();
+                }
+
+                // Check if the name starts with MSSQL_, since this is reserved namespace for system providers.
+                if (key.StartsWith(ADP.ColumnEncryptionSystemProviderNamePrefix, StringComparison.InvariantCultureIgnoreCase)) 
+                {
+                    throw SQL.InvalidCustomKeyStoreProviderName(key, ADP.ColumnEncryptionSystemProviderNamePrefix);
+                }
+
+                // Validate the provider value
+                if (customProviders[key] == null)
+                {
+                    throw SQL.NullProviderValue(key);
+                }
+            }
+
+            lock (_CustomColumnEncryptionKeyProvidersLock)
+            {
+                // Provider list can only be set once
+                if (_CustomColumnEncryptionKeyStoreProviders != null)
+                {
+                    throw SQL.CanOnlyCallOnce();
+                }
+
+                // Create a temporary dictionary and then add items from the provided dictionary.
+                // Dictionary constructor does shallow copying by simply copying the provider name and provider reference pairs
+                // in the provided customerProviders dictionary.
+                Dictionary<string, SqlColumnEncryptionKeyStoreProvider> customColumnEncryptionKeyStoreProviders =
+                    new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>(customProviders, StringComparer.OrdinalIgnoreCase);
+
+                // Set the dictionary to the ReadOnly dictionary.
+                _CustomColumnEncryptionKeyStoreProviders = new ReadOnlyDictionary<string, SqlColumnEncryptionKeyStoreProvider>(customColumnEncryptionKeyStoreProviders);
+            }
+        }
+
+        /// <summary>
+        /// This function walks through both system and custom column encryption key store providers and returns an object if found.
+        /// </summary>
+        /// <param name="providerName">Provider Name to be searched in System Provider diction and Custom provider dictionary.</param>
+        /// <param name="columnKeyStoreProvider">If the provider is found, returns the corresponding SqlColumnEncryptionKeyStoreProvider instance.</param>
+        /// <returns>true if the provider is found, else returns false</returns>
+        static internal bool TryGetColumnEncryptionKeyStoreProvider(string providerName, out SqlColumnEncryptionKeyStoreProvider columnKeyStoreProvider) {
+            Debug.Assert(!string.IsNullOrWhiteSpace(providerName), "Provider name is invalid");
+
+            // Initialize the out parameter
+            columnKeyStoreProvider = null;
+
+            // Search in the sytem provider list.
+            if (_SystemColumnEncryptionKeyStoreProviders.TryGetValue(providerName, out columnKeyStoreProvider))
+            {
+                return true;
+            }
+
+            lock (_CustomColumnEncryptionKeyProvidersLock)
+            {
+                // If custom provider is not set, then return false
+                if (_CustomColumnEncryptionKeyStoreProviders == null)
+                {
+                    return false;
+                }
+
+                // Search in the custom provider list
+                return _CustomColumnEncryptionKeyStoreProviders.TryGetValue(providerName, out columnKeyStoreProvider);
+            }
+        }
+
+        /// <summary>
+        /// This function returns a list of system provider dictionary currently supported by this driver.
+        /// </summary>
+        /// <returns>Combined list of provider names</returns>
+        static internal List<string> GetColumnEncryptionSystemKeyStoreProviders() {
+            HashSet<string> providerNames = new HashSet<string>(_SystemColumnEncryptionKeyStoreProviders.Keys);
+            return providerNames.ToList();
+        }
+
+        /// <summary>
+        /// This function returns a list of custom provider dictionary currently registered.
+        /// </summary>
+        /// <returns>Combined list of provider names</returns>
+        static internal List<string> GetColumnEncryptionCustomKeyStoreProviders() {
+            if(_CustomColumnEncryptionKeyStoreProviders != null)
+            {
+                HashSet<string> providerNames = new HashSet<string>(_CustomColumnEncryptionKeyStoreProviders.Keys);
+                return providerNames.ToList();
+            }
+
+            return new List<string>();
+        }
+
         private SqlDebugContext _sdc;   // SQL Debugging support
 
         private bool    _AsyncCommandInProgress;
@@ -59,7 +220,9 @@ namespace System.Data.SqlClient
 
         private SqlCredential _credential; // SQL authentication password stored in SecureString
         private string _connectionString;
-        private int _connectRetryCount; 
+        private int _connectRetryCount;
+
+        private string _accessToken; // Access Token to be used for token based authententication
 
         // connection resiliency
         private object _reconnectLock = new object();
@@ -98,6 +261,11 @@ namespace System.Data.SqlClient
                     throw ADP.InvalidMixedArgumentOfSecureCredentialAndContextConnection();
                 }
 
+                if (UsesActiveDirectoryIntegrated(connectionOptions))
+                {
+                     throw SQL.SettingCredentialWithIntegratedArgument();
+                }
+
                 Credential = credential;
             }
             // else
@@ -116,6 +284,7 @@ namespace System.Data.SqlClient
                 password.MakeReadOnly();
                 _credential = new SqlCredential(connection._credential.UserId, password);
             }
+            _accessToken = connection._accessToken;
             CacheConnectionStringProperties();
         }
 
@@ -206,19 +375,38 @@ namespace System.Data.SqlClient
             }
         }
 
+        /// <summary>
+        /// Is this connection using column encryption ?
+        /// </summary>
+        internal bool IsColumnEncryptionSettingEnabled {
+            get {
+                SqlConnectionString opt = (SqlConnectionString)ConnectionOptions;
+                return opt != null ? opt.ColumnEncryptionSetting == SqlConnectionColumnEncryptionSetting.Enabled : false;
+            }
+        }
+
         // Is this connection is a Context Connection?
         private bool UsesContextConnection(SqlConnectionString opt)
         {
             return opt != null ? opt.ContextConnection : false;
         }
 
+        private bool UsesActiveDirectoryIntegrated(SqlConnectionString opt) 
+        {
+             return opt != null ? opt.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated : false;
+        }
+
+        private bool UsesAuthentication(SqlConnectionString opt) {
+             return opt != null ? opt.Authentication != SqlAuthenticationMethod.NotSpecified : false;
+        }
+        
         // Does this connection uses Integrated Security?
         private bool UsesIntegratedSecurity(SqlConnectionString opt) {
-                return opt != null ? opt.IntegratedSecurity : false;
+            return opt != null ? opt.IntegratedSecurity : false;
         }
 
         // Does this connection uses old style of clear userID or Password in connection string?
-         private bool UsesClearUserIdOrPassword(SqlConnectionString opt) {
+        private bool UsesClearUserIdOrPassword(SqlConnectionString opt) {
             bool result = false;
             if (null != opt) {
                 result = (!ADP.IsEmpty(opt.UserID) || !ADP.IsEmpty(opt.Password));
@@ -256,6 +444,41 @@ namespace System.Data.SqlClient
             }
         }
 
+        // AccessToken: To be used for token based authentication
+        [
+        Browsable(false),
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+        ResDescriptionAttribute(Res.SqlConnection_AccessToken),
+        ]
+        public string AccessToken {
+            get {
+                string result = _accessToken;
+                // When a connection is connecting or is ever opened, make AccessToken available only if "Persist Security Info" is set to true
+                // otherwise, return null
+                SqlConnectionString connectionOptions = (SqlConnectionString)UserConnectionOptions;
+                if (InnerConnection.ShouldHidePassword && connectionOptions != null && !connectionOptions.PersistSecurityInfo) {
+                    result = null;
+                }
+
+                return result;
+            }
+            set {
+                // If a connection is connecting or is ever opened, AccessToken cannot be set
+                if (!InnerConnection.AllowSetConnectionString) {
+                    throw ADP.OpenConnectionPropertySet("AccessToken", InnerConnection.State);
+                }
+                
+                if (value != null) {
+                    // Check if the usage of AccessToken has any conflict with the keys used in connection string and credential
+                    CheckAndThrowOnInvalidCombinationOfConnectionOptionAndAccessToken((SqlConnectionString)ConnectionOptions);
+                }
+                
+                _accessToken = value;
+                // Need to call ConnectionString_Set to do proper pool group check
+                ConnectionString_Set(new SqlConnectionPoolKey(_connectionString, credential: _credential, accessToken: _accessToken));
+            }
+        }
+
         [
         DefaultValue(""),
 #pragma warning disable 618 // ignore obsolete warning about RecommendedAsConfigurable to use SettingsBindableAttribute
@@ -272,13 +495,23 @@ namespace System.Data.SqlClient
                 return ConnectionString_Get();
             }
             set {
-                if (_credential != null)
-                {
+                if(_credential != null || _accessToken != null) {
                     SqlConnectionString connectionOptions = new SqlConnectionString(value);
-                    CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential(connectionOptions);
-                }
+                    if(_credential != null) {
+                        // Check for Credential being used with Authentication=ActiveDirectoryIntegrated. Since a different error string is used
+                        // for this case in ConnectionString setter vs in Credential setter, check for this error case before calling
+                        // CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential, which is common to both setters.
+                        if(UsesActiveDirectoryIntegrated(connectionOptions)) {
+                            throw SQL.SettingIntegratedWithCredential();
+                        }
 
-                ConnectionString_Set(new SqlConnectionPoolKey(value, _credential));
+                        CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential(connectionOptions);
+                    }
+                    else if(_accessToken != null) {
+                        CheckAndThrowOnInvalidCombinationOfConnectionOptionAndAccessToken(connectionOptions);
+                    }
+                }
+                ConnectionString_Set(new SqlConnectionPoolKey(value, _credential, _accessToken));
                 _connectionString = value;  // Change _connectionString value only after value is validated
                 CacheConnectionStringProperties();
             }
@@ -482,13 +715,24 @@ namespace System.Data.SqlClient
                 // check if the usage of credential has any conflict with the keys used in connection string
                 if (value != null)
                 {
-                    CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential((SqlConnectionString) ConnectionOptions);
-                }
+                    // Check for Credential being used with Authentication=ActiveDirectoryIntegrated. Since a different error string is used
+                    // for this case in ConnectionString setter vs in Credential setter, check for this error case before calling
+                    // CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential, which is common to both setters.
+                    if (UsesActiveDirectoryIntegrated((SqlConnectionString) ConnectionOptions)) {
+                        throw SQL.SettingCredentialWithIntegratedInvalid();
+                    }
 
+                    CheckAndThrowOnInvalidCombinationOfConnectionStringAndSqlCredential((SqlConnectionString) ConnectionOptions);
+                    if(_accessToken != null) {
+                        throw ADP.InvalidMixedUsageOfCredentialAndAccessToken();
+                    }
+
+                }
+                
                 _credential = value;
 
                 // Need to call ConnectionString_Set to do proper pool group check
-                ConnectionString_Set(new SqlConnectionPoolKey(_connectionString, _credential));
+                ConnectionString_Set(new SqlConnectionPoolKey(_connectionString, _credential, accessToken: _accessToken));
             }
         }
 
@@ -511,6 +755,33 @@ namespace System.Data.SqlClient
             if (UsesContextConnection(connectionOptions))
             {
                 throw ADP.InvalidMixedArgumentOfSecureCredentialAndContextConnection();
+            }
+        }
+
+        // CheckAndThrowOnInvalidCombinationOfConnectionOptionAndAccessToken: check if the usage of AccessToken has any conflict
+        //  with the keys used in connection string and credential
+        //  If there is any conflict, it throws InvalidOperationException
+        //  This is to be used setter of ConnectionString and AccessToken properties
+        private void CheckAndThrowOnInvalidCombinationOfConnectionOptionAndAccessToken(SqlConnectionString connectionOptions) {
+            if (UsesClearUserIdOrPassword(connectionOptions)) {
+                throw ADP.InvalidMixedUsageOfAccessTokenAndUserIDPassword();
+            }
+
+            if (UsesIntegratedSecurity(connectionOptions)) {
+                throw ADP.InvalidMixedUsageOfAccessTokenAndIntegratedSecurity();
+            }
+
+            if (UsesContextConnection(connectionOptions)) {
+                throw ADP.InvalidMixedUsageOfAccessTokenAndContextConnection();
+            }
+
+            if (UsesAuthentication(connectionOptions)) {
+                throw ADP.InvalidMixedUsageOfAccessTokenAndAuthentication();
+            }
+
+            // Check if the usage of AccessToken has the conflict with credential
+            if (_credential != null) {
+                throw ADP.InvalidMixedUsageOfAccessTokenAndCredential();
             }
         }
 
@@ -784,14 +1055,16 @@ namespace System.Data.SqlClient
         }
 
         private void DisposeMe(bool disposing) { // MDAC 65459
-            _credential = null; // clear credential here rather than in IDisposable.Dispose as this is only specific to SqlConnection only
-                                //  IDisposable.Dispose is generated code from a template and used by other providers as well
+            // clear credential and AccessToken here rather than in IDisposable.Dispose as these are specific to SqlConnection only
+            //  IDisposable.Dispose is generated code from a template and used by other providers as well
+            _credential = null; 
+            _accessToken = null;
 
             if (!disposing) {
-                // DevDiv2 Bug 457934:SQLConnection leaks when not disposed
-                // http://vstfdevdiv:8080/DevDiv2/DevDiv/_workitems/edit/457934
-                // For non-pooled connections we need to make sure that if the SqlConnection was not closed, then we release the GCHandle on the stateObject to allow it to be GCed
-                // For pooled connections, we will rely on the pool reclaiming the connection
+                // DevDiv2 
+
+
+
                 var innerConnection = (InnerConnection as SqlInternalConnectionTds);
                 if ((innerConnection != null) && (!innerConnection.ConnectionOptions.Pooling)) {
                     var parser = innerConnection.Parser;
@@ -1151,7 +1424,16 @@ namespace System.Data.SqlClient
         }
 
         private bool TryOpen(TaskCompletionSource<DbConnectionInternal> retry) {
-            if (_impersonateIdentity != null) {
+            SqlConnectionString connectionOptions = (SqlConnectionString)ConnectionOptions;
+
+            if (connectionOptions != null &&
+                (connectionOptions.Authentication == SqlAuthenticationMethod.SqlPassword || connectionOptions.Authentication == SqlAuthenticationMethod.ActiveDirectoryPassword) &&
+                (!connectionOptions.HasUserIdKeyword || !connectionOptions.HasPasswordKeyword) &&
+                _credential == null) {
+                    throw SQL.CredentialsNotProvided(connectionOptions.Authentication);
+            }
+
+           if (_impersonateIdentity != null) {
                 if (_impersonateIdentity.User == DbConnectionPoolIdentity.GetCurrentWindowsIdentity().User) {
                     return TryOpenInner(retry);
                 }
@@ -1162,7 +1444,7 @@ namespace System.Data.SqlClient
                 }
             }
             else {
-                if (this.UsesIntegratedSecurity((SqlConnectionString)ConnectionOptions)) {
+                if (this.UsesIntegratedSecurity(connectionOptions) || this.UsesActiveDirectoryIntegrated(connectionOptions)) {
                     _lastIdentity = DbConnectionPoolIdentity.GetCurrentWindowsIdentity();
                 }
                 else {
@@ -1353,13 +1635,13 @@ namespace System.Data.SqlClient
         internal void OnError(SqlException exception, bool breakConnection, Action<Action> wrapCloseInAction) {
             Debug.Assert(exception != null && exception.Errors.Count != 0, "SqlConnection: OnError called with null or empty exception!");
 
-            // Bug fix - MDAC 49022 - connection open after failure...  Problem was parser was passing
-            // Open as a state - because the parser's connection to the netlib was open.  We would
-            // then set the connection state to the parser's state - which is not correct.  The only
-            // time the connection state should change to what is passed in to this function is if
-            // the parser is broken, then we should be closed.  Changed to passing in
-            // TdsParserState, not ConnectionState.
-            // fixed by [....]
+            // 
+
+
+
+
+
+
 
             if (breakConnection && (ConnectionState.Open == State)) {
 
@@ -1665,10 +1947,10 @@ namespace System.Data.SqlClient
                     throw ADP.InvalidArgumentLength("newPassword", TdsEnums.MAXLEN_NEWPASSWORD);
                 }
 
-                SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, null);
+                SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, credential: null, accessToken: null);
 
                 SqlConnectionString connectionOptions = SqlConnectionFactory.FindSqlConnectionOptions(key);
-                if (connectionOptions.IntegratedSecurity) {
+                if (connectionOptions.IntegratedSecurity || connectionOptions.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated) {
                     throw SQL.ChangePasswordConflictsWithSSPI();
                 }
                 if (! ADP.IsEmpty(connectionOptions.AttachDBFilename)) {
@@ -1714,7 +1996,7 @@ namespace System.Data.SqlClient
                     throw ADP.InvalidArgumentLength("newSecurePassword", TdsEnums.MAXLEN_NEWPASSWORD);
                 }
 
-                SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, credential);
+                SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, credential, accessToken: null);
 
                 SqlConnectionString connectionOptions = SqlConnectionFactory.FindSqlConnectionOptions(key);
 
@@ -1723,7 +2005,7 @@ namespace System.Data.SqlClient
                     throw ADP.InvalidMixedArgumentOfSecureAndClearCredential();
                 }
 
-                if (connectionOptions.IntegratedSecurity) {
+                if (connectionOptions.IntegratedSecurity || connectionOptions.Authentication == SqlAuthenticationMethod.ActiveDirectoryIntegrated) {
                     throw SQL.ChangePasswordConflictsWithSSPI();
                 }
 
@@ -1755,7 +2037,7 @@ namespace System.Data.SqlClient
                     throw SQL.ChangePasswordRequiresYukon();
                 }
             }
-            SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, credential);
+            SqlConnectionPoolKey key = new SqlConnectionPoolKey(connectionString, credential, accessToken: null);
 
             SqlConnectionFactory.SingletonInstance.ClearPool(key);
         }

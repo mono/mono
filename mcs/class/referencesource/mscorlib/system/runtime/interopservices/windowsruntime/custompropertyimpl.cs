@@ -4,13 +4,12 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Security;
 using System.Reflection;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -69,77 +68,26 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 
         public object GetValue(object target)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginCustomPropertyImplGetValue(target != null ? target.GetType().GetFullNameForEtw() : "", m_property.GetFullNameForEtw());
-            }
-#endif
-            object o = InvokeInternal(target, null, true);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndCustomPropertyImplGetValue(target != null ? target.GetType().GetFullNameForEtw() : "", m_property.GetFullNameForEtw());
-            }
-#endif
-            return o;
+            return InvokeInternal(target, null, true);
         }
 
         // Unlike normal .Net, Jupiter properties can have at most one indexer parameter. A null
         // indexValue here means that the property has an indexer argument and its value is null.
         public object GetValue(object target, object indexValue)
         {
-#if !FEATURE_CORECLR            
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginCustomPropertyImplGetValueIndexValue(target != null ? target.GetType().GetFullNameForEtw() : "", indexValue != null ? indexValue.GetType().GetFullNameForEtw() : "");
-            }
-#endif
-            object o = InvokeInternal(target, new object[] { indexValue }, true);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndCustomPropertyImplGetValueIndexValue(target != null ? target.GetType().GetFullNameForEtw() : "", indexValue != null ? indexValue.GetType().GetFullNameForEtw() : "");
-            }
-#endif
-            return o;
+            return InvokeInternal(target, new object[] { indexValue }, true);
         }
 
         public void SetValue(object target, object value)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginCustomPropertyImplSetValue(target != null ? target.GetType().GetFullNameForEtw() : "", value != null ? value.GetType().GetFullNameForEtw() : "");
-            }
-#endif
             InvokeInternal(target, new object[] { value }, false);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndCustomPropertyImplSetValue(target != null ? target.GetType().GetFullNameForEtw() : "", value != null ? value.GetType().GetFullNameForEtw() : "");
-            }
-#endif
         }
 
         // Unlike normal .Net, Jupiter properties can have at most one indexer parameter. A null
         // indexValue here means that the property has an indexer argument and its value is null.
         public void SetValue(object target, object value, object indexValue)
         {
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginCustomPropertyImplSetValueIndexValue(target != null ? target.GetType().GetFullNameForEtw() : "", value != null ? value.GetType().GetFullNameForEtw() : "", indexValue != null ? indexValue.GetType().GetFullNameForEtw() : "");
-            }
-#endif
             InvokeInternal(target, new object[] { indexValue, value }, false);
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndCustomPropertyImplSetValueIndexValue(target != null ? target.GetType().GetFullNameForEtw() : "", value != null ? value.GetType().GetFullNameForEtw() : "", indexValue != null ? indexValue.GetType().GetFullNameForEtw() : "");
-            }
-#endif
-
         }
 
         [SecuritySafeCritical]

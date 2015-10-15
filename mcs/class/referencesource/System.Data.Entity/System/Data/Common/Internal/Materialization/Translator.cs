@@ -2,8 +2,8 @@
 // <copyright file="Translator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common.Internal.Materialization
@@ -2199,7 +2199,7 @@ namespace System.Data.Common.Internal.Materialization
                     }
                     else if (typeof(Object) == type)
                     {
-                        // We assume that Object means we want DBNull rather than null. I believe this is a bug.
+                        // We assume that Object means we want DBNull rather than null. I believe this is a 
                         result = DbDataReader_GetValue;
                     }
                     else

@@ -2,7 +2,7 @@
 // <copyright file="XmlSchemaValidator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -2006,8 +2006,10 @@ namespace System.Xml.Schema {
                             break;
 
                         case CompiledIdentityConstraint.ConstraintRole.Unique:
-                            if (! ks.IsQualified()) {
-                                continue;
+                            if (LocalAppContextSwitches.IgnoreEmptyKeySequences) {
+                                if (!ks.IsQualified()) {
+                                    continue;
+                                }
                             }
                             if (constraints[i].qualifiedTable.Contains (ks)) {
                                 // unique or key checking confliction

@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 using System;
@@ -190,7 +190,7 @@ namespace System.Reflection
             }
         }
 
-        // Keep the definition in [....] with vm\ManagedMdImport.hpp
+        // Keep the definition in sync with vm\ManagedMdImport.hpp
         internal int m_length;
         internal IntPtr m_constArray;
     }
@@ -256,7 +256,7 @@ namespace System.Reflection
 
     internal unsafe struct MetadataEnumResult
     {
-        // Keep the definition in [....] with vm\ManagedMdImport.hpp
+        // Keep the definition in sync with vm\ManagedMdImport.hpp
         private int[] largeResult;
         private int length;
         private fixed int smallResult[16];

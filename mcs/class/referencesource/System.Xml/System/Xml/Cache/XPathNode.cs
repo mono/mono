@@ -2,7 +2,7 @@
 // <copyright file="XPathNode.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
@@ -332,7 +332,6 @@ namespace MS.Internal.Xml.Cache {
         /// <summary>
         /// Set this node's line number information.
         /// </summary>
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public void SetLineInfoOffsets(int lineNumOffset, int linePosOffset) {
             Debug.Assert(lineNumOffset >= 0 && lineNumOffset <= MaxLineNumberOffset, "Line number offset too large or small: " + lineNumOffset);
             Debug.Assert(linePosOffset >= 0 && linePosOffset <= MaxLinePositionOffset, "Line position offset too large or small: " + linePosOffset);

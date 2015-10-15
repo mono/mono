@@ -7,7 +7,7 @@
 **
 ** Interface:  IDictionary
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Base interface for all dictionaries.

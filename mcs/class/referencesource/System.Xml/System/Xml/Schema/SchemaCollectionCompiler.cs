@@ -2,7 +2,7 @@
 // <copyright file="Compiler.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>  
-// <owner current="true" primary="true">[....]</owner>                                                              
+// <owner current="true" primary="true">Microsoft</owner>                                                              
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema {
@@ -678,8 +678,8 @@ namespace System.Xml.Schema {
                 if (baseType.ContentType == XmlSchemaContentType.TextOnly) {
                     if (simpleRestriction.BaseType == null) { 
                         datatype = baseType.Datatype; 
-                        //There is a bug here. Need to check if simpleRestriction has facets.
-                        //If yes, Need tp apply these facets as well. 
+                        //There is a 
+
                     }
                     else {
                         CompileSimpleType(simpleRestriction.BaseType);

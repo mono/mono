@@ -290,7 +290,7 @@ namespace System.Web.UI.WebControls {
                 (Page.Request.Browser.W3CDomVersion.Major > 0)) {
                 if (DefaultButton.Length > 0) {
                     // Find control from the page if it's a hierarchical ID.
-                    // Dev11 bug 19915
+                    // Dev11 
                     Control c = FindControlFromPageIfNecessary(DefaultButton);
 
                     if (c is IButtonControl) {

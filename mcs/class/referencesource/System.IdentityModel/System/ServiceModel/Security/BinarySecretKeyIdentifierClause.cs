@@ -50,7 +50,7 @@ namespace System.ServiceModel.Security
         {
             BinarySecretKeyIdentifierClause that = keyIdentifierClause as BinarySecretKeyIdentifierClause;
 
-            // PreSharp Bug: Parameter 'that' to this public method must be validated: A null-dereference can occur here.
+            // PreSharp 
 #pragma warning suppress 56506
             return ReferenceEquals(this, that) || (that != null && that.Matches(this.GetRawBuffer()));
         }

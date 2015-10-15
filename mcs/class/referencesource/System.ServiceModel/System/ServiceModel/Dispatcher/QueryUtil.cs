@@ -657,7 +657,7 @@ namespace System.ServiceModel.Dispatcher
             }
             else
             {
-                // PERF, [....], can this be made more efficient?  Does it need to be?
+                // PERF, Microsoft, can this be made more efficient?  Does it need to be?
                 Remove(old);
                 Insert(replace);
             }
@@ -704,7 +704,7 @@ namespace System.ServiceModel.Dispatcher
             }
             else if (this.buffer.Length == this.size)
             {
-                // PERF, [....], how should we choose a new size?
+                // PERF, Microsoft, how should we choose a new size?
                 T[] tmp = new T[this.size + 1];
 
                 if (index == 0)

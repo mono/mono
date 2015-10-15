@@ -872,7 +872,7 @@ namespace System.Net.Mail
             try {
                 writer = transport.EndSendMail(result);
                 // If some recipients failed but not others, send the e-mail anyways, but then return the
-                // "Non-fatal" exception reporting the failures.  The [....] code path does it this way.
+                // "Non-fatal" exception reporting the failures.  The sync code path does it this way.
                 // Fatal exceptions would have thrown above at transport.EndSendMail(...)
                 SendMailAsyncResult sendResult = (SendMailAsyncResult)result;
                 // Save these and throw them later in SendMessageCallback, after the message has sent.

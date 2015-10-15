@@ -171,11 +171,11 @@ namespace System.Security.AccessControl
             private bool disposed = false;
             private int referenceCount = 1;
             [System.Security.SecurityCritical] // auto-generated
-            private SafeTokenHandle threadHandle = new SafeTokenHandle( IntPtr.Zero );
+            private SafeAccessTokenHandle threadHandle = new SafeAccessTokenHandle( IntPtr.Zero );
             private bool isImpersonating = false;
 
             [System.Security.SecurityCritical] // auto-generated
-            private static volatile SafeTokenHandle processHandle = new SafeTokenHandle( IntPtr.Zero );
+            private static volatile SafeAccessTokenHandle processHandle = new SafeAccessTokenHandle( IntPtr.Zero );
             private static readonly object syncRoot = new object();
 
 #region Constructor and Finalizer
@@ -201,7 +201,7 @@ namespace System.Security.AccessControl
                     {
                         if ( processHandle.IsInvalid)
                         {
-                            SafeTokenHandle localProcessHandle;
+                            SafeAccessTokenHandle localProcessHandle;
                             if ( false == Win32Native.OpenProcessToken(
                                             Win32Native.GetCurrentProcess(),
                                             TokenAccessLevels.Duplicate,
@@ -229,7 +229,7 @@ namespace System.Security.AccessControl
                         // the process token by impersonating self.
                         //
 
-                        SafeTokenHandle threadHandleBefore = this.threadHandle;
+                        SafeAccessTokenHandle threadHandleBefore = this.threadHandle;
                         error = FCall.OpenThreadToken(
                                       TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges,
                                       WinSecurityContext.Process,
@@ -386,7 +386,7 @@ namespace System.Security.AccessControl
 
 #region Properties
 
-            public SafeTokenHandle ThreadHandle
+            public SafeAccessTokenHandle ThreadHandle
             {
                 [System.Security.SecurityCritical]  // auto-generated
                 get { return this.threadHandle; }

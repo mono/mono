@@ -28,6 +28,7 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 
@@ -623,6 +624,24 @@ namespace System.IO.Pipes {
             }
         }
 
+        public Task WaitForConnectionAsync(CancellationToken cancellationToken) {
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromCancellation(cancellationToken);
+            }
+
+            if (!IsAsync) {
+                return Task.Factory.StartNew(WaitForConnection, cancellationToken);
+            }
+
+            // Avoiding allocation if the task cannot be cancelled
+            IOCancellationHelper cancellationHelper = cancellationToken.CanBeCanceled ? new IOCancellationHelper(cancellationToken) : null;
+            return Task.Factory.FromAsync(BeginWaitForConnection, EndWaitForConnection, cancellationHelper);
+        }
+
+        public Task WaitForConnectionAsync() {
+            return WaitForConnectionAsync(CancellationToken.None);
+        }
+
         // Async version of WaitForConnection.  See the comments above for more info.
         [System.Security.SecurityCritical]
         [HostProtection(ExternalThreading = true)]
@@ -640,6 +659,8 @@ namespace System.IO.Pipes {
             asyncResult._userCallback = callback;
             asyncResult._userStateObject = state;
 
+            IOCancellationHelper cancellationHelper = state as IOCancellationHelper;
+
             // Create wait handle and store in async result
             ManualResetEvent waitHandle = new ManualResetEvent(false);
             asyncResult._waitHandle = waitHandle;
@@ -655,8 +676,12 @@ namespace System.IO.Pipes {
             if (!UnsafeNativeMethods.ConnectNamedPipe(InternalHandle, intOverlapped)) {
                 int errorCode = Marshal.GetLastWin32Error();
 
-                if (errorCode == UnsafeNativeMethods.ERROR_IO_PENDING)
+                if (errorCode == UnsafeNativeMethods.ERROR_IO_PENDING) {
+                    if (cancellationHelper != null) {
+                        cancellationHelper.AllowCancellation(InternalHandle, intOverlapped);
+                    }
                     return asyncResult;
+                }
 
                 // WaitForConnectionCallback will not be called becasue we completed synchronously.
                 // Either the pipe is already connected, or there was an error. Unpin and free the overlapped again.
@@ -676,6 +701,9 @@ namespace System.IO.Pipes {
                 __Error.WinIOError(errorCode, String.Empty);                
             }
             // will set state to Connected when EndWait is called
+            if (cancellationHelper != null) {
+                cancellationHelper.AllowCancellation(InternalHandle, intOverlapped);
+            }
 
             return asyncResult;
         }
@@ -704,6 +732,11 @@ namespace System.IO.Pipes {
                 __Error.EndWaitForConnectionCalledTwice();
             }
 
+            IOCancellationHelper cancellationHelper = afsar.AsyncState as IOCancellationHelper;
+            if (cancellationHelper != null) {
+                cancellationHelper.SetOperationCompleted();
+            }
+
             // Obtain the WaitHandle, but don't use public property in case we
             // delay initialize the manual reset event in the future.
             WaitHandle wh = afsar._waitHandle;
@@ -728,6 +761,11 @@ namespace System.IO.Pipes {
 
             // Now check for any error during the read.
             if (afsar._errorCode != 0) {
+                if (afsar._errorCode == UnsafeNativeMethods.ERROR_OPERATION_ABORTED) {
+                    if (cancellationHelper != null) {
+                        cancellationHelper.ThrowIOOperationAborted();
+                    }
+                }
                 __Error.WinIOError(afsar._errorCode, String.Empty);
             }
 
@@ -939,6 +977,9 @@ namespace System.IO.Pipes {
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
     public sealed class NamedPipeClientStream : PipeStream {
 
+        // Maximum interval in miliseconds between which cancellation is checked.
+        // Used by ConnectInternal. 50ms is fairly responsive time but really long time for processor.
+        private const int CancellationCheckIntervalInMilliseconds = 50;
         private string m_normalizedPipePath;
         private TokenImpersonationLevel m_impersonationLevel;
         private PipeOptions m_pipeOptions;
@@ -1161,6 +1202,127 @@ namespace System.IO.Pipes {
 
                 // Pipe server should be free.  Let's try to connect to it.
                 SafePipeHandle handle = UnsafeNativeMethods.CreateNamedPipeClient(m_normalizedPipePath, 
+                                            m_access,           // read and write access
+                                            0,                  // sharing: none
+                                            secAttrs,           // security attributes
+                                            FileMode.Open,      // open existing 
+                                            _pipeFlags,         // impersonation flags
+                                            UnsafeNativeMethods.NULL);  // template file: null
+
+                if (handle.IsInvalid) {
+                    int errorCode = Marshal.GetLastWin32Error();
+
+                    // Handle the possible race condition of someone else connecting to the server 
+                    // between our calls to WaitNamedPipe & CreateFile.
+                    if (errorCode == UnsafeNativeMethods.ERROR_PIPE_BUSY) {
+                        continue;
+                    }
+
+                    __Error.WinIOError(errorCode, String.Empty);
+                }
+
+                // Success! 
+                InitializeHandle(handle, false, (m_pipeOptions & PipeOptions.Asynchronous) != 0);
+                State = PipeState.Connected;
+
+                return;
+            }
+            while (timeout == Timeout.Infinite || (elapsed = unchecked(Environment.TickCount - startTime)) < timeout);
+            // BUGBUG: SerialPort does not use unchecked arithmetic when calculating elapsed times.  This is needed
+            //         because Environment.TickCount can overflow (though only every 49.7 days).
+
+            throw new TimeoutException();
+        }
+
+        public Task ConnectAsync() {
+            // We cannot avoid creating lambda here by using Connect method
+            // unless we don't care about start time to be measured before the thread is started
+            return ConnectAsync(Timeout.Infinite, CancellationToken.None);
+        }
+
+        public Task ConnectAsync(int timeout) {
+            return ConnectAsync(timeout, CancellationToken.None);
+        }
+
+        public Task ConnectAsync(CancellationToken cancellationToken) {
+            return ConnectAsync(Timeout.Infinite, cancellationToken);
+        }
+
+        public Task ConnectAsync(int timeout, CancellationToken cancellationToken) {
+            CheckConnectOperationsClient();
+
+            if (timeout < 0 && timeout != Timeout.Infinite) {
+                throw new ArgumentOutOfRangeException("timeout", SR.GetString(SR.ArgumentOutOfRange_InvalidTimeout));
+            }
+
+            if (cancellationToken.IsCancellationRequested) {
+                return Task.FromCancellation(cancellationToken);
+            }
+
+            // We need to measure time here, not in the lambda
+            int startTime = Environment.TickCount;
+            return Task.Factory.StartNew(() => ConnectInternal(timeout, cancellationToken, startTime), cancellationToken);
+        }
+
+        // Waits for a pipe instance to become available. This method may return before WaitForConnection is called
+        // on the server end, but WaitForConnection will not return until we have returned.  Any data writen to the
+        // pipe by us after we have connected but before the server has called WaitForConnection will be available
+        // to the server after it calls WaitForConnection. 
+        [System.Security.SecuritySafeCritical]
+        private void ConnectInternal(int timeout, CancellationToken cancellationToken, int startTime) {
+            UnsafeNativeMethods.SECURITY_ATTRIBUTES secAttrs = PipeStream.GetSecAttrs(m_inheritability);
+
+            int _pipeFlags = (int)m_pipeOptions;
+            if (m_impersonationLevel != TokenImpersonationLevel.None) {
+                _pipeFlags |= UnsafeNativeMethods.SECURITY_SQOS_PRESENT;
+                _pipeFlags |= (((int)m_impersonationLevel - 1) << 16);
+            }
+
+            // This is the main connection loop. It will loop until the timeout expires.  Most of the 
+            // time, we will be waiting in the WaitNamedPipe win32 blocking function; however, there are
+            // cases when we will need to loop: 1) The server is not created (WaitNamedPipe returns 
+            // straight away in such cases), and 2) when another client connects to our server in between 
+            // our WaitNamedPipe and CreateFile calls.
+            int elapsed = 0;
+            do {
+                // We want any other exception and and success to have priority over cancellation.
+                cancellationToken.ThrowIfCancellationRequested();
+
+                // Wait for pipe to become free (this will block unless the pipe does not exist).
+                int timeLeft = timeout - elapsed;
+                int waitTime;
+                if (cancellationToken.CanBeCanceled) {
+                    waitTime = Math.Min(CancellationCheckIntervalInMilliseconds, timeLeft);
+                }
+                else {
+                    waitTime = timeLeft;
+                }
+
+                if (!UnsafeNativeMethods.WaitNamedPipe(m_normalizedPipePath, waitTime)) {
+                    int errorCode = Marshal.GetLastWin32Error();
+
+                    // Server is not yet created so let's keep looping.
+                    if (errorCode == UnsafeNativeMethods.ERROR_FILE_NOT_FOUND) {
+                        continue;
+                    }
+
+                    // The timeout has expired.
+                    if (errorCode == UnsafeNativeMethods.ERROR_SUCCESS) {
+                        if (cancellationToken.CanBeCanceled) {
+                            // It may not be real timeout and only checking for cancellation
+                            // let the while condition check it and decide
+                            continue;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+
+                    __Error.WinIOError(errorCode, String.Empty);
+                }
+
+                // Pipe server should be free.  Let's try to connect to it.
+                SafePipeHandle handle = UnsafeNativeMethods.CreateNamedPipeClient(m_normalizedPipePath,
                                             m_access,           // read and write access
                                             0,                  // sharing: none
                                             secAttrs,           // security attributes

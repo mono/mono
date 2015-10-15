@@ -209,7 +209,7 @@ namespace System.Runtime
                 if (Bits.Count(ht) == -1)
                 {
                     // Use a temporary local here to store the result of the Interlocked.CompareExchange.  This
-                    // works around a codegen bug in the 32-bit JIT (TFS 749182).
+                    // works around a codegen 
                     int interlockedResult = Interlocked.CompareExchange(ref this.headTail, ht + Bits.HiOne, ht);
                     if (ht == interlockedResult)
                     {

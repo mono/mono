@@ -7,7 +7,7 @@
 **
 ** File:    ContextBoundObject.cs
 **<EMAIL>
-** Author(s):   Tarun Anand    ([....])
+** Author(s):   Tarun Anand    (TarunA)
 **</EMAIL>              
 **
 ** Purpose: Defines the root type for all context bound types

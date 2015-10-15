@@ -43,15 +43,6 @@ namespace System {
     }
 #endif 
 
-#if FEATURE_SPLIT_RESOURCES
-    // See code:#splitResourceFeature
-    internal enum ResourceHelperState {
-        UNITIALIZED = 0,
-        HAVE_RESOURCES = 1,
-        NO_RESOURCES = 2,
-    }
-#endif // FEATURE_SPLIT_RESOURCES
-
     [ComVisible(true)]
     public static class Environment {
 
@@ -71,17 +62,6 @@ namespace System {
                 m_name = name;
             }
 
-#if FEATURE_SPLIT_RESOURCES
-            // See code:#splitResourceFeature
-            internal ResourceHelper(String name, bool isDebug) : this(name)
-            {
-                m_isDebug = isDebug;
-                if (!isDebug) {
-                    m_state = (int)ResourceHelperState.HAVE_RESOURCES;
-                }
-            }
-#endif // FEATURE_SPLIT_RESOURCES
-
             private String m_name;
             private ResourceManager SystemResMgr;
 
@@ -97,18 +77,6 @@ namespace System {
             // Is this thread currently doing infinite resource lookups?
             private int infinitelyRecursingCount;
 
-#if FEATURE_SPLIT_RESOURCES
-
-            private bool m_isDebug;
-            private int m_state = (int)ResourceHelperState.UNITIALIZED;
-
-            internal bool UseFallback() {
-                // this always returns false for runtime resources because its state can never be NO_RESOURCES
-                return m_state == (int)ResourceHelperState.NO_RESOURCES;
-            }
-
-#endif // FEATURE_SPLIT_RESOURCES
-         
             // Data representing one individual resource lookup on a thread.
             internal class GetResourceStringUserData
             {
@@ -142,12 +110,6 @@ namespace System {
                     Contract.Assert(false, "Environment::GetResourceString with null or empty key.  Bug in caller, or weird recursive loading problem?");
                     return "[Resource lookup failed - null or empty resource name]";
                 }
-
-#if FEATURE_SPLIT_RESOURCES
-                if (UseFallback()) {
-                    return null;
-                }
-#endif // FEATURE_SPLIT_RESOURCES
 
                 // We have a somewhat common potential for infinite 
                 // loops with mscorlib's ResourceManager.  If "potentially dangerous"
@@ -202,12 +164,12 @@ namespace System {
                         return;
                     }
                     rh.infinitelyRecursingCount++;
-                    // This is often a bug in the BCL, security, NLS+ code,
-                    // or the loader somewhere.  However, this could also
-                    // be a setup problem - check whether mscorlib & 
-                    // clr.dll are both of the same build flavor.  Also, user 
-                    // code in the resource lookup process (like an assembly 
-                    // resolve event or custom CultureInfo) might potentially cause issues.
+                    // This is often a 
+
+
+
+
+
 
                     // Note: our infrastructure for reporting this exception will again cause resource lookup.
                     // This is the most direct way of dealing with that problem.
@@ -242,23 +204,6 @@ namespace System {
         
                 rh.currentlyLoading.Push(key);
 
-#if FEATURE_SPLIT_RESOURCES
-                if (rh.SystemResMgr == null) {
-                    rh.SystemResMgr = new ResourceManager(m_name, typeof(Object).Assembly, m_isDebug);
-                }
-                String s = rh.SystemResMgr.GetString(key, culture);
-                rh.currentlyLoading.Pop();
-
-                if (rh.m_isDebug) {
-                    int detectedState = (s == null) ? (int)ResourceHelperState.NO_RESOURCES : (int)ResourceHelperState.HAVE_RESOURCES;
-                    // update state only if it's currently in the UNITIALIZED state
-                    int currentState = Interlocked.CompareExchange(ref m_state, detectedState, (int)ResourceHelperState.UNITIALIZED);
-                }
-                else {
-                    Contract.Assert(s!=null, "Managed resource string lookup failed.  Was your resource name misspelled?  Did you rebuild mscorlib after adding a resource to resources.txt?  Debug this w/ cordbg and bug whoever owns the code that called Environment.GetResourceString.  Resource name was: \""+key+"\"");
-                }
-
-#else
                 if (rh.SystemResMgr == null) {
                     rh.SystemResMgr = new ResourceManager(m_name, typeof(Object).Assembly);
                 }
@@ -266,8 +211,6 @@ namespace System {
                 rh.currentlyLoading.Pop();
 
                 Contract.Assert(s!=null, "Managed resource string lookup failed.  Was your resource name misspelled?  Did you rebuild mscorlib after adding a resource to resources.txt?  Debug this w/ cordbg and bug whoever owns the code that called Environment.GetResourceString.  Resource name was: \""+key+"\"");
-
-#endif // !FEATURE_SPLIT_RESOURCES
 
                 userData.m_retVal = s;
             }
@@ -299,70 +242,7 @@ namespace System {
         
         }
 
-        // #splitResourceFeature
-        //
-        // Overview:
-        // FEATURE_SPLIT_RESOURCES is enabled only in coreclr builds. With this feature, resources are split into
-        // runtime (critical) and debug resources. There are <10 runtime resources, and these are handled with the 
-        // runtime resource helper. Debug resources will only be present in debug packs so we allow fallback in 
-        // case these resources aren't present. If they aren't present, we return a general resource string. 
-        //
-        // Impact to GetResourceString callers:
-        // To minimize impact of this feature on the codebase, the typical resource helper is co-opted for debug
-        // resources and a new runtime resource helper is introduced to handle the runtime resources. To save 
-        // lookup time, if FEATURE_SPLIT_RESOURCES is enabled, callers looking for runtime resources will call the
-        // XRuntime overloads. (There were <10 such callers.)
-        //
-        // Some exception classes need to know if fallback was used, so they can do something other than their 
-        // typical exception message formatting. So Environment now provides some internal overloads to allow 
-        // these callers to detect this. 
-        // 
-        // Differences in resource lookup when FEATURE_SPLIT_RESOURCES is enabled:
-        // You'll need some historical information first, otherwise the changes probably won't make sense, so...
-        // 
-        // A bit of history:
-        // Historically (Orcas and before), mscorlib's resources were embedded in mscorlib.dll. Furthermore, 
-        // its resources were loaded in the default appdomain. This latter characteristic is yet another way in 
-        // which mscorlib is distinct from other framework assemblies. This is achieved by the fcall
-        // GetResourceFromDefault, which transitions into the default appdomain and then calls Environment's
-        // GetResourceStringLocal. 
-        // 
-        // The changes -- deployment:
-        // The <10 runtime resources are still embedded in mscorlib, but all others are pulled out into a 
-        // satellite assembly. To reserve the right to have all mscorlib's resources in a satellite assembly in 
-        // thefuture (and given that these are optional), this optional satellite assembly is called
-        // mscorlib.debug.resources.dll. To achieve this, we added some special casing in the VM to accept this 
-        // new name as an mscorlib satellite assembly. When attempting to load this satellite assembly, 
-        // localization is performed in the normal way: if mscorlib.dll, etc are stored in <setup_dir>, then you 
-        // can place the satellite assembly under <setup_dir>\en-US, or <setup_dir>\<current_culture> in general
-        // and we'll grab the assembly for the current culture. The ResourceManager does the usual fallback magic
-        // in case the current culture's resources aren't present.
-        //
-        // The changes -- lookup:
-        // Resources are still loaded in the default appdomain so we added extra magic below to do the transitions
-        // for runtime and optional resource messages. If the optional resource set isn't found on first lookup, 
-        // we flag that and return the default fallback message (which is a runtime resource string). We avoid 
-        // this work subsequently via the new field ResourceHelper.m_useFallbackMessage.
-#if FEATURE_SPLIT_RESOURCES
-        private static ResourceHelper m_runtimeResHelper;  // Doesn't need to be initialized as they're zero-init.
-#endif // FEATURE_SPLIT_RESOURCES
-        private static volatile ResourceHelper m_resHelper;  // Doesn't need to be initialized as they're zero-init.
-
-        private static volatile bool s_IsWindowsVistaOrAbove;
-        private static volatile bool s_CheckedOSVistaOrAbove;
-        private static volatile bool s_IsWindows8OrAbove;
-        private static volatile bool s_CheckedOSWin8OrAbove;
-
-        // Desktop dropped support for Win2k3 in version 4.5, but Silverlight 5 supports Win2k3.
-#if WIN32 && FEATURE_CORECLR && !FEATURE_CORESYSTEM
-        private static volatile bool s_IsW2k3;
-        private static volatile bool s_CheckedOSW2k3;
-#endif
-
-#if FEATURE_COMINTEROP
-        private static volatile bool s_WinRTSupported;
-        private static volatile bool s_CheckedWinRT;
-#endif // FEATURE_COMINTEROP
+              private static volatile ResourceHelper m_resHelper;  // Doesn't need to be initialized as they're zero-init.
 
         private const  int    MaxMachineNameLength = 256;
 
@@ -381,7 +261,6 @@ namespace System {
 
 
         private static volatile OperatingSystem m_os;  // Cached OperatingSystem value
-        private static volatile OSName m_osname;
 
         /*==================================TickCount===================================
         **Action: Gets the number of ticks since the system was started.
@@ -503,9 +382,6 @@ namespace System {
         ==============================================================================*/
         public static String CurrentDirectory
         {
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get{
@@ -522,7 +398,6 @@ namespace System {
             }
         }
 
- #if !FEATURE_PAL || !FEATURE_CORECLR || FEATURE_CORESYSTEM
         // Returns the system directory (ie, C:\WinNT\System32).
         public static String SystemDirectory {
 #if FEATURE_CORECLR
@@ -547,7 +422,6 @@ namespace System {
                 return path;
             }
         }
-#endif // !FEATURE_PAL || !FEATURE_CORECLR || FEATURE_CORESYSTEM
 
 #if !FEATURE_PAL
         // Returns the windows directory (ie, C:\WinNT).
@@ -578,21 +452,24 @@ namespace System {
                 return name;
             }
 
-            bool isFullTrust;
-#if FEATURE_CORECLR
-            isFullTrust = false;
-#else
-            isFullTrust = CodeAccessSecurityEngine.QuickCheckForAllDemands();
-#endif // FEATURE_CORECLR
+            if (AppDomain.IsAppXModel() && !AppDomain.IsAppXDesignMode()) {
+                // Environment variable accessors are not approved modern API.
+                // Behave as if no variables are defined in this case.
+                return name; 
+            }
+
+            int currentSize = 100;
+            StringBuilder blob = new StringBuilder(currentSize); // A somewhat reasonable default size
+            int size;
+
+#if !FEATURE_CORECLR
+            bool isFullTrust = CodeAccessSecurityEngine.QuickCheckForAllDemands();
 
             // Do a security check to guarantee we can read each of the 
             // individual environment variables requested here.
             String[] varArray = name.Split(new char[] {'%'});
             StringBuilder vars = isFullTrust ? null : new StringBuilder();
 
-            int currentSize = 100;
-            StringBuilder blob = new StringBuilder(currentSize); // A somewhat reasonable default size
-            int size;
             bool fJustExpanded = false; // to accommodate expansion alg.
 
             for(int i=1; i<varArray.Length-1; i++) { // Skip first and last tokens
@@ -640,6 +517,7 @@ namespace System {
      
             if (!isFullTrust)
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, vars.ToString()).Demand();
+#endif // !FEATURE_CORECLR
 
             blob.Length = 0;
             size = Win32Native.ExpandEnvironmentStrings(name, blob, currentSize);
@@ -740,24 +618,32 @@ namespace System {
                 throw new ArgumentNullException("variable");
             Contract.EndContractBlock();
 
+            if (AppDomain.IsAppXModel() && !AppDomain.IsAppXDesignMode()) {
+                // Environment variable accessors are not approved modern API.
+                // Behave as if the variable was not found in this case.
+                return null; 
+            }
+
 #if !FEATURE_CORECLR
             (new EnvironmentPermission(EnvironmentPermissionAccess.Read, variable)).Demand();
 #endif //!FEATURE_CORECLR
             
-            StringBuilder blob = new StringBuilder(128); // A somewhat reasonable default size
-            int requiredSize = Win32Native.GetEnvironmentVariable(variable, blob, blob.Capacity); 
+            StringBuilder blob = StringBuilderCache.Acquire(128); // A somewhat reasonable default size
+            int requiredSize = Win32Native.GetEnvironmentVariable(variable, blob, blob.Capacity);
 
-            if( requiredSize == 0) {  //  GetEnvironmentVariable failed
-                if( Marshal.GetLastWin32Error() == Win32Native.ERROR_ENVVAR_NOT_FOUND)
+            if (requiredSize == 0) {  //  GetEnvironmentVariable failed
+                if (Marshal.GetLastWin32Error() == Win32Native.ERROR_ENVVAR_NOT_FOUND) {
+                    StringBuilderCache.Release(blob);
                     return null;
+                }
             }
 
             while (requiredSize > blob.Capacity) { // need to retry since the environment variable might be changed 
                 blob.Capacity = requiredSize;
                 blob.Length = 0;
-                requiredSize = Win32Native.GetEnvironmentVariable(variable, blob, blob.Capacity); 
+                requiredSize = Win32Native.GetEnvironmentVariable(variable, blob, blob.Capacity);
             }
-            return blob.ToString();
+            return StringBuilderCache.GetStringAndRelease(blob);
         }
         
 #if !FEATURE_PAL
@@ -871,17 +757,22 @@ namespace System {
         [ResourceConsumption(ResourceScope.Machine)]
         public static IDictionary GetEnvironmentVariables()
         {
-            bool isFullTrust;
-#if FEATURE_CORECLR
-            isFullTrust = false;
-#else
-            isFullTrust = CodeAccessSecurityEngine.QuickCheckForAllDemands();
-#endif // FEATURE_CORECLR
+            if (AppDomain.IsAppXModel() && !AppDomain.IsAppXDesignMode()) {
+                // Environment variable accessors are not approved modern API.
+                // Behave as if no environment variables are defined in this case.
+                return new Hashtable(0);
+            }
+
+#if !FEATURE_CORECLR
+            bool isFullTrust = CodeAccessSecurityEngine.QuickCheckForAllDemands();
+            StringBuilder vars = isFullTrust ? null : new StringBuilder();  
+            bool first = true;
+#endif
 
             char[] block = GetEnvironmentCharArray();
 
             Hashtable table = new Hashtable(20);
-            StringBuilder vars = isFullTrust ? null : new StringBuilder();            
+
             // Copy strings out, parsing into pairs and inserting into the table.
             // The first few environment variable entries start with an '='!
             // The current working directory of every drive (except for those drives
@@ -896,7 +787,6 @@ namespace System {
             // CreateProcess page (null-terminated array of null-terminated strings).
             // Note the =HiddenVar's aren't always at the beginning.
             
-            bool first = true;
             for(int i=0; i<block.Length; i++) {
                 int startKey = i;
                 // Skip to key
@@ -929,6 +819,7 @@ namespace System {
                 // skip over 0 handled by for loop's i++
                 table[key]=value;
 
+#if !FEATURE_CORECLR
                 if (!isFullTrust) {
                     if( first) {      
                         first = false;
@@ -938,10 +829,13 @@ namespace System {
                     }
                     vars.Append(key);
                 }
+#endif
             }
 
+#if !FEATURE_CORECLR
             if (!isFullTrust)
                 new EnvironmentPermission(EnvironmentPermissionAccess.Read, vars.ToString()).Demand();
+#endif
             return table;
         }
         
@@ -997,7 +891,9 @@ namespace System {
         public static void SetEnvironmentVariable(string variable, string value) {
             CheckEnvironmentVariableName(variable);
 
+#if !FEATURE_CORECLR
             new EnvironmentPermission(PermissionState.Unrestricted).Demand();
+#endif
             // explicitly null out value if is the empty string. 
             if (String.IsNullOrEmpty(value) || value[0] == '\0') {
                 value = null;
@@ -1006,6 +902,12 @@ namespace System {
                 if( value.Length >= MaxEnvVariableValueLength) {
                     throw new ArgumentException(Environment.GetResourceString("Argument_LongEnvVarValue"));                                    
                 }
+            }
+
+            if (AppDomain.IsAppXModel() && !AppDomain.IsAppXDesignMode()) {
+                // Environment variable accessors are not approved modern API.
+                // so we throw PlatformNotSupportedException.
+                throw new PlatformNotSupportedException();
             }
 
             if(!Win32Native.SetEnvironmentVariable(variable, value)) {
@@ -1130,7 +1032,6 @@ namespace System {
         ==============================================================================*/
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static String[] GetLogicalDrives() {
-#if !PLATFORM_UNIX
             new EnvironmentPermission(PermissionState.Unrestricted).Demand();
                                  
             int drives = Win32Native.GetLogicalDrives();
@@ -1154,9 +1055,6 @@ namespace System {
                 root[0]++;
             }
             return result;
-#else
-            return new String[0];
-#endif // !PLATFORM_UNIX
         }
         
         /*===================================NewLine====================================
@@ -1169,11 +1067,7 @@ namespace System {
         public static String NewLine {
             get {
                 Contract.Ensures(Contract.Result<String>() != null);
-#if !PLATFORM_UNIX
                 return "\r\n";
-#else
-                return "\n";
-#endif // !PLATFORM_UNIX
             }
         }
 
@@ -1186,7 +1080,12 @@ namespace System {
         ==============================================================================*/
         public static Version Version {
             get {
-                return new Version(ThisAssembly.InformationalVersion);
+
+                // Previously this represented the File version of mscorlib.dll.  Many other libraries in the framework and outside took dependencies on the first three parts of this version 
+                // remaining constant throughout 4.x.  From 4.0 to 4.5.2 this was fine since the file version only incremented the last part.Starting with 4.6 we switched to a file versioning
+                // scheme that matched the product version.  In order to preserve compatibility with existing libraries, this needs to be hard-coded.
+                
+                return new Version(4,0,30319,42000);
             }
         }
 
@@ -1223,45 +1122,17 @@ namespace System {
                 Contract.Ensures(Contract.Result<OperatingSystem>() != null);
 
                 if (m_os==null) { // We avoid the lock since we don't care if two threads will set this at the same time.
+                            
                     Microsoft.Win32.Win32Native.OSVERSIONINFO osvi = new Microsoft.Win32.Win32Native.OSVERSIONINFO();
                     if (!GetVersion(osvi)) {
                         throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_GetVersion"));
                     }
 
-                    PlatformID id;
-                    Boolean getServicePackInfo;
-                    switch (osvi.PlatformId) {
-                    case Win32Native.VER_PLATFORM_WIN32_NT:
-                        id = PlatformID.Win32NT;
-                        getServicePackInfo = true;
-                        break;
-
-                    case Win32Native.VER_PLATFORM_UNIX:
-                        id = PlatformID.Unix;
-                        getServicePackInfo = false;
-                        break;
-
-#if !FEATURE_LEGACYNETCF
-                    case Win32Native.VER_PLATFORM_MACOSX:
-                        id = PlatformID.MacOSX;
-                        getServicePackInfo = false;
-                        break;
-#endif
-
-                    case Win32Native.VER_PLATFORM_WINCE:
-                        id = PlatformID.WinCE;
-                        getServicePackInfo = false;
-                        break;
-                          
-                    default:
-                        Contract.Assert(false, "Unsupported platform!");
-                        throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_InvalidPlatformID"));
-                    }
-                            
-                    // for OS other than unix or mac, we need to get Service pack information 
                     Microsoft.Win32.Win32Native.OSVERSIONINFOEX osviEx = new Microsoft.Win32.Win32Native.OSVERSIONINFOEX();
-                    if (getServicePackInfo && !GetVersionEx(osviEx))
+                    if (!GetVersionEx(osviEx))
                         throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_GetVersion"));
+
+                    PlatformID id = PlatformID.Win32NT;
 
 #if FEATURE_LEGACYNETCF
                     // return platform as WinCE, to ensure apps earlier than WP8 works as expected. 
@@ -1279,16 +1150,26 @@ namespace System {
             }
         }
 
-        internal static bool IsWindowsVistaOrAbove {
+#if FEATURE_CORESYSTEM
+
+        internal static bool IsWindows8OrAbove {
             get {
-                if (!s_CheckedOSVistaOrAbove) {
-                    OperatingSystem OS = Environment.OSVersion;
-                    s_IsWindowsVistaOrAbove = OS.Platform == PlatformID.Win32NT && OS.Version.Major >= 6;
-                    s_CheckedOSVistaOrAbove = true;
-                }
-                return s_IsWindowsVistaOrAbove;
+                return true;
             }
         }
+
+#if FEATURE_COMINTEROP
+        internal static bool IsWinRTSupported {
+            get {
+                return true;
+            }
+        }
+#endif // FEATURE_COMINTEROP
+
+#else // FEATURE_CORESYSTEM
+
+        private static volatile bool s_IsWindows8OrAbove;
+        private static volatile bool s_CheckedOSWin8OrAbove;
 
         // Windows 8 version is 6.2
         internal static bool IsWindows8OrAbove {
@@ -1303,30 +1184,10 @@ namespace System {
             }
         }
 
-        internal static bool IsW2k3 {
-            get {
-                // Desktop dropped support for Win2k3 in version 4.5, but Silverlight 5 supports Win2k3.
-#if !WIN32 || !FEATURE_CORECLR || FEATURE_CORESYSTEM
-                return false;
-#else
-                if (!s_CheckedOSW2k3) {
-                    OperatingSystem OS = Environment.OSVersion;
-                    s_IsW2k3 = ( (OS.Platform == PlatformID.Win32NT) && (OS.Version.Major == 5) && (OS.Version.Minor == 2));
-                    s_CheckedOSW2k3 = true;
-                }
-                return s_IsW2k3;
-#endif
-            }
-        }
-
-
-        internal static bool RunningOnWinNT {
-            get {
-                return OSVersion.Platform == PlatformID.Win32NT;
-            }
-        }
-
 #if FEATURE_COMINTEROP
+        private static volatile bool s_WinRTSupported;
+        private static volatile bool s_CheckedWinRT;
+
         // Does the current version of Windows have Windows Runtime suppport?
         internal static bool IsWinRTSupported {
             [SecuritySafeCritical]
@@ -1347,18 +1208,7 @@ namespace System {
         private static extern bool WinRTSupported();
 #endif // FEATURE_COMINTEROP
 
-        [Serializable]
-        internal enum OSName
-        {
-            Invalid = 0,
-            Unknown = 1,
-            WinNT = 0x80,
-            Nt4   = 1 | WinNT,
-            Win2k   = 2 | WinNT,
-            MacOSX = 0x100,
-            Tiger = 1 | MacOSX,
-            Leopard = 2 | MacOSX
-        }
+#endif // FEATURE_CORESYSTEM
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -1370,80 +1220,6 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool GetVersionEx(Microsoft.Win32.Win32Native.OSVERSIONINFOEX  osVer);
 
-
-        internal static OSName OSInfo
-        {
-            [System.Security.SecuritySafeCritical]  // auto-generated
-            get
-            {
-                if (m_osname == OSName.Invalid) 
-                {
-                    lock(InternalSyncObject) 
-                    {
-                        if (m_osname == OSName.Invalid) 
-                        {
-                            Microsoft.Win32.Win32Native.OSVERSIONINFO osvi = new Microsoft.Win32.Win32Native.OSVERSIONINFO();
-                            bool r = GetVersion(osvi);
-                            if (!r)
-                            {
-                                Contract.Assert(r, "OSVersion native call failed.");
-                                throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_GetVersion"));
-                            }
-                            switch (osvi.PlatformId) 
-                                {
-                                case Win32Native.VER_PLATFORM_WIN32_NT:
-                                    switch(osvi.MajorVersion) 
-                                    {
-                                        case 5:
-                                            m_osname = OSName.Win2k;
-                                            break;
-                                        case 4:
-                                            Contract.Assert(false, "NT4 is no longer a supported platform!");
-                                            m_osname = OSName.Unknown; // Unknown OS
-                                            break;
-                                        default:
-                                            m_osname = OSName.WinNT;
-                                            break;
-                                    }
-                                    break;
-                                
-                                case Win32Native.VER_PLATFORM_WIN32_WINDOWS:
-                                    Contract.Assert(false, "Win9x is no longer a supported platform!");
-                                    m_osname = OSName.Unknown; // Unknown OS
-                                   break;  
-
-                                case Win32Native.VER_PLATFORM_MACOSX:
-                                    if (osvi.MajorVersion == 10)
-                                    {
-                                        switch (osvi.MinorVersion)
-                                        {
-                                            case 5:
-                                                m_osname = OSName.Leopard;
-                                                break;
-                                            case 4:
-                                                m_osname = OSName.Tiger;
-                                                break;
-                                            default:
-                                                m_osname = OSName.MacOSX;
-                                                break;
-                                        }
-                                    }
-                                    else
-                                        m_osname = OSName.MacOSX; // Well, at least Macintosh.
-                                    break;
-
-                                default:
-                                    Contract.Assert(false, "Unrecognized operating system");
-                                    m_osname = OSName.Unknown; // Unknown OS
-                                    break;
-                                
-                            }
-                        }
-                    }
-                }
-                return m_osname;
-            }
-        }
 
         /*==================================StackTrace==================================
         **Action:
@@ -1493,12 +1269,7 @@ namespace System {
                 Monitor.Enter(Environment.InternalSyncObject, ref tookLock);
 
                 if (m_resHelper == null) {
-#if FEATURE_SPLIT_RESOURCES
-                    // See code:#splitResourceFeature
-                    ResourceHelper rh = new ResourceHelper("mscorlib.debug", true);
-#else
                     ResourceHelper rh = new ResourceHelper("mscorlib");
-#endif // FEATURE_SPLIT_RESOURCES
 
                     System.Threading.Thread.MemoryBarrier();
                     m_resHelper =rh;
@@ -1510,10 +1281,12 @@ namespace System {
             }
         }
 
+#if !FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static String GetResourceFromDefault(String key);            
+        internal extern static String GetResourceFromDefault(String key);           
+#endif	
 
         // Looks up the resource string value for key.
         // 
@@ -1527,28 +1300,7 @@ namespace System {
             if (m_resHelper == null)
                 InitResourceHelper();
 
-#if FEATURE_SPLIT_RESOURCES
-            // See code:#splitResourceFeature
-            // Go ahead and make sure the runtime resource helper is initialized. We'll most likely
-            // need it, for either the fallback resource or words like "at", which are needed in 
-            // stack traces
-            if (m_runtimeResHelper == null)
-                InitRuntimeResourceHelper();
-#endif // FEATURE_SPLIT_RESOURCES
-
-            String s = m_resHelper.GetResourceString(key);
-#if FEATURE_SPLIT_RESOURCES
-            // See code:#splitResourceFeature
-            if (m_resHelper.UseFallback()) {
-                s = m_runtimeResHelper.GetResourceString("NoDebugResources");
-                // note: only source of these calls are from vm; mscorlib calls use the usedFallback
-                // overload if FEATURE_SPLIT_RESOURCES is enabled. Let's go ahead and format for VM.
-                // Also note that no VM callers call any of the params overloads.
-                s = FormatFallbackMessage(s, key, null);
-            }
-#endif // FEATURE_SPLIT_RESOURCES
-            return s;
-
+            return m_resHelper.GetResourceString(key);
         }
 
         // #threadCultureInfo
@@ -1563,202 +1315,36 @@ namespace System {
         // so that the ResourceManager GetString(x, cultureInfo) overload can be used. 
         // We first perform the same check as in CultureInfo to make sure it's safe to 
         // let the CultureInfo travel across AppDomains. 
-#if !FEATURE_SPLIT_RESOURCES
+
         [System.Security.SecuritySafeCritical]  // auto-generated
-#endif
-        [Pure]
         [ResourceExposure(ResourceScope.None)]
         internal static String GetResourceString(String key) {
-#if FEATURE_SPLIT_RESOURCES
-            bool usedFallback = false;
-            CultureInfo lookupCulture = GetResourceLookupCulture();
-            String s = GetResourceFromDefaultUsedFallback(key, lookupCulture, ref usedFallback);
-            if (usedFallback) {
-                s = FormatFallbackMessage(s, key, null);
-            }
-            return s;
+#if FEATURE_CORECLR
+            return GetResourceStringLocal(key);
 #else
             return GetResourceFromDefault(key);
-#endif
+#endif //FEATURE_CORECLR
         }
 
-#if !FEATURE_SPLIT_RESOURCES
         [System.Security.SecuritySafeCritical]  // auto-generated
-#endif
-        [Pure]
         [ResourceExposure(ResourceScope.None)]
         internal static String GetResourceString(String key, params Object[] values) {
-#if FEATURE_SPLIT_RESOURCES
-            bool usedFallback = false;
-            CultureInfo lookupCulture = GetResourceLookupCulture();
-            String s = GetResourceFromDefaultUsedFallback(key, lookupCulture, ref usedFallback);
-            if (usedFallback) {
-                s = FormatFallbackMessage(s, key, values);
-                return s;
-            }
-#else
-            String s = GetResourceFromDefault(key);
-#endif
+            String s = GetResourceString(key);
             return String.Format(CultureInfo.CurrentCulture, s, values);
         }
 
-#if !FEATURE_SPLIT_RESOURCES
-        [System.Security.SecuritySafeCritical]  // auto-generated
-#endif
+        //The following two internal methods are not used anywhere within the framework,
+        // but are being kept around as external platforms built on top of us have taken 
+        // dependency by using private reflection on them for getting system resource strings 
         [ResourceExposure(ResourceScope.None)]
         internal static String GetRuntimeResourceString(String key) {
-#if FEATURE_SPLIT_RESOURCES
-            CultureInfo lookupCulture = GetResourceLookupCulture();
-            return GetRuntimeResourceFromDefault(key,lookupCulture);
-#else
-            return GetResourceFromDefault(key);
-#endif // FEATURE_SPLIT_RESOURCES
+            return GetResourceString(key);
         }
 
-#if !FEATURE_SPLIT_RESOURCES
-        [System.Security.SecuritySafeCritical]  // auto-generated
-#endif
         [ResourceExposure(ResourceScope.None)]
         internal static String GetRuntimeResourceString(String key, params Object[] values) {
-#if FEATURE_SPLIT_RESOURCES
-            CultureInfo lookupCulture = GetResourceLookupCulture();
-            String s = GetRuntimeResourceFromDefault(key, lookupCulture);
-#else
-            String s = GetResourceFromDefault(key);
-#endif // FEATURE_SPLIT_RESOURCES
-            return String.Format(CultureInfo.CurrentCulture, s, values);
+            return GetResourceString(key,values);
         }
-
-#if FEATURE_SPLIT_RESOURCES
-        // See code:#splitResourceFeature
-        private static string FormatFallbackMessage(String fallbackMessage, String key, params Object[] values) {
-            if (fallbackMessage == null) {
-                // couldn't even find fallbackMessage. As a last-ditch effort, just return the key
-                return key;
-            }
-
-            // build up arg string
-            String argStr = null; 
-            if (values != null) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < values.Length; i ++) {
-                    if (values[i] != null) {
-                        String value = values[i].ToString();
-                        if (value != null) {
-                            sb.Append(value);
-                            if (i < values.Length - 1) {
-                                sb.Append(CultureInfo.CurrentCulture.TextInfo.ListSeparator);
-                            }
-                        }
-                    }
-                }
-                argStr = sb.ToString();
-            }    
-            if (argStr == null) argStr = "";
-
-            // don't uri-encode key; instead burden is on mscorlib resource keys to not conflict
-            return String.Format(CultureInfo.CurrentCulture, fallbackMessage, key, argStr, GetAssemblyFileVersion(), "mscorlib.dll", key);
-        }
-
-        private static string GetAssemblyFileVersion() {
-            Object[] attributes = typeof(Object).Assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), false);
-            if (attributes.Length != 1) {
-                return "";
-            }
-
-            AssemblyFileVersionAttribute fileVersionAttribute = attributes[0] as AssemblyFileVersionAttribute;
-            if (fileVersionAttribute == null) {
-                return "";
-            }
-
-            return fileVersionAttribute.Version;
-        }
-
-        [Pure]
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static String GetRuntimeResourceFromDefault(String key, CultureInfo culture); 
-
-        #if FEATURE_CORECLR
-        [System.Security.SecurityCritical] // auto-generated
-        #endif
-        [Pure]
-        internal static String GetRuntimeResourceStringLocal(String key, CultureInfo culture) {
-            if (m_runtimeResHelper == null)
-                InitRuntimeResourceHelper();
-
-            // runtime resources always have to be present (they're embedded in mscorlib)
-            // so we don't have to fall back.
-            return m_runtimeResHelper.GetResourceString(key, culture);
-        }
-
-        #if FEATURE_CORECLR
-        [System.Security.SecurityCritical] // auto-generated
-        #endif
-        private static void InitRuntimeResourceHelper() {
-            // Only the default AppDomain should have a ResourceHelper.  All calls to 
-            // GetResourceString from any AppDomain delegate to GetResourceStringLocal 
-            // in the default AppDomain via the fcall GetResourceFromDefault.
-
-            bool tookLock = false;
-            RuntimeHelpers.PrepareConstrainedRegions();
-            try {
-
-                Monitor.Enter(Environment.InternalSyncObject, ref tookLock);
-
-                if (m_runtimeResHelper == null) {
-                    ResourceHelper rh = new ResourceHelper("mscorlib", false);
-                    System.Threading.Thread.MemoryBarrier();
-                    m_runtimeResHelper = rh;
-                }
-            }
-            finally {
-                if (tookLock)
-                    Monitor.Exit(Environment.InternalSyncObject);
-            }
-        }       
-
-        // The following methods specify whether the fallback resource message was used, which
-        // would happen if the debug satellite assembly isn't present. The only callers that 
-        // need to know this are some Exception classes, which don't want to do their usual
-        // formatting with the fallback resource meessage.
-
-        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern static String GetResourceFromDefaultUsedFallback(String key, CultureInfo culture, ref bool usedFallback); 
-
-        #if FEATURE_CORECLR
-        [System.Security.SecurityCritical] // auto-generated
-        #endif
-        internal static String GetResourceStringLocalUsedFallback(String key, CultureInfo culture, ref bool usedFallback) {
-            if (m_resHelper == null)
-                InitResourceHelper();
-
-            // See code:#splitResourceFeature
-            // Go ahead and make sure the runtime resource helper is initialized. We'll most likely
-            // need it, for either the fallback resource or words like "at", which are needed in 
-            // stack traces
-            if (m_runtimeResHelper == null)
-                InitRuntimeResourceHelper();
-
-            String s = m_resHelper.GetResourceString(key, culture);
-            usedFallback = m_resHelper.UseFallback();
-            if (usedFallback) {
-                s = m_runtimeResHelper.GetResourceString("NoDebugResources", culture);
-            }
-            return s;
-        }
-
-        private static CultureInfo GetResourceLookupCulture() {
-            CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
-            if (currentUICulture.CanSendCrossDomain())
-            {
-                return currentUICulture;
-            }
-            return null;
-        }
-
-#endif // FEATURE_SPLIT_RESOURCES
 
         public static bool Is64BitProcess {
             get {
@@ -1781,7 +1367,7 @@ namespace System {
                         && isWow64;
                 #else
                     // 64-bit programs run only on 64-bit
-                    //<STRIP>This will have to change for Mac if we add this API to Silverlight</STRIP>
+                    //<
                     return true;
                 #endif
             }
@@ -1833,18 +1419,16 @@ namespace System {
             [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
             get {
 #if !FEATURE_PAL && !FEATURE_CORESYSTEM
-                if ((OSInfo & OSName.WinNT) == OSName.WinNT) { // On WinNT
-                    IntPtr hwinsta = Win32Native.GetProcessWindowStation();
-                    if (hwinsta != IntPtr.Zero && processWinStation != hwinsta) {
-                        int lengthNeeded = 0;
-                        Win32Native.USEROBJECTFLAGS flags = new Win32Native.USEROBJECTFLAGS();
-                        if (Win32Native.GetUserObjectInformation(hwinsta, Win32Native.UOI_FLAGS, flags, Marshal.SizeOf(flags),ref lengthNeeded)) {
-                            if ((flags.dwFlags & Win32Native.WSF_VISIBLE) == 0) {
-                                isUserNonInteractive = true;
-                            }
+                IntPtr hwinsta = Win32Native.GetProcessWindowStation();
+                if (hwinsta != IntPtr.Zero && processWinStation != hwinsta) {
+                    int lengthNeeded = 0;
+                    Win32Native.USEROBJECTFLAGS flags = new Win32Native.USEROBJECTFLAGS();
+                    if (Win32Native.GetUserObjectInformation(hwinsta, Win32Native.UOI_FLAGS, flags, Marshal.SizeOf(flags),ref lengthNeeded)) {
+                        if ((flags.dwFlags & Win32Native.WSF_VISIBLE) == 0) {
+                            isUserNonInteractive = true;
                         }
-                        processWinStation = hwinsta;
                     }
+                    processWinStation = hwinsta;
                 }
 
                 // The logic is reversed to avoid static initialization to true
@@ -1937,7 +1521,7 @@ namespace System {
                     break;
                 case __HResults.COR_E_PLATFORMNOTSUPPORTED:
                     // This one error is the one we do want to throw.
-                    // <STRIP>
+                    // <
 
                     throw new PlatformNotSupportedException();
                 }
@@ -2048,16 +1632,11 @@ namespace System {
             //       favorite items. 
             //  
             Favorites =  Win32Native.CSIDL_FAVORITES,
-#if FEATURE_MULTIPLATFORM || !FEATURE_PAL
             //  
             //     Represents the file system directory that serves as a common repository for Internet
             //       history items. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             History =  Win32Native.CSIDL_HISTORY,
-#endif // FEATURE_MULTIPLATFORM || !FEATURE_PAL
             //  
             //     Represents the file system directory that serves as a common repository for temporary 
             //       Internet files. 
@@ -2073,59 +1652,39 @@ namespace System {
             MyPictures = Win32Native.CSIDL_MYPICTURES,
             //      "My Videos" folder
             MyVideos = Win32Native.CSIDL_MYVIDEO,
-#if FEATURE_MULTIPLATFORM || !FEATURE_PAL
             //  
             //     Represents the file system directory that contains the user's most recently used
             //       documents. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             Recent =  Win32Native.CSIDL_RECENT,
             //  
             //     Represents the file system directory that contains Send To menu items. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             SendTo =  Win32Native.CSIDL_SENDTO,
             //  
             //     Represents the file system directory that contains the Start menu items. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             StartMenu =  Win32Native.CSIDL_STARTMENU,
             //  
             //     Represents the file system directory that corresponds to the user's Startup program group. The system
             //       starts these programs whenever any user logs on to Windows NT, or
             //       starts Windows 95 or Windows 98. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             Startup =  Win32Native.CSIDL_STARTUP,
             //  
             //     System directory.
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             System =  Win32Native.CSIDL_SYSTEM,
             //  
             //     Represents the file system directory that serves as a common repository for document
             //       templates. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             Templates =  Win32Native.CSIDL_TEMPLATES,
             //  
             //     Represents the file system directory used to physically store file objects on the desktop.
             //       This should not be confused with the desktop folder itself, which is
             //       a virtual folder. 
             //  
-#endif // FEATURE_MULTIPLATFORM || !FEATURE_PAL
             DesktopDirectory =  Win32Native.CSIDL_DESKTOPDIRECTORY,
             //  
             //     Represents the file system directory that serves as a common repository for documents. 
@@ -2139,15 +1698,10 @@ namespace System {
             //     Represents the program files folder. 
             //  
             ProgramFiles =  Win32Native.CSIDL_PROGRAM_FILES,
-#if FEATURE_MULTIPLATFORM || !FEATURE_PAL
             //  
             //     Represents the folder for components that are shared across applications. 
             //  
-#if FEATURE_CORECLR && !FEATURE_LEGACYNETCF
-            [SupportedPlatforms(~(Platforms.MacOSX | Platforms.Unix))]
-#endif // FEATURE_CORECLR && !FEATURE_LEGACYNETCF
             CommonProgramFiles =  Win32Native.CSIDL_PROGRAM_FILES_COMMON,            
-#endif // FEATURE_MULTIPLATFORM || !FEATURE_PAL
 #if !FEATURE_CORECLR
             //
             //      <user name>\Start Menu\Programs\Administrative Tools
@@ -2246,9 +1800,6 @@ namespace System {
 
         public static int CurrentManagedThreadId
         {
-#if !FEATURE_CORECLR
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             get
             {

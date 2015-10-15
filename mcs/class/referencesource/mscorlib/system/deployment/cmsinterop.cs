@@ -1,6 +1,3 @@
-                    #if !ISOLATION_IN_MSCORLIB
-                    #define FEATURE_COMINTEROP
-                    #endif
                     
     using System;
     using System.IO;
@@ -14,7 +11,6 @@
     namespace System.Deployment.Internal.Isolation.Manifest
     {
     
-                    #if FEATURE_COMINTEROP
                      
         internal enum CMSSECTIONID
         {
@@ -1594,7 +1590,6 @@
 
         //++! end object [CompatibleFramework]
 
-                    #endif
                     #endif
     
     }

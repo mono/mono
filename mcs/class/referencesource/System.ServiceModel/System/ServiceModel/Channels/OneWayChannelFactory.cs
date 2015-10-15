@@ -763,7 +763,7 @@ namespace System.ServiceModel.Channels
                         thisPtr.CompleteOpen(result);
                         completeSelf = thisPtr.SendMessage();
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -796,7 +796,7 @@ namespace System.ServiceModel.Channels
                     {
                         thisPtr.innerChannel.EndSend(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

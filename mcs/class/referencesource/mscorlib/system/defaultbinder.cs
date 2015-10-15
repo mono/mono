@@ -227,10 +227,6 @@ namespace System {
                     {
                         if (argTypes[paramOrder[i][j]] == null || !CanConvertPrimitiveObjectToType(args[paramOrder[i][j]],(RuntimeType)pCls)) 
                         {
-#if !FEATURE_COMINTEROP
-                            if (CanChangeType(args[paramOrder[i][j]],pCls,cultureInfo))
-                                continue;
-#endif 
                             break;
                         }
                     }
@@ -246,10 +242,6 @@ namespace System {
                                 if (pCls.IsInstanceOfType(args[paramOrder[i][j]]))
                                     continue;
                             }
-#if !FEATURE_COMINTEROP
-                            if (CanChangeType(args[paramOrder[i][j]],pCls,cultureInfo))
-                                continue;
-#endif 
                             break;
                         }
                     }

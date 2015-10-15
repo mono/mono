@@ -8,8 +8,8 @@ namespace System.Globalization {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
-    /* SSS_DROP_BEGIN */ /* SSS_WARNINGS_OFF */
-    /*=================================TaiwanCalendar==========================
+    /* 
+
     **
     ** Taiwan calendar is based on the Gregorian calendar.  And the year is an offset to Gregorian calendar.
     ** That is,
@@ -21,7 +21,7 @@ namespace System.Globalization {
     **      Gregorian   1912/01/01  9999/12/31
     **      Taiwan      01/01/01    8088/12/31
     ============================================================================*/
-    /* SSS_WARNINGS_ON */ /* SSS_DROP_END */  
+
 
     [System.Runtime.InteropServices.ComVisible(true)]
     [Serializable] public class TaiwanCalendar: Calendar {

@@ -507,8 +507,8 @@ namespace System.Diagnostics {
 
             if(traceFormat != TraceFormat.NoResourceLookup)
             {
-                word_At = Environment.GetRuntimeResourceString("Word_At");
-                inFileLineNum = Environment.GetRuntimeResourceString("StackTrace_InFileLineNumber");
+                word_At = Environment.GetResourceString("Word_At");
+                inFileLineNum = Environment.GetResourceString("StackTrace_InFileLineNumber");
             }
             
             bool fFirstFrame = true;
@@ -616,7 +616,7 @@ namespace System.Diagnostics {
                     if (sf.GetIsLastFrameFromForeignExceptionStackTrace())
                     {
                         sb.Append(Environment.NewLine);
-                        sb.Append(Environment.GetRuntimeResourceString("Exception_EndStackTraceFromPreviousThrow"));
+                        sb.Append(Environment.GetResourceString("Exception_EndStackTraceFromPreviousThrow"));
                     }
 #endif // FEATURE_EXCEPTIONDISPATCHINFO
                 }

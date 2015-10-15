@@ -9,7 +9,7 @@
 // PInvokeMap is an enum that defines the PInvoke attributes.  These
 //  values are defined in CorHdr.h.
 //
-// <EMAIL>Author: [....]</EMAIL>
+// <EMAIL>Author: meichint</EMAIL>
 // Date: Sep 99
 //
 namespace System.Runtime.InteropServices {

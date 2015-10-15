@@ -696,12 +696,12 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected internal override void Render(HtmlTextWriter writer) {
             RenderBeginTag(writer);
-            //Dev10 Bug 483896: Original TextBox rendering in MultiLine mode suffers from the
-            //problem of losing the first newline. We fixed this bug by always rendering a newline
-            //before rendering the value of the Text property.
+            //Dev10 
+
+
             if (TextMode == TextBoxMode.MultiLine) {
-                //Dev11 Bug 437709 fix: We do not want to encode the extra new line that we are
-                //rendering. However we are doing this only for 4.5 or later frameworks for back-compat.
+                //Dev11 
+
                 if (RenderingCompatibility >= VersionUtil.Framework45) {
                     writer.Write(System.Environment.NewLine);
                     HttpUtility.HtmlEncode(Text, writer);

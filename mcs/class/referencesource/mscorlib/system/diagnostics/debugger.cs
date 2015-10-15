@@ -38,7 +38,7 @@ namespace System.Diagnostics
         [ResourceConsumption(ResourceScope.Process)]
         public static void Break()
         {
-            if (!IsDebuggerAttached())
+            if (!Debugger.IsAttached)
             {
                 // Try and demand UnmanagedCodePermission.  This is done in a try block because if this
                 // fails we want to be able to silently eat the exception and just return so
@@ -69,7 +69,7 @@ namespace System.Diagnostics
         [ResourceConsumption(ResourceScope.Process)]
         static void BreakCanThrow()
         {
-            if (!IsDebuggerAttached())
+            if (!Debugger.IsAttached)
             {
 #pragma warning disable 618
                 new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
@@ -93,7 +93,7 @@ namespace System.Diagnostics
         [ResourceConsumption(ResourceScope.Machine)]
         public static bool Launch()
         {
-            if (IsDebuggerAttached())
+            if (Debugger.IsAttached)
                 return (true);
 
             // Try and demand UnmanagedCodePermission.  This is done in a try block because if this
@@ -130,6 +130,14 @@ namespace System.Diagnostics
             }
         }
 
+        // Do not inline the slow path 
+        [MethodImplAttribute(MethodImplOptions.NoInlining)]
+        private static void NotifyOfCrossThreadDependencySlow()
+        {
+            CrossThreadDependencyNotification notification = new CrossThreadDependencyNotification();
+            CustomNotification(notification);
+        }
+
         // Sends a notification to the debugger to indicate that execution is about to enter a path 
         // involving a cross thread dependency. A debugger that has opted into this type of notification 
         // can take appropriate action on receipt. For example, performing a funceval normally requires 
@@ -145,11 +153,9 @@ namespace System.Diagnostics
         {
             if (Debugger.IsAttached)
             {
-                CrossThreadDependencyNotification notification = new CrossThreadDependencyNotification();
-                CustomNotification(notification);
+                NotifyOfCrossThreadDependencySlow();
             }
         }
-
 
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Machine)]
@@ -158,17 +164,14 @@ namespace System.Diagnostics
 
         // Returns whether or not a debugger is attached to the process.
         //
-        public static bool IsAttached
+        public static extern bool IsAttached
         {
             [ResourceExposure(ResourceScope.Process)]
             [ResourceConsumption(ResourceScope.Process)]
-            get { return IsDebuggerAttached(); }
+            [System.Security.SecuritySafeCritical]  // auto-generated
+            [MethodImplAttribute(MethodImplOptions.InternalCall)]
+            get;
         }
-
-        [System.Security.SecuritySafeCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.Process)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private static extern bool IsDebuggerAttached();
 
         // Constants representing the importance level of messages to be logged.
         //

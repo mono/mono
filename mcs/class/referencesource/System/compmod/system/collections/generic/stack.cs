@@ -28,10 +28,11 @@ namespace System.Collections.Generic {
 #endif
     [System.Runtime.InteropServices.ComVisible(false)]
     public class Stack<T> : IEnumerable<T>, 
-        System.Collections.ICollection {
+        System.Collections.ICollection,
+        IReadOnlyCollection<T> {
         private T[] _array;     // Storage for stack elements
         private int _size;           // Number of items in the stack.
-        private int _version;        // Used to keep enumerator in [....] w/ collection.
+        private int _version;        // Used to keep enumerator in sync w/ collection.
 #if !SILVERLIGHT
         [NonSerialized]
 #endif

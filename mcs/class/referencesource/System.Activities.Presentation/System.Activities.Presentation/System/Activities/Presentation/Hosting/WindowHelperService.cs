@@ -159,7 +159,7 @@ namespace System.Activities.Presentation.Hosting
                 {
                     this.hwndSource = HwndSource.FromHwnd(this.ParentWindowHwnd);
                 }
-                //if didn't succeed - (either handle is null or we are hosted in [....] app)
+                //if didn't succeed - (either handle is null or we are hosted in Microsoft app)
                 //try to create hwnd source out of designer's view 
                 if (null == this.hwndSource)
                 {

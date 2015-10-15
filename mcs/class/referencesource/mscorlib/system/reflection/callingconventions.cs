@@ -8,10 +8,10 @@
 //
 // CallingConventions is a set of Bits representing the calling conventions
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    in the system.
 //
-// <EMAIL>Author: [....]</EMAIL>
+// <EMAIL>Author: meichint</EMAIL>
 // Date: Aug 99
 //
 namespace System.Reflection {

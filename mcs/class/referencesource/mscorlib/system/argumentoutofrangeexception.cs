@@ -28,20 +28,14 @@ namespace System {
     [Serializable]
     public class ArgumentOutOfRangeException : ArgumentException, ISerializable {
      
-#if !FEATURE_SPLIT_RESOURCES   
         private static volatile String _rangeMessage;
-#endif
         private Object m_actualValue;
 
         private static String RangeMessage {
             get {
-#if FEATURE_SPLIT_RESOURCES
-                return Environment.GetResourceString("Arg_ArgumentOutOfRangeException");
-#else
                 if (_rangeMessage == null)
                     _rangeMessage = Environment.GetResourceString("Arg_ArgumentOutOfRangeException");
                 return _rangeMessage;
-#endif
             }
         }
 
@@ -80,7 +74,7 @@ namespace System {
             get {
                 String s = base.Message;
                 if (m_actualValue != null) {
-                    String valueMessage = Environment.GetRuntimeResourceString("ArgumentOutOfRange_ActualValue", m_actualValue.ToString());
+                    String valueMessage = Environment.GetResourceString("ArgumentOutOfRange_ActualValue", m_actualValue.ToString());
                     if (s == null)
                         return valueMessage;
                     return s + Environment.NewLine + valueMessage; 

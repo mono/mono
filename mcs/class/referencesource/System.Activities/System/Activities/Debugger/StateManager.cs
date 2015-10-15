@@ -681,7 +681,7 @@ namespace System.Activities.Debugger
             [SecurityCritical]
             void InitDynamicModule(string asmName)
             {
-                // See http://blogs.msdn.com/[....]/archive/2005/02/03/366429.aspx for a simple example
+                // See http://blogs.msdn.com/Microsoft/archive/2005/02/03/366429.aspx for a simple example
                 // of debuggable reflection-emit.
                 Fx.Assert(dynamicModule == null, "can only be initialized once");
 
@@ -738,26 +738,36 @@ namespace System.Activities.Debugger
 
                 if (isPriming)
                 {
-                    if (!islandsWithPriming.TryGetValue(state, out island))
+                    lock (islandsWithPriming)
                     {
-                        island = state.GetMethodInfo(true);
-                        islandsWithPriming[state] = island;
+                        if (!islandsWithPriming.TryGetValue(state, out island))
+                        {
+                            island = state.GetMethodInfo(true);
+                            islandsWithPriming[state] = island;
+                        }
                     }
                 }
                 else
                 {
-                    if (!islands.TryGetValue(state, out island))
+                    lock (islands)
                     {
-                        island = state.GetMethodInfo(false);
-                        islands[state] = island;
+                        if (!islands.TryGetValue(state, out island))
+                        {
+                            island = state.GetMethodInfo(false);
+                            islands[state] = island;
+                        }
                     }
                 }
                 return island;
             }
 
+            // This method is only called from CreateIsland, which is only called from Bake.
+            // Bake does a "lock(this)" before calling CreateIsland, so access to the sourceDocuments
+            // dictionary is protected by that lock. If this changes, locking will need to be added
+            // to this method to protect the sourceDocuments dictionary.
             [Fx.Tag.SecurityNote(Critical = "Used in generating the dynamic module.")]
             [SecurityCritical]
-            internal ISymbolDocumentWriter GetSourceDocument(string fileName, byte[] checksum, Dictionary<string, byte[]> checksumCache)
+            private ISymbolDocumentWriter GetSourceDocument(string fileName, byte[] checksum, Dictionary<string, byte[]> checksumCache)
             {
                 ISymbolDocumentWriter documentWriter;
                 string sourceDocKey = fileName + SymbolHelper.GetHexStringFromChecksum(checksum);

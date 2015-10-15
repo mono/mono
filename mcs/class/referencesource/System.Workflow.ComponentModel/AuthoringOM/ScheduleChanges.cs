@@ -201,8 +201,8 @@ namespace System.Workflow.ComponentModel
                     {
                         foreach (Activity contextActivity in contextActivities)
                         {
-                            // WinOE Bug 16903: Ask the contextActivity itself whether or not it can be removed.
-                            // An activity can not be removed if it's in the executing mode.
+                            // WinOE 
+
                             if (changeAction is RemovedActivityAction &&
                                 contextActivity.DottedPath == ((RemovedActivityAction)changeAction).OriginalRemovedActivity.DottedPath)
                                 validationErrors.AddRange(changeAction.ValidateChanges(contextActivity));

@@ -3,7 +3,7 @@
 // <copyright file="HtmlRawTextWriterGenerator.cxx" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 // WARNING: This file is generated and should not be modified directly.  Instead,
@@ -111,7 +111,7 @@ namespace System.Xml {
 
             RawText( "<!DOCTYPE ");
 
-            // Bug 114337: Always output "html" or "HTML" in doc-type, even if "name" is something else
+            // 
             if ( name == "HTML" )
                 RawText( "HTML" );
             else

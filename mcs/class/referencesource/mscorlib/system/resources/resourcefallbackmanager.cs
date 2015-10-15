@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceFallbackManager
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Encapsulates CultureInfo fallback for resource 
@@ -67,7 +67,7 @@ namespace System.Resources
             return GetEnumerator();
         }
 
-        // WARING: This function must be kept in [....] with ResourceManager.GetFirstResourceSet()
+        // WARING: This function must be kept in sync with ResourceManager.GetFirstResourceSet()
         public IEnumerator<CultureInfo> GetEnumerator()
         {
             bool reachedNeutralResourcesCulture = false;
@@ -234,23 +234,23 @@ namespace System.Resources
             // settings, and applications built in certain styles.  The OS-preferred fallback should
             // be last, and the user-preferred fallback just breaks certain apps no matter where you put it.
             // 
-            // Necessary and sufficient conditions for an AppCompat bug (if we respected user & OS fallbacks):
-            //   1) A French OS (ie, you walk into an Internet café in Paris)
-            //   2) A .NET application whose neutral resources are authored in English.
-            //   3) The application did not provide an English satellite assembly (a common pattern).
-            //   4) The application is localized to French.
-            //   5) The user wants to read English, expressed in either of two ways:
-            //      a. Changing Windows’ Display Language in the Regional Options Control Panel
-            //      b. The application explicitly ASKS THE USER what language to display.
-            // 
-            // Obviously the exact languages above can be interchanged a bit - I’m keeping this concrete.
-            // Also the NeutralResourcesLanguageAttribute will allow this to work, but usually we set it
-            // to en-US for our assemblies, meaning all other English cultures are broken.
-            //
-            // Workarounds:            
-            //   *) Use the NeutralResourcesLanguageAttribute and tell us that your neutral resources 
-            //      are in region-neutral English (en).
-            //   *) Consider shipping a region-neutral English satellite assembly.
+            // Necessary and sufficient conditions for an AppCompat 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             // Future work:
             // 2) Consider a mechanism for individual assemblies to opt into wanting user-preferred fallback.

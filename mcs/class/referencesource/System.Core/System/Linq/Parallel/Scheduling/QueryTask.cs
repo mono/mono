@@ -7,7 +7,7 @@
 //
 // QueryTask.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -88,7 +88,7 @@ namespace System.Linq.Parallel
         }
 
         //-----------------------------------------------------------------------------------
-        // Common function called regardless of [....] or async execution.  Just wraps some
+        // Common function called regardless of sync or async execution.  Just wraps some
         // amount of tracing around the call to the real work API.
         //
 

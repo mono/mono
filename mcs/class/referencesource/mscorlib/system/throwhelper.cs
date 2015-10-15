@@ -36,15 +36,15 @@ namespace System {
     // It is very important we do this for generic classes because we can easily generate the same code 
     // multiple times for different instantiation. 
     // 
-    // <STRIP>
-    // Jit will generates the code to throw exception at the end of a method, thus we can reduce working
-    // set if the user code will never throw an exception. However Jit doesn't know anything about the
-    // methods in ThrowHelper, so it will not moves the instructions to the end. 
-    // This is not a problem for ngened code because we will probably move the code based on profile data(hopefully.) 
-    //
-    // For jitted code, it doesn't make much difference. The only advantage of moving the code to the end is to 
-    // improve cache locality. This doesn't make much different on newer processor like P4.
-    // </STRIP>
+    // <
+
+
+
+
+
+
+
+
 
     using System.Runtime.CompilerServices;        
     using System.Runtime.Serialization;
@@ -52,10 +52,8 @@ namespace System {
 
     [Pure]
     internal static class ThrowHelper {    
-        internal static void ThrowArgumentOutOfRangeException() {
-            throw new ArgumentOutOfRangeException(
-		GetArgumentName(ExceptionArgument.index), 
-		Environment.GetResourceString(GetResourceName(ExceptionResource.ArgumentOutOfRange_Index)));
+        internal static void ThrowArgumentOutOfRangeException() {        
+            ThrowArgumentOutOfRangeException(ExceptionArgument.index, ExceptionResource.ArgumentOutOfRange_Index);            
         }
 
         internal static void ThrowWrongKeyTypeArgumentException(object key, Type targetType) {
@@ -87,7 +85,14 @@ namespace System {
         }
 
         internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource) {
-            throw new ArgumentOutOfRangeException(GetArgumentName(argument), Environment.GetResourceString(GetResourceName(resource)));
+                
+            if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8) {
+                // Dev11 474369 quirk: Mango had an empty message string:
+                throw new ArgumentOutOfRangeException(GetArgumentName(argument), String.Empty);                                                  
+            } else {
+                throw new ArgumentOutOfRangeException(GetArgumentName(argument),
+                                                      Environment.GetResourceString(GetResourceName(resource)));
+            }            
         }
 
         internal static void ThrowInvalidOperationException(ExceptionResource resource) {
@@ -218,6 +223,10 @@ namespace System {
 
                 case ExceptionArgument.view:
                     argumentName = "view";
+                    break;
+
+               case ExceptionArgument.sourceBytesToCopy:
+                    argumentName = "sourceBytesToCopy";
                     break;
 
                 default:
@@ -458,6 +467,7 @@ namespace System {
         item,
         options,
         view,
+        sourceBytesToCopy,
     }
 
     //

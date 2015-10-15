@@ -7,7 +7,7 @@
 //
 // Class: __HResults
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>kimhamil</OWNER>
 //
 // Author: Automatically generated
 //

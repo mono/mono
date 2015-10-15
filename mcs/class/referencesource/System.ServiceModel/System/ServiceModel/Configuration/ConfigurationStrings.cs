@@ -401,6 +401,7 @@ namespace System.ServiceModel.Configuration
         internal const string Soap12WSAddressing10 = "Soap12WSAddressing10";
         internal const string Soap12WSAddressingAugust2004 = "Soap12WSAddressingAugust2004";
         internal const string SslCertificateAuthentication = "sslCertificateAuthentication";
+        internal const string SslProtocols = "sslProtocols";
         internal const string SslStreamSecuritySectionName = "sslStreamSecurity";
         internal const string StandardEndpoint = "standardEndpoint";
         internal const string StandardEndpointsSectionName = "standardEndpoints";        

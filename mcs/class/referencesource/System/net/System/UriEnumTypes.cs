@@ -29,7 +29,7 @@ namespace System
     public enum UriComponents
     {
         // Generic parts.
-        // ATTN: The values must stay in [....] with Uri.Flags.xxxNotCanonical
+        // ATTN: The values must stay in sync with Uri.Flags.xxxNotCanonical
         Scheme      = 0x1,
         UserInfo    = 0x2,
         Host        = 0x4,

@@ -13,6 +13,7 @@ namespace System.ServiceModel.Configuration
     using System.ServiceModel;
     using System.ServiceModel.Security;
     using System.ComponentModel;
+    using System.Security.Authentication;
 
     public sealed partial class TcpTransportSecurityElement : ServiceModelConfigurationElement
     {
@@ -39,6 +40,14 @@ namespace System.ServiceModel.Configuration
             private set { base[ConfigurationStrings.ExtendedProtectionPolicy] = value; }
         }
 
+        [ConfigurationProperty(ConfigurationStrings.SslProtocols, DefaultValue = TransportDefaults.SslProtocols)]
+        [ServiceModelEnumValidator(typeof(SslProtocolsHelper))]
+        public SslProtocols SslProtocols
+        {
+            get { return (SslProtocols)base[ConfigurationStrings.SslProtocols]; }
+            private set { base[ConfigurationStrings.SslProtocols] = value; }
+        }
+
         internal void ApplyConfiguration(TcpTransportSecurity security)
         {
             if (security == null)
@@ -48,6 +57,7 @@ namespace System.ServiceModel.Configuration
             security.ClientCredentialType = this.ClientCredentialType;
             security.ProtectionLevel = this.ProtectionLevel;
             security.ExtendedProtectionPolicy = ChannelBindingUtility.BuildPolicy(this.ExtendedProtectionPolicy);
+            security.SslProtocols = this.SslProtocols;
         }
 
         internal void InitializeFrom(TcpTransportSecurity security)
@@ -59,6 +69,7 @@ namespace System.ServiceModel.Configuration
             SetPropertyValueIfNotDefaultValue(ConfigurationStrings.ClientCredentialType, security.ClientCredentialType);
             SetPropertyValueIfNotDefaultValue(ConfigurationStrings.ProtectionLevel, security.ProtectionLevel);
             ChannelBindingUtility.InitializeFrom(security.ExtendedProtectionPolicy, this.ExtendedProtectionPolicy);
+            SetPropertyValueIfNotDefaultValue(ConfigurationStrings.SslProtocols, security.SslProtocols);
         }
     }
 }

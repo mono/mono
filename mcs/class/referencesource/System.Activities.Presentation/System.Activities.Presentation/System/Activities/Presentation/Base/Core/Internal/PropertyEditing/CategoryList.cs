@@ -582,7 +582,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
 
             if (hasKeyboardFocus) 
             {
-                // We just gained keyboard focus.  Make sure we [....] up the current property selection
+                // We just gained keyboard focus.  Make sure we sync up the current property selection
                 // with the keyboard focus, so that navigation works.
                 SynchronizeSelectionFocus(StealFocusMode.OnlyIfCurrentSelectionDoesNotHaveFocusWithin);
             }

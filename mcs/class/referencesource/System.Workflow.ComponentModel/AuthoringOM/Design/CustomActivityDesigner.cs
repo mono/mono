@@ -725,14 +725,14 @@
         private string category;
         private string description;
         private DesignerSerializationVisibility designerSerializationVisibility = DesignerSerializationVisibility.Visible;
-        // NOTE: we don't write the ValidationOption attribute anymore (WinOE Bug 17398). We have removed our property creation
-        // dialog in beta1.  Now this code is only used for property promotion.  If the promoted property is a meta property,
-        // it can not be bindable so no promotion is not allowed.  If the property is an instance property, this attribute is ignored.  
-        // There is no reason for writing out this attribute anymore.We just remove it from property promotion all together.
-        // NOTE II: for the same reason that this code is only used for promotion, we don't write out meta properties anymore.
-        // We had customized the CodeDomSerializer.Deserialize to recognize meta properties by inspecting the field init expression,
-        // which is no long needed.  If we were to bring this functionality back in the future, sample code can be found
-        // from the file history in Source Depot.
+        // NOTE: we don't write the ValidationOption attribute anymore (WinOE 
+
+
+
+
+
+
+
         private bool isEvent = false;
         private bool browseable = true;
         private bool hidden = false;

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 // <copyright file="CodeDomCompilationConfiguration.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

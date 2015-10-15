@@ -446,9 +446,9 @@ namespace System.Activities.Presentation
                 {
                     this.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() =>
                     {
-                        // check for Item == null, we found an interesting bug, where the user 
-                        // could drop something in here, and undo the change before the code below
-                        // could execute
+                        // check for Item == null, we found an interesting 
+
+
                         if (this.Item != null)
                         {
                             UIElement view = (UIElement)(this.Item.View);
@@ -817,9 +817,9 @@ namespace System.Activities.Presentation
 
         // NOTE: This wrapper method is exclusively called by TransitionDesigner, because
         // WIP of Transition.Action would handle the event if the dragged source comes from
-        // WIP of Transition.Trigger (see Bug 201342).  However, Auto-Surround spacer is usually
-        // handled in DragEnter handler of WIP, and other ActivityDesigner should not need to 
-        // access this method directly.
+        // WIP of Transition.Trigger (see 
+
+
         internal void ShowSpacerHelperOnDraggedItems(DragEventArgs arg)
         {
             this.spacerHelper.OnWfItemPresenterPreviewDragEnter(this, arg);

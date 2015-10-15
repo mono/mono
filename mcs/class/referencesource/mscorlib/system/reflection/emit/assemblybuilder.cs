@@ -23,7 +23,7 @@
 // "internal" and "external" ModuleBuilders are similar
 //*************************************************************************************************************
 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Reflection.Emit
 {
     using System;
@@ -316,9 +316,9 @@ namespace System.Reflection.Emit
 #if FEATURE_REFLECTION_ONLY_LOAD
                 && access != AssemblyBuilderAccess.ReflectionOnly
 #endif // FEATURE_REFLECTION_ONLY_LOAD
-#if FEATURE_COLLECTIBLE_TYPES && !FEATURE_CORECLR
+#if FEATURE_COLLECTIBLE_TYPES
                 && access != AssemblyBuilderAccess.RunAndCollect
-#endif // FEATURE_COLLECTIBLE_TYPES && !FEATURE_CORECLR
+#endif // FEATURE_COLLECTIBLE_TYPES
                 )
             {
                 throw new ArgumentException(Environment.GetResourceString("Arg_EnumIllegalVal", (int)access), "access");
@@ -475,7 +475,7 @@ namespace System.Reflection.Emit
             // The name in the underlying metadata will be set when the
             // manifest module is created during nCreateDynamicAssembly.
 
-            // This name needs to stay in [....] with that used in
+            // This name needs to stay in sync with that used in
             // Assembly::Init to call ReflectionModule::Create (in VM)
             m_manifestModuleBuilder.Init(AssemblyBuilder.MANIFEST_MODULE_NAME, null, 0);
 
@@ -2159,6 +2159,7 @@ namespace System.Reflection.Emit
          **********************************************/
         private AssemblyBuilder() {}
 
+#if !FEATURE_CORECLR
         void _AssemblyBuilder.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -2180,6 +2181,7 @@ namespace System.Reflection.Emit
         {
             throw new NotImplementedException();
         }
+#endif
 
         // Create a new module in which to emit code. This module will not contain the manifest.
         [System.Security.SecurityCritical]  // auto-generated

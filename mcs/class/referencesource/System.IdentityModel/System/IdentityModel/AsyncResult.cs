@@ -112,7 +112,7 @@ namespace System.IdentityModel
         {
             if (completed == true)
             {
-                // it is a bug to call complete twice
+                // it is a 
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new AsynchronousOperationException(SR.GetString(SR.ID4005)));
             }
 

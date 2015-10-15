@@ -7,7 +7,7 @@
 //
 // DefaultMergeHelper.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -32,7 +32,7 @@ namespace System.Linq.Parallel
         private QueryTaskGroupState m_taskGroupState; // State shared among tasks.
         private PartitionedStream<TInputOutput, TIgnoreKey> m_partitions; // Source partitions.
         private AsynchronousChannel<TInputOutput>[] m_asyncChannels; // Destination channels (async).
-        private SynchronousChannel<TInputOutput>[] m_syncChannels; // Destination channels ([....]).
+        private SynchronousChannel<TInputOutput>[] m_syncChannels; // Destination channels (sync).
         private IEnumerator<TInputOutput> m_channelEnumerator; // Output enumerator.
         private TaskScheduler m_taskScheduler; // The task manager to execute the query.
         private bool m_ignoreOutput; // Whether we're enumerating "for effect".

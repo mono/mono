@@ -516,7 +516,7 @@ namespace System.ServiceModel
         static bool GetIsSimpleApplicationHost()
         {
             // ASPNET won't provide API to check Cassini. But it's safe and performant to check only
-            // the ApplicationID prefix (MessageBus Bug 24832).
+            // the ApplicationID prefix (MessageBus 
             return (string.Compare(ISAPIApplicationIdPrefix, 0,
                     HostingEnvironmentWrapper.UnsafeApplicationID, 0, ISAPIApplicationIdPrefix.Length, StringComparison.OrdinalIgnoreCase) != 0);
         }

@@ -186,7 +186,7 @@ namespace System.ServiceModel.Description
         static class SoapConverter
         {
 
-            // [....], this could be simplified if we used generics.
+            // Microsoft, this could be simplified if we used generics.
             internal static void ConvertExtensions(WsdlNS.ServiceDescriptionFormatExtensionCollection extensions, EnvelopeVersion version, ConvertExtension conversionMethod)
             {
                 bool foundOne = false;

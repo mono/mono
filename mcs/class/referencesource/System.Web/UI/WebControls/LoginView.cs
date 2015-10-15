@@ -350,7 +350,7 @@ namespace System.Web.UI.WebControls {
                     // Note: we always recreate the child controls in the designer to correctly handle the case of
                     // the currently selected role group being deleted.  This is necessary because the
                     // setter for TemplateIndex won't recreate the controls if the TemplateIndex is unchanged,
-                    // which is the case when deleting all but the last role group. [Fix for Bug 148406]
+                    // which is the case when deleting all but the last role group. [Fix for 
                     ChildControlsCreated = false;
                 }
             }

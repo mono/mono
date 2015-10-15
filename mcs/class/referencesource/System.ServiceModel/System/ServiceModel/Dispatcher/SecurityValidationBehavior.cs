@@ -235,7 +235,7 @@ namespace System.ServiceModel.Dispatcher
                 if (sbe is SymmetricSecurityBindingElement || sbe is AsymmetricSecurityBindingElement)
                 {
                     // check to see if we are streaming
-                    // ([....] 53690): need to have a general way get the transfer Mode from the binding
+                    // (Microsoft 53690): need to have a general way get the transfer Mode from the binding
                     // TransferMode transferMode = binding.GetProperty<TransferMode>(new BindingParameterCollection());
                     if (GetTransferMode(binding) != TransferMode.Buffered)
                     {

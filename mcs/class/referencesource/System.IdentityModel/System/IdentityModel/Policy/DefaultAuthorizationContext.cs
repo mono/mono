@@ -27,19 +27,26 @@ namespace System.IdentityModel.Policy
         {
             get
             {
-                if (empty == null)
-                    empty = new DefaultAuthorizationContext(new DefaultEvaluationContext());
-                return empty;
+                if (LocalAppContextSwitches.EnableCachedEmptyDefaultAuthorizationContext)
+                {
+                    if (empty == null)
+                        empty = new DefaultAuthorizationContext(new DefaultEvaluationContext());
+                    return empty;
+                }
+                else
+                {
+                    return new DefaultAuthorizationContext(new DefaultEvaluationContext());
+                }
             }
         }
 
         public override string Id
         {
-            get 
+            get
             {
                 if (this.id == null)
                     this.id = SecurityUniqueId.Create();
-                return this.id.Value; 
+                return this.id.Value;
             }
         }
 

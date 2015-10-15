@@ -158,7 +158,7 @@ namespace System.Workflow.Runtime
                             transactionalProperties = (TransactionalProperties)atomicActivity.GetValue(WorkflowExecutor.TransactionalPropertiesProperty);
                             // If we've aborted for any reason stop now!
                             // If we attempt to enter a new TransactionScope the com+ context will get corrupted
-                            // See windows se bug 137267
+                            // See windows se 
                             if (!WorkflowExecutor.CheckAndProcessTransactionAborted(transactionalProperties))
                             {
                                 if (transactionalProperties.TransactionScope == null)

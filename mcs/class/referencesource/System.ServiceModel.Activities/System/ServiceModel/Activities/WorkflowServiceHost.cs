@@ -31,7 +31,6 @@ namespace System.ServiceModel.Activities
         static readonly Type mexBehaviorType = typeof(ServiceMetadataBehavior);
         static readonly TimeSpan defaultPersistTimeout = TimeSpan.FromSeconds(30);
         static readonly TimeSpan defaultTrackTimeout = TimeSpan.FromSeconds(30);
-        static readonly TimeSpan defaultFilterResumeTimeout = TimeSpan.FromMinutes(1);
         static readonly Type baseActivityType = typeof(Activity);
         static readonly Type correlationQueryBehaviorType = typeof(CorrelationQueryBehavior);
         static readonly Type bufferedReceiveServiceBehaviorType = typeof(BufferedReceiveServiceBehavior);
@@ -482,7 +481,7 @@ namespace System.ServiceModel.Activities
 
             this.PersistTimeout = defaultPersistTimeout;
             this.TrackTimeout = defaultTrackTimeout;
-            this.FilterResumeTimeout = defaultFilterResumeTimeout;
+            this.FilterResumeTimeout = TimeSpan.FromSeconds(AppSettings.FilterResumeTimeoutInSeconds);
         }
 
         protected override void InitializeRuntime()

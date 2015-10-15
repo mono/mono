@@ -10,7 +10,10 @@
 
         public PhoneAttribute()
             : base(DataType.PhoneNumber) {
-            ErrorMessage = DataAnnotationsResources.PhoneAttribute_Invalid;
+            
+            // DevDiv 468241: set DefaultErrorMessage not ErrorMessage, allowing user to set
+            // ErrorMessageResourceType and ErrorMessageResourceName to use localized messages.
+            DefaultErrorMessage = DataAnnotationsResources.PhoneAttribute_Invalid;
         }
 
         public override bool IsValid(object value) {

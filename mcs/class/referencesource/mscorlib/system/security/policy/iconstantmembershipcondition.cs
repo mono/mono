@@ -5,7 +5,7 @@
 // ==--==
 //  IConstantMembershipCondition.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 //  Interface that all constant membership conditions must implement
 //

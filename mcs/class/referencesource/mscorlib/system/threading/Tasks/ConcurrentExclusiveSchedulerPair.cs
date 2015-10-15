@@ -7,7 +7,7 @@
 //
 // ConcurrentExclusiveSchedulerPair.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A pair of schedulers that together support concurrent (reader) / exclusive (writer) 
 // task scheduling.  Using just the exclusive scheduler can be used to simulate a serial
@@ -70,7 +70,7 @@ namespace System.Threading.Tasks
         /// <summary>Default MaxConcurrencyLevel is the processor count if not otherwise specified.</summary>
         private static Int32 DefaultMaxConcurrencyLevel { get { return Environment.ProcessorCount; } }
 
-        /// <summary>Gets the [....] obj used to protect all state on this instance.</summary>
+        /// <summary>Gets the sync obj used to protect all state on this instance.</summary>
         private object ValueLock { get { return m_threadProcessingMapping; } }
 
         /// <summary>
@@ -763,7 +763,7 @@ namespace System.Threading.Tasks
         /// <param name="isReplacementReplica">If this task is being created to replace another.</param>
         /// <remarks>
         /// These options should be used for all tasks that have the potential to run user code or
-        /// that are repeatedly spawned and thus need a modi---- of fair treatment.
+        /// that are repeatedly spawned and thus need a modicum of fair treatment.
         /// </remarks>
         /// <returns>The options to use.</returns>
         internal static TaskCreationOptions GetCreationOptionsForTask(bool isReplacementReplica = false)

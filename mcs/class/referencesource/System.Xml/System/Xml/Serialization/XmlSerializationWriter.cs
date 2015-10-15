@@ -2,7 +2,7 @@
 // <copyright file="XmlSerializationWriter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Serialization {
@@ -3627,7 +3627,7 @@ namespace System.Xml.Serialization {
                     return "(("+typeDesc.CSharpName+")"+obj+").@"+memberName;
             }
             //throw GetReflectionVariableException(saveTypeDesc.CSharpName,memberName); 
-            // NOTE, [....]:Must never happen. If it does let the code
+            // NOTE, Microsoft:Must never happen. If it does let the code
             // gen continue to help debugging what's gone wrong.
             // Eventually the compilation will fail.
             return "["+obj+"]";

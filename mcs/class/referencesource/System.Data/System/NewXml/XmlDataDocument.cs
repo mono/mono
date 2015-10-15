@@ -2,8 +2,8 @@
 // <copyright file="XmlDataDocument.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 namespace System.Xml {
     using System;
@@ -606,9 +606,9 @@ namespace System.Xml {
                     DataRow row = node.Row;
 
                     // create new attrs & elements for row
-                    // For detached rows: we are in [....] w/ temp values
-                    // For non-detached rows: we are in [....] w/ the current values
-                    // For deleted rows: we never [....]
+                    // For detached rows: we are in sync w/ temp values
+                    // For non-detached rows: we are in sync w/ the current values
+                    // For deleted rows: we never sync
                     DataRowVersion rowVersion = ( row.RowState == DataRowState.Detached ) ? DataRowVersion.Proposed : DataRowVersion.Current;
                     foreach( DataColumn col in row.Table.Columns ) {
                         if ( !IsNotMapped(col) ) {
@@ -1273,7 +1273,7 @@ namespace System.Xml {
             if ( col.ColumnMapping == MappingType.SimpleContent && Convert.IsDBNull( value ) && !rowElement.IsFoliated )
                 ForceFoliation( rowElement, ElementState.WeakFoliation);
             else {
-                // no need to [....] if not foliated
+                // no need to sync if not foliated
                 if ( !IsFoliated( rowElement ) ) {
 #if DEBUG
                     // If the new value is null, we should be already foliated if there is a DataPointer that points to the column
@@ -1433,7 +1433,7 @@ lblDoNestedRelationSync:
                     XmlBoundElement be = row.Element;
                     Debug.Assert( be != null );
                     if ( be.IsFoliated ) {
-                        // Need to [....] changes from ROM to DOM
+                        // Need to sync changes from ROM to DOM
                         OnColumnValueChanged( row, col, be );
                     }
                 }
@@ -1535,7 +1535,7 @@ lblDoNestedRelationSync:
         // Change the childElement position in the tree to conform to the parent nested relationship in ROM
         private void OnNestedParentChange(DataRow child, XmlBoundElement childElement, DataColumn childCol) {
             Debug.Assert( child.Element == childElement && childElement.Row == child );
-            // This function is (and s/b) called as a result of ROM changes, therefore XML changes done here should not be [....]-ed to ROM
+            // This function is (and s/b) called as a result of ROM changes, therefore XML changes done here should not be sync-ed to ROM
             Debug.Assert( ignoreXmlEvents == true );
 #if DEBUG
             // In order to check that this move does not change the connected/disconnected state of the node
@@ -1697,7 +1697,7 @@ lblDoNestedRelationSync:
                     OnNodeRemovedFromTree( node, oldParent );
                 }
                 else {
-                    // Removing from disconnected tree to disconnected tree: just [....] the old region
+                    // Removing from disconnected tree to disconnected tree: just sync the old region
                     OnNodeRemovedFromFragment( node, oldParent );
                 }
             }
@@ -1742,7 +1742,7 @@ lblDoNestedRelationSync:
             XmlBoundElement oldRowElem;
 
             if ( mapper.GetRegion( oldParent, out oldRowElem ) ) {
-                // [....] the old region if it is not deleted
+                // Sync the old region if it is not deleted
                 DataRow row = oldRowElem.Row;
                 // Since the old old region was disconnected, then the row can be only Deleted or Detached
                 Debug.Assert( ! IsRowLive( row ) );
@@ -2171,7 +2171,7 @@ lblDoNestedRelationSync:
         private void SynchronizeRowFromRowElement( XmlBoundElement rowElement ) {
             SynchronizeRowFromRowElement( rowElement, null );
         }
-        // [....] row fields w/ values from rowElem region.
+        // Sync row fields w/ values from rowElem region.
         // If rowElemList is != null, all subregions of rowElem are appended to it.
         private void SynchronizeRowFromRowElement( XmlBoundElement rowElement, ArrayList rowElemList ) {
             DataRow row = rowElement.Row;
@@ -2402,7 +2402,7 @@ lblDoNestedRelationSync:
                 }
             }
             else {
-                // We only need to [....] the embedded sub-regions
+                // We only need to sync the embedded sub-regions
                 TreeIterator iter = new TreeIterator( node );
                 for (bool fMore = iter.NextRowElement(); fMore; fMore = iter.NextRightRowElement() )
                     rowElemList.Add( iter.CurrentNode );
@@ -2588,7 +2588,7 @@ lblDoNestedRelationSync:
 
             if ( row.RowState == DataRowState.Detached )
                 SynchronizeRowFromRowElementEx( rowElement, rowElemList );
-            // Nothing to do if the row is deleted (there is no [....]-ing from XML to ROM for deleted rows)
+            // Nothing to do if the row is deleted (there is no sync-ing from XML to ROM for deleted rows)
         }
 
         private void SetNestedParentRegion( XmlBoundElement childRowElem ) {

@@ -8,10 +8,10 @@
 //
 // ResourceAttributes is an enum which defines the attributes that may be associated
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //  with a manifest resource.  The values here are defined in Corhdr.h.
 //
-// <EMAIL>Author: [....]</EMAIL>
+// <EMAIL>Author: meichint</EMAIL>
 // Date: April 2000
 //
 namespace System.Reflection {

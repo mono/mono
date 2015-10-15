@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       jeffreed
+// @backupOwner anpete
 //---------------------------------------------------------------------
 
 namespace System.Data.EntityModel.SchemaObjectModel

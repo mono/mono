@@ -1212,8 +1212,8 @@ namespace System.Configuration {
                                 reader.Read();
                             }
 
-                            // Dev10 bug 687017 - Handle only UTF-16 explicitly, so that handling of other 
-                            // encodings are not affected.
+                            // Dev10 
+
                             if (reader.CurrentEncoding is UnicodeEncoding) {
                                 encoding = reader.CurrentEncoding;
                             }
@@ -1776,7 +1776,7 @@ namespace System.Configuration {
                                         // VSWhidbey 580658: When a section is to be removed, its corresponding file
                                         // input should be cleared as well so this section will be indicated as "moved"
                                         // next time something is added back to the section.  Without marking it as "moved",
-                                        // adding new content to a removed section fails as the bug describes.
+                                        // adding new content to a removed section fails as the 
                                         sectionRecord.RemoveFileInput();
                                     }
                                 }

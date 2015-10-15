@@ -2,7 +2,7 @@
 // <copyright file="XmlWellFormedWriter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System;
@@ -1370,7 +1370,7 @@ namespace System.Xml {
                     }
                 }
                 else {
-                    // We do not pass the standalone value here - Dev10 Bug #479769
+                    // We do not pass the standalone value here - Dev10 
                     writer.WriteStartDocument();
                 }
             }

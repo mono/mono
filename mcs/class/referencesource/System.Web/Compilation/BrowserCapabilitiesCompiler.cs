@@ -48,7 +48,7 @@ namespace System.Web.Compilation {
                     string version;
 
                     // If we are targeting previous versions, try loading the 2.0 version of ASP.BrowserCapsFactory
-                    // (Dev10 bug 795509)
+                    // (Dev10 
                     if (MultiTargetingUtil.IsTargetFramework40OrAbove) {
                         version = ThisAssembly.Version;
                     } else {
@@ -389,7 +389,7 @@ namespace System.Web.Compilation {
                             // If not, then we need to use the type BrowserCapabilitiesFactory35 that contains code
                             // from the 2.0 version of BrowserCapabilitiesFactory. This is because "baseType" is the 4.0 type
                             // that contains the new 4.0 definitions.
-                            // (Dev10 bug 795509)
+                            // (Dev10 
                             if (MultiTargetingUtil.IsTargetFramework40OrAbove || 
                                 baseType.Assembly == BrowserCapabilitiesCompiler.AspBrowserCapsFactoryAssembly) {
                                 _baseInstance = (BrowserCapabilitiesFactoryBase)Activator.CreateInstance(baseType);

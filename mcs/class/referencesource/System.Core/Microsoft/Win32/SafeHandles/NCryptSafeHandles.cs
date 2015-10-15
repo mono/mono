@@ -263,7 +263,7 @@ namespace Microsoft.Win32.SafeHandles {
             T duplicate = new T();
 
             // We need to do this operation in a CER in order to ensure that everybody's state stays consistent
-            // with the current view of the world.  If the state of the various handles gets out of [....], then
+            // with the current view of the world.  If the state of the various handles gets out of sync, then
             // we'll end up leaking since reference counts will not be set up properly.
             RuntimeHelpers.PrepareConstrainedRegions();
             try { }

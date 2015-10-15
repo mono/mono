@@ -7,7 +7,7 @@
 **
 ** Class:  Dictionary
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: Generic hash table implementation
 **
@@ -92,6 +92,13 @@ namespace System.Collections.Generic {
             if (capacity < 0) ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.capacity);
             if (capacity > 0) Initialize(capacity);
             this.comparer = comparer ?? EqualityComparer<TKey>.Default;
+
+#if FEATURE_CORECLR
+            if (HashHelpers.s_UseRandomizedStringHashing && comparer == EqualityComparer<string>.Default)
+            {
+                this.comparer = (IEqualityComparer<TKey>) NonRandomizedStringEqualityComparer.Default;
+            }
+#endif // FEATURE_CORECLR
         }
 
         public Dictionary(IDictionary<TKey,TValue> dictionary): this(dictionary, null) {}
@@ -361,11 +368,26 @@ namespace System.Collections.Generic {
             version++;
 
 #if FEATURE_RANDOMIZED_STRING_HASHING
+
+#if FEATURE_CORECLR
+            // In case we hit the collision threshold we'll need to switch to the comparer which is using randomized string hashing
+            // in this case will be EqualityComparer<string>.Default.
+            // Note, randomized string hashing is turned on by default on coreclr so EqualityComparer<string>.Default will 
+            // be using randomized string hashing
+
+            if (collisionCount > HashHelpers.HashCollisionThreshold && comparer == NonRandomizedStringEqualityComparer.Default) 
+            {
+                comparer = (IEqualityComparer<TKey>) EqualityComparer<string>.Default;
+                Resize(entries.Length, true);
+            }
+#else
             if(collisionCount > HashHelpers.HashCollisionThreshold && HashHelpers.IsWellKnownEqualityComparer(comparer)) 
             {
                 comparer = (IEqualityComparer<TKey>) HashHelpers.GetRandomizedEqualityComparer(comparer);
                 Resize(entries.Length, true);
             }
+#endif // FEATURE_CORECLR
+
 #endif
 
         }
@@ -776,7 +798,7 @@ namespace System.Collections.Generic {
         [DebuggerTypeProxy(typeof(Mscorlib_DictionaryKeyCollectionDebugView<,>))]
         [DebuggerDisplay("Count = {Count}")]        
         [Serializable]
-        public sealed class KeyCollection: ICollection<TKey>, ICollection
+        public sealed class KeyCollection: ICollection<TKey>, ICollection, IReadOnlyCollection<TKey>
         {
             private Dictionary<TKey,TValue> dictionary;
 
@@ -963,7 +985,7 @@ namespace System.Collections.Generic {
         [DebuggerTypeProxy(typeof(Mscorlib_DictionaryValueCollectionDebugView<,>))]
         [DebuggerDisplay("Count = {Count}")]
         [Serializable]
-        public sealed class ValueCollection: ICollection<TValue>, ICollection
+        public sealed class ValueCollection: ICollection<TValue>, ICollection, IReadOnlyCollection<TValue>
         {
             private Dictionary<TKey,TValue> dictionary;
 

@@ -212,7 +212,7 @@ namespace System.Text
             // Do the work
             int result = GetBytes(arrChar, 0, charCount, arrByte, 0, flush);
 
-            // The only way this could fail is a bug in GetBytes
+            // The only way this could fail is a 
             Contract.Assert(result <= byteCount, "Returned more bytes than we have space for");
 
             // Copy the byte array

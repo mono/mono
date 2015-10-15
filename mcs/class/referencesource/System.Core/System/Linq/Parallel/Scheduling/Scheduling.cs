@@ -7,7 +7,7 @@
 //
 // Scheduling.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Infrastructure for setting up concurrent work, marshaling exceptions, determining
 // the recommended degree-of-parallelism, and so forth.

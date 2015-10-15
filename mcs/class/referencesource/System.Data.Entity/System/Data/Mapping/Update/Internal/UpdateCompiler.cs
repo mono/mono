@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 // For the purposes of the update compiler, the member name fully describes the member

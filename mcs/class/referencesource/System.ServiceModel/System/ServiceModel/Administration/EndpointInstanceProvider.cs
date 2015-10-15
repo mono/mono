@@ -120,7 +120,7 @@ namespace System.ServiceModel.Administration
         {
             Fx.Assert(null != endpoint, "");
             Fx.Assert(null != instance, "");
-            instance.SetProperty(AdministrationStrings.CounterInstanceName, PerformanceCounters.PerformanceCountersEnabled ? EndpointPerformanceCounters.CreateFriendlyInstanceName(endpoint.ServiceName, endpoint.Contract.Name, endpoint.Address.AbsoluteUri.ToUpperInvariant()) : String.Empty);
+            instance.SetProperty(AdministrationStrings.CounterInstanceName, PerformanceCounters.PerformanceCountersEnabled ? EndpointPerformanceCounters.GetFriendlyInstanceName(endpoint.ServiceName, endpoint.Contract.Name, endpoint.Address.AbsoluteUri.ToUpperInvariant()) : String.Empty);
             instance.SetProperty(AdministrationStrings.Name, endpoint.Name);
             instance.SetProperty(AdministrationStrings.ContractName, endpoint.Contract.Name);
             FillAddressInfo(endpoint, instance);
@@ -668,7 +668,7 @@ namespace System.ServiceModel.Administration
 
             if (PerformanceCounters.PerformanceCountersEnabled && null != endpointInfo)
             {
-                result = OperationPerformanceCounters.CreateFriendlyInstanceName(endpointInfo.ServiceName, endpointInfo.Contract.Name, operationName, endpointInfo.Address.AbsoluteUri.ToUpperInvariant());
+                result = OperationPerformanceCounters.GetFriendlyInstanceName(endpointInfo.ServiceName, endpointInfo.Contract.Name, operationName, endpointInfo.Address.AbsoluteUri.ToUpperInvariant());
             }
 
             return result;

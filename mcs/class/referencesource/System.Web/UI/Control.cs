@@ -146,7 +146,6 @@ namespace System.Web.UI {
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.Web.UI.Control'/> class.</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public Control() {
             if (this is INamingContainer)
                 flags.Set(isNamingContainer);
@@ -169,7 +168,6 @@ namespace System.Web.UI {
         WebSysDescription(SR.Control_ClientIDMode)
         ]
         public virtual ClientIDMode ClientIDMode {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return ClientIDModeValue;
             }
@@ -396,7 +394,6 @@ namespace System.Web.UI {
         ]
         protected internal virtual HttpContext Context {
             //  Request context containing the intrinsics
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 Page page = Page;
                 if(page != null) {
@@ -509,7 +506,6 @@ namespace System.Web.UI {
         ///       is read-only.</para>
         /// </devdoc>
         protected EventHandlerList Events {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 if (_events == null) {
                     _events = new EventHandlerList();
@@ -518,7 +514,6 @@ namespace System.Web.UI {
             }
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected bool HasEvents() {
             return (_events != null);
         }
@@ -862,7 +857,6 @@ namespace System.Web.UI {
         /// VSWhidbey 80467: Need to adapt id separator.
         /// </devdoc>
         protected char IdSeparator {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 if (Page != null) {
                     return Page.IdSeparator;
@@ -942,7 +936,6 @@ namespace System.Web.UI {
 
         // VSWhidbey 244999
         internal virtual bool IsReloadable {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return false;
             }
@@ -1118,7 +1111,6 @@ namespace System.Web.UI {
         WebSysDescription(SR.Control_Parent)
         ]
         public virtual Control Parent {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return _parent;
             }
@@ -1590,7 +1582,6 @@ namespace System.Web.UI {
             }
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal void PreventAutoID() {
             // controls that are also naming containers must always get an id
             if (flags[isNamingContainer] == false) {
@@ -1603,7 +1594,6 @@ namespace System.Web.UI {
         ///    <para>Notifies the control that an element, XML or HTML, was parsed, and adds it to
         ///       the control.</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual void AddParsedSubObject(object obj) {
             Control control = obj as Control;
             if (control != null) {
@@ -2361,7 +2351,6 @@ namespace System.Web.UI {
             _controlState = ControlState.PreRendered;
         }
 
-
         // Same as PreRenderRecursive, but has an async point after the call to this.OnPreRender.
         internal async Task PreRenderRecursiveInternalAsync(Page page) {
             // Call Visible property and cache value in !flags[invisible] to allow Visible to be overridden.
@@ -2372,7 +2361,15 @@ namespace System.Web.UI {
             }
             else {
                 flags.Clear(invisible);
-                EnsureChildControls();
+                if (AppSettings.EnableAsyncModelBinding) {
+                    using (page.Context.SyncContext.AllowVoidAsyncOperationsBlock()) {
+                        EnsureChildControls();
+                        await page.GetWaitForPreviousStepCompletionAwaitable();
+                    }
+                }
+                else {
+                    EnsureChildControls();
+                }                
 
                 using (page.Context.SyncContext.AllowVoidAsyncOperationsBlock()) {
                     if (AdapterInternal != null) {
@@ -2389,8 +2386,17 @@ namespace System.Web.UI {
 
                     int controlCount = _controls.Count;
                     for (int i = 0; i < controlCount; i++) {
-                        _controls[i].PreRenderRecursiveInternal();
+                        if (AppSettings.EnableAsyncModelBinding) {
+                            // To make sure every OnPreRender is awaited so that _controlState
+                            // would not be set to ControlState.PreRendered until the control is
+                            // really PreRendered
+                            await _controls[i].PreRenderRecursiveInternalAsync(page);
+                        }
+                        else {
+                            _controls[i].PreRenderRecursiveInternal();
+                        }
                     }
+
                     _controls.SetCollectionReadOnly(oldmsg);
                 }
             }
@@ -2587,7 +2593,6 @@ namespace System.Web.UI {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public virtual void RenderControl(HtmlTextWriter writer) {
             //use the Adapter property to ensure it is resolved
             RenderControl(writer, Adapter);
@@ -2714,7 +2719,7 @@ namespace System.Web.UI {
             // But for control which requires its OnInit method to be called again
             // to properly initialize when the control is removed and added back
             // to Page's control tree, the control can override IsReloadable
-            // to true so the control state is reset.  e.g. Validator, see bug
+            // to true so the control state is reset.  e.g. Validator, see 
             if (IsReloadable) {
                 _controlState = ControlState.Constructed;
             }
@@ -2842,7 +2847,6 @@ namespace System.Web.UI {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)        
         ]
         protected virtual bool ViewStateIgnoresCase {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 return false;
             }
@@ -2949,7 +2953,6 @@ namespace System.Web.UI {
         ///       child controls they contain in preperation for postback or rendering.
         ///    </para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected internal virtual void CreateChildControls() {
         }
 
@@ -3176,7 +3179,7 @@ namespace System.Web.UI {
         internal Control FindControlFromPageIfNecessary(string id) {
             Control c = FindControl(id);
             // Find control from the page if it's a hierarchical ID.
-            // Dev11 bug 19915
+            // Dev11 
             if (c == null && Page != null) {
                 char[] findControlSeparators = { ID_SEPARATOR, LEGACY_ID_SEPARATOR };
                 if (id.IndexOfAny(findControlSeparators) != -1) {
@@ -3275,7 +3278,6 @@ namespace System.Web.UI {
         ///       so that they can be stored in the <see langword='StateBag'/>
         ///       object.</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         protected virtual void TrackViewState() {
             if (_viewState != null)
                 _viewState.TrackViewState();
@@ -3420,7 +3422,6 @@ namespace System.Web.UI {
         /// <para>Notifies the control that an element, XML or HTML, was parsed, and adds it to
         /// the control.</para>
         /// </devdoc>
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         void IParserAccessor.AddParsedSubObject(object obj) {
             AddParsedSubObject(obj);
         }
@@ -3436,7 +3437,6 @@ namespace System.Web.UI {
         }
 
         private Control OwnerControl {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 if (RareFields == null) {
                     return null;

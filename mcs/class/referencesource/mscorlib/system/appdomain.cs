@@ -7,7 +7,7 @@
 **
 ** Class: AppDomain
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Domains represent an application within the runtime. Objects can 
@@ -362,17 +362,12 @@ namespace System {
 #if FEATURE_APPX
         private static APPX_FLAGS s_flags;
 
-        private enum PROFILE_API_CHECK_FLAGS : uint
-        {
-            PROFILE_API_CHECK_FLAGS_NONE =      0,
-            PROFILE_API_CHECK_FLAGS_ALWAYS =    1,
-            PROFILE_API_CHECK_FLAGS_NEVER =     2,
-        }
-
+        //
+        // Keep in async with vm\appdomainnative.cpp
+        //
         [Flags]
         private enum APPX_FLAGS
         {
-            APPX_FLAGS_UNKNOWN =            0x00,
             APPX_FLAGS_INITIALIZED =        0x01,
 
             APPX_FLAGS_APPX_MODEL =         0x02,
@@ -390,40 +385,10 @@ namespace System {
             [SecuritySafeCritical]
             get
             {
-                if ((s_flags & APPX_FLAGS.APPX_FLAGS_INITIALIZED) == 0)
-                {
-                    APPX_FLAGS flags = APPX_FLAGS.APPX_FLAGS_UNKNOWN;
+                if (s_flags == 0)
+                    s_flags = nGetAppXFlags();
 
-                    if (nIsAppXModel())
-                    {
-                        flags |= APPX_FLAGS.APPX_FLAGS_APPX_MODEL;
-
-                        if (nIsAppXDesignMode())
-                            flags |= APPX_FLAGS.APPX_FLAGS_APPX_DESIGN_MODE;
-                        else
-                            flags |= APPX_FLAGS.APPX_FLAGS_API_CHECK;
-
-                        if (nIsAppXNGen())
-                            flags |= APPX_FLAGS.APPX_FLAGS_APPX_NGEN;
-                    }
-
-                    PROFILE_API_CHECK_FLAGS apicheck = AppDomain.nGetWindows8ProfileAPICheckFlag();
-
-                    switch (apicheck)
-                    {
-                        case PROFILE_API_CHECK_FLAGS.PROFILE_API_CHECK_FLAGS_ALWAYS:
-                            flags |= APPX_FLAGS.APPX_FLAGS_API_CHECK;
-                            break;
-                        case PROFILE_API_CHECK_FLAGS.PROFILE_API_CHECK_FLAGS_NEVER:
-                            flags &= ~APPX_FLAGS.APPX_FLAGS_API_CHECK;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    s_flags = flags | APPX_FLAGS.APPX_FLAGS_INITIALIZED;
-                }
-
+                Contract.Assert(s_flags != 0);
                 return s_flags;
             }
         }
@@ -447,13 +412,6 @@ namespace System {
         }
 #endif // FEATURE_APPX
 
-        // this method is required so Object.GetType is not made virtual by the compiler
-        // _AppDomain.GetType()
-        public new Type GetType()
-        {
-            return base.GetType();
-        }
-
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
@@ -466,29 +424,8 @@ namespace System {
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.U4)]
-        private static extern PROFILE_API_CHECK_FLAGS nGetWindows8ProfileAPICheckFlag();
-
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
-        [SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool nIsAppXModel();
-
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
-        [SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool nIsAppXDesignMode();
-
-        [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
-        [SecurityCritical]
-        [ResourceExposure(ResourceScope.None)]
-        [SuppressUnmanagedCodeSecurity]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool nIsAppXNGen();
+        [return: MarshalAs(UnmanagedType.I4)]
+        private static extern APPX_FLAGS nGetAppXFlags();
 #endif
 
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -562,46 +499,33 @@ namespace System {
 
             AppDomainSetup adSetup = FusionStore;
 #if FEATURE_VERSIONING
-            if (String.IsNullOrEmpty(adSetup.GetUnsecureManifestFilePath()))
+            String trustedPlatformAssemblies = (String)(GetData("TRUSTED_PLATFORM_ASSEMBLIES"));
+            if (trustedPlatformAssemblies != null)
             {
-                String trustedPlatformAssemblies = (String)(GetData("TRUSTED_PLATFORM_ASSEMBLIES"));
-                if (trustedPlatformAssemblies != null)
+                String platformResourceRoots = (String)(GetData("PLATFORM_RESOURCE_ROOTS"));
+                if (platformResourceRoots == null)
                 {
-                    String platformResourceRoots = (String)(GetData("PLATFORM_RESOURCE_ROOTS"));
-                    if (platformResourceRoots == null)
-                    {
-                        platformResourceRoots = String.Empty;
-                    }
-
-                    String appPaths = (String)(GetData("APP_PATHS"));
-                    if (appPaths == null)
-                    {
-                        appPaths = String.Empty;
-                    }
-
-                    String appNiPaths = (String)(GetData("APP_NI_PATHS"));
-                    if (appNiPaths == null)
-                    {
-                        appNiPaths = String.Empty;
-                    }
-                    SetupBindingPaths(trustedPlatformAssemblies, platformResourceRoots, appPaths, appNiPaths);
+                    platformResourceRoots = String.Empty;
                 }
-            } else
-            {
-                // Chicken-Egg problem: At this point, security is not yet fully up.
-                // We need this information to power up the manifest to enable security.
-                String manifestFilePath = adSetup.GetUnsecureManifestFilePath();
-                bool fIsAssemblyPath = false;
-                String applicationBase = adSetup.GetUnsecureApplicationBase();
-                String applicationName = adSetup.ApplicationName;
 
-                if ((manifestFilePath == null) && (applicationBase != null) && (applicationName != null))
+                String appPaths = (String)(GetData("APP_PATHS"));
+                if (appPaths == null)
                 {
-                    manifestFilePath = Path.Combine(applicationBase, applicationName);
-                    fIsAssemblyPath = true;
+                    appPaths = String.Empty;
                 }
-                
-                SetupManifest(manifestFilePath, fIsAssemblyPath);
+
+                String appNiPaths = (String)(GetData("APP_NI_PATHS"));
+                if (appNiPaths == null)
+                {
+                    appNiPaths = String.Empty;
+                }
+
+                String appLocalWinMD = (String)(GetData("APP_LOCAL_WINMETADATA"));
+                if (appLocalWinMD == null)
+                {
+                    appLocalWinMD = String.Empty;
+                }
+                SetupBindingPaths(trustedPlatformAssemblies, platformResourceRoots, appPaths, appNiPaths, appLocalWinMD);
             }
 #endif // FEATURE_VERSIONING
 
@@ -698,7 +622,6 @@ namespace System {
         {
             String targetFrameworkName = _FusionStore.TargetFrameworkName;
 
-#if !FEATURE_CORECLR  // Assembly.GetEntryAssembly doesn't make sense nor exist on Silverlight
             if (targetFrameworkName == null && IsDefaultAppDomain() && !_FusionStore.CheckedForTargetFrameworkName)
             {
                 // This should only be run in the default appdomain.  All other appdomains should have
@@ -716,7 +639,7 @@ namespace System {
                 }
                 _FusionStore.CheckedForTargetFrameworkName = true;
             }
-#endif // !FEATURE_CORECLR
+
             return targetFrameworkName;
         }
 
@@ -2240,9 +2163,11 @@ namespace System {
             get { return nGetFriendlyName(); }
         } 
 
-#if FEATURE_FUSION
         public String BaseDirectory
         {
+#if FEATURE_CORECLR
+            [System.Security.SecurityCritical]
+#endif        
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
             get {
@@ -2250,6 +2175,7 @@ namespace System {
             }
         }
 
+#if FEATURE_FUSION
         public String RelativeSearchPath
         {
             [ResourceExposure(ResourceScope.Machine)]
@@ -2306,8 +2232,6 @@ namespace System {
         {
             return nGetAssemblies(true /* forIntrospection */);
         }
-
-
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
@@ -2500,11 +2424,6 @@ namespace System {
                 case (int) AppDomainSetup.LoaderInformation.ConfigurationBytesValue:
                     FusionStore.SetConfigurationBytes((byte[]) data);
                     break;
-#if FEATURE_VERSIONING
-                case (int) AppDomainSetup.LoaderInformation.ManifestFilePathValue:
-                    FusionStore.ManifestFilePath = (string) data;
-                    break;
-#endif // FEATURE_VERSIONING
                 default:
                     FusionStore.Value[key] = (string) data;
                     break;
@@ -2575,10 +2494,6 @@ namespace System {
                     return FusionStore.ApplicationBase;
                 case (int) AppDomainSetup.LoaderInformation.ApplicationNameValue:
                     return FusionStore.ApplicationName;
-#if FEATURE_VERSIONING
-                case (int) AppDomainSetup.LoaderInformation.ManifestFilePathValue:
-                    return FusionStore.ManifestFilePath;
-#endif // FEATURE_VERSIONING
 #if FEATURE_FUSION
                 case (int) AppDomainSetup.LoaderInformation.ConfigurationFileValue:
                     return FusionStore.ConfigurationFile;
@@ -3036,39 +2951,20 @@ namespace System {
 
 #if FEATURE_VERSIONING
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern void nCreateContext(string applicationName);
+        internal extern void nCreateContext();
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal extern int nSetupManifest(String manifestOrAssemblyFile,
-                                           String manifestBases,
-                                           bool fIsAssemblyPath);
-        
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SuppressUnmanagedCodeSecurity]
-        private static extern void nSetupBindingPaths(String trustedPlatformAssemblies, String platformResourceRoots, String appPath, String appNiPaths);
+        private static extern void nSetupBindingPaths(String trustedPlatformAssemblies, String platformResourceRoots, String appPath, String appNiPaths, String appLocalWinMD);
 
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated
         #endif
-        internal int SetupManifest(String assemblyFile, bool fIsAssemblyPath)
+        internal void SetupBindingPaths(String trustedPlatformAssemblies, String platformResourceRoots, String appPath, String appNiPaths, String appLocalWinMD)
         {
-            if ((assemblyFile != null) && (assemblyFile.Length != 0))
-            {
-                return nSetupManifest(assemblyFile,
-                                      FusionStore.VersioningManifestBase,
-                                      fIsAssemblyPath);
-            }
-            return 0;
-        }
-
-        #if FEATURE_CORECLR
-        [System.Security.SecurityCritical] // auto-generated
-        #endif
-        internal void SetupBindingPaths(String trustedPlatformAssemblies, String platformResourceRoots, String appPath, String appNiPaths)
-        {
-            nSetupBindingPaths(trustedPlatformAssemblies, platformResourceRoots, appPath, appNiPaths);
+            nSetupBindingPaths(trustedPlatformAssemblies, platformResourceRoots, appPath, appNiPaths, appLocalWinMD);
         }
 #endif // FEATURE_VERSIONING
 
@@ -3246,48 +3142,6 @@ namespace System {
             return null;
         }
 
-#if FEATURE_VERSIONING
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private extern bool nVerifyResolvedAssembly(String assemblyFullName,
-                                                    RuntimeAssembly candidateAssembly,
-                                                    bool fInspectionOnly);
-
-        #if FEATURE_CORECLR
-        [System.Security.SecurityCritical] // auto-generated
-        #endif
-        private RuntimeAssembly TryToResolveAssembly(RuntimeAssembly assembly, String assemblyFullName,
-                                                     ResolveEventHandler eventHandler,
-                                                     bool fInspectionOnly)
-        {
-            Delegate[] delegates = eventHandler.GetInvocationList();
-            int len = delegates.Length;
-            // Attempt all assembly resolve handlers before bailing out.
-            // This by design can produce a number of loaded assemblies unused for the pending bind.
-            for (int i = 0; i < len; i++) {
-                RuntimeAssembly rtAssembly = null;
-                // ---- handler exceptions to allow other handlers to proceed
-                try {
-                    Assembly candidateAssembly =
-                        ((ResolveEventHandler) delegates[i])(this,
-                                                             new ResolveEventArgs(assemblyFullName, assembly));
-                    rtAssembly = GetRuntimeAssembly(candidateAssembly);
-                }
-                catch (Exception) {
-                    continue;
-                }
-                // Only accept assemblies that match the request
-                if (rtAssembly != null)
-                {
-                    if (nVerifyResolvedAssembly(assemblyFullName,
-                                                rtAssembly,
-                                                fInspectionOnly))
-                        return rtAssembly;
-                }
-            }
-            return null;
-        }
-#endif // FEATURE_VERSIONING
-
         // This method is called by the VM.
         [System.Security.SecurityCritical]
         private RuntimeAssembly OnAssemblyResolveEvent(RuntimeAssembly assembly, String assemblyFullName)
@@ -3299,7 +3153,6 @@ namespace System {
                 return null;
             }
 
-#if FEATURE_FUSION
             Delegate[] ds = eventHandler.GetInvocationList();
             int len = ds.Length;
             for (int i = 0; i < len; i++) {
@@ -3310,11 +3163,6 @@ namespace System {
             }
             
             return null;
-#endif // FEATURE_FUSION
-
-#if FEATURE_VERSIONING
-            return TryToResolveAssembly(assembly, assemblyFullName, eventHandler, false);
-#endif // FEATURE_VERSIONING
         }
 
 #if FEATURE_REFLECTION_ONLY_LOAD
@@ -3641,10 +3489,6 @@ namespace System {
 #endif // FEATURE_CAS_POLICY
 
 #if FEATURE_CORECLR
-        // with Fusion gone we need another way to set those
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        private extern void nAddTrustedPath (string appBase);
-
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -3713,7 +3557,7 @@ namespace System {
             // Set loader optimization policy
 #else
 #if FEATURE_VERSIONING
-            nCreateContext(info.ApplicationName);
+            nCreateContext();
 #endif // FEATURE_VERSIONING
 #endif // FEATURE_FUSION
 
@@ -3896,7 +3740,7 @@ namespace System {
                 for (int i=0; i<propertyNames.Length; i++)
                 {
                     
-                    if(propertyNames[i]=="APPBASE") // make sure in [....] with Fusion
+                    if(propertyNames[i]=="APPBASE") // make sure in sync with Fusion
                     {
                         if(propertyValues[i]==null)
                             throw new ArgumentNullException("APPBASE");
@@ -3907,27 +3751,14 @@ namespace System {
                         newSetup.ApplicationBase=Path.NormalizePath(propertyValues[i],true);
 
                     }
-                    else
-                    if(propertyNames[i]=="LOCATION_URI" && providedSecurityInfo==null)
-                    {
 #if FEATURE_CAS_POLICY
+                    else if(propertyNames[i]=="LOCATION_URI" && providedSecurityInfo==null)
+                    {
                         providedSecurityInfo=new Evidence();
                         providedSecurityInfo.AddHostEvidence(new Url(propertyValues[i]));
-#endif // FEATURE_CAS_POLICY
                         ad.SetDataHelper(propertyNames[i],propertyValues[i],null);                        
                     }
-#if FEATURE_VERSIONING
-                    else if (propertyNames[i] == "MANIFEST_FILE_PATH")
-                    {
-                        newSetup.ManifestFilePath = propertyValues[i];
-                        ad.SetDataHelper(propertyNames[i], propertyValues[i],null);
-                    }
-                    else if (propertyNames[i] == "VERSIONING_MANIFEST_BASE")
-                    {
-                        newSetup.VersioningManifestBase = propertyValues[i];
-                        ad.SetDataHelper(propertyNames[i], propertyValues[i],null);
-                    }
-#endif // FEATURE_VERSIONING
+#endif // FEATURE_CAS_POLICY
 #if FEATURE_LOADER_OPTIMIZATION                    
                     else
                     if(propertyNames[i]=="LOADER_OPTIMIZATION")
@@ -3946,43 +3777,6 @@ namespace System {
                     }
 #endif // FEATURE_LOADER_OPTIMIZATION                    
 #if FEATURE_CORECLR      
-                    // TRUSTEDPATH  is supported only by CoreCLR binder
-                    else
-                    if(propertyNames[i]=="TRUSTEDPATH")
-                    {
-                        if(propertyValues[i]==null)
-                            throw new ArgumentNullException("TRUSTEDPATH");
-
-                        StringBuilder normalisedTrustedPathList = new StringBuilder();
-                        foreach(string path in propertyValues[i].Split(Path.PathSeparator))
-                        {
-
-                            if( path.Length==0 )                  // skip empty dirs
-                                continue;
-                               
-                            if (Path.IsRelative(path))
-                                throw new ArgumentException( Environment.GetResourceString( "Argument_AbsolutePathRequired" ) );
-
-                            string trustedPath=Path.NormalizePath(path,true);
-                            ad.nAddTrustedPath(trustedPath);
-                            normalisedTrustedPathList.Append(trustedPath);
-                            normalisedTrustedPathList.Append(Path.PathSeparator);
-                        }
-                        // Strip the last separator
-                        if (normalisedTrustedPathList.Length > 0)
-                        {
-                            normalisedTrustedPathList.Remove(normalisedTrustedPathList.Length - 1, 1);
-                        }
-                        ad.SetDataHelper(propertyNames[i],normalisedTrustedPathList.ToString(),null);        // not supported by fusion, so set explicitly                
-                    }
-                    else
-                    if(propertyNames[i]=="PLATFORM_ASSEMBLIES")
-                    {
-                        if(propertyValues[i]==null)
-                            throw new ArgumentNullException("PLATFORM_ASSEMBLIES");
-
-                        ad.SetDataHelper(propertyNames[i],propertyValues[i],null);
-                    }
                     else
                     if(propertyNames[i]=="NATIVE_DLL_SEARCH_DIRECTORIES")
                     {
@@ -4137,15 +3931,6 @@ namespace System {
             // technically, we don't need this, newSetup refers to the same object as FusionStore 
             // but it's confusing since it isn't immediately obvious whether we have a ref or a copy
             AppDomainSetup adSetup = ad.FusionStore; 
-            
-#if FEATURE_CORECLR
-            // Silverlight2 implementation restriction (all hosts must specify the same PLATFORM_ASSEMBLIES list.)
-            if (SharedStatics.ConflictsWithPriorPlatformList((String)(ad.GetData("PLATFORM_ASSEMBLIES"))))
-            {
-                throw new ArgumentOutOfRangeException("PLATFORM_ASSEMBLIES");
-            }
-#endif // FEATURE_CORECLR
-            
 
 #if FEATURE_CORECLR
 
@@ -4208,31 +3993,6 @@ namespace System {
 #endif // FEATURE_CLICKONCE
         }
 
-
-#if FEATURE_CORECLR
-        // This routine is invoked from coreclr.dll. This routine must return true
-        // for "assemblyName" to be treated as a platform assembly.
-        [System.Security.SecurityCritical] // auto-generated
-        private static bool IsAssemblyOnHostPlatformList(String assemblyName)
-        {
-            AppDomain ad = AppDomain.CurrentDomain;
-            String platformListString = (String)(ad.GetData("PLATFORM_ASSEMBLIES"));
-            if (platformListString == null)
-            {
-                return false;
-            }
-            String[] platformList = platformListString.Split(';');
-            for (int i = 0; i < platformList.Length; i++)
-            {
-                if (assemblyName.Equals(platformList[i], StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-#endif // FEATURE_CORECLR
 
 #if FEATURE_APTCA
         // Called from DomainAssembly in Conditional APTCA cases
@@ -4395,7 +4155,7 @@ namespace System {
                                 // in via the default domain properties.  That restriction could be lifted
                                 // in a future release, at which point this assert should be removed.
                                 // 
-                                // This should be kept in [....] with the real externally facing filter code
+                                // This should be kept in sync with the real externally facing filter code
                                 // in CorHost2::SetPropertiesForDefaultAppDomain
                                 BCLDebug.Assert(false, "Unexpected default domain property");
                             }
@@ -4530,6 +4290,7 @@ namespace System {
         {
             InternalSetDynamicBase(path);
         }
+#endif // FEATURE_FUSION
 
         public AppDomainSetup SetupInformation
         {
@@ -4538,6 +4299,7 @@ namespace System {
             }
         }
 
+#if FEATURE_FUSION
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
@@ -4596,14 +4358,6 @@ namespace System {
                                                      FusionStore.Value[(int) AppDomainSetup.LoaderInformation.DynamicBaseValue]);
             }
         }
-#else // FEATURE_FUSION
-        public AppDomainSetup SetupInformation
-        {
-            get {
-                return new AppDomainSetup();
-            }
-        }
-
 #endif // FEATURE_FUSION
 
         [System.Security.SecurityCritical]  // auto-generated
@@ -4917,10 +4671,6 @@ namespace System {
         private static AppDomainSetup InternalCreateDomainSetup(String imageLocation)
         {
             int i = imageLocation.LastIndexOf('\\');
-#if PLATFORM_UNIX
-            int j = imageLocation.LastIndexOf('/');
-            i = i > j ? i : j;
-#endif
  
             Contract.Assert(i != -1, "invalid image location");
 
@@ -4941,16 +4691,6 @@ namespace System {
         private static AppDomain InternalCreateDomain(String imageLocation)
         {
             AppDomainSetup info = InternalCreateDomainSetup(imageLocation);
-#if FEATURE_VERSIONING
-            String manifestFilePath = imageLocation + ".managed_manifest";
-
-            // If the assembly to be validated comes with an manifest, use this for the app domain
-            if (File.Exists(manifestFilePath))
-            {
-                info.ManifestFilePath = manifestFilePath;
-            }
-#endif // FEATURE_VERSIONING
-
             return CreateDomain("Validator",
                                 null,
                                 info);
@@ -5091,6 +4831,15 @@ namespace System {
             SetupFusionStore(InternalCreateDomainSetup(imageLocation), null);
         }
 #endif
+
+#if !FEATURE_CORECLR
+        // this method is required so Object.GetType is not made virtual by the compiler
+        // _AppDomain.GetType()
+        public new Type GetType()
+        {
+            return base.GetType();
+        }
+
         void _AppDomain.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -5112,6 +4861,7 @@ namespace System {
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
     //  CallBacks provide a facility to request execution of some code

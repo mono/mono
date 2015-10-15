@@ -55,7 +55,7 @@ namespace System.Linq.Expressions {
     /// an overloaded field enables us to both reduce memory usage as well as maintain compatibility and an 
     /// easy to use external API.
     /// </summary>
-    internal interface IArgumentProvider {
+    public interface IArgumentProvider {
         Expression GetArgument(int index);
         int ArgumentCount {
             get;

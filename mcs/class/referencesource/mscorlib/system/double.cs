@@ -55,11 +55,13 @@ namespace System {
 
         [Pure]
         [System.Security.SecuritySafeCritical]  // auto-generated
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool IsInfinity(double d) {
             return (*(long*)(&d) & 0x7FFFFFFFFFFFFFFF) == 0x7FF0000000000000;
         }
 
         [Pure]
+        [System.Runtime.Versioning.NonVersionable]
         public static bool IsPositiveInfinity(double d) {
             //Jit will generate inlineable code with this
             if (d == double.PositiveInfinity)
@@ -73,6 +75,7 @@ namespace System {
         }
 
         [Pure]
+        [System.Runtime.Versioning.NonVersionable]
         public static bool IsNegativeInfinity(double d) {
             //Jit will generate inlineable code with this
             if (d == double.NegativeInfinity)
@@ -94,6 +97,7 @@ namespace System {
         [Pure]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [System.Security.SecuritySafeCritical]
+        [System.Runtime.Versioning.NonVersionable]
         public unsafe static bool IsNaN(double d)
         {
             return (*(UInt64*)(&d) & 0x7FFFFFFFFFFFFFFFL) > 0x7FF0000000000000L;
@@ -152,26 +156,32 @@ namespace System {
             return IsNaN(temp) && IsNaN(m_value);
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator ==(Double left, Double right) {
             return left == right;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator !=(Double left, Double right) {
             return left != right;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator <(Double left, Double right) {
             return left < right;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator >(Double left, Double right) {
             return left > right;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator <=(Double left, Double right) {
             return left <= right;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static bool operator >=(Double left, Double right) {
             return left >= right;
         }

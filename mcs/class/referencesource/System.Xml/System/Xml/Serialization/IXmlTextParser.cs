@@ -2,7 +2,7 @@
 // <copyright file="SafeWriter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">ElenaK</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Serialization {

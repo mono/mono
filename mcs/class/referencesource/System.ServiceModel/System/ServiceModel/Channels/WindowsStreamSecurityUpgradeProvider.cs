@@ -614,7 +614,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = this.HandleBaseOpenComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -645,7 +645,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = this.HandleOpenTokenProviderComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -676,7 +676,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = this.HandleGetSspiCredentialComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -758,7 +758,7 @@ namespace System.ServiceModel.Channels
                     {
                         completeSelf = this.HandleBaseCloseComplete(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))
@@ -788,7 +788,7 @@ namespace System.ServiceModel.Channels
                     {
                         SecurityUtils.EndCloseTokenProviderIfRequired(result);
                     }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                     catch (Exception e)
                     {
                         if (Fx.IsFatal(e))

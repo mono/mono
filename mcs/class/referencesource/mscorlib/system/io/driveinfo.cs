@@ -7,7 +7,7 @@
 **
 ** Class:  DriveInfo
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Exposes routines for exploring a drive.

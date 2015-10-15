@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Data.Common;
@@ -100,21 +100,21 @@ namespace System.Data.Entity.Design.Common
                 // this seems counter intuitive at first, but makes sense when you think all the way through it
                 //
                 // CascadeDelete Behavior (we can assume the runtime will always delete cascade 
-                //                         to the link table from the outside tables (it actually doesn't, but that is a bug))
-                //  Store               Effective
-                //  A -> AToB <- B      None
-                //  A <- AToB <- B      <-
-                //  A -> AToB -> B      ->
-                //  A <- AToB -> B      None
-                //  A <- AToB    B      <-
-                //  A    AToB -> B      ->
-                //  A -> AToB    B      None
-                //  A    AToB <- B      None
-                //  
-                //  Other CascadeDelete rules
-                //  1. Can't have a delete from a Many multiplicity end
-                //  2. Can't have a delete on both ends
-                //
+                //                         to the link table from the outside tables (it actually doesn't, but that is a 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 associationSetEnd = GetAssociationSetEnd(definingSet, true);
                 AssociationSetEnd multiplicityAssociationSetEnd = GetAssociationSetEnd(multiplicitySet, false);

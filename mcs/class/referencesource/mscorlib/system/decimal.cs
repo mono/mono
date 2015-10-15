@@ -61,7 +61,8 @@ namespace System {
     // the range of the Decimal type.
     [StructLayout(LayoutKind.Sequential)]
     [Serializable]
-[System.Runtime.InteropServices.ComVisible(true)]
+    [System.Runtime.InteropServices.ComVisible(true)]
+    [System.Runtime.Versioning.NonVersionable] // This only applies to field layout
 #if GENERICS_WORK
     public struct Decimal : IFormattable, IComparable, IConvertible, IDeserializationCallback
             , IComparable<Decimal>, IEquatable<Decimal> {
@@ -238,9 +239,6 @@ namespace System {
 #else
         // Constructs a Decimal from a Currency value.
         //
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal Decimal(Currency value) {
             Decimal temp = Currency.ToDecimal(value);
             this.lo = temp.lo;

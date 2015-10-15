@@ -2,7 +2,7 @@
 // <copyright file="DatatypeImplementation.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema {
@@ -805,7 +805,7 @@ namespace System.Xml.Schema {
             return 0;
         }
 
-#if PRIYAL
+#if Microsoft
         protected object GetValueToCheck(object value, IXmlNamespaceResolver nsmgr) {
             object valueToCheck = value;
             string resId;

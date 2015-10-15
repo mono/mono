@@ -38,6 +38,11 @@
             { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultInstance, SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultInstance },
             { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultAsyncState, SR.AppVerifier_Errors_BeginHandlerReturnedUnexpectedAsyncResultAsyncState },
             { AppVerifierErrorCode.SyncContextSendOrPostCalledAfterRequestCompleted, SR.AppVerifier_Errors_SyncContextSendOrPostCalledAfterRequestCompleted },
+            { AppVerifierErrorCode.SyncContextSendOrPostCalledBetweenNotifications, SR.AppVerifier_Errors_SyncContextSendOrPostCalledBetweenNotifications },
+            { AppVerifierErrorCode.SyncContextPostCalledInNestedNotification, SR.AppVerifier_Errors_SyncContextPostCalledInNestedNotification },
+            { AppVerifierErrorCode.RequestNotificationCompletedSynchronouslyWithNotificationContextPending, SR.AppVerifier_Errors_RequestNotificationCompletedSynchronouslyWithNotificationContextPending },
+            { AppVerifierErrorCode.NotificationContextHasChangedAfterSynchronouslyProcessingNotification, SR.AppVerifier_Errors_NotificationContextHasChangedAfterSynchronouslyProcessingNotification },
+            { AppVerifierErrorCode.PendingProcessRequestNotificationStatusAfterCompletingNestedNotification, SR.AppVerifier_Errors_PendingProcessRequestNotificationStatusAfterCompletingNestedNotification },
         };
 
         // Provides an option for different wrappers to specify whether to collect the call stacks traces
@@ -63,12 +68,13 @@
 
         // The declarative order of these two fields is important; don't swap them!
         private static Action<AppVerifierException> DefaultAppVerifierBehavior = GetAppVerifierBehaviorFromRegistry();
-        private static readonly bool IsAppVerifierEnabled = (DefaultAppVerifierBehavior != null);
+        internal static readonly bool IsAppVerifierEnabled = (DefaultAppVerifierBehavior != null);
         private static long AppVerifierErrorCodeCollectCallStackMask;
         private static long AppVerifierErrorCodeEnableAssertMask;
         private static CallStackCollectionBitMasks AppVerifierCollectCallStackMask;
 
         private delegate void AssertDelegate(bool condition, AppVerifierErrorCode errorCode);
+        private delegate void AppendAdditionalInfoDelegate(StringBuilder errorString);
 
         // Returns an AppVerifier handler (something that can record exceptions appropriately)
         // appropriate to what was set in the system registry. If the key we're looking for
@@ -299,7 +305,7 @@
                                    // BeginHandler hasn't yet returned, so this call may be synchronous or asynchronous.
                                    // We can tell by comparing the current thread with the thread which called BeginHandler.
                                    // From a correctness perspective, it is valid to invoke the AsyncCallback delegate either
-                                   // synchronously or asynchronously. From [....]: if 'CompletedSynchronously = true', then
+                                   // synchronously or asynchronously. From Microsoft: if 'CompletedSynchronously = true', then
                                    // AsyncCallback invocation can happen either on the same thread or on a different thread,
                                    // just as long as BeginHandler hasn't yet returned (which in true in this case).
                                    if (!asyncResult.CompletedSynchronously) {
@@ -444,8 +450,9 @@
         }
 
         // Gets a delegate that checks for application code trying to call into the SyncContext after
-        // the request is already completed. The Action returned by this method could be null.
-        public static Action GetSyncContextCheckDelegate(ISyncContext syncContext) {
+        // the request or the request notification is already completed. 
+        // The Action returned by this method could be null.
+        public static Action<bool> GetSyncContextCheckDelegate(ISyncContext syncContext) {
             if (!IsAppVerifierEnabled) {
                 return null;
             }
@@ -454,13 +461,14 @@
         }
 
         /// <summary>
-        /// Returns an Action that determines whether SynchronizationContext.Send or Post was called after the underlying request finished.
+        /// Returns an Action<bool> that determines whether SynchronizationContext.Send or Post was called after the underlying request 
+        /// or the request notification finished. The bool parameter controls whether to check if Post is attempted in nested notification.
         /// The instrumentation can be a performance hit, so this method should not be called if AppVerifier is not enabled.
         /// </summary>
         /// <param name="syncContext">The ISyncContext (HttpApplication, WebSocketPipeline, etc.) on which to perform the check.</param>
         /// <param name="errorHandler">The listener that can handle verification failures.</param>
         /// <returns>A callback which performs the verification.</returns>
-        internal static Action GetSyncContextCheckDelegateImpl(ISyncContext syncContext, Action<AppVerifierException> errorHandler) {
+        internal static Action<bool> GetSyncContextCheckDelegateImpl(ISyncContext syncContext, Action<AppVerifierException> errorHandler) {
             Uri requestUrl = null;
             object originalThreadContextId = null;
 
@@ -479,7 +487,113 @@
             }
 
             // If the condition passed to this method evaluates to false, we will raise an error to whoever is listening.
-            AssertDelegate assert = (condition, errorCode) => {
+            AssertDelegate assert = GetAssertDelegateImpl(requestUrl, errorHandler, appendAdditionalInfoDelegate: null);
+
+            return (checkForReEntry) => {
+                try {
+                    // Make sure that the ISyncContext is still associated with the same HttpContext that
+                    // we captured earlier.
+                    HttpContext currentHttpContext = (syncContext != null) ? syncContext.HttpContext : null;
+                    object currentThreadContextId = (currentHttpContext != null) ? currentHttpContext.ThreadContextId : null;
+                    assert(currentThreadContextId != null && ReferenceEquals(originalThreadContextId, currentThreadContextId), AppVerifierErrorCode.SyncContextSendOrPostCalledAfterRequestCompleted);
+
+                    if (HttpRuntime.UsingIntegratedPipeline && !currentHttpContext.HasWebSocketRequestTransitionCompleted) {
+                        var notificationContext = (currentHttpContext != null) ? currentHttpContext.NotificationContext : null;
+                        assert(notificationContext != null, AppVerifierErrorCode.SyncContextSendOrPostCalledBetweenNotifications);
+
+                        if (checkForReEntry && notificationContext != null) {
+                            assert(!notificationContext.IsReEntry, AppVerifierErrorCode.SyncContextPostCalledInNestedNotification);
+                        }
+                    }
+                }
+                catch (AppVerifierException) {
+                    // We want to ---- any exceptions thrown by our verification logic, as the failure
+                    // has already been recorded by the appropriate listener. Propagate the original
+                    // exception upward.
+                }
+            };
+        }
+
+        // This generic method invokes a delegate that was created by AppVerifier at an earlier time.
+        // It is safe to call it even if the returned delegate is null (e.g. AppVerifier is off).
+        // Here is the typical usage scenario:
+        //      var verifierCheck = AppVerifier.Get*CheckDelegate(...);         // get the delegate which can capture some state
+        //      T result = <...>                                                // the result of some code execution
+        //      AppVerifier.InvokeVerifierCheck(verifierCheckDelegate, result); // invoke the verification of the result
+        internal static void InvokeVerifierCheck<T>(Action<T> verifierCheckDelegate, T result)
+        {
+            if (verifierCheckDelegate != null) {
+                try {
+                    verifierCheckDelegate(result);
+                }
+                catch (AppVerifierException) {
+                    // We want to ---- any exceptions thrown by our verification logic, as the failure
+                    // has already been recorded by the appropriate listener.
+                }
+            }
+        }
+
+        // Gets a delegate that checks for inconsistencies after managed code finished processing one or more request notifications.
+        // The Action returned by this method could be null.
+        internal static Action<RequestNotificationStatus> GetRequestNotificationStatusCheckDelegate(HttpContext context, RequestNotification currentNotification, bool isPostNotification) {
+            if (!IsAppVerifierEnabled) {
+                return null;
+            }
+            return GetRequestNotificationStatusCheckDelegateImpl(context, currentNotification, isPostNotification, HandleAppVerifierException);
+        }
+
+        /// <summary>
+        /// Returns an Action<RequestNotificationStatus> that will check for inconsistencies after 
+        /// managed code has finished processing one or more notifications and about to return back to IIS. 
+        /// </summary>
+        /// <returns>A callback which performs the verification.</returns>
+        internal static Action<RequestNotificationStatus> GetRequestNotificationStatusCheckDelegateImpl(HttpContext context, RequestNotification currentNotification, bool isPostNotification, Action<AppVerifierException> errorHandler) {
+            // collect all of the diagnostic information upfront
+            NotificationContext originalNotificationContext = context.NotificationContext;
+            bool isReentry = originalNotificationContext.IsReEntry;
+            Uri requestUrl = null;
+            if (!context.HideRequestResponse && context.Request != null) {
+                requestUrl = context.Request.Unvalidated.Url;
+            }
+
+            AppendAdditionalInfoDelegate appendCurrentNotificationInfo = (errorString) => {
+                errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_NotificationInfo, currentNotification, isPostNotification, isReentry));
+            };
+
+            AssertDelegate assert = GetAssertDelegateImpl(requestUrl, errorHandler, appendAdditionalInfoDelegate: appendCurrentNotificationInfo);
+                
+            return (RequestNotificationStatus status) => {
+                if (status == RequestNotificationStatus.Pending) {
+                    // We don't expect nested notifications to complete asynchronously
+                    assert(!isReentry, AppVerifierErrorCode.PendingProcessRequestNotificationStatusAfterCompletingNestedNotification);
+                }
+                else {
+                    // Completing synchronously with pending NotificationContext means a 
+
+
+                    assert(context.NotificationContext != null && !context.NotificationContext.PendingAsyncCompletion,
+                            AppVerifierErrorCode.RequestNotificationCompletedSynchronouslyWithNotificationContextPending);
+
+                    // Can't have a different NotificationContext after finishing the notification
+                    // Even if it was changed while processing nested notifications it should be restored back before we unwind
+                    assert(context.NotificationContext == originalNotificationContext,
+                            AppVerifierErrorCode.NotificationContextHasChangedAfterSynchronouslyProcessingNotification);
+                }
+            };
+        }
+
+        /// <summary>
+        /// This method returns the default implementation of the assert code which takes care of 
+        /// evaluating the assert contition, handing assert and stack collection enabling masks,
+        /// and creating an AppVerifierException with basic information
+        /// </summary>
+        /// <param name="requestUrl">The Url of the request.</param>
+        /// <param name="errorHandler">The listener that can handle verification failures.</param>
+        /// <param name="appendAdditionalInfoDelegate">The caller can provide this delegate to append additional information to the exception. Could be null.</param>
+        /// <returns>A callback which performs the verification.</returns>
+        private static AssertDelegate GetAssertDelegateImpl(Uri requestUrl, Action<AppVerifierException> errorHandler, AppendAdditionalInfoDelegate appendAdditionalInfoDelegate) {
+            // If the condition passed to this method evaluates to false, we will raise an error to whoever is listening.
+            return (condition, errorCode) => {
                 long mask = 1L << (int)errorCode;
                 // assert only if it was not masked out by a bit set
                 bool enableAssert = (AppVerifierErrorCodeEnableAssertMask & mask) == mask;
@@ -500,6 +614,13 @@
                     errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ErrorCode, (int)errorCode));
                     errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_Description, GetLocalizedDescriptionStringForError(errorCode)));
                     errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ThreadInfo, assertInvocationInfo.ThreadId, assertInvocationInfo.Timestamp.ToLocalTime()));
+
+                    // append additional info if needed
+                    if (appendAdditionalInfoDelegate != null) {
+                        appendAdditionalInfoDelegate(errorString);
+                    }
+
+                    // append the stack trace
                     errorString.AppendLine(assertInvocationInfo.StackTrace.ToString());
 
                     AppVerifierException ex = new AppVerifierException(errorCode, errorString.ToString());
@@ -507,22 +628,8 @@
                     throw ex;
                 }
             };
-
-            return () => {
-                try {
-                    // Make sure that the ISyncContext is still associated with the same HttpContext that
-                    // we captured earlier.
-                    HttpContext currentHttpContext = (syncContext != null) ? syncContext.HttpContext : null;
-                    object currentThreadContextId = (currentHttpContext != null) ? currentHttpContext.ThreadContextId : null;
-                    assert(currentThreadContextId != null && ReferenceEquals(originalThreadContextId, currentThreadContextId), AppVerifierErrorCode.SyncContextSendOrPostCalledAfterRequestCompleted);
-                }
-                catch (AppVerifierException) {
-                    // We want to ---- any exceptions thrown by our verification logic, as the failure
-                    // has already been recorded by the appropriate listener. Propagate the original
-                    // exception upward.
-                }
-            };
         }
+
 
         // This is the default implementation of an AppVerifierException handler;
         // it just delegates to the configured behavior.

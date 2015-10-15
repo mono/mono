@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection.Emit
@@ -51,9 +51,7 @@ namespace System.Reflection.Emit
         // Always false unless we are in an immersive (non dev mode) process.
 #if FEATURE_APPX
         private bool m_profileAPICheck;
-#endif
 
-#if !FEATURE_CORECLR
         private RuntimeAssembly m_creatorAssembly;
 #endif
 

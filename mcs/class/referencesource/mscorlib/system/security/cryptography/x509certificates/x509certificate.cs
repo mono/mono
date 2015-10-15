@@ -26,9 +26,7 @@ namespace System.Security.Cryptography.X509Certificates {
     [System.Runtime.InteropServices.ComVisible(true)]
     public enum X509ContentType {
         Unknown         = 0x00,
-        Cert            = 0x01
-#if !FEATURE_CORECLR
-        ,
+        Cert            = 0x01,
         SerializedCert  = 0x02,
 #if !FEATURE_PAL
         Pfx             = 0x03,
@@ -37,7 +35,6 @@ namespace System.Security.Cryptography.X509Certificates {
         SerializedStore = 0x04, 
         Pkcs7           = 0x05,
         Authenticode    = 0x06
-#endif // !FEATURE_CORECLR
     }
 
     // DefaultKeySet, UserKeySet and MachineKeySet are mutually exclusive
@@ -45,20 +42,20 @@ namespace System.Security.Cryptography.X509Certificates {
     [Flags]
     [System.Runtime.InteropServices.ComVisible(true)]
     public enum X509KeyStorageFlags {
-        DefaultKeySet = 0x00
-#if !FEATURE_CORECLR
-        ,
+        DefaultKeySet = 0x00,
         UserKeySet    = 0x01,
         MachineKeySet = 0x02,
         Exportable    = 0x04,
         UserProtected = 0x08,
         PersistKeySet = 0x10
-#endif // !FEATURE_CORECLR
     }
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
-    public class X509Certificate : IDeserializationCallback, ISerializable {
+    public class X509Certificate :
+        IDisposable,
+        IDeserializationCallback,
+        ISerializable {
         private const string m_format = "X509";
         private string m_subjectName;
         private string m_issuerName;
@@ -416,7 +413,6 @@ namespace System.Security.Cryptography.X509Certificates {
             CultureInfo culture = CultureInfo.CurrentCulture;
 
             if (!culture.DateTimeFormat.Calendar.IsValidDay(date.Year, date.Month, date.Day, 0)) {
-#if !FEATURE_ONLY_CORE_CALENDARS
                 // The most common case of culture failing to work is in the Um-AlQuara calendar. In this case,
                 // we can fall back to the Hijri calendar, otherwise fall back to the invariant culture.
                 if (culture.DateTimeFormat.Calendar is UmAlQuraCalendar) {
@@ -424,7 +420,6 @@ namespace System.Security.Cryptography.X509Certificates {
                     culture.DateTimeFormat.Calendar = new HijriCalendar();
                 }
                 else
-#endif // !FEATURE_ONLY_CORE_CALENDARS
                 {
                     culture = CultureInfo.InvariantCulture;
                 }
@@ -576,6 +571,17 @@ namespace System.Security.Cryptography.X509Certificates {
                 m_safeCertContext = SafeCertContextHandle.InvalidHandle;
             }
             m_certContextCloned = false;
+        }
+   
+        public void Dispose() {
+            Dispose(true);
+        }
+
+        [System.Security.SecuritySafeCritical] 
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                Reset();
+            }            
         }
 
 #if FEATURE_SERIALIZATION

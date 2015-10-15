@@ -24,13 +24,11 @@ namespace System.Configuration.Assemblies {
         None = 0,
         MD5 = 0x8003,
         SHA1 = 0x8004,
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         [ComVisible(false)]
         SHA256 = 0x800c,
         [ComVisible(false)]
         SHA384 = 0x800d,
         [ComVisible(false)]
         SHA512 = 0x800e,
-#endif
     }
 }

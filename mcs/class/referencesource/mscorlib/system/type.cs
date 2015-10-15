@@ -6,7 +6,7 @@
 //
 // File: Type.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements System.Type
 //
@@ -27,7 +27,6 @@ namespace System {
     using System.Collections.Generic;
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using CultureInfo = System.Globalization.CultureInfo;
     using StackCrawlMark = System.Threading.StackCrawlMark;
     using DebuggerStepThroughAttribute = System.Diagnostics.DebuggerStepThroughAttribute;
@@ -88,12 +87,6 @@ namespace System {
         // case-sensitive by default).
         ////  
 
-        // this method is required so Object.GetType is not made virtual by the compiler 
-        // _Type.GetType()
-        public new Type GetType()
-        {
-            return base.GetType();
-        }
 #if !MONO
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type GetType(String typeName, bool throwOnError, bool ignoreCase) {
@@ -104,30 +97,14 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type GetType(String typeName, bool throwOnError) {
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            Type t = RuntimeType.GetType(typeName, throwOnError, false, false, ref stackMark);
-
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && t != null)
-            {
-                FrameworkEventSource.Log.TypeGetType(t.GetFullNameForEtw());
-            }
-#endif
-            return t;
+            return RuntimeType.GetType(typeName, throwOnError, false, false, ref stackMark);
         }
 
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type GetType(String typeName) {
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            Type t = RuntimeType.GetType(typeName, false, false, false, ref stackMark);
 
-#if !FEATURE_CORECLR && !MONO
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && t != null)
-            {
-                FrameworkEventSource.Log.TypeGetType(t.GetFullNameForEtw());
-            }
-#endif
-
-            return t;
+            return RuntimeType.GetType(typeName, false, false, false, ref stackMark);
         }
 #endif
 #if !FEATURE_CORECLR
@@ -282,9 +259,6 @@ namespace System {
 
         // Return the Default binder used by the system.
         static public Binder DefaultBinder {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 // Allocate the default binder if it hasn't been allocated yet.
                 if (defaultBinder == null)
@@ -698,9 +672,6 @@ namespace System {
             return GetPropertyImpl(name,Type.DefaultLookup,null,returnType,types,modifiers);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public PropertyInfo GetProperty(String name, BindingFlags bindingAttr)
         {
             if (name == null)
@@ -749,9 +720,6 @@ namespace System {
             return GetPropertyImpl(name, bindingAttr, null, returnType, null, null);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public PropertyInfo GetProperty(String name)
         {
             if (name == null)
@@ -990,9 +958,6 @@ namespace System {
         public bool IsNested 
         {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
                 return DeclaringType != null; 
@@ -1063,17 +1028,11 @@ namespace System {
 
         public bool IsPublic {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {return ((GetAttributeFlagsImpl() & TypeAttributes.VisibilityMask) == TypeAttributes.Public);}
         }
 
         public bool IsNestedPublic {
             [Pure]
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {return ((GetAttributeFlagsImpl() & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic);}
         }
 
@@ -1136,9 +1095,6 @@ namespace System {
 
         public bool IsAbstract {
             [Pure]
-#if !FEATURE_CORECLR
-             [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
              get { return ((GetAttributeFlagsImpl() & TypeAttributes.Abstract) != 0); }
          }
          
@@ -1151,7 +1107,6 @@ namespace System {
          public bool IsEnum {
 #else
          public virtual bool IsEnum {
-             [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
 #endif
              [Pure]
              get
@@ -1327,9 +1282,6 @@ namespace System {
         }
                        
         // Protected routine to determine if this class represents a value class
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         // The default implementation of IsValueTypeImpl never returns true for non-runtime types.
         protected virtual bool IsValueTypeImpl()
         {
@@ -1428,9 +1380,6 @@ namespace System {
         [Pure]
         abstract protected bool HasElementTypeImpl();
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal Type GetRootElementType()
         {
             Type rootElementType = this;
@@ -1815,7 +1764,7 @@ namespace System {
         {
             throw new NotImplementedException();
         }
-        
+
         // ToString
         // Print the String Representation of the Type
         public override String ToString()
@@ -1852,7 +1801,6 @@ namespace System {
         // _Type.Equals(Type)
         [Pure]
 #if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         public virtual bool Equals(Type o)
 #else
         public bool Equals(Type o)
@@ -1890,9 +1838,6 @@ namespace System {
 #endif // !FEATURE_CORECLR
 #endif
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode()
         {
             Type SystemType = UnderlyingSystemType;
@@ -1910,6 +1855,14 @@ namespace System {
         public virtual InterfaceMapping GetInterfaceMap(Type interfaceType)
         {
             throw new NotSupportedException(Environment.GetResourceString("NotSupported_SubclassOverride"));
+        }
+
+#if !FEATURE_CORECLR
+        // this method is required so Object.GetType is not made virtual by the compiler 
+        // _Type.GetType()
+        public new Type GetType()
+        {
+            return base.GetType();
         }
 
         void _Type.GetTypeInfoCount(out uint pcTInfo)
@@ -1933,6 +1886,7 @@ namespace System {
         {
             throw new NotImplementedException();
         }
+#endif
 
         // private convenience data
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;

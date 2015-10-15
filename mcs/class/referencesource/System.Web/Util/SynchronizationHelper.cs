@@ -19,10 +19,11 @@ namespace System.Web.Util {
         private Task _completionTask; // the Task that will run when all in-flight operations have completed
         private Thread _currentThread; // the Thread that's running the current Task; all threads must see the same value for this field
         private Task _lastScheduledTask = CreateInitialTask(); // the last Task that was queued to this helper, used to hook future Tasks (not volatile since always accessed under lock)
+        private Task _lastScheduledTaskAsync = CreateInitialTask(); // the last async Task that was queued to this helper
         private readonly object _lockObj = new object(); // synchronizes access to _lastScheduledTask
         private int _operationsInFlight; // operation counter
         private readonly ISyncContext _syncContext; // a context that wraps an operation with pre- and post-execution phases
-        private readonly Action _appVerifierCallback; // for making sure that developers don't try calling us after the request has completed
+        private readonly Action<bool> _appVerifierCallback; // for making sure that developers don't try calling us after the request has completed
 
         public SynchronizationHelper(ISyncContext syncContext) {
             _syncContext = syncContext;
@@ -56,9 +57,9 @@ namespace System.Web.Util {
             return newOperationCount;
         }
 
-        private void CheckForRequestCompletionIfRequired() {
+        private void CheckForRequestStateIfRequired(bool checkForReEntry) {
             if (_appVerifierCallback != null) {
-                _appVerifierCallback();
+                _appVerifierCallback(checkForReEntry);
             }
         }
 
@@ -98,7 +99,7 @@ namespace System.Web.Util {
         }
 
         public void QueueAsynchronous(Action action) {
-            CheckForRequestCompletionIfRequired();
+            CheckForRequestStateIfRequired(checkForReEntry: true);
             ChangeOperationCount(+1);
 
             // This method only schedules work; it doesn't itself do any work. The lock is held for a very
@@ -109,8 +110,31 @@ namespace System.Web.Util {
             }
         }
 
+        // QueueAsynchronousAsync and SafeWrapCallbackAsync guarantee:
+        // 1. For funcs posted here, it's would first come, first complete.
+        // 2. There is no overlapping execution.
+        public void QueueAsynchronousAsync(Func<object, Task> func, object state) {
+            CheckForRequestStateIfRequired(checkForReEntry: true);
+            ChangeOperationCount(+1);
+
+            // This method only schedules work; it doesn't itself do any work. The lock is held for a very
+            // short period of time.
+            lock (_lockObj) {
+                // 1. Note that we are chaining newTask with _lastScheduledTaskAsync, not _lastScheduledTask.
+                // Chaining newTask with _lastScheduledTask would cause deadlock.
+                // 2. Unwrap() is necessary to be called here. When chaining multiple tasks using the ContinueWith
+                // method, your return type will be Task<T> whereas T is the return type of the delegate/method
+                // passed to ContinueWith. As the return type of an async delegate is a Task, you will end up with 
+                // a Task<Task> and end up waiting for the async delegate to return you the Task which is done after
+                // the first await.
+                Task newTask = _lastScheduledTaskAsync.ContinueWith(
+                    async _ => { await SafeWrapCallbackAsync(func, state); }).Unwrap();
+                _lastScheduledTaskAsync = newTask; // the newly-created task is now the last one
+            }
+        }
+
         public void QueueSynchronous(Action action) {
-            CheckForRequestCompletionIfRequired();
+            CheckForRequestStateIfRequired(checkForReEntry: false);
             if (CurrentThread == Thread.CurrentThread) {
                 // current thread already owns the context, so just execute inline to prevent deadlocks
                 action();
@@ -146,6 +170,35 @@ namespace System.Web.Util {
             }
             finally {
                 CurrentThread = null;
+                ChangeOperationCount(-1);
+            }
+        }
+
+        // This method does not run the func by itself. It simply queues the func into the existing
+        // syncContext queue.
+        private async Task SafeWrapCallbackAsync(Func<object, Task> func, object state) {
+            try {
+                TaskCompletionSource<Task> tcs = new TaskCompletionSource<Task>();
+                QueueAsynchronous(() => {
+                    var t = func(state);
+                    t.ContinueWith((_) => {
+                        if (t.IsFaulted) {
+                            tcs.TrySetException(t.Exception.InnerExceptions);
+                        }
+                        else if (t.IsCanceled) {
+                            tcs.TrySetCanceled();
+                        }
+                        else {
+                            tcs.TrySetResult(t);
+                        }
+                    }, TaskContinuationOptions.ExecuteSynchronously);
+                });
+                await tcs.Task;
+            }
+            catch (Exception ex) {
+                Error = ExceptionDispatchInfo.Capture(ex);
+            }
+            finally {
                 ChangeOperationCount(-1);
             }
         }

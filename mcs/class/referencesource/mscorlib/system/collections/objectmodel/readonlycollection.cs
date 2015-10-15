@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Collections.ObjectModel
@@ -32,22 +32,13 @@ namespace System.Collections.ObjectModel
         }
 
         public int Count {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return list.Count; }
         }
 
         public T this[int index] {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return list[index]; }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public bool Contains(T value) {
             return list.Contains(value);
         }
@@ -56,9 +47,6 @@ namespace System.Collections.ObjectModel
             list.CopyTo(array, index);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public IEnumerator<T> GetEnumerator() {
             return list.GetEnumerator();
         }
@@ -196,9 +184,6 @@ namespace System.Collections.ObjectModel
         }
 
         object IList.this[int index] {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return list[index]; }
             set { 
                 ThrowHelper.ThrowNotSupportedException(ExceptionResource.NotSupported_ReadOnlyCollection);

@@ -15,21 +15,21 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
     using System.Activities.Presentation;
 
     // <summary>
-    // This is a fix for a bug in EditModeSwitchButton which lives in System.Activities.Presentation and
-    // which has already been locked as an assembly.  EditModeSwitchButton only responds to MouseDown
-    // events to make sure that the opening of the popup extended editor works correctly.  However,
-    // that means that it will never respond to keyboard or automation events.  To fix it, this class
-    // offers up an attached DP that, when used, hooks into events offered by EditModeSwitchButton
-    // to correct this issue and still have the button do the right thing even if mouse is not involved
-    // in invoking the button.
-    //
-    // This class is associated with every instance of EditModeSwitchButton using a setter in the
-    // EditModeSwitchButton style:
-    //
-    //   &lt;Style TargetType="{x:Type PropertyEditing:EditModeSwitchButton}" BasedOn="{StaticResource {x:Type Button}}"&gt;
-    //     ...
-    //     &lt;Setter Property="Internal:EditModeSwitchButtonKeyboardFix.ApplyFix" Value="True" /&gt;
-    // </summary>
+    // This is a fix for a 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     class EditModeSwitchButtonKeyboardFix 
     {

@@ -2,14 +2,14 @@
 // <copyright file="XmlSchemaUse.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright> 
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">priyal</owner>                                                                
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema {
 
     using System.Xml.Serialization;
 
-    //[....]: if change the enum, have to change xsdbuilder as well.
+    //nzeng: if change the enum, have to change xsdbuilder as well.
     /// <include file='doc\XmlSchemaUse.uex' path='docs/doc[@for="XmlSchemaUse"]/*' />
     /// <devdoc>
     ///    <para>[To be supplied.]</para>

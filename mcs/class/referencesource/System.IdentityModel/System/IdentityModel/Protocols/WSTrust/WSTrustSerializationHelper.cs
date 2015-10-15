@@ -688,7 +688,7 @@ namespace System.IdentityModel.Protocols.WSTrust
             }
 
             // Step 3: Write the custom attributes here from the Attributes bag.
-            // IDFX beta work item bug 878
+            // IDFX beta work item 
 
             // Step 4: Write the first class Element here
             requestSerializer.WriteKnownRequestElement(rst, writer, context);

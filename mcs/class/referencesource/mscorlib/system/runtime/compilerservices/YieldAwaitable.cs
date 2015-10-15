@@ -7,7 +7,7 @@
 //
 // YieldAwaitable.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Compiler-targeted type for switching back into the current execution context, e.g.
 // 
@@ -87,12 +87,10 @@ namespace System.Runtime.CompilerServices
                 if (continuation == null) throw new ArgumentNullException("continuation");
                 Contract.EndContractBlock();
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
                 if (TplEtwProvider.Log.IsEnabled())
                 {
                     continuation = OutputCorrelationEtwEvent(continuation);
                 }
-#endif
                 // Get the current SynchronizationContext, and if there is one,
                 // post the continuation to it.  However, treat the base type
                 // as if there wasn't a SynchronizationContext, since that's what it
@@ -127,7 +125,6 @@ namespace System.Runtime.CompilerServices
                 }
             }
 
-#if !FEATURE_PAL && !FEATURE_CORECLR    // PAL and CoreClr don't support  eventing
             private static Action OutputCorrelationEtwEvent(Action continuation)
             {
                 int continuationId = Task.NewId();
@@ -137,18 +134,26 @@ namespace System.Runtime.CompilerServices
 
                 return AsyncMethodBuilderCore.CreateContinuationWrapper(continuation, () =>
                 {
+                    var etwLog = TplEtwProvider.Log;
+                    etwLog.TaskWaitContinuationStarted(continuationId);
+
                     // ETW event for Task Wait End.
                     Guid prevActivityId = new Guid();
                     // Ensure the continuation runs under the correlated activity ID generated above
-                    EventSource.SetCurrentThreadActivityId(TplEtwProvider.CreateGuidForTaskID(continuationId), out prevActivityId);
+                    if (etwLog.TasksSetActivityIds)
+                        EventSource.SetCurrentThreadActivityId(TplEtwProvider.CreateGuidForTaskID(continuationId), out prevActivityId);
+
                     // Invoke the original continuation provided to OnCompleted.
                     continuation();
                     // Restore activity ID
-                    EventSource.SetCurrentThreadActivityId(prevActivityId);
+
+                    if (etwLog.TasksSetActivityIds)
+                        EventSource.SetCurrentThreadActivityId(prevActivityId);
+
+                    etwLog.TaskWaitContinuationComplete(continuationId);
                 });
                 
             }
-#endif
 
             /// <summary>WaitCallback that invokes the Action supplied as object state.</summary>
             private static readonly WaitCallback s_waitCallbackRunAction = RunAction;

@@ -15,8 +15,6 @@
 **/
 
 
-#if FEATURE_COMINTEROP
-
 namespace System.Runtime.InteropServices {
 
     using System;
@@ -96,5 +94,3 @@ namespace System.Runtime.InteropServices {
 
     }
 }
-
-#endif

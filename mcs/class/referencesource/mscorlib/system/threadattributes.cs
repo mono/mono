@@ -19,9 +19,6 @@
 namespace System {
     [AttributeUsage (AttributeTargets.Method)]  
 [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_CORECLR && !FEATURE_NETCORE
-    [Obsolete("STAThreadAttribute is not supported in this release. It has been left in so that legacy tools can be used with this release, but it cannot be used in your code.", true)] 
-#endif // FEATURE_CORECLR
     public sealed class STAThreadAttribute : Attribute
     {
         public STAThreadAttribute()

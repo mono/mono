@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       amirhmy
+// @backupOwner dsimmons
 //---------------------------------------------------------------------
 using System;
 using System.ComponentModel;

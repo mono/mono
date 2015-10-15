@@ -4,8 +4,8 @@
 // 
 // ==--==
 ////////////////////////////////////////////////////////////////////////////////
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection 
@@ -107,7 +107,7 @@ namespace System.Reflection
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR        
+
         public override bool Equals(object o)
         {
             return base.Equals(o);
@@ -117,7 +117,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
         #endregion
 
         #region Literals
@@ -562,6 +561,7 @@ namespace System.Reflection
 #endif // FEATURE_X509 && FEATURE_CAS_POLICY
         #endregion
 
+#if !FEATURE_CORECLR
         void _Module.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();
@@ -581,11 +581,9 @@ namespace System.Reflection
         {
             throw new NotImplementedException();
         }
+#endif
     }
 
-#if !FEATURE_CORECLR
-    [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
     [Serializable]
     internal class RuntimeModule : Module
     {
@@ -949,9 +947,6 @@ namespace System.Reflection
         private RuntimeType m_runtimeType;
         private RuntimeAssembly m_runtimeAssembly;
         private IntPtr m_pRefClass;
-#if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-#endif //!FEATURE_CORECLR
         private IntPtr m_pData;
         private IntPtr m_pGlobals;
         private IntPtr m_pFields;

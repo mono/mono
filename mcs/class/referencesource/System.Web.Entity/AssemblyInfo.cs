@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       barryfr
+// @backupOwner cmeek
 //---------------------------------------------------------------------
 
 // Ensures that this library never satisfies a link demand by virtue of being a GACed

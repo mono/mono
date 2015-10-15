@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -2161,15 +2161,15 @@ namespace System.Data.Query.PlanCompiler
             KeyVec drivingNodeKeys = Command.PullupKeys(drivingNode);
             if (drivingNodeKeys.NoKeys)
             {
-                // [....]: In this case we used to wrap drivingNode into a projection that would also project Edm.NewGuid() thus giving us a synthetic key.
-                // This solution did not work however due to a bug in SQL Server that allowed pulling non-deterministic functions above joins and applies, thus 
-                // producing incorrect results. SQL Server bug was filed in "sqlbuvsts01\Sql Server" database as #725272.
-                // The only known path how we can get a keyless drivingNode is if 
-                //    - drivingNode is over a TVF call
-                //    - TVF is declared as Collection(Row) is SSDL (the only form of TVF definitions at the moment)
-                //    - TVF is not mapped to entities
-                //      Note that if TVF is mapped to entities via function import mapping, and the user query is actually the call of the 
-                //      function import, we infer keys for the TVF from the c-space entity keys and their mappings.
+                // Microsoft: In this case we used to wrap drivingNode into a projection that would also project Edm.NewGuid() thus giving us a synthetic key.
+                // This solution did not work however due to a 
+
+
+
+
+
+
+
                 throw EntityUtil.KeysRequiredForNesting();
             }
 
@@ -2494,9 +2494,9 @@ namespace System.Data.Query.PlanCompiler
                 {
                     newDrivingNode = OpCopier.Copy(Command, drivingNode, drivingNodeVars, out newDrivingNodeVars);
                     // 
-                    // Bug 450245: If we copied the driver node, then references to driver node vars
-                    // from the collection subquery must be patched up
-                    //
+                    // 
+
+
                     VarRemapper varRemapper = new VarRemapper(this.Command);
                     for (int j = 0; j < drivingNodeVars.Count; j++)
                     {
@@ -2505,7 +2505,7 @@ namespace System.Data.Query.PlanCompiler
                     // Remap all references in the current subquery
                     varRemapper.RemapSubtree(nestNode.Children[i]);
 
-                    // Bug 479183: Remap the flattened element vars
+                    // 
                     newFlattenedElementVars = varRemapper.RemapVarList(nestOp.CollectionInfo[i - 1].FlattenedElementVars);
 
                     // Create a cross apply for all but the first collection

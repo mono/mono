@@ -17,6 +17,7 @@ namespace System.Security.Cryptography.X509Certificates {
     using System.Security.Cryptography;
     using System.Security.Permissions;
     using System.Text;
+    using Microsoft.Win32.SafeHandles;
 
     using _FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
@@ -72,12 +73,16 @@ namespace System.Security.Cryptography.X509Certificates {
         }
     }
 
-    public class X509Chain {
+    public class X509Chain
+        : IDisposable
+    {
         private uint m_status;
         private X509ChainPolicy m_chainPolicy;
         private X509ChainStatus[] m_chainStatus;
         private X509ChainElementCollection m_chainElementCollection;
-        private SafeCertChainHandle m_safeCertChainHandle;
+
+        [SecurityCritical]
+        private SafeX509ChainHandle m_safeCertChainHandle;
         private bool m_useMachineContext;
         private readonly object m_syncRoot = new object();
 
@@ -85,14 +90,16 @@ namespace System.Security.Cryptography.X509Certificates {
             return (X509Chain) CryptoConfig.CreateFromName("X509Chain");
         }
 
+        [SecurityCritical]
         public X509Chain () : this (false) {}
 
+        [SecurityCritical]
         public X509Chain (bool useMachineContext) {
             m_status = 0;
             m_chainPolicy = null;
             m_chainStatus = null;
             m_chainElementCollection = new X509ChainElementCollection();
-            m_safeCertChainHandle = SafeCertChainHandle.InvalidHandle;
+            m_safeCertChainHandle = SafeX509ChainHandle.InvalidHandle;
             m_useMachineContext = useMachineContext;
         }
 
@@ -103,7 +110,7 @@ namespace System.Security.Cryptography.X509Certificates {
             if (chainContext == IntPtr.Zero)
                 throw new ArgumentNullException("chainContext");
             m_safeCertChainHandle = CAPI.CertDuplicateCertificateChain(chainContext);
-            if (m_safeCertChainHandle == null || m_safeCertChainHandle == SafeCertChainHandle.InvalidHandle)
+            if (m_safeCertChainHandle == null || m_safeCertChainHandle == SafeX509ChainHandle.InvalidHandle)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidContextHandle), "chainContext");
 
             Init();
@@ -114,6 +121,16 @@ namespace System.Security.Cryptography.X509Certificates {
             [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
             get {
                 return m_safeCertChainHandle.DangerousGetHandle();
+            }
+        }
+
+        public SafeX509ChainHandle SafeHandle {
+            [SecurityCritical]
+            [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+            [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+            get
+            {
+                return m_safeCertChainHandle;
             }
         }
 
@@ -150,18 +167,26 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
+#if !FEATURE_CORESYSTEM
         [PermissionSetAttribute(SecurityAction.LinkDemand, Unrestricted=true)]
         [PermissionSetAttribute(SecurityAction.InheritanceDemand, Unrestricted=true)]
+#endif
         public bool Build (X509Certificate2 certificate) {
             lock (m_syncRoot) {
                 if (certificate == null || certificate.CertContext.IsInvalid)
                     throw new ArgumentException(SR.GetString(SR.Cryptography_InvalidContextHandle), "certificate");
 
+#if !FEATURE_CORESYSTEM
                 // Chain building opens and enumerates the root store to see if the root of the chain is trusted.
                 StorePermission sp = new StorePermission(StorePermissionFlags.OpenStore | StorePermissionFlags.EnumerateCertificates);
                 sp.Demand();
+#endif
 
                 X509ChainPolicy chainPolicy = this.ChainPolicy;
+#if !FEATURE_CORESYSTEM
                 if (chainPolicy.RevocationMode == X509RevocationMode.Online) {
                     if (certificate.Extensions[CAPI.szOID_CRL_DIST_POINTS] != null ||
                         certificate.Extensions[CAPI.szOID_AUTHORITY_INFO_ACCESS] != null) {
@@ -173,6 +198,7 @@ namespace System.Security.Cryptography.X509Certificates {
                         ps.Demand();
                     }
                 }
+#endif
 
                 Reset();
                 int hr = BuildChain(m_useMachineContext ? new IntPtr(CAPI.HCCE_LOCAL_MACHINE) : new IntPtr(CAPI.HCCE_CURRENT_USER),
@@ -210,20 +236,41 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+        [SecurityCritical]
+#if !FEATURE_CORESYSTEM
         [PermissionSetAttribute(SecurityAction.LinkDemand, Unrestricted=true)]
         [PermissionSetAttribute(SecurityAction.InheritanceDemand, Unrestricted=true)]
+#endif
         public void Reset () {
             m_status = 0;
             m_chainStatus = null;
             m_chainElementCollection = new X509ChainElementCollection();
             if (!m_safeCertChainHandle.IsInvalid) {
                 m_safeCertChainHandle.Dispose();
-                m_safeCertChainHandle = SafeCertChainHandle.InvalidHandle;
+                m_safeCertChainHandle = SafeX509ChainHandle.InvalidHandle;
             }
         }
 
+        [SecuritySafeCritical]
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+
+        [SecuritySafeCritical]
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Reset();
+            }
+        }
+
+        [SecurityCritical]
         private unsafe void Init () {
-            using (SafeCertChainHandle safeCertChainHandle = CAPI.CertDuplicateCertificateChain(m_safeCertChainHandle)) {
+            using (SafeX509ChainHandle safeCertChainHandle = CAPI.CertDuplicateCertificateChain(m_safeCertChainHandle)) {
                 CAPI.CERT_CHAIN_CONTEXT pChain = new CAPI.CERT_CHAIN_CONTEXT(Marshal.SizeOf(typeof(CAPI.CERT_CHAIN_CONTEXT)));
                 uint cbSize = (uint) Marshal.ReadInt32(safeCertChainHandle.DangerousGetHandle());
                 if (cbSize > Marshal.SizeOf(pChain))
@@ -237,6 +284,9 @@ namespace System.Security.Cryptography.X509Certificates {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static X509ChainStatus[] GetChainStatusInformation (uint dwStatus) {
             if (dwStatus == 0)
                 return new X509ChainStatus[0];
@@ -407,6 +457,8 @@ namespace System.Security.Cryptography.X509Certificates {
         // Builds a certificate chain.
         //
 
+
+        [SecurityCritical]
         internal static unsafe int BuildChain (IntPtr hChainEngine,
                                                SafeCertContextHandle pCertContext,
                                                X509Certificate2Collection extraStore, 
@@ -416,7 +468,7 @@ namespace System.Security.Cryptography.X509Certificates {
                                                X509RevocationFlag revocationFlag,
                                                DateTime verificationTime,
                                                TimeSpan timeout,
-                                               ref SafeCertChainHandle ppChainContext) {
+                                               ref SafeX509ChainHandle ppChainContext) {
             if (pCertContext == null || pCertContext.IsInvalid)
                 throw new ArgumentException(SR.GetString(SR.Cryptography_InvalidContextHandle), "pCertContext");
 

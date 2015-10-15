@@ -91,9 +91,6 @@ namespace System {
       **Arguments: None
       **Exceptions: None
       ==============================================================================*/
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       protected virtual double Sample() {
           //Including this division at the end gives us significantly improved
           //random number distribution.
@@ -131,9 +128,6 @@ namespace System {
       **Arguments: None
       **Exceptions: None.
       ==============================================================================*/
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public virtual int Next() {
         return InternalSample();
       }
@@ -198,9 +192,6 @@ namespace System {
       **Arguments: None
       **Exceptions: None
       ==============================================================================*/
-#if !FEATURE_CORECLR
-      [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
       public virtual double NextDouble() {
         return Sample();
       }

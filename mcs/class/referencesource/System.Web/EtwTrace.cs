@@ -185,7 +185,6 @@ namespace System.Web {
             return verbosity;
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal static bool IsTraceEnabled(int level, int flag) {
             if (level < _traceLevel && ((flag & _traceFlags) != EtwTraceFlags.None))
                 return true;

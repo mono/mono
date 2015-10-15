@@ -84,7 +84,6 @@ namespace System {
         private const int DaysTo1899 = DaysPer400Years * 4 + DaysPer100Years * 3 - 367;
         // Number of days from 1/1/0001 to 12/31/1969
         internal const int DaysTo1970 = DaysPer400Years * 4 + DaysPer100Years * 3 + DaysPer4Years * 17 + DaysPerYear; // 719,162
-
         // Number of days from 1/1/0001 to 12/31/9999
         private const int DaysTo10000 = DaysPer400Years * 25 - 366;  // 3652059
     
@@ -324,18 +323,12 @@ namespace System {
         
     
         internal Int64 InternalTicks {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 return (Int64)(dateData & TicksMask);
             }
         }
         
         private UInt64 InternalKind {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 return (dateData & FlagsMask);
             }
@@ -715,9 +708,6 @@ namespace System {
             return TimeZoneInfo.Local.IsDaylightSavingTime(this, TimeZoneInfoOptions.NoThrowOnInvalidTime);
         }        
                 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static DateTime SpecifyKind(DateTime value, DateTimeKind kind) {
             return new DateTime(value.InternalTicks, kind);
         }            
@@ -749,9 +739,6 @@ namespace System {
 
         // Return the underlying data, without adjust local times to the right time zone. Needed if performance
         // or compatability are important.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal Int64 ToBinaryRaw() {
             return (Int64)dateData;
         }        
@@ -761,9 +748,6 @@ namespace System {
         // zero (midnight).
         //
         public DateTime Date {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { 
                 Int64 ticks = InternalTicks;
                 return new DateTime((UInt64)(ticks - ticks % TicksPerDay) | InternalKind);
@@ -834,9 +818,6 @@ namespace System {
         // Thursday, 5 indicates Friday, and 6 indicates Saturday.
         //
         public DayOfWeek DayOfWeek {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<DayOfWeek>() >= DayOfWeek.Sunday);
                 Contract.Ensures(Contract.Result<DayOfWeek>() <= DayOfWeek.Saturday);
@@ -857,9 +838,6 @@ namespace System {
     
         // Returns the hash code for this DateTime.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode() {
             Int64 ticks = InternalTicks;
             return unchecked((int)ticks) ^ (int)(ticks >> 32);
@@ -869,9 +847,6 @@ namespace System {
         // integer between 0 and 23.
         //
         public int Hour {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<int>() >= 0);
                 Contract.Ensures(Contract.Result<int>() < 24);
@@ -885,9 +860,6 @@ namespace System {
     
         [Pure]
         public DateTimeKind Kind {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 switch (InternalKind) {
                     case KindUnspecified:
@@ -904,9 +876,6 @@ namespace System {
         // is an integer between 0 and 999.
         //
         public int Millisecond {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<int>() >= 0);
                 Contract.Ensures(Contract.Result<int>() < 1000);
@@ -918,9 +887,6 @@ namespace System {
         // an integer between 0 and 59.
         //
         public int Minute {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<int>() >= 0);
                 Contract.Ensures(Contract.Result<int>() < 60);
@@ -964,9 +930,6 @@ namespace System {
 
         public static DateTime UtcNow {
             [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<DateTime>().Kind == DateTimeKind.Utc);
                 // following code is tuned for speed. Don't change it without running benchmark.
@@ -996,9 +959,6 @@ namespace System {
         // an integer between 0 and 59.
         //
         public int Second {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<int>() >= 0);
                 Contract.Ensures(Contract.Result<int>() < 60);
@@ -1020,9 +980,6 @@ namespace System {
         // is a TimeSpan that indicates the time elapsed since midnight.
         //
         public TimeSpan TimeOfDay {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { 
                 return new TimeSpan(InternalTicks % TicksPerDay); 
             }
@@ -1033,9 +990,6 @@ namespace System {
         // the returned value is zero (midnight).
         //
         public static DateTime Today {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 return DateTime.Now.Date;
             }
@@ -1105,9 +1059,6 @@ namespace System {
             return DateTimeParse.ParseExactMultiple(s, formats, DateTimeFormatInfo.GetInstance(provider), style);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public TimeSpan Subtract(DateTime value) {
             return new TimeSpan(InternalTicks - value.InternalTicks);
         }
@@ -1221,9 +1172,6 @@ namespace System {
             return DateTimeFormat.Format(this, format, DateTimeFormatInfo.CurrentInfo);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public String ToString(IFormatProvider provider) {
             Contract.Ensures(Contract.Result<String>() != null);
             return DateTimeFormat.Format(this, null, DateTimeFormatInfo.GetInstance(provider));
@@ -1275,51 +1223,30 @@ namespace System {
             return new DateTime((UInt64)(ticks - valueTicks) | d.InternalKind);
         }
     
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static TimeSpan operator -(DateTime d1, DateTime d2) {
             return new TimeSpan(d1.InternalTicks - d2.InternalTicks);
         }
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator ==(DateTime d1, DateTime d2) {
             return d1.InternalTicks == d2.InternalTicks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator !=(DateTime d1, DateTime d2) {
             return d1.InternalTicks != d2.InternalTicks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif      
         public static bool operator <(DateTime t1, DateTime t2) {
             return t1.InternalTicks < t2.InternalTicks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator <=(DateTime t1, DateTime t2) {
             return t1.InternalTicks <= t2.InternalTicks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator >(DateTime t1, DateTime t2) {
             return t1.InternalTicks > t2.InternalTicks;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static bool operator >=(DateTime t1, DateTime t2) {
             return t1.InternalTicks >= t2.InternalTicks;
         }
@@ -1366,9 +1293,6 @@ namespace System {
         // IConvertible implementation
         // 
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public TypeCode GetTypeCode() {
             return TypeCode.DateTime;
         }
@@ -1440,9 +1364,6 @@ namespace System {
         }
 
         /// <internalonly/>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         DateTime IConvertible.ToDateTime(IFormatProvider provider) {
             return this;
         }

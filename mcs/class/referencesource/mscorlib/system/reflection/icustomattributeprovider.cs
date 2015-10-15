@@ -8,10 +8,10 @@
 //
 // ICustomAttributeProvider is an interface that is implemented by reflection
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    objects which support custom attributes.
 //
-// <EMAIL>Author: darylo & Rajesh Chandrashekaran ([....])</EMAIL>
+// <EMAIL>Author: darylo & Rajesh Chandrashekaran (rajeshc)</EMAIL>
 // Date: July 99
 //
 namespace System.Reflection {

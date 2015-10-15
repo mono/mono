@@ -227,7 +227,7 @@ namespace System.Media {
         /// <include file='doc\SoundPlayer.uex' path='docs/doc[@for="SoundPlayer.Load"]/*' />
         public void Load() {
             // if we have a file there is nothing to load - we just pass the file to the PlaySound function
-            // if we have a stream, then we start loading the stream [....]
+            // if we have a stream, then we start loading the stream sync
             //
             if (uri != null && uri.IsFile){
                 Debug.Assert(stream == null, "we can't have a stream and a path at the same time");
@@ -245,7 +245,7 @@ namespace System.Media {
 
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")] // FileIOPermission based on URI path, but path isn't gonna change during scope of Demand
         private void LoadAndPlay(int flags) {
-            // bug 16794: when the user does not specify a sound location nor a stream, play Beep
+            // 
             if (String.IsNullOrEmpty(soundLocation) && stream == null) {
                 SystemSounds.Beep.Play();
                 return;

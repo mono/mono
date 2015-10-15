@@ -14,6 +14,9 @@ namespace System.Web.UI.WebControls {
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Web.Compilation;
     using System.Web.ModelBinding;
     using System.Web.UI;
@@ -40,6 +43,8 @@ namespace System.Web.UI.WebControls {
         private string _selectMethod;
         private string _updateMethod;
         private string _dataKeyName;
+
+        private Task _viewOperationTask = null;
 
         private const string TotalRowCountParameterName = "totalRowCount";
         private const string MaximumRowsParameterName = "maximumRows";
@@ -236,7 +241,7 @@ namespace System.Web.UI.WebControls {
             EvaluateSelectParameters();
         }
 
-        private static bool IsAutoPagingRequired(MethodInfo selectMethod, bool isReturningQueryable) {
+        private static bool IsAutoPagingRequired(MethodInfo selectMethod, bool isReturningQueryable, bool isAsyncSelect) {
 
             bool maximumRowsFound = false;
             bool totalRowCountFound = false;
@@ -264,10 +269,22 @@ namespace System.Web.UI.WebControls {
                 }
             }
 
-            bool pagingParamsFound = maximumRowsFound && startRowIndexFound && totalRowCountFound;
+            bool pagingParamsFound;
+            if (isAsyncSelect) {
+                pagingParamsFound = maximumRowsFound && startRowIndexFound;
+            }
+            else {
+                pagingParamsFound = maximumRowsFound && startRowIndexFound && totalRowCountFound;
+            }
 
-            if (!isReturningQueryable && !pagingParamsFound) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidPagingParameters));
+            bool canDoPaging = isReturningQueryable || pagingParamsFound;
+            if (!canDoPaging) {
+                if (isAsyncSelect) {
+                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncPagingParameters));
+                }
+                else {
+                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidPagingParameters));
+                }
             }
 
             return !pagingParamsFound;
@@ -286,11 +303,40 @@ namespace System.Web.UI.WebControls {
                 }
             }
 
-            if ((!isReturningQueryable && !sortExpressionFound)) {
+            if (!isReturningQueryable && !sortExpressionFound) {
                 throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidSortingParameters));
             }
 
             return !sortExpressionFound;
+        }        
+
+        private object GetPropertyValueByName(object o, string name) {
+            var propInfo = o.GetType().GetProperty(name);
+            object value = propInfo.GetValue(o, null);
+            return value;
+        }
+
+        private void ValidateAsyncModelBindingRequirements() {
+            if (!(_owner.DataControl.Page.IsAsync && SynchronizationContextUtil.CurrentMode != SynchronizationContextMode.Legacy)) {
+                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+            }
+        }
+
+        private bool RequireAsyncModelBinding(string methodName, out ModelDataSourceMethod method) {
+            if (!AppSettings.EnableAsyncModelBinding) {
+                method = null;
+                return false;
+            }
+
+            method = FindMethod(methodName);
+            if (null == method) {
+                return false;
+            }
+
+            MethodInfo methodInfo = method.MethodInfo;
+            bool returnTypeIsTask = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
+
+            return returnTypeIsTask;
         }
 
         /// <summary>
@@ -322,12 +368,19 @@ namespace System.Web.UI.WebControls {
         /// </param>
         /// <returns>A <see cref="System.Web.UI.WebControls.ModelDataSourceMethod"/> with the information required to invoke the select method.</returns>
         protected virtual ModelDataSourceMethod EvaluateSelectMethodParameters(DataSourceSelectArguments arguments, out DataSourceSelectResultProcessingOptions selectResultProcessingOptions) {
-            ModelDataSourceMethod method;
+            return EvaluateSelectMethodParameters(arguments, null/*method*/, false /*isAsyncSelect*/, out selectResultProcessingOptions);
+        }
+
+        private ModelDataSourceMethod EvaluateSelectMethodParameters(DataSourceSelectArguments arguments, ModelDataSourceMethod method, bool isAsyncSelect, out DataSourceSelectResultProcessingOptions selectResultProcessingOptions) {
             IOrderedDictionary mergedParameters = MergeSelectParameters(arguments);
             // Resolve the method
-            method = FindMethod(SelectMethod);
+            method = method ?? FindMethod(SelectMethod);
 
             Type selectMethodReturnType = method.MethodInfo.ReturnType;
+            if (isAsyncSelect) {
+                selectMethodReturnType = ExtractAsyncSelectReturnType(selectMethodReturnType);
+            }
+
             Type modelType = ModelType;
             if (modelType == null) {
                 //When ModelType is not specified but SelectMethod returns IQueryable<T>, we treat T as model type for auto paging and sorting.
@@ -344,11 +397,25 @@ namespace System.Web.UI.WebControls {
             //We do auto paging or auto sorting when the select method is returning an IQueryable and does not have parameters for paging or sorting.
             bool isReturningQueryable = queryableModelType != null && queryableModelType.IsAssignableFrom(selectMethodReturnType);
 
+            if (isAsyncSelect && isReturningQueryable) {
+                // async select method does not support returning IQueryable<>.
+                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
+            }
+
             bool autoPage = false;
             bool autoSort = false;
 
             if (arguments.StartRowIndex >= 0 && arguments.MaximumRows > 0) {
-                autoPage = IsAutoPagingRequired(method.MethodInfo, isReturningQueryable);
+                autoPage = IsAutoPagingRequired(method.MethodInfo, isReturningQueryable, isAsyncSelect);
+
+                if (isAsyncSelect) {
+                    Debug.Assert(!autoPage, "auto-paging should not be true when using async select method");
+
+                    // custom paging is not supported if the return type is not SelectResult
+                    if (typeof(SelectResult) != selectMethodReturnType) {
+                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_MustUseSelectResultAsReturnType));
+                    }
+                }
             }
 
             if (!String.IsNullOrEmpty(arguments.SortExpression)) {
@@ -358,6 +425,19 @@ namespace System.Web.UI.WebControls {
             selectResultProcessingOptions = new DataSourceSelectResultProcessingOptions() { ModelType = modelType, AutoPage = autoPage, AutoSort = autoSort };
             EvaluateMethodParameters(DataSourceOperation.Select, method, mergedParameters);
             return method;
+        }
+
+        private Type ExtractAsyncSelectReturnType(Type t) {
+            // Async select return type is expected to be Task<T>.
+            // This method is trying to return type T.
+            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Task<>)) {
+                Type[] typeArguments = t.GetGenericArguments();
+                if (typeArguments.Length == 1) {
+                    return typeArguments[0];
+                }
+            }
+
+            throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, ModelType));
         }
 
         /// <summary>
@@ -384,7 +464,7 @@ namespace System.Web.UI.WebControls {
                 MethodInfo countHelperMethod = typeof(QueryableHelpers).GetMethod("CountHelper").MakeGenericMethod(modelType);
                 arguments.TotalRowCount = (int)countHelperMethod.Invoke(null, new object[] { result.ReturnValue });
 
-                //Bug 180907: We would like to auto sort on DataKeyName when paging is enabled and result is not already sorted by user to overcome a limitation in EF.
+                //
                 MethodInfo isOrderingMethodFoundMethod = typeof(QueryableHelpers).GetMethod("IsOrderingMethodFound").MakeGenericMethod(modelType);
                 bool isOrderingMethodFound = (bool)isOrderingMethodFoundMethod.Invoke(null, new object[] { result.ReturnValue });
                 if (!isOrderingMethodFound) {
@@ -445,6 +525,10 @@ namespace System.Web.UI.WebControls {
         /// If ItemType is set and the return value is not of proper type, throws an InvalidOperationException.
         /// </returns>
         protected virtual IEnumerable CreateSelectResult(object result) {
+            return CreateSelectResult(result, false/*isAsyncSelect*/);
+        }
+
+        private IEnumerable CreateSelectResult(object result, bool isAsyncSelect) {
             if (result == null) {
                 return null;
             }
@@ -463,8 +547,36 @@ namespace System.Web.UI.WebControls {
                 }
                 else {
                     //Sorry only the above return types are allowed!!!
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidSelectReturnType, modelType));
+                    if (isAsyncSelect) {
+                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
+                    }
+                    else {
+                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidSelectReturnType, modelType));
+                    }
                 }
+            }
+        }
+
+        private static bool IsCancellationRequired(MethodInfo method, out string parameterName) {
+            parameterName = null;
+            bool cancellationTokenFound = false;
+            var lastParameter = method.GetParameters().LastOrDefault();
+            if (lastParameter != null && lastParameter.ParameterType == typeof(CancellationToken)) {
+                cancellationTokenFound = true;
+                parameterName = lastParameter.Name;
+            }
+
+            return cancellationTokenFound;
+        }
+
+        private void SetCancellationTokenIfRequired(ModelDataSourceMethod method, bool isAsyncMethod, CancellationToken? cancellationToken) {
+            string cancellationTokenParameterName;
+            if (isAsyncMethod && IsCancellationRequired(method.MethodInfo, out cancellationTokenParameterName)) {
+                if (null == cancellationToken) {
+                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_CancellationTokenIsNotSupported));
+                }
+
+                method.Parameters[cancellationTokenParameterName] = cancellationToken;
             }
         }
 
@@ -472,13 +584,22 @@ namespace System.Web.UI.WebControls {
         /// Invokes the Delete method and gets the result.
         /// </summary>
         protected virtual object GetDeleteMethodResult(IDictionary keys, IDictionary oldValues) {
-            ModelDataSourceMethod method = EvaluateDeleteMethodParameters(keys, oldValues);
-            ModelDataMethodResult result = InvokeMethod(method);
+            return GetDeleteMethodResult(keys, oldValues, null/*method*/, false/*isAsyncMethod*/, null/*cancellationToken*/);
+        }
+
+        private object GetDeleteMethodResult(IDictionary keys, IDictionary oldValues, ModelDataSourceMethod method, bool isAsyncMethod, CancellationToken? cancellationToken) {
+            method = method == null ? EvaluateDeleteMethodParameters(keys, oldValues) : EvaluateDeleteMethodParameters(keys, oldValues, method);
+            SetCancellationTokenIfRequired(method, isAsyncMethod, cancellationToken);
+            ModelDataMethodResult result = InvokeMethod(method, isAsyncMethod);
 
             return result.ReturnValue;
         }
 
         protected virtual ModelDataSourceMethod EvaluateDeleteMethodParameters(IDictionary keys, IDictionary oldValues) {
+            return EvaluateDeleteMethodParameters(keys, oldValues, null/*method*/);
+        }
+
+        private ModelDataSourceMethod EvaluateDeleteMethodParameters(IDictionary keys, IDictionary oldValues, ModelDataSourceMethod method) {
             if (!CanDelete) {
                 throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_DeleteNotSupported));
             }
@@ -488,7 +609,7 @@ namespace System.Web.UI.WebControls {
             MergeDictionaries(keys, caseInsensitiveOldValues);
             MergeDictionaries(oldValues, caseInsensitiveOldValues);
 
-            ModelDataSourceMethod method = FindMethod(DeleteMethod);
+            method = method ?? FindMethod(DeleteMethod);
             EvaluateMethodParameters(DataSourceOperation.Delete, method, caseInsensitiveOldValues);
             return method;
         }
@@ -497,13 +618,22 @@ namespace System.Web.UI.WebControls {
         /// Invokes the Insert method and gets the result.
         /// </summary>
         protected virtual object GetInsertMethodResult(IDictionary values) {
-            ModelDataSourceMethod method = EvaluateInsertMethodParameters(values);
-            ModelDataMethodResult result = InvokeMethod(method);
+            return GetInsertMethodResult(values, null/*method*/, false/*isAsyncMethod&*/, null/*cancellationToken*/);
+        }
+
+        private object GetInsertMethodResult(IDictionary values, ModelDataSourceMethod method, bool isAsyncMethod, CancellationToken? cancellationToken) {
+            method = method == null ? EvaluateInsertMethodParameters(values) : EvaluateInsertMethodParameters(values, method);
+            SetCancellationTokenIfRequired(method, isAsyncMethod, cancellationToken);
+            ModelDataMethodResult result = InvokeMethod(method, isAsyncMethod);
 
             return result.ReturnValue;
         }
 
         protected virtual ModelDataSourceMethod EvaluateInsertMethodParameters(IDictionary values) {
+            return EvaluateInsertMethodParameters(values, null/*method*/);
+        }
+
+        private ModelDataSourceMethod EvaluateInsertMethodParameters(IDictionary values, ModelDataSourceMethod method) {
             if (!CanInsert) {
                 throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_InsertNotSupported));
             }
@@ -512,7 +642,7 @@ namespace System.Web.UI.WebControls {
 
             MergeDictionaries(values, caseInsensitiveNewValues);
 
-            ModelDataSourceMethod method = FindMethod(InsertMethod);
+            method = method ?? FindMethod(InsertMethod);
             EvaluateMethodParameters(DataSourceOperation.Insert, method, caseInsensitiveNewValues);
             return method;
         }
@@ -521,13 +651,22 @@ namespace System.Web.UI.WebControls {
         /// Invokes the Update method and gets the result.
         /// </summary>
         protected virtual object GetUpdateMethodResult(IDictionary keys, IDictionary values, IDictionary oldValues) {
-            ModelDataSourceMethod method = EvaluateUpdateMethodParameters(keys, values, oldValues);
-            ModelDataMethodResult result = InvokeMethod(method);
+            return GetUpdateMethodResult(keys, values, oldValues, null/*method*/, false/*isAsyncMethod*/, null/*cancellationToken*/);
+        }
+
+        private object GetUpdateMethodResult(IDictionary keys, IDictionary values, IDictionary oldValues, ModelDataSourceMethod method, bool isAsyncMethod, CancellationToken? cancellationToken) {
+            method = method == null ? EvaluateUpdateMethodParameters(keys, values, oldValues) : EvaluateUpdateMethodParameters(keys, values, oldValues, method);
+            SetCancellationTokenIfRequired(method, isAsyncMethod, cancellationToken);
+            ModelDataMethodResult result = InvokeMethod(method, isAsyncMethod);
 
             return result.ReturnValue;
         }
 
         protected virtual ModelDataSourceMethod EvaluateUpdateMethodParameters(IDictionary keys, IDictionary values, IDictionary oldValues) {
+            return EvaluateUpdateMethodParameters(keys, values, oldValues, null/*method*/);
+        }
+
+        private ModelDataSourceMethod EvaluateUpdateMethodParameters(IDictionary keys, IDictionary values, IDictionary oldValues, ModelDataSourceMethod method) {
             if (!CanUpdate) {
                 throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_UpdateNotSupported));
             }
@@ -542,7 +681,7 @@ namespace System.Web.UI.WebControls {
             MergeDictionaries(keys, caseInsensitiveNewValues);
             MergeDictionaries(values, caseInsensitiveNewValues);
 
-            ModelDataSourceMethod method = FindMethod(UpdateMethod);
+            method = method ?? FindMethod(UpdateMethod);
             EvaluateMethodParameters(DataSourceOperation.Update, method, caseInsensitiveNewValues);
             return method;
         }
@@ -554,6 +693,190 @@ namespace System.Web.UI.WebControls {
         /// <returns>Returns the result as is if it's integer. Otherwise returns -1.</returns>
         private static int GetIntegerReturnValue(object result) {
             return (result is int) ? (int)result : -1 ;
+        }
+
+        // We cannot cache this value since users can change SelectMethod by using UpdateProperties
+        // method.
+        internal bool IsSelectMethodAsync {
+            get {
+                ModelDataSourceMethod method;
+                return RequireAsyncModelBinding(SelectMethod, out method);
+            }
+        }
+
+        public override void Select(DataSourceSelectArguments arguments, DataSourceViewSelectCallback callback) {
+            ModelDataSourceMethod method;
+            if (RequireAsyncModelBinding(SelectMethod, out method)) {
+                // We have to remember the method to make sure the method we later would use in the async function
+                // is the method we validate here in case the method later might be changed by UpdateProperties.
+                SelectAsync(arguments, callback, method);
+            }
+            else {
+                base.Select(arguments, callback);
+            }
+        }
+
+        private void SelectAsync(DataSourceSelectArguments arguments, DataSourceViewSelectCallback callback, ModelDataSourceMethod method) {
+            Func<object, Task> func = GetSelectAsyncFunc(arguments, callback, method);
+
+            var syncContext = _owner.DataControl.Page.Context.SyncContext as AspNetSynchronizationContext;
+            if (null == syncContext) {
+                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+            }
+
+            // The first edition of the async model binding feature was implemented by registering async binding 
+            // function as PageAsyncTask. We, however, decided not to do that because postponing data binding
+            // to page async point changed the order of page events and caused many problems.
+            // See the comment on SynchronizationHelper.QueueAsynchronousAsync for more details regarding to the PostAsync
+            // function.
+            syncContext.PostAsync(func, null);
+        }
+
+        private Func<object, Task> GetSelectAsyncFunc(DataSourceSelectArguments arguments, DataSourceViewSelectCallback callback, ModelDataSourceMethod method) {
+            Func<object, Task> func = async _ => {
+                ValidateAsyncModelBindingRequirements();
+                CancellationTokenSource cancellationTokenSource = _owner.DataControl.Page.CreateCancellationTokenFromAsyncTimeout();
+                CancellationToken cancellationToken = cancellationTokenSource.Token;
+                DataSourceSelectResultProcessingOptions selectResultProcessingOptions = null;
+                ModelDataSourceMethod modelMethod = EvaluateSelectMethodParameters(arguments, method, true/*isAsyncSelect*/, out selectResultProcessingOptions);
+                SetCancellationTokenIfRequired(modelMethod, true/*isAsyncMethod*/, cancellationToken);
+                ModelDataMethodResult result = InvokeMethod(modelMethod);
+                IEnumerable finalResult = null;
+                if (result.ReturnValue != null) {
+                    await (Task)result.ReturnValue;
+                    var returnValue = GetPropertyValueByName(result.ReturnValue, "Result");
+
+                    if (null == returnValue) {
+                        // do nothing
+                    }
+                    // Users needs to use SelectResult as return type to use
+                    // custom paging.
+                    else if (returnValue is SelectResult) {
+                        var viewOperationTask = _viewOperationTask;
+                        if (viewOperationTask != null) {
+                            await viewOperationTask;
+                        }
+
+                        var selectResult = (SelectResult)returnValue;
+                        arguments.TotalRowCount = selectResult.TotalRowCount;
+                        finalResult = CreateSelectResult(selectResult.Results, true/*isAsyncSelect*/);
+                    }
+                    else {
+                        // The returnValue does not have to run through ProcessSelectMethodResult() as we
+                        // don't support auto-paging or auto-sorting when using async select.
+                        finalResult = CreateSelectResult(returnValue, true/*isAsyncSelect*/);
+                    }
+                }
+
+                callback(finalResult);
+                if (cancellationToken.IsCancellationRequested) {
+                    throw new TimeoutException(SR.GetString(SR.Async_task_timed_out));
+                }
+            };
+
+            return func;
+        }
+
+        public override void Insert(IDictionary values, DataSourceViewOperationCallback callback) {
+            if (callback == null) {
+                throw new ArgumentNullException("callback");
+            }
+
+            ModelDataSourceMethod method;
+            if (RequireAsyncModelBinding(InsertMethod, out method)) {
+                ViewOperationAsync((cancellationToken) => (Task)GetInsertMethodResult(values, method, true/*isAsyncMethod*/, cancellationToken), callback);
+            }
+            else {
+                base.Insert(values, callback);
+            }
+        }
+
+        public override void Update(IDictionary keys, IDictionary values, IDictionary oldValues, DataSourceViewOperationCallback callback) {
+            if (callback == null) {
+                throw new ArgumentNullException("callback");
+            }
+
+            ModelDataSourceMethod method;
+            if (RequireAsyncModelBinding(UpdateMethod, out method)) {
+                ViewOperationAsync((cancellationToken) => (Task)GetUpdateMethodResult(keys, values, oldValues, method, true/*isAsyncMethod*/, cancellationToken), callback);
+            }
+            else {
+                base.Update(keys, values, oldValues, callback);
+            }
+        }
+
+        public override void Delete(IDictionary keys, IDictionary oldValues, DataSourceViewOperationCallback callback) {
+            if (callback == null) {
+                throw new ArgumentNullException("callback");
+            }
+
+            ModelDataSourceMethod method;
+            if (RequireAsyncModelBinding(DeleteMethod, out method)) {
+                ViewOperationAsync((cancellationToken) => (Task)GetDeleteMethodResult(keys, oldValues, method, true/*isAsyncMethod*/, cancellationToken), callback);
+            }
+            else {
+                base.Delete(keys, oldValues, callback);
+            }
+        }
+
+        private void ViewOperationAsync(Func<CancellationToken, Task> asyncViewOperation, DataSourceViewOperationCallback callback) {
+            ValidateAsyncModelBindingRequirements();
+
+            Func<object, Task> func = async _ => {
+                CancellationTokenSource cancellationTokenSource = _owner.DataControl.Page.CreateCancellationTokenFromAsyncTimeout();
+                CancellationToken cancellationToken = cancellationTokenSource.Token;
+                var viewOperationTask = _viewOperationTask;
+                if (viewOperationTask != null) {
+                    await viewOperationTask;
+                }
+
+                var operationTask = asyncViewOperation(cancellationToken);
+                _viewOperationTask = operationTask;
+                var operationTaskInt = operationTask as Task<int>;
+                var operationThrew = false;
+                var affectedRecords = -1;
+                try {
+                    if (null != operationTask) {
+                        await operationTask;
+                        if (operationTaskInt != null) {
+                            affectedRecords = operationTaskInt.Result;
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    operationThrew = true;
+                    if (!callback(affectedRecords, ex)) {
+                        // Nobody handled the operation error so re-throw
+                        throw;
+                    }
+                }
+                finally {
+                    _viewOperationTask = null;
+
+                    // Data Method is done executing, turn off the TryUpdateModel                    
+                    _owner.DataControl.Page.SetActiveValueProvider(null);                    
+
+                    if (!operationThrew) {
+                        if (_owner.DataControl.Page.ModelState.IsValid) {
+                            OnDataSourceViewChanged(EventArgs.Empty);
+                        }
+
+                        // Success
+                        callback(affectedRecords, null);
+                    }
+                }
+
+                if (cancellationToken.IsCancellationRequested) {
+                    throw new TimeoutException(SR.GetString(SR.Async_task_timed_out));
+                }
+            };
+
+            var syncContext = _owner.DataControl.Page.Context.SyncContext as AspNetSynchronizationContext;
+            if (null == syncContext) {
+                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+            }
+
+            syncContext.PostAsync(func, null);
         }
 
         protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues) {
@@ -601,6 +924,12 @@ namespace System.Web.UI.WebControls {
             return ExecuteUpdate(keys, values, oldValues);
         }
 
+        // For unit testing.
+        // Return the select async func that we use in the SelectAsync method.
+        internal Func<object, Task> SelectAsyncInternal(DataSourceSelectArguments arguments, DataSourceViewSelectCallback callback, ModelDataSourceMethod method) {
+            return GetSelectAsyncFunc(arguments, callback, method);
+        }
+
         //Evaluates the select method parameters using the custom value provides. This is done after page load so that
         //we raise the DataSourceChanged event if the values of parameters change.
         private void EvaluateSelectParameters() {
@@ -641,6 +970,17 @@ namespace System.Web.UI.WebControls {
             IValueProvider dataBoundControlValueProvider = GetValueProviderFromDictionary(controlValues);
             
             ModelBindingExecutionContext modelBindingExecutionContext = _owner.DataControl.Page.ModelBindingExecutionContext;
+
+            Control previousDataControl = null;
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework46) {
+                // DevDiv 1087698: a child control overwrites its parent controls's modelBindingExecutionContext,
+                // which may cause a problem for the parent control to find control by controlId.
+                Control dataControl = modelBindingExecutionContext.TryGetService<Control>();
+                if (dataControl != _owner.DataControl) {
+                    previousDataControl = dataControl;
+                }
+            }
+
             //This is used by ControlValueProvider later.
             modelBindingExecutionContext.PublishService<Control>(_owner.DataControl);
 
@@ -649,7 +989,13 @@ namespace System.Web.UI.WebControls {
                 _owner.DataControl.Page.SetActiveValueProvider(dataBoundControlValueProvider);
             }
 
-            foreach (ParameterInfo parameterInfo in actionMethod.GetParameters()) {
+            var methodParameters = actionMethod.GetParameters();
+            ParameterInfo lastParameter = null;
+            if (methodParameters.Length > 0) {
+                lastParameter = methodParameters[methodParameters.Length - 1];
+            }
+
+            foreach (ParameterInfo parameterInfo in methodParameters) {
                 object value = null;
                 string modelName = parameterInfo.Name;
 
@@ -705,11 +1051,21 @@ namespace System.Web.UI.WebControls {
                         }
                     }
 
+                    // We set the CancellationToken after EvaluateMethodParameters(). 
+                    // We don't want to set a null value to a CancellationToken variable.
+                    if (parameterInfo == lastParameter && typeof(CancellationToken) == parameterInfo.ParameterType && value == null) {
+                        value = CancellationToken.None;
+                    }
+
                     if (!isPageLoadComplete) {
                         ValidateParameterValue(parameterInfo, value, actionMethod);
                     }
                 }
                 modelDataSourceMethod.Parameters.Add(parameterInfo.Name, value);
+            }
+
+            if (previousDataControl != null) {
+                modelBindingExecutionContext.PublishService<Control>(previousDataControl);
             }
         }
 
@@ -841,6 +1197,10 @@ namespace System.Web.UI.WebControls {
         /// A ModelDataSouceResult object containing the ReturnValue of the method and any out parameters.
         /// </returns>
         protected virtual ModelDataMethodResult InvokeMethod(ModelDataSourceMethod method) {
+            return InvokeMethod(method, false/*isAsyncMethod*/);
+        }
+
+        private ModelDataMethodResult InvokeMethod(ModelDataSourceMethod method, bool isAsyncMethod) {
             object returnValue = null;
 
             object[] parameterValues = null;
@@ -855,8 +1215,11 @@ namespace System.Web.UI.WebControls {
             OrderedDictionary outputParameters = GetOutputParameters(method.MethodInfo.GetParameters(), parameterValues);
             method.Instance = null;
 
-            //Data Method is done executing, turn off the TryUpdateModel
-            _owner.DataControl.Page.SetActiveValueProvider(null);
+            // Data Method is done executing, turn off the TryUpdateModel
+            // Do not turn off the TryUpdateModel at this point when the method is async
+            if (!isAsyncMethod) {
+                _owner.DataControl.Page.SetActiveValueProvider(null);
+            }
 
             return new ModelDataMethodResult(returnValue, outputParameters);
         }

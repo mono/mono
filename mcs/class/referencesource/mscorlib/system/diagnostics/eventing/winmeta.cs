@@ -3,7 +3,6 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
 /*============================================================
 **
 ** File: winmeta.cs
@@ -13,9 +12,20 @@
 ** environment.
 ** 
 ============================================================*/
-namespace System.Diagnostics.Tracing {
+#if ES_BUILD_STANDALONE
+#define FEATURE_MANAGED_ETW_CHANNELS
+#endif
+
+#if ES_BUILD_STANDALONE
+namespace Microsoft.Diagnostics.Tracing
+#else
+namespace System.Diagnostics.Tracing
+#endif
+{
+    using System;
+
     /// <summary>
-    /// WindowsEventLevel
+    /// WindowsEventLevel. Custom values must be in the range from 16 through 255
     /// </summary>
     public enum EventLevel {
         /// <summary>
@@ -44,9 +54,11 @@ namespace System.Diagnostics.Tracing {
         Verbose
     }
     /// <summary>
-    /// WindowsEventTask
+    /// WindowsEventTask. Custom values must be in the range from 1 through 65534
     /// </summary>
+#if !ES_BUILD_STANDALONE
     [System.Runtime.CompilerServices.FriendAccessAllowed]
+#endif
     public enum EventTask {
         /// <summary>
         /// Undefined task
@@ -54,10 +66,13 @@ namespace System.Diagnostics.Tracing {
         None = 0
     }
     /// <summary>
-    /// EventOpcode
+    /// EventOpcode. Custom values must be in the range from 11 through 239
     /// </summary>
+#if !ES_BUILD_STANDALONE
     [System.Runtime.CompilerServices.FriendAccessAllowed]
-    public enum EventOpcode {
+#endif
+    public enum EventOpcode
+    {
         /// <summary>
         /// An informational event
         /// </summary>
@@ -104,15 +119,31 @@ namespace System.Diagnostics.Tracing {
         Receive = 240
     }
 
-#if FEARURE_MANAGED_ETW_CHANNELS
     // Added for CLR V4
+    /// <summary>
+    /// EventChannel. Custom values must be in the range from 16 through 255. Currently only predefined values allowed.
+    /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification="Backwards compatibility")]
+#if !ES_BUILD_STANDALONE
     [System.Runtime.CompilerServices.FriendAccessAllowed]
+#endif
     public enum EventChannel : byte 
     { 
-        Default = 0, 
+        /// <summary>
+        /// No channel
+        /// </summary>
+        None = 0,
+        // Channels 1 - 15 are reserved...
+        /// <summary>The admin channel</summary>
+        Admin = 16,
+        /// <summary>The operational channel</summary>
+        Operational = 17,
+        /// <summary>The analytic channel</summary>
+        Analytic = 18,
+        /// <summary>The debug channel</summary>
+        Debug = 19,
+
     };
-#endif
 
     /// <summary>
     /// EventOpcode
@@ -120,9 +151,17 @@ namespace System.Diagnostics.Tracing {
     [Flags]
     public enum EventKeywords : long {
         /// <summary>
-        /// Wild card value
+        /// No events. 
         /// </summary>
         None = 0x0,
+        /// <summary>
+        /// All Events 
+        /// </summary>
+        All = ~0,
+        /// <summary>
+        /// Telemetry events
+        /// </summary>
+        MicrosoftTelemetry = 0x02000000000000,
         /// <summary>
         /// WDI context events
         /// </summary>
@@ -136,7 +175,7 @@ namespace System.Diagnostics.Tracing {
         /// </summary>
         Sqm = 0x08000000000000,
         /// <summary>
-        /// FAiled security audits
+        /// Failed security audits
         /// </summary>
         AuditFailure = 0x10000000000000,
         /// <summary>
@@ -145,6 +184,7 @@ namespace System.Diagnostics.Tracing {
         AuditSuccess = 0x20000000000000,
         /// <summary>
         /// Transfer events where the related Activity ID is a computed value and not a GUID
+        /// N.B. The correct value for this field is 0x40000000000000.
         /// </summary>
         CorrelationHint = 0x10000000000000,
         /// <summary>

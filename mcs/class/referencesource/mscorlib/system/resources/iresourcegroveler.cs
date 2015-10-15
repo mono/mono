@@ -7,7 +7,7 @@
 **
 ** Class:  IResourceGroveler
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Interface for resource grovelers

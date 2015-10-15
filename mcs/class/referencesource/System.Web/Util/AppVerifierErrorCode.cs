@@ -27,7 +27,11 @@
         BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled,
         BeginHandlerReturnedUnexpectedAsyncResultInstance,
         BeginHandlerReturnedUnexpectedAsyncResultAsyncState,
-        SyncContextSendOrPostCalledAfterRequestCompleted
-
+        SyncContextSendOrPostCalledAfterRequestCompleted,
+        SyncContextSendOrPostCalledBetweenNotifications,
+        SyncContextPostCalledInNestedNotification,
+        RequestNotificationCompletedSynchronouslyWithNotificationContextPending,
+        NotificationContextHasChangedAfterSynchronouslyProcessingNotification,
+        PendingProcessRequestNotificationStatusAfterCompletingNestedNotification
     }
 }

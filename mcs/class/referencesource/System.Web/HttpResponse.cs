@@ -11,6 +11,7 @@ namespace System.Web {
 
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Runtime.Serialization;
     using System.IO;
     using System.Collections;
@@ -166,6 +167,12 @@ namespace System.Web {
         private bool UsingHttpWriter {
             get {
                 return (_httpWriter != null && _writer == _httpWriter);
+            }
+        }
+
+        internal void SetAllocatorProvider(IAllocatorProvider allocator) {
+            if (_httpWriter != null) {
+                _httpWriter.AllocatorProvider = allocator;
             }
         }
 
@@ -719,7 +726,7 @@ namespace System.Web {
                 return _wr.BeginFlush(callback, state);
             }
 
-            // perform a [....] flush since async is not supported
+            // perform a sync flush since async is not supported
             FlushAsyncResult ar = new FlushAsyncResult(callback, state);
             try {
                 Flush(false);
@@ -745,7 +752,7 @@ namespace System.Web {
                 return;
             }
             
-            // finish [....] flush since async is not supported
+            // finish sync flush since async is not supported
             if (asyncResult == null)
                 throw new ArgumentNullException("asyncResult");
             FlushAsyncResult ar = asyncResult as FlushAsyncResult;
@@ -755,6 +762,10 @@ namespace System.Web {
             if (ar.Error != null) {
                 ar.Error.Throw();
             }
+        }
+
+        public Task FlushAsync() {
+            return Task.Factory.FromAsync(BeginFlush, EndFlush, state: null);
         }
 
         // WOS 1555777: kernel cache support
@@ -1240,6 +1251,13 @@ namespace System.Web {
                 }
             }
 
+            // Show config source only on local request for security reasons
+            // Config file snippet may unintentionally reveal sensitive information (not related to the error)
+            ConfigErrorFormatter configErrorFormatter = errorFormatter as ConfigErrorFormatter;
+            if (configErrorFormatter != null) {
+                configErrorFormatter.AllowSourceCode = Request.IsLocal;
+            }
+
             return errorFormatter;
         }
 
@@ -1350,7 +1368,7 @@ namespace System.Web {
                             // the <customErrors> element to control this behavior.
 
                             if (customErrorsSetting.AllowNestedErrors) {
-                                // The user has set the compat switch to use the original (pre-bug fix) behavior.
+                                // The user has set the compat switch to use the original (pre-
                                 goto case RedirectToErrorPageStatus.NotAttempted;
                             }
 
@@ -2904,6 +2922,76 @@ namespace System.Web {
             }
         }
 
+        /// <devdoc>
+        ///    <para>Allows HTTP/2 Server Push</para>
+        /// </devdoc>
+        public void PushPromise(string path) {
+            // 
+
+
+            PushPromise(path, method: "GET", headers: null);
+        }
+
+        /// <devdoc>
+        ///    <para>Allows HTTP/2 Server Push</para>
+        /// </devdoc>
+        public void PushPromise(string path, string method, NameValueCollection headers) {
+            // PushPromise is non-deterministic and application shouldn't have logic that depends on it. 
+            // It's only purpose is performance advantage in some cases.
+            // There are many conditions (protocol and implementation) that may cause to 
+            // ignore the push requests completely.
+            // The expectation is based on fire-and-forget 
+
+            if (path == null) {
+                throw new ArgumentNullException("path");
+            }
+
+            if (method == null) {
+                throw new ArgumentNullException("method");
+            }
+
+            // Extract an optional query string
+            string queryString = string.Empty;
+            int i = path.IndexOf('?');
+
+            if (i >= 0) {
+                if (i < path.Length - 1) {
+                    queryString = path.Substring(i + 1);
+                }
+
+                // Remove the query string portion from the path
+                path = path.Substring(0, i);
+            }
+
+
+            // Only virtual path is allowed:
+            // "/path"   - origin relative
+            // "~/path"  - app relative
+            // "path"    - request relative
+            // "../path" - reduced 
+            if (string.IsNullOrEmpty(path) || !UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
+                throw new ArgumentException(SR.GetString(SR.Invalid_path_for_push_promise, path));
+            }
+
+            VirtualPath virtualPath = Request.FilePathObject.Combine(VirtualPath.Create(path));
+
+            try {
+                if (!HttpRuntime.UseIntegratedPipeline) {
+                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                }
+
+                // Do push promise
+                IIS7WorkerRequest wr = (IIS7WorkerRequest) _wr;
+                wr.PushPromise(virtualPath.VirtualPathString, queryString, method, headers);
+            }
+            catch (PlatformNotSupportedException e) {
+                // Ignore errors if push promise is not supported
+                if (Context.TraceIsEnabled) {
+                    Context.Trace.Write("aspx", "Push promise is not supported", e);
+                }
+            }
+        }
+
         //
         // Deprecated ASP compatibility methods and properties
         //
@@ -3196,10 +3284,10 @@ namespace System.Web {
         }
 
         private String UrlEncodeIDNSafe(String url) {
-            // Bug 86594: Should not encode the domain part of the url. For example,
-            // http://Übersite/Überpage.aspx should only encode the 2nd Ü.
-            // To accomplish this we must separate the scheme+host+port portion of the url from the path portion,
-            // encode the path portion, then reconstruct the url.
+            // 
+
+
+
             Debug.Assert(!url.Contains("?"), "Querystring should have been stripped off.");
 
             string schemeAndAuthority;
@@ -3275,7 +3363,7 @@ namespace System.Web {
 
                 // DevDiv #782830: Provide a hook where the application can change the response status code
                 // or response headers.
-                if (!_onSendingHeadersSubscriptionQueue.IsEmpty) {
+                if (sendHeaders && !_onSendingHeadersSubscriptionQueue.IsEmpty) {
                     _onSendingHeadersSubscriptionQueue.FireAndComplete(cb => cb(Context));
                 }
 

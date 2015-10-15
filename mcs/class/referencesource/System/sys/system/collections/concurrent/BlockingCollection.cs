@@ -1,4 +1,4 @@
-﻿// ==++==
+// ==++==
 //
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
@@ -7,7 +7,7 @@
 //
 // BlockingCollection.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A class that implements the bounding and blocking functionality while abstracting away
 // the underlying storage mechanism. This file also contains BlockingCollection's 
@@ -53,7 +53,7 @@ namespace System.Collections.Concurrent
 #endif
     [DebuggerTypeProxy(typeof(SystemThreadingCollections_BlockingCollectionDebugView<>))]
     [DebuggerDisplay("Count = {Count}, Type = {m_collection}")]
-    public class BlockingCollection<T> : IEnumerable<T>, ICollection, IDisposable
+    public class BlockingCollection<T> : IEnumerable<T>, ICollection, IDisposable, IReadOnlyCollection<T>
     {
         private IProducerConsumerCollection<T> m_collection;
         private int m_boundedCapacity;
@@ -499,7 +499,7 @@ namespace System.Collections.Concurrent
                     try
                     {
                         //The token may have been canceled before the collection had space available, so we need a check after the wait has completed.
-                        //This fixes bug #702328, case 2 of 2.
+                        //This fixes 
                         cancellationToken.ThrowIfCancellationRequested();
                         addingSucceeded = m_collection.TryAdd(item);
                     }
@@ -736,7 +736,7 @@ namespace System.Collections.Concurrent
                 try
                 {
                     //The token may have been canceled before an item arrived, so we need a check after the wait has completed.
-                    //This fixes bug #702328, case 1 of 2.
+                    //This fixes 
                     cancellationToken.ThrowIfCancellationRequested();
 
                     //If an item was successfully removed from the underlying collection.

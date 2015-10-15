@@ -1030,7 +1030,7 @@ namespace System.ServiceModel.Dispatcher
 
         void ProcessMessage31(ref MessageRpc rpc)
         {
-            rpc.NextProcessor = this.ProcessMessage4;
+            rpc.NextProcessor = this.processMessage4;
 
             if (this.transaction != null)
             {
@@ -1144,7 +1144,7 @@ namespace System.ServiceModel.Dispatcher
                 {
                     if (!rpc.Operation.IsSynchronous)
                     {
-                        // If async call completes in [....], it tells us through the gate below
+                        // If async call completes in sync, it tells us through the gate below
                         rpc.PrepareInvokeContinueGate();
                     }
 

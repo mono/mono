@@ -40,6 +40,34 @@ namespace System.Linq {
 
     public static class Queryable {
 
+#region Helper methods to obtain MethodInfo in a safe way
+
+        private static MethodInfo GetMethodInfo<T1, T2>(Func<T1, T2> f, T1 unused1) {
+            return f.Method;
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3>(Func<T1, T2, T3> f, T1 unused1, T2 unused2) {
+            return f.Method;
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3, T4>(Func<T1, T2, T3, T4> f, T1 unused1, T2 unused2, T3 unused3) {
+            return f.Method;
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3, T4, T5>(Func<T1, T2, T3, T4, T5> f, T1 unused1, T2 unused2, T3 unused3, T4 unused4) {
+            return f.Method;
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3, T4, T5, T6>(Func<T1, T2, T3, T4, T5, T6> f, T1 unused1, T2 unused2, T3 unused3, T4 unused4, T5 unused5) {
+            return f.Method;
+        }
+
+        private static MethodInfo GetMethodInfo<T1, T2, T3, T4, T5, T6, T7>(Func<T1, T2, T3, T4, T5, T6, T7> f, T1 unused1, T2 unused2, T3 unused3, T4 unused4, T5 unused5, T6 unused6) {
+            return f.Method;
+        }
+
+#endregion
+
         public static IQueryable<TElement> AsQueryable<TElement>(this IEnumerable<TElement> source) {
             if (source == null)
                 throw Error.ArgumentNull("source");
@@ -67,7 +95,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Where, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -79,8 +107,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Where, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -91,7 +119,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)), 
+                    GetMethodInfo(Queryable.OfType<TResult>, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -101,8 +129,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TResult)), 
+                    null,
+                    GetMethodInfo(Queryable.Cast<TResult>, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -115,7 +143,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    GetMethodInfo(Queryable.Select, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -128,7 +156,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    GetMethodInfo(Queryable.Select, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -141,7 +169,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    GetMethodInfo(Queryable.SelectMany, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -154,7 +182,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    GetMethodInfo(Queryable.SelectMany, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -169,7 +197,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TCollection), typeof(TResult)),
+                    GetMethodInfo(Queryable.SelectMany, source, collectionSelector, resultSelector),
                     new Expression[] { source.Expression, Expression.Quote(collectionSelector), Expression.Quote(resultSelector) }
                     ));
         }
@@ -184,7 +212,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TCollection), typeof(TResult)), 
+                    GetMethodInfo(Queryable.SelectMany, source, collectionSelector, resultSelector),
                     new Expression[] { source.Expression, Expression.Quote(collectionSelector), Expression.Quote(resultSelector) }
                     ));
         }
@@ -209,7 +237,7 @@ namespace System.Linq {
             return outer.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)), 
+                    GetMethodInfo(Queryable.Join, outer, inner, outerKeySelector, innerKeySelector, resultSelector),
                     new Expression[] { 
                         outer.Expression, 
                         GetSourceExpression(inner),
@@ -234,7 +262,7 @@ namespace System.Linq {
             return outer.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)),
+                    GetMethodInfo(Queryable.Join, outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer),
                     new Expression[] { 
                         outer.Expression, 
                         GetSourceExpression(inner),
@@ -260,7 +288,7 @@ namespace System.Linq {
             return outer.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)), 
+                    GetMethodInfo(Queryable.GroupJoin, outer, inner, outerKeySelector, innerKeySelector, resultSelector),
                     new Expression[] { 
                         outer.Expression, 
                         GetSourceExpression(inner),
@@ -284,7 +312,7 @@ namespace System.Linq {
             return outer.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TOuter), typeof(TInner), typeof(TKey), typeof(TResult)),
+                    GetMethodInfo(Queryable.GroupJoin, outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer),
                     new Expression[] { 
                         outer.Expression, 
                         GetSourceExpression(inner),
@@ -304,7 +332,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.OrderBy, source, keySelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector) }
                     ));
         }
@@ -317,7 +345,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.OrderBy, source, keySelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Constant(comparer, typeof(IComparer<TKey>)) }
                     ));
         }
@@ -327,10 +355,10 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             if (keySelector == null)
                 throw Error.ArgumentNull("keySelector");
-            return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
+            return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.OrderByDescending, source, keySelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector) }
                     ));
         }
@@ -343,7 +371,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.OrderByDescending, source, keySelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Constant(comparer, typeof(IComparer<TKey>)) }
                     ));
         }
@@ -356,7 +384,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.ThenBy, source, keySelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector) }
                     ));
         }
@@ -369,7 +397,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.ThenBy, source, keySelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Constant(comparer, typeof(IComparer<TKey>)) }
                     ));
         }
@@ -382,7 +410,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.ThenByDescending, source, keySelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector) }
                     ));
         }
@@ -395,7 +423,7 @@ namespace System.Linq {
             return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.ThenByDescending, source, keySelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Constant(comparer, typeof(IComparer<TKey>)) }
                     ));
         }
@@ -406,7 +434,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Take, source, count),
                     new Expression[] { source.Expression, Expression.Constant(count) }
                     ));
         }
@@ -419,7 +447,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.TakeWhile, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -432,7 +460,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.TakeWhile, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -443,7 +471,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Skip, source, count),
                     new Expression[] { source.Expression, Expression.Constant(count) }
                     ));
         }
@@ -456,7 +484,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.SkipWhile, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -469,7 +497,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.SkipWhile, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -482,7 +510,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<IGrouping<TKey,TSource>>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector) }
                     ));
         }
@@ -497,7 +525,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<IGrouping<TKey,TElement>>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TElement)), 
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, elementSelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(elementSelector) }
                     ));
         }
@@ -510,7 +538,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<IGrouping<TKey,TSource>>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey)), 
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Constant(comparer, typeof(IEqualityComparer<TKey>)) }
                     ));
         }
@@ -525,7 +553,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<IGrouping<TKey,TElement>>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TElement)), 
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, elementSelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(elementSelector), Expression.Constant(comparer, typeof(IEqualityComparer<TKey>)) }
                     ));
         }
@@ -543,7 +571,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TElement), typeof(TResult)),
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, elementSelector, resultSelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(elementSelector), Expression.Quote(resultSelector) }
                     ));
         }
@@ -559,7 +587,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TResult)),
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, resultSelector),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(resultSelector) }
                     ));
         }
@@ -575,7 +603,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TResult)),
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, resultSelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(resultSelector), Expression.Constant(comparer, typeof(IEqualityComparer<TKey>)) }
                     ));
         }
@@ -593,7 +621,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TResult>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TKey), typeof(TElement), typeof(TResult)),
+                    GetMethodInfo(Queryable.GroupBy, source, keySelector, elementSelector, resultSelector, comparer),
                     new Expression[] { source.Expression, Expression.Quote(keySelector), Expression.Quote(elementSelector), Expression.Quote(resultSelector), Expression.Constant(comparer, typeof(IEqualityComparer<TKey>)) }
                     ));
         }
@@ -604,7 +632,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Distinct, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -615,7 +643,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Distinct, source, comparer),
                     new Expression[] { source.Expression, Expression.Constant(comparer, typeof(IEqualityComparer<TSource>)) }
                     ));
         }
@@ -627,8 +655,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source2");
             return source1.Provider.CreateQuery<TSource>( 
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Concat, source1, source2),
                     new Expression[] { source1.Expression, GetSourceExpression(source2) }
                     ));
         }
@@ -643,7 +671,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TResult>( 
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TFirst), typeof(TSecond), typeof(TResult)), 
+                    GetMethodInfo(Queryable.Zip, source1, source2, resultSelector),
                     new Expression[] { source1.Expression, GetSourceExpression(source2), Expression.Quote(resultSelector) }
                     ));
         }
@@ -655,8 +683,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source2");
             return source1.Provider.CreateQuery<TSource>( 
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Union, source1, source2),
                     new Expression[] { source1.Expression, GetSourceExpression(source2) }
                     ));
         }
@@ -669,7 +697,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Union, source1, source2, comparer),
                     new Expression[] { 
                         source1.Expression, 
                         GetSourceExpression(source2),
@@ -686,7 +714,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Intersect, source1, source2),
                     new Expression[] { source1.Expression, GetSourceExpression(source2) }
                     ));
         }
@@ -699,7 +727,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Intersect, source1, source2, comparer),
                     new Expression[] { 
                         source1.Expression, 
                         GetSourceExpression(source2),
@@ -716,7 +744,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Except, source1, source2),
                     new Expression[] { source1.Expression, GetSourceExpression(source2) }
                     ));
         }
@@ -729,7 +757,7 @@ namespace System.Linq {
             return source1.Provider.CreateQuery<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Except, source1, source2, comparer),
                     new Expression[] { 
                         source1.Expression, 
                         GetSourceExpression(source2),
@@ -743,8 +771,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.First, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -756,8 +784,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.First, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -768,7 +796,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.FirstOrDefault, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -780,8 +808,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.FirstOrDefault, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -791,8 +819,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Last, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -804,8 +832,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Last, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -816,7 +844,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.LastOrDefault, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -828,8 +856,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null,                    
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.LastOrDefault, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -840,7 +868,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Single, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -852,8 +880,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Single, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -864,7 +892,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.SingleOrDefault, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -876,8 +904,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.SingleOrDefault, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -889,8 +917,8 @@ namespace System.Linq {
                 throw Error.ArgumentOutOfRange("index");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.ElementAt, source, index),
                     new Expression[] { source.Expression, Expression.Constant(index) }
                     ));
         }
@@ -900,8 +928,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<TSource>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.ElementAtOrDefault, source, index),
                     new Expression[] { source.Expression, Expression.Constant(index) }
                     ));
         }
@@ -912,7 +940,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.DefaultIfEmpty, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -922,8 +950,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.DefaultIfEmpty, source, defaultValue),
                     new Expression[] { source.Expression, Expression.Constant(defaultValue, typeof(TSource)) }
                     ));
         }
@@ -933,8 +961,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<bool>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Contains, source, item),
                     new Expression[] { source.Expression, Expression.Constant(item, typeof(TSource)) }
                     ));
         }
@@ -945,7 +973,7 @@ namespace System.Linq {
             return source.Provider.Execute<bool>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Contains, source, item, comparer),
                     new Expression[] { source.Expression, Expression.Constant(item, typeof(TSource)), Expression.Constant(comparer, typeof(IEqualityComparer<TSource>)) }
                     ));
         }
@@ -956,7 +984,7 @@ namespace System.Linq {
             return source.Provider.CreateQuery<TSource>( 
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Reverse, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -969,7 +997,7 @@ namespace System.Linq {
             return source1.Provider.Execute<bool>(
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.SequenceEqual, source1, source2),
                     new Expression[] { source1.Expression, GetSourceExpression(source2) }
                     ));
         }
@@ -982,7 +1010,7 @@ namespace System.Linq {
             return source1.Provider.Execute<bool>(
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.SequenceEqual, source1, source2, comparer),
                     new Expression[] { 
                         source1.Expression, 
                         GetSourceExpression(source2),
@@ -997,7 +1025,7 @@ namespace System.Linq {
             return source.Provider.Execute<bool>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Any, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1009,8 +1037,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<bool>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Any, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -1022,8 +1050,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("predicate");
             return source.Provider.Execute<bool>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.All, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -1034,7 +1062,7 @@ namespace System.Linq {
             return source.Provider.Execute<int>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Count, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1047,7 +1075,7 @@ namespace System.Linq {
             return source.Provider.Execute<int>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Count, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -1058,7 +1086,7 @@ namespace System.Linq {
             return source.Provider.Execute<long>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.LongCount, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1071,7 +1099,7 @@ namespace System.Linq {
             return source.Provider.Execute<long>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.LongCount, source, predicate),
                     new Expression[] { source.Expression, Expression.Quote(predicate) }
                     ));
         }
@@ -1082,7 +1110,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Min, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1094,8 +1122,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<TResult>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    null,
+                    GetMethodInfo(Queryable.Min, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1106,7 +1134,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Max, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1118,8 +1146,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<TResult>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TResult)), 
+                    null,
+                    GetMethodInfo(Queryable.Max, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1130,7 +1158,7 @@ namespace System.Linq {
             return source.Provider.Execute<int>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1140,8 +1168,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<int?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1151,8 +1179,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<long>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1162,8 +1190,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<long?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1173,8 +1201,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<float>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1184,8 +1212,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<float?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1195,8 +1223,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<double>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1206,8 +1234,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<double?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1217,8 +1245,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<decimal>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1228,8 +1256,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("source");
             return source.Provider.Execute<decimal?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1241,8 +1269,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<int>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1254,8 +1282,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<int?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1267,8 +1295,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<long>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1280,8 +1308,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<long?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1293,8 +1321,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<float>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1306,8 +1334,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<float?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1319,8 +1347,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1332,8 +1360,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1345,8 +1373,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<decimal>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1358,8 +1386,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<decimal?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Sum, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1370,7 +1398,7 @@ namespace System.Linq {
             return source.Provider.Execute<double>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1381,7 +1409,7 @@ namespace System.Linq {
             return source.Provider.Execute<double?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1392,7 +1420,7 @@ namespace System.Linq {
             return source.Provider.Execute<double>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1403,7 +1431,7 @@ namespace System.Linq {
             return source.Provider.Execute<double?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1415,7 +1443,7 @@ namespace System.Linq {
             return source.Provider.Execute<float>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()),
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1427,7 +1455,7 @@ namespace System.Linq {
             return source.Provider.Execute<float?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()),
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1438,7 +1466,7 @@ namespace System.Linq {
             return source.Provider.Execute<double>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1449,7 +1477,7 @@ namespace System.Linq {
             return source.Provider.Execute<double?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1460,7 +1488,7 @@ namespace System.Linq {
             return source.Provider.Execute<decimal>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1471,7 +1499,7 @@ namespace System.Linq {
             return source.Provider.Execute<decimal?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()), 
+                    GetMethodInfo(Queryable.Average, source),
                     new Expression[] { source.Expression }
                     ));
         }
@@ -1483,8 +1511,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1496,8 +1524,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1511,7 +1539,7 @@ namespace System.Linq {
             return source.Provider.Execute<float>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1525,7 +1553,7 @@ namespace System.Linq {
             return source.Provider.Execute<float?>(
                 Expression.Call(
                     null,
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)),
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1537,8 +1565,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1550,8 +1578,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1563,8 +1591,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1576,8 +1604,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<double?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1589,8 +1617,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<decimal>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1602,8 +1630,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<decimal?>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    null,
+                    GetMethodInfo(Queryable.Average, source, selector),
                     new Expression[] { source.Expression, Expression.Quote(selector) }
                     ));
         }
@@ -1616,7 +1644,7 @@ namespace System.Linq {
             return source.Provider.Execute<TSource>(
                 Expression.Call(
                     null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource)), 
+                    GetMethodInfo(Queryable.Aggregate, source, func),
                     new Expression[] { source.Expression, Expression.Quote(func) }
                     ));
         }
@@ -1628,8 +1656,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("func");
             return source.Provider.Execute<TAccumulate>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TAccumulate)), 
+                    null,
+                    GetMethodInfo(Queryable.Aggregate, source, seed, func),
                     new Expression[] { source.Expression, Expression.Constant(seed), Expression.Quote(func) }
                     ));
         }
@@ -1643,8 +1671,8 @@ namespace System.Linq {
                 throw Error.ArgumentNull("selector");
             return source.Provider.Execute<TResult>(
                 Expression.Call(
-                    null, 
-                    ((MethodInfo)MethodBase.GetCurrentMethod()).MakeGenericMethod(typeof(TSource), typeof(TAccumulate), typeof(TResult)), 
+                    null,
+                    GetMethodInfo(Queryable.Aggregate, source, seed, func, selector),
                     new Expression[] { source.Expression, Expression.Constant(seed), Expression.Quote(func), Expression.Quote(selector) }
                     ));
         }

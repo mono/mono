@@ -3,7 +3,7 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
+// @owner  Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Linq.Expressions.Internal

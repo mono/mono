@@ -20,6 +20,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
         internal X509Extension(string oid) : base (new Oid(oid, OidGroup.ExtensionOrAttribute, false)) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal X509Extension(IntPtr pExtension) {
             CAPI.CERT_EXTENSION extension = (CAPI.CERT_EXTENSION) Marshal.PtrToStructure(pExtension, typeof(CAPI.CERT_EXTENSION));
             m_critical = extension.fCritical;
@@ -93,6 +96,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509KeyUsageExtension (X509KeyUsageFlags keyUsages, bool critical) :
             base (CAPI.szOID_KEY_USAGE, EncodeExtension(keyUsages), critical) {}
 
@@ -112,6 +118,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = false;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private void DecodeExtension () {
             uint cbDecoded = 0;
             SafeLocalAllocHandle decoded = null;
@@ -135,6 +144,9 @@ namespace System.Security.Cryptography.X509Certificates {
             decoded.Dispose();
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe byte[] EncodeExtension (X509KeyUsageFlags keyUsages) {
             CAPI.CRYPT_BIT_BLOB blob = new CAPI.CRYPT_BIT_BLOB();
             blob.cbData = 2;
@@ -194,6 +206,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = false;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private void DecodeExtension () {
             uint cbDecoded = 0;
             SafeLocalAllocHandle decoded = null;
@@ -236,6 +251,9 @@ namespace System.Security.Cryptography.X509Certificates {
             decoded.Dispose();
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe byte[] EncodeExtension (bool certificateAuthority, bool hasPathLengthConstraint, int pathLengthConstraint) {
             CAPI.CERT_BASIC_CONSTRAINTS2_INFO pBasicConstraints2 = new CAPI.CERT_BASIC_CONSTRAINTS2_INFO();
             pBasicConstraints2.fCA = certificateAuthority ? 1 : 0;
@@ -270,6 +288,9 @@ namespace System.Security.Cryptography.X509Certificates {
             base (CAPI.szOID_ENHANCED_KEY_USAGE, encodedEnhancedKeyUsages.RawData, critical) {}
 
         public OidCollection EnhancedKeyUsages {
+#if FEATURE_CORESYSTEM
+            [SecuritySafeCritical]
+#endif
             get {
                 if (!m_decoded)
                     DecodeExtension();
@@ -286,6 +307,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = false;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private void DecodeExtension () {
             uint cbDecoded = 0;
             SafeLocalAllocHandle decoded = null;
@@ -311,6 +335,9 @@ namespace System.Security.Cryptography.X509Certificates {
             decoded.Dispose();
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe byte[] EncodeExtension (OidCollection enhancedKeyUsages) {
             if (enhancedKeyUsages == null)
                 throw new ArgumentNullException("enhancedKeyUsages");
@@ -344,22 +371,40 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509SubjectKeyIdentifierExtension (string subjectKeyIdentifier, bool critical) :
             base (CAPI.szOID_SUBJECT_KEY_IDENTIFIER, EncodeExtension(subjectKeyIdentifier), critical) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509SubjectKeyIdentifierExtension (byte[] subjectKeyIdentifier, bool critical) : 
             base (CAPI.szOID_SUBJECT_KEY_IDENTIFIER, EncodeExtension(subjectKeyIdentifier), critical) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509SubjectKeyIdentifierExtension (AsnEncodedData encodedSubjectKeyIdentifier, bool critical) :
             base (CAPI.szOID_SUBJECT_KEY_IDENTIFIER, encodedSubjectKeyIdentifier.RawData, critical) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509SubjectKeyIdentifierExtension (PublicKey key, bool critical) :
             base (CAPI.szOID_SUBJECT_KEY_IDENTIFIER, EncodePublicKey(key, X509SubjectKeyIdentifierHashAlgorithm.Sha1), critical) {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         public X509SubjectKeyIdentifierExtension (PublicKey key, X509SubjectKeyIdentifierHashAlgorithm algorithm, bool critical) :
             base (CAPI.szOID_SUBJECT_KEY_IDENTIFIER, EncodePublicKey(key, algorithm), critical) {}
 
         public string SubjectKeyIdentifier {
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
             get {
                 if (!m_decoded)
                     DecodeExtension();
@@ -372,6 +417,9 @@ namespace System.Security.Cryptography.X509Certificates {
             m_decoded = false;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private void DecodeExtension () {
             uint cbDecoded = 0;
             SafeLocalAllocHandle decoded = null;
@@ -400,6 +448,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return EncodeExtension(X509Utils.DecodeHexString(subjectKeyIdentifier));
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe byte[] EncodeExtension (byte[] subjectKeyIdentifier) {
             if (subjectKeyIdentifier == null)
                 throw new ArgumentNullException("subjectKeyIdentifier");
@@ -420,6 +471,9 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         // Construct CERT_PUBLIC_KEY_INFO2 in unmanged memory from given encoded blobs.
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe SafeLocalAllocHandle EncodePublicKey (PublicKey key) {
             SafeLocalAllocHandle publicKeyInfo = SafeLocalAllocHandle.InvalidHandle;
             CAPI.CERT_PUBLIC_KEY_INFO2 * pPublicKeyInfo = null;
@@ -453,6 +507,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return publicKeyInfo;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         private static unsafe byte[] EncodePublicKey (PublicKey key, X509SubjectKeyIdentifierHashAlgorithm algorithm) {
             if (key == null)
                 throw new ArgumentNullException("key");
@@ -540,6 +597,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
         public X509ExtensionCollection() {}
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal unsafe X509ExtensionCollection(SafeCertContextHandle safeCertContextHandle) {
             using (SafeCertContextHandle certContext = CAPI.CertDuplicateCertificateContext(safeCertContextHandle)) {
                 CAPI.CERT_CONTEXT pCertContext = *((CAPI.CERT_CONTEXT*) certContext.DangerousGetHandle());

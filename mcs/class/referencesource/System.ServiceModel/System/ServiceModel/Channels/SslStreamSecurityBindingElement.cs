@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------
 namespace System.ServiceModel.Channels
 {
+    using System.Security.Authentication;
     using System.ComponentModel;
     using System.Collections.Generic;
     using System.Net.Security;
@@ -16,10 +17,12 @@ namespace System.ServiceModel.Channels
     {
         IdentityVerifier identityVerifier;
         bool requireClientCertificate;
+        SslProtocols sslProtocols;
 
         public SslStreamSecurityBindingElement()
         {
             this.requireClientCertificate = TransportDefaults.RequireClientCertificate;
+            this.sslProtocols = TransportDefaults.SslProtocols;
         }
 
         protected SslStreamSecurityBindingElement(SslStreamSecurityBindingElement elementToBeCloned)
@@ -27,6 +30,7 @@ namespace System.ServiceModel.Channels
         {
             this.identityVerifier = elementToBeCloned.identityVerifier;
             this.requireClientCertificate = elementToBeCloned.requireClientCertificate;
+            this.sslProtocols = elementToBeCloned.sslProtocols;
         }
 
         public IdentityVerifier IdentityVerifier
@@ -64,6 +68,20 @@ namespace System.ServiceModel.Channels
             }
         }
 
+        [DefaultValue(TransportDefaults.SslProtocols)]
+        public SslProtocols SslProtocols
+        {
+            get
+            {
+                return this.sslProtocols;
+            }
+            set
+            {
+                SslProtocolsHelper.Validate(value);
+                this.sslProtocols = value;
+            }
+        }
+
         public override IChannelFactory<TChannel> BuildChannelFactory<TChannel>(BindingContext context)
         {
             if (context == null)
@@ -71,7 +89,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.BuildInnerChannelFactory<TChannel>();
         }
@@ -83,7 +101,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelFactory<TChannel>();
         }
@@ -95,7 +113,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.BuildInnerChannelListener<TChannel>();
         }
@@ -107,7 +125,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelListener<TChannel>();
         }
@@ -218,7 +236,7 @@ namespace System.ServiceModel.Channels
                 return false;
             }
 
-            return this.requireClientCertificate == ssl.requireClientCertificate;
+            return this.requireClientCertificate == ssl.requireClientCertificate && this.sslProtocols == ssl.sslProtocols;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

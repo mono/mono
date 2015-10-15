@@ -2,7 +2,7 @@
 // <copyright file="XPathBuilder.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -294,7 +294,7 @@ namespace System.Xml.Xsl.XPath {
                 //    </xsl:template>
                 //</xsl:stylesheet>
 
-                // ToDo: remove this code when IlGen bug will be fixed.
+                // ToDo: remove this code when IlGen 
                 if (qilAxis.NodeType == QilNodeType.Filter) {
                     QilLoop filter = (QilLoop) qilAxis;
                     filter.Body = f.And(filter.Body, 

@@ -2,7 +2,7 @@
 // <copyright file="ActionFrame.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -76,7 +76,6 @@ namespace System.Xml.Xsl.XsltOld {
             return ++ this.counter;
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         internal void AllocateVariables(int count) {
             if (0 < count) {
                 this.variables = new object [count];

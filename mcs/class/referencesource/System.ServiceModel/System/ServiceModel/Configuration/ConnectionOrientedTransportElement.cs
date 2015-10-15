@@ -111,7 +111,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ConnectionOrientedTransportElement source = (ConnectionOrientedTransportElement)from;
-#pragma warning suppress 56506 // [....], base.CopyFrom() validates the argument
+#pragma warning suppress 56506 // Microsoft, base.CopyFrom() validates the argument
             this.ConnectionBufferSize = source.ConnectionBufferSize;
             this.HostNameComparisonMode = source.HostNameComparisonMode;
             this.ChannelInitializationTimeout = source.ChannelInitializationTimeout;

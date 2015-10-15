@@ -2,8 +2,8 @@
 // <copyright file="ValueUtilsSmi.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace Microsoft.SqlServer.Server {
@@ -1830,8 +1830,8 @@ namespace Microsoft.SqlServer.Server {
                             // In order for us to get here we would have to have an 
                             // invalid instance of SqlDbType, or one would have to add 
                             // new member to SqlDbType without adding a case in this 
-                            // switch, hence the assert - it must be bug in our code 
-                            // not invalid user parameters.
+                            // switch, hence the assert - it must be 
+
                             Debug.Assert( false, "unsupported DbType:" + metaData[i].SqlDbType.ToString() );
                             throw ADP.NotSupported();
                             
@@ -2022,8 +2022,8 @@ namespace Microsoft.SqlServer.Server {
                             // In order for us to get here we would have to have an 
                             // invalid instance of SqlDbType, or one would have to add 
                             // new member to SqlDbType without adding a case in this 
-                            // switch, hence the assert - it must be bug in our code 
-                            // not invalid user parameters.
+                            // switch, hence the assert - it must be 
+
                             Debug.Assert(false, "unsupported DbType:" + metaData[i].SqlDbType.ToString());
                             throw ADP.NotSupported();
 

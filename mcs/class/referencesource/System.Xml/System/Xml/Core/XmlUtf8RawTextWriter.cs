@@ -3,7 +3,7 @@
 // <copyright file="XmlRawTextWriterGenerator.cxx" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 // WARNING: This file is generated and should not be modified directly.  Instead,
@@ -360,8 +360,8 @@ namespace System.Xml {
         internal override void WriteStartNamespaceDeclaration(string prefix) {
             Debug.Assert( prefix != null );
 
-            // VSTFDEVDIV bug #583965: Inconsistency between Silverlight 2 and Dev10 in the way a single xmlns attribute is serialized    
-            // Resolved as: Won't fix (breaking change)
+            // VSTFDEVDIV 
+
 
             if ( prefix.Length == 0 ) {
                 RawText( " xmlns=\"" );
@@ -1245,12 +1245,12 @@ namespace System.Xml {
 
         private static unsafe byte* EncodeSurrogate( char* pSrc, char* pSrcEnd, byte* pDst ) {
             Debug.Assert( XmlCharType.IsSurrogate( *pSrc ) );
-
             int ch = *pSrc;
             if ( ch <= XmlCharType.SurHighEnd ) {
                 if ( pSrc + 1 < pSrcEnd ) {
                     int lowChar = pSrc[1];
-                    if ( lowChar >= XmlCharType.SurLowStart ) {
+                    if ( lowChar >= XmlCharType.SurLowStart &&
+                        (LocalAppContextSwitches.DontThrowOnInvalidSurrogatePairs || lowChar <= XmlCharType.SurLowEnd)) {
 
                         // Calculate Unicode scalar value for easier manipulations (see section 3.7 in Unicode spec)
                         // The scalar value repositions surrogate values to start at 0x10000.

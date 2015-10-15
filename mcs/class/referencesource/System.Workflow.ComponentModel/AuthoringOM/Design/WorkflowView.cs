@@ -181,7 +181,7 @@ namespace System.Workflow.ComponentModel.Design
             //Initialize the tooltip shown
             this.workflowToolTip = new WorkflowToolTip(this);
 
-            //[....] the global theme change event, which is fired by the theme infrastructure for theme change
+            //Sync the global theme change event, which is fired by the theme infrastructure for theme change
             WorkflowTheme.ThemeChanged += new EventHandler(OnThemeChange);
 
             //Create the core message filters
@@ -1497,7 +1497,7 @@ namespace System.Workflow.ComponentModel.Design
             //To enable this functionality please note that selection change is not a good event as it will get
             //fired in multiple cases, instead we should add a event in extended ui service which will do this and move
             //the following code in the event handler of that event
-            //Ref Bug#3925
+            //Ref 
 
             if (RootDesigner != null && RootDesigner.Activity != null)
             {

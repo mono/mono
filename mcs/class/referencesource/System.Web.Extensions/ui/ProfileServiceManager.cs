@@ -97,9 +97,9 @@ namespace System.Web.UI {
             }
 
             if (!String.IsNullOrEmpty(serviceUrl)) {
-                // DevDiv Bug 72257:When custom path is set and loadProperties=True, we shouldn't use the default path
-                // loadProperties script always retrieves the properties from default profile provider, which is not correct if ProfileService
-                // points to non default path. Hence throw when non default path and loadProperties both are specified.
+                // DevDiv 
+
+
                 if (defaultServicePath == null){
                     defaultServicePath = scriptManager.ResolveClientUrl("~/" + System.Web.Script.Services.WebServiceData._profileServiceFileName);
                 }

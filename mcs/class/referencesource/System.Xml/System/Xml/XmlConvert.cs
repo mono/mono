@@ -2,7 +2,7 @@
 // <copyright file="XmlConvert.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml {
@@ -678,7 +678,6 @@ namespace System.Xml {
             return value.ToString(null, NumberFormatInfo.InvariantInfo);
         }
 
-#if !SILVERLIGHT
         ///<include file='doc\XmlConvert.uex' path='docs/doc[@for="XmlConvert.ToString6"]/*' />
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
@@ -695,7 +694,6 @@ namespace System.Xml {
         public static string ToString(UInt16 value) {
             return value.ToString(null, NumberFormatInfo.InvariantInfo);
         }
-#endif
 
         ///<include file='doc\XmlConvert.uex' path='docs/doc[@for="XmlConvert.ToString8"]/*' />
         /// <devdoc>

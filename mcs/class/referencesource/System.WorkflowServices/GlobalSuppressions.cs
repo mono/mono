@@ -21,7 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Workflow.ComponentModel.Walker..ctor(System.Object)")]
 
 
-// Added by [....],  This warning is issued on the dialog resources of the System.Workflow.Activities dialgos, which hold types from System.WorkflowServices.dll , this warning complains that the assembly version does not match the Mscorlib assemblyversion of 4.0.0.0 , thats why this message is suppressed globally.
+// Added by ramrajb,  This warning is issued on the dialog resources of the System.Workflow.Activities dialgos, which hold types from System.WorkflowServices.dll , this warning complains that the assembly version does not match the Mscorlib assemblyversion of 4.0.0.0 , thats why this message is suppressed globally.
 
 [module: SuppressMessage("Microsoft.Usage", "CA2228:DoNotShipUnreleasedResourceFormats", Scope = "resource", Target = "System.Workflow.Activities.Design.ServiceContractDetailViewControl.resources", MessageId = ">>$this.Type")]
 [module: SuppressMessage("Microsoft.Usage", "CA2228:DoNotShipUnreleasedResourceFormats", Scope = "resource", Target = "System.Workflow.Activities.Design.ServiceContractViewControl.resources", MessageId = ">>backgroundPanel.Type")]
@@ -39,7 +39,7 @@ using System.Diagnostics.CodeAnalysis;
 [module: SuppressMessage("Microsoft.Usage", "CA2228:DoNotShipUnreleasedResourceFormats", Scope = "resource", Target = "System.Workflow.Activities.Design.ServiceOperationViewControl.resources", MessageId = ">>operationNameLabel.Type")]
 [module: SuppressMessage("Microsoft.Usage", "CA2228:DoNotShipUnreleasedResourceFormats", Scope = "resource", Target = "System.Workflow.Activities.Design.ReflectedServiceOperationDetailViewControl.resources", MessageId = ">>$this.Type")]
 
-// Added by [....] for jself. These suppressions are for violations in red bits that are temporarily copied over.
+// Added by tvish for jself. These suppressions are for violations in red bits that are temporarily copied over.
 
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Workflow.ComponentModel.WalkerEventArgs.get_CurrentValue():System.Object")]
 [module: SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "System.Workflow.ComponentModel.WalkerEventArgs.get_UserData():System.Object")]

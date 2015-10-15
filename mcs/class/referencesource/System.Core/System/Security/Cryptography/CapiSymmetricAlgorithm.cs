@@ -5,6 +5,9 @@
 // ==--==
 
 using System;
+#if FEATURE_CORESYSTEM
+using System.Core;
+#endif
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;

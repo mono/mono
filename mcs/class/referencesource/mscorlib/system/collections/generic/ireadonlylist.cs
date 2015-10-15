@@ -7,7 +7,7 @@
 **
 ** Interface:  IReadOnlyList<T>
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>matell</OWNER>
 **
 ** Purpose: Base interface for read-only generic lists.
 ** 

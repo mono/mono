@@ -57,7 +57,7 @@ namespace System.Diagnostics.Eventing.Reader {
     /// <summary>
     /// EventOpcode
     /// </summary>
-    [SuppressMessage("Microsoft.Naming","CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId="Opcode", Justification="[....]: Shipped public in 3.5, breaking change to fix now.")]
+    [SuppressMessage("Microsoft.Naming","CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId="Opcode", Justification="matell: Shipped public in 3.5, breaking change to fix now.")]
     public enum StandardEventOpcode {
         /// <summary>
         /// An informational event

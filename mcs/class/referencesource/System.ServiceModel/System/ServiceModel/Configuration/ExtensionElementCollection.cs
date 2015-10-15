@@ -87,7 +87,7 @@ namespace System.ServiceModel.Configuration
                 else if (element.TypeName.Equals(extension.TypeName, StringComparison.Ordinal))
                 {
                     // In order to avoid extra assemblies being loaded, we perform type comparison only if the type names
-                    // are the same. See bug CSDMain 222573.
+                    // are the same. See 
                     Type elementType = Type.GetType(element.Type, false);
                     if (null != elementType && elementType.Equals(Type.GetType(extension.Type, false)))
                     {

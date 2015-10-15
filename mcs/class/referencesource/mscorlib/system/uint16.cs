@@ -66,6 +66,7 @@ namespace System {
             return m_value == ((UInt16)obj).m_value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(UInt16 obj)
         {
             return m_value == obj;

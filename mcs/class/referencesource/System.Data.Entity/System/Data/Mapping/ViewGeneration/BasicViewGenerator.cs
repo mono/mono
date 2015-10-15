@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 namespace System.Data.Mapping.ViewGeneration
@@ -131,7 +131,7 @@ namespace System.Data.Mapping.ViewGeneration
             foreach (LeafCellTreeNode childNode in rootNode.Children)
             {
                 // A cell may contain P, P.PA -- we return P
-                // CHANGE_[....]_FEATURE_COMPOSITION Need to fix for composition!!
+                // CHANGE_Microsoft_FEATURE_COMPOSITION Need to fix for composition!!
                 EntitySetBase extent = childNode.LeftCellWrapper.RightCellQuery.Extent; // relation or extent to group by
                 Debug.Assert(extent != null, "Each cell must have a right extent");
 

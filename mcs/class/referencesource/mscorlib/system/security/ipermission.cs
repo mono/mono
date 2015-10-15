@@ -5,7 +5,7 @@
 // ==--==
 // IPermission.cs
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>ShawnFa</OWNER>
 //
 // Defines the interface that all Permission objects must support.
 // 

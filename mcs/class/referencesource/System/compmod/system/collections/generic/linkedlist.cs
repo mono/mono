@@ -12,10 +12,10 @@ namespace System.Collections.Generic {
     [DebuggerTypeProxy(typeof(System_CollectionDebugView<>))]
     [DebuggerDisplay("Count = {Count}")]    
 #if SILVERLIGHT
-    public class LinkedList<T>: ICollection<T>, System.Collections.ICollection
+    public class LinkedList<T>: ICollection<T>, System.Collections.ICollection, IReadOnlyCollection<T>
 #else
     [Serializable()]    
-    public class LinkedList<T>: ICollection<T>, System.Collections.ICollection
+    public class LinkedList<T>: ICollection<T>, System.Collections.ICollection, IReadOnlyCollection<T>
            ,ISerializable, IDeserializationCallback 
 #endif
     {

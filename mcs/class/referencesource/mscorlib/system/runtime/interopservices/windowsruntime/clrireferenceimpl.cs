@@ -4,14 +4,13 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Collections;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using System.Reflection;
 using System.Security;
 
@@ -78,6 +77,10 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // We have T in an IReference<T>.  Need to QI for IReference<T> with the appropriate GUID, call
         // the get_Value property, allocate an appropriately-sized managed object, marshal the native object
         // to the managed object, and free the native method.  Also we want the return value boxed (aka normal value type boxing).
+        //
+        // This method is called by VM. Mark the method with FriendAccessAllowed attribute to ensure that the unreferenced method
+        // optimization skips it and the code will be saved into NGen image.
+        [System.Runtime.CompilerServices.FriendAccessAllowed]
         internal static Object UnboxHelper(Object wrapper)
         {
             Contract.Requires(wrapper != null);
@@ -104,7 +107,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             _value = obj;
 
             // This should not fail but I'm making a cast here anyway just in case 
-            // we have a bug (that _value is not an array) or there is a runtime failure
+            // we have a 
             _list = (IList) _value;
         }
 
@@ -263,6 +266,10 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         // We have T in an IReferenceArray<T>.  Need to QI for IReferenceArray<T> with the appropriate GUID, call
         // the get_Value property, allocate an appropriately-sized managed object, marshal the native object
         // to the managed object, and free the native method.
+        //
+        // This method is called by VM. Mark the method with FriendAccessAllowed attribute to ensure that the unreferenced method
+        // optimization skips it and the code will be saved into NGen image.
+        [System.Runtime.CompilerServices.FriendAccessAllowed]
         internal static Object UnboxHelper(Object wrapper)
         {
             Contract.Requires(wrapper != null);
@@ -286,28 +293,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             Contract.Requires(obj != null, "Null should not be boxed.");
             Contract.Ensures(Contract.Result<Object>() != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginCreateIReference();
-            }
-#endif
-            
-            Object returnObj = CreateIReferenceWorker(obj);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndCreateIReference(returnObj != null ? returnObj.GetType().GetFullNameForEtw() : "");
-            }
-#endif
-
-            return returnObj;
-        }
-
-        [SecuritySafeCritical]
-        private static Object CreateIReferenceWorker(Object obj)
-        {
             Type type = obj.GetType();
 
             if (type.IsArray)

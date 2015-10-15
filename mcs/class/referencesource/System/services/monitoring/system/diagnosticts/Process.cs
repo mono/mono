@@ -356,6 +356,14 @@ namespace System.Diagnostics {
             }
         }
 
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]  
+        public SafeProcessHandle SafeHandle {
+            get {
+                EnsureState(State.Associated);
+                return OpenProcessHandle(this.m_processAccess);
+            }
+        }
+
 #if !FEATURE_PAL
         /// <devdoc>
         ///    <para>

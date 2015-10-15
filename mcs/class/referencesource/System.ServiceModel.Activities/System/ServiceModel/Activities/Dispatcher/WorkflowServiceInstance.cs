@@ -42,7 +42,7 @@ namespace System.ServiceModel.Activities.Dispatcher
     //   NOTE: There is a small period of time where no one things they own the lock.  Exit has "handed
     //   off the lock by calling Set on the waiter, but the waiter has not yet executed the code
     //   which sets ownsLock to true.
-    // [....] Handoff - During [....] handoff the ref bool ownsLock will be set accordingly by the
+    // Sync Handoff - During sync handoff the ref bool ownsLock will be set accordingly by the
     //   Acquire* method.  These methods should always be called in a try block with a finally
     //   which calls ReleaseLock.
     // Async Handoff - During async handoff the callback can assume it has the lock if either
@@ -655,12 +655,12 @@ namespace System.ServiceModel.Activities.Dispatcher
             {
                 if (!this.idleWaiters.Remove(idleEvent))
                 {
-                    // If it wasn't in the list that means we ----d between throwing from Wait
+                    // If it wasn't in the list that means we raced between throwing from Wait
                     // and setting the event.  This thread now is responsible for the lock.
                     if (waitException is TimeoutException)
                     {
                         // In the case of Timeout we let setting the event win and signal to
-                        // ---- the exception
+                        // swallow the exception
 
                         ownsLock = true;
                         return false;
@@ -814,7 +814,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                     if (!this.executorLock.Exit(isRunnable, ref ownsLock))
                     {
                         // No one was waiting, but we had activeOperations (otherwise we would not have gotten
-                        // to this branch of the if).  This means that we ----d with a timeout and should resume
+                        // to this branch of the if).  This means that we raced with a timeout and should resume
                         // the workflow's execution.  If we don't resume execution we'll just hang ... no one
                         // has the lock, the workflow is ready to execute, but it is not.
                         Fx.Assert(this.activeOperations > 0, "We should always have active operations otherwise we should have taken a different code path.");
@@ -1653,8 +1653,8 @@ namespace System.ServiceModel.Activities.Dispatcher
                 result = this.Controller.ScheduleBookmarkResumption(bookmark, value, bookmarkScope);
             }
 
-            if (result == BookmarkResumptionResult.NotReady && !bufferedReceiveEnabled)
-            {
+            if (result == BookmarkResumptionResult.NotReady && !bufferedReceiveEnabled && (this.serviceHost.FilterResumeTimeout.TotalSeconds > 0))
+                {
                 if (waitHandle == null)
                 {
                     waitHandle = new AsyncWaitHandle();
@@ -3007,7 +3007,8 @@ namespace System.ServiceModel.Activities.Dispatcher
                 this.value = value;
                 this.bookmarkScope = bookmarkScope;
                 this.timeoutHelper = new TimeoutHelper(timeout);
-                // we are using default hard coded timeout of 1 minutes
+                // The value for WorkflowServiceHost.FilterResumeTimeout comes from the AppSetting
+                // "microsoft:WorkflowServices:FilterResumeTimeoutInSeconds"
                 this.nextIdleTimeoutHelper = new TimeoutHelper(instance.serviceHost.FilterResumeTimeout);
                 this.isResumeProtocolBookmark = isResumeProtocolBookmark;
                 this.OnCompleting = onCompleting;
@@ -3195,8 +3196,8 @@ namespace System.ServiceModel.Activities.Dispatcher
 
                     bool bufferedReceiveEnabled = this.isResumeProtocolBookmark && this.instance.BufferedReceiveManager != null;
                     this.resumptionResult = this.instance.ResumeProtocolBookmarkCore(this.bookmark, this.value, this.bookmarkScope, bufferedReceiveEnabled, ref this.waitHandle, ref this.ownsLock);
-                    if (this.resumptionResult == BookmarkResumptionResult.NotReady && !bufferedReceiveEnabled)
-                    {
+                    if (this.resumptionResult == BookmarkResumptionResult.NotReady && !bufferedReceiveEnabled && (this.instance.serviceHost.FilterResumeTimeout.TotalSeconds > 0))
+                        {
                         if (nextIdleCallback == null)
                         {
                             nextIdleCallback = new Action<object, TimeoutException>(OnNextIdle);
@@ -3267,7 +3268,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                     {
                         // If the waitHandle is not in either of these lists then it must have
                         // been removed by the Set() path - that means we've got the lock, so let's
-                        // just run with it (IE - ---- the exception).
+                        // just run with it (IE - swallow the exception).
                         if (thisPtr.instance.nextIdleWaiters.Remove(thisPtr.waitHandle) || thisPtr.instance.idleWaiters.Remove(thisPtr.waitHandle))
                         {
                             thisPtr.Complete(false, asyncException);
@@ -5310,7 +5311,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                     {
                         if (!asyncWaiter.Owner.waiters.Remove(asyncWaiter.Token))
                         {
-                            // We ----d between timing out and getting signaled.
+                            // We raced between timing out and getting signaled.
                             // We'll take the signal which means we now own the lock
 
                             completionException = null;
@@ -5603,7 +5604,7 @@ namespace System.ServiceModel.Activities.Dispatcher
             {
                 // In the interest of allocating less objects we don't implement
                 // the full async pattern here.  Instead, we've flattened it to
-                // do the [....] part and then optionally delegate down to the inner
+                // do the sync part and then optionally delegate down to the inner
                 // BeginCommit.
                 if (this.contextOwnedTransaction != null)
                 {

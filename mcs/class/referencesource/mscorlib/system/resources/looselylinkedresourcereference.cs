@@ -7,7 +7,7 @@
 **
 ** Class:  LooselyLinkedResourceReference
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Provides a localizable way of retrieving a file
@@ -65,7 +65,7 @@ namespace System.Resources {
                 throw new ArgumentNullException("assembly");
             Contract.EndContractBlock();
 
-            // @
+            // @TODO: Consider making this lookup case-insensitive for VB.
             Stream data = assembly.GetManifestResourceStream(_manifestResourceName);
             if (data == null)
                 throw new MissingManifestResourceException(Environment.GetResourceString("MissingManifestResource_LooselyLinked", _manifestResourceName, assembly.FullName));

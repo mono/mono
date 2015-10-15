@@ -7,7 +7,7 @@
 //
 // QueryOpeningEnumerator.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -110,7 +110,7 @@ namespace System.Linq.Parallel
             {
                 // To keep the MoveNext method body small, the code that executes first time only is in a separate method.
                 // It appears that if the method becomes too large, we observe a performance regression. This may have
-                // to do with method inlining. See bug 706485.
+                // to do with method inlining. See 
                 OpenQuery();
             }
 

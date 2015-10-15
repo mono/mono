@@ -173,11 +173,9 @@ namespace System.IO
             Init(stream, encoding, detectEncodingFromByteOrderMarks, bufferSize, leaveOpen);
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#elif FEATURE_LEGACYNETCF
+#if FEATURE_LEGACYNETCF
         [System.Security.SecuritySafeCritical]
-#endif // FEATURE_LEGACYNETCFIOSECURITY
+#endif // FEATURE_LEGACYNETCF
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader(String path) 
@@ -198,38 +196,25 @@ namespace System.IO
 #endif // FEATURE_LEGACYNETCF
                                }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader(String path, bool detectEncodingFromByteOrderMarks) 
             : this(path, Encoding.UTF8, detectEncodingFromByteOrderMarks, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader(String path, Encoding encoding) 
             : this(path, encoding, true, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader(String path, Encoding encoding, bool detectEncodingFromByteOrderMarks) 
             : this(path, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) {
         }
 
-#if FEATURE_LEGACYNETCFIOSECURITY
-        [System.Security.SecurityCritical]
-#else
         [System.Security.SecuritySafeCritical]
-#endif //FEATURE_LEGACYNETCFIOSECURITY
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader(String path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
@@ -1149,7 +1134,7 @@ namespace System.IO
         // and is thus lifted to a state machine type, access will be slow.
         // As a workaround, we either cache instance fields in locals or use properties to access such fields.
 
-        // See Dev11 bug #370300 for more info.
+        // See Dev11 
         
         private Int32 CharLen_Prop {
             get { return charLen; }

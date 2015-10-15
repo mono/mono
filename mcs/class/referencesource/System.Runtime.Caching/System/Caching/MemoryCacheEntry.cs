@@ -230,7 +230,7 @@ namespace System.Runtime.Caching {
 
         internal void RemoveDependent(MemoryCacheEntryChangeMonitor dependent) {
             lock (this) {
-                if (_fields._dependents != null) {
+                if (_fields != null && _fields._dependents != null) {
                     _fields._dependents.Remove(dependent);
                 }
             }

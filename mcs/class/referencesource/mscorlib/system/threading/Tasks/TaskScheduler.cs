@@ -7,7 +7,7 @@
 //
 // TaskScheduler.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // This file contains the primary interface and management of tasks and queues.  
 //
@@ -215,9 +215,7 @@ namespace System.Threading.Tasks
             bool bInlined = false;
             try
             {
-#if !FEATURE_PAL && !FEATURE_CORECLR
                 task.FireTaskScheduledIfNeeded(this);
-#endif
                 bInlined = TryExecuteTaskInline(task, taskWasPreviouslyQueued);
             }
             finally
@@ -272,9 +270,8 @@ namespace System.Threading.Tasks
         {
             Contract.Requires(task != null);
 
-#if !FEATURE_PAL && !FEATURE_CORECLR
             task.FireTaskScheduledIfNeeded(this);
-#endif
+
             this.QueueTask(task);
         }
 
@@ -362,9 +359,7 @@ namespace System.Threading.Tasks
             {
                 Task currentTask = Task.InternalCurrent;
                 return ( (currentTask != null) 
-#if !FEATURE_CORECLR ||  FEATURE_NETCORE
                     && ((currentTask.CreationOptions & TaskCreationOptions.HideScheduler) == 0)
-#endif
                     ) ? currentTask.ExecutingTaskScheduler : null;
             }
         }

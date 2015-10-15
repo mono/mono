@@ -50,7 +50,7 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-#pragma warning suppress 56503 // [....], the property is really not implemented, cannot lie, API not public
+#pragma warning suppress 56503 // Microsoft, the property is really not implemented, cannot lie, API not public
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotImplementedException()); 
             }
         }

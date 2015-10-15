@@ -8,12 +8,12 @@
 //
 // PropertyAttributes is an enum which defines the attributes that may be associated
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 //    with a property.  The values here are defined in Corhdr.h.
 //
-// <
-
-
+// <TODO>Author: darylo</TODO>
+// Date: Aug 99
+//
 namespace System.Reflection {
     
     using System;

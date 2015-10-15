@@ -14,7 +14,7 @@ namespace System.Runtime.Serialization.Json
 
     // This wrapper does not support seek.
     // Supports: UTF-8, Unicode, BigEndianUnicode
-    // ASSUMPTION ([....]): This class will only be used for EITHER reading OR writing.  It can be done, it would just mean more buffers.
+    // ASSUMPTION (Microsoft): This class will only be used for EITHER reading OR writing.  It can be done, it would just mean more buffers.
     class JsonEncodingStreamWrapper : Stream
     {
         [Fx.Tag.SecurityNote(Miscellaneous = "RequiresReview - Static fields are marked SecurityCritical or readonly to prevent"

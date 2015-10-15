@@ -47,7 +47,7 @@ namespace System.ServiceModel.Dispatcher
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(
                     SR2.GetString(SR2.EndpointAddressCannotBeNull)));
             }
-#pragma warning disable 56506 // [....], endpoint.Address.Uri is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Address.Uri is never null
             Uri baseUri = endpoint.Address.Uri;
             this.methodSpecificTables = new Dictionary<string, UriTemplateTable>();
             this.templates = new Dictionary<string, UriTemplate>();
@@ -61,7 +61,7 @@ namespace System.ServiceModel.Dispatcher
 
             Dictionary<WCFKey, string> alreadyHaves = new Dictionary<WCFKey, string>();
 
-#pragma warning disable 56506 // [....], endpoint.Contract is never null
+#pragma warning disable 56506 // Microsoft, endpoint.Contract is never null
             foreach (OperationDescription od in endpoint.Contract.Operations)
 #pragma warning restore 56506
             {
@@ -156,7 +156,7 @@ namespace System.ServiceModel.Dispatcher
             }
             bool uriMatched;
             string result = this.SelectOperation(ref message, out uriMatched);
-#pragma warning disable 56506 // [....], Message.Properties is never null
+#pragma warning disable 56506 // Microsoft, Message.Properties is never null
             message.Properties.Add(HttpOperationSelectorUriMatchedPropertyName, uriMatched);
 #pragma warning restore 56506
             if (result != null)
@@ -164,7 +164,7 @@ namespace System.ServiceModel.Dispatcher
                 message.Properties.Add(HttpOperationNamePropertyName, result);
                 if (DiagnosticUtility.ShouldTraceInformation)
                 {
-#pragma warning disable 56506 // [....], Message.Headers is never null
+#pragma warning disable 56506 // Microsoft, Message.Headers is never null
                     TraceUtility.TraceEvent(TraceEventType.Information, TraceCode.WebRequestMatchesOperation, SR2.GetString(SR2.TraceCodeWebRequestMatchesOperation, message.Headers.To, result));
 #pragma warning restore 56506
                 }
@@ -186,7 +186,7 @@ namespace System.ServiceModel.Dispatcher
                 return this.catchAllOperationName;
             }
 
-#pragma warning disable 56506 // [....], message.Properties is never null
+#pragma warning disable 56506 // Microsoft, message.Properties is never null
             if (!message.Properties.ContainsKey(HttpRequestMessageProperty.Name))
             {
                 return this.catchAllOperationName;

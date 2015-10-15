@@ -711,7 +711,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
 
         // Hack to deal with {x:Static ...} extensions.  The Cider Markup code currently
         // replaces all StaticExtensions with internal versions of the same class.
-        // Once bug 100647 is fixed this code can go away.
+        // Once 
         private static bool IsStaticExtension(Type type) 
         {
             return type != null && (

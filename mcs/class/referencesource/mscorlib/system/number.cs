@@ -533,9 +533,6 @@ namespace System {
             return true;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         private static Boolean IsWhite(char ch) {
             return (((ch) == 0x20) || ((ch) >= 0x09 && (ch) <= 0x0D));
         }
@@ -665,9 +662,6 @@ namespace System {
         }
 
         [System.Security.SecurityCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         private unsafe static char * MatchChars(char* p, string str) {
             fixed (char* stringPointer = str) {
                 return MatchChars(p, stringPointer);

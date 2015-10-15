@@ -2,7 +2,7 @@
 // <copyright file="Processor.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -185,7 +185,6 @@ namespace System.Xml.Xsl.XsltOld {
             this.sortArray.Add(sortinfo);
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         internal void InitSortArray() {
             if (this.sortArray == null) {
                 this.sortArray = new ArrayList();
@@ -343,7 +342,6 @@ namespace System.Xml.Xsl.XsltOld {
             this.PushActionFrame(this.rootAction, /*nodeSet:*/null);
         }
 
-        [System.Runtime.TargetedPatchingOptOutAttribute("Performance critical to inline across NGen image boundaries")]
         public ReaderOutput StartReader() {
             ReaderOutput output = new ReaderOutput(this);
             this.builder = new RecordBuilder(output, this.nameTable);

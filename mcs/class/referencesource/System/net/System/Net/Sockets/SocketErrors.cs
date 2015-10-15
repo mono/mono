@@ -333,7 +333,7 @@ namespace System.Net.Sockets {
        // WSAEREMOTE             = (10000+71),
         /// <devdoc>
         ///    <para>
-        ///       G----ful shutdown in progress.
+        ///       Graceful shutdown in progress.
         ///    </para>
         /// </devdoc>
         Disconnecting             = (10000+101), //WSAEDISCON

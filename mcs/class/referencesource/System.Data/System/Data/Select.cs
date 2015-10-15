@@ -2,9 +2,9 @@
 // <copyright file="Select.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -52,7 +52,7 @@ namespace System.Data {
             return ((op >= Operators.EqualTo && op <= Operators.LessOrEqual) || op == Operators.Is || op == Operators.IsNot);
         }
 
-        // [....] : Gathers all linear expressions in to this.linearExpression and all binary expressions in to their respective candidate columns expressions
+        // Microsoft : Gathers all linear expressions in to this.linearExpression and all binary expressions in to their respective candidate columns expressions
         private void AnalyzeExpression(BinaryNode expr) {
             if (this.linearExpression == this.expression)
                 return;
@@ -355,7 +355,7 @@ namespace System.Data {
                         matchedCandidates = 0;
                         if (this.linearExpression != this.expression) {
                             IndexField[] fields = index.IndexFields;
-                            while (matchedCandidates < j) { // [....] : j = index.IndexDesc.Length
+                            while (matchedCandidates < j) { // Microsoft : j = index.IndexDesc.Length
                                 ColumnInfo canColumn = candidateColumns[fields[matchedCandidates].Column.Ordinal];
                                 if (canColumn == null || canColumn.expr == null)
                                     break;
@@ -417,7 +417,7 @@ namespace System.Data {
                     }
                 }
             }
-//            Debug.Assert(this.linearExpression != null, "BuildLinearExpression : How come there is nothing to search linearly"); bug 97446
+//            Debug.Assert(this.linearExpression != null, "BuildLinearExpression : How come there is nothing to search linearly"); 
         }
 
         public DataRow[] SelectRows() {
@@ -459,7 +459,7 @@ namespace System.Data {
                 return table.NewRowArray(0);
 
             Range range;
-            if (matchedCandidates == 0) { // [....] : Either dont have rowFilter or only linear search expression
+            if (matchedCandidates == 0) { // Microsoft : Either dont have rowFilter or only linear search expression
                 range = new Range(0, index.RecordCount-1);
                 Debug.Assert(!needSorting, "What are we doing here if no real reuse of this index ?");
                 this.linearExpression = this.expression;

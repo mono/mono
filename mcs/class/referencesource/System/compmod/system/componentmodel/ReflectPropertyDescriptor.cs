@@ -1116,7 +1116,6 @@ namespace System.ComponentModel {
 
                 object invokee = GetInvocationTarget(componentClass, component);
 
-                Debug.Assert(!IsReadOnly, "SetValue attempted on read-only property [" + Name + "]");
                 if (!IsReadOnly) {
 
                     // Announce that we are about to change this component

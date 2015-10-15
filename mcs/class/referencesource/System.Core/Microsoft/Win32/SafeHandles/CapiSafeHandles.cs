@@ -18,21 +18,27 @@ namespace Microsoft.Win32.SafeHandles {
     /// <summary>
     ///     SafeHandle for buffers returned by the Axl APIs
     /// </summary>
+#if !FEATURE_CORESYSTEM
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
     [System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
     internal sealed class SafeAxlBufferHandle : SafeHandleZeroOrMinusOneIsInvalid {
         private SafeAxlBufferHandle() : base(true) {
             return;
         }
 
         [DllImport("kernel32")]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         private static extern IntPtr GetProcessHeap();
 
         [DllImport("kernel32")]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool HeapFree(IntPtr hHeap, int dwFlags, IntPtr lpMem);
@@ -53,26 +59,43 @@ namespace Microsoft.Win32.SafeHandles {
     ///     maintains a native refcount on its parent HCRYPTPROV to ensure that if the corresponding
     ///     SafeCspKeyHandle is finalized first CAPI still keeps the provider alive.
     /// </summary>
+#if FEATURE_CORESYSTEM
+    [System.Security.SecurityCritical]
+#else
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
     [SecurityCritical(SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
     internal abstract class SafeCapiHandleBase : SafeHandleZeroOrMinusOneIsInvalid {
         private IntPtr m_csp;
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
         internal SafeCapiHandleBase() : base(true) {
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [DllImport("advapi32", SetLastError = true)]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptContextAddRef(IntPtr hProv,
                                                       IntPtr pdwReserved,
                                                       int dwFlags);
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [DllImport("advapi32")]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptReleaseContext(IntPtr hProv, int dwFlags);
@@ -81,7 +104,9 @@ namespace Microsoft.Win32.SafeHandles {
         protected IntPtr ParentCsp {
             get { return m_csp; }
 
+#if !FEATURE_CORESYSTEM
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)] 
+#endif
             set {
                 // We should not be resetting the parent CSP if it's already been set once - that will
                 // lead to leaking the original handle.
@@ -108,7 +133,12 @@ namespace Microsoft.Win32.SafeHandles {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+#endif
         internal void SetParentCsp(SafeCspHandle parentCsp) {
             bool addedRef = false;
             RuntimeHelpers.PrepareConstrainedRegions();
@@ -124,8 +154,14 @@ namespace Microsoft.Win32.SafeHandles {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         protected abstract bool ReleaseCapiChildHandle();
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         protected override sealed bool ReleaseHandle() {
             // Order is important here - we must destroy the child handle before the parent CSP
             bool destroyedChild = ReleaseCapiChildHandle();
@@ -142,10 +178,17 @@ namespace Microsoft.Win32.SafeHandles {
     /// <summary>
     ///     SafeHandle for CAPI hash algorithms (HCRYPTHASH)
     /// </summary>
+#if FEATURE_CORESYSTEM
+    [System.Security.SecurityCritical]
+#else
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
     [System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
     internal sealed class SafeCapiHashHandle : SafeCapiHandleBase {
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         private SafeCapiHashHandle() {
         }
 
@@ -160,12 +203,20 @@ namespace Microsoft.Win32.SafeHandles {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [DllImport("advapi32")]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptDestroyHash(IntPtr hHash);
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         protected override bool ReleaseCapiChildHandle() {
             return CryptDestroyHash(handle);
         }
@@ -174,10 +225,17 @@ namespace Microsoft.Win32.SafeHandles {
     /// <summary>
     ///     SafeHandle for CAPI keys (HCRYPTKEY)
     /// </summary>
+#if FEATURE_CORESYSTEM
+    [System.Security.SecurityCritical]
+#else
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
     [System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
     internal sealed class SafeCapiKeyHandle : SafeCapiHandleBase {
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         private SafeCapiKeyHandle()  {
         }
 
@@ -194,7 +252,11 @@ namespace Microsoft.Win32.SafeHandles {
         }
 
         [DllImport("advapi32")]
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#else
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptDestroyKey(IntPtr hKey);
@@ -203,6 +265,9 @@ namespace Microsoft.Win32.SafeHandles {
         ///     Make a copy of this key handle
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")] 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         internal SafeCapiKeyHandle Duplicate() {
             Contract.Requires(!IsInvalid && !IsClosed);
             Contract.Ensures(Contract.Result<SafeCapiKeyHandle>() != null && !Contract.Result<SafeCapiKeyHandle>().IsInvalid && !Contract.Result<SafeCapiKeyHandle>().IsClosed);
@@ -224,6 +289,9 @@ namespace Microsoft.Win32.SafeHandles {
             return duplicate;
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         protected override bool ReleaseCapiChildHandle() {
             return CryptDestroyKey(handle);
         }
@@ -232,26 +300,43 @@ namespace Microsoft.Win32.SafeHandles {
     /// <summary>
     ///     SafeHandle for crypto service providers (HCRYPTPROV)
     /// </summary>
+#if FEATURE_CORESYSTEM
+    [System.Security.SecurityCritical]
+#else
 #pragma warning disable 618    // Have not migrated to v4 transparency yet
     [System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Everything)]
 #pragma warning restore 618
+#endif
     internal sealed class SafeCspHandle : SafeHandleZeroOrMinusOneIsInvalid {
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         private SafeCspHandle() : base(true) {
             return;
         }
 
         [DllImport("advapi32", SetLastError = true)]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptContextAddRef(SafeCspHandle hProv,
                                                      IntPtr pdwReserved,
                                                      int dwFlags);
 
         [DllImport("advapi32")]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [SuppressUnmanagedCodeSecurity]
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptReleaseContext(IntPtr hProv, int dwFlags);
 
@@ -259,6 +344,9 @@ namespace Microsoft.Win32.SafeHandles {
         ///     Create a second SafeCspHandle which refers to the same HCRYPTPROV
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")] 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         public SafeCspHandle Duplicate() {
             Contract.Requires(!IsInvalid && !IsClosed);
 
@@ -308,6 +396,9 @@ namespace Microsoft.Win32.SafeHandles {
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [System.Security.SecurityCritical]
+#endif
         protected override bool ReleaseHandle() {
             return CryptReleaseContext(handle, 0);
         }

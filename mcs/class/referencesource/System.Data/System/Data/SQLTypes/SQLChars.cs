@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 //  </copyright>																
 // <owner current="true" primary="true">junfang</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 //**************************************************************************
@@ -28,16 +28,16 @@
 //     112296 AZA  07/06/02 Seal SqlAccess classes.
 //     107151 AZA  04/18/02 Track byte array buffer as well as SqlBytes in 
 //                          sqlaccess.
-//     107216 JXF  04/17/02 Bug 514927
-//     106854 JXF  04/15/02 Fix http suites due to SqlChars
-//     106448 JXF  04/12/02 Bugs on sqlchars
-//     105715 JXF  04/05/02 Handle NULL properly in SqlBytes.SetLength
-//     91128 JXF  10/17/01 Make SqlBytes not unsafe
-//
-//   04/20/01  JunFang	Created.
-//
-// @EndHeader@
-//**************************************************************************
+//     107216 JXF  04/17/02 
+
+
+
+
+
+
+
+
+
 
 
 namespace System.Data.SqlTypes {

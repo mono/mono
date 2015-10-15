@@ -357,6 +357,17 @@ namespace System.Web {
         [DllImport(ModName.KERNEL32_FULL_NAME)]
         internal static extern IntPtr GetCurrentThread();
 
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/aa366569(v=vs.85).aspx
+        [DllImport(ModName.KERNEL32_FULL_NAME, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+        internal static extern IntPtr GetProcessHeap();
+
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/aa366701(v=vs.85).aspx
+        [DllImport(ModName.KERNEL32_FULL_NAME, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+        internal static extern bool HeapFree(
+            [In] IntPtr hHeap,
+            [In] uint dwFlags,
+            [In] IntPtr lpMem);
+
         /*
          * webengine.dll
          */
@@ -652,7 +663,7 @@ namespace System.Web {
         // List of functions supported by PMCallISAPI
         //
         // ATTENTION!!
-        // If you change this list, make sure it is in [....] with the
+        // If you change this list, make sure it is in sync with the
         // CallISAPIFunc enum in ecbdirect.h
         //
         internal enum CallISAPIFunc : int {

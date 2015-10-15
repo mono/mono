@@ -101,6 +101,9 @@ namespace System.Web.Hosting {
         private readonly object _disposeLockObj = new object();
         private CancellationTokenHelper _clientDisconnectTokenHelper;
 
+        private static IAllocatorProvider s_DefaultAllocator;
+        private IAllocatorProvider _allocator;
+
         internal IIS7WorkerRequest(IntPtr requestContext, bool etwProviderEnabled) {
 
             PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TOTAL);
@@ -1100,6 +1103,46 @@ namespace System.Web.Hosting {
             get { return _traceId; }
         }
 
+        internal void PushPromise(string virtualPath, string queryString, string method, NameValueCollection headers) {
+            // 
+            // Convert NameValueCollection collection into string arrays
+            // Headers (name/value) are expected to be US-ASCII only. Caller should encode accordingly
+            string[] headerNames = null;
+            string[] headerValues = null;
+            int headerCount = 0;
+
+            if (headers != null && headers.Count > 0) {
+                headerCount = headers.Count;
+                headerNames = headers.AllKeys;
+                headerValues = new string[headerCount];
+
+                for (int i = 0; i < headerCount; ++i) {
+                    headerValues[i] = headers.Get(i);
+                }
+            }
+
+
+            int result = IIS.MgdPushPromise(_context,
+                                            virtualPath,
+                                            queryString,
+                                            method,
+                                            headerCount,
+                                            headerNames,
+                                            headerValues);
+
+            // 
+
+
+
+            // Check if PushPromise is supported on this platform
+            if (result == HResults.E_NOTIMPL) {
+                throw new PlatformNotSupportedException();
+            }
+
+            // Propagate unknown native error
+            Misc.ThrowIfFailedHr(result);
+        }
+
         internal unsafe HTTP_COOKED_URL* GetCookedUrl() {
             return (HTTP_COOKED_URL*)_pCookedUrl;
         }
@@ -1303,13 +1346,13 @@ namespace System.Web.Hosting {
                     numFragments = _cachedResponseBodyBytes.Count;
 
                     fragments =
-                        RecyclableArrayHelper.GetIntPtrArray(numFragments);
+                        AllocatorProvider.IntPtrBufferAllocator.GetBuffer(numFragments);
 
                     fragmentLengths =
-                        RecyclableArrayHelper.GetIntegerArray(numFragments);
+                        AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
                     bodyFragmentTypes =
-                        RecyclableArrayHelper.GetIntegerArray(numFragments);
+                        AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
                     for ( int i = 0; i < numFragments; i++ ) {
                         MemoryBytes bytes =
@@ -1337,7 +1380,7 @@ namespace System.Web.Hosting {
                 }
 
                 // send to unmanaged code
-                // sends are always [....] now since they're buffered by IIS
+                // sends are always sync now since they're buffered by IIS
                 FlushCore(true,
                           numFragments,
                           fragments,
@@ -1349,9 +1392,9 @@ namespace System.Web.Hosting {
                 UnlockCachedResponseBytes();
 
                 // recycle buffers
-                RecyclableArrayHelper.ReuseIntPtrArray(fragments);
-                RecyclableArrayHelper.ReuseIntegerArray(fragmentLengths);
-                RecyclableArrayHelper.ReuseIntegerArray(bodyFragmentTypes);
+                AllocatorProvider.IntPtrBufferAllocator.ReuseBuffer(fragments);
+                AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentLengths);
+                AllocatorProvider.IntBufferAllocator.ReuseBuffer(bodyFragmentTypes);
             }
         }
 
@@ -1653,13 +1696,13 @@ namespace System.Web.Hosting {
             int startFragments = numFragments;
 
             fragments =
-                RecyclableArrayHelper.GetIntPtrArray(numFragments);
+                AllocatorProvider.IntPtrBufferAllocator.GetBuffer(numFragments);
 
             fragmentLengths =
-                RecyclableArrayHelper.GetIntegerArray(numFragments);
+                AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
             fragmentTypes =
-                RecyclableArrayHelper.GetIntegerArray(numFragments);
+                AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
             int result = IIS.MgdGetResponseChunks(
                     _context,
@@ -1680,18 +1723,18 @@ namespace System.Web.Hosting {
                     Debug.Assert(numFragments > startFragments, "numFragments > startFragments");
 
                     // recycle the current stuff
-                    RecyclableArrayHelper.ReuseIntPtrArray(fragments);
-                    RecyclableArrayHelper.ReuseIntegerArray(fragmentLengths);
-                    RecyclableArrayHelper.ReuseIntegerArray(fragmentTypes);
+                    AllocatorProvider.IntPtrBufferAllocator.ReuseBuffer(fragments);
+                    AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentLengths);
+                    AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentTypes);
 
                     fragments =
-                        RecyclableArrayHelper.GetIntPtrArray(numFragments);
+                        AllocatorProvider.IntPtrBufferAllocator.GetBuffer(numFragments);
 
                     fragmentLengths =
-                        RecyclableArrayHelper.GetIntegerArray(numFragments);
+                        AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
                     fragmentTypes =
-                        RecyclableArrayHelper.GetIntegerArray(numFragments);
+                        AllocatorProvider.IntBufferAllocator.GetBuffer(numFragments);
 
                     result = IIS.MgdGetResponseChunks(
                         _context,
@@ -1845,9 +1888,9 @@ namespace System.Web.Hosting {
             }
 
             // recycle the arrays
-            RecyclableArrayHelper.ReuseIntPtrArray(fragments);
-            RecyclableArrayHelper.ReuseIntegerArray(fragmentLengths);
-            RecyclableArrayHelper.ReuseIntegerArray(fragmentTypes);
+            AllocatorProvider.IntPtrBufferAllocator.ReuseBuffer(fragments);
+            AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentLengths);
+            AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentTypes);
 
             return buffers;
         }
@@ -2274,11 +2317,11 @@ namespace System.Web.Hosting {
             return isInRole;
         }
 
-        // Windows OS Bug 1726303 was "fixed" by changing SynchronizeVariables
-        // to only synchronize the IPrincipal/IHttpUser if Windows authentication
-        // was enabled.  This is incorrect behavior; for example, suppose a forms
-        // authenticated request calls TransferRequest and passes the parent IPrincipal to a
-        // child request.
+        // Windows OS 
+
+
+
+
         private static bool IsAuthenticationEnabled {
             get {
                 if (!s_AuthenticationChecked) {
@@ -2468,6 +2511,29 @@ namespace System.Web.Hosting {
             _clientCertValidUntil = (notAfter != 0) ? DateTime.FromFileTime(notAfter) : DateTime.Now;
         }
 
+        internal ITlsTokenBindingInfo GetTlsTokenBindingInfo() {
+            TlsTokenBindingHandle handle = new TlsTokenBindingHandle(_context);
+            if (handle.IsInvalid) {
+                // The client doesn't support this, the server doesn't support this,
+                // or the client and the server haven't agreed on this protocol.
+                return null;
+            }
+
+            byte[] providedToken, referredToken;
+            using (handle) {
+                providedToken = handle.GetProvidedToken();
+                referredToken = handle.GetReferredToken();
+            }
+
+            // Only return an info object if we have any non-empty data to provide.
+            if (providedToken != null || referredToken != null) {
+                return new TlsTokenBindingInfo(providedToken, referredToken);
+            }
+            else {
+                return null;
+            }
+        }
+
         public override String MapPath(String path)
         {
             return HostingEnvironment.MapPathInternal(path);
@@ -2557,5 +2623,30 @@ namespace System.Web.Hosting {
             return isChildRequest;
         }
 
+        internal IAllocatorProvider AllocatorProvider {
+            private get {
+                if (_allocator == null) {
+                    if (s_DefaultAllocator == null) {
+                        // Create default static allocator
+                        IBufferAllocator intAllocator = new IntegerArrayAllocator(BufferingParams.INT_BUFFER_SIZE, BufferingParams.MAX_FREE_OUTPUT_BUFFERS);
+                        IBufferAllocator intPtrAllocator = new IntPtrArrayAllocator(BufferingParams.INTPTR_BUFFER_SIZE, BufferingParams.MAX_FREE_OUTPUT_BUFFERS);
+
+                        AllocatorProvider alloc = new AllocatorProvider();
+                        alloc.IntBufferAllocator = new BufferAllocatorWrapper<int>(intAllocator);
+                        alloc.IntPtrBufferAllocator = new BufferAllocatorWrapper<IntPtr>(intPtrAllocator);
+
+                        Interlocked.CompareExchange(ref s_DefaultAllocator, alloc, null);
+                    }
+
+                    _allocator = s_DefaultAllocator;
+                }
+
+                return _allocator;
+            }
+
+            set {
+                _allocator = value;
+            }
+        }
     }
 }

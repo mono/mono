@@ -7,7 +7,7 @@
 /*
  */
 
-// SECREVIEW: Remove this attribute once bug#411889 is fixed.
+// SECREVIEW: Remove this attribute once 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2113:SecureLateBindingMethods", Scope="member", Target="System.ComponentModel.InstallerTypeAttribute.get_InstallerType():System.Type")]
 
 namespace System.ComponentModel {

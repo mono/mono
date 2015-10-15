@@ -17,7 +17,7 @@ namespace System.Data.Linq {
         internal static readonly IEnumerable<T> Assigned = (IEnumerable<T>)new T[] { };
     }
 
-    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "[....]: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
+    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Microsoft: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
     public struct Link<T> {
         T underlyingValue;
         IEnumerable<T> source;
@@ -80,7 +80,7 @@ namespace System.Data.Linq {
         }
     }
 
-    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification="[....]: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
+    [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification="Microsoft: Types are never compared to each other.  When comparisons happen it is against the entities that are represented by these constructs.")]
     public struct EntityRef<TEntity>
         where TEntity : class {
         IEnumerable<TEntity> source;
@@ -146,7 +146,7 @@ namespace System.Data.Linq {
         }
     }
 
-    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="[....]: Naming chosen to represent a different concept from a collection because it is delayed loaded.")]
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification="Microsoft: Naming chosen to represent a different concept from a collection because it is delayed loaded.")]
     public sealed class EntitySet<TEntity> : IList, IList<TEntity>, IListSource
         where TEntity : class {
         IEnumerable<TEntity> source;
@@ -213,7 +213,7 @@ namespace System.Data.Linq {
             }
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "[....]: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "Microsoft: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
         public void Add(TEntity entity) {
             if (entity == null) {
                 throw Error.ArgumentNull("entity");
@@ -279,7 +279,7 @@ namespace System.Data.Linq {
             OnListChanged(ListChangedType.Reset, 0);
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "[....]: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "Microsoft: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
         public bool Contains(TEntity entity) {
             return IndexOf(entity) >= 0;
         }
@@ -311,13 +311,13 @@ namespace System.Data.Linq {
             }
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "[....]: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "Microsoft: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
         public int IndexOf(TEntity entity) {
             Load();
             return entities.IndexOf(entity);
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "[....]: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "Microsoft: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
         public void Insert(int index, TEntity entity) {
             Load();
             if (index < 0 || index > Count)
@@ -406,7 +406,7 @@ namespace System.Data.Linq {
             isModified = true;
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "[....]: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
+        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "Microsoft: Naming the parameter entity makes it more discoverable because it is clear what type of data should be added to this collection.")]
         public bool Remove(TEntity entity) {
             if (entity == null || entity == onRemoveEntity) return false;
             CheckModify();
@@ -758,7 +758,7 @@ namespace System.Data.Linq {
         }
     }
 
-    [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Justification = "[....]: The name clearly describes function and the namespace is under a DLinq namespace which will make the distinction clear.")]
+    [SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces", Justification = "Microsoft: The name clearly describes function and the namespace is under a DLinq namespace which will make the distinction clear.")]
     [DataContract]
     [Serializable]
     public sealed class Binary : IEquatable<Binary> {

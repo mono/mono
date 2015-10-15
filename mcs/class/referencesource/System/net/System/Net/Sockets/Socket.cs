@@ -64,7 +64,7 @@ namespace System.Net.Sockets {
         private SocketType      socketType;
         private ProtocolType    protocolType;
 
-        // These caches are one degree off of Socket since they're not used in the [....] case/when disabled in config.
+        // These caches are one degree off of Socket since they're not used in the sync case/when disabled in config.
         private CacheSet m_Caches;
 
         private class CacheSet
@@ -891,11 +891,11 @@ namespace System.Net.Sockets {
                 //     NetworkAccess.Accept permissions in Receive.
             }
             else {
-                //<STRIP>
-                // for V1 we will demand permission to run UnmanagedCode for
-                // an EndPoint that is not an IPEndPoint until we figure out how these fit
-                // into the whole picture of SocketPermission
-                //</STRIP>
+                //<
+
+
+
+
 
                 ExceptionHelper.UnmanagedPermission.Demand();
             }
@@ -2621,8 +2621,8 @@ namespace System.Net.Sockets {
             // 
             // Negative microsecond values that weren't exactly (-1) were originally successfully 
             // converted to a timeval struct containing unsigned non-zero integers.  This code 
-            // retains that behavior so that any app working around the original bug with, 
-            // for example, (-2) specified for microseconds, will continue to get the same behavior.
+            // retains that behavior so that any app working around the original 
+
 
             int socketCount;
 
@@ -2972,16 +2972,16 @@ namespace System.Net.Sockets {
             }
 
 
-            //<STRIP>
-            // we now need to get the status of the async completion, we had an easy implementation
-            // that uses GetSocketOption(), but VadimE suggested not to use this 'cause it may be
-            // buggy on some platforms, so we use WSAEnumNetworkEvents() instead:
-            //
-            // The best way to do this is to call WSAEnumNetworkEvents and use the error code iError
-            // array corresponding to FD_CONNECT. getsockopt (SO_ERROR) may return NO_ERROR under
-            // stress even in case of error at least on Winnt4.0 (I don't remember whether I fixed
-            // it on Win2000 or WinXP).
-            //</STRIP>
+            //<
+
+
+
+
+
+
+
+
+
 
             //
             // get async completion
@@ -6408,7 +6408,7 @@ namespace System.Net.Sockets {
                 throw;
             }
 
-            // Keep the internal state in [....] if the user manually resets this
+            // Keep the internal state in sync if the user manually resets this
             if (optionName == SocketOptionName.PacketInformation && optionValue == 0 && 
                 errorCode == SocketError.Success)
             {
@@ -6851,9 +6851,9 @@ namespace System.Net.Sockets {
             catch
             {
                 //
-                // Bug 152350: If ConnectEx throws we need to unpin the socketAddress buffer.
-                // m_RightEndPoint will always equal oldEndPoint anyways...
-                //
+                // 
+
+
                 asyncResult.InternalCleanup();
                 m_RightEndPoint = oldEndPoint;
                 throw;
@@ -7634,7 +7634,7 @@ namespace System.Net.Sockets {
             e.StartOperationAccept();
             BindToCompletionPort();
 
-            // Local variables for [....] completion.
+            // Local variables for sync completion.
             int bytesTransferred;
             SocketError socketError = SocketError.Success;
 
@@ -7899,7 +7899,7 @@ namespace System.Net.Sockets {
             e.StartOperationReceive();
             BindToCompletionPort();
 
-            // Local vars for [....] completion of native call.
+            // Local vars for sync completion of native call.
             SocketFlags flags = e.m_SocketFlags;
             int bytesTransferred;
             SocketError socketError;
@@ -8142,7 +8142,7 @@ namespace System.Net.Sockets {
             BindToCompletionPort();
 
             
-            // Local vars for [....] completion of native call.
+            // Local vars for sync completion of native call.
             int bytesTransferred;
             SocketError socketError;
 
@@ -8826,7 +8826,7 @@ namespace System.Net.Sockets {
             
 
 
-        // Method to update internal state after [....] or async completion.
+        // Method to update internal state after sync or async completion.
         internal void SetResults(SocketError socketError, int bytesTransferred, SocketFlags flags) {
             m_SocketError = socketError;
             m_ConnectByNameError = null;

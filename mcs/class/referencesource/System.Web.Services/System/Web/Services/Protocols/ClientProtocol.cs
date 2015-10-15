@@ -90,7 +90,7 @@ namespace System.Web.Services.Protocols {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         protected WebClientProtocol() {
-            this.timeout = 100000; // should be kept in [....] with HttpWebRequest.Timeout default (see private WebRequest.DefaultTimeout)
+            this.timeout = 100000; // should be kept in sync with HttpWebRequest.Timeout default (see private WebRequest.DefaultTimeout)
         }
 
         internal WebClientProtocol(WebClientProtocol protocol) {

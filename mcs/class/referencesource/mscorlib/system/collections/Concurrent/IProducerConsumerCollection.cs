@@ -7,7 +7,7 @@
 //
 // IProducerConsumerCollection.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A common interface for all concurrent collections.
 //

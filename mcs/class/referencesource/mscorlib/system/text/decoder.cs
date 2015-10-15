@@ -219,7 +219,7 @@ namespace System.Text
             // Do the work
             int result = GetChars(arrByte, 0, byteCount, arrChar, 0, flush);
 
-            // The only way this could fail is a bug in GetChars
+            // The only way this could fail is a 
             Contract.Assert(result <= charCount, "Returned more chars than we have space for");
 
             // Copy the char array
@@ -231,7 +231,7 @@ namespace System.Text
                 charCount = result;
 
             // We check both result and charCount so that we don't accidentally overrun
-            // our pointer buffer just because of any GetChars bug.
+            // our pointer buffer just because of any GetChars 
             for (index = 0; index < charCount; index++)
                 chars[index] = arrChar[index];
 

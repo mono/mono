@@ -14,7 +14,6 @@ namespace System.Runtime.Caching {
     internal sealed class MemoryCacheStore : IDisposable {
         const int INSERT_BLOCK_WAIT = 10000;
         const int MAX_COUNT = Int32.MaxValue / 2;
-        const int MIN_COUNT = 10;
 
         private Hashtable _entries;
         private Object _entriesLock;
@@ -140,7 +139,7 @@ namespace System.Runtime.Caching {
                 if (_disposed == 0) {
                     existingEntry = _entries[key] as MemoryCacheEntry;
                     // has it expired?
-                    if (existingEntry != null && entry.UtcAbsExp <= DateTime.UtcNow) {
+                    if (existingEntry != null && existingEntry.UtcAbsExp <= DateTime.UtcNow) {
                         toBeReleasedEntry = existingEntry;
                         toBeReleasedEntry.State = EntryState.RemovingFromCache;
                         existingEntry = null;
@@ -300,20 +299,17 @@ namespace System.Runtime.Caching {
         }
 
         internal long TrimInternal(int percent) {
+            Dbg.Assert(percent <= 100, "percent <= 100");
+
             int count = Count;
             int toTrim = 0;
             // do we need to drop a percentage of entries?
             if (percent > 0) {
-                toTrim = (int)(((long)count * (long)percent) / 100L);
+                toTrim = (int)Math.Ceiling(((long)count * (long)percent) / 100D);
                 // would this leave us above MAX_COUNT?
                 int minTrim = count - MAX_COUNT;
                 if (toTrim < minTrim) {
                     toTrim = minTrim;
-                }
-                // would this put us below MIN_COUNT?
-                int maxTrim = count - MIN_COUNT;
-                if (toTrim > maxTrim) {
-                    toTrim = maxTrim;
                 }
             }
             // do we need to trim?

@@ -2,8 +2,8 @@
 // <copyright file="OdbcParameter.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 
@@ -326,12 +326,12 @@ namespace System.Data.Odbc {
                             // the following code causes failure against SQL 6.5
                             // ERROR [HY104] [Microsoft][ODBC SQL Server Driver]Invalid precision value
                             //
-                            // the code causes failure if it is NOT there (remark added by [....])
+                            // the code causes failure if it is NOT there (remark added by Microsoft)
                             // it causes failure with jet if it is there
                             //
                             // MDAC 76227: Code is required for japanese client/server tests.
-                            // If this causes regressions with Jet please doc here including bug#. ([....])
-                            //
+                            // If this causes regressions with Jet please doc here including 
+
                             if ((ODBC32.SQL_TYPE.CHAR == _bindtype._sql_type)
                                 || (ODBC32.SQL_TYPE.VARCHAR == _bindtype._sql_type)
                                 || (ODBC32.SQL_TYPE.LONGVARCHAR == _bindtype._sql_type)) {
@@ -707,8 +707,8 @@ namespace System.Data.Odbc {
             if (ODBC32.SQL_C.NUMERIC == sql_c_type) {
 
                 // for input/output parameters we need to adjust the scale of the input value since the convert function in
-                // sqlsrv32 takes this scale for the output parameter (possible bug in sqlsrv32?)
-                //
+                // sqlsrv32 takes this scale for the output parameter (possible 
+
                 if ((ODBC32.SQL_PARAM.INPUT_OUTPUT == sqldirection) && (value is Decimal)) {
                     if (scale < _internalScale) {
                         while (scale < _internalScale) {
@@ -720,8 +720,8 @@ namespace System.Data.Odbc {
                 SetInputValue(value, sql_c_type, cbValueSize, precision, 0, parameterBuffer);
 
                 // for output parameters we need to write precision and scale to the buffer since the convert function in
-                // sqlsrv32 expects these values there (possible bug in sqlsrv32?)
-                //
+                // sqlsrv32 expects these values there (possible 
+
                 if (ODBC32.SQL_PARAM.INPUT != sqldirection) {
                     parameterBuffer.WriteInt16(_preparedValueOffset, (short)(((ushort)scale << 8) | (ushort)precision));
                 }

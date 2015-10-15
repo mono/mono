@@ -111,6 +111,7 @@ namespace System {
         return (m_value==((Boolean)obj).m_value);
       }
 
+      [System.Runtime.Versioning.NonVersionable]
       public bool Equals(Boolean obj)
       {
           return m_value == obj;

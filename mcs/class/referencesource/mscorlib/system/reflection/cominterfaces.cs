@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>WESU</OWNER>
 using System;
 using System.Globalization;
 using System.IO;
@@ -22,6 +22,7 @@ namespace System.Runtime.InteropServices
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Type
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -154,6 +155,7 @@ namespace System.Runtime.InteropServices
         bool IsMarshalByRef { get; }            
         bool Equals(Type o);
         #endregion
+#endif
     }
 
     [GuidAttribute("17156360-2f1a-384a-bc52-fde93c215c5b")]
@@ -163,6 +165,7 @@ namespace System.Runtime.InteropServices
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Assembly
     {
+#if !FEATURE_CORECLR
         #region Object Members
         String ToString();
         bool Equals(Object other);
@@ -239,6 +242,7 @@ get; }
         AssemblyName[] GetReferencedAssemblies();
         bool GlobalAssemblyCache { get; }
         #endregion
+#endif
     }
 
 
@@ -249,6 +253,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _MemberInfo
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -272,6 +277,7 @@ get; }
         Object[] GetCustomAttributes(bool inherit);
         bool IsDefined(Type attributeType, bool inherit);
         #endregion
+#endif
     }
 
 
@@ -282,6 +288,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _MethodBase
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -328,6 +335,7 @@ get; }
         bool IsConstructor { get; }      
         Object Invoke(Object obj, Object[] parameters);        
         #endregion
+#endif
     }
 
 
@@ -338,6 +346,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _MethodInfo
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -390,6 +399,7 @@ get; }
         ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
         MethodInfo GetBaseDefinition();
         #endregion
+#endif
     }
         
 
@@ -400,6 +410,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _ConstructorInfo
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -451,6 +462,7 @@ get; }
         Object Invoke_4(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture);
         Object Invoke_5(Object[] parameters);
         #endregion
+#endif
     }
 
 
@@ -461,6 +473,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _FieldInfo
     {        
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -507,6 +520,7 @@ get; }
         bool IsSpecialName { get; }
         bool IsPinvokeImpl { get; }
         #endregion
+#endif
     }
 
     
@@ -517,6 +531,7 @@ get; }
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _PropertyInfo
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -559,6 +574,7 @@ get; }
         MethodInfo GetSetMethod();
         bool IsSpecialName { get; }
         #endregion
+#endif
     }
 
 
@@ -569,6 +585,7 @@ get; }
     [System.Runtime.InteropServices.ComVisible(true)]
     public interface _EventInfo
     {
+#if !FEATURE_CORECLR
         #region IDispatch Members
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
@@ -607,6 +624,7 @@ get; }
         bool IsSpecialName { get; }        
         bool IsMulticast { get; }
         #endregion
+#endif
     }
 
     [GuidAttribute("993634C4-E47A-32CC-BE08-85F567DC27D6")]
@@ -616,10 +634,12 @@ get; }
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _ParameterInfo
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 
     [GuidAttribute("D002E9BA-D9E3-3749-B1D3-D565A08B13E7")]
@@ -629,10 +649,12 @@ get; }
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _Module
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 
     [GuidAttribute("B42B6AAC-317E-34D5-9FA9-093BB4160C50")]
@@ -642,10 +664,12 @@ get; }
 [System.Runtime.InteropServices.ComVisible(true)]
     public interface _AssemblyName
     {
+#if !FEATURE_CORECLR
         void GetTypeInfoCount(out uint pcTInfo);
         void GetTypeInfo(uint iTInfo, uint lcid, IntPtr ppTInfo);
         void GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
         void Invoke(uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+#endif
     }
 }
 

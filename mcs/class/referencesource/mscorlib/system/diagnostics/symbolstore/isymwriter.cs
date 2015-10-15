@@ -98,8 +98,8 @@ namespace System.Diagnostics.SymbolStore {
         //
         // Note: scope id's are only valid in the current method.
         //
-        // <
-
+        // <TODO>@todo: should we require that startOffset and endOffset for
+        // scopes also be defined as sequence points?</TODO>
         #if FEATURE_CORECLR
         [System.Security.SecurityCritical] // auto-generated
         #endif

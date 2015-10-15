@@ -10,9 +10,9 @@ namespace System.Web.UI.WebControls.Adapters {
     using System.Web.UI.Adapters;
     using System.Web.UI.WebControls;
 
-    // 
-
-
+    // REVIEW: Inheritance.  If this inherits from ImageButtonAdapter, there is no way to create a
+    // WmlImageAdapter and set the Control property to delegate rendering (base.Render, below). Control is read-only. 
+    // Maybe Control should be get/set for this situation.
     public class WmlImageButtonAdapter : WmlImageAdapter {
 
         protected new ImageButton Control {
@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls.Adapters {
                 postUrl = Control.ResolveClientUrl (Control.PostBackUrl);
             }
 
-            // 
+            // UNDONE: Replace hard coded string indexer with strongly typed capability.
             if (Page != null && Page.Request != null && (String)Page.Request.Browser["supportsImageSubmit"] == "false") {
                 writer.EnterStyle(Control.ControlStyle);
 

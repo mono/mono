@@ -555,12 +555,20 @@ namespace System.Net {
             if(Logging.On)Logging.Enter(Logging.Web, this, "GetResponse", "");
             if(Logging.On)Logging.PrintInfo(Logging.Web, this, "GetResponse", SR.GetString(SR.net_log_method_equal, m_MethodInfo.Method));
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse");
+            if (FrameworkEventSource.Log.IsEnabled()) {
+                LogBeginGetResponse(success: true, synchronous: true);
+            }
 
+            bool success = false;
+            int statusCode = -1;
             try {
                 CheckError();
 
-                if (m_FtpWebResponse != null)
+                if (m_FtpWebResponse != null) {
+                    success = true;
+                    statusCode = GetStatusCode(m_FtpWebResponse);
                     return m_FtpWebResponse;
+                }
 
                 if (m_GetResponseStarted) {
                     throw new InvalidOperationException(SR.GetString(SR.net_repcall));
@@ -607,9 +615,10 @@ namespace System.Net {
                                 webException.InternalStatus);
                         }
                         SetException(webException);
+                        statusCode = GetStatusCode(webException);
                         throw webException;
                     }
-                    // Catch added to address Bug # 545645
+                    // Catch added to address 
                     catch (InvalidOperationException invalidOpException)
                     {
                         SetException(invalidOpException);
@@ -657,7 +666,18 @@ namespace System.Net {
                             FinishRequestStage(RequestStage.ReleaseConnection);
                     }
                 }
-            } catch (Exception exception) {
+
+                statusCode = GetStatusCode(m_FtpWebResponse);
+                success = true;
+            }
+            catch (Exception exception) {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    WebException webException = exception as WebException;
+                    if (webException != null) {
+                        statusCode = GetStatusCode(webException);        
+                    }
+                }
+
                 if(Logging.On)Logging.Exception(Logging.Web, this, "GetResponse", exception);
 
                 // if m_Exception == null, we are about to throw an exception to the user
@@ -677,6 +697,9 @@ namespace System.Net {
 
                 GlobalLog.Leave("FtpWebRequest#" + ValidationHelper.HashString(this) + "::GetResponse", "returns #"+ValidationHelper.HashString(m_FtpWebResponse));
                 if(Logging.On)Logging.Exit(Logging.Web, this, "GetResponse", "");
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetResponse(success, synchronous: true, statusCode: statusCode);
+                }
             }
             return m_FtpWebResponse;
         }
@@ -693,7 +716,8 @@ namespace System.Net {
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse");
 
             ContextAwareResult asyncResult;
-
+            bool success = true;
+            
             try {
                 if (m_FtpWebResponse != null)
                 {
@@ -758,19 +782,16 @@ namespace System.Net {
                     }
                 }
             } catch (Exception exception) {
+                success = false;
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetResponse", exception);
                 throw;
             } finally {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogBeginGetResponse(success, synchronous: false);
+                }
                 GlobalLog.Leave("FtpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetResponse");
                 if(Logging.On)Logging.Exit(Logging.Web, this, "BeginGetResponse", "");
             }
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetResponse(suri);
 
             return asyncResult;
         }
@@ -783,6 +804,8 @@ namespace System.Net {
             if(Logging.On)Logging.Enter(Logging.Web, this, "EndGetResponse", "");
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse");
 
+            bool success = false;
+            int statusCode = -1;
             try {
                 // parameter validation
                 if (asyncResult==null) {
@@ -805,16 +828,18 @@ namespace System.Net {
                         if (m_FtpWebResponse == null)
                         {
                             m_FtpWebResponse = new FtpWebResponse((HttpWebResponse)GetHttpWebRequest().EndGetResponse(asyncResult));
+                            statusCode = GetStatusCode(m_FtpWebResponse);
                         }
                     } catch (WebException webException) {
+                        statusCode = GetStatusCode(webException);
                         if (webException.Response != null &&
                             webException.Response is HttpWebResponse)
                         {
                             throw new WebException(webException.Message,
-                                                   null,
-                                                   webException.Status,
-                                                   new FtpWebResponse((HttpWebResponse)webException.Response),
-                                                   webException.InternalStatus);
+                                                    null,
+                                                    webException.Status,
+                                                    new FtpWebResponse((HttpWebResponse)webException.Response),
+                                                    webException.InternalStatus);
                         }
                         throw;
                     }
@@ -824,15 +849,26 @@ namespace System.Net {
                     castedAsyncResult.EndCalled = true;
                     CheckError();
                 }
-            } catch (Exception exception) {
+
+                success = true;
+            }
+            catch (Exception exception) {
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    WebException webException = exception as WebException;
+                    if (webException != null) {
+                        statusCode = GetStatusCode(webException);
+                    }
+                }
+
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetResponse", exception);
                 throw;
             } finally {
                 GlobalLog.Leave("FtpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetResponse");
                 if(Logging.On)Logging.Exit(Logging.Web, this, "EndGetResponse", "");
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetResponse(success, synchronous: false, statusCode: statusCode);
+                }
             }
-
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetResponse();
 
             return m_FtpWebResponse;
         }
@@ -845,7 +881,11 @@ namespace System.Net {
             if(Logging.On)Logging.Enter(Logging.Web, this, "GetRequestStream", "");
             if(Logging.On)Logging.PrintInfo(Logging.Web, this, "GetRequestStream", SR.GetString(SR.net_log_method_equal, m_MethodInfo.Method));
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream");
+            if (FrameworkEventSource.Log.IsEnabled()) {
+                LogBeginGetRequestStream(success: true, synchronous: true);
+            }
 
+            bool success = false;
             try {
                 if (m_GetRequestStreamStarted) {
                     throw new InvalidOperationException(SR.GetString(SR.net_repcall));
@@ -889,13 +929,17 @@ namespace System.Net {
                     m_Stream.WriteTimeout = ReadWriteTimeout;
                     m_Stream.ReadTimeout = ReadWriteTimeout;
                 }
+
+                success = true;
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "GetRequestStream", exception);
                 throw;
             } finally {
-
                 GlobalLog.Leave("FtpWebRequest#" + ValidationHelper.HashString(this) + "::GetRequestStream");
                 if(Logging.On)Logging.Exit(Logging.Web, this, "GetRequestStream", "");
+                if (FrameworkEventSource.Log.IsEnabled()) {
+                    LogEndGetRequestStream(success, synchronous: true);
+                }
             }
             return m_Stream;
         }
@@ -910,7 +954,7 @@ namespace System.Net {
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream");
 
             ContextAwareResult asyncResult = null;
-
+            bool success = false;
             try {
                 if (m_GetRequestStreamStarted) {
                     throw new InvalidOperationException(SR.GetString(SR.net_repcall));
@@ -939,21 +983,19 @@ namespace System.Net {
                         FinishRequestStage(RequestStage.CheckForError);
                     }
                 }
+
+                success = true;
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "BeginGetRequestStream", exception);
                 throw;
             } finally {
-
+                
+                if (FrameworkEventSource.Log.IsEnabled()){
+                    LogBeginGetRequestStream(success, synchronous: false);
+                }
                 GlobalLog.Leave("FtpWebRequest#" + ValidationHelper.HashString(this) + "::BeginGetRequestStream");
                 if(Logging.On)Logging.Exit(Logging.Web, this, "BeginGetRequestStream", "");
             }
-
-            string suri;
-            if (FrameworkEventSource.Log.IsEnabled(EventLevel.Verbose, FrameworkEventSource.Keywords.NetClient))
-                suri = this.RequestUri.ToString();
-            else
-                suri = this.RequestUri.OriginalString;
-            if (FrameworkEventSource.Log.IsEnabled()) LogBeginGetRequestStream(suri);
 
             return asyncResult;
         }
@@ -964,6 +1006,7 @@ namespace System.Net {
             GlobalLog.Enter("FtpWebRequest#" + ValidationHelper.HashString(this) + "::EndGetRequestStream");
 
             Stream requestStream = null;
+            bool success = false;
 
             try {
                 // parameter validation
@@ -995,6 +1038,8 @@ namespace System.Net {
                     requestStream.WriteTimeout = ReadWriteTimeout;
                     requestStream.ReadTimeout = ReadWriteTimeout;
                 }
+
+                success = true;
             } catch (Exception exception) {
                 if(Logging.On)Logging.Exception(Logging.Web, this, "EndGetRequestStream", exception);
                 throw;
@@ -1003,7 +1048,9 @@ namespace System.Net {
                 if(Logging.On)Logging.Exit(Logging.Web, this, "EndGetRequestStream", "");
             }
 
-            if (FrameworkEventSource.Log.IsEnabled()) LogEndGetRequestStream();
+            if (FrameworkEventSource.Log.IsEnabled()) {
+                LogEndGetRequestStream(success, synchronous: false);
+            }
 
             return requestStream;
         }
@@ -1273,7 +1320,7 @@ namespace System.Net {
             }
         }
 
-        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
+        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
         //
         // 
 
@@ -1284,7 +1331,7 @@ namespace System.Net {
             else if (m_WriteAsyncResult != null)
                 return m_WriteAsyncResult;
 
-            // [....].
+            // Sync.
             GlobalLog.ThreadContract(ThreadKinds.User | ThreadKinds.Sync, "FtpWebRequest#" + ValidationHelper.HashString(this) + "::GetWritingContext");
             return null;
         }
@@ -1292,7 +1339,7 @@ namespace System.Net {
         //
         //    Provides an abstract way of having Async code callback into the request (saves a delegate)
         //
-        //    ATTN this method is also called on [....] path when either command or data stream gets closed
+        //    ATTN this method is also called on sync path when either command or data stream gets closed
         //    Consider: Revisit the design of ftp streams
         //
         internal override void RequestCallback(object obj)
@@ -1303,7 +1350,7 @@ namespace System.Net {
                 SyncRequestCallback(obj);
         }
         //
-        // Only executed for [....] requests when the pipline is completed
+        // Only executed for Sync requests when the pipline is completed
         //
         private void SyncRequestCallback(object obj)
         {
@@ -1342,7 +1389,7 @@ namespace System.Net {
                         isRevalidatedOrRetried =!m_CacheDone &&
                                                 (CacheProtocol.ProtocolStatus == CacheValidationStatus.Continue || CacheProtocol.ProtocolStatus == CacheValidationStatus.RetryResponseFromServer);
 
-                        // This is for [....] Upload commands that do not get chance hit GetResponse loop
+                        // This is for sync Upload commands that do not get chance hit GetResponse loop
                         if (m_MethodInfo.IsUpload)
                         {
                             CheckCacheRetrieveOnResponse();
@@ -2175,6 +2222,49 @@ namespace System.Net {
                     connection.Abort(ExceptionHelper.RequestAbortedException);
             }
         }
+
+        private static int GetStatusCode(WebException webException)
+        {
+            int result = -1;
+
+            // we are calculating statusCode only when FrameworkEventSource logging is enabled.
+            if (FrameworkEventSource.Log.IsEnabled() && webException != null && webException.Response != null) {
+                HttpWebResponse httpWebResponse = webException.Response as HttpWebResponse;
+                if (httpWebResponse != null) {
+                    try {
+                        result = (int)httpWebResponse.StatusCode;
+                    }
+                    catch (ObjectDisposedException) {
+                        // ObjectDisposedException is expected here in the following sequuence: ftpWebRequest.GetResponse().Dispose() -> ftpWebRequest.GetResponse()
+                        // on the second call to GetResponse() we cannot determine the statusCode.
+                    }
+                }
+                else {
+                    var ftpWebResponse = webException.Response as FtpWebResponse;
+                    result = GetStatusCode(ftpWebResponse);
+                }
+            }
+
+            return result;
+        }
+
+        private static int GetStatusCode(FtpWebResponse ftpWebResponse)
+        {
+            int result = -1;
+
+            if (FrameworkEventSource.Log.IsEnabled() && ftpWebResponse != null) {
+                try {
+                    result = (int)ftpWebResponse.StatusCode;
+                }
+                catch (ObjectDisposedException) {
+                    // ObjectDisposedException is expected here in the following sequuence: ftpWebRequest.GetResponse().Dispose() -> ftpWebRequest.GetResponse()
+                    // on the second call to GetResponse() we cannot determine the statusCode.
+                }
+            }
+
+            return result;
+        }
+
     }  // class FtpWebRequest
 
     //

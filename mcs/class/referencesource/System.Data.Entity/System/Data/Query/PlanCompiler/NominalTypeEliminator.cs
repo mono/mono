@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections;
@@ -1936,9 +1936,9 @@ namespace System.Data.Query.PlanCompiler
             // If the CaseOp returns a simple type, then we don't need to do 
             // anything special.
             //
-            // Bug 480780: We must perform further processing, if the result
-            // type is not a scalar
-            //
+            // 
+
+
 
             // If the CaseOp returns a collection, then we need to create a
             // new CaseOp of the new and improved collection type. Similarly

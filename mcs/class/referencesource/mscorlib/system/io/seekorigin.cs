@@ -7,7 +7,7 @@
 **
 ** Enum:   SeekOrigin
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Enum describing locations in a stream you could

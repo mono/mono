@@ -6,6 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+#if FEATURE_CORESYSTEM
+using System.Core;
+#endif
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -67,7 +70,7 @@ namespace System.Security.Cryptography {
         ///     Value of the symmetric key used for encryption / decryption
         /// </summary>
         public override byte[] Key {
-            [System.Security.SecurityCritical]
+            [System.Security.SecuritySafeCritical]
             [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
             get {
                 Contract.Ensures(m_key != null && !m_key.IsInvalid && !m_key.IsClosed);
@@ -84,7 +87,7 @@ namespace System.Security.Cryptography {
                 return keyValue;
             }
 
-            [System.Security.SecurityCritical]
+            [System.Security.SecuritySafeCritical]
             [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
             set {
                 Contract.Ensures(m_key != null && !m_key.IsInvalid && !m_key.IsClosed);
@@ -120,7 +123,7 @@ namespace System.Security.Cryptography {
         public override int KeySize {
             get { return base.KeySize; }
 
-            [System.Security.SecurityCritical]
+            [System.Security.SecuritySafeCritical]
             [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
             set {
                 base.KeySize = value;
@@ -136,7 +139,7 @@ namespace System.Security.Cryptography {
         ///     Create an object to perform AES decryption with the current key and IV
         /// </summary>
         /// <returns></returns>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
         public override ICryptoTransform CreateDecryptor() {
             Contract.Ensures(Contract.Result<ICryptoTransform>() != null);
@@ -151,7 +154,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Create an object to perform AES decryption with the given key and IV
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         public override ICryptoTransform CreateDecryptor(byte[] key, byte[] iv) {
             Contract.Ensures(Contract.Result<ICryptoTransform>() != null);
 
@@ -197,7 +200,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Create an object to do AES encryption with the current key and IV
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
         public override ICryptoTransform CreateEncryptor() {
             Contract.Ensures(Contract.Result<ICryptoTransform>() != null);
@@ -217,7 +220,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Create an object to do AES encryption with the given key and IV
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         public override ICryptoTransform CreateEncryptor(byte[] key, byte[] iv) {
             Contract.Ensures(Contract.Result<ICryptoTransform>() != null);
 
@@ -263,7 +266,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Release any CAPI handles we're holding onto
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         protected override void Dispose(bool disposing) {
             Contract.Ensures(!disposing || m_key == null || m_key.IsClosed);
             Contract.Ensures(!disposing || m_cspHandle == null || m_cspHandle.IsClosed);
@@ -360,7 +363,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Generate a new random key
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
         public override void GenerateKey() {
             Contract.Ensures(m_key != null && !m_key.IsInvalid & !m_key.IsClosed);
@@ -393,7 +396,7 @@ namespace System.Security.Cryptography {
         /// <summary>
         ///     Generate a random initialization vector
         /// </summary>
-        [System.Security.SecurityCritical]
+        [System.Security.SecuritySafeCritical]
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Reviewed")]
         public override void GenerateIV() {
             Contract.Ensures(IVValue != null && IVValue.Length == BlockSizeValue / 8);

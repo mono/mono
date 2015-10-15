@@ -7,7 +7,7 @@
 //
 //  Class:  DriveNotFoundException
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 //  Purpose: Exception for accessing a drive that is not available.
 //

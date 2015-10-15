@@ -476,9 +476,9 @@ namespace System.Web.Configuration {
                     // with these characters. We fallback to the default GetStreamName failure behavior which is to
                     // return null.
 
-                    // Dev10 Bug 835901: '?' (%3F), '*' (%2A), and ':' (%3A) are valid in a URL.  We need to return null
-                    // if the path contains one of these characters.  Instead of explicitly checking for these characters, 
-                    // we will rely on Path.Combine and Path.GetFullPath to throw when the path is invalid.
+                    // Dev10 
+
+
                     return CombineAndValidatePath(directory, baseName);
                 }
 

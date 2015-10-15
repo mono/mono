@@ -146,7 +146,7 @@ namespace System.Web {
                 string svValue = replace ? value : base.Get(name);
                 HttpServerVarsCollection serverVars = _request.ServerVariables as HttpServerVarsCollection;
                 if (serverVars != null) {
-                    serverVars.SynchronizeServerVariable("HTTP_" + name.ToUpper(CultureInfo.InvariantCulture).Replace('-', '_'), svValue);
+                    serverVars.SynchronizeServerVariable("HTTP_" + name.ToUpper(CultureInfo.InvariantCulture).Replace('-', '_'), svValue, ensurePopulated: false);
                 }
 
                 // invalidate Params collection
@@ -194,7 +194,7 @@ namespace System.Web {
                 // update managed copy of server variable
                 HttpServerVarsCollection serverVars = _request.ServerVariables as HttpServerVarsCollection;
                 if (serverVars != null) {
-                    serverVars.SynchronizeServerVariable("HTTP_" + name.ToUpper(CultureInfo.InvariantCulture).Replace('-', '_'), null);
+                    serverVars.SynchronizeServerVariable("HTTP_" + name.ToUpper(CultureInfo.InvariantCulture).Replace('-', '_'), null, ensurePopulated: false);
                 }
 
                 // invalidate Params collection

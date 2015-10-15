@@ -23,66 +23,64 @@ namespace System
     // at all (since T may not).   Do NOT add any interfaces to Nullable!
     // 
     [Serializable]
+    [System.Runtime.Versioning.NonVersionable] // This only applies to field layout
     public struct Nullable<T> where T : struct
     {
         private bool hasValue; 
-        internal T value; 
-        
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        internal T value;
+
+        [System.Runtime.Versioning.NonVersionable]
         public Nullable(T value) {
             this.value = value;
             this.hasValue = true;
         }        
 
         public bool HasValue {
+            [System.Runtime.Versioning.NonVersionable]
             get {
                 return hasValue;
                 }
             } 
 
         public T Value {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
-                if (!HasValue) {
+                if (!hasValue) {
                     ThrowHelper.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_NoValue);
                 }
                 return value;
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
+        [System.Runtime.Versioning.NonVersionable]
         public T GetValueOrDefault() {
             return value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public T GetValueOrDefault(T defaultValue) {
-            return HasValue ? value : defaultValue;
+            return hasValue ? value : defaultValue;
         }
 
         public override bool Equals(object other) {
-            if (!HasValue) return other == null;
+            if (!hasValue) return other == null;
             if (other == null) return false;
             return value.Equals(other);
         }
 
         public override int GetHashCode() {
-            return HasValue ? value.GetHashCode() : 0;
+            return hasValue ? value.GetHashCode() : 0;
         }
 
         public override string ToString() {
-            return HasValue ? value.ToString() : "";
+            return hasValue ? value.ToString() : "";
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static implicit operator Nullable<T>(T value) {
             return new Nullable<T>(value);
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public static explicit operator T(Nullable<T> value) {
             return value.Value;
         }

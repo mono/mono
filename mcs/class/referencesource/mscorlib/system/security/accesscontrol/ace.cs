@@ -137,8 +137,8 @@ namespace System.Security.AccessControl
             {
                 //
                 // Only have two bytes to store the length in.
-                // Indicates a bug in the implementation, not in user's code.
-                //
+                // Indicates a 
+
 
                 Contract.Assert( false, "Length > ushort.MaxValue" );
                 throw new SystemException();
@@ -395,8 +395,8 @@ namespace System.Security.AccessControl
             if (((!( result is ObjectAce )) && (( binaryForm[offset + 2] << 0 ) + ( binaryForm[offset + 3] << 8 ) != result.BinaryLength ))
                 //
                 // This is needed because object aces created through ADSI have the advertised ACE length
-                // greater than the actual length by 32 (bug in ADSI).
-                //
+                // greater than the actual length by 32 (
+
                 || (( result is ObjectAce ) && (( binaryForm[offset + 2] << 0 ) + ( binaryForm[offset + 3] << 8 ) != result.BinaryLength ) && ((( binaryForm[offset + 2] << 0 ) + ( binaryForm[offset + 3] << 8 ) - 32 ) != result.BinaryLength )))
             {
                 goto InvalidParameter;
@@ -1199,8 +1199,8 @@ namespace System.Security.AccessControl
                 default:
 
                     //
-                    // Indicates a bug in the implementation, not in user's code
-                    //
+                    // Indicates a 
+
 
                     Contract.Assert( false, "Invalid ACE type" );                    
                     throw new SystemException();

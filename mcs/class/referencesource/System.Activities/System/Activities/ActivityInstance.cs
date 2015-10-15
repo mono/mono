@@ -1292,7 +1292,7 @@ namespace System.Activities
 
             if (TD.ActivityCompletedIsEnabled())
             {
-                TD.ActivityCompleted(this.Activity.GetType().ToString(), this.Activity.DisplayName, this.Id, this.State.ToString());
+                TD.ActivityCompleted(this.Activity.GetType().ToString(), this.Activity.DisplayName, this.Id, this.State.GetStateName());
             }
 
         }

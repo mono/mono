@@ -17,6 +17,7 @@ namespace System.Diagnostics {
     using System.ComponentModel.Design;
     using System.Collections.Specialized;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
     using System.Runtime.Versioning;
@@ -166,7 +167,14 @@ namespace System.Diagnostics {
         public StringDictionary EnvironmentVariables {
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
-            get { 
+            get {
+                // Note:
+                // Creating a detached ProcessStartInfo will pre-populate the environment
+                // with current environmental variables. 
+
+                // When used with an existing Process.ProcessStartInfo the following behavior
+                //  * Desktop - Populates with current Environment (rather than that of the process)
+                                
                 if (environmentVariables == null) {
 #if PLATFORM_UNIX
                     environmentVariables = new CaseSensitiveStringDictionary();
@@ -180,15 +188,32 @@ namespace System.Diagnostics {
                           ((Component)this.weakParentProcess.Target).Site != null &&
                           ((Component)this.weakParentProcess.Target).Site.DesignMode)) {
                         
-                        foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
+                        foreach (DictionaryEntry entry in System.Environment.GetEnvironmentVariables())
                             environmentVariables.Add((string)entry.Key, (string)entry.Value);
                     }
-                    
+                
                 }
-                return environmentVariables; 
-            }                        
+                return environmentVariables;
+            }
         }
 
+        private IDictionary<string,string> environment;
+
+        [
+            DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+            DefaultValue(null),
+            NotifyParentProperty(true)
+        ]
+        public IDictionary<string, string> Environment {
+            get {
+                if (environment == null) {
+                    environment = this.EnvironmentVariables.AsGenericDictionary();
+                }
+
+                return environment;
+            }
+        }
+      
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>

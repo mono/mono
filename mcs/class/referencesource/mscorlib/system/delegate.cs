@@ -21,9 +21,6 @@ namespace System {
     public abstract class Delegate : ICloneable, ISerializable 
     {
         // _target is the object we will invoke on
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]
         internal Object _target;
 
@@ -34,9 +31,6 @@ namespace System {
 
         // _methodPtr is a pointer to the method we will invoke
         // It could be a small thunk if this is a static or UM call
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]
         internal IntPtr _methodPtr;
         
@@ -44,9 +38,6 @@ namespace System {
         // whatever _methodPtr would have stored: and _methodPtr points to a
         // small thunk which removes the "this" pointer before going on
         // to _methodPtrAux.
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]
         internal IntPtr _methodPtrAux;
 
@@ -200,9 +191,6 @@ namespace System {
             return GetType().GetHashCode();
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public static Delegate Combine(Delegate a, Delegate b)
         {
             if ((Object)a == null) // cast to object for a more efficient test
@@ -583,9 +571,6 @@ namespace System {
             return d;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif            
         public static bool operator ==(Delegate d1, Delegate d2)
         {
             if ((Object)d1 == null)
@@ -774,9 +759,6 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern IntPtr GetMulticastInvoke();
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization] // called from IL stubs
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -814,7 +796,7 @@ namespace System {
     }
 
     // These flags effect the way BindToMethodInfo and BindToMethodName are allowed to bind a delegate to a target method. Their
-    // values must be kept in [....] with the definition in vm\comdelegate.h.
+    // values must be kept in sync with the definition in vm\comdelegate.h.
     internal enum DelegateBindingFlags
     {
         StaticMethodOnly    =   0x00000001, // Can only bind to static target methods

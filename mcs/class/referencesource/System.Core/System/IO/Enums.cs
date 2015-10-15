@@ -18,7 +18,9 @@ using System.Text;
 
 namespace System.IO {
 
+#if !FEATURE_CORESYSTEM
     [Serializable]
+#endif
     public enum HandleInheritability {
         None = 0,
         Inheritable = 1,

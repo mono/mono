@@ -14,6 +14,7 @@ namespace System.Web.Util {
 using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Web.Hosting;
 
 /*
  * Various string handling utilities
@@ -275,6 +276,45 @@ internal static class StringUtil {
         }
     }
 
+    internal static int GetNonRandomizedHashCode(string s, bool ignoreCase = false) {
+        // Preserve the default behavior when string hash randomization is off
+        if (!AppSettings.UseRandomizedStringHashAlgorithm) {
+            return ignoreCase ? StringComparer.InvariantCultureIgnoreCase.GetHashCode(s) : s.GetHashCode();
+        }
+
+        if (ignoreCase) {
+            s = s.ToLower(CultureInfo.InvariantCulture);
+        }
+
+        // Use our stable hash algorithm implementation
+        return GetStringHashCode(s);
+    }
+
+    // Need StringComparer implementation. It's very expensive to port the actual BCL code here
+    // Instead use the default AppDomain, because it doesn't have string hash randomization enabled.
+    // Marshal the call to reuse the default StringComparer behavior. 
+    // PERF isn't optimal, so apply consideration!
+    internal static int GetNonRandomizedStringComparerHashCode(string s) {
+        // Preserve the default behavior when string hash randomization is off
+        if (!AppSettings.UseRandomizedStringHashAlgorithm) {
+            return StringComparer.InvariantCultureIgnoreCase.GetHashCode(s);
+        }
+
+        ApplicationManager appManager = HostingEnvironment.GetApplicationManager();
+        if (appManager != null) {
+            // Cross AppDomain call may cause marshaling of IPrincipal to fail. So strip out the exectuion context
+            int hashCode = 0;
+            ExecutionContextUtil.RunInNullExecutionContext(delegate {
+                 hashCode = appManager.GetNonRandomizedStringComparerHashCode(s, ignoreCase:true);
+            });
+
+            return hashCode;
+        }
+
+        // Fall back to non-compat result
+        return GetStringHashCode(s.ToLower(CultureInfo.InvariantCulture));
+    }
+
     internal static int GetNullTerminatedByteArray(Encoding enc, string s, out byte[] bytes)
     {
         bytes = null;
@@ -382,12 +422,12 @@ internal static class StringUtil {
             }
         }
 #else
-        // <STRIP>This is Peter Sollich's faster memcpy implementation, from 
-        // COMString.cpp.  For our strings, this beat the processor's 
-        // repeat & move single byte instruction, which memcpy expands into.  
-        // (You read that correctly.)
-        // This is 3x faster than a simple while loop copying byte by byte, 
-        // for large copies.</STRIP>
+        // <
+
+
+
+
+
         if (len >= 16) {
             do {
 #if AMD64

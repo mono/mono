@@ -15,7 +15,7 @@ namespace System.ServiceModel.Description
             {
                 if (isForService)
                 {
-                    // no other method ([....], async) is allowed to co-exist with a task-based method on the server-side.
+                    // no other method (sync, async) is allowed to co-exist with a task-based method on the server-side.
                     EnsureNoSyncMethod(operationDescription);
                     EnsureNoBeginEndMethod(operationDescription);
                 }

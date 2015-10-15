@@ -2,7 +2,7 @@
 // <copyright file="ConstraintStruct.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>                                                                
+// <owner current="true" primary="true">Microsoft</owner>                                                                
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema {
@@ -386,58 +386,83 @@ namespace System.Xml.Schema {
             }
             hashcode = 0;  // indicate it's changed. even the calculated hashcode below is 0
             for (int i = 0; i < this.ks.Length; i ++) {
-                // extract its primitive value to calculate hashcode
-                // decimal is handled differently to enable among different CLR types
-                this.ks[i].SetDecimal();
-                if (this.ks[i].IsDecimal) {
-                    for (int j = 0 ; j < this.ks[i].Dim ; j ++) {
-                        hashcode += this.ks[i].Dvalue[j].GetHashCode();
-                    }
-                }
-                // 
-                else {
-                    Array arr = this.ks[i].Value as System.Array;
-                    if (arr != null) {
-                        XmlAtomicValue[] atomicValues = arr as XmlAtomicValue[];
-                        if (atomicValues != null) {
-                            for (int j = 0 ; j < atomicValues.Length ; j ++) {
-                                hashcode += ((XmlAtomicValue)atomicValues.GetValue(j)).TypedValue.GetHashCode();
-                            }
-                        }
-                        else {
-                            for (int j = 0 ; j < ((Array) this.ks[i].Value).Length ; j ++) {
-                                hashcode += ((Array) this.ks[i].Value).GetValue(j).GetHashCode();
-                            }
-                        }
-                    }
-                    else { //not a list
-                        hashcode += this.ks[i].Value.GetHashCode();
-                    }
-                }
+				if (this.ks[i] != null) {
+					// extract its primitive value to calculate hashcode
+					// decimal is handled differently to enable among different CLR types
+					this.ks[i].SetDecimal();
+					if (this.ks[i].IsDecimal) {
+						for (int j = 0 ; j < this.ks[i].Dim ; j ++) {
+							hashcode += this.ks[i].Dvalue[j].GetHashCode();
+						}
+					}
+					// 
+					else {
+						Array arr = this.ks[i].Value as System.Array;
+						if (arr != null) {
+							XmlAtomicValue[] atomicValues = arr as XmlAtomicValue[];
+							if (atomicValues != null) {
+								for (int j = 0 ; j < atomicValues.Length ; j ++) {
+									hashcode += ((XmlAtomicValue)atomicValues.GetValue(j)).TypedValue.GetHashCode();
+								}
+							}
+							else {
+								for (int j = 0 ; j < ((Array) this.ks[i].Value).Length ; j ++) {
+									hashcode += ((Array) this.ks[i].Value).GetValue(j).GetHashCode();
+								}
+							}
+						}
+						else { //not a list
+							hashcode += this.ks[i].Value.GetHashCode();
+						}
+					}
+				}
             }
             return hashcode;
         }
 
         // considering about derived type
         public override bool Equals(object other) {
-            // each key sequence member can have different type
-            KeySequence keySequence = (KeySequence)other;
-            for (int i = 0; i < this.ks.Length; i ++) {
-                if (! this.ks[i].Equals (keySequence.ks[i])) {
-                    return false;
+            if (LocalAppContextSwitches.IgnoreEmptyKeySequences) {
+                // each key sequence member can have different type
+                KeySequence keySequence = (KeySequence)other;
+                for (int i = 0; i < this.ks.Length; i++) {
+                    if (!this.ks[i].Equals(keySequence.ks[i])) {
+                        return false;
+                    }
                 }
+                return true;
             }
-            return true;
+            else {
+                // each key sequence member can have different type
+                KeySequence keySequence = (KeySequence)other;
+                for (int i = 0; i < this.ks.Length; i++) {
+                    if (!(this.ks[i] == null && keySequence.ks[i] == null) && (this.ks[i] == null || keySequence.ks[i] == null || !this.ks[i].Equals(keySequence.ks[i]))) {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         public override string ToString() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(this.ks[0].ToString());
-            for (int i = 1; i < this.ks.Length; i ++) {
-                sb.Append(" ");
-                sb.Append(this.ks[i].ToString());
+            if (LocalAppContextSwitches.IgnoreEmptyKeySequences) {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(this.ks[0].ToString());
+                for (int i = 1; i < this.ks.Length; i++) {
+                    sb.Append(" ");
+                    sb.Append(this.ks[i].ToString());
+                }
+                return sb.ToString();
             }
-            return sb.ToString();
+            else {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(this.ks[0].ToString());
+                for (int i = 1; i < this.ks.Length; i++) {
+                    sb.Append(" ");
+                    sb.Append(this.ks[i] == null ? "{}" : this.ks[i].ToString());
+                }
+                return sb.ToString();
+            }
         }
     }
 

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 using System;
 using System.Collections;
@@ -63,8 +63,8 @@ namespace System.Data.Objects
         /// <remarks>
         /// The algorithm here is lifted from System.Windows.Forms.ListBindingHelper,
         /// from the GetTypedIndexer method.
-        /// The Entity Framework could not take a dependency on [....],
-        /// so we lifted the appropriate parts from the [....] code here.
+        /// The Entity Framework could not take a dependency on Microsoft,
+        /// so we lifted the appropriate parts from the Microsoft code here.
         /// Not the best, but much better than guessing as to what algorithm is proper for data binding.
         /// </remarks>
         private static PropertyInfo GetTypedIndexer(Type type)
@@ -106,8 +106,8 @@ namespace System.Data.Objects
         /// <remarks>
         /// The algorithm here is lifted from System.Windows.Forms.ListBindingHelper,
         /// from the GetListItemType(object) method.
-        /// The Entity Framework could not take a dependency on [....],
-        /// so we lifted the appropriate parts from the [....] code here.
+        /// The Entity Framework could not take a dependency on Microsoft,
+        /// so we lifted the appropriate parts from the Microsoft code here.
         /// Not the best, but much better than guessing as to what algorithm is proper for data binding.
         /// </remarks>
         private static Type GetListItemType(Type type)

@@ -3,7 +3,7 @@
 //   Copyright(c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 namespace System.Reflection
@@ -12,7 +12,6 @@ namespace System.Reflection
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using System.Diagnostics.Tracing;
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.ConstrainedExecution;
@@ -68,7 +67,7 @@ namespace System.Reflection
             return !(left == right);
         }
 #endif // !FEATURE_CORECLR
-#if FEATURE_NETCORE || !FEATURE_CORECLR
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -78,7 +77,6 @@ namespace System.Reflection
         {
             return base.GetHashCode();
         }
-#endif //FEATURE_NETCORE || !FEATURE_CORECLR
 
         #region Internal Members
         internal virtual Type GetReturnType() { throw new NotImplementedException(); }
@@ -108,6 +106,7 @@ namespace System.Reflection
         }
         #endregion
 
+#if !FEATURE_CORECLR
         #region COM Interop Support
         Type _ConstructorInfo.GetType()
         {
@@ -156,6 +155,7 @@ namespace System.Reflection
             throw new NotImplementedException();
         }
         #endregion
+#endif
     }
 
     [Serializable]
@@ -321,9 +321,6 @@ namespace System.Reflection
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal override bool CacheEquals(object o)
         {
             RuntimeConstructorInfo m = o as RuntimeConstructorInfo;
@@ -443,13 +440,6 @@ namespace System.Reflection
             [System.Security.SecuritySafeCritical]  // auto-generated
             get { return RuntimeMethodHandle.GetName(this); }
         }
-
-        [System.Security.SecuritySafeCritical]
-        internal override String GetFullNameForEtw()
-        {
-            return RuntimeMethodHandle.GetName(this);
-        }
-        
 [System.Runtime.InteropServices.ComVisible(true)]
         public override MemberTypes MemberType { get { return MemberTypes.Constructor; } }
         
@@ -666,14 +656,6 @@ namespace System.Reflection
                     parameters[index] = arguments[index];
                 return retValue;
             }
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.ConstructorInfoInvoke(GetRuntimeType().GetFullNameForEtw(), GetFullNameForEtw());
-            }
-#endif
-            
             return RuntimeMethodHandle.InvokeMethod(obj, null, sig, false);
         }
         

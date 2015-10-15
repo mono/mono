@@ -7,7 +7,7 @@
 **
 ** CLASS:    XMLUtil
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** PURPOSE:  Helpers for XML input & output
 **

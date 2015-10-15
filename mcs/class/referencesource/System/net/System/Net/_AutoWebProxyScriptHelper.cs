@@ -413,7 +413,7 @@ namespace System.Net
             return true;
         }
 
-        // See bug 87334 for details on the implementation.
+        // See 
         public bool shExpMatch(string host, string pattern) {
             GlobalLog.Print("WebProxyScriptHelper::shExpMatch() host:" + ValidationHelper.ToString(host) + " pattern:" + ValidationHelper.ToString(pattern));
             if (host==null) {

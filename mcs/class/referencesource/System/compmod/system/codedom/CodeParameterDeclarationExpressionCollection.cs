@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------
 // <copyright file="CodeParameterDeclarationExpressionCollection.cs" company="Microsoft">
 // 
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright> 
 // ------------------------------------------------------------------------------

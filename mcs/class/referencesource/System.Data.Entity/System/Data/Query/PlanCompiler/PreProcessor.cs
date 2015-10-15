@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  [....]
-// @backupOwner [....]
+// @owner  Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 //using System.Diagnostics; // Please use PlanCompiler.Assert instead of Debug.Assert in this class...
@@ -1283,8 +1283,8 @@ namespace System.Data.Query.PlanCompiler
             // and if the parent is already visited that rel op parent would be part of the subtree resulting from the parent.
             // If the parent is not visited it would be a rel op parent higher in the tree (also valid), and leaves less room 
             // for join elimination. 
-            // The original out-of-order visitation was put in place to work around a bug that has been fixed.
-            //
+            // The original out-of-order visitation was put in place to work around a 
+
             bool visitChildLater = IsNavigationPropertyOverVarRef(n.Child0);
             if (!visitChildLater)
             {

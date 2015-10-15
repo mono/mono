@@ -9,7 +9,7 @@
 
 /*********************************************************************
  * NOTE: A copy of this file exists at: WF\Common\Shared
- * The two files must be kept in [....].  Any change made here must also
+ * The two files must be kept in sync.  Any change made here must also
  * be made to WF\Common\Shared\CompModHelpers.cs
 *********************************************************************/
 
@@ -1169,10 +1169,10 @@ namespace System.Workflow.Activities.Common
                 Guid parentContextGuid = GetRuntimeContextGuid(parentContextActivity);
                 while (activity == null && declaringContextGuid != currentContextGuid)
                 {
-                    // WinOE Bug 17931: if the context id is different, it means that this activity is running in a child context (such as 
-                    // the children of a replicator or a while).  we need to resolve the activity within the child context
-                    // first.  If we go up to the declaring activity, we'd be finding children of the template instead of
-                    // the actual running instance.
+                    // WinOE 
+
+
+
                     while (parentContextActivity != null && parentContextGuid == currentContextGuid)
                     {
                         currentContextActivity = parentContextActivity;
@@ -1395,10 +1395,10 @@ namespace System.Workflow.Activities.Common
     }
     #endregion
 
-    // This class has been added as a fix for bug 18214 in order to 
-    // create an independent code-path for debugger's use of ParseActivity functionality.
-    // The GetActivity method of this class uses QualifiedName instead of Name property
-    // for finding activities.
+    // This class has been added as a fix for 
+
+
+
     internal static class DebuggerHelpers
     {
         [SuppressMessage("Microsoft.Globalization", "CA1307:SpecifyStringComparison", Justification = "IndexOf(\".\") not a security issue.")]

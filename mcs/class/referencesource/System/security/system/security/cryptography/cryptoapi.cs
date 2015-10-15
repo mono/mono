@@ -18,10 +18,11 @@ namespace System.Security.Cryptography {
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Runtime.Versioning;
+    using System.Security;
     using System.Security.Cryptography.X509Certificates;
     using System.Security.Permissions;
     using System.Text;
-
+ 
     using _FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
     internal abstract class CAPIBase {
@@ -1932,6 +1933,9 @@ namespace System.Security.Cryptography {
             [In] IntPtr hModule,
             [In] [MarshalAs(UnmanagedType.LPStr)] string lpProcName);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(KERNEL32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -1945,6 +1949,9 @@ namespace System.Security.Cryptography {
         IntPtr LoadLibrary(
             [In] [MarshalAs(UnmanagedType.LPStr)] string lpFileName);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.Machine)]  // This is a way of recovering from process SxS problems.
         internal static extern
@@ -1962,29 +1969,41 @@ namespace System.Security.Cryptography {
             [In]     SafeLocalAllocHandle pbCertEncoded,
             [In]     uint                 cbCertEncoded);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern
         SafeCertContextHandle CertDuplicateCertificateContext(
             [In]     IntPtr pCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern
         SafeCertContextHandle CertDuplicateCertificateContext(
             [In]     SafeCertContextHandle pCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern
-        SafeCertChainHandle CertDuplicateCertificateChain(
+        SafeX509ChainHandle CertDuplicateCertificateChain(
             [In]     IntPtr pChainContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern
-        SafeCertChainHandle CertDuplicateCertificateChain(
-            [In]     SafeCertChainHandle pChainContext);
+        SafeX509ChainHandle CertDuplicateCertificateChain(
+            [In]     SafeX509ChainHandle pChainContext);
 
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
@@ -2006,6 +2025,9 @@ namespace System.Security.Cryptography {
         bool CertFreeCertificateContext (
             [In]     IntPtr pCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2017,8 +2039,11 @@ namespace System.Security.Cryptography {
             [In]     ref CERT_CHAIN_PARA     pChainPara,
             [In]     uint                    dwFlags,
             [In]     IntPtr                  pvReserved,
-            [In,Out] ref SafeCertChainHandle ppChainContext);
+            [In,Out] ref SafeX509ChainHandle ppChainContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2037,6 +2062,9 @@ namespace System.Security.Cryptography {
             [In]     IntPtr                pbKeyUsage,
             [In,Out] uint                  cbKeyUsage);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2055,6 +2083,9 @@ namespace System.Security.Cryptography {
             [In]    uint                  dwCertEncodingType,
             [In]    IntPtr                pPublicKey); // PCERT_PUBLIC_KEY_INFO 
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2065,6 +2096,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle rghOIDs,
             [In,Out] IntPtr               pcbOIDs);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2075,6 +2109,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle psz,
             [In]     uint                 csz);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2103,15 +2140,21 @@ namespace System.Security.Cryptography {
             [In,Out] ref _FILETIME pTimeToVerify,
             [In]     IntPtr       pCertInfo);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
         bool CertVerifyCertificateChainPolicy(
             [In]     IntPtr                       pszPolicyOID,
-            [In]     SafeCertChainHandle          pChainContext,
+            [In]     SafeX509ChainHandle          pChainContext,
             [In]     ref CERT_CHAIN_POLICY_PARA   pPolicyPara,
             [In,Out] ref CERT_CHAIN_POLICY_STATUS pPolicyStatus);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2123,6 +2166,9 @@ namespace System.Security.Cryptography {
             [In,Out] ref uint                   pdwKeySpec,
             [In,Out] ref bool                   pfCallerFreeProv);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2135,6 +2181,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle pvStructInfo,
             [In,Out] IntPtr               pcbStructInfo);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2147,6 +2196,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle pvStructInfo,
             [In,Out] IntPtr               pcbStructInfo);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2157,6 +2209,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle pbEncoded,
             [In,Out] IntPtr               pcbEncoded);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern 
@@ -2175,6 +2230,9 @@ namespace System.Security.Cryptography {
             [In]     IntPtr               pvKey,
             [In]     OidGroup             dwGroupId);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2183,6 +2241,9 @@ namespace System.Security.Cryptography {
             [In]     SafeLocalAllocHandle pvKey,
             [In]     OidGroup             dwGroupId);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true, BestFitMapping=false)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2197,6 +2258,9 @@ namespace System.Security.Cryptography {
             [In,Out] SafeLocalAllocHandle pbFormat,
             [In,Out] IntPtr pcbFormat);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal extern static 
@@ -2312,19 +2376,25 @@ namespace System.Security.Cryptography {
         void SetLastError(uint dwErrorCode);
 
         [DllImport(KERNEL32, SetLastError=true)]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [ResourceExposure(ResourceScope.None)]
         internal static extern
         IntPtr LocalFree(IntPtr handle);
 
         [DllImport(KERNEL32, SetLastError=true)]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [ResourceExposure(ResourceScope.None)]
         internal static extern
         void ZeroMemory(IntPtr handle, uint length);
 
         [DllImport(ADVAPI32, SetLastError=true)]
+#if !FEATURE_CORESYSTEM
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [ResourceExposure(ResourceScope.None)]
         internal static extern
         int LsaNtStatusToWinError (
@@ -2383,6 +2453,9 @@ namespace System.Security.Cryptography {
             [In]     uint                                     dwProvType,
             [In]     uint                                     dwFlags);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
@@ -2392,6 +2465,9 @@ namespace System.Security.Cryptography {
             [In]     uint                  dwAddDisposition,
             [In,Out] SafeCertContextHandle ppStoreContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
@@ -2401,12 +2477,18 @@ namespace System.Security.Cryptography {
             [In]     uint                  dwAddDisposition,
             [In,Out] SafeCertContextHandle ppStoreContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
         bool CertDeleteCertificateFromStore (
             [In]     SafeCertContextHandle pCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport (CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2414,6 +2496,9 @@ namespace System.Security.Cryptography {
             [In]     SafeCertStoreHandle hCertStore, 
             [In]     IntPtr              pPrevCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport (CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2422,6 +2507,9 @@ namespace System.Security.Cryptography {
             [In]     SafeCertContextHandle pPrevCertContext);
 
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport (CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2433,6 +2521,9 @@ namespace System.Security.Cryptography {
             [In]     IntPtr                pvFindPara,
             [In]     SafeCertContextHandle pPrevCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern 
@@ -2443,6 +2534,9 @@ namespace System.Security.Cryptography {
             [In]     uint   dwFlags,
             [In]     string pvPara); // we want this always as a Unicode string.
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport (CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2454,6 +2548,9 @@ namespace System.Security.Cryptography {
             [In,Out] IntPtr              pvSaveToPara,
             [In]     uint                dwFlags);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
@@ -2463,6 +2560,9 @@ namespace System.Security.Cryptography {
             [In]     uint                  dwFlags,
             [In]     IntPtr                pvData);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
@@ -2472,6 +2572,9 @@ namespace System.Security.Cryptography {
             [In]     uint                  dwFlags,
             [In]     IntPtr                pvData);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected extern static 
@@ -2550,6 +2653,9 @@ namespace System.Security.Cryptography {
             [In,Out] IntPtr phMsg,
             [In,Out] IntPtr ppvContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Auto, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2590,6 +2696,9 @@ namespace System.Security.Cryptography {
             [In]     uint   dwFlags,
             [In,Out] IntPtr pDataBlob);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport (CRYPT32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2599,6 +2708,9 @@ namespace System.Security.Cryptography {
             [In]     string              szPassword,
             [In]     uint                dwFlags);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [DllImport(CRYPT32, CharSet=CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         internal protected static extern
@@ -2645,6 +2757,9 @@ namespace System.Security.Cryptography {
             return BlobToByteArray(blob);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static
         byte[] BlobToByteArray(CAPI.CRYPTOAPI_BLOB blob) {
             if (blob.cbData == 0)
@@ -2695,6 +2810,9 @@ namespace System.Security.Cryptography {
             return true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static unsafe
         bool DecodeObject(IntPtr pszStructType, 
                           byte[] pbEncoded,
@@ -2768,6 +2886,9 @@ namespace System.Security.Cryptography {
             return true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static unsafe
         bool EncodeObject(string lpszStructType,
                           IntPtr pvStructInfo,
@@ -2802,6 +2923,9 @@ namespace System.Security.Cryptography {
             return true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static unsafe
         string GetCertNameInfo(
             [In]    SafeCertContextHandle safeCertContext,
@@ -2844,6 +2968,9 @@ namespace System.Security.Cryptography {
             return name;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         new internal static 
         SafeLocalAllocHandle LocalAlloc(uint uFlags, IntPtr sizetdwBytes) {
             SafeLocalAllocHandle safeLocalAllocHandle = CAPIMethods.LocalAlloc(uFlags, sizetdwBytes);
@@ -2854,7 +2981,9 @@ namespace System.Security.Cryptography {
         }
 
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         new internal static 
         bool CryptAcquireContext(
             [In,Out] ref SafeCryptProvHandle                  hCryptProv,
@@ -2870,12 +2999,14 @@ namespace System.Security.Cryptography {
             parameters.KeyNumber = -1;
             parameters.Flags = (CspProviderFlags) ((dwFlags & CAPI.CRYPT_MACHINE_KEYSET) == CAPI.CRYPT_MACHINE_KEYSET ? CspProviderFlags.UseMachineKeyStore : 0);
 
+#if !FEATURE_CORESYSTEM
             if (!CompatibilitySwitches.IsAppEarlierThanWindowsPhone8) {
                 KeyContainerPermission kp = new KeyContainerPermission(KeyContainerPermissionFlags.NoFlags);
                 KeyContainerPermissionAccessEntry entry = new KeyContainerPermissionAccessEntry(parameters, KeyContainerPermissionFlags.Open);
                 kp.AccessEntries.Add(entry);
                 kp.Demand();
             }
+#endif
 
             bool rc = CAPIMethods.CryptAcquireContext(ref hCryptProv,
                                                       pwszContainer,
@@ -2895,7 +3026,9 @@ namespace System.Security.Cryptography {
         }
 
         [ResourceExposure(ResourceScope.Machine)]
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         internal static 
         bool CryptAcquireContext(
             ref SafeCryptProvHandle  hCryptProv,
@@ -2921,6 +3054,9 @@ namespace System.Security.Cryptography {
                                        dwFlags);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         new internal static
         CRYPT_OID_INFO CryptFindOIDInfo(
             [In]    uint     dwKeyType,
@@ -2941,6 +3077,9 @@ namespace System.Security.Cryptography {
             return pOIDInfo;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         new internal static
         CRYPT_OID_INFO CryptFindOIDInfo(
             [In]    uint                 dwKeyType,
@@ -2963,6 +3102,9 @@ namespace System.Security.Cryptography {
             return pOIDInfo;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static unsafe
         string CryptFormatObject(
             [In]    uint    dwCertEncodingType,
@@ -3010,6 +3152,9 @@ namespace System.Security.Cryptography {
             return s;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static unsafe
         string CryptFormatObject(
             [In]    uint    dwCertEncodingType,
@@ -3142,6 +3287,9 @@ namespace System.Security.Cryptography {
                                                     pStreamInfo);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         bool CertSetCertificateContextProperty (
             [In]     IntPtr                pCertContext,
@@ -3156,13 +3304,18 @@ namespace System.Security.Cryptography {
                 dwPropId != CERT_DELETE_KEYSET_PROP_ID && dwPropId != CERT_KEY_PROV_INFO_PROP_ID)
                 throw new ArgumentException(SR.GetString(SR.Security_InvalidValue), "dwFlags");
 
+#if !FEATURE_CORESYSTEM
             // We do not want semi-trusted code to archive or set the friendly name property of a cert.
             if (dwPropId == CERT_ARCHIVED_PROP_ID || dwPropId == CERT_FRIENDLY_NAME_PROP_ID || dwPropId == CERT_KEY_PROV_INFO_PROP_ID)
                 new PermissionSet(PermissionState.Unrestricted).Demand();
+#endif
 
             return CAPIMethods.CertSetCertificateContextProperty(pCertContext, dwPropId, dwFlags, pvData);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         bool CertSetCertificateContextProperty (
             [In]     SafeCertContextHandle pCertContext,
@@ -3177,13 +3330,18 @@ namespace System.Security.Cryptography {
                 dwPropId != CERT_DELETE_KEYSET_PROP_ID && dwPropId != CERT_KEY_PROV_INFO_PROP_ID)
                 throw new ArgumentException(SR.GetString(SR.Security_InvalidValue), "dwFlags");
 
+#if !FEATURE_CORESYSTEM
             // We do not want semi-trusted code to archive or set the friendly name property of a cert.
             if (dwPropId == CERT_ARCHIVED_PROP_ID || dwPropId == CERT_FRIENDLY_NAME_PROP_ID || dwPropId == CERT_KEY_PROV_INFO_PROP_ID)
                 new PermissionSet(PermissionState.Unrestricted).Demand();
+#endif
 
             return CAPIMethods.CertSetCertificateContextProperty(pCertContext, dwPropId, dwFlags, pvData);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         bool CertSetCertificateContextProperty (
             [In]     SafeCertContextHandle pCertContext,
@@ -3200,13 +3358,18 @@ namespace System.Security.Cryptography {
                 dwPropId != CERT_DELETE_KEYSET_PROP_ID && dwPropId != CERT_KEY_PROV_INFO_PROP_ID)
                 throw new ArgumentException(SR.GetString(SR.Security_InvalidValue), "dwFlags");
 
+#if !FEATURE_CORESYSTEM
             // We do not want semi-trusted code to archive or set the friendly name property of a cert.
             if (dwPropId == CERT_ARCHIVED_PROP_ID || dwPropId == CERT_FRIENDLY_NAME_PROP_ID || dwPropId == CERT_KEY_PROV_INFO_PROP_ID)
                 new PermissionSet(PermissionState.Unrestricted).Demand();
+#endif
 
             return CAPIMethods.CertSetCertificateContextProperty(pCertContext, dwPropId, dwFlags, safeLocalAllocHandle);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         SafeCertContextHandle CertDuplicateCertificateContext (
             [In]     IntPtr     pCertContext) {
@@ -3216,6 +3379,9 @@ namespace System.Security.Cryptography {
             return CAPIMethods.CertDuplicateCertificateContext(pCertContext);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         SafeCertContextHandle CertDuplicateCertificateContext (
             [In]     SafeCertContextHandle      pCertContext) {
@@ -3225,6 +3391,9 @@ namespace System.Security.Cryptography {
             return CAPIMethods.CertDuplicateCertificateContext(pCertContext);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         IntPtr CertEnumCertificatesInStore (
             [In]     SafeCertStoreHandle     hCertStore, 
@@ -3235,10 +3404,12 @@ namespace System.Security.Cryptography {
             if (hCertStore.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "hCertStore");
 
+#if !FEATURE_CORESYSTEM
             if (pPrevCertContext == IntPtr.Zero) {
                 StorePermission sp = new StorePermission(StorePermissionFlags.EnumerateCertificates);
                 sp.Demand();
             }
+#endif
 
             IntPtr handle = CAPIMethods.CertEnumCertificatesInStore(hCertStore, pPrevCertContext);
             if (handle == IntPtr.Zero) {
@@ -3251,6 +3422,9 @@ namespace System.Security.Cryptography {
             return handle;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         SafeCertContextHandle CertEnumCertificatesInStore (
             [In]     SafeCertStoreHandle     hCertStore, 
@@ -3261,10 +3435,12 @@ namespace System.Security.Cryptography {
             if (hCertStore.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "hCertStore");
 
+#if !FEATURE_CORESYSTEM
             if (pPrevCertContext.IsInvalid) {
                 StorePermission sp = new StorePermission(StorePermissionFlags.EnumerateCertificates);
                 sp.Demand();
             }
+#endif
 
             SafeCertContextHandle safeCertContextHandle = CAPIMethods.CertEnumCertificatesInStore(hCertStore, pPrevCertContext);
             if (safeCertContextHandle == null || safeCertContextHandle.IsInvalid) {
@@ -3279,8 +3455,13 @@ namespace System.Security.Cryptography {
         // This override demands FileIOPermission.Read if dwObjectType is CERT_QUERY_OBJECT_FILE.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]  // If you pass in a file name
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         internal static unsafe
         bool CryptQueryObject (
             [In]     uint                     dwObjectType,
@@ -3305,8 +3486,10 @@ namespace System.Security.Cryptography {
                     throw new ArgumentNullException("pvObject");
 
                 if (dwObjectType == CERT_QUERY_OBJECT_FILE) {
+#if !FEATURE_CORESYSTEM
                     string fullPath = Path.GetFullPath((string) pvObject);
                     new FileIOPermission(FileIOPermissionAccess.Read, fullPath).Demand();
+#endif
                 } else {
                     certBlob.cbData = (uint) ((byte[]) pvObject).Length;
                     certBlob.pbData = pbData;
@@ -3337,8 +3520,13 @@ namespace System.Security.Cryptography {
         // This override demands FileIOPermission.Read if dwObjectType is CERT_QUERY_OBJECT_FILE.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]  // If you passed in a file name
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         internal static unsafe
         bool CryptQueryObject (
             [In]     uint                     dwObjectType,
@@ -3363,8 +3551,10 @@ namespace System.Security.Cryptography {
                     throw new ArgumentNullException("pvObject");
 
                 if (dwObjectType == CERT_QUERY_OBJECT_FILE) {
+#if !FEATURE_CORESYSTEM
                     string fullPath = Path.GetFullPath((string) pvObject);
                     new FileIOPermission(FileIOPermissionAccess.Read, fullPath).Demand();
+#endif
                 } else {
                     certBlob.cbData = (uint) ((byte[]) pvObject).Length;
                     certBlob.pbData = pbData;
@@ -3395,8 +3585,13 @@ namespace System.Security.Cryptography {
         // This override demands FileIOPermission.Read if dwObjectType is CERT_QUERY_OBJECT_FILE.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         [ResourceExposure(ResourceScope.Machine)]  // If you pass in a file name
+#if !FEATURE_CORESYSTEM
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         internal static unsafe
         SafeCertStoreHandle PFXImportCertStore(
             [In]     uint      dwObjectType,
@@ -3415,6 +3610,7 @@ namespace System.Security.Cryptography {
                 pbData = (byte[]) pvObject;
             }
 
+#if !FEATURE_CORESYSTEM
             if (persistKeyContainers) {
                 //
                 // Right now, we always demand KeyContainerPermission regardless of whether the PFX contains a private key or not.
@@ -3425,6 +3621,7 @@ namespace System.Security.Cryptography {
                     kp.Demand();
                 }
             }
+#endif
 
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
             GCHandle handle = GCHandle.Alloc(pbData, GCHandleType.Pinned);
@@ -3473,6 +3670,9 @@ namespace System.Security.Cryptography {
         // This override demands StorePermission.AddToStore.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static 
         bool CertAddCertificateContextToStore (
             [In]     SafeCertStoreHandle        hCertStore,
@@ -3490,8 +3690,10 @@ namespace System.Security.Cryptography {
             if (pCertContext.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "pCertContext");
 
+#if !FEATURE_CORESYSTEM
             StorePermission sp = new StorePermission(StorePermissionFlags.AddToStore);
             sp.Demand();
+#endif
 
             return CAPIMethods.CertAddCertificateContextToStore(hCertStore, 
                                                                 pCertContext, 
@@ -3503,6 +3705,9 @@ namespace System.Security.Cryptography {
         // This override demands StorePermission.AddToStore.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static 
         bool CertAddCertificateLinkToStore (
             [In]     SafeCertStoreHandle        hCertStore,
@@ -3520,8 +3725,10 @@ namespace System.Security.Cryptography {
             if (pCertContext.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "pCertContext");
 
+#if !FEATURE_CORESYSTEM
             StorePermission sp = new StorePermission(StorePermissionFlags.AddToStore);
             sp.Demand();
+#endif
 
             return CAPIMethods.CertAddCertificateLinkToStore(hCertStore, 
                                                              pCertContext, 
@@ -3533,6 +3740,9 @@ namespace System.Security.Cryptography {
         // This override demands StorePermission.RemoveFromStore.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static 
         bool CertDeleteCertificateFromStore (
             [In]     SafeCertContextHandle  pCertContext) {
@@ -3542,8 +3752,10 @@ namespace System.Security.Cryptography {
             if (pCertContext.IsInvalid) 
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "pCertContext");
 
+#if !FEATURE_CORESYSTEM
             StorePermission sp = new StorePermission(StorePermissionFlags.RemoveFromStore);
             sp.Demand();
+#endif
 
             return CAPIMethods.CertDeleteCertificateFromStore(pCertContext); 
         }
@@ -3552,6 +3764,9 @@ namespace System.Security.Cryptography {
         // This override demands StorePermission.OpenStore.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static 
         SafeCertStoreHandle CertOpenStore(
             [In]    IntPtr  lpszStoreProvider,
@@ -3563,6 +3778,7 @@ namespace System.Security.Cryptography {
             if (lpszStoreProvider != new IntPtr(CERT_STORE_PROV_MEMORY) && lpszStoreProvider != new IntPtr(CERT_STORE_PROV_SYSTEM))
                 throw new ArgumentException(SR.GetString(SR.Security_InvalidValue), "lpszStoreProvider");
 
+#if !FEATURE_CORESYSTEM
             if ((dwFlags & CERT_SYSTEM_STORE_LOCAL_MACHINE) == CERT_SYSTEM_STORE_LOCAL_MACHINE ||
                 (dwFlags & CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY) == CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY ||
                 (dwFlags & CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE) == CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE) {
@@ -3588,6 +3804,7 @@ namespace System.Security.Cryptography {
                 StorePermission sp = new StorePermission(StorePermissionFlags.CreateStore);
                 sp.Demand();
             }
+#endif
 
             return CAPIMethods.CertOpenStore(lpszStoreProvider, 
                                              dwMsgAndCertEncodingType, 
@@ -3596,6 +3813,9 @@ namespace System.Security.Cryptography {
                                              pvPara);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         SafeCertContextHandle CertFindCertificateInStore(
             [In]    SafeCertStoreHandle     hCertStore,
@@ -3621,6 +3841,9 @@ namespace System.Security.Cryptography {
                                                           pPrevCertContext);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         bool PFXExportCertStore(
             [In]     SafeCertStoreHandle    hCertStore,
@@ -3633,6 +3856,7 @@ namespace System.Security.Cryptography {
             if (hCertStore.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "hCertStore");
 
+#if !FEATURE_CORESYSTEM
             //
             // Right now, we always demand KeyContainerPermission regardless of whether the PFX contains a private key or not.
             // We could avoid that by looping through the certs in the store and find out whether there are actually private keys.
@@ -3641,6 +3865,7 @@ namespace System.Security.Cryptography {
                 KeyContainerPermission kp = new KeyContainerPermission(KeyContainerPermissionFlags.Open | KeyContainerPermissionFlags.Export);
                 kp.Demand();
             }
+#endif
 
             return CAPIMethods.PFXExportCertStore(hCertStore,
                                                   pPFX,
@@ -3648,6 +3873,9 @@ namespace System.Security.Cryptography {
                                                   dwFlags);
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         new internal static
         bool CertSaveStore(
             [In]     SafeCertStoreHandle    hCertStore,
@@ -3662,8 +3890,10 @@ namespace System.Security.Cryptography {
             if (hCertStore.IsInvalid)
                 throw new CryptographicException(SR.GetString(SR.Cryptography_InvalidHandle), "hCertStore");
 
+#if !FEATURE_CORESYSTEM
             StorePermission sp = new StorePermission(StorePermissionFlags.EnumerateCertificates);
             sp.Demand();
+#endif
 
             if (dwSaveTo == CERT_STORE_SAVE_TO_FILENAME_A || dwSaveTo == CERT_STORE_SAVE_TO_FILENAME_W)
                 throw new ArgumentException(SR.GetString(SR.Security_InvalidValue), "pvSaveToPara");
@@ -3683,8 +3913,10 @@ namespace System.Security.Cryptography {
 
         [DllImport(CAPI.KERNEL32, SetLastError = true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool FreeLibrary([In] IntPtr hModule);
 
@@ -3694,7 +3926,11 @@ namespace System.Security.Cryptography {
         }
     }
 
-    internal sealed class SafeLocalAllocHandle : SafeHandleZeroOrMinusOneIsInvalid {
+#if FEATURE_CORESYSTEM
+    [SecurityCritical]
+#endif
+    internal sealed class SafeLocalAllocHandle : SafeHandleZeroOrMinusOneIsInvalid
+    {
         private SafeLocalAllocHandle () : base(true) {}
 
         // 0 is an Invalid Handle
@@ -3707,11 +3943,16 @@ namespace System.Security.Cryptography {
         }
 
         [DllImport(CAPI.KERNEL32, SetLastError=true),
-         SuppressUnmanagedCodeSecurity,
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         SuppressUnmanagedCodeSecurity]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         [ResourceExposure(ResourceScope.None)]
         private static extern IntPtr LocalFree(IntPtr handle);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         override protected bool ReleaseHandle()
         {
             return LocalFree(handle) == IntPtr.Zero;
@@ -3732,8 +3973,10 @@ namespace System.Security.Cryptography {
 
         [DllImport(CAPI.ADVAPI32, SetLastError=true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         private static extern bool CryptReleaseContext(IntPtr hCryptProv, uint dwFlags); 
 
         override protected bool ReleaseHandle()
@@ -3742,6 +3985,9 @@ namespace System.Security.Cryptography {
         }
     }
 
+#if FEATURE_CORESYSTEM
+    [SecurityCritical]
+#endif
     internal sealed class SafeCertContextHandle : SafeHandleZeroOrMinusOneIsInvalid {
         private SafeCertContextHandle() : base (true) {}
 
@@ -3756,16 +4002,24 @@ namespace System.Security.Cryptography {
 
         [DllImport(CAPI.CRYPT32, SetLastError=true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         private static extern bool CertFreeCertificateContext (IntPtr pCertContext);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         override protected bool ReleaseHandle()
         {
             return CertFreeCertificateContext(handle);
         }
     }
 
+#if FEATURE_CORESYSTEM
+    [SecurityCritical]
+#endif
     internal sealed class SafeCertStoreHandle : SafeHandleZeroOrMinusOneIsInvalid {
         private SafeCertStoreHandle() : base (true) {}
 
@@ -3780,10 +4034,15 @@ namespace System.Security.Cryptography {
 
         [DllImport(CAPI.CRYPT32, SetLastError=true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         private static extern bool CertCloseStore (IntPtr hCertStore, uint dwFlags);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         override protected bool ReleaseHandle()
         {
             return CertCloseStore(handle, 0);
@@ -3803,33 +4062,52 @@ namespace System.Security.Cryptography {
 
         [DllImport(CAPI.CRYPT32, SetLastError=true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         private static extern bool CryptMsgClose(IntPtr handle);
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         override protected bool ReleaseHandle()
         {
             return CryptMsgClose(handle);
         }
     }
+}
 
-    internal sealed class SafeCertChainHandle : SafeHandleZeroOrMinusOneIsInvalid {
-        private SafeCertChainHandle () : base(true) {}
+namespace Microsoft.Win32.SafeHandles {
+    using System;
+    using System.Runtime.InteropServices;
+    using System.Runtime.ConstrainedExecution;
+    using System.Runtime.Versioning;
+    using System.Security;
+    using System.Security.Cryptography;
+ 
+    [SecurityCritical]
+    public sealed class SafeX509ChainHandle : SafeHandleZeroOrMinusOneIsInvalid {
+        private SafeX509ChainHandle () : base(true) {}
 
-        internal SafeCertChainHandle (IntPtr handle) : base (true) {
+        internal SafeX509ChainHandle (IntPtr handle) : base (true) {
             SetHandle(handle);
         }
 
-        internal static SafeCertChainHandle InvalidHandle {
-            get { return new SafeCertChainHandle(IntPtr.Zero); }
+        internal static SafeX509ChainHandle InvalidHandle {
+            get { return new SafeX509ChainHandle(IntPtr.Zero); }
         }
 
         [DllImport(CAPI.CRYPT32, SetLastError=true),
          SuppressUnmanagedCodeSecurity,
-         ResourceExposure(ResourceScope.None),
-         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+         ResourceExposure(ResourceScope.None)]
+#if !FEATURE_CORESYSTEM
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#endif
         private static extern void CertFreeCertificateChain(IntPtr handle);
 
+
+        [SecurityCritical]
         override protected bool ReleaseHandle()
         {
             CertFreeCertificateChain(handle);

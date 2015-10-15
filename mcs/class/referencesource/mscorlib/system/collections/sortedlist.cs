@@ -7,7 +7,7 @@
 **
 ** Class:  SortedList
 **
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: A sorted dictionary.
 **

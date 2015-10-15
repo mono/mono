@@ -6,7 +6,7 @@
 //
 // File: RtType.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // Implements System.RuntimeType
 //
@@ -45,7 +45,6 @@ using MdToken = System.Reflection.MetadataToken;
 #endif
 using System.Runtime.Versioning;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 
 #if MONO
 using CustomAttribute=System.MonoCustomAttrs;
@@ -59,7 +58,7 @@ namespace System
 
     internal delegate void CtorDelegate(Object instance);
 
-    // Keep this in [....] with FormatFlags defined in typestring.h
+    // Keep this in sync with FormatFlags defined in typestring.h
     internal enum TypeNameFormatFlags
     {
         FormatBasic         = 0x00000000, // Not a bitmask, simply the tersest flag settings possible
@@ -92,13 +91,8 @@ namespace System
     }
 
     [Serializable]
-    internal partial class RuntimeType :
-#if !FEATURE_CORECLR || FEATURE_NETCORE
-        System.Reflection.TypeInfo, 
-#else
-        System.Type, 
-#endif	    
-        ISerializable, ICloneable
+    internal partial class RuntimeType : 
+        System.Reflection.TypeInfo, ISerializable, ICloneable
     {
         #region Definitions
 
@@ -214,12 +208,6 @@ namespace System
             private const int MAXNAMELEN = 1024;
 
             #region Definitions
-            internal enum WhatsCached
-            {
-                Nothing         = 0x0,
-                EnclosingType   = 0x1,
-            }
-
             internal enum CacheType
             {
                 Method,
@@ -540,7 +528,7 @@ namespace System
 #if !FEATURE_LEGACYNETCF
                                 else
 #endif
-                                    list = m_allMembers;
+                                list = m_allMembers;
                                 break;
 
                             default:
@@ -609,8 +597,8 @@ namespace System
                                     // Grow the list by exactly one element in this case to avoid null entries at the end.
                                     //
 
-                                    // DevDiv #339308 is fixed, but we are keeping this code here for Dev11 in case there are other instances of this bug.
-                                    // Remove for Dev12.
+                                    // DevDiv #339308 is fixed, but we are keeping this code here for Dev11 in case there are other instances of this 
+
 
                                     Contract.Assert(false);
 
@@ -1586,7 +1574,6 @@ namespace System
             #endregion
 
             #region Private Data Members
-            private WhatsCached m_whatsCached;
             private RuntimeType m_runtimeType;
             private RuntimeType m_enclosingType;
             private TypeCode m_typeCode;
@@ -1610,6 +1597,7 @@ namespace System
             private RuntimeConstructorInfo m_serializationCtor;
 #endif
             private string m_defaultMemberName;
+            private Object m_genericCache; // Generic cache for rare scenario specific data. It is used to cache Enum names and values.
             #endregion
 
             #region Constructor
@@ -1675,6 +1663,13 @@ namespace System
             #endregion
 
             #region Internal Members
+
+            internal Object GenericCache
+            {
+                get { return m_genericCache; }
+                set { m_genericCache = value; }
+            }
+
             internal bool DomainInitialized
             {
                 get { return m_bIsDomainInitialized; }
@@ -1744,14 +1739,15 @@ namespace System
             [System.Security.SecuritySafeCritical]  // auto-generated
             internal unsafe RuntimeType GetEnclosingType()
             { 
-                if ((m_whatsCached & WhatsCached.EnclosingType) == 0)
+                if (m_enclosingType == null)
                 {
-                    m_enclosingType = RuntimeTypeHandle.GetDeclaringType(GetRuntimeType());
-        
-                    m_whatsCached |= WhatsCached.EnclosingType;
+                    // Use void as a marker of null enclosing type
+                    RuntimeType enclosingType = RuntimeTypeHandle.GetDeclaringType(GetRuntimeType());
+                    Contract.Assert(enclosingType != typeof(void));
+                    m_enclosingType = enclosingType ?? (RuntimeType)typeof(void);
                 }
 
-                return m_enclosingType;
+                return (m_enclosingType == typeof(void)) ? null : m_enclosingType;
             }
 
             internal RuntimeType GetRuntimeType()
@@ -2144,6 +2140,12 @@ namespace System
             return retval;
         }
 
+        internal Object GenericCache
+        {
+            get { return Cache.GenericCache; }
+            set { Cache.GenericCache = value; }
+        }
+
         internal bool DomainInitialized
         {
             get { return Cache.DomainInitialized; }
@@ -2387,7 +2389,7 @@ namespace System
 
             if (ignoreCase)
             {
-                if (!memberInfo.Name.ToLower(CultureInfo.InvariantCulture).StartsWith(name, StringComparison.Ordinal))
+                if (!memberInfo.Name.StartsWith(name, StringComparison.OrdinalIgnoreCase))
                     return false;
             }
             else
@@ -2657,9 +2659,6 @@ namespace System
 #if !MONO
         private object m_keepalive; // This will be filled with a LoaderAllocator reference when this RuntimeType represents a collectible type
         private IntPtr m_cache;
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal IntPtr m_handle;
 #endif
 #if FEATURE_APPX
@@ -3575,9 +3574,6 @@ namespace System
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal RuntimeModule GetRuntimeModule()
         {
             return RuntimeTypeHandle.GetModule(this);
@@ -3591,9 +3587,6 @@ namespace System
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal RuntimeAssembly GetRuntimeAssembly()
         {
             return RuntimeTypeHandle.GetAssembly(this);
@@ -3608,9 +3601,6 @@ namespace System
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal sealed override RuntimeTypeHandle GetTypeHandleInternal()
         {
             return new RuntimeTypeHandle(this);
@@ -3705,9 +3695,6 @@ namespace System
 
         #region Hierarchy
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override bool IsInstanceOfType(Object o)
         {
             return RuntimeTypeHandle.IsInstanceOfType(this, o);
@@ -3742,12 +3729,12 @@ namespace System
 
             return false;
         }
-#if !FEATURE_CORECLR || FEATURE_NETCORE
+
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;
             return IsAssignableFrom(typeInfo.AsType());
         }
-#endif
+
         public override bool IsAssignableFrom(Type c)
         {
             if ((object)c == null)
@@ -3863,9 +3850,6 @@ namespace System
 
         public override Type UnderlyingSystemType 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
                 return this;
@@ -3876,17 +3860,8 @@ namespace System
         #region Name
         public override String FullName 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.TypeFullName(GetFullNameForEtw());
-                }
-#endif
                 return GetCachedName(TypeNameKind.FullName);
             }
         }
@@ -3895,44 +3870,20 @@ namespace System
         {
             get 
             {
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.BeginTypeAssemblyQualifiedName(GetFullNameForEtw());
-                }
-#endif
                 string fullname = FullName;
 
                 // FullName is null if this type contains generic parameters but is not a generic type definition.
                 if (fullname == null)
                     return null;
-
                 
-                String qualifiedName = Assembly.CreateQualifiedName(this.Assembly.FullName, fullname); 
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.EndTypeAssemblyQualifiedName(GetFullNameForEtw());
-                }
-#endif
-                return qualifiedName;
+                return Assembly.CreateQualifiedName(this.Assembly.FullName, fullname); 
             }
         }
 
         public override String Namespace 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.TypeNamespace(GetFullNameForEtw());
-                }
-#endif
-                
                 string ns = Cache.GetNameSpace();
                 
                 if (ns == null || ns.Length == 0)
@@ -3945,9 +3896,6 @@ namespace System
 #endif
         #region Attributes
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override TypeAttributes GetAttributeFlagsImpl() 
         {
             return RuntimeTypeHandle.GetAttributes(this);
@@ -3982,9 +3930,6 @@ namespace System
         }
         */
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override bool IsByRefImpl() 
         {
             return RuntimeTypeHandle.IsByRef(this);
@@ -4001,9 +3946,6 @@ namespace System
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override bool IsCOMObjectImpl() 
         {
             return RuntimeTypeHandle.IsComObject(this, false);
@@ -4043,9 +3985,6 @@ namespace System
             return GetBaseType() == typeof(System.MulticastDelegate);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override bool IsValueTypeImpl()
         {
             // We need to return true for generic parameters with the ValueType constraint.
@@ -4060,7 +3999,6 @@ namespace System
 #if !FEATURE_CORECLR
         public override bool IsEnum
         {
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get
             {
                 return GetBaseType() == RuntimeType.EnumType; 
@@ -4068,9 +4006,6 @@ namespace System
         }
 #endif
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override bool HasElementTypeImpl() 
         {
             return RuntimeTypeHandle.HasElementType(this);
@@ -4099,23 +4034,14 @@ namespace System
 #if !MONO
         public override bool IsSecurityCritical 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return new RuntimeTypeHandle(this).IsSecurityCritical(); } 
         }
         public override bool IsSecuritySafeCritical
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return new RuntimeTypeHandle(this).IsSecuritySafeCritical(); }
         }
         public override bool IsSecurityTransparent
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return new RuntimeTypeHandle(this).IsSecurityTransparent(); }
         }
 #endif
@@ -4130,9 +4056,6 @@ namespace System
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override bool IsArrayImpl() 
         {
             return RuntimeTypeHandle.IsArray(this);
@@ -4147,9 +4070,6 @@ namespace System
             return RuntimeTypeHandle.GetArrayRank(this);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override Type GetElementType() 
         {
             return RuntimeTypeHandle.GetElementType(this);
@@ -4368,17 +4288,11 @@ namespace System
 
         public override bool IsGenericTypeDefinition
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return RuntimeTypeHandle.IsGenericTypeDefinition(this); }
         }
 
         public override bool IsGenericParameter
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return RuntimeTypeHandle.IsGenericVariable(this); }
         }
 
@@ -4397,9 +4311,6 @@ namespace System
             }
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override Type GetGenericTypeDefinition() 
         {
             if (!IsGenericType)
@@ -4411,9 +4322,6 @@ namespace System
 
         public override bool IsGenericType
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return RuntimeTypeHandle.HasInstantiation(this); }
         }
 
@@ -4424,9 +4332,6 @@ namespace System
 #if !MONO
         public override bool ContainsGenericParameters
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return GetRootElementType().GetTypeHandleInternal().ContainsGenericVariables(); } 
         }
 
@@ -5116,9 +5021,6 @@ namespace System
         #endregion
 
         #region Object Overrides
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [Pure]
         public override bool Equals(object obj)
         {
@@ -5126,9 +5028,6 @@ namespace System
             return obj == (object)this;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override int GetHashCode() 
         {
             return RuntimeHelpers.GetHashCode(this);
@@ -5219,42 +5118,12 @@ namespace System
 #if !MONO
         public override String Name 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
-#if !FEATURE_CORECLR
-                if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-                {
-                    FrameworkEventSource.Log.TypeName(GetFullNameForEtw());
-                }
-#endif
                 return GetCachedName(TypeNameKind.Name);
             }
         }
 
-        internal override string GetFullNameForEtw()
-        {
-            string fullName = "";
-            
-            if (IsCOMObject)
-            {
-                fullName = "Guid:" + this.GUID.ToString() + ", ";
-            }
-            
-            string fullname = GetCachedName(TypeNameKind.FullName);
-            string assemblyFullName = this.Assembly.GetFullNameForEtw();
-            
-            // FullName is null if this type contains generic parameters but is not a generic type definition.
-            if (fullname == null || assemblyFullName == null)
-                return fullName;
-            
-            fullName += Assembly.CreateQualifiedName(assemblyFullName, fullname); 
-
-            return fullName;
-        }
-#endif
         // This is used by the ToString() overrides of all reflection types. The legacy behavior has the following problems:
         //  1. Use only Name for nested types, which can be confused with global types and generic parameters of the same name.
         //  2. Use only Name for generic parameters, which can be confused with nested types and global types of the same name.
@@ -5292,6 +5161,7 @@ namespace System
                 return typeName;
             }
         }
+
 #if !MONO
         private string GetCachedName(TypeNameKind kind)
         {
@@ -5311,9 +5181,6 @@ namespace System
 #if !MONO
         public override Type DeclaringType 
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
                 return Cache.GetEnclosingType();
@@ -5331,9 +5198,6 @@ namespace System
         public override int MetadataToken
         {
             [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get 
             {
                 return RuntimeTypeHandle.GetToken(this);
@@ -5987,7 +5851,7 @@ namespace System
         [Flags]
         private enum DispatchWrapperType : int
         {
-            // This enum must stay in [....] with the DispatchWrapperType enum defined in MLInfo.h
+            // This enum must stay in sync with the DispatchWrapperType enum defined in MLInfo.h
             Unknown         = 0x00000001,
             Dispatch        = 0x00000002,
             Record          = 0x00000004,

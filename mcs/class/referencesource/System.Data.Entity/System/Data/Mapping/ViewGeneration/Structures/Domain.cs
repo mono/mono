@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner [....]
-// @backupOwner [....]
+// @owner Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -177,7 +177,7 @@ namespace System.Data.Mapping.ViewGeneration.Structures
         // effect: returns the default value for the member
         // if the member is nullable and has no default, changes default value to CellConstant.NULL and returns true
         // if the mebmer is not nullable and has no default, returns false
-        // CHANGE_[....]_FEATURE_DEFAULT_VALUES: return the right default once metadata supports it
+        // CHANGE_Microsoft_FEATURE_DEFAULT_VALUES: return the right default once metadata supports it
         internal static bool TryGetDefaultValueForMemberPath(MemberPath memberPath, out Constant defaultConstant)
         {
             object defaultValue = memberPath.DefaultValue;

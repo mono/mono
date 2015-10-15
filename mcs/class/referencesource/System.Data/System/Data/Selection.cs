@@ -2,8 +2,8 @@
 // <copyright file="Selection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -855,7 +855,7 @@ namespace System.Data {
                     OnListChanged(ListChangedType.ItemAdded, newIndex, oldIndex);
                 }
                 else  if (newIndex == -1) { // its deleted
-                    // Do not fix this. see bug Bug 271076 for explanation.
+                    // Do not fix this. see 
                     OnListChanged(ListChangedType.ItemDeleted, oldIndex);
                 }
                 else {

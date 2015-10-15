@@ -1524,7 +1524,7 @@ namespace System.ServiceModel.Security
                     foreach (XmlNode node in element.ChildNodes)
                         if (node is XmlElement)
                         {
-                            // PreSharp Bug: Parameter 'requiredClaims' to this public method must be validated: A null-dereference can occur here.
+                            // PreSharp 
 #pragma warning suppress 56506
                             requiredClaims.Add((XmlElement)node);
                         }

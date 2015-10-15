@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 // ==--==
 //* File:    Channel.cs
 //*
-//* <EMAIL>Author:  Tarun Anand ([....])</EMAIL>
+//* <EMAIL>Author:  Tarun Anand (Microsoft)</EMAIL>
 //*
 //* Purpose: Defines the general purpose remoting proxy
 //*
@@ -1191,9 +1191,9 @@ namespace System.Runtime.Remoting.Channels {
 
 
     // This list should be considered immutable once created.
-    //   <STRIP>Ideally, this class would encapsulate more functionality, but
-    //   to help minimize the number of changes in the RTM tree, only
-    //   a small amount of code has been moved here.</STRIP>
+    //   <
+
+
     internal class RegisteredChannelList
     {
         private RegisteredChannel[] _channels;

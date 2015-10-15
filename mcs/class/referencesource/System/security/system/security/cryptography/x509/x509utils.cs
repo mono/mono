@@ -19,6 +19,7 @@ namespace System.Security.Cryptography.X509Certificates {
     using System.Security.Cryptography;
     using System.Security.Permissions;
     using System.Text;
+    using Microsoft.Win32.SafeHandles;
 
     internal class X509Utils {
         private X509Utils () {}
@@ -228,6 +229,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return index + 1;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static SafeLocalAllocHandle ByteToPtr (byte[] managed) {
             SafeLocalAllocHandle pb = CAPI.LocalAlloc(CAPI.LMEM_FIXED, new IntPtr(managed.Length));
             Marshal.Copy(managed, 0, pb.DangerousGetHandle(), managed.Length);
@@ -240,12 +244,18 @@ namespace System.Security.Cryptography.X509Certificates {
         // following the platform.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal unsafe static void memcpy (IntPtr source, IntPtr dest, uint size) {
             for (uint index = 0; index < size; index++) {
                 *(byte*) ((long)dest + index) = Marshal.ReadByte(new IntPtr((long)source + index));
             }
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static byte[] PtrToByte (IntPtr unmanaged, uint size) {
             byte[] array = new byte[(int) size];
             Marshal.Copy(unmanaged, array, 0, array.Length);
@@ -264,6 +274,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return true;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static SafeLocalAllocHandle StringToAnsiPtr (string s) {
             byte[] arr = new byte[s.Length + 1];
             Encoding.ASCII.GetBytes(s, 0, s.Length, arr, 0);
@@ -272,6 +285,9 @@ namespace System.Security.Cryptography.X509Certificates {
             return pb;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static SafeLocalAllocHandle StringToUniPtr (string s) {
             byte[] arr = new byte[2 * (s.Length + 1)];
             Encoding.Unicode.GetBytes(s, 0, s.Length, arr, 0);
@@ -281,14 +297,19 @@ namespace System.Security.Cryptography.X509Certificates {
         }
 
         // this method create a memory store from a certificate collection
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static SafeCertStoreHandle ExportToMemoryStore (X509Certificate2Collection collection) {
             //
             // We need to Assert all StorePermission flags since this is a memory store and we want 
             // semi-trusted code to be able to export certificates to a memory store.
             //
 
+#if !FEATURE_CORESYSTEM
             StorePermission sp = new StorePermission(StorePermissionFlags.AllFlags);
             sp.Assert();
+#endif
 
             SafeCertStoreHandle safeCertStoreHandle = SafeCertStoreHandle.InvalidHandle;
 
@@ -320,12 +341,18 @@ namespace System.Security.Cryptography.X509Certificates {
             return safeCertStoreHandle;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static uint OidToAlgId (string value) {
             SafeLocalAllocHandle pszOid = StringToAnsiPtr(value);
             CAPI.CRYPT_OID_INFO pOIDInfo = CAPI.CryptFindOIDInfo(CAPI.CRYPT_OID_INFO_OID_KEY, pszOid, 0);
             return pOIDInfo.Algid;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static string FindOidInfo(uint keyType, string keyValue, OidGroup oidGroup) {
             if (keyValue == null)
                 throw new ArgumentNullException("keyValue");
@@ -417,6 +444,9 @@ error:
             throw new ArgumentException(SR.GetString(SR.Argument_InvalidOidValue));
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static SafeLocalAllocHandle CopyOidsToUnmanagedMemory (OidCollection oids) {
             SafeLocalAllocHandle safeLocalAllocHandle = SafeLocalAllocHandle.InvalidHandle;
             if (oids == null || oids.Count == 0)
@@ -451,6 +481,9 @@ error:
             return safeLocalAllocHandle;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecuritySafeCritical]
+#endif
         internal static X509Certificate2Collection GetCertificates(SafeCertStoreHandle safeCertStoreHandle) {
             X509Certificate2Collection collection = new X509Certificate2Collection();
             IntPtr pEnumContext = CAPI.CertEnumCertificatesInStore(safeCertStoreHandle, IntPtr.Zero);
@@ -469,6 +502,9 @@ error:
         // Anything else is an error.
         //
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static unsafe int VerifyCertificate (SafeCertContextHandle pCertContext,
                                                       OidCollection applicationPolicy,
                                                       OidCollection certificatePolicy,
@@ -486,7 +522,7 @@ error:
             CAPI.CERT_CHAIN_POLICY_STATUS PolicyStatus = new CAPI.CERT_CHAIN_POLICY_STATUS(Marshal.SizeOf(typeof(CAPI.CERT_CHAIN_POLICY_STATUS)));
 
             // Build the chain.
-            SafeCertChainHandle pChainContext = SafeCertChainHandle.InvalidHandle;
+            SafeX509ChainHandle pChainContext = SafeX509ChainHandle.InvalidHandle;
             int hr = X509Chain.BuildChain(new IntPtr(CAPI.HCCE_CURRENT_USER),
                                           pCertContext, 
                                           extraStore,
@@ -515,6 +551,9 @@ error:
             return CAPI.S_OK;
         }
 
+#if FEATURE_CORESYSTEM
+        [SecurityCritical]
+#endif
         internal static string GetSystemErrorString (int hr) {
             StringBuilder strMessage = new StringBuilder(512);
             uint dwErrorCode = CAPI.FormatMessage (CAPI.FORMAT_MESSAGE_FROM_SYSTEM | CAPI.FORMAT_MESSAGE_IGNORE_INSERTS,

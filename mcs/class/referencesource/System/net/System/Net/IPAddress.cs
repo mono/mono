@@ -741,8 +741,11 @@ namespace System.Net {
                 return this;
             }
 
-            long address = (((m_Numbers[6] & 0x0000FF00) >> 8) | ((m_Numbers[6] & 0x000000FF) << 8)) |
-                    ((((m_Numbers[7] & 0x0000FF00) >> 8) | ((m_Numbers[7] & 0x000000FF) << 8)) << 16);
+            // Cast the ushort values to a uint and mask with unsigned literal before bit shifting.
+            // Otherwise, we can end up getting a negative value for any IPv4 address that ends with
+            // a byte higher than 127 due to sign extension of the most significant 1 bit.
+            long address = ((((uint)m_Numbers[6] & 0x0000FF00u) >> 8) | (((uint)m_Numbers[6] & 0x000000FFu) << 8)) |
+                    (((((uint)m_Numbers[7] & 0x0000FF00u) >> 8) | (((uint)m_Numbers[7] & 0x000000FFu) << 8)) << 16);
 
             return new IPAddress(address);
         }

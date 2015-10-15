@@ -59,7 +59,7 @@ namespace System.Web.Services.Protocols {
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
-        // NOTE, [....]: The SOAP 1.1 is unclear on whether the detail element can or should be qualified.
+        // NOTE, Microsoft: The SOAP 1.1 is unclear on whether the detail element can or should be qualified.
         // Based on consensus about the intent, we will not qualify it.
         public static readonly XmlQualifiedName DetailElementName = new XmlQualifiedName(Soap.Element.FaultDetail, "");
 
@@ -191,9 +191,9 @@ namespace System.Web.Services.Protocols {
             actor = (string)list["actor"];
             role = (string)list["role"];
             
-            // Bug: 323493: XmlNode is not serializable, and I don't think we want to really want to create
-            // an XmlDocument just to read a XmlNode from string to get the deserialized instance back.
-            // detail = (XmlNode)list["detail"];
+            // 
+
+
 
             subCode = (SoapFaultSubCode)list["subCode"];
             lang = (string)list["lang"];
@@ -280,9 +280,9 @@ namespace System.Web.Services.Protocols {
             list["actor"] = Actor;
             list["role"] = Role;
             
-            // Bug: 323493: XmlNode is not serializable, and I don't think we want to really want to create
-            // an XmlDocument just to read a XmlNode from string to get the deserialized instance back.
-            // list["detail"] = Detail;
+            // 
+
+
             
             list["subCode"] = SubCode;
             list["lang"] = Lang;

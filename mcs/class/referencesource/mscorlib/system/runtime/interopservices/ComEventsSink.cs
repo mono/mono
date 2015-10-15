@@ -14,7 +14,6 @@
 ** Date:  April 2008
 **/
 
-#if FEATURE_COMINTEROP
 
 namespace System.Runtime.InteropServices {
     using System;
@@ -289,5 +288,3 @@ namespace System.Runtime.InteropServices {
 #endregion
     };
 }
-
-#endif

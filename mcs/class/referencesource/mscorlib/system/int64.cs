@@ -75,6 +75,7 @@ namespace System {
             return m_value == ((Int64)obj).m_value;
         }
 
+        [System.Runtime.Versioning.NonVersionable]
         public bool Equals(Int64 obj)
         {
             return m_value == obj;

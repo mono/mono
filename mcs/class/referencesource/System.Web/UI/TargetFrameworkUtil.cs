@@ -103,7 +103,7 @@ namespace System.Web.UI {
 
         // The provider needs not be cached because the TFP service 
         // returns light-weight providers that delegate to the same 
-        // underlying TFP instance.  (Dev10 bug 795001)
+        // underlying TFP instance.  (Dev10 
         private static TypeDescriptionProvider GetTargetFrameworkProvider(object obj) {
             TypeDescriptionProviderService service = TargetFrameworkUtil.TypeDescriptionProviderService;
             if (service != null) {
@@ -532,7 +532,7 @@ namespace System.Web.UI {
                 //   updated).
                 // - Otherwise, we are either already using standard reflection, or we are using the
                 //   TFP in the primary appdomain, and should not be caching statically.
-                // Dev10 bug 805134
+                // Dev10 
                 return s_cbmTdpBridge == null;
             }
         }

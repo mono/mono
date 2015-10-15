@@ -444,7 +444,7 @@ namespace System.ServiceModel.Channels
                     bool lockTaken = false;
                     try
                     {
-                        // We need this lock only in [....] reply case. In this case, we hopped the thread in the request side, so it's possible to send the response here
+                        // We need this lock only in sync reply case. In this case, we hopped the thread in the request side, so it's possible to send the response here
                         // before the TransportIntegrationHandler is ready on another thread (thus a race condition). So we use the lock here. In the incoming path, we won't
                         // release the lock until the TransportIntegrationHandler is ready. Once we get the lock on the outgoing path, we can then call Wait() on this handler safely.
                         Monitor.TryEnter(this.ThisLock, TimeoutHelper.ToMilliseconds(helper.RemainingTime()), ref lockTaken);
@@ -615,7 +615,7 @@ namespace System.ServiceModel.Channels
                                 this.cancellationTokenSource.Dispose();
                                 this.wasProcessInboundRequestSuccessful = true;
                                 //// shortcut scenario
-                                //// Currently we are always doing [....] send even async send is enabled. 
+                                //// Currently we are always doing sync send even async send is enabled. 
                                 this.SendAndClose(t.Result);
                             }
                             else if (this.isAsyncReply)

@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //---------------------------------------------------------------------
 
 using System;
@@ -28,7 +28,7 @@ namespace System.Data.Metadata.Edm
         // The way the collection supports both case sensitive and insensitive search is that it maintains two lists: one list
         // for keep tracking of the order (the ordered list) and another list sorted case sensitively (the sorted list) by the
         // identity of the item.  When a look up on ordinal is requested, the ordered list is used.  When a look up on the name
-        // is requested, the sorted list is used.  The two list must be kept in [....] for all update operations.  For case
+        // is requested, the sorted list is used.  The two list must be kept in sync for all update operations.  For case
         // sensitive name lookup, the sorted list is searched.  For case insensitive name lookup, a binary search is used on the
         // sorted list to find the match.
 

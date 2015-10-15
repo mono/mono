@@ -2,8 +2,8 @@
 // <copyright file="DataRow.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -1307,9 +1307,9 @@ namespace System.Data {
                     version = DataRowVersion.Current;
                 }
                 // There are various known issues detected by this assert for non-default versions, 
-                // for example DevDiv2 bug 73753
-                // Since changes consitutute breaking change (either way customer will get another result), 
-                // we decided not to fix them in Dev 11
+                // for example DevDiv2 
+
+
                 Debug.Assert(valueFromStorage.Equals(column.DataExpression.Evaluate(this, version)),
                     "Value from storage does lazily computed expression value"); 
             }

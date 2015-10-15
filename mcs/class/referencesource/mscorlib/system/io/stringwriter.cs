@@ -7,7 +7,7 @@
 **
 ** Class:  StringWriter
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 ** Purpose: For writing text to a string
 **
@@ -40,26 +40,17 @@ namespace System.IO {
 
         // Constructs a new StringWriter. A new StringBuilder is automatically
         // created and associated with the new StringWriter.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringWriter() 
             : this(new StringBuilder(), CultureInfo.CurrentCulture)
         {
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringWriter(IFormatProvider formatProvider) 
             : this(new StringBuilder(), formatProvider) {
         }
     
         // Constructs a new StringWriter that writes to the given StringBuilder.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringWriter(StringBuilder sb) : this(sb, CultureInfo.CurrentCulture) {
         }
 
@@ -71,17 +62,11 @@ namespace System.IO {
             _isOpen = true;
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override void Close()
         {
             Dispose(true);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         protected override void Dispose(bool disposing)
         {
             // Do not destroy _sb, so that we can extract this after we are
@@ -92,9 +77,6 @@ namespace System.IO {
 
 
         public override Encoding Encoding {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { 
                 if (m_encoding==null) {
                     m_encoding = new UnicodeEncoding(false, false);
@@ -113,9 +95,6 @@ namespace System.IO {
     
         // Writes a character to the underlying string buffer.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override void Write(char value) {
             if (!_isOpen)
                 __Error.WriterClosed();
@@ -147,9 +126,6 @@ namespace System.IO {
         // Writes a string to the underlying string buffer. If the given string is
         // null, nothing is written.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override void Write(String value) {
             if (!_isOpen)
                 __Error.WriterClosed();
@@ -219,9 +195,6 @@ namespace System.IO {
         // Returns a string containing the characters written to this TextWriter
         // so far.
         //
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public override String ToString() {
             return _sb.ToString();
         }

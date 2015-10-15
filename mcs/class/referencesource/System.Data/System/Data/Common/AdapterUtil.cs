@@ -2,8 +2,8 @@
 // <copyright file="AdapterUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -78,7 +78,7 @@ namespace System.Data.Common {
         }
 
         // NOTE: Initializing a Task in SQL CLR requires the "UNSAFE" permission set (http://msdn.microsoft.com/en-us/library/ms172338.aspx)
-        // Therefore we are lazily initializing these Tasks to avoid forcing customers to use the "UNSAFE" set when they are actually using no Async features (See Dev11 Bug #193253)
+        // Therefore we are lazily initializing these Tasks to avoid forcing customers to use the "UNSAFE" set when they are actually using no Async features (See Dev11 
         static private Task<bool> _trueTask = null;
         static internal Task<bool> TrueTask {
             get {
@@ -803,7 +803,7 @@ namespace System.Data.Common {
             return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfSecureAndClearCredential));
         }
         
-         static internal ArgumentException InvalidMixedArgumentOfSecureAndClearCredential() {
+        static internal ArgumentException InvalidMixedArgumentOfSecureAndClearCredential() {
             return ADP.Argument(Res.GetString(Res.ADP_InvalidMixedUsageOfSecureAndClearCredential));
         }
 
@@ -820,9 +820,33 @@ namespace System.Data.Common {
            return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfSecureCredentialAndContextConnection));
        }
 
-       static internal ArgumentException InvalidMixedArgumentOfSecureCredentialAndContextConnection()
+       static internal ArgumentException InvalidMixedArgumentOfSecureCredentialAndContextConnection() 
        {
            return ADP.Argument(Res.GetString(Res.ADP_InvalidMixedUsageOfSecureCredentialAndContextConnection));
+       }
+
+       static internal InvalidOperationException InvalidMixedUsageOfAccessTokenAndContextConnection() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfAccessTokenAndContextConnection));
+       }
+
+       static internal InvalidOperationException InvalidMixedUsageOfAccessTokenAndIntegratedSecurity() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfAccessTokenAndIntegratedSecurity));
+       }
+
+       static internal InvalidOperationException InvalidMixedUsageOfAccessTokenAndUserIDPassword() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfAccessTokenAndUserIDPassword));
+       }
+
+       static internal Exception InvalidMixedUsageOfAccessTokenAndCredential() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfAccessTokenAndCredential));
+       }
+
+       static internal Exception InvalidMixedUsageOfAccessTokenAndAuthentication() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfAccessTokenAndAuthentication));
+       }
+
+       static internal Exception InvalidMixedUsageOfCredentialAndAccessToken() {
+           return ADP.InvalidOperation(Res.GetString(Res.ADP_InvalidMixedUsageOfCredentialAndAccessToken));
        }
 
        //
@@ -1568,6 +1592,10 @@ namespace System.Data.Common {
             return ADP.Argument(Res.GetString(Res.ADP_ParameterValueOutOfRange, value.ToString()));
         }
 
+        static internal ArgumentException ParameterValueOutOfRange(String value) {
+            return ADP.Argument(Res.GetString(Res.ADP_ParameterValueOutOfRange, value));
+        }
+
         static internal ArgumentException VersionDoesNotSupportDataType(string typeName) {
             return Argument(Res.GetString(Res.ADP_VersionDoesNotSupportDataType, typeName));
         }
@@ -1761,6 +1789,7 @@ namespace System.Data.Common {
         internal const string ChangeDatabase = "ChangeDatabase";
         internal const string Cancel = "Cancel";
         internal const string Clone = "Clone";
+        internal const string ColumnEncryptionSystemProviderNamePrefix = "MSSQL_";
         internal const string CommitTransaction = "CommitTransaction";
         internal const string CommandTimeout = "CommandTimeout";
         internal const string ConnectionString = "ConnectionString";

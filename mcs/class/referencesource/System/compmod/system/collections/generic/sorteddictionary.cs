@@ -9,7 +9,7 @@ namespace System.Collections.Generic {
 #endif
     [DebuggerTypeProxy(typeof(System_DictionaryDebugView<,>))]
     [DebuggerDisplay("Count = {Count}")]        
-    public class SortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary {
+    public class SortedDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue> {
 #if !FEATURE_NETCORE
         [NonSerialized]
 #endif
@@ -134,6 +134,12 @@ namespace System.Collections.Generic {
             }
         }
 
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys {
+            get {
+                return Keys;
+            }
+        }
+
         public ValueCollection Values {
             get {
                 if (values == null) values = new ValueCollection(this);
@@ -143,6 +149,12 @@ namespace System.Collections.Generic {
 
         ICollection<TValue> IDictionary<TKey, TValue>.Values {
             get {                
+                return Values;
+            }
+        }
+
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values {
+            get {
                 return Values;
             }
         }
@@ -391,8 +403,8 @@ namespace System.Collections.Generic {
                     if (getEnumeratorRetType == DictEntry) {
                         return new DictionaryEntry(Current.Key, Current.Value);
                     } else {
-                        return new KeyValuePair<TKey, TValue>(Current.Key, Current.Value);			  
-                    }		
+                        return new KeyValuePair<TKey, TValue>(Current.Key, Current.Value);            
+                    }       
 
                 }
             }
@@ -433,7 +445,7 @@ namespace System.Collections.Generic {
 #if !FEATURE_NETCORE
         [Serializable]
 #endif
-        public sealed class KeyCollection: ICollection<TKey>, ICollection {
+        public sealed class KeyCollection: ICollection<TKey>, ICollection, IReadOnlyCollection<TKey> {
             private SortedDictionary<TKey,TValue> dictionary;
 
             public KeyCollection(SortedDictionary<TKey,TValue> dictionary) {
@@ -588,7 +600,7 @@ namespace System.Collections.Generic {
 #if !FEATURE_NETCORE
         [Serializable]
 #endif
-        public sealed class ValueCollection: ICollection<TValue>, ICollection {
+        public sealed class ValueCollection: ICollection<TValue>, ICollection, IReadOnlyCollection<TValue> {
             private SortedDictionary<TKey,TValue> dictionary;
 
             public ValueCollection(SortedDictionary<TKey,TValue> dictionary) {

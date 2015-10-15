@@ -67,8 +67,8 @@ namespace System.Web.UI.Adapters {
             }
         }
 
-        // 
-
+        // UNDONE: Internal because needed by WmlTextWriter.  Consider removing this prop somehow.
+        // Returns true if form variables have been written.
         internal bool WrittenFormVariables {
             get {
                 return _writtenFormVariables;
@@ -131,8 +131,8 @@ namespace System.Web.UI.Adapters {
             return collection;
         }
 
-        // 
-
+        // UNDONE: For M1, we only have Wml browsers which do not support accesskey.  For later milestones, make this
+        // dependent on a capability or replace with a capability.
         private bool DoesBrowserSupportAccessKey() {
             return false;
         }
@@ -235,16 +235,16 @@ namespace System.Web.UI.Adapters {
         }
 
         // Renders the beginning of the form.
-        // 
+        // UNDONE: Remove internal modifier when method is completely removed from writer.
         protected internal virtual void RenderBeginForm(WmlTextWriter writer) {
 
             RenderBeginCardTag(writer);
 
             // Write form variables.
 
-            // 
-
-
+            // UNDONE: Move writer._provideBackButton to this adapter.
+            // Review: In V1 we had a writer.ProvideBackButton property, is there any need for this with (more advanced)
+            // whidbey devices?
             _writtenFormVariables = true;
             if (_formVariables == null) {
                 _formVariables = new ListDictionary();
@@ -259,7 +259,7 @@ namespace System.Web.UI.Adapters {
             RenderSetFormVariables(writer);
             RenderPostUrlFormVariable(writer);
             writer.WriteLine("</refresh></onevent>");
-            // 
+            // UNDONE: formAdapter.RenderExtraCardElements(this);
             writer.BeginFormOrPanel();
         }
 
@@ -432,7 +432,7 @@ namespace System.Web.UI.Adapters {
             RenderTargetAndArgumentPostFields(writer, target, argument, postFieldType);
             RenderPostFieldVariableDictionary(writer, _dynamicPostFields);
             RenderPostFieldDictionary(writer, _staticPostFields);
-            // 
+            // UNDONE: Add postbacks for variables which are not on the current page.
             writer.WriteEndTag("go");
         }
 
@@ -442,8 +442,8 @@ namespace System.Web.UI.Adapters {
                 return;
             }
             writer.Write("?");
-            // 
-
+            // UNDONE: MMIT IPageAdapter.PersistCookielessData NYI
+            // if(Page.Adapter.PersistCookielessData && Browser["canRenderOneventAndPrevElementsTogether"] != "false")
             if (!StringUtil.EqualsIgnoreCase((string)Browser["canRenderOneventAndPrevElementsTogether"], "false")) {
                 queryString = writer.ReplaceFormsCookieWithVariable(queryString);
             }
@@ -504,7 +504,7 @@ namespace System.Web.UI.Adapters {
 
             writer.Write("<onevent type=\"onenterforward\">");
             RenderFormPostInGoAction(writer, null, _postBackEventArgumentVarName, WmlPostFieldType.Variable, String.Empty);
-            // 
+            // REVIEW: Should we always include page hidden variables.
             writer.WriteLine("</onevent>");
 
             writer.WriteLine("<onevent type=\"onenterbackward\"><prev /></onevent>");

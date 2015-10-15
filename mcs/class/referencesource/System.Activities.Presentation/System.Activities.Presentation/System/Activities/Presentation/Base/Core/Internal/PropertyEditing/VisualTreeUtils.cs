@@ -22,7 +22,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing
         private const int MaxSearchDepth = 5;
 
         // The maxium wpf visual tree depth
-        // this value should be kept in [....] with WPF's limit
+        // this value should be kept in sync with WPF's limit
         private const int MaxAllowedTreeDepth = 250;
 
         // <summary>

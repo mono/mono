@@ -69,7 +69,7 @@ namespace System.Configuration.Internal {
         [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "The callers don't leak this information.")]
         static internal string StaticGetStreamNameForConfigSource(string streamName, string configSource) {
             //
-            // Note ([....] 7/08/05):
+            // Note (Microsoft 7/08/05):
             // RemoteWebConfigurationHost also redirects GetStreamNameForConfigSource to this
             // method, and that means streamName is referring to a path that's on the remote
             // machine.  The problem is that Path.GetFullPath will demand FileIOPermission on

@@ -104,7 +104,7 @@ namespace System.ServiceModel.Configuration
             base.CopyFrom(from);
 
             ReliableSessionElement source = (ReliableSessionElement)from;
-#pragma warning suppress 56506 //[....]; base.CopyFrom() checks for 'from' being null
+#pragma warning suppress 56506 //Microsoft; base.CopyFrom() checks for 'from' being null
             this.AcknowledgementInterval = source.AcknowledgementInterval;
             this.FlowControlEnabled = source.FlowControlEnabled;
             this.InactivityTimeout = source.InactivityTimeout;

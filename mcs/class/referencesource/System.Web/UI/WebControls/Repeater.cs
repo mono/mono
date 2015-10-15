@@ -56,6 +56,7 @@ namespace System.Web.UI.WebControls {
         private string _itemType;
         private string _selectMethod;
         private ModelDataSource _modelDataSource;
+        private bool _asyncSelectPending;
 
 
         /// <devdoc>
@@ -603,7 +604,6 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected virtual void CreateControlHierarchy(bool useDataSource) {
             IEnumerable dataSource = null;
-            int count = -1;
 
             if (itemsArray != null) {
                 itemsArray.Clear();
@@ -612,31 +612,50 @@ namespace System.Web.UI.WebControls {
                 itemsArray = new ArrayList();
             }
 
-            if (useDataSource == false) {
+            if (!useDataSource) {
                 // ViewState must have a non-null value for ItemCount because we check for
                 // this in CreateChildControls
-                count = (int)ViewState[ItemCountViewStateKey];
+                int count = (int)ViewState[ItemCountViewStateKey];
                 if (count != -1) {
                     dataSource = new DummyDataSource(count);
                     itemsArray.Capacity = count;
                 }
+
+                AddDataItemsIntoItemsArray(dataSource, useDataSource);
             }
             else {
                 dataSource = GetData();
+                PostGetDataAction(dataSource);
+            }
+        }
 
-                ICollection collection = dataSource as ICollection;
-                if (collection != null) {
-                    itemsArray.Capacity = collection.Count;
-                }
+        private void OnDataSourceViewSelectCallback(IEnumerable data) {
+            _asyncSelectPending = false;
+            PostGetDataAction(data);
+        }
+
+        private void PostGetDataAction(IEnumerable dataSource) {
+            if (_asyncSelectPending)
+                return;
+
+            ICollection collection = dataSource as ICollection;
+            if (collection != null) {
+                itemsArray.Capacity = collection.Count;
             }
 
+            int addedItemCount = AddDataItemsIntoItemsArray(dataSource, true/*useDataSource*/);
+            ViewState[ItemCountViewStateKey] = addedItemCount;
+        }
+
+        private int AddDataItemsIntoItemsArray(IEnumerable dataSource, bool useDataSource) {
+            int dataItemCount = -1;
             if (dataSource != null) {
                 RepeaterItem item;
                 ListItemType itemType;
                 int index = 0;
 
                 bool hasSeparators = (separatorTemplate != null);
-                count = 0;
+                dataItemCount = 0;
 
                 if (headerTemplate != null) {
                     CreateItem(-1, ListItemType.Header, useDataSource, null);
@@ -646,7 +665,7 @@ namespace System.Web.UI.WebControls {
                     // rather than creating separators after the item, we create the separator
                     // for the previous item in all iterations of this loop.
                     // this is so that we don't create a separator for the last item
-                    if (hasSeparators && (count > 0)) {
+                    if (hasSeparators && (dataItemCount > 0)) {
                         CreateItem(index - 1, ListItemType.Separator, useDataSource, null);
                     }
 
@@ -654,7 +673,7 @@ namespace System.Web.UI.WebControls {
                     item = CreateItem(index, itemType, useDataSource, dataItem);
                     itemsArray.Add(item);
 
-                    count++;
+                    dataItemCount++;
                     index++;
                 }
 
@@ -663,10 +682,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
 
-            if (useDataSource) {
-                // save the number of items contained in the repeater for use in round-trips
-                ViewState[ItemCountViewStateKey] = ((dataSource != null) ? count : -1);
-            }
+            return dataItemCount;
         }
 
         protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments() {
@@ -749,8 +765,22 @@ namespace System.Web.UI.WebControls {
             Debug.Assert(_currentViewValid);
 
             if (view != null) {
-                return view.ExecuteSelect(SelectArguments);
+                // DevDiv 1070535: enable async model binding for Repeater
+                bool useAsyncSelect = false;
+                if (AppSettings.EnableAsyncModelBinding) {
+                    var modelDataView = view as ModelDataSourceView;
+                    useAsyncSelect = modelDataView != null && modelDataView.IsSelectMethodAsync;
+                }
+
+                if (useAsyncSelect) {
+                    _asyncSelectPending = true; // disable post data binding action until the callback is invoked
+                    view.Select(SelectArguments, OnDataSourceViewSelectCallback);
+                }
+                else {
+                    return view.ExecuteSelect(SelectArguments);
+                }
             }
+
             return null;
         }
 
@@ -969,10 +999,10 @@ namespace System.Web.UI.WebControls {
         /// Saves view state.
         /// </devdoc>
         protected override object SaveViewState() {
-            // Bug 322689: In the web farms scenario, if a web site is hosted in 4.0 and 4.5 servers
-            // (though this is not a really supported scenario, we are fixing this instance), 
-            // the View state created by 4.0 should be able to be understood by 4.5 controls.
-            // So, we create a Pair only if we are using model binding and otherwise fallback to 4.0 behavior.
+            // 
+
+
+
 
             object baseViewState = base.SaveViewState();
 

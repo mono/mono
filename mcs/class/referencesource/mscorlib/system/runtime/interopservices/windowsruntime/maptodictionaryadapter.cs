@@ -5,7 +5,7 @@
 // ==--==
 //
 // <OWNER>GPaperin</OWNER>
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.Security;

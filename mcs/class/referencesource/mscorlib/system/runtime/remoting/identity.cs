@@ -139,8 +139,6 @@ namespace System.Runtime.Remoting {
             return (String.CompareOrdinal(s1, 0, prefix, 0, prefix.Length) == 0);
         } // StringStartsWith
 
-
-
         // DISCONNECTED_FULL denotes that the object is disconnected
         // from both local & remote (x-appdomain & higher) clients
 
@@ -176,6 +174,9 @@ namespace System.Runtime.Remoting {
 
         // Lease for object
         internal Lease _lease;
+
+        // Set  when Identity is initializing and not yet ready for use.
+        private volatile bool _initializing;
 
         internal static String ProcessGuid {get {return ProcessIDGuid;}}
 
@@ -230,6 +231,15 @@ namespace System.Runtime.Remoting {
         internal bool IsContextBound {
             get  {
                 return (_flags&IDFLG_CONTEXT_BOUND) == IDFLG_CONTEXT_BOUND;
+            }
+        }
+
+        internal bool IsInitializing {
+            get  {
+                return (_initializing);
+            }
+            set {
+                _initializing = value;
             }
         }
 

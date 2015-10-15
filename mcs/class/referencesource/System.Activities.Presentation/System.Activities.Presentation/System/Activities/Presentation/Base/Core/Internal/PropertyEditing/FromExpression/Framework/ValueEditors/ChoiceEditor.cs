@@ -70,7 +70,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
 
         public static readonly DependencyProperty ComboBoxLoadingCursorProperty = DependencyProperty.Register("ComboBoxLoadingCursor", typeof(Cursor), typeof(ChoiceEditor), new PropertyMetadata(null));
 
-        // WORKAROUND this property is used in combination with a trigger to kick the combobox when it clears its bindings Avalon bug: 1756023
+        // WORKAROUND this property is used in combination with a trigger to kick the combobox when it clears its bindings Avalon 
         public static readonly DependencyProperty ForceBindingProperty = DependencyProperty.Register("ForceBinding", typeof(bool), typeof(ChoiceEditor), new FrameworkPropertyMetadata(false));
 
 
@@ -924,7 +924,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
         protected override void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
         {
             this.BeginNoCommitInternalValueChangeBlock();
-            // WORKAROUND Turn off bindings on the internal combo while the template is udpating. This works around Avalon bug: 1756023
+            // WORKAROUND Turn off bindings on the internal combo while the template is udpating. This works around Avalon 
             this.ForceBinding = false;
             base.OnTemplateChanged(oldTemplate, newTemplate);
         }
@@ -932,7 +932,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            // WORKAROUND Force the bindings on our internal combo (if there is one) to update. This works around Avalon bug: 1756023
+            // WORKAROUND Force the bindings on our internal combo (if there is one) to update. This works around Avalon 
             this.ForceBinding = true;
 
             this.EndNoCommitInternalValueChangeBlock();
@@ -992,7 +992,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
 
         private void ItemsSourceChanged()
         {
-            // The collection just changed, so we need to make sure that things are in [....]
+            // The collection just changed, so we need to make sure that things are in sync
 
             // ###################################################
             // CIDER-SPECIFIC CHANGE IN NEED OF PORTING - BEGIN
@@ -1131,7 +1131,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
 
                             this.Value = newValue;
 
-                            // At this point it is possible that the value that we just set is out of [....] with the internal value
+                            // At this point it is possible that the value that we just set is out of sync with the internal value
                             if (newValue != this.InternalValue)
                             {
                                 this.UpdateInternalValuesFromValue();

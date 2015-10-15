@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 namespace System.Security.Principal
 {
     using System;
@@ -212,9 +212,9 @@ namespace System.Security.Principal
                 {
                     //
                     // Rare case that we have defined a type of identity reference and 
-                    // not included it in the code logic above (this is more like a bug in the implementation
-                    // but only as long as we do not allow IdentityReference to be subclassed outside of the BCL)
-                    //
+                    // not included it in the code logic above (this is more like a 
+
+
                     Contract.Assert( false, "Source type is an IdentityReference type which has not been included in translation logic.");
                     throw new SystemException();
                 }
@@ -275,9 +275,9 @@ namespace System.Security.Principal
                     {
                         //
                         // Rare case that we have defined a type of identity reference and 
-                        // not included it in the code logic above (this is more like a bug in the implementation
-                        // but only as long as we do not allow IdentityReference to be subclassed outside of the BCL)
-                        //
+                        // not included it in the code logic above (this is more like a 
+
+
                         Contract.Assert( false, "Source type is an IdentityReference type which has not been included in translation logic.");
                         throw new SystemException();
                     }
@@ -372,9 +372,9 @@ namespace System.Security.Principal
                     {
                         //
                         // Rare case that we have defined a type of identity reference and 
-                        // not included it in the code logic above (this is more like a bug in the implementation
-                        // but only as long as we do not allow IdentityReference to be subclassed outside of the BCL)
-                        //
+                        // not included it in the code logic above (this is more like a 
+
+
                         Contract.Assert( false, "Source type is an IdentityReference type which has not been included in translation logic.");
                         throw new SystemException();
                     }

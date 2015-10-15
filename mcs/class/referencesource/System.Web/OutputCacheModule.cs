@@ -352,7 +352,7 @@ namespace System.Web.Caching {
                     return 0;
                 }
                 for (int i = startIndex; i < contentEncodings.Length; i++) {
-                    if (contentEncodings[i] == acceptEncodingWithoutWeight) {
+                    if (StringUtil.EqualsIgnoreCase(contentEncodings[i], acceptEncodingWithoutWeight)) {
                         return i; // found
                     }
                 }
@@ -393,7 +393,7 @@ namespace System.Web.Caching {
             int acceptEncodingLength = acceptEncoding.Length;
             int maxSearchIndex = acceptEncodingLength - codingLength;
             while (startSearchIndex < maxSearchIndex) {
-                int indexStart = acceptEncoding.IndexOf(coding, startSearchIndex, StringComparison.Ordinal);
+                int indexStart = acceptEncoding.IndexOf(coding, startSearchIndex, StringComparison.OrdinalIgnoreCase);
                 
                 if (indexStart == -1) {
                     break; // not found

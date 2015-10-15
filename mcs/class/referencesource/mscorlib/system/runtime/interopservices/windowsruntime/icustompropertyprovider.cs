@@ -4,13 +4,12 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 
 using System;
 using System.StubHelpers;
 using System.Reflection;
 using System.Diagnostics.Contracts;
-using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,24 +53,11 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             Contract.Requires(target != null);
             Contract.Requires(propertyName != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginICustomPropertyProviderCreateProperty(target.GetType().GetFullNameForEtw(), propertyName);
-            }
-#endif
             // Only return public instance/static properties
             PropertyInfo propertyInfo = target.GetType().GetProperty(
                 propertyName,
                 BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndICustomPropertyProviderCreateProperty(target.GetType().GetFullNameForEtw(), propertyName);
-            }
-#endif
-            
             if (propertyInfo == null)
                 return null;
             else
@@ -99,13 +85,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             Contract.Requires(target != null);
             Contract.Requires(propertyName != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.BeginICustomPropertyProviderCreateIndexedProperty(target.GetType().GetFullNameForEtw(), propertyName, indexedParamType != null ? indexedParamType.GetFullNameForEtw() : "");
-            }
-#endif
-
             // Only return public instance/static properties
             PropertyInfo propertyInfo = target.GetType().GetProperty(
                 propertyName,
@@ -116,13 +95,6 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 null                                                                    // ignore type modifier
                 );
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage))
-            {
-                FrameworkEventSource.Log.EndICustomPropertyProviderCreateIndexedProperty(target.GetType().GetFullNameForEtw(), propertyName, indexedParamType != null ? indexedParamType.GetFullNameForEtw() : "");
-            }
-#endif
-            
             if (propertyInfo == null)
                 return null;
             else
@@ -250,7 +222,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             {
                 return _target.GetType();
             }
-        }        
+        }
 
         //
         // override ToString() to make sure callers get correct IStringable.ToString() behavior in native code
@@ -259,7 +231,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
         {
             return WindowsRuntime.IStringableHelper.ToString(_target);
         }
-        
+
         //
         // IGetProxyTarget - unwraps the target object and use it for data binding
         // 

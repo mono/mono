@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 // 
 
 using System;
@@ -452,11 +452,9 @@ namespace System.Reflection
             if (marshalAs.MarshalType != null) i++;
             if (marshalAs.MarshalTypeRef != null) i++;
             if (marshalAs.MarshalCookie != null) i++;
-#if FEATURE_COMINTEROP
             i++; // IidParameterIndex
             i++; // SafeArraySubType
             if (marshalAs.SafeArrayUserDefinedSubType != null) i++;
-#endif // FEATURE_COMINTEROP
             CustomAttributeNamedArgument[] namedArgs = new CustomAttributeNamedArgument[i];
 
             // For compatibility with previous runtimes, we always include the following 5 attributes, regardless
@@ -465,20 +463,16 @@ namespace System.Reflection
             namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("ArraySubType"), marshalAs.ArraySubType);
             namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("SizeParamIndex"), marshalAs.SizeParamIndex);
             namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("SizeConst"), marshalAs.SizeConst);
-#if FEATURE_COMINTEROP
             namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("IidParameterIndex"), marshalAs.IidParameterIndex);
             namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("SafeArraySubType"), marshalAs.SafeArraySubType);
-#endif // FEATURE_COMINTEROP
             if (marshalAs.MarshalType != null)
                 namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("MarshalType"), marshalAs.MarshalType);
             if (marshalAs.MarshalTypeRef != null)
                 namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("MarshalTypeRef"), marshalAs.MarshalTypeRef);
             if (marshalAs.MarshalCookie != null)
                 namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("MarshalCookie"), marshalAs.MarshalCookie);
-#if FEATURE_COMINTEROP
             if (marshalAs.SafeArrayUserDefinedSubType != null)
                 namedArgs[i++] = new CustomAttributeNamedArgument(type.GetField("SafeArrayUserDefinedSubType"), marshalAs.SafeArrayUserDefinedSubType);
-#endif // FEATURE_COMINTEROP
 
             m_namedArgs = Array.AsReadOnly(namedArgs);
         }
@@ -1194,13 +1188,6 @@ namespace System.Reflection
         {
             Contract.Requires(type != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (type.GetElementType() != null) 
                 return false;
 
@@ -1232,13 +1219,6 @@ namespace System.Reflection
             Contract.Requires(method != null);
             Contract.Requires(caType != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (PseudoCustomAttribute.IsDefined(method, caType))
                 return true;
 
@@ -1267,13 +1247,6 @@ namespace System.Reflection
             Contract.Requires(ctor != null);
             Contract.Requires(caType != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (PseudoCustomAttribute.IsDefined(ctor, caType))
                 return true;
 
@@ -1285,13 +1258,6 @@ namespace System.Reflection
         {
             Contract.Requires(property != null);
             Contract.Requires(caType != null);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
 
             if (PseudoCustomAttribute.IsDefined(property, caType))
                 return true;
@@ -1305,13 +1271,6 @@ namespace System.Reflection
             Contract.Requires(e != null);
             Contract.Requires(caType != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (PseudoCustomAttribute.IsDefined(e, caType))
                 return true;
 
@@ -1323,13 +1282,6 @@ namespace System.Reflection
         {
             Contract.Requires(field != null);
             Contract.Requires(caType != null);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
 
             if (PseudoCustomAttribute.IsDefined(field, caType))
                 return true;
@@ -1343,13 +1295,6 @@ namespace System.Reflection
             Contract.Requires(parameter != null);
             Contract.Requires(caType != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (PseudoCustomAttribute.IsDefined(parameter, caType))
                 return true;
 
@@ -1362,13 +1307,6 @@ namespace System.Reflection
             Contract.Requires(assembly != null);
             Contract.Requires(caType != null);
 
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
-
             if (PseudoCustomAttribute.IsDefined(assembly, caType))
                 return true;
 
@@ -1380,13 +1318,6 @@ namespace System.Reflection
         {
             Contract.Requires(module != null);
             Contract.Requires(caType != null);
-
-#if !FEATURE_CORECLR
-            if (FrameworkEventSource.IsInitialized && FrameworkEventSource.Log.IsEnabled(EventLevel.Informational, FrameworkEventSource.Keywords.DynamicTypeUsage) && caType != null)
-            {
-                FrameworkEventSource.Log.QueryAttributeIsDefined(caType.GetFullNameForEtw());
-            }
-#endif
 
             if (PseudoCustomAttribute.IsDefined(module, caType))
                 return true;
@@ -1963,14 +1894,12 @@ namespace System.Reflection
             if (!AttributeUsageCheck(attributeType, mustBeInheritable, attributes, derivedAttributes))
                 return false;
 
-#if FEATURE_COMINTEROP
             // Windows Runtime attributes aren't real types - they exist to be read as metadata only, and as such
             // should be filtered out of the GetCustomAttributes path.
             if ((attributeType.Attributes & TypeAttributes.WindowsRuntime) == TypeAttributes.WindowsRuntime)
             {
                 return false;
             }
-#endif // FEATURE_COMINTEROP
 
 #if FEATURE_APTCA
             // APTCA checks

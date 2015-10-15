@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       [....]
-// @backupOwner [....]
+// @owner       Microsoft
+// @backupOwner Microsoft
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -70,6 +70,7 @@ namespace System.Web.UI.Design.WebControls
         private bool _forceSchemaRetrieval;
         private readonly EntityDataSourceDesigner _owner;
         private bool _canLoadWebConfig;
+        private bool _usingEntityFrameworkVersionHigherThanFive = false;
         #endregion
         
         internal EntityDataSourceDesignerHelper(EntityDataSource entityDataSource, bool interactiveMode)
@@ -96,7 +97,7 @@ namespace System.Web.UI.Design.WebControls
 
             }            
             Debug.Assert(_owner != null, "expected non-null owner");            
-            Debug.Assert(_webApplication != null, "expected non-null web application service");            
+            Debug.Assert(_webApplication != null, "expected non-null web application service");
         }
 
         internal void AddSystemWebEntityReference()
@@ -627,9 +628,16 @@ namespace System.Web.UI.Design.WebControls
                 catch (Exception ex)
                 {   
                     StringBuilder exceptionMessage = new StringBuilder();
-                    exceptionMessage.AppendLine(Strings.Error_MetadataLoadError);
-                    exceptionMessage.AppendLine();
-                    exceptionMessage.Append(ex.Message);
+                    if (_usingEntityFrameworkVersionHigherThanFive)
+                    {
+                        exceptionMessage.Append(Strings.Error_UnsupportedVersionOfEntityFramework);
+                    }
+                    else
+                    {
+                        exceptionMessage.AppendLine(Strings.Error_MetadataLoadError);
+                        exceptionMessage.AppendLine();
+                        exceptionMessage.Append(ex.Message);
+                    }
                     ShowError(exceptionMessage.ToString());
                 }
             }
@@ -657,9 +665,17 @@ namespace System.Web.UI.Design.WebControls
             {
                 foreach (Type type in typeDiscoverySvc.GetTypes(typeof(object), false /*excludeGlobalTypes*/))
                 {
-                    if (!_assemblies.Contains(type.Assembly) && !IsSystemAssembly(type.Assembly.FullName))
+                    var assembly = type.Assembly;
+                    if (!_usingEntityFrameworkVersionHigherThanFive
+                            && assembly.GetName().Name.Equals("EntityFramework", StringComparison.InvariantCultureIgnoreCase)
+                            && assembly.GetName().Version.Major > 5)
                     {
-                        _assemblies.Add(type.Assembly);
+                        _usingEntityFrameworkVersionHigherThanFive = true;
+                        ShowError(Strings.Error_UnsupportedVersionOfEntityFramework);
+                    }
+                    if (!_assemblies.Contains(assembly) && !IsSystemAssembly(assembly.FullName))
+                    {
+                        _assemblies.Add(assembly);
                     }
                 }
             }
@@ -1115,12 +1131,12 @@ namespace System.Web.UI.Design.WebControls
                 // the right metadata from the design-time environment
                 EntityDataSource entityDataSource = new EntityDataSource(_entityConnection);
 
-                // This is workaround for a bug in the SQL CE provider services. SQL CE uses two providers - one is supposed to be used at design time 
-                // while the other one is supposed to be used at runtime. When the Entiy Designer is used in a way that requires to talk to the database 
-                // SQL CE starts returning design time provider. However they don't reset an internal flag and continue to return design time provider even if 
-                // the Entity Designer is not used anymore. Calling GetProviderManifestToken() method will reset the flag according to the provider in the
-                // connection. This fixes the problem for SQL CE provider without having to special case SQL CE because it will be a no-op for other providers. 
-                // For more details see bug 35675 in DevDiv database http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=35675
+                // This is workaround for a 
+
+
+
+
+
                 DbProviderServices.GetProviderServices(_entityConnection.StoreConnection).GetProviderManifestToken(_entityConnection.StoreConnection);
                 
                 // Copy only the properties that can affect the schema

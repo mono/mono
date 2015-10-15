@@ -7,7 +7,7 @@
 **
 ** Class:  Contract
 ** 
-** <OWNER>maf,mbarnett,[....]</OWNER>
+** <OWNER>maf,mbarnett,Microsoft</OWNER>
 **
 ** Implementation details of CLR Contracts.
 **
@@ -113,7 +113,6 @@ namespace System.Diagnostics.Contracts {
             System.Runtime.CompilerServices.ContractHelper.TriggerFailure(failureKind, displayMessage, userMessage, conditionText, innerException);
         }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         /// <summary>
         /// Allows a managed application environment such as an interactive interpreter (IronPython)
         /// to be notified of contract failures and 
@@ -143,11 +142,9 @@ namespace System.Diagnostics.Contracts {
                 System.Runtime.CompilerServices.ContractHelper.InternalContractFailed -= value;
             }
         }
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE 
         #endregion FailureBehavior
     }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE  // Not usable on Silverlight by end users due to security, and full trust users have not yet expressed an interest.
     public sealed class ContractFailedEventArgs : EventArgs
     {
         private ContractFailureKind _failureKind;
@@ -207,7 +204,6 @@ namespace System.Diagnostics.Contracts {
             _unwind = true;
         }
     }
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
 
 #if FEATURE_SERIALIZATION
     [Serializable]
@@ -279,15 +275,13 @@ namespace System.Runtime.CompilerServices
     {
         #region Private fields
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         private static volatile EventHandler<ContractFailedEventArgs> contractFailedEvent;
         private static readonly Object lockObject = new Object();
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
+
         internal const int COR_E_CODECONTRACTFAILED = unchecked((int)0x80131542);
 
         #endregion
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         /// <summary>
         /// Allows a managed application environment such as an interactive interpreter (IronPython) or a
         /// web browser host (Jolt hosting Silverlight in IE) to be notified of contract failures and 
@@ -325,7 +319,6 @@ namespace System.Runtime.CompilerServices
                 }
             }
         }
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
 
         /// <summary>
         /// Rewriter will call this method on a contract failure to allow listeners to be notified.
@@ -352,16 +345,13 @@ namespace System.Runtime.CompilerServices
 
             string returnValue;
             String displayMessage = "contract failed.";  // Incomplete, but in case of OOM during resource lookup...
-#if !FEATURE_CORECLR || FEATURE_NETCORE
             ContractFailedEventArgs eventArgs = null;  // In case of OOM.
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
 #if FEATURE_RELIABILITY_CONTRACTS
             System.Runtime.CompilerServices.RuntimeHelpers.PrepareConstrainedRegions();
 #endif
             try
             {
                 displayMessage = GetDisplayMessage(failureKind, userMessage, conditionText);
-#if !FEATURE_CORECLR || FEATURE_NETCORE
                 EventHandler<ContractFailedEventArgs> contractFailedEventLocal = contractFailedEvent;
                 if (contractFailedEventLocal != null)
                 {
@@ -389,17 +379,14 @@ namespace System.Runtime.CompilerServices
                         throw new ContractException(failureKind, displayMessage, userMessage, conditionText, innerException);
                     }
                 }
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
             }
             finally
             {
-#if !FEATURE_CORECLR || FEATURE_NETCORE
                 if (eventArgs != null && eventArgs.Handled)
                 {
                     returnValue = null; // handled
                 }
                 else
-#endif // !FEATURE_CORECLR || FEATURE_NETCORE
                 {
                     returnValue = displayMessage;
                 }

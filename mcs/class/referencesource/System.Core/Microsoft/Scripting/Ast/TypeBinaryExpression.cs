@@ -127,10 +127,10 @@ namespace System.Linq.Expressions {
             Expression getType = Expression.Call(value, typeof(object).GetMethod("GetType"));
             
             // In remoting scenarios, obj.GetType() can return an interface.
-            // But there's a bug in the JIT32's optimized "obj.GetType() ==
-            // typeof(ISomething)" codegen, causing it to always return false.
-            // We workaround the bug by generating different, less optimal IL
-            // if TypeOperand is an interface.
+            // But there's a 
+
+
+
             if (_typeOperand.IsInterface) {
                 var temp = Expression.Parameter(typeof(Type));
                 getType = Expression.Block(new[] { temp }, Expression.Assign(temp, getType), temp);

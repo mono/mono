@@ -730,7 +730,7 @@ namespace System.Web {
         // which doesn't fit our expected patterns and where that code likely has negative side effects.
         // 
         // This flag is respected only by AspNetSynchronizationContext; it has no effect when the
-        // legacy [....] context is in use.
+        // legacy sync context is in use.
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public bool AllowAsyncDuringSyncStages {
             get {
@@ -757,6 +757,15 @@ namespace System.Web {
                 }
                 else {
                     _appInstance = value;
+
+                    // Use HttpApplication instance custom allocator provider
+                    if (_isIntegratedPipeline) {
+                        // The provider allows null - everyone should fallback to default implementation
+                        IAllocatorProvider allocator = _appInstance != null ? _appInstance.AllocatorProvider : null;
+
+                        _response.SetAllocatorProvider(allocator);
+                        ((IIS7WorkerRequest)_wr).AllocatorProvider = allocator;
+                    }
                 }
             }
         }
@@ -902,7 +911,6 @@ namespace System.Web {
         ///    </para>
         /// </devdoc>
         public HttpRequest Request {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                  if (HideRequestResponse)
                     throw new HttpException(SR.GetString(SR.Request_not_available));
@@ -918,7 +926,6 @@ namespace System.Web {
         ///    </para>
         /// </devdoc>
         public HttpResponse Response {
-            [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
             get {
                 if (HideRequestResponse || HasWebSocketRequestTransitionCompleted)
                     throw new HttpException(SR.GetString(SR.Response_not_available));
@@ -1306,7 +1313,7 @@ namespace System.Web {
                 return _rootedObjects;
             }
             set {
-                // [....] the Principal between the containers
+                // Sync the Principal between the containers
                 SwitchPrincipalContainer(value);
                 _rootedObjects = value;
             }
@@ -1723,7 +1730,6 @@ namespace System.Web {
 
         */
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal void BeginCancellablePeriod() {
             // It could be caused by an exception in OnThreadStart
             if (Volatile.Read(ref _timeoutStartTimeUtcTicks) == -1) {
@@ -1741,7 +1747,6 @@ namespace System.Web {
             Interlocked.CompareExchange(ref _timeoutState, 0, 1);
         }
 
-        [System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
         internal void WaitForExceptionIfCancelled() {
             while (Volatile.Read(ref _timeoutState) == -1)
                 Thread.Sleep(100);
@@ -2256,7 +2261,7 @@ namespace System.Web {
                         return CultureUtil.CreateReadOnlyCulture(userLanguages, requireSpecific);
                     }
                     catch {
-                        return CultureUtil.CreateReadOnlyCulture(configString, requireSpecific);
+                        return CultureUtil.CreateReadOnlyCulture(configString.Substring(5 /* "auto:".Length */), requireSpecific);
                     }
                 }
                 else {

@@ -16,6 +16,8 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
+using System.StubHelpers;
+using System.Threading.Tasks;
 
 #if FEATURE_COMINTEROP
 
@@ -46,7 +48,7 @@ namespace System
         // This can be removed after V2, when we implement other schemes
         // of keeping the JIT-compiler out for generic instantiations.
 
-        static void CommonlyUsedGenericInstantiations_HACK()
+        static void CommonlyUsedGenericInstantiations()
         {
             // Make absolutely sure we include some of the most common 
             // instantiations here in mscorlib's ngen image.
@@ -78,6 +80,10 @@ namespace System
             new Dictionary<Object, UInt32>();
             new Dictionary<UInt32, Object>();
             new Dictionary<Int64, Object>();
+#if FEATURE_CORECLR
+            // to genereate mdil for Dictionary instantiation when key is user defined value type
+            new Dictionary<Guid, Int32>();
+#endif
 
         // Microsoft.Windows.Design
             new Dictionary<System.Reflection.MemberTypes, Object>();
@@ -87,19 +93,19 @@ namespace System
             new Dictionary<Object, KeyValuePair<Object,Object>>();
             new Dictionary<KeyValuePair<Object,Object>, Object>();
 
-            NullableHelper_HACK<Boolean>();
-            NullableHelper_HACK<Byte>();
-            NullableHelper_HACK<Char>();
-            NullableHelper_HACK<DateTime>(); 
-            NullableHelper_HACK<Decimal>(); 
-            NullableHelper_HACK<Double>();
-            NullableHelper_HACK<Guid>();
-            NullableHelper_HACK<Int16>();
-            NullableHelper_HACK<Int32>();
-            NullableHelper_HACK<Int64>();
-            NullableHelper_HACK<Single>();
-            NullableHelper_HACK<TimeSpan>();
-            NullableHelper_HACK<DateTimeOffset>();  // For SQL
+            NullableHelper<Boolean>();
+            NullableHelper<Byte>();
+            NullableHelper<Char>();
+            NullableHelper<DateTime>(); 
+            NullableHelper<Decimal>(); 
+            NullableHelper<Double>();
+            NullableHelper<Guid>();
+            NullableHelper<Int16>();
+            NullableHelper<Int32>();
+            NullableHelper<Int64>();
+            NullableHelper<Single>();
+            NullableHelper<TimeSpan>();
+            NullableHelper<DateTimeOffset>();  // For SQL
 
             new List<Boolean>();
             new List<Byte>();
@@ -126,28 +132,37 @@ namespace System
             new KeyValuePair<UInt16, Double>(UInt16.MinValue, Double.MinValue);
             new KeyValuePair<Object, Int32>(String.Empty, Int32.MinValue);
             new KeyValuePair<Int32, Int32>(Int32.MinValue, Int32.MinValue);            
-            SZArrayHelper_HACK<Boolean>(null);
-            SZArrayHelper_HACK<Byte>(null);
-            SZArrayHelper_HACK<DateTime>(null);
-            SZArrayHelper_HACK<Decimal>(null);
-            SZArrayHelper_HACK<Double>(null);
-            SZArrayHelper_HACK<Guid>(null);
-            SZArrayHelper_HACK<Int16>(null);
-            SZArrayHelper_HACK<Int32>(null);
-            SZArrayHelper_HACK<Int64>(null);
-            SZArrayHelper_HACK<TimeSpan>(null);
-            SZArrayHelper_HACK<SByte>(null);
-            SZArrayHelper_HACK<Single>(null);
-            SZArrayHelper_HACK<UInt16>(null);
-            SZArrayHelper_HACK<UInt32>(null);
-            SZArrayHelper_HACK<UInt64>(null);
-            SZArrayHelper_HACK<DateTimeOffset>(null);
+            SZArrayHelper<Boolean>(null);
+            SZArrayHelper<Byte>(null);
+            SZArrayHelper<DateTime>(null);
+            SZArrayHelper<Decimal>(null);
+            SZArrayHelper<Double>(null);
+            SZArrayHelper<Guid>(null);
+            SZArrayHelper<Int16>(null);
+            SZArrayHelper<Int32>(null);
+            SZArrayHelper<Int64>(null);
+            SZArrayHelper<TimeSpan>(null);
+            SZArrayHelper<SByte>(null);
+            SZArrayHelper<Single>(null);
+            SZArrayHelper<UInt16>(null);
+            SZArrayHelper<UInt32>(null);
+            SZArrayHelper<UInt64>(null);
+            SZArrayHelper<DateTimeOffset>(null);
 
-            SZArrayHelper_HACK<CustomAttributeTypedArgument>(null);
-            SZArrayHelper_HACK<CustomAttributeNamedArgument>(null);
+            SZArrayHelper<CustomAttributeTypedArgument>(null);
+            SZArrayHelper<CustomAttributeNamedArgument>(null);
+
+#if FEATURE_CORECLR
+#pragma warning disable 4014
+            // This is necessary to generate MDIL for AsyncVoidMethodBuilder
+            AsyncHelper<int>();
+            AsyncHelper2<int>();
+            AsyncHelper3();
+#pragma warning restore 4014
+#endif
         }
 
-        static T NullableHelper_HACK<T>() where T : struct
+        static T NullableHelper<T>() where T : struct
         {
             Nullable.Compare<T>(null, null);    
             Nullable.Equals<T>(null, null); 
@@ -155,7 +170,7 @@ namespace System
             return nullable.GetValueOrDefault();
         }       
 
-        static void SZArrayHelper_HACK<T>(SZArrayHelper oSZArrayHelper)
+        static void SZArrayHelper<T>(SZArrayHelper oSZArrayHelper)
         {
             // Instantiate common methods for IList implementation on Array
             oSZArrayHelper.get_Count<T>();
@@ -163,9 +178,31 @@ namespace System
             oSZArrayHelper.GetEnumerator<T>();
         }
 
+#if FEATURE_CORECLR
+        // System.Runtime.CompilerServices.AsyncVoidMethodBuilder
+        // System.Runtime.CompilerServices.TaskAwaiter
+        static async void AsyncHelper<T>()
+        {
+            await Task.Delay(1);
+        }
+        // System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[System.__Canon]
+        // System.Runtime.CompilerServices.TaskAwaiter'[System.__Canon]
+        static async Task<String> AsyncHelper2<T>()
+        {
+            return await Task.FromResult<string>("");
+        }
+
+        // System.Runtime.CompilerServices.AsyncTaskMethodBuilder
+        // System.Runtime.CompilerServices.AsyncTaskMethodBuilder'1[VoidTaskResult]
+        static async Task AsyncHelper3()
+        {
+            await Task.FromResult<string>("");
+        }
+#endif
+
 #if FEATURE_COMINTEROP
 
-        // Similar to CommonlyUsedGenericInstantiations_HACK but for instantiations of marshaling stubs used
+        // Similar to CommonlyUsedGenericInstantiations but for instantiations of marshaling stubs used
         // for WinRT redirected interfaces. Note that we do care about reference types here as well because,
         // say, IList<string> and IList<object> cannot share marshaling stubs.
         // The methods below "call" most commonly used stub methods on redirected interfaces and take arguments
@@ -173,42 +210,54 @@ namespace System
         // IMap<K, V>, ...) which is necessary to generate all required IL stubs.
 
         [SecurityCritical]
-        static void CommonlyUsedWinRTRedirectedInterfaceStubs_HACK()
+        static void CommonlyUsedWinRTRedirectedInterfaceStubs()
         {
-            WinRT_IEnumerable_HACK<byte>(null, null, null);
-            WinRT_IEnumerable_HACK<char>(null, null, null);
-            WinRT_IEnumerable_HACK<short>(null, null, null);
-            WinRT_IEnumerable_HACK<ushort>(null, null, null);
-            WinRT_IEnumerable_HACK<int>(null, null, null);
-            WinRT_IEnumerable_HACK<uint>(null, null, null);
-            WinRT_IEnumerable_HACK<long>(null, null, null);
-            WinRT_IEnumerable_HACK<ulong>(null, null, null);
-            WinRT_IEnumerable_HACK<float>(null, null, null);
-            WinRT_IEnumerable_HACK<double>(null, null, null);
-            WinRT_IEnumerable_HACK<string>(null, null, null);
-            WinRT_IEnumerable_HACK<object>(null, null, null);
+            WinRT_IEnumerable<byte>(null, null, null);
+            WinRT_IEnumerable<char>(null, null, null);
+            WinRT_IEnumerable<short>(null, null, null);
+            WinRT_IEnumerable<ushort>(null, null, null);
+            WinRT_IEnumerable<int>(null, null, null);
+            WinRT_IEnumerable<uint>(null, null, null);
+            WinRT_IEnumerable<long>(null, null, null);
+            WinRT_IEnumerable<ulong>(null, null, null);
+            WinRT_IEnumerable<float>(null, null, null);
+            WinRT_IEnumerable<double>(null, null, null);
 
-            WinRT_IList_HACK<int>(null, null, null, null);
-            WinRT_IList_HACK<string>(null, null, null, null);
-            WinRT_IList_HACK<object>(null, null, null, null);
+            // The underlying WinRT types for shared instantiations have to be referenced explicitly. 
+            // They are not guaranteeed to be created indirectly because of generic code sharing.
+            WinRT_IEnumerable<string>(null, null, null); typeof(IIterable<string>).ToString(); typeof(IIterator<string>).ToString();
+            WinRT_IEnumerable<object>(null, null, null); typeof(IIterable<object>).ToString(); typeof(IIterator<object>).ToString();
 
-            WinRT_IReadOnlyList_HACK<int>(null, null, null);
-            WinRT_IReadOnlyList_HACK<string>(null, null, null);
-            WinRT_IReadOnlyList_HACK<object>(null, null, null);
+            WinRT_IList<int>(null, null, null, null);
+            WinRT_IList<string>(null, null, null, null); typeof(IVector<string>).ToString();
+            WinRT_IList<object>(null, null, null, null); typeof(IVector<object>).ToString();
 
-            WinRT_IDictionary_HACK<string, int>(null, null, null, null);
-            WinRT_IDictionary_HACK<string, string>(null, null, null, null);
-            WinRT_IDictionary_HACK<string, object>(null, null, null, null);
-            WinRT_IDictionary_HACK<object, object>(null, null, null, null);
+            WinRT_IReadOnlyList<int>(null, null, null);
+            WinRT_IReadOnlyList<string>(null, null, null); typeof(IVectorView<string>).ToString();
+            WinRT_IReadOnlyList<object>(null, null, null); typeof(IVectorView<object>).ToString();
 
-            WinRT_IReadOnlyDictionary_HACK<string, int>(null, null, null, null);
-            WinRT_IReadOnlyDictionary_HACK<string, string>(null, null, null, null);
-            WinRT_IReadOnlyDictionary_HACK<string, object>(null, null, null, null);
-            WinRT_IReadOnlyDictionary_HACK<object, object>(null, null, null, null);
+            WinRT_IDictionary<string, int>(null, null, null, null); typeof(IMap<string, int>).ToString();
+            WinRT_IDictionary<string, string>(null, null, null, null); typeof(IMap<string, string>).ToString();
+            WinRT_IDictionary<string, object>(null, null, null, null); typeof(IMap<string, object>).ToString();
+            WinRT_IDictionary<object, object>(null, null, null, null); typeof(IMap<object, object>).ToString();
+
+            WinRT_IReadOnlyDictionary<string, int>(null, null, null, null); typeof(IMapView<string, int>).ToString();
+            WinRT_IReadOnlyDictionary<string, string>(null, null, null, null); typeof(IMapView<string, string>).ToString();
+            WinRT_IReadOnlyDictionary<string, object>(null, null, null, null); typeof(IMapView<string, object>).ToString();
+            WinRT_IReadOnlyDictionary<object, object>(null, null, null, null); typeof(IMapView<object, object>).ToString();
+
+            WinRT_Nullable<bool>();
+            WinRT_Nullable<byte>();
+            WinRT_Nullable<int>();
+            WinRT_Nullable<uint>();
+            WinRT_Nullable<long>();
+            WinRT_Nullable<ulong>();
+            WinRT_Nullable<float>();
+            WinRT_Nullable<double>();
         }
 
         [SecurityCritical]
-        static void WinRT_IEnumerable_HACK<T>(IterableToEnumerableAdapter iterableToEnumerableAdapter, EnumerableToIterableAdapter enumerableToIterableAdapter, IIterable<T> iterable)
+        static void WinRT_IEnumerable<T>(IterableToEnumerableAdapter iterableToEnumerableAdapter, EnumerableToIterableAdapter enumerableToIterableAdapter, IIterable<T> iterable)
         {
             // instantiate stubs for the one method on IEnumerable<T> and the one method on IIterable<T>
             iterableToEnumerableAdapter.GetEnumerator_Stub<T>();
@@ -216,9 +265,9 @@ namespace System
         }
 
         [SecurityCritical]
-        static void WinRT_IList_HACK<T>(VectorToListAdapter vectorToListAdapter, VectorToCollectionAdapter vectorToCollectionAdapter, ListToVectorAdapter listToVectorAdapter, IVector<T> vector)
+        static void WinRT_IList<T>(VectorToListAdapter vectorToListAdapter, VectorToCollectionAdapter vectorToCollectionAdapter, ListToVectorAdapter listToVectorAdapter, IVector<T> vector)
         {
-            WinRT_IEnumerable_HACK<T>(null, null, null);
+            WinRT_IEnumerable<T>(null, null, null);
 
             // instantiate stubs for commonly used methods on IList<T> and ICollection<T>
             vectorToListAdapter.Indexer_Get<T>(0);
@@ -241,19 +290,19 @@ namespace System
         }
 
         [SecurityCritical]
-        static void WinRT_IReadOnlyCollection_HACK<T>(VectorViewToReadOnlyCollectionAdapter vectorViewToReadOnlyCollectionAdapter)
+        static void WinRT_IReadOnlyCollection<T>(VectorViewToReadOnlyCollectionAdapter vectorViewToReadOnlyCollectionAdapter)
         {
-            WinRT_IEnumerable_HACK<T>(null, null, null);
+            WinRT_IEnumerable<T>(null, null, null);
 
             // instantiate stubs for commonly used methods on IReadOnlyCollection<T>
             vectorViewToReadOnlyCollectionAdapter.Count<T>();
         }
 
         [SecurityCritical]
-        static void WinRT_IReadOnlyList_HACK<T>(IVectorViewToIReadOnlyListAdapter vectorToListAdapter, IReadOnlyListToIVectorViewAdapter listToVectorAdapter, IVectorView<T> vectorView)
+        static void WinRT_IReadOnlyList<T>(IVectorViewToIReadOnlyListAdapter vectorToListAdapter, IReadOnlyListToIVectorViewAdapter listToVectorAdapter, IVectorView<T> vectorView)
         {
-            WinRT_IEnumerable_HACK<T>(null, null, null);
-            WinRT_IReadOnlyCollection_HACK<T>(null);
+            WinRT_IEnumerable<T>(null, null, null);
+            WinRT_IReadOnlyCollection<T>(null);
 
             // instantiate stubs for commonly used methods on IReadOnlyList<T>
             vectorToListAdapter.Indexer_Get<T>(0);
@@ -264,9 +313,9 @@ namespace System
         }
 
         [SecurityCritical]
-        static void WinRT_IDictionary_HACK<K, V>(MapToDictionaryAdapter mapToDictionaryAdapter, MapToCollectionAdapter mapToCollectionAdapter, DictionaryToMapAdapter dictionaryToMapAdapter, IMap<K, V> map)
+        static void WinRT_IDictionary<K, V>(MapToDictionaryAdapter mapToDictionaryAdapter, MapToCollectionAdapter mapToCollectionAdapter, DictionaryToMapAdapter dictionaryToMapAdapter, IMap<K, V> map)
         {
-            WinRT_IEnumerable_HACK<KeyValuePair<K, V>>(null, null, null);
+            WinRT_IEnumerable<KeyValuePair<K, V>>(null, null, null);
 
             // instantiate stubs for commonly used methods on IDictionary<K, V> and ICollection<KeyValuePair<K, V>>
             V dummy;
@@ -290,10 +339,10 @@ namespace System
         }
 
         [SecurityCritical]
-        static void WinRT_IReadOnlyDictionary_HACK<K, V>(IMapViewToIReadOnlyDictionaryAdapter mapToDictionaryAdapter, IReadOnlyDictionaryToIMapViewAdapter dictionaryToMapAdapter, IMapView<K, V> mapView, MapViewToReadOnlyCollectionAdapter mapViewToReadOnlyCollectionAdapter)
+        static void WinRT_IReadOnlyDictionary<K, V>(IMapViewToIReadOnlyDictionaryAdapter mapToDictionaryAdapter, IReadOnlyDictionaryToIMapViewAdapter dictionaryToMapAdapter, IMapView<K, V> mapView, MapViewToReadOnlyCollectionAdapter mapViewToReadOnlyCollectionAdapter)
         {
-            WinRT_IEnumerable_HACK<KeyValuePair<K, V>>(null, null, null);
-            WinRT_IReadOnlyCollection_HACK<KeyValuePair<K, V>>(null);
+            WinRT_IEnumerable<KeyValuePair<K, V>>(null, null, null);
+            WinRT_IReadOnlyCollection<KeyValuePair<K, V>>(null);
 
             // instantiate stubs for commonly used methods on IReadOnlyDictionary<K, V>
             V dummy;
@@ -308,6 +357,14 @@ namespace System
             dictionaryToMapAdapter.Lookup<K, V>(default(K));
             dictionaryToMapAdapter.Size<K, V>();
             dictionaryToMapAdapter.HasKey<K, V>(default(K));
+        }
+
+        [SecurityCritical]
+        static void WinRT_Nullable<T>() where T : struct
+        {
+            Nullable<T> nullable = new Nullable<T>();
+            NullableMarshaler.ConvertToNative(ref nullable);
+            NullableMarshaler.ConvertToManagedRetVoid(IntPtr.Zero, ref nullable);
         }
 
 #endif // FEATURE_COMINTEROP

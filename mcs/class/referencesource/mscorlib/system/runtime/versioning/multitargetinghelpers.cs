@@ -7,7 +7,7 @@
 **
 ** Class:  MultitargetingHelpers
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: Central repository for helpers supporting 

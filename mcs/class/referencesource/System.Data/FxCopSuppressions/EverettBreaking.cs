@@ -3,9 +3,9 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <description></description>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">nissimn</owner>
+// <owner current="true" primary="false">alazela</owner>
+// <owner current="true" primary="false">sukanyas</owner>
 //------------------------------------------------------------------------------
 //
 // This file has a list of FXCOP messages to suppress, converted from ddsuites\src\FxCop\Excludes\EverettBreaking\System.Data.dll-breaking.xml using FXCOP GUI.

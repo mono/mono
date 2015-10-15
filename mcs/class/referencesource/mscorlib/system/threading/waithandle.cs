@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 /*=============================================================================
 **
 ** Class: WaitHandle    (this name is NOT definitive)
@@ -107,7 +107,7 @@ namespace System.Threading
                     // ideally do these things:
                     // *) Expose a settable SafeHandle property on WaitHandle.
                     // *) Expose a settable OwnsHandle property on SafeHandle.
-                    // We're looking into this.   -- [....]
+                    // We're looking into this.   -- Microsoft
                     if (safeWaitHandle != null)
                     {
                         safeWaitHandle.SetHandleAsInvalid();
@@ -597,20 +597,12 @@ namespace System.Threading
 
         private static void ThrowAbandonedMutexException()
         {
-#if !FEATURE_CORECLR
             throw new AbandonedMutexException();
-#else
-            throw new Exception(Environment.GetResourceString("Threading.AbandonedMutexException"));
-#endif
         }
 
         private static void ThrowAbandonedMutexException(int location, WaitHandle handle)
         {
-#if !FEATURE_CORECLR
             throw new AbandonedMutexException(location, handle);
-#else
-            throw new Exception(Environment.GetResourceString("Threading.AbandonedMutexException"));
-#endif
         }
 
         public virtual void Close()

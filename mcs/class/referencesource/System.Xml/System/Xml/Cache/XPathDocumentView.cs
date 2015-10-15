@@ -2,7 +2,7 @@
 // <copyright file="XPathDocumentView.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="true">derekdb</owner>
 //------------------------------------------------------------------------------
 #if ENABLEDATABINDING
 using System;
@@ -606,7 +606,7 @@ namespace System.Xml.XPath.DataBinding
                 }
             }
             if (0 == rows.Count) {
-                // 
+                // TODO:
                 throw new NotImplementedException("XPath failed to match an elements");
             }
             if (null == schemaInfo) {

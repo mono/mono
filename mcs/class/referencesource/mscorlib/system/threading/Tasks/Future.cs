@@ -7,7 +7,7 @@
 //
 // Future.cs
 //
-// <OWNER>[....]</OWNER>
+// <OWNER>Microsoft</OWNER>
 //
 // A task that produces a value.
 //
@@ -529,9 +529,6 @@ namespace System.Threading.Tasks
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public TResult Result
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return IsWaitNotificationEnabledOrNotRanToCompletion ? GetResultCore(waitCompletionNotification: true) : m_result; }
         }
 
@@ -544,9 +541,6 @@ namespace System.Threading.Tasks
         /// </remarks>
         internal TResult ResultOnSuccess
         {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get
             {
                 Contract.Assert(!IsWaitNotificationEnabledOrNotRanToCompletion,
@@ -695,15 +689,11 @@ namespace System.Threading.Tasks
             Contract.Assert(false, "Invalid m_action in Task<TResult>");
         }
 
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         #region Await Support
 
         /// <summary>Gets an awaiter used to await this <see cref="System.Threading.Tasks.Task{TResult}"/>.</summary>
         /// <returns>An awaiter instance.</returns>
         /// <remarks>This method is intended for compiler user rather than use directly in code.</remarks>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public new TaskAwaiter<TResult> GetAwaiter()
         {
             return new TaskAwaiter<TResult>(this);
@@ -714,16 +704,13 @@ namespace System.Threading.Tasks
         /// true to attempt to marshal the continuation back to the original context captured; otherwise, false.
         /// </param>
         /// <returns>An object used to await this task.</returns>
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public new ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext)
         {
             return new ConfiguredTaskAwaitable<TResult>(this, continueOnCapturedContext);
         }
 
         #endregion
-#endif
+
         #region Continuation methods
 
         #region Action<Task<TResult>> continuations

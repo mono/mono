@@ -2,8 +2,8 @@
 // <copyright file="XmlDataLoader.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -313,7 +313,7 @@ namespace System.Data {
                 XmlElement e = xdoc.DocumentElement;
                 DataTable topTable = (DataTable) nodeToSchemaMap.GetSchemaForNode(e, FIgnoreNamespace(e));
                 if (topTable != null) {
-                    topRow = topTable.CreateEmptyRow(); //enzol perf
+                    topRow = topTable.CreateEmptyRow(); //Microsoft perf
                     nodeToRowMap[ e ] = topRow;
 
                     // get all field values.

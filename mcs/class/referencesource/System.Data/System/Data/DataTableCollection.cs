@@ -2,9 +2,9 @@
 // <copyright file="DataTableCollection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
-// <owner current="false" primary="false">[....]</owner>
+// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="false" primary="false">Microsoft</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -398,7 +398,7 @@ namespace System.Data {
 
                 for (ChildForeignKeyConstraintEnumerator constraints = new ChildForeignKeyConstraintEnumerator(dataSet, table); constraints.GetNext();) {
                     ForeignKeyConstraint constraint = constraints.GetForeignKeyConstraint();
-                    if (constraint.Table == table && constraint.RelatedTable == table) // bug 97670
+                    if (constraint.Table == table && constraint.RelatedTable == table) // 
                         continue;
 
                     if (!fThrowException)

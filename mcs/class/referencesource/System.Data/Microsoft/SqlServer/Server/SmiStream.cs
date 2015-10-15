@@ -2,8 +2,8 @@
 // <copyright file="SmiStream.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">[....]</owner>
-// <owner current="true" primary="false">[....]</owner>
+// <owner current="true" primary="true">alazela</owner>
+// <owner current="true" primary="false">stevesta</owner>
 //------------------------------------------------------------------------------
 
 // Stream-like object that uses SmiEventSink for server-side errors.

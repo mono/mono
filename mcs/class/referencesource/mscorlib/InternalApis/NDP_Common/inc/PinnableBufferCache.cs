@@ -164,8 +164,10 @@ namespace System
                     if (GC.GetGeneration(buffer) < GC.MaxGeneration)
                     {
                         // The buffer is not aged, so put it in the non-aged free list.
+                        m_moreThanFreeListNeeded = true;
                         PinnableBufferCacheEventSource.Log.FreeBufferStillTooYoung(m_CacheName, m_NotGen2.Count);
                         m_NotGen2.Add(buffer);
+                        m_gen1CountAtLastRestock = GC.CollectionCount(GC.MaxGeneration - 1);
                         return;
                     }
                 }
@@ -310,6 +312,7 @@ namespace System
         /// otherwise, we root the cache to the Gen2GcCallback object, and leak the cache even when
         /// the application no longer needs it.
         /// </summary>
+        [System.Security.SecuritySafeCritical]
         private static bool Gen2GcCallbackFunc(object targetObj)
         {
             return ((PinnableBufferCache)(targetObj)).TrimFreeListIfNeeded();
@@ -509,6 +512,11 @@ namespace System
         ~Gen2GcCallback()
         {
             // Check to see if the target object is still alive.
+            if (!m_weakTargetObj.IsAllocated)
+            {
+                return;
+            }
+
             object targetObj = m_weakTargetObj.Target;
             if (targetObj == null)
             {
@@ -635,6 +643,7 @@ namespace System
         public void AgePendingBuffersResults(string cacheName, int promotedToFreeListCount, int heldBackCount) { if (IsEnabled()) WriteEvent(20, cacheName, promotedToFreeListCount, heldBackCount); }
         [Event(21)]
         public void WalkFreeListResult(string cacheName, int freeListCount, int gen0BuffersInFreeList) { if (IsEnabled()) WriteEvent(21, cacheName, freeListCount, gen0BuffersInFreeList); }
+
 
         static internal ulong AddressOf(object obj)
         {

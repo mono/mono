@@ -28,13 +28,7 @@ namespace System
     // three fields from an ArraySegment may not see the same ArraySegment from one call to another
     // (ie, users could assign a new value to the old location).  
     [Serializable]
-
-// After .NET 4.5 RTMs, we can undo this and expose the full surface area to CoreCLR
-#if !FEATURE_CORECLR || FEATURE_NETCORE
     public struct ArraySegment<T> : IList<T>, IReadOnlyList<T>
-#else
-    public struct ArraySegment<T>
-#endif
     {
         private T[] _array;
         private int _offset;
@@ -148,8 +142,6 @@ namespace System
             return !(a == b);
         }
 
-// After .NET 4.5 RTMs, we can undo this and expose the full surface area to CoreCLR
-#if !FEATURE_CORECLR || FEATURE_NETCORE
         #region IList<T>
         T IList<T>.this[int index]
         {
@@ -347,6 +339,5 @@ namespace System
             {
             }
         }
-#endif
     }
 }

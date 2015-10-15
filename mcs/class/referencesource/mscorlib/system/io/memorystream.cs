@@ -7,7 +7,7 @@
 **
 ** Class:  MemoryStream
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: A Stream whose backing store is memory.  Great
@@ -82,9 +82,6 @@ namespace System.IO {
             _isOpen = true;
         }
         
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public MemoryStream(byte[] buffer) 
             : this(buffer, true) {
         }
@@ -123,7 +120,7 @@ namespace System.IO {
             _origin = _position = index;
             _length = _capacity = index + count;
             _writable = writable;
-            _exposable = publiclyVisible;  // Can GetBuffer return the array?
+            _exposable = publiclyVisible;  // Can TryGetBuffer/GetBuffer return the array?
             _expandable = false;
             _isOpen = true;
         }
@@ -144,17 +141,7 @@ namespace System.IO {
         }
 
         private void EnsureWriteable() {
-            // Previously, instead of calling CanWrite we just checked the _writable field directly, and some code
-            // took a dependency on that behavior.
-#if FEATURE_CORECLR
-            if (IsAppEarlierThanSl4) {
-                if (!_writable) __Error.WriteNotSupported();
-            } else {
-                if (!CanWrite) __Error.WriteNotSupported();
-            }
-#else
             if (!CanWrite) __Error.WriteNotSupported();
-#endif
         }
 
         protected override void Dispose(bool disposing)
@@ -164,7 +151,7 @@ namespace System.IO {
                     _isOpen = false;
                     _writable = false;
                     _expandable = false;
-                    // Don't set buffer to null - allow GetBuffer & ToArray to work.
+                    // Don't set buffer to null - allow TryGetBuffer, GetBuffer & ToArray to work.
 #if FEATURE_ASYNC_IO
                     _lastReadTask = null;
 #endif
@@ -185,8 +172,15 @@ namespace System.IO {
                 int newCapacity = value;
                 if (newCapacity < 256)
                     newCapacity = 256;
+                // We are ok with this overflowing since the next statement will deal
+                // with the cases where _capacity*2 overflows.
                 if (newCapacity < _capacity * 2)
                     newCapacity = _capacity * 2;
+                // We want to expand the array up to Array.MaxArrayLengthOneDimensional
+                // And we want to give the user the value that they asked for
+                if ((uint)(_capacity * 2) > Array.MaxByteArrayLength)
+                    newCapacity = value > Array.MaxByteArrayLength ? value : Array.MaxByteArrayLength;
+                
                 Capacity = newCapacity;
                 return true;
             }
@@ -217,29 +211,30 @@ namespace System.IO {
 #endif // FEATURE_ASYNC_IO
 
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public virtual byte[] GetBuffer() {
             if (!_exposable)
                 throw new UnauthorizedAccessException(Environment.GetResourceString("UnauthorizedAccess_MemStreamBuffer"));
             return _buffer;
         }
 
+        public virtual bool TryGetBuffer(out ArraySegment<byte> buffer) {
+            if (!_exposable) {
+                buffer = default(ArraySegment<byte>);
+                return false;
+            }
+
+            buffer = new ArraySegment<byte>(_buffer, offset:_origin, count:(_length - _origin));
+            return true;
+        }
+
         // -------------- PERF: Internal functions for fast direct access of MemoryStream buffer (cf. BinaryReader for usage) ---------------
 
         // PERF: Internal sibling of GetBuffer, always returns a buffer (cf. GetBuffer())
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal byte[] InternalGetBuffer() {
             return _buffer;
         }
 
         // PERF: Get origin and length - used in ResourceWriter.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         [FriendAccessAllowed]
         internal void InternalGetOriginAndLength(out int origin, out int length)
         {
@@ -249,9 +244,6 @@ namespace System.IO {
         }
 
         // PERF: True cursor position, we don't need _origin for direct access
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         internal int InternalGetPosition() {
             if (!_isOpen) __Error.StreamIsClosed();
             return _position;
@@ -296,19 +288,9 @@ namespace System.IO {
             set {
                 // Only update the capacity if the MS is expandable and the value is different than the current capacity.
                 // Special behavior if the MS isn't expandable: we don't throw if value is the same as the current capacity
-#if !FEATURE_CORECLR
                 if (value < Length) throw new ArgumentOutOfRangeException("value", Environment.GetResourceString("ArgumentOutOfRange_SmallCapacity"));
-#endif
                 Contract.Ensures(_capacity - _origin == value);
                 Contract.EndContractBlock();
-
-#if FEATURE_CORECLR              
-                if (IsAppEarlierThanSl4) {
-                    if (value < _length) throw new ArgumentOutOfRangeException("value", Environment.GetResourceString("ArgumentOutOfRange_SmallCapacity"));
-                } else {
-                    if (value < Length) throw new ArgumentOutOfRangeException("value", Environment.GetResourceString("ArgumentOutOfRange_SmallCapacity"));
-                }
-#endif
 
                 if (!_isOpen) __Error.StreamIsClosed();
                 if (!_expandable && (value != Capacity)) __Error.MemoryStreamNotExpandable();
@@ -329,9 +311,6 @@ namespace System.IO {
         }        
 
         public override long Length {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 if (!_isOpen) __Error.StreamIsClosed();
                 return _length - _origin;
@@ -339,9 +318,6 @@ namespace System.IO {
         }
 
         public override long Position {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { 
                 if (!_isOpen) __Error.StreamIsClosed();
                 return _position - _origin;
@@ -359,14 +335,6 @@ namespace System.IO {
                 _position = _origin + (int)value;
             }
         }
-
-#if FEATURE_CORECLR
-        private static bool IsAppEarlierThanSl4 {
-            get {
-                return CompatibilitySwitches.IsAppEarlierThanSilverlight4;
-            }
-        }
-#endif
 
         public override int Read([In, Out] byte[] buffer, int offset, int count) {
             if (buffer==null)
@@ -454,7 +422,7 @@ namespace System.IO {
 
             // This implementation offers beter performance compared to the base class version.
 
-            // The parameter checks must be in [....] with the base version:
+            // The parameter checks must be in sync with the base version:
             if (destination == null)
                 throw new ArgumentNullException("destination");
             

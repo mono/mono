@@ -64,7 +64,7 @@ namespace System.Workflow.Activities
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        private Activity GetDynamicActivity(Activity childActivity)
+        internal Activity GetDynamicActivity(Activity childActivity)
         {
             if (childActivity == null)
                 throw new ArgumentNullException("childActivity");

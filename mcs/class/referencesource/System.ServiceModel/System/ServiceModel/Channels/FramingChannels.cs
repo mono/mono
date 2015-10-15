@@ -641,7 +641,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleWritePreamble();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -669,7 +669,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandlePreambleAck();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -702,7 +702,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleInitiatorOpen(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -735,7 +735,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleUpgrade(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -768,7 +768,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleInitiatorClose(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -796,7 +796,7 @@ namespace System.ServiceModel.Channels
                     thisPtr.connection.EndWrite();
                     completeSelf = thisPtr.ReadAck();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -826,7 +826,7 @@ namespace System.ServiceModel.Channels
                 {
                     ConnectionUpgradeHelper.EndDecodeFramingFault(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -913,7 +913,7 @@ namespace System.ServiceModel.Channels
                 {
                     completeSelf = thisPtr.HandleEstablishConnection(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1172,7 +1172,7 @@ namespace System.ServiceModel.Channels
                 {
                     thisPtr.CompleteReadFaultData();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1335,7 +1335,7 @@ namespace System.ServiceModel.Channels
                         completeSelf = thisPtr.Begin();
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1366,7 +1366,7 @@ namespace System.ServiceModel.Channels
                 {
                     ConnectionUpgradeHelper.EndDecodeFramingFault(result);
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1392,7 +1392,7 @@ namespace System.ServiceModel.Channels
                         completeSelf = thisPtr.Begin();
                     }
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1423,7 +1423,7 @@ namespace System.ServiceModel.Channels
                     thisPtr.CompleteUpgrade(result);
                     completeSelf = thisPtr.Begin();
                 }
-#pragma warning suppress 56500 // [....], transferring exception to another thread
+#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))

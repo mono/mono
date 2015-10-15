@@ -85,18 +85,12 @@ namespace System.Text {
 
         // Creates a new empty string builder (i.e., it represents String.Empty)
         // with the default capacity (16 characters).
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder()
             : this(DefaultCapacity) {
         }
 
         // Create a new empty string builder (i.e., it represents String.Empty)
         // with the specified capacity.
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder(int capacity)
             : this(String.Empty, capacity) {
         }
@@ -116,9 +110,6 @@ namespace System.Text {
         // (i.e., it will also represent String.NullString).
         // The maximum number of characters this string may contain is set by capacity.
         // 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder(String value, int capacity)
             : this(value, 0, ((value != null) ? value.Length : 0), capacity) {
         }
@@ -295,9 +286,6 @@ namespace System.Text {
         }
 
         public int Capacity {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get { return m_ChunkChars.Length + m_ChunkOffset; }
             set {
                 if (value < 0) {
@@ -468,9 +456,6 @@ namespace System.Text {
         // instance, nulls are appended.  The capacity is adjusted to be the same as the length.
 
         public int Length {
-#if !FEATURE_CORECLR
-            [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
             get {
                 Contract.Ensures(Contract.Result<int>() >= 0);
                 return m_ChunkOffset + m_ChunkLength;
@@ -687,9 +672,6 @@ namespace System.Text {
         // We put this fixed in its own helper to avoid the cost zero initing valueChars in the
         // case we don't actually use it.  
         [System.Security.SecuritySafeCritical]  // auto-generated
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         private void AppendHelper(string value) {
             unsafe {
                 fixed (char* valueChars = value)
@@ -700,17 +682,11 @@ namespace System.Text {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SecurityCritical]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal unsafe extern void ReplaceBufferInternal(char* newBuffer, int newLength);
 
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [SecurityCritical]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         internal unsafe extern void ReplaceBufferAnsiInternal(sbyte* newBuffer, int newLength);
 #endif
         // Appends a copy of the characters in value from startIndex to startIndex +
@@ -968,9 +944,6 @@ namespace System.Text {
 
         // Appends an int to this string builder.
         // The capacity is adjusted as needed. 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder Append(int value) {
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
             return Append(value.ToString(CultureInfo.CurrentCulture));
@@ -1028,9 +1001,6 @@ namespace System.Text {
 
         // Appends an Object to this string builder. 
         // The capacity is adjusted as needed. 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder Append(Object value) {
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
 
@@ -1291,36 +1261,69 @@ namespace System.Text {
             return Insert(index, value.ToString(), 1);
         }
 
-#if !FEATURE_CORECLR
-        [TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")]
-#endif
         public StringBuilder AppendFormat(String format, Object arg0) {
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
-            return AppendFormat(null, format, new Object[] { arg0 });
+            return AppendFormatHelper(null, format, new ParamsArray(arg0));
         }
 
         public StringBuilder AppendFormat(String format, Object arg0, Object arg1) {
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
-            return AppendFormat(null, format, new Object[] { arg0, arg1 });
+            return AppendFormatHelper(null, format, new ParamsArray(arg0, arg1));
         }
 
         public StringBuilder AppendFormat(String format, Object arg0, Object arg1, Object arg2) {
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
-            return AppendFormat(null, format, new Object[] { arg0, arg1, arg2 });
+            return AppendFormatHelper(null, format, new ParamsArray(arg0, arg1, arg2));
         }
 
         public StringBuilder AppendFormat(String format, params Object[] args) {
-            Contract.Ensures(Contract.Result<StringBuilder>() != null);
-            return AppendFormat(null, format, args);
+            if (args == null)
+            {
+                // To preserve the original exception behavior, throw an exception about format if both
+                // args and format are null. The actual null check for format is in AppendFormatHelper.
+                throw new ArgumentNullException((format == null) ? "format" : "args");
+            }
+            Contract.Ensures(Contract.Result<String>() != null);
+            Contract.EndContractBlock();
+            
+            return AppendFormatHelper(null, format, new ParamsArray(args));
         }
 
+        public StringBuilder AppendFormat(IFormatProvider provider, String format, Object arg0) {
+            Contract.Ensures(Contract.Result<StringBuilder>() != null);
+            return AppendFormatHelper(provider, format, new ParamsArray(arg0));
+        }
+        
+        public StringBuilder AppendFormat(IFormatProvider provider, String format, Object arg0, Object arg1) {
+            Contract.Ensures(Contract.Result<StringBuilder>() != null);
+            return AppendFormatHelper(provider, format, new ParamsArray(arg0, arg1));
+        }
+        
+        public StringBuilder AppendFormat(IFormatProvider provider, String format, Object arg0, Object arg1, Object arg2) {
+            Contract.Ensures(Contract.Result<StringBuilder>() != null);
+            return AppendFormatHelper(provider, format, new ParamsArray(arg0, arg1, arg2));
+        }
+        
+        public StringBuilder AppendFormat(IFormatProvider provider, String format, params Object[] args) {
+            if (args == null)
+            {
+                // To preserve the original exception behavior, throw an exception about format if both
+                // args and format are null. The actual null check for format is in AppendFormatHelper.
+                throw new ArgumentNullException((format == null) ? "format" : "args");
+            }
+            Contract.Ensures(Contract.Result<String>() != null);
+            Contract.EndContractBlock();
+            
+            return AppendFormatHelper(provider, format, new ParamsArray(args));
+        }
+        
         private static void FormatError() {
             throw new FormatException(Environment.GetResourceString("Format_InvalidString"));
         }
-
-        public StringBuilder AppendFormat(IFormatProvider provider, String format, params Object[] args) {
-            if (format == null || args == null) {
-                throw new ArgumentNullException((format == null) ? "format" : "args");
+        
+        internal StringBuilder AppendFormatHelper(IFormatProvider provider, String format, ParamsArray args) {
+            if (format == null) {
+                throw new ArgumentNullException("format");
             }
             Contract.Ensures(Contract.Result<StringBuilder>() != null);
             Contract.EndContractBlock();
@@ -1659,10 +1662,14 @@ namespace System.Text {
         /// Appends 'value' of length 'count' to the stringBuilder. 
         /// </summary>
         [SecurityCritical]
-        internal unsafe StringBuilder Append(char* value, int valueCount)
+        [System.CLSCompliantAttribute(false)]
+        public unsafe StringBuilder Append(char* value, int valueCount)
         {
-            Contract.Assert(value != null, "Value can't be null");
-            Contract.Assert(valueCount >= 0, "Count can't be negative");
+            // We don't check null value as this case will throw null reference exception anyway
+            if (valueCount < 0)
+            {
+                throw new ArgumentOutOfRangeException("valueCount", Environment.GetResourceString("ArgumentOutOfRange_NegativeCount"));
+            }
 
             // This case is so common we want to optimize for it heavily. 
             int newIndex = valueCount + m_ChunkLength;
@@ -1876,9 +1883,6 @@ namespace System.Text {
         }
 #if !MONO
          // Copies the source StringBuilder to the destination IntPtr memory allocated with len bytes.
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         internal unsafe void InternalCopy(IntPtr dest, int len) {
             if(len ==0)

@@ -195,7 +195,7 @@ namespace System.Activities.Presentation.Xaml
             this.lineNumber = lineNumber;
             this.linePosition = linePosition;
 
-            // But we also need to keep it in [....] with the nodestream, for XOW errors
+            // But we also need to keep it in sync with the nodestream, for XOW errors
             // XOW and XamlNodeQueue.Writer both implement IXamlLineInfoConsumer, so we can do a straight cast
             if (this.rootFragment.HasError)
             {

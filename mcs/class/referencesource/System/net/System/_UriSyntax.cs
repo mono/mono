@@ -422,8 +422,8 @@ namespace System {
                                             UriSyntaxFlags.AllowEmptyHost |
                                             UriSyntaxFlags.AllowUncHost |       //
                                             UriSyntaxFlags.AllowAnInternetHost |
-                                            // UriSyntaxFlags.AllowAnyOtherHost | // V1.1 has a bug and so does not support this case
-                                            //
+                                            // UriSyntaxFlags.AllowAnyOtherHost | // V1.1 has a 
+
                                             UriSyntaxFlags.PathIsRooted |
                                             UriSyntaxFlags.AllowDOSPath |        //
                                             UriSyntaxFlags.ConvertPathSlashes |  // V1 compat, it will always convert backslashes

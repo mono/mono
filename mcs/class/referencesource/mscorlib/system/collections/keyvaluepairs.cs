@@ -7,7 +7,7 @@
 **
 ** Class:  KeyValuePairs
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>Microsoft</OWNER>
 **
 **
 ** Purpose: KeyValuePairs to display items in collection class under debugger

@@ -14,6 +14,7 @@ namespace System {
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
     using System.Security;
+    using System.Runtime;
 
 [System.Runtime.InteropServices.ComVisible(true)]
     public static partial class Buffer
@@ -216,9 +217,6 @@ namespace System {
                 *(src + len) = 0;
         }
 
-       #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]  // auto-generated
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal unsafe static void Memcpy(byte[] dest, int destIndex, byte* src, int srcIndex, int len) {
@@ -233,9 +231,6 @@ namespace System {
             }
         }
 
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [SecurityCritical]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal unsafe static void Memcpy(byte* pDest, int destIndex, byte[] src, int srcIndex, int len)
@@ -253,10 +248,14 @@ namespace System {
 #if !MONO
         // This is tricky to get right AND fast, so lets make it useful for the whole Fx.
         // E.g. System.Runtime.WindowsRuntime!WindowsRuntimeBufferExtensions.MemCopy uses it.
+
+        // This method has a slightly different behavior on arm and other platforms.
+        // On arm this method behaves like memcpy and does not handle overlapping buffers.
+        // While on other platforms it behaves like memmove and handles overlapping buffers.
+        // This behavioral difference is unfortunate but intentional because
+        // 1. This method is given access to other internal dlls and this close to release we do not want to change it.
+        // 2. It is difficult to get this right for arm and again due to release dates we would like to visit it later.
         [FriendAccessAllowed]
-        #if !FEATURE_CORECLR
-        [System.Runtime.ForceTokenStabilization]
-        #endif //!FEATURE_CORECLR
         [System.Security.SecurityCritical]
         [ResourceExposure(ResourceScope.None)] 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
@@ -264,9 +263,30 @@ namespace System {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal unsafe static extern void Memcpy(byte* dest, byte* src, int len);
 #else // ARM
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
         internal unsafe static void Memcpy(byte* dest, byte* src, int len) {
             Contract.Assert(len >= 0, "Negative length in memcopy!");
+            Memmove(dest, src, (uint)len);
+        }
+#endif // ARM
 
+        // This method has different signature for x64 and other platforms and is done for performance reasons.
+        [System.Security.SecurityCritical]
+        [ResourceExposure(ResourceScope.None)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+#if WIN64
+        internal unsafe static void Memmove(byte* dest, byte* src, ulong len)
+#else
+        internal unsafe static void Memmove(byte* dest, byte* src, uint len)
+#endif
+        {
+            // P/Invoke into the native version when the buffers are overlapping and the copy needs to be performed backwards
+            // This check can produce false positives for lengths greater than Int32.MaxInt. It is fine because we want to use PInvoke path for the large lengths anyway.
+#if WIN64
+            if ((ulong)dest - (ulong)src < len) goto PInvoke;
+#else
+            if (((uint)dest - (uint)src) < len) goto PInvoke;
+#endif
             //
             // This is portable version of memcpy. It mirrors what the hand optimized assembly versions of memcpy typically do.
             //
@@ -396,11 +416,7 @@ namespace System {
             }
 
             // P/Invoke into the native version for large lengths
-            if (len >= 512)
-            {
-                _Memcpy(dest, src, len);
-                return;
-            }
+            if (len >= 512) goto PInvoke;
 
             if (((int)dest & 3) != 0)
             {
@@ -430,7 +446,11 @@ namespace System {
             }
 #endif
 
-            int count = len / 16;
+#if WIN64
+            ulong count = len / 16;
+#else
+            uint count = len / 16;
+#endif
             while (count > 0)
             {
 #if WIN64
@@ -471,7 +491,13 @@ namespace System {
                 src += 2;
            }
            if ((len & 1) != 0)
-                *dest++ = *src++;
+                *dest = *src;
+
+            return;
+
+            PInvoke:
+            _Memmove(dest, src, len);
+
         }
 
         // Non-inlinable wrapper around the QCall that avoids poluting the fast path
@@ -480,9 +506,13 @@ namespace System {
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [MethodImplAttribute(MethodImplOptions.NoInlining)]
-        private unsafe static void _Memcpy(byte* dest, byte* src, int len)
+#if WIN64
+        private unsafe static void _Memmove(byte* dest, byte* src, ulong len)
+#else
+        private unsafe static void _Memmove(byte* dest, byte* src, uint len)
+#endif
         {
-            __Memcpy(dest, src, len);
+            __Memmove(dest, src, len);
         }
 
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
@@ -490,8 +520,49 @@ namespace System {
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]        
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        extern private unsafe static void __Memcpy(byte* dest, byte* src, int len);
-#endif // ARM
+#if WIN64
+        extern private unsafe static void __Memmove(byte* dest, byte* src, ulong len);
+#else
+        extern private unsafe static void __Memmove(byte* dest, byte* src, uint len);
+#endif
+
+
+        // The attributes on this method are chosen for best JIT performance. 
+        // Please do not edit unless intentional.
+        [System.Security.SecurityCritical]
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [CLSCompliant(false)]
+        public static unsafe void MemoryCopy(void* source, void* destination, long destinationSizeInBytes, long sourceBytesToCopy)
+        {
+            if (sourceBytesToCopy > destinationSizeInBytes)
+            {
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.sourceBytesToCopy);
+            }
+#if WIN64
+            Memmove((byte*)destination, (byte*)source, checked((ulong) sourceBytesToCopy));
+#else
+            Memmove((byte*)destination, (byte*)source, checked((uint)sourceBytesToCopy));
+#endif // WIN64
+        }
+
+
+        // The attributes on this method are chosen for best JIT performance. 
+        // Please do not edit unless intentional.
+        [System.Security.SecurityCritical]
+        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [CLSCompliant(false)]
+        public static unsafe void MemoryCopy(void* source, void* destination, ulong destinationSizeInBytes, ulong sourceBytesToCopy)
+        {
+            if (sourceBytesToCopy > destinationSizeInBytes)
+            {
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.sourceBytesToCopy);
+            }
+#if WIN64
+            Memmove((byte*)destination, (byte*)source, sourceBytesToCopy);
+#else
+            Memmove((byte*)destination, (byte*)source, checked((uint)sourceBytesToCopy));
+#endif // WIN64
+        }
 #endif
     }
 }

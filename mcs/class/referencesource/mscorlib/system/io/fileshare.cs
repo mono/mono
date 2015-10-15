@@ -7,7 +7,7 @@
 **
 ** Enum:   FileShare
 ** 
-** <OWNER>[....]</OWNER>
+** <OWNER>kimhamil</OWNER>
 **
 **
 ** Purpose: Enum describing how to share files with other 
