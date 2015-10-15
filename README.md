@@ -37,8 +37,8 @@ Community supported architectures:
 [8]: http://jenkins.mono-project.com/job/test-mono-mainline/label=debian-armhf/
 [9]: https://ci.appveyor.com/api/projects/status/1e61ebdfpbiei58v/branch/master?svg=true
 [10]: https://ci.appveyor.com/project/ajlennon/mono-817/branch/master
-[11]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=nealef-s390x-1/badge/icon
-[12]: http://jenkins.mono-project.com/job/test-mono-mainline-communityarchitectures/label=nealef-s390x-1/
+[11]: https://jenkins.mono-project.com/job/z/label=centos-s390x/badge/icon
+[12]: https://jenkins.mono-project.com/job/z/label=centos-s390x
 
 Compilation and Installation
 ============================
