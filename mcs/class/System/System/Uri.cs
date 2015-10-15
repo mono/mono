@@ -371,7 +371,7 @@ namespace System {
 			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
 				path = "/" + path;
 
-			source += UriHelper.Reduce (path, true);
+			source += UriHelper.Reduce (path, !IriParsing);
 
 			if (relativeEl.query != null) {
 				canUseBase = false;
