@@ -1051,7 +1051,7 @@ namespace System.Data.SqlClient {
         static internal Exception InvalidDataTypeForEncryptedParameter(string parameterName, int actualDataType, int expectedDataType) {
             return ADP.Argument(Res.GetString(Res.TCE_NullProviderValue, parameterName, actualDataType, expectedDataType));
         }
-
+#if !MONO
         static internal Exception KeyDecryptionFailed (string providerName, string keyHex, Exception e) {
             if (providerName.Equals(SqlColumnEncryptionCertificateStoreProvider.ProviderName)) {
                 return GetExceptionArray(null, Res.GetString(Res.TCE_KeyDecryptionFailedCertStore, providerName, keyHex), e);
@@ -1060,7 +1060,7 @@ namespace System.Data.SqlClient {
                 return GetExceptionArray(null, Res.GetString(Res.TCE_KeyDecryptionFailed, providerName, keyHex), e);
             }
         }
-
+#endif
         static internal Exception UntrustedKeyPath(string keyPath, string serverName) {
             return ADP.Argument(Res.GetString(Res.TCE_UntrustedKeyPath, keyPath, serverName));
         }
