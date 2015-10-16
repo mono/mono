@@ -30,7 +30,6 @@ using MSX = MonoSecurity::Mono.Security.X509;
 #endif
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -93,50 +92,20 @@ namespace System.Security.Cryptography.X509Certificates {
 					IntPtr.Zero);
 			}
 		}
-
-		static IList<byte[]> CreateArray (X509Certificate2Collection certificates)
-		{
-			var list = new List<byte[]> (certificates.Count);
-			for (int i = 0; i < certificates.Count; i++)
-				list.Add (certificates [i].RawData);
-			return list;
-		}
 		
-		static IList<byte[]> CreateArray (MSX.X509CertificateCollection certificates)
-		{
-			var list = new List<byte[]> (certificates.Count);
-			for (int i = 0; i < certificates.Count; i++)
-				list.Add (certificates [i].RawData);
-			return list;
-		}
-
-		public static SecTrustResult TrustEvaluateSsl (MSX.X509CertificateCollection certificates, string host)
-		{
-			if (certificates == null)
-				return SecTrustResult.Deny;
-
-			try {
-				var certArray = CreateArray (certificates);
-				return _TrustEvaluateSsl (certArray, host);
-			} catch {
-				return SecTrustResult.Deny;
-			}
-		}
-
 		public static SecTrustResult TrustEvaluateSsl (X509Certificate2Collection certificates, string host)
 		{
 			if (certificates == null)
 				return SecTrustResult.Deny;
 
 			try {
-				var certArray = CreateArray (certificates);
-				return _TrustEvaluateSsl (certArray, host);
+				return _TrustEvaluateSsl (certificates, host);
 			} catch {
 				return SecTrustResult.Deny;
 			}
 		}
 
-		static SecTrustResult _TrustEvaluateSsl (IList<byte[]> certificates, string hostName)
+		static SecTrustResult _TrustEvaluateSsl (X509Certificate2Collection certificates, string hostName)
 		{
 			int certCount = certificates.Count;
 			IntPtr [] cfDataPtrs = new IntPtr [certCount];
@@ -149,7 +118,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			try {
 				for (int i = 0; i < certCount; i++)
-					cfDataPtrs [i] = MakeCFData (certificates [i]);
+					cfDataPtrs [i] = MakeCFData (certificates [i].RawData);
 				
 				for (int i = 0; i < certCount; i++){
 					secCerts [i] = SecCertificateCreateWithData (IntPtr.Zero, cfDataPtrs [i]);
