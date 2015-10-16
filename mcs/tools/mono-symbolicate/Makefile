@@ -41,10 +41,13 @@ BUILD_TEST_EXE = @\
 
 check: test-local
 
+AOT_SUPPORTED = $(shell $(MONO) --aot 2>&1 | grep -q "AOT compilation is not supported" && echo 0 || echo 1)
+
 test-local: all
 	$(BUILD_TEST_EXE)
 	@echo "Checking $(PROGRAM) without AOT"
 	$(CHECK_DIFF)
+ifeq ($(AOT_SUPPORTED), 1)
 	@echo "Checking $(PROGRAM) with AOT"
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
@@ -52,3 +55,4 @@ test-local: all
 	$(BUILD_TEST_EXE)
 	@MONO_DEBUG=gen-compact-seq-points $(MONO) --aot=gen-seq-points-file $(TEST_EXE) > /dev/null
 	$(CHECK_DIFF)
+endif
