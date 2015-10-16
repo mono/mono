@@ -64,6 +64,8 @@ public class TestRunner
 		// Defaults
 		int concurrency = 1;
 		int timeout = 2 * 60; // in seconds
+		int expectedExitCode = 0;
+		string testsuiteName = "runtime";
 
 		DateTime test_start_time = DateTime.UtcNow;
 
@@ -115,6 +117,20 @@ public class TestRunner
 					}
 					foreach (var s in args [i + 1].Split ())
 						opt_sets.Add (s);
+					i += 2;
+				} else if (args [i] == "--expected-exit-code") {
+					if (i + i >= args.Length) {
+						Console.WriteLine ("Missing argument to --expected-exit-code command line option.");
+						return 1;
+					}
+					expectedExitCode = Int32.Parse (args [i + 1]);
+					i += 2;
+				} else if (args [i] == "--testsuite-name") {
+					if (i + i >= args.Length) {
+						Console.WriteLine ("Missing argument to --testsuite-name command line option.");
+						return 1;
+					}
+					testsuiteName = args [i + 1];
 					i += 2;
 				} else {
 					Console.WriteLine ("Unknown command line option: '" + args [i] + "'.");
@@ -212,7 +228,7 @@ public class TestRunner
 				Process dead = (Process)sender;
 
 				lock (monitor) {
-					if (dead.ExitCode == 0) {
+					if (dead.ExitCode == expectedExitCode) {
 						if (concurrency == 1)
 							Console.WriteLine ("passed.");
 						else
@@ -320,14 +336,14 @@ public class TestRunner
 		XmlWriterSettings xmlWriterSettings = new XmlWriterSettings ();
 		xmlWriterSettings.NewLineOnAttributes = true;
 		xmlWriterSettings.Indent = true;
-		using (XmlWriter writer = XmlWriter.Create ("TestResults_runtime.xml", xmlWriterSettings)) {
+		using (XmlWriter writer = XmlWriter.Create (String.Format ("TestResults_{0}.xml", testsuiteName), xmlWriterSettings)) {
 			// <?xml version="1.0" encoding="utf-8" standalone="no"?>
 			writer.WriteStartDocument ();
 			// <!--This file represents the results of running a test suite-->
 			writer.WriteComment ("This file represents the results of running a test suite");
 			// <test-results name="/home/charlie/Dev/NUnit/nunit-2.5/work/src/bin/Debug/tests/mock-assembly.dll" total="21" errors="1" failures="1" not-run="7" inconclusive="1" ignored="4" skipped="0" invalid="3" date="2010-10-18" time="13:23:35">
 			writer.WriteStartElement ("test-results");
-			writer.WriteAttributeString ("name", "runtime-tests.dummy");
+			writer.WriteAttributeString ("name", String.Format ("{0}-tests.dummy", testsuiteName));
 			writer.WriteAttributeString ("total", (npassed + nfailed).ToString());
 			writer.WriteAttributeString ("failures", nfailed.ToString());
 			writer.WriteAttributeString ("not-run", "0");

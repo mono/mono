@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+my $expected_exit_code = shift;
 my $interpreter = shift;
 my $test = shift;
 my $disabled_tests = shift;
@@ -64,7 +65,7 @@ if (!defined ($cpid)) {
 	$res = $? >> 8;
 }
 
-if ($res) {
+if ($res != $expected_exit_code) {
 	printf ("failed $? (%d) signal (%d).\n", $? >> 8, $? & 127);
 	dump_files ();
 	if (($? & 127) == 2) {
