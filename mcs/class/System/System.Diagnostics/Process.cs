@@ -1100,7 +1100,7 @@ namespace System.Diagnostics {
 			if (startInfo.RedirectStandardOutput) {
 				MonoIO.Close (stdout_write, out error);
 
-				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.OutputEncoding;
+				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
 
 				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (stdout_read, false), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
 			}
@@ -1108,7 +1108,7 @@ namespace System.Diagnostics {
 			if (startInfo.RedirectStandardError) {
 				MonoIO.Close (stderr_write, out error);
 
-				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.OutputEncoding;
+				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
 
 				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, false), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
 			}
