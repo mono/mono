@@ -37,9 +37,9 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyCopyright ("(c) 2015 Xamarin")]
-[assembly: AssemblyDescription ("Mono.Security.Providers.dll")]
+[assembly: AssemblyDescription ("Mono.Security.Providers.DotNet.dll")]
 [assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyTitle ("Mono.Security.Providers.dll")]
+[assembly: AssemblyTitle ("Mono.Security.Providers.DotNet.dll")]
 [assembly: CLSCompliant (true)]
 [assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
