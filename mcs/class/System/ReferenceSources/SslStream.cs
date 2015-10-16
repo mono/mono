@@ -25,7 +25,6 @@ namespace System.Net.Security
 		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, EncryptionPolicy encryptionPolicy, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-#if MARTIN_FIXME
 			if (encryptionPolicy != EncryptionPolicy.RequireEncryption && encryptionPolicy != EncryptionPolicy.AllowNoEncryption && encryptionPolicy != EncryptionPolicy.NoEncryption)
 				throw new ArgumentException (SR.GetString (SR.net_invalid_enum, "EncryptionPolicy"), "encryptionPolicy");
 
@@ -37,12 +36,8 @@ namespace System.Net.Security
 
 			_Configuration = new MyConfiguration (settings, this);
 			_SslState = new SslState (innerStream, null, selectionCallback, encryptionPolicy, _Configuration);
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
-#if MARTIN_FIXME
 		/*
 		 * Mono-specific version of 'userCertValidationCallbackWrapper'; we're called from ChainValidationHelper.ValidateChain() here.
 		 *
@@ -61,7 +56,6 @@ namespace System.Net.Security
 
 			return ChainValidationHelper.InvokeCallback (callback, this, certificate, chain, sslPolicyErrors);
 		}
-#endif
 
 		class MyConfiguration : SSPIConfiguration
 		{

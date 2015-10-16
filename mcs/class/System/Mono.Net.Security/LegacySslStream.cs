@@ -366,15 +366,11 @@ namespace Mono.Net.Security
 				return null;
 			};
 
-#if MARTIN_FIXME
 			// Even if validation_callback is null this allows us to verify requests where the user
 			// does not provide a verification callback but attempts to authenticate with the website
 			// as a client (see https://bugzilla.xamarin.com/show_bug.cgi?id=18962 for an example)
 			s.ServerCertValidation2 += (certs) => ((ChainValidationHelper)certificateValidator).ValidateChain (targetHost, certs);
 			s.ClientCertSelectionDelegate = OnCertificateSelection;
-#else
-			throw new NotImplementedException ();
-#endif
 
 			ssl_stream = s;
 
@@ -411,14 +407,10 @@ namespace Mono.Net.Security
 				return cert2 != null ? cert2.PrivateKey : null;
 			};
 
-#if MARTIN_FIXME
 			s.ClientCertValidationDelegate = delegate (X509Certificate cert, int[] certErrors) {
 				var errors = certErrors.Length > 0 ? MonoSslPolicyErrors.RemoteCertificateChainErrors : MonoSslPolicyErrors.None;
 				return ((ChainValidationHelper)certificateValidator).ValidateClientCertificate (cert, errors);
 			};
-#else
-			throw new NotImplementedException ();
-#endif
 
 			ssl_stream = s;
 
