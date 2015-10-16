@@ -13,6 +13,8 @@ ReferenceSources/Strings.cs
 
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/DynamicExpression.cs
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/ExpressionVisitor.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/IArgumentProvider.cs
+../../../external/referencesource/System.Core/Microsoft/Scripting/Ast/IDynamicExpression.cs
 
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Action.cs
 ../../../external/referencesource/System.Core/Microsoft/Scripting/Utils/Extension.cs

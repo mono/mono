@@ -1325,7 +1325,7 @@ System.Web.Security/MembershipPasswordAttribute.cs
 System.Web/DynamicModuleManager.cs
 
 ../../../external/referencesource/System.Web/ISubscriptionToken.cs
-
+../../../external/referencesource/System.Web/ITlsTokenBindingInfo.cs
 
 ../../../external/referencesource/System.Web/ModelBinding/IModelNameProvider.cs
 ../../../external/referencesource/System.Web/ModelBinding/BindingBehaviorAttribute.cs

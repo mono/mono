@@ -3102,6 +3102,12 @@ namespace System
 			return d;
 		}
 
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static T[] Empty<T>()
+		{
+			return EmptyArray<T>.Value;
+		}
+
 		public static bool Exists<T> (T [] array, Predicate <T> match)
 		{
 			if (array == null)
