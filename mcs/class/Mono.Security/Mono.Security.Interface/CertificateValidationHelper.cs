@@ -138,11 +138,7 @@ namespace Mono.Security.Interface
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
 		{
 			#if INSIDE_SYSTEM
-			#if MARTIN_FIXME
 			return ChainValidationHelper.GetDefaultValidator (settings);
-			#else
-			throw new NotImplementedException ();
-			#endif
 			#else
 			return (ICertificateValidator)createMethod.Invoke (null, new object[] { settings });
 			#endif
