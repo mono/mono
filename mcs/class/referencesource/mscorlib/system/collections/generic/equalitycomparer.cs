@@ -88,13 +88,13 @@ namespace System.Collections.Generic
                 switch (underlyingTypeCode) {
                     case TypeCode.Int16: // short
 #if MONO
-                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(ShortEnumEqualityComparer<short>), t);
+                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(ShortEnumEqualityComparer<>), t);
 #else
                         return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(ShortEnumEqualityComparer<short>), t);
 #endif
                     case TypeCode.SByte:
 #if MONO
-                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(SByteEnumEqualityComparer<sbyte>), t);
+                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(SByteEnumEqualityComparer<>), t);
 #else
                         return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(SByteEnumEqualityComparer<sbyte>), t);
 #endif
@@ -103,14 +103,14 @@ namespace System.Collections.Generic
                     case TypeCode.Byte:
                     case TypeCode.UInt16: //ushort
 #if MONO
-                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(EnumEqualityComparer<int>), t);
+                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(EnumEqualityComparer<>), t);
 #else
                         return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(EnumEqualityComparer<int>), t);
 #endif
                     case TypeCode.Int64:
                     case TypeCode.UInt64:
 #if MONO
-                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(LongEnumEqualityComparer<long>), t);
+                        return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(LongEnumEqualityComparer<>), t);
 #else
                         return (EqualityComparer<T>)RuntimeTypeHandle.CreateInstanceForAnotherGenericParameter((RuntimeType)typeof(LongEnumEqualityComparer<long>), t);
 #endif
