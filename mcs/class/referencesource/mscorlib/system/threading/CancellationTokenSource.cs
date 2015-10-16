@@ -71,7 +71,7 @@ namespace System.Threading
         /// actually run the callbacks.
         private volatile int m_threadIDExecutingCallbacks = -1;
 
-        private int m_disposed;
+        private bool m_disposed;
 
         private CancellationTokenRegistration [] m_linkingRegistrations; //lazily initialized if required.
         
@@ -131,7 +131,7 @@ namespace System.Threading
         /// </summary>
         internal bool IsDisposed
         {
-            get { return m_disposed == 1; }
+            get { return m_disposed; }
         }
 
         /// <summary>
@@ -570,7 +570,7 @@ namespace System.Threading
                 //      than if Dispose wasn't safe to use concurrently, as Dispose would never be called,
                 //      and thus no handlers would be dropped.
 
-                if (m_disposed != 0 || Interlocked.CompareExchange (ref m_disposed, 1, 0) != 0)
+                if (m_disposed)
                     return;
 
                 if (m_timer != null) m_timer.Dispose();
@@ -595,6 +595,8 @@ namespace System.Threading
                     m_kernelEvent.Close(); // the critical cleanup to release an OS handle
                     m_kernelEvent = null; // free for GC.
                 }
+
+                m_disposed = true;
             }
         }
 
@@ -605,7 +607,7 @@ namespace System.Threading
         /// </summary>
         internal void ThrowIfDisposed()
         {
-            if (m_disposed == 1)
+            if (m_disposed)
                 ThrowObjectDisposedException();
         }
 
