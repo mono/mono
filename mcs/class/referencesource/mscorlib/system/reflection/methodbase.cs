@@ -91,6 +91,7 @@ namespace System.Reflection
             MethodBase m = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
             if (m == null)
                 throw new ArgumentException ("The handle is invalid.");
+            return m;
 #else
             return RuntimeType.GetMethodBase(declaringType.GetRuntimeType(), handle.GetMethodInfo());
 #endif
