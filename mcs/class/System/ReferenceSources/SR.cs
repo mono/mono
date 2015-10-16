@@ -61,6 +61,7 @@ partial class SR
 	public const string UnterminatedBracket="Unterminated [] set.";
 	public const string UnterminatedComment="Unterminated (?#...) comment.";
 	
+	public const string ArgumentNull_Array = "ArgumentNull_Array";
 	public const string ArgumentNull_ArrayWithNullElements = "ArgumentNull_ArrayWithNullElements";
 	public const string Arg_ArrayPlusOffTooSmall = "Arg_ArrayPlusOffTooSmall";
 	public const string Arg_InsufficientSpace = "Arg_InsufficientSpace";

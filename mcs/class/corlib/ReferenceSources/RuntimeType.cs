@@ -43,6 +43,8 @@ namespace System
 {
 	partial class RuntimeType
 	{
+		internal Object GenericCache;
+
 		internal virtual MonoCMethod GetDefaultConstructor ()
 		{
 			// TODO: Requires MonoType

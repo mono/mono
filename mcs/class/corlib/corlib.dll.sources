@@ -882,6 +882,7 @@ System.Threading.Tasks/DecoupledTask.cs
 ../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
 
 ReferenceSources/__ConsoleStream.cs
+ReferenceSources/AppContextSwitches.cs
 ReferenceSources/Array.cs
 ReferenceSources/BCLDebug.cs
 ReferenceSources/CalendarData.cs
@@ -1019,6 +1020,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/outofmemoryexception.cs
 ../../../external/referencesource/mscorlib/system/overflowexception.cs
 ../../../external/referencesource/mscorlib/system/paramarrayattribute.cs
+../../../external/referencesource/mscorlib/system/paramsarray.cs
 ../../../external/referencesource/mscorlib/system/platformnotsupportedexception.cs
 ../../../external/referencesource/mscorlib/system/progress.cs
 ../../../external/referencesource/mscorlib/system/random.cs
@@ -1131,6 +1133,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendaralgorithmtype.cs
+../../../external/referencesource/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendarweekrule.cs
 ../../../external/referencesource/mscorlib/system/globalization/charunicodeinfo.cs
@@ -1387,6 +1390,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/dsasignaturedeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/dsasignatureformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hashalgorithm.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/HashAlgorithmName.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hmac.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hmacmd5.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/hmacripemd160.cs
@@ -1415,6 +1419,10 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/rsaoaepkeyexchangeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/rsapkcs1keyexchangedeformatter.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/rsapkcs1keyexchangeformatter.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/RSAEncryptionPadding.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/RSAEncryptionPaddingMode.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/RSASignaturePadding.cs
+../../../external/referencesource/mscorlib/system/security/cryptography/RSASignaturePaddingMode.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha1.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha1managed.cs
 ../../../external/referencesource/mscorlib/system/security/cryptography/sha256.cs
@@ -1514,6 +1522,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/binarycompatibility.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/componentguaranteesattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/multitargetinghelpers.cs
+../../../external/referencesource/mscorlib/system/runtime/versioning/NonVersionableAttribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/resourceattributes.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkattribute.cs
 ../../../external/referencesource/mscorlib/system/runtime/versioning/targetframeworkid.cs
@@ -1552,6 +1561,7 @@ ReferenceSources/SecurityContext.cs
 ../../../external/referencesource/mscorlib/system/threading/waithandlecannotbeopenedexception.cs
 ../../../external/referencesource/mscorlib/system/threading/threadpool.cs
 
+../../../external/referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/BeginEndAwaitableAdapter.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/TaskFactory.cs
 ../../../external/referencesource/mscorlib/system/threading/Tasks/FutureFactory.cs

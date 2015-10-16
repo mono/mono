@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
 ReferenceSources/Res.cs
+ReferenceSources/LocalAppContextSwitches.cs
 ReferenceSources/ThisAssembly.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/GenerateHelper.cs
 ../../../external/referencesource/System.Data.SqlXml/System/Xml/Xsl/IlGen/IteratorDescriptor.cs

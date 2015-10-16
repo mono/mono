@@ -40,7 +40,6 @@
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ExpressionStringBuilder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/ExpressionType.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/GotoExpression.cs
-../dlr/Runtime/Microsoft.Scripting.Core/Ast/IArgumentProvider.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/IndexExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/InvocationExpression.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Ast/LabelExpression.cs
