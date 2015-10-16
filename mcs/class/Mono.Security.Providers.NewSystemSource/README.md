@@ -51,8 +51,9 @@ if you don't explicitly install a custom provider, so simply call
   `MONO_FEATURE_NEW_SYSTEM_SOURCE` (defining conditional for this configuration)
   are defined.  We do not define `MONO_X509_ALIAS here`.
   
-The `Mono.Security.Providers` directory is currently enabled in the top-level `Makefile`,
-but the resulting binaries should only be used to test the new TLS code and not shipped as stable APIs.
+The `Mono.Security.Providers.DotNet` and `Mono.Security.Providers.NewSystemSource` directory is currently
+enabled in the top-level `Makefile`, but the resulting binaries should only be used to test the new TLS
+code and not shipped as stable APIs.
 
 Pending changes
 ---------------
