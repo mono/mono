@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
@@ -43,21 +44,37 @@ public class TestRunner
 		public string test;
 		public StreamWriter stdout, stderr;
 		public string stdoutFile, stderrFile;
-
-		public void CloseStreams () {
-			if (stdout != null) {
-				stdout.Close ();
-				stdout = null;
-			}
-			if (stderr != null) {
-				stderr.Close ();
-				stderr = null;
-			}
-		}
 	}
 
 	class TestInfo {
 		public string test, opt_set;
+	}
+
+	class ThreadTaskScheduler : TaskScheduler
+	{
+		protected override void QueueTask (Task task)
+		{
+			Thread thread = new Thread (o => {
+				Task t = (Task) o;
+				if (!base.TryExecuteTask (t))
+					throw new Exception ();
+			});
+			thread.IsBackground = true;
+			thread.Start (task);
+		}
+
+		protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+		{
+			if (taskWasPreviouslyQueued)
+				return false;
+
+			return base.TryExecuteTask (task);
+		}
+
+		protected override IEnumerable<Task> GetScheduledTasks ()
+		{
+			return new Task [0];
+		}
 	}
 
 	public static int Main (String[] args) {
@@ -138,17 +155,11 @@ public class TestRunner
 			if (!disabled.ContainsKey (args [j]))
 				tests.Add (args [j]);
 
-		int npassed = 0;
-		int nfailed = 0;
-
-		var processes = new List<Process> ();
 		var passed = new List<ProcessData> ();
 		var failed = new List<ProcessData> ();
-		var process_data = new Dictionary<Process, ProcessData> ();
+		var timedout = new List<ProcessData> ();
 
 		object monitor = new object ();
-
-		var terminated = new List<Process> ();
 
 		if (concurrency != 1)
 			Console.WriteLine ("Running tests: ");
@@ -164,25 +175,13 @@ public class TestRunner
 			}
 		}		
 
-		foreach (TestInfo ti in test_info) {
-			lock (monitor) {
-				while (processes.Count == concurrency) {
-					/* Wait for one process to terminate */
-					Monitor.Wait (monitor);
-				}
+		ParallelOptions options = new ParallelOptions
+		{
+			 MaxDegreeOfParallelism = concurrency,
+			 TaskScheduler = new ThreadTaskScheduler (),
+		};
 
-				/* Cleaup terminated processes */
-				foreach (Process dead in terminated) {
-					if (process_data [dead].stdout != null)
-						process_data [dead].stdout.Close ();
-					if (process_data [dead].stderr != null)
-						process_data [dead].stderr.Close ();
-					// This is needed to avoid CreateProcess failed errors :(
-					dead.Close ();
-				}
-				terminated.Clear ();
-			}
-
+		Parallel.ForEach (test_info, options, (ti) => {
 			string test = ti.test;
 			string opt_set = ti.opt_set;
 
@@ -195,10 +194,12 @@ public class TestRunner
 				process_args = test;
 			else
 				process_args = "-O=" + opt_set + " " + test;
+
 			ProcessStartInfo info = new ProcessStartInfo (runtime, process_args);
 			info.UseShellExecute = false;
 			info.RedirectStandardOutput = true;
 			info.RedirectStandardError = true;
+
 			Process p = new Process ();
 			p.StartInfo = info;
 
@@ -216,16 +217,7 @@ public class TestRunner
 			data.stderr = new StreamWriter (new FileStream (data.stderrFile, FileMode.Create));
 
 			p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-				Process p2 = (Process)sender;
-
-				StreamWriter fs;
-
-				lock (monitor) {
-					fs = process_data [p2].stdout;
-
-					if (e.Data == null)
-						process_data [p2].stdout = null;
-				}
+				StreamWriter fs = data.stdout;
 
 				if (e.Data == null) {
 					fs.Close ();
@@ -236,84 +228,58 @@ public class TestRunner
 			};
 
 			p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-				Process p2 = (Process)sender;
-
-				StreamWriter fs;
-
-				lock (monitor) {
-					fs = process_data [p2].stderr;
-
-					if (e.Data == null)
-						process_data [p2].stderr = null;
-
-				}
+				StreamWriter fs = data.stderr;
 
 				if (e.Data == null) {
 					fs.Close ();
-
-					lock (monitor) {
-						process_data [p2].stderr = null;
-					}
 				} else {
 					fs.WriteLine (e.Data);
 					fs.Flush ();
 				}
 			};
 
-			lock (monitor) {
-				processes.Add (p);
-				process_data [p] = data;
-			}
 			p.Start ();
 
 			p.BeginOutputReadLine ();
 			p.BeginErrorReadLine ();
 
-			ThreadPool.QueueUserWorkItem (o => {
-				Process process = (Process) o;
-
-				process.WaitForExit ();
-
+			if (!p.WaitForExit (timeout * 1000)) {
 				lock (monitor) {
-					if (process.ExitCode == 0) {
-						if (concurrency == 1)
-							Console.WriteLine ("passed.");
-						else
-							Console.Write (".");
-						passed.Add(process_data [process]);
-						npassed ++;
-					} else {
-						if (concurrency == 1)
-							Console.WriteLine ("failed.");
-						else
-							Console.Write ("F");
-						failed.Add (process_data [process]);
-						nfailed ++;
-					}
-					processes.Remove (process);
-					terminated.Add (process);
-					Monitor.Pulse (monitor);
+					timedout.Add (data);
+					failed.Add (data);
 				}
-			}, p);
-		}
 
-		bool timed_out = false;
+				if (concurrency == 1)
+					Console.WriteLine ("timed out.");
+				else
+					Console.Write ("T");
 
-		/* Wait for all processes to terminate */
-		while (true) {
-			lock (monitor) {
-				int nprocesses = processes.Count;
-
-				if (nprocesses == 0)
-					break;
-
-				bool res = Monitor.Wait (monitor, 1000 * timeout);
-				if (!res) {
-					timed_out = true;
-					break;
+				p.Kill ();
+			} else if (p.ExitCode != 0) {
+				lock (monitor) {
+					failed.Add (data);
 				}
+
+				if (concurrency == 1)
+					Console.WriteLine ("failed.");
+				else
+					Console.Write ("F");
+			} else {
+				lock (monitor) {
+					passed.Add (data);
+				}
+
+				if (concurrency == 1)
+					Console.WriteLine ("passed.");
+				else
+					Console.Write (".");
 			}
-		}
+
+			p.Close ();
+		});
+
+		int npassed = passed.Count;
+		int nfailed = failed.Count;
 
 		TimeSpan test_time = DateTime.UtcNow - test_start_time;
 		XmlWriterSettings xmlWriterSettings = new XmlWriterSettings ();
@@ -421,18 +387,13 @@ public class TestRunner
 
 		Console.WriteLine ();
 
-		if (timed_out) {
+		if (timedout.Count > 0) {
 			Console.WriteLine ("\nrunning tests timed out:\n");
 			Console.WriteLine (npassed + nfailed);
-			lock (monitor) {
-				foreach (Process p in processes) {
-					ProcessData pd = process_data [p];
-					pd.CloseStreams ();
-					Console.WriteLine (pd.test);
-					p.Kill ();
-					DumpFile (pd.stdoutFile);
-					DumpFile (pd.stderrFile);
-				}
+			foreach (ProcessData pd in timedout) {
+				Console.WriteLine (pd.test);
+				DumpFile (pd.stdoutFile);
+				DumpFile (pd.stderrFile);
 			}
 			return 1;
 		}
