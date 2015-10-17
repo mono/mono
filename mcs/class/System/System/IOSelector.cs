@@ -257,6 +257,7 @@ namespace System
 				BackendInitialize (wakeup_pipes_rd.SafeFileHandle, out backend);
 
 				Dictionary<IntPtr, List<IOSelectorJob>> states = new Dictionary<IntPtr, List<IOSelectorJob>> ();
+				List<BackendUpdate> backend_updates = new List<BackendUpdate> ();
 				BackendEvent[] backend_events = new BackendEvent [8];
 
 				for (;;) {
@@ -275,7 +276,38 @@ namespace System
 
 								states [u.handle].Add (u.job);
 
-								BackendAddHandle (backend, u.handle, GetOperationsForJobs (states [u.handle]), !exists);
+								int idx;
+								if ((idx = backend_updates.FindLastIndex (bu => bu.handle == u.handle)) == -1) {
+									backend_updates.Add (new BackendUpdate (u.handle, BackendUpdateType.Add) {
+										operations = GetOperationsForJobs (states [u.handle]),
+										is_new = !exists,
+									});
+								} else {
+									BackendUpdate bu = backend_updates [idx];
+									switch (bu.type) {
+									case BackendUpdateType.Add:
+										if (!exists)
+											throw new InvalidOperationException (String.Format ("Cannot add handle {0} as new, while it already exists", (int) u.handle));
+
+										backend_updates [idx] = new BackendUpdate (bu) {
+											operations = GetOperationsForJobs (states [u.handle]),
+										};
+
+										break;
+									case BackendUpdateType.Remove:
+										if (exists)
+											throw new InvalidOperationException (String.Format ("Cannot add handle {0} as existing, while it has previously been removed", (int) u.handle));
+
+										backend_updates.Add (new BackendUpdate (u.handle, BackendUpdateType.Add) {
+											operations = GetOperationsForJobs (states [u.handle]),
+											is_new = true,
+										});
+
+										break;
+									default:
+										throw new InvalidOperationException ();
+									}
+								}
 
 								break;
 							}
@@ -287,7 +319,24 @@ namespace System
 
 									states.Remove (u.handle);
 
-									BackendRemoveHandle (backend, u.handle);
+									int idx;
+									if ((idx = backend_updates.FindLastIndex (bu => bu.handle == u.handle)) == -1) {
+										backend_updates.Add (new BackendUpdate (u.handle, BackendUpdateType.Remove));
+									} else {
+										BackendUpdate bu = backend_updates [idx];
+										switch (bu.type) {
+										case BackendUpdateType.Add:
+											backend_updates.RemoveAt (idx);
+											if (!bu.is_new)
+												backend_updates.Add (new BackendUpdate (u.handle, BackendUpdateType.Remove));
+
+											break;
+										case BackendUpdateType.Remove:
+											throw new InvalidOperationException (String.Format ("Cannot remove handle {0} twice", (int) u.handle));
+										default:
+											throw new InvalidOperationException ();
+										}
+									}
 								}
 
 								for (int j = i + 1; j < updates_last; ++j) {
@@ -310,6 +359,22 @@ namespace System
 							Array.Clear (updates, 0, updates.Length);
 						}
 
+						for (int i = 0; i < backend_updates.Count; ++i) {
+							BackendUpdate bu = backend_updates [i];
+							switch (bu.type) {
+							case BackendUpdateType.Add:
+								BackendAddHandle (backend, bu.handle, bu.operations, bu.is_new);
+								break;
+							case BackendUpdateType.Remove:
+								BackendRemoveHandle (backend, bu.handle);
+								break;
+							default:
+								throw new InvalidOperationException ();
+							}
+						}
+
+						backend_updates.Clear ();
+
 						Monitor.PulseAll (updates);
 					}
 
@@ -331,7 +396,7 @@ namespace System
 							wakeup_pipes_rd.Read (recv_buffer, 0, recv_buffer.Length);
 						} else {
 							if (!states.ContainsKey (e.handle))
-								throw new InvalidOperationException (String.Format ("handle {0} not found in states dictionary", (int) e.handle));
+								throw new InvalidOperationException (String.Format ("Handle {0} not found in states dictionary", (int) e.handle));
 
 							IOSelectorJob job;
 							List<IOSelectorJob> jobs = states [e.handle];
@@ -345,12 +410,17 @@ namespace System
 									ThreadPool.UnsafeQueueCustomWorkItem (job, false);
 							}
 
+							if (backend_updates.Exists (bu => bu.handle == e.handle))
+								throw new InvalidOperationException (String.Format ("Handle {0} returned in multiple events by BackendPoll", e.handle));
+
 							if ((e.events & (int) BackendEventType.Error) == 0) {
-								BackendAddHandle (backend, e.handle, GetOperationsForJobs (jobs), false);
+								backend_updates.Add (new BackendUpdate (e.handle, BackendUpdateType.Add) {
+									operations = GetOperationsForJobs (jobs),
+									is_new = false,
+								});
 							} else {
 								states.Remove (e.handle);
-
-								BackendRemoveHandle (backend, e.handle);
+								backend_updates.Add (new BackendUpdate (e.handle, BackendUpdateType.Remove));
 							}
 						}
 					}
@@ -392,27 +462,61 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void BackendPoll (IntPtr backend, BackendEvent[] events);
 
-		struct Update {
+		struct Update
+		{
 			public UpdateType type;
 			public IntPtr handle;
 			public IOSelectorJob job;
 		}
 
-		enum UpdateType {
+		enum UpdateType
+		{
 			Empty,
+			Add,
+			Remove,
+		}
+
+		struct BackendUpdate
+		{
+			public IntPtr handle;
+			public BackendUpdateType type;
+			public int operations;
+			public bool is_new;
+
+			public BackendUpdate (IntPtr handle, BackendUpdateType type)
+			{
+				this.handle = handle;
+				this.type = type;
+				this.operations = 0;
+				this.is_new = false;
+			}
+
+			public BackendUpdate (BackendUpdate o)
+			{
+				this.handle = o.handle;
+				this.type = o.type;
+				this.operations = o.operations;
+				this.is_new = o.is_new;
+			}
+		}
+
+		enum BackendUpdateType
+		{
 			Add,
 			Remove,
 		}
 
 		/* Keep in sync with ThreadPoolIOBackendEvent in mono/metadata/threadpool-ms-io.c */
 		[StructLayout (LayoutKind.Sequential)]
-		struct BackendEvent {
+		struct BackendEvent
+		{
 			public IntPtr handle;
 			public short events;
 		}
 
 		/* Keep in sync with ThreadPoolIOBackendEventType in mono/metadata/threadpool-ms-io.c */
-		enum BackendEventType {
+		enum BackendEventType
+		{
 			In    = 1 << 0,
 			Out   = 1 << 1,
 			Error = 1 << 2,
