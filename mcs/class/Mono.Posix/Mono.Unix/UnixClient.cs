@@ -1,5 +1,5 @@
 //
-// UnixListener.cs
+// UnixClient.cs
 //
 // Authors:
 //	Joe Shaw (joeshaw@novell.com)
