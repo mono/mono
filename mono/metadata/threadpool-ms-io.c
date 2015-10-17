@@ -52,7 +52,7 @@ typedef struct {
 } ThreadPoolIOBackend;
 
 // #include "threadpool-ms-io-epoll.c"
-// #include "threadpool-ms-io-kqueue.c"
+#include "threadpool-ms-io-kqueue.c"
 #include "threadpool-ms-io-poll.c"
 
 static mono_lazy_init_t io_status = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
@@ -64,11 +64,11 @@ initialize (void)
 {
 	threadpool_io_backend = backend_poll;
 	if (g_getenv ("MONO_ENABLE_AIO") != NULL) {
-// #if defined(HAVE_EPOLL)
+#if defined(HAVE_KQUEUE)
+		threadpool_io_backend = backend_kqueue;
+// #elif defined(HAVE_EPOLL)
 // 		threadpool_io_backend = backend_epoll;
-// #elif defined(HAVE_KQUEUE)
-// 		threadpool_io_backend = backend_kqueue;
-// #endif
+#endif
 	}
 }
 

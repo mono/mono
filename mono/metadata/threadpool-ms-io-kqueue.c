@@ -12,85 +12,149 @@
 
 #define KQUEUE_NEVENTS 128
 
-static gint kqueue_fd;
-static struct kevent *kqueue_events;
+typedef struct {
+	gint fd;
+} ThreadPoolIOBackendKqueue;
 
-static gint
-KQUEUE_INIT_FD (gint fd, gint events, gint flags)
+static gpointer
+kqueue_init (gpointer wakeup_pipe_handle)
 {
+	ThreadPoolIOBackendKqueue *backend_kqueue;
+	gint wakeup_pipe_fd;
 	struct kevent event;
-	EV_SET (&event, fd, events, flags, 0, 0, 0);
-	return kevent (kqueue_fd, &event, 1, NULL, 0, NULL);
-}
 
-static gboolean
-kqueue_init (gint wakeup_pipe_fd)
-{
-	kqueue_fd = kqueue ();
-	if (kqueue_fd == -1) {
-		g_error ("kqueue_init: kqueue () failed, error (%d) %s", errno, g_strerror (errno));
-		return FALSE;
-	}
+	backend_kqueue = g_new0 (ThreadPoolIOBackendKqueue, 1);
+	g_assert (backend_kqueue);
 
-	if (KQUEUE_INIT_FD (wakeup_pipe_fd, EVFILT_READ, EV_ADD | EV_ENABLE) == -1) {
-		g_error ("kqueue_init: kevent () failed, error (%d) %s", errno, g_strerror (errno));
-		close (kqueue_fd);
-		return FALSE;
-	}
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_IO_THREADPOOL,
+		"[%p][kqueue] init", backend_kqueue);
 
-	kqueue_events = g_new0 (struct kevent, KQUEUE_NEVENTS);
+	backend_kqueue->fd = kqueue ();
+	if (backend_kqueue->fd == -1)
+		g_error ("[%p][kqueue] init: kqueue () failed, error (%d) %s", backend_kqueue, errno, g_strerror (errno));
 
-	return TRUE;
+	wakeup_pipe_fd = GPOINTER_TO_INT (wakeup_pipe_handle);
+	g_assert (wakeup_pipe_fd >= 0);
+
+	EV_SET (&event, wakeup_pipe_fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+	if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1)
+		g_error ("[%p][kqueue] init: kevent () failed, error (%d) %s", backend_kqueue, errno, g_strerror (errno));
+
+	return backend_kqueue;
 }
 
 static void
-kqueue_cleanup (void)
+kqueue_cleanup (gpointer backend)
 {
-	g_free (kqueue_events);
-	close (kqueue_fd);
+	ThreadPoolIOBackendKqueue *backend_kqueue;
+
+	backend_kqueue = backend;
+	g_assert (backend_kqueue);
+
+	close (backend_kqueue->fd);
+	g_free (backend_kqueue);
 }
 
 static void
-kqueue_register_fd (gint fd, gint events, gboolean is_new)
+kqueue_add_handle (gpointer backend, gpointer handle, gint16 operations, gboolean is_new)
 {
-	if (events & EVENT_IN) {
-		if (KQUEUE_INIT_FD (fd, EVFILT_READ, EV_ADD | EV_ENABLE) == -1)
-			g_error ("kqueue_register_fd: kevent(read,enable) failed, error (%d) %s", errno, g_strerror (errno));
+	ThreadPoolIOBackendKqueue *backend_kqueue;
+	gint fd;
+	struct kevent event;
+
+	backend_kqueue = backend;
+	g_assert (backend_kqueue);
+
+	fd = GPOINTER_TO_INT (handle);
+	g_assert (fd >= 0);
+
+	if (operations & OPERATION_READ) {
+		EV_SET (&event, fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, 0);
+		if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1)
+			g_error ("[%p][kqueue] add: kevent(%d,read,enable) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
 	} else {
-		if (KQUEUE_INIT_FD (fd, EVFILT_READ, EV_ADD | EV_DISABLE) == -1)
-			g_error ("kqueue_register_fd: kevent(read,disable) failed, error (%d) %s", errno, g_strerror (errno));
+		if (!is_new) {
+			EV_SET (&event, fd, EVFILT_READ, EV_ADD | EV_DISABLE, 0, 0, 0);
+			if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1)
+				g_error ("[%p][kqueue] add: kevent(%d,read,disable) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+		}
 	}
-	if (events & EVENT_OUT) {
-		if (KQUEUE_INIT_FD (fd, EVFILT_WRITE, EV_ADD | EV_ENABLE) == -1)
-			g_error ("kqueue_register_fd: kevent(write,enable) failed, error (%d) %s", errno, g_strerror (errno));
+
+	if (operations & OPERATION_WRITE) {
+		EV_SET (&event, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE, 0, 0, 0);
+		if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1)
+			g_error ("[%p][kqueue] add: kevent(%d,write,enable) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
 	} else {
-		if (KQUEUE_INIT_FD (fd, EVFILT_WRITE, EV_ADD | EV_DISABLE) == -1)
-			g_error ("kqueue_register_fd: kevent(write,disable) failed, error (%d) %s", errno, g_strerror (errno));
+		if (!is_new) {
+			EV_SET (&event, fd, EVFILT_WRITE, EV_ADD | EV_DISABLE, 0, 0, 0);
+			if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1) {
+				switch (errno) {
+				case EPIPE:
+					mono_trace (G_LOG_LEVEL_CRITICAL, MONO_TRACE_IO_THREADPOOL,
+						"[%p][kqueue] add: kevent(%d,write,disable) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+					break;
+				default:
+					g_error ("[%p][kqueue] add: kevent(%d,write,disable) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+				}
+			}
+		}
 	}
 }
 
 static void
-kqueue_remove_fd (gint fd)
+kqueue_remove_handle (gpointer backend, gpointer handle)
 {
-	/* FIXME: a race between closing and adding operation in the Socket managed code trigger a ENOENT error */
-	if (KQUEUE_INIT_FD (fd, EVFILT_READ, EV_DELETE) == -1)
-		g_error ("kqueue_register_fd: kevent(read,delete) failed, error (%d) %s", errno, g_strerror (errno));
-	if (KQUEUE_INIT_FD (fd, EVFILT_WRITE, EV_DELETE) == -1)
-		g_error ("kqueue_register_fd: kevent(write,delete) failed, error (%d) %s", errno, g_strerror (errno));
+	ThreadPoolIOBackendKqueue *backend_kqueue;
+	gint fd;
+	struct kevent event;
+
+	backend_kqueue = backend;
+	g_assert (backend_kqueue);
+
+	fd = GPOINTER_TO_INT (handle);
+	g_assert (fd >= 0);
+
+	EV_SET (&event, fd, EVFILT_READ, EV_DELETE, 0, 0, 0);
+	if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1) {
+		switch (errno) {
+		case ENOENT:
+			mono_trace (G_LOG_LEVEL_CRITICAL, MONO_TRACE_IO_THREADPOOL,
+				"[%p][kqueue] remove: kevent(%d,read,delete) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+			break;
+		default:
+			g_error ("[%p][kqueue] remove: kevent(%d,read,delete) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+		}
+	}
+
+	EV_SET (&event, fd, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
+	if (kevent (backend_kqueue->fd, &event, 1, NULL, 0, NULL) == -1) {
+		switch (errno) {
+		case ENOENT:
+			mono_trace (G_LOG_LEVEL_CRITICAL, MONO_TRACE_IO_THREADPOOL,
+				"[%p][kqueue] remove: kevent(%d,write,delete) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+			break;
+		default:
+			g_error ("[%p][kqueue] remove: kevent(%d,write,delete) failed, error (%d) %s", backend_kqueue, fd, errno, g_strerror (errno));
+		}
+	}
 }
 
-static gint
-kqueue_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gpointer user_data)
+static void
+kqueue_poll (gpointer backend, ThreadPoolIOBackendEvent *events, gint nevents)
 {
+	ThreadPoolIOBackendKqueue *backend_kqueue;
 	gint i, ready;
+	struct kevent kqueue_events [KQUEUE_NEVENTS];
 
-	memset (kqueue_events, 0, sizeof (struct kevent) * KQUEUE_NEVENTS);
+	backend_kqueue = backend;
+	g_assert (backend_kqueue);
 
-	mono_gc_set_skip_thread (TRUE);
+	g_assert (events);
+	g_assert (nevents > 0);
 
-	ready = kevent (kqueue_fd, NULL, 0, kqueue_events, KQUEUE_NEVENTS, NULL);
+	memset (kqueue_events, 0, sizeof (kqueue_events));
 
-	mono_gc_set_skip_thread (FALSE);
+	ready = kevent (backend_kqueue->fd, NULL, 0, kqueue_events, MIN (KQUEUE_NEVENTS, nevents), NULL);
 
 	if (ready == -1) {
 		switch (errno) {
@@ -99,35 +163,37 @@ kqueue_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), 
 			ready = 0;
 			break;
 		default:
-			g_error ("kqueue_event_wait: kevent () failed, error (%d) %s", errno, g_strerror (errno));
-			break;
+			g_error ("[%p][kqueue] poll: kevent () failed, error (%d) %s", backend_kqueue, errno, g_strerror (errno));
 		}
 	}
 
-	if (ready == -1)
-		return -1;
+	if (ready == 0)
+		return;
 
-	for (i = 0; i < ready; ++i) {
-		gint fd, events = 0;
+	g_assert (ready > 0);
 
-		fd = kqueue_events [i].ident;
-		if (kqueue_events [i].filter == EVFILT_READ || (kqueue_events [i].flags & EV_ERROR) != 0)
-			events |= EVENT_IN;
-		if (kqueue_events [i].filter == EVFILT_WRITE || (kqueue_events [i].flags & EV_ERROR) != 0)
-			events |= EVENT_OUT;
+	for (i = 0; i < MIN (ready, nevents); ++i) {
+		struct kevent e = kqueue_events [i];
 
-		callback (fd, events, user_data);
+		events [i].handle = GINT_TO_POINTER (e.ident);
+		if (e.flags & EV_ERROR) {
+			events [i].events = EVENT_IN | EVENT_OUT | EVENT_ERROR;
+		} else {
+			events [i].events = 0;
+			if (e.filter == EVFILT_READ)
+				events [i].events |= EVENT_IN;
+			if (e.filter == EVFILT_WRITE)
+				events [i].events |= EVENT_OUT;
+		}
 	}
-
-	return 0;
 }
 
 static ThreadPoolIOBackend backend_kqueue = {
 	.init = kqueue_init,
 	.cleanup = kqueue_cleanup,
-	.register_fd = kqueue_register_fd,
-	.remove_fd = kqueue_remove_fd,
-	.event_wait = kqueue_event_wait,
+	.add_handle = kqueue_add_handle,
+	.remove_handle = kqueue_remove_handle,
+	.poll = kqueue_poll,
 };
 
 #endif
