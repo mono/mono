@@ -996,7 +996,7 @@ namespace System.Runtime.InteropServices{
         public int Value { get { return _val; } }
     }
 
-#if MOBILE_LEGACY
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.ReturnValue, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class ComAliasNameAttribute : Attribute
