@@ -51,7 +51,7 @@ typedef struct {
 	void     (*poll)          (gpointer backend, ThreadPoolIOBackendEvent *events, gint nevents);
 } ThreadPoolIOBackend;
 
-// #include "threadpool-ms-io-epoll.c"
+#include "threadpool-ms-io-epoll.c"
 #include "threadpool-ms-io-kqueue.c"
 #include "threadpool-ms-io-poll.c"
 
@@ -66,8 +66,8 @@ initialize (void)
 	if (g_getenv ("MONO_ENABLE_AIO") != NULL) {
 #if defined(HAVE_KQUEUE)
 		threadpool_io_backend = backend_kqueue;
-// #elif defined(HAVE_EPOLL)
-// 		threadpool_io_backend = backend_epoll;
+#elif defined(HAVE_EPOLL)
+		threadpool_io_backend = backend_epoll;
 #endif
 	}
 }
