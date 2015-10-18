@@ -77,6 +77,14 @@ ves_icall_System_IOSelector_BackendInitialize (gpointer wakeup_pipe_handle)
 {
 	mono_lazy_initialize (&io_status, initialize);
 
+#ifndef HOST_WIN32
+	if (fcntl (GPOINTER_TO_INT (wakeup_pipe_handle), F_SETFL, O_NONBLOCK) == -1)
+		g_error ("ves_icall_System_IOSelector_BackendInitialize: fcntl () failed, error (%d) %s\n", errno, g_strerror (errno));
+#else
+	if (ioctlsocket ((SOCKET) wakeup_pipe_handle, FIONBIO, &arg) == SOCKET_ERROR)
+		g_error ("ves_icall_System_IOSelector_BackendInitialize: ioctlsocket () failed, error (%d)\n", WSAGetLastError ());
+#endif
+
 	return threadpool_io_backend.init (wakeup_pipe_handle);
 }
 

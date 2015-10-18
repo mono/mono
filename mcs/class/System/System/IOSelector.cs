@@ -393,7 +393,14 @@ namespace System
 							continue;
 
 						if (e.handle == wakeup_pipes_rd.Handle) {
-							wakeup_pipes_rd.Read (recv_buffer, 0, recv_buffer.Length);
+							try {
+								while (wakeup_pipes_rd.Read (recv_buffer, 0, recv_buffer.Length) > 0);
+							} catch (IOException ex) {
+								/* EAGAIN transforms to ERROR_SHARING_VIOLATION, and some
+								 * magic happens before setting HResult. Do not ask why... */
+								if (ex.HResult != (unchecked((int) 0x80070000) | (int) MonoIOError.ERROR_SHARING_VIOLATION))
+									throw;
+							}
 						} else {
 							if (!states.ContainsKey (e.handle))
 								throw new InvalidOperationException (String.Format ("Handle {0} not found in states dictionary", (int) e.handle));
