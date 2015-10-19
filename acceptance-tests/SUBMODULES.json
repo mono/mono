@@ -1,18 +1,26 @@
 [
   {
-    "name": "mono-extensions",
-    "directory": "mono-extensions",
-    "url": "git@github.com:xamarin/mono-extensions.git",
+    "name": "roslyn",
+    "directory": "roslyn",
+    "url": "git://github.com/dotnet/roslyn.git",
     "branch": "master",
     "remote-branch": "origin/master",
-    "rev": "45d7121a6d2e717c85522bf8c4cff16bdc9debda"
+    "rev": "2e68ae5e6ec51762296c681aadf57a6f33f2f34f"
   },
   {
-    "name": "llvm",
-    "directory": "llvm",
-    "url": "git@github.com:mono/llvm.git",
+    "name": "coreclr",
+    "directory": "coreclr",
+    "url": "git://github.com/dotnet/coreclr.git",
     "branch": "master",
     "remote-branch": "origin/master",
-    "rev": "e1b4ee2f4e2ae2b9ebc402255972cec110878011"
+    "rev": "b9920ebea8d8d77b65d0ca10ffdb840f0cd36f06"
+  },
+  {
+    "name": "ms-test-suite",
+    "directory": "ms-test-suite",
+    "url": "git@github.com:xamarin/ms-test-suite.git",
+    "branch": "master",
+    "remote-branch": "origin/master",
+    "rev": "4caab98ae449836c2aaacb9748fe0c796b71517f"
   }
 ]
