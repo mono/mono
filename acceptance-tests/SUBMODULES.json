@@ -1,26 +1,26 @@
 [
   {
-    "name": "roslyn",
-    "directory": "roslyn",
-    "url": "git://github.com/dotnet/roslyn.git",
-    "branch": "master",
-    "remote-branch": "origin/master",
-    "rev": "2e68ae5e6ec51762296c681aadf57a6f33f2f34f"
-  },
+    "name": "roslyn", 
+    "url": "git://github.com/dotnet/roslyn.git", 
+    "rev": "2e68ae5e6ec51762296c681aadf57a6f33f2f34f", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "roslyn"
+  }, 
   {
-    "name": "coreclr",
-    "directory": "coreclr",
-    "url": "git://github.com/dotnet/coreclr.git",
-    "branch": "master",
-    "remote-branch": "origin/master",
-    "rev": "b9920ebea8d8d77b65d0ca10ffdb840f0cd36f06"
-  },
+    "name": "coreclr", 
+    "url": "git://github.com/dotnet/coreclr.git", 
+    "rev": "b9920ebea8d8d77b65d0ca10ffdb840f0cd36f06", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "coreclr"
+  }, 
   {
-    "name": "ms-test-suite",
-    "directory": "ms-test-suite",
-    "url": "git@github.com:xamarin/ms-test-suite.git",
-    "branch": "master",
-    "remote-branch": "origin/master",
-    "rev": "4caab98ae449836c2aaacb9748fe0c796b71517f"
+    "name": "ms-test-suite", 
+    "url": "git@github.com:xamarin/ms-test-suite.git", 
+    "rev": "4caab98ae449836c2aaacb9748fe0c796b71517f", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "ms-test-suite"
   }
 ]
