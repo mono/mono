@@ -1165,6 +1165,6 @@ namespace System.Runtime.InteropServices{
         public Type ClassType { get { return _classType; } }
         public String MethodName { get { return _methodName; } }
     }    
-
+#endif
 }
 
