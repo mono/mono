@@ -5,7 +5,7 @@ MSTESTSUITE_PATH=$(TOP)/../ms-test-suite
 
 include versions.mk
 
-EXTRA_DISTFILES=README.md SUBMODULES.json versions.mk versions.rb
+EXTRA_DISTFILES=README.md SUBMODULES.json versions.mk versions.py
 
 check: check-roslyn check-coreclr check-ms-test-suite
 

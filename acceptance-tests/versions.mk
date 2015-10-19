@@ -7,11 +7,11 @@ CONFIG=SUBMODULES.json
 
 define ValidateVersionTemplate
 #$(eval REPOSITORY_$(2):=$(shell test -z $(3) && echo $(1) || echo "$(3)"))
-#$(eval DIRECTORY_$(2):=$(shell ruby versions.rb get-dir $(1)))
+#$(eval DIRECTORY_$(2):=$(shell python versions.py get-dir $(1)))
 #$(eval DIRECTORY_$(2):=$(shell test -z $(DIRECTORY_$(2)) && echo $(1) || echo $(DIRECTORY_$(2))))
-#$(eval MODULE_$(2):=$(shell ruby versions.rb get-url $(1)))
-#$(eval NEEDED_$(2)_VERSION:=$(shell ruby versions.rb get-rev $(1)))
-#$(eval $(2)_BRANCH_AND_REMOTE:=$(shell ruby versions.rb get-remote-branch $(1)))
+#$(eval MODULE_$(2):=$(shell python versions.py get-url $(1)))
+#$(eval NEEDED_$(2)_VERSION:=$(shell python versions.py get-rev $(1)))
+#$(eval $(2)_BRANCH_AND_REMOTE:=$(shell python versions.py get-remote-branch $(1)))
 
 #$(eval $(2)_VERSION:=$$$$(shell cd $($(2)_PATH) 2>/dev/null && git rev-parse HEAD ))
 
@@ -108,21 +108,21 @@ reset:
 __bump-version-%:
 	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
 	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
-	ruby versions.rb set-rev $* $(REV)
+	python versions.py set-rev $* $(REV)
 	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $(REV)." | git commit -F - $(CONFIG); fi
 
 __bump-branch-%:
 	@if [ "$(BRANCH)" = "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
 	@if [ "$(REMOTE_BRANCH)" == "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
 	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
-	ruby versions.rb set-branch $* $(BRANCH)
-	ruby versions.rb set-remote-branch $* $(REMOTE_BRANCH)
+	python versions.py set-branch $* $(BRANCH)
+	python versions.py set-remote-branch $* $(REMOTE_BRANCH)
 	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." | git commit -F - $(CONFIG); fi
 
 __bump-current-version-%:
 	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	REV=$(shell cd $(TOP)/../$* && git log -1 --pretty=format:%H); \
-	ruby versions.rb set-rev $* $$REV; \
+	python versions.py set-rev $* $$REV; \
 	if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $$REV:" | git commit -F - $(CONFIG); fi
 
 # Bump the given submodule to the revision given by the REV make variable
