@@ -2030,6 +2030,19 @@ namespace MonoTests.System
 				Assert.Fail (string.Format ("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
 			}
 		}
+
+		// Covers #29864
+		[Test]
+		public void PathDotTrim ()
+		{
+			var baseUri = new Uri ("http://test.com", UriKind.Absolute);
+			var relUri = new Uri ("path/dot./", UriKind.Relative);
+			var uri = new Uri (baseUri, relUri);
+			if (IriParsing)
+				Assert.AreEqual ("http://test.com/path/dot./", uri.ToString ());
+			else
+				Assert.AreEqual ("http://test.com/path/dot/", uri.ToString ());
+		}
 	}
 
 	// Tests non default IriParsing
