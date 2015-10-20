@@ -1,4 +1,4 @@
-This directory contains acceptance tests, handled by optional non git submodule based submodules. Run the tests via "make check".
+This directory contains acceptance tests, handled by optional non git submodule based submodules. Run the tests via "make check-full" (there are also targets for individual test suites).
 
 The SUBMODULES.json file stores information about the submodules, and make targets are used to check out submodules, check their versions, and update the submodule information.
 
