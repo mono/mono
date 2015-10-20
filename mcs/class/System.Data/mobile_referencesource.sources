@@ -198,6 +198,8 @@
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionFactory.cs
 # ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionInternal.cs
+../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContext.cs
+../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolAuthenticationContextKey.cs
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPool.cs
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolGroup.cs
 ../../../external/referencesource/System.Data/System/Data/ProviderBase/DbConnectionPoolGroupProviderInfo.cs
@@ -271,6 +273,7 @@
 
 ../../../external/referencesource/System.Data/System/Data/SqlClient/ApplicationIntent.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/LocalDBAPI.cs
+../../../external/referencesource/System.Data/System/Data/SqlClient/SqlClientEncryptionType.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/SqlClientPermission.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/SqlConnectionString.cs
 ../../../external/referencesource/System.Data/System/Data/SqlClient/SqlConnectionStringBuilder.cs
