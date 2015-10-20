@@ -1172,11 +1172,10 @@ namespace MonoTests.System.Runtime.Caching
 			for (int i = 0; i < 10; i++)
 				mc.Set ("key" + i.ToString (), "value" + i.ToString (), null);
 
-			// .NET doesn't touch the freshest 10 entries
 			Assert.AreEqual (10, mc.GetCount (), "#A1-1");
 			long trimmed = mc.Trim (50);
-			Assert.AreEqual (0, trimmed, "#A1-2");
-			Assert.AreEqual (10, mc.GetCount (), "#A1-3");
+			Assert.AreEqual (5, trimmed, "#A1-2");
+			Assert.AreEqual (5, mc.GetCount (), "#A1-3");
 
 			mc = new MemoryCache ("MyCache", config);
 			// Only entries 11- are considered for removal
@@ -1185,8 +1184,8 @@ namespace MonoTests.System.Runtime.Caching
 
 			Assert.AreEqual (11, mc.GetCount (), "#A2-1");
 			trimmed = mc.Trim (50);
-			Assert.AreEqual (1, trimmed, "#A2-2");
-			Assert.AreEqual (10, mc.GetCount (), "#A2-3");
+			Assert.AreEqual (6, trimmed, "#A2-2");
+			Assert.AreEqual (5, mc.GetCount (), "#A2-3");
 
 			mc = new MemoryCache ("MyCache", config);
 			// Only entries 11- are considered for removal
@@ -1195,8 +1194,8 @@ namespace MonoTests.System.Runtime.Caching
 
 			Assert.AreEqual (125, mc.GetCount (), "#A3-1");
 			trimmed = mc.Trim (50);
-			Assert.AreEqual (62, trimmed, "#A3-2");
-			Assert.AreEqual (63, mc.GetCount (), "#A3-3");
+			Assert.AreEqual (63, trimmed, "#A3-2");
+			Assert.AreEqual (62, mc.GetCount (), "#A3-3");
 
 			// Testing the removal order
 			mc = new MemoryCache ("MyCache", config);
