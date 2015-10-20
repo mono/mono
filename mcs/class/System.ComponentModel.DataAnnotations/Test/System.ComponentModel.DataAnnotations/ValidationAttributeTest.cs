@@ -402,7 +402,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		}
 
 		[Test]
-		public void IsValid_Object_ValidationContext_CrossCallsWithNIEX ()
+		public void IsValid_Object_No_User_EntryPoint ()
 		{
 			var attr = new ValidateSomethingAttribute ();
 
@@ -419,23 +419,8 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				// at MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_02() in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 514
 				attr.IsValid ("stuff");
 			}, "#A1");
-
-			AssertExtensions.Throws<NotImplementedException> (() => {
-				// And this one is thrown from the IsValid (object) overload!
-				//
-				// MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_CrossCallsWithNIEX:
-				// System.NotImplementedException : IsValid(object value) has not been implemented by this class.  The preferred entry point is GetValidationResult() and classes should override IsValid(object value, ValidationContext context).
-				//
-				// at System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(Object value)
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.IsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 660
-				// at System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(Object value)
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.IsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 660
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.CallIsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 667
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_CrossCallsWithNIEX() in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 530
-
-				attr.CallIsValid ("stuff", null);
-			}, "#A2");
 		}
+		
 		[Test]
 		public void Validate_Object_ValidationContext ()
 		{
@@ -543,25 +528,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			return base.FormatErrorMessage (name);
 		}
 	}
+	
 	class ValidateSomethingAttribute : ValidationAttribute
 	{
-		public override bool IsValid (object value)
-		{
-			return base.IsValid (value, null) == ValidationResult.Success;
-		}
-
-		protected override ValidationResult IsValid (object value, ValidationContext validationContext)
-		{
-			if (base.IsValid (value))
-				return ValidationResult.Success;
-			return new ValidationResult ("failed to validate in base class");
-		}
-
-		public ValidationResult CallIsValid (object value, ValidationContext validationContext)
-		{
-			return IsValid (value, validationContext);
-		}
 	}
+
 	class FooErrorMessageProvider
 	{
 		public static string ErrorProperty1
