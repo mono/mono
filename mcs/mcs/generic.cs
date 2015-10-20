@@ -3111,21 +3111,36 @@ namespace Mono.CSharp {
 				return ExactInference (ac_u.Element, ac_v.Element);
 			}
 
-			// If V is constructed type and U is constructed type
+			//
+			// If V is constructed type and U is constructed type or dynamic
+			//
 			if (TypeManager.IsGenericType (v)) {
-				if (!TypeManager.IsGenericType (u) || v.MemberDefinition != u.MemberDefinition)
-					return 0;
+				if (u.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 
-				TypeSpec [] ga_u = TypeManager.GetTypeArguments (u);
-				TypeSpec [] ga_v = TypeManager.GetTypeArguments (v);
-				if (ga_u.Length != ga_v.Length)
-					return 0;
+					var ga_v = v.TypeArguments;
 
-				int score = 0;
-				for (int i = 0; i < ga_u.Length; ++i)
-					score += ExactInference (ga_u [i], ga_v [i]);
+					int score = 0;
+					for (int i = 0; i < ga_v.Length; ++i)
+						score += ExactInference (u, ga_v [i]);
 
-				return System.Math.Min (1, score);
+					return System.Math.Min (1, score);
+
+				} else {
+					if (!TypeManager.IsGenericType (u) || v.MemberDefinition != u.MemberDefinition)
+						return 0;
+
+					var ga_u = u.TypeArguments;
+					var ga_v = v.TypeArguments;
+
+					if (u.TypeArguments.Length != u.TypeArguments.Length)
+						return 0;
+
+					int score = 0;
+					for (int i = 0; i < ga_v.Length; ++i)
+						score += ExactInference (ga_u [i], ga_v [i]);
+
+					return System.Math.Min (1, score);
+				}
 			}
 
 			// If V is one of the unfixed type arguments
