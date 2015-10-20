@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-074</name>
+    </assembly>
+    <members>
+        <member name="T:Test">
+             <summary>The Test</summary>
+            </member>
+        <member name="P:Test.Foo">
+             <summary>The Foo</summary>
+            </member>
+        <member name="F:Test.TestFoo">
+             <summary>Tests the Foo</summary>
+            </member>
+    </members>
+</doc>

@@ -1829,9 +1829,9 @@ property_declaration
 	  accessor_declarations 
 	  {
 		lexer.PropertyParsing = false;
-		
+
 		if (doc_support)
-			current_property.DocComment = ConsumeStoredComment ();				
+			current_property.DocComment = ConsumeStoredComment ();
 	  }
 	  CLOSE_BRACE
 	  {
@@ -1893,6 +1893,9 @@ opt_property_initializer
 		lbag.AppendToMember (current_property, GetLocation ($1), GetLocation ($4));
 		end_block (GetLocation ($4));
 		current_local_parameters = null;
+
+		if (doc_support)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
