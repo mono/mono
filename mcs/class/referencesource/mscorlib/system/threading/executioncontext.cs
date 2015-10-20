@@ -1,3 +1,6 @@
+#if MOBILE_LEGACY
+#define FEATURE_REMOTING
+#endif
 // ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.

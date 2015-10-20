@@ -284,7 +284,7 @@ namespace System.Runtime.InteropServices{
         }
     }
 #endif
-#if FEATURE_COMINTEROP
+#if FEATURE_COMINTEROP || MOBILE_LEGACY
 [Serializable]
 [Flags()]
     [System.Runtime.InteropServices.ComVisible(true)]

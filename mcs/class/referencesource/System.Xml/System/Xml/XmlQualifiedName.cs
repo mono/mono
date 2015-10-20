@@ -164,7 +164,9 @@ namespace System.Xml {
 
 #if !SILVERLIGHT // These methods are not used in Silverlight
         [SecuritySafeCritical]
+#if !MOBILE
         [ReflectionPermission(SecurityAction.Assert, Unrestricted = true)]
+#endif
         private static HashCodeOfStringDelegate GetHashCodeDelegate() {
              // If we are using randomized hashing and we find the Marving hash method, we use that
              // Otherwise, we use the old string hashing function.
@@ -182,6 +184,12 @@ namespace System.Xml {
             return new HashCodeOfStringDelegate(GetHashCodeOfString);
         }
 
+#if MONO
+        static bool IsRandomizedHashingDisabled () 
+        {
+            return false;
+        }
+#else
         [SecuritySafeCritical]
         [RegistryPermission(SecurityAction.Assert, Unrestricted = true)]
         private static bool IsRandomizedHashingDisabled() {
@@ -209,7 +217,7 @@ namespace System.Xml {
             catch { /* use the default if we couldn't read the key */ }
             return false;
         }
-
+#endif
         private static int GetHashCodeOfString(string s, int length, long additionalEntropy)
         {
             // This is the fallback method for calling the regular hashcode method
