@@ -55,8 +55,8 @@ namespace System.Reflection.Emit
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
-		private string tname;
-		private string nspace;
+		private string tname; // name in internal form
+		private string nspace; // namespace in internal form
 		private Type parent;
 		private Type nesting_type;
 		internal Type[] interfaces;
@@ -81,7 +81,7 @@ namespace System.Reflection.Emit
 		#endregion
 #pragma warning restore 169		
 		
-		string fullname;
+		TypeName fullname;
 		bool createTypeCalled;
 		private Type underlying_type;
 
@@ -113,8 +113,9 @@ namespace System.Reflection.Emit
 			this.attrs = attr;
 			this.class_size = UnspecifiedTypeSize;
 			this.table_idx = table_idx;
-			fullname = this.tname = table_idx == 1 ? "<Module>" : "type_" + table_idx.ToString ();
+			this.tname = table_idx == 1 ? "<Module>" : "type_" + table_idx.ToString ();
 			this.nspace = String.Empty;
+			this.fullname = TypeIdentifiers.WithoutEscape(this.tname);
 			pmodule = mb;
 			setup_internal_class (this);
 		}
@@ -162,7 +163,7 @@ namespace System.Reflection.Emit
 
 		public override string AssemblyQualifiedName {
 			get {
-				return fullname + ", " + Assembly.FullName;
+				return fullname.DisplayName + ", " + Assembly.FullName;
 			}
 		}
 
@@ -209,18 +210,19 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		string GetFullName ()
+		TypeName GetFullName ()
 		{
+			TypeIdentifier ident = TypeIdentifiers.FromInternal (tname);
 			if (nesting_type != null)
-				return String.Concat (nesting_type.FullName, "+", tname);
+				return TypeNames.FromDisplay (nesting_type.FullName).NestedName (ident);
 			if ((nspace != null) && (nspace.Length > 0))
-				return String.Concat (nspace, ".", tname);
-			return tname;
+				return TypeIdentifiers.FromInternal (nspace, ident);
+			return ident;
 		}
 	
 		public override string FullName {
 			get {
-				return fullname;
+				return fullname.DisplayName;
 			}
 		}
 	
@@ -1571,7 +1573,8 @@ namespace System.Reflection.Emit
 			check_not_created ();
 
 			string typeName = "$ArrayType$" + size;
-			Type datablobtype = pmodule.GetRegisteredType (fullname + "+" + typeName);
+			TypeIdentifier ident = TypeIdentifiers.WithoutEscape (typeName);
+			Type datablobtype = pmodule.GetRegisteredType (fullname.NestedName(ident));
 			if (datablobtype == null) {
 				TypeBuilder tb = DefineNestedType (typeName,
 					TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,

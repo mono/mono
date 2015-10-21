@@ -4042,7 +4042,8 @@ namespace MonoTests.System
 			MustAE (string.Format ("{0}&&", typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}&*", typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}&[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
-
+			MustAE (string.Format ("{0}[,", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[*", typeof (MyRealEnum).FullName));
 
 			MustAE (string.Format ("{0}[[{1},", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
@@ -4102,6 +4103,51 @@ namespace MonoTests.System
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[*"), null, "#14");
 			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32"), null, "#15");
 		}
+
+#if !MONOTOUCH
+		[Test]
+		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
+		{
+			var nm = new AssemblyName ("asm");
+			var ab = AssemblyBuilder.DefineDynamicAssembly (nm,
+									AssemblyBuilderAccess.Run);
+			var mb = ab.DefineDynamicModule("m", true);
+			var tb = mb.DefineType ("NameSpace,+*&[]\\.Type,+*&[]\\",
+						TypeAttributes.Class | TypeAttributes.Public);
+
+			var nestedTb = tb.DefineNestedType("Nested,+*&[]\\",
+							  TypeAttributes.Class | TypeAttributes.NestedPublic);
+
+			var ty = tb.CreateType();
+
+			var nestedTy = nestedTb.CreateType();
+
+			var escapedNestedName =
+				"NameSpace\\,\\+\\*\\&\\[\\]\\\\"
+				+ "."
+				+ "Type\\,\\+\\*\\&\\[\\]\\\\"
+				+ "+"
+				+ "Nested\\,\\+\\*\\&\\[\\]\\\\";
+
+			Assert.AreEqual(escapedNestedName, nestedTy.FullName);
+
+			var lookupNestedTy =
+				Type.GetType(escapedNestedName + "," + nm.FullName,
+					     asmName => {
+						     if (asmName.FullName.Equals(nm.FullName)) return ab;
+						     else return Assembly.Load (asmName);
+					     },
+					     (asm,name,ignore) => {
+						     if (asm == null)
+							     return Type.GetType(name, true, ignore);
+						     else return asm.GetType(name, true, ignore);
+					     },
+					     true,
+					     false);
+			Assert.AreEqual(nestedTy, lookupNestedTy);
+
+		}
+#endif
 
 		public abstract class Stream : IDisposable
 		{
