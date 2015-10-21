@@ -423,13 +423,6 @@ namespace System.Net
 			this.clientCertificate = clientCertificate;
 		}
 
-		// will be removed shortly
-		internal void SetCertificates (X509Certificate client, X509Certificate server) 
-		{
-			SetClientCertificate (client);
-			SetServerCertificate (server);
-		}
-
 		internal bool CallEndPointDelegate (Socket sock, IPEndPoint remote)
 		{
 			if (endPointCallback == null)
