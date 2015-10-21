@@ -2449,17 +2449,20 @@ sgen_object_is_live (GCObject *obj)
 
 static volatile gboolean pending_unqueued_finalizer = FALSE;
 
+#define SGEN_FINALIZER_BATCH_SIZE (16)
+
 int
 sgen_gc_invoke_finalizers (void)
 {
+	GCObject *pending_unqueued_finalizers [SGEN_FINALIZER_BATCH_SIZE] = { 0 };
+	unsigned dequeued_count = 0;
 	int count = 0;
 
 	g_assert (!pending_unqueued_finalizer);
 
 	/* FIXME: batch to reduce lock contention */
 	while (sgen_have_pending_finalizers ()) {
-		GCObject *obj;
-
+		dequeued_count = 0;
 		LOCK_GC;
 
 		/*
@@ -2469,27 +2472,29 @@ sgen_gc_invoke_finalizers (void)
 		if (!sgen_pointer_queue_is_empty (&fin_ready_queue)) {
 			pending_unqueued_finalizer = TRUE;
 			mono_memory_write_barrier ();
-			obj = sgen_pointer_queue_pop (&fin_ready_queue);
+			while (!sgen_pointer_queue_is_empty (&fin_ready_queue) && dequeued_count < SGEN_FINALIZER_BATCH_SIZE)
+				pending_unqueued_finalizers [dequeued_count++] = sgen_pointer_queue_pop (&fin_ready_queue);
 		} else if (!sgen_pointer_queue_is_empty (&critical_fin_queue)) {
 			pending_unqueued_finalizer = TRUE;
 			mono_memory_write_barrier ();
-			obj = sgen_pointer_queue_pop (&critical_fin_queue);
-		} else {
-			obj = NULL;
+			while (!sgen_pointer_queue_is_empty (&critical_fin_queue) && dequeued_count < SGEN_FINALIZER_BATCH_SIZE)
+				pending_unqueued_finalizers [dequeued_count++] = sgen_pointer_queue_pop (&critical_fin_queue);
 		}
 
-		if (obj)
-			SGEN_LOG (7, "Finalizing object %p (%s)", obj, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (obj)));
+		if (dequeued_count)
+			for (unsigned i = 0; i < dequeued_count; ++i)
+				SGEN_LOG (7, "Finalizing object %p (%s)", pending_unqueued_finalizers [i], sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (pending_unqueued_finalizers [i])));
 
 		UNLOCK_GC;
 
-		if (!obj)
+		if (!dequeued_count)
 			break;
 
 		count++;
 		/* the object is on the stack so it is pinned */
 		/*g_print ("Calling finalizer for object: %p (%s)\n", obj, sgen_client_object_safe_name (obj));*/
-		sgen_client_run_finalize (obj);
+		for (unsigned i = 0; i < dequeued_count; ++i)
+			sgen_client_run_finalize (pending_unqueued_finalizers [i]);
 	}
 
 	if (pending_unqueued_finalizer) {
