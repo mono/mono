@@ -66,35 +66,6 @@ namespace Mono.Net.Security.Private
 	 */
 	class MonoDefaultTlsProvider : MonoTlsProviderImpl
 	{
-		Type sslStream;
-#if !MOBILE
-		PropertyInfo piClient;
-		PropertyInfo piServer;
-		PropertyInfo piTrustFailure;
-#endif
-
-		public MonoDefaultTlsProvider ()
-		{
-#if MOBILE
-			sslStream = typeof (HttpsClientStream);
-#else
-			// HttpsClientStream is an internal glue class in Mono.Security.dll
-			sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +
-				Consts.AssemblyMono_Security, false);
-
-			if (sslStream == null) {
-				string msg = "Missing Mono.Security.dll assembly. " +
-					"Support for SSL/TLS is unavailable.";
-
-				throw new NotSupportedException (msg);
-			}
-
-			piClient = sslStream.GetProperty ("SelectedClientCertificate");
-			piServer = sslStream.GetProperty ("ServerCertificate");
-			piTrustFailure = sslStream.GetProperty ("TrustFailure");
-#endif
-		}
-
 		public MonoTlsProvider Provider {
 			get { return this; }
 		}

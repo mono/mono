@@ -162,23 +162,6 @@ namespace Mono.Net.Security
 			return helper;
 		}
 
-		[Obsolete]
-		internal ChainValidationHelper (HttpWebRequest request)
-		{
-			this.callbackWrapper = callbackWrapper;
-
-			this.request = request;
-			this.sender = request;
-
-			if (certValidationCallback == null)
-				certValidationCallback = request.ServerCertValidationCallback;
-			if (certSelectionCallback == null)
-				certSelectionCallback = new LocalCertSelectionCallback (DefaultSelectionCallback);
-
-			if (certValidationCallback == null)
-				certValidationCallback = ServicePointManager.ServerCertValidationCallback;
-		}
-
 		ChainValidationHelper (MonoTlsSettings settings, bool cloneSettings, MonoTlsStream stream, ServerCertValidationCallbackWrapper callbackWrapper)
 		{
 			if (cloneSettings)
