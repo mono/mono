@@ -44,6 +44,8 @@ namespace System.Media {
 		MemoryStream mstream;
 		bool load_completed;
 		int load_timeout = 10000;
+		int atomic_start = 0;
+		Mutex mutex;
 
 		#region Only used for Alsa implementation
 		AudioData adata;
@@ -63,6 +65,7 @@ namespace System.Media {
 
 		public SoundPlayer ()
 		{
+			mutex = new Mutex();
 			sound_location = String.Empty;
 		}
 
@@ -180,8 +183,10 @@ namespace System.Media {
 		public void Play ()
 		{
 			if (!use_win32_player) {
-				ThreadStart async = new ThreadStart (PlaySync);
-				async.BeginInvoke (AsyncFinished, async);
+				if (0 == System.Threading.Interlocked.CompareExchange (ref atomic_start, 1, 0)) {
+					ThreadStart async = new ThreadStart (PlaySync);
+					async.BeginInvoke (AsyncFinished, async);
+				}
 			} else {
 				Start ();
 
@@ -226,6 +231,7 @@ namespace System.Media {
 
 		public void PlaySync ()
 		{
+			mutex.WaitOne();
 			Start ();
 
 			if (mstream == null) {
@@ -244,9 +250,12 @@ namespace System.Media {
 					}
 				} catch {
 				}
+				System.Threading.Interlocked.Exchange (ref atomic_start, 0);
+
 			} else {
 				win32_player.PlaySync ();
 			}
+			mutex.ReleaseMutex();
 		}
 
 		public void Stop ()
