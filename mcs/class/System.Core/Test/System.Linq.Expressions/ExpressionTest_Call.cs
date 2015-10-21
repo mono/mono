@@ -240,6 +240,17 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		public void CallMethodOnDateTime ()
+		{
+			var left = Expression.Call (Expression.Constant (DateTime.Now), typeof(DateTime).GetMethod ("AddDays"), Expression.Constant (-5.0));
+			var right = Expression.Constant (DateTime.Today);
+			var expr = Expression.GreaterThan (left, right);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsFalse (eq ());
+		}
+
+		[Test]
 		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
 		[ExpectedException (typeof (ArgumentException))]
 		public void CallStaticMethodOnNonSenseInstanceExpression ()
@@ -382,7 +393,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect282702 ()
 		{
 			var lambda = Expression.Lambda<Func<Func<int>>> (
