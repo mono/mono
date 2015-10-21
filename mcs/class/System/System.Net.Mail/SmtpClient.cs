@@ -29,15 +29,24 @@
 //
 
 #if SECURITY_DEP
-
-#if MONOTOUCH || MONODROID
-using System.Security.Cryptography.X509Certificates;
-#else
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+#endif
+#if MONO_X509_ALIAS
 extern alias PrebuiltSystem;
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using System.Security.Cryptography.X509Certificates;
 #endif
 
+#if MONO_SECURITY_ALIAS
+using MSI = MonoSecurity::Mono.Security.Interface;
+#else
+using MSI = Mono.Security.Interface;
+#endif
+#if MONO_X509_ALIAS
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#else
+using X509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#endif
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 using System;
@@ -56,6 +65,7 @@ using System.Configuration;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Mono.Net.Security;
 
 namespace System.Net.Mail {
 	[Obsolete ("SmtpClient and its network of types are poorly designed, we strongly recommend you use https://github.com/jstedfast/MailKit and https://github.com/jstedfast/MimeKit instead")]
@@ -1143,21 +1153,6 @@ try {
 			return "unknown";
 		}
 
-#if SECURITY_DEP
-		RemoteCertificateValidationCallback callback = delegate (object sender,
-									 X509Certificate certificate,
-									 X509Chain chain,
-									 SslPolicyErrors sslPolicyErrors) {
-			// honor any exciting callback defined on ServicePointManager
-			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
-			// otherwise provide our own
-			if (sslPolicyErrors != SslPolicyErrors.None)
-				throw new InvalidOperationException ("SSL authentication error: " + sslPolicyErrors);
-			return true;
-			};
-#endif
-
 		private void InitiateSecureConnection () {
 			SmtpResponse response = SendCommand ("STARTTLS");
 
@@ -1165,11 +1160,14 @@ try {
 				throw new SmtpException (SmtpStatusCode.GeneralFailure, "Server does not support secure connections.");
 			}
 
-#if   SECURITY_DEP
-			SslStream sslStream = new SslStream (stream, false, callback, null);
+#if SECURITY_DEP
+			var tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
+			var settings = new MSI.MonoTlsSettings ();
+			settings.UseServicePointManagerCallback = true;
+			var sslStream = tlsProvider.CreateSslStream (stream, false, settings);
 			CheckCancellation ();
 			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
-			stream = sslStream;
+			stream = sslStream.AuthenticatedStream;
 
 #else
 			throw new SystemException ("You are using an incomplete System.dll build");
