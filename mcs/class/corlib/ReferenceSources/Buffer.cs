@@ -64,6 +64,44 @@ namespace System
 			}
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static unsafe void MemoryCopy (void* source, void* destination, long destinationSizeInBytes, long sourceBytesToCopy)
+		{
+			if (sourceBytesToCopy > destinationSizeInBytes) {
+				ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.sourceBytesToCopy);
+			}
+
+			var src = (byte*)source;
+			var dst = (byte*)destination;
+			while (sourceBytesToCopy > int.MaxValue) {
+				Memcpy (dst, src, int.MaxValue);
+				sourceBytesToCopy -= int.MaxValue;
+				src += int.MaxValue;
+				dst += int.MaxValue;
+			}
+
+			memcpy1 (dst, src, (int) sourceBytesToCopy);
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static unsafe void MemoryCopy (void* source, void* destination, ulong destinationSizeInBytes, ulong sourceBytesToCopy)
+		{
+			if (sourceBytesToCopy > destinationSizeInBytes) {
+				ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.sourceBytesToCopy);
+			}
+
+			var src = (byte*)source;
+			var dst = (byte*)destination;
+			while (sourceBytesToCopy > int.MaxValue) {
+				Memcpy (dst, src, int.MaxValue);
+				sourceBytesToCopy -= int.MaxValue;
+				src += int.MaxValue;
+				dst += int.MaxValue;
+			}
+
+			Memcpy (dst, src, (int) sourceBytesToCopy);
+		}
+
 		internal static unsafe void memcpy4 (byte *dest, byte *src, int size) {
 			/*while (size >= 32) {
 				// using long is better than int and slower than double

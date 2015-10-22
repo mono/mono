@@ -278,5 +278,18 @@ namespace MonoTests.System {
 			Buffer.SetByte (byteArray, 3, (byte) 10);
 			Assert.AreEqual ((Byte)10, Buffer.GetByte (byteArray, 3), "TestSetByte");
 		}
+
+		[Test]
+		public void MemoryCopy_Simple ()
+		{
+			int a = 0xBC614E;
+			int b = 1;
+			unsafe {
+				Buffer.MemoryCopy (&a, &b, 4, 2);				
+			}
+
+			Assert.AreEqual (0xBC614E, a, "#1");
+			Assert.AreEqual (0x614E, b, "#2");
+		}
 	}
 }
