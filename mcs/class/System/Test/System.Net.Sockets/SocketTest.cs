@@ -9,10 +9,8 @@
 //
 
 using System;
-using System.Linq;
 using System.Collections;
 using System.Threading;
-using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
@@ -3479,37 +3477,6 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 		}
 
-		static bool supportsTcpReuse = false;
-		static bool supportsTcpReuseSet = false;
-
-		static bool SupportsTcpReuse ()
-		{
-			if (supportsTcpReuseSet)
-				return supportsTcpReuse;
-
-			if (Path.DirectorySeparatorChar == '/') {
-				/*
-				 * On UNIX OS
-				 * Multiple threads listening to the same address and port are not possible
-				 * before linux 3.9 kernel, where the socket option SO_REUSEPORT was introduced.
-				 */
-				Regex reg = new Regex(@"^#define\s*SO_REUSEPORT");
-				foreach (string directory in Directory.GetDirectories ("/usr/include")) {
-					var f = Directory.GetFiles (directory, "socket.h").SingleOrDefault ();
-					if (f != null && File.ReadLines (f).Any (l => reg.Match (l).Success)) {
-						supportsTcpReuse = true;
-						break;
-					}
-				}
-			} else {
-				supportsTcpReuse = true;
-			}
-
-			supportsTcpReuseSet = true;
-
-			return supportsTcpReuse;
-		}
-
 		// Test case for bug #31557
 		[Test]
 		public void TcpDoubleBind ()
@@ -3525,15 +3492,10 @@ namespace MonoTests.System.Net.Sockets
 
 				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-				Exception ex = null;
-				try {
-					ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
-					ss.Listen(1);
-				} catch (SocketException e) {
-					ex = e;
-				}
+				ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
+				ss.Listen(1);
 
-				Assert.AreEqual (SupportsTcpReuse (), ex == null);
+				// If we make it this far, we succeeded.
 			}
 		}
 
