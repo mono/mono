@@ -243,8 +243,11 @@ namespace System.Web.Compilation
                                         monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (p)), "bin\\mono.exe");
 					if (!File.Exists (monoPath)) {
 						monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (Path.GetDirectoryName (p))), "mono\\mono\\mini\\mono.exe");
-						if (!File.Exists (monoPath))
-							throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
+						if (!File.Exists (monoPath)) {
+							monoPath = Path.Combine (Path.GetDirectoryName (Path.GetDirectoryName (Path.GetDirectoryName (p))), "mono\\mini\\mono.exe");
+							if (!File.Exists (monoPath))
+								throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
+						}
 					}
 				}
 				alPath = Path.Combine (p, framework_version + "\\al.exe");

@@ -78,6 +78,12 @@ namespace Mono.CSharp
 								Path.GetDirectoryName (p))),
 						"mono\\mono\\mini\\mono.exe");
 				if (!File.Exists (windowsMonoPath))
+					windowsMonoPath = Path.Combine (
+						Path.GetDirectoryName (
+							Path.GetDirectoryName (
+								Path.GetDirectoryName (p))),
+						"mono\\mini\\mono.exe");
+				if (!File.Exists (windowsMonoPath))
 					throw new FileNotFoundException ("Windows mono path not found: " + windowsMonoPath);
 
 				windowsMcsPath = Path.Combine (p, "4.5\\mcs.exe");

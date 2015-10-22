@@ -586,6 +586,9 @@ namespace System.Windows.Forms
 						mono_path = Path.Combine (mono_prefix, "mono\\mono\\mini\\mono.exe");
 
 					if (!File.Exists (mono_path))
+						mono_path = Path.Combine (mono_prefix, "mono\\mini\\mono.exe");
+
+					if (!File.Exists (mono_path))
 						throw new FileNotFoundException (string.Format ("Windows mono path not found: '{0}'", mono_path));
 				}
 			}
