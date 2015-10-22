@@ -206,7 +206,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void BackColorTest ()
 		{
-			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#A1");
+			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#A1");
 			textBox.BackColor = Color.Red;
 			Assert.AreEqual (Color.Red, textBox.BackColor, "#A2");
 			textBox.BackColor = Color.White;
