@@ -3120,9 +3120,6 @@ namespace System.Net.Sockets
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void socket_pool_queue (SocketAsyncCallback d, SocketAsyncResult r);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool SupportsPortReuse ();
 	}
 }
 
