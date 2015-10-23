@@ -37,7 +37,10 @@ namespace System.Net.Sockets {
 			int error = 0;
 
 			Socket.Blocking_internal (handle, false, out error);
+#if MOBILE_STATIC
+			/* It's only for platforms that do not have working syscall abort mechanism, like WatchOS and TvOS */
 			Socket.Shutdown_internal (handle, SocketShutdown.Both, out error);
+#endif
 
 			if (blocking_threads != null) {
 				int abort_attempts = 0;
