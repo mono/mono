@@ -124,19 +124,6 @@ namespace Mono.Net.Security
 
 		#endregion
 
-		#region Internal Interface
-
-		internal static object GetDefaultCertificateValidator (object settings)
-		{
-			#if SECURITY_DEP
-			return ChainValidationHelper.GetDefaultValidator ((MSI.MonoTlsSettings)settings);
-			#else
-			throw new NotSupportedException ();
-			#endif
-		}
-
-		#endregion
-
 #if SECURITY_DEP && !MONO_FEATURE_NEW_SYSTEM_SOURCE
 
 		#region Mono.Security visible API
