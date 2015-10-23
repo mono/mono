@@ -32,7 +32,7 @@ using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Protocol.Tls;
 using MX = Mono.Security.X509;
-using MNS = Mono.Net.Security;
+using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
@@ -119,7 +119,7 @@ namespace Mono.Security.Interface
 
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
 		{
-			return (ICertificateValidator)MNS.MonoTlsProviderFactory.GetDefaultCertificateValidator (settings);
+			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (settings);
 		}
 
 		#if !INSIDE_SYSTEM
