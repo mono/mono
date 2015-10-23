@@ -49,10 +49,6 @@ using Mono.Security.Interface;
 using Mono.Security.Protocol.Tls;
 #endif
 
-#if !MOBILE
-using System.Reflection;
-#endif
-
 using System;
 using System.IO;
 using System.Net;
