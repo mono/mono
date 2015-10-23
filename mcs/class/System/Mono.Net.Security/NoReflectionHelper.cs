@@ -36,6 +36,7 @@ using MX = Mono.Security.X509;
 #endif
 
 using System;
+using System.Net;
 
 namespace Mono.Net.Security
 {
@@ -48,6 +49,52 @@ namespace Mono.Net.Security
 		{
 			#if SECURITY_DEP
 			return ChainValidationHelper.GetDefaultValidator ((MSI.MonoTlsSettings)settings);
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static object GetProvider ()
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.GetProvider ();
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static object GetDefaultProvider ()
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.GetDefaultProvider ();
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static bool HasProvider {
+			get {
+				#if SECURITY_DEP
+				return MonoTlsProviderFactory.HasProvider;
+				#else
+				throw new NotSupportedException ();
+				#endif
+			}
+		}
+
+		internal static void InstallProvider (object provider)
+		{
+			#if SECURITY_DEP
+			MonoTlsProviderFactory.InstallProvider ((MSI.MonoTlsProvider)provider);
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static HttpWebRequest CreateHttpsRequest (Uri requestUri, object provider, object settings)
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.CreateHttpsRequest (requestUri, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif
