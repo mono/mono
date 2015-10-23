@@ -29,7 +29,6 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Threading;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Protocol.Tls;
 using MX = Mono.Security.X509;
