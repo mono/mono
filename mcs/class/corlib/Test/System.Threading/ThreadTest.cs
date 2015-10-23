@@ -13,6 +13,9 @@ using System;
 using System.Globalization;
 using System.Security.Principal;
 using System.Threading;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 using NUnit.Framework;
 
@@ -1248,6 +1251,17 @@ namespace MonoTests.System.Threading
 
 		static void ThreadProc(Object stateInfo) {
 			Thread.CurrentThread.Name = "My Worker";
+		}
+
+		[Test]
+		public void GetStackTraces () {
+			var m = typeof (Thread).GetMethod ("Mono_GetStackTraces", BindingFlags.NonPublic|BindingFlags.Static);
+			if (m != null) {
+				var res = (Dictionary<Thread,StackTrace>)typeof (Thread).GetMethod ("Mono_GetStackTraces", BindingFlags.NonPublic|BindingFlags.Static).Invoke (null, null);
+				foreach (var t in res.Keys) {
+					var st = res [t].ToString ();
+				}
+			}
 		}
 	}
 
