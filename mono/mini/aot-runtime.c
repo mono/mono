@@ -1647,7 +1647,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, char **out_msg)
 	char *build_info;
 	char *msg = NULL;
 	gboolean usable = TRUE;
-	gboolean full_aot;
+	gboolean full_aot, safepoints;
 	guint8 *blob;
 	guint32 excluded_cpu_optimizations;
 
@@ -1710,6 +1710,13 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, char **out_msg)
 			msg = g_strdup_printf ("compiled against GC %s, while the current runtime uses GC %s.\n", gc_name, current_gc_name);
 			usable = FALSE;
 		}
+	}
+
+	safepoints = info->flags & MONO_AOT_FILE_FLAG_SAFEPOINTS;
+
+	if (!safepoints && mono_threads_is_coop_enabled ()) {
+		msg = g_strdup_printf ("not compiled with safepoints");
+		usable = FALSE;
 	}
 
 	*out_msg = msg;

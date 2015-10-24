@@ -177,6 +177,7 @@ typedef enum {
 	MONO_AOT_FILE_FLAG_FULL_AOT = 2,
 	MONO_AOT_FILE_FLAG_DEBUG = 4,
 	MONO_AOT_FILE_FLAG_LLVM_THUMB = 8,
+	MONO_AOT_FILE_FLAG_SAFEPOINTS = 32,
 } MonoAotFileFlags;
 
 /* This structure is stored in the AOT file */
