@@ -73,6 +73,9 @@ coreclr-runtest-managed: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $
 
 check-coreclr: coreclr-compile-tests coreclr-runtest-managed
 
+coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
+	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/testmix_gc.config
+
 CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/CodeGenBringUpTests/Add1.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/CodeGenBringUpTests/addref.cs	\
@@ -1187,6 +1190,38 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/Threading/ThreadStatics/ThreadStatic05.cs	\
 	$(CORECLR_PATH)/tests/src/Threading/ThreadStatics/ThreadStatic06.cs
 
+CORECLR_STRESSTEST_CS_SRC=	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/573277.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/MulDimJagAry.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/bestfit-finalize.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/ExpandHeap.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/PlugGaps.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/concurrentspin2.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCQueue.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/SingLinkStay.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCSimulator.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/StressAllocator.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/doubLinkStay.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCVariant.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/ThdTreeGrowingObj.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/allocationwithpins.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/pinstress.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/LeakGenThrd.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/b115557.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/plug.cs
+
+CORECLR_STRESSTEST_RUNNER_CS_SRC=	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityConfiguration.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityFramework.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityTest.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityTestSet.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityTestSet.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/RFLogging.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/DetourHelpers.cs	\
+	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/LoaderClass.cs	\
+	GCStressTests/AssemblyLoadContext.cs	\
+	GCStressTests/AssemblyExtensions.cs
+
 # relies on TestLibrary:
 CORECLR_DISABLED_TEST_CS_SRC = 		\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/TestFramework.cs	\
@@ -1237,25 +1272,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Exceptions/Finalization/Finalizer.cs
 
 # exclude the CoreCLR GC stress framework for now, it needs special integration:
-CORECLR_DISABLED_TEST_CS_SRC += 	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/plug.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/SingLinkStay.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/pinstress.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCQueue.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/ExpandHeap.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/PlugGaps.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/concurrentspin2.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/ThdTreeGrowingObj.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/573277.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCVariant.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/bestfit-finalize.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/allocationwithpins.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/MulDimJagAry.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/GCSimulator.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/StressAllocator.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/doubLinkStay.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/LeakGenThrd.cs	\
-	$(CORECLR_PATH)/tests/src/GC/Stress/Tests/b115557.cs	\
+CORECLR_DISABLED_TEST_CS_SRC +=	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/RFLogging.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/DetourHelpers.cs	\
 	$(CORECLR_PATH)/tests/src/GC/Stress/Framework/ReliabilityTest.cs	\
@@ -2399,7 +2416,7 @@ CORECLR_UPSTREAM_IL_SRC=$(shell find "$(CORECLR_PATH)/tests" -iname "*.il")
 CORECLR_IL_SRC_MISSING=$(filter-out $(CORECLR_DEFINED_IL_SRC),$(CORECLR_UPSTREAM_IL_SRC))
 
 # find all CoreCLR *.cs test files that aren't mentioned in this file
-CORECLR_DEFINED_CS_SRC = $(CORECLR_TEST_CS_SRC) $(CORECLR_DISABLED_TEST_CS_SRC)
+CORECLR_DEFINED_CS_SRC = $(CORECLR_TEST_CS_SRC) $(CORECLR_STRESSTEST_CS_SRC) $(CORECLR_DISABLED_TEST_CS_SRC)
 CORECLR_UPSTREAM_CS_SRC=$(shell find "$(CORECLR_PATH)/tests" -iname "*.cs")
 CORECLR_CS_SRC_MISSING=$(filter-out $(CORECLR_DEFINED_CS_SRC),$(CORECLR_UPSTREAM_CS_SRC))
 
@@ -2414,6 +2431,8 @@ coreclr-list-missing-tests:
 CORECLR_TESTSI_CS=$(CORECLR_TEST_CS_SRC:.cs=.exe)
 CORECLR_TESTSI_IL=$(CORECLR_TEST_IL_SRC:.il=_il.exe)
 
+CORECLR_STRESSTESTSI_CS=$(CORECLR_STRESSTEST_CS_SRC:%.cs=%.exe)
+
 # the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
 $(CORECLR_PATH)%_il.exe: $(CORECLR_PATH)%.il
 	$(ILASM) -out:$@ $<
@@ -2425,4 +2444,7 @@ $(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.cs
 test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
 	$(MCS) -debug -out:$@ $<
 
-CLEANFILES = $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) *.dll *.exe *.mdb
+GCStressTests.exe: $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
+	$(MCS) -out:$@ -debug -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
+
+CLEANFILES = $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) *.dll *.exe *.mdb $(CORECLR_STRESSTESTSI_CS) GCStressTests.exe
