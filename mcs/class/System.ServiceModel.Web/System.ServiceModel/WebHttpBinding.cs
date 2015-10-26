@@ -158,7 +158,7 @@ namespace System.ServiceModel
 		}
 
 		public override string Scheme {
-			get { return Security.Mode != WebHttpSecurityMode.None ? Uri.UriSchemeHttps : Uri.UriSchemeHttp; }
+			get { return Security.Mode == WebHttpSecurityMode.Transport ? Uri.UriSchemeHttps : Uri.UriSchemeHttp; }
 		}
 
 		public WebHttpSecurity Security {
