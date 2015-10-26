@@ -25,7 +25,7 @@
 // THE SOFTWARE.
 using System;
 using System.Net;
-using System.Reflection;
+using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
@@ -36,21 +36,6 @@ namespace Mono.Security.Interface
 	 */
 	public static class MonoTlsProviderFactory
 	{
-		const string FactoryTypeName = "Mono.Net.Security.MonoTlsProviderFactory";
-
-		static MonoTlsProviderFactory ()
-		{
-			factoryType = Type.GetType (FactoryTypeName + ", " + Consts.AssemblySystem, true);
-			getProviderMethod = factoryType.GetMethod ("GetProvider", BindingFlags.Static | BindingFlags.NonPublic);
-			getDefaultProviderMethod = factoryType.GetMethod ("GetDefaultProvider", BindingFlags.Static | BindingFlags.NonPublic);
-			installProviderMethod = factoryType.GetMethod ("InstallProvider", BindingFlags.Static | BindingFlags.NonPublic);
-			hasProviderProperty = factoryType.GetProperty ("HasProvider", BindingFlags.Static | BindingFlags.NonPublic);
-			createHttpsRequestMethod = factoryType.GetMethod ("CreateHttpsRequest", BindingFlags.Static | BindingFlags.NonPublic);
-			if (getProviderMethod == null || getDefaultProviderMethod == null || installProviderMethod == null ||
-			    hasProviderProperty == null || createHttpsRequestMethod == null)
-				throw new NotSupportedException ();
-		}
-
 		/*
 		 * Returns the currently installed @MonoTlsProvider, falling back to the default one.
 		 *
@@ -58,7 +43,7 @@ namespace Mono.Security.Interface
 		 */
 		public static MonoTlsProvider GetProvider ()
 		{
-			return (MonoTlsProvider)getProviderMethod.Invoke (null, null);
+			return (MonoTlsProvider)NoReflectionHelper.GetProvider ();
 		}
 
 		/*
@@ -68,7 +53,7 @@ namespace Mono.Security.Interface
 		 */
 		public static MonoTlsProvider GetDefaultProvider ()
 		{
-			return (MonoTlsProvider)getDefaultProviderMethod.Invoke (null, null);
+			return (MonoTlsProvider)NoReflectionHelper.GetDefaultProvider ();
 		}
 
 		/*
@@ -80,7 +65,7 @@ namespace Mono.Security.Interface
 		 */
 		public static bool HasProvider {
 			get {
-				return (bool)hasProviderProperty.GetValue (null);
+				return NoReflectionHelper.HasProvider;
 			}
 		}
 
@@ -92,7 +77,7 @@ namespace Mono.Security.Interface
 		 */
 		public static void InstallProvider (MonoTlsProvider provider)
 		{
-			installProviderMethod.Invoke (null, new object[] { provider });
+			NoReflectionHelper.InstallProvider (provider);
 		}
 
 		/*
@@ -104,15 +89,8 @@ namespace Mono.Security.Interface
 		 */
 		public static HttpWebRequest CreateHttpsRequest (System.Uri requestUri, MonoTlsProvider provider, MonoTlsSettings settings = null)
 		{
-			return (HttpWebRequest)createHttpsRequestMethod.Invoke (null, new object[] { requestUri, provider, settings });
+			return NoReflectionHelper.CreateHttpsRequest (requestUri, provider, settings);
 		}
-
-		static Type factoryType;
-		static MethodInfo getProviderMethod;
-		static MethodInfo getDefaultProviderMethod;
-		static MethodInfo installProviderMethod;
-		static PropertyInfo hasProviderProperty;
-		static MethodInfo createHttpsRequestMethod;
 	}
 }
 

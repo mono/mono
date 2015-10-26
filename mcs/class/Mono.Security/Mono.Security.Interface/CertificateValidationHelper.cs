@@ -29,13 +29,10 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Threading;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Protocol.Tls;
 using MX = Mono.Security.X509;
-#if MOBILE
 using Mono.Net.Security;
-#endif
 
 namespace Mono.Security.Interface
 {
@@ -107,31 +104,8 @@ namespace Mono.Security.Interface
 		const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 		static readonly bool noX509Chain;
 
-		#if !INSIDE_SYSTEM
-		const string InternalHelperTypeName = "Mono.Net.Security.ChainValidationHelper";
-		static readonly Type internalHelperType;
-		static readonly MethodInfo createMethod;
-		static readonly MethodInfo validateClientCertificateMethod;
-		static readonly MethodInfo validateChainMethod;
-		#endif
-
 		static CertificateValidationHelper ()
 		{
-			#if !INSIDE_SYSTEM
-			internalHelperType = Type.GetType (InternalHelperTypeName + ", " + Consts.AssemblySystem, true);
-			if (internalHelperType == null)
-				throw new NotSupportedException ();
-			createMethod = internalHelperType.GetMethod ("GetDefaultValidator", BindingFlags.Static | BindingFlags.NonPublic);
-			if (createMethod == null)
-				throw new NotSupportedException ();
-			validateClientCertificateMethod = internalHelperType.GetMethod ("ValidateClientCertificate", BindingFlags.Instance | BindingFlags.Public);
-			if (validateClientCertificateMethod == null)
-				throw new NotSupportedException ();
-			validateChainMethod = internalHelperType.GetMethod ("ValidateChain", BindingFlags.Instance | BindingFlags.Public);
-			if (validateChainMethod == null)
-				throw new NotSupportedException ();
-			#endif
-
 			#if MONOTOUCH || XAMMAC
 			noX509Chain = true;
 			#else
@@ -145,11 +119,7 @@ namespace Mono.Security.Interface
 
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
 		{
-			#if INSIDE_SYSTEM
-			return ChainValidationHelper.GetDefaultValidator (settings);
-			#else
-			return (ICertificateValidator)createMethod.Invoke (null, new object[] { settings });
-			#endif
+			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (settings);
 		}
 
 		#if !INSIDE_SYSTEM
