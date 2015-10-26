@@ -56,7 +56,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsNull (array);
 
 			Assert.IsTrue (buffer.Post (42));
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsNotNull (array);
 			CollectionAssert.AreEqual (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 42 }, array);
