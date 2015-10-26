@@ -20788,6 +20788,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-21.cs">
+    <type name="Subclass">
+      <method name="System.String get_Value()" attrs="2246">
+        <size>14</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>19</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)" attrs="145">
