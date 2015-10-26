@@ -1092,7 +1092,7 @@ namespace System.Diagnostics {
 #else
 				var stdinEncoding = Console.InputEncoding;
 #endif
-				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, false), FileAccess.Write, 8192, false), stdinEncoding) {
+				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, true), FileAccess.Write, 8192, false), stdinEncoding) {
 					AutoFlush = true
 				};
 			}
@@ -1102,7 +1102,7 @@ namespace System.Diagnostics {
 
 				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
 
-				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (stdout_read, false), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
+				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (stdout_read, true), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
 			}
 
 			if (startInfo.RedirectStandardError) {
@@ -1110,7 +1110,7 @@ namespace System.Diagnostics {
 
 				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
 
-				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, false), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
+				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, true), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
 			}
 
 			process.StartBackgroundWaitForExit ();
