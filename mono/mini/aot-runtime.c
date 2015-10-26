@@ -470,18 +470,16 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 		break;
 	}
 	case MONO_AOT_TYPEREF_VAR: {
-		MonoType *t;
+		MonoType *t = NULL;
 		MonoGenericContainer *container = NULL;
 		int type = decode_value (p, &p);
 		int num = decode_value (p, &p);
 		gboolean has_container = decode_value (p, &p);
 		MonoType *gshared_constraint = NULL;
-		char *par_name = NULL;
 
-		t = NULL;
 		if (has_container) {
 			gboolean is_method = decode_value (p, &p);
-			
+
 			if (is_method) {
 				MonoMethod *method_def;
 				g_assert (type == MONO_TYPE_MVAR);
@@ -531,8 +529,6 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 				par->gshared_constraint = gshared_constraint;
 				par->image = module->assembly->image;
 				t->data.generic_param = par;
-				if (par_name)
-					((MonoGenericParamFull*)par)->info.name = par_name;
 			}
 			// FIXME: Maybe use types directly to avoid
 			// the overhead of creating MonoClass-es
