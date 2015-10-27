@@ -2412,10 +2412,10 @@ coreclr-list-missing-tests:
 	@echo $(CORECLR_CS_SRC_MISSING) | tr " " "\n"
 
 CORECLR_TESTSI_CS=$(CORECLR_TEST_CS_SRC:.cs=.exe)
-CORECLR_TESTSI_IL=$(CORECLR_TEST_IL_SRC:.il=.exe)
+CORECLR_TESTSI_IL=$(CORECLR_TEST_IL_SRC:.il=_il.exe)
 
 # the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
-$(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.il
+$(CORECLR_PATH)%_il.exe: $(CORECLR_PATH)%.il
 	$(ILASM) -out:$@ $<
 	[ -f "$(CLASS)/Facades/System.Console.dll" ] && cp -f "$(CLASS)/Facades/System.Console.dll" "$(dir $@)"
 
