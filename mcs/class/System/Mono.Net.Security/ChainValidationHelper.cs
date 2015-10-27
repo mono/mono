@@ -115,6 +115,8 @@ namespace Mono.Net.Security
 
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
 		{
+			if (settings == null)
+				return new ChainValidationHelper (null, false, null, null);
 			if (settings.CertificateValidator == null)
 				settings.CertificateValidator = new ChainValidationHelper (settings, false, null, null);
 			return settings.CertificateValidator;
