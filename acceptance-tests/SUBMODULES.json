@@ -9,10 +9,10 @@
   }, 
   {
     "name": "coreclr", 
-    "url": "git://github.com/dotnet/coreclr.git", 
+    "url": "git://github.com/mono/coreclr.git", 
     "rev": "b9920ebea8d8d77b65d0ca10ffdb840f0cd36f06", 
-    "remote-branch": "origin/master", 
-    "branch": "master", 
+    "remote-branch": "origin/mono", 
+    "branch": "mono", 
     "directory": "coreclr"
   }, 
   {
