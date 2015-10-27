@@ -470,18 +470,16 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 		break;
 	}
 	case MONO_AOT_TYPEREF_VAR: {
-		MonoType *t;
+		MonoType *t = NULL;
 		MonoGenericContainer *container = NULL;
 		int type = decode_value (p, &p);
 		int num = decode_value (p, &p);
 		gboolean has_container = decode_value (p, &p);
 		MonoType *gshared_constraint = NULL;
-		char *par_name = NULL;
 
-		t = NULL;
 		if (has_container) {
 			gboolean is_method = decode_value (p, &p);
-			
+
 			if (is_method) {
 				MonoMethod *method_def;
 				g_assert (type == MONO_TYPE_MVAR);
@@ -529,11 +527,8 @@ decode_klass_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
 				MonoGenericParam *par = (MonoGenericParam*)mono_image_alloc0 (module->assembly->image, sizeof (MonoGenericParamFull));
 				par->num = num;
 				par->gshared_constraint = gshared_constraint;
-				// FIXME:
-				par->image = mono_defaults.corlib;
+				par->image = module->assembly->image;
 				t->data.generic_param = par;
-				if (par_name)
-					((MonoGenericParamFull*)par)->info.name = par_name;
 			}
 			// FIXME: Maybe use types directly to avoid
 			// the overhead of creating MonoClass-es
@@ -4420,7 +4415,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 
 	ji.type = decode_value (p, &p);
 
-	mp = mono_mempool_new_size (512);
+	mp = mono_mempool_new ();
 	res = decode_patch (module, mp, &ji, p, &p);
 
 	if (!res) {
