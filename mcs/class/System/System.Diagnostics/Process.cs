@@ -80,8 +80,6 @@ namespace System.Diagnostics {
 		Thread background_wait_for_exit_thread;
 		ISynchronizeInvoke synchronizingObject;
 		EventHandler exited_event;
-		IntPtr stdout_rd;
-		IntPtr stderr_rd;
 
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
@@ -1019,17 +1017,15 @@ namespace System.Diagnostics {
 
 				if (startInfo.RedirectStandardOutput) {
 					CreatePipe (out stdout_read, out stdout_write, false);
-					process.stdout_rd = stdout_read;
 				} else {
-					process.stdout_rd = IntPtr.Zero;
+					stdout_read = IntPtr.Zero;
 					stdout_write = MonoIO.ConsoleOutput;
 				}
 
 				if (startInfo.RedirectStandardError) {
 					CreatePipe (out stderr_read, out stderr_write, false);
-					process.stderr_rd  = stderr_read;
 				} else {
-					process.stderr_rd = IntPtr.Zero;
+					stderr_read = IntPtr.Zero;
 					stderr_write = MonoIO.ConsoleError;
 				}
 
@@ -1092,7 +1088,7 @@ namespace System.Diagnostics {
 #else
 				var stdinEncoding = Console.InputEncoding;
 #endif
-				process.input_stream = new StreamWriter (new FileStream (new SafeFileHandle (stdin_write, true), FileAccess.Write, 8192, false), stdinEncoding) {
+				process.input_stream = new StreamWriter (new FileStream (stdin_write, FileAccess.Write, true, 8192), stdinEncoding) {
 					AutoFlush = true
 				};
 			}
@@ -1102,7 +1098,7 @@ namespace System.Diagnostics {
 
 				Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
 
-				process.output_stream = new StreamReader (new FileStream (new SafeFileHandle (stdout_read, true), FileAccess.Read, 8192, false), stdoutEncoding, true, 8192);
+				process.output_stream = new StreamReader (new FileStream (stdout_read, FileAccess.Read, true, 8192), stdoutEncoding, true);
 			}
 
 			if (startInfo.RedirectStandardError) {
@@ -1110,7 +1106,7 @@ namespace System.Diagnostics {
 
 				Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
 
-				process.error_stream = new StreamReader (new FileStream (new SafeFileHandle (stderr_read, true), FileAccess.Read, 8192, false), stderrEncoding, true, 8192);
+				process.error_stream = new StreamReader (new FileStream (stderr_read, FileAccess.Read, true, 8192), stderrEncoding, true);
 			}
 
 			process.StartBackgroundWaitForExit ();
@@ -1325,21 +1321,21 @@ namespace System.Diagnostics {
 			StringBuilder sb = new StringBuilder ();
 			byte[] buffer = new byte [4096];
 
-			public ProcessAsyncReader (Process process, IntPtr handle, bool err_out)
+			public ProcessAsyncReader (Process process, FileStream stream, bool err_out)
 				: base (null, null)
 			{
 				this.process = process;
-				this.handle = handle;
-				this.stream = new FileStream (handle, FileAccess.Read, false);
+				this.handle = stream.SafeFileHandle.DangerousGetHandle ();
+				this.stream = stream;
 				this.err_out = err_out;
 			}
 
-			public void BeginRead ()
+			public void BeginReadLine ()
 			{
-				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
+				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => Read (), null));
 			}
 
-			public void AddInput ()
+			void Read ()
 			{
 				int nread = 0;
 
@@ -1375,7 +1371,7 @@ namespace System.Diagnostics {
 
 				Flush (false);
 
-				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => AddInput (), null));
+				IOSelector.Add (this.handle, new IOSelectorJob (IOOperation.Read, _ => Read (), null));
 			}
 
 			void Flush (bool last)
@@ -1411,7 +1407,6 @@ namespace System.Diagnostics {
 			public void Close ()
 			{
 				IOSelector.Remove (handle);
-				stream.Close ();
 			}
 
 			internal override void CompleteDisposed ()
@@ -1438,8 +1433,8 @@ namespace System.Diagnostics {
 			async_mode |= AsyncModes.AsyncOutput;
 			output_canceled = false;
 			if (async_output == null) {
-				async_output = new ProcessAsyncReader (this, stdout_rd, true);
-				async_output.BeginRead ();
+				async_output = new ProcessAsyncReader (this, (FileStream) output_stream.BaseStream, true);
+				async_output.BeginReadLine ();
 			}
 		}
 
@@ -1470,8 +1465,8 @@ namespace System.Diagnostics {
 			async_mode |= AsyncModes.AsyncError;
 			error_canceled = false;
 			if (async_error == null) {
-				async_error = new ProcessAsyncReader (this, stderr_rd, false);
-				async_error.BeginRead ();
+				async_error = new ProcessAsyncReader (this, (FileStream) error_stream.BaseStream, false);
+				async_error.BeginReadLine ();
 			}
 		}
 
