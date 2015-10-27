@@ -1,0 +1,5 @@
+./Properties/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+
+./Mono.Security.Providers.OldTls/OldTlsProvider.cs
