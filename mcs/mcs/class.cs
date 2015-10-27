@@ -530,7 +530,6 @@ namespace Mono.CSharp
 
 		bool has_normal_indexers;
 		string indexer_name;
-		protected bool requires_delayed_unmanagedtype_check;
 		bool error;
 		bool members_defined;
 		bool members_defined_ok;
@@ -1999,15 +1998,6 @@ namespace Mono.CSharp
 				CheckPairedOperators ();
 			}
 
-			if (requires_delayed_unmanagedtype_check) {
-				requires_delayed_unmanagedtype_check = false;
-				foreach (var member in members) {
-					var f = member as Field;
-					if (f != null && f.MemberType != null && f.MemberType.IsPointer)
-						TypeManager.VerifyUnmanaged (Module, f.MemberType, f.Location);
-				}
-			}
-
 			ComputeIndexerName();
 
 			if (HasEquals && !HasGetHashCode) {
@@ -2711,6 +2701,22 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public override void PrepareEmit ()
+		{
+			var s = this as Struct;
+			if (s == null || !s.HasUnmanagedCheckDone) {
+				for (int i = 0; i < Members.Count; ++i) {
+					var f = Members [i] as Field;
+					if (f == null || f.MemberType == null || !f.MemberType.IsPointer)
+						continue;
+
+					TypeManager.VerifyUnmanaged (Module, f.MemberType, f.Location);
+				}
+			}
+
+			base.PrepareEmit ();
+		}
+
 		public override void Emit ()
 		{
 			if (!has_static_constructor && HasStaticFieldInitializer) {
@@ -2959,7 +2965,7 @@ namespace Mono.CSharp
 
 	public sealed class Struct : ClassOrStruct
 	{
-		bool is_unmanaged, has_unmanaged_check_done;
+		bool is_unmanaged, has_unmanaged_check_done, requires_delayed_unmanagedtype_check;
 		bool InTransit;
 
 		// <summary>
@@ -3087,6 +3093,12 @@ namespace Mono.CSharp
 			CheckStructCycles ();
 
 			base.Emit ();
+		}
+
+		public bool HasUnmanagedCheckDone {
+			get {
+				return has_unmanaged_check_done;
+			}
 		}
 
 		bool HasUserDefaultConstructor ()
