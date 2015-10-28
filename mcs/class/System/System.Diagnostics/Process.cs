@@ -1297,6 +1297,8 @@ namespace System.Diagnostics {
 			StringBuilder sb = new StringBuilder ();
 			byte[] buffer = new byte [4096];
 
+			const int ERROR_INVALID_HANDLE = 6;
+
 			public ProcessAsyncReader (Process process, FileStream stream, bool err_out)
 				: base (null, null)
 			{
@@ -1318,6 +1320,9 @@ namespace System.Diagnostics {
 				try {
 					nread = stream.Read (buffer, 0, buffer.Length);
 				} catch (ObjectDisposedException) {
+				} catch (IOException ex) {
+					if (ex.HResult != (unchecked((int) 0x80070000) | (int) ERROR_INVALID_HANDLE))
+						throw;
 				} catch (NotSupportedException) {
 					if (stream.CanRead)
 						throw;
