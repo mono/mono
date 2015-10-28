@@ -266,7 +266,7 @@ namespace Mono.Net.Security
 		public ValidationResult ValidateClientCertificate (XX509CertificateCollection certs)
 		{
 			var certs2 = Convert (certs);
-			return ValidateChain (null, certs2, 0);
+			return ValidateChain (string.Empty, certs2, 0);
 		}
 
 		public ValidationResult ValidateChain (string host, XX509CertificateCollection certs)
