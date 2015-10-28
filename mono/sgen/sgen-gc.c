@@ -727,6 +727,21 @@ pin_objects_from_nursery_pin_queue (gboolean do_scan_objects, ScanCopyContext ct
 	return count;
 }
 
+static RngFun rng;
+
+void
+sgen_install_rng (RngFun fn)
+{
+	rng = fn;
+}
+
+double
+sgen_rand (guint32 min, guint32 max)
+{
+	g_assert (rng);
+	return rng (min, max);
+}
+
 static void
 pin_objects_in_nursery (gboolean do_scan_objects, ScanCopyContext ctx)
 {

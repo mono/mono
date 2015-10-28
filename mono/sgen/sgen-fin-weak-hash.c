@@ -433,6 +433,7 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 {
 	gint32 index, new_next_entry, old_next_entry;
 	gint32 previous_state;
+	gint32 sleep_backoff = 0;
 
  retry:
 	for (;;) {
@@ -451,7 +452,16 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 				 * This seems like a good value.  Determined by timing
 				 * sgen-weakref-stress.exe.
 				 */
-				g_usleep (200);
+
+				const guint32 lower_limit = 200;
+				const guint32 max_wait = 9000;
+				guint32 upper_limit = 1 << ++sleep_backoff;
+				if (upper_limit <= lower_limit)
+					upper_limit = lower_limit + 1;
+
+				g_assert (upper_limit < max_wait && lower_limit < upper_limit);
+				g_usleep (sgen_rand (lower_limit, upper_limit));
+
 				HEAVY_STAT (++stat_wait_for_processing);
 			}
 			continue;

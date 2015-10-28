@@ -285,7 +285,15 @@ enum {
 
 void sgen_gc_init (void);
 
+void sgen_gc_cleanup (void);
+
 void sgen_os_init (void);
+
+typedef guint32 (*RngFun) (guint32, guint32);
+
+void sgen_install_rng (RngFun fn);
+
+double sgen_rand (guint32 min, guint32 max);
 
 void sgen_update_heap_boundaries (mword low, mword high);
 
