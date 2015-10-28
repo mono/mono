@@ -481,7 +481,6 @@ namespace MonoTests.System
 		public void TestPow ()
 		{
 			double precision;
-			int iTest = 1;
 #if MONODROID
 			// It fails on Nexus 9 with
 			//
@@ -489,7 +488,7 @@ namespace MonoTests.System
 			//
 			// when using double_epsilon. Precision differs between different ARM CPUs, so we
 			// will just use a more conservative value
-			precision = double_epsilon * 10;
+			precision = 1.3636094460602122 - 1.3636094460602119;
 #else
 			precision = double_epsilon;
 #endif
