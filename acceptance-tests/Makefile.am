@@ -69,7 +69,9 @@ coreclr-compile-tests: coreclr-validate
 	$(MAKE) -j4 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 coreclr-runtest-managed: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
-	@$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
+	@echo $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) | tr " " "\n" > coreclr-testlist.txt
+	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 --input-file coreclr-testlist.txt
+	@rm -f coreclr-testlist.txt
 
 check-coreclr: coreclr-compile-tests coreclr-runtest-managed
 
