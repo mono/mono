@@ -29,7 +29,7 @@ namespace Mono.Security.Interface
 {
 	public sealed class MonoTlsSettings
 	{
-		public MonoRemoteCertificateValidationCallback ServerCertificateValidationCallback {
+		public MonoRemoteCertificateValidationCallback RemoteCertificateValidationCallback {
 			get; set;
 		}
 
@@ -98,7 +98,7 @@ namespace Mono.Security.Interface
 			}
 
 			var copy = new MonoTlsSettings ();
-			copy.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
+			copy.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
 			copy.ClientCertificateSelectionCallback = ClientCertificateSelectionCallback;
 			copy.checkCertName = checkCertName;
 			copy.checkCertRevocationStatus = checkCertRevocationStatus;

@@ -176,8 +176,8 @@ namespace Mono.Net.Security
 			var fallbackToSPM = false;
 
 			if (settings != null) {
-				if (settings.ServerCertificateValidationCallback != null) {
-					var callback = Private.CallbackHelpers.MonoToPublic (settings.ServerCertificateValidationCallback);
+				if (settings.RemoteCertificateValidationCallback != null) {
+					var callback = Private.CallbackHelpers.MonoToPublic (settings.RemoteCertificateValidationCallback);
 					certValidationCallback = new ServerCertValidationCallback (callback);
 				}
 				certSelectionCallback = Private.CallbackHelpers.MonoToInternal (settings.ClientCertificateSelectionCallback);

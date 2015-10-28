@@ -388,7 +388,7 @@ namespace System.Net.Security
 			// does not provide a verification callback but attempts to authenticate with the website
 			// as a client (see https://bugzilla.xamarin.com/show_bug.cgi?id=18962 for an example)
 			var settings = new MonoTlsSettings ();
-			settings.ServerCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (validation_callback);
+			settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (validation_callback);
 			var helper = MNS.ChainValidationHelper.Create (ref settings, null);
 			s.ServerCertValidation2 += (certs) => helper.ValidateChain (targetHost, certs);
 			if (selection_callback != null)
