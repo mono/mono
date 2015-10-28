@@ -1780,7 +1780,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 			return FALSE;
 		}
 		pid = process_handle->id;
-		proc_name = process_handle->proc_name;
+		proc_name = g_strdup (process_handle->proc_name);
 	}
 	
 #if defined(PLATFORM_MACOSX) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__HAIKU__)
@@ -1788,6 +1788,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 	if (!proc_name) {
 		modules[0] = NULL;
 		*needed = sizeof(gpointer);
+		g_free (proc_name);
 		return TRUE;
 	}
 #else
@@ -1798,6 +1799,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 		 */
 		modules[0] = NULL;
 		*needed = sizeof(gpointer);
+		g_free (proc_name);
 		return TRUE;
 	}
 	mods = load_modules (fp);
@@ -1831,6 +1833,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 		free_procmodule (g_slist_nth_data (mods, i));
 	}
 	g_slist_free (mods);
+	g_free (proc_name);
 
 	return TRUE;
 }
