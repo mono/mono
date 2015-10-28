@@ -817,7 +817,7 @@ namespace System.Runtime.Serialization.Json
 			if (PeekChar () == '"') { // it isn't premise: the object might be empty
 				ReadChar ();
 				string s = ReadStringLiteral ();
-				if (s == "__type") {
+                if (s == "__type") {
 					SkipWhitespaces ();
 					Expect (':');
 					SkipWhitespaces ();
@@ -826,8 +826,10 @@ namespace System.Runtime.Serialization.Json
 					SkipWhitespaces ();
 					ei.HasContent = true;
 				}
-				else
-					next_object_content_name = s;
+                else {
+                    current_runtime_type = null; // do not persist the previous type hint for the current object
+                    next_object_content_name = s;
+                }
 			}
 		}
 
