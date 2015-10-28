@@ -85,7 +85,6 @@ namespace System.Net
 		bool ssl;
 		Exception connect_exception;
 		static object classLock = new object ();
-		IMonoTlsProvider tlsProvider;
 		MonoTlsStream tlsStream;
 
 #if MONOTOUCH
@@ -219,15 +218,6 @@ namespace System.Net
 					}
 				}
 			}
-		}
-
-		void EnsureSSLStreamAvailable (HttpWebRequest request)
-		{
-			tlsProvider = request.TlsProvider;
-			if (tlsProvider != null)
-				return;
-
-			tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
 		}
 
 		bool CreateTunnel (HttpWebRequest request, Uri connectUri,
@@ -406,7 +396,6 @@ namespace System.Net
 				if (request.Address.Scheme == Uri.UriSchemeHttps) {
 #if SECURITY_DEP
 					ssl = true;
-					EnsureSSLStreamAvailable (request);
 					if (!reused || nstream == null || tlsStream == null) {
 						byte [] buffer = null;
 						if (sPoint.UseConnect) {
