@@ -67,7 +67,7 @@ namespace Mono.Security.Providers.DotNet
 			LocalCertificateSelectionCallback selection_callback = null;
 
 			if (settings != null) {
-				validation_callback = ConvertCallback (settings.ServerCertificateValidationCallback);
+				validation_callback = ConvertCallback (settings.RemoteCertificateValidationCallback);
 				selection_callback = ConvertCallback (settings.ClientCertificateSelectionCallback);
 			}
 
