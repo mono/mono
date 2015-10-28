@@ -79,7 +79,7 @@ namespace System.Net {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
-				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, true, false);
+				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false, false);
 				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
 				ssl_stream.ClientCertValidationDelegate += OnClientCertificateValidation;
 				stream = ssl_stream;
