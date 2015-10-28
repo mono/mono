@@ -59,8 +59,6 @@ monoutils_sources = \
 	mono-stdlib.c 		\
 	mono-property-hash.h 	\
 	mono-property-hash.c 	\
-	mono-value-hash.h 	\
-	mono-value-hash.c 	\
 	freebsd-elf_common.h 	\
 	freebsd-elf32.h		\
 	freebsd-elf64.h		\
