@@ -1,36 +1,28 @@
 //
-// System.Net.Security.SslStream.cs
+// SslStream.cs
 //
-// Authors:
-//	Tim Coleman (tim@timcoleman.com)
-//	Atsushi Enomoto (atsushi@ximian.com)
-//	Marek Safar (marek.safar@gmail.com)
+// Author:
+//       Martin Baulig <martin.baulig@xamarin.com>
 //
-// Copyright (C) Tim Coleman, 2004
-// (c) 2004,2007 Novell, Inc. (http://www.novell.com)
-// Copyright 2011 Xamarin Inc.
+// Copyright (c) 2015 Xamarin, Inc.
 //
-
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 #if SECURITY_DEP && !MONO_FEATURE_NEW_TLS
 
@@ -46,18 +38,22 @@ using MonoCipherAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.CipherA
 using MonoHashAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = MonoSecurity::Mono.Security.Protocol.Tls.SecurityProtocolType;
-using MonoSecurity::Mono.Security.Protocol.Tls;
 using MonoSecurity::Mono.Security.Interface;
+// using MonoSecurity::Mono.Security.Protocol.Tls;
 #else
 using MonoCipherAlgorithmType = Mono.Security.Protocol.Tls.CipherAlgorithmType;
 using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
-using Mono.Security.Protocol.Tls;
 using Mono.Security.Interface;
+// using Mono.Security.Protocol.Tls;
 #endif
 #if MONO_X509_ALIAS
-using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using XSslProtocols = PrebuiltSystem::System.Security.Authentication.SslProtocols;
+using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#else
+using XSslProtocols = System.Security.Authentication.SslProtocols;
+using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
@@ -67,15 +63,18 @@ using ExchangeAlgorithmType = System.Security.Authentication.ExchangeAlgorithmTy
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Security.Cryptography;
 
 using System.Threading.Tasks;
+
 using MNS = Mono.Net.Security;
 
-namespace System.Net.Security 
+namespace System.Net.Security
 {
 	/*
 	 * These two are defined by the referencesource; add them heere to make
@@ -90,22 +89,25 @@ namespace System.Net.Security
 
 	internal delegate X509Certificate LocalCertSelectionCallback (
 		string targetHost,
-		X509CertificateCollection localCertificates,
+		XX509CertificateCollection localCertificates,
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
-	[MonoTODO ("Non-X509Certificate2 certificate is not supported")]
-	public class SslStream : AuthenticatedStream
+	public class SslStream : AuthenticatedStream, MNS.IMonoSslStream
 	{
-		#region Fields
+		MonoSslStream impl;
 
-		SslStreamBase ssl_stream;
-		RemoteCertificateValidationCallback validation_callback;
-		LocalCertificateSelectionCallback selection_callback;
+		internal MonoSslStream Impl {
+			get {
+				CheckDisposed ();
+				return impl;
+			}
+		}
 
-		#endregion // Fields
-
-		#region Constructors
+		static MonoTlsProvider GetProvider ()
+		{
+			return new MNS.Private.MonoDefaultTlsProvider ();
+		}
 
 		public SslStream (Stream innerStream)
 			: this (innerStream, false)
@@ -115,493 +117,285 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+			var provider = GetProvider ();
+			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen);
 		}
 
-		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
 			: this (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback, null)
 		{
 		}
 
-		[MonoTODO ("userCertificateValidationCallback is not passed X509Chain and SslPolicyErrors correctly")]
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
-			// they are nullable.
-			validation_callback = userCertificateValidationCallback;
-			selection_callback = userCertificateSelectionCallback;
-		}
-		#endregion // Constructors
-
-		#region Properties
-
-		public override bool CanRead {
-			get { return InnerStream.CanRead; }
-		}
-
-		public override bool CanSeek {
-			get { return InnerStream.CanSeek; }
-		}
-
-		public override bool CanTimeout {
-			get { return InnerStream.CanTimeout; }
-		}
-
-		public override bool CanWrite {
-			get { return InnerStream.CanWrite; }
-		}
-
-		public override long Length {
-			get { return InnerStream.Length; }
-		}
-
-		public override long Position {
-			get { return InnerStream.Position; }
-			set {
-				throw new NotSupportedException ("This stream does not support seek operations");
-			}
-		}
-
-		// AuthenticatedStream overrides
-
-		public override bool IsAuthenticated { 
-			get { return ssl_stream != null; }
-		}
-
-		public override bool IsEncrypted { 
-			get { return IsAuthenticated; }
-		}
-
-		public override bool IsMutuallyAuthenticated { 
-			get { return IsAuthenticated && (IsServer ? RemoteCertificate != null : LocalCertificate != null); }
-		}
-
-		public override bool IsServer { 
-			get { return ssl_stream is SslServerStream; }
-		}
-
-		public override bool IsSigned { 
-			get { return IsAuthenticated; }
-		}
-
-		public override int ReadTimeout {
-			get { return InnerStream.ReadTimeout; }
-			set { InnerStream.ReadTimeout = value; }
-		}
-
-		public override int WriteTimeout {
-			get { return InnerStream.WriteTimeout; }
-			set { InnerStream.WriteTimeout = value; }
-		}
-
-		// SslStream
-
-		public virtual bool CheckCertRevocationStatus {
-			get {
-				if (!IsAuthenticated)
-					return false;
-
-				return ssl_stream.CheckCertRevocationStatus;
-			}
-		}
-
-		public virtual CipherAlgorithmType CipherAlgorithm  {
-			get {
-				CheckConnectionAuthenticated ();
-
-				switch (ssl_stream.CipherAlgorithm) {
-				case MonoCipherAlgorithmType.Des:
-					return CipherAlgorithmType.Des;
-				case MonoCipherAlgorithmType.None:
-					return CipherAlgorithmType.None;
-				case MonoCipherAlgorithmType.Rc2:
-					return CipherAlgorithmType.Rc2;
-				case MonoCipherAlgorithmType.Rc4:
-					return CipherAlgorithmType.Rc4;
-				case MonoCipherAlgorithmType.SkipJack:
-					break;
-				case MonoCipherAlgorithmType.TripleDes:
-					return CipherAlgorithmType.TripleDes;
-				case MonoCipherAlgorithmType.Rijndael:
-					switch (ssl_stream.CipherStrength) {
-					case 128:
-						return CipherAlgorithmType.Aes128;
-					case 192:
-						return CipherAlgorithmType.Aes192;
-					case 256:
-						return CipherAlgorithmType.Aes256;
-					}
-					break;
-				}
-
-				throw new InvalidOperationException ("Not supported cipher algorithm is in use. It is likely a bug in SslStream.");
-			}
-		}
-
-		public virtual int CipherStrength  {
-			get {
-				CheckConnectionAuthenticated ();
-
-				return ssl_stream.CipherStrength;
-			}
-		}
-
-		public virtual HashAlgorithmType HashAlgorithm  {
-			get {
-				CheckConnectionAuthenticated ();
-
-				switch (ssl_stream.HashAlgorithm) {
-				case MonoHashAlgorithmType.Md5:
-					return HashAlgorithmType.Md5;
-				case MonoHashAlgorithmType.None:
-					return HashAlgorithmType.None;
-				case MonoHashAlgorithmType.Sha1:
-					return HashAlgorithmType.Sha1;
-				}
-
-				throw new InvalidOperationException ("Not supported hash algorithm is in use. It is likely a bug in SslStream.");
-			}
-		}
-
-		public virtual int HashStrength  {
-			get {
-				CheckConnectionAuthenticated ();
-
-				return ssl_stream.HashStrength;
-			}
-		}
-
-		public virtual ExchangeAlgorithmType KeyExchangeAlgorithm { 
-			get {
-				CheckConnectionAuthenticated ();
-
-				switch (ssl_stream.KeyExchangeAlgorithm) {
-				case MonoExchangeAlgorithmType.DiffieHellman:
-					return ExchangeAlgorithmType.DiffieHellman;
-				case MonoExchangeAlgorithmType.Fortezza:
-					break;
-				case MonoExchangeAlgorithmType.None:
-					return ExchangeAlgorithmType.None;
-				case MonoExchangeAlgorithmType.RsaKeyX:
-					return ExchangeAlgorithmType.RsaKeyX;
-				case MonoExchangeAlgorithmType.RsaSign:
-					return ExchangeAlgorithmType.RsaSign;
-				}
-
-				throw new InvalidOperationException ("Not supported exchange algorithm is in use. It is likely a bug in SslStream.");
-			}
-		}
-
-		public virtual int KeyExchangeStrength { 
-			get {
-				CheckConnectionAuthenticated ();
-
-				return ssl_stream.KeyExchangeStrength;
-			}
-		}
-
-		public virtual X509Certificate LocalCertificate {
-			get {
-				CheckConnectionAuthenticated ();
-
-				return IsServer ? ssl_stream.ServerCertificate : ((SslClientStream) ssl_stream).SelectedClientCertificate;
-			}
-		}
-
-		public virtual X509Certificate RemoteCertificate {
-			get {
-				CheckConnectionAuthenticated ();
-				return !IsServer ? ssl_stream.ServerCertificate : ((SslServerStream) ssl_stream).ClientCertificate;
-			}
-		}
-
-		public virtual SslProtocols SslProtocol {
-			get {
-				CheckConnectionAuthenticated ();
-
-				switch (ssl_stream.SecurityProtocol) {
-				case MonoSecurityProtocolType.Default:
-					return SslProtocols.Default;
-				case MonoSecurityProtocolType.Ssl2:
-					return SslProtocols.Ssl2;
-				case MonoSecurityProtocolType.Ssl3:
-					return SslProtocols.Ssl3;
-				case MonoSecurityProtocolType.Tls:
-					return SslProtocols.Tls;
-				}
-
-				throw new InvalidOperationException ("Not supported SSL/TLS protocol is in use. It is likely a bug in SslStream.");
-			}
-		}
-
-		#endregion // Properties
-
-		#region Methods
-/*
-		AsymmetricAlgorithm GetPrivateKey (X509Certificate cert, string targetHost)
-		{
-			// FIXME: what can I do for non-X509Certificate2 ?
-			X509Certificate2 cert2 = cert as X509Certificate2;
-			return cert2 != null ? cert2.PrivateKey : null;
-		}
-*/
-		X509Certificate OnCertificateSelection (X509CertificateCollection clientCerts, X509Certificate serverCert, string targetHost, X509CertificateCollection serverRequestedCerts)
-		{
-			string [] acceptableIssuers = new string [serverRequestedCerts != null ? serverRequestedCerts.Count : 0];
-			for (int i = 0; i < acceptableIssuers.Length; i++)
-				acceptableIssuers [i] = serverRequestedCerts [i].GetIssuerName ();
-			return selection_callback (this, targetHost, clientCerts, serverCert, acceptableIssuers);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
-		{
-			return BeginAuthenticateAsClient (targetHost, new X509CertificateCollection (), SslProtocols.Tls, false, asyncCallback, asyncState);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-		{
-			if (IsAuthenticated)
-				throw new InvalidOperationException ("This SslStream is already authenticated");
-
-			SslClientStream s = new SslClientStream (InnerStream, targetHost, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols), clientCertificates);
-			s.CheckCertRevocationStatus = checkCertificateRevocation;
-
-			// Due to the Mono.Security internal, it cannot reuse
-			// the delegated argument, as Mono.Security creates 
-			// another instance of X509Certificate which lacks 
-			// private key but is filled the private key via this
-			// delegate.
-			s.PrivateKeyCertSelectionDelegate = delegate (X509Certificate cert, string host) {
-				string hash = cert.GetCertHashString ();
-				// ... so, we cannot use the delegate argument.
-				foreach (X509Certificate cc in clientCertificates) {
-					if (cc.GetCertHashString () != hash)
-						continue;
-					X509Certificate2 cert2 = cc as X509Certificate2;
-					cert2 = cert2 ?? new X509Certificate2 (cc);
-					return cert2.PrivateKey;
-				}
-				return null;
-			};
-
-			// Even if validation_callback is null this allows us to verify requests where the user
-			// does not provide a verification callback but attempts to authenticate with the website
-			// as a client (see https://bugzilla.xamarin.com/show_bug.cgi?id=18962 for an example)
+			var provider = GetProvider ();
 			var settings = new MonoTlsSettings ();
-			settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (validation_callback);
-			var helper = MNS.ChainValidationHelper.Create (ref settings, null);
-			s.ServerCertValidation2 += (certs) => helper.ValidateChain (targetHost, certs);
-			if (selection_callback != null)
-				s.ClientCertSelectionDelegate = OnCertificateSelection;
-
-			ssl_stream = s;
-
-			return BeginWrite (new byte [0], 0, 0, asyncCallback, asyncState);
+			settings.RemoteCertificateValidationCallback = MNS.Private.CallbackHelpers.PublicToMono (userCertificateValidationCallback);
+			settings.ClientCertificateSelectionCallback = MNS.Private.CallbackHelpers.PublicToMono (userCertificateSelectionCallback);
+			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
 		}
 
-		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoSslStream impl)
+			: base (innerStream, leaveInnerStreamOpen)
 		{
-			CheckConnectionAuthenticated ();
-
-			return ssl_stream.BeginRead (buffer, offset, count, asyncCallback, asyncState);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
-		{
-			return BeginAuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false, asyncCallback, asyncState);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-		{
-			if (IsAuthenticated)
-				throw new InvalidOperationException ("This SslStream is already authenticated");
-
-			SslServerStream s = new SslServerStream (InnerStream, serverCertificate, clientCertificateRequired, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols));
-			s.CheckCertRevocationStatus = checkCertificateRevocation;
-			// Due to the Mono.Security internal, it cannot reuse
-			// the delegated argument, as Mono.Security creates 
-			// another instance of X509Certificate which lacks 
-			// private key but is filled the private key via this
-			// delegate.
-			s.PrivateKeyCertSelectionDelegate = delegate (X509Certificate cert, string targetHost) {
-				// ... so, we cannot use the delegate argument.
-				X509Certificate2 cert2 = serverCertificate as X509Certificate2 ?? new X509Certificate2 (serverCertificate);
-				return cert2 != null ? cert2.PrivateKey : null;
-			};
-
-			if (validation_callback != null)
-				s.ClientCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
-					X509Chain chain = null;
-					if (cert is X509Certificate2) {
-						chain = new X509Chain ();
-						chain.Build ((X509Certificate2) cert);
-					}
-					// FIXME: SslPolicyErrors is incomplete
-					SslPolicyErrors errors = certErrors.Length > 0 ? SslPolicyErrors.RemoteCertificateChainErrors : SslPolicyErrors.None;
-					return validation_callback (this, cert, chain, errors);
-				};
-
-			ssl_stream = s;
-
-			return BeginWrite (new byte[0], 0, 0, asyncCallback, asyncState);
-		}
-
-		MonoSecurityProtocolType GetMonoSslProtocol (SslProtocols ms)
-		{
-			switch (ms) {
-			case SslProtocols.Ssl2:
-				return MonoSecurityProtocolType.Ssl2;
-			case SslProtocols.Ssl3:
-				return MonoSecurityProtocolType.Ssl3;
-			case SslProtocols.Tls:
-				return MonoSecurityProtocolType.Tls;
-			default:
-				return MonoSecurityProtocolType.Default;
-			}
-		}
-
-		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
-		{
-			CheckConnectionAuthenticated ();
-
-			return ssl_stream.BeginWrite (buffer, offset, count, asyncCallback, asyncState);
+			this.impl = impl;
 		}
 
 		public virtual void AuthenticateAsClient (string targetHost)
 		{
-			AuthenticateAsClient (targetHost, new X509CertificateCollection (), SslProtocols.Tls, false);
+			Impl.AuthenticateAsClient (targetHost);
 		}
 
-		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual void AuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			EndAuthenticateAsClient (BeginAuthenticateAsClient (
-				targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, null, null));
+			Impl.AuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
 		}
 
-		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
+		[HostProtection (ExternalThreading=true)]
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
 		{
-			AuthenticateAsServer (serverCertificate, false, SslProtocols.Tls, false);
+			return Impl.BeginAuthenticateAsClient (targetHost, asyncCallback, asyncState);
 		}
 
-		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		[HostProtection (ExternalThreading=true)]
+		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
-			EndAuthenticateAsServer (BeginAuthenticateAsServer (
-				serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, null, null));
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				if (ssl_stream != null)
-					ssl_stream.Dispose ();
-				ssl_stream = null;
-			}
-			base.Dispose (disposing);
+			return Impl.BeginAuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
 		{
-			CheckConnectionAuthenticated ();
+			Impl.EndAuthenticateAsClient (asyncResult);
+		}
 
-			if (CanRead)
-				ssl_stream.EndRead (asyncResult);
-			else
-				ssl_stream.EndWrite (asyncResult);
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
+		{
+			Impl.AuthenticateAsServer (serverCertificate);
+		}
+
+		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		{
+			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
+		}
+
+		[HostProtection (ExternalThreading=true)]
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
+		{
+			return Impl.BeginAuthenticateAsServer (serverCertificate, asyncCallback, asyncState);
+		}
+
+		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+		{
+			return Impl.BeginAuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
 		}
 
 		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
 		{
-			CheckConnectionAuthenticated ();
-
-			if (CanRead)
-				ssl_stream.EndRead (asyncResult);
-			else
-				ssl_stream.EndWrite (asyncResult);
+			Impl.EndAuthenticateAsServer (asyncResult);
 		}
 
-		public override int EndRead (IAsyncResult asyncResult)
-		{
-			CheckConnectionAuthenticated ();
-
-			return ssl_stream.EndRead (asyncResult);
+		public TransportContext TransportContext {
+			get {
+				throw new NotSupportedException();
+			}
 		}
 
-		public override void EndWrite (IAsyncResult asyncResult)
-		{
-			CheckConnectionAuthenticated ();
-
-			ssl_stream.EndWrite (asyncResult);
-		}
-
-		public override void Flush ()
-		{
-			CheckConnectionAuthenticated ();
-
-			InnerStream.Flush ();
-		}
-
-		public override int Read (byte[] buffer, int offset, int count)
-		{
-			return EndRead (BeginRead (buffer, offset, count, null, null));
-		}
-
-		public override long Seek (long offset, SeekOrigin origin)
-		{
-			throw new NotSupportedException ("This stream does not support seek operations");
-		}
-
-		public override void SetLength (long value)
-		{
-			InnerStream.SetLength (value);
-		}
-
-		public override void Write (byte[] buffer, int offset, int count)
-		{
-			EndWrite (BeginWrite (buffer, offset, count, null, null));
-		}
-
-		public void Write (byte[] buffer)
-		{
-			Write (buffer, 0, buffer.Length);
-		}
-
-		void CheckConnectionAuthenticated ()
-		{
-			if (!IsAuthenticated)
-				throw new InvalidOperationException ("This operation is invalid until it is successfully authenticated");
-		}
-
+		[HostProtection (ExternalThreading=true)]
 		public virtual Task AuthenticateAsClientAsync (string targetHost)
 		{
-			return Task.Factory.FromAsync (BeginAuthenticateAsClient, EndAuthenticateAsClient, targetHost, null);
+			return Impl.AuthenticateAsClientAsync (targetHost);
 		}
 
-		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+		public virtual Task AuthenticateAsClientAsync (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			var t = Tuple.Create (targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, this);
-
-			return Task.Factory.FromAsync ((callback, state) => {
-				var d = (Tuple<string, X509CertificateCollection, SslProtocols, bool, SslStream>) state;
-				return d.Item5.BeginAuthenticateAsClient (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
-			}, EndAuthenticateAsClient, t);
+			return Impl.AuthenticateAsClientAsync (targetHost, clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
 		}
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
 		{
-			return Task.Factory.FromAsync (BeginAuthenticateAsServer, EndAuthenticateAsServer, serverCertificate, null);
+			return Impl.AuthenticateAsServerAsync (serverCertificate);
 		}
 
 		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
 		{
-			var t = Tuple.Create (serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, this);
-
-			return Task.Factory.FromAsync ((callback, state) => {
-				var d = (Tuple<X509Certificate, bool, SslProtocols, bool, SslStream>) state;
-				return d.Item5.BeginAuthenticateAsServer (d.Item1, d.Item2, d.Item3, d.Item4, callback, null);
-			}, EndAuthenticateAsServer, t);
+			return Impl.AuthenticateAsServerAsync (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
 		}
 
-		#endregion // Methods
+		public override bool IsAuthenticated {
+			get { return Impl.IsAuthenticated; }
+		}
+
+		public override bool IsMutuallyAuthenticated {
+			get { return Impl.IsMutuallyAuthenticated; }
+		}
+
+		public override bool IsEncrypted {
+			get { return Impl.IsEncrypted; }
+		}
+
+		public override bool IsSigned {
+			get { return Impl.IsSigned; }
+		}
+
+		public override bool IsServer {
+			get { return Impl.IsServer; }
+		}
+
+		public virtual SslProtocols SslProtocol {
+			get { return (SslProtocols)Impl.SslProtocol; }
+		}
+
+		public virtual bool CheckCertRevocationStatus {
+			get { return Impl.CheckCertRevocationStatus; }
+		}
+
+		X509Certificate MNS.IMonoSslStream.InternalLocalCertificate {
+			get { return Impl.InternalLocalCertificate; }
+		}
+
+		public virtual X509Certificate LocalCertificate {
+			get { return Impl.LocalCertificate; }
+		}
+
+		public virtual X509Certificate RemoteCertificate {
+			get { return Impl.RemoteCertificate; }
+		}
+
+		public virtual CipherAlgorithmType CipherAlgorithm {
+			get { return (CipherAlgorithmType)Impl.CipherAlgorithm; }
+		}
+
+		public virtual int CipherStrength {
+			get { return Impl.CipherStrength; }
+		}
+
+		public virtual HashAlgorithmType HashAlgorithm {
+			get { return (HashAlgorithmType)Impl.HashAlgorithm; }
+		}
+
+		public virtual int HashStrength {
+			get { return Impl.HashStrength; }
+		}
+
+		public virtual ExchangeAlgorithmType KeyExchangeAlgorithm {
+			get { return (ExchangeAlgorithmType)Impl.KeyExchangeAlgorithm; }
+		}
+
+		public virtual int KeyExchangeStrength {
+			get { return Impl.KeyExchangeStrength; }
+		}
+
+		public override bool CanSeek {
+			get { return false; }
+		}
+
+		public override bool CanRead {
+			get { return Impl.CanRead; }
+		}
+
+		public override bool CanTimeout {
+			get { return Impl.CanTimeout; }
+		}
+
+		public override bool CanWrite {
+			get { return Impl.CanWrite; }
+		}
+
+		public override int ReadTimeout {
+			get { return Impl.ReadTimeout; }
+			set { Impl.ReadTimeout = value; }
+		}
+
+		public override int WriteTimeout {
+			get { return Impl.WriteTimeout; }
+			set { Impl.WriteTimeout = value; }
+		}
+
+		public override long Length {
+			get { return Impl.Length; }
+		}
+
+		public override long Position {
+			get { return Impl.Position; }
+			set {
+				throw new NotSupportedException (SR.GetString (SR.net_noseek));
+			}
+		}
+
+		public override void SetLength (long value)
+		{
+			Impl.SetLength (value);
+		}
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			throw new NotSupportedException (SR.GetString (SR.net_noseek));
+		}
+
+		public override void Flush ()
+		{
+			Impl.Flush ();
+		}
+
+		void CheckDisposed ()
+		{
+			if (impl == null)
+				throw new ObjectDisposedException ("MonoSslStream");
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			try {
+				if (impl != null && disposing) {
+					impl.Dispose ();
+					impl = null;
+				}
+			} finally {
+				base.Dispose (disposing);
+			}
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			return Impl.Read (buffer, offset, count);
+		}
+
+		public void Write (byte[] buffer)
+		{
+			Impl.Write (buffer);
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			Impl.Write (buffer, offset, count);
+		}
+
+		[HostProtection (ExternalThreading=true)]
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		{
+			return Impl.BeginRead (buffer, offset, count, asyncCallback, asyncState);
+		}
+
+		public override int EndRead (IAsyncResult asyncResult)
+		{
+			return Impl.EndRead (asyncResult);
+		}
+
+		[HostProtection (ExternalThreading=true)]
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		{
+			return Impl.BeginWrite (buffer, offset, count, asyncCallback, asyncState);
+		}
+
+		public override void EndWrite (IAsyncResult asyncResult)
+		{
+			Impl.EndWrite (asyncResult);
+		}
+
+		AuthenticatedStream MNS.IMonoSslStream.AuthenticatedStream {
+			get { return this; }
+		}
 	}
 }
 
