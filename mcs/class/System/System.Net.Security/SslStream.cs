@@ -152,13 +152,13 @@ namespace System.Net.Security
 			Impl.AuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
 		{
 			return Impl.BeginAuthenticateAsClient (targetHost, asyncCallback, asyncState);
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, XX509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 		{
 			return Impl.BeginAuthenticateAsClient (targetHost, (XX509CertificateCollection)(object)clientCertificates, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation, asyncCallback, asyncState);
@@ -179,7 +179,7 @@ namespace System.Net.Security
 			Impl.AuthenticateAsServer (serverCertificate, clientCertificateRequired, (XSslProtocols)enabledSslProtocols, checkCertificateRevocation);
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
 		{
 			return Impl.BeginAuthenticateAsServer (serverCertificate, asyncCallback, asyncState);
@@ -201,7 +201,7 @@ namespace System.Net.Security
 			}
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public virtual Task AuthenticateAsClientAsync (string targetHost)
 		{
 			return Impl.AuthenticateAsClientAsync (targetHost);
@@ -371,7 +371,7 @@ namespace System.Net.Security
 			Impl.Write (buffer, offset, count);
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
 		{
 			return Impl.BeginRead (buffer, offset, count, asyncCallback, asyncState);
@@ -382,7 +382,7 @@ namespace System.Net.Security
 			return Impl.EndRead (asyncResult);
 		}
 
-		[HostProtection (ExternalThreading=true)]
+		// [HostProtection (ExternalThreading=true)]
 		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
 		{
 			return Impl.BeginWrite (buffer, offset, count, asyncCallback, asyncState);
