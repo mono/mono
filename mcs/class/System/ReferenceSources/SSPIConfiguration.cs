@@ -31,11 +31,16 @@ using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
+using Mono.Net.Security;
 
 namespace System.Net.Security
 {
 	internal interface SSPIConfiguration
 	{
+		IMonoTlsProvider Provider {
+			get;
+		}
+
 		MonoTlsSettings Settings {
 			get;
 		}

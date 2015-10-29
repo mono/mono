@@ -77,16 +77,13 @@ namespace System.Net.Security
 		                                           bool remoteCertRequired, bool checkCertName, bool checkCertRevocationStatus, EncryptionPolicy encryptionPolicy,
 		                                           LocalCertSelectionCallback certSelectionDelegate, RemoteCertValidationCallback remoteValidationCallback, SSPIConfiguration userConfig)
 		{
-			var provider = MNS.MonoTlsProviderFactory.GetProviderInternal ();
-			var settings = userConfig != null ? userConfig.Settings : null;
-			var eventSink = userConfig != null ? userConfig.EventSink : null;
-			if (settings != null && remoteValidationCallback != null)
+			if (userConfig.Settings != null && remoteValidationCallback != null)
 				throw new InvalidOperationException ();
-			var context = provider.CreateTlsContext (
+			var context = userConfig.Provider.CreateTlsContext (
 				hostname, serverMode, (TlsProtocols)protocolFlags, serverCertificate, clientCertificates,
 				remoteCertRequired, checkCertName, checkCertRevocationStatus,
-				(MonoEncryptionPolicy)encryptionPolicy, settings);
-			return new SSPIInterface (context, eventSink);
+				(MonoEncryptionPolicy)encryptionPolicy, userConfig.Settings);
+			return new SSPIInterface (context, userConfig.EventSink);
 		}
 	}
 

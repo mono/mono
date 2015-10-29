@@ -10,7 +10,7 @@ using Mono.Security.Interface;
 #endif
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Net.Security;
+using MNS = Mono.Net.Security;
 
 namespace System.Net.Security
 {
@@ -22,19 +22,20 @@ namespace System.Net.Security
 		#if SECURITY_DEP
 		SSPIConfiguration _Configuration;
 
-		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, EncryptionPolicy encryptionPolicy, MonoTlsSettings settings)
+		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, EncryptionPolicy encryptionPolicy, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			if (encryptionPolicy != EncryptionPolicy.RequireEncryption && encryptionPolicy != EncryptionPolicy.AllowNoEncryption && encryptionPolicy != EncryptionPolicy.NoEncryption)
 				throw new ArgumentException (SR.GetString (SR.net_invalid_enum, "EncryptionPolicy"), "encryptionPolicy");
 
-			var validationHelper = ChainValidationHelper.CloneWithCallbackWrapper (ref settings, myUserCertValidationCallbackWrapper);
+			var validationHelper = MNS.ChainValidationHelper.CloneWithCallbackWrapper (ref settings, myUserCertValidationCallbackWrapper);
 
 			LocalCertSelectionCallback selectionCallback = null;
 			if (validationHelper.HasCertificateSelectionCallback)
 				selectionCallback = validationHelper.SelectClientCertificate;
 
-			_Configuration = new MyConfiguration (settings, this);
+			var internalProvider = new MNS.Private.MonoTlsProviderWrapper (provider);
+			_Configuration = new MyConfiguration (internalProvider, settings, this);
 			_SslState = new SslState (innerStream, null, selectionCallback, encryptionPolicy, _Configuration);
 		}
 
@@ -54,18 +55,24 @@ namespace System.Net.Security
 				return (sslPolicyErrors == MonoSslPolicyErrors.None);
 			}
 
-			return ChainValidationHelper.InvokeCallback (callback, this, certificate, chain, sslPolicyErrors);
+			return MNS.ChainValidationHelper.InvokeCallback (callback, this, certificate, chain, sslPolicyErrors);
 		}
 
 		class MyConfiguration : SSPIConfiguration
 		{
+			MNS.IMonoTlsProvider provider;
 			MonoTlsSettings settings;
 			IMonoTlsEventSink eventSink;
 
-			public MyConfiguration (MonoTlsSettings settings, IMonoTlsEventSink eventSink)
+			public MyConfiguration (MNS.IMonoTlsProvider provider, MonoTlsSettings settings, IMonoTlsEventSink eventSink)
 			{
+				this.provider = provider;
 				this.settings = settings;
 				this.eventSink = eventSink;
+			}
+
+			public MNS.IMonoTlsProvider Provider {
+				get { return provider; }
 			}
 
 			public MonoTlsSettings Settings {
