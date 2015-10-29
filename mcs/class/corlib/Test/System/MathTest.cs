@@ -16,8 +16,7 @@ namespace MonoTests.System
 	[TestFixture]
 	public class MathTest
 	{
-		private static double double_epsilon =
-			double.Epsilon;
+		private static double double_epsilon = 2.2204460492503131e-16; /* DBL_EPSILON = 2^-52 */
 
 		static double x = 0.1234;
 		static double y = 12.345;
@@ -488,7 +487,7 @@ namespace MonoTests.System
 			//
 			// when using double_epsilon. Precision differs between different ARM CPUs, so we
 			// will just use a more conservative value
-			precision = 1.3636094460602122 - 1.3636094460602119;
+			precision = double_epsilon * 10;
 #else
 			precision = double_epsilon;
 #endif
