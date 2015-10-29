@@ -66,6 +66,13 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		/*
+		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
+		 */
+		public TlsProtocols? EnabledProtocols {
+			get; set;
+		}
+
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
