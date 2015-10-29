@@ -53,7 +53,6 @@ namespace System.Net {
 		ArrayList unhandled; // List<ListenerPrefix> unhandled; host = '*'
 		ArrayList all;       // List<ListenerPrefix> all;  host = '+'
 		X509Certificate2 cert;
-		AsymmetricAlgorithm key;
 		bool secure;
 		Dictionary<HttpConnection, HttpConnection> unregistered;
 
@@ -90,7 +89,7 @@ namespace System.Net {
 				if (!File.Exists (pvk_file))
 					return;
 				cert = new X509Certificate2 (cert_file);
-				key = PrivateKey.CreateFromFile (pvk_file).RSA;
+				cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
 			} catch {
 				// ignore errors
 			}
@@ -121,11 +120,11 @@ namespace System.Net {
 			if (accepted == null)
 				return;
 
-			if (epl.secure && (epl.cert == null || epl.key == null)) {
+			if (epl.secure && (epl.cert == null || !epl.cert.HasPrivateKey)) {
 				accepted.Close ();
 				return;
 			}
-			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);
+			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure, epl.cert);
 			lock (epl.unregistered) {
 				epl.unregistered [conn] = conn;
 			}

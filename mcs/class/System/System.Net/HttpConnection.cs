@@ -28,20 +28,32 @@
 //
 
 #if SECURITY_DEP
-
-#if MONOTOUCH || MONODROID
-using Mono.Security.Protocol.Tls;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+#if MONO_X509_ALIAS
+extern alias PrebuiltSystem;
+#endif
+
+#if MONO_SECURITY_ALIAS
+using MSI = MonoSecurity::Mono.Security.Interface;
+#else
+using MSI = Mono.Security.Interface;
+#endif
+#if MONO_X509_ALIAS
+using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#else
+using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Mono.Net.Security;
 
 namespace System.Net {
 	sealed class HttpConnection
@@ -62,27 +74,38 @@ namespace System.Net {
 		int reuses;
 		bool context_bound;
 		bool secure;
-		AsymmetricAlgorithm key;
+		X509Certificate2 cert;
 		int s_timeout = 90000; // 90k ms for first request, 15k ms from then on
 		Timer timer;
 		IPEndPoint local_ep;
 		HttpListener last_listener;
 		int [] client_cert_errors;
 		X509Certificate2 client_cert;
+		IMonoSslStream ssl_stream;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
+		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert)
 		{
 			this.sock = sock;
 			this.epl = epl;
 			this.secure = secure;
-			this.key = key;
+			this.cert = cert;
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
-				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, true, false);
-				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
-				ssl_stream.ClientCertValidationDelegate += OnClientCertificateValidation;
-				stream = ssl_stream;
+				var tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
+				var settings = new MSI.MonoTlsSettings ();
+				settings.RemoteCertificateValidationCallback = (t, c, ch, e) => {
+					if (c == null)
+						return true;
+					var c2 = c as X509Certificate2;
+					if (c2 == null)
+						c2 = new X509Certificate2 (c.GetRawCertData ());
+					client_cert = c2;
+					client_cert_errors = new int[] { (int)e };
+					return true;
+				};
+				ssl_stream = tlsProvider.CreateSslStream (new NetworkStream (sock, false), false, settings);
+				stream = ssl_stream.AuthenticatedStream;
 			}
 			timer = new Timer (OnTimeout, null, Timeout.Infinite, Timeout.Infinite);
 			Init ();
@@ -96,25 +119,12 @@ namespace System.Net {
 			get { return client_cert; }
 		}
 
-		bool OnClientCertificateValidation (X509Certificate certificate, int[] errors)
-		{
-			if (certificate == null)
-				return true;
-			X509Certificate2 cert = certificate as X509Certificate2;
-			if (cert == null)
-				cert = new X509Certificate2 (certificate.GetRawCertData ());
-			client_cert = cert;
-			client_cert_errors = errors;
-			return true;
-		}
-
-		AsymmetricAlgorithm OnPVKSelection (X509Certificate certificate, string targetHost)
-		{
-			return key;
-		}
-
 		void Init ()
 		{
+			if (ssl_stream != null) {
+				ssl_stream.AuthenticateAsServer (cert, true, (SslProtocols)ServicePointManager.SecurityProtocol, false);
+			}
+
 			context_bound = false;
 			i_stream = null;
 			o_stream = null;
