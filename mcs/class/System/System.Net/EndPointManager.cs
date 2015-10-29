@@ -107,7 +107,7 @@ namespace System.Net {
 			if (p.ContainsKey (port)) {
 				epl = (EndPointListener) p [port];
 			} else {
-				epl = new EndPointListener (addr, port, secure);
+				epl = new EndPointListener (listener, addr, port, secure);
 				p [port] = epl;
 			}
 

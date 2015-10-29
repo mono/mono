@@ -47,6 +47,7 @@ using System.Threading;
 namespace System.Net {
 	sealed class EndPointListener
 	{
+		HttpListener listener;
 		IPEndPoint endpoint;
 		Socket sock;
 		Hashtable prefixes;  // Dictionary <ListenerPrefix, HttpListener>
@@ -56,11 +57,13 @@ namespace System.Net {
 		bool secure;
 		Dictionary<HttpConnection, HttpConnection> unregistered;
 
-		public EndPointListener (IPAddress addr, int port, bool secure)
+		public EndPointListener (HttpListener listener, IPAddress addr, int port, bool secure)
 		{
+			this.listener = listener;
+
 			if (secure) {
 				this.secure = secure;
-				LoadCertificateAndKey (addr, port);
+				cert = listener.LoadCertificateAndKey (addr, port);
 			}
 
 			endpoint = new IPEndPoint (addr, port);
@@ -75,24 +78,8 @@ namespace System.Net {
 			unregistered = new Dictionary<HttpConnection, HttpConnection> ();
 		}
 
-		void LoadCertificateAndKey (IPAddress addr, int port)
-		{
-			// Actually load the certificate
-			try {
-				string dirname = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
-				string path = Path.Combine (dirname, ".mono");
-				path = Path.Combine (path, "httplistener");
-				string cert_file = Path.Combine (path, String.Format ("{0}.cer", port));
-				if (!File.Exists (cert_file))
-					return;
-				string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
-				if (!File.Exists (pvk_file))
-					return;
-				cert = new X509Certificate2 (cert_file);
-				cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
-			} catch {
-				// ignore errors
-			}
+		internal HttpListener Listener {
+			get { return listener; }
 		}
 
 		static void OnAccept (object sender, EventArgs e)

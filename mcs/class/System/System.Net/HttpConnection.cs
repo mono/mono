@@ -92,9 +92,7 @@ namespace System.Net {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
-				var tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
-				var settings = new MSI.MonoTlsSettings ();
-				settings.RemoteCertificateValidationCallback = (t, c, ch, e) => {
+				ssl_stream = epl.Listener.CreateSslStream (new NetworkStream (sock, false), false, (t, c, ch, e) => {
 					if (c == null)
 						return true;
 					var c2 = c as X509Certificate2;
@@ -103,8 +101,7 @@ namespace System.Net {
 					client_cert = c2;
 					client_cert_errors = new int[] { (int)e };
 					return true;
-				};
-				ssl_stream = tlsProvider.CreateSslStream (new NetworkStream (sock, false), false, settings);
+				});
 				stream = ssl_stream.AuthenticatedStream;
 			}
 			timer = new Timer (OnTimeout, null, Timeout.Infinite, Timeout.Infinite);

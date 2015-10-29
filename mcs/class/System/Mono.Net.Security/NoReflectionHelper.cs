@@ -33,6 +33,7 @@ using MX = MonoSecurity::Mono.Security.X509;
 using MSI = Mono.Security.Interface;
 using MX = Mono.Security.X509;
 #endif
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 using System;
@@ -95,6 +96,15 @@ namespace Mono.Net.Security
 		{
 			#if SECURITY_DEP
 			return MonoTlsProviderFactory.CreateHttpsRequest (requestUri, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
+		internal static object CreateHttpListener (object certificate, object provider, object settings)
+		{
+			#if SECURITY_DEP
+			return MonoTlsProviderFactory.CreateHttpListener ((X509Certificate2)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif

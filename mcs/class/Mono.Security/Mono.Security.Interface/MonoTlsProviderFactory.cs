@@ -26,6 +26,7 @@
 using System;
 using System.Net;
 using Mono.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
@@ -90,6 +91,11 @@ namespace Mono.Security.Interface
 		public static HttpWebRequest CreateHttpsRequest (System.Uri requestUri, MonoTlsProvider provider, MonoTlsSettings settings = null)
 		{
 			return NoReflectionHelper.CreateHttpsRequest (requestUri, provider, settings);
+		}
+
+		public static HttpListener CreateHttpListener (X509Certificate2 certificate, MonoTlsProvider provider = null, MonoTlsSettings settings = null)
+		{
+			return (HttpListener)NoReflectionHelper.CreateHttpListener (certificate, provider, settings);
 		}
 	}
 }

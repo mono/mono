@@ -33,6 +33,7 @@ using MX = MonoSecurity::Mono.Security.X509;
 using MSI = Mono.Security.Interface;
 using MX = Mono.Security.X509;
 #endif
+using System.Security.Cryptography.X509Certificates;
 #endif
 
 using System;
@@ -172,6 +173,14 @@ namespace Mono.Net.Security
 			lock (locker) {
 				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
 				return new HttpWebRequest (requestUri, internalProvider, settings);
+			}
+		}
+
+		internal static HttpListener CreateHttpListener (X509Certificate2 certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
+		{
+			lock (locker) {
+				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;
+				return new HttpListener (certificate, internalProvider, settings);
 			}
 		}
 		#endregion
