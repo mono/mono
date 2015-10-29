@@ -114,6 +114,7 @@ namespace Mono.Security.Interface
 			copy.callbackNeedsChain = callbackNeedsChain;
 			copy.UserSettings = UserSettings;
 			copy.certificateValidator = validator;
+			copy.EnabledProtocols = EnabledProtocols;
 			copy.cloned = true;
 			return copy;
 		}
