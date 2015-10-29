@@ -90,6 +90,8 @@ namespace Microsoft.Build.BuildEngine {
 		static XmlNamespaceManager	manager;
 		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 
+		Dictionary<string,IDictionary> buildOutputCache = new Dictionary<string, IDictionary> ();
+
 		public Project ()
 			: this (Engine.GlobalEngine)
 		{
@@ -576,6 +578,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			isDirty = true;
 			timeOfLastDirty = DateTime.Now;
+			ClearCachedBuildResults ();
 		}
 
 		[MonoTODO ("Not tested")]
@@ -858,6 +861,7 @@ namespace Microsoft.Build.BuildEngine {
 			} finally {
 				if (textReader != null)
 					textReader.Close ();
+				ClearCachedBuildResults ();
 			}
 		}
 
@@ -1664,5 +1668,55 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		internal IDictionary GetCachedBuildResults (string[] targetNames,
+			BuildPropertyGroup globalProperties,
+			BuildSettings buildFlags, string toolsVersion)
+		{
+			if (!CanCacheBuildResults (targetNames))
+				return null;
+			
+			var key = GetCacheKey (targetNames, globalProperties, buildFlags, toolsVersion);
+
+			IDictionary res;
+			buildOutputCache.TryGetValue (key, out res);
+			return res;
+		}
+
+		internal void CacheBuildResults (string[] targetNames,
+			BuildPropertyGroup globalProperties,
+			BuildSettings buildFlags, string toolsVersion, IDictionary targetOutputs)
+		{
+			if (!CanCacheBuildResults (targetNames))
+				return;
+
+			var key = GetCacheKey (targetNames, globalProperties, buildFlags, toolsVersion);
+			buildOutputCache [key] = targetOutputs;
+		}
+
+		void ClearCachedBuildResults ()
+		{
+			buildOutputCache.Clear ();
+		}
+
+		bool CanCacheBuildResults (string[] targetNames)
+		{
+			return targetNames.Length == 1 && (targetNames[0] == "GetTargetPath" || targetNames[0] == "GetCopyToOutputDirectoryItems");
+		}
+
+		string GetCacheKey (string[] targetNames,
+			BuildPropertyGroup globalProperties,
+			BuildSettings buildFlags, string toolsVersion)
+		{
+			var sb = new StringBuilder ();
+			foreach (var t in targetNames)
+				sb.Append (t).Append (',');
+			sb.AppendLine().Append (buildFlags).AppendLine().Append(toolsVersion);
+			if (globalProperties != null) {
+				sb.AppendLine();
+				foreach (BuildProperty bp in globalProperties)
+					sb.Append (bp.Name).Append('=').Append(bp.Value).Append('|');
+			}
+			return sb.ToString ();
+		}
 	}
 }
