@@ -394,7 +394,7 @@ namespace Mono.Net.Security
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("This SslStream is already authenticated");
 
-			SslServerStream s = new SslServerStream (InnerStream, serverCertificate, clientCertificateRequired, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols));
+			SslServerStream s = new SslServerStream (InnerStream, serverCertificate, false, clientCertificateRequired, !LeaveInnerStreamOpen, GetMonoSslProtocol (enabledSslProtocols));
 			s.CheckCertRevocationStatus = checkCertificateRevocation;
 			// Due to the Mono.Security internal, it cannot reuse
 			// the delegated argument, as Mono.Security creates 
