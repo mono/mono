@@ -240,17 +240,6 @@ namespace Mono.Net.Security
 			return result.Trusted && !result.UserDenied;
 		}
 
-		static XX509CertificateCollection Convert (MSX.X509CertificateCollection certificates)
-		{
-			if (certificates == null)
-				return null;
-
-			var certs2 = new XX509CertificateCollection ();
-			for (int i = 0; i < certificates.Count; i++)
-				certs2.Add (new X509Certificate2 (certificates [i].RawData));
-			return certs2;
-		}
-
 		internal static SystemCertificateValidator GetSystemCertificateValidator ()
 		{
 			return new SystemCertificateValidator ();
@@ -265,21 +254,6 @@ namespace Mono.Net.Security
 		{
 			try {
 				var result = ValidateChain (host, certs, 0);
-				if (tlsStream != null)
-					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
-				return result;
-			} catch {
-				if (tlsStream != null)
-					tlsStream.CertificateValidationFailed = true;
-				throw;
-			}
-		}
-
-		internal ValidationResult ValidateChain (string host, MSX.X509CertificateCollection certs)
-		{
-			try {
-				var certs2 = Convert (certs);
-				var result = ValidateChain (host, certs2, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
 				return result;
