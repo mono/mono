@@ -107,23 +107,20 @@ reset:
 
 __bump-version-%:
 	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
-	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	python versions.py set-rev $* $(REV)
-	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $(REV)." | git commit -F - $(CONFIG); fi
+	@if [ "$(COMMIT)" = "1" ]; then echo "[acceptance-tests] Bump $* to pick up $(REV)." | git commit -F - $(CONFIG); fi
 
 __bump-branch-%:
 	@if [ "$(BRANCH)" = "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
 	@if [ "$(REMOTE_BRANCH)" == "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
-	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	python versions.py set-branch $* $(BRANCH)
 	python versions.py set-remote-branch $* $(REMOTE_BRANCH)
-	@if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." | git commit -F - $(CONFIG); fi
+	@if [ "$(COMMIT)" = "1" ]; then echo "[acceptance-tests] Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." | git commit -F - $(CONFIG); fi
 
 __bump-current-version-%:
-	@if [ "$(COMMIT)" = "1" ]; then git pull; fi
 	REV=$(shell cd $(TOP)/../$* && git log -1 --pretty=format:%H); \
 	python versions.py set-rev $* $$REV; \
-	if [ "$(COMMIT)" = "1" ]; then echo "Bump $* to pick up $$REV:" | git commit -F - $(CONFIG); fi
+	if [ "$(COMMIT)" = "1" ]; then echo "[acceptance-tests] Bump $* to pick up $$REV:" | git commit -F - $(CONFIG); fi
 
 # Bump the given submodule to the revision given by the REV make variable
 # If COMMIT is 1, commit the change
