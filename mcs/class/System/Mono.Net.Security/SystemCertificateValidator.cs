@@ -125,7 +125,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public virtual bool EvaluateSystem (XX509CertificateCollection certs, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		public virtual bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			var leaf = certs [0];
 			var result = false;
@@ -145,7 +145,7 @@ namespace Mono.Net.Security
 				// Ideally we should return the SecTrustResult
 				OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;
 				try {
-					trustResult = OSX509Certificates.TrustEvaluateSsl (certs, host);
+					trustResult = OSX509Certificates.TrustEvaluateSsl (certs, anchors, host);
 					// We could use the other values of trustResult to pass this extra information
 					// to the .NET 2 callback for values like SecTrustResult.Confirm
 					result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||

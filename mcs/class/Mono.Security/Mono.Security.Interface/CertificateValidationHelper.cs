@@ -99,18 +99,33 @@ namespace Mono.Security.Interface
 	{
 		const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 		static readonly bool noX509Chain;
+		static readonly bool supportsTrustAnchors;
 
 		static CertificateValidationHelper ()
 		{
 			#if MONOTOUCH || XAMMAC
 			noX509Chain = true;
+			supportsTrustAnchors = true;
+			#elif MONODROID
+			noX509Chain = true;
+			supportsTrustAnchors = false;
 			#else
-			noX509Chain = File.Exists (SecurityLibrary);
+			if (File.Exists (SecurityLibrary)) {
+				noX509Chain = true;
+				supportsTrustAnchors = true;
+			} else {
+				noX509Chain = false;
+				supportsTrustAnchors = false;
+			}
 			#endif
 		}
 
 		public static bool SupportsX509Chain {
 			get { return !noX509Chain; }
+		}
+
+		public static bool SupportsTrustAnchors {
+			get { return supportsTrustAnchors; }
 		}
 
 		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)

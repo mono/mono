@@ -271,6 +271,7 @@ namespace Mono.Net.Security
 			bool result = false;
 
 			var hasCallback = certValidationCallback != null || callbackWrapper != null;
+			var anchors = settings != null ? settings.TrustAnchors : null;
 
 			var systemValidator = GetSystemCertificateValidator ();
 
@@ -319,7 +320,7 @@ namespace Mono.Net.Security
 			systemValidator.CheckUsage (certs, host, ref errors, ref status11);
 
 			if (!skipSystemValidators)
-				result = systemValidator.EvaluateSystem (certs, host, chain, ref errors, ref status11);
+				result = systemValidator.EvaluateSystem (certs, anchors, host, chain, ref errors, ref status11);
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;

@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
@@ -60,6 +61,13 @@ namespace Mono.Security.Interface
 		public bool CallbackNeedsCertificateChain {
 			get { return callbackNeedsChain; }
 			set { callbackNeedsChain = value; }
+		}
+
+		/*
+		 * This is only supported if CertificateValidationHelper.SupportsTrustAnchors is true.
+		 */
+		public X509CertificateCollection TrustAnchors {
+			get; set;
 		}
 
 		public object UserSettings {
@@ -115,6 +123,7 @@ namespace Mono.Security.Interface
 			copy.UserSettings = UserSettings;
 			copy.certificateValidator = validator;
 			copy.EnabledProtocols = EnabledProtocols;
+			copy.TrustAnchors = TrustAnchors;
 			copy.cloned = true;
 			return copy;
 		}
