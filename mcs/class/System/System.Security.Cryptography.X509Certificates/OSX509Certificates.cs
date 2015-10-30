@@ -21,12 +21,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if SECURITY_DEP
+#if MONO_X509_ALIAS
+extern alias PrebuiltSystem;
+#endif
 
-#if MONOTOUCH || MONODROID
-using MSX = Mono.Security.X509;
+#if MONO_X509_ALIAS
+using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #else
-extern alias MonoSecurity;
-using MSX = MonoSecurity::Mono.Security.X509;
+using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 
 using System;
@@ -93,7 +95,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 		
-		public static SecTrustResult TrustEvaluateSsl (X509Certificate2Collection certificates, string host)
+		public static SecTrustResult TrustEvaluateSsl (XX509CertificateCollection certificates, string host)
 		{
 			if (certificates == null)
 				return SecTrustResult.Deny;
@@ -105,7 +107,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		static SecTrustResult _TrustEvaluateSsl (X509Certificate2Collection certificates, string hostName)
+		static SecTrustResult _TrustEvaluateSsl (XX509CertificateCollection certificates, string hostName)
 		{
 			int certCount = certificates.Count;
 			IntPtr [] cfDataPtrs = new IntPtr [certCount];
@@ -118,7 +120,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			try {
 				for (int i = 0; i < certCount; i++)
-					cfDataPtrs [i] = MakeCFData (certificates [i].RawData);
+					cfDataPtrs [i] = MakeCFData (certificates [i].GetRawCertData ());
 				
 				for (int i = 0; i < certCount; i++){
 					secCerts [i] = SecCertificateCreateWithData (IntPtr.Zero, cfDataPtrs [i]);

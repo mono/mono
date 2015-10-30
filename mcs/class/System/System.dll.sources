@@ -626,6 +626,7 @@ Mono.Net.Security/MonoTlsProviderImpl.cs
 Mono.Net.Security/MonoTlsProviderWrapper.cs
 Mono.Net.Security/MonoTlsStream.cs
 Mono.Net.Security/NoReflectionHelper.cs
+Mono.Net.Security/SystemCertificateValidator.cs
 
 ReferenceSources/AssertWrapper.cs
 ReferenceSources/BinaryCompatibility.cs
