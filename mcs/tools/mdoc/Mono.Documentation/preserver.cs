@@ -7,6 +7,7 @@ using Mono.Options;
 
 namespace Mono.Documentation
 {
+	[Obsolete ("This functionality is no longer supported.")]
 	public class MDocPreserve : MDocCommand
 	{
 		MDocUpdater updater;
@@ -18,6 +19,8 @@ namespace Mono.Documentation
 
 		public override void Run (IEnumerable<string> args)
 		{
+			Message (System.Diagnostics.TraceLevel.Warning, "This functionality is no longer supported, and will be removed in a future release.");
+
 			string preserveName = string.Empty;
 			var p = new OptionSet () { { "name=",
 					"Root {DIRECTORY} to generate/update documentation.",
