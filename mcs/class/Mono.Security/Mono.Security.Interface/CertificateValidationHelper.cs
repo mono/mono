@@ -94,12 +94,8 @@ namespace Mono.Security.Interface
 
 		ValidationResult ValidateClientCertificate (X509CertificateCollection certificates);
 	}
-	#endif
 
-	#if !INSIDE_SYSTEM
-	public
-	#endif
-	static class CertificateValidationHelper
+	public static class CertificateValidationHelper
 	{
 		const string SecurityLibrary = "/System/Library/Frameworks/Security.framework/Security";
 		static readonly bool noX509Chain;
@@ -122,11 +118,10 @@ namespace Mono.Security.Interface
 			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (settings);
 		}
 
-		#if !INSIDE_SYSTEM
 		public static ICertificateValidator GetValidator (MonoTlsSettings settings)
 		{
 			return GetDefaultValidator (settings);
 		}
-		#endif
 	}
+#endif
 }
