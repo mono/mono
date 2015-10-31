@@ -99,7 +99,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Test]
 		public void ConstructorMisc ()
 		{
-			new DataContractJsonSerializer (typeof (GlobalSample1)).WriteObject (new MemoryStream (), new GlobalSample1 ());
+			new DataContractJsonSerializer (typeof (JsonGlobalSample1)).WriteObject (new MemoryStream (), new JsonGlobalSample1 ());
 		}
 
 		[Test]
@@ -1449,7 +1449,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Test]
 		public void DictionarySerialization ()
 		{
-			var dict = new MyDictionary<string,string> ();
+			var dict = new JsonMyDictionary<string,string> ();
 			dict.Add ("key", "value");
 			var serializer = new DataContractJsonSerializer (dict.GetType ());
 			var stream = new MemoryStream ();
@@ -1458,7 +1458,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 
 			Assert.AreEqual ("[{\"Key\":\"key\",\"Value\":\"value\"}]", new StreamReader (stream).ReadToEnd (), "#1");
 			stream.Position = 0;
-			dict = (MyDictionary<string,string>) serializer.ReadObject (stream);
+			dict = (JsonMyDictionary<string,string>) serializer.ReadObject (stream);
 			Assert.AreEqual (1, dict.Count, "#2");
 			Assert.AreEqual ("value", dict ["key"], "#3");
 		}
@@ -1899,9 +1899,9 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public void DefaultValueDeserialization ()
 		{
 			// value type
-			var person = new Person { name = "John" };
+			var person = new JsonPerson { name = "John" };
 			using (var ms = new MemoryStream()) {
-				var serializer = new DataContractJsonSerializer (typeof (Person), new DataContractJsonSerializerSettings {
+				var serializer = new DataContractJsonSerializer (typeof (JsonPerson), new DataContractJsonSerializerSettings {
 					SerializeReadOnlyTypes = true,
 					UseSimpleDictionaryFormat = true
 					});
@@ -1932,8 +1932,28 @@ namespace MonoTests.System.Runtime.Serialization.Json
 				Assert.AreEqual(@"{""Int0"":1,""Int1"":1,""IntZero1"":0,""Str0"":"""",""Str1"":"""",""StrNull1"":null}", output);
 			}
 		}
+
+		[Test]
+		public void Bug4230()
+		{
+			string serializedObj = @"{ ""Notifications"": null }";
+			Bug4230Response deserializedObj = Deserialize<Bug4230Response> (serializedObj);
+
+			Assert.IsNull (deserializedObj.Notifications);
+		}
 	}
-	
+
+	public class Bug4230Notification {
+	}
+
+	public class Bug4230Response
+	{
+		public Bug4230Notification[] Notifications
+		{
+			get;
+			set;
+		}
+	}
 
 	[DataContract]
 	public class Bug15028
@@ -2226,12 +2246,12 @@ namespace MonoTests.System.Runtime.Serialization.Json
 }
 
 [DataContract]
-class GlobalSample1
+class JsonGlobalSample1
 {
 }
 
 
-public class MyDictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
+public class JsonMyDictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
 {
 	Dictionary<K,V> dic = new Dictionary<K,V> ();
 
@@ -2764,7 +2784,7 @@ public class Bug13485Type
 
 #region DefaultValueDeserialization
     [DataContract]
-    public class Person
+    public class JsonPerson
     {
         [DataMember(EmitDefaultValue = false)]
         public string name { get; set; }
