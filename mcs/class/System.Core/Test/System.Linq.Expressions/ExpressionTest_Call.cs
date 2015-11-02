@@ -243,7 +243,7 @@ namespace MonoTests.System.Linq.Expressions {
 		public void CallMethodOnDateTime ()
 		{
 			var left = Expression.Call (Expression.Constant (DateTime.Now), typeof(DateTime).GetMethod ("AddDays"), Expression.Constant (-5.0));
-			var right = Expression.Constant (DateTime.Today);
+			var right = Expression.Constant (DateTime.Today.AddDays (1));
 			var expr = Expression.GreaterThan (left, right);
 
 			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
