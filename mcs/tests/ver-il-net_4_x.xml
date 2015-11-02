@@ -14546,6 +14546,9 @@
       <method name="Void Test_20()" attrs="129">
         <size>8</size>
       </method>
+      <method name="Void Test_21()" attrs="129">
+        <size>5</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">

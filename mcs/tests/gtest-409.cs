@@ -165,6 +165,11 @@ public class ConditionalParsing
 		var t = (Object)string.Empty;
 	}
 
+	void Test_21 ()
+	{
+		var t = (Int32)sbyte.MaxValue;
+	}
+
 	static void Helper<T> (T arg)
 	{
 	}
