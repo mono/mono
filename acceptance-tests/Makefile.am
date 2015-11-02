@@ -1180,10 +1180,6 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Regression/VS-ia64-JIT/V2.0-RTM/b539509/b539509.cs	\
 	$(CORECLR_PATH)/tests/src/Loader/regressions/classloader/main.cs	\
 	$(CORECLR_PATH)/tests/src/Loader/regressions/classloader/vsw307137.cs	\
-	$(CORECLR_PATH)/tests/src/Loader/regressions/classloader-generics/repro237932.cs	\
-	$(CORECLR_PATH)/tests/src/Loader/regressions/classloader-generics/StaticsProblem5.cs	\
-	$(CORECLR_PATH)/tests/src/Loader/regressions/classloader-generics/vsw514968.cs	\
-	$(CORECLR_PATH)/tests/src/Loader/typeinitialization/circularcctorthreethreads03.cs	\
 	$(CORECLR_PATH)/tests/src/managed/Compilation/HelloWorld.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/common/ArrayCopy.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/common/avtest.cs	\
@@ -3776,16 +3772,12 @@ CORECLR_TESTLIBRARY_CS_SRC = 	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Utilities.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/CalendarHelpers.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Generator.cs	\
-	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Env.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/EndianessChecker.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/GlobLocHelper.cs	\
 	$(CORECLR_PATH)/tests/src/Common/CoreCLRTestLibrary/Logging.cs
 
-# the ICastable interface isn't implemented in Mono yet:
-CORECLR_DISABLED_TEST_CS_SRC = $(CORECLR_PATH)/tests/src/Interop/ICastable/Castable.cs
-
 # needs parameters:
-CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Loader/regressions/polyrec/polyrec.cs
+CORECLR_DISABLED_TEST_CS_SRC = $(CORECLR_PATH)/tests/src/Loader/regressions/polyrec/polyrec.cs
 
 # relies on env vars:
 CORECLR_DISABLED_TEST_CS_SRC += 	\
@@ -3801,7 +3793,6 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/assem.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/test.cs		\
-	$(CORECLR_PATH)/tests/src/Interop/NativeCallable/NativeCallableTest.cs	\
 	$(CORECLR_PATH)/tests/src/Interop/ReversePInvoke/Marshalling/MarshalBoolArray.cs
 
 # relies on a define:
