@@ -3476,29 +3476,7 @@ namespace MonoTests.System.Net.Sockets
 			ss.Close ();
 			s.Close ();
 		}
-
-		// Test case for bug #31557
-		[Test]
-		public void TcpDoubleBind ()
-		{
-			using (Socket s = new Socket (AddressFamily.InterNetwork,
-						SocketType.Stream, ProtocolType.Tcp))
-			using (Socket ss = new Socket (AddressFamily.InterNetwork,
-						SocketType.Stream, ProtocolType.Tcp)) {
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-				s.Bind (new IPEndPoint (IPAddress.Any, 12345));
-				s.Listen(1);
-
-				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-				ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
-				ss.Listen(1);
-
-				// If we make it this far, we succeeded.
-			}
-		}
-
+		
 		[Test]
 		[Category ("NotOnMac")]
                 public void ConnectedProperty ()
