@@ -69,12 +69,15 @@ coreclr-compile-tests: coreclr-validate
 	$(MAKE) -j4 $(CORECLR_TESTSI_CS) $(CORECLR_COREMANGLIB_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
 coreclr-runtest-basic: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
-	@echo $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL) | tr " " "\n" > coreclr-testlist.txt
+	@rm -f coreclr-testlist.txt
+	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_CS))
+	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_IL))
 	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 --input-file coreclr-testlist.txt
 	@rm -f coreclr-testlist.txt
 
 coreclr-runtest-coremanglib: coreclr-validate test-runner.exe $(CORECLR_COREMANGLIB_TESTSI_CS)
-	@echo $(CORECLR_COREMANGLIB_TESTSI_CS) | tr " " "\n" > coreclr-testlist.txt
+	@rm -f coreclr-testlist.txt
+	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_COREMANGLIB_TESTSI_CS))
 	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr-coremanglib" --expected-exit-code 100 --input-file coreclr-testlist.txt
 	@rm -f coreclr-testlist.txt
 
@@ -82,6 +85,14 @@ check-coreclr: coreclr-compile-tests coreclr-runtest-basic coreclr-runtest-corem
 
 coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
 	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/testmix_gc.config
+
+# Output a variable in $(2) to the file $(1), separated by newline characters
+# we need to do it in groups of 100 entries to make sure we don't exceed shell char limits
+# note: the variable is appended to the file
+define dumpvariabletofile
+echo $(wordlist 1, 100, $(2)) | tr " " "\n" >> $(1)
+$(if $(word 101, $(2)), $(call dumpvariabletofile, $(1), $(wordlist 101, $(words $(2)), $(2))))
+endef
 
 CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/CodeGenBringUpTests/Add1.cs	\
