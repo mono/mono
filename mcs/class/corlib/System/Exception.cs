@@ -248,7 +248,7 @@ namespace System
 
 			info.AddValue ("ClassName", ClassName);
 			info.AddValue ("Message", _message);
-			info.AddValue ("InnerException", inner_exception);
+			info.AddValue ("InnerException", inner_exception, typeof (Exception));
 			info.AddValue ("HelpURL", help_link);
 			info.AddValue ("StackTraceString", StackTrace);
 			info.AddValue ("RemoteStackTraceString", _remoteStackTraceString);
