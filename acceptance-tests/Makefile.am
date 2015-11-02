@@ -3301,6 +3301,7 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttoint32_5.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttoint64_7.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttosbyte6.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttosbyte16.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttostring27.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/attributeusageattribute/attributeusageattributector.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/attributeusageattribute/attributeusageattributeallowmultiple.cs	\
@@ -3618,6 +3619,7 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32iconvertibletochar.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32iconvertibletoint16.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32iconvertibletouint16.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32iconvertibletosbyte.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32parse3.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32parse4.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/byte/byteiconvertibletoint16.cs	\
@@ -3723,6 +3725,7 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16iconvertibletosingle.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16iconvertibletotype.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16iconvertibletodatetime.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16iconvertibletosbyte.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16parse2.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/icomparable/icomparablecompareto.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/components/stopwatch/co9600ctor.cs	\
@@ -3839,12 +3842,6 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/JIT/SIMD/Vector3.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/SIMD/CtorFromArray.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/SIMD/Haar-likeFeaturesGeneric.cs
-
-# Fails to compile due to Mono/mcs bug 35410
-CORECLR_DISABLED_TEST_CS_SRC += 	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/convert/converttosbyte16.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int/int32iconvertibletosbyte.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/int16/int16iconvertibletosbyte.cs
 
 # unused files
 CORECLR_DISABLED_TEST_CS_SRC += 	\
