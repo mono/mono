@@ -1,3 +1,6 @@
+System.Runtime.Serialization.Json/DataContractJsonSerializerTest.cs
+System.Runtime.Serialization.Json/JsonReaderTest.cs
+System.Runtime.Serialization.Json/JsonWriterTest.cs
 System.Runtime.Serialization/Bug11916Test.cs
 System.Runtime.Serialization/Bug666333Test.cs
 System.Runtime.Serialization/Bug675144Test.cs
