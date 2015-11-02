@@ -1408,6 +1408,10 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
+			// Goto to unreachable label
+			if (label == null)
+				return true;
+
 			if (fc.AddReachedLabel (label))
 				return true;
 
@@ -1424,12 +1428,12 @@ namespace Mono.CSharp {
 
 			if (try_finally != null) {
 				if (try_finally.FinallyBlock.HasReachableClosingBrace) {
-					label.AddGotoReference (rc, false);
+					label.AddGotoReference (rc);
 				} else {
-					label.AddGotoReference (rc, true);
+					label = null;
 				}
 			} else {
-				label.AddGotoReference (rc, false);
+				label.AddGotoReference (rc);
 			}
 
 			return Reachability.CreateUnreachable ();
@@ -1442,8 +1446,9 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			// This should only happen for goto from try block to unrechable label
 			if (label == null)
-				throw new InternalErrorException ("goto emitted before target resolved");
+				return;
 
 			Label l = label.LabelTarget (ec);
 
@@ -1478,7 +1483,6 @@ namespace Mono.CSharp {
 		string name;
 		bool defined;
 		bool referenced;
-		bool finalTarget;
 		Label label;
 		Block block;
 		
@@ -1525,9 +1529,6 @@ namespace Mono.CSharp {
 		{
 			LabelTarget (ec);
 			ec.MarkLabel (label);
-
-			if (finalTarget)
-				ec.Emit (OpCodes.Br_S, label);
 		}
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
@@ -1549,24 +1550,13 @@ namespace Mono.CSharp {
 			return rc;
 		}
 
-		public void AddGotoReference (Reachability rc, bool finalTarget)
+		public void AddGotoReference (Reachability rc)
 		{
 			if (referenced)
 				return;
 
 			referenced = true;
 			MarkReachable (rc);
-
-			//
-			// Label is final target when goto jumps out of try block with
-			// finally clause. In that case we need leave with target but in C#
-			// terms the label is unreachable. Using finalTarget we emit
-			// explicit label not just marker
-			//
-			if (finalTarget) {
-				this.finalTarget = true;
-				return;
-			}
 
 			block.ScanGotoJump (this);
 		}
@@ -2992,18 +2982,30 @@ namespace Mono.CSharp {
 				if (end_unreachable) {
 					bool after_goto_case = goto_flow_analysis && s is GotoCase;
 
-					for (++startIndex; startIndex < statements.Count; ++startIndex) {
-						s = statements[startIndex];
-						if (s is SwitchLabel) {
-							if (!after_goto_case)
+					var f = s as TryFinally;
+					if (f != null && !f.FinallyBlock.HasReachableClosingBrace) {
+						//
+						// Special case for try-finally with unreachable code after
+						// finally block. Try block has to include leave opcode but there is
+						// no label to leave to after unreachable finally block closing
+						// brace. This sentinel ensures there is always IL instruction to
+						// leave to even if we know it'll never be reached.
+						//
+						statements.Insert (startIndex + 1, new SentinelStatement ());
+					} else {
+						for (++startIndex; startIndex < statements.Count; ++startIndex) {
+							s = statements [startIndex];
+							if (s is SwitchLabel) {
+								if (!after_goto_case)
+									s.FlowAnalysis (fc);
+
+								break;
+							}
+
+							if (s.IsUnreachable) {
 								s.FlowAnalysis (fc);
-
-							break;
-						}
-
-						if (s.IsUnreachable) {
-							s.FlowAnalysis (fc);
-							statements [startIndex] = RewriteUnreachableStatement (s);
+								statements [startIndex] = RewriteUnreachableStatement (s);
+							}
 						}
 					}
 
@@ -3043,7 +3045,7 @@ namespace Mono.CSharp {
 			// L:
 			//	v = 1;
 
-			if (s is BlockVariable || s is EmptyStatement)
+			if (s is BlockVariable || s is EmptyStatement || s is SentinelStatement)
 				return s;
 
 			return new EmptyStatement (s.loc);
@@ -8208,6 +8210,25 @@ namespace Mono.CSharp {
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
+		}
+	}
+
+	class SentinelStatement: Statement
+	{
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			var l = ec.DefineLabel ();
+			ec.MarkLabel (l);
+			ec.Emit (OpCodes.Br_S, l);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
