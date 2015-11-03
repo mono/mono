@@ -68,16 +68,21 @@ coreclr-validate:
 coreclr-compile-tests: coreclr-validate
 	$(MAKE) -j4 $(CORECLR_TESTSI_CS) $(CORECLR_COREMANGLIB_TESTSI_CS) $(CORECLR_TESTSI_IL)
 
+# the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
+# all the other tests rely on the coreclr-testlibrary.dll
 coreclr-runtest-basic: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
 	@rm -f coreclr-testlist.txt
 	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_CS))
 	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_TESTSI_IL))
+	@for var in $(sort $(dir $(CORECLR_TESTSI_CS))); do ln -sf $(abspath coreclr-testlibrary.dll) "$$var"; done
+	@for var in $(sort $(dir $(CORECLR_TESTSI_IL))); do ln -sf "$(abspath $(CLASS)/Facades/System.Console.dll)" "$$var"; done
 	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr" --expected-exit-code 100 --input-file coreclr-testlist.txt
 	@rm -f coreclr-testlist.txt
 
 coreclr-runtest-coremanglib: coreclr-validate test-runner.exe $(CORECLR_COREMANGLIB_TESTSI_CS)
 	@rm -f coreclr-testlist.txt
 	@$(call dumpvariabletofile, coreclr-testlist.txt, $(CORECLR_COREMANGLIB_TESTSI_CS))
+	@for var in $(sort $(dir $(CORECLR_COREMANGLIB_TESTSI_CS))); do ln -sf $(abspath coreclr-testlibrary.dll) "$$var"; done
 	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "coreclr-coremanglib" --expected-exit-code 100 --input-file coreclr-testlist.txt
 	@rm -f coreclr-testlist.txt
 
@@ -5183,17 +5188,14 @@ CORECLR_TESTSI_IL=$(CORECLR_TEST_IL_SRC:.il=_il.exe)
 CORECLR_STRESSTESTSI_CS=$(CORECLR_STRESSTEST_CS_SRC:%.cs=%.exe)
 CORECLR_COREMANGLIB_TESTSI_CS=$(CORECLR_COREMANGLIB_TEST_CS_SRC:.cs=.exe)
 
-# the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
 $(CORECLR_PATH)%_il.exe: $(CORECLR_PATH)%.il
 	$(ILASM) -out:$@ $<
-	@if [ ! -f "$(dir $@)/System.Console.dll" ]; then cp -f "$(CLASS)/Facades/System.Console.dll" "$(dir $@)"; fi
 
 coreclr-testlibrary.dll: $(CORECLR_TESTLIBRARY_CS_SRC)
 	$(MCS) -unsafe -debug -target:library -d:WINCORESYS -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
 
 $(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.cs coreclr-testlibrary.dll
 	$(MCS) -unsafe -debug -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -out:$@ $<
-	@if [ ! -f "$(dir $@)coreclr-testlibrary.dll" ]; then cp -f coreclr-testlibrary.dll "$(dir $@)"; fi
 
 test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
 	$(MCS) -debug -out:$@ $<
