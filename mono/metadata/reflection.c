@@ -6648,8 +6648,8 @@ mono_type_get_object (MonoDomain *domain, MonoType *type)
 	 */
 	if (type == &klass->byval_arg && !image_is_dynamic (klass->image)) {
 		MonoVTable *vtable = mono_class_try_get_vtable (domain, klass);
-		if (vtable && vtable->type)
-			return vtable->type;
+		if (vtable && vtable->type_handle)
+			return mono_vtable_get_reflection_type (vtable);
 	}
 
 	mono_loader_lock (); /*FIXME mono_class_init and mono_class_vtable acquire it*/
