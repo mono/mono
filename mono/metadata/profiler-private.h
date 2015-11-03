@@ -57,6 +57,12 @@ void mono_profiler_module_loaded (MonoImage *image, int result);
 void mono_profiler_class_event  (MonoClass *klass, int code);
 void mono_profiler_class_loaded (MonoClass *klass, int result);
 
+void mono_profiler_static_field (MonoClassField *field);
+void mono_profiler_static_fields_allocated (MonoClass *klass);
+
+void mono_profiler_special_static_area_allocated (MonoObject *owner, gboolean thread_local, gsize owner_id, int index, void **addr, gsize size);
+void mono_profiler_special_static_field_allocated (MonoClassField *field, gboolean thread_local, int index, int offset);
+
 void mono_profiler_appdomain_event  (MonoDomain *domain, int code);
 void mono_profiler_appdomain_loaded (MonoDomain *domain, int result);
 void mono_profiler_appdomain_name   (MonoDomain *domain, const char *name);

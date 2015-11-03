@@ -3734,10 +3734,17 @@ mark_ctx_slots (void *addr, MonoGCMarkFunc mark_func, void *gc_data)
  *   Allocate memory blocks for storing threads or context static data
  */
 static void 
-mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean threadlocal)
+mono_alloc_static_data (MonoObject *owner, gpointer **static_data_ptr, guint32 offset, gboolean threadlocal)
 {
 	guint idx = ACCESS_SPECIAL_STATIC_OFFSET (offset, index);
 	int i;
+	gsize thread_id = 0;
+	uint32_t ctx_id = 0;
+
+	if (threadlocal)
+		thread_id = ((MonoInternalThread *) owner)->tid;
+	else
+		ctx_id = ((MonoAppContext *) owner)->context_id;
 
 	gpointer* static_data = *static_data_ptr;
 	if (!static_data) {
@@ -3757,6 +3764,11 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 			threadlocal ? "managed thread-static variables" : "managed context-static variables");
 		*static_data_ptr = static_data;
 		static_data [0] = static_data;
+
+		if (mono_profiler_get_events () & MONO_PROFILE_FIELD_EVENTS) {
+			mono_profiler_special_static_area_allocated (owner, threadlocal,
+				threadlocal ? thread_id : (gsize) ctx_id, 0, static_data, static_data_size [0]);
+		}
 	}
 
 	for (i = 1; i <= idx; ++i) {
@@ -3769,6 +3781,11 @@ mono_alloc_static_data (gpointer **static_data_ptr, guint32 offset, gboolean thr
 			static_data [i] = mono_gc_alloc_fixed (static_data_size [i], MONO_GC_DESCRIPTOR_NULL,
 				threadlocal ? MONO_ROOT_SOURCE_THREAD_STATIC : MONO_ROOT_SOURCE_CONTEXT_STATIC,
 				threadlocal ? "managed thread-static variables" : "managed context-static variables");
+
+		if (mono_profiler_get_events () & MONO_PROFILE_FIELD_EVENTS) {
+			mono_profiler_special_static_area_allocated (owner, threadlocal,
+				threadlocal ? thread_id : (gsize) ctx_id, i, (void **) static_data [i], static_data_size [i]);
+		}
 	}
 }
 
@@ -3849,7 +3866,7 @@ thread_adjust_static_data (MonoInternalThread *thread)
 	if (thread_static_info.offset || thread_static_info.idx > 0) {
 		/* get the current allocated size */
 		guint32 offset = MAKE_SPECIAL_STATIC_OFFSET (thread_static_info.idx, thread_static_info.offset, 0);
-		mono_alloc_static_data (&thread->static_data, offset, TRUE);
+		mono_alloc_static_data (&thread->obj, &thread->static_data, offset, TRUE);
 	}
 	mono_threads_unlock ();
 }
@@ -3862,7 +3879,7 @@ context_adjust_static_data (MonoAppContext *ctx)
 {
 	if (context_static_info.offset || context_static_info.idx > 0) {
 		guint32 offset = MAKE_SPECIAL_STATIC_OFFSET (context_static_info.idx, context_static_info.offset, 0);
-		mono_alloc_static_data (&ctx->static_data, offset, FALSE);
+		mono_alloc_static_data (&ctx->obj, &ctx->static_data, offset, FALSE);
 	}
 }
 
@@ -3875,7 +3892,7 @@ alloc_thread_static_data_helper (gpointer key, gpointer value, gpointer user)
 	MonoInternalThread *thread = value;
 	guint32 offset = GPOINTER_TO_UINT (user);
 
-	mono_alloc_static_data (&(thread->static_data), offset, TRUE);
+	mono_alloc_static_data (&thread->obj, &(thread->static_data), offset, TRUE);
 }
 
 /*
@@ -3893,7 +3910,7 @@ alloc_context_static_data_helper (gpointer key, gpointer value, gpointer user)
 	}
 
 	guint32 offset = GPOINTER_TO_UINT (user);
-	mono_alloc_static_data (&ctx->static_data, offset, FALSE);
+	mono_alloc_static_data (&ctx->obj, &ctx->static_data, offset, FALSE);
 
 	return FALSE; // Don't remove it
 }
@@ -3952,7 +3969,7 @@ clear_reference_bitmap (MonoBitSet **sets, guint32 offset, guint32 size)
 }
 
 guint32
-mono_alloc_special_static_data (guint32 static_type, guint32 size, guint32 align, uintptr_t *bitmap, int numbits)
+mono_alloc_special_static_data (MonoClassField *field, guint32 static_type, guint32 size, guint32 align, uintptr_t *bitmap, int numbits)
 {
 	g_assert (static_type == SPECIAL_STATIC_THREAD || static_type == SPECIAL_STATIC_CONTEXT);
 
@@ -3990,6 +4007,13 @@ mono_alloc_special_static_data (guint32 static_type, guint32 size, guint32 align
 			g_hash_table_foreach_remove (contexts, alloc_context_static_data_helper, GUINT_TO_POINTER (offset));
 
 		ACCESS_SPECIAL_STATIC_OFFSET (offset, type) = SPECIAL_STATIC_OFFSET_TYPE_CONTEXT;
+	}
+
+	if (mono_profiler_get_events () & MONO_PROFILE_FIELD_EVENTS) {
+		mono_profiler_special_static_field_allocated (field,
+			ACCESS_SPECIAL_STATIC_OFFSET (offset, type) == SPECIAL_STATIC_OFFSET_TYPE_THREAD,
+			ACCESS_SPECIAL_STATIC_OFFSET (offset, index),
+			ACCESS_SPECIAL_STATIC_OFFSET (offset, offset));
 	}
 
 	mono_threads_unlock ();
