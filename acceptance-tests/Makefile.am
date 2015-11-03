@@ -1698,7 +1698,6 @@ CORECLR_COREMANGLIB_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/constructorinfo/constructorinfoconstructorname.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assemblydefaultaliasattribute/assemblydefaultaliasattributector.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assemblydefaultaliasattribute/assemblydefaultaliasattributedefaultalias.cs	\
-	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assembly/testtarget.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assemblydelaysignattribute/assemblydelaysignattributector.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assemblydelaysignattribute/assemblydelaysignattributedelaysign.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/fieldattributes/fieldattributesinitonly.cs	\
@@ -4029,6 +4028,7 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/runtime/interopservices/marshal/oleaut32.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/delegate/testforotherassembly.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assembly/testassembly1.cs	\
+	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/reflection/assembly/testtarget.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/reflection/assembly/testassembly.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/exception/data_helper.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/reflection/assembly/server4.cs	\
@@ -5195,7 +5195,7 @@ coreclr-testlibrary.dll: $(CORECLR_TESTLIBRARY_CS_SRC)
 	$(MCS) -unsafe -debug -target:library -d:WINCORESYS -out:$@ $(CORECLR_TESTLIBRARY_CS_SRC)
 
 $(CORECLR_PATH)%.exe: $(CORECLR_PATH)%.cs coreclr-testlibrary.dll
-	$(MCS) -unsafe -debug -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -out:$@ $<
+	$(MCS) -unsafe -debug -nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 -nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 -nowarn:0197 -r:coreclr-testlibrary.dll -d:MONO -out:$@ $<
 
 test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
 	$(MCS) -debug -out:$@ $<
