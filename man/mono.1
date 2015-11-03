@@ -1341,12 +1341,13 @@ word, which is checked on each minor collection. Can be used to detect/debug
 heap corruption issues.
 
 .TP
-\fBdo-not-finalize\fR
+\fBdo-not-finalize(=\fIclasses\fB)\fR
 If enabled, finalizers will not be run.  Everything else will be
 unaffected: finalizable objects will still be put into the
 finalization queue where they survive until they're scheduled to
 finalize.  Once they're not in the queue anymore they will be
-collected regularly.
+collected regularly.  If a list of comma-separated class names is
+given, only objects from those classes will not be finalized.
 
 .TP
 \fBlog-finalizers\fR
