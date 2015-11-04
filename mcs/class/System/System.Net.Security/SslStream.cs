@@ -96,7 +96,7 @@ namespace System.Net.Security
 
 		static MonoTlsProvider GetProvider ()
 		{
-			return new MNS.Private.MonoDefaultTlsProvider ();
+			return MonoTlsProviderFactory.GetDefaultProvider ();
 		}
 
 		public SslStream (Stream innerStream)
