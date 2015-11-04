@@ -30,13 +30,6 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security.Protocol.Tls;
-#else
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Protocol.Tls;
-#endif
-
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
