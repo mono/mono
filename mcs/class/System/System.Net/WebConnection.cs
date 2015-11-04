@@ -82,7 +82,6 @@ namespace System.Net
 		NtlmAuthState connect_ntlm_auth_state;
 		HttpWebRequest connect_request;
 
-		bool ssl;
 		Exception connect_exception;
 		static object classLock = new object ();
 		MonoTlsStream tlsStream;
@@ -395,7 +394,6 @@ namespace System.Net
 
 				if (request.Address.Scheme == Uri.UriSchemeHttps) {
 #if SECURITY_DEP
-					ssl = true;
 					if (!reused || nstream == null || tlsStream == null) {
 						byte [] buffer = null;
 						if (sPoint.UseConnect) {
@@ -414,7 +412,6 @@ namespace System.Net
 					throw new NotSupportedException ();
 #endif
 				} else {
-					ssl = false;
 					nstream = serverStream;
 				}
 			} catch (Exception ex) {
