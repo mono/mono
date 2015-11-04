@@ -39,7 +39,7 @@ using System.Diagnostics;
 
 namespace Mono.Net.Security
 {
-	internal class SystemCertificateValidator
+	internal static class SystemCertificateValidator
 	{
 		static bool is_macosx;
 		static bool is_mobile;
@@ -72,7 +72,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public virtual X509Chain ComputeX509Chain (XX509CertificateCollection certs, ref SslPolicyErrors errors, ref int status11)
+		static X509Chain ComputeX509Chain (XX509CertificateCollection certs, ref SslPolicyErrors errors, ref int status11)
 		{
 #if MOBILE
 			return null;
@@ -106,7 +106,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public virtual void CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
+		static void CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MONOTOUCH
 			var leaf = (X509Certificate2)certs[0];
@@ -125,7 +125,7 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		public virtual bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		static bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 			var leaf = certs [0];
 			var result = false;
@@ -167,6 +167,22 @@ namespace Mono.Net.Security
 #endif
 
 			return result;
+		}
+
+		public static bool Evaluate (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, bool needsChain, bool skipSystemValidators,
+			ref X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		{
+#if !MOBILE
+			if (needsChain && chain == null)
+				chain = ComputeX509Chain (certs, ref errors, ref status11);
+#endif
+
+			CheckUsage (certs, host, ref errors, ref status11);
+
+			if (skipSystemValidators)
+				return false;
+
+			return EvaluateSystem (certs, anchors, host, chain, ref errors, ref status11);
 		}
 
 #if !MOBILE

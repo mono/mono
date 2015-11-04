@@ -240,11 +240,6 @@ namespace Mono.Net.Security
 			return result.Trusted && !result.UserDenied;
 		}
 
-		internal static SystemCertificateValidator GetSystemCertificateValidator ()
-		{
-			return new SystemCertificateValidator ();
-		}
-
 		public ValidationResult ValidateClientCertificate (XX509CertificateCollection certs)
 		{
 			return ValidateChain (string.Empty, certs, 0);
@@ -273,8 +268,6 @@ namespace Mono.Net.Security
 			var hasCallback = certValidationCallback != null || callbackWrapper != null;
 			var anchors = settings != null ? settings.TrustAnchors : null;
 
-			var systemValidator = GetSystemCertificateValidator ();
-
 			X509Certificate leaf;
 			if (certs == null || certs.Count == 0)
 				leaf = null;
@@ -298,6 +291,9 @@ namespace Mono.Net.Security
 
 			bool needsChain;
 			bool skipSystemValidators = false;
+#if MOBILE
+			needsChain = false;
+#else
 			if (!CertificateValidationHelper.SupportsX509Chain || is_mobile || is_macosx) {
 				needsChain = false;
 			} else if (settings != null) {
@@ -306,21 +302,14 @@ namespace Mono.Net.Security
 			} else {
 				needsChain = true;
 			}
+#endif
 
 			ICertificatePolicy policy = ServicePointManager.GetLegacyCertificatePolicy ();
 
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 			X509Chain chain = null;
 
-#if !MOBILE
-			if (needsChain)
-				chain = systemValidator.ComputeX509Chain (certs, ref errors, ref status11);
-#endif
-
-			systemValidator.CheckUsage (certs, host, ref errors, ref status11);
-
-			if (!skipSystemValidators)
-				result = systemValidator.EvaluateSystem (certs, anchors, host, chain, ref errors, ref status11);
+			result = SystemCertificateValidator.Evaluate (certs, anchors, host, needsChain, skipSystemValidators, ref chain, ref errors, ref status11);
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
