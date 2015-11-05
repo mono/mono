@@ -93,9 +93,10 @@
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\ValidationException.cs" />
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\ValidationResult.cs" />
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\Validator.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\Resources\DataAnnotationsResources.Designer.cs" />
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="DataAnnotationsResources.cs" />  </ItemGroup>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -142,6 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+    <ItemGroup>
+    <EmbeddedResource Include="DataAnnotationsResources.resx" />
   </ItemGroup>
 </Project>
 

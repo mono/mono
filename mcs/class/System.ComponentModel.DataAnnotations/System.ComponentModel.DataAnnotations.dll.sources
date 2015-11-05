@@ -48,4 +48,4 @@ Assembly/AssemblyInfo.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/ValidationException.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/ValidationResult.cs
 ../../../external/referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/Validator.cs
-DataAnnotationsResources.cs
+../../../external/referencesource/System.ComponentModel.DataAnnotations/Resources/DataAnnotationsResources.Designer.cs
