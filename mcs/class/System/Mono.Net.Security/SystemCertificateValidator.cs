@@ -169,20 +169,36 @@ namespace Mono.Net.Security
 			return result;
 		}
 
-		public static bool Evaluate (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, bool needsChain, bool skipSystemValidators,
+		public static bool Evaluate (
+			MonoTlsSettings settings, string host, XX509CertificateCollection certs,
 			ref X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MOBILE
-			if (needsChain && chain == null)
+			if (NeedsChain (settings) && chain == null)
 				chain = ComputeX509Chain (certs, ref errors, ref status11);
 #endif
 
 			CheckUsage (certs, host, ref errors, ref status11);
 
-			if (skipSystemValidators)
+			if (settings != null && settings.SkipSystemValidators)
 				return false;
 
+			var anchors = settings != null ? settings.TrustAnchors : null;
 			return EvaluateSystem (certs, anchors, host, chain, ref errors, ref status11);
+		}
+
+		static bool NeedsChain (MonoTlsSettings settings)
+		{
+#if MOBILE
+			return false;
+#else
+			if (!CertificateValidationHelper.SupportsX509Chain)
+				return false;
+			if (settings != null)
+				return !settings.SkipSystemValidators || settings.CallbackNeedsCertificateChain;
+			else
+				return true;
+#endif
 		}
 
 #if !MOBILE
