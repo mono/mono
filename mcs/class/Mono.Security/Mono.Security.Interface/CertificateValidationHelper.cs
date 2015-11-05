@@ -94,8 +94,9 @@ namespace Mono.Security.Interface
 
 		ValidationResult ValidateClientCertificate (X509CertificateCollection certificates);
 
-		bool InvokeSystemValidator (string targetHost, X509CertificateCollection certificates,
-		                            ref MonoSslPolicyErrors errors, ref int status11);
+		bool InvokeSystemValidator (
+			string targetHost, bool serverMode, X509CertificateCollection certificates,
+			ref MonoSslPolicyErrors errors, ref int status11);
 	}
 
 	public static class CertificateValidationHelper

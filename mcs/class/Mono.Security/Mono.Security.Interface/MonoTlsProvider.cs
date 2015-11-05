@@ -105,6 +105,22 @@ namespace Mono.Security.Interface
 
 #endregion
 
+#region Certificate Validation
+
+		public virtual bool HasCustomSystemCertificateValidator {
+			get { return false; }
+		}
+
+		public virtual bool InvokeSystemCertificateValidator (
+			ICertificateValidator validator, string targetHost, bool serverMode,
+			X509CertificateCollection certificates, ref MonoSslPolicyErrors errors,
+			ref int status11)
+		{
+			return false;
+		}
+
+#endregion
+
 #region Manged SSPI
 
 		/*
