@@ -89,6 +89,10 @@ namespace Mono.Security.Interface
 		bool callbackNeedsChain = true;
 		ICertificateValidator certificateValidator;
 
+		public MonoTlsSettings ()
+		{
+		}
+
 		#region Private APIs
 
 		/*
@@ -101,7 +105,6 @@ namespace Mono.Security.Interface
 		[Obsolete ("Do not use outside System.dll!")]
 		public ICertificateValidator CertificateValidator {
 			get { return certificateValidator; }
-			set { certificateValidator = value; }
 		}
 
 		[Obsolete ("Do not use outside System.dll!")]
@@ -112,20 +115,24 @@ namespace Mono.Security.Interface
 				return this;
 			}
 
-			var copy = new MonoTlsSettings ();
-			copy.RemoteCertificateValidationCallback = RemoteCertificateValidationCallback;
-			copy.ClientCertificateSelectionCallback = ClientCertificateSelectionCallback;
-			copy.checkCertName = checkCertName;
-			copy.checkCertRevocationStatus = checkCertRevocationStatus;
-			copy.UseServicePointManagerCallback = useServicePointManagerCallback;
-			copy.skipSystemValidators = skipSystemValidators;
-			copy.callbackNeedsChain = callbackNeedsChain;
-			copy.UserSettings = UserSettings;
+			var copy = new MonoTlsSettings (this);
 			copy.certificateValidator = validator;
-			copy.EnabledProtocols = EnabledProtocols;
-			copy.TrustAnchors = TrustAnchors;
-			copy.cloned = true;
 			return copy;
+		}
+
+		MonoTlsSettings (MonoTlsSettings other)
+		{
+			RemoteCertificateValidationCallback = other.RemoteCertificateValidationCallback;
+			ClientCertificateSelectionCallback = other.ClientCertificateSelectionCallback;
+			checkCertName = other.checkCertName;
+			checkCertRevocationStatus = other.checkCertRevocationStatus;
+			UseServicePointManagerCallback = other.useServicePointManagerCallback;
+			skipSystemValidators = other.skipSystemValidators;
+			callbackNeedsChain = other.callbackNeedsChain;
+			UserSettings = other.UserSettings;
+			EnabledProtocols = other.EnabledProtocols;
+			TrustAnchors = other.TrustAnchors;
+			cloned = true;
 		}
 
 		#endregion

@@ -28,7 +28,7 @@ namespace System.Net.Security
 			if (encryptionPolicy != EncryptionPolicy.RequireEncryption && encryptionPolicy != EncryptionPolicy.AllowNoEncryption && encryptionPolicy != EncryptionPolicy.NoEncryption)
 				throw new ArgumentException (SR.GetString (SR.net_invalid_enum, "EncryptionPolicy"), "encryptionPolicy");
 
-			var validationHelper = MNS.ChainValidationHelper.CloneWithCallbackWrapper (ref settings, myUserCertValidationCallbackWrapper);
+			var validationHelper = MNS.ChainValidationHelper.CloneWithCallbackWrapper (provider, ref settings, myUserCertValidationCallbackWrapper);
 
 			LocalCertSelectionCallback selectionCallback = null;
 			if (validationHelper.HasCertificateSelectionCallback)

@@ -76,6 +76,7 @@ namespace Mono.Net.Security
 	{
 		readonly object sender;
 		readonly MonoTlsSettings settings;
+		readonly MonoTlsProvider provider;
 		readonly ServerCertValidationCallback certValidationCallback;
 		readonly LocalCertSelectionCallback certSelectionCallback;
 		readonly ServerCertValidationCallbackWrapper callbackWrapper;
@@ -113,13 +114,13 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
+		internal static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
 			if (settings == null)
-				return new ChainValidationHelper (null, false, null, null);
-			if (settings.CertificateValidator == null)
-				settings.CertificateValidator = new ChainValidationHelper (settings, false, null, null);
-			return settings.CertificateValidator;
+				return new ChainValidationHelper (provider, null, false, null, null);
+			if (settings.CertificateValidator != null)
+				return settings.CertificateValidator;
+			return new ChainValidationHelper (provider, settings, false, null, null);
 		}
 
 #region SslStream support
@@ -127,13 +128,13 @@ namespace Mono.Net.Security
 		/*
 		 * This is a hack which is used in SslStream - see ReferenceSources/SslStream.cs for details.
 		 */
-		internal static ChainValidationHelper CloneWithCallbackWrapper (ref MonoTlsSettings settings, ServerCertValidationCallbackWrapper wrapper)
+		internal static ChainValidationHelper CloneWithCallbackWrapper (MonoTlsProvider provider, ref MonoTlsSettings settings, ServerCertValidationCallbackWrapper wrapper)
 		{
 			var helper = (ChainValidationHelper)settings.CertificateValidator;
 			if (helper == null)
-				helper = new ChainValidationHelper (settings, true, null, wrapper);
+				helper = new ChainValidationHelper (provider, settings, true, null, wrapper);
 			else
-				helper = new ChainValidationHelper (helper, settings, wrapper);
+				helper = new ChainValidationHelper (helper, provider, settings, wrapper);
 			settings = helper.settings;
 			return helper;
 		}
@@ -145,7 +146,7 @@ namespace Mono.Net.Security
 
 #endregion
 
-		ChainValidationHelper (ChainValidationHelper other, MonoTlsSettings settings, ServerCertValidationCallbackWrapper callbackWrapper = null)
+		ChainValidationHelper (ChainValidationHelper other, MonoTlsProvider provider, MonoTlsSettings settings, ServerCertValidationCallbackWrapper callbackWrapper = null)
 		{
 			sender = other.sender;
 			certValidationCallback = other.certValidationCallback;
@@ -153,22 +154,24 @@ namespace Mono.Net.Security
 			tlsStream = other.tlsStream;
 			request = other.request;
 
+			this.provider = provider;
 			this.settings = settings = settings.CloneWithValidator (this);
 			this.callbackWrapper = callbackWrapper;
 		}
 
-		internal static ChainValidationHelper Create (ref MonoTlsSettings settings, MonoTlsStream stream)
+		internal static ChainValidationHelper Create (MonoTlsProvider provider, ref MonoTlsSettings settings, MonoTlsStream stream)
 		{
-			var helper = new ChainValidationHelper (settings, true, stream, null);
+			var helper = new ChainValidationHelper (provider, settings, true, stream, null);
 			settings = helper.settings;
 			return helper;
 		}
 
-		ChainValidationHelper (MonoTlsSettings settings, bool cloneSettings, MonoTlsStream stream, ServerCertValidationCallbackWrapper callbackWrapper)
+		ChainValidationHelper (MonoTlsProvider provider, MonoTlsSettings settings, bool cloneSettings, MonoTlsStream stream, ServerCertValidationCallbackWrapper callbackWrapper)
 		{
 			if (cloneSettings)
 				settings = settings.CloneWithValidator (this);
 
+			this.provider = provider;
 			this.settings = settings;
 			this.tlsStream = stream;
 			this.callbackWrapper = callbackWrapper;
@@ -209,6 +212,10 @@ namespace Mono.Net.Security
 			else
 				clientCertificate = localCertificates [0];
 			return clientCertificate;
+		}
+
+		public MonoTlsProvider Provider {
+			get { return provider; }
 		}
 
 		public MonoTlsSettings Settings {

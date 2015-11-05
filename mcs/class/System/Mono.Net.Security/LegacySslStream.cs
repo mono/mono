@@ -83,6 +83,7 @@ namespace Mono.Net.Security
 		#region Fields
 
 		SslStreamBase ssl_stream;
+		MonoTlsProvider provider;
 		MonoTlsSettings settings;
 		ICertificateValidator certificateValidator;
 
@@ -90,21 +91,12 @@ namespace Mono.Net.Security
 
 		#region Constructors
 
-		public LegacySslStream (Stream innerStream)
-			: this (innerStream, false)
-		{
-		}
-
-		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen)
-			: this (innerStream, leaveInnerStreamOpen, null)
-		{
-		}
-
-		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
+		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+			this.provider = provider;
 			this.settings = settings;
-			this.certificateValidator = ChainValidationHelper.GetDefaultValidator (settings);
+			this.certificateValidator = ChainValidationHelper.GetDefaultValidator (provider, settings);
 		}
 		#endregion // Constructors
 
