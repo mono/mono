@@ -128,14 +128,25 @@ namespace Mono.Security.Interface
 			get { return supportsTrustAnchors; }
 		}
 
-		internal static ICertificateValidator GetDefaultValidator (MonoTlsSettings settings)
+		static ICertificateValidator GetDefaultValidator (MonoTlsProvider provider, MonoTlsSettings settings)
 		{
-			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (settings);
+			return (ICertificateValidator)NoReflectionHelper.GetDefaultCertificateValidator (provider, settings);
 		}
 
+		/*
+		 * Internal API, intended to be used by MonoTlsProvider implementations.
+		 */
+		public static ICertificateValidator GetValidator (MonoTlsProvider provider, MonoTlsSettings settings)
+		{
+			return GetDefaultValidator (provider, settings);
+		}
+
+		/*
+		 * Use this overloaded version in user code.
+		 */
 		public static ICertificateValidator GetValidator (MonoTlsSettings settings)
 		{
-			return GetDefaultValidator (settings);
+			return GetDefaultValidator (null, settings);
 		}
 	}
 #endif

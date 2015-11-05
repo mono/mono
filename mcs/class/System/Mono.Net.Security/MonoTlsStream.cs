@@ -98,7 +98,7 @@ namespace Mono.Net.Security
 			if (settings == null)
 				settings = new MonoTlsSettings ();
 
-			validationHelper = ChainValidationHelper.Create (ref settings, this);
+			validationHelper = ChainValidationHelper.Create (provider.Provider, ref settings, this);
 		}
 
 		internal Stream CreateStream (byte[] buffer)

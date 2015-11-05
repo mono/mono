@@ -84,7 +84,7 @@ namespace Mono.Net.Security.Private
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings)
 		{
-			return new LegacySslStream (innerStream, leaveInnerStreamOpen, settings);
+			return new LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
 		}
 
 		protected override IMonoTlsContext CreateTlsContextImpl (

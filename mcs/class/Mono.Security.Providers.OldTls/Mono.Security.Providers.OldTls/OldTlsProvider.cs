@@ -56,7 +56,7 @@ namespace Mono.Security.Providers.OldTls
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			var impl = new LegacySslStream (innerStream, leaveInnerStreamOpen, settings);
+			var impl = new LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
 			return new MonoSslStreamImpl (impl);
 		}
 
