@@ -273,7 +273,6 @@ namespace Mono.Net.Security
 			bool result = false;
 
 			var hasCallback = certValidationCallback != null || callbackWrapper != null;
-			var anchors = settings != null ? settings.TrustAnchors : null;
 
 			X509Certificate leaf;
 			if (certs == null || certs.Count == 0)
@@ -296,27 +295,12 @@ namespace Mono.Net.Security
 				return new ValidationResult (result, user_denied, 0, (MonoSslPolicyErrors)errors);
 			}
 
-			bool needsChain;
-			bool skipSystemValidators = false;
-#if MOBILE
-			needsChain = false;
-#else
-			if (!CertificateValidationHelper.SupportsX509Chain || is_mobile || is_macosx) {
-				needsChain = false;
-			} else if (settings != null) {
-				skipSystemValidators = settings.SkipSystemValidators;
-				needsChain = !settings.SkipSystemValidators || settings.CallbackNeedsCertificateChain;
-			} else {
-				needsChain = true;
-			}
-#endif
-
 			ICertificatePolicy policy = ServicePointManager.GetLegacyCertificatePolicy ();
 
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 			X509Chain chain = null;
 
-			result = SystemCertificateValidator.Evaluate (certs, anchors, host, needsChain, skipSystemValidators, ref chain, ref errors, ref status11);
+			result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
