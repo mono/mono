@@ -325,6 +325,18 @@ namespace Mono.Net.Security
 			}
 			return new ValidationResult (result, user_denied, status11, (MonoSslPolicyErrors)errors);
 		}
+
+		public bool InvokeSystemValidator (string targetHost, XX509CertificateCollection certificates, ref MonoSslPolicyErrors xerrors, ref int status11)
+		{
+			if (SystemCertificateValidator.NeedsChain (settings))
+				throw new NotSupportedException ("Cannot use ICertificateValidator.InvokeSystemValidator() when the X509Chain is required.");
+
+			X509Chain chain = null;
+			var errors = (SslPolicyErrors)xerrors;
+			var result = SystemCertificateValidator.Evaluate (settings, targetHost, certificates, ref chain, ref errors, ref status11);
+			xerrors = (MonoSslPolicyErrors)errors;
+			return result;
+		}
 	}
 }
 #endif

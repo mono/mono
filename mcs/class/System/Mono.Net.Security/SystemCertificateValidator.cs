@@ -187,7 +187,7 @@ namespace Mono.Net.Security
 			return EvaluateSystem (certs, anchors, host, chain, ref errors, ref status11);
 		}
 
-		static bool NeedsChain (MonoTlsSettings settings)
+		internal static bool NeedsChain (MonoTlsSettings settings)
 		{
 #if MOBILE
 			return false;
