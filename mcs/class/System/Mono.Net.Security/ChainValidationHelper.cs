@@ -240,7 +240,7 @@ namespace Mono.Net.Security
 			var certs = new XX509CertificateCollection ();
 			certs.Add (new X509Certificate2 (certificate.GetRawCertData ()));
 
-			var result = ValidateChain (null, certs, (SslPolicyErrors)errors);
+			var result = ValidateChain (string.Empty, false, certs, (SslPolicyErrors)errors);
 			if (result == null)
 				return false;
 
@@ -249,13 +249,13 @@ namespace Mono.Net.Security
 
 		public ValidationResult ValidateClientCertificate (XX509CertificateCollection certs)
 		{
-			return ValidateChain (string.Empty, certs, 0);
+			return ValidateChain (string.Empty, false, certs, 0);
 		}
 
 		public ValidationResult ValidateChain (string host, XX509CertificateCollection certs)
 		{
 			try {
-				var result = ValidateChain (host, certs, 0);
+				var result = ValidateChain (host, true, certs, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
 				return result;
@@ -266,7 +266,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		ValidationResult ValidateChain (string host, XX509CertificateCollection certs, SslPolicyErrors errors)
+		ValidationResult ValidateChain (string host, bool server, XX509CertificateCollection certs, SslPolicyErrors errors)
 		{
 			// user_denied is true if the user callback is called and returns false
 			bool user_denied = false;
@@ -300,7 +300,15 @@ namespace Mono.Net.Security
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 			X509Chain chain = null;
 
-			result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
+			if (provider != null && provider.HasCustomSystemCertificateValidator) {
+				if (SystemCertificateValidator.NeedsChain (settings))
+					throw new NotSupportedException ("Cannot use MonoTlsProvider.InvokeSystemCertificateValidator() when the X509Chain is required.");
+				var xerrors = (MonoSslPolicyErrors)errors;
+				result = provider.InvokeSystemCertificateValidator (this, host, server, certs, ref xerrors, ref status11);
+				errors = (SslPolicyErrors)xerrors;
+			} else {
+				result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
+			}
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
@@ -326,7 +334,7 @@ namespace Mono.Net.Security
 			return new ValidationResult (result, user_denied, status11, (MonoSslPolicyErrors)errors);
 		}
 
-		public bool InvokeSystemValidator (string targetHost, XX509CertificateCollection certificates, ref MonoSslPolicyErrors xerrors, ref int status11)
+		public bool InvokeSystemValidator (string targetHost, bool serverMode, XX509CertificateCollection certificates, ref MonoSslPolicyErrors xerrors, ref int status11)
 		{
 			if (SystemCertificateValidator.NeedsChain (settings))
 				throw new NotSupportedException ("Cannot use ICertificateValidator.InvokeSystemValidator() when the X509Chain is required.");
