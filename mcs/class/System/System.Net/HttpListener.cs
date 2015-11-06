@@ -62,7 +62,7 @@ namespace System.Net {
 
 		IMonoTlsProvider tlsProvider;
 		MSI.MonoTlsSettings tlsSettings;
-		X509Certificate2 certificate;
+		X509Certificate certificate;
 
 		Hashtable registry;   // Dictionary<HttpListenerContext,HttpListenerContext> 
 		ArrayList ctx_queue;  // List<HttpListenerContext> ctx_queue;
@@ -79,7 +79,7 @@ namespace System.Net {
 			auth_schemes = AuthenticationSchemes.Anonymous;
 		}
 
-		internal HttpListener (X509Certificate2 certificate, IMonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
+		internal HttpListener (X509Certificate certificate, IMonoTlsProvider tlsProvider, MSI.MonoTlsSettings tlsSettings)
 			: this ()
 		{
 			this.certificate = certificate;
@@ -87,7 +87,7 @@ namespace System.Net {
 			this.tlsSettings = tlsSettings;
 		}
 
-		internal X509Certificate2 LoadCertificateAndKey (IPAddress addr, int port)
+		internal X509Certificate LoadCertificateAndKey (IPAddress addr, int port)
 		{
 			lock (registry) {
 				if (certificate != null)
@@ -104,8 +104,9 @@ namespace System.Net {
 					string pvk_file = Path.Combine (path, String.Format ("{0}.pvk", port));
 					if (!File.Exists (pvk_file))
 						return null;
-					certificate = new X509Certificate2 (cert_file);
-					certificate.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
+					var cert = new X509Certificate2 (cert_file);
+					cert.PrivateKey = PrivateKey.CreateFromFile (pvk_file).RSA;
+					certificate = cert;
 					return certificate;
 				} catch {
 					// ignore errors

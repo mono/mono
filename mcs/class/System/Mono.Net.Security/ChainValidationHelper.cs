@@ -240,7 +240,7 @@ namespace Mono.Net.Security
 			var certs = new XX509CertificateCollection ();
 			certs.Add (new X509Certificate2 (certificate.GetRawCertData ()));
 
-			var result = ValidateChain (string.Empty, false, certs, (SslPolicyErrors)errors);
+			var result = ValidateChain (string.Empty, true, certs, (SslPolicyErrors)errors);
 			if (result == null)
 				return false;
 
@@ -249,13 +249,13 @@ namespace Mono.Net.Security
 
 		public ValidationResult ValidateClientCertificate (XX509CertificateCollection certs)
 		{
-			return ValidateChain (string.Empty, false, certs, 0);
+			return ValidateChain (string.Empty, true, certs, 0);
 		}
 
 		public ValidationResult ValidateChain (string host, XX509CertificateCollection certs)
 		{
 			try {
-				var result = ValidateChain (host, true, certs, 0);
+				var result = ValidateChain (host, false, certs, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
 				return result;
