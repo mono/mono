@@ -104,7 +104,7 @@ namespace Mono.Net.Security
 		internal static object CreateHttpListener (object certificate, object provider, object settings)
 		{
 			#if SECURITY_DEP
-			return MonoTlsProviderFactory.CreateHttpListener ((X509Certificate2)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
+			return MonoTlsProviderFactory.CreateHttpListener ((X509Certificate)certificate, (MSI.MonoTlsProvider)provider, (MSI.MonoTlsSettings)settings);
 			#else
 			throw new NotSupportedException ();
 			#endif

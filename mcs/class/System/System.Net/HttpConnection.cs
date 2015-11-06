@@ -74,7 +74,7 @@ namespace System.Net {
 		int reuses;
 		bool context_bound;
 		bool secure;
-		X509Certificate2 cert;
+		X509Certificate cert;
 		int s_timeout = 90000; // 90k ms for first request, 15k ms from then on
 		Timer timer;
 		IPEndPoint local_ep;
@@ -83,7 +83,7 @@ namespace System.Net {
 		X509Certificate2 client_cert;
 		IMonoSslStream ssl_stream;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert)
+		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate cert)
 		{
 			this.sock = sock;
 			this.epl = epl;

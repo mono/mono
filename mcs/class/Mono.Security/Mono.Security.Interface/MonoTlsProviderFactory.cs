@@ -93,7 +93,7 @@ namespace Mono.Security.Interface
 			return NoReflectionHelper.CreateHttpsRequest (requestUri, provider, settings);
 		}
 
-		public static HttpListener CreateHttpListener (X509Certificate2 certificate, MonoTlsProvider provider = null, MonoTlsSettings settings = null)
+		public static HttpListener CreateHttpListener (X509Certificate certificate, MonoTlsProvider provider = null, MonoTlsSettings settings = null)
 		{
 			return (HttpListener)NoReflectionHelper.CreateHttpListener (certificate, provider, settings);
 		}

@@ -258,7 +258,7 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static HttpListener CreateHttpListener (X509Certificate2 certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
+		internal static HttpListener CreateHttpListener (X509Certificate certificate, MSI.MonoTlsProvider provider, MSI.MonoTlsSettings settings)
 		{
 			lock (locker) {
 				var internalProvider = provider != null ? new Private.MonoTlsProviderWrapper (provider) : null;

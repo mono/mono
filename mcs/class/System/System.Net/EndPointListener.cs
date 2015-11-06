@@ -53,7 +53,7 @@ namespace System.Net {
 		Hashtable prefixes;  // Dictionary <ListenerPrefix, HttpListener>
 		ArrayList unhandled; // List<ListenerPrefix> unhandled; host = '*'
 		ArrayList all;       // List<ListenerPrefix> all;  host = '+'
-		X509Certificate2 cert;
+		X509Certificate cert;
 		bool secure;
 		Dictionary<HttpConnection, HttpConnection> unregistered;
 
@@ -107,7 +107,7 @@ namespace System.Net {
 			if (accepted == null)
 				return;
 
-			if (epl.secure && (epl.cert == null || !epl.cert.HasPrivateKey)) {
+			if (epl.secure && epl.cert == null) {
 				accepted.Close ();
 				return;
 			}
