@@ -356,6 +356,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		public void Deliver ()
 		{
 			var server = new SmtpServer ();
@@ -372,6 +373,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		public void Deliver_Envelope ()
 		{
 			var server = new SmtpServer ();
@@ -390,6 +392,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		public void Deliver_Async ()
 		{
 			var server = new SmtpServer ();
