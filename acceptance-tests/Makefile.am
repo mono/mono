@@ -26,40 +26,23 @@ check-ms-test-suite:
 		echo "*** [ms-test-suite] Getting the repository failed, you probably don't have access to this Xamarin-internal resource. Skipping."; \
 	fi
 
-# Roslyn require some aditional files in the mono installation to build.
-# Those files can be copied from roslyn mono toolset archive that is downloaded by cibuild.sh
 check-roslyn:
 	@$(MAKE) validate-roslyn RESET_VERSIONS=1
 	@if [ -z $$PREFIX ]; then echo "You need to set PREFIX to the prefix of the Mono installation that should be used for testing Roslyn." && exit 1; fi
 	export MSBuildExtensionsPath=$$PREFIX/lib/mono/xbuild; \
-	MONO_TOOLSET_NAME=mono.mac.3; \
-	MONO_NUGET_DIR=$$PREFIX/lib/mono/xbuild/Microsoft/NuGet; \
 	MONO_DOTNET_PORTABLE_DIR=$$PREFIX/lib/mono/xbuild-frameworks/.NETPortable/; \
-	pushd /tmp; \
-	if [ ! -d "$$MONO_NUGET_DIR" ]; then \
-		echo "Mono installation is missing $$MONO_NUGET_DIR"; \
-		ROSLYN_MONO_TOOLSET_REQUIRED=yes; \
+	MONO_NUGET_TARGETS_DIR=$$PREFIX/lib/mono/xbuild/Microsoft/NuGet/; \
+	MONO_PORTABLE_TARGETS_DIR=$$PREFIX/lib/mono/xbuild/Microsoft/Portable/v5.0; \
+	if [ ! -d "$$MONO_DOTNET_PORTABLE_DIR/v5.0" ]; then \
+		mkdir -p $$MONO_DOTNET_PORTABLE_DIR; \
+		mkdir -p $$MONO_NUGET_TARGETS_DIR; \
+		mkdir -p $$MONO_PORTABLE_TARGETS_DIR; \
+		curl -SL "http://storage.bos.internalx.com/bot-provisioning/RoslynBuildDependencies.zip" > /tmp/RoslynBuildDependencies.zip; \
+		unzip -o /tmp/RoslynBuildDependencies.zip -d /tmp/RoslynBuildDependencies; \
+		cp -r /tmp/RoslynBuildDependencies/PortableReferenceAssemblies/* $$MONO_DOTNET_PORTABLE_DIR; \
+		cp /tmp/RoslynBuildDependencies/NuGetTargets/* $$MONO_NUGET_TARGETS_DIR; \
+		cp /tmp/RoslynBuildDependencies/PortableTargets/* $$MONO_PORTABLE_TARGETS_DIR; \
 	fi; \
-	if [ ! -d "$$MONO_DOTNET_PORTABLE_DIR" ]; then \
-		echo "Mono installation is missing $$MONO_DOTNET_PORTABLE_DIR"; \
-		ROSLYN_MONO_TOOLSET_REQUIRED=yes; \
-	fi; \
-	if [[ $$ROSLYN_MONO_TOOLSET_REQUIRED ]]; then \
-		if [ ! -d "$$MONO_TOOLSET_NAME" ]; then \
-			echo "Downloading roslyn mono tool set"; \
-			curl -O https://dotnetci.blob.core.windows.net/roslyn/$$MONO_TOOLSET_NAME.tar.bz2; \
-			tar -jxf $$MONO_TOOLSET_NAME.tar.bz2; \
-		fi; \
-	fi; \
-	if [ ! -d "$$MONO_NUGET_DIR" ]; then \
-		mkdir $$MONO_NUGET_DIR; \
-		cp -r $$MONO_TOOLSET_NAME/lib/mono/xbuild/Microsoft/NuGet/* $$MONO_NUGET_DIR; \
-	fi; \
-	if [ ! -d "$$MONO_DOTNET_PORTABLE_DIR" ]; then \
-		mkdir $$MONO_DOTNET_PORTABLE_DIR; \
-		cp -r $$MONO_TOOLSET_NAME/lib/mono/xbuild-frameworks/.NETPortable/* $$MONO_DOTNET_PORTABLE_DIR; \
-	fi; \
-	popd; \
 	cd $(ROSLYN_PATH) && ./cibuild.sh --mono-path $$PREFIX/bin
 
 coreclr-validate:

@@ -2,7 +2,7 @@
   {
     "name": "roslyn", 
     "url": "git://github.com/dotnet/roslyn.git", 
-    "rev": "2e68ae5e6ec51762296c681aadf57a6f33f2f34f", 
+    "rev": "322bd5b2bbf07df6a67de35cbcb2365484412f70", 
     "remote-branch": "origin/master", 
     "branch": "master", 
     "directory": "roslyn"
@@ -10,7 +10,7 @@
   {
     "name": "coreclr", 
     "url": "git://github.com/mono/coreclr.git", 
-    "rev": "a8cbbdddfe9923a7f99edf8870842ad373e66b5b", 
+    "rev": "ba86240da16a86505743ef592dc448edb3e5109c", 
     "remote-branch": "origin/mono", 
     "branch": "mono", 
     "directory": "coreclr"
