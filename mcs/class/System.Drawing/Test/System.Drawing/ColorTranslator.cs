@@ -71,6 +71,8 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (0, ColorTranslator.FromHtml ("#0").ToArgb (), "#0");
 			Assert.AreEqual (1, ColorTranslator.FromHtml ("#1").ToArgb (), "#1");
 			Assert.AreEqual (255, ColorTranslator.FromHtml ("#FF").ToArgb (), "#FF");
+			Assert.AreEqual (-15654349, ColorTranslator.FromHtml ("#123").ToArgb (), "#123");
+			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFF").ToArgb (), "#FFF");
 			Assert.AreEqual (65535, ColorTranslator.FromHtml ("#FFFF").ToArgb (), "#FFFF");
 			Assert.AreEqual (-15584170, ColorTranslator.FromHtml ("#123456").ToArgb (), "#123456");
 			Assert.AreEqual (-1, ColorTranslator.FromHtml ("#FFFFFF").ToArgb (), "#FFFFFF");
