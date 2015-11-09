@@ -43,6 +43,7 @@ monoutils_sources = \
 	mono-lazy-init.h		\
 	mono-networkinterfaces.c		\
 	mono-networkinterfaces.h		\
+	mono-pp-foreach.h	\
 	mono-proclib.c		\
 	mono-proclib.h		\
 	mono-publib.c		\

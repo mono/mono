@@ -14,6 +14,7 @@
 #include "mono/utils/mono-stack-unwinding.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-coop-mutex.h"
+#include "mono/utils/mono-pp-foreach.h"
 
 #if 1
 #ifdef __GNUC__
