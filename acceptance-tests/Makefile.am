@@ -43,7 +43,9 @@ check-roslyn:
 		cp /tmp/RoslynBuildDependencies/NuGetTargets/* $$MONO_NUGET_TARGETS_DIR; \
 		cp /tmp/RoslynBuildDependencies/PortableTargets/* $$MONO_PORTABLE_TARGETS_DIR; \
 	fi; \
-	cd $(ROSLYN_PATH) && ./cibuild.sh --mono-path $$PREFIX/bin
+	cd $(ROSLYN_PATH); \
+	sed -i -e 'N; s/bootstrapArg=".*\n.*"/bootstrapArg=""/g' cibuild.sh; \
+	./cibuild.sh --mono-path $$PREFIX/bin
 
 coreclr-validate:
 	$(MAKE) validate-coreclr RESET_VERSIONS=1
