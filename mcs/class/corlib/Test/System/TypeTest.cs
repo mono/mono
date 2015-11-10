@@ -4106,6 +4106,7 @@ namespace MonoTests.System
 
 #if !MONOTOUCH
 		[Test]
+		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
 		{
 			var nm = new AssemblyName ("asm");
