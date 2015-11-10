@@ -28,38 +28,51 @@ namespace CorCompare
 	{
 		public static int Main (string [] args)
 		{
-			if (args.Length == 0)
-				return 1;
-
+			bool showHelp = false;
 			AbiMode = false;
+			FollowForwarders = false;
 
-			AssemblyCollection acoll = new AssemblyCollection ();
+			var acoll = new AssemblyCollection ();
+
+			var options = new Mono.Options.OptionSet {
+				{ "h|help", "Show this help", v => showHelp = true },
+				{ "abi", _ => AbiMode = true},
+				{ "f|follow-forwarders", _ => FollowForwarders = true },
+				{ "d|search-directory=", v => TypeHelper.Resolver.AddSearchDirectory (v) },
+			};
+
+			var asms = options.Parse (args);
+
+			if (showHelp || asms.Count == 0) {
+				Console.WriteLine (@"Usage: mono-api-info [options] <assemblies>");
+				Console.WriteLine ();
+				Console.WriteLine ("Available options:");
+				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
+				return showHelp? 0 :1;
+			}
 
 			string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 			TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
 
-			foreach (string arg in args) {
-				if (arg == "--abi") {
-					AbiMode = true;
-				} else {
-					acoll.Add (arg);
+			foreach (string arg in asms) {
+				acoll.Add (arg);
 
-					if (arg.Contains ("v3.0")) {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-					} else if (arg.Contains ("v3.5")) {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
-					} else if (arg.Contains ("v4.0")) {
-						if (arg.Contains ("Silverlight")) {
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
-						} else {
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
-						}
+				if (arg.Contains ("v3.0")) {
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+				} else if (arg.Contains ("v3.5")) {
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
+				} else if (arg.Contains ("v4.0")) {
+					if (arg.Contains ("Silverlight")) {
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
 					} else {
-						TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
 					}
+				} else {
+					TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
 				}
 			}
 
@@ -75,6 +88,7 @@ namespace CorCompare
 		}
 
 		internal static bool AbiMode { get; private set; }
+		internal static bool FollowForwarders { get; private set; }
 	}
 
 	public class Utils {
@@ -223,16 +237,33 @@ namespace CorCompare
 			AddAttribute (nassembly, "name", aname.Name);
 			AddAttribute (nassembly, "version", aname.Version.ToString ());
 			parent.AppendChild (nassembly);
-			TypeForwardedToData.OutputForwarders (document, nassembly, ass);
-			AttributeData.OutputAttributes (document, nassembly, ass);
-			var typesCollection = ass.MainModule.Types;
-			if (typesCollection == null || typesCollection.Count == 0)
-				return;
-			var typesArray = new TypeDefinition [typesCollection.Count];
-			for (int i = 0; i < typesCollection.Count; i++) {
-				typesArray [i] = typesCollection [i];
+
+			if (!Driver.FollowForwarders) {
+				TypeForwardedToData.OutputForwarders (document, nassembly, ass);
 			}
-			Array.Sort (typesArray, TypeReferenceComparer.Default);
+
+			AttributeData.OutputAttributes (document, nassembly, ass);
+
+			var types = new List<TypeDefinition> ();
+			if (ass.MainModule.Types != null) {
+				types.AddRange (ass.MainModule.Types);
+			}
+
+			if (Driver.FollowForwarders && ass.MainModule.ExportedTypes != null) {
+				foreach (var t in ass.MainModule.ExportedTypes) {
+					var forwarded = t.Resolve ();
+					if (forwarded == null) {
+						throw new Exception ("Could not resolve forwarded type " + t.FullName + " in " + ass.Name);
+					}
+					types.Add (forwarded);
+				}
+			}
+
+			if (types.Count == 0) {
+				return;
+			}
+
+			types.Sort (TypeReferenceComparer.Default);
 
 			XmlNode nss = document.CreateElement ("namespaces", null);
 			nassembly.AppendChild (nss);
@@ -240,7 +271,7 @@ namespace CorCompare
 			string current_namespace = "$%&$&";
 			XmlNode ns = null;
 			XmlNode classes = null;
-			foreach (TypeDefinition t in typesArray) {
+			foreach (TypeDefinition t in types) {
 				if (string.IsNullOrEmpty (t.Namespace))
 					continue;
 
@@ -1340,19 +1371,17 @@ namespace CorCompare
 
 	}
 
-	class TypeReferenceComparer : IComparer
+	class TypeReferenceComparer : IComparer<TypeReference>
 	{
 		public static TypeReferenceComparer Default = new TypeReferenceComparer ();
 
-		public int Compare (object a, object b)
+		public int Compare (TypeReference a, TypeReference b)
 		{
-			TypeReference ta = (TypeReference) a;
-			TypeReference tb = (TypeReference) b;
-			int result = String.Compare (ta.Namespace, tb.Namespace);
+			int result = String.Compare (a.Namespace, b.Namespace, StringComparison.Ordinal);
 			if (result != 0)
 				return result;
 
-			return String.Compare (ta.Name, tb.Name);
+			return String.Compare (a.Name, b.Name, StringComparison.Ordinal);
 		}
 	}
 
@@ -1364,7 +1393,7 @@ namespace CorCompare
 		{
 			MemberReference ma = (MemberReference) a;
 			MemberReference mb = (MemberReference) b;
-			return String.Compare (ma.Name, mb.Name);
+			return String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 		}
 	}
 

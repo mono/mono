@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -53,9 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +61,9 @@
     <Compile Include="mono-api-info.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WellFormedXmlWriter.cs" />
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs">
+      <Link>Options.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
