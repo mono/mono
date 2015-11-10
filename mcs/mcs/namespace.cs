@@ -1347,7 +1347,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < clauses.Count; ++i) {
 						var entry = clauses[i];
 						if (entry.Alias != null) {
-							aliases.Add (entry.Alias.Value, (UsingAliasNamespace) entry);
+							aliases[entry.Alias.Value] = (UsingAliasNamespace) entry;
 						}
 					}
 				}

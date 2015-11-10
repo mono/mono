@@ -96,6 +96,14 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		public void UsingAlias ()
+		{
+			Evaluator.Run("using System;");
+			Evaluator.Run("using MyConsole = System.Console;");
+			Evaluator.Run("Console.WriteLine(\"Hello World\")");
+		}
+
+		[Test]
 		public void WithTypeBuilders ()
 		{
 			object res;
