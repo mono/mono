@@ -193,6 +193,11 @@ namespace Mono.Security.Interface
 		protected virtual void Dispose (bool disposing)
 		{
 		}
+
+		~MonoSslStream ()
+		{
+			Dispose (false);
+		}
 	}
 }
 
