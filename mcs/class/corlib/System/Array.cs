@@ -1689,10 +1689,10 @@ namespace System
 		
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
-				
-			if (keys.Length != items.Length)
-				throw new ArgumentException ("Length of keys and items does not match.");
-			
+
+			if (keys.Length > items.Length)
+				throw new ArgumentException ("Length of keys is larger than length of items.");
+
 			SortImpl<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
 
