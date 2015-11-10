@@ -203,7 +203,7 @@ internal static class StringUtil {
 
         return 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
     }
-
+#if !MONO
     internal unsafe static void UnsafeStringCopy(string src, int srcIndex, char[] dest, int destIndex, int len) {
         // We do not verify the parameters in this function, as the callers are assumed
         // to have done so. This is important for users such as HttpWriter that already
@@ -226,7 +226,7 @@ internal static class StringUtil {
             memcpyimpl(pbSrc, pbDest, cb);
         }
     }
-
+#endif
     internal static bool StringArrayEquals(string[] a, string [] b) {
         if ((a == null) != (b == null)) {
             return false;
@@ -275,7 +275,7 @@ internal static class StringUtil {
             }
         }
     }
-
+#if !MONO
     internal static int GetNonRandomizedHashCode(string s, bool ignoreCase = false) {
         // Preserve the default behavior when string hash randomization is off
         if (!AppSettings.UseRandomizedStringHashAlgorithm) {
@@ -314,7 +314,7 @@ internal static class StringUtil {
         // Fall back to non-compat result
         return GetStringHashCode(s.ToLower(CultureInfo.InvariantCulture));
     }
-
+#endif
     internal static int GetNullTerminatedByteArray(Encoding enc, string s, out byte[] bytes)
     {
         bytes = null;
@@ -328,7 +328,9 @@ internal static class StringUtil {
     }
 
     internal unsafe static void memcpyimpl(byte* src, byte* dest, int len) {
+#if !MONO        
         Debug.Assert(len >= 0, "Negative length in memcpyimpl!");
+#endif
 
 #if FEATURE_PAL
         // Portable naive implementation
