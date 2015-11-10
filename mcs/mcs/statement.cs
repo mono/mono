@@ -3881,8 +3881,10 @@ namespace Mono.CSharp {
 			return new ParameterReference (parameter_info[index], loc);
 		}
 
-		public Statement PerformClone ()
+		public Statement PerformClone (ref HashSet<LocalVariable> undeclaredVariables)
 		{
+			undeclaredVariables = TopBlock.GetUndeclaredVariables ();
+
 			CloneContext clonectx = new CloneContext ();
 			return Clone (clonectx);
 		}
@@ -4394,6 +4396,63 @@ namespace Mono.CSharp {
 				this_variable.IsThisAssigned (fc, this);
 
 			base.CheckControlExit (fc, dat);
+		}
+
+		public HashSet<LocalVariable> GetUndeclaredVariables ()
+		{
+			if (names == null)
+				return null;
+
+			HashSet<LocalVariable> variables = null;
+
+			foreach (var entry in names) {
+				var complex = entry.Value as List<INamedBlockVariable>;
+				if (complex != null) {
+					foreach (var centry in complex) {
+						if (IsUndeclaredVariable (centry)) {
+							if (variables == null)
+								variables = new HashSet<LocalVariable> ();
+
+							variables.Add ((LocalVariable) centry);
+						}
+					}
+				} else if (IsUndeclaredVariable ((INamedBlockVariable)entry.Value)) {
+					if (variables == null)
+						variables = new HashSet<LocalVariable> ();
+
+					variables.Add ((LocalVariable)entry.Value);					
+				}
+			}
+
+			return variables;
+		}
+
+		static bool IsUndeclaredVariable (INamedBlockVariable namedBlockVariable)
+		{
+			var lv = namedBlockVariable as LocalVariable;
+			return lv != null && !lv.IsDeclared;
+		}
+
+		public void SetUndeclaredVariables (HashSet<LocalVariable> undeclaredVariables)
+		{
+			if (names == null)
+				return;
+			
+			foreach (var entry in names) {
+				var complex = entry.Value as List<INamedBlockVariable>;
+				if (complex != null) {
+					foreach (var centry in complex) {
+						var lv = centry as LocalVariable;
+						if (lv != null && undeclaredVariables.Contains (lv)) {
+							lv.Type = null;
+						}
+					}
+				} else {
+					var lv = entry.Value as LocalVariable;
+					if (lv != null && undeclaredVariables.Contains (lv))
+						lv.Type = null;
+				}
+			}
 		}
 
 		public override void Emit (EmitContext ec)

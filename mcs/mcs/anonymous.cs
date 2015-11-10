@@ -1154,7 +1154,8 @@ namespace Mono.CSharp {
 					prev = null;
 				}
 
-				var body = CompatibleMethodBody (ec, tic, null, delegate_type);
+				HashSet<LocalVariable> undeclaredVariables = null;
+				var body = CompatibleMethodBody (ec, tic, null, delegate_type, ref undeclaredVariables);
 				if (body != null) {
 					am = body.Compatible (ec, body);
 				} else {
@@ -1163,6 +1164,10 @@ namespace Mono.CSharp {
 
 				if (TypeInferenceReportPrinter != null) {
 					ec.Report.SetPrinter (prev);
+				}
+
+				if (undeclaredVariables != null) {
+					body.Block.TopBlock.SetUndeclaredVariables (undeclaredVariables);
 				}
 			}
 
@@ -1209,8 +1214,8 @@ namespace Mono.CSharp {
 			// we satisfy the rule by setting the return type on the EmitContext
 			// to be the delegate type return type.
 			//
-
-			var body = CompatibleMethodBody (ec, null, return_type, delegate_type);
+			HashSet<LocalVariable> undeclaredVariables = null;
+			var body = CompatibleMethodBody (ec, null, return_type, delegate_type, ref undeclaredVariables);
 			if (body == null)
 				return null;
 
@@ -1268,6 +1273,15 @@ namespace Mono.CSharp {
 				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
+			} finally {
+				//
+				// LocalVariable is not stateless and it's not easy to clone because it's
+				// cached in toplevel block. Unsetting any initialized variables should
+				// be enough
+				//
+				if (undeclaredVariables != null) {
+					body.Block.TopBlock.SetUndeclaredVariables (undeclaredVariables);
+				}
 			}
 
 			if (!ec.IsInProbingMode && !etree_conversion) {
@@ -1387,13 +1401,13 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, TypeSpec return_type, TypeSpec delegate_type)
+		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, TypeSpec return_type, TypeSpec delegate_type, ref HashSet<LocalVariable> undeclaredVariables)
 		{
 			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
 				return null;
 
-			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
+			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone (ref undeclaredVariables) : Block;
 
 			if (b.IsAsync) {
 				var rt = return_type;
