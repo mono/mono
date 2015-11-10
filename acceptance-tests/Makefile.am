@@ -19,7 +19,7 @@ ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 check-ms-test-suite:
 	@if $(MAKE) validate-ms-test-suite RESET_VERSIONS=1; then \
 		$(MAKE) -C $(MSTESTSUITE_PATH)/conformance build MCS="$(MCS) -t:library -warn:1 -r:nunit.framework"; \
-		$(MAKE) -C $(MSTESTSUITE_PATH)/conformance run NUNIT-CONSOLE="$(RUNTIME) $(CLASS)/nunit-console.exe -nologo -exclude=MonoBug,BadTest"; \
+		$(MAKE) -C $(MSTESTSUITE_PATH)/conformance run NUNIT-CONSOLE="$(RUNTIME) $(CLASS)/nunit-console.exe -nologo -exclude=MonoBug,BadTest" NUNIT_XML_RESULT=$(abs_top_builddir)/acceptance-tests/TestResult-ms-test-suite-conformance.xml; \
 		$(MAKE) -C $(MSTESTSUITE_PATH)/systemruntimebringup build MCS="$(MCS) -debug -warn:1"; \
 		$(MAKE) -C $(MSTESTSUITE_PATH)/systemruntimebringup run MONO="$(RUNTIME)"; \
 	else \
@@ -45,6 +45,7 @@ check-roslyn:
 	fi; \
 	cd $(ROSLYN_PATH); \
 	sed -i -e 'N; s/bootstrapArg=".*\n.*"/bootstrapArg=""/g' cibuild.sh; \
+	sed -i -e 's#-xml Binaries/\$$BUILD_CONFIGURATION/xUnitResults/#-nunit $(abs_top_builddir)/acceptance-tests/TestResult-#g' cibuild.sh; \
 	./cibuild.sh --mono-path $$PREFIX/bin
 
 coreclr-validate:
