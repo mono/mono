@@ -945,28 +945,28 @@ namespace MonoTests.System
 		[Test]
 		public void GetHashCode_ShouldBeEqualToUnderlyingType ()
 		{
-			Assert.AreEqual (EnInt8.A.GetHashCode(), SByte.MinValue, "i8#0");
-			Assert.AreEqual (EnInt8.B.GetHashCode(), 44, "i8#1");
-			Assert.AreEqual (EnInt8.C.GetHashCode(), SByte.MaxValue, "i8#2");
+			Assert.AreEqual (EnInt8.A.GetHashCode(), SByte.MinValue.GetHashCode (), "i8#0");
+			Assert.AreEqual (EnInt8.B.GetHashCode(), ((sbyte)44).GetHashCode (), "i8#1");
+			Assert.AreEqual (EnInt8.C.GetHashCode(), SByte.MaxValue.GetHashCode (), "i8#2");
 	
-			Assert.AreEqual (EnUInt8.A.GetHashCode(), Byte.MinValue, "u8#0");
-			Assert.AreEqual (EnUInt8.B.GetHashCode(), 55, "u8#1");
-			Assert.AreEqual (EnUInt8.C.GetHashCode(), Byte.MaxValue, "u8#2");
+			Assert.AreEqual (EnUInt8.A.GetHashCode(), Byte.MinValue.GetHashCode (), "u8#0");
+			Assert.AreEqual (EnUInt8.B.GetHashCode(), ((byte)55).GetHashCode (), "u8#1");
+			Assert.AreEqual (EnUInt8.C.GetHashCode(), Byte.MaxValue.GetHashCode (), "u8#2");
 	
-			Assert.AreEqual (EnInt16.A.GetHashCode(), Int16.MinValue, "i16#0");
-			Assert.AreEqual (EnInt16.B.GetHashCode(), 66, "i16#1");
-			Assert.AreEqual (EnInt16.C.GetHashCode(), Int16.MaxValue, "i16#2");
+			Assert.AreEqual (EnInt16.A.GetHashCode(), Int16.MinValue.GetHashCode (), "i16#0");
+			Assert.AreEqual (EnInt16.B.GetHashCode(), ((short)66).GetHashCode (), "i16#1");
+			Assert.AreEqual (EnInt16.C.GetHashCode(), Int16.MaxValue.GetHashCode (), "i16#2");
 	
-			Assert.AreEqual (EnUInt16.A.GetHashCode(), UInt16.MinValue, "u16#0");
-			Assert.AreEqual (EnUInt16.B.GetHashCode(), 77, "u16#1");
-			Assert.AreEqual (EnUInt16.C.GetHashCode(), UInt16.MaxValue, "u16#2");
+			Assert.AreEqual (EnUInt16.A.GetHashCode(), UInt16.MinValue.GetHashCode (), "u16#0");
+			Assert.AreEqual (EnUInt16.B.GetHashCode(), ((ushort)77).GetHashCode (), "u16#1");
+			Assert.AreEqual (EnUInt16.C.GetHashCode(), UInt16.MaxValue.GetHashCode (), "u16#2");
 	
-			Assert.AreEqual (EnInt32.A.GetHashCode(), Int32.MinValue, "i32#0");
-			Assert.AreEqual (EnInt32.B.GetHashCode(), 88, "i32#1");
-			Assert.AreEqual (EnInt32.C.GetHashCode(), Int32.MaxValue, "i32#2");
+			Assert.AreEqual (EnInt32.A.GetHashCode(), Int32.MinValue.GetHashCode (), "i32#0");
+			Assert.AreEqual (EnInt32.B.GetHashCode(), ((int)88).GetHashCode (), "i32#1");
+			Assert.AreEqual (EnInt32.C.GetHashCode(), Int32.MaxValue.GetHashCode (), "i32#2");
 	
-			Assert.AreEqual (EnUInt32.A.GetHashCode(), UInt32.MinValue, "u32#0");
-			Assert.AreEqual (EnUInt32.B.GetHashCode(), 99, "u32#1");
+			Assert.AreEqual (EnUInt32.A.GetHashCode(), UInt32.MinValue.GetHashCode (), "u32#0");
+			Assert.AreEqual (EnUInt32.B.GetHashCode(), ((uint)99).GetHashCode (), "u32#1");
 			Assert.AreEqual (EnUInt32.C.GetHashCode(), UInt32.MaxValue.GetHashCode (), "u32#2");
 	
 			Assert.AreEqual (EnInt64.A.GetHashCode(), Int64.MinValue.GetHashCode (), "i64#0");
@@ -974,7 +974,7 @@ namespace MonoTests.System
 			Assert.AreEqual (EnInt64.C.GetHashCode(), Int64.MaxValue.GetHashCode (), "i64#2");
 	
 			Assert.AreEqual (EnUInt64.A.GetHashCode(), UInt64.MinValue.GetHashCode (), "u64#0");
-			Assert.AreEqual (EnUInt64.B.GetHashCode(), 3488924689489L.GetHashCode (), "u64#1");
+			Assert.AreEqual (EnUInt64.B.GetHashCode(), ((ulong)3488924689489L).GetHashCode (), "u64#1");
 			Assert.AreEqual (EnUInt64.C.GetHashCode(), UInt64.MaxValue.GetHashCode (), "u64#2");
 		}
 
