@@ -36,7 +36,7 @@ using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
-	public abstract class MonoSslStream
+	public abstract class MonoSslStream : IDisposable
 	{
 		public abstract void AuthenticateAsClient (string targetHost);
 
