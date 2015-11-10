@@ -1122,7 +1122,7 @@ System.Web.UI.WebControls/VerticalAlignConverter.cs
 ../../../external/referencesource/System.Web/UI/WebControls/VerticalAlign.cs
 System.Web.UI.WebControls/ViewCollection.cs
 System.Web.UI.WebControls/View.cs
-System.Web.UI.WebControls/WebColorConverter.cs
+../../../external/referencesource/System.Web/UI/WebControls/WebColorConverter.cs
 System.Web.UI.WebControls/WebControl.cs
 System.Web.UI.WebControls.WebParts/ConnectionConsumerCallback.cs
 System.Web.UI.WebControls.WebParts/ConnectionInterfaceCollection.cs
@@ -1197,6 +1197,7 @@ System.Web.Util/Helpers.cs
 System.Web.Util/HttpEncoder.cs
 System.Web.Util/ICalls.cs
 ../../../external/referencesource/System.Web/Util/IObjectFactory.cs
+../../../external/referencesource/System.Web/Util/StringUtil.cs
 System.Web.Util/IWebPropertyAccessor.cs
 System.Web.Util/MachineKeySectionUtils.cs
 System.Web.Util/RuntimeHelpers.cs
