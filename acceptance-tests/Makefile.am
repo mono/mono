@@ -52,7 +52,9 @@ coreclr-validate:
 	$(MAKE) validate-coreclr RESET_VERSIONS=1
 
 coreclr-compile-tests: coreclr-validate
-	$(MAKE) -j4 $(CORECLR_TESTSI_CS) $(CORECLR_COREMANGLIB_TESTSI_CS) $(CORECLR_TESTSI_IL)
+	$(MAKE) -j4 $(CORECLR_TESTSI_CS)
+	$(MAKE) -j4 $(CORECLR_COREMANGLIB_TESTSI_CS)
+	$(MAKE) -j4 $(CORECLR_TESTSI_IL)
 
 # the CoreCLR IL tests use the System.Console facade, we need to copy it to the test directory
 # all the other tests rely on the coreclr-testlibrary.dll
@@ -293,6 +295,7 @@ CORECLR_TEST_CS_SRC=		\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lclfldmul.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lclfldrem.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/coverage/oldtests/lclfldsub.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/gettypetypeof/gettypetypeofmatrix.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/interlocked/IntrinsicTest_Overflow.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/interlocked/cmpxchg.cs	\
 	$(CORECLR_PATH)/tests/src/JIT/Directed/intrinsic/interlocked/cse_cmpxchg.cs	\
@@ -3794,7 +3797,12 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/assem.cs	\
 	$(CORECLR_PATH)/tests/src/Regressions/assemblyref/test.cs		\
-	$(CORECLR_PATH)/tests/src/Interop/ReversePInvoke/Marshalling/MarshalBoolArray.cs
+	$(CORECLR_PATH)/tests/src/Interop/ReversePInvoke/Marshalling/MarshalBoolArray.cs	\
+	$(CORECLR_PATH)/tests/src/Interop/NativeCallable/NativeCallableTest.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/StructABI/StructABI.OSX.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/StructABI/StructABI.Windows.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/StructABI/StructABI.Unix.cs	\
+	$(CORECLR_PATH)/tests/src/JIT/Directed/StructABI/StructABI.cs
 
 # relies on a define:
 CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Exceptions/Finalization/Finalizer.cs
@@ -3845,6 +3853,9 @@ CORECLR_DISABLED_TEST_CS_SRC += 	\
 	$(CORECLR_PATH)/tests/src/Common/Coreclr.TestWrapper/CoreclrTestWrapperLib.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/cti/system/resources/resourcemanager/customculture.cs	\
 	$(CORECLR_PATH)/tests/src/CoreMangLib/system/resources/resourcemanager/customculture.cs
+
+# Mono doesn't support ICastable
+CORECLR_DISABLED_TEST_CS_SRC += $(CORECLR_PATH)/tests/src/Interop/ICastable/Castable.cs
 
 # throws IndexOutOfRange exception even on .NET
 CORECLR_DISABLED_TEST_CS_SRC += 	\
@@ -5189,4 +5200,9 @@ test-runner.exe: $(top_srcdir)/mono/tests/test-runner.cs
 GCStressTests.exe: $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
 	$(MCS) -out:$@ -debug -d:PROJECTK_BUILD $(CORECLR_STRESSTEST_RUNNER_CS_SRC)
 
-CLEANFILES = $(CORECLR_TESTSI_CS) $(CORECLR_COREMANGLIB_TESTSI_CS) $(CORECLR_TESTSI_IL) *.dll *.exe *.mdb $(CORECLR_STRESSTESTSI_CS) GCStressTests.exe coreclr-testlibrary.dll
+CLEANFILES = *.dll *.exe *.mdb $(CORECLR_STRESSTESTSI_CS) GCStressTests.exe coreclr-testlibrary.dll
+
+clean-local:
+	-rm -f $(CORECLR_TESTSI_CS)
+	-rm -f $(CORECLR_COREMANGLIB_TESTSI_CS)
+	-rm -f $(CORECLR_TESTSI_IL)
