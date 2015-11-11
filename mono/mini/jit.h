@@ -33,8 +33,31 @@ mono_set_signal_chaining   (mono_bool chain_signals);
 MONO_API void
 mono_set_crash_chaining   (mono_bool chain_signals);
 
+/**
+ * This function is deprecated, use mono_jit_set_aot_mode instead.
+ */
 MONO_API void
 mono_jit_set_aot_only      (mono_bool aot_only);
+
+/**
+ * Allows control over our AOT (Ahead-of-time) compilation mode.
+ */
+typedef enum {
+	/* Disables AOT mode */
+	MONO_AOT_MODE_NONE,
+	/* Enables normal AOT mode, equivalent to mono_jit_set_aot_only (false) */
+	MONO_AOT_MODE_NORMAL,
+	/* Enables hybrid AOT mode, JIT can still be used for wrappers */
+	MONO_AOT_MODE_HYBRID,
+	/* Enables full AOT mode, JIT is disabled and not allowed,
+	 * equivalent to mono_jit_set_aot_only (true) */
+	MONO_AOT_MODE_FULL,
+	/* Same as full, but use only llvm compiled code */
+	MONO_AOT_MODE_LLVMONLY
+} MonoAotMode;
+
+MONO_API void
+mono_jit_set_aot_mode      (MonoAotMode mode);
 
 /* Allow embedders to decide wherther to actually obey breakpoint instructions
  * in specific methods (works for both break IL instructions and Debugger.Break ()
@@ -59,6 +82,14 @@ MONO_API void
 mono_jit_parse_options     (int argc, char * argv[]);
 
 MONO_API char*       mono_get_runtime_build_info    (void);
+
+/* The following APIs are not stable. Avoid if possible. */
+
+MONO_API MonoJitInfo *
+mono_get_jit_info_from_method (MonoDomain *domain, MonoMethod *method);
+
+MONO_API void *
+mono_aot_get_method (MonoDomain *domain, MonoMethod *method);
 
 MONO_END_DECLS
 

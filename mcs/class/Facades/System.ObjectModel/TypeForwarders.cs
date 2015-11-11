@@ -35,3 +35,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.PropertyChangedEventHandler))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Windows.Input.ICommand))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.INotifyPropertyChanging))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.PropertyChangingEventArgs))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.PropertyChangingEventHandler))]

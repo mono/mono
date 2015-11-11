@@ -40,6 +40,7 @@ using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
+using System.Collections.Generic;
 
 namespace System.Reflection.Emit
 {
@@ -266,6 +267,13 @@ namespace System.Reflection.Emit
 				code = new byte [count];
 				System.Array.Copy(il, code, count);
 			}
+		}
+
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			var ilgen = GetILGenerator ();
+			ilgen.Init (il, maxStack, localSignature, exceptionHandlers, tokenFixups);
 		}
 
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
@@ -655,7 +663,7 @@ namespace System.Reflection.Emit
 
 		public override Module Module {
 			get {
-				return base.Module;
+				return GetModule ();
 			}
 		}
 

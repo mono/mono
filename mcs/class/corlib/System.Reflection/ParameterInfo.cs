@@ -81,24 +81,31 @@ namespace System.Reflection
 			return result;
 		}
 
-		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p)
+		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
 		{
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
 
-				Type pt = p[i].ParameterType;
-				bool byref = pt.IsByRef;
-				if (byref)
-					pt = pt.GetElementType ();
+				Type t = p[i].ParameterType;
 
-				if (Type.ShouldPrintFullName (pt))
-					sb.Append (pt.ToString ());
-				else
-					sb.Append (pt.Name);
+				string typeName = t.FormatTypeName (serialization);
 
-				if (byref)
+				// Legacy: Why use "ByRef" for by ref parameters? What language is this?
+				// VB uses "ByRef" but it should precede (not follow) the parameter name.
+				// Why don't we just use "&"?
+				if (t.IsByRef && !serialization) {
+					sb.Append (typeName.TrimEnd (new char[] { '&' }));
 					sb.Append (" ByRef");
+				} else {
+					sb.Append (typeName);
+				}
+			}
+
+			if ((callingConvention & CallingConventions.VarArgs) != 0) {
+				if (p.Length > 0)
+					sb.Append (", ");
+				sb.Append ("...");
 			}
 		}
 
@@ -114,13 +121,13 @@ namespace System.Reflection
 				return (Attributes & ParameterAttributes.In) != 0;
 			}
 		}
-
+#if FEATURE_USE_LCID
 		public bool IsLcid {
 			get {
 				return (Attributes & ParameterAttributes.Lcid) != 0;
 			}
 		}
-
+#endif
 		public bool IsOptional {
 			get {
 				return (Attributes & ParameterAttributes.Optional) != 0;

@@ -17,11 +17,7 @@ LIB_REFS += Microsoft.CSharp
 LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
 endif
 
-ifeq (monodroid, $(PROFILE))
-LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
-endif
-
-ifeq (xammac, $(PROFILE))
+ifdef MOBILE_DYNAMIC
 LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
 endif
 

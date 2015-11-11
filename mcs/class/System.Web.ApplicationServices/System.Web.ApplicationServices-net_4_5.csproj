@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;SYSTEM_WEB_APPLICATIONSERVICES</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;SYSTEM_WEB_APPLICATIONSERVICES</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;SYSTEM_WEB_APPLICATIONSERVICES</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;SYSTEM_WEB_APPLICATIONSERVICES</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,22 +48,22 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipCreateStatus.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipCreateUserException.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipPasswordException.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipPasswordFormat.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipProvider.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipProviderCollection.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipUser.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipUserCollection.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\MembershipValidatePasswordEventHandler.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\RoleProvider.cs" />
-    <Compile Include="..\System.Web\System.Web.Security\ValidatePasswordEventArgs.cs" />
-    <Compile Include="..\System.Web\System.Web.UI\KeyedList.cs" />
-    <Compile Include="..\System.Web\System.Web.UI\KeyedListEnumerator.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Web.Configuration\MembershipPasswordCompatibilityMode.cs" />
-    <Compile Include="System.Web.Security\IMembershipHelper.cs" />  </ItemGroup>
+    <Compile Include="System.Web.Security\IMembershipHelper.cs" />
+    <Compile Include="System.Web.Security\MembershipCreateStatus.cs" />
+    <Compile Include="System.Web.Security\MembershipCreateUserException.cs" />
+    <Compile Include="System.Web.Security\MembershipPasswordException.cs" />
+    <Compile Include="System.Web.Security\MembershipPasswordFormat.cs" />
+    <Compile Include="System.Web.Security\MembershipProvider.cs" />
+    <Compile Include="System.Web.Security\MembershipProviderCollection.cs" />
+    <Compile Include="System.Web.Security\MembershipUser.cs" />
+    <Compile Include="System.Web.Security\MembershipUserCollection.cs" />
+    <Compile Include="System.Web.Security\MembershipValidatePasswordEventHandler.cs" />
+    <Compile Include="System.Web.Security\RoleProvider.cs" />
+    <Compile Include="System.Web.Security\ValidatePasswordEventArgs.cs" />
+    <Compile Include="System.Web.UI\KeyedList.cs" />
+    <Compile Include="System.Web.UI\KeyedListEnumerator.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

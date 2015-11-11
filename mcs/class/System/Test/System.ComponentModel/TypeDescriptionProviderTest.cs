@@ -37,7 +37,6 @@ namespace MonoTests.System.ComponentModel
 	[TestFixture]
 	public class TypeDescriptionProviderTest
 	{
-#if NET_4_0
 		[Test]
 		public void IsSupportedType ()
 		{
@@ -71,7 +70,6 @@ namespace MonoTests.System.ComponentModel
 				return base.GetExtenderProviders (instance);
 			}
 		}
-#endif
 	}
 }
 

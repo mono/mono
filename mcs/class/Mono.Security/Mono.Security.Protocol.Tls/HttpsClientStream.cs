@@ -39,6 +39,7 @@ namespace Mono.Security.Protocol.Tls {
 
 	// Note: DO NOT REUSE this class - instead use SslClientStream
 
+	[Obsolete ("This class is obsolete and will be removed shortly.")]
 	internal class HttpsClientStream : SslClientStream {
 
 		private HttpWebRequest _request;

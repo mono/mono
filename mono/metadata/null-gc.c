@@ -30,12 +30,15 @@ mono_gc_base_init (void)
 	         manner that boehm-gc does it. This is probably worth investigating
 	         more carefully. */
 	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
-	cb.mono_gc_pthread_create = (gpointer)mono_gc_pthread_create;
-	cb.thread_exit = mono_gc_pthread_exit;
 
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
 
 	mono_thread_info_attach (&dummy);
+}
+
+void
+mono_gc_base_cleanup (void)
+{
 }
 
 void
@@ -108,8 +111,13 @@ mono_gc_enable_events (void)
 {
 }
 
+void
+mono_gc_enable_alloc_events (void)
+{
+}
+
 int
-mono_gc_register_root (char *start, size_t size, void *descr)
+mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
 	return TRUE;
 }
@@ -168,7 +176,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr)
+mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
 	return g_malloc0 (size);
 }
@@ -177,6 +185,53 @@ void
 mono_gc_free_fixed (void* addr)
 {
 	g_free (addr);
+}
+
+void *
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+{
+	MonoObject *obj = calloc (1, size);
+
+	obj->vtable = vtable;
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+{
+	MonoArray *obj = calloc (1, size);
+
+	obj->obj.vtable = vtable;
+	obj->max_length = max_length;
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+{
+	MonoArray *obj = calloc (1, size);
+
+	obj->obj.vtable = vtable;
+	obj->max_length = max_length;
+
+	if (bounds_size)
+		obj->bounds = (MonoArrayBounds *) ((char *) obj + size - bounds_size);
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+{
+	MonoString *obj = calloc (1, size);
+
+	obj->object.vtable = vtable;
+	obj->length = len;
+	obj->chars [len] = 0;
+
+	return obj;
 }
 
 void
@@ -253,7 +308,7 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
 }
 
 MonoMethod*
-mono_gc_get_managed_allocator_by_type (int atype)
+mono_gc_get_managed_allocator_by_type (int atype, gboolean slowpath)
 {
 	return NULL;
 }
@@ -306,6 +361,13 @@ int
 mono_gc_get_restart_signal (void)
 {
 	return -1;
+}
+
+MonoMethod*
+mono_gc_get_specific_write_barrier (gboolean is_concurrent)
+{
+	g_assert_not_reached ();
+	return NULL;
 }
 
 MonoMethod*
@@ -437,35 +499,16 @@ mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
 }
 
 #ifndef HOST_WIN32
-
 int
 mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
 	return pthread_create (new_thread, attr, start_routine, arg);
 }
-
-int
-mono_gc_pthread_join (pthread_t thread, void **retval)
-{
-	return pthread_join (thread, retval);
-}
-
-int
-mono_gc_pthread_detach (pthread_t thread)
-{
-	return pthread_detach (thread);
-}
-
-void
-mono_gc_pthread_exit (void *retval)
-{
-	pthread_exit (retval);
-}
+#endif
 
 void mono_gc_set_skip_thread (gboolean value)
 {
 }
-#endif
 
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved)
@@ -475,7 +518,7 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 #endif
 
 guint
-mono_gc_get_vtable_bits (MonoClass *class)
+mono_gc_get_vtable_bits (MonoClass *klass)
 {
 	return 0;
 }
@@ -487,6 +530,12 @@ mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack,
 
 gboolean
 mono_gc_set_allow_synchronous_major (gboolean flag)
+{
+	return TRUE;
+}
+
+gboolean
+mono_gc_is_null (void)
 {
 	return TRUE;
 }

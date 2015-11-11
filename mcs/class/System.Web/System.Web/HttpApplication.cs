@@ -4,7 +4,8 @@
 // Author:
 //	Miguel de Icaza (miguel@novell.com)
 //	Gonzalo Paniagua (gonzalo@ximian.com)
-//    
+//	Matthias Bogad (bogad@cs.tum.edu)
+//
 //
 // Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
@@ -62,8 +63,10 @@
 //    Events Disposed
 //
 
+using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
@@ -162,6 +165,8 @@ namespace System.Web
 		bool removeConfigurationFromCache;
 		bool fullInitComplete = false;
 		
+		static DynamicModuleManager dynamicModuleManeger = new DynamicModuleManager ();
+
 		//
 		// These are used to detect the case where the EndXXX method is invoked
 		// from within the BeginXXXX delegate, so we detect whether we kick the
@@ -209,6 +214,13 @@ namespace System.Web
 					if (context == null)
 						context = HttpContext.Current;
 					HttpModuleCollection coll = modules.LoadModules (this);
+
+					HttpModuleCollection dynMods = CreateDynamicModules ();
+
+					for (int i = 0; i < dynMods.Count; i++) {
+						coll.AddModule (dynMods.GetKey (i), dynMods.Get (i));
+					}
+
 					Interlocked.CompareExchange (ref modcoll, coll, null);
 					HttpContext.Current = saved;
 
@@ -404,7 +416,7 @@ namespace System.Web
 		
 		public void AddOnAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			AcquireRequestState += new EventHandler (invoker.Invoke);
 		}
 
@@ -417,7 +429,7 @@ namespace System.Web
 		
 		public void AddOnAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			AuthenticateRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -430,7 +442,7 @@ namespace System.Web
 		
 		public void AddOnAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			AuthorizeRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -452,7 +464,7 @@ namespace System.Web
 		
 		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			BeginRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -474,7 +486,7 @@ namespace System.Web
 		
 		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			EndRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -487,7 +499,7 @@ namespace System.Web
 		
 		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			PostRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
@@ -500,7 +512,7 @@ namespace System.Web
 		
 		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			PreRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
@@ -513,7 +525,7 @@ namespace System.Web
 		
 		public void AddOnReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			ReleaseRequestState += new EventHandler (invoker.Invoke);
 		}
 
@@ -526,7 +538,7 @@ namespace System.Web
 		
 		public void AddOnResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			ResolveRequestCache += new EventHandler (invoker.Invoke);
 		}
 
@@ -539,7 +551,7 @@ namespace System.Web
 		
 		public void AddOnUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
+			AsyncInvoker invoker = new AsyncInvoker (bh, eh, this);
 			UpdateRequestCache += new EventHandler (invoker.Invoke);
 		}
 
@@ -555,9 +567,9 @@ namespace System.Web
 			AddOnPostAuthenticateRequestAsync (bh, eh, null);
 		}
 			
-		public void AddOnPostAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostAuthenticateRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostAuthenticateRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -573,9 +585,9 @@ namespace System.Web
 			AddOnPostAuthorizeRequestAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostAuthorizeRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostAuthorizeRequest += new EventHandler (invoker.Invoke);
 		}
 		
@@ -591,9 +603,9 @@ namespace System.Web
 			AddOnPostResolveRequestCacheAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostResolveRequestCacheAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostResolveRequestCache += new EventHandler (invoker.Invoke);
 		}
 
@@ -609,9 +621,9 @@ namespace System.Web
 			AddOnPostMapRequestHandlerAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostMapRequestHandlerAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostMapRequestHandlerAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostMapRequestHandler += new EventHandler (invoker.Invoke);
 		}
 
@@ -627,9 +639,9 @@ namespace System.Web
 			AddOnPostAcquireRequestStateAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostAcquireRequestStateAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostAcquireRequestState += new EventHandler (invoker.Invoke);
 		}
 
@@ -645,9 +657,9 @@ namespace System.Web
 			AddOnPostReleaseRequestStateAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostReleaseRequestStateAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostReleaseRequestState += new EventHandler (invoker.Invoke);
 		}
 
@@ -663,72 +675,72 @@ namespace System.Web
 			AddOnPostUpdateRequestCacheAsync (bh, eh, null);
 		}
 		
-		public void AddOnPostUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnPostUpdateRequestCacheAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostUpdateRequestCache += new EventHandler (invoker.Invoke);
 		}
 
 		//
 		// The new overloads that take a data parameter
 		//
-		public void AddOnAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnAcquireRequestStateAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			AcquireRequestState += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnAuthenticateRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			AuthenticateRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnAuthorizeRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			AuthorizeRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnBeginRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			BeginRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnEndRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			EndRequest += new EventHandler (invoker.Invoke);
 		}
 		
-		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+			public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+			public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PreRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnReleaseRequestStateAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			ReleaseRequestState += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnResolveRequestCacheAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			ResolveRequestCache += new EventHandler (invoker.Invoke);
 		}
 
-		public void AddOnUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh, object data)
+		public void AddOnUpdateRequestCacheAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			UpdateRequestCache += new EventHandler (invoker.Invoke);
 		}
 
@@ -749,7 +761,7 @@ namespace System.Web
 		
 		public void AddOnLogRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			LogRequest += new EventHandler (invoker.Invoke);
 		}
 
@@ -767,7 +779,7 @@ namespace System.Web
 
 		public void AddOnMapRequestHandlerAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			MapRequestHandler += new EventHandler (invoker.Invoke);
 		}
 
@@ -785,7 +797,7 @@ namespace System.Web
 
 		public void AddOnPostLogRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
 		{
-			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, this, state);
 			PostLogRequest += new EventHandler (invoker.Invoke);
 		}
 		
@@ -871,7 +883,7 @@ namespace System.Web
 		//
 		// If we catch an error, queue this error
 		//
-		void ProcessError (Exception e)
+		internal void ProcessError (Exception e)
 		{
 			bool first = context.Error == null;
 			context.AddError (e);
@@ -1643,7 +1655,39 @@ namespace System.Web
 				return true;
 			}
 		}
-		
+
+		public static void RegisterModule (Type moduleType) 
+		{
+			HttpRuntimeSection config = (HttpRuntimeSection)WebConfigurationManager.GetSection ("system.web/httpRuntime");
+
+			if (!config.AllowDynamicModuleRegistration)
+				throw new InvalidOperationException ("The Application has requested to register a dynamic Module, but dynamic module registration is disabled in web.config.");
+
+			dynamicModuleManeger.Add (moduleType);
+		}
+
+
+		HttpModuleCollection CreateDynamicModules () 
+		{
+			HttpModuleCollection modules = new HttpModuleCollection ();
+
+			foreach (var module in dynamicModuleManeger.LockAndGetModules ()) {
+				IHttpModule httpModule = CreateModuleInstance (module.Type);
+				httpModule.Init (this);
+				modules.AddModule (module.Name, httpModule);
+			}
+			return modules;
+		}
+
+		IHttpModule CreateModuleInstance (Type type)
+		{
+			return (IHttpModule) Activator.CreateInstance (type,
+					BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.CreateInstance,
+					null,
+					null,
+					null);
+		}
+
 #region internals
 		internal void ClearError ()
 		{
@@ -1891,24 +1935,40 @@ namespace System.Web
 		public BeginEventHandler begin;
 		public EndEventHandler end;
 		public object data;
+		HttpApplication app;
+		AsyncCallback callback;
 		
-		public AsyncInvoker (BeginEventHandler bh, EndEventHandler eh, object d)
+		public AsyncInvoker (BeginEventHandler bh, EndEventHandler eh, HttpApplication a, object d)
 		{
 			begin = bh;
 			end = eh;
 			data = d;
+			app = a;
+			callback = new AsyncCallback (doAsyncCallback);
 		}
 
-		public AsyncInvoker (BeginEventHandler bh, EndEventHandler eh)
-		{
-			begin = bh;
-			end = eh;
-		}
+		public AsyncInvoker (BeginEventHandler bh, EndEventHandler eh, HttpApplication app) : this(bh, eh, app, null) { }
 		
 		public void Invoke (object sender, EventArgs e)
 		{
-			throw new Exception ("This is just a dummy");
+			IAsyncResult res;
+			res = begin (app, e, callback, data);
+		}
+
+		void doAsyncCallback (IAsyncResult res)
+		{
+			ThreadPool.QueueUserWorkItem ((object ores) => {
+				IAsyncResult tres = (IAsyncResult) ores;
+				try {
+					end (tres);
+				} catch (Exception ee) {
+					// I tried using ProcessError(), but we only come here frome an Invokation in PipelineDone().
+					// Using ProcessError, I still get a blank screen, this way, we at least log the error to console...
+					Console.Error.WriteLine (ee.ToString ());
+				}
+			}, res);
 		}
 	}
 #endregion
 }
+

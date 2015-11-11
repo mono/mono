@@ -42,11 +42,11 @@ namespace System.Globalization {
 	public partial class RegionInfo {
 
 		[DllImport ("__Internal")]
-		extern static string monotouch_get_locale_country_code ();
+		extern static string xamarin_get_locale_country_code ();
 
 		static RegionInfo CreateFromNSLocale ()
 		{
-			return new RegionInfo (monotouch_get_locale_country_code ());
+			return new RegionInfo (xamarin_get_locale_country_code ());
 		}
 	}
 }

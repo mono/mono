@@ -29,6 +29,7 @@
 #include <intrin.h>
 #endif
 #include "decimal-ms.h"
+#include "number-ms.h"
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
@@ -55,8 +56,13 @@ static const uint32_t ten_to_ten_div_4 = 2500000000U;
 #define DECIMAL_LO32(dec)        ((dec).v.v.Lo32)
 #define DECIMAL_MID32(dec)       ((dec).v.v.Mid32)
 #define DECIMAL_HI32(dec)        ((dec).Hi32)
-#define DECIMAL_LO64_GET(dec)    ((dec).v.Lo64)
-#define DECIMAL_LO64_SET(dec,value)   {(dec).v.Lo64 = value; }
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
+# define DECIMAL_LO64_GET(dec)   (((uint64_t)((dec).v.v.Mid32) << 32) | (dec).v.v.Lo32)
+# define DECIMAL_LO64_SET(dec,value)   {(dec).v.v.Lo32 = (value); (dec).v.v.Mid32 = ((value) >> 32); }
+#else
+# define DECIMAL_LO64_GET(dec)    ((dec).v.Lo64)
+# define DECIMAL_LO64_SET(dec,value)   {(dec).v.Lo64 = value; }
+#endif
 
 #define DECIMAL_SETZERO(dec) {DECIMAL_LO32(dec) = 0; DECIMAL_MID32(dec) = 0; DECIMAL_HI32(dec) = 0; DECIMAL_SIGNSCALE(dec) = 0;}
 #define COPYDEC(dest, src) {DECIMAL_SIGNSCALE(dest) = DECIMAL_SIGNSCALE(src); DECIMAL_HI32(dest) = DECIMAL_HI32(src); \
@@ -88,50 +94,8 @@ typedef union {
 } SPLIT64;
 
 static const SPLIT64    ten_to_eighteen = { 1000000000000000000ULL };
-// Double Bias
-#define DBLBIAS 1022
 
-// Structure to access an encoded double floating point
-typedef union{
-    struct {
-#if BYTE_ORDER == G_BIG_ENDIAN
-      unsigned int sign:1;
-      unsigned int exp:11;
-      unsigned int mantHi:20;
-      unsigned int mantLo;
-#else // BIGENDIAN
-      unsigned int mantLo;
-      unsigned int mantHi:20;
-      unsigned int exp:11;
-      unsigned int sign:1;
-#endif
-    } u;
-    double dbl;
-} DoubleStructure;
-
-#if BYTE_ORDER == G_BIG_ENDIAN
-#define DEFDS(Lo, Hi, exp, sign) { {sign, exp, Hi, Lo } }
-#else
-#define DEFDS(Lo, Hi, exp, sign) { {Lo, Hi, exp, sign} }
-#endif
-
-const DoubleStructure ds2to64 = DEFDS(0, 0, DBLBIAS + 65, 0);
-
-// Single floating point Bias
-#define SNGBIAS 126
-
-// Structure to access an encoded single floating point
-typedef struct {
-#if BYTE_ORDER == G_BIG_ENDIAN
-    unsigned int sign:1;
-    unsigned int exp:8;
-    unsigned int mant:23;
-#else
-    unsigned int mant:23;
-    unsigned int exp:8;
-    unsigned int sign:1;
-#endif
-} SingleStructure;
+const MonoDouble_double ds2to64 = { .s = { .sign = 0, .exp = MONO_DOUBLE_BIAS + 65, .mantHi = 0, .mantLo = 0 } };
 
 //
 // Data tables
@@ -1119,14 +1083,14 @@ RetDec:
 }
 
 // Decimal addition
-static MonoDecimalStatus
+static MonoDecimalStatus G_GNUC_UNUSED
 mono_decimal_add(MonoDecimal *left, MonoDecimal *right, MonoDecimal *result)
 {
     return DecAddSub (left, right, result, 0);
 }
 
 // Decimal subtraction
-static MonoDecimalStatus
+static MonoDecimalStatus G_GNUC_UNUSED
 mono_decimal_sub(MonoDecimal *left, MonoDecimal *right, MonoDecimal *result)
 {
     return DecAddSub (left, right, result, DECIMAL_NEG);
@@ -1369,7 +1333,7 @@ OverflowUnscale (uint32_t *quo, gboolean remainder)
 }
 
 // mono_decimal_divide - Decimal divide
-static MonoDecimalStatus
+static MonoDecimalStatus G_GNUC_UNUSED
 mono_decimal_divide_result(MonoDecimal *left, MonoDecimal *right, MonoDecimal *result)
 {
 	uint32_t   quo[3];
@@ -1715,7 +1679,7 @@ mono_decimal_divide_result(MonoDecimal *left, MonoDecimal *right, MonoDecimal *r
 }
 
 // mono_decimal_absolute - Decimal Absolute Value
-static void
+static void G_GNUC_UNUSED
 mono_decimal_absolute (MonoDecimal *pdecOprd, MonoDecimal *result)
 {
 	COPYDEC(*result, *pdecOprd);
@@ -1748,7 +1712,7 @@ mono_decimal_round_to_int (MonoDecimal *pdecOprd, MonoDecimal *result)
 }
 
 // mono_decimal_negate - Decimal Negate
-static void
+static void G_GNUC_UNUSED
 mono_decimal_negate (MonoDecimal *pdecOprd, MonoDecimal *result)
 {
 	COPYDEC(*result, *pdecOprd);
@@ -1817,7 +1781,7 @@ mono_decimal_round_result(MonoDecimal *input, int cDecimals, MonoDecimal *result
 //
 // Returns MONO_DECIMAL_OK or MONO_DECIMAL_OVERFLOW
 static MonoDecimalStatus
-mono_decimal_from_float (float input, MonoDecimal* result)
+mono_decimal_from_float (float input_f, MonoDecimal* result)
 {
 	int         exp;    // number of bits to left of binary point
 	int         power;
@@ -1826,12 +1790,13 @@ mono_decimal_from_float (float input, MonoDecimal* result)
 	SPLIT64     sdlLo;
 	SPLIT64     sdlHi;
 	int         lmax, cur;  // temps used during scale reduction
-	
+	MonoSingle_float input = { .f = input_f };
+
 	// The most we can scale by is 10^28, which is just slightly more
 	// than 2^93.  So a float with an exponent of -94 could just
 	// barely reach 0.5, but smaller exponents will always round to zero.
 	//
-	if ((exp = ((SingleStructure *)&input)->exp - SNGBIAS) < -94 ) {
+	if ((exp = input.s.exp - MONO_SINGLE_BIAS) < -94 ) {
 		DECIMAL_SETZERO(*result);
 		return MONO_DECIMAL_OK;
 	}
@@ -1847,7 +1812,7 @@ mono_decimal_from_float (float input, MonoDecimal* result)
 	// the exponent by log10(2).  Using scaled integer multiplcation, 
 	// log10(2) * 2 ^ 16 = .30103 * 65536 = 19728.3.
 	//
-	dbl = fabs(input);
+	dbl = fabs(input.f);
 	power = 6 - ((exp * 19728) >> 16);
 	
 	if (power >= 0) {
@@ -1951,13 +1916,13 @@ mono_decimal_from_float (float input, MonoDecimal* result)
 		DECIMAL_SCALE(*result) = power;
 	}
 	
-	DECIMAL_SIGN(*result) = (char)((SingleStructure *)&input)->sign << 7;
+	DECIMAL_SIGN(*result) = (char)input.s.sign << 7;
 	return MONO_DECIMAL_OK;
 }
 
 // Returns MONO_DECIMAL_OK or MONO_DECIMAL_OVERFLOW
 static MonoDecimalStatus
-mono_decimal_from_double (double input, MonoDecimal *result)
+mono_decimal_from_double (double input_d, MonoDecimal *result)
 {
 	int         exp;    // number of bits to left of binary point
 	int         power;  // power-of-10 scale factor
@@ -1967,13 +1932,13 @@ mono_decimal_from_double (double input, MonoDecimal *result)
 	int         lmax, cur;  // temps used during scale reduction
 	uint32_t       pwr_cur;
 	uint32_t       quo;
-	
+	MonoDouble_double input = { .d = input_d };
 	
 	// The most we can scale by is 10^28, which is just slightly more
 	// than 2^93.  So a float with an exponent of -94 could just
 	// barely reach 0.5, but smaller exponents will always round to zero.
 	//
-	if ((exp = ((DoubleStructure *)&input)->u.exp - DBLBIAS) < -94) {
+	if ((exp = input.s.exp - MONO_DOUBLE_BIAS) < -94) {
 		DECIMAL_SETZERO(*result);
 		return MONO_DECIMAL_OK;
 	}
@@ -1989,7 +1954,7 @@ mono_decimal_from_double (double input, MonoDecimal *result)
 	// the exponent by log10(2).  Using scaled integer multiplcation, 
 	// log10(2) * 2 ^ 16 = .30103 * 65536 = 19728.3.
 	//
-	dbl = fabs(input);
+	dbl = fabs(input.d);
 	power = 14 - ((exp * 19728) >> 16);
 	
 	if (power >= 0) {
@@ -2100,7 +2065,7 @@ mono_decimal_from_double (double input, MonoDecimal *result)
 		DECIMAL_MID32(*result) = sdlMant.u.Hi;
 	}
 
-	DECIMAL_SIGN(*result) = (char)((DoubleStructure *)&input)->u.sign << 7;
+	DECIMAL_SIGN(*result) = (char)input.s.sign << 7;
 	return MONO_DECIMAL_OK;
 }
 
@@ -2118,11 +2083,11 @@ mono_decimal_to_double_result(MonoDecimal *input, double *result)
 	tmp.u.Hi = DECIMAL_MID32(*input);
 	
 	if ((int32_t)DECIMAL_MID32(*input) < 0)
-		dbl = (ds2to64.dbl + (double)(int64_t)tmp.int64 +
-		       (double)DECIMAL_HI32(*input) * ds2to64.dbl) / fnDblPower10(DECIMAL_SCALE(*input)) ;
+		dbl = (ds2to64.d + (double)(int64_t)tmp.int64 +
+		       (double)DECIMAL_HI32(*input) * ds2to64.d) / fnDblPower10(DECIMAL_SCALE(*input)) ;
 	else
 		dbl = ((double)(int64_t)tmp.int64 +
-		       (double)DECIMAL_HI32(*input) * ds2to64.dbl) / fnDblPower10(DECIMAL_SCALE(*input));
+		       (double)DECIMAL_HI32(*input) * ds2to64.d) / fnDblPower10(DECIMAL_SCALE(*input));
 	
 	if (DECIMAL_SIGN(*input))
 		dbl = -dbl;
@@ -2215,6 +2180,8 @@ mono_decimal_compare (MonoDecimal *left, MonoDecimal *right)
 	uint32_t   right_sign;
 	MonoDecimal result;
 
+	result.Hi32 = 0; 	// Just to shut up the compiler
+
 	// First check signs and whether either are zero.  If both are
 	// non-zero and of the same sign, just use subtraction to compare.
 	//
@@ -2242,9 +2209,9 @@ mono_decimal_compare (MonoDecimal *left, MonoDecimal *right)
 	}
 
 	//
-	// Signs are different.  Used signed byte compares
+	// Signs are different.  Use signed byte comparison
 	//
-	if ((char)left_sign > (char)right_sign)
+	if ((signed char)left_sign > (signed char)right_sign)
 		return MONO_DECIMAL_CMP_GT;
 	return MONO_DECIMAL_CMP_LT;
 }
@@ -3059,19 +3026,11 @@ mono_decimal_divide (MonoDecimal *left, MonoDecimal *right)
 }
 
 #define DECIMAL_PRECISION 29
-#define NUMBER_MAXDIGITS 50
-typedef struct  {
-	int32_t precision;
-	int32_t scale;
-	int32_t sign;
-	uint16_t digits[NUMBER_MAXDIGITS + 1];
-	uint16_t* allDigits;
-} CLRNumber;
 
 int
 mono_decimal_from_number (void *from, MonoDecimal *target)
 {
-	CLRNumber *number = (CLRNumber *) from;
+	MonoNumber *number = (MonoNumber *) from;
 	uint16_t* p = number->digits;
 	MonoDecimal d;
 	int e = number->scale;

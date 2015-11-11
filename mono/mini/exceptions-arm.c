@@ -154,8 +154,10 @@ mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow)
+		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
+			mono_ex->trace_ips = NULL;
+		}
 	}
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
@@ -374,19 +376,19 @@ mono_arch_exceptions_init (void)
 			MonoTrampInfo *info = l->data;
 
 			mono_register_jit_icall (info->code, g_strdup (info->name), NULL, TRUE);
-			mono_tramp_info_register (info);
+			mono_tramp_info_register (info, NULL);
 		}
 		g_slist_free (tramps);
 	}
 }
 
 /* 
- * mono_arch_find_jit_info:
+ * mono_arch_unwind_frame:
  *
  * See exceptions-amd64.c for docs;
  */
 gboolean
-mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
 							 mgreg_t **save_locations,
@@ -401,12 +403,15 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 	if (ji != NULL) {
 		int i;
-		gssize regs [MONO_MAX_IREGS + 1 + 8];
+		mono_unwind_reg_t regs [MONO_MAX_IREGS + 1 + 8];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
 
-		frame->type = FRAME_TYPE_MANAGED;
+		if (ji->is_trampoline)
+			frame->type = FRAME_TYPE_TRAMPOLINE;
+		else
+			frame->type = FRAME_TYPE_MANAGED;
 
 		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
@@ -420,7 +425,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 #ifdef TARGET_IOS
 		/* On IOS, d8..d15 are callee saved. They are mapped to 8..15 in unwind.c */
 		for (i = 0; i < 8; ++i)
-			regs [MONO_MAX_IREGS + i] = new_ctx->fregs [8 + i];
+			regs [MONO_MAX_IREGS + i] = *(guint64*)&(new_ctx->fregs [8 + i]);
 #endif
 
 		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
@@ -434,7 +439,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		new_ctx->regs [ARMREG_SP] = (gsize)cfa;
 #ifdef TARGET_IOS
 		for (i = 0; i < 8; ++i)
-			new_ctx->fregs [8 + i] = regs [MONO_MAX_IREGS + i];
+			new_ctx->fregs [8 + i] = *(double*)&(regs [MONO_MAX_IREGS + i]);
 #endif
 
 		/* Clear thumb bit */
@@ -606,9 +611,8 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	/* Allocate a stack frame */
 	sp -= 16;
 	MONO_CONTEXT_SET_SP (ctx, sp);
-	MONO_CONTEXT_SET_IP (ctx, async_cb);
 
-	// FIXME: thumb/arm
+	mono_arch_setup_resume_sighandler_ctx (ctx, async_cb);
 }
 
 /*

@@ -633,6 +633,60 @@ namespace MonoTests.System.Collections.Generic {
 			}
 		}
 
+#if !MOBILE
+		[Test]
+		public void SerializationCompatibilty ()
+		{
+			/* Serialization output from .net 
+
+			var dict = new Dictionary<string, string> ();
+			dict.Add ("key", "value");
+
+			var dictSerializedStream = new MemoryStream ();
+			fmt.Serialize (dictSerializedStream, dict);
+
+			dictSerializedStream.Seek (0, SeekOrigin.Begin);
+			var res = Convert.ToBase64String (dictSerializedStream.ToArray (), Base64FormattingOptions.InsertLineBreaks);
+
+			*/
+
+			var x = "AAEAAAD/////AQAAAAAAAAAEAQAAAOIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuRGljdGlv" +
+				"bmFyeWAyW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJl" +
+				"PW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldLFtTeXN0ZW0uU3RyaW5n" +
+				"LCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRv" +
+				"a2VuPWI3N2E1YzU2MTkzNGUwODldXQQAAAAHVmVyc2lvbghDb21wYXJlcghIYXNoU2l6ZQ1LZXlW" +
+				"YWx1ZVBhaXJzAAMAAwiSAVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkdlbmVyaWNFcXVhbGl0" +
+				"eUNvbXBhcmVyYDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1" +
+				"bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dCOYBU3lzdGVt" +
+				"LkNvbGxlY3Rpb25zLkdlbmVyaWMuS2V5VmFsdWVQYWlyYDJbW1N5c3RlbS5TdHJpbmcsIG1zY29y" +
+				"bGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3" +
+				"YTVjNTYxOTM0ZTA4OV0sW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAs" +
+				"IEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dW10BAAAA" + 
+				"CQIAAAADAAAACQMAAAAEAgAAAJIBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuR2VuZXJpY0Vx" +
+				"dWFsaXR5Q29tcGFyZXJgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAu" + 
+				"MCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0AAAAA" + 
+				"BwMAAAAAAQAAAAEAAAAD5AFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5LZXlWYWx1ZVBhaXJg" + 
+				"MltbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0" + 
+				"cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XSxbU3lzdGVtLlN0cmluZywgbXNj" + 
+				"b3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1i" + 
+				"NzdhNWM1NjE5MzRlMDg5XV0E/P///+QBU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuS2V5VmFs" + 
+				"dWVQYWlyYDJbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1" + 
+				"cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV0sW1N5c3RlbS5TdHJp" + 
+				"bmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5" + 
+				"VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dAgAAAANrZXkFdmFsdWUBAQYFAAAAA2tleQYGAAAABXZh" + 
+				"bHVlCw==";
+
+			var dict = new Dictionary<string, string> ();
+			dict.Add ("key", "value");
+		
+			BinaryFormatter fmt = new BinaryFormatter ();
+			var mdict = (Dictionary<string, string>) fmt.Deserialize (new MemoryStream (Convert.FromBase64String (x)));
+
+			Assert.AreEqual (1, dict.Count);
+			Assert.AreEqual (dict.Comparer.GetType (), mdict.Comparer.GetType ());
+		}
+#endif
+
 		[Test]
 		public void ZeroCapacity ()
 		{

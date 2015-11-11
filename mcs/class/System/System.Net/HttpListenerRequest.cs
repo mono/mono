@@ -30,13 +30,6 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security.Protocol.Tls;
-#else
-extern alias MonoSecurity;
-using MonoSecurity::Mono.Security.Protocol.Tls;
-#endif
-
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -142,10 +135,10 @@ namespace System.Net {
 			foreach (string kv in components) {
 				int pos = kv.IndexOf ('=');
 				if (pos == -1) {
-					query_string.Add (null, HttpUtility.UrlDecode (kv));
+					query_string.Add (null, WebUtility.UrlDecode (kv));
 				} else {
-					string key = HttpUtility.UrlDecode (kv.Substring (0, pos));
-					string val = HttpUtility.UrlDecode (kv.Substring (pos + 1));
+					string key = WebUtility.UrlDecode (kv.Substring (0, pos));
+					string val = WebUtility.UrlDecode (kv.Substring (pos + 1));
 					
 					query_string.Add (key, val);
 				}
@@ -162,7 +155,7 @@ namespace System.Net {
 
 			string path;
 			Uri raw_uri = null;
-			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
+			if (Uri.MaybeUri (raw_url.ToLowerInvariant ()) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else
 				path = raw_url;
@@ -187,6 +180,11 @@ namespace System.Net {
 			}
 
 			CreateQueryString (url.Query);
+
+			// Use reference source HttpListenerRequestUriBuilder to process url.
+			// Fixes #29927
+			url = HttpListenerRequestUriBuilder.GetRequestUri (raw_url, url.Scheme,
+								url.Authority, url.LocalPath, url.Query);
 
 			if (version >= HttpVersion.Version11) {
 				string t_encoding = Headers ["Transfer-Encoding"];

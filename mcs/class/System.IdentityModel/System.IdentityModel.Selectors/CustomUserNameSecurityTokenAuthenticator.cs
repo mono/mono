@@ -1,3 +1,4 @@
+#if !NO_SYSTEM_WEB_DEPENDENCY
 //
 // CustomUserNameSecurityTokenAuthenticator.cs
 //
@@ -133,3 +134,4 @@ namespace System.IdentityModel.Selectors
 		}
 	}
 }
+#endif

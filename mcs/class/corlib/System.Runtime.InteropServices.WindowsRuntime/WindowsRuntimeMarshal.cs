@@ -65,6 +65,11 @@ namespace System.Runtime.InteropServices.WindowsRuntime
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal static bool ReportUnhandledError (Exception e)
+		{
+			return false;
+		}
 	}
 }
 

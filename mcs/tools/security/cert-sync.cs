@@ -49,6 +49,7 @@ namespace Mono.Tools
 	
 		static string inputFile;
 		static bool quiet;
+		static bool userStore;
 
 		static X509Certificate DecodeCertificate (string s)
 		{
@@ -115,7 +116,7 @@ namespace Mono.Tools
 				return 0;
 			}
 				
-			X509Stores stores = (X509StoreManager.LocalMachine);
+			X509Stores stores = userStore ? X509StoreManager.CurrentUser : X509StoreManager.LocalMachine;
 			X509CertificateCollection trusted = stores.TrustedRoot.Certificates;
 			int additions = 0;
 			WriteLine ("I already trust {0}, your new list has {1}", trusted.Count, roots.Count);
@@ -124,10 +125,11 @@ namespace Mono.Tools
 					try {
 						stores.TrustedRoot.Import (root);
 						WriteLine ("Certificate added: {0}", root.SubjectName);
-					} catch {
-						WriteLine ("Warning: Could not import {0}");
+						additions++;
+					} catch (Exception e) {
+						WriteLine ("Warning: Could not import {0}", root.SubjectName);
+						WriteLine (e.ToString ());
 					}
-					additions++;
 				}
 			}
 			if (additions > 0)
@@ -168,14 +170,17 @@ namespace Mono.Tools
 				case "--quiet":
 					quiet = true;
 					break;
+				case "--user":
+					userStore = true;
+					break;
 				default:
-					WriteLine ("Unknown option '{0}'.");
+					WriteLine ("Unknown option '{0}'.", args[i]);
 					return false;
 				}
 			}
 			inputFile = args [args.Length - 1];
 			if (!File.Exists (inputFile)) {
-				WriteLine ("Unknown option or file not found '{0}'.");
+				WriteLine ("Unknown option or file not found '{0}'.", inputFile);
 				return false;
 			}
 			return true;
@@ -188,7 +193,7 @@ namespace Mono.Tools
 
 		static void Help ()
 		{
-			Console.WriteLine ("Usage: cert-sync [--quiet] system-ca-bundle.crt");
+			Console.WriteLine ("Usage: cert-sync [--quiet] [--user] system-ca-bundle.crt");
 			Console.WriteLine ("Where system-ca-bundle.crt is in PEM format");
 		}
 

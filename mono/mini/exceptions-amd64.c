@@ -163,6 +163,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
+	int i, gregs_offset;
 
 	/* restore_contect (MonoContext *ctx) */
 
@@ -171,22 +172,15 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_ARG_REG1, 8);
 
 	/* Restore all registers except %rip and %r11 */
-	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rax), 8);
-	amd64_mov_reg_membase (code, AMD64_RCX, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rcx), 8);
-	amd64_mov_reg_membase (code, AMD64_RDX, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rdx), 8);
-	amd64_mov_reg_membase (code, AMD64_RBX, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rbx), 8);
-	amd64_mov_reg_membase (code, AMD64_RBP, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rbp), 8);
-	amd64_mov_reg_membase (code, AMD64_RSI, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rsi), 8);
-	amd64_mov_reg_membase (code, AMD64_RDI, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rdi), 8);
-	//amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r8), 8);
-	//amd64_mov_reg_membase (code, AMD64_R9, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r9), 8);
-	//amd64_mov_reg_membase (code, AMD64_R10, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r10), 8);
-	amd64_mov_reg_membase (code, AMD64_R12, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r12), 8);
-	amd64_mov_reg_membase (code, AMD64_R13, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r13), 8);
-	amd64_mov_reg_membase (code, AMD64_R14, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r14), 8);
-#if !defined(__native_client_codegen__)
-	amd64_mov_reg_membase (code, AMD64_R15, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, r15), 8);
+	gregs_offset = MONO_STRUCT_OFFSET (MonoContext, gregs);
+	for (i = 0; i < AMD64_NREG; ++i) {
+#if defined(__native_client_codegen__)
+		if (i == AMD64_R15)
+			continue;
 #endif
+		if (i != AMD64_RIP && i != AMD64_RSP && i != AMD64_R8 && i != AMD64_R9 && i != AMD64_R10 && i != AMD64_R11)
+			amd64_mov_reg_membase (code, i, AMD64_R11, gregs_offset + (i * 8), 8);
+	}
 
 	/*
 	 * The context resides on the stack, in the stack frame of the
@@ -196,16 +190,17 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	 * size.  Hence the stack pointer can be restored only after
 	 * we have finished loading everything from the context.
 	 */
-	amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rsp), 8);
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11,  MONO_STRUCT_OFFSET (MonoContext, rip), 8);
+	amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  gregs_offset + (AMD64_RSP * 8), 8);
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11,  gregs_offset + (AMD64_RIP * 8), 8);
 	amd64_mov_reg_reg (code, AMD64_RSP, AMD64_R8, 8);
 
 	/* jump to the saved IP */
 	amd64_jump_reg (code, AMD64_R11);
 
-	nacl_global_codeman_validate(&start, 256, &code);
+	nacl_global_codeman_validate (&start, 256, &code);
 
 	mono_arch_flush_icache (start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
@@ -224,7 +219,7 @@ gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
 	guint8 *start;
-	int i;
+	int i, gregs_offset;
 	guint8 *code;
 	guint32 pos;
 	MonoJumpInfo *ji = NULL;
@@ -256,20 +251,21 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	if (! (pos & 8))
 		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
 
+	gregs_offset = MONO_STRUCT_OFFSET (MonoContext, gregs);
+
 	/* set new EBP */
-	amd64_mov_reg_membase (code, AMD64_RBP, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, rbp), 8);
+	amd64_mov_reg_membase (code, AMD64_RBP, AMD64_ARG_REG1, gregs_offset + (AMD64_RBP * 8), 8);
 	/* load callee saved regs */
-	amd64_mov_reg_membase (code, AMD64_RBX, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, rbx), 8);
-	amd64_mov_reg_membase (code, AMD64_R12, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, r12), 8);
-	amd64_mov_reg_membase (code, AMD64_R13, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, r13), 8);
-	amd64_mov_reg_membase (code, AMD64_R14, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, r14), 8);
-#if !defined(__native_client_codegen__)
-	amd64_mov_reg_membase (code, AMD64_R15, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoContext, r15), 8);
+	for (i = 0; i < AMD64_NREG; ++i) {
+#if defined(__native_client_codegen__)
+		if (i == AMD64_R15)
+			continue;
 #endif
-#ifdef TARGET_WIN32
-	amd64_mov_reg_membase (code, AMD64_RDI, AMD64_ARG_REG1,  MONO_STRUCT_OFFSET (MonoContext, rdi), 8);
-	amd64_mov_reg_membase (code, AMD64_RSI, AMD64_ARG_REG1,  MONO_STRUCT_OFFSET (MonoContext, rsi), 8);
-#endif
+		if (AMD64_IS_CALLEE_SAVED_REG (i) && i != AMD64_RBP)
+			amd64_mov_reg_membase (code, AMD64_RBX, AMD64_ARG_REG1, gregs_offset + (i * 8), 8);
+	}
+	/* load exc register */
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_ARG_REG1,  gregs_offset + (AMD64_RAX * 8), 8);
 
 	/* call the handler */
 	amd64_call_reg (code, AMD64_ARG_REG2);
@@ -293,6 +289,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	nacl_global_codeman_validate(&start, kMaxCodeSize, &code);
 
 	mono_arch_flush_icache (start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
@@ -307,33 +304,23 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 void
 mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 							guint64 dummy5, guint64 dummy6,
-							mgreg_t *regs, mgreg_t rip,
-							MonoObject *exc, gboolean rethrow)
+							MonoContext *mctx, MonoObject *exc, gboolean rethrow)
 {
 	MonoContext ctx;
 
-	ctx.rsp = regs [AMD64_RSP];
-	ctx.rip = rip;
-	ctx.rbx = regs [AMD64_RBX];
-	ctx.rbp = regs [AMD64_RBP];
-	ctx.r12 = regs [AMD64_R12];
-	ctx.r13 = regs [AMD64_R13];
-	ctx.r14 = regs [AMD64_R14];
-	ctx.r15 = regs [AMD64_R15];
-	ctx.rdi = regs [AMD64_RDI];
-	ctx.rsi = regs [AMD64_RSI];
-	ctx.rax = regs [AMD64_RAX];
-	ctx.rcx = regs [AMD64_RCX];
-	ctx.rdx = regs [AMD64_RDX];
+	/* mctx is on the caller's stack */
+	memcpy (&ctx, mctx, sizeof (MonoContext));
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow)
+		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
+			mono_ex->trace_ips = NULL;
+		}
 	}
 
 	/* adjust eip so that it point into the call instruction */
-	ctx.rip -= 1;
+	ctx.gregs [AMD64_RIP] --;
 
 	mono_handle_exception (&ctx, exc);
 	mono_restore_context (&ctx);
@@ -343,44 +330,31 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 void
 mono_amd64_throw_corlib_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 								   guint64 dummy5, guint64 dummy6,
-								   mgreg_t *regs, mgreg_t rip,
-								   guint32 ex_token_index, gint64 pc_offset)
+								   MonoContext *mctx, guint32 ex_token_index, gint64 pc_offset)
 {
 	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
 	MonoException *ex;
 
 	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
 
-	rip -= pc_offset;
+	mctx->gregs [AMD64_RIP] -= pc_offset;
 
 	/* Negate the ip adjustment done in mono_amd64_throw_exception () */
-	rip += 1;
+	mctx->gregs [AMD64_RIP] += 1;
 
-	mono_amd64_throw_exception (dummy1, dummy2, dummy3, dummy4, dummy5, dummy6, regs, rip, (MonoObject*)ex, FALSE);
+	mono_amd64_throw_exception (dummy1, dummy2, dummy3, dummy4, dummy5, dummy6, mctx, (MonoObject*)ex, FALSE);
 }
 
-static void
+void
 mono_amd64_resume_unwind (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 						  guint64 dummy5, guint64 dummy6,
-						  mgreg_t *regs, mgreg_t rip,
-						  guint32 dummy7, gint64 dummy8)
+						  MonoContext *mctx, guint32 dummy7, gint64 dummy8)
 {
 	/* Only the register parameters are valid */
 	MonoContext ctx;
 
-	ctx.rsp = regs [AMD64_RSP];
-	ctx.rip = rip;
-	ctx.rbx = regs [AMD64_RBX];
-	ctx.rbp = regs [AMD64_RBP];
-	ctx.r12 = regs [AMD64_R12];
-	ctx.r13 = regs [AMD64_R13];
-	ctx.r14 = regs [AMD64_R14];
-	ctx.r15 = regs [AMD64_R15];
-	ctx.rdi = regs [AMD64_RDI];
-	ctx.rsi = regs [AMD64_RSI];
-	ctx.rax = regs [AMD64_RAX];
-	ctx.rcx = regs [AMD64_RCX];
-	ctx.rdx = regs [AMD64_RDX];
+	/* mctx is on the caller's stack */
+	memcpy (&ctx, mctx, sizeof (MonoContext));
 
 	mono_resume_unwind (&ctx);
 }
@@ -398,7 +372,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	guint8 *code;
 	MonoJumpInfo *ji = NULL;
 	GSList *unwind_ops = NULL;
-	int i, stack_size, arg_offsets [16], regs_offset, dummy_stack_space;
+	int i, stack_size, arg_offsets [16], ctx_offset, regs_offset, dummy_stack_space;
 	const guint kMaxCodeSize = NACL_SIZE (256, 512);
 
 #ifdef TARGET_WIN32
@@ -410,7 +384,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	start = code = mono_global_codeman_reserve (kMaxCodeSize);
 
 	/* The stack is unaligned on entry */
-	stack_size = 192 + 8 + dummy_stack_space;
+	stack_size = ALIGN_TO (sizeof (MonoContext) + 64 + dummy_stack_space, MONO_ARCH_FRAME_ALIGNMENT) + 8;
 
 	code = start;
 
@@ -430,8 +404,8 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	arg_offsets [0] = dummy_stack_space + 0;
 	arg_offsets [1] = dummy_stack_space + sizeof(mgreg_t);
 	arg_offsets [2] = dummy_stack_space + sizeof(mgreg_t) * 2;
-	arg_offsets [3] = dummy_stack_space + sizeof(mgreg_t) * 3;
-	regs_offset = dummy_stack_space + sizeof(mgreg_t) * 4;
+	ctx_offset = dummy_stack_space + sizeof(mgreg_t) * 4;
+	regs_offset = ctx_offset + MONO_STRUCT_OFFSET (MonoContext, gregs);
 
 	/* Save registers */
 	for (i = 0; i < AMD64_NREG; ++i)
@@ -440,38 +414,46 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	/* Save RSP */
 	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, stack_size + sizeof(mgreg_t));
 	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RSP * sizeof(mgreg_t)), X86_EAX, sizeof(mgreg_t));
-	/* Set arg1 == regs */
-	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, regs_offset);
-	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof(mgreg_t));
-	/* Set arg2 == eip */
+	/* Save IP */
 	if (llvm_abs)
 		amd64_alu_reg_reg (code, X86_XOR, AMD64_RAX, AMD64_RAX);
 	else
 		amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RSP, stack_size, sizeof(mgreg_t));
-	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_RAX, sizeof(mgreg_t));
-	/* Set arg3 == exc/ex_token_index */
+	amd64_mov_membase_reg (code, AMD64_RSP, regs_offset + (AMD64_RIP * sizeof(mgreg_t)), AMD64_RAX, sizeof(mgreg_t));
+	/* Set arg1 == ctx */
+	amd64_lea_membase (code, AMD64_RAX, AMD64_RSP, ctx_offset);
+	amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [0], AMD64_RAX, sizeof(mgreg_t));
+	/* Set arg2 == exc/ex_token_index */
 	if (resume_unwind)
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [1], 0, sizeof(mgreg_t));
 	else
-		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG1, sizeof(mgreg_t));
-	/* Set arg4 == rethrow/pc offset */
+		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [1], AMD64_ARG_REG1, sizeof(mgreg_t));
+	/* Set arg3 == rethrow/pc offset */
 	if (resume_unwind) {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [3], 0, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], 0, sizeof(mgreg_t));
 	} else if (corlib) {
-		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [3], AMD64_ARG_REG2, sizeof(mgreg_t));
+		amd64_mov_membase_reg (code, AMD64_RSP, arg_offsets [2], AMD64_ARG_REG2, sizeof(mgreg_t));
 		if (llvm_abs)
 			/* 
 			 * The caller is LLVM code which passes the absolute address not a pc offset,
 			 * so compensate by passing 0 as 'rip' and passing the negated abs address as
 			 * the pc offset.
 			 */
-			amd64_neg_membase (code, AMD64_RSP, arg_offsets [3]);
+			amd64_neg_membase (code, AMD64_RSP, arg_offsets [2]);
 	} else {
-		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [3], rethrow, sizeof(mgreg_t));
+		amd64_mov_membase_imm (code, AMD64_RSP, arg_offsets [2], rethrow, sizeof(mgreg_t));
 	}
 
 	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, corlib ? "mono_amd64_throw_corlib_exception" : "mono_amd64_throw_exception");
+		const char *icall_name;
+
+		if (resume_unwind)
+			icall_name = "mono_amd64_resume_unwind";
+		else if (corlib)
+			icall_name = "mono_amd64_throw_corlib_exception";
+		else
+			icall_name = "mono_amd64_throw_exception";
+		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
 		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
 	} else {
 		amd64_mov_reg_imm (code, AMD64_R11, resume_unwind ? ((gpointer)mono_amd64_resume_unwind) : (corlib ? (gpointer)mono_amd64_throw_corlib_exception : (gpointer)mono_amd64_throw_exception));
@@ -484,6 +466,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 	g_assert ((code - start) < kMaxCodeSize);
 
 	nacl_global_codeman_validate(&start, kMaxCodeSize, &code);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	if (info)
 		*info = mono_tramp_info_create (tramp_name, start, code - start, ji, unwind_ops);
@@ -528,7 +511,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 }
 
 /*
- * mono_arch_find_jit_info:
+ * mono_arch_unwind_frame:
  *
  * This function is used to gather information from @ctx, and store it in @frame_info.
  * It unwinds one stack frame, and stores the resulting context into @new_ctx. @lmf
@@ -536,13 +519,14 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
  * Returns TRUE on success, FALSE otherwise.
  */
 gboolean
-mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
 							 mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
+	int i;
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
@@ -556,7 +540,10 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint8 *unwind_info;
 		guint8 *epilog = NULL;
 
-		frame->type = FRAME_TYPE_MANAGED;
+		if (ji->is_trampoline)
+			frame->type = FRAME_TYPE_TRAMPOLINE;
+		else
+			frame->type = FRAME_TYPE_MANAGED;
 
 		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
@@ -571,44 +558,22 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		if (ji->has_arch_eh_info)
 			epilog = (guint8*)ji->code_start + ji->code_size - mono_jinfo_get_epilog_size (ji);
  
-		regs [AMD64_RAX] = new_ctx->rax;
-		regs [AMD64_RBX] = new_ctx->rbx;
-		regs [AMD64_RCX] = new_ctx->rcx;
-		regs [AMD64_RDX] = new_ctx->rdx;
-		regs [AMD64_RBP] = new_ctx->rbp;
-		regs [AMD64_RSP] = new_ctx->rsp;
-		regs [AMD64_RSI] = new_ctx->rsi;
-		regs [AMD64_RDI] = new_ctx->rdi;
-		regs [AMD64_RIP] = new_ctx->rip;
-		regs [AMD64_R12] = new_ctx->r12;
-		regs [AMD64_R13] = new_ctx->r13;
-		regs [AMD64_R14] = new_ctx->r14;
-		regs [AMD64_R15] = new_ctx->r15;
+		for (i = 0; i < AMD64_NREG; ++i)
+			regs [i] = new_ctx->gregs [i];
 
 		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 						   (guint8*)ji->code_start + ji->code_size,
 						   ip, epilog ? &epilog : NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
 
-		new_ctx->rax = regs [AMD64_RAX];
-		new_ctx->rbx = regs [AMD64_RBX];
-		new_ctx->rcx = regs [AMD64_RCX];
-		new_ctx->rdx = regs [AMD64_RDX];
-		new_ctx->rbp = regs [AMD64_RBP];
-		new_ctx->rsp = regs [AMD64_RSP];
-		new_ctx->rsi = regs [AMD64_RSI];
-		new_ctx->rdi = regs [AMD64_RDI];
-		new_ctx->rip = regs [AMD64_RIP];
-		new_ctx->r12 = regs [AMD64_R12];
-		new_ctx->r13 = regs [AMD64_R13];
-		new_ctx->r14 = regs [AMD64_R14];
-		new_ctx->r15 = regs [AMD64_R15];
+		for (i = 0; i < AMD64_NREG; ++i)
+			new_ctx->gregs [i] = regs [i];
  
 		/* The CFA becomes the new SP value */
-		new_ctx->rsp = (mgreg_t)cfa;
+		new_ctx->gregs [AMD64_RSP] = (mgreg_t)cfa;
 
 		/* Adjust IP */
-		new_ctx->rip --;
+		new_ctx->gregs [AMD64_RIP] --;
 
 		return TRUE;
 	} else if (*lmf) {
@@ -632,7 +597,11 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			return TRUE;
 		}
 
-		if (((guint64)(*lmf)->previous_lmf) & 1) {
+		if (((guint64)(*lmf)->previous_lmf) & 4) {
+			MonoLMFTramp *ext = (MonoLMFTramp*)(*lmf);
+
+			rip = (guint64)MONO_CONTEXT_GET_IP (ext->ctx);
+		} else if (((guint64)(*lmf)->previous_lmf) & 1) {
 			/* This LMF has the rip field set */
 			rip = (*lmf)->rip;
 		} else if ((*lmf)->rsp == 0) {
@@ -656,43 +625,31 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		if (!ji)
 			return FALSE;
 
-		/* Adjust IP */
-		rip --;
-
 		frame->ji = ji;
 		frame->type = FRAME_TYPE_MANAGED_TO_NATIVE;
-
-		new_ctx->rip = rip;
-		new_ctx->rbp = (*lmf)->rbp;
-		new_ctx->rsp = (*lmf)->rsp;
 
 		if (((guint64)(*lmf)->previous_lmf) & 4) {
 			MonoLMFTramp *ext = (MonoLMFTramp*)(*lmf);
 
 			/* Trampoline frame */
-			new_ctx->rbx = ext->regs [AMD64_RBX];
-			new_ctx->r12 = ext->regs [AMD64_R12];
-			new_ctx->r13 = ext->regs [AMD64_R13];
-			new_ctx->r14 = ext->regs [AMD64_R14];
-			new_ctx->r15 = ext->regs [AMD64_R15];
-#ifdef TARGET_WIN32
-			new_ctx->rdi = ext->regs [AMD64_RDI];
-			new_ctx->rsi = ext->regs [AMD64_RSI];
-#endif
+			for (i = 0; i < AMD64_NREG; ++i)
+				new_ctx->gregs [i] = ext->ctx->gregs [i];
+			/* Adjust IP */
+			new_ctx->gregs [AMD64_RIP] --;
 		} else {
 			/*
 			 * The registers saved in the LMF will be restored using the normal unwind info,
 			 * when the wrapper frame is processed.
 			 */
-			new_ctx->rbx = 0;
-			new_ctx->r12 = 0;
-			new_ctx->r13 = 0;
-			new_ctx->r14 = 0;
-			new_ctx->r15 = 0;
-#ifdef TARGET_WIN32
-			new_ctx->rdi = 0;
-			new_ctx->rsi = 0;
-#endif
+			/* Adjust IP */
+			rip --;
+			new_ctx->gregs [AMD64_RIP] = rip;
+			new_ctx->gregs [AMD64_RSP] = (*lmf)->rsp;
+			new_ctx->gregs [AMD64_RBP] = (*lmf)->rbp;
+			for (i = 0; i < AMD64_NREG; ++i) {
+				if (AMD64_IS_CALLEE_SAVED_REG (i) && i != AMD64_RBP)
+					new_ctx->gregs [i] = 0;
+			}
 		}
 
 		*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~7);
@@ -724,9 +681,9 @@ handle_signal_exception (gpointer obj)
 void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
-	guint64 sp = ctx->rsp;
+	guint64 sp = ctx->gregs [AMD64_RSP];
 
-	ctx->rdi = (guint64)user_data;
+	ctx->gregs [AMD64_RDI] = (guint64)user_data;
 
 	/* Allocate a stack frame below the red zone */
 	sp -= 128;
@@ -735,10 +692,10 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 		sp -= 8;
 #ifdef __linux__
 	/* Preserve the call chain to prevent crashes in the libgcc unwinder (#15969) */
-	*(guint64*)sp = ctx->rip;
+	*(guint64*)sp = ctx->gregs [AMD64_RIP];
 #endif
-	ctx->rsp = sp;
-	ctx->rip = (guint64)async_cb;
+	ctx->gregs [AMD64_RSP] = sp;
+	ctx->gregs [AMD64_RIP] = (guint64)async_cb;
 }
 
 /**
@@ -792,7 +749,7 @@ mono_arch_ip_from_context (void *sigctx)
 	return ((CONTEXT*)sigctx)->Rip;
 #else
 	MonoContext *ctx = sigctx;
-	return (gpointer)ctx->rip;
+	return (gpointer)ctx->gregs [AMD64_RIP];
 #endif	
 }
 
@@ -814,12 +771,12 @@ static void
 prepare_for_guard_pages (MonoContext *mctx)
 {
 	gpointer *sp;
-	sp = (gpointer)(mctx->rsp);
+	sp = (gpointer)(mctx->gregs [AMD64_RSP]);
 	sp -= 1;
 	/* the return addr */
-	sp [0] = (gpointer)(mctx->rip);
-	mctx->rip = (guint64)restore_soft_guard_pages;
-	mctx->rsp = (guint64)sp;
+	sp [0] = (gpointer)(mctx->gregs [AMD64_RIP]);
+	mctx->gregs [AMD64_RIP] = (guint64)restore_soft_guard_pages;
+	mctx->gregs [AMD64_RSP] = (guint64)sp;
 }
 
 static void
@@ -889,167 +846,11 @@ mono_amd64_get_original_ip (void)
 	return lmf->rip;
 }
 
-gpointer
-mono_arch_get_throw_pending_exception (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *code, *start;
-	guint8 *br[1];
-	gpointer throw_trampoline;
-	MonoJumpInfo *ji = NULL;
-	GSList *unwind_ops = NULL;
-	const guint kMaxCodeSize = NACL_SIZE (128, 256);
-
-	start = code = mono_global_codeman_reserve (kMaxCodeSize);
-
-	/* We are in the frame of a managed method after a call */
-	/* 
-	 * We would like to throw the pending exception in such a way that it looks to
-	 * be thrown from the managed method.
-	 */
-
-	/* Save registers which might contain the return value of the call */
-	amd64_push_reg (code, AMD64_RAX);
-	amd64_push_reg (code, AMD64_RDX);
-
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-	amd64_movsd_membase_reg (code, AMD64_RSP, 0, AMD64_XMM0);
-
-	/* Align stack */
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-
-	/* Obtain the pending exception */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_thread_get_and_clear_pending_exception");
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
-	} else {
-		amd64_mov_reg_imm (code, AMD64_R11, mono_thread_get_and_clear_pending_exception);
-	}
-	amd64_call_reg (code, AMD64_R11);
-
-	/* Check if it is NULL, and branch */
-	amd64_alu_reg_imm (code, X86_CMP, AMD64_RAX, 0);
-	br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
-
-	/* exc != NULL branch */
-
-	/* Save the exc on the stack */
-	amd64_push_reg (code, AMD64_RAX);
-	/* Align stack */
-	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
-
-	/* Obtain the original ip and clear the flag in previous_lmf */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_amd64_get_original_ip");
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
-	} else {
-		amd64_mov_reg_imm (code, AMD64_R11, mono_amd64_get_original_ip);
-	}
-	amd64_call_reg (code, AMD64_R11);	
-
-	/* Load exc */
-	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, 8, 8);
-
-	/* Pop saved stuff from the stack */
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 6 * 8);
-
-	/* Setup arguments for the throw trampoline */
-	/* Exception */
-	amd64_mov_reg_reg (code, AMD64_ARG_REG1, AMD64_R11, 8);
-	/* The trampoline expects the caller ip to be pushed on the stack */
-	amd64_push_reg (code, AMD64_RAX);
-
-	/* Call the throw trampoline */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_amd64_throw_exception");
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
-	} else {
-		throw_trampoline = mono_get_throw_exception ();
-		amd64_mov_reg_imm (code, AMD64_R11, throw_trampoline);
-	}
-	/* We use a jump instead of a call so we can push the original ip on the stack */
-	amd64_jump_reg (code, AMD64_R11);
-
-	/* ex == NULL branch */
-	mono_amd64_patch (br [0], code);
-
-	/* Obtain the original ip and clear the flag in previous_lmf */
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_amd64_get_original_ip");
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
-	} else {
-		amd64_mov_reg_imm (code, AMD64_R11, mono_amd64_get_original_ip);
-	}
-	amd64_call_reg (code, AMD64_R11);	
-	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RAX, 8);
-
-	/* Restore registers */
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
-	amd64_movsd_reg_membase (code, AMD64_XMM0, AMD64_RSP, 0);
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
-	amd64_pop_reg (code, AMD64_RDX);
-	amd64_pop_reg (code, AMD64_RAX);
-
-	/* Return to original code */
-	amd64_jump_reg (code, AMD64_R11);
-
-	g_assert ((code - start) < kMaxCodeSize);
-
-	nacl_global_codeman_validate(&start, kMaxCodeSize, &code);
-
-	if (info)
-		*info = mono_tramp_info_create ("throw_pending_exception", start, code - start, ji, unwind_ops);
-
-	return start;
-}
-
-static gpointer throw_pending_exception;
-
-/*
- * Called when a thread receives an async exception while executing unmanaged code.
- * Instead of checking for this exception in the managed-to-native wrapper, we hijack 
- * the return address on the stack to point to a helper routine which throws the
- * exception.
- */
-void
-mono_arch_notify_pending_exc (MonoThreadInfo *info)
-{
-	MonoLMF *lmf = mono_get_lmf ();
-
-	if (!info) {
-		lmf = mono_get_lmf ();
-	} else {
-		g_assert (info->suspend_state.valid);
-		lmf = info->suspend_state.unwind_data [MONO_UNWIND_DATA_LMF];
-	}
-
-	if (!lmf)
-		/* Not yet started */
-		return;
-
-	if (lmf->rsp == 0)
-		/* Initial LMF */
-		return;
-
-	if ((guint64)lmf->previous_lmf & 1)
-		/* Already hijacked or trampoline LMF entry */
-		return;
-
-	/* lmf->rsp is set just before making the call which transitions to unmanaged code */
-	lmf->rip = *(guint64*)(lmf->rsp - 8);
-	/* Signal that lmf->rip is set */
-	lmf->previous_lmf = (gpointer)((guint64)lmf->previous_lmf | 1);
-
-	*(gpointer*)(lmf->rsp - 8) = throw_pending_exception;
-}
-
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot)
 {
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
-
-	mono_arch_get_throw_pending_exception (&info, aot);
-	tramps = g_slist_prepend (tramps, info);
 
 	/* LLVM needs different throw trampolines */
 	get_throw_trampoline (&info, FALSE, TRUE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", aot);
@@ -1058,7 +859,7 @@ mono_amd64_get_exception_trampolines (gboolean aot)
 	get_throw_trampoline (&info, FALSE, TRUE, TRUE, FALSE, "llvm_throw_corlib_exception_abs_trampoline", aot);
 	tramps = g_slist_prepend (tramps, info);
 
-	get_throw_trampoline (&info, FALSE, TRUE, TRUE, TRUE, "llvm_resume_unwind_trampoline", FALSE);
+	get_throw_trampoline (&info, FALSE, TRUE, TRUE, TRUE, "llvm_resume_unwind_trampoline", aot);
 	tramps = g_slist_prepend (tramps, info);
 
 	return tramps;
@@ -1071,7 +872,6 @@ mono_arch_exceptions_init (void)
 	gpointer tramp;
 
 	if (mono_aot_only) {
-		throw_pending_exception = mono_aot_get_trampoline ("throw_pending_exception");
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_trampoline");
 		mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE);
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_abs_trampoline");
@@ -1080,14 +880,12 @@ mono_arch_exceptions_init (void)
 		mono_register_jit_icall (tramp, "llvm_resume_unwind_trampoline", NULL, TRUE);
 	} else {
 		/* Call this to avoid initialization races */
-		throw_pending_exception = mono_arch_get_throw_pending_exception (NULL, FALSE);
-
 		tramps = mono_amd64_get_exception_trampolines (FALSE);
 		for (l = tramps; l; l = l->next) {
 			MonoTrampInfo *info = l->data;
 
 			mono_register_jit_icall (info->code, g_strdup (info->name), NULL, TRUE);
-			mono_tramp_info_register (info);
+			mono_tramp_info_register (info, NULL);
 		}
 		g_slist_free (tramps);
 	}
@@ -1380,6 +1178,8 @@ mono_tasklets_arch_restore (void)
 	g_assert ((code - start) <= kMaxCodeSize);
 
 	nacl_global_codeman_validate(&start, kMaxCodeSize, &code);
+	mono_arch_flush_icache (start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
 
 	saved = start;
 	return (MonoContinuationRestore)saved;

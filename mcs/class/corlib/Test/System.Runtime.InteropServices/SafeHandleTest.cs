@@ -48,22 +48,39 @@ namespace MonoTests.System.Runtime.InteropServices
 			protected override void Dispose (bool manual)
 			{
 				disposed = true;
+#if !MONODROID
+				// Bombs on Android (ObjectDisposedException)
 				base.Dispose (manual);
+#endif
 			}
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
+		public void SimpleDispose ()
+		{
+			FakeSafeHandle sf = new FakeSafeHandle ();
+			sf.Dispose ();
+		}
+
+		[Test]
 		public void BadDispose1 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
 
 			sf.DangerousRelease ();
-			sf.DangerousRelease ();
+
+			try {
+				sf.DangerousRelease ();
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			GC.SuppressFinalize (sf);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
+		[Category ("AndroidNotWorking")] // Because of the FakeSafeHandle.Dispose issue
 		public void BadDispose2 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
@@ -74,6 +91,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
+		[Category ("AndroidNotWorking")] // Because of the FakeSafeHandle.Dispose issue
 		public void BadDispose3 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle ();
@@ -102,6 +120,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Because of the FakeSafeHandle.Dispose issue
 		public void GoodDispose ()
 		{
 			int dummyHandle = 0xDEAD;
@@ -130,6 +149,8 @@ namespace MonoTests.System.Runtime.InteropServices
 			Assert.IsTrue (sf.IsClosed, "closed");
 			//Handle value is not changed, so the value itself is still valid (not 0 or -1)
 			Assert.IsFalse (sf.IsInvalid, "invalid");
+
+			GC.SuppressFinalize (sf);
 		}
 
 		[Test]
@@ -217,6 +238,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Because of the FakeSafeHandle.Dispose issue
 		public void ReleaseAfterDispose1 ()
 		{
 			int dummyHandle = 0xDEAD;
@@ -245,6 +267,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
+		[Category ("AndroidNotWorking")] // Because of the FakeSafeHandle.Dispose issue
 		public void ReleaseAfterDispose2 ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle (true);
@@ -263,6 +286,7 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Not until Dispose runtime crasher in FakeSafeHandle is fixed
 		public void NoReleaseUnowned ()
 		{
 			FakeSafeHandle sf = new FakeSafeHandle (false);

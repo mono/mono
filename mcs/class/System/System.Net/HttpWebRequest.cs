@@ -31,6 +31,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if SECURITY_DEP
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Interface;
+#else
+using Mono.Security.Interface;
+#endif
+#endif
+
 using System;
 using System.Collections;
 using System.Configuration;
@@ -39,11 +48,13 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using Mono.Net.Security;
 
 namespace System.Net 
 {
@@ -101,6 +112,11 @@ namespace System.Net
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
 		int readWriteTimeout = 300000; // ms
+		IMonoTlsProvider tlsProvider;
+#if SECURITY_DEP
+		MonoTlsSettings tlsSettings;
+#endif
+		ServerCertValidationCallback certValidationCallback;
 
 		enum NtlmAuthState {
 			None,
@@ -109,6 +125,9 @@ namespace System.Net
 		}
 		AuthorizationState auth_state, proxy_auth_state;
 		string host;
+
+		[NonSerialized]
+		internal Action<Stream> ResendContentFactory;
 
 		// Constructors
 		static HttpWebRequest ()
@@ -140,6 +159,15 @@ namespace System.Net
 			ThrowOnError = true;
 			ResetAuthorization ();
 		}
+
+#if SECURITY_DEP
+		internal HttpWebRequest (Uri uri, IMonoTlsProvider tlsProvider, MonoTlsSettings settings = null)
+			: this (uri)
+		{
+			this.tlsProvider = tlsProvider;
+			this.tlsSettings = settings;
+		}
+#endif
 		
 		[Obsolete ("Serialization is obsoleted for this type", false)]
 		protected HttpWebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
@@ -226,25 +254,41 @@ namespace System.Net
 		
 		internal bool InternalAllowBuffering {
 			get {
-				return (allowBuffering && (method != "HEAD" && method != "GET" &&
-							method != "MKCOL" && method != "CONNECT" &&
-							method != "TRACE"));
+				return allowBuffering && MethodWithBuffer;
 			}
 		}
+
+		bool MethodWithBuffer {
+			get {
+				return method != "HEAD" && method != "GET" &&
+				method != "MKCOL" && method != "CONNECT" &&
+				method != "TRACE";
+			}
+		}
+
+		internal IMonoTlsProvider TlsProvider {
+			get { return tlsProvider; }
+		}
+
+#if SECURITY_DEP
+		internal MonoTlsSettings TlsSettings {
+			get { return tlsSettings; }
+		}
+#endif
 		
 		public X509CertificateCollection ClientCertificates {
 			get {
 				if (certificates == null)
 					certificates = new X509CertificateCollection ();
-
 				return certificates;
 			}
-			[MonoTODO]
 			set {
-				throw GetMustImplement ();
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				certificates = value;
 			}
 		}
-		
+
 		public string Connection {
 			get { return webHeaders ["Connection"]; }
 			set {
@@ -657,7 +701,26 @@ namespace System.Net
 		internal bool ProxyQuery {
 			get { return servicePoint.UsesProxy && !servicePoint.UseConnect; }
 		}
-		
+
+		internal ServerCertValidationCallback ServerCertValidationCallback {
+			get { return certValidationCallback; }
+		}
+
+		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+			get {
+				if (certValidationCallback == null)
+					return null;
+				return certValidationCallback.ValidationCallback;
+			}
+			set
+			{
+				if (value == null)
+					certValidationCallback = null;
+				else
+					certValidationCallback = new ServerCertValidationCallback (value);
+			}
+		}
+
 		// Methods
 		
 		internal ServicePoint GetServicePoint ()
@@ -1095,13 +1158,13 @@ namespace System.Net
 				break;
 			}
 
-			if (method != "GET" && !InternalAllowBuffering && writeStream.WriteBufferLength > 0)
+			if (method != "GET" && !InternalAllowBuffering && (writeStream.WriteBufferLength > 0 || contentLength > 0))
 				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
 
 			if (e != null)
 				throw e;
 
-			if (AllowWriteStreamBuffering)
+			if (AllowWriteStreamBuffering || method == "GET")
 				contentLength = -1;
 
 			uriString = webResponse.Headers ["Location"];
@@ -1306,8 +1369,7 @@ namespace System.Net
 						bodyBuffer = null;
 						writeStream.Close ();
 					}
-				} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
-				          method != "TRACE") {
+				} else if (MethodWithBuffer) {
 					if (getResponseCalled && !writeStream.RequestWritten)
 						return writeStream.WriteRequestAsync (result);
 				}
@@ -1606,12 +1668,28 @@ namespace System.Net
 					(ProxyQuery && !proxy_auth_state.IsCompleted && code == HttpStatusCode.ProxyAuthenticationRequired)) {
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
-						if (InternalAllowBuffering) {
-							if (writeStream.WriteBufferLength > 0) {
-								bodyBuffer = writeStream.WriteBuffer;
-								bodyBufferLength = writeStream.WriteBufferLength;
+						if (MethodWithBuffer) {
+							if (AllowWriteStreamBuffering) {
+								if (writeStream.WriteBufferLength > 0) {
+									bodyBuffer = writeStream.WriteBuffer;
+									bodyBufferLength = writeStream.WriteBufferLength;
+								}
+
+								return true;
 							}
-							return true;
+
+							//
+							// Buffering is not allowed but we have alternative way to get same content (we
+							// need to resent it due to NTLM Authentication).
+					 		//
+							if (ResendContentFactory != null) {
+								using (var ms = new MemoryStream ()) {
+									ResendContentFactory (ms);
+									bodyBuffer = ms.ToArray ();
+									bodyBufferLength = bodyBuffer.Length;
+								}
+								return true;
+							}
 						} else if (method != "PUT" && method != "POST") {
 							bodyBuffer = null;
 							return true;

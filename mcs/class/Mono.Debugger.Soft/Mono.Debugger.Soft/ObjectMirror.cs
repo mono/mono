@@ -442,6 +442,9 @@ namespace Mono.Debugger.Soft
 
 			Interlocked.Decrement (ref r.NumPending);
 
+			if (error != 0)
+				r.ErrorCode = error;
+
 			if (r.NumPending == 0) {
 				r.IsCompleted = true;
 				((ManualResetEvent)r.AsyncWaitHandle).Set ();

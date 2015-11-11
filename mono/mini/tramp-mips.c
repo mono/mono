@@ -53,6 +53,8 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	/*g_print ("unbox trampoline at %d for %s:%s\n", this_pos, m->klass->name, m->name);
 	g_print ("unbox code is at %p for method at %p\n", start, addr);*/
 
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
+
 	return start;
 }
 
@@ -111,42 +113,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 #define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
 
 #define STACK (int)(ALIGN_TO(4*IREG_SIZE + 8 + sizeof(MonoLMF) + 32, 8))
-
-void
-mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
-{
-	guint32 *code32 = (guint32*)code;
-
-	/* back up to the jal/jalr instruction */
-	code32 -= 2;
-
-	/* Check for jal/jalr -- and NOP it out */
-	if ((((*code32)&0xfc000000) == 0x0c000000)
-	    || (((*code32)&0xfc1f003f) == 0x00000009)) {
-		mips_nop (code32);
-		mono_arch_flush_icache ((gpointer)(code32 - 1), 4);
-		return;
-	}
-	g_assert_not_reached ();
-}
-
-gpointer
-mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
-{
-	guint8 *buf, *code;
-
-	code = buf = mono_global_codeman_reserve (16);
-
-	mips_jr (code, mips_ra);
-	mips_nop (code);
-
-	mono_arch_flush_icache (buf, code - buf);
-
-	if (info)
-		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
-
-	return buf;
-}
 
 /*
  * Stack frame description when the generic trampoline is called.
@@ -247,10 +213,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 
 	/* Arg 3: MonoMethod *method. */
-	if (tramp_type == MONO_TRAMPOLINE_GENERIC_CLASS_INIT)
-		mips_lw (code, mips_a2, mips_sp, lmf + G_STRUCT_OFFSET (MonoLMF, iregs [mips_a0]));
-	else
-		mips_lw (code, mips_a2, mips_sp, lmf + G_STRUCT_OFFSET (MonoLMF, method));
+	mips_lw (code, mips_a2, mips_sp, lmf + G_STRUCT_OFFSET (MonoLMF, method));
 
 	/* Arg 4: Trampoline */
 	mips_move (code, mips_a3, mips_zero);
@@ -304,11 +267,10 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Sanity check */
 	g_assert ((code - buf) <= max_code_len);
 
-	if (info) {
-		tramp_name = mono_get_generic_trampoline_name (tramp_type);
-		*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
-		g_free (tramp_name);
-	}
+	g_assert (info);
+	tramp_name = mono_get_generic_trampoline_name (tramp_type);
+	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
+	g_free (tramp_name);
 
 	return buf;
 }
@@ -363,6 +325,8 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 	g_assert ((code - start) <= buf_len);
 
 	mono_arch_flush_icache (start, code - start);
+
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), domain);
 
 	return start;
 }
@@ -477,62 +441,6 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 		*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
 		g_free (name);
 	}
-
-	return buf;
-}
-
-gpointer
-mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *tramp;
-	guint8 *code, *buf;
-	static int byte_offset = -1;
-	static guint8 bitmask;
-	guint8 *jump;
-	int tramp_size;
-	guint32 code_len;
-	GSList *unwind_ops = NULL;
-	MonoJumpInfo *ji = NULL;
-
-	tramp_size = 64;
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
-	if (byte_offset < 0)
-		mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
-
-	/* if (!(vtable->initialized)) */
-	mips_lbu (code, mips_at, MONO_ARCH_VTABLE_REG, byte_offset);
-	g_assert (!(bitmask & 0xffff0000));
-	mips_andi (code, mips_at, mips_at, bitmask);
-	jump = code;
-	mips_beq (code, mips_at, mips_zero, 0);
-	mips_nop (code);
-	/* Initialized case */
-	mips_jr (code, mips_ra);
-	mips_nop (code);
-
-	/* Uninitialized case */
-	mips_patch ((guint32*)jump, (guint32)code);
-
-	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "specific_trampoline_generic_class_init");
-		mips_load (code, mips_at, 0);
-		mips_jr (code, mips_at);
-		mips_nop (code);
-	} else {
-		tramp = mono_arch_create_specific_trampoline (NULL, MONO_TRAMPOLINE_GENERIC_CLASS_INIT, mono_get_root_domain (), &code_len);
-		mips_load (code, mips_at, tramp);
-		mips_jr (code, mips_at);
-		mips_nop (code);
-	}
-
-	mono_arch_flush_icache (buf, code - buf);
-
-	g_assert (code - buf <= tramp_size);
-
-	if (info)
-		*info = mono_tramp_info_create ("generic_class_init_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }

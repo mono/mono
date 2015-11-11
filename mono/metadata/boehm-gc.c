@@ -34,12 +34,10 @@
 
 #if HAVE_BOEHM_GC
 
-#ifdef USE_INCLUDED_LIBGC
 #undef TRUE
 #undef FALSE
 #define THREAD_LOCAL_ALLOC 1
 #include "private/pthread_support.h"
-#endif
 
 #if defined(PLATFORM_MACOSX) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 void *pthread_get_stackaddr_np(pthread_t);
@@ -62,6 +60,34 @@ register_test_toggleref_callback (void);
 
 #define BOEHM_GC_BIT_FINALIZER_AWARE 1
 static MonoGCFinalizerCallbacks fin_callbacks;
+
+/* GC Handles */
+
+static mono_mutex_t handle_section;
+#define lock_handles(handles) mono_mutex_lock (&handle_section)
+#define unlock_handles(handles) mono_mutex_unlock (&handle_section)
+
+typedef struct {
+	guint32  *bitmap;
+	gpointer *entries;
+	guint32   size;
+	guint8    type;
+	guint     slot_hint : 24; /* starting slot for search in bitmap */
+	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
+	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
+	guint16  *domain_ids;
+} HandleData;
+
+#define EMPTY_HANDLE_DATA(type) {NULL, NULL, 0, (type), 0, NULL}
+
+/* weak and weak-track arrays will be allocated in malloc memory 
+ */
+static HandleData gc_handles [] = {
+	EMPTY_HANDLE_DATA (HANDLE_WEAK),
+	EMPTY_HANDLE_DATA (HANDLE_WEAK_TRACK),
+	EMPTY_HANDLE_DATA (HANDLE_NORMAL),
+	EMPTY_HANDLE_DATA (HANDLE_PINNED)
+};
 
 static void
 mono_gc_warning (char *msg, GC_word arg)
@@ -148,19 +174,28 @@ mono_gc_base_init (void)
 	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
 	GC_no_dls = TRUE;
 #endif
+	{
+		if ((env = g_getenv ("MONO_GC_DEBUG"))) {
+			char **opts = g_strsplit (env, ",", -1);
+			for (char **ptr = opts; ptr && *ptr; ptr ++) {
+				char *opt = *ptr;
+				if (!strcmp (opt, "do-not-finalize")) {
+					mono_do_not_finalize = 1;
+				} else if (!strcmp (opt, "log-finalizers")) {
+					log_finalizers = 1;
+				}
+			}
+		}
+	}
+
 	GC_init ();
+
 	GC_oom_fn = mono_gc_out_of_memory;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
 	GC_finalizer_notifier = mono_gc_finalize_notify;
 
-#ifdef HAVE_GC_GCJ_MALLOC
 	GC_init_gcj_malloc (5, NULL);
-#endif
-
-#ifdef HAVE_GC_ALLOW_REGISTER_THREADS
-	GC_allow_register_threads();
-#endif
 
 	if ((env = g_getenv ("MONO_GC_PARAMS"))) {
 		char **ptr, **opts = g_strsplit (env, ",", -1);
@@ -200,18 +235,25 @@ mono_gc_base_init (void)
 	cb.thread_register = boehm_thread_register;
 	cb.thread_unregister = boehm_thread_unregister;
 	cb.mono_method_is_critical = (gpointer)mono_runtime_is_critical_method;
-#ifndef HOST_WIN32
-	cb.thread_exit = mono_gc_pthread_exit;
-	cb.mono_gc_pthread_create = (gpointer)mono_gc_pthread_create;
-#endif
-	
+
 	mono_threads_init (&cb, sizeof (MonoThreadInfo));
 	mono_mutex_init (&mono_gc_lock);
+	mono_mutex_init_recursive (&handle_section);
 
 	mono_thread_info_attach (&dummy);
 
 	mono_gc_enable_events ();
+
+	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+
 	gc_initialized = TRUE;
+}
+
+void
+mono_gc_base_cleanup (void)
+{
+	GC_finalizer_notifier = NULL;
 }
 
 /**
@@ -325,13 +367,7 @@ mono_gc_get_heap_size (void)
 gboolean
 mono_gc_is_gc_thread (void)
 {
-#if GC_VERSION_MAJOR >= 7
-	return TRUE;
-#elif defined(USE_INCLUDED_LIBGC)
 	return GC_thread_is_registered ();
-#else
-	return TRUE;
-#endif
 }
 
 extern int GC_thread_register_foreign (void *base_addr);
@@ -345,32 +381,12 @@ mono_gc_register_thread (void *baseptr)
 static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 {
-#if GC_VERSION_MAJOR >= 7
-	struct GC_stack_base sb;
-	int res;
-
-	res = GC_get_stack_base (&sb);
-	if (res != GC_SUCCESS) {
-		sb.mem_base = baseptr;
-#ifdef __ia64__
-		/* Can't determine the register stack bounds */
-		g_error ("mono_gc_register_thread failed ().\n");
-#endif
-	}
-	res = GC_register_my_thread (&sb);
-	if ((res != GC_SUCCESS) && (res != GC_DUPLICATE)) {
-		g_warning ("GC_register_my_thread () failed.\n");
-		return NULL;
-	}
-	return info;
-#else
 	if (mono_gc_is_gc_thread())
 		return info;
-#if defined(USE_INCLUDED_LIBGC) && !defined(HOST_WIN32)
+#if !defined(HOST_WIN32)
 	return GC_thread_register_foreign (baseptr) ? info : NULL;
 #else
 	return NULL;
-#endif
 #endif
 }
 
@@ -388,11 +404,7 @@ boehm_thread_unregister (MonoThreadInfo *p)
 gboolean
 mono_object_is_alive (MonoObject* o)
 {
-#ifdef USE_INCLUDED_LIBGC
 	return GC_is_marked ((gpointer)o);
-#else
-	return TRUE;
-#endif
 }
 
 int
@@ -400,8 +412,6 @@ mono_gc_walk_heap (int flags, MonoGCReferences callback, void *data)
 {
 	return 1;
 }
-
-#ifdef USE_INCLUDED_LIBGC
 
 static gint64 gc_start_time;
 
@@ -461,6 +471,8 @@ on_gc_notification (GCEventType event)
 		gc_stats.major_gc_time += mono_100ns_ticks () - gc_start_time;
 		mono_trace_message (MONO_TRACE_GC, "gc took %d usecs", (mono_100ns_ticks () - gc_start_time) / 10);
 		break;
+	default:
+		break;
 	}
 
 	mono_profiler_gc_event (e, 0);
@@ -487,17 +499,16 @@ mono_gc_enable_events (void)
 	GC_on_heap_resize = on_gc_heap_resize;
 }
 
-#else
+static gboolean alloc_events = FALSE;
 
 void
-mono_gc_enable_events (void)
+mono_gc_enable_alloc_events (void)
 {
+	alloc_events = TRUE;
 }
 
-#endif
-
 int
-mono_gc_register_root (char *start, size_t size, void *descr)
+mono_gc_register_root (char *start, size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
 	/* for some strange reason, they want one extra byte on the end */
 	GC_add_roots (start, start + size + 1);
@@ -515,7 +526,7 @@ mono_gc_deregister_root (char* addr)
 #endif
 }
 
-void
+static void
 mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 {
 	/* libgc requires that we use HIDE_POINTER... */
@@ -526,7 +537,7 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 		GC_GENERAL_REGISTER_DISAPPEARING_LINK (link_addr, obj);
 }
 
-void
+static void
 mono_gc_weak_link_remove (void **link_addr, gboolean track)
 {
 	if (track)
@@ -543,7 +554,7 @@ reveal_link (gpointer link_addr)
 	return REVEAL_POINTER (*link_a);
 }
 
-MonoObject*
+static MonoObject *
 mono_gc_weak_link_get (void **link_addr)
 {
 	MonoObject *obj = GC_call_with_alloc_lock (reveal_link, link_addr);
@@ -574,15 +585,11 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 void*
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
-#ifdef HAVE_GC_GCJ_MALLOC
 	/* It seems there are issues when the bitmap doesn't fit: play it safe */
 	if (numbits >= 30)
 		return GC_NO_DESCRIPTOR;
 	else
 		return (gpointer)GC_make_descriptor ((GC_bitmap)bitmap, numbits);
-#else
-	return NULL;
-#endif
 }
 
 void*
@@ -592,7 +599,7 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr)
+mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
 {
 	/* To help track down typed allocation bugs */
 	/*
@@ -613,6 +620,107 @@ mono_gc_alloc_fixed (size_t size, void *descr)
 void
 mono_gc_free_fixed (void* addr)
 {
+}
+
+void *
+mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+{
+	MonoObject *obj;
+
+	if (!vtable->klass->has_references) {
+		obj = GC_MALLOC_ATOMIC (size);
+
+		obj->vtable = vtable;
+		obj->synchronisation = NULL;
+
+		memset ((char *) obj + sizeof (MonoObject), 0, size - sizeof (MonoObject));
+	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
+		obj = GC_GCJ_MALLOC (size, vtable);
+	} else {
+		obj = GC_MALLOC (size);
+
+		obj->vtable = vtable;
+	}
+
+	if (G_UNLIKELY (alloc_events))
+		mono_profiler_allocation (obj);
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+{
+	MonoArray *obj;
+
+	if (!vtable->klass->has_references) {
+		obj = GC_MALLOC_ATOMIC (size);
+
+		obj->obj.vtable = vtable;
+		obj->obj.synchronisation = NULL;
+
+		memset ((char *) obj + sizeof (MonoObject), 0, size - sizeof (MonoObject));
+	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
+		obj = GC_GCJ_MALLOC (size, vtable);
+	} else {
+		obj = GC_MALLOC (size);
+
+		obj->obj.vtable = vtable;
+	}
+
+	obj->max_length = max_length;
+
+	if (G_UNLIKELY (alloc_events))
+		mono_profiler_allocation (&obj->obj);
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+{
+	MonoArray *obj;
+
+	if (!vtable->klass->has_references) {
+		obj = GC_MALLOC_ATOMIC (size);
+
+		obj->obj.vtable = vtable;
+		obj->obj.synchronisation = NULL;
+
+		memset ((char *) obj + sizeof (MonoObject), 0, size - sizeof (MonoObject));
+	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
+		obj = GC_GCJ_MALLOC (size, vtable);
+	} else {
+		obj = GC_MALLOC (size);
+
+		obj->obj.vtable = vtable;
+	}
+
+	obj->max_length = max_length;
+
+	if (bounds_size)
+		obj->bounds = (MonoArrayBounds *) ((char *) obj + size - bounds_size);
+
+	if (G_UNLIKELY (alloc_events))
+		mono_profiler_allocation (&obj->obj);
+
+	return obj;
+}
+
+void *
+mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+{
+	MonoString *obj = GC_MALLOC_ATOMIC (size);
+
+	obj->object.vtable = vtable;
+	obj->object.synchronisation = NULL;
+	obj->length = len;
+	obj->chars [len] = 0;
+
+	if (G_UNLIKELY (alloc_events))
+		mono_profiler_allocation (&obj->object);
+
+	return obj;
 }
 
 int
@@ -691,24 +799,16 @@ mono_gc_clear_domain (MonoDomain *domain)
 int
 mono_gc_get_suspend_signal (void)
 {
-#ifdef USE_INCLUDED_GC
 	return GC_get_suspend_signal ();
-#else
-	return -1;
-#endif
 }
 
 int
 mono_gc_get_restart_signal (void)
 {
-#ifdef USE_INCLUDED_GC
 	return GC_get_restart_signal ();
-#else
-	return -1;
-#endif
 }
 
-#if defined(USE_INCLUDED_LIBGC) && defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
+#if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
 extern __thread MONO_TLS_FAST void* GC_thread_tls;
 #include "metadata-internals.h"
 
@@ -731,7 +831,7 @@ enum {
 };
 
 static MonoMethod*
-create_allocator (int atype, int tls_key)
+create_allocator (int atype, int tls_key, gboolean slowpath)
 {
 	int index_var, bytes_var, my_fl_var, my_entry_var;
 	guint32 no_freelist_branch, not_small_enough_branch = 0;
@@ -739,21 +839,40 @@ create_allocator (int atype, int tls_key)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	MonoMethodSignature *csig;
-	AllocatorWrapperInfo *info;
+	const char *name = NULL;
+	WrapperInfo *info;
+
+	if (atype == ATYPE_FREEPTR) {
+		name = slowpath ? "SlowAllocPtrfree" : "AllocPtrfree";
+	} else if (atype == ATYPE_FREEPTR_FOR_BOX) {
+		name = slowpath ? "SlowAllocPtrfreeBox" : "AllocPtrfreeBox";
+	} else if (atype == ATYPE_NORMAL) {
+		name = slowpath ? "SlowAlloc" : "Alloc";
+	} else if (atype == ATYPE_GCJ) {
+		name = slowpath ? "SlowAllocGcj" : "AllocGcj";
+	} else if (atype == ATYPE_STRING) {
+		name = slowpath ? "SlowAllocString" : "AllocString";
+	} else {
+		g_assert_not_reached ();
+	}
+
+	csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 
 	if (atype == ATYPE_STRING) {
-		csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 		csig->ret = &mono_defaults.string_class->byval_arg;
 		csig->params [0] = &mono_defaults.int_class->byval_arg;
 		csig->params [1] = &mono_defaults.int32_class->byval_arg;
 	} else {
-		csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 		csig->ret = &mono_defaults.object_class->byval_arg;
 		csig->params [0] = &mono_defaults.int_class->byval_arg;
 		csig->params [1] = &mono_defaults.int32_class->byval_arg;
 	}
 
-	mb = mono_mb_new (mono_defaults.object_class, "Alloc", MONO_WRAPPER_ALLOC);
+	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_ALLOC);
+
+	if (slowpath)
+		goto always_slowpath;
+
 	bytes_var = mono_mb_add_local (mb, &mono_defaults.int32_class->byval_arg);
 	if (atype == ATYPE_STRING) {
 		/* a string alloator method takes the args: (vtable, len) */
@@ -906,7 +1025,9 @@ create_allocator (int atype, int tls_key)
 		mono_mb_patch_short_branch (mb, not_small_enough_branch);
 	if (size_overflow_branch > 0)
 		mono_mb_patch_short_branch (mb, size_overflow_branch);
+
 	/* the slow path: we just call back into the runtime */
+ always_slowpath:
 	if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icall (mb, mono_string_alloc);
@@ -917,19 +1038,19 @@ create_allocator (int atype, int tls_key)
 
 	mono_mb_emit_byte (mb, MONO_CEE_RET);
 
-	res = mono_mb_create_method (mb, csig, 8);
+	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
+	info->d.alloc.gc_name = "boehm";
+	info->d.alloc.alloc_type = atype;
+
+	res = mono_mb_create (mb, csig, 8, info);
 	mono_mb_free (mb);
 	mono_method_get_header (res)->init_locals = FALSE;
-
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo));
-	info->gc_name = "boehm";
-	info->alloc_type = atype;
-	mono_marshal_set_wrapper_info (res, info);
 
 	return res;
 }
 
 static MonoMethod* alloc_method_cache [ATYPE_NUM];
+static MonoMethod* slowpath_alloc_method_cache [ATYPE_NUM];
 
 static G_GNUC_UNUSED gboolean
 mono_gc_is_critical_method (MonoMethod *method)
@@ -937,7 +1058,7 @@ mono_gc_is_critical_method (MonoMethod *method)
 	int i;
 
 	for (i = 0; i < ATYPE_NUM; ++i)
-		if (method == alloc_method_cache [i])
+		if (method == alloc_method_cache [i] || method == slowpath_alloc_method_cache [i])
 			return TRUE;
 
 	return FALSE;
@@ -973,6 +1094,8 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 		return NULL;
 	if (klass->byval_arg.type == MONO_TYPE_STRING) {
 		atype = ATYPE_STRING;
+	} else if (!known_instance_size) {
+		return NULL;
 	} else if (!klass->has_references) {
 		if (for_box)
 			atype = ATYPE_FREEPTR_FOR_BOX;
@@ -989,7 +1112,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 			atype = ATYPE_NORMAL;
 		*/
 	}
-	return mono_gc_get_managed_allocator_by_type (atype);
+	return mono_gc_get_managed_allocator_by_type (atype, FALSE);
 }
 
 MonoMethod*
@@ -1004,26 +1127,27 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
  *   Return a managed allocator method corresponding to allocator type ATYPE.
  */
 MonoMethod*
-mono_gc_get_managed_allocator_by_type (int atype)
+mono_gc_get_managed_allocator_by_type (int atype, gboolean slowpath)
 {
 	int offset = -1;
 	MonoMethod *res;
+	MonoMethod **cache = slowpath ? slowpath_alloc_method_cache : alloc_method_cache;
 	MONO_THREAD_VAR_OFFSET (GC_thread_tls, offset);
 
 	mono_tls_key_set_offset (TLS_KEY_BOEHM_GC_THREAD, offset);
 
-	res = alloc_method_cache [atype];
+	res = cache [atype];
 	if (res)
 		return res;
 
-	res = create_allocator (atype, TLS_KEY_BOEHM_GC_THREAD);
+	res = create_allocator (atype, TLS_KEY_BOEHM_GC_THREAD, slowpath);
 	mono_mutex_lock (&mono_gc_lock);
-	if (alloc_method_cache [atype]) {
+	if (cache [atype]) {
 		mono_free_method (res);
-		res = alloc_method_cache [atype];
+		res = cache [atype];
 	} else {
 		mono_memory_barrier ();
-		alloc_method_cache [atype] = res;
+		cache [atype] = res;
 	}
 	mono_mutex_unlock (&mono_gc_lock);
 	return res;
@@ -1063,7 +1187,7 @@ mono_gc_get_managed_array_allocator (MonoClass *klass)
 }
 
 MonoMethod*
-mono_gc_get_managed_allocator_by_type (int atype)
+mono_gc_get_managed_allocator_by_type (int atype, gboolean slowpath)
 {
 	return NULL;
 }
@@ -1082,6 +1206,13 @@ mono_gc_get_write_barrier (void)
 }
 
 #endif
+
+MonoMethod*
+mono_gc_get_specific_write_barrier (gboolean is_concurrent)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
 
 int
 mono_gc_get_aligned_size_for_allocator (int size)
@@ -1219,55 +1350,28 @@ mono_gc_register_for_finalization (MonoObject *obj, void *user_data)
 	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
-/*
- * These will call the redefined versions in libgc.
- */
-
 #ifndef HOST_WIN32
-
 int
 mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
 {
+	/* it is being replaced by GC_pthread_create on some
+	 * platforms, see libgc/include/gc_pthread_redirects.h */
 	return pthread_create (new_thread, attr, start_routine, arg);
 }
-
-int
-mono_gc_pthread_join (pthread_t thread, void **retval)
-{
-	return pthread_join (thread, retval);
-}
-
-int
-mono_gc_pthread_detach (pthread_t thread)
-{
-	return pthread_detach (thread);
-}
-
-void
-mono_gc_pthread_exit (void *retval)
-{
-	pthread_exit (retval);
-	g_assert_not_reached ();
-}
-
 #endif
 
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
-#ifdef USE_INCLUDED_LIBGC
 	return GC_DllMain (module_handle, reason, reserved);
-#else
-	return TRUE;
-#endif
 }
 #endif
 
 guint
-mono_gc_get_vtable_bits (MonoClass *class)
+mono_gc_get_vtable_bits (MonoClass *klass)
 {
 	if (fin_callbacks.is_class_finalization_aware) {
-		if (fin_callbacks.is_class_finalization_aware (class))
+		if (fin_callbacks.is_class_finalization_aware (klass))
 			return BOEHM_GC_BIT_FINALIZER_AWARE;
 	}
 	return 0;
@@ -1282,9 +1386,7 @@ mono_gc_get_vtable_bits (MonoClass *class)
 void
 mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
 {
-#ifdef USE_INCLUDED_LIBGC
 	GC_register_altstack (stack, stack_size, altstack, altstack_size);
-#endif
 }
 
 int
@@ -1384,6 +1486,383 @@ mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
 	fin_callbacks = *callbacks;
 
 	GC_set_finalizer_notify_proc ((void (*) (GC_PTR))fin_notifier);
+}
+
+#define BITMAP_SIZE (sizeof (*((HandleData *)NULL)->bitmap) * CHAR_BIT)
+
+static inline gboolean
+slot_occupied (HandleData *handles, guint slot) {
+	return handles->bitmap [slot / BITMAP_SIZE] & (1 << (slot % BITMAP_SIZE));
+}
+
+static inline void
+vacate_slot (HandleData *handles, guint slot) {
+	handles->bitmap [slot / BITMAP_SIZE] &= ~(1 << (slot % BITMAP_SIZE));
+}
+
+static inline void
+occupy_slot (HandleData *handles, guint slot) {
+	handles->bitmap [slot / BITMAP_SIZE] |= 1 << (slot % BITMAP_SIZE);
+}
+
+static int
+find_first_unset (guint32 bitmap)
+{
+	int i;
+	for (i = 0; i < 32; ++i) {
+		if (!(bitmap & (1 << i)))
+			return i;
+	}
+	return -1;
+}
+
+static void
+handle_data_alloc_entries (HandleData *handles)
+{
+	handles->size = 32;
+	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+		handles->entries = g_malloc0 (sizeof (*handles->entries) * handles->size);
+		handles->domain_ids = g_malloc0 (sizeof (*handles->domain_ids) * handles->size);
+	} else {
+		handles->entries = mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+	}
+	handles->bitmap = g_malloc0 (handles->size / CHAR_BIT);
+}
+
+static gint
+handle_data_next_unset (HandleData *handles)
+{
+	gint slot;
+	for (slot = handles->slot_hint; slot < handles->size / BITMAP_SIZE; ++slot) {
+		if (handles->bitmap [slot] == 0xffffffff)
+			continue;
+		handles->slot_hint = slot;
+		return find_first_unset (handles->bitmap [slot]);
+	}
+	return -1;
+}
+
+static gint
+handle_data_first_unset (HandleData *handles)
+{
+	gint slot;
+	for (slot = 0; slot < handles->slot_hint; ++slot) {
+		if (handles->bitmap [slot] == 0xffffffff)
+			continue;
+		handles->slot_hint = slot;
+		return find_first_unset (handles->bitmap [slot]);
+	}
+	return -1;
+}
+
+/* Returns the index of the current slot in the bitmap. */
+static void
+handle_data_grow (HandleData *handles, gboolean track)
+{
+	guint32 *new_bitmap;
+	guint32 new_size = handles->size * 2; /* always double: we memset to 0 based on this below */
+
+	/* resize and copy the bitmap */
+	new_bitmap = g_malloc0 (new_size / CHAR_BIT);
+	memcpy (new_bitmap, handles->bitmap, handles->size / CHAR_BIT);
+	g_free (handles->bitmap);
+	handles->bitmap = new_bitmap;
+
+	/* resize and copy the entries */
+	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+		gpointer *entries;
+		guint16 *domain_ids;
+		gint i;
+		domain_ids = g_malloc0 (sizeof (*handles->domain_ids) * new_size);
+		entries = g_malloc0 (sizeof (*handles->entries) * new_size);
+		memcpy (domain_ids, handles->domain_ids, sizeof (*handles->domain_ids) * handles->size);
+		for (i = 0; i < handles->size; ++i) {
+			MonoObject *obj = mono_gc_weak_link_get (&(handles->entries [i]));
+			if (obj) {
+				mono_gc_weak_link_add (&(entries [i]), obj, track);
+				mono_gc_weak_link_remove (&(handles->entries [i]), track);
+			} else {
+				g_assert (!handles->entries [i]);
+			}
+		}
+		g_free (handles->entries);
+		g_free (handles->domain_ids);
+		handles->entries = entries;
+		handles->domain_ids = domain_ids;
+	} else {
+		gpointer *entries;
+		entries = mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
+		mono_gc_free_fixed (handles->entries);
+		handles->entries = entries;
+	}
+	handles->slot_hint = handles->size / BITMAP_SIZE;
+	handles->size = new_size;
+}
+
+static guint32
+alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
+{
+	gint slot, i;
+	guint32 res;
+	lock_handles (handles);
+	if (!handles->size)
+		handle_data_alloc_entries (handles);
+	i = handle_data_next_unset (handles);
+	if (i == -1 && handles->slot_hint != 0)
+		i = handle_data_first_unset (handles);
+	if (i == -1) {
+		handle_data_grow (handles, track);
+		i = 0;
+	}
+	slot = handles->slot_hint * BITMAP_SIZE + i;
+	occupy_slot (handles, slot);
+	handles->entries [slot] = NULL;
+	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+		/*FIXME, what to use when obj == null?*/
+		handles->domain_ids [slot] = (obj ? mono_object_get_domain (obj) : mono_domain_get ())->domain_id;
+		if (obj)
+			mono_gc_weak_link_add (&(handles->entries [slot]), obj, track);
+	} else {
+		handles->entries [slot] = obj;
+	}
+
+#ifndef DISABLE_PERFCOUNTERS
+	mono_perfcounters->gc_num_handles++;
+#endif
+	unlock_handles (handles);
+	res = MONO_GC_HANDLE (slot, handles->type);
+	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_CREATED, handles->type, res, obj);
+	return res;
+}
+
+/**
+ * mono_gchandle_new:
+ * @obj: managed object to get a handle for
+ * @pinned: whether the object should be pinned
+ *
+ * This returns a handle that wraps the object, this is used to keep a
+ * reference to a managed object from the unmanaged world and preventing the
+ * object from being disposed.
+ * 
+ * If @pinned is false the address of the object can not be obtained, if it is
+ * true the address of the object can be obtained.  This will also pin the
+ * object so it will not be possible by a moving garbage collector to move the
+ * object. 
+ * 
+ * Returns: a handle that can be used to access the object from
+ * unmanaged code.
+ */
+guint32
+mono_gchandle_new (MonoObject *obj, gboolean pinned)
+{
+	return alloc_handle (&gc_handles [pinned? HANDLE_PINNED: HANDLE_NORMAL], obj, FALSE);
+}
+
+/**
+ * mono_gchandle_new_weakref:
+ * @obj: managed object to get a handle for
+ * @pinned: whether the object should be pinned
+ *
+ * This returns a weak handle that wraps the object, this is used to
+ * keep a reference to a managed object from the unmanaged world.
+ * Unlike the mono_gchandle_new the object can be reclaimed by the
+ * garbage collector.  In this case the value of the GCHandle will be
+ * set to zero.
+ * 
+ * If @pinned is false the address of the object can not be obtained, if it is
+ * true the address of the object can be obtained.  This will also pin the
+ * object so it will not be possible by a moving garbage collector to move the
+ * object. 
+ * 
+ * Returns: a handle that can be used to access the object from
+ * unmanaged code.
+ */
+guint32
+mono_gchandle_new_weakref (MonoObject *obj, gboolean track_resurrection)
+{
+	return alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection);
+}
+
+/**
+ * mono_gchandle_get_target:
+ * @gchandle: a GCHandle's handle.
+ *
+ * The handle was previously created by calling mono_gchandle_new or
+ * mono_gchandle_new_weakref. 
+ *
+ * Returns a pointer to the MonoObject represented by the handle or
+ * NULL for a collected object if using a weakref handle.
+ */
+MonoObject*
+mono_gchandle_get_target (guint32 gchandle)
+{
+	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
+	guint type = MONO_GC_HANDLE_TYPE (gchandle);
+	HandleData *handles = &gc_handles [type];
+	MonoObject *obj = NULL;
+	if (type >= HANDLE_TYPE_MAX)
+		return NULL;
+
+	lock_handles (handles);
+	if (slot < handles->size && slot_occupied (handles, slot)) {
+		if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+			obj = mono_gc_weak_link_get (&handles->entries [slot]);
+		} else {
+			obj = handles->entries [slot];
+		}
+	} else {
+		/* print a warning? */
+	}
+	unlock_handles (handles);
+	/*g_print ("get target of entry %d of type %d: %p\n", slot, handles->type, obj);*/
+	return obj;
+}
+
+void
+mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
+{
+	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
+	guint type = MONO_GC_HANDLE_TYPE (gchandle);
+	HandleData *handles = &gc_handles [type];
+	MonoObject *old_obj = NULL;
+
+	g_assert (type < HANDLE_TYPE_MAX);
+	lock_handles (handles);
+	if (slot < handles->size && slot_occupied (handles, slot)) {
+		if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+			old_obj = handles->entries [slot];
+			if (handles->entries [slot])
+				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
+			if (obj)
+				mono_gc_weak_link_add (&handles->entries [slot], obj, handles->type == HANDLE_WEAK_TRACK);
+			/*FIXME, what to use when obj == null?*/
+			handles->domain_ids [slot] = (obj ? mono_object_get_domain (obj) : mono_domain_get ())->domain_id;
+		} else {
+			handles->entries [slot] = obj;
+		}
+	} else {
+		/* print a warning? */
+	}
+	/*g_print ("changed entry %d of type %d to object %p (in slot: %p)\n", slot, handles->type, obj, handles->entries [slot]);*/
+	unlock_handles (handles);
+}
+
+/**
+ * mono_gchandle_is_in_domain:
+ * @gchandle: a GCHandle's handle.
+ * @domain: An application domain.
+ *
+ * Returns: true if the object wrapped by the @gchandle belongs to the specific @domain.
+ */
+gboolean
+mono_gc_is_null (void)
+{
+	return FALSE;
+}
+
+gboolean
+mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
+{
+	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
+	guint type = MONO_GC_HANDLE_TYPE (gchandle);
+	HandleData *handles = &gc_handles [type];
+	gboolean result = FALSE;
+
+	if (type >= HANDLE_TYPE_MAX)
+		return FALSE;
+
+	lock_handles (handles);
+	if (slot < handles->size && slot_occupied (handles, slot)) {
+		if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+			result = domain->domain_id == handles->domain_ids [slot];
+		} else {
+			MonoObject *obj;
+			obj = handles->entries [slot];
+			if (obj == NULL)
+				result = TRUE;
+			else
+				result = domain == mono_object_domain (obj);
+		}
+	} else {
+		/* print a warning? */
+	}
+	unlock_handles (handles);
+	return result;
+}
+
+/**
+ * mono_gchandle_free:
+ * @gchandle: a GCHandle's handle.
+ *
+ * Frees the @gchandle handle.  If there are no outstanding
+ * references, the garbage collector can reclaim the memory of the
+ * object wrapped. 
+ */
+void
+mono_gchandle_free (guint32 gchandle)
+{
+	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
+	guint type = MONO_GC_HANDLE_TYPE (gchandle);
+	HandleData *handles = &gc_handles [type];
+	if (type >= HANDLE_TYPE_MAX)
+		return;
+
+	lock_handles (handles);
+	if (slot < handles->size && slot_occupied (handles, slot)) {
+		if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
+			if (handles->entries [slot])
+				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
+		} else {
+			handles->entries [slot] = NULL;
+		}
+		vacate_slot (handles, slot);
+	} else {
+		/* print a warning? */
+	}
+#ifndef DISABLE_PERFCOUNTERS
+	mono_perfcounters->gc_num_handles--;
+#endif
+	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
+	unlock_handles (handles);
+	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handles->type, gchandle, NULL);
+}
+
+/**
+ * mono_gchandle_free_domain:
+ * @domain: domain that is unloading
+ *
+ * Function used internally to cleanup any GC handle for objects belonging
+ * to the specified domain during appdomain unload.
+ */
+void
+mono_gchandle_free_domain (MonoDomain *domain)
+{
+	guint type;
+
+	for (type = HANDLE_TYPE_MIN; type < HANDLE_PINNED; ++type) {
+		guint slot;
+		HandleData *handles = &gc_handles [type];
+		lock_handles (handles);
+		for (slot = 0; slot < handles->size; ++slot) {
+			if (!slot_occupied (handles, slot))
+				continue;
+			if (MONO_GC_HANDLE_TYPE_IS_WEAK (type)) {
+				if (domain->domain_id == handles->domain_ids [slot]) {
+					vacate_slot (handles, slot);
+					if (handles->entries [slot])
+						mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
+				}
+			} else {
+				if (handles->entries [slot] && mono_object_domain (handles->entries [slot]) == domain) {
+					vacate_slot (handles, slot);
+					handles->entries [slot] = NULL;
+				}
+			}
+		}
+		unlock_handles (handles);
+	}
+
 }
 
 #endif /* no Boehm GC */

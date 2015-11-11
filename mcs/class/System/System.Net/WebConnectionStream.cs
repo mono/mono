@@ -45,8 +45,8 @@ namespace System.Net
 		int readBufferOffset;
 		int readBufferSize;
 		int stream_length; // -1 when CL not present
-		int contentLength;
-		int totalRead;
+		long contentLength;
+		long totalRead;
 		internal long totalWritten;
 		bool nextReadCalled;
 		int pendingReads;
@@ -93,10 +93,10 @@ namespace System.Net
 						ReadAll ();
 					}
 				} catch {
-					contentLength = Int32.MaxValue;
+					contentLength = Int64.MaxValue;
 				}
 			} else {
-				contentLength = Int32.MaxValue;
+				contentLength = Int64.MaxValue;
 			}
 
 			// Negative numbers?
@@ -208,7 +208,7 @@ namespace System.Net
 		internal void ForceCompletion ()
 		{
 			if (!nextReadCalled) {
-				if (contentLength == Int32.MaxValue)
+				if (contentLength == Int64.MaxValue)
 					contentLength = 0;
 				nextReadCalled = true;
 				cnc.NextRead ();
@@ -244,7 +244,7 @@ namespace System.Net
 				int diff = readBufferSize - readBufferOffset;
 				int new_size;
 
-				if (contentLength == Int32.MaxValue) {
+				if (contentLength == Int64.MaxValue) {
 					MemoryStream ms = new MemoryStream ();
 					byte [] buffer = null;
 					if (readBuffer != null && diff > 0) {
@@ -264,7 +264,7 @@ namespace System.Net
 					new_size = (int) ms.Length;
 					contentLength = new_size;
 				} else {
-					new_size = contentLength - totalRead;
+					new_size = (int) (contentLength - totalRead);
 					b = new byte [new_size];
 					if (readBuffer != null && diff > 0) {
 						if (diff > new_size)
@@ -384,8 +384,8 @@ namespace System.Net
 			if (cb != null)
 				cb = cb_wrapper;
 
-			if (contentLength != Int32.MaxValue && contentLength - totalRead < size)
-				size = contentLength - totalRead;
+			if (contentLength != Int64.MaxValue && contentLength - totalRead < size)
+				size = (int)(contentLength - totalRead);
 
 			if (!read_eof) {
 				result.InnerAsyncResult = cnc.BeginRead (request, buffer, offset, size, cb, result);
@@ -654,7 +654,8 @@ namespace System.Net
 			if (setInternalLength && !no_writestream && writeBuffer != null)
 				request.InternalContentLength = writeBuffer.Length;
 
-			if (!(sendChunked || request.ContentLength > -1 || no_writestream || webdav))
+			bool has_content = !no_writestream && (writeBuffer == null || request.ContentLength > -1);
+			if (!(sendChunked || has_content || no_writestream || webdav))
 				return false;
 
 			headersSent = true;

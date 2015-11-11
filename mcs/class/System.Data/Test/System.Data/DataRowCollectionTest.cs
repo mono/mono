@@ -304,10 +304,10 @@ namespace MonoTests.System.Data
 			cols [1] = "test3";
 			Table.Rows.Add (cols);			
 			
-			DataRelation Rel = new DataRelation ("REL", _tbl.Columns [0], Table.Columns [0]);
 			DataSet Set = new DataSet ();
 			Set.Tables.Add (_tbl);
 			Set.Tables.Add (Table);
+			DataRelation Rel = new DataRelation ("REL", _tbl.Columns [0], Table.Columns [0]);
 			Set.Relations.Add (Rel);
 			
 			try {

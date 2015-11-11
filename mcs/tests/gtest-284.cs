@@ -172,10 +172,8 @@ public static class InterfaceTester
 		ifaces.Add (icollection_type, State.Missing);
 		ifaces.Add (ienumerable_type, State.Missing);
 		ifaces.Add (icloneable_type, State.Missing);
-#if NET_4_0
 		ifaces.Add (typeof (IStructuralEquatable), State.Missing);
 		ifaces.Add (typeof (IStructuralComparable), State.Missing);
-#endif
 		Type array_type = t.MakeArrayType ();
 
 		if (Debug) {

@@ -40,7 +40,6 @@ namespace MonoTests.System.Web.Routing
 	[TestFixture]
 	public class RequestContextTest
 	{
-#if NET_4_0
 		[Test]
 		public void DefaultConstructor ()
 		{
@@ -49,7 +48,6 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (null, rc.HttpContext, "#A1");
 			Assert.AreEqual (null, rc.RouteData, "#A2");
 		}
-#endif
 		[Test]
 		public void Constructor_HttpContextBase_RouteData ()
 		{
@@ -72,14 +70,12 @@ namespace MonoTests.System.Web.Routing
 			var rc = new RequestContext (ctx, new RouteData ());
 
 			Assert.AreSame (ctx, rc.HttpContext, "#A1");
-#if NET_4_0
 			ctx = new HttpContextWrapper (new HttpContext (new HttpRequest ("filename", "http://localhost/filename", String.Empty), new HttpResponse (new StringWriter ())));
 			rc.HttpContext = ctx;
 			Assert.AreSame (ctx, rc.HttpContext, "#A2");
 
 			rc.HttpContext = null;
 			Assert.IsNull (rc.HttpContext, "#A3");
-#endif
 		}
 
 		[Test]
@@ -90,14 +86,12 @@ namespace MonoTests.System.Web.Routing
 			var rc = new RequestContext (ctx, rd);
 
 			Assert.AreSame (rd, rc.RouteData, "#A1");
-#if NET_4_0
 			rd = new RouteData ();
 			rc.RouteData = rd;
 			Assert.AreSame (rd, rc.RouteData, "#A2");
 
 			rc.RouteData = null;
 			Assert.IsNull (rc.RouteData, "#A3");
-#endif
 		}
 	}
 }

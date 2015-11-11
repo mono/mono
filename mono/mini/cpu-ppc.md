@@ -128,6 +128,8 @@ storer8_memindex: dest:b src1:i src2:i len:4
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
 fmove: dest:f src1:f len:4
+move_f_to_i4: dest:i src1:f len:8
+move_i4_to_f: dest:f src1:i len:8
 add_imm: dest:i src1:i len:4
 sub_imm: dest:i src1:i len:4
 mul_imm: dest:i src1:i len:4
@@ -314,5 +316,7 @@ vcall2_membase: src1:b len:16 clob:c
 
 jump_table: dest:i len:8
 
-atomic_add_i4: src1:b src2:i dest:i len:20
+atomic_add_i4: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
+
+gc_safe_point: len:0

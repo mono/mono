@@ -572,11 +572,11 @@ namespace System.IO
 		// pipe handles
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static bool CreatePipe (out IntPtr read_handle, out IntPtr write_handle);
+		public extern static bool CreatePipe (out IntPtr read_handle, out IntPtr write_handle, out MonoIOError error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool DuplicateHandle (IntPtr source_process_handle, IntPtr source_handle,
-			IntPtr target_process_handle, out IntPtr target_handle, int access, int inherit, int options);
+			IntPtr target_process_handle, out IntPtr target_handle, int access, int inherit, int options, out MonoIOError error);
 
 		// path characters
 
@@ -599,9 +599,6 @@ namespace System.IO
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int GetTempPath(out string path);
 	}
 }
 

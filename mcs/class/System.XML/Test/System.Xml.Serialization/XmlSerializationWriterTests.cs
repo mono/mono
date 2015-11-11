@@ -455,7 +455,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Ignore ("Additional namespace prefixes are added")]
+		[Category ("MobileNotWorking")]
 		public void TestWritePotentiallyReferencingElement ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -495,13 +495,6 @@ namespace MonoTests.System.XmlSerialization
 				"<Item>A</Item>" +
 				"<Item>B</Item>" +
 				"</q3:Array>", XmlSchemaNamespace, SoapEncodingNamespace), xsw.Content, "#5");
-		}
-
-		[Test]
-		public void TestWriteSerializable()
-		{
-			// FIXME
-			//Assert.AreEqual (, "");
 		}
 
 		[Test]
@@ -836,7 +829,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // enum name is output instead of integral value
 		public void TestWriteTypedPrimitive_Enum ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -884,7 +876,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // InvalidOperationException is thrown
 		public void TestWriteTypedPrimitive_Enum_XsiType ()
 		{
 			XmlSerializarionWriterTester xsw = new XmlSerializarionWriterTester ();
@@ -1567,9 +1558,10 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestNullableDatesAndTimes ()
 		{
-			DateTime dt = new DateTime (2012, 1, 3, 10, 0, 0, 0);
+			DateTime dt = new DateTime (2012, 1, 3, 10, 0, 0, 0, DateTimeKind.Utc);
 			
 			var d = new NullableDatesAndTimes () {
 				MyTime = dt,
@@ -1583,12 +1575,30 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (sw, d);
 			string str = sw.ToString ();
 
-			Assert.IsTrue (str.IndexOf ("<MyTime>10:00:00</MyTime>") != -1, "Time");
-			Assert.IsTrue (str.IndexOf ("<MyTimeNullable>10:00:00</MyTimeNullable>") != -1, "Nullable Time");
-			Assert.IsTrue (str.IndexOf ("<MyDate>2012-01-03</MyDate>") != -1, "Date");
-			Assert.IsTrue (str.IndexOf ("<MyDateNullable>2012-01-03</MyDateNullable>") != -1, "Nullable Datwe");
+			str = RemoveTZ (str, "MyTime");
+			str = RemoveTZ (str, "MyTimeNullable");
+
+			var expected =
+"<?xml version=\"1.0\" encoding=\"utf-16\"?>" + Environment.NewLine +
+"<root xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + Environment.NewLine +
+"  <MyTime>10:00:00.0000000$TZ$</MyTime>" + Environment.NewLine +
+"  <MyTimeNullable>10:00:00.0000000$TZ$</MyTimeNullable>" + Environment.NewLine +
+"  <MyDate>2012-01-03</MyDate>" + Environment.NewLine +
+"  <MyDateNullable>2012-01-03</MyDateNullable>" + Environment.NewLine +
+"</root>";
+
+			Assert.AreEqual (expected, str);
 		}
 		
-		
+		static string RemoveTZ (string str, string tag)
+		{
+			var st = str.IndexOf ("<" + tag + ">");
+			var et = str.IndexOf ("</" + tag + ">");
+			if (st < 0 || et < 0)
+				return str;
+
+			var	start = str.IndexOfAny (new [] { '+', '-' }, st, et - st);
+			return str.Substring (0, start) + "$TZ$" + str.Substring (et, str.Length - et);	
+		}
 	}
 }

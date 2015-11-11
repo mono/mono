@@ -87,8 +87,8 @@
 		return retval;										  \
        };				}G_STMT_END
 
-/* 16 == default capacity */
-#define mono_stringbuilder_capacity(sb) ((sb)->str ? ((sb)->str->length) : 16)
+#define mono_string_builder_capacity(sb) sb->chunkOffset + sb->chunkChars->max_length
+#define mono_string_builder_string_length(sb) sb->chunkOffset + sb->chunkLength
 
 /* 
  * Macros which cache the results of lookups locally.
@@ -210,13 +210,16 @@ struct _MonoAppDomain {
 	MonoDomain *data;
 };
 
-typedef struct {
+typedef struct _MonoStringBuilder MonoStringBuilder;
+
+struct _MonoStringBuilder {
 	MonoObject object;
-	gint32 length;
-	MonoString *str;
-	MonoString *cached_str;
-	gint32 max_capacity;
-} MonoStringBuilder;
+	MonoArray  *chunkChars;
+	MonoStringBuilder* chunkPrevious;      // Link to the block logically before this block
+	int chunkLength;                  // The index in ChunkChars that represent the end of the block
+	int chunkOffset;                  // The logial offset (sum of all characters in previous blocks)
+	int maxCapacity;
+};
 
 typedef struct {
 	MonoType *type;
@@ -252,6 +255,8 @@ struct _MonoException {
 	MonoObject *_data;
 	MonoObject *captured_traces;
 	MonoArray  *native_trace_ips;
+	/* Dynamic methods referenced by the stack trace */
+	MonoObject *dynamic_methods;
 };
 
 typedef struct {
@@ -262,12 +267,6 @@ typedef struct {
 	MonoSystemException base;
 	MonoString *param_name;
 } MonoArgumentException;
-
-typedef struct {
-	MonoSystemException base;
-	MonoString *msg;
-	MonoString *type_name;
-} MonoTypeLoadException;
 
 typedef struct {
 	MonoObject   object;
@@ -355,11 +354,23 @@ typedef struct {
 	guint32	    call_type;
 } MonoMethodMessage;
 
+/* Keep in sync with the System.MonoAsyncCall */
+typedef struct {
+	MonoObject object;
+	MonoMethodMessage *msg;
+	MonoMethod *cb_method;
+	MonoDelegate *cb_target;
+	MonoObject *state;
+	MonoObject *res;
+	MonoArray *out_args;
+} MonoAsyncCall;
+
 typedef struct {
 	MonoObject obj;
 	gint32 il_offset;
 	gint32 native_offset;
 	gint64 method_address;
+	gint32 method_index;
 	MonoReflectionMethod *method;
 	MonoString *filename;
 	gint32 line;
@@ -386,7 +397,6 @@ struct _MonoInternalThread {
 	HANDLE	    start_notify;
 	gpointer stack_ptr;
 	gpointer *static_data;
-	gpointer jit_data;
 	void *thread_info; /*This is MonoThreadInfo*, but to simplify dependencies, let's make it a void* here. */
 	MonoAppContext *current_appcontext;
 	MonoException *pending_exception;
@@ -396,14 +406,9 @@ struct _MonoInternalThread {
 	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
 	gint32 interruption_requested;
-	gpointer suspend_event;
-	gpointer suspended_event;
-	gpointer resume_event;
 	mono_mutex_t *synch_cs;
 	MonoBoolean threadpool_thread;
-	MonoBoolean thread_dump_requested;
 	MonoBoolean thread_interrupt_requested;
-	gpointer end_stack; /* This is only used when running in the debugger. */
 	int stack_size;
 	guint8	apartment_state;
 	gint32 critical_region_level;
@@ -412,10 +417,7 @@ struct _MonoInternalThread {
 	MonoThreadManageCallback manage_callback;
 	gpointer interrupt_on_stop;
 	gsize    flags;
-	gpointer android_tid;
 	gpointer thread_pinning_ref;
-	gint32 ignore_next_signal;
-	MonoMethod *async_invoke_method;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
@@ -430,7 +432,6 @@ struct _MonoThread {
 	MonoObject obj;
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
-	MonoObject *ec_to_set;
 };
 
 typedef struct {
@@ -471,37 +472,34 @@ typedef struct {
 typedef struct 
 {
 	MonoObject obj;
-	MonoBoolean readOnly;
-	MonoString *decimalFormats;
-	MonoString *currencyFormats;
-	MonoString *percentFormats;
-	MonoString *digitPattern;
-	MonoString *zeroPattern;
-	gint32 currencyDecimalDigits;
-	MonoString *currencyDecimalSeparator;
-	MonoString *currencyGroupSeparator;
+	MonoArray *numberGroupSizes;
 	MonoArray *currencyGroupSizes;
-	gint32 currencyNegativePattern;
-	gint32 currencyPositivePattern;
-	MonoString *currencySymbol;
-	MonoString *naNSymbol;
-	MonoString *negativeInfinitySymbol;
+	MonoArray *percentGroupSizes;
+	MonoString *positiveSign;
 	MonoString *negativeSign;
-	guint32 numberDecimalDigits;
 	MonoString *numberDecimalSeparator;
 	MonoString *numberGroupSeparator;
-	MonoArray *numberGroupSizes;
-	gint32 numberNegativePattern;
-	gint32 percentDecimalDigits;
+	MonoString *currencyGroupSeparator;
+	MonoString *currencyDecimalSeparator;
+	MonoString *currencySymbol;
+	MonoString *ansiCurrencySymbol;	/* unused */
+	MonoString *naNSymbol;
+	MonoString *positiveInfinitySymbol;
+	MonoString *negativeInfinitySymbol;
 	MonoString *percentDecimalSeparator;
 	MonoString *percentGroupSeparator;
-	MonoArray *percentGroupSizes;
-	gint32 percentNegativePattern;
-	gint32 percentPositivePattern;
 	MonoString *percentSymbol;
 	MonoString *perMilleSymbol;
-	MonoString *positiveInfinitySymbol;
-	MonoString *positiveSign;
+	MonoString *nativeDigits; /* unused */
+	gint32 dataItem; /* unused */
+	guint32 numberDecimalDigits;
+	gint32 currencyDecimalDigits;
+	gint32 currencyPositivePattern;
+	gint32 currencyNegativePattern;
+	gint32 numberNegativePattern;
+	gint32 percentPositivePattern;
+	gint32 percentNegativePattern;
+	gint32 percentDecimalDigits;
 } MonoNumberFormatInfo;
 
 typedef struct {
@@ -636,6 +634,9 @@ MONO_COLD void mono_set_pending_exception (MonoException *exc);
 MonoAsyncResult *
 mono_async_result_new	    (MonoDomain *domain, HANDLE handle, 
 			     MonoObject *state, gpointer data, MonoObject *object_data);
+
+MonoObject *
+ves_icall_System_Runtime_Remoting_Messaging_AsyncResult_Invoke (MonoAsyncResult *ares);
 
 MonoWaitHandle *
 mono_wait_handle_new	    (MonoDomain *domain, HANDLE handle);
@@ -779,6 +780,7 @@ struct _MonoDelegate {
 	MonoObject *target;
 	MonoMethod *method;
 	gpointer delegate_trampoline;
+	gpointer rgctx;
 	/* 
 	 * If non-NULL, this points to a memory location which stores the address of 
 	 * the compiled code of the method, or NULL if it is not yet compiled.
@@ -787,12 +789,13 @@ struct _MonoDelegate {
 	MonoReflectionMethod *method_info;
 	MonoReflectionMethod *original_method_info;
 	MonoObject *data;
+	MonoBoolean method_is_virtual;
 };
 
 typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
 struct _MonoMulticastDelegate {
 	MonoDelegate delegate;
-	MonoMulticastDelegate *prev;
+	MonoArray *delegates;
 };
 
 struct _MonoReflectionField {
@@ -1271,27 +1274,13 @@ typedef struct {
 	gint16 size_param_index;
 } MonoReflectionMarshalAsAttribute;
 
-
 typedef struct {
 	MonoObject object;
 	gint32 call_conv;
 	gint32 charset;
-	MonoString *dll;
-	MonoString *entry_point;
-	MonoBoolean exact_spelling;
-	MonoBoolean preserve_sig;
-	MonoBoolean set_last_error;
 	MonoBoolean best_fit_mapping;
 	MonoBoolean throw_on_unmappable;
-} MonoReflectionDllImportAttribute;
-
-typedef struct {
-	MonoObject object;
-	gint32 call_conv;
-	gint32 charset;
 	MonoBoolean set_last_error;
-	MonoBoolean best_fit_mapping;
-	MonoBoolean throw_on_unmappable;
 } MonoReflectionUnmanagedFunctionPointerAttribute;
 
 typedef struct {
@@ -1641,6 +1630,18 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoException *exc);
 
 char *
 mono_exception_get_managed_backtrace (MonoException *exc);
+
+void
+mono_copy_value (MonoType *type, void *dest, void *value, int deref_pointer);
+
+void
+mono_error_raise_exception (MonoError *target_error);
+
+void
+mono_error_set_pending_exception (MonoError *error);
+
+MonoArray *
+mono_glist_to_array (GList *list, MonoClass *eclass);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

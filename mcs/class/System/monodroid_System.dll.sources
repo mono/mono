@@ -77,4 +77,13 @@ System/AndroidPlatform.cs
 ../Mono.Security/Mono.Security.X509.Extensions/NetscapeCertTypeExtension.cs
 ../Mono.Security/Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 
-
+../Mono.Security/Mono.Security.Interface/CertificateValidationHelper.cs
+../Mono.Security/Mono.Security.Interface/IBufferOffsetSize.cs
+../Mono.Security/Mono.Security.Interface/IMonoTlsEventSink.cs
+../Mono.Security/Mono.Security.Interface/IMonoTlsContext.cs
+../Mono.Security/Mono.Security.Interface/MonoSslStream.cs
+../Mono.Security/Mono.Security.Interface/MonoTlsConnectionInfo.cs
+../Mono.Security/Mono.Security.Interface/MonoTlsProvider.cs
+../Mono.Security/Mono.Security.Interface/MonoTlsProviderFactory.cs
+../Mono.Security/Mono.Security.Interface/MonoTlsSettings.cs
+../Mono.Security/Mono.Security.Interface/TlsProtocols.cs

@@ -400,6 +400,17 @@ outer_declaration
 	  }
 	| opt_extern_alias_directives opt_using_directives attribute_sections
 	  {
+		Attributes attrs = (Attributes) $3;
+		if (attrs != null) {
+			foreach (var a in attrs.Attrs) {
+				if (a.ExplicitTarget == "assembly" || a.ExplicitTarget == "module")
+					continue;
+
+				if (a.ExplicitTarget == null)
+					report.Error (-1671, a.Location, "Global attributes must have attribute target specified");
+			}
+		}
+
 		module.AddAttributes ((Attributes) $3, current_namespace);
 	  }
 	| error
@@ -1818,9 +1829,9 @@ property_declaration
 	  accessor_declarations 
 	  {
 		lexer.PropertyParsing = false;
-		
+
 		if (doc_support)
-			current_property.DocComment = ConsumeStoredComment ();				
+			current_property.DocComment = ConsumeStoredComment ();
 	  }
 	  CLOSE_BRACE
 	  {
@@ -1858,6 +1869,9 @@ property_declaration
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", property.GetSignatureForError ());
 
+		if (doc_support)
+			property.DocComment = ConsumeStoredComment ();
+
 		current_type.AddMember (property);
 
 		current_local_parameters = null;
@@ -1879,6 +1893,9 @@ opt_property_initializer
 		lbag.AppendToMember (current_property, GetLocation ($1), GetLocation ($4));
 		end_block (GetLocation ($4));
 		current_local_parameters = null;
+
+		if (doc_support)
+			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	;
 
@@ -2403,12 +2420,7 @@ constructor_declarator
 			}
 		} else {
 			if (current_type.Kind == MemberKind.Struct && current_local_parameters.IsEmpty) {
-				if (lang_version < LanguageVersion.V_6)
-					FeatureIsNotAvailable (GetLocation ($3), "struct parameterless instance constructor");
-
-				if ((mods & Modifiers.PUBLIC) == 0) {
-					report.Error (8075, c.Location, "`{0}': Structs parameterless instance constructor must be public", c.GetSignatureForError ());
-				}
+				report.Error (568, c.Location, "Structs cannot contain explicit parameterless constructors");
 			}
 		}
 

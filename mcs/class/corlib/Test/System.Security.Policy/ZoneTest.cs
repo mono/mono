@@ -184,7 +184,10 @@ namespace MonoTests.System.Security.Policy {
 		// files are always rooted (Path.IsPathRooted) and exists (File.Exists)
 		string[] myComputerUrls = {
 			Path.GetTempFileName (),
+#if !MONODROID
+			// Assembly.Location doesn't work on Android
 			Assembly.GetExecutingAssembly ().Location,
+#endif
 		};
 
 		[Test]

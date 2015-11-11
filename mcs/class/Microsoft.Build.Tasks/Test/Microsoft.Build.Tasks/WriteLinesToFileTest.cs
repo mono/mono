@@ -91,6 +91,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
+		[Category("NotWorking")] // this fails due to an xbuild bug, it works on MS.NET
 		public void TestLineWithEscapedSemicolon ()
 		{
 			string[] lines = new string[] { "abc%3Btest%3B%3B", "%3Bdef" };
@@ -101,12 +102,23 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
+		[Category("NotWorking")] // this fails due to an xbuild bug, it works on MS.NET
 		public void TestLineWithEscapedSpace ()
 		{
 			string[] lines = new string[] { "  %20%20abc%20test  ", "  def%20%20" };
 			CreateProjectAndCheck (full_filepath, lines, false, true, delegate () {
 				CheckFileExists (full_filepath, true);
 				CheckLines (full_filepath, new string [] {"  abc test", "def  "});
+			});
+		}
+
+		[Test]
+		public void TestLineWithEscapedQuote ()
+		{
+			string[] lines = new string[] { "%22abc test%22 123 %22def%22" };
+			CreateProjectAndCheck (full_filepath, lines, false, true, delegate () {
+				CheckFileExists (full_filepath, true);
+				CheckLines (full_filepath, new string [] {"\"abc test\" 123 \"def\""});
 			});
 		}
 

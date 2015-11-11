@@ -103,11 +103,11 @@ namespace System.IO.Compression
 				throw new ArgumentException("Stream must support reading, writing and seeking for Update archive mode");
 
 			try {
-				zipFile = mode == ZipArchiveMode.Create ? 
-					SharpCompress.Archive.Zip.ZipArchive.Create() :
-					SharpCompress.Archive.Zip.ZipArchive.Open(stream);
-			} catch (Exception) {
-				throw new InvalidDataException("The contents of the stream are not in the zip archive format.");
+				zipFile = mode != ZipArchiveMode.Create && stream.Length != 0
+					? SharpCompress.Archive.Zip.ZipArchive.Open(stream)
+					: SharpCompress.Archive.Zip.ZipArchive.Create();
+			} catch (Exception e) {
+				throw new InvalidDataException("The contents of the stream are not in the zip archive format.", e);
 			}
 
 			entries = new Dictionary<string, ZipArchiveEntry>();
@@ -202,7 +202,7 @@ namespace System.IO.Compression
 		private void Save()
 		{
 			using (var newZip = new MemoryStream()) {
-				zipFile.SaveTo(newZip, CompressionType.Deflate);
+				zipFile.SaveTo(newZip, CompressionType.Deflate, entryNameEncoding ?? Encoding.UTF8);
 
 				stream.SetLength(0);
 				stream.Position = 0;

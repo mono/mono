@@ -92,10 +92,12 @@ namespace Microsoft.Build.BuildEngine
 
 			object[] args;
 			if (Arguments == null) {
-				flags |= BindingFlags.GetProperty;
+				if ((flags & BindingFlags.CreateInstance) == 0)
+					flags |= BindingFlags.GetProperty;
 				args = null;
 			} else {
-				flags |= BindingFlags.InvokeMethod;
+				if ((flags & BindingFlags.CreateInstance) == 0)
+					flags |= BindingFlags.InvokeMethod;
 				ExpandArguments (project, options);
 				args = PrepareMethodArguments (member_name, flags);
 				if (args == null)

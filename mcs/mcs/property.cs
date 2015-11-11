@@ -82,8 +82,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public abstract void PrepareEmit ();
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -246,7 +244,7 @@ namespace Mono.CSharp
 			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
-					parameters[0].ApplyAttributeBuilder (a, ctor, cdata, pa);
+					parameters[parameters.Count - 1].ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 
@@ -548,19 +546,21 @@ namespace Mono.CSharp
 			}
 
 			if (Set == null) {
-				if ((ModFlags & Modifiers.SEALED) != 0 && base_prop.HasSet && !base_prop.Set.IsAccessible (this)) {
-					// TODO: Should be different error code but csc uses for some reason same
-					Report.SymbolRelatedToPreviousError (base_prop);
-					Report.Error (546, Location,
-						"`{0}': cannot override because `{1}' does not have accessible set accessor",
-						GetSignatureForError (), base_prop.GetSignatureForError ());
-					ok = false;
-				}
+				if (base_prop.HasSet) {
+					if ((ModFlags & Modifiers.SEALED) != 0 && !base_prop.Set.IsAccessible (this)) {
+						// TODO: Should be different error code but csc uses for some reason same
+						Report.SymbolRelatedToPreviousError (base_prop);
+						Report.Error (546, Location,
+							"`{0}': cannot override because `{1}' does not have accessible set accessor",
+							GetSignatureForError (), base_prop.GetSignatureForError ());
+						ok = false;
+					}
 
-				if ((ModFlags & Modifiers.AutoProperty) != 0) {
-					Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
-						GetSignatureForError ());
-					ok = false;
+					if ((ModFlags & Modifiers.AutoProperty) != 0) {
+						Report.Error (8080, Location, "`{0}': Auto-implemented properties must override all accessors of the overridden property",
+							GetSignatureForError ());
+						ok = false;
+					}
 				}
 			} else {
 				if (!base_prop.HasSet) {
@@ -617,8 +617,7 @@ namespace Mono.CSharp
 						GetSignatureForError ());
 				}
 			} else if ((ModFlags & Modifiers.OVERRIDE) == 0 && 
-				(Get == null && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) ||
-				(Set == null && (Get.ModFlags & Modifiers.AccessibilityMask) != 0)) {
+				((Get == null && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) || (Set == null && (Get.ModFlags & Modifiers.AccessibilityMask) != 0))) {
 				Report.Error (276, Location, 
 					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
 					      GetSignatureForError ());
@@ -1450,6 +1449,8 @@ namespace Mono.CSharp
 
 		public override void PrepareEmit ()
 		{
+			base.PrepareEmit ();
+
 			add.PrepareEmit ();
 			remove.PrepareEmit ();
 
@@ -1759,9 +1760,8 @@ namespace Mono.CSharp
 
 		public override void PrepareEmit ()
 		{
-			parameters.ResolveDefaultValues (this);
-
 			base.PrepareEmit ();
+			parameters.ResolveDefaultValues (this);
 		}
 
 		protected override bool VerifyClsCompliance ()

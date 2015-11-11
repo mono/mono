@@ -56,6 +56,7 @@ man_MANS = \
 	xsd.1		      \
 	mono-configuration-crypto.1 \
 	ccrewrite.1			\
-	cccheck.1
+	cccheck.1			\
+	mono-symbolicate.1
 
 EXTRA_DIST = $(man_MANS)

@@ -843,6 +843,20 @@ public class RSACryptoServiceProviderTest {
 		rsa.ToXmlString (true);
 	}
 
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void ExportWithoutCRT_2 () 
+	{
+		try {
+			rsa = new RSACryptoServiceProvider ();
+			rsa.FromXmlString (MonoXml384woCRT);
+		}
+		catch {
+		}
+		// exception is HERE!
+		rsa.ExportParameters (true);
+	}
+
 	// Validate that we can sign with every keypair and verify the signature
 	// With Windows this means that we can use Mono keypairs to sign and verify.
 	// For Mono this doesn't mean much.

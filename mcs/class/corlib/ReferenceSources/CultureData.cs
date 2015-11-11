@@ -65,6 +65,15 @@ namespace System.Globalization
 		// TODO: should query runtime with culture name for a list of culture's calendars
 		int calendarId;
 
+		int numberIndex;
+
+		int iDefaultAnsiCodePage;
+		int iDefaultOemCodePage;
+		int iDefaultMacCodePage;
+		int iDefaultEbcdicCodePage;
+		bool isRightToLeft;
+		string sListSeparator;
+
 		private CultureData (string name)
 		{
 			this.sRealName = name;
@@ -95,6 +104,13 @@ namespace System.Globalization
 					// Store for specific data about each calendar
 		    		invariant.calendars = new CalendarData[CalendarData.MAX_CALENDARS];
 		    		invariant.calendars[0] = CalendarData.Invariant;
+
+					invariant.iDefaultAnsiCodePage = 1252;                   // default ansi code page ID (ACP)
+					invariant.iDefaultOemCodePage = 437;                    // default oem code page ID (OCP or OEM)
+					invariant.iDefaultMacCodePage = 10000;                  // default macintosh code page
+					invariant.iDefaultEbcdicCodePage = 037;                    // default EBCDIC code page
+
+					invariant.sListSeparator = ",";
 					
 					Interlocked.CompareExchange (ref s_Invariant, invariant, null);
 				}
@@ -113,7 +129,8 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, string iso2lang)
+		public static CultureData GetCultureData (string cultureName, bool useUserOverride, int datetimeIndex, int calendarId, int numberIndex, string iso2lang,
+			int ansiCodePage, int oemCodePage, int macCodePage, int ebcdicCodePage, bool rightToLeft, string listSeparator)
 		{
 			if (string.IsNullOrEmpty (cultureName))
 				return Invariant;
@@ -122,8 +139,21 @@ namespace System.Globalization
 			cd.fill_culture_data (datetimeIndex);
 			cd.bUseOverrides = useUserOverride;
 			cd.calendarId = calendarId;
+			cd.numberIndex = numberIndex;
 			cd.sISO639Language = iso2lang;
+			cd.iDefaultAnsiCodePage = ansiCodePage;
+			cd.iDefaultOemCodePage = oemCodePage;
+			cd.iDefaultMacCodePage = macCodePage;
+			cd.iDefaultEbcdicCodePage = ebcdicCodePage;
+			cd.isRightToLeft = rightToLeft;
+			cd.sListSeparator = listSeparator;
 			return cd;
+		}
+
+		internal static CultureData GetCultureData (int culture, bool bUseUserOverride)
+		{
+			// Legacy path which we should never hit
+			return null;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -131,7 +161,7 @@ namespace System.Globalization
 
 		public CalendarData GetCalendar (int calendarId)
 		{
-            // arrays are 0 based, calendarIds are 1 based
+			// arrays are 0 based, calendarIds are 1 based
 			int calendarIndex = calendarId - 1;
 
 			// Have to have calendars
@@ -219,17 +249,71 @@ namespace System.Globalization
 			}
 		}
 
-        internal String CultureName {
-            get {
-                return sRealName;
-            }
-        }
-
-	 internal String SCOMPAREINFO {
-		get {
-			return "";
+		internal bool IsInvariantCulture {
+			get {
+				return string.IsNullOrEmpty (sRealName);
+			}
 		}
-	}
+
+		internal String CultureName {
+			get {
+				return sRealName;
+			}
+		}
+
+		internal String SCOMPAREINFO {
+			get {
+				return "";
+			}
+		}
+
+		internal String STEXTINFO {
+			get {
+				return sRealName;
+			}
+		}
+
+		internal int ILANGUAGE {
+			get {
+				return 0;
+			}
+		}
+
+		internal int IDEFAULTANSICODEPAGE {
+			get {
+				return iDefaultAnsiCodePage;
+			}
+		}
+
+		internal int IDEFAULTOEMCODEPAGE {
+			get {
+				return iDefaultOemCodePage;
+			}
+		}
+
+		internal int IDEFAULTMACCODEPAGE {
+			get {
+				return iDefaultMacCodePage;
+			}
+		}
+
+		internal int IDEFAULTEBCDICCODEPAGE {
+			get {
+				return iDefaultEbcdicCodePage;
+			}
+		}
+
+		internal bool IsRightToLeft {
+			get {
+				return isRightToLeft;
+			}
+		}
+
+		internal String SLIST {
+			get {
+				return sListSeparator;
+			}
+		}
 
 #region from reference sources
 
@@ -510,5 +594,42 @@ namespace System.Globalization
 		{
 			return str;
 		}
+
+		internal static bool IsCustomCultureId(int cultureId)
+		{
+			return false;
+		}
+
+		internal void GetNFIValues (NumberFormatInfo nfi)
+		{
+			if (this.IsInvariantCulture)
+			{
+				// Same as default values
+			}
+			else
+			{
+				//
+				// We don't have information for the following four.  All cultures use
+				// the same value of the number formatting values.
+				//
+				// PercentDecimalDigits
+				// PercentDecimalSeparator
+				// PercentGroupSize
+				// PercentGroupSeparator
+				//
+				fill_number_data (nfi, numberIndex);
+			}
+
+			//
+			// We don't have percent values, so use the number values
+			//
+			nfi.percentDecimalDigits = nfi.numberDecimalDigits;
+			nfi.percentDecimalSeparator = nfi.numberDecimalSeparator;
+			nfi.percentGroupSizes = nfi.numberGroupSizes;
+			nfi.percentGroupSeparator = nfi.numberGroupSeparator;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void fill_number_data (NumberFormatInfo nfi, int numberIndex);
 	}
 }

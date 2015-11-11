@@ -183,11 +183,11 @@ Restrict the compiler to use only the features available in C# 3.0
 Restrict the compiler to use only the features available in C# 4.0
 specification.
 .TP
-.I "future"
+.I "experimental"
 Enables unstable features from upcoming versions of the language.
 .PP
 Notice that this flag only restricts the language features available to
-the programmer. A version of produced assemblies can be controled using
+the programmer. A version of produced assemblies can be controlled using
 .I SDK
 option.
 .ne
@@ -249,29 +249,6 @@ This will instruct the compiler to reference the System.* libraries
 available on a typical dotnet framework installation, notice that this
 does not include all of the Mono libraries, only the System.* ones.  This
 is a convenient shortcut for those porting code.
-.TP
-.I \-pkg:olive
-Use this to reference the "Olive" libraries (the 3.0 and 3.5 extended
-libraries).
-.TP
-.I \-pkg:silver
-References the assemblies for creating Moonlight/Silverlight
-applications.
-.TP
-.I \-pkg:silverdesktop
-Use this option to create Moonlight/Silverlight applications that
-target the desktop.   This option allows developers to consume the
-Silverlight APIs with the full 2.0 profile API available to them,
-unlike 
-.I smcs 
-it gives full access to all the APIs that are part of Mono.  The only
-downside is that applications created with silverdesktop will not run
-on the browser.   Typically these applications will be launched
-with the 
-.I mopen
-command line tool.
-.TP
-For more details see the PACKAGE section in this document
 .ne
 .RE
 .TP

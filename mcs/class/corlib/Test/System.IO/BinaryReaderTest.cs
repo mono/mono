@@ -1562,5 +1562,22 @@ namespace MonoTests.System.IO
 			}
 		}
 	}
+
+	// Bug Xamarin #30171
+	[Test]
+	public void BinaryReaderRegressionMono40 ()
+	{
+		char testChar1 = 'H';
+		using (var stream = new MemoryStream()){
+			using (var writer = new BinaryWriter(stream, Encoding.Unicode, true)){
+				using (var reader = new BinaryReader(stream, Encoding.Unicode)) {
+					writer.Write(testChar1);
+					stream.Position = 0;
+					char testchar2 = reader.ReadChar();
+					Assert.AreEqual (testChar1, testchar2);
+				}
+			}
+		}
+	}
 }
 }

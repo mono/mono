@@ -87,11 +87,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-#if NET_4_0
 		[ExpectedException (typeof (ArgumentException))]
-#else
-		[ExpectedException (typeof (ArgumentNullException))]
-#endif
 		public void ArgInstanceNullForNonStaticMethod ()
 		{
 			Expression.Call (null, typeof (object).GetMethod ("ToString"));
@@ -244,6 +240,17 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		public void CallMethodOnDateTime ()
+		{
+			var left = Expression.Call (Expression.Constant (DateTime.Now), typeof(DateTime).GetMethod ("AddDays"), Expression.Constant (-5.0));
+			var right = Expression.Constant (DateTime.Today.AddDays (1));
+			var expr = Expression.GreaterThan (left, right);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsFalse (eq ());
+		}
+
+		[Test]
 		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
 		[ExpectedException (typeof (ArgumentException))]
 		public void CallStaticMethodOnNonSenseInstanceExpression ()
@@ -292,18 +299,6 @@ namespace MonoTests.System.Linq.Expressions {
 		{
 			return (int) (i as ConstantExpression).Value;
 		}
-#if !NET_4_0 // dlr bug 5875
-		[Test]
-		public void CallMethodWithExpressionParameter ()
-		{
-			var call = Expression.Call (GetType ().GetMethod ("Bang"), Expression.Constant (42));
-			Assert.AreEqual (ExpressionType.Quote, call.Arguments [0].NodeType);
-
-			var l = Expression.Lambda<Func<int>> (call).Compile ();
-
-			Assert.AreEqual (42, l ());
-		}
-#endif
 		static bool fout_called = false;
 
 		public static int FooOut (out int x)
@@ -398,7 +393,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void Connect282702 ()
 		{
 			var lambda = Expression.Lambda<Func<Func<int>>> (

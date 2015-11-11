@@ -207,8 +207,9 @@ namespace System.Windows.Forms
 		{
 			// Ensure that at least one line is going to get displayed.
 			// Line limit does not ensure that despite its description.
-			textBounds.Height = Math.Max (textBounds.Height, button.Font.Height);
-			
+			if (button.Font != null && button.Font.Height > 0)
+				textBounds.Height = Math.Max (textBounds.Height, button.Font.Height);
+
 			if (button.Enabled)
 				TextRenderer.DrawTextInternal (g, button.Text, button.Font, textBounds, button.ForeColor, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			else
@@ -2956,8 +2957,15 @@ namespace System.Windows.Forms
 				else
 					idx = item.ImageIndex;
 
-				if (idx > -1 && idx < image_list.Images.Count)
-					image_list.Draw (dc, icon_rect.Location, idx);
+				if (idx > -1 && idx < image_list.Images.Count) {
+					// Draw a thumbnail image if it exists for a FileViewListViewItem, otherwise draw
+					// the standard icon.  See https://bugzilla.xamarin.com/show_bug.cgi?id=28025.
+					var fi = item as System.Windows.Forms.FileViewListViewItem;
+					if (fi != null && fi.FSEntry != null && fi.FSEntry.Image != null)
+						dc.DrawImage(fi.FSEntry.Image, icon_rect);
+					else
+						image_list.Draw(dc, icon_rect.Location, idx);
+				}
 			}
 
 			// draw the item text			

@@ -20,20 +20,11 @@
 /*                 D e f i n e s                                    */
 /*------------------------------------------------------------------*/
 
-#define GR_SAVE_SIZE		4*sizeof(long)
-#define FP_SAVE_SIZE		16*sizeof(double)
-#define METHOD_SAVE_OFFSET	S390_MINIMAL_STACK_SIZE
-#define CREATE_GR_OFFSET	METHOD_SAVE_OFFSET+8
-#define CREATE_FP_OFFSET	CREATE_GR_OFFSET+GR_SAVE_SIZE
-#define CREATE_LMF_OFFSET	CREATE_FP_OFFSET+FP_SAVE_SIZE
-#define CREATE_STACK_SIZE	(CREATE_LMF_OFFSET+2*sizeof(long)+sizeof(MonoLMF))
-#define GENERIC_REG_OFFSET	CREATE_STACK_SIZE + \
-				S390_REG_SAVE_OFFSET + \
-				3*sizeof(long)
+#define LMFReg	s390_r13
 
-/*------------------------------------------------------------------*/
-/* Method-specific trampoline code fragment sizes		    */
-/*------------------------------------------------------------------*/
+/*
+ * Method-specific trampoline code fragment sizes		    
+ */
 #define SPECIFIC_TRAMPOLINE_SIZE	96
 
 /*========================= End of Defines =========================*/
@@ -48,9 +39,10 @@
 
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/metadata/marshal.h>
-#include <mono/metadata/tabledefs.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/metadata/tabledefs.h>
 #include <mono/arch/s390x/s390x-codegen.h>
 
 #include "mini.h"
@@ -62,6 +54,11 @@
 /*------------------------------------------------------------------*/
 /*                 T y p e d e f s                                  */
 /*------------------------------------------------------------------*/
+
+typedef struct {
+	guint8	stk[S390_MINIMAL_STACK_SIZE];	/* Standard s390x stack	*/
+	struct MonoLMF  LMF;			/* LMF			*/
+} trampStack_t;
 
 /*========================= End of Typedefs ========================*/
 
@@ -99,6 +96,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 	guint8 *code, *start;
 	int this_pos = s390_r2;
 	MonoDomain *domain = mono_domain_get ();
+	char trampName[128];
 
 	start = code = mono_domain_code_reserve (domain, 28);
 
@@ -110,6 +108,10 @@ mono_arch_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 
 	mono_arch_flush_icache (start, code - start);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_UNBOX_TRAMPOLINE, method);
+
+	snprintf(trampName, sizeof(trampName), "%s_unbox_trampoline", method->name);
+
+	mono_tramp_info_register (mono_tramp_info_create (trampName, start, code - start, NULL, NULL), domain);
 
 	return start;
 }
@@ -164,55 +166,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_nullify_class_init_trampoline           */
-/*                                                                  */
-/* Function	- Nullify a call which calls a class init trampoline*/
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-void
-mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
-{
-	char patch[2] = {0x07, 0x00};
-
-	code = code - 2;
-
-	memcpy(code, patch, sizeof(patch));
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- mono_arch_get_nullified_class_init		    */
-/*                                                                  */
-/* Function	- Nullify a PLT entry call.			    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-gpointer
-mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
-{
-	guint8 *buf, *code;
-
-	code = buf = mono_global_codeman_reserve (16);
-
-	s390_br (code, s390_r14);
-
-	mono_arch_flush_icache (buf, code - buf);
-	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
-
-	if (info)
-		*info = mono_tramp_info_create ("nullified_class_init_trampoline", 
-						buf, code - buf, NULL, NULL);
-
-	return (buf);
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
 /* Name		- mono_arch_create_trampoline_code                  */
 /*                                                                  */
 /* Function	- Create the designated type of trampoline according*/
@@ -225,7 +178,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 {
 	char *tramp_name;
 	guint8 *buf, *tramp, *code;
-	int i, offset, lmfOffset, has_caller;
+	int i, offset, has_caller;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 
@@ -249,16 +202,29 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		
 	s390_stmg (buf, s390_r6, s390_r15, STK_BASE, S390_REG_SAVE_OFFSET);
 	s390_lgr  (buf, s390_r11, s390_r15);
-	s390_aghi (buf, STK_BASE, -CREATE_STACK_SIZE);
+	s390_aghi (buf, STK_BASE, -sizeof(trampStack_t));
 	s390_stg  (buf, s390_r11, 0, STK_BASE, 0);
-	s390_stg  (buf, s390_r1, 0, STK_BASE, METHOD_SAVE_OFFSET);
-	s390_stmg (buf, s390_r2, s390_r5, STK_BASE, CREATE_GR_OFFSET);
 
-	/* Save the FP registers */
-	offset = CREATE_FP_OFFSET;
+	/*---------------------------------------------------------------*/
+	/* we build the MonoLMF structure on the stack - see mini-s390.h */
+	/* Keep in sync with the code in mono_arch_emit_prolog 		 */
+	/*---------------------------------------------------------------*/
+											
+	s390_lgr   (buf, LMFReg, STK_BASE);
+	s390_aghi  (buf, LMFReg, G_STRUCT_OFFSET(trampStack_t, LMF));
+											
+	/*---------------------------------------------------------------*/	
+	/* Save general and floating point registers in LMF		 */	
+	/*---------------------------------------------------------------*/	
+	s390_stmg (buf, s390_r0, s390_r1, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[0]));
+	s390_stmg (buf, s390_r2, s390_r5, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[2]));
+	s390_mvc  (buf, 10*sizeof(gulong), LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[6]),
+		   s390_r11, S390_REG_SAVE_OFFSET);
+
+	offset = G_STRUCT_OFFSET(MonoLMF, fregs[0]);
 	for (i = s390_f0; i <= s390_f15; ++i) {
-		s390_std  (buf, i, 0, STK_BASE, offset);
-		offset += 8;
+		s390_std  (buf, i, 0, LMFReg, offset);
+		offset += sizeof(gdouble);
 	}
 
 	/*----------------------------------------------------------
@@ -270,20 +236,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 				
 	S390_SET  (buf, s390_r1, mono_get_lmf_addr);
 	s390_basr (buf, s390_r14, s390_r1);
-
-	/*---------------------------------------------------------------*/
-	/* we build the MonoLMF structure on the stack - see mini-s390.h */
-	/* Keep in sync with the code in mono_arch_emit_prolog 		 */
-	/*---------------------------------------------------------------*/
-	lmfOffset = CREATE_STACK_SIZE - sizeof(MonoLMF);
-											
-	s390_lgr   (buf, s390_r13, STK_BASE);
-	s390_aghi  (buf, s390_r13, lmfOffset);	
 											
 	/*---------------------------------------------------------------*/	
 	/* Set lmf.lmf_addr = jit_tls->lmf				 */	
 	/*---------------------------------------------------------------*/	
-	s390_stg   (buf, s390_r2, 0, s390_r13, 				
+	s390_stg   (buf, s390_r2, 0, LMFReg, 				
 			    G_STRUCT_OFFSET(MonoLMF, lmf_addr));			
 											
 	/*---------------------------------------------------------------*/	
@@ -294,26 +251,25 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/*---------------------------------------------------------------*/	
 	/* Set our lmf as the current lmf				 */	
 	/*---------------------------------------------------------------*/	
-	s390_stg   (buf, s390_r13, 0, s390_r2, 0);				
+	s390_stg   (buf, LMFReg, 0, s390_r2, 0);				
 											
 	/*---------------------------------------------------------------*/	
 	/* Have our lmf.previous_lmf point to the last lmf		 */	
 	/*---------------------------------------------------------------*/	
-	s390_stg   (buf, s390_r0, 0, s390_r13, 				
+	s390_stg   (buf, s390_r0, 0, LMFReg, 				
 			    G_STRUCT_OFFSET(MonoLMF, previous_lmf));			
 											
 	/*---------------------------------------------------------------*/	
 	/* save method info						 */	
 	/*---------------------------------------------------------------*/	
-	s390_lg    (buf, s390_r1, 0, STK_BASE, METHOD_SAVE_OFFSET);
-	s390_stg   (buf, s390_r1, 0, s390_r13, 				
-			    G_STRUCT_OFFSET(MonoLMF, method));				
+	s390_lg    (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[1]));
+	s390_stg   (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, method));				
 									
 	/*---------------------------------------------------------------*/	
 	/* save the current SP						 */	
 	/*---------------------------------------------------------------*/	
 	s390_lg    (buf, s390_r1, 0, STK_BASE, 0);
-	s390_stg   (buf, s390_r1, 0, s390_r13, G_STRUCT_OFFSET(MonoLMF, ebp));	
+	s390_stg   (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, ebp));	
 									
 	/*---------------------------------------------------------------*/	
 	/* save the current IP						 */	
@@ -323,28 +279,16 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	} else {
 		s390_lghi  (buf, s390_r1, 0);
 	}
-	s390_stg   (buf, s390_r1, 0, s390_r13, G_STRUCT_OFFSET(MonoLMF, eip));	
+	s390_stg   (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, eip));	
 											
-	/*---------------------------------------------------------------*/	
-	/* Save general and floating point registers			 */	
-	/*---------------------------------------------------------------*/	
-	s390_mvc   (buf, 4*sizeof(gulong), s390_r13, G_STRUCT_OFFSET(MonoLMF, gregs[2]), 
-		    STK_BASE, CREATE_GR_OFFSET);
-	s390_mvc   (buf, 10*sizeof(gulong), s390_r13, G_STRUCT_OFFSET(MonoLMF, gregs[6]), 
-		    s390_r11, S390_REG_SAVE_OFFSET);
-
-	/* Simply copy fpregs already saved above			 */
-	s390_mvc   (buf, 16*sizeof(double), s390_r13, G_STRUCT_OFFSET(MonoLMF, fregs[0]),
-		    STK_BASE, CREATE_FP_OFFSET);
-
 	/*---------------------------------------------------------------*/
 	/* STEP 2: call the C trampoline function                        */
 	/*---------------------------------------------------------------*/
 				
 	/* Set arguments */
 
-	/* Arg 1: mgreg_t *regs. We pass sp instead */
-	s390_la  (buf, s390_r2, 0, STK_BASE, CREATE_STACK_SIZE);
+	/* Arg 1: mgreg_t *regs */
+	s390_la  (buf, s390_r2, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[0]));
 		
 	/* Arg 2: code (next address to the instruction that called us) */
 	if (has_caller) {
@@ -354,12 +298,10 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 
 	/* Arg 3: Trampoline argument */
-	if (tramp_type == MONO_TRAMPOLINE_GENERIC_CLASS_INIT)
-		s390_lg (buf, s390_r4, 0, STK_BASE, GENERIC_REG_OFFSET);
-	else
-		s390_lg (buf, s390_r4, 0, STK_BASE, METHOD_SAVE_OFFSET);
+	s390_lg (buf, s390_r4, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[1]));
 
-	/* Arg 4: trampoline address. Ignore for now */
+	/* Arg 4: trampoline address. */
+	S390_SET (buf, s390_r5, buf);
 		
 	/* Calculate call address and call the C trampoline. Return value will be in r2 */
 	tramp = (guint8*)mono_get_trampoline_func (tramp_type);
@@ -373,25 +315,25 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/*----------------------------------------------------------
 	  STEP 3: Restore the LMF
 	  ----------------------------------------------------------*/
-	restoreLMF(buf, STK_BASE, CREATE_STACK_SIZE);
+	restoreLMF(buf, STK_BASE, sizeof(trampStack_t));
 	
 	/*----------------------------------------------------------
 	  STEP 4: call the compiled method
 	  ----------------------------------------------------------*/
 		
-	/* Restore registers */
-
-	s390_lmg  (buf, s390_r2, s390_r5, STK_BASE, CREATE_GR_OFFSET);
+	/* Restore parameter registers */
+	s390_lmg (buf, s390_r2, s390_r5, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[2]));
 		
 	/* Restore the FP registers */
-	offset = CREATE_FP_OFFSET;
+	offset = G_STRUCT_OFFSET(MonoLMF, fregs[0]);
 	for (i = s390_f0; i <= s390_f15; ++i) {
-		s390_ld  (buf, i, 0, STK_BASE, offset);
-		offset += 8;
+		s390_ld  (buf, i, 0, LMFReg, offset);
+		offset += sizeof(gdouble);
 	}
 
 	/* Restore stack pointer and jump to the code -
-	   R14 contains the return address to our caller */
+	 * R14 contains the return address to our caller 
+	 */
 	s390_lgr  (buf, STK_BASE, s390_r11);
 	s390_lmg  (buf, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
 
@@ -406,11 +348,10 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	mono_arch_flush_icache (code, buf - code);
 	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL);
 	
-	if (info) {
-		tramp_name = mono_get_generic_trampoline_name (tramp_type);
-		*info = mono_tramp_info_create (tramp_name, buf, buf - code, ji, unwind_ops);
-		g_free (tramp_name);
-	}
+	g_assert (info);
+	tramp_name = mono_get_generic_trampoline_name (tramp_type);
+	*info = mono_tramp_info_create (tramp_name, buf, buf - code, ji, unwind_ops);
+	g_free (tramp_name);
 
 	/* Sanity check */
 	g_assert ((buf - code) <= 512);
@@ -496,7 +437,6 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 gpointer
 mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info, gboolean aot)
 {
-#ifdef MONO_ARCH_VTABLE_REG
 	guint8 *tramp;
 	guint8 *code, *buf;
 	guint8 **rgctx_null_jumps;
@@ -592,17 +532,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	g_assert (code - buf <= tramp_size);
 
-	if (info) {
-		char *name = mono_get_rgctx_fetch_trampoline_name (slot);
-		*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
-		g_free (name);
-	}
+	char *name = mono_get_rgctx_fetch_trampoline_name (slot);
+	*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
+	g_free (name);
 
 	return(buf);
-#else
-	g_assert_not_reached ();
-#endif
-	return(NULL);
 }	
 
 /*========================= End of Function ========================*/
@@ -624,6 +558,7 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m,
 	guint8 *code, *start;
 	gint32 displace;
 	int buf_len;
+	char trampName[128];
 
 	MonoDomain *domain = mono_domain_get ();
 
@@ -638,6 +573,10 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m,
 
 	mono_arch_flush_icache (start, code - start);
 	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
+
+	snprintf(trampName, sizeof(trampName), "%s_rgctx_trampoline", m->name);
+
+	mono_tramp_info_register (mono_tramp_info_create (trampName, start, code - start, NULL, NULL), domain);
 
 	return(start);
 }	
@@ -711,62 +650,9 @@ mono_arch_create_handler_block_trampoline (MonoTrampInfo **info, gboolean aot)
 	mono_profiler_code_buffer_new (buf, code - buf, MONO_PROFILER_CODE_BUFFER_HELPER, NULL);
 	g_assert (code - buf <= tramp_size);
 
-	if (info)
-		*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
+	*info = mono_tramp_info_create ("handler_block_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name		- mono_arch_create_generic_class_init_trampoline    */
-/*                                                                  */
-/* Function	- 						    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-gpointer
-mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot)
-{
-	guint8 *tramp;
-	guint8 *code, *buf;
-	static int byte_offset = -1;
-	static guint8 bitmask;
-	gint32 displace;
-	int tramp_size;
-	GSList *unwind_ops = NULL;
-	MonoJumpInfo *ji = NULL;
-
-	tramp_size = 48;
-
-	code = buf = mono_global_codeman_reserve (tramp_size);
-
-	unwind_ops = mono_arch_get_cie_program ();
-
-	if (byte_offset < 0)
-		mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
-
-	s390_llgc(code, s390_r0, 0, MONO_ARCH_VTABLE_REG, byte_offset);
-	s390_nill(code, s390_r0, bitmask);
-	s390_bnzr(code, s390_r14);
-
-	tramp = mono_arch_create_specific_trampoline (NULL, MONO_TRAMPOLINE_GENERIC_CLASS_INIT,
-		mono_get_root_domain (), NULL);
-
-	/* jump to the actual trampoline */
-	displace = (tramp - code) / 2;
-	s390_jg (code, displace);
-
-	mono_arch_flush_icache (buf, code - buf);
-
-	g_assert (code - buf <= tramp_size);
-
-	if (info)
-		*info = mono_tramp_info_create ("generic_class_init_trampoline", buf, code - buf, ji, unwind_ops);
-
-	return(buf);
 }
 
 /*========================= End of Function ========================*/

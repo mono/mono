@@ -303,7 +303,6 @@ namespace MonoTests.System.Threading {
 				Assert.IsFalse (Monitor.Wait (o, SmallNegative), "Wait");
 			}
 		}
-#if NET_4_0
 		[Test]
 		public void Enter_bool ()
 		{
@@ -333,7 +332,6 @@ namespace MonoTests.System.Threading {
 			Monitor.Enter (o, ref taken);
 		}
 
-#endif
 
 	}
 }

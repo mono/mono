@@ -7,8 +7,6 @@
 
 #if defined(MONO_SUPPORT_TASKLETS)
 
-/* keepalive_stacks could be a per-stack var to avoid locking overhead */
-static MonoGHashTable *keepalive_stacks;
 static mono_mutex_t tasklets_mutex;
 #define tasklets_lock() mono_mutex_lock(&tasklets_mutex)
 #define tasklets_unlock() mono_mutex_unlock(&tasklets_mutex)
@@ -17,10 +15,9 @@ static mono_mutex_t tasklets_mutex;
 static void
 internal_init (void)
 {
-	if (keepalive_stacks)
-		return;
-	MONO_GC_REGISTER_ROOT_PINNING (keepalive_stacks);
-	keepalive_stacks = mono_g_hash_table_new (NULL, NULL);
+	if (!mono_gc_is_moving ())
+		/* Boehm requires the keepalive stacks to be kept in a hash since mono_gc_alloc_fixed () returns GC memory */
+		g_assert_not_reached ();
 }
 
 static void*
@@ -33,12 +30,8 @@ continuation_alloc (void)
 static void
 continuation_free (MonoContinuation *cont)
 {
-	if (cont->saved_stack) {
-		tasklets_lock ();
-		mono_g_hash_table_remove (keepalive_stacks, cont->saved_stack);
-		tasklets_unlock ();
+	if (cont->saved_stack)
 		mono_gc_free_fixed (cont->saved_stack);
-	}
 	g_free (cont);
 }
 
@@ -57,7 +50,7 @@ continuation_mark_frame (MonoContinuation *cont)
 	jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	lmf = mono_get_lmf();
 	cont->domain = mono_domain_get ();
-	cont->thread_id = GetCurrentThreadId ();
+	cont->thread_id = mono_native_thread_id_get ();
 
 	/* get to the frame that called Mark () */
 	memset (&rji, 0, sizeof (rji));
@@ -69,7 +62,7 @@ continuation_mark_frame (MonoContinuation *cont)
 		ctx = new_ctx;
 		if (endloop)
 			break;
-		if (strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
+		if (!ji->is_trampoline && strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
 			endloop = TRUE;
 	} while (1);
 
@@ -89,7 +82,7 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 		*e =  mono_get_exception_argument ("cont", "Continuation not initialized");
 		return 0;
 	}
-	if (cont->domain != mono_domain_get () || cont->thread_id != GetCurrentThreadId ()) {
+	if (cont->domain != mono_domain_get () || !mono_native_thread_id_equals (cont->thread_id, mono_native_thread_id_get ())) {
 		*e = mono_get_exception_argument ("cont", "Continuation from another thread or domain");
 		return 0;
 	}
@@ -111,14 +104,11 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 	} else {
 		tasklets_lock ();
 		internal_init ();
-		if (cont->saved_stack) {
-			mono_g_hash_table_remove (keepalive_stacks, cont->saved_stack);
+		if (cont->saved_stack)
 			mono_gc_free_fixed (cont->saved_stack);
-		}
 		cont->stack_used_size = num_bytes;
 		cont->stack_alloc_size = num_bytes * 1.1;
-		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL);
-		mono_g_hash_table_insert (keepalive_stacks, cont->saved_stack, cont->saved_stack);
+		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, "saved tasklet stack");
 		tasklets_unlock ();
 	}
 	memcpy (cont->saved_stack, cont->return_sp, num_bytes);
@@ -134,7 +124,7 @@ continuation_restore (MonoContinuation *cont, int state)
 
 	if (!cont->domain || !cont->return_sp)
 		return mono_get_exception_argument ("cont", "Continuation not initialized");
-	if (cont->domain != mono_domain_get () || cont->thread_id != GetCurrentThreadId ())
+	if (cont->domain != mono_domain_get () || !mono_native_thread_id_equals (cont->thread_id, mono_native_thread_id_get ()))
 		return mono_get_exception_argument ("cont", "Continuation from another thread or domain");
 
 	/*g_print ("restore: %p, state: %d\n", cont, state);*/

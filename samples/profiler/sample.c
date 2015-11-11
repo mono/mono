@@ -2,10 +2,15 @@
 
 /*
  * Bare bones profiler. Compile with:
- * gcc -shared -o mono-profiler-sample.so sample.c `pkg-config --cflags --libs mono`
- * Install the binary where the dynamic loader can find it.
+ * 
+ * linux : gcc -shared -o mono-profiler-sample.so sample.c `pkg-config --cflags --libs mono`
+ * mac : gcc sample.c -o mono-profiler-sample.dylib -Dmono_free=free -lz `pkg-config --cflags mono-2` -undefined suppress -flat_namespace  
+ *
+ * Install the binary where the dynamic loader can find it. eg /usr/lib etc
  * Then run mono with:
  * mono --profile=sample your_application.exe
+ *
+ * Note if you name a profiler with more than 8 characters (eg sample6789) appears to not work
  */
 
 struct _MonoProfiler {

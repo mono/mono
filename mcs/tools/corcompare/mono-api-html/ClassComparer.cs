@@ -73,13 +73,9 @@ namespace Xamarin.ApiDiff {
 			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
 				return;
 			Output.WriteLine ("<h3>New Type {0}.{1}</h3>", State.Namespace, name);
-			Output.WriteLine ("<pre>");
-			if (State.Colorize)
-				Output.WriteLine ("<font color='green'>");
+			Output.WriteLine (State.Colorize ? "<pre style='color: green'>" : "<pre>");
 			State.Indent = 0;
 			AddedInner (target);
-			if (State.Colorize)
-				Output.WriteLine ("</font>");
 			Output.WriteLine ("</pre>");
 		}
 
@@ -206,6 +202,13 @@ namespace Xamarin.ApiDiff {
 			var output = Output;
 			State.Output = new StringWriter ();
 
+			var sb = source.GetAttribute ("base");
+			var tb = target.GetAttribute ("base");
+			if (sb != tb) {
+				Output.Write ("Modified base type: ");
+				Output.WriteLine (new ApiChange ().AppendModified (sb, tb, true).Member.ToString ());
+			}
+
 			ccomparer.Compare (source, target);
 			icomparer.Compare (source, target);
 			fcomparer.Compare (source, target);
@@ -230,7 +233,10 @@ namespace Xamarin.ApiDiff {
 
 		public override void Removed (XElement source)
 		{
-			Output.WriteLine ("<h3>Removed Type {0}.{1}", State.Namespace, GetTypeName (source));
+			var style = string.Empty;
+			if (State.Colorize)
+				style = "style='color: red'";
+			Output.Write ("<h3>Removed Type <span {0}>{1}.{2}</span></h3>", style, State.Namespace, GetTypeName (source));
 		}
 
 		public virtual string GetTypeName (XElement type)

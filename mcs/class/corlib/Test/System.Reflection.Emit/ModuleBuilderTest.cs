@@ -136,6 +136,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Null ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -152,6 +153,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_Empty ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -169,6 +171,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Name_NullChar ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -188,6 +191,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -224,6 +228,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DefineType_Parent_Interface ()
 		{
 			TypeBuilder tb;
@@ -241,6 +246,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
+		public void DefineType_TypeSize ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
+				typeof (ValueType), 1);
+			Assert.AreEqual (1, tb.Size);
+		}
+
+		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		[ExpectedException (typeof (ArgumentException))]
 		public void DuplicateTypeName () {
 			AssemblyBuilder ab = genAssembly ();
@@ -256,6 +274,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter assembly
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();
@@ -708,6 +727,72 @@ namespace MonoTests.System.Reflection.Emit
 			}
 			catch (ArgumentException) {
 			}
+		}
+
+		[Test]
+		public void GetType_Escaped_Chars ()
+		{
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = ab.DefineDynamicModule ("mod");
+
+			var tb = module.DefineType ("NameSpace,+*&[]\\.Type,+*&[]\\",
+						    TypeAttributes.Class | TypeAttributes.Public);
+
+			var nestedTb = tb.DefineNestedType ("Nested,+*&[]\\",
+							    TypeAttributes.Class | TypeAttributes.NestedPublic);
+
+			var escapedOuterName =
+				"NameSpace\\,\\+\\*\\&\\[\\]\\\\"
+				+ "."
+				+ "Type\\,\\+\\*\\&\\[\\]\\\\";
+
+			var escapedNestedName =
+				escapedOuterName
+				+ "+"
+				+ "Nested\\,\\+\\*\\&\\[\\]\\\\";
+
+			Assert.AreEqual (escapedOuterName, tb.FullName);
+			Assert.AreEqual (escapedNestedName, nestedTb.FullName);
+
+			Type outerCreatedTy = tb.CreateType ();
+			Type nestedCreatedTy = nestedTb.CreateType ();
+			Type outerTy = module.GetType (escapedOuterName);
+			Type nestedTy = module.GetType (escapedNestedName);
+
+			Assert.IsNotNull (outerTy, "A");
+			Assert.IsNotNull (nestedTy, "B");
+			Assert.AreEqual (escapedNestedName, nestedTy.FullName);
+
+
+			Assert.AreEqual (nestedCreatedTy, nestedTy);
+
+		}
+
+		[Test]
+		public void GetMethodTokenNullParam ()
+		{
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = ab.DefineDynamicModule ("mod");
+
+			var method = typeof (object).GetMethod ("GetType");
+
+			// ArgumentNullException should not occur.
+			module.GetMethodToken (method, null);
+		}
+
+		[Test]
+		public void GetConstructorTokenNullParam ()
+		{
+			AssemblyName an = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			ModuleBuilder module = ab.DefineDynamicModule ("mod");
+
+			var method = typeof (object).GetConstructor (Type.EmptyTypes);
+
+			// ArgumentNullException should not occur.
+			module.GetConstructorToken (method, null);
 		}
 	}
 }

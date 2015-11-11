@@ -25,13 +25,12 @@ namespace System
 	public struct UInt64 {}
 	public struct IntPtr {}
 	public struct UIntPtr {}
-	public struct Decimal { }
 	public class String { }
 	public class Delegate {}
 	public class MulticastDelegate {}
 	public class Array {}
 	public class Exception {}
-	public class Type {}
+	public partial class Type {}
 	public class ValueType {}
 	public class Enum {}
 	public class Attribute {}
@@ -42,6 +41,43 @@ namespace System
 	public struct RuntimeFieldHandle {}
 		
 	public interface IDisposable {}
+
+	public struct Decimal {
+
+		private int flags;
+
+		public Decimal(int[] bits) {
+			flags = 0;
+			SetBits(bits);
+		}
+
+		public Decimal (int i)
+		{
+			flags = 0;
+		}
+
+		private void SetBits(int[] bits) {
+		}
+	}
+
+	partial class Type
+	{
+		public static bool operator == (Type left, Type right)
+		{
+			return false;
+		}
+
+		public static bool operator != (Type left, Type right)
+		{
+			return true;
+		}
+
+		void Foo ()
+		{
+			Decimal d = 0;
+			var d2 = d;
+		}
+	}	
 }
 	
 namespace System.Runtime.InteropServices
@@ -60,4 +96,3 @@ namespace System.Reflection
 {
 	public class DefaultMemberAttribute {}
 }
-

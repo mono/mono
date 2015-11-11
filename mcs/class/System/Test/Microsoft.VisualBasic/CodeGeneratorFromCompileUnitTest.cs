@@ -2,7 +2,7 @@
 // Microsoft.VisualBasic.* Test Cases
 //
 // Authors:
-// 	Gert Driesen (drieseng@users.sourceforge.net)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (c) 2005 Novell
 //
@@ -152,6 +152,40 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<Assembly: A(),  _{0} Assembly: B()> {0}{0}Namespace A{0}End "
 				+ "Namespace{0}", NewLine), Generate ());
+		}
+
+		[Test]
+		public void AttributeAndImportsTest ()
+		{
+			CodeNamespace ns = new CodeNamespace ();
+			codeUnit.Namespaces.Add (ns);
+			ns.Imports.Add(new CodeNamespaceImport("System"));
+			ns.Imports.Add(new CodeNamespaceImport("System.Reflection"));
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Imports System{0}Imports System.Reflection{0}<Assembly: A()> {0}{0}",
+				NewLine), Generate ());
+		}
+
+		[Test]
+		public void AttributeAndImportsAndNamespaceTest ()
+		{
+			CodeNamespace ns = new CodeNamespace ("A");
+			codeUnit.Namespaces.Add (ns);
+			ns.Imports.Add(new CodeNamespaceImport("System"));
+			ns.Imports.Add(new CodeNamespaceImport("System.Reflection"));
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Imports System{0}Imports System.Reflection{0}<Assembly: A()> {0}{0}"
+				+ "Namespace A{0}End Namespace{0}", NewLine), Generate ());
 		}
 
 		[Test]

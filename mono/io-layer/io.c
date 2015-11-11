@@ -656,7 +656,7 @@ static gboolean file_setendoffile(gpointer handle)
 	struct _WapiHandle_file *file_handle;
 	gboolean ok;
 	struct stat statbuf;
-	off_t size, pos;
+	off_t pos;
 	int ret, fd;
 	
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_FILE,
@@ -691,7 +691,6 @@ static gboolean file_setendoffile(gpointer handle)
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
 	}
-	size=statbuf.st_size;
 
 	pos=lseek(fd, (off_t)0, SEEK_CUR);
 	if(pos==-1) {
@@ -703,6 +702,7 @@ static gboolean file_setendoffile(gpointer handle)
 	}
 	
 #ifdef FTRUNCATE_DOESNT_EXTEND
+	off_t size = statbuf.st_size;
 	/* I haven't bothered to write the configure.ac stuff for this
 	 * because I don't know if any platform needs it.  I'm leaving
 	 * this code just in case though
@@ -1033,8 +1033,9 @@ static void console_close (gpointer handle, gpointer data)
 	DEBUG("%s: closing console handle %p", __func__, handle);
 
 	g_free (console_handle->filename);
-	
-	close (fd);
+
+	if (fd > 2)
+		close (fd);
 }
 
 static WapiFileType console_getfiletype(void)
@@ -3417,48 +3418,6 @@ gboolean CreatePipe (gpointer *readpipe, gpointer *writepipe,
 		   __func__, read_handle, write_handle);
 
 	return(TRUE);
-}
-
-guint32 GetTempPath (guint32 len, gunichar2 *buf)
-{
-	gchar *tmpdir=g_strdup (g_get_tmp_dir ());
-	gunichar2 *tmpdir16=NULL;
-	glong dirlen;
-	gsize bytes;
-	guint32 ret;
-	
-	if(tmpdir[strlen (tmpdir)]!='/') {
-		g_free (tmpdir);
-		tmpdir=g_strdup_printf ("%s/", g_get_tmp_dir ());
-	}
-	
-	tmpdir16=mono_unicode_from_external (tmpdir, &bytes);
-	if(tmpdir16==NULL) {
-		g_free (tmpdir);
-		return(0);
-	} else {
-		dirlen=(bytes/2);
-		
-		if(dirlen+1>len) {
-			DEBUG ("%s: Size %d smaller than needed (%ld)",
-				   __func__, len, dirlen+1);
-		
-			ret=dirlen+1;
-		} else {
-			/* Add the terminator */
-			memset (buf, '\0', bytes+2);
-			memcpy (buf, tmpdir16, bytes);
-		
-			ret=dirlen;
-		}
-	}
-
-	if(tmpdir16!=NULL) {
-		g_free (tmpdir16);
-	}
-	g_free (tmpdir);
-	
-	return(ret);
 }
 
 #ifdef HAVE_GETFSSTAT

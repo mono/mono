@@ -56,6 +56,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			}
 		}
 
+		public bool HasCertificate {
+			get { return clientCertificates.Count > 0; }
+		}
+
 		#endregion
 
 		#region Protected Methods

@@ -38,6 +38,7 @@
   <ItemGroup>
     <ClCompile Include="..\mono\metadata\remoting.c" />
     <ClCompile Include="..\mono\mini\alias-analysis.c" />
+    <ClCompile Include="..\mono\mini\arch-stubs.c" />
     <ClCompile Include="..\mono\mini\exceptions-amd64.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">true</ExcludedFromBuild>
@@ -56,6 +57,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\mono\mini\mini-runtime.c" />
     <ClCompile Include="..\mono\mini\mini-windows.c" />
     <ClCompile Include="..\mono\mini\mini-x86.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -94,15 +96,12 @@
     <ClInclude Include="..\mono\mini\mini-arch.h" />
     <ClCompile Include="..\mono\mini\dominators.c" />
     <ClCompile Include="..\mono\mini\cfold.c" />
-    <ClCompile Include="..\mono\mini\regalloc.c" />
     <ClInclude Include="..\mono\mini\regalloc.h" />
     <ClCompile Include="..\mono\mini\helpers.c" />
     <ClCompile Include="..\mono\mini\liveness.c" />
     <ClCompile Include="..\mono\mini\ssa.c" />
     <ClCompile Include="..\mono\mini\abcremoval.c" />
     <ClInclude Include="..\mono\mini\abcremoval.h" />
-    <ClCompile Include="..\mono\mini\ssapre.c" />
-    <ClInclude Include="..\mono\mini\ssapre.h" />
     <ClCompile Include="..\mono\mini\local-propagation.c" />
     <ClCompile Include="..\mono\mini\driver.c" />
     <ClCompile Include="..\mono\mini\debug-mini.c" />
@@ -113,8 +112,6 @@
     <ClCompile Include="..\mono\mini\mini-codegen.c" />
     <ClCompile Include="..\mono\mini\mini-exceptions.c" />
     <ClCompile Include="..\mono\mini\mini-trampolines.c  " />
-    <ClCompile Include="..\mono\mini\declsec.c" />
-    <ClInclude Include="..\mono\mini\declsec.h" />
     <ClCompile Include="..\mono\mini\tramp-amd64.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">true</ExcludedFromBuild>
@@ -127,10 +124,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\mono\mini\wapihandles.c" />
     <ClCompile Include="..\mono\mini\branch-opts.c" />
     <ClCompile Include="..\mono\mini\mini-generic-sharing.c" />
-    <ClCompile Include="..\mono\mini\regalloc2.c" />
     <ClInclude Include="..\mono\mini\simd-methods.h" />
     <ClCompile Include="..\mono\mini\tasklets.c" />
     <ClInclude Include="..\mono\mini\tasklets.h" />
@@ -241,14 +236,14 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'">monosgen-2.0</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mono-2.0</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">monosgen-2.0</TargetName>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">$(Platform)\bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">$(Platform)\bin\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\bin\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
@@ -289,16 +284,26 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntime.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>mono.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">
     <PreBuildEvent>
@@ -331,16 +336,26 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libmonoruntimesgen.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>monosgen.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
@@ -376,13 +391,23 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntime.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>mono.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'">
     <PreBuildEvent>
@@ -420,11 +445,21 @@
     <Link>
       <AdditionalDependencies>libgc.lib;libmonoruntimesgen.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>monosgen64.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>monosgen.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
@@ -442,7 +477,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\Release/libmono.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -453,15 +489,25 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntime.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>mono.def</ModuleDefinitionFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">
     <PreBuildEvent>
@@ -479,7 +525,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\Release/libmono.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -490,16 +537,26 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntimesgen.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>monosgen.def</ModuleDefinitionFile>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
@@ -520,7 +577,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\Release/libmono.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -531,13 +589,23 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntime.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>mono.def</ModuleDefinitionFile>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">
     <PreBuildEvent>
@@ -558,7 +626,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <PrecompiledHeaderOutputFile>.\Release/libmono.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -569,13 +638,23 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>libgc.lib;libmonoruntimesgen.lib;libmonoutils.lib;eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(Platform)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>monosgen64.def</ModuleDefinitionFile>
-      <ImportLibrary>$(Platform)\lib\$(TargetName).lib</ImportLibrary>
+      <ModuleDefinitionFile>monosgen.def</ModuleDefinitionFile>
+      <ImportLibrary>$(Platform)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\cil\opcode.def" "$(SolutionDir)include\mono\cil\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\mini\jit.h" "$(SolutionDir)include\mono\jit\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\metadata\*.h" "$(SolutionDir)include\mono\metadata\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-counters.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-dl-fallback.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-error.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-logger.h" "$(SolutionDir)include\mono\utils\"
+$(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(SolutionDir)include\mono\utils\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CustomBuildStep Include="..\mono\mini\mini-x86.h">
@@ -594,15 +673,35 @@
   <ItemGroup>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="genmdesc.vcxproj">
-      <Project>{b7098dfa-31e6-4006-8a15-1c9a4e925149}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <ProjectReference Include="libgc.vcxproj">
       <Project>{eb56000b-c80b-4e8b-908d-d84d31b517d3}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <Private>false</Private>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="libmonoruntime.vcxproj">
+      <Project>{c36612bd-22d3-4b95-85e2-7fdc4fc5d739}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="libmonoutils.vcxproj">
+      <Project>{8fc2b0c8-51ad-49df-851f-5d01a77a75e4}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

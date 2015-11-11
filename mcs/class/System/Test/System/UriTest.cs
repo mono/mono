@@ -176,10 +176,6 @@ namespace MonoTests.System
 
 			uri = new Uri (new Uri("http://www.xxx.com"), "?x=0");
 			Assert.AreEqual ("http://www.xxx.com/?x=0", uri.ToString(), "#rel30");
-#if !NET_4_0
-			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "?x=0");
-			Assert.AreEqual ("http://www.xxx.com/?x=0", uri.ToString(), "#rel31");
-#endif
 			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "#here");
 			Assert.AreEqual ("http://www.xxx.com/index.htm#here", uri.ToString(), "#rel32");
 
@@ -243,9 +239,6 @@ namespace MonoTests.System
 			Uri b = new Uri ("http://a/b/c/d;p?q");
 			Assert.AreEqual ("http://a/g", new Uri (b, "/g").ToString (), "#1");
 			Assert.AreEqual ("http://g/", new Uri (b, "//g").ToString (), "#2");
-#if !NET_4_0
-			Assert.AreEqual ("http://a/b/c/?y", new Uri (b, "?y").ToString (), "#3");
-#endif
 			Assert.IsTrue (new Uri (b, "#s").ToString ().EndsWith ("#s"), "#4");
 
 			Uri u = new Uri (b, "/g?q=r");
@@ -702,13 +695,8 @@ namespace MonoTests.System
 			Assert.AreEqual ("c#", UriEx.UnescapeString ("file://localhost/c#", "c%23"), "#2");
 			Assert.AreEqual ("#", UriEx.UnescapeString ("http://localhost/c#", "%23"), "#1");
 			Assert.AreEqual ("c#", UriEx.UnescapeString ("http://localhost/c#", "c%23"), "#2");
-#if NET_4_0
 			Assert.AreEqual ("%A9", UriEx.UnescapeString ("file://localhost/c#", "%A9"), "#3");
 			Assert.AreEqual ("%A9", UriEx.UnescapeString ("http://localhost/c#", "%A9"), "#3");
-#else
-			Assert.AreEqual ("\xA9", UriEx.UnescapeString ("file://localhost/c#", "%A9"), "#3");
-			Assert.AreEqual ("\xA9", UriEx.UnescapeString ("http://localhost/c#", "%A9"), "#3");
-#endif
 		}
 
 		[Test]
@@ -784,13 +772,7 @@ namespace MonoTests.System
 			// 2-byte escape sequence, 2 individual characters
 			uri = new Uri ("file:///foo/a%C2%F8b", true);
 			path = uri.LocalPath;
-#if NET_4_0
 			Assert.AreEqual ("/foo/a%C2%F8b", path, "#7");
-#else
-			Assert.AreEqual (9, path.Length, "#7");
-			Assert.AreEqual (0xC2, path [6], "#8");
-			Assert.AreEqual (0xF8, path [7], "#9");
-#endif
 		}
 
 		[Test]
@@ -1527,10 +1509,6 @@ namespace MonoTests.System
 			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20%21%22%23%24%25%26%27%28%29%2A%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				Uri.EscapeDataString (sb.ToString ()));
-#elif NET_4_0
-			Assert.AreEqual (
-				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-				Uri.EscapeDataString (sb.ToString ()));
 #else
 			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25%26'()*%2B%2C-.%2F0123456789%3A%3B%3C%3D%3E%3F%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
@@ -1549,10 +1527,6 @@ namespace MonoTests.System
 #if NET_4_5
 			Assert.AreEqual (
 				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[%5C]%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-				Uri.EscapeUriString (sb.ToString ()));
-#elif NET_4_0
-			Assert.AreEqual (
-				"%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
 				Uri.EscapeUriString (sb.ToString ()));
 #else
 			Assert.AreEqual (
@@ -1940,6 +1914,52 @@ namespace MonoTests.System
 			Assert.AreEqual ("id=1%262&sort=asc", escaped, "UriEscaped");
 		}
 
+		// When used, paths such as "/foo" are assumed relative.
+		static UriKind DotNetRelativeOrAbsolute = (Type.GetType ("Mono.Runtime") == null)? UriKind.RelativeOrAbsolute : (UriKind) 300;
+
+		[Test]
+		public void DotNetRelativeOrAbsoluteTest ()
+		{
+			FieldInfo useDotNetRelativeOrAbsoluteField = null;
+			bool useDotNetRelativeOrAbsoluteOld = false;
+
+			if (Type.GetType ("Mono.Runtime") != null) {
+				useDotNetRelativeOrAbsoluteField = typeof (Uri).GetField ("useDotNetRelativeOrAbsolute",
+					BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+				useDotNetRelativeOrAbsoluteOld = (bool) useDotNetRelativeOrAbsoluteField.GetValue (null);
+				useDotNetRelativeOrAbsoluteField.SetValue (null, false);
+			}
+
+			try {
+				Uri uri;
+
+				uri = new Uri ("/foo", DotNetRelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+				
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				if (useDotNetRelativeOrAbsoluteField != null) {
+					uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					Uri.TryCreate("/foo", UriKind.RelativeOrAbsolute, out uri);
+					Assert.IsTrue (uri.IsAbsoluteUri);
+
+					useDotNetRelativeOrAbsoluteField.SetValue (null, true);
+				}
+
+				uri = new Uri ("/foo", UriKind.RelativeOrAbsolute);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+
+				Uri.TryCreate("/foo", DotNetRelativeOrAbsolute, out uri);
+				Assert.IsFalse (uri.IsAbsoluteUri);
+			} finally {
+				if (useDotNetRelativeOrAbsoluteField != null)
+					useDotNetRelativeOrAbsoluteField.SetValue (null, useDotNetRelativeOrAbsoluteOld);
+			}
+		}
+
 		[Test]
 		// Bug #12631
 		public void LocalPathWithBaseUrl ()
@@ -1995,6 +2015,33 @@ namespace MonoTests.System
 					Assert.Fail (string.Format("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
 				}
 			}
+		}
+
+		[Test]
+		public void UserInfo_Spaces ()
+		{
+			const string userinfo = "test 1:pass 1";
+			const string expected = "test%201:pass%201";
+
+			try {
+				var uri = new Uri (string.Format ("rtmp://{0}@test.com:333/live", userinfo));
+				Assert.AreEqual (expected, uri.UserInfo);
+			} catch (Exception e) {
+				Assert.Fail (string.Format ("Unexpected {0} while building URI with username {1}", e.GetType ().Name, userinfo));
+			}
+		}
+
+		// Covers #29864
+		[Test]
+		public void PathDotTrim ()
+		{
+			var baseUri = new Uri ("http://test.com", UriKind.Absolute);
+			var relUri = new Uri ("path/dot./", UriKind.Relative);
+			var uri = new Uri (baseUri, relUri);
+			if (IriParsing)
+				Assert.AreEqual ("http://test.com/path/dot./", uri.ToString ());
+			else
+				Assert.AreEqual ("http://test.com/path/dot/", uri.ToString ());
 		}
 	}
 

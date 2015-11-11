@@ -267,6 +267,7 @@ namespace Mono.CSharp
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
 		readonly Dictionary<TypeSpec, AwaiterDefinition> awaiters;
+		readonly Dictionary<TypeSpec, TypeInfo> type_info_cache;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
@@ -302,6 +303,7 @@ namespace Mono.CSharp
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
 			awaiters = new Dictionary<TypeSpec, AwaiterDefinition> ();
+			type_info_cache = new Dictionary<TypeSpec, TypeInfo> ();
 		}
 
 		#region Properties
@@ -422,6 +424,12 @@ namespace Mono.CSharp
 		internal Dictionary<TypeSpec, ReferenceContainer> ReferenceTypesCache {
 			get {
 				return reference_types;
+			}
+		}
+
+		internal Dictionary<TypeSpec, TypeInfo> TypeInfoCache {
+			get {
+				return type_info_cache;
 			}
 		}
 
@@ -737,29 +745,31 @@ namespace Mono.CSharp
 			this.assembly = assembly;
 		}
 
-		public void LoadGetResourceStrings (string fileName)
+		public void LoadGetResourceStrings (List<string> fileNames)
 		{
-			if (!File.Exists (fileName)) {
-				Report.Error (1566, "Error reading resource file `{0}'", fileName);
-				return;
-			}
+			foreach (var fileName in fileNames) {
+				if (!File.Exists (fileName)) {
+					Report.Error (1566, "Error reading resource file `{0}'", fileName);
+					return;
+				}
 
-			foreach (var l in File.ReadLines (fileName)) {
-				if (GetResourceStrings == null)
-					GetResourceStrings = new Dictionary<string, string> ();
+				foreach (var l in File.ReadLines (fileName)) {
+					if (GetResourceStrings == null)
+						GetResourceStrings = new Dictionary<string, string> ();
 
-				var line = l.Trim ();
-				if (line.Length == 0 || line [0] == '#' || line [0] == ';')
-					continue;
+					var line = l.Trim ();
+					if (line.Length == 0 || line [0] == '#' || line [0] == ';')
+						continue;
 				
-				var epos = line.IndexOf ('=');
-				if (epos < 0)
-					continue;
+					var epos = line.IndexOf ('=');
+					if (epos < 0)
+						continue;
 
-				var key = line.Substring (0, epos).Trim ();
-				var value = line.Substring (epos + 1).Trim ();
+					var key = line.Substring (0, epos).Trim ();
+					var value = line.Substring (epos + 1).Trim ();
 
-				GetResourceStrings [key] = value;
+					GetResourceStrings [key] = value;
+				}
 			}
 		}
 	}

@@ -354,10 +354,10 @@ namespace MonoTests.Mono.Options
 					p, v => { v.Parse (_("-a", "-b")); });
 			Assert.AreEqual (a, "-b");
 			Utils.AssertException (typeof(ArgumentNullException),
-					"Argument cannot be null.\nParameter name: option",
+					"Value cannot be null.\nParameter name: option",
 					p, v => { v.Add ((Option) null); });
 			Utils.AssertException (typeof(ArgumentNullException),
-					"Argument cannot be null.\nParameter name: header",
+					"Value cannot be null.\nParameter name: header",
 					p, v => { v.Add ((string) null); });
 
 			// bad type
@@ -374,7 +374,7 @@ namespace MonoTests.Mono.Options
 					p, v => { v.Parse (_("-cz", "extra")); });
 
 			Utils.AssertException (typeof(ArgumentNullException), 
-					"Argument cannot be null.\nParameter name: action",
+					"Value cannot be null.\nParameter name: action",
 					p, v => { v.Add ("foo", (Action<string>) null); });
 			Utils.AssertException (typeof(ArgumentException), 
 					"Cannot provide maxValueCount of 2 for OptionValueType.None.\nParameter name: maxValueCount",
@@ -752,7 +752,7 @@ namespace MonoTests.Mono.Options
 			Utils.AssertException (typeof(ArgumentException), "prototypes must be null!",
 					p, v => { v.Add ("N|NUM=", (int n) => {}); });
 			Utils.AssertException (typeof(ArgumentNullException),
-					"Argument cannot be null.\nParameter name: option",
+					"Value cannot be null.\nParameter name: option",
 					p, v => { v.GetOptionForName (null); });
 		}
 

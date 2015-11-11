@@ -50,6 +50,7 @@ namespace Microsoft.VisualBasic
 	{
 		static string windowsMonoPath;
 		static string windowsvbncPath;
+		static string unixVbncCommand;
 
 		static VBCodeCompiler ()
 		{
@@ -69,6 +70,13 @@ namespace Microsoft.VisualBasic
 						"bin\\mono.exe");
 				windowsvbncPath =
 					Path.Combine (p, "2.0\\vbnc.exe");
+			} else {
+				var mscorlibPath = new Uri (typeof (object).Assembly.CodeBase).LocalPath;
+				var unixMcsPath = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbnc"));
+				if (File.Exists (unixMcsPath))
+					unixVbncCommand = unixMcsPath;
+				else
+					unixVbncCommand = "vbnc";
 			}
 		}
 

@@ -559,8 +559,10 @@ namespace Mono.Data.Tds.Protocol
 			 * If the value is null, not setting the size to 0 will cause varchar
 			 * fields to get inserted as an empty string rather than an null.
 			 */
-			if (param.Value == null || param.Value == DBNull.Value)
-				size = 0;
+			if (colType != TdsColumnType.IntN && colType != TdsColumnType.DateTimeN) {
+				if (param.Value == null || param.Value == DBNull.Value)
+					size = 0;
+			}
 
 			// Change colType according to the following table
 			/* 
@@ -584,6 +586,13 @@ namespace Mono.Data.Tds.Protocol
 			} else if (colType == TdsColumnType.BigVarBinary) {
 				if (size > 8000)
 					colType = TdsColumnType.Image;
+			} else if (colType == TdsColumnType.DateTime2 ||
+				   colType == TdsColumnType.DateTimeOffset) {
+				// HACK: Wire-level DateTime{2,Offset}
+				// require TDS 7.3, which this driver
+				// does not implement correctly--so we
+				// serialize to ASCII instead.
+				colType = TdsColumnType.Char;
 			}
 			// Calculation of TypeInfo field
 			/* 
@@ -713,6 +722,8 @@ namespace Mono.Data.Tds.Protocol
 				case "nchar" :
 				case "text" :
 				case "ntext" :
+				case "datetime2":
+				case "datetimeoffset":
 					byte [] tmp = param.GetBytes ();
 					Comm.Append (tmp);
 					break;

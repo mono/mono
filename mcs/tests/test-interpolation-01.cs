@@ -44,7 +44,7 @@ public class Test
 			return 9;
 
 		s = $"{200:{{X+Y}}}";
-		if (s != "{{X+Y}")
+		if (s != "{X+Y}")
 			return 10;
 
 		s = $"{ $"{ res }" }";
@@ -59,6 +59,10 @@ public class Test
 		s = $"b = {(int)b}";
 		if (s != "b = 3")
 			return 13;
+
+		s = $"{{fo!o = {res}}}";
+		if (s != "{fo!o = 5}")
+			return 14;
 
 		Console.WriteLine ("ok");
 		return 0;

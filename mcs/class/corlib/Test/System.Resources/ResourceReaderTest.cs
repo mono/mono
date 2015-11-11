@@ -90,8 +90,8 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[Ignore ("Not covered in the docs, not sure what the correct behavior should be for this")]
-		[ExpectedException (typeof (DirectoryNotFoundException))]
+		[Category ("MobileNotWorking")]
+		[ExpectedException (typeof (BadImageFormatException))]
 		public void ConstructorString_Bad ()
 		{
 			Assert.IsTrue (File.Exists (m_BadResourceFile));

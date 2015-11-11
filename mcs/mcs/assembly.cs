@@ -396,34 +396,40 @@ namespace Mono.CSharp
 		//
 		void CheckReferencesPublicToken ()
 		{
-			// TODO: It should check only references assemblies but there is
-			// no working SRE API
-			foreach (var entry in Importer.Assemblies) {
-				var a = entry as ImportedAssemblyDefinition;
-				if (a == null || a.IsMissing)
-					continue;
-
-				if (public_key != null && !a.HasStrongName) {
+			foreach (var an in builder_extra.GetReferencedAssemblies ()) {
+				if (public_key != null && an.GetPublicKey ().Length == 0) {
 					Report.Error (1577, "Referenced assembly `{0}' does not have a strong name",
-						a.FullName);
+						an.FullName);
 				}
 
-				var ci = a.Assembly.GetName ().CultureInfo;
+				var ci = an.CultureInfo;
 				if (!ci.Equals (CultureInfo.InvariantCulture)) {
 					Report.Warning (8009, 1, "Referenced assembly `{0}' has different culture setting of `{1}'",
-						a.Name, ci.Name);
+						an.Name, ci.Name);
 				}
 
-				if (!a.IsFriendAssemblyTo (this))
+				var ia = Importer.GetImportedAssemblyDefinition (an);
+				if (ia == null)
 					continue;
 
-				var attr = a.GetAssemblyVisibleToName (this);
+				var references = GetNotUnifiedReferences (an);
+				if (references != null) {
+					foreach (var r in references) {
+						Report.SymbolRelatedToPreviousError ( r[0]);
+						Report.Error (1705, r [1]);
+					}
+				}
+
+				if (!ia.IsFriendAssemblyTo (this))
+					continue;
+				
+				var attr = ia.GetAssemblyVisibleToName (this);
 				var atoken = attr.GetPublicKeyToken ();
 
 				if (ArrayComparer.IsEqual (GetPublicKeyToken (), atoken))
 					continue;
 
-				Report.SymbolRelatedToPreviousError (a.Location);
+				Report.SymbolRelatedToPreviousError (ia.Location);
 				Report.Error (281,
 					"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
 					attr.FullName, FullName);
@@ -542,6 +548,11 @@ namespace Mono.CSharp
 			Buffer.BlockCopy (hash, hash.Length - 8, public_key_token, 0, 8);
 			Array.Reverse (public_key_token, 0, 8);
 			return public_key_token;
+		}
+
+		protected virtual List<string[]> GetNotUnifiedReferences (AssemblyName assemblyName)
+		{
+			return null;
 		}
 
 		//
@@ -873,8 +884,10 @@ namespace Mono.CSharp
 				} else {
 					Builder.Save (module.Builder.ScopeName, pekind, machine);
 				}
+			} catch (ArgumentOutOfRangeException) {
+				Report.Error (16, "Output file `{0}' exceeds the 4GB limit");
 			} catch (Exception e) {
-				Report.Error (16, "Could not write to file `" + name + "', cause: " + e.Message);
+				Report.Error (16, "Could not write to file `{0}'. {1}", name, e.Message);
 			}
 			Compiler.TimeReporter.Stop (TimeReporter.TimerType.OutputSave);
 
@@ -1090,7 +1103,7 @@ namespace Mono.CSharp
 	//
 	public class AssemblyBuilderExtension
 	{
-		readonly CompilerContext ctx;
+		protected readonly CompilerContext ctx;
 
 		public AssemblyBuilderExtension (CompilerContext ctx)
 		{
@@ -1116,6 +1129,11 @@ namespace Mono.CSharp
 		public virtual void DefineWin32IconResource (string fileName)
 		{
 			ctx.Report.RuntimeMissingSupport (Location.Null, "-win32icon");
+		}
+
+		public virtual AssemblyName[] GetReferencedAssemblies ()
+		{
+			return null;
 		}
 
 		public virtual void SetAlgorithmId (uint value, Location loc)

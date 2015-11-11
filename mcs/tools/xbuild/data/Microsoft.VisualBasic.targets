@@ -1,5 +1,4 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<UsingTask TaskName="Microsoft.Build.Tasks.CreateVisualBasicManifestResourceName" AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.vb</DefaultLanguageSourceExtension>
 		<Language>VB</Language>
@@ -65,9 +64,10 @@
 			OptionExplicit="$(OptionExplicit)"
 			OptionStrict="$(OptionStrict)"
 			OptionStrictType="$(OptionStrictType)"
+			OptionInfer="$(OptionInfer)"
 			OutputAssembly="@(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
-			References="@(ResolvedFiles)"
+			References="@(ReferencePath)"
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ResponseFiles="$(CompilerResponseFile)"
@@ -77,6 +77,7 @@
 			TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
 			UseHostCompilerIfAvailable="$(UseHostCompilerIfAvailable)"
 			Utf8Output="$(Utf8Output)"
+			VBRuntime="$(VBRuntime)"
 			Verbosity="$(VbcVerbosity)"
 			WarningsAsErrors="$(WarningsAsErrors)"
 			WarningsNotAsErrors="$(WarningsNotAsErrors)"
@@ -113,11 +114,7 @@
 	<Import Project="Microsoft.Common.targets" />
 
 	<PropertyGroup>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' != 'Windows_NT'">vbnc2</VbcToolExe>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(OS)' == 'Windows_NT'">vbnc2.bat</VbcToolExe>
-
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' != 'Windows_NT'">vbnc</VbcToolExe>
-		<VbcToolExe Condition="'$(VbcToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' == 'Windows_NT'">vbnc.bat</VbcToolExe>
+		<VbcToolExe Condition="'$(VbcToolExe)' == ''">vbnc.exe</VbcToolExe>
 	</PropertyGroup>
 
 </Project>

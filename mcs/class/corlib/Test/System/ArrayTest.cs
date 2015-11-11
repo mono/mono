@@ -2549,6 +2549,33 @@ public class ArrayTest
 	}
 
 	[Test]
+	public void TestSortComparable()
+	{
+		int[] source = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		int[] expected = { 6, 5, 4, 3, 2, 1, 7, 8, 9 };
+		Comp[] c = { new Comp (100), new Comp (16), new Comp (11), new Comp (9), new Comp (0), new Comp (-100) };
+		IComparer<Comp> comp = null;
+		Array.Sort<Comp, int> (c, source, comp);
+
+		Assert.AreEqual (expected, source);
+	}
+
+	class Comp : IComparable
+	{
+		readonly int val;
+
+		public Comp (int a)
+		{
+			val = a;
+		}
+
+		int IComparable.CompareTo (object obj)
+		{
+			return val.CompareTo ((obj as Comp).val);
+		}
+	}
+
+	[Test]
 	public void TestInitializeEmpty()
 	{
 		bool catched=false;
@@ -3449,7 +3476,6 @@ public class ArrayTest
 		Assert.AreEqual (input, expected);
 	}
 
-#if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
 	public void CompareToWithJaggedArray () {
@@ -3616,7 +3642,6 @@ public class ArrayTest
 		Assert.AreEqual (3, c.Counter);		
 	}
 
-#endif
 
 	[Test]
 	public void JaggedArrayCtor ()

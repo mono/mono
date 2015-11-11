@@ -45,6 +45,7 @@
 
 #include <mono/utils/mono-mutex.h>
 #include <mono/utils/mono-proclib.h>
+#include <mono/utils/mono-threads.h>
 #undef DEBUG_REFS
 
 #if 0
@@ -279,13 +280,6 @@ wapi_init (void)
 	_wapi_global_signal_mutex = &_WAPI_PRIVATE_HANDLES (GPOINTER_TO_UINT (_wapi_global_signal_handle)).signal_mutex;
 
 	wapi_processes_init ();
-
-	/* Using atexit here instead of an explicit function call in
-	 * a cleanup routine lets us cope when a third-party library
-	 * calls exit (eg if an X client loses the connection to its
-	 * server.)
-	 */
-	mono_atexit (handle_cleanup);
 }
 
 void
@@ -298,6 +292,7 @@ wapi_cleanup (void)
 	_wapi_error_cleanup ();
 	_wapi_thread_cleanup ();
 	wapi_processes_cleanup ();
+	handle_cleanup ();
 }
 
 static void _wapi_handle_init_shared (struct _WapiHandleShared *handle,
@@ -1509,6 +1504,13 @@ static int timedwait_signal_poll_cond (pthread_cond_t *cond, mono_mutex_t *mutex
 	int ret;
 
 	if (!alertable) {
+		/*
+		 * pthread_cond_(timed)wait() can return 0 even if the condition was not
+		 * signalled.  This happens at least on Darwin.  We surface this, i.e., we
+		 * get spurious wake-ups.
+		 *
+		 * http://pubs.opengroup.org/onlinepubs/007908775/xsh/pthread_cond_wait.html
+		 */
 		if (timeout)
 			ret=mono_cond_timedwait (cond, mutex, timeout);
 		else
@@ -1536,29 +1538,50 @@ static int timedwait_signal_poll_cond (pthread_cond_t *cond, mono_mutex_t *mutex
 	return(ret);
 }
 
-int _wapi_handle_wait_signal (gboolean poll)
+int
+_wapi_handle_timedwait_signal (struct timespec *timeout, gboolean poll, gboolean *alerted)
 {
-	return _wapi_handle_timedwait_signal_handle (_wapi_global_signal_handle, NULL, TRUE, poll);
+	return _wapi_handle_timedwait_signal_handle (_wapi_global_signal_handle, timeout, TRUE, poll, alerted);
 }
 
-int _wapi_handle_timedwait_signal (struct timespec *timeout, gboolean poll)
+static void
+signal_handle_and_unref (gpointer handle)
 {
-	return _wapi_handle_timedwait_signal_handle (_wapi_global_signal_handle, timeout, TRUE, poll);
+	pthread_cond_t *cond;
+	mono_mutex_t *mutex;
+	guint32 idx;
+
+	g_assert (handle);
+
+	/* If we reach here, then interrupt token is set to the flag value, which
+	 * means that the target thread is either
+	 * - before the first CAS in timedwait, which means it won't enter the wait.
+	 * - it is after the first CAS, so it is already waiting, or it will enter
+	 *    the wait, and it will be interrupted by the broadcast. */
+	idx = GPOINTER_TO_UINT (handle);
+	cond = &_WAPI_PRIVATE_HANDLES (idx).signal_cond;
+	mutex = &_WAPI_PRIVATE_HANDLES (idx).signal_mutex;
+
+	mono_mutex_lock (mutex);
+	mono_cond_broadcast (cond);
+	mono_mutex_unlock (mutex);
+
+	_wapi_handle_unref (handle);
 }
 
-int _wapi_handle_wait_signal_handle (gpointer handle, gboolean alertable)
-{
-	DEBUG ("%s: waiting for %p", __func__, handle);
-	
-	return _wapi_handle_timedwait_signal_handle (handle, NULL, alertable, FALSE);
-}
-
-int _wapi_handle_timedwait_signal_handle (gpointer handle,
-										  struct timespec *timeout, gboolean alertable, gboolean poll)
+int
+_wapi_handle_timedwait_signal_handle (gpointer handle, struct timespec *timeout,
+		gboolean alertable, gboolean poll, gboolean *alerted)
 {
 	DEBUG ("%s: waiting for %p (type %s)", __func__, handle,
 		   _wapi_handle_typename[_wapi_handle_type (handle)]);
-	
+
+	if (alertable)
+		g_assert (alerted);
+
+	if (alerted)
+		*alerted = FALSE;
+
 	if (_WAPI_SHARED_HANDLE (_wapi_handle_type (handle))) {
 		if (WAPI_SHARED_HANDLE_DATA(handle).signalled == TRUE) {
 			return (0);
@@ -1592,8 +1615,12 @@ int _wapi_handle_timedwait_signal_handle (gpointer handle,
 		pthread_cond_t *cond;
 		mono_mutex_t *mutex;
 
-		if (alertable && !wapi_thread_set_wait_handle (handle))
-			return 0;
+		if (alertable) {
+			mono_thread_info_install_interrupt (signal_handle_and_unref, handle, alerted);
+			if (*alerted)
+				return 0;
+			_wapi_handle_ref (handle);
+		}
 
 		cond = &_WAPI_PRIVATE_HANDLES (idx).signal_cond;
 		mutex = &_WAPI_PRIVATE_HANDLES (idx).signal_mutex;
@@ -1608,8 +1635,13 @@ int _wapi_handle_timedwait_signal_handle (gpointer handle,
 				res = mono_cond_wait (cond, mutex);
 		}
 
-		if (alertable)
-			wapi_thread_clear_wait_handle (handle);
+		if (alertable) {
+			mono_thread_info_uninstall_interrupt (alerted);
+			if (!*alerted) {
+				/* if it is alerted, then the handle is unref in the interrupt callback */
+				_wapi_handle_unref (handle);
+			}
+		}
 
 		return res;
 	}
@@ -1786,7 +1818,7 @@ static void _wapi_handle_check_share_by_pid (struct _WapiFileShare *share_info)
 {
 #if defined(__native_client__)
 	g_assert_not_reached ();
-#else
+#elif defined(HAVE_KILL)
 	if (kill (share_info->opened_by_pid, 0) == -1 &&
 	    (errno == ESRCH ||
 	     errno == EPERM)) {
@@ -1913,7 +1945,8 @@ void _wapi_handle_dump (void)
 						 _wapi_handle_typename[handle_data->type],
 						 handle_data->signalled?"Sg":"Un",
 						 handle_data->ref);
-				handle_details[handle_data->type](&handle_data->u);
+				if (handle_details[handle_data->type])
+					handle_details[handle_data->type](&handle_data->u);
 				g_print ("\n");
 			}
 		}

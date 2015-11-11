@@ -20,6 +20,7 @@
 #include <mono/metadata/image.h>
 #include <mono/metadata/cil-coff.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/threadpool-ms-io.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/io-layer/io-layer.h>
@@ -29,6 +30,9 @@
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
+#ifdef _WIN32
+#include <shellapi.h>
+#endif
 
 HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 {
@@ -53,11 +57,11 @@ ves_icall_System_Diagnostics_Process_GetPid_internal (void)
 	return mono_process_current_pid ();
 }
 
-void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this,
+void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *this_obj,
 								 HANDLE process)
 {
 #ifdef THREAD_DEBUG
-	g_message ("%s: Closing process %p, handle %p", __func__, this, process);
+	g_message ("%s: Closing process %p, handle %p", __func__, this_obj, process);
 #endif
 
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
@@ -67,9 +71,9 @@ void ves_icall_System_Diagnostics_Process_Process_free_internal (MonoObject *thi
 #endif
 }
 
-#define STASH_SYS_ASS(this) \
+#define STASH_SYS_ASS(this_obj) \
 	if(system_assembly == NULL) { \
-		system_assembly=this->vtable->klass->image; \
+		system_assembly=this_obj->vtable->klass->image; \
 	}
 
 static MonoImage *system_assembly=NULL;
@@ -110,6 +114,20 @@ static void process_set_field_string (MonoObject *obj, const gchar *fieldname,
 	
 	field=mono_class_get_field_from_name (mono_object_class (obj),
 					      fieldname);
+	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
+}
+
+static void process_set_field_string_char (MonoObject *obj, const gchar *fieldname,
+				      const gchar *val)
+{
+	MonoClassField *field;
+	MonoString *string;
+
+	LOGDEBUG (g_message ("%s: Setting field %s to [%s]", __func__, fieldname, val));
+
+	string=mono_string_new (mono_object_domain (obj), val);
+	
+	field=mono_class_get_field_from_name (mono_object_class (obj), fieldname);
 	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
 }
 
@@ -350,9 +368,51 @@ static void process_get_fileversion (MonoObject *filever, gunichar2 *filename)
 	}
 }
 
+static void process_get_assembly_fileversion (MonoObject *filever, MonoAssembly *assembly)
+{
+	process_set_field_int (filever, "filemajorpart", assembly->aname.major);
+	process_set_field_int (filever, "fileminorpart", assembly->aname.minor);
+	process_set_field_int (filever, "filebuildpart", assembly->aname.build);
+}
+
+static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_class)
+{
+	static MonoClass *filever_class = NULL;
+	MonoObject *item, *filever;
+	MonoDomain *domain = mono_domain_get ();
+	char *filename;
+	const char *modulename = assembly->aname.name;
+
+	filename = g_strdup_printf ("[In Memory] %s", modulename);
+
+	/* Build a System.Diagnostics.ProcessModule with the data.
+	 */
+	item = mono_object_new (domain, proc_class);
+
+	if (!filever_class)
+		filever_class = mono_class_from_name (system_assembly,
+					    "System.Diagnostics",
+					    "FileVersionInfo");
+
+	filever = mono_object_new (domain, filever_class);
+
+	process_get_assembly_fileversion (filever, assembly);
+	process_set_field_string_char (filever, "filename", filename);
+	process_set_field_object (item, "version_info", filever);
+
+	process_set_field_intptr (item, "baseaddr", assembly->image->raw_data);
+	process_set_field_int (item, "memory_size", assembly->image->raw_data_len);
+	process_set_field_string_char (item, "filename", filename);
+	process_set_field_string_char (item, "modulename", modulename);
+
+	g_free (filename);
+
+	return item;
+}
+
 static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class)
 {
-	MonoClass *filever_class;
+	static MonoClass *filever_class = NULL;
 	MonoObject *item, *filever;
 	MonoDomain *domain=mono_domain_get ();
 	MODULEINFO modinfo;
@@ -362,9 +422,11 @@ static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *f
 	 */
 	item=mono_object_new (domain, proc_class);
 
-	filever_class=mono_class_from_name (system_assembly,
+	if (!filever_class)
+		filever_class=mono_class_from_name (system_assembly,
 					    "System.Diagnostics",
 					    "FileVersionInfo");
+
 	filever=mono_object_new (domain, filever_class);
 
 	process_get_fileversion (filever, filename);
@@ -390,8 +452,30 @@ static MonoObject* process_add_module (HANDLE process, HMODULE mod, gunichar2 *f
 	return item;
 }
 
+static GPtrArray* get_domain_assemblies (MonoDomain *domain)
+{
+	GSList *tmp;
+	GPtrArray *assemblies;
+
+	/* 
+	 * Make a copy of the list of assemblies because we can't hold the assemblies
+	 * lock while creating objects etc.
+	 */
+	assemblies = g_ptr_array_new ();
+	mono_domain_assemblies_lock (domain);
+	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = tmp->data;
+		if (ass->image->fileio_used)
+			continue;
+		g_ptr_array_add (assemblies, ass);
+	}
+	mono_domain_assemblies_unlock (domain);
+
+	return assemblies;
+}
+
 /* Returns an array of System.Diagnostics.ProcessModule */
-MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this, HANDLE process)
+MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
 {
 	MonoArray *temp_arr = NULL;
 	MonoArray *arr;
@@ -399,24 +483,50 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 	gunichar2 filename[MAX_PATH];
 	gunichar2 modname[MAX_PATH];
 	DWORD needed;
-	guint32 count = 0;
+	guint32 count = 0, module_count = 0, assembly_count = 0;
 	guint32 i, num_added = 0;
-	MonoClass *proc_class;
+	static MonoClass *proc_class = NULL;
+	GPtrArray *assemblies = NULL;
+	static HANDLE current_process = 0;
+	
+	if (current_process == 0) {
+		int pid = mono_process_current_pid ();
+		current_process = ves_icall_System_Diagnostics_Process_GetProcess_internal (pid);
+	}
 
-	STASH_SYS_ASS (this);
+	STASH_SYS_ASS (this_obj);
+
+	if (process == current_process) {
+		assemblies = get_domain_assemblies (mono_domain_get ());
+		assembly_count = assemblies->len;
+	}
 
 	if (EnumProcessModules (process, mods, sizeof(mods), &needed)) {
-		count = needed / sizeof(HMODULE);
+		module_count += needed / sizeof(HMODULE);
+	}
+
+	count = module_count + assembly_count; 
+	if (!proc_class)
 		proc_class = mono_class_from_name (system_assembly, "System.Diagnostics", "ProcessModule");
-		temp_arr = mono_array_new (mono_domain_get (), proc_class, count);
-		for (i = 0; i < count; i++) {
-			if (GetModuleBaseName (process, mods[i], modname, MAX_PATH) &&
-					GetModuleFileNameEx (process, mods[i], filename, MAX_PATH)) {
-				MonoObject *module = process_add_module (process, mods[i],
-						filename, modname, proc_class);
-				mono_array_setref (temp_arr, num_added++, module);
-			}
+
+	temp_arr = mono_array_new (mono_domain_get (), proc_class, count);
+
+	for (i = 0; i < module_count; i++) {
+		if (GetModuleBaseName (process, mods[i], modname, MAX_PATH) &&
+				GetModuleFileNameEx (process, mods[i], filename, MAX_PATH)) {
+			MonoObject *module = process_add_module (process, mods[i],
+					filename, modname, proc_class);
+			mono_array_setref (temp_arr, num_added++, module);
 		}
+	}
+
+	if (assemblies) {
+		for (i = 0; i < assembly_count; i++) {
+			MonoAssembly *ass = g_ptr_array_index (assemblies, i);
+			MonoObject *module = get_process_module (ass, proc_class);
+			mono_array_setref (temp_arr, num_added++, module);
+		}
+		g_ptr_array_free (assemblies, TRUE);
 	}
 
 	if (count == num_added) {
@@ -432,12 +542,12 @@ MonoArray *ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject 
 	return arr;
 }
 
-void ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this, MonoString *filename)
+void ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename)
 {
-	STASH_SYS_ASS (this);
+	STASH_SYS_ASS (this_obj);
 	
-	process_get_fileversion (this, mono_string_chars (filename));
-	process_set_field_string (this, "filename",
+	process_get_fileversion (this_obj, mono_string_chars (filename));
+	process_set_field_string (this_obj, "filename",
 				  mono_string_chars (filename),
 				  mono_string_length (filename));
 }
@@ -548,10 +658,7 @@ MonoBoolean ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoPr
 	} else {
 		process_info->process_handle = shellex.hProcess;
 		process_info->thread_handle = NULL;
-		/* It appears that there's no way to get the pid from a
-		 * process handle before windows xp.  Really.
-		 */
-#if defined(HAVE_GETPROCESSID) && !defined(MONO_CROSS_COMPILE)
+#if !defined(MONO_CROSS_COMPILE)
 		process_info->pid = GetProcessId (shellex.hProcess);
 #else
 		process_info->pid = 0;
@@ -688,16 +795,19 @@ MonoBoolean ves_icall_System_Diagnostics_Process_CreateProcess_internal (MonoPro
 	return(ret);
 }
 
-MonoBoolean ves_icall_System_Diagnostics_Process_WaitForExit_internal (MonoObject *this, HANDLE process, gint32 ms)
+MonoBoolean ves_icall_System_Diagnostics_Process_WaitForExit_internal (MonoObject *this_obj, HANDLE process, gint32 ms)
 {
 	guint32 ret;
 	
+	MONO_PREPARE_BLOCKING;
 	if(ms<0) {
 		/* Wait forever */
 		ret=WaitForSingleObjectEx (process, INFINITE, TRUE);
 	} else {
 		ret=WaitForSingleObjectEx (process, ms, TRUE);
 	}
+	MONO_FINISH_BLOCKING;
+
 	if(ret==WAIT_OBJECT_0) {
 		return(TRUE);
 	} else {
@@ -705,7 +815,7 @@ MonoBoolean ves_icall_System_Diagnostics_Process_WaitForExit_internal (MonoObjec
 	}
 }
 
-MonoBoolean ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal (MonoObject *this, HANDLE process, gint32 ms)
+MonoBoolean ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal (MonoObject *this_obj, HANDLE process, gint32 ms)
 {
 	guint32 ret;
 	
@@ -804,7 +914,7 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	}
 	procs = mono_array_new (mono_domain_get (), mono_get_int32_class (), count);
 	if (sizeof (guint32) == sizeof (gpointer)) {
-		memcpy (mono_array_addr (procs, guint32, 0), pidarray, count);
+		memcpy (mono_array_addr (procs, guint32, 0), pidarray, count * sizeof (gint32));
 	} else {
 		for (i = 0; i < count; ++i)
 			*(mono_array_addr (procs, guint32, i)) = GPOINTER_TO_UINT (pidarray [i]);

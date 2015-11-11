@@ -13,6 +13,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 #if STATIC
 using MetaType = IKVM.Reflection.Type;
@@ -209,14 +210,14 @@ namespace Mono.CSharp
 				Constant c = field_type.Kind == MemberKind.MissingType ?
 					new NullConstant (InternalType.ErrorType, Location.Null) :
 					CreateConstantFromValue (field_type, fi);
-				return new ConstSpec (declaringType, definition, field_type, fi, mod, c);
+				return new ConstSpec (declaringType, definition, field_type, fi, mod | Modifiers.STATIC, c);
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
 				if (field_type.BuiltinType == BuiltinTypeSpec.Type.Decimal) {
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
-						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
+						return new ConstSpec (declaringType, definition, field_type, fi, mod | Modifiers.STATIC, dc);
 				}
 
 				mod |= Modifiers.READONLY;
@@ -979,6 +980,21 @@ namespace Mono.CSharp
 			return found;
 		}
 
+		public ImportedAssemblyDefinition GetImportedAssemblyDefinition (AssemblyName assemblyName)
+		{
+			foreach (var a in Assemblies) {
+				var ia = a as ImportedAssemblyDefinition;
+				if (ia == null)
+					continue;
+				
+				if (a.Name == assemblyName.Name)
+					return ia;
+			}
+
+			return null;
+		}
+
+
 		public void ImportTypeBase (MetaType type)
 		{
 			TypeSpec spec = import_cache[type];
@@ -1724,7 +1740,14 @@ namespace Mono.CSharp
 					if (s == null)
 						continue;
 
-					var an = new AssemblyName (s);
+					AssemblyName an;
+					try {
+						an = new AssemblyName (s);
+					} catch (FileLoadException) {
+						// Invalid assembly name reuses FileLoadException
+						continue;
+					}
+
 					if (internals_visible_to == null)
 						internals_visible_to = new List<AssemblyName> ();
 

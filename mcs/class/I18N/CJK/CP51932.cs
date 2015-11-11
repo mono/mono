@@ -521,19 +521,13 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 			--count;
 			if (last == 0) {
 				if (byteval == 0x8F) {
-					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character.
-						last = 0;
-						length++;
-					}
-					// First byte in a triple-byte sequence
-					else
-						last = byteval;
+					// SS3: One-time triple-byte sequence should follow.
+					last = byteval;
 				} else if (byteval <= 0x7F) {
 					// Ordinary ASCII/Latin1/Control character.
 					length++;
 				} else if (byteval == 0x8E) {
-					// First byte of half-width Katakana
+					// SS2: One-time double-byte sequence should follow.
 					last = byteval;
 				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
 					// First byte in a double-byte sequence.
@@ -544,9 +538,8 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 				}
 			}
 			else if (last == 0x8E) {
+				// SS2 (One-time double-byte sequence)
 				if (byteval >= 0xA1 && byteval <= 0xDF) {
-					value = ((byteval - 0x40) |
-						(last + 0x71) << 8);
 					length++;
 				} else {
 					// Invalid second byte.
@@ -555,8 +548,8 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 				last =0;
 			}
 			else if (last == 0x8F) {
-				// 3-byte character
-				// FIXME: currently not supported yet
+				// SS3: 3-byte character
+				// FIXME: not supported (I don't think iso-2022-jp has)
 				last = byteval;
 			}
 			else
@@ -627,23 +620,15 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 			--byteCount;
 			if (last == 0) {
 				if (byteval == 0x8F) {
-					if (byteval != 0) {
-						// Invalid second byte of a 3-byte character.
-						last = 0;
-						if (posn >= charLength)
-							throw Insufficient ();
-						chars [posn++] = '\u30FB';
-					}
-					// First byte in a triple-byte sequence
-					else
-						last = byteval;
+					// SS3 (One-time triple-byte sequence) should follow.
+					last = byteval;
 				} else if (byteval <= 0x7F) {
 					// Ordinary ASCII/Latin1/Control character.
 					if (posn >= charLength)
 						throw Insufficient ();
 					chars [posn++] = (char) byteval;
 				} else if (byteval == 0x8E) {
-					// First byte of half-width Katakana
+					// SS2 (One-time double-byte sequence) should follow.
 					last = byteval;
 				} else if (byteval >= 0xA1 && byteval <= 0xFE) {
 					// First byte in a double-byte sequence.
@@ -656,6 +641,7 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 				}
 			}
 			else if (last == 0x8E) {
+				// SS2 (One-time double-byte sequence)
 				if (byteval >= 0xA1 && byteval <= 0xDF) {
 					value = ((byteval - 0x40) |
 						(last + 0x71) << 8);
@@ -671,8 +657,8 @@ internal class CP51932Decoder : DbcsEncoding.DbcsDecoder
 				last =0;
 			}
 			else if (last == 0x8F) {
-				// 3-byte character
-				// FIXME: currently not supported yet
+				// SS3: 3-byte character
+				// FIXME: not supported (I don't think iso-2022-jp has)
 				last = byteval;
 			}
 			else

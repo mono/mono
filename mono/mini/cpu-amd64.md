@@ -16,10 +16,11 @@
 #	b  base register (used in address references)
 #	f  floating point register
 #	a  EAX register
-#   d  EDX register
+#  d  EDX register
 #	l  long reg (forced eax:edx)
-#   s  ECX register
-#   c  register which can be used as a byte register (RAX..RDX)
+#  s  ECX register
+#  c  register which can be used as a byte register (RAX..RDX)
+#  A - first arg reg (rdi/rcx)
 #
 # len:number         describe the maximun length in bytes of the instruction
 # 		     number is a positive integer.  If the length is not specified
@@ -65,7 +66,7 @@ break: len:2
 tailcall: len:120 clob:c
 br: len:6
 label: len:0
-seq_point: len:31 clob:c
+seq_point: len:46 clob:c
 il_seq_point: len:0
 
 long_add: dest:i src1:i src2:i len:3 clob:1 nacl:6
@@ -109,6 +110,8 @@ rethrow: src1:i len:18 nacl:50
 start_handler: len:16
 endfinally: len:9 nacl:22
 endfilter: src1:a len:9 nacl:19
+get_ex_obj: dest:a len:16
+
 ckfinite: dest:f src1:f len:43
 ceq: dest:c len:8
 cgt: dest:c len:8
@@ -293,7 +296,7 @@ move_f_to_i8: dest:i src1:f len:5
 move_i8_to_f: dest:f src1:i len:5
 call_handler: len:14 clob:c nacl:52
 aot_const: dest:i len:10
-nacl_gc_safe_point: clob:c
+gc_safe_point: clob:c src1:i len:40
 x86_test_null: src1:i len:5
 x86_compare_membase_reg: src1:b src2:i len:9
 x86_compare_membase_imm: src1:b len:13
@@ -794,3 +797,4 @@ gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
 
+generic_class_init: src1:A len:32 clob:c

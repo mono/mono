@@ -76,15 +76,24 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.IsNull (expr.Method);
-#if !NET_4_0
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
-#endif
 		}
 
 		[Test]
 		public void PrimitiveNonNumeric ()
 		{
 			BinaryExpression expr = Expression.Equal (Expression.Constant ('a'), Expression.Constant ('b'));
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsFalse (eq ());
+		}
+
+		[Test]
+		public void StringWithNull ()
+		{
+			BinaryExpression expr = Expression.Equal (Expression.Constant ("a"), Expression.Constant (null));
 			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.IsNull (expr.Method);
@@ -107,9 +116,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (true, expr.IsLifted);
 			Assert.AreEqual (false, expr.IsLiftedToNull);
 			Assert.IsNull (expr.Method);
-#if !NET_4_0
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
-#endif
 		}
 
 		[Test]
@@ -126,9 +132,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (true, expr.IsLifted);
 			Assert.AreEqual (true, expr.IsLiftedToNull);
 			Assert.IsNull (expr.Method);
-#if !NET_4_0
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
-#endif
 		}
 
 		[Test]
@@ -154,9 +157,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.AreEqual (mi, expr.Method);
 			Assert.AreEqual ("op_Equality", expr.Method.Name);
-#if !NET_4_0
-			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) = value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
-#endif
 		}
 
 		[Test]

@@ -423,6 +423,7 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		// FIXME: this actually doesn't match .NET behavior. It shouldn't throw NRE.
 		[Test]
 		public void Prepare_Connection_Null ()
 		{
@@ -474,7 +475,7 @@ namespace MonoTests.System.Data.SqlClient
 			} catch (NullReferenceException) {
 			}
 		}
-
+		
 		[Test] // bug #412586
 		public void Prepare_Connection_Closed ()
 		{

@@ -241,17 +241,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void Controls_Table ()
 		{
-#if NET_4_0
 			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
 			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
 			string origHtml3 = "<table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table>";
 			string origHtml4 = "<span><table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table></span>";
-#else
-			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
-			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
-			string origHtml3 = "<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table>";
-			string origHtml4 = "<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table></span>";
-#endif
 			TestDataListItem dli = new TestDataListItem (0, ListItemType.Item);
 			dli.Controls.Add (GetTable ("mono"));
 
@@ -271,17 +264,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void Controls_Table_Dual ()
 		{
-#if NET_4_0
 			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
 			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
 			string origHtml3 = "<table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table>\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table>";
 			string origHtml4 = "<span><table>\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table>\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table></span>";
-#else
-			string origHtml1 = "<tr>\n\t<td>mono</td>\n</tr>";
-			string origHtml2 = "<tr>\n\t<td>mono</td>\n</tr>";
-			string origHtml3 = "<table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table>";
-			string origHtml4 = "<span><table border=\"0\">\n\t<tr>\n\t\t<td>mono</td>\n\t</tr>\n</table><table border=\"0\">\n\t<tr>\n\t\t<td>monkey</td>\n\t</tr>\n</table></span>";
-#endif
 			TestDataListItem dli = new TestDataListItem (0, ListItemType.Item);
 			dli.Controls.Add (GetTable ("mono"));
 			dli.Controls.Add (GetTable ("monkey"));
@@ -315,7 +301,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("mono", dli.Render (false, true), "Render-Empty-F-T");
 			Assert.AreEqual ("<span>mono</span>", dli.Render (false, false), "Render-Empty-F-F");
 		}
-#if NET_4_0
 		[Test]
 		public void SupportsDisabledAttribute ()
 		{
@@ -329,6 +314,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (ver35, p.RenderingCompatibility, "#A2-1");
 			Assert.IsTrue (p.SupportsDisabledAttribute, "#A2-2");
 		}
-#endif
 	}
 }

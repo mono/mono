@@ -5,7 +5,7 @@ NO_TESTS = yes
 
 include xbuild.make
 
-LOCAL_MCS_FLAGS = -r:$(XBUILD_FRAMEWORK) -r:$(XBUILD_UTILITIES) -r:$(XBUILD_ENGINE)
+LOCAL_MCS_FLAGS = -r:$(XBUILD_FRAMEWORK) -r:$(XBUILD_UTILITIES) -r:$(XBUILD_ENGINE) -r:$(XBUILD_MSTASKS)
 PROGRAM = xbuild.exe
 
 include ../../build/executable.make
@@ -41,24 +41,36 @@ install-bin-data:
 install-frameworks:
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v$(FRAMEWORK_VERSION)/RedistList
 	$(INSTALL_DATA) frameworks/net_$(FRAMEWORK_VERSION).xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v$(FRAMEWORK_VERSION)/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v2.0/RedistList
+	$(INSTALL_DATA) frameworks/net_2.0.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v2.0/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v3.0/RedistList
 	$(INSTALL_DATA) frameworks/net_3.0.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v3.0/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v3.5/RedistList
+	$(INSTALL_DATA) frameworks/net_3.5.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v3.5/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/RedistList
 	$(INSTALL_DATA) frameworks/net_4.0.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/Profile/Client/RedistList
 	$(INSTALL_DATA) frameworks/net_4.0_client.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/Profile/Client/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.5.1/RedistList
 	$(INSTALL_DATA) frameworks/net_4.5.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.5.1/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.5.2/RedistList
+	$(INSTALL_DATA) frameworks/net_4.5.2.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.5.2/RedistList/FrameworkList.xml
 
 install-pcl-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0
 	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.Common.targets
 	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.CSharp.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.VisualBasic.targets
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5
 	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.Common.targets
 	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.CSharp.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.VisualBasic.targets
 	$(INSTALL_DATA) targets/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
 	$(INSTALL_DATA) targets/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
+	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6
+	$(INSTALL_DATA) targets/Microsoft.Portable.Common.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.Common.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.CSharp.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.VisualBasic_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.6/Microsoft.Portable.VisualBasic.targets
 
 install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
@@ -97,8 +109,11 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.0_client.xml \
 	frameworks/net_4.5.xml \
 	frameworks/net_4.5.1.xml \
+	frameworks/net_4.5.2.xml \
 	targets/Microsoft.Portable.CSharp_4.0.targets \
 	targets/Microsoft.Portable.CSharp_4.5.targets \
+	targets/Microsoft.Portable.VisualBasic_4.0.targets \
+	targets/Microsoft.Portable.VisualBasic_4.5.targets \
 	targets/Microsoft.Portable.Common.targets \
 	targets/Microsoft.Portable.Core.targets \
 	targets/Microsoft.Portable.Core.props \

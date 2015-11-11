@@ -35,3 +35,4 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XmlDictionaryString))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.XmlDictionaryWriter))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Xml.OnXmlDictionaryReaderClose))]

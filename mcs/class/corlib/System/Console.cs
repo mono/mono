@@ -152,10 +152,7 @@ namespace System
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
 #endif
-// FULL_AOT_RUNTIME is used (instead of MONOTOUCH) since we only want this code when running on 
-// iOS (simulator or devices) and *not* when running tools (e.g. btouch #12179) that needs to use 
-// the mscorlib.dll shipped with Xamarin.iOS
-#if MONOTOUCH && FULL_AOT_RUNTIME
+#if MONOTOUCH
 				stdout = new NSLogWriter ();
 #else
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
@@ -163,7 +160,7 @@ namespace System
 #endif
 				stdout = TextWriter.Synchronized (stdout);
 
-#if MONOTOUCH && FULL_AOT_RUNTIME
+#if MONOTOUCH
 				stderr = new NSLogWriter ();
 #else
 				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
@@ -210,7 +207,8 @@ namespace System
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
 			try {
-				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
+				// TODO: Should use __ConsoleStream from reference sources
+				return new FileStream (handle, access, false, bufferSize, false, true);
 			} catch (IOException) {
 				return Stream.Null;
 			}

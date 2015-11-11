@@ -73,12 +73,12 @@ namespace System.IO
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
+		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
 
-			Init (new SafeFileHandle (handle, false), access, ownsHandle, bufferSize, isAsync, isZeroSize);
+			Init (new SafeFileHandle (handle, false), access, ownsHandle, bufferSize, isAsync, isConsoleWrapper);
 		}
 
 		// construct from filename
@@ -113,7 +113,6 @@ namespace System.IO
 		{
 		}
 
-#if !NET_2_1
 		public FileStream (SafeFileHandle handle, FileAccess access)
 			:this(handle, access, DefaultBufferSize, false)
 		{
@@ -130,6 +129,7 @@ namespace System.IO
 			Init (handle, access, false, bufferSize, isAsync, false);
 		}
 
+#if !MOBILE
 		[MonoLimitation ("This ignores the rights parameter")]
 		public FileStream (string path, FileMode mode,
 				   FileSystemRights rights, FileShare share,
@@ -148,7 +148,7 @@ namespace System.IO
 		}
 #endif
 
-		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options, string msgPath, bool bFromProxy, bool useLongPath, bool checkHost)
+		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options, string msgPath, bool bFromProxy, bool useLongPath = false, bool checkHost = false)
 			: this (path, mode, access, share, bufferSize, false, options)
 		{
 		}
@@ -291,10 +291,14 @@ namespace System.IO
 			}
 		}
 
-		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
+		private void Init (SafeFileHandle safeHandle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isConsoleWrapper)
 		{
+			if (!isConsoleWrapper && safeHandle.IsInvalid)
+				throw new ArgumentException(Environment.GetResourceString("Arg_InvalidHandle"), "handle");
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
+			if (!isConsoleWrapper && bufferSize <= 0)
+				throw new ArgumentOutOfRangeException("bufferSize", Environment.GetResourceString("ArgumentOutOfRange_NeedPosNum"));
 
 			MonoIOError error;
 			MonoFileType ftype = MonoIO.GetFileType (safeHandle, out error);
@@ -411,10 +415,8 @@ namespace System.IO
 				return ret;
 			}
 			set {
-				if(value < 0) {
-					throw new ArgumentOutOfRangeException("Attempt to set the position to a negative value");
-				}
-				
+				if (value < 0) throw new ArgumentOutOfRangeException("value", Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum"));
+
 				Seek (value, SeekOrigin.Begin);
 			}
 		}
@@ -988,7 +990,7 @@ namespace System.IO
 			
 			if (count > 0) {
 				// Use the fastest method, all range checks has been done
-				Buffer.BlockCopyInternal (buf, buf_offset, dest, dest_offset, count);
+				Buffer.InternalBlockCopy (buf, buf_offset, dest, dest_offset, count);
 				buf_offset += count;
 			}
 			

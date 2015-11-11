@@ -124,6 +124,11 @@ namespace System.Security.Cryptography {
 			}
 			return num;
 		}
+
+		[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
+		public static bool AllowOnlyFipsAlgorithms {
+			get { return false; }
+		}
 	}
 }
 

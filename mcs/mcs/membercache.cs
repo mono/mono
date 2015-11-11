@@ -354,7 +354,7 @@ namespace Mono.CSharp {
 		//
 		static bool AddInterfaceMember (MemberSpec member, ref IList<MemberSpec> existing)
 		{
-			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : ParametersCompiled.EmptyReadOnlyParameters;
+			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : null;
 
 			//
 			// interface IA : IB { int Prop { set; } }
@@ -368,10 +368,14 @@ namespace Mono.CSharp {
 				if (entry.Arity != member.Arity)
 					continue;
 
-				if (entry is IParametersMember) {
-					var entry_param = ((IParametersMember) entry).Parameters;
-					if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
-						continue;
+				AParametersCollection entry_param = null;
+				if (member_param != null) {
+					var entry_pm = entry as IParametersMember;
+					if (entry_pm != null) {
+						entry_param = entry_pm.Parameters;
+						if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
+							continue;
+					}
 				}
 
 				if (member.DeclaringType.ImplementsInterface (entry.DeclaringType, false)) {
@@ -384,8 +388,10 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor) ||
-					entry.DeclaringType.ImplementsInterface (member.DeclaringType, false))
+				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor))
+					return false;
+
+				if (entry.DeclaringType.ImplementsInterface (member.DeclaringType, false) && AParametersCollection.HasSameParameterDefaults (entry_param, member_param))
 					return false;
 			}
 

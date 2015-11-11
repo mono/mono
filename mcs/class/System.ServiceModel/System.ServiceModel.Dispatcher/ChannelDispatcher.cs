@@ -455,8 +455,11 @@ namespace System.ServiceModel.Dispatcher
 			public void CloseInput ()
 			{
 				foreach (var ch in channels.ToArray ()) {
-					if (ch.State == CommunicationState.Closed)
-						RemoveChannel (ch);
+					if (ch.State == CommunicationState.Closed) {
+						lock (channels) {
+							RemoveChannel (ch);
+						}
+					}
 					else {
 						try {
 							ch.Close (close_timeout - (DateTime.Now - close_started));
@@ -584,10 +587,14 @@ namespace System.ServiceModel.Dispatcher
 			{
 				Message msg;
 				var input = (IInputChannel) result.AsyncState;
-				if (input.EndTryReceive (result, out msg))
-					ProcessInput (input, msg);
-				else
+				try {
+					if (input.EndTryReceive (result, out msg))
+						ProcessInput (input, msg);
+					else
+						input.Close ();
+				} catch (ObjectDisposedException) {
 					input.Close ();
+				}
 			}
 
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)

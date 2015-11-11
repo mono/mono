@@ -932,6 +932,11 @@ namespace Mono.Data.Tds.Protocol
 					element = new Guid (guidBytes);
 				}
 				break;
+			case TdsColumnType.Variant :
+				if (outParam)
+					comm.Skip (4);
+				element = GetVariantValue();
+				break;
 			default :
 				return DBNull.Value;
 			}
@@ -954,6 +959,40 @@ namespace Mono.Data.Tds.Protocol
 			}
 
 			return result;
+		}
+
+		private object GetVariantValue ()
+		{
+			uint len = (uint)comm.GetTdsInt ();
+			if (len == 0)
+				return DBNull.Value;
+
+			// VARIANT_BASETYPE
+			TdsColumnType colType = (TdsColumnType)comm.GetByte ();
+			// VARIANT_PROPBYTES
+			byte propbytes = comm.GetByte ();
+			if (propbytes != 0)
+				// VARIANT_PROPERTIES
+				comm.Skip (propbytes);
+
+			len -= (uint)propbytes + 2;
+
+			switch (colType)
+			{
+			case TdsColumnType.Int1 :
+			case TdsColumnType.Int2 :
+			case TdsColumnType.Int4 :
+			case TdsColumnType.BigInt :
+				return GetIntValue (colType);
+			default:
+				// The old code was ignoring variants
+				// and returning null.  Should we
+				// throw an exception?
+				comm.Skip (len);
+				break;
+			}
+
+			return DBNull.Value;
 		}
 
 		private object GetDateTimeValue (
@@ -1291,7 +1330,7 @@ namespace Mono.Data.Tds.Protocol
 		
 		internal bool IsBlobType (TdsColumnType columnType)
 		{
-			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
+			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText || columnType == TdsColumnType.Variant);
 		}
 
 		internal bool IsLargeType (TdsColumnType columnType)

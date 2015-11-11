@@ -900,7 +900,7 @@ namespace Microsoft.Build.BuildEngine
 			void DumpPerformanceSummary ()
 			{
 				SetColor (eventColor);
-				WriteLine ("Target perfomance summary:");
+				WriteLine ("Target performance summary:");
 				ResetColor ();
 	
 				foreach (var pi in targetPerfTable.OrderBy (pair => pair.Value.Time))
@@ -909,7 +909,7 @@ namespace Microsoft.Build.BuildEngine
 				WriteLine (String.Empty);
 	
 				SetColor (eventColor);
-				WriteLine ("Tasks perfomance summary:");
+				WriteLine ("Tasks performance summary:");
 				ResetColor ();
 	
 				foreach (var pi in tasksPerfTable.OrderBy (pair => pair.Value.Time))

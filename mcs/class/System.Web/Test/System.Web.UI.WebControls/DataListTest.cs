@@ -322,7 +322,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-2");
 		}
-#if NET_4_0
 		[Test]
 		public void RepeatLayout_Lists ()
 		{
@@ -336,7 +335,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 				dl.RepeatLayout = RepeatLayout.UnorderedList;
 			}, "#A2");
 		}
-#endif
 		[Test]
 		public void CleanProperties ()
 		{

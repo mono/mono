@@ -37,10 +37,10 @@ namespace System.Net.Sockets
 		// this version does not throw.
 		internal void InternalShutdown (SocketShutdown how)
 		{
-			if (!connected || disposed)
+			if (!is_connected || is_disposed)
 				return;
 			int error;
-			Shutdown_internal (socket, how, out error);
+			Shutdown_internal (safe_handle, how, out error);
 		}
 
 		internal IAsyncResult UnsafeBeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
@@ -86,7 +86,7 @@ namespace System.Net.Sockets
 
 		internal void SetSocketOption (SocketOptionLevel optionLevel, SocketOptionName optionName, int optionValue, bool silent)
 		{
-			if (disposed && closed) {
+			if (is_disposed && is_closed) {
 				if (silent)
 					return;
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -94,7 +94,7 @@ namespace System.Net.Sockets
 
 			int error;
 
-			SetSocketOption_internal (socket, optionLevel, optionName, null,
+			SetSocketOption_internal (safe_handle, optionLevel, optionName, null,
 				null, optionValue, out error);
 
 			if (!silent && error != 0)

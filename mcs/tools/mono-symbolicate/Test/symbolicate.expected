@@ -1,0 +1,131 @@
+System.Exception: Stacktrace with 1 frame
+  at StackTraceDumper.Main () in StackTraceDumper.cs:9 
+Stacktrace:
+  at StackTraceDumper.Main () in StackTraceDumper.cs:9 
+
+System.Exception: Stacktrace with 2 frames
+  at StackTraceDumper.<Main>m__0 () in StackTraceDumper.cs:16 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.<Main>m__0 () in StackTraceDumper.cs:16 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stacktrace with 3 frames
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.<Main>m__1 () in StackTraceDumper.cs:18 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stacktrace with 4 frames
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:76 
+  at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:78 
+  at StackTraceDumper.ThrowException (System.String message, Int32 i) in StackTraceDumper.cs:76 
+  at StackTraceDumper.<Main>m__2 () in StackTraceDumper.cs:20 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack frame with method overload using ref parameter
+  at StackTraceDumper.ThrowException (System.String& message) in StackTraceDumper.cs:70 
+  at StackTraceDumper.<Main>m__3 () in StackTraceDumper.cs:24 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowException (System.String& message) in StackTraceDumper.cs:70 
+  at StackTraceDumper.<Main>m__3 () in StackTraceDumper.cs:24 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack frame with method overload using out parameter
+  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in StackTraceDumper.cs:83 
+  at StackTraceDumper.<Main>m__4 () in StackTraceDumper.cs:29 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowException (System.String message, System.Int32& o) in StackTraceDumper.cs:83 
+  at StackTraceDumper.<Main>m__4 () in StackTraceDumper.cs:29 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack frame with 1 generic parameter
+  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in StackTraceDumper.cs:88 
+  at StackTraceDumper.<Main>m__5 () in StackTraceDumper.cs:32 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowExceptionGeneric[T] (System.String message) in StackTraceDumper.cs:88 
+  at StackTraceDumper.<Main>m__5 () in StackTraceDumper.cs:32 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack frame with 2 generic parameters
+  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in StackTraceDumper.cs:108 
+  at StackTraceDumper.<Main>m__6 () in StackTraceDumper.cs:34 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowExceptionGeneric[T1,T2] (System.String message) in StackTraceDumper.cs:108 
+  at StackTraceDumper.<Main>m__6 () in StackTraceDumper.cs:34 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack frame with generic method overload
+  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in StackTraceDumper.cs:93 
+  at StackTraceDumper.<Main>m__7 () in StackTraceDumper.cs:36 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper.ThrowExceptionGeneric[T] (T a1) in StackTraceDumper.cs:93 
+  at StackTraceDumper.<Main>m__7 () in StackTraceDumper.cs:36 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack trace with inner class
+  at StackTraceDumper+InnerClass.ThrowException (System.String message) in StackTraceDumper.cs:114 
+  at StackTraceDumper.<Main>m__8 () in StackTraceDumper.cs:38 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerClass.ThrowException (System.String message) in StackTraceDumper.cs:114 
+  at StackTraceDumper.<Main>m__8 () in StackTraceDumper.cs:38 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack trace with inner generic class
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in StackTraceDumper.cs:121 
+  at StackTraceDumper.<Main>m__9 () in StackTraceDumper.cs:40 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message) in StackTraceDumper.cs:121 
+  at StackTraceDumper.<Main>m__9 () in StackTraceDumper.cs:40 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Generic to string:string
+
+System.Exception: Stack trace with inner generic class and method generic parameter
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in StackTraceDumper.cs:127 
+  at StackTraceDumper.<Main>m__A () in StackTraceDumper.cs:42 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException (System.String message, T arg) in StackTraceDumper.cs:127 
+  at StackTraceDumper.<Main>m__A () in StackTraceDumper.cs:42 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack trace with inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in StackTraceDumper.cs:132 
+  at StackTraceDumper.<Main>m__B () in StackTraceDumper.cs:44 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1[T].ThrowException[T1] (System.String message, T1 arg) in StackTraceDumper.cs:132 
+  at StackTraceDumper.<Main>m__B () in StackTraceDumper.cs:44 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack trace with 2 inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in StackTraceDumper.cs:138 
+  at StackTraceDumper.<Main>m__C () in StackTraceDumper.cs:46 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T message) in StackTraceDumper.cs:138 
+  at StackTraceDumper.<Main>m__C () in StackTraceDumper.cs:46 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+
+System.Exception: Stack trace with 2 inner generic class and generic overload
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in StackTraceDumper.cs:143 
+  at StackTraceDumper.<Main>m__D () in StackTraceDumper.cs:48 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 
+Stacktrace:
+  at StackTraceDumper+InnerGenericClass`1+InnerInnerGenericClass`1[T,T2].ThrowException (T2 message) in StackTraceDumper.cs:143 
+  at StackTraceDumper.<Main>m__D () in StackTraceDumper.cs:48 
+  at StackTraceDumper.Catch (System.Action action) in StackTraceDumper.cs:54 

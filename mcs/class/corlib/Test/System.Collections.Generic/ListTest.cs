@@ -342,28 +342,6 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (- (l.Count + 1), l.BinarySearch (int.MaxValue));
 		}
 
-#if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
-
-		[Test]
-		public void SerializeTest ()
-		{
-			List <int> list = new List <int> ();
-			list.Add (5);
-			list.Add (0);
-			list.Add (7);
-
-			BinaryFormatter bf = new BinaryFormatter ();
-			MemoryStream ms = new MemoryStream ();
-			bf.Serialize (ms, list);
-
-			byte [] buffer = new byte [ms.Length];
-			ms.Position = 0;
-			ms.Read (buffer, 0, buffer.Length);
-
-			Assert.AreEqual (_serializedList, buffer);
-		}
-
-#endif
 
 		[Test]
 		public void DeserializeTest ()

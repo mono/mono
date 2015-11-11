@@ -38,12 +38,17 @@ using System.Text;
 
 namespace System.Reflection
 {
+	abstract class RuntimeParameterInfo : ParameterInfo
+	{
+
+	}
+
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	class MonoParameterInfo : ParameterInfo {
+	class MonoParameterInfo : RuntimeParameterInfo {
 
 #if !FULL_AOT_RUNTIME
 		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {

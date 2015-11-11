@@ -96,6 +96,9 @@ namespace MonoTests.System.Web.Services.Protocols
 				if (tcpListener != null) {
 					tcpListener.Stop ();
 					tcpListener = null;
+					listenThread.Abort ();
+					listenThread.Join ();
+					listenThread = null;
 				}
 			}
 		}

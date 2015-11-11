@@ -59,10 +59,9 @@ namespace Mono.CSharp
 		public TypeInfo[] SubStructInfo;
 
 		readonly StructInfo struct_info;
-		private static Dictionary<TypeSpec, TypeInfo> type_hash;
 
 		static readonly TypeInfo simple_type = new TypeInfo (1);
-		
+
 		static TypeInfo ()
 		{
 			Reset ();
@@ -70,7 +69,6 @@ namespace Mono.CSharp
 		
 		public static void Reset ()
 		{
-			type_hash = new Dictionary<TypeSpec, TypeInfo> ();
 			StructInfo.field_type_hash = new Dictionary<TypeSpec, StructInfo> ();
 		}
 
@@ -111,8 +109,17 @@ namespace Mono.CSharp
 				return simple_type;
 
 			TypeInfo info;
-			if (type_hash.TryGetValue (type, out info))
-				return info;
+			Dictionary<TypeSpec, TypeInfo> type_hash;
+			if (type.BuiltinType > 0) {
+				// Don't cache built-in types, they are null in most cases except for
+				// corlib compilation when we need to distinguish between declaration
+				// and referencing
+				type_hash = null;
+			} else {
+				type_hash = context.Module.TypeInfoCache;
+				if (type_hash.TryGetValue (type, out info))
+					return info;
+			}
 
 			var struct_info = StructInfo.GetStructInfo (type, context);
 			if (struct_info != null) {
@@ -121,7 +128,9 @@ namespace Mono.CSharp
 				info = simple_type;
 			}
 
-			type_hash.Add (type, info);
+			if (type_hash != null)
+				type_hash.Add (type, info);
+
 			return info;
 		}
 
@@ -262,7 +271,7 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeSpec type, IMemberContext context)
 			{
-				if (type.BuiltinType > 0)
+				if (type.BuiltinType > 0 && type != context.CurrentType)
 					return null;
 
 				StructInfo info;
@@ -543,7 +552,7 @@ namespace Mono.CSharp
 
 		public static DefiniteAssignmentBitSet operator & (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
-			if (AreEqual (a, b))
+			if (IsEqual (a, b))
 				return a;
 
 			DefiniteAssignmentBitSet res;
@@ -566,7 +575,7 @@ namespace Mono.CSharp
 
 		public static DefiniteAssignmentBitSet operator | (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
-			if (AreEqual (a, b))
+			if (IsEqual (a, b))
 				return a;
 
 			DefiniteAssignmentBitSet res;
@@ -669,13 +678,28 @@ namespace Mono.CSharp
 				large_bits[index >> 5] |= (1 << (index & 31));
 		}
 
-		public static bool AreEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
+		static bool IsEqual (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
 		{
 			if (a.large_bits == null)
 				return (a.bits & ~copy_on_write_flag) == (b.bits & ~copy_on_write_flag);
 
 			for (int i = 0; i < a.large_bits.Length; ++i) {
 				if (a.large_bits[i] != b.large_bits[i])
+					return false;
+			}
+
+			return true;
+		}
+
+		public static bool IsIncluded (DefiniteAssignmentBitSet set, DefiniteAssignmentBitSet test)
+		{
+			var set_bits = set.large_bits;
+			if (set_bits == null)
+				return (set.bits & test.bits & ~copy_on_write_flag) == (set.bits & ~copy_on_write_flag);
+
+			var test_bits = test.large_bits;
+			for (int i = 0; i < set_bits.Length; ++i) {
+				if ((set_bits[i] & test_bits[i]) != set_bits[i])
 					return false;
 			}
 

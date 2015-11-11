@@ -52,7 +52,7 @@ struct sigcontext {
 #define MONO_ARCH_USE_SIGACTION
 #endif
 
-#if defined(__native_client__)
+#if defined(__native_client__) || defined(HOST_WATCHOS)
 #undef MONO_ARCH_USE_SIGACTION
 #endif
 
@@ -89,7 +89,7 @@ struct sigcontext {
 #endif
 #define MONO_ARCH_HAVE_RESTORE_STACK_SUPPORT 1
 
-#define MONO_ARCH_CPU_SPEC x86_desc
+#define MONO_ARCH_CPU_SPEC mono_x86_desc
 
 #define MONO_MAX_IREGS 8
 #define MONO_MAX_FREGS 8
@@ -165,6 +165,8 @@ typedef struct {
 	gboolean need_stack_frame_inited;
 	gboolean need_stack_frame;
 	int sp_fp_offset, param_area_size;
+	gpointer ss_tramp_var;
+	gpointer bp_tramp_var;
 } MonoCompileArch;
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->eax = (gsize)exc; } while (0)
@@ -206,18 +208,14 @@ typedef struct {
 /* X86 uses jit_tls->lmf (See emit_push_lmf ()) */
 #define MONO_ARCH_ENABLE_MONO_LMF_VAR 1
 #endif
-#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_TLS_GET (mono_x86_have_tls_get ())
 #define MONO_ARCH_IMT_REG X86_EDX
 #define MONO_ARCH_VTABLE_REG X86_EDX
 #define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
+#define MONO_ARCH_EXC_REG X86_EAX
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK 1
 #define MONO_ARCH_HAVE_LIVERANGE_OPS 1
 #define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
-#if defined(__linux__) || defined (__APPLE__)
-#define MONO_ARCH_MONITOR_OBJECT_REG X86_EAX
-#define MONO_ARCH_MONITOR_LOCK_TAKEN_REG X86_EDX
-#endif
 #if !defined(__native_client_codegen__)
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #endif
@@ -239,9 +237,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
-#if defined(MONO_ARCH_USE_SIGACTION) || defined(TARGET_WIN32)
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
-#endif
 
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
 #define MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD 1
@@ -256,6 +252,8 @@ typedef struct {
 #define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
 #define MONO_ARCH_HAVE_TLS_GET_REG 1
 #define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
+#define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
@@ -269,13 +267,6 @@ typedef struct {
             MONO_ADD_INS ((cfg)->cbb, inst); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)
-
-typedef struct {
-	guint8 *address;
-	guint8 saved_byte;
-} MonoBreakpointInfo;
-
-extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 /* Return value marshalling for calls between gsharedvt and normal code */
 typedef enum {
@@ -317,7 +308,7 @@ guint8*
 mono_x86_emit_tls_get_reg (guint8* code, int dreg, int offset_reg);
 
 guint32
-mono_x86_get_this_arg_offset (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig);
+mono_x86_get_this_arg_offset (MonoMethodSignature *sig);
 
 gboolean
 mono_x86_have_tls_get (void);

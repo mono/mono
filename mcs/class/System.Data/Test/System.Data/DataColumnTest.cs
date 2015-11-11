@@ -766,12 +766,13 @@ namespace MonoTests.System.Data
 			table2.Columns.Add ("test", typeof(int));
 			table3.Columns.Add ("test", typeof(int));
 
-			DataRelation rel1 = new DataRelation ("rel1", table1.Columns[0], table2.Columns[0]);
-			DataRelation rel2 = new DataRelation ("rel2", table2.Columns[0], table3.Columns[0]);
-
 			ds.Tables.Add (table1);
 			ds.Tables.Add (table2);
 			ds.Tables.Add (table3);
+
+			DataRelation rel1 = new DataRelation ("rel1", table1.Columns[0], table2.Columns[0]);
+			DataRelation rel2 = new DataRelation ("rel2", table2.Columns[0], table3.Columns[0]);
+
 			ds.Relations.Add (rel1);
 			ds.Relations.Add (rel2);
 

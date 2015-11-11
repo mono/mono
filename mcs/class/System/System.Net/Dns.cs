@@ -56,8 +56,6 @@ namespace System.Net {
 
 		static Dns ()
 		{
-			System.Net.Sockets.Socket.CheckProtocolSupport();
-
 #if !MOBILE
 			if (Environment.GetEnvironmentVariable ("MONO_DNS") != null) {
 				resolver = new SimpleResolver ();

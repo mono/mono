@@ -410,10 +410,10 @@ namespace MonoTests.System.Data
 			DataColumnCollection Cols2 = Table2.Columns;
 			Assert.IsTrue (Cols2.CanRemove (C), "test#04");
 
-			DataRelation Rel = new DataRelation ("Rel", Table.Columns [0], Table2.Columns [0]);
 			DataSet Set = new DataSet ();
 			Set.Tables.Add (Table);
 			Set.Tables.Add (Table2);
+			DataRelation Rel = new DataRelation ("Rel", Table.Columns [0], Table2.Columns [0]);
 			Set.Relations.Add (Rel);
 
 			Assert.IsFalse (Cols2.CanRemove (C), "test#05");

@@ -88,11 +88,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // ctor (Uri)
-#if NET_4_0
 		[ExpectedException (typeof (ArgumentNullException))]
-#else
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
 		public void Constructor2_Uri_Null ()
 		{
 			new UriBuilder ((Uri) null);
@@ -386,6 +382,13 @@ namespace MonoTests.System
 			ub.UserName = null;
 			// this is what ASP.NET really means (the ?)
 			Assert.AreEqual ("http://192.168.0.21/error404.aspx?aspxerrorpath=/WebResource.axd", ub.Uri.ToString ());
+		}
+
+		[Test]
+		public void NoHostname ()
+		{
+			UriBuilder ub = new UriBuilder ("about", null, -1, "config");
+			Assert.AreEqual ("about:config", ub.ToString ());
 		}
 	}
 }

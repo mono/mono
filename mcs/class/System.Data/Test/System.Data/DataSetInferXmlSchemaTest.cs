@@ -197,7 +197,7 @@ namespace MonoTests.System.Data
 			// namespaces
 			ds = GetDataSet (xml14, null);
 			AssertDataSet ("xml14", ds, "root", 0, 0);
-			Assert.AreEqual ("p", ds.Prefix);
+			Assert.AreEqual (string.Empty, ds.Prefix);
 			Assert.AreEqual ("urn:foo", ds.Namespace);
 
 			ds = GetDataSet (xml17, null);

@@ -322,5 +322,15 @@ namespace MonoTests.System.Security.Cryptography {
 			rsa.FromXmlString (xml);
 			Assert.AreEqual (xmlPublic, rsa.ToXmlString (false), "Embedded");
 		}
+
+		[Test]
+		public void FromXmlString_Namespaced ()
+		{
+			string rsakey = "<RSAKeyValue><Modulus>sjanng8QA1Puw5S563eglnZgwlQOMcLgAZWHVmWVzAfUotsKc+9HhLpobPdjPsjdJE64Jbx/1oQdjMtx5z9ty+5dlW5fausb4UbFfLSH38Nci/k/qasHCphiuJMtqCYNBYvisf/2rUsj0d5nSxvNNtp37SRbIZ7bDFpmp53kAJU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
+			string dsrsakey = "<ds:RSAKeyValue><ds:Modulus>sjanng8QA1Puw5S563eglnZgwlQOMcLgAZWHVmWVzAfUotsKc+9HhLpobPdjPsjdJE64Jbx/1oQdjMtx5z9ty+5dlW5fausb4UbFfLSH38Nci/k/qasHCphiuJMtqCYNBYvisf/2rUsj0d5nSxvNNtp37SRbIZ7bDFpmp53kAJU=</ds:Modulus><ds:Exponent>AQAB</ds:Exponent></ds:RSAKeyValue>";
+			RSA rsa = RSA.Create();
+			rsa.FromXmlString (rsakey);
+			rsa.FromXmlString (dsrsakey);
+		}
 	}
 }

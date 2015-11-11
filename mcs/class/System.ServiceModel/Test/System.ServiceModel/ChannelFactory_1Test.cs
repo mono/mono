@@ -38,6 +38,8 @@ using System.Xml.Serialization;
 using MonoTests.System.ServiceModel.Channels;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -63,14 +65,14 @@ namespace MonoTests.System.ServiceModel
 			//ChannelFactory<TestService> f =
 				new ChannelFactory<TestService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:37564"));
+					new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 		}
 
 		[Test]
 		public void EndpointAddressAfterCreateChannel ()
 		{
 			var f = new ChannelFactory<ITestService> (new BasicHttpBinding ());
-			f.CreateChannel (new EndpointAddress ("http://localhost:37564"), null);
+			f.CreateChannel (new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()), null);
 			Assert.IsNull (f.Endpoint.Address, "#1");
 		}
 
@@ -163,7 +165,7 @@ namespace MonoTests.System.ServiceModel
 			MyChannelFactory<ITestService> f =
 				new MyChannelFactory<ITestService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:37564"));
+					new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 			Assert.AreEqual (CommunicationState.Created,
 				f.State, "#1");
 			f.OpenAnyways ();
@@ -179,7 +181,7 @@ namespace MonoTests.System.ServiceModel
 			ChannelFactory<ITestService> f =
 				new ChannelFactory<ITestService> (
 					new BasicHttpBinding (),
-					new EndpointAddress ("http://localhost:37564"));
+					new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 			f.CreateChannel ();
 		}
 
@@ -432,14 +434,12 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual ("callResult", res.val, "#2");
 		}
 
-#if NET_4_0
 		[Test]
 		public void ConstructorServiceEndpoint ()
 		{
 			// It is okay to pass ServiceEndpoint that does not have Binding or EndpointAddress.
 			new ChannelFactory<IRequestChannel> (new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), null, null));
 		}
-#endif
 
 		public T CreateFooComplexMC_Channel<T> (bool isXml)
 		{

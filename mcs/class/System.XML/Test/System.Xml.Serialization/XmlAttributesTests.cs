@@ -62,6 +62,7 @@ namespace MonoTests.System.XmlSerialization
 		// Testcases.
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void NewXmlAttributes ()
 		{
 			// seems not different from Type specified ctor().
@@ -74,9 +75,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (0, atts.XmlArrayItems.Count, "#6");
 			Assert.IsNull (atts.XmlAttribute, "#7");
 			Assert.IsNull (atts.XmlChoiceIdentifier, "#8");
-			Assert.IsNotNull (atts.XmlDefaultValue, "#9");
-			// DBNull??
-			Assert.AreEqual (DBNull.Value, atts.XmlDefaultValue, "#10");
+			Assert.IsNull (atts.XmlDefaultValue, "#9");
 			Assert.IsNotNull (atts.XmlElements, "#11");
 			Assert.AreEqual (0, atts.XmlElements.Count, "#12");
 			Assert.IsNull (atts.XmlEnum, "#13");

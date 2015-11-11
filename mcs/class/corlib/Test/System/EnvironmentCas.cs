@@ -110,7 +110,6 @@ namespace MonoCasTests.System {
 			Environment.CurrentDirectory = cd;
 		}
 
-#if !RUN_ONDOTNET || NET_4_0 // Disabled because .net 2 fails to load dll with "Failure decoding embedded permission set object" due to "/" path
 
 		[Test]
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
@@ -129,7 +128,6 @@ namespace MonoCasTests.System {
 			// now that the stack is set, call the method
 			string s = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 		}		
-#endif
 
 		[Test]
 		public void CurrentDirectory_Set_FileIOPermission ()

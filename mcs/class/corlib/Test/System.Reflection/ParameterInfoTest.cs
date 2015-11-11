@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -242,7 +243,6 @@ namespace MonoTests.System.Reflection
 		{
 		}
 
-#if NET_4_0
 		public static void TestC (decimal u = decimal.MaxValue) {
 		}
 
@@ -259,6 +259,26 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (info [0].HasDefaultValue);
 		}
 #endif
+
+		class TestParamAttribute : Attribute
+		{
+		}
+
+		public static int TestCustomAttribute_Method ([TestParamAttribute] string arg)
+		{
+			return arg.Length;
+		}
+
+		[Test]
+		public void TestCustomAttribute ()
+		{
+			var metInfo = GetType ().GetMethod ("TestCustomAttribute_Method", new Type[] { typeof(string) });
+			var paramInfos = metInfo.GetParameters ();
+			var argParamInfo = paramInfos[0];
+
+			var custAttrs = argParamInfo.GetCustomAttributes ();
+			Assert.AreEqual (1, custAttrs.Count ());
+		}
 
 		class MyParameterInfo2 : ParameterInfo
 		{
@@ -332,7 +352,9 @@ namespace MonoTests.System.Reflection
 			}
 #endif
 			Assert.IsFalse (p.IsIn, "#7");
+#if FEATURE_USE_LCID
 			Assert.IsFalse (p.IsLcid, "#8");
+#endif
 			Assert.IsFalse (p.IsOptional, "#9");
 			Assert.IsFalse (p.IsOut, "#10");
 			Assert.IsFalse (p.IsRetval, "#10");
@@ -428,6 +450,5 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (p2.myList, p2.CustomAttributes, "#3");
 #endif
 		}
-#endif
 	}
 }

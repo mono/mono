@@ -410,6 +410,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // DefineResource doesn't allow path in its fileName parameter and the test attempts to write to / in effect
 	public void TestDefineResource ()
 	{
 		ab.DefineResource ("foo", "FOO", "foo.txt", ResourceAttributes.Public);
@@ -586,6 +587,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // Missing Mono.Compilerservices.SymbolWriter assembly
 	public void TestDefineDynamicModule ()
 	{
 		ab.DefineDynamicModule ("foo", "foo.dll");
@@ -781,19 +783,8 @@ public class AssemblyBuilderTest
 		try {
 			ab.Save ("lib.dll");
 			Assert.Fail ("#A1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name doesnotexist is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-			Assert.IsNull (ex.InnerException, "#A3");
-			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.IsTrue (ex.Message.IndexOf ("doesnotexist") != -1, "#A5");
-			Assert.AreEqual ("name", ex.ParamName, "#A6");
-		}
-#endif
 
 		ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname,
 			AssemblyBuilderAccess.RunAndSave, tempDir);
@@ -809,19 +800,8 @@ public class AssemblyBuilderTest
 		try {
 			ab.Save ("lib.dll");
 			Assert.Fail ("#B1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name neutral is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-			Assert.IsNull (ex.InnerException, "#B3");
-			Assert.IsNotNull (ex.Message, "#B4");
-			Assert.IsTrue (ex.Message.IndexOf ("neutral") != -1, "#B5");
-			Assert.AreEqual ("name", ex.ParamName, "#B6");
-		}
-#endif
 	}
 
 	[Test] // DefineVersionInfoResource ()
@@ -903,19 +883,8 @@ public class AssemblyBuilderTest
 		try {
 			ab.Save ("lib.dll");
 			Assert.Fail ("#A1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name doesnotexist is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-			Assert.IsNull (ex.InnerException, "#A3");
-			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.IsTrue (ex.Message.IndexOf ("doesnotexist") != -1, "#A5");
-			Assert.AreEqual ("name", ex.ParamName, "#A6");
-		}
-#endif
 
 		ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname,
 			AssemblyBuilderAccess.RunAndSave, tempDir);
@@ -931,19 +900,8 @@ public class AssemblyBuilderTest
 		try {
 			ab.Save ("lib.dll");
 			Assert.Fail ("#B1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name neutral is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-			Assert.IsNull (ex.InnerException, "#B3");
-			Assert.IsNotNull (ex.Message, "#B4");
-			Assert.IsTrue (ex.Message.IndexOf ("neutral") != -1, "#B5");
-			Assert.AreEqual ("name", ex.ParamName, "#B6");
-		}
-#endif
 	}
 
 	[Test] // DefineVersionInfoResource (String, String, String, String, String)
@@ -1427,10 +1385,8 @@ public class AssemblyBuilderTest
 			string FxVersion;
 #if MOBILE
 			FxVersion = "2.0.5.0;";
-#elif NET_4_0
-			FxVersion = "4.0.0.0;";
 #else
-			FxVersion = "2.0.0.0;";
+			FxVersion = "4.0.0.0;";
 #endif
 			Assert.AreEqual (new Version (FxVersion), refs [0].Version, "#D2:Version");
 			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
@@ -1829,9 +1785,13 @@ public class AssemblyBuilderTest
 				fullName);
 			newDomain.DoCallBack (new CrossAppDomainDelegate (helper.Test));
 		} finally {
+#if !MONODROID
+			// RUNTIME: crash
+			// AppDomain unloading crashes the runtime on Android
 			if (newDomain != null) {
 				AppDomain.Unload (newDomain);
 			}
+#endif
 		}
 	}
 

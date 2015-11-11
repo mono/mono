@@ -47,6 +47,8 @@
     <ClCompile Include="..\mono\utils\mono-mmap.c" />
     <ClCompile Include="..\mono\utils\mono-mutex.c" />
     <ClCompile Include="..\mono\utils\mono-networkinterfaces.c" />
+    <ClCompile Include="..\mono\utils\mono-rand.c" />
+    <ClCompile Include="..\mono\utils\mono-threads-state-machine.c" />
     <ClCompile Include="..\mono\utils\networking.c" />
     <ClCompile Include="..\mono\utils\networking-posix.c" />
     <ClCompile Include="..\mono\utils\networking-missing.c" />
@@ -61,19 +63,24 @@
     <ClCompile Include="..\mono\utils\mono-stdlib.c" />
     <ClCompile Include="..\mono\utils\mono-threads-mach.c" />
     <ClCompile Include="..\mono\utils\mono-threads-posix.c" />
+    <ClCompile Include="..\mono\utils\mono-threads-posix-signals.c" />
     <ClCompile Include="..\mono\utils\mono-threads-windows.c" />
     <ClCompile Include="..\mono\utils\mono-threads.c" />
+    <ClCompile Include="..\mono\utils\mono-threads-posix-abort-syscall.c" />
+    <ClCompile Include="..\mono\utils\mono-threads-mach-abort-syscall.c" />
+    <ClCompile Include="..\mono\utils\mono-threads-windows-abort-syscall.c" />
     <ClCompile Include="..\mono\utils\mono-time.c" />
     <ClCompile Include="..\mono\utils\mono-tls.c" />
     <ClCompile Include="..\mono\utils\mono-uri.c" />
     <ClCompile Include="..\mono\utils\mono-value-hash.c" />
     <ClCompile Include="..\mono\utils\monobitset.c" />
     <ClCompile Include="..\mono\utils\strenc.c" />
-    <ClCompile Include="..\mono\utils\strtod.c" />
     <ClCompile Include="..\mono\utils\atomic.c" />
     <ClCompile Include="..\mono\utils\mono-hwcap.c" />
     <ClCompile Include="..\mono\utils\mono-hwcap-x86.c" />
     <ClCompile Include="..\mono\utils\bsearch.c" />
+    <ClCompile Include="..\mono\utils\memfuncs.c" />
+    <ClCompile Include="..\mono\utils\parse.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mono\utils\dlmalloc.h" />
@@ -93,6 +100,7 @@
     <ClInclude Include="..\mono\utils\memcheck.h" />
     <ClInclude Include="..\mono\utils\mono-codeman.h" />
     <ClInclude Include="..\mono\utils\mono-compiler.h" />
+    <ClInclude Include="..\mono\utils\mono-complex.h" />
     <ClInclude Include="..\mono\utils\mono-conc-hashtable.h" />
     <ClInclude Include="..\mono\utils\mono-context.h" />
     <ClInclude Include="..\mono\utils\mono-counters.h" />
@@ -118,24 +126,27 @@
     <ClInclude Include="..\mono\utils\mono-proclib.h" />
     <ClInclude Include="..\mono\utils\mono-property-hash.h" />
     <ClInclude Include="..\mono\utils\mono-publib.h" />
+    <ClInclude Include="..\mono\utils\mono-rand.h" />
     <ClInclude Include="..\mono\utils\mono-semaphore.h" />
     <ClInclude Include="..\mono\utils\mono-sigcontext.h" />
     <ClInclude Include="..\mono\utils\mono-stack-unwinding.h" />
     <ClInclude Include="..\mono\utils\mono-stdlib.h" />
     <ClInclude Include="..\mono\utils\mono-string.h" />
     <ClInclude Include="..\mono\utils\mono-threads.h" />
+    <ClCompile Include="..\mono\utils\mono-threads-posix-signals.h" />
     <ClInclude Include="..\mono\utils\mono-time.h" />
     <ClInclude Include="..\mono\utils\mono-tls.h" />
     <ClInclude Include="..\mono\utils\mono-uri.h" />
     <ClInclude Include="..\mono\utils\mono-value-hash.h" />
     <ClInclude Include="..\mono\utils\monobitset.h" />
     <ClInclude Include="..\mono\utils\strenc.h" />
-    <ClInclude Include="..\mono\utils\strtod.h" />
     <ClInclude Include="..\mono\utils\valgrind.h" />
     <ClInclude Include="..\mono\utils\atomic.h" />
     <ClInclude Include="..\mono\utils\mono-hwcap.h" />
     <ClInclude Include="..\mono\utils\mono-hwcap-x86.h" />
     <ClInclude Include="..\mono\utils\bsearch.h" />
+    <ClInclude Include="..\mono\utils\memfuncs.h" />
+    <ClInclude Include="..\mono\utils\parse.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\mono\utils\win64.asm">
@@ -174,7 +185,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+    <Import Project=".\masm.fixed.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -190,19 +201,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(Platform)\lib\</OutDir>
+    <OutDir>$(Platform)\lib\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(Platform)\lib\</OutDir>
+    <OutDir>$(Platform)\lib\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(Platform)\lib\</OutDir>
+    <OutDir>$(Platform)\lib\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(Platform)\lib\</OutDir>
+    <OutDir>$(Platform)\lib\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\obj\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

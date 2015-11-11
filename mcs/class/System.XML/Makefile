@@ -13,21 +13,19 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-# FIXME: use below, once mcs got fixed.
-#RESOURCE_STRINGS = ../../../external/referencesource/System.Xml/System.Xml.txt
-#	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
-
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
+RESOURCE_STRINGS = \
+	../../../external/referencesource/System.Xml/System.Xml.txt \
+	../../../external/referencesource/System.Data.SqlXml/System.Xml.Utils.txt
 
 LIB_REFS = System
-LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,0612,0642,649 -unsafe -d:ASYNC -d:DISABLE_CAS_USE -d:MONO_HYBRID_SYSTEM_XML
+LIB_MCS_FLAGS = -r:$(corlib)  -nowarn:219,414,649,1717 -unsafe -d:ASYNC
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT
+LIB_MCS_FLAGS += -d:AGCLR -d:NET_2_1_HACK -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML -d:DISABLE_CAS_USE
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -r:System.Data.dll -r:System.Core.dll
 
-ifndef PROFILE_ANY_MOBILE
+ifndef MOBILE_PROFILE
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
@@ -81,7 +79,7 @@ system_xml_library_deps := 				\
 	$(bare_libdir)/System.dll			\
 	$(bare_libdir)/System.Xml.dll
 
-ifndef PROFILE_ANY_MOBILE
+ifndef MOBILE_PROFILE
 system_xml_library_deps += $(the_libdir_base)System.Configuration.dll
 endif
 

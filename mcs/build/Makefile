@@ -18,8 +18,8 @@ PLATFORMS = darwin linux win32
 PROFILES = \
 	basic \
 	build \
-	net_4_0 \
-	net_4_5 \
+	binary_reference_assemblies \
+	net_4_x \
 	xbuild_12 \
 	xbuild_14
 

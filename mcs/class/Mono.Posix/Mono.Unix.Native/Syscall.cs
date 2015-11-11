@@ -727,6 +727,186 @@ namespace Mono.Unix.Native {
 		MREMAP_MAYMOVE = 0x1,
 	}
 
+	[Map]
+	[CLSCompliant (false)]
+	public enum UnixSocketType : int {
+		SOCK_STREAM    =  1, // Byte-stream socket
+		SOCK_DGRAM     =  2, // Datagram socket
+		SOCK_RAW       =  3, // Raw protocol interface (linux specific)
+		SOCK_RDM       =  4, // Reliably-delivered messages (linux specific)
+		SOCK_SEQPACKET =  5, // Sequenced-packet socket
+		SOCK_DCCP      =  6, // Datagram Congestion Control Protocol (linux specific)
+		SOCK_PACKET    = 10, // Linux specific
+	}
+
+	[Map][Flags]
+	[CLSCompliant (false)]
+	public enum UnixSocketFlags : int {
+		SOCK_CLOEXEC  = 0x80000, /* Atomically set close-on-exec flag for the new descriptor(s). */
+		SOCK_NONBLOCK = 0x00800, /* Atomically mark descriptor(s) as non-blocking. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum UnixSocketProtocol : int {
+		IPPROTO_ICMP    =    1, /* Internet Control Message Protocol */
+		IPPROTO_IGMP    =    2, /* Internet Group Management Protocol */
+		IPPROTO_IPIP    =    4, /* IPIP tunnels (older KA9Q tunnels use 94) */
+		IPPROTO_TCP     =    6, /* Transmission Control Protocol */
+		IPPROTO_EGP     =    8, /* Exterior Gateway Protocol */
+		IPPROTO_PUP     =   12, /* PUP protocol */
+		IPPROTO_UDP     =   17, /* User Datagram Protocol */
+		IPPROTO_IDP     =   22, /* XNS IDP protocol */
+		IPPROTO_TP      =   29, /* SO Transport Protocol Class 4 */
+		IPPROTO_DCCP    =   33, /* Datagram Congestion Control Protocol */
+		IPPROTO_IPV6    =   41, /* IPv6-in-IPv4 tunnelling */
+		IPPROTO_RSVP    =   46, /* RSVP Protocol */
+		IPPROTO_GRE     =   47, /* Cisco GRE tunnels (rfc 1701,1702) */
+		IPPROTO_ESP     =   50, /* Encapsulation Security Payload protocol */
+		IPPROTO_AH      =   51, /* Authentication Header protocol */
+		IPPROTO_MTP     =   92, /* Multicast Transport Protocol */
+		IPPROTO_BEETPH  =   94, /* IP option pseudo header for BEET */
+		IPPROTO_ENCAP   =   98, /* Encapsulation Header */
+		IPPROTO_PIM     =  103, /* Protocol Independent Multicast */
+		IPPROTO_COMP    =  108, /* Compression Header Protocol */
+		IPPROTO_SCTP    =  132, /* Stream Control Transport Protocol */
+		IPPROTO_UDPLITE =  136, /* UDP-Lite (RFC 3828) */
+		IPPROTO_RAW     =  255, /* Raw IP packets */
+
+		// Number used by linux (0) has a special meaning for socket()
+		IPPROTO_IP      = 1024, /* Dummy protocol for TCP */
+		// Number used by linux (1) clashes with IPPROTO_ICMP
+		SOL_SOCKET      = 2048, /* For setsockopt() / getsockopt(): Options to be accessed at socket level, not protocol level. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum UnixAddressFamily : int {
+		AF_UNSPEC     =  0,  /* Unspecified. */
+		AF_UNIX       =  1,  /* Local to host (pipes and file-domain). */
+		AF_INET       =  2,  /* IP protocol family. */
+		AF_AX25       =  3,  /* Amateur Radio AX.25. */
+		AF_IPX        =  4,  /* Novell Internet Protocol. */
+		AF_APPLETALK  =  5,  /* Appletalk DDP. */
+		AF_NETROM     =  6,  /* Amateur radio NetROM. */
+		AF_BRIDGE     =  7,  /* Multiprotocol bridge. */
+		AF_ATMPVC     =  8,  /* ATM PVCs. */
+		AF_X25        =  9,  /* Reserved for X.25 project. */
+		AF_INET6      = 10,  /* IP version 6. */
+		AF_ROSE       = 11,  /* Amateur Radio X.25 PLP. */
+		AF_DECnet     = 12,  /* Reserved for DECnet project. */
+		AF_NETBEUI    = 13,  /* Reserved for 802.2LLC project. */
+		AF_SECURITY   = 14,  /* Security callback pseudo AF. */
+		AF_KEY        = 15,  /* PF_KEY key management API. */
+		AF_NETLINK    = 16,
+		AF_PACKET     = 17,  /* Packet family. */
+		AF_ASH        = 18,  /* Ash. */
+		AF_ECONET     = 19,  /* Acorn Econet. */
+		AF_ATMSVC     = 20,  /* ATM SVCs. */
+		AF_RDS        = 21,  /* RDS sockets. */
+		AF_SNA        = 22,  /* Linux SNA Project */
+		AF_IRDA       = 23,  /* IRDA sockets. */
+		AF_PPPOX      = 24,  /* PPPoX sockets. */
+		AF_WANPIPE    = 25,  /* Wanpipe API sockets. */
+		AF_LLC        = 26,  /* Linux LLC. */
+		AF_CAN        = 29,  /* Controller Area Network. */
+		AF_TIPC       = 30,  /* TIPC sockets. */
+		AF_BLUETOOTH  = 31,  /* Bluetooth sockets. */
+		AF_IUCV       = 32,  /* IUCV sockets. */
+		AF_RXRPC      = 33,  /* RxRPC sockets. */
+		AF_ISDN       = 34,  /* mISDN sockets. */
+		AF_PHONET     = 35,  /* Phonet sockets. */
+		AF_IEEE802154 = 36,  /* IEEE 802.15.4 sockets. */
+		AF_CAIF       = 37,  /* CAIF sockets. */
+		AF_ALG        = 38,  /* Algorithm sockets. */
+		AF_NFC        = 39,  /* NFC sockets. */
+		AF_VSOCK      = 40,  /* vSockets. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum UnixSocketOptionName : int {
+		SO_DEBUG                         =  1,
+		SO_REUSEADDR                     =  2,
+		SO_TYPE                          =  3,
+		SO_ERROR                         =  4,
+		SO_DONTROUTE                     =  5,
+		SO_BROADCAST                     =  6,
+		SO_SNDBUF                        =  7,
+		SO_RCVBUF                        =  8,
+		SO_SNDBUFFORCE                   = 32,
+		SO_RCVBUFFORCE                   = 33,
+		SO_KEEPALIVE                     =  9,
+		SO_OOBINLINE                     = 10,
+		SO_NO_CHECK                      = 11,
+		SO_PRIORITY                      = 12,
+		SO_LINGER                        = 13,
+		SO_BSDCOMPAT                     = 14,
+		SO_REUSEPORT                     = 15,
+		SO_PASSCRED                      = 16,
+		SO_PEERCRED                      = 17,
+		SO_RCVLOWAT                      = 18,
+		SO_SNDLOWAT                      = 19,
+		SO_RCVTIMEO                      = 20,
+		SO_SNDTIMEO                      = 21,
+		SO_SECURITY_AUTHENTICATION       = 22,
+		SO_SECURITY_ENCRYPTION_TRANSPORT = 23,
+		SO_SECURITY_ENCRYPTION_NETWORK   = 24,
+		SO_BINDTODEVICE                  = 25,
+		SO_ATTACH_FILTER                 = 26,
+		SO_DETACH_FILTER                 = 27,
+		SO_PEERNAME                      = 28,
+		SO_TIMESTAMP                     = 29,
+		SO_ACCEPTCONN                    = 30,
+		SO_PEERSEC                       = 31,
+		SO_PASSSEC                       = 34,
+		SO_TIMESTAMPNS                   = 35,
+		SO_MARK                          = 36,
+		SO_TIMESTAMPING                  = 37,
+		SO_PROTOCOL                      = 38,
+		SO_DOMAIN                        = 39,
+		SO_RXQ_OVFL                      = 40,
+		SO_WIFI_STATUS                   = 41,
+		SO_PEEK_OFF                      = 42,
+		SO_NOFCS                         = 43,
+		SO_LOCK_FILTER                   = 44,
+		SO_SELECT_ERR_QUEUE              = 45,
+		SO_BUSY_POLL                     = 46,
+		SO_MAX_PACING_RATE               = 47,
+	}
+
+	[Flags][Map]
+	[CLSCompliant (false)]
+	public enum MessageFlags : int {
+		MSG_OOB          =       0x01, /* Process out-of-band data. */
+		MSG_PEEK         =       0x02, /* Peek at incoming messages. */
+		MSG_DONTROUTE    =       0x04, /* Don't use local routing. */
+		MSG_CTRUNC       =       0x08, /* Control data lost before delivery. */
+		MSG_PROXY        =       0x10, /* Supply or ask second address. */
+		MSG_TRUNC        =       0x20,
+		MSG_DONTWAIT     =       0x40, /* Nonblocking IO. */
+		MSG_EOR          =       0x80, /* End of record. */
+		MSG_WAITALL      =      0x100, /* Wait for a full request. */
+		MSG_FIN          =      0x200,
+		MSG_SYN          =      0x400,
+		MSG_CONFIRM      =      0x800, /* Confirm path validity. */
+		MSG_RST          =     0x1000,
+		MSG_ERRQUEUE     =     0x2000, /* Fetch message from error queue. */
+		MSG_NOSIGNAL     =     0x4000, /* Do not generate SIGPIPE. */
+		MSG_MORE         =     0x8000, /* Sender will send more. */
+		MSG_WAITFORONE   =    0x10000, /* Wait for at least one packet to return.*/
+		MSG_FASTOPEN     = 0x20000000, /* Send data in TCP SYN. */
+		MSG_CMSG_CLOEXEC = 0x40000000, /* Set close_on_exit for file descriptor received through SCM_RIGHTS. */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum ShutdownOption : int {
+		SHUT_RD   = 0x01,   /* No more receptions. */
+		SHUT_WR   = 0x02,   /* No more transmissions. */
+		SHUT_RDWR = 0x03,   /* No more receptions or transmissions. */
+	}
+
 	#endregion
 
 	#region Structures
@@ -1228,6 +1408,19 @@ namespace Mono.Unix.Native {
 		[FieldOffset (4)]
 		public ulong u64;
 	}
+
+	[Map ("struct linger")]
+	[CLSCompliant (false)]
+	public struct Linger {
+		public int l_onoff;
+		public int l_linger;
+
+		public override string ToString ()
+		{
+			return string.Format ("{0}, {1}", l_onoff, l_linger);
+		}
+	}
+
 	#endregion
 
 	#region Classes
@@ -4355,6 +4548,243 @@ namespace Mono.Unix.Native {
 		{
 			return sys_pwritev (fd, iov, iov.Length, offset);
 		}
+		#endregion
+
+		#region <socket.h> Declarations
+		//
+		// <socket.h>
+		//
+
+		// socket(2)
+		//    int socket(int domain, int type, int protocol);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="socket")]
+		static extern int sys_socket (int domain, int type, int protocol);
+
+		public static int socket (UnixAddressFamily domain, UnixSocketType type, UnixSocketFlags flags, UnixSocketProtocol protocol)
+		{
+			var _domain = NativeConvert.FromUnixAddressFamily (domain);
+			var _type = NativeConvert.FromUnixSocketType (type);
+			var _flags = NativeConvert.FromUnixSocketFlags (flags);
+			// protocol == 0 is a special case (uses default protocol)
+			var _protocol = protocol == 0 ? 0 : NativeConvert.FromUnixSocketProtocol (protocol);
+
+			return sys_socket (_domain, _type | _flags, _protocol);
+		}
+
+		public static int socket (UnixAddressFamily domain, UnixSocketType type, UnixSocketProtocol protocol)
+		{
+			return socket (domain, type, 0, protocol);
+		}
+
+		// socketpair(2)
+		//    int socketpair(int domain, int type, int protocol, int sv[2]);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_socketpair")]
+		static extern int sys_socketpair (int domain, int type, int protocol, out int socket1, out int socket2);
+
+		public static int socketpair (UnixAddressFamily domain, UnixSocketType type, UnixSocketFlags flags, UnixSocketProtocol protocol, out int socket1, out int socket2)
+		{
+			var _domain = NativeConvert.FromUnixAddressFamily (domain);
+			var _type = NativeConvert.FromUnixSocketType (type);
+			var _flags = NativeConvert.FromUnixSocketFlags (flags);
+			// protocol == 0 is a special case (uses default protocol)
+			var _protocol = protocol == 0 ? 0 : NativeConvert.FromUnixSocketProtocol (protocol);
+
+			return sys_socketpair (_domain, _type | _flags, _protocol, out socket1, out socket2);
+		}
+
+		public static int socketpair (UnixAddressFamily domain, UnixSocketType type, UnixSocketProtocol protocol, out int socket1, out int socket2)
+		{
+			return socketpair (domain, type, 0, protocol, out socket1, out socket2);
+		}
+
+		// sockatmark(2)
+		//    int sockatmark(int sockfd);
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int sockatmark (int socket);
+
+		// listen(2)
+		//    int listen(int sockfd, int backlog);
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int listen (int socket, int backlog);
+
+		// getsockopt(2)
+		//    int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt")]
+		static extern unsafe int sys_getsockopt (int socket, int level, int option_name, void *option_value, ref long option_len);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt_timeval")]
+		static extern unsafe int sys_getsockopt_timeval (int socket, int level, int option_name, out Timeval option_value);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_getsockopt_linger")]
+		static extern unsafe int sys_getsockopt_linger (int socket, int level, int option_name, out Linger option_value);
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, void *option_value, ref long option_len)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_getsockopt (socket, _level, _option_name, option_value, ref option_len);
+		}
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, IntPtr option_value, ref long option_len)
+		{
+			return getsockopt (socket, level, option_name, (void*) option_value, ref option_len);
+		}
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, out int option_value)
+		{
+			int value;
+			long size = sizeof (int);
+			int ret = getsockopt (socket, level, option_name, &value, ref size);
+			if (ret != -1 && size != sizeof (int)) {
+				SetLastError (Errno.EINVAL);
+				ret = -1;
+			}
+			option_value = value;
+			return ret;
+		}
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, byte[] option_value, ref long option_len)
+		{
+			if (option_len > (option_value == null ? 0 : option_value.Length))
+				throw new ArgumentOutOfRangeException ("option_len", "option_len > (option_value == null ? 0 : option_value.Length)");
+			fixed (byte* ptr = option_value)
+				return getsockopt (socket, level, option_name, ptr, ref option_len);
+		}
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, out Timeval option_value)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_getsockopt_timeval (socket, _level, _option_name, out option_value);
+		}
+
+		public static unsafe int getsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, out Linger option_value)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_getsockopt_linger (socket, _level, _option_name, out option_value);
+		}
+
+		// setsockopt(2)
+		//    int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt")]
+		static extern unsafe int sys_setsockopt (int socket, int level, int option_name, void *option_value, long option_len);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt_timeval")]
+		static extern unsafe int sys_setsockopt_timeval (int socket, int level, int option_name, ref Timeval option_value);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setsockopt_linger")]
+		static extern unsafe int sys_setsockopt_linger (int socket, int level, int option_name, ref Linger option_value);
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, void *option_value, long option_len)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_setsockopt (socket, _level, _option_name, option_value, option_len);
+		}
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, IntPtr option_value, long option_len)
+		{
+			return setsockopt (socket, level, option_name, (void*) option_value, option_len);
+		}
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, int option_value)
+		{
+			return setsockopt (socket, level, option_name, &option_value, sizeof (int));
+		}
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, byte[] option_value, long option_len)
+		{
+			if (option_len > (option_value == null ? 0 : option_value.Length))
+				throw new ArgumentOutOfRangeException ("option_len", "option_len > (option_value == null ? 0 : option_value.Length)");
+			fixed (byte* ptr = option_value)
+				return setsockopt (socket, level, option_name, ptr, option_len);
+		}
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Timeval option_value)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_setsockopt_timeval (socket, _level, _option_name, ref option_value);
+		}
+
+		public static unsafe int setsockopt (int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Linger option_value)
+		{
+			var _level = NativeConvert.FromUnixSocketProtocol (level);
+			var _option_name = NativeConvert.FromUnixSocketOptionName (option_name);
+			return sys_setsockopt_linger (socket, _level, _option_name, ref option_value);
+		}
+
+		// shutdown(2)
+		//    int shutdown(int sockfd, int how);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="shutdown")]
+		static extern int sys_shutdown (int socket, int how);
+
+		public static int shutdown (int socket, ShutdownOption how)
+		{
+			var _how = NativeConvert.FromShutdownOption (how);
+			return sys_shutdown (socket, _how);
+		}
+
+		// recv(2)
+		//    ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_recv")]
+		static extern unsafe long sys_recv (int socket, void *buffer, ulong length, int flags);
+
+		public static unsafe long recv (int socket, void *buffer, ulong length, MessageFlags flags)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_recv (socket, buffer, length, _flags);
+		}
+
+		public static unsafe long recv (int socket, IntPtr buffer, ulong length, MessageFlags flags)
+		{
+			return recv (socket, (void*) buffer, length, flags);
+		}
+
+		public static unsafe long recv (int socket, byte[] buffer, ulong length, MessageFlags flags)
+		{
+			if (length > (ulong) (buffer == null ? 0 : buffer.LongLength))
+				throw new ArgumentOutOfRangeException ("length", "length > (buffer == null ? 0 : buffer.LongLength)");
+			fixed (byte* ptr = buffer)
+				return recv (socket, ptr, length, flags);
+		}
+
+		// send(2)
+		//    ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_send")]
+		static extern unsafe long sys_send (int socket, void *message, ulong length, int flags);
+
+		public static unsafe long send (int socket, void *message, ulong length, MessageFlags flags)
+		{
+			int _flags = NativeConvert.FromMessageFlags (flags);
+			return sys_send (socket, message, length, _flags);
+		}
+
+		public static unsafe long send (int socket, IntPtr message, ulong length, MessageFlags flags)
+		{
+			return send (socket, (void*) message, length, flags);
+		}
+
+		public static unsafe long send (int socket, byte[] message, ulong length, MessageFlags flags)
+		{
+			if (length > (ulong) (message == null ? 0 : message.LongLength))
+				throw new ArgumentOutOfRangeException ("length", "length > (message == null ? 0 : message.LongLength)");
+			fixed (byte* ptr = message)
+				return send (socket, ptr, length, flags);
+		}
+
 		#endregion
 	}
 

@@ -40,6 +40,7 @@ using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
@@ -57,6 +58,10 @@ namespace System.Runtime.Remoting.Contexts {
 		#endregion
 #pragma warning restore 169, 414
 
+		// Name is significant; used by the runtime.
+		[ContextStatic]
+		static object[] local_slots;
+
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;
 
@@ -66,29 +71,36 @@ namespace System.Runtime.Remoting.Contexts {
 		// The sink chain that has to be used by all calls exiting the context
 		IMessageSink client_context_sink_chain = null;
 
-		object[] datastore;
 		List<IContextProperty> context_properties;
 //		bool frozen;
 		
 		static int global_count;
 
-		/* Wrap this in a nested class so its not constructed during shutdown */
-		class NamedSlots {
-			public static Hashtable namedSlots = new Hashtable ();
-		}
+		volatile LocalDataStoreHolder _localDataStore;
+
+		static LocalDataStoreMgr _localDataStoreMgr = new LocalDataStoreMgr();
 
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
 		ContextCallbackObject callback_object = null;
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void RegisterContext (Context ctx);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern static void ReleaseContext (Context ctx);
 		
 		public Context ()
 		{
 			domain_id = Thread.GetDomainID();
-			context_id = 1 + global_count++;
+			context_id = Interlocked.Increment (ref global_count);
+
+			RegisterContext (this);
 		}
 
 		~Context ()
 		{
+			ReleaseContext (this);
 		}
 
 		public static Context DefaultContext {
@@ -150,7 +162,13 @@ namespace System.Runtime.Remoting.Contexts {
 					return rp.ObjectIdentity.ClientDynamicProperties;
 				}
 				else
+				{
+#if FEATURE_REMOTING
 					return obj.ObjectIdentity.ServerDynamicProperties;
+#else
+					throw new NotSupportedException ();
+#endif					
+				}
 			}
 			else if (ctx != null && obj == null)
 			{
@@ -355,66 +373,56 @@ namespace System.Runtime.Remoting.Contexts {
 			
 			callback_object.DoCallBack (deleg);
 		}
-		
+
+		private LocalDataStore MyLocalStore 
+		{
+			get 
+			{ 
+				if (_localDataStore == null)
+				{
+					// It's OK to lock the manager here because it is going to lock
+					// itself anyway.
+					lock (_localDataStoreMgr)
+					{
+						if (_localDataStore == null)
+						{
+							// The local store has not yet been created for this thread.
+							_localDataStore = _localDataStoreMgr.CreateLocalDataStore();
+						}
+					}
+				}
+				return _localDataStore.Store;
+			}
+		}
+
 		public static LocalDataStoreSlot AllocateDataSlot ()
 		{
-			return new LocalDataStoreSlot (false);
+			return _localDataStoreMgr.AllocateDataSlot ();
 		}
-		
+
 		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				LocalDataStoreSlot slot = AllocateDataSlot ();
-				NamedSlots.namedSlots.Add (name, slot);
-				return slot;
-			}
+			return _localDataStoreMgr.AllocateNamedDataSlot (name);
 		}
-		
+
 		public static void FreeNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				NamedSlots.namedSlots.Remove (name);
-			}
+			_localDataStoreMgr.FreeNamedDataSlot (name);
 		}
-		
-		public static object GetData (LocalDataStoreSlot slot)
-		{
-			Context ctx = Thread.CurrentContext;
-			
-			lock (ctx)
-			{
-				if (ctx.datastore != null && slot.slot < ctx.datastore.Length)
-					return ctx.datastore [slot.slot];
-				return null;
-			}
-		}
-		
+
 		public static LocalDataStoreSlot GetNamedDataSlot (string name)
 		{
-			lock (NamedSlots.namedSlots.SyncRoot)
-			{
-				LocalDataStoreSlot slot = NamedSlots.namedSlots [name] as LocalDataStoreSlot;
-				if (slot == null) return AllocateNamedDataSlot (name);
-				else return slot;
-			}
+			return _localDataStoreMgr.GetNamedDataSlot (name);
 		}
-		
+
+		public static object GetData (LocalDataStoreSlot slot)
+		{
+			return Thread.CurrentContext.MyLocalStore.GetData (slot);
+		}
+
 		public static void SetData (LocalDataStoreSlot slot, object data)
 		{
-			Context ctx = Thread.CurrentContext;
-			lock (ctx)
-			{
-				if (ctx.datastore == null) {
-					ctx.datastore = new object [slot.slot + 2];
-				} else if (slot.slot >= ctx.datastore.Length) {
-					object[] nslots = new object [slot.slot + 2];
-					ctx.datastore.CopyTo (nslots, 0);
-					ctx.datastore = nslots;
-				}
-				ctx.datastore [slot.slot] = data;
-			}
+			Thread.CurrentContext.MyLocalStore.SetData (slot, data);
 		}
 	}
 

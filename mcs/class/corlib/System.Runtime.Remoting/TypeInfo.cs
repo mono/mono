@@ -56,7 +56,7 @@ namespace System.Runtime.Remoting
 
 				int baseCount = 0;
 				Type baseType = type.BaseType;
-				while (baseType != typeof (MarshalByRefObject) && baseType != typeof(object))
+				while (baseType != typeof (MarshalByRefObject) && baseType != null)
 				{
 					baseType = baseType.BaseType;
 					baseCount++;

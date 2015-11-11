@@ -19,7 +19,8 @@ typedef enum {
 	FRAME_TYPE_DEBUGGER_INVOKE = 1,
 	/* Frame for transitioning to native code */
 	FRAME_TYPE_MANAGED_TO_NATIVE = 2,
-	FRAME_TYPE_SENTINEL = 3
+	FRAME_TYPE_TRAMPOLINE = 3,
+	FRAME_TYPE_NUM = 4
 } MonoStackFrameType;
 
 typedef enum {
@@ -93,6 +94,8 @@ typedef struct {
 	MonoContext ctx;
 	gpointer unwind_data [3]; /*right now: domain, lmf and jit_tls*/
 	gboolean valid;
+	void *gc_stackdata;
+	int gc_stackdata_size;
 } MonoThreadUnwindState;
 
 

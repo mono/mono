@@ -74,6 +74,14 @@ class C
 		if (res2)
 			return 17;
 
+		var r1 = a_n & E.V;
+		if (r1 != null)
+			return 18;
+
+		var r2 = E.V & a_n;
+		if (r2 != null)
+			return 19;
+
 		Console.WriteLine ("ok");
 
 		return 0;

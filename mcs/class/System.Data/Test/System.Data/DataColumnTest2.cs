@@ -292,7 +292,7 @@ namespace MonoTests.System.Data
 			dc.MaxLength = int.MinValue  ;
 			//Checking Get MinValue
 			// MaxLength MinValue
-			Assert.AreEqual(int.MinValue, dc.MaxLength , "DC31");
+			Assert.AreEqual(-1, dc.MaxLength , "DC31");
 
 			DataTable dt = new DataTable();
 			dt.Columns.Add(new DataColumn("col",typeof(string)));

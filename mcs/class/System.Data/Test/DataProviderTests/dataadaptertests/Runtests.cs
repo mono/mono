@@ -49,11 +49,13 @@ class RunTest {
 		foreach (string str in databases) {
 
 			switch  (str) {
+/*
 			case "mysql" :
 				Console.WriteLine ("\n ****** Running tests for MYSQL ***** \n");
 				dbAdapter = new MySqlAdapter ("mysql");
 				dbAdapter.RunTest ();
 				break;
+*/
 			
 			case "mssql" :
 				Console.WriteLine ("\n ****** Running tests for MS SQL ***** \n");
@@ -65,11 +67,13 @@ class RunTest {
 				dbAdapter = new OraAdapter ("oracle");
 				dbAdapter.RunTest ();
 				break;
+/*
 			case "postgres" :
 				Console.WriteLine ("\n ****** Running tests for POSTGRE ***** \n");
 				dbAdapter = new PostgresAdapter ("postgres");
 				dbAdapter.RunTest ();
 				break;
+*/
 			}
 		}
 	}

@@ -30,6 +30,8 @@ namespace Mono.Data.Sqlite
     private const string SQLITE_DLL = "SQLite.Interop.DLL";
 #endif // USE_INTEROP_DLL
 
+#elif MONOTOUCH
+	private const string SQLITE_DLL = "/usr/lib/libsqlite3.dylib";
 #else
     private const string SQLITE_DLL = "sqlite3";
 #endif
@@ -133,6 +135,13 @@ namespace Mono.Data.Sqlite
     [DllImport(SQLITE_DLL)]
 #endif
     internal static extern int sqlite3_close(IntPtr db);
+		
+#if !PLATFORM_COMPACTFRAMEWORK
+    [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]
+#else
+    [DllImport(SQLITE_DLL)]
+#endif
+    internal static extern int sqlite3_close_v2(IntPtr db);
 
 #if !PLATFORM_COMPACTFRAMEWORK
     [DllImport(SQLITE_DLL, CallingConvention = CallingConvention.Cdecl)]

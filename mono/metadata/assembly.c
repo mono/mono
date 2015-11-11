@@ -28,6 +28,7 @@
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-uri.h>
 #include <mono/metadata/mono-config.h>
+#include <mono/metadata/mono-config-dirs.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-path.h>
@@ -74,6 +75,9 @@ static char **extra_gac_paths = NULL;
  * The integer number is an index in the MonoRuntimeInfo structure, whose
  * values can be found in domain.c - supported_runtimes. Look there
  * to understand what remapping will be made.
+ *
+ * .NET version can be found at https://github.com/dotnet/coreclr/blob/master/src/inc/fxretarget.h#L99
+ *
  */
 static const AssemblyVersionMap framework_assemblies [] = {
 	{"Accessibility", 0},
@@ -84,6 +88,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"I18N.Other", 0},
 	{"I18N.Rare", 0},
 	{"I18N.West", 0},
+	{"Microsoft.Build.Engine", 2},
+	{"Microsoft.Build.Framework", 2},
 	{"Microsoft.VisualBasic", 1},
 	{"Microsoft.VisualC", 1},
 	{"Mono.Cairo", 0},
@@ -102,6 +108,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"Npgsql", 0},
 	{"PEAPI", 0},
 	{"System", 0},
+	{"System.ComponentModel.Composition", 2},
 	{"System.ComponentModel.DataAnnotations", 2},
 	{"System.Configuration", 0},
 	{"System.Configuration.Install", 0},
@@ -117,6 +124,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Drawing", 0},
 	{"System.Drawing.Design", 0},
 	{"System.EnterpriseServices", 0},
+	{"System.IdentityModel", 3},
+	{"System.IdentityModel.Selectors", 3},
 	{"System.Management", 0},
 	{"System.Messaging", 0},
 	{"System.Net", 2},
@@ -124,6 +133,7 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Runtime.Serialization", 3},
 	{"System.Runtime.Serialization.Formatters.Soap", 0},
 	{"System.Security", 0},
+	{"System.ServiceModel", 3},
 	{"System.ServiceModel.Web", 2},
 	{"System.ServiceProcess", 0},
 	{"System.Transactions", 0},
@@ -168,6 +178,8 @@ mono_set_corlib_data (void *data, size_t size)
 }
 
 #endif
+
+static char* unquote (const char *str);
 
 /* This protects loaded_assemblies and image->references */
 #define mono_assemblies_lock() mono_mutex_lock (&assemblies_mutex)
@@ -562,14 +574,10 @@ mono_assembly_getrootdir (void)
 void
 mono_set_dirs (const char *assembly_dir, const char *config_dir)
 {
-#if defined (MONO_ASSEMBLIES)
 	if (assembly_dir == NULL)
-		assembly_dir = MONO_ASSEMBLIES;
-#endif
-#if defined (MONO_CFG_DIR)
+		assembly_dir = mono_config_get_assemblies_dir ();
 	if (config_dir == NULL)
-		config_dir = MONO_CFG_DIR;
-#endif
+		config_dir = mono_config_get_cfg_dir ();
 	mono_assembly_setrootdir (assembly_dir);
 	mono_set_config_dir (config_dir);
 }
@@ -601,7 +609,7 @@ compute_base (char *path)
 static void
 fallback (void)
 {
-	mono_set_dirs (MONO_ASSEMBLIES, MONO_CFG_DIR);
+	mono_set_dirs (mono_config_get_assemblies_dir (), mono_config_get_cfg_dir ());
 }
 
 static G_GNUC_UNUSED void
@@ -610,11 +618,14 @@ set_dirs (char *exe)
 	char *base;
 	char *config, *lib, *mono;
 	struct stat buf;
+	const char *bindir;
 	
 	/*
 	 * Only /usr prefix is treated specially
 	 */
-	if (strncmp (exe, MONO_BINDIR, strlen (MONO_BINDIR)) == 0 || (base = compute_base (exe)) == NULL){
+	bindir = mono_config_get_bin_dir ();
+	g_assert (bindir);
+	if (strncmp (exe, bindir, strlen (bindir)) == 0 || (base = compute_base (exe)) == NULL){
 		fallback ();
 		return;
 	}
@@ -1577,6 +1588,7 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 	
 	image = NULL;
 
+	// If VM built with mkbundle
 	loaded_from_bundle = FALSE;
 	if (bundles != NULL) {
 		image = mono_assembly_open_from_bundle (fname, status, refonly);
@@ -1673,7 +1685,6 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		MonoCustomAttrEntry *attr = &attrs->attrs [i];
 		MonoAssemblyName *aname;
 		const gchar *data;
-		guint slen;
 		/* Do some sanity checking */
 		if (!attr->ctor || attr->ctor->klass != mono_defaults.internals_visible_class)
 			continue;
@@ -1683,7 +1694,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		/* 0xFF means null string, see custom attr format */
 		if (data [0] != 1 || data [1] != 0 || (data [2] & 0xFF) == 0xFF)
 			continue;
-		slen = mono_metadata_decode_value (data + 2, &data);
+		mono_metadata_decode_value (data + 2, &data);
 		aname = g_new0 (MonoAssemblyName, 1);
 		/*g_print ("friend ass: %s\n", data);*/
 		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL, NULL)) {
@@ -2070,11 +2081,19 @@ gboolean
 mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboolean save_public_key, gboolean *is_version_defined, gboolean *is_token_defined)
 {
 	gchar *dllname;
+	gchar *dllname_uq;
 	gchar *version = NULL;
+	gchar *version_uq;
 	gchar *culture = NULL;
+	gchar *culture_uq;
 	gchar *token = NULL;
+	gchar *token_uq;
 	gchar *key = NULL;
+	gchar *key_uq;
 	gchar *retargetable = NULL;
+	gchar *retargetable_uq;
+	gchar *procarch;
+	gchar *procarch_uq;
 	gboolean res;
 	gchar *value, *part_name;
 	guint32 part_name_len;
@@ -2146,29 +2165,42 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 
 		if (part_name_len == 12 && !g_ascii_strncasecmp (part_name, "Retargetable", part_name_len)) {
 			retargetable = value;
-			if (strlen (retargetable) == 0) {
-				goto cleanup_and_fail;
-			}
+			retargetable_uq = unquote (retargetable);
+			if (retargetable_uq != NULL)
+				retargetable = retargetable_uq;
+
 			if (!g_ascii_strcasecmp (retargetable, "yes")) {
 				flags |= ASSEMBLYREF_RETARGETABLE_FLAG;
 			} else if (g_ascii_strcasecmp (retargetable, "no")) {
+				free (retargetable_uq);
 				goto cleanup_and_fail;
 			}
+
+			free (retargetable_uq);
 			tmp++;
 			continue;
 		}
 
 		if (part_name_len == 21 && !g_ascii_strncasecmp (part_name, "ProcessorArchitecture", part_name_len)) {
-			if (!g_ascii_strcasecmp (value, "MSIL"))
+			procarch = value;
+			procarch_uq = unquote (procarch);
+			if (procarch_uq != NULL)
+				procarch = procarch_uq;
+
+			if (!g_ascii_strcasecmp (procarch, "MSIL"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_MSIL;
-			else if (!g_ascii_strcasecmp (value, "X86"))
+			else if (!g_ascii_strcasecmp (procarch, "X86"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_X86;
-			else if (!g_ascii_strcasecmp (value, "IA64"))
+			else if (!g_ascii_strcasecmp (procarch, "IA64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
-			else if (!g_ascii_strcasecmp (value, "AMD64"))
+			else if (!g_ascii_strcasecmp (procarch, "AMD64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
-			else
+			else {
+				free (procarch_uq);
 				goto cleanup_and_fail;
+			}
+
+			free (procarch_uq);
 			tmp++;
 			continue;
 		}
@@ -2182,14 +2214,55 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		goto cleanup_and_fail;
 	}
 
-	res = build_assembly_name (dllname, version, culture, token, key, flags, arch,
-		aname, save_public_key);
+	dllname_uq = unquote (dllname);
+	version_uq = unquote (version);
+	culture_uq = unquote (culture);
+	token_uq = unquote (token);
+	key_uq = unquote (key);
+
+	res = build_assembly_name (
+		dllname_uq == NULL ? dllname : dllname_uq,
+		version_uq == NULL ? version : version_uq,
+		culture_uq == NULL ? culture : culture_uq,
+		token_uq == NULL ? token : token_uq,
+		key_uq == NULL ? key : key_uq,
+		flags, arch, aname, save_public_key);
+
+	free (dllname_uq);
+	free (version_uq);
+	free (culture_uq);
+	free (token_uq);
+	free (key_uq);
+
 	g_strfreev (parts);
 	return res;
 
 cleanup_and_fail:
 	g_strfreev (parts);
 	return FALSE;
+}
+
+static char*
+unquote (const char *str)
+{
+	gint slen;
+	const char *end;
+
+	if (str == NULL)
+		return NULL;
+
+	slen = strlen (str);
+	if (slen < 2)
+		return NULL;
+
+	if (*str != '\'' && *str != '\"')
+		return NULL;
+
+	end = str + slen - 1;
+	if (*str != *end)
+		return NULL;
+
+	return g_strndup (str + 1, slen - 2);
 }
 
 /**
@@ -2848,6 +2921,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 		return corlib;
 	}
 
+	// In native client, Corlib is embedded in the executable as static variable corlibData
 #if defined(__native_client__)
 	if (corlibData != NULL && corlibSize != 0) {
 		int status = 0;
@@ -2864,6 +2938,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	}
 #endif
 
+	// A nonstandard preload hook may provide a special mscorlib assembly
 	aname = mono_assembly_name_new ("mscorlib.dll");
 	corlib = invoke_assembly_preload_hook (aname, assemblies_path);
 	mono_assembly_name_free (aname);
@@ -2871,16 +2946,16 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	if (corlib != NULL)
 		return corlib;
 
-	if (assemblies_path) {
+	// This unusual directory layout can occur if mono is being built and run out of its own source repo
+	if (assemblies_path) { // Custom assemblies path set via MONO_PATH or mono_set_assemblies_path
 		corlib = load_in_path ("mscorlib.dll", (const char**)assemblies_path, status, FALSE);
 		if (corlib)
 			return corlib;
 	}
 
-	/* Load corlib from mono/<version> */
-	
+	/* Normal case: Load corlib from mono/<version> */
 	corlib_file = g_build_filename ("mono", runtime->framework_version, "mscorlib.dll", NULL);
-	if (assemblies_path) {
+	if (assemblies_path) { // Custom assemblies path
 		corlib = load_in_path (corlib_file, (const char**)assemblies_path, status, FALSE);
 		if (corlib) {
 			g_free (corlib_file);
@@ -3246,6 +3321,20 @@ MonoImage*
 mono_assembly_get_image (MonoAssembly *assembly)
 {
 	return assembly->image;
+}
+
+/**
+ * mono_assembly_get_name:
+ * @assembly: The assembly to retrieve the name from
+ *
+ * The returned name's lifetime is the same as @assembly's.
+ *
+ * Returns: the MonoAssemblyName associated with this assembly.
+ */
+MonoAssemblyName *
+mono_assembly_get_name (MonoAssembly *assembly)
+{
+	return &assembly->aname;
 }
 
 void

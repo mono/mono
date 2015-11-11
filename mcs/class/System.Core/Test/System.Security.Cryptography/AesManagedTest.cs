@@ -37,7 +37,7 @@ namespace MonoTests.System.Security.Cryptography {
 	public class AesManagedTest {
 		
 		[Test]
-#if !MOBILE
+#if !MONOTOUCH
 		[ExpectedException (typeof (CryptographicException))]
 #endif
 		public void CFB_NotAllowed ()
@@ -61,7 +61,7 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 		
 		[Test]
-#if !MOBILE
+#if !MONOTOUCH
 		[ExpectedException (typeof (CryptographicException))]
 #endif
 		public void OFB_NotAllowed ()

@@ -22,14 +22,14 @@ namespace Xamarin.ApiDiff
 		public ApiChange AppendAdded (string text, bool breaking = false)
 		{
 			if (breaking)
-				Member.Append ("<u>");
+				Member.Append ("<span style='text-decoration: underline'>");
 			if (State.Colorize)
-				Member.Append (breaking ? "<font color='green'>" : "<font color='green'>");
+				Member.Append ("<span style='color:green'>");
 			Member.Append (text);
 			if (State.Colorize)
-				Member.Append (breaking ? "</font>" : "</font>");
+				Member.Append ("</span>");
 			if (breaking)
-				Member.Append ("</u>");
+				Member.Append ("</span>");
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
@@ -37,13 +37,13 @@ namespace Xamarin.ApiDiff
 
 		public ApiChange AppendRemoved (string text, bool breaking = true)
 		{
-			Member.Append ("<s>");
+			Member.Append ("<span style='text-decoration: line-through'>");
 			if (State.Colorize && breaking)
-				Member.Append ("<font color='red'>");
+				Member.Append ("<span style='color:red'>");
 			Member.Append (text);
 			if (State.Colorize && breaking)
-				Member.Append ("</font>");
-			Member.Append ("</s>");
+				Member.Append ("</span>");
+			Member.Append ("</span>");
 			Breaking |= breaking;
 			AnyChange = true;
 			return this;
@@ -68,8 +68,14 @@ namespace Xamarin.ApiDiff
 		{
 			if (!change.AnyChange) {
 				// This is most likely because the rendering doesn't take into account something that's different (solution: fix rendering).
-				if (!change.HasIgnoredChanges)
-					Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetMethodAttributes (), target.GetMethodAttributes ());
+				if (!change.HasIgnoredChanges) {
+					var isField = source.Name.LocalName == "field";
+					if (isField) {
+						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetFieldAttributes (), target.GetFieldAttributes ());
+					} else {
+						Console.WriteLine ("Comparison resulting in no changes (src: {2} dst: {3}) :\n{0}\n{1}\n\n", source.ToString (), target.ToString (), source.GetMethodAttributes (), target.GetMethodAttributes ());
+					}
+				}
 				return;
 			}
 

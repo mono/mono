@@ -96,10 +96,13 @@ namespace Mono.CSharp.Linq
 
 			bool OverloadResolver.IErrorHandler.AmbiguousCandidates (ResolveContext ec, MemberSpec best, MemberSpec ambiguous)
 			{
+				var emg = mg as ExtensionMethodGroupExpr;
+				var type = emg == null ? mg.InstanceExpression : emg.ExtensionExpression;
+
 				ec.Report.SymbolRelatedToPreviousError (best);
 				ec.Report.SymbolRelatedToPreviousError (ambiguous);
 				ec.Report.Error (1940, loc, "Ambiguous implementation of the query pattern `{0}' for source type `{1}'",
-					best.Name, mg.InstanceExpression.GetSignatureForError ());
+					best.Name, type.Type.GetSignatureForError ());
 				return true;
 			}
 

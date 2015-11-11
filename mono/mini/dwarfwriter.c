@@ -21,6 +21,7 @@
 
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/debug-mono-symfile.h>
+#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/utils/mono-compiler.h>
 
 #ifndef HOST_WIN32
@@ -94,12 +95,12 @@ mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_st
 	w->appending = appending;
 
 	if (appending)
-		g_assert (img_writer_subsections_supported (w->w));
+		g_assert (mono_img_writer_subsections_supported (w->w));
 
 	w->emit_line = TRUE;
 
 	if (appending) {
-		if (!img_writer_subsections_supported (w->w))
+		if (!mono_img_writer_subsections_supported (w->w))
 			/* Can't emit line number info without subsections */
 			w->emit_line = FALSE;
 	} else {
@@ -112,8 +113,8 @@ mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_st
 		w->collect_line_info = FALSE;
 	}
 
-	w->fp = img_writer_get_fp (w->w);
-	w->temp_prefix = img_writer_get_temp_label_prefix (w->w);
+	w->fp = mono_img_writer_get_fp (w->w);
+	w->temp_prefix = mono_img_writer_get_temp_label_prefix (w->w);
 
 	w->class_to_die = g_hash_table_new (NULL, NULL);
 	w->class_to_vtype_die = g_hash_table_new (NULL, NULL);
@@ -141,97 +142,85 @@ mono_dwarf_writer_get_il_file_line_index (MonoDwarfWriter *w)
 static inline void
 emit_section_change (MonoDwarfWriter *w, const char *section_name, int subsection_index)
 {
-	img_writer_emit_section_change (w->w, section_name, subsection_index);
+	mono_img_writer_emit_section_change (w->w, section_name, subsection_index);
 }
 
 static inline void
 emit_push_section (MonoDwarfWriter *w, const char *section_name, int subsection)
 {
-	img_writer_emit_push_section (w->w, section_name, subsection);
+	mono_img_writer_emit_push_section (w->w, section_name, subsection);
 }
 
 static inline void
 emit_pop_section (MonoDwarfWriter *w)
 {
-	img_writer_emit_pop_section (w->w);
-}
-
-static inline void
-emit_local_symbol (MonoDwarfWriter *w, const char *name, const char *end_label, gboolean func) 
-{ 
-	img_writer_emit_local_symbol (w->w, name, end_label, func); 
+	mono_img_writer_emit_pop_section (w->w);
 }
 
 static inline void
 emit_label (MonoDwarfWriter *w, const char *name) 
 { 
-	img_writer_emit_label (w->w, name); 
+	mono_img_writer_emit_label (w->w, name); 
 }
 
 static inline void
 emit_bytes (MonoDwarfWriter *w, const guint8* buf, int size) 
 { 
-	img_writer_emit_bytes (w->w, buf, size); 
+	mono_img_writer_emit_bytes (w->w, buf, size); 
 }
 
 static inline void
 emit_string (MonoDwarfWriter *w, const char *value) 
 { 
-	img_writer_emit_string (w->w, value); 
+	mono_img_writer_emit_string (w->w, value); 
 }
 
 static inline void
 emit_line (MonoDwarfWriter *w) 
 { 
-	img_writer_emit_line (w->w); 
+	mono_img_writer_emit_line (w->w); 
 }
 
 static inline void
 emit_alignment (MonoDwarfWriter *w, int size) 
 { 
-	img_writer_emit_alignment (w->w, size); 
+	mono_img_writer_emit_alignment (w->w, size); 
 }
 
 static inline void
 emit_pointer_unaligned (MonoDwarfWriter *w, const char *target) 
 { 
-	img_writer_emit_pointer_unaligned (w->w, target); 
+	mono_img_writer_emit_pointer_unaligned (w->w, target); 
 }
 
 static inline void
 emit_pointer (MonoDwarfWriter *w, const char *target) 
 { 
-	img_writer_emit_pointer (w->w, target); 
+	mono_img_writer_emit_pointer (w->w, target); 
 }
 
 static inline void
 emit_int16 (MonoDwarfWriter *w, int value) 
 { 
-	img_writer_emit_int16 (w->w, value); 
+	mono_img_writer_emit_int16 (w->w, value); 
 }
 
 static inline void
 emit_int32 (MonoDwarfWriter *w, int value) 
 { 
-	img_writer_emit_int32 (w->w, value); 
+	mono_img_writer_emit_int32 (w->w, value); 
 }
 
 static inline void
 emit_symbol_diff (MonoDwarfWriter *w, const char *end, const char* start, int offset) 
 { 
-	img_writer_emit_symbol_diff (w->w, end, start, offset); 
-}
-
-static inline void
-emit_zero_bytes (MonoDwarfWriter *w, int num) 
-{ 
-	img_writer_emit_zero_bytes (w->w, num); 
+	mono_img_writer_emit_symbol_diff (w->w, end, start, offset); 
 }
 
 static inline void
 emit_byte (MonoDwarfWriter *w, guint8 val) 
 { 
-	img_writer_emit_byte (w->w, val); 
+	mono_img_writer_emit_byte (w->w, val); 
 }
 
 static G_GNUC_UNUSED void
@@ -418,7 +407,7 @@ emit_fde (MonoDwarfWriter *w, int fde_index, char *start_symbol, char *end_symbo
 	}
 
 	/* Convert the list of MonoUnwindOps to the format used by DWARF */	
-	uw_info = mono_unwind_ops_encode (l, &uw_info_len);
+	uw_info = mono_unwind_ops_encode_full (l, &uw_info_len, FALSE);
 	emit_bytes (w, uw_info, uw_info_len);
 	g_free (uw_info);
 
@@ -721,7 +710,6 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 	for (l = info_list; l; l = l->next) {
 		MethodLineNumberInfo *info = l->data;
 		MonoDebugMethodInfo *minfo;
-		char *source_file;
 		GPtrArray *source_file_list;
 
 		// FIXME: Free stuff
@@ -729,7 +717,7 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 		if (!minfo)
 			continue;
 
-		mono_debug_symfile_get_line_numbers_full (minfo, &source_file, &source_file_list, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		mono_debug_get_seq_points (minfo, NULL, &source_file_list, NULL, NULL, NULL);
 		for (i = 0; i < source_file_list->len; ++i) {
 			MonoDebugSourceInfo *sinfo = g_ptr_array_index (source_file_list, i);
 			add_line_number_file_name (w, sinfo->source_file, 0, 0);
@@ -829,7 +817,9 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 		MethodLineNumberInfo *info = l->data;
 		MonoDebugMethodJitInfo *dmji;
 
-		dmji = mono_debug_find_method (info->method, mono_domain_get ());;
+		dmji = mono_debug_find_method (info->method, mono_domain_get ());
+		if (!dmji)
+			continue;
 		emit_line_number_info (w, info->method, info->start_symbol, info->end_symbol, info->code, info->code_size, dmji);
 		mono_debug_free_method_jit_info (dmji);
 	}
@@ -853,7 +843,7 @@ emit_debug_info_end (MonoDwarfWriter *w)
 {
 	/* This doesn't seem to work/required with recent iphone sdk versions */
 #if 0
-	if (!img_writer_subsections_supported (w->w))
+	if (!mono_img_writer_subsections_supported (w->w))
 		fprintf (w->fp, "\n.set %sdebug_info_end,.\n", w->temp_prefix);
 #endif
 }
@@ -913,7 +903,7 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, const char *cu_name, GSLis
 	emit_int32 (w, 0); /* .debug_abbrev offset */
 	emit_byte (w, sizeof (gpointer)); /* address size */
 
-	if (img_writer_subsections_supported (w->w) && w->appending) {
+	if (mono_img_writer_subsections_supported (w->w) && w->appending) {
 		/* Emit this into a separate section so it gets placed at the end */
 		emit_section_change (w, ".debug_info", 1);
 		emit_byte (w, 0); /* close COMPILE_UNIT */
@@ -1065,10 +1055,9 @@ emit_class_dwarf_info (MonoDwarfWriter *w, MonoClass *klass, gboolean vtype)
 		iter = NULL;
 		while ((field = mono_class_get_fields (klass, &iter))) {
 			const char *p;
-			int len;
 			MonoTypeEnum def_type;
 
-			if (strcmp ("value__", mono_field_get_name (field)) == 0)
+			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 				continue;
 			if (mono_field_is_deleted (field))
 				continue;
@@ -1077,7 +1066,7 @@ emit_class_dwarf_info (MonoDwarfWriter *w, MonoClass *klass, gboolean vtype)
 			emit_string (w, mono_field_get_name (field));
 
 			p = mono_class_get_field_default_value (field, &def_type);
-			len = mono_metadata_decode_blob_size (p, &p);
+			/* len = */ mono_metadata_decode_blob_size (p, &p);
 			switch (mono_class_enum_basetype (klass)->type) {
 			case MONO_TYPE_U1:
 			case MONO_TYPE_I1:
@@ -1656,8 +1645,12 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 		prev_il_offset = il_offset;
 
 		loc = mono_debug_symfile_lookup_location (minfo, il_offset);
-		if (!(loc && loc->source_file))
+		if (!loc)
 			continue;
+		if (!loc->source_file) {
+			mono_debug_symfile_free_location (loc);
+			continue;
+		}
 
 		line_diff = (gint32)loc->row - (gint32)prev_line;
 		addr_diff = i - prev_native_offset;
@@ -1888,6 +1881,9 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 		int file_index = add_line_number_file_name (w, loc->source_file, 0, 0);
 		emit_uleb128 (w, file_index + 1);
 		emit_uleb128 (w, loc->row);
+
+		mono_debug_symfile_free_location (loc);
+		loc = NULL;
 	} else {
 		emit_uleb128 (w, 0);
 		emit_uleb128 (w, 0);
@@ -2017,7 +2013,7 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 	}
 
 	if (locals_info)
-		mono_debug_symfile_free_locals (locals_info);
+		mono_debug_free_locals (locals_info);
 
 	/* Subprogram end */
 	emit_uleb128 (w, 0x0);

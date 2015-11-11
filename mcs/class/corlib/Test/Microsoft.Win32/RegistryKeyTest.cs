@@ -657,7 +657,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		// Unfortunately we can't test that the scenario where a volatile
 		// key is not alive after a reboot, but we can test other bits.
 		[Test]
@@ -818,7 +817,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 
 		}
-#endif
 
 		[Test]
 		public void DeleteSubKey ()
@@ -1109,7 +1107,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		[Test]
 		public void DeleteSubKeyTree_Key_DoesNotExist_Overload ()
 		{
@@ -1128,7 +1125,6 @@ namespace MonoTests.Microsoft.Win32
 			// It's enough to know this line is not throwing an exception.
 			Registry.CurrentUser.DeleteSubKey (subKeyName, false);
 		}
-#endif
 
 		[Test]
 		public void DeleteSubKeyTree_Key_ReadOnly ()
@@ -1302,10 +1298,10 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNotNull (names, "#A2");
 					Assert.AreEqual (2, names.Length, "#A3");
 					Assert.IsNotNull (names [0], "#A4");
-					Assert.AreEqual ("name1", names [1], "#A5");
+					Assert.AreEqual ("name1", names [0], "#A5");
 					Assert.IsNotNull (createdKey.GetValue ("name1"), "#A6");
 					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#A7");
-					Assert.AreEqual ("name2", names [0], "#A8");
+					Assert.AreEqual ("name2", names [1], "#A8");
 					Assert.IsNotNull (createdKey.GetValue ("name2"), "#A9");
 					Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#A10");
 				}
@@ -1658,7 +1654,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_4_0
 		[DllImport ("advapi32.dll", CharSet = CharSet.Unicode)]
 		static extern int RegOpenKeyEx (IntPtr keyBase, string keyName, IntPtr reserved, int access, out IntPtr keyHandle);
         
@@ -1752,7 +1747,6 @@ namespace MonoTests.Microsoft.Win32
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void GetValue ()
@@ -3361,8 +3355,8 @@ namespace MonoTests.Microsoft.Win32
 						string [] names = createdKey.GetValueNames ();
 						Assert.IsNotNull (names, "#6");
 						Assert.AreEqual (2, names.Length, "#7");
-						Assert.AreEqual ("name1", names [1], "#8");
-						Assert.AreEqual ("name2", names [0], "#9");
+						Assert.AreEqual ("name1", names [0], "#8");
+						Assert.AreEqual ("name2", names [1], "#9");
 
 						softwareKey.DeleteSubKeyTree (subKeyName);
 

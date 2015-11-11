@@ -12,6 +12,9 @@
  * wapi_<funcname>.
  */
 
+#define GetLastError wapi_GetLastError
+#define SetLastError wapi_SetLastError
+#define TransmitFile wapi_TransmitFile
 #define GetThreadContext wapi_GetThreadContext
 #define CreateEvent wapi_CreateEvent 
 #define PulseEvent wapi_PulseEvent 
@@ -47,7 +50,6 @@
 #define GetCurrentDirectory wapi_GetCurrentDirectory 
 #define SetCurrentDirectory wapi_SetCurrentDirectory 
 #define CreatePipe wapi_CreatePipe 
-#define GetTempPath wapi_GetTempPath 
 #define GetLogicalDriveStrings wapi_GetLogicalDriveStrings 
 #define GetDiskFreeSpaceEx wapi_GetDiskFreeSpaceEx
 #define GetDriveType wapi_GetDriveType
@@ -87,9 +89,6 @@
 #define WSARecv wapi_WSARecv 
 #define WSASend wapi_WSASend 
 #define GetSystemInfo wapi_GetSystemInfo
-#define GetCurrentThreadId wapi_GetCurrentThreadId
-#define Sleep wapi_Sleep
-#define SleepEx wapi_SleepEx
 #define QueryPerformanceCounter wapi_QueryPerformanceCounter
 #define QueryPerformanceFrequency wapi_QueryPerformanceFrequency
 #define GetTickCount wapi_GetTickCount 

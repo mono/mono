@@ -109,18 +109,20 @@ static void
 add_record (RecordType record_kind, RuntimeLocks kind, gpointer lock)
 {
 	int i = 0;
-	gpointer frames[10];
+	const int no_frames = 6;
+	gpointer frames[no_frames];
+
 	char *msg;
  	if (!trace_file)
 		return;
 
-	memset (frames, 0, sizeof (gpointer));
-	mono_backtrace (frames, 6);
-	for (i = 0; i < 6; ++i)
+	memset (frames, 0, sizeof (gpointer) * no_frames);
+	mono_backtrace (frames, no_frames);
+	for (i = 0; i < no_frames; ++i)
 		frames [i] = (gpointer)((size_t)frames[i] - base_address);
 
 	/*We only dump 5 frames, which should be more than enough to most analysis.*/
-	msg = g_strdup_printf ("%x,%d,%d,%p,%p,%p,%p,%p,%p\n", (guint32)GetCurrentThreadId (), record_kind, kind, lock, frames [1], frames [2], frames [3], frames [4], frames [5]);
+	msg = g_strdup_printf ("%x,%d,%d,%p,%p,%p,%p,%p,%p\n", (guint32)mono_native_thread_id_get (), record_kind, kind, lock, frames [1], frames [2], frames [3], frames [4], frames [5]);
 	fwrite (msg, strlen (msg), 1, trace_file);
 	fflush (trace_file);
 	g_free (msg);

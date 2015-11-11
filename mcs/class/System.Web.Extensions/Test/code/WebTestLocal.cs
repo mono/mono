@@ -10,12 +10,10 @@ namespace MonoTests.SystemWeb.Framework
 #if !DOTNET
 			CopyResource (myself, "Web.mono.config", "Web.config");
 #endif
-#if NET_4_5
-			CopyResource (myself, "profile.config.4.5", "profile.config");
-#elif NET_4_0
-			CopyResource (myself, "profile.config.4.0", "profile.config");
+#if NET_4_6
+			CopyResource (myself, "profile.config.4.x", "profile.config");
 #else
-			CopyResource (myself, "profile.config.2.0", "profile.config");
+			#error "Unknown profile"
 #endif
 		}
 	}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-072</name>
+    </assembly>
+    <members>
+        <member name="T:X.C">
+            <summary>
+            Top-class
+            </summary></member>
+        <member name="M:X.C.Main">
+            <summary>
+            foo
+            </summary></member>
+    </members>
+</doc>

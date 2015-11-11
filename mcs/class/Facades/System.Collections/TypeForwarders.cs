@@ -34,3 +34,4 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.Generic.Stack<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.StructuralComparisons))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.Generic.SortedList<,>))]

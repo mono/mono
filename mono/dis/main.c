@@ -626,16 +626,14 @@ dis_locals (MonoImage *m, MonoMethodHeader *mh, const char *ptr)
 		unsigned char flags = *(const unsigned char *) ptr;
 		unsigned char format = flags & METHOD_HEADER_FORMAT_MASK;
 		guint16 fat_flags;
-		guint32 local_var_sig_tok, max_stack, code_size, init_locals;
-		int hsize;
+		guint32 local_var_sig_tok, init_locals;
 
 		g_assert (format == METHOD_HEADER_FAT_FORMAT);
 		fat_flags = read16 (ptr);
 		ptr += 2;
-		hsize = (fat_flags >> 12) & 0xf;
-		max_stack = read16 (ptr);
+		/* max_stack = read16 (ptr); */
 		ptr += 2;
-		code_size = read32 (ptr);
+		/* code_size = read32 (ptr); */
 		ptr += 4;
 		local_var_sig_tok = read32 (ptr);
 		ptr += 4;
@@ -982,7 +980,7 @@ dis_property_signature (MonoImage *m, guint32 prop_idx, MonoGenericContainer *co
 		g_string_append (res, "instance ");
 	ptr++;
 	pcount = mono_metadata_decode_value (ptr, &ptr);
-	type = mono_metadata_parse_type_full (m, container, MONO_PARSE_TYPE, 0, ptr, &ptr);
+	type = mono_metadata_parse_type_full (m, container, 0, ptr, &ptr);
 	blurb = dis_stringify_type (m, type, TRUE);
 	if (prop_flags & 0x0200)
 		g_string_append (res, "specialname ");
@@ -995,7 +993,7 @@ dis_property_signature (MonoImage *m, guint32 prop_idx, MonoGenericContainer *co
 	for (i = 0; i < pcount; i++) {
 		if (i)
 			g_string_append (res, ", ");
-		param = mono_metadata_parse_type_full (m, container, MONO_PARSE_PARAM, 0, ptr, &ptr);
+		param = mono_metadata_parse_type_full (m, container, 0, ptr, &ptr);
 		blurb = dis_stringify_param (m, param);
 		g_string_append (res, blurb);
 		g_free (blurb);
@@ -1602,15 +1600,14 @@ disassemble_file (const char *file)
 {
 	MonoImageOpenStatus status;
 	MonoImage *img;
-	MonoAssembly *assembly;
-
 
 	img = mono_image_open (file, &status);
 	if (!img) {
 		fprintf (stderr, "Error while trying to process %s\n", file);
 		return;
 	} else {
-		assembly = mono_assembly_load_from_full (img, file, &status, FALSE);
+		/* FIXME: is this call necessary? */
+		mono_assembly_load_from_full (img, file, &status, FALSE);
 	}
 
 	setup_filter (img);

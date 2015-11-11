@@ -57,7 +57,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 119;
+		private const int mono_corlib_version = 138;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -549,8 +549,7 @@ namespace System {
 			return GetFolderPath (folder, SpecialFolderOption.None);
 		}
 
-// for monotouch, not monotouch_runtime
-#if !(MONOTOUCH && FULL_AOT_RUNTIME)
+#if !MONOTOUCH
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string GetWindowsFolderPath (int folder);
 

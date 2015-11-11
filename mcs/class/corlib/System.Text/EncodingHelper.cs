@@ -7,7 +7,7 @@ using System.Security;
 namespace System.Text
 {
 
-internal static class EncodingHelper
+internal static partial class EncodingHelper
 {
 	//
 	// Only internal, to be used by the class libraries: Unmarked and non-input-validating
@@ -71,6 +71,7 @@ internal static class EncodingHelper
 	[MethodImpl (MethodImplOptions.InternalCall)]
 	extern internal static string InternalCodePage (ref int code_page);
 
+#if !MONOTOUCH
 	internal static Encoding GetDefaultEncoding ()
 	{
 		Encoding enc = null;
@@ -105,6 +106,7 @@ internal static class EncodingHelper
 						}
 		return enc;
 	}
+#endif
 
 	// Loaded copy of the "I18N" assembly.  We need to move
 	// this into a class in "System.Private" eventually.

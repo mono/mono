@@ -136,6 +136,19 @@ namespace System.Reflection {
 
 			return (RuntimeAssembly) Assembly.Load (assemblyRef);
 		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (String partialName, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			// Mono runtime does not support StackCrawlMark
+			//FIXME stackMark should probably change method behavior in some cases.
+			return (RuntimeAssembly) Assembly.LoadWithPartialName (partialName, securityEvidence);
+		}
+
+		internal static RuntimeAssembly LoadWithPartialNameInternal (AssemblyName an, Evidence securityEvidence, ref StackCrawlMark stackMark)
+		{
+			return LoadWithPartialNameInternal (an.ToString (), securityEvidence, ref stackMark);
+		}
+
 	}
 
 	[ComVisible (true)]

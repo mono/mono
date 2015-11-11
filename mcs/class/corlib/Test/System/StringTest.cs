@@ -652,6 +652,13 @@ public class StringTest
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CompareOrdinal_InvalidCount()
+	{
+		string.CompareOrdinal ("a", 0, "b", 0, -1);
+	}
+
+	[Test]
 	public void CompareOrdinalWithOffset ()
 	{
 		string ab1 = "ab";
@@ -2965,7 +2972,7 @@ public class StringTest
 
 		result = s1.PadLeft (s1.Length);
 		Assert.AreEqual (s1, result, "#C1");
-		Assert.IsTrue (!object.ReferenceEquals (s1, result), "#C2");
+		Assert.IsTrue (object.ReferenceEquals (s1, result), "#C2");
 
 		result = s1.PadLeft (s1.Length + 1);
 		Assert.AreEqual (" Hi!", result, "#D");
@@ -3008,7 +3015,7 @@ public class StringTest
 
 		result = s1.PadRight (s1.Length);
 		Assert.AreEqual (s1, result, "#C1");
-		Assert.IsTrue (!object.ReferenceEquals (s1, result), "#C2");
+		Assert.IsTrue (object.ReferenceEquals (s1, result), "#C2");
 
 		result = s1.PadRight (s1.Length + 1);
 		Assert.AreEqual ("Hi! ", result, "#D");
@@ -3762,9 +3769,7 @@ public class StringTest
 		Assert.AreEqual ("original", "\u2028original\u2029".Trim (), "net_2_0 additional char#1");
 		Assert.AreEqual ("original", "\u0085original\u1680".Trim (), "net_2_0 additional char#2");
 
-#if NET_4_0
 		Assert.AreEqual ("", "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Trim (), "net_4_0 changes #1");
-#endif
 	}
 
 	[Test]
@@ -3937,9 +3942,7 @@ public class StringTest
 		chunks = s1.Split(c2, 0);
 		Assert.AreEqual (0, chunks.Length, "Zero split");
 
-#if NET_4_0
 		Assert.AreEqual (0, "\x9\xa\xb\xc\xd\x20\x85\xa0\x1680\x2000\x2001\x2002\x2003\x2004\x2005\x2006\x2007\x2008\x2009\x200a\x2028\x2029\x202f\x205f\x3000".Split ((char[]) null, StringSplitOptions.RemoveEmptyEntries).Length, "net_4_0 changes");
-#endif
 	}
 
 	[Test]

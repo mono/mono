@@ -195,6 +195,7 @@ static pthread_mutex_t signals_mutex = PTHREAD_MUTEX_INITIALIZER;
 void*
 Mono_Unix_UnixSignal_install (int sig)
 {
+#if defined(HAVE_SIGNAL)
 	int i;
 	signal_info* h = NULL; 
 	int have_handler = 0;
@@ -252,6 +253,10 @@ Mono_Unix_UnixSignal_install (int sig)
 	release_mutex (&signals_mutex);
 
 	return h;
+#else
+	g_error ("signal() is not supported by this platform");
+	return 0;
+#endif
 }
 
 static int
@@ -269,6 +274,7 @@ count_handlers (int signum)
 int
 Mono_Unix_UnixSignal_uninstall (void* info)
 {
+#if defined(HAVE_SIGNAL)	
 	signal_info* h;
 	int r = -1;
 
@@ -294,6 +300,10 @@ Mono_Unix_UnixSignal_uninstall (void* info)
 	release_mutex (&signals_mutex);
 
 	return r;
+#else
+	g_error ("signal() is not supported by this platform");
+	return 0;
+#endif
 }
 
 static int

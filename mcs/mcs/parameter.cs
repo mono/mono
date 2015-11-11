@@ -563,7 +563,8 @@ namespace Mono.CSharp {
 
 				if (TypeSpecComparer.IsEqual (default_expr.Type, parameter_type) ||
 					(default_expr is NullConstant && TypeSpec.IsReferenceType (parameter_type) && !parameter_type.IsGenericParameter) ||
-					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Object ||
+					parameter_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					return;
 				}
 
@@ -958,6 +959,19 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
+		public static bool HasSameParameterDefaults (AParametersCollection a, AParametersCollection b)
+		{
+			if (a == null)
+				return b == null;
+
+			for (int i = 0; i < a.Count; ++i) {
+				if (a.FixedParameters [i].HasDefaultValue != b.FixedParameters [i].HasDefaultValue)
+					return false;
+			}
+
+			return true;
+		}
+
 		public bool HasArglist {
 			get { return has_arglist; }
 		}
@@ -1321,6 +1335,9 @@ namespace Mono.CSharp {
 			ResolveContext rc = null;
 			for (int i = 0; i < parameters.Length; ++i) {
 				Parameter p = (Parameter) parameters [i];
+
+				if (p.Type != null)
+					p.Type.CheckObsoleteness (m, p.Location);
 
 				//
 				// Try not to enter default values resolution if there are is not any default value possible

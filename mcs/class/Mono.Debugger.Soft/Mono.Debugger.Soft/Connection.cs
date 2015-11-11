@@ -382,7 +382,8 @@ namespace Mono.Debugger.Soft
 		ERR_UNLOADED = 103,
 		ERR_NO_INVOCATION = 104,
 		ABSENT_INFORMATION = 105,
-		NO_SEQ_POINT_AT_IL_OFFSET = 106
+		NO_SEQ_POINT_AT_IL_OFFSET = 106,
+		INVOKE_ABORTED = 107
 	}
 
 	public class ErrorHandlerEventArgs : EventArgs {
@@ -417,7 +418,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 40;
+		internal const int MINOR_VERSION = 42;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -797,6 +798,13 @@ namespace Mono.Debugger.Soft
 			public string ReadString () {
 				int len = decode_int (packet, ref offset);
 				string res = new String (Encoding.UTF8.GetChars (packet, offset, len));
+				offset += len;
+				return res;
+			}
+
+			public string ReadUTF16String () {
+				int len = decode_int (packet, ref offset);
+				string res = new String (Encoding.Unicode.GetChars (packet, offset, len));
 				offset += len;
 				return res;
 			}
@@ -2418,7 +2426,16 @@ namespace Mono.Debugger.Soft
 		 * STRINGS
 		 */
 		internal string String_GetValue (long id) {
-			return SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_VALUE, new PacketWriter ().WriteId (id)).ReadString ();
+			var r = SendReceive (CommandSet.STRING_REF, (int)CmdStringRef.GET_VALUE, new PacketWriter ().WriteId (id));
+
+			bool is_utf16 = false;
+			if (Version.AtLeast (2, 41))
+				is_utf16 = r.ReadByte () == 1;
+
+			if (is_utf16)
+				return r.ReadUTF16String ();
+			else
+				return r.ReadString ();
 		}			
 
 		internal int String_GetLength (long id) {

@@ -37,7 +37,7 @@ namespace MonoTests.Mono.Unix
 			Assert.AreEqual ("one", path);
 
 			path = UnixPath.Combine (current, "one");
-			expected = current + DSC + "one";
+			expected = (current == "/" ? String.Empty : current) + DSC + "one";
 			Assert.AreEqual (expected, path);
 
 			path = UnixPath.Combine ("one", current);

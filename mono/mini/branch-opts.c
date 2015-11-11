@@ -626,7 +626,7 @@ mono_if_conversion (MonoCompile *cfg)
 	 * optimize_branches () since the IR is already optimized.
 	 */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoBasicBlock *bb1, *bb2, *true_bb, *false_bb, *next_bb;
+		MonoBasicBlock *bb1, *bb2, *next_bb;
 		MonoInst *branch1, *branch2, *compare1, *ins, *next;
 
 		/* Look for the IR code generated from if (<var> < 0 || v > <limit>)
@@ -657,8 +657,6 @@ mono_if_conversion (MonoCompile *cfg)
 		if (!(branch1 && ((branch1->opcode == OP_IBLT) || (branch1->opcode == OP_LBLT)) && (branch1->inst_false_bb == next_bb)))
 			continue;
 
-		true_bb = branch1->inst_true_bb;
-
 		/* Check second branch */
 		branch2 = mono_bb_last_inst (next_bb, filter);
 		if (!branch2)
@@ -666,9 +664,9 @@ mono_if_conversion (MonoCompile *cfg)
 
 		/* mcs sometimes generates inverted branches */
 		if (((branch2->opcode == OP_IBGT) || (branch2->opcode == OP_LBGT)) && branch2->inst_true_bb == branch1->inst_true_bb)
-			false_bb = branch2->inst_false_bb;
+			;
 		else if (((branch2->opcode == OP_IBLE) || (branch2->opcode == OP_LBLE)) && branch2->inst_false_bb == branch1->inst_true_bb)
-			false_bb = branch2->inst_true_bb;
+			;
 		else
 			continue;
 
@@ -1240,7 +1238,7 @@ mono_remove_critical_edges (MonoCompile *cfg)
 void
 mono_optimize_branches (MonoCompile *cfg)
 {
-	int i, changed = FALSE;
+	int i, count = 0, changed = FALSE;
 	MonoBasicBlock *bb, *bbn;
 	guint32 niterations;
 	MonoInst *bbn_first_inst;
@@ -1263,6 +1261,11 @@ mono_optimize_branches (MonoCompile *cfg)
 
 		/* we skip the entry block (exit is handled specially instead ) */
 		for (previous_bb = cfg->bb_entry, bb = cfg->bb_entry->next_bb; bb; previous_bb = bb, bb = bb->next_bb) {
+			count ++;
+			if (count == 1000) {
+				mono_threads_safepoint ();
+				count = 0;
+			}
 			/* dont touch code inside exception clauses */
 			if (bb->region != -1)
 				continue;

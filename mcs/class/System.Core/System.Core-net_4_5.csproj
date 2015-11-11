@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;FEATURE_PAL;PFX_LEGACY_3_5;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;FEATURE_PAL;PFX_LEGACY_3_5;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NET_3_5;FEATURE_CORE_DLR;FEATURE_REFEMIT;FEATURE_PDBEMIT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,10 +45,24 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\DynamicExpression.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\ExpressionVisitor.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Action.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Extension.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Function.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\StrongBox.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\BitHelper.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSet.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSetDebugView.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Collections\Generic\HashSetEqualityComparer.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\FuncAndAction.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\InvalidTimeZoneException.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\IO\Enums.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\IO\MemoryMappedFiles\Enums.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\IO\MemoryMappedFiles\MemoryMappedFileSecurity.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Enumerable.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Expressions\ExpressionVisitor.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\IQueryable.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Channels\AsynchronousChannel.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Channels\SynchronousChannel.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\Parallel\Enumerables\AggregationMinMaxHelpers.cs" />
@@ -184,8 +198,17 @@
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\ParallelEnumerable.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\ParallelExecutionMode.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\ParallelMergeOptions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\SequenceQuery.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Linq\TypeHelper.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Runtime\CompilerServices\DynamicAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Runtime\CompilerServices\ExecutionScope.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\Aes.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\threading\ReaderWriterLockSlim\ReaderWriterLockSlim.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\System\threading\Tasks\TaskExtensions.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\TimeZoneInfo.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\System\TimeZoneNotFoundException.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BinaryOperationBinder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Actions\BindingRestrictions.cs" />
@@ -222,13 +245,11 @@
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DebugInfoExpression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DebugViewWriter.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DefaultExpression.cs" />
-    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\DynamicExpression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ElementInit.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\Expression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\Expression.DebuggerProxy.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionStringBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionType.cs" />
-    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionVisitor.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\GotoExpression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IArgumentProvider.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IndexExpression.cs" />
@@ -308,13 +329,10 @@
     <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedFileHandle.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedViewHandle.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafePipeHandle.cs" />
-    <Compile Include="ReferenceSources\Set.cs" />
+    <Compile Include="ReferenceSources\Error.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
+    <Compile Include="ReferenceSources\Strings.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFile.cs" />
-    <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileAccess.cs" />
-    <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileOptions.cs" />
-    <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileRights.cs" />
-    <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedFileSecurity.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedViewAccessor.cs" />
     <Compile Include="System.IO.MemoryMappedFiles\MemoryMappedViewStream.cs" />
     <Compile Include="System.IO.Pipes\AnonymousPipeClientStream.cs" />
@@ -333,41 +351,7 @@
     <Compile Include="System.IO.Pipes\PipeTransmissionMode.cs" />
     <Compile Include="System.IO.Pipes\PipeUnix.cs" />
     <Compile Include="System.IO.Pipes\PipeWin32.cs" />
-    <Compile Include="System.IO\HandleInheritability.cs" />
-    <Compile Include="System.Linq.Expressions\DynamicExpressionVisitor.cs" />
-    <Compile Include="System.Linq.Expressions\ExpressionTransformer.cs" />
-    <Compile Include="System.Linq.Expressions\Extensions.cs" />
-    <Compile Include="System.Linq\Check.cs" />
-    <Compile Include="System.Linq\Enumerable.cs" />
-    <Compile Include="System.Linq\EnumerableExecutor.cs" />
-    <Compile Include="System.Linq\EnumerableExecutor_T.cs" />
-    <Compile Include="System.Linq\EnumerableQuery.cs" />
-    <Compile Include="System.Linq\EnumerableQuery_T.cs" />
-    <Compile Include="System.Linq\Grouping.cs" />
-    <Compile Include="System.Linq\IGrouping.cs" />
-    <Compile Include="System.Linq\ILookup_T.cs" />
-    <Compile Include="System.Linq\IOrderedEnumerable_T.cs" />
-    <Compile Include="System.Linq\IOrderedQueryable.cs" />
-    <Compile Include="System.Linq\IOrderedQueryable_T.cs" />
-    <Compile Include="System.Linq\IQueryable.cs" />
-    <Compile Include="System.Linq\IQueryable_T.cs" />
-    <Compile Include="System.Linq\IQueryProvider.cs" />
-    <Compile Include="System.Linq\Lookup.cs" />
-    <Compile Include="System.Linq\OrderedEnumerable.cs" />
-    <Compile Include="System.Linq\OrderedSequence.cs" />
-    <Compile Include="System.Linq\Queryable.cs" />
-    <Compile Include="System.Linq\QueryableEnumerable.cs" />
-    <Compile Include="System.Linq\QueryableTransformer.cs" />
-    <Compile Include="System.Linq\QuickSort.cs" />
-    <Compile Include="System.Linq\SortContext.cs" />
-    <Compile Include="System.Linq\SortDirection.cs" />
-    <Compile Include="System.Linq\SortSequenceContext.cs" />
-    <Compile Include="System.Runtime.CompilerServices\DynamicAttribute.cs" />
-    <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
-    <Compile Include="System.Runtime.CompilerServices\IStrongBox.cs" />
-    <Compile Include="System.Runtime.CompilerServices\StrongBox_T.cs" />
     <Compile Include="System.Security.Cryptography\AesCryptoServiceProvider.cs" />
-    <Compile Include="System.Security.Cryptography\AesManaged.cs" />
     <Compile Include="System.Security.Cryptography\AesTransform.cs" />
     <Compile Include="System.Security.Cryptography\CngAlgorithm.cs" />
     <Compile Include="System.Security.Cryptography\CngAlgorithmGroup.cs" />
@@ -379,17 +363,6 @@
     <Compile Include="System.Security.Cryptography\SHA384CryptoServiceProvider.cs" />
     <Compile Include="System.Security.Cryptography\SHA512Cng.cs" />
     <Compile Include="System.Security.Cryptography\SHA512CryptoServiceProvider.cs" />
-    <Compile Include="System.Threading\LockRecursionException.cs" />
-    <Compile Include="System.Threading\ReaderWriterLockSlimExtensions.cs" />
-    <Compile Include="System.Threading\ThreadLockState.cs" />
-    <Compile Include="System\Actions.cs" />
-    <Compile Include="System\Funcs.cs" />
-    <Compile Include="System\InvalidTimeZoneException.cs" />
-    <Compile Include="System\TimeZoneInfo.AdjustmentRule.cs" />
-    <Compile Include="System\TimeZoneInfo.cs" />
-    <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-    <Compile Include="System\TimeZoneInfo.TransitionTime.cs" />
-    <Compile Include="System\TimeZoneNotFoundException.cs" />
     <Compile Include="System\Util.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

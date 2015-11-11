@@ -25,20 +25,21 @@ TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:Sy
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,SYSTEM_NAMESPACE,MONO,PLATFORM_UNIX
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 $(REFERENCE_SOURCES_FLAGS) -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
-PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac mobile mobile_static, $(PROFILE))
 
 RESOURCE_STRINGS = ../../../external/referencesource/System/System.txt
 
-ifeq (2.1, $(FRAMEWORK_VERSION))
+#
+# MOBILE_PROFILE needs SECURITY_DEP, except for XAMMAC
+#
+ifdef MOBILE_PROFILE
+ifeq ($(PROFILE),xammac)
+EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
+else
+LIB_MCS_FLAGS += -d:INSIDE_SYSTEM -d:SECURITY_DEP
 endif
-ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
-LIB_MCS_FLAGS += -d:SECURITY_DEP
-endif
-ifeq (monodroid, $(PROFILE))
-LIB_MCS_FLAGS += -d:SECURITY_DEP
-endif
-ifndef PROFILE_ANY_MOBILE
+else
+EXTERN_ALIAS_FLAGS = -d:MONO_SECURITY_ALIAS -d:MONO_X509_ALIAS
 FINAL_MCS_FLAGS = -r:System.Configuration.dll -d:CONFIGURATION_DEP
 endif
 
@@ -48,7 +49,7 @@ endif
 ifeq (secxml/, $(intermediate))
 LOCAL_MCS_FLAGS = -lib:$(bare_libdir) 
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(bare_libdir)/System.dll $(EXTERN_ALIAS_FLAGS)
 endif
 
 #
@@ -56,7 +57,7 @@ endif
 #
 ifndef intermediate
 LIB_REFS += System.Xml MonoSecurity=Mono.Security
-LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(FINAL_MCS_FLAGS)
+LIB_MCS_FLAGS += -d:SECURITY_DEP -d:XML_DEP -r:PrebuiltSystem=$(secxml_libdir)/System.dll $(EXTERN_ALIAS_FLAGS) $(FINAL_MCS_FLAGS)
 endif
 
 EXTRA_DISTFILES = \
@@ -77,7 +78,7 @@ system_library_deps := \
 	$(the_libdir_base)Mono.Security.dll	\
 	$(bare_libdir)/System.dll
 
-ifndef PROFILE_ANY_MOBILE
+ifndef MOBILE_PROFILE
 system_library_deps += $(the_libdir_base)System.Configuration.dll	
 endif
 

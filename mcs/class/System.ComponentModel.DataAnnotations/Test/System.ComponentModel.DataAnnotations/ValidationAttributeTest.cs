@@ -89,46 +89,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			attr.ErrorMessage = "Test";
 			Assert.AreEqual ("Test", attr.ErrorMessage, "#A2");
-#if NET_4_0
 			attr.ErrorMessage = String.Empty;
 			Assert.AreEqual (String.Empty, attr.ErrorMessage, "#A3");
 
 			attr.ErrorMessage = null;
 			Assert.IsNull (attr.ErrorMessage, "#A4");
-#else
-			try {
-				attr.ErrorMessage = String.Empty;
-				Assert.Fail ("#A3");
-			} catch (InvalidOperationException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ("Test");
-			try {
-				attr.ErrorMessage = null;
-				Assert.Fail ("#A4");
-			} catch (ArgumentException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ("Test");
-			try {
-				attr.ErrorMessage = String.Empty;
-				Assert.Fail ("#A4");
-			} catch (ArgumentException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ();
-			attr.ErrorMessageResourceName = "ErrorProperty1";
-
-			try {
-				attr.ErrorMessage = "Test Message";
-				Assert.Fail ("#E1");
-			} catch (InvalidOperationException) {
-				// success
-			}
-#endif
 			
 		}
 
@@ -142,47 +107,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.ErrorMessageResourceName = "Test";
 			Assert.IsNotNull (attr.ErrorMessageResourceName, "#A2-1");
 			Assert.AreEqual ("Test", attr.ErrorMessageResourceName, "#A2-2");
-#if NET_4_0
 			attr.ErrorMessageResourceName = String.Empty;
 			Assert.IsNotNull (attr.ErrorMessageResourceName, "#A3-1");
 			Assert.AreEqual (String.Empty, attr.ErrorMessageResourceName, "#A3-2");
 
 			attr.ErrorMessageResourceName = null;
 			Assert.IsNull (attr.ErrorMessageResourceName, "#A3-1");
-#else
-			try {
-				attr.ErrorMessageResourceName = String.Empty;
-				Assert.Fail ("#A3-1");
-			} catch (InvalidOperationException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ("Test");
-			try {
-				attr.ErrorMessageResourceName = String.Empty;
-				Assert.Fail ("#A3-2");
-			} catch (ArgumentException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ("Test");
-			try {
-				attr.ErrorMessageResourceName = null;
-				Assert.Fail ("#A3-3");
-			} catch (ArgumentException) {
-				// success
-			}
-
-			attr = new ValidateFooAttribute ();
-			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
-
-			try {
-				attr.ErrorMessageResourceName = "NoSuchProperty";
-				Assert.Fail ("#A3-4");
-			} catch (InvalidOperationException) {
-				// success
-			}
-#endif
 		}
 
 		[Test]
@@ -195,17 +125,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
 			Assert.IsNotNull (attr.ErrorMessageResourceType, "#A2-1");
 			Assert.AreEqual (typeof (FooErrorMessageProvider), attr.ErrorMessageResourceType, "#A2-2");
-#if !NET_4_0
-			attr = new ValidateFooAttribute ();
-			attr.ErrorMessageResourceName = "NoSuchProperty";
-			
-			try {
-				attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
-				Assert.Fail ("#A3");
-			} catch (InvalidOperationException) {
-				// success
-			}
-#endif
 		}
 
 		[Test]
@@ -224,7 +143,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			} catch (InvalidOperationException) {
 				// success
 			}
-#if NET_4_0
 			attr = new ValidateFooAttribute ();
 			attr.ErrorMessageResourceName = String.Empty;
 			try {
@@ -324,7 +242,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			} catch (InvalidOperationException) {
 				// success
 			}
-#endif
 
 			attr = new ValidateFooAttribute ();
 			attr.ErrorMessageResourceName = "ErrorProperty1";
@@ -341,7 +258,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
 			Assert.IsNotNull (attr.GetErrorMessageString (), "#D1-3");
 			Assert.AreEqual ("Error Message 1", attr.GetErrorMessageString (), "#D1-4");
-#if NET_4_0
 			attr.ErrorMessage = "Test Message";
 			try {
 				attr.GetErrorMessageString ();
@@ -349,7 +265,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			} catch (InvalidOperationException) {
 				// success
 			}
-#endif
 		}
 
 		[Test]
@@ -363,31 +278,20 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.ErrorMessage = "Test: {0}";
 			Assert.IsNotNull (attr.FormatErrorMessage ("SomeField"), "#A2-1");
 			Assert.AreEqual ("Test: SomeField", attr.FormatErrorMessage ("SomeField"), "#A2-2");
-#if !NET_4_0
-			attr = new ValidateFooAttribute ();
-#else
 			attr.ErrorMessage = null;
-#endif
 			attr.ErrorMessageResourceName = "ErrorProperty1";
 			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
 			Assert.IsNotNull (attr.FormatErrorMessage ("SomeField"), "#B1-1");
 			Assert.AreEqual ("Error Message 1", attr.FormatErrorMessage ("SomeField"), "#B1-2");
-#if !NET_4_0
-			attr = new ValidateFooAttribute ();
-#endif
 			attr.ErrorMessageResourceName = "ErrorProperty6";
 			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
 			Assert.IsNotNull (attr.FormatErrorMessage ("SomeField"), "#B2-1");
 			Assert.AreEqual ("Error Message 6: SomeField", attr.FormatErrorMessage ("SomeField"), "#B2-2");
-#if !NET_4_0
-			attr = new ValidateFooAttribute ();
-#endif
 			attr.ErrorMessageResourceName = "ErrorProperty6";
 			attr.ErrorMessageResourceType = typeof (FooErrorMessageProvider);
 			Assert.IsNotNull (attr.FormatErrorMessage ("SomeField"), "#B3-1");
 			Assert.AreEqual ("Error Message 6: ", attr.FormatErrorMessage (null), "#B3-2");
 		}
-#if NET_4_0
 		[Test]
 		public void GetValidationResult ()
 		{
@@ -498,7 +402,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		}
 
 		[Test]
-		public void IsValid_Object_ValidationContext_CrossCallsWithNIEX ()
+		public void IsValid_Object_No_User_EntryPoint ()
 		{
 			var attr = new ValidateSomethingAttribute ();
 
@@ -515,23 +419,8 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				// at MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_02() in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 514
 				attr.IsValid ("stuff");
 			}, "#A1");
-
-			AssertExtensions.Throws<NotImplementedException> (() => {
-				// And this one is thrown from the IsValid (object) overload!
-				//
-				// MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_CrossCallsWithNIEX:
-				// System.NotImplementedException : IsValid(object value) has not been implemented by this class.  The preferred entry point is GetValidationResult() and classes should override IsValid(object value, ValidationContext context).
-				//
-				// at System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(Object value)
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.IsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 660
-				// at System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(Object value)
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.IsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 660
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidateSomethingAttribute.CallIsValid(Object value, ValidationContext validationContext) in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 667
-				// at MonoTests.System.ComponentModel.DataAnnotations.ValidationAttributeTest.IsValid_Object_ValidationContext_CrossCallsWithNIEX() in C:\Users\grendel\Documents\Visual Studio 2010\Projects\System.Web.Test\System.Web.Test\System.ComponentModel.DataAnnotations\ValidationAttributeTest.cs:line 530
-
-				attr.CallIsValid ("stuff", null);
-			}, "#A2");
 		}
+		
 		[Test]
 		public void Validate_Object_ValidationContext ()
 		{
@@ -556,7 +445,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.AreEqual ("bool IsValid (object value)", attr.Calls [1], "#A2-3");
 			Assert.AreEqual ("string FormatErrorMessage (string name)", attr.Calls [2], "#A2-4");
 		}
-#endif
 		[Test]
 		public void Validate_Object_String ()
 		{
@@ -593,12 +481,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			return ErrorMessageString;
 		}
-#if !NET_4_0
-		public override bool IsValid (object value)
-		{
-			return value != null;
-		}
-#endif
 	}
 
 	class ValidateBarAttribute : ValidateFooAttribute
@@ -613,7 +495,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			return value != null;
 		}
-#if NET_4_0
 		protected override ValidationResult IsValid (object value, ValidationContext validationContext)
 		{
 			if (!IsValid (value))
@@ -625,7 +506,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 		{
 			return base.IsValid (value, validationContext);
 		}
-#endif
 	}
 
 	class ValidateBazAttribute : ValidateBarAttribute
@@ -637,40 +517,22 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Calls.Add ("bool IsValid (object value)");
 			return base.IsValid (value);
 		}
-#if NET_4_0
 		protected override ValidationResult IsValid (object value, ValidationContext validationContext)
 		{
 			Calls.Add ("ValidationResult IsValid (object value, ValidationContext validationContext)");
 			return base.IsValid (value, validationContext);
 		}
-#endif
 		public override string FormatErrorMessage (string name)
 		{
 			Calls.Add ("string FormatErrorMessage (string name)");
 			return base.FormatErrorMessage (name);
 		}
 	}
-#if NET_4_0
+	
 	class ValidateSomethingAttribute : ValidationAttribute
 	{
-		public override bool IsValid (object value)
-		{
-			return base.IsValid (value, null) == ValidationResult.Success;
-		}
-
-		protected override ValidationResult IsValid (object value, ValidationContext validationContext)
-		{
-			if (base.IsValid (value))
-				return ValidationResult.Success;
-			return new ValidationResult ("failed to validate in base class");
-		}
-
-		public ValidationResult CallIsValid (object value, ValidationContext validationContext)
-		{
-			return IsValid (value, validationContext);
-		}
 	}
-#endif
+
 	class FooErrorMessageProvider
 	{
 		public static string ErrorProperty1

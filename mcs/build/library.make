@@ -58,7 +58,7 @@ endif
 endif
 
 ifndef response
-response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
+response = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).response
 library_CLEAN_FILES += $(response)
 endif
 
@@ -141,6 +141,7 @@ csproj-local: csproj-library csproj-test
 intermediate_clean=$(subst /,-,$(intermediate))
 csproj-library: 
 	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
+	[[ $(thisdir) == *"Facades"* ]] && config_file=Facades_$$config_file; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
@@ -306,7 +307,7 @@ all-local: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 endif
 
-makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
+makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).makefrag
 library_CLEAN_FILES += $(makefrag)
 $(makefrag): $(sourcefile)
 #	@echo Creating $@ ...

@@ -61,6 +61,10 @@ public class Tests {
 	public struct EmptyStruct {
 	}
 
+	[StructLayout (LayoutKind.Sequential, Size=1)]
+	public struct EmptyStructCpp {
+	}
+
 	[StructLayout (LayoutKind.Sequential)]
 	public struct DelegateStruct {
 		public int a;
@@ -263,6 +267,12 @@ public class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_empty_struct")]
 	public static extern int mono_test_empty_struct (int a, EmptyStruct es, int b);
 
+	[DllImport ("libtest", EntryPoint="mono_test_return_empty_struct")]
+	public static extern EmptyStruct mono_test_return_empty_struct (int a);
+
+	[DllImport ("libtest", EntryPoint="mono_test_return_empty_struct")]
+	public static extern EmptyStructCpp mono_test_return_empty_struct_cpp (int a);
+
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_lpstruct")]
 	public static extern int mono_test_marshal_lpstruct ([In, MarshalAs(UnmanagedType.LPStruct)] SimpleStruct ss);
 
@@ -296,11 +306,11 @@ public class Tests {
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder")]
 	public static extern void mono_test_marshal_stringbuilder (StringBuilder sb, int len);
 
-	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder2")]
-	public static extern void mono_test_marshal_stringbuilder2 (StringBuilder sb, int len);
-
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_default")]
 	public static extern void mono_test_marshal_stringbuilder_default (StringBuilder sb, int len);
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_append")]
+	public static extern void mono_test_marshal_stringbuilder_append (StringBuilder sb, int len);
 
 	[DllImport ("libtest", EntryPoint="mono_test_marshal_stringbuilder_unicode", CharSet=CharSet.Unicode)]
 	public static extern void mono_test_marshal_stringbuilder_unicode (StringBuilder sb, int len);
@@ -483,9 +493,22 @@ public class Tests {
 
 		if (mono_test_empty_struct (1, es, 2) != 0)
 			return 1;
+
+		mono_test_return_empty_struct (42);
+
+		return 0;
+	}
+
+	/* FIXME: This doesn't work on all platforms */
+	/*
+	public static int test_0_marshal_empty_struct_cpp () {
+		EmptyStructCpp es = new EmptyStructCpp ();
+
+		mono_test_return_empty_struct_cpp (42);
 		
 		return 0;
 	}
+	*/
 
 	public static int test_0_marshal_lpstruct () {
 		SimpleStruct ss = new  SimpleStruct ();
@@ -808,11 +831,33 @@ public class Tests {
 		if (res != "This is my message.  Isn't it nice?")
 			return 1;  
 
-		// Test that cached_str is cleared
-		mono_test_marshal_stringbuilder2 (sb, sb.Capacity);
-		res = sb.ToString();
-		if (res != "EFGH")
-			return 2;
+		// Test StringBuilder with default capacity (16)
+		StringBuilder sb2 = new StringBuilder();
+		mono_test_marshal_stringbuilder_default (sb2, sb2.Capacity);
+		if (sb2.ToString () != "This is my messa")
+			return 3;
+
+		return 0;
+	}
+
+	public static int test_0_marshal_stringbuilder_append () {
+		const String in_sentinel = "MONO_";
+		const String out_sentinel = "CSHARP_";
+		const int iterations = 100;
+		StringBuilder sb = new StringBuilder(255);
+		StringBuilder check = new StringBuilder(255);
+
+		for (int i = 0; i < iterations; i++) {
+			sb.Append (in_sentinel[i % in_sentinel.Length]);
+			check.Append (out_sentinel[i % out_sentinel.Length]);
+
+			mono_test_marshal_stringbuilder_append (sb, sb.Length);
+
+			String res = sb.ToString();
+			String checkRev = check.ToString();
+			if (res != checkRev)
+				return 1;
+		}
 
 		// Test StringBuilder with default capacity (16)
 		StringBuilder sb2 = new StringBuilder();

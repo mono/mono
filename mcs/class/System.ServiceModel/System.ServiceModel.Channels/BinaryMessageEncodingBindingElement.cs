@@ -131,7 +131,7 @@ namespace System.ServiceModel.Channels
 			return new BinaryMessageEncoderFactory (this);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		[MonoTODO]
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
 			WsdlContractConversionContext context)

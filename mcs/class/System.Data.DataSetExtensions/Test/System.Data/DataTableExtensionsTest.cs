@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using NUnit.Framework;
 
 namespace MonoTests.System.Data
@@ -70,6 +71,22 @@ namespace MonoTests.System.Data
 			dt.Columns.Add ("CName", typeof (string));
 			DataTable dst = new DataTable ();
 			dt.AsEnumerable ().CopyToDataTable<DataRow> (dst, LoadOption.PreserveChanges);
+		}
+
+		[Test]
+		public void AsEnumerable ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXml ("Test/System.Data/testdataset1.xml");
+			DataTable dt = ds.Tables [0];
+			Assert.AreEqual ("ScoreList", dt.TableName, "TableName");
+			var dv = dt.AsEnumerable ();
+			Assert.AreEqual (4, dv.Count (), "#0");
+			var i = dv.GetEnumerator ();
+			Assert.IsTrue (i.MoveNext (), "#1");
+			Assert.AreEqual (1, i.Current ["ID"], "#2");
+			Assert.IsTrue (i.MoveNext (), "#3");
+			Assert.AreEqual (2, i.Current ["ID"], "#4");
 		}
 
 		[Test]

@@ -326,17 +326,14 @@ public class DSACryptoServiceProviderTest {
 		Assert.IsFalse (emptyDSA.VerifySignature (hash, sign));
 	}
 		
-#if !NET_2_1
 	[Test]
-	[Category ("NotWorking")]
+	[ExpectedException (typeof (ObjectDisposedException))]
 	public void ImportDisposed ()
 	{
 		DSACryptoServiceProvider import = new DSACryptoServiceProvider (minKeySize);
 		import.Clear ();
 		import.ImportParameters (AllTests.GetKey (false));
-		// no exception from Fx 2.0 +
 	}
-#endif
 
 	[Test]
 	[ExpectedException (typeof (ObjectDisposedException))]

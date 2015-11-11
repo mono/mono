@@ -526,7 +526,7 @@ namespace Mono.CSharp {
 				fexpr.EmitAssign (ec, source, false, false);
 				Instance = fexpr;
 			} else {
-				var local = TemporaryVariableReference.Create (source.Type, block, Location);
+				var local = TemporaryVariableReference.Create (source.Type, block, Location, writeToSymbolFile: true);
 				if (source.Type.IsStruct) {
 					local.LocalInfo.CreateBuilder (ec);
 				} else {
@@ -1154,7 +1154,8 @@ namespace Mono.CSharp {
 					prev = null;
 				}
 
-				var body = CompatibleMethodBody (ec, tic, null, delegate_type);
+				HashSet<LocalVariable> undeclaredVariables = null;
+				var body = CompatibleMethodBody (ec, tic, null, delegate_type, ref undeclaredVariables);
 				if (body != null) {
 					am = body.Compatible (ec, body);
 				} else {
@@ -1163,6 +1164,10 @@ namespace Mono.CSharp {
 
 				if (TypeInferenceReportPrinter != null) {
 					ec.Report.SetPrinter (prev);
+				}
+
+				if (undeclaredVariables != null) {
+					body.Block.TopBlock.SetUndeclaredVariables (undeclaredVariables);
 				}
 			}
 
@@ -1188,6 +1193,9 @@ namespace Mono.CSharp {
 			if (compatibles.TryGetValue (type, out am))
 				return am;
 
+			if (type == InternalType.ErrorType)
+				return null;
+
 			TypeSpec delegate_type = CompatibleChecks (ec, type);
 			if (delegate_type == null)
 				return null;
@@ -1206,8 +1214,8 @@ namespace Mono.CSharp {
 			// we satisfy the rule by setting the return type on the EmitContext
 			// to be the delegate type return type.
 			//
-
-			var body = CompatibleMethodBody (ec, null, return_type, delegate_type);
+			HashSet<LocalVariable> undeclaredVariables = null;
+			var body = CompatibleMethodBody (ec, null, return_type, delegate_type, ref undeclaredVariables);
 			if (body == null)
 				return null;
 
@@ -1265,6 +1273,15 @@ namespace Mono.CSharp {
 				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
+			} finally {
+				//
+				// LocalVariable is not stateless and it's not easy to clone because it's
+				// cached in toplevel block. Unsetting any initialized variables should
+				// be enough
+				//
+				if (undeclaredVariables != null) {
+					body.Block.TopBlock.SetUndeclaredVariables (undeclaredVariables);
+				}
 			}
 
 			if (!ec.IsInProbingMode && !etree_conversion) {
@@ -1384,13 +1401,13 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, TypeSpec return_type, TypeSpec delegate_type)
+		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, TypeSpec return_type, TypeSpec delegate_type, ref HashSet<LocalVariable> undeclaredVariables)
 		{
 			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
 				return null;
 
-			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone () : Block;
+			ParametersBlock b = ec.IsInProbingMode ? (ParametersBlock) Block.PerformClone (ref undeclaredVariables) : Block;
 
 			if (b.IsAsync) {
 				var rt = return_type;
@@ -1613,14 +1630,17 @@ namespace Mono.CSharp {
 			fc.ParametersBlock = Block;
 			var da_ontrue = fc.DefiniteAssignmentOnTrue;
 			var da_onfalse = fc.DefiniteAssignmentOnFalse;
+			var prev_tf = fc.TryFinally;
 
 			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
+			fc.TryFinally = null;
 			block.FlowAnalysis (fc);
 
 			fc.ParametersBlock = prev_pb;
 			fc.DefiniteAssignment = das;
 			fc.DefiniteAssignmentOnTrue = da_ontrue;
 			fc.DefiniteAssignmentOnFalse = da_onfalse;
+			fc.TryFinally = prev_tf;
 		}
 
 		public override void MarkReachable (Reachability rc)
@@ -1917,17 +1937,16 @@ namespace Mono.CSharp {
 
 			var delegate_method = method.Spec;
 			if (storey != null && storey.MemberName.IsGeneric) {
-				TypeSpec t = storey.Instance.Type;
-
 				//
 				// Mutate anonymous method instance type if we are in nested
 				// hoisted generic anonymous method storey
 				//
 				if (ec.IsAnonymousStoreyMutateRequired) {
-					t = storey.Mutator.Mutate (t);
+					ec.Emit (OpCodes.Ldftn, delegate_method);
+				} else {
+					TypeSpec t = storey.Instance.Type;
+					ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 				}
-
-				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
 			} else {
 				if (delegate_method.IsGeneric) {
 					TypeParameterSpec[] tparams;

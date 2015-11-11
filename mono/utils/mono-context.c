@@ -34,7 +34,7 @@
 void
 mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
-#if defined (__native_client__)
+#if defined (__native_client__) || defined (HOST_WATCHOS)
 	printf("WARNING: mono_arch_sigctx_to_monoctx() called!\n");
 	mctx->eax = 0xDEADBEEF;
 	mctx->ebx = 0xDEADBEEF;
@@ -45,6 +45,8 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->esi = 0xDEADBEEF;
 	mctx->edi = 0xDEADBEEF;
 	mctx->eip = 0xDEADBEEF;
+#elif MONO_CROSS_COMPILE
+	g_assert_not_reached ();
 #elif defined(MONO_SIGNAL_USE_SIGACTION)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	
@@ -87,8 +89,10 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 void
 mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
-#if defined(__native_client__)
+#if defined(__native_client__) || defined(HOST_WATCHOS)
 	printf("WARNING: mono_arch_monoctx_to_sigctx() called!\n");
+#elif MONO_CROSS_COMPILE
+	g_assert_not_reached ();
 #elif defined(MONO_SIGNAL_USE_SIGACTION)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
@@ -143,66 +147,50 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	printf("WARNING: mono_arch_sigctx_to_monoctx() called!\n");
 #endif
 
-#if defined(MONO_SIGNAL_USE_SIGACTION)
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#elif defined(UCONTEXT_REG_RAX)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
-	mctx->rax = UCONTEXT_REG_RAX (ctx);
-	mctx->rbx = UCONTEXT_REG_RBX (ctx);
-	mctx->rcx = UCONTEXT_REG_RCX (ctx);
-	mctx->rdx = UCONTEXT_REG_RDX (ctx);
-	mctx->rbp = UCONTEXT_REG_RBP (ctx);
-	mctx->rsp = UCONTEXT_REG_RSP (ctx);
-	mctx->rsi = UCONTEXT_REG_RSI (ctx);
-	mctx->rdi = UCONTEXT_REG_RDI (ctx);
-	mctx->r8 = UCONTEXT_REG_R8 (ctx);
-	mctx->r9 = UCONTEXT_REG_R9 (ctx);
-	mctx->r10 = UCONTEXT_REG_R10 (ctx);
-	mctx->r11 = UCONTEXT_REG_R11 (ctx);
-	mctx->r12 = UCONTEXT_REG_R12 (ctx);
-	mctx->r13 = UCONTEXT_REG_R13 (ctx);
-	mctx->r14 = UCONTEXT_REG_R14 (ctx);
-	mctx->r15 = UCONTEXT_REG_R15 (ctx);
-	mctx->rip = UCONTEXT_REG_RIP (ctx);
+	mctx->gregs [AMD64_RAX] = UCONTEXT_REG_RAX (ctx);
+	mctx->gregs [AMD64_RBX] = UCONTEXT_REG_RBX (ctx);
+	mctx->gregs [AMD64_RCX] = UCONTEXT_REG_RCX (ctx);
+	mctx->gregs [AMD64_RDX] = UCONTEXT_REG_RDX (ctx);
+	mctx->gregs [AMD64_RBP] = UCONTEXT_REG_RBP (ctx);
+	mctx->gregs [AMD64_RSP] = UCONTEXT_REG_RSP (ctx);
+	mctx->gregs [AMD64_RSI] = UCONTEXT_REG_RSI (ctx);
+	mctx->gregs [AMD64_RDI] = UCONTEXT_REG_RDI (ctx);
+	mctx->gregs [AMD64_R8] = UCONTEXT_REG_R8 (ctx);
+	mctx->gregs [AMD64_R9] = UCONTEXT_REG_R9 (ctx);
+	mctx->gregs [AMD64_R10] = UCONTEXT_REG_R10 (ctx);
+	mctx->gregs [AMD64_R11] = UCONTEXT_REG_R11 (ctx);
+	mctx->gregs [AMD64_R12] = UCONTEXT_REG_R12 (ctx);
+	mctx->gregs [AMD64_R13] = UCONTEXT_REG_R13 (ctx);
+	mctx->gregs [AMD64_R14] = UCONTEXT_REG_R14 (ctx);
+	mctx->gregs [AMD64_R15] = UCONTEXT_REG_R15 (ctx);
+	mctx->gregs [AMD64_RIP] = UCONTEXT_REG_RIP (ctx);
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
 
-	mctx->rip = context->Rip;
-	mctx->rax = context->Rax;
-	mctx->rcx = context->Rcx;
-	mctx->rdx = context->Rdx;
-	mctx->rbx = context->Rbx;
-	mctx->rsp = context->Rsp;
-	mctx->rbp = context->Rbp;
-	mctx->rsi = context->Rsi;
-	mctx->rdi = context->Rdi;
-	mctx->r8 = context->R8;
-	mctx->r9 = context->R9;
-	mctx->r10 = context->R10;
-	mctx->r11 = context->R11;
-	mctx->r12 = context->R12;
-	mctx->r13 = context->R13;
-	mctx->r14 = context->R14;
-	mctx->r15 = context->R15;
+	mctx->gregs [AMD64_RIP] = context->Rip;
+	mctx->gregs [AMD64_RAX] = context->Rax;
+	mctx->gregs [AMD64_RCX] = context->Rcx;
+	mctx->gregs [AMD64_RDX] = context->Rdx;
+	mctx->gregs [AMD64_RBX] = context->Rbx;
+	mctx->gregs [AMD64_RSP] = context->Rsp;
+	mctx->gregs [AMD64_RBP] = context->Rbp;
+	mctx->gregs [AMD64_RSI] = context->Rsi;
+	mctx->gregs [AMD64_RDI] = context->Rdi;
+	mctx->gregs [AMD64_R8] = context->R8;
+	mctx->gregs [AMD64_R9] = context->R9;
+	mctx->gregs [AMD64_R10] = context->R10;
+	mctx->gregs [AMD64_R11] = context->R11;
+	mctx->gregs [AMD64_R12] = context->R12;
+	mctx->gregs [AMD64_R13] = context->R13;
+	mctx->gregs [AMD64_R14] = context->R14;
+	mctx->gregs [AMD64_R15] = context->R15;
 #else
-	MonoContext *ctx = (MonoContext *)sigctx;
-
-	mctx->rax = ctx->rax;
-	mctx->rbx = ctx->rbx;
-	mctx->rcx = ctx->rcx;
-	mctx->rdx = ctx->rdx;
-	mctx->rbp = ctx->rbp;
-	mctx->rsp = ctx->rsp;
-	mctx->rsi = ctx->rsi;
-	mctx->rdi = ctx->rdi;
-	mctx->r8 = ctx->r8;
-	mctx->r9 = ctx->r9;
-	mctx->r10 = ctx->r10;
-	mctx->r11 = ctx->r11;
-	mctx->r12 = ctx->r12;
-	mctx->r13 = ctx->r13;
-	mctx->r14 = ctx->r14;
-	mctx->r15 = ctx->r15;
-	mctx->rip = ctx->rip;
+	g_assert_not_reached ();
 #endif
 }
 
@@ -213,66 +201,50 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
   printf("WARNING: mono_arch_monoctx_to_sigctx() called!\n");
 #endif
 
-#if defined(MONO_SIGNAL_USE_SIGACTION)
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#elif defined(UCONTEXT_REG_RAX)
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
-	UCONTEXT_REG_RAX (ctx) = mctx->rax;
-	UCONTEXT_REG_RBX (ctx) = mctx->rbx;
-	UCONTEXT_REG_RCX (ctx) = mctx->rcx;
-	UCONTEXT_REG_RDX (ctx) = mctx->rdx;
-	UCONTEXT_REG_RBP (ctx) = mctx->rbp;
-	UCONTEXT_REG_RSP (ctx) = mctx->rsp;
-	UCONTEXT_REG_RSI (ctx) = mctx->rsi;
-	UCONTEXT_REG_RDI (ctx) = mctx->rdi;
-	UCONTEXT_REG_R8 (ctx) = mctx->r8;
-	UCONTEXT_REG_R9 (ctx) = mctx->r9;
-	UCONTEXT_REG_R10 (ctx) = mctx->r10;
-	UCONTEXT_REG_R11 (ctx) = mctx->r11;
-	UCONTEXT_REG_R12 (ctx) = mctx->r12;
-	UCONTEXT_REG_R13 (ctx) = mctx->r13;
-	UCONTEXT_REG_R14 (ctx) = mctx->r14;
-	UCONTEXT_REG_R15 (ctx) = mctx->r15;
-	UCONTEXT_REG_RIP (ctx) = mctx->rip;
+	UCONTEXT_REG_RAX (ctx) = mctx->gregs [AMD64_RAX];
+	UCONTEXT_REG_RBX (ctx) = mctx->gregs [AMD64_RBX];
+	UCONTEXT_REG_RCX (ctx) = mctx->gregs [AMD64_RCX];
+	UCONTEXT_REG_RDX (ctx) = mctx->gregs [AMD64_RDX];
+	UCONTEXT_REG_RBP (ctx) = mctx->gregs [AMD64_RBP];
+	UCONTEXT_REG_RSP (ctx) = mctx->gregs [AMD64_RSP];
+	UCONTEXT_REG_RSI (ctx) = mctx->gregs [AMD64_RSI];
+	UCONTEXT_REG_RDI (ctx) = mctx->gregs [AMD64_RDI];
+	UCONTEXT_REG_R8 (ctx) = mctx->gregs [AMD64_R8];
+	UCONTEXT_REG_R9 (ctx) = mctx->gregs [AMD64_R9];
+	UCONTEXT_REG_R10 (ctx) = mctx->gregs [AMD64_R10];
+	UCONTEXT_REG_R11 (ctx) = mctx->gregs [AMD64_R11];
+	UCONTEXT_REG_R12 (ctx) = mctx->gregs [AMD64_R12];
+	UCONTEXT_REG_R13 (ctx) = mctx->gregs [AMD64_R13];
+	UCONTEXT_REG_R14 (ctx) = mctx->gregs [AMD64_R14];
+	UCONTEXT_REG_R15 (ctx) = mctx->gregs [AMD64_R15];
+	UCONTEXT_REG_RIP (ctx) = mctx->gregs [AMD64_RIP];
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
 
-	context->Rip = mctx->rip;
-	context->Rax = mctx->rax;
-	context->Rcx = mctx->rcx;
-	context->Rdx = mctx->rdx;
-	context->Rbx = mctx->rbx;
-	context->Rsp = mctx->rsp;
-	context->Rbp = mctx->rbp;
-	context->Rsi = mctx->rsi;
-	context->Rdi = mctx->rdi;
-	context->R8 = mctx->r8;
-	context->R9 = mctx->r9;
-	context->R10 = mctx->r10;
-	context->R11 = mctx->r11;
-	context->R12 = mctx->r12;
-	context->R13 = mctx->r13;
-	context->R14 = mctx->r14;
-	context->R15 = mctx->r15;
+	context->Rip = mctx->gregs [AMD64_RIP];
+	context->Rax = mctx->gregs [AMD64_RAX];
+	context->Rcx = mctx->gregs [AMD64_RCX];
+	context->Rdx = mctx->gregs [AMD64_RDX];
+	context->Rbx = mctx->gregs [AMD64_RBX];
+	context->Rsp = mctx->gregs [AMD64_RSP];
+	context->Rbp = mctx->gregs [AMD64_RBP];
+	context->Rsi = mctx->gregs [AMD64_RSI];
+	context->Rdi = mctx->gregs [AMD64_RDI];
+	context->R8 = mctx->gregs [AMD64_R8];
+	context->R9 = mctx->gregs [AMD64_R9];
+	context->R10 = mctx->gregs [AMD64_R10];
+	context->R11 = mctx->gregs [AMD64_R11];
+	context->R12 = mctx->gregs [AMD64_R12];
+	context->R13 = mctx->gregs [AMD64_R13];
+	context->R14 = mctx->gregs [AMD64_R14];
+	context->R15 = mctx->gregs [AMD64_R15];
 #else
-	MonoContext *ctx = (MonoContext *)sigctx;
-
-	ctx->rax = mctx->rax;
-	ctx->rbx = mctx->rbx;
-	ctx->rcx = mctx->rcx;
-	ctx->rdx = mctx->rdx;
-	ctx->rbp = mctx->rbp;
-	ctx->rsp = mctx->rsp;
-	ctx->rsi = mctx->rsi;
-	ctx->rdi = mctx->rdi;
-	ctx->r8 = mctx->r8;
-	ctx->r9 = mctx->r9;
-	ctx->r10 = mctx->r10;
-	ctx->r11 = mctx->r11;
-	ctx->r12 = mctx->r12;
-	ctx->r13 = mctx->r13;
-	ctx->r14 = mctx->r14;
-	ctx->r15 = mctx->r15;
-	ctx->rip = mctx->rip;
+	g_assert_not_reached ();
 #endif
 }
 

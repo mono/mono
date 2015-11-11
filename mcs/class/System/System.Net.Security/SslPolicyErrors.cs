@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MONO_FEATURE_NEW_TLS
 namespace System.Net.Security 
 {
 	[Flags]
@@ -37,3 +37,4 @@ namespace System.Net.Security
 		RemoteCertificateChainErrors = 4,
 	}
 }
+#endif

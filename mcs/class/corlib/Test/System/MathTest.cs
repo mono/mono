@@ -16,8 +16,7 @@ namespace MonoTests.System
 	[TestFixture]
 	public class MathTest
 	{
-		private static double double_epsilon =
-			double.Epsilon;
+		private static double double_epsilon = 2.2204460492503131e-16; /* DBL_EPSILON = 2^-52 */
 
 		static double x = 0.1234;
 		static double y = 12.345;
@@ -405,7 +404,7 @@ namespace MonoTests.System
 		public void TestIEEERemainder ()
 		{
 			double a = Math.IEEERemainder (y, x);
-			double b = 0.0050000000000007816;
+			double b = 0.0050000000000010592;
 
 			Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99")
 				+ " != " + b.ToString ("G99"));
@@ -456,7 +455,8 @@ namespace MonoTests.System
 			// MS docs say this should be PositiveInfinity
 			Assert.IsTrue (Math.Log (0, y) == double.NegativeInfinity);
 			Assert.IsTrue (Math.Log (double.PositiveInfinity, y) == double.PositiveInfinity);
-			Assert.IsTrue (Math.Log (x, double.PositiveInfinity) == 0);
+
+			Assert.IsTrue (Double.IsNaN (Math.Log (x, double.PositiveInfinity)));
 		}
 
 		[Test]
@@ -479,80 +479,117 @@ namespace MonoTests.System
 		[Test]
 		public void TestPow ()
 		{
-			int iTest = 1;
+			double precision;
+#if MONODROID
+			// It fails on Nexus 9 with
+			//
+			//   1.3636094460602122 != 1.3636094460602119
+			//
+			// when using double_epsilon. Precision differs between different ARM CPUs, so we
+			// will just use a more conservative value
+			precision = double_epsilon * 10;
+#else
+			precision = double_epsilon;
+#endif
 
-			try {
-				double a = Math.Pow (y, x);
-				double b = 1.363609446060212;
+			/* documentation cases : https://msdn.microsoft.com/en-us/library/system.math.pow%28v=vs.110%29.aspx */
 
-				Assert.IsTrue ((Math.Abs (a - b) <= double_epsilon), a.ToString ("G99") + " != " + b.ToString ("G99"));
-				iTest++;
-				Assert.IsTrue (double.IsNaN (Math.Pow (y, double.NaN)));
-				iTest++;
-				Assert.IsTrue (double.IsNaN (Math.Pow (double.NaN, x)));
-				iTest++;
-				Assert.IsTrue (double.IsNegativeInfinity (Math.Pow (double.NegativeInfinity, 1)),
-					"Math.Pow(double.NegativeInfinity, 1) should be NegativeInfinity");
-				iTest++;
-				Assert.IsTrue (double.IsPositiveInfinity (Math.Pow (double.NegativeInfinity, 2)),
-					"Math.Pow(double.NegativeInfinity, 2) should be PositiveInfinity");
+			/* x or y = NaN -> NaN */
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,              double.NaN)), "#1");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN, double.NegativeInfinity)), "#2");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                      -2)), "#2");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                      -1)), "#3");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       0)), "#4");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       1)), "#5");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN,                       2)), "#6");
+			Assert.IsTrue (double.IsNaN (Math.Pow (             double.NaN, double.PositiveInfinity)), "#7");
+			Assert.IsTrue (double.IsNaN (Math.Pow (double.NegativeInfinity,              double.NaN)), "#8");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                     -2,              double.NaN)), "#9");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                     -1,              double.NaN)), "#10");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      0,              double.NaN)), "#11");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      1,              double.NaN)), "#12");
+			Assert.IsTrue (double.IsNaN (Math.Pow (                      2,              double.NaN)), "#13");
+			Assert.IsTrue (double.IsNaN (Math.Pow (double.PositiveInfinity,              double.NaN)), "#14");
 
-				// MS docs say this should be 0
-				iTest++;
-				Assert.IsTrue (double.IsNaN (Math.Pow (1, double.NegativeInfinity)));
-				iTest++;
-				Assert.AreEqual ((double) 0, Math.Pow (double.PositiveInfinity, double.NegativeInfinity),
-					"Math.Pow(double.PositiveInfinity, double.NegativeInfinity)");
-				iTest++;
-				Assert.IsTrue (double.IsPositiveInfinity (Math.Pow (double.PositiveInfinity, 1)),
-					"Math.Pow(double.PositiveInfinity, 1) should be PositiveInfinity");
+			/* x = Any value except NaN; y = 0 -> 1 */
+			Assert.AreEqual ((double) 1, Math.Pow (2, 0), "#15");
 
-				// MS docs say this should be PositiveInfinity
-				iTest++;
-				Assert.IsTrue (double.IsNaN (Math.Pow (1, double.PositiveInfinity)),
-					"Math.Pow(1, double.PositiveInfinity) should be NaN");
+			/* x = NegativeInfinity; y < 0 -> 0 */
+			Assert.AreEqual ((double) 0, Math.Pow (double.NegativeInfinity, -2), "#16");
 
-				iTest++;
-				Assert.IsTrue (Double.IsNaN (Math.Pow (1, Double.NaN)),
-					"Math.Pow(1, NaN) should be NaN");
-				iTest++;
-				Assert.IsTrue (Double.IsNaN (Math.Pow (Double.NaN, 0)),
-					"Math.Pow(NaN, 0) should be NaN");
-				iTest++;
-				Assert.IsTrue (1.0 == Math.Pow (-1, Double.MaxValue),
-					"Math.Pow(-1, MaxValue) should be 1.0");
+			/* x = NegativeInfinity; y is a positive odd integer -> NegativeInfinity */
+			Assert.AreEqual (double.NegativeInfinity, Math.Pow (double.NegativeInfinity, 3), "#17");
 
-				iTest++;
-				Assert.IsTrue (1.0 == Math.Pow (-1, Double.MinValue),
-					"Math.Pow(-1, MinValue) should be 1.0");
+			/* x = NegativeInfinity; y is positive but not an odd integer -> PositiveInfinity */
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (double.NegativeInfinity, 2), "#18");
 
-				iTest++;
-				Assert.IsTrue (Double.IsPositiveInfinity (Math.Pow (Double.MinValue,
-					Double.MaxValue)), "Math.Pow(MinValue, MaxValue) should be +Infinity");
+			/* x < 0 but not NegativeInfinity; y is not an integer, NegativeInfinity, or PositiveInfinity -> NaN */
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, 2.5)), "#19");
 
-				iTest++;
-				Assert.IsTrue (0.0 == Math.Pow (Double.MinValue, Double.MinValue),
-					"Math.Pow(MinValue, MinValue) should be 0.0");
+			/* x = -1; y = NegativeInfinity or PositiveInfinity -> NaN */
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, double.PositiveInfinity)), "#20");
+			Assert.IsTrue (double.IsNaN (Math.Pow (-1, double.NegativeInfinity)), "#21");
 
-				//
-				// The following bugs were present because we tried to outsmart the C Pow:
-				//
-				double infinity = Double.PositiveInfinity;
-				Assert.IsTrue (Math.Pow (0.5, infinity) == 0.0,
-					"Math.Pow(0.5, Infinity) == 0.0");
-				Assert.IsTrue (Math.Pow (0.5, -infinity) == infinity,
-					"Math.Pow(0.5, -Infinity) == Infinity");
-				Assert.IsTrue (Math.Pow (2, infinity) == infinity,
-					"Math.Pow(2, Infinity) == Infinity");
-				Assert.IsTrue (Math.Pow (2, -infinity) == 0.0,
-					"Math.Pow(2, -Infinity) == 0");
-				Assert.IsTrue (Math.Pow (infinity, 0) == 1.0,
-					"Math.Pow(Infinity, 0) == 1.0");
-				Assert.IsTrue (Math.Pow (-infinity, 0) == 1.0,
-					"Math.Pow(-Infinity, 0) == 1.0");
-			} catch (Exception e) {
-				Assert.Fail ("Unexpected exception at iTest=" + iTest + ". e=" + e);
-			}
+			/* -1 < x < 1; y = NegativeInfinity -> PositiveInfinity */
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (-0.5, double.NegativeInfinity), "#22");
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (+0.5, double.NegativeInfinity), "#23");
+
+			/* -1 < x < 1; y = PositiveInfinity -> 0 */
+			Assert.AreEqual ((double) 0, Math.Pow (-0.5, double.PositiveInfinity), "#24");
+			Assert.AreEqual ((double) 0, Math.Pow (+0.5, double.PositiveInfinity), "#25");
+
+			/* x < -1 or x > 1; y = NegativeInfinity -> 0 */
+			Assert.AreEqual ((double) 0, Math.Pow (-2, double.NegativeInfinity), "#26");
+			Assert.AreEqual ((double) 0, Math.Pow (+2, double.NegativeInfinity), "#27");
+
+			/* x < -1 or x > 1; y = PositiveInfinity -> PositiveInfinity */
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (-2, double.PositiveInfinity), "#28");
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (+2, double.PositiveInfinity), "#29");
+
+			/* x = 0; y < 0 -> PositiveInfinity */
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (0, -2), "#30");
+
+			/* x = 0; y > 0 -> PositiveInfinity */
+			Assert.AreEqual ((double) 0, Math.Pow (0, +2), "#31");
+
+			/* x = 1; y is any value except NaN -> 1 */
+			Assert.AreEqual ((double) 1, Math.Pow (1, double.NegativeInfinity), "#32");
+			Assert.AreEqual ((double) 1, Math.Pow (1,                      -2), "#33");
+			Assert.AreEqual ((double) 1, Math.Pow (1,                       0), "#34");
+			Assert.AreEqual ((double) 1, Math.Pow (1,                      +2), "#35");
+			Assert.AreEqual ((double) 1, Math.Pow (1, double.PositiveInfinity), "#36");
+
+			/* x = PositiveInfinity; y < 0 -> 0 */
+			Assert.AreEqual ((double) 0, Math.Pow (double.PositiveInfinity, -1), "#37");
+			Assert.AreEqual ((double) 0, Math.Pow (double.PositiveInfinity, -2), "#38");
+
+			/* x = PositiveInfinity; y > 0 -> PositiveInfinity */
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (double.PositiveInfinity, 1), "#39");
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (double.PositiveInfinity, 2), "#40");
+
+			/* other cases */
+
+			double a = Math.Pow (y, x);
+			double b = 1.363609446060212;
+
+			Assert.IsTrue (Math.Abs (a - b) <= precision, "#41 " + a.ToString ("G99") + " != " + b.ToString ("G99") + " +/- " + precision.ToString ("G99"));
+			Assert.AreEqual (double.NegativeInfinity, Math.Pow (double.NegativeInfinity, 1), "#42");
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (double.NegativeInfinity, 2), "#43");
+
+			Assert.AreEqual (Math.Pow (double.PositiveInfinity, double.NegativeInfinity), (double) 0, "#44");
+
+			Assert.AreEqual ((double) 1, Math.Pow (-1, Double.MaxValue), "#45");
+			Assert.AreEqual ((double) 1, Math.Pow (-1, Double.MinValue), "#46");
+			Assert.AreEqual ((double) 0, Math.Pow (Double.MinValue, Double.MinValue), "#47");
+			Assert.AreEqual (double.PositiveInfinity, Math.Pow (Double.MinValue, Double.MaxValue), "#48");
+
+			double infinity = double.PositiveInfinity;
+			Assert.AreEqual ((double) 0, Math.Pow (      0.5,  infinity), "#49");
+			Assert.AreEqual (  infinity, Math.Pow (      0.5, -infinity), "#50");
+			Assert.AreEqual (  infinity, Math.Pow (        2,  infinity), "#51");
+			Assert.AreEqual ((double) 0, Math.Pow (        2, -infinity), "#52");
+			Assert.AreEqual ((double) 1, Math.Pow ( infinity,         0), "#53");
+			Assert.AreEqual ((double) 1, Math.Pow (-infinity,         0), "#54");
 		}
 
 		[Test]

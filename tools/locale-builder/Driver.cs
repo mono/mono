@@ -174,10 +174,6 @@ namespace Mono.Tools.LocaleBuilder
 				writer.WriteLine ("{0}: {1}", "NumberGroupSeparator", nf.NumberGroupSeparator);
 				Dump (writer, nf.NumberGroupSizes, "NumberGroupSizes", true);
 				writer.WriteLine ("{0}: {1}", "NumberNegativePattern", nf.NumberNegativePattern);
-				writer.WriteLine ("{0}: {1}", "PercentDecimalDigits", nf.PercentDecimalDigits);
-				writer.WriteLine ("{0}: {1}", "PercentDecimalSeparator", nf.PercentDecimalSeparator);
-				writer.WriteLine ("{0}: {1}", "PercentGroupSeparator", nf.PercentGroupSeparator);
-				Dump (writer, nf.PercentGroupSizes, "PercentGroupSizes", true);
 				writer.WriteLine ("{0}: {1}", "PercentNegativePattern", nf.PercentNegativePattern);
 				writer.WriteLine ("{0}: {1}", "PercentPositivePattern", nf.PercentPositivePattern);
 				writer.WriteLine ("{0}: {1}", "PercentSymbol", nf.PercentSymbol);
@@ -935,12 +931,10 @@ namespace Mono.Tools.LocaleBuilder
 			// We don't add 3 as it's for some arabic states only
 			switch (data.ThreeLetterISOLanguageName) {
 			case "amh":
-				data.NumberFormatEntry.NumberDecimalDigits =
-				data.NumberFormatEntry.PercentDecimalDigits = 1;
+				data.NumberFormatEntry.NumberDecimalDigits = 1;
 				break;
 			default:
-				data.NumberFormatEntry.NumberDecimalDigits =
-				data.NumberFormatEntry.PercentDecimalDigits = 2;
+				data.NumberFormatEntry.NumberDecimalDigits = 2;
 				break;
 			}
 
@@ -973,7 +967,7 @@ namespace Mono.Tools.LocaleBuilder
 
 			string calendar;
 			// Default calendar is for now always "gregorian"
-			switch (ci.Name) {
+			switch (ci.OriginalName) {
 			case "th": case "th-TH":
 				calendar = "buddhist";
 				ci.CalendarType = CalendarType.ThaiBuddhist; // typeof (ThaiBuddhistCalendar);
@@ -1006,6 +1000,12 @@ namespace Mono.Tools.LocaleBuilder
 				nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='wide']/month");
 				ProcessAllNodes (nodes, df.MonthNames, AddOrReplaceValue);
 
+				if (df.MonthNames != null) {
+					if (ci.Name == "sv" || ci.Name == "sv-SE") {
+						ToLower (df.MonthNames);
+					}
+				}
+
 				// Apply global rule first <alias source="locale" path="../../monthContext[@type='format']/monthWidth[@type='abbreviated']"/>
 				if (ci.Name == "ja" || ci.Name == "ja-JP") {
 					// Use common number style
@@ -1014,6 +1014,12 @@ namespace Mono.Tools.LocaleBuilder
 					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
 					nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
 					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				}
+
+				if (df.AbbreviatedMonthNames != null) {
+					if (ci.Name == "sv" || ci.Name == "sv-SE") {
+						ToLower (df.AbbreviatedMonthNames);
+					}
 				}
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
@@ -1032,6 +1038,12 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.AbbreviatedDayNames, AddOrReplaceDayValue);
 				nodes = node.SelectNodes ("days/dayContext[@type='stand-alone']/dayWidth[@type='abbreviated']/day");
 				ProcessAllNodes (nodes, df.AbbreviatedDayNames, AddOrReplaceDayValue);
+
+				if (df.AbbreviatedDayNames != null) {
+					if (ci.Name == "sv" || ci.Name == "sv-SE") {
+						ToLower (df.AbbreviatedDayNames);
+					}
+				}
 
 				// TODO: This is not really ShortestDayNames as .NET uses it
 				// Apply global rules first <alias source="locale" path="../../dayContext[@type='stand-alone']/dayWidth[@type='narrow']"/>
@@ -1110,12 +1122,6 @@ namespace Mono.Tools.LocaleBuilder
 
 			node = doc.SelectSingleNode ("ldml/numbers/symbols");
 			if (node != null) {
-				el = node.SelectSingleNode ("decimal");
-				if (el != null) {
-					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator = el.InnerText;
-				}
-
 				el = node.SelectSingleNode ("plusSign");
 				if (el != null)
 					ni.PositiveSign = el.InnerText;
@@ -1164,6 +1170,7 @@ namespace Mono.Tools.LocaleBuilder
 			// .net has incorrect separators for some countries and we want to be compatible
 			switch (ci.Name) {
 			case "es-ES":
+			case "es":
 				// es-ES does not have group separator but .net has '.'
 				value = ".";
 				break;
@@ -1179,9 +1186,20 @@ namespace Mono.Tools.LocaleBuilder
 			}
 					
 			if (value != null) {
-				ni.NumberGroupSeparator =
-				ni.PercentGroupSeparator =
-				ni.CurrencyGroupSeparator = value;
+				ni.NumberGroupSeparator = ni.CurrencyGroupSeparator = value;
+			}
+		}
+
+		static void ToLower (string[] values)
+		{
+			if (values == null)
+				return;
+
+			for (int i = 0; i < values.Length; ++i) {
+				if (values [i] == null)
+					continue;
+
+				values [i] = values [i].ToLower ();
 			}
 		}
 

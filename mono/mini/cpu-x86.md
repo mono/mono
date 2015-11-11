@@ -66,7 +66,7 @@ break: len:1
 call: dest:a clob:c len:17
 tailcall: len:120 clob:c
 br: len:5
-seq_point: len:17
+seq_point: len:24 clob:c
 il_seq_point: len:0
 
 int_beq: len:6
@@ -120,6 +120,7 @@ rethrow: src1:i len:13
 start_handler: len:16
 endfinally: len:16 nacl:21
 endfilter: src1:a len:16 nacl:21
+get_ex_obj: dest:a len:16
 
 ckfinite: dest:f src1:f len:32
 ceq: dest:y len:6
@@ -250,7 +251,7 @@ call_handler: len:11 clob:c
 aot_const: dest:i len:5
 load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7
-nacl_gc_safe_point: clob:c
+gc_safe_point: clob:c src1:i len:20
 x86_test_null: src1:i len:2
 x86_compare_membase_reg: src1:b src2:i len:7
 x86_compare_membase_imm: src1:b len:11

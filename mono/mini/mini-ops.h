@@ -640,6 +640,11 @@ MINI_OP(OP_CALL_HANDLER  , "call_handler", NONE, NONE, NONE)
 MINI_OP(OP_START_HANDLER  , "start_handler", NONE, NONE, NONE)
 MINI_OP(OP_ENDFILTER,  "endfilter", NONE, IREG, NONE)
 MINI_OP(OP_ENDFINALLY,  "endfinally", NONE, NONE, NONE)
+/*
+ * Returns the exception object passed to catch clauses in
+ * by the EH code in a register.
+ */
+MINI_OP(OP_GET_EX_OBJ, "get_ex_obj", IREG, NONE, NONE)
 
 /* inline (long)int * (long)int */
 MINI_OP(OP_BIGMUL, "bigmul", LREG, IREG, IREG)
@@ -1062,14 +1067,17 @@ MINI_OP(OP_GC_SPILL_SLOT_LIVENESS_DEF, "gc_spill_slot_liveness_def", NONE, NONE,
  */
 MINI_OP(OP_GC_PARAM_SLOT_LIVENESS_DEF, "gc_param_slot_liveness_def", NONE, NONE, NONE)
 
-/* Arch specific opcodes */
-/* #if defined(__native_client_codegen__) || defined(__native_client__) */
-/* We have to define these in terms of the TARGET defines, not NaCl defines */
-/* because genmdesc.pl doesn't have multiple defines per platform.          */
-#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM)
-MINI_OP(OP_NACL_GC_SAFE_POINT,     "nacl_gc_safe_point", IREG, NONE, NONE)
-#endif
+MINI_OP(OP_GC_SAFE_POINT, "gc_safe_point", NONE, IREG, NONE)
 
+/*
+ * Check if the class given by sreg1 was inited, if not, call
+ * mono_generic_class_init_trampoline () though a trampoline.
+ * Since the trampoline saves all registers, this doesn't clobber
+ * any registers.
+ */
+MINI_OP(OP_GENERIC_CLASS_INIT, "generic_class_init", NONE, IREG, NONE)
+
+/* Arch specific opcodes */
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 MINI_OP(OP_X86_TEST_NULL,          "x86_test_null", NONE, IREG, NONE)
 MINI_OP(OP_X86_COMPARE_MEMBASE_REG,"x86_compare_membase_reg", NONE, IREG, IREG)

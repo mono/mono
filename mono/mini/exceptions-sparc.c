@@ -180,8 +180,10 @@ throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow)
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow)
+		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
+			mono_ex->trace_ips = NULL;
+		}
 	}
 	mono_handle_exception (&ctx, exc);
 	restore_context (&ctx);
@@ -324,7 +326,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 	return start;
 }
 
-/* mono_arch_find_jit_info:
+/* mono_arch_unwind_frame:
  *
  * This function is used to gather information from @ctx. It return the 
  * MonoJitInfo of the corresponding function, unwinds one stack frame and
@@ -334,7 +336,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
  * start of the function or -1 if that info is not available.
  */
 gboolean
-mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf,
 							 mgreg_t **save_locations,
@@ -348,7 +350,10 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	*new_ctx = *ctx;
 
 	if (ji != NULL) {
-		frame->type = FRAME_TYPE_MANAGED;
+		if (ji->is_trampoline)
+			frame->type = FRAME_TYPE_TRAMPOLINE;
+		else
+			frame->type = FRAME_TYPE_MANAGED;
 
 		/* Restore ip and sp from the saved register window */
 		window = MONO_SPARC_WINDOW_ADDR (ctx->sp);

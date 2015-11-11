@@ -16,10 +16,6 @@
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/mempool-internals.h>
 
-
-extern mono_mutex_t mono_delegate_section;
-extern mono_mutex_t mono_strtod_mutex;
-
 /*
  * If this is set, the memory belonging to appdomains is not freed when a domain is
  * unloaded, and assemblies loaded by the appdomain are not unloaded either. This
@@ -85,6 +81,15 @@ typedef struct {
 	gpointer try_start;
 	gpointer try_end;
 	gpointer handler_start;
+	/*
+	 * For LLVM compiled code, this is the index of the il clause
+	 * associated with this handler.
+	 */
+	int clause_index;
+	uint32_t try_offset;
+	uint32_t try_len;
+	uint32_t handler_offset;
+	uint32_t handler_len;
 	union {
 		MonoClass *catch_class;
 		gpointer filter;
@@ -96,13 +101,7 @@ typedef struct {
  * Contains information about the type arguments for generic shared methods.
  */
 typedef struct {
-	/*
-	 * If not NULL, determines whenever the class type arguments of the gshared method are references or vtypes.
-	 * The array length is equal to class_inst->type_argv.
-	 */
-	gboolean *var_is_vt;
-	/* Same for method type parameters */
-	gboolean *mvar_is_vt;
+	gboolean is_gsharedvt;
 } MonoGenericSharingContext;
 
 /* Simplified DWARF location list entry */
@@ -179,21 +178,17 @@ typedef struct
 } MonoArchEHJitInfo;
 
 typedef struct {
-	gboolean    cas_inited:1;
-	gboolean    cas_class_assert:1;
-	gboolean    cas_class_deny:1;
-	gboolean    cas_class_permitonly:1;
-	gboolean    cas_method_assert:1;
-	gboolean    cas_method_deny:1;
-	gboolean    cas_method_permitonly:1;
-} MonoMethodCasInfo;
+	/* Relative to code_start */
+	int thunks_offset;
+	int thunks_size;
+} MonoThunkJitInfo;
 
 typedef enum {
 	JIT_INFO_NONE = 0,
-	JIT_INFO_HAS_CAS_INFO = (1 << 0),
-	JIT_INFO_HAS_GENERIC_JIT_INFO = (1 << 1),
-	JIT_INFO_HAS_TRY_BLOCK_HOLES = (1 << 2),
-	JIT_INFO_HAS_ARCH_EH_INFO = (1 << 3)
+	JIT_INFO_HAS_GENERIC_JIT_INFO = (1 << 0),
+	JIT_INFO_HAS_TRY_BLOCK_HOLES = (1 << 1),
+	JIT_INFO_HAS_ARCH_EH_INFO = (1 << 2),
+	JIT_INFO_HAS_THUNK_INFO = (1 << 3)
 } MonoJitInfoFlags;
 
 struct _MonoJitInfo {
@@ -205,6 +200,7 @@ struct _MonoJitInfo {
 		MonoMethod *method;
 		MonoImage *image;
 		gpointer aot_info;
+		gpointer tramp_info;
 	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
@@ -213,10 +209,10 @@ struct _MonoJitInfo {
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
 	gboolean    domain_neutral:1;
-	gboolean    has_cas_info:1;
 	gboolean    has_generic_jit_info:1;
 	gboolean    has_try_block_holes:1;
 	gboolean    has_arch_eh_info:1;
+	gboolean    has_thunk_info:1;
 	gboolean    from_aot:1;
 	gboolean    from_llvm:1;
 	gboolean    dbg_attrs_inited:1;
@@ -225,6 +221,11 @@ struct _MonoJitInfo {
 	gboolean    async:1;
 	gboolean    dbg_step_through:1;
 	gboolean    dbg_non_user_code:1;
+	/*
+	 * Whenever this jit info refers to a trampoline.
+	 * d.tramp_info contains additional data in this case.
+	 */
+	gboolean    is_trampoline:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -233,6 +234,7 @@ struct _MonoJitInfo {
 	/* There is an optional MonoGenericJitInfo after the clauses */
 	/* There is an optional MonoTryBlockHoleTableJitInfo after MonoGenericJitInfo clauses*/
 	/* There is an optional MonoArchEHJitInfo after MonoTryBlockHoleTableJitInfo */
+	/* There is an optional MonoThunkJitInfo after MonoArchEHJitInfo */
 };
 
 #define MONO_SIZEOF_JIT_INFO (offsetof (struct _MonoJitInfo, clauses))
@@ -276,13 +278,6 @@ typedef struct _MonoThunkFreeList {
 } MonoThunkFreeList;
 
 typedef struct _MonoJitCodeHash MonoJitCodeHash;
-
-typedef struct _MonoTlsDataRecord MonoTlsDataRecord;
-struct _MonoTlsDataRecord {
-	MonoTlsDataRecord *next;
-	guint32 tls_offset;
-	guint32 size;
-};
 
 struct _MonoDomain {
 	/*
@@ -361,7 +356,6 @@ struct _MonoDomain {
 	MonoMethod         *private_invoke_method;
 	/* Used to store offsets of thread and context static fields */
 	GHashTable         *special_static_fields;
-	MonoTlsDataRecord  *tlsrec_list;
 	/* 
 	 * This must be a GHashTable, since these objects can't be finalized
 	 * if the hashtable contains a GC visible reference to them.
@@ -406,16 +400,12 @@ struct _MonoDomain {
 	MonoClass *sockaddr_class;
 	MonoClassField *sockaddr_data_field;
 
-	/* Used by threadpool.c */
-	MonoImage *system_image;
-	MonoClass *corlib_asyncresult_class;
-	MonoClass *socket_class;
-	MonoClass *ad_unloaded_ex_class;
-	MonoClass *process_class;
-
 	/* Cache function pointers for architectures  */
 	/* that require wrappers */
 	GHashTable *ftnptrs_hash;
+
+	/* Maps MonoMethod* to weak links to DynamicMethod objects */
+	GHashTable *method_to_dyn_method;
 
 	guint32 execution_context_field_offset;
 };
@@ -431,14 +421,15 @@ typedef struct  {
 	const AssemblyVersionSet version_sets [4];
 } MonoRuntimeInfo;
 
-#define mono_domain_lock(domain) mono_locks_acquire(&(domain)->lock, DomainLock)
-#define mono_domain_unlock(domain) mono_locks_release(&(domain)->lock, DomainLock)
 #define mono_domain_assemblies_lock(domain) mono_locks_acquire(&(domain)->assemblies_lock, DomainAssembliesLock)
 #define mono_domain_assemblies_unlock(domain) mono_locks_release(&(domain)->assemblies_lock, DomainAssembliesLock)
 #define mono_domain_jit_code_hash_lock(domain) mono_locks_acquire(&(domain)->jit_code_hash_lock, DomainJitCodeHashLock)
 #define mono_domain_jit_code_hash_unlock(domain) mono_locks_release(&(domain)->jit_code_hash_lock, DomainJitCodeHashLock)
 
 typedef MonoDomain* (*MonoLoadFunc) (const char *filename, const char *runtime_version);
+
+void mono_domain_lock (MonoDomain *domain);
+void mono_domain_unlock (MonoDomain *domain);
 
 void
 mono_install_runtime_load  (MonoLoadFunc func);
@@ -538,8 +529,8 @@ mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji);
 MonoArchEHJitInfo*
 mono_jit_info_get_arch_eh_info (MonoJitInfo *ji);
 
-MonoMethodCasInfo*
-mono_jit_info_get_cas_info (MonoJitInfo *ji);
+MonoThunkJitInfo*
+mono_jit_info_get_thunk_info (MonoJitInfo *ji);
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside
@@ -602,6 +593,9 @@ ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id);
 
 void
 ves_icall_System_AppDomain_InternalUnload          (gint32 domain_id);
+
+void
+ves_icall_System_AppDomain_DoUnhandledException (MonoException *exc);
 
 gint32
 ves_icall_System_AppDomain_ExecuteAssembly         (MonoAppDomain *ad, 
@@ -679,7 +673,7 @@ void mono_reflection_cleanup_domain (MonoDomain *domain);
 
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
-MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot);
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
 

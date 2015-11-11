@@ -5,23 +5,15 @@ AM_CFLAGS = $(WERROR_CFLAGS)
 MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
 
 if CROSS_COMPILING
-SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
+SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir) acceptance-tests
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
-DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
+DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests
 else
-if ONLY_MONOTOUCH
-SUBDIRS = $(MONOTOUCH_SUBDIRS) runtime
-else
-if ONLY_XAMMAC
-SUBDIRS = $(libgc_dir) eglib/src mono runtime
-else
-SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
+SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir) acceptance-tests
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
-DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
-endif
-endif
+DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests
 endif
 
 all: update_submodules
@@ -36,11 +28,9 @@ EXTRA_DIST= \
         README.md \
 	    LICENSE \
 	    autogen.sh \
-	    build-mingw32.sh \
 	    mkinstalldirs \
 	    mono-uninstalled.pc.in \
 	    winconfig.h \
-	    mono-core.spec \
 	    external
 
 DISTCHECK_CONFIGURE_FLAGS = EXTERNAL_MCS=false EXTERNAL_RUNTIME=false
@@ -52,7 +42,7 @@ dist-hook:
 	d=`cd $(distdir)/mcs && pwd`; cd $(mcs_topdir) && $(MAKE) distdir=$$d dist-recursive
 	rm -rf `find $(top_distdir)/external -path '*\.git'`
 	rm -f `find $(top_distdir)/external -path '*\.exe'`
-	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/v4\.0*'`
+	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*'`
 	cp mcs/class/lib/basic/System.Configuration.dll mcs/class/lib/monolite/
 	cp mcs/class/lib/basic/System.Security.dll mcs/class/lib/monolite/
 # Disable this for now because it is very slow and causes wrench to timeout:
@@ -66,7 +56,7 @@ DISTCLEANFILES= mono-uninstalled.pc
 mcslib = $(mcs_topdir)/class/lib
 monolite = $(mcslib)/monolite
 mono_corlib_version = $(shell sed -n "s/\#define MONO_CORLIB_VERSION //p" $(srcdir)/mono/metadata/appdomain.c)
-monolite_url = http://storage.bos.xamarin.com/mono-dist-master/latest/monolite-$(mono_corlib_version)-latest.tar.gz
+monolite_url = http://download.mono-project.com/monolite/monolite-$(mono_corlib_version)-latest.tar.gz
 .PHONY: get-monolite-latest 
 get-monolite-latest:
 	-rm -fr $(mcslib)/monolite-*

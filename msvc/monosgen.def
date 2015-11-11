@@ -201,6 +201,7 @@ mono_debug_find_method
 mono_debug_free_method_jit_info
 mono_debug_free_source_location
 mono_debug_il_offset_from_address
+mono_debug_image_has_debug_info
 mono_debug_init
 mono_debug_lookup_locals
 mono_debug_lookup_method
@@ -211,10 +212,7 @@ mono_debug_open_mono_symbols
 mono_debug_print_stack_frame
 mono_debug_print_vars
 mono_debug_remove_method
-mono_debug_symfile_free_locals
 mono_debug_symfile_free_location
-mono_debug_symfile_get_line_numbers
-mono_debug_symfile_get_line_numbers_full
 mono_debug_symfile_is_loaded
 mono_debug_symfile_lookup_locals
 mono_debug_symfile_lookup_location
@@ -223,6 +221,9 @@ mono_debugger_agent_register_transport
 mono_debugger_insert_breakpoint
 mono_debugger_method_has_breakpoint
 mono_debugger_run_finally
+mono_decimal_addsub
+mono_decimal_divide
+mono_decimal_from_number
 mono_declsec_flags_from_assembly
 mono_declsec_flags_from_class
 mono_declsec_flags_from_method
@@ -316,8 +317,6 @@ mono_g_hash_table_foreach_remove
 mono_g_hash_table_insert
 mono_g_hash_table_lookup
 mono_g_hash_table_lookup_extended
-mono_g_hash_table_new
-mono_g_hash_table_new_full
 mono_g_hash_table_new_type
 mono_g_hash_table_print_stats
 mono_g_hash_table_remove
@@ -325,15 +324,11 @@ mono_g_hash_table_replace
 mono_g_hash_table_size
 mono_gc_collect
 mono_gc_collection_count
-mono_gc_enable_events
 mono_gc_get_generation
 mono_gc_get_heap_size
 mono_gc_get_used_size
 mono_gc_invoke_finalizers
-mono_gc_is_finalizer_thread
-mono_gc_make_root_descr_user
 mono_gc_max_generation
-mono_gc_out_of_memory
 mono_gc_reference_queue_add
 mono_gc_reference_queue_free
 mono_gc_reference_queue_new
@@ -477,8 +472,6 @@ mono_install_assembly_refonly_preload_hook
 mono_install_assembly_refonly_search_hook
 mono_install_assembly_search_hook
 mono_install_runtime_cleanup
-mono_install_threadpool_item_hooks
-mono_install_threadpool_thread_hooks
 mono_install_unhandled_exception_hook
 mono_invoke_unhandled_exception_hook
 mono_is_debugger_attached
@@ -516,7 +509,6 @@ mono_mempool_alloc
 mono_mempool_alloc0
 mono_mempool_contains_addr
 mono_mempool_destroy
-mono_mempool_empty
 mono_mempool_get_allocated
 mono_mempool_invalidate
 mono_mempool_new
@@ -634,6 +626,7 @@ mono_mlist_set_next
 mono_module_file_get_object
 mono_module_get_object
 mono_monitor_enter
+mono_monitor_enter_v4
 mono_monitor_exit
 mono_monitor_try_enter
 mono_mprotect
@@ -648,7 +641,6 @@ mono_object_get_domain
 mono_object_get_size
 mono_object_get_virtual_method
 mono_object_hash
-mono_object_is_alive
 mono_object_isinst
 mono_object_isinst_mbyref
 mono_object_isinst_with_cache
@@ -665,6 +657,7 @@ mono_opcode_value
 mono_pagesize
 mono_param_get_objects
 mono_parse_default_optimizations
+mono_parse_env_options
 mono_path_canonicalize
 mono_path_resolve_symlinks
 mono_pe_file_open
@@ -759,6 +752,7 @@ mono_runtime_resource_set_callback
 mono_runtime_run_main
 mono_runtime_set_main_args
 mono_runtime_set_shutting_down
+mono_save_seq_point_info
 mono_security_core_clr_get_options
 mono_security_core_clr_require_elevated_permissions
 mono_security_core_clr_set_options
@@ -833,11 +827,8 @@ mono_thread_detach_if_exiting
 mono_thread_exit
 mono_thread_get_main
 mono_thread_get_undeniable_exception
-mono_thread_info_clear_interruption
 mono_thread_info_exit
-mono_thread_info_finish_interrupt
 mono_thread_info_get_stack_bounds
-mono_thread_info_interrupt
 mono_thread_info_open_handle
 mono_thread_info_prepare_interrupt
 mono_thread_info_self_interrupt
@@ -851,10 +842,6 @@ mono_thread_set_main
 mono_thread_set_manage_callback
 mono_thread_stop
 mono_threads_attach_tools_thread
-mono_threads_core_clear_interruption
-mono_threads_core_finish_interrupt
-mono_threads_core_prepare_interrupt
-mono_threads_core_self_interrupt
 mono_threads_create_thread
 mono_threads_get_default_stacksize
 mono_threads_request_thread_dump
@@ -908,4 +895,3 @@ mono_win32_compat_CopyMemory
 mono_win32_compat_FillMemory
 mono_win32_compat_MoveMemory
 mono_win32_compat_ZeroMemory
-mono_xdebug_flush

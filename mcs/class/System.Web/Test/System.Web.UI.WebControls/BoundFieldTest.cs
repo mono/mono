@@ -130,11 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 646505")]
 		public void BoundField_Bug646505 ()
 		{
-#if NET_4_0
 			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView$ctl02$ctl00&#39;,&#39;&#39;)\">Update</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Cancel$0&#39;)\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Edit$1&#39;)\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
-#else
-			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack('gridView$ctl02$ctl00','')\">Update</a>&nbsp;<a href=\"javascript:__doPostBack('gridView','Cancel$0')\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack('gridView','Edit$1')\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
-#endif
 			WebTest t = new WebTest ("BoundField_Bug646505.aspx");
 			t.Run ();
 
@@ -371,11 +367,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (bf.DoSupportsHtmlEncode, "#A1-3");
 
 			bf.DataFormatString = formatString;
-#if NET_4_0
 			Assert.AreEqual ("&lt;script&gt;alert (&#39;&lt;test&gt;&#39;);&lt;/script&gt;", bf.DoFormatDataValue ("<test>", true), "#A2");
-#else
-			Assert.AreEqual ("&lt;script&gt;alert ('&lt;test&gt;');&lt;/script&gt;", bf.DoFormatDataValue ("<test>", true), "#A2");
-#endif
 			Assert.AreEqual (String.Format (formatString, "<test>"), bf.DoFormatDataValue ("<test>", false), "#A3");
 
 			bf.HtmlEncodeFormatString = false;
@@ -383,11 +375,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			var ec = new EncodingTest ();
 			bf.HtmlEncodeFormatString = true;
-#if NET_4_0
 			Assert.AreEqual ("&lt;script&gt;alert (&#39;&lt;EncodingTest&gt;&amp;&#39;);&lt;/script&gt;", bf.DoFormatDataValue (ec, true), "#A4");
-#else
-			Assert.AreEqual ("&lt;script&gt;alert ('&lt;EncodingTest&gt;&amp;');&lt;/script&gt;", bf.DoFormatDataValue (ec, true), "#A4");
-#endif
 		}
 
 		[Test]

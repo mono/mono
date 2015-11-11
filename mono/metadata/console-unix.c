@@ -33,7 +33,7 @@
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/metadata.h>
-#include <mono/metadata/threadpool.h>
+#include <mono/metadata/threadpool-ms.h>
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-proclib.h>
 
@@ -200,7 +200,7 @@ terminal_get_dimensions (void)
 static void
 tty_teardown (void)
 {
-	int unused;
+	int unused G_GNUC_UNUSED;
 
 	if (!setup_finished)
 		return;
@@ -225,8 +225,6 @@ do_console_cancel_event (void)
 	MonoClass *klass;
 	MonoDelegate *load_value;
 	MonoMethod *method;
-	MonoMethodMessage *msg;
-	MonoMethod *im;
 	MonoVTable *vtable;
 
 	/* FIXME: this should likely iterate all the domains, instead */
@@ -252,9 +250,8 @@ do_console_cancel_event (void)
 	klass = load_value->object.vtable->klass;
 	method = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
 	g_assert (method != NULL);
-	im = mono_get_delegate_invoke (method->klass);
-	msg = mono_method_call_message_new (method, NULL, im, NULL, NULL);
-	mono_thread_pool_add ((MonoObject *) load_value, msg, NULL, NULL);
+
+	mono_threadpool_ms_begin_invoke (domain, (MonoObject*) load_value, method, NULL);
 }
 
 static int need_cancel = FALSE;
@@ -289,7 +286,7 @@ static struct sigaction save_sigcont, save_sigint, save_sigwinch;
 
 MONO_SIG_HANDLER_FUNC (static, sigcont_handler)
 {
-	int unused;
+	int unused G_GNUC_UNUSED;
 	// Ignore error, there is not much we can do in the sigcont handler.
 	tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr);
 
@@ -339,6 +336,7 @@ MONO_SIG_HANDLER_FUNC (static, sigwinch_handler)
 static void
 console_set_signal_handlers ()
 {
+#if defined(HAVE_SIGACTION)
 	struct sigaction sigcont, sigint, sigwinch;
 
 	memset (&sigcont, 0, sizeof (struct sigaction));
@@ -362,6 +360,7 @@ console_set_signal_handlers ()
 	sigwinch.sa_flags = 0;
 	sigemptyset (&sigwinch.sa_mask);
 	sigaction (SIGWINCH, &sigwinch, &save_sigwinch);
+#endif
 }
 
 #if currently_unuused

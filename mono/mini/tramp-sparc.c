@@ -51,6 +51,8 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 
 	mono_arch_flush_icache (start, code - start);
 
+	mono_tramp_info_register (mono_tramp_info_create (NULL, start, code - start, NULL, NULL), NULL);
+
 	return start;
 }
 
@@ -68,13 +70,6 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 	g_assert_not_reached ();
 }
 
-void
-mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
-{
-	/* Patch calling code */
-	sparc_nop (code);
-}
-
 #define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
 guchar*
@@ -85,8 +80,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	gboolean has_caller;
 
 	g_assert (!aot);
-	if (info)
-		*info = NULL;
+	*info = NULL;
 
 	if (tramp_type == MONO_TRAMPOLINE_JUMP)
 		has_caller = FALSE;
@@ -192,10 +186,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		sparc_lddf_imm (code, sparc_sp, MONO_SPARC_STACK_BIAS + 320 + (i * 8), sparc_f0 + (i * 2));
 #endif	
 
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT)
-		sparc_ret (code);
-	else
-		sparc_jmpl (code, sparc_o0, sparc_g0, sparc_g0);
+	sparc_jmpl (code, sparc_o0, sparc_g0, sparc_g0);
 
 	/* restore previous frame in delay slot */
 	sparc_restore_simple (code);
@@ -266,21 +257,4 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	/* FIXME: implement! */
 	g_assert_not_reached ();
 	return NULL;
-}
-
-gpointer
-mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
-{
-	guint8 *buf, *code;
-
-	code = buf = mono_global_codeman_reserve (16);
-
-	sparc_ret (code);
-
-	mono_arch_flush_icache (buf, code - buf);
-
-	if (info)
-		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
-
-	return buf;
 }

@@ -76,7 +76,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LADDCC;
 		else
 			opcode = OP_ADDCC;
@@ -90,7 +90,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LADDCC;
 		else
 			opcode = OP_ADDCC;
@@ -105,7 +105,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LSUBCC;
 		else
 			opcode = OP_SUBCC;
@@ -119,7 +119,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LSUBCC;
 		else
 			opcode = OP_SUBCC;
@@ -299,7 +299,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
  * Sets the cfg exception if an opcode is not supported.
  */
 MonoInst*
-mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins, MonoBasicBlock **out_cbb)
+mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 {
 	MonoInst *repl = NULL;
 	int type = ins->type;
@@ -307,10 +307,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins, MonoBasicBlock **out_cbb
 	gboolean emulate = FALSE;
 
 	/* FIXME: Instead of = NOP, don't emit the original ins at all */
-
-#ifdef MONO_ARCH_HAVE_DECOMPOSE_OPTS
 	mono_arch_decompose_opts (cfg, ins);
-#endif
 
 	/*
 	 * The code below assumes that we are called immediately after emitting 
@@ -446,36 +443,34 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins, MonoBasicBlock **out_cbb
 		cfg->exception_message = g_strdup_printf ("float conv.ovf.un opcodes not supported.");
 		break;
 
-#if defined(MONO_ARCH_EMULATE_DIV) && defined(MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION)
 	case OP_IDIV:
 	case OP_IREM:
 	case OP_IDIV_UN:
 	case OP_IREM_UN:
-		if (!mono_arch_opcode_needs_emulation (cfg, ins->opcode)) {
-#ifdef MONO_ARCH_NEED_DIV_CHECK
-			int reg1 = alloc_ireg (cfg);
-			int reg2 = alloc_ireg (cfg);
-			/* b == 0 */
-			MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg2, 0);
-			MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "DivideByZeroException");
-			if (ins->opcode == OP_IDIV || ins->opcode == OP_IREM) {
-				/* b == -1 && a == 0x80000000 */
-				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg2, -1);
-				MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, reg1, -1);
-				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0x80000000);
-				MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, reg2, -1);
-				MONO_EMIT_NEW_BIALU (cfg, OP_IAND, reg1, reg1, reg2);
-				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, reg1, 1);
+		if (cfg->backend->emulate_div && !mono_arch_opcode_needs_emulation (cfg, ins->opcode)) {
+			if (cfg->backend->need_div_check) {
+				int reg1 = alloc_ireg (cfg);
+				int reg2 = alloc_ireg (cfg);
+				/* b == 0 */
+				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg2, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "DivideByZeroException");
+				if (ins->opcode == OP_IDIV || ins->opcode == OP_IREM) {
+					/* b == -1 && a == 0x80000000 */
+					MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg2, -1);
+					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, reg1, -1);
+					MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0x80000000);
+					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, reg2, -1);
+					MONO_EMIT_NEW_BIALU (cfg, OP_IAND, reg1, reg1, reg2);
+					MONO_EMIT_NEW_ICOMPARE_IMM (cfg, reg1, 1);
+					MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "OverflowException");
+				}
 			}
-#endif
 			MONO_EMIT_NEW_BIALU (cfg, ins->opcode, ins->dreg, ins->sreg1, ins->sreg2);
 			NULLIFY_INS (ins);
 		} else {
 			emulate = TRUE;
 		}
 		break;
-#endif
 
 #if SIZEOF_REGISTER == 8
 	case OP_LREM_IMM:
@@ -556,7 +551,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins, MonoBasicBlock **out_cbb
 				}
 			}
 
-			call = mono_emit_jit_icall_by_info (cfg, info, args, out_cbb);
+			call = mono_emit_jit_icall_by_info (cfg, info, args);
 			call->dreg = ins->dreg;
 
 			NULLIFY_INS (ins);
@@ -639,10 +634,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 		cfg->cbb->code = cfg->cbb->last_ins = NULL;
 
 		while (tree) {
-
-#ifdef MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS
 			mono_arch_decompose_long_opts (cfg, tree);
-#endif
 
 			switch (tree->opcode) {
 			case OP_I8CONST:

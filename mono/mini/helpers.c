@@ -66,7 +66,7 @@ opnames[] = {
 #endif /* DISABLE_LOGGING */
 
 #if defined(__i386__) || defined(__x86_64__)
-#ifndef TARGET_ARM64
+#if !defined(TARGET_ARM64) && !defined(__APPLE__)
 #define emit_debug_info  TRUE
 #else
 #define emit_debug_info  FALSE
@@ -99,6 +99,7 @@ mono_inst_name (int op) {
 	g_error ("unknown opcode name for %d", op);
 	return NULL;
 #else
+	g_error ("unknown opcode name for %d", op);
 	g_assert_not_reached ();
 #endif
 }
@@ -148,7 +149,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	char *as_file;
 	char *o_file;
 	char *cmd;
-	int unused;
+	int unused G_GNUC_UNUSED;
 
 #ifdef HOST_WIN32
 	as_file = g_strdup_printf ("%s/test.s", tmp);    
@@ -270,6 +271,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	close (i);
 #endif
 
+#ifdef HAVE_SYSTEM
 	cmd = g_strdup_printf (ARCH_PREFIX AS_CMD " %s -o %s", as_file, o_file);
 	unused = system (cmd); 
 	g_free (cmd);
@@ -291,6 +293,9 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	cmd = g_strdup_printf (ARCH_PREFIX DIS_CMD " %s %s", objdump_args, o_file);
 	unused = system (cmd);
 	g_free (cmd);
+#else
+	g_assert_not_reached ();
+#endif /* HAVE_SYSTEM */
 
 #ifndef HOST_WIN32
 	unlink (o_file);

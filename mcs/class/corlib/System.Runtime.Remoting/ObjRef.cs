@@ -34,6 +34,7 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
@@ -64,14 +65,34 @@ namespace System.Runtime.Remoting {
 			UpdateChannelInfo();
 		}
 
-		internal ObjRef (string typeName, string uri, IChannelInfo cinfo) 
+		internal ObjRef (string uri, IChannelInfo cinfo)
 		{
 			this.uri = uri;
-			channel_info = cinfo;
-			typeInfo = new TypeInfo (Type.GetType (typeName, true));
+			this.channel_info = cinfo;
 		}
 
-		internal ObjRef (ObjRef o, bool unmarshalAsProxy) {
+		internal ObjRef DeserializeInTheCurrentDomain (int domainId, byte[] tInfo)
+		{
+				string local_uri = string.Copy (this.uri);
+				ChannelInfo cinfo = new ChannelInfo (new CrossAppDomainData (domainId));
+				ObjRef res = new ObjRef (local_uri, cinfo);
+				IRemotingTypeInfo typeInfo = (IRemotingTypeInfo)CADSerializer.DeserializeObjectSafe (tInfo);
+				res.typeInfo = typeInfo;
+				return res;
+		}
+
+		internal byte[] SerializeType ()
+		{
+			// FIXME: Assert self and typeinfo in same domain
+			if (typeInfo == null)
+				throw new Exception ("Attempt to serialize a null TypeInfo.");
+
+			MemoryStream stm = CADSerializer.SerializeObject (typeInfo);
+			return stm.GetBuffer ();
+		}
+
+		internal ObjRef (ObjRef o, bool unmarshalAsProxy)
+		{
 			channel_info = o.channel_info;
 			uri = o.uri;
 	
@@ -259,6 +280,10 @@ namespace System.Runtime.Remoting {
 				if (_serverType == null) _serverType = Type.GetType (typeInfo.TypeName);
 				return _serverType;
 			}
+		}
+
+		internal void SetDomainID (int id)
+		{
 		}
 	}
 }

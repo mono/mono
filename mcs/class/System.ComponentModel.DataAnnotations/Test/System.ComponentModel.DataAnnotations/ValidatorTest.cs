@@ -33,7 +33,6 @@ using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-#if NET_4_0
 	[TestFixture]
 	public class ValidatorTest
 	{
@@ -1233,5 +1232,4 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}
 		}
 	}
-#endif
 }

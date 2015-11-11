@@ -666,7 +666,7 @@ public class PasswordDeriveBytesTest {
 	public void CryptDeriveKey_TooLongKey () 
 	{
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
-		pd.CryptDeriveKey ("AlgName", "MD5", 256, new byte [8]);
+		pd.CryptDeriveKey ("AlgName", "MD5", -256, new byte [8]);
 	}
 		
 #if !NET_2_1

@@ -573,6 +573,130 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Send_Complete_CustomHeaders_SpecialSeparators ()
+		{
+			bool? failed = null;
+
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				try {
+					Assert.AreEqual ("MLK Android Phone 1.1.9", request.UserAgent, "#1");
+					failed = false;
+				} catch {
+					failed = true;
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				client.DefaultRequestHeaders.Add("User-Agent", "MLK Android Phone 1.1.9");
+
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Complete_CustomHeaders_Host ()
+		{
+			bool? failed = null;
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				try {
+					Assert.AreEqual ("customhost", request.Headers["Host"], "#1");
+					failed = false;
+				} catch {
+					failed = true;
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+
+				client.DefaultRequestHeaders.Add("Host", "customhost");
+
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				var response = client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Result;
+
+				Assert.AreEqual ("", response.Content.ReadAsStringAsync ().Result, "#100");
+				Assert.AreEqual (HttpStatusCode.OK, response.StatusCode, "#101");
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Transfer_Encoding_Chunked ()
+		{
+			bool? failed = null;
+
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				try {
+					Assert.AreEqual (1, request.Headers.Count, "#1");
+					failed = false;
+				} catch {
+					failed = true;
+				}
+			});
+
+			try {
+				var client = new HttpClient ();
+				client.DefaultRequestHeaders.TransferEncodingChunked = true;
+
+				client.GetAsync (LocalServer).Wait ();
+
+				Assert.AreEqual (false, failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Transfer_Encoding_Custom ()
+		{
+			bool? failed = null;
+
+			var listener = CreateListener (l => {
+				failed = true;
+			});
+
+			try {
+				var client = new HttpClient ();
+				client.DefaultRequestHeaders.TransferEncoding.Add (new TransferCodingHeaderValue ("chunked2"));
+
+				var request = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+
+				try {
+					client.SendAsync (request, HttpCompletionOption.ResponseHeadersRead).Wait ();
+					Assert.Fail ("#1");
+				} catch (AggregateException e) {
+					Assert.AreEqual (typeof (ProtocolViolationException), e.InnerException.GetType (), "#2");
+				}
+				Assert.IsNull (failed, "#102");
+			} finally {
+				listener.Abort ();
+				listener.Close ();
+			}
+		}
+
+		[Test]
 		public void Send_Complete_Content ()
 		{
 			var listener = CreateListener (l => {

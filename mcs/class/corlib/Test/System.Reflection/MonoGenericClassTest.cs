@@ -68,17 +68,14 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual ("type", inst.Name, "#1");
 			Assert.AreEqual ("foo", inst.Namespace, "#2");
-#if NET_4_0
+#if !MOBILE
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", inst.FullName, "#3");
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
-#elif NET_2_1
+#elif NET_2_1 || MOBILE
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]", inst.FullName, "#3");
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
-#else
-			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", inst.FullName, "#3");
-			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
-#endif
 			Assert.AreEqual ("foo.type[System.Double,System.String]", inst.ToString (), "#5");
+#endif
 		}
 
 		static void CheckInst (string prefix, Type inst, int a, int b)
@@ -203,6 +200,88 @@ namespace MonoTests.System.Reflection.Emit
 			var expected = typeof (Base<>).MakeGenericType (typeof (SubClass<>).GetGenericArguments ()[0]);
 			Assert.AreSame (expected, t.BaseType, "#1");
 			
+		}
+
+		[Test]
+		public void GenericClassFromStaleTypeBuilderDoesNotClassInit ()
+		{
+			// interface JJJ<T> {
+			//   abstract void W (x : T)
+			// }
+			MethodInfo winfo = null;
+			TypeBuilder ib = null;
+			Type ic = null;
+			Type icreated = null;
+			{
+				ib = module.DefineType ("Foo.JJJ`1",
+							 TypeAttributes.Public
+							 | TypeAttributes.Interface
+							 | TypeAttributes.Abstract);
+				String[] gens = { "T" };
+				GenericTypeParameterBuilder[] gbs = ib.DefineGenericParameters (gens);
+				var gb = gbs[0];
+				winfo = ib.DefineMethod ("W",
+							 MethodAttributes.Public |
+							 MethodAttributes.Abstract |
+							 MethodAttributes.Virtual,
+							 CallingConventions.HasThis,
+							 typeof(void),
+					 new Type[] { gb });
+				icreated = ib.CreateType();
+
+			}
+
+			// class SSS : JJJ<char> {
+			//   bool wasCalled;
+			//   void JJJ.W (x : T) { wasCalled = true; return; }
+		        // }
+			TypeBuilder tb = null;
+			MethodBuilder mb = null;
+			{
+				tb = module.DefineType ("Foo.SSS",
+							TypeAttributes.Public,
+							null,
+							new Type[]{ icreated.MakeGenericType(typeof(char)) });
+				var wasCalledField = tb.DefineField ("wasCalled",
+								     typeof(bool),
+								     FieldAttributes.Public);
+				mb = tb.DefineMethod ("W_impl",
+						      MethodAttributes.Public | MethodAttributes.Virtual,
+						      CallingConventions.HasThis,
+						      typeof (void),
+						      new Type[] { typeof (char) });
+				{
+					var il = mb.GetILGenerator ();
+					il.Emit (OpCodes.Ldarg_0); // this
+					il.Emit (OpCodes.Ldc_I4_1);
+					il.Emit (OpCodes.Stfld, wasCalledField); // this.wasCalled = true
+					il.Emit (OpCodes.Ret);
+				}
+			}
+
+			ic = ib.MakeGenericType(typeof (char)); // this is a MonoGenericMethod
+			var mintf = TypeBuilder.GetMethod(ic, winfo);
+			// the next line causes mono_class_init() to
+			// be called on JJJ<char> when we try to setup
+			// the vtable for SSS
+			tb.DefineMethodOverride(mb, mintf);
+
+			var result = tb.CreateType();
+
+			// o = new SSS()
+			object o = Activator.CreateInstance(result);
+			Assert.IsNotNull(o, "#1");
+
+			// ((JJJ<char>)o).W('a');
+			var m = icreated.MakeGenericType(typeof(char)).GetMethod("W", BindingFlags.Public | BindingFlags.Instance);
+			Assert.IsNotNull(m, "#2");
+			m.Invoke(o, new object[] {'a'});
+
+			var f = result.GetField("wasCalled", BindingFlags.Public | BindingFlags.Instance);
+			Assert.IsNotNull(f, "#3");
+			var wasCalledVal = f.GetValue(o);
+			Assert.IsInstanceOfType (typeof(Boolean), wasCalledVal, "#4");
+			Assert.AreEqual (wasCalledVal, true, "#5");
 		}
 	}
 }

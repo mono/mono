@@ -1,20 +1,25 @@
-// CS0619: `S.S()' is obsolete: `ctor'
-// Line: 18
+// CS0619: `Program.TestEventArgs' is obsolete: `FooBar'
+// Line: 10
 
 using System;
 
-struct S
+namespace Program
 {
-	[Obsolete ("ctor", true)]
-	public S ()
+	public class TestClass
+	{
+		public EventHandler<TestEventArgs> Foo;
+	}
+
+	[Obsolete(Messages.Test, true)]
+	public sealed class TestEventArgs : EventArgs
 	{
 	}
 }
 
-class C
+namespace Program
 {
-	public static void Main ()
+	public static class Messages
 	{
-		new S ();
+		public const string Test = "FooBar";
 	}
 }

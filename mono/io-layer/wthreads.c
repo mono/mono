@@ -30,6 +30,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-mutex.h>
+#include <mono/utils/mono-time.h>
 
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
@@ -197,310 +198,10 @@ wapi_get_current_thread_handle (void)
 	return get_current_thread_handle ();
 }
 
-/**
- * GetCurrentThreadId:
- *
- * Looks up the thread ID of the current thread.  This ID can be
- * passed to OpenThread() to create a new handle on this thread.
- *
- * Return value: the thread ID.  NB this is defined as DWORD (ie 32
- * bit) in the MS API, but we need to cope with 64 bit IDs for s390x
- * and amd64.  This doesn't really break the API, it just embraces and
- * extends it on 64bit platforms :)
- */
-gsize
-GetCurrentThreadId (void)
-{
-	MonoNativeThreadId id;
-
-	id = mono_native_thread_id_get ();
-	return MONO_NATIVE_THREAD_ID_TO_UINT (id);
-}
-
-/**
- * SleepEx:
- * @ms: The time in milliseconds to suspend for
- * @alertable: if TRUE, the wait can be interrupted by an APC call
- *
- * Suspends execution of the current thread for @ms milliseconds.  A
- * value of zero causes the thread to relinquish its time slice.  A
- * value of %INFINITE causes an infinite delay.
- */
-guint32
-SleepEx (guint32 ms, gboolean alertable)
-{
-	struct timespec req;
-	int ms_quot, ms_rem;
-	int ret;
-	gpointer current_thread = NULL;
-#if defined (__linux__) && !defined(PLATFORM_ANDROID)
-	struct timespec start, target;
-#else
-	struct timespec rem;
-#endif
-	
-	DEBUG("%s: Sleeping for %d ms", __func__, ms);
-
-	if (alertable) {
-		current_thread = get_current_thread_handle ();
-		
-		if (_wapi_thread_apc_pending (current_thread))
-			return WAIT_IO_COMPLETION;
-	}
-	
-	if(ms==0) {
-		sched_yield();
-		return 0;
-	}
-	
-	/* FIXME: check for INFINITE and sleep forever */
-	ms_quot = ms / 1000;
-	ms_rem = ms % 1000;
-	
-	req.tv_sec=ms_quot;
-	req.tv_nsec=ms_rem*1000000;
-
-#if defined (__linux__) && !defined(PLATFORM_ANDROID)
-	/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */
-	ret = clock_gettime (CLOCK_MONOTONIC, &start);
-	g_assert (ret == 0);
-	target = start;
-	target.tv_sec += ms_quot;
-	target.tv_nsec += ms_rem * 1000000;
-	if (target.tv_nsec > 999999999) {
-		target.tv_nsec -= 999999999;
-		target.tv_sec ++;
-	}
-
-	while (TRUE) {
-		ret = clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME, &target, NULL);
-
-		if (alertable && _wapi_thread_apc_pending (current_thread))
-			return WAIT_IO_COMPLETION;
-
-		if (ret == 0)
-			break;
-	}
-
-#else
-
-again:
-	memset (&rem, 0, sizeof (rem));
-	ret=nanosleep(&req, &rem);
-
-	if (alertable && _wapi_thread_apc_pending (current_thread))
-		return WAIT_IO_COMPLETION;
-	
-	if(ret==-1) {
-		/* Sleep interrupted with rem time remaining */
-#ifdef DEBUG_ENABLED
-		guint32 rems=rem.tv_sec*1000 + rem.tv_nsec/1000000;
-		
-		g_message("%s: Still got %d ms to go", __func__, rems);
-#endif
-		req=rem;
-		goto again;
-	}
-
-#endif /* __linux__ */
-
-	return 0;
-}
-
-void
-Sleep(guint32 ms)
-{
-	SleepEx(ms, FALSE);
-}
-
 gboolean
 _wapi_thread_cur_apc_pending (void)
 {
-	return _wapi_thread_apc_pending (get_current_thread_handle ());
-}
-
-gboolean
-_wapi_thread_apc_pending (gpointer handle)
-{
-	WapiHandle_thread *thread;
-
-	thread = lookup_thread (handle);
-	
-	return thread->wait_handle == INTERRUPTION_REQUESTED_HANDLE;
-}
-
-/*
- * wapi_interrupt_thread:
- *
- * The state of the thread handle HANDLE is set to 'interrupted' which means that
- * if the thread calls one of the WaitFor functions, the function will return with 
- * WAIT_IO_COMPLETION instead of waiting. Also, if the thread was waiting when
- * this function was called, the wait will be broken.
- * It is possible that the wait functions return WAIT_IO_COMPLETION, but the
- * target thread didn't receive the interrupt signal yet, in this case it should
- * call the wait function again. This essentially means that the target thread will
- * busy wait until it is ready to process the interruption.
- */
-void
-wapi_interrupt_thread (gpointer thread_handle)
-{
-	gpointer wait_handle;
-
-	wait_handle = wapi_prepare_interrupt_thread (thread_handle);
-	wapi_finish_interrupt_thread (wait_handle);
-}
-
-gpointer
-wapi_prepare_interrupt_thread (gpointer thread_handle)
-{
-	WapiHandle_thread *thread;
-	gpointer prev_handle, wait_handle;
-
-	thread = lookup_thread (thread_handle);
-
-	while (TRUE) {
-		wait_handle = thread->wait_handle;
-
-		/* 
-		 * Atomically obtain the handle the thread is waiting on, and
-		 * change it to a flag value.
-		 */
-		prev_handle = InterlockedCompareExchangePointer (&thread->wait_handle,
-														 INTERRUPTION_REQUESTED_HANDLE, wait_handle);
-		if (prev_handle == INTERRUPTION_REQUESTED_HANDLE)
-			/* Already interrupted */
-			return 0;
-		if (prev_handle == wait_handle)
-			break;
-
-		/* Try again */
-	}
-
-	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread->id););
-
-	return wait_handle;
-}
-
-void
-wapi_finish_interrupt_thread (gpointer wait_handle)
-{
-	pthread_cond_t *cond;
-	mono_mutex_t *mutex;
-	guint32 idx;
-
-	if (!wait_handle)
-		/* Not waiting */
-		return;
-
-	/* If we reach here, then wait_handle is set to the flag value, 
-	 * which means that the target thread is either
-	 * - before the first CAS in timedwait, which means it won't enter the
-	 * wait.
-	 * - it is after the first CAS, so it is already waiting, or it will 
-	 * enter the wait, and it will be interrupted by the broadcast.
-	 */
-	idx = GPOINTER_TO_UINT(wait_handle);
-	cond = &_WAPI_PRIVATE_HANDLES(idx).signal_cond;
-	mutex = &_WAPI_PRIVATE_HANDLES(idx).signal_mutex;
-
-	mono_mutex_lock (mutex);
-	mono_cond_broadcast (cond);
-	mono_mutex_unlock (mutex);
-
-	/* ref added by set_wait_handle */
-	_wapi_handle_unref (wait_handle);
-}
-
-/*
- * wapi_self_interrupt:
- *
- *   This is not part of the WIN32 API.
- * Set the 'interrupted' state of the calling thread if it's NULL.
- */
-void
-wapi_self_interrupt (void)
-{
-	gpointer wait_handle;
-
-	wait_handle = wapi_prepare_interrupt_thread (get_current_thread_handle ());
-	if (wait_handle)
-		/* ref added by set_wait_handle */
-		_wapi_handle_unref (wait_handle);
-}
-
-/*
- * wapi_clear_interruption:
- *
- *   This is not part of the WIN32 API. 
- * Clear the 'interrupted' state of the calling thread.
- * This function is signal safe
- */
-void
-wapi_clear_interruption (void)
-{
-	WapiHandle_thread *thread;
-	gpointer prev_handle;
-
-	thread = get_current_thread ();
-
-	prev_handle = InterlockedCompareExchangePointer (&thread->wait_handle,
-													 NULL, INTERRUPTION_REQUESTED_HANDLE);
-	if (prev_handle == INTERRUPTION_REQUESTED_HANDLE)
-		WAIT_DEBUG (printf ("%p: state -> NORMAL.\n", GetCurrentThreadId ()););
-}
-
-/**
- * wapi_thread_set_wait_handle:
- *
- *   Set the wait handle for the current thread to HANDLE. Return TRUE on success, FALSE
- * if the thread is in interrupted state, and cannot start waiting.
- */
-gboolean
-wapi_thread_set_wait_handle (gpointer handle)
-{
-	WapiHandle_thread *thread;
-	gpointer prev_handle;
-
-	thread = get_current_thread ();
-
-	prev_handle = InterlockedCompareExchangePointer (&thread->wait_handle,
-													 handle, NULL);
-	if (prev_handle == NULL) {
-		/* thread->wait_handle acts as an additional reference to the handle */
-		_wapi_handle_ref (handle);
-
-		WAIT_DEBUG (printf ("%p: state -> WAITING.\n", GetCurrentThreadId ()););
-	} else {
-		g_assert (prev_handle == INTERRUPTION_REQUESTED_HANDLE);
-		WAIT_DEBUG (printf ("%p: unable to set state to WAITING.\n", GetCurrentThreadId ()););
-	}
-
-	return prev_handle == NULL;
-}
-
-/**
- * wapi_thread_clear_wait_handle:
- *
- *   Clear the wait handle of the current thread.
- */
-void
-wapi_thread_clear_wait_handle (gpointer handle)
-{
-	WapiHandle_thread *thread;
-	gpointer prev_handle;
-
-	thread = get_current_thread ();
-
-	prev_handle = InterlockedCompareExchangePointer (&thread->wait_handle,
-													 NULL, handle);
-	if (prev_handle == handle) {
-		_wapi_handle_unref (handle);
-		WAIT_DEBUG (printf ("%p: state -> NORMAL.\n", GetCurrentThreadId ()););
-	} else {
-		/*It can be NULL if it was asynchronously cleared*/
-		g_assert (prev_handle == INTERRUPTION_REQUESTED_HANDLE || prev_handle == NULL);
-		WAIT_DEBUG (printf ("%p: finished waiting.\n", GetCurrentThreadId ()););
-	}
+	return mono_thread_info_is_interrupt_state (mono_thread_info_current ());
 }
 
 void
@@ -533,31 +234,20 @@ wapi_current_thread_desc (void)
 	WapiHandle_thread *thread;
 	gpointer thread_handle;
 	int i;
-	gpointer handle;
 	GString* text;
 	char *res;
 
 	thread_handle = get_current_thread_handle ();
 	thread = lookup_thread (thread_handle);
 
-	handle = thread->wait_handle;
 	text = g_string_new (0);
 	g_string_append_printf (text, "thread handle %p state : ", thread_handle);
 
-	if (!handle)
-		g_string_append_printf (text, "not waiting");
-	else if (handle == INTERRUPTION_REQUESTED_HANDLE)
-		g_string_append_printf (text, "interrupted state");
-	else
-		g_string_append_printf (text, "waiting on %p : %s ", handle, _wapi_handle_typename[_wapi_handle_type (handle)]);
+	mono_thread_info_describe_interrupt_token (mono_thread_info_current (), text);
+
 	g_string_append_printf (text, " owns (");
-	for (i = 0; i < thread->owned_mutexes->len; i++) {
-		gpointer mutex = g_ptr_array_index (thread->owned_mutexes, i);
-		if (i > 0)
-			g_string_append_printf (text, ", %p", mutex);
-		else
-			g_string_append_printf (text, "%p", mutex);
-	}
+	for (i = 0; i < thread->owned_mutexes->len; i++)
+		g_string_append_printf (text, i > 0 ? ", %p" : "%p", g_ptr_array_index (thread->owned_mutexes, i));
 	g_string_append_printf (text, ")");
 
 	res = text->str;

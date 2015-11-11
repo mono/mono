@@ -299,7 +299,8 @@
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
 			<Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
-
+			<Output TaskParameter="DependsOnSystemRuntime" PropertyName="DependsOnSystemRuntime"/>
+			
 			<!-- FIXME: backwards compatibility -->
 			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
 		</ResolveAssemblyReference>
@@ -313,13 +314,13 @@
 		<AssignProjectConfiguration
 			ProjectReferences = "@(ProjectReference)"
 			SolutionConfigurationContents = "$(CurrentSolutionConfigurationContents)"
-			Condition="'$(BuildingSolutionFile)' == 'true'">
+			Condition="'$(BuildingSolutionFile)' == 'true' or '$(BuildingInsideVisualStudio)' == 'true'">
 
 			<Output TaskParameter = "AssignedProjects" ItemName = "ProjectReferenceWithConfiguration"/>
 		</AssignProjectConfiguration>
 
 		<!-- Else, just -->
-		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true'">
+		<CreateItem Include="@(ProjectReference)" Condition="'$(BuildingSolutionFile)' != 'true' and '$(BuildingInsideVisualStudio)' != 'true'">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfiguration"/>
 		</CreateItem>
 
@@ -899,7 +900,8 @@
 	<Target Name="ImplicitlyExpandDesignTimeFacades" Condition="'$(ImplicitlyExpandDesignTimeFacades)' == 'true'" DependsOnTargets="$(ImplicitlyExpandDesignTimeFacadesDependsOn)">
 
 		<PropertyGroup>
-			<_HasReferenceToSystemRuntime Condition="'%(_ResolvedDependencyFiles.Filename)' == 'System.Runtime'">true</_HasReferenceToSystemRuntime>
+			<!-- Does one of our dependencies reference a System.Runtime-based portable library? -->
+			<_HasReferenceToSystemRuntime Condition="'$(DependsOnSystemRuntime)' == 'true' or '%(_ResolvedProjectReferencePaths.TargetPlatformIdentifier)' == 'Portable'">true</_HasReferenceToSystemRuntime>
 		</PropertyGroup>
 
 		<ItemGroup Condition="'$(_HasReferenceToSystemRuntime)' == 'true'">

@@ -96,6 +96,12 @@ namespace System {
 			set { s_IriParsing = value; }
 		}
 
+		// Do not rename this.
+		// User code might set this to true with reflection.
+		// When set to true an Uri constructed with UriKind.RelativeOrAbsolute 
+		// and paths such as "/foo" is assumed relative.
+		private static bool useDotNetRelativeOrAbsolute;
+
 #if BOOTSTRAP_BASIC
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static readonly string [] Empty = new string [0];
@@ -147,6 +153,8 @@ namespace System {
 				IriParsing = true;
 			else if (iriparsingVar == "false")
 				IriParsing = false;
+
+			useDotNetRelativeOrAbsolute = Environment.GetEnvironmentVariable ("MONO_URI_DOTNETRELATIVEORABSOLUTE") == "true";
 		}
 
 		public Uri (string uriString) : this (uriString, false) 
@@ -170,9 +178,25 @@ namespace System {
 			}
 		}
 
+		// When used instead of UriKind.RelativeOrAbsolute paths such as "/foo" are assumed relative.
+		const UriKind DotNetRelativeOrAbsolute = (UriKind) 300;
+
+		private void ProcessUriKind (string uriString, ref UriKind uriKind)
+		{
+			if (uriString == null)
+			   return;
+		
+			if (uriKind == DotNetRelativeOrAbsolute ||
+				(uriKind == UriKind.RelativeOrAbsolute && useDotNetRelativeOrAbsolute))
+				uriKind = (uriString.StartsWith ("/", StringComparison.Ordinal))? UriKind.Relative : UriKind.RelativeOrAbsolute;
+		}
+
 		public Uri (string uriString, UriKind uriKind)
 		{
 			source = uriString;
+
+			ProcessUriKind (uriString, ref uriKind);
+
 			ParseUri (uriKind);
 
 			switch (uriKind) {
@@ -205,6 +229,8 @@ namespace System {
 				return;
 			}
 
+			ProcessUriKind (uriString, ref uriKind);
+
 			if (uriKind != UriKind.RelativeOrAbsolute &&
 				uriKind != UriKind.Absolute &&
 				uriKind != UriKind.Relative) {
@@ -232,6 +258,11 @@ namespace System {
 				default:
 					success = false;
 					break;
+				}
+
+				if (success && host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
+					// host name present (but not an IPv6 address)
+					host = host.ToLower (CultureInfo.InvariantCulture);
 				}
 			}
 		}
@@ -340,7 +371,7 @@ namespace System {
 			if ((path.Length == 0 || path [0] != '/') && baseEl.delimiter == SchemeDelimiter)
 				path = "/" + path;
 
-			source += UriHelper.Reduce (path, true);
+			source += UriHelper.Reduce (path, !IriParsing);
 
 			if (relativeEl.query != null) {
 				canUseBase = false;
@@ -1131,9 +1162,6 @@ namespace System {
 		private void ParseUri (UriKind kind)
 		{
 			Parse (kind, source);
-
-			if (userEscaped)
-				return;
 
 			if (host.Length > 1 && host [0] != '[' && host [host.Length - 1] != ']') {
 				// host name present (but not an IPv6 address)

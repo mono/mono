@@ -540,7 +540,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 				 * VOLATILE, since that would prevent it from being allocated to
 				 * registers.
 				 */
-				 if (!cfg->disable_deadce_vars && !(cfg->generic_sharing_context && mono_method_signature (cfg->method)->hasthis && cfg->varinfo [vi->idx] == cfg->args [0]))
+				 if (!cfg->disable_deadce_vars && !(cfg->gshared && mono_method_signature (cfg->method)->hasthis && cfg->varinfo [vi->idx] == cfg->args [0]))
 					 cfg->varinfo [vi->idx]->flags |= MONO_INST_IS_DEAD;
 			}
 			vi->range.first_use.abs_pos = 0;
@@ -812,7 +812,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 			}
 			else {
 				/* Try dead code elimination */
-				if ((var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) && !(var->flags & MONO_INST_VOLATILE)) {
+				if (!cfg->disable_deadce_vars && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && ((ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_R8CONST)) && !(var->flags & MONO_INST_VOLATILE)) {
 					LIVENESS_DEBUG (printf ("\tdead def of R%d, eliminated\n", ins->dreg));
 					NULLIFY_INS (ins);
 					return;

@@ -22,7 +22,7 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_5 \
 	-d:MONO \
 	-d:DISABLE_CAS_USE \
-	-d:MOBILE \
+	-d:MOBILE,MOBILE_LEGACY \
 	-d:MOBILE_DYNAMIC \
 	-d:MONODROID \
 	-d:ANDROID \
@@ -37,3 +37,5 @@ NO_TEST = yes
 
 # the tuner takes care of the install
 NO_INSTALL = yes
+MOBILE_DYNAMIC = yes
+MOBILE_PROFILE = yes

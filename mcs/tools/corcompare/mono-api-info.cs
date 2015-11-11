@@ -28,38 +28,51 @@ namespace CorCompare
 	{
 		public static int Main (string [] args)
 		{
-			if (args.Length == 0)
-				return 1;
-
+			bool showHelp = false;
 			AbiMode = false;
+			FollowForwarders = false;
 
-			AssemblyCollection acoll = new AssemblyCollection ();
+			var acoll = new AssemblyCollection ();
+
+			var options = new Mono.Options.OptionSet {
+				{ "h|help", "Show this help", v => showHelp = true },
+				{ "abi", _ => AbiMode = true},
+				{ "f|follow-forwarders", _ => FollowForwarders = true },
+				{ "d|search-directory=", v => TypeHelper.Resolver.AddSearchDirectory (v) },
+			};
+
+			var asms = options.Parse (args);
+
+			if (showHelp || asms.Count == 0) {
+				Console.WriteLine (@"Usage: mono-api-info [options] <assemblies>");
+				Console.WriteLine ();
+				Console.WriteLine ("Available options:");
+				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
+				return showHelp? 0 :1;
+			}
 
 			string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 			TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
 
-			foreach (string arg in args) {
-				if (arg == "--abi") {
-					AbiMode = true;
-				} else {
-					acoll.Add (arg);
+			foreach (string arg in asms) {
+				acoll.Add (arg);
 
-					if (arg.Contains ("v3.0")) {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-					} else if (arg.Contains ("v3.5")) {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
-					} else if (arg.Contains ("v4.0")) {
-						if (arg.Contains ("Silverlight")) {
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
-						} else {
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
-							TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
-						}
+				if (arg.Contains ("v3.0")) {
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+				} else if (arg.Contains ("v3.5")) {
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
+				} else if (arg.Contains ("v4.0")) {
+					if (arg.Contains ("Silverlight")) {
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
 					} else {
-						TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
+						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
 					}
+				} else {
+					TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
 				}
 			}
 
@@ -75,6 +88,7 @@ namespace CorCompare
 		}
 
 		internal static bool AbiMode { get; private set; }
+		internal static bool FollowForwarders { get; private set; }
 	}
 
 	public class Utils {
@@ -223,16 +237,33 @@ namespace CorCompare
 			AddAttribute (nassembly, "name", aname.Name);
 			AddAttribute (nassembly, "version", aname.Version.ToString ());
 			parent.AppendChild (nassembly);
-			TypeForwardedToData.OutputForwarders (document, nassembly, ass);
-			AttributeData.OutputAttributes (document, nassembly, ass.CustomAttributes);
-			var typesCollection = ass.MainModule.Types;
-			if (typesCollection == null || typesCollection.Count == 0)
-				return;
-			object [] typesArray = new object [typesCollection.Count];
-			for (int i = 0; i < typesCollection.Count; i++) {
-				typesArray [i] = typesCollection [i];
+
+			if (!Driver.FollowForwarders) {
+				TypeForwardedToData.OutputForwarders (document, nassembly, ass);
 			}
-			Array.Sort (typesArray, TypeReferenceComparer.Default);
+
+			AttributeData.OutputAttributes (document, nassembly, ass);
+
+			var types = new List<TypeDefinition> ();
+			if (ass.MainModule.Types != null) {
+				types.AddRange (ass.MainModule.Types);
+			}
+
+			if (Driver.FollowForwarders && ass.MainModule.ExportedTypes != null) {
+				foreach (var t in ass.MainModule.ExportedTypes) {
+					var forwarded = t.Resolve ();
+					if (forwarded == null) {
+						throw new Exception ("Could not resolve forwarded type " + t.FullName + " in " + ass.Name);
+					}
+					types.Add (forwarded);
+				}
+			}
+
+			if (types.Count == 0) {
+				return;
+			}
+
+			types.Sort (TypeReferenceComparer.Default);
 
 			XmlNode nss = document.CreateElement ("namespaces", null);
 			nassembly.AppendChild (nss);
@@ -240,7 +271,7 @@ namespace CorCompare
 			string current_namespace = "$%&$&";
 			XmlNode ns = null;
 			XmlNode classes = null;
-			foreach (TypeDefinition t in typesArray) {
+			foreach (TypeDefinition t in types) {
 				if (string.IsNullOrEmpty (t.Namespace))
 					continue;
 
@@ -287,14 +318,11 @@ namespace CorCompare
 				if (!NoMemberAttributes)
 					AddAttribute (mnode, "attrib", GetMemberAttributes (member));
 
-				AttributeData.OutputAttributes (document, mnode, GetCustomAttributes (member));
+				AttributeData.OutputAttributes (document, mnode, (ICustomAttributeProvider) member);
 
 				AddExtraData (mnode, member);
 			}
 		}
-
-
-		protected abstract IList<CustomAttribute> GetCustomAttributes (MemberReference member);
 
 		protected virtual void AddExtraData (XmlNode p, MemberReference memberDefenition)
 		{
@@ -330,15 +358,15 @@ namespace CorCompare
 
 			var gparameters = provider.GenericParameters;
 
-			XmlElement ngeneric = document.CreateElement (string.Format ("generic-parameters"));
+			XmlElement ngeneric = document.CreateElement ("generic-parameters");
 			nclass.AppendChild (ngeneric);
 
 			foreach (GenericParameter gp in gparameters) {
-				XmlElement nparam = document.CreateElement (string.Format ("generic-parameter"));
+				XmlElement nparam = document.CreateElement ("generic-parameter");
 				nparam.SetAttribute ("name", gp.Name);
 				nparam.SetAttribute ("attributes", ((int) gp.Attributes).ToString ());
 
-				AttributeData.OutputAttributes (document, nparam, gp.CustomAttributes);
+				AttributeData.OutputAttributes (document, nparam, gp);
 
 				ngeneric.AppendChild (nparam);
 
@@ -368,11 +396,6 @@ namespace CorCompare
 		{
 			this.type = type;
 		}
-
-		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
-			return ((TypeDefinition) member).CustomAttributes;
-		}
-
 		public override void DoOutput ()
 		{
 			if (document == null)
@@ -412,11 +435,11 @@ namespace CorCompare
 
 			parent.AppendChild (nclass);
 
-			AttributeData.OutputAttributes (document, nclass, GetCustomAttributes(type));
+			AttributeData.OutputAttributes (document, nclass, type);
 
 			XmlNode ifaces = null;
 
-			foreach (TypeReference iface in  TypeHelper.GetInterfaces (type)) {
+			foreach (TypeReference iface in TypeHelper.GetInterfaces (type).OrderBy (s => s.FullName)) {
 				if (!TypeHelper.IsPublic (iface))
 					// we're only interested in public interfaces
 					continue;
@@ -454,7 +477,7 @@ namespace CorCompare
 
 				MethodDefinition [] ctors = GetConstructors (type);
 				if (ctors.Length > 0) {
-					Array.Sort (ctors, MemberReferenceComparer.Default);
+					Array.Sort (ctors, MethodDefinitionComparer.Default);
 					members.Add (new ConstructorData (document, nclass, ctors));
 				}
 
@@ -472,7 +495,7 @@ namespace CorCompare
 
 				MethodDefinition [] methods = GetMethods (type);
 				if (methods.Length > 0) {
-					Array.Sort (methods, MemberReferenceComparer.Default);
+					Array.Sort (methods, MethodDefinitionComparer.Default);
 					members.Add (new MethodData (document, nclass, methods));
 				}
 			}
@@ -495,11 +518,13 @@ namespace CorCompare
 				nested.RemoveAt (i);
 			}
 
-
 			if (nested.Count > 0) {
+				var nestedArray = nested.ToArray ();
+				Array.Sort (nestedArray, TypeReferenceComparer.Default);
+
 				XmlNode classes = document.CreateElement ("classes", null);
 				nclass.AppendChild (classes);
-				foreach (TypeDefinition t in nested) {
+				foreach (TypeDefinition t in nestedArray) {
 					TypeData td = new TypeData (document, classes, t);
 					td.DoOutput ();
 				}
@@ -713,10 +738,6 @@ namespace CorCompare
 		{
 		}
 
-		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
-			return ((FieldDefinition) member).CustomAttributes;
-		}
-
 		protected override string GetName (MemberReference memberDefenition)
 		{
 			FieldDefinition field = (FieldDefinition) memberDefenition;
@@ -767,10 +788,6 @@ namespace CorCompare
 		public PropertyData (XmlDocument document, XmlNode parent, PropertyDefinition [] members)
 			: base (document, parent, members)
 		{
-		}
-
-		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
-			return ((PropertyDefinition) member).CustomAttributes;
 		}
 
 		protected override string GetName (MemberReference memberDefenition)
@@ -834,10 +851,6 @@ namespace CorCompare
 		{
 		}
 
-		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
-			return ((EventDefinition) member).CustomAttributes;
-		}
-
 		protected override string GetName (MemberReference memberDefenition)
 		{
 			EventDefinition evt = (EventDefinition) memberDefenition;
@@ -873,10 +886,6 @@ namespace CorCompare
 		public MethodData (XmlDocument document, XmlNode parent, MethodDefinition [] members)
 			: base (document, parent, members)
 		{
-		}
-
-		protected override IList<CustomAttribute> GetCustomAttributes (MemberReference member) {
-			return ((MethodDefinition) member).CustomAttributes;
 		}
 
 		protected override string GetName (MemberReference memberDefenition)
@@ -919,7 +928,7 @@ namespace CorCompare
 			if (rettype != "System.Void" || !mbase.IsConstructor)
 				AddAttribute (p, "returntype", (rettype));
 
-			AttributeData.OutputAttributes (document, p, mbase.MethodReturnType.CustomAttributes);
+			AttributeData.OutputAttributes (document, p, mbase.MethodReturnType);
 
 			MemberData.OutputGenericParameters (document, p, mbase);
 		}
@@ -993,7 +1002,7 @@ namespace CorCompare
 				if (direction != "in")
 					AddAttribute (paramNode, "direction", direction);
 
-				AttributeData.OutputAttributes (document, paramNode, parameter.CustomAttributes);
+				AttributeData.OutputAttributes (document, paramNode, parameter);
 			}
 		}
 	}
@@ -1071,7 +1080,7 @@ namespace CorCompare
 			PopulateMapping (mapping, attribute);
 
 			var constructor = attribute.Constructor.Resolve ();
-			if (constructor == null || constructor.Parameters.Count == 0)
+			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
 			PopulateMapping (mapping, constructor, attribute);
@@ -1081,6 +1090,9 @@ namespace CorCompare
 
 		static void PopulateMapping (Dictionary<string, object> mapping, CustomAttribute attribute)
 		{
+			if (!attribute.HasProperties)
+				return;
+			
 			foreach (var named_argument in attribute.Properties) {
 				var name = named_argument.Name;
 				var arg = named_argument.Argument;
@@ -1224,7 +1236,7 @@ namespace CorCompare
 			if (!type.IsEnum)
 				return false;
 
-			if (type.CustomAttributes.Count == 0)
+			if (!type.HasCustomAttributes)
 				return false;
 
 			foreach (CustomAttribute attribute in type.CustomAttributes)
@@ -1313,9 +1325,12 @@ namespace CorCompare
 				|| type_name.EndsWith ("TODOAttribute");
 		}
 
-		public static void OutputAttributes (XmlDocument doc, XmlNode parent, IList<CustomAttribute> attributes)
+		public static void OutputAttributes (XmlDocument doc, XmlNode parent, ICustomAttributeProvider provider)
 		{
-			AttributeData ad = new AttributeData (doc, parent, attributes);
+			if (!provider.HasCustomAttributes)
+				return;
+			
+			AttributeData ad = new AttributeData (doc, parent, provider.CustomAttributes);
 			ad.DoOutput ();
 		}
 	}
@@ -1325,7 +1340,7 @@ namespace CorCompare
 		public static string GetSignature (IList<ParameterDefinition> infos)
 		{
 			if (infos == null || infos.Count == 0)
-				return "";
+				return string.Empty;
 
 			var signature = new StringBuilder ();
 			for (int i = 0; i < infos.Count; i++) {
@@ -1343,8 +1358,10 @@ namespace CorCompare
 				else
 					modifier = string.Empty;
 
-				if (modifier.Length > 0)
-					signature.AppendFormat ("{0} ", modifier);
+				if (modifier.Length > 0) {
+					signature.Append (modifier);
+					signature.Append (" ");
+				}
 
 				signature.Append (Utils.CleanupTypeName (info.ParameterType));
 			}
@@ -1354,19 +1371,17 @@ namespace CorCompare
 
 	}
 
-	class TypeReferenceComparer : IComparer
+	class TypeReferenceComparer : IComparer<TypeReference>
 	{
 		public static TypeReferenceComparer Default = new TypeReferenceComparer ();
 
-		public int Compare (object a, object b)
+		public int Compare (TypeReference a, TypeReference b)
 		{
-			TypeReference ta = (TypeReference) a;
-			TypeReference tb = (TypeReference) b;
-			int result = String.Compare (ta.Namespace, tb.Namespace);
+			int result = String.Compare (a.Namespace, b.Namespace, StringComparison.Ordinal);
 			if (result != 0)
 				return result;
 
-			return String.Compare (ta.Name, tb.Name);
+			return String.Compare (a.Name, b.Name, StringComparison.Ordinal);
 		}
 	}
 
@@ -1378,7 +1393,7 @@ namespace CorCompare
 		{
 			MemberReference ma = (MemberReference) a;
 			MemberReference mb = (MemberReference) b;
-			return String.Compare (ma.Name, mb.Name);
+			return String.Compare (ma.Name, mb.Name, StringComparison.Ordinal);
 		}
 	}
 
@@ -1393,6 +1408,15 @@ namespace CorCompare
 			int res = String.Compare (ma.Name, mb.Name);
 			if (res != 0)
 				return res;
+
+			if (!ma.HasParameters && !mb.HasParameters)
+				return 0;
+
+			if (!ma.HasParameters)
+				return -1;
+
+			if (!mb.HasParameters)
+				return 1;
 
 			IList<ParameterDefinition> pia = ma.Parameters ;
 			IList<ParameterDefinition> pib = mb.Parameters;

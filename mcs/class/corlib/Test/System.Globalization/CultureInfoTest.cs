@@ -171,6 +171,21 @@ namespace MonoTests.System.Globalization
 
 			ci = CultureInfo.CreateSpecificCulture ("");
 			Assert.AreEqual (CultureInfo.InvariantCulture, ci, "#5");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hant");
+			Assert.AreEqual ("zh-HK", ci.Name, "#6");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hans");
+			Assert.AreEqual ("zh-CN", ci.Name, "#7");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hans-CN");
+			Assert.AreEqual ("zh-CN", ci.Name, "#8");
+
+			ci = CultureInfo.CreateSpecificCulture ("zh-hant-US");
+			Assert.AreEqual ("zh-HK", ci.Name, "#9");
+
+			ci = CultureInfo.CreateSpecificCulture ("az-CyrlM-BR");
+			Assert.AreEqual ("az-Latn-AZ", ci.Name, "#10");
 		}
 
 		[Test]
@@ -179,11 +194,7 @@ namespace MonoTests.System.Globalization
 			try {
 				CultureInfo.CreateSpecificCulture ("uy32");
 				Assert.Fail ("#1");
-#if NET_4_0
 			} catch (CultureNotFoundException) {
-#else
-			} catch (ArgumentException) {
-#endif
 			}
 
 			try {
@@ -200,11 +211,7 @@ namespace MonoTests.System.Globalization
 			CultureInfo ci = new CultureInfo ("nl");
 			try {
 				DateTimeFormatInfo dfi = ci.DateTimeFormat;
-#if NET_4_0
 				Assert.IsNotNull (dfi, "#1");
-#else
-				Assert.Fail ("#1:" + (dfi != null));
-#endif
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -226,9 +233,15 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
-#if !NET_4_0
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		public void GetAllCultures_Specific ()
+		{
+			CultureInfo [] infos = CultureInfo.GetCultures (CultureTypes.SpecificCultures);
+			foreach (CultureInfo ci in infos) {
+				Assert.IsNotNull (ci.DateTimeFormat);
+			}
+		}
+
+		[Test]
 		public void TrySetNeutralCultureNotInvariant ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("ar");
@@ -391,11 +404,7 @@ namespace MonoTests.System.Globalization
 			CultureInfo ci = new CultureInfo ("nl");
 			try {
 				NumberFormatInfo nfi = ci.NumberFormat;
-#if NET_4_0
 				Assert.IsNotNull (nfi, "#1");
-#else
-				Assert.Fail ("#1:" + (nfi != null));
-#endif
 			} catch (NotSupportedException ex) {
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -440,11 +449,7 @@ namespace MonoTests.System.Globalization
 				CultureInfo.GetCultureInfo (666);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
-#if NET_4_0
 				Assert.AreEqual (typeof (CultureNotFoundException), ex.GetType (), "#2");
-#else
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-#endif
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
@@ -474,11 +479,7 @@ namespace MonoTests.System.Globalization
 				CultureInfo.GetCultureInfo ("666");
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
-#if NET_4_0
 				Assert.AreEqual (typeof (CultureNotFoundException), ex.GetType (), "#2");
-#else
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-#endif
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
@@ -603,11 +604,7 @@ namespace MonoTests.System.Globalization
 		}
 		
 		[Test]
-#if NET_4_0
 		[ExpectedException (typeof (CultureNotFoundException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void CultureNotFound ()
 		{
 			// that's how the 'locale' gets defined for a device with an English UI
@@ -616,9 +613,19 @@ namespace MonoTests.System.Globalization
 			new CultureInfo ("en-HK");
 		}
 
+		[Test]
+		public void ChineseSimplifiedDontEqual ()
+		{
+			CultureInfo zh1 = new CultureInfo ("zh-Hans");
+			CultureInfo zh2 = new CultureInfo ("zh-CHS");
+
+			Assert.IsFalse (zh1.Equals (zh2), "#1");
+			Assert.IsFalse (zh2.Equals (zh1), "#2");
+		}
+
 #if NET_4_5
 		CountdownEvent barrier = new CountdownEvent (3);
-		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
+		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
 
 		CultureInfo[] initial_culture = new CultureInfo[4];
 		CultureInfo[] changed_culture = new CultureInfo[4];
@@ -661,61 +668,63 @@ namespace MonoTests.System.Globalization
 
 		[Test]
 		public void DefaultThreadCurrentCulture () {
-			var orig_culture = CultureInfo.CurrentCulture;
-			var new_culture = new CultureInfo("fr-FR");
 
-			// The test doesn't work if the current culture is already set
-			if (orig_culture != CultureInfo.InvariantCulture)
-				Assert.Ignore ("The test doesn't work if the current culture is already set.");
+			Action c = () => {
+				var orig_culture = CultureInfo.CurrentCulture;
+				var new_culture = new CultureInfo("fr-FR");
 
-			/* Phase 0 - warm up */
-			new Thread (ThreadWithoutChange).Start ();
-			new Thread (ThreadWithChange).Start ();
-			Action x = ThreadPoolWithoutChange;
-			x.BeginInvoke (null, null);
+				/* Phase 0 - warm up */
+				new Thread (ThreadWithoutChange).Start ();
+				new Thread (ThreadWithChange).Start ();
+				Action x = ThreadPoolWithoutChange;
+				x.BeginInvoke (null, null);
 
-			/* Phase 1 - let everyone witness initial values */
-			initial_culture [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 1 - let everyone witness initial values */
+				initial_culture [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			/* Phase 2 - change the default culture*/
-			CultureInfo.DefaultThreadCurrentCulture = new_culture;
-			evt [0].Set ();
-			evt [1].Set ();
-			evt [2].Set ();
-			/* Phase 3 - let everyone witness the new value */
-			changed_culture [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 2 - change the default culture*/
+				CultureInfo.DefaultThreadCurrentCulture = new_culture;
+				evt [1].Set ();
+				evt [2].Set ();
+				evt [3].Set ();
 
-			/* Phase 4 - revert the default culture back to null */
-			CultureInfo.DefaultThreadCurrentCulture = null;
-			evt [0].Set ();
-			evt [1].Set ();
-			evt [2].Set ();
+				/* Phase 3 - let everyone witness the new value */
+				changed_culture [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			/* Phase 5 - let everyone witness the new value */
-			changed_culture2 [0] = CultureInfo.CurrentCulture;
-			barrier.Wait ();
-			barrier.Reset ();
+				/* Phase 4 - revert the default culture back to null */
+				CultureInfo.DefaultThreadCurrentCulture = null;
+				evt [1].Set ();
+				evt [2].Set ();
+				evt [3].Set ();
 
-			CultureInfo.DefaultThreadCurrentCulture = null;
+				/* Phase 5 - let everyone witness the new value */
+				changed_culture2 [0] = CultureInfo.CurrentCulture;
+				barrier.Wait ();
+				barrier.Reset ();
 
-			Assert.AreEqual (orig_culture, initial_culture [0], "#1");
-			Assert.AreEqual (orig_culture, initial_culture [1], "#2");
-			Assert.AreEqual (alternative_culture, initial_culture [2], "#3");
-			Assert.AreEqual (orig_culture, initial_culture [3], "#4");
+				CultureInfo.DefaultThreadCurrentCulture = null;
 
-			Assert.AreEqual (new_culture, changed_culture [0], "#5");
-			Assert.AreEqual (new_culture, changed_culture [1], "#6");
-			Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
-			Assert.AreEqual (new_culture, changed_culture [3], "#8");
+				Assert.AreEqual (orig_culture, initial_culture [0], "#1");
+				Assert.AreEqual (orig_culture, initial_culture [1], "#2");
+				Assert.AreEqual (alternative_culture, initial_culture [2], "#3");
+				Assert.AreEqual (orig_culture, initial_culture [3], "#4");
 
-			Assert.AreEqual (orig_culture, changed_culture [0], "#9");
-			Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
-			Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
-			Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
+				Assert.AreEqual (new_culture, changed_culture [0], "#5");
+				Assert.AreEqual (new_culture, changed_culture [1], "#6");
+				Assert.AreEqual (alternative_culture, changed_culture [2], "#7");
+				Assert.AreEqual (new_culture, changed_culture [3], "#8");
+
+				Assert.AreEqual (orig_culture, changed_culture2 [0], "#9");
+				Assert.AreEqual (orig_culture, changed_culture2 [1], "#10");
+				Assert.AreEqual (alternative_culture, changed_culture2 [2], "#11");
+				Assert.AreEqual (orig_culture, changed_culture2 [3], "#12");
+			};
+			var ar = c.BeginInvoke (null, null);
+			ar.AsyncWaitHandle.WaitOne ();
 		}
 
 		[Test]

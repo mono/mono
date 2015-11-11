@@ -15,7 +15,7 @@
 #
 # register may have the following values:
 #	i  integer register
-#	a  r3 register (output from calls)
+#	a  r0 register (first argument/result reg)
 #	b  base register (used in address references)
 #	f  floating point register
 #	g  floating point register returned in r0:r1 for soft-float mode
@@ -51,12 +51,11 @@
 nop: len:4
 relaxed_nop: len:4
 break: len:4
-jmp: len:92
 br: len:16
 switch: src1:i len:12
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
 # since the corresponding sigctx structures are not well defined.
-seq_point: len:38 clob:c
+seq_point: len:52 clob:c
 il_seq_point: len:0
 
 throw: src1:i len:24
@@ -65,6 +64,7 @@ start_handler: len:20
 endfinally: len:32
 call_handler: len:16 clob:c
 endfilter: src1:i len:16
+get_ex_obj: dest:i len:16
 
 ckfinite: dest:f src1:f len:112
 ceq: dest:i len:12
@@ -95,9 +95,9 @@ rcall_membase: dest:g src1:b len:24 clob:c
 lcall: dest:l len:20 clob:c
 lcall_reg: dest:l src1:i len:8 clob:c
 lcall_membase: dest:l src1:b len:16 clob:c
-vcall: len:20 clob:c
-vcall_reg: src1:i len:8 clob:c
-vcall_membase: src1:b len:16 clob:c
+vcall: len:64 clob:c
+vcall_reg: src1:i len:64 clob:c
+vcall_membase: src1:b len:64 clob:c
 tailcall: len:160 clob:c
 iconst: dest:i len:16
 r4const: dest:f len:24
@@ -204,6 +204,7 @@ float_cle: dest:y src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
 
 # R4 opcodes
+rmove: dest:f src1:f len:4
 r4_conv_to_i1: dest:i src1:f len:88
 r4_conv_to_i2: dest:i src1:f len:88
 r4_conv_to_i4: dest:i src1:f len:88
@@ -243,6 +244,9 @@ br_reg: src1:i len:8
 bigmul: len:8 dest:l src1:i src2:i
 bigmul_un: len:8 dest:l src1:i src2:i
 tls_get: len:24 dest:i clob:c
+tls_get_reg: len:28 dest:i src1:i clob:c
+tls_set: len:24 src1:i clob:c
+tls_set_reg: len:28 src1:i src2:i clob:c
 
 # 32 bit opcodes
 int_add: dest:i src1:i src2:i len:4
@@ -354,10 +358,10 @@ icompare_imm: src1:i len:12
 
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 
-vcall2: len:20 clob:c
-vcall2_reg: src1:i len:8 clob:c
-vcall2_membase: src1:b len:12 clob:c
-dyn_call: src1:i src2:i len:120 clob:c
+vcall2: len:64 clob:c
+vcall2_reg: src1:i len:64 clob:c
+vcall2_membase: src1:b len:64 clob:c
+dyn_call: src1:i src2:i len:136 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -377,6 +381,7 @@ gc_liveness_def: len:0
 gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
+gc_safe_point: clob:c src1:i len:40
 
 atomic_add_i4: dest:i src1:i src2:i len:64
 atomic_exchange_i4: dest:i src1:i src2:i len:64
@@ -398,3 +403,5 @@ atomic_store_i4: dest:b src1:i len:28
 atomic_store_u4: dest:b src1:i len:28
 atomic_store_r4: dest:b src1:f len:80
 atomic_store_r8: dest:b src1:f len:32
+
+generic_class_init: src1:a len:44 clob:c

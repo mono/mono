@@ -40,7 +40,7 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Description
 {
 	public class ClientCredentials
-#if NET_2_1
+#if NET_2_1 || XAMMAC_4_5
 		: IEndpointBehavior
 #else
 		: SecurityCredentialsManager, IEndpointBehavior
@@ -128,7 +128,7 @@ namespace System.ServiceModel.Description
 			return new ClientCredentials (this);
 		}
 
-#if !NET_2_1
+#if !NET_2_1 && !XAMMAC_4_5
 		public override SecurityTokenManager CreateSecurityTokenManager ()
 		{
 			return new ClientCredentialsSecurityTokenManager (this);

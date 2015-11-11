@@ -57,6 +57,12 @@ namespace Mono.Linker.Steps {
 		{
 			XPathNavigator nav = _document.CreateNavigator ();
 			nav.MoveToFirstChild ();
+
+			// This step can be created with XML files that aren't necessarily
+			// linker descriptor files. So bail if we don't have a <linker> element.
+			if (nav.LocalName != "linker")
+				return;
+
 			ProcessAssemblies (Context, nav.SelectChildren ("assembly", _ns));
 		}
 
@@ -123,15 +129,24 @@ namespace Mono.Linker.Steps {
 			return new Regex (pattern.Replace(".", @"\.").Replace("*", "(.*)"));
 		}
 
+		void MatchType (TypeDefinition type, Regex regex, XPathNavigator nav)
+		{
+			if (regex.Match (type.FullName).Success)
+				ProcessType (type, nav);
+
+			if (!type.HasNestedTypes)
+				return;
+
+			foreach (var nt in type.NestedTypes)
+				MatchType (nt, regex, nav);
+		}
+
 		void ProcessTypePattern (string fullname, AssemblyDefinition assembly, XPathNavigator nav)
 		{
 			Regex regex = CreateRegexFromPattern (fullname);
 
 			foreach (TypeDefinition type in assembly.MainModule.Types) {
-				if (!regex.Match (type.FullName).Success)
-					continue;
-
-				ProcessType (type, nav);
+				MatchType (type, regex, nav);
 			}
 		}
 

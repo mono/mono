@@ -419,6 +419,12 @@ static const char* const patch_info_str[] = {
 #undef PATCH_INFO
 };
 
+const char*
+mono_ji_type_to_string (MonoJumpInfoType type)
+{
+	return patch_info_str [type];
+}
+
 void
 mono_print_ji (const MonoJumpInfo *ji)
 {
@@ -435,6 +441,10 @@ mono_print_ji (const MonoJumpInfo *ji)
 		char *s = mono_method_full_name (ji->data.method, TRUE);
 		printf ("[METHODCONST - %s]", s);
 		g_free (s);
+		break;
+	}
+	case MONO_PATCH_INFO_INTERNAL_METHOD: {
+		printf ("[INTERNAL_METHOD - %s]", ji->data.name);
 		break;
 	}
 	default:
@@ -650,6 +660,19 @@ mono_print_ins_index (int i, MonoInst *ins)
 
 			list = g_slist_next (list);
 		}
+		list = call->out_freg_args;
+		while (list) {
+			guint32 regpair;
+			int reg, hreg;
+
+			regpair = (guint32)(gssize)(list->data);
+			hreg = regpair >> 24;
+			reg = regpair & 0xffffff;
+
+			printf (" [%s <- R%d]", mono_arch_fregname (hreg), reg);
+
+			list = g_slist_next (list);
+		}
 		break;
 	}
 	case OP_BR:
@@ -689,7 +712,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 		break;
 	case OP_IL_SEQ_POINT:
 	case OP_SEQ_POINT:
-		printf (" il: %x", (int)ins->inst_imm);
+		printf (" il: 0x%x%s", (int)ins->inst_imm, ins->flags & MONO_INST_NONEMPTY_STACK ? ", nonempty-stack" : "");
 		break;
 	default:
 		break;
@@ -719,6 +742,12 @@ print_regtrack (RegTrack *t, int num)
 	}
 }
 #else
+
+const char*
+mono_ji_type_to_string (MonoJumpInfoType type)
+{
+	return "";
+}
 
 void
 mono_print_ji (const MonoJumpInfo *ji)
@@ -779,10 +808,8 @@ spill_vreg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins
 {
 	MonoInst *load;
 	int i, sel, spill;
-	int *symbolic;
 	MonoRegState *rs = cfg->rs;
 
-	symbolic = rs->symbolic [bank];
 	sel = rs->vassign [reg];
 
 	/* the vreg we need to spill lives in another logical reg bank */
@@ -827,10 +854,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 	MonoInst *load;
 	int i, sel, spill, num_sregs;
 	int sregs [MONO_MAX_SRC_REGS];
-	int *symbolic;
 	MonoRegState *rs = cfg->rs;
-
-	symbolic = rs->symbolic [bank];
 
 	g_assert (bank < MONO_NUM_REGBANKS);
 
@@ -1302,44 +1326,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->dreg = -1;
 		}
 
-		if (spec [MONO_INST_CLOB] == 'c' && MONO_IS_CALL (ins)) {
-			/* A call instruction implicitly uses all registers in call->out_ireg_args */
-
-			MonoCallInst *call = (MonoCallInst*)ins;
-			GSList *list;
-
-			list = call->out_ireg_args;
-			if (list) {
-				while (list) {
-					guint32 regpair;
-					int reg, hreg;
-
-					regpair = (guint32)(gssize)(list->data);
-					hreg = regpair >> 24;
-					reg = regpair & 0xffffff;
-
-					//reginfo [reg].prev_use = reginfo [reg].last_use;
-					//reginfo [reg].last_use = i;
-
-					list = g_slist_next (list);
-				}
-			}
-
-			list = call->out_freg_args;
-			if (list) {
-				while (list) {
-					guint32 regpair;
-					int reg, hreg;
-
-					regpair = (guint32)(gssize)(list->data);
-					hreg = regpair >> 24;
-					reg = regpair & 0xffffff;
-
-					list = g_slist_next (list);
-				}
-			}
-		}
-
 		++i;
 	}
 
@@ -1347,7 +1333,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	DEBUG (print_regtrack (reginfo, rs->next_vreg));
 	MONO_BB_FOR_EACH_INS_REVERSE_SAFE (bb, prev, ins) {
-		int prev_dreg, clob_dreg;
+		int prev_dreg;
 		int dest_dreg, clob_reg;
 		int dest_sregs [MONO_MAX_SRC_REGS], prev_sregs [MONO_MAX_SRC_REGS];
 		int dreg_high, sreg1_high;
@@ -1360,7 +1346,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		spec_src1 = spec [MONO_INST_SRC1];
 		spec_dest = spec [MONO_INST_DEST];
 		prev_dreg = -1;
-		clob_dreg = -1;
 		clob_reg = -1;
 		dest_dreg = -1;
 		dreg_high = -1;
@@ -1518,7 +1503,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 					prev_dreg = ins->dreg;
 					assign_reg (cfg, rs, ins->dreg, new_dest, 0);
-					clob_dreg = ins->dreg;
 					create_copy_ins (cfg, bb, tmp, dest_sreg, new_dest, ins, ip, 0);
 					mono_regstate_free_int (rs, dest_sreg);
 					need_spill = FALSE;
@@ -2537,12 +2521,8 @@ mono_opcode_to_type (int opcode, int cmp_opcode)
 gboolean
 mono_is_regsize_var (MonoType *t)
 {
-	if (t->byref)
-		return TRUE;
-	t = mono_type_get_underlying_type (t);
+	t = mini_get_underlying_type (t);
 	switch (t->type) {
-	case MONO_TYPE_BOOLEAN:
-	case MONO_TYPE_CHAR:
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_I2:
@@ -2790,9 +2770,6 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 				return FALSE;
 			prev_ftype = ftype;
 			nfields += nested_nfields;
-			// FIXME: Nested float structs are aligned to 8 bytes
-			if (ftype->type == MONO_TYPE_R4)
-				return FALSE;
 		} else {
 			if (!(!ftype->byref && (ftype->type == MONO_TYPE_R4 || ftype->type == MONO_TYPE_R8)))
 				return FALSE;
@@ -2802,11 +2779,30 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 			nfields ++;
 		}
 	}
-	if (nfields == 0 || nfields > 4)
+	if (nfields == 0)
 		return FALSE;
 	*out_nfields = nfields;
 	*out_esize = prev_ftype->type == MONO_TYPE_R4 ? 4 : 8;
 	return TRUE;
+}
+
+MonoRegState*
+mono_regstate_new (void)
+{
+	MonoRegState* rs = g_new0 (MonoRegState, 1);
+
+	rs->next_vreg = MAX (MONO_MAX_IREGS, MONO_MAX_FREGS);
+#ifdef MONO_ARCH_NEED_SIMD_BANK
+	rs->next_vreg = MAX (rs->next_vreg, MONO_MAX_XREGS);
+#endif
+
+	return rs;
+}
+
+void
+mono_regstate_free (MonoRegState *rs) {
+	g_free (rs->vassign);
+	g_free (rs);
 }
 
 #endif /* DISABLE_JIT */

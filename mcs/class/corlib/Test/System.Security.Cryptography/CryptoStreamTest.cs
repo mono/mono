@@ -316,15 +316,17 @@ namespace MonoTests.System.Security.Cryptography {
 				byte[] buffer = new byte [8];
 				cs = new CryptoStream (s, encryptor, CryptoStreamMode.Read);
 				cs.Clear ();
-				Assert.AreEqual (0, cs.Read (buffer, 0, 8), "Read from disposed");
+				try {
+					cs.Read (buffer, 0, 8);
+					Assert.Fail ();
+				} catch (NotSupportedException) {
+				}
 			}
 		}
 		
 #if !NET_2_1
 		[Test]
-		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
+		[ExpectedException (typeof (NotSupportedException))]
 		public void Read_Disposed_Break () 
 		{
 			// do no corrupt readStream in further tests
@@ -419,11 +421,8 @@ namespace MonoTests.System.Security.Cryptography {
 			cs.Read (buffer, Int32.MaxValue, 4);
 		}
 		
-#if !NET_2_1
 		[Test]
-		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
+		[ExpectedException (typeof (NotSupportedException))]
 		public void Write_Disposed () 
 		{
 			// do no corrupt writeStream in further tests
@@ -434,7 +433,6 @@ namespace MonoTests.System.Security.Cryptography {
 				cs.Write (buffer, 0, 8);
 			}
 		}
-#endif
 		
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
@@ -819,7 +817,6 @@ namespace MonoTests.System.Security.Cryptography {
 			Assert.AreEqual ("ximian", Encoding.Unicode.GetString (data, 0, len), "Unicode DES Roundtrip");
 		}
 
-		[Category ("NotWorking")]
 		[Test]
 		public void DecryptPartial_TransformFinalBlock_2Pass () 
 		{
@@ -846,7 +843,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		// based on http://www.c-sharpcorner.com/Code/2002/May/FileEncryption.asp
-		[Category ("NotWorking")]
 		[Test]
 		public void WriteByteReadByte () 
 		{
@@ -1238,7 +1234,6 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] digest = hash.Hash;
 			Assert.AreEqual ("71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest), "Hash");
 		}
-		[Category ("NotWorking")]
 		[Test]
 		public void CascadedCryptoStream_Read () 
 		{

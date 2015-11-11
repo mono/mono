@@ -269,6 +269,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_CreateDirectory (MonoString *path, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -276,7 +277,8 @@ ves_icall_System_IO_MonoIO_CreateDirectory (MonoString *path, gint32 *error)
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -284,6 +286,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_RemoveDirectory (MonoString *path, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -291,64 +294,59 @@ ves_icall_System_IO_MonoIO_RemoveDirectory (MonoString *path, gint32 *error)
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
 static gchar *
-get_search_dir (MonoString *pattern)
+get_search_dir (const gunichar2 *pattern)
 {
 	gchar *p;
 	gchar *result;
 
-	p = mono_string_to_utf8 (pattern);
+	p = g_utf16_to_utf8 (pattern, -1, NULL, NULL, NULL);
 	result = g_path_get_dirname (p);
 	g_free (p);
 	return result;
 }
 
-MonoArray *
-ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
-						 MonoString *path_with_pattern,
+static GPtrArray *
+get_filesystem_entries (const gunichar2 *path,
+						 const gunichar2 *path_with_pattern,
 						 gint attrs, gint mask,
 						 gint32 *error)
 {
-	MonoDomain *domain;
-	MonoArray *result;
 	int i;
 	WIN32_FIND_DATA data;
 	HANDLE find_handle;
-	GPtrArray *names;
-	gchar *utf8_path, *utf8_result, *full_name;
+	GPtrArray *names = NULL;
+	gchar *utf8_path = NULL, *utf8_result, *full_name;
 	gint32 attributes;
-	
-	result = NULL;
-	*error = ERROR_SUCCESS;
 
-	domain = mono_domain_get ();
 	mask = convert_attrs (mask);
-	attributes = get_file_attributes (mono_string_chars (path));
+	attributes = get_file_attributes (path);
 	if (attributes != -1) {
 		if ((attributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
 			*error = ERROR_INVALID_NAME;
-			goto leave;
+			goto fail;
 		}
 	} else {
 		*error = GetLastError ();
-		goto leave;
+		goto fail;
 	}
 	
-	find_handle = FindFirstFile (mono_string_chars (path_with_pattern), &data);
+	find_handle = FindFirstFile (path_with_pattern, &data);
 	if (find_handle == INVALID_HANDLE_VALUE) {
 		gint32 find_error = GetLastError ();
 		
 		if (find_error == ERROR_FILE_NOT_FOUND || find_error == ERROR_NO_MORE_FILES) {
 			/* No files, so just return an empty array */
-			goto leave;
+			goto fail;
 		}
 		
 		*error = find_error;
-		goto leave;
+		goto fail;
 	}
 
 	utf8_path = get_search_dir (path_with_pattern);
@@ -375,25 +373,52 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
 
 	if (FindClose (find_handle) == FALSE) {
 		*error = GetLastError ();
-		result = NULL;
-	} else {
-		result = mono_array_new (domain, mono_defaults.string_class, names->len);
-		for (i = 0; i < names->len; i++) {
-			mono_array_setref (result, i, mono_string_new (domain, g_ptr_array_index (names, i)));
-		}
+		goto fail;
 	}
 
+	g_free (utf8_path);
+	return names;
+fail:
+	if (names) {
+		for (i = 0; i < names->len; i++)
+			g_free (g_ptr_array_index (names, i));
+		g_ptr_array_free (names, TRUE);
+	}
+	g_free (utf8_path);
+	return FALSE;
+}
+
+
+MonoArray *
+ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
+						 MonoString *path_with_pattern,
+						 gint attrs, gint mask,
+						 gint32 *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoArray *result;
+	int i;
+	GPtrArray *names;
+	
+	*error = ERROR_SUCCESS;
+
+	MONO_PREPARE_BLOCKING;
+	names = get_filesystem_entries (mono_string_chars (path), mono_string_chars (path_with_pattern), attrs, mask, error);
+	MONO_FINISH_BLOCKING;
+
+	if (!names) {
+		// If there's no array and no error, then return an empty array.
+		if (*error == ERROR_SUCCESS)
+			return mono_array_new (domain, mono_defaults.string_class, 0);
+		return NULL;
+	}
+
+	result = mono_array_new (domain, mono_defaults.string_class, names->len);
 	for (i = 0; i < names->len; i++) {
+		mono_array_setref (result, i, mono_string_new (domain, g_ptr_array_index (names, i)));
 		g_free (g_ptr_array_index (names, i));
 	}
 	g_ptr_array_free (names, TRUE);
-	g_free (utf8_path);
-
-leave:
-	// If there's no array and no error, then return an empty array.
-	if (result == NULL && *error == ERROR_SUCCESS)
-		result = mono_array_new (domain, mono_defaults.string_class, 0);
-
 	return result;
 }
 
@@ -424,6 +449,7 @@ incremental_find_check_match (IncrementalFind *handle, WIN32_FIND_DATA *data, Mo
 	return TRUE;
 }
 
+/* FIXME make gc suspendable */
 MonoString *
 ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
 				      MonoString *path_with_pattern,
@@ -469,6 +495,7 @@ ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
 	return result;
 }
 
+/* FIXME make gc suspendable */
 MonoString *
 ves_icall_System_IO_MonoIO_FindNext (gpointer handle, gint32 *result_attr, gint32 *error)
 {
@@ -495,13 +522,15 @@ ves_icall_System_IO_MonoIO_FindClose (gpointer handle)
 {
 	IncrementalFind *ifh = handle;
 	gint32 error;
-	
+
+	MONO_PREPARE_BLOCKING;
 	if (FindClose (ifh->find_handle) == FALSE){
 		error = GetLastError ();
 	} else
 		error = ERROR_SUCCESS;
 	g_free (ifh->utf8_path);
 	g_free (ifh);
+	MONO_FINISH_BLOCKING;
 
 	return error;
 }
@@ -562,14 +591,16 @@ ves_icall_System_IO_MonoIO_MoveFile (MonoString *path, MonoString *dest,
 				     gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
-	
+
 	ret=MoveFile (mono_string_chars (path), mono_string_chars (dest));
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -581,6 +612,7 @@ ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *
 	gboolean ret;
 	gunichar2 *utf16_sourceFileName = NULL, *utf16_destinationFileName = NULL, *utf16_destinationBackupFileName = NULL;
 	guint32 replaceFlags = REPLACEFILE_WRITE_THROUGH;
+	MONO_PREPARE_BLOCKING;
 
 	if (sourceFileName)
 		utf16_sourceFileName = mono_string_chars (sourceFileName);
@@ -599,6 +631,7 @@ ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *
 	if (ret == FALSE)
 		*error = GetLastError ();
 
+	MONO_FINISH_BLOCKING;
 	return ret;
 }
 
@@ -607,6 +640,7 @@ ves_icall_System_IO_MonoIO_CopyFile (MonoString *path, MonoString *dest,
 				     MonoBoolean overwrite, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -615,6 +649,7 @@ ves_icall_System_IO_MonoIO_CopyFile (MonoString *path, MonoString *dest,
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -622,6 +657,7 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_DeleteFile (MonoString *path, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -630,6 +666,7 @@ ves_icall_System_IO_MonoIO_DeleteFile (MonoString *path, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -637,7 +674,8 @@ gint32
 ves_icall_System_IO_MonoIO_GetFileAttributes (MonoString *path, gint32 *error)
 {
 	gint32 ret;
-	
+	MONO_PREPARE_BLOCKING;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=get_file_attributes (mono_string_chars (path));
@@ -653,6 +691,7 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (MonoString *path, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -661,6 +700,7 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (MonoString *path, gint32 attrs,
 					      gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -669,7 +709,8 @@ ves_icall_System_IO_MonoIO_SetFileAttributes (MonoString *path, gint32 attrs,
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -677,7 +718,8 @@ gint32
 ves_icall_System_IO_MonoIO_GetFileType (HANDLE handle, gint32 *error)
 {
 	gboolean ret;
-	
+	MONO_PREPARE_BLOCKING;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=GetFileType (handle);
@@ -688,6 +730,7 @@ ves_icall_System_IO_MonoIO_GetFileType (HANDLE handle, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -697,6 +740,7 @@ ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat,
 {
 	gboolean result;
 	WIN32_FILE_ATTRIBUTE_DATA data;
+	MONO_PREPARE_BLOCKING;
 
 	*error=ERROR_SUCCESS;
 	
@@ -709,6 +753,7 @@ ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat,
 		memset (stat, 0, sizeof (MonoIOStat));
 	}
 
+	MONO_FINISH_BLOCKING;
 	return result;
 }
 
@@ -719,8 +764,10 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 {
 	HANDLE ret;
 	int attributes, attrs;
-	gunichar2 *chars = mono_string_chars (filename);
-	
+	gunichar2 *chars;
+	MONO_PREPARE_BLOCKING;
+
+	chars = mono_string_chars (filename);	
 	*error=ERROR_SUCCESS;
 
 	if (options != 0){
@@ -763,6 +810,7 @@ ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
 		*error=GetLastError ();
 	} 
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -770,7 +818,8 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_Close (HANDLE handle, gint32 *error)
 {
 	gboolean ret;
-	
+	MONO_PREPARE_BLOCKING;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=CloseHandle (handle);
@@ -778,6 +827,7 @@ ves_icall_System_IO_MonoIO_Close (HANDLE handle, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -800,7 +850,10 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArray *dest,
 	}
 
 	buffer = mono_array_addr (dest, guchar, dest_offset);
+
+	MONO_PREPARE_BLOCKING;
 	result = ReadFile (handle, buffer, count, &n, NULL);
+	MONO_FINISH_BLOCKING;
 
 	if (!result) {
 		*error=GetLastError ();
@@ -829,7 +882,9 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArray *src,
 	}
 	
 	buffer = mono_array_addr (src, guchar, src_offset);
+	MONO_PREPARE_BLOCKING;
 	result = WriteFile (handle, buffer, count, &n, NULL);
+	MONO_FINISH_BLOCKING;
 
 	if (!result) {
 		*error=GetLastError ();
@@ -844,6 +899,7 @@ ves_icall_System_IO_MonoIO_Seek (HANDLE handle, gint64 offset, gint32 origin,
 				 gint32 *error)
 {
 	gint32 offset_hi;
+	MONO_PREPARE_BLOCKING;
 
 	*error=ERROR_SUCCESS;
 	
@@ -854,7 +910,8 @@ ves_icall_System_IO_MonoIO_Seek (HANDLE handle, gint64 offset, gint32 origin,
 	if(offset==INVALID_SET_FILE_POINTER) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return offset | ((gint64)offset_hi << 32);
 }
 
@@ -862,7 +919,8 @@ MonoBoolean
 ves_icall_System_IO_MonoIO_Flush (HANDLE handle, gint32 *error)
 {
 	gboolean ret;
-	
+	MONO_PREPARE_BLOCKING;
+
 	*error=ERROR_SUCCESS;
 	
 	ret=FlushFileBuffers (handle);
@@ -870,6 +928,7 @@ ves_icall_System_IO_MonoIO_Flush (HANDLE handle, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -878,6 +937,7 @@ ves_icall_System_IO_MonoIO_GetLength (HANDLE handle, gint32 *error)
 {
 	gint64 length;
 	guint32 length_hi;
+	MONO_PREPARE_BLOCKING;
 
 	*error=ERROR_SUCCESS;
 	
@@ -886,9 +946,11 @@ ves_icall_System_IO_MonoIO_GetLength (HANDLE handle, gint32 *error)
 		*error=GetLastError ();
 	}
 	
+	MONO_FINISH_BLOCKING;
 	return length | ((gint64)length_hi << 32);
 }
 
+/* FIXME make gc suspendable */
 MonoBoolean
 ves_icall_System_IO_MonoIO_SetLength (HANDLE handle, gint64 length,
 				      gint32 *error)
@@ -946,6 +1008,7 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 	const FILETIME *creation_filetime;
 	const FILETIME *last_access_filetime;
 	const FILETIME *last_write_filetime;
+	MONO_PREPARE_BLOCKING;
 
 	*error=ERROR_SUCCESS;
 	
@@ -968,7 +1031,8 @@ ves_icall_System_IO_MonoIO_SetFileTime (HANDLE handle, gint64 creation_time,
 	if(ret==FALSE) {
 		*error=GetLastError ();
 	}
-	
+
+	MONO_FINISH_BLOCKING;
 	return(ret);
 }
 
@@ -991,8 +1055,7 @@ ves_icall_System_IO_MonoIO_get_ConsoleError ()
 }
 
 MonoBoolean
-ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle,
-				       HANDLE *write_handle)
+ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle, HANDLE *write_handle, gint32 *error)
 {
 	SECURITY_ATTRIBUTES attr;
 	gboolean ret;
@@ -1000,9 +1063,13 @@ ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle,
 	attr.nLength=sizeof(SECURITY_ATTRIBUTES);
 	attr.bInheritHandle=TRUE;
 	attr.lpSecurityDescriptor=NULL;
-	
+
+	MONO_PREPARE_BLOCKING;
 	ret=CreatePipe (read_handle, write_handle, &attr, 0);
+	MONO_FINISH_BLOCKING;
+
 	if(ret==FALSE) {
+		*error = GetLastError ();
 		/* FIXME: throw an exception? */
 		return(FALSE);
 	}
@@ -1010,15 +1077,19 @@ ves_icall_System_IO_MonoIO_CreatePipe (HANDLE *read_handle,
 	return(TRUE);
 }
 
-MonoBoolean ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, 
-						HANDLE source_handle, HANDLE target_process_handle, HANDLE *target_handle, 
-						gint32 access, gint32 inherit, gint32 options)
+MonoBoolean
+ves_icall_System_IO_MonoIO_DuplicateHandle (HANDLE source_process_handle, HANDLE source_handle,
+		HANDLE target_process_handle, HANDLE *target_handle, gint32 access, gint32 inherit, gint32 options, gint32 *error)
 {
 	/* This is only used on Windows */
 	gboolean ret;
 	
+	MONO_PREPARE_BLOCKING;
 	ret=DuplicateHandle (source_process_handle, source_handle, target_process_handle, target_handle, access, inherit, options);
+	MONO_FINISH_BLOCKING;
+
 	if(ret==FALSE) {
+		*error = GetLastError ();
 		/* FIXME: throw an exception? */
 		return(FALSE);
 	}
@@ -1107,40 +1178,11 @@ ves_icall_System_IO_MonoIO_get_InvalidPathChars ()
 	return chars;
 }
 
-gint32
-ves_icall_System_IO_MonoIO_GetTempPath (MonoString **mono_name)
-{
-	gunichar2 *name;
-	int ret;
-
-	name=g_new0 (gunichar2, 256);
-	
-	ret=GetTempPath (256, name);
-	if(ret>255) {
-		/* Buffer was too short. Try again... */
-		g_free (name);
-		name=g_new0 (gunichar2, ret+2);	/* include the terminator */
-		ret=GetTempPath (ret, name);
-	}
-	
-	if(ret>0) {
-#ifdef DEBUG
-		g_message ("%s: Temp path is [%s] (len %d)", __func__, name, ret);
-#endif
-
-		mono_gc_wbarrier_generic_store ((gpointer) mono_name,
-				(MonoObject*) mono_string_new_utf16 (mono_domain_get (), name, ret));
-	}
-
-	g_free (name);
-	
-	return(ret);
-}
-
 void ves_icall_System_IO_MonoIO_Lock (HANDLE handle, gint64 position,
 				      gint64 length, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -1149,12 +1191,15 @@ void ves_icall_System_IO_MonoIO_Lock (HANDLE handle, gint64 position,
 	if (ret == FALSE) {
 		*error = GetLastError ();
 	}
+
+	MONO_FINISH_BLOCKING;
 }
 
 void ves_icall_System_IO_MonoIO_Unlock (HANDLE handle, gint64 position,
 					gint64 length, gint32 *error)
 {
 	gboolean ret;
+	MONO_PREPARE_BLOCKING;
 	
 	*error=ERROR_SUCCESS;
 	
@@ -1163,6 +1208,8 @@ void ves_icall_System_IO_MonoIO_Unlock (HANDLE handle, gint64 position,
 	if (ret == FALSE) {
 		*error = GetLastError ();
 	}
+
+	MONO_FINISH_BLOCKING;
 }
 
 //Support for io-layer free mmap'd files.
@@ -1175,13 +1222,16 @@ mono_filesize_from_path (MonoString *string)
 	struct stat buf;
 	gint64 res;
 	char *path = mono_string_to_utf8 (string);
-	
+
+	MONO_PREPARE_BLOCKING;
 	if (stat (path, &buf) == -1)
 		res = -1;
 	else
 		res = (gint64)buf.st_size;
 
 	g_free (path);
+
+	MONO_FINISH_BLOCKING;
 	return res;
 }
 
@@ -1189,8 +1239,13 @@ gint64
 mono_filesize_from_fd (int fd)
 {
 	struct stat buf;
+	int res;
 
-	if (fstat (fd, &buf) == -1)
+	MONO_PREPARE_BLOCKING;
+	res = fstat (fd, &buf);
+	MONO_FINISH_BLOCKING;
+	
+	if (res == -1)
 		return (gint64)-1;
 
 	return (gint64)buf.st_size;

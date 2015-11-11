@@ -1,4 +1,5 @@
 NUnitMoonHelper.cs
+../../test-helpers/NetworkHelpers.cs
 FeatureBased/Features.Client/AsyncCallTesterProxy.cs
 FeatureBased/Features.Client/AsyncPatternServer.cs
 FeatureBased/Features.Client/DataContractTesterProxy.cs
@@ -127,6 +128,7 @@ System.ServiceModel.Description/WsdlImporterTest.cs
 System.ServiceModel.Dispatcher/ActionFilterTest.cs
 System.ServiceModel.Dispatcher/Bug652331Test.cs
 System.ServiceModel.Dispatcher/Bug652331_2Test.cs
+System.ServiceModel.Dispatcher/Bug32886Test.cs
 System.ServiceModel.Dispatcher/ChannelDispatcherTest.cs
 System.ServiceModel.Dispatcher/DispatchOperationTest.cs
 System.ServiceModel.Dispatcher/DispatchRuntimeTest.cs
@@ -210,3 +212,5 @@ MetadataTests/MetadataSamples.cs
 MetadataTests/TestContext.cs
 MetadataTests/TestLabel.cs
 MetadataTests/ExportTests.cs
+../../test-helpers/NetworkHelpers.cs
+

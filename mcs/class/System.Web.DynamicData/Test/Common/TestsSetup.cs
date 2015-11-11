@@ -34,13 +34,7 @@ namespace MonoTests.Common
 		{
 			Type type = typeof (TestsSetup);
 			WebTest.CopyResource (type, "MonoTests.WebPages.Global.asax", "Global.asax");
-#if NET_4_5
-			WebTest.CopyResource (type, "MonoTests.WebPages.web.config.4.5", "web.config");
-#elif NET_4_0
-			WebTest.CopyResource (type, "MonoTests.WebPages.web.config.4.0", "web.config");
-#else
-			WebTest.CopyResource (type, "MonoTests.WebPages.web.config.2.0", "web.config");
-#endif
+			WebTest.CopyResource (type, "MonoTests.WebPages.web.config.4.x", "web.config");
 			WebTest.CopyResource (type, "MonoTests.WebPages.Site.css", "Site.css");
 			WebTest.CopyResource (type, "MonoTests.WebPages.Site.master", "Site.master");
 			WebTest.CopyResource (type, "MonoTests.WebPages.Site.master.cs", "Site.master.cs");

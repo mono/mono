@@ -34,7 +34,6 @@ using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.IO;
 using System.Runtime.Remoting.Channels;
-using Mono.Posix;
 
 namespace Mono.Remoting.Channels.Unix
 {

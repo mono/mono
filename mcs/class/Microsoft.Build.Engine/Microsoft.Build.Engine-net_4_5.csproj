@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -168,6 +168,18 @@
     <ProjectReference Include="../Microsoft.Build.Utilities/Microsoft.Build.Utilities-net_4_5.csproj">
       <Project>{6E1C7BDE-7B9E-47B0-A7B2-1561822FE922}</Project>
       <Name>Microsoft.Build.Utilities-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System/System-net_4_5.csproj">
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
+      <Name>System-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.Core/System.Core-net_4_5.csproj">
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
+      <Name>System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="../System.XML/System.Xml-net_4_5.csproj">
+      <Project>{2951DEC2-4393-4A78-83F9-42EB39CB708F}</Project>
+      <Name>System.Xml-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

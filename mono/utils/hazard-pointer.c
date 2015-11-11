@@ -6,16 +6,24 @@
 
 #include <config.h>
 
+#include <string.h>
+
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-memory-model.h>
-#include <mono/utils/mono-mmap.h>
 #include <mono/utils/monobitset.h>
-#include <mono/utils/mono-threads.h>
 #include <mono/utils/lock-free-array-queue.h>
-#include <mono/utils/mono-counters.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-mutex.h>
+#ifdef SGEN_WITHOUT_MONO
+#include <mono/sgen/sgen-gc.h>
+#include <mono/sgen/sgen-client.h>
+#else
+#include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-counters.h>
 #include <mono/io-layer/io-layer.h>
+#endif
 
 typedef struct {
 	gpointer p;
@@ -101,7 +109,7 @@ mono_thread_small_id_alloc (void)
 		int num_pages = (hazard_table_size * sizeof (MonoThreadHazardPointers) + pagesize - 1) / pagesize;
 
 		if (hazard_table == NULL) {
-			hazard_table = mono_valloc (NULL,
+			hazard_table = (MonoThreadHazardPointers *volatile) mono_valloc (NULL,
 				sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE,
 				MONO_MMAP_NONE);
 		}

@@ -66,8 +66,11 @@
 /*                   P r o t o t y p e s                            */
 /*------------------------------------------------------------------*/
 
-gboolean mono_arch_handle_exception (void     *ctx,
-				     gpointer obj);
+static void throw_exception (MonoObject *, unsigned long, unsigned long, 
+		 gulong *, gdouble *, gint32 *, guint, gboolean);
+static gpointer mono_arch_get_throw_exception_generic (int, MonoTrampInfo **, 
+				int, gboolean, gboolean);
+static void handle_signal_exception (gpointer);
 
 /*========================= End of Prototypes ======================*/
 
@@ -210,6 +213,9 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 
 	g_assert ((code - start) < SZ_THROW); 
 
+	mono_arch_flush_icache(start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	if (info)
 		*info = mono_tramp_info_create ("call_filter",
 						start, code - start, ji,
@@ -256,8 +262,10 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow)
+		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
+			mono_ex->trace_ips = NULL;
+		}
 	}
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
@@ -357,6 +365,9 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 	s390_break (code);
 	g_assert ((code - start) < size);
 
+	mono_arch_flush_icache (start, code - start);
+	mono_profiler_code_buffer_new (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL);
+
 	if (info)
 		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" 
                                                       : (rethrow ? "rethrow_exception" 
@@ -410,7 +421,7 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 	if (info)
 		*info = NULL;
 
-	return (mono_arch_get_throw_exception_generic (SZ_THROW, info, FALSE, FALSE, aot));
+	return (mono_arch_get_throw_exception_generic (SZ_THROW, info, FALSE, TRUE, aot));
 }
 
 /*========================= End of Function ========================*/
@@ -440,21 +451,20 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_find_jit_info                           */
+/* Name		- mono_arch_unwind_frame                           */
 /*                                                                  */
 /* Function	- See exceptions-amd64.c for docs.                  */
 /*                                                                  */
 /*------------------------------------------------------------------*/
 
 gboolean
-mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, 
+mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 			 MonoJitInfo *ji, MonoContext *ctx, 
 			 MonoContext *new_ctx, MonoLMF **lmf,
 			 mgreg_t **save_locations,
 			 StackFrameInfo *frame)
 {
 	gpointer ip = (gpointer) MONO_CONTEXT_GET_IP (ctx);
-	MonoS390StackFrame *sframe;
 
 	memset (frame, 0, sizeof (StackFrameInfo));
 	frame->ji = ji;
@@ -468,7 +478,10 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		guint8 *unwind_info;
 		mgreg_t regs[16];
 
-		frame->type = FRAME_TYPE_MANAGED;
+		if (ji->is_trampoline)
+			frame->type = FRAME_TYPE_TRAMPOLINE;
+		else
+			frame->type = FRAME_TYPE_MANAGED;
 
 		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
@@ -513,6 +526,29 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
+/* Name		- handle_signal_exception                           */
+/*                                                                  */
+/* Function	- Handle an exception raised by the JIT code.	    */
+/*                                                                  */
+/* Parameters   - obj       - The exception object                  */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+
+static void
+handle_signal_exception (gpointer obj)
+{
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	MonoContext ctx;
+
+	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
+	mono_handle_exception (&ctx, obj);
+	mono_restore_context (&ctx);
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
 /* Name		- mono_arch_handle_exception                        */
 /*                                                                  */
 /* Function	- Handle an exception raised by the JIT code.	    */
@@ -523,9 +559,52 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 /*------------------------------------------------------------------*/
 
 gboolean
-mono_arch_handle_exception (void *uc, gpointer obj)
+mono_arch_handle_exception (void *sigctx, gpointer obj)
 {
-	return mono_handle_exception (uc, obj);
+	MonoContext mctx;
+
+	/*
+	 * Handling the exception in the signal handler is problematic, since the original
+	 * signal is disabled, and we could run arbitrary code though the debugger. So
+	 * resume into the normal stack and do most work there if possible.
+	 */
+	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+
+	/* Pass the ctx parameter in TLS */
+	mono_sigctx_to_monoctx (sigctx, &jit_tls->ex_ctx);
+
+	mctx = jit_tls->ex_ctx;
+	mono_arch_setup_async_callback (&mctx, handle_signal_exception, obj);
+	mono_monoctx_to_sigctx (&mctx, sigctx);
+
+	return TRUE;
+}
+
+/*========================= End of Function ========================*/
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name		- mono_arch_setup_async_callback                    */
+/*                                                                  */
+/* Function	- Establish the async callback.              	    */
+/*                                                                  */
+/* Parameters   - ctx       - Context                               */
+/*                async_cb  - Callback routine address              */
+/*                user_data - Data to be passed to callback         */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+
+void
+mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
+{
+	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
+
+	ctx->uc_mcontext.gregs[2] = (unsigned long) user_data;
+
+	sp -= S390_MINIMAL_STACK_SIZE;
+	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
+	MONO_CONTEXT_SET_BP(ctx, sp);
+	MONO_CONTEXT_SET_IP(ctx, (unsigned long) async_cb);
 }
 
 /*========================= End of Function ========================*/

@@ -41,6 +41,9 @@ namespace System.Diagnostics.Tracing
 			get; private set;
 		}
 
+		public EventLevel Level { get; set; }
+		public EventKeywords Keywords { get; set; }
+
 	}
 }
 

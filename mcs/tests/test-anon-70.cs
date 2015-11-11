@@ -26,8 +26,11 @@ public class C
 		Test (delegate () {
 			int i = *v.GetUnsafeValue ();
 		});
+
+		Test (delegate () {
+			byte* buffer = stackalloc byte[8192];
+		});
 	}
-	
 	
 	public static void Main ()
 	{

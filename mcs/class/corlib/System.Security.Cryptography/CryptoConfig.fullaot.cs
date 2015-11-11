@@ -185,6 +185,11 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		internal static string MapNameToOID (string name, object arg)
+		{
+			return MapNameToOID (name);
+		}
+
 		public static string MapNameToOID (string name)
 		{
 			if (name == null)

@@ -45,7 +45,7 @@ namespace System.Runtime.Caching {
 		{
 		}
 
-		public void Add (MemoryCacheEntry entry)
+		public new void Add (MemoryCacheEntry entry)
 		{
 			var now = DateTime.UtcNow;
 			if (now == prevDateTime)
@@ -61,7 +61,7 @@ namespace System.Runtime.Caching {
 			base.Add (entry);
 		}
 
-		public void Remove (MemoryCacheEntry entry)
+		public new void Remove (MemoryCacheEntry entry)
 		{
 			base.Remove (entry);
 			entry.UsageEntryRef = UsageEntryRef.INVALID;

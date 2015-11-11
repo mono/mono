@@ -150,6 +150,12 @@ namespace System.Security.Policy {
 				assemblyEvidenceList.Clear ();
 		}
 
+        [ComVisible(false)]
+        public Evidence Clone ()
+        {
+            return new Evidence(this);
+        }		
+
 		[Obsolete]
 		public void CopyTo (Array array, int index) 
 		{

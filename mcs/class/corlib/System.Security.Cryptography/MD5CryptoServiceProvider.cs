@@ -50,7 +50,7 @@ namespace System.Security.Cryptography {
 			Initialize();
 		}
 
-		~MD5CryptoServiceProvider () 
+		~MD5CryptoServiceProvider ()
 		{
 			Dispose (false);
 		}
@@ -59,22 +59,20 @@ namespace System.Security.Cryptography {
 		{
 			if (_ProcessingBuffer != null) {
 				Array.Clear (_ProcessingBuffer, 0, _ProcessingBuffer.Length);
-				_ProcessingBuffer = null;
 			}
 			if (_H != null) {
 				Array.Clear (_H, 0, _H.Length);
-				_H = null;
 			}
 			if (buff != null) {
 				Array.Clear (buff, 0, buff.Length);
-				buff = null;
 			}
+
+			base.Dispose (disposing);
 		}
 
 		protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
 		{
 			int i;
-			State = 1;
 
 			if (_ProcessingBufferCount != 0) {
 				if (cbSize < (BLOCK_SIZE_BYTES - _ProcessingBufferCount)) {

@@ -9,6 +9,8 @@
 # (C) 2008 Novell (http://www.novell.com)
 #
 
+if [ -n "$DISABLE_MONO_RPM_AUTO_DEPS" ]; then exit 0; fi
+
 IFS=$'\n'
 filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
 monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
@@ -50,7 +52,7 @@ esac
 # set LD_LIBRARY_PATH to ensure that libmono is found
 export LD_LIBRARY_PATH=$libdir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 # and set MONO_PATH to ensure that mscorlib.dll can be found
-export MONO_PATH=$prefix/lib/mono/2.0
+export MONO_PATH=$prefix/lib/mono/4.5
 
 REQUIRES=$(
 	for i in "${monolist[@]}"; do

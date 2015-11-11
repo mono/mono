@@ -205,13 +205,15 @@ namespace Mono.CSharp
 			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces) {
 				if (string.IsNullOrEmpty (codeNamespace.Name)) {
 					global_imports = codeNamespace.Imports;
-					codeNamespace.Imports = new CodeNamespaceImportCollection ();
+					codeNamespace.Imports.Clear ();
 				}
 
 				GenerateNamespace (codeNamespace);
 
 				if (global_imports != null) {
-					codeNamespace.Imports = global_imports;
+					codeNamespace.Imports.Clear ();
+					foreach (CodeNamespaceImport ns in global_imports)
+					codeNamespace.Imports.Add (ns);
 					global_imports = null;
 				}
 			}

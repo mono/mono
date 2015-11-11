@@ -653,6 +653,21 @@ namespace System
 			return CreateInstance (elementType, length);
 		}
 
+		internal static Array UnsafeCreateInstance(Type elementType, int[] lengths, int[] lowerBounds)
+		{
+			return CreateInstance(elementType, lengths, lowerBounds);
+		}
+
+		internal static Array UnsafeCreateInstance (Type elementType, int length1, int length2)
+		{
+			return CreateInstance (elementType, length1, length2);
+		}
+
+		internal static Array UnsafeCreateInstance (Type elementType, params int[] lengths)
+		{
+			return CreateInstance(elementType, lengths);
+		}
+
 		public static Array CreateInstance (Type elementType, int length)
 		{
 			int[] lengths = {length};
@@ -686,8 +701,8 @@ namespace System
 
 			int[] bounds = null;
 
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
+			elementType = elementType.UnderlyingSystemType as RuntimeType;
+			if (elementType == null)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
@@ -710,8 +725,8 @@ namespace System
 			if (lowerBounds == null)
 				throw new ArgumentNullException ("lowerBounds");
 
-			elementType = elementType.UnderlyingSystemType;
-			if (!elementType.IsSystemType)
+			elementType = elementType.UnderlyingSystemType as RuntimeType;
+			if (elementType == null)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
@@ -1674,10 +1689,10 @@ namespace System
 		
 			if (keys == null)
 				throw new ArgumentNullException ("keys");
-				
-			if (keys.Length != items.Length)
-				throw new ArgumentException ("Length of keys and items does not match.");
-			
+
+			if (keys.Length > items.Length)
+				throw new ArgumentException ("Length of keys is larger than length of items.");
+
 			SortImpl<TKey, TValue> (keys, items, 0, keys.Length, comparer);
 		}
 
@@ -3030,7 +3045,7 @@ namespace System
 			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
 				throw new ArgumentOutOfRangeException ();
 
-			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, startIndex + count);
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
 		}
 		
 		public static int LastIndexOf<T> (T [] array, T value)
@@ -3085,6 +3100,12 @@ namespace System
 			
 			Resize <T> (ref d, pos);
 			return d;
+		}
+
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static T[] Empty<T>()
+		{
+			return EmptyArray<T>.Value;
 		}
 
 		public static bool Exists<T> (T [] array, Predicate <T> match)

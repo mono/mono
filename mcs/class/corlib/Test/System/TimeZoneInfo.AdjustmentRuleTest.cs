@@ -55,16 +55,17 @@ namespace MonoTests.System
 			}
 		
 			[Test]
-			[ExpectedException (typeof (ArgumentOutOfRangeException))]
 			public void EndBeforeStart ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
-					throw new ArgumentOutOfRangeException ();;
 				DateTime dateStart = new DateTime (2007,01,01);
 				DateTime dateEnd = new DateTime (2006,01,01);
 				TimeZoneInfo.TransitionTime daylightTransitionStart = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 03, 11);
 				TimeZoneInfo.TransitionTime daylightTransitionEnd = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 10, 11);
-				TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, new TimeSpan (1,0,0), daylightTransitionStart, daylightTransitionEnd);
+				try {
+					TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, new TimeSpan (1,0,0), daylightTransitionStart, daylightTransitionEnd);
+					Assert.Fail ();
+				} catch (ArgumentException) {
+				}
 			}
 		
 			[Test]
@@ -79,7 +80,6 @@ namespace MonoTests.System
 			}
 		
 			[Test]
-			[ExpectedException (typeof (ArgumentOutOfRangeException))]
 			public void DeltaNotInSeconds ()
 			{
 				if (Environment.OSVersion.Platform != PlatformID.Unix)
@@ -88,7 +88,11 @@ namespace MonoTests.System
 				DateTime dateEnd = new DateTime (2008,01,01);
 				TimeZoneInfo.TransitionTime daylightTransitionStart = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 03, 11);
 				TimeZoneInfo.TransitionTime daylightTransitionEnd = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 10, 11);
-				TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, new TimeSpan (55), daylightTransitionStart, daylightTransitionEnd);
+				try {
+					TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, new TimeSpan (55), daylightTransitionStart, daylightTransitionEnd);
+					Assert.Fail ();
+				} catch (ArgumentException) {
+				}
 			}
 		}
 	

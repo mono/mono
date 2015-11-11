@@ -70,6 +70,11 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
+		public static IPAddress GetNetMask (IPAddress address)
+		{
+			return nif.GetNetMask (address);
+		}
+
 		public abstract IPInterfaceProperties GetIPProperties ();
 		public abstract IPv4InterfaceStatistics GetIPv4Statistics ();
 		public abstract PhysicalAddress GetPhysicalAddress ();
@@ -101,12 +106,12 @@ namespace System.Net.NetworkInformation {
 
 		class MacOsNetworkInterfaceAPI : UnixNetworkInterfaceAPI
 		{
+			const int AF_INET  = 2;
+			const int AF_INET6 = 30;
+			const int AF_LINK  = 18;
+
 			public override NetworkInterface [] GetAllNetworkInterfaces ()
 			{
-				const int AF_INET  = 2;
-				const int AF_INET6 = 30;
-				const int AF_LINK  = 18;
-
 				var interfaces = new Dictionary <string, MacOsNetworkInterface> ();
 				IntPtr ifap;
 				if (getifaddrs (out ifap) != 0)
@@ -209,6 +214,37 @@ namespace System.Net.NetworkInformation {
 			public override int GetLoopbackInterfaceIndex ()
 			{
 				return if_nametoindex ("lo0");
+			}
+
+			public override IPAddress GetNetMask (IPAddress address)
+			{
+				IntPtr ifap;
+				if (getifaddrs (out ifap) != 0)
+					throw new SystemException ("getifaddrs() failed");
+
+				try {
+					IntPtr next = ifap;
+					while (next != IntPtr.Zero) {
+						MacOsStructs.ifaddrs addr = (MacOsStructs.ifaddrs) Marshal.PtrToStructure (next, typeof (MacOsStructs.ifaddrs));
+
+						if (addr.ifa_addr != IntPtr.Zero) {
+							// optain IPAddress
+							MacOsStructs.sockaddr sockaddr = (MacOsStructs.sockaddr) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr));
+
+							if (sockaddr.sa_family == AF_INET) {
+								MacOsStructs.sockaddr_in sockaddrin = (MacOsStructs.sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (MacOsStructs.sockaddr_in));
+								var saddress = new IPAddress (sockaddrin.sin_addr);
+								if (address.Equals (saddress))
+									return new IPAddress(((sockaddr_in)Marshal.PtrToStructure(addr.ifa_netmask, typeof(sockaddr_in))).sin_addr);
+							}
+						}
+						next = addr.ifa_next;
+					}
+				} finally {
+					freeifaddrs (ifap);
+				}
+
+				return null;
 			}
 		}
 
@@ -367,6 +403,11 @@ namespace System.Net.NetworkInformation {
 			{
 				return if_nametoindex ("lo");
 			}
+
+			public override IPAddress GetNetMask (IPAddress address)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 
 		class Win32NetworkInterfaceAPI : NetworkInterfaceFactory
@@ -410,10 +451,16 @@ namespace System.Net.NetworkInformation {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public override IPAddress GetNetMask (IPAddress address)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 
 		public abstract NetworkInterface [] GetAllNetworkInterfaces ();
 		public abstract int GetLoopbackInterfaceIndex ();
+		public abstract IPAddress GetNetMask (IPAddress address);
 
 		public static NetworkInterfaceFactory Create ()
 		{

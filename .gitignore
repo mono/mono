@@ -23,7 +23,6 @@
 *.tlb
 *.tlh
 *.bak
-*.[Cc]ache
 *.ilk
 *.log
 *.lib
@@ -44,6 +43,8 @@ Ankh.NoLoad
 _ReSharper*/
 *.resharper
 [Tt]est[Rr]esult*
+*.orig
+*.rej
 
 # NuGet packages
 !.nuget/*
@@ -122,7 +123,6 @@ docs/perlmod*
 compile
 mono.h
 mono-*.tar.*
-mono.spec
-mono-core.spec
 tmpinst-dir.stamp
+msvc/scripts/inputs/
 

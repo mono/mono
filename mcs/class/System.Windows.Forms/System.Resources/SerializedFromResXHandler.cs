@@ -57,7 +57,7 @@ namespace System.Resources {
 
 		public override object GetValue (AssemblyName [] assemblyNames)
 		{
-			return DeserializeObject ((ITypeResolutionService) null);
+			return DeserializeObject (new AssemblyNamesTypeResolutionService (assemblyNames));
 		}
 
 		public override string GetValueTypeName (ITypeResolutionService typeResolver)

@@ -753,6 +753,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ReadWriteXmlTest ()
 		{
 			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><decimal>4556.89756</decimal>";
@@ -770,8 +771,8 @@ namespace MonoTests.System.Data.SqlTypes
 			try {
 				ReadWriteXmlTestInternal (xml3, test3, "BA03");
 				Assert.Fail ("BA03");
-			} catch (FormatException e) {
-				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			} catch (InvalidOperationException e) {
+				Assert.AreEqual (typeof (FormatException), e.InnerException.GetType (), "#BA03");
 			}
 		}
 	}

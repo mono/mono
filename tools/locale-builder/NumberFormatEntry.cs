@@ -49,10 +49,12 @@ namespace Mono.Tools.LocaleBuilder
 		public string NumberGroupSeparator = ",";
 		public string[] NumberGroupSizes = new string[Constants.GROUP_SIZE];
 		public string NumberNegativePattern;
+		/*
 		public int PercentDecimalDigits;
 		public string PercentDecimalSeparator = ",";
 		public string PercentGroupSeparator = ",";
 		public string[] PercentGroupSizes = new string[Constants.GROUP_SIZE];
+		*/
 		public string PercentNegativePattern;
 		public string PercentPositivePattern;
 		public string PercentSymbol = "%";
@@ -89,8 +91,6 @@ namespace Mono.Tools.LocaleBuilder
 
 			builder.Append (EncodeStringIdx (CurrencyDecimalSeparator) + ", ");
 			builder.Append (EncodeStringIdx (CurrencyGroupSeparator) + ", ");
-			builder.Append (EncodeStringIdx (PercentDecimalSeparator) + ", ");
-			builder.Append (EncodeStringIdx (PercentGroupSeparator) + ", ");
 			builder.Append (EncodeStringIdx (NumberDecimalSeparator) + ", ");
 			builder.Append (EncodeStringIdx (NumberGroupSeparator) + ", ");
 
@@ -111,12 +111,9 @@ namespace Mono.Tools.LocaleBuilder
 			builder.Append (NumberNegativePattern + ", ");
 
 			builder.Append (CurrencyDecimalDigits + ", ");
-			builder.Append (PercentDecimalDigits + ", ");
 			builder.Append (NumberDecimalDigits + ", ");
 
 			AppendGroupSizes (builder, CurrencyGroupSizes);
-			builder.Append (", ");
-			AppendGroupSizes (builder, PercentGroupSizes);
 			builder.Append (", ");
 			AppendGroupSizes (builder, NumberGroupSizes);
 

@@ -60,6 +60,7 @@ namespace System
 		private object m_target;
 		private IntPtr method;
 		private IntPtr delegate_trampoline;
+		private IntPtr rgctx;
 		private IntPtr method_code;
 		private MethodInfo method_info;
 
@@ -68,6 +69,8 @@ namespace System
 		private MethodInfo original_method_info;
 
 		private DelegateData data;
+
+		private bool method_is_virtual;
 #pragma warning restore 169, 414, 649
 		#endregion
 
@@ -103,12 +106,18 @@ namespace System
 					return method_info;
 				} else {
 					if (method != IntPtr.Zero) {
-						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+						if (!method_is_virtual)
+							method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+						else
+							method_info = GetVirtualMethod_internal ();
 					}
 					return method_info;
 				}
 			}
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern MethodInfo GetVirtualMethod_internal ();
 
 		public object Target {
 			get {
@@ -122,9 +131,6 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info, bool throwOnBindFailure);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern void SetMulticastInvoke ();
 
 		private static bool arg_type_match (Type delArgType, Type argType) {
 			bool match = delArgType == argType;
@@ -186,11 +192,12 @@ namespace System
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
-			if (!return_type_match (invoke.ReturnType, method.ReturnType))
+			if (!return_type_match (invoke.ReturnType, method.ReturnType)) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method return type is incompatible");
 				else
 					return null;
+			}
 
 			ParameterInfo[] delargs = invoke.GetParametersInternal ();
 			ParameterInfo[] args = method.GetParametersInternal ();
@@ -224,11 +231,12 @@ namespace System
 						argLengthMatch = args.Length == delargs.Length + 1;
 				}
 			}
-			if (!argLengthMatch)
+			if (!argLengthMatch) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method argument length mismatch");
 				else
 					return null;
+			}
 
 			bool argsMatch;
 			DelegateData delegate_data = new DelegateData ();
@@ -274,11 +282,12 @@ namespace System
 				}
 			}
 
-			if (!argsMatch)
+			if (!argsMatch) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method arguments are incompatible");
 				else
 					return null;
+			}
 
 			Delegate d = CreateDelegate_internal (type, target, method, throwOnBindFailure);
 			if (d != null)
@@ -467,13 +476,15 @@ namespace System
 			return MemberwiseClone ();
 		}
 
-		internal bool Compare (Delegate d)
+		public override bool Equals (object obj)
 		{
+			Delegate d = obj as Delegate;
+
 			if (d == null)
 				return false;
-			
+
 			// Do not compare method_ptr, since it can point to a trampoline
-			if (d.m_target == m_target && d.method == method) {
+			if (d.m_target == m_target && d.Method == Method) {
 				if (d.data != null || data != null) {
 					/* Uncommon case */
 					if (d.data != null && data != null)
@@ -492,14 +503,10 @@ namespace System
 			return false;
 		}
 
-		public override bool Equals (object obj)
-		{
-			return Compare (obj as Delegate);
-		}
-
 		public override int GetHashCode ()
 		{
-			return method.GetHashCode () ^ (m_target != null ? m_target.GetHashCode () : 0);
+			/* same implementation as CoreCLR */
+			return GetType ().GetHashCode ();
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()
@@ -609,5 +616,14 @@ namespace System
 			return RemotingServices.IsTransparentProxy (m_target);
 #endif
 		}
+
+		internal static Delegate CreateDelegateNoSecurityCheck (RuntimeType type, Object firstArgument, MethodInfo method)
+		{
+			return CreateDelegate_internal (type, firstArgument, method, true);
+		}
+
+		/* Internal call largely inspired from MS Delegate.InternalAllocLike */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static MulticastDelegate AllocDelegateLike_internal (Delegate d);
 	}
 }

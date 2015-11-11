@@ -2537,6 +2537,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("AndroidNotWorking")] // locks with offsets bigger than Int32.Max don't work on Android
 		public void Lock_Large ()
 		{
 			// note: already worked without HAVE_LARGE_FILE_SUPPORT

@@ -93,7 +93,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			this.binPath = binPath;
 			this.buildEnabled = true;
-			this.projects = new Dictionary <string, Project> ();
+			this.projects = new Dictionary <string, Project> (StringComparer.OrdinalIgnoreCase);
 			this.eventSource = new EventSource ();
 			this.loggers = new List <ILogger> ();
 			this.buildStarted = false;
@@ -118,6 +118,9 @@ namespace Microsoft.Build.BuildEngine {
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
 #if XBUILD_12
 			Toolsets.Add (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0")));
+#endif
+#if XBUILD_14
+			Toolsets.Add (new Toolset ("14.0", ToolLocationHelper.GetPathToBuildTools ("14.0")));
 #endif
 		}
 		

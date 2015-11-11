@@ -11,7 +11,6 @@
 #include "mono-error-internals.h"
 
 #include <mono/metadata/exception.h>
-#include <mono/metadata/object-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
 
@@ -35,9 +34,29 @@ mono_error_prepare (MonoErrorInternal *error)
 	if (error->error_code != MONO_ERROR_NONE)
 		return;
 
-	error->type_name = error->assembly_name = error->member_name = error->full_message = error->exception_name_space = error->exception_name = NULL;
+	error->type_name = error->assembly_name = error->member_name = error->full_message = error->exception_name_space = error->exception_name = error->full_message_with_fields = NULL;
 	error->klass = NULL;
 	error->message [0] = 0;
+}
+
+static const char*
+get_type_name (MonoErrorInternal *error)
+{
+	if (error->type_name)
+		return error->type_name;
+	if (error->klass)
+		return error->klass->name;
+	return "<unknown type>";
+}
+
+static const char*
+get_assembly_name (MonoErrorInternal *error)
+{
+	if (error->assembly_name)
+		return error->assembly_name;
+	if (error->klass && error->klass->image)
+		return error->klass->image->name;
+	return "<unknown assembly>";
 }
 
 void
@@ -64,6 +83,7 @@ mono_error_cleanup (MonoError *oerror)
 		return;
 
 	g_free ((char*)error->full_message);
+	g_free ((char*)error->full_message_with_fields);
 	if (!(error->flags & MONO_ERROR_FREE_STRINGS)) //no memory was allocated
 		return;
 
@@ -80,6 +100,15 @@ mono_error_ok (MonoError *error)
 	return error->error_code == MONO_ERROR_NONE;
 }
 
+void
+mono_error_assert_ok (MonoError *error)
+{
+	if (mono_error_ok (error))
+		return;
+
+	g_error ("%s\n", mono_error_get_message (error));
+}
+
 unsigned short
 mono_error_get_error_code (MonoError *error)
 {
@@ -94,7 +123,16 @@ mono_error_get_message (MonoError *oerror)
 	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
 	if (error->error_code == MONO_ERROR_NONE)
 		return NULL;
-	return mono_internal_error_get_message (error);
+	if (error->full_message_with_fields)
+		return error->full_message_with_fields;
+
+	error->full_message_with_fields = g_strdup_printf ("%s assembly:%s type:%s member:%s",
+		mono_internal_error_get_message (error),
+		get_assembly_name (error),
+		get_type_name (error),
+		error->member_name ? error->member_name : "<none>");
+
+	return error->full_message_with_fields ? error->full_message_with_fields : mono_internal_error_get_message (error);
 }
 
 /*
@@ -301,10 +339,6 @@ mono_error_set_from_loader_error (MonoError *oerror)
 	case MONO_EXCEPTION_NONE:
 		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Runtime tried to produce a mono-error from a non-error loader-error");
 		break;
-	case MONO_EXCEPTION_SECURITY_LINKDEMAND:
-	case MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND:
-		mono_error_set_generic_error (oerror, "System.Security", "SecurityException", "Failed for unknown reasons.");
-		break;
 
 	case MONO_EXCEPTION_INVALID_PROGRAM:
 		mono_error_set_generic_error (oerror, "System", "InvalidProgramException", "Failed for unknown reasons.");
@@ -362,26 +396,6 @@ mono_error_set_from_loader_error (MonoError *oerror)
 
 	mono_error_dup_strings (oerror, dup_strings);
 	mono_loader_clear_error ();
-}
-
-static const char*
-get_type_name (MonoErrorInternal *error)
-{
-	if (error->type_name)
-		return error->type_name;
-	if (error->klass)
-		return error->klass->name;
-	return "<unknown type>";
-}
-
-static const char*
-get_assembly_name (MonoErrorInternal *error)
-{
-	if (error->assembly_name)
-		return error->assembly_name;
-	if (error->klass && error->klass->image)
-		return error->klass->image->name;
-	return "<unknown assembly>";
 }
 
 void
@@ -660,20 +674,4 @@ mono_error_convert_to_exception (MonoError *target_error)
 	}
 	mono_error_cleanup (target_error);
 	return ex;
-}
-
-
-/*
-Raises the exception of @error.
-Does nothing if @error has a success error code.
-Aborts in case of a double fault. This happens when it can't recover from an error caused by trying
-to construct the first exception object.
-The error object @error is cleaned up. 
-*/
-void
-mono_error_raise_exception (MonoError *target_error)
-{
-	MonoException *ex = mono_error_convert_to_exception (target_error);
-	if (ex)
-		mono_raise_exception (ex);	
 }

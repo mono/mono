@@ -369,8 +369,17 @@ namespace MonoTests.System.Data
 
 			dv.Sort = "String1,ChildId";
 			// Find = wrong sort, can not find
-			dvArr = dv.FindRows(new object[] {"3","3-String1"});
-			Assert.AreEqual(0, dvArr.Length  , "DV42");
+			try 
+			{
+				dvArr = dv.FindRows(new object[] {"3","3-String1"});
+				Assert.Fail("DV42: FindRows Failed to throw ArgumentException");
+			}
+			catch (FormatException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DV42-2: FindRows. Wrong exception type. Got:" + exc);
+			}
 
 			dv.Sort = "ChildId,String1";
 
@@ -481,8 +490,17 @@ namespace MonoTests.System.Data
 
 			dv.Sort = "String1,ParentId";
 			// Find = wrong sort, can not find
-			FindResult = dv.Find(new object[] {"3","3-String1"});
-			Assert.AreEqual(-1, FindResult , "DV51");
+			try 
+			{
+				FindResult = dv.Find(new object[] {"3","3-String1"});
+				Assert.Fail("DV51: Find Failed to throw ArgumentException");
+			}
+			catch (FormatException) {}
+			catch (AssertionException exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assert.Fail("DV51-2: Find. Wrong exception type. Got:" + exc);
+			}
 
 			dv.Sort = "ParentId,String1";
 			// Find 
@@ -562,7 +580,7 @@ namespace MonoTests.System.Data
 			// change value - NewIndex
 			Assert.AreEqual(1, evProp.NewIndex, "DV60");
 			// change value - OldIndex
-			Assert.AreEqual(-1, evProp.OldIndex , "DV61");
+			Assert.AreEqual(1, evProp.OldIndex , "DV61");
 
 			// ----- Add New ---------
 			evProp = null;
@@ -1127,7 +1145,7 @@ namespace MonoTests.System.Data
 			evProp = null;
 			table.Rows[0][0] = 5;
 			Assert.AreEqual (0, evProp.NewIndex, "#4");
-			Assert.AreEqual (-1, evProp.OldIndex, "#5");
+			Assert.AreEqual (0, evProp.OldIndex, "#5");
 			Assert.AreEqual (ListChangedType.ItemChanged, evProp.lstType, "#6");
 
 			evProp = null;

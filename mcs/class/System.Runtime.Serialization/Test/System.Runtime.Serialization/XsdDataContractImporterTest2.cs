@@ -97,7 +97,6 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (ret.TypeArguments [0].BaseType, Is.EqualTo ("System.Int32"), "#6");
 		}
 
-#if NET_4_0		
 		[Test]
 		public void TestSimpleList3 ()
 		{
@@ -118,7 +117,6 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (ret.TypeArguments.Count, Is.EqualTo (1), "#5");
 			Assert.That (ret.TypeArguments [0].BaseType, Is.EqualTo ("System.Int32"), "#6");
 		}
-#endif
 		
 		[Test]
 		public void TestListOfFoo ()
@@ -244,7 +242,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (ret, Is.Not.Null, "#2");
 			
 			Assert.That (ret.ArrayRank, Is.EqualTo (0), "#3");
-			Assert.That (ret.BaseType, Is.EqualTo ("TestWCF.Model.MyCollectionOfdouble"), "#4");
+			Assert.That (ret.BaseType, Is.EqualTo ("TestWCF.Model1.MyCollectionOfdouble"), "#4");
 			Assert.That (ret.TypeArguments.Count, Is.EqualTo (0), "#5");
 		}
 

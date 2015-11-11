@@ -240,6 +240,8 @@ OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
 OTHER_RES += $(RESOURCE_FILES_4)
 endif
 
+RESOURCE_STRINGS = ../../../external/referencesource/System.Web/System.Web.txt
+
 LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap System.ComponentModel.DataAnnotations
 LIB_MCS_FLAGS = \
 	-unsafe \
@@ -250,8 +252,8 @@ LIB_MCS_FLAGS = \
 	$(OTHER_RES:%=/resource:%)
 
 ifneq (plainweb/,$(intermediate))
-LIB_REFS += System.Web.Services
-LIB_MCS_FLAGS += -define:WEBSERVICES_DEP
+LIB_REFS += System.Web.Services System.Design
+LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -lib:$(the_libdir_base)plaindesign
 
 all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources 
 

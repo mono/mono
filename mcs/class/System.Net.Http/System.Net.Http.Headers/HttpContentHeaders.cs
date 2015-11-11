@@ -78,8 +78,11 @@ namespace System.Net.Http.Headers
 					return v;
 
 				long l;
-				if (content.TryComputeLength (out l))
+				if (content.TryComputeLength (out l)) {
+					// .net compatibility reading value actually set header property value
+					SetValue ("Content-Length", l);
 					return l;
+				}
 
 				return null;
 			}

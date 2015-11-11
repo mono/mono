@@ -385,10 +385,8 @@ public class AssemblyNameTest {
 		string AssemblyCorlib;
 #if MOBILE
 		AssemblyCorlib = "mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-#elif NET_4_0
-		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #else
-		AssemblyCorlib = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #endif
 		Assert.AreEqual (AssemblyCorlib, an.FullName, "#2");
 	}
@@ -1112,6 +1110,7 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();
@@ -1293,19 +1292,8 @@ public class AssemblyNameTest {
 		try {
 			new AssemblyName (assemblyName + ", Culture=aa-AA");
 			Assert.Fail ("#1");
-#if NET_4_0
 		} catch (CultureNotFoundException ex) {
 		}
-#else
-		} catch (ArgumentException ex) {
-			// Culture name 'aa-aa' is not supported
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNotNull (ex.ParamName, "#5");
-			Assert.AreEqual ("name", ex.ParamName, "#6");
-		}
-#endif
 	}
 
 	[Test] // ctor (String)
@@ -1819,6 +1807,28 @@ public class AssemblyNameTest {
 		}
 	}
 
+	[Test] // ctor (String)
+	public void Constructor1_Quoted ()
+	{
+		AssemblyName an;
+
+		an = new AssemblyName ("'System', Version=\"10.0.0.0\", Culture='Neutral', PublicKeyToken='b67a5c561934e089', Retargetable='Yes', ProcessorArchitecture='AMD64'");
+		Assert.AreEqual ("System, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b67a5c561934e089, Retargetable=Yes", an.ToString ());
+		Assert.AreEqual (ProcessorArchitecture.Amd64, an.ProcessorArchitecture, "Amd64");
+	}
+
+	[Test] // ctor (String)
+	public void Constructor1_Quoted_Invalid ()
+	{
+		AssemblyName an;
+
+		try {
+			an = new AssemblyName ("System, Version=\"10.0.0.0'");
+			Assert.Fail ("#1");
+		} catch (FileLoadException) {
+		}
+	}
+
 	[Test (Description="Xamarin bug #99 - whitespaces in key=value")]
 	public void WhiteSpaceInKeyValue ()
 	{
@@ -1844,6 +1854,15 @@ public class AssemblyNameTest {
 		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an1, an2));
 		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an3, an4));
 		Assert.IsFalse (AssemblyName.ReferenceMatchesDefinition (an5, an6));
+	}
+
+	[Test]
+	public void CultureNameInvariant ()
+	{
+		var an = new AssemblyName ("TestDll");
+		an.CultureInfo = new CultureInfo (CultureInfo.InvariantCulture.LCID);
+
+		Assert.AreEqual ("", an.CultureName);
 	}
 }
 

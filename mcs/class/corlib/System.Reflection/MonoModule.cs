@@ -38,12 +38,17 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
+	abstract class RuntimeModule : Module
+	{
+		
+	}
+
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	class MonoModule : Module {
-
+	class MonoModule : RuntimeModule
+	{
 		public
 		override
 		Assembly Assembly {
@@ -127,6 +132,9 @@ namespace System.Reflection {
 		public override
 		FieldInfo GetField (string name, BindingFlags bindingAttr) 
 		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
 			if (IsResource ())
 				return null;
 

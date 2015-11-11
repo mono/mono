@@ -61,6 +61,16 @@ namespace Xamarin.ApiDiff {
 		{
 		}
 
+		string GetContainingType (XElement el)
+		{
+			return el.Ancestors ("class").First ().Attribute ("type").Value;
+		}
+
+		bool IsInInterface (XElement el)
+		{
+			return GetContainingType (el) == "interface";
+		}
+
 		public XElement Source { get; set; }
 
 		public virtual bool Find (XElement e)
@@ -182,9 +192,10 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Added {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
-			if (State.Colorize)
-				Output.Write ("<font color='green'>");
+			Output.WriteLine ("<p>Added {0}:</p>", list.Count () > 1 ? GroupName : ElementName);
+
+			bool isInterface = list.Count () > 0 && IsInInterface (list.First ());
+			Output.WriteLine (State.Colorize ? string.Format ("<pre style='color: {0}'>", isInterface ? "red" : "green") : "<pre>");
 		}
 
 		public override void Added (XElement target)
@@ -198,9 +209,7 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterAdding ()
 		{
-			if (State.Colorize)
-				Output.Write ("</font>");
-			Output.WriteLine ("</pre>");
+			Output.WriteLine ("</pre>");;
 		}
 
 		public override void Modified (XElement source, XElement target, ApiChanges change)
@@ -210,9 +219,8 @@ namespace Xamarin.ApiDiff {
 		public virtual void BeforeRemoving (IEnumerable<XElement> list)
 		{
 			first = true;
-			Output.WriteLine ("<p>Removed {0}:</p>\n<pre>", list.Count () > 1 ? GroupName : ElementName);
-			if (State.Colorize)
-				Output.Write ("<font color='red'>");
+			Output.WriteLine ("<p>Removed {0}:</p>\n", list.Count () > 1 ? GroupName : ElementName);
+			Output.WriteLine (State.Colorize ? "<pre style='color: red'>" : "<pre>");
 		}
 
 		public override void Removed (XElement source)
@@ -226,9 +234,24 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void AfterRemoving ()
 		{
-			if (State.Colorize)
-				Output.Write ("</font>");
-			Output.WriteLine ("</pre>");
+			Output.WriteLine ("</pre>");;
+		}
+
+		string RenderGenericParameter (XElement gp)
+		{
+			var sb = new StringBuilder ();
+			sb.Append (gp.GetTypeName ("name"));
+
+			var constraints = gp.DescendantList ("generic-parameter-constraints", "generic-parameter-constraint");
+			if (constraints != null && constraints.Count > 0) {
+				sb.Append (" : ");
+				for (int i = 0; i < constraints.Count; i++) {
+					if (i > 0)
+						sb.Append (", ");
+					sb.Append (constraints [i].GetTypeName ("name"));
+				}
+			}
+			return sb.ToString ();
 		}
 
 		protected void RenderGenericParameters (XElement source, XElement target, ApiChange change)
@@ -246,12 +269,12 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 				if (i >= srcCount) {
-					change.AppendAdded (tgt [i].GetTypeName ("name"), true);
+					change.AppendAdded (RenderGenericParameter (tgt [i]), true);
 				} else if (i >= tgtCount) {
-					change.AppendRemoved (src [i].GetTypeName ("name"), true);
+					change.AppendRemoved (RenderGenericParameter (src [i]), true);
 				} else {
-					var srcName = src [i].GetTypeName ("name");
-					var tgtName = tgt [i].GetTypeName ("name");
+					var srcName = RenderGenericParameter (src [i]);
+					var tgtName = RenderGenericParameter (tgt [i]);
 
 					if (srcName != tgtName) {
 						change.AppendModified (srcName, tgtName, true);
@@ -410,6 +433,17 @@ namespace Xamarin.ApiDiff {
 				change.AnyChange = false;
 				change.HasIgnoredChanges = true;
 			}
+
+			var tgtSecurity = (source & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+			var srcSecurity = (target & MethodAttributes.HasSecurity) == MethodAttributes.HasSecurity;
+
+			if (tgtSecurity != srcSecurity)
+				change.HasIgnoredChanges = true;
+
+			var srcPInvoke = (source & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			var tgtPInvoke = (target & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl;
+			if (srcPInvoke != tgtPInvoke)
+				change.HasIgnoredChanges = true;
 		}
 
 		protected string GetVisibility (MethodAttributes attr)
@@ -525,14 +559,14 @@ namespace Xamarin.ApiDiff {
 				var change = new ApiChange ();
 				change.Header = "Obsoleted " + GroupName;
 				if (State.Colorize)
-					change.Append ("<font color='gray'>");
+					change.Append ("<span style='color:gray'>");
 				change.Append ("[Obsolete (");
 				if (tgtObsolete != string.Empty)
 					change.Append ("\"").Append (tgtObsolete).Append ("\"");
-				change.Append ("]\n");
+				change.Append (")]\n");
 				change.Append (GetDescription (target));
 				if (State.Colorize)
-					change.Append ("</font>");
+					change.Append ("</span>");
 				change.AnyChange = true;
 				changes.Add (source, target, change);
 			} else if (tgtObsolete == null) {

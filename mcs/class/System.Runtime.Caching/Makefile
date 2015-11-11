@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Runtime.Caching.dll
 LIB_REFS = System System.Data System.Configuration System.Core
-LIB_MCS_FLAGS =
+LIB_MCS_FLAGS = -nowarn:414
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

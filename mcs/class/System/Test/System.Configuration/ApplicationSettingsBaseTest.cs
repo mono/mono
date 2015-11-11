@@ -168,12 +168,12 @@ namespace MonoTests.System.Configuration {
 
 			IEnumerator props = settings.Properties.GetEnumerator();
 			Assert.IsNotNull (props, "A1");
-			
-			Assert.IsTrue (props.MoveNext(), "A2");
-			Assert.AreEqual ("Username", ((SettingsProperty)props.Current).Name, "A3");
 
 			Assert.IsTrue (props.MoveNext(), "A4");
 			Assert.AreEqual ("Address", ((SettingsProperty)props.Current).Name, "A5");
+			
+			Assert.IsTrue (props.MoveNext(), "A2");
+			Assert.AreEqual ("Username", ((SettingsProperty)props.Current).Name, "A3");
 
 			Assert.AreEqual ("root", settings.Username, "A6");
 			Assert.AreEqual ("8 Cambridge Center", settings.Address, "A7");
@@ -284,16 +284,7 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void TestSettings2_Properties ()
 		{
-			// This test will fail when there are newer versions
-			// of the test assemblies - so conditionalize it in
-			// such cases.
-#if   NET_4_5
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_5, Version=0.0.0.0";
-#elif NET_4_0
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_0, Version=0.0.0.0";
-#else
-			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_2_0, Version=0.0.0.0";
-#endif
+			string expected = "MonoTests.System.Configuration.ProviderPoker, System_test_net_4_x, Version=0.0.0.0";
 			Assert.AreEqual (expected, new SettingsProviderAttribute (typeof (ProviderPoker)).ProviderTypeName.Substring (0, expected.Length), "#1");
 			TestSettings2 settings = new TestSettings2 ();
 

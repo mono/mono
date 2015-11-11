@@ -326,8 +326,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (tableName, table.TableName, "#6");
 			Assert.AreEqual (2, table.Constraints.Count, "#7");
 			Assert.AreEqual (string.Empty, table.Prefix, "#8");
-			Assert.AreEqual ("Constraint1", table.Constraints [0].ToString (), "#9");
-			Assert.AreEqual ("Constraint2", table.Constraints [1].ToString (), "#10");
+			Assert.AreEqual ("Constraint2", table.Constraints [0].ToString (), "#9");
+			Assert.AreEqual ("Constraint1", table.Constraints [1].ToString (), "#10");
 			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [0].GetType (), "#11");
 			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [1].GetType (), "#12");
 			Assert.AreEqual (2, table.PrimaryKey.Length, "#13");
@@ -424,8 +424,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (tableName, table.TableName, "#6");
 			Assert.AreEqual (2, table.Constraints.Count, "#7");
 			Assert.AreEqual (string.Empty, table.Prefix, "#8");
-			Assert.AreEqual ("Constraint1", table.Constraints [0].ToString (), "#9");
-			Assert.AreEqual ("Constraint2", table.Constraints [1].ToString (), "#10");
+			Assert.AreEqual ("Constraint2", table.Constraints [0].ToString (), "#9");
+			Assert.AreEqual ("Constraint1", table.Constraints [1].ToString (), "#10");
 			Assert.AreEqual ("System.Data.UniqueConstraint", table.Constraints [0].GetType ().ToString (), "#11");
 			Assert.AreEqual ("System.Data.UniqueConstraint", table.Constraints [1].GetType ().ToString (), "#12");
 			Assert.AreEqual (2, table.PrimaryKey.Length, "#13");
@@ -700,7 +700,7 @@ namespace MonoTests.System.Data
 			VerifyTable_WithChildren (table, parentTable1.TableName, parentTable1.DataSet);
 
 			//Check Properties of First Child Table
-			DataTable firstChildTable = table.ChildRelations [0].ChildTable;
+			DataTable firstChildTable = table.ChildRelations [1].ChildTable;
 			Assert.AreEqual (string.Empty, firstChildTable.Namespace, "#1");
 			Assert.AreEqual ("XmlDataSet", firstChildTable.DataSet.DataSetName, "#2");
 			Assert.AreEqual (3, firstChildTable.Columns.Count, "#3");
@@ -720,7 +720,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, firstChildTable.PrimaryKey.Length, "#17");
 
 			//Check Properties of Second Child Table
-			DataTable secondChildTable = table.ChildRelations [1].ChildTable;
+			DataTable secondChildTable = table.ChildRelations [0].ChildTable;
 			Assert.AreEqual (string.Empty, secondChildTable.Namespace, "#18");
 			Assert.AreEqual ("XmlDataSet", secondChildTable.DataSet.DataSetName, "#19");
 			Assert.AreEqual (4, secondChildTable.Columns.Count, "#20");
@@ -782,7 +782,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, col.AutoIncrementSeed, "#15");
 			Assert.AreEqual (1, col.AutoIncrementStep, "#16");
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#17");
-			Assert.AreEqual ("ChildID", col.Caption, "#18");
+			Assert.AreEqual ("ID", col.Caption, "#18");
 			Assert.AreEqual ("ChildID", col.ColumnName, "#19");
 			Assert.AreEqual (typeof (int), col.DataType, "#20");
 			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#21");
@@ -1372,7 +1372,7 @@ namespace MonoTests.System.Data
 
 			//Check the rows
 			foreach (DataRow row in table.Rows)
-				Assert.IsNull (row [0], "#8");
+				Assert.AreEqual (DBNull.Value, row [0], "#8");
 		}
 
 		[Test]
@@ -1420,19 +1420,19 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, row ["id"], "#14");
 			Assert.AreEqual ("ParentItem 1", row ["ParentItem"], "#15");
 			Assert.AreEqual (1, row ["DepartmentID"], "#16");
-			Assert.IsNull (row ["DummyColumn"], "#17");
+			Assert.AreEqual (DBNull.Value, row ["DummyColumn"], "#17");
 
 			row = table.Rows [1];
 			Assert.AreEqual (2, row ["id"], "#18");
 			Assert.AreEqual ("ParentItem 2", row ["ParentItem"], "#19");
 			Assert.AreEqual (2, row ["DepartmentID"], "#20");
-			Assert.IsNull (row ["DummyColumn"], "#21");
+			Assert.AreEqual (DBNull.Value, row ["DummyColumn"], "#21");
 
 			row = table.Rows [2];
 			Assert.AreEqual (3, row ["id"], "#22");
 			Assert.AreEqual ("ParentItem 3", row ["ParentItem"], "#23");
 			Assert.AreEqual (3, row ["DepartmentID"], "#24");
-			Assert.IsNull (row ["DummyColumn"], "#25");
+			Assert.AreEqual (DBNull.Value, row ["DummyColumn"], "#25");
 		}
 
 		[Test]

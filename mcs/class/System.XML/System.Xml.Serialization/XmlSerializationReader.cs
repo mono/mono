@@ -942,8 +942,7 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 
-			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o);
-			args.ExpectedAttributes = qnames;
+			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o, qnames);
 
 			if (eventSource != null)
 				eventSource.OnUnknownAttribute (args);
@@ -967,8 +966,7 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 
-			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o);
-			args.ExpectedElements = qnames;
+			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o, qnames);
 
 			if (eventSource != null)
 				eventSource.OnUnknownElement (args);
@@ -1010,7 +1008,7 @@ namespace System.Xml.Serialization
 			else
 			{
 				if (eventSource != null)
-					eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, node.LocalName, node.Name, node.NamespaceURI, node.NodeType, o, node.Value));
+					eventSource.OnUnknownNode (new XmlNodeEventArgs(node, line_number, line_position, o));
 	
 				if (Reader.ReadState == ReadState.EndOfFile) 
 					throw new InvalidOperationException ("End of document found");
@@ -1040,7 +1038,14 @@ namespace System.Xml.Serialization
 			object collectionItems;
 			string id;
 
-			public CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
+			public CollectionFixup(object collection, XmlSerializationCollectionFixupCallback callback, object collectionItems)
+			{
+				this.callback = callback;
+				this.collection = collection;
+				this.collectionItems = collectionItems;
+			}
+
+			internal CollectionFixup (object collection, XmlSerializationCollectionFixupCallback callback, string id)
 			{
 				this.callback = callback;
 				this.collection = collection;
@@ -1055,14 +1060,14 @@ namespace System.Xml.Serialization
 				get { return collection; }
 			}
 
-			public object Id {
+			internal object Id {
 				get { return id; }
 			}
 
-			internal object CollectionItems
+			public object CollectionItems
 			{
 				get { return collectionItems; }
-				set { collectionItems = value; }
+				internal set { collectionItems = value; }
 			}
 		}
 
@@ -1100,7 +1105,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		protected class CollectionItemFixup 
+		class CollectionItemFixup 
 		{
 			Array list;
 			int index;

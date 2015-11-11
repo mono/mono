@@ -221,7 +221,7 @@ namespace System.Xml.Serialization
 				return ((PropertyInfo) _specifiedMember).CanWrite;
 
 			if (_specifiedMember is FieldInfo)
-				return ((FieldInfo) _specifiedMember).IsInitOnly;
+				return ! ((FieldInfo) _specifiedMember).IsInitOnly;
 
 			return false;
 		}

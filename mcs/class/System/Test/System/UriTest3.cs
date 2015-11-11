@@ -184,6 +184,12 @@ namespace MonoTests.System
 
 			Assert.IsTrue (Uri.TryCreate ("http://mono-project.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
 			Assert.AreEqual("http://mono-project.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
+
+			string mixedCaseUri = "http://mOnO-proJECT.com";
+			uri = new Uri (mixedCaseUri);
+			Uri uri2;
+			Assert.IsTrue (Uri.TryCreate (mixedCaseUri, UriKind.Absolute, out uri2), "mixedcasehost-absolute");
+			Assert.AreEqual (uri.AbsoluteUri, uri2.AbsoluteUri, "mixedcasehost-absoluteuri-absoluteuri");
 		}
 
 		[Test] // TryCreate (String, UriKind, Uri)
@@ -291,16 +297,10 @@ namespace MonoTests.System
 			Uri baseUri = new Uri (absolute);
 			try {
 				Uri.TryCreate (baseUri, (Uri) null, out uri);
-#if NET_4_0
 				Assert.IsNull (uri);
-#else
-				Assert.Fail ("throw NRE under FX 2.0");
-#endif
 			}
 			catch (NullReferenceException) {
-#if NET_4_0
 				Assert.Fail ("does not throw NRE under FX 4.0");
-#endif
 			}
 		}
 
@@ -543,7 +543,6 @@ namespace MonoTests.System
 				uri.MakeRelativeUri ((Uri) null);
 				Assert.Fail ("#1");
 			}
-#if NET_4_0
 			catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
@@ -551,11 +550,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("uri", ex.ParamName, "#6");
 			}
-#else
-			catch (NullReferenceException) {
-				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
-			}
-#endif
 		}
 
 		[Test] // LAMESPEC: see bug #321113

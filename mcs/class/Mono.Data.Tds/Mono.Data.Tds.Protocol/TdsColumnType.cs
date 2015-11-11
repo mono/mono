@@ -35,6 +35,8 @@ namespace Mono.Data.Tds.Protocol {
 		Char = 0x2f,		// SYBCHAR
 		DateTime = 0x3d,	// SYBDATETIME
 		DateTime4 = 0x3a,	// SYBDATETIME4
+		DateTime2 = 0x2a,	// SYBMSDATETIME2
+		DateTimeOffset = 0x2b,	// SYBMSDATETIMEOFFSET
 		DateTimeN = 0x6f,	// SYBDATETIMN
 		Decimal = 0x6a,		// SYBDECIMAL
 		Real = 0x3b,		// SYBREAL

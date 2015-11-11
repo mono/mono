@@ -266,12 +266,13 @@ jit_info_table_find (MonoJitInfoTable *table, MonoThreadHazardPointers *hp, gint
  *
  * If TRY_AOT is FALSE, avoid loading information for missing methods from AOT images, which is currently not async safe.
  * In this case, only those AOT methods will be found whose jit info is already loaded.
+ * If ALLOW_TRAMPOLINES is TRUE, this can return a MonoJitInfo which represents a trampoline (ji->is_trampoline is true).
  * ASYNC SAFETY: When called in an async context (mono_thread_info_is_async_context ()), this is async safe.
  * In this case, the returned MonoJitInfo might not have metadata information, in particular,
  * mono_jit_info_get_method () could fail.
  */
 MonoJitInfo*
-mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot)
+mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot, gboolean allow_trampolines)
 {
 	MonoJitInfoTable *table;
 	MonoJitInfo *ji, *module_ji;
@@ -292,6 +293,8 @@ mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_
 	ji = jit_info_table_find (table, hp, (gint8*)addr);
 	if (hp)
 		mono_hazard_pointer_clear (hp, JIT_INFO_TABLE_HAZARD_INDEX);
+	if (ji && ji->is_trampoline && !allow_trampolines)
+		return NULL;
 	if (ji)
 		return ji;
 
@@ -304,6 +307,9 @@ mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_
 		if (hp)
 			mono_hazard_pointer_clear (hp, JIT_INFO_TABLE_HAZARD_INDEX);
 	}
+
+	if (ji && ji->is_trampoline && !allow_trampolines)
+		return NULL;
 	
 	return ji;
 }
@@ -311,7 +317,7 @@ mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_
 MonoJitInfo*
 mono_jit_info_table_find (MonoDomain *domain, char *addr)
 {
-	return mono_jit_info_table_find_internal (domain, addr, TRUE);
+	return mono_jit_info_table_find_internal (domain, addr, TRUE, FALSE);
 }
 
 static G_GNUC_UNUSED void
@@ -772,14 +778,14 @@ mono_jit_info_size (MonoJitInfoFlags flags, int num_clauses, int num_holes)
 	int size = MONO_SIZEOF_JIT_INFO;
 
 	size += num_clauses * sizeof (MonoJitExceptionInfo);
-	if (flags & JIT_INFO_HAS_CAS_INFO)
-		size += sizeof (MonoMethodCasInfo);
 	if (flags & JIT_INFO_HAS_GENERIC_JIT_INFO)
 		size += sizeof (MonoGenericJitInfo);
 	if (flags & JIT_INFO_HAS_TRY_BLOCK_HOLES)
 		size += sizeof (MonoTryBlockHoleTableJitInfo) + num_holes * sizeof (MonoTryBlockHoleJitInfo);
 	if (flags & JIT_INFO_HAS_ARCH_EH_INFO)
 		size += sizeof (MonoArchEHJitInfo);
+	if (flags & JIT_INFO_HAS_THUNK_INFO)
+		size += sizeof (MonoThunkJitInfo);
 	return size;
 }
 
@@ -791,14 +797,14 @@ mono_jit_info_init (MonoJitInfo *ji, MonoMethod *method, guint8 *code, int code_
 	ji->code_start = code;
 	ji->code_size = code_size;
 	ji->num_clauses = num_clauses;
-	if (flags & JIT_INFO_HAS_CAS_INFO)
-		ji->has_cas_info = 1;
 	if (flags & JIT_INFO_HAS_GENERIC_JIT_INFO)
 		ji->has_generic_jit_info = 1;
 	if (flags & JIT_INFO_HAS_TRY_BLOCK_HOLES)
 		ji->has_try_block_holes = 1;
 	if (flags & JIT_INFO_HAS_ARCH_EH_INFO)
 		ji->has_arch_eh_info = 1;
+	if (flags & JIT_INFO_HAS_THUNK_INFO)
+		ji->has_thunk_info = 1;
 }
 
 gpointer
@@ -817,6 +823,7 @@ MonoMethod*
 mono_jit_info_get_method (MonoJitInfo* ji)
 {
 	g_assert (!ji->async);
+	g_assert (!ji->is_trampoline);
 	return ji->d.method;
 }
 
@@ -928,10 +935,10 @@ mono_jit_info_get_arch_eh_info (MonoJitInfo *ji)
 	}
 }
 
-MonoMethodCasInfo*
-mono_jit_info_get_cas_info (MonoJitInfo *ji)
+MonoThunkJitInfo*
+mono_jit_info_get_thunk_info (MonoJitInfo *ji)
 {
-	if (ji->has_cas_info) {
+	if (ji->has_thunk_info) {
 		char *ptr = (char*)&ji->clauses [ji->num_clauses];
 		if (ji->has_generic_jit_info)
 			ptr += sizeof (MonoGenericJitInfo);
@@ -939,7 +946,7 @@ mono_jit_info_get_cas_info (MonoJitInfo *ji)
 			ptr += try_block_hole_table_size (ji);
 		if (ji->has_arch_eh_info)
 			ptr += sizeof (MonoArchEHJitInfo);
-		return (MonoMethodCasInfo*)ptr;
+		return (MonoThunkJitInfo*)ptr;
 	} else {
 		return NULL;
 	}

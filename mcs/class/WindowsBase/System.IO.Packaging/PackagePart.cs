@@ -125,7 +125,8 @@ namespace System.IO.Packaging {
 
 		private PackageRelationship CreateRelationship (Uri targetUri, TargetMode targetMode, string relationshipType, string id, bool loading)
 		{
-			Package.CheckIsReadOnly ();
+			if (!loading)
+				Package.CheckIsReadOnly ();
 			Check.TargetUri (targetUri);
 			Check.RelationshipTypeIsValid (relationshipType);
 			Check.IdIsValid (id);

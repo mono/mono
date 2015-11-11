@@ -39,13 +39,13 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/threads.h>
+#include <mono/metadata/threadpool-ms.h>
 #include <mono/metadata/socket-io.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/monitor.h>
-#include <mono/metadata/threadpool.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/attach.h>
@@ -54,6 +54,7 @@
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-uri.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-path.h>
@@ -73,12 +74,12 @@
  * of classes the runtime knows about, changing icall signature or
  * semantics etc), increment this variable. Also increment the
  * pair of this variable in mscorlib in:
- *       mcs/class/mscorlib/System/Environment.cs
+ *       mcs/class/corlib/System/Environment.cs
  *
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 119
+#define MONO_CORLIB_VERSION 138
 
 typedef struct
 {
@@ -87,10 +88,6 @@ typedef struct
 	MonoDomain *domain;
 	gchar *filename;
 } RuntimeConfig;
-
-mono_mutex_t mono_delegate_section;
-
-mono_mutex_t mono_strtod_mutex;
 
 static gunichar2 process_guid [36];
 static gboolean process_guid_set = FALSE;
@@ -163,11 +160,22 @@ create_domain_objects (MonoDomain *domain)
 {
 	MonoDomain *old_domain = mono_domain_get ();
 	MonoString *arg;
+	MonoVTable *string_vt;
+	MonoClassField *string_empty_fld;
 
 	if (domain != old_domain) {
 		mono_thread_push_appdomain_ref (domain);
 		mono_domain_set_internal_with_options (domain, FALSE);
 	}
+
+	/*
+	 * Initialize String.Empty. This enables the removal of
+	 * the static cctor of the String class.
+	 */
+	string_vt = mono_class_vtable (domain, mono_defaults.string_class);
+	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
+	g_assert (string_empty_fld);
+	mono_field_static_set_value (string_vt, string_empty_fld, mono_string_intern (mono_string_new (domain, "")));
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -217,13 +225,12 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 {
 	MonoAppDomainSetup *setup;
 	MonoAppDomain *ad;
-	MonoClass *class;
+	MonoClass *klass;
 
 	mono_portability_helpers_init ();
 	
 	mono_gc_base_init ();
 	mono_monitor_init ();
-	mono_thread_pool_init ();
 	mono_marshal_init ();
 
 	mono_install_assembly_preload_hook (mono_domain_assembly_preload, GUINT_TO_POINTER (FALSE));
@@ -237,22 +244,16 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 
 	mono_thread_init (start_cb, attach_cb);
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, class);
+	klass = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	setup = (MonoAppDomainSetup *) mono_object_new_pinned (domain, klass);
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomain");
-	ad = (MonoAppDomain *) mono_object_new_pinned (domain, class);
+	klass = mono_class_from_name (mono_defaults.corlib, "System", "AppDomain");
+	ad = (MonoAppDomain *) mono_object_new_pinned (domain, klass);
 	ad->data = domain;
 	domain->domain = ad;
 	domain->setup = setup;
 
-	mono_mutex_init_recursive (&mono_delegate_section);
-
-	mono_mutex_init_recursive (&mono_strtod_mutex);
-	
 	mono_thread_attach (domain);
-	mono_context_init (domain);
-	mono_context_set (domain->default_context);
 
 	mono_type_initialization_init ();
 
@@ -261,6 +262,10 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 
 	/* GC init has to happen after thread init */
 	mono_gc_init ();
+
+	/* contexts use GC handles, so they must be initialized after the GC */
+	mono_context_init (domain);
+	mono_context_set (domain->default_context);
 
 #ifndef DISABLE_SOCKETS
 	mono_network_init ();
@@ -322,13 +327,14 @@ mono_check_corlib_version (void)
 void
 mono_context_init (MonoDomain *domain)
 {
-	MonoClass *class;
+	MonoClass *klass;
 	MonoAppContext *context;
 
-	class = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
-	context = (MonoAppContext *) mono_object_new_pinned (domain, class);
+	klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Contexts", "Context");
+	context = (MonoAppContext *) mono_object_new_pinned (domain, klass);
 	context->domain_id = domain->domain_id;
 	context->context_id = 0;
+	ves_icall_System_Runtime_Remoting_Contexts_Context_RegisterContext (context);
 	domain->default_context = context;
 }
 
@@ -388,10 +394,10 @@ mono_domain_create_appdomain (char *friendly_name, char *configuration_file)
 {
 	MonoAppDomain *ad;
 	MonoAppDomainSetup *setup;
-	MonoClass *class;
+	MonoClass *klass;
 
-	class = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
-	setup = (MonoAppDomainSetup *) mono_object_new (mono_domain_get (), class);
+	klass = mono_class_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	setup = (MonoAppDomainSetup *) mono_object_new (mono_domain_get (), klass);
 	setup->configuration_file = configuration_file != NULL ? mono_string_new (mono_domain_get (), configuration_file) : NULL;
 
 	ad = mono_domain_create_appdomain_internal (friendly_name, setup);
@@ -471,6 +477,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	ad->data = data;
 	data->domain = ad;
 	data->friendly_name = g_strdup (friendly_name);
+
+	mono_profiler_appdomain_name (data, data->friendly_name);
 
 	if (!setup->application_base) {
 		/* Inherit from the root domain since MS.NET does this */
@@ -612,9 +620,9 @@ ves_icall_System_AppDomain_GetData (MonoAppDomain *ad, MonoString *name)
 
 	MONO_CHECK_ARG_NULL (name, NULL);
 
-	g_assert (ad != NULL);
+	g_assert (ad);
 	add = ad->data;
-	g_assert (add != NULL);
+	g_assert (add);
 
 	str = mono_string_to_utf8 (name);
 
@@ -657,9 +665,9 @@ ves_icall_System_AppDomain_SetData (MonoAppDomain *ad, MonoString *name, MonoObj
 
 	MONO_CHECK_ARG_NULL (name,);
 
-	g_assert (ad != NULL);
+	g_assert (ad);
 	add = ad->data;
-	g_assert (add != NULL);
+	g_assert (add);
 
 	mono_domain_lock (add);
 
@@ -671,8 +679,8 @@ ves_icall_System_AppDomain_SetData (MonoAppDomain *ad, MonoString *name, MonoObj
 MonoAppDomainSetup *
 ves_icall_System_AppDomain_getSetup (MonoAppDomain *ad)
 {
-	g_assert (ad != NULL);
-	g_assert (ad->data != NULL);
+	g_assert (ad);
+	g_assert (ad->data);
 
 	return ad->data->setup;
 }
@@ -680,8 +688,8 @@ ves_icall_System_AppDomain_getSetup (MonoAppDomain *ad)
 MonoString *
 ves_icall_System_AppDomain_getFriendlyName (MonoAppDomain *ad)
 {
-	g_assert (ad != NULL);
-	g_assert (ad->data != NULL);
+	g_assert (ad);
+	g_assert (ad->data);
 
 	return mono_string_new (ad->data, ad->data->friendly_name);
 }
@@ -1950,7 +1958,7 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	gchar *name;
 	gboolean parsed;
 
-	g_assert (assRef != NULL);
+	g_assert (assRef);
 
 	name = mono_string_to_utf8 (assRef);
 	parsed = mono_assembly_name_parse (name, &aname);
@@ -2022,6 +2030,12 @@ ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id)
 		return TRUE;
 
 	return mono_domain_is_unloading (domain);
+}
+
+void
+ves_icall_System_AppDomain_DoUnhandledException (MonoException *exc)
+{
+	mono_unhandled_exception ((MonoObject*) exc);
 }
 
 gint32
@@ -2207,9 +2221,9 @@ deregister_reflection_info_roots_from_list (MonoImage *image)
 	GSList *list = image->reflection_info_unregister_classes;
 
 	while (list) {
-		MonoClass *class = list->data;
+		MonoClass *klass = list->data;
 
-		mono_class_free_ref_info (class);
+		mono_class_free_ref_info (klass);
 
 		list = list->next;
 	}
@@ -2267,7 +2281,7 @@ unload_thread_main (void *arg)
 		goto failure;
 	}
 
-	if (!mono_thread_pool_remove_domain_jobs (domain, -1)) {
+	if (!mono_threadpool_ms_remove_domain_jobs (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Cleanup of threadpool jobs of domain %s timed out.", domain->friendly_name);
 		goto failure;
 	}
@@ -2349,6 +2363,18 @@ mono_domain_unload (MonoDomain *domain)
 		mono_raise_exception ((MonoException*)exc);
 }
 
+static guint32
+guarded_wait (HANDLE handle, guint32 timeout, gboolean alertable)
+{
+	guint32 result;
+
+	MONO_PREPARE_BLOCKING;
+	result = WaitForSingleObjectEx (handle, timeout, alertable);
+	MONO_FINISH_BLOCKING;
+
+	return result;
+}
+
 /*
  * mono_domain_unload:
  * @domain: The domain to unload
@@ -2379,7 +2405,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	MonoDomain *caller_domain = mono_domain_get ();
 	char *name;
 
-	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, GetCurrentThreadId ()); */
+	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, mono_native_thread_id_get ()); */
 
 	/* Atomically change our state to UNLOADING */
 	prev_state = InterlockedCompareExchange ((gint32*)&domain->state,
@@ -2435,7 +2461,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	g_free (name);
 
 	/* Wait for the thread */	
-	while (!thread_data->done && WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {
+	while (!thread_data->done && guarded_wait (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {
 		if (mono_thread_internal_has_appdomain_ref (mono_thread_internal_current (), domain) && (mono_thread_interruption_requested ())) {
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */

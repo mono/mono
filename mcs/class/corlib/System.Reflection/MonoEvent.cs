@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
@@ -60,9 +61,56 @@ namespace System.Reflection {
 		}
 	}
 
+	abstract class RuntimeEventInfo : EventInfo, ISerializable
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		internal RuntimeType GetDeclaringTypeInternal ()
+		{
+			return (RuntimeType) DeclaringType;
+		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return GetDeclaringTypeInternal ().GetRuntimeModule ();
+		}
+
+        #region ISerializable
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                null,
+                MemberTypes.Event);
+        }
+        #endregion
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal sealed class MonoEvent: EventInfo, ISerializable
+	internal sealed class MonoEvent: RuntimeEventInfo
 	{
 #pragma warning disable 169
 		IntPtr klass;
@@ -156,13 +204,6 @@ namespace System.Reflection {
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit)
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
-		}
-
-		// ISerializable
-		public void GetObjectData (SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
-				ToString(), MemberTypes.Event);
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {

@@ -12,6 +12,11 @@
 
 #include "mini.h"
 
+/* This is the same as mgreg_t, except on 32 bit bit platforms with callee saved fp regs */
+#ifndef mono_unwind_reg_t
+#define mono_unwind_reg_t mgreg_t
+#endif
+
 /*
  * This is a platform-independent interface for unwinding through stack frames 
  * based on the Dwarf unwinding interface.
@@ -109,6 +114,8 @@ typedef struct {
 #define mono_add_unwind_op_same_value(op_list,code,buf,reg) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_same_value, (reg), 0)); } while (0)
 #define mono_add_unwind_op_offset(op_list,code,buf,reg,offset) do { (op_list) = g_slist_append ((op_list), mono_create_unwind_op ((code) - (buf), DW_CFA_offset, (reg), (offset))); } while (0)
 
+#define mono_free_unwind_info(op_list) do { GSList *l; for (l = op_list; l; l = l->next) g_free (l->data); g_slist_free (op_list); op_list = NULL; } while (0)
+
 /* Pointer Encoding in the .eh_frame */
 enum {
 	DW_EH_PE_absptr = 0x00,
@@ -140,12 +147,15 @@ int
 mono_unwind_get_dwarf_pc_reg (void);
 
 guint8*
+mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enable_extensions);
+
+guint8*
 mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len);
 
 void
 mono_unwind_frame (guint8 *unwind_info, guint32 unwind_info_len, 
 				   guint8 *start_ip, guint8 *end_ip, guint8 *ip, guint8 **mark_locations,
-				   mgreg_t *regs, int nregs,
+				   mono_unwind_reg_t *regs, int nregs,
 				   mgreg_t **save_locations, int save_locations_len,
 				   guint8 **out_cfa);
 

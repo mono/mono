@@ -41,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Security.Cryptography.X509Certificates;
 
 using Mono.Xml;
 
@@ -511,6 +512,11 @@ public partial class CryptoConfig {
 		}
 	}
 
+	internal static string MapNameToOID (string name, OidGroup oidGroup)
+	{
+		return MapNameToOID (name);
+	}
+
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
@@ -525,11 +531,6 @@ public partial class CryptoConfig {
 		string result = null;
 		oids.TryGetValue (name, out result);
 		return result;
-	}
-
-	[MonoLimitation ("nothing is FIPS certified so it never make sense to restrict to this (empty) subset")]
-	public static bool AllowOnlyFipsAlgorithms {
-		get { return false; }
 	}
 
 	public static void AddAlgorithm (Type algorithm, params string[] names)

@@ -21,6 +21,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/assembly.h>
 #include <mono/utils/mono-time.h>
+#include <mono/utils/mono-memory-model.h>
 #include "trace.h"
 
 #if defined (PLATFORM_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
@@ -50,6 +51,8 @@
 #endif
 
 static MonoTraceSpec trace_spec;
+
+static volatile gint32 output_lock = 0;
 
 gboolean
 mono_trace_eval_exception (MonoClass *klass)
@@ -357,7 +360,7 @@ static void indent (int diff) {
 		indent_level += diff;
 	if (start_time == 0)
 		start_time = mono_100ns_ticks ();
-	printf ("[%p: %.5f %d] ", (void*)GetCurrentThreadId (), seconds_since_start (), indent_level);
+	printf ("[%p: %.5f %d] ", (void*)mono_native_thread_id_get (), seconds_since_start (), indent_level);
 	if (diff > 0)
 		indent_level += diff;
 }
@@ -403,7 +406,7 @@ void
 mono_trace_enter_method (MonoMethod *method, char *ebp)
 {
 	int i, j;
-	MonoClass *class;
+	MonoClass *klass;
 	MonoObject *o;
 	MonoJitArgumentInfo *arg_info;
 	MonoMethodSignature *sig;
@@ -413,6 +416,9 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	if (!trace_spec.enabled)
 		return;
 
+	while (output_lock != 0 || InterlockedCompareExchange (&output_lock, 1, 0) != 0)
+		mono_thread_info_yield ();
+
 	fname = mono_method_full_name (method, TRUE);
 	indent (1);
 	printf ("ENTER: %s(", fname);
@@ -420,8 +426,8 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 
 	if (!ebp) {
 		printf (") ip: %p\n", RETURN_ADDRESS_N (1));
-		return;
-	}	
+		goto unlock;
+	}
 
 	sig = mono_method_signature (method);
 
@@ -432,15 +438,15 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
-				return;
+				goto unlock;
 			}
 		}
 	}
 
-	mono_arch_get_argument_info (gsctx, sig, sig->param_count, arg_info);
+	mono_arch_get_argument_info (sig, sig->param_count, arg_info);
 
 	if (MONO_TYPE_ISSTRUCT (mono_method_signature (method)->ret)) {
 		g_assert (!mono_method_signature (method)->ret->byref);
@@ -456,16 +462,16 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 			o = *arg_in_stack_slot(this, MonoObject *);
 
 			if (o) {
-				class = o->vtable->klass;
+				klass = o->vtable->klass;
 
-				if (class == mono_defaults.string_class) {
+				if (klass == mono_defaults.string_class) {
 					MonoString *s = (MonoString*)o;
 					char *as = string_to_utf8 (s);
 
 					printf ("this:[STRING:%p:%s], ", o, as);
 					g_free (as);
 				} else {
-					printf ("this:%p[%s.%s %s], ", o, class->name_space, class->name, o->vtable->domain->friendly_name);
+					printf ("this:%p[%s.%s %s], ", o, klass->name_space, klass->name, o->vtable->domain->friendly_name);
 				}
 			} else 
 				printf ("this:NULL, ");
@@ -518,19 +524,19 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 		case MONO_TYPE_OBJECT: {
 			o = *arg_in_stack_slot(cpos, MonoObject *);
 			if (o) {
-				class = o->vtable->klass;
+				klass = o->vtable->klass;
 		    
-				if (class == mono_defaults.string_class) {
+				if (klass == mono_defaults.string_class) {
 					char *as = string_to_utf8 ((MonoString*)o);
 
 					printf ("[STRING:%p:%s], ", o, as);
 					g_free (as);
-				} else if (class == mono_defaults.int32_class) {
+				} else if (klass == mono_defaults.int32_class) {
 					printf ("[INT32:%p:%d], ", o, *(gint32 *)((char *)o + sizeof (MonoObject)));
-				} else if (class == mono_defaults.monotype_class) {
+				} else if (klass == mono_defaults.monotype_class) {
 					printf ("[TYPE:%s], ", mono_type_full_name (((MonoReflectionType*)o)->type));
 				} else
-					printf ("[%s.%s:%p], ", class->name_space, class->name, o);
+					printf ("[%s.%s:%p], ", klass->name_space, klass->name, o);
 			} else {
 				printf ("%p, ", *arg_in_stack_slot(cpos, gpointer));
 			}
@@ -565,6 +571,9 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 
 	printf (")\n");
 	fflush (stdout);
+
+unlock:
+	mono_atomic_store_release (&output_lock, 0);
 }
 
 void
@@ -578,6 +587,9 @@ mono_trace_leave_method (MonoMethod *method, ...)
 	if (!trace_spec.enabled)
 		return;
 
+	while (output_lock != 0 || InterlockedCompareExchange (&output_lock, 1, 0) != 0)
+		mono_thread_info_yield ();
+
 	va_start(ap, method);
 
 	fname = mono_method_full_name (method, TRUE);
@@ -590,10 +602,10 @@ mono_trace_leave_method (MonoMethod *method, ...)
 		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
 		if (ji) {
 			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+			if (gsctx && gsctx->is_gsharedvt) {
 				/* Needs a ctx to get precise method */
 				printf (") <gsharedvt>\n");
-				return;
+				goto unlock;
 			}
 		}
 	}
@@ -703,6 +715,9 @@ handle_enum:
 	//printf (" ip: %p\n", RETURN_ADDRESS_N (1));
 	printf ("\n");
 	fflush (stdout);
+
+unlock:
+	mono_atomic_store_release (&output_lock, 0);
 }
 
 void

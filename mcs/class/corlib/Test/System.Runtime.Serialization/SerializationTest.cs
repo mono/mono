@@ -28,8 +28,8 @@ namespace MonoTests.System.Runtime.Serialization
 		MemoryStream ms;
 		string uri;
 
+#if FEATURE_REMOTING
 		[Test]
-		[Category ("MobileNotWorking")]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();
@@ -41,6 +41,7 @@ namespace MonoTests.System.Runtime.Serialization
 
 			RemotingServices.Disconnect (mt);
 		}
+#endif
 
 #if !MONOTOUCH
 		[Test]
@@ -77,6 +78,7 @@ namespace MonoTests.System.Runtime.Serialization
 			return 2;
 		}
 
+#if FEATURE_REMOTING
 		void WriteData ()
 		{
 			StreamingContext context = new StreamingContext (StreamingContextStates.Other);
@@ -148,7 +150,7 @@ namespace MonoTests.System.Runtime.Serialization
 			CheckMessages ("MethodCall", originalMsgData, ProcessMessages (null, calls));
 			CheckMessages ("MethodResponse", originalMsgData, ProcessMessages (null, resps));
 		}
-
+#endif
 		BinderTester_A CreateBinderTestData ()
 		{
 			BinderTester_A bta = new BinderTester_A();

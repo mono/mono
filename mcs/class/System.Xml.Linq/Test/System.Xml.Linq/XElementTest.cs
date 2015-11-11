@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -2106,6 +2107,49 @@ namespace MonoTests.System.Xml.Linq
 			string[] content = {null, "content1", null, "content2"};
 			var el = new XElement ("test", (object)content);
 			Assert.AreEqual ("<test>content1content2</test>", el.ToString ());
+		}
+
+		[Test] // bug #14856
+		public void PossibleDuplicateNamespaces ()
+		{
+            string testXML =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<TestElement xmlns=\"http://www.test.com/TestNamespace\" />";
+
+            using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (testXML)))
+            {
+                var root = XElement.Load (stream);
+                using (var savedStream = new MemoryStream ())
+                {
+                    var options = SaveOptions.None;
+
+                    // Comment out this line to make it not crash.
+                    options |= SaveOptions.OmitDuplicateNamespaces;
+
+                    root.Save (savedStream, options);
+                    savedStream.Flush ();
+                    savedStream.Position = 0;
+
+                    var settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
+                    using (var xmlReader = XmlReader.Create (savedStream, settings))
+                    {
+                        while (xmlReader.Read ())
+                        {
+                        }
+                    }
+                }
+            }
+		}
+
+		[Test]
+		public void ParseVsReadXml ()
+		{
+			var p = XElement.Parse ("<root xmlns='urn:foo'><foo><xxx /></foo><x:bar xmlns:x='urn:bar'><yyy /></x:bar><baz xmlns=''><zzz /></baz></root>");
+			var r = XElement.Parse ("<foo />");
+			XmlReader xr = XmlReader.Create (new StringReader ("<root xmlns='urn:foo'><foo><xxx /></foo><x:bar xmlns:x='urn:bar'><yyy /></x:bar><baz xmlns=''><zzz /></baz></root>"), new XmlReaderSettings ());
+			((IXmlSerializable)r).ReadXml (xr);
+
+			Assert.IsTrue (XNode.DeepEquals (p, r), "The XElements were not equal.\nParse() expected:\n{0}\n\nBut ReadXml() was:\n{1}\n", p, r);
 		}
 	}
 }

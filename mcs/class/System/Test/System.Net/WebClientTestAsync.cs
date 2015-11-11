@@ -43,6 +43,7 @@ namespace MonoTests.System.Net
 	{
 		[Test]
 		[Category("Async")]
+		[Category("AndroidNotWorking")] // Attempts to access the test dll which won't work on Android
 		public void DownloadData ()
 		{
 			WebClient wc;
@@ -94,6 +95,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
+		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
@@ -121,6 +123,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
+		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
@@ -139,6 +142,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
+		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple2 ()
 		{
 			WebClient wc = new WebClient ();
@@ -151,6 +155,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category("InetAccess")]
+		[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple3 ()
 		{
 			WebClient wc = new WebClient ();

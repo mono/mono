@@ -39,6 +39,8 @@ using System.Transactions;
 using System.Threading;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -80,7 +82,7 @@ namespace MonoTests.System.ServiceModel
 			IEndpointBehavior eb = new CallbackBehaviorAttribute () { ConcurrencyMode = ConcurrencyMode.Multiple, ValidateMustUnderstand = false };
 			var cd = ContractDescription.GetContract (typeof (IFoo));
 			var se = new ServiceEndpoint (cd);
-			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:37564"), "IFoo", "urn:foo");
+			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()), "IFoo", "urn:foo");
 			eb.ApplyDispatchBehavior (se, ed);
 		}
 
@@ -92,7 +94,7 @@ namespace MonoTests.System.ServiceModel
 			IEndpointBehavior eb = new CallbackBehaviorAttribute () { ConcurrencyMode = ConcurrencyMode.Multiple, ValidateMustUnderstand = false };
 			var cd = ContractDescription.GetContract (typeof (IFoo));
 			var se = new ServiceEndpoint (cd);
-			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:37564"), "IFoo", "urn:foo");
+			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()), "IFoo", "urn:foo");
 			var cr = ed.DispatchRuntime.CallbackClientRuntime;
 			eb.ApplyClientBehavior (se, cr);
 		}
@@ -104,7 +106,7 @@ namespace MonoTests.System.ServiceModel
 			IEndpointBehavior eb = new CallbackBehaviorAttribute () { ConcurrencyMode = ConcurrencyMode.Multiple, ValidateMustUnderstand = false };
 			var cd = ContractDescription.GetContract (typeof (IDuplexFoo));
 			var se = new ServiceEndpoint (cd);
-			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:37564"), "IDuplexFoo", "urn:foo");
+			var ed = new EndpointDispatcher (new EndpointAddress ("http://localhost:" + NetworkHelpers.FindFreePort ()), "IDuplexFoo", "urn:foo");
 			var cr = ed.DispatchRuntime.CallbackClientRuntime;
 			eb.ApplyClientBehavior (se, cr);
 			Assert.IsFalse (cr.ValidateMustUnderstand, "#2.1");

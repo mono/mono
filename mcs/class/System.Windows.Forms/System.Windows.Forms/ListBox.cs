@@ -102,7 +102,7 @@ namespace System.Windows.Forms
 
 			requested_height = bounds.Height;
 			InternalBorderStyle = BorderStyle.Fixed3D;
-			BackColor = ThemeEngine.Current.ColorWindow;
+			BackColor = ThemeEngine.Current.ColorControl;
 
 			/* Vertical scrollbar */
 			vscrollbar = new ImplicitVScrollBar ();

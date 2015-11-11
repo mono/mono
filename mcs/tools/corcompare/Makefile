@@ -11,7 +11,10 @@ COMMON_SOURCES = \
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-APIINFO_SOURCES = mono-api-info.cs $(COMMON_SOURCES)
+APIINFO_SOURCES = \
+	mono-api-info.cs \
+	../../class/Mono.Options/Mono.Options/Options.cs \
+	$(COMMON_SOURCES)
 
 DISTFILES= $(COMMON_SOURCES) $(APIINFO_SOURCES)
 

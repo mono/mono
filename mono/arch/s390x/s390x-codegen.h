@@ -137,6 +137,42 @@ typedef enum {
 	s390_fpc = 256,
 } S390SpecialRegister;
 
+typedef enum {
+	s390_VR0 = 0,
+	s390_VR1 = 1,
+	s390_VR2 = 2,
+	s390_VR3 = 3,
+	s390_VR4 = 4,
+	s390_VR5 = 5,
+	s390_VR6 = 6,
+	s390_VR7 = 7,
+	s390_VR8 = 8,
+	s390_VR9 = 9,
+	s390_VR10 = 10,
+	s390_VR11 = 11,
+	s390_VR12 = 12,
+	s390_VR13 = 13,
+	s390_VR14 = 14,
+	s390_VR15 = 15,
+	s390_VR16 = 16,
+	s390_VR17 = 17,
+	s390_VR18 = 18,
+	s390_VR19 = 19,
+	s390_VR20 = 20,
+	s390_VR21 = 21,
+	s390_VR22 = 22,
+	s390_VR23 = 23,
+	s390_VR24 = 24,
+	s390_VR25 = 25,
+	s390_VR26 = 26,
+	s390_VR27 = 27,
+	s390_VR28 = 28,
+	s390_VR29 = 29,
+	s390_VR30 = 30,
+	s390_VR31 = 31,
+	s390_VR_NREG = 32,
+} s390_VR_Reg_No;
+
 #define s390_is_imm16(val) 		((glong)val >= (glong) SHRT_MIN && \
 					 (glong)val <= (glong) SHRT_MAX)
 #define s390_is_imm32(val) 		((glong)val >= (glong) INT_MIN && \
@@ -206,10 +242,32 @@ typedef struct {
 } I_Format;
 
 typedef struct {
+	short	op;
+	char	xx;
+	char	ri1 : 4;
+	char	ri2 : 4;
+} IE_Format;
+
+typedef struct {
+	short	op;
+	short	m1 : 4;
+	short	ri2 : 12;
+	short	i3;	
+} MII_Format;
+
+typedef struct {
 	char 	op;
 	char	r1 : 4;
 	char 	r2 : 4;
 } RR_Format;
+
+typedef struct {
+	short	op;
+	char	r1 : 4;
+	char	xx : 4;
+	char	r3 : 4;
+	char	r4 : 4;
+} __attribute__ ((packed)) RRD_Format;
 
 typedef struct {
 	short	op;
@@ -243,29 +301,38 @@ typedef struct {
 } RRF_Format_3;
 
 typedef struct {
+	short	op;
+	char	m3 : 4;
+	char	m4 : 4;
+	char	r1 : 4;
+	char	r2 : 4;
+} RRF_Format_4;
+
+typedef struct {
+	char	op1;
+	char	r1 : 4;
+	char	r2 : 4;
+	short	b4 : 4;
+	short	d4 : 12;
+	char	m3 : 4;
+	char	xx : 4;
+	char	op2;
+} RRS_Format;
+
+typedef struct {
 	char	op;
 	char	r1 : 4;
 	char	x2 : 4;
-	char	b2 : 4;
+	short	b2 : 4;
 	short	d2 : 12;
 } RX_Format;
 
 typedef struct {
 	char 	op1;
-	char	r1 : 4;
-	char	x2 : 4;
-	char	b2 : 4;
-	int	d2 : 12;
-	char	xx;
-	char	op2;
-} RXE_Format;
-
-typedef struct {
-	char 	op1;
 	char	r3 : 4;
 	char	x2 : 4;
-	char	b2 : 4;
-	int	d2 : 12;
+	short	b2 : 4;
+	short	d2 : 12;
 	char	r1 : 4;
 	char	xx : 4;
 	char	op2;
@@ -275,7 +342,7 @@ typedef struct {
 	char 	op1;
 	char	r1 : 4;
 	char	x2 : 4;
-	char	b2 : 4;
+	int 	b2 : 4;
 	int	d2 : 20;
 	char	op2;
 } __attribute__ ((packed)) RXY_Format;
@@ -284,32 +351,34 @@ typedef struct {
 	char 	op;
 	char	r1 : 4;
 	char	r3 : 4;
-	char	b2 : 4;
-	int	d2 : 12;
+	short	b2 : 4;
+	short	d2 : 12;
 } RS_Format_1;
 
 typedef struct {
 	char 	op;
 	char	r1 : 4;
 	char	m3 : 4;
-	char	b2 : 4;
-	int	d2 : 12;
+	short	b2 : 4;
+	short	d2 : 12;
 } RS_Format_2;
 
 typedef struct {
 	char 	op;
 	char	r1 : 4;
 	char	xx : 4;
-	char	b2 : 4;
-	int	d2 : 12;
+	short	b2 : 4;
+	short	dl2 : 12;
+	char	dh2;
 } RS_Format_3;
 
 typedef struct {
 	char 	op1;
 	char	r1 : 4;
 	char	r3 : 4;
-	char	b2 : 4;
-	int	d2 : 20;
+	short	b2 : 4;
+	short	dl2 : 12;
+	char	dh2;
 	char 	op2;
 } __attribute__ ((packed)) RSY_Format_1;
 
@@ -317,8 +386,9 @@ typedef struct {
 	char 	op1;
 	char	r1 : 4;
 	char	m3 : 4;
-	char	b2 : 4;
-	int	d2 : 20;
+	short	b2 : 4;
+	short	dl2 : 12;
+	char	dh2;
 	char 	op2;
 } __attribute__ ((packed)) RSY_Format_2;
 
@@ -326,25 +396,25 @@ typedef struct {
 	char 	op1;
 	char	l1 : 4;
 	char	xx : 4;
-	char	b1 : 4;
-	int 	d1 : 12;
+	short	b1 : 4;
+	short	d1 : 12;
 	char	yy;
 	char 	op2;
-} RSL_Format;
+} __attribute__ ((packed)) RSL_Format;
 
 typedef struct {
 	char 	op;
 	char	r1 : 4;
 	char	r3 : 4;
 	short	i2;
-} RSI_Format;
+} __attribute__ ((packed)) RSI_Format;
 
 typedef struct {
 	char 	op1;
 	char	m1 : 4;
 	char	op2 : 4;
 	short	i2;
-} RI_Format;
+} __attribute__ ((packed)) RI_Format;
 
 typedef struct {
 	char 	op1;
@@ -353,7 +423,7 @@ typedef struct {
 	short	i2;
 	char	xx;
 	char	op2;
-} RIE_Format_1;
+} __attribute__ ((packed)) RIE_Format_1;
 
 typedef struct {
 	char 	op1;
@@ -363,7 +433,7 @@ typedef struct {
 	char	m2 : 4;
 	char    xx : 4;
 	char	op2;
-} RIE_Format_2;
+} __attribute__ ((packed)) RIE_Format_2;
 
 typedef struct {
 	char 	op1;
@@ -372,7 +442,7 @@ typedef struct {
 	short	d;
 	char	i;
 	char	op2;
-} RIE_Format_3;
+} __attribute__ ((packed)) RIE_Format_3;
 
 typedef struct {
 	char 	op1;
@@ -382,7 +452,45 @@ typedef struct {
 	char	m3 : 4;
 	char	xx : 4;
 	char	op2;
-} RIE_Format_4;
+} __attribute__ ((packed)) RIE_Format_4;
+
+typedef struct {
+	char 	op1;
+	char	r1 : 4;
+	char	r3 : 4;
+	short	ri2;
+	char	xx;
+	char	op2;
+} __attribute__ ((packed)) RIE_Format_5;
+
+typedef struct {
+	char 	op1;
+	char	r1 : 4;
+	char	r2 : 4;
+	char	i3;
+	char	i4;
+	char	i5;
+	char	op2;
+} __attribute__ ((packed)) RIE_Format_6;
+
+typedef struct {
+	char 	op1;
+	char	r1 : 4;
+	char	m3 : 4;
+	short	i2;
+	char	xx;
+	char	op2;
+} __attribute__ ((packed)) RIE_Format_7;
+
+typedef struct {
+	char	op1;
+	char	r1 : 4;
+	char	m3 : 4;
+	int	b4 : 4;
+	int	d4 : 12;
+	char	i2;
+	char	op2;
+} __attribute__ ((packed)) RIS_Format;
 
 typedef struct {
 	char 	op1;
@@ -399,11 +507,29 @@ typedef struct {
 } __attribute__ ((packed)) RIL_Format_2;
 
 typedef struct {
+	short	op1;
+	char	r1 : 4;
+	char	x2 : 4;
+	short	b2 : 4;
+	short	d1 : 12;
+	char	m3 : 4;
+	char	xx : 4;
+	char	op2;
+} __attribute__ ((packed)) RXE_Format;
+
+typedef struct {
 	char	op;
 	char	i2;
+	short	b1 : 4;
+	short	d1 : 12;
+} __attribute__ ((packed)) SI_Format;
+
+typedef struct {
+	short	op;
 	char	b1 : 4;
 	short	d1 : 12;
-} SI_Format;
+	short	i2;
+} __attribute__ ((packed)) SIL_Format;
 
 typedef struct {
 	char	op1;
@@ -414,49 +540,58 @@ typedef struct {
 } __attribute__ ((packed)) SIY_Format;
 
 typedef struct {
+	char	op1;
+	char	m1 : 4;
+	char	xx : 4;
+	short	b3 : 4;
+	short	d3 : 12;
+	short	ri2;
+} __attribute__ ((packed)) SMI_Format;
+
+typedef struct {
 	short	op;
-	char	b2 : 4;
+	short	b2 : 4;
 	short	d2 : 12;
-} S_Format;
+} __attribute__ ((packed)) S_Format;
 
 typedef struct {
 	char	op;
 	char	ll;
-	char	b1 : 4;
+	short	b1 : 4;
 	short	d1 : 12;
-	char	b2 : 4;
+	short	b2 : 4;
 	short	d2 : 12;
-} SS_Format_1;
+} __attribute__ ((packed)) SS_Format_1;
 
 typedef struct {
 	char	op;
 	char	l1 : 4;
 	char	l2 : 4;
-	char	b1 : 4;	
+	short	b1 : 4;	
 	short	d1 : 12;
-	char	b2 : 4;
+	short	b2 : 4;
 	short	d2 : 12;
-} SS_Format_2;
+} __attribute__ ((packed)) SS_Format_2;
 
 typedef struct {
 	char	op;
 	char	r1 : 4;
 	char	r3 : 4;
-	char	b1 : 4;	
+	short	b1 : 4;	
 	short	d1 : 12;
-	char	b2 : 4;
+	short	b2 : 4;
 	short	d2 : 12;
-} SS_Format_3;	
+} __attribute__ ((packed)) SS_Format_3;	
 
 typedef struct {
 	char	op;
 	char	r1 : 4;
 	char	r3 : 4;
-	char	b2 : 4;	
+	short	b2 : 4;	
 	short	d2 : 12;
-	char	b4 : 4;
+	short	b4 : 4;
 	short	d4 : 12;
-} SS_Format_4;	
+} __attribute__ ((packed)) SS_Format_4;	
 
 typedef struct {
 	short	op;
@@ -475,6 +610,189 @@ typedef struct {
 	short	b2 : 4;
 	short	d2 : 12;
 } __attribute__ ((packed)) SSF_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	xx : 4;
+	short	i2;
+	char	m3 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRIa_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	xx : 4;
+	char	i2;
+	char	i3;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRIb_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v3 : 4;
+	short	i2;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRIc_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	v3 : 4;
+	char	xx : 4;
+	char	i4;
+	char	m5 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRId_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	short	i3 : 12;
+	char	m5 : 4;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRIe_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	xx;
+	char	m5 : 4;
+	char	m4 : 4;
+	char	m3 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRa_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	v3 : 4;
+	char	xx : 4;
+	char	m5 : 4;
+	char	yy : 4;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRb_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	v3 : 4;
+	char	xx : 4;
+	char	m5 : 4;
+	char	m4 : 4;
+	char	m3 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRc_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	v3 : 4;
+	char	m5 : 4;
+	char	m6 : 4;
+	char	xx : 4;
+	char	v4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRd_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	v3 : 4;
+	char	m6 : 4;
+	char	xx : 4;
+	char	m5 : 4;
+	char	v4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRe_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	r2 : 4;
+	char	r3 : 4;
+	short	xx;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRRf_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v3 : 4;
+	char	b2 : 4;
+	short	d2 : 12;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRSa_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	r3 : 4;
+	char	b2 : 4;
+	short	d2 : 12;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRSb_Format;
+
+typedef struct {
+	short	op1;
+	char	r1 : 4;
+	char	v3 : 4;
+	char	b2 : 4;
+	short	d2 : 12;
+	char	m4 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRSc_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	v2 : 4;
+	char	b2 : 4;
+	short	d2 : 12;
+	char	m3 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRV_Format;
+
+typedef struct {
+	short	op1;
+	char	v1 : 4;
+	char	x2 : 4;
+	char	b2 : 4;
+	short	d2 : 12;
+	char	m3 : 4;
+	char	rxb : 4;
+	char	op2;
+} __attribute__ ((packed)) VRX_Format;
 
 #define s390_emit16(c, x) do 			\
 {						\
@@ -501,6 +819,8 @@ typedef struct {
 #define S390_RRF_2(c,opc,g1,k3,g2)	s390_emit32(c, (opc << 16 | (k3) << 12 | (g1) << 4 | g2))
 
 #define S390_RRF_3(c,opc,g1,g2,k4,g3)	s390_emit32(c, (opc << 16 | (g3) << 12 | (k4) << 8 | (g1) << 4 | g2))
+
+#define S390_RRF_4(c,opc,g1,m3,g2,m4)	s390_emit32(c, (opc << 16 | (m3) << 12 | (m4) << 8 | (g1) << 4 | g2))
 
 #define S390_RX(c,opc,g1,n2,s2,p2)	s390_emit32(c, (opc << 24 | (g1) << 20 | (n2) << 16 | (s2) << 12 | ((p2) & 0xfff)))
 
@@ -614,6 +934,14 @@ typedef struct {
 			(opc & 0xff)));				\
 } while (0)
 
+#define S390_SIY_1(c,opc,d1,b1,i2) do				\
+{								\
+	s390_emit16(c, ((opc & 0xff00) | i2));			\
+	s390_emit32(c, ((b1) << 28 | (((d1) & 0xfff) << 16) | 	\
+			((((d1) & 0xff000) >> 12) << 8) |	\
+			(opc & 0xff)));				\
+} while (0)
+
 #define S390_S(c,opc,s2,p2)	s390_emit32(c, (opc << 16 | (s2) << 12 | ((p2) & 0xfff)))
 
 #define S390_SS_1(c,opc,ln,s1,p1,s2,p2) do			\
@@ -659,6 +987,140 @@ typedef struct {
 	s390_emit16(c, ((s2) << 12 | ((p2) & 0xfff)));			\
 } while (0)
 
+#define S390_VRIa(c,opc,v1,i2,m3) do				\
+{									\
+	char rxb = (((v1) > 15) << 7);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4));		\
+	s390_emit16(c, (i2));						\
+	s390_emit16(c, (((m3) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRIb(c,opc,v1,i2,i3,m4) do				\
+{									\
+	char rxb = (((v1) > 15) << 7);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4));		\
+	s390_emit16(c, (((i2) << 8) | (i3)));				\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRIc(c,opc,v1,v3,i2,m4) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, (v4));						\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRId(c,opc,v1,v2,v3,i4,m5) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((v3) << 12) | (i2));				\
+	s390_emit16(c, (((m5) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRIe(c,opc,v1,v2,i3,m4,m5) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((i2) << 8) | (m5));				\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRa(c,opc,v1,v2,m3,m4,m5) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((m5) << 4) | (m4));				\
+	s390_emit16(c, (((m3) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRb(c,opc,v1,v2,v3,m4,m5) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((v3) << 12) | ((m5) << 4) | (m4));		\
+	s390_emit16(c, (((m3) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRc(c,opc,v1,v2,m3,m4,m5) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, (((v3) << 12)| (m5) << 4));			\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRd(c,opc,v1,v2,v3,v4,m5,m6) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5) | (((v4) > 15) << 4);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, (((v3) << 12)| ((m6) << 8)) | ((m5) << 4));	\
+	s390_emit16(c, (((v4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRe(c,opc,v1,v2,v3,m4,m5,m6) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6) |		\
+		   (((v3) > 15) << 5);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, (((v3) << 12)| ((m6) << 8)) | (m5));		\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRRf(c,opc,v1,r2) do					\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((r2) << 12)| ((r3) << r8) | (m5));		\
+	s390_emit16(c, (((rxb) << 8) | ((opc) & 0xff)));		\
+} while (0)
+
+#define S390_VRSa(c,opc,v1,v3,b2,d2,m4) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v3)));	\
+	s390_emit16(c, ((b2) << 12)| (d2));				\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRSb(c,opc,v1,r3,b2,d2,m4) do				\
+{									\
+	char rxb = (((v1) > 15) << 7);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((r3)));	\
+	s390_emit16(c, ((b2) << 12)| (d2));				\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRSc(c,opc,r1,v3,b2,d2,m4) do				\
+{									\
+	char rxb = (((v1) > 15) << 7);					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((r1) << 4) | ((v3)));	\
+	s390_emit16(c, ((b2) << 12)| (d2));				\
+	s390_emit16(c, (((m4) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRV(c,opc,v1,v2,b2,d2,m3) do				\
+{									\
+	char rxb = (((v1) > 15) << 7) | (((v2) > 15) << 6);		\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((v2)));	\
+	s390_emit16(c, ((b2) << 12)| (d2));				\
+	s390_emit16(c, (((m3) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
+#define S390_VRX(c,opc,v1,x2,b2,d2,m3) do				\
+{									\
+	char rxb = ((v1) > 15) << 7;					\
+	s390_emit16(c, (((opc) & 0xff00) << 8) | ((v1) << 4) | ((x2)));	\
+	s390_emit16(c, ((b2) << 12)| (d2));				\
+	s390_emit16(c, (((m3) << 12) | ((rxb) << 8) | ((opc) & 0xff)));	\
+} while (0)
+
 #define s390_a(c, r, x, b, d)		S390_RX(c, 0x5a, r, x, b, d)
 #define s390_adb(c, r, x, b, d)		S390_RXE(c, 0xed1a, r, x, b, d)
 #define s390_adbr(c, r1, r2)		S390_RRE(c, 0xb31a, r1, r2)
@@ -691,19 +1153,20 @@ typedef struct {
 #define s390_algfr(c, r1, r2)		S390_RRE(c, 0xb91a, r1, r2)
 #define s390_alghsik(c, r, v)		S390_RIE_1(c, 0xecd8, r, v)
 #define s390_algr(c, r1, r2)		S390_RRE(c, 0xb90a, r1, r2)
-#define s390_algsi(c, r, v)		S390_SIY(c, 0xeb7e, r, v)
+#define s390_algsi(c, d1, b1, i2)	S390_SIY_1(c, 0xeb7e, d1, b1, i2)
 #define s390_alhhhr(c, r1, r2, r3)	S390_RRF_1(c, 0xb9ca, r1, r2, r3)
 #define s390_alhhlr(c, r1, r2, r3)	S390_RRF_1(c, 0xb9da, r1, r2, r3)
 #define s390_alhsik(c, r, v)		S390_RIE_1(c, 0xecda, r, v)
 #define s390_alr(c, r1, r2)		S390_RR(c, 0x1e, r1, r2)
 #define s390_alrk(c, r1, r2)		S390_RRF(c, 0xb9fa, r1, r2)
-#define s390_alsi(c, r, v)		S390_SIY(c, 0xeb6e, r, v)
+#define s390_alsi(c, d1, b1, i2)	S390_SIY_1(c, 0xeb6e, d1, b1, i2)
 #define s390_alsih(c, r, v)		S390_RIL_1(c, 0xcca, r, v)
 #define s390_alsihn(c, r, v)		S390_RIL_1(c, 0xccb, r, v)
 #define s390_aly(c, r, x, b, d)		S390_RXY(c, 0xe35e, r, x, b, d)
 #define s390_ar(c, r1, r2)		S390_RR(c, 0x1a, r1, r2)
 #define s390_ark(c, r1, r2, r3)		S390_RRF_1(c, 0xb9f8, r1, r2, r3)
 #define s390_asi(c, r, v)		S390_SIY(c, 0xeb6a, r, v)
+#define s390_axbr(c, r1, r2)		S390_RRE(c, 0xb34a, r1, r2)
 #define s390_ay(c, r, x, b, d)		S390_RXY(c, 0xe35a, r, x, b, d)
 #define s390_basr(c, r1, r2)		S390_RR(c, 0x0d, r1, r2)
 #define s390_bctr(c, r1, r2)		S390_RR(c, 0x06, r1, r2)
@@ -721,6 +1184,8 @@ typedef struct {
 #define s390_cdbr(c, r1, r2)		S390_RRE(c, 0xb319, r1, r2)
 #define s390_cdfbr(c, r1, r2)		S390_RRE(c, 0xb395, r1, r2)
 #define s390_cdgbr(c, r1, r2)		S390_RRE(c, 0xb3a5, r1, r2)
+#define s390_cdlfbr(c, r1, m3, r2, m4)	S390_RRF_4(c, 0xb391, r1, m3, r2, m4)
+#define s390_cdlgbr(c, r1, m3, r2, m4)	S390_RRF_4(c, 0xb3a1, r1, m3, r2, m4)
 #define s390_cds(c, r1, r2, b, d)	S390_RX(c, 0xbb, r1, r2, b, d)
 #define s390_cdsg(c, r1, r2, b, d)	S390_RSY_1(c, 0xeb3e, r1, r2, b, d)
 #define s390_cdsy(c, r1, r2, b, d)	S390_RSY_1(c, 0xeb31, r1, r2, b, d)
@@ -745,12 +1210,15 @@ typedef struct {
 #define s390_cij(c, r, i, m, d)		S390_RIE_3(c, 0xec7e, r, i, m, d)
 #define s390_cit(c, r, i, m)		S390_RIE_4(c, 0xec72, r, i m);
 #define s390_cl(c, r, x, b, d)		S390_RX(c, 0x55, r, x, b, d)
+#define s390_clfdbr(c, r1, m3, r2, m4)	S390_RRF_4(c, 0xb39d, r1, m3, r2, m4)
 #define s390_clg(c, r, x, b, d)		S390_RXY(c, 0xe321, r, x, b, d)
 #define s390_clgib(c, r, i, m, b, d)	S390_RIS(c, 0xecfd, r, i, m, b, d)
 #define s390_clgij(c, r, i, b)		S390_RIE_3(c, 0xec7d, r, i, m, d)
 #define s390_clgr(c, r1, r2)		S390_RRE(c, 0xb921, r1, r2)
+#define s390_clgdbr(c, r1, m3, r2, m4)	S390_RRF_4(c, 0xb3ad, r1, m3, r2, m4)
 #define s390_clgrj(c, r1, r2, m, v)	S390_RIE_2(c, 0xec65, r1, r2, m, v)
 #define s390_clgrb(c, r1, r2, m3, b, d)	S390_RRS(c, 0xece5, r1, r2, m3, b, d)
+#define s390_cli(c, b, d, v)		S390_SI(c, 0x95, b, d, v)
 #define s390_clib(c, r, i, m, b, d)	S390_RIS(c, 0xecff, r, i, m, b, d)
 #define s390_clij(c, r, i, b)		S390_RIE_3(c, 0xec7f, r, i, m, d)
 #define s390_clr(c, r1, r2)		S390_RR(c, 0x15, r1, r2)
@@ -766,6 +1234,7 @@ typedef struct {
 #define s390_csg(c, r1, r2, b, d)	S390_RSY_1(c, 0xeb30, r1, r2, b, d)
 #define s390_csst(c, d1, b1, d2, b2, r)	S390_SSF(c, 0xc82, b1, d1, b2, d2, r)
 #define s390_csy(c, r1, r2, b, d)	S390_RSY_1(c, 0xeb14, r1, r2, b, d)
+#define s390_cxgbr(c, r1, r2)		S390_RRE(c, 0xb3a6, r1, r2)
 #define s390_ddbr(c, r1, r2)		S390_RRE(c, 0xb31d, r1, r2)
 #define s390_debr(c, r1, r2)		S390_RRE(c, 0xb30d, r1, r2)
 #define s390_didbr(c, r1, r2, m, r3)    S390_RRF_3(c, 0xb35b, r1, r2, m, r3)
@@ -839,6 +1308,7 @@ typedef struct {
 #define s390_ldeb(c, r, x, b, d)	S390_RXE(c, 0xed04, r, x, b, d)
 #define s390_ldebr(c, r1, r2)		S390_RRE(c, 0xb304, r1, r2)
 #define s390_ldgr(c, r1, r2)		S390_RRE(c, 0xb3c1, r1, r2)
+#define s390_ldxbr(c, r1, r2)		S390_RRE(c, 0xb345, r1, r2)
 #define s390_ldr(c, r1, r2)		S390_RR(c, 0x28, r1, r2)
 #define s390_le(c, f, x, b, d)		S390_RX(c, 0x78, f, x, b, d)
 #define s390_ledbr(c, r1, r2)		S390_RRE(c, 0xb344, r1, r2)
@@ -907,6 +1377,7 @@ typedef struct {
 #define s390_mvc(c, l, b1, d1, b2, d2)	S390_SS_1(c, 0xd2, l, b1, d1, b2, d2)
 #define s390_mvcl(c, r1, r2)		S390_RR(c, 0x0e, r1, r2)
 #define s390_mvcle(c, r1, r3, d2, b2)	S390_RS_1(c, 0xa8, r1, r3, d2, b2)
+#define s390_mvi(c, b, d, v)		S390_SI(c, 0x92, b, d, v)
 #define s390_n(c, r, x, b, d)		S390_RX(c, 0x54, r, x, b, d)
 #define s390_nc(c, l, b1, d1, b2, d2)	S390_SS_1(c, 0xd4, l, b1, d1, b2, d2)
 #define s390_ng(c, r, x, b, d)		S390_RXY(c, 0xe380, r, x, b, d)
@@ -931,7 +1402,7 @@ typedef struct {
 #define s390_oihl(c, r, v)		S390_RI(c, 0xa59, r, v)
 #define s390_oilf(c, r, v)		S390_RIL_1(c, 0xc0d, r, v)
 #define s390_oilh(c, r, v)		S390_RI(c, 0xa5a, r, v)
-#define s390_oill(c, r, v)		S390_RI(c, 0xa5b` r, v)
+#define s390_oill(c, r, v)		S390_RI(c, 0xa5b, r, v)
 #define s390_oiy(c, b, d, v)		S390_SIY(c, 0xeb56 b, d, v) 
 #define s390_og(c, r, x, b, d)		S390_RXY(c, 0xe381, r, x, b, d)
 #define s390_ogr(c, r1, r2)		S390_RRE(c, 0xb981, r1, r2)
@@ -988,6 +1459,11 @@ typedef struct {
 #define s390_sty(c, r, x, b, d)		S390_RXY(c, 0xe350, r, x, b, d)
 #define s390_tcdb(c, r, x, b, d)	S390_RXE(c, 0xed11, r, x, b, d)
 #define s390_tceb(c, r, x, b, d)	S390_RXE(c, 0xed10, r, x, b, d)
+#define s390_tmhh(c, r, m)		S390_RI(c, 0xa73, r, m)
+#define s390_tmhl(c, r, m)		S390_RI(c, 0xa72, r, m)
+#define s390_tmlh(c, r, m)		S390_RI(c, 0xa70, r, m)
+#define s390_tmll(c, r, m)		S390_RI(c, 0xa71, r, m)
+#define s390_tm(c, b, d, v)		S390_SI(c, 0x91, b, d, v)
 #define s390_x(c, r, x, b, d)		S390_RX(c, 0x57, r, x, b, d)
 #define s390_xihf(c, r, v)		S390_RIL_1(c, 0xc06, r, v)
 #define s390_xilf(c, r, v)		S390_RIL_1(c, 0xc07, r, v)

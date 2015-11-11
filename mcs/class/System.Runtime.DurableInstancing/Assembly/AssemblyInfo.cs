@@ -2,7 +2,9 @@
 // AssemblyInfo.cs
 //
 // Author:
-//   Joel W. Reed (joelwreed@gmail.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 
 //
@@ -30,32 +32,45 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Security.Permissions;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.ServiceModel assembly
-
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
+// General Information about the System.Runtime.DurableInstancing assembly
+// v3.0 Assembly
 
 [assembly: AssemblyTitle ("System.Runtime.DurableInstancing.dll")]
 [assembly: AssemblyDescription ("System.Runtime.DurableInstancing.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
-
-[assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.Runtime.DurableInstancing.dll")]
-[assembly: AssemblyInformationalVersion ("3.5.594.0")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+
 [assembly: NeutralResourcesLanguage ("en-US")]
-
-[assembly: ComVisible (false)]
-
+[assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 #if NET_2_1
 [assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
-[assembly: AssemblyKeyFile("../winfx.pub")]
+[assembly: AssemblyKeyFile ("../winfx.pub")]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+[assembly: SecurityCritical (SecurityCriticalScope.Explicit)]
 #endif
+
+[assembly: InternalsVisibleTo ("System.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.Runtime.Serialization, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.IdentityModel.Selectors, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Activities, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Activation, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+[assembly: InternalsVisibleTo ("System.ServiceModel.Routing, PublicKey=" + AssemblyRef.FrameworkPublicKeyFull2)]
+
+[assembly: ComVisible (false)]

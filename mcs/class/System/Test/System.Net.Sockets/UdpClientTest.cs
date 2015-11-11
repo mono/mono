@@ -9,6 +9,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -830,31 +831,37 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			UdpClient client = null;
 			var rnd = new Random ();
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0, max = 5; i < max; i++) {
 				int port = rnd.Next (1025, 65534);
 				try {
 					client = new UdpClient (port);
 					break;
 				} catch (Exception) {
-					if (i == 5)
+					if (i == max - 1)
 						throw;
 				}
 			}
 
-			new Thread(delegate() {
-				Thread.Sleep(2000);
-				client.Close();
-				}).Start();
-
+			ManualResetEvent ready = new ManualResetEvent (false);
 			bool got_exc = false;
-			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
-			try {
-				client.Receive(ref ep);
-			} catch (SocketException) {
-				got_exc = true;
-			} finally {
-				client.Close ();
-			}
+
+			Task receive_task = Task.Factory.StartNew (() => {
+				IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
+				try {
+					ready.Set ();
+					client.Receive(ref ep);
+				} catch (SocketException) {
+					got_exc = true;
+				} finally {
+					client.Close ();
+				}
+			});
+
+			ready.WaitOne (2000);
+			Thread.Sleep (20);
+			client.Close();
+
+			Assert.IsTrue (receive_task.Wait (1000));
 			Assert.IsTrue (got_exc);
 		}
 

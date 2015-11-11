@@ -13,8 +13,8 @@ using System.Collections;
 
 namespace Mono.ILASM {
         public class Pair {
-                private PEAPI.Type type;
-                private string sig;
+                protected PEAPI.Type type;
+                protected string sig;
 
                 public Pair (PEAPI.Type type, string sig)
                 {
@@ -35,6 +35,31 @@ namespace Mono.ILASM {
                                 return false;
                         
                         return (p.type == this.type && p.sig == this.sig);
+                }
+        }
+
+        class Triplet : Pair
+        {
+                string typeMod;
+
+                public Triplet (PEAPI.Type type, string sig, string typeMod)
+                        : base (type, sig)
+                {
+                        this.typeMod = typeMod;
+                }
+
+                public override int GetHashCode ()
+                {
+                        return base.GetHashCode () ^ typeMod.GetHashCode ();
+                }
+
+                public override bool Equals (object o)
+                {
+                        Triplet t = o as Triplet;
+                        if (t == null)
+                                return false;
+
+                        return t.type == type && t.sig == sig && t.typeMod == typeMod;
                 }
         }
 
@@ -196,21 +221,32 @@ namespace Mono.ILASM {
                 }
 
                 public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
-                                BaseClassRef klass)
+                                BaseTypeRef klass)
                 {
 			PEAPI.Type type;
 
                         use_type_spec = true;
                         
-                        Pair p = new Pair (peapi_type, modifier.ToString ());
+                        Pair p = new Triplet (peapi_type, modifier.ToString (), klass.FullName);
                         type = type_table [p] as PEAPI.Type;
                         if (type == null) {
-                                klass.Resolve (code_gen);
-                                type = new PEAPI.CustomModifiedType (peapi_type,
-                                        modifier, klass.PeapiClass);
+                                type = GetType (code_gen, modifier, klass);
                                 type_table [p] = type;
                         }
                         peapi_type = type;
+                }
+
+                PEAPI.Type GetType (CodeGen code_gen, PEAPI.CustomModifier modifier, BaseTypeRef klass)
+                {
+                        klass.Resolve (code_gen);
+                        var bcr = klass as BaseClassRef;
+                        if (bcr != null)
+                                return new PEAPI.CustomModifiedType (peapi_type, modifier, bcr.PeapiClass);
+
+                        var pt = klass as PrimitiveTypeRef;
+                                return new PEAPI.CustomModifiedType (peapi_type, modifier, code_gen.PEFile.AddPrimitiveType ((PEAPI.PrimitiveType) pt.PeapiType));
+
+                        throw new NotSupportedException (klass.GetType ().ToString ());
                 }
 
                 public void MakePinned ()

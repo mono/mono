@@ -25,14 +25,15 @@
 
 #ifdef HAVE_SGEN_GC
 
-#include "sgen-gc.h"
+#include "sgen/sgen-gc.h"
 #include "sgen-toggleref.h"
+#include "sgen/sgen-client.h"
 
 
 /*only one of the two can be non null at a given time*/
 typedef struct {
-	void *strong_ref;
-	void *weak_ref;
+	GCObject *strong_ref;
+	GCObject *weak_ref;
 } MonoGCToggleRef;
 
 static MonoToggleRefStatus (*toggleref_callback) (MonoObject *obj);
@@ -90,9 +91,9 @@ sgen_process_togglerefs (void)
 		w);
 }
 
-void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
+void sgen_client_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
 {
-	CopyOrMarkObjectFunc copy_func = ctx.copy_func;
+	CopyOrMarkObjectFunc copy_func = ctx.ops->copy_or_mark_object;
 	SgenGrayQueue *queue = ctx.queue;
 	int i;
 
@@ -100,19 +101,19 @@ void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
 
 	for (i = 0; i < toggleref_array_size; ++i) {
 		if (toggleref_array [i].strong_ref) {
-			char *object = toggleref_array [i].strong_ref;
-			if (object >= start && object < end) {
+			GCObject *object = toggleref_array [i].strong_ref;
+			if ((char*)object >= start && (char*)object < end) {
 				SGEN_LOG (6, "\tcopying strong slot %d", i);
 				copy_func (&toggleref_array [i].strong_ref, queue);
 			}
 		}
 	}
-	sgen_drain_gray_stack (-1, ctx);
+	sgen_drain_gray_stack (ctx);
 }
 
-void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
+void sgen_client_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
 {
-	CopyOrMarkObjectFunc copy_func = ctx.copy_func;
+	CopyOrMarkObjectFunc copy_func = ctx.ops->copy_or_mark_object;
 	SgenGrayQueue *queue = ctx.queue;
 	int i;
 
@@ -120,9 +121,9 @@ void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
 
 	for (i = 0; i < toggleref_array_size; ++i) {
 		if (toggleref_array [i].weak_ref) {
-			char *object = toggleref_array [i].weak_ref;
+			GCObject *object = toggleref_array [i].weak_ref;
 
-			if (object >= start && object < end) {
+			if ((char*)object >= start && (char*)object < end) {
 				if (sgen_gc_is_object_ready_for_finalization (object)) {
 					SGEN_LOG (6, "\tcleaning weak slot %d", i);
 					toggleref_array [i].weak_ref = NULL; /* We defer compaction to only happen on the callback step. */
@@ -133,7 +134,7 @@ void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
 			}
 		}
 	}
-	sgen_drain_gray_stack (-1, ctx);
+	sgen_drain_gray_stack (ctx);
 }
 
 static void

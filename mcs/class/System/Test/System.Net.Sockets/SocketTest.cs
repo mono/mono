@@ -9,8 +9,11 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Threading;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
@@ -2505,6 +2508,24 @@ namespace MonoTests.System.Net.Sockets
 		public void IOControl ()
 		{
 		}
+
+		[Test]
+		public void TestDefaultsDualMode ()
+		{
+			using (var socket = new Socket (AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)){
+				Assert.IsTrue (socket.DualMode, "In Mono, DualMode must be true when constructing InterNetworkV6 sockets");
+			}
+
+			using (var socket = new Socket (SocketType.Stream, ProtocolType.Tcp)){
+				Assert.AreEqual (AddressFamily.InterNetworkV6, socket.AddressFamily, "When creating sockets of type stream/tcp, the address family should be InterNetworkV6");
+				Assert.IsTrue (socket.DualMode, "In Mono, DualMode must be true when constructing InterNetworkV6 sockets");
+
+				socket.DualMode = false;
+
+				Assert.IsFalse (socket.DualMode, "Setting of DualSocket should turn DualSockets off");
+			}
+			
+		}
 		
 		[Test]
 		public void ReceiveGeneric ()
@@ -3156,7 +3177,7 @@ namespace MonoTests.System.Net.Sockets
 
 			EndPoint remoteEP = new IPEndPoint (IPAddress.Loopback, 8001);
 			try {
-				s.ReceiveFrom ((Byte []) null, -1, (SocketFlags) 666,
+				s.ReceiveFrom ((Byte []) null, 0, (SocketFlags) 666,
 					ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -3178,7 +3199,7 @@ namespace MonoTests.System.Net.Sockets
 			byte [] buffer = new byte [5];
 			EndPoint remoteEP = null;
 			try {
-				s.ReceiveFrom (buffer, -1, (SocketFlags) 666, ref remoteEP);
+				s.ReceiveFrom (buffer, buffer.Length, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
@@ -3322,7 +3343,7 @@ namespace MonoTests.System.Net.Sockets
 			EndPoint remoteEP = null;
 
 			try {
-				s.ReceiveFrom (buffer, -1, -1, (SocketFlags) 666, ref remoteEP);
+				s.ReceiveFrom (buffer, 0, buffer.Length, (SocketFlags) 666, ref remoteEP);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
@@ -3458,7 +3479,46 @@ namespace MonoTests.System.Net.Sockets
 			ss.Close ();
 			s.Close ();
 		}
-		
+
+		static bool? supportsPortReuse;
+		static bool SupportsPortReuse ()
+		{
+			if (supportsPortReuse.HasValue)
+				return supportsPortReuse.Value;
+
+			supportsPortReuse = (bool) typeof (Socket).GetMethod ("SupportsPortReuse",
+					BindingFlags.Static | BindingFlags.NonPublic)
+					.Invoke (null, new object [] {});
+			return supportsPortReuse.Value;
+		}
+
+		// Test case for bug #31557
+		[Test]
+		public void TcpDoubleBind ()
+		{
+			using (Socket s = new Socket (AddressFamily.InterNetwork,
+						SocketType.Stream, ProtocolType.Tcp))
+			using (Socket ss = new Socket (AddressFamily.InterNetwork,
+						SocketType.Stream, ProtocolType.Tcp)) {
+				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+				s.Bind (new IPEndPoint (IPAddress.Any, 12345));
+				s.Listen(1);
+
+				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+				Exception ex = null;
+				try {
+					ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
+					ss.Listen(1);
+				} catch (SocketException e) {
+					ex = e;
+				}
+
+				Assert.AreEqual (SupportsPortReuse (), ex == null);
+			}
+		}
+
 		[Test]
 		[Category ("NotOnMac")]
                 public void ConnectedProperty ()
@@ -4249,7 +4309,7 @@ namespace MonoTests.System.Net.Sockets
 
 			Socket listenSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			
-			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 8001));
+			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 0));
 			listenSocket.Listen (1);
 
 			listenSocket.BeginAccept (new AsyncCallback (ReceiveCallback), listenSocket);

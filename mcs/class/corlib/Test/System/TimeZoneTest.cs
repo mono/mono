@@ -27,13 +27,13 @@ public class TimeZoneTest {
 		Assert.AreEqual("CEST", t1.DaylightName, "A02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		Assert.AreEqual("03/31/2002 02:00:00", d1.Start.ToString ("G"), "A03");
-		Assert.AreEqual("10/27/2002 03:00:00", d1.End.ToString ("G"), "A04");
+		Assert.AreEqual("03/31/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "A03");
+		Assert.AreEqual("10/27/2002 03:00:00", d1.End.ToString ("G", CultureInfo.InvariantCulture), "A04");
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "A05");
 	
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G"), "A06");
-		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G"), "A07");
+		Assert.AreEqual("03/31/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "A06");
+		Assert.AreEqual("10/27/1996 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "A07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "A08");
 	
 		DateTime d3 = new DateTime (2002,2,25);
@@ -46,6 +46,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d3).Ticks, "A12");
 		Assert.AreEqual(72000000000L, t1.GetUtcOffset (d4).Ticks, "A13");
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d5).Ticks, "A14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "A15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "A16");
 	}
 
 	private void EST (TimeZone t1) 
@@ -55,25 +60,31 @@ public class TimeZoneTest {
 		//Assert.AreEqual("Eastern Daylight Time", t1.DaylightName, "B02");
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G"), "B03");
-		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G"), "B04");
+		Assert.AreEqual("04/07/2002 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "B03");
+		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G", CultureInfo.InvariantCulture), "B04");
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "B05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		Assert.AreEqual("04/07/1996 02:00:00", d2.Start.ToString ("G"), "B06");
-		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G"), "B07");
+		Assert.AreEqual("04/07/1996 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "B06");
+		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "B07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "B08");
 
 		DateTime d3 = new DateTime (2002,2,25);
 		Assert.AreEqual(false, t1.IsDaylightSavingTime (d3), "B09");
 		DateTime d4 = new DateTime (2002,4,8);
 		Assert.AreEqual(true, t1.IsDaylightSavingTime (d4), "B10");
+		
 		DateTime d5 = new DateTime (2002,11,4);
 		Assert.AreEqual(false, t1.IsDaylightSavingTime (d5), "B11");
 
 		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d3).Ticks, "B12");
 		Assert.AreEqual(-144000000000L, t1.GetUtcOffset (d4).Ticks, "B13");
 		Assert.AreEqual(-180000000000L, t1.GetUtcOffset (d5).Ticks, "B14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "B15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "B16");
 	}
 
 	private void TST (TimeZone t1) 
@@ -101,13 +112,13 @@ public class TimeZoneTest {
 		Assert.IsTrue("BST" == t1.DaylightName || "IST" == t1.DaylightName, "D02");
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		Assert.AreEqual("03/31/2002 01:00:00", d1.Start.ToString ("G"), "D03");
-		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G"), "D04");
+		Assert.AreEqual("03/31/2002 01:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "D03");
+		Assert.AreEqual("10/27/2002 02:00:00", d1.End.ToString ("G", CultureInfo.InvariantCulture), "D04");
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "D05");
 	
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		Assert.AreEqual("03/31/1996 01:00:00", d2.Start.ToString ("G"), "D06");
-		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G"), "D07");
+		Assert.AreEqual("03/31/1996 01:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "D06");
+		Assert.AreEqual("10/27/1996 02:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "D07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "D08");
 	
 		DateTime d3 = new DateTime (2002,2,25);
@@ -120,6 +131,11 @@ public class TimeZoneTest {
 		Assert.AreEqual(0L, t1.GetUtcOffset (d3).Ticks, "D12");
 		Assert.AreEqual(36000000000L, t1.GetUtcOffset (d4).Ticks, "D13");
 		Assert.AreEqual(0L, t1.GetUtcOffset (d5).Ticks, "D14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d4.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "D15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "D16");
 	}
 
 	private void NZST(TimeZone t1) {
@@ -127,13 +143,13 @@ public class TimeZoneTest {
 		Assert.AreEqual("NZDT", t1.DaylightName, "E02");
 
 		DaylightTime d1 = t1.GetDaylightChanges (2013);
-		Assert.AreEqual("09/29/2013 02:00:00", d1.Start.ToString ("G"), "E03");
-		Assert.AreEqual("04/07/2013 03:00:00", d1.End.ToString ("G"), "E04");
+		Assert.AreEqual("09/29/2013 02:00:00", d1.Start.ToString ("G", CultureInfo.InvariantCulture), "E03");
+		Assert.AreEqual("04/07/2013 03:00:00", d1.End.ToString ("G", CultureInfo.InvariantCulture), "E04");
 		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "E05");
 
 		DaylightTime d2 = t1.GetDaylightChanges (2001);
-		Assert.AreEqual("10/07/2001 02:00:00", d2.Start.ToString ("G"), "E06");
-		Assert.AreEqual("03/18/2001 03:00:00", d2.End.ToString ("G"), "E07");
+		Assert.AreEqual("10/07/2001 02:00:00", d2.Start.ToString ("G", CultureInfo.InvariantCulture), "E06");
+		Assert.AreEqual("03/18/2001 03:00:00", d2.End.ToString ("G", CultureInfo.InvariantCulture), "E07");
 		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "E08");
 
 		DateTime d3 = new DateTime(2013,02,15);
@@ -146,10 +162,14 @@ public class TimeZoneTest {
 		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d3).Ticks, "E12");
 		Assert.AreEqual(36000000000L /*hour*/ * 12L, t1.GetUtcOffset (d4).Ticks, "E13");
 		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d5).Ticks, "E14");
+
+		// Test TimeZone methods with UTC DateTime in DST.
+		DateTime d6 = d5.ToUniversalTime ();
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d6), "E15");
+		Assert.AreEqual(0, t1.GetUtcOffset (d6).Ticks, "E16");
 	}
 
 	[Test]
-	[Culture ("")]
 	public void TestCtors ()
 	{
 		TimeZone t1 = TimeZone.CurrentTimeZone;

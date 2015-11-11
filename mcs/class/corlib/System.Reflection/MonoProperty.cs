@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 	
@@ -73,9 +74,87 @@ namespace System.Reflection {
 	internal delegate object GetterAdapter (object _this);
 	internal delegate R Getter<T,R> (T _this);
 
+	abstract class RuntimePropertyInfo : PropertyInfo, ISerializable
+	{
+		internal BindingFlags BindingFlags {
+			get {
+				return 0;
+			}
+		}
+
+		public override Module Module {
+			get {
+				return GetRuntimeModule ();
+			}
+		}
+
+		internal RuntimeType GetDeclaringTypeInternal ()
+		{
+			return (RuntimeType) DeclaringType;
+		}
+
+		RuntimeType ReflectedTypeInternal {
+			get {
+				return (RuntimeType) ReflectedType;
+			}
+		}
+
+		internal RuntimeModule GetRuntimeModule ()
+		{
+			return GetDeclaringTypeInternal ().GetRuntimeModule ();
+		}
+
+        #region Object Overrides
+        public override String ToString()
+        {
+            return FormatNameAndSig(false);
+        }
+
+        private string FormatNameAndSig(bool serialization)
+        {
+            StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName(serialization));
+
+            sbName.Append(" ");
+            sbName.Append(Name);
+
+			var pi = GetIndexParameters ();
+			if (pi.Length > 0) {
+				sbName.Append (" [");
+				ParameterInfo.FormatParameters (sbName, pi, 0, serialization);
+				sbName.Append ("]");
+			}
+
+            return sbName.ToString();
+        }
+        #endregion		
+
+        #region ISerializable Implementation
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new ArgumentNullException("info");
+            Contract.EndContractBlock();
+
+            MemberInfoSerializationHolder.GetSerializationInfo(
+                info,
+                Name,
+                ReflectedTypeInternal,
+                ToString(),
+                SerializationToString(),
+                MemberTypes.Property,
+                null);
+        }
+
+        internal string SerializationToString()
+        {
+            return FormatNameAndSig(true);
+        }
+        #endregion
+	}
+
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoProperty : PropertyInfo, ISerializable {
+	internal class MonoProperty : RuntimePropertyInfo {
 #pragma warning disable 649
 		internal IntPtr klass;
 		internal IntPtr prop;
@@ -366,29 +445,6 @@ namespace System.Reflection {
 			method.Invoke (obj, invokeAttr, binder, parms, culture);
 		}
 
-		public override string ToString ()
-		{
-			var sb = new StringBuilder ();
-
-			Type retType = PropertyType;
-			if (Type.ShouldPrintFullName (retType))
-				sb.Append (retType.ToString ());
-			else
-				sb.Append (retType.Name);
-
-			sb.Append (" ");
-			sb.Append (Name);
-
-			var pi = GetIndexParameters ();
-			if (pi.Length > 0) {
-				sb.Append (" [");
-				ParameterInfo.FormatParameters (sb, pi);
-				sb.Append ("]");
-			}
-
-			return sb.ToString ();
-		}
-
 		public override Type[] GetOptionalCustomModifiers () {
 			Type[] types = MonoPropertyInfo.GetTypeModifiers (this, true);
 			if (types == null)
@@ -401,13 +457,6 @@ namespace System.Reflection {
 			if (types == null)
 				return Type.EmptyTypes;
 			return types;
-		}
-
-		// ISerializable
-		public void GetObjectData (SerializationInfo info, StreamingContext context) 
-		{
-			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
-				ToString(), MemberTypes.Property);
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {

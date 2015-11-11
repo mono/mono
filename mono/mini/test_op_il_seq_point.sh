@@ -6,7 +6,7 @@ USE_AOT=$2
 TMP_FILE_PREFIX=$(basename $0).tmp
 BASEDIR=$(dirname $0)
 
-MONO_PATH=$BASEDIR/../../mcs/class/lib/net_4_5:$BASEDIR
+MONO_PATH=$BASEDIR/../../mcs/class/lib/net_4_x:$BASEDIR
 RUNTIME=$BASEDIR/../../runtime/mono-wrapper
 
 trap "rm -rf ${TMP_FILE_PREFIX}*" EXIT
@@ -18,6 +18,10 @@ tmp_file () {
 clean_aot () {
 	rm -rf *.exe..so *.exe.dylib *.exe.dylib.dSYM
 }
+
+# The test compares the generated native code size between a compilation with and without seq points.
+# In some architectures ie:amd64 when possible 32bit instructions and registers are used instead of 64bit ones.
+# Using MONO_DEBUG=single-imm-size avoids 32bit optimizations thus mantaining the native code size between compilations.
 
 get_methods () {
 	if [ -z $4 ]; then
@@ -39,14 +43,14 @@ get_method () {
 
 diff_methods () {
 	TMP_FILE=$(tmp_file)
-	echo "$(get_methods $1 $2 $3 $4)" >$TMP_FILE
-	diff <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points get_methods $1 $2 $3 $4)")
+	echo "$(MONO_DEBUG=single-imm-size get_methods $1 $2 $3 $4)" >$TMP_FILE
+	diff <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points,single-imm-size get_methods $1 $2 $3 $4)")
 }
 
 diff_method () {
 	TMP_FILE=$(tmp_file)
-	echo "$(get_method $1 $2 $3 $4 $5)" >$TMP_FILE
-	sdiff -w 150 <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points get_method $1 $2 $3 $4 $5 | grep -Ev il_seq_point)")
+	echo "$(MONO_DEBUG=single-imm-size get_method $1 $2 $3 $4 $5)" >$TMP_FILE
+	sdiff -w 150 <(cat $TMP_FILE) <(echo "$(MONO_DEBUG=gen-compact-seq-points,single-imm-size get_method $1 $2 $3 $4 $5 | grep -Ev il_seq_point)")
 }
 
 get_method_name () {
@@ -85,27 +89,29 @@ while read line; do
 	fi
 done < $TMP_FILE
 
-echo -n "              <test-case name=\"MonoTests.op_il_seq_point.${TEST_FILE}${USE_AOT}\" executed=\"True\" time=\"0\" asserts=\"0\" success=\"" >> TestResults_op_il_seq_point.xml
+TESTRESULT_FILE=TestResult-op_il_seq_point.xml
+
+echo -n "              <test-case name=\"MonoTests.op_il_seq_point.${TEST_FILE}${USE_AOT}\" executed=\"True\" time=\"0\" asserts=\"0\" success=\"" >> $TESTRESULT_FILE
 
 if [ $CHANGES != 0 ]
 then
 	METHOD_NAME=$(get_method_name "$METHOD")
 
-	echo "False\">" >> TestResults_op_il_seq_point.xml
-	echo "                <failure>" >> TestResults_op_il_seq_point.xml
-	echo -n "                  <message><![CDATA[" >> TestResults_op_il_seq_point.xml
-	echo "Detected OP_IL_SEQ_POINT incompatibility on $TEST_FILE" >> TestResults_op_il_seq_point.xml
-	echo "  $CHANGES methods differ when sequence points are enabled." >> TestResults_op_il_seq_point.xml
-	echo '  This is probably caused by a runtime optimization that is not handling OP_IL_SEQ_POINT' >> TestResults_op_il_seq_point.xml
-	echo '' >> TestResults_op_il_seq_point.xml
-	echo "Diff $METHOD_NAME" >> TestResults_op_il_seq_point.xml
-	echo "Without IL_OP_SEQ_POINT                                                         With IL_OP_SEQ_POINT" >> TestResults_op_il_seq_point.xml
-	echo -n "$(diff_method $MONO_PATH $RUNTIME $TEST_FILE $METHOD_NAME $USE_AOT)" >> TestResults_op_il_seq_point.xml
-	echo "]]></message>" >> TestResults_op_il_seq_point.xml
-	echo "                  <stack-trace>" >> TestResults_op_il_seq_point.xml
-	echo "                  </stack-trace>" >> TestResults_op_il_seq_point.xml
-	echo "                </failure>" >> TestResults_op_il_seq_point.xml
-	echo "              </test-case>" >> TestResults_op_il_seq_point.xml
+	echo "False\">" >> $TESTRESULT_FILE
+	echo "                <failure>" >> $TESTRESULT_FILE
+	echo -n "                  <message><![CDATA[" >> $TESTRESULT_FILE
+	echo "Detected OP_IL_SEQ_POINT incompatibility on $TEST_FILE" >> $TESTRESULT_FILE
+	echo "  $CHANGES methods differ when sequence points are enabled." >> $TESTRESULT_FILE
+	echo '  This is probably caused by a runtime optimization that is not handling OP_IL_SEQ_POINT' >> $TESTRESULT_FILE
+	echo '' >> $TESTRESULT_FILE
+	echo "Diff $METHOD_NAME" >> $TESTRESULT_FILE
+	echo "Without IL_OP_SEQ_POINT                                                         With IL_OP_SEQ_POINT" >> $TESTRESULT_FILE
+	echo -n "$(diff_method $MONO_PATH $RUNTIME $TEST_FILE $METHOD_NAME $USE_AOT)" >> $TESTRESULT_FILE
+	echo "]]></message>" >> $TESTRESULT_FILE
+	echo "                  <stack-trace>" >> $TESTRESULT_FILE
+	echo "                  </stack-trace>" >> $TESTRESULT_FILE
+	echo "                </failure>" >> $TESTRESULT_FILE
+	echo "              </test-case>" >> $TESTRESULT_FILE
 
 	echo ''
 	echo "Detected OP_IL_SEQ_POINT incompatibility on $TEST_FILE"
@@ -118,5 +124,5 @@ then
 	echo "$(diff_method $MONO_PATH $RUNTIME $TEST_FILE $METHOD_NAME $USE_AOT)"
 	exit 1
 else
-	echo "True\" />" >> TestResults_op_il_seq_point.xml
+	echo "True\" />" >> $TESTRESULT_FILE
 fi

@@ -96,8 +96,9 @@ namespace System.ServiceModel.Description
 					MetadataSection.CreateFromServiceDescription (sd));
 
 			foreach (XmlSchema xs in GeneratedXmlSchemas.Schemas ())
-				metadata.MetadataSections.Add (
-					MetadataSection.CreateFromSchema (xs));
+				if (xs.TargetNamespace != XmlSchema.Namespace)
+					metadata.MetadataSections.Add (
+						MetadataSection.CreateFromSchema (xs));
 				
 			return metadata;
 		}
@@ -459,7 +460,6 @@ namespace System.ServiceModel.Description
 			get {
 				if (xsd_exporter == null)
 					xsd_exporter = new XsdDataContractExporter ();
-
 				return xsd_exporter;
 			}
 		}
@@ -650,6 +650,9 @@ namespace System.ServiceModel.Description
 				if (import.Namespace == ns)
 					return;
 			}
+
+			if (ns == string.Empty)
+				return;
 
 			XmlSchemaImport imp = new XmlSchemaImport ();
 			imp.Namespace = ns;

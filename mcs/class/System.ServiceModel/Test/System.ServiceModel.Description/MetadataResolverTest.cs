@@ -38,17 +38,19 @@ using System.ServiceModel;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
 	public class MetadataResolverTest
 	{
-		string url = "http://localhost:37564/echo/mex";
+		string url;
 		//string url = "http://192.168.0.1:8080/echo/mex";
 
 		static HttpListener listener;
 		IAsyncResult current_request;
-		int remaining;
+		int remaining, port;
 
 		static readonly string mex = File.ReadAllText ("Test/System.ServiceModel.Description/dump.xml");
 
@@ -58,7 +60,9 @@ namespace MonoTests.System.ServiceModel.Description
 			if (listener != null)
 				listener.Stop ();
 			listener = new HttpListener ();
-			listener.Prefixes.Add ("http://*:37564/echo/");
+			port = NetworkHelpers.FindFreePort ();
+			url = "http://localhost:" + port + "/echo/mex";
+			listener.Prefixes.Add ("http://*:" + port + "/echo/");
 			listener.Start ();
 			current_request = listener.BeginGetContext (OnReceivedRequest, null);
 			remaining = 1;

@@ -830,6 +830,7 @@ public class ConstructorBuilderTest
 
 	// Same as in MethodBuilderTest
 	[Test]
+	[Category ("MobileNotWorking")] // No declarative security in the mobile profile
 	public void AddDeclarativeSecurity_Complete ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -851,6 +852,7 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")] // No declarative security in the mobile profile
 	public void AddDeclarativeSecurity_PSet_Null ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -867,6 +869,7 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")] // No declarative security in the mobile profile
 	public void AddDeclarativeSecurity_Action_Invalid ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -892,6 +895,7 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
+	[Category ("MobileNotWorking")] // No declarative security in the mobile profile
 	public void AddDeclarativeSecurity_Action_Duplicate ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (

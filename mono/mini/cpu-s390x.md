@@ -131,15 +131,15 @@ float_rem: dest:f src1:f src2:f len:16
 float_rem_un: dest:f src1:f src2:f len:16
 float_sub: dest:f src1:f src2:f len:6
 fmove: dest:f src1:f len:4
-move_f_to_i4: dest:i src1:f len:4
-move_i4_to_f: dest:f src1:i len:4
+move_f_to_i4: dest:i src1:f len:14
+move_i4_to_f: dest:f src1:i len:14
 move_f_to_i8: dest:i src1:f len:4
-move_i8_to_f: dest:f src1:i len:4
+move_i8_to_f: dest:f src1:i len:8
 i8const: dest:i len:20
 icompare: src1:i src2:i len:4
 icompare_imm: src1:i len:18
 iconst: dest:i len:40
-jmp: len:46
+jmp: len:50
 label: len:0
 lcall: dest:o len:22 clob:c
 lcall_membase: dest:o src1:b len:12 clob:c
@@ -389,3 +389,6 @@ gc_liveness_def: len:0
 gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
+gc_safe_point: clob:c src1:i len:32
+
+generic_class_init: src1:A len:32 clob:c

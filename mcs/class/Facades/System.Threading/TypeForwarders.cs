@@ -48,3 +48,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.Volatile))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.WaitHandleCannotBeOpenedException))]
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.AsyncLocal<>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.AsyncLocalValueChangedArgs<>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.ContextCallback))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Threading.ExecutionContext))]

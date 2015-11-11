@@ -1,0 +1,28 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="DocTest-enumerations" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="MyNamespace">
+      <Type Name="MyClass" Kind="Class" />
+      <Type Name="MyEnum" Kind="Enumeration" />
+      <Type Name="MyEnumAttribute" Kind="Class" />
+      <Type Name="MyFlagEnumAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="ObjCRuntime">
+      <Type Name="Platform" Kind="Enumeration" />
+    </Namespace>
+  </Types>
+  <Title>DocTest-enumerations</Title>
+</Overview>

@@ -27,7 +27,6 @@
 //
 //
 
-#if NET_4_0
 
 using System;
 using System.Threading;
@@ -345,18 +344,18 @@ namespace MonoTests.System.Threading.Tasks
 			CountdownEvent cde = new CountdownEvent (2);
 			var mre = new ManualResetEvent (false);
 			var tasks = new[] {
-				Task.Factory.StartNew (delegate { mre.WaitOne (); }),
+				Task.Factory.StartNew (delegate { Assert.IsTrue (mre.WaitOne (10000), "#0"); }),
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } }),
 				Task.Factory.StartNew (delegate { try { throw new ApplicationException (); } finally { cde.Signal (); } })
 			};
 
-			Assert.IsTrue (cde.Wait (1000), "#1");
+			Assert.IsTrue (cde.Wait (5000), "#1");
 			Assert.IsFalse (Task.WaitAll (tasks, 1000), "#2");
 
 			mre.Set ();
 
 			try {
-				Assert.IsTrue (Task.WaitAll (tasks, 1000), "#3");
+				Task.WaitAll (tasks, 1000);
 				Assert.Fail ("#4");
 			} catch (AggregateException e) {
 				Assert.AreEqual (2, e.InnerExceptions.Count, "#5");
@@ -1159,7 +1158,7 @@ namespace MonoTests.System.Threading.Tasks
 			});
 			var onErrorTask = testTask.ContinueWith (x => continuationRan = true, TaskContinuationOptions.OnlyOnFaulted);
 			testTask.RunSynchronously ();
-			onErrorTask.Wait (100);
+			onErrorTask.Wait (1000);
 			Assert.IsNotNull (e);
 			Assert.IsTrue (continuationRan);
 		}
@@ -1889,7 +1888,7 @@ namespace MonoTests.System.Threading.Tasks
 			bool? is_bg = null;
 			var t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; });
 			t.Start ();
-			t.Wait ();
+			Assert.IsTrue (t.Wait (5000), "#0");
 			Assert.IsTrue ((bool)is_tp, "#1");
 			Assert.IsTrue ((bool)is_bg, "#2");
 
@@ -1897,7 +1896,7 @@ namespace MonoTests.System.Threading.Tasks
 			is_bg = null;
 			t = new Task (() => { is_tp = Thread.CurrentThread.IsThreadPoolThread; is_bg = Thread.CurrentThread.IsBackground; }, TaskCreationOptions.LongRunning);
 			t.Start ();
-			t.Wait ();
+			Assert.IsTrue (t.Wait (5000), "#10");
 			Assert.IsFalse ((bool) is_tp, "#11");
 			Assert.IsTrue ((bool) is_bg, "#12");
 		}
@@ -2118,4 +2117,3 @@ namespace MonoTests.System.Threading.Tasks
 #endif
 	}
 }
-#endif

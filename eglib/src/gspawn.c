@@ -74,13 +74,18 @@
 #define NO_INTR(var,cmd) do { (var) = (cmd); } while ((var) == -1 && errno == EINTR)
 #define CLOSE_PIPE(p) do { close (p [0]); close (p [1]); } while (0)
 
-#if defined(__APPLE__) && !defined (__arm__) && !defined (__aarch64__)
+#if defined(__APPLE__)
+#if defined (TARGET_OSX)
 /* Apple defines this in crt_externs.h but doesn't provide that header for 
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
-gchar ***_NSGetEnviron();
+gchar ***_NSGetEnviron(void);
 #define environ (*_NSGetEnviron())
+#else
+static char *mono_environ[1] = { NULL };
+#define environ mono_environ
+#endif /* defined (TARGET_OSX) */
 #elif defined(_MSC_VER)
 /* MS defines this in stdlib.h */
 #else
@@ -248,6 +253,9 @@ g_spawn_command_line_sync (const gchar *command_line,
 				GError **error)
 {
 #ifdef G_OS_WIN32
+#elif !defined (HAVE_FORK) || !defined (HAVE_EXECV)
+	fprintf (stderr, "g_spawn_command_line_sync not supported on this platform\n");
+	return FALSE;
 #else
 	pid_t pid;
 	gchar **argv;
@@ -344,6 +352,9 @@ g_spawn_async_with_pipes (const gchar *working_directory,
 			GError **error)
 {
 #ifdef G_OS_WIN32
+#elif !defined (HAVE_FORK) || !defined (HAVE_EXECVE)
+	fprintf (stderr, "g_spawn_async_with_pipes is not supported on this platform\n");
+	return FALSE;
 #else
 	pid_t pid;
 	int info_pipe [2];

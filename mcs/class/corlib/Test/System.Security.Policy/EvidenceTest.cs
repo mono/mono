@@ -297,23 +297,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsNotNull (e.SyncRoot, "SyncRoot");
 		}
 
-#if !NET_4_0
-		[Test]
-		public void Equals_GetHashCode () 
-		{
-			Evidence e1 = new Evidence ();
-			Evidence e2 = new Evidence ();
-			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-1");
-			Assert.IsTrue (e1.Equals (e2), "e1.Equals(e2)");
-			e1.AddAssembly (String.Empty);
-			e2.AddAssembly (String.Empty);
-			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-2");
-			e1.AddHost (String.Empty);
-			e2.AddHost (String.Empty);
-			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
-			Assert.IsTrue (e2.Equals (e1), "e2.Equals(e1)");
-		}
-#endif
 
 		[Test]
 		public void Clear () 

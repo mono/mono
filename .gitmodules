@@ -17,9 +17,6 @@
 [submodule "external/ikvm"]
 	path = external/ikvm
 	url = git://github.com/mono/ikvm-fork.git
-[submodule "external/Lucene.Net"]
-	path = external/Lucene.Net
-	url = git://github.com/mono/lucene.net.git
 [submodule "external/ikdasm"]
 	path = external/ikdasm
 	url = git://github.com/mono/ikdasm.git
@@ -30,3 +27,6 @@
 [submodule "external/reference-assemblies"]
 	path = external/binary-reference-assemblies
 	url = git://github.com/mono/reference-assemblies.git
+[submodule "external/Lucene.Net.Light"]
+	path = external/Lucene.Net.Light
+	url = git://github.com/mono/Lucene.Net.Light.git

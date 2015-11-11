@@ -1009,5 +1009,82 @@ namespace MonoTests.System.ServiceModel.Description
 			[MyWebGet]
 			string Get ();
 		}
+
+		public interface IA1 : IB1, IB2 
+		{
+			void MethodA1 ();
+		}
+
+		public interface IA2 : IB1, IB2 
+		{
+			void MethodA2 ();
+		}
+
+		[ServiceContract]
+		public interface IB1 : IC1, IC2 
+		{
+			[OperationContract]				
+			void MethodB1 ();
+		}
+
+		[ServiceContract]
+		public interface IB2 : IC1, IC2 
+		{
+			[OperationContract]				
+			void MethodB2 ();
+		}
+
+		public interface IC1 {}
+		public interface IC2 {}
+
+		[ServiceContract]
+		public interface IS : IA1, IA2 
+		{
+			[OperationContract]				
+			void MethodS()	;	
+		}
+
+		public class S : IS
+		{
+			#region IS implementation
+			public void MethodS ()
+			{
+				throw new NotImplementedException ();
+			}
+			#endregion
+			#region IA2 implementation
+			public void MethodA2 ()
+			{
+				throw new NotImplementedException ();
+			}
+			#endregion
+			#region IA1 implementation
+			public void MethodA1 ()
+			{
+				throw new NotImplementedException ();
+			}
+			#endregion
+			#region IB2 implementation
+			public void MethodB2 ()
+			{
+				throw new NotImplementedException ();
+			}
+			#endregion
+			#region IB1 implementation
+			public void MethodB1 ()
+			{
+				throw new NotImplementedException ();
+			}
+			#endregion
+
+		}
+		[Test]
+		public void DualSpreadingInheritanceTest()
+		{
+			var cd = ContractDescription.GetContract (typeof(S));
+			Assert.IsNotNull(cd);
+			Assert.IsTrue (cd.Name == "IS");
+		}
+
 	}
 }

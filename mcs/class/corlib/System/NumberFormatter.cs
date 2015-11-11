@@ -52,10 +52,6 @@ namespace System
 
 		const int SingleDefPrecision = 7;
 		const int DoubleDefPrecision = 15;
-		const int Int8DefPrecision = 3;
-		const int UInt8DefPrecision = 3;
-		const int Int16DefPrecision = 5;
-		const int UInt16DefPrecision = 5;
 		const int Int32DefPrecision = 10;
 		const int UInt32DefPrecision = 10;
 		const int Int64DefPrecision = 19;
@@ -307,7 +303,7 @@ namespace System
 
 		// Parse the given format and initialize the following fields:
 		//   _isCustomFormat, _specifierIsUpper, _specifier & _precision.
-		public NumberFormatter (Thread current)
+		NumberFormatter (Thread current)
 		{
 			_cbuf = EmptyArray<char>.Value;
 			if (current == null)
@@ -353,8 +349,6 @@ namespace System
 		private void InitHex (ulong value)
 		{
 			switch (_defPrecision) {
-				case Int8DefPrecision:  value = (byte) value;    break;
-				case Int16DefPrecision: value = (ushort) value;  break;
 				case Int32DefPrecision: value = (uint) value;    break;
 			}
 			_val1 = (uint)value;
@@ -580,7 +574,7 @@ namespace System
 			return NumberFormatInfo.GetInstance (fp);
 		}
 
-		public CultureInfo CurrentCulture {
+		CultureInfo CurrentCulture {
 			set {
 				if (value != null && value.IsReadOnly)
 					_nfi = value.NumberFormat;
@@ -787,42 +781,6 @@ namespace System
 				threadNumberFormatter = this;
 		}
 
-		public static string NumberToString (string format, sbyte value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			inst.Init (format, value, Int8DefPrecision);
-			string res = inst.IntegerToString (format, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (string format, byte value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			inst.Init (format, value, UInt8DefPrecision);
-			string res = inst.IntegerToString (format, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (string format, ushort value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			inst.Init (format, value, Int16DefPrecision);
-			string res = inst.IntegerToString (format, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (string format, short value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			inst.Init (format, value, UInt16DefPrecision);
-			string res = inst.IntegerToString (format, fp);
-			inst.Release();
-			return res;
-		}
-
 		public static string NumberToString (string format, uint value, IFormatProvider fp)
 		{
 			NumberFormatter inst = GetInstance (fp);
@@ -910,110 +868,6 @@ namespace System
 			return res;
 		}
 
-		public static string NumberToString (uint value, IFormatProvider fp)
-		{
-			if (value >= HundredMillion)
-				return NumberToString (null, value, fp);
-
-			NumberFormatter inst = GetInstance (fp);
-			string res = inst.FastIntegerToString ((int)value, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (int value, IFormatProvider fp)
-		{
-			if (value >= HundredMillion || value <= -HundredMillion)
-				return NumberToString (null, value, fp);
-
-			NumberFormatter inst = GetInstance (fp);
-			string res = inst.FastIntegerToString (value, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (ulong value, IFormatProvider fp)
-		{
-			if (value >= HundredMillion)
-				return NumberToString (null, value, fp);
-
-			NumberFormatter inst = GetInstance (fp);
-			string res = inst.FastIntegerToString ((int)value, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (long value, IFormatProvider fp)
-		{
-			if (value >= HundredMillion || value <= -HundredMillion)
-				return NumberToString (null, value, fp);
-
-			NumberFormatter inst = GetInstance (fp);
-			string res = inst.FastIntegerToString ((int)value, fp);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (float value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			inst.Init (null, value, SingleDefPrecision);
-			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
-			string res;
-			if (inst._NaN)
-				res = nfi.NaNSymbol;
-			else if (inst._infinity)
-				if (inst._positive)
-					res = nfi.PositiveInfinitySymbol;
-				else
-					res = nfi.NegativeInfinitySymbol;
-			else
-				res = inst.FormatGeneral (-1, nfi);
-			inst.Release();
-			return res;
-		}
-
-		public static string NumberToString (double value, IFormatProvider fp)
-		{
-			NumberFormatter inst = GetInstance (fp);
-			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
-			inst.Init (null, value, DoubleDefPrecision);
-			string res;
-			if (inst._NaN)
-				res = nfi.NaNSymbol;
-			else if (inst._infinity)
-				if (inst._positive)
-					res = nfi.PositiveInfinitySymbol;
-				else
-					res = nfi.NegativeInfinitySymbol;
-			else
-				res = inst.FormatGeneral (-1, nfi);
-			inst.Release();
-			return res;
-		}
-
-		private string FastIntegerToString (int value, IFormatProvider fp)
-		{
-			if (value < 0) {
-				string sign = GetNumberFormatInstance(fp).NegativeSign;
-				ResetCharBuf (8 + sign.Length);
-				value = -value;
-				Append (sign);
-			}
-			else
-				ResetCharBuf (8);
-
-			if (value >= 10000) {
-				int v = value / 10000;
-				FastAppendDigits (v, false);
-				FastAppendDigits (value - v * 10000, true);
-			}
-			else
-				FastAppendDigits (value, false);
-
-			return new string (_cbuf, 0, _ind);
-		}
-
 		private string IntegerToString (string format, IFormatProvider fp)
 		{
 			NumberFormatInfo nfi = GetNumberFormatInstance (fp);
@@ -1066,7 +920,7 @@ namespace System
 			}
 		}
 
-		public string FormatCurrency (int precision, NumberFormatInfo nfi)
+		string FormatCurrency (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.CurrencyDecimalDigits);
 			RoundDecimal (precision);
@@ -1134,7 +988,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawCurrencyGroupSizes, nfi.CurrencyGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.CurrencyDecimalSeparator);
@@ -1236,7 +1090,7 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-		public string FormatFixedPoint (int precision, NumberFormatInfo nfi)
+		string FormatFixedPoint (int precision, NumberFormatInfo nfi)
 		{
 			if (precision == -1)
 				precision = nfi.NumberDecimalDigits;
@@ -1322,7 +1176,7 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-		public string FormatNumber (int precision, NumberFormatInfo nfi)
+		string FormatNumber (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.NumberDecimalDigits);
 			ResetCharBuf (IntegerDigits * 3 + precision);
@@ -1343,7 +1197,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawNumberGroupSizes, nfi.NumberGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.NumberGroupSizes, nfi.NumberGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.NumberDecimalSeparator);
@@ -1368,7 +1222,7 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-		public string FormatPercent (int precision, NumberFormatInfo nfi)
+		string FormatPercent (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.PercentDecimalDigits);
 			Multiply10(2);
@@ -1394,7 +1248,7 @@ namespace System
 				}
 			}
 
-			AppendIntegerStringWithGroupSeparator (nfi.RawPercentGroupSizes, nfi.PercentGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.PercentGroupSizes, nfi.PercentGroupSeparator);
 
 			if (precision > 0) {
 				Append (nfi.PercentDecimalSeparator);
@@ -1427,7 +1281,7 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-		public string FormatExponential (int precision, NumberFormatInfo nfi)
+		 string FormatExponential (int precision, NumberFormatInfo nfi)
 		{
 			if (precision == -1)
 				precision = DefaultExpPrecision;
@@ -1460,7 +1314,7 @@ namespace System
 			return new string (_cbuf, 0, _ind);
 		}
 
-		public string FormatCustom (string format, NumberFormatInfo nfi)
+		string FormatCustom (string format, NumberFormatInfo nfi)
 		{
 			bool p = _positive;
 			int offset = 0;
@@ -1746,27 +1600,6 @@ namespace System
 				v = 0;
 			v >>= (start & 0x7) << 2;
 			_cbuf [_ind++] = (char)('0' | v & 0xf);
-		}
-
-		unsafe private void FastAppendDigits (int val, bool force)
-		{
-			int i = _ind;
-			int digits;
-			if (force || val >= 100) {
-				int v = (val * 5243) >> 19;
-				digits = DecHexDigits [v];
-				if (force || val >= 1000)
-					_cbuf [i++] = (char)('0' | digits >> 4);
-				_cbuf [i++] = (char)('0' | (digits & 0xf));
-				digits = DecHexDigits [val - v * 100];
-			}
-			else
-				digits = DecHexDigits [val];
-
-			if (force || val >= 10)
-				_cbuf [i++] = (char)('0' | digits >> 4);
-			_cbuf [i++] = (char)('0' | (digits & 0xf));
-			_ind = i;
 		}
 
 		private void AppendDigits (int start, int end)
@@ -2168,7 +2001,7 @@ namespace System
 				int sb_int_index = 0;
 				int sb_dec_index = 0;
 
-				int[] groups = nfi.RawNumberGroupSizes;
+				int[] groups = nfi.NumberGroupSizes;
 				string groupSeparator = nfi.NumberGroupSeparator;
 				int intLen = 0, total = 0, groupIndex = 0, counter = 0, groupSize = 0;
 				if (UseGroup && groups.Length > 0) {

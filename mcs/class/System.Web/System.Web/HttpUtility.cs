@@ -511,7 +511,7 @@ namespace System.Web {
 			if (value == null)
 				return null;
 
-#if !MOBILE
+#if !(MOBILE || NO_SYSTEM_WEB_DEPENDENCY)
 			IHtmlString htmlString = value as IHtmlString;
 			if (htmlString != null)
 				return htmlString.ToHtmlString ();
