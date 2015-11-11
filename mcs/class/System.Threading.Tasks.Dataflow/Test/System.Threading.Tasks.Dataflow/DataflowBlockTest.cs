@@ -60,7 +60,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var block = new BufferBlock<int> ();
 			block.Complete ();
 			AssertEx.Throws<InvalidOperationException> (
-				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+				() => block.Receive (TimeSpan.FromMilliseconds (1000)));
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 		{
 			var block = new BufferBlock<int> ();
 			AssertEx.Throws<TimeoutException> (
-				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+				() => block.Receive (TimeSpan.FromMilliseconds (1000)));
 		}
 
 		[Test]
@@ -169,7 +169,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.AreEqual (1, target.Receive ());
 
-			Assert.IsTrue (task.Wait (100));
+			Assert.IsTrue (task.Wait (1000));
 			Assert.IsTrue (task.Result);
 		}
 
@@ -187,7 +187,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			target.Complete ();
 
-			Assert.IsTrue (task.Wait (100));
+			Assert.IsTrue (task.Wait (1000));
 			Assert.IsFalse (task.Result);
 		}
 

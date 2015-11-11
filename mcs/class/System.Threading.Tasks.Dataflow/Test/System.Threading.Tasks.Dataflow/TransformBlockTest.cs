@@ -91,7 +91,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			block.Complete ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]

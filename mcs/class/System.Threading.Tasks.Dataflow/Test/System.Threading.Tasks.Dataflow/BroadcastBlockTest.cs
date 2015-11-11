@@ -58,7 +58,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue (broadcast.Post (42));
 
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsTrue (act1);
 			Assert.IsTrue (act2);
@@ -81,7 +81,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			broadcast.LinkTo (action);
 
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsTrue (act);
 		}
@@ -99,7 +99,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (broadcast.Post (2));
 
 			Assert.AreEqual (1, target.Receive (TimeSpan.FromMilliseconds (0)));
-			Assert.AreEqual (2, target.Receive (TimeSpan.FromMilliseconds (100)));
+			Assert.AreEqual (2, target.Receive (TimeSpan.FromMilliseconds (1000)));
 		}
 
 		[Test]
@@ -200,7 +200,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (broadcast.Post (2));
 
 			AssertEx.Throws<TimeoutException> (
-				() => target.Receive (TimeSpan.FromMilliseconds (100)));
+				() => target.Receive (TimeSpan.FromMilliseconds (1000)));
 
 			scheduler.ExecuteAll ();
 
@@ -269,7 +269,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue (broadcast.Post (source));
 
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsNotNull (act1);
 			Assert.IsNotNull (act2);

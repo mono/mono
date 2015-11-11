@@ -59,7 +59,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			foreach (var block in blocks) {
 				var ae =
-					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+					AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 				Assert.AreEqual (1, ae.InnerExceptions.Count);
 				Assert.IsInstanceOfType (typeof(TaskCanceledException), ae.InnerExceptions [0]);
 				Assert.IsTrue (block.Completion.IsCanceled);
@@ -103,7 +103,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 					source.LinkTo (new BufferBlock<int> ());
 				}
-				Assert.IsTrue (block.Completion.Wait (500));
+				Assert.IsTrue (block.Completion.Wait (1000));
 
 				CollectionAssert.AreEquivalent (
 					Enumerable.Range (0, 100), queue.Select (t => t.Item1));
@@ -243,7 +243,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsNotNull (action);
 
-			Assert.IsTrue (action.Completion.Wait (100));
+			Assert.IsTrue (action.Completion.Wait (1000));
 			Assert.IsTrue (task.Wait (0));
 		}
 
@@ -405,7 +405,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			evt.Set ();
 
-			Assert.IsTrue (Task.WaitAll (new Task[] { task1, task2 }, 100));
+			Assert.IsTrue (Task.WaitAll (new Task[] { task1, task2 }, 1000));
 
 			CollectionAssert.AreEquivalent (
 				new[]

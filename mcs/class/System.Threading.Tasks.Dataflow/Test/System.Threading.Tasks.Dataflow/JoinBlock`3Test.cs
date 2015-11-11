@@ -50,12 +50,12 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			block.Target1.Post (42);
 
-			evt.Wait (500);
+			evt.Wait (1000);
 			Assert.IsNull (tuple);
 
 			block.Target2.Post (24);
 
-			evt.Wait (500);
+			evt.Wait (1000);
 			Assert.IsNull (tuple);
 
 			block.Target3.Post (44);
@@ -79,7 +79,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Tuple<int, int, int> tuple;
 			Assert.IsFalse (block.TryReceive (out tuple));
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -108,7 +108,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			scheduler.ExecuteAll ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -148,7 +148,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (block.TryReceive (out tuple));
 			Assert.AreEqual (Tuple.Create (11, 21, 31), tuple);
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 	}
 }
