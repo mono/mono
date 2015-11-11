@@ -87,14 +87,15 @@ namespace Microsoft.Build.Tasks {
 				string config;
 
 				string guid_str = item.GetMetadata ("Project");
-				Guid guid;
-				if (!TryParseGuid (guid_str, out guid)) {
+
+				Guid guid = Guid.Empty;
+				if (!string.IsNullOrEmpty(guid_str) && !TryParseGuid (guid_str, out guid)) {
 					Log.LogError ("Project reference '{0}' has invalid or missing guid for metadata 'Project'.",
 							item.ItemSpec);
 					return false;
 				}
 
-				if (guidToConfigPlatform.TryGetValue (guid, out config)) {
+				if (guid != Guid.Empty && guidToConfigPlatform.TryGetValue (guid, out config)) {
 					string [] parts = config.Split (new char [] {'|'}, 2);
 
 					ITaskItem new_item = new TaskItem (item);
