@@ -50,7 +50,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.AreEqual (42, block.Receive ());
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.RanToCompletion, block.Completion.Status);
 		}
@@ -62,7 +62,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (block.Post (42));
 			((IDataflowBlock)block).Fault (new Exception ());
 
-			AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+			AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 			Assert.IsTrue (block.Completion.IsCompleted);
 			Assert.AreEqual (TaskStatus.Faulted, block.Completion.Status);
 			Assert.IsFalse (block.Post (43));
@@ -78,7 +78,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			tokenSource.Cancel ();
 
 			var ae = AssertEx.Throws<AggregateException> (
-				() => block.Completion.Wait (100));
+				() => block.Completion.Wait (1000));
 			Assert.AreEqual (1, ae.InnerExceptions.Count);
 			Assert.AreEqual (typeof(TaskCanceledException), ae.InnerException.GetType ());
 
@@ -208,7 +208,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			((IDataflowBlock)block).Fault (new Exception ("fault"));
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
@@ -259,7 +259,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			tokenSource.Cancel ();
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
@@ -289,7 +289,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			evt.Set ();
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("action", exception.InnerException.Message);
@@ -309,7 +309,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			((IDataflowBlock)block).Fault (new Exception ("fault"));
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual (typeof(TaskCanceledException),
@@ -341,7 +341,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Thread.Sleep (100);
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual (typeof(TaskCanceledException),
@@ -373,7 +373,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Thread.Sleep (100);
 
 			var exception =
-				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => block.Completion.Wait (1000));
 
 			Assert.AreEqual (1, exception.InnerExceptions.Count);
 			Assert.AreEqual ("fault", exception.InnerException.Message);

@@ -54,7 +54,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue (block.Target3.Post ("foo"));
 
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsNotNull (result);
 			CollectionAssert.AreEqual (new[] { 1 }, result.Item1);
@@ -86,7 +86,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			CollectionAssert.IsEmpty (batch.Item2);
 			CollectionAssert.IsEmpty (batch.Item3);
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -125,7 +125,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			scheduler.ExecuteAll ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 	}
 }

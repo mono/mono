@@ -56,7 +56,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue(source.Post(1));
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsTrue(task.Result);
 		}
 
@@ -68,7 +68,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var task = source.OutputAvailableAsync();
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsFalse(task.Result);
 		}
 
@@ -83,7 +83,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			source.Complete();
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsFalse(task.Result);
 		}
 
@@ -95,7 +95,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			var task = source.OutputAvailableAsync();
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsFalse(task.Result);
 		}
 
@@ -110,7 +110,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			((IDataflowBlock)source).Fault(new Exception());
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsFalse(task.Result);
 		}
 
@@ -139,7 +139,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsTrue(source.Post(1));
 
-			Assert.IsTrue(task.Wait(100));
+			Assert.IsTrue(task.Wait(1000));
 			Assert.IsTrue(task.Result);
 		}
 
@@ -153,7 +153,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			tokenSource.Cancel();
 
-			AssertEx.Throws<AggregateException>(() => task.Wait(100));
+			AssertEx.Throws<AggregateException>(() => task.Wait(1000));
 			Assert.IsTrue(task.IsCanceled);
 		}
 	}

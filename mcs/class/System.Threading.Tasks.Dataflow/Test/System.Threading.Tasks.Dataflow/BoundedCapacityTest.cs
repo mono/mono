@@ -77,13 +77,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.AreEqual (DataflowMessageStatus.Postponed,
 				target.OfferMessage (header, 43, source, false));
 
-			Assert.AreEqual (42, block.Receive (TimeSpan.FromMilliseconds (100)));
+			Assert.AreEqual (42, block.Receive (TimeSpan.FromMilliseconds (1000)));
 
 			Assert.IsFalse (block.Completion.Wait (100));
 
 			Assert.IsTrue (source.WasConsumed (header));
 
-			Assert.AreEqual (43, block.Receive (TimeSpan.FromMilliseconds (100)));
+			Assert.AreEqual (43, block.Receive (TimeSpan.FromMilliseconds (1000)));
 
 			Assert.AreEqual (DataflowMessageStatus.Accepted,
 				target.OfferMessage (new DataflowMessageHeader (3), 44, source, false));

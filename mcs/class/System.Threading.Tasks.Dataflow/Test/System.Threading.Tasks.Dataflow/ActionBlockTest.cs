@@ -46,7 +46,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			for (int i = 0; i < array.Length; ++i)
 				Assert.IsTrue (block.Post (i), "Not accepted");
 
-			Assert.IsTrue (evt.Wait (500));
+			Assert.IsTrue (evt.Wait (1000));
 			
 			Assert.IsTrue (array.All (b => b), "Some false");
 		}
@@ -82,7 +82,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			block.Complete ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]

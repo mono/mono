@@ -88,7 +88,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (transformMany.Post (1), "#1");
 
 			transformMany.Complete ();
-			Assert.IsTrue (transformMany.Completion.Wait (100), "#2");
+			Assert.IsTrue (transformMany.Completion.Wait (1000), "#2");
 			Assert.IsFalse (received, "#3");
 		}
 
@@ -108,7 +108,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			block.Complete ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
