@@ -716,9 +716,7 @@ static ReplyPacket reply_packets [128];
 int nreply_packets;
 
 #define dbg_lock() do {	\
-	MONO_TRY_BLOCKING;			\
 	mono_mutex_lock (&debug_mutex); \
-	MONO_FINISH_TRY_BLOCKING;		\
 } while (0)
 
 #define dbg_unlock() mono_mutex_unlock (&debug_mutex)
@@ -1604,12 +1602,10 @@ stop_debugger_thread (void)
 	 */
 	if (!is_debugger_thread ()) {
 		do {
-			MONO_TRY_BLOCKING;
 			mono_mutex_lock (&debugger_thread_exited_mutex);
 			if (!debugger_thread_exited)
 				mono_cond_wait (&debugger_thread_exited_cond, &debugger_thread_exited_mutex);
 			mono_mutex_unlock (&debugger_thread_exited_mutex);
-			MONO_FINISH_TRY_BLOCKING;
 		} while (!debugger_thread_exited);
 	}
 
@@ -2747,9 +2743,7 @@ suspend_vm (void)
 {
 	mono_loader_lock ();
 
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&suspend_mutex);
-	MONO_FINISH_TRY_BLOCKING;
 
 	suspend_count ++;
 
@@ -2787,9 +2781,7 @@ resume_vm (void)
 
 	mono_loader_lock ();
 
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&suspend_mutex);
-	MONO_FINISH_TRY_BLOCKING;
 
 	g_assert (suspend_count > 0);
 	suspend_count --;
@@ -2833,9 +2825,7 @@ resume_thread (MonoInternalThread *thread)
 	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
 	g_assert (tls);
 	
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&suspend_mutex);
-	MONO_FINISH_TRY_BLOCKING;
 
 	g_assert (suspend_count > 0);
 
@@ -2910,9 +2900,7 @@ suspend_current (void)
  	tls = mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
 
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&suspend_mutex);
-	MONO_FINISH_TRY_BLOCKING;
 
 	tls->suspending = FALSE;
 	tls->really_suspended = TRUE;
@@ -2924,12 +2912,10 @@ suspend_current (void)
 
 	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer)mono_native_thread_id_get ());
 
-	MONO_TRY_BLOCKING;
 	while (suspend_count - tls->resume_count > 0) {
 		err = mono_cond_wait (&suspend_cond, &suspend_mutex);
 		g_assert (err == 0);
 	}
-	MONO_FINISH_TRY_BLOCKING;
 
 	tls->suspended = FALSE;
 	tls->really_suspended = FALSE;
@@ -9742,12 +9728,10 @@ debugger_thread (void *arg)
 
 	mono_set_is_debugger_attached (FALSE);
 	
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&debugger_thread_exited_mutex);
 	debugger_thread_exited = TRUE;
 	mono_cond_signal (&debugger_thread_exited_cond);
 	mono_mutex_unlock (&debugger_thread_exited_mutex);
-	MONO_FINISH_TRY_BLOCKING;
 
 	DEBUG_PRINTF (1, "[dbg] Debugger thread exited.\n");
 	

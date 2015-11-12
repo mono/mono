@@ -227,9 +227,7 @@ static gint32 managed_thread_id_counter = 0;
 static void
 mono_threads_lock (void)
 {
-	MONO_TRY_BLOCKING;
 	mono_locks_acquire (&threads_mutex, ThreadsLock);
-	MONO_FINISH_TRY_BLOCKING;
 }
 
 static void
@@ -374,9 +372,7 @@ lock_thread (MonoInternalThread *thread)
 
 	g_assert (thread->synch_cs);
 
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (thread->synch_cs);
-	MONO_FINISH_TRY_BLOCKING;
 }
 
 static inline void

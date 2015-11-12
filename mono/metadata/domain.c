@@ -94,9 +94,7 @@ static gboolean debug_domain_unload;
 gboolean mono_dont_free_domains;
 
 #define mono_appdomains_lock() do {	\
-	MONO_TRY_BLOCKING;	\
 	mono_mutex_lock (&appdomains_mutex); \
-	MONO_FINISH_TRY_BLOCKING;	\
 } while (0);
 
 #define mono_appdomains_unlock() mono_mutex_unlock (&appdomains_mutex)
@@ -1967,9 +1965,7 @@ mono_get_aot_cache_config (void)
 void
 mono_domain_lock (MonoDomain *domain)
 {
-	MONO_TRY_BLOCKING;
 	mono_locks_acquire (&(domain)->lock, DomainLock);
-	MONO_FINISH_TRY_BLOCKING;
 }
 
 void

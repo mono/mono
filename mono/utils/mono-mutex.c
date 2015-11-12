@@ -57,10 +57,12 @@ mono_mutex_lock (mono_mutex_t *mutex)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
 
 	res = pthread_mutex_lock (mutex);
 	g_assert (res != EINVAL);
 
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
@@ -94,8 +96,12 @@ mono_cond_wait (mono_cond_t *cond, mono_mutex_t *mutex)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
+
 	res = pthread_cond_wait (cond, mutex);
 	g_assert (res != EINVAL);
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
@@ -105,9 +111,12 @@ mono_cond_timedwait (mono_cond_t *cond, mono_mutex_t *mutex, struct timespec *ti
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
 
 	res = pthread_cond_timedwait (cond, mutex, timeout);
 	g_assert (res != EINVAL);
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
@@ -132,8 +141,12 @@ mono_cond_timedwait_ms (mono_cond_t *cond, mono_mutex_t *mutex, int timeout_ms)
 	ts.tv_sec = tv.tv_sec;
 	ts.tv_nsec = usecs * 1000;
 
+	MONO_TRY_BLOCKING;
+
 	res = pthread_cond_timedwait (cond, mutex, &ts);
 	g_assert (res != EINVAL);
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
@@ -176,7 +189,12 @@ mono_mutex_destroy (mono_mutex_t *mutex)
 int
 mono_mutex_lock (mono_mutex_t *mutex)
 {
+	MONO_TRY_BLOCKING;
+
 	EnterCriticalSection (mutex);
+
+	MONO_FINISH_TRY_BLOCKING;
+
 	return 0;
 }
 
@@ -211,7 +229,11 @@ mono_cond_wait (mono_cond_t *cond, mono_mutex_t *mutex)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
+
 	res = SleepConditionVariableCS (cond, mutex, INFINITE) ? 0 : 1;
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
@@ -227,7 +249,11 @@ mono_cond_timedwait_ms (mono_cond_t *cond, mono_mutex_t *mutex, int timeout_ms)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
+
 	res = SleepConditionVariableCS (cond, mutex, timeout_ms) ? 0 : 1;
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res;
 }
