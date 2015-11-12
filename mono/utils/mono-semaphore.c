@@ -18,6 +18,7 @@
 #endif
 
 #include "mono-semaphore.h"
+#include "mono-threads-coop.h"
 
 #ifndef NSEC_PER_SEC
 #define NSEC_PER_SEC 1000 * 1000 * 1000
@@ -42,12 +43,16 @@ mono_sem_wait (MonoSemType *sem, gboolean alertable)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
+
 retry:
 	res = semaphore_wait (*sem);
 	g_assert (res != KERN_INVALID_ARGUMENT);
 
 	if (res == KERN_ABORTED && !alertable)
 		goto retry;
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res != KERN_SUCCESS ? -1 : 0;
 }
@@ -71,6 +76,8 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 
 	copy = ts;
 	gettimeofday (&start, NULL);
+
+	MONO_TRY_BLOCKING;
 
 retry:
 	res = semaphore_timedwait (*sem, ts);
@@ -97,6 +104,8 @@ retry:
 
 		goto retry;
 	}
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res != KERN_SUCCESS ? -1 : 0;
 }
@@ -131,6 +140,8 @@ mono_sem_wait (MonoSemType *sem, gboolean alertable)
 {
 	int res;
 
+	MONO_TRY_BLOCKING;
+
 retry:
 	res = sem_wait (sem);
 	if (res == -1)
@@ -138,6 +149,8 @@ retry:
 
 	if (res == -1 && errno == EINTR && !alertable)
 		goto retry:
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res != 0 ? -1 : 0;
 }
@@ -170,6 +183,8 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 
 	copy = ts;
 
+	MONO_TRY_BLOCKING;
+
 retry:
 #if defined(__native_client__) && defined(USE_NEWLIB)
 	res = sem_trywait (sem);
@@ -183,6 +198,8 @@ retry:
 		ts = copy;
 		goto retry;
 	}
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res != 0 ? -1 : 0;
 }
@@ -225,11 +242,15 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 {
 	gboolean res;
 
+	MONO_TRY_BLOCKING;
+
 retry:
 	res = WaitForSingleObjectEx (*sem, timeout_ms, alertable);
 
 	if (res == WAIT_IO_COMPLETION && !alertable)
 		goto retry;
+
+	MONO_FINISH_TRY_BLOCKING;
 
 	return res != WAIT_OBJECT_0 ? -1 : 0;
 }

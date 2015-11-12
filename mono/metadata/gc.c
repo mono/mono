@@ -820,7 +820,7 @@ mono_gc_init (void)
 	g_assert (pending_done_event);
 	mono_cond_init (&exited_cond);
 #ifdef MONO_HAS_SEMAPHORES
-	MONO_SEM_INIT (&finalizer_sem, 0);
+	mono_sem_init (&finalizer_sem, 0);
 #endif
 
 #ifndef LAZY_GC_THREAD_CREATION

@@ -140,12 +140,10 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 		return NULL;
 	}
 
-	MONO_TRY_BLOCKING;
 	/* Wait until the thread register itself in various places */
 	while (mono_sem_wait (&(start_info.registered), FALSE) != 0) {
 		/*if (EINTR != errno) ABORT("sem_wait failed"); */
 	}
-	MONO_FINISH_TRY_BLOCKING;
 
 	mono_sem_destroy (&(start_info.registered));
 

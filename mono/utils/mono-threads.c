@@ -1020,9 +1020,7 @@ STW to make sure no unsafe pending suspend is in progress.
 void
 mono_thread_info_suspend_lock (void)
 {
-	MONO_TRY_BLOCKING;
 	while (mono_sem_wait (&global_suspend_semaphore, FALSE) != 0);
-	MONO_FINISH_TRY_BLOCKING;
 }
 
 void
