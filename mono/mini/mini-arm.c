@@ -5991,9 +5991,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
 		case OP_GC_SAFE_POINT: {
-#if defined (USE_COOP_GC)
 			const char *polling_func = NULL;
 			guint8 *buf [1];
+
+			g_assert (mono_threads_is_coop_enabled ());
 
 			polling_func = "mono_threads_state_poll";
 			ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, 0);
@@ -6003,7 +6004,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, polling_func);
 			code = emit_call_seq (cfg, code);
 			arm_patch (buf [0], code);
-#endif
 			break;
 		}
 
