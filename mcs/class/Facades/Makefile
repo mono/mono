@@ -29,6 +29,7 @@ include $(MCS_BUILD_DIR)/rules.make
 dist-local: dist-default
 
 DIST_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
+EXTRA_DISTFILES=subdirs.make
 
 doc-update-local:
 	@echo "not doing docs"
