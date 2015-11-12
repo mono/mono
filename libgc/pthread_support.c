@@ -1462,13 +1462,18 @@ void * GC_start_routine_head(void * arg, void *base_addr,
     return me;
 }
 
-int GC_thread_register_foreign (void *base_addr)
+void GC_allow_register_threads (void)
+{
+    /* No-op for GC pre-v7. */
+}
+
+int GC_register_my_thread (struct GC_stack_base *sb)
 {
     struct start_info si = { 0, }; /* stacked for legibility & locking */
     GC_thread me;
 
 #   ifdef DEBUG_THREADS
-        GC_printf1( "GC_thread_register_foreign %p\n", &si );
+        GC_printf1( "GC_register_my_thread %p\n", &si );
 #   endif
 
     si.flags = FOREIGN_THREAD;
@@ -1476,12 +1481,13 @@ int GC_thread_register_foreign (void *base_addr)
     if (!parallel_initialized) GC_init_parallel();
     LOCK();
     if (!GC_thr_initialized) GC_thr_init();
-
+    me = GC_lookup_thread(pthread_self());
     UNLOCK();
+    if (me != NULL)
+	return GC_DUPLICATE;
 
-    me = GC_start_routine_head(&si, base_addr, NULL, NULL);
-
-    return me != NULL;
+    (void)GC_start_routine_head(&si, sb -> mem_base, NULL, NULL);
+    return GC_SUCCESS;
 }
 
 void * GC_start_routine(void * arg)

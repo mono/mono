@@ -644,8 +644,16 @@ GC_stop_func stop_func;
    }
 }
 
-void (*GC_notify_event) GC_PROTO((GCEventType e));
+void (*GC_notify_event) GC_PROTO((GC_EventType e));
 void (*GC_on_heap_resize) GC_PROTO((size_t new_size));
+
+GC_API void GC_set_on_collection_event (void (*fn) (GC_EventType))
+{
+	DCL_LOCK_STATE;
+	LOCK();
+	GC_notify_event = fn;
+	UNLOCK();
+}
 
 /* Finish up a collection.  Assumes lock is held, signals are disabled,	*/
 /* but the world is otherwise running.					*/

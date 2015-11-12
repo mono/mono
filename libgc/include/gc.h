@@ -104,11 +104,11 @@ typedef enum {
 	GC_EVENT_POST_STOP_WORLD,
 	GC_EVENT_PRE_START_WORLD,
 	GC_EVENT_POST_START_WORLD
-} GCEventType;
+} GC_EventType;
 
-GC_API void (*GC_notify_event) GC_PROTO((GCEventType event_type));
-			/* Invoked at specific points during every collection.
-			 */
+GC_API void GC_set_on_collection_event GC_PROTO((void (*) (GC_EventType)));
+			/* Set callback invoked at specific points	*/
+			/* during every collection.			*/
 			 
 GC_API void (*GC_on_heap_resize) GC_PROTO((size_t new_size));
 			/* Invoked when the heap grows or shrinks        */
@@ -431,7 +431,10 @@ int GC_get_suspend_signal GC_PROTO((void));
 
 /* Return the signal used by the gc to resume threads on posix platforms. */
 /* Return -1 otherwise. */
-int GC_get_restart_signal GC_PROTO((void));
+int GC_get_thr_restart_signal GC_PROTO((void));
+
+/* Explicitly enable GC_register_my_thread() invocation.		*/
+GC_API void GC_allow_register_threads GC_PROTO((void));
 
 /* Disable garbage collection.  Even GC_gcollect calls will be 		*/
 /* ineffective.								*/
@@ -773,13 +776,21 @@ GC_API int GC_unregister_disappearing_link GC_PROTO((GC_PTR * /* link */));
 GC_API int GC_register_long_link GC_PROTO((GC_PTR * /* link */, GC_PTR obj));
 GC_API int GC_unregister_long_link GC_PROTO((GC_PTR * /* link */));
 
+typedef enum {
+	GC_TOGGLE_REF_DROP,
+	GC_TOGGLE_REF_STRONG,
+	GC_TOGGLE_REF_WEAK
+} GC_ToggleRefStatus;
 
 /* toggleref support */
-GC_API void GC_toggleref_register_callback GC_PROTO((int (*proccess_toggleref) (GC_PTR obj)));
-GC_API void GC_toggleref_add (GC_PTR object, int strong_ref);
+GC_API void GC_set_toggleref_func GC_PROTO(
+		(GC_ToggleRefStatus (*proccess_toggleref) (GC_PTR obj)));
+GC_API int GC_toggleref_add (GC_PTR object, int strong_ref);
+	/* Returns GC_SUCCESS if registration succeeded (or no callback	*/
+	/* registered yet), GC_NO_MEMORY if failed for lack of memory.	*/
 
 /* finalizer callback support */
-GC_API void GC_set_finalizer_notify_proc GC_PROTO((void (*object_finalized) (GC_PTR obj)));
+GC_API void GC_set_await_finalize_proc GC_PROTO((void (*object_finalized) (GC_PTR obj)));
 
 
 /* Returns !=0  if GC_invoke_finalizers has something to do. 		*/
@@ -858,6 +869,21 @@ GC_API GC_PTR GC_is_visible GC_PROTO((GC_PTR p));
 /* Uninteresting with GC_all_interior_pointers.				*/
 /* Always returns its argument.						*/
 GC_API GC_PTR GC_is_valid_displacement GC_PROTO((GC_PTR	p));
+
+#define GC_SUCCESS 0
+#define GC_DUPLICATE 1		/* Was already registered.		*/
+#define GC_NO_MEMORY 2		/* Failure due to lack of memory.	*/
+#define GC_UNIMPLEMENTED 3	/* Not yet implemented on the platform.	*/
+
+/* Structure representing the base of a thread stack.			*/
+struct GC_stack_base {
+	void * mem_base; /* Base of memory stack. */
+};
+
+/* Register the current thread, with the indicated stack base.		*/
+/* Returns GC_SUCCESS on success, GC_DUPLICATE if already registered.	*/
+/* On some platforms it returns GC_UNIMPLEMENTED.			*/
+GC_API int GC_register_my_thread GC_PROTO((struct GC_stack_base *));
 
 /* Returns 1 if the calling thread is registered with the GC, 0 otherwise */
 GC_API int GC_thread_is_registered GC_PROTO((void));
@@ -949,7 +975,9 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
 #if defined(GC_WIN32_THREADS) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
 # include <windows.h>
 
+# ifdef GC_INSIDE_DLL
    BOOL WINAPI GC_DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved);
+# endif
 
   /*
    * All threads must be created using GC_CreateThread, so that they will be
