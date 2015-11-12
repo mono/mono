@@ -280,8 +280,9 @@ namespace MonoTests.System.Reflection.Emit
 			var f = result.GetField("wasCalled", BindingFlags.Public | BindingFlags.Instance);
 			Assert.IsNotNull(f, "#3");
 			var wasCalledVal = f.GetValue(o);
-			Assert.IsInstanceOfType (typeof(Boolean), wasCalledVal, "#4");
-			Assert.AreEqual (wasCalledVal, true, "#5");
+			Assert.IsNotNull(wasCalledVal, "#4");
+			Assert.AreEqual (wasCalledVal.GetType(), typeof(Boolean), "#5");
+			Assert.AreEqual (wasCalledVal, true, "#6");
 		}
 	}
 }
