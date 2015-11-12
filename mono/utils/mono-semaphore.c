@@ -8,8 +8,8 @@
  */
 
 #include <config.h>
+
 #include <errno.h>
-#include "utils/mono-semaphore.h"
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -17,67 +17,71 @@
 #include <unistd.h>
 #endif
 
-#if (defined (HAVE_SEMAPHORE_H) || defined (USE_MACH_SEMA)) && !defined(HOST_WIN32)
-/* sem_* or semaphore_* functions in use */
-#  ifdef USE_MACH_SEMA
-#    define TIMESPEC mach_timespec_t
-#    define WAIT_BLOCK(a,b) semaphore_timedwait (*(a), *(b))
-#  elif defined(__native_client__) && defined(USE_NEWLIB)
-#    define TIMESPEC struct timespec
-#    define WAIT_BLOCK(a, b) sem_trywait(a)
-#  else
-#    define TIMESPEC struct timespec
-#    define WAIT_BLOCK(a,b) sem_timedwait (a, b)
-#  endif
+#include "mono-semaphore.h"
 
 #ifndef NSEC_PER_SEC
-#define NSEC_PER_SEC 1000000000
+#define NSEC_PER_SEC 1000 * 1000 * 1000
 #endif
+
+#if defined(USE_MACH_SEMA)
+
+int
+mono_sem_init (MonoSemType *sem, int value)
+{
+	return semaphore_create (current_task (), sem, SYNC_POLICY_FIFO, value) != KERN_SUCCESS ? -1 : 0;
+}
+
+int
+mono_sem_destroy (MonoSemType *sem)
+{
+	return semaphore_destroy (current_task (), *sem) != KERN_SUCCESS ? -1 : 0;
+}
+
+int
+mono_sem_wait (MonoSemType *sem, gboolean alertable)
+{
+	int res;
+
+retry:
+	res = semaphore_wait (*sem);
+	g_assert (res != KERN_INVALID_ARGUMENT);
+
+	if (res == KERN_ABORTED && !alertable)
+		goto retry;
+
+	return res != KERN_SUCCESS ? -1 : 0;
+}
 
 int
 mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 {
-	TIMESPEC ts, copy;
-	struct timeval t;
+	mach_timespec_t ts, copy;
+	struct timeval start, current;
 	int res = 0;
 
-#ifndef USE_MACH_SEMA
-	if (timeout_ms == 0)
-		return sem_trywait (sem);
-#endif
 	if (timeout_ms == (guint32) 0xFFFFFFFF)
 		return mono_sem_wait (sem, alertable);
 
-#ifdef USE_MACH_SEMA
-	memset (&t, 0, sizeof (t));
-#else
-	gettimeofday (&t, NULL);
-#endif
-	ts.tv_sec = timeout_ms / 1000 + t.tv_sec;
-	ts.tv_nsec = (timeout_ms % 1000) * 1000000 + t.tv_usec * 1000;
+	ts.tv_sec = timeout_ms / 1000;
+	ts.tv_nsec = (timeout_ms % 1000) * 1000000;
 	while (ts.tv_nsec >= NSEC_PER_SEC) {
 		ts.tv_nsec -= NSEC_PER_SEC;
 		ts.tv_sec++;
 	}
 
 	copy = ts;
-#ifdef USE_MACH_SEMA
-	gettimeofday (&t, NULL);
-	while ((res = WAIT_BLOCK (sem, &ts)) == KERN_ABORTED)
-#else
-	while ((res = WAIT_BLOCK (sem, &ts)) == -1 && errno == EINTR)
-#endif
-	{
-#ifdef USE_MACH_SEMA
-		struct timeval current;
-#endif
-		if (alertable)
-			return -1;
+	gettimeofday (&start, NULL);
+
+retry:
+	res = semaphore_timedwait (*sem, ts);
+	g_assert (res != KERN_INVALID_ARGUMENT);
+
+	if (res == KERN_ABORTED && !alertable) {
 		ts = copy;
-#ifdef USE_MACH_SEMA
+
 		gettimeofday (&current, NULL);
-		ts.tv_sec -= (current.tv_sec - t.tv_sec);
-		ts.tv_nsec -= (current.tv_usec - t.tv_usec) * 1000;
+		ts.tv_sec -= (current.tv_sec - start.tv_sec);
+		ts.tv_nsec -= (current.tv_usec - start.tv_usec) * 1000;
 		if (ts.tv_nsec < 0) {
 			if (ts.tv_sec <= 0) {
 				ts.tv_nsec = 0;
@@ -90,51 +94,126 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 			ts.tv_sec = 0;
 			ts.tv_nsec = 0;
 		}
-#endif
+
+		goto retry;
 	}
 
-	/* OSX might return > 0 for error */
-	if (res != 0)
-		res = -1;
-	return res;
-}
-
-int
-mono_sem_wait (MonoSemType *sem, gboolean alertable)
-{
-	int res;
-#ifndef USE_MACH_SEMA
-	while ((res = sem_wait (sem)) == -1 && errno == EINTR)
-#else
-	while ((res = semaphore_wait (*sem)) == KERN_ABORTED)
-#endif
-	{
-		if (alertable)
-			return -1;
-	}
-	/* OSX might return > 0 for error */
-	if (res != 0)
-		res = -1;
-	return res;
+	return res != KERN_SUCCESS ? -1 : 0;
 }
 
 int
 mono_sem_post (MonoSemType *sem)
 {
 	int res;
-#ifndef USE_MACH_SEMA
-	while ((res = sem_post (sem)) == -1 && errno == EINTR);
-#else
+
 	res = semaphore_signal (*sem);
-	/* OSX might return > 0 for error */
-	if (res != KERN_SUCCESS)
-		res = -1;
+	g_assert (res != KERN_INVALID_ARGUMENT);
+
+	return res != KERN_SUCCESS ? -1 : 0;
+}
+
+#elif defined(HAVE_SEMAPHORE_H) && !defined(HOST_WIN32)
+
+int
+mono_sem_init (MonoSemType *sem, int value)
+{
+	return sem_init (sem, 0, value);
+}
+
+int
+mono_sem_destroy (MonoSemType *sem)
+{
+	return sem_destroy (sem);
+}
+
+int
+mono_sem_wait (MonoSemType *sem, gboolean alertable)
+{
+	int res;
+
+retry:
+	res = sem_wait (sem);
+	if (res == -1)
+		g_assert (errno != EINVAL);
+
+	if (res == -1 && errno == EINTR && !alertable)
+		goto retry:
+
+	return res != 0 ? -1 : 0;
+}
+
+int
+mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
+{
+	struct timespec ts, copy;
+	struct timeval t;
+	int res = 0;
+
+	if (timeout_ms == 0) {
+		res = sem_trywait (sem) != 0 ? -1 : 0;
+		if (res == -1)
+			g_assert (errno != EINVAL);
+
+		return res != 0 ? -1 : 0;
+	}
+
+	if (timeout_ms == (guint32) 0xFFFFFFFF)
+		return mono_sem_wait (sem, alertable);
+
+	gettimeofday (&t, NULL);
+	ts.tv_sec = timeout_ms / 1000 + t.tv_sec;
+	ts.tv_nsec = (timeout_ms % 1000) * 1000000 + t.tv_usec * 1000;
+	while (ts.tv_nsec >= NSEC_PER_SEC) {
+		ts.tv_nsec -= NSEC_PER_SEC;
+		ts.tv_sec++;
+	}
+
+	copy = ts;
+
+retry:
+#if defined(__native_client__) && defined(USE_NEWLIB)
+	res = sem_trywait (sem);
+#else
+	res = sem_timedwait (sem, &ts)
 #endif
+	if (res == -1)
+		g_assert (errno != EINVAL);
+
+	if (res == -1 && errno == EINTR && !alertable) {
+		ts = copy;
+		goto retry;
+	}
+
+	return res != 0 ? -1 : 0;
+}
+
+int
+mono_sem_post (MonoSemType *sem)
+{
+	int res;
+
+	res = sem_post (sem);
+	if (res == -1)
+		g_assert (errno != EINVAL);
+
 	return res;
 }
 
 #else
-/* Windows or io-layer functions in use */
+
+int
+mono_sem_init (MonoSemType *sem, int value)
+{
+	*sem = CreateSemaphore (NULL, value, 0x7FFFFFFF, NULL);
+	return *sem == NULL ? -1 : 0;
+}
+
+int
+mono_sem_destroy (MonoSemType *sem)
+{
+	return !CloseHandle (*sem) ? -1 : 0;
+}
+
 int
 mono_sem_wait (MonoSemType *sem, gboolean alertable)
 {
@@ -146,27 +225,19 @@ mono_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, gboolean alertable)
 {
 	gboolean res;
 
-	while ((res = WaitForSingleObjectEx (*sem, timeout_ms, alertable)) == WAIT_IO_COMPLETION) {
-		if (alertable) {
-			errno = EINTR;
-			return -1;
-		}
-	}
-	switch (res) {
-	case WAIT_OBJECT_0:
-		return 0;    
-	// WAIT_TIMEOUT and WAIT_FAILED
-	default:
-		return -1;
-	}
+retry:
+	res = WaitForSingleObjectEx (*sem, timeout_ms, alertable);
+
+	if (res == WAIT_IO_COMPLETION && !alertable)
+		goto retry;
+
+	return res != WAIT_OBJECT_0 ? -1 : 0;
 }
 
 int
 mono_sem_post (MonoSemType *sem)
 {
-	if (!ReleaseSemaphore (*sem, 1, NULL))
-		return -1;
-	return 0;
+	return !ReleaseSemaphore (*sem, 1, NULL) ? -1 : 0;
 }
-#endif
 
+#endif

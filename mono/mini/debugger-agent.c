@@ -2489,7 +2489,7 @@ suspend_init (void)
 {
 	mono_mutex_init (&suspend_mutex);
 	mono_cond_init (&suspend_cond);	
-	MONO_SEM_INIT (&suspend_sem, 0);
+	mono_sem_init (&suspend_sem, 0);
 }
 
 typedef struct
@@ -2604,7 +2604,7 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, MonoJitInfo *ji)
 			mono_memory_barrier ();
 
 			tls->suspended = TRUE;
-			MONO_SEM_POST (&suspend_sem);
+			mono_sem_post (&suspend_sem);
 		}
 	}
 }
@@ -2907,7 +2907,7 @@ suspend_current (void)
 
 	if (!tls->suspended) {
 		tls->suspended = TRUE;
-		MONO_SEM_POST (&suspend_sem);
+		mono_sem_post (&suspend_sem);
 	}
 
 	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer)mono_native_thread_id_get ());
@@ -2981,7 +2981,7 @@ wait_for_suspend (void)
 		nwait = count_threads_to_wait_for ();
 		if (nwait) {
 			DEBUG_PRINTF (1, "Waiting for %d(%d) threads to suspend...\n", nwait, nthreads);
-			err = MONO_SEM_WAIT (&suspend_sem);
+			err = mono_sem_wait (&suspend_sem, FALSE);
 			g_assert (err == 0);
 			waited = TRUE;
 		} else {

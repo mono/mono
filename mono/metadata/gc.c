@@ -633,7 +633,7 @@ mono_gc_finalize_notify (void)
 		return;
 
 #ifdef MONO_HAS_SEMAPHORES
-	MONO_SEM_POST (&finalizer_sem);
+	mono_sem_post (&finalizer_sem);
 #else
 	SetEvent (finalizer_event);
 #endif
@@ -726,7 +726,7 @@ finalizer_thread (gpointer unused)
 		if (wait) {
 		/* An alertable wait is required so this thread can be suspended on windows */
 #ifdef MONO_HAS_SEMAPHORES
-			MONO_SEM_WAIT_ALERTABLE (&finalizer_sem, TRUE);
+			mono_sem_wait (&finalizer_sem, TRUE);
 #else
 			WaitForSingleObjectEx (finalizer_event, INFINITE, TRUE);
 #endif
@@ -765,7 +765,7 @@ finalizer_thread (gpointer unused)
 
 #ifdef MONO_HAS_SEMAPHORES
 		/* Avoid posting the pending done event until there are pending finalizers */
-		if (MONO_SEM_TIMEDWAIT (&finalizer_sem, 0) == 0)
+		if (mono_sem_timedwait (&finalizer_sem, 0, FALSE) == 0)
 			/* Don't wait again at the start of the loop */
 			wait = FALSE;
 		else
