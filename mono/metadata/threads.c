@@ -476,6 +476,8 @@ static void thread_cleanup (MonoInternalThread *thread)
 		MONO_GC_UNREGISTER_ROOT (thread->thread_pinning_ref);
 		thread->thread_pinning_ref = NULL;
 	}
+
+	mono_handle_arena_deinit_thread (thread);
 }
 
 /*
@@ -596,6 +598,8 @@ create_internal_thread (void)
 		thread->thread_pinning_ref = thread;
 		MONO_GC_REGISTER_ROOT_PINNING (thread->thread_pinning_ref, MONO_ROOT_SOURCE_THREADING, "thread pinning reference");
 	}
+
+	mono_handle_arena_init_thread (thread);
 
 	return thread;
 }
