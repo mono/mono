@@ -76,7 +76,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LADDCC;
 		else
 			opcode = OP_ADDCC;
@@ -90,7 +90,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LADDCC;
 		else
 			opcode = OP_ADDCC;
@@ -105,7 +105,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LSUBCC;
 		else
 			opcode = OP_SUBCC;
@@ -119,7 +119,7 @@ decompose_long_opcode (MonoCompile *cfg, MonoInst *ins, MonoInst **repl_ins)
 
 		if (COMPILE_LLVM (cfg))
 			break;
-		if (MONO_IS_ILP32 && SIZEOF_REGISTER == 8)
+		if (cfg->backend->ilp32 && SIZEOF_REGISTER == 8)
 			opcode = OP_LSUBCC;
 		else
 			opcode = OP_SUBCC;
@@ -443,13 +443,11 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		cfg->exception_message = g_strdup_printf ("float conv.ovf.un opcodes not supported.");
 		break;
 
-#if defined(MONO_ARCH_EMULATE_DIV)
 	case OP_IDIV:
 	case OP_IREM:
 	case OP_IDIV_UN:
 	case OP_IREM_UN:
-		if (!mono_arch_opcode_needs_emulation (cfg, ins->opcode)) {
-#ifdef MONO_ARCH_NEED_DIV_CHECK
+		if (cfg->backend->need_div_check) {
 			int reg1 = alloc_ireg (cfg);
 			int reg2 = alloc_ireg (cfg);
 			/* b == 0 */
@@ -465,14 +463,18 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 				MONO_EMIT_NEW_ICOMPARE_IMM (cfg, reg1, 1);
 				MONO_EMIT_NEW_COND_EXC (cfg, IEQ, "OverflowException");
 			}
-#endif
+			MONO_EMIT_NEW_BIALU (cfg, ins->opcode, ins->dreg, ins->sreg1, ins->sreg2);
+			NULLIFY_INS (ins);
+			break;
+		}
+
+		if (cfg->backend->emulate_div && !mono_arch_opcode_needs_emulation (cfg, ins->opcode)) {
 			MONO_EMIT_NEW_BIALU (cfg, ins->opcode, ins->dreg, ins->sreg1, ins->sreg2);
 			NULLIFY_INS (ins);
 		} else {
 			emulate = TRUE;
 		}
 		break;
-#endif
 
 #if SIZEOF_REGISTER == 8
 	case OP_LREM_IMM:

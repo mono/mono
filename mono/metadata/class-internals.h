@@ -583,8 +583,13 @@ struct _MonoGenericParam {
 typedef struct {
 	MonoClass *pklass;		/* The corresponding `MonoClass'. */
 	const char *name;
+
+	// See GenericParameterAttributes
 	guint16 flags;
+
 	guint32 token;
+
+	// Constraints on type parameters
 	MonoClass** constraints; /* NULL means end of list */
 } MonoGenericParamInfo;
 
@@ -1135,14 +1140,14 @@ MonoClass*	\
 mono_class_get_##shortname##_class (void)	\
 {	\
 	static MonoClass *tmp_class;	\
-	MonoClass *class = tmp_class;	\
-	if (!class) {	\
-		class = mono_class_from_name (mono_defaults.corlib, #namespace, #name);	\
-		g_assert (class);	\
+	MonoClass *klass = tmp_class;	\
+	if (!klass) {	\
+		klass = mono_class_from_name (mono_defaults.corlib, #namespace, #name);	\
+		g_assert (klass);	\
 		mono_memory_barrier ();	\
-		tmp_class = class;	\
+		tmp_class = klass;	\
 	}	\
-	return class;	\
+	return klass;	\
 }
 
 #define GENERATE_STATIC_GET_CLASS_WITH_CACHE(shortname,namespace,name) \

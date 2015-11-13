@@ -180,7 +180,7 @@ mono_gc_base_init (void)
 			for (char **ptr = opts; ptr && *ptr; ptr ++) {
 				char *opt = *ptr;
 				if (!strcmp (opt, "do-not-finalize")) {
-					do_not_finalize = 1;
+					mono_do_not_finalize = 1;
 				} else if (!strcmp (opt, "log-finalizers")) {
 					log_finalizers = 1;
 				}
@@ -840,7 +840,7 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 	MonoMethod *res;
 	MonoMethodSignature *csig;
 	const char *name = NULL;
-	AllocatorWrapperInfo *info;
+	WrapperInfo *info;
 
 	if (atype == ATYPE_FREEPTR) {
 		name = slowpath ? "SlowAllocPtrfree" : "AllocPtrfree";
@@ -1038,14 +1038,13 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 
 	mono_mb_emit_byte (mb, MONO_CEE_RET);
 
-	res = mono_mb_create_method (mb, csig, 8);
+	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
+	info->d.alloc.gc_name = "boehm";
+	info->d.alloc.alloc_type = atype;
+
+	res = mono_mb_create (mb, csig, 8, info);
 	mono_mb_free (mb);
 	mono_method_get_header (res)->init_locals = FALSE;
-
-	info = mono_image_alloc0 (mono_defaults.corlib, sizeof (AllocatorWrapperInfo));
-	info->gc_name = "boehm";
-	info->alloc_type = atype;
-	mono_marshal_set_wrapper_info (res, info);
 
 	return res;
 }
@@ -1369,10 +1368,10 @@ BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reser
 #endif
 
 guint
-mono_gc_get_vtable_bits (MonoClass *class)
+mono_gc_get_vtable_bits (MonoClass *klass)
 {
 	if (fin_callbacks.is_class_finalization_aware) {
-		if (fin_callbacks.is_class_finalization_aware (class))
+		if (fin_callbacks.is_class_finalization_aware (klass))
 			return BOEHM_GC_BIT_FINALIZER_AWARE;
 	}
 	return 0;

@@ -39,6 +39,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 
 namespace System.Threading {
@@ -704,6 +705,22 @@ namespace System.Threading {
 		internal CultureInfo GetCurrentUICultureNoAppX ()
 		{
 			return CultureInfo.CurrentUICulture;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void GetStackTraces (out Thread[] threads, out object[] stack_frames);
+
+		// This is a mono extension to gather the stack traces for all running threads
+		internal static Dictionary<Thread, StackTrace> Mono_GetStackTraces () {
+			Thread[] threads;
+			object[] stack_frames;
+
+			GetStackTraces (out threads, out stack_frames);
+
+			var res = new Dictionary<Thread, StackTrace> ();
+			for (int i = 0; i < threads.Length; ++i)
+				res [threads [i]] = new StackTrace ((StackFrame[])stack_frames [i]);
+			return res;
 		}
 	}
 }

@@ -51,6 +51,8 @@ namespace System.IO
 		public static readonly IntPtr
 			InvalidHandle = (IntPtr)(-1L);
 
+		static bool dump_handles = Environment.GetEnvironmentVariable ("MONO_DUMP_HANDLES_ON_ERROR_TOO_MANY_OPEN_FILES") != null;
+
 		// error methods
 		public static Exception GetException (MonoIOError error)
 		{
@@ -89,6 +91,8 @@ namespace System.IO
 				return new FileNotFoundException (message, path);
 
 			case MonoIOError.ERROR_TOO_MANY_OPEN_FILES:
+				if (dump_handles)
+					DumpHandles ();
 				return new IOException ("Too many open files", unchecked((int)0x80070000) | (int)error);
 				
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
@@ -599,6 +603,9 @@ namespace System.IO
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void DumpHandles ();
 	}
 }
 

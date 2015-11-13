@@ -89,9 +89,6 @@
 #define WSARecv wapi_WSARecv 
 #define WSASend wapi_WSASend 
 #define GetSystemInfo wapi_GetSystemInfo
-#define GetCurrentThreadId wapi_GetCurrentThreadId
-#define Sleep wapi_Sleep
-#define SleepEx wapi_SleepEx
 #define QueryPerformanceCounter wapi_QueryPerformanceCounter
 #define QueryPerformanceFrequency wapi_QueryPerformanceFrequency
 #define GetTickCount wapi_GetTickCount 

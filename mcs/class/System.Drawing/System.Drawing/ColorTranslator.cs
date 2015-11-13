@@ -42,12 +42,11 @@ namespace System.Drawing {
 
 		public static Color FromHtml (string htmlColor)
 		{
-			if ((htmlColor == null) || (htmlColor.Length == 0))
-				return Color.Empty;
+			if (string.IsNullOrEmpty (htmlColor)) return Color.Empty;
 
 			switch (htmlColor.ToLowerInvariant ()) {
 			case "buttonface":
-			case "threedface":		
+			case "threedface":
 				return SystemColors.Control;
 			case "buttonhighlight":
 			case "threedlightshadow":
@@ -70,7 +69,13 @@ namespace System.Drawing {
 			case "lightgrey":
 				return Color.LightGray;
 			}
-			
+
+			if (htmlColor[0] == '#' && htmlColor.Length == 4)
+			{
+				char r = htmlColor[1], g = htmlColor[2], b = htmlColor[3];
+				htmlColor = new string ( new char [] { '#', r, r, g, g, b, b } );
+			}
+
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (Color));
 			return (Color) converter.ConvertFromString (htmlColor);
 		}

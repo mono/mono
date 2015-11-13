@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 //
 // This is a simple test runner with support for parallel execution
@@ -39,21 +40,12 @@ using System.Xml;
 
 public class TestRunner
 {
+	const string TEST_TIME_FORMAT = "mm\\:ss\\.fff";
+
 	class ProcessData {
 		public string test;
 		public StreamWriter stdout, stderr;
 		public string stdoutFile, stderrFile;
-
-		public void CloseStreams () {
-			if (stdout != null) {
-				stdout.Close ();
-				stdout = null;
-			}
-			if (stderr != null) {
-				stderr.Close ();
-				stderr = null;
-			}
-		}
 	}
 
 	class TestInfo {
@@ -64,8 +56,9 @@ public class TestRunner
 		// Defaults
 		int concurrency = 1;
 		int timeout = 2 * 60; // in seconds
-
-		DateTime test_start_time = DateTime.UtcNow;
+		int expectedExitCode = 0;
+		string testsuiteName = null;
+		string inputFile = null;
 
 		// FIXME: Add support for runtime arguments + env variables
 
@@ -78,7 +71,7 @@ public class TestRunner
 		while (i < args.Length) {
 			if (args [i].StartsWith ("-")) {
 				if (args [i] == "-j") {
-					if (i + i >= args.Length) {
+					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to -j command line option.");
 						return 1;
 					}
@@ -88,33 +81,54 @@ public class TestRunner
 						concurrency = Int32.Parse (args [i + 1]);
 					i += 2;
 				} else if (args [i] == "--timeout") {
-					if (i + i >= args.Length) {
+					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --timeout command line option.");
 						return 1;
 					}
 					timeout = Int32.Parse (args [i + 1]);
 					i += 2;
 				} else if (args [i] == "--disabled") {
-					if (i + i >= args.Length) {
+					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --disabled command line option.");
 						return 1;
 					}
 					disabled_tests = args [i + 1];
 					i += 2;
 				} else if (args [i] == "--runtime") {
-					if (i + i >= args.Length) {
+					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --runtime command line option.");
 						return 1;
 					}
 					runtime = args [i + 1];
 					i += 2;
 				} else if (args [i] == "--opt-sets") {
-					if (i + i >= args.Length) {
+					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --opt-sets command line option.");
 						return 1;
 					}
 					foreach (var s in args [i + 1].Split ())
 						opt_sets.Add (s);
+					i += 2;
+				} else if (args [i] == "--expected-exit-code") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --expected-exit-code command line option.");
+						return 1;
+					}
+					expectedExitCode = Int32.Parse (args [i + 1]);
+					i += 2;
+				} else if (args [i] == "--testsuite-name") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --testsuite-name command line option.");
+						return 1;
+					}
+					testsuiteName = args [i + 1];
+					i += 2;
+				} else if (args [i] == "--input-file") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --input-file command line option.");
+						return 1;
+					}
+					inputFile = args [i + 1];
 					i += 2;
 				} else {
 					Console.WriteLine ("Unknown command line option: '" + args [i] + "'.");
@@ -125,6 +139,11 @@ public class TestRunner
 			}
 		}
 
+		if (String.IsNullOrEmpty (testsuiteName)) {
+			Console.WriteLine ("Missing the required --testsuite-name command line option.");
+			return 1;
+		}
+
 		var disabled = new Dictionary <string, string> ();
 
 		if (disabled_tests != null) {
@@ -132,204 +151,177 @@ public class TestRunner
 				disabled [test] = test;
 		}
 
-		// The remaining arguments are the tests
 		var tests = new List<string> ();
-		for (int j = i; j < args.Length; ++j)
-			if (!disabled.ContainsKey (args [j]))
-				tests.Add (args [j]);
 
-		int npassed = 0;
-		int nfailed = 0;
+		if (!String.IsNullOrEmpty (inputFile)) {
+			tests.AddRange (File.ReadAllLines (inputFile));
+		} else {
+			// The remaining arguments are the tests
+			for (int j = i; j < args.Length; ++j)
+				if (!disabled.ContainsKey (args [j]))
+					tests.Add (args [j]);
+		}
 
-		var processes = new List<Process> ();
 		var passed = new List<ProcessData> ();
 		var failed = new List<ProcessData> ();
-		var process_data = new Dictionary<Process, ProcessData> ();
+		var timedout = new List<ProcessData> ();
 
 		object monitor = new object ();
 
-		var terminated = new List<Process> ();
+		Console.WriteLine ("Running tests: ");
 
-		if (concurrency != 1)
-			Console.WriteLine ("Running tests: ");
-
-		var test_info = new List<TestInfo> ();
+		var test_info = new Queue<TestInfo> ();
 		if (opt_sets.Count == 0) {
 			foreach (string s in tests)
-				test_info.Add (new TestInfo { test = s });
+				test_info.Enqueue (new TestInfo { test = s });
 		} else {
 			foreach (string opt in opt_sets) {
 				foreach (string s in tests)
-					test_info.Add (new TestInfo { test = s, opt_set = opt });
+					test_info.Enqueue (new TestInfo { test = s, opt_set = opt });
 			}
-		}		
+		}
 
+		/* compute the max length of test names, to have an optimal output width */
+		int output_width = -1;
 		foreach (TestInfo ti in test_info) {
-			lock (monitor) {
-				while (processes.Count == concurrency) {
-					/* Wait for one process to terminate */
-					Monitor.Wait (monitor);
-				}
+			if (ti.test.Length > output_width)
+				output_width = Math.Min (120, ti.test.Length);
+		}
 
-				/* Cleaup terminated processes */
-				foreach (Process dead in terminated) {
-					if (process_data [dead].stdout != null)
-						process_data [dead].stdout.Close ();
-					if (process_data [dead].stderr != null)
-						process_data [dead].stderr.Close ();
-					// This is needed to avoid CreateProcess failed errors :(
-					dead.Close ();
-				}
-				terminated.Clear ();
-			}
+		List<Thread> threads = new List<Thread> (concurrency);
 
-			string test = ti.test;
-			string opt_set = ti.opt_set;
+		DateTime test_start_time = DateTime.UtcNow;
 
-			if (concurrency == 1)
-				Console.Write ("Testing " + test + "... ");
-
-			/* Spawn a new process */
-			string process_args;
-			if (opt_set == null)
-				process_args = test;
-			else
-				process_args = "-O=" + opt_set + " " + test;
-			ProcessStartInfo info = new ProcessStartInfo (runtime, process_args);
-			info.UseShellExecute = false;
-			info.RedirectStandardOutput = true;
-			info.RedirectStandardError = true;
-			Process p = new Process ();
-			p.StartInfo = info;
-			p.EnableRaisingEvents = true;
-
-			ProcessData data = new ProcessData ();
-			data.test = test;
-
-			p.Exited += delegate (object sender, EventArgs e) {
-				// Anon methods share some of their state, so we can't use
-				// variables which change during the loop (test, p)
-				Process dead = (Process)sender;
-
-				lock (monitor) {
-					if (dead.ExitCode == 0) {
-						if (concurrency == 1)
-							Console.WriteLine ("passed.");
-						else
-							Console.Write (".");
-						passed.Add(process_data [dead]);
-						npassed ++;
-					} else {
-						if (concurrency == 1)
-							Console.WriteLine ("failed.");
-						else
-							Console.Write ("F");
-						failed.Add (process_data [dead]);
-						nfailed ++;
-					}
-					processes.Remove (dead);
-					terminated.Add (dead);
-					Monitor.Pulse (monitor);
-				}
-			};
-
-			string log_prefix = "";
-			if (opt_set != null)
-				log_prefix = "." + opt_set.Replace ("-", "no").Replace (",", "_");
-
-			data.stdoutFile = test + log_prefix + ".stdout";
-			data.stdout = new StreamWriter (new FileStream (data.stdoutFile, FileMode.Create));
-
-			data.stderrFile = test + log_prefix + ".stderr";
-			data.stderr = new StreamWriter (new FileStream (data.stderrFile, FileMode.Create));
-
-			p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-				Process p2 = (Process)sender;
-
-				StreamWriter fs;
-
-				lock (monitor) {
-					fs = process_data [p2].stdout;
-
-					if (String.IsNullOrEmpty (e.Data))
-						process_data [p2].stdout = null;
-				}
-
-				if (String.IsNullOrEmpty (e.Data)) {
-					fs.Close ();
-				} else {
-					fs.WriteLine (e.Data);
-					fs.Flush ();
-				}
-			};
-
-			p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
-				Process p2 = (Process)sender;
-
-				StreamWriter fs;
-
-				lock (monitor) {
-					fs = process_data [p2].stderr;
-
-					if (String.IsNullOrEmpty (e.Data))
-						process_data [p2].stderr = null;
-
-				}
-
-				if (String.IsNullOrEmpty (e.Data)) {
-					fs.Close ();
+		for (int j = 0; j < concurrency; ++j) {
+			Thread thread = new Thread (() => {
+				while (true) {
+					TestInfo ti;
 
 					lock (monitor) {
-						process_data [p2].stderr = null;
+						if (test_info.Count == 0)
+							break;
+						ti = test_info.Dequeue ();
 					}
-				} else {
-					fs.WriteLine (e.Data);
-					fs.Flush ();
+
+					var output = new StringWriter ();
+
+					string test = ti.test;
+					string opt_set = ti.opt_set;
+
+					output.Write (String.Format ("{{0,-{0}}} ", output_width), test);
+
+					/* Spawn a new process */
+					string process_args;
+					if (opt_set == null)
+						process_args = test;
+					else
+						process_args = "-O=" + opt_set + " " + test;
+					ProcessStartInfo info = new ProcessStartInfo (runtime, process_args);
+					info.UseShellExecute = false;
+					info.RedirectStandardOutput = true;
+					info.RedirectStandardError = true;
+					Process p = new Process ();
+					p.StartInfo = info;
+
+					ProcessData data = new ProcessData ();
+					data.test = test;
+
+					string log_prefix = "";
+					if (opt_set != null)
+						log_prefix = "." + opt_set.Replace ("-", "no").Replace (",", "_");
+
+					data.stdoutFile = test + log_prefix + ".stdout";
+					data.stdout = new StreamWriter (new FileStream (data.stdoutFile, FileMode.Create));
+
+					data.stderrFile = test + log_prefix + ".stderr";
+					data.stderr = new StreamWriter (new FileStream (data.stderrFile, FileMode.Create));
+
+					p.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e) {
+						if (e.Data != null) {
+							data.stdout.WriteLine (e.Data);
+						} else {
+							data.stdout.Flush ();
+							data.stdout.Close ();
+						}
+					};
+
+					p.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e) {
+						if (e.Data != null) {
+							data.stderr.WriteLine (e.Data);
+						} else {
+							data.stderr.Flush ();
+							data.stderr.Close ();
+						}
+					};
+
+					var start = DateTime.UtcNow;
+
+					p.Start ();
+
+					p.BeginOutputReadLine ();
+					p.BeginErrorReadLine ();
+
+					if (!p.WaitForExit (timeout * 1000)) {
+						lock (monitor) {
+							timedout.Add (data);
+						}
+
+						output.Write ("timed out");
+
+						p.Kill ();
+					} else if (p.ExitCode != expectedExitCode) {
+						var end = DateTime.UtcNow;
+
+						lock (monitor) {
+							failed.Add (data);
+						}
+
+						output.Write ("failed, time: {0}, exit code: {1}", (end - start).ToString (TEST_TIME_FORMAT), p.ExitCode);
+					} else {
+						var end = DateTime.UtcNow;
+
+						lock (monitor) {
+							passed.Add (data);
+						}
+
+						output.Write ("passed, time: {0}", (end - start).ToString (TEST_TIME_FORMAT));
+					}
+
+					p.Close ();
+
+					lock (monitor) {
+						Console.WriteLine (output.ToString ());
+					}
 				}
-			};
+			});
 
-			lock (monitor) {
-				processes.Add (p);
-				process_data [p] = data;
-			}
-			p.Start ();
+			thread.Start ();
 
-			p.BeginOutputReadLine ();
-			p.BeginErrorReadLine ();
+			threads.Add (thread);
 		}
 
-		bool timed_out = false;
-
-		/* Wait for all processes to terminate */
-		while (true) {
-			lock (monitor) {
-				int nprocesses = processes.Count;
-
-				if (nprocesses == 0)
-					break;
-
-				bool res = Monitor.Wait (monitor, 1000 * timeout);
-				if (!res) {
-					timed_out = true;
-					break;
-				}
-			}
-		}
+		for (int j = 0; j < threads.Count; ++j)
+			threads [j].Join ();
 
 		TimeSpan test_time = DateTime.UtcNow - test_start_time;
+
+		int npassed = passed.Count;
+		int nfailed = failed.Count;
+		int ntimedout = timedout.Count;
+
 		XmlWriterSettings xmlWriterSettings = new XmlWriterSettings ();
 		xmlWriterSettings.NewLineOnAttributes = true;
 		xmlWriterSettings.Indent = true;
-		using (XmlWriter writer = XmlWriter.Create ("TestResults_runtime.xml", xmlWriterSettings)) {
+		using (XmlWriter writer = XmlWriter.Create (String.Format ("TestResult-{0}.xml", testsuiteName), xmlWriterSettings)) {
 			// <?xml version="1.0" encoding="utf-8" standalone="no"?>
 			writer.WriteStartDocument ();
 			// <!--This file represents the results of running a test suite-->
 			writer.WriteComment ("This file represents the results of running a test suite");
 			// <test-results name="/home/charlie/Dev/NUnit/nunit-2.5/work/src/bin/Debug/tests/mock-assembly.dll" total="21" errors="1" failures="1" not-run="7" inconclusive="1" ignored="4" skipped="0" invalid="3" date="2010-10-18" time="13:23:35">
 			writer.WriteStartElement ("test-results");
-			writer.WriteAttributeString ("name", "runtime-tests.dummy");
-			writer.WriteAttributeString ("total", (npassed + nfailed).ToString());
-			writer.WriteAttributeString ("failures", nfailed.ToString());
+			writer.WriteAttributeString ("name", String.Format ("{0}-tests.dummy", testsuiteName));
+			writer.WriteAttributeString ("total", (npassed + nfailed + ntimedout).ToString());
+			writer.WriteAttributeString ("failures", (nfailed + ntimedout).ToString());
 			writer.WriteAttributeString ("not-run", "0");
 			writer.WriteAttributeString ("date", DateTime.Now.ToString ("yyyy-MM-dd"));
 			writer.WriteAttributeString ("time", DateTime.Now.ToString ("HH:mm:ss"));
@@ -351,33 +343,33 @@ public class TestRunner
 			writer.WriteEndElement ();
 			//   <test-suite name="corlib_test_net_4_5.dll" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
-			writer.WriteAttributeString ("name","runtime-tests.dummy");
-			writer.WriteAttributeString ("success", (nfailed == 0).ToString());
+			writer.WriteAttributeString ("name", String.Format ("{0}-tests.dummy", testsuiteName));
+			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
 			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", nfailed.ToString());
+			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
 			//     <results>
 			writer.WriteStartElement ("results");
 			//       <test-suite name="MonoTests" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
 			writer.WriteAttributeString ("name","MonoTests");
-			writer.WriteAttributeString ("success", (nfailed == 0).ToString());
+			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
 			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", nfailed.ToString());
+			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
 			//         <results>
 			writer.WriteStartElement ("results");
 			//           <test-suite name="MonoTests" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
-			writer.WriteAttributeString ("name","runtime");
-			writer.WriteAttributeString ("success", (nfailed == 0).ToString());
+			writer.WriteAttributeString ("name", testsuiteName);
+			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
 			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", nfailed.ToString());
+			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
 			//             <results>
 			writer.WriteStartElement ("results");
 			// Dump all passing tests first
 			foreach (ProcessData pd in passed) {
 				// <test-case name="MonoTests.Microsoft.Win32.RegistryKeyTest.bug79051" executed="True" success="True" time="0.063" asserts="0" />
 				writer.WriteStartElement ("test-case");
-				writer.WriteAttributeString ("name", "MonoTests.runtime." + pd.test);
+				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}", testsuiteName, pd.test));
 				writer.WriteAttributeString ("executed", "True");
 				writer.WriteAttributeString ("success", "True");
 				writer.WriteAttributeString ("time", "0");
@@ -388,7 +380,26 @@ public class TestRunner
 			foreach (ProcessData pd in failed) {
 				// <test-case name="MonoTests.Microsoft.Win32.RegistryKeyTest.bug79051" executed="True" success="True" time="0.063" asserts="0" />
 				writer.WriteStartElement ("test-case");
-				writer.WriteAttributeString ("name", "MonoTests.runtime." + pd.test);
+				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}", testsuiteName, pd.test));
+				writer.WriteAttributeString ("executed", "True");
+				writer.WriteAttributeString ("success", "False");
+				writer.WriteAttributeString ("time", "0");
+				writer.WriteAttributeString ("asserts", "1");
+				writer.WriteStartElement ("failure");
+				writer.WriteStartElement ("message");
+				writer.WriteCData (DumpPseudoTrace (pd.stdoutFile));
+				writer.WriteEndElement ();
+				writer.WriteStartElement ("stack-trace");
+				writer.WriteCData (DumpPseudoTrace (pd.stderrFile));
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+			}
+			// Then dump all timing out tests
+			foreach (ProcessData pd in timedout) {
+				// <test-case name="MonoTests.Microsoft.Win32.RegistryKeyTest.bug79051" executed="True" success="True" time="0.063" asserts="0" />
+				writer.WriteStartElement ("test-case");
+				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}_timedout", testsuiteName, pd.test));
 				writer.WriteAttributeString ("executed", "True");
 				writer.WriteAttributeString ("success", "False");
 				writer.WriteAttributeString ("time", "0");
@@ -421,35 +432,35 @@ public class TestRunner
 		}
 
 		Console.WriteLine ();
+		Console.WriteLine ("Time: {0}", test_time.ToString (TEST_TIME_FORMAT));
+		Console.WriteLine ();
+		Console.WriteLine ("{0,4} test(s) passed", npassed);
+		Console.WriteLine ("{0,4} test(s) failed", nfailed);
+		Console.WriteLine ("{0,4} test(s) timed out", ntimedout);
 
-		if (timed_out) {
-			Console.WriteLine ("\nrunning tests timed out:\n");
-			Console.WriteLine (npassed + nfailed);
-			lock (monitor) {
-				foreach (Process p in processes) {
-					ProcessData pd = process_data [p];
-					pd.CloseStreams ();
-					Console.WriteLine (pd.test);
-					p.Kill ();
-					DumpFile (pd.stdoutFile);
-					DumpFile (pd.stderrFile);
-				}
-			}
-			return 1;
-		}
-
-		Console.WriteLine ("" + npassed + " test(s) passed. " + nfailed + " test(s) did not pass.");
 		if (nfailed > 0) {
-			Console.WriteLine ("\nFailed tests:\n");
+			Console.WriteLine ();
+			Console.WriteLine ("Failed test(s):");
 			foreach (ProcessData pd in failed) {
+				Console.WriteLine ();
 				Console.WriteLine (pd.test);
 				DumpFile (pd.stdoutFile);
 				DumpFile (pd.stderrFile);
 			}
-			return 1;
-		} else {
-			return 0;
 		}
+
+		if (ntimedout > 0) {
+			Console.WriteLine ();
+			Console.WriteLine ("Timed out test(s):");
+			foreach (ProcessData pd in timedout) {
+				Console.WriteLine ();
+				Console.WriteLine (pd.test);
+				DumpFile (pd.stdoutFile);
+				DumpFile (pd.stderrFile);
+			}
+		}
+
+		return (ntimedout == 0 && nfailed == 0) ? 0 : 1;
 	}
 	
 	static void DumpFile (string filename) {
@@ -462,8 +473,14 @@ public class TestRunner
 
 	static string DumpPseudoTrace (string filename) {
 		if (File.Exists (filename))
-			return File.ReadAllText (filename);
+			return FilterInvalidXmlChars (File.ReadAllText (filename));
 		else
 			return string.Empty;
+	}
+
+	static string FilterInvalidXmlChars (string text) {
+		// Spec at http://www.w3.org/TR/2008/REC-xml-20081126/#charsets says only the following chars are valid in XML:
+		// Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]	/* any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. */
+		return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", "");
 	}
 }

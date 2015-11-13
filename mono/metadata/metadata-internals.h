@@ -4,6 +4,7 @@
 
 #include "mono/metadata/image.h"
 #include "mono/metadata/blob.h"
+#include "mono/metadata/cil-coff.h"
 #include "mono/metadata/mempool.h"
 #include "mono/metadata/domain-internals.h"
 #include "mono/metadata/mono-hash.h"
@@ -73,7 +74,7 @@ struct _MonoAssembly {
 	/* 
 	 * The number of appdomains which have this assembly loaded plus the number of 
 	 * assemblies referencing this assembly through an entry in their image->references
-	 * arrays. The later is needed because entries in the image->references array
+	 * arrays. The latter is needed because entries in the image->references array
 	 * might point to assemblies which are only loaded in some appdomains, and without
 	 * the additional reference, they can be freed at any time.
 	 * The ref_count is initially 0.
@@ -164,6 +165,13 @@ struct _MonoTableInfo {
 
 typedef struct _MonoDllMap MonoDllMap;
 
+typedef struct {
+	gboolean (*match) (MonoImage*);
+	gboolean (*load_pe_data) (MonoImage*);
+	gboolean (*load_cli_data) (MonoImage*);
+	gboolean (*load_tables) (MonoImage*);
+} MonoImageLoader;
+
 struct _MonoImage {
 	/*
 	 * The number of assemblies which reference this MonoImage though their 'image'
@@ -172,6 +180,8 @@ struct _MonoImage {
 	 * this image between calls of mono_image_open () and mono_image_close ().
 	 */
 	int   ref_count;
+
+	/* If the raw data was allocated from a source such as mmap, the allocator may store resource tracking information here. */
 	void *raw_data_handle;
 	char *raw_data;
 	guint32 raw_data_len;
@@ -208,10 +218,16 @@ struct _MonoImage {
 
 	/* Whenever this image is considered as platform code for the CoreCLR security model */
 	guint8 core_clr_platform_code : 1;
-			    
+
+	/* The path to the file for this image. */
 	char *name;
+
+	/* The assembly name reported in the file for this image (expected to be NULL for a netmodule) */
 	const char *assembly_name;
+
+	/* The module name reported in the file for this image (could be NULL for a malformed file) */
 	const char *module_name;
+
 	char *version;
 	gint16 md_version_major, md_version_minor;
 	char *guid;
@@ -241,11 +257,16 @@ struct _MonoImage {
 	MonoAssembly **references;
 	int nreferences;
 
+	/* Code files in the assembly. */
 	MonoImage **modules;
 	guint32 module_count;
 	gboolean *modules_loaded;
 
-	MonoImage **files; /*protected by the image lock*/
+	/*
+	 * Files in the assembly. Items are either NULL or alias items in modules, so this does not impact ref_count.
+	 * Protected by the image lock.
+	 */
+	MonoImage **files;
 
 	gpointer aot_module;
 
@@ -365,6 +386,9 @@ struct _MonoImage {
 	/* The length of the above array */
 	int gshared_types_len;
 
+	/* The loader used to load this image */
+	MonoImageLoader *loader;
+
 	/*
 	 * No other runtime locks must be taken while holding this lock.
 	 * It's meant to be used only to mutate and query structures part of this image.
@@ -421,6 +445,7 @@ typedef struct {
 	guint32 *values; /* rows * columns */
 } MonoDynamicTable;
 
+/* "Dynamic" assemblies and images arise from System.Reflection.Emit */
 struct _MonoDynamicAssembly {
 	MonoAssembly assembly;
 	char *strong_name;
@@ -638,6 +663,9 @@ void
 mono_remove_image_unload_hook (MonoImageUnloadFunc func, gpointer user_data);
 
 void
+mono_install_image_loader (const MonoImageLoader *loader);
+
+void
 mono_image_append_class_to_reflection_info_set (MonoClass *klass);
 
 gpointer
@@ -656,6 +684,12 @@ char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
 #define mono_image_set_new0(image,type,size) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size)))
+
+gboolean
+mono_image_load_cli_header (MonoImage *image, MonoCLIImageInfo *iinfo);
+
+gboolean
+mono_image_load_metadata (MonoImage *image, MonoCLIImageInfo *iinfo);
 
 MonoType*
 mono_metadata_get_shared_type (MonoType *type);
@@ -690,7 +724,6 @@ mono_metadata_parse_array_full              (MonoImage             *image,
 MONO_API MonoType *
 mono_metadata_parse_type_full               (MonoImage             *image,
 					     MonoGenericContainer  *container,
-					     MonoParseTypeMode      mode,
 					     short                  opt_attrs,
 					     const char            *ptr,
 					     const char           **rptr);
@@ -726,7 +759,8 @@ mono_metadata_parse_generic_inst            (MonoImage             *image,
 					     MonoGenericContainer  *container,
 					     int                    count,
 					     const char            *ptr,
-					     const char           **rptr);
+					     const char           **rptr,
+						 MonoError *error);
 
 MonoGenericInst *
 mono_metadata_get_generic_inst              (int 		    type_argc,
@@ -861,6 +895,9 @@ mono_method_get_wrapper_cache (MonoMethod *method);
 
 MonoWrapperCaches*
 mono_method_get_wrapper_cache (MonoMethod *method);
+
+MonoType*
+mono_metadata_parse_type_checked (MonoImage *m, MonoGenericContainer *container, short opt_attrs, gboolean transient, const char *ptr, const char **rptr, MonoError *error);
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

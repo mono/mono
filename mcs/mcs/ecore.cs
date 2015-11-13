@@ -7038,19 +7038,16 @@ namespace Mono.CSharp {
 
 		protected override bool ResolveAutopropertyAssignment (ResolveContext rc, Expression rhs)
 		{
-			var prop = best_candidate.MemberDefinition as Property;
-			if (prop == null)
-				return false;
-
 			if (!rc.HasSet (ResolveContext.Options.ConstructorScope))
 				return false;
 
-			if (prop.Parent.PartialContainer != rc.CurrentMemberDefinition.Parent.PartialContainer) {
-				var ps = MemberCache.FindMember (rc.CurrentType, MemberFilter.Property (prop.ShortName, prop.MemberType), BindingRestriction.DeclaredOnly) as PropertySpec;
+			var prop = best_candidate.MemberDefinition as Property;
+			if (prop == null || prop.Parent.PartialContainer != rc.CurrentMemberDefinition.Parent.PartialContainer) {
+				var ps = MemberCache.FindMember (rc.CurrentType, MemberFilter.Property (best_candidate.Name, best_candidate.MemberType), BindingRestriction.DeclaredOnly) as PropertySpec;
 				if (ps == null)
 					return false;
 
-				prop = (Property) ps.MemberDefinition;
+				prop = (Property)ps.MemberDefinition;
 			}
 
 			var spec = prop.BackingField;

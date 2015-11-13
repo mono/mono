@@ -1579,6 +1579,7 @@
     <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
     <Compile Include="System\TimeZoneInfo.Serialization.cs" />
     <Compile Include="System\TypeCode.cs" />
+    <Compile Include="System\TypeIdentifier.cs" />
     <Compile Include="System\TypeSpec.cs" />
     <Compile Include="System\UIntPtr.cs" />
     <Compile Include="System\ValueType.cs" />

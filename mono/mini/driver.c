@@ -1151,6 +1151,7 @@ mini_usage_jitdeveloper (void)
 		 "    --inject-async-exc METHOD OFFSET Inject an asynchronous exception at METHOD\n"
 		 "    --verify-all           Run the verifier on all assemblies and methods\n"
 		 "    --full-aot             Avoid JITting any code\n"
+		 "    --llvmonly             Use LLVM compiled code only\n"
 		 "    --agent=ASSEMBLY[:ARG] Loads the specific agent assembly and executes its Main method with the given argument before loading the main assembly.\n"
 		 "    --no-x86-stack-align   Don't align stack on x86\n"
 		 "\n"
@@ -1687,6 +1688,9 @@ mono_main (int argc, char* argv[])
 			mono_verifier_enable_verify_all ();
 		} else if (strcmp (argv [i], "--full-aot") == 0) {
 			mono_aot_only = TRUE;
+		} else if (strcmp (argv [i], "--llvmonly") == 0) {
+			mono_aot_only = TRUE;
+			mono_llvm_only = TRUE;
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2228,6 +2232,8 @@ void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
 	mono_aot_mode = mode;
+	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY)
+		mono_llvm_only = TRUE;
 }
 
 /**
@@ -2279,4 +2285,82 @@ void
 mono_set_crash_chaining (gboolean chain_crashes)
 {
 	mono_do_crash_chaining = chain_crashes;
+}
+
+void
+mono_parse_env_options (int argc, char *argv [])
+{
+	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
+	if (env_options != NULL){
+		GPtrArray *array = g_ptr_array_new ();
+		GString *buffer = g_string_new ("");
+		const char *p;
+		unsigned i;
+		gboolean in_quotes = FALSE;
+		char quote_char = '\0';
+
+		for (p = env_options; *p; p++){
+			switch (*p){
+			case ' ': case '\t':
+				if (!in_quotes) {
+					if (buffer->len != 0){
+						g_ptr_array_add (array, g_strdup (buffer->str));
+						g_string_truncate (buffer, 0);
+					}
+				} else {
+					g_string_append_c (buffer, *p);
+				}
+				break;
+			case '\\':
+				if (p [1]){
+					g_string_append_c (buffer, p [1]);
+					p++;
+				}
+				break;
+			case '\'':
+			case '"':
+				if (in_quotes) {
+					if (quote_char == *p)
+						in_quotes = FALSE;
+					else
+						g_string_append_c (buffer, *p);
+				} else {
+					in_quotes = TRUE;
+					quote_char = *p;
+				}
+				break;
+			default:
+				g_string_append_c (buffer, *p);
+				break;
+			}
+		}
+		if (in_quotes) {
+			fprintf (stderr, "Unmatched quotes in value of MONO_ENV_OPTIONS: [%s]\n", env_options);
+			exit (1);
+		}
+			
+		if (buffer->len != 0)
+			g_ptr_array_add (array, g_strdup (buffer->str));
+		g_string_free (buffer, TRUE);
+
+		if (array->len > 0){
+			int new_argc = array->len + argc;
+			char **new_argv = g_new (char *, new_argc + 1);
+			int j;
+
+			new_argv [0] = argv [0];
+			
+			/* First the environment variable settings, to allow the command line options to override */
+			for (i = 0; i < array->len; i++)
+				new_argv [i+1] = g_ptr_array_index (array, i);
+			i++;
+			for (j = 1; j < argc; j++)
+				new_argv [i++] = argv [j];
+			new_argv [i] = NULL;
+
+			argc = new_argc;
+			argv = new_argv;
+		}
+		g_ptr_array_free (array, TRUE);
+	}
 }

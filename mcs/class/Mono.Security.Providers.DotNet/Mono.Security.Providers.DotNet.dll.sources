@@ -1,0 +1,6 @@
+./Properties/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+
+./Mono.Security.Providers.DotNet/DotNetTlsProvider.cs
+./Mono.Security.Providers.DotNet/DotNetSslStreamImpl.cs

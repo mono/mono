@@ -1296,16 +1296,20 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					entry.Define (this);
-
-					//
-					// It's needed for repl only, when using clause cannot be resolved don't hold it in
-					// global list which is resolved for each evaluation
-					//
-					if (entry.ResolvedExpression == null) {
-						clauses.RemoveAt (i--);
-						continue;
+					try {
+						entry.Define (this);
+					} finally {
+						//
+						// It's needed for repl only, when using clause cannot be resolved don't hold it in
+						// global list which is resolved for every evaluation
+						//
+						if (entry.ResolvedExpression == null) {
+							clauses.RemoveAt (i--);
+						}
 					}
+
+					if (entry.ResolvedExpression == null)
+						continue;
 
 					var using_ns = entry.ResolvedExpression as NamespaceExpression;
 					if (using_ns == null) {
@@ -1343,7 +1347,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < clauses.Count; ++i) {
 						var entry = clauses[i];
 						if (entry.Alias != null) {
-							aliases.Add (entry.Alias.Value, (UsingAliasNamespace) entry);
+							aliases[entry.Alias.Value] = (UsingAliasNamespace) entry;
 						}
 					}
 				}
@@ -1439,6 +1443,7 @@ namespace Mono.CSharp {
 			if (resolved != null) {
 				var compiler = ctx.Module.Compiler;
 				var type = resolved.Type;
+				resolved = null;
 
 				compiler.Report.SymbolRelatedToPreviousError (type);
 				compiler.Report.Error (138, Location,

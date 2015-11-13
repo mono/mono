@@ -123,7 +123,6 @@ System.Net.Sockets/IPPacketInformation.cs
 System.Net.Sockets/IPv6MulticastOption.cs
 System.Net.Sockets/LingerOption.cs
 System.Net.Sockets/MulticastOption.cs
-System.Net.Sockets/NetworkStream.cs
 System.Net.Sockets/ProtocolFamily.cs
 System.Net.Sockets/ProtocolType.cs
 System.Net.Sockets/SafeSocketHandle.cs
@@ -349,11 +348,28 @@ System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs
 
+Mono.Net.Security/CallbackHelpers.cs
+Mono.Net.Security/ChainValidationHelper.cs
+Mono.Net.Security/IMonoTlsProvider.cs
+Mono.Net.Security/IMonoSslStream.cs
+Mono.Net.Security/LegacySslStream.cs
+Mono.Net.Security/MonoDefaultTlsProvider.cs
+Mono.Net.Security/MonoSslStreamImpl.cs
+Mono.Net.Security/MonoSslStreamWrapper.cs
+Mono.Net.Security/MonoTlsProviderFactory.cs
+Mono.Net.Security/MonoTlsProviderImpl.cs
+Mono.Net.Security/MonoTlsProviderWrapper.cs
+Mono.Net.Security/MonoTlsStream.cs
+Mono.Net.Security/NoReflectionHelper.cs
+Mono.Net.Security/SystemCertificateValidator.cs
+
 ReferenceSources/AssertWrapper.cs
+ReferenceSources/Internal.cs
 ReferenceSources/HttpSysSettings.cs
 ReferenceSources/Logging.cs
 ReferenceSources/NativeMethods.cs
 ReferenceSources/SettingsSectionInternal.cs
+ReferenceSources/Socket.cs
 ReferenceSources/SR.cs
 ReferenceSources/SRCategoryAttribute.cs
 ReferenceSources/SystemNetworkCredential.cs
@@ -726,11 +742,13 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/net/System/Net/Internal.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeDecodingConformance.cs
 ../../../external/referencesource/System/net/System/Net/UnicodeEncodingConformance.cs
+../../../external/referencesource/System/net/System/Net/ServicePointManager.cs
 ../../../external/referencesource/System/net/System/Net/webclient.cs
 ../../../external/referencesource/System/net/System/Net/WebPermission.cs
 ../../../external/referencesource/System/net/System/Net/WebUtility.cs
 ../../../external/referencesource/System/net/System/Net/WriteStreamClosedEventArgs.cs
 
+../../../external/referencesource/System/net/System/Net/Sockets/NetworkStream.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/IPInterfaceStatistics.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/ScopeLevel.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/UnicastIPAddressInformation.cs

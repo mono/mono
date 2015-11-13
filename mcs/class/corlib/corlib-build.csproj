@@ -1691,6 +1691,7 @@
     <Compile Include="System\TypedReference.cs" />
     <Compile Include="System\TypeInitializationException.cs" />
     <Compile Include="System\TypeLoadException.cs" />
+    <Compile Include="System\TypeIdentifier.cs" />
     <Compile Include="System\TypeSpec.cs" />
     <Compile Include="System\TypeUnloadedException.cs" />
     <Compile Include="System\UInt16.cs" />

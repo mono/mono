@@ -358,7 +358,16 @@ typedef struct {
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
+#define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
+#endif
+
+#if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_TLS_GET_REG 1
+#endif
+
+#if defined(TARGET_APPLETVOS)
+/* No signals */
+#define MONO_ARCH_NEED_DIV_CHECK 1
 #endif
 
 /* Used for optimization, not complete */

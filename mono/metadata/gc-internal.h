@@ -191,12 +191,6 @@ void  mono_gc_finalize_threadpool_threads (void);
 
 /* fast allocation support */
 
-/* Accessible using mono_marshal_wrapper_info_from_wrapper () */
-typedef struct {
-	const char *gc_name;
-	int alloc_type;
-} AllocatorWrapperInfo;
-
 int mono_gc_get_aligned_size_for_allocator (int size);
 MonoMethod* mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean known_instance_size);
 MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass);
@@ -370,7 +364,9 @@ void mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer alts
 extern gboolean log_finalizers;
 
 /* If set, do not run finalizers. */
-extern gboolean do_not_finalize;
+extern gboolean mono_do_not_finalize;
+/* List of names of classes not to finalize. */
+extern gchar **mono_do_not_finalize_class_names;
 
 #endif /* __MONO_METADATA_GC_INTERNAL_H__ */
 

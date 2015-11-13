@@ -67,7 +67,8 @@ namespace System.Reflection.Emit {
 		
 		private TypeBuilder global_type;
 		private Type global_type_created;
-		Hashtable name_cache;
+		// name_cache keys are display names
+		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
 		private int[] table_indexes;
 		bool transient;
@@ -90,7 +91,7 @@ namespace System.Reflection.Emit {
 			guid = Guid.FastNewGuidArray ();
 			// guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
-			name_cache = new Hashtable ();
+			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
 
 			basic_init (this);
@@ -262,24 +263,27 @@ namespace System.Reflection.Emit {
 		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packingSize, int typesize) {
 			if (name == null)
 				throw new ArgumentNullException ("fullname");
-			if (name_cache.ContainsKey (name))
+			TypeIdentifier ident = TypeIdentifiers.FromInternal (name);
+			if (name_cache.ContainsKey (ident))
 				throw new ArgumentException ("Duplicate type name within an assembly.");
 			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packingSize, typesize, null);
 			AddType (res);
 
-			name_cache.Add (name, res);
+			name_cache.Add (ident, res);
 			
 			return res;
 		}
 
-		internal void RegisterTypeName (TypeBuilder tb, string name)
+		internal void RegisterTypeName (TypeBuilder tb, TypeName name)
 		{
 			name_cache.Add (name, tb);
 		}
 		
-		internal TypeBuilder GetRegisteredType (string name)
+		internal TypeBuilder GetRegisteredType (TypeName name)
 		{
-			return (TypeBuilder) name_cache [name];
+			TypeBuilder result = null;
+			name_cache.TryGetValue (name, out result);
+			return result;
 		}
 
 		[ComVisible (true)]
@@ -304,13 +308,14 @@ namespace System.Reflection.Emit {
 		}
 
 		public EnumBuilder DefineEnum( string name, TypeAttributes visibility, Type underlyingType) {
-			if (name_cache.Contains (name))
+			TypeIdentifier ident = TypeIdentifiers.FromInternal (name);
+			if (name_cache.ContainsKey (ident))
 				throw new ArgumentException ("Duplicate type name within an assembly.");
 
 			EnumBuilder eb = new EnumBuilder (this, name, visibility, underlyingType);
 			TypeBuilder res = eb.GetTypeBuilder ();
 			AddType (res);
-			name_cache.Add (name, res);
+			name_cache.Add (ident, res);
 			return eb;
 		}
 
@@ -324,20 +329,20 @@ namespace System.Reflection.Emit {
 			return GetType (className, false, ignoreCase);
 		}
 
-		private TypeBuilder search_in_array (TypeBuilder[] arr, int validElementsInArray, string className) {
+		private TypeBuilder search_in_array (TypeBuilder[] arr, int validElementsInArray, TypeName className) {
 			int i;
 			for (i = 0; i < validElementsInArray; ++i) {
-				if (String.Compare (className, arr [i].FullName, true, CultureInfo.InvariantCulture) == 0) {
+				if (String.Compare (className.DisplayName, arr [i].FullName, true, CultureInfo.InvariantCulture) == 0) {
 					return arr [i];
 				}
 			}
 			return null;
 		}
 
-		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, int validElementsInArray, string className) {
+		private TypeBuilder search_nested_in_array (TypeBuilder[] arr, int validElementsInArray, TypeName className) {
 			int i;
 			for (i = 0; i < validElementsInArray; ++i) {
-				if (String.Compare (className, arr [i].Name, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (className.DisplayName, arr [i].Name, true, CultureInfo.InvariantCulture) == 0)
 					return arr [i];
 			}
 			return null;
@@ -346,26 +351,17 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type create_modified_type (TypeBuilder tb, string modifiers);
 
-		static readonly char [] type_modifiers = {'&', '[', '*'};
+		private TypeBuilder GetMaybeNested (TypeBuilder t, IEnumerable<TypeName> nested) {
+			TypeBuilder result = t;
 
-		private TypeBuilder GetMaybeNested (TypeBuilder t, string className) {
-			int subt;
-			string pname, rname;
-
-			subt = className.IndexOf ('+');
-			if (subt < 0) {
-				if (t.subtypes != null)
-					return search_nested_in_array (t.subtypes, t.subtypes.Length, className);
-				return null;
+			foreach (TypeName pname in nested) {
+				if (result.subtypes == null)
+					return null;
+				result = search_nested_in_array(result.subtypes, result.subtypes.Length, pname);
+				if (result == null)
+					return null;
 			}
-			if (t.subtypes != null) {
-				pname = className.Substring (0, subt);
-				rname = className.Substring (subt + 1);
-				TypeBuilder result = search_nested_in_array (t.subtypes, t.subtypes.Length, pname);
-				if (result != null)
-					return GetMaybeNested (result, rname);
-			}
-			return null;
+			return result;
 		}
 
 		[ComVisible (true)]
@@ -376,40 +372,27 @@ namespace System.Reflection.Emit {
 			if (className.Length == 0)
 				throw new ArgumentException ("className");
 
-			int subt;
-			string orig = className;
-			string modifiers;
 			TypeBuilder result = null;
 
 			if (types == null && throwOnError)
 				throw new TypeLoadException (className);
 
-			subt = className.IndexOfAny (type_modifiers);
-			if (subt >= 0) {
-				modifiers = className.Substring (subt);
-				className = className.Substring (0, subt);
-			} else
-				modifiers = null;
+			TypeSpec ts = TypeSpec.Parse (className);
 
 			if (!ignoreCase) {
-				result =  name_cache [className] as TypeBuilder;
+				var displayNestedName = ts.TypeNameWithoutModifiers();
+				name_cache.TryGetValue (displayNestedName, out result);
 			} else {
-				subt = className.IndexOf ('+');
-				if (subt < 0) {
-					if (types != null)
-						result = search_in_array (types, num_types,  className);
-				} else {
-					string pname, rname;
-					pname = className.Substring (0, subt);
-					rname = className.Substring (subt + 1);
-					result = search_in_array (types, num_types, pname);
-					if (result != null)
-						result = GetMaybeNested (result, rname);
+				if (types != null)
+					result = search_in_array (types, num_types,  ts.Name);
+				if (!ts.IsNested && result != null) {
+					result = GetMaybeNested (result, ts.Nested);
 				}
 			}
 			if ((result == null) && throwOnError)
-				throw new TypeLoadException (orig);
-			if (result != null && (modifiers != null)) {
+				throw new TypeLoadException (className);
+			if (result != null && (ts.HasModifiers || ts.IsByRef)) {
+				string modifiers = ts.ModifierString ();
 				Type mt = create_modified_type (result, modifiers);
 				result = mt as TypeBuilder;
 				if (result == null)

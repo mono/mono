@@ -39,7 +39,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Assert.IsFalse (target.Completion.Wait (100));
 			source.Complete ();
-			Assert.IsTrue (target.Completion.Wait (100));
+			Assert.IsTrue (target.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -55,10 +55,10 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			source.Fault (exception);
 
 			var ae =
-				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (1000));
 			Assert.AreEqual (exception, ae.Flatten ().InnerException);
 
-			ae = AssertEx.Throws<AggregateException> (() => target.Completion.Wait (100));
+			ae = AssertEx.Throws<AggregateException> (() => target.Completion.Wait (1000));
 			Assert.AreEqual (exception, ae.Flatten ().InnerException);
 		}
 
@@ -76,11 +76,11 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			tokenSource.Cancel ();
 
 			var ae =
-				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (100));
+				AssertEx.Throws<AggregateException> (() => source.Completion.Wait (1000));
 			Assert.IsInstanceOfType (
 				typeof(TaskCanceledException), ae.Flatten ().InnerException);
 
-			Assert.IsTrue (target.Completion.Wait (100));
+			Assert.IsTrue (target.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -109,7 +109,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsFalse (target.Completion.Wait (100));
 
 			Assert.AreEqual (42, target.Receive ());
-			Assert.IsTrue (target.Completion.Wait (100));
+			Assert.IsTrue (target.Completion.Wait (1000));
 		}
 
 		[Test]

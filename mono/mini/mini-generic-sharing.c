@@ -1187,6 +1187,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		MonoJumpInfoVirtMethod *info = data;
 		MonoClass *iface_class = info->method->klass;
 		MonoMethod *method;
+		MonoError error;
 		int ioffset, slot;
 		gpointer addr;
 
@@ -1202,6 +1203,8 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		g_assert (slot != -1);
 		g_assert (info->klass->vtable);
 		method = info->klass->vtable [ioffset + slot];
+
+		method = mono_class_inflate_generic_method_checked (method, context, &error);
 
 		addr = mono_compile_method (method);
 		return mini_add_method_trampoline (method, addr, mono_method_needs_static_rgctx_invoke (method, FALSE), FALSE);
@@ -2300,6 +2303,13 @@ mono_method_is_generic_sharable (MonoMethod *method, gboolean allow_type_vars)
 	return mono_method_is_generic_sharable_full (method, allow_type_vars, partial_sharing_supported (), TRUE);
 }
 
+/*
+ * mono_method_needs_static_rgctx_invoke:
+ *
+ *   Return whenever METHOD needs an rgctx argument.
+ * An rgctx argument is needed when the method is generic sharable, but it doesn't
+ * have a this argument which can be used to load the rgctx.
+ */
 gboolean
 mono_method_needs_static_rgctx_invoke (MonoMethod *method, gboolean allow_type_vars)
 {
@@ -2721,19 +2731,14 @@ get_shared_gparam_name (MonoTypeEnum constraint, const char *name)
 	}
 }
 
-typedef struct {
-	MonoGenericParam *par;
-	MonoType *constraint;
-} SharedGParam;
-
 static guint
 shared_gparam_hash (gconstpointer data)
 {
-	SharedGParam *p = (SharedGParam*)data;
+	MonoGSharedGenericParam *p = (MonoGSharedGenericParam*)data;
 	guint hash;
 
-	hash = mono_metadata_generic_param_hash (p->par);
-	hash = ((hash << 5) - hash) ^ mono_metadata_type_hash (p->constraint);
+	hash = mono_metadata_generic_param_hash (p->parent);
+	hash = ((hash << 5) - hash) ^ mono_metadata_type_hash (p->param.param.gshared_constraint);
 
 	return hash;
 }
@@ -2741,42 +2746,45 @@ shared_gparam_hash (gconstpointer data)
 static gboolean
 shared_gparam_equal (gconstpointer ka, gconstpointer kb)
 {
-	SharedGParam *p1 = (SharedGParam*)ka;
-	SharedGParam *p2 = (SharedGParam*)kb;
+	MonoGSharedGenericParam *p1 = (MonoGSharedGenericParam*)ka;
+	MonoGSharedGenericParam *p2 = (MonoGSharedGenericParam*)kb;
 
 	if (p1 == p2)
 		return TRUE;
-	if (p1->par != p2->par)
+	if (p1->parent != p2->parent)
 		return FALSE;
-	if (!mono_metadata_type_equal (p1->constraint, p2->constraint))
+	if (!mono_metadata_type_equal (p1->param.param.gshared_constraint, p2->param.param.gshared_constraint))
 		return FALSE;
 	return TRUE;
 }
 
 /*
- * get_shared_gparam:
+ * mini_get_shared_gparam:
  *
- *   Create an anonymous gparam with a type variable with a constraint which encodes which types can match it.
+ *   Create an anonymous gparam from T with a constraint which encodes which types can match it.
  */
-static MonoType*
-get_shared_gparam (MonoType *t, MonoType *constraint)
+MonoType*
+mini_get_shared_gparam (MonoType *t, MonoType *constraint)
 {
 	MonoGenericParam *par = t->data.generic_param;
-	MonoGenericParam *copy;
-	SharedGParam key;
+	MonoGSharedGenericParam *copy, key;
 	MonoType *res;
 	MonoImage *image = NULL;
 	char *name;
 
 	memset (&key, 0, sizeof (key));
-	key.par = par;
-	key.constraint = constraint;
+	key.parent = par;
+	key.param.param.gshared_constraint = constraint;
 
 	g_assert (mono_generic_param_info (par));
 	/* image might not be set for sre */
 	if (par->owner && par->owner->image) {
 		image = par->owner->image;
 
+		/*
+		 * Need a cache to ensure the newly created gparam
+		 * is unique wrt T/CONSTRAINT.
+		 */
 		mono_image_lock (image);
 		if (!image->gshared_types) {
 			image->gshared_types_len = MONO_TYPE_INTERNAL;
@@ -2788,34 +2796,29 @@ get_shared_gparam (MonoType *t, MonoType *constraint)
 		mono_image_unlock (image);
 		if (res)
 			return res;
-		copy = mono_image_alloc0 (image, sizeof (MonoGenericParamFull));
-		memcpy (copy, par, sizeof (MonoGenericParamFull));
+		copy = mono_image_alloc0 (image, sizeof (MonoGSharedGenericParam));
+		memcpy (&copy->param, par, sizeof (MonoGenericParamFull));
 		name = get_shared_gparam_name (constraint->type, ((MonoGenericParamFull*)copy)->info.name);
-		((MonoGenericParamFull*)copy)->info.name = mono_image_strdup (image, name);
+		copy->param.info.name = mono_image_strdup (image, name);
 		g_free (name);
 	} else {
 		/* mono_generic_param_name () expects this to be a MonoGenericParamFull */
-		copy = (MonoGenericParam*)g_new0 (MonoGenericParamFull, 1);
-		memcpy (copy, par, sizeof (MonoGenericParam));
+		copy = g_new0 (MonoGSharedGenericParam, 1);
+		memcpy (&copy->param, par, sizeof (MonoGenericParam));
 	}
-	copy->owner = NULL;
+	copy->param.param.owner = NULL;
 	// FIXME:
-	copy->image = image ? image : mono_defaults.corlib;
+	copy->param.param.image = image ? image : mono_defaults.corlib;
 
-	copy->gshared_constraint = constraint;
+	copy->param.param.gshared_constraint = constraint;
+	copy->parent = par;
 	res = mono_metadata_type_dup (NULL, t);
-	res->data.generic_param = copy;
+	res->data.generic_param = (MonoGenericParam*)copy;
 
 	if (image) {
-		SharedGParam *dkey;
-
-		dkey = mono_image_alloc0 (image, sizeof (SharedGParam));
-		dkey->par = par;
-		dkey->constraint = constraint;
-
 		mono_image_lock (image);
 		/* Duplicates are ok */
-		g_hash_table_insert (image->gshared_types [constraint->type], dkey, res);
+		g_hash_table_insert (image->gshared_types [constraint->type], copy, res);
 		mono_image_unlock (image);
 	}
 
@@ -2843,7 +2846,7 @@ get_shared_type (MonoType *t, MonoType *type)
 
 		k = mono_class_inflate_generic_class (gclass->container_class, &context);
 
-		return get_shared_gparam (t, &k->byval_arg);
+		return mini_get_shared_gparam (t, &k->byval_arg);
 	} else if (MONO_TYPE_ISSTRUCT (type)) {
 		return type;
 	}
@@ -2856,7 +2859,7 @@ get_shared_type (MonoType *t, MonoType *type)
 		ttype = MONO_TYPE_OBJECT;
 	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {
 		if (type->data.generic_param->gshared_constraint)
-			return get_shared_gparam (t, type->data.generic_param->gshared_constraint);
+			return mini_get_shared_gparam (t, type->data.generic_param->gshared_constraint);
 		ttype = MONO_TYPE_OBJECT;
 	}
 
@@ -2868,7 +2871,7 @@ get_shared_type (MonoType *t, MonoType *type)
 		t2.type = ttype;
 		klass = mono_class_from_mono_type (&t2);
 
-		return get_shared_gparam (t, &klass->byval_arg);
+		return mini_get_shared_gparam (t, &klass->byval_arg);
 	}
 }
 
@@ -2876,7 +2879,7 @@ static MonoType*
 get_gsharedvt_type (MonoType *t)
 {
 	/* Use TypeHandle as the constraint type since its a valuetype */
-	return get_shared_gparam (t, &mono_defaults.typehandle_class->byval_arg);
+	return mini_get_shared_gparam (t, &mono_defaults.typehandle_class->byval_arg);
 }
 
 static MonoGenericInst*

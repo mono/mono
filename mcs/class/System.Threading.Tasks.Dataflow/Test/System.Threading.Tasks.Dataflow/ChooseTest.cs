@@ -46,7 +46,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			source1.Post (42);
 
-			Assert.IsTrue (completion.Wait (500));
+			Assert.IsTrue (completion.Wait (1000));
 			Assert.AreEqual (0, completion.Result);
 			Assert.IsTrue (action1);
 			Assert.IsFalse (action2);
@@ -67,7 +67,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			source1.Post (42);
 			source1.Post (43);
 
-			Assert.IsTrue (completion.Wait (500));
+			Assert.IsTrue (completion.Wait (1000));
 			Assert.AreEqual (0, completion.Result);
 			Assert.AreEqual (1, action1);
 			Assert.AreEqual (0, action2);
@@ -104,7 +104,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			Task.WaitAll (t1, t2);
 
-			Assert.IsTrue (completion.Wait (500));
+			Assert.IsTrue (completion.Wait (1000));
 			Assert.AreEqual (1, action1 + action2);
 
 			int item;
@@ -166,7 +166,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			source1.Post (10);
 
-			Assert.IsTrue (completion.Wait (500));
+			Assert.IsTrue (completion.Wait (1000));
 			Assert.AreEqual (0, completion.Result);
 			Assert.AreEqual (42, action1);
 			Assert.AreEqual (0, action2);
@@ -185,7 +185,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			source1.Post (42);
 
-			var ae = AssertEx.Throws<AggregateException> (() => completion.Wait (500));
+			var ae = AssertEx.Throws<AggregateException> (() => completion.Wait (1000));
 			Assert.AreEqual (1, ae.InnerExceptions.Count);
 			Assert.AreSame (exception, ae.InnerException);
 		}
@@ -207,7 +207,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			source3.Post (new object ());
 
-			Assert.IsTrue (completion.Wait (500));
+			Assert.IsTrue (completion.Wait (1000));
 			Assert.AreEqual (2, completion.Result);
 			Assert.IsFalse (action1);
 			Assert.IsFalse (action2);

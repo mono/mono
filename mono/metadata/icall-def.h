@@ -325,6 +325,7 @@ ICALL(MONOIO_3, "CreateDirectory(string,System.IO.MonoIOError&)", ves_icall_Syst
 ICALL(MONOIO_4, "CreatePipe", ves_icall_System_IO_MonoIO_CreatePipe)
 ICALL(MONOIO_5, "DeleteFile(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_DeleteFile)
 #endif /* !PLATFORM_RO_FS */
+ICALL(MONOIO_38, "DumpHandles", ves_icall_System_IO_MonoIO_DumpHandles)
 ICALL(MONOIO_34, "DuplicateHandle", ves_icall_System_IO_MonoIO_DuplicateHandle)
 ICALL(MONOIO_37, "FindClose", ves_icall_System_IO_MonoIO_FindClose)
 ICALL(MONOIO_35, "FindFirst", ves_icall_System_IO_MonoIO_FindFirst)
@@ -441,6 +442,7 @@ ICALL(SOCK_17, "Send_internal(intptr,byte[],int,int,System.Net.Sockets.SocketFla
 ICALL(SOCK_18, "SetSocketOption_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,object,byte[],int,int&)", ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal)
 ICALL(SOCK_19, "Shutdown_internal(intptr,System.Net.Sockets.SocketShutdown,int&)", ves_icall_System_Net_Sockets_Socket_Shutdown_internal)
 ICALL(SOCK_20, "Socket_internal(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType,int&)", ves_icall_System_Net_Sockets_Socket_Socket_internal)
+ICALL(SOCK_20a, "SupportsPortReuse", ves_icall_System_Net_Sockets_Socket_SupportPortReuse)
 ICALL(SOCK_21a, "cancel_blocking_socket_operation", icall_cancel_blocking_socket_operation)
 
 ICALL_TYPE(SOCKEX, "System.Net.Sockets.SocketException", SOCKEX_1)
@@ -911,6 +913,7 @@ ICALL(THREAD_55, "GetAbortExceptionState", ves_icall_System_Threading_Thread_Get
 ICALL(THREAD_7, "GetDomainID", ves_icall_System_Threading_Thread_GetDomainID)
 ICALL(THREAD_8, "GetName_internal(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetName_internal)
 ICALL(THREAD_57, "GetPriorityNative", ves_icall_System_Threading_Thread_GetPriority)
+ICALL(THREAD_59, "GetStackTraces", ves_icall_System_Threading_Thread_GetStackTraces)
 ICALL(THREAD_11, "GetState(System.Threading.InternalThread)", ves_icall_System_Threading_Thread_GetState)
 ICALL(THREAD_53, "InterruptInternal", ves_icall_System_Threading_Thread_Interrupt_internal)
 ICALL(THREAD_12, "JoinInternal", ves_icall_System_Threading_Thread_Join_internal)

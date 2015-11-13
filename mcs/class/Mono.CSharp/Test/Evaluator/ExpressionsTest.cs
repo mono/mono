@@ -84,6 +84,26 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		public void UsingWithError ()
+		{
+			try {
+				Evaluator.Run ("using System.DateTime;");
+				Assert.Fail ("#1");
+			} catch {
+			}
+
+			Evaluator.Evaluate ("1+1");
+		}
+
+		[Test]
+		public void UsingAlias ()
+		{
+			Evaluator.Run("using System;");
+			Evaluator.Run("using MyConsole = System.Console;");
+			Evaluator.Run("Console.WriteLine(\"Hello World\")");
+		}
+
+		[Test]
 		public void WithTypeBuilders ()
 		{
 			object res;

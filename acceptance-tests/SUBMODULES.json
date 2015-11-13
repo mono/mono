@@ -1,0 +1,26 @@
+[
+  {
+    "name": "roslyn", 
+    "url": "git://github.com/dotnet/roslyn.git", 
+    "rev": "322bd5b2bbf07df6a67de35cbcb2365484412f70", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "roslyn"
+  }, 
+  {
+    "name": "coreclr", 
+    "url": "git://github.com/mono/coreclr.git", 
+    "rev": "ffe6263398591cfbd8100070ac8a191ff2080fbb", 
+    "remote-branch": "origin/mono", 
+    "branch": "mono", 
+    "directory": "coreclr"
+  }, 
+  {
+    "name": "ms-test-suite", 
+    "url": "git@github.com:xamarin/ms-test-suite.git", 
+    "rev": "19f2a7dd44a2bfcf6006fd38033222383e8b81bf", 
+    "remote-branch": "origin/master", 
+    "branch": "master", 
+    "directory": "ms-test-suite"
+  }
+]

@@ -1095,6 +1095,7 @@ namespace Mono.CSharp
 						case Token.DECIMAL:
 						case Token.BOOL:
 						case Token.STRING:
+						case Token.SBYTE:
 							return Token.OPEN_PARENS_CAST;
 						}
 					}

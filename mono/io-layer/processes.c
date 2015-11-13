@@ -96,13 +96,18 @@
 #include <mono/utils/mono-proclib.h>
 
 /* The process' environment strings */
-#if defined(__APPLE__) && !defined (__arm__) && !defined (__aarch64__)
+#if defined(__APPLE__)
+#if defined (TARGET_OSX)
 /* Apple defines this in crt_externs.h but doesn't provide that header for 
  * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
  * in fact exist on all implementations (so far) 
  */
-char ***_NSGetEnviron(void);
+gchar ***_NSGetEnviron(void);
 #define environ (*_NSGetEnviron())
+#else
+static char *mono_environ[1] = { NULL };
+#define environ mono_environ
+#endif /* defined (TARGET_OSX) */
 #else
 extern char **environ;
 #endif
@@ -1775,7 +1780,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 			return FALSE;
 		}
 		pid = process_handle->id;
-		proc_name = process_handle->proc_name;
+		proc_name = g_strdup (process_handle->proc_name);
 	}
 	
 #if defined(PLATFORM_MACOSX) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__HAIKU__)
@@ -1793,6 +1798,7 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 		 */
 		modules[0] = NULL;
 		*needed = sizeof(gpointer);
+		g_free (proc_name);
 		return TRUE;
 	}
 	mods = load_modules (fp);
@@ -1826,7 +1832,8 @@ gboolean EnumProcessModules (gpointer process, gpointer *modules,
 		free_procmodule (g_slist_nth_data (mods, i));
 	}
 	g_slist_free (mods);
-
+	g_free (proc_name);
+	
 	return TRUE;
 }
 

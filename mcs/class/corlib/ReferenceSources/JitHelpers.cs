@@ -16,7 +16,7 @@ namespace System.Runtime.CompilerServices {
 
 		static internal long UnsafeEnumCastLong<T>(T val) where T : struct
 		{
-			throw new NotImplementedException ();
+			return Array.UnsafeMov<T, long> (val);
 		}
 	}
 }

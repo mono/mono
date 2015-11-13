@@ -4,6 +4,9 @@ check-local: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type
 check-full: test-sgen check-local
 check-parallel: compile-tests check-full
 
+check-coreclr:
+	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
+
 # for backwards compatibility on Wrench
 test-wrench: check-parallel
 
@@ -861,11 +864,11 @@ runtest: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQS
 
 runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) ./test-runner.exe -j a --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	$(RUNTIME) ./test-runner.exe -j a --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 runtest-managed-serial: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) ./test-runner.exe -j 1 --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	$(RUNTIME) ./test-runner.exe -j 1 --testsuite-name "runtime" --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
 
 testjit:
 	@if test x$(M) != x0; then $(MAKE) runtest-managed; else $(MAKE) runtest; fi
@@ -1309,7 +1312,7 @@ test-generic-sharing-normal: $(GSHARED_TESTS)
 	done
 
 test-generic-sharing-managed: test-runner.exe $(GSHARED_TESTS)
-	@$(RUNTIME) ./test-runner.exe -j a --opt-sets "gshared gshared,shared gshared,-inline gshared,-inline,shared" $(GSHARED_TESTS)
+	@$(RUNTIME) ./test-runner.exe -j a --testsuite-name "gshared" --opt-sets "gshared gshared,shared gshared,-inline gshared,-inline,shared" $(GSHARED_TESTS)
 
 if NACL_CODEGEN
 test-generic-sharing:
@@ -1365,15 +1368,25 @@ test-oom: $(OOM_TESTS)
 if HOST_WIN32
 test-unhandled-exception-2:
 else
-test-unhandled-exception-2: unhandled-exception.exe
-	@echo "Testing unhandled-exception_1 ..."; $(RUNTIME) $+ 1 1> unhandled-exception_1.exe.stdout 2> unhandled-exception_1.exe.stderr; if test "x$$?" != "x1";   then exit 1; fi;	\
-	 echo "Testing unhandled-exception_2 ..."; $(RUNTIME) $+ 2 1> unhandled-exception_2.exe.stdout 2> unhandled-exception_2.exe.stderr; if test "x$$?" != "x0";   then exit 2; fi;	\
-	 echo "Testing unhandled-exception_3 ..."; $(RUNTIME) $+ 3 1> unhandled-exception_3.exe.stdout 2> unhandled-exception_3.exe.stderr; if test "x$$?" != "x0";   then exit 3; fi;	\
-	 echo "Testing unhandled-exception_4 ..."; $(RUNTIME) $+ 4 1> unhandled-exception_4.exe.stdout 2> unhandled-exception_4.exe.stderr; if test "x$$?" != "x0";   then exit 4; fi;	\
-	 echo "Testing unhandled-exception_5 ..."; $(RUNTIME) $+ 5 1> unhandled-exception_5.exe.stdout 2> unhandled-exception_5.exe.stderr; if test "x$$?" != "x255"; then exit 5; fi;	\
-	 echo "Testing unhandled-exception_6 ..."; $(RUNTIME) $+ 6 1> unhandled-exception_6.exe.stdout 2> unhandled-exception_6.exe.stderr; if test "x$$?" != "x0";   then exit 6; fi;	\
-	 echo "Testing unhandled-exception_7 ..."; $(RUNTIME) $+ 7 1> unhandled-exception_7.exe.stdout 2> unhandled-exception_7.exe.stderr; if test "x$$?" != "x0";   then exit 7; fi;	\
-	 echo "Testing unhandled-exception_8 ..."; $(RUNTIME) $+ 8 1> unhandled-exception_8.exe.stdout 2> unhandled-exception_8.exe.stderr; if test "x$$?" != "x3";   then exit 8; fi
+test-unhandled-exception-2: test-unhandled-exception-2-1 test-unhandled-exception-2-2 test-unhandled-exception-2-3 test-unhandled-exception-2-4	\
+		 test-unhandled-exception-2-5 test-unhandled-exception-2-6 test-unhandled-exception-2-7 test-unhandled-exception-2-8
+
+test-unhandled-exception-2-1: unhandled-exception-1.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 1 $<
+test-unhandled-exception-2-2: unhandled-exception-2.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
+test-unhandled-exception-2-3: unhandled-exception-3.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
+test-unhandled-exception-2-4: unhandled-exception-4.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
+test-unhandled-exception-2-5: unhandled-exception-5.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 255 $<
+test-unhandled-exception-2-6: unhandled-exception-6.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
+test-unhandled-exception-2-7: unhandled-exception-7.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 0 $<
+test-unhandled-exception-2-8: unhandled-exception-8.exe test-runner.exe
+	@$(RUNTIME) ./test-runner.exe --testsuite-name $@ --expected-exit-code 3 $<
 endif
 
 EXTRA_DIST += appdomain-loader.cs appdomain-tester.cs
@@ -1382,6 +1395,9 @@ test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
 	$(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.2.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) -O=gshared appdomain-loader.exe > appdomain-loader.exe.3.stdout || exit 1;
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.4.stdout || exit 1;
+
+coreclr-gcstress:
+	$(MAKE) -C $(mono_build_root)/acceptance-tests coreclr-gcstress
 
 noinst_LTLIBRARIES = libtest.la
 

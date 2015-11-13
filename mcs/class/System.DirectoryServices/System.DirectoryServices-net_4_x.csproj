@@ -49,6 +49,7 @@
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.DirectoryServices.ActiveDirectory\ActiveDirectoryObjectNotFoundException.cs" />
     <Compile Include="System.DirectoryServices.ActiveDirectory\ActiveDirectoryOperationException.cs" />
     <Compile Include="System.DirectoryServices.ActiveDirectory\ActiveDirectoryPartition.cs" />
     <Compile Include="System.DirectoryServices.ActiveDirectory\ActiveDirectoryReplicationMetadata.cs" />

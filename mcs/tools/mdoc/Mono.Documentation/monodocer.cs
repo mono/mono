@@ -133,6 +133,7 @@ class MDocUpdater : MDocCommand
 	List<AssemblyDefinition> assemblies;
 	readonly DefaultAssemblyResolver assemblyResolver = new DefaultAssemblyResolver();
 	
+	bool multiassembly;
 	bool delete;
 	bool show_exceptions;
 	bool no_assembly_versions, ignore_missing_types;
@@ -278,6 +279,9 @@ class MDocUpdater : MDocCommand
 			{ "preserve",
 				"Do not delete members that don't exist in the assembly, but rather mark them as preserved.",
 				v => PreserveTag = "true" },
+			{ "multiassembly",
+				"Allow types to be in multiple assemblies.",
+				v => multiassembly = true },
 		};
 		var assemblies = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -767,7 +771,13 @@ class MDocUpdater : MDocCommand
 
 	private void AddIndexAssembly (AssemblyDefinition assembly, XmlElement parent)
 	{
-		XmlElement index_assembly = parent.OwnerDocument.CreateElement("Assembly");
+		XmlElement index_assembly = null;
+		if (multiassembly) 
+			index_assembly = (XmlElement)parent.SelectSingleNode ("Assembly[@Name='"+ assembly.Name.Name +"']");
+		
+		if (index_assembly == null) 
+			index_assembly = parent.OwnerDocument.CreateElement ("Assembly");
+
 		index_assembly.SetAttribute ("Name", assembly.Name.Name);
 		index_assembly.SetAttribute ("Version", assembly.Name.Version.ToString());
 
@@ -842,7 +852,8 @@ class MDocUpdater : MDocCommand
 		
 		XmlElement index_types = WriteElement(index.DocumentElement, "Types");
 		XmlElement index_assemblies = WriteElement(index.DocumentElement, "Assemblies");
-		index_assemblies.RemoveAll ();
+		if (!multiassembly) 
+			index_assemblies.RemoveAll ();
 
 
 		HashSet<string> goodfiles = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
@@ -1535,28 +1546,15 @@ class MDocUpdater : MDocCommand
 				type);
 		}
 		
+		AddAssemblyNameToNode (root, type);
+
 		string assemblyInfoNodeFilter = MDocUpdater.HasDroppedNamespace (type) ? "[@apistyle='unified']" : "[not(@apistyle) or @apistyle='classic']";
-
-		AddXmlNode(
-			root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().ToArray (),
-			x => x.SelectSingleNode("AssemblyName").InnerText == type.Module.Assembly.Name.Name,
-			x => WriteElementText(x, "AssemblyName", type.Module.Assembly.Name.Name),
-			() => {
-				XmlElement ass = WriteElement(root, "AssemblyInfo", forceNewElement:true);
-				
-				if (MDocUpdater.HasDroppedNamespace (type)) ass.SetAttribute ("apistyle", "unified");
-
-				
-
-				return ass;
-			},
-			type);
-
-		foreach(var ass in root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ())
+		Func<XmlElement, bool> assemblyFilter = x => x.SelectSingleNode ("AssemblyName").InnerText == type.Module.Assembly.Name.Name;
+		foreach(var ass in root.SelectNodes ("AssemblyInfo" + assemblyInfoNodeFilter).Cast<XmlElement> ().Where (assemblyFilter))
 		{
 			WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
 			if (!no_assembly_versions) {
-				UpdateAssemblyVersions (root, type, true);
+				UpdateAssemblyVersions (ass, type, true);
 			}
 			else {
 				var versions = ass.SelectNodes ("AssemblyVersion").Cast<XmlNode> ().ToList ();
@@ -1654,6 +1652,29 @@ class MDocUpdater : MDocCommand
 		NormalizeWhitespace(root);
 	}
 
+	/// <summary>Adds an AssemblyInfo with AssemblyName node to an XmlElement.</summary>
+	/// <returns>The assembly that was either added, or was already present</returns>
+	static XmlElement AddAssemblyNameToNode (XmlElement root, TypeDefinition type)
+	{
+		return AddAssemblyNameToNode (root, type.Module);
+	}
+
+	/// <summary>Adds an AssemblyInfo with AssemblyName node to an XmlElement.</summary>
+	/// <returns>The assembly that was either added, or was already present</returns>
+	static XmlElement AddAssemblyNameToNode (XmlElement root, ModuleDefinition module)
+	{
+		Func<XmlElement, bool> assemblyFilter = x => x.SelectSingleNode ("AssemblyName").InnerText == module.Assembly.Name.Name;
+		return AddAssemblyXmlNode (
+			root.SelectNodes ("AssemblyInfo").Cast<XmlElement> ().ToArray (), 
+			assemblyFilter, x => WriteElementText (x, "AssemblyName", module.Assembly.Name.Name), 
+			() =>  {
+				XmlElement ass = WriteElement (root, "AssemblyInfo", forceNewElement: true);
+				if (MDocUpdater.HasDroppedNamespace (module))
+					ass.SetAttribute ("apistyle", "unified");
+				return ass;
+			}, module);
+	}
+
 	static readonly string[] TypeNodeOrder = {
 		"TypeSignature",
 		"MemberOfLibrary",
@@ -1709,7 +1730,13 @@ class MDocUpdater : MDocCommand
 		WriteElementText(me, "MemberType", GetMemberType(mi));
 
 		if (!no_assembly_versions) {
-			UpdateAssemblyVersions (me, mi, true);
+			if (!multiassembly)
+				UpdateAssemblyVersions (me, mi, true);
+			else {
+				var node = AddAssemblyNameToNode (me, mi.Module);
+
+				UpdateAssemblyVersionForAssemblyInfo (node, me, new[] { GetAssemblyVersion (mi.Module.Assembly) }, add: true);
+			}
 		}
 		else {
 			ClearElement (me, "AssemblyInfo");
@@ -1741,6 +1768,25 @@ class MDocUpdater : MDocCommand
 
 	static void AddXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, TypeDefinition type) {
 		AddXmlNode (relevant, valueMatches, setValue, makeNewNode, type.Module);
+	}
+
+	static XmlElement AddAssemblyXmlNode (XmlElement[] relevant, Func<XmlElement, bool> valueMatches, Action<XmlElement> setValue, Func<XmlElement> makeNewNode, ModuleDefinition module)
+	{
+		bool isUnified = MDocUpdater.HasDroppedNamespace (module);
+		XmlElement thisAssemblyNode = relevant.FirstOrDefault (valueMatches);
+		if (thisAssemblyNode == null) {
+			thisAssemblyNode = makeNewNode ();
+			setValue (thisAssemblyNode);
+		}
+
+		if (isUnified) {
+			thisAssemblyNode.AddApiStyle (ApiStyle.Unified);
+
+			foreach (var otherNodes in relevant.Where (n => n != thisAssemblyNode && n.DoesNotHaveApiStyle (ApiStyle.Unified))) {
+				otherNodes.AddApiStyle (ApiStyle.Classic);
+			}
+		}
+		return thisAssemblyNode;
 	}
 
 	/// <summary>Adds an xml node, reusing the node if it's available</summary>
@@ -2307,7 +2353,13 @@ class MDocUpdater : MDocCommand
 		TypeDefinition type = member as TypeDefinition;
 		if (type == null)
 			type = member.DeclaringType as TypeDefinition;
-		return UpdateAssemblyVersions(root, type.Module.Assembly, new string[]{ GetAssemblyVersion (type.Module.Assembly) }, add);
+
+		var versions = new string[] { GetAssemblyVersion (type.Module.Assembly) };
+
+		if (root.LocalName == "AssemblyInfo")
+			return UpdateAssemblyVersionForAssemblyInfo (root, root.ParentNode as XmlElement, versions, add: true);
+		else 
+			return UpdateAssemblyVersions (root, type.Module.Assembly, versions, add);
 	}
 	
 	private static string GetAssemblyVersion (AssemblyDefinition assembly)
@@ -2346,9 +2398,12 @@ class MDocUpdater : MDocCommand
 			thatNode.SetAttribute ("apistyle", "classic");
 		}
 
-		List<XmlNode> matches = e.SelectNodes ("AssemblyVersion").Cast<XmlNode>()
-			.Where(v => Array.IndexOf (assemblyVersions, v.InnerText) >= 0)
-			.ToList ();
+		return UpdateAssemblyVersionForAssemblyInfo (e, root, assemblyVersions, add);
+	}
+
+	static bool UpdateAssemblyVersionForAssemblyInfo (XmlElement e, XmlElement root, string[] assemblyVersions, bool add)
+	{
+		List<XmlNode> matches = e.SelectNodes ("AssemblyVersion").Cast<XmlNode> ().Where (v => Array.IndexOf (assemblyVersions, v.InnerText) >= 0).ToList ();
 		// matches.Count > 0 && add: ignore -- already present
 		if (matches.Count > 0 && !add) {
 			foreach (XmlNode c in matches)

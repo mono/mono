@@ -506,7 +506,6 @@ mono_mempool_alloc
 mono_mempool_alloc0
 mono_mempool_contains_addr
 mono_mempool_destroy
-mono_mempool_empty
 mono_mempool_get_allocated
 mono_mempool_invalidate
 mono_mempool_new
@@ -655,6 +654,7 @@ mono_opcode_value
 mono_pagesize
 mono_param_get_objects
 mono_parse_default_optimizations
+mono_parse_env_options
 mono_path_canonicalize
 mono_path_resolve_symlinks
 mono_pe_file_open

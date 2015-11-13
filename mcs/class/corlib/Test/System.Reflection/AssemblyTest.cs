@@ -5,9 +5,11 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Philippe Lavoie (philippe.lavoie@cactus.ca)
 //	Sebastien Pouliot (sebastien@ximian.com)
+//      Aleksey Kliger (aleksey@xamarin.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Xamarin, Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,6 +42,7 @@ using System.Reflection.Emit;
 #endif
 using System.Threading;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using System.Security;
 using System.Linq;
 using System.Resources;
@@ -89,13 +92,58 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #49114
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetType_TypeName_Invalid () 
 		{
 			typeof (int).Assembly.GetType ("&blabla", true, true);
 		}
 
+		[Test] // bug #17571
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetType_Invalid_RefPtr () {
+			typeof (int).Assembly.GetType ("System.Int32&*", true, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetType_Invalid_RefArray () {
+			typeof (int).Assembly.GetType ("System.Int32&[]", true, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetType_Invalid_RefGeneric () {
+			typeof (int).Assembly.GetType ("System.Tuple`1&[System.Int32]", true, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetType_Invalid_PtrGeneric () {
+			typeof (int).Assembly.GetType ("System.Tuple`1*[System.Int32]", true, true);
+		}
+
+		[Test]
+		public void GetType_ComposeModifiers () {
+			var a = typeof(int).Assembly;
+
+			var e1 = typeof (Int32).MakePointerType().MakeByRefType();
+			var t1 = a.GetType ("System.Int32*&", true, true);
+			Assert.AreEqual (e1, t1, "#1");
+
+			var e2 = typeof (Int32).MakeArrayType(2).MakeByRefType();
+			var t2 = a.GetType ("System.Int32[,]&", true, true);
+			Assert.AreEqual (e2, t2, "#2");
+
+			var e3 = typeof (Int32).MakePointerType().MakeArrayType();
+			var t3 = a.GetType ("System.Int32*[]", true, true);
+			Assert.AreEqual (e3, t3, "#3");
+
+			var e4 = typeof (Int32).MakeArrayType().MakePointerType().MakePointerType().MakeArrayType().MakePointerType().MakeByRefType();
+			var t4 = a.GetType ("System.Int32[]**[]*&", true, true);
+			Assert.AreEqual (e4, t4, "#4");
+				
+		}
+		
 		[Test] // bug #334203
 		public void GetType_TypeName_AssemblyName ()
 		{
@@ -1184,6 +1232,67 @@ namespace MonoTests.System.Reflection
 				typeof (string).Assembly.GetType ("");
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {}
+		}
+
+		class GetCallingAssemblyCallee {
+			static int _dummy;
+
+			static void sideEffect () {
+				_dummy++;
+			}
+
+			// GetCallingAssembly may see an unpredictable
+			// view of the stack if it's called in tail
+			// position, or if its caller or the caller's
+			// caller is inlined.  So we put in a side
+			// effect to get out of tail position, and we
+			// tag the methods NoInlining to discourage
+			// the inliner.
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly Leaf () {
+				var a = Assembly.GetCallingAssembly ();
+				sideEffect();
+				return a;
+			}
+
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly DirectCall () {
+				var a = Leaf();
+				sideEffect();
+				return a;
+			}
+
+			[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public static Assembly InvokeCall () {
+				var ty = typeof (GetCallingAssemblyCallee);
+				var mi = ty.GetMethod("Leaf");
+				var o = mi.Invoke(null, null);
+				sideEffect();
+				return (Assembly)o;
+			}
+		}
+
+		[Test]
+		public void GetCallingAssembly_Direct() {
+			var a = GetCallingAssemblyCallee.DirectCall ();
+			Assert.IsNotNull (a);
+
+			Assert.AreEqual (GetType().Assembly, a);
+		}
+
+		[Test]
+		public void GetCallingAssembly_SkipsReflection () {
+			// check that the calling assembly is this
+			// one, not mscorlib (aka, the reflection
+			// API).
+			var a = GetCallingAssemblyCallee.InvokeCall ();
+			Assert.IsNotNull (a);
+
+			var invokeAssembly =
+				typeof (MethodInfo).Assembly;
+			Assert.AreNotEqual (invokeAssembly, a);
+
+			Assert.AreEqual (GetType().Assembly, a);
 		}
 
 #if NET_4_5

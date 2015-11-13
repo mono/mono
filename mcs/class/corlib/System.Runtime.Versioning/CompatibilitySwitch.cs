@@ -39,6 +39,11 @@ namespace System.Runtime.Versioning {
 		{
 			return null;
 		}
+
+		internal static string GetValueInternal (string compatibilitySwitchName)
+		{
+			return null;
+		}
 	}
 }
 

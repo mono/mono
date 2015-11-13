@@ -91,6 +91,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void StringWithNull ()
+		{
+			BinaryExpression expr = Expression.Equal (Expression.Constant ("a"), Expression.Constant (null));
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+
+			var eq = Expression.Lambda<Func<bool>> (expr).Compile ();
+			Assert.IsFalse (eq ());
+		}
+
+		[Test]
 		public void Nullable_LiftToNull_SetToFalse ()
 		{
 			int? a = 1;

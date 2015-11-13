@@ -224,7 +224,6 @@ void mono_threads_install_notify_pending_exc (MonoThreadNotifyPendingExcFunc fun
 void mono_runtime_set_has_tls_get (gboolean val);
 gboolean mono_runtime_has_tls_get (void);
 
-void mono_thread_abort_all_other_threads (void);
 void mono_thread_suspend_all_other_threads (void);
 gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 
@@ -257,5 +256,7 @@ void mono_threads_join_threads (void);
 void mono_thread_join (gpointer tid);
 
 void mono_thread_detach_internal (MonoInternalThread *thread);
+
+void ves_icall_System_Threading_Thread_GetStackTraces (MonoArray **out_threads, MonoArray **out_stack_traces);
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -31,7 +31,7 @@
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
 #ifdef _WIN32
-#include <Shellapi.h>
+#include <shellapi.h>
 #endif
 
 HANDLE ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
@@ -380,10 +380,10 @@ static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_c
 	static MonoClass *filever_class = NULL;
 	MonoObject *item, *filever;
 	MonoDomain *domain = mono_domain_get ();
-	char filename [80] = "[In Memory] ";
+	char *filename;
 	const char *modulename = assembly->aname.name;
 
-	strncat (filename, modulename, 80);
+	filename = g_strdup_printf ("[In Memory] %s", modulename);
 
 	/* Build a System.Diagnostics.ProcessModule with the data.
 	 */
@@ -404,6 +404,8 @@ static MonoObject* get_process_module (MonoAssembly *assembly, MonoClass *proc_c
 	process_set_field_int (item, "memory_size", assembly->image->raw_data_len);
 	process_set_field_string_char (item, "filename", filename);
 	process_set_field_string_char (item, "modulename", modulename);
+
+	g_free (filename);
 
 	return item;
 }

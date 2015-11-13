@@ -204,6 +204,15 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		public void GetValuesForMultipleHeaderManyLines ()
+		{
+			WebHeaderCollection w = new WebHeaderCollection ();
+			w.Add ("Pragma", "H1, H2");
+			w.Add ("Pragma", "H3");
+			Assert.AreEqual (3, w.GetValues ("Pragma").Length, "#1");
+		}
+
+		[Test]
 		public void Indexers ()
 		{
 			Assert.AreEqual ("Value1", ((NameValueCollection)col)[0], "#1.1");

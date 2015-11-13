@@ -36,8 +36,8 @@
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/Support/CommandLine.h>
-#include "llvm/IR/LegacyPassNameParser.h"
-#include "llvm/Support/PrettyStackTrace.h"
+#include <llvm/IR/LegacyPassNameParser.h>
+#include <llvm/Support/PrettyStackTrace.h>
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/CodeGen/MachineFunctionPass.h>
 #include <llvm/CodeGen/MachineFunction.h>
@@ -45,10 +45,9 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Module.h>
-//#include <llvm/LinkAllPasses.h>
 
-#include "llvm-c/Core.h"
-#include "llvm-c/ExecutionEngine.h"
+#include <llvm-c/Core.h>
+#include <llvm-c/ExecutionEngine.h>
 
 #include "mini-llvm-cpp.h"
 
@@ -59,6 +58,14 @@
 using namespace llvm;
 
 #ifndef MONO_CROSS_COMPILE
+
+static void (*unhandled_exception)() = default_mono_llvm_unhandled_exception;
+
+void
+mono_llvm_set_unhandled_exception_handler (void)
+{
+	std::set_terminate (unhandled_exception);
+}
 
 class MonoJITMemoryManager : public JITMemoryManager
 {
@@ -451,6 +458,18 @@ mono_llvm_set_is_constant (LLVMValueRef global_var)
 	unwrap<GlobalVariable>(global_var)->setConstant (true);
 }
 
+void
+mono_llvm_set_preserveall_cc (LLVMValueRef func)
+{
+	unwrap<Function>(func)->setCallingConv (CallingConv::PreserveAll);
+}
+
+void
+mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
+{
+	unwrap<CallInst>(func)->setCallingConv (CallingConv::PreserveAll);
+}
+
 static cl::list<const PassInfo*, bool, PassNameParser>
 PassList(cl::desc("Optimizations available:"));
 
@@ -598,10 +617,16 @@ init_llvm (void)
   LLVMInitializeARMTarget ();
   LLVMInitializeARMTargetInfo ();
   LLVMInitializeARMTargetMC ();
-#else
+#elif defined(TARGET_X86) || defined(TARGET_AMD64)
   LLVMInitializeX86Target ();
   LLVMInitializeX86TargetInfo ();
   LLVMInitializeX86TargetMC ();
+#elif defined(TARGET_POWERPC)
+  LLVMInitializePowerPCTarget ();
+  LLVMInitializePowerPCTargetInfo ();
+  LLVMInitializePowerPCTargetMC ();
+#else
+  #error Unsupported mono-llvm target
 #endif
 
   PassRegistry &Registry = *PassRegistry::getPassRegistry();
@@ -721,6 +746,11 @@ mono_llvm_dispose_ee (MonoEERef *eeref)
 }
 
 #else
+
+void
+mono_llvm_set_unhandled_exception_handler (void)
+{
+}
 
 MonoEERef
 mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb, LLVMExecutionEngineRef *ee)

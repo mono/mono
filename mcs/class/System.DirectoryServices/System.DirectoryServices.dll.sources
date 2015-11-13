@@ -40,6 +40,7 @@ System.DirectoryServices/SortDirection.cs
 System.DirectoryServices/SortOption.cs
 ../../build/common/MonoTODOAttribute.cs
 System.DirectoryServices.Design/DirectoryEntryConverter.cs
+System.DirectoryServices.ActiveDirectory/ActiveDirectoryObjectNotFoundException.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryOperationException.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryPartition.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryReplicationMetadata.cs

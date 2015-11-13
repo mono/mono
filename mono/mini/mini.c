@@ -85,6 +85,8 @@ gboolean mono_using_xdebug;
 #define mono_jit_unlock() mono_mutex_unlock (&jit_mutex)
 static mono_mutex_t jit_mutex;
 
+MonoBackend *current_backend;
+
 #ifndef DISABLE_JIT
 
 gpointer
@@ -2086,7 +2088,7 @@ mono_create_tls_get_offset (MonoCompile *cfg, int offset)
 {
 	MonoInst* ins;
 
-	if (!MONO_ARCH_HAVE_TLS_GET)
+	if (!cfg->backend->have_tls_get)
 		return NULL;
 
 	if (offset == -1)
@@ -2101,11 +2103,11 @@ mono_create_tls_get_offset (MonoCompile *cfg, int offset)
 gboolean
 mini_tls_get_supported (MonoCompile *cfg, MonoTlsKey key)
 {
-	if (!MONO_ARCH_HAVE_TLS_GET)
+	if (!cfg->backend->have_tls_get)
 		return FALSE;
 
 	if (cfg->compile_aot)
-		return ARCH_HAVE_TLS_GET_REG;
+		return cfg->backend->have_tls_get_reg;
 	else
 		return mini_get_tls_offset (key) != -1;
 }
@@ -2113,7 +2115,7 @@ mini_tls_get_supported (MonoCompile *cfg, MonoTlsKey key)
 MonoInst*
 mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 {
-	if (!MONO_ARCH_HAVE_TLS_GET)
+	if (!cfg->backend->have_tls_get)
 		return NULL;
 
 	/*
@@ -2121,7 +2123,7 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 	 * use a different opcode.
 	 */
 	if (cfg->compile_aot) {
-		if (ARCH_HAVE_TLS_GET_REG) {
+		if (cfg->backend->have_tls_get_reg) {
 			MonoInst *ins, *c;
 
 			EMIT_NEW_TLS_OFFSETCONST (cfg, c, key);
@@ -2908,7 +2910,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 				 * Extend the try block backwards to include parts of the previous call
 				 * instruction.
 				 */
-				ei->try_start = (guint8*)ei->try_start - MONO_ARCH_MONITOR_ENTER_ADJUSTMENT;
+				ei->try_start = (guint8*)ei->try_start - cfg->backend->monitor_enter_adjustment;
 			}
 			tblock = cfg->cil_offset_to_bb [ec->try_offset + ec->try_len];
 			g_assert (tblock);
@@ -3047,8 +3049,6 @@ is_open_method (MonoMethod *method)
 	return FALSE;
 }
 
-#if defined(__native_client_codegen__) || USE_COOP_GC
-
 static void
 mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 {
@@ -3059,6 +3059,7 @@ mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 #if defined(__native_client_codegen__)
 	NEW_AOTCONST (cfg, poll_addr, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, (gpointer)&__nacl_thread_suspension_needed);
 #else
+	g_assert (mono_threads_is_coop_enabled ());
 	NEW_AOTCONST (cfg, poll_addr, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, (gpointer)&mono_polling_required);
 #endif
 
@@ -3104,14 +3105,19 @@ static void
 mono_insert_safepoints (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
+
+#if !defined(__native_client_codegen__)
+	if (!mono_threads_is_coop_enabled ())
+		return;
+#endif
+
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 #if defined(__native_client__) || defined(__native_client_codegen__)
 		gpointer poll_func = &mono_nacl_gc;
-#elif defined(USE_COOP_GC)
-		gpointer poll_func = &mono_threads_state_poll;
 #else
-		gpointer poll_func = NULL;
+		g_assert (mono_threads_is_coop_enabled ());
+		gpointer poll_func = &mono_threads_state_poll;
 #endif
 
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
@@ -3156,14 +3162,70 @@ mono_insert_safepoints (MonoCompile *cfg)
 
 }
 
-#else
-
 static void
-mono_insert_safepoints (MonoCompile *cfg)
+init_backend (MonoBackend *backend)
 {
-}
-
+#ifdef MONO_ARCH_NEED_GOT_VAR
+	backend->need_got_var = 1;
 #endif
+#ifdef MONO_ARCH_HAVE_CARD_TABLE_WBARRIER
+	backend->have_card_table_wb = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT
+	backend->have_op_generic_class_init = 1;
+#endif
+#ifdef MONO_ARCH_EMULATE_MUL_DIV
+	backend->emulate_mul_div = 1;
+#endif
+#ifdef MONO_ARCH_EMULATE_DIV
+	backend->emulate_div = 1;
+#endif
+#if !defined(MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS)
+	backend->emulate_long_shift_opts = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_OBJC_GET_SELECTOR
+	backend->have_objc_get_selector = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_GENERALIZED_IMT_THUNK
+	backend->have_generalized_imt_thunk = 1;
+#endif
+#ifdef MONO_ARCH_GSHARED_SUPPORTED
+	backend->gshared_supported = 1;
+#endif
+	if (MONO_ARCH_HAVE_TLS_GET)
+		backend->have_tls_get = 1;
+#ifdef MONO_ARCH_HAVE_TLS_GET_REG
+		backend->have_tls_get_reg = 1;
+#endif
+	if (MONO_ARCH_USE_FPSTACK)
+		backend->use_fpstack = 1;
+#ifdef MONO_ARCH_HAVE_LIVERANGE_OPS
+	backend->have_liverange_ops = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_OP_TAIL_CALL
+	backend->have_op_tail_call = 1;
+#endif
+#ifndef MONO_ARCH_MONITOR_ENTER_ADJUSTMENT
+	backend->monitor_enter_adjustment = 1;
+#else
+	backend->monitor_enter_adjustment = MONO_ARCH_MONITOR_ENTER_ADJUSTMENT;
+#endif
+#if defined(__mono_ilp32__)
+	backend->ilp32 = 1;
+#endif
+#ifdef MONO_ARCH_HAVE_DUMMY_INIT
+	backend->have_dummy_init = 1;
+#endif
+#ifdef MONO_ARCH_NEED_DIV_CHECK
+	backend->need_div_check = 1;
+#endif
+#ifdef NO_UNALIGNED_ACCESS
+	backend->no_unaligned_access = 1;
+#endif
+#ifdef MONO_ARCH_DYN_CALL_PARAM_AREA
+	backend->dyn_call_param_area = MONO_ARCH_DYN_CALL_PARAM_AREA;
+#endif
+}
 
 /*
  * mini_method_compile:
@@ -3272,6 +3334,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->orig_method = method;
 	cfg->gen_seq_points = debug_options.gen_seq_points_compact_data || debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = debug_options.gen_sdb_seq_points;
+	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
+	cfg->backend = current_backend;
 
 #ifdef PLATFORM_ANDROID
 	if (cfg->method->wrapper_type != MONO_WRAPPER_NONE) {
@@ -3281,11 +3345,13 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 #endif
 	/* coop / nacl requires loop detection to happen */
-#if defined(__native_client_codegen__) || defined(USE_COOP_GC)
+#if defined(__native_client_codegen__)
 	cfg->opt |= MONO_OPT_LOOP;
+#else
+	if (mono_threads_is_coop_enabled ())
+		cfg->opt |= MONO_OPT_LOOP;
 #endif
-
-	cfg->explicit_null_checks = debug_options.explicit_null_checks;
+	cfg->explicit_null_checks = debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
 	cfg->soft_breakpoints = debug_options.soft_breakpoints;
 	cfg->check_pinvoke_callconv = debug_options.check_pinvoke_callconv;
 	cfg->disable_direct_icalls = disable_direct_icalls;
@@ -3296,8 +3362,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->compile_aot)
 		cfg->method_index = aot_method_index;
 
+	/*
 	if (!mono_debug_count ())
 		cfg->opt &= ~MONO_OPT_FLOAT32;
+	*/
+	if (cfg->llvm_only)
+		cfg->opt &= ~MONO_OPT_SIMD;
 	cfg->r4fp = (cfg->opt & MONO_OPT_FLOAT32) ? 1 : 0;
 	cfg->r4_stack_type = cfg->r4fp ? STACK_R4 : STACK_R8;
 
@@ -3384,10 +3454,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		if (COMPILE_LLVM (cfg)) {
 			mono_llvm_check_method_supported (cfg);
 			if (cfg->disable_llvm) {
-				if (cfg->verbose_level >= 1) {
+				if (cfg->verbose_level >= cfg->llvm_only ? 0 : 1) {
 					//nm = mono_method_full_name (cfg->method, TRUE);
 					printf ("LLVM failed for '%s': %s\n", method->name, cfg->exception_message);
 					//g_free (nm);
+				}
+				if (cfg->llvm_only) {
+					cfg->disable_aot = TRUE;
+					return cfg;
 				}
 				mono_destroy_compile (cfg);
 				try_llvm = FALSE;
@@ -3611,7 +3685,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (!COMPILE_LLVM (cfg))
 		mono_if_conversion (cfg);
 
-	MONO_SUSPEND_CHECK ();
+	mono_threads_safepoint ();
 
 	/* Depth-first ordering on basic blocks */
 	cfg->bblocks = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (cfg->num_bblocks + 1));
@@ -3899,10 +3973,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		if (!cfg->disable_llvm)
 			mono_llvm_emit_method (cfg);
 		if (cfg->disable_llvm) {
-			if (cfg->verbose_level >= 1) {
+			if (cfg->verbose_level >= cfg->llvm_only ? 0 : 1) {
 				//nm = mono_method_full_name (cfg->method, TRUE);
 				printf ("LLVM failed for '%s': %s\n", method->name, cfg->exception_message);
 				//g_free (nm);
+			}
+			if (cfg->llvm_only) {
+				cfg->disable_aot = TRUE;
+				return cfg;
 			}
 			mono_destroy_compile (cfg);
 			try_llvm = FALSE;
@@ -4104,6 +4182,10 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 				 */
 				return mono_get_addr_from_ftnptr ((gpointer)mono_icall_get_wrapper_full (mi, TRUE));
 			} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
+				if (mono_llvm_only) {
+					nm = mono_marshal_get_delegate_invoke (method, NULL);
+					return mono_get_addr_from_ftnptr (mono_compile_method (nm));
+				}
 				return mono_create_delegate_trampoline (target_domain, method->klass);
 			} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 				nm = mono_marshal_get_delegate_begin_invoke (method);
@@ -4383,6 +4465,10 @@ void
 mini_jit_init (void)
 {
 	mono_mutex_init_recursive (&jit_mutex);
+#ifndef DISABLE_JIT
+	current_backend = g_new0 (MonoBackend, 1);
+	init_backend (current_backend);
+#endif
 }
 
 void
@@ -4405,6 +4491,17 @@ void mono_llvm_emit_aot_data (const char *symbol, guint8 *data, int data_len)
 {
 	g_assert_not_reached ();
 }
+
+#endif
+
+#if !defined(ENABLE_LLVM_RUNTIME) && !defined(ENABLE_LLVM)
+
+void
+mono_llvm_cpp_throw_exception (void)
+{
+	g_assert_not_reached ();
+}
+
 #endif
 
 #ifdef DISABLE_JIT

@@ -149,6 +149,10 @@ namespace System.Diagnostics {
 			throw new NotImplementedException ();
 		}
 
+		internal StackTrace (StackFrame[] frames) {
+			this.frames = frames;
+		}
+
 		public virtual int FrameCount {
 			get {
 				return (frames == null) ? 0 : frames.Length;

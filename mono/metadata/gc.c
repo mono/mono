@@ -53,7 +53,8 @@ static gboolean gc_disabled = FALSE;
 static gboolean finalizing_root_domain = FALSE;
 
 gboolean log_finalizers = FALSE;
-gboolean do_not_finalize = FALSE;
+gboolean mono_do_not_finalize = FALSE;
+gchar **mono_do_not_finalize_class_names = NULL;
 
 #define mono_finalizer_lock() mono_mutex_lock (&finalizer_mutex)
 #define mono_finalizer_unlock() mono_mutex_unlock (&finalizer_mutex)
@@ -106,9 +107,6 @@ static gboolean suspend_finalizers = FALSE;
 void
 mono_gc_run_finalize (void *obj, void *data)
 {
-	if (do_not_finalize)
-		return;
-
 	MonoObject *exc = NULL;
 	MonoObject *o;
 #ifndef HAVE_SGEN_GC
@@ -120,9 +118,26 @@ mono_gc_run_finalize (void *obj, void *data)
 	RuntimeInvokeFunction runtime_invoke;
 
 	// This function is called from the innards of the GC, so our best alternative for now is to do polling here
-	MONO_SUSPEND_CHECK ();
+	mono_threads_safepoint ();
 
 	o = (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data));
+
+	if (mono_do_not_finalize) {
+		if (!mono_do_not_finalize_class_names)
+			return;
+
+		size_t namespace_len = strlen (o->vtable->klass->name_space);
+		for (int i = 0; mono_do_not_finalize_class_names [i]; ++i) {
+			const char *name = mono_do_not_finalize_class_names [i];
+			if (strncmp (name, o->vtable->klass->name_space, namespace_len))
+				break;
+			if (name [namespace_len] != '.')
+				break;
+			if (strcmp (name + namespace_len + 1, o->vtable->klass->name))
+				break;
+			return;
+		}
+	}
 
 	if (log_finalizers)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_DEBUG, "<%s at %p> Starting finalizer checks.", o->vtable->klass->name, o);
@@ -220,7 +235,7 @@ mono_gc_run_finalize (void *obj, void *data)
 		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Compiling finalizer.", o->vtable->klass->name, o);
 
 	if (!domain->finalize_runtime_invoke) {
-		MonoMethod *invoke = mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE);
+		MonoMethod *invoke = mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE, FALSE);
 
 		domain->finalize_runtime_invoke = mono_compile_method (invoke);
 	}

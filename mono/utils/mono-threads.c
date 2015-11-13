@@ -24,6 +24,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-time.h>
+#include <mono/utils/mono-lazy-init.h>
 
 
 #include <errno.h>
@@ -95,9 +96,35 @@ mono_threads_notify_initiator_of_resume (MonoThreadInfo* info)
 	MONO_SEM_POST (&suspend_semaphore);
 }
 
+static gboolean
+begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
+{
+	if (mono_threads_is_coop_enabled ()) {
+		/* There's nothing else to do after we async request the thread to suspend */
+		mono_threads_add_to_pending_operation_set (info);
+		return TRUE;
+	}
+
+	return mono_threads_core_begin_async_suspend (info, interrupt_kernel);
+}
+
+static gboolean
+check_async_suspend (MonoThreadInfo *info)
+{
+	if (mono_threads_is_coop_enabled ()) {
+		/* Async suspend can't async fail on coop */
+		return TRUE;
+	}
+
+	return mono_threads_core_check_suspend_result (info);
+}
+
 static void
 resume_async_suspended (MonoThreadInfo *info)
 {
+	if (mono_threads_is_coop_enabled ())
+		g_assert_not_reached ();
+
 	g_assert (mono_threads_core_begin_async_resume (info));
 }
 
@@ -133,21 +160,25 @@ mono_threads_add_to_pending_operation_set (MonoThreadInfo* info)
 void
 mono_threads_begin_global_suspend (void)
 {
-	g_assert (pending_suspends == 0);
+	size_t ps = pending_suspends;
+	if (G_UNLIKELY (ps != 0))
+		g_error ("pending_suspends = %d, but must be 0", ps);
 	THREADS_SUSPEND_DEBUG ("------ BEGIN GLOBAL OP sp %d rp %d ap %d wd %d po %d (sp + rp + ap == wd) (wd == po)\n", suspend_posts, resume_posts,
 		abort_posts, waits_done, pending_ops);
 	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
-	mono_threads_core_begin_global_suspend ();
+	mono_threads_coop_begin_global_suspend ();
 }
 
 void
 mono_threads_end_global_suspend (void) 
 {
-	g_assert (pending_suspends == 0);
+	size_t ps = pending_suspends;
+	if (G_UNLIKELY (ps != 0))
+		g_error ("pending_suspends = %d, but must be 0", ps);
 	THREADS_SUSPEND_DEBUG ("------ END GLOBAL OP sp %d rp %d ap %d wd %d po %d\n", suspend_posts, resume_posts,
 		abort_posts, waits_done, pending_ops);
 	g_assert ((suspend_posts + resume_posts + abort_posts) == waits_done);
-	mono_threads_core_end_global_suspend ();
+	mono_threads_coop_end_global_suspend ();
 }
 
 static void
@@ -326,6 +357,8 @@ register_thread (MonoThreadInfo *info, gpointer baseptr)
 	info->stack_start_limit = staddr;
 	info->stack_end = staddr + stsize;
 
+	info->stackdata = g_byte_array_new ();
+
 	mono_threads_platform_register (info);
 
 	/*
@@ -386,6 +419,8 @@ unregister_thread (void *arg)
 	mono_threads_transition_detach (info);
 
 	mono_thread_info_suspend_unlock ();
+
+	g_byte_array_free (info->stackdata, /*free_segment=*/TRUE);
 
 	/*now it's safe to free the thread info.*/
 	mono_thread_hazardous_free_or_queue (info, free_thread_info, TRUE, FALSE);
@@ -594,7 +629,7 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 #endif
 	g_assert (res);
 
-	unified_suspend_enabled = g_getenv ("MONO_ENABLE_UNIFIED_SUSPEND") != NULL || MONO_THREADS_PLATFORM_REQUIRES_UNIFIED_SUSPEND;
+	unified_suspend_enabled = g_getenv ("MONO_ENABLE_UNIFIED_SUSPEND") != NULL || mono_threads_is_coop_enabled ();
 
 	MONO_SEM_INIT (&global_suspend_semaphore, 1);
 	MONO_SEM_INIT (&suspend_semaphore, 0);
@@ -602,6 +637,7 @@ mono_threads_init (MonoThreadInfoCallbacks *callbacks, size_t info_size)
 	mono_lls_init (&thread_list, NULL);
 	mono_thread_smr_init ();
 	mono_threads_init_platform ();
+	mono_threads_init_coop ();
 	mono_threads_init_abort_syscall ();
 
 #if defined(__MACH__)
@@ -646,7 +682,7 @@ mono_thread_info_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel
 		mono_threads_add_to_pending_operation_set (info);
 		break;
 	case AsyncSuspendInitSuspend:
-		if (!mono_threads_core_begin_async_suspend (info, interrupt_kernel)) {
+		if (!begin_async_suspend (info, interrupt_kernel)) {
 			mono_hazard_pointer_clear (hp, 1);
 			*error_condition = "Could not suspend thread";
 			return NULL;
@@ -656,8 +692,7 @@ mono_thread_info_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel
 	//Wait for the pending suspend to finish
 	mono_threads_wait_pending_operations ();
 
-	if (!mono_threads_core_check_suspend_result (info)) {
-
+	if (!check_async_suspend (info)) {
 		mono_hazard_pointer_clear (hp, 1);
 		*error_condition = "Post suspend failed";
 		return NULL;
@@ -782,7 +817,7 @@ mono_thread_info_begin_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
 		mono_threads_add_to_pending_operation_set (info);
 		return TRUE;
 	case AsyncSuspendInitSuspend:
-		return mono_threads_core_begin_async_suspend (info, interrupt_kernel);
+		return begin_async_suspend (info, interrupt_kernel);
 	default:
 		g_assert_not_reached ();
 	}
@@ -792,6 +827,12 @@ gboolean
 mono_thread_info_begin_resume (MonoThreadInfo *info)
 {
 	return mono_thread_info_core_resume (info);
+}
+
+gboolean
+mono_thread_info_check_suspend_result (MonoThreadInfo *info)
+{
+	return check_async_suspend (info);
 }
 
 /*
@@ -1005,16 +1046,16 @@ mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid)
 {
 	MonoThreadHazardPointers *hp;
 	MonoThreadInfo *info;
-	
+
 	if (tid == mono_native_thread_id_get () || !mono_threads_core_needs_abort_syscall ())
 		return;
 
-	hp = mono_hazard_pointer_get ();	
-	info = mono_thread_info_lookup (tid); /*info on HP1*/
+	hp = mono_hazard_pointer_get ();
+	info = mono_thread_info_lookup (tid);
 	if (!info)
 		return;
 
-	if (mono_thread_info_run_state (info) > STATE_RUNNING) {
+	if (mono_thread_info_run_state (info) == STATE_DETACHED) {
 		mono_hazard_pointer_clear (hp, 1);
 		return;
 	}
@@ -1100,6 +1141,135 @@ gboolean
 mono_thread_info_yield (void)
 {
 	return mono_threads_core_yield ();
+}
+static mono_lazy_init_t sleep_init = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
+static mono_mutex_t sleep_mutex;
+static mono_cond_t sleep_cond;
+
+static void
+sleep_initialize (void)
+{
+	mono_mutex_init (&sleep_mutex);
+	mono_cond_init (&sleep_cond, NULL);
+}
+
+static void
+sleep_interrupt (gpointer data)
+{
+	mono_mutex_lock (&sleep_mutex);
+	mono_cond_broadcast (&sleep_cond);
+	mono_mutex_unlock (&sleep_mutex);
+}
+
+static inline guint32
+sleep_interruptable (guint32 ms, gboolean *alerted)
+{
+	guint32 start, now, end;
+
+	g_assert (INFINITE == G_MAXUINT32);
+
+	g_assert (alerted);
+	*alerted = FALSE;
+
+	start = mono_msec_ticks ();
+
+	if (start < G_MAXUINT32 - ms) {
+		end = start + ms;
+	} else {
+		/* start + ms would overflow guint32 */
+		end = G_MAXUINT32;
+	}
+
+	mono_lazy_initialize (&sleep_init, sleep_initialize);
+
+	mono_mutex_lock (&sleep_mutex);
+
+	for (now = mono_msec_ticks (); ms == INFINITE || now - start < ms; now = mono_msec_ticks ()) {
+		mono_thread_info_install_interrupt (sleep_interrupt, NULL, alerted);
+		if (*alerted) {
+			mono_mutex_unlock (&sleep_mutex);
+			return WAIT_IO_COMPLETION;
+		}
+
+		if (ms < INFINITE)
+			mono_cond_timedwait_ms (&sleep_cond, &sleep_mutex, end - now);
+		else
+			mono_cond_wait (&sleep_cond, &sleep_mutex);
+
+		mono_thread_info_uninstall_interrupt (alerted);
+		if (*alerted) {
+			mono_mutex_unlock (&sleep_mutex);
+			return WAIT_IO_COMPLETION;
+		}
+	}
+
+	mono_mutex_unlock (&sleep_mutex);
+
+	return 0;
+}
+
+gint
+mono_thread_info_sleep (guint32 ms, gboolean *alerted)
+{
+	if (ms == 0) {
+		MonoThreadInfo *info;
+
+		mono_thread_info_yield ();
+
+		info = mono_thread_info_current ();
+		if (info && mono_thread_info_is_interrupt_state (info))
+			return WAIT_IO_COMPLETION;
+
+		return 0;
+	}
+
+	if (alerted)
+		return sleep_interruptable (ms, alerted);
+
+	if (ms == INFINITE) {
+		do {
+#ifdef HOST_WIN32
+			Sleep (G_MAXUINT32);
+#else
+			sleep (G_MAXUINT32);
+#endif
+		} while (1);
+	} else {
+		int ret;
+#if defined (__linux__) && !defined(PLATFORM_ANDROID)
+		struct timespec start, target;
+
+		/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */
+		ret = clock_gettime (CLOCK_MONOTONIC, &start);
+		g_assert (ret == 0);
+
+		target = start;
+		target.tv_sec += ms / 1000;
+		target.tv_nsec += (ms % 1000) * 1000000;
+		if (target.tv_nsec > 999999999) {
+			target.tv_nsec -= 999999999;
+			target.tv_sec ++;
+		}
+
+		do {
+			ret = clock_nanosleep (CLOCK_MONOTONIC, TIMER_ABSTIME, &target, NULL);
+		} while (ret != 0);
+#elif HOST_WIN32
+		Sleep (ms);
+#else
+		struct timespec req, rem;
+
+		req.tv_sec = ms / 1000;
+		req.tv_nsec = (ms % 1000) * 1000000;
+
+		do {
+			memset (&rem, 0, sizeof (rem));
+			ret = nanosleep (&req, &rem);
+		} while (ret != 0);
+#endif /* __linux__ */
+	}
+
+	return 0;
 }
 
 gpointer

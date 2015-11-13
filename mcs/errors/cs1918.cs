@@ -10,7 +10,7 @@ struct S
 class C
 {
 	public S Value {
-		set { }
+		set; get;
 	}
 
 	static void Main ()

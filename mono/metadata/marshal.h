@@ -139,11 +139,16 @@ typedef struct {
 	MonoMethod *method;
 	/* For WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL */
 	MonoMethodSignature *sig;
+	gboolean pass_rgctx;
 } RuntimeInvokeWrapperInfo;
 
 typedef struct {
 	MonoMethod *method;
 } ManagedToNativeWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} SynchronizedWrapperInfo;
 
 typedef struct {
 	MonoMethod *method;
@@ -165,6 +170,23 @@ typedef struct {
 	MonoClass *klass;
 } ProxyWrapperInfo;
 
+typedef struct {
+	int nursery_bits;
+} WriteBarrierWrapperInfo;
+
+typedef struct {
+	const char *gc_name;
+	int alloc_type;
+} AllocatorWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} UnboxWrapperInfo;
+
+typedef struct {
+	MonoMethod *method;
+} RemotingWrapperInfo;
+
 /*
  * This structure contains additional information to uniquely identify a given wrapper
  * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
@@ -185,6 +207,8 @@ typedef struct {
 		NativeToManagedWrapperInfo native_to_managed;
 		/* MONO_WRAPPER_MANAGED_TO_NATIVE */
 		ManagedToNativeWrapperInfo managed_to_native;
+		/* SYNCHRONIZED */
+		SynchronizedWrapperInfo synchronized;
 		/* SYNCHRONIZED_INNER */
 		SynchronizedInnerWrapperInfo synchronized_inner;
 		/* GENERIC_ARRAY_HELPER */
@@ -195,6 +219,14 @@ typedef struct {
 		ArrayAccessorWrapperInfo array_accessor;
 		/* PROXY_ISINST etc. */
 		ProxyWrapperInfo proxy;
+		/* WRITE_BARRIER */
+		WriteBarrierWrapperInfo wbarrier;
+		/* ALLOC */
+		AllocatorWrapperInfo alloc;
+		/* UNBOX */
+		UnboxWrapperInfo unbox;
+		/* MONO_WRAPPER_REMOTING_INVOKE/MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK/MONO_WRAPPER_XDOMAIN_INVOKE */
+		RemotingWrapperInfo remoting;
 	} d;
 } WrapperInfo;
 
@@ -294,9 +326,9 @@ WrapperInfo*
 mono_wrapper_info_create (MonoMethodBuilder *mb, WrapperSubtype subtype);
 
 void
-mono_marshal_set_wrapper_info (MonoMethod *method, gpointer data);
+mono_marshal_set_wrapper_info (MonoMethod *method, WrapperInfo *info);
 
-gpointer
+WrapperInfo*
 mono_marshal_get_wrapper_info (MonoMethod *wrapper);
 
 MonoMethod *
@@ -312,7 +344,7 @@ MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method);
 
 MonoMethod *
-mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual);
+mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean is_virtual, gboolean pass_rgctx);
 
 MonoMethod*
 mono_marshal_get_runtime_invoke_dynamic (void);

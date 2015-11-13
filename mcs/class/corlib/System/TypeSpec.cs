@@ -32,8 +32,13 @@ using System.IO;
 using System.Reflection;
 
 namespace System {
-	internal class ArraySpec
+	internal interface ModifierSpec {
+		Type Resolve (Type type);
+		Text.StringBuilder Append (Text.StringBuilder sb);
+	}
+        internal class ArraySpec : ModifierSpec
 	{
+		// dimensions == 1 and bound, or dimensions > 1 and !bound
 		int dimensions;
 		bool bound;
 
@@ -43,7 +48,7 @@ namespace System {
 			this.bound = bound;
 		}
 
-		internal Type Resolve (Type type)
+		public Type Resolve (Type type)
 		{
 			if (bound)
 				return type.MakeArrayType (1);
@@ -52,70 +57,160 @@ namespace System {
 			return type.MakeArrayType (dimensions);
 		}
 
-#if DEBUG
-		public override string ToString ()
+		public Text.StringBuilder Append (Text.StringBuilder sb)
 		{
 			if (bound)
-				return "[*]";
-			string str = "[";
-			for (int i = 1; i < dimensions; ++i)
-				str += ",";
-			return str + "]";
+				return sb.Append ("[*]");
+			return sb.Append ('[')
+				.Append (',', dimensions - 1)
+				.Append (']');
+			
 		}
-#endif
+		public override string ToString ()
+		{
+			return Append (new Text.StringBuilder ()).ToString ();
+		}
+	}
+
+	internal class PointerSpec : ModifierSpec
+	{
+		int pointer_level;
+
+		internal PointerSpec (int pointer_level) {
+			this.pointer_level = pointer_level;
+		}
+
+		public Type Resolve (Type type) {
+			for (int i = 0; i < pointer_level; ++i)
+				type = type.MakePointerType ();
+			return type;
+		}
+
+		public Text.StringBuilder Append (Text.StringBuilder sb)
+		{
+			return sb.Append ('*', pointer_level);
+		}
+		
+		public override string ToString () {
+			return Append (new Text.StringBuilder ()).ToString ();
+		}
+
 	}
 
 	internal class TypeSpec
 	{
-		string name, assembly_name;
-		List<string> nested;
+		TypeIdentifier name;
+		string assembly_name;
+		List<TypeIdentifier> nested;
 		List<TypeSpec> generic_params;
-		List<ArraySpec> array_spec;
-		int pointer_level;
+		List<ModifierSpec> modifier_spec;
 		bool is_byref;
 
-		bool IsArray {
-			get { return array_spec != null; }
+		string display_fullname; // cache
+
+		internal bool HasModifiers {
+			get { return modifier_spec != null; }
 		}
 
+		internal bool IsNested {
+			get { return nested != null && nested.Count > 0; }
+		}
+
+		internal bool IsByRef {
+			get { return is_byref; }
+		}
+
+		internal TypeName Name {
+			get { return name; }
+		}
+
+		internal IEnumerable<TypeName> Nested {
+			get {
+				if (nested != null)
+					return nested;
+				else
+					return EmptyArray<TypeName>.Value;
+			}
+		}
+
+		internal IEnumerable<ModifierSpec> Modifiers {
+			get {
+				if (modifier_spec != null)
+					return modifier_spec;
+				else
+					return EmptyArray<ModifierSpec>.Value;
+			}
+		}
+
+		[Flags]
+		internal enum DisplayNameFormat {
+			Default = 0x0,
+			WANT_ASSEMBLY = 0x1,
+			NO_MODIFIERS = 0x2,
+		}
 #if DEBUG
 		public override string ToString () {
-			string str = name;
+			return GetDisplayFullName (DisplayNameFormat.WANT_ASSEMBLY);
+		}
+#endif
+
+		string GetDisplayFullName (DisplayNameFormat flags)
+		{
+			bool wantAssembly = (flags & DisplayNameFormat.WANT_ASSEMBLY) != 0;
+			bool wantModifiers = (flags & DisplayNameFormat.NO_MODIFIERS) == 0;
+			var sb = new Text.StringBuilder(name.DisplayName);
 			if (nested != null) {
 				foreach (var n in nested)
-					str += "+" + n;
+					sb.Append ('+').Append (n.DisplayName);
 			}
 
 			if (generic_params != null) {
-				str += "[";
+				sb.Append ('[');
 				for (int i = 0; i < generic_params.Count; ++i) {
 					if (i > 0)
-						str += ", ";
+						sb.Append (", ");
 					if (generic_params [i].assembly_name != null)
-						str += "[" + generic_params [i] + "]";
+						sb.Append ('[').Append (generic_params [i].DisplayFullName).Append (']');
 					else
-						str += generic_params [i];
+						sb.Append (generic_params [i].DisplayFullName);
 				}
-				str += "]";
+				sb.Append (']');
 			}
 
-			if (array_spec != null) {
-				foreach (var ar in array_spec)
-					str += ar;
-			}
+			if (wantModifiers)
+				GetModifierString (sb);
 
-			for (int i = 0; i < pointer_level; ++i)
-				str += "*";
+			if (assembly_name != null && wantAssembly)
+				sb.Append (", ").Append (assembly_name);
+
+			return sb.ToString();
+		}
+
+		internal string ModifierString ()
+		{
+			return GetModifierString (new Text.StringBuilder ()).ToString ();
+		}
+
+		private Text.StringBuilder GetModifierString (Text.StringBuilder sb)
+		{
+			if (modifier_spec != null) {
+				foreach (var md in modifier_spec)
+					md.Append (sb);
+			}
 
 			if (is_byref)
-				str += "&";
+				sb.Append ('&');
 
-			if (assembly_name != null)
-				str += ", " + assembly_name;
-
-			return str;
+			return sb;
 		}
-#endif
+
+		internal string DisplayFullName {
+			get {
+				if (display_fullname == null)
+					display_fullname = GetDisplayFullName (DisplayNameFormat.Default);
+				return display_fullname;
+			}
+		}
 
 		internal static TypeSpec Parse (string typeName)
 		{
@@ -129,11 +224,70 @@ namespace System {
 			return res;
 		}
 
+		internal static string EscapeDisplayName(string internalName)
+		{
+			// initial capacity = length of internalName.
+			// Maybe we won't have to escape anything.
+			var res = new Text.StringBuilder (internalName.Length);
+			foreach (char c in internalName)
+			{
+				switch (c) {
+					case '+':
+					case ',':
+					case '[':
+					case ']':
+					case '*':
+					case '&':
+					case '\\':
+						res.Append ('\\').Append (c);
+						break;
+					default:
+						res.Append (c);
+						break;
+				}
+			}
+			return res.ToString ();
+		}
+
+		internal static string UnescapeInternalName(string displayName)
+		{
+			var res = new Text.StringBuilder (displayName.Length);
+			for (int i = 0; i < displayName.Length; ++i)
+			{
+				char c = displayName[i];
+				if (c == '\\')
+					if (++i < displayName.Length)
+						c = displayName[i];
+				res.Append (c);
+			}
+			return res.ToString ();
+		}
+
+		internal static bool NeedsEscaping (string internalName)
+		{
+			foreach (char c in internalName)
+			{
+				switch (c) {
+					case ',':
+					case '+':
+					case '*':
+					case '&':
+					case '[':
+					case ']':
+					case '\\':
+						return true;
+					default:
+						break;
+				}
+			}
+			return false;
+		}
+
 		internal Type Resolve (Func<AssemblyName,Assembly> assemblyResolver, Func<Assembly,string,bool,Type> typeResolver, bool throwOnError, bool ignoreCase)
 		{
 			Assembly asm = null;
 			if (assemblyResolver == null && typeResolver == null)
-				return Type.GetType (name, throwOnError, ignoreCase);
+				return Type.GetType (name.DisplayName, throwOnError, ignoreCase);
 
 			if (assembly_name != null) {
 				if (assemblyResolver != null)
@@ -150,9 +304,9 @@ namespace System {
 
 			Type type = null;
 			if (typeResolver != null)
-				type = typeResolver (asm, name, ignoreCase);
+				type = typeResolver (asm, name.DisplayName, ignoreCase);
 			else
-				type = asm.GetType (name, false, ignoreCase);
+				type = asm.GetType (name.DisplayName, false, ignoreCase);
 			if (type == null) {
 				if (throwOnError)
 					throw new TypeLoadException ("Could not resolve type '" + name + "'");
@@ -161,7 +315,7 @@ namespace System {
 
 			if (nested != null) {
 				foreach (var n in nested) {
-					var tmp = type.GetNestedType (n, BindingFlags.Public | BindingFlags.NonPublic);
+					var tmp = type.GetNestedType (n.DisplayName, BindingFlags.Public | BindingFlags.NonPublic);
 					if (tmp == null) {
 						if (throwOnError)
 							throw new TypeLoadException ("Could not resolve type '" + n + "'");
@@ -185,13 +339,10 @@ namespace System {
 				type = type.MakeGenericType (args);
 			}
 
-			if (array_spec != null) {
-				foreach (var arr in array_spec)
-					type = arr.Resolve (type);
+			if (modifier_spec != null) {
+				foreach (var md in modifier_spec)
+					type = md.Resolve (type);
 			}
-
-			for (int i = 0; i < pointer_level; ++i)
-				type = type.MakePointerType ();
 
 			if (is_byref)
 				type = type.MakeByRefType ();
@@ -202,19 +353,19 @@ namespace System {
 		void AddName (string type_name)
 		{
 			if (name == null) {
-				name = type_name;
+				name = ParsedTypeIdentifier(type_name);
 			} else {
 				if (nested == null)
-					nested = new List <string> ();
-				nested.Add (type_name);
+					nested = new List <TypeIdentifier> ();
+				nested.Add (ParsedTypeIdentifier(type_name));
 			}
 		}
 
-		void AddArray (ArraySpec array)
+		void AddModifier (ModifierSpec md)
 		{
-			if (array_spec == null)
-				array_spec = new List<ArraySpec> ();
-			array_spec.Add (array);
+			if (modifier_spec == null)
+				modifier_spec = new List<ModifierSpec> ();
+			modifier_spec.Add (md);
 		}
 
 		static void SkipSpace (string name, ref int pos)
@@ -223,6 +374,11 @@ namespace System {
 			while (p < name.Length && Char.IsWhiteSpace (name [p]))
 				++p;
 			pos = p;
+		}
+
+		static TypeIdentifier ParsedTypeIdentifier (string displayName)
+		{
+			return TypeIdentifiers.FromDisplay(displayName);
 		}
 
 		static TypeSpec Parse (string name, ref int p, bool is_recurse, bool allow_aqn)
@@ -261,6 +417,9 @@ namespace System {
 					name_start = pos + 1;
 					in_modifiers = true;
 					break;
+				case '\\':
+					pos++;
+					break;
 				}
 				if (in_modifiers)
 					break;
@@ -282,7 +441,13 @@ namespace System {
 					case '*':
 						if (data.is_byref)
 							throw new ArgumentException ("Can't have a pointer to a byref type", "typeName");
-						++data.pointer_level;
+						// take subsequent '*'s too
+						int pointer_level = 1;
+						while (pos+1 < name.Length && name[pos+1] == '*') {
+							++pos;
+							++pointer_level;
+						}
+						data.AddModifier (new PointerSpec(pointer_level));
 						break;
 					case ',':
 						if (is_recurse) {
@@ -308,8 +473,8 @@ namespace System {
 
 						if (name [pos] != ',' && name [pos] != '*' && name [pos]  != ']') {//generic args
 							List<TypeSpec> args = new List <TypeSpec> ();
-							if (data.IsArray)
-								throw new ArgumentException ("generic args after array spec", "typeName");
+							if (data.HasModifiers)
+								throw new ArgumentException ("generic args after array spec or pointer type", "typeName");
 
 							while (pos < name.Length) {
 								SkipSpace (name, ref pos);
@@ -348,11 +513,11 @@ namespace System {
 								++pos;
 								SkipSpace (name, ref pos);
 							}
-							if (name [pos] != ']')
+							if (pos >= name.Length || name [pos] != ']')
 								throw new ArgumentException ("Error parsing array spec", "typeName");
 							if (dimensions > 1 && bound)
 								throw new ArgumentException ("Invalid array spec, multi-dimensional array cannot be bound", "typeName");
-							data.AddArray (new ArraySpec (dimensions, bound));
+							data.AddModifier (new ArraySpec (dimensions, bound));
 						}
 
 						break;
@@ -371,6 +536,41 @@ namespace System {
 			p = pos;
 			return data;
 		}
+
+		internal TypeName TypeNameWithoutModifiers ()
+		{
+			return new TypeSpecTypeName (this, false);
+		}
+		
+		internal TypeName TypeName {
+			get { return new TypeSpecTypeName (this, true); }
+		}
+
+		private class TypeSpecTypeName : TypeNames.ATypeName, TypeName {
+			TypeSpec ts;
+			bool want_modifiers;
+
+			internal TypeSpecTypeName (TypeSpec ts, bool wantModifiers)
+			{
+				this.ts = ts;
+				this.want_modifiers = wantModifiers;
+			}
+
+			public override string DisplayName {
+				get {
+					if (want_modifiers)
+						return ts.DisplayFullName;
+					else
+						return ts.GetDisplayFullName (DisplayNameFormat.NO_MODIFIERS);
+				}
+			}
+
+			public override TypeName NestedName (TypeIdentifier innerName)
+			{
+				return TypeNames.FromDisplay(DisplayName + "+" + innerName.DisplayName);
+			}
+		}
+
 	}
 }
 

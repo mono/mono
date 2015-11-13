@@ -1347,11 +1347,11 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 
 		switch (ainfo->storage) {
 		case ArgInIReg:
-			linfo->args [i].storage = LLVMArgInIReg;
+			linfo->args [i].storage = LLVMArgNormal;
 			break;
 		case ArgInDoubleSSEReg:
 		case ArgInFloatSSEReg:
-			linfo->args [i].storage = LLVMArgInFPReg;
+			linfo->args [i].storage = LLVMArgNormal;
 			break;
 		case ArgOnStack:
 			if (mini_type_is_vtype (t)) {
@@ -1361,13 +1361,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 				else
 					linfo->args [i].storage = LLVMArgVtypeByVal;
 			} else {
-				linfo->args [i].storage = LLVMArgInIReg;
-				if (t->byref) {
-					if (t->type == MONO_TYPE_R4)
-						linfo->args [i].storage = LLVMArgInFPReg;
-					else if (t->type == MONO_TYPE_R8)
-						linfo->args [i].storage = LLVMArgInFPReg;
-				}
+				linfo->args [i].storage = LLVMArgNormal;
 			}
 			break;
 		case ArgValuetypeInReg:
@@ -2779,8 +2773,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Have to use ecx as a temp reg since this can occur after OP_SETRET */
 
 			/* 
-			 * Read from the single stepping trigger page. This will cause a
-			 * SIGSEGV when single stepping is enabled.
 			 * We do this _before_ the breakpoint, so single stepping after
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
@@ -5066,15 +5058,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int compare_val = 0;
 			guint8 *br [1];
 
-#if defined (USE_COOP_GC)
-			polling_func = "mono_threads_state_poll";
-			compare_val = 1;
-#elif defined(__native_client_codegen__) && defined(__native_client_gc__)
+#if defined(__native_client_codegen__) && defined(__native_client_gc__)
 			polling_func = "mono_nacl_gc";
 			compare_val = 0xFFFFFFFF;
+#else
+			g_assert (mono_threads_is_coop_enabled ());
+			polling_func = "mono_threads_state_poll";
+			compare_val = 1;
 #endif
-			if (!polling_func)
-				break;
 
 			x86_test_membase_imm (code, ins->sreg1, 0, compare_val);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);

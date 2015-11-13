@@ -113,7 +113,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			scheduler.ExecuteAll ();
 			Assert.AreEqual (default(int), target.DirectlyAccepted);
 
-			Assert.AreEqual (42, source.Receive (TimeSpan.FromMilliseconds (100)));
+			Assert.AreEqual (42, source.Receive (TimeSpan.FromMilliseconds (1000)));
 			scheduler.ExecuteAll ();
 			Assert.AreEqual (43, target.DirectlyAccepted);
 		}
@@ -347,7 +347,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 				new BufferBlock<int> (new DataflowBlockOptions { TaskScheduler = scheduler });
 
 			AssertEx.Throws<TimeoutException> (
-				() => block.Receive (TimeSpan.FromMilliseconds (100)));
+				() => block.Receive (TimeSpan.FromMilliseconds (1000)));
 
 			block.Post (1);
 

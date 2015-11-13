@@ -1,0 +1,6 @@
+Makefile.in
+Makefile
+*.exe
+*.dll
+*.mdb
+coreclr-testlist.txt

@@ -15,6 +15,8 @@
 #include "llvm-c/Core.h"
 #include "llvm-c/ExecutionEngine.h"
 
+#include <unwind.h>
+
 G_BEGIN_DECLS
 
 /*
@@ -92,6 +94,22 @@ mono_llvm_create_constant_data_array (const uint8_t *data, int len);
 
 void
 mono_llvm_set_is_constant (LLVMValueRef global_var);
+
+void
+mono_llvm_set_preserveall_cc (LLVMValueRef func);
+
+void
+mono_llvm_set_call_preserveall_cc (LLVMValueRef call);
+
+_Unwind_Reason_Code 
+mono_debug_personality (int a, _Unwind_Action b,
+	uint64_t c, struct _Unwind_Exception *d, struct _Unwind_Context *e);
+
+void
+mono_llvm_set_unhandled_exception_handler (void);
+
+void
+default_mono_llvm_unhandled_exception (void);
 
 G_END_DECLS
 

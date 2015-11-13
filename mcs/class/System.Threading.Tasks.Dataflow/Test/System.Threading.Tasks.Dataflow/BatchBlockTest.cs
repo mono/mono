@@ -56,7 +56,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsNull (array);
 
 			Assert.IsTrue (buffer.Post (42));
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (1000));
 
 			Assert.IsNotNull (array);
 			CollectionAssert.AreEqual (new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 42 }, array);
@@ -340,7 +340,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			scheduler.ExecuteAll ();
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -355,9 +355,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			block.Complete ();
 
 			CollectionAssert.AreEqual (new[] { 1 },
-				block.Receive (TimeSpan.FromMilliseconds (200)));
+				block.Receive (TimeSpan.FromMilliseconds (2000)));
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -371,9 +371,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			block.Complete ();
 
 			CollectionAssert.AreEqual (new[] { 1, 2 },
-				block.Receive (TimeSpan.FromMilliseconds (200)));
+				block.Receive (TimeSpan.FromMilliseconds (2000)));
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -386,9 +386,9 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			block.Complete ();
 
 			CollectionAssert.AreEqual (new[] { 1 },
-				block.Receive (TimeSpan.FromMilliseconds (200)));
+				block.Receive (TimeSpan.FromMilliseconds (2000)));
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -410,7 +410,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			int[] batch;
 			Assert.IsFalse (block.TryReceive (out batch));
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 
 		[Test]
@@ -446,7 +446,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			Assert.IsTrue (block.TryReceive (out batch));
 			CollectionAssert.AreEquivalent (new[] { 11, 21 }, batch);
 
-			Assert.IsTrue (block.Completion.Wait (100));
+			Assert.IsTrue (block.Completion.Wait (1000));
 		}
 	}
 }

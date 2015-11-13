@@ -369,6 +369,16 @@ llvm_sources = \
 endif
 endif
 
+if ENABLE_LLVM
+llvm_runtime_sources = \
+	llvm-runtime.cpp
+else
+if ENABLE_LLVM_RUNTIME
+llvm_runtime_sources = \
+	llvm-runtime.cpp
+endif
+endif
+
 common_sources = \
 	mini.c			\
 	mini-runtime.c	\
@@ -426,7 +436,8 @@ common_sources = \
 	mini-llvm-cpp.h	\
 	alias-analysis.c	\
 	mini-cross-helpers.c \
-	arch-stubs.c
+	arch-stubs.c		\
+	llvm-runtime.h
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -439,7 +450,7 @@ test_sources = 			\
 	basic.cs		\
 	exceptions.cs		\
 	devirtualization.cs	\
-	iltests.il.in		\
+	iltests.il		\
 	test.cs			\
 	generics.cs		\
 	generics-variant-types.il\
@@ -539,7 +550,7 @@ os_sources = $(darwin_sources) $(posix_sources)
 monobin_platform_ldflags=-framework CoreFoundation -framework Foundation
 endif
 
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(arch_sources) $(os_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources)
 libmini_la_CFLAGS = $(mono_CFLAGS)
 
 libmonoboehm_2_0_la_SOURCES =
@@ -578,10 +589,6 @@ generics.exe: generics.cs TestDriver.dll generics-variant-types.dll
 
 %.exe: %.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll
-
-iltests.il: iltests.il.in Makefile.am
-	echo '// DO NOT EDIT: This file has been generated from iltests.il.in' > iltests.il
-	cpp -Darch=$(arch_define) < $(srcdir)/iltests.il.in | sed 's/^#.*//' >> iltests.il
 
 %.exe: %.il
 	$(ILASM) -output=$@ $<
@@ -661,7 +668,7 @@ rcheck2: mono $(regtests)
 	$(MINI_RUNTIME) --regression $(regtests)
 
 check-seq-points: mono $(regtests)
-	rm -f TestResults_op_il_seq_point.xml
+	rm -f TestResult-op_il_seq_point.xml
 	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $$i || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
 	for i in $(regtests); do $(srcdir)/test_op_il_seq_point.sh $$i --aot || ($(srcdir)/test_op_il_seq_point_headerfooter.sh; exit 1) || exit 1; done
 	$(srcdir)/test_op_il_seq_point_headerfooter.sh
@@ -719,6 +726,24 @@ fullaot-tmp/%.dylib: $(CLASS)/%
 llvmfullaotcheck:
 	$(MAKE) fullaotcheck LLVM=1
 
+llvmonlycheck: mono $(fullaot_regtests)
+	rm -rf fullaot-tmp
+	mkdir fullaot-tmp
+	$(MAKE) fullaot-libs AOT_FLAGS=llvmonly
+	cp $(regtests) $(fullaot_regtests) generics-variant-types.dll TestDriver.dll fullaot-tmp/
+	MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper  --aot=llvmonly fullaot-tmp/{generics-variant-types.dll,TestDriver.dll,*.exe} || exit 1
+	ln -s $$PWD/mono fullaot-tmp/
+	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=fullaot-tmp $(top_builddir)/runtime/mono-wrapper --llvmonly fullaot-tmp/$$i --exclude '!FULLAOT' --exclude '!BITCODE' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
+
+# This can run in parallel
+fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
+
+fullaot-tmp/%.dylib: $(CLASS)/%
+	cp $(CLASS)/$* fullaot-tmp/
+	mkdir fullaot-tmp/$*-tmp
+	MONO_PATH=fullaot-tmp/:$(CLASS) $(top_builddir)/runtime/mono-wrapper --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
+	rm -rf fullaot-tmp/$*-tmp
+
 gccheck: gc-test.exe
 	MONO_GC_PARAMS=stack-mark=precise MONO_GC_DEBUG=clear-at-gc ./mono-sgen gc-test.exe	
 
@@ -746,7 +771,7 @@ docu: mini.sgm
 check-local: rcheck check-seq-points
 
 clean-local:
-	rm -f mono a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe regressionexitcode.out TestResults_op_il_seq_point.xml*
+	rm -f mono a.out gmon.out *.o buildver-boehm.h buildver-sgen.h test.exe regressionexitcode.out TestResult-op_il_seq_point.xml*
 
 pkgconfigdir = $(libdir)/pkgconfig
 
