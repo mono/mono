@@ -44,6 +44,8 @@
 #include <mono/io-layer/io-portability.h>
 #include <mono/utils/strenc.h>
 
+#include "mono/utils/mono-once.h"
+
 #if 0
 #define DEBUG(...) g_message(__VA_ARGS__)
 #define DEBUG_ENABLED 1

@@ -134,9 +134,7 @@ mono_type_init_lock (TypeInitializationLock *lock)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
-	MONO_TRY_BLOCKING;
 	mono_mutex_lock (&lock->initialization_section);
-	MONO_FINISH_TRY_BLOCKING;
 }
 
 static void
