@@ -248,6 +248,14 @@ namespace System.Threading
             ec.SynchronizationContextNoFlow = syncContext;
         }
 
+#if MOBILE_LEGACY
+        [Obsolete("The method is not supported and will be removed")]
+        public static void SetThreadStaticContext(SynchronizationContext syncContext)
+        {
+            throw new NotSupportedException ();
+        }
+#endif
+
         // Get the current SynchronizationContext on the current thread
         public static SynchronizationContext Current 
         {
