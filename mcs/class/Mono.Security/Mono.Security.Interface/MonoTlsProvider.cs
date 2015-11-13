@@ -107,15 +107,26 @@ namespace Mono.Security.Interface
 
 #region Certificate Validation
 
+		/*
+		 * Allows a TLS provider to provide a custom system certificiate validator.
+		 */
 		public virtual bool HasCustomSystemCertificateValidator {
 			get { return false; }
 		}
 
+		/*
+		 * If @serverMode is true, then we're a server and want to validate a certificate
+		 * that we received from a client.
+		 * 
+		 * Returns `true` if certificate validation has been performed and `false` to invoke the
+		 * default system validator.
+		 */
 		public virtual bool InvokeSystemCertificateValidator (
 			ICertificateValidator validator, string targetHost, bool serverMode,
-			X509CertificateCollection certificates, ref MonoSslPolicyErrors errors,
-			ref int status11)
+			X509CertificateCollection certificates, out bool success,
+			ref MonoSslPolicyErrors errors, ref int status11)
 		{
+			success = false;
 			return false;
 		}
 
