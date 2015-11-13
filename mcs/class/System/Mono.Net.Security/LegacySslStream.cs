@@ -324,7 +324,9 @@ namespace Mono.Net.Security
 			string [] acceptableIssuers = new string [serverRequestedCerts != null ? serverRequestedCerts.Count : 0];
 			for (int i = 0; i < acceptableIssuers.Length; i++)
 				acceptableIssuers [i] = serverRequestedCerts [i].GetIssuerName ();
-			return certificateValidator.SelectClientCertificate (targetHost, clientCerts, serverCert, acceptableIssuers);
+			X509Certificate clientCertificate;
+			certificateValidator.SelectClientCertificate (targetHost, clientCerts, serverCert, acceptableIssuers, out clientCertificate);
+			return clientCertificate;
 		}
 
 		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -368,7 +370,7 @@ namespace Mono.Net.Security
 					for (int i = 0; i < mcerts.Count; i++)
 						certs.Add (new X509Certificate2 (mcerts [i].RawData));
 				}
-				return ((ChainValidationHelper)certificateValidator).ValidateChain (targetHost, certs);
+				return ((ChainValidationHelper)certificateValidator).ValidateCertificate (targetHost, false, certs);
 			};
 			s.ClientCertSelectionDelegate = OnCertificateSelection;
 
