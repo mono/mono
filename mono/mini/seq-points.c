@@ -10,32 +10,50 @@
 #include "mini.h"
 #include "seq-points.h"
 
-static void
-collect_pred_seq_points (MonoBasicBlock *bb, MonoInst *ins, GSList **next, int depth)
+/*#define CONDITIONAL_PRINTF(...) CONDITIONAL_PRINTF(__VA_ARGS__)*/
+#define CONDITIONAL_PRINTF(...) // Do Nothing 
+
+void
+mono_propagate_seq_points (MonoBasicBlock *init)
 {
-	int i;
-	MonoBasicBlock *in_bb;
-	GSList *l;
+	// Use Iterative DFS to find the incoming bbs which
+	// are the last sequence points
+	GQueue *stack = g_queue_new ();
 
-	for (i = 0; i < bb->in_count; ++i) {
-		in_bb = bb->in_bb [i];
+	g_assert (init->last_seq_point);
+	gpointer last_seq = init->last_seq_point;
 
-		if (in_bb->last_seq_point) {
-			int src_index = in_bb->last_seq_point->backend.size;
-			int dst_index = ins->backend.size;
+	g_queue_push_tail (stack, init);
 
-			/* bb->in_bb might contain duplicates */
-			for (l = next [src_index]; l; l = l->next)
-				if (GPOINTER_TO_UINT (l->data) == dst_index)
-					break;
-			if (!l)
-				next [src_index] = g_slist_append (next [src_index], GUINT_TO_POINTER (dst_index));
-		} else {
-			/* Have to look at its predecessors */
-			if (depth < 5)
-				collect_pred_seq_points (in_bb, ins, next, depth + 1);
+	MonoBasicBlock *curr = init;
+	do {
+		CONDITIONAL_PRINTF("Processing inst \n", out_bb);
+
+		for (int i = 0; i < curr->out_count; ++i) {
+			MonoBasicBlock *out_bb = curr->out_bb [i];
+			if (out_bb->last_seq_point)
+				continue;
+
+			CONDITIONAL_PRINTF("Finding last sequence point of bb %p\n", out_bb);
+
+			// Handle duplicate incoming basic blocks
+			if (out_bb->sequence_predecessors && out_bb->sequence_predecessors->data == last_seq)
+				continue;
+
+			out_bb->sequence_predecessors = g_slist_prepend (out_bb->sequence_predecessors, last_seq);
+			CONDITIONAL_PRINTF ("Appending last_seq to basic block %p from basic block %p\n", out_bb, curr);
+
+			// DFS, to keep the queue smaller.
+			g_queue_push_head (stack, out_bb);
 		}
-	}
+	} while ((curr = g_queue_pop_head (stack)));
+
+	CONDITIONAL_PRINTF ("DONE: %s :: %d\n", __FILE__, __LINE__);
+	// No null BBs caused us to terminate early
+	assert (g_queue_is_empty (stack));
+	CONDITIONAL_PRINTF ("Asserted: %s :: %d\n", __FILE__, __LINE__);
+	g_queue_free (stack);
+	CONDITIONAL_PRINTF ("Freed: %s :: %d\n", __FILE__, __LINE__);
 }
 
 void
@@ -53,6 +71,10 @@ mono_save_seq_point_info (MonoCompile *cfg)
 
 	if (!cfg->seq_points)
 		return;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+		if (bb->last_seq_point)
+			mono_propagate_seq_points (bb);
 
 	seq_points = g_new0 (SeqPoint, cfg->seq_points->len);
 
@@ -79,23 +101,48 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			bb_seq_points = g_slist_reverse (bb->seq_points);
 			last = NULL;
 			for (l = bb_seq_points; l; l = l->next) {
+				CONDITIONAL_PRINTF ("Iteration: %s :: %d with %p\n", __FILE__, __LINE__, l);
 				MonoInst *ins = l->data;
 
-				if (ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET)
+				if (ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) {
 				/* Used to implement method entry/exit events */
+					CONDITIONAL_PRINTF ("DONE Loop iteration: %s :: %d with %p\n", __FILE__, __LINE__, l);
 					continue;
-				if (ins->inst_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE)
+				}
+				if (ins->inst_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE) {
+					CONDITIONAL_PRINTF ("DONE Loop iteration: %s :: %d with %p\n", __FILE__, __LINE__, l);
 					continue;
+				}
 
 				if (last != NULL) {
 					/* Link with the previous seq point in the same bb */
-					next [last->backend.size] = g_slist_append (next [last->backend.size], GUINT_TO_POINTER (ins->backend.size));
+					size_t src_index = last->backend.size;
+					CONDITIONAL_PRINTF ("Assigning for inner one. Src index %d dst_index %d, dest %p\n", src_index, ins->backend.size, next[src_index]);
+					next [src_index] = g_slist_prepend (next [src_index], GUINT_TO_POINTER (ins->backend.size)); 
 				} else {
 					/* Link with the last bb in the previous bblocks */
-					collect_pred_seq_points (bb, ins, next, 0);
+
+					if (bb->last_seq_point)
+						g_assert (!bb->sequence_predecessors);
+
+					for (GSList *pred = bb->sequence_predecessors; pred; pred = pred->next) {
+						MonoInst *predSeq = (MonoInst *)pred->data;
+						size_t src_index = predSeq->backend.size;
+						int dst_index = ins->backend.size;
+
+						GSList *inner;
+						for (inner = next [src_index]; inner; inner = inner->next)
+							if (GPOINTER_TO_UINT (inner->data) == dst_index)
+								break;
+							if (!inner) {
+								CONDITIONAL_PRINTF ("Assigning for first one. Src index %d dst_index %d, dest %p, basic block: %p\n", src_index, ins->backend.size, next[src_index], bb);
+								next [src_index] = g_slist_prepend (next [src_index], GUINT_TO_POINTER (ins->backend.size)); 
+							}
+					}
 				}
 
 				last = ins;
+				CONDITIONAL_PRINTF ("DONE Loop iteration: %s :: %d with %p\n", __FILE__, __LINE__, l);
 			}
 
 			/* The second case handles endfinally opcodes which are in a separate bb by themselves */
@@ -116,15 +163,18 @@ mono_save_seq_point_info (MonoCompile *cfg)
 						if (l) {
 							MonoInst *ins = l->data;
 
-							if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
+							if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point) {
+								size_t src_index = endfinally_seq_point->backend.size;
 								next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+								CONDITIONAL_PRINTF ("Assigning for finally one. Src index %d dst_index %d, dest %p\n", src_index, ins->backend.size, next[src_index]);
+							}
 						}
 					}
 				}
 			}
 		}
 
-		if (cfg->verbose_level > 2) {
+		if (0) {
 			printf ("\nSEQ POINT MAP: \n");
 
 			for (i = 0; i < cfg->seq_points->len; ++i) {

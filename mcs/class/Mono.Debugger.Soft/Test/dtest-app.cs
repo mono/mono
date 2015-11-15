@@ -185,6 +185,62 @@ struct RecStruct : IRecStruct {
 	}
 }
 
+class ComplexStepping
+{
+	internal interface willy
+	{
+	}
+
+	internal class snarf
+	{
+	}
+
+	internal class flap : snarf, willy
+	{
+	}
+
+	internal class point
+	{
+		public string acme = "";
+		public snarf lst = new flap();
+	}
+
+	internal class zork
+	{
+		public point point = new point();
+	}
+
+	internal class narf
+	{
+		public zork zork = new zork();
+	}
+
+	public class MainClass
+	{
+		static int count = 1;
+		static narf _narf = new narf();
+
+		// DO NOT ALTER THIS FORMATTING.
+		// The lines are long, but the relative line offsets are important for the test that uses this.
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void bla()
+		{
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst); 
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+			doStuff(_narf.zork.point.acme, _narf.zork.point.acme, (willy)_narf.zork.point.lst, _narf.zork.point.acme, (willy)_narf.zork.point.lst);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static void doStuff(string str, string str2, willy lst, string str3,
+							willy lst2)
+		{
+
+		}
+	}
+}
+
 interface ITest
 {
 	void Foo ();
@@ -333,6 +389,8 @@ public class Tests : TestsBase, ITest2
 		set_ip ();
 		step_filters ();
 		local_reflect ();
+		ComplexStepping.MainClass.bla ();
+		ComplexStepping2 ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -345,12 +403,28 @@ public class Tests : TestsBase, ITest2
 		if (args.Length > 0 && args [0] == "invoke-abort")
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
+
 		return 3;
 	}
 
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
+	}
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ComplexStepping2 () {
+		Complex2Callee(null);
+	}//5. But ends here
+
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void Complex2Callee (Object arg) {
+		if (arg is IAsyncResult ||// BREAKING HERE: Step over on this doesn't work correctly and gets out of this method
+		    arg is ICloneable ||
+		    arg is IDisposable ||
+		    arg is GenericUriParser)
+			Console.WriteLine("2");
+		Console.WriteLine("3");//4. Step over IF above should end here
 	}
 
 	public static void breakpoints () {
@@ -805,6 +879,7 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals6_2 (int arg) {
 	}
+
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals6_3 () {

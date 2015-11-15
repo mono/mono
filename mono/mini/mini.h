@@ -689,6 +689,7 @@ struct MonoBasicBlock {
 
 	GSList *seq_points;
 	MonoInst *last_seq_point;
+	GSList *sequence_predecessors;
 
 	GSList *spill_slot_defs;
 
