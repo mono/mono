@@ -4272,6 +4272,7 @@ static MonoException*
 mono_thread_execute_interruption (void)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoThread *sys_thread = mono_thread_current ();
 
 	LOCK_THREAD (thread);
 
@@ -4309,11 +4310,11 @@ mono_thread_execute_interruption (void)
 		
 		mono_thread_exit ();
 		return NULL;
-	} else if (thread->pending_exception) {
+	} else if (sys_thread->pending_exception) {
 		MonoException *exc;
 
-		exc = thread->pending_exception;
-		thread->pending_exception = NULL;
+		exc = sys_thread->pending_exception;
+		sys_thread->pending_exception = NULL;
 
         UNLOCK_THREAD (thread);
         return exc;
@@ -4484,6 +4485,7 @@ MonoException*
 mono_thread_get_and_clear_pending_exception (void)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoThread *sys_thread = mono_thread_current ();
 
 	/* The thread may already be stopping */
 	if (thread == NULL)
@@ -4493,10 +4495,10 @@ mono_thread_get_and_clear_pending_exception (void)
 		return mono_thread_execute_interruption ();
 	}
 	
-	if (thread->pending_exception) {
-		MonoException *exc = thread->pending_exception;
+	if (sys_thread->pending_exception) {
+		MonoException *exc = sys_thread->pending_exception;
 
-		thread->pending_exception = NULL;
+		sys_thread->pending_exception = NULL;
 		return exc;
 	}
 
@@ -4512,7 +4514,7 @@ mono_thread_get_and_clear_pending_exception (void)
 void
 mono_set_pending_exception (MonoException *exc)
 {
-	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoThread *thread = mono_thread_current ();
 
 	/* The thread may already be stopping */
 	if (thread == NULL)
