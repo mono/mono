@@ -1378,7 +1378,8 @@ namespace System
 				else {
 					abbrevs.Add (abbrev_index, sb.ToString ());
 					//Adding all the substrings too, as it seems to be used, at least for Africa/Windhoek
-					for (int j = 1; j < sb.Length; j++)
+					//j == sb.Length empty substring also needs to be added #31432
+					for (int j = 1; j <= sb.Length; j++)
 						abbrevs.Add (abbrev_index + j, sb.ToString (j, sb.Length - j));
 					abbrev_index = i + 1;
 					sb = new StringBuilder ();
