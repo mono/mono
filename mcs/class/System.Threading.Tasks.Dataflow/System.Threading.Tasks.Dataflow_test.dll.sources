@@ -2,7 +2,6 @@ TestScheduler.cs
 AssertEx.cs
 Blocks.cs
 System.Threading.Tasks.Dataflow/DataflowMessageHeaderTest.cs
-System.Threading.Tasks.Dataflow/CompletionHelperTest.cs
 System.Threading.Tasks.Dataflow/CompletionTest.cs
 System.Threading.Tasks.Dataflow/ReceivingTest.cs
 System.Threading.Tasks.Dataflow/OptionsTest.cs
@@ -26,5 +25,4 @@ System.Threading.Tasks.Dataflow/InvalidArgumentsTest.cs
 System.Threading.Tasks.Dataflow/OutputAvailableTest.cs
 System.Threading.Tasks.Dataflow/EncapsulateTest.cs
 System.Threading.Tasks.Dataflow/ChooseTest.cs
-../System.Threading.Tasks.Dataflow/CompletionHelper.cs
 ../../Mono.Parallel/Mono.Threading/AtomicBoolean.cs
