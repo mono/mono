@@ -41,11 +41,11 @@ build_profiles += monotouch monotouch_runtime
 endif
 
 if INSTALL_MONOTOUCH_WATCH
-build_profiles += monotouch_watch
+build_profiles += monotouch_watch monotouch_watch_runtime
 endif
 
 if INSTALL_MONOTOUCH_TV
-build_profiles += monotouch_tv
+build_profiles += monotouch_tv monotouch_tv_runtime
 endif
 
 if INSTALL_XAMMAC
