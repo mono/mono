@@ -30,9 +30,7 @@
 
 using System.IO;
 using System.Reflection;
-#if NET_4_0
 using System.Runtime.CompilerServices;
-#endif
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
@@ -74,7 +72,6 @@ namespace System.Runtime.InteropServices
 			return "v" + Environment.Version.Major + "." + Environment.Version.Minor + "." + Environment.Version.Build;
 		}
 
-#if NET_4_0
 		[DllImport("mscoree")]
 		private extern static int CLRCreateInstance (
 		    [MarshalAs(UnmanagedType.LPStruct)] Guid clsid,
@@ -116,10 +113,8 @@ namespace System.Runtime.InteropServices
 
 			return result;
 		}
-#endif
 	}
 
-#if NET_4_0
     [Guid ("d332db9e-b9b3-4125-8207-a14884f53216")]
     [InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
     [ComImport ()]
@@ -151,5 +146,4 @@ namespace System.Runtime.InteropServices
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		void ExitProcess (int iExitCode);
     }
-#endif
 }
