@@ -109,15 +109,16 @@ namespace Mono.Net.Security
 				Console.Error.WriteLine ("ERROR building certificate chain: {0}", e);
 				Console.Error.WriteLine ("Please, report this problem to the Mono team");
 				errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+				ok = false;
 			}
 
 			try {
 				status11 = GetStatusFromChain (chain);
 			} catch {
-				status11 = 0x800B010B; // TRUST_E_FAIL - generic
+				status11 = -2146762485; // TRUST_E_FAIL - generic
 			}
 
-			return chain;
+			return ok;
 #endif
 		}
 
