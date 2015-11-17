@@ -52,7 +52,7 @@ using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.
 using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
 #else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
+using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
 #endif
 
 using System;
