@@ -69560,6 +69560,16 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-20.cs">
+    <type name="M">
+      <method name="Void Main()" attrs="150">
+        <size>182</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()" attrs="6278">
