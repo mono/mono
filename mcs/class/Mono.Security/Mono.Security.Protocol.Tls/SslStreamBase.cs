@@ -633,15 +633,14 @@ namespace Mono.Security.Protocol.Tls
 		// record and return are the records (may be more than one) we have
 		private void InternalReadCallback(IAsyncResult result)
 		{
-			if (this.disposed)
-				return;
-
 			object[] state = (object[])result.AsyncState;
 			byte[] recbuf = (byte[])state[0];
 			InternalAsyncResult internalResult = (InternalAsyncResult)state[1];
 
 			try
 			{
+				this.checkDisposed();
+				
 				int n = innerStream.EndRead(result);
 				if (n > 0)
 				{
@@ -795,13 +794,11 @@ namespace Mono.Security.Protocol.Tls
 
 		private void InternalWriteCallback(IAsyncResult ar)
 		{
-			if (this.disposed)
-				return;
-			
 			InternalAsyncResult internalResult = (InternalAsyncResult)ar.AsyncState;
 
 			try
 			{
+				this.checkDisposed();
 				this.innerStream.EndWrite(ar);
 				internalResult.SetComplete();
 			}
