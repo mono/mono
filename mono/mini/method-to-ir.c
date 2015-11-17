@@ -50,7 +50,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/mono-debug-debugger.h>
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/security-core-clr.h>
@@ -69,6 +69,7 @@
 #include "jit.h"
 #include "debugger-agent.h"
 #include "seq-points.h"
+#include "aot-compiler.h"
 
 #define BRANCH_COST 10
 #define INLINE_LENGTH_LIMIT 20

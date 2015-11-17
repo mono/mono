@@ -26,7 +26,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-debug.h>
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-memory-model.h>
@@ -419,7 +419,7 @@ mono_arch_nacl_skip_nops (guint8* code)
 
 #endif /*__native_client_codegen__*/
 
-static inline void 
+static void
 amd64_patch (unsigned char* code, gpointer target)
 {
 	guint8 rex = 0;

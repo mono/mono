@@ -226,7 +226,19 @@ namespace Mono.Net.Security
 			get { return certSelectionCallback != null; }
 		}
 
-		public X509Certificate SelectClientCertificate (
+		public bool SelectClientCertificate (
+			string targetHost, XX509CertificateCollection localCertificates, X509Certificate remoteCertificate,
+			string[] acceptableIssuers, out X509Certificate clientCertificate)
+		{
+			if (certSelectionCallback == null) {
+				clientCertificate = null;
+				return false;
+			}
+			clientCertificate = certSelectionCallback (targetHost, localCertificates, remoteCertificate, acceptableIssuers);
+			return true;
+		}
+
+		internal X509Certificate SelectClientCertificate (
 			string targetHost, XX509CertificateCollection localCertificates, X509Certificate remoteCertificate,
 			string[] acceptableIssuers)
 		{
@@ -247,15 +259,10 @@ namespace Mono.Net.Security
 			return result.Trusted && !result.UserDenied;
 		}
 
-		public ValidationResult ValidateClientCertificate (XX509CertificateCollection certs)
-		{
-			return ValidateChain (string.Empty, true, certs, 0);
-		}
-
-		public ValidationResult ValidateChain (string host, XX509CertificateCollection certs)
+		public ValidationResult ValidateCertificate (string host, bool serverMode, XX509CertificateCollection certs)
 		{
 			try {
-				var result = ValidateChain (host, false, certs, 0);
+				var result = ValidateChain (host, serverMode, certs, 0);
 				if (tlsStream != null)
 					tlsStream.CertificateValidationFailed = result == null || !result.Trusted || result.UserDenied;
 				return result;
@@ -300,15 +307,17 @@ namespace Mono.Net.Security
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 			X509Chain chain = null;
 
+			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
 				if (SystemCertificateValidator.NeedsChain (settings))
 					throw new NotSupportedException ("Cannot use MonoTlsProvider.InvokeSystemCertificateValidator() when the X509Chain is required.");
 				var xerrors = (MonoSslPolicyErrors)errors;
-				result = provider.InvokeSystemCertificateValidator (this, host, server, certs, ref xerrors, ref status11);
+				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, out result, ref xerrors, ref status11);
 				errors = (SslPolicyErrors)xerrors;
-			} else {
-				result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
 			}
+
+			if (!providerValidated)
+				result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;

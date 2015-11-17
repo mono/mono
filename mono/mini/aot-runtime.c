@@ -47,10 +47,10 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
-#include <mono/utils/mono-logger-internal.h>
+#include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-counters.h>
@@ -60,6 +60,7 @@
 #include "seq-points.h"
 #include "version.h"
 #include "debugger-agent.h"
+#include "aot-compiler.h"
 
 #ifndef DISABLE_AOT
 
@@ -895,15 +896,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 			break;
 		}
 		case MONO_WRAPPER_WRITE_BARRIER: {
-			int nursery_bits = decode_value (p, &p);
-
 			ref->method = mono_gc_get_write_barrier ();
-			if (ref->method) {
-				/* Sanity check */
-				info = mono_marshal_get_wrapper_info (ref->method);
-				g_assert (info);
-				g_assert (info->d.wbarrier.nursery_bits == nursery_bits);
-			}
 			break;
 		}
 		case MONO_WRAPPER_STELEMREF: {
@@ -2149,18 +2142,6 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	}
 	else
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: loaded AOT Module for %s.\n", assembly->image->name);
-}
-
-/*
- * mono_aot_register_globals:
- *
- *   This is called by the ctor function in AOT images compiled with the
- * 'no-dlsym' option.
- */
-void
-mono_aot_register_globals (gpointer *globals)
-{
-	g_assert_not_reached ();
 }
 
 /*

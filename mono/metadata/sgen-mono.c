@@ -32,10 +32,11 @@
 #include "metadata/abi-details.h"
 #include "metadata/mono-gc.h"
 #include "metadata/runtime.h"
-#include "metadata/sgen-bridge-internal.h"
-#include "metadata/gc-internal.h"
+#include "metadata/sgen-bridge-internals.h"
+#include "metadata/gc-internals.h"
 #include "utils/mono-memory-model.h"
-#include "utils/mono-logger-internal.h"
+#include "utils/mono-logger-internals.h"
+#include "utils/mono-threads.h"
 #include "sgen/sgen-thread-pool.h"
 
 #ifdef HEAVY_STATISTICS
@@ -191,6 +192,18 @@ mono_gc_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size, uns
 	sgen_wbarrier_value_copy_bitmap (_dest, _src, size, bitmap);
 }
 
+int
+mono_gc_get_suspend_signal (void)
+{
+	return mono_threads_posix_get_suspend_signal ();
+}
+
+int
+mono_gc_get_restart_signal (void)
+{
+	return mono_threads_posix_get_restart_signal ();
+}
+
 static MonoMethod *write_barrier_conc_method;
 static MonoMethod *write_barrier_noconc_method;
 
@@ -333,8 +346,6 @@ mono_gc_get_specific_write_barrier (gboolean is_concurrent)
 #endif
 	res = mono_mb_create_method (mb, sig, 16);
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
-	/* The generated barrier depends on this being the same at runtime */
-	info->d.wbarrier.nursery_bits = DEFAULT_NURSERY_BITS;
 	mono_marshal_set_wrapper_info (res, info);
 	mono_mb_free (mb);
 
@@ -2872,13 +2883,6 @@ sgen_client_init (void)
 		mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, tls_offset);
 	}
 #endif
-
-	/*
-	 * This needs to happen before any internal allocations because
-	 * it inits the small id which is required for hazard pointer
-	 * operations.
-	 */
-	sgen_os_init ();
 
 	mono_gc_register_thread (&dummy);
 }

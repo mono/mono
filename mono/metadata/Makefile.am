@@ -129,7 +129,7 @@ common_sources = \
 	file-io.h		\
 	filewatcher.c		\
 	filewatcher.h		\
-	gc-internal.h		\
+	gc-internals.h		\
 	icall.c			\
 	icall-def.h		\
 	image.c			\
@@ -232,13 +232,9 @@ boehm_sources = \
 	boehm-gc.c
 
 sgen_sources = \
-	sgen-os-posix.c		\
-	sgen-os-mach.c		\
-	sgen-os-win32.c		\
-	sgen-os-coop.c		\
 	sgen-bridge.c		\
 	sgen-bridge.h		\
-	sgen-bridge-internal.h	\
+	sgen-bridge-internals.h	\
 	sgen-old-bridge.c		\
 	sgen-new-bridge.c		\
 	sgen-tarjan-bridge.c		\

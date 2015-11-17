@@ -125,4 +125,5 @@ mono.h
 mono-*.tar.*
 tmpinst-dir.stamp
 msvc/scripts/inputs/
+extensions-config.h
 

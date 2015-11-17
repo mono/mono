@@ -24,7 +24,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/monitor.h>
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/runtime.h>
 #include <mono/io-layer/io-layer.h>
@@ -41,7 +41,7 @@
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
 
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
@@ -675,6 +675,8 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	 */
 	mono_thread_new_init (tid, &tid, start_func);
 	internal->stack_ptr = &tid;
+	if (domain != mono_get_root_domain ())
+		set_current_thread_for_domain (domain, internal, start_info->obj);
 
 	LIBGC_DEBUG (g_message ("%s: (%"G_GSIZE_FORMAT",%d) Setting thread stack to %p", __func__, mono_native_thread_id_get (), getpid (), thread->stack_ptr));
 
@@ -919,8 +921,10 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 		return NULL;
 
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
+#ifndef MONO_CROSS_COMPILE
 	if (mono_check_corlib_version () == NULL)
 		g_assert (((char*)&internal->unused2 - (char*)internal) == mono_defaults.internal_thread_class->fields [mono_defaults.internal_thread_class->field.count - 1].offset);
+#endif
 
 	return internal;
 }

@@ -88,10 +88,10 @@ struct _SgenClientThreadInfo {
 #include "metadata/profiler-private.h"
 #include "utils/dtrace.h"
 #include "utils/mono-counters.h"
-#include "utils/mono-logger-internal.h"
+#include "utils/mono-logger-internals.h"
 #include "utils/mono-time.h"
 #include "utils/mono-semaphore.h"
-#include "metadata/sgen-bridge-internal.h"
+#include "metadata/sgen-bridge-internals.h"
 
 extern void mono_sgen_register_moved_object (void *obj, void *destination);
 extern void mono_sgen_gc_event_moves (void);
@@ -654,11 +654,6 @@ static void G_GNUC_UNUSED
 sgen_client_binary_protocol_gray_dequeue (gpointer queue, gpointer cursor, gpointer value)
 {
 }
-
-int sgen_thread_handshake (BOOL suspend);
-gboolean sgen_suspend_thread (SgenThreadInfo *info);
-gboolean sgen_resume_thread (SgenThreadInfo *info);
-void sgen_wait_for_suspend_ack (int count);
 
 #ifdef HAVE_KW_THREAD
 extern __thread SgenThreadInfo *sgen_thread_info;

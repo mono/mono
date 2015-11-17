@@ -7093,8 +7093,11 @@ namespace Mono.CSharp
 			// Next, evaluate all the expressions in the argument list
 			//
 			bool dynamic_arg = false;
-			if (arguments != null)
-				arguments.Resolve (ec, out dynamic_arg);
+			if (arguments != null) {
+				using (ec.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false)) {
+					arguments.Resolve (ec, out dynamic_arg);
+				}
+			}
 
 			TypeSpec expr_type = member_expr.Type;
 			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
@@ -10857,7 +10860,9 @@ namespace Mono.CSharp
 			eclass = ExprClass.IndexerAccess;
 
 			bool dynamic;
-			arguments.Resolve (rc, out dynamic);
+			using (rc.With (ResolveContext.Options.DontSetConditionalAccessReceiver, false)) {
+				arguments.Resolve (rc, out dynamic);
+			}
 
 			if (indexers == null && InstanceExpression.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				dynamic = true;

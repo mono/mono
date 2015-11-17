@@ -315,7 +315,7 @@
 
 	In the Mono C# compiler, we use a class for each of the
 	statements and expressions in the C# language.  For example,
-	there is a `While' class for the the `while' statement, a
+	there is a `While' class for the `while' statement, a
 	`Cast' class to represent a cast expression and so on.
 
 	There is a Statement class, and an Expression class which are

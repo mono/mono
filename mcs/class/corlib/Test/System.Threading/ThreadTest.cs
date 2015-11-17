@@ -861,6 +861,32 @@ namespace MonoTests.System.Threading
 			Assert.AreSame (Thread.GetNamedDataSlot ("te#st"), Thread.GetNamedDataSlot ("te#st"), "#2");
 		}
 
+		class DomainClass : MarshalByRefObject {
+			Thread m_thread;
+			bool success;
+
+			public bool Run () {
+				m_thread = new Thread(ThreadProc);
+				m_thread.Start(Thread.CurrentThread);
+				m_thread.Join();
+				return success;
+			}
+
+			public void ThreadProc (object arg) {
+				success = m_thread == Thread.CurrentThread;
+			}
+		}
+
+		[Test]
+		public void CurrentThread_Domains ()
+		{
+			AppDomain ad = AppDomain.CreateDomain ("foo");
+			ad.Load (typeof (DomainClass).Assembly.GetName ());
+			var o = (DomainClass)ad.CreateInstanceAndUnwrap (typeof (DomainClass).Assembly.FullName, typeof (DomainClass).FullName);
+			Assert.IsTrue (o.Run ());
+			AppDomain.Unload (ad);
+		}
+
 		void CheckIsRunning (string s, Thread t)
 		{
 			int c = counter;

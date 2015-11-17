@@ -15,7 +15,7 @@ monoutils_sources = \
 	mono-md5.c		\
 	mono-sha1.c		\
 	mono-logger.c		\
-	mono-logger-internal.h	\
+	mono-logger-internals.h	\
 	mono-codeman.c		\
 	dlmalloc.h      	\
 	dlmalloc.c      	\
@@ -36,7 +36,7 @@ monoutils_sources = \
 	mono-math.c  		\
 	mono-mmap.c  		\
 	mono-mmap.h  		\
-	mono-mmap-internal.h	\
+	mono-mmap-internals.h	\
 	mono-mutex.c  		\
 	mono-mutex.h  		\
 	mono-lazy-init.h		\
@@ -102,7 +102,6 @@ monoutils_sources = \
 	mono-threads-state-machine.c	\
 	mono-threads-posix.c	\
 	mono-threads-posix-signals.c	\
-	mono-threads-posix-signals.h	\
 	mono-threads-mach.c	\
 	mono-threads-mach-helper.c	\
 	mono-threads-windows.c	\

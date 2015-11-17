@@ -41,17 +41,17 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
-#include <mono/metadata/gc-internal.h>
+#include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/threads-types.h>
-#include <mono/utils/mono-logger-internal.h>
+#include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/json.h>
 
-#include "mini.h"
+#include "aot-compiler.h"
 #include "seq-points.h"
 #include "image-writer.h"
 #include "dwarfwriter.h"
@@ -2819,7 +2819,6 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 		}
 		case MONO_WRAPPER_WRITE_BARRIER: {
 			g_assert (info);
-			encode_value (info->d.wbarrier.nursery_bits, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_STELEMREF: {
