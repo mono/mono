@@ -80,8 +80,7 @@ Testing and Installation
 You can run the mono and mcs test suites with the command: `make check`.
 
 Expect to find a few test suite failures. As a sanity check, you
-can compare the failures you got with [https://wrench.mono-project.com/Wrench/](https://wrench.mono-project.com/Wrench/)
-and [http://jenkins.mono-project.com/](http://jenkins.mono-project.com/).
+can compare the failures you got with [https://jenkins.mono-project.com/](https://jenkins.mono-project.com/).
 
 You can now install mono with: `make install`
 
