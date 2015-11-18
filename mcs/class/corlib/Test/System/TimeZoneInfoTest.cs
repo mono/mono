@@ -93,8 +93,10 @@ namespace MonoTests.System
 				} catch (DllNotFoundException e) {
 					return;
 				}
-
+#if !MONOTOUCH && !XAMMAC
+				// this assumption is incorrect for iOS, tvO, watchOS and OSX
 				Assert.IsTrue (TimeZoneInfo.Local.Id != "Local", "Local timezone id should not be \"Local\"");
+#endif
 			}
 		}
 
