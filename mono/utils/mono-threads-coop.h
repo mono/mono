@@ -33,17 +33,26 @@ mono_threads_is_coop_enabled (void)
 
 /* Internal API */
 
-void mono_threads_state_poll (void);
-void mono_threads_state_poll_stack_data (void* stackdata);
+void
+mono_threads_state_poll (void);
 
-void* mono_threads_prepare_blocking (void* stackdata);
-void mono_threads_finish_blocking (void* cookie, void* stackdata);
+gpointer
+mono_threads_prepare_blocking (void);
 
-void* mono_threads_reset_blocking_start (void* stackdata);
-void mono_threads_reset_blocking_end (void* cookie, void* stackdata);
+void
+mono_threads_finish_blocking (gpointer cookie);
 
-void* mono_threads_try_prepare_blocking (void* stackdata);
-void mono_threads_finish_try_blocking (void* cookie, void* stackdata);
+gpointer
+mono_threads_reset_blocking_start (void);
+
+void
+mono_threads_reset_blocking_end (gpointer cookie);
+
+gpointer
+mono_threads_try_prepare_blocking (void);
+
+void
+mono_threads_finish_try_blocking (gpointer cookie);
 
 static inline void
 mono_threads_safepoint (void)
@@ -53,30 +62,27 @@ mono_threads_safepoint (void)
 }
 
 #define MONO_PREPARE_BLOCKING	\
-{	\
-	void *__dummy;	\
-	void *__blocking_cookie = mono_threads_prepare_blocking (&__dummy);
+	do {	\
+		gpointer __blocking_cookie = mono_threads_prepare_blocking ();
 
 #define MONO_FINISH_BLOCKING \
-	mono_threads_finish_blocking (__blocking_cookie, &__dummy);	\
-}
+		mono_threads_finish_blocking (__blocking_cookie);	\
+	} while (0)
 
 #define MONO_PREPARE_RESET_BLOCKING	\
-{	\
-	void *__dummy;	\
-	void *__reset_cookie = mono_threads_reset_blocking_start (&__dummy);
+	do {	\
+		gpointer __reset_cookie = mono_threads_reset_blocking_start ()
 
 #define MONO_FINISH_RESET_BLOCKING \
-	mono_threads_reset_blocking_end (__reset_cookie, &__dummy);	\
-}
+		mono_threads_reset_blocking_end (__reset_cookie);	\
+	} while (0)
 
 #define MONO_TRY_BLOCKING	\
-{	\
-	void *__dummy;	\
-	void *__try_block_cookie = mono_threads_try_prepare_blocking (&__dummy);
+	do {	\
+		gpointer __try_block_cookie = mono_threads_try_prepare_blocking ();
 
 #define MONO_FINISH_TRY_BLOCKING \
-	mono_threads_finish_try_blocking (__try_block_cookie, &__dummy);	\
-}
+		mono_threads_finish_try_blocking (__try_block_cookie);	\
+	} while (0)
 
 #endif

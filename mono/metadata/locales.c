@@ -24,6 +24,7 @@
 #include <mono/metadata/locales.h>
 #include <mono/metadata/culture-info.h>
 #include <mono/metadata/culture-info-tables.h>
+#include <mono/metadata/icall-wrapper.h>
 #include <mono/utils/bsearch.h>
 
 #ifndef DISABLE_NORMALIZATION
@@ -166,6 +167,8 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 	const CultureInfoEntry *ci;
 	char *n;
 
+	MONO_ICALL_WRAPPER_START;
+
 	n = mono_string_to_utf8 (name);
 	ne = mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
 			sizeof (CultureInfoNameEntry), culture_name_locator);
@@ -199,6 +202,8 @@ ves_icall_System_Globalization_CalendarData_fill_calendar_data (MonoCalendarData
 	MONO_OBJECT_SETREF (this_obj, GenitiveMonthNames, create_names_array_idx (dfe->month_genitive_names, NUM_MONTHS));
 	MONO_OBJECT_SETREF (this_obj, GenitiveAbbreviatedMonthNames, create_names_array_idx (dfe->abbreviated_month_genitive_names, NUM_MONTHS));
 
+	MONO_ICALL_WRAPPER_END;
+
 	return TRUE;
 }
 
@@ -207,6 +212,8 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *t
 {
 	MonoDomain *domain;
 	const DateTimeFormatEntry *dfe;
+
+	MONO_ICALL_WRAPPER_START;
 
 	g_assert (datetime_index >= 0);
 
@@ -223,6 +230,8 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *t
 			NUM_SHORT_TIME_PATTERNS));
 	this_obj->FirstDayOfWeek = dfe->first_day_of_week;
 	this_obj->CalendarWeekRule = dfe->calendar_week_rule;
+
+	MONO_ICALL_WRAPPER_END;
 }
 
 void
@@ -230,6 +239,8 @@ ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInf
 {
 	MonoDomain *domain;
 	const NumberFormatEntry *nfe;
+
+	MONO_ICALL_WRAPPER_START;
 
 	g_assert (number_index != 0);
 
@@ -265,6 +276,9 @@ ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInf
 	MONO_OBJECT_SETREF (number, positiveInfinitySymbol, mono_string_new (domain,
 			idx2string (nfe->positive_infinity_symbol)));
 	MONO_OBJECT_SETREF (number, positiveSign, mono_string_new (domain, idx2string (nfe->positive_sign)));
+
+
+	MONO_ICALL_WRAPPER_END;
 }
 
 static MonoBoolean
@@ -489,24 +503,32 @@ ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 }
 
 MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj,
-		gint lcid)
+ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid (MonoCultureInfo *this_obj, gint lcid)
 {
 	const CultureInfoEntry *ci;
-	
+	MonoBoolean ret;
+
+	MONO_ICALL_WRAPPER_START;
+
 	ci = culture_info_entry_from_lcid (lcid);
 	if(ci == NULL)
-		return FALSE;
+		ret = FALSE;
+	else
+		ret = construct_culture (this_obj, ci);
 
-	return construct_culture (this_obj, ci);
+	MONO_ICALL_WRAPPER_END;
+
+	return ret;
 }
 
 MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (MonoCultureInfo *this_obj,
-		MonoString *name)
+ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (MonoCultureInfo *this_obj, MonoString *name)
 {
 	const CultureInfoNameEntry *ne;
 	char *n;
+	MonoBoolean ret;
+
+	MONO_ICALL_WRAPPER_START;
 	
 	n = mono_string_to_utf8 (name);
 	ne = mono_binary_search (n, culture_name_entries, NUM_CULTURE_ENTRIES,
@@ -514,12 +536,15 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 
 	if (ne == NULL) {
 		/*g_print ("ne (%s) is null\n", n);*/
-		g_free (n);
-		return FALSE;
+		ret = FALSE;
+	} else {
+		ret = construct_culture (this_obj, &culture_entries [ne->culture_entry_index]);
 	}
 	g_free (n);
 
-	return construct_culture (this_obj, &culture_entries [ne->culture_entry_index]);
+	MONO_ICALL_WRAPPER_END;
+
+	return ret;
 }
 /*
 MonoBoolean
@@ -537,42 +562,52 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specif
 }
 */
 MonoBoolean
-ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this_obj,
-		gint lcid)
+ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this_obj, gint lcid)
 {
 	const RegionInfoEntry *ri;
-	
+	MonoBoolean ret;
+
+	MONO_ICALL_WRAPPER_START;
+
 	ri = region_info_entry_from_lcid (lcid);
 	if(ri == NULL)
-		return FALSE;
+		ret = FALSE;
+	else
+		ret = construct_region (this_obj, ri);
 
-	return construct_region (this_obj, ri);
+	MONO_ICALL_WRAPPER_END;
+
+	return ret;
 }
 
 MonoBoolean
-ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (MonoRegionInfo *this_obj,
-		MonoString *name)
+ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (MonoRegionInfo *this_obj, MonoString *name)
 {
 	const RegionInfoNameEntry *ne;
 	char *n;
-	
+	MonoBoolean ret;
+
+	MONO_ICALL_WRAPPER_START;
+
 	n = mono_string_to_utf8 (name);
 	ne = mono_binary_search (n, region_name_entries, NUM_REGION_ENTRIES,
 		sizeof (RegionInfoNameEntry), region_name_locator);
 
 	if (ne == NULL) {
 		/*g_print ("ne (%s) is null\n", n);*/
-		g_free (n);
-		return FALSE;
+		ret = FALSE;
+	} else {
+		ret = construct_region (this_obj, &region_entries [ne->region_entry_index]);
 	}
 	g_free (n);
 
-	return construct_region (this_obj, &region_entries [ne->region_entry_index]);
+	MONO_ICALL_WRAPPER_END;
+
+	return ret;
 }
 
 MonoArray*
-ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral,
-		MonoBoolean specific, MonoBoolean installed)
+ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral, MonoBoolean specific, MonoBoolean installed)
 {
 	MonoArray *ret;
 	MonoClass *klass;
@@ -581,6 +616,8 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 	const CultureInfoEntry *ci;
 	gint i, len;
 	gboolean is_neutral;
+
+	MONO_ICALL_WRAPPER_START;
 
 	domain = mono_domain_get ();
 
@@ -603,7 +640,7 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 	ret = mono_array_new (domain, klass, len);
 
 	if (len == 0)
-		return ret;
+		goto done;
 
 	len = 0;
 	if (neutral)
@@ -621,16 +658,28 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 		}
 	}
 
+done:
+
+	MONO_ICALL_WRAPPER_END;
+
 	return ret;
 }
 
-int ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo *this_obj, MonoString *str1, gint32 off1, gint32 len1, MonoString *str2, gint32 off2, gint32 len2, gint32 options)
+int
+ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo *this_obj, MonoString *str1, gint32 off1, gint32 len1, MonoString *str2, gint32 off2, gint32 len2, gint32 options)
 {
+	int ret;
+
+	MONO_ICALL_WRAPPER_START;
+
 	/* Do a normal ascii string compare, as we only know the
 	 * invariant locale if we dont have ICU
 	 */
-	return(string_invariant_compare (str1, off1, len1, str2, off2, len2,
-					 options));
+	ret = string_invariant_compare (str1, off1, len1, str2, off2, len2, options);
+
+	MONO_ICALL_WRAPPER_END;
+
+	return ret;
 }
 
 void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo *this_obj, MonoSortKey *key, MonoString *source, gint32 options)

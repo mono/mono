@@ -242,10 +242,12 @@ mono_marshal_init (void)
 		mono_remoting_init ();
 
 		if (mono_threads_is_coop_enabled ()) {
-			register_icall (mono_threads_prepare_blocking, "mono_threads_prepare_blocking", "ptr ptr", FALSE);
-			register_icall (mono_threads_finish_blocking, "mono_threads_finish_blocking", "void ptr ptr", FALSE);
-			register_icall (mono_threads_reset_blocking_start, "mono_threads_reset_blocking_start","ptr ptr", TRUE);
-			register_icall (mono_threads_reset_blocking_end, "mono_threads_reset_blocking_end","void ptr ptr", TRUE);
+			register_icall (mono_icall_wrapper_start, "mono_icall_wrapper_start", "ptr ptr", FALSE);
+			register_icall (mono_icall_wrapper_end, "mono_icall_wrapper_end", "void ptr ptr", FALSE);
+			register_icall (mono_threads_prepare_blocking, "mono_threads_prepare_blocking", "ptr", FALSE);
+			register_icall (mono_threads_finish_blocking, "mono_threads_finish_blocking", "void ptr", FALSE);
+			register_icall (mono_threads_reset_blocking_start, "mono_threads_reset_blocking_start","ptr", TRUE);
+			register_icall (mono_threads_reset_blocking_end, "mono_threads_reset_blocking_end","void ptr", TRUE);
 		}
 	}
 }
@@ -7147,6 +7149,8 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 
 	if (mono_threads_is_coop_enabled ()) {
 		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_icall (mb, mono_icall_wrapper_start);
+		mono_mb_emit_stloc (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_prepare_blocking);
 		mono_mb_emit_stloc (mb, coop_gc_var);
 	}
@@ -7197,8 +7201,10 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 
 	if (mono_threads_is_coop_enabled ()) {
 		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
 		mono_mb_emit_icall (mb, mono_threads_finish_blocking);
+		mono_mb_emit_ldloc (mb, coop_gc_stack_dummy);
+		mono_mb_emit_ldloc_addr (mb, coop_gc_stack_dummy);
+		mono_mb_emit_icall (mb, mono_icall_wrapper_end);
 	}
 
 	/* convert the result */
@@ -7700,7 +7706,7 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	MonoMethodSignature *sig, *csig;
 	int i, *tmp_locals;
 	gboolean closed = FALSE;
-	int coop_gc_var, coop_gc_dummy_local;
+	int coop_gc_var;
 
 	sig = m->sig;
 	csig = m->csig;
@@ -7731,8 +7737,6 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 		/* local 4, the local to be used when calling the reset_blocking funcs */
 		/* tons of code hardcode 3 to be the return var */
 		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-		/* local 5, the local used to get a stack address for suspend funcs */
-		coop_gc_dummy_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	}
 
 	mono_mb_emit_icon (mb, 0);
@@ -7747,7 +7751,6 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 
 	if (mono_threads_is_coop_enabled ()) {
 		/* XXX can we merge reset_blocking_start with JIT_ATTACH above and save one call? */
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
 		mono_mb_emit_icall (mb, mono_threads_reset_blocking_start);
 		mono_mb_emit_stloc (mb, coop_gc_var);
 	}
@@ -7883,7 +7886,6 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	if (mono_threads_is_coop_enabled ()) {
 		/* XXX merge reset_blocking_end with detach */
 		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
 		mono_mb_emit_icall (mb, mono_threads_reset_blocking_end);
 	}
 
@@ -11221,7 +11223,7 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	GHashTable *cache;
 	MonoMethod *res;
 	int i, param_count, sig_size, pos_leave;
-	int coop_gc_var, coop_gc_dummy_local;
+	int coop_gc_var;
 
 	g_assert (method);
 
@@ -11279,7 +11281,6 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 		/* tons of code hardcode 3 to be the return var */
 		coop_gc_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 		/* local 5, the local used to get a stack address for suspend funcs */
-		coop_gc_dummy_local = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	}
 
 	/* clear exception arg */
@@ -11289,7 +11290,6 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 
 	if (mono_threads_is_coop_enabled ()) {
 		/* FIXME this is technically wrong as the callback itself must be executed in gc unsafe context. */
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
 		mono_mb_emit_icall (mb, mono_threads_reset_blocking_start);
 		mono_mb_emit_stloc (mb, coop_gc_var);
 	}
@@ -11366,7 +11366,6 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	if (mono_threads_is_coop_enabled ()) {
 		/* XXX merge reset_blocking_end with detach */
 		mono_mb_emit_ldloc (mb, coop_gc_var);
-		mono_mb_emit_ldloc_addr (mb, coop_gc_dummy_local);
 		mono_mb_emit_icall (mb, mono_threads_reset_blocking_end);
 	}
 
