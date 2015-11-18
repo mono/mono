@@ -616,7 +616,9 @@ namespace System.Threading {
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern void ResumeInternal();
+#endif
 
+#if !FEATURE_CORECLR || MONO
         /*=========================================================================
         ** Interrupts a thread that is inside a Wait(), Sleep() or Join().  If that
         ** thread is not currently blocked in that manner, it will be interrupted
