@@ -1782,7 +1782,7 @@ static void
 init_amodule_got (MonoAotModule *amodule)
 {
 	MonoJumpInfo *ji;
-	MonoMemPool *mp = mono_mempool_new ();
+	MonoMemPool *mp;
 	MonoJumpInfo *patches;
 	guint32 got_offsets [128];
 	int i, npatches;
@@ -1793,6 +1793,7 @@ init_amodule_got (MonoAotModule *amodule)
 
 	amodule->got_initializing = TRUE;
 
+	mp = mono_mempool_new ();
 	npatches = amodule->info.nshared_got_entries;
 	for (i = 0; i < npatches; ++i)
 		got_offsets [i] = i;
@@ -1832,6 +1833,8 @@ init_amodule_got (MonoAotModule *amodule)
 		for (i = 0; i < npatches; ++i)
 			amodule->llvm_got [i] = amodule->shared_got [i];
 	}
+
+	mono_mempool_destroy (mp);
 }
 
 static void
