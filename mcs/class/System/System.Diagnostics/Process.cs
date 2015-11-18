@@ -1584,7 +1584,7 @@ namespace System.Diagnostics {
 			if (background_wait_for_exit_thread != null)
 				return;
 
-			Thread t = new Thread (_ => WaitForExit ());
+			Thread t = new Thread (_ => WaitForExit ()) { IsBackground = true };
 
 			if (Interlocked.CompareExchange (ref background_wait_for_exit_thread, t, null) == null)
 				t.Start ();
