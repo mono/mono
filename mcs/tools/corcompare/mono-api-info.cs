@@ -1410,7 +1410,12 @@ namespace CorCompare
 			if (!mb.HasParameters)
 				return 1;
 
-			return Compare (ma.Parameters, mb.Parameters);
+			res = Compare (ma.Parameters, mb.Parameters);
+			if (res != 0)
+				return res;
+
+			// operators can differ by only return type
+			return string.CompareOrdinal (ma.ReturnType.FullName, mb.ReturnType.FullName);
 		}
 
 		public static int Compare (IList<ParameterDefinition> pia, IList<ParameterDefinition> pib)
