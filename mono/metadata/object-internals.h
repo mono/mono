@@ -7,6 +7,7 @@
 #include <mono/metadata/mempool.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/threads-types.h>
+#include <mono/metadata/icall-wrapper.h>
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 #include "mono/utils/mono-error.h"
@@ -418,6 +419,7 @@ struct _MonoInternalThread {
 	gpointer interrupt_on_stop;
 	gsize    flags;
 	gpointer thread_pinning_ref;
+	MonoIcallWrapperData *icall_wrapper_data;
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
@@ -426,6 +428,8 @@ struct _MonoInternalThread {
 	 */
 	gpointer unused1;
 	gpointer unused2;
+	gpointer unused3;
+	gpointer end;
 };
 
 struct _MonoThread {

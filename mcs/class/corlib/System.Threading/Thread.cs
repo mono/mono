@@ -91,12 +91,15 @@ namespace System.Threading {
 		private IntPtr interrupt_on_stop;
 		private IntPtr flags;
 		private IntPtr thread_pinning_ref;
+		private IntPtr icall_wrapper_data;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
 		private IntPtr unused1;
 		private IntPtr unused2;
+		private IntPtr unused3;
+		private IntPtr end;
 		#endregion
 #pragma warning restore 169, 414, 649
 

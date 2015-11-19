@@ -30,13 +30,6 @@
 #include <mono/utils/mach-support.h>
 #endif
 
-#ifdef _MSC_VER
-// TODO: Find MSVC replacement for __builtin_unwind_init
-#define SAVE_REGS_ON_STACK g_assert_not_reached ();
-#else 
-#define SAVE_REGS_ON_STACK __builtin_unwind_init ();
-#endif
-
 volatile size_t mono_polling_required;
 
 static int coop_reset_blocking_count;
@@ -80,43 +73,8 @@ mono_threads_state_poll (void)
 	}
 }
 
-static void *
-return_stack_ptr ()
-{
-	gpointer i;
-	return &i;
-}
-
-static void
-copy_stack_data (MonoThreadInfo *info, void* stackdata_begin)
-{
-	MonoThreadUnwindState *state;
-	int stackdata_size;
-	void* stackdata_end = return_stack_ptr ();
-
-	SAVE_REGS_ON_STACK;
-
-	state = &info->thread_saved_state [SELF_SUSPEND_STATE_INDEX];
-
-	stackdata_size = (char*)stackdata_begin - (char*)stackdata_end;
-
-	if (((gsize) stackdata_begin & (SIZEOF_VOID_P - 1)) != 0)
-		g_error ("stackdata_begin (%p) must be %d-byte aligned", stackdata_begin, SIZEOF_VOID_P);
-	if (((gsize) stackdata_end & (SIZEOF_VOID_P - 1)) != 0)
-		g_error ("stackdata_end (%p) must be %d-byte aligned", stackdata_end, SIZEOF_VOID_P);
-
-	if (stackdata_size <= 0)
-		g_error ("stackdata_size = %d, but must be > 0, stackdata_begin = %p, stackdata_end = %p", stackdata_size, stackdata_begin, stackdata_end);
-
-	g_byte_array_set_size (info->stackdata, stackdata_size);
-	state->gc_stackdata = info->stackdata->data;
-	memcpy (state->gc_stackdata, stackdata_end, stackdata_size);
-
-	state->gc_stackdata_size = stackdata_size;
-}
-
-void*
-mono_threads_prepare_blocking (void* stackdata)
+gpointer
+mono_threads_prepare_blocking (void)
 {
 	MonoThreadInfo *info;
 
@@ -131,8 +89,6 @@ mono_threads_prepare_blocking (void* stackdata)
 		THREADS_SUSPEND_DEBUG ("PREPARE-BLOCKING failed %p\n", mono_thread_info_get_tid (info));
 		return NULL;
 	}
-
-	copy_stack_data (info, stackdata);
 
 retry:
 	++coop_save_count;
@@ -150,7 +106,7 @@ retry:
 }
 
 void
-mono_threads_finish_blocking (void *cookie, void* stackdata)
+mono_threads_finish_blocking (gpointer cookie)
 {
 	static gboolean warned_about_bad_transition;
 	MonoThreadInfo *info;
@@ -185,8 +141,8 @@ mono_threads_finish_blocking (void *cookie, void* stackdata)
 }
 
 
-void*
-mono_threads_reset_blocking_start (void* stackdata)
+gpointer
+mono_threads_reset_blocking_start (void)
 {
 	MonoThreadInfo *info;
 
@@ -199,8 +155,6 @@ mono_threads_reset_blocking_start (void* stackdata)
 	/* If the thread is not attached, it doesn't make sense prepare for suspend. */
 	if (!info || !mono_thread_info_is_live (info))
 		return NULL;
-
-	copy_stack_data (info, stackdata);
 
 	switch (mono_threads_transition_abort_blocking (info)) {
 	case AbortBlockingIgnore:
@@ -221,7 +175,7 @@ mono_threads_reset_blocking_start (void* stackdata)
 }
 
 void
-mono_threads_reset_blocking_end (void *cookie, void* stackdata)
+mono_threads_reset_blocking_end (gpointer cookie)
 {
 	MonoThreadInfo *info;
 
@@ -233,11 +187,11 @@ mono_threads_reset_blocking_end (void *cookie, void* stackdata)
 		return;
 
 	g_assert (info == mono_thread_info_current_unchecked ());
-	mono_threads_prepare_blocking (stackdata);
+	mono_threads_prepare_blocking ();
 }
 
-void*
-mono_threads_try_prepare_blocking (void* stackdata)
+gpointer
+mono_threads_try_prepare_blocking (void)
 {
 	MonoThreadInfo *info;
 
@@ -252,8 +206,6 @@ mono_threads_try_prepare_blocking (void* stackdata)
 		THREADS_SUSPEND_DEBUG ("PREPARE-TRY-BLOCKING failed %p\n", mono_thread_info_get_tid (info));
 		return NULL;
 	}
-
-	copy_stack_data (info, stackdata);
 
 retry:
 	++coop_save_count;
@@ -271,12 +223,12 @@ retry:
 }
 
 void
-mono_threads_finish_try_blocking (void* cookie, void* stackdata)
+mono_threads_finish_try_blocking (gpointer cookie)
 {
 	if (!mono_threads_is_coop_enabled ())
 		return;
 
-	mono_threads_finish_blocking (cookie, stackdata);
+	mono_threads_finish_blocking (cookie);
 }
 
 void
@@ -308,19 +260,19 @@ mono_threads_coop_end_global_suspend (void)
 }
 
 void*
-mono_threads_enter_gc_unsafe_region (void* stackdata)
+mono_threads_enter_gc_unsafe_region (void)
 {
 	if (!mono_threads_is_coop_enabled ())
 		return NULL;
 
-	return mono_threads_reset_blocking_start (stackdata);
+	return mono_threads_reset_blocking_start ();
 }
 
 void
-mono_threads_exit_gc_unsafe_region (void *regions_cookie, void* stackdata)
+mono_threads_exit_gc_unsafe_region (void *regions_cookie)
 {
 	if (!mono_threads_is_coop_enabled ())
 		return;
 
-	mono_threads_reset_blocking_end (regions_cookie, stackdata);
+	mono_threads_reset_blocking_end (regions_cookie);
 }

@@ -20,8 +20,11 @@ This API is experimental. It will eventually be required to properly use the res
 */
 
 /* Don't use those directly, use the MONO_(BEGIN|END)_EFRAME */
-MONO_API void* mono_threads_enter_gc_unsafe_region (void* stackdata);
-MONO_API void mono_threads_exit_gc_unsafe_region (void *region_cookie, void* stackdata);
+MONO_API void*
+mono_threads_enter_gc_unsafe_region (void);
+
+MONO_API void
+mono_threads_exit_gc_unsafe_region (void *region_cookie);
 
 /*
 Use those macros to limit regions of code that interact with managed memory or use the embedding API.
@@ -31,8 +34,13 @@ For further explanation of what can and can't be done in GC unsafe mode:
 http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-mode
 
 */
-#define MONO_BEGIN_EFRAME { void *__dummy; void *__region_cookie = mono_threads_enter_gc_unsafe_region (&__dummy);
-#define MONO_END_EFRAME mono_threads_exit_gc_unsafe_region (__region_cookie, &__dummy); }
+#define MONO_BEGIN_EFRAME \
+	do {	\
+		void *__region_cookie = mono_threads_enter_gc_unsafe_region ()
+
+#define MONO_END_EFRAME \
+		mono_threads_exit_gc_unsafe_region (__region_cookie);	\
+	} while (0)
 
 
 MONO_END_DECLS

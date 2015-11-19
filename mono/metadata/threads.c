@@ -923,7 +923,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 	/* Check that the managed and unmanaged layout of MonoInternalThread matches */
 #ifndef MONO_CROSS_COMPILE
 	if (mono_check_corlib_version () == NULL)
-		g_assert (((char*)&internal->unused2 - (char*)internal) == mono_defaults.internal_thread_class->fields [mono_defaults.internal_thread_class->field.count - 1].offset);
+		g_assert (((char*)&internal->end - (char*)internal) == mono_defaults.internal_thread_class->fields [mono_defaults.internal_thread_class->field.count - 1].offset);
 #endif
 
 	return internal;
@@ -1183,9 +1183,9 @@ ves_icall_System_Threading_Thread_Sleep_internal(gint32 ms)
 
 		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 
-		MONO_PREPARE_BLOCKING
+		MONO_PREPARE_BLOCKING;
 		res = mono_thread_info_sleep (ms, &alerted);
-		MONO_FINISH_BLOCKING
+		MONO_FINISH_BLOCKING;
 
 		mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
