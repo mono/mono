@@ -226,32 +226,24 @@ namespace Monodoc.Ecma
 			return sb.ToString ();
 		}
 
-		void ConstructCRef (StringBuilder sb)
+		void ConstructCRef (StringBuilder sb, bool skipLeadingDot = false)
 		{
+			if (string.IsNullOrEmpty (Namespace))
+				skipLeadingDot = true;
+
 			sb.Append (Namespace);
 			if (DescKind == Kind.Namespace)
 				return;
 
-			sb.Append ('.');
-			sb.Append (TypeName);
-			if (GenericTypeArguments != null && GenericTypeArgumentsIsNumeric) {
-				sb.AppendFormat ("`{0}", GenericTypeArgumentsCount);
-			} else if (GenericTypeArguments != null) {
-				sb.Append ('<');
-				int i=0;
-				foreach (var t in GenericTypeArguments) {
-					if (i > 0) {
-						sb.Append (",");
-					}
-					t.ConstructCRef (sb);
+			if (!skipLeadingDot)
+				sb.Append ('.');
 
-					i++;
-				}
-				sb.Append ('>');
-			}
+			sb.Append (TypeName);
+			AppendGenericArguments (sb, GenericTypeArguments, GenericTypeArgumentsIsNumeric, GenericTypeArgumentsCount);
+
 			if (NestedType != null) {
 				sb.Append ('+');
-				NestedType.ConstructCRef (sb);
+				NestedType.ConstructCRef (sb, skipLeadingDot: true);
 			}
 			if (ArrayDimensions != null && ArrayDimensions.Count > 0) {
 				for (int i = 0; i < ArrayDimensions.Count; i++) {
@@ -263,8 +255,17 @@ namespace Monodoc.Ecma
 			if (DescKind == Kind.Type)
 				return;
 
+			if (ExplicitImplMember != null) {
+				sb.Append ('$');
+				ExplicitImplMember.DescKind = this.DescKind;
+				ExplicitImplMember.ConstructCRef (sb, skipLeadingDot: false);
+				return;
+			}
+
 			sb.Append (".");
 			sb.Append (MemberName);
+
+			AppendGenericArguments (sb, GenericMemberArguments, GenericMemberArgumentsIsNumeric, GenericMemberArgumentsCount);
 
 			if (MemberArguments != null && MemberArgumentsCount > 0) {
 				sb.Append ("(");
@@ -277,6 +278,25 @@ namespace Monodoc.Ecma
 					i++;
 				}
 				sb.Append (")");
+			}
+		}
+
+		void AppendGenericArguments (StringBuilder sb, IEnumerable<EcmaDesc> arguments, bool isNumeric, int argumentsCount)
+		{
+			if (arguments != null && isNumeric) {
+				sb.AppendFormat ("`{0}", argumentsCount);
+			} else if (arguments != null) {
+				sb.Append ('<');
+				int i=0;
+				foreach (var t in arguments) {
+					if (i > 0) {
+						sb.Append (",");
+					}
+					t.ConstructCRef (sb);
+
+					i++;
+				}
+				sb.Append ('>');
 			}
 		}
 
