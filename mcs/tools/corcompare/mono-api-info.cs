@@ -1000,9 +1000,7 @@ namespace CorCompare
 				parent.AppendChild (natts);
 			}
 
-			for (int i = 0; i < atts.Count; ++i) {
-				CustomAttribute att = atts [i];
-
+			foreach (var att in atts.OrderBy ((a) => a.Constructor.DeclaringType.FullName)) {
 				string attName = Utils.CleanupTypeName (att.Constructor.DeclaringType);
 				if (SkipAttribute (att))
 					continue;
