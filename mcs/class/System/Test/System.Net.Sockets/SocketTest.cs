@@ -3500,27 +3500,6 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 		}
 
-#if MONOTOUCH
-		// when the linker is enabled then reflection won't work and would throw an NRE
-		// this is also always true for iOS - so we do not need to poke internals
-		static bool SupportsPortReuse ()
-		{
-			return true;
-		}
-#else
-		static bool? supportsPortReuse;
-		static bool SupportsPortReuse ()
-		{
-			if (supportsPortReuse.HasValue)
-				return supportsPortReuse.Value;
-
-			supportsPortReuse = (bool) typeof (Socket).GetMethod ("SupportsPortReuse",
-					BindingFlags.Static | BindingFlags.NonPublic)
-					.Invoke (null, new object [] {});
-			return supportsPortReuse.Value;
-		}
-#endif
-
 		// Test case for bug #31557
 		[Test]
 		public void TcpDoubleBind ()
@@ -3529,22 +3508,28 @@ namespace MonoTests.System.Net.Sockets
 						SocketType.Stream, ProtocolType.Tcp))
 			using (Socket ss = new Socket (AddressFamily.InterNetwork,
 						SocketType.Stream, ProtocolType.Tcp)) {
-				s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				var supportsReuseAddress = true;
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				} catch (SocketException e) {
+					// Exception is thrown when ReuseAddress is not supported
+					supportsReuseAddress = false;
+				}
+
 				var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
 				s.Bind (ep);
 				s.Listen(1);
 
-				ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				if (supportsReuseAddress)
+					ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
-				Exception ex = null;
 				try {
 					ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
 					ss.Listen(1);
+					if (!supportsReuseAddress)
+						Assert.Fail ("Reusing address is not supported, exception was expected on second bind.");
 				} catch (SocketException e) {
-					ex = e;
 				}
-
-				Assert.AreEqual (SupportsPortReuse (), ex == null);
 			}
 		}
 
