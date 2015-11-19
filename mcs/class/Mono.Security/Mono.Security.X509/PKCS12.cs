@@ -430,6 +430,10 @@ namespace Mono.Security.X509 {
 
 		public string Password {
 			set {
+				// Clear old password.
+				if (_password != null)
+					Array.Clear (_password, 0, _password.Length);
+				_password = null;
 				if (value != null) {
 					if (value.Length > 0) {
 						int size = value.Length;
@@ -447,9 +451,6 @@ namespace Mono.Security.X509 {
 						// double-byte (Unicode) NULL (0x00) - see bug #79617
 						_password = new byte[2];
 					}
-				} else {
-					// no password
-					_password = null;
 				}
 			}
 		}
