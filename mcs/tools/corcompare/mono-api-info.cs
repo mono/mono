@@ -452,7 +452,7 @@ namespace CorCompare
 
 				PropertyDefinition[] properties = GetProperties (type);
 				if (properties.Length > 0) {
-					Array.Sort (properties, MemberReferenceComparer.Default);
+					Array.Sort (properties, PropertyDefinitionComparer.Default);
 					members.Add (new PropertyData (document, nclass, properties));
 				}
 
@@ -1366,6 +1366,29 @@ namespace CorCompare
 		}
 	}
 
+	class PropertyDefinitionComparer : IComparer<PropertyDefinition>
+	{
+		public static PropertyDefinitionComparer Default = new PropertyDefinitionComparer ();
+
+		public int Compare (PropertyDefinition ma, PropertyDefinition mb)
+		{
+			int res = String.Compare (ma.Name, mb.Name);
+			if (res != 0)
+				return res;
+
+			if (!ma.HasParameters && !mb.HasParameters)
+				return 0;
+
+			if (!ma.HasParameters)
+				return -1;
+
+			if (!mb.HasParameters)
+				return 1;
+
+			return MethodDefinitionComparer.Compare (ma.Parameters, mb.Parameters);
+		}
+	}
+
 	class MethodDefinitionComparer : IComparer
 	{
 		public static MethodDefinitionComparer Default = new MethodDefinitionComparer ();
@@ -1387,9 +1410,12 @@ namespace CorCompare
 			if (!mb.HasParameters)
 				return 1;
 
-			IList<ParameterDefinition> pia = ma.Parameters ;
-			IList<ParameterDefinition> pib = mb.Parameters;
-			res = pia.Count - pib.Count;
+			return Compare (ma.Parameters, mb.Parameters);
+		}
+
+		public static int Compare (IList<ParameterDefinition> pia, IList<ParameterDefinition> pib)
+		{
+			var res = pia.Count - pib.Count;
 			if (res != 0)
 				return res;
 
