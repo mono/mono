@@ -410,6 +410,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
+#if !MOBILE
 		class Win32NetworkInterfaceAPI : NetworkInterfaceFactory
 		{
 			[DllImport ("iphlpapi.dll", SetLastError = true)]
@@ -457,6 +458,7 @@ namespace System.Net.NetworkInformation {
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 
 		public abstract NetworkInterface [] GetAllNetworkInterfaces ();
 		public abstract int GetLoopbackInterfaceIndex ();
@@ -464,7 +466,7 @@ namespace System.Net.NetworkInformation {
 
 		public static NetworkInterfaceFactory Create ()
 		{
-#if MONOTOUCH
+#if MONOTOUCH || XAMMAC
 			return new MacOsNetworkInterfaceAPI ();
 #else
 			Version windowsVer51 = new Version (5, 1);
@@ -718,6 +720,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32NetworkInterface2 : NetworkInterface
 	{
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
@@ -830,5 +833,6 @@ namespace System.Net.NetworkInformation {
 			get { return !addr.NoMulticast; }
 		}
 	}
+#endif
 }
 

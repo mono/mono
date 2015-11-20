@@ -46,6 +46,8 @@ namespace System.Net.NetworkInformation {
 		{
 #if MONODROID
 			return new AndroidIPGlobalProperties ();
+#elif MONOTOUCH || XAMMAC
+			return new UnixIPGlobalProperties ();
 #else
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
@@ -190,6 +192,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if MONODROID
 	sealed class AndroidIPGlobalProperties : UnixIPGlobalProperties
 	{
 		public override string DomainName {
@@ -198,6 +201,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 	}
+#endif
 
 	// It expects /proc/net/snmp (or /usr/compat/linux/proc/net/snmp),
 	// formatted like:
@@ -403,6 +407,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32IPGlobalProperties : IPGlobalProperties
 	{
 		public const int AF_INET = 2;
@@ -736,4 +741,5 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 	}
+#endif
 }

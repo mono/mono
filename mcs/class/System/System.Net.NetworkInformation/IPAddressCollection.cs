@@ -100,6 +100,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32IPAddressCollection : IPAddressCollection
 	{
 		public static readonly Win32IPAddressCollection Empty = new Win32IPAddressCollection (IntPtr.Zero);
@@ -168,6 +169,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 	}
+#endif
 }
 
 

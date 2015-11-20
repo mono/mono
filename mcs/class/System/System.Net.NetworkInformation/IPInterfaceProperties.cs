@@ -325,6 +325,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32IPInterfaceProperties2 : IPInterfaceProperties
 	{
 		readonly Win32_IP_ADAPTER_ADDRESSES addr;
@@ -406,6 +407,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 	}
+#endif
 }
 
 

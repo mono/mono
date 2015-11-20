@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace System.Net.NetworkInformation {
+#if !MOBILE
 	class Win32IPv4InterfaceStatistics : IPv4InterfaceStatistics
 	{
 		Win32_MIB_IFROW info;
@@ -86,6 +87,7 @@ namespace System.Net.NetworkInformation {
 		}
 	
 	}
+#endif
 
 	class LinuxIPv4InterfaceStatistics : IPv4InterfaceStatistics
 	{

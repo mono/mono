@@ -109,6 +109,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
+#if !MOBILE
 		public static IPAddressInformationCollection Win32FromAnycast (IntPtr ptr)
 		{
 			IPAddressInformationImplCollection c = new IPAddressInformationImplCollection (false);
@@ -123,6 +124,7 @@ namespace System.Net.NetworkInformation {
 			c.is_readonly = true;
 			return c;
 		}
+#endif
 
 		public static IPAddressInformationImplCollection LinuxFromAnycast (IList<IPAddress> addresses)
 		{
