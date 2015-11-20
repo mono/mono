@@ -39,7 +39,9 @@ namespace System.Drawing
 {
 	[Serializable]
 	[ComVisible (true)]
+#if !MONOTOUCH && !MONOMAC
 	[TypeConverter (typeof (RectangleConverter))]
+#endif
 	public struct Rectangle
 	{
 		private int x, y, width, height;

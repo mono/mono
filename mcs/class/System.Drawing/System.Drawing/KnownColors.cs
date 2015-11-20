@@ -210,6 +210,7 @@ namespace System.Drawing {
 			0xFF316AC5,	/* 174 - MenuHighlight */
 		};
 
+#if !MONOTOUCH && !MONOMAC
 		static KnownColors ()
 		{
 			if (GDIPlus.RunningOnWindows ()) {
@@ -264,6 +265,7 @@ namespace System.Drawing {
 			ArgbValues [(int)KnownColor.MenuBar] = GetSysColor (GetSysColorIndex.COLOR_MENUBAR);
 			ArgbValues [(int)KnownColor.MenuHighlight] = GetSysColor (GetSysColorIndex.COLOR_MENUHIGHLIGHT);
 		}
+#endif
 
 		public static Color FromKnownColor (KnownColor kc)
 		{
