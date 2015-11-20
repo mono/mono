@@ -72,6 +72,14 @@ namespace Mono.Security.Interface
 
 	public abstract class MonoTlsProvider
 	{
+		public abstract Guid ID {
+			get;
+		}
+
+		public abstract string Name {
+			get;
+		}
+
 #region SslStream
 
 		/*

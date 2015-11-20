@@ -36,6 +36,16 @@ namespace Mono.Security.Providers.OldTls
 {
 	public class OldTlsProvider : MonoTlsProvider
 	{
+		static readonly Guid id = new Guid ("cf8baa0d-c6ed-40ae-b512-dec8d097e9af");
+
+		public override Guid ID {
+			get { return id; }
+		}
+
+		public override string Name {
+			get { return "old"; }
+		}
+
 		public override bool SupportsSslStream {
 			get { return true; }
 		}

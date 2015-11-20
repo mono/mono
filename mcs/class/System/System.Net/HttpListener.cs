@@ -122,7 +122,7 @@ namespace System.Net {
 				if (tlsProvider == null)
 					tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
 				if (tlsSettings == null)
-					tlsSettings = new MSI.MonoTlsSettings ();
+					tlsSettings = MSI.MonoTlsSettings.CopyDefaultSettings ();
 				if (tlsSettings.RemoteCertificateValidationCallback == null)
 					tlsSettings.RemoteCertificateValidationCallback = callback;
 				return tlsProvider.CreateSslStream (innerStream, ownsStream, tlsSettings);

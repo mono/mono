@@ -156,8 +156,11 @@ namespace Mono.Net.Security
 			tlsStream = other.tlsStream;
 			request = other.request;
 
+			if (settings == null)
+				settings = MonoTlsSettings.DefaultSettings;
+
 			this.provider = provider;
-			this.settings = settings = settings.CloneWithValidator (this);
+			this.settings = settings.CloneWithValidator (this);
 			this.callbackWrapper = callbackWrapper;
 		}
 
