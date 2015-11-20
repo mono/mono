@@ -217,7 +217,9 @@ common_sources = \
 	seq-points-data.c	\
 	handle.c	\
 	handle.h	\
-	handle-private.h
+	handle-private.h	\
+	runtime-interface.c	\
+	runtime-interface.h
 
 
 # These source files have compile time dependencies on GC code
