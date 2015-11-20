@@ -1297,6 +1297,21 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Parse_SameTimeAndDateSeparator ()
+		{
+			var fiFI = (CultureInfo) CultureInfo.GetCultureInfo("fi-FI").Clone();
+
+			fiFI.DateTimeFormat.TimeSeparator = fiFI.DateTimeFormat.DateSeparator;
+
+			var dt = DateTime.Parse("4.3.2010", fiFI);
+
+			Assert.AreEqual (2010, dt.Year, "#1");
+			Assert.AreEqual (3, dt.Month, "#2");
+			Assert.AreEqual (4, dt.Day, "#3");
+		}
+
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void Parse_RequireSpaceSeparator ()
 		{
