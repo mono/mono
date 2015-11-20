@@ -1,5 +1,5 @@
 //
-// MonoTlsConnectionInfo.cs
+// HashAlgorithmType.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -23,36 +23,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 
 namespace Mono.Security.Interface
 {
-	public class MonoTlsConnectionInfo
+	public enum HashAlgorithmType
 	{
-		public CipherSuiteCode CipherSuiteCode {
-			get; set;
-		}
+		// These values refer to the @HashAlgorithm enumeration in the TLS 1.2 spec.
+		None	= 0,
+		Md5	= 1,
+		Sha1	= 2,
+		Sha224	= 3,
+		Sha256	= 4,
+		Sha384	= 5,
+		Sha512	= 6,
+		Unknown	= 255,
 
-		public TlsProtocols ProtocolVersion {
-			get; set;
-		}
-
-		public CipherAlgorithmType CipherAlgorithmType {
-			get; set;
-		}
-
-		public HashAlgorithmType HashAlgorithmType {
-			get; set;
-		}
-
-		public ExchangeAlgorithmType ExchangeAlgorithmType {
-			get; set;
-		}
-
-		public override string ToString ()
-		{
-			return string.Format ("[MonoTlsConnectionInfo: {0}:{1}]", ProtocolVersion, CipherSuiteCode);
-		}
+		// Mono-specific addition, allowing us to reuse it IHashAlgorithm API for TLS 1.0 / 1.1.
+		Md5Sha1	= 254
 	}
 }
-

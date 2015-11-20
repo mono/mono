@@ -33,11 +33,11 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
-using Mono.Security.Interface;
+using MSI = Mono.Security.Interface;
 
 namespace Mono.Security.Providers.DotNet
 {
-	class DotNetSslStreamImpl : MonoSslStream
+	class DotNetSslStreamImpl : MSI.MonoSslStream
 	{
 		SslStream impl;
 

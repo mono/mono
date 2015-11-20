@@ -1,5 +1,5 @@
 //
-// MonoTlsConnectionInfo.cs
+// TlsException.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -23,36 +23,62 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
+using System.Text;
+using System.Runtime.Serialization;
 
 namespace Mono.Security.Interface
 {
-	public class MonoTlsConnectionInfo
+	public sealed class TlsException : Exception
 	{
-		public CipherSuiteCode CipherSuiteCode {
-			get; set;
+		#region Fields
+
+		private Alert alert;
+
+		#endregion
+
+		#region Properties
+
+		public Alert Alert {
+			get { return this.alert; }
 		}
 
-		public TlsProtocols ProtocolVersion {
-			get; set;
-		}
+		#endregion
 
-		public CipherAlgorithmType CipherAlgorithmType {
-			get; set;
-		}
+		#region Constructors
 
-		public HashAlgorithmType HashAlgorithmType {
-			get; set;
-		}
-
-		public ExchangeAlgorithmType ExchangeAlgorithmType {
-			get; set;
-		}
-
-		public override string ToString ()
+		public TlsException (Alert alert)
+			: this (alert, alert.Description.ToString())
 		{
-			return string.Format ("[MonoTlsConnectionInfo: {0}:{1}]", ProtocolVersion, CipherSuiteCode);
 		}
+
+		public TlsException (Alert alert, string message)
+			: base (message)
+		{
+			this.alert = alert;
+		}
+
+		public TlsException (AlertLevel level, AlertDescription description)
+			: this (new Alert (level, description))
+		{
+		}
+
+		public TlsException (AlertDescription description)
+			: this (new Alert (description))
+		{
+		}
+
+		public TlsException (AlertDescription description, string message)
+			: this (new Alert (description), message)
+		{
+		}
+
+		public TlsException (AlertDescription description, string format, params object[] args)
+			: this (new Alert (description), string.Format (format, args))
+		{
+		}
+
+		#endregion
 	}
 }
-
