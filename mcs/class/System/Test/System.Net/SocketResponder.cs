@@ -131,7 +131,7 @@ namespace MonoTests.System.Net
 					}
 				} catch (SocketException ex) {
 					// ignore interruption of blocking call
-					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS)
+					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS && _state != STATE_STOPPED)
 						throw;
 				} catch (ObjectDisposedException ex) {
 					Console.WriteLine (ex);
