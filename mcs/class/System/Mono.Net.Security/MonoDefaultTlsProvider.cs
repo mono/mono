@@ -60,6 +60,16 @@ namespace Mono.Net.Security.Private
 	 */
 	class MonoDefaultTlsProvider : MonoTlsProviderImpl
 	{
+		static readonly Guid id = new Guid ("809e77d5-56cc-4da8-b9f0-45e65ba9cceb");
+
+		public override Guid ID {
+			get { return id; }
+		}
+
+		public override string Name {
+			get { return "legacy"; }
+		}
+
 		public MonoTlsProvider Provider {
 			get { return this; }
 		}

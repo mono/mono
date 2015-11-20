@@ -95,9 +95,6 @@ namespace Mono.Net.Security
 			provider = request.TlsProvider ?? MonoTlsProviderFactory.GetProviderInternal ();
 			status = WebExceptionStatus.SecureChannelFailure;
 
-			if (settings == null)
-				settings = new MonoTlsSettings ();
-
 			validationHelper = ChainValidationHelper.Create (provider.Provider, ref settings, this);
 		}
 
