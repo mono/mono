@@ -1,5 +1,5 @@
 //
-// TlsProtocols.cs
+// TlsException.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -25,25 +25,60 @@
 // THE SOFTWARE.
 
 using System;
+using System.Text;
+using System.Runtime.Serialization;
 
 namespace Mono.Security.Interface
 {
-	[Flags]
-	// Keep in sync with SchProtocols / native SChannel.h
-	// Unfortunately, the definition in System.dll is not public, so we need to duplicate it here.
-	public enum TlsProtocols {
-		Zero                = 0,
-		Tls10Client         = 0x00000080,
-		Tls10Server         = 0x00000040,
-		Tls10               = (Tls10Client | Tls10Server),
-		Tls11Client         = 0x00000200,
-		Tls11Server         = 0x00000100,
-		Tls11               = (Tls11Client | Tls11Server),
-		Tls12Client         = 0x00000800,
-		Tls12Server         = 0x00000400,
-		Tls12               = (Tls12Client | Tls12Server),
-		ClientMask          = (Tls10Client | Tls11Client | Tls12Client),
-		ServerMask          = (Tls10Server | Tls11Server | Tls12Server)
-	};
-}
+	public sealed class TlsException : Exception
+	{
+		#region Fields
 
+		private Alert alert;
+
+		#endregion
+
+		#region Properties
+
+		public Alert Alert {
+			get { return this.alert; }
+		}
+
+		#endregion
+
+		#region Constructors
+
+		public TlsException (Alert alert)
+			: this (alert, alert.Description.ToString())
+		{
+		}
+
+		public TlsException (Alert alert, string message)
+			: base (message)
+		{
+			this.alert = alert;
+		}
+
+		public TlsException (AlertLevel level, AlertDescription description)
+			: this (new Alert (level, description))
+		{
+		}
+
+		public TlsException (AlertDescription description)
+			: this (new Alert (description))
+		{
+		}
+
+		public TlsException (AlertDescription description, string message)
+			: this (new Alert (description), message)
+		{
+		}
+
+		public TlsException (AlertDescription description, string format, params object[] args)
+			: this (new Alert (description), string.Format (format, args))
+		{
+		}
+
+		#endregion
+	}
+}
