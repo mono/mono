@@ -28,7 +28,7 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Threading.Tasks;
-using System.Security.Authentication;
+using SSA = System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
@@ -40,31 +40,31 @@ namespace Mono.Security.Interface
 	{
 		public abstract void AuthenticateAsClient (string targetHost);
 
-		public abstract void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		public abstract void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		public abstract IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
+		public abstract IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
 		public abstract void EndAuthenticateAsClient (IAsyncResult asyncResult);
 
 		public abstract void AuthenticateAsServer (X509Certificate serverCertificate);
 
-		public abstract void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		public abstract void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		public abstract IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
+		public abstract IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
 		public abstract void EndAuthenticateAsServer (IAsyncResult asyncResult);
 
 		public abstract Task AuthenticateAsClientAsync (string targetHost);
 
-		public abstract Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		public abstract Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		public abstract Task AuthenticateAsServerAsync (X509Certificate serverCertificate);
 
-		public abstract Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		public abstract Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
 		public abstract void Flush ();
 
@@ -106,7 +106,7 @@ namespace Mono.Security.Interface
 			get;
 		}
 
-		public abstract CipherAlgorithmType CipherAlgorithm {
+		public abstract SSA.CipherAlgorithmType CipherAlgorithm {
 			get;
 		}
 
@@ -114,7 +114,7 @@ namespace Mono.Security.Interface
 			get;
 		}
 
-		public abstract HashAlgorithmType HashAlgorithm {
+		public abstract SSA.HashAlgorithmType HashAlgorithm {
 			get;
 		}
 
@@ -122,7 +122,7 @@ namespace Mono.Security.Interface
 			get;
 		}
 
-		public abstract ExchangeAlgorithmType KeyExchangeAlgorithm {
+		public abstract SSA.ExchangeAlgorithmType KeyExchangeAlgorithm {
 			get;
 		}
 
@@ -180,7 +180,7 @@ namespace Mono.Security.Interface
 			get;
 		}
 
-		public abstract SslProtocols SslProtocol {
+		public abstract SSA.SslProtocols SslProtocol {
 			get;
 		}
 
