@@ -135,12 +135,7 @@
 ./Mono.Xml/MiniParser.cs
 ./Mono.Xml/SecurityParser.cs
 
-./Mono.Security.Interface/Alert.cs
 ./Mono.Security.Interface/CertificateValidationHelper.cs
-./Mono.Security.Interface/CipherAlgorithmType.cs
-./Mono.Security.Interface/CipherSuiteCode.cs
-./Mono.Security.Interface/ExchangeAlgorithmType.cs
-./Mono.Security.Interface/HashAlgorithmType.cs
 ./Mono.Security.Interface/IBufferOffsetSize.cs
 ./Mono.Security.Interface/IMonoTlsEventSink.cs
 ./Mono.Security.Interface/IMonoTlsContext.cs
@@ -149,7 +144,4 @@
 ./Mono.Security.Interface/MonoTlsProvider.cs
 ./Mono.Security.Interface/MonoTlsProviderFactory.cs
 ./Mono.Security.Interface/MonoTlsSettings.cs
-./Mono.Security.Interface/TlsConnectionInfo.cs
-./Mono.Security.Interface/TlsException.cs
-./Mono.Security.Interface/TlsProtocolCode.cs
 ./Mono.Security.Interface/TlsProtocols.cs
