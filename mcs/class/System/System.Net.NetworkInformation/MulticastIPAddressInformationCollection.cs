@@ -109,6 +109,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
+#if !MOBILE
 		public static MulticastIPAddressInformationCollection Win32FromMulticast (IntPtr ptr)
 		{
 			MulticastIPAddressInformationImplCollection c = new MulticastIPAddressInformationImplCollection (false);
@@ -123,6 +124,7 @@ namespace System.Net.NetworkInformation {
 			c.is_readonly = true;
 			return c;
 		}
+#endif
 
 		public static MulticastIPAddressInformationImplCollection LinuxFromList (List<IPAddress> addresses)
 		{

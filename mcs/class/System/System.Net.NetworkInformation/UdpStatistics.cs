@@ -73,6 +73,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32UdpStatistics : UdpStatistics
 	{
 		Win32_MIB_UDPSTATS info;
@@ -111,5 +112,6 @@ namespace System.Net.NetworkInformation {
 		public uint OutDatagrams;
 		public int NumAddrs;
 	}
+#endif
 }
 

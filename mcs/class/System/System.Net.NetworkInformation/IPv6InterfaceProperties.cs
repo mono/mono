@@ -35,7 +35,7 @@ namespace System.Net.NetworkInformation {
 		public abstract int Index { get; }
 		public abstract int Mtu { get; }
 	}
-
+#if !MOBILE
 	class Win32IPv6InterfaceProperties : IPv6InterfaceProperties
 	{
 		Win32_MIB_IFROW mib;
@@ -53,5 +53,6 @@ namespace System.Net.NetworkInformation {
 			get { return mib.Mtu; }
 		}
 	}
+#endif
 }
 

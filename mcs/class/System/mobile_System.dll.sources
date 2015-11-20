@@ -104,7 +104,6 @@ System.Net.NetworkInformation/TcpStatistics.cs
 System.Net.NetworkInformation/UdpStatistics.cs
 System.Net.NetworkInformation/UnicastIPAddressInformation.cs
 System.Net.NetworkInformation/UnicastIPAddressInformationCollection.cs
-System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
 System.Net.Security/AuthenticatedStream.cs
 System.Net.Security/AuthenticationLevel.cs
 System.Net.Security/EncryptionPolicy.cs

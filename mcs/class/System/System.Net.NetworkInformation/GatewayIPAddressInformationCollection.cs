@@ -92,6 +92,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32GatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
 	{
 		public static readonly Win32GatewayIPAddressInformationCollection Empty = new Win32GatewayIPAddressInformationCollection (true);
@@ -127,6 +128,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 	}
+#endif
 
 	class UnixGatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
 	{

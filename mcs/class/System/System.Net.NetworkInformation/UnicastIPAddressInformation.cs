@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 using System.Net.Sockets;
 
 namespace System.Net.NetworkInformation {
+#if !MOBILE
 	class Win32UnicastIPAddressInformation : UnicastIPAddressInformation 
 	{
 		int if_index;
@@ -105,6 +106,7 @@ namespace System.Net.NetworkInformation {
 			get { return info.SuffixOrigin; }
 		}
 	}
+#endif
 
 	class LinuxUnicastIPAddressInformation : UnicastIPAddressInformation
 	{

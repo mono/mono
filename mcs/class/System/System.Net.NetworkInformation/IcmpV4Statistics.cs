@@ -157,6 +157,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32IcmpV4Statistics : IcmpV4Statistics
 	{
 		Win32_MIBICMPSTATS iin, iout;
@@ -269,5 +270,6 @@ namespace System.Net.NetworkInformation {
 		public uint AddrMasks;
 		public uint AddrMaskReps;
 	}
+#endif
 }
 
