@@ -167,11 +167,7 @@ class MakeBundle {
 				sources.Add (args [i]);
 				break;
 			}
-			
-			if (static_link && style == "windows") {
-				Console.Error.WriteLine ("The option `{0}' is not supported on this platform.", args [i]);
-				return 1;
-			}
+
 		}
 
 		Console.WriteLine ("Sources: {0} Auto-dependencies: {1}", sources.Count, autodeps);
@@ -419,16 +415,6 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			ts.Close ();
 
-			string assembler = GetEnv ("AS", IsUnix ? "as" : "i686-pc-mingw32-as");
-			
-			Console.WriteLine ("Compiling:");
-			string cmd = String.Format ("{0} -o {1} {2} ", assembler, temp_o, temp_s);
-			int ret = Execute (cmd);
-			if (ret != 0){
-				Error ("[Fail]");
-				return;
-			}
-
 			if (compress)
 				tc.WriteLine ("\nstatic const CompressedAssembly *compressed [] = {");
 			else
@@ -478,42 +464,90 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				string maintemplate = st.ReadToEnd ();
 				tc.Write (maintemplate);
 			}
-			
+
 			tc.Close ();
 
 			if (compile_only)
 				return;
+			Console.WriteLine("Compiling:");
 
-			string zlib = (compress ? "-lz" : "");
-			string debugging = "-g";
-			string cc = GetEnv ("CC", IsUnix ? "cc" : "i686-pc-mingw32-gcc");
+			if (style == "windows")
+			{
+				string assembler = GetEnv("AS", "as");
+				string as_cmd = String.Format("{0} -o {1} {2} ", assembler, temp_o, temp_s);
+				Execute(as_cmd);
 
-			if (style == "linux")
-				debugging = "-ggdb";
-			if (static_link) {
-				string smonolib;
-				if (style == "osx")
-					smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
+				Func<string, string> quote = (pp) => { return "\"" + pp + "\""; };
+
+				string compiler = GetEnv("CC", "cl.exe");
+				string winsdkPath = GetEnv("WINSDK", @"C:\Program Files (x86)\Windows Kits\8.1");
+				string vsPath = GetEnv("VSINCLUDE", @"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC");
+				string monoPath = GetEnv("MONOPREFIX", @"C:\Program Files (x86)\Mono");
+
+				string[] includes = new string[] {winsdkPath + @"\Include\um", winsdkPath + @"\Include\shared", vsPath + @"\include", monoPath + @"\include\mono-2.0"};
+				string[] libs = new string[] { winsdkPath + @"\Lib\winv6.3\um\x86" , vsPath + @"\lib" };
+				string monoFile;
+
+				var compilerArgs = new List<string>();
+				foreach (string include in includes)
+					compilerArgs.Add(String.Format ("/I {0}", quote (include)));
+
+				if (static_link) {
+					compilerArgs.Add("/MT");
+					monoFile = monoPath + @"\lib\mono-2.0.lib";
+				}
+				else {
+					compilerArgs.Add("/MD");
+					monoFile = monoPath + @"\lib\mono-2.0.dll";
+				}
+
+				compilerArgs.Add(temp_c);
+				compilerArgs.Add(temp_o);
+				compilerArgs.Add("/link");
+
+				foreach (string lib in libs)
+					compilerArgs.Add(String.Format ("/LIBPATH:{0}", quote(lib)));
+				compilerArgs.Add (quote(monoFile));
+
+				string cl_cmd = String.Format("{0} {1}", compiler, String.Join(" ", compilerArgs.ToArray()));
+				Execute (cl_cmd);
+			}
+			else
+			{
+				string assembler = GetEnv("AS", "as");
+				string cmd = String.Format("{0} -o {1} {2} ", assembler, temp_o, temp_s);
+				Execute(cmd);
+
+				string zlib = (compress ? "-lz" : "");
+				string debugging = "-g";
+				string cc = GetEnv("CC", "cc");
+
+				if (style == "linux")
+					debugging = "-ggdb";
+				if (static_link)
+				{
+					string smonolib;
+					if (style == "osx")
+						smonolib = "`pkg-config --variable=libdir mono-2`/libmono-2.0.a ";
+					else
+						smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
+					cmd = String.Format("{4} -o {2} -Wall `pkg-config --cflags mono-2` {0} {3} " +
+						"`pkg-config --libs-only-L mono-2` " + smonolib +
+						"`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
+						temp_c, temp_o, output, zlib, cc);
+				}
 				else
-					smonolib = "-Wl,-Bstatic -lmono-2.0 -Wl,-Bdynamic ";
-				cmd = String.Format ("{4} -o {2} -Wall `pkg-config --cflags mono-2` {0} {3} " +
-						     "`pkg-config --libs-only-L mono-2` " + smonolib +
-						     "`pkg-config --libs-only-l mono-2 | sed -e \"s/\\-lmono-2.0 //\"` {1}",
-						     temp_c, temp_o, output, zlib, cc);
-			} else {
-				
-				cmd = String.Format ("{4} " + debugging + " -o {2} -Wall {0} `pkg-config --cflags --libs mono-2` {3} {1}",
-						     temp_c, temp_o, output, zlib, cc);
+				{
+
+					cmd = String.Format("{4} " + debugging + " -o {2} -Wall {0} `pkg-config --cflags --libs mono-2` {3} {1}",
+						temp_c, temp_o, output, zlib, cc);
+				}
+				Execute (cmd);
 			}
-                            
-			ret = Execute (cmd);
-			if (ret != 0){
-				Error ("[Fail]");
-				return;
-			}
+
 			Console.WriteLine ("Done");
-			}
-			}
+		}
+	}
 		} finally {
 			if (!keeptemp){
 				if (object_out == null){
@@ -708,81 +742,98 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 
-	static int Execute (string cmdLine)
+	static void Execute (string cmdLine)
 	{
 		if (IsUnix) {
 			Console.WriteLine (cmdLine);
-			return system (cmdLine);
+			int ret = system (cmdLine);
+			if (ret != 0)
+			{
+				Error(String.Format("[Fail] {0}", ret));
+			}
 		}
-		
+
 		// on Windows, we have to pipe the output of a
 		// `cmd` interpolation to dos2unix, because the shell does not
 		// strip the CRLFs generated by the native pkg-config distributed
 		// with Mono.
 		//
 		// But if it's *not* on cygwin, just skip it.
-		
+
 		// check if dos2unix is applicable.
-		if (use_dos2unix == null) {
-			use_dos2unix = false;
+		if (use_dos2unix == true)
 			try {
-				var info = new ProcessStartInfo ("dos2unix");
-				info.CreateNoWindow = true;
-				info.RedirectStandardInput = true;
-				info.UseShellExecute = false;
-				var dos2unix = Process.Start (info);
-				dos2unix.StandardInput.WriteLine ("aaa");
-				dos2unix.StandardInput.WriteLine ("\u0004");
-				dos2unix.StandardInput.Close ();
-				dos2unix.WaitForExit ();
-				if (dos2unix.ExitCode == 0)
-					use_dos2unix = true;
-			} catch {
-				// ignore
-			}
-		}
-		// and if there is no dos2unix, just run cmd /c.
-		if (use_dos2unix == false) {
-			Console.WriteLine (cmdLine);
-			ProcessStartInfo dos2unix = new ProcessStartInfo ();
-			dos2unix.UseShellExecute = false;
-			dos2unix.FileName = "cmd";
-			dos2unix.Arguments = String.Format ("/c \"{0}\"", cmdLine);
-
-			using (Process p = Process.Start (dos2unix)) {
-				p.WaitForExit ();
-				return p.ExitCode;
-			}
+			var info = new ProcessStartInfo ("dos2unix");
+			info.CreateNoWindow = true;
+			info.RedirectStandardInput = true;
+			info.UseShellExecute = false;
+			var dos2unix = Process.Start (info);
+			dos2unix.StandardInput.WriteLine ("aaa");
+			dos2unix.StandardInput.WriteLine ("\u0004");
+			dos2unix.StandardInput.Close ();
+			dos2unix.WaitForExit ();
+			if (dos2unix.ExitCode == 0)
+				use_dos2unix = true;
+		} catch {
+			Console.WriteLine("Warning: dos2unix not found");
+			use_dos2unix = false;
 		}
 
-		StringBuilder b = new StringBuilder ();
-		int count = 0;
-		for (int i = 0; i < cmdLine.Length; i++) {
-			if (cmdLine [i] == '`') {
-				if (count % 2 != 0) {
-					b.Append ("|dos2unix");
-				}
-				count++;
-			}
-			b.Append (cmdLine [i]);
-		}
-		cmdLine = b.ToString ();
-		Console.WriteLine (cmdLine);
-			
-		ProcessStartInfo psi = new ProcessStartInfo ();
+		if (use_dos2unix == null)
+			use_dos2unix = false;
+
+		ProcessStartInfo psi = new ProcessStartInfo();
 		psi.UseShellExecute = false;
-		psi.FileName = "sh";
-		psi.Arguments = String.Format ("-c \"{0}\"", cmdLine);
 
+		// if there is no dos2unix, just run cmd /c.
+		if (use_dos2unix == false)
+		{
+			psi.FileName = "cmd";
+			psi.Arguments = String.Format("/c \"{0}\"", cmdLine);
+		}
+		else
+		{
+			psi.FileName = "sh";
+			StringBuilder b = new StringBuilder();
+			int count = 0;
+			for (int i = 0; i < cmdLine.Length; i++)
+			{
+				if (cmdLine[i] == '`')
+				{
+					if (count % 2 != 0)
+					{
+						b.Append("|dos2unix");
+					}
+					count++;
+				}
+				b.Append(cmdLine[i]);
+			}
+			cmdLine = b.ToString();
+			psi.Arguments = String.Format("-c \"{0}\"", cmdLine);
+		}
+
+		Console.WriteLine(cmdLine);
 		using (Process p = Process.Start (psi)) {
 			p.WaitForExit ();
-			return p.ExitCode;
+			int ret = p.ExitCode;
+			if (ret != 0){
+				Error (String.Format("[Fail] {0}", ret));
+			}
 		}
 	}
 
-	static string GetEnv (string name, string defaultValue) 
+	static string GetEnv(string name, string defaultValue)
 	{
-		string s = Environment.GetEnvironmentVariable (name);
-		return s != null ? s : defaultValue;
+		string val = Environment.GetEnvironmentVariable(name);
+		if (val != null)
+		{
+			Console.WriteLine("{0} = {1}", name, val);
+		}
+		else
+		{
+			val = defaultValue;
+			Console.WriteLine("{0} = {1} (default)", name, val);
+		}
+		return val;
 	}
 }
