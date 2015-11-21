@@ -1015,7 +1015,12 @@ class MDocUpdater : MDocCommand
 					XmlDocument doc = new XmlDocument ();
 					doc.Load (typefile.FullName);
 					XmlElement e = doc.SelectSingleNode("/Type") as XmlElement;
-					string assemblyName = doc.SelectSingleNode ("/Type/AssemblyInfo/AssemblyName").InnerText;
+					var assemblyNameNode = doc.SelectSingleNode ("/Type/AssemblyInfo/AssemblyName");
+					if (assemblyNameNode == null){
+						Warning ("Did not find /Type/AssemblyInfo/AssemblyName on {0}", typefile.FullName);
+						continue;
+					}
+					string assemblyName = assemblyNameNode.InnerText;
 					AssemblyDefinition assembly = assemblies.FirstOrDefault (a => a.Name.Name == assemblyName);
 
 					Action saveDoc = () => {
