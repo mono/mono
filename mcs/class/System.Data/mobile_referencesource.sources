@@ -1,4 +1,4 @@
-../../../external/referencesource/System.Data/bid/inc/cs/bidPrivateBase.cs
+MobileStubs.cs
 
 ../../../external/referencesource/System.Data/Microsoft/SqlServer/Server/SqlTriggerContext.cs
 
@@ -91,12 +91,10 @@
 ../../../external/referencesource/System.Data/System/Data/Common/SQLTypes/SqlXmlStorage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/StringStorage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/SupportedJoinOperators.cs
-../../../external/referencesource/System.Data/System/Data/Common/System.Data_BID.cs
 ../../../external/referencesource/System.Data/System/Data/Common/TimeSpanStorage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/UInt16Storage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/UInt32Storage.cs
 ../../../external/referencesource/System.Data/System/Data/Common/UInt64Storage.cs
-../../../external/referencesource/System.Data/System/Data/Common/UnsafeNativeMethods.cs
 ../../../external/referencesource/System.Data/System/Data/ConflictOptions.cs
 ../../../external/referencesource/System.Data/System/Data/ConnectionState.cs
 ../../../external/referencesource/System.Data/System/Data/ConstraintCollection.cs
