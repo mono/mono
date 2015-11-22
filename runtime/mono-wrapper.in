@@ -2,6 +2,7 @@
 r='@mono_build_root@'
 MONO_CFG_DIR='@mono_cfg_dir@'
 PATH="$r/runtime/_tmpinst/bin:$PATH"
+MONO_EXECUTABLE=${MONO_EXECUTABLE:-"$r/@mono_runtime@"}
 export MONO_CFG_DIR PATH
 if [ -n "@nacl_self_host@" ]; then
   case "$@" in
@@ -12,4 +13,4 @@ if [ -n "@nacl_self_host@" ]; then
     */mcs.exe* | */gacutil.exe* | */mdoc.exe* ) exec /usr/local/bin/mono "$@";;
   esac
 fi
-exec "$r/libtool" --mode=execute "$r/@mono_runtime@" --config "@mono_cfg_dir@/mono/config" "$@"
+exec "$r/libtool" --mode=execute "${MONO_EXECUTABLE}" --config "@mono_cfg_dir@/mono/config" "$@"
