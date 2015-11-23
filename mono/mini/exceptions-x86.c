@@ -382,8 +382,10 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 	ctx.ecx = regs [X86_ECX];
 	ctx.eax = regs [X86_EAX];
 
-	/* UNITY: enforce alignment at call sites */
+#ifdef __APPLE__
+	/* The OSX ABI specifies 16 byte alignment at call sites */
 	g_assert ((ctx.esp % MONO_ARCH_FRAME_ALIGNMENT) == 0);
+#endif
 
 	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
 		MonoException *mono_ex = (MonoException*)exc;
