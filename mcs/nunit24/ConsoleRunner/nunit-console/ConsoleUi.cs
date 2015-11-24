@@ -158,7 +158,7 @@ namespace NUnit.ConsoleRunner
 				//if ( testRunner != null )
 				//    testRunner.Unload();
 
-				if ( collector.HasExceptions )
+				if ( result == null || collector.HasExceptions )
 				{
 					collector.WriteExceptions();
 					return UNEXPECTED_ERROR;
