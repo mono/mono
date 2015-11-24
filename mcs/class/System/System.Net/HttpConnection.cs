@@ -132,6 +132,7 @@ namespace System.Net {
 			input_state = InputState.RequestLine;
 			line_state = LineState.None;
 			context = new HttpListenerContext (this);
+			context.Listener = epl.Listener;
 		}
 
 		public bool IsClosed {
