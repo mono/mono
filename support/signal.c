@@ -107,23 +107,24 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 
 #ifndef HOST_WIN32
 
+// Because we are in MonoPosixHelper, we are banned from linking mono.
+// We can still use atomic.h because that's all inline functions--
+// unless WAPI_NO_ATOMIC_ASM is defined, in which case atomic.h calls linked functions.
 #ifndef WAPI_NO_ATOMIC_ASM
 	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
 	#define mph_int_inc(p)     InterlockedIncrement ((p))
 	#define mph_int_dec_test(p)     (InterlockedDecrement ((p)) == 0)
-	#define mph_int_set(p,o,n) InterlockedExchange ((p), (n))
+	#define mph_int_set(p,n) InterlockedExchange ((p), (n))
+	// Pointer, original, new
+	#define mph_int_test_and_set(p,o,n) (o == InterlockedCompareExchange ((p), (n), (o)))
 #elif GLIB_CHECK_VERSION(2,4,0)
 	#define mph_int_get(p) g_atomic_int_get ((p))
  	#define mph_int_inc(p) do {g_atomic_int_inc ((p));} while (0)
 	#define mph_int_dec_test(p) g_atomic_int_dec_and_test ((p))
-	#define mph_int_set(p,o,n) do {                                 \
-		while (!g_atomic_int_compare_and_exchange ((p), (o), (n))) {} \
-	} while (0)
+	#define mph_int_set(p,n) g_atomic_int_set ((p),(n))
+	#define mph_int_test_and_set(p,o,n) g_atomic_int_compare_and_exchange ((p), (o), (n))
 #else
-	#define mph_int_get(p) (*(p))
-	#define mph_int_inc(p) do { (*(p))++; } while (0)
-	#define mph_int_dec_test(p) (--(*(p)) == 0)
-	#define mph_int_set(p,o,n) do { *(p) = n; } while (0)
+	#error "GLIB 2.4 required because building without ASM atomics"
 #endif
 
 #if HAVE_PSIGNAL
@@ -166,6 +167,90 @@ keep_trying (int r)
 	return r == -1 && errno == EINTR;
 }
 
+// This tiny ad-hoc read/write lock is needed because of the very specific
+// synchronization needed between default_handler and teardown_pipes:
+// - Many default_handlers can be running at once
+// - External forces already ensure only one teardown_pipes runs at once
+// - If a teardown_pipes interrupts a default_handler, it must block
+// - If a default_handler interrupts a teardown_pipes, it must *not* block
+// Locks are implemented as ints.
+
+// The lock is split into a teardown bit and a handler count (sign bit unused).
+// There is a teardown running or waiting to run if the teardown bit is set.
+// There is a handler running if the handler count is nonzero.
+#define PIPELOCK_TEARDOWN_BIT (  (int)0x40000000 )
+#define PIPELOCK_COUNT_MASK   (~((int)0xC0000000))
+#define PIPELOCK_GET_COUNT(x)      ((x) & PIPELOCK_COUNT_MASK)
+#define PIPELOCK_INCR_COUNT(x, by) (((x) & PIPELOCK_TEARDOWN_BIT) | (PIPELOCK_GET_COUNT (PIPELOCK_GET_COUNT (x) + (by))))
+
+static inline void
+acquire_pipelock_teardown (int *lock)
+{
+	int lockvalue_draining;
+	// First mark that a teardown is occurring, so handlers will stop entering the lock.
+	while (1) {
+		int lockvalue = mph_int_get (lock);
+		lockvalue_draining = lockvalue | PIPELOCK_TEARDOWN_BIT;
+		if (mph_int_test_and_set (lock, lockvalue, lockvalue_draining))
+			break;
+	}
+	// Now wait for all handlers to complete.
+	while (1) {
+		if (0 == PIPELOCK_GET_COUNT(lockvalue_draining))
+			break; // We now hold the lock.
+		// Handler is still running, spin until it completes.
+		sched_yield (); // We can call this because !defined(HOST_WIN32)
+		lockvalue_draining = mph_int_get (lock);
+	}
+}
+
+static inline void
+release_pipelock_teardown (int *lock)
+{
+	while (1) {
+		int lockvalue = mph_int_get (lock);
+		int lockvalue_new = lockvalue & ~PIPELOCK_TEARDOWN_BIT;
+		// Technically this can't fail, because we hold both the pipelock and the mutex, but
+		if (mph_int_test_and_set (lock, lockvalue, lockvalue_new))
+			return;
+	}
+}
+
+// Return 1 for success
+static inline int
+acquire_pipelock_handler (int *lock)
+{
+	while (1) {
+		int lockvalue = mph_int_get (lock);
+		if (lockvalue & PIPELOCK_TEARDOWN_BIT) // Final lock is being torn down
+			return 0;
+		int lockvalue_new = PIPELOCK_INCR_COUNT (lockvalue, 1);
+		if (mph_int_test_and_set (lock, lockvalue, lockvalue_new))
+			return 1;
+	}
+}
+
+static inline void
+release_pipelock_handler (int *lock)
+{
+	while (1) {
+		int lockvalue = mph_int_get (lock);
+		int lockvalue_new = PIPELOCK_INCR_COUNT (lockvalue, -1);
+		if (mph_int_test_and_set (lock, lockvalue, lockvalue_new))
+			return;
+	}
+}
+
+// This handler is registered once for each UnixSignal object. A pipe is maintained
+// for each one; Wait users read at one end of this pipe, and default_handler sends
+// a write on the pipe for each signal received while the Wait is ongoing.
+//
+// Notice a fairly unlikely race condition exists here: Because we synchronize with
+// pipe teardown, but not install/uninstall (in other words, we are only trying to
+// protect against writing on a closed pipe) it is technically possible a full
+// uninstall and then an install could complete after signum is checked but before
+// the remaining instructions execute. In this unlikely case count could be
+// incremented or a byte written on the wrong signal handler.
 static void
 default_handler (int signum)
 {
@@ -175,7 +260,12 @@ default_handler (int signum)
 		signal_info* h = &signals [i];
 		if (mph_int_get (&h->signum) != signum)
 			continue;
+
 		mph_int_inc (&h->count);
+
+		if (!acquire_pipelock_handler (&h->pipelock))
+			continue; // Teardown is occurring on this object, no one to send to.
+
 		fd = mph_int_get (&h->write_fd);
 		if (fd > 0) {
 			int j,pipecounter;
@@ -186,6 +276,7 @@ default_handler (int signum)
 				do { r = write (fd, &c, 1); } while (keep_trying (r));
 			}
 		}
+		release_pipelock_handler (&h->pipelock);
 	}
 }
 
@@ -244,9 +335,9 @@ Mono_Unix_UnixSignal_install (int sig)
 	}
 
 	if (h) {
-		mph_int_set (&h->count, h->count, 0);
-		mph_int_set (&h->signum, h->signum, sig);
-		mph_int_set (&h->pipecnt, h->pipecnt, 0);
+		mph_int_set (&h->count, 0);
+		mph_int_set (&h->signum, sig);
+		mph_int_set (&h->pipecnt, 0);
 	}
 
 	release_mutex (&signals_mutex);
@@ -339,12 +430,14 @@ teardown_pipes (signal_info** signals, int count)
 		signal_info* h = signals [i];
 
 		if (mph_int_dec_test (&h->pipecnt)) {
+			acquire_pipelock_teardown (&h->pipelock);
 			if (h->read_fd != 0)
 				close (h->read_fd);
 			if (h->write_fd != 0)
 				close (h->write_fd);
 			h->read_fd  = 0;
 			h->write_fd = 0;
+			release_pipelock_teardown (&h->pipelock);
 		}
 	}
 }
