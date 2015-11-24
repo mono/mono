@@ -27,7 +27,9 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessModule))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessModuleCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessPriorityClass))]
+#if MONO_FEATURE_PROCESS_START
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessStartInfo))]
+#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessThread))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ProcessThreadCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Diagnostics.ThreadPriorityLevel))]

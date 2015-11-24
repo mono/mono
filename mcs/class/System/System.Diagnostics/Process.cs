@@ -577,6 +577,7 @@ namespace System.Diagnostics {
 			}
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		private StreamReader error_stream=null;
 		bool error_stream_exposed;
 
@@ -648,6 +649,7 @@ namespace System.Diagnostics {
 				start_info = value;
 			}
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		/* Returns the process start time in Windows file
 		 * times (ticks from DateTime(1/1/1601 00:00 GMT))
@@ -895,6 +897,7 @@ namespace System.Diagnostics {
 			// the process (currently we have none).
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo,
 								   ref ProcInfo proc_info);
@@ -1191,6 +1194,7 @@ namespace System.Diagnostics {
 			psi.UseShellExecute = false;
 			return Start(psi);
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		public override string ToString()
 		{
@@ -1219,11 +1223,13 @@ namespace System.Diagnostics {
 			if (!WaitForExit_internal (process_handle, ms))
 				return false;
 
+#if MONO_FEATURE_PROCESS_START
 			if (async_output != null && !async_output.IsCompleted)
 				async_output.AsyncWaitHandle.WaitOne ();
 
 			if (async_error != null && !async_error.IsCompleted)
 				async_error.AsyncWaitHandle.WaitOne ();
+#endif // MONO_FEATURE_PROCESS_START
 
 			OnExited ();
 
@@ -1277,6 +1283,7 @@ namespace System.Diagnostics {
 				cb (this, new DataReceivedEventArgs (str));
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[Flags]
 		enum AsyncModes {
 			NoneYet = 0,
@@ -1465,6 +1472,7 @@ namespace System.Diagnostics {
 
 			error_canceled = true;
 		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		[Category ("Behavior")]
 		[MonitoringDescription ("Raised when this process exits.")]
@@ -1497,6 +1505,7 @@ namespace System.Diagnostics {
 			// If this is a call to Dispose,
 			// dispose all managed resources.
 			if (disposing) {
+#if MONO_FEATURE_PROCESS_START
 				/* These have open FileStreams on the pipes we are about to close */
 				if (async_output != null)
 					async_output.Close ();
@@ -1518,6 +1527,7 @@ namespace System.Diagnostics {
 						error_stream.Close ();
 					error_stream = null;
 				}
+#endif // MONO_FEATURE_PROCESS_START
 			}
 
 			// Release unmanaged resources
