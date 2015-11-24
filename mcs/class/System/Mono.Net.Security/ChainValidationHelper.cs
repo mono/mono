@@ -170,6 +170,8 @@ namespace Mono.Net.Security
 
 		ChainValidationHelper (MonoTlsProvider provider, MonoTlsSettings settings, bool cloneSettings, MonoTlsStream stream, ServerCertValidationCallbackWrapper callbackWrapper)
 		{
+			if (settings == null)
+				settings = MonoTlsSettings.CopyDefaultSettings ();
 			if (cloneSettings)
 				settings = settings.CloneWithValidator (this);
 
