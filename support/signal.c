@@ -184,7 +184,6 @@ default_handler (int signum)
 			for (j = 0; j < pipecounter; ++j) {
 				int r;
 				do { r = write (fd, &c, 1); } while (keep_trying (r));
-				fsync (fd); /* force */
 			}
 		}
 	}
