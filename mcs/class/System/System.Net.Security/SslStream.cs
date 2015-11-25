@@ -86,9 +86,9 @@ namespace System.Net.Security
 	public class SslStream : AuthenticatedStream, MNS.IMonoSslStream
 	{
 		MonoTlsProvider provider;
-		MonoSslStream impl;
+		IMonoSslStream impl;
 
-		internal MonoSslStream Impl {
+		internal IMonoSslStream Impl {
 			get {
 				CheckDisposed ();
 				return impl;
@@ -134,7 +134,7 @@ namespace System.Net.Security
 			impl = provider.CreateSslStream (innerStream, leaveInnerStreamOpen, settings);
 		}
 
-		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoSslStream impl)
+		internal SslStream (Stream innerStream, bool leaveInnerStreamOpen, IMonoSslStream impl)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
 			this.impl = impl;
@@ -339,7 +339,7 @@ namespace System.Net.Security
 		void CheckDisposed ()
 		{
 			if (impl == null)
-				throw new ObjectDisposedException ("MonoSslStream");
+				throw new ObjectDisposedException ("SslStream");
 		}
 
 		protected override void Dispose (bool disposing)

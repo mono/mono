@@ -74,7 +74,7 @@ namespace Mono.Net.Security.Private
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings);
 
-		public override MSI.MonoSslStream CreateSslStream (
+		public override MSI.IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MSI.MonoTlsSettings settings = null)
 		{

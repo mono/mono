@@ -34,9 +34,9 @@ extern alias MonoSecurity;
 #endif
 
 #if MONO_SECURITY_ALIAS
-using MonoSecurity::Mono.Security.Interface;
+using MSI = MonoSecurity::Mono.Security.Interface;
 #else
-using Mono.Security.Interface;
+using MSI = Mono.Security.Interface;
 #endif
 #if MONO_X509_ALIAS
 using XSslProtocols = PrebuiltSystem::System.Security.Authentication.SslProtocols;
@@ -65,16 +65,16 @@ namespace Mono.Net.Security.Private
 {
 	class MonoSslStreamWrapper : IMonoSslStream
 	{
-		MonoSslStream impl;
+		MSI.IMonoSslStream impl;
 
-		internal MonoSslStream Impl {
+		internal MSI.IMonoSslStream Impl {
 			get {
 				CheckDisposed ();
 				return impl;
 			}
 		}
 
-		public MonoSslStreamWrapper (MonoSslStream impl)
+		public MonoSslStreamWrapper (MSI.IMonoSslStream impl)
 		{
 			this.impl = impl;
 		}
