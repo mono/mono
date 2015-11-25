@@ -26,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.IO;
 using System.Text;
@@ -286,6 +287,7 @@ namespace System.Net.NetworkInformation {
 
 		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
 		{
+#if MONO_FEATURE_PROCESS_START
 			DateTime sentTime = DateTime.UtcNow;
 
 			Process ping = new Process ();
@@ -325,6 +327,9 @@ namespace System.Net.NetworkInformation {
 			}
 
 			return new PingReply (address, buffer, options, trip_time, status);
+#else
+			throw new NotSupportedException ("Ping is not supported on this platform.");
+#endif // MONO_FEATURE_PROCESS_START
 		}
 
 		// Async
@@ -592,4 +597,3 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 }
-

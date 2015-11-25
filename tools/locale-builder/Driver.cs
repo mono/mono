@@ -133,18 +133,18 @@ namespace Mono.Tools.LocaleBuilder
 				Dump (writer, df.DayNames, "DayNames");
 				writer.WriteLine ("{0}: {1}", "FirstDayOfWeek", (DayOfWeek) df.FirstDayOfWeek);
 //				Dump (writer, df.GetAllDateTimePatterns (), "GetAllDateTimePatterns");
-				writer.WriteLine ("{0}: {1}", "LongDatePattern", df.LongDatePattern);
-				writer.WriteLine ("{0}: {1}", "LongTimePattern", df.LongTimePattern);
+//				writer.WriteLine ("{0}: {1}", "LongDatePattern", df.LongDatePattern);
+//				writer.WriteLine ("{0}: {1}", "LongTimePattern", df.LongTimePattern);
 				writer.WriteLine ("{0}: {1}", "MonthDayPattern", df.MonthDayPattern);
 				Dump (writer, df.MonthGenitiveNames, "MonthGenitiveNames");
 				Dump (writer, df.MonthNames, "MonthNames");
 				writer.WriteLine ("{0}: {1}", "NativeCalendarName", df.NativeCalendarName);
 				writer.WriteLine ("{0}: {1}", "PMDesignator", df.PMDesignator);
-				writer.WriteLine ("{0}: {1}", "ShortDatePattern", df.ShortDatePattern);
+//				writer.WriteLine ("{0}: {1}", "ShortDatePattern", df.ShortDatePattern);
 				Dump (writer, df.ShortestDayNames, "ShortestDayNames");
-				writer.WriteLine ("{0}: {1}", "ShortTimePattern", df.ShortTimePattern);
+//				writer.WriteLine ("{0}: {1}", "ShortTimePattern", df.ShortTimePattern);
 				writer.WriteLine ("{0}: {1}", "TimeSeparator", df.TimeSeparator);
-				writer.WriteLine ("{0}: {1}", "YearMonthPattern", df.YearMonthPattern);
+//				writer.WriteLine ("{0}: {1}", "YearMonthPattern", df.YearMonthPattern);
 
 				var ti = c.TextInfoEntry;
 				writer.WriteLine ("-- TextInfo --");
@@ -923,9 +923,6 @@ namespace Mono.Tools.LocaleBuilder
 					}
 				}
 			}
-
-			// It looks like it never changes
-			data.DateTimeFormatEntry.TimeSeparator = ":";
 
 			// TODO: Don't have input data available but most values are 2 with few exceptions for 1 and 3
 			// We don't add 3 as it's for some arabic states only

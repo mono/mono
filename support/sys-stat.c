@@ -30,9 +30,13 @@ Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 
 	to->st_dev         = from->st_dev;
 	to->st_ino         = from->st_ino;
-	if (Mono_Posix_FromFilePermissions (from->st_mode, &to->st_mode) != 0) {
+
+	unsigned int to_st_mode;
+	if (Mono_Posix_FromFilePermissions (from->st_mode, &to_st_mode) != 0) {
 		return -1;
 	}
+
+	to->st_mode        = to_st_mode;
 	to->st_nlink       = from->st_nlink;
 	to->st_uid         = from->st_uid;
 	to->st_gid         = from->st_gid;

@@ -128,7 +128,11 @@ namespace MonoTests.System.Threading
 				TestUtil.WaitForNotAlive (thread1, "");
 				Assert.AreEqual (100, class1.marker);
 			} finally {
+#if MONO_FEATURE_THREAD_ABORT
 				thread1.Abort ();
+#else
+				thread1.Interrupt ();
+#endif
 			}
 		}
 
@@ -150,8 +154,13 @@ namespace MonoTests.System.Threading
 			
 				Assert.AreEqual (class2.id, class2.marker);
 			} finally {
+#if MONO_FEATURE_THREAD_ABORT
 				thread1.Abort ();
 				thread2.Abort ();
+#else
+				thread1.Interrupt ();
+				thread2.Interrupt ();
+#endif
 			}
 		}
 

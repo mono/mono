@@ -1122,9 +1122,17 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 					g_assert_not_reached ();
 					break;
 				}
-				if (target && wrapper != target)
-					return FALSE;
-				ref->method = wrapper;
+				if (target) {
+					/*
+					 * Due to the way mini_get_shared_method () works, we could end up with
+					 * multiple copies of the same wrapper.
+					 */
+					if (wrapper->klass != target->klass)
+						return FALSE;
+					ref->method = target;
+				} else {
+					ref->method = wrapper;
+				}
 			} else {
 				/*
 				 * These wrappers are associated with a signature, not with a method.
@@ -1770,7 +1778,7 @@ static void
 init_amodule_got (MonoAotModule *amodule)
 {
 	MonoJumpInfo *ji;
-	MonoMemPool *mp = mono_mempool_new ();
+	MonoMemPool *mp;
 	MonoJumpInfo *patches;
 	guint32 got_offsets [128];
 	int i, npatches;
@@ -1781,6 +1789,7 @@ init_amodule_got (MonoAotModule *amodule)
 
 	amodule->got_initializing = TRUE;
 
+	mp = mono_mempool_new ();
 	npatches = amodule->info.nshared_got_entries;
 	for (i = 0; i < npatches; ++i)
 		got_offsets [i] = i;
@@ -1821,6 +1830,8 @@ init_amodule_got (MonoAotModule *amodule)
 		for (i = 0; i < npatches; ++i)
 			amodule->llvm_got [i] = amodule->shared_got [i];
 	}
+
+	mono_mempool_destroy (mp);
 }
 
 static void
@@ -3596,8 +3607,6 @@ load_patch_info (MonoAotModule *amodule, MonoMemPool *mp, int n_patches,
 
 	p = buf;
 
-	patches = mono_mempool_alloc0 (mp, sizeof (MonoJumpInfo) * n_patches);
-
 	*got_slots = g_malloc (sizeof (guint32) * n_patches);
 	for (pindex = 0; pindex < n_patches; ++pindex) {
 		(*got_slots)[pindex] = decode_value (p, &p);
@@ -3839,7 +3848,7 @@ find_aot_method_in_amodule (MonoAotModule *amodule, MonoMethod *method, guint32 
 			MonoMethod *w1 = mono_marshal_method_from_wrapper (method);
 			MonoMethod *w2 = mono_marshal_method_from_wrapper (m);
 
-			if (w1->is_inflated && ((MonoMethodInflated *)w1)->declaring == w2) {
+			if ((w1 == w2) || (w1->is_inflated && ((MonoMethodInflated *)w1)->declaring == w2)) {
 				index = value;
 				break;
 			}
@@ -3968,8 +3977,10 @@ init_llvm_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *meth
 		}
 
 		patches = load_patch_info (amodule, mp, n_patches, llvm, &got_slots, p, &p);
-		if (patches == NULL)
+		if (patches == NULL) {
+			mono_mempool_destroy (mp);
 			goto cleanup;
+		}
 
 		for (pindex = 0; pindex < n_patches; ++pindex) {
 			MonoJumpInfo *ji = &patches [pindex];
@@ -4238,6 +4249,27 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 			code = mono_aot_get_method (domain, m);
 			if (code)
 				return code;
+		}
+
+		/* For ARRAY_ACCESSOR wrappers with reference types, use the <object> instantiation saved in corlib */
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+			WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+
+			if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR) {
+				MonoMethod *array_method = info->d.array_accessor.method;
+				if (MONO_TYPE_IS_REFERENCE (&array_method->klass->element_class->byval_arg)) {
+					MonoClass *obj_array_class = mono_array_class_get (mono_defaults.object_class, 1);
+					MonoMethod *m = mono_class_get_method_from_name (obj_array_class, array_method->name, mono_method_signature (array_method)->param_count);
+					g_assert (m);
+
+					m = mono_marshal_get_array_accessor_wrapper (m);
+					if (m != method) {
+						code = mono_aot_get_method (domain, m);
+						if (code)
+							return code;
+					}
+				}
+			}
 		}
 
 		if (method_index == 0xffffff && method->is_inflated && mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE)) {

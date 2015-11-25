@@ -201,6 +201,7 @@ namespace System.Net.NetworkInformation {
 		public const int RouterRenumbering = 138;
 	}
 
+#if !MOBILE
 	class Win32IcmpV6Statistics : IcmpV6Statistics
 	{
 		Win32_MIBICMPSTATS_EX iin, iout;
@@ -322,5 +323,6 @@ namespace System.Net.NetworkInformation {
 		[MarshalAs (UnmanagedType.ByValArray, SizeConst = 256)]
 		public uint [] Counts;
 	}
+#endif
 }
 

@@ -27,6 +27,9 @@ namespace MonoTests.Microsoft.CSharp
 
 		private static readonly string _sourceLibrary1 = "public class Test1 {}";
 		private static readonly string _sourceLibrary2 = "public class Test2 {}";
+		private static readonly string _sourceLibrary3 =
+			@"public class Test3 { public void F() { } }
+			public class Test4 : Test3 { public void F() { } }";
 		private static readonly string _sourceExecutable = "public class Program { static void Main () { } }";
 
 		[SetUp]
@@ -545,6 +548,22 @@ namespace MonoTests.Microsoft.CSharp
 			string[] tempFiles = Directory.GetFiles (_tempDir);
 			Assert.AreEqual (1, tempFiles.Length, "#3");
 			Assert.AreEqual (tempFile, tempFiles[0], "#4");
+		}
+
+		[Test]
+		public void MultiLineWarningIsReportedAsOneWarning()
+		{
+			CompilerParameters options = new CompilerParameters ();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = true;
+			options.TempFiles = new TempFileCollection (_tempDir);
+
+			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
+			CompilerResults results = compiler.CompileAssemblyFromSource (options,
+				_sourceLibrary3);
+
+			// verify compilation was successful
+			AssertCompileResults (results, true);
 		}
 
 		private static string CreateTempDirectory ()

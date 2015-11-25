@@ -52,6 +52,22 @@ namespace MonoTests.Monodoc.Ecma
 			Assert.AreEqual (expected, actual, "Converted URL differs");
 		}
 
+		void AssertEcmaString (string expected, EcmaDesc actual)
+		{
+			string actualString = actual.ToEcmaCref ();
+			Assert.AreEqual (expected, actualString);
+		}
+
+		IEnumerable<EcmaDesc> GenericTypeArgumentsList (params string[] parameters) 
+		{
+			foreach (var p in parameters)
+				yield return new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						TypeName = p,
+						Namespace = string.Empty
+					};
+		}
+
 		[Test]
 		public void CommonMethodUrlIsValidTest ()
 		{
@@ -454,38 +470,370 @@ namespace MonoTests.Monodoc.Ecma
 			AssertUrlDesc (ast, "P:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item(System.Int32)");
 		}
 
-		/*		[Test]
-		public void TreeParsabilityTest ()
+		[Test]
+		public void ToEcmaCref_Namespace ()
 		{
-			var rootTree = RootTree.LoadTree ("/home/jeremie/monodoc/");
-			Node result;
-			var generator = new CheckGenerator ();
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Namespace,
+				Namespace = "System.IO",
+			};
 
-			foreach (var leaf in GetLeaves (rootTree.RootNode).Where (IsEcmaNode))
-				AssertUrl (leaf.PublicUrl);
+			AssertEcmaString ("N:System.IO", actual);
 		}
 
-		IEnumerable<Node> GetLeaves (Node node)
+		[Test]
+		public void ToEcmaCref_SimpleType ()
 		{
-			if (node == null)
-				yield break;
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "System.IO",
+				TypeName = "Path",
+			};
 
-			if (node.IsLeaf)
-				yield return node;
-			else {
-				foreach (var child in node.Nodes) {
-					if (!string.IsNullOrEmpty (child.Element) && !child.Element.StartsWith ("root:/"))
-						yield return child;
-					foreach (var childLeaf in GetLeaves (child))
-						yield return childLeaf;
-				}
-			}
+			AssertEcmaString ("T:System.IO.Path", actual);
 		}
 
-		bool IsEcmaNode (Node node)
+		[Test]
+		public void ToEcmaCref_NestedType ()
 		{
-			var url = node.PublicUrl;
-			return url != null && url.Length > 2 && url[1] == ':';
-		}*/
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "TheNestedType",
+				},
+			};
+
+			AssertEcmaString ("T:System.IO.Path+TheNestedType", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_NestedType_FourDeep ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "Mono",
+				TypeName = "DocTest",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "NestedClass",
+					NestedType = new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						TypeName = "Double",
+						NestedType = new EcmaDesc {
+							DescKind = EcmaDesc.Kind.Type,
+							TypeName = "Triple",
+							NestedType = new EcmaDesc {
+								DescKind = EcmaDesc.Kind.Type,
+								TypeName = "Quadruple",
+							},
+						},
+					},
+				},
+			};
+
+			string targetUrl = "T:Mono.DocTest+NestedClass+Double+Triple+Quadruple";
+			AssertEcmaString (targetUrl, actual);
+			AssertUrlDesc (actual, targetUrl);
+		}
+
+		[Test]
+		public void ToEcmaCref_NestedType_Field ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Field,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "TheNestedType",
+				},
+				MemberName = "NestedField"
+			};
+
+			AssertEcmaString ("F:System.IO.Path+TheNestedType.NestedField", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_SimpleType_WithGenerics ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				GenericTypeArguments = GenericTypeArgumentsList ("K").ToArray ()
+			};
+
+			AssertEcmaString ("T:System.IO.Path<K>", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Nestedype_WithGenerics ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "TheNestedType",
+				},
+				GenericTypeArguments = GenericTypeArgumentsList ("K").ToArray ()
+			};
+
+			AssertEcmaString ("T:System.IO.Path<K>+TheNestedType", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Nestedype_WithGenericsOnBoth ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Type,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "TheNestedType",
+					GenericTypeArguments = GenericTypeArgumentsList ("T", "V").ToArray (),
+				},
+				GenericTypeArguments = GenericTypeArgumentsList ("K").ToArray ()
+			};
+
+			AssertEcmaString ("T:System.IO.Path<K>+TheNestedType<T,V>", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Nestedype_Property_WithGenericsOnBoth ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Property,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				NestedType = new EcmaDesc {
+					DescKind = EcmaDesc.Kind.Type,
+					TypeName = "TheNestedType",
+					GenericTypeArguments = GenericTypeArgumentsList ("T", "V").ToArray (),
+				},
+				GenericTypeArguments = GenericTypeArgumentsList ("K").ToArray (),
+				MemberName = "TheProperty"
+			};
+
+			AssertEcmaString ("P:System.IO.Path<K>+TheNestedType<T,V>.TheProperty", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Field ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Field,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				MemberName = "TheField"
+			};
+
+			AssertEcmaString ("F:System.IO.Path.TheField", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_ExplicitlyImplemented_Field ()
+		{
+			var explicitImpl = new EcmaDesc {
+				Namespace = "System.Web.SessionState",
+				TypeName = "IHttpSessionState",
+				MemberName = "Item",
+			};
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Field,
+				TypeName = "HttpSessionStateContainer",
+				Namespace = "System.Web.SessionState",
+				ExplicitImplMember = explicitImpl,
+			};
+			AssertEcmaString ("F:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item", actual);
+		}		
+
+		[Test]
+		public void ToEcmaCref_Property ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Property,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				MemberName = "TheProperty",
+			};
+
+			AssertEcmaString ("P:System.IO.Path.TheProperty", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_ExplicitlyImplemented_Property ()
+		{
+			var explicitImpl = new EcmaDesc {
+				Namespace = "System.Web.SessionState",
+				TypeName = "IHttpSessionState",
+				MemberName = "Item",
+			};
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Property,
+				TypeName = "HttpSessionStateContainer",
+				Namespace = "System.Web.SessionState",
+				ExplicitImplMember = explicitImpl,
+			};
+			AssertEcmaString ("P:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_ExplicitlyImplemented_Method ()
+		{
+			var explicitImpl = new EcmaDesc {
+				Namespace = "System.Web.SessionState",
+				TypeName = "IHttpSessionState",
+				MemberName = "Item",
+				MemberArguments = new [] {
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "System",
+						TypeName = "Int32",
+					},
+				},
+			};
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Method,
+				TypeName = "HttpSessionStateContainer",
+				Namespace = "System.Web.SessionState",
+				ExplicitImplMember = explicitImpl,
+			};
+			AssertEcmaString ("M:System.Web.SessionState.HttpSessionStateContainer$System.Web.SessionState.IHttpSessionState.Item(System.Int32)", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Event ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Event,
+				Namespace = "System.IO",
+				TypeName = "Path",
+				MemberName = "TheEvent",
+			};
+
+			AssertEcmaString ("E:System.IO.Path.TheEvent", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Operator ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Operator,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "Addition",
+			};
+
+			AssertEcmaString ("O:System.Int32.Addition", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Operator_Conversion ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Operator,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "ExplicitConversion",
+				MemberArguments = new [] { 
+					new EcmaDesc { 
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "System",
+						TypeName = "Double",
+					},
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "System",
+						TypeName = "Int32",
+					}
+				},
+			};
+
+			AssertEcmaString ("O:System.Int32.ExplicitConversion(System.Double,System.Int32)", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Method ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Method,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "Add"
+			};
+
+			AssertEcmaString ("M:System.Int32.Add", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Method_Parameters ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Method,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "Add",
+				MemberArguments = new [] { 
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "System",
+						TypeName = "Double",
+					},
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "System",
+						TypeName = "Int32",
+					},
+				},
+			};
+
+			AssertEcmaString ("M:System.Int32.Add(System.Double,System.Int32)", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Method_Generics ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Method,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "Add",
+				GenericMemberArguments = GenericTypeArgumentsList ("T", "K").ToArray (),
+			};
+
+			AssertEcmaString ("M:System.Int32.Add<T,K>", actual);
+		}
+
+		[Test]
+		public void ToEcmaCref_Method_Generics_PlusParameters ()
+		{
+			var actual = new EcmaDesc {
+				DescKind = EcmaDesc.Kind.Method,
+				Namespace = "System",
+				TypeName = "Int32",
+				MemberName = "Add",
+				GenericMemberArguments = GenericTypeArgumentsList ("T", "K").ToArray (),
+				MemberArguments = new [] { 
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "",
+						TypeName = "T",
+					},
+					new EcmaDesc {
+						DescKind = EcmaDesc.Kind.Type,
+						Namespace = "",
+						TypeName = "K",
+					},
+				},
+			};
+
+			AssertEcmaString ("M:System.Int32.Add<T,K>(T,K)", actual);
+		}
 	}
 }

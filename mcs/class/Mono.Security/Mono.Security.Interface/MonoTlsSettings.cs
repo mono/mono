@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
@@ -84,13 +85,31 @@ namespace Mono.Security.Interface
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
-		bool useServicePointManagerCallback = false;
+		bool useServicePointManagerCallback = true;
 		bool skipSystemValidators = false;
 		bool callbackNeedsChain = true;
 		ICertificateValidator certificateValidator;
 
 		public MonoTlsSettings ()
 		{
+		}
+
+		volatile static MonoTlsSettings defaultSettings;
+
+		public static MonoTlsSettings DefaultSettings {
+			get {
+				if (defaultSettings == null)
+					Interlocked.CompareExchange (ref defaultSettings, new MonoTlsSettings (), null);
+				return defaultSettings;
+			}
+			set {
+				defaultSettings = value ?? new MonoTlsSettings ();
+			}
+		}
+
+		public static MonoTlsSettings CopyDefaultSettings ()
+		{
+			return DefaultSettings.Clone ();
 		}
 
 		#region Private APIs
@@ -118,6 +137,11 @@ namespace Mono.Security.Interface
 			var copy = new MonoTlsSettings (this);
 			copy.certificateValidator = validator;
 			return copy;
+		}
+
+		public MonoTlsSettings Clone ()
+		{
+			return new MonoTlsSettings (this);
 		}
 
 		MonoTlsSettings (MonoTlsSettings other)

@@ -109,6 +109,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32TcpStatistics : TcpStatistics
 	{
 		Win32_MIB_TCPSTATS info;
@@ -193,6 +194,6 @@ namespace System.Net.NetworkInformation {
 		public uint OutRsts;
 		public uint NumConns;
 	}
-
+#endif
 }
 

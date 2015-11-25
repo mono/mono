@@ -18,8 +18,10 @@ using Mono.Security.X509.Extensions;
 #endif
 #if MONO_X509_ALIAS
 using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
 #else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
 #endif
 
 using System;
@@ -72,41 +74,55 @@ namespace Mono.Net.Security
 #endif
 		}
 
-		static X509Chain ComputeX509Chain (XX509CertificateCollection certs, ref SslPolicyErrors errors, ref int status11)
+		public static X509Chain CreateX509Chain (XX509CertificateCollection certs)
 		{
-#if MOBILE
-			return null;
-#else
-			if (is_macosx)
-				return null;
-
 			var chain = new X509Chain ();
 			chain.ChainPolicy = new X509ChainPolicy ();
 
+#if !MOBILE
 			chain.ChainPolicy.RevocationMode = revocation_mode;
+#endif
 
 			for (int i = 1; i < certs.Count; i++) {
 				chain.ChainPolicy.ExtraStore.Add (certs [i]);
 			}
 
+			return chain;
+		}
+
+		public static bool BuildX509Chain (XX509CertificateCollection certs, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+		{
+#if MOBILE
+			return true;
+#else
+			if (is_macosx)
+				return true;
+
 			var leaf = (X509Certificate2)certs [0];
 
+			bool ok;
 			try {
-				if (!chain.Build (leaf))
+				ok = chain.Build (leaf);
+				if (!ok)
 					errors |= GetErrorsFromChain (chain);
 			} catch (Exception e) {
 				Console.Error.WriteLine ("ERROR building certificate chain: {0}", e);
 				Console.Error.WriteLine ("Please, report this problem to the Mono team");
 				errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+				ok = false;
 			}
 
-			status11 = GetStatusFromChain (chain);
+			try {
+				status11 = GetStatusFromChain (chain);
+			} catch {
+				status11 = -2146762485; // TRUST_E_FAIL - generic
+			}
 
-			return chain;
+			return ok;
 #endif
 		}
 
-		static void CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
+		static bool CheckUsage (XX509CertificateCollection certs, string host, ref SslPolicyErrors errors, ref int status11)
 		{
 #if !MONOTOUCH
 			var leaf = (X509Certificate2)certs[0];
@@ -115,14 +131,17 @@ namespace Mono.Net.Security
 				if (!CheckCertificateUsage (leaf)) {
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
+					return false;
 				}
 
 				if (host != null && !CheckServerIdentity (leaf, host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
+					return false;
 				}
 			}
 #endif
+			return true;
 		}
 
 		static bool EvaluateSystem (XX509CertificateCollection certs, XX509CertificateCollection anchors, string host, X509Chain chain, ref SslPolicyErrors errors, ref int status11)
@@ -171,14 +190,10 @@ namespace Mono.Net.Security
 
 		public static bool Evaluate (
 			MonoTlsSettings settings, string host, XX509CertificateCollection certs,
-			ref X509Chain chain, ref SslPolicyErrors errors, ref int status11)
+			X509Chain chain, ref SslPolicyErrors errors, ref int status11)
 		{
-#if !MOBILE
-			if (NeedsChain (settings) && chain == null)
-				chain = ComputeX509Chain (certs, ref errors, ref status11);
-#endif
-
-			CheckUsage (certs, host, ref errors, ref status11);
+			if (!CheckUsage (certs, host, ref errors, ref status11))
+				return false;
 
 			if (settings != null && settings.SkipSystemValidators)
 				return false;

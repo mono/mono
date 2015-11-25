@@ -577,6 +577,7 @@ namespace System.Diagnostics {
 			}
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		private StreamReader error_stream=null;
 		bool error_stream_exposed;
 
@@ -648,6 +649,28 @@ namespace System.Diagnostics {
 				start_info = value;
 			}
 		}
+#else
+		[Obsolete ("Process.StandardError is not supported on the current platform.", true)]
+		public StreamReader StandardError {
+			get { throw new NotSupportedException ("Process.StandardError is not supported on the current platform."); }
+		}
+
+		[Obsolete ("Process.StandardInput is not supported on the current platform.", true)]
+		public StreamWriter StandardInput {
+			get { throw new NotSupportedException ("Process.StandardInput is not supported on the current platform."); }
+		}
+
+		[Obsolete ("Process.StandardOutput is not supported on the current platform.", true)]
+		public StreamReader StandardOutput {
+			get { throw new NotSupportedException ("Process.StandardOutput is not supported on the current platform."); }
+		}
+
+		[Obsolete ("Process.StartInfo is not supported on the current platform.", true)]
+		public ProcessStartInfo StartInfo {
+			get { throw new NotSupportedException ("Process.StartInfo is not supported on the current platform."); }
+			set { throw new NotSupportedException ("Process.StartInfo is not supported on the current platform."); }
+		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		/* Returns the process start time in Windows file
 		 * times (ticks from DateTime(1/1/1601 00:00 GMT))
@@ -895,6 +918,7 @@ namespace System.Diagnostics {
 			// the process (currently we have none).
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo,
 								   ref ProcInfo proc_info);
@@ -1191,6 +1215,43 @@ namespace System.Diagnostics {
 			psi.UseShellExecute = false;
 			return Start(psi);
 		}
+#else
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public bool Start ()
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public static Process Start (ProcessStartInfo startInfo)
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public static Process Start (string fileName)
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public static Process Start(string fileName, string arguments)
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public static Process Start(string fileName, string username, SecureString password, string domain)
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.Start is not supported on the current platform.", true)]
+		public static Process Start(string fileName, string arguments, string username, SecureString password, string domain)
+		{
+			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		public override string ToString()
 		{
@@ -1219,11 +1280,13 @@ namespace System.Diagnostics {
 			if (!WaitForExit_internal (process_handle, ms))
 				return false;
 
+#if MONO_FEATURE_PROCESS_START
 			if (async_output != null && !async_output.IsCompleted)
 				async_output.AsyncWaitHandle.WaitOne ();
 
 			if (async_error != null && !async_error.IsCompleted)
 				async_error.AsyncWaitHandle.WaitOne ();
+#endif // MONO_FEATURE_PROCESS_START
 
 			OnExited ();
 
@@ -1277,6 +1340,7 @@ namespace System.Diagnostics {
 				cb (this, new DataReceivedEventArgs (str));
 		}
 
+#if MONO_FEATURE_PROCESS_START
 		[Flags]
 		enum AsyncModes {
 			NoneYet = 0,
@@ -1465,6 +1529,31 @@ namespace System.Diagnostics {
 
 			error_canceled = true;
 		}
+#else
+		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
+		public void BeginOutputReadLine ()
+		{
+			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
+		public void CancelOutputRead ()
+		{
+			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
+		public void BeginErrorReadLine ()
+		{
+			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+		}
+
+		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
+		public void CancelErrorRead ()
+		{
+			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+		}
+#endif // MONO_FEATURE_PROCESS_START
 
 		[Category ("Behavior")]
 		[MonitoringDescription ("Raised when this process exits.")]
@@ -1497,6 +1586,7 @@ namespace System.Diagnostics {
 			// If this is a call to Dispose,
 			// dispose all managed resources.
 			if (disposing) {
+#if MONO_FEATURE_PROCESS_START
 				/* These have open FileStreams on the pipes we are about to close */
 				if (async_output != null)
 					async_output.Close ();
@@ -1518,6 +1608,7 @@ namespace System.Diagnostics {
 						error_stream.Close ();
 					error_stream = null;
 				}
+#endif // MONO_FEATURE_PROCESS_START
 			}
 
 			// Release unmanaged resources
@@ -1584,7 +1675,7 @@ namespace System.Diagnostics {
 			if (background_wait_for_exit_thread != null)
 				return;
 
-			Thread t = new Thread (_ => WaitForExit ());
+			Thread t = new Thread (_ => WaitForExit ()) { IsBackground = true };
 
 			if (Interlocked.CompareExchange (ref background_wait_for_exit_thread, t, null) == null)
 				t.Start ();

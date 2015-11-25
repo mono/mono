@@ -40,6 +40,16 @@ namespace Mono.Security.Providers.DotNet
 	 */
 	public class DotNetTlsProvider : MonoTlsProvider
 	{
+		static readonly Guid id = new Guid ("3a7b3a26-0dbd-4572-a5b8-fdce766bf0dd");
+
+		public override Guid ID {
+			get { return id; }
+		}
+
+		public override string Name {
+			get { return "dotnet"; }
+		}
+
 		public override bool SupportsSslStream {
 			get { return true; }
 		}

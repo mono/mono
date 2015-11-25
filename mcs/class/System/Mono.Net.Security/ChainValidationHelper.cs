@@ -49,8 +49,10 @@ using Mono.Security.X509.Extensions;
 #endif
 #if MONO_X509_ALIAS
 using XX509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using XX509Chain = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509Chain;
 #else
 using XX509CertificateCollection = System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+using XX509Chain = System.Security.Cryptography.X509Certificates.X509Chain;
 #endif
 
 using System;
@@ -154,8 +156,11 @@ namespace Mono.Net.Security
 			tlsStream = other.tlsStream;
 			request = other.request;
 
+			if (settings == null)
+				settings = MonoTlsSettings.DefaultSettings;
+
 			this.provider = provider;
-			this.settings = settings = settings.CloneWithValidator (this);
+			this.settings = settings.CloneWithValidator (this);
 			this.callbackWrapper = callbackWrapper;
 		}
 
@@ -168,6 +173,8 @@ namespace Mono.Net.Security
 
 		ChainValidationHelper (MonoTlsProvider provider, MonoTlsSettings settings, bool cloneSettings, MonoTlsStream stream, ServerCertValidationCallbackWrapper callbackWrapper)
 		{
+			if (settings == null)
+				settings = MonoTlsSettings.CopyDefaultSettings ();
 			if (cloneSettings)
 				settings = settings.CloneWithValidator (this);
 
@@ -307,17 +314,28 @@ namespace Mono.Net.Security
 			int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 			X509Chain chain = null;
 
+			bool wantsChain = SystemCertificateValidator.NeedsChain (settings);
+			if (!wantsChain && hasCallback) {
+				if (settings == null || settings.CallbackNeedsCertificateChain)
+					wantsChain = true;
+			}
+
+			if (wantsChain)
+				chain = SystemCertificateValidator.CreateX509Chain (certs);
+
+			if (wantsChain || SystemCertificateValidator.NeedsChain (settings))
+				SystemCertificateValidator.BuildX509Chain (certs, chain, ref errors, ref status11);
+
 			bool providerValidated = false;
 			if (provider != null && provider.HasCustomSystemCertificateValidator) {
-				if (SystemCertificateValidator.NeedsChain (settings))
-					throw new NotSupportedException ("Cannot use MonoTlsProvider.InvokeSystemCertificateValidator() when the X509Chain is required.");
 				var xerrors = (MonoSslPolicyErrors)errors;
-				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, out result, ref xerrors, ref status11);
+				var xchain = (XX509Chain)(object)chain;
+				providerValidated = provider.InvokeSystemCertificateValidator (this, host, server, certs, xchain, out result, ref xerrors, ref status11);
 				errors = (SslPolicyErrors)xerrors;
 			}
 
 			if (!providerValidated)
-				result = SystemCertificateValidator.Evaluate (settings, host, certs, ref chain, ref errors, ref status11);
+				result = SystemCertificateValidator.Evaluate (settings, host, certs, chain, ref errors, ref status11);
 
 			if (policy != null && (!(policy is DefaultCertificatePolicy) || certValidationCallback == null)) {
 				ServicePoint sp = null;
@@ -343,14 +361,11 @@ namespace Mono.Net.Security
 			return new ValidationResult (result, user_denied, status11, (MonoSslPolicyErrors)errors);
 		}
 
-		public bool InvokeSystemValidator (string targetHost, bool serverMode, XX509CertificateCollection certificates, ref MonoSslPolicyErrors xerrors, ref int status11)
+		public bool InvokeSystemValidator (string targetHost, bool serverMode, XX509CertificateCollection certificates, XX509Chain xchain, ref MonoSslPolicyErrors xerrors, ref int status11)
 		{
-			if (SystemCertificateValidator.NeedsChain (settings))
-				throw new NotSupportedException ("Cannot use ICertificateValidator.InvokeSystemValidator() when the X509Chain is required.");
-
-			X509Chain chain = null;
+			X509Chain chain = (X509Chain)(object)xchain;
 			var errors = (SslPolicyErrors)xerrors;
-			var result = SystemCertificateValidator.Evaluate (settings, targetHost, certificates, ref chain, ref errors, ref status11);
+			var result = SystemCertificateValidator.Evaluate (settings, targetHost, certificates, chain, ref errors, ref status11);
 			xerrors = (MonoSslPolicyErrors)errors;
 			return result;
 		}

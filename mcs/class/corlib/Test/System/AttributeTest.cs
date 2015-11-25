@@ -836,6 +836,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		// The linker removes the serializable attribute
+		[Category ("MobileNotWorking")]
 		public void OrderIsImportant ()
 		{
 			var custom = typeof (ClassForOrderIsImportant).GetCustomAttributes (false);

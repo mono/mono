@@ -7,6 +7,7 @@
 ../../../external/ikdasm/Program.cs
 ../../../external/ikdasm/Util.cs
 ../../../external/ikdasm/VTableFixups.cs
+../../../external/ikdasm/TableDumper.cs
 
 ../../../external/ikvm/reflect/*.cs
 ../../../external/ikvm/reflect/Emit/*.cs

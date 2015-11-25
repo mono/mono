@@ -111,6 +111,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
+#if !MOBILE
 		public static UnicastIPAddressInformationCollection Win32FromUnicast (int ifIndex, IntPtr ptr)
 		{
 			UnicastIPAddressInformationImplCollection c = new UnicastIPAddressInformationImplCollection (false);
@@ -122,6 +123,7 @@ namespace System.Net.NetworkInformation {
 			c.is_readonly = true;
 			return c;
 		}
+#endif
 
 		public static UnicastIPAddressInformationCollection LinuxFromList (List<IPAddress> addresses)
 		{

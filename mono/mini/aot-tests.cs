@@ -5,18 +5,19 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 /*
  * Regression tests for the AOT/FULL-AOT code.
  */
 
-#if MOBILE
+#if __MOBILE__
 class AotTests
 #else
 class Tests
 #endif
 {
-#if !MOBILE
+#if !__MOBILE__
 	static int Main (String[] args) {
 		return TestDriver.RunTests (typeof (Tests), args);
 	}
@@ -291,4 +292,35 @@ class Tests
 			return 1;
 		return 0;
 	}
+
+	enum LongEnum : ulong {
+		A = 1
+			}
+
+	public static int test_0_long_enum_eq_comparer () {
+		var c = EqualityComparer<LongEnum>.Default;
+		c.GetHashCode (LongEnum.A);
+		return 0;
+	}
+
+	public static int test_0_array_accessor_runtime_invoke_ref () {
+		var t = typeof (string[]);
+		var arr = Array.CreateInstance (typeof (string), 1);
+		arr.GetType ().GetMethod ("Set").Invoke (arr, new object [] { 0, "A" });
+		var res = (string)arr.GetType ().GetMethod ("Get").Invoke (arr, new object [] { 0 });
+		if (res != "A")
+			return 1;
+		return 0;
+	}
+
+	public static void SetArrayValue_<T> (T[] values) {
+		values.Select (x => x).ToArray ();
+	}
+
+	public static int test_0_delegate_invoke_wrappers_gsharedvt () {
+		var enums = new LongEnum [] { LongEnum.A };
+		SetArrayValue_ (enums);
+		return 0;
+	}
+
 }

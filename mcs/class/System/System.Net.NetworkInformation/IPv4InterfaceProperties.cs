@@ -137,6 +137,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 	
+#if !MOBILE
 	sealed class Win32IPv4InterfaceProperties : IPv4InterfaceProperties
 	{
 		[DllImport ("iphlpapi.dll")]
@@ -198,5 +199,6 @@ namespace System.Net.NetworkInformation {
 		public IntPtr CurrentDnsServer; // to Win32_IP_ADDR_STRING
 		public Win32_IP_ADDR_STRING DnsServerList;
 	}
+#endif
 }
 

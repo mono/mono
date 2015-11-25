@@ -142,6 +142,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
+#if !MOBILE
 	class Win32IPGlobalStatistics : IPGlobalStatistics 
 	{
 		Win32_MIB_IPSTATS info;
@@ -218,7 +219,7 @@ namespace System.Net.NetworkInformation {
 			get { return info.InUnknownProtos; }
 		}
 	}
-
+	
 	[StructLayout (LayoutKind.Sequential)]
 	struct Win32_MIB_IPSTATS
 	{
@@ -246,5 +247,6 @@ namespace System.Net.NetworkInformation {
 		public int NumAddr;
 		public int NumRoutes;
 	}
+#endif
 }
 

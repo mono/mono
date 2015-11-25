@@ -105,7 +105,11 @@ namespace MonoTests.System.Net
 					tcpListener = null;
 					if (listenSocket != null)
 						listenSocket.Close ();
+#if MONO_FEATURE_THREAD_ABORT
 					listenThread.Abort ();
+#else
+					listenThread.Interrupt ();
+#endif
 					listenThread.Join ();
 					listenThread = null;
 					Thread.Sleep (50);
@@ -127,12 +131,16 @@ namespace MonoTests.System.Net
 					}
 				} catch (SocketException ex) {
 					// ignore interruption of blocking call
-					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS)
+					if (ex.ErrorCode != SOCKET_CLOSED && ex.ErrorCode != SOCKET_INVALID_ARGS && _state != STATE_STOPPED)
 						throw;
 				} catch (ObjectDisposedException ex) {
 					Console.WriteLine (ex);
 					if (_state != STATE_STOPPED)
 						throw;
+#if !MONO_FEATURE_THREAD_ABORT
+				} catch (ThreadInterruptedException) {
+					break;
+#endif
 #if MOBILE
 				} catch (InvalidOperationException ex) {
 					// This breaks some tests running on Android. The problem is that the stack trace
@@ -142,7 +150,15 @@ namespace MonoTests.System.Net
 					Console.WriteLine (ex);
 #endif
 				} finally {
+#if MONO_FEATURE_THREAD_ABORT
 					Thread.Sleep (500);
+#else
+					try {
+						Thread.Sleep (500);
+					} catch (ThreadInterruptedException) {
+						// nothing to do
+					}
+#endif
 					if (listenSocket != null)
 						listenSocket.Close ();
 				}

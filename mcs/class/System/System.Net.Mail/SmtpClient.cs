@@ -1161,7 +1161,7 @@ try {
 
 #if SECURITY_DEP
 			var tlsProvider = MonoTlsProviderFactory.GetProviderInternal ();
-			var settings = new MSI.MonoTlsSettings ();
+			var settings = MSI.MonoTlsSettings.CopyDefaultSettings ();
 			settings.UseServicePointManagerCallback = true;
 			var sslStream = tlsProvider.CreateSslStream (stream, false, settings);
 			CheckCancellation ();

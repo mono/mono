@@ -67,6 +67,7 @@
 #include "debugger-agent.h"
 #include "seq-points.h"
 #include "llvm-runtime.h"
+#include "mini-llvm.h"
 
 #ifdef ENABLE_LLVM
 #include "mini-llvm-cpp.h"
@@ -2912,6 +2913,9 @@ uint64_t c, struct _Unwind_Exception *d, struct _Unwind_Context *e)
 	g_assert_not_reached ();
 }
 #else
+void
+mono_debug_personality (void);
+
 void
 mono_debug_personality (void)
 {

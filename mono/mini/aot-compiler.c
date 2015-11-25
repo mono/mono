@@ -56,6 +56,7 @@
 #include "image-writer.h"
 #include "dwarfwriter.h"
 #include "mini-gc.h"
+#include "mini-llvm.h"
 
 #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT)
 
@@ -4482,6 +4483,26 @@ add_generic_instances (MonoAotCompile *acfg)
 		if (klass)
 			add_instances_of (acfg, klass, insts, ninsts, TRUE);
 
+		/* Add an instance of LongEnumEqualityComparer<long/ulong> which is created by EqualityComparer<T> for enums */
+		{
+			MonoClass *enum_comparer;
+			MonoGenericContext ctx;
+			MonoType *args [16];
+
+			enum_comparer = mono_class_from_name (mono_defaults.corlib, "System.Collections.Generic", "LongEnumEqualityComparer`1");
+			g_assert (enum_comparer);
+
+			memset (&ctx, 0, sizeof (ctx));
+			args [0] = &mono_defaults.int64_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (enum_comparer, &ctx), FALSE, "EqualityComparer<T>");
+
+			memset (&ctx, 0, sizeof (ctx));
+			args [0] = &mono_defaults.uint64_class->byval_arg;
+			ctx.class_inst = mono_metadata_get_generic_inst (1, args);
+			add_generic_class (acfg, mono_class_inflate_generic_class (enum_comparer, &ctx), FALSE, "EqualityComparer<T>");
+		}
+
 		/* Add instances of the array generic interfaces for primitive types */
 		/* This will add instances of the InternalArray_ helper methods in Array too */
 		klass = mono_class_from_name (acfg->image, "System.Collections.Generic", "ICollection`1");
@@ -4556,6 +4577,30 @@ add_generic_instances (MonoAotCompile *acfg)
 					}
 				}
 			}
+		}
+
+		/* object[] accessor wrappers. */
+		{
+			MonoClass *obj_array_class = mono_array_class_get (mono_defaults.object_class, 1);
+			MonoMethod *m;
+
+			m = mono_class_get_method_from_name (obj_array_class, "Get", 1);
+			g_assert (m);
+
+			m = mono_marshal_get_array_accessor_wrapper (m);
+			add_extra_method (acfg, m);
+
+			m = mono_class_get_method_from_name (obj_array_class, "Address", 1);
+			g_assert (m);
+
+			m = mono_marshal_get_array_accessor_wrapper (m);
+			add_extra_method (acfg, m);
+
+			m = mono_class_get_method_from_name (obj_array_class, "Set", 2);
+			g_assert (m);
+
+			m = mono_marshal_get_array_accessor_wrapper (m);
+			add_extra_method (acfg, m);
 		}
 	}
 }

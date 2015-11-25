@@ -11,7 +11,13 @@ ifdef MOBILE_STATIC
 LIB_MCS_FLAGS += -d:IOS_REFLECTION
 endif
 
+ifndef NO_THREAD_ABORT
+REFERENCE_SOURCES_FLAGS += -d:MONO_FEATURE_THREAD_ABORT
+endif
+
 TEST_MCS_FLAGS = -r:System.Core.dll
+
+LIB_MCS_FLAGS += $(REFERENCE_SOURCES_FLAGS)
 
 include ../../build/library.make
 

@@ -47,6 +47,9 @@ using System.Security;
 using System.Linq;
 using System.Resources;
 
+// Used by GetType_TypeForwarder_Nested ()
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Globalization.CultureInfo))]
+
 namespace MonoTests.System.Reflection
 {
 	[TestFixture]
@@ -163,6 +166,14 @@ namespace MonoTests.System.Reflection
 			Assert.IsNull (type, "#B1");
 			type = a.GetType (typeName, false, true);
 			Assert.IsNull (type, "#B2");
+		}
+
+		[Test]
+		public void GetType_TypeForwarder_Nested () {
+			// System.Globalization is a PCL assembly
+			Type t = typeof (AssemblyTest).Assembly.GetType ("System.Globalization.CultureInfo/Data");
+			Assert.IsNotNull (t);
+			Assert.AreEqual ("System.Globalization.CultureInfo+Data", t.FullName);
 		}
 
 		[Test]
