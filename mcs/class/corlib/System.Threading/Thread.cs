@@ -503,7 +503,7 @@ namespace System.Threading {
 		}
 
 		[Obsolete ("Thread.ResetAbort is not supported on the current platform.", true)]
-		public void ResetAbort ()
+		public static void ResetAbort ()
 		{
 			throw new NotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
 		}
