@@ -795,10 +795,18 @@ version.h: Makefile
 			LANG=C; export LANG; \
 			branch=`git branch | grep '^\*' | sed 's/(detached from .*/explicit/' | cut -d ' ' -f 2`; \
 			version=`git log --no-color --first-parent -n1 --pretty=format:%h`; \
+			echo "#ifdef _MSC_VER"; \
+			echo "#define FULL_VERSION \"$$branch/$$version built by Visual Studio\""; \
+			echo "#else"; \
 			echo "#define FULL_VERSION \"$$branch/$$version\""; \
+			echo "#endif"; \
 		); \
 	else \
+		echo "#ifdef _MSC_VER"; \
 		echo "#define FULL_VERSION \"tarball\""; \
+		echo "#else"; \
+		echo "#define FULL_VERSION \"tarball built by Visual Studio\""; \
+		echo "#endif"; \
 	fi > version.h
 
 # Utility target for patching libtool to speed up linking
