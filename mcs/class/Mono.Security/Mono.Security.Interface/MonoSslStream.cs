@@ -36,167 +36,152 @@ using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
-	public abstract class MonoSslStream : IDisposable
+	public interface IMonoSslStream : IDisposable
 	{
-		public abstract void AuthenticateAsClient (string targetHost);
+		void AuthenticateAsClient (string targetHost);
 
-		public abstract void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
-		public abstract IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract void EndAuthenticateAsClient (IAsyncResult asyncResult);
+		void EndAuthenticateAsClient (IAsyncResult asyncResult);
 
-		public abstract void AuthenticateAsServer (X509Certificate serverCertificate);
+		void AuthenticateAsServer (X509Certificate serverCertificate);
 
-		public abstract void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
-		public abstract IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract void EndAuthenticateAsServer (IAsyncResult asyncResult);
+		void EndAuthenticateAsServer (IAsyncResult asyncResult);
 
-		public abstract Task AuthenticateAsClientAsync (string targetHost);
+		Task AuthenticateAsClientAsync (string targetHost);
 
-		public abstract Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
-		public abstract Task AuthenticateAsServerAsync (X509Certificate serverCertificate);
+		Task AuthenticateAsServerAsync (X509Certificate serverCertificate);
 
-		public abstract Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
+		Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SSA.SslProtocols enabledSslProtocols, bool checkCertificateRevocation);
 
-		public abstract void Flush ();
+		void Flush ();
 
-		public abstract int Read (byte[] buffer, int offset, int count);
+		int Read (byte[] buffer, int offset, int count);
 
-		public abstract void Write (byte[] buffer);
+		void Write (byte[] buffer);
 
-		public abstract void Write (byte[] buffer, int offset, int count);
+		void Write (byte[] buffer, int offset, int count);
 
-		public abstract IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract int EndRead (IAsyncResult asyncResult);
+		int EndRead (IAsyncResult asyncResult);
 
-		public abstract IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);
+		IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState);
 
-		public abstract void EndWrite (IAsyncResult asyncResult);
+		void EndWrite (IAsyncResult asyncResult);
 
-		public abstract TransportContext TransportContext {
+		TransportContext TransportContext {
 			get;
 		}
 
-		public abstract bool IsAuthenticated {
+		bool IsAuthenticated {
 			get;
 		}
 
-		public abstract bool IsMutuallyAuthenticated {
+		bool IsMutuallyAuthenticated {
 			get;
 		}
 
-		public abstract bool IsEncrypted {
+		bool IsEncrypted {
 			get;
 		}
 
-		public abstract bool IsSigned {
+		bool IsSigned {
 			get;
 		}
 
-		public abstract bool IsServer {
+		bool IsServer {
 			get;
 		}
 
-		public abstract SSA.CipherAlgorithmType CipherAlgorithm {
+		SSA.CipherAlgorithmType CipherAlgorithm {
 			get;
 		}
 
-		public abstract int CipherStrength {
+		int CipherStrength {
 			get;
 		}
 
-		public abstract SSA.HashAlgorithmType HashAlgorithm {
+		SSA.HashAlgorithmType HashAlgorithm {
 			get;
 		}
 
-		public abstract int HashStrength {
+		int HashStrength {
 			get;
 		}
 
-		public abstract SSA.ExchangeAlgorithmType KeyExchangeAlgorithm {
+		SSA.ExchangeAlgorithmType KeyExchangeAlgorithm {
 			get;
 		}
 
-		public abstract int KeyExchangeStrength {
+		int KeyExchangeStrength {
 			get;
 		}
 
-		public abstract bool CanRead {
+		bool CanRead {
 			get;
 		}
 
-		public abstract bool CanTimeout {
+		bool CanTimeout {
 			get;
 		}
 
-		public abstract bool CanWrite {
+		bool CanWrite {
 			get;
 		}
 
-		public abstract long Length {
+		long Length {
 			get;
 		}
 
-		public abstract long Position {
+		long Position {
 			get;
 		}
 
-		public abstract void SetLength (long value);
+		void SetLength (long value);
 
-		public abstract AuthenticatedStream AuthenticatedStream {
+		AuthenticatedStream AuthenticatedStream {
 			get;
 		}
 
-		public abstract int ReadTimeout {
+		int ReadTimeout {
 			get; set;
 		}
 
-		public abstract int WriteTimeout {
+		int WriteTimeout {
 			get; set;
 		}
 
-		public abstract bool CheckCertRevocationStatus {
+		bool CheckCertRevocationStatus {
 			get;
 		}
 
-		public abstract X509Certificate InternalLocalCertificate {
+		X509Certificate InternalLocalCertificate {
 			get;
 		}
 
-		public abstract X509Certificate LocalCertificate {
+		X509Certificate LocalCertificate {
 			get;
 		}
 
-		public abstract X509Certificate RemoteCertificate {
+		X509Certificate RemoteCertificate {
 			get;
 		}
 
-		public abstract SSA.SslProtocols SslProtocol {
+		SSA.SslProtocols SslProtocol {
 			get;
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-		}
-
-		~MonoSslStream ()
-		{
-			Dispose (false);
 		}
 	}
 }

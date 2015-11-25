@@ -66,7 +66,7 @@ namespace Mono.Security.Providers.DotNet
 			get { return (SslProtocols)ServicePointManager.SecurityProtocol; }
 		}
 
-		public override MonoSslStream CreateSslStream (
+		public override IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{

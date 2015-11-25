@@ -104,10 +104,10 @@ namespace Mono.Security.Interface
 		}
 
 		/*
-		 * Obtain a @MonoSslStream instance.
+		 * Obtain a @IMonoSslStream instance.
 		 *
 		 */
-		public abstract MonoSslStream CreateSslStream (
+		public abstract IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null);
 

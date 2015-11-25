@@ -104,7 +104,7 @@ artifacts = $(system_library_deps) 			\
 
 .NOTPARALLEL: $(system_library_deps)
 
-$(the_libdir_base)System.dll: $(system_library_deps) 
+$(the_libdir_base)System.dll: $(system_library_deps) ../Mono.Security/Makefile
 
 ifeq (bare/,$(intermediate))
 build-bare:

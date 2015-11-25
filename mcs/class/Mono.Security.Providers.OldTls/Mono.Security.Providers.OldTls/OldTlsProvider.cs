@@ -30,7 +30,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Interface;
-using Mono.Net.Security;
+using MNS = Mono.Net.Security;
 
 namespace Mono.Security.Providers.OldTls
 {
@@ -62,12 +62,12 @@ namespace Mono.Security.Providers.OldTls
 			get { return SslProtocols.Tls; }
 		}
 
-		public override MonoSslStream CreateSslStream (
+		public override IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			var impl = new LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
-			return new MonoSslStreamImpl (impl);
+			var impl = new MNS.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
+			return new MNS.MonoSslStreamImpl (impl);
 		}
 
 		public override IMonoTlsContext CreateTlsContext (
