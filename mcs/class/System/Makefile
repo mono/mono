@@ -126,7 +126,7 @@ $(the_libdir_base)System.Xml.dll:
 $(bare_libdir)/System.Xml.dll:
 	(cd ../System.XML; $(MAKE) $@)
 
-$(the_libdir_base)Mono.Security.dll:
+$(the_libdir_base)Mono.Security.dll: ../Mono.Security/Makefile
 	(cd ../Mono.Security; $(MAKE))
 
 $(the_libdir_base)System.Configuration.dll:
