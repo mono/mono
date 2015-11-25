@@ -37,6 +37,7 @@ namespace System.Windows.Forms
     /// </devdoc>
     internal static class SecurityUtils {
 
+#if !DISABLE_CAS_USE
         private static volatile ReflectionPermission memberAccessPermission = null;
         private static volatile ReflectionPermission restrictedMemberAccessPermission = null;
 
@@ -58,24 +59,30 @@ namespace System.Windows.Forms
                 return restrictedMemberAccessPermission;
             }
         }
+#endif
 
         private static void DemandReflectionAccess(Type type) {
+#if !DISABLE_CAS_USE
             try {
                 MemberAccessPermission.Demand();
             }
             catch (SecurityException) {
                 DemandGrantSet(type.Assembly);
             }
+#endif
         }
 
         [SecuritySafeCritical]
         private static void DemandGrantSet(Assembly assembly) {
+#if !DISABLE_CAS_USE
             PermissionSet targetGrantSet = assembly.PermissionSet;
             targetGrantSet.AddPermission(RestrictedMemberAccessPermission);
             targetGrantSet.Demand();
+#endif
         }
 
         private static bool HasReflectionPermission(Type type) {
+#if !DISABLE_CAS_USE
             try {
                 DemandReflectionAccess(type);
                 return true;
@@ -84,6 +91,9 @@ namespace System.Windows.Forms
             }
 
             return false;
+#else
+            return true;
+#endif
         }
 
        

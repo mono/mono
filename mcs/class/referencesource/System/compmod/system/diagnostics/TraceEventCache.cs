@@ -30,9 +30,10 @@ namespace System.Diagnostics {
             get {
                 if (stackTrace == null)
                     stackTrace = Environment.StackTrace;
+#if !DISABLE_CAS_USE
                 else
                     new EnvironmentPermission(PermissionState.Unrestricted).Demand();
-
+#endif
                 return stackTrace;
             }
         }
@@ -76,9 +77,10 @@ namespace System.Diagnostics {
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         private static void InitProcessInfo() {
+#if !DISABLE_CAS_USE
             // Demand unmanaged code permission
             new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
-
+#endif
             if (processName == null) {
                 Process p = Process.GetCurrentProcess();
                 try {

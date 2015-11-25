@@ -494,8 +494,10 @@ namespace System.Runtime.Serialization
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void GetObjectData(ISerializable obj, SerializationInfo serInfo, StreamingContext context)
         {
+#if !DISABLE_CAS_USE
             // Demand the serialization formatter permission every time
             Globals.SerializationFormatterPermission.Demand();
+#endif
             obj.GetObjectData(serInfo, context);
         }
 

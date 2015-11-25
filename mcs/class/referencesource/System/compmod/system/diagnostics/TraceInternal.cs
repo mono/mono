@@ -62,7 +62,9 @@ namespace System.Diagnostics {
         internal static string AppName {
             get {
                 if (appName == null) {
+#if !DISABLE_CAS_USE
                     new EnvironmentPermission(EnvironmentPermissionAccess.Read, "Path").Assert();
+#endif
                     appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
                 }
                 return appName;

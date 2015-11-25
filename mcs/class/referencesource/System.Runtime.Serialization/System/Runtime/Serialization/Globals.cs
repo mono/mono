@@ -1105,6 +1105,7 @@ namespace System.Runtime.Serialization
             }
         }
 
+#if !DISABLE_CAS_USE
         [Fx.Tag.SecurityNote(Critical = "Holds instance of SecurityPermission that we will Demand for SerializationFormatter."
             + " Should not be modified to something else.")]
         [SecurityCritical]
@@ -1136,7 +1137,7 @@ namespace System.Runtime.Serialization
                 return memberAccessPermission;
             }
         }
-
+#endif
 
         public const bool DefaultIsRequired = false;
         public const bool DefaultEmitDefaultValue = true;

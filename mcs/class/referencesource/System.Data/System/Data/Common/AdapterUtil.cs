@@ -2120,6 +2120,7 @@ namespace System.Data.Common {
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal Stream GetFileStream(string filename) {
+#if !DISABLE_CAS_USE
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert();
             try {
                 return new FileStream(filename,FileMode.Open,FileAccess.Read,FileShare.Read);
@@ -2127,11 +2128,15 @@ namespace System.Data.Common {
             finally {
                 FileIOPermission.RevertAssert();
             }
+#else
+            return new FileStream(filename,FileMode.Open,FileAccess.Read,FileShare.Read);
+#endif
         }
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         static internal FileVersionInfo GetVersionInfo(string filename) {
+#if !DISABLE_CAS_USE
             (new FileIOPermission(FileIOPermissionAccess.Read, filename)).Assert(); // MDAC 62038
             try {
                 return FileVersionInfo.GetVersionInfo(filename); // MDAC 60411
@@ -2139,7 +2144,11 @@ namespace System.Data.Common {
             finally {
                 FileIOPermission.RevertAssert();
             }
+#else
+            return FileVersionInfo.GetVersionInfo(filename); // MDAC 60411
+#endif
         }
+
 #if MOBILE
         static internal object LocalMachineRegistryValue(string subkey, string queryvalue) {
             return null;
