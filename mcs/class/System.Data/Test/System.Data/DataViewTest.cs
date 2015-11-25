@@ -983,6 +983,7 @@ table was set.
 			eventWriter.WriteLine (" add a column with an empty name.");
 
 			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
+			GC.KeepAlive (dv);
 		}
 
 		public class ComplexEventSequence1View : DataView
