@@ -392,21 +392,48 @@ namespace MonoTests.System.Net.Mail
 		[Test]
 		public void Deliver_Async ()
 		{
-			var server = new SmtpServer ();
-			var client = new SmtpClient ("localhost", server.EndPoint.Port);
-			var msg = new MailMessage ("foo@example.com", "bar@example.com", "hello", "howdydoo\r\n");
+			// SmtpClient uses BackgroundWorker and listens for the RunWorkerCompleted
+			// to mark an async task as completed. The problem is that BackgroundWorker uses
+			// System.ComponentModel.AsyncOperationManager to get the synchronization
+			// context, and in monotouch that returns by default a synchronization
+			// context for the main thread. Since tests are also run on the main thread,
+			// we'll block the main thread while waiting for the async send to complete,
+			// while the async completion is waiting for the main thread to process it.
+			// So instead use a SynchronizationContext that uses the threadpool instead
+			// of the main thread.
+			var existing_context = global::System.ComponentModel.AsyncOperationManager.SynchronizationContext;
+			global::System.ComponentModel.AsyncOperationManager.SynchronizationContext = new ThreadPoolSynchronizationContext ();
+			try {
+				var server = new SmtpServer ();
+				var client = new SmtpClient ("localhost", server.EndPoint.Port);
+				var msg = new MailMessage ("foo@example.com", "bar@example.com", "hello", "howdydoo\r\n");
 
-			Thread t = new Thread (server.Run);
-			t.Start ();
-			var task = client.SendMailAsync (msg);
-			t.Join ();
+				Thread t = new Thread (server.Run);
+				t.Start ();
+				var task = client.SendMailAsync (msg);
+				t.Join ();
 
-			Assert.AreEqual ("<foo@example.com>", server.mail_from);
-			Assert.AreEqual ("<bar@example.com>", server.rcpt_to);
+				Assert.AreEqual ("<foo@example.com>", server.mail_from);
+				Assert.AreEqual ("<bar@example.com>", server.rcpt_to);
 
-			Assert.IsTrue (task.Wait (1000));
-			Assert.IsTrue (task.IsCompleted, "task");
+				Assert.IsTrue (task.Wait (1000));
+				Assert.IsTrue (task.IsCompleted, "task");
+			} finally {
+				global::System.ComponentModel.AsyncOperationManager.SynchronizationContext = existing_context;
+			}
 		}
 
+		internal class ThreadPoolSynchronizationContext : SynchronizationContext
+		{
+			public override void Post (SendOrPostCallback d, object state)
+			{
+				ThreadPool.QueueUserWorkItem ((v) => d (state));
+			}
+
+			public override void Send (SendOrPostCallback d, object state)
+			{
+				d (state);
+			}
+		}
 	}
 }
