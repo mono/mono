@@ -21,10 +21,10 @@
 #include <mono/utils/mono-logger-internals.h>
 
 static void event_signal(gpointer handle);
-static gboolean event_own (gpointer handle);
+static gboolean event_own (gpointer handle, guint32 *statuscode);
 
 static void namedevent_signal (gpointer handle);
-static gboolean namedevent_own (gpointer handle);
+static gboolean namedevent_own (gpointer handle, guint32 *statuscode);
 
 struct _WapiHandleOps _wapi_event_ops = {
 	NULL,			/* close */
@@ -94,11 +94,13 @@ static void event_signal(gpointer handle)
 	SetEvent(handle);
 }
 
-static gboolean event_own (gpointer handle)
+static gboolean event_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_event *event_handle;
 	gboolean ok;
-	
+
+	*statuscode = WAIT_OBJECT_0;
+
 	ok=_wapi_lookup_handle (handle, WAPI_HANDLE_EVENT,
 				(gpointer *)&event_handle);
 	if(ok==FALSE) {
@@ -126,10 +128,12 @@ static void namedevent_signal (gpointer handle)
 }
 
 /* NB, always called with the shared handle lock held */
-static gboolean namedevent_own (gpointer handle)
+static gboolean namedevent_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_namedevent *namedevent_handle;
 	gboolean ok;
+
+	*statuscode = WAIT_OBJECT_0;
 	
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: owning named event handle %p", __func__, handle);
 

@@ -22,11 +22,11 @@
 #include <mono/utils/mono-logger-internals.h>
 
 static void mutex_signal(gpointer handle);
-static gboolean mutex_own (gpointer handle);
+static gboolean mutex_own (gpointer handle, guint32 *statuscode);
 static gboolean mutex_is_owned (gpointer handle);
 
 static void namedmutex_signal (gpointer handle);
-static gboolean namedmutex_own (gpointer handle);
+static gboolean namedmutex_own (gpointer handle, guint32 *statuscode);
 static gboolean namedmutex_is_owned (gpointer handle);
 static void namedmutex_prewait (gpointer handle);
 
@@ -97,7 +97,7 @@ static void mutex_signal(gpointer handle)
 	ReleaseMutex(handle);
 }
 
-static gboolean mutex_own (gpointer handle)
+static gboolean mutex_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_mutex *mutex_handle;
 	gboolean ok;
@@ -119,6 +119,14 @@ static gboolean mutex_own (gpointer handle)
 	mutex_handle->pid = _wapi_getpid ();
 	mutex_handle->tid = pthread_self ();
 	mutex_handle->recursion++;
+	if (mutex_handle->abandoned)
+	{
+		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: mutex handle %p was abandoned", __func__, handle);
+		mutex_handle->abandoned = FALSE;
+		*statuscode = WAIT_ABANDONED_0;
+	}
+	else
+		*statuscode = WAIT_OBJECT_0;
 
 	MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: mutex handle %p locked %d times by %d:%ld", __func__,
 		   handle, mutex_handle->recursion, mutex_handle->pid,
@@ -162,7 +170,7 @@ static void namedmutex_signal (gpointer handle)
 }
 
 /* NB, always called with the shared handle lock held */
-static gboolean namedmutex_own (gpointer handle)
+static gboolean namedmutex_own (gpointer handle, guint32 *statuscode)
 {
 	struct _WapiHandle_namedmutex *namedmutex_handle;
 	gboolean ok;
@@ -182,6 +190,14 @@ static gboolean namedmutex_own (gpointer handle)
 	namedmutex_handle->pid = _wapi_getpid ();
 	namedmutex_handle->tid = pthread_self ();
 	namedmutex_handle->recursion++;
+	if (namedmutex_handle->abandoned)
+	{
+		MONO_TRACE (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: mutex handle %p was abandoned", __func__, handle);
+		namedmutex_handle->abandoned = FALSE;
+		*statuscode = WAIT_ABANDONED_0;
+	}
+	else
+		*statuscode = WAIT_OBJECT_0;
 
 	_wapi_shared_handle_set_signal_state (handle, FALSE);
 
@@ -302,6 +318,7 @@ static void mutex_abandon (gpointer handle, pid_t pid, pthread_t tid)
 		mutex_handle->recursion = 0;
 		mutex_handle->pid = 0;
 		mutex_handle->tid = 0;
+		mutex_handle->abandoned = TRUE;
 		
 		_wapi_handle_set_signal_state (handle, TRUE, FALSE);
 	}
@@ -334,6 +351,7 @@ static void namedmutex_abandon (gpointer handle, pid_t pid, pthread_t tid)
 		mutex_handle->recursion = 0;
 		mutex_handle->pid = 0;
 		mutex_handle->tid = 0;
+		mutex_handle->abandoned = TRUE;
 		
 		_wapi_shared_handle_set_signal_state (handle, TRUE);
 	}
@@ -364,6 +382,7 @@ static gpointer mutex_create (WapiSecurityAttributes *security G_GNUC_UNUSED,
 	struct _WapiHandle_mutex mutex_handle = {0};
 	gpointer handle;
 	int thr_ret;
+	guint32 dummy;
 	
 	/* Need to blow away any old errors here, because code tests
 	 * for ERROR_ALREADY_EXISTS on success (!) to see if a mutex
@@ -384,7 +403,7 @@ static gpointer mutex_create (WapiSecurityAttributes *security G_GNUC_UNUSED,
 	g_assert (thr_ret == 0);
 	
 	if(owned==TRUE) {
-		mutex_own (handle);
+		mutex_own (handle, &dummy);
 	} else {
 		_wapi_handle_set_signal_state (handle, TRUE, FALSE);
 	}
@@ -407,6 +426,7 @@ static gpointer namedmutex_create (WapiSecurityAttributes *security G_GNUC_UNUSE
 	gpointer ret = NULL;
 	guint32 namelen;
 	gint32 offset;
+	guint32 dummy;
 
 	/* w32 seems to guarantee that opening named objects can't
 	 * race each other
@@ -478,7 +498,7 @@ static gpointer namedmutex_create (WapiSecurityAttributes *security G_GNUC_UNUSE
 		g_assert (thr_ret == 0);
 	
 		if (owned == TRUE) {
-			namedmutex_own (handle);
+			namedmutex_own (handle, &dummy);
 		} else {
 			_wapi_shared_handle_set_signal_state (handle, TRUE);
 		}

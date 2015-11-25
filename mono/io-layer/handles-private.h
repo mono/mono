@@ -62,7 +62,7 @@ extern gboolean _wapi_handle_test_capabilities (gpointer handle,
 						WapiHandleCapability caps);
 extern void _wapi_handle_ops_close (gpointer handle, gpointer data);
 extern void _wapi_handle_ops_signal (gpointer handle);
-extern gboolean _wapi_handle_ops_own (gpointer handle);
+extern gboolean _wapi_handle_ops_own (gpointer handle, guint32 *statuscode);
 extern gboolean _wapi_handle_ops_isowned (gpointer handle);
 extern guint32 _wapi_handle_ops_special_wait (gpointer handle,
 					      guint32 timeout,

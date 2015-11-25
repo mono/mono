@@ -1212,7 +1212,7 @@ void _wapi_handle_ops_signal (gpointer handle)
 	}
 }
 
-gboolean _wapi_handle_ops_own (gpointer handle)
+gboolean _wapi_handle_ops_own (gpointer handle, guint32 *statuscode)
 {
 	guint32 idx = GPOINTER_TO_UINT(handle);
 	WapiHandleType type;
@@ -1224,7 +1224,7 @@ gboolean _wapi_handle_ops_own (gpointer handle)
 	type = _WAPI_PRIVATE_HANDLES(idx).type;
 
 	if (handle_ops[type] != NULL && handle_ops[type]->own_handle != NULL) {
-		return(handle_ops[type]->own_handle (handle));
+		return(handle_ops[type]->own_handle (handle, statuscode));
 	} else {
 		return(FALSE);
 	}

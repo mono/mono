@@ -25,6 +25,7 @@ struct _WapiHandle_mutex
 	pid_t pid;
 	pthread_t tid;
 	guint32 recursion;
+	gboolean abandoned;
 };
 
 struct _WapiHandle_namedmutex 
@@ -33,6 +34,7 @@ struct _WapiHandle_namedmutex
 	pid_t pid;
 	pthread_t tid;
 	guint32 recursion;
+	gboolean abandoned;
 };
 
 extern void _wapi_mutex_abandon (gpointer data, pid_t pid, pthread_t tid);

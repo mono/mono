@@ -80,8 +80,10 @@ struct _WapiHandleOps
 	/* Called by WaitForSingleObject and WaitForMultipleObjects,
 	 * with the handle locked (shared handles aren't locked.)
 	 * Returns TRUE if ownership was established, false otherwise.
+	 * If TRUE, *statuscode contains a status to which a handle
+	 * number can be added (typically WAIT_STATUS_0 or WAIT_ABANDONED_0).
 	 */
-	gboolean (*own_handle)(gpointer handle);
+	gboolean (*own_handle)(gpointer handle, guint32 *statuscode);
 
 	/* Called by WaitForSingleObject and WaitForMultipleObjects, if the
 	 * handle in question is "ownable" (ie mutexes), to see if the current
