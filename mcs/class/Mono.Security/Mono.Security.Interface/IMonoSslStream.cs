@@ -1,5 +1,5 @@
 //
-// MonoSslStream.cs
+// IMonoSslStream.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>

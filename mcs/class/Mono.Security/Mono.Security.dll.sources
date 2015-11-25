@@ -144,7 +144,7 @@
 ./Mono.Security.Interface/IBufferOffsetSize.cs
 ./Mono.Security.Interface/IMonoTlsEventSink.cs
 ./Mono.Security.Interface/IMonoTlsContext.cs
-./Mono.Security.Interface/MonoSslStream.cs
+./Mono.Security.Interface/IMonoSslStream.cs
 ./Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ./Mono.Security.Interface/MonoTlsProvider.cs
 ./Mono.Security.Interface/MonoTlsProviderFactory.cs

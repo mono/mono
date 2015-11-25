@@ -80,7 +80,7 @@ MonoTouch/MonoPInvokeCallbackAttribute.cs
 ../Mono.Security/Mono.Security.Interface/IBufferOffsetSize.cs
 ../Mono.Security/Mono.Security.Interface/IMonoTlsEventSink.cs
 ../Mono.Security/Mono.Security.Interface/IMonoTlsContext.cs
-../Mono.Security/Mono.Security.Interface/MonoSslStream.cs
+../Mono.Security/Mono.Security.Interface/IMonoSslStream.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsProvider.cs
 ../Mono.Security/Mono.Security.Interface/MonoTlsProviderFactory.cs
