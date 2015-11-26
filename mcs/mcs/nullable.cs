@@ -1073,6 +1073,7 @@ namespace Mono.CSharp.Nullable
 	{
 		Expression left, right;
 		Unwrap unwrap;
+		bool user_conversion_left;
 
 		public NullCoalescingOperator (Expression left, Expression right)
 		{
@@ -1220,6 +1221,7 @@ namespace Mono.CSharp.Nullable
 				return ReducedExpression.Create (right, this, false).Resolve (ec);
 
 			left = Convert.ImplicitConversion (ec, unwrap ?? left, rtype, loc);
+			user_conversion_left = left is UserCast;
 			type = rtype;
 			return this;
 		}
@@ -1283,10 +1285,14 @@ namespace Mono.CSharp.Nullable
 			// Null check is done on original expression not after expression is converted to
 			// result type. This is in most cases same but when user conversion is involved
 			// we can end up in situation when user operator does the null handling which is
-			// not what the operator is supposed to do
+			// not what the operator is supposed to do.
+			// There is tricky case where cast of left expression is meant to be cast of
+			// whole source expression (null check is done on it) and cast from right-to-left
+			// conversion needs to do null check on unconverted source expression.
 			//
-			var op_expr = left as UserCast;
-			if (op_expr != null) {
+			if (user_conversion_left) {
+				var op_expr = (UserCast) left;
+
 				op_expr.Source.Emit (ec);
 				LocalTemporary temp;
 
