@@ -85,6 +85,19 @@ class C
 		
 		if ((true | a) != true)
 			return 65;
+
+		var b4 = true;
+		if ((b4 & null) != null)
+			return 100;
+
+		if ((null & b4) != null)
+			return 101;
+
+		if ((b4 | null) != true)
+			return 102;
+
+		if ((null | b4) != true)
+			return 103;
 		
 		return 0;
 	}

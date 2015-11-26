@@ -2953,11 +2953,11 @@ namespace Mono.CSharp
 					}
 
 					lifted.Left = b.left.IsNull ?
-						b.left :
+						Nullable.LiftedNull.Create (ltype, b.left.Location) :
 						Convert.ImplicitConversion (rc, lifted.UnwrapLeft ?? b.left, ltype, b.left.Location);
 
 					lifted.Right = b.right.IsNull ?
-						b.right :
+						Nullable.LiftedNull.Create (rtype, b.right.Location) :
 						Convert.ImplicitConversion (rc, lifted.UnwrapRight ?? b.right, rtype, b.right.Location);
 
 					return lifted.Resolve (rc);

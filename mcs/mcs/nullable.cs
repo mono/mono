@@ -795,7 +795,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Both operands are bool? types
 			//
-			if (UnwrapLeft != null && UnwrapRight != null) {
+			if ((UnwrapLeft != null && !Left.IsNull) && (UnwrapRight != null && !Right.IsNull)) {
 				if (ec.HasSet (BuilderContext.Options.AsyncBody) && Binary.Right.ContainsEmitWithAwait ()) {
 					Left = Left.EmitToField (ec);
 					Right = Right.EmitToField (ec);
