@@ -31,6 +31,11 @@ namespace Microsoft.Win32.SafeHandles {
             SetHandle(preexistingHandle);
         }
 
+#if MOBILE
+        override protected bool ReleaseHandle() {
+            return true;
+        }
+#else
         [System.Security.SecurityCritical]
         override protected bool ReleaseHandle() {
             return (RegCloseKey(handle) == Win32Native.ERROR_SUCCESS);
@@ -41,6 +46,7 @@ namespace Microsoft.Win32.SafeHandles {
          ResourceExposure(ResourceScope.None),
          ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern int RegCloseKey(IntPtr hKey);
+#endif
     }
 }
 #endif // !FEATURE_PAL
