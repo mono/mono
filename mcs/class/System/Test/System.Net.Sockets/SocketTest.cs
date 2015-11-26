@@ -3483,21 +3483,31 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void UdpDoubleBind ()
 		{
-			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-			
-			var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
-			s.Bind (ep);
-			
-			Socket ss = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-			ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-			
-			ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
+			using (Socket s = new Socket (AddressFamily.InterNetwork,
+						SocketType.Dgram, ProtocolType.Udp))
+			using (Socket ss = new Socket (AddressFamily.InterNetwork,
+						SocketType.Dgram, ProtocolType.Udp)) {
+				var supportsReuseAddress = true;
+				try {
+					s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+				} catch (SocketException e) {
+					// Exception is thrown when ReuseAddress is not supported
+					supportsReuseAddress = false;
+				}
 
-			// If we make it this far, we succeeded.
-			
-			ss.Close ();
-			s.Close ();
+				var ep = new IPEndPoint (IPAddress.Any, NetworkHelpers.FindFreePort ());
+				s.Bind (ep);
+
+				if (supportsReuseAddress)
+					ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+				try {
+					ss.Bind (new IPEndPoint (IPAddress.Any, ep.Port));
+					if (!supportsReuseAddress)
+						Assert.Fail ("Reusing address is not supported, exception was expected on second bind.");
+				} catch (SocketException e) {
+				}
+			}
 		}
 
 		// Test case for bug #31557
