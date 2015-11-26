@@ -289,6 +289,7 @@ namespace System.IO {
 			return fullpath;
 		}
 
+#if !MOBILE
 		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
@@ -341,6 +342,7 @@ namespace System.IO {
 			}
 			return path;
 		}
+#endif
 
 		// insecure - do not call directly
 		internal static string InsecureGetFullPath (string path)
@@ -352,11 +354,11 @@ namespace System.IO {
 				string msg = Locale.GetText ("The specified path is not of a legal form (empty).");
 				throw new ArgumentException (msg);
 			}
-
+#if !MOBILE
 			// adjust for drives, i.e. a special case for windows
 			if (Environment.IsRunningOnWindows)
 				path = WindowsDriveAdjustment (path);
-
+#endif
 			// if the supplied path ends with a separator...
 			char end = path [path.Length - 1];
 
