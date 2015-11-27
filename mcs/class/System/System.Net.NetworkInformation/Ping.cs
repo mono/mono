@@ -340,7 +340,7 @@ namespace System.Net.NetworkInformation {
 
 			return new PingReply (address, buffer, options, trip_time, status);
 #else
-			throw new NotSupportedException ("Ping is not supported on this platform.");
+			throw new PlatformNotSupportedException ("Ping is not supported on this platform.");
 #endif // MONO_FEATURE_PROCESS_START
 		}
 #endif // !MONOTOUCH

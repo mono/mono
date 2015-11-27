@@ -652,23 +652,23 @@ namespace System.Diagnostics {
 #else
 		[Obsolete ("Process.StandardError is not supported on the current platform.", true)]
 		public StreamReader StandardError {
-			get { throw new NotSupportedException ("Process.StandardError is not supported on the current platform."); }
+			get { throw new PlatformNotSupportedException ("Process.StandardError is not supported on the current platform."); }
 		}
 
 		[Obsolete ("Process.StandardInput is not supported on the current platform.", true)]
 		public StreamWriter StandardInput {
-			get { throw new NotSupportedException ("Process.StandardInput is not supported on the current platform."); }
+			get { throw new PlatformNotSupportedException ("Process.StandardInput is not supported on the current platform."); }
 		}
 
 		[Obsolete ("Process.StandardOutput is not supported on the current platform.", true)]
 		public StreamReader StandardOutput {
-			get { throw new NotSupportedException ("Process.StandardOutput is not supported on the current platform."); }
+			get { throw new PlatformNotSupportedException ("Process.StandardOutput is not supported on the current platform."); }
 		}
 
 		[Obsolete ("Process.StartInfo is not supported on the current platform.", true)]
 		public ProcessStartInfo StartInfo {
-			get { throw new NotSupportedException ("Process.StartInfo is not supported on the current platform."); }
-			set { throw new NotSupportedException ("Process.StartInfo is not supported on the current platform."); }
+			get { throw new PlatformNotSupportedException ("Process.StartInfo is not supported on the current platform."); }
+			set { throw new PlatformNotSupportedException ("Process.StartInfo is not supported on the current platform."); }
 		}
 #endif // MONO_FEATURE_PROCESS_START
 
@@ -1219,37 +1219,37 @@ namespace System.Diagnostics {
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public bool Start ()
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public static Process Start (ProcessStartInfo startInfo)
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public static Process Start (string fileName)
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public static Process Start(string fileName, string arguments)
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public static Process Start(string fileName, string username, SecureString password, string domain)
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.Start is not supported on the current platform.", true)]
 		public static Process Start(string fileName, string arguments, string username, SecureString password, string domain)
 		{
-			throw new NotSupportedException ("Process.Start is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.Start is not supported on the current platform.");
 		}
 #endif // MONO_FEATURE_PROCESS_START
 
@@ -1533,25 +1533,25 @@ namespace System.Diagnostics {
 		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
 		public void BeginOutputReadLine ()
 		{
-			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
 		public void CancelOutputRead ()
 		{
-			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
 		public void BeginErrorReadLine ()
 		{
-			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
 		}
 
 		[Obsolete ("Process.BeginOutputReadLine is not supported on the current platform.", true)]
 		public void CancelErrorRead ()
 		{
-			throw new NotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Process.BeginOutputReadLine is not supported on the current platform.");
 		}
 #endif // MONO_FEATURE_PROCESS_START
 
