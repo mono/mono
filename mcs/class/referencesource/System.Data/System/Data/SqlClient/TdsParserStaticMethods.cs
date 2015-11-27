@@ -113,7 +113,11 @@ namespace System.Data.SqlClient {
         [ResourceExposure(ResourceScope.None)] // SxS: we use this method for TDS login only
         [ResourceConsumption(ResourceScope.Process, ResourceScope.Process)]
         static internal int GetCurrentProcessIdForTdsLoginOnly() {
+#if MOBILE
+            return 0;
+#else
             return SafeNativeMethods.GetCurrentProcessId();
+#endif
         }
 
 

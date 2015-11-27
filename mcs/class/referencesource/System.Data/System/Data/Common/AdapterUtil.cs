@@ -2087,6 +2087,9 @@ namespace System.Data.Common {
             const int ERROR_MORE_DATA = 234; // winerror.h
 
             string value;
+#if MOBILE
+            value = ADP.MachineName();
+#else
             if (IsPlatformNT5) {
                 int length = 0; // length parameter must be zero if buffer is null
                 // query for the required length
@@ -2112,6 +2115,7 @@ namespace System.Data.Common {
             else {
                 value = ADP.MachineName();
             }
+#endif
             return value;
         }
 
