@@ -861,6 +861,8 @@ namespace Mono.CSharp.Nullable
 					LiftedNull.Create (type, loc).Emit (ec);
 				} else {
 					Left.Emit (ec);
+					UnwrapRight.Store (ec);
+
 					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_right);
 
 					ec.EmitInt (or ? 1 : 0);
@@ -869,7 +871,7 @@ namespace Mono.CSharp.Nullable
 					ec.Emit (OpCodes.Br_S, end_label);
 
 					ec.MarkLabel (load_right);
-					UnwrapRight.Original.Emit (ec);
+					UnwrapRight.Load (ec);
 				}
 			} else {
 				//
@@ -897,14 +899,14 @@ namespace Mono.CSharp.Nullable
 					LiftedNull.Create (type, loc).Emit (ec);
 				} else {
 					Right.Emit (ec);
-					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_right);
+					ec.Emit (or ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, load_left);
 
 					ec.EmitInt (or ? 1 : 0);
 					ec.Emit (OpCodes.Newobj, NullableInfo.GetConstructor (type));
 
 					ec.Emit (OpCodes.Br_S, end_label);
 
-					ec.MarkLabel (load_right);
+					ec.MarkLabel (load_left);
 
 					UnwrapLeft.Load (ec);
 				}

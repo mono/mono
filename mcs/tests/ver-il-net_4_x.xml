@@ -17434,7 +17434,7 @@
   <test name="gtest-540.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>1017</size>
+        <size>1025</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -19750,6 +19750,22 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-636.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>88</size>
+      </method>
+      <method name="Boolean XX()" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="System.Nullable`1[System.Boolean] YY()" attrs="145">
+        <size>48</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
