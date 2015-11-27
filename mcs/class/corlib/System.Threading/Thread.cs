@@ -493,19 +493,19 @@ namespace System.Threading {
 		[Obsolete ("Thread.Abort is not supported on the current platform.", true)]
 		public void Abort ()
 		{
-			throw new NotSupportedException ("Thread.Abort is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Thread.Abort is not supported on the current platform.");
 		}
 
 		[Obsolete ("Thread.Abort is not supported on the current platform.", true)]
 		public void Abort (object stateInfo)
 		{
-			throw new NotSupportedException ("Thread.Abort is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Thread.Abort is not supported on the current platform.");
 		}
 
 		[Obsolete ("Thread.ResetAbort is not supported on the current platform.", true)]
 		public static void ResetAbort ()
 		{
-			throw new NotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Thread.ResetAbort is not supported on the current platform.");
 		}
 #endif // MONO_FEATURE_THREAD_ABORT
 
@@ -747,13 +747,13 @@ namespace System.Threading {
 		[Obsolete ("Thread.Suspend is not supported on the current platform.", true)]
 		public void Suspend ()
 		{
-			throw new NotSupportedException ("Thread.Suspend is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Thread.Suspend is not supported on the current platform.");
 		}
 
 		[Obsolete ("Thread.Resume is not supported on the current platform.", true)]
 		public void Resume ()
 		{
-			throw new NotSupportedException ("Thread.Resume is not supported on the current platform.");
+			throw new PlatformNotSupportedException ("Thread.Resume is not supported on the current platform.");
 		}
 #endif
 	}
