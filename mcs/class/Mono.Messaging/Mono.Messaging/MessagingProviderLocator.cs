@@ -43,20 +43,25 @@ namespace Mono.Messaging
 	public class MessagingProviderLocator 
 	{
 		public static readonly TimeSpan InfiniteTimeout = TimeSpan.MaxValue;
-		private static readonly MessagingProviderLocator instance = new MessagingProviderLocator();
 		private readonly IMessagingProvider provider;
 		private const string MESSAGING_PROVIDER_KEY = "MONO_MESSAGING_PROVIDER";
 		private const string RABBIT_MQ_CLASS_NAME = "Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider";
 		private const string RABBIT_MQ_FULL_CLASS_NAME = RABBIT_MQ_CLASS_NAME + ",Mono.Messaging.RabbitMQ";
 		private const string RABBIT_MQ_ALIAS = "rabbitmq";
-		
-		private MessagingProviderLocator () {
-			string providerName = GetProviderClassName ();
+
+		internal delegate string MessagingProviderStrategy ();
+		internal static MessagingProviderStrategy strategy = GetProviderClassName;
+
+		// must be declared after other items it depends on since they are initialized in source order
+		internal static MessagingProviderLocator instance = new MessagingProviderLocator();
+
+		internal MessagingProviderLocator () {
+			string providerName = strategy ();
 			if (providerName == null || providerName == "")
 				providerName = RABBIT_MQ_ALIAS;
 			provider = CreateProvider (providerName);
 		}
-		
+
 		public static MessagingProviderLocator Instance { 
 			get { return instance; }
 		}
@@ -66,7 +71,7 @@ namespace Mono.Messaging
 			return Instance.provider;
 		}
 		
-		private string GetProviderClassName ()
+		internal static string GetProviderClassName ()
 		{
 			return System.Configuration.ConfigurationManager.AppSettings[MESSAGING_PROVIDER_KEY];
 		}
@@ -87,15 +92,22 @@ namespace Mono.Messaging
 			return (IMessagingProvider) ci.Invoke (new object[0]);
 		}
 
-		private Type ResolveType (string classNameOrAlias)
+		private static Type ResolveType (string classNameOrAlias)
 		{
-			switch (classNameOrAlias) {
-			case RABBIT_MQ_ALIAS:
-			case RABBIT_MQ_FULL_CLASS_NAME:
+			if (classNameOrAlias == RABBIT_MQ_ALIAS || classNameOrAlias == RABBIT_MQ_FULL_CLASS_NAME)
+			{
 				Assembly a = Assembly.Load (Consts.AssemblyMono_Messaging_RabbitMQ);
 				return a.GetType (RABBIT_MQ_CLASS_NAME);
-			default:
+			}
+
+			Type t = Type.GetType (classNameOrAlias);
+			if (t == null)
 				throw new MonoMessagingException ("Unknown MessagingProvider class name or alias: " + classNameOrAlias);
+			else if (typeof(IMessagingProvider).IsAssignableFrom(t))
+				return t;
+			else {
+				var message = string.Format ("Configured MessagingProvider class {0} does not implement interface IMessagingProvider", t.FullName);
+				throw new MonoMessagingException (message);
 			}
 		}
 	}
