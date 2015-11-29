@@ -73,6 +73,8 @@ namespace System.Net
 		bool ntlm_authenticated;
 		bool unsafe_sharing;
 
+		bool retriedOnce;
+
 		enum NtlmAuthState
 		{
 			None,
@@ -109,6 +111,7 @@ namespace System.Net
 			queue = wcs.Group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
+			retriedOnce = false;
 			abortHandler = new EventHandler (abortHelper.Abort);
 		}
 
@@ -476,9 +479,27 @@ namespace System.Net
 			}
 
 			if (nread == 0) {
-				cnc.HandleError (WebExceptionStatus.ReceiveFailure, null, "ReadDone2");
+				if (cnc.keepAlive && !cnc.retriedOnce) {
+					cnc.retriedOnce = true;
+					cnc.Close (true);
+					cnc.InitConnection(data.request);
+					data.request.WebConnection = cnc;
+					data.request.ReuseConnection = false;
+					data.request.KeepAlive = cnc.keepAlive;
+					cnc.position = 0;
+					data.ReadState = ReadState.None;
+
+					InitRead(cnc);
+					return;
+				} else {
+					cnc.retriedOnce = false;
+					cnc.HandleError (WebExceptionStatus.ReceiveFailure, null, "ReadDone2");
+				}
+
 				return;
 			}
+
+			cnc.retriedOnce = false;
 
 			if (nread < 0) {
 				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null, "ReadDone3");
