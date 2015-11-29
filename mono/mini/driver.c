@@ -2288,8 +2288,11 @@ mono_set_crash_chaining (gboolean chain_crashes)
 }
 
 void
-mono_parse_env_options (int argc, char *argv [])
+mono_parse_env_options (int *ref_argc, char **ref_argv [])
 {
+	int argc = *ref_argc;
+	char **argv = *ref_argv;
+
 	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
 	if (env_options != NULL){
 		GPtrArray *array = g_ptr_array_new ();
@@ -2358,8 +2361,8 @@ mono_parse_env_options (int argc, char *argv [])
 				new_argv [i++] = argv [j];
 			new_argv [i] = NULL;
 
-			argc = new_argc;
-			argv = new_argv;
+			*ref_argc = new_argc;
+			*ref_argv = new_argv;
 		}
 		g_ptr_array_free (array, TRUE);
 	}
