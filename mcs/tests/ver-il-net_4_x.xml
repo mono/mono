@@ -51869,6 +51869,22 @@
       </method>
     </type>
   </test>
+  <test name="test-932.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="145">
+        <size>20</size>
+      </method>
+      <method name="Void WriteLine(System.String, System.ConsoleColor, System.ConsoleColor, System.Object[])" attrs="134">
+        <size>7</size>
+      </method>
+      <method name="Void WriteLine(System.String, System.ConsoleColor, System.ConsoleColor)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-94.cs">
     <type name="Base">
       <method name="Int32 IVehicle.Start()" attrs="481">

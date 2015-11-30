@@ -4747,6 +4747,11 @@ namespace Mono.CSharp {
 				if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
 					return cand_param.HasDefaultValue;
 
+				if (cand_param.HasDefaultValue) {
+					++j;
+					continue;
+				}
+
 				if (candidate_pd.Count == best_pd.Count) {
 					//
 					// LAMESPEC:
@@ -4754,11 +4759,6 @@ namespace Mono.CSharp {
 					// void Foo (int i = 0) is better than void Foo (params int[]) for Foo ()
 					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
 					//
-
-					if (cand_param.HasDefaultValue) {
-						++j;
-						continue;
-					}
 				} else {
 					//
 					// Neither is better when not all arguments are provided
