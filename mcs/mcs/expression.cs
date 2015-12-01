@@ -101,33 +101,17 @@ namespace Mono.CSharp
 
 	public class ParenthesizedExpression : ShimExpression
 	{
-		bool conditional_access_receiver;
-
 		public ParenthesizedExpression (Expression expr, Location loc)
 			: base (expr)
 		{
 			this.loc = loc;
 		}
 
-		void ResolveConditionalAccessReceiver (ResolveContext rc)
-		{
-			if (!rc.HasSet (ResolveContext.Options.DontSetConditionalAccessReceiver) && expr.HasConditionalAccess ()) {
-				conditional_access_receiver = true;
-			}			
-		}
-
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			Expression res = null;
 
-			ResolveConditionalAccessReceiver (rc);
-			if (conditional_access_receiver) {
-				using (rc.Set (ResolveContext.Options.DontSetConditionalAccessReceiver)) {
-					res = expr.Resolve (rc);
-				}
-			} else {
-				res = expr.Resolve (rc);
-			}
+			res = expr.Resolve (rc);
 
 			var constant = res as Constant;
 			if (constant != null && constant.IsLiteral) {
@@ -135,13 +119,6 @@ namespace Mono.CSharp
 					return res;
 				
 				return Constant.CreateConstantFromValue (res.Type, constant.GetValue (), expr.Location);
-			}
-
-			if (conditional_access_receiver) {
-				expr = res;
-				type = LiftMemberType (rc, res.Type);
-				eclass = expr.eclass;
-				return this;
 			}
 
 			return res;
@@ -155,18 +132,6 @@ namespace Mono.CSharp
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (!conditional_access_receiver)
-				base.Emit (ec);
-
-			var prev = ec.ConditionalAccess;
-			ec.ConditionalAccess = new ConditionalAccessContext (type, ec.DefineLabel ());
-			expr.Emit (ec);
-			ec.CloseConditionalAccess (type.IsNullableType ? type : null);
-			ec.ConditionalAccess = prev;
 		}
 
 		public override bool HasConditionalAccess ()
