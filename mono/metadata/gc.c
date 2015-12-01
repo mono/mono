@@ -710,6 +710,9 @@ finalizer_thread (gpointer unused)
 		 */
 
 		g_assert (mono_domain_get () == mono_get_root_domain ());
+
+		MONO_PREPARE_BLOCKING;
+
 		mono_gc_set_skip_thread (TRUE);
 
 		if (wait) {
@@ -719,6 +722,8 @@ finalizer_thread (gpointer unused)
 		wait = TRUE;
 
 		mono_gc_set_skip_thread (FALSE);
+
+		MONO_FINISH_BLOCKING;
 
 		mono_threads_perform_thread_dump ();
 

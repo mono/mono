@@ -208,15 +208,6 @@ static gboolean
 sgen_is_thread_in_current_stw (SgenThreadInfo *info)
 {
 	/*
-	A thread explicitly asked to be skiped because it holds no managed state.
-	This is used by TP and finalizer threads.
-	FIXME Use an atomic variable for this to avoid everyone taking the GC LOCK.
-	*/
-	if (info->client_info.gc_disabled) {
-		return FALSE;
-	}
-
-	/*
 	We have detected that this thread is failing/dying, ignore it.
 	FIXME: can't we merge this with thread_is_dying?
 	*/

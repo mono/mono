@@ -147,11 +147,15 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 	for (i = 0; i < poll_fds_size; ++i)
 		poll_fds [i].revents = 0;
 
+	MONO_PREPARE_BLOCKING;
+
 	mono_gc_set_skip_thread (TRUE);
 
 	ready = mono_poll (poll_fds, poll_fds_size, -1);
 
 	mono_gc_set_skip_thread (FALSE);
+
+	MONO_FINISH_BLOCKING;
 
 	if (ready == -1) {
 		/*
