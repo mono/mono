@@ -159,6 +159,7 @@
     <Compile Include="Microsoft.Build.Tasks\VCBuild.cs" />
     <Compile Include="Microsoft.Build.Tasks\Warning.cs" />
     <Compile Include="Microsoft.Build.Tasks\WriteLinesToFile.cs" />
+    <Compile Include="Microsoft.Build.Tasks\XmlPeek.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceReader.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceWriter.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceReader.cs" />
