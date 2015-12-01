@@ -250,6 +250,10 @@ namespace System.Net.NetworkInformation {
 
 		class LinuxNetworkInterfaceAPI : UnixNetworkInterfaceAPI
 		{
+			const int AF_INET = 2;
+			const int AF_INET6 = 10;
+			const int AF_PACKET = 17;
+
 			static void FreeInterfaceAddresses (IntPtr ifap)
 			{
 #if MONODROID
@@ -270,9 +274,6 @@ namespace System.Net.NetworkInformation {
 
 			public override NetworkInterface [] GetAllNetworkInterfaces ()
 			{
-				const int AF_INET   = 2;
-				const int AF_INET6  = 10;
-				const int AF_PACKET = 17;
 
 				var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
 				IntPtr ifap;
@@ -406,7 +407,43 @@ namespace System.Net.NetworkInformation {
 
 			public override IPAddress GetNetMask (IPAddress address)
 			{
-				throw new NotImplementedException ();
+				foreach (ifaddrs networkInteface in GetNetworkInterfaces()) {
+					if (networkInteface.ifa_addr == IntPtr.Zero)
+						continue;
+
+					var sockaddr = (sockaddr_in)Marshal.PtrToStructure(networkInteface.ifa_addr, typeof(sockaddr_in));
+
+					if (sockaddr.sin_family != AF_INET)
+						continue;
+
+					if (!address.Equals(new IPAddress(sockaddr.sin_addr)))
+						continue;
+
+					var netmask = (sockaddr_in)Marshal.PtrToStructure(networkInteface.ifa_netmask, typeof(sockaddr_in));
+					return new IPAddress(netmask.sin_addr);
+				}
+
+				return null;
+			}
+
+			private static IEnumerable<ifaddrs> GetNetworkInterfaces()
+			{
+				IntPtr ifap = IntPtr.Zero;
+
+				try {
+					if (GetInterfaceAddresses(out ifap) != 0)
+						yield break;
+
+					var next = ifap;
+					while (next != IntPtr.Zero) {
+						var addr = (ifaddrs)Marshal.PtrToStructure(next, typeof(ifaddrs));
+						yield return addr;
+						next = addr.ifa_next;
+					}
+				} finally {
+					if (ifap != IntPtr.Zero)
+						FreeInterfaceAddresses(ifap);
+				}
 			}
 		}
 
