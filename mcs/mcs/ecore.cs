@@ -4740,6 +4740,7 @@ namespace Mono.CSharp {
 			//
 			// We have not reached end of parameters list due to params or used default parameters
 			//
+			bool defaults_ambiguity = false;
 			while (j < candidate_pd.Count && j < best_pd.Count) {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
@@ -4747,11 +4748,7 @@ namespace Mono.CSharp {
 				if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
 					return cand_param.HasDefaultValue;
 
-				if (cand_param.HasDefaultValue) {
-					++j;
-					continue;
-				}
-
+				defaults_ambiguity = true;
 				if (candidate_pd.Count == best_pd.Count) {
 					//
 					// LAMESPEC:
@@ -4759,22 +4756,30 @@ namespace Mono.CSharp {
 					// void Foo (int i = 0) is better than void Foo (params int[]) for Foo ()
 					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
 					//
-				} else {
-					//
-					// Neither is better when not all arguments are provided
-					//
-					// void Foo (string s, int i = 0) <-> Foo (string s, int i = 0, int i2 = 0)
-					// void Foo (string s, int i = 0) <-> Foo (string s, byte i = 0)
-					// void Foo (string s, params int[]) <-> Foo (string s, params byte[])
-					//
-					return false;
+					if (cand_param.HasDefaultValue) {
+						++j;
+						continue;
+					}
+
+					break;
 				}
 
-				break;
+				//
+				// Neither is better when not all arguments are provided
+				//
+				// void Foo (string s, int i = 0) <-> Foo (string s, int i = 0, int i2 = 0)
+				// void Foo (string s, int i = 0) <-> Foo (string s, byte i = 0)
+				// void Foo (string s, params int[]) <-> Foo (string s, params byte[])
+				//
+				++j;
 			}
 
-			if (candidate_pd.Count != best_pd.Count)
+			if (candidate_pd.Count != best_pd.Count) {
+				if (defaults_ambiguity && best_pd.Count - 1 == j)
+					return best_pd.HasParams;
+
 				return candidate_pd.Count < best_pd.Count;
+			}
 
 			//
 			// One is a non-generic method and second is a generic method, then non-generic is better
