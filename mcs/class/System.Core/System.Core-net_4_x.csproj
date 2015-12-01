@@ -47,6 +47,8 @@
   <ItemGroup>
     <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\DynamicExpression.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\ExpressionVisitor.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\IArgumentProvider.cs" />
+    <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Ast\IDynamicExpression.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Action.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Extension.cs" />
     <Compile Include="..\..\..\external\referencesource\System.Core\Microsoft\Scripting\Utils\Function.cs" />
@@ -257,7 +259,6 @@
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionStringBuilder.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\ExpressionType.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\GotoExpression.cs" />
-    <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IArgumentProvider.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\IndexExpression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\InvocationExpression.cs" />
     <Compile Include="..\dlr\Runtime\Microsoft.Scripting.Core\Ast\LabelExpression.cs" />
