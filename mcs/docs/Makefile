@@ -95,7 +95,7 @@ NETDOCS_DIRS = \
 	$(classdir)/System.Web.Services/$(doc_en)                           \
 	$(classdir)/System.Web/$(doc_en)                                    \
 	$(classdir)/System.XML/$(doc_en)                                    \
-	$(classdir)/System.XML.Linq/$(doc_en)                               \
+	$(classdir)/System.Xml.Linq/$(doc_en)                               \
 	$(classdir)/System/$(doc_en) 
 
 MONO_DIRS = \
