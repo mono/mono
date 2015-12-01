@@ -8903,6 +8903,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			sp -= n;
 
+			/*
+			 * We have the `constrained.' prefix opcode.
+			 */
 			if (constrained_class) {
 				if (mini_is_gsharedvt_klass (cfg, constrained_class)) {
 					if ((cmethod->klass != mono_defaults.object_class) && constrained_class->valuetype && cmethod->klass->valuetype) {
@@ -8917,9 +8920,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 				}
 
-				/*
-				 * We have the `constrained.' prefix opcode.
-				 */
 				if (constrained_partial_call) {
 					gboolean need_box = TRUE;
 
