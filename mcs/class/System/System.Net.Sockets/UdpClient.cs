@@ -298,7 +298,7 @@ namespace System.Net.Sockets
 			CheckDisposed ();
 
 			byte [] recBuffer = new byte [65536]; // Max. size
-			EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
+			EndPoint endPoint = (EndPoint) remoteEP;
 			int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
 			if (dataRead < recBuffer.Length)
 				recBuffer = CutArray (recBuffer, dataRead);
