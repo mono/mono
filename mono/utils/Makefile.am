@@ -1,3 +1,6 @@
+TOP=../..
+include $(TOP)/mk/common.inc
+
 noinst_LTLIBRARIES = libmonoutils.la
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)

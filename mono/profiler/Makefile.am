@@ -1,3 +1,6 @@
+TOP=../..
+include $(TOP)/mk/common.inc
+
 if HAVE_ZLIB
 Z_LIBS= -lz
 else

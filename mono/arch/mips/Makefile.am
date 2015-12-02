@@ -1,3 +1,5 @@
+TOP=../../..
+include $(TOP)/mk/common.inc
 
 AM_CPPFLAGS = $(GLIB_CFLAGS) -I$(top_srcdir)
 

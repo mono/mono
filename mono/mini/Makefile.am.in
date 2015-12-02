@@ -1,3 +1,6 @@
+TOP=../..
+include $(TOP)/mk/common.inc
+
 count=100000
 mtest=for_loop
 monodir=$(top_builddir)

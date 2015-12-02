@@ -1,3 +1,7 @@
+TOP=..
+include $(TOP)/mk/common.inc
+
+
 if SUPPORT_SGEN
 sgen_dirs = sgen
 endif

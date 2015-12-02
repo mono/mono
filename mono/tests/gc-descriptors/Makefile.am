@@ -1,3 +1,6 @@
+TOP=../../..
+include $(TOP)/mk/common.inc
+
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
 with_mono_path = MONO_PATH=$(CLASS)

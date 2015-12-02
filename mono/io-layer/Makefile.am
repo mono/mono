@@ -1,3 +1,5 @@
+TOP=../..
+include $(TOP)/mk/common.inc
 
 noinst_LTLIBRARIES = libwapi.la
 
@@ -117,7 +119,7 @@ libwapi_la_LIBADD = -lproc
 endif
 
 EXTRA_DIST =	\
-	$(WINDOWS_SRC)
+	$(WINDOWS_SRC)	\
 	$(OTHER_SRC)
 
 

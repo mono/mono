@@ -1,3 +1,6 @@
+TOP=../..
+include $(TOP)/mk/common.inc
+
 if HOST_WIN32
 win32_sources = \
 	console-win32.c
