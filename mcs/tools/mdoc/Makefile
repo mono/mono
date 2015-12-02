@@ -195,6 +195,24 @@ check-monodocer-dropns-multi: $(PROGRAM)
 	
 	diff --exclude=.svn -rup Test/en.expected-dropns-multi Test/en.actual
 
+
+check-monodocer-dropns-multi-withexisting: $(PROGRAM)
+	-rm -Rf Test/en.actual
+	$(MAKE) Test/DocTest-DropNS-classic.dll
+	$(MAKE) Test/DocTest-DropNS-unified.dll
+	$(MAKE) Test/DocTest-DropNS-classic-multitest.dll
+	$(MAKE) Test/DocTest-DropNS-unified-multitest.dll
+
+	# mdoc update to show a pre-existing set of documents
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework 
+	
+	# mdoc update for both classic and unified
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	
+	diff --exclude=.svn -rup Test/en.expected-dropns-multi-withexisting Test/en.actual
+
 check-monodocer-dropns-delete: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	rm -Rf Test/DocTest-DropNS-classic-deletetest.dll
@@ -399,7 +417,8 @@ check-doc-tools: check-monodocer-since \
 	check-monodocer-dropns-delete \
 	check-monodocer-internal-interface \
 	check-monodocer-enumerations \
-	check-monodocer-dropns-multi
+	check-monodocer-dropns-multi \
+	check-monodocer-dropns-multi-withexisting
 
 check-doc-tools-update: check-monodocer-since-update \
 	check-monodocer-importecmadoc-update \

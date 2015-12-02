@@ -1668,7 +1668,11 @@ class MDocUpdater : MDocCommand
 	/// <returns>The assembly that was either added, or was already present</returns>
 	static XmlElement AddAssemblyNameToNode (XmlElement root, ModuleDefinition module)
 	{
-		Func<XmlElement, bool> assemblyFilter = x => x.SelectSingleNode ("AssemblyName").InnerText == module.Assembly.Name.Name;
+		Func<XmlElement, bool> assemblyFilter = x => {
+			var existingName = x.SelectSingleNode ("AssemblyName");
+			return existingName != null && existingName.InnerText == module.Assembly.Name.Name;
+		};
+		
 		return AddAssemblyXmlNode (
 			root.SelectNodes ("AssemblyInfo").Cast<XmlElement> ().ToArray (), 
 			assemblyFilter, x => WriteElementText (x, "AssemblyName", module.Assembly.Name.Name), 
