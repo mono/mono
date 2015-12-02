@@ -19,10 +19,10 @@ fi
 HOST_ENV=`uname -s`
 case "$HOST_ENV" in
     Darwin)
-        HOST_ENV=darwin-x86
+        HOST_ENV=darwin
         ;;
     Linux)
-        HOST_ENV=linux-x86
+        HOST_ENV=linux
         ;;
     CYGWIN*|*_NT-*)
         HOST_ENV=windows
@@ -35,6 +35,13 @@ esac
 
 PLATFORM_ROOT=$NDK_ROOT/platforms/$ANDROID_PLATFORM/arch-x86
 TOOLCHAIN=$NDK_ROOT/toolchains/x86-$GCC_VERSION/prebuilt/$HOST_ENV
+
+if [ ! -d $TOOLCHAIN ]; then
+	TOOLCHAIN=${TOOLCHAIN}-x86
+	if [ ! -d $TOOLCHAIN ]; then
+		TOOLCHAIN=${TOOLCHAIN}_64
+	fi
+fi
 
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
