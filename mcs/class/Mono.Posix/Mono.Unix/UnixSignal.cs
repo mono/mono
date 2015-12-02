@@ -39,6 +39,11 @@ namespace Mono.Unix {
 		private int signum;
 		private IntPtr signal_info;
 
+		static UnixSignal ()
+		{
+			Stdlib.VersionCheck ();
+		}
+
 		public UnixSignal (Signum signum)
 		{
 			this.signum = NativeConvert.FromSignum (signum);
