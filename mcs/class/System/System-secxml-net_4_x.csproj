@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP</DefineConstants>
+    <DefineConstants>TRACE;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;MONO_X509_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;SECURITY_DEP;XML_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;CONFIGURATION_2_0;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;SECURITY_DEP;XML_DEP;MONO_SECURITY_ALIAS;MONO_X509_ALIAS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -491,7 +491,9 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\IPInterfaceStatistics.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\ScopeLevel.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\NetworkInformation\UnicastIPAddressInformation.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\ServicePointManager.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\IPProtectionLevel.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\NetworkStream.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Sockets\SocketOptionName.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\UnicodeDecodingConformance.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\UnicodeEncodingConformance.cs" />
@@ -584,16 +586,39 @@
     <Compile Include="Mono.Net.Dns\ResolverError.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolver.cs" />
     <Compile Include="Mono.Net.Dns\SimpleResolverEventArgs.cs" />
+    <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+    <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+    <Compile Include="Mono.Net.Security\IMonoSslStream.cs" />
+    <Compile Include="Mono.Net.Security\IMonoTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+    <Compile Include="Mono.Net.Security\MonoDefaultTlsProvider.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslStreamImpl.cs" />
+    <Compile Include="Mono.Net.Security\MonoSslStreamWrapper.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderImpl.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsProviderWrapper.cs" />
+    <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+    <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+    <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+    <Compile Include="ReferenceSources\_SecureChannel.cs" />
+    <Compile Include="ReferenceSources\_SslState.cs" />
+    <Compile Include="ReferenceSources\_SslStream.cs" />
     <Compile Include="ReferenceSources\AssertWrapper.cs" />
     <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
     <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
     <Compile Include="ReferenceSources\HttpSysSettings.cs" />
+    <Compile Include="ReferenceSources\Internal.cs" />
     <Compile Include="ReferenceSources\Logging.cs" />
     <Compile Include="ReferenceSources\NativeMethods.cs" />
     <Compile Include="ReferenceSources\SettingsSectionInternal.cs" />
     <Compile Include="ReferenceSources\Socket.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
+    <Compile Include="ReferenceSources\SR2.cs" />
     <Compile Include="ReferenceSources\SRCategoryAttribute.cs" />
+    <Compile Include="ReferenceSources\SslStream.cs" />
+    <Compile Include="ReferenceSources\SSPIConfiguration.cs" />
+    <Compile Include="ReferenceSources\SSPISafeHandles.cs" />
+    <Compile Include="ReferenceSources\SSPIWrapper.cs" />
     <Compile Include="ReferenceSources\SystemNetworkCredential.cs" />
     <Compile Include="ReferenceSources\WebHeaderCollectionType.cs" />
     <Compile Include="ReferenceSources\Win32Exception.cs" />
@@ -907,7 +932,6 @@
     <Compile Include="System.Net.Sockets\IPv6MulticastOption.cs" />
     <Compile Include="System.Net.Sockets\LingerOption.cs" />
     <Compile Include="System.Net.Sockets\MulticastOption.cs" />
-    <Compile Include="System.Net.Sockets\NetworkStream.cs" />
     <Compile Include="System.Net.Sockets\ProtocolFamily.cs" />
     <Compile Include="System.Net.Sockets\ProtocolType.cs" />
     <Compile Include="System.Net.Sockets\SafeSocketHandle.cs" />
@@ -1135,6 +1159,7 @@
     <Compile Include="System\GenericUriParserOptions.cs" />
     <Compile Include="System\GopherStyleUriParser.cs" />
     <Compile Include="System\HttpStyleUriParser.cs" />
+    <Compile Include="System\IOSelector.cs" />
     <Compile Include="System\IUriData.cs" />
     <Compile Include="System\LdapStyleUriParser.cs" />
     <Compile Include="System\NetPipeStyleUriParser.cs" />

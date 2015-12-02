@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY</DefineConstants>
+    <DefineConstants>TRACE;INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>612,618,1635,1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY</DefineConstants>
+    <DefineConstants>INSIDE_CORLIB;MONO_CULTURE_DATA;LIBC;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;NET_4_0;NET_4_5;NET_4_6;MONO;DISABLE_CAS_USE;FEATURE_PAL;GENERICS_WORK;FEATURE_LIST_PREDICATES;FEATURE_SERIALIZATION;FEATURE_ASCII;FEATURE_LATIN1;FEATURE_UTF7;FEATURE_UTF32;MONO_HYBRID_ENCODING_SUPPORT;FEATURE_ASYNC_IO;NEW_EXPERIMENTAL_ASYNC_IO;FEATURE_UTF32;FEATURE_EXCEPTIONDISPATCHINFO;FEATURE_CORRUPTING_EXCEPTIONS;FEATURE_EXCEPTION_NOTIFICATIONS;FEATURE_STRONGNAME_MIGRATION;FEATURE_USE_LCID;FEATURE_FUSION;FEATURE_CRYPTO;FEATURE_X509_SECURESTRINGS;FEATURE_SYNCHRONIZATIONCONTEXT;FEATURE_SYNCHRONIZATIONCONTEXT_WAIT;FEATURE_REMOTING;MONO_COM;FEATURE_COMINTEROP;FEATURE_ROLE_BASED_SECURITY;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -184,6 +184,7 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\calendaralgorithmtype.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\calendardata.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\calendarweekrule.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\CalendricalCalculationsHelper.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\charunicodeinfo.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\chineselunisolarcalendar.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\globalization\compareinfo.cs" />
@@ -294,6 +295,7 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\outofmemoryexception.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\overflowexception.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\paramarrayattribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\paramsarray.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\platformnotsupportedexception.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\progress.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\random.cs" />
@@ -498,6 +500,7 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\binarycompatibility.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\componentguaranteesattribute.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\multitargetinghelpers.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\NonVersionableAttribute.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\resourceattributes.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\targetframeworkattribute.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\runtime\versioning\targetframeworkid.cs" />
@@ -526,6 +529,7 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\dsasignaturedeformatter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\dsasignatureformatter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\hashalgorithm.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\HashAlgorithmName.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\hmac.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\hmacmd5.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\hmacripemd160.cs" />
@@ -550,10 +554,14 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\ripemd160.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\ripemd160managed.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\rsa.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\RSAEncryptionPadding.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\RSAEncryptionPaddingMode.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\rsaoaepkeyexchangedeformatter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\rsaoaepkeyexchangeformatter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\rsapkcs1keyexchangedeformatter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\rsapkcs1keyexchangeformatter.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\RSASignaturePadding.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\RSASignaturePaddingMode.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\sha1.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\sha1managed.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\security\cryptography\sha256.cs" />
@@ -627,6 +635,7 @@
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\SpinWait.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\synchronizationcontext.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\synchronizationlockexception.cs" />
+    <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\Tasks\AsyncCausalityTracer.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\Tasks\BeginEndAwaitableAdapter.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\Tasks\ConcurrentExclusiveSchedulerPair.cs" />
     <Compile Include="..\..\..\external\referencesource\mscorlib\system\threading\Tasks\Future.cs" />
@@ -765,6 +774,7 @@
     <Compile Include="Mono\DataConverter.cs" />
     <Compile Include="Mono\Runtime.cs" />
     <Compile Include="ReferenceSources\__ConsoleStream.cs" />
+    <Compile Include="ReferenceSources\AppContextSwitches.cs" />
     <Compile Include="ReferenceSources\AppDomain.cs" />
     <Compile Include="ReferenceSources\Array.cs" />
     <Compile Include="ReferenceSources\BCLDebug.cs" />
