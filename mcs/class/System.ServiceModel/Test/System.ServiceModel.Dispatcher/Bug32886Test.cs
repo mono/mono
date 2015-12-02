@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -81,16 +82,16 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			public FahrenheitToCelsiusResponse FarenheitToCelsius (FahrenheitToCelsiusRequest request)
 			{
-				var farenheit = double.Parse (request.Body.Fahrenheit);
+				var farenheit = double.Parse (request.Body.Fahrenheit, CultureInfo.InvariantCulture);
 				var celsius = ((farenheit - 32) / 9) * 5;
-				return new FahrenheitToCelsiusResponse (new FahrenheitToCelsiusResponseBody (celsius.ToString ()));
+				return new FahrenheitToCelsiusResponse (new FahrenheitToCelsiusResponseBody (celsius.ToString (CultureInfo.InvariantCulture)));
 			}
 
 			public CelsiusToFahrenheitResponse CelsiusToFarenheit (CelsiusToFahrenheitRequest request)
 			{
-				var celsius = double.Parse (request.Body.Celsius);
+				var celsius = double.Parse (request.Body.Celsius, CultureInfo.InvariantCulture);
 				var farenheit = ((celsius * 9) / 5) + 32;
-				return new CelsiusToFahrenheitResponse (new CelsiusToFahrenheitResponseBody (farenheit.ToString ()));
+				return new CelsiusToFahrenheitResponse (new CelsiusToFahrenheitResponseBody (farenheit.ToString (CultureInfo.InvariantCulture)));
 			}
 
 			Func<FahrenheitToCelsiusRequest,FahrenheitToCelsiusResponse> farenheitToCelsius;
