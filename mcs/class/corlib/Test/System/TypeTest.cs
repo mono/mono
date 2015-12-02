@@ -1527,6 +1527,27 @@ namespace MonoTests.System
 							    typeof (long), new Type[0], null), "#2");
 		}
 
+		[Test]
+		public void GetProperty9_Indexers ()
+		{
+
+			var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+
+			Type type1 = typeof (List<byte>);
+			var p1 = type1.GetProperty ("Item", bindingFlags, null, typeof (byte), new Type[] { typeof (int) }, null);
+			Assert.IsNotNull (p1, "#1");
+
+			Type type2 = typeof (List<string>);
+			var p2 = type2.GetProperty ("Item", bindingFlags, null, typeof (string), new Type[] { typeof (int) }, null);
+			Assert.IsNotNull (p2, "#2");
+
+			Type type3 = typeof (List<Type>);
+			// result type not convertible, make sure we fail.
+			var p3 = type3.GetProperty ("Item", bindingFlags, null, typeof (string) /*!*/,
+						    new Type[] { typeof (int) }, null);
+			Assert.IsNull (p3, "#3");
+		}
+
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1
 		{
