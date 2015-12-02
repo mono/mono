@@ -50,6 +50,12 @@ mono_threads_reset_blocking_start (gpointer stackdata);
 void
 mono_threads_reset_blocking_end (gpointer cookie, gpointer stackdata);
 
+gpointer
+mono_threads_prepare_critical (void);
+
+void
+mono_threads_finish_critical (gpointer cookie);
+
 static inline void
 mono_threads_safepoint (void)
 {
@@ -73,6 +79,14 @@ mono_threads_safepoint (void)
 
 #define MONO_FINISH_RESET_BLOCKING \
 		mono_threads_reset_blocking_end (__reset_cookie, &__dummy);	\
+	} while (0)
+
+#define MONO_PREPARE_CRITICAL	\
+	do {	\
+		gpointer __critical_cookie = mono_threads_prepare_critical ()
+
+#define MONO_FINISH_CRITICAL	\
+		mono_threads_finish_critical (__critical_cookie);	\
 	} while (0)
 
 G_END_DECLS
