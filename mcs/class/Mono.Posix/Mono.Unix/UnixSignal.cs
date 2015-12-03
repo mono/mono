@@ -150,10 +150,12 @@ namespace Mono.Unix {
 			set {Interlocked.Exchange (ref Info->count, value);}
 		}
 
+		// signum, count, write_fd, pipecnt, and pipelock are read from a signal handler thread
+		// count and pipelock are both read and written from the signal handler thread
 		[Map]
 		struct SignalInfo {
-			public int signum, count, read_fd, write_fd, have_handler, pipecnt;
-			public IntPtr handler;
+			public int signum, count, read_fd, write_fd, pipecnt, pipelock, have_handler;
+			public IntPtr handler; // Backed-up handler to restore when signal unregistered
 		}
 
 		#region WaitHandle overrides

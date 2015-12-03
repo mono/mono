@@ -2018,8 +2018,9 @@ struct Mono_Unix_UnixSignal_SignalInfo {
 	int   count;
 	int   read_fd;
 	int   write_fd;
-	int   have_handler;
 	int   pipecnt;
+	int   pipelock;
+	int   have_handler;
 	void* handler;
 };
 
