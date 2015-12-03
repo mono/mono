@@ -558,8 +558,6 @@ System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionLevel.cs
 
-System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
-System.Runtime.InteropServices/HandleCollector.cs
 System.Runtime.InteropServices/StandardOleMarshalObject.cs
 System.Runtime.InteropServices.ComTypes/ADVF.cs
 System.Runtime.InteropServices.ComTypes/DATADIR.cs
@@ -1036,6 +1034,9 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/IPInterfaceStatistics.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/ScopeLevel.cs
 ../../../external/referencesource/System/net/System/Net/NetworkInformation/UnicastIPAddressInformation.cs
+
+../../../external/referencesource/System/sys/system/runtime/interopservices/DefaultParameterValueAttribute.cs
+../../../external/referencesource/System/sys/system/runtime/interopservices/handlecollector.cs
 
 ../../../external/referencesource/System/sys/system/runtime/versioning/FrameworkName.cs
 
