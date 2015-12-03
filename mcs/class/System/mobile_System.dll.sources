@@ -331,15 +331,8 @@ System/Platform.cs
 System/SRDescriptionAttribute.cs
 System/Uri.cs
 System/UriBuilder.cs
-System/UriComponents.cs
-System/UriFormat.cs
-System/UriFormatException.cs
 System/UriHelper.cs
-System/UriHostNameType.cs
-System/UriIdnScope.cs
-System/UriKind.cs
 System/UriParser.cs
-System/UriPartial.cs
 System/UriTypeConverter.cs
 System/UriElements.cs
 System/UriParseComponents.cs
@@ -728,6 +721,11 @@ ReferenceSources/Win32Exception.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/TraceSource.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/TraceSwitch.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/traceutils.cs
+
+../../../external/referencesource/System/net/System/UriEnumTypes.cs
+../../../external/referencesource/System/net/System/URIFormatException.cs
+../../../external/referencesource/System/net/System/UriHostNameType.cs
+../../../external/referencesource/System/net/System/URIPartial.cs
 
 ../../../external/referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
