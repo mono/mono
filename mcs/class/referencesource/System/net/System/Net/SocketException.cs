@@ -21,6 +21,18 @@ namespace System.Net.Sockets {
         [NonSerialized]
         private EndPoint m_EndPoint;
     
+#if MONO
+        [System.Runtime.CompilerServices.MethodImplAttribute (System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+        static extern int WSAGetLastError_internal ();
+        
+        public SocketException () : base (WSAGetLastError_internal ())
+        {
+        }
+
+        internal SocketException (int error, string message) : base (error, message)
+        {
+        }
+#else
         /// <devdoc>
         ///    <para>
         ///       Creates a new instance of the <see cref='System.Net.Sockets.SocketException'/> class with the default error code.
@@ -29,6 +41,7 @@ namespace System.Net.Sockets {
         public SocketException() : base(Marshal.GetLastWin32Error()) {
             GlobalLog.Print("SocketException::.ctor() " + NativeErrorCode.ToString() + ":" + Message);
         }
+#endif
         
         internal SocketException(EndPoint endPoint) : base(Marshal.GetLastWin32Error()) {
             m_EndPoint = endPoint;
@@ -54,7 +67,6 @@ namespace System.Net.Sockets {
         /// </devdoc>
         internal SocketException(SocketError socketError) : base((int)socketError) {
         }
-
 
         protected SocketException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext) {
