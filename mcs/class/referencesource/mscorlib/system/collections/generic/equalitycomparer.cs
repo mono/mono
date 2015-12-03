@@ -100,10 +100,8 @@ namespace System.Collections.Generic
 #endif
                     case TypeCode.Int32:
                     case TypeCode.UInt32:
-#if !MONO // Workaroud for JIT limitation
                     case TypeCode.Byte:
                     case TypeCode.UInt16: //ushort
-#endif
 #if MONO
                         return (EqualityComparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(EnumEqualityComparer<>), t);
 #else
