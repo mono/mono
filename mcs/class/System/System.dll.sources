@@ -553,16 +553,9 @@ System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
 System/UriBuilder.cs
-System/UriComponents.cs
 System/Uri.cs
-System/UriFormat.cs
-System/UriFormatException.cs
-System/UriHostNameType.cs
 System/UriHelper.cs
-System/UriIdnScope.cs
-System/UriKind.cs
 System/UriParser.cs
-System/UriPartial.cs
 System/UriTypeConverter.cs
 System/UriElements.cs
 System/UriParseComponents.cs
@@ -1016,6 +1009,11 @@ ReferenceSources/_SslStream.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/traceutils.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/TypedElement.cs
 ../../../external/referencesource/System/compmod/system/diagnostics/XmlWriterTraceListener.cs
+
+../../../external/referencesource/System/net/System/UriEnumTypes.cs
+../../../external/referencesource/System/net/System/URIFormatException.cs
+../../../external/referencesource/System/net/System/UriHostNameType.cs
+../../../external/referencesource/System/net/System/URIPartial.cs
 
 ../../../external/referencesource/System/net/System/Net/_BufferOffsetSize.cs
 ../../../external/referencesource/System/net/System/Net/_LazyAsyncResult.cs
