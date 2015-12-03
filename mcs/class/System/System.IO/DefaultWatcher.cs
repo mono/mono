@@ -43,6 +43,8 @@ namespace System.IO {
 		public bool Enabled;
 		public bool NoWildcards;
 		public DateTime DisabledTime;
+
+		public object FilesLock = new object ();
 		public Hashtable Files;
 	}
 
@@ -211,6 +213,13 @@ namespace System.IO {
 					files = NoStringsArray;
 			}
 
+			lock (data.FilesLock) {
+				IterateAndModifyFilesData (data, directory, dispatch, files);
+			}
+		}
+
+		void IterateAndModifyFilesData (DefaultWatcherData data, string directory, bool dispatch, string[] files)
+		{
 			/* Set all as untested */
 			foreach (string filename in data.Files.Keys) {
 				FileData fd = (FileData) data.Files [filename];
