@@ -100,10 +100,13 @@ namespace System.ComponentModel.DataAnnotations {
         /// Returns the default MatchTimeout based on UseLegacyRegExTimeout switch.
         /// </summary>
         private static int GetDefaultTimeout() {
+#if !MONO            
             if (LocalAppContextSwitches.UseLegacyRegExTimeout) {
                 return -1;
             }
-            else {
+            else 
+#endif
+            {
                 return 2000;
             }
 
