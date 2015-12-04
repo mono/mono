@@ -992,9 +992,19 @@ runtest: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQS
 	  exit 1; \
 	fi
 
+# 1. create baseline coverage data file
+# 2. perform test
+# 3. create test coverage data file
+# 4. combine baseline and test coverage data
+
 runtest-managed: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
-	$(RUNTIME) --debug $(TEST_RUNNER) $(TEST_RUNNER_ARGS) -j a --testsuite-name "runtime" --timeout 300 --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL)
+	$(LCOV) -c -i -d $(top_srcdir)/mono/sgen -d $(top_srcdir)/mono/mini -d $(top_srcdir)/mono/metadata \
+		-o coverage-base.info --test-name "runtime"; \
+	$(RUNTIME) --debug $(TEST_RUNNER) $(TEST_RUNNER_ARGS) -j a --testsuite-name "runtime" --timeout 300 --disabled "$${disabled_tests}" $(TESTSI_CS) $(TESTBS) $(TESTSI_IL); \
+	$(LCOV) -c -d $(top_srcdir)/mono/sgen -d $(top_srcdir)/mono/mini -d $(top_srcdir)/mono/metadata \
+		-o coverage-test.info --test-name "runtime"; \
+	$(LCOV) -a coverage-base.info -a coverage-test.info -o coverage-total.info
 
 runtest-managed-serial: test-runner.exe $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la $(PREREQSI_IL) $(PREREQSI_CS)
 	@if [ "x$$CI" = "x1" ]; then disabled_tests="$(DISABLED_TESTS_WRENCH)"; else disabled_tests="$(DISABLED_TESTS)"; fi; \
@@ -1651,12 +1661,12 @@ AM_CPPFLAGS = $(GLIB_CFLAGS)
 if HOST_WIN32
 # gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call
 # This shows up when compiling mono_test_marshal_delegate ()
-libtest_la_CFLAGS=-fno-optimize-sibling-calls
+libtest_la_CFLAGS=-fno-optimize-sibling-calls $(COVERAGE_CFLAGS)
 # the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
 # can't find them. So we use --kill-at to remove the @ suffix as well.
-libtest_la_LDFLAGS=-no-undefined -rpath `pwd` -Wl,--kill-at
+libtest_la_LDFLAGS=-no-undefined -rpath `pwd` -Wl,--kill-at $(COVERAGE_LDFLAGS)
 else
-libtest_la_LDFLAGS = -rpath `pwd`
+libtest_la_LDFLAGS = -rpath `pwd` $(COVERAGE_LDFLAGS)
 endif
 libtest_la_SOURCES = libtest.c
 libtest_la_LIBADD = $(GLIB_LIBS) $(LIBICONV)

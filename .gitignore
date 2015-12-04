@@ -114,6 +114,9 @@ GTAGS
 docs/doxygen*
 docs/perlmod*
 
+# gcov
+*.gcda
+*.gcno
 
 ##############################################################################
 # Mono-specific patterns

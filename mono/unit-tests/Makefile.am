@@ -1,10 +1,12 @@
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) -DMONO_BINDIR=\"$(bindir)/\" -DMONO_ASSEMBLIES=\"$(assembliesdir)\" -DMONO_CFG_DIR=\"$(confdir)\"
 
-test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES)
+test_cflags = $(AM_CFLAGS) $(SGEN_DEFINES) $(COVERAGE_CFLAGS)
 test_ldadd = libtestlib.la \
 	$(LIBGC_LIBS) $(GLIB_LIBS) -lm $(LIBICONV)
 if PLATFORM_DARWIN
-test_ldflags = -framework CoreFoundation -framework Foundation
+test_ldflags = -framework CoreFoundation -framework Foundation $(COVERAGE_LDFLAGS)
+else
+test_ldflags = $(COVERAGE_LDFLAGS)
 endif
 
 if !CROSS_COMPILE

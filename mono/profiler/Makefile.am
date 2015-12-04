@@ -30,16 +30,18 @@ lib_LTLIBRARIES = \
 suppressiondir = $(datadir)/mono-$(API_VER)/mono/profiler
 suppression_DATA = mono-profiler-log.suppression
 
+libmono_profiler_log_la_CFLAGS = $(COVERAGE_CFLAGS)
+
 if PLATFORM_DARWIN
 if BITCODE
 prof_ldflags = -no-undefined
 else
-prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
+prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace $(COVERAGE_LDFLAGS)
 endif
 endif
 
 if PLATFORM_ANDROID
-prof_ldflags = -avoid-version
+prof_ldflags = -avoid-version $(COVERAGE_LDFLAGS)
 endif
 
 # FIXME fix the profiler tests to work with coop.
@@ -65,7 +67,7 @@ libmono_profiler_aot_la_SOURCES = mono-profiler-aot.c
 libmono_profiler_aot_la_LIBADD =  $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(LIBICONV)
 libmono_profiler_aot_la_LDFLAGS = $(prof_ldflags)
 libmono_profiler_aot_static_la_SOURCES = mono-profiler-aot.c
-libmono_profiler_aot_static_la_LDFLAGS = -static
+libmono_profiler_aot_static_la_LDFLAGS = -static $(COVERAGE_CFLAGS)
 
 libmono_profiler_iomap_la_SOURCES = mono-profiler-iomap.c
 libmono_profiler_iomap_la_LIBADD = $(monodir)/mono/mini/$(LIBMONO_LA) $(GLIB_LIBS) $(LIBICONV)
