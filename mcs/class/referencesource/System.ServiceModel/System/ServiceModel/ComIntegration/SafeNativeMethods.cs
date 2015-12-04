@@ -56,7 +56,7 @@ namespace System.ServiceModel.ComIntegration
         ACTIVATE_LOCAL = 0x08,
         ACTIVATE_REMOTE = 0x10
     }
-
+    
     enum TOKEN_INFORMATION_CLASS
     {
         TokenUser = 1,
@@ -96,6 +96,7 @@ namespace System.ServiceModel.ComIntegration
         ERROR_INSUFFICIENT_BUFFER = 122,
         ERROR_NO_TOKEN = 1008,
         ERROR_NONE_MAPPED = 1332,
+        ERROR_NO_SUCH_DOMAIN = 1355,
     }
 
     enum EXTENDED_NAME_FORMAT
@@ -110,6 +111,32 @@ namespace System.ServiceModel.ComIntegration
         NameCanonicalEx = 9,
         NameServicePrincipalName = 10,
         NameDnsDomainName = 12
+    }
+
+    [Flags]
+    enum DSFlags : uint
+    {
+        DS_FORCE_REDISCOVERY = 0x00000001,
+        DS_DIRECTORY_SERVICE_REQUIRED = 0x00000010,
+        DS_DIRECTORY_SERVICE_PREFERRED = 0x00000020,
+        DS_GC_SERVER_REQUIRED = 0x00000040,
+        DS_PDC_REQUIRED = 0x00000080,
+        DS_BACKGROUND_ONLY = 0x00000100,
+        DS_IP_REQUIRED = 0x00000200,
+        DS_KDC_REQUIRED = 0x00000400,
+        DS_TIMESERV_REQUIRED = 0x00000800,
+        DS_WRITABLE_REQUIRED = 0x00001000,
+        DS_GOOD_TIMESERV_PREFERRED = 0x00002000,
+        DS_AVOID_SELF = 0x00004000,
+        DS_ONLY_LDAP_NEEDED = 0x00008000,
+        DS_IS_FLAT_NAME = 0x00010000,
+        DS_IS_DNS_NAME = 0x00020000,
+        DS_TRY_NEXTCLOSEST_SITE = 0x00040000,
+        DS_DIRECTORY_SERVICE_6_REQUIRED = 0x00080000,
+        DS_WEB_SERVICE_REQUIRED = 0x00100000,
+        DS_DIRECTORY_SERVICE_8_REQUIRED = 0x00200000,
+        DS_RETURN_DNS_NAME = 0x40000000,
+        DS_RETURN_FLAT_NAME = 0x80000000,
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -228,6 +255,7 @@ namespace System.ServiceModel.ComIntegration
         internal const String OLEAUT32 = "oleaut32.dll";
         internal const String COMSVCS = "comsvcs.dll";
         internal const String SECUR32 = "secur32.dll";
+        internal const String NETAPI32 = "netapi32.dll";
 
         internal const int ERROR_MORE_DATA = 0xEA;
         internal const int ERROR_SUCCESS = 0;
@@ -493,7 +521,21 @@ namespace System.ServiceModel.ComIntegration
         [DllImport(SECUR32, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.U1)]
         [ResourceExposure(ResourceScope.None)]
-        internal extern static bool TranslateName(string input, EXTENDED_NAME_FORMAT inputFormat, EXTENDED_NAME_FORMAT outputFormat, StringBuilder outputString, out uint size);
+        internal static extern bool TranslateName(string input, EXTENDED_NAME_FORMAT inputFormat, EXTENDED_NAME_FORMAT outputFormat, StringBuilder outputString, out uint size);
+
+        [DllImport(NETAPI32, ExactSpelling = true, EntryPoint = "DsGetDcNameW", CharSet = CharSet.Unicode, SetLastError = true)]
+        [ResourceExposure(ResourceScope.None)]
+        internal static extern int DsGetDcName(
+            [In] string computerName,
+            [In] string domainName,
+            [In] IntPtr domainGuid,
+            [In] string siteName,
+            [In] uint flags,
+            [Out] out IntPtr domainControllerInfo);
+
+        [DllImport(NETAPI32)]
+        [ResourceExposure(ResourceScope.None)]
+        internal static extern int NetApiBufferFree([In] IntPtr buffer);
     }
 
     internal static class InterfaceHelper

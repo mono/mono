@@ -17,6 +17,7 @@ namespace System.Data.SqlClient {
         KeepNulls           = 1 << 3,
         FireTriggers        = 1 << 4,
         UseInternalTransaction = 1 << 5,
+        AllowEncryptedValueModifications = 1 << 6,
     }
 }
 

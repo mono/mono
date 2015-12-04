@@ -753,7 +753,7 @@ namespace System.Diagnostics.Eventing{
                     {
                         // If relatedActivityId is Guid.Empty, this is not a real transfer: just call EventWrite().
                         // For pre-Win7 platforms we cannot set the activityId from CorrelationManager
-                        // because we cannot set relatedActivityId to null (Win7 
+                        // because we cannot set relatedActivityId to null (Win7 bug 116784)
                         status = UnsafeNativeMethods.EventWrite (m_regHandle, 
                                                                  ref eventDescriptor, 
                                                                  (uint)argCount, 

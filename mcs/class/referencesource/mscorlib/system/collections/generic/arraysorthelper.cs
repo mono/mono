@@ -7,7 +7,7 @@
 **
 ** Class:  ArraySortHelper
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: class to sort arrays

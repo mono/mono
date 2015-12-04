@@ -681,7 +681,7 @@ namespace System.Activities.Debugger
             [SecurityCritical]
             void InitDynamicModule(string asmName)
             {
-                // See http://blogs.msdn.com/Microsoft/archive/2005/02/03/366429.aspx for a simple example
+                // See http://blogs.msdn.com/[....]/archive/2005/02/03/366429.aspx for a simple example
                 // of debuggable reflection-emit.
                 Fx.Assert(dynamicModule == null, "can only be initialized once");
 

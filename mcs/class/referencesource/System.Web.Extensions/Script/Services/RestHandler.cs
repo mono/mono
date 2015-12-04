@@ -224,9 +224,9 @@ namespace System.Web.Script.Services {
             context.Response.AddHeader("jsonerror", "true");
             // Maintain the Charset from before. (DevDiv Bugs 158401)
             context.Response.Charset = charset;
-            //Devdiv 
-
-
+            //Devdiv Bug: 118619:When accessed remotely, an Ajax web service that throws an error doesn't return the error string in the proper format on IIS7
+            //For IIS 7.0 integrated mode we need to set TrySkipIisCustomErrors to override IIS custom error handling. This has no functional/perf impact on
+            //IIS 7.0 classic mode or earlier versions.
             context.Response.TrySkipIisCustomErrors = true;
             using (StreamWriter writer = new StreamWriter(context.Response.OutputStream, new UTF8Encoding(false))) {
                 if (ex is TargetInvocationException) {

@@ -189,7 +189,7 @@ namespace System.Web.UI {
                     return null;
                 }
 
-                // Note: duplicated (somewhat) in GetMacKeyModifier, keep in sync
+                // Note: duplicated (somewhat) in GetMacKeyModifier, keep in [....]
                 // See that method for comments on why these modifiers are in place
 
                 List<string> specificPurposes = new List<string>() {
@@ -216,7 +216,7 @@ namespace System.Web.UI {
                     return null;
                 }
 
-                // Note: duplicated (somewhat) in GetSpecificPurposes, keep in sync
+                // Note: duplicated (somewhat) in GetSpecificPurposes, keep in [....]
 
                 // Use the page's directory and class name as part of the key (ASURT 64044)
                 uint pageHashCode = _page.GetClientStateIdentifier();

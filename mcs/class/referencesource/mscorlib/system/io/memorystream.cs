@@ -7,7 +7,7 @@
 **
 ** Class:  MemoryStream
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: A Stream whose backing store is memory.  Great
@@ -422,7 +422,7 @@ namespace System.IO {
 
             // This implementation offers beter performance compared to the base class version.
 
-            // The parameter checks must be in sync with the base version:
+            // The parameter checks must be in [....] with the base version:
             if (destination == null)
                 throw new ArgumentNullException("destination");
             

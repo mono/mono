@@ -554,6 +554,24 @@ namespace System.ServiceModel.Diagnostics
             return retval;
         }
 
+
+        internal static ServiceModelActivity ExtractActivity(RequestContext request)
+        {
+            try
+            {
+                return TraceUtility.ExtractActivity(request.RequestMessage);
+            }
+            catch (Exception e)
+            {
+                if (Fx.IsFatal(e))
+                {
+                    throw;
+                }
+            }
+
+            return null;
+        }
+
         internal static Guid ExtractActivityId(Message message)
         {
             if (TraceUtility.MessageFlowTracingOnly)

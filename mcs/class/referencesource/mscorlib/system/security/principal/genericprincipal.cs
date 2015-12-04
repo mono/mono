@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 // 
 
 //
@@ -63,7 +63,7 @@ namespace System.Security.Principal
             //
             // 4.5               4.5         Yes                There should be a ClaimsIdentity, DebugAssert if this is not the case
             //                                                  If there are roles, attach them to the first ClaimsIdentity.
-            //                                                  If there is no non-null ClaimsIdentity, add one.  However, this is unusual and may be a 
+            //                                                  If there is no non-null ClaimsIdentity, add one.  However, this is unusual and may be a bug.
 
             ClaimsIdentity firstNonNullIdentity = null;
             foreach (var identity in base.Identities)

@@ -7,7 +7,7 @@
 **
 ** Class:  StringToken
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Represents a String to the ILGenerator class.

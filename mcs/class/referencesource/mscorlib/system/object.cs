@@ -86,7 +86,7 @@ public class Object
     // Based on the contents of the object, the hash function will return a suitable
     // value with a relatively random distribution over the various inputs.
     //
-    // The default implementation returns the sync block index for this instance.
+    // The default implementation returns the [....] block index for this instance.
     // Calling it on the same object multiple times will return the same value, so
     // it will technically meet the needs of a hash function, but it's less than ideal.
     // Objects (& especially value classes) should override this method.

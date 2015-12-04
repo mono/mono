@@ -7,7 +7,7 @@
 **
 ** Class:  Comparer
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Default IComparer implementation.

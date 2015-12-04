@@ -2128,7 +2128,7 @@ namespace System.Linq
 
         internal int InternalGetHashCode(TKey key)
         {
-            //Microsoft DevDivBugs 171937. work around comparer implementations that throw when passed null
+            //[....] DevDivBugs 171937. work around comparer implementations that throw when passed null
             return (key == null) ? 0 : comparer.GetHashCode(key) & 0x7FFFFFFF;
         }
 
@@ -2346,7 +2346,7 @@ namespace System.Linq
 
         internal int InternalGetHashCode(TElement value)
         {
-            //Microsoft DevDivBugs 171937. work around comparer implementations that throw when passed null
+            //[....] DevDivBugs 171937. work around comparer implementations that throw when passed null
             return (value == null) ? 0 : comparer.GetHashCode(value) & 0x7FFFFFFF;
         }
 

@@ -8,7 +8,7 @@ using System.Diagnostics.Contracts;
 **
 ** Class:  ListDictionaryInternal
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: List for exceptions.

@@ -7,7 +7,7 @@
 //
 // ParallelEnumerable.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // The standard IEnumerable-based LINQ-to-Objects query provider. This class basically
 // mirrors the System.Linq.Enumerable class, but (1) takes as input a special "parallel

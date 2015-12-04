@@ -2,8 +2,8 @@
 // <copyright file="DataColumn.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -1822,7 +1822,7 @@ namespace System.Data {
     }
 
     /// <summary>the auto stepped value with Int64 representation</summary>
-    /// <remarks>use unchecked behavior for Dev10 
+    /// <remarks>use unchecked behavior for Dev10 Bug 568510</remarks>
     internal sealed class AutoIncrementInt64 : AutoIncrementValue {
         /// <summary>the last returned auto incremented value</summary>
         private System.Int64 current;

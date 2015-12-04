@@ -199,7 +199,7 @@ namespace System.Runtime.Serialization.Json
         void WriteDateTimeInDefaultFormat(DateTime value)
         {
             // ToUniversalTime() truncates dates to DateTime.MaxValue or DateTime.MinValue instead of throwing
-            // This will break round-tripping of these dates (see 
+            // This will break round-tripping of these dates (see bug 9690 in CSD Developer Framework)
             if (value.Kind != DateTimeKind.Utc)
             {
                 long tickCount = value.Ticks - TimeZone.CurrentTimeZone.GetUtcOffset(value).Ticks;

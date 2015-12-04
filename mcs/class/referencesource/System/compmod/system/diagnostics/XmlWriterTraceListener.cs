@@ -23,9 +23,9 @@ namespace System.Diagnostics {
         private StringBuilder strBldr = null;
         private XmlTextWriter xmlBlobWriter = null;
         
-        // Previously we had a 
-
-
+        // Previously we had a bug where TraceTransfer did not respect the filter set on this listener.  We're fixing this
+        // bug, but only for cases where the filter was set via config.  In the next side by side release, we'll remove
+        // this and always respect the filter for TraceTransfer events.
         internal bool shouldRespectFilterOnTraceTransfer;
 
         public XmlWriterTraceListener(Stream stream) : base(stream){    }

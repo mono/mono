@@ -618,7 +618,7 @@ namespace System {
 
         // We impose limits on maximum array lenght in each dimension to allow efficient 
         // implementation of advanced range check elimination in future.
-        // Keep in sync with vm\gcscan.cpp and HashHelpers.MaxPrimeArrayLength.
+        // Keep in [....] with vm\gcscan.cpp and HashHelpers.MaxPrimeArrayLength.
         // The constants are defined in this method: inline SIZE_T MaxArrayLength(SIZE_T componentSize) from gcscan
         // We have different max sizes for arrays with elements of size 1 for backwards compatibility
         internal const int MaxArrayLength = 0X7FEFFFFF;

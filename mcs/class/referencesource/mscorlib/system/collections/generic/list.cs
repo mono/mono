@@ -7,7 +7,7 @@
 **
 ** Class:  List
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Implements a generic, dynamically sized list as an 
 **          array.

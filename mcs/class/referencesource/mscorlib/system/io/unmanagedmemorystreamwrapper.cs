@@ -7,7 +7,7 @@
 **
 ** Class:  UnmanagedMemoryStreamWrapper
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Create a Memorystream over an UnmanagedMemoryStream
 **
@@ -152,7 +152,7 @@ namespace System.IO {
 
         public override Task CopyToAsync(Stream destination, Int32 bufferSize, CancellationToken cancellationToken) {
 
-            // The parameter checks must be in sync with the base version:
+            // The parameter checks must be in [....] with the base version:
             if (destination == null)
                 throw new ArgumentNullException("destination");
             

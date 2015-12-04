@@ -66,7 +66,7 @@ namespace System.Resources {
     }
 
     [FriendAccessAllowed]
-    // [Microsoft 3/9/2012] This class should be named PRIErrorInfo.
+    // [[....] 3/9/2012] This class should be named PRIErrorInfo.
     //
     // During Dev11 CLR RC Ask mode, the Windows Modern Resource Manager
     // made a breaking change such that ResourceMap.GetSubtree returns null when a subtree is
@@ -147,27 +147,27 @@ namespace System.Resources {
     // which is key for maintainability. 
     // - Makes the ResourceManager more extensible by identifying and
     // encapsulating what varies
-    // - Unearthed a 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // - Unearthed a bug that's been lurking a while in file-based 
+    // lookup paths for InternalGetResourceSet if createIfNotExists is
+    // false.
+    // - Reuses logic, e.g. by breaking apart the culture fallback into 
+    // the fallback iterator class, we don't have to repeat the 
+    // sometimes confusing fallback logic across multiple methods
+    // - Fxcop violations reduced to 1/5th of original count. Most 
+    // importantly, code complexity violations disappeared.
+    // - Finally, it got rid of dead code paths. Because the big loop was
+    // so confusing, it masked unused chunks of code. Also, dividing 
+    // between file-based and manifest-based allowed functionaliy 
+    // unused in silverlight to fall out.
+    // 
+    // Note: this type is integral to the construction of exception objects,
+    // and sometimes this has to be done in low memory situtations (OOM) or
+    // to create TypeInitializationExceptions due to failure of a static class
+    // constructor. This type needs to be extremely careful and assume that 
+    // any type it references may have previously failed to construct, so statics
+    // belonging to that type may not be initialized. FrameworkEventSource.Log
+    // is one such example.
+    //
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
@@ -645,7 +645,7 @@ namespace System.Resources {
             return sb.ToString();
         }
 
-        // WARNING: This function must be kept in sync with ResourceFallbackManager.GetEnumerator()
+        // WARNING: This function must be kept in [....] with ResourceFallbackManager.GetEnumerator()
         // Return the first ResourceSet, based on the first culture ResourceFallbackManager would return
         internal ResourceSet GetFirstResourceSet(CultureInfo culture)
         {

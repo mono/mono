@@ -5,6 +5,7 @@
 namespace System.ServiceModel.Dispatcher
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Runtime;
     using System.Runtime.CompilerServices;
@@ -769,7 +770,7 @@ namespace System.ServiceModel.Dispatcher
 
         bool HandleError(Exception e, ref ErrorHandlerFaultInfo faultInfo)
         {
-            if (!(e != null))
+            if (e == null)
             {
                 Fx.Assert(SR.GetString(SR.GetString(SR.SFxNonExceptionThrown)));
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new InvalidOperationException(SR.GetString(SR.GetString(SR.SFxNonExceptionThrown))));
@@ -944,7 +945,8 @@ namespace System.ServiceModel.Dispatcher
                 return false;
             }
 
-            ServiceModelActivity activity = DiagnosticUtility.ShouldUseActivity ? TraceUtility.ExtractActivity(request.RequestMessage) : null;
+            ServiceModelActivity activity = DiagnosticUtility.ShouldUseActivity ? TraceUtility.ExtractActivity(request) : null;
+
             using (ServiceModelActivity.BoundOperation(activity))
             {
                 if (this.HandleRequestAsReply(request))
@@ -1440,7 +1442,7 @@ namespace System.ServiceModel.Dispatcher
         {
             if (this.isConcurrent)
             {
-                this.isPumpAcquired = 0;
+                Interlocked.Exchange(ref this.isPumpAcquired, 0);
             }
         }
 
@@ -1793,8 +1795,6 @@ namespace System.ServiceModel.Dispatcher
                 }
                 this.requestInfo.ChannelHandlerOwnsInstanceContextThrottle = (this.requestInfo.ExistingInstanceContext == null);
 
-
-
                 if (this.DispatchAndReleasePump(request, false, null))
                 {
                     this.EnsurePump();
@@ -1802,9 +1802,42 @@ namespace System.ServiceModel.Dispatcher
             }
         }
 
+        bool TryRetrievingInstanceContext(RequestContext request)
+        {
+            try
+            {
+                return TryRetrievingInstanceContextCore(request);
+            }
+            catch (Exception ex)
+            {
+                if (Fx.IsFatal(ex))
+                {
+                    throw;
+                }
+
+                DiagnosticUtility.TraceHandledException(ex, TraceEventType.Error);
+
+                try
+                {
+                    request.Close();
+                }
+                catch (Exception e)
+                {
+                    if (Fx.IsFatal(e))
+                    {
+                        throw;
+                    }
+
+                    request.Abort();
+                }
+
+                return false;
+            }
+        }
+
         //Return: False denotes failure, Caller should discard the request.
         //      : True denotes operation is sucessful.
-        bool TryRetrievingInstanceContext(RequestContext request)
+        bool TryRetrievingInstanceContextCore(RequestContext request)
         {
             bool releasePump = true;
             try
@@ -1870,6 +1903,7 @@ namespace System.ServiceModel.Dispatcher
                 }
 
                 this.HandleError(e, request, channel);
+                
                 return false;
             }
             finally
@@ -1949,10 +1983,7 @@ namespace System.ServiceModel.Dispatcher
         {
             if (this.isConcurrent)
             {
-                if (this.isPumpAcquired != 0 || Interlocked.CompareExchange(ref this.isPumpAcquired, 1, 0) != 0)
-                {
-                    return false;
-                }
+                return Interlocked.CompareExchange(ref this.isPumpAcquired, 1, 0) == 0;
             }
 
             return true;

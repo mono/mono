@@ -2,8 +2,8 @@
 // <copyright file="TdsParserSafeHandles.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -132,7 +132,9 @@ namespace System.Data.SqlClient {
             out byte[] instanceName, 
             bool flushCache, 
             bool fSync,
-            bool fParallel)
+            bool fParallel,
+            TransparentNetworkResolutionState transparentNetworkResolutionState,
+            int totalTimeout)
             : base(IntPtr.Zero, true) {
 
             RuntimeHelpers.PrepareConstrainedRegions();
@@ -146,8 +148,9 @@ namespace System.Data.SqlClient {
                     timeout = Timeout.Infinite; // -1 == native SNIOPEN_TIMEOUT_VALUE / INFINITE
                 }
 
+                int transparentNetworkResolutionStateNo = (int)transparentNetworkResolutionState;
                 _status = SNINativeMethodWrapper.SNIOpenSyncEx(myInfo, serverName, ref base.handle,
-                            spnBuffer, instanceName, flushCache, fSync, timeout, fParallel);
+                            spnBuffer, instanceName, flushCache, fSync, timeout, fParallel, transparentNetworkResolutionStateNo, totalTimeout);
             }
         }
 

@@ -7,7 +7,7 @@
 //
 // ParallelQuery.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // ParallelQuery is an abstract class that represents a PLINQ query.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

@@ -703,9 +703,9 @@ namespace System.Web.Hosting {
         internal static extern int MgdGetTlsTokenBindingIdentifiers(
             [In] IntPtr pHandler,
             [In, Out] ref IntPtr tokenBindingHandle,
-            [Out] out IntPtr providedTokenIdentifier,
-            [Out] out uint providedTokenIdentifierSize,
-            [Out] out IntPtr referredTokenIdentifier,
-            [Out] out uint referredTokenIdentifierSize);
+            [Out] out IntPtr providedToken,
+            [Out] out uint providedTokenSize,
+            [Out] out IntPtr referredToken,
+            [Out] out uint referredTokenSize);
     }
 }

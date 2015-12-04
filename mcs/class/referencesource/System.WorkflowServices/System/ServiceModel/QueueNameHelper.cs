@@ -39,7 +39,7 @@ namespace System.ServiceModel
             string conversationId = null;
 
             //Chosen explicit look up against generic looping of Context Headers
-            //to mitigate security threat 
+            //to mitigate security threat bug PS#3470.
             if (contextProperties.TryGetValue(WellKnownContextProperties.ConversationId, out conversationId))
             {
                 StringBuilder stringBuilder = new StringBuilder();

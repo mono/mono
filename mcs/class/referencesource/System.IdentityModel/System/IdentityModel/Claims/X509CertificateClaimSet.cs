@@ -172,9 +172,24 @@ namespace System.IdentityModel.Claims
             if (!string.IsNullOrEmpty(value))
                 claims.Add(Claim.CreateX500DistinguishedNameClaim(this.certificate.SubjectName));
 
-            value = this.certificate.GetNameInfo(X509NameType.DnsName, false);
-            if (!string.IsNullOrEmpty(value))
-                claims.Add(Claim.CreateDnsClaim(value));
+            // App context switch for disabling support for multiple dns entries in a SAN certificate
+            if (LocalAppContextSwitches.DisableMultipleDNSEntriesInSANCertificate)
+            {
+                // old behavior, default for <= 4.6
+                value = this.certificate.GetNameInfo(X509NameType.DnsName, false);
+                if (!string.IsNullOrEmpty(value))
+                    claims.Add(Claim.CreateDnsClaim(value));
+            }
+            else
+            {
+                // new behavior as this is the default long term behavior
+                // Since a SAN can have multiple DNS entries
+                string[] entries = GetDnsFromExtensions(this.certificate);
+                for (int i = 0; i < entries.Length; ++i)
+                {
+                    claims.Add(Claim.CreateDnsClaim(entries[i]));
+                }
+            }
 
             value = this.certificate.GetNameInfo(X509NameType.SimpleName, false);
             if (!string.IsNullOrEmpty(value))
@@ -243,10 +258,24 @@ namespace System.IdentityModel.Claims
             {
                 if (right == null || Rights.PossessProperty.Equals(right))
                 {
-                    string value = this.certificate.GetNameInfo(X509NameType.DnsName, false);
-                    if (!string.IsNullOrEmpty(value))
+                    // App context switch for disabling support for multiple dns entries in a SAN certificate
+                    if (LocalAppContextSwitches.DisableMultipleDNSEntriesInSANCertificate)
                     {
-                        yield return Claim.CreateDnsClaim(value);
+                        // old behavior, default for <= 4.6
+                        string value = this.certificate.GetNameInfo(X509NameType.DnsName, false);
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            yield return Claim.CreateDnsClaim(value);
+                        }
+                    }
+                    else
+                    {
+                        // new behavior since this is the default long term behavior
+                        string[] entries = GetDnsFromExtensions(certificate);
+                        for (int i = 0; i < entries.Length; ++i)
+                        {
+                            yield return Claim.CreateDnsClaim(entries[i]);
+                        }
                     }
                 }
             }
@@ -268,6 +297,33 @@ namespace System.IdentityModel.Claims
                     }
                 }
             }
+        }
+
+        // Fixing Bug 795660: SAN having multiple DNS entries
+        private static string[] GetDnsFromExtensions(X509Certificate2 cert)
+        {
+            foreach (X509Extension ext in cert.Extensions)
+            {
+                // Extension is SAN or SAN2
+                if (ext.Oid.Value == "2.5.29.7" || ext.Oid.Value == "2.5.29.17")
+                {
+                    string asnString = ext.Format(true);
+                    if (string.IsNullOrEmpty(asnString))
+                    {
+                        return new string[0];
+                    }
+
+                    string[] rawDnsEntries = asnString.Split(new string[1] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] dnsEntries = new string[rawDnsEntries.Length];
+                    for (int i = 0; i < rawDnsEntries.Length; ++i)
+                    {
+                        int equalSignIndex = rawDnsEntries[i].IndexOf('=');
+                        dnsEntries[i] = rawDnsEntries[i].Substring(equalSignIndex + 1).Trim();
+                    }
+                    return dnsEntries;
+                }
+            }
+            return new string[0];
         }
 
         public override IEnumerator<Claim> GetEnumerator()
@@ -347,7 +403,7 @@ namespace System.IdentityModel.Claims
             {
                 ThrowIfDisposed();
                 if (this.name == null)
-                {   
+                {
                     //
                     // DCR 48092: PrincipalPermission authorization using certificates could cause Elevation of Privilege.
                     // because there could be duplicate subject name.  In order to be more unique, we use SubjectName + Thumbprint

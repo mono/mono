@@ -2,8 +2,8 @@
 // <copyright file="XmlQueryTypeFactory.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;

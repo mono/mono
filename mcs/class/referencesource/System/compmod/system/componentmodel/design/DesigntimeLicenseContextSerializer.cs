@@ -44,7 +44,7 @@ namespace System.ComponentModel.Design {
             formatter.Serialize(o, new object[] {cryptoKey, context.savedLicenseKeys});
         }
         
-        [SuppressMessage("Microsoft.Security", "CA2107:ReviewDenyAndPermitOnlyUsage")] // Use of PermitOnly here is appropriate. This was a previous war-approved security 
+        [SuppressMessage("Microsoft.Security", "CA2107:ReviewDenyAndPermitOnlyUsage")] // Use of PermitOnly here is appropriate. This was a previous war-approved security bug fix.
         internal static void Deserialize(Stream o, string cryptoKey, RuntimeLicenseContext context) {
             IFormatter formatter = new BinaryFormatter();
 

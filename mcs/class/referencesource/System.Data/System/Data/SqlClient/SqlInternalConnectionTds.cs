@@ -2,8 +2,8 @@
 // <copyright file="SqlInternalConnectionTds.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient
@@ -168,6 +168,8 @@ namespace System.Data.SqlClient
 
         private readonly TimeoutTimer _timeout;
 
+        private static HashSet<int> transientErrors = new HashSet<int>();
+
         internal SessionData CurrentSessionData {
             get {
                 if (_currentSessionData != null) {
@@ -299,6 +301,11 @@ namespace System.Data.SqlClient
         private Guid _originalClientConnectionId = Guid.Empty;
         private string _routingDestination = null;
 
+        static SqlInternalConnectionTds()
+        {
+            populateTransientErrors();
+        }
+
         // although the new password is generally not used it must be passed to the c'tor
         // the new Login7 packet will always write out the new password (or a length of zero and no bytes if not present)
         //
@@ -313,7 +320,9 @@ namespace System.Data.SqlClient
                 SqlConnectionString         userConnectionOptions = null, // NOTE: userConnectionOptions may be different to connectionOptions if the connection string has been expanded (see SqlConnectionString.Expand)
                 SessionData                 reconnectSessionData = null,
                 DbConnectionPool            pool = null,
-                string                      accessToken = null) : base(connectionOptions) {
+                string                      accessToken = null,
+                bool applyTransientFaultHandling = false
+                ) : base(connectionOptions) {
 
 #if DEBUG
             if (reconnectSessionData != null) {
@@ -388,7 +397,33 @@ namespace System.Data.SqlClient
                 {
 #endif //DEBUG
                     _timeout = TimeoutTimer.StartSecondsTimeout(connectionOptions.ConnectTimeout);
-                    OpenLoginEnlist(_timeout, connectionOptions, credential, newPassword, newSecurePassword, redirectedUserInstance);
+
+                    // If transient fault handling is enabled then we can retry the login upto the ConnectRetryCount.
+                    int connectionEstablishCount = applyTransientFaultHandling ? connectionOptions.ConnectRetryCount + 1 : 1;
+                    int transientRetryIntervalInMilliSeconds = connectionOptions.ConnectRetryInterval * 1000; // Max value of transientRetryInterval is 60*1000 ms. The max value allowed for ConnectRetryInterval is 60
+                    for (int i = 0; i < connectionEstablishCount; i++)
+                    {
+                        try
+                        {
+                            OpenLoginEnlist(_timeout, connectionOptions, credential, newPassword, newSecurePassword, redirectedUserInstance);
+                            break;
+                        }
+                        catch (SqlException sqlex)
+                        {
+                            if (i + 1 == connectionEstablishCount 
+                                || !applyTransientFaultHandling
+                                || _timeout.IsExpired
+                                || _timeout.MillisecondsRemaining < transientRetryIntervalInMilliSeconds
+                                || !IsTransientError(sqlex))
+                            {
+                                throw sqlex;
+                            }
+                            else
+                            {
+                                Thread.Sleep(transientRetryIntervalInMilliSeconds);
+                            }
+                        }
+                    }
                 }
 #if DEBUG
                 finally {
@@ -416,7 +451,61 @@ namespace System.Data.SqlClient
                 Bid.Trace("<sc.SqlInternalConnectionTds.ctor|ADV> %d#, constructed new TDS internal connection\n", ObjectID);
             }
         }
-       
+
+        // The erros in the transient error set are contained in
+        // https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-error-messages/#transient-faults-connection-loss-and-other-temporary-errors
+        private static void populateTransientErrors()
+        {
+            // SQL Error Code: 4060
+            // Cannot open database "%.*ls" requested by the login. The login failed.
+            transientErrors.Add(4060);
+            // SQL Error Code: 10928
+            // Resource ID: %d. The %s limit for the database is %d and has been reached.
+            transientErrors.Add(10928);
+            // SQL Error Code: 10929
+            // Resource ID: %d. The %s minimum guarantee is %d, maximum limit is %d and the current usage for the database is %d. 
+            // However, the server is currently too busy to support requests greater than %d for this database.
+            transientErrors.Add(10929);
+            // SQL Error Code: 40197
+            // You will receive this error, when the service is down due to software or hardware upgrades, hardware failures, 
+            // or any other failover problems. The error code (%d) embedded within the message of error 40197 provides 
+            // additional information about the kind of failure or failover that occurred. Some examples of the error codes are 
+            // embedded within the message of error 40197 are 40020, 40143, 40166, and 40540.
+            transientErrors.Add(40197);
+            transientErrors.Add(40020);
+            transientErrors.Add(40143);
+            transientErrors.Add(40166);
+            // The service has encountered an error processing your request. Please try again.
+            transientErrors.Add(40540);
+            // The service is currently busy. Retry the request after 10 seconds. Incident ID: %ls. Code: %d.
+            transientErrors.Add(40501);
+            // Database '%.*ls' on server '%.*ls' is not currently available. Please retry the connection later. 
+            // If the problem persists, contact customer support, and provide them the session tracing ID of '%.*ls'.
+            transientErrors.Add(40613);
+            // Do federation errors deserve to be here ? 
+            // Note: Federation errors 10053 and 10054 might also deserve inclusion in your retry logic.
+            //transientErrors.Add(10053);
+            //transientErrors.Add(10054);
+        }
+
+
+        // Returns true if the Sql error is a transient.
+        private bool IsTransientError(SqlException exc)
+        {
+            if (exc == null)
+            {
+                return false;
+            }
+            foreach (SqlError error in exc.Errors)
+            {
+                if (transientErrors.Contains(error.Number))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         internal Guid ClientConnectionId {
             get {
                 return _clientConnectionId;
@@ -1229,8 +1318,8 @@ namespace System.Data.SqlClient
                 _federatedAuthenticationRequested = true;
             }
 
-            // The TCE feature is implicitly requested 
-            requestedFeatures |= TdsEnums.FeatureExtension.Tce;
+            // The TCE and GLOBALTRANSACTIONS feature are implicitly requested
+            requestedFeatures |= TdsEnums.FeatureExtension.Tce | TdsEnums.FeatureExtension.GlobalTransactions;
             _parser.TdsLogin(login, requestedFeatures, _recoverySessionData, _fedAuthFeatureExtensionData);
         }
 
@@ -1339,8 +1428,9 @@ namespace System.Data.SqlClient
         ResolveExtendedServerName(serverInfo, !redirectedUserInstance, connectionOptions);
 
         long timeoutUnitInterval = 0;
+        Boolean isParallel = connectionOptions.MultiSubnetFailover || connectionOptions.TransparentNetworkIPResolution;
 
-        if (connectionOptions.MultiSubnetFailover) {
+        if(isParallel) {
             // Determine unit interval
             if (timeout.IsInfinite) {
                 timeoutUnitInterval = checked((long)(ADP.FailoverTimeoutStep * (1000L * ADP.DefaultConnectionTimeout)));
@@ -1360,9 +1450,11 @@ namespace System.Data.SqlClient
         //  back into the parser for the error cases.
         int attemptNumber = 0;
         TimeoutTimer intervalTimer = null;
+        TimeoutTimer firstTransparentAttemptTimeout = TimeoutTimer.StartMillisecondsTimeout(ADP.FirstTransparentAttemptTimeout);
+        TimeoutTimer attemptOneLoginTimeout = timeout;
         while(true) {
 
-            if (connectionOptions.MultiSubnetFailover) {
+            if(isParallel) {
                 attemptNumber++;
                 // Set timeout for this attempt, but don't exceed original timer                
                 long nextTimeoutInterval = checked(timeoutUnitInterval * attemptNumber);
@@ -1385,14 +1477,26 @@ namespace System.Data.SqlClient
                 // 
 
 
+                Boolean isFirstTransparentAttempt =  connectionOptions.TransparentNetworkIPResolution && attemptNumber == 1;
+
+                if(isFirstTransparentAttempt) {
+                    attemptOneLoginTimeout = firstTransparentAttemptTimeout;
+                }
+                else {
+                    if(isParallel) {
+                        attemptOneLoginTimeout = intervalTimer;
+                    }
+                }
+                
                 AttemptOneLogin(    serverInfo, 
                                     newPassword,
                                     newSecurePassword,
-                                    !connectionOptions.MultiSubnetFailover,    // ignore timeout for SniOpen call unless MSF 
-                                    connectionOptions.MultiSubnetFailover ? intervalTimer : timeout);
+                                    !isParallel,    // ignore timeout for SniOpen call unless MSF , and TNIR
+                                    attemptOneLoginTimeout,
+                                    isFirstTransparentAttempt:isFirstTransparentAttempt);
                 
                 if (connectionOptions.MultiSubnetFailover && null != ServerProvidedFailOverPartner) {
-                    // connection succeeded: trigger exception if server sends failover partner and MultiSubnetFailover is used
+                    // connection succeeded: trigger exception if server sends failover partner and MultiSubnetFailover is used.
                     throw SQL.MultiSubnetFailoverWithFailoverPartner(serverProvidedFailoverPartner: true, internalConnection: this);
                 }
 
@@ -1710,7 +1814,7 @@ namespace System.Data.SqlClient
     }
 
     // Common code path for making one attempt to establish a connection and log in to server.
-    private void AttemptOneLogin(ServerInfo serverInfo, string newPassword, SecureString newSecurePassword, bool ignoreSniOpenTimeout, TimeoutTimer timeout, bool withFailover = false) {
+    private void AttemptOneLogin(ServerInfo serverInfo, string newPassword, SecureString newSecurePassword, bool ignoreSniOpenTimeout, TimeoutTimer timeout, bool withFailover = false, bool isFirstTransparentAttempt = true) {
         if (Bid.AdvancedOn) {
             Bid.Trace("<sc.SqlInternalConnectionTds.AttemptOneLogin|ADV> %d#, timout=%I64d{msec}, server=", ObjectID, timeout.MillisecondsRemaining);
             Bid.PutStr(serverInfo.ExtendedServerName);
@@ -1729,6 +1833,7 @@ namespace System.Data.SqlClient
                         ConnectionOptions.TrustServerCertificate,
                         ConnectionOptions.IntegratedSecurity,
                         withFailover,
+                        isFirstTransparentAttempt,
                         ConnectionOptions.Authentication);
 
         timeoutErrorInternal.EndPhase(SqlConnectionTimeoutErrorPhase.ConsumePreLoginHandshake);
@@ -2335,6 +2440,23 @@ namespace System.Data.SqlClient
                         _tceVersionSupported = supportedTceVersion;
                         Debug.Assert (_tceVersionSupported == TdsEnums.MAX_SUPPORTED_TCE_VERSION, "Client support TCE version 1");
                         _parser.IsColumnEncryptionSupported = true;
+                        break;
+                    }
+
+                case TdsEnums.FEATUREEXT_GLOBALTRANSACTIONS: {
+                        if (Bid.AdvancedOn) {
+                            Bid.Trace("<sc.SqlInternalConnectionTds.OnFeatureExtAck> %d#, Received feature extension acknowledgement for GlobalTransactions\n", ObjectID);
+                        }
+
+                        if (data.Length < 1) {
+                            Bid.Trace("<sc.SqlInternalConnectionTds.OnFeatureExtAck|ERR> %d#, Unknown version number for GlobalTransactions\n", ObjectID);
+                            throw SQL.ParsingError(ParsingErrorState.CorruptedTdsStream);
+                        }
+
+                        IsGlobalTransaction = true;    
+                        if (1 == data[0]) {
+                            IsGlobalTransactionsEnabledForServer = true;
+                        }
                         break;
                     }
 

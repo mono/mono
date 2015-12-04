@@ -179,7 +179,7 @@ namespace System.Web {
         // this is the per instance list that contains the events for each module
         private PipelineModuleStepContainer[] _moduleContainers;
 
-        // Byte array to be used by HttpRequest.GetEntireRawContent. Windows OS 
+        // Byte array to be used by HttpRequest.GetEntireRawContent. Windows OS Bug 1632921
         private byte[] _entityBuffer;
 
         // Counts the number of code paths consuming this HttpApplication instance. When the counter hits zero,
@@ -304,7 +304,7 @@ namespace System.Web {
 
         }
 
-        // Used by HttpRequest.GetEntireRawContent. Windows OS 
+        // Used by HttpRequest.GetEntireRawContent. Windows OS Bug 1632921
         internal byte[] EntityBuffer
         {
             get
@@ -769,7 +769,7 @@ namespace System.Web {
         }
 
         //
-        // Sync event hookup
+        // [....] event hookup
         //
 
 
@@ -1707,7 +1707,7 @@ namespace System.Web {
                 asyncHandler.CreateExecutionSteps(this, steps);
             }
 
-            // sync
+            // [....]
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -2398,7 +2398,7 @@ namespace System.Web {
                 Debug.Trace("PipelineRuntime", "RegisterEventSubscriptionsWithIIS: name=" + CurrentModuleCollectionKey
                             + ", type=" + httpModule.GetType().FullName + "\n");
 
-                // make sure collections are in sync
+                // make sure collections are in [....]
                 Debug.Assert(moduleInfo.Name == _currentModuleCollectionKey, "moduleInfo.Name == _currentModuleCollectionKey");
 #endif
 
@@ -2546,7 +2546,7 @@ namespace System.Web {
                 hasEvents = true;
             }
 
-            // sync
+            // [....]
             EventHandler handler = (EventHandler)Events[eventIndex];
 
             if (handler != null) {
@@ -4009,10 +4009,10 @@ namespace System.Web {
                             // a SendResponse, at which point it blocks until the SendResponse notification completes.
 
                             if (!isReEntry) { // currently we only re-enter for SendResponse
-                                // DevDiv 482614 (Sharepoint 
-
-
-
+                                // DevDiv 482614 (Sharepoint Bug 3137123)
+                                // Async completion or SendResponse can happen on a background thread while the thread that called IndicateCompletion has not unwound yet
+                                // Therefore (InIndicateCompletion == true) is not a sufficient evidence that we can use the ThreadContext stored in IndicateCompletionContext
+                                // To avoid using other thread's ThreadContext we use IndicateCompletionContext only if ThreadInsideIndicateCompletion is indeed our thread
                                 if (context.InIndicateCompletion && context.ThreadInsideIndicateCompletion == Thread.CurrentThread) {
                                     // we already have a ThreadContext
                                     threadContext = context.IndicateCompletionContext;
@@ -4087,7 +4087,7 @@ namespace System.Web {
                                         break;
                                     }
 
-                                    // sync case (we might be able to stay in managed code and execute another notification)
+                                    // [....] case (we might be able to stay in managed code and execute another notification)
                                     if (needToFinishRequest || UnsafeIISMethods.MgdGetNextNotification(wr.RequestContext, RequestNotificationStatus.Continue) != 1) {
                                         isSynchronousCompletion = true;
                                         needToComplete = true;
@@ -4151,14 +4151,14 @@ namespace System.Web {
                             if (threadContext != null) {
                                 if (context.InIndicateCompletion) {
                                     if (isSynchronousCompletion) {
-                                        // this is a sync completion on an IIS thread
+                                        // this is a [....] completion on an IIS thread
                                         threadContext.Synchronize();
                                         // Note for DevDiv 482614 fix:
                                         // If this threadContext is from IndicateCompletionContext (e.g. this thread called IndicateCompletion)
                                         // then we continue reusing this thread and only undo impersonation before unwinding back to IIS.
                                         //
                                         // If this threadContext was created while another thread was and still is in IndicateCompletion call
-                                        // (e.g. sync or async flush on a background thread from native code, not managed since isReEnty==false)
+                                        // (e.g. [....] or async flush on a background thread from native code, not managed since isReEnty==false)
                                         // then we can not reuse this thread and this threadContext will be cleaned before we leave ResumeSteps
                                         // (because needToDisassociateThreadContext was set to true when we created this threadContext)
 
@@ -4190,7 +4190,7 @@ namespace System.Web {
                                 }
                                 else if (isSynchronousCompletion) {
                                     Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
-                                    // this is a sync completion on an IIS thread
+                                    // this is a [....] completion on an IIS thread
                                     threadContext.Synchronize();
                                     // get ready to call IndicateCompletion
                                     context.IndicateCompletionContext = threadContext;

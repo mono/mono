@@ -373,9 +373,9 @@ namespace System.Security.AccessControl
                 if ( aceLength % 4 != 0 )
                 {
                     //
-                    // This indicates a 
-
-
+                    // This indicates a bug in one of the ACE classes.
+                    // Binary length of an ace must ALWAYS be divisible by 4.
+                    //
 
                     Contract.Assert( false, "aceLength % 4 != 0" );
                     throw new SystemException();
@@ -389,8 +389,8 @@ namespace System.Security.AccessControl
                     // Increment the offset by the advertised length rather than the 
                     // actual binary length. (Ideally these two should match, but for
                     // object aces created through ADSI, the actual length is 32 bytes 
-                    // less than the allocated size of the ACE. This is a 
-
+                    // less than the allocated size of the ACE. This is a bug in ADSI.)
+                    //
                     offset += (binaryForm[offset + 2] << 0) + (binaryForm[offset + 3] << 8);
                 }
                 else
@@ -512,9 +512,9 @@ namespace System.Security.AccessControl
                 if ( aceLength % 4 != 0 )
                 {
                     //
-                    // This indicates a 
-
-
+                    // This indicates a bug in one of the ACE classes.
+                    // Binary length of an ace must ALWAYS be divisible by 4.
+                    //
 
                     Contract.Assert( false, "aceLength % 4 != 0" );
                     throw new SystemException();
@@ -548,9 +548,9 @@ namespace System.Security.AccessControl
                 if ( value.BinaryLength % 4 != 0 )
                 {
                     //
-                    // This indicates a 
-
-
+                    // This indicates a bug in one of the ACE classes.
+                    // Binary length of an ace must ALWAYS be divisible by 4.
+                    //
 
                     Contract.Assert( false, "aceLength % 4 != 0" );
                     throw new SystemException();
@@ -1787,7 +1787,7 @@ namespace System.Security.AccessControl
                     if ( ace == null )
                     {
                         //
-                        // <Microsoft-9/19/2004> Afraid to yank this statement now
+                        // <[....]-9/19/2004> Afraid to yank this statement now
                         // for fear of destabilization, so adding an assert instead
                         //
 

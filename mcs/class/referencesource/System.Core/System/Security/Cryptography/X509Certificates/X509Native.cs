@@ -142,6 +142,18 @@ namespace System.Security.Cryptography.X509Certificates {
 
             return UnsafeNativeMethods.CertDuplicateCertificateContext(context);
         }
+
+        // Gets a SafeHandle for the X509 certificate. The caller owns the returned handle and should dispose of it. It
+        // can be used independently of the lifetime of the original X509Certificate.
+        [SecuritySafeCritical]
+        internal static SafeCertContextHandle GetCertificateContext(X509Certificate certificate) {
+            SafeCertContextHandle certificateContext = DuplicateCertContext(certificate.Handle);
+            // Make sure to keep the X509Certificate object alive until after its certificate context is
+            // duplicated, otherwise it could end up being closed out from underneath us before we get a
+            // chance to duplicate the handle.
+            GC.KeepAlive(certificate);
+            return certificateContext;
+        }
     }
     /// <summary>
     ///     Native interop layer for X509 certificate and Authenticode functions. Native definitions can be
@@ -160,6 +172,60 @@ namespace System.Security.Cryptography.X509Certificates {
             UrlOnlyCacheRetrieval       = 0x00000008,   // AXL_URL_ONLY_CACHE_RETRIEVAL
             LifetimeSigning             = 0x00000010,   // AXL_LIFETIME_SIGNING
             TrustMicrosoftRootOnly      = 0x00000020    // AXL_TRUST_MICROSOFT_ROOT_ONLY
+        }
+
+        internal const uint X509_ASN_ENCODING = 0x00000001;
+        internal const string szOID_ECC_PUBLIC_KEY = "1.2.840.10045.2.1";   //Copied from Windows header file
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CERT_CONTEXT {
+            internal uint dwCertEncodingType;
+            internal IntPtr pbCertEncoded;
+            internal uint cbCertEncoded;
+            internal IntPtr pCertInfo;
+            internal IntPtr hCertStore;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CERT_PUBLIC_KEY_INFO {
+            internal CRYPT_ALGORITHM_IDENTIFIER Algorithm;
+            internal CRYPT_BIT_BLOB PublicKey;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CERT_INFO {
+            internal uint dwVersion;
+            internal CRYPTOAPI_BLOB SerialNumber;
+            internal CRYPT_ALGORITHM_IDENTIFIER SignatureAlgorithm;
+            internal CRYPTOAPI_BLOB Issuer;
+            internal FILETIME NotBefore;
+            internal FILETIME NotAfter;
+            internal CRYPTOAPI_BLOB Subject;
+            internal CERT_PUBLIC_KEY_INFO SubjectPublicKeyInfo;
+            internal CRYPT_BIT_BLOB IssuerUniqueId;
+            internal CRYPT_BIT_BLOB SubjectUniqueId;
+            internal uint cExtension;
+            internal IntPtr rgExtension; // PCERT_EXTENSION
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CRYPT_ALGORITHM_IDENTIFIER {
+            [MarshalAs(UnmanagedType.LPStr)]
+            internal string pszObjId;
+            internal CRYPTOAPI_BLOB Parameters;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CRYPT_BIT_BLOB {
+            internal uint cbData;
+            internal IntPtr pbData;
+            internal uint cUnusedBits;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        internal struct CRYPTOAPI_BLOB {
+            internal uint cbData;
+            internal IntPtr pbData;
         }
 
         /// <summary>

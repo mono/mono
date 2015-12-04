@@ -7,7 +7,7 @@
 **
 ** Class:  IOException
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Exception for a generic IO error.

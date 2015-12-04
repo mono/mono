@@ -7,7 +7,7 @@
 **
 ** Signature:  SignatureToken
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Represents a Signature to the ILGenerator signature.

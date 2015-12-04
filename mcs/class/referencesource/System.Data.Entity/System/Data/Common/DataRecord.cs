@@ -2,8 +2,8 @@
 // <copyright file="DataRecord.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Objects
@@ -426,7 +426,7 @@ namespace System.Data.Objects
         }
 
         #region ICustomTypeDescriptor implementation
-        //[Microsoft] Reference: http://msdn.microsoft.com/msdnmag/issues/05/04/NETMatters/
+        //[[....]] Reference: http://msdn.microsoft.com/msdnmag/issues/05/04/NETMatters/
         //Holds all of the PropertyDescriptors for the PrimitiveType objects in _values
         private PropertyDescriptorCollection _propertyDescriptors = null;
         private FilterCache _filterCache;

@@ -7,7 +7,7 @@
 //
 // YieldAwaitable.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Compiler-targeted type for switching back into the current execution context, e.g.
 // 

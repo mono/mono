@@ -765,10 +765,10 @@ internal class WebDirectoryBatchCompiler {
         }
 
         else {
-            // devdiv 
-
-
-
+            // devdiv bug 666936: ASP.NET compilation related deadlock in Antares scenario. 
+            // The main (current) thread holds a global compilation lock. CacheAssemblyResults and CacheCompileErrors may 
+            // also require the global compilation lock in case of removing old data and thus may lead to deadlock.
+            // Fix: using dictionaries to collect the build results from parallel threads and do caching in the main thread.
             ConcurrentDictionary<AssemblyBuilder, CompilerResults> buildResults = new ConcurrentDictionary<AssemblyBuilder, CompilerResults>();
             ConcurrentDictionary<AssemblyBuilder, CompilerResults> buildErrors = new ConcurrentDictionary<AssemblyBuilder, CompilerResults>();
             

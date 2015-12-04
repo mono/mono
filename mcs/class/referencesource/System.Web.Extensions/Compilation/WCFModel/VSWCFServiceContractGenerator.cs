@@ -441,9 +441,9 @@ namespace Microsoft.VSDesigner.WCFModel
             }
             catch (Exception ex)
             {
-                // fatal error... (workaround for 
-
-
+                // fatal error... (workaround for bug #135242)
+                // We want to convert fatal error exception to a normal code generator error message,
+                // so the user could find information from pervious errors to find KB topic.
                 proxyGenerationErrors.Add(new ProxyGenerationError(
                                     ProxyGenerationError.GeneratorState.GenerateCode,
                                     String.Empty,
@@ -1252,7 +1252,7 @@ namespace Microsoft.VSDesigner.WCFModel
             if (serializerType == ClientOptions.ProxySerializerType.Auto && ContainsHttpBindings(metadataSections))
             {
                 // NOTE: HTTP Get/Post binding indicates an old web service. We use XmlSerializer to prevent generating dup classes.
-                // Please check devdiv 
+                // Please check devdiv bug 94078
                 serializerType = ClientOptions.ProxySerializerType.XmlSerializer;
             }
 

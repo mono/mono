@@ -1290,7 +1290,7 @@ namespace System.Web.UI.MobileControls
             }
         }
 
-        // NOTE: Make sure this stays in sync with Page.PageRegisteredControlsThatRequirePostBackKey
+        // NOTE: Make sure this stays in [....] with Page.PageRegisteredControlsThatRequirePostBackKey
         private const string PageRegisteredControlsThatRequirePostBackKey = "__ControlsRequirePostBackKey__";
         private bool CheckEmptyViewState(Object viewState)
         {
@@ -1441,7 +1441,7 @@ namespace System.Web.UI.MobileControls
 
         private byte[] GetMacKeyModifier()
         {
-            //NOTE:  duplicate of the version in objectstateformatter.cs, keep in sync
+            //NOTE:  duplicate of the version in objectstateformatter.cs, keep in [....]
 
             // Use the page's directory and class name as part of the key (ASURT 64044)
             // We need to make sure that the hash is case insensitive, since the file system

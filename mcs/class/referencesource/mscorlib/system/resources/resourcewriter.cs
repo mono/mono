@@ -7,7 +7,7 @@
 **
 ** Class:  ResourceWriter
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Default way to write strings to a CLR resource 

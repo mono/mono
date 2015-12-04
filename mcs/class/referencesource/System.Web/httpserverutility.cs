@@ -492,7 +492,7 @@ namespace System.Web {
                             targetPage.SmartNavigation = true;
 #pragma warning restore 0618
 
-                        // If the target page is async need to save/restore sync context
+                        // If the target page is async need to save/restore [....] context
                         if (targetPage is IHttpAsyncHandler) {
                             savedSyncContext = _context.InstallNewAspNetSynchronizationContext();
                         }

@@ -7,7 +7,7 @@
 //
 // TaskToApm.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Helper methods for using Tasks to implement the APM pattern.
 //

@@ -73,4 +73,22 @@ namespace Microsoft.Win32.SafeHandles {
             return success;
         }
     }
+
+    /// <summary>
+    ///     SafeHandle for a native BCRYPT_KEY_HANDLE.
+    /// </summary>
+    [SecuritySafeCritical]
+    internal sealed class SafeBCryptKeyHandle : SafeHandleZeroOrMinusOneIsInvalid {
+        internal SafeBCryptKeyHandle(): base(true){ }
+
+        [DllImport("bcrypt.dll")]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SuppressUnmanagedCodeSecurity]        
+        internal static extern BCryptNative.ErrorCode BCryptDestroyKey(IntPtr hKey);
+
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        protected override bool ReleaseHandle() {
+            return BCryptDestroyKey(handle) == BCryptNative.ErrorCode.Success;
+        }
+    }
 }

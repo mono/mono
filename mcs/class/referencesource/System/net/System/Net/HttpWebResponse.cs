@@ -335,19 +335,19 @@ namespace System.Net {
         internal bool KeepAlive {
             get {
                 //
-                // QFE  - DevDiv 
-
-
-
-
-
-
-
-
-
-
-
-
+                // QFE  - DevDiv bug: 37757
+                // If there is proxy involved, independen of the Http Version, we should honor the
+                // proxy indicated Proxy-Connection header value.
+                // This header value is not RFC mandated, but is a legacy from Netscape documentations.
+                // It indicates that the proxy wants to keep the connection.
+                // Functionally it is equivalent of a Keep-Alive AND/OR Connection header.
+                //
+                // The absence of this check will result in HTTP/1.0 responsen be considered to be not
+                // Keeping the connection alive.
+                //
+                // This will result in a state mismatch between the connection pool and HttpWebRequest object
+                // when the decision to drain the connection and putting it back to the idle pool is made.
+                //
                 if (m_UsesProxySemantics)
                 {
                     string proxyConnectionHeader = Headers[HttpKnownHeaderNames.ProxyConnection];

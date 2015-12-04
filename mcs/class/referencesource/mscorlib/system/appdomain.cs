@@ -7,7 +7,7 @@
 **
 ** Class: AppDomain
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Domains represent an application within the runtime. Objects can 
@@ -3740,7 +3740,7 @@ namespace System {
                 for (int i=0; i<propertyNames.Length; i++)
                 {
                     
-                    if(propertyNames[i]=="APPBASE") // make sure in sync with Fusion
+                    if(propertyNames[i]=="APPBASE") // make sure in [....] with Fusion
                     {
                         if(propertyValues[i]==null)
                             throw new ArgumentNullException("APPBASE");
@@ -4155,7 +4155,7 @@ namespace System {
                                 // in via the default domain properties.  That restriction could be lifted
                                 // in a future release, at which point this assert should be removed.
                                 // 
-                                // This should be kept in sync with the real externally facing filter code
+                                // This should be kept in [....] with the real externally facing filter code
                                 // in CorHost2::SetPropertiesForDefaultAppDomain
                                 BCLDebug.Assert(false, "Unexpected default domain property");
                             }

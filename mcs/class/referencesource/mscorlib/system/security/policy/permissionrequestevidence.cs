@@ -5,7 +5,7 @@
 // ==--==
 //  PermissionRequestEvidence.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  Encapsulation of permission request as an evidence type.
 //

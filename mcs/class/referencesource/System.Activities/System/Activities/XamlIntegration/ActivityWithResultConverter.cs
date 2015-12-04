@@ -158,7 +158,7 @@ namespace System.Activities.XamlIntegration
                     {
                         literalValue = (T)(object)text;
                     }
-                    else if (text == string.Empty) // workaround for System.Runtime.Xaml 
+                    else if (text == string.Empty) // workaround for System.Runtime.Xaml bug
                     {
                         literalValue = default(T);
                     }

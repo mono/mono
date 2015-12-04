@@ -664,7 +664,7 @@ namespace System.ServiceModel.Channels
                                                             new ArraySegment<byte>(internalBuffer, receivedByteCount, internalBuffer.Length - receivedByteCount),
                                                             CancellationToken.None);
 
-                            await receiveTask.ContinueOnCapturedContextFlow<WebSocketReceiveResult>();
+                            await receiveTask.ConfigureAwait(false);
 
                             result = receiveTask.Result;
                             this.CheckCloseStatus(result);
@@ -847,7 +847,8 @@ namespace System.ServiceModel.Channels
                         if (this.streamWaitTask != null)
                         {
                             //// Wait until the previous stream message finished.
-                            await this.streamWaitTask.Task.ContinueOnCapturedContextFlow<object>();
+
+                            await this.streamWaitTask.Task.ConfigureAwait(false);
                         }
 
                         this.streamWaitTask = new TaskCompletionSource<object>();
@@ -857,7 +858,7 @@ namespace System.ServiceModel.Channels
                     {
                         if (!this.useStreaming)
                         {
-                            await this.ReadBufferedMessageAsync();
+                            await this.ReadBufferedMessageAsync().ConfigureAwait(false);
                         }
                         else
                         {
@@ -875,7 +876,8 @@ namespace System.ServiceModel.Channels
                                     Task<WebSocketReceiveResult> receiveTask = this.webSocket.ReceiveAsync(
                                                         new ArraySegment<byte>(buffer, 0, this.receiveBufferSize),
                                                         CancellationToken.None);
-                                    await receiveTask.ContinueOnCapturedContextFlow<WebSocketReceiveResult>();
+
+                                    await receiveTask.ConfigureAwait(false);
 
                                     WebSocketReceiveResult result = receiveTask.Result;
                                     this.CheckCloseStatus(result);

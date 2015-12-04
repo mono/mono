@@ -2,8 +2,8 @@
 // <copyright file="SqlParameter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -345,7 +345,7 @@ namespace System.Data.SqlClient {
 					maxlen = (long)mt.FixedLength;
 				}
                 else if (Size > 0 || Size < 0) {
-                   	maxlen = Size;   // 
+                   	maxlen = Size;   // Bug Fix: 302768, 302695, 302694, 302693
                 }
 				else {
 					maxlen = MSS.SmiMetaData.GetDefaultForType( mt.SqlDbType ).MaxLength;
@@ -1532,32 +1532,32 @@ namespace System.Data.SqlClient {
         // byte length and a parameter length > than that expressable in 2 bytes
         internal MetaType ValidateTypeLengths(bool yukonOrNewer) {
             MetaType mt = InternalMetaType;
-            // MDAC 
-
-
-
-
+            // MDAC bug #50839 + #52829 : Since the server will automatically reject any
+            // char, varchar, binary, varbinary, nchar, or nvarchar parameter that has a
+            // byte sizeInCharacters > 8000 bytes, we promote the parameter to image, text, or ntext.  This
+            // allows the user to specify a parameter type using a COM+ datatype and be able to
+            // use that parameter against a BLOB column.
             if ((SqlDbType.Udt != mt.SqlDbType) && (false == mt.IsFixed) && (false == mt.IsLong)) { // if type has 2 byte length
                 long actualSizeInBytes = this.GetActualSize();
                 long sizeInCharacters = this.Size;
 
-                // 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                // Bug: VSTFDevDiv #636867
+                // Notes:
+                // 'actualSizeInBytes' is the size of value passed; 
+                // 'sizeInCharacters' is the parameter size;
+                // 'actualSizeInBytes' is in bytes; 
+                // 'this.Size' is in charaters; 
+                // 'sizeInCharacters' is in characters; 
+                // 'TdsEnums.TYPE_SIZE_LIMIT' is in bytes;
+                // For Non-NCharType and for non-Yukon or greater variables, size should be maintained;
+                // Reverting changes from bug VSTFDevDiv # 479739 as it caused an regression;
+                // Modifed variable names from 'size' to 'sizeInCharacters', 'actualSize' to 'actualSizeInBytes', and 
+                // 'maxSize' to 'maxSizeInBytes'
+                // The idea is to
+                //  1) revert the regression from bug 479739
+                //  2) fix as many scenarios as possible including bug 636867
+                //  3) cause no additional regression from 3.5 sp1
+                // Keeping these goals in mind - the following are the changes we are making
 
                 long maxSizeInBytes = 0;
                 if ((mt.IsNCharType) && (yukonOrNewer))

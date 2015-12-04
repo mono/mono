@@ -101,7 +101,7 @@ namespace System.Net {
         private const string responseDrainTimeoutAppSetting = "responseDrainTimeout";
 
         //
-        // Timeout - timeout in ms for sync reads & writes, passed in HttpWebRequest
+        // Timeout - timeout in ms for [....] reads & writes, passed in HttpWebRequest
         //
 
         public override bool CanTimeout {
@@ -430,7 +430,7 @@ namespace System.Net {
                 if (returnResult == null) {
                     m_Connection.WriteStartNextRequest(m_Request, ref returnResult);
 
-                    // If the request is Sync, then we do our Read here for data
+                    // If the request is [....], then we do our Read here for data
                     if (!m_Request.Async)
                     {
                         object syncReaderResult = m_Request.ConnectionReaderAsyncResult.InternalWaitForCompletion();
@@ -439,7 +439,7 @@ namespace System.Net {
                         //via poll when we handed back the request stream
                         if (syncReaderResult == null && m_Request.NeedsToReadForResponse)
 #if DEBUG
-                            // Remove once mixed sync/async requests are supported.
+                            // Remove once mixed [....]/async requests are supported.
                             using (GlobalLog.SetThreadKind(ThreadKinds.Sync))
 #endif
                         {
@@ -891,7 +891,7 @@ namespace System.Net {
         }
 
         //
-        // Handles either async or sync Writing for *public* stream API
+        // Handles either async or [....] Writing for *public* stream API
         //
         private IAsyncResult InternalWrite(bool async, byte[] buffer, int offset, int size, AsyncCallback callback, object state ) {
             //
@@ -952,7 +952,7 @@ namespace System.Net {
                         m_BytesLeftToWrite -= size;
                     }
 
-                    GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() ----ing: size==0 || BufferOnly || IgnoreSocketErrors= " + (size==0) + BufferOnly + IgnoreSocketErrors);
+                    GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() swallowing: size==0 || BufferOnly || IgnoreSocketErrors= " + (size==0) + BufferOnly + IgnoreSocketErrors);
                     if (async) {
                         asyncResult = new LazyAsyncResult(this, state, callback);
                         completeSync = true;
@@ -1006,7 +1006,7 @@ namespace System.Net {
                         // IgnoreSocketErrors can be set at any time - need to check it again.
                         if (IgnoreSocketErrors && !NclUtilities.IsFatal(exception))
                         {
-                            GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() ----ing: IgnoreSocketErrors set after throw.");
+                            GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() swallowing: IgnoreSocketErrors set after throw.");
                             if (async)
                             {
                                 completeSync = true;
@@ -1109,7 +1109,7 @@ namespace System.Net {
                         // IgnoreSocketErrors can be set at any time - need to check it again.
                         if (IgnoreSocketErrors && !NclUtilities.IsFatal(exception))
                         {
-                            GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() ----ing: IgnoreSocketErrors set after throw.");
+                            GlobalLog.Print("ConnectStream#" + ValidationHelper.HashString(this) + "::InternalWrite() swallowing: IgnoreSocketErrors set after throw.");
                             if (async)
                             {
                                 completeSync = true;
@@ -1577,7 +1577,7 @@ namespace System.Net {
                 GlobalLog.Print("m_ReadBytes = "+m_ReadBytes);
 
                 if (m_ReadBytes < 0)
-                    throw new InternalException(); // 
+                    throw new InternalException(); // TODO consider changing on Assert or a user exception when stress gets stable-stable
 
             }
 
@@ -2596,7 +2596,7 @@ namespace System.Net {
                                     SafeSetSocketTimeout(SocketShutdown.Send);
 
 #if DEBUG
-                                    // Until there is an async version of this, we have to assert Sync privileges here.
+                                    // Until there is an async version of this, we have to assert [....] privileges here.
                                     using (GlobalLog.SetThreadKind(ThreadKinds.Sync)) {
 #endif
                                     m_Connection.Write(NclConstants.ChunkTerminator, 0, NclConstants.ChunkTerminator.Length);

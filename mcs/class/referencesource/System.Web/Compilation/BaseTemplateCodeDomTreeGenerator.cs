@@ -510,12 +510,12 @@ namespace System.Web.Compilation {
                 // if ((this.__Template_TestTemplate != null)) {
                 //     // For 2.0:
                 //     this.__Template_TestTemplate.InstantiateIn(__ctrl);
-                //     // For 4.0, use a new method. This is for fixing Dev10 
-
-
-
-
-
+                //     // For 4.0, use a new method. This is for fixing Dev10 bug 776195.
+                //     this.InstantiateInContentPlaceHolder(__ctrl, this.__Template_TestTemplate);
+                // }
+                // else {
+                //     // normal sub control building code
+                // }
                 if (MultiTargetingUtil.IsTargetFramework40OrAbove) {
                     instantiateTemplateExpr = new CodeMethodInvokeExpression(new CodeThisReferenceExpression(), "InstantiateInContentPlaceHolder");
                     instantiateTemplateExpr.Parameters.Add(ctrlRefExpr);
@@ -1105,11 +1105,11 @@ namespace System.Web.Compilation {
                         BuildExtractStatementsRecursive(controlBuilder.SubBuilders, statements, topLevelStatements, linePragma, tableVarName, containerVarName);
                     }
 
-                    // Dev10 
-
-
-
-
+                    // Dev10 bug 525267
+                    // When a control defines a DefaultProperty in its ParseChildren attribute, its subBuilders are appended 
+                    // to the DefaultProperty's subbuilders, and the DefaultProperty itself is added 
+                    // as a ComplexProperty or a TemplateProperty (and not as a suBbuilder). Thus we 
+                    // also need to go through these properties as well.
                     ArrayList list = new ArrayList();
                     AddEntryBuildersToList(controlBuilder.ComplexPropertyEntries, list);
                     AddEntryBuildersToList(controlBuilder.TemplatePropertyEntries, list);

@@ -7,7 +7,7 @@
  *
  * Class:  IsolatedStorageException
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
  *
  *
  * Purpose: The exceptions in IsolatedStorage

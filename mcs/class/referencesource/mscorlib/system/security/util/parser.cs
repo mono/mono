@@ -7,7 +7,7 @@
 **
 ** CLASS:    Parser
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** PURPOSE:  Parse "Elementary XML", that is, XML without 

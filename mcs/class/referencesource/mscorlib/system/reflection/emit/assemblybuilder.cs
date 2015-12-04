@@ -23,7 +23,7 @@
 // "internal" and "external" ModuleBuilders are similar
 //*************************************************************************************************************
 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 namespace System.Reflection.Emit
 {
     using System;
@@ -475,7 +475,7 @@ namespace System.Reflection.Emit
             // The name in the underlying metadata will be set when the
             // manifest module is created during nCreateDynamicAssembly.
 
-            // This name needs to stay in sync with that used in
+            // This name needs to stay in [....] with that used in
             // Assembly::Init to call ReflectionModule::Create (in VM)
             m_manifestModuleBuilder.Init(AssemblyBuilder.MANIFEST_MODULE_NAME, null, 0);
 

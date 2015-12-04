@@ -8,7 +8,7 @@
 //
 // TargetInvocationException is used to report an exception that was thrown
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //    by the target of an invocation.
 //
 // 

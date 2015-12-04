@@ -2,8 +2,8 @@
 // <copyright file="XmlSchemaInferenceException.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner> 
-// <owner current="false" primary="false">Microsoft</owner> 
+// <owner current="true" primary="true">[....]</owner> 
+// <owner current="false" primary="false">[....]</owner> 
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Schema 

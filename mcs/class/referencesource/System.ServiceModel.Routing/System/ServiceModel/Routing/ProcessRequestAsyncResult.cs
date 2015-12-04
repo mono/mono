@@ -248,6 +248,22 @@ namespace System.ServiceModel.Routing
                     return true;
                 }
             }
+            else if (exception is ProtocolException)
+            {
+                // This exception may happen when the current cached channel was closed due to end service recycles.
+                // We abort the channel in this case and clean it up from the session.
+                // We will then retry the request one more time only. In retried request, it will create a new channel because the cached channel has been cleaned up.
+                if (!this.abortedRetry)
+                {
+                    SessionChannels sessionChannels = this.service.GetSessionChannels(this.messageRpc.Impersonating);
+                    if (sessionChannels != null)
+                    {
+                        this.abortedRetry = true;
+                        sessionChannels.AbortChannel(sendOperation.CurrentEndpoint);
+                        return true;
+                    }
+                }
+            }
 
             if (sendOperation.TryMoveToAlternate(exception))
             {

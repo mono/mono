@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 // 
 
 namespace System.Security {
@@ -20,7 +20,7 @@ namespace System.Security {
     using System.Diagnostics.Contracts;
 
     // Used in DemandInternal, to remember the result of previous demands
-    // KEEP IN SYNC WITH DEFINITIONS IN SECURITYPOLICY.H
+    // KEEP IN [....] WITH DEFINITIONS IN SECURITYPOLICY.H
     [Serializable]
     internal enum PermissionType
     {

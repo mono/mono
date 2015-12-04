@@ -50,16 +50,23 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-                lock (this.ThisLock)
+                if (this.calls == null)
                 {
-                    if (this.calls == null)
+                    lock (this.ThisLock)
                     {
-                        this.calls = new FlowThrottle(this.GotCall, ServiceThrottle.DefaultMaxConcurrentCallsCpuCount,
-                                                      ServiceThrottle.MaxConcurrentCallsPropertyName, ServiceThrottle.MaxConcurrentCallsConfigName);
-                        this.calls.SetRatio(this.RatioCallsToken);
+                        if (this.calls == null)
+                        {
+                            FlowThrottle callsFt = new FlowThrottle(this.GotCall, ServiceThrottle.DefaultMaxConcurrentCallsCpuCount,
+                                ServiceThrottle.MaxConcurrentCallsPropertyName, ServiceThrottle.MaxConcurrentCallsConfigName);
+
+                            callsFt.SetRatio(this.RatioCallsToken);
+
+                            this.calls = callsFt;
+                        }
                     }
-                    return this.calls;
                 }
+
+                return this.calls;
             }
         }
 
@@ -67,16 +74,23 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-                lock (this.ThisLock)
+                if (this.sessions == null)
                 {
-                    if (this.sessions == null)
+                    lock (this.ThisLock)
                     {
-                        this.sessions = new FlowThrottle(this.GotSession, ServiceThrottle.DefaultMaxConcurrentSessionsCpuCount,
-                                                         ServiceThrottle.MaxConcurrentSessionsPropertyName, ServiceThrottle.MaxConcurrentSessionsConfigName);
-                        this.sessions.SetRatio(this.RatioSessionsToken);
+                        if (this.sessions == null)
+                        {
+                            FlowThrottle sessionsFt = new FlowThrottle(this.GotSession, ServiceThrottle.DefaultMaxConcurrentSessionsCpuCount,
+                                ServiceThrottle.MaxConcurrentSessionsPropertyName, ServiceThrottle.MaxConcurrentSessionsConfigName);
+
+                            sessionsFt.SetRatio(this.RatioSessionsToken);
+
+                            this.sessions = sessionsFt;
+                        }
                     }
-                    return this.sessions;
                 }
+
+                return this.sessions;
             }
         }
 
@@ -84,16 +98,22 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-                lock (this.ThisLock)
+                if (this.dynamic == null)
                 {
-                    if (this.dynamic == null)
+                    lock (this.ThisLock)
                     {
-                        this.dynamic = new QuotaThrottle(this.GotDynamic, new object());
-                        this.dynamic.Owner = "ServiceHost";
+                        if (this.dynamic == null)
+                        {
+                            QuotaThrottle dynamicQt = new QuotaThrottle(this.GotDynamic, new object());
+                            dynamicQt.Owner = "ServiceHost";
+
+                            this.dynamic = dynamicQt;
+                        }
                     }
-                    this.UpdateIsActive();
-                    return this.dynamic;
                 }
+
+                this.UpdateIsActive();
+                return this.dynamic;
             }
         }
 
@@ -158,20 +178,27 @@ namespace System.ServiceModel.Dispatcher
         {
             get
             {
-                lock (this.ThisLock)
+                if (this.instanceContexts == null)
                 {
-                    if (this.instanceContexts == null)
+                    lock (this.ThisLock)
                     {
-                        this.instanceContexts = new FlowThrottle(this.GotInstanceContext, Int32.MaxValue,
-                                                                 ServiceThrottle.MaxConcurrentInstancesPropertyName, ServiceThrottle.MaxConcurrentInstancesConfigName);
-                        this.instanceContexts.SetRatio(this.RatioInstancesToken);
-                        if (this.servicePerformanceCounters != null)
+                        if (this.instanceContexts == null)
                         {
-                            InitializeInstancePerfCounterSettings();
+                            FlowThrottle instanceContextsFt = new FlowThrottle(this.GotInstanceContext, Int32.MaxValue,
+                                                                     ServiceThrottle.MaxConcurrentInstancesPropertyName, ServiceThrottle.MaxConcurrentInstancesConfigName);
+                            instanceContextsFt.SetRatio(this.RatioInstancesToken);
+
+                            if (this.servicePerformanceCounters != null)
+                            {
+                                InitializeInstancePerfCounterSettings(instanceContextsFt);
+                            }
+
+                            this.instanceContexts = instanceContextsFt;
                         }
                     }
-                    return this.instanceContexts;
                 }
+
+                return this.instanceContexts;
             }
         }
 
@@ -191,7 +218,7 @@ namespace System.ServiceModel.Dispatcher
             //instance throttle is created through the behavior, set the perf counter callbacks if initialized
             if (this.instanceContexts != null)
             {
-                InitializeInstancePerfCounterSettings();
+                InitializeInstancePerfCounterSettings(this.instanceContexts);
             }
 
             //this.calls and this.sessions throttles are created by the constructor. Set the perf counter callbacks
@@ -199,14 +226,14 @@ namespace System.ServiceModel.Dispatcher
             InitializeSessionsPerfCounterSettings();
         }
 
-        void InitializeInstancePerfCounterSettings()
+        void InitializeInstancePerfCounterSettings(FlowThrottle instanceContextsFt)
         {
-            Fx.Assert(this.instanceContexts != null, "Expect instanceContext to be initialized");
+            Fx.Assert(instanceContextsFt != null, "Expect instanceContext to be initialized");
             Fx.Assert(this.servicePerformanceCounters != null, "expect servicePerformanceCounters to be set");
-            this.instanceContexts.SetAcquired(this.AcquiredInstancesToken);
-            this.instanceContexts.SetReleased(this.ReleasedInstancesToken);
-            this.instanceContexts.SetRatio(this.RatioInstancesToken);
-            this.servicePerformanceCounters.SetThrottleBase((int)ServicePerformanceCounters.PerfCounters.InstancesPercentMaxInstancesBase, this.instanceContexts.Capacity);
+            instanceContextsFt.SetAcquired(this.AcquiredInstancesToken);
+            instanceContextsFt.SetReleased(this.ReleasedInstancesToken);
+            instanceContextsFt.SetRatio(this.RatioInstancesToken);
+            this.servicePerformanceCounters.SetThrottleBase((int)ServicePerformanceCounters.PerfCounters.InstancesPercentMaxInstancesBase, instanceContextsFt.Capacity);
         }
 
         void InitializeCallsPerfCounterSettings()

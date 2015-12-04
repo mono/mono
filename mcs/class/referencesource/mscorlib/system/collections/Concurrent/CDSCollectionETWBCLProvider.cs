@@ -7,7 +7,7 @@
 //
 // CDSCollectionETWBCLProvider.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A helper class for firing ETW events related to the Coordination Data Structure 
 // collection types. This provider is used by CDS collections in both mscorlib.dll 

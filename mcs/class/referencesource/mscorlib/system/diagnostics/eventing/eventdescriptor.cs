@@ -2,7 +2,7 @@
 // <copyright file="etwprovider.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //------------------------------------------------------------------------------
 using System;
 using System.Runtime.InteropServices;

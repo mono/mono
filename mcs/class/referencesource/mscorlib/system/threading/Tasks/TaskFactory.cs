@@ -7,7 +7,7 @@
 //
 // TaskFactory.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // There are a plethora of common patterns for which Tasks are created.  TaskFactory encodes 
 // these patterns into helper methods.  These helpers also pick up default configuration settings 

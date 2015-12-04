@@ -2,7 +2,7 @@
 // <copyright file="Util.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
 //------------------------------------------------------------------------------
 
 using System.Data.Metadata.Edm;

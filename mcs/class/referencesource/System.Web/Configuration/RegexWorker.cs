@@ -88,7 +88,8 @@ namespace System.Web.Configuration {
                 target = String.Empty;
             }
 
-            Regex regex = new Regex(regexExpression, RegexOptions.ExplicitCapture);
+            // Adding timeout for Regex in case of malicious string causing DoS
+            Regex regex = RegexUtil.CreateRegex(regexExpression, RegexOptions.ExplicitCapture);
             Match match = regex.Match(target);
             if(match.Success == false) {
                 return false;

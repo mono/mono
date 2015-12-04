@@ -2719,7 +2719,7 @@ namespace System.Web.UI {
             // But for control which requires its OnInit method to be called again
             // to properly initialize when the control is removed and added back
             // to Page's control tree, the control can override IsReloadable
-            // to true so the control state is reset.  e.g. Validator, see 
+            // to true so the control state is reset.  e.g. Validator, see bug
             if (IsReloadable) {
                 _controlState = ControlState.Constructed;
             }
@@ -3179,7 +3179,7 @@ namespace System.Web.UI {
         internal Control FindControlFromPageIfNecessary(string id) {
             Control c = FindControl(id);
             // Find control from the page if it's a hierarchical ID.
-            // Dev11 
+            // Dev11 bug 19915
             if (c == null && Page != null) {
                 char[] findControlSeparators = { ID_SEPARATOR, LEGACY_ID_SEPARATOR };
                 if (id.IndexOfAny(findControlSeparators) != -1) {

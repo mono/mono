@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner       willa
-// @backupOwner Microsoft
+// @backupOwner [....]
 //---------------------------------------------------------------------
 namespace System.Data.EntityModel.SchemaObjectModel
 {

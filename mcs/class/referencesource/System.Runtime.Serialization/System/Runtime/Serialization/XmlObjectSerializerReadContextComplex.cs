@@ -193,7 +193,7 @@ namespace System.Runtime.Serialization
         {
             if (TD.DCDeserializeWithSurrogateStartIsEnabled())
             {
-                TD.DCDeserializeWithSurrogateStart(surrogateDataContract.UnderlyingType.FullName);
+                TD.DCDeserializeWithSurrogateStart(declaredType.FullName);
             }
 
             DataContract dataContract = surrogateDataContract ??

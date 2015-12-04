@@ -24,7 +24,7 @@ namespace System.Globalization
     //            properties are available without locales using CalendarData.GetCalendar(int)
 
     // StructLayout is needed here otherwise compiler can re-arrange the fields.
-    // We have to keep this in-sync with the definition in calendardata.h
+    // We have to keep this in-[....] with the definition in calendardata.h
     //
     // WARNING WARNING WARNING
     //

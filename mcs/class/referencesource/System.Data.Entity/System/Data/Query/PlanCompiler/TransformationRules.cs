@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  Microsoft
-// @backupOwner Microsoft
+// @owner  [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 using System;
@@ -4206,24 +4206,24 @@ namespace System.Data.Query.PlanCompiler
         /// the group by operation uses all the columns of X as the key.
         /// Additionally, the top-level physical projection must only expose one variable. If it exposes
         /// more than one (more than just the aggregate itself), then this rule must not apply.
-        /// This is a fix for devdiv 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        /// This is a fix for devdiv bug 851732. Since now we're supporting NewRecordOp nodes as
+        /// part of the GroupBy aggregate variable computations, we are also respecting the fact that
+        /// group by (e => e) means that we're grouping by all columns of entity e. This was not a
+        /// problem when the NewRecordOp node was not being processed since this caused the GroupBy
+        /// statement to be simplified to a form with no keys and no output columns. The generated SQL
+        /// is correct, but it is different from what it used to be and may be incompatible if the
+        /// entity contains fields with datatypes that do not support being grouped by, such as blobs
+        /// and images.
+        /// This rule simplifies the tree so that we remain compatible with the way we were generating
+        /// queries that contain group by (e => e).
+        /// What this does is enabling the tree to take a shape that further optimization can convert
+        /// into an expression that groups by the key of the table and calls the aggregate function
+        /// as expected.
+        /// </summary>
+        /// <param name="context"> Rule processing context </param>
+        /// <param name="n"> Current ProjectOp node </param>
+        /// <param name="newNode"> modified subtree </param>
+        /// <returns> Transformation status </returns>
         private static bool ProcessGroupByOpOnAllInputColumnsWithAggregateOperation(RuleProcessingContext context, Node n, out Node newNode)
         {
             newNode = n;

@@ -671,15 +671,15 @@ namespace System.Net
             GC.SuppressFinalize(this);
         }
 
-        // 
-
-
-
-
-
-
-
-
+        // Bug 434828
+        //
+        // It's very hard to guarantee cleanup of an AppDomain.  They aren't garbage collected, and Unload() is synchronous and
+        // can't be called from the finalizer thread.  So we must have a finalizer that uses another thread, in this case the
+        // TimerThread, to unload the domain.
+        //
+        // A case this will come up is if the user replaces the DefaultWebProxy.  The old one will be GC'd - there's no chance to
+        // clean it up properly.  If the user wants to avoid the TimerThread being spun up for that purpose, they should save the
+        // existing DefaultWebProxy in a static before replacing it.
         ~AutoWebProxyScriptWrapper()
         {
             if (!NclUtilities.HasShutdownStarted && scriptDomain != null)

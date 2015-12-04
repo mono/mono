@@ -844,7 +844,7 @@ namespace System.Runtime.Remoting {
             lock (Info)
             {            
                 // We make an entry in our config tables so as to keep
-                // both the file-based and programmatic config in sync.
+                // both the file-based and programmatic config in [....].
                 Info.AddWellKnownEntry(entry);
             }
         } // RegisterWellKnownServiceType

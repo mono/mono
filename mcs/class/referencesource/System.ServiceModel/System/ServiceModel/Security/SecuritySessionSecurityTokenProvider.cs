@@ -865,9 +865,9 @@ namespace System.ServiceModel.Security
 
             /*
              *   Session issuance/renewal consists of the following steps (some may be async):
-             *  1. Create a channel (sync)
+             *  1. Create a channel ([....])
              *  2. Open the channel (async)
-             *  3. Create the request to send to server (sync)
+             *  3. Create the request to send to server ([....])
              *  4. Send the message and get reply (async)
              *  5. Process the reply to get the token
              *  6. Close the channel (async) and complete the async result

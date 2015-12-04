@@ -6,7 +6,7 @@
 //
 // File: RtType.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Implements System.RuntimeType
 //
@@ -58,7 +58,7 @@ namespace System
 
     internal delegate void CtorDelegate(Object instance);
 
-    // Keep this in sync with FormatFlags defined in typestring.h
+    // Keep this in [....] with FormatFlags defined in typestring.h
     internal enum TypeNameFormatFlags
     {
         FormatBasic         = 0x00000000, // Not a bitmask, simply the tersest flag settings possible
@@ -597,8 +597,8 @@ namespace System
                                     // Grow the list by exactly one element in this case to avoid null entries at the end.
                                     //
 
-                                    // DevDiv #339308 is fixed, but we are keeping this code here for Dev11 in case there are other instances of this 
-
+                                    // DevDiv #339308 is fixed, but we are keeping this code here for Dev11 in case there are other instances of this bug.
+                                    // Remove for Dev12.
 
                                     Contract.Assert(false);
 
@@ -5851,7 +5851,7 @@ namespace System
         [Flags]
         private enum DispatchWrapperType : int
         {
-            // This enum must stay in sync with the DispatchWrapperType enum defined in MLInfo.h
+            // This enum must stay in [....] with the DispatchWrapperType enum defined in MLInfo.h
             Unknown         = 0x00000001,
             Dispatch        = 0x00000002,
             Record          = 0x00000004,

@@ -189,7 +189,7 @@
                 bool captureBeginStack = (myBeginMask & (CallStackCollectionBitMasks)AppVerifierCollectCallStackMask) == myBeginMask;
 
                 InvocationInfo beginHandlerInvocationInfo = InvocationInfo.Capture(captureBeginStack);
-                Uri requestUrl = null;
+                string requestUrl = null;
                 RequestNotification? currentNotification = null;
                 bool isPostNotification = false;
                 Type httpHandlerType = null;
@@ -199,7 +199,7 @@
                     HttpContext context = httpApplication.Context;
                     if (context != null) {
                         if (!context.HideRequestResponse && context.Request != null) {
-                            requestUrl = context.Request.Unvalidated.Url;
+                            requestUrl = TryGetRequestUrl(context);
                         }
 
                         if (context.NotificationContext != null) {
@@ -305,7 +305,7 @@
                                    // BeginHandler hasn't yet returned, so this call may be synchronous or asynchronous.
                                    // We can tell by comparing the current thread with the thread which called BeginHandler.
                                    // From a correctness perspective, it is valid to invoke the AsyncCallback delegate either
-                                   // synchronously or asynchronously. From Microsoft: if 'CompletedSynchronously = true', then
+                                   // synchronously or asynchronously. From [....]: if 'CompletedSynchronously = true', then
                                    // AsyncCallback invocation can happen either on the same thread or on a different thread,
                                    // just as long as BeginHandler hasn't yet returned (which in true in this case).
                                    if (!asyncResult.CompletedSynchronously) {
@@ -469,14 +469,14 @@
         /// <param name="errorHandler">The listener that can handle verification failures.</param>
         /// <returns>A callback which performs the verification.</returns>
         internal static Action<bool> GetSyncContextCheckDelegateImpl(ISyncContext syncContext, Action<AppVerifierException> errorHandler) {
-            Uri requestUrl = null;
+            string requestUrl = null;
             object originalThreadContextId = null;
 
             // collect all of the diagnostic information upfront
             HttpContext originalHttpContext = (syncContext != null) ? syncContext.HttpContext : null;
             if (originalHttpContext != null) {
                 if (!originalHttpContext.HideRequestResponse && originalHttpContext.Request != null) {
-                    requestUrl = originalHttpContext.Request.Unvalidated.Url;
+                    requestUrl = TryGetRequestUrl(originalHttpContext);
                 }
 
                 // This will be used as a surrogate for the captured HttpContext so that we don't
@@ -551,9 +551,9 @@
             // collect all of the diagnostic information upfront
             NotificationContext originalNotificationContext = context.NotificationContext;
             bool isReentry = originalNotificationContext.IsReEntry;
-            Uri requestUrl = null;
+            string requestUrl = null;
             if (!context.HideRequestResponse && context.Request != null) {
-                requestUrl = context.Request.Unvalidated.Url;
+                requestUrl = TryGetRequestUrl(context);
             }
 
             AppendAdditionalInfoDelegate appendCurrentNotificationInfo = (errorString) => {
@@ -568,9 +568,9 @@
                     assert(!isReentry, AppVerifierErrorCode.PendingProcessRequestNotificationStatusAfterCompletingNestedNotification);
                 }
                 else {
-                    // Completing synchronously with pending NotificationContext means a 
-
-
+                    // Completing synchronously with pending NotificationContext means a bug in either user code or the pipeline.
+                    // NotificationContext being null means we already completed asynchronously before completing synchronously.
+                    // Both cases indicate that we have some async operations we failed to account for.
                     assert(context.NotificationContext != null && !context.NotificationContext.PendingAsyncCompletion,
                             AppVerifierErrorCode.RequestNotificationCompletedSynchronouslyWithNotificationContextPending);
 
@@ -591,7 +591,7 @@
         /// <param name="errorHandler">The listener that can handle verification failures.</param>
         /// <param name="appendAdditionalInfoDelegate">The caller can provide this delegate to append additional information to the exception. Could be null.</param>
         /// <returns>A callback which performs the verification.</returns>
-        private static AssertDelegate GetAssertDelegateImpl(Uri requestUrl, Action<AppVerifierException> errorHandler, AppendAdditionalInfoDelegate appendAdditionalInfoDelegate) {
+        private static AssertDelegate GetAssertDelegateImpl(string requestUrl, Action<AppVerifierException> errorHandler, AppendAdditionalInfoDelegate appendAdditionalInfoDelegate) {
             // If the condition passed to this method evaluates to false, we will raise an error to whoever is listening.
             return (condition, errorCode) => {
                 long mask = 1L << (int)errorCode;
@@ -648,6 +648,15 @@
             GC.KeepAlive(errorCode);
             GC.KeepAlive(fullMessage);
             GC.KeepAlive(ex);
+        }
+
+        private static string TryGetRequestUrl(HttpContext context) {
+            try {
+                return context.Request.EnsureRawUrl();
+            }
+            catch (HttpException) {
+                return null;
+            }
         }
 
         internal static string PrettyPrintDelegate(Delegate del) {

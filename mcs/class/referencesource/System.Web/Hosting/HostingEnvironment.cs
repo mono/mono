@@ -590,7 +590,7 @@ namespace System.Web.Hosting {
 
             HttpRuntime.SetShutdownReason(ApplicationShutdownReason.HostingEnvironment, "HostingEnvironment initiated shutdown");
 
-            // Avoid calling Environment.StackTrace if we are in the ClientBuildManager (Dev10 
+            // Avoid calling Environment.StackTrace if we are in the ClientBuildManager (Dev10 bug 824659)
             if (!BuildManagerHost.InClientBuildManager) {
                 new EnvironmentPermission(PermissionState.Unrestricted).Assert();
                 try {
@@ -601,7 +601,7 @@ namespace System.Web.Hosting {
                 }
             }
 
-            // waitChangeNotification need not be honored in ClientBuildManager (Dev11 
+            // waitChangeNotification need not be honored in ClientBuildManager (Dev11 bug 264894)
             if (!BuildManagerHost.InClientBuildManager) {
                 // this should only be called once, before the cache is disposed, and
                 // the config records are released.

@@ -31,7 +31,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp 
+            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
 #pragma warning suppress 56523 // We are not interested in throwing an exception here if CloseHandle fails.
             return NativeMethods.CryptReleaseContext(handle, 0);
         }
@@ -58,7 +58,7 @@ namespace System.IdentityModel
 
         protected override bool ReleaseHandle()
         {
-            // PreSharp 
+            // PreSharp Bug: Call 'Marshal.GetLastWin32Error' or 'Marshal.GetHRForLastWin32Error' before any other interop call. 
 #pragma warning suppress 56523 // We are not interested in throwing an exception here if CloseHandle fails.
             bool ret = NativeMethods.CryptDestroyKey(handle);
             if (this.provHandle != null)

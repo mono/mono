@@ -7,7 +7,7 @@
 **
 ** Class:  SafeLocalMemHandle
 **
-** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
+** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
 **
 ** A wrapper for handle to local memory
 **

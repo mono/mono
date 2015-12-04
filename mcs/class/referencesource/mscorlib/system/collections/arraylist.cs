@@ -7,7 +7,7 @@
 **
 ** Class:  ArrayList
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Implements a dynamically sized List as an array,

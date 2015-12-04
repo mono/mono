@@ -1380,7 +1380,7 @@ namespace System.Web.Hosting {
                 }
 
                 // send to unmanaged code
-                // sends are always sync now since they're buffered by IIS
+                // sends are always [....] now since they're buffered by IIS
                 FlushCore(true,
                           numFragments,
                           fragments,
@@ -2317,11 +2317,11 @@ namespace System.Web.Hosting {
             return isInRole;
         }
 
-        // Windows OS 
-
-
-
-
+        // Windows OS Bug 1726303 was "fixed" by changing SynchronizeVariables
+        // to only synchronize the IPrincipal/IHttpUser if Windows authentication
+        // was enabled.  This is incorrect behavior; for example, suppose a forms
+        // authenticated request calls TransferRequest and passes the parent IPrincipal to a
+        // child request.
         private static bool IsAuthenticationEnabled {
             get {
                 if (!s_AuthenticationChecked) {

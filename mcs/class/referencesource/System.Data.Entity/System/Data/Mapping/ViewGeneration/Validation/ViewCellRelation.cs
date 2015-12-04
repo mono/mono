@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner Microsoft
-// @backupOwner Microsoft
+// @owner [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -62,7 +62,7 @@ namespace System.Data.Mapping.ViewGeneration.Validation
         // null if it does not find the slot in the left or right side of the viewrelation
         internal ViewCellSlot LookupViewSlot(MemberProjectedSlot slot)
         {
-            // CHANGE_Microsoft_IMPROVE: We could have a dictionary to speed this up
+            // CHANGE_[....]_IMPROVE: We could have a dictionary to speed this up
             foreach (ViewCellSlot viewSlot in m_slots)
             {
                 // If the left or right slots are equal, return the viewSlot

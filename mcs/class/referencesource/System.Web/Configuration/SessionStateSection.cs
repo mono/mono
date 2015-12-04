@@ -392,7 +392,7 @@ namespace System.Web.Configuration {
                 return (string)base[_propLockAttributes];
             }
             set {
-                // base.LockedAttributes.SetFromList(value); // keep the internal list in sync
+                // base.LockedAttributes.SetFromList(value); // keep the internal list in [....]
                 base[_propLockAttributes] = value;
             }
         }

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------------
 // <copyright file="CodeDirectiveCollection.cs" company="Microsoft">
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright> 
 // ------------------------------------------------------------------------------

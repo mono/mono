@@ -7,7 +7,7 @@
 **
 ** Class: CannotUnloadAppDomainException
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Exception class for failed attempt to unload an AppDomain.

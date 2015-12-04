@@ -7,7 +7,7 @@
 **
 ** Class:  MissingManifestResourceException
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Exception for a missing assembly-level resource 

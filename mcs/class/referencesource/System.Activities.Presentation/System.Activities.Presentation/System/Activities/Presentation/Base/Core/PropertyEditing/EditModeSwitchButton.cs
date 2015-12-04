@@ -61,7 +61,7 @@ namespace System.Activities.Presentation.PropertyEditing {
 
             EditModeSwitchButton theThis = (EditModeSwitchButton) obj;
 
-            // Sync to the owning PropertyContainer only if requested to do so
+            // [....] to the owning PropertyContainer only if requested to do so
             if (!theThis.SyncModeToOwningContainer)
                 return value;
 

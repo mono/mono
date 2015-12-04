@@ -7,7 +7,7 @@
 **
 ** Class:  SafeFileMappingHandle
 **
-** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
+** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
 **
 ** A wrapper for handle to file mappings, returned by 
 ** CreateFileMapping and OpenFileMapping.  Used for shared 

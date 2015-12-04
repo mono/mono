@@ -27,7 +27,7 @@ namespace System.Activities.XamlIntegration
             consumer.SetLineInfo(lineNumber, linePosition);
         }
         
-        // This method is a workaround for TFS 
+        // This method is a workaround for TFS bug #788190, since XamlReader.ReadSubtree() should (but doesn't) preserve IXamlLineInfo on the subreader
         public static void Transform(XamlReader reader, XamlWriter writer, IXamlLineInfo readerLineInfo, bool closeWriter)
         {
             IXamlLineInfoConsumer consumer = writer as IXamlLineInfoConsumer;

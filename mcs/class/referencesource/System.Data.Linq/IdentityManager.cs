@@ -97,8 +97,8 @@ namespace System.Data.Linq {
 
             #region Nested type definitions
             // These types are internal rather than private to work around
-            // CLR 
-
+            // CLR bug #117419 related to type visibility under partial trust
+            // in nested class scenarios.
 
             internal abstract class KeyManager {
                 internal abstract Type KeyType { get; }

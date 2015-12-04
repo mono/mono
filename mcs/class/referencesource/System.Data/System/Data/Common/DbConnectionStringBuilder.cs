@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -382,7 +382,7 @@ namespace System.Data.Common {
                 }
 
                 // all keywords in Keys list that do not have strongly typed property, ODBC case
-                // ignore 'Workaround Oracle 
+                // ignore 'Workaround Oracle Bug 914652' via IsFixedSize
                 if (!IsFixedSize) {
                     attributes = null;
                     foreach(string keyword in Keys) {

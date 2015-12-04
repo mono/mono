@@ -284,7 +284,7 @@ namespace System.ServiceModel.Security
         volatile static bool isSslValidationRequirementDetermined = false;
         static readonly int MinimumSslCipherStrength = 128;
 
-        // these are kept in sync with IIS70
+        // these are kept in [....] with IIS70
         public const string AuthTypeNTLM = "NTLM";
         public const string AuthTypeNegotiate = "Negotiate";
         public const string AuthTypeKerberos = "Kerberos";
@@ -1401,7 +1401,7 @@ namespace System.ServiceModel.Security
             }
         }
 
-        // work-around to Windows SE 
+        // work-around to Windows SE Bug 141614
         [Fx.Tag.SecurityNote(Critical = "Uses unsafe critical method UnsafeGetPassword to access the credential password without a Demand.",
             Safe = "Only uses the password to construct a cloned NetworkCredential instance, does not leak password value.")]
         [SecuritySafeCritical]
@@ -1435,7 +1435,7 @@ namespace System.ServiceModel.Security
             }
         }
 
-        // WORKAROUND, Microsoft, VSWhidbey 561276: The first NetworkCredential must be created in a lock.
+        // WORKAROUND, [....], VSWhidbey 561276: The first NetworkCredential must be created in a lock.
         internal static void PrepareNetworkCredential()
         {
             if (dummyNetworkCredential == null)
@@ -1655,7 +1655,7 @@ namespace System.ServiceModel.Security
                 {
                     thisPtr.communicationObject.EndOpen(result);
                 }
-#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
+#pragma warning suppress 56500 // [....], transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -1730,7 +1730,7 @@ namespace System.ServiceModel.Security
                 {
                     thisPtr.communicationObject.EndClose(result);
                 }
-#pragma warning suppress 56500 // Microsoft, transferring exception to another thread
+#pragma warning suppress 56500 // [....], transferring exception to another thread
                 catch (Exception e)
                 {
                     if (Fx.IsFatal(e))
@@ -2179,7 +2179,7 @@ namespace System.ServiceModel.Security
             if (keyIdentifierClause is EncryptedKeyIdentifierClause)
             {
                 EncryptedKeyIdentifierClause keyClause = (EncryptedKeyIdentifierClause)keyIdentifierClause;
-                // PreSharp 
+                // PreSharp Bug: Parameter 'keyClause' to this public method must be validated: A null-dereference can occur here.
 #pragma warning suppress 56506 // keyClause will not be null due to the if condition above.
                 for (int i = 0; i < keyClause.EncryptingKeyIdentifier.Count; i++)
                 {

@@ -193,7 +193,7 @@ namespace System.ServiceModel.Activation
         {
             HttpInput httpInput = this.GetHttpInput(false);
 
-            // work around http.sys keep alive 
+            // work around http.sys keep alive bug with chunked requests, see MB 49676, this is fixed in Vista
             if ((httpInput != null && httpInput.ContentLength == -1 && !OSEnvironmentHelper.IsVistaOrGreater) || !this.KeepAliveEnabled)
             {
                 result.SetConnectionClose();

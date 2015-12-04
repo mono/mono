@@ -8,7 +8,7 @@
 //
 // InvalidFilterCriteriaException is thrown in FindMembers when the
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //    filter criteria is not valid for the type of filter being used. 
 //
 // 

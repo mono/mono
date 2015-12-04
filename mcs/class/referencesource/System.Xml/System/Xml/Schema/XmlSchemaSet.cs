@@ -2,7 +2,7 @@
 // <copyright file="XmlSchemaSet.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>                                                                 
+// <owner current="true" primary="true">[....]</owner>                                                                 
 //------------------------------------------------------------------------------
 using System.Diagnostics;
 using System.Collections;
@@ -598,11 +598,11 @@ namespace System.Xml.Schema {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public XmlSchema Reprocess(XmlSchema schema) {
-            // Due to 
-
-
-
-
+            // Due to bug 644477 - this method is tightly coupled (THE CODE IS BASICALLY COPIED) to Remove, Add and AddSchemaToSet
+            // methods. If you change anything here *make sure* to update Remove/Add/AddSchemaToSet method(s) accordingly.
+            // The only difference is that we don't touch .schemas collection here to not break a code like this:
+            // foreach(XmlSchema s in schemaset.schemas) { schemaset.Reprocess(s); }
+            // This is by purpose.
             if (schema == null) {
                 throw new ArgumentNullException("schema");
             }
@@ -718,8 +718,8 @@ namespace System.Xml.Schema {
 //Internal Methods
 
         private XmlSchema Add(string targetNamespace, XmlSchema schema) {
-            // Due to 
-
+            // Due to bug 644477 - this method is tightly coupled (THE CODE IS BASICALLY COPIED) to Reprocess 
+            // method. If you change anything here *make sure* to update Reprocess method accordingly.
 
             if (schema == null || schema.ErrorCount != 0) { //Schema with parsing errors cannot be loaded
                 return null;    
@@ -908,8 +908,8 @@ namespace System.Xml.Schema {
         }
 
         private void AddSchemaToSet(XmlSchema schema) {
-            // Due to 
-
+            // Due to bug 644477 - this method is tightly coupled (THE CODE IS BASICALLY COPIED) to Reprocess 
+            // method. If you change anything here *make sure* to update Reprocess method accordingly.
 
             schemas.Add(schema.SchemaId, schema);
             //Add to targetNamespaces table
@@ -998,8 +998,8 @@ namespace System.Xml.Schema {
         }
 
         internal XmlSchema Remove(XmlSchema schema, bool forceCompile) {
-            // Due to 
-
+            // Due to bug 644477 - this method is tightly coupled (THE CODE IS BASICALLY COPIED) to Reprocess 
+            // method. If you change anything here *make sure* to update Reprocess method accordingly.
             if (schema == null) {
                 throw new ArgumentNullException("schema");
             }

@@ -7,7 +7,7 @@
 **
 ** Interface:  DictionaryEntry
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Return Value for IDictionaryEnumerator::GetEntry

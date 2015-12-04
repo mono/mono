@@ -7,7 +7,7 @@
 //
 // TaskScheduler.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // This file contains the primary interface and management of tasks and queues.  
 //

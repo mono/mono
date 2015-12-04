@@ -7,7 +7,7 @@
 **
 ** Class:  FieldToken
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Represents a Field to the ILGenerator Class

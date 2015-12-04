@@ -880,7 +880,7 @@ namespace System.Workflow.Runtime.DebugEngine
         #region Helper methods and properties
 
         // Callers of this method should acquire the executor lock only if they 
-        // are not being called in the runtime thread.(
+        // are not being called in the runtime thread.(bug 17231).
         private void LoadExistingInstance(WorkflowInstance instance, bool attaching)
         {
             WorkflowExecutor executor = instance.GetWorkflowResourceUNSAFE();

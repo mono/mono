@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 // 
 
 //
@@ -46,7 +46,7 @@ namespace System.Security.Principal
         Anonymous   = 3
     }
 
-    // Keep in sync with vm\comprincipal.h
+    // Keep in [....] with vm\comprincipal.h
     internal enum WinSecurityContext {
         Thread = 1, // OpenAsSelf = false
         Process = 2, // OpenAsSelf = true
@@ -370,8 +370,8 @@ namespace System.Security.Principal
 
             get {
                 if (m_isAuthenticated == -1) {
-                    // There is a known 
-
+                    // There is a known bug where this approach will not work correctly for domain guests (will return false
+                    // instead of true). But this is a corner-case that is not very interesting.
 #if !FEATURE_CORECLR
                     m_isAuthenticated = CheckNtTokenForSid(new SecurityIdentifier(IdentifierAuthority.NTAuthority,
                                                                     new int[] { Win32Native.SECURITY_AUTHENTICATED_USER_RID })) ? 1 : 0;
@@ -562,9 +562,9 @@ namespace System.Security.Principal
                     using (SafeLocalAllocHandle pGroups = GetTokenInformation(m_safeTokenHandle, TokenInformationClass.TokenGroups)) {
 
                         uint groupCount = pGroups.Read<uint>(0); 
-                        // Work-around 
-
-
+                        // Work-around bug on WS03 that only populates the GroupCount field of TOKEN_GROUPS if the count is 0
+                        // In that situation, attempting to read the entire TOKEN_GROUPS structure will lead to InsufficientBuffer exception 
+                        // since the field is only 4 bytes long (uint only, for GroupCount), but we try to read more (including the pointer to GroupDetails).
                         if (groupCount != 0)
                         {
 

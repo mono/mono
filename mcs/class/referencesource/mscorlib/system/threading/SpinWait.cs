@@ -7,7 +7,7 @@
 //
 // SpinWait.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Central spin logic used across the entire code-base.
 //

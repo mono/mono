@@ -10,8 +10,8 @@
 //     Changes to this file will be lost if the code is regenerated.
 // </auto-generated>
 
-// @owner    Microsoft
-// @backupOwner Microsoft
+// @owner    [....]
+// @backupOwner [....]
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;

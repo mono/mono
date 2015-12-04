@@ -2,8 +2,8 @@
 // <copyright file="AdapterUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.Common {
@@ -78,7 +78,7 @@ namespace System.Data.Common {
         }
 
         // NOTE: Initializing a Task in SQL CLR requires the "UNSAFE" permission set (http://msdn.microsoft.com/en-us/library/ms172338.aspx)
-        // Therefore we are lazily initializing these Tasks to avoid forcing customers to use the "UNSAFE" set when they are actually using no Async features (See Dev11 
+        // Therefore we are lazily initializing these Tasks to avoid forcing customers to use the "UNSAFE" set when they are actually using no Async features (See Dev11 Bug #193253)
         static private Task<bool> _trueTask = null;
         static internal Task<bool> TrueTask {
             get {
@@ -1852,6 +1852,7 @@ namespace System.Data.Common {
         internal const int DefaultCommandTimeout = 30;
         internal const int DefaultConnectionTimeout = DbConnectionStringDefaults.ConnectTimeout;
         internal const float FailoverTimeoutStep = 0.08F;    // fraction of timeout to use for fast failover connections
+        internal const int FirstTransparentAttemptTimeout = 500; // The first login attempt in  Transparent network IP Resolution 
 
         // security issue, don't rely upon static public readonly values - AS/URT 109635
         static internal readonly String StrEmpty = ""; // String.Empty

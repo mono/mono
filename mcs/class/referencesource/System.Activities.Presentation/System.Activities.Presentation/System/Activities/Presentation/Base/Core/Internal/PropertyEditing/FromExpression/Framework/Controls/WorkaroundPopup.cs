@@ -13,14 +13,14 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
 
     // <summary>
     // This class contains specific behavior for the Popup associated with PropertyContainer.
-    // Basically, it is a workaround for Windows OS 
-
-
-
-
-
-
-
+    // Basically, it is a workaround for Windows OS bug #1745919.  The "StaysOpen = false" setting
+    // on a Popup does not function as we expect when the Popup is created within another
+    // "StaysOpen = false" popup (or if anything has capture).  What happens is the Popup first
+    // checks if anything has capture, and only takes capture if nothing else has taken it.  But the
+    // StaysOpen behavior is implemented using the capture, so we lose that.  Also, related to that
+    // the Closed event will not be called, so to workaround both of those issues we essentially
+    // re-implement the popup capture grabbing code, except we take capture no matter what.
+    // </summary>
     internal class WorkaroundPopup : Popup
     {
         private bool releasingCapture = false;

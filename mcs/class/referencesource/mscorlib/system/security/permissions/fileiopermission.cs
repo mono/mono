@@ -5,7 +5,7 @@
 // ==--==
 //  FileIOPermission.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 
 namespace System.Security.Permissions {

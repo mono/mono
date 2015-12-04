@@ -7,7 +7,7 @@
 **
 ** Class:  UnmanagedMemoryAccessor
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Provides a fast, AV free, cross-language way of 
 **          accessing unmanaged memory in a random fashion.

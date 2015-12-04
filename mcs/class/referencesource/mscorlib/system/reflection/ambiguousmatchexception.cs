@@ -8,7 +8,7 @@
 //
 // AmbiguousMatchException is thrown when binding to a method results in more
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //    than one method matching the binding criteria.  This exception is thrown in
 //    general when something is Ambiguous.
 //

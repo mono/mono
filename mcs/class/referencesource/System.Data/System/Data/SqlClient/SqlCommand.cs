@@ -2,8 +2,8 @@
 // <copyright file="SqlCommand.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -485,7 +485,7 @@ namespace System.Data.SqlClient {
                     }
                 }
 
-                _activeConnection = value; // 
+                _activeConnection = value; // UNDONE: Designers need this setter.  Should we block other scenarios?
 
                 Bid.Trace("<sc.SqlCommand.set_Connection|API> %d#, %d#\n", ObjectID, ((null != value) ? value.ObjectID : -1));
             }
@@ -1898,7 +1898,7 @@ namespace System.Data.SqlClient {
         }
 
         internal SqlDataReader ExecuteReader(CommandBehavior behavior, string method) {
-            SqlConnection.ExecutePermission.Demand(); // 
+            SqlConnection.ExecutePermission.Demand(); // TODO: Need to move this to public methods...
 
             // Reset _pendingCancel upon entry into any Execute - used to synchronize state
             // between entry into Execute* API and the thread obtaining the stateObject.
@@ -4163,7 +4163,7 @@ namespace System.Data.SqlClient {
                 }
 
                 if (null != eventStream) {
-                    eventStream.Close( EventSink );     // 
+                    eventStream.Close( EventSink );     // UNDONE: should cancel instead!
                 }
 
                 if (requestExecutor != null) {
@@ -5339,8 +5339,8 @@ namespace System.Data.SqlClient {
                         }
                     }
 
-                    // 
-
+                    // bug 49497, if the user specifies a 0-sized parameter for a variable len field
+                    // pass over max size (8000 bytes or 4000 characters for wide types)
                     if (0 == size)
                         size = mt.IsSizeInCharacters ? (TdsEnums.MAXSIZE >> 1) : TdsEnums.MAXSIZE;
 

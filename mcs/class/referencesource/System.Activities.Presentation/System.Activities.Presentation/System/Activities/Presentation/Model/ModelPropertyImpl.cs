@@ -10,7 +10,7 @@ namespace System.Activities.Presentation.Model
 
     // This class provides the implementation for a model property.
     // this intercepts sets /gets to the property and works with modeltreemanager
-    // to keep the xaml in sync.
+    // to keep the xaml in [....].
 
     class ModelPropertyImpl : ModelProperty
     {

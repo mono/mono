@@ -1921,7 +1921,7 @@ namespace System.Activities.Runtime
                 return Scheduler.Continue;
             }
 
-            // We only check this in the sync path because there are no ways of changing the keys collections from the work items that can
+            // We only check this in the [....] path because there are no ways of changing the keys collections from the work items that can
             // go async.  There's an assert to this effect in FinishWorkItem.
             if (this.bookmarkScopeManager != null && this.bookmarkScopeManager.HasKeysToUpdate)
             {

@@ -375,5 +375,37 @@ namespace System.Security.Cryptography {
                 return NCryptNative.VerifySignature(keyHandle, hash, signature);
             }
         }
+
+        /// <summary>
+        ///     Helper property to get the NCrypt key handle
+        /// </summary>
+        private SafeNCryptKeyHandle KeyHandle {
+            [SecuritySafeCritical]
+            get { return Key.Handle; }
+        }
+
+        protected override byte[] HashData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm) {
+            // we're sealed and the base should have checked this before calling us
+            Debug.Assert(data != null);
+            Debug.Assert(offset >= 0 && offset <= data.Length);
+            Debug.Assert(count >= 0 && count <= data.Length - offset);
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
+
+            using (BCryptHashAlgorithm hasher = new BCryptHashAlgorithm(new CngAlgorithm(hashAlgorithm.Name), BCryptNative.ProviderName.MicrosoftPrimitiveProvider)) {
+                hasher.HashCore(data, offset, count);
+                return hasher.HashFinal();
+            }
+        }
+
+        protected override byte[] HashData(Stream data, HashAlgorithmName hashAlgorithm) {
+            // we're sealed and the base should have checked this before calling us
+            Debug.Assert(data != null);
+            Debug.Assert(!String.IsNullOrEmpty(hashAlgorithm.Name));
+
+            using (BCryptHashAlgorithm hasher = new BCryptHashAlgorithm(new CngAlgorithm(hashAlgorithm.Name), BCryptNative.ProviderName.MicrosoftPrimitiveProvider)) {
+                hasher.HashStream(data);
+                return hasher.HashFinal();
+            }
+        }
     }
 }

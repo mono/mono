@@ -7,7 +7,7 @@
 //
 // TplEtwProvider.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // EventSource for TPL.
 //

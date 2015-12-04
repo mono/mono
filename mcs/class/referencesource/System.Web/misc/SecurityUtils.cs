@@ -8,11 +8,11 @@
  */
 
 
-#if Microsoft_NAMESPACE
+#if WINFORMS_NAMESPACE
     namespace System.Windows.Forms
 #elif DRAWING_NAMESPACE
     namespace System.Drawing
-#elif Microsoft_PUBLIC_GRAPHICS_LIBRARY
+#elif WINFORMS_PUBLIC_GRAPHICS_LIBRARY
     namespace System.Internal
 #elif SYSTEM_NAMESPACE
     namespace System
@@ -127,7 +127,7 @@ namespace System.Windows.Forms
             return Activator.CreateInstance(type, flags, null, args, null);
         }
 
-#if (!Microsoft_NAMESPACE)
+#if (!WINFORMS_NAMESPACE)
 
         /// <devdoc>
         ///     This helper method provides safe access to Activator.CreateInstance.

@@ -127,9 +127,9 @@ namespace System.Workflow.ComponentModel
             compositeActivity.OnWorkflowChangesCompleted(executionContext);
         }
 
-        // Refer 
-
-
+        // Refer Bug 9339 (VB Compilation Failure - Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.)
+        //An unhandled exception of type 'System.TypeLoadException' occurred
+        // "Signature of the body and declaration in a method implementation do not match"
         protected override ActivityExecutionStatus Execute(T activity, ActivityExecutionContext executionContext)
         {
             return base.Execute(activity, executionContext);

@@ -155,6 +155,11 @@ namespace System.IdentityModel
             this.Signature.SignedInfo.EnsureDigestValidity(id, resolvedXmlSource);
         }
 
+        public bool EnsureDigestValidityIfIdMatches(string id, object resolvedXmlSource)
+        {
+            return this.Signature.SignedInfo.EnsureDigestValidityIfIdMatches(id, resolvedXmlSource);
+        }
+
         public byte[] GetSignatureValue()
         {
             return this.Signature.GetSignatureBytes();
@@ -1226,7 +1231,7 @@ namespace System.IdentityModel
             {
                 this.transformChain.ReadFrom(reader, transformFactory, dictionaryManager, ShouldPreserveComments(this.Uri));
             }
-                       
+
             this.digestMethodElement.ReadFrom(reader, dictionaryManager);
             this.digestValueElement.ReadFrom(reader, dictionaryManager);
 

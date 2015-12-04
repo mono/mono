@@ -489,7 +489,7 @@ namespace System.ServiceModel.Diagnostics
         {
             if ((source & MessageLoggingSource.Malformed) != 0)
             {
-                if (!TD.MessageLogWarning(data.ToString()))
+                if (TD.MessageLogWarningIsEnabled() && !TD.MessageLogWarning(data.ToString()))
                 {
                     if (TD.MessageLogEventSizeExceededIsEnabled())
                     {
@@ -499,7 +499,7 @@ namespace System.ServiceModel.Diagnostics
             }
             else
             {
-                if (!TD.MessageLogInfo(data.ToString()))
+                if (TD.MessageLogInfoIsEnabled() && !TD.MessageLogInfo(data.ToString()))
                 {
                     if (TD.MessageLogEventSizeExceededIsEnabled())
                     {

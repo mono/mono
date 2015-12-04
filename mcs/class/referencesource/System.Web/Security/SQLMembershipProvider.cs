@@ -77,7 +77,7 @@ namespace System.Web.Security {
                 _AppName = value;
             }
         }
-
+        
         private string    _sqlConnectionString;
         private bool      _EnablePasswordRetrieval;
         private bool      _EnablePasswordReset;
@@ -94,6 +94,7 @@ namespace System.Web.Security {
         private MembershipPasswordFormat _PasswordFormat;
         private MembershipPasswordCompatibilityMode _LegacyPasswordCompatibilityMode = MembershipPasswordCompatibilityMode.Framework20;
         private string s_HashAlgorithm = null;
+        private int?       _passwordStrengthRegexTimeout;
 
         private const int      PASSWORD_SIZE  = 14;
 
@@ -124,6 +125,7 @@ namespace System.Web.Security {
             _PasswordAttemptWindow      = SecUtility.GetIntValue( config, "passwordAttemptWindow", 10, false, 0 );
             _MinRequiredPasswordLength  = SecUtility.GetIntValue( config, "minRequiredPasswordLength", 7, false, 128 );
             _MinRequiredNonalphanumericCharacters = SecUtility.GetIntValue( config, "minRequiredNonalphanumericCharacters", 1, true, 128 );
+            _passwordStrengthRegexTimeout = SecUtility.GetNullableIntValue(config, "passwordStrengthRegexTimeout");
 
             _PasswordStrengthRegularExpression = config["passwordStrengthRegularExpression"];
             if( _PasswordStrengthRegularExpression != null )
@@ -203,6 +205,7 @@ namespace System.Web.Security {
             config.Remove("minRequiredNonalphanumericCharacters");
             config.Remove("passwordStrengthRegularExpression");
             config.Remove("passwordCompatMode");
+            config.Remove("passwordStrengthRegexTimeout");
             if (config.Count > 0) {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
@@ -331,7 +334,7 @@ namespace System.Web.Security {
 
             if( PasswordStrengthRegularExpression.Length > 0 )
             {
-                if( !Regex.IsMatch( password, PasswordStrengthRegularExpression ) )
+                if( !RegexUtil.IsMatch( password, PasswordStrengthRegularExpression, RegexOptions.None, _passwordStrengthRegexTimeout ) )
                 {
                     status = MembershipCreateStatus.InvalidPassword;
                     return null;
@@ -422,7 +425,7 @@ namespace System.Web.Security {
                 throw;
             }
         }
-
+        
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
@@ -580,7 +583,7 @@ namespace System.Web.Security {
 
             if( PasswordStrengthRegularExpression.Length > 0 )
             {
-                if( !Regex.IsMatch( newPassword, PasswordStrengthRegularExpression ) )
+                if( !RegexUtil.IsMatch( newPassword, PasswordStrengthRegularExpression, RegexOptions.None, _passwordStrengthRegexTimeout ) )
                 {
                     throw new ArgumentException(SR.GetString(SR.Password_does_not_match_regular_expression,
                                                              "newPassword"));

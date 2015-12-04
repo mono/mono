@@ -7,7 +7,7 @@
 **
 ** Class: ManifestResourceInfo
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: For info regarding a manifest resource's topology.

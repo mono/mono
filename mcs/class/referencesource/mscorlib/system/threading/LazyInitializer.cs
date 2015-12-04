@@ -7,7 +7,7 @@
 //
 // LazyInitializer.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // a set of lightweight static helpers for lazy initialization.
 //

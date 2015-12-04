@@ -468,9 +468,9 @@ public abstract class BasePartialCachingControl : Control {
         NameValueCollection reqValCollection;
         HttpRequest request = Page.Request;
         if (request != null && request.HttpVerb == HttpVerb.POST) {
-            // 
-
-
+            // Bug 6129: Partial cache key should include posted form values in postbacks.
+            // Include both QueryString and Form values (but not Cookies or Server Variables like Request.Params does).
+            // Per Request.Params behavior, add QueryString values before Form values
             reqValCollection = new NameValueCollection(request.QueryString);
             reqValCollection.Add(request.Form);
         }

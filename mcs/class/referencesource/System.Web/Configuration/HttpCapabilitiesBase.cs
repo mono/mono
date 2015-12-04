@@ -404,7 +404,8 @@ namespace System.Web.Configuration {
                 return null;
             }
 
-            Regex regex = new Regex("\\.NET CLR (?'clrVersion'[0-9\\.]*)");
+            // Adding timeout for Regex in case of malicious UA string causing DoS
+            Regex regex = RegexUtil.CreateRegex("\\.NET CLR (?'clrVersion'[0-9\\.]*)", RegexOptions.None);
             MatchCollection matches = regex.Matches(ua);
 
             if (matches.Count == 0) {

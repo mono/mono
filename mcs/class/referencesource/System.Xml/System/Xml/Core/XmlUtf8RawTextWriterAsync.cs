@@ -210,8 +210,8 @@ namespace System.Xml {
             CheckAsyncCall();
             Debug.Assert( prefix != null );
 
-            // VSTFDEVDIV 
-
+            // VSTFDEVDIV bug #583965: Inconsistency between Silverlight 2 and Dev10 in the way a single xmlns attribute is serialized    
+            // Resolved as: Won't fix (breaking change)
 
 #if SILVERLIGHT
             if ( attrEndPos == bufPos ) {

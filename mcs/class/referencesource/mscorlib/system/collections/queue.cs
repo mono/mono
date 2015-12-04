@@ -7,7 +7,7 @@
 **
 ** Class: Queue
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: A circular-array implementation of a queue.
 **

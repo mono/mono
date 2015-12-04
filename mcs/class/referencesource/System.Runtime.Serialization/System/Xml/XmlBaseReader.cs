@@ -1,8 +1,8 @@
 //------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
-// PERF, Microsoft, Microsoft: Make LookupNamespace do something smarter when lots of names
-// PERF, Microsoft, Microsoft: Make Attribute lookup smarter when lots of attributes
+// PERF, [....], [....]: Make LookupNamespace do something smarter when lots of names
+// PERF, [....], [....]: Make Attribute lookup smarter when lots of attributes
 namespace System.Xml
 {
     using System;
@@ -1566,7 +1566,13 @@ namespace System.Xml
                 {
                     int actualCharCount;
                     if (readContent)
+                    {
                         actualCharCount = ReadContentAsChars(chars, charCount, maxCharCount - charCount);
+                        // When deserializing base64 content which contains new line chars (CR, LF) chars from ReadObject, the reader reads in chunks of base64 content, LF char, base64 content, LF char and so on
+                        // Relying on encoding.GetBytes' exception to handle LF char would result in performance degradation so skipping LF char here
+                        if (actualCharCount == 1 && chars[charCount] == '\n')
+                            continue;
+                    }
                     else
                         actualCharCount = ReadValueChunk(chars, charCount, maxCharCount - charCount);
                     if (actualCharCount == 0)

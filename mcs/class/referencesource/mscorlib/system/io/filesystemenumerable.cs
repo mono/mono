@@ -7,7 +7,7 @@
 **
 ** Class:  FileSystemEnumerable
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Enumerates files and dirs

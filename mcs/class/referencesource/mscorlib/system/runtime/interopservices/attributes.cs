@@ -446,7 +446,7 @@ namespace System.Runtime.InteropServices{
 
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
-    // Note that this enum should remain in-sync with the CorNativeType enum in corhdr.h
+    // Note that this enum should remain in-[....] with the CorNativeType enum in corhdr.h
     public enum UnmanagedType
     {
         Bool = 0x2,         // 4 byte boolean value (true != 0, false == 0)

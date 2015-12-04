@@ -49,6 +49,7 @@ namespace System.Diagnostics {
         string userName;
         string domain;
         SecureString password;
+        string passwordInClearText;
         bool loadUserProfile;
 #endif //FEATURE_PAL
         bool redirectStandardInput = false;
@@ -335,6 +336,12 @@ namespace System.Diagnostics {
         public SecureString Password {
             get { return password; } 
             set { password = value; }
+        }
+
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string PasswordInClearText {
+            get { return passwordInClearText; }
+            set { passwordInClearText = value; }
         }
         
         [NotifyParentProperty(true)]

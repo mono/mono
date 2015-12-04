@@ -89,7 +89,7 @@ namespace System.Web.Util {
                 || c == '\'' // HTML-sensitive chars encoded for safety
                 || c == '<'
                 || c == '>'
-                || (c == '&' && JavaScriptEncodeAmpersand) // 
+                || (c == '&' && JavaScriptEncodeAmpersand) // Bug Dev11 #133237. Encode '&' to provide additional security for people who incorrectly call the encoding methods (unless turned off by backcompat switch)
                 || c == '\u0085' // newline chars (see Unicode 6.2, Table 5-1 [http://www.unicode.org/versions/Unicode6.2.0/ch05.pdf]) have to be encoded (DevDiv #663531)
                 || c == '\u2028'
                 || c == '\u2029';

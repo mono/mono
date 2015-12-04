@@ -56,9 +56,9 @@ namespace System.ServiceModel.Dispatcher
         {
             if ((this.dispatcher == null) || !this.dispatcher.HandleError(e))
             {
-                // We only stop if the listener faults.  It is a 
-
-
+                // We only stop if the listener faults.  It is a bug
+                // if the listener is in an invalid state and does not
+                // fault.  So there are no cases today where this aborts.
             }
         }
 

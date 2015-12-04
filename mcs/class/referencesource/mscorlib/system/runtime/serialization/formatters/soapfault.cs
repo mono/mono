@@ -7,7 +7,7 @@
  **
  ** Class: SoapFault
  **
- ** <EMAIL>Author: Peter de Jong (Microsoft)</EMAIL>
+ ** <EMAIL>Author: Peter de Jong ([....])</EMAIL>
  **
  ** Purpose: Specifies information for a Soap Fault
  **

@@ -7,7 +7,7 @@
 //
 // QueryLifecycle.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A convenient place to put things associated with entire queries and their lifecycle events.
 //

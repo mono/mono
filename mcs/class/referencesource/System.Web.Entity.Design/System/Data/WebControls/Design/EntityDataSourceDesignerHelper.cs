@@ -3,8 +3,8 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       Microsoft
-// @backupOwner Microsoft
+// @owner       [....]
+// @backupOwner [....]
 //------------------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -1131,12 +1131,12 @@ namespace System.Web.UI.Design.WebControls
                 // the right metadata from the design-time environment
                 EntityDataSource entityDataSource = new EntityDataSource(_entityConnection);
 
-                // This is workaround for a 
-
-
-
-
-
+                // This is workaround for a bug in the SQL CE provider services. SQL CE uses two providers - one is supposed to be used at design time 
+                // while the other one is supposed to be used at runtime. When the Entiy Designer is used in a way that requires to talk to the database 
+                // SQL CE starts returning design time provider. However they don't reset an internal flag and continue to return design time provider even if 
+                // the Entity Designer is not used anymore. Calling GetProviderManifestToken() method will reset the flag according to the provider in the
+                // connection. This fixes the problem for SQL CE provider without having to special case SQL CE because it will be a no-op for other providers. 
+                // For more details see bug 35675 in DevDiv database http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=35675
                 DbProviderServices.GetProviderServices(_entityConnection.StoreConnection).GetProviderManifestToken(_entityConnection.StoreConnection);
                 
                 // Copy only the properties that can affect the schema

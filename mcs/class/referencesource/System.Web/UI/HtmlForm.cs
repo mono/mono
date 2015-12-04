@@ -219,8 +219,8 @@ namespace System.Web.UI.HtmlControls {
 
         /// <devdoc>
         /// Overridden to return a constant value or tack the ID onto the same constant value.
-        /// This fixes a 
-
+        /// This fixes a bug in PocketPC which doesn't allow the name and ID of a form to be different
+        /// </devdoc>
         public override string UniqueID {
             get {
                 if (NamingContainer == Page) {
@@ -279,14 +279,16 @@ namespace System.Web.UI.HtmlControls {
             // scenarios need the postback action to be the original URL.  Note however, if Server.Transfer/Execute
             // is used, the action will be set to the transferred/executed page, that is, the value of
             // CurrentExecutionFilePathObject.  This is because of ASURT 59970 and the document attached to
-            // that 
+            // that bug, which indirectly states that things should behave this way when Transfer/Execute is used.
             if (Context.ServerExecuteDepth == 0) {
                 // There hasn't been any Server.Transfer or RewritePath.
                 // ASURT 15979: need to use a relative path, not absolute
                 action = clientFilePath.VirtualPathString;
                 int iPos = action.LastIndexOf('/');
                 if (iPos >= 0) {
-                    action = action.Substring(iPos + 1);
+                    // Ensure the segment is always a relative path, so prepend a dot-segment
+                    // (RFC section 4.2 Relative Reference)
+                    action = "./" + action.Substring(iPos + 1);
                 }
             }
             else {
@@ -423,7 +425,7 @@ namespace System.Web.UI.HtmlControls {
                     (page.RequestInternal.Browser.W3CDomVersion.Major > 0)) {
                     if (DefaultButton.Length > 0) {
                         // Find control from the page if it's a hierarchical ID.
-                        // Dev11 
+                        // Dev11 bug 19915
                         Control c = FindControlFromPageIfNecessary(DefaultButton);
 
                         if (c is IButtonControl) {

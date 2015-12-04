@@ -359,7 +359,7 @@ namespace System.Web.Compilation {
         private static void ValidateCompilerVersionFor40AndAbove() {
             // Since the root web.config already specifies 4.0, we need to make sure both compilerVersions
             // are actually greater than or equal to 4.0, in case the user only sets compilerVersion=3.5
-            // for one language. (Dev10 
+            // for one language. (Dev10 bug 738202)
             ValidateCompilerVersionFor40AndAbove(GetCSharpCompilerVersion());
             ValidateCompilerVersionFor40AndAbove(GetVisualBasicCompilerVersion());
         }

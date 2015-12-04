@@ -188,7 +188,7 @@ internal static class CompilationLock {
             // Always take the BuildManager lock *before* taking the mutex, to avoid possible
             // deadlock situations (VSWhidbey 530732)
 #pragma warning disable 0618
-            //@TODO: This overload of Monitor.Enter is obsolete.  Please change this to use Monitor.Enter(ref bool), and remove the pragmas   -- Microsoft
+            //@TODO: This overload of Monitor.Enter is obsolete.  Please change this to use Monitor.Enter(ref bool), and remove the pragmas   -- [....]
             Monitor.Enter(BuildManager.TheBuildManager);
 #pragma warning restore 0618
             _mutex.WaitOne();

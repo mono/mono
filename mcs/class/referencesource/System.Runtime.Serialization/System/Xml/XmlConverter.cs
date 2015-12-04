@@ -1,9 +1,9 @@
 //------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
-// PERF, Microsoft, Microsoft: Make LookupNamespace do something smarter when lots of names
-// PERF, Microsoft, Microsoft: Make Attribute lookup smarter when lots of attributes
-// PERF: Microsoft, Microsoft: Compare safe/unsafe versions
+// PERF, [....], [....]: Make LookupNamespace do something smarter when lots of names
+// PERF, [....], [....]: Make Attribute lookup smarter when lots of attributes
+// PERF: [....], [....]: Compare safe/unsafe versions
 
 namespace System.Xml
 {

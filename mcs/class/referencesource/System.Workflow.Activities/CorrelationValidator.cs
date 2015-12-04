@@ -840,7 +840,7 @@ namespace System.Workflow.Activities
                 //This is a work around for delgates of unbounded generic type. There is no support
                 //in file code model for these so we dont support it for now. The only way
                 //to detect if the DesignTimeEventInfo has EventHandler of unbounded generic type
-                //is to check if we get the methods correctly here Ref 
+                //is to check if we get the methods correctly here Ref Bug#17783
                 EventInfo eventInfo = interfaceType.GetEvent(operation);
                 if (eventInfo == null || eventInfo.GetAddMethod(true) == null)
                 {

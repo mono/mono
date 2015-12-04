@@ -449,7 +449,7 @@ namespace System.Runtime.Remoting {
                     if (takeAndRelease)
                         rwlock.AcquireWriterLock(INFINITE);
 
-                    // SetIdentity will give the correct Id if we raced
+                    // SetIdentity will give the correct Id if we ----d
                     // between the ResolveIdentity call above and now.
                     //   (we are unmarshaling, and the server should guarantee
                     //    that the uri is unique, so we will use an existing identity

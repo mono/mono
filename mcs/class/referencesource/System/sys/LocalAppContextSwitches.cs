@@ -25,5 +25,19 @@ namespace System
         }
 #endregion
 
+#region System.Net.WebSockets.HttpListenerAsyncEventArgs
+        private static int _allocateOverlappedOnDemand;
+        internal const string AllocateOverlappedOnDemandName = @"Switch.System.Net.WebSockets.HttpListenerAsyncEventArgs.AllocateOverlappedOnDemand";
+
+        public static bool AllocateOverlappedOnDemand
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(AllocateOverlappedOnDemandName, ref _allocateOverlappedOnDemand);
+            }
+        }
+#endregion
+
     }
 }

@@ -164,12 +164,12 @@ namespace System {
                         return;
                     }
                     rh.infinitelyRecursingCount++;
-                    // This is often a 
-
-
-
-
-
+                    // This is often a bug in the BCL, security, NLS+ code,
+                    // or the loader somewhere.  However, this could also
+                    // be a setup problem - check whether mscorlib & 
+                    // clr.dll are both of the same build flavor.  Also, user 
+                    // code in the resource lookup process (like an assembly 
+                    // resolve event or custom CultureInfo) might potentially cause issues.
 
                     // Note: our infrastructure for reporting this exception will again cause resource lookup.
                     // This is the most direct way of dealing with that problem.

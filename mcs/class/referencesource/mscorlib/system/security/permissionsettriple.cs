@@ -7,7 +7,7 @@
 **
 ** Class: PermissionSetTriple
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Container class for holding an AppDomain's Grantset and Refused sets.
 **          Also used for CompressedStacks which brings in the third PermissionSet.

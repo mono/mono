@@ -8,7 +8,7 @@
 //
 // PartitionerStatic.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A class of default partitioners for Partitioner<TSource>
 //

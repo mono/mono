@@ -2,8 +2,8 @@
 // <copyright file="SqlInternalConnection.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient
@@ -30,7 +30,11 @@ namespace System.Data.SqlClient
         private bool                         _isEnlistedInTransaction; // is the server-side connection enlisted? true while we're enlisted, reset only after we send a null...
         private byte[]                       _promotedDTCToken;        // token returned by the server when we promote transaction
         private byte[]                       _whereAbouts;             // cache the whereabouts (DTC Address) for exporting
-
+        
+        private bool                         _isGlobalTransaction = false; // Whether this is a Global Transaction (Non-MSDTC, Azure SQL DB Transaction)
+        private bool                         _isGlobalTransactionEnabledForServer = false; // Whether Global Transactions are enabled for this Azure SQL DB Server
+        private static readonly Guid         _globalTransactionTMID = new Guid("1c742caf-6680-40ea-9c26-6b6846079764"); // ID of the Non-MSDTC, Azure SQL DB Transaction Manager
+        
         // if connection is not open: null
         // if connection is open: currently active database
         internal string CurrentDatabase { get; set; }
@@ -147,7 +151,25 @@ namespace System.Data.SqlClient
                 _promotedDTCToken = value;
             }
         }
-                
+
+        internal bool IsGlobalTransaction {
+            get {
+                return _isGlobalTransaction;
+            }
+            set {
+                _isGlobalTransaction = value;
+            }
+        }
+
+        internal bool IsGlobalTransactionsEnabledForServer {
+            get {
+                return _isGlobalTransactionEnabledForServer;
+            }
+            set {
+                _isGlobalTransactionEnabledForServer = value;
+            }
+        }
+
         override public DbTransaction BeginTransaction(IsolationLevel iso) {
             return BeginSqlTransaction(iso, null, false);
         }
@@ -389,8 +411,35 @@ namespace System.Data.SqlClient
                     // our delegated transaction, and proceed to enlist
                     // in the promoted one.
 
-                    if (tx.EnlistPromotableSinglePhase(delegatedTransaction)) {
-                        hasDelegatedTransaction = true;
+                    // NOTE: Global Transactions is an Azure SQL DB only 
+                    // feature where the Transaction Manager (TM) is not
+                    // MS-DTC. Sys.Tx added APIs to support Non MS-DTC
+                    // promoter types/TM in .NET 4.6.1. Following directions
+                    // from .NETFX shiproom, to avoid a "hard-dependency"
+                    // (compile time) on Sys.Tx, we use reflection to invoke
+                    // the new APIs. Further, the _isGlobalTransaction flag
+                    // indicates that this is an Azure SQL DB Transaction
+                    // that could be promoted to a Global Transaction (it's
+                    // always false for on-prem Sql Server). The Promote()
+                    // call in SqlDelegatedTransaction makes sure that the
+                    // right Sys.Tx.dll is loaded and that Global Transactions
+                    // are actually allowed for this Azure SQL DB.
+
+                    if (_isGlobalTransaction) {
+                        if (SysTxForGlobalTransactions.EnlistPromotableSinglePhase == null) {
+                            // This could be a local Azure SQL DB transaction. 
+                            hasDelegatedTransaction = tx.EnlistPromotableSinglePhase(delegatedTransaction);
+                        }
+                        else {
+                            hasDelegatedTransaction = (bool)SysTxForGlobalTransactions.EnlistPromotableSinglePhase.Invoke(tx, new object[] { delegatedTransaction, _globalTransactionTMID });
+                        }
+                    }
+                    else {
+                        // This is an MS-DTC distributed transaction
+                        hasDelegatedTransaction = tx.EnlistPromotableSinglePhase(delegatedTransaction);
+                    }
+
+                    if (hasDelegatedTransaction) {
 
                         this.DelegatedTransaction = delegatedTransaction;
 
@@ -438,16 +487,25 @@ namespace System.Data.SqlClient
 
                 byte[] cookie = null;
 
-                if (null == _whereAbouts) {
-                     byte[] dtcAddress = GetDTCAddress();
+                if (_isGlobalTransaction) {
+                    if (SysTxForGlobalTransactions.GetPromotedToken == null) {
+                        throw SQL.UnsupportedSysTxForGlobalTransactions();
+                    }
 
-                     if (null == dtcAddress) {
-                        throw SQL.CannotGetDTCAddress();
-                     }
-                     _whereAbouts = dtcAddress;
+                    cookie = (byte[])SysTxForGlobalTransactions.GetPromotedToken.Invoke(tx, null);
                 }
-                    
-                cookie = GetTransactionCookie(tx, _whereAbouts);
+                else {
+                    if (null == _whereAbouts) {
+                        byte[] dtcAddress = GetDTCAddress();
+
+                        if (null == dtcAddress) {
+                            throw SQL.CannotGetDTCAddress();
+                        }
+                        _whereAbouts = dtcAddress;
+                    }
+
+                    cookie = GetTransactionCookie(tx, _whereAbouts);
+                }
 
                 // send cookie to server to finish enlistment
                 PropagateTransactionCookie(cookie);

@@ -2149,7 +2149,7 @@ namespace System
 
         #region Private Data Members
         //
-        // Keep the layout in sync with SignatureNative in the VM
+        // Keep the layout in [....] with SignatureNative in the VM
         //
         internal RuntimeType[] m_arguments;
         internal RuntimeType m_declaringType;

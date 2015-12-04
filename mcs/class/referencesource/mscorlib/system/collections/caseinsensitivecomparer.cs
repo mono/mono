@@ -7,7 +7,7 @@
 **
 ** Class: CaseInsensitiveComparer
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 **

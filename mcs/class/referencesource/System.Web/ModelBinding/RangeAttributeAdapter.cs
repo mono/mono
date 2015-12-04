@@ -8,7 +8,7 @@
 
 #if UNDEF
         public override IEnumerable<ModelClientValidationRule> GetClientValidationRules() {
-            string errorMessage = ErrorMessage; // Per Dev10 
+            string errorMessage = ErrorMessage; // Per Dev10 Bug #923283, need to make sure ErrorMessage is called before Minimum/Maximum
             return new[] { new ModelClientValidationRangeRule(errorMessage, Attribute.Minimum, Attribute.Maximum) };
         }
 #endif

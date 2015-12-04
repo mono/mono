@@ -203,8 +203,8 @@ namespace System.Net.WebSockets
             return bytesRead;
         }
 
-        // return value indicates sync vs async completion
-        // false: sync completion
+        // return value indicates [....] vs async completion
+        // false: [....] completion
         // true: async completion
         private unsafe bool ReadAsyncFast(HttpListenerAsyncEventArgs eventArgs)
         {
@@ -480,8 +480,8 @@ namespace System.Net.WebSockets
             }
         }
 
-        // return value indicates sync vs async completion
-        // false: sync completion
+        // return value indicates [....] vs async completion
+        // false: [....] completion
         // true: async completion
         private bool WriteAsyncFast(HttpListenerAsyncEventArgs eventArgs)
         {
@@ -649,7 +649,7 @@ namespace System.Net.WebSockets
                 }
 
                 // throw OperationCancelledException when canceled by the caller
-                // otherwise swallow the exception
+                // otherwise ---- the exception
                 cancellationToken.ThrowIfCancellationRequested();
             }
             finally
@@ -863,12 +863,22 @@ namespace System.Net.WebSockets
             private readonly WebSocketBase m_WebSocket;
             private readonly WebSocketHttpListenerDuplexStream m_CurrentStream;
 
+            // With this flag enabled, Overlapped objects are allocated/pinned before each operation and released/unpinned when the operation ends.
+            // This eliminates the need to keep an Overlapped object in-memory all the time for the generally short-lived write operation.
+            // It also allows the GC to better compact the heap due to the frequent unpinning of the (read and write) Overlapped objects.
+            private readonly bool m_AllocateOverlappedOnDemand;
+
             public HttpListenerAsyncEventArgs(WebSocketBase webSocket, WebSocketHttpListenerDuplexStream stream)
                 : base()
             {
                 m_WebSocket = webSocket;
                 m_CurrentStream = stream;
-                InitializeOverlapped();
+                m_AllocateOverlappedOnDemand = LocalAppContextSwitches.AllocateOverlappedOnDemand;
+
+                if (!m_AllocateOverlappedOnDemand)
+                {
+                    InitializeOverlapped();
+                }
             }
 
             public int BytesTransferred
@@ -890,11 +900,11 @@ namespace System.Net.WebSockets
                 set
                 {
                     Contract.Assert(!m_ShouldCloseOutput, "'m_ShouldCloseOutput' MUST be 'false' at this point.");
-                    Contract.Assert(value == null || m_Buffer == null, 
+                    Contract.Assert(value == null || m_Buffer == null,
                         "Either 'm_Buffer' or 'm_BufferList' MUST be NULL.");
-                    Contract.Assert(m_Operating == Free, 
+                    Contract.Assert(m_Operating == Free,
                         "This property can only be modified if no IO operation is outstanding.");
-                    Contract.Assert(value == null || value.Count == 2, 
+                    Contract.Assert(value == null || value.Count == 2,
                         "This list can only be 'NULL' or MUST have exactly '2' items.");
                     m_BufferList = value;
                 }
@@ -996,9 +1006,12 @@ namespace System.Net.WebSockets
                     return;
                 }
 
-                // OK to dispose now.
-                // Free native overlapped data.
-                FreeOverlapped(false);
+                if (!m_AllocateOverlappedOnDemand)
+                {
+                    // OK to dispose now.
+                    // Free native overlapped data.
+                    FreeOverlapped(false);
+                }
 
                 // Don't bother finalizing later.
                 GC.SuppressFinalize(this);
@@ -1007,7 +1020,10 @@ namespace System.Net.WebSockets
             // Finalizer
             ~HttpListenerAsyncEventArgs()
             {
-                FreeOverlapped(true);
+                if (!m_AllocateOverlappedOnDemand)
+                {
+                    FreeOverlapped(true);
+                }
             }
 
             private unsafe void InitializeOverlapped()
@@ -1030,6 +1046,10 @@ namespace System.Net.WebSockets
                     if (m_DataChunksGCHandle.IsAllocated)
                     {
                         m_DataChunksGCHandle.Free();
+                        if (m_AllocateOverlappedOnDemand)
+                        {
+                            m_DataChunks = null;
+                        }
                     }
                 }
             }
@@ -1039,7 +1059,7 @@ namespace System.Net.WebSockets
             internal void StartOperationCommon(WebSocketHttpListenerDuplexStream currentStream)
             {
                 // Change status to "in-use".
-                if(Interlocked.CompareExchange(ref m_Operating, InProgress, Free) != Free)
+                if (Interlocked.CompareExchange(ref m_Operating, InProgress, Free) != Free)
                 {
                     // If it was already "in-use" check if Dispose was called.
                     if (m_DisposeCalled)
@@ -1057,7 +1077,16 @@ namespace System.Net.WebSockets
                 // is not IntPtr.Zero, so we have to reset this field because we are reusing the Overlapped.
                 // When using the IAsyncResult based approach of HttpListenerResponseStream the Overlapped is reinitialized
                 // for each operation by the CLR when returned from the OverlappedDataCache.
-                NativeOverlapped.ReinitializeNativeOverlapped();
+
+                if (m_AllocateOverlappedOnDemand)
+                {
+                    InitializeOverlapped();
+                }
+                else
+                {
+                    NativeOverlapped.ReinitializeNativeOverlapped();
+                }
+
                 m_Exception = null;
                 m_BytesTransferred = 0;
             }
@@ -1099,7 +1128,7 @@ namespace System.Net.WebSockets
 
                 Contract.Assert(m_Buffer == null || m_BufferList == null, "Either 'm_Buffer' or 'm_BufferList' MUST be NULL.");
                 Contract.Assert(m_ShouldCloseOutput || m_Buffer != null || m_BufferList != null, "Either 'm_Buffer' or 'm_BufferList' MUST NOT be NULL.");
-                
+
                 // The underlying byte[] m_Buffer or each m_BufferList[].Array are pinned already 
                 if (m_Buffer != null)
                 {
@@ -1137,7 +1166,7 @@ namespace System.Net.WebSockets
                 }
                 else
                 {
-                    m_DataChunks[index].pBuffer = 
+                    m_DataChunks[index].pBuffer =
                         (byte*)m_WebSocket.InternalBuffer.ConvertPinnedSendPayloadToNative(buffer, offset, count);
                 }
 
@@ -1148,8 +1177,17 @@ namespace System.Net.WebSockets
             // Will also execute a Dispose deferred because I/O was in progress.  
             internal void Complete()
             {
-                // Mark as not in-use            
-                m_Operating = Free;
+                if (m_AllocateOverlappedOnDemand)
+                {
+                    FreeOverlapped(false);
+                    // Mark as not in-use
+                    Interlocked.Exchange(ref m_Operating, Free);
+                }
+                else
+                {
+                    // Mark as not in-use            
+                    m_Operating = Free;
+                }
 
                 // Check for deferred Dispose().
                 // The deferred Dispose is not guaranteed if Dispose is called while an operation is in progress. 
@@ -1160,7 +1198,7 @@ namespace System.Net.WebSockets
                 }
             }
 
-            // Method to update internal state after sync or async completion.
+            // Method to update internal state after [....] or async completion.
             private void SetResults(Exception exception, int bytesTransferred)
             {
                 m_Exception = exception;
@@ -1173,7 +1211,7 @@ namespace System.Net.WebSockets
 
                 if (WebSocketBase.LoggingEnabled)
                 {
-                    Logging.PrintError(Logging.WebSockets, m_CurrentStream, 
+                    Logging.PrintError(Logging.WebSockets, m_CurrentStream,
                         m_CompletedOperation == HttpListenerAsyncOperation.Receive ? Methods.ReadAsyncFast : Methods.WriteAsyncFast,
                         exception.ToString());
                 }
@@ -1216,7 +1254,7 @@ namespace System.Net.WebSockets
                 {
                     m_CurrentStream.m_OutputStream.SetClosedFlag();
                 }
-                
+
                 // Complete the operation and raise completion event.
                 Complete();
                 OnCompleted(this);

@@ -7,7 +7,7 @@
 **
 ** Class:  FileSystemInfo    
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: 

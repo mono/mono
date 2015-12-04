@@ -105,7 +105,7 @@ namespace System.Activities.Presentation.View
 
             if (isValid)
             {
-                //Work around TFS 
+                //Work around TFS bug #825815, in some cases, XamlMember.IsNameValid returns true but it's not valid Xml Name.
                 try
                 {
                     XmlConvert.VerifyName(name);

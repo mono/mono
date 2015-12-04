@@ -7,8 +7,8 @@
 **
 ** File:    AssemblyName
 ** 
-** <OWNER>Microsoft</OWNER>
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Used for binding and retrieving info about an assembly

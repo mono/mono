@@ -683,8 +683,8 @@ namespace System.Workflow.ComponentModel.Compiler
                     parameters.LocalAssembly = GenerateLocalAssembly(files, codeFiles, parameters, results, out intermediateTempFiles, out localAssemblyPath, out createdDirectoryName);
                     if (parameters.LocalAssembly != null)
                     {
-                        // WinOE 
-
+                        // WinOE Bug 17591: we must set the local assembly here,
+                        // otherwise, the resolver won't be able to resolve custom types correctly.
                         resolver.SetLocalAssembly(parameters.LocalAssembly);
 
                         // Work around HERE!!!

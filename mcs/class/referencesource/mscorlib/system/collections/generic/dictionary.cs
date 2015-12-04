@@ -7,7 +7,7 @@
 **
 ** Class:  Dictionary
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Generic hash table implementation
 **

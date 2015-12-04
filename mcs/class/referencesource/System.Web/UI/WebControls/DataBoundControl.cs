@@ -445,14 +445,11 @@ namespace System.Web.UI.WebControls {
                 OnDataBinding(EventArgs.Empty);
             }
             DataSourceView view = GetData();
+            _arguments = CreateDataSourceSelectArguments();
             _ignoreDataSourceViewChanged = true;
             RequiresDataBinding = false;
             MarkAsDataBound();
-
-            // when PerformSelect is called in async method, setting _arguments
-            // to a new instance causes an exception deep in ListView.
-            // Instead, we should use SelectArguments.
-            view.Select(SelectArguments, OnDataSourceViewSelectCallback);
+            view.Select(_arguments, OnDataSourceViewSelectCallback);
         }
 
 
@@ -493,10 +490,10 @@ namespace System.Web.UI.WebControls {
         /// Saves view state.
         /// </devdoc>
         protected override object SaveViewState() {
-            // 
-
-
-
+            // Bug 322689: In the web farms scenario, if a web site is hosted in 4.0 and 4.5 servers
+            // (though this is not a really supported scenario, we are fixing this instance), 
+            // the View state created by 4.0 should be able to be understood by 4.5 controls.
+            // So, we create a Pair only if we are using model binding and otherwise fallback to 4.0 behavior.
 
             object baseViewState = base.SaveViewState();
 

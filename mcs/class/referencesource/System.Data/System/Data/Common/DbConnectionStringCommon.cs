@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
     using System;
@@ -716,39 +716,40 @@ namespace System.Data.Common {
         internal const bool   OmitOracleConnectionName  = false;
 
         // SqlClient
-        internal const ApplicationIntent ApplicationIntent = System.Data.SqlClient.ApplicationIntent.ReadWrite;
-        internal const string ApplicationName            = ".Net SqlClient Data Provider";
-        internal const bool   AsynchronousProcessing     = false;
-        internal const string AttachDBFilename           = "";
-        internal const int    ConnectTimeout             = 15;
-        internal const bool   ConnectionReset            = true;
-        internal const bool   ContextConnection          = false;
-        internal const string CurrentLanguage            = "";
-        internal const string DataSource                 = "";
-        internal const bool   Encrypt                    = false;
-        internal const bool   Enlist                     = true;
-        internal const string FailoverPartner            = "";
-        internal const string InitialCatalog             = "";
-        internal const bool   IntegratedSecurity         = false;
-        internal const int    LoadBalanceTimeout         = 0; // default of 0 means don't use
-        internal const bool   MultipleActiveResultSets   = false;
-        internal const bool   MultiSubnetFailover        = false;
-        internal const int    MaxPoolSize                = 100;
-        internal const int    MinPoolSize                = 0;
-        internal const string NetworkLibrary             = "";
-        internal const int    PacketSize                 = 8000;
-        internal const string Password                   =  "";
-        internal const bool   PersistSecurityInfo        = false;
-        internal const bool   Pooling                    = true;
-        internal const bool   TrustServerCertificate     = false;
-        internal const string TypeSystemVersion          = "Latest";
-        internal const string UserID                     = "";
-        internal const bool   UserInstance               = false;
-        internal const bool   Replication                = false;
-        internal const string WorkstationID              = "";
-        internal const string TransactionBinding         = "Implicit Unbind";
-        internal const int    ConnectRetryCount          = 1;
-        internal const int    ConnectRetryInterval       = 10;
+        internal const ApplicationIntent ApplicationIntent   = System.Data.SqlClient.ApplicationIntent.ReadWrite;
+		internal const string ApplicationName                = ".Net SqlClient Data Provider";
+		internal const bool   AsynchronousProcessing         = false;
+		internal const string AttachDBFilename               = "";
+		internal const int    ConnectTimeout                 = 15;
+		internal const bool   ConnectionReset                = true;
+		internal const bool   ContextConnection              = false;
+		internal const string CurrentLanguage                = "";
+		internal const string DataSource                     = "";
+		internal const bool   Encrypt                        = false;
+		internal const bool   Enlist                         = true;
+		internal const string FailoverPartner                = "";
+		internal const string InitialCatalog                 = "";
+		internal const bool   IntegratedSecurity             = false;
+		internal const int    LoadBalanceTimeout             = 0; // default of 0 means don't use
+		internal const bool   MultipleActiveResultSets       = false;
+		internal const bool   MultiSubnetFailover            = false;
+		internal const bool   TransparentNetworkIPResolution = true;
+		internal const int    MaxPoolSize                    = 100;
+		internal const int    MinPoolSize                    = 0;
+		internal const string NetworkLibrary                 = "";
+		internal const int    PacketSize                     = 8000;
+		internal const string Password                       =  "";
+		internal const bool   PersistSecurityInfo            = false;
+		internal const bool   Pooling                        = true;
+		internal const bool   TrustServerCertificate         = false;
+		internal const string TypeSystemVersion              = "Latest";
+		internal const string UserID                         = "";
+		internal const bool   UserInstance                   = false;
+		internal const bool   Replication                    = false;
+		internal const string WorkstationID                  = "";
+		internal const string TransactionBinding             = "Implicit Unbind";
+		internal const int    ConnectRetryCount              = 1;
+		internal const int    ConnectRetryInterval           = 10;
         internal static readonly SqlAuthenticationMethod Authentication = SqlAuthenticationMethod.NotSpecified;
         internal static readonly SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting = SqlConnectionColumnEncryptionSetting.Disabled;
     }
@@ -791,31 +792,33 @@ namespace System.Data.Common {
         internal const string OmitOracleConnectionName  = "Omit Oracle Connection Name";
 
         // SqlClient
-        internal const string ApplicationIntent         = "ApplicationIntent";
-        internal const string ApplicationName           = "Application Name";
-        internal const string AsynchronousProcessing    = "Asynchronous Processing";
-        internal const string AttachDBFilename          = "AttachDbFilename";
-        internal const string ConnectTimeout            = "Connect Timeout";
-        internal const string ConnectionReset           = "Connection Reset";
-        internal const string ContextConnection         = "Context Connection";
-        internal const string CurrentLanguage           = "Current Language";
-        internal const string Encrypt                   = "Encrypt";
-        internal const string FailoverPartner           = "Failover Partner";
-        internal const string InitialCatalog            = "Initial Catalog";
-        internal const string MultipleActiveResultSets  = "MultipleActiveResultSets";
-        internal const string MultiSubnetFailover       = "MultiSubnetFailover";
-        internal const string NetworkLibrary            = "Network Library";
-        internal const string PacketSize                = "Packet Size";
-        internal const string Replication               = "Replication";
-        internal const string TransactionBinding        = "Transaction Binding";
-        internal const string TrustServerCertificate    = "TrustServerCertificate";
-        internal const string TypeSystemVersion         = "Type System Version";
-        internal const string UserInstance              = "User Instance";
-        internal const string WorkstationID             = "Workstation ID";
-        internal const string ConnectRetryCount         = "ConnectRetryCount";
-        internal const string ConnectRetryInterval      = "ConnectRetryInterval";
-        internal const string Authentication            = "Authentication";
-        internal const string ColumnEncryptionSetting   = "Column Encryption Setting";
+		internal const string ApplicationIntent              = "ApplicationIntent";
+		internal const string ApplicationName                = "Application Name";
+		internal const string AsynchronousProcessing         = "Asynchronous Processing";
+		internal const string AttachDBFilename               = "AttachDbFilename";
+		internal const string ConnectTimeout                 = "Connect Timeout";
+		internal const string ConnectionReset                = "Connection Reset";
+		internal const string ContextConnection              = "Context Connection";
+		internal const string CurrentLanguage                = "Current Language";
+		internal const string Encrypt                        = "Encrypt";
+		internal const string FailoverPartner                = "Failover Partner";
+		internal const string InitialCatalog                 = "Initial Catalog";
+		internal const string MultipleActiveResultSets       = "MultipleActiveResultSets";
+		internal const string MultiSubnetFailover            = "MultiSubnetFailover";
+		internal const string TransparentNetworkIPResolution = "TransparentNetworkIPResolution";
+		internal const string NetworkLibrary                 = "Network Library";
+		internal const string PacketSize                     = "Packet Size";
+		internal const string Replication                    = "Replication";
+		internal const string TransactionBinding             = "Transaction Binding";
+		internal const string TrustServerCertificate         = "TrustServerCertificate";
+		internal const string TypeSystemVersion              = "Type System Version";
+		internal const string UserInstance                   = "User Instance";
+		internal const string WorkstationID                  = "Workstation ID";
+		internal const string ConnectRetryCount              = "ConnectRetryCount";
+		internal const string ConnectRetryInterval           = "ConnectRetryInterval";
+		internal const string Authentication                 = "Authentication";
+		internal const string Certificate                    = "Certificate";
+		internal const string ColumnEncryptionSetting        = "Column Encryption Setting";
         
         // common keywords (OleDb, OracleClient, SqlClient)
         internal const string DataSource                = "Data Source";

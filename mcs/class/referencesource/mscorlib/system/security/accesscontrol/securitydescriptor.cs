@@ -913,7 +913,7 @@ namespace System.Security.AccessControl
             ControlFlags actualFlags = flags | ControlFlags.DiscretionaryAclPresent;
             
             //
-            // Keep SACL and the flag bit in sync.
+            // Keep SACL and the flag bit in [....].
             //
 
             if (systemAcl == null)
@@ -1263,7 +1263,7 @@ namespace System.Security.AccessControl
 
         //
         // These two add/remove method must be called with great care (and thus it is internal)
-        // The caller is responsible for keeping the SaclPresent and DaclPresent bits in sync
+        // The caller is responsible for keeping the SaclPresent and DaclPresent bits in [....]
         // with the actual SACL and DACL.
         //
 

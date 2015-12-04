@@ -79,7 +79,7 @@ public class BaseParser {
     }
 
     private Regex _tagRegex;
-    // The 3.5 regex is used only when targeting 2.0/3.5 for backward compatibility (Dev10 
+    // The 3.5 regex is used only when targeting 2.0/3.5 for backward compatibility (Dev10 bug 830783).
     private readonly static Regex tagRegex35 = new TagRegex35();
     // The 4.0 regex is used for web sites targeting 4.0 and above. 
     private readonly static Regex tagRegex40 = new TagRegex();

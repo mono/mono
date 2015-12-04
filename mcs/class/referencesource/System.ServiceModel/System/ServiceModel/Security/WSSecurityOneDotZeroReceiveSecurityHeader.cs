@@ -222,7 +222,7 @@ namespace System.ServiceModel.Security
                 }
 
                 if (!isHeaderEncrypted && reader.IsStartElement(SecurityXXX2005Strings.EncryptedHeader, SecurityXXX2005Strings.Namespace))
-                {                    
+                {
                     XmlDictionaryReader localreader = headers.GetReaderAtHeader(i);
                     localreader.ReadStartElement(SecurityXXX2005Strings.EncryptedHeader, SecurityXXX2005Strings.Namespace);
 
@@ -234,7 +234,7 @@ namespace System.ServiceModel.Security
                         {
                             isHeaderEncrypted = true;
                         }
-                    }                   
+                    }
                 }
 
                 this.ElementManager.VerifyUniquenessAndSetHeaderId(id, i);
@@ -611,9 +611,27 @@ namespace System.ServiceModel.Security
                         throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new MessageSecurityException(SR.GetString(SR.TransportSecuredMessageMissingToHeader)));
                     XmlDictionaryReader toHeaderReader = this.Message.Headers.GetReaderAtHeader(headerIndex);
                     id = toHeaderReader.GetAttribute(XD.UtilityDictionary.IdAttribute, XD.UtilityDictionary.Namespace);
-                    if (id == null)
-                        throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new MessageSecurityException(SR.GetString(SR.UnsignedToHeaderInTransportSecuredMessage)));
-                    signedXml.EnsureDigestValidity(id, toHeaderReader);
+
+                    // DevDiv:938534 - We added a flag that allow unsigned headers. If this is set, we do not throw an Exception but move on to CompleteSignatureVerification()
+                    if (LocalAppContextSwitches.AllowUnsignedToHeader)
+                    {
+                        // The lack of an id indicates that the sender did not wish to sign the header. We can safely assume that null indicates this header is not signed.
+                        // If id is not null, then we need to validate the Digest and ensure signature is valid. The exception is thrown deeper in the System.IdentityModel stack.
+                        if (id != null)
+                        {
+                            signedXml.EnsureDigestValidityIfIdMatches(id, toHeaderReader);
+                        }
+                    }
+                    else
+                    {
+                        // default behavior for all platforms
+                        if (id == null)
+                        {
+                            // 
+                            throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new MessageSecurityException(SR.GetString(SR.UnsignedToHeaderInTransportSecuredMessage)));
+                        }
+                        signedXml.EnsureDigestValidity(id, toHeaderReader);
+                    }
                 }
                 signedXml.CompleteSignatureVerification();
                 return token;
@@ -692,7 +710,7 @@ namespace System.ServiceModel.Security
                 }
             }
 
-              // This check makes sure that if RequireSignedPrimaryToken is true (ProtectTokens is enabled on sbe) then the incoming message 
+            // This check makes sure that if RequireSignedPrimaryToken is true (ProtectTokens is enabled on sbe) then the incoming message 
             // should have the primary signature over the primary(signing)token.
             if (isPrimarySignature && this.RequireSignedPrimaryToken && !this.ElementManager.IsPrimaryTokenSigned)
             {

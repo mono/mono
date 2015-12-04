@@ -7,7 +7,7 @@
 //
 // CancellationState.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A bag of cancellation-related items that are passed around as a group.
 //

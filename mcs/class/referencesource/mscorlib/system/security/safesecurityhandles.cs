@@ -1,4 +1,4 @@
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 namespace Microsoft.Win32.SafeHandles {
     using System;
     using System.Runtime.CompilerServices;

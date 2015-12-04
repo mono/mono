@@ -2923,7 +2923,7 @@ namespace System.ServiceModel.Security
                     return;
                 }
                 WsdlImporter wsdlImporter;
-                // NOTE: Microsoft, Policy import/export is seperate from WSDL however, this policy importer
+                // NOTE: [....], Policy import/export is seperate from WSDL however, this policy importer
                 //      invokes the WsdlImporter. In the event that the current MetadataImporter is a WsdlImporter,
                 //      we should use it's collection of extensions for the import process. Other wise
                 WsdlImporter currentWsdlImporter = importer as WsdlImporter;

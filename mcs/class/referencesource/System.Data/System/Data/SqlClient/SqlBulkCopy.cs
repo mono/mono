@@ -2,8 +2,8 @@
 // <copyright file="SqlBulkCopy.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 // todo list:
@@ -531,7 +531,7 @@ namespace System.Data.SqlClient {
         }
 
         // Creates and then executes initial query to get information about the targettable
-        // When __isAsyncBulkCopy == false (i.e. it is Sync copy): out result contains the resulset. Returns null. 
+        // When __isAsyncBulkCopy == false (i.e. it is [....] copy): out result contains the resulset. Returns null. 
         // When __isAsyncBulkCopy == true (i.e. it is Async copy): This still uses the _parser.Run method synchronously and return Task<BulkCopySimpleResultSet>. 
         // We need to have a _parser.RunAsync to make it real async. 
         private Task<BulkCopySimpleResultSet> CreateAndExecuteInitialQueryAsync(out BulkCopySimpleResultSet result) {
@@ -775,7 +775,8 @@ namespace System.Data.SqlClient {
                     SqlBulkCopyOptions.KeepNulls
                     | SqlBulkCopyOptions.TableLock
                     | SqlBulkCopyOptions.CheckConstraints
-                    | SqlBulkCopyOptions.FireTriggers)) != SqlBulkCopyOptions.Default) {
+                    | SqlBulkCopyOptions.FireTriggers
+                    | SqlBulkCopyOptions.AllowEncryptedValueModifications)) != SqlBulkCopyOptions.Default) {
                 bool addSeparator = false;  // insert a comma character if multiple options in list ...
                 updateBulkCommandText.Append(" with (");
                 if(IsCopyOption(SqlBulkCopyOptions.KeepNulls)) {
@@ -792,6 +793,10 @@ namespace System.Data.SqlClient {
                 }
                 if(IsCopyOption(SqlBulkCopyOptions.FireTriggers)) {
                     updateBulkCommandText.Append((addSeparator ? ", " : "") + "FIRE_TRIGGERS");
+                    addSeparator = true;
+                }
+                if(IsCopyOption(SqlBulkCopyOptions.AllowEncryptedValueModifications)) {
+                    updateBulkCommandText.Append((addSeparator ? ", " : "") + "ALLOW_ENCRYPTED_VALUE_MODIFICATIONS");
                     addSeparator = true;
                 }
                 updateBulkCommandText.Append(")");
@@ -1062,7 +1067,7 @@ namespace System.Data.SqlClient {
         
         // unified method to read a row from the current rowsource
         // When _isAsyncBulkCopy == true (i.e. async copy): returns Task<bool> when IDataReader is a DbDataReader, Null for others.
-        // When _isAsyncBulkCopy == false (i.e. sync copy): returns null. Uses ReadFromRowSource to get the boolean value.
+        // When _isAsyncBulkCopy == false (i.e. [....] copy): returns null. Uses ReadFromRowSource to get the boolean value.
         // "more" -- should be used by the caller only when the return value is null.
         private Task ReadFromRowSourceAsync(CancellationToken cts) {
 #if !PROJECTK
@@ -1437,15 +1442,15 @@ namespace System.Data.SqlClient {
                         value = SqlParameter.CoerceValue(value, mt, out coercedToDataFeed, out typeChanged, false);
                         
                         // Convert Source Decimal Percision and Scale to Destination Percision and Scale
-                        // Fix 
-
-
-
-
-
-
-
-
+                        // Fix Bug: 385971 sql decimal data could get corrupted on insert if the scale of
+                        // the source and destination weren't the same.  The BCP protocal, specifies the
+                        // scale of the incoming data in the insert statement, we just tell the server we
+                        // are inserting the same scale back. This then created a bug inside the BCP opperation
+                        // if the scales didn't match.  The fix is to do the same thing that SQL Paramater does,
+                        // and adjust the scale before writing.  In Orcas is scale adjustment should be removed from
+                        // SqlParamater and SqlBulkCopy and Isoloated inside SqlParamater.CoerceValue, but becouse of
+                        // where we are in the cycle, the changes must be kept at minimum, so I'm just bringing the
+                        // code over to SqlBulkCopy.
                         
                         SqlDecimal sqlValue;
                         if ((isSqlType) && (!typeChanged)) {
@@ -2076,7 +2081,7 @@ namespace System.Data.SqlClient {
         // Reads a cell and then writes it. 
         // Read may block at this moment since there is no getValueAsync or DownStream async at this moment.
         // When _isAsyncBulkCopy == true: Write will return Task (when async method runs asynchronously) or Null (when async call actually ran synchronously) for performance. 
-        // When _isAsyncBulkCopy == false: Writes are purely sync. This method reutrn null at the end.
+        // When _isAsyncBulkCopy == false: Writes are purely [....]. This method reutrn null at the end.
         //
         private Task ReadWriteColumnValueAsync(int col) {
             bool isSqlType;
@@ -2387,7 +2392,7 @@ namespace System.Data.SqlClient {
                         AsyncHelper.ContinueTask(commandTask, source, () => {
                             Task continuedTask = CopyBatchesAsyncContinued(internalResults, updateBulkCommandText, cts, source);
                             if (continuedTask == null) {
-                                // Continuation finished sync, recall into CopyBatchesAsync to continue
+                                // Continuation finished [....], recall into CopyBatchesAsync to continue
                                 CopyBatchesAsync(internalResults, updateBulkCommandText, cts, source);
                             }
                         }, _connection.GetOpenTdsConnection());
@@ -2438,7 +2443,7 @@ namespace System.Data.SqlClient {
                     AsyncHelper.ContinueTask(task, source, () => {
                         Task continuedTask = CopyBatchesAsyncContinuedOnSuccess(internalResults, updateBulkCommandText, cts, source);
                         if (continuedTask == null) {
-                            // Continuation finished sync, recall into CopyBatchesAsync to continue
+                            // Continuation finished [....], recall into CopyBatchesAsync to continue
                             CopyBatchesAsync(internalResults, updateBulkCommandText, cts, source);
                         }
                     }, _connection.GetOpenTdsConnection(), _ => CopyBatchesAsyncContinuedOnError(cleanupParser: false), () => CopyBatchesAsyncContinuedOnError(cleanupParser: true));
@@ -2581,7 +2586,7 @@ namespace System.Data.SqlClient {
 
         // The continuation part of WriteToServerInternalRest. Executes when the initial query task is completed. (see, WriteToServerInternalRest).
         // It carries on the source which is passed from the WriteToServerInternalRest and performs SetResult when the entire copy is done.
-        // The carried on source may be null in case of Sync copy. So no need to SetResult at that time.
+        // The carried on source may be null in case of [....] copy. So no need to SetResult at that time.
         // It launches the copy operation. 
         //
         private void WriteToServerInternalRestContinuedAsync(BulkCopySimpleResultSet internalResults, CancellationToken cts, TaskCompletionSource<object> source) {
@@ -2678,7 +2683,7 @@ namespace System.Data.SqlClient {
 
         // Rest of the WriteToServerInternalAsync method. 
         // It carries on the source from its caller WriteToServerInternal.
-        // source is null in case of Sync bcp. But valid in case of Async bcp.
+        // source is null in case of [....] bcp. But valid in case of Async bcp.
         // It calls the WriteToServerInternalRestContinuedAsync as a continuation of the initial query task.
         //
         private void WriteToServerInternalRestAsync(CancellationToken cts, TaskCompletionSource<object> source) {
@@ -2788,7 +2793,7 @@ namespace System.Data.SqlClient {
             }            
         }
     
-        // This returns Task for Async, Null for Sync
+        // This returns Task for Async, Null for [....]
         //
         private Task WriteToServerInternalAsync(CancellationToken ctoken) {
             TaskCompletionSource<object> source = null;

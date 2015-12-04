@@ -107,7 +107,7 @@ namespace System.Web.Services.Protocols {
         }
 
         /*
-        // Microsoft: adapted from UrlEscapeStringUnicode below
+        // [....]: adapted from UrlEscapeStringUnicode below
         internal static string EscapeStringUnicode(string s) {
             int l = s.Length;
             StringBuilder sb = new StringBuilder(l);
@@ -126,7 +126,7 @@ namespace System.Web.Services.Protocols {
         }
         */
 
-        // Microsoft: copied from System.Web.HttpUtility
+        // [....]: copied from System.Web.HttpUtility
         internal static string UrlEscapeStringUnicode(string s) {
             int l = s.Length;
             StringBuilder sb = new StringBuilder(l);

@@ -2,7 +2,7 @@
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 
 using System;
 using System.Security;

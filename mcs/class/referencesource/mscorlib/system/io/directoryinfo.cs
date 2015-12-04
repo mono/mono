@@ -7,7 +7,7 @@
 **
 ** Class:  DirectoryInfo
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Exposes routines for enumerating through a 

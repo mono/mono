@@ -5,7 +5,7 @@
 // ==--==
 //  URLString
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  Implementation of membership condition for zones
 //

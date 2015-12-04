@@ -6,7 +6,7 @@
 **
 ** Class:  SecurityContext
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Capture security  context for a thread
@@ -32,7 +32,7 @@ namespace System.Security
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
 
-    // This enum must be kept in sync with the SecurityContextSource enum in the VM
+    // This enum must be kept in [....] with the SecurityContextSource enum in the VM
     public enum SecurityContextSource
     {
         CurrentAppDomain = 0,

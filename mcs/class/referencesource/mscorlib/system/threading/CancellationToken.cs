@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 ////////////////////////////////////////////////////////////////////////////////
 
 #pragma warning disable 0420 // turn off 'a reference to a volatile field will not be treated as volatile' during CAS.
@@ -334,8 +334,8 @@ namespace System.Threading
                 return new CancellationTokenRegistration(); // nothing to do for tokens than can never reach the canceled state. Give them a dummy registration.
             }
 
-            // Capture sync/execution contexts if required.
-            // Note: Only capture sync/execution contexts if IsCancellationRequested = false
+            // Capture [....]/execution contexts if required.
+            // Note: Only capture [....]/execution contexts if IsCancellationRequested = false
             // as we know that if it is true that the callback will just be called synchronously.
 
             SynchronizationContext capturedSyncContext = null;

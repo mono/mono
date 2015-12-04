@@ -730,7 +730,7 @@ namespace System.Web {
         // which doesn't fit our expected patterns and where that code likely has negative side effects.
         // 
         // This flag is respected only by AspNetSynchronizationContext; it has no effect when the
-        // legacy sync context is in use.
+        // legacy [....] context is in use.
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public bool AllowAsyncDuringSyncStages {
             get {
@@ -1313,7 +1313,7 @@ namespace System.Web {
                 return _rootedObjects;
             }
             set {
-                // Sync the Principal between the containers
+                // [....] the Principal between the containers
                 SwitchPrincipalContainer(value);
                 _rootedObjects = value;
             }

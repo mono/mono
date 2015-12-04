@@ -7,7 +7,7 @@
 //
 // FutureFactory.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // As with TaskFactory, TaskFactory<TResult> encodes common factory patterns into helper methods.
 //

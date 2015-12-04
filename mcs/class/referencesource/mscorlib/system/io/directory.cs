@@ -7,7 +7,7 @@
 **
 ** Class:  Directory
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Exposes routines for enumerating through a 
@@ -412,7 +412,7 @@ namespace System.IO {
             catch (UnauthorizedAccessException)
             {
 #if !FEATURE_PAL
-                Contract.Assert(false, "Ignore this assert and send a repro to Microsoft. This assert was tracking purposes only.");
+                Contract.Assert(false, "Ignore this assert and send a repro to [....]. This assert was tracking purposes only.");
 #endif //!FEATURE_PAL
             }
             return false;

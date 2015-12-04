@@ -1569,9 +1569,9 @@ namespace System.Web.UI.WebControls {
         private void PerformSuccessAction() {
             string successPageUrl = SuccessPageUrl;
             if (!String.IsNullOrEmpty(successPageUrl)) {
-                // Microsoft suggested that we should not terminate execution of current page, to give
+                // [....] suggested that we should not terminate execution of current page, to give
                 // page a chance to cleanup its resources.  This may be less performant though.
-                // Microsoft suggested that we need to call ResolveClientUrl before redirecting.
+                // [....] suggested that we need to call ResolveClientUrl before redirecting.
                 // Example is this control inside user control, want redirect relative to user control dir.
                 Page.Response.Redirect(ResolveClientUrl(successPageUrl), false);
             }

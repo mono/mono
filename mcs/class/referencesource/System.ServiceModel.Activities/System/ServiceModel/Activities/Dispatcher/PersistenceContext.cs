@@ -102,7 +102,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                 ReadSuspendedInfo(view);
             }
 
-            // If we were loaded or we locked the instance, the keys will have been sync'd.
+            // If we were loaded or we locked the instance, the keys will have been [....]'d.
             if (IsInitialized || IsLocked)
             {
                 RationalizeSavedKeys(false);

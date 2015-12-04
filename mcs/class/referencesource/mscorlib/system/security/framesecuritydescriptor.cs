@@ -3,7 +3,7 @@
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
 // 
 // ==--==
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 namespace System.Security {
     using System.Text;
     using System.Runtime.CompilerServices;

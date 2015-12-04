@@ -4,7 +4,7 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-// SECREVIEW: remove this attribute once 
+// SECREVIEW: remove this attribute once bug#411883 is fixed.
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2113:SecureLateBindingMethods", Scope="member", Target="System.ComponentModel.ToolboxItemAttribute.get_ToolboxItemType():System.Type")]
 
 namespace System.ComponentModel {

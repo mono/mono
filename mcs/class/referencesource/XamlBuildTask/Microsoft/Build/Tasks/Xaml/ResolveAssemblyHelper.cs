@@ -44,9 +44,9 @@ namespace Microsoft.Build.Tasks.Xaml
         public Assembly ResolveLocalProjectReferences(object sender, ResolveEventArgs args)
         {
             // Currently we are return the assembly just by matching the short name
-            // of the assembly. Filed 
-
-
+            // of the assembly. Filed bug 172138 to figure out whether we need
+            // to load the exact matching(version, culture, public key matches)
+            // assembly.
 
             AssemblyName targetAssemblyName = new AssemblyName(args.Name);
             string targetName = targetAssemblyName.Name;

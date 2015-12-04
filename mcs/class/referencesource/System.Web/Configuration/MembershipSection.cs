@@ -48,6 +48,7 @@ namespace System.Web.Configuration {
                    minRequiredPasswordLength="int"            The minimum number of characters required in a password
                    minRequiredNonAlphanumericCharacters="int" The minimum number of non-alphanumeric characters that are required in a password
                    passwordStrengthRegularExpression="string" The regular expression used to test the password strength
+                   passwordStrengthRegexTimeout="int"         The timeout in milliseconds for the regex we use to check password strength 
         -->
 
         <membership defaultProvider="AspNetSqlMembershipProvider" userIsOnlineTimeWindow="15" >
@@ -60,6 +61,7 @@ namespace System.Web.Configuration {
                     minRequiredPasswordLength="7"
                     minRequireNonAlphanumericCharacters="1"
                     passwordStrengthRegularExpression=""
+                    passwordStrengthRegexTimeout="2000"
                     enablePasswordRetrieval="false"
                     enablePasswordReset="true"
                     requiresQuestionAndAnswer="true"

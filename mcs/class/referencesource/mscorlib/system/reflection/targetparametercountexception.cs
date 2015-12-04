@@ -8,7 +8,7 @@
 //
 // TargetParameterCountException is thrown when the number of parameter to an
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //    invocation doesn't match the number expected.
 //
 // 

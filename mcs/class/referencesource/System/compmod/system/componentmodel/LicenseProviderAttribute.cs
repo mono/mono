@@ -57,7 +57,7 @@ namespace System.ComponentModel {
         ///    <para>Gets the license provider to use with the associated class.</para>
         /// </devdoc>
         public Type LicenseProvider {
-            // SECREVIEW: Remove this attribute once 
+            // SECREVIEW: Remove this attribute once bug#411910 is fixed.
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2113:SecureLateBindingMethods")]
             get {
                 if (licenseProviderType == null && licenseProviderName != null) {

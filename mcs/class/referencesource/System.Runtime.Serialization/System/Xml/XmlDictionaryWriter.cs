@@ -145,7 +145,7 @@ namespace System.Xml
             {
                 if (LookupPrefix(namespaceUri) != null)
                     return;
-#pragma warning suppress 56506 // Microsoft, namespaceUri is already checked
+#pragma warning suppress 56506 // [....], namespaceUri is already checked
                 prefix = namespaceUri.Length == 0 ? string.Empty : string.Concat("d", namespaceUri.Length.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
             }
             WriteAttributeString("xmlns", prefix, null, namespaceUri);
@@ -196,7 +196,7 @@ namespace System.Xml
                 throw System.Runtime.Serialization.DiagnosticUtility.ExceptionUtility.ThrowHelperError(new ArgumentNullException("localName"));
             if (namespaceUri == null)
                 namespaceUri = XmlDictionaryString.Empty;
-#pragma warning suppress 56506 // Microsoft, XmlDictionaryString.Empty is never null
+#pragma warning suppress 56506 // [....], XmlDictionaryString.Empty is never null
             WriteQualifiedName(localName.Value, namespaceUri.Value);
         }
 
@@ -301,7 +301,7 @@ namespace System.Xml
             {
                 if (completionException == null)
                 {
-                    // only release stream when no exception (mirrors sync behaviour)
+                    // only release stream when no exception (mirrors [....] behaviour)
                     this.streamProvider.ReleaseStream(this.stream);
                     this.stream = null;
                 }
@@ -311,7 +311,7 @@ namespace System.Xml
 
             void ContinueWork(bool completedSynchronously, Exception completionException = null)
             {
-                // Individual Reads or writes may complete sync or async. A callback however 
+                // Individual Reads or writes may complete [....] or async. A callback however 
                 // will always all ContinueWork() with CompletedSynchronously=false this flag 
                 // is used to complete this AsyncResult.
                 try
@@ -565,7 +565,7 @@ namespace System.Xml
             {
                 if (completionException == null)
                 {
-                    // only release stream when no exception (mirrors sync behaviour)
+                    // only release stream when no exception (mirrors [....] behaviour)
                     this.streamProvider.ReleaseStream(this.stream);
                     this.stream = null;
                 }
@@ -582,7 +582,7 @@ namespace System.Xml
                     {
                         if (HandleReadBlock(result))
                         {
-                            // Read completed (sync or async, doesn't matter) 
+                            // Read completed ([....] or async, doesn't matter) 
                             if (this.bytesRead > 0)
                             {
                                 // allow loop to continue at Write
@@ -604,7 +604,7 @@ namespace System.Xml
                     {
                         if (this.writeBlockHandler(result, this))
                         {
-                            // Write completed (sync or async, doesn't matter) 
+                            // Write completed ([....] or async, doesn't matter) 
                             AdjustBlockSize();
                             operation = Operation.Read;
                         }

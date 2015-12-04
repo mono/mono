@@ -24,15 +24,15 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.Editors
         // That information if both returned and cached for future reference.
         //
         // NOTE: This method does not handle structs correctly because it will return FALSE
-        // for struct types, which is incorrect.  However, this 
-
-
-
-
-
-
-
-
+        // for struct types, which is incorrect.  However, this bug has its counter-part in
+        // System.Activities.Presentation.dll where the default NewItemFactory only instantiates
+        // non-struct classes.  Both of these need to be fixed at the same time because
+        // they are used in conjunction.  However, MWD is currently locked.
+        //
+        // </summary>
+        // <param name="type">Type to verify</param>
+        // <returns>True if the specified type is concrete and has a default constructor,
+        // false otherwise.</returns>
         public static bool IsConcreteWithDefaultCtor(Type type) 
         {
 

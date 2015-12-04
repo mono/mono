@@ -488,6 +488,9 @@ namespace System.Security.Cryptography {
 
         internal const uint CERT_TRUST_IS_OFFLINE_REVOCATION               = 0x01000000;
         internal const uint CERT_TRUST_NO_ISSUANCE_CHAIN_POLICY            = 0x02000000;
+        internal const uint CERT_TRUST_IS_EXPLICIT_DISTRUST                = 0x04000000;
+        internal const uint CERT_TRUST_HAS_NOT_SUPPORTED_CRITICAL_EXT      = 0x08000000;
+        internal const uint CERT_TRUST_HAS_WEAK_SIGNATURE                  = 0x00100000;
 
         // These can be applied to chains only
         internal const uint CERT_TRUST_IS_PARTIAL_CHAIN                    = 0x00010000;
@@ -997,12 +1000,15 @@ namespace System.Security.Cryptography {
         internal const int CRYPT_E_REVOCATION_OFFLINE   = unchecked((int) 0x80092013); // The revocation function was unable to check revocation 
                                                                                        // because the revocation server was offline.        
         internal const int CRYPT_E_ASN1_BADTAG          = unchecked((int) 0x8009310B); // ASN1 bad tag value met.
+        internal const int CERTSRV_E_WEAK_SIGNATURE_OR_KEY = unchecked((int) 0x80094016); // A signature algorithm or public key length does not meet the system's
+                                                                                       // minimum required strength.
 
         internal const int TRUST_E_CERT_SIGNATURE       = unchecked((int) 0x80096004); // The signature of the certificate can not be verified.
         internal const int TRUST_E_BASIC_CONSTRAINTS    = unchecked((int) 0x80096019); // A certificate's basic constraint extension has not been observed.        
         internal const int CERT_E_EXPIRED               = unchecked((int) 0x800B0101); // A required certificate is not within its validity period when verifying against 
                                                                                        // the current system clock or the timestamp in the signed file.        
         internal const int CERT_E_VALIDITYPERIODNESTING = unchecked((int) 0x800B0102); // The validity periods of the certification chain do not nest correctly.        
+        internal const int CERT_E_CRITICAL              = unchecked((int) 0x800B0105); // A certificate contains an unknown extension that is marked 'critical'.
         internal const int CERT_E_UNTRUSTEDROOT         = unchecked((int) 0x800B0109); // A certificate chain processed, but terminated in a root 
                                                                                        // certificate which is not trusted by the trust provider.
         internal const int CERT_E_CHAINING              = unchecked((int) 0x800B010A); // An internal certificate chaining error has occurred.        
@@ -1012,6 +1018,7 @@ namespace System.Security.Cryptography {
                                                                                        // is not trusted with the current policy settings.        
         internal const int CERT_E_REVOCATION_FAILURE    = unchecked((int) 0x800B010E); // The revocation process could not continue - the certificate(s) could not be checked.        
         internal const int CERT_E_WRONG_USAGE           = unchecked((int) 0x800B0110); // The certificate is not valid for the requested usage.        
+        internal const int TRUST_E_EXPLICIT_DISTRUST    = unchecked((int) 0x800B0111); // The certificate was explicitly marked as untrusted by the user.
         internal const int CERT_E_INVALID_POLICY        = unchecked((int) 0x800B0113); // The certificate has invalid policy.        
         internal const int CERT_E_INVALID_NAME          = unchecked((int) 0x800B0114); // The certificate has an invalid name. The name is not included 
                                                                                        // in the permitted list or is explicitly excluded.

@@ -653,7 +653,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (Byte)value;
+            return value;
         }
     }
 
@@ -675,7 +675,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (SByte)value;
+            return value;
         }
     }
 
@@ -697,7 +697,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (Int16)value;
+            return value;
         }
     }
 
@@ -719,7 +719,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (UInt16)value;
+            return value;
         }
     }
 
@@ -741,7 +741,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (Int32)value;
+            return value;
         }
     }
 
@@ -763,7 +763,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (UInt32)value;
+            return value;
         }
     }
 
@@ -785,7 +785,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (Int64)value;
+            return value;
         }
     }
 
@@ -807,7 +807,7 @@ namespace System.Diagnostics.Tracing
 
         public override object GetData(object value)
         {
-            return (UInt64)value;
+            return value;
         }
     }
 

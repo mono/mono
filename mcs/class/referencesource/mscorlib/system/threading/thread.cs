@@ -4,7 +4,7 @@
 //
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 /*=============================================================================
 **
 ** Class: Thread
@@ -1167,12 +1167,12 @@ namespace System.Threading {
                 if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
                 {
                     //
-                    // NetCF had a 
-
-
-
-
-
+                    // NetCF had a bug where Thread.Current{UI}Culture would set the culture for every thread in the process.  
+                    // This was because they stored the value in a regular static field (NetCF has no support for ThreadStatic fields).
+                    // Some apps depend on the broken behavior. We will emulate this behavior by redirecting setters to 
+                    // DefaultThreadCurrentUICulture. (Note that this property did not existed in NetCF and so it is fine to piggy back 
+                    // on it for the quirk.)
+                    //
                     CultureInfo.SetCurrentUICultureQuirk(value);
                     return;
                 }

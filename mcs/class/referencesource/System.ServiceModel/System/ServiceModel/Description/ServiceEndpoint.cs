@@ -105,7 +105,7 @@ namespace System.ServiceModel.Description
                 }
                 else if (binding != null)
                 {
-                    // Microsoft: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
+                    // [....]: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
                     return String.Format(CultureInfo.InvariantCulture, "{0}_{1}", new XmlName(Binding.Name).EncodedName, Contract.Name);
                 }
                 else

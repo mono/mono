@@ -21,7 +21,7 @@ namespace System.Activities.Presentation
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             ResourceDictionary resourceDictionary = null;
-            // disable caching till the wpf mergedictionaries in theme dictionary 
+            // disable caching till the wpf mergedictionaries in theme dictionary bug is fixed.
             if (!Cache.TryGetValue(this.Source, out resourceDictionary))
             {
                 resourceDictionary = new ResourceDictionary();

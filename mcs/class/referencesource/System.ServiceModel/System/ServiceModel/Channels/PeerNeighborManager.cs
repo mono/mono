@@ -1635,7 +1635,7 @@ namespace System.ServiceModel.Channels
                     throw;
                 }
 
-                // Indicate sync completion to the caller
+                // Indicate [....] completion to the caller
                 if (result.CompletedSynchronously)
                     base.Complete(true);
             }

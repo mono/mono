@@ -7,7 +7,7 @@
 **
 ** Class:  ParameterToken
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: metadata tokens for a parameter

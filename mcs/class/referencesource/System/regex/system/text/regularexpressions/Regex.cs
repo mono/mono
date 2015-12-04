@@ -445,7 +445,7 @@ namespace System.Text.RegularExpressions {
         ///       Unescapes any escaped characters in the input string.
         ///    </para>
         /// </devdoc>
-        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="Unescape", Justification="Microsoft: already shipped since v1 - can't fix without causing a breaking change")]
+        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="Unescape", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
         public static String Unescape(String str) {
             if (str==null)
                 throw new ArgumentNullException("str");
@@ -1200,7 +1200,7 @@ namespace System.Text.RegularExpressions {
 #endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
         [ResourceConsumption(ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="Microsoft: already shipped since v1 - can't fix without causing a breaking change")]
+        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
         public static void CompileToAssembly(RegexCompilationInfo[] regexinfos, AssemblyName assemblyname) {
         
             CompileToAssemblyInternal(regexinfos, assemblyname, null, null);
@@ -1213,7 +1213,7 @@ namespace System.Text.RegularExpressions {
 #endif
         [ResourceExposure(ResourceScope.Machine)] // The AssemblyName is interesting.
         [ResourceConsumption(ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="Microsoft: already shipped since v1 - can't fix without causing a breaking change")]
+        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
         public static void CompileToAssembly(RegexCompilationInfo[] regexinfos, AssemblyName assemblyname, CustomAttributeBuilder[] attributes) {
             CompileToAssemblyInternal(regexinfos, assemblyname, attributes, null);
         }
@@ -1223,7 +1223,7 @@ namespace System.Text.RegularExpressions {
 #endif
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="Microsoft: already shipped since v1 - can't fix without causing a breaking change")]
+        [SuppressMessage("Microsoft.Naming","CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId="assemblyname", Justification="[....]: already shipped since v1 - can't fix without causing a breaking change")]
         public static void CompileToAssembly(RegexCompilationInfo[] regexinfos, AssemblyName assemblyname, CustomAttributeBuilder[] attributes, String resourceFile) {
             CompileToAssemblyInternal(regexinfos, assemblyname, attributes, resourceFile);
         }

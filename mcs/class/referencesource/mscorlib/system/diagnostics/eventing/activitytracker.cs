@@ -526,7 +526,7 @@ namespace System.Diagnostics.Tracing
         }
 
         // This callback is used to initialize the m_current AsyncLocal Variable.   
-        // Its job is to keep the ETW Activity ID (part of thread local storage) in sync
+        // Its job is to keep the ETW Activity ID (part of thread local storage) in [....]
         // with m_current.ActivityID
         void ActivityChanging(AsyncLocalValueChangedArgs<ActivityInfo> args)
         {

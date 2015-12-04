@@ -5,7 +5,7 @@
 // ==--==
 /*============================================================
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 ** 
 ** Class:  CustomAttrbuteBuilder
 **

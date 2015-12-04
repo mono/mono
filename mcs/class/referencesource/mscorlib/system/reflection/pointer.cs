@@ -7,7 +7,7 @@
 //
 // This is a wrapper class for Pointers
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // 
 //  

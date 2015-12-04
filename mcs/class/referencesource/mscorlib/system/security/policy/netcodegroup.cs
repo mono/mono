@@ -5,7 +5,7 @@
 // ==--==
 //  NetCodeGroup.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  Representation for code groups used for the policy mechanism
 //

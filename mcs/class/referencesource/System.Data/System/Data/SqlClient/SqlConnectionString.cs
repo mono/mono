@@ -2,8 +2,8 @@
 // <copyright file="SqlConnectionString.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -27,36 +27,37 @@ namespace System.Data.SqlClient {
 
         internal static class DEFAULT {
             internal const  ApplicationIntent ApplicationIntent = DbConnectionStringDefaults.ApplicationIntent;
-            internal const  string Application_Name       = TdsEnums.SQL_PROVIDER_NAME;
-            internal const  bool   Asynchronous           = false;
-            internal const  string AttachDBFilename       = "";
-            internal const  int    Connect_Timeout        = ADP.DefaultConnectionTimeout;
-            internal const  bool   Connection_Reset       = true;
-            internal const  bool   Context_Connection     = false;
-            internal const  string Current_Language       = "";
-            internal const  string Data_Source            = "";
-            internal const  bool   Encrypt                = false;
-            internal const  bool   Enlist                 = true;
-            internal const  string FailoverPartner        = "";
-            internal const  string Initial_Catalog        = "";
-            internal const  bool   Integrated_Security    = false;
-            internal const  int    Load_Balance_Timeout   = 0; // default of 0 means don't use
-            internal const  bool   MARS                   = false;
-            internal const  int    Max_Pool_Size          = 100;
-            internal const  int    Min_Pool_Size          = 0;
-            internal const  bool   MultiSubnetFailover    = DbConnectionStringDefaults.MultiSubnetFailover;
-            internal const  string Network_Library        = "";
-            internal const  int    Packet_Size            = 8000;
-            internal const  string Password               = "";
-            internal const  bool   Persist_Security_Info  = false;
-            internal const  bool   Pooling                = true;
-            internal const  bool   TrustServerCertificate = false;
-            internal const  string Type_System_Version    = "";
-            internal const  string User_ID                = "";
-            internal const  bool   User_Instance          = false;
-            internal const  bool   Replication            = false;
-            internal const  int    Connect_Retry_Count    = 1;
-            internal const  int    Connect_Retry_Interval = 10;
+            internal const  string Application_Name               = TdsEnums.SQL_PROVIDER_NAME;
+            internal const  bool   Asynchronous                   = false;
+            internal const  string AttachDBFilename               = "";
+            internal const  int    Connect_Timeout                = ADP.DefaultConnectionTimeout;
+            internal const  bool   Connection_Reset               = true;
+            internal const  bool   Context_Connection             = false;
+            internal const  string Current_Language               = "";
+            internal const  string Data_Source                    = "";
+            internal const  bool   Encrypt                        = false;
+            internal const  bool   Enlist                         = true;
+            internal const  string FailoverPartner                = "";
+            internal const  string Initial_Catalog                = "";
+            internal const  bool   Integrated_Security            = false;
+            internal const  int    Load_Balance_Timeout           = 0; // default of 0 means don't use
+            internal const  bool   MARS                           = false;
+            internal const  int    Max_Pool_Size                  = 100;
+            internal const  int    Min_Pool_Size                  = 0;
+            internal const  bool   MultiSubnetFailover            = DbConnectionStringDefaults.MultiSubnetFailover;
+            internal const  bool   TransparentNetworkIPResolution = DbConnectionStringDefaults.TransparentNetworkIPResolution;
+            internal const  string Network_Library                = "";
+            internal const  int    Packet_Size                    = 8000;
+            internal const  string Password                       = "";
+            internal const  bool   Persist_Security_Info          = false;
+            internal const  bool   Pooling                        = true;
+            internal const  bool   TrustServerCertificate         = false;
+            internal const  string Type_System_Version            = "";
+            internal const  string User_ID                        = "";
+            internal const  bool   User_Instance                  = false;
+            internal const  bool   Replication                    = false;
+            internal const  int    Connect_Retry_Count            = 1;
+            internal const  int    Connect_Retry_Interval         = 10;
             internal static readonly SqlAuthenticationMethod Authentication = SqlAuthenticationMethod.NotSpecified;
             internal static readonly SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting = SqlConnectionColumnEncryptionSetting.Disabled;
         }
@@ -64,41 +65,43 @@ namespace System.Data.SqlClient {
         // SqlConnection ConnectionString Options
         // keys must be lowercase!
         internal static class KEY {
-            internal const string ApplicationIntent      = "applicationintent";
-            internal const string Application_Name       = "application name";
-            internal const string AsynchronousProcessing = "asynchronous processing";
-            internal const string AttachDBFilename       = "attachdbfilename";
-            internal const string ColumnEncryptionSetting = "column encryption setting";
-            internal const string Connect_Timeout        = "connect timeout";
-            internal const string Connection_Reset       = "connection reset";
-            internal const string Context_Connection     = "context connection";
-            internal const string Current_Language       = "current language";
-            internal const string Data_Source            = "data source";
-            internal const string Encrypt                = "encrypt";
-            internal const string Enlist                 = "enlist";
-            internal const string FailoverPartner        = "failover partner";
-            internal const string Initial_Catalog        = "initial catalog";
-            internal const string Integrated_Security    = "integrated security";
-            internal const string Load_Balance_Timeout   = "load balance timeout";
-            internal const string MARS                   = "multipleactiveresultsets";
-            internal const string Max_Pool_Size          = "max pool size";
-            internal const string Min_Pool_Size          = "min pool size";
-            internal const string MultiSubnetFailover    = "multisubnetfailover";
-            internal const string Network_Library        = "network library";
-            internal const string Packet_Size            = "packet size";
-            internal const string Password               = "password";
-            internal const string Persist_Security_Info  = "persist security info";
-            internal const string Pooling                = "pooling";
-            internal const string TransactionBinding     = "transaction binding";
-            internal const string TrustServerCertificate = "trustservercertificate";
-            internal const string Type_System_Version    = "type system version";
-            internal const string User_ID                = "user id";
-            internal const string User_Instance          = "user instance";
-            internal const string Workstation_Id         = "workstation id";
-            internal const string Replication            = "replication";
-            internal const string Connect_Retry_Count    = "connectretrycount";
-            internal const string Connect_Retry_Interval = "connectretryinterval";
-            internal const string Authentication         = "authentication";
+            internal const string ApplicationIntent					= "applicationintent";
+            internal const string Application_Name					= "application name";
+            internal const string AsynchronousProcessing			= "asynchronous processing";
+            internal const string AttachDBFilename					= "attachdbfilename";
+            internal const string ColumnEncryptionSetting			= "column encryption setting";
+            internal const string Connect_Timeout					= "connect timeout";
+            internal const string Connection_Reset					= "connection reset";
+            internal const string Context_Connection				= "context connection";
+            internal const string Current_Language					= "current language";
+            internal const string Data_Source						= "data source";
+            internal const string Encrypt							= "encrypt";
+            internal const string Enlist							= "enlist";
+            internal const string FailoverPartner					= "failover partner";
+            internal const string Initial_Catalog					= "initial catalog";
+            internal const string Integrated_Security				= "integrated security";
+            internal const string Load_Balance_Timeout				= "load balance timeout";
+            internal const string MARS								= "multipleactiveresultsets";
+            internal const string Max_Pool_Size						= "max pool size";
+            internal const string Min_Pool_Size						= "min pool size";
+            internal const string MultiSubnetFailover				= "multisubnetfailover";
+            internal const string TransparentNetworkIPResolution	= "transparentnetworkipresolution";
+            internal const string Network_Library					= "network library";
+            internal const string Packet_Size						= "packet size";
+            internal const string Password							= "password";
+            internal const string Persist_Security_Info				= "persist security info";
+            internal const string Pooling							= "pooling";
+            internal const string TransactionBinding				= "transaction binding";
+            internal const string TrustServerCertificate			= "trustservercertificate";
+            internal const string Type_System_Version				= "type system version";
+            internal const string User_ID							= "user id";
+            internal const string User_Instance						= "user instance";
+            internal const string Workstation_Id					= "workstation id";
+            internal const string Replication						= "replication";
+            internal const string Connect_Retry_Count				= "connectretrycount";
+            internal const string Connect_Retry_Interval			= "connectretryinterval";
+            internal const string Authentication					= "authentication";
+
         }
 
         // Constant for the number of duplicate options in the connnection string
@@ -198,6 +201,7 @@ namespace System.Data.SqlClient {
         private readonly bool _replication;
         private readonly bool _userInstance;
         private readonly bool _multiSubnetFailover;
+        private readonly bool _transparentNetworkIPResolution;
         private readonly SqlAuthenticationMethod _authType;
         private readonly SqlConnectionColumnEncryptionSetting _columnEncryptionSetting;
 
@@ -253,6 +257,7 @@ namespace System.Data.SqlClient {
             _replication         = ConvertValueToBoolean(KEY.Replication,           DEFAULT.Replication);
             _userInstance        = ConvertValueToBoolean(KEY.User_Instance,         DEFAULT.User_Instance);
             _multiSubnetFailover = ConvertValueToBoolean(KEY.MultiSubnetFailover,   DEFAULT.MultiSubnetFailover);
+            _transparentNetworkIPResolution = ConvertValueToBoolean(KEY.TransparentNetworkIPResolution, DEFAULT.TransparentNetworkIPResolution);
 
             _connectTimeout     = ConvertValueToInt32(KEY.Connect_Timeout,       DEFAULT.Connect_Timeout);
             _loadBalanceTimeout = ConvertValueToInt32(KEY.Load_Balance_Timeout,  DEFAULT.Load_Balance_Timeout);
@@ -478,37 +483,39 @@ namespace System.Data.SqlClient {
                 _enlist = connectionOptions._enlist;
             }
             
-            _mars                     = connectionOptions._mars;
-            _persistSecurityInfo      = connectionOptions._persistSecurityInfo;
-            _pooling                  = connectionOptions._pooling;
-            _replication              = connectionOptions._replication;
-            _userInstance             = userInstance;
-            _connectTimeout           = connectionOptions._connectTimeout;
-            _loadBalanceTimeout       = connectionOptions._loadBalanceTimeout;
-            _maxPoolSize              = connectionOptions._maxPoolSize;
-            _minPoolSize              = connectionOptions._minPoolSize;
-            _multiSubnetFailover      = connectionOptions._multiSubnetFailover;
-            _packetSize               = connectionOptions._packetSize;
-            _applicationName          = connectionOptions._applicationName;
-            _attachDBFileName         = connectionOptions._attachDBFileName;
-            _currentLanguage          = connectionOptions._currentLanguage;
-            _dataSource               = dataSource;
-            _localDBInstance          = LocalDBAPI.GetLocalDbInstanceNameFromServerName(_dataSource);
-            _failoverPartner          = connectionOptions._failoverPartner;
-            _initialCatalog           = connectionOptions._initialCatalog;
-            _password                 = connectionOptions._password;
-            _userID                   = connectionOptions._userID;
-            _networkLibrary           = connectionOptions._networkLibrary;
-            _workstationId            = connectionOptions._workstationId;
-            _expandedAttachDBFilename = connectionOptions._expandedAttachDBFilename;
-            _typeSystemVersion        = connectionOptions._typeSystemVersion;
-            _typeSystemAssemblyVersion =connectionOptions._typeSystemAssemblyVersion;
-            _transactionBinding       = connectionOptions._transactionBinding;
-            _applicationIntent        = connectionOptions._applicationIntent;
-            _connectRetryCount        = connectionOptions._connectRetryCount;
-            _connectRetryInterval     = connectionOptions._connectRetryInterval;
-            _authType                 = connectionOptions._authType;
-            _columnEncryptionSetting = connectionOptions._columnEncryptionSetting;
+            _mars                           = connectionOptions._mars;
+            _persistSecurityInfo            = connectionOptions._persistSecurityInfo;
+            _pooling                        = connectionOptions._pooling;
+            _replication                    = connectionOptions._replication;
+            _userInstance                   = userInstance;
+            _connectTimeout                 = connectionOptions._connectTimeout;
+            _loadBalanceTimeout             = connectionOptions._loadBalanceTimeout;
+            _maxPoolSize                    = connectionOptions._maxPoolSize;
+            _minPoolSize                    = connectionOptions._minPoolSize;
+            _multiSubnetFailover            = connectionOptions._multiSubnetFailover;
+            _transparentNetworkIPResolution = connectionOptions._transparentNetworkIPResolution;
+            _packetSize                     = connectionOptions._packetSize;
+            _applicationName                = connectionOptions._applicationName;
+            _attachDBFileName               = connectionOptions._attachDBFileName;
+            _currentLanguage                = connectionOptions._currentLanguage;
+            _dataSource                     = dataSource;
+            _localDBInstance                = LocalDBAPI.GetLocalDbInstanceNameFromServerName(_dataSource);
+            _failoverPartner                = connectionOptions._failoverPartner;
+            _initialCatalog                 = connectionOptions._initialCatalog;
+            _password                       = connectionOptions._password;
+            _userID                         = connectionOptions._userID;
+            _networkLibrary                 = connectionOptions._networkLibrary;
+            _workstationId                  = connectionOptions._workstationId;
+            _expandedAttachDBFilename       = connectionOptions._expandedAttachDBFilename;
+            _typeSystemVersion              = connectionOptions._typeSystemVersion;
+            _typeSystemAssemblyVersion      = connectionOptions._typeSystemAssemblyVersion;
+            _transactionBinding             = connectionOptions._transactionBinding;
+            _applicationIntent              = connectionOptions._applicationIntent;
+            _connectRetryCount              = connectionOptions._connectRetryCount;
+            _connectRetryInterval           = connectionOptions._connectRetryInterval;
+            _authType                       = connectionOptions._authType;
+            _columnEncryptionSetting        = connectionOptions._columnEncryptionSetting;
+
             ValidateValueLength(_dataSource, TdsEnums.MAXLEN_SERVERNAME, KEY.Data_Source);
         }
 
@@ -527,6 +534,7 @@ namespace System.Data.SqlClient {
         internal bool Enlist { get { return _enlist; } }
         internal bool MARS { get { return _mars; } }
         internal bool MultiSubnetFailover { get { return _multiSubnetFailover; } }
+        internal bool TransparentNetworkIPResolution { get { return _transparentNetworkIPResolution; } }
         internal SqlAuthenticationMethod Authentication { get { return _authType; } }
         internal SqlConnectionColumnEncryptionSetting ColumnEncryptionSetting { get { return _columnEncryptionSetting; } }
         internal bool PersistSecurityInfo { get { return _persistSecurityInfo; } }
@@ -608,63 +616,64 @@ namespace System.Data.SqlClient {
             Hashtable hash = _sqlClientSynonyms;
             if (null == hash) {
                 hash = new Hashtable(SqlConnectionStringBuilder.KeywordsCount + SynonymCount);
-                hash.Add(KEY.ApplicationIntent,      KEY.ApplicationIntent);
-                hash.Add(KEY.Application_Name,       KEY.Application_Name);
-                hash.Add(KEY.AsynchronousProcessing, KEY.AsynchronousProcessing);
-                hash.Add(KEY.AttachDBFilename,       KEY.AttachDBFilename);
-                hash.Add(KEY.Connect_Timeout,        KEY.Connect_Timeout);
-                hash.Add(KEY.Connection_Reset,       KEY.Connection_Reset);
-                hash.Add(KEY.Context_Connection,     KEY.Context_Connection);
-                hash.Add(KEY.Current_Language,       KEY.Current_Language);
-                hash.Add(KEY.Data_Source,            KEY.Data_Source);
-                hash.Add(KEY.Encrypt,                KEY.Encrypt);
-                hash.Add(KEY.Enlist,                 KEY.Enlist);
-                hash.Add(KEY.FailoverPartner,        KEY.FailoverPartner);
-                hash.Add(KEY.Initial_Catalog,        KEY.Initial_Catalog);
-                hash.Add(KEY.Integrated_Security,    KEY.Integrated_Security);
-                hash.Add(KEY.Load_Balance_Timeout,   KEY.Load_Balance_Timeout);
-                hash.Add(KEY.MARS,                   KEY.MARS);
-                hash.Add(KEY.Max_Pool_Size,          KEY.Max_Pool_Size);
-                hash.Add(KEY.Min_Pool_Size,          KEY.Min_Pool_Size);
-                hash.Add(KEY.MultiSubnetFailover,    KEY.MultiSubnetFailover);
-                hash.Add(KEY.Network_Library,        KEY.Network_Library);
-                hash.Add(KEY.Packet_Size,            KEY.Packet_Size);
-                hash.Add(KEY.Password,               KEY.Password);
-                hash.Add(KEY.Persist_Security_Info,  KEY.Persist_Security_Info);
-                hash.Add(KEY.Pooling,                KEY.Pooling);
-                hash.Add(KEY.Replication,            KEY.Replication);
-                hash.Add(KEY.TrustServerCertificate, KEY.TrustServerCertificate);
-                hash.Add(KEY.TransactionBinding,     KEY.TransactionBinding);
-                hash.Add(KEY.Type_System_Version,    KEY.Type_System_Version);
-                hash.Add(KEY.ColumnEncryptionSetting, KEY.ColumnEncryptionSetting);
-                hash.Add(KEY.User_ID,                KEY.User_ID);
-                hash.Add(KEY.User_Instance,          KEY.User_Instance);
-                hash.Add(KEY.Workstation_Id,         KEY.Workstation_Id);
-                hash.Add(KEY.Connect_Retry_Count,    KEY.Connect_Retry_Count);
-                hash.Add(KEY.Connect_Retry_Interval, KEY.Connect_Retry_Interval);
-                hash.Add(KEY.Authentication,         KEY.Authentication);
+                hash.Add(KEY.ApplicationIntent,              KEY.ApplicationIntent);
+                hash.Add(KEY.Application_Name,               KEY.Application_Name);
+                hash.Add(KEY.AsynchronousProcessing,         KEY.AsynchronousProcessing);
+                hash.Add(KEY.AttachDBFilename,               KEY.AttachDBFilename);
+                hash.Add(KEY.Connect_Timeout,                KEY.Connect_Timeout);
+                hash.Add(KEY.Connection_Reset,               KEY.Connection_Reset);
+                hash.Add(KEY.Context_Connection,             KEY.Context_Connection);
+                hash.Add(KEY.Current_Language,               KEY.Current_Language);
+                hash.Add(KEY.Data_Source,                    KEY.Data_Source);
+                hash.Add(KEY.Encrypt,                        KEY.Encrypt);
+                hash.Add(KEY.Enlist,                         KEY.Enlist);
+                hash.Add(KEY.FailoverPartner,                KEY.FailoverPartner);
+                hash.Add(KEY.Initial_Catalog,                KEY.Initial_Catalog);
+                hash.Add(KEY.Integrated_Security,            KEY.Integrated_Security);
+                hash.Add(KEY.Load_Balance_Timeout,           KEY.Load_Balance_Timeout);
+                hash.Add(KEY.MARS,                           KEY.MARS);
+                hash.Add(KEY.Max_Pool_Size,                  KEY.Max_Pool_Size);
+                hash.Add(KEY.Min_Pool_Size,                  KEY.Min_Pool_Size);
+                hash.Add(KEY.MultiSubnetFailover,            KEY.MultiSubnetFailover);
+                hash.Add(KEY.TransparentNetworkIPResolution, KEY.TransparentNetworkIPResolution);
+                hash.Add(KEY.Network_Library,                KEY.Network_Library);
+                hash.Add(KEY.Packet_Size,                    KEY.Packet_Size);
+                hash.Add(KEY.Password,                       KEY.Password);
+                hash.Add(KEY.Persist_Security_Info,          KEY.Persist_Security_Info);
+                hash.Add(KEY.Pooling,                        KEY.Pooling);
+                hash.Add(KEY.Replication,                    KEY.Replication);
+                hash.Add(KEY.TrustServerCertificate,         KEY.TrustServerCertificate);
+                hash.Add(KEY.TransactionBinding,             KEY.TransactionBinding);
+                hash.Add(KEY.Type_System_Version,            KEY.Type_System_Version);
+                hash.Add(KEY.ColumnEncryptionSetting,        KEY.ColumnEncryptionSetting);
+                hash.Add(KEY.User_ID,                        KEY.User_ID);
+                hash.Add(KEY.User_Instance,                  KEY.User_Instance);
+                hash.Add(KEY.Workstation_Id,                 KEY.Workstation_Id);
+                hash.Add(KEY.Connect_Retry_Count,            KEY.Connect_Retry_Count);
+                hash.Add(KEY.Connect_Retry_Interval,         KEY.Connect_Retry_Interval);
+                hash.Add(KEY.Authentication,                 KEY.Authentication);
 
-                hash.Add(SYNONYM.APP,                 KEY.Application_Name);
-                hash.Add(SYNONYM.Async,               KEY.AsynchronousProcessing);
-                hash.Add(SYNONYM.EXTENDED_PROPERTIES, KEY.AttachDBFilename);
-                hash.Add(SYNONYM.INITIAL_FILE_NAME,   KEY.AttachDBFilename);
-                hash.Add(SYNONYM.CONNECTION_TIMEOUT,  KEY.Connect_Timeout);
-                hash.Add(SYNONYM.TIMEOUT,             KEY.Connect_Timeout);
-                hash.Add(SYNONYM.LANGUAGE,            KEY.Current_Language);
-                hash.Add(SYNONYM.ADDR,                KEY.Data_Source);
-                hash.Add(SYNONYM.ADDRESS,             KEY.Data_Source);
-                hash.Add(SYNONYM.NETWORK_ADDRESS,     KEY.Data_Source);
-                hash.Add(SYNONYM.SERVER,              KEY.Data_Source);
-                hash.Add(SYNONYM.DATABASE,            KEY.Initial_Catalog);
-                hash.Add(SYNONYM.TRUSTED_CONNECTION,  KEY.Integrated_Security);
-                hash.Add(SYNONYM.Connection_Lifetime, KEY.Load_Balance_Timeout);
-                hash.Add(SYNONYM.NET,                 KEY.Network_Library);
-                hash.Add(SYNONYM.NETWORK,             KEY.Network_Library);
-                hash.Add(SYNONYM.Pwd,                 KEY.Password);
-                hash.Add(SYNONYM.PERSISTSECURITYINFO, KEY.Persist_Security_Info);
-                hash.Add(SYNONYM.UID,                 KEY.User_ID);
-                hash.Add(SYNONYM.User,                KEY.User_ID);
-                hash.Add(SYNONYM.WSID,                KEY.Workstation_Id);
+                hash.Add(SYNONYM.APP,                        KEY.Application_Name);
+                hash.Add(SYNONYM.Async,                      KEY.AsynchronousProcessing);
+                hash.Add(SYNONYM.EXTENDED_PROPERTIES,        KEY.AttachDBFilename);
+                hash.Add(SYNONYM.INITIAL_FILE_NAME,          KEY.AttachDBFilename);
+                hash.Add(SYNONYM.CONNECTION_TIMEOUT,         KEY.Connect_Timeout);
+                hash.Add(SYNONYM.TIMEOUT,                    KEY.Connect_Timeout);
+                hash.Add(SYNONYM.LANGUAGE,                   KEY.Current_Language);
+                hash.Add(SYNONYM.ADDR,                       KEY.Data_Source);
+                hash.Add(SYNONYM.ADDRESS,                    KEY.Data_Source);
+                hash.Add(SYNONYM.NETWORK_ADDRESS,            KEY.Data_Source);
+                hash.Add(SYNONYM.SERVER,                     KEY.Data_Source);
+                hash.Add(SYNONYM.DATABASE,                   KEY.Initial_Catalog);
+                hash.Add(SYNONYM.TRUSTED_CONNECTION,         KEY.Integrated_Security);
+                hash.Add(SYNONYM.Connection_Lifetime,        KEY.Load_Balance_Timeout);
+                hash.Add(SYNONYM.NET,                        KEY.Network_Library);
+                hash.Add(SYNONYM.NETWORK,                    KEY.Network_Library);
+                hash.Add(SYNONYM.Pwd,                        KEY.Password);
+                hash.Add(SYNONYM.PERSISTSECURITYINFO,        KEY.Persist_Security_Info);
+                hash.Add(SYNONYM.UID,                        KEY.User_ID);
+                hash.Add(SYNONYM.User,                       KEY.User_ID);
+                hash.Add(SYNONYM.WSID,                       KEY.Workstation_Id);
                 Debug.Assert(SqlConnectionStringBuilder.KeywordsCount + SynonymCount == hash.Count, "incorrect initial ParseSynonyms size");
                 _sqlClientSynonyms = hash;
             }

@@ -463,12 +463,12 @@ namespace System.Workflow.ComponentModel.Compiler
             }
 
             // replace the System.Type with RTTypeWrapper for generic types.
-            // WinOE 
-
-
-
-
-
+            // WinOE Bug 16560: The type provider may be used at runtime.  No RTTypeWrapper should ever be returned
+            // at runtime.  
+            // At design time, we need to wrap all generic types even if the parameter types are not 
+            // design time types.  This is because our parsing function creates a base generic type before it binds
+            // all the parameters.  The RTTypeWrapper.MakeGenericType override will then take care of binding to 
+            // design time types.
             if (this.designTimeTypes != null && this.designTimeTypes.Count > 0 && returnType.Assembly != null && returnType.IsGenericTypeDefinition)
             {
                 if (this.hashOfRTTypes.Contains(returnType))

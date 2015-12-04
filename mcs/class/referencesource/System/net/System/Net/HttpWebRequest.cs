@@ -153,7 +153,7 @@ namespace System.Net {
         // Used by our Connection to block on being able to Read from our Connection
         private LazyAsyncResult         _ConnectionReaderAResult;
 
-        // Once set, the Request either works Async or Sync internally
+        // Once set, the Request either works Async or [....] internally
         private TriState                _RequestIsAsync;
 
         // Delegate that can be called on Continue Response
@@ -406,7 +406,7 @@ namespace System.Net {
             }
         }
 
-        // Sync code path only.
+        // [....] code path only.
         // True if ProcessWriteCallDone Should read for an additional response.
         // False if the 100Continue code will do the read in WriteHeaders.
         internal bool NeedsToReadForResponse {
@@ -792,7 +792,7 @@ namespace System.Net {
         }
 
         // True, if the EndGetRequestStream or GetRequestStream call returned
-        // codereview: Used ONLY by Sync code
+        // codereview: Used ONLY by [....] code
         internal bool UserRetrievedWriteStream {
             get {
                 return _WriteAResult != null && _WriteAResult.InternalPeekCompleted;
@@ -1555,7 +1555,7 @@ namespace System.Net {
                         CurrentMethod = _OriginVerb;
 
                         // Submit the Request, causes us to queue ourselves to a Connection and may block
-                        // It has happened that Sync path uses this loop the Retry memeber for handling resubmissions.
+                        // It has happened that [....] path uses this loop the Retry memeber for handling resubmissions.
                         while (m_Retry && !_WriteAResult.InternalPeekCompleted) {
                             _OldSubmitWriteStream = null;
                             _SubmitWriteStream = null;
@@ -1825,7 +1825,7 @@ namespace System.Net {
                 {
                     GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::DoSubmitRequestProcessing() resubmiting this request.");
 
-                    // Here is a little hack for sync looping through BeginSubmitRequest.
+                    // Here is a little hack for [....] looping through BeginSubmitRequest.
                     // We want to unlock cache protocol only if this is NOT a retry.
                     if (CacheProtocol != null && _HttpResponse != null)
                         CacheProtocol.Reset();
@@ -1856,7 +1856,7 @@ namespace System.Net {
                         SubmitRequest(servicePoint);
                     }
                     else {
-                        // under sync conditions, we let GetResponse() loop calling BeginSubmitRequest() until we're done
+                        // under [....] conditions, we let GetResponse() loop calling BeginSubmitRequest() until we're done
                         m_Retry = true;
                     }
                     result = HttpProcessingResult.WriteWait;
@@ -2181,7 +2181,7 @@ namespace System.Net {
 
                             Async = false;
 
-                            // Since we don't really allow switching between sync and async, if the request is already async, this needs to
+                            // Since we don't really allow switching between [....] and async, if the request is already async, this needs to
                             // capture context for use in the ongoing async operations as if it were BeginGetResponse().
                             if (Async)
                             {
@@ -2206,7 +2206,7 @@ namespace System.Net {
 
                     if (!gotResponse)
                     {
-                        //The previous call may have been async.  If we are now doing a sync call, we should
+                        //The previous call may have been async.  If we are now doing a [....] call, we should
                         //use the timeout
                         if (_Timer == null) {
                             _Timer = TimerQueue.CreateTimer(s_TimeoutCallback, this);
@@ -3369,7 +3369,7 @@ namespace System.Net {
             //
             // This line is needed ONLY if we got a connect failure (Abort can still happen at random time)
             // CallDone will check for the write side response processing and this is what we want.
-            // Note that Sync case already has a separate path to check for the response
+            // Note that [....] case already has a separate path to check for the response
             //
             if (Async && _CoreResponse != null && (object)_CoreResponse != (object)DBNull.Value)
             {
@@ -3489,7 +3489,7 @@ namespace System.Net {
         //
         internal void CheckWriteSideResponseProcessing()
         {
-            // In Sync case never close the write side window
+            // In [....] case never close the write side window
 
             // Definitions of _CoreResponse:
             // - DBNull.Value - Uploading headers/body is in progress, but we haven't yet received a response.
@@ -3595,7 +3595,7 @@ namespace System.Net {
             {
                 GlobalLog.Print("HttpWebRequest#" + ValidationHelper.HashString(this) + "::SetAndOrProcessResponse() - Write Thread will procees the response.");
                 //
-                // Note for a sync request a write side window is always open
+                // Note for a [....] request a write side window is always open
                 //
                 if (!Async)
                 {
@@ -3991,7 +3991,7 @@ namespace System.Net {
             }
         }
 
-        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
+        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetConnectingContext()
         {
             if (!Async)
@@ -4014,7 +4014,7 @@ namespace System.Net {
             return context;
         }
 
-        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
+        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetWritingContext()
         {
             if (!Async)
@@ -4039,7 +4039,7 @@ namespace System.Net {
             return context;
         }
 
-        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
+        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
         internal override ContextAwareResult GetReadingContext()
         {
             if (!Async)
@@ -6025,12 +6025,12 @@ namespace System.Net {
 
                         // The second NTLM request is required to use the same connection, don't close it
                         if (ntlmFollowupRequest) {
-                            // We only want CallDone to do a sync read now if 100Continue won't later
+                            // We only want CallDone to do a [....] read now if 100Continue won't later
                             NeedsToReadForResponse = !ShouldWaitFor100Continue();
                             _SubmitWriteStream.CallDone();
                         }
                         else if (!AllowWriteStreamBuffering) {
-                            // We only want CloseInternal to do a sync read now if 100Continue won't later
+                            // We only want CloseInternal to do a [....] read now if 100Continue won't later
                             NeedsToReadForResponse = !ShouldWaitFor100Continue();
                             _SubmitWriteStream.CloseInternal(true);
                         }
@@ -6094,7 +6094,7 @@ namespace System.Net {
         // Never throws
         //
         private Stream MakeMemoryStream(Stream stream) {
-           // GlobalLog.ThreadContract(ThreadKinds.Sync, "HttpWebRequest#" + ValidationHelper.HashString(this) + "::MakeMemoryStream");
+           // GlobalLog.ThreadContract(ThreadKinds.[....], "HttpWebRequest#" + ValidationHelper.HashString(this) + "::MakeMemoryStream");
 
             if (stream == null || stream is SyncMemoryStream)
                 return stream;

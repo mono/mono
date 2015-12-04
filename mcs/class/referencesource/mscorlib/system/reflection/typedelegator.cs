@@ -5,7 +5,7 @@
 // ==--==
 // TypeDelegator
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 // This class wraps a Type object and delegates all methods to that Type.
 
 namespace System.Reflection {

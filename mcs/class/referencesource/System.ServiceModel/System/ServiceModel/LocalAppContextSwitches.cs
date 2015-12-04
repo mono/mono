@@ -13,7 +13,10 @@ namespace System.ServiceModel
     internal static class LocalAppContextSwitches
     {
         private const string DisableExplicitConnectionCloseHeaderString = "Switch.System.ServiceModel.DisableExplicitConnectionCloseHeader";
+        private const string AllowUnsignedToHeaderString = "Switch.System.ServiceModel.AllowUnsignedToHeader";
+
         private static int disableExplicitConnectionCloseHeader;
+        private static int allowUnsignedToHeader;
 
         public static bool DisableExplicitConnectionCloseHeader
         {
@@ -21,6 +24,15 @@ namespace System.ServiceModel
             get
             {
                 return LocalAppContext.GetCachedSwitchValue(DisableExplicitConnectionCloseHeaderString, ref disableExplicitConnectionCloseHeader);
+            }
+        }
+
+        public static bool AllowUnsignedToHeader
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return LocalAppContext.GetCachedSwitchValue(AllowUnsignedToHeaderString, ref allowUnsignedToHeader);
             }
         }
 

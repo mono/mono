@@ -4,7 +4,7 @@
 // </copyright>
 //
 // @owner  willa
-// @backupOwner Microsoft
+// @backupOwner [....]
 //------------------------------------------------------------------------------
 using System.Diagnostics;
 using System.Data.Metadata.Edm;

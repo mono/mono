@@ -3,7 +3,7 @@
 // <copyright file="XmlRawTextWriterGenerator.cxx" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
 //------------------------------------------------------------------------------
 
 // WARNING: This file is generated and should not be modified directly.  Instead,
@@ -416,8 +416,8 @@ namespace System.Xml {
 
             if ( trackTextContent && inTextContent != false ) { ChangeTextContentMark( false ); }
 
-            // VSTFDEVDIV 
-
+            // VSTFDEVDIV bug #583965: Inconsistency between Silverlight 2 and Dev10 in the way a single xmlns attribute is serialized    
+            // Resolved as: Won't fix (breaking change)
 
             if ( prefix.Length == 0 ) {
                 RawText( " xmlns=\"" );

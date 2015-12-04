@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       Microsoft
-// @backupOwner Microsoft
+// @owner       [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 using System.Collections;
@@ -199,10 +199,10 @@ namespace System.Data.Metadata.Edm
         }
 
         /// <summary>
-        /// Workaround for 
-
-
-
+        /// Workaround for bug 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public new virtual int IndexOf(T value)
         {
             return base.IndexOf(value);

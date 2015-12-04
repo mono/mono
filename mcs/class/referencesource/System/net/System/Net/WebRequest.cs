@@ -981,7 +981,7 @@ namespace System.Net {
         // GetRequestStream() and the reading phase to GetResponse(), but if there's no request body, both phases
         // may happen inside GetResponse().
         //
-        // Return null only on Sync (if we're on the Sync thread).  Otherwise throw if no context is available.
+        // Return null only on [....] (if we're on the [....] thread).  Otherwise throw if no context is available.
         internal virtual ContextAwareResult GetConnectingContext()
         {
             throw ExceptionHelper.MethodNotImplementedException;

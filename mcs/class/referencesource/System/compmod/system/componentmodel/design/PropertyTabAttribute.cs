@@ -4,7 +4,7 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-// SECREVIEW: Remove this attribute once 
+// SECREVIEW: Remove this attribute once bug#411903 is fixed.
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2113:SecureLateBindingMethods", Scope="member", Target="System.ComponentModel.PropertyTabAttribute.get_TabClasses():System.Type[]")]
 
 namespace System.ComponentModel {

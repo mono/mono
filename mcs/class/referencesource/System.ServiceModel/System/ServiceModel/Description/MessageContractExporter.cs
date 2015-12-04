@@ -511,7 +511,7 @@ namespace System.ServiceModel.Description
                 string operationName = contractContext.GetOperation(operation).Name;
 
                 string callbackString = operation.IsServerInitiated() ? "Callback" : string.Empty;
-                // Microsoft: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
+                // [....]: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
                 if (messageDescription.Direction == MessageDirection.Input)
                     messageNameBase = string.Format(System.Globalization.CultureInfo.InvariantCulture,
                                         "{0}_{1}_Input{2}Message", portTypeName, operationName, callbackString);
@@ -539,7 +539,7 @@ namespace System.ServiceModel.Description
         {
             string portTypeName = contractContext.WsdlPortType.Name;
             string operationName = contractContext.GetOperation(operation).Name;
-            // Microsoft: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
+            // [....]: composing names have potential problem of generating name that looks like an encoded name, consider avoiding '_'
             string faultNameBase = String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}_{1}_{2}_FaultMessage", portTypeName, operationName, faultName);
 
             WsdlNS.ServiceDescription wsdl = contractContext.WsdlPortType.ServiceDescription;

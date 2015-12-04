@@ -84,9 +84,9 @@ namespace System.Web.UI {
 
             bool pathSpecified = !String.IsNullOrEmpty(serviceUrl);
             if (pathSpecified) {
-                // DevDiv 
-
-
+                // DevDiv Bug 71954:When loadRoles="true" and the path is set, we should not load the roles from the default path
+                // loadRoles script always retrieves the roles from default role provider, which is not correct if RolesService
+                // points to non default path. Hence throw when non default path and loadRoles both are specified.
                 if (defaultServicePath == null){
                     defaultServicePath = scriptManager.ResolveClientUrl("~/" + System.Web.Script.Services.WebServiceData._roleServiceFileName);
                 }

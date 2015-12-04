@@ -338,19 +338,19 @@ namespace Microsoft.Win32 {
         [DllImport(ExternDll.Advapi32, CharSet=System.Runtime.InteropServices.CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Microsoft: EventLog is protected by EventLogPermission")]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "[....]: EventLog is protected by EventLogPermission")]
         public static extern bool GetOldestEventLogRecord(SafeHandle hEventLog, out int number);
         [DllImport(ExternDll.Advapi32, CharSet=System.Runtime.InteropServices.CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.Machine)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Microsoft: EventLog is protected by EventLogPermission")]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "[....]: EventLog is protected by EventLogPermission")]
         public static extern bool ReadEventLog(SafeHandle hEventLog, int dwReadFlags,
                                                  int dwRecordOffset, byte[] buffer, int numberOfBytesToRead, out int bytesRead,
                                                  out int minNumOfBytesNeeded);
         [DllImport(ExternDll.Advapi32, CharSet=System.Runtime.InteropServices.CharSet.Unicode, SetLastError=true)]
         [ResourceExposure(ResourceScope.None)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Microsoft: EventLog is protected by EventLogPermission")]
+        [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "[....]: EventLog is protected by EventLogPermission")]
         public static extern bool NotifyChangeEventLog(SafeHandle hEventLog, SafeWaitHandle hEvent);
 
         [DllImport(ExternDll.Kernel32, EntryPoint="ReadDirectoryChangesW", CharSet=System.Runtime.InteropServices.CharSet.Auto, SetLastError=true)]

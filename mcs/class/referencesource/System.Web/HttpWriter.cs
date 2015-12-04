@@ -717,7 +717,7 @@ namespace System.Web {
                 return;
             }
 
-            // Dev10 
+            // Dev10 Bug 507392: Do as Stream does.
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
             if (offset < 0)
@@ -1433,7 +1433,7 @@ namespace System.Web {
             _lastBuffer = null;
 
             // no content to filter
-            // Allow the filter to be closed (Dev10 
+            // Allow the filter to be closed (Dev10 Bug 550168).
             if (_buffers.Count == 0 && !finalFiltering)
                 return;
 
@@ -1621,7 +1621,7 @@ namespace System.Web {
                 return;
             }
 
-            // Dev10 
+            // Dev10 Bug 507392: Do as TextWriter does.
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
             if (index < 0)

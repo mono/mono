@@ -2,7 +2,7 @@
 // <copyright file="XsltCompileContext.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Xml.Xsl.XsltOld {
@@ -467,7 +467,7 @@ namespace System.Xml.Xsl.XsltOld {
                 if (typeof(XPathNodeIterator).IsAssignableFrom(type)) {
                     return XPathResultType.NodeSet;
                 }
-                // Microsoft: It be better to check that type is realy object and otherwise return XPathResultType.Error
+                // [....]: It be better to check that type is realy object and otherwise return XPathResultType.Error
                 return XPathResultType.Any;
             case TypeCode.DateTime :
                 return XPathResultType.Error;

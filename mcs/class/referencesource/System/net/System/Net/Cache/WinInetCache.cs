@@ -546,8 +546,8 @@ using System.Globalization;
 
             int bufferCharLength = bufferPtr->HeaderInfoChars + ((int)(bufferPtr->_OffsetHeaderInfo))/c_CharSz;
             if (bufferCharLength*c_CharSz > entry.MaxBufferBytes) {
-                // WinInet 
-
+                // WinInet bug? They may report offset+HeaderInfoChars as a greater value than MaxBufferBytes as total buffer size.
+                // Actually, the last one seems to be accurate based on the data we have provided for Commit.
                 bufferCharLength = entry.MaxBufferBytes/c_CharSz;
             }
             //WinInet may put terminating nulls at the end of the buffer, remove them.
@@ -579,46 +579,46 @@ using System.Globalization;
             }
             int bufferCharLength = bufferPtr->HeaderInfoChars + ((int)(bufferPtr->_OffsetHeaderInfo))/c_CharSz;
             if (bufferCharLength*c_CharSz > entry.MaxBufferBytes) {
-                // WinInet 
+                // WinInet bug? They may report offset+HeaderInfoChars as a greater value than total buffer size.
+                // Actually, the last one seems to be accurate based on the data we have provided for Commit.
+                bufferCharLength = entry.MaxBufferBytes/c_CharSz;
+            }
 
+            while (true) {
+                int totalLength = 0;
+                DataParseStatus status = WebHeaderCollection.ParseHeaders(collection, false, buffer, bufferCharLength,
+                                        ref offset,
+                                        ref totalLength,
+                                        entry.MaxBufferBytes/c_CharSz);
 
+                if (status != DataParseStatus.Done) {
+                    if (status == DataParseStatus.NeedMoreData) {
+                        //WinInet puts terminating null at the end of the buffer, accept that as a "normal" case.
+                        if ((offset+1 == bufferCharLength) && charPtr[offset] == 0) {
+                             // accept as the last metainfo block
+                             if (collection.Count != 0) {
+                                 result.Add(collection);
+                             }
+                             break;
+                        }
+                    }
+                    entry.Error = Status.CorruptedHeaders;
+                    //throw new InvalidOperationException("Cannot convert Cache Entry metadata into a NameValueCollection instance");
+                    break;
+                }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
+                result.Add(collection);
+                // do we have more meta data?
+                if (offset >= bufferCharLength) {
+                    break;
+                }
+                // continue parsing next collection
+                collection = new NameValueCollection();
+            }
+            entry.MetaInfo = (result.Count == 0? null: (NameValueCollection[])result.ToArray(typeof(NameValueCollection)));
+            return entry.Error;
+        }
+*********************/
 #if DEBUG
 
         /*

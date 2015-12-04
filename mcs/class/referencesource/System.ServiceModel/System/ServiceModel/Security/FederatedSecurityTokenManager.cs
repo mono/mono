@@ -439,9 +439,9 @@ namespace System.ServiceModel.Security
             return _defaultTokenResolver;
         }
         /// <summary>
-        /// There is a 
-
-
+        /// There is a bug in WCF where the version obtained from the public SecurityTokenVersion strings is wrong.
+        /// The internal MessageSecurityTokenVersion has the right version.
+        /// </summary>
         internal static SecurityVersion GetSecurityVersion( SecurityTokenVersion tokenVersion )
         {
             if ( tokenVersion == null )
@@ -450,11 +450,11 @@ namespace System.ServiceModel.Security
             }
 
             //
-            // Workaround for WCF 
-
-
-
-
+            // Workaround for WCF bug.
+            // In .NET 3.5 WCF returns the wrong Token Specification. We need to reflect on the
+            // internal code so we can access the SecurityVersion directly instead of depending
+            // on the security specification.
+            //
             if ( tokenVersion is MessageSecurityTokenVersion )
             {
                 SecurityVersion sv = ( tokenVersion as MessageSecurityTokenVersion ).SecurityVersion;

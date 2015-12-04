@@ -137,7 +137,7 @@ namespace System.Runtime.Caching {
                 for (int i = 0; i < NUM_COUNTERS; i++) {
                     PerformanceCounter counter = counters[i];
                     if (counter != null) {
-                        // decrement counter by its current value, to zero it out for this instance of the named cache (see Dev10 
+                        // decrement counter by its current value, to zero it out for this instance of the named cache (see Dev10 Bug 680819)
                         long value = Interlocked.Exchange(ref _counterValues[i], 0);
                         if (value != 0) {
                             counter.IncrementBy(-value);

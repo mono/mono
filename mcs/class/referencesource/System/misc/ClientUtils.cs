@@ -6,11 +6,11 @@
 
 /*
  */
-#if Microsoft_NAMESPACE 
+#if WINFORMS_NAMESPACE 
     namespace System.Windows.Forms
 #elif DRAWING_NAMESPACE
     namespace System.Drawing
-#elif Microsoft_PUBLIC_GRAPHICS_LIBRARY 
+#elif WINFORMS_PUBLIC_GRAPHICS_LIBRARY 
     namespace System.Internal
 #elif SYSTEM_NAMESPACE
     namespace System
@@ -274,7 +274,7 @@
         ///   -----------------------------------------------------------------
         ///
         /// </devdoc>        
-#if Microsoft_NAMESPACE || Microsoft_PUBLIC_GRAPHICS_LIBRARY || DRAWING_NAMESPACE
+#if WINFORMS_NAMESPACE || WINFORMS_PUBLIC_GRAPHICS_LIBRARY || DRAWING_NAMESPACE
         internal class WeakRefCollection : IList {
             private int refCheckThreshold = Int32.MaxValue; // this means this is disabled by default.
             private ArrayList _innerList;

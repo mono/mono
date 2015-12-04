@@ -7,7 +7,7 @@
 **
 ** Class: Stack
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: An array implementation of a stack.
 **
@@ -30,7 +30,7 @@ namespace System.Collections {
         private Object[] _array;     // Storage for stack elements
         [ContractPublicPropertyName("Count")]
         private int _size;           // Number of items in the stack.
-        private int _version;        // Used to keep enumerator in sync w/ collection.
+        private int _version;        // Used to keep enumerator in [....] w/ collection.
         [NonSerialized]
         private Object _syncRoot;
     

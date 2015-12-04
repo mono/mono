@@ -7,7 +7,7 @@
 **
 ** Class: CaseInsensitiveHashCodeProvider
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Designed to support hashtables which require 

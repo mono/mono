@@ -773,7 +773,7 @@ namespace System.Web {
 
             Debug.Assert((_utcTimestampCreated == DateTime.MinValue && _utcTimestampRequest == DateTime.MinValue) ||
                          (_utcTimestampCreated != DateTime.MinValue && _utcTimestampRequest != DateTime.MinValue),
-                        "_utcTimestampCreated and _utcTimestampRequest are out of sync in UpdateCachedHeaders");
+                        "_utcTimestampCreated and _utcTimestampRequest are out of [....] in UpdateCachedHeaders");
 
             if (_utcTimestampCreated == DateTime.MinValue) {
                 _utcTimestampCreated = _utcTimestampRequest = response.Context.UtcTimestamp;
@@ -946,8 +946,8 @@ namespace System.Web {
                     }
                     
                     if (!omitVaryStar) {
-                        // Dev10 
-
+                        // Dev10 Bug 425047 - OutputCache Location="ServerAndClient" (HttpCacheability.ServerAndPrivate) should 
+                        // not use "Vary: *" so the response can be cached on the client
                         if (_varyByCustom != null || (_varyByParams.IsModified() && !_varyByParams.IgnoreParams)) {
                             varyByHeaders = "*";
                         }
@@ -1155,7 +1155,7 @@ namespace System.Web {
 
         internal bool   IsKernelCacheable(HttpRequest request, bool enableKernelCacheForVaryByStar) {
             return  _cacheability == HttpCacheability.Public
-                && !_hasUserProvidedDependencies // Consider (Microsoft): rework dependency model to support user-provided dependencies
+                && !_hasUserProvidedDependencies // Consider ([....]): rework dependency model to support user-provided dependencies
                 && !_hasSetCookieHeader
                 && !_noServerCaching
                 && HasExpirationPolicy()

@@ -829,7 +829,7 @@ namespace System.ServiceModel.Channels
 
             public override HttpOutput GetHttpOutput(Message message)
             {
-                // work around http.sys keep alive 
+                // work around http.sys keep alive bug with chunked requests, see MB 49676, this is fixed in Vista
                 if (listenerContext.Request.ContentLength64 == -1 && !OSEnvironmentHelper.IsVistaOrGreater)
                 {
                     listenerContext.Response.KeepAlive = false;

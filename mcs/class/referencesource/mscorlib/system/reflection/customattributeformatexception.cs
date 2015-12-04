@@ -8,11 +8,11 @@
 //
 // CustomAttributeFormatException is thrown when the binary format of a 
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //    custom attribute is invalid.
 //
 // <EMAIL>Author: darylo</EMAIL>
-// Date: Microsoft 98
+// Date: [....] 98
 //
 namespace System.Reflection {
     using System;

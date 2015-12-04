@@ -2,8 +2,8 @@
 // <copyright file="DbConnectionPool.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.ProviderBase {
@@ -1163,7 +1163,7 @@ namespace System.Data.ProviderBase {
                 return true;
             }
             else if (retry == null) {
-                // timed out on a sync call
+                // timed out on a [....] call
                 return true;
             }
 

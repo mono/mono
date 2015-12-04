@@ -7,7 +7,7 @@
 **
 ** Class:  StringReader
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: For reading text from strings
 **

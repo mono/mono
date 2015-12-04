@@ -1178,7 +1178,7 @@ namespace System.ServiceModel.Activities.Dispatcher
                     this.pipeline.Publish();
                 }
 
-                // PersistenceContext.Open doesn't do anything, so it's ok to call sync.
+                // PersistenceContext.Open doesn't do anything, so it's ok to call [....].
                 this.context.Open(TimeSpan.Zero);
 
                 IAsyncResult result;

@@ -7,6 +7,7 @@
 namespace System.Net {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.IO;
     using System.Net.Sockets;
@@ -98,9 +99,9 @@ namespace System.Net {
             try {
                 if (errorCode == UnsafeNclNativeMethods.ErrorCodes.ERROR_MORE_DATA)
                {
-                    //There is a 
-
-
+                    //There is a bug that has existed in http.sys since w2k3.  Bytesreceived will only
+                    //return the size of the inital cert structure.  To get the full size,
+                    //we need to add the certificate encoding size as well.
 
                     UnsafeNclNativeMethods.HttpApi.HTTP_SSL_CLIENT_CERT_INFO* pClientCertInfo = asyncResult.RequestBlob;
                     asyncResult.Reset(numBytes + pClientCertInfo->CertEncodedSize);
@@ -235,6 +236,9 @@ namespace System.Net {
         private bool m_IsDisposed = false;
         internal const uint CertBoblSize = 1500;
         private string m_ServiceName;
+        private object m_Lock = new object();
+        private List<TokenBinding> m_TokenBindings = null;
+        private int m_TokenBindingVerifyMessageStatus = 0;
 
         private enum SslStatus : byte
         {
@@ -1007,6 +1011,126 @@ namespace System.Net {
         internal ChannelBinding GetChannelBinding()
         {
             return HttpListenerContext.Listener.GetChannelBindingFromTls(m_ConnectionId);
+        }
+
+        internal IEnumerable<TokenBinding> GetTlsTokenBindings() {
+
+            // Try to get the token binding if not created.
+            if (Volatile.Read(ref m_TokenBindings) == null)
+            {
+                lock (m_Lock)
+                {
+                    if (Volatile.Read(ref m_TokenBindings) == null)
+                    {
+                        // If token binding is supported on the machine get it else create empty list.
+                        if (UnsafeNclNativeMethods.TokenBindingOSHelper.SupportsTokenBinding)
+                        {
+                            ProcessTlsTokenBindings();
+                        }
+                        else
+                        {
+                            m_TokenBindings = new List<TokenBinding>();
+                        }
+                    }
+                }
+            }
+
+            // If the cached status is not success throw exception, else return the token binding
+            if (0 != m_TokenBindingVerifyMessageStatus)
+            {
+                throw new HttpListenerException(m_TokenBindingVerifyMessageStatus);
+            }
+            else
+            {
+                return m_TokenBindings.AsReadOnly();
+            }
+        }
+
+        /// <summary>
+        /// Process the token binding information in the request and populate m_TokenBindings 
+        /// This method should be called once only as token binding information is cached in m_TokenBindings for further use.
+        /// </summary>
+        private void ProcessTlsTokenBindings() {
+
+            Debug.Assert(m_TokenBindings == null);
+
+            if (m_TokenBindings != null)
+            {
+                return;
+            }
+
+            m_TokenBindings = new List<TokenBinding>();
+
+            UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* pTokenBindingInfo = GetTlsTokenBindingRequestInfo();
+
+            if (pTokenBindingInfo == null)
+            {
+                // The current request isn't over TLS or the client or server doesn't support the token binding
+                // protocol. This isn't an error; just return "nothing here".
+                return;
+            }
+
+            UnsafeNclNativeMethods.HttpApi.HeapAllocHandle handle = null;
+            m_TokenBindingVerifyMessageStatus = -1;
+            m_TokenBindingVerifyMessageStatus = UnsafeNclNativeMethods.HttpApi.TokenBindingVerifyMessage(
+                pTokenBindingInfo->TokenBinding,
+                pTokenBindingInfo->TokenBindingSize,
+                pTokenBindingInfo->KeyType,
+                pTokenBindingInfo->TlsUnique,
+                pTokenBindingInfo->TlsUniqueSize,
+                out handle);
+
+            if (m_TokenBindingVerifyMessageStatus != 0)
+            {
+                throw new HttpListenerException(m_TokenBindingVerifyMessageStatus);
+            }
+            
+            Debug.Assert(handle != null);
+            Debug.Assert(!handle.IsInvalid);
+
+            using (handle)
+            {
+                UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST* pResultList = (UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_LIST*)handle.DangerousGetHandle();
+                for (int i = 0; i < pResultList->resultCount; i++)
+                {
+                    UnsafeNclNativeMethods.HttpApi.TOKENBINDING_RESULT_DATA* pThisResultData = &pResultList->resultData[i];
+
+                    if (pThisResultData != null)
+                    {
+                        // Per http://tools.ietf.org/html/draft-ietf-tokbind-protocol-00, Sec. 4,
+                        // We'll strip off the token binding type and return the remainder as an opaque blob.
+                        Debug.Assert((long)(&pThisResultData->identifierData->hashAlgorithm) == (long)(pThisResultData->identifierData) + 1);
+                        byte[] retVal = new byte[pThisResultData->identifierSize - 1];
+                        Marshal.Copy((IntPtr)(&pThisResultData->identifierData->hashAlgorithm), retVal, 0, retVal.Length);
+
+                        if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_PROVIDED)
+                        {
+                            m_TokenBindings.Add(new TokenBinding(TokenBindingType.Provided, retVal));
+                        }
+                        else if (pThisResultData->identifierData->bindingType == UnsafeNclNativeMethods.HttpApi.TOKENBINDING_TYPE.TOKENBINDING_TYPE_REFERRED)
+                        {
+                            m_TokenBindings.Add(new TokenBinding(TokenBindingType.Referred, retVal));
+                        }
+                    }
+                }
+            }
+        }
+
+        private UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO* GetTlsTokenBindingRequestInfo() {
+            fixed (byte* pMemoryBlob = RequestBuffer)
+            {
+                UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2* request = (UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_V2*)pMemoryBlob;
+
+                for (int i = 0; i < request->RequestInfoCount; i++)
+                {
+                    UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_INFO* pThisInfo = &request->pRequestInfo[i];
+                    if (pThisInfo != null && pThisInfo->InfoType == UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_INFO_TYPE.HttpRequestInfoTypeSslTokenBinding)
+                    {
+                        return (UnsafeNclNativeMethods.HttpApi.HTTP_REQUEST_TOKEN_BINDING_INFO*)pThisInfo->pInfo;
+                    }
+                }
+            }
+            return null;
         }
 
         internal void CheckDisposed() {

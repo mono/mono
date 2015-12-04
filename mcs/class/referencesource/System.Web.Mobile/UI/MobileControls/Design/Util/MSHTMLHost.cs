@@ -6,7 +6,7 @@
 
 // MSHTMLHost.cs
 //
-// 12/17/98: Created: Microsoft
+// 12/17/98: Created: [....]
 //
 
 namespace System.Web.UI.Design.MobileControls.Util {
@@ -210,7 +210,7 @@ namespace System.Web.UI.Design.MobileControls.Util {
         }
 
         public virtual void OnUIDeactivate(int fUndoable) {
-            // NOTE, Microsoft, 7/99: Don't return E_NOTIMPL. Somehow doing nothing and returning S_OK
+            // NOTE, [....], 7/99: Don't return E_NOTIMPL. Somehow doing nothing and returning S_OK
             //    fixes trident hosting in Win2000.
         }
 
@@ -245,7 +245,7 @@ namespace System.Web.UI.Design.MobileControls.Util {
         }
 
         public virtual void SetActiveObject(NativeMethods.IOleInPlaceActiveObject pActiveObject, string pszObjName) {
-            // NOTE, Microsoft, 7/99: Don't return E_NOTIMPL. Somehow doing nothing and returning S_OK
+            // NOTE, [....], 7/99: Don't return E_NOTIMPL. Somehow doing nothing and returning S_OK
             //    fixes trident hosting in Win2000.
             // throw new COMException(String.Empty, NativeMethods.E_NOTIMPL);
         }

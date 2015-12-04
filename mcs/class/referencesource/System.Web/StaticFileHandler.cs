@@ -508,7 +508,7 @@ namespace System.Web {
 
             // Determine Last Modified Time.  We might need it soon 
             // if we encounter a Range: and If-Range header
-            // Using UTC time to avoid daylight savings time 
+            // Using UTC time to avoid daylight savings time bug 83230
             lastModifiedInUtc = new DateTime(fileInfo.LastWriteTimeUtc.Year,
                                         fileInfo.LastWriteTimeUtc.Month,
                                         fileInfo.LastWriteTimeUtc.Day,

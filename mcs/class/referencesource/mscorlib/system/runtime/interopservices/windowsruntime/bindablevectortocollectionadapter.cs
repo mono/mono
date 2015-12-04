@@ -5,7 +5,7 @@
 // ==--==
 //
 // <OWNER>GPaperin</OWNER>
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 
 using System;
 using System.Runtime;
@@ -85,7 +85,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
                 throw new ArgumentOutOfRangeException("arrayIndex");
 
             // Does the dimension in question have sufficient space to copy the expected number of entries?
-            // We perform this check before valid index check to ensure the exception message is in sync with
+            // We perform this check before valid index check to ensure the exception message is in [....] with
             // the following snippet that uses regular framework code:
             //
             // ArrayList list = new ArrayList();

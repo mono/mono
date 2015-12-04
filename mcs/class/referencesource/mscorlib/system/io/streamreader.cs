@@ -1134,7 +1134,7 @@ namespace System.IO
         // and is thus lifted to a state machine type, access will be slow.
         // As a workaround, we either cache instance fields in locals or use properties to access such fields.
 
-        // See Dev11 
+        // See Dev11 bug #370300 for more info.
         
         private Int32 CharLen_Prop {
             get { return charLen; }

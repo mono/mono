@@ -71,10 +71,10 @@ namespace System.ServiceModel.Transactions
         void ForcePromotion(Transaction transaction)
         {
             // Force promotion. This may throw TransactionException.
-            // We used to check the DistributedIdentifier property first, but VSWhidbey 
-
-
-
+            // We used to check the DistributedIdentifier property first, but VSWhidbey bug 547901 
+            // prevents us from doing so reliably in multi-threaded scenarios (there is a ----
+            // in the System.Transactions code that can cause a NullReferenceException if we ask
+            // for the identifier while the transaction is being promoted)
             TransactionInterop.GetTransmitterPropagationToken(transaction);
         }
 

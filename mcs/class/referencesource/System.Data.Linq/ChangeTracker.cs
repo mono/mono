@@ -560,7 +560,7 @@ namespace System.Data.Linq {
                     }
                 }
 
-                // Return value indicates whether or not any data was actually sync'd
+                // Return value indicates whether or not any data was actually [....]'d
                 internal override bool SynchDependentData() {                    
                     bool valueWasSet = false;
 

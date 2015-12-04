@@ -2,8 +2,8 @@
 // <copyright file="TdsParserStateObject.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -646,7 +646,7 @@ namespace System.Data.SqlClient {
             // Should only be called for MARS - that is the only time we need to take
             // the ResetConnection lock!
 
-            // SQL BU DT 333026 - it was raised in a security review by Microsoft questioning whether
+            // SQL BU DT 333026 - it was raised in a security review by [....] questioning whether
             // we need to actually process the resulting packet (sp_reset ack or error) to know if the
             // reset actually succeeded.  There was a concern that if the reset failed and we proceeded
             // there might be a security issue present.  We have been assured by the server that if
@@ -744,7 +744,8 @@ namespace System.Data.SqlClient {
             return myInfo;
         }
 
-        internal void CreatePhysicalSNIHandle(string serverName, bool ignoreSniOpenTimeout, long timerExpire, out byte[] instanceName, byte[] spnBuffer, bool flushCache, bool async, bool fParallel) {
+        internal void CreatePhysicalSNIHandle(string serverName, bool ignoreSniOpenTimeout, long timerExpire, out byte[] instanceName, byte[] spnBuffer, bool flushCache, bool async, bool fParallel, TransparentNetworkResolutionState transparentNetworkResolutionState, int totalTimeout)
+        {
             SNINativeMethodWrapper.ConsumerInfo myInfo = CreateConsumerInfo(async);
 
             // Translate to SNI timeout values (Int32 milliseconds)
@@ -761,8 +762,7 @@ namespace System.Data.SqlClient {
                     timeout = 0;
                 }
             }
-
-            _sessionHandle = new SNIHandle(myInfo, serverName, spnBuffer, ignoreSniOpenTimeout, checked((int)timeout), out instanceName, flushCache, !async, fParallel);
+            _sessionHandle = new SNIHandle(myInfo, serverName, spnBuffer, ignoreSniOpenTimeout, checked((int)timeout), out instanceName, flushCache, !async, fParallel, transparentNetworkResolutionState, totalTimeout);
         }
 
         internal bool Deactivate() {
@@ -1611,9 +1611,9 @@ namespace System.Data.SqlClient {
             Debug.Assert(_syncOverAsync || !_asyncReadWithoutSnapshot, "This method is not safe to call when doing sync over async");
 
             if (null == encoding) {
-                // 
-
-
+                // Bug 462435:CR: TdsParser.DrainData(stateObj) hitting timeout exception after Connection Resiliency change
+                // http://vstfdevdiv:8080/web/wi.aspx?pcguid=22f9acc9-569a-41ff-b6ac-fac1b6370209&id=462435
+                // Need to skip the current column before throwing the error - this ensures that the state shared between this and the data reader is consistent when calling DrainData
                 if (isPlp) {
                     ulong ignored;
                     if (!_parser.TrySkipPlpValue((ulong)length, this, out ignored)) {
@@ -2046,8 +2046,8 @@ namespace System.Data.SqlClient {
                         TaskCompletionSource<object> source = _networkPacketTaskSource;
 
                         if (_parser.Connection.IsInPool) {
-                            // Dev11 
-
+                            // Dev11 Bug 390048 : Timing issue between OnTimeout and ReadAsyncCallback results in SqlClient's packet parsing going out of [....]          
+                            // We should never timeout if the connection is currently in the pool: the safest thing to do here is to doom the connection to avoid corruption
                             Debug.Assert(_parser.Connection.IsConnectionDoomed, "Timeout occurred while the connection is in the pool");
                             _parser.State = TdsParserState.Broken;
                             _parser.Connection.BreakConnection();
@@ -2150,7 +2150,7 @@ namespace System.Data.SqlClient {
                 }
 
                 // -1 == Infinite
-                //  0 == Already timed out (NOTE: To simulate the same behavior as sync we will only timeout on 0 if we receive an IO Pending from SNI)
+                //  0 == Already timed out (NOTE: To simulate the same behavior as [....] we will only timeout on 0 if we receive an IO Pending from SNI)
                 // >0 == Actual timeout remaining
                 int msecsRemaining = GetTimeoutRemaining();
                 if (msecsRemaining > 0) {
@@ -2206,7 +2206,7 @@ namespace System.Data.SqlClient {
                     ChangeNetworkPacketTimeout(0, Timeout.Infinite);
                 }
                 // DO NOT HANDLE PENDING READ HERE - which is TdsEnums.SNI_SUCCESS_IO_PENDING state.
-                // That is handled by user who initiated async read, or by ReadNetworkPacket which is sync over async.
+                // That is handled by user who initiated async read, or by ReadNetworkPacket which is [....] over async.
             }
             finally {
                 if (readPacket != IntPtr.Zero) {
@@ -2375,7 +2375,7 @@ namespace System.Data.SqlClient {
                                 // For DB Mirroring Failover during login, never break the connection, just close the TdsParser (Devdiv 846298)
                                 _parser.Disconnect();
                             }
-                            else if ((_parser.State == TdsParserState.OpenNotLoggedIn) && (_parser.Connection.ConnectionOptions.MultiSubnetFailover))
+                            else if ((_parser.State == TdsParserState.OpenNotLoggedIn) && (_parser.Connection.ConnectionOptions.MultiSubnetFailover || _parser.Connection.ConnectionOptions.TransparentNetworkIPResolution))
                             {
                                 // For MultiSubnet Failover during login, never break the connection, just close the TdsParser
                                 _parser.Disconnect();
@@ -3084,7 +3084,7 @@ namespace System.Data.SqlClient {
             Debug.Assert(Parser.Connection._parserLock.ThreadMayHaveLock(), "Thread is writing without taking the connection lock");
             Task task = SNIWritePacket(Handle, packet, out sniError, canAccumulate, callerHasConnectionLock: true);
 
-            // Check to see if the timeout has occured.  This time out code is special case code to allow BCP writes to timeout to fix 
+            // Check to see if the timeout has occured.  This time out code is special case code to allow BCP writes to timeout to fix bug 350558, eventually we should make all writes timeout.
             if (_bulkCopyOpperationInProgress && 0 == GetTimeoutRemaining()) {
                 _parser.Connection.ThreadHasParserLockForClose = true;
                 try {
@@ -3278,7 +3278,7 @@ namespace System.Data.SqlClient {
         internal void AddError(SqlError error) {
             Debug.Assert(error != null, "Trying to add a null error");
 
-            // Switch to sync once we see an error
+            // Switch to [....] once we see an error
             _syncOverAsync = true;
 
             lock (_errorAndWarningsLock) {
@@ -3312,7 +3312,7 @@ namespace System.Data.SqlClient {
         internal void AddWarning(SqlError error) {
             Debug.Assert(error != null, "Trying to add a null error");
 
-            // Switch to sync once we see a warning
+            // Switch to [....] once we see a warning
             _syncOverAsync = true;
 
             lock (_errorAndWarningsLock){

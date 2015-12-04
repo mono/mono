@@ -464,7 +464,7 @@ namespace System.Web.UI.WebControls {
                 MethodInfo countHelperMethod = typeof(QueryableHelpers).GetMethod("CountHelper").MakeGenericMethod(modelType);
                 arguments.TotalRowCount = (int)countHelperMethod.Invoke(null, new object[] { result.ReturnValue });
 
-                //
+                //Bug 180907: We would like to auto sort on DataKeyName when paging is enabled and result is not already sorted by user to overcome a limitation in EF.
                 MethodInfo isOrderingMethodFoundMethod = typeof(QueryableHelpers).GetMethod("IsOrderingMethodFound").MakeGenericMethod(modelType);
                 bool isOrderingMethodFound = (bool)isOrderingMethodFoundMethod.Invoke(null, new object[] { result.ReturnValue });
                 if (!isOrderingMethodFound) {

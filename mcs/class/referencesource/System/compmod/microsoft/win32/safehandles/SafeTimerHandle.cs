@@ -7,7 +7,7 @@
 **
 ** Class:  SafeTimerHandle
 **
-** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
+** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
 **
 ** A wrapper for a timer handle
 **

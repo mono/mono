@@ -999,10 +999,10 @@ namespace System.Web.UI.WebControls {
         /// Saves view state.
         /// </devdoc>
         protected override object SaveViewState() {
-            // 
-
-
-
+            // Bug 322689: In the web farms scenario, if a web site is hosted in 4.0 and 4.5 servers
+            // (though this is not a really supported scenario, we are fixing this instance), 
+            // the View state created by 4.0 should be able to be understood by 4.5 controls.
+            // So, we create a Pair only if we are using model binding and otherwise fallback to 4.0 behavior.
 
             object baseViewState = base.SaveViewState();
 

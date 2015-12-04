@@ -117,11 +117,11 @@ namespace System.Web {
             Interlocked.Increment(ref _state.VoidAsyncOutstandingOperationCount);
         }
 
-        // Dev11 
-
-
-
-
+        // Dev11 Bug 70908: Race condition involving SynchronizationContext allows ASP.NET requests to be abandoned in the pipeline
+        //  
+        // When the last completion occurs, the _pendingCount is decremented and then the _lastCompletionCallbackLock is acquired to get
+        // the _lastCompletionCallback.  If the _lastCompletionCallback is non-null, then the last completion will invoke the callback;
+        // otherwise, the caller of PendingCompletion will handle the completion.
         internal override bool PendingCompletion(WaitCallback callback) {
             return _state.Helper.TrySetCompletionContinuation(() => callback(null));
         }

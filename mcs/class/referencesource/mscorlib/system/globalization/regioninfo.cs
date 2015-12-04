@@ -14,7 +14,7 @@
 //            preferences of the user and does not depend on the user's
 //            language or culture.
 //
-//  Date:     Microsoft 31, 1999
+//  Date:     [....] 31, 1999
 //
 ////////////////////////////////////////////////////////////////////////////
 

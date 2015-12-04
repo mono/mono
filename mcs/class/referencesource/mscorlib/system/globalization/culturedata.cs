@@ -55,7 +55,7 @@ namespace System.Globalization
     //
 
     // StructLayout is needed here otherwise compiler can re-arrange the fields.
-    // We have to keep this in-sync with the definition in comnlsinfo.h
+    // We have to keep this in-[....] with the definition in comnlsinfo.h
     //
     // WARNING WARNING WARNING
     //
@@ -1186,24 +1186,10 @@ namespace System.Globalization
                 if (this.sLocalizedDisplayName == null)
                 {
 #if !FEATURE_CORECLR
-                    if (this.IsSupplementalCustomCulture)
+                    String resourceKey = "Globalization.ci_" + this.sName;
+                    if (IsResourcePresent(resourceKey))
                     {
-                        if (this.IsNeutralCulture)
-                        {
-                            this.sLocalizedDisplayName = this.SNATIVELANGUAGE;
-                        }
-                        else
-                        {
-                            this.sLocalizedDisplayName = this.SNATIVEDISPLAYNAME;
-                        }
-                    }
-                    else
-                    {
-                        String resourceKey = "Globalization.ci_" + this.sName;
-                        if (IsResourcePresent(resourceKey))
-                        {
-                            this.sLocalizedDisplayName = Environment.GetResourceString(resourceKey);
-                        }
+                        this.sLocalizedDisplayName = Environment.GetResourceString(resourceKey);
                     }
 #endif
                     // If it hasn't been found (Windows 8 and up), fallback to the system
@@ -1323,7 +1309,7 @@ namespace System.Globalization
 #if !FEATURE_CORECLR
                         if (IsIncorrectNativeLanguageForSinhala())
                         {
-                            // work around 
+                            // work around bug in Windows 7 for native name of Sinhala
                             this.sNativeDisplayName ="\x0dc3\x0dd2\x0d82\x0dc4\x0dbd (\x0DC1\x0DCA\x200D\x0DBB\x0DD3\x0020\x0DBD\x0D82\x0D9A\x0DCF)";
                         }
                         else
@@ -1452,7 +1438,7 @@ namespace System.Globalization
 #if !FEATURE_CORECLR
                     if (IsIncorrectNativeLanguageForSinhala())
                     {
-                        // work around 
+                        // work around bug in Windows 7 for native language of Sinhala
                         this.sNativeLanguage = "\x0dc3\x0dd2\x0d82\x0dc4\x0dbd";
                     }
                     else
@@ -1525,17 +1511,10 @@ namespace System.Globalization
                 if (this.sLocalizedCountry == null)
                 {
 #if !FEATURE_CORECLR
-                    if (this.IsSupplementalCustomCulture)
+                    String resourceKey = "Globalization.ri_" + this.SREGIONNAME;
+                    if (IsResourcePresent(resourceKey))
                     {
-                        this.sLocalizedCountry = SNATIVECOUNTRY;
-                    }
-                    else
-                    {
-                        String resourceKey = "Globalization.ri_" + this.SREGIONNAME;
-                        if (IsResourcePresent(resourceKey))
-                        {
-                            this.sLocalizedCountry = Environment.GetResourceString(resourceKey);
-                        }
+                        this.sLocalizedCountry = Environment.GetResourceString(resourceKey);
                     }
 #endif
                     // If it hasn't been found (Windows 8 and up), fallback to the system

@@ -966,7 +966,7 @@ namespace System.Web.UI.WebControls {
                 // In 4.0, the default value of Menu.StaticSubMenuIndent was changed from 16px to Unit.Empty,
                 // since the table and list rendering modes need to have different effective default values.
                 // To maintain back compat, the effective default value for table rendering is 16px.
-                // Dev10 
+                // Dev10 Bug 741543
                 if (indent.IsEmpty) {
                     indent = Unit.Pixel(16);
                 }

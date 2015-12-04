@@ -178,7 +178,7 @@ namespace System.Workflow.ComponentModel
             FieldInfo fieldInfo = null;
             bool isEvent = (typeof(System.Delegate).IsAssignableFrom(propertyType) && (defaultMetadata == null || (defaultMetadata.Options & DependencyPropertyOptions.DelegateProperty) == 0));
 
-            // WinOE 
+            // WinOE Bug 13807: events can not be meta properties.
             if (isEvent && defaultMetadata != null && defaultMetadata.IsMetaProperty)
                 throw new ArgumentException(SR.GetString(SR.Error_DPAddHandlerMetaProperty), "defaultMetadata");
 

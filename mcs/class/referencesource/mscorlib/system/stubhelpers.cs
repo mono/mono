@@ -147,7 +147,7 @@ namespace  System.StubHelpers {
 
                 if (hasTrailByte)
                 {
-                    // this is an odd-sized string with a trailing byte stored in its sync block
+                    // this is an odd-sized string with a trailing byte stored in its [....] block
                     lengthInBytes++;
                 }
 
@@ -231,7 +231,7 @@ namespace  System.StubHelpers {
 
                 if ((length & 1) == 1)
                 {
-                    // odd-sized strings need to have the trailing byte saved in their sync block
+                    // odd-sized strings need to have the trailing byte saved in their [....] block
                     ret.SetTrailByte(((byte *)bstr.ToPointer())[length - 1]);
                 }
 

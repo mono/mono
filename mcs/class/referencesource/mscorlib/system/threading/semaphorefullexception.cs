@@ -7,7 +7,7 @@
 **
 ** Class: SemaphoreFullException
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 =============================================================================*/
 namespace System.Threading {

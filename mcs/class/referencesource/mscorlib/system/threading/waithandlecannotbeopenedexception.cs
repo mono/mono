@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 namespace System.Threading 
 {
     using System;

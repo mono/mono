@@ -4,7 +4,7 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 
 /*
  * This files defines the following types:

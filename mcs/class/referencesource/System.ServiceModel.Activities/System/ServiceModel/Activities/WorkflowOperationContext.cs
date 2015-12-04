@@ -94,7 +94,7 @@ namespace System.ServiceModel.Activities
 
             try
             {
-                // set activity ID on the executing thread (
+                // set activity ID on the executing thread (Bug 113386)
                 if (TraceUtility.MessageFlowTracingOnly)
                 {
                     this.e2eActivityId = TraceUtility.GetReceivedActivityId(this.OperationContext);

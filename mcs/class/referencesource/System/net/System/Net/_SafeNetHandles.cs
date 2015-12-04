@@ -781,6 +781,12 @@ namespace System.Net {
             return result;
         }
 
+        public unsafe bool HasFunction(string functionName)
+        {
+            IntPtr ret = UnsafeNclNativeMethods.GetProcAddress(this, functionName);
+            return (ret != IntPtr.Zero);
+        }
+
         protected override bool ReleaseHandle() {
             return UnsafeNclNativeMethods.SafeNetHandles.FreeLibrary(handle);
         }

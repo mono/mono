@@ -110,9 +110,9 @@ namespace System.Linq.Expressions.Compiler {
             sb.Append("$");
             sb.Append(index);
 
-            // There is a 
-
-
+            // There is a bug in Reflection.Emit that leads to 
+            // Unhandled Exception: System.Runtime.InteropServices.COMException (0x80131130): Record not found on lookup.
+            // if there is any of the characters []*&+,\ in the type name and a method defined on the type is called.
             sb.Replace('+', '_').Replace('[', '_').Replace(']', '_').Replace('*', '_').Replace('&', '_').Replace(',', '_').Replace('\\', '_');
 
             name = sb.ToString();

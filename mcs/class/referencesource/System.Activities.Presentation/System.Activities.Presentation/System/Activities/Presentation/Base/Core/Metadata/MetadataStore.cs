@@ -288,17 +288,17 @@ namespace System.Activities.Presentation.Metadata
                 Fx.Assert(objectType != null, "objectType parameter should not be null");
                 Type reflectType = TypeDescriptor.GetReflectionType(objectType);
 
-                // There is a 
-
-
-
-
-
-
-
-
-
-
+                // There is a bug in CLR reflection that does not respect the "inherit"
+                // flag for event or property infos.  Our custom metadata type does respect
+                // this flag and correctly does the right thing.  If the object type we
+                // are passed is not a metadata type, just use the default behavior of the
+                // parent member descriptor.  It will be right, and since we're not a metadata
+                // type that means we have no overrides anyway.
+                //
+                // The reason we have to call our type with inherit, instead of just using
+                // one code path is we need to support the interleaving of CLR and 
+                // metadata table attributes up the inheritance hierarchy.  MetadataType 
+                // does that for us.
 
                 if (parentDescriptor != null && !(reflectType is MetadataType))
                 {

@@ -110,9 +110,9 @@ namespace System.Web.UI.WebControls {
                         AddExpandoAttribute(expandoAttributeWriter, id, "dateorder", GetDateElementOrder(), false);
                         AddExpandoAttribute(expandoAttributeWriter, id, "cutoffyear", CutoffYear.ToString(NumberFormatInfo.InvariantInfo), false);
 
-                        // VSWhidbey 504553: The changes of this 
-
-
+                        // VSWhidbey 504553: The changes of this bug make client-side script not
+                        // using the century attribute anymore, but still generating it for
+                        // backward compatibility with Everett pages.
                         int currentYear = DateTime.Today.Year;
                         int century = currentYear - (currentYear % 100);
                         AddExpandoAttribute(expandoAttributeWriter, id, "century", century.ToString(NumberFormatInfo.InvariantInfo), false);

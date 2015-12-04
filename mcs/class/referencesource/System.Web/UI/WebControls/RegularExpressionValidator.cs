@@ -54,6 +54,8 @@ namespace System.Web.UI.WebControls {
             }
         }
 
+        // The timeout for regex
+        public int? MatchTimeout { get; set; }
 
         /// <internalonly/>
         /// <devdoc>
@@ -87,9 +89,14 @@ namespace System.Web.UI.WebControls {
 
             try {
                 // we are looking for an exact match, not just a search hit
-                Match m = Regex.Match(controlValue, ValidationExpression);
+                // Adding timeout for Regex in case of malicious string causing DoS
+                Match m = RegexUtil.Match(controlValue, ValidationExpression, RegexOptions.None, MatchTimeout);
+
                 return(m.Success && m.Index == 0 && m.Length == controlValue.Length);
-            }
+            } 
+            catch (ArgumentOutOfRangeException) {
+                throw;
+            } 
             catch {
                 Debug.Fail("Regex error should have been caught in property setter.");
                 return true;

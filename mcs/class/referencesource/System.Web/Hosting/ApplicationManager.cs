@@ -961,7 +961,7 @@ namespace System.Web.Hosting {
                     inClientBuildManager = true;
                     // The default hosting policy in VS has changed (from MultiDomainHost to MultiDomain), 
                     // so we need to specify explicitly to allow generated assemblies 
-                    // to be unloaded subsequently. (Dev10 
+                    // to be unloaded subsequently. (Dev10 bug)
                     setup.LoaderOptimization = LoaderOptimization.MultiDomainHost;
                 }
             }

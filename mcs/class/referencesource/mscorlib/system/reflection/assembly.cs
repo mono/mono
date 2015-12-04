@@ -1146,7 +1146,7 @@ namespace System.Reflection
 
     }
 
-    // Keep this in sync with LOADCTX_TYPE defined in fusionpriv.idl
+    // Keep this in [....] with LOADCTX_TYPE defined in fusionpriv.idl
     internal enum LoadContext
     {
        DEFAULT,
@@ -2915,9 +2915,9 @@ namespace System.Reflection
                         if (e.IsTransient)
                             throw;
 
-                        // See Dev11 
-
-
+                        // See Dev11 bug 298776 (DevDiv2 TFS database). Sometimes
+                        // UnauthorizedAccessException will be thrown by the call to
+                        // Fusion.ReadCache.
 
                         // We also catch any other exception types we haven't come across yet,
                         // not just UnauthorizedAccessException.

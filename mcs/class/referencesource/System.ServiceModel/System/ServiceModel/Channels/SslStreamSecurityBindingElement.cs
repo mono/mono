@@ -89,7 +89,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.BuildInnerChannelFactory<TChannel>();
         }
@@ -101,7 +101,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelFactory<TChannel>();
         }
@@ -113,7 +113,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.BuildInnerChannelListener<TChannel>();
         }
@@ -125,7 +125,7 @@ namespace System.ServiceModel.Channels
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("context");
             }
 
-#pragma warning suppress 56506 // Microsoft, BindingContext.BindingParameters cannot be null
+#pragma warning suppress 56506 // [....], BindingContext.BindingParameters cannot be null
             context.BindingParameters.Add(this);
             return context.CanBuildInnerChannelListener<TChannel>();
         }

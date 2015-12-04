@@ -1152,7 +1152,7 @@ namespace System.ServiceModel.Channels
         internal int GetClientPid()
         {
             int pid;
-#pragma warning suppress 56523 // Microsoft, Win32Exception ctor calls Marshal.GetLastWin32Error()
+#pragma warning suppress 56523 // [....], Win32Exception ctor calls Marshal.GetLastWin32Error()
             bool success = UnsafeNativeMethods.GetNamedPipeClientProcessId(this, out pid);
             if (!success)
             {

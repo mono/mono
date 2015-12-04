@@ -2,8 +2,8 @@
 // <copyright file="SqlDelegatedTransaction.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data.SqlClient {
@@ -11,6 +11,7 @@ namespace System.Data.SqlClient {
     using System.Data.Common;
     using System.Data.SqlClient;
     using System.Diagnostics;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Runtime.ConstrainedExecution;
     using System.Threading;
@@ -19,6 +20,7 @@ namespace System.Data.SqlClient {
     sealed internal class SqlDelegatedTransaction : SysTx.IPromotableSinglePhaseNotification {
         private static int _objectTypeCount;
         private readonly int _objectID = Interlocked.Increment(ref _objectTypeCount);
+        private const int _globalTransactionsTokenVersionSizeInBytes = 4; // the size of the version in the PromotedDTCToken for Global Transactions
         internal int ObjectID {
             get {
                 return _objectID;
@@ -163,6 +165,20 @@ namespace System.Data.SqlClient {
 
                             connection.ExecuteTransaction(SqlInternalConnection.TransactionRequest.Promote, null, IsolationLevel.Unspecified, _internalTransaction, true);
                             returnValue = _connection.PromotedDTCToken;
+
+                            // For Global Transactions, we need to set the Transaction Id since we use a Non-MSDTC Promoter type.
+                            if(_connection.IsGlobalTransaction) {
+                                if (SysTxForGlobalTransactions.SetDistributedTransactionIdentifier == null) {
+                                    throw SQL.UnsupportedSysTxForGlobalTransactions();
+                                }
+
+                                if(!_connection.IsGlobalTransactionsEnabledForServer) {
+                                    throw SQL.GlobalTransactionsNotEnabled();
+                                }
+
+                                SysTxForGlobalTransactions.SetDistributedTransactionIdentifier.Invoke(_atomicTransaction, new object[] { this, GetGlobalTxnIdentifierFromToken() });
+                            }
+
                             promoteException = null;
                         }
                         catch (SqlException e) {
@@ -453,5 +469,12 @@ namespace System.Data.SqlClient {
             }
         }
 
+        // Get the server-side Global Transaction Id from the PromotedDTCToken
+        // Skip first 4 bytes since they contain the version
+        private Guid GetGlobalTxnIdentifierFromToken() {
+            byte[] txnGuid = new byte[16];
+            Array.Copy(_connection.PromotedDTCToken, _globalTransactionsTokenVersionSizeInBytes /* Skip the version */, txnGuid, 0, txnGuid.Length);
+            return new Guid(txnGuid);
+        }
     }
 }

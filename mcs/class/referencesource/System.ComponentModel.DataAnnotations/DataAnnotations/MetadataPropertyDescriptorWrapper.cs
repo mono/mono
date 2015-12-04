@@ -26,9 +26,9 @@ namespace System.ComponentModel.DataAnnotations {
 
         public override bool IsReadOnly {
             get {
-                // Dev10 
-
-
+                // Dev10 Bug 594083
+                // It's not enough to call the wrapped _descriptor because it does not know anything about
+                // new attributes passed into the constructor of this class.
                 return _isReadOnly || _descriptor.IsReadOnly;
             }
         }

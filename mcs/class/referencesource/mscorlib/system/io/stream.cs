@@ -509,7 +509,7 @@ namespace System.IO {
         private void RunReadWriteTaskWhenReady(Task asyncWaiter, ReadWriteTask readWriteTask)
         {
             Contract.Assert(readWriteTask != null);  // Should be Contract.Requires, but CCRewrite is doing a poor job with
-                                                     // preconditions in async methods that await.  Mike & Manuel are aware. (10/6/2011, 
+                                                     // preconditions in async methods that await.  Mike & Manuel are aware. (10/6/2011, bug 290222)
             Contract.Assert(asyncWaiter != null);    // Ditto
 
             // If the wait has already complete, run the task.

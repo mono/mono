@@ -54,11 +54,11 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
         // Data for managing expanded state based on a filter.
         private FilterState filterIsEmpty = FilterState.Unknown;
 
-        // garylins 11/15/2006 - This variable has been added to fix 
-
-
-
-
+        // garylins 11/15/2006 - This variable has been added to fix bug 29740.  The real fix is to find
+        // a way to update CategoryContainers expansion state when the Category changes.  The bug comes about
+        // because when UpdateFilter is called from the PI, it fires the FilterUpdated event.  At this time
+        // the CategoryContainer is not yet built out, so it hasn't hooked up to listen to the event and hence
+        // never gets it's filter state related variables updated.
         private bool haveCachedExpanded = false;
         private bool wasAdvancedPinnedBeforeFilter = false;
         private bool wasExpandedBeforeFilter = true;
@@ -375,7 +375,7 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
                 // ###################################################
 
                 // Bugfix: this condition used to reference editor.Category.AdvancedProperties.Count instead of
-                // editor.unconsumedAdvancedProperties, which is a 
+                // editor.unconsumedAdvancedProperties, which is a bug.
                 if ((editor.unconsumedAdvancedProperties.Count <= 0 && editor.advancedCategoryEditors.Count == 0) || !editor.AdvancedPropertyMatchesFilter)
 
                 // ###################################################
@@ -518,8 +518,8 @@ namespace System.Activities.Presentation.Internal.PropertyEditing.FromExpression
         // CIDER-SPECIFIC CHANGE IN NEED OF PORTING - BEGIN
         // ###################################################
 
-        // This change is a result of 
-
+        // This change is a result of bug 88870.  Blend has this issue
+        // as well and will need to address it soon.
 
         // Original code:
 

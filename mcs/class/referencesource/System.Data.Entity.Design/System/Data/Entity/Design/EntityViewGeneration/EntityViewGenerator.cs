@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       Microsoft
-// @backupOwner Microsoft
+// @owner       [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 using System;
@@ -345,7 +345,7 @@ namespace System.Data.Entity.Design
 
             foreach (var storageEntityContainerMapping in mappingCollection.GetItems<StorageEntityContainerMapping>())
             {
-                //Throw warning when containerMapping contains query view for 
+                //Throw warning when containerMapping contains query view for bug 547285.
                 if (HasQueryView(storageEntityContainerMapping))
                 {
                     schemaErrors.Add(new EdmSchemaError(

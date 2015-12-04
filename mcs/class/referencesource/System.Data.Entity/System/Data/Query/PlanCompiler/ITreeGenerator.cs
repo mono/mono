@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  Microsoft
-// @backupOwner Microsoft
+// @owner  [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 //using System.Diagnostics; // Please use PlanCompiler.Assert instead of Debug.Assert in this class...

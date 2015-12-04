@@ -62,7 +62,7 @@ namespace System.IdentityModel.Tokens
         {
             EncryptedKeyIdentifierClause that = keyIdentifierClause as EncryptedKeyIdentifierClause;
 
-            // PreSharp 
+            // PreSharp Bug: Parameter 'that' to this public method must be validated: A null-dereference can occur here.
             #pragma warning suppress 56506
             return ReferenceEquals(this, that) || (that != null && that.Matches(this.GetRawBuffer(), this.encryptionMethod, this.carriedKeyName));
         }

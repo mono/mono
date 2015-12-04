@@ -38,7 +38,7 @@ namespace System.ServiceModel
             if (identity == null)
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgumentNull("identity");
 
-            // PreSharp 
+            // PreSharp Bug: Parameter 'identity.ResourceType' to this public method must be validated: A null-dereference can occur here.
 #pragma warning suppress 56506 // Claim.ResourceType will never return null
             if (!identity.ClaimType.Equals(ClaimTypes.Upn))
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperArgument(SR.GetString(SR.UnrecognizedClaimTypeForIdentity, identity.ClaimType, ClaimTypes.Upn));
@@ -80,7 +80,11 @@ namespace System.ServiceModel
             try
             {
                 downlevelName = windowsIdentity.Name;
-                upnName = GetUpnFromDownlevelName(downlevelName);
+
+                if (this.IsMachineJoinedToDomain())
+                {
+                    upnName = GetUpnFromDownlevelName(downlevelName);
+                }
             }
 #pragma warning suppress 56500 // covered by FxCOP
             catch (Exception e)
@@ -89,11 +93,32 @@ namespace System.ServiceModel
                 {
                     throw;
                 }
+
                 DiagnosticUtility.TraceHandledException(e, TraceEventType.Warning);
             }
+
             // if the AD cannot be queried for the fully qualified domain name,
             // fall back to the downlevel UPN name
             return upnName ?? downlevelName;
+        }
+
+        bool IsMachineJoinedToDomain()
+        {
+            IntPtr pDomainControllerInfo = IntPtr.Zero;
+
+            try
+            {
+                int result = SafeNativeMethods.DsGetDcName(null, null, IntPtr.Zero, null, (uint)DSFlags.DS_DIRECTORY_SERVICE_REQUIRED, out pDomainControllerInfo);
+
+                return result != (int)Win32Error.ERROR_NO_SUCH_DOMAIN;
+            }
+            finally
+            {
+                if (pDomainControllerInfo != IntPtr.Zero)
+                {
+                    SafeNativeMethods.NetApiBufferFree(pDomainControllerInfo);
+                }
+            }
         }
 
         // Duplicate code from SecurityImpersonationBehavior
@@ -108,6 +133,7 @@ namespace System.ServiceModel
             {
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperWarning(new InvalidOperationException(SR.GetString(SR.DownlevelNameCannotMapToUpn, downlevelName)));
             }
+
             string shortDomainName = downlevelName.Substring(0, delimiterPos + 1);
             string userName = downlevelName.Substring(delimiterPos + 1);
             string fullDomainName;

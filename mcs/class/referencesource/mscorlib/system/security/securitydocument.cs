@@ -7,7 +7,7 @@
 //
 // CLASS:    SecurityDocument.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // PURPOSE:  Represent an XML document
 // 

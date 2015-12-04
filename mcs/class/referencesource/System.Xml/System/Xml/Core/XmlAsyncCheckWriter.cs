@@ -28,7 +28,7 @@ namespace System.Xml {
             }
         }
 
-        #region Sync Methods, Properties Check
+        #region [....] Methods, Properties Check
 
         public override XmlWriterSettings Settings {
             get {

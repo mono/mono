@@ -66,7 +66,7 @@ namespace System.Security.Cryptography.X509Certificates
                 return null;
             }
 
-            using (SafeCertContextHandle certificateContext = GetCertificateContext(certificate))
+            using (SafeCertContextHandle certificateContext = X509Native.GetCertificateContext(certificate))
             using (SafeNCryptKeyHandle privateKeyHandle = X509Native.TryAcquireCngPrivateKey(certificateContext))
             {
                 if (privateKeyHandle == null)
@@ -101,23 +101,6 @@ namespace System.Security.Cryptography.X509Certificates
                 CapiNative.CRYPT_OID_INFO oidInfo = CapiNative.CryptFindOIDInfo(CapiNative.CRYPT_OID_INFO_OID_KEY, oidHandle, 0);
                 return oidInfo.Algid;
             }
-        }
-
-        // Gets a SafeHandle for the X509 certificate. The caller
-        // owns the returned handle and should dispose of it. It 
-        // can be used independently of the lifetime of the original 
-        // X509Certificate.
-        [SecuritySafeCritical]
-        private static SafeCertContextHandle GetCertificateContext(X509Certificate certificate)
-        {
-            SafeCertContextHandle certificateContext = X509Native.DuplicateCertContext(certificate.Handle);
-
-            // Make sure to keep the X509Certificate object alive until after its certificate context is
-            // duplicated, otherwise it could end up being closed out from underneath us before we get a
-            // chance to duplicate the handle.
-            GC.KeepAlive(certificate);
-
-            return certificateContext;
-        }
+        }     
     }
 }

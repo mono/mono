@@ -7,7 +7,7 @@
 **
 ** Class:  __Error
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Centralized error methods for the IO package.  

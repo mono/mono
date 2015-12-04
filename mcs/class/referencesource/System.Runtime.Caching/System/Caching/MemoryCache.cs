@@ -494,7 +494,7 @@ namespace System.Runtime.Caching {
             return (GetInternal(key, regionName) != null);
         }
 
-        // Dev10 907758: Breaking 
+        // Dev10 907758: Breaking bug in System.RuntimeCaching.MemoryCache.AddOrGetExisting (CacheItem, CacheItemPolicy)
         public override bool Add(CacheItem item, CacheItemPolicy policy) {
             CacheItem existingEntry = AddOrGetExisting(item, policy);
             return (existingEntry == null || existingEntry.Value == null);

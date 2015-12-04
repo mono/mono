@@ -509,8 +509,16 @@ namespace System.Runtime.Serialization
                         CollectionDataContract.IsCollection(type, out itemType) ||
                         ClassDataContract.IsNonAttributedTypeValidForSerialization(type));
             }
-            catch (System.IO.FileLoadException)
-            { // this can happen in Type.IsDefined when trying to load a referenced library that is not available at design time.
+            catch (Exception ex)
+            {
+                // An exception can be thrown in the designer when a project has a runtime binding redirection for a referenced assembly or a reference dependent assembly.
+                // Type.IsDefined is known to throw System.IO.FileLoadException.
+                // ClassDataContract.IsNonAttributedTypeValidForSerialization is known to throw System.IO.FileNotFoundException.
+                // We guard against all non-critical exceptions.
+                if (Fx.IsFatal(ex))
+                {
+                    throw;
+                }
             }
             
             return false;

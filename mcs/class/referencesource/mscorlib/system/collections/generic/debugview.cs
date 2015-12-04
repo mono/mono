@@ -9,7 +9,7 @@
 **
 ** Purpose: DebugView class for generic collections
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 =============================================================================*/

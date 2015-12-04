@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 // ==--==
 //* File:    Channel.cs
 //*
-//* <EMAIL>Author:  Tarun Anand (Microsoft)</EMAIL>
+//* <EMAIL>Author:  Tarun Anand ([....])</EMAIL>
 //*
 //* Purpose: Defines the general purpose remoting proxy
 //*

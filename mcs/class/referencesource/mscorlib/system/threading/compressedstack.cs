@@ -7,8 +7,8 @@
 **
 ** Class: CompressedStack
 **
-** <OWNER>Microsoft</OWNER>
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
+** <OWNER>[....]</OWNER>
 **
 ** Purpose: Managed wrapper for the security stack compression implementation
 **

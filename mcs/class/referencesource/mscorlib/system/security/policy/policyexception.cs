@@ -5,7 +5,7 @@
 // ==--==
 //  PolicyException.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  Use this class to throw a PolicyException
 //

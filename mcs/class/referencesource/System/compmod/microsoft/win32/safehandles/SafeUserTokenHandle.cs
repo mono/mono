@@ -7,7 +7,7 @@
 **
 ** Class:  SafeUserTokenHandle 
 **
-** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
+** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
 **
 ** A wrapper for a user token handle
 **

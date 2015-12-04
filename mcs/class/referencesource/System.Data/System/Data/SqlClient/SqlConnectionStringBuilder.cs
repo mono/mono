@@ -2,8 +2,8 @@
 // <copyright file="SqlConnectionStringBuilder.cs" company="Microsoft">
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
     using System;
@@ -71,6 +71,8 @@ namespace System.Data.SqlClient {
 
             MultiSubnetFailover,
 
+            TransparentNetworkIPResolution,
+
             ConnectRetryCount,
 
             ConnectRetryInterval,
@@ -109,120 +111,124 @@ namespace System.Data.SqlClient {
         private int _connectRetryCount   = DbConnectionStringDefaults.ConnectRetryCount;
         private int _connectRetryInterval = DbConnectionStringDefaults.ConnectRetryInterval;
 
-        private bool _asynchronousProcessing       = DbConnectionStringDefaults.AsynchronousProcessing;
-        private bool _connectionReset              = DbConnectionStringDefaults.ConnectionReset;
-        private bool _contextConnection            = DbConnectionStringDefaults.ContextConnection;
-        private bool _encrypt                      = DbConnectionStringDefaults.Encrypt;
-        private bool _trustServerCertificate       = DbConnectionStringDefaults.TrustServerCertificate;
-        private bool _enlist                       = DbConnectionStringDefaults.Enlist;
-        private bool _integratedSecurity           = DbConnectionStringDefaults.IntegratedSecurity;
-        private bool _multipleActiveResultSets     = DbConnectionStringDefaults.MultipleActiveResultSets;
-        private bool _multiSubnetFailover          = DbConnectionStringDefaults.MultiSubnetFailover;
-        private bool _persistSecurityInfo          = DbConnectionStringDefaults.PersistSecurityInfo;
-        private bool _pooling                      = DbConnectionStringDefaults.Pooling;
-        private bool _replication                  = DbConnectionStringDefaults.Replication;
-        private bool _userInstance                 = DbConnectionStringDefaults.UserInstance;
+        private bool _asynchronousProcessing		= DbConnectionStringDefaults.AsynchronousProcessing;
+        private bool _connectionReset				= DbConnectionStringDefaults.ConnectionReset;
+        private bool _contextConnection				= DbConnectionStringDefaults.ContextConnection;
+        private bool _encrypt						= DbConnectionStringDefaults.Encrypt;
+        private bool _trustServerCertificate		= DbConnectionStringDefaults.TrustServerCertificate;
+        private bool _enlist						= DbConnectionStringDefaults.Enlist;
+        private bool _integratedSecurity			= DbConnectionStringDefaults.IntegratedSecurity;
+        private bool _multipleActiveResultSets		= DbConnectionStringDefaults.MultipleActiveResultSets;
+        private bool _multiSubnetFailover			= DbConnectionStringDefaults.MultiSubnetFailover;
+        private bool _transparentNetworkIPResolution= DbConnectionStringDefaults.TransparentNetworkIPResolution;
+        private bool _persistSecurityInfo			= DbConnectionStringDefaults.PersistSecurityInfo;
+        private bool _pooling						= DbConnectionStringDefaults.Pooling;
+        private bool _replication					= DbConnectionStringDefaults.Replication;
+        private bool _userInstance					= DbConnectionStringDefaults.UserInstance;
         private SqlAuthenticationMethod _authentication     = DbConnectionStringDefaults.Authentication;
         private SqlConnectionColumnEncryptionSetting _columnEncryptionSetting = DbConnectionStringDefaults.ColumnEncryptionSetting;
 
         static SqlConnectionStringBuilder() {
             string[] validKeywords = new string[KeywordsCount];
-            validKeywords[(int)Keywords.ApplicationIntent]        = DbConnectionStringKeywords.ApplicationIntent;
-            validKeywords[(int)Keywords.ApplicationName]          = DbConnectionStringKeywords.ApplicationName;
-            validKeywords[(int)Keywords.AsynchronousProcessing]   = DbConnectionStringKeywords.AsynchronousProcessing;
-            validKeywords[(int)Keywords.AttachDBFilename]         = DbConnectionStringKeywords.AttachDBFilename;
-            validKeywords[(int)Keywords.ConnectionReset]          = DbConnectionStringKeywords.ConnectionReset;
-            validKeywords[(int)Keywords.ContextConnection]        = DbConnectionStringKeywords.ContextConnection;
-            validKeywords[(int)Keywords.ConnectTimeout]           = DbConnectionStringKeywords.ConnectTimeout;
-            validKeywords[(int)Keywords.CurrentLanguage]          = DbConnectionStringKeywords.CurrentLanguage;
-            validKeywords[(int)Keywords.DataSource]               = DbConnectionStringKeywords.DataSource;
-            validKeywords[(int)Keywords.Encrypt]                  = DbConnectionStringKeywords.Encrypt;
-            validKeywords[(int)Keywords.Enlist]                   = DbConnectionStringKeywords.Enlist;
-            validKeywords[(int)Keywords.FailoverPartner]          = DbConnectionStringKeywords.FailoverPartner;
-            validKeywords[(int)Keywords.InitialCatalog]           = DbConnectionStringKeywords.InitialCatalog;
-            validKeywords[(int)Keywords.IntegratedSecurity]       = DbConnectionStringKeywords.IntegratedSecurity;
-            validKeywords[(int)Keywords.LoadBalanceTimeout]       = DbConnectionStringKeywords.LoadBalanceTimeout;
-            validKeywords[(int)Keywords.MaxPoolSize]              = DbConnectionStringKeywords.MaxPoolSize;
-            validKeywords[(int)Keywords.MinPoolSize]              = DbConnectionStringKeywords.MinPoolSize;
-            validKeywords[(int)Keywords.MultipleActiveResultSets] = DbConnectionStringKeywords.MultipleActiveResultSets;
-            validKeywords[(int)Keywords.MultiSubnetFailover]      = DbConnectionStringKeywords.MultiSubnetFailover;
-//          validKeywords[(int)Keywords.NamedConnection]          = DbConnectionStringKeywords.NamedConnection;
-            validKeywords[(int)Keywords.NetworkLibrary]           = DbConnectionStringKeywords.NetworkLibrary;
-            validKeywords[(int)Keywords.PacketSize]               = DbConnectionStringKeywords.PacketSize;
-            validKeywords[(int)Keywords.Password]                 = DbConnectionStringKeywords.Password;
-            validKeywords[(int)Keywords.PersistSecurityInfo]      = DbConnectionStringKeywords.PersistSecurityInfo;
-            validKeywords[(int)Keywords.Pooling]                  = DbConnectionStringKeywords.Pooling;
-            validKeywords[(int)Keywords.Replication]              = DbConnectionStringKeywords.Replication;
-            validKeywords[(int)Keywords.TransactionBinding]       = DbConnectionStringKeywords.TransactionBinding;
-            validKeywords[(int)Keywords.TrustServerCertificate]   = DbConnectionStringKeywords.TrustServerCertificate;
-            validKeywords[(int)Keywords.TypeSystemVersion]        = DbConnectionStringKeywords.TypeSystemVersion;
-            validKeywords[(int)Keywords.UserID]                   = DbConnectionStringKeywords.UserID;
-            validKeywords[(int)Keywords.UserInstance]             = DbConnectionStringKeywords.UserInstance;
-            validKeywords[(int)Keywords.WorkstationID]            = DbConnectionStringKeywords.WorkstationID;
-            validKeywords[(int)Keywords.ConnectRetryCount]        = DbConnectionStringKeywords.ConnectRetryCount;
-            validKeywords[(int)Keywords.ConnectRetryInterval]     = DbConnectionStringKeywords.ConnectRetryInterval;
-            validKeywords[(int)Keywords.Authentication]           = DbConnectionStringKeywords.Authentication;
-            validKeywords[(int)Keywords.ColumnEncryptionSetting] = DbConnectionStringKeywords.ColumnEncryptionSetting;
-           _validKeywords = validKeywords;
+            validKeywords[(int)Keywords.ApplicationIntent]              = DbConnectionStringKeywords.ApplicationIntent;
+            validKeywords[(int)Keywords.ApplicationName]                = DbConnectionStringKeywords.ApplicationName;
+            validKeywords[(int)Keywords.AsynchronousProcessing]         = DbConnectionStringKeywords.AsynchronousProcessing;
+            validKeywords[(int)Keywords.AttachDBFilename]               = DbConnectionStringKeywords.AttachDBFilename;
+            validKeywords[(int)Keywords.ConnectionReset]                = DbConnectionStringKeywords.ConnectionReset;
+            validKeywords[(int)Keywords.ContextConnection]              = DbConnectionStringKeywords.ContextConnection;
+            validKeywords[(int)Keywords.ConnectTimeout]                 = DbConnectionStringKeywords.ConnectTimeout;
+            validKeywords[(int)Keywords.CurrentLanguage]                = DbConnectionStringKeywords.CurrentLanguage;
+            validKeywords[(int)Keywords.DataSource]                     = DbConnectionStringKeywords.DataSource;
+            validKeywords[(int)Keywords.Encrypt]                        = DbConnectionStringKeywords.Encrypt;
+            validKeywords[(int)Keywords.Enlist]                         = DbConnectionStringKeywords.Enlist;
+            validKeywords[(int)Keywords.FailoverPartner]                = DbConnectionStringKeywords.FailoverPartner;
+            validKeywords[(int)Keywords.InitialCatalog]                 = DbConnectionStringKeywords.InitialCatalog;
+            validKeywords[(int)Keywords.IntegratedSecurity]             = DbConnectionStringKeywords.IntegratedSecurity;
+            validKeywords[(int)Keywords.LoadBalanceTimeout]             = DbConnectionStringKeywords.LoadBalanceTimeout;
+            validKeywords[(int)Keywords.MaxPoolSize]                    = DbConnectionStringKeywords.MaxPoolSize;
+            validKeywords[(int)Keywords.MinPoolSize]                    = DbConnectionStringKeywords.MinPoolSize;
+            validKeywords[(int)Keywords.MultipleActiveResultSets]       = DbConnectionStringKeywords.MultipleActiveResultSets;
+            validKeywords[(int)Keywords.MultiSubnetFailover]            = DbConnectionStringKeywords.MultiSubnetFailover;
+            validKeywords[(int)Keywords.TransparentNetworkIPResolution] = DbConnectionStringKeywords.TransparentNetworkIPResolution;
+//          validKeywords[(int)Keywords.NamedConnection]                = DbConnectionStringKeywords.NamedConnection;
+            validKeywords[(int)Keywords.NetworkLibrary]                 = DbConnectionStringKeywords.NetworkLibrary;
+            validKeywords[(int)Keywords.PacketSize]                     = DbConnectionStringKeywords.PacketSize;
+            validKeywords[(int)Keywords.Password]                       = DbConnectionStringKeywords.Password;
+            validKeywords[(int)Keywords.PersistSecurityInfo]            = DbConnectionStringKeywords.PersistSecurityInfo;
+            validKeywords[(int)Keywords.Pooling]                        = DbConnectionStringKeywords.Pooling;
+            validKeywords[(int)Keywords.Replication]                    = DbConnectionStringKeywords.Replication;
+            validKeywords[(int)Keywords.TransactionBinding]             = DbConnectionStringKeywords.TransactionBinding;
+            validKeywords[(int)Keywords.TrustServerCertificate]         = DbConnectionStringKeywords.TrustServerCertificate;
+            validKeywords[(int)Keywords.TypeSystemVersion]              = DbConnectionStringKeywords.TypeSystemVersion;
+            validKeywords[(int)Keywords.UserID]                         = DbConnectionStringKeywords.UserID;
+            validKeywords[(int)Keywords.UserInstance]                   = DbConnectionStringKeywords.UserInstance;
+            validKeywords[(int)Keywords.WorkstationID]                  = DbConnectionStringKeywords.WorkstationID;
+            validKeywords[(int)Keywords.ConnectRetryCount]              = DbConnectionStringKeywords.ConnectRetryCount;
+            validKeywords[(int)Keywords.ConnectRetryInterval]           = DbConnectionStringKeywords.ConnectRetryInterval;
+            validKeywords[(int)Keywords.Authentication]                 = DbConnectionStringKeywords.Authentication;
+            validKeywords[(int)Keywords.ColumnEncryptionSetting]        = DbConnectionStringKeywords.ColumnEncryptionSetting;
+            _validKeywords = validKeywords;
 
             Dictionary<string, Keywords> hash = new Dictionary<string, Keywords>(KeywordsCount + SqlConnectionString.SynonymCount, StringComparer.OrdinalIgnoreCase);
-            hash.Add(DbConnectionStringKeywords.ApplicationIntent,        Keywords.ApplicationIntent);
-            hash.Add(DbConnectionStringKeywords.ApplicationName,          Keywords.ApplicationName);
-            hash.Add(DbConnectionStringKeywords.AsynchronousProcessing,   Keywords.AsynchronousProcessing);
-            hash.Add(DbConnectionStringKeywords.AttachDBFilename,         Keywords.AttachDBFilename);
-            hash.Add(DbConnectionStringKeywords.ConnectTimeout,           Keywords.ConnectTimeout);
-            hash.Add(DbConnectionStringKeywords.ConnectionReset,          Keywords.ConnectionReset);
-            hash.Add(DbConnectionStringKeywords.ContextConnection,        Keywords.ContextConnection);
-            hash.Add(DbConnectionStringKeywords.CurrentLanguage,          Keywords.CurrentLanguage);
-            hash.Add(DbConnectionStringKeywords.DataSource,               Keywords.DataSource);
-            hash.Add(DbConnectionStringKeywords.Encrypt,                  Keywords.Encrypt);
-            hash.Add(DbConnectionStringKeywords.Enlist,                   Keywords.Enlist);
-            hash.Add(DbConnectionStringKeywords.FailoverPartner,          Keywords.FailoverPartner);
-            hash.Add(DbConnectionStringKeywords.InitialCatalog,           Keywords.InitialCatalog);
-            hash.Add(DbConnectionStringKeywords.IntegratedSecurity,       Keywords.IntegratedSecurity);
-            hash.Add(DbConnectionStringKeywords.LoadBalanceTimeout,       Keywords.LoadBalanceTimeout);
-            hash.Add(DbConnectionStringKeywords.MultipleActiveResultSets, Keywords.MultipleActiveResultSets);
-            hash.Add(DbConnectionStringKeywords.MaxPoolSize,              Keywords.MaxPoolSize);
-            hash.Add(DbConnectionStringKeywords.MinPoolSize,              Keywords.MinPoolSize);
-            hash.Add(DbConnectionStringKeywords.MultiSubnetFailover,      Keywords.MultiSubnetFailover);
-//          hash.Add(DbConnectionStringKeywords.NamedConnection,          Keywords.NamedConnection);
-            hash.Add(DbConnectionStringKeywords.NetworkLibrary,           Keywords.NetworkLibrary);
-            hash.Add(DbConnectionStringKeywords.PacketSize,               Keywords.PacketSize);
-            hash.Add(DbConnectionStringKeywords.Password,                 Keywords.Password);
-            hash.Add(DbConnectionStringKeywords.PersistSecurityInfo,      Keywords.PersistSecurityInfo);
-            hash.Add(DbConnectionStringKeywords.Pooling,                  Keywords.Pooling);
-            hash.Add(DbConnectionStringKeywords.Replication,              Keywords.Replication);
-            hash.Add(DbConnectionStringKeywords.TransactionBinding,       Keywords.TransactionBinding);
-            hash.Add(DbConnectionStringKeywords.TrustServerCertificate,   Keywords.TrustServerCertificate);
-            hash.Add(DbConnectionStringKeywords.TypeSystemVersion,        Keywords.TypeSystemVersion);
-            hash.Add(DbConnectionStringKeywords.UserID,                   Keywords.UserID);
-            hash.Add(DbConnectionStringKeywords.UserInstance,             Keywords.UserInstance);
-            hash.Add(DbConnectionStringKeywords.WorkstationID,            Keywords.WorkstationID);
-            hash.Add(DbConnectionStringKeywords.ConnectRetryCount,        Keywords.ConnectRetryCount);
-            hash.Add(DbConnectionStringKeywords.ConnectRetryInterval,     Keywords.ConnectRetryInterval);
-            hash.Add(DbConnectionStringKeywords.Authentication,           Keywords.Authentication);
-            hash.Add(DbConnectionStringKeywords.ColumnEncryptionSetting, Keywords.ColumnEncryptionSetting);
-            hash.Add(DbConnectionStringSynonyms.APP,                      Keywords.ApplicationName);
-            hash.Add(DbConnectionStringSynonyms.Async,                    Keywords.AsynchronousProcessing);
-            hash.Add(DbConnectionStringSynonyms.EXTENDEDPROPERTIES,       Keywords.AttachDBFilename);
-            hash.Add(DbConnectionStringSynonyms.INITIALFILENAME,          Keywords.AttachDBFilename);
-            hash.Add(DbConnectionStringSynonyms.CONNECTIONTIMEOUT,        Keywords.ConnectTimeout);
-            hash.Add(DbConnectionStringSynonyms.TIMEOUT,                  Keywords.ConnectTimeout);
-            hash.Add(DbConnectionStringSynonyms.LANGUAGE,                 Keywords.CurrentLanguage);
-            hash.Add(DbConnectionStringSynonyms.ADDR,                     Keywords.DataSource);
-            hash.Add(DbConnectionStringSynonyms.ADDRESS,                  Keywords.DataSource);
-            hash.Add(DbConnectionStringSynonyms.NETWORKADDRESS,           Keywords.DataSource);
-            hash.Add(DbConnectionStringSynonyms.SERVER,                   Keywords.DataSource);
-            hash.Add(DbConnectionStringSynonyms.DATABASE,                 Keywords.InitialCatalog);
-            hash.Add(DbConnectionStringSynonyms.TRUSTEDCONNECTION,        Keywords.IntegratedSecurity);
-            hash.Add(DbConnectionStringSynonyms.ConnectionLifetime,       Keywords.LoadBalanceTimeout);
-            hash.Add(DbConnectionStringSynonyms.NET,                      Keywords.NetworkLibrary);
-            hash.Add(DbConnectionStringSynonyms.NETWORK,                  Keywords.NetworkLibrary);
-            hash.Add(DbConnectionStringSynonyms.Pwd,                      Keywords.Password);
-            hash.Add(DbConnectionStringSynonyms.PERSISTSECURITYINFO,      Keywords.PersistSecurityInfo);
-            hash.Add(DbConnectionStringSynonyms.UID,                      Keywords.UserID);
-            hash.Add(DbConnectionStringSynonyms.User,                     Keywords.UserID);
-            hash.Add(DbConnectionStringSynonyms.WSID,                     Keywords.WorkstationID);
+            hash.Add(DbConnectionStringKeywords.ApplicationIntent,					Keywords.ApplicationIntent);
+            hash.Add(DbConnectionStringKeywords.ApplicationName,					Keywords.ApplicationName);
+            hash.Add(DbConnectionStringKeywords.AsynchronousProcessing,				Keywords.AsynchronousProcessing);
+            hash.Add(DbConnectionStringKeywords.AttachDBFilename,					Keywords.AttachDBFilename);
+            hash.Add(DbConnectionStringKeywords.ConnectTimeout,						Keywords.ConnectTimeout);
+            hash.Add(DbConnectionStringKeywords.ConnectionReset,					Keywords.ConnectionReset);
+            hash.Add(DbConnectionStringKeywords.ContextConnection,					Keywords.ContextConnection);
+            hash.Add(DbConnectionStringKeywords.CurrentLanguage,					Keywords.CurrentLanguage);
+            hash.Add(DbConnectionStringKeywords.DataSource,							Keywords.DataSource);
+            hash.Add(DbConnectionStringKeywords.Encrypt,							Keywords.Encrypt);
+            hash.Add(DbConnectionStringKeywords.Enlist,								Keywords.Enlist);
+            hash.Add(DbConnectionStringKeywords.FailoverPartner,					Keywords.FailoverPartner);
+            hash.Add(DbConnectionStringKeywords.InitialCatalog,						Keywords.InitialCatalog);
+            hash.Add(DbConnectionStringKeywords.IntegratedSecurity,					Keywords.IntegratedSecurity);
+            hash.Add(DbConnectionStringKeywords.LoadBalanceTimeout,					Keywords.LoadBalanceTimeout);
+            hash.Add(DbConnectionStringKeywords.MultipleActiveResultSets,			Keywords.MultipleActiveResultSets);
+            hash.Add(DbConnectionStringKeywords.MaxPoolSize,						Keywords.MaxPoolSize);
+            hash.Add(DbConnectionStringKeywords.MinPoolSize,						Keywords.MinPoolSize);
+            hash.Add(DbConnectionStringKeywords.MultiSubnetFailover,				Keywords.MultiSubnetFailover);
+            hash.Add(DbConnectionStringKeywords.TransparentNetworkIPResolution,		Keywords.TransparentNetworkIPResolution);
+//          hash.Add(DbConnectionStringKeywords.NamedConnection,					Keywords.NamedConnection);
+            hash.Add(DbConnectionStringKeywords.NetworkLibrary,						Keywords.NetworkLibrary);
+            hash.Add(DbConnectionStringKeywords.PacketSize,							Keywords.PacketSize);
+            hash.Add(DbConnectionStringKeywords.Password,							Keywords.Password);
+            hash.Add(DbConnectionStringKeywords.PersistSecurityInfo,				Keywords.PersistSecurityInfo);
+            hash.Add(DbConnectionStringKeywords.Pooling,							Keywords.Pooling);
+            hash.Add(DbConnectionStringKeywords.Replication,						Keywords.Replication);
+            hash.Add(DbConnectionStringKeywords.TransactionBinding,					Keywords.TransactionBinding);
+            hash.Add(DbConnectionStringKeywords.TrustServerCertificate,				Keywords.TrustServerCertificate);
+            hash.Add(DbConnectionStringKeywords.TypeSystemVersion,					Keywords.TypeSystemVersion);
+            hash.Add(DbConnectionStringKeywords.UserID,								Keywords.UserID);
+            hash.Add(DbConnectionStringKeywords.UserInstance,						Keywords.UserInstance);
+            hash.Add(DbConnectionStringKeywords.WorkstationID,						Keywords.WorkstationID);
+            hash.Add(DbConnectionStringKeywords.ConnectRetryCount,					Keywords.ConnectRetryCount);
+            hash.Add(DbConnectionStringKeywords.ConnectRetryInterval,				Keywords.ConnectRetryInterval);
+            hash.Add(DbConnectionStringKeywords.Authentication,						Keywords.Authentication);
+            hash.Add(DbConnectionStringKeywords.ColumnEncryptionSetting,			Keywords.ColumnEncryptionSetting);
+
+            hash.Add(DbConnectionStringSynonyms.APP,								Keywords.ApplicationName);
+            hash.Add(DbConnectionStringSynonyms.Async,								Keywords.AsynchronousProcessing);
+            hash.Add(DbConnectionStringSynonyms.EXTENDEDPROPERTIES,					Keywords.AttachDBFilename);
+            hash.Add(DbConnectionStringSynonyms.INITIALFILENAME,					Keywords.AttachDBFilename);
+            hash.Add(DbConnectionStringSynonyms.CONNECTIONTIMEOUT,					Keywords.ConnectTimeout);
+            hash.Add(DbConnectionStringSynonyms.TIMEOUT,							Keywords.ConnectTimeout);
+            hash.Add(DbConnectionStringSynonyms.LANGUAGE,							Keywords.CurrentLanguage);
+            hash.Add(DbConnectionStringSynonyms.ADDR,								Keywords.DataSource);
+            hash.Add(DbConnectionStringSynonyms.ADDRESS,							Keywords.DataSource);
+            hash.Add(DbConnectionStringSynonyms.NETWORKADDRESS,						Keywords.DataSource);
+            hash.Add(DbConnectionStringSynonyms.SERVER,								Keywords.DataSource);
+            hash.Add(DbConnectionStringSynonyms.DATABASE,							Keywords.InitialCatalog);
+            hash.Add(DbConnectionStringSynonyms.TRUSTEDCONNECTION,					Keywords.IntegratedSecurity);
+            hash.Add(DbConnectionStringSynonyms.ConnectionLifetime,					Keywords.LoadBalanceTimeout);
+            hash.Add(DbConnectionStringSynonyms.NET,								Keywords.NetworkLibrary);
+            hash.Add(DbConnectionStringSynonyms.NETWORK,							Keywords.NetworkLibrary);
+            hash.Add(DbConnectionStringSynonyms.Pwd,								Keywords.Password);
+            hash.Add(DbConnectionStringSynonyms.PERSISTSECURITYINFO,				Keywords.PersistSecurityInfo);
+            hash.Add(DbConnectionStringSynonyms.UID,								Keywords.UserID);
+            hash.Add(DbConnectionStringSynonyms.User,								Keywords.UserID);
+            hash.Add(DbConnectionStringSynonyms.WSID,								Keywords.WorkstationID);
             Debug.Assert((KeywordsCount + SqlConnectionString.SynonymCount) == hash.Count, "initial expected size is incorrect");
             _keywords = hash;
 
@@ -246,47 +252,48 @@ namespace System.Data.SqlClient {
                 if (null != value) {
                     Keywords index = GetIndex(keyword);
                     switch(index) {
-                    case Keywords.ApplicationIntent:        this.ApplicationIntent = ConvertToApplicationIntent(keyword, value); break;
-                    case Keywords.ApplicationName:          ApplicationName = ConvertToString(value); break;
-                    case Keywords.AttachDBFilename:         AttachDBFilename = ConvertToString(value); break;
-                    case Keywords.CurrentLanguage:          CurrentLanguage = ConvertToString(value); break;
-                    case Keywords.DataSource:               DataSource = ConvertToString(value); break;
-                    case Keywords.FailoverPartner:          FailoverPartner = ConvertToString(value); break;
-                    case Keywords.InitialCatalog:           InitialCatalog = ConvertToString(value); break;
-//                  case Keywords.NamedConnection:          NamedConnection = ConvertToString(value); break;
-                    case Keywords.NetworkLibrary:           NetworkLibrary = ConvertToString(value); break;
-                    case Keywords.Password:                 Password = ConvertToString(value); break;
-                    case Keywords.UserID:                   UserID = ConvertToString(value); break;
-                    case Keywords.TransactionBinding:       TransactionBinding = ConvertToString(value); break;
-                    case Keywords.TypeSystemVersion:        TypeSystemVersion = ConvertToString(value); break;
-                    case Keywords.WorkstationID:            WorkstationID = ConvertToString(value); break;
+                    case Keywords.ApplicationIntent:				this.ApplicationIntent = ConvertToApplicationIntent(keyword, value); break;
+                    case Keywords.ApplicationName:					ApplicationName = ConvertToString(value); break;
+                    case Keywords.AttachDBFilename:					AttachDBFilename = ConvertToString(value); break;
+                    case Keywords.CurrentLanguage:					CurrentLanguage = ConvertToString(value); break;
+                    case Keywords.DataSource:						DataSource = ConvertToString(value); break;
+                    case Keywords.FailoverPartner:					FailoverPartner = ConvertToString(value); break;
+                    case Keywords.InitialCatalog:					InitialCatalog = ConvertToString(value); break;
+//                  case Keywords.NamedConnection:					NamedConnection = ConvertToString(value); break;
+                    case Keywords.NetworkLibrary:					NetworkLibrary = ConvertToString(value); break;
+                    case Keywords.Password:							Password = ConvertToString(value); break;
+                    case Keywords.UserID:							UserID = ConvertToString(value); break;
+                    case Keywords.TransactionBinding:				TransactionBinding = ConvertToString(value); break;
+                    case Keywords.TypeSystemVersion:				TypeSystemVersion = ConvertToString(value); break;
+                    case Keywords.WorkstationID:					WorkstationID = ConvertToString(value); break;
 
-                    case Keywords.ConnectTimeout:           ConnectTimeout = ConvertToInt32(value); break;
-                    case Keywords.LoadBalanceTimeout:       LoadBalanceTimeout = ConvertToInt32(value); break;
-                    case Keywords.MaxPoolSize:              MaxPoolSize = ConvertToInt32(value); break;
-                    case Keywords.MinPoolSize:              MinPoolSize = ConvertToInt32(value); break;
-                    case Keywords.PacketSize:               PacketSize = ConvertToInt32(value); break;
+                    case Keywords.ConnectTimeout:					ConnectTimeout = ConvertToInt32(value); break;
+                    case Keywords.LoadBalanceTimeout:				LoadBalanceTimeout = ConvertToInt32(value); break;
+                    case Keywords.MaxPoolSize:						MaxPoolSize = ConvertToInt32(value); break;
+                    case Keywords.MinPoolSize:						MinPoolSize = ConvertToInt32(value); break;
+                    case Keywords.PacketSize:						PacketSize = ConvertToInt32(value); break;
 
-                    case Keywords.IntegratedSecurity:       IntegratedSecurity = ConvertToIntegratedSecurity(value); break;
+                    case Keywords.IntegratedSecurity:				IntegratedSecurity = ConvertToIntegratedSecurity(value); break;
 
-                    case Keywords.Authentication:           Authentication = ConvertToAuthenticationType(keyword, value); break;
-                    case Keywords.ColumnEncryptionSetting: ColumnEncryptionSetting = ConvertToColumnEncryptionSetting(keyword, value); break;
-                    case Keywords.AsynchronousProcessing:   AsynchronousProcessing = ConvertToBoolean(value); break;
+                    case Keywords.Authentication:					Authentication = ConvertToAuthenticationType(keyword, value); break;
+                    case Keywords.ColumnEncryptionSetting:			ColumnEncryptionSetting = ConvertToColumnEncryptionSetting(keyword, value); break;
+                    case Keywords.AsynchronousProcessing:			AsynchronousProcessing = ConvertToBoolean(value); break;
 #pragma warning disable 618 // Obsolete ConnectionReset
-                    case Keywords.ConnectionReset:          ConnectionReset = ConvertToBoolean(value); break;
+                    case Keywords.ConnectionReset:					ConnectionReset = ConvertToBoolean(value); break;
 #pragma warning restore 618
-                    case Keywords.ContextConnection:        ContextConnection = ConvertToBoolean(value); break;
-                    case Keywords.Encrypt:                  Encrypt = ConvertToBoolean(value); break;
-                    case Keywords.TrustServerCertificate:   TrustServerCertificate = ConvertToBoolean(value); break;
-                    case Keywords.Enlist:                   Enlist = ConvertToBoolean(value); break;
-                    case Keywords.MultipleActiveResultSets: MultipleActiveResultSets = ConvertToBoolean(value); break;
-                    case Keywords.MultiSubnetFailover:      MultiSubnetFailover = ConvertToBoolean(value); break;
-                    case Keywords.PersistSecurityInfo:      PersistSecurityInfo = ConvertToBoolean(value); break;
-                    case Keywords.Pooling:                  Pooling = ConvertToBoolean(value); break;
-                    case Keywords.Replication:              Replication = ConvertToBoolean(value); break;
-                    case Keywords.UserInstance:             UserInstance = ConvertToBoolean(value); break;
-                    case Keywords.ConnectRetryCount:        ConnectRetryCount = ConvertToInt32(value); break;
-                    case Keywords.ConnectRetryInterval:     ConnectRetryInterval = ConvertToInt32(value); break;
+                    case Keywords.ContextConnection:				ContextConnection = ConvertToBoolean(value); break;
+                    case Keywords.Encrypt:							Encrypt = ConvertToBoolean(value); break;
+                    case Keywords.TrustServerCertificate:			TrustServerCertificate = ConvertToBoolean(value); break;
+                    case Keywords.Enlist:							Enlist = ConvertToBoolean(value); break;
+                    case Keywords.MultipleActiveResultSets:			MultipleActiveResultSets = ConvertToBoolean(value); break;
+                    case Keywords.MultiSubnetFailover:				MultiSubnetFailover = ConvertToBoolean(value); break;
+                    case Keywords.TransparentNetworkIPResolution:	TransparentNetworkIPResolution = ConvertToBoolean(value); break;
+                    case Keywords.PersistSecurityInfo:				PersistSecurityInfo = ConvertToBoolean(value); break;
+                    case Keywords.Pooling:							Pooling = ConvertToBoolean(value); break;
+                    case Keywords.Replication:						Replication = ConvertToBoolean(value); break;
+                    case Keywords.UserInstance:						UserInstance = ConvertToBoolean(value); break;
+                    case Keywords.ConnectRetryCount:				ConnectRetryCount = ConvertToInt32(value); break;
+                    case Keywords.ConnectRetryInterval:				ConnectRetryInterval = ConvertToInt32(value); break;
 
                     default:
                         Debug.Assert(false, "unexpected keyword");
@@ -626,6 +633,19 @@ namespace System.Data.SqlClient {
                 _multiSubnetFailover = value;
             }
         }
+
+        [DisplayName(DbConnectionStringKeywords.TransparentNetworkIPResolution)]
+        [ResCategoryAttribute(Res.DataCategory_Source)]
+        [ResDescriptionAttribute(Res.DbConnectionString_TransparentNetworkIPResolution)]
+        [RefreshPropertiesAttribute(RefreshProperties.All)]
+        public bool TransparentNetworkIPResolution
+        {
+            get { return _transparentNetworkIPResolution; }
+            set {
+                SetValue(DbConnectionStringKeywords.TransparentNetworkIPResolution, value);
+                _transparentNetworkIPResolution = value;
+            }
+        }
 /*
         [DisplayName(DbConnectionStringKeywords.NamedConnection)]
         [ResCategoryAttribute(Res.DataCategory_NamedConnectionString)]
@@ -882,44 +902,45 @@ namespace System.Data.SqlClient {
 
         private object GetAt(Keywords index) {
             switch(index) {
-            case Keywords.ApplicationIntent:        return this.ApplicationIntent;
-            case Keywords.ApplicationName:          return ApplicationName;
-            case Keywords.AsynchronousProcessing:   return AsynchronousProcessing;
-            case Keywords.AttachDBFilename:         return AttachDBFilename;
-            case Keywords.ConnectTimeout:           return ConnectTimeout;
+            case Keywords.ApplicationIntent:				return this.ApplicationIntent;
+            case Keywords.ApplicationName:					return ApplicationName;
+            case Keywords.AsynchronousProcessing:			return AsynchronousProcessing;
+            case Keywords.AttachDBFilename:					return AttachDBFilename;
+            case Keywords.ConnectTimeout:					return ConnectTimeout;
 #pragma warning disable 618 // Obsolete ConnectionReset
-            case Keywords.ConnectionReset:          return ConnectionReset;
+            case Keywords.ConnectionReset:					return ConnectionReset;
 #pragma warning restore 618
-            case Keywords.ContextConnection:        return ContextConnection;
-            case Keywords.CurrentLanguage:          return CurrentLanguage;
-            case Keywords.DataSource:               return DataSource;
-            case Keywords.Encrypt:                  return Encrypt;
-            case Keywords.Enlist:                   return Enlist;
-            case Keywords.FailoverPartner:          return FailoverPartner;
-            case Keywords.InitialCatalog:           return InitialCatalog;
-            case Keywords.IntegratedSecurity:       return IntegratedSecurity;
-            case Keywords.LoadBalanceTimeout:       return LoadBalanceTimeout;
-            case Keywords.MultipleActiveResultSets: return MultipleActiveResultSets;
-            case Keywords.MaxPoolSize:              return MaxPoolSize;
-            case Keywords.MinPoolSize:              return MinPoolSize;
-            case Keywords.MultiSubnetFailover:      return MultiSubnetFailover;
-//          case Keywords.NamedConnection:          return NamedConnection;
-            case Keywords.NetworkLibrary:           return NetworkLibrary;
-            case Keywords.PacketSize:               return PacketSize;
-            case Keywords.Password:                 return Password;
-            case Keywords.PersistSecurityInfo:      return PersistSecurityInfo;
-            case Keywords.Pooling:                  return Pooling;
-            case Keywords.Replication:              return Replication;
-            case Keywords.TransactionBinding:       return TransactionBinding;
-            case Keywords.TrustServerCertificate:   return TrustServerCertificate;
-            case Keywords.TypeSystemVersion:        return TypeSystemVersion;
-            case Keywords.UserID:                   return UserID;
-            case Keywords.UserInstance:             return UserInstance;
-            case Keywords.WorkstationID:            return WorkstationID;
-            case Keywords.ConnectRetryCount:        return ConnectRetryCount;
-            case Keywords.ConnectRetryInterval:     return ConnectRetryInterval;
-            case Keywords.Authentication:           return Authentication;
-            case Keywords.ColumnEncryptionSetting: return ColumnEncryptionSetting;
+            case Keywords.ContextConnection:				return ContextConnection;
+            case Keywords.CurrentLanguage:					return CurrentLanguage;
+            case Keywords.DataSource:						return DataSource;
+            case Keywords.Encrypt:							return Encrypt;
+            case Keywords.Enlist:							return Enlist;
+            case Keywords.FailoverPartner:					return FailoverPartner;
+            case Keywords.InitialCatalog:					return InitialCatalog;
+            case Keywords.IntegratedSecurity:				return IntegratedSecurity;
+            case Keywords.LoadBalanceTimeout:				return LoadBalanceTimeout;
+            case Keywords.MultipleActiveResultSets:			return MultipleActiveResultSets;
+            case Keywords.MaxPoolSize:						return MaxPoolSize;
+            case Keywords.MinPoolSize:						return MinPoolSize;
+            case Keywords.MultiSubnetFailover:				return MultiSubnetFailover;
+            case Keywords.TransparentNetworkIPResolution:	return TransparentNetworkIPResolution;
+//          case Keywords.NamedConnection:					return NamedConnection;
+            case Keywords.NetworkLibrary:					return NetworkLibrary;
+            case Keywords.PacketSize:						return PacketSize;
+            case Keywords.Password:							return Password;
+            case Keywords.PersistSecurityInfo:				return PersistSecurityInfo;
+            case Keywords.Pooling:							return Pooling;
+            case Keywords.Replication:						return Replication;
+            case Keywords.TransactionBinding:				return TransactionBinding;
+            case Keywords.TrustServerCertificate:			return TrustServerCertificate;
+            case Keywords.TypeSystemVersion:				return TypeSystemVersion;
+            case Keywords.UserID:							return UserID;
+            case Keywords.UserInstance:						return UserInstance;
+            case Keywords.WorkstationID:					return WorkstationID;
+            case Keywords.ConnectRetryCount:				return ConnectRetryCount;
+            case Keywords.ConnectRetryInterval:				return ConnectRetryInterval;
+            case Keywords.Authentication:					return Authentication;
+            case Keywords.ColumnEncryptionSetting:			return ColumnEncryptionSetting;
             default:
                 Debug.Assert(false, "unexpected keyword");
                 throw ADP.KeywordNotSupported(_validKeywords[(int)index]);
@@ -1036,6 +1057,9 @@ namespace System.Data.SqlClient {
             case Keywords.MultiSubnetFailover:
                 _multiSubnetFailover = DbConnectionStringDefaults.MultiSubnetFailover;
                 break;
+            case Keywords.TransparentNetworkIPResolution:
+                _transparentNetworkIPResolution = DbConnectionStringDefaults.TransparentNetworkIPResolution;
+                    break;
 //          case Keywords.NamedConnection:
 //              _namedConnection = DbConnectionStringDefaults.NamedConnection;
 //              break;

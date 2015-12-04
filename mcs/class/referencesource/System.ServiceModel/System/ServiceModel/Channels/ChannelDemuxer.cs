@@ -127,6 +127,24 @@ namespace System.ServiceModel.Channels
 
     abstract class TypedChannelDemuxer
     {
+        internal static void AbortMessage(RequestContext request)
+        {
+            // RequestContext.RequestMessage can throw an AddressMismatch exception.
+            try
+            {
+                AbortMessage(request.RequestMessage);
+            }
+            catch (Exception e)
+            {
+                if (Fx.IsFatal(e))
+                {
+                    throw;
+                }
+
+                DiagnosticUtility.TraceHandledException(e, TraceEventType.Information);
+            }
+        }
+
         internal static void AbortMessage(Message message)
         {
             try
@@ -582,10 +600,11 @@ namespace System.ServiceModel.Channels
         {
             try
             {
-                Message message = this.GetMessage(item);
+                Message message = null;
                 IChannelListener matchingListener = null;
                 try
                 {
+                    message = this.GetMessage(item);
                     matchingListener = MatchListener(message);
                 }
                 // The message may be bad because of which running the listener filters may throw
@@ -1285,7 +1304,7 @@ namespace System.ServiceModel.Channels
 
         protected override void AbortItem(RequestContext request)
         {
-            AbortMessage(request.RequestMessage);
+            AbortMessage(request);
             request.Abort();
         }
 
@@ -2938,7 +2957,7 @@ namespace System.ServiceModel.Channels
 
         protected override void AbortItem(RequestContext request)
         {
-            AbortMessage(request.RequestMessage);
+            AbortMessage(request);
             request.Abort();
         }
 

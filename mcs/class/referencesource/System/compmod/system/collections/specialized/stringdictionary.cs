@@ -192,7 +192,7 @@ namespace System.Collections.Specialized {
 #region GenericAdapter
         //
     // This class is used to make StringDictionary implement IDictionary<string,string> indirectly. 
-    // This is done to prevent StringDictionary be serialized as IDictionary<string,string> and break its serialization by DataContractSerializer due to a 
+    // This is done to prevent StringDictionary be serialized as IDictionary<string,string> and break its serialization by DataContractSerializer due to a bug in the serialization code.
     private class GenericAdapter : IDictionary<string, string>
     {
 

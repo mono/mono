@@ -43,7 +43,7 @@ namespace System.Web {
         private void CallCallback(SendOrPostCallback callback, Object state) {
             CheckForRequestStateIfRequired();
 
-            // don't take app lock for sync caller to avoid deadlocks in case they poll for result
+            // don't take app lock for [....] caller to avoid deadlocks in case they poll for result
             if (_syncCaller) {
                 CallCallbackPossiblyUnderLock(callback, state);
             }
@@ -72,7 +72,7 @@ namespace System.Web {
             }
         }
 
-        // this property no-ops using the legacy sync context
+        // this property no-ops using the legacy [....] context
         internal override bool AllowAsyncDuringSyncStages {
             get;
             set;
@@ -90,11 +90,11 @@ namespace System.Web {
             _error = null;
         }
 
-        // Dev11 
-
-
-
-
+        // Dev11 Bug 70908: Race condition involving SynchronizationContext allows ASP.NET requests to be abandoned in the pipeline
+        //  
+        // When the last completion occurs, the _pendingCount is decremented and then the _lastCompletionCallbackLock is acquired to get
+        // the _lastCompletionCallback.  If the _lastCompletionCallback is non-null, then the last completion will invoke the callback;
+        // otherwise, the caller of PendingCompletion will handle the completion.
         internal override bool PendingCompletion(WaitCallback callback) {
             Debug.Assert(_lastCompletionCallback == null); // only one at a time
             bool pending = false;

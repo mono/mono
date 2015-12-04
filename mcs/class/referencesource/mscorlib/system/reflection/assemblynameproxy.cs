@@ -7,8 +7,8 @@
 **
 ** File:    AssemblyNameProxy
 ** 
-** <OWNER>Microsoft</OWNER>
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Remotable version the AssemblyName

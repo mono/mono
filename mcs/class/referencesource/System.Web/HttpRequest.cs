@@ -3026,8 +3026,8 @@ namespace System.Web {
             _url = null;
             Unvalidated.InvalidateUrl();
 
-            // DevDiv 
-
+            // DevDiv Bug 164390: calling the worker request's RawUrl method here
+            // to ensure we cache the original request Url in Url Mapping scenarios.
             string temp = RawUrl;
 
             // remember the new path
@@ -3066,8 +3066,8 @@ namespace System.Web {
             _url = null;
             Unvalidated.InvalidateUrl();
 
-            // DevDiv 
-
+            // DevDiv Bug 164390: calling the worker request's RawUrl method here
+            // to ensure we cache the original request Url in Url Mapping scenarios.
             string temp = RawUrl;
 
             if (newPathInfo == null) {

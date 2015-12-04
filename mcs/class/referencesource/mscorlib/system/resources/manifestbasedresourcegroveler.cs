@@ -7,7 +7,7 @@
 **
 ** Class:  ManifestBasedResourceGroveler
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Searches for resources in Assembly manifest, used

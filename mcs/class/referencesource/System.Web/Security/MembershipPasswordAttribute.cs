@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using  System.Web.Util;
 
     /// <summary>
     /// Validates whether a password field meets the current Membership Provider's password requirements.
@@ -143,6 +144,9 @@
                 }
             }
         }
+
+        // The timeout for the regex we use to check password strength
+        public int? PasswordStrengthRegexTimeout { get; set; }
         #endregion
 
         #region Overriden Methods
@@ -189,7 +193,8 @@
 
                 Regex passwordStrengthRegex;
                 try {
-                    passwordStrengthRegex = new Regex(passwordStrengthRegularExpression);
+                    // Adding timeout for Regex in case of malicious string causing DoS
+                    passwordStrengthRegex = RegexUtil.CreateRegex(passwordStrengthRegularExpression, RegexOptions.None, PasswordStrengthRegexTimeout);
                 }
                 catch (ArgumentException ex) {
                     throw new InvalidOperationException(SR.GetString(SR.MembershipPasswordAttribute_InvalidRegularExpression), ex);

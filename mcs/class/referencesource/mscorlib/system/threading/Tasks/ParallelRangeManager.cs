@@ -7,7 +7,7 @@
 //
 // ParallelRangeManager.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Implements the algorithm for distributing loop indices to parallel loop workers
 //

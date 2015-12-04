@@ -7,7 +7,7 @@
 //
 // Future.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A task that produces a value.
 //

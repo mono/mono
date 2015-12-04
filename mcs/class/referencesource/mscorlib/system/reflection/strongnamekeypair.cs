@@ -7,7 +7,7 @@
 **
 ** File:    StrongNameKeyPair.cs
 **
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Encapsulate access to a public/private key pair

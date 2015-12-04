@@ -1567,7 +1567,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 TypeDescriptor.GetAttributes(childType)[typeof(PartialCachingAttribute)];
 
             // If we are parsing a theme file, the controls do not have an ID,
-            // and we should not be adding one. (Dev10 
+            // and we should not be adding one. (Dev10 bug 660310)
             if (!(subBuilder.Parser is PageThemeParser) && cacheAttrib != null) {
                 _id = "_ctrl_" + _controlCount.ToString(NumberFormatInfo.InvariantInfo);
                 subBuilder.ID = _id;

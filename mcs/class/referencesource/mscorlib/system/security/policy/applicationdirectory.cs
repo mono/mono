@@ -5,7 +5,7 @@
 // ==--==
 //  ApplicationDirectory.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  ApplicationDirectory is an evidence type representing the directory the assembly
 //  was loaded from.

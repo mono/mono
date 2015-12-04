@@ -8,7 +8,7 @@
 //
 // ThreadLocal.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A class that provides a simple, lightweight implementation of thread-local lazy-initialization, where a value is initialized once per accessing 
 // thread; this provides an alternative to using a ThreadStatic static variable and having 

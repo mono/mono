@@ -29,7 +29,7 @@ namespace System.Web.Security
     using  System.Reflection;
     using  System.Configuration.Provider;
     using  System.Web.Management;
-
+    
     public enum ActiveDirectoryConnectionProtection
     {
         None		= 0,
@@ -78,6 +78,7 @@ namespace System.Web.Security
         private int minRequiredNonalphanumericCharacters;
         private string passwordStrengthRegularExpression;
         private MembershipPasswordCompatibilityMode _LegacyPasswordCompatibilityMode = MembershipPasswordCompatibilityMode.Framework20;
+        private int? passwordStrengthRegexTimeout;
 
         //
         // configuration parameters specific to the AD membership provider
@@ -377,6 +378,7 @@ namespace System.Web.Security
 
             int clientSearchTimeout = SecUtility.GetIntValue(config, "clientSearchTimeout", -1, false, 0);
             int serverSearchTimeout = SecUtility.GetIntValue(config, "serverSearchTimeout", -1, false, 0);
+            passwordStrengthRegexTimeout = SecUtility.GetNullableIntValue(config, "passwordStrengthRegexTimeout");
 
             enableSearchMethods = SecUtility.GetBooleanValue(config, "enableSearchMethods", false);
             requiresUniqueEmail = SecUtility.GetBooleanValue(config, "requiresUniqueEmail", false);
@@ -384,7 +386,7 @@ namespace System.Web.Security
             requiresQuestionAndAnswer = SecUtility.GetBooleanValue(config, "requiresQuestionAndAnswer", false);
             minRequiredPasswordLength = SecUtility.GetIntValue( config, "minRequiredPasswordLength", 7, false, 128 );
             minRequiredNonalphanumericCharacters = SecUtility.GetIntValue( config, "minRequiredNonalphanumericCharacters", 1, true, 128 );
-
+          
             passwordStrengthRegularExpression = config["passwordStrengthRegularExpression"];
             if( passwordStrengthRegularExpression != null )
             {
@@ -618,6 +620,7 @@ namespace System.Web.Security
             config.Remove("minRequiredNonalphanumericCharacters");
             config.Remove("passwordStrengthRegularExpression");
             config.Remove("passwordCompatMode");
+            config.Remove("passwordStrengthRegexTimeout");
 
             if (config.Count > 0)
             {
@@ -735,7 +738,7 @@ namespace System.Web.Security
 
             if( PasswordStrengthRegularExpression.Length > 0 )
             {
-                if( !Regex.IsMatch( password, PasswordStrengthRegularExpression ) )
+                if( !RegexUtil.IsMatch( password, PasswordStrengthRegularExpression, RegexOptions.None, passwordStrengthRegexTimeout ) )
                 {
                     status = MembershipCreateStatus.InvalidPassword;
                     return null;
@@ -1224,7 +1227,7 @@ namespace System.Web.Security
 
             if( PasswordStrengthRegularExpression.Length > 0 )
             {
-                if( !Regex.IsMatch( newPassword, PasswordStrengthRegularExpression ) )
+                if( !RegexUtil.IsMatch( newPassword, PasswordStrengthRegularExpression, RegexOptions.None, passwordStrengthRegexTimeout ) )
                 {
                     throw new ArgumentException(SR.GetString(SR.Password_does_not_match_regular_expression,
                                                              "newPassword"));
@@ -4020,8 +4023,8 @@ namespace System.Web.Security
                 }
                 catch (DirectoryOperationException)
                 {
-                    // Dev10 
-
+                    // Dev10 Bug# 623663:
+                    // concurrent bind is not supported when a client certificate is specified, (continue without it and don't try to set it next time)
 
                     this.concurrentBindSupported = false;
                 }

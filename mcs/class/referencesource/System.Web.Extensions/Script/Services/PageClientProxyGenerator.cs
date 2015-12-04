@@ -13,13 +13,13 @@ namespace System.Web.Script.Services {
 
         internal PageClientProxyGenerator(IPage page, bool debug)
             : this(VirtualPathUtility.MakeRelative(page.Request.Path, page.Request.FilePath), debug) {
-            // Dev10 
-
-
-
-
-
-
+            // Dev10 Bug 597146: Use VirtualPathUtility to build a relative path from the path to the file.
+            // Previously just Page.Request.FilePath was used, which was for example, /app/foo/page.aspx,
+            // but this breaks with cookieless sessions since the url is /app/foo/(sessionid)/page.aspx.
+            // We need to make a relative path from page.Request.Path (e.g. /app/foo) to page.Request.FilePath
+            // (e.g. /app/foo/page.aspx) rather than just strip off 'page.aspx' with Path.GetFileName, because
+            // the url may include PathInfo, such as "/app/foo/page.aspx/pathinfo1/pathinfo2", and in that case
+            // we need the path to be ../../page.aspx
         }
 
         internal PageClientProxyGenerator(string path, bool debug) {

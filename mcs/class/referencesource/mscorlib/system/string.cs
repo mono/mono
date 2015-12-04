@@ -61,7 +61,7 @@ namespace System {
 
         //private static readonly char FmtMsgMarkerChar='%';
         //private static readonly char FmtMsgFmtCodeChar='!';
-        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in sync.
+        //These are defined in Com99/src/vm/COMStringCommon.h and must be kept in [....].
         private const int TrimHead = 0;
         private const int TrimTail = 1;
         private const int TrimBoth = 2;
@@ -2847,10 +2847,10 @@ namespace System {
             if (CompatibilitySwitches.IsAppEarlierThanWindowsPhoneMango)
             {
                 // Dev11 453753 quirk
-                // for pre-Mango this function had a 
-
-
-
+                // for pre-Mango this function had a bug that would cause it to
+                // drop all characters to the right of the first embedded NULL.
+                // this was quirked on Mango for pre-Mango apps however for apps
+                // targeting Mango the bug was fixed.
                 int i = s.IndexOf('\0');
                 if (i > 0)
                     return s.Substring(0, i);

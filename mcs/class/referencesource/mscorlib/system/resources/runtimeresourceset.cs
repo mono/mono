@@ -7,7 +7,7 @@
 **
 ** Class:  RuntimeResourceSet
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: CultureInfo-specific collection of resources.

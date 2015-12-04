@@ -2,8 +2,8 @@
 // <copyright file="DataSet.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
-// <owner current="true" primary="false">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
+// <owner current="true" primary="false">[....]</owner>
 //------------------------------------------------------------------------------
 
 namespace System.Data {
@@ -684,7 +684,7 @@ namespace System.Data {
                             continue;
                         if ((dt.NestedParentRelations.Length == 0) ||
                             (dt.NestedParentRelations.Length == 1 && dt.NestedParentRelations[0].ChildTable == dt)) {
-                            //                            dt.SelfNestedWithOneRelation) { // this is wrong 
+                            //                            dt.SelfNestedWithOneRelation) { // this is wrong bug it was previous behavior
                             if (Tables.Contains(dt.TableName, value, false, true))
                                 throw ExceptionBuilder.DuplicateTableName2(dt.TableName, value);
                             dt.CheckCascadingNamespaceConflict(value);
@@ -1106,7 +1106,7 @@ namespace System.Data {
             try {
                 DataSet ds = (DataSet)Activator.CreateInstance(this.GetType(), true);
 
-                if (ds.Tables.Count > 0)  // Microsoft : To clean up all the schema in strong typed dataset.
+                if (ds.Tables.Count > 0)  // [....] : To clean up all the schema in strong typed dataset.
                     ds.Reset();
 
                 //copy some original dataset properties
@@ -3064,7 +3064,7 @@ namespace System.Data {
             }
         }
 
-        // Microsoft: may be better to rewrite this as nonrecursive?
+        // [....]: may be better to rewrite this as nonrecursive?
         internal DataTable FindTable(DataTable baseTable, PropertyDescriptor[] props, int propStart) {
             if (props.Length < propStart + 1)
                 return baseTable;

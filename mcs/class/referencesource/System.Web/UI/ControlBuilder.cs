@@ -2220,8 +2220,8 @@ namespace System.Web.UI {
                         try {
                             // We must push the theme flag to child complex objects so they are init'd properly
                             
-                            // DevDiv 
-
+                            // DevDiv Bug 59351
+                            // Set applytheme only when necessary.
                             if (entry.Builder.flags[applyTheme] != flags[applyTheme]) {
                                 entry.Builder.flags[applyTheme] = flags[applyTheme];
                             }

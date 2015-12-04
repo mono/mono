@@ -674,7 +674,7 @@ namespace System.Web.UI.Design.MobileControls
             Debug.Assert(e.CancelEdit == false);
 
             // this happens when the label is unchanged after entering and exiting
-            // label editing mode - bizarre behavior. this may be a 
+            // label editing mode - bizarre behavior. this may be a bug in treeview
             if (null == e.Label)
             {
                 return;

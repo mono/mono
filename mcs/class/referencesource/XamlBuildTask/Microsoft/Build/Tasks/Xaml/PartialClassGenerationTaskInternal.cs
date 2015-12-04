@@ -487,11 +487,11 @@ namespace Microsoft.Build.Tasks.Xaml
                     XamlXmlWriterSettings xamlSettings = new XamlXmlWriterSettings() { CloseOutput = true };
                     
                     // Process EmbeddedResourceXaml to remove xml:space="preserve"
-                    // due to a 
-
-
-
-
+                    // due to a bug in XamlXmlWriter. XamlXmlWriter throws
+                    // if there are duplicate xml:space attributes.
+                    // It is ok to remove the xml:space attribute
+                    // as the XamlXmlWriter would add it in the next step
+                    // if needed.
                     RemoveXamlSpaceAttribute(classData);
 
                     using (XamlReader reader = classData.EmbeddedResourceXaml.GetReader())

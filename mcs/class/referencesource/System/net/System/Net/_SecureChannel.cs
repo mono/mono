@@ -515,16 +515,17 @@ namespace System.Net.Security {
                             uint count = issuerList.cIssuers;
                             issuers = new string[issuerList.cIssuers];
                             _CERT_CHAIN_ELEMENT* pIL = (_CERT_CHAIN_ELEMENT*)issuerList.aIssuers.DangerousGetHandle();
-                            for (int i =0; i<count; ++i) {
+                            for (uint i =0; i<count; ++i) {
                                 _CERT_CHAIN_ELEMENT* pIL2 = pIL + i;
                                 uint size = pIL2->cbSize;
                                 byte* ptr = (byte*)(pIL2->pCertContext);
                                 byte[] x = new byte[size];
-                                for (int j=0; j<size; j++) {
+                                for (uint j=0; j<size; j++) {
                                     x[j] = *(ptr + j);
                                 }
                                 // Oid oid = new Oid();
                                 // oid.Value = "1.3.6.1.5.5.7.3.2";
+                                // Value of issuers[i] can be an empty string when size of x is 0.
                                 X500DistinguishedName x500DistinguishedName = new X500DistinguishedName(x);
                                 issuers[i] = x500DistinguishedName.Name;
                                 GlobalLog.Print("SecureChannel#" + ValidationHelper.HashString(this) + "::GetIssuers() IssuerListEx[" + i + "]:" + issuers[i]);

@@ -7,7 +7,7 @@
 **
 ** Class:  FileBasedResourceGroveler
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: Searches for resources on disk, used for file-

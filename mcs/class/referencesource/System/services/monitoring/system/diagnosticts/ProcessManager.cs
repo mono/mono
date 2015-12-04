@@ -49,7 +49,7 @@ namespace System.Diagnostics {
             if (NativeMethods.GetWindow(new HandleRef(this, handle), NativeMethods.GW_OWNER) != (IntPtr)0 || !NativeMethods.IsWindowVisible(new HandleRef(this, handle)))
                 return false;
             
-            // Microsoft: should we use no window title to mean not a main window? (task man does)
+            // [....]: should we use no window title to mean not a main window? (task man does)
             
             /*
             int length = NativeMethods.GetWindowTextLength(handle) * 2;

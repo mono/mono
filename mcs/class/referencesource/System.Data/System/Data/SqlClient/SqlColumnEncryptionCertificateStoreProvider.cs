@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="SqlException.cs" company="Microsoft">
+// <copyright file="SqlColumnEncryptionCertificateStoreProvider.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <owner current="true" primary="true">balnee</owner>
@@ -19,7 +19,7 @@ namespace System.Data.SqlClient
     /// <summary>
     /// Certificate Key Store Provider class
     /// </summary>
-    sealed public class SqlColumnEncryptionCertificateStoreProvider : SqlColumnEncryptionKeyStoreProvider
+    public class SqlColumnEncryptionCertificateStoreProvider : SqlColumnEncryptionKeyStoreProvider
     {
         // Constants
         //
@@ -27,14 +27,14 @@ namespace System.Data.SqlClient
         // Certificate provider name (CertificateStore) dont need to be localized.
 
         /// <summary>
+        /// Name for the certificate key store provider.
+        /// </summary>
+        public const string ProviderName = @"MSSQL_CERTIFICATE_STORE";
+
+        /// <summary>
         /// RSA_OAEP is the only algorithm supported for encrypting/decrypting column encryption keys.
         /// </summary>
         internal const string RSAEncryptionAlgorithmWithOAEP = @"RSA_OAEP";
-
-        /// <summary>
-        /// Name for the certificate key store provider.
-        /// </summary>
-        internal const string ProviderName = @"MSSQL_CERTIFICATE_STORE";
 
         /// <summary>
         /// LocalMachine certificate store location. Valid certificate locations are LocalMachine and CurrentUser.
@@ -131,6 +131,7 @@ namespace System.Data.SqlClient
             }
 
             // Validate the signature length
+            // Signature length should be same as the key side for RSA PKCSv1.5
             int signatureLength = encryptedColumnEncryptionKey.Length - currentIndex - cipherTextLength;
             if (signatureLength != keySizeInBytes)
             {
@@ -139,7 +140,7 @@ namespace System.Data.SqlClient
 
             // Get ciphertext
             byte[] cipherText = new byte[cipherTextLength];
-            Buffer.BlockCopy(encryptedColumnEncryptionKey, currentIndex, cipherText, 0, cipherTextLength);
+            Buffer.BlockCopy(encryptedColumnEncryptionKey, currentIndex, cipherText, 0, cipherText.Length);
             currentIndex += cipherTextLength;
 
             // Get signature

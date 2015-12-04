@@ -561,6 +561,11 @@ namespace System.Security.Cryptography {
             if (error != ErrorCode.Success) {
                 throw new CryptographicException((int)error);
             }
+
+            // Sometimes decryptedSize can be less than the allocated buffer size
+            // So resize the array to the actual returned plaintext 
+            Array.Resize(ref decrypted, decryptedSize);
+
             return decrypted;
         }
 

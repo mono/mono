@@ -197,13 +197,13 @@ namespace System.Workflow.Activities
                 IComparable initializerValue = initializerValues.Current.Value as IComparable;
                 object followerValue = followerValues.Current.Value;
 
-                // 
-
-
-
-
-
-
+                // Bug DevDiv2\DevDiv 552322 - http://vstfdevdiv.redmond.corp.microsoft.com:8080/DevDiv2/DevDiv/_workitems#_a=edit&id=552322
+                // Reflection does not guarantee ordering, so the two collections (arrays) of
+                // CorrelationProperties may not be in the same order, based on Name. So we need to check all the
+                // elements of the followerProperties for the Name of the current initializerValue.
+                // The collections MIGHT be in the same order. Before searching the followerProperties collection for an element with a matching
+                // name, see if the current element in the initializerValues and followerValues enumerators have a matching name.
+                // If they do match, just fall thru because followerValue is already set to followerValues.Current.Value;
                 if (!initializerValues.Current.Name.Equals(followerValues.Current.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     CorrelationProperty followerProperty = null;

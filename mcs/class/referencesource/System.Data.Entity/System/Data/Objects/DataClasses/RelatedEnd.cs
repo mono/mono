@@ -3,8 +3,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner       Microsoft
-// @backupOwner Microsoft
+// @owner       [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 namespace System.Data.Objects.DataClasses

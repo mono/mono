@@ -82,7 +82,7 @@ namespace System.Activities.Presentation.Xaml
                     if (viewStateSrcLocation != null)
                     {
                         // In some cases duplicated key is possible, use indexer instead of Add() to avoid throw. 
-                        // See TFS 
+                        // See TFS bug 523908 for detailed information
                         viewStateSourceLocationToModelItemMapping[viewStateSrcLocation] = modelItem;
                     }
                 }

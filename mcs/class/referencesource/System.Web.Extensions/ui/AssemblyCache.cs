@@ -95,7 +95,7 @@ using System.Web.Script;
                 }
             }
             catch {
-                // 
+                // Bug 34311: If we are unable to load the attribute, don't throw. 
             }
             return null;
         }

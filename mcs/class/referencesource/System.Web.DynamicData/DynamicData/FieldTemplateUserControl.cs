@@ -421,11 +421,11 @@ namespace System.Web.DynamicData {
         private void SetUpRequiredFieldValidator(RequiredFieldValidator validator, MetaColumn column) {
             var requiredAttribute = column.Metadata.RequiredAttribute;
             if (requiredAttribute!= null && requiredAttribute.AllowEmptyStrings) {
-                // Dev10 
-
-
-
-
+                // Dev10 Bug 749744
+                // If somone explicitly set AllowEmptyStrings = true then we assume that they want to
+                // allow empty strings to go into a database even if the column is marked as required.
+                // Since ASP.NET validators always get an empty string, this essential turns of
+                // required field validation.
                 IgnoreModelValidationAttribute(typeof(RequiredAttribute));
             } else if (column.IsRequired) {
                 validator.Enabled = true;

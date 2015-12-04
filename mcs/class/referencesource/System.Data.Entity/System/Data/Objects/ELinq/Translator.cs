@@ -3,7 +3,7 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  Microsoft, Microsoft
+// @owner  [....], [....]
 //---------------------------------------------------------------------
 
 namespace System.Data.Objects.ELinq

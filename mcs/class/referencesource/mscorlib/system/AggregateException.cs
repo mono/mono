@@ -7,7 +7,7 @@
 //
 // AggregateException.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Public type to communicate multiple failures to an end-user.
 //

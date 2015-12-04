@@ -787,8 +787,8 @@ namespace System.Web {
 
             // header info
             try {
-                // 
-
+                // Bug 867196: Use Request.Unvalidated to ensure request validation will not
+                // be triggered when the entries of the collection are accessed.
                 AddCollectionToRequestData(requestData, SR.Trace_Headers_Collection, _context.Request.Unvalidated.Headers);
             }
             catch {

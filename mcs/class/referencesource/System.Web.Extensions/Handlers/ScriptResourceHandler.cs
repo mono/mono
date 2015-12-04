@@ -526,8 +526,8 @@ namespace System.Web.Handlers {
                 }
             }
             else {
-                // 
-
+                // Bug DevDiv #175061, we don't want to force any encoding here and let the default
+                // encoding apply no matter what the incoming scripts might have been encoded with.
                 response.Write(script.ToString());
             }
         }

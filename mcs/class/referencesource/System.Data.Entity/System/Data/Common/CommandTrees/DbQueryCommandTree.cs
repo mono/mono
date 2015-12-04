@@ -4,8 +4,8 @@
 //      Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //
-// @owner  Microsoft
-// @backupOwner Microsoft
+// @owner  [....]
+// @backupOwner [....]
 //---------------------------------------------------------------------
 
 using System;

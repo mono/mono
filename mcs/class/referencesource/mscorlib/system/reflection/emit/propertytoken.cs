@@ -7,7 +7,7 @@
 **
 ** Class:  PropertyToken
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Propertybuilder is for client to define properties for a class

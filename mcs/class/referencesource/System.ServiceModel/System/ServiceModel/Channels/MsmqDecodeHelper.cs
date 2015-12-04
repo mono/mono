@@ -325,8 +325,8 @@ namespace System.ServiceModel.Channels
                 throw listener.NormalizePoisonException(messageProperty.LookupId, MaxMessageSizeStream.CreateMaxReceivedMessageSizeExceededException(listener.MaxReceivedMessageSize));
             }
 
-            // Fix for CSDMain 
-
+            // Fix for CSDMain bug 17842
+            // size is derived from user data, check for corruption
             if ((size + offset) > buffer.Length)
             {
                 listener.MsmqReceiveHelper.FinalDisposition(messageProperty);

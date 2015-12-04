@@ -337,8 +337,8 @@ namespace System.ServiceModel.Dispatcher
             // Fx will bind prefixes and functions here.
             if (namespaces != null)
             {
-                // There's a 
-
+                // There's a bug in System.Xml.XPath.  If we pass an XsltContext to SetContext it won't throw if there's
+                // an undefined prefix.
                 if (namespaces is XsltContext)
                 {
                     // Lex the xpath to find all prefixes used

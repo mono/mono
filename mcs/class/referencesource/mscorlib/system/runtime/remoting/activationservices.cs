@@ -1745,7 +1745,7 @@ namespace System.Runtime.Remoting.Activation {
                 // Need to grow our arrays ... this will be exceedingly rare
                 Object[] newTypes = new Object[activationTypes.Length * 2];
                 Object[] newAttr = new Object[activationAttributes.Length * 2];
-                Contract.Assert(newAttr.Length == newTypes.Length,"These should be in sync!");
+                Contract.Assert(newAttr.Length == newTypes.Length,"These should be in [....]!");
                 Array.Copy(activationTypes, newTypes, activationTypes.Length);
                 Array.Copy(activationAttributes, newAttr, activationAttributes.Length);    
                 activationTypes = newTypes;

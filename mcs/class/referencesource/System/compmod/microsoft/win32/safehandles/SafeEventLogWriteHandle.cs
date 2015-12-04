@@ -7,7 +7,7 @@
 **
 ** Class:  SafeEventLogWriteHandle 
 **
-** <EMAIL>Author: David Gutierrez (Microsoft) </EMAIL>
+** <EMAIL>Author: David Gutierrez ([....]) </EMAIL>
 **
 ** A wrapper for event log handles
 **

@@ -5,7 +5,7 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -789,7 +789,7 @@ namespace System.Threading
                                 m_executingCallback = currArrayFragment[i];
                                 if (m_executingCallback != null)
                                 {
-                                    //Transition to the target sync context (if necessary), and continue our work there.
+                                    //Transition to the target [....] context (if necessary), and continue our work there.
                                     CancellationCallbackCoreWorkArguments args = new CancellationCallbackCoreWorkArguments(currArrayFragment, i);
 
                                     // marshal exceptions: either aggregate or perform an immediate rethrow
@@ -855,7 +855,7 @@ namespace System.Threading
             {
                 if (callback.TargetExecutionContext != null)
                 {
-                    // we are running via a custom sync context, so update the executing threadID
+                    // we are running via a custom [....] context, so update the executing threadID
                     callback.CancellationTokenSource.ThreadIDExecutingCallbacks = Thread.CurrentThread.ManagedThreadId;
                 }
                 callback.ExecuteCallback();
@@ -951,7 +951,7 @@ namespace System.Threading
     // ----------------------------------------------------------
     // -- CancellationCallbackCoreWorkArguments --
     // ----------------------------------------------------------
-    // Helper struct for passing data to the target sync context
+    // Helper struct for passing data to the target [....] context
     internal struct CancellationCallbackCoreWorkArguments
     {
         internal SparselyPopulatedArrayFragment<CancellationCallbackInfo> m_currArrayFragment;

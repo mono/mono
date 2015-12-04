@@ -4,9 +4,9 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
-// <OWNER>Microsoft</OWNER>
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
+// <OWNER>[....]</OWNER>
+// <OWNER>[....]</OWNER>
 
 using System;
 using System.Diagnostics.Contracts;

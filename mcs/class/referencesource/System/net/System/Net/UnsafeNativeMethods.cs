@@ -20,6 +20,7 @@ namespace System.Net {
     using System.Diagnostics.CodeAnalysis;
     using System.Security.Cryptography;
     using System.Security.Cryptography.X509Certificates;
+    using System.IO;
 
     [System.Security.SuppressUnmanagedCodeSecurityAttribute()]
     internal static class UnsafeNclNativeMethods {
@@ -67,6 +68,7 @@ namespace System.Net {
         private const string WINHTTP = "winhttp.dll";
         private const string BCRYPT = "bcrypt.dll";
         private const string USER32 = "user32.dll";
+        private const string TOKENBINDING = "tokenbinding.dll";
 
 #if !FEATURE_PAL
         private const string OLE32 = "ole32.dll";        
@@ -114,6 +116,16 @@ namespace System.Net {
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Implementation requires unmanaged code usage")]
         [DllImport(KERNEL32, ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
         internal static unsafe extern bool SetFileCompletionNotificationModes(CriticalHandle handle, FileCompletionNotificationModes modes);
+
+        [DllImport(KERNEL32, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+        internal static extern IntPtr GetProcessHeap();
+
+        [DllImport(KERNEL32, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+        internal static extern bool HeapFree([In] IntPtr hHeap, [In] uint dwFlags, [In] IntPtr lpMem);
+
+        [System.Security.SecurityCritical]
+        [DllImport(KERNEL32, CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+        internal extern static IntPtr GetProcAddress(SafeLoadLibrary hModule, string entryPoint);
 
         [Flags]
         internal enum FileCompletionNotificationModes : byte
@@ -2171,6 +2183,33 @@ namespace System.Net {
             [DllImport(HTTPAPI, ExactSpelling = true, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
             internal static extern uint HttpCloseUrlGroup(ulong urlGroupId);
 
+            [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage", Justification = "Implementation requires unmanaged code usage")]
+            [DllImport(TOKENBINDING, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+            public static extern int TokenBindingVerifyMessage(
+                [In] byte* tokenBindingMessage,
+                [In] uint tokenBindingMessageSize,
+                [In] IntPtr keyType,
+                [In] byte* tlsUnique,
+                [In] uint tlsUniqueSize,
+                [Out] out HeapAllocHandle resultList);
+
+            internal sealed class HeapAllocHandle : SafeHandleZeroOrMinusOneIsInvalid
+            {
+                private static readonly IntPtr ProcessHeap = GetProcessHeap();
+
+                // Called by P/Invoke when returning SafeHandles.
+                private HeapAllocHandle()
+                    : base(ownsHandle: true)
+                {
+                }
+
+                // Do not provide a finalizer - SafeHandle's critical finalizer will call ReleaseHandle for you.
+                protected override bool ReleaseHandle()
+                {
+                    return HeapFree(ProcessHeap, 0, handle);
+                }
+            }
+
             internal enum HTTP_API_VERSION {
                 Invalid,
                 Version10,
@@ -2192,12 +2231,12 @@ namespace System.Net {
                 HttpServerChannelBindProperty,
                 HttpServerProtectionLevelProperty,
             }
-
-            //
-            // Currently only one request info type is supported but the enum is for future extensibility.
-            //
+                       
             internal enum HTTP_REQUEST_INFO_TYPE {
                 HttpRequestInfoTypeAuth,
+                HttpRequestInfoTypeChannelBind,
+                HttpRequestInfoTypeSslProtocol,
+                HttpRequestInfoTypeSslTokenBinding
             }
 
             internal enum HTTP_RESPONSE_INFO_TYPE {
@@ -2519,6 +2558,12 @@ namespace System.Net {
                 internal HTTP_DATA_CHUNK* pEntityChunks;
                 internal ulong RawConnectionId;
                 internal HTTP_SSL_INFO* pSslInfo;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct HTTP_REQUEST_V2
+            {
+                internal HTTP_REQUEST RequestV1;
                 internal ushort RequestInfoCount;
                 internal HTTP_REQUEST_INFO* pRequestInfo;
             }
@@ -2540,6 +2585,63 @@ namespace System.Net {
                 internal IntPtr RequestQueueHandle;                
             }
 
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct HTTP_REQUEST_TOKEN_BINDING_INFO
+            {
+                public byte* TokenBinding;
+                public uint TokenBindingSize;
+                public byte* TlsUnique;
+                public uint TlsUniqueSize;
+                public IntPtr KeyType;
+            }
+
+            internal enum TOKENBINDING_HASH_ALGORITHM : byte
+            {
+                TOKENBINDING_HASH_ALGORITHM_SHA256 = 4,
+            }
+
+            internal enum TOKENBINDING_SIGNATURE_ALGORITHM : byte
+            {
+                TOKENBINDING_SIGNATURE_ALGORITHM_RSA = 1,
+                TOKENBINDING_SIGNATURE_ALGORITHM_ECDSAP256 = 3,
+            }
+
+            internal enum TOKENBINDING_TYPE : byte
+            {
+                TOKENBINDING_TYPE_PROVIDED = 0,
+                TOKENBINDING_TYPE_REFERRED = 1,
+            }
+
+            internal enum TOKENBINDING_EXTENSION_FORMAT
+            {
+                TOKENBINDING_EXTENSION_FORMAT_UNDEFINED = 0,
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct TOKENBINDING_IDENTIFIER
+            {
+                public TOKENBINDING_TYPE bindingType;
+                public TOKENBINDING_HASH_ALGORITHM hashAlgorithm;
+                public TOKENBINDING_SIGNATURE_ALGORITHM signatureAlgorithm;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct TOKENBINDING_RESULT_DATA
+            {
+                public uint identifierSize;
+                public TOKENBINDING_IDENTIFIER* identifierData;
+                public TOKENBINDING_EXTENSION_FORMAT extensionFormat;
+                public uint extensionSize;
+                public IntPtr extensionData;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal unsafe struct TOKENBINDING_RESULT_LIST
+            {
+                public uint resultCount;
+                public TOKENBINDING_RESULT_DATA* resultData;
+            }
+            
             // see http.w for definitions
             [Flags]
             internal enum HTTP_FLAGS : uint {
@@ -3243,6 +3345,67 @@ namespace System.Net {
                 public int top;
                 public int right;
                 public int bottom;
+            }
+        }
+
+        /// <remarks>
+        /// Determines whether Token binding is supported on the machine or not
+        /// This class is thread safe.
+        /// The static method EnsureTokenBindingOSHelperInitialized is used to get that information.
+        /// It calls the load library and caches the result under proper locks to make sure it is thread safe and only one call is made to load library.
+        /// </remarks>
+        internal static class TokenBindingOSHelper
+        {
+            private static bool s_supportsTokenBinding = false;
+            private static object s_Lock = new object();
+            private static volatile bool s_Initialized = false;
+
+            // <SecurityKernel Critical="True" Ring="0">
+            // <CallsSuppressUnmanagedCode Name="UnsafeNclNativeMethods.GetProcAddress(System.Net.SafeLoadLibrary,System.String):System.IntPtr" />
+            // <SatisfiesLinkDemand Name="SafeHandle.get_IsInvalid():System.Boolean" />
+            // <ReferencesCritical Name="Method: SafeLoadLibrary.LoadLibraryEx(System.String):System.Net.SafeLoadLibrary" Ring="1" />
+            // </SecurityKernel>
+            [System.Security.SecurityCritical]
+            private static void EnsureTokenBindingOSHelperInitialized()
+            {
+                if (s_Initialized)
+                {
+                    return;
+                }
+                lock (s_Lock)
+                {
+                    if (s_Initialized)
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        // if tokenbinding.dll is not available, TOKENBINDING is not supported
+                        string dllFileName = Path.Combine(Environment.SystemDirectory, TOKENBINDING);
+                        SafeLoadLibrary s_TokenBindingLibrary = SafeLoadLibrary.LoadLibraryEx(dllFileName);
+                        if (!s_TokenBindingLibrary.IsInvalid)
+                        {
+                            s_supportsTokenBinding = s_TokenBindingLibrary.HasFunction("TokenBindingVerifyMessage");
+                        }
+                        s_Initialized = true;
+                    }
+                    catch (Exception e)
+                    {
+                        if (NclUtilities.IsFatal(e))
+                        { 
+                            throw;
+                        }
+                    }
+                }
+            }
+
+            internal static bool SupportsTokenBinding
+            {
+                get
+                {
+                    EnsureTokenBindingOSHelperInitialized();
+                    return s_supportsTokenBinding;
+                }
             }
         }
     }

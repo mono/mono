@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls.WebParts {
             CheckReadOnly();
             if (_webPartManager != null) {
                 int webPartManagerIndex = _webPartManager.StaticConnections.IndexOf((WebPartConnection)oldValue);
-                // It is a 
+                // It is a bug if the main WebPartManager does not contain the oldValue
                 Debug.Assert(webPartManagerIndex >= 0);
                 _webPartManager.StaticConnections[webPartManagerIndex] = (WebPartConnection)newValue;
             }

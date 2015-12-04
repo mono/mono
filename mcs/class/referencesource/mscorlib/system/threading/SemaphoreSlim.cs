@@ -7,7 +7,7 @@
 //
 // SemaphoreSlim.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // A lightweight semahore class that contains the basic semaphore functions plus some useful functions like interrupt
 // and wait handle exposing to allow waiting on multiple semaphores.

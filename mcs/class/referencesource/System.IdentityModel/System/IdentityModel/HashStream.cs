@@ -57,7 +57,7 @@ namespace System.IdentityModel
             get { return this.length; }
             set
             {
-                // PreSharp 
+                // PreSharp Bug: Property get methods should not throw exceptions.
 #pragma warning suppress 56503
                 throw DiagnosticUtility.ExceptionUtility.ThrowHelperError(new NotSupportedException());
             }

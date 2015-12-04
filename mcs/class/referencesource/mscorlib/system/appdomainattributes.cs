@@ -7,7 +7,7 @@
 **
 ** File: AppDomainAttributes
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** Purpose: For AppDomain-related custom attributes.

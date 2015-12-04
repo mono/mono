@@ -115,7 +115,7 @@ internal abstract class BaseResourcesBuildProvider : BuildProvider {
                 }
                 finally {
                     // Put the assignment in a finally block to avoid a ThreadAbortException from
-                    // causing the created stream to not get assigned and become leaked (Dev10 
+                    // causing the created stream to not get assigned and become leaked (Dev10 bug 844463)
                     outputStream = assemblyBuilder.CreateEmbeddedResource(this, resourceFileName);
                 }
             }
@@ -141,7 +141,7 @@ internal abstract class BaseResourcesBuildProvider : BuildProvider {
         }
         finally {
             // Always close the stream to avoid a ThreadAbortException from causing the stream
-            // to be leaked (Dev10 
+            // to be leaked (Dev10 bug 844463)
             if (outputStream != null) {
                 outputStream.Close();
             }

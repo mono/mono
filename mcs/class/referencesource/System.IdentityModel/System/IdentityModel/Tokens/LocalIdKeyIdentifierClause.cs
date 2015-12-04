@@ -60,7 +60,7 @@ namespace System.IdentityModel.Tokens
         {
             LocalIdKeyIdentifierClause that = keyIdentifierClause as LocalIdKeyIdentifierClause;
 
-            // PreSharp 
+            // PreSharp Bug: Parameter 'that' to this public method must be validated: A null-dereference can occur here.
 #pragma warning suppress 56506
             return ReferenceEquals(this, that) || (that != null && that.Matches(this.localId, this.OwnerType));
         }

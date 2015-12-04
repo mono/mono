@@ -5,7 +5,7 @@
 // ==--==
 //  ApplicationDirectoryMembershipCondition.cs
 // 
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 //  Implementation of membership condition for "application directories"
 //

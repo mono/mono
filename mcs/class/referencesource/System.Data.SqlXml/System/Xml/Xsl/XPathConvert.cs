@@ -2,7 +2,7 @@
 // <copyright file="XPathConvert.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
-// <owner current="true" primary="true">Microsoft</owner>
+// <owner current="true" primary="true">[....]</owner>
 //------------------------------------------------------------------------------
 
 /**
@@ -2678,7 +2678,7 @@ namespace System.Xml.Xsl {
                     }
                     break;
                 default:
-                    // MSXML has a 
+                    // MSXML has a bug, we should not allow whitespace after a minus sign
                     if (IsWhitespace(ch) && sign > 0) {
                         pch = SkipWhitespace(pch);
                         goto LRestart;

@@ -7,7 +7,7 @@
 **
 ** Class:  EnumBuilder
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** EnumBuilder is a helper class to build Enum ( a special type ). 

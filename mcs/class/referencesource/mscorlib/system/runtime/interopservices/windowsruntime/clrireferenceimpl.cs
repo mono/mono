@@ -4,9 +4,9 @@
 // 
 // ==--==
 //
-// <OWNER>Microsoft</OWNER>
-// <OWNER>Microsoft</OWNER>
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
+// <OWNER>[....]</OWNER>
+// <OWNER>[....]</OWNER>
 
 using System;
 using System.Collections;
@@ -107,7 +107,7 @@ namespace System.Runtime.InteropServices.WindowsRuntime
             _value = obj;
 
             // This should not fail but I'm making a cast here anyway just in case 
-            // we have a 
+            // we have a bug (that _value is not an array) or there is a runtime failure
             _list = (IList) _value;
         }
 

@@ -367,7 +367,7 @@ namespace System.Activities
 
                 try
                 {
-                    // The "false" is to notify that we are not still sync
+                    // The "false" is to notify that we are not still [....]
                     done = data.NextCallback(result, thisPtr, false);
                 }
                 catch (Exception e)
@@ -1100,7 +1100,7 @@ namespace System.Activities
             TerminateAsyncResult.End(result);
         }
 
-        // called from the sync and async paths
+        // called from the [....] and async paths
         void CancelCore()
         {
             // We only actually do any work if we haven't completed and we aren't
@@ -3867,7 +3867,7 @@ namespace System.Activities
                 if (this.instance.HasPersistenceProvider && this.instance.persistenceManager.OwnerWasCreated &&
                     (this.operation == PersistenceOperation.Unload || this.operation == PersistenceOperation.Complete))
                 {
-                    // This call uses the ambient transaction directly if there was one, to mimic the sync case.
+                    // This call uses the ambient transaction directly if there was one, to mimic the [....] case.
                     // 
                     IAsyncResult deleteOwnerResult = null;
                     using (PrepareTransactionalCall(this.dependentTransaction))

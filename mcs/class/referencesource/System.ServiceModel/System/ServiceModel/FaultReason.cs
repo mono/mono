@@ -72,7 +72,7 @@ namespace System.ServiceModel
             return GetMatchingTranslation(CultureInfo.CurrentCulture);
         }
 
-        // Microsoft, This function should always return a translation so that a fault can be surfaced.
+        // [....], This function should always return a translation so that a fault can be surfaced.
         public FaultReasonText GetMatchingTranslation(CultureInfo cultureInfo)
         {
             if (cultureInfo == null)

@@ -195,7 +195,7 @@ public class Page: TemplateControl, IHttpHandler {
     private const string PageSubmitScriptKey = "PageSubmitScript";
     private const string PageReEnableControlsScriptKey = "PageReEnableControlsScript";
 
-    // NOTE: Make sure this stays in sync with MobilePage.PageRegisteredControlsThatRequirePostBackKey
+    // NOTE: Make sure this stays in [....] with MobilePage.PageRegisteredControlsThatRequirePostBackKey
     // 
     private const string PageRegisteredControlsThatRequirePostBackKey = "__ControlsRequirePostBackKey__";
 
@@ -2167,17 +2167,15 @@ public class Page: TemplateControl, IHttpHandler {
         }
         // Load the scroll positions from the request if they exist
         if (_requestValueCollection != null) {
+            double doubleValue;
+            
             string xpos = _requestValueCollection[_scrollPositionXID];
             if (xpos != null) {
-                if (!Int32.TryParse(xpos, out _scrollPositionX)) {
-                    _scrollPositionX = 0;
-                }
+                _scrollPositionX = HttpUtility.TryParseCoordinates(xpos, out doubleValue) ? (int)doubleValue : 0 ;
             }
             string ypos = _requestValueCollection[_scrollPositionYID];
             if (ypos != null) {
-                if (!Int32.TryParse(ypos, out _scrollPositionY)) {
-                    _scrollPositionY = 0;
-                }
+                _scrollPositionY = HttpUtility.TryParseCoordinates(ypos, out doubleValue) ? (int)doubleValue : 0 ;
             }
         }
     }
@@ -2273,8 +2271,8 @@ public class Page: TemplateControl, IHttpHandler {
             // Need to always render out the viewstate field so alternate viewstate persistence will get called
             writer.Write("\r\n<input type=\"hidden\" name=\"");
             writer.Write(ViewStateFieldPrefixID);
-            // Dev10 
-
+            // Dev10 Bug 486494
+            // Remove previously rendered NewLine
             writer.Write("\" id=\"");
             writer.Write(ViewStateFieldPrefixID);
             writer.WriteLine("\" value=\"\" />");
@@ -3236,7 +3234,7 @@ window.onload = WebForm_RestoreScrollPosition;
         bool changed;
 
         // ListControl family controls call EnsureDataBound in consumer.LoadPostData, which could be an async call in 4.6. 
-        // LoadPostData, however, is a sync method, which means we cannot await EnsureDataBound in the method.
+        // LoadPostData, however, is a [....] method, which means we cannot await EnsureDataBound in the method.
         // To workaround this, for ListControl family controls, we call EnsureDataBound before we call into LoadPostData.
         if (AppSettings.EnableAsyncModelBinding && consumer is ListControl) {
             var listControl = consumer as ListControl;
@@ -5581,8 +5579,8 @@ window.onload = WebForm_RestoreScrollPosition;
         HttpCapabilitiesBase caps = _request.Browser;
 
         if(caps != null) {
-            // Dev10 440476: Page.SetIntrinsics method has a 
-
+            // Dev10 440476: Page.SetIntrinsics method has a bug causing throwing NullReferenceException
+            // in certain circumstances. This edge case was regressed by the VSWhidbey fix below.
 
             // VSWhidbey 109162: Set content type at the very beginning so it can be
             // overwritten within the user code of the page if needed.

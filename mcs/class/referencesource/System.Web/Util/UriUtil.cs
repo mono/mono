@@ -165,7 +165,7 @@ namespace System.Web.Util {
                     // For example, the "//" could be missing, or there could be "///" as in "file:///C:\foo.txt"
                     // To retain the same string as originally given, find the authority in the original url and include
                     // everything up to that.
-                    int authorityIndex = inputWithoutQueryFragment.IndexOf(authority, StringComparison.Ordinal);
+                    int authorityIndex = inputWithoutQueryFragment.IndexOf(authority, StringComparison.OrdinalIgnoreCase);
                     if (authorityIndex != -1) {
                         int schemeAndAuthorityLength = authorityIndex + authority.Length;
                         schemeAndAuthority = inputWithoutQueryFragment.Substring(0, schemeAndAuthorityLength);

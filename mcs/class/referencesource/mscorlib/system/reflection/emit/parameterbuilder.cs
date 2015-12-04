@@ -7,7 +7,7 @@
 **
 ** Class:  ParameterBuilder
 ** 
-** <OWNER>Microsoft</OWNER>
+** <OWNER>[....]</OWNER>
 **
 **
 ** ParameterBuilder is used to create/associate parameter information

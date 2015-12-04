@@ -215,6 +215,17 @@ namespace System.Web.Util {
             return iValue;
         }
 
+        internal static int? GetNullableIntValue(NameValueCollection config, string valueName) {
+            int iValue;
+            string sValue = config[valueName];
+
+            if (sValue == null || !Int32.TryParse(sValue, out iValue)) {
+                return null;
+            }
+
+            return iValue;
+        }
+
 #if !FEATURE_PAL //
         internal static void CheckSchemaVersion(ProviderBase provider, SqlConnection connection, string[] features, string version, ref int schemaVersionCheck) {
             if (connection == null) {

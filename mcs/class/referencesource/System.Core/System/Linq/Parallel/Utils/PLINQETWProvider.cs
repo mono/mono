@@ -7,7 +7,7 @@
 //
 // PlinqEtwProvider.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // EventSource for PLINQ.
 //

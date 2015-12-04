@@ -115,9 +115,9 @@ namespace System.ServiceModel.Diagnostics
 
         // A CounterSetInstance is not disposed immediately when a service, endpoint or operation perf counter is disposed. Because messages 
         // can be processed while a ServiceHost is being closed, and such messages can try to update perf counters data, resulting in AVs or 
-        // corruptions (see 
-
-
+        // corruptions (see bug 249132 @ CSDMain). So instead of disposing a CounterSetInstance, we hold a WeakReference to it, until either 
+        // GC reclaims it or a new service/endpoint/operation perf counter is started with the same name (and re-uses the CounterSetInstance).
+        // The CounterSetInstance finalizer will free up the perf counters memory, so we don't have a leak.
         protected class CounterSetInstanceCache
         {
             // instance name -> WeakReference of CounterSetInstance

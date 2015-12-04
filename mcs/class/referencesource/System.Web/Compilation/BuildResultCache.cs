@@ -372,7 +372,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
         // run into a situation where the dependency has changed just
         // when the cache item is about to get inserted, resulting in 
         // the callback deleting only the dll file and leaving behind the 
-        // pdb file. (Dev10 
+        // pdb file. (Dev10 bug 846606)
         var pdbPath = Path.ChangeExtension(f.FullName, ".pdb");
         if (File.Exists(pdbPath)) {
             DiskBuildResultCache.TryDeleteFile(new FileInfo(pdbPath));

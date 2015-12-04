@@ -7,7 +7,7 @@
 //
 // AsyncMethodBuilder.cs
 //
-// <OWNER>Microsoft</OWNER>
+// <OWNER>[....]</OWNER>
 //
 // Compiler-targeted types that build tasks for use as the return types of asynchronous methods.
 //
@@ -49,7 +49,7 @@ namespace System.Runtime.CompilerServices
         /// <returns>The initialized <see cref="AsyncVoidMethodBuilder"/>.</returns>
         public static AsyncVoidMethodBuilder Create()
         {
-            // Capture the current sync context.  If there isn't one, use the dummy s_noContextCaptured
+            // Capture the current [....] context.  If there isn't one, use the dummy s_noContextCaptured
             // instance; this allows us to tell the state of no captured context apart from the state
             // of an improperly constructed builder instance.
             SynchronizationContext sc = SynchronizationContext.CurrentNoFlow;
