@@ -8,6 +8,7 @@ System.Runtime.Serialization/Bug2843Test.cs
 System.Runtime.Serialization/Bug3258Test.cs
 System.Runtime.Serialization/Bug242Test.cs
 System.Runtime.Serialization/Bug695203Test.cs
+System.Runtime.Serialization/Bug36100.cs
 System.Runtime.Serialization/DataContractResolverTest.cs
 System.Runtime.Serialization/DataContractSerializerTest_DuplicateQName.cs
 System.Runtime.Serialization/DataContractSerializerTest_NullableWithDictionary.cs
