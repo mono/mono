@@ -162,6 +162,8 @@ namespace System.IO {
 
 	class KqueueMonitor : IDisposable
 	{
+		static bool initialized;
+		
 		public int Connection
 		{
 			get { return conn; }
@@ -171,6 +173,13 @@ namespace System.IO {
 		{
 			this.fsw = fsw;
 			this.conn = -1;
+			if (!initialized){
+				int t;
+				initialized = true;
+				var maxenv = Environment.GetEnvironmentVariable ("MONO_DARWIN_WATCHER_MAXFDS");
+				if (maxenv != null && Int32.TryParse (maxenv, out t))
+					maxFds = t;
+			}
 		}
 
 		public void Dispose ()
@@ -638,7 +647,7 @@ namespace System.IO {
 		const int F_GETPATH = 50;
 		const int __DARWIN_MAXPATHLEN = 1024;
 		static readonly kevent[] emptyEventList = new System.IO.kevent[0];
-		const int maxFds = 200;
+		int maxFds = Int32.MaxValue;
 
 		FileSystemWatcher fsw;
 		int conn;
