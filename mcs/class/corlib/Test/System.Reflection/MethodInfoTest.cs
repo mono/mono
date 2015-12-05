@@ -52,7 +52,12 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
+#if MONOTOUCH
+		// use an existing symbol - so we can build without dlsym. It does not matter that the signature does not match for the test
+		[DllImport ("libc", EntryPoint="readlink", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
+#else
 		[DllImport ("libfoo", EntryPoint="foo", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
+#endif
 		public static extern void dllImportMethod ();
 		[MethodImplAttribute(MethodImplOptions.PreserveSig)]
 		public void preserveSigMethod ()
@@ -108,8 +113,13 @@ namespace MonoTests.System.Reflection
 			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
 			Assert.AreEqual (CallingConvention.Winapi, attr.CallingConvention, "#1");
+#if MONOTOUCH
+			Assert.AreEqual ("readlink", attr.EntryPoint, "#2");
+			Assert.AreEqual ("libc", attr.Value, "#3");
+#else
 			Assert.AreEqual ("foo", attr.EntryPoint, "#2");
 			Assert.AreEqual ("libfoo", attr.Value, "#3");
+#endif
 			Assert.AreEqual (CharSet.Unicode, attr.CharSet, "#4");
 			Assert.AreEqual (false, attr.ExactSpelling, "#5");
 			Assert.AreEqual (true, attr.PreserveSig, "#6");
