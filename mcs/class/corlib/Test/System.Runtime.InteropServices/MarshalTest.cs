@@ -805,6 +805,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
+#if !MOBILE
 		[DllImport ("kernel32.dll", SetLastError = true)]
 		[PreserveSig]
 		static extern uint GetModuleFileName (
@@ -816,6 +817,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			[MarshalAs (UnmanagedType.U4)]
 			int nSize
 		);
+#endif
 	}
 #if !NET_2_1
 	[ComImport()]

@@ -72,6 +72,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			File.Delete("temp.b64");
 		}
 
+#if !MOBILE
 		public IntPtr GetHandleEx (byte[] certificate) 
 		{
 			CertificateContext cc = new CertificateContext ();
@@ -151,6 +152,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (serial, x509.GetSerialNumber (), "GetSerialNumber");
 			Assert.AreEqual ("02720006E8", x509.GetSerialNumberString (), "GetSerialNumberString");
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
