@@ -212,6 +212,16 @@ namespace MonoTests.System
 		}
 	}
 
+	public class GenericIndexers<T, U>
+	{
+		// This class has two indexers that take different
+		// arguments.  GetProperties on all instances of this
+		// generic type should still have 2 properties, even
+		// if T and U are instantiated with the same types.
+		public T this[T t] { get { return t; } }
+		public U this[U u] { get { return u; } }
+	}
+
 	public class FirstMethodBinder : Binder
 	{
 		public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase [] match, ref object [] args,
@@ -425,8 +435,25 @@ namespace MonoTests.System
 		public void GetProperties ()
 		{
 			// Test hide-by-name-and-signature
-			Assert.AreEqual (1, typeof (Derived2).GetProperties ().Length);
-			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType);
+			Assert.AreEqual (1, typeof (Derived2).GetProperties ().Length, "#1");
+			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType, "#2");
+
+			// For generics, hide-by-name-and-signature works on the unexpanded types. The
+			// GenericIndexers<T,U> class has two indexers that take different arguments.
+			// GetProperties on all instances of this generic type should still have 2 properties,
+			// even if T and U are instantiated with the same types.
+
+			var ps = typeof (GenericIndexers<int,int>).GetProperties ();
+			Assert.AreEqual (2, ps.Length, "#3");
+			for (int i = 0; i < ps.Length; i++) {
+				var p = ps[i];
+
+				var getterResultType = p.GetGetMethod ().ReturnType;
+
+				var msg = String.Format ("#4-{0}", i);
+				Assert.AreEqual (typeof (int), getterResultType, msg);
+			}
+
 		}
 
 		[Test] // GetProperties (BindingFlags)
