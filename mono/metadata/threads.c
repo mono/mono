@@ -664,6 +664,8 @@ static guint32 WINAPI start_wrapper_internal(void *data)
 	thread_adjust_static_data (internal);
 	init_root_domain_thread (internal, start_info->obj);
 
+	g_usleep (10000);
+
 	/* This MUST be called before any managed code can be
 	 * executed, as it calls the callback function that (for the
 	 * jit) sets the lmf marker.

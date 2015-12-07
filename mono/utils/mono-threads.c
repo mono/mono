@@ -68,7 +68,7 @@ static size_t pending_suspends;
 /*warn at 50 ms*/
 #define SLEEP_DURATION_BEFORE_WARNING (10)
 /*abort at 1 sec*/
-#define SLEEP_DURATION_BEFORE_ABORT 200
+#define SLEEP_DURATION_BEFORE_ABORT 0x7FFFFFFF
 
 static int suspend_posts, resume_posts, abort_posts, waits_done, pending_ops;
 

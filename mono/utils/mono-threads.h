@@ -102,13 +102,13 @@ and reduce the number of casts drastically.
 #define THREADS_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
 #endif
 
-#if 1
+#if 0
 #define THREADS_STW_DEBUG(...)
 #else
 #define THREADS_STW_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
 #endif
 
-#if 1
+#if 0
 #define THREADS_SUSPEND_DEBUG(...)
 #else
 #define THREADS_SUSPEND_DEBUG MOSTLY_ASYNC_SAFE_PRINTF
