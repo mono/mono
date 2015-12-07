@@ -12563,6 +12563,15 @@ namespace Mono.CSharp
 			ca.Emit (ec, best, arguments, loc);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (interpolations != null) {
+				foreach (var expr in interpolations) {
+					expr.FlowAnalysis (fc);
+				}
+			}
+		}
+
 		MethodSpec ResolveBestFormatOverload (ResolveContext rc)
 		{
 			var members = MemberCache.FindMembers (rc.BuiltinTypes.String, "Format", true);
@@ -12600,6 +12609,11 @@ namespace Mono.CSharp
 			// as argument(s)
 			//
 			return Convert.ImplicitConversionRequired (rc, expr, rc.BuiltinTypes.Object, expr.Location);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Child.FlowAnalysis (fc);
 		}
 
 		public int? ResolveAligment (ResolveContext rc)
