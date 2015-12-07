@@ -40,6 +40,7 @@ using MonoSecurity::Mono.Security.Protocol.Ntlm;
 using System;
 using System.Collections;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace Mono.Http
 {
@@ -122,14 +123,8 @@ namespace Mono.Http
 
 	class NtlmClient : IAuthenticationModule
 	{
-		static Hashtable cache;
-
-		static NtlmClient () 
-		{
-			cache = new Hashtable ();
-		}
-	
-		public NtlmClient () {}
+		static readonly ConditionalWeakTable<HttpWebRequest, NtlmSession> cache =
+			new ConditionalWeakTable<HttpWebRequest, NtlmSession> ();
 	
 		public Authorization Authenticate (string challenge, WebRequest webRequest, ICredentials credentials) 
 		{
@@ -153,12 +148,7 @@ namespace Mono.Http
 				return null;
 
 			lock (cache) {
-				NtlmSession ds = (NtlmSession) cache [request];
-				if (ds == null) {
-					ds = new NtlmSession ();
-					cache.Add (request, ds);
-				}
-
+				var ds = cache.GetOrCreateValue (request);
 				return ds.Authenticate (header, webRequest, credentials);
 			}
 		}
