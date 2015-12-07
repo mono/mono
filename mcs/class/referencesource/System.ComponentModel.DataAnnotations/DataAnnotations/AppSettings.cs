@@ -14,6 +14,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.ComponentModel.DataAnnotations {
     internal static class AppSettings {
+#if MONO
+        internal static readonly bool DisableRegEx = false;
+#else
         private static volatile bool _settingsInitialized = false;
         private static object _appSettingsLock = new object();
         private static void EnsureSettingsLoaded() {
@@ -44,5 +47,6 @@ namespace System.ComponentModel.DataAnnotations {
                 return _disableRegEx;
             }
         }
+#endif
     }
 }

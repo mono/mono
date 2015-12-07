@@ -61,9 +61,6 @@
         }
 
         private static Regex CreateRegEx() {
-#if MONO
-            return null;
-#else            
             // We only need to create the RegEx if this switch is enabled.
             if (AppSettings.DisableRegEx) {
                 return null;
@@ -87,7 +84,6 @@
             
             // Legacy fallback (without explicit match timeout)
             return new Regex(pattern, options);
-#endif
         }
 
         private static string RemoveExtension(string potentialPhoneNumber) {
