@@ -294,17 +294,17 @@ void GC_init_thread_local(GC_thread p)
 	ABORT("Failed to set thread specific allocation pointers");
     }
     for (i = 1; i < NFREELISTS; ++i) {
-	p -> ptrfree_freelists[i] = (ptr_t)1;
-	p -> normal_freelists[i] = (ptr_t)1;
+	p -> tlfs.ptrfree_freelists[i] = (ptr_t)1;
+	p -> tlfs.normal_freelists[i] = (ptr_t)1;
 #	ifdef GC_GCJ_SUPPORT
-	  p -> gcj_freelists[i] = (ptr_t)1;
+	  p -> tlfs.gcj_freelists[i] = (ptr_t)1;
 #	endif
     }   
     /* Set up the size 0 free lists.	*/
-    p -> ptrfree_freelists[0] = (ptr_t)(&size_zero_object);
-    p -> normal_freelists[0] = (ptr_t)(&size_zero_object);
+    p -> tlfs.ptrfree_freelists[0] = (ptr_t)(&size_zero_object);
+    p -> tlfs.normal_freelists[0] = (ptr_t)(&size_zero_object);
 #   ifdef GC_GCJ_SUPPORT
-        p -> gcj_freelists[0] = (ptr_t)(-1);
+	p -> tlfs.gcj_freelists[0] = (ptr_t)(-1);
 #   endif
 }
 
@@ -320,10 +320,10 @@ void GC_destroy_thread_local(GC_thread p)
 #   ifndef HANDLE_FORK
       GC_ASSERT(GC_getspecific(GC_thread_key) == (void *)p);
 #   endif
-    return_freelists(p -> ptrfree_freelists, GC_aobjfreelist);
-    return_freelists(p -> normal_freelists, GC_objfreelist);
+    return_freelists(p -> tlfs.ptrfree_freelists, GC_aobjfreelist);
+    return_freelists(p -> tlfs.normal_freelists, GC_objfreelist);
 #   ifdef GC_GCJ_SUPPORT
-   	return_freelists(p -> gcj_freelists, GC_gcjobjfreelist);
+	return_freelists(p -> tlfs.gcj_freelists, GC_gcjobjfreelist);
 #   endif
 }
 
@@ -357,7 +357,7 @@ GC_PTR GC_local_malloc(size_t bytes)
 	  GC_ASSERT(tsd == (void *)GC_lookup_thread(pthread_self()));
 	  UNLOCK();
 #	endif
-	my_fl = ((GC_thread)tsd) -> normal_freelists + index;
+	my_fl = ((GC_thread)tsd) -> tlfs.normal_freelists + index;
 	my_entry = *my_fl;
 	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
 	    ptr_t next = obj_link(my_entry);
@@ -384,7 +384,7 @@ GC_PTR GC_local_malloc_atomic(size_t bytes)
     } else {
 	int index = INDEX_FROM_BYTES(bytes);
 	ptr_t * my_fl = ((GC_thread)GC_getspecific(GC_thread_key))
-		        -> ptrfree_freelists + index;
+		        -> tlfs.ptrfree_freelists + index;
 	ptr_t my_entry = *my_fl;
     
 	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
@@ -424,7 +424,7 @@ GC_PTR GC_local_gcj_malloc(size_t bytes,
     } else {
 	int index = INDEX_FROM_BYTES(bytes);
 	ptr_t * my_fl = ((GC_thread)GC_getspecific(GC_thread_key))
-	                -> gcj_freelists + index;
+	                -> tlfs.gcj_freelists + index;
 	ptr_t my_entry = *my_fl;
 	if (EXPECT((word)my_entry >= HBLKSIZE, 1)) {
 	    GC_PTR result = (GC_PTR)my_entry;
@@ -463,7 +463,7 @@ GC_PTR GC_local_gcj_malloc(size_t bytes,
 void * GC_local_gcj_fast_malloc(size_t lw, void * ptr_to_struct_containing_descr)
 {
 	ptr_t * my_fl = ((GC_thread)GC_getspecific(GC_thread_key))
-		-> gcj_freelists + lw;
+		-> tlfs.gcj_freelists + lw;
 	ptr_t my_entry = *my_fl;
 
     GC_ASSERT(GC_gcj_malloc_initialized);
@@ -666,12 +666,12 @@ void GC_mark_thread_local_free_lists(void)
     for (i = 0; i < THREAD_TABLE_SZ; ++i) {
       for (p = GC_threads[i]; 0 != p; p = p -> next) {
 	for (j = 1; j < NFREELISTS; ++j) {
-	  q = p -> ptrfree_freelists[j];
+	  q = p -> tlfs.ptrfree_freelists[j];
 	  if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
-	  q = p -> normal_freelists[j];
+	  q = p -> tlfs.normal_freelists[j];
 	  if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
 #	  ifdef GC_GCJ_SUPPORT
-	    q = p -> gcj_freelists[j];
+	    q = p -> tlfs.gcj_freelists[j];
 	    if ((word)q > HBLKSIZE) GC_set_fl_marks(q);
 #	  endif /* GC_GCJ_SUPPORT */
 	}
@@ -1462,13 +1462,18 @@ void * GC_start_routine_head(void * arg, void *base_addr,
     return me;
 }
 
-int GC_thread_register_foreign (void *base_addr)
+void GC_allow_register_threads (void)
+{
+    /* No-op for GC pre-v7. */
+}
+
+int GC_register_my_thread (struct GC_stack_base *sb)
 {
     struct start_info si = { 0, }; /* stacked for legibility & locking */
     GC_thread me;
 
 #   ifdef DEBUG_THREADS
-        GC_printf1( "GC_thread_register_foreign %p\n", &si );
+        GC_printf1( "GC_register_my_thread %p\n", &si );
 #   endif
 
     si.flags = FOREIGN_THREAD;
@@ -1476,12 +1481,13 @@ int GC_thread_register_foreign (void *base_addr)
     if (!parallel_initialized) GC_init_parallel();
     LOCK();
     if (!GC_thr_initialized) GC_thr_init();
-
+    me = GC_lookup_thread(pthread_self());
     UNLOCK();
+    if (me != NULL)
+	return GC_DUPLICATE;
 
-    me = GC_start_routine_head(&si, base_addr, NULL, NULL);
-
-    return me != NULL;
+    (void)GC_start_routine_head(&si, sb -> mem_base, NULL, NULL);
+    return GC_SUCCESS;
 }
 
 void * GC_start_routine(void * arg)

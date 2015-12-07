@@ -16,6 +16,23 @@
 
 /* We use the allocation lock to protect thread-related data structures. */
 
+#ifdef THREAD_LOCAL_ALLOC
+#   if CPP_WORDSZ == 64 && defined(ALIGN_DOUBLE)
+#	define GRANULARITY 16
+#	define NFREELISTS 49
+#   else
+#	define GRANULARITY 8
+#	define NFREELISTS 65
+#   endif
+    struct thread_local_freelists {
+	ptr_t ptrfree_freelists[NFREELISTS];
+	ptr_t normal_freelists[NFREELISTS];
+#	ifdef GC_GCJ_SUPPORT
+	    ptr_t gcj_freelists[NFREELISTS];
+#	endif
+    };
+#endif
+
 /* The set of all known threads.  We intercept thread creation and 	*/
 /* joins.								*/
 /* Protected by allocation/GC lock.					*/
@@ -60,23 +77,12 @@ typedef struct GC_Thread_Rep {
 				/* reclamation of any data it might 	*/
 				/* reference.				*/
 #   ifdef THREAD_LOCAL_ALLOC
-#	if CPP_WORDSZ == 64 && defined(ALIGN_DOUBLE)
-#	    define GRANULARITY 16
-#	    define NFREELISTS 49
-#	else
-#	    define GRANULARITY 8
-#	    define NFREELISTS 65
-#	endif
 	/* The ith free list corresponds to size i*GRANULARITY */
 #	define INDEX_FROM_BYTES(n) ((ADD_SLOP(n) + GRANULARITY - 1)/GRANULARITY)
 #	define BYTES_FROM_INDEX(i) ((i) * GRANULARITY - EXTRA_BYTES)
 #	define SMALL_ENOUGH(bytes) (ADD_SLOP(bytes) <= \
 				    (NFREELISTS-1)*GRANULARITY)
-	ptr_t ptrfree_freelists[NFREELISTS];
-	ptr_t normal_freelists[NFREELISTS];
-#	ifdef GC_GCJ_SUPPORT
-	  ptr_t gcj_freelists[NFREELISTS];
-#	endif
+	struct thread_local_freelists tlfs;
 		/* Free lists contain either a pointer or a small count */
 		/* reflecting the number of granules allocated at that	*/
 		/* size.						*/
