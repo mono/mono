@@ -255,7 +255,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
@@ -307,7 +307,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
@@ -359,7 +359,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -411,7 +411,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -463,7 +463,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
@@ -511,7 +511,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <ClCompile>
       <AdditionalOptions>/D /NODEFAULTLIB:LIBCD" " %(AdditionalOptions)</AdditionalOptions>
@@ -560,7 +560,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -609,7 +609,7 @@ $(windir)\system32\xcopy /F /Y "$(SolutionDir)..\mono\utils\mono-publib.h" "$(So
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'">
     <PreBuildEvent>
-      <Command>echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
+      <Command>if not exist ..\mono\mini\version.h echo #define FULL_VERSION "Visual Studio built mono" &gt; ..\mono\mini\version.h</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
