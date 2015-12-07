@@ -455,6 +455,7 @@ namespace Mono.ILASM {
 
                         if (methref == null) {
                                 methref = methoddef.MakeVarArgSignature (opt);
+                                methref.AddCallConv (call_conv);
                                 vararg_sig_table [full_signature] = methref;
                         }
 
