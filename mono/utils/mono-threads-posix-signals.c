@@ -113,29 +113,46 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	int old_errno = errno;
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
-
 	MonoThreadInfo *current = mono_thread_info_current ();
 	gboolean ret;
 
 	THREADS_SUSPEND_DEBUG ("SIGNAL HANDLER FOR %p [%p]\n", current, (void*)current->native_handle);
 	if (current->syscall_break_signal) {
-		current->syscall_break_signal = FALSE;
 		THREADS_SUSPEND_DEBUG ("\tsyscall break for %p\n", current);
+
+		current->syscall_break_signal = FALSE;
+
 		mono_threads_notify_initiator_of_abort (current);
+
 		goto done;
 	}
 
 	/* Have we raced with self suspend? */
 	if (!mono_threads_transition_finish_async_suspend (current)) {
-		current->suspend_can_continue = TRUE;
 		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", current);
+
+		current->suspend_can_continue = TRUE;
+
 		goto done;
 	}
 
 	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], context);
 
-	/* thread_state_init_from_sigctx return FALSE if the current thread is detaching and suspend can't continue. */
-	current->suspend_can_continue = ret;
+	/* This thread is doomed, all we can do is give up and let the suspender recover. */
+	if (!ret) {
+		THREADS_SUSPEND_DEBUG ("\tThread is dying, failed to capture state %p\n", current);
+
+		mono_threads_transition_async_suspend_compensation (current);
+
+		current->suspend_can_continue = FALSE;
+
+		/* We're done suspending */
+		mono_threads_notify_initiator_of_suspend (current);
+
+		goto done;
+	}
+
+	current->suspend_can_continue = TRUE;
 
 	/*
 	Block the restart signal.
@@ -143,20 +160,6 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	which might miss the signal and get stuck.
 	*/
 	pthread_sigmask (SIG_BLOCK, &suspend_ack_signal_mask, NULL);
-
-	/* This thread is doomed, all we can do is give up and let the suspender recover. */
-	if (!ret) {
-		THREADS_SUSPEND_DEBUG ("\tThread is dying, failed to capture state %p\n", current);
-		mono_threads_transition_async_suspend_compensation (current);
-
-		/* We're done suspending */
-		mono_threads_notify_initiator_of_suspend (current);
-
-		/* Unblock the restart signal. */
-		pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
-
-		goto done;
-	}
 
 	/* We're done suspending */
 	mono_threads_notify_initiator_of_suspend (current);
