@@ -209,8 +209,11 @@ namespace System.Net {
 			// TODO: can we get this stream before reading the input?
 			if (o_stream == null) {
 				HttpListener listener = context.Listener;
-				bool ign = (listener == null) ? true : listener.IgnoreWriteExceptions;
-				o_stream = new ResponseStream (stream, context.Response, ign);
+				
+				if(listener == null)
+					return new ResponseStream (stream, context.Response, true);
+
+				o_stream = new ResponseStream (stream, context.Response, listener.IgnoreWriteExceptions);
 			}
 			return o_stream;
 		}

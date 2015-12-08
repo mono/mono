@@ -27,9 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using MonoTests.Helpers;
 
@@ -530,6 +532,53 @@ namespace MonoTests.System.Net {
 			context.Response.OutputStream.Close ();
 
 			return clientEndPoint;
+		}
+		
+		[Test]
+		public void HttpClientIsDisconnectedCheckForWriteException()
+		{
+			string uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
+
+			AutoResetEvent exceptionOccuredEvent = new AutoResetEvent (false);
+			HttpListener listener = new HttpListener {
+				IgnoreWriteExceptions = false
+			};
+			listener.Prefixes.Add (uri);
+			listener.Start ();
+			listener.BeginGetContext (result =>
+			{
+				HttpListenerContext context = listener.EndGetContext (result);
+				context.Response.SendChunked = true;
+				context.Request.InputStream.Close ();
+				
+				var bytes = new byte [1024];
+				using(Stream outputStream = context.Response.OutputStream) {
+					try {
+						while (true) 
+							outputStream.Write (bytes, 0, bytes.Length);
+					} catch {
+						exceptionOccuredEvent.Set ();
+					}
+				}
+			}, null);
+
+			Task.Factory.StartNew (() =>
+			{
+				var webRequest = (HttpWebRequest)WebRequest.Create (uri);
+				webRequest.Method = "POST";
+				webRequest.KeepAlive = false;
+				Stream requestStream = webRequest.GetRequestStream ();
+				requestStream.WriteByte (1);
+				requestStream.Close ();
+				using (WebResponse response = webRequest.GetResponse ())
+				using (Stream stream = response.GetResponseStream ()) {
+					byte[] clientBytes = new byte [1024];
+					Assert.IsNotNull (stream, "#01");
+					stream.Read (clientBytes, 0, clientBytes.Length);
+				}
+			});
+
+			Assert.IsTrue (exceptionOccuredEvent.WaitOne (15 * 1000), "#02");
 		}
 	}
 }
