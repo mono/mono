@@ -205,7 +205,7 @@ namespace System.Net {
 			}
 
 			if (String.Compare (Headers ["Expect"], "100-continue", StringComparison.OrdinalIgnoreCase) == 0) {
-				ResponseStream output = context.Connection.GetResponseStream ();
+				ResponseStream output = context.Connection.GetResponseStreamInternal ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);
 			}
 		}
