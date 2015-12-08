@@ -102,17 +102,7 @@ namespace System
 
 		public MethodInfo Method {
 			get {
-				if (method_info != null) {
-					return method_info;
-				} else {
-					if (method != IntPtr.Zero) {
-						if (!method_is_virtual)
-							method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
-						else
-							method_info = GetVirtualMethod_internal ();
-					}
-					return method_info;
-				}
+				return GetMethodImpl ();
 			}
 		}
 
@@ -511,7 +501,17 @@ namespace System
 
 		protected virtual MethodInfo GetMethodImpl ()
 		{
-			return Method;
+			if (method_info != null) {
+				return method_info;
+			} else {
+				if (method != IntPtr.Zero) {
+					if (!method_is_virtual)
+						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+					else
+						method_info = GetVirtualMethod_internal ();
+				}
+				return method_info;
+			}
 		}
 
 		// This is from ISerializable
