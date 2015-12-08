@@ -1439,12 +1439,16 @@ mono_threadpool_ms_resume (void)
 void
 ves_icall_System_Threading_ThreadPool_GetAvailableThreadsNative (gint32 *worker_threads, gint32 *completion_port_threads)
 {
+	ThreadPoolCounter counter;
+
 	if (!worker_threads || !completion_port_threads)
 		return;
 
 	mono_lazy_initialize (&status, initialize);
 
-	*worker_threads = threadpool->limit_worker_max;
+	counter.as_gint64 = COUNTER_READ ();
+
+	*worker_threads = threadpool->limit_worker_max - counter._.active;
 	*completion_port_threads = threadpool->limit_io_max;
 }
 
@@ -1482,8 +1486,8 @@ ves_icall_System_Threading_ThreadPool_SetMinThreadsNative (gint32 worker_threads
 	if (completion_port_threads <= 0 || completion_port_threads > threadpool->limit_io_max)
 		return FALSE;
 
-	threadpool->limit_worker_max = worker_threads;
-	threadpool->limit_io_max = completion_port_threads;
+	threadpool->limit_worker_min = worker_threads;
+	threadpool->limit_io_min = completion_port_threads;
 
 	return TRUE;
 }
