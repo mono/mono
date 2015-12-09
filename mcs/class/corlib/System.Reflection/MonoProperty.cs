@@ -280,23 +280,6 @@ namespace System.Reflection {
 			
 		public override object GetValue (object obj, object[] index)
 		{
-			if (index == null || index.Length == 0) {
-				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
-#if !MONOTOUCH
-				if (cached_getter == null) {
-					if (!DeclaringType.IsValueType) { //FIXME find a way to build an invoke delegate for value types.
-						MethodInfo method = GetGetMethod (true);
-						if (method == null)
-							throw new ArgumentException ("Get Method not found for '" + Name + "'");
-						cached_getter = CreateGetterDelegate (method);
-						return cached_getter (obj);
-					}
-				} else {
-					return cached_getter (obj);
-				}
-#endif
-			}
-
 			return GetValue (obj, BindingFlags.Default, null, index, null);
 		}
 #endif

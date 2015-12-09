@@ -138,6 +138,12 @@ our $ndks =
 						"macosx" => "android-ndk-r9-darwin-x86.tar.bz2",
 						"linux" => "android-ndk-r9-linux-x86.tar.bz2",
 					},
+	"r10e"		=>
+					{
+						"windows" => "android-ndk-r10e-windows-x86.exe",
+						"macosx" => "android-ndk-r10e-darwin-x86_64.bin",
+						"linux" => "android-ndk-r10e-linux-x86.bin",
+					},
 };
 
 our ($HOST_ENV, $TMP, $HOME, $WINZIP);
@@ -241,7 +247,7 @@ if ($ndk)
 		$export = "set";
 	}
 
-	if ($setenv and ($ENV{$SDK_ROOT_ENV} or $ENV{$SDK_ROOT_ENV}))
+	if ($setenv and ($ENV{$SDK_ROOT_ENV} or $ENV{$NDK_ROOT_ENV}))
 	{
 		print "Outputing updated environment:\n";
 		print "\t'$setenv'\n";
@@ -391,6 +397,14 @@ sub DownloadAndUnpackArchive
 		elsif (lc $suffix eq '.bz2')
 		{
 			system("tar", "-xf", $temporary_download_path, "-C", $temporary_unpack_path);
+		}
+		elsif (lc $suffix eq '.bin')
+		{	chmod(0755, $temporary_download_path);
+			system($temporary_download_path, "-o" . $temporary_unpack_path);
+		}
+		elsif (lc $suffix eq '.exe')
+		{	chmod(0755, $temporary_download_path);
+			system($temporary_download_path, "-o" . $temporary_unpack_path);
 		}
 		else
 		{

@@ -11,7 +11,7 @@ CWD="$(pwd)"
 PREFIX="$CWD/builds/android"
 BUILDSCRIPTSDIR=external/buildscripts
 
-perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r9 -env=envsetup.sh && source envsetup.sh
+perl ${BUILDSCRIPTSDIR}/PrepareAndroidSDK.pl -ndk=r10e -env=envsetup.sh && source envsetup.sh
 
 NDK_ROOT=`cd $ANDROID_NDK_ROOT && pwd`
 
@@ -23,10 +23,10 @@ fi
 HOST_ENV=`uname -s`
 case "$HOST_ENV" in
     Darwin)
-        HOST_ENV=darwin-x86
+        HOST_ENV=darwin
         ;;
     Linux)
-        HOST_ENV=linux-x86
+        HOST_ENV=linux
         ;;
     CYGWIN*|*_NT-*)
         HOST_ENV=windows
@@ -39,6 +39,13 @@ esac
 
 PLATFORM_ROOT=$NDK_ROOT/platforms/$ANDROID_PLATFORM/arch-arm
 TOOLCHAIN=$NDK_ROOT/toolchains/$GCC_PREFIX$GCC_VERSION/prebuilt/$HOST_ENV
+
+if [ ! -d $TOOLCHAIN ]; then
+	TOOLCHAIN=${TOOLCHAIN}-x86
+	if [ ! -d $TOOLCHAIN ]; then
+		TOOLCHAIN=${TOOLCHAIN}_64
+	fi
+fi
 
 if [ ! -a $TOOLCHAIN -o ! -a $PLATFORM_ROOT ]; then
 	NDK_NAME=`basename $NDK_ROOT`
