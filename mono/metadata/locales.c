@@ -27,6 +27,7 @@
 #include <mono/metadata/culture-info-tables.h>
 #include <mono/metadata/handle.h>
 #include <mono/metadata/runtime-interface.h>
+#include <mono/metadata/icall-define.h>
 #include <mono/utils/bsearch.h>
 
 #ifndef DISABLE_NORMALIZATION
@@ -763,25 +764,15 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (M
 	return ret;
 }
 
-MonoBoolean
-ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (MonoRegionInfo *this_obj, MonoString *name)
+MONO_ICALL_DEFINE (
+VAL (MonoBoolean, ret),
+ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name,
+	(REF (MonoRegionInfo, this_obj), REF (MonoString, name)),
 {
-	MonoBoolean ret;
-
-	MONO_ICALL_ENTRY ();
-
 	const RegionInfoNameEntry *name_entry;
 	char *name_utf8;
 
-	MONO_HANDLE_ARENA_PUSH (2);
-
-	MONO_HANDLE_TYPE (MonoRegionInfo) *this_obj_handle;
-	MONO_HANDLE_TYPE (MonoString) *name_handle;
-
-	this_obj_handle = MONO_HANDLE_NEW (MonoRegionInfo, this_obj);
-	name_handle = MONO_HANDLE_NEW (MonoString, name);
-
-	name_utf8 = mono_handle_string_to_utf8 (name_handle);
+	name_utf8 = mono_handle_string_to_utf8 (name);
 
 	name_entry = mono_binary_search (name_utf8, region_name_entries, NUM_REGION_ENTRIES, sizeof (RegionInfoNameEntry), region_name_locator);
 
@@ -789,17 +780,9 @@ ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name (M
 		/*g_print ("name_entry (%s) is null\n", name_utf8);*/
 		ret = FALSE;
 	} else {
-		ret = construct_region (this_obj_handle, &region_entries [name_entry->region_entry_index]);
+		ret = construct_region (this_obj, &region_entries [name_entry->region_entry_index]);
 	}
-
-	g_free (name_utf8);
-
-	MONO_HANDLE_ARENA_POP;
-
-	MONO_ICALL_EXIT;
-
-	return ret;
-}
+})
 
 MonoArray*
 ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean neutral, MonoBoolean specific, MonoBoolean installed)
