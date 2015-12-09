@@ -12,6 +12,7 @@
 #include <mono/utils/mono-pp-foreach.h>
 #include <mono/utils/mono-pp-bool.h>
 #include <mono/metadata/handle.h>
+#include <mono/metadata/runtime-interface.h>
 
 /**
    MONO_ICALL_DEFINE(ReturnSpec, fname, ParametersSpec, Body)
@@ -38,12 +39,14 @@
 	MONO_ICALL_IMPL_DECL(ReturnSpec, name, ParametersSpec)		\
 	{								\
 		MONO_ICALL_IMPL_DECLARE_RETURN_LCL(ReturnSpec);		\
+		MONO_ICALL_ENTRY();					\
 		MONO_ICALL_IMPL_DECLARE_PARAMETERS_LCL(ParametersSpec);	\
 		MONO_HANDLE_ARENA_PUSH(MONO_ICALL_IMPL_ARENA_SIZE(ReturnSpec,ParametersSpec)); \
 		MONO_ICALL_IMPL_TAKE_PARAMETERS(ParametersSpec);	\
 		Body ;							\
 		MONO_ICALL_IMPL_RELEASE_RETURN(ReturnSpec);		\
 		MONO_HANDLE_ARENA_POP;					\
+		MONO_ICALL_EXIT;					\
 		MONO_ICALL_IMPL_RETURN(ReturnSpec);			\
 	}
 
