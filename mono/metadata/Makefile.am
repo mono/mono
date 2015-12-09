@@ -131,6 +131,7 @@ common_sources = \
 	filewatcher.h		\
 	gc-internals.h		\
 	icall.c			\
+	icall-define.h		\
 	icall-def.h		\
 	image.c			\
 	image-internals.h	\
