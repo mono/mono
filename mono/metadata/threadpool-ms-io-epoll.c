@@ -10,90 +10,117 @@
 
 #define EPOLL_NEVENTS 128
 
-static gint epoll_fd;
-static struct epoll_event *epoll_events;
+typedef struct {
+	gint fd;
+} ThreadPoolIOBackendEpoll;
 
-static gboolean
-epoll_init (gint wakeup_pipe_fd)
+static gpointer
+epoll_init (gpointer wakeup_pipe_handle)
 {
+	ThreadPoolIOBackendEpoll *backend_epoll;
+	gint wakeup_pipe_fd;
 	struct epoll_event event;
 
+	backend_epoll = g_new0 (ThreadPoolIOBackendEpoll, 1);
+	g_assert (backend_epoll);
+
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_IO_THREADPOOL,
+		"[%p][epoll] init", backend_epoll);
+
 #ifdef EPOOL_CLOEXEC
-	epoll_fd = epoll_create1 (EPOLL_CLOEXEC);
+	backend_epoll->fd = epoll_create1 (EPOLL_CLOEXEC);
 #else
-	epoll_fd = epoll_create (256);
-	fcntl (epoll_fd, F_SETFD, FD_CLOEXEC);
+	backend_epoll->fd = epoll_create (256);
+	fcntl (backend_epoll->fd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	if (epoll_fd == -1) {
+	if (backend_epoll->fd == -1) {
 #ifdef EPOOL_CLOEXEC
-		g_error ("epoll_init: epoll (EPOLL_CLOEXEC) failed, error (%d) %s\n", errno, g_strerror (errno));
+		g_error ("[%p][epoll] init: epoll_create1 () failed, error (%d) %s\n", backend_epoll, errno, g_strerror (errno));
 #else
-		g_error ("epoll_init: epoll (256) failed, error (%d) %s\n", errno, g_strerror (errno));
+		g_error ("[%p][epoll] init: epoll_create () failed, error (%d) %s\n", backend_epoll, errno, g_strerror (errno));
 #endif
-		return FALSE;
 	}
+
+	wakeup_pipe_fd = GPOINTER_TO_INT (wakeup_pipe_handle);
+	g_assert (wakeup_pipe_fd >= 0);
 
 	event.events = EPOLLIN;
 	event.data.fd = wakeup_pipe_fd;
-	if (epoll_ctl (epoll_fd, EPOLL_CTL_ADD, event.data.fd, &event) == -1) {
-		g_error ("epoll_init: epoll_ctl () failed, error (%d) %s", errno, g_strerror (errno));
-		close (epoll_fd);
-		return FALSE;
-	}
+	if (epoll_ctl (backend_epoll->fd, EPOLL_CTL_ADD, event.data.fd, &event) == -1)
+		g_error ("[%p][epoll] init: epoll_ctl () failed, error (%d) %s", backend_epoll, errno, g_strerror (errno));
 
-	epoll_events = g_new0 (struct epoll_event, EPOLL_NEVENTS);
-
-	return TRUE;
+	return backend_epoll;
 }
 
 static void
-epoll_cleanup (void)
+epoll_cleanup (gpointer backend)
 {
-	g_free (epoll_events);
-	close (epoll_fd);
+	ThreadPoolIOBackendEpoll *backend_epoll;
+
+	backend_epoll = backend;
+	g_assert (backend_epoll);
+
+	close (backend_epoll->fd);
+	g_free (backend_epoll);
 }
 
 static void
-epoll_register_fd (gint fd, gint events, gboolean is_new)
+epoll_add_handle (gpointer backend, gpointer handle, gint16 operations, gboolean is_new)
 {
+	ThreadPoolIOBackendEpoll *backend_epoll;
+	gint fd;
 	struct epoll_event event;
 
-#ifndef EPOLLONESHOT
-/* it was only defined on android in May 2013 */
-#define EPOLLONESHOT 0x40000000
-#endif
+	backend_epoll = backend;
+	g_assert (backend_epoll);
+
+	fd = GPOINTER_TO_INT (handle);
+	g_assert (fd >= 0);
 
 	event.data.fd = fd;
-	event.events = EPOLLONESHOT;
-	if ((events & EVENT_IN) != 0)
+	event.events = 0;
+	if (operations & OPERATION_READ)
 		event.events |= EPOLLIN;
-	if ((events & EVENT_OUT) != 0)
+	if (operations & OPERATION_WRITE)
 		event.events |= EPOLLOUT;
 
-	if (epoll_ctl (epoll_fd, is_new ? EPOLL_CTL_ADD : EPOLL_CTL_MOD, event.data.fd, &event) == -1)
-		g_error ("epoll_register_fd: epoll_ctl(%s) failed, error (%d) %s", is_new ? "EPOLL_CTL_ADD" : "EPOLL_CTL_MOD", errno, g_strerror (errno));
+	if (epoll_ctl (backend_epoll->fd, is_new ? EPOLL_CTL_ADD : EPOLL_CTL_MOD, event.data.fd, &event) == -1)
+		g_error ("[%p][epoll] add: epoll_ctl(%s,%d) failed, error (%d) %s", backend_epoll, is_new ? "add" : "mod", fd, errno, g_strerror (errno));
 }
 
 static void
-epoll_remove_fd (gint fd)
+epoll_remove_handle (gpointer backend, gpointer handle)
 {
-	if (epoll_ctl (epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
-			g_error ("epoll_remove_fd: epoll_ctl (EPOLL_CTL_DEL) failed, error (%d) %s", errno, g_strerror (errno));
+	ThreadPoolIOBackendEpoll *backend_epoll;
+	gint fd;
+
+	backend_epoll = backend;
+	g_assert (backend_epoll);
+
+	fd = GPOINTER_TO_INT (handle);
+	g_assert (fd >= 0);
+
+	if (epoll_ctl (backend_epoll->fd, EPOLL_CTL_DEL, fd, NULL) == -1)
+		g_error ("[%p][epoll] remove: epoll_ctl(del,%d) failed, error (%d) %s", backend_epoll, fd, errno, g_strerror (errno));
 }
 
-static gint
-epoll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gpointer user_data)
+static void
+epoll_poll (gpointer backend, ThreadPoolIOBackendEvent *events, gint nevents)
 {
+	ThreadPoolIOBackendEpoll *backend_epoll;
 	gint i, ready;
+	struct epoll_event epoll_events [EPOLL_NEVENTS];
 
-	memset (epoll_events, 0, sizeof (struct epoll_event) * EPOLL_NEVENTS);
+	backend_epoll = backend;
+	g_assert (backend_epoll);
 
-	mono_gc_set_skip_thread (TRUE);
+	g_assert (events);
+	g_assert (nevents > 0);
 
-	ready = epoll_wait (epoll_fd, epoll_events, EPOLL_NEVENTS, -1);
+	memset (epoll_events, 0, sizeof (epoll_events));
 
-	mono_gc_set_skip_thread (FALSE);
+	ready = epoll_wait (backend_epoll->fd, epoll_events, MIN (EPOLL_NEVENTS, nevents), -1);
 
 	if (ready == -1) {
 		switch (errno) {
@@ -102,35 +129,37 @@ epoll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), g
 			ready = 0;
 			break;
 		default:
-			g_error ("epoll_event_wait: epoll_wait () failed, error (%d) %s", errno, g_strerror (errno));
-			break;
+			g_error ("[%p][epoll] poll: epoll_wait () failed, error (%d) %s", backend_epoll, errno, g_strerror (errno));
 		}
 	}
 
-	if (ready == -1)
-		return -1;
+	if (ready == 0)
+		return;
 
-	for (i = 0; i < ready; ++i) {
-		gint fd, events = 0;
+	g_assert (ready > 0);
 
-		fd = epoll_events [i].data.fd;
-		if (epoll_events [i].events & (EPOLLIN | EPOLLERR | EPOLLHUP))
-			events |= EVENT_IN;
-		if (epoll_events [i].events & (EPOLLOUT | EPOLLERR | EPOLLHUP))
-			events |= EVENT_OUT;
+	for (i = 0; i < MIN (ready, nevents); ++i) {
+		struct epoll_event e = epoll_events [i];
 
-		callback (fd, events, user_data);
+		events [i].handle = GINT_TO_POINTER (e.data.fd);
+		if (e.events & (EPOLLERR | EPOLLHUP)) {
+			events [i].events = EVENT_IN | EVENT_OUT | EVENT_ERROR;
+		} else {
+			events [i].events = 0;
+			if (e.events & EPOLLIN)
+				events [i].events |= EVENT_IN;
+			if (e.events & EPOLLOUT)
+				events [i].events |= EVENT_OUT;
+		}
 	}
-
-	return 0;
 }
 
 static ThreadPoolIOBackend backend_epoll = {
 	.init = epoll_init,
 	.cleanup = epoll_cleanup,
-	.register_fd = epoll_register_fd,
-	.remove_fd = epoll_remove_fd,
-	.event_wait = epoll_event_wait,
+	.add_handle = epoll_add_handle,
+	.remove_handle = epoll_remove_handle,
+	.poll = epoll_poll,
 };
 
 #endif

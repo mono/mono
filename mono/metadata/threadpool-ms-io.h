@@ -5,21 +5,22 @@
 #include <glib.h>
 
 #include <mono/metadata/object-internals.h>
-#include <mono/metadata/socket-io.h>
 
-typedef struct _MonoIOSelectorJob MonoIOSelectorJob;
+typedef struct _ThreadPoolIOBackendEvent ThreadPoolIOBackendEvent;
 
-void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job);
-
-void
-ves_icall_System_IOSelector_Remove (gpointer handle);
+gpointer
+ves_icall_System_IOSelector_BackendInitialize (gpointer wakeup_pipe_handle);
 
 void
-mono_threadpool_ms_io_remove_socket (int fd);
+ves_icall_System_IOSelector_BackendCleanup (gpointer backend);
+
 void
-mono_threadpool_ms_io_remove_domain_jobs (MonoDomain *domain);
+ves_icall_System_IOSelector_BackendAddHandle (gpointer backend, gpointer handle, gint32 operations, MonoBoolean is_new);
+
 void
-mono_threadpool_ms_io_cleanup (void);
+ves_icall_System_IOSelector_BackendRemoveHandle (gpointer backend, gpointer handle);
+
+void
+ves_icall_System_IOSelector_BackendPoll (gpointer backend, MonoArray *events_array);
 
 #endif /* _MONO_THREADPOOL_MS_IO_H_ */

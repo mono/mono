@@ -72,6 +72,7 @@ namespace System.Net.Sockets {
 				}
 			}
 
+			IOSelector.Remove (handle);
 			Socket.Close_internal (handle, out error);
 
 			return error == 0;

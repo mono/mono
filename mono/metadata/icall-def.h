@@ -368,8 +368,11 @@ ICALL_TYPE(IOPATH, "System.IO.Path", IOPATH_1)
 ICALL(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path)
 
 ICALL_TYPE(IOSELECTOR, "System.IOSelector", IOSELECTOR_1)
-ICALL(IOSELECTOR_1, "Add", ves_icall_System_IOSelector_Add)
-ICALL(IOSELECTOR_2, "Remove", ves_icall_System_IOSelector_Remove)
+ICALL(IOSELECTOR_1, "BackendAddHandle", ves_icall_System_IOSelector_BackendAddHandle)
+ICALL(IOSELECTOR_2, "BackendCleanup", ves_icall_System_IOSelector_BackendCleanup)
+ICALL(IOSELECTOR_3, "BackendInitialize", ves_icall_System_IOSelector_BackendInitialize)
+ICALL(IOSELECTOR_4, "BackendPoll", ves_icall_System_IOSelector_BackendPoll)
+ICALL(IOSELECTOR_5, "BackendRemoveHandle", ves_icall_System_IOSelector_BackendRemoveHandle)
 
 ICALL_TYPE(MATH, "System.Math", MATH_19)
 ICALL(MATH_19, "Abs(double)", ves_icall_System_Math_Abs_double)
