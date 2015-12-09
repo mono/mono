@@ -145,8 +145,9 @@ namespace System.Security.Cryptography.X509Certificates {
 		// algorithm used to sign the certificate).
 		public virtual byte[] GetCertHash () 
 		{
+			X509Helper.ThrowIfContextInvalid (impl);
 			// we'll hash the cert only once and only if required
-			if (cachedCertificateHash == null && X509Helper.IsValid (impl))
+			if (cachedCertificateHash == null)
 				cachedCertificateHash = impl.GetCertHash ();
 			return cachedCertificateHash;
 		}

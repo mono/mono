@@ -229,7 +229,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			X509Helper.ThrowIfContextInvalid (impl);
+			if (!X509Helper.IsValid (impl))
+				throw new NullReferenceException ();
 			// will throw a NRE if info is null (just like MS implementation)
 			info.AddValue ("RawData", impl.GetRawCertData ());
 		}
@@ -237,12 +238,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		[ComVisible (false)]
 		public virtual void Reset ()
 		{
-#if MONOTOUCH || XAMMAC
 			if (impl != null) {
 				impl.Dispose ();
 				impl = null;
 			}
-#endif
 
 			issuer_name = null;
 			subject_name = null;
