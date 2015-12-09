@@ -751,6 +751,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			{
 				Error(String.Format("[Fail] {0}", ret));
 			}
+			return;
 		}
 
 		// on Windows, we have to pipe the output of a
