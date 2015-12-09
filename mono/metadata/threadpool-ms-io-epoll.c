@@ -89,11 +89,15 @@ epoll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), g
 
 	memset (epoll_events, 0, sizeof (struct epoll_event) * EPOLL_NEVENTS);
 
+	MONO_PREPARE_BLOCKING;
+
 	mono_gc_set_skip_thread (TRUE);
 
 	ready = epoll_wait (epoll_fd, epoll_events, EPOLL_NEVENTS, -1);
 
 	mono_gc_set_skip_thread (FALSE);
+
+	MONO_FINISH_BLOCKING;
 
 	if (ready == -1) {
 		switch (errno) {

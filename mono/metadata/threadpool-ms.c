@@ -485,6 +485,8 @@ worker_park (void)
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] current worker parking", mono_native_thread_id_get ());
 
+	MONO_PREPARE_BLOCKING;
+
 	mono_gc_set_skip_thread (TRUE);
 
 	mono_coop_mutex_lock (&threadpool->active_threads_lock);
@@ -521,6 +523,8 @@ done:
 	mono_coop_mutex_unlock (&threadpool->active_threads_lock);
 
 	mono_gc_set_skip_thread (FALSE);
+
+	MONO_FINISH_BLOCKING;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] current worker unparking, timeout? %s", mono_native_thread_id_get (), timeout ? "yes" : "no");
 
@@ -833,9 +837,8 @@ monitor_thread (void)
 
 		g_assert (monitor_status != MONITOR_STATUS_NOT_RUNNING);
 
-		mono_gc_set_skip_thread (TRUE);
-
 		do {
+			gint res;
 			guint32 ts;
 			gboolean alerted = FALSE;
 
@@ -843,17 +846,25 @@ monitor_thread (void)
 				break;
 
 			ts = mono_msec_ticks ();
-			if (mono_thread_info_sleep (interval_left, &alerted) == 0)
-				break;
-			interval_left -= mono_msec_ticks () - ts;
+
+			MONO_PREPARE_BLOCKING;
+
+			mono_gc_set_skip_thread (TRUE);
+
+			res = mono_thread_info_sleep (interval_left, &alerted);
 
 			mono_gc_set_skip_thread (FALSE);
+
+			MONO_FINISH_BLOCKING;
+
+			if (res == 0)
+				break;
+
+			interval_left -= mono_msec_ticks () - ts;
+
 			if ((current_thread->state & (ThreadState_StopRequested | ThreadState_SuspendRequested)) != 0)
 				mono_thread_interruption_checkpoint ();
-			mono_gc_set_skip_thread (TRUE);
 		} while (interval_left > 0 && ++awake < 10);
-
-		mono_gc_set_skip_thread (FALSE);
 
 		if (threadpool->suspended)
 			continue;

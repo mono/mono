@@ -17,8 +17,6 @@
 #include <errno.h>
 #include <signal.h>
 
-#include "mono-threads-posix-signals.h"
-
 #if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 #define DEFAULT_SUSPEND_SIGNAL SIGXFSZ
 #else
@@ -37,14 +35,14 @@ static sigset_t suspend_ack_signal_mask;
 extern int mono_gc_get_suspend_signal (void);
 
 static int
-signal_search_alternative (int min_signal)
+signal_search_alternative (void)
 {
 #if !defined (SIGRTMIN)
 	g_error ("signal search only works with RTMIN");
 #else
 	int i;
 	/* we try to avoid SIGRTMIN and any one that might have been set already, see bug #75387 */
-	for (i = MAX (min_signal, SIGRTMIN) + 1; i < SIGRTMAX; ++i) {
+	for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
 		struct sigaction sinfo;
 		sigaction (i, NULL, &sinfo);
 		if (sinfo.sa_handler == SIG_DFL && (void*)sinfo.sa_sigaction == (void*)SIG_DFL) {
@@ -75,61 +73,20 @@ signal_add_handler (int signo, gpointer handler, int flags)
 }
 
 static int
-suspend_signal_get (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGUNUSED;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR1
-	return SIGUSR1;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int suspend_signum = -1;
-	if (suspend_signum == -1)
-		suspend_signum = signal_search_alternative (-1);
-	return suspend_signum;
-#endif /* SIGRTMIN */
-}
-
-static int
-restart_signal_get (void)
-{
-#if defined(PLATFORM_ANDROID)
-	return SIGTTOU;
-#elif !defined (SIGRTMIN)
-#ifdef SIGUSR2
-	return SIGUSR2;
-#else
-	return -1;
-#endif /* SIGUSR1 */
-#else
-	static int resume_signum = -1;
-	if (resume_signum == -1)
-		resume_signum = signal_search_alternative (suspend_signal_get () + 1);
-	return resume_signum;
-#endif /* SIGRTMIN */
-}
-
-
-static int
 abort_signal_get (void)
 {
 #if defined(PLATFORM_ANDROID)
 	return SIGTTIN;
-#elif !defined (SIGRTMIN)
-#ifdef SIGTTIN
+#elif defined (SIGRTMIN)
+	static int abort_signum = -1;
+	if (abort_signum == -1)
+		abort_signum = signal_search_alternative ();
+	return abort_signum;
+#elif defined (SIGTTIN)
 	return SIGTTIN;
 #else
 	return -1;
-#endif /* SIGRTMIN */
-#else
-	static int abort_signum = -1;
-	if (abort_signum == -1)
-		abort_signum = signal_search_alternative (restart_signal_get () + 1);
-	return abort_signum;
-#endif /* SIGRTMIN */
+#endif
 }
 
 static void
@@ -156,29 +113,46 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	int old_errno = errno;
 	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
-
 	MonoThreadInfo *current = mono_thread_info_current ();
 	gboolean ret;
 
 	THREADS_SUSPEND_DEBUG ("SIGNAL HANDLER FOR %p [%p]\n", current, (void*)current->native_handle);
 	if (current->syscall_break_signal) {
-		current->syscall_break_signal = FALSE;
 		THREADS_SUSPEND_DEBUG ("\tsyscall break for %p\n", current);
+
+		current->syscall_break_signal = FALSE;
+
 		mono_threads_notify_initiator_of_abort (current);
+
 		goto done;
 	}
 
 	/* Have we raced with self suspend? */
 	if (!mono_threads_transition_finish_async_suspend (current)) {
-		current->suspend_can_continue = TRUE;
 		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", current);
+
+		current->suspend_can_continue = TRUE;
+
 		goto done;
 	}
 
 	ret = mono_threads_get_runtime_callbacks ()->thread_state_init_from_sigctx (&current->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], context);
 
-	/* thread_state_init_from_sigctx return FALSE if the current thread is detaching and suspend can't continue. */
-	current->suspend_can_continue = ret;
+	/* This thread is doomed, all we can do is give up and let the suspender recover. */
+	if (!ret) {
+		THREADS_SUSPEND_DEBUG ("\tThread is dying, failed to capture state %p\n", current);
+
+		mono_threads_transition_async_suspend_compensation (current);
+
+		current->suspend_can_continue = FALSE;
+
+		/* We're done suspending */
+		mono_threads_notify_initiator_of_suspend (current);
+
+		goto done;
+	}
+
+	current->suspend_can_continue = TRUE;
 
 	/*
 	Block the restart signal.
@@ -186,20 +160,6 @@ suspend_signal_handler (int _dummy, siginfo_t *info, void *context)
 	which might miss the signal and get stuck.
 	*/
 	pthread_sigmask (SIG_BLOCK, &suspend_ack_signal_mask, NULL);
-
-	/* This thread is doomed, all we can do is give up and let the suspender recover. */
-	if (!ret) {
-		THREADS_SUSPEND_DEBUG ("\tThread is dying, failed to capture state %p\n", current);
-		mono_threads_transition_async_suspend_compensation (current);
-
-		/* We're done suspending */
-		mono_threads_notify_initiator_of_suspend (current);
-
-		/* Unblock the restart signal. */
-		pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
-
-		goto done;
-	}
 
 	/* We're done suspending */
 	mono_threads_notify_initiator_of_suspend (current);
@@ -253,18 +213,11 @@ mono_threads_posix_init_signals (MonoThreadPosixInitSignals signals)
 
 	switch (signals) {
 	case MONO_THREADS_POSIX_INIT_SIGNALS_SUSPEND_RESTART: {
-		if (mono_thread_info_unified_management_enabled ()) {
-			suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
-			restart_signal_num = DEFAULT_RESTART_SIGNAL;
-		} else {
-			suspend_signal_num = suspend_signal_get ();
-			restart_signal_num = restart_signal_get ();
-		}
+		suspend_signal_num = DEFAULT_SUSPEND_SIGNAL;
+		restart_signal_num = DEFAULT_RESTART_SIGNAL;
 
 		sigfillset (&suspend_signal_mask);
 		sigdelset (&suspend_signal_mask, restart_signal_num);
-		if (!mono_thread_info_unified_management_enabled ())
-			sigdelset (&suspend_signal_mask, mono_gc_get_suspend_signal ());
 
 		sigemptyset (&suspend_ack_signal_mask);
 		sigaddset (&suspend_ack_signal_mask, restart_signal_num);
@@ -309,6 +262,26 @@ gint
 mono_threads_posix_get_abort_signal (void)
 {
 	return abort_signal_num;
+}
+
+#else /* defined(USE_POSIX_BACKEND) */
+
+gint
+mono_threads_posix_get_suspend_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_posix_get_restart_signal (void)
+{
+	return -1;
+}
+
+gint
+mono_threads_posix_get_abort_signal (void)
+{
+	return -1;
 }
 
 #endif /* defined(USE_POSIX_BACKEND) */

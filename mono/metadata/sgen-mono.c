@@ -36,6 +36,7 @@
 #include "metadata/gc-internals.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
+#include "utils/mono-threads.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -188,6 +189,18 @@ void
 mono_gc_wbarrier_value_copy_bitmap (gpointer _dest, gpointer _src, int size, unsigned bitmap)
 {
 	sgen_wbarrier_value_copy_bitmap (_dest, _src, size, bitmap);
+}
+
+int
+mono_gc_get_suspend_signal (void)
+{
+	return mono_threads_posix_get_suspend_signal ();
+}
+
+int
+mono_gc_get_restart_signal (void)
+{
+	return mono_threads_posix_get_restart_signal ();
 }
 
 static MonoMethod *write_barrier_conc_method;
@@ -2344,7 +2357,7 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 
 	FOREACH_THREAD (info) {
 		int skip_reason = 0;
-		void *aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
+		void *aligned_stack_start;
 
 		if (info->client_info.skip) {
 			SGEN_LOG (3, "Skipping dead thread %p, range: %p-%p, size: %zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start);
@@ -2361,6 +2374,11 @@ sgen_client_scan_thread_data (void *start_nursery, void *end_nursery, gboolean p
 
 		if (skip_reason)
 			continue;
+
+		g_assert (info->client_info.stack_start);
+		g_assert (info->client_info.stack_end);
+
+		aligned_stack_start = (void*)(mword) ALIGN_TO ((mword)info->client_info.stack_start, SIZEOF_VOID_P);
 
 		g_assert (info->client_info.suspend_done);
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %zd, pinned=%zd", info, info->client_info.stack_start, info->client_info.stack_end, (char*)info->client_info.stack_end - (char*)info->client_info.stack_start, sgen_get_pinned_count ());
@@ -2863,13 +2881,6 @@ sgen_client_init (void)
 		mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, tls_offset);
 	}
 #endif
-
-	/*
-	 * This needs to happen before any internal allocations because
-	 * it inits the small id which is required for hazard pointer
-	 * operations.
-	 */
-	sgen_os_init ();
 
 	mono_gc_register_thread (&dummy);
 }
