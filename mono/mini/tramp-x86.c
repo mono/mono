@@ -789,6 +789,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	/* Argument area */
 	framesize += sizeof (mgreg_t);
 
+	framesize = ALIGN_TO (framesize, 8);
 	ctx_offset = framesize;
 	framesize += sizeof (MonoContext);
 
