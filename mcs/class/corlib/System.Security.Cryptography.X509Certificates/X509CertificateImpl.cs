@@ -35,6 +35,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract X509CertificateImpl Clone ();
 
+		public abstract string GetSubjectSummary ();
+
 		public abstract string GetIssuerName (bool legacyV1Mode);
 
 		public abstract string GetSubjectName (bool legacyV1Mode);
@@ -46,6 +48,13 @@ namespace System.Security.Cryptography.X509Certificates
 		public abstract DateTime GetEffectiveDateString ();
 
 		public abstract DateTime GetExpirationDateString ();
+
+		public override int GetHashCode ()
+		{
+			return ObjectGetHashCode ();
+		}
+
+		protected abstract int ObjectGetHashCode ();
 
 		public abstract bool Equals (X509CertificateImpl other, out bool result);
 
@@ -61,28 +70,32 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract string ToString (bool full);
 
-		public static bool Equals (X509CertificateImpl first, X509CertificateImpl second)
+		public override bool Equals (object obj)
 		{
-			if (!first.IsValid || !second.IsValid)
+			var other = obj as X509CertificateImpl;
+			if (other == null)
+				return false;
+
+			if (!IsValid || !other.IsValid)
 				return false;
 
 			bool result;
-			if (first.Equals (second, out result))
+			if (Equals (other, out result))
 				return result;
 
-			var firstRaw = first.GetRawCertData ();
-			var secondRaw = second.GetRawCertData ();
+			var ourRaw = GetRawCertData ();
+			var theirRaw = other.GetRawCertData ();
 
-			if (firstRaw == null)
-				return secondRaw == null;
-			else if (secondRaw == null)
+			if (ourRaw == null)
+				return theirRaw == null;
+			else if (theirRaw == null)
 				return false;
 
-			if (firstRaw.Length != secondRaw.Length)
+			if (ourRaw.Length != theirRaw.Length)
 				return false;
 
-			for (int i = 0; i < firstRaw.Length; i++) {
-				if (firstRaw [i] != secondRaw [i])
+			for (int i = 0; i < ourRaw.Length; i++) {
+				if (ourRaw [i] != theirRaw [i])
 					return false;
 			}
 

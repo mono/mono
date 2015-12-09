@@ -187,16 +187,12 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (!X509Helper.IsValid (impl))
 				return 0;
-			// the cert hash may not be (yet) calculated
-			if (cachedCertificateHash == null)
-				GetCertHash();
-		
 			// return the integer of the first 4 bytes of the cert hash
 			if ((cachedCertificateHash != null) && (cachedCertificateHash.Length >= 4))
 				return ((cachedCertificateHash[0] << 24) |(cachedCertificateHash[1] << 16) |
 					(cachedCertificateHash[2] << 8) | cachedCertificateHash[3]);
 			else
-				return 0;
+				return impl.GetHashCode ();
 		}
 
 		[Obsolete ("Use the Issuer property.")]
