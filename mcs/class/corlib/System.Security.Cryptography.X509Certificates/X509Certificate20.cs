@@ -42,7 +42,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
 	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
-	public partial class X509Certificate : IDeserializationCallback, ISerializable {
+	public partial class X509Certificate : IDeserializationCallback, ISerializable, IDisposable {
 		private string issuer_name;
 		private string subject_name;
 
@@ -291,6 +291,17 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			// will throw a NRE if info is null (just like MS implementation)
 			info.AddValue ("RawData", x509.RawData);
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Reset ();
 		}
 
 		[ComVisible (false)]
