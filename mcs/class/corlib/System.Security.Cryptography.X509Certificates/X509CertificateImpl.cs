@@ -33,6 +33,10 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		public abstract IntPtr Handle {
+			get;
+		}
+
 		public abstract X509CertificateImpl Clone ();
 
 		public abstract string GetSubjectSummary ();

@@ -130,7 +130,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		[ComVisible (false)]
 		public IntPtr Handle {
-			get { return IntPtr.Zero; }
+			get {
+				if (X509Helper.IsValid (impl))
+					return impl.Handle;
+				return IntPtr.Zero;
+			}
 		}
 
 

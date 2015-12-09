@@ -47,6 +47,10 @@ namespace System.Security.Cryptography.X509Certificates
 			get { return x509 != null; }
 		}
 
+		public override IntPtr Handle {
+			get { return IntPtr.Zero; }
+		}
+
 		void ThrowIfContextInvalid ()
 		{
 			if (x509 == null)
