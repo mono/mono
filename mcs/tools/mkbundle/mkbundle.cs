@@ -495,11 +495,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 				if (static_link) {
 					compilerArgs.Add("/MT");
-					monoFile = monoPath + @"\lib\mono-2.0.lib";
+					monoFile = LocateFile (monoPath + @"\lib\mono-2.0.lib");
 				}
 				else {
 					compilerArgs.Add("/MD");
-					monoFile = monoPath + @"\lib\mono-2.0.dll";
+					monoFile = LocateFile (monoPath + @"\lib\mono-2.0.dll");
 				}
 
 				compilerArgs.Add(temp_c);
@@ -834,5 +834,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Console.WriteLine("{0} = {1} (default)", name, val);
 		}
 		return val;
+	}
+
+	static string LocateFile(string default_path)
+	{
+		var override_path = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(default_path));
+		if (File.Exists(override_path))
+			return override_path;
+		else if (File.Exists(default_path))
+			return default_path;
+		else
+			throw new FileNotFoundException(default_path);
 	}
 }
