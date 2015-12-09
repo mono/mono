@@ -3,9 +3,11 @@
 //
 // Authors:
 //  Zoltan Varga (vargaz@gmail.com)
+//  Aleksey Kliger (aleksey@xamarin.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2015 Xamarin, Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -291,6 +293,35 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+		}
+
+		class GenericBase<T,H> {
+			public virtual void f2 () { }
+		}
+
+		class GenericMid<T, U> : GenericBase<T, Action<U>> {
+			public virtual T f1 () { return default (T); }
+		}
+
+		class GenericChild<T> : GenericMid<T, int> {
+			public override T f1 () { return default (T); }
+			public override void f2 () { }
+		}
+
+		[Test]
+		public void GetBaseDefinition_OpenConstructedBaseType () // 36305
+		{
+			var t = typeof (GenericChild<string>);
+
+			var mi1 = t.GetMethod ("f1");
+			var mi1_base = mi1.GetBaseDefinition ();
+
+			Assert.AreEqual (typeof (GenericMid<string, int>), mi1_base.DeclaringType, "#1");
+
+			var mi2 = t.GetMethod ("f2");
+			var mi2_base = mi2.GetBaseDefinition ();
+
+			Assert.AreEqual (typeof (GenericBase<string, Action<int>>), mi2_base.DeclaringType, "#2");
 		}
 
 		class TestInheritedMethodA {
