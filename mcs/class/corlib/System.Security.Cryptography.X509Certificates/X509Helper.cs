@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Text;
 using System.Runtime.InteropServices;
 #if !NET_2_1
 using System.Security.Permissions;
@@ -107,7 +108,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 		}
 
-		static MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
+		internal static MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
 		{
 			var pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
 			if (pfx.Certificates.Count == 0) {
@@ -130,6 +131,7 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
+#if !MONOTOUCH && !XAMMAC
 		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			MX.X509Certificate x509;
@@ -159,6 +161,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 			return new X509CertificateImplMono (x509);
 		}
+#endif
 
 		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
 		{
@@ -192,6 +195,20 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 
 			return true;
+		}
+
+		// almost every byte[] returning function has a string equivalent
+		// sadly the BitConverter insert dash between bytes :-(
+		public static string ToHexString (byte[] data)
+		{
+			if (data != null) {
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < data.Length; i++)
+					sb.Append (data[i].ToString ("X2"));
+				return sb.ToString ();
+			}
+			else
+				return null;
 		}
 	}
 }

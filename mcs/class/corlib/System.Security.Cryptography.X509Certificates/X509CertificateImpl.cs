@@ -35,9 +35,9 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract X509CertificateImpl Clone ();
 
-		public abstract string GetIssuerName ();
+		public abstract string GetIssuerName (bool legacyV1Mode);
 
-		public abstract string GetSubjectName ();
+		public abstract string GetSubjectName (bool legacyV1Mode);
 
 		public abstract byte[] GetRawCertData ();
 
@@ -58,6 +58,36 @@ namespace System.Security.Cryptography.X509Certificates
 		public abstract byte[] GetSerialNumber ();
 
 		public abstract byte[] Export (X509ContentType contentType, byte[] password);
+
+		public abstract string ToString (bool full);
+
+		public static bool Equals (X509CertificateImpl first, X509CertificateImpl second)
+		{
+			if (!first.IsValid || !second.IsValid)
+				return false;
+
+			bool result;
+			if (first.Equals (second, out result))
+				return result;
+
+			var firstRaw = first.GetRawCertData ();
+			var secondRaw = second.GetRawCertData ();
+
+			if (firstRaw == null)
+				return secondRaw == null;
+			else if (secondRaw == null)
+				return false;
+
+			if (firstRaw.Length != secondRaw.Length)
+				return false;
+
+			for (int i = 0; i < firstRaw.Length; i++) {
+				if (firstRaw [i] != secondRaw [i])
+					return false;
+			}
+
+			return true;
+		}
 
 		public void Dispose ()
 		{

@@ -58,20 +58,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		private bool hideDates;
 		private byte[] cachedCertificateHash;
 	
-		// almost every byte[] returning function has a string equivalent
-		// sadly the BitConverter insert dash between bytes :-(
-		private string tostr (byte[] data) 
-		{
-			if (data != null) {
-				StringBuilder sb = new StringBuilder ();
-				for (int i = 0; i < data.Length; i++)
-					sb.Append (data[i].ToString ("X2"));
-				return sb.ToString ();
-			}
-			else
-				return null;
-		}
-	
 		// static methods
 	
 		public static X509Certificate CreateFromCertFile (string filename) 
@@ -149,7 +135,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 				}
 
-				return impl.Equals (other.impl);
+				return X509CertificateImpl.Equals (impl, other.impl);
 			}
 		}
 
@@ -168,7 +154,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual string GetCertHashString () 
 		{
 			// must call GetCertHash (not variable) or optimization wont work
-			return tostr (GetCertHash ());
+			return X509Helper.ToHexString (GetCertHash ());
 		}
 	
 		// strangly there are no DateTime returning function
@@ -217,7 +203,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual string GetIssuerName () 
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
-			return Issuer;
+			return impl.GetIssuerName (true);
 		}
 	
 		public virtual string GetKeyAlgorithm () 
@@ -239,14 +225,14 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public virtual string GetKeyAlgorithmParametersString () 
 		{
-			return tostr (GetKeyAlgorithmParameters ());
+			return X509Helper.ToHexString (GetKeyAlgorithmParameters ());
 		}
 	
 		[Obsolete ("Use the Subject property.")]
 		public virtual string GetName ()
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
-			return Subject;
+			return impl.GetSubjectName (true);
 		}
 	
 		public virtual byte[] GetPublicKey () 
@@ -257,7 +243,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public virtual string GetPublicKeyString () 
 		{
-			return tostr (GetPublicKey ());
+			return X509Helper.ToHexString (GetPublicKey ());
 		}
 	
 		public virtual byte[] GetRawCertData () 
@@ -269,7 +255,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual string GetRawCertDataString () 
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
-			return tostr (impl.GetRawCertData ());
+			return X509Helper.ToHexString (impl.GetRawCertData ());
 		}
 	
 		public virtual byte[] GetSerialNumber () 
@@ -282,7 +268,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			byte[] sn = GetSerialNumber ();
 			Array.Reverse (sn);
-			return tostr (sn);
+			return X509Helper.ToHexString (sn);
 		}
 	
 		// to please corcompare ;-)
@@ -296,15 +282,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (!fVerbose || !X509Helper.IsValid (impl))
 				return base.ToString ();
 
-			string nl = Environment.NewLine;
-			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
-			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, GetCertHashString ());
-			sb.Append (nl);
-			return sb.ToString ();
+			return impl.ToString (true);
 		}
 
 		protected static string FormatDate (DateTime date)

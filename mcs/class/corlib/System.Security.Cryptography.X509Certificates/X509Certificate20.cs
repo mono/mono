@@ -113,7 +113,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (issuer_name == null)
-					issuer_name = impl.GetIssuerName ();
+					issuer_name = impl.GetIssuerName (false);
 				return issuer_name;
 			}
 		}
@@ -123,7 +123,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				X509Helper.ThrowIfContextInvalid (impl);
 
 				if (subject_name == null)
-					subject_name = impl.GetSubjectName ();
+					subject_name = impl.GetSubjectName (false);
 				return subject_name;
 			}
 		}
@@ -188,7 +188,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
 			Reset ();
-			X509Helper.Import (rawData, password, keyStorageFlags);
+			impl = X509Helper.Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString support is incomplete")]

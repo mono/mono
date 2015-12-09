@@ -28,6 +28,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Text;
 using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates
@@ -57,16 +59,22 @@ namespace System.Security.Cryptography.X509Certificates
 			return new X509CertificateImplMono (x509);
 		}
 
-		public override string GetIssuerName ()
+		public override string GetIssuerName (bool legacyV1Mode)
 		{
 			ThrowIfContextInvalid ();
-			return MX.X501.ToString (x509.GetIssuerName (), true, ", ", true);
+			if (legacyV1Mode)
+				return x509.IssuerName;
+			else
+				return MX.X501.ToString (x509.GetIssuerName (), true, ", ", true);
 		}
 
-		public override string GetSubjectName ()
+		public override string GetSubjectName (bool legacyV1Mode)
 		{
 			ThrowIfContextInvalid ();
-			return MX.X501.ToString (x509.GetSubjectName (), true, ", ", true);
+			if (legacyV1Mode)
+				return x509.SubjectName;
+			else
+				return MX.X501.ToString (x509.GetSubjectName (), true, ", ", true);
 		}
 
 		public override byte[] GetRawCertData ()
@@ -142,6 +150,21 @@ namespace System.Security.Cryptography.X509Certificates
 				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
 				throw new CryptographicException (msg);
 			}
+		}
+
+		public override string ToString (bool full)
+		{
+			ThrowIfContextInvalid ();
+
+			string nl = Environment.NewLine;
+			StringBuilder sb = new StringBuilder ();
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
+			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
+			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
+			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
+			sb.Append (nl);
+			return sb.ToString ();
 		}
 
 		protected override void Dispose (bool disposing)
