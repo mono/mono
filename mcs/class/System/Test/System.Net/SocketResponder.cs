@@ -105,13 +105,6 @@ namespace MonoTests.System.Net
 					tcpListener = null;
 					if (listenSocket != null)
 						listenSocket.Close ();
-#if MONO_FEATURE_THREAD_ABORT
-					listenThread.Abort ();
-#else
-					listenThread.Interrupt ();
-#endif
-					listenThread.Join ();
-					listenThread = null;
 					Thread.Sleep (50);
 				}
 			}
