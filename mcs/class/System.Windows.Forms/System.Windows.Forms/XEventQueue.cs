@@ -142,12 +142,10 @@ namespace System.Windows.Forms {
 			}
 
 			public int Count {
-				get	{
-					int Count = 0;
+				get {
 					lock (hwnds) {
-						Count = hwnds.Count;
+						return hwnds.Count;
 					}
-					return Count;
 				}
 			}
 
@@ -201,7 +199,7 @@ namespace System.Windows.Forms {
 						xevent.ExposeEvent.height = hwnd.nc_invalid.Height;
 						return xevent;
 					}
-        }
+				}
 			}
 		}
 
