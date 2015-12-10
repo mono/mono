@@ -246,7 +246,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			issuer_name = null;
 			subject_name = null;
 			hideDates = false;
-			cachedCertificateHash = null;
 		}
 
 		public void Dispose ()

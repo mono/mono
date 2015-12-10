@@ -51,12 +51,6 @@ namespace System.Security.Cryptography.X509Certificates
 			get { return IntPtr.Zero; }
 		}
 
-		void ThrowIfContextInvalid ()
-		{
-			if (x509 == null)
-				throw X509Helper.GetInvalidContextException ();
-		}
-
 		public override X509CertificateImpl Clone ()
 		{
 			ThrowIfContextInvalid ();
@@ -93,7 +87,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return x509.RawData;
 		}
 
-		public override byte[] GetCertHash () 
+		protected override byte[] GetCertHash (bool lazy)
 		{
 			ThrowIfContextInvalid ();
 			SHA1 sha = SHA1.Create ();
@@ -117,6 +111,11 @@ namespace System.Security.Cryptography.X509Certificates
 			// Use default implementation
 			result = false;
 			return false;
+		}
+
+		protected override int ObjectGetHashCode ()
+		{
+			return x509 != null ? x509.GetHashCode () : 0;
 		}
 
 		public override string GetKeyAlgorithm () 

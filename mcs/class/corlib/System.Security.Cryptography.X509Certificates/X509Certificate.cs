@@ -56,7 +56,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		X509CertificateImpl impl;
 
 		private bool hideDates;
-		private byte[] cachedCertificateHash;
 	
 		// static methods
 	
@@ -146,10 +145,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual byte[] GetCertHash () 
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
-			// we'll hash the cert only once and only if required
-			if (cachedCertificateHash == null)
-				cachedCertificateHash = impl.GetCertHash ();
-			return cachedCertificateHash;
+			return impl.GetCertHash ();
 		}
 	
 		public virtual string GetCertHashString () 
@@ -186,7 +182,9 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public override int GetHashCode ()
 		{
-			return 0;
+			if (!X509Helper.IsValid (impl))
+				return 0;
+			return impl.GetHashCode ();
 		}
 
 		[Obsolete ("Use the Issuer property.")]

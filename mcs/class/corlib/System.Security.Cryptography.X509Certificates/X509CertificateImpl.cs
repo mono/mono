@@ -37,6 +37,12 @@ namespace System.Security.Cryptography.X509Certificates
 			get;
 		}
 
+		protected void ThrowIfContextInvalid ()
+		{
+			if (!IsValid)
+				throw X509Helper.GetInvalidContextException ();
+		}
+
 		public abstract X509CertificateImpl Clone ();
 
 		public abstract string GetSubjectSummary ();
@@ -47,16 +53,37 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract byte[] GetRawCertData ();
 
-		public abstract byte[] GetCertHash ();
-
 		public abstract DateTime GetEffectiveDateString ();
 
 		public abstract DateTime GetExpirationDateString ();
 
+		byte[] cachedCertificateHash;
+
+		public byte[] GetCertHash ()
+		{
+			ThrowIfContextInvalid ();
+			if (cachedCertificateHash == null)
+				cachedCertificateHash = GetCertHash (false);
+			return cachedCertificateHash;
+		}
+
+		protected abstract byte[] GetCertHash (bool lazy);
+
 		public override int GetHashCode ()
 		{
-			return 0;
+			if (!IsValid)
+				return 0;
+			if (cachedCertificateHash == null)
+				cachedCertificateHash = GetCertHash (true);
+			// return the integer of the first 4 bytes of the cert hash
+			if ((cachedCertificateHash != null) && (cachedCertificateHash.Length >= 4))
+				return ((cachedCertificateHash [0] << 24) | (cachedCertificateHash [1] << 16) |
+					(cachedCertificateHash [2] << 8) | cachedCertificateHash [3]);
+			else
+				return 0;
 		}
+
+		protected abstract int ObjectGetHashCode ();
 
 		public abstract bool Equals (X509CertificateImpl other, out bool result);
 
@@ -112,6 +139,7 @@ namespace System.Security.Cryptography.X509Certificates
 
 		protected virtual void Dispose (bool disposing)
 		{
+			cachedCertificateHash = null;
 		}
 
 		~X509CertificateImpl ()
