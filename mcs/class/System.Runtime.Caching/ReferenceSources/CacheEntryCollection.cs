@@ -68,15 +68,17 @@ namespace System.Runtime.Caching
 			if (blockInsert)
 				store.BlockInsert ();
 
-			foreach (var entry in entries) {
-				if (helper.GetDateTime (entry) > limit || flushedItems >= count)
-					break;
+			lock (entries) {
+				foreach (var entry in entries) {
+					if (helper.GetDateTime (entry) > limit || flushedItems >= count)
+						break;
 
-				flushedItems++;
+					flushedItems++;
+				}
+
+				for (var f = 0; f < flushedItems; f++)
+					store.Remove (entries.Min, null, reason);
 			}
-
-			for (var f = 0; f < flushedItems; f++)
-				store.Remove (entries.Min, null, reason);
 
 			if (blockInsert)
 				store.UnblockInsert ();
