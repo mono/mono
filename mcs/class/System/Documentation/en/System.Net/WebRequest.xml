@@ -1036,9 +1036,10 @@ public class CreateDefaultExample
       <Parameters />
       <Docs>
         <remarks>
-          <attribution license="cc4" from="Microsoft" modified="false" />
-          <para>
-            <see cref="M:System.Net.WebRequest.GetSystemWebProxy" /> method reads the current user's Internet Explorer (IE) proxy settings. This process includes the IE options to automatically detect proxy settings, use an automatic configuration script, manual proxy server settings, and advanced manual proxy server settings.</para>
+          <attribution license="cc4" from="Microsoft" modified="true" />
+          <para><see cref="M:System.Net.WebRequest.GetSystemWebProxy" /> creates an appropriate proxy object for the current user.</para>
+          <para>On Windows, the method reads the current user's Internet Explorer (IE) proxy settings. The settings supported on Mono are proxy enabled, proxy URL, and proxy excluded domains.</para>
+          <para>On UNIX-like systems (but not including Mac OS, iOS, or Android), the method reads the environment variables "MONO_PROXY" (or "mono_proxy") and "NO_PROXY" (or "no_proxy"). See the mono man page for more information.</para>
           <para>If your application is impersonating several users, you can use the <see cref="M:System.Net.WebRequest.GetSystemWebProxy" /> method to retrieve a proxy for each impersonated user.</para>
         </remarks>
         <summary>

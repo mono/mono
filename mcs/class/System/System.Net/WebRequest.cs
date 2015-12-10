@@ -40,6 +40,7 @@ using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
@@ -332,6 +333,19 @@ namespace System.Net
 			throw GetMustImplement ();
 		}
 		
+		// Takes an ArrayList of fileglob-formatted strings and returns an array of Regex-formatted strings
+		private static string[] CreateBypassList (ArrayList al)
+		{
+			string[] result = al.ToArray (typeof (string)) as string[];
+			for (int c = 0; c < result.Length; c++)
+			{
+				result [c] = "^" +
+					Regex.Escape (result [c]).Replace (@"\*", ".*").Replace (@"\?", ".") +
+					"$";
+			}
+			return result;
+		}
+
 		[MonoTODO("Look in other places for proxy config info")]
 		public static IWebProxy GetSystemWebProxy ()
 		{
@@ -375,7 +389,7 @@ namespace System.Net
 						}
 					}
 					
-					return new WebProxy (strHttpProxy, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
+					return new WebProxy (strHttpProxy, bBypassOnLocal, CreateBypassList (al));
 				}
 			} else {
 #endif
@@ -425,7 +439,7 @@ namespace System.Net
 							}
 						}
 						
-						return new WebProxy (uri, bBypassOnLocal, al.ToArray (typeof(string)) as string[]);
+						return new WebProxy (uri, bBypassOnLocal, CreateBypassList (al));
 					} catch (UriFormatException) {
 					}
 				}

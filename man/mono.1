@@ -931,7 +931,12 @@ by setting the option
 Turns off the garbage collection in Mono.  This should be only used
 for debugging purposes
 .TP
-\fBLVM_COUNT\fR
+\fBHTTP_PROXY\fR
+(Also \fBhttp_proxy\fR) If set, web requests using the Mono
+Class Library will be automatically proxied through the given URL.
+Not supported on Windows, Mac OS, iOS or Android. See also \fBNO_PROXY\fR.
+.TP
+\fBLLVM_COUNT\fR
 When Mono is compiled with LLVM support, this instructs the runtime to
 stop using LLVM after the specified number of methods are JITed.
 This is a tool used in diagnostics to help isolate problems in the
@@ -1538,6 +1543,13 @@ ftps, smtps...).  The default is 'nocheck', which performs no revocation check
 at all. The other possible values are 'offline', which performs CRL check (not
 implemented yet) and 'online' which uses OCSP and CRL to verify the revocation
 status (not implemented yet).
+.TP
+\fBNO_PROXY\fR
+(Also \fBno_proxy\fR) If both \fBHTTP_PROXY\fR and \fBNO_PROXY\fR are
+set, \fBNO_PROXY\fR will be treated as a comma-separated list of "bypass" domains
+which will not be sent through the proxy. Domains in \fBNO_PROXY\fR may contain
+wildcards, as in "*.mono-project.com" or "build????.local". Not supported on
+Windows, Mac OS, iOS or Android.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR
