@@ -118,7 +118,7 @@ namespace System.Windows.Forms {
 					return lqueue.Peek ();
 				}
 			}				
-			return xqueue.Peek();
+			return xqueue.Peek ();
 		}
 
 		public bool DispatchIdle {
@@ -136,17 +136,15 @@ namespace System.Windows.Forms {
 			private XEvent		xevent;
 			
 			public PaintQueue (int size) {
-				hwnds = new ArrayList(size);
-				xevent = new XEvent();
+				hwnds = new ArrayList (size);
+				xevent = new XEvent ();
 				xevent.AnyEvent.type = XEventName.Expose;
 			}
 
 			public int Count {
-				get
-				{
+				get	{
 					int Count = 0;
-					lock ( hwnds )
-					{
+					lock (hwnds) {
 						Count = hwnds.Count;
 					}
 					return Count;
@@ -154,17 +152,15 @@ namespace System.Windows.Forms {
 			}
 
 			public void Enqueue (Hwnd hwnd) {
-				lock ( hwnds )
-				{
-					hwnds.Add( hwnd );
+				lock (hwnds) {
+					hwnds.Add (hwnd);
 				}
 			}
 
 			public void Remove(Hwnd hwnd) {
 				if (!hwnd.expose_pending && !hwnd.nc_expose_pending) {
-					lock ( hwnds )
-					{
-						hwnds.Remove( hwnd );
+					lock (hwnds) {
+						hwnds.Remove (hwnd);
 					}
 				}
 			}
@@ -173,26 +169,22 @@ namespace System.Windows.Forms {
 				Hwnd		hwnd;
 				IEnumerator	next;
 
-				lock( hwnds )
-				{
-					if( hwnds.Count == 0 )
-					{
+				lock (hwnds) {
+					if (hwnds.Count == 0) {
 						xevent.ExposeEvent.window = IntPtr.Zero;
 						return xevent;
 					}
 
-					next = hwnds.GetEnumerator();
-					next.MoveNext();
+					next = hwnds.GetEnumerator ();
+					next.MoveNext ();
 					hwnd = (Hwnd)next.Current;
 
 					// We only remove the event from the queue if we have one expose left since
 					// a single 'entry in our queue may be for both NC and Client exposed
-					if( !( hwnd.nc_expose_pending && hwnd.expose_pending ) )
-					{
-						hwnds.Remove( hwnd );
+					if (!(hwnd.nc_expose_pending && hwnd.expose_pending)) {
+						hwnds.Remove (hwnd);
 					}
-					if( hwnd.expose_pending )
-					{
+					if (wnd.expose_pending) {
 						xevent.ExposeEvent.window = hwnd.client_window;
 #if not
 						xevent.ExposeEvent.x = hwnd.invalid.X;
@@ -201,9 +193,7 @@ namespace System.Windows.Forms {
 						xevent.ExposeEvent.height = hwnd.invalid.Height;
 #endif
 						return xevent;
-					}
-					else
-					{
+					} else {
 						xevent.ExposeEvent.window = hwnd.whole_window;
 						xevent.ExposeEvent.x = hwnd.nc_invalid.X;
 						xevent.ExposeEvent.y = hwnd.nc_invalid.Y;
