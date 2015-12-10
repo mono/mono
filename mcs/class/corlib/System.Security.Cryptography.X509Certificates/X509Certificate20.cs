@@ -258,17 +258,5 @@ namespace System.Security.Cryptography.X509Certificates {
 			subject_name = null;
 			hideDates = false;
 		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			if (disposing) {
-				Reset ();
-			}
-		}
 	}
 }
