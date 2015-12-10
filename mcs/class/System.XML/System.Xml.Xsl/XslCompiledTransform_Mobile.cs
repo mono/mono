@@ -121,7 +121,9 @@ namespace System.Xml.Xsl
 
 		public void Transform (IXPathNavigable input, XsltArgumentList arguments, Stream results)
 		{
-			Transform (input.CreateNavigator (), arguments, results);
+			using (var sw = new StreamWriter (results)) {
+				Transform (input.CreateNavigator (), arguments, sw);
+			}
 		}
 
 		public void Transform (IXPathNavigable input, XmlWriter results)
