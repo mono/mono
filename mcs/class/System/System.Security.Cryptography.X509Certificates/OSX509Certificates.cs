@@ -62,6 +62,9 @@ namespace System.Security.Cryptography.X509Certificates {
 		unsafe extern static IntPtr CFDataCreate (IntPtr allocator, byte *bytes, /* CFIndex */ IntPtr length);
 
 		[DllImport (CoreFoundationLibrary)]
+		extern static void CFRetain (IntPtr handle);
+
+		[DllImport (CoreFoundationLibrary)]
 		extern static void CFRelease (IntPtr handle);
 
 		[DllImport (CoreFoundationLibrary)]
@@ -97,6 +100,18 @@ namespace System.Security.Cryptography.X509Certificates {
 					IntPtr.Zero);
 			}
 		}
+
+		static IntPtr GetCertificate (X509Certificate certificate, out IntPtr dataPtr)
+		{
+			var handle = certificate.Handle;
+			if (handle != IntPtr.Zero) {
+				dataPtr = IntPtr.Zero;
+				CFRetain (handle);
+				return handle;
+			}
+			dataPtr = MakeCFData (certificate.GetRawCertData ());
+			return SecCertificateCreateWithData (IntPtr.Zero, dataPtr);
+		}
 		
 		public static SecTrustResult TrustEvaluateSsl (XX509CertificateCollection certificates, XX509CertificateCollection anchors, string host)
 		{
@@ -126,19 +141,14 @@ namespace System.Security.Cryptography.X509Certificates {
 			SecTrustResult result = SecTrustResult.Deny;
 
 			try {
-				for (int i = 0; i < certCount; i++)
-					cfDataPtrs [i] = MakeCFData (certificates [i].GetRawCertData ());
-				for (int i = 0; i < anchorCount; i++)
-					cfDataAnchorPtrs [i] = MakeCFData (anchors [i].GetRawCertData ());
-				
-				for (int i = 0; i < certCount; i++){
-					secCerts [i] = SecCertificateCreateWithData (IntPtr.Zero, cfDataPtrs [i]);
+				for (int i = 0; i < certCount; i++) {
+					secCerts [i] = GetCertificate (certificates [i], out cfDataPtrs [i]);
 					if (secCerts [i] == IntPtr.Zero)
 						return SecTrustResult.Deny;
 				}
 
 				for (int i = 0; i < anchorCount; i++) {
-					secCertAnchors [i] = SecCertificateCreateWithData (IntPtr.Zero, cfDataAnchorPtrs [i]);
+					secCertAnchors [i] = GetCertificate (anchors [i], out cfDataAnchorPtrs [i]);
 					if (secCertAnchors [i] == IntPtr.Zero)
 						return SecTrustResult.Deny;
 				}
