@@ -54,7 +54,7 @@ namespace System.Web.Util {
 			if (path.StartsWith (appvpath))
 				path = path.Substring (appvpath.Length);
 
-			if (path [0] == '/')
+			if (path.StartsWith("/"))
 				path = path.Length > 1 ? path.Substring (1) : "";
 
 			return Canonic (appvpath + "(" + id + ")/" + path);
