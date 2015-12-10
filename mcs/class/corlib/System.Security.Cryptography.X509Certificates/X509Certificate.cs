@@ -186,14 +186,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public override int GetHashCode ()
 		{
-			if (!X509Helper.IsValid (impl))
-				return 0;
-			// return the integer of the first 4 bytes of the cert hash
-			if ((cachedCertificateHash != null) && (cachedCertificateHash.Length >= 4))
-				return ((cachedCertificateHash[0] << 24) |(cachedCertificateHash[1] << 16) |
-					(cachedCertificateHash[2] << 8) | cachedCertificateHash[3]);
-			else
-				return impl.GetHashCode ();
+			return 0;
 		}
 
 		[Obsolete ("Use the Issuer property.")]

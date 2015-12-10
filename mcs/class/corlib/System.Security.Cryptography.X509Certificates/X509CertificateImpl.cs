@@ -55,10 +55,8 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public override int GetHashCode ()
 		{
-			return ObjectGetHashCode ();
+			return 0;
 		}
-
-		protected abstract int ObjectGetHashCode ();
 
 		public abstract bool Equals (X509CertificateImpl other, out bool result);
 
