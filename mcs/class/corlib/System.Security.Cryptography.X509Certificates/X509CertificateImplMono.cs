@@ -113,11 +113,6 @@ namespace System.Security.Cryptography.X509Certificates
 			return false;
 		}
 
-		protected override int ObjectGetHashCode ()
-		{
-			return x509 != null ? x509.GetHashCode () : 0;
-		}
-
 		public override string GetKeyAlgorithm () 
 		{
 			ThrowIfContextInvalid ();
