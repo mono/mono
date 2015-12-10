@@ -239,8 +239,8 @@ assert_gc_neutral_mode (void)
 // Locking strategy is a little slapdash overall.
 
 // Reference audit support
-#define check_mempool_assert_message(...) \
-	g_assertion_message("Mempool reference violation: " __VA_ARGS__)
+#define check_mempool_assert_message(FILE, LINE, FMT, ...)			\
+	g_assertion_message("%s:%d: Mempool reference violation: " FMT, FILE, LINE,  __VA_ARGS__)
 
 typedef struct
 {
@@ -488,7 +488,7 @@ mono_find_mempool_owner (void *ptr)
 
 // Actually perform reference audit
 static void
-check_mempool_may_reference_mempool (void *from_ptr, void *to_ptr, gboolean require_local)
+check_mempool_may_reference_mempool (void *from_ptr, void *to_ptr, gboolean require_local, const char *filename, int lineno)
 {
 	// Null pointers are OK
 	if (!to_ptr)
@@ -499,62 +499,62 @@ check_mempool_may_reference_mempool (void *from_ptr, void *to_ptr, gboolean requ
 	if (require_local)
 	{
 		if (!check_mempool_owner_eq (from,to))
-			check_mempool_assert_message ("Pointer in image %s should have been internal, but instead pointed to image %s", check_mempool_owner_name (from), check_mempool_owner_name (to));
+			check_mempool_assert_message (filename, lineno, "Pointer in image %s should have been internal, but instead pointed to image %s", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	// Writing into unknown mempool
 	else if (check_mempool_owner_eq (from, mono_mempool_no_owner))
 	{
-		check_mempool_assert_message ("Non-image memory attempting to write pointer to image %s", check_mempool_owner_name (to));
+		check_mempool_assert_message (filename, lineno, "Non-image memory attempting to write pointer to image %s", check_mempool_owner_name (to));
 	}
 
 	// Reading from unknown mempool
 	else if (check_mempool_owner_eq (to, mono_mempool_no_owner))
 	{
-		check_mempool_assert_message ("Attempting to write pointer from image %s to non-image memory", check_mempool_owner_name (from));
+		check_mempool_assert_message (filename, lineno, "Attempting to write pointer from image %s to non-image memory", check_mempool_owner_name (from));
 	}
 
 	// Split out the four cases described above:
 	else if (from.image && to.image)
 	{
 		if (!check_image_may_reference_image (from.image, to.image))
-			check_mempool_assert_message ("Image %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
+			check_mempool_assert_message (filename, lineno, "Image %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image && to.image_set)
 	{
 		if (!check_image_may_reference_image_set (from.image, to.image_set))
-			check_mempool_assert_message ("Image %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
+			check_mempool_assert_message (filename, lineno, "Image %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image_set && to.image_set)
 	{
 		if (!check_image_set_may_reference_image_set (from.image_set, to.image_set))
-			check_mempool_assert_message ("Image set %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
+			check_mempool_assert_message (filename, lineno, "Image set %s tried to point to image set %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else if (from.image_set && to.image)
 	{
 		if (!check_image_set_may_reference_image (from.image_set, to.image))
-			check_mempool_assert_message ("Image set %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
+			check_mempool_assert_message (filename, lineno, "Image set %s tried to point to image %s, but does not retain a reference", check_mempool_owner_name (from), check_mempool_owner_name (to));
 	}
 
 	else
 	{
-		check_mempool_assert_message ("Internal logic error: Unreachable code");
+		g_assert_not_reached();
 	}
 }
 
 void
-check_metadata_store (void *from, void *to)
+check_metadata_store (void *from, void *to, const char *filename, int lineno)
 {
-    check_mempool_may_reference_mempool (from, to, FALSE);
+	check_mempool_may_reference_mempool (from, to, FALSE, filename, lineno);
 }
 
 void
-check_metadata_store_local (void *from, void *to)
+check_metadata_store_local (void *from, void *to, const char *filename, int lineno)
 {
-    check_mempool_may_reference_mempool (from, to, TRUE);
+	check_mempool_may_reference_mempool (from, to, TRUE, filename, lineno);
 }
 
 #endif /* CHECKED_BUILD */

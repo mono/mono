@@ -80,19 +80,19 @@ Functions that can be called from both coop or preept modes.
 
 // Use when writing a pointer from one image or imageset to another.
 #define CHECKED_METADATA_WRITE_PTR(ptr, val) do {    \
-    check_metadata_store (&(ptr), (val));    \
+    check_metadata_store (&(ptr), (val), __FILE__, __LINE__);	\
     (ptr) = (val);    \
 } while (0);
 
 // Use when writing a pointer from an image or imageset to itself.
 #define CHECKED_METADATA_WRITE_PTR_LOCAL(ptr, val) do {    \
-    check_metadata_store_local (&(ptr), (val));    \
+    check_metadata_store_local (&(ptr), (val), __FILE__, __LINE__);	\
     (ptr) = (val);    \
 } while (0);
 
 // Use when writing a pointer from one image or imageset to another (atomic version).
 #define CHECKED_METADATA_WRITE_PTR_ATOMIC(ptr, val) do {    \
-    check_metadata_store (&(ptr), (val));    \
+    check_metadata_store (&(ptr), (val), __FILE__, __LINE__);	\
     mono_atomic_store_release (&(ptr), (val));    \
 } while (0);
 
@@ -119,8 +119,8 @@ void assert_gc_neutral_mode (void);
 void checked_build_init (void);
 void checked_build_thread_transition(const char *transition, void *info, int from_state, int suspend_count, int next_state, int suspend_count_delta);
 
-void check_metadata_store(void *from, void *to);
-void check_metadata_store_local(void *from, void *to);
+void check_metadata_store(void *from, void *to, const char *filename, int lineno);
+void check_metadata_store_local(void *from, void *to, const char *filename, int lineno);
 
 #else
 
