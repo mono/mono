@@ -164,6 +164,8 @@ namespace MonoTests.System.Threading
 			int i, workerThreads, completionPortThreads;
 
 			try {
+				ThreadPool.SetMaxThreads (20, 20);
+
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 					if (workerThreads == 0)
