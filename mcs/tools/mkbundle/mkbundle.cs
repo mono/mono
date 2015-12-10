@@ -575,7 +575,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				}
 			
 				assemblies.Add (a.CodeBase);
-			} catch (Exception e) {
+			} catch (Exception) {
 				if (skip_scan) {
 					Console.WriteLine ("File will not be scanned: {0}", name);
 					assemblies.Add (new Uri (new FileInfo (name).FullName).ToString ());
@@ -621,7 +621,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				if (!QueueAssembly (files, a.CodeBase))
 					return false;
 			}
-		} catch (Exception e) {
+		} catch (Exception) {
 			if (!skip_scan)
 				throw;
 		}
