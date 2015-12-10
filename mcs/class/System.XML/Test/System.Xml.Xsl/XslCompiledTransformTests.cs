@@ -168,5 +168,31 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
 			// Returns true on .NET and False on mono 2.10.2
 			Assert.IsTrue (xslCompiledTransform.OutputSettings.Indent, "#1");
 		}
+
+		[Test] // Bug 36436
+		public void TransformWithXmlDocument ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<ROOT/>");
+			XmlDocument st = new XmlDocument ();
+			st.LoadXml (@"<?xml version=""1.0"" encoding=""utf-8""?>
+<xsl:stylesheet version=""1.0"" xmlns:vy=""Vineyard.Elements""
+    xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"" xmlns:xlink=""http://www.w3.org/1999/xlink"" xmlns:user=""http://www.mydomain.com/mynamespace"">
+  <xsl:output method=""xml""/>
+
+  <xsl:param name=""os"" select=""ios""/>
+
+  <xsl:template match=""/ROOT"" >
+    <xsl:copy/>
+</xsl:template>
+</xsl:stylesheet>");
+			XslCompiledTransform xsl = new XslCompiledTransform ();
+			xsl.Load (st);
+
+			XsltArgumentList args = new XsltArgumentList ();
+
+			MemoryStream mstr = new MemoryStream ();
+			xsl.Transform (doc, args, mstr);
+		}
 	}
 }
