@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 					if (!(hwnd.nc_expose_pending && hwnd.expose_pending)) {
 						hwnds.Remove (hwnd);
 					}
-					if (wnd.expose_pending) {
+					if (hwnd.expose_pending) {
 						xevent.ExposeEvent.window = hwnd.client_window;
 #if not
 						xevent.ExposeEvent.x = hwnd.invalid.X;
