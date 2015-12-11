@@ -129,8 +129,8 @@ namespace MonoTests.System.Threading
 
 			workerThreads_new = workerThreads == 1 ? 2 : 1;
 			completionPortThreads_new = completionPortThreads == 1 ? 2 : 1;
-
 			ThreadPool.SetMinThreads (workerThreads_new, completionPortThreads_new);
+
 			ThreadPool.GetMinThreads (out workerThreads, out completionPortThreads);
 			Assert.IsTrue (workerThreads == workerThreads_new, "#3");
 			Assert.IsTrue (completionPortThreads == completionPortThreads_new, "#4");
@@ -149,8 +149,8 @@ namespace MonoTests.System.Threading
 
 			workerThreads_new = workerThreads == cpuCount ? cpuCount + 1 : cpuCount;
 			completionPortThreads_new = completionPortThreads == cpuCount ? cpuCount + 1 : cpuCount;
-
 			ThreadPool.SetMaxThreads (workerThreads_new, completionPortThreads_new);
+
 			ThreadPool.GetMaxThreads (out workerThreads, out completionPortThreads);
 			Assert.IsTrue (workerThreads == workerThreads_new, "#3");
 			Assert.IsTrue (completionPortThreads == completionPortThreads_new, "#4");
@@ -164,12 +164,14 @@ namespace MonoTests.System.Threading
 			int i, workerThreads, completionPortThreads;
 
 			try {
-				ThreadPool.SetMaxThreads (20, 20);
+				Assert.IsTrue (ThreadPool.SetMaxThreads (Environment.ProcessorCount, Environment.ProcessorCount));
 
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 					if (workerThreads == 0)
 						break;
+
+					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 
 					if ((DateTime.Now - start).TotalSeconds >= 10)
 						Assert.Fail ("did not reach 0 available threads");
