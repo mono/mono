@@ -4,6 +4,8 @@ namespace MyNamespace {
 		public float Hello(int value) {
 			return 0.0f;
 		}
+		public char OnlyInUnified {get;set;} 
+		
 		#if DELETETEST
 		public string InBoth {get;set;}
 		public string InBothUnified {get;set;}
