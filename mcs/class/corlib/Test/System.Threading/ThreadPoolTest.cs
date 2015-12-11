@@ -171,6 +171,8 @@ namespace MonoTests.System.Threading
 					if (workerThreads == 0)
 						break;
 
+					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
+
 					if ((DateTime.Now - start).TotalSeconds >= 10)
 						Assert.Fail ("did not reach 0 available threads");
 
