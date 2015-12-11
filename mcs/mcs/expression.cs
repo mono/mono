@@ -6018,6 +6018,7 @@ namespace Mono.CSharp
 				case BuiltinTypeSpec.Type.Byte:
 				case BuiltinTypeSpec.Type.Short:
 				case BuiltinTypeSpec.Type.UShort:
+				case BuiltinTypeSpec.Type.Int:
 					ec.Emit (OpCodes.Conv_I);
 					break;
 				case BuiltinTypeSpec.Type.UInt:
