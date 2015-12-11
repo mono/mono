@@ -133,6 +133,8 @@ class MDocUpdater : MDocCommand
 	List<AssemblyDefinition> assemblies;
 	readonly DefaultAssemblyResolver assemblyResolver = new DefaultAssemblyResolver();
 	
+	string apistyle = string.Empty;
+	bool isClassicRun;
 	bool multiassembly;
 	bool delete;
 	bool show_exceptions;
@@ -282,6 +284,9 @@ class MDocUpdater : MDocCommand
 			{ "multiassembly",
 				"Allow types to be in multiple assemblies.",
 				v => multiassembly = true },
+			{ "api-style=",
+				"Denotes the apistyle. Currently, only `classic` and `unified` are supported. `classic` set of assemblies should be run first, immediately followed by 'unified' assemblies with the `dropns` parameter.",
+				v => apistyle = v.ToLowerInvariant ()},
 		};
 		var assemblies = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -290,7 +295,17 @@ class MDocUpdater : MDocCommand
 			return;
 		if (assemblies.Count == 0)
 			Error ("No assemblies specified.");
-
+		
+		// validation for the api-style parameter
+		if (apistyle == "classic") 
+			isClassicRun = true;
+		else if (apistyle == "unified") {
+			if (!droppedAssemblies.Any ())
+				Error ("api-style 'unified' must also supply the 'dropns' parameter with at least one assembly and dropped namespace.");
+		} else if (!string.IsNullOrWhiteSpace (apistyle)) 
+			Error ("api-style '{0}' is not currently supported", apistyle);
+			
+				
 		foreach (var dir in assemblies
 				.Where (a => a.Contains (Path.DirectorySeparatorChar))
 				.Select (a => Path.GetDirectoryName (a)))
@@ -1045,7 +1060,7 @@ class MDocUpdater : MDocCommand
 						saveDoc ();
 
 						var unifiedAssemblyNode = doc.SelectSingleNode ("/Type/AssemblyInfo[@apistyle='unified']");
-						var classicAssemblyNode = doc.SelectSingleNode ("/Type/AssemblyInfo[@apistyle='classic']");
+						var classicAssemblyNode = doc.SelectSingleNode ("/Type/AssemblyInfo[not(@apistyle) or @apistyle='classic']");
 						var unifiedMembers = doc.SelectNodes ("//Member[@apistyle='unified']|//Member/AssemblyInfo[@apistyle='unified']");
 						var classicMembers = doc.SelectNodes ("//Member[@apistyle='classic']|//Member/AssemblyInfo[@apistyle='classic']");
 						bool isUnifiedRun = HasDroppedAnyNamespace ();
@@ -1265,10 +1280,10 @@ class MDocUpdater : MDocCommand
 				XmlElement mm = MakeMember(basefile, new DocsNodeInfo (null, m));
 				if (mm == null) continue;
 
-				if (MDocUpdater.SwitchingToMagicTypes) {
+				if (MDocUpdater.SwitchingToMagicTypes || MDocUpdater.HasDroppedNamespace (m)) {
 					// this is a unified style API that obviously doesn't exist in the classic API. Let's mark
 					// it with apistyle="unified", so that it's not displayed for classic style APIs
-					mm.SetAttribute ("apistyle", "unified");
+					mm.AddApiStyle (ApiStyle.Unified);
 				}
 
 				members.AppendChild( mm );
@@ -1379,7 +1394,7 @@ class MDocUpdater : MDocCommand
 
 		bool unifiedRun = HasDroppedNamespace (type);
 
-		var classicAssemblyInfo = member.SelectSingleNode ("AssemblyInfo[@apistyle='classic']");
+		var classicAssemblyInfo = member.SelectSingleNode ("AssemblyInfo[not(@apistyle) or @apistyle='classic']");
 		bool nodeIsClassic = classicAssemblyInfo != null || member.HasApiStyle (ApiStyle.Classic);
 		var unifiedAssemblyInfo = member.SelectSingleNode ("AssemblyInfo[@apistyle='unified']");
 		bool nodeIsUnified = unifiedAssemblyInfo != null || member.HasApiStyle (ApiStyle.Unified);
@@ -1398,12 +1413,13 @@ class MDocUpdater : MDocCommand
 		} else if (unifiedRun && nodeIsClassic) {
 			// this is a unified run, and the member doesn't exist, but is marked as being in the classic assembly.
 			member.RemoveApiStyle (ApiStyle.Unified);
+			member.AddApiStyle (ApiStyle.Classic);
 			Warning ("Not removing '{0}' since it's still in the classic assembly.", signature);
 		} else if (unifiedRun && !nodeIsClassic) {
 			// unified run, and the node is not classic, which means it doesn't exist anywhere.
 			actuallyDelete ();
 		} else { 
-			if (!nodeIsClassic && !nodeIsUnified) { // regular codepath (ie. not classic/unified)
+			if (!isClassicRun || (isClassicRun && !nodeIsClassic && !nodeIsUnified)) { // regular codepath (ie. not classic/unified)
 				actuallyDelete ();
 			} else { // this is a classic run
 				Warning ("Removing classic from '{0}' ... will be removed in the unified run if not present there.", signature);
@@ -1659,18 +1675,25 @@ class MDocUpdater : MDocCommand
 
 	/// <summary>Adds an AssemblyInfo with AssemblyName node to an XmlElement.</summary>
 	/// <returns>The assembly that was either added, or was already present</returns>
-	static XmlElement AddAssemblyNameToNode (XmlElement root, TypeDefinition type)
+	XmlElement AddAssemblyNameToNode (XmlElement root, TypeDefinition type)
 	{
 		return AddAssemblyNameToNode (root, type.Module);
 	}
 
 	/// <summary>Adds an AssemblyInfo with AssemblyName node to an XmlElement.</summary>
 	/// <returns>The assembly that was either added, or was already present</returns>
-	static XmlElement AddAssemblyNameToNode (XmlElement root, ModuleDefinition module)
+	XmlElement AddAssemblyNameToNode (XmlElement root, ModuleDefinition module)
 	{
 		Func<XmlElement, bool> assemblyFilter = x => {
 			var existingName = x.SelectSingleNode ("AssemblyName");
-			return existingName != null && existingName.InnerText == module.Assembly.Name.Name;
+
+			bool apiStyleMatches = true;
+			string currentApiStyle = x.GetAttribute ("apistyle");
+			if ((HasDroppedNamespace (module) && !string.IsNullOrWhiteSpace (currentApiStyle) && currentApiStyle != "unified") ||
+				    (isClassicRun && (string.IsNullOrWhiteSpace (currentApiStyle) || currentApiStyle != "classic"))) {
+				apiStyleMatches = false;
+			}
+			return apiStyleMatches && (existingName == null || (existingName != null && existingName.InnerText == module.Assembly.Name.Name));
 		};
 		
 		return AddAssemblyXmlNode (
@@ -1678,8 +1701,11 @@ class MDocUpdater : MDocCommand
 			assemblyFilter, x => WriteElementText (x, "AssemblyName", module.Assembly.Name.Name), 
 			() =>  {
 				XmlElement ass = WriteElement (root, "AssemblyInfo", forceNewElement: true);
+				
 				if (MDocUpdater.HasDroppedNamespace (module))
-					ass.SetAttribute ("apistyle", "unified");
+					ass.AddApiStyle (ApiStyle.Unified);
+				if (isClassicRun) 
+					ass.AddApiStyle (ApiStyle.Classic);
 				return ass;
 			}, module);
 	}
@@ -1785,8 +1811,8 @@ class MDocUpdater : MDocCommand
 		XmlElement thisAssemblyNode = relevant.FirstOrDefault (valueMatches);
 		if (thisAssemblyNode == null) {
 			thisAssemblyNode = makeNewNode ();
-			setValue (thisAssemblyNode);
 		}
+		setValue (thisAssemblyNode);
 
 		if (isUnified) {
 			thisAssemblyNode.AddApiStyle (ApiStyle.Unified);
@@ -2357,7 +2383,7 @@ class MDocUpdater : MDocCommand
 				n.ParentNode.RemoveChild(n);
 	}
 	
-	private static bool UpdateAssemblyVersions (XmlElement root, MemberReference member, bool add)
+	private bool UpdateAssemblyVersions (XmlElement root, MemberReference member, bool add)
 	{
 		TypeDefinition type = member as TypeDefinition;
 		if (type == null)
@@ -2376,8 +2402,11 @@ class MDocUpdater : MDocCommand
 		return assembly.Name.Version.ToString();
 	}
 	
-	private static bool UpdateAssemblyVersions(XmlElement root, AssemblyDefinition assembly, string[] assemblyVersions, bool add)
+	private bool UpdateAssemblyVersions(XmlElement root, AssemblyDefinition assembly, string[] assemblyVersions, bool add)
 	{
+		if (multiassembly)
+			return false;
+			
 		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");
 		if (av != null) {
 				// AssemblyVersions is not part of the spec
@@ -2394,7 +2423,7 @@ class MDocUpdater : MDocCommand
 			e = root.OwnerDocument.CreateElement("AssemblyInfo");
 
 			if (MDocUpdater.HasDroppedNamespace (assembly)) {
-				e.SetAttribute ("apistyle", "unified");
+				e.AddApiStyle (ApiStyle.Unified);
 			}
 
 			root.AppendChild(e);
@@ -2403,8 +2432,8 @@ class MDocUpdater : MDocCommand
 		var thatNode = (XmlElement) root.SelectSingleNode (thatNodeFilter);
 		if (MDocUpdater.HasDroppedNamespace (assembly) && thatNode != null) {
 			// there's a classic node, we should add apistyles
-			e.SetAttribute ("apistyle", "unified");
-			thatNode.SetAttribute ("apistyle", "classic");
+			e.AddApiStyle (ApiStyle.Unified);
+			thatNode.AddApiStyle (ApiStyle.Classic);
 		}
 
 		return UpdateAssemblyVersionForAssemblyInfo (e, root, assemblyVersions, add);
@@ -3042,6 +3071,39 @@ static class DocUtils {
 		if (string.IsNullOrWhiteSpace (existingValue) || existingValue != styleString) {
 			element.SetAttribute ("apistyle", styleString);
 		}
+		
+		// Propagate the API style up to the membernode if necessary
+		if (element.LocalName == "AssemblyInfo" && element.ParentNode != null && element.ParentNode.LocalName == "Member") {
+			var member = element.ParentNode;
+			var unifiedAssemblyNode = member.SelectSingleNode ("AssemblyInfo[@apistyle='unified']");
+			var classicAssemblyNode = member.SelectSingleNode ("AssemblyInfo[not(@apistyle) or @apistyle='classic']");
+
+			var parentAttribute = element.ParentNode.Attributes ["apistyle"];
+			Action removeStyle = () => element.ParentNode.Attributes.Remove (parentAttribute);
+			Action propagateStyle = () => {
+				if (parentAttribute == null) {
+					// if it doesn't have the attribute, then add it
+					parentAttribute = element.OwnerDocument.CreateAttribute ("apistyle");
+					parentAttribute.Value = styleString;
+					element.ParentNode.Attributes.Append (parentAttribute);
+				} 
+			};
+
+			if ((style == ApiStyle.Classic && unifiedAssemblyNode != null) || (style == ApiStyle.Unified && classicAssemblyNode != null)) 
+				removeStyle ();
+			else
+				propagateStyle ();
+		}
+	}
+	public static void AddApiStyle (this XmlNode node, ApiStyle style) 
+	{
+		string styleString = style.ToString ().ToLowerInvariant ();
+		var existingAttribute = node.Attributes ["apistyle"];
+		if (existingAttribute == null) {
+			existingAttribute = node.OwnerDocument.CreateAttribute ("apistyle");
+			node.Attributes.Append (existingAttribute);
+		}
+		existingAttribute.Value = styleString;
 	}
 	public static void RemoveApiStyle (this XmlElement element, ApiStyle style) 
 	{
