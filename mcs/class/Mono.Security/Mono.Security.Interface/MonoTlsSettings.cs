@@ -94,7 +94,7 @@ namespace Mono.Security.Interface
 		{
 		}
 
-		volatile static MonoTlsSettings defaultSettings;
+		static MonoTlsSettings defaultSettings;
 
 		public static MonoTlsSettings DefaultSettings {
 			get {

@@ -52,12 +52,11 @@ namespace Mono.Security.Interface
 			this.policy_errors = policy_errors;
 		}
 
-		internal ValidationResult (bool trusted, bool user_defined, int error_code)
+		internal ValidationResult (bool trusted, bool user_denied, int error_code)
 		{
 			this.trusted = trusted;
 			this.user_denied = user_denied;
 			this.error_code = error_code;
-			this.policy_errors = policy_errors;
 		}
 
 		public bool Trusted {

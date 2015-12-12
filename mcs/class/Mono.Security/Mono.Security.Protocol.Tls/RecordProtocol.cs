@@ -597,7 +597,7 @@ namespace Mono.Security.Protocol.Tls
 			try {
 				SendAlert(alert);
 			} catch (Exception alertEx) {
-				ex = new IOException (string.Format ("Error while sending TLS Alert ({0}:{1}): {2}", alert.Level, alert.Description, ex), ex);
+				ex = new IOException (string.Format ("Error while sending TLS Alert ({0}:{1}): {2}", alert.Level, alert.Description, ex), alertEx);
 			}
 		}
 
