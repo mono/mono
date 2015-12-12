@@ -164,10 +164,13 @@ System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.Tracing/EventAttribute.cs
 System.Diagnostics.Tracing/EventCommand.cs
-System.Diagnostics.Tracing/EventKeywords.cs
-System.Diagnostics.Tracing/EventLevel.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/eventactivityoptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/EventSourceOptions.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/TraceLogging/TraceLoggingEventTraits.cs
 System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
+System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventCommandEventArgs.cs
 System.Diagnostics.Tracing/NonEventAttribute.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
