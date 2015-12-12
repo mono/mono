@@ -31,13 +31,13 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-using MX = Mono.Security.X509;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
 using MX = MonoSecurity::Mono.Security.X509;
+#else
+using Mono.Security;
+using MX = Mono.Security.X509;
 #endif
 
 using System.Collections;
