@@ -23848,7 +23848,7 @@
   <test name="gtest-fixedbuffer-05.cs">
     <type name="S2">
       <method name="Void Test()" attrs="134">
-        <size>42</size>
+        <size>43</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>17</size>
@@ -40281,7 +40281,7 @@
   <test name="test-401.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>206</size>
+        <size>209</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -40368,7 +40368,7 @@
   <test name="test-408.cs">
     <type name="T">
       <method name="Int32 Main()" attrs="150">
-        <size>59</size>
+        <size>60</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -45690,13 +45690,13 @@
         <size>11</size>
       </method>
       <method name="Int32 CheckAdd(Byte*, Int32)" attrs="145">
-        <size>27</size>
+        <size>28</size>
       </method>
       <method name="Int32 CheckSub(Int16*, Int32)" attrs="145">
-        <size>29</size>
+        <size>30</size>
       </method>
       <method name="Int32 CheckSub2(Int16*, Int32)" attrs="145">
-        <size>36</size>
+        <size>37</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -45895,7 +45895,7 @@
         <size>33</size>
       </method>
       <method name="Void Test2(SByte, Int16, Int32, Int64, UInt64)" attrs="145">
-        <size>40</size>
+        <size>43</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>54</size>
@@ -46202,7 +46202,7 @@
   <test name="test-670.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
-        <size>15</size>
+        <size>17</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -47047,7 +47047,7 @@
         <size>7</size>
       </method>
       <method name="Void CopyTo(Int32, Char[], Int32, Int32)" attrs="145">
-        <size>71</size>
+        <size>73</size>
       </method>
     </type>
   </test>
