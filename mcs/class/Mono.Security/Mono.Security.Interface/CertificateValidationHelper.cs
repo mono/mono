@@ -36,7 +36,6 @@ using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
-	#if (!MONOTOUCH && !MONODROID) || INSIDE_SYSTEM
 	public class ValidationResult
 	{
 		bool trusted;
@@ -159,5 +158,4 @@ namespace Mono.Security.Interface
 			return GetDefaultValidator (null, settings);
 		}
 	}
-#endif
 }
