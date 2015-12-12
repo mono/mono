@@ -559,8 +559,10 @@ namespace Mono.Data.Tds.Protocol
 			 * If the value is null, not setting the size to 0 will cause varchar
 			 * fields to get inserted as an empty string rather than an null.
 			 */
-			if (param.Value == null || param.Value == DBNull.Value)
-				size = 0;
+			if (colType != TdsColumnType.IntN && colType != TdsColumnType.DateTimeN) {
+				if (param.Value == null || param.Value == DBNull.Value)
+					size = 0;
+			}
 
 			// Change colType according to the following table
 			/* 
