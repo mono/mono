@@ -29,16 +29,15 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-using Mono.Security.Cryptography;
-using MX = Mono.Security.X509;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
-
 using MonoSecurity::Mono.Security;
 using MonoSecurity::Mono.Security.Cryptography;
 using MX = MonoSecurity::Mono.Security.X509;
+#else
+using Mono.Security;
+using Mono.Security.Cryptography;
+using MX = Mono.Security.X509;
 #endif
 
 #endif

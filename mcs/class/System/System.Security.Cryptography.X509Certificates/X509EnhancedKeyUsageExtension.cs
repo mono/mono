@@ -28,11 +28,11 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH || MONODROID
-using Mono.Security;
-#else
+#if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
+#else
+using Mono.Security;
 #endif
 
 using System.Text;
