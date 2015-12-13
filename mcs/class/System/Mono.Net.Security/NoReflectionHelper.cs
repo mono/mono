@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using System;
 using System.Net;
+using System.Net.Security;
 
 namespace Mono.Net.Security
 {
@@ -109,5 +110,15 @@ namespace Mono.Net.Security
 			throw new NotSupportedException ();
 			#endif
 		}
+
+		internal static object GetMonoSslStream (SslStream stream)
+		{
+			#if SECURITY_DEP
+			return stream.Impl;
+			#else
+			throw new NotSupportedException ();
+			#endif
+		}
+
 	}
 }

@@ -25,8 +25,9 @@
 // THE SOFTWARE.
 using System;
 using System.Net;
-using Mono.Net.Security;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using Mono.Net.Security;
 
 namespace Mono.Security.Interface
 {
@@ -96,6 +97,11 @@ namespace Mono.Security.Interface
 		public static HttpListener CreateHttpListener (X509Certificate certificate, MonoTlsProvider provider = null, MonoTlsSettings settings = null)
 		{
 			return (HttpListener)NoReflectionHelper.CreateHttpListener (certificate, provider, settings);
+		}
+
+		public static IMonoSslStream GetMonoSslStream (SslStream stream)
+		{
+			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (stream);
 		}
 	}
 }
