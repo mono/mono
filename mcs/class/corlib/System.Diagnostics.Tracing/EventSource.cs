@@ -112,7 +112,7 @@ namespace System.Diagnostics.Tracing
 
 		public void Dispose ()
 		{
-			Dispose(true);
+			Dispose (true);
 		}
 
 		public string GetTrait (string key)
