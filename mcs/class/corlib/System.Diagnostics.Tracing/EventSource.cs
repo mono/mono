@@ -31,39 +31,39 @@ namespace System.Diagnostics.Tracing
 {
 	public class EventSource : IDisposable
 	{
-		protected EventSource()
+		protected EventSource ()
 		{
 			this.Name = this.GetType().Name;
 		}
 
-		protected EventSource(bool throwOnEventWriteErrors)
+		protected EventSource (bool throwOnEventWriteErrors)
 			: this()
 		{
 		}
 
-		protected EventSource(EventSourceSettings settings)
+		protected EventSource (EventSourceSettings settings)
 			: this()
 		{
 			this.Settings = settings;
 		}
 
-		protected EventSource(EventSourceSettings settings, params string[] traits)
+		protected EventSource (EventSourceSettings settings, params string[] traits)
 			: this(settings)
 		{
 		}
 
-		public EventSource(string eventSourceName)
+		public EventSource (string eventSourceName)
 		{
 			this.Name = eventSourceName;
 		}
 
-		public EventSource(string eventSourceName, EventSourceSettings config)
+		public EventSource (string eventSourceName, EventSourceSettings config)
 			: this(eventSourceName)
 		{
 			this.Settings = config;
 		}
 
-		public EventSource(string eventSourceName, EventSourceSettings config, params string[] traits)
+		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
 			: this(eventSourceName, config)
 		{
 		}
@@ -95,128 +95,128 @@ namespace System.Diagnostics.Tracing
 			private set;
 		}
 
-		public bool IsEnabled()
+		public bool IsEnabled ()
 		{
 			return false;
 		}
 
-		public bool IsEnabled(EventLevel level, EventKeywords keywords)
+		public bool IsEnabled (EventLevel level, EventKeywords keywords)
 		{
 			return false;
 		}
 
-		public bool IsEnabled(EventLevel level, EventKeywords keywords, EventChannel channel)
+		public bool IsEnabled (EventLevel level, EventKeywords keywords, EventChannel channel)
 		{
 			return false;
 		}
 
-		public void Dispose()
+		public void Dispose ()
 		{
 			Dispose(true);
 		}
 
-		public string GetTrait(string key)
+		public string GetTrait (string key)
 		{
 			return null;
 		}
 
-		public void Write(string eventName)
+		public void Write (string eventName)
 		{
 		}
 
-		public void Write<T>(string eventName, T data)
+		public void Write<T> (string eventName, T data)
 		{
 		}
 
-		public void Write<T>(string eventName, EventSourceOptions options, T data)
+		public void Write<T> (string eventName, EventSourceOptions options, T data)
 		{
 		}
 
-		public void Write<T>(string eventName, ref EventSourceOptions options, ref T data)
+		public void Write<T> (string eventName, ref EventSourceOptions options, ref T data)
 		{
 		}
 
-		public void Write<T>(string eventName, ref EventSourceOptions options, ref Guid activityId, ref Guid relatedActivityId, ref T data)
+		public void Write<T> (string eventName, ref EventSourceOptions options, ref Guid activityId, ref Guid relatedActivityId, ref T data)
 		{
 		}
 
-		protected virtual void Dispose(bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 		}
 
-		protected virtual void OnEventCommand(EventCommandEventArgs command)
+		protected virtual void OnEventCommand (EventCommandEventArgs command)
 		{
 		}
 
-		protected void WriteEvent(int eventId)
+		protected void WriteEvent (int eventId)
 		{
 		}
 
-		protected void WriteEvent(int eventId, byte[] arg1)
+		protected void WriteEvent (int eventId, byte[] arg1)
 		{
 		}
 
-		protected void WriteEvent(int eventId, int arg1)
+		protected void WriteEvent (int eventId, int arg1)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1)
+		protected void WriteEvent (int eventId, string arg1)
 		{
 		}
 
-		protected void WriteEvent(int eventId, int arg1, int arg2)
+		protected void WriteEvent (int eventId, int arg1, int arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, int arg1, int arg2, int arg3)
+		protected void WriteEvent (int eventId, int arg1, int arg2, int arg3)
 		{
 		}
 
-		protected void WriteEvent(int eventId, int arg1, string arg2)
+		protected void WriteEvent (int eventId, int arg1, string arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, long arg1)
+		protected void WriteEvent (int eventId, long arg1)
 		{
 		}
 
-		protected void WriteEvent(int eventId, long arg1, byte[] arg2)
+		protected void WriteEvent (int eventId, long arg1, byte[] arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, long arg1, long arg2)
+		protected void WriteEvent (int eventId, long arg1, long arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, long arg1, long arg2, long arg3)
+		protected void WriteEvent (int eventId, long arg1, long arg2, long arg3)
 		{
 		}
 
-		protected void WriteEvent(int eventId, long arg1, string arg2)
+		protected void WriteEvent (int eventId, long arg1, string arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, params object[] args)
+		protected void WriteEvent (int eventId, params object[] args)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1, int arg2)
+		protected void WriteEvent (int eventId, string arg1, int arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1, int arg2, int arg3)
+		protected void WriteEvent (int eventId, string arg1, int arg2, int arg3)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1, long arg2)
+		protected void WriteEvent (int eventId, string arg1, long arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1, string arg2)
+		protected void WriteEvent (int eventId, string arg1, string arg2)
 		{
 		}
 
-		protected void WriteEvent(int eventId, string arg1, string arg2, string arg3)
+		protected void WriteEvent (int eventId, string arg1, string arg2, string arg3)
 		{
 		}
 	}
