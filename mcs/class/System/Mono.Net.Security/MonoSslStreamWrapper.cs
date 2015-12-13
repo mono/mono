@@ -296,6 +296,15 @@ namespace Mono.Net.Security.Private
 			get { return (SslProtocols)Impl.SslProtocol; }
 		}
 
+		public MSI.MonoTlsProvider Provider {
+			get { return Impl.Provider; }
+		}
+
+		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
+		{
+			return Impl.GetConnectionInfo ();
+		}
+
 		void CheckDisposed ()
 		{
 			if (impl == null)

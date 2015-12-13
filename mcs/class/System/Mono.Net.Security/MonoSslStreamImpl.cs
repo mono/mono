@@ -70,8 +70,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Security.Cryptography;
 
-namespace Mono.Net.Security
+namespace Mono.Net.Security.Private
 {
+	/*
+	 * Strictly private - do not use outside the Mono.Net.Security directory.
+	 */
 	class MonoSslStreamImpl : MSI.IMonoSslStream
 	{
 		IMonoSslStream impl;
@@ -303,6 +306,15 @@ namespace Mono.Net.Security
 
 		public XSslProtocols SslProtocol {
 			get { return (XSslProtocols)Impl.SslProtocol; }
+		}
+
+		public MSI.MonoTlsProvider Provider {
+			get { return Impl.Provider; }
+		}
+
+		public MSI.MonoTlsConnectionInfo GetConnectionInfo ()
+		{
+			return Impl.GetConnectionInfo ();
 		}
 
 		void CheckDisposed ()

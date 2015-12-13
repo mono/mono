@@ -18,3 +18,4 @@ EXTRA_DISTFILES = README.md
 
 include ../../build/library.make
 
+$(the_lib): ../Mono.Security/Makefile
