@@ -1,10 +1,10 @@
 //
-// EventLevel.cs
+// EventSourceSettings.cs
 //
 // Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+//	Frederik Carlier  <frederik.carlier@quamotion.mobi>
 //
-// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2015 Quamotion (http://quamotion.mobi)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,14 +29,13 @@
 
 namespace System.Diagnostics.Tracing
 {
-	public enum EventLevel
+	[Flags]
+	public enum EventSourceSettings
 	{
-		LogAlways,
-		Critical,
-		Error,
-		Warning,
-		Informational,
-		Verbose
+		Default = 0,
+		EtwManifestEventFormat = 1,
+		EtwSelfDescribingEventFormat = 4,
+		ThrowOnEventWriteErrors = 8
 	}
 }
 
