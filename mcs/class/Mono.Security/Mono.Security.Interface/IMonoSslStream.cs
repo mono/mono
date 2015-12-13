@@ -183,6 +183,13 @@ namespace Mono.Security.Interface
 		SSA.SslProtocols SslProtocol {
 			get;
 		}
+
+		MonoTlsProvider Provider {
+			get;
+		}
+
+
+		MonoTlsConnectionInfo GetConnectionInfo ();
 	}
 }
 

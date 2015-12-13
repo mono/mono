@@ -394,6 +394,15 @@ namespace System.Net.Security
 		AuthenticatedStream MNS.IMonoSslStream.AuthenticatedStream {
 			get { return this; }
 		}
+
+		MonoTlsProvider MNS.IMonoSslStream.Provider {
+			get { return provider; }
+		}
+
+		MonoTlsConnectionInfo MNS.IMonoSslStream.GetConnectionInfo ()
+		{
+			return Impl.GetConnectionInfo ();
+		}
 	}
 }
 

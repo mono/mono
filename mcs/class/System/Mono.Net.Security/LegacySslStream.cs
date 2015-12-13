@@ -75,8 +75,11 @@ using System.Security.Cryptography;
 
 using System.Threading.Tasks;
 
-namespace Mono.Net.Security 
+namespace Mono.Net.Security.Private
 {
+	/*
+	 * Strictly private - do not use outside the Mono.Net.Security directory.
+	 */
 	[MonoTODO ("Non-X509Certificate2 certificate is not supported")]
 	internal class LegacySslStream : AuthenticatedStream, IMonoSslStream
 	{
@@ -84,6 +87,7 @@ namespace Mono.Net.Security
 
 		SslStreamBase ssl_stream;
 		ICertificateValidator certificateValidator;
+		MonoTlsProvider provider;
 
 		#endregion // Fields
 
@@ -92,6 +96,7 @@ namespace Mono.Net.Security
 		public LegacySslStream (Stream innerStream, bool leaveInnerStreamOpen, MonoTlsProvider provider, MonoTlsSettings settings)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+			this.provider = provider;
 			certificateValidator = ChainValidationHelper.GetDefaultValidator (provider, settings);
 		}
 		#endregion // Constructors
@@ -580,6 +585,15 @@ namespace Mono.Net.Security
 
 		TransportContext IMonoSslStream.TransportContext {
 			get { throw new NotSupportedException (); }
+		}
+
+		MonoTlsProvider IMonoSslStream.Provider {
+			get { return provider; }
+		}
+
+		MonoTlsConnectionInfo IMonoSslStream.GetConnectionInfo ()
+		{
+			return null;
 		}
 
 		#endregion

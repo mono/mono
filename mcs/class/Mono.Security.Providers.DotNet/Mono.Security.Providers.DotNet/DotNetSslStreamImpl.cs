@@ -39,6 +39,7 @@ namespace Mono.Security.Providers.DotNet
 {
 	class DotNetSslStreamImpl : MSI.IMonoSslStream
 	{
+		DotNetTlsProvider provider;
 		SslStream impl;
 
 		internal SslStream Impl {
@@ -49,10 +50,11 @@ namespace Mono.Security.Providers.DotNet
 		}
 
 		public DotNetSslStreamImpl (
-			Stream innerStream, bool leaveInnerStreamOpen,
+			Stream innerStream, bool leaveInnerStreamOpen, DotNetTlsProvider provider,
 			RemoteCertificateValidationCallback userCertificateValidationCallback,
 			LocalCertificateSelectionCallback userCertificateSelectionCallback)
 		{
+			this.provider = provider;
 			impl = new SslStream (
 				innerStream, leaveInnerStreamOpen,
 				userCertificateValidationCallback,
@@ -280,6 +282,15 @@ namespace Mono.Security.Providers.DotNet
 
 		public SslProtocols SslProtocol {
 			get { return Impl.SslProtocol; }
+		}
+
+		MSI.MonoTlsProvider MSI.IMonoSslStream.Provider {
+			get { return provider; }
+		}
+
+		MSI.MonoTlsConnectionInfo MSI.IMonoSslStream.GetConnectionInfo ()
+		{
+			return null;
 		}
 
 		void CheckDisposed ()

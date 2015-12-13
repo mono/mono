@@ -54,6 +54,10 @@ namespace Mono.Security.Providers.OldTls
 			get { return false; }
 		}
 
+		public override bool SupportsConnectionInfo {
+			get { return false; }
+		}
+
 		public override bool SupportsTlsContext {
 			get { return false; }
 		}
@@ -66,8 +70,8 @@ namespace Mono.Security.Providers.OldTls
 			Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings = null)
 		{
-			var impl = new MNS.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
-			return new MNS.MonoSslStreamImpl (impl);
+			var impl = new MNS.Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
+			return new MNS.Private.MonoSslStreamImpl (impl);
 		}
 
 		public override IMonoTlsContext CreateTlsContext (

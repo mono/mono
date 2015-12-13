@@ -8,3 +8,5 @@ LIB_MCS_FLAGS = -unsafe -nowarn:1030 -keyfile:../mono.pub -delaysign -d:SECURITY
 
 include ../../build/library.make
 
+$(the_lib): ../Mono.Security/Makefile
+

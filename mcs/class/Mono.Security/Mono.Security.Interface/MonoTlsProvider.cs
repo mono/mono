@@ -92,6 +92,13 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * Does this provider support IMonoSslStream.GetConnectionInfo() ?
+		 */
+		public abstract bool SupportsConnectionInfo {
+			get;
+		}
+
+		/*
 		 * Whether or not this TLS Provider supports Mono-specific extensions
 		 * (via @MonoTlsSettings).
 		 */
