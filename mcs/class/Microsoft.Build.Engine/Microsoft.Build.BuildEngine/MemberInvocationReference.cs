@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System.Text;
 
 namespace Microsoft.Build.BuildEngine
@@ -280,7 +281,10 @@ namespace Microsoft.Build.BuildEngine
 
 		public ITaskItem[] ConvertToITaskItemArray (Project project, ExpressionOptions options)
 		{
-			throw new NotImplementedException ();
+			var items = new ITaskItem[1];
+			items[0] = new TaskItem (ConvertToString (project, options));
+
+			return items;
 		}
 	}
 }
