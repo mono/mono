@@ -166,6 +166,8 @@ System.Diagnostics.Tracing/EventSource.cs
 System.Diagnostics.Tracing/EventSourceAttribute.cs
 System.Diagnostics.Tracing/EventSourceSettings.cs
 System.Diagnostics.Tracing/EventCommandEventArgs.cs
+System.Diagnostics.Tracing/EventListener.cs
+System.Diagnostics.Tracing/EventWrittenEventArgs.cs
 System.Diagnostics.Tracing/NonEventAttribute.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
