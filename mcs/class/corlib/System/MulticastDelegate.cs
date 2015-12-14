@@ -33,6 +33,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
@@ -110,6 +111,14 @@ namespace System
 		public sealed override int GetHashCode ()
 		{
 			return base.GetHashCode ();
+		}
+
+		protected override MethodInfo GetMethodImpl ()
+		{
+			if (delegates != null)
+				return delegates [delegates.Length - 1].Method;
+
+			return base.GetMethodImpl ();
 		}
 
 		// <summary>
