@@ -67,7 +67,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		void Message (object sender, BuildMessageEventArgs args)
 		{
 		}
-		
+
 		void Warning (object sender, BuildWarningEventArgs args)
 		{
 		}
@@ -97,7 +97,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Project project;
 			string documentString =
 				"<Project></Project>";
-			
+
 			engine = new Engine (Consts.BinPath);
 
 			DateTime time = DateTime.Now;
@@ -127,7 +127,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Project project;
 			string documentString =
 				"<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"></Project>";
-			
+
 			engine = new Engine (Consts.BinPath);
 			DateTime time = DateTime.Now;
 			project = engine.CreateNewProject ();
@@ -310,7 +310,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target 
+					<Target
 						Name='Main'
 						Inputs='a;b;c'
 						Outputs='d;e;f'
@@ -345,7 +345,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Engine engine;
 			Project project;
 			IDictionary hashtable = new Hashtable ();
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<Target Name='Main'>
@@ -353,7 +353,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					</Target>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -769,12 +769,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -787,15 +787,15 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			engine.GlobalProperties.SetProperty ("Property", "Value");
-			
+
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 
@@ -815,12 +815,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -834,7 +834,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<PropertyGroup>
@@ -842,7 +842,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					</PropertyGroup>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -861,7 +861,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<PropertyGroup>
@@ -869,7 +869,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					</PropertyGroup>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -914,7 +914,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			Engine engine;
 			Project project;
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 
@@ -1076,18 +1076,18 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (3, tl.TargetStartedEvents, "A1");
 			Assert.AreEqual (3, tl.TargetFinishedEvents, "A1");
 		}
-		
+
 		[Test]
 		public void TestSchemaFile ()
 		{
 			Engine engine;
 			Project project;
-			
+
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 				</Project>
 			";
-			
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -2092,7 +2092,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                         <MeTAdata1>md3</MeTAdata1>
                         <Metadata2>md4</Metadata2>
                 </Abc>
-        </ItemGroup> 
+        </ItemGroup>
         <PropertyGroup><ProP1>ValueProp</ProP1></PropertyGroup>
 	<Target Name=""Main"">
 		<MesSAGE Text=""Full item: @(ABC)""/>
@@ -2159,7 +2159,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					Path.Combine ("fr-FR", "Lib2.resources.dll"),
 					"Lib4.dll", "Lib4" + debug_extn
 				},
-				
+
 				// lib1
 				new string [] {
 					// lib1 files
@@ -2216,7 +2216,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Project project = engine.CreateNewProject ();
 			project.Load (Path.Combine (basepath, "Project01.sln.proj"));
-			
+
 			bool result = project.Build ();
 			if (!result) {
 				logger.DumpMessages ();
@@ -2372,6 +2372,25 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 
 			return project;
+		}
+
+		[Test]
+		public void CheckCommaInQuotes ()
+		{
+			string testString = "Test.string.with.Commas";
+			string documentString = string.Format (@"
+			<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<PropertyGroup>
+					<TestString>{0}</TestString>
+					<TestString2>$(TestString.Replace(&quot;.&quot;,&quot;,&quot;))</TestString2>
+				</PropertyGroup>
+			</Project>", testString);
+
+			Project project = new Project ();
+      project.LoadXml (documentString);
+
+			string result = project.EvaluatedProperties ["TestString2"].FinalValue;
+      Assert.AreEqual (testString.Replace (".", ","), result, "A1");
 		}
 	}
 }
