@@ -974,7 +974,7 @@ namespace System.Globalization {
             Contract.EndContractBlock();
 
 #if MONO
-            return StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
+            return this == s_Invariant ? StringComparer.InvariantCultureIgnoreCase.GetHashCode (str) : StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
 #else
             // Return our result
             return (InternalGetCaseInsHash(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, forceRandomizedHashing, additionalEntropy));
