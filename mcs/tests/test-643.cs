@@ -11,7 +11,10 @@ class PointerArithmeticTest
 		} catch (System.OverflowException) {}
 		
 		try {
-			return CheckSub((short*)(-1), int.MaxValue);
+			if (IntPtr.Size <= 4)
+				return CheckSub((short*)(-1), int.MaxValue);
+			else
+				return CheckSub((short*)(-1), long.MaxValue);
 		} catch (System.OverflowException) {}
 		
 		CheckSub2((short*)(-1), int.MaxValue);
@@ -37,6 +40,14 @@ class PointerArithmeticTest
 	}
 	
 	unsafe static int CheckSub(short* ptr, int offset)
+	{
+		if (checked(ptr - offset < ptr))
+			return 2;
+
+		return 102;
+	}
+
+	unsafe static int CheckSub(short* ptr, long offset)
 	{
 		if (checked(ptr - offset < ptr))
 			return 2;

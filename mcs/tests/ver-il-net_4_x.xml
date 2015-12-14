@@ -45684,7 +45684,7 @@
   <test name="test-643.cs">
     <type name="PointerArithmeticTest">
       <method name="Int32 Main()" attrs="150">
-        <size>137</size>
+        <size>170</size>
       </method>
       <method name="Int32* Conversions(Int64)" attrs="145">
         <size>11</size>
@@ -45700,6 +45700,9 @@
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Int32 CheckSub(Int16*, Int64)" attrs="145">
+        <size>31</size>
       </method>
     </type>
   </test>
