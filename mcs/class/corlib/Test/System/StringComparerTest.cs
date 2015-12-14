@@ -215,6 +215,20 @@ namespace MonoTests.System
 			StringComparer.Ordinal.GetHashCode (null);
 		}
 
+		[Test]
+		[SetCulture("en-us")]
+		public void OrdinarCultureSwitch ()
+		{
+			var cmp1 = StringComparer.OrdinalIgnoreCase;
+			var h1 = cmp1.GetHashCode ("w");
+
+			global::System.Threading.Thread.CurrentThread.CurrentCulture = new global::System.Globalization.CultureInfo ("fi");
+
+			var cmp2 = StringComparer.OrdinalIgnoreCase;
+			var h2 = cmp2.GetHashCode ("w");
+			Assert.AreEqual (h1, h2);
+		}
+
 		private static readonly byte [] _serializedCurrentCulture = new byte [] {
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00,
