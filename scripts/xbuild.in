@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/xbuild/12.0/bin/xbuild.exe "$@"
+exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/xbuild/14.0/bin/xbuild.exe "$@"
