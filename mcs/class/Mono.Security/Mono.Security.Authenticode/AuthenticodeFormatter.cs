@@ -77,7 +77,7 @@ namespace Mono.Security.Authenticode {
 		public string Hash {
 			get { 
 				if (hash == null)
-					hash = "MD5";
+					hash = "SHA1";
 				return hash; 
 			}
 			set {
