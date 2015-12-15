@@ -71,9 +71,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				object result = null;
 
 				client.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 
 				client.GetDataAsync ();

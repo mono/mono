@@ -82,9 +82,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				object result = null;
 
 				normalClient.GetDataCompleted += delegate (object o, GetDataCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 				normalClient.GetDataAsync ();
 
@@ -99,9 +102,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				ObservableCollection<object> result = null;
 
 				collectionClient.GetCollectionDataCompleted += delegate (object sender, GetCollectionDataCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 				collectionClient.GetCollectionDataAsync ();
 
@@ -116,9 +122,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				WebServiceMoonlightTest.ServiceReference2.DataType2 result = null;
 
 				nestedClient.GetNestedDataCompleted += delegate (object sender, GetNestedDataCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 				nestedClient.GetNestedDataAsync ();
 
@@ -133,9 +142,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				string result = null;
 
 				dbClient.JSMGetDatabasesCompleted += delegate (object sender, JSMGetDatabasesCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 				dbClient.JSMGetDatabasesAsync();
 
