@@ -68,9 +68,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				string result = null;
 
 				client.CelsiusToFahrenheitCompleted += delegate (object o, CelsiusToFahrenheitCompletedEventArgs e) {
-					error = e.Error;
-					result = e.Result;
-					wait.Set ();
+					try {
+						error = e.Error;
+						result = e.Error == null ? e.Result : null;
+					} finally {
+						wait.Set ();
+					}
 				};
 
 				client.CelsiusToFahrenheitAsync ("24.5");
