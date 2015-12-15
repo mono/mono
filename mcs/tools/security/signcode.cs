@@ -35,7 +35,7 @@ namespace Mono.Tools {
 			Console.WriteLine ("Usage: signcode [options] filename{0}", Environment.NewLine);
 			Console.WriteLine ("\t-spc spc\tSoftware Publisher Certificate file");
 			Console.WriteLine ("\t-v pvk\t\tPrivate Key file");
-			Console.WriteLine ("\t-a md5 | sha1\tHash Algorithm (default: MD5)");
+			Console.WriteLine ("\t-a sha1 | md5\tHash Algorithm (default: SHA1)");
 			Console.WriteLine ("\t-$ indivisual | commercial\tSignature type");
 			Console.WriteLine ("\t-n description\tDescription for the signed file");
 			Console.WriteLine ("\t-i url\tURL for the signed file");
