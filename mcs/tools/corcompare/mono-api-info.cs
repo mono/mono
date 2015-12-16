@@ -35,18 +35,31 @@ namespace CorCompare
 			var acoll = new AssemblyCollection ();
 
 			var options = new Mono.Options.OptionSet {
-				{ "h|help", "Show this help", v => showHelp = true },
-				{ "abi", _ => AbiMode = true},
-				{ "f|follow-forwarders", _ => FollowForwarders = true },
-				{ "d|search-directory=", v => TypeHelper.Resolver.AddSearchDirectory (v) },
+				"usage: mono-api-info [OPTIONS+] ASSEMBLY+",
+				"",
+				"Expose IL structure of CLR assemblies as XML.",
+				"",
+				"Available Options:",
+				{ "abi",
+					"Generate ABI, not API; contains only classes with instance fields which are not [NonSerialized].",
+					v => AbiMode = v != null },
+				{ "f|follow-forwarders",
+					"Follow type forwarders.",
+					v => FollowForwarders = v != null },
+				{ "d|L|lib|search-directory=",
+					"Check for assembly references in {DIRECTORY}.",
+					v => TypeHelper.Resolver.AddSearchDirectory (v) },
+				{ "r=",
+					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
+					v => TypeHelper.Resolver.ResolveFile (v) },
+				{ "h|?|help",
+					"Show this message and exit.",
+					v => showHelp = v != null },
 			};
 
 			var asms = options.Parse (args);
 
 			if (showHelp || asms.Count == 0) {
-				Console.WriteLine (@"Usage: mono-api-info [options] <assemblies>");
-				Console.WriteLine ();
-				Console.WriteLine ("Available options:");
 				options.WriteOptionDescriptions (Console.Out);
 				Console.WriteLine ();
 				return showHelp? 0 :1;
