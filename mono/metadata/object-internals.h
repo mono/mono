@@ -179,6 +179,24 @@ struct _MonoString {
 #define mono_string_chars_fast(s) ((mono_unichar2*)(s)->chars)
 #define mono_string_length_fast(s) ((s)->length)
 
+static inline gint32
+mono_handle_string_length (MONO_HANDLE_TYPE (MonoString) *string_handle)
+{
+	return mono_handle_obj (string_handle)->length;
+}
+
+static inline gchar*
+mono_handle_string_to_utf8 (MONO_HANDLE_TYPE (MonoString) *str_handle)
+{
+	gchar *ret;
+
+	MONO_PREPARE_CRITICAL;
+	ret = mono_string_to_utf8 (mono_handle_obj (str_handle));
+	MONO_FINISH_CRITICAL;
+
+	return ret;
+}
+
 #define mono_array_length_fast(array) ((array)->max_length)
 #define mono_array_addr_with_size_fast(array,size,index) ( ((char*)(array)->vector) + (size) * (index) )
 
@@ -438,158 +456,6 @@ struct _MonoThread {
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 };
-
-typedef struct {
-	guint32 state;
-	MonoObject *additional;
-} MonoStreamingContext;
-
-typedef struct {
-	MonoObject obj;
-	MonoBoolean readOnly;
-	MonoString *AMDesignator;
-	MonoString *PMDesignator;
-	MonoString *DateSeparator;
-	MonoString *TimeSeparator;
-	MonoString *ShortDatePattern;
-	MonoString *LongDatePattern;
-	MonoString *ShortTimePattern;
-	MonoString *LongTimePattern;
-	MonoString *MonthDayPattern;
-	MonoString *YearMonthPattern;
-	guint32 FirstDayOfWeek;
-	guint32 CalendarWeekRule;
-	MonoArray *AbbreviatedDayNames;
-	MonoArray *DayNames;
-	MonoArray *MonthNames;
-	MonoArray *GenitiveMonthNames;
-	MonoArray *AbbreviatedMonthNames;
-	MonoArray *GenitiveAbbreviatedMonthNames;
-	MonoArray *ShortDatePatterns;
-	MonoArray *LongDatePatterns;
-	MonoArray *ShortTimePatterns;
-	MonoArray *LongTimePatterns;
-	MonoArray *MonthDayPatterns;
-	MonoArray *YearMonthPatterns;
-	MonoArray *ShortestDayNames;
-} MonoDateTimeFormatInfo;
-
-typedef struct 
-{
-	MonoObject obj;
-	MonoArray *numberGroupSizes;
-	MonoArray *currencyGroupSizes;
-	MonoArray *percentGroupSizes;
-	MonoString *positiveSign;
-	MonoString *negativeSign;
-	MonoString *numberDecimalSeparator;
-	MonoString *numberGroupSeparator;
-	MonoString *currencyGroupSeparator;
-	MonoString *currencyDecimalSeparator;
-	MonoString *currencySymbol;
-	MonoString *ansiCurrencySymbol;	/* unused */
-	MonoString *naNSymbol;
-	MonoString *positiveInfinitySymbol;
-	MonoString *negativeInfinitySymbol;
-	MonoString *percentDecimalSeparator;
-	MonoString *percentGroupSeparator;
-	MonoString *percentSymbol;
-	MonoString *perMilleSymbol;
-	MonoString *nativeDigits; /* unused */
-	gint32 dataItem; /* unused */
-	guint32 numberDecimalDigits;
-	gint32 currencyDecimalDigits;
-	gint32 currencyPositivePattern;
-	gint32 currencyNegativePattern;
-	gint32 numberNegativePattern;
-	gint32 percentPositivePattern;
-	gint32 percentNegativePattern;
-	gint32 percentDecimalDigits;
-} MonoNumberFormatInfo;
-
-typedef struct {
-	MonoObject obj;
-	gint32 lcid;
-	MonoString *icu_name;
-	gpointer ICU_collator;
-} MonoCompareInfo;
-
-typedef struct {
-	MonoObject obj;
-	MonoString *NativeName;
-	MonoArray *ShortDatePatterns;
-	MonoArray *YearMonthPatterns;
-	MonoArray *LongDatePatterns;
-	MonoString *MonthDayPattern;
-
-	MonoArray *EraNames;
-	MonoArray *AbbreviatedEraNames;
-	MonoArray *AbbreviatedEnglishEraNames;
-	MonoArray *DayNames;
-	MonoArray *AbbreviatedDayNames;
-	MonoArray *SuperShortDayNames;
-	MonoArray *MonthNames;
-	MonoArray *AbbreviatedMonthNames;
-	MonoArray *GenitiveMonthNames;
-	MonoArray *GenitiveAbbreviatedMonthNames;
-} MonoCalendarData;
-
-typedef struct {
-	MonoObject obj;
-	MonoString *AMDesignator;
-	MonoString *PMDesignator;
-	MonoString *TimeSeparator;
-	MonoArray *LongTimePatterns;
-	MonoArray *ShortTimePatterns;
-	guint32 FirstDayOfWeek;
-	guint32 CalendarWeekRule;
-} MonoCultureData;
-
-typedef struct {
-	MonoObject obj;
-	MonoBoolean is_read_only;
-	gint32 lcid;
-	gint32 parent_lcid;
-	gint32 datetime_index;
-	gint32 number_index;
-	gint32 calendar_type;
-	MonoBoolean use_user_override;
-	MonoNumberFormatInfo *number_format;
-	MonoDateTimeFormatInfo *datetime_format;
-	MonoObject *textinfo;
-	MonoString *name;
-	MonoString *englishname;
-	MonoString *nativename;
-	MonoString *iso3lang;
-	MonoString *iso2lang;
-	MonoString *win3lang;
-	MonoString *territory;
-	MonoArray *native_calendar_names;
-	MonoCompareInfo *compareinfo;
-	const void* text_info_data;
-} MonoCultureInfo;
-
-typedef struct {
-	MonoObject obj;
-	gint32 geo_id;
-	MonoString *iso2name;
-	MonoString *iso3name;
-	MonoString *win3name;
-	MonoString *english_name;
-	MonoString *native_name;
-	MonoString *currency_symbol;
-	MonoString *iso_currency_symbol;
-	MonoString *currency_english_name;
-	MonoString *currency_native_name;
-} MonoRegionInfo;
-
-typedef struct {
-	MonoObject obj;
-	MonoString *str;
-	gint32 options;
-	MonoArray *key;
-	gint32 lcid;
-} MonoSortKey;
 
 typedef struct {
 	MonoObject object;
