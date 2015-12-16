@@ -4327,6 +4327,19 @@ namespace MonoTests.System.Net.Sockets
 			client.Receive (bytes, bytes.Length, 0);
 			client.Close ();
 		}
+
+		[Test]
+		public void UdpMulticasTimeToLive ()
+		{
+			/* see https://bugzilla.xamarin.com/show_bug.cgi?id=36941 */
+
+			using (Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)) {
+				IPEndPoint end_point = new IPEndPoint (IPAddress.Any, 11000);
+				socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+				socket.Bind (end_point);
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 19);
+			}
+		}
  	}
 }
 
