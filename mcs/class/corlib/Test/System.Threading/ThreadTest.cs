@@ -964,6 +964,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[Test]
 		public void CurrentThread_Domains ()
 		{
@@ -973,6 +974,7 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (o.Run ());
 			AppDomain.Unload (ad);
 		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 		void CheckIsRunning (string s, Thread t)
 		{

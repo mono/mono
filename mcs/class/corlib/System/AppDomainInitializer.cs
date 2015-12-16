@@ -27,8 +27,12 @@
 //
 
 namespace System {
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
+#else
+	[Obsolete ("AppDomainInitializer is not supported on the current platform.", true)]
+#endif
 	public delegate void AppDomainInitializer (string[] args);
 
 }
