@@ -611,6 +611,7 @@ namespace System {
 #if FEATURE_COMINTEROP || MONO_COM || MOBILE_LEGACY
 
 #if FEATURE_CLICKONCE || MOBILE_LEGACY
+#if FEATURE_CLICKONCE || MONO_FEATURE_MULTIPLE_APPDOMAINS
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static ObjectHandle CreateInstance (ActivationContext activationContext) {
             AppDomainManager domainManager = AppDomain.CurrentDomain.DomainManager;
@@ -628,6 +629,17 @@ namespace System {
 
             return domainManager.ApplicationActivator.CreateInstance(activationContext, activationCustomData);
         }
+#else
+        [Obsolete ("Activator.CreateInstance (ActivationContext) is not supported on this platform.", true)]
+        public static ObjectHandle CreateInstance (ActivationContext activationContext) {
+            throw new PlatformNotSupportedException ("Activator.CreateInstance (ActivationContext) is not supported on this platform.");
+        }
+
+        [Obsolete ("Activator.CreateInstance (ActivationContext, string[]) is not supported on this platform.", true)]
+        public static ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData) {
+            throw new PlatformNotSupportedException ("Activator.CreateInstance (ActivationContext) is not supported on this platform.");
+        }
+#endif
 #endif // FEATURE_CLICKONCE
 
         [ResourceExposure(ResourceScope.Machine)]

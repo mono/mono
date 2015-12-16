@@ -77,6 +77,7 @@ namespace System.Threading.Tasks
 
         private static void EnsureADUnloadCallbackRegistered()
         {
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
             if (s_adUnloadEventHandler == null && 
                 Interlocked.CompareExchange( ref s_adUnloadEventHandler,
                                              AppDomainUnloadCallback, 
@@ -84,6 +85,7 @@ namespace System.Threading.Tasks
             {
                 AppDomain.CurrentDomain.DomainUnload += s_adUnloadEventHandler;
             }
+#endif
         }
 
         private static void AppDomainUnloadCallback(object sender, EventArgs e)
