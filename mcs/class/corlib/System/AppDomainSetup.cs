@@ -309,6 +309,7 @@ namespace System
 			set { _activationArguments = value; }
 		}
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		[MonoLimitation ("it needs to be invoked within the created domain")]
 		public AppDomainInitializer AppDomainInitializer {
 			get {
@@ -319,6 +320,14 @@ namespace System
 			}
 			set { domain_initializer = value; }
 		}
+#else
+		[Obsolete ("AppDomainSetup.AppDomainInitializer is not supported on this platform.", true)]
+		public AppDomainInitializer AppDomainInitializer {
+			get { throw new PlatformNotSupportedException ("AppDomainSetup.AppDomainInitializer is not supported on this platform."); }
+			set { throw new PlatformNotSupportedException ("AppDomainSetup.AppDomainInitializer is not supported on this platform."); }
+		}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
+
 
 		[MonoLimitation ("it needs to be used to invoke the initializer within the created domain")]
 		public string [] AppDomainInitializerArguments {
@@ -369,7 +378,9 @@ namespace System
 				object [] arr = (object []) bf.Deserialize (ms);
 
 				_activationArguments = (ActivationArguments) arr [0];
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 				domain_initializer = (AppDomainInitializer) arr [1];
+#endif
 				application_trust = (ApplicationTrust) arr [2];
 
 				serialized_non_primitives = null;

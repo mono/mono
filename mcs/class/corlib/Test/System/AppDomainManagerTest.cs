@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 
 using System;
 using System.Security;
@@ -56,3 +57,4 @@ namespace MonoTests.System {
 	}
 }
 
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS

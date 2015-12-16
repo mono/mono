@@ -33,6 +33,7 @@ using System.Security;
 
 namespace System {
 
+#if MONO_FEATURE_MULTIPLE_APPDOMAINS
 	[ComVisible (true)]
 	public class AppDomainManager {
 
@@ -51,6 +52,26 @@ namespace System {
 			return (state != null);
 		}
 	}
+#else
+	[Obsolete ("AppDomainManager is not supported on the current platform.", true)]
+	public class AppDomainManager {
+
+		public AppDomainManager ()
+		{
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual void InitializeNewDomain (AppDomainSetup appDomainInfo)
+		{
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+
+		public virtual bool CheckSecuritySettings (SecurityState state)
+		{
+			get { throw new PlatformNotSupportedException ("AppDomainManager is not supported on the current platform."); }
+		}
+	}
+#endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
 }
 
 #endif
