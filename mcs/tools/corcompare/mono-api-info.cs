@@ -22,6 +22,8 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.IO;
 
+using Mono.Options;
+
 namespace CorCompare
 {
 	public class Driver
@@ -39,7 +41,34 @@ namespace CorCompare
 			string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 			TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
 
-			foreach (string arg in args) {
+			bool help = false;
+			var options = new OptionSet () {
+				"usage: mono-api-info [OPTIONS+] ASSEMBLY+",
+				"",
+				"Expose IL structure of CLR assemblies as XML.",
+				"",
+				"Available Options:",
+				{ "abi",
+					"Generate ABI, not API; contains only classes with instance fields which are not [NonSerialized].",
+					v => AbiMode = v != null
+				},
+				{ "L|lib=",
+					"Check for assembly references in {DIRECTORY}.",
+					v => TypeHelper.Resolver.AddSearchDirectory (v) },
+				{ "r=",
+					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
+					v => TypeHelper.Resolver.ResolveFile (v) },
+				{ "h|?|help",
+					"Show this message and exit.",
+					v => help = v != null },
+			};
+			var files = options.Parse (args);
+			if (help) {
+				options.WriteOptionDescriptions (Console.Out);
+				return 0;
+			}
+
+			foreach (string arg in files) {
 				if (arg == "--abi") {
 					AbiMode = true;
 				} else {
