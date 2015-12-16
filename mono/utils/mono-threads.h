@@ -217,7 +217,7 @@ typedef struct {
 	A critical session is implicitly started when you call mono_thread_info_safe_suspend_sync
 	and is ended when you call either mono_thread_info_resume or mono_thread_info_finish_suspend.
 	*/
-	gboolean inside_critical_region;
+	volatile gboolean inside_critical_region;
 
 	/*
 	 * If TRUE, the thread is in async context. Code can use this information to avoid async-unsafe

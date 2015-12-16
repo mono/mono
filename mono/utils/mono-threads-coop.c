@@ -58,6 +58,8 @@ mono_threads_state_poll (void)
 		return;
 	THREADS_SUSPEND_DEBUG ("FINISH SELF SUSPEND OF %p\n", mono_thread_info_get_tid (info));
 
+	g_assert (!info->inside_critical_region);
+
 	/* Fast check for pending suspend requests */
 	if (!(info->thread_state & (STATE_ASYNC_SUSPEND_REQUESTED | STATE_SELF_SUSPEND_REQUESTED)))
 		return;
@@ -233,6 +235,32 @@ mono_threads_reset_blocking_end (void *cookie, void* stackdata)
 
 	g_assert (info == mono_thread_info_current_unchecked ());
 	mono_threads_prepare_blocking (stackdata);
+}
+
+gpointer
+mono_threads_prepare_critical (void)
+{
+	MonoThreadInfo *thread = mono_thread_info_current_unchecked ();
+	if (!thread)
+		return NULL;
+
+	if (thread->inside_critical_region)
+		return NULL;
+
+	thread->inside_critical_region = TRUE;
+	return thread;
+}
+
+void
+mono_threads_finish_critical (gpointer cookie)
+{
+	MonoThreadInfo *thread;
+
+	if (!cookie)
+		return;
+
+	thread = (MonoThreadInfo*) cookie;
+	thread->inside_critical_region = FALSE;
 }
 
 void

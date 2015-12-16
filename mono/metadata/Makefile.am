@@ -131,6 +131,7 @@ common_sources = \
 	filewatcher.h		\
 	gc-internals.h		\
 	icall.c			\
+	icall-define.h		\
 	icall-def.h		\
 	image.c			\
 	image-internals.h	\
@@ -214,7 +215,12 @@ common_sources = \
 	abi-details.h	\
 	metadata-cross-helpers.c	\
 	seq-points-data.h	\
-	seq-points-data.c
+	seq-points-data.c	\
+	handle.c	\
+	handle.h	\
+	handle-private.h	\
+	runtime-interface.c	\
+	runtime-interface.h
 
 
 # These source files have compile time dependencies on GC code
