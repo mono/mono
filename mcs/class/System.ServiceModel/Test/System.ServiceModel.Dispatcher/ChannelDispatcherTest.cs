@@ -19,9 +19,9 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 	{
 		Uri CreateAvailableUri (string uriString)
 		{
-			var uri = new Uri (uriString);
+			Uri uri = new Uri (uriString);
 			try {
-				var t = new TcpListener (uri.Port);
+				TcpListener t = new TcpListener (uri.Port);
 				t.Start ();
 				t.Stop ();
 			} catch (Exception ex) {
@@ -40,110 +40,121 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]
 		public void ServiceThrottle ()
 		{
-			var cd = new ChannelDispatcher (new MyChannelListener<IReplyChannel> (new Uri ("urn:foo")));
-			var st = cd.ServiceThrottle;
-			Assert.IsNull (st, "#0");
+			ChannelDispatcher channelDispatcher = new ChannelDispatcher (new MyChannelListener<IReplyChannel> (new Uri ("urn:foo")));
+			Assert.IsNull (channelDispatcher.ServiceThrottle, "#0");
 
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			h.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
-			h.ChannelDispatchers.Add (cd);
-			Assert.IsNull (st, "#1");
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			Assert.IsNull (ed.ChannelDispatcher, "#1-2");
-			ed.DispatchRuntime.Type = typeof (TestContract);
-			cd.Endpoints.Add (ed);
-			Assert.AreEqual (cd, ed.ChannelDispatcher, "#1-3");
-			cd.MessageVersion = MessageVersion.Default;
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
 
-			{
-				cd.Open (TimeSpan.FromSeconds (10));
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				serviceHost.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
+				serviceHost.ChannelDispatchers.Add (channelDispatcher);
+				Assert.IsNull (channelDispatcher.ServiceThrottle, "#1");
+
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				Assert.IsNull (endpointDispatcher.ChannelDispatcher, "#1-2");
+
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract);
+				channelDispatcher.Endpoints.Add (endpointDispatcher);
+				Assert.AreEqual (channelDispatcher, endpointDispatcher.ChannelDispatcher, "#1-3");
+
+				channelDispatcher.MessageVersion = MessageVersion.Default;
+
+				channelDispatcher.Open (TimeSpan.FromSeconds (10));
 				try {
-					Assert.IsNull (st, "#2");
+					Assert.IsNull (channelDispatcher.ServiceThrottle, "#2");
 					// so, can't really test actual slot values as it is null.
 				} finally {
-					cd.Close (TimeSpan.FromSeconds (10));
+					channelDispatcher.Close (TimeSpan.FromSeconds (10));
 				}
-				return;
 			}
 		}
 
 		[Test]			
 		public void Collection_Add_Remove () {
-			Console.WriteLine ("STart test Collection_Add_Remove");
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			h.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
-			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
-			h.ChannelDispatchers.Add (d);
-			Assert.IsTrue (d.Attached, "#1");
-			h.ChannelDispatchers.Remove (d);
-			Assert.IsFalse (d.Attached, "#2");
-			h.ChannelDispatchers.Insert (0, d);
-			Assert.IsTrue (d.Attached, "#3");
-			h.ChannelDispatchers.Add (new MyChannelDispatcher (new MyChannelListener (uri)));
-			h.ChannelDispatchers.Clear ();
-			Assert.IsFalse (d.Attached, "#4");
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				serviceHost.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
+
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (new MyChannelListener (uri));
+
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				Assert.IsTrue (myChannelDispatcher.Attached, "#1");
+
+				serviceHost.ChannelDispatchers.Remove (myChannelDispatcher);
+				Assert.IsFalse (myChannelDispatcher.Attached, "#2");
+
+				serviceHost.ChannelDispatchers.Insert (0, myChannelDispatcher);
+				Assert.IsTrue (myChannelDispatcher.Attached, "#3");
+
+				serviceHost.ChannelDispatchers.Add (new MyChannelDispatcher (new MyChannelListener (uri)));
+				serviceHost.ChannelDispatchers.Clear ();
+				Assert.IsFalse (myChannelDispatcher.Attached, "#4");
+			}
 		}
 
 		[Test]
 		public void EndpointDispatcherAddTest ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
-			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (new MyChannelListener (uri));
+			myChannelDispatcher.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))] 
 		public void EndpointDispatcherAddTest2 () {
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
-			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
-			d.Open (); // the dispatcher must be attached.
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (new MyChannelListener (uri));
+			myChannelDispatcher.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
+			myChannelDispatcher.Open (); // the dispatcher must be attached.
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void EndpointDispatcherAddTest3 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
-			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
-			h.ChannelDispatchers.Add (d);
-			d.Open (); // missing MessageVersion
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (new MyChannelListener (uri));
+				myChannelDispatcher.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				myChannelDispatcher.Open (); // missing MessageVersion
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))] // i.e. it is thrown synchronously in current thread.
 		public void EndpointDispatcherAddTest4 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var listener = new MyChannelListener (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			Assert.IsNotNull (ed.DispatchRuntime, "#1");
-			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#2");
-			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#3");
-			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#3.2");
-			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#4");
-			d.Endpoints.Add (ed);
-			d.MessageVersion = MessageVersion.Default;
-			h.ChannelDispatchers.Add (d);
-			// it misses DispatchRuntime.Type, which seems set
-			// automatically when the dispatcher is created in
-			// ordinal process but need to be set manually in this case.
-			try {
-				d.Open ();
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				MyChannelListener myChannelListener = new MyChannelListener (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+
+				Assert.IsNotNull (endpointDispatcher.DispatchRuntime, "#1");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#2");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceContextProvider, "#3");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#3.2");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#4");
+
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				// it misses DispatchRuntime.Type, which seems set
+				// automatically when the dispatcher is created in
+				// ordinal process but need to be set manually in this case.
 				try {
-					// should not reach here, but in case it didn't, it must be closed.
-					d.Close (TimeSpan.FromSeconds (10));
-				} catch {
+					myChannelDispatcher.Open ();
+					try {
+						// should not reach here, but in case it didn't, it must be closed.
+						myChannelDispatcher.Close (TimeSpan.FromSeconds (10));
+					} catch {
+					}
+				} finally {
+					Assert.AreEqual (CommunicationState.Opened, myChannelDispatcher.State, "#5");
 				}
-			} finally {
-				Assert.AreEqual (CommunicationState.Opened, listener.State, "#5");
 			}
 		}
 
@@ -151,83 +162,87 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[ExpectedException (typeof (InvalidOperationException))] // i.e. it is thrown synchronously in current thread.
 		public void EndpointDispatcherAddTest5 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var binding = new BasicHttpBinding ();
-			var listener = new MyChannelListener (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			d.Endpoints.Add (ed);
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				BasicHttpBinding binding = new BasicHttpBinding ();
+				MyChannelListener myChannelDispatcher = new MyChannelListener (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
 
-			ed.DispatchRuntime.Type = typeof (TestContract); // different from Test4
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract); // different from Test4
 
-			d.MessageVersion = MessageVersion.Default;
-			h.ChannelDispatchers.Add (d);
-			// It rejects "unrecognized type" of the channel listener.
-			// Test6 uses IChannelListener<IReplyChannel> and works.
-			d.Open ();
-			// should not reach here, but in case it didn't, it must be closed.
-			d.Close (TimeSpan.FromSeconds (10));
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				// It rejects "unrecognized type" of the channel myChannelDispatcher.
+				// Test6 uses IChannelListener<IReplyChannel> and works.
+				myChannelDispatcher.Open ();
+				// should not reach here, but in case it didn't, it must be closed.
+				myChannelDispatcher.Close (TimeSpan.FromSeconds (10));
+			}
 		}
 
 		[Test]
 		public void EndpointDispatcherAddTest6 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var binding = new BasicHttpBinding ();
-			var listener = new MyChannelListener<IReplyChannel> (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			d.Endpoints.Add (ed);
-			Assert.IsFalse (d.Attached, "#x1");
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				BasicHttpBinding binding = new BasicHttpBinding ();
+				MyChannelListener myChannelDispatcher = new MyChannelListener<IReplyChannel> (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
 
-			ed.DispatchRuntime.Type = typeof (TestContract);
+				Assert.IsFalse (myChannelDispatcher.Attached, "#x1");
 
-			d.MessageVersion = MessageVersion.Default;
-			h.ChannelDispatchers.Add (d);
-			Assert.IsTrue (d.Attached, "#x2");
-			d.Open (); // At this state, it does *not* call AcceptChannel() yet.
-			Assert.IsFalse (listener.AcceptChannelTried, "#1");
-			Assert.IsFalse (listener.WaitForChannelTried, "#2");
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract);
 
-			Assert.IsNotNull (ed.DispatchRuntime, "#3");
-			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
-			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it is not still set after ChannelDispatcher.Open().
-			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#5.2");
-			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				Assert.IsTrue (myChannelDispatcher.Attached, "#x2");
 
-			d.Close (); // we don't have to even close it.
+				myChannelDispatcher.Open (); // At this state, it does *not* call AcceptChannel() yet.
+				Assert.IsFalse (myChannelDispatcher.AcceptChannelTried, "#1");
+				Assert.IsFalse (myChannelDispatcher.WaitForChannelTried, "#2");
+
+				Assert.IsNotNull (endpointDispatcher.DispatchRuntime, "#3");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#4");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceContextProvider, "#5"); // it is not still set after ChannelDispatcher.Open().
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#5.2");
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#6");
+
+				myChannelDispatcher.Close (); // we don't have to even close it.
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void EndpointDispatcherAddTest7 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var binding = new BasicHttpBinding ();
-			var listener = new MyChannelListener<IReplyChannel> (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			d.Endpoints.Add (ed);
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				BasicHttpBinding binding = new BasicHttpBinding ();
+				MyChannelListener myChannelDispatcher = new MyChannelListener<IReplyChannel> (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
 
-			ed.DispatchRuntime.Type = typeof (TestContract);
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract);
 
-			d.MessageVersion = MessageVersion.Default;
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
 
-			// add service endpoint to open the host (unlike all tests above).
-			h.AddServiceEndpoint (typeof (TestContract),
-				new BasicHttpBinding (), uri.ToString ());
-			h.ChannelDispatchers.Clear ();
+				// add service endpoint to open the host (unlike all tests above).
+				serviceHost.AddServiceEndpoint (typeof (TestContract), new BasicHttpBinding (), uri.ToString ());
+				serviceHost.ChannelDispatchers.Clear ();
 
-			h.ChannelDispatchers.Add (d);
-			d.Open (); // At this state, it does *not* call AcceptChannel() yet.
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				myChannelDispatcher.Open (); // At this state, it does *not* call AcceptChannel() yet.
 
-			// This rejects already-opened ChannelDispatcher.
-			h.Open (TimeSpan.FromSeconds (10));
-			// should not reach here, but in case it didn't, it must be closed.
-			h.Close (TimeSpan.FromSeconds (10));
+				// This rejects already-opened ChannelDispatcher.
+				serviceHost.Open (TimeSpan.FromSeconds (10));
+				// should not reach here, but in case it didn't, it must be closed.
+				serviceHost.Close (TimeSpan.FromSeconds (10));
+			}
 		}
 
 		[Test]
@@ -239,44 +254,44 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		// but it makes little sense especially for checking duplicate listen URIs. Duplicate listen URIs should be rejected anyways.
 		public void EndpointDispatcherAddTest8 ()
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
-			var listener = new MyChannelListener<IReplyChannel> (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			d.Endpoints.Add (ed);
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (typeof (TestContract), uri)) {
+				MyChannelListener myChannelDispatcher = new MyChannelListener<IReplyChannel> (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
 
-			ed.DispatchRuntime.Type = typeof (TestContract);
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract);
 
-			d.MessageVersion = MessageVersion.Default;
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
 
-			// add service endpoint to open the host (unlike all tests above).
-			h.AddServiceEndpoint (typeof (TestContract),
-				new BasicHttpBinding (), uri.ToString ());
-			h.ChannelDispatchers.Clear ();
+				// add service endpoint to open the host (unlike all tests above).
+				serviceHost.AddServiceEndpoint (typeof (TestContract), new BasicHttpBinding (), uri.ToString ());
+				serviceHost.ChannelDispatchers.Clear ();
 
-			h.ChannelDispatchers.Add (d);
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
 
-			Assert.AreEqual (h, d.Host, "#0");
+				Assert.AreEqual (serviceHost, myChannelDispatcher.Host, "#0");
 
-			try {
-				h.Open (TimeSpan.FromSeconds (10));
-				Assert.AreEqual (3, h.ChannelDispatchers.Count, "#0"); // TestContract, d, mex
-				Assert.IsTrue (listener.BeginAcceptChannelTried, "#1"); // while it throws NIE ...
-				Assert.IsFalse (listener.WaitForChannelTried, "#2");
-				Assert.IsNotNull (ed.DispatchRuntime, "#3");
-				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
-				Assert.IsNotNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
-				Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
-				/*
-				var l = new HttpListener ();
-				l.Prefixes.Add (uri.ToString ());
-				l.Start ();
-				l.Stop ();
-				*/
-			} finally {
-				h.Close (TimeSpan.FromSeconds (10));
-				h.Abort ();
+				try {
+					serviceHost.Open (TimeSpan.FromSeconds (10));
+					Assert.AreEqual (3, serviceHost.ChannelDispatchers.Count, "#0"); // TestContract, myChannelDispatcher, mex
+					Assert.IsTrue (myChannelDispatcher.BeginAcceptChannelTried, "#1"); // while it throws NIE ...
+					Assert.IsFalse (myChannelDispatcher.WaitForChannelTried, "#2");
+					Assert.IsNotNull (endpointDispatcher.DispatchRuntime, "#3");
+					Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#4");
+					Assert.IsNotNull (endpointDispatcher.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
+					Assert.IsNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#6");
+					/*
+					var l = new HttpListener ();
+					l.Prefixes.Add (uri.ToString ());
+					l.Start ();
+					l.Stop ();
+					*/
+				} finally {
+					serviceHost.Close (TimeSpan.FromSeconds (10));
+					serviceHost.Abort ();
+				}
 			}
 		}
 
@@ -284,28 +299,29 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 //		[Test]
 		public void EndpointDispatcherAddTest9 () // test singleton service
 		{
-			var uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
-			ServiceHost h = new ServiceHost (new TestContract (), uri);
-			h.Description.Behaviors.Find<ServiceBehaviorAttribute> ().InstanceContextMode = InstanceContextMode.Single;
-			var listener = new MyChannelListener<IReplyChannel> (uri);
-			MyChannelDispatcher d = new MyChannelDispatcher (listener);
-			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
-			d.Endpoints.Add (ed);
-			ed.DispatchRuntime.Type = typeof (TestContract);
-			d.MessageVersion = MessageVersion.Default;
-			h.AddServiceEndpoint (typeof (TestContract), new BasicHttpBinding (), uri.ToString ());
-			h.ChannelDispatchers.Clear ();
-			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#1");
-			h.ChannelDispatchers.Add (d);
-			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#2");
-			try {
-				h.Open (TimeSpan.FromSeconds (10));
-				Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
-				Assert.IsNotNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
-				Assert.IsNotNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
-			} finally {
-				h.Close (TimeSpan.FromSeconds (10));
-				h.Abort ();
+			Uri uri = CreateAvailableUri ("http://localhost:" + NetworkHelpers.FindFreePort ());
+			using (ServiceHost serviceHost = new ServiceHost (new TestContract (), uri)) {
+				serviceHost.Description.Behaviors.Find<ServiceBehaviorAttribute> ().InstanceContextMode = InstanceContextMode.Single;
+				MyChannelListener myChannelDispatcher = new MyChannelListener<IReplyChannel> (uri);
+				MyChannelDispatcher myChannelDispatcher = new MyChannelDispatcher (myChannelDispatcher);
+				EndpointDispatcher endpointDispatcher = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+				myChannelDispatcher.Endpoints.Add (endpointDispatcher);
+				endpointDispatcher.DispatchRuntime.Type = typeof (TestContract);
+				myChannelDispatcher.MessageVersion = MessageVersion.Default;
+				serviceHost.AddServiceEndpoint (typeof (TestContract), new BasicHttpBinding (), uri.ToString ());
+				serviceHost.ChannelDispatchers.Clear ();
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#1");
+				serviceHost.ChannelDispatchers.Add (myChannelDispatcher);
+				Assert.IsNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#2");
+				try {
+					serviceHost.Open (TimeSpan.FromSeconds (10));
+					Assert.IsNull (endpointDispatcher.DispatchRuntime.InstanceProvider, "#4");
+					Assert.IsNotNull (endpointDispatcher.DispatchRuntime.InstanceContextProvider, "#5"); // it was set after ServiceHost.Open().
+					Assert.IsNotNull (endpointDispatcher.DispatchRuntime.SingletonInstanceContext, "#6");
+				} finally {
+					serviceHost.Close (TimeSpan.FromSeconds (10));
+					serviceHost.Abort ();
+				}
 			}
 		}
 
