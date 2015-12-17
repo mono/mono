@@ -496,7 +496,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				if (static_link)
 					monoFile = LocateFile (monoPath + @"\lib\monosgen-2.0.lib");
 				else
-					monoFile = LocateFile (monoPath + @"\lib\monosgen-2.0dll");
+					monoFile = LocateFile (monoPath + @"\lib\monosgen-2.0.dll");
 
 				compilerArgs.Add("/MD");
 				compilerArgs.Add(temp_c);
