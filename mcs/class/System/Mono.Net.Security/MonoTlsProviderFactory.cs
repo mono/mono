@@ -50,7 +50,7 @@ namespace Mono.Net.Security
 	 * Keep in sync with Mono.Security/Mono.Security.Interface/MonoTlsProvider.cs.
 	 *
 	 */
-	static class MonoTlsProviderFactory
+	static partial class MonoTlsProviderFactory
 	{
 		#region Internal API
 
@@ -101,6 +101,7 @@ namespace Mono.Net.Security
 			}
 		}
 
+#if MONO_FEATURE_NEW_SYSTEM_SOURCE || (!MONOTOUCH && !XAMMAC)
 		static IMonoTlsProvider CreateDefaultProvider ()
 		{
 #if SECURITY_DEP
@@ -123,6 +124,7 @@ namespace Mono.Net.Security
 			return null;
 #endif
 		}
+#endif
 
 		static object locker = new object ();
 		static IMonoTlsProvider defaultProvider;

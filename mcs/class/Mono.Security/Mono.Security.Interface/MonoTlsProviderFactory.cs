@@ -36,7 +36,7 @@ namespace Mono.Security.Interface
 	 *
 	 * Keep in sync with System/Mono.Net.Security/MonoTlsProviderFactory.cs.
 	 */
-	public static class MonoTlsProviderFactory
+	public static partial class MonoTlsProviderFactory
 	{
 		/*
 		 * Returns the currently installed @MonoTlsProvider, falling back to the default one.
