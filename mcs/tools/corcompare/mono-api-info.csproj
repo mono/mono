@@ -63,6 +63,9 @@
     <Compile Include="mono-api-info.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WellFormedXmlWriter.cs" />
+    <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs">
+      <Link>Options.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
