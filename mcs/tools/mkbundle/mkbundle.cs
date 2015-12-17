@@ -467,15 +467,16 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			tc.Close ();
 
+			string assembler = GetEnv("AS", "as");
+			string as_cmd = String.Format("{0} -o {1} {2} ", assembler, temp_o, temp_s);
+			Execute(as_cmd);
+
 			if (compile_only)
 				return;
 			Console.WriteLine("Compiling:");
 
 			if (style == "windows")
 			{
-				string assembler = GetEnv("AS", "as");
-				string as_cmd = String.Format("{0} -o {1} {2} ", assembler, temp_o, temp_s);
-				Execute(as_cmd);
 
 				Func<string, string> quote = (pp) => { return "\"" + pp + "\""; };
 
@@ -514,13 +515,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			else
 			{
-				string assembler = GetEnv("AS", "as");
-				string cmd = String.Format("{0} -o {1} {2} ", assembler, temp_o, temp_s);
-				Execute(cmd);
-
 				string zlib = (compress ? "-lz" : "");
 				string debugging = "-g";
 				string cc = GetEnv("CC", "cc");
+				string cmd = null;
 
 				if (style == "linux")
 					debugging = "-ggdb";
@@ -745,7 +743,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	static void Execute (string cmdLine)
 	{
 		if (IsUnix) {
-			Console.WriteLine (cmdLine);
+			Console.WriteLine ("[execute cmd]: " + cmdLine);
 			int ret = system (cmdLine);
 			if (ret != 0)
 			{
