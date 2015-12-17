@@ -7198,7 +7198,7 @@ namespace host
 {
 	public class AppDelegate
 	{
-		static void Main ()
+		static void MainTest ()
 		{
 			var a = new DingusSyncData ();
 			a.Aircraft = new AircraftDTO[] { new AircraftDTO () { } };
