@@ -493,15 +493,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				foreach (string include in includes)
 					compilerArgs.Add(String.Format ("/I {0}", quote (include)));
 
-				if (static_link) {
-					compilerArgs.Add("/MT");
-					monoFile = LocateFile (monoPath + @"\lib\mono-2.0.lib");
-				}
-				else {
-					compilerArgs.Add("/MD");
-					monoFile = LocateFile (monoPath + @"\lib\mono-2.0.dll");
-				}
+				if (static_link)
+					monoFile = LocateFile (monoPath + @"\lib\monosgen-2.0.lib");
+				else
+					monoFile = LocateFile (monoPath + @"\lib\monosgen-2.0dll");
 
+				compilerArgs.Add("/MD");
 				compilerArgs.Add(temp_c);
 				compilerArgs.Add(temp_o);
 				compilerArgs.Add("/link");
