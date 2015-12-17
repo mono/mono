@@ -604,16 +604,6 @@ is_socket_async_callback (MonoImage *system_image, MonoClass *class)
 	return class == socket_async_callback_class;
 }
 
-static gboolean
-is_async_read_handler (MonoImage *system_image, MonoClass *class)
-{
-	MonoClass *async_read_handler_class = NULL;
-
-	async_read_handler_class = mono_class_from_name (system_image, "System.Diagnostics", "Process/AsyncReadHandler");
-
-	return class == async_read_handler_class;
-}
-
 gboolean
 mono_threadpool_ms_is_io (MonoObject *target, MonoObject *state)
 {
@@ -624,7 +614,7 @@ mono_threadpool_ms_is_io (MonoObject *target, MonoObject *state)
 	if (!system_image)
 		return FALSE;
 
-	if (!is_socket_async_callback (system_image, target->vtable->klass) && !is_async_read_handler (system_image, target->vtable->klass))
+	if (!is_socket_async_callback (system_image, target->vtable->klass))
 		return FALSE;
 
 	sockares = (MonoSocketAsyncResult*) state;
