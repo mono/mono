@@ -180,7 +180,7 @@ namespace System.Data.Odbc
 		{
 			if (cols [ordinal] == null) {
 				short bufsize = 255;
-				byte [] colname_buffer = new byte [bufsize];
+				byte [] colname_buffer = new byte [2 * bufsize];
 				string colname;
 				short colname_size = 0;
 				uint ColSize = 0;
@@ -190,7 +190,8 @@ namespace System.Data.Odbc
 									 ref DecDigits, ref Nullable);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
-				colname = RemoveTrailingNullChar (Encoding.Unicode.GetString (colname_buffer));
+				if (colname_size >= bufsize) colname_size = (short)(bufsize - 1);
+				colname = Encoding.Unicode.GetString (colname_buffer, 0, colname_size * 2);
 				OdbcColumn c = new OdbcColumn (colname, (SQL_TYPE) dt);
 				c.AllowDBNull = (Nullable != 0);
 				c.Digits = DecDigits;
