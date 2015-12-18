@@ -503,6 +503,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				compilerArgs.Add(temp_o);
 				compilerArgs.Add("/link");
 
+				if (nomain)
+					compilerArgs.Add("/NOENTRY");
+					compilerArgs.Add("/DLL");
+
 				foreach (string lib in libs)
 					compilerArgs.Add(String.Format ("/LIBPATH:{0}", quote(lib)));
 				compilerArgs.Add (quote(monoFile));
