@@ -299,7 +299,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			// Do the file reading and compression in parallel
 			Action<string> body = delegate (string url) {
-				string fname = new Uri (url).LocalPath;
+				string fname = LocateFile (new Uri (url).LocalPath);
 				Stream stream = File.OpenRead (fname);
 
 				long real_size = stream.Length;
@@ -334,7 +334,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			// The non-parallel part
 			byte [] buffer = new byte [8192];
 			foreach (var url in files) {
-				string fname = new Uri (url).LocalPath;
+				string fname = LocateFile (new Uri (url).LocalPath);
 				string aname = Path.GetFileName (fname);
 				string encoded = aname.Replace ("-", "_").Replace (".", "_");
 
