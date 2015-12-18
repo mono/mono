@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # Mimics GNU timeout, but does some fancy tracking based on custom features in mono nunit24.
 
@@ -32,25 +32,25 @@ LOGGING_FILE      = "babysitter_report.json_lines"
 
 # Environment keys
 
-CURRENT_TEST_KEY  = 'NUNIT_BABYSITTER_CURRENT_TEST_FILE' # Tell nunit where to leave files
-RAN_TEST_KEY      = 'NUNIT_BABYSITTER_RAN_TEST_FILE'
-FAILED_TEST_KEY   = 'NUNIT_BABYSITTER_FAILED_TEST_FILE'
-RUN_KEY           = 'NUNIT_BABYSITTER_RUN_TEST' # Semicolon-separated list of test names
-RUN_MODE_KEY      = 'NUNIT_BABYSITTER_RUN_MODE' # Equal to either RUN or AFTER
-RETRY_KEY         = 'BABYSITTER_RETRY'          # Equal to an integer
-CRASH_RESUME_KEY  = 'BABYSITTER_CRASH_RESUME'
-VERBOSE_KEY       = 'BABYSITTER_VERBOSE'
+CURRENT_TEST_KEY  = 'MONO_BABYSITTER_NUNIT_CURRENT_TEST_FILE' # Tell nunit where to leave files
+RAN_TEST_KEY      = 'MONO_BABYSITTER_NUNIT_RAN_TEST_FILE'
+FAILED_TEST_KEY   = 'MONO_BABYSITTER_NUNIT_FAILED_TEST_FILE'
+RUN_KEY           = 'MONO_BABYSITTER_NUNIT_RUN_TEST' # Semicolon-separated list of test names
+RUN_MODE_KEY      = 'MONO_BABYSITTER_NUNIT_RUN_MODE' # Equal to either RUN or AFTER
+RETRY_KEY         = 'MONO_BABYSITTER_RETRY'          # Equal to an integer
+CRASH_RESUME_KEY  = 'MONO_BABYSITTER_CRASH_RESUME'
+VERBOSE_KEY       = 'MONO_BABYSITTER_VERBOSE'
 LOGGING_DIR_KEY   = 'WORKSPACE'
 
 # JSON keys
 
-DATE_JSON       = 'date'          # POSIX timestamp of test run
+DATE_JSON       = 'date'          # POSIX timestamp of test suite run
 INVOKE_JSON     = 'invocation'
 COUNT_JSON      = 'passes'        # How many times was command executed?
 LIMIT_JSON      = 'failure_max'
-SUPPORT_JSON    = 'retry_support' # Was the test running with a babysitter-aware nunit?
+SUPPORT_JSON    = 'retry_support' # Was the test suite running with a babysitter-aware nunit?
 FINAL_CODE_JSON = 'final_code'
-TESTS_JSON      = 'tests'         # Holds dictionary of (test name)->(dict with TEST_ keys below)
+TESTS_JSON      = 'tests'         # Holds dictionary of (test case name)->(dict with TEST_ keys below)
 TEST_FAILURES         = 'normal_failures'
 TEST_CRASH_FAILURES   = 'crash_failures'
 TEST_TIMEOUT_FAILURES = 'timeout_failures'
@@ -75,7 +75,7 @@ class HesitantParser(argparse.ArgumentParser):
 
 # Define args
 argparser = HesitantParser(description="""\
-Run a test case with a timeout.\n
+Run a test suite with a timeout.\n
 Durations are floating point numbers followed by an optional unit:\n
 's' for seconds (the default)
 'm' for minutes
@@ -83,8 +83,8 @@ Durations are floating point numbers followed by an optional unit:\n
 'd' for days\n
 supported environment variables:
   %s: Directory path to save logs into
-  %s: If set to a number, failed tests will be rerun this many times
-  %s: If set, rerun even for tests which terminated early
+  %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)
+  %s: If set, rerun even for test cases which terminated early
   %s: If set, print extra logging during run""" %
 		(LOGGING_DIR_KEY, RETRY_KEY, CRASH_RESUME_KEY, VERBOSE_KEY),
 	formatter_class=argparse.RawTextHelpFormatter)
@@ -231,7 +231,7 @@ def run(): # Returns exit code
 		else:
 			target[key] = set
 
-	def log_test(testname, key, set=None, add=None):   # Call to add test-level value to log
+	def log_test(testname, key, set=None, add=None):   # Call to add test-case-level value to log
 		if not logging:
 			return
 		if TESTS_JSON not in log:
@@ -262,7 +262,7 @@ def run(): # Returns exit code
 					env[RUN_KEY] = ";".join(retry_these)
 					env[RUN_MODE_KEY] = "RUN"
 
-			# Run test
+			# Run test suite
 			try:
 				proc = subprocess.Popen(command, env=env)
 			except OSError:
@@ -282,14 +282,14 @@ def run(): # Returns exit code
 				sys.stderr.write("%s: Command `%s` timed out\n" % (scriptname, command[0]))
 			died_politely = True
 
-			# The test has now run, and what happens next varies:
-			# 1. The test either completed fully without failures, or timed out: Just quit.
-			# 2. The test crashed (halted without completing):
-			#   Remember any failures for later and rerun, using a blacklist of tests we have completed.
-			# 3. The test completed, but there were failures reported:
-			#   Rerun, using a whitelist of only reported-failed tests.
-			# 4. The test crashed partway through a run with a whitelist:
-			#   Rerun, using a whitelist consisting of the previous whitelist minus successful tests.
+			# The test suite has now run, and what happens next varies:
+			# 1. The suite either completed fully without failures, or timed out: Just quit.
+			# 2. The suite crashed (halted without completing):
+			#   Remember any failures for later and rerun, using a blacklist of testcases we have completed.
+			# 3. The suite completed, but there were failures reported:
+			#   Rerun, using a whitelist of only reported-failed testcases.
+			# 4. The suite crashed partway through a run with a whitelist:
+			#   Rerun, using a whitelist consisting of the previous whitelist minus successful testcases.
 
 			crashed_at = attemptFirstLine(env[CURRENT_TEST_KEY])
 			failed_tests = attemptLines(env[FAILED_TEST_KEY])
@@ -318,12 +318,12 @@ def run(): # Returns exit code
 					if failure_may_retry(crashed_at):
 						verbose_print( "--- CRASH FAIL    on %s (will retry)" % (crashed_at) )
 						if ever_completed:           # Rerun with whitelist next time
-							for test in retry_these: # Prepopulate with last whitelist minus run tests
-								if test == crashed_at or test not in ran_tests: # (plus crashed test)
+							for test in retry_these: # Prepopulate with last whitelist minus run testcases
+								if test == crashed_at or test not in ran_tests: # (plus crashed testcase)
 									retry_next.append(test)
 						else:                            # Rerun with blacklist next time
-							for test in ran_tests:       # Add tests we just ran to blacklist
-								if test != crashed_at:   # (except for the crashed test)
+							for test in ran_tests:       # Add testcases we just ran to blacklist
+								if test != crashed_at:   # (except for the crashed testcase)
 									resume_after.append(test)
 					else:
 						verbose_print( "--- CRASH FAIL    on %s (will NOT retry)" % (crashed_at) )
@@ -346,9 +346,9 @@ def run(): # Returns exit code
 			retry_these = retry_next
 
 			if resume_after:
-				print "Babysitter script will rerun, resuming at crashed test %s" % (crashed_at)
+				print "Babysitter script will rerun, resuming at crashed testcase %s" % (crashed_at)
 			else:
-				print "Babysitter script will rerun, running %d failed tests" % (len(retry_these))
+				print "Babysitter script will rerun, running %d failed testcases" % (len(retry_these))
 			verbose_print( "--- Tests pending to rerun: %s" % (retry_these) )
 	finally:
 		# Emergency: Ensure command does not outlive this script
@@ -359,6 +359,6 @@ def run(): # Returns exit code
 		log_value(FINAL_CODE_JSON, "EXCEPTION" if code is None else code)
 		if logging:
 			with open(logfile, "a") as f:
-				f.write(json.dumps(log) + "\n")
+				f.write(json.dumps(log) + os.linesep)
 
 sys.exit( run() )

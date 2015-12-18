@@ -1,5 +1,12 @@
-// Added to NUnit by Andi McClure to add special support for the test babysitter script.
-// See scripts/babysitter in Mono repository.
+//
+// BabysitterSupport.cs: Nunit extensions to support test harness used by Mono.
+//                       See scripts/babysitter in Mono repository.
+//
+// Author:
+//   Andi McClure (andi.mcclure@xamarin.com)
+//
+// Copyright (C) 2015 Xamarin, Inc (http://www.xamarin.com)
+//
 
 namespace NUnit.Core
 {
@@ -30,22 +37,22 @@ namespace NUnit.Core
 		// Environment variables are available from process start, so safe to do setup in a static constructor
 		static BabysitterSupport()
 		{
-			string overrideModeString = Environment.GetEnvironmentVariable("NUNIT_BABYSITTER_RUN_MODE");
-			string overrideTestString = Environment.GetEnvironmentVariable("NUNIT_BABYSITTER_RUN_TEST");
+			string overrideModeString = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_RUN_MODE");
+			string overrideTestString = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_RUN_TEST");
 			if (overrideModeString == "RUN")
 				Override = OverrideMode.Run;
 			else if (overrideModeString == "EXCLUDE")
 				Override = OverrideMode.Exclude;
 			if (Override != OverrideMode.None)
 			{
-				char [] semicolon = {';'};
-				foreach (string s in overrideTestString.Split(semicolon, StringSplitOptions.RemoveEmptyEntries))
+				string[] overrideTests = overrideTestString.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string s in overrideTests)
 					OverrideTests[s] = true;
 			}
 
-			CurrentTestFile = Environment.GetEnvironmentVariable("NUNIT_BABYSITTER_CURRENT_TEST_FILE");
-			RanTestFile = Environment.GetEnvironmentVariable("NUNIT_BABYSITTER_RAN_TEST_FILE");
-			FailedTestFile = Environment.GetEnvironmentVariable("NUNIT_BABYSITTER_FAILED_TEST_FILE");
+			CurrentTestFile = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_CURRENT_TEST_FILE");
+			RanTestFile = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_RAN_TEST_FILE");
+			FailedTestFile = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_FAILED_TEST_FILE");
 		}
 
 		// Entry points
@@ -55,7 +62,7 @@ namespace NUnit.Core
 			if (CurrentTestFile != null)
 				WriteFile(CurrentTestFile, testName);
 			if (RanTestFile != null)
-				File.AppendAllText(RanTestFile, testName + "\n");
+				File.AppendAllText(RanTestFile, testName + Environment.NewLine);
 		}
 
 		public static void RecordLeaveTest( string testName )
@@ -67,7 +74,7 @@ namespace NUnit.Core
 		public static void RecordFailedTest( string testName )
 		{
 			if (FailedTestFile != null)
-				File.AppendAllText(FailedTestFile, testName + "\n");
+				File.AppendAllText(FailedTestFile, testName + Environment.NewLine);
 		}
 
 		public static TestFilter AddBabysitterFilter(TestFilter currentFilter)
