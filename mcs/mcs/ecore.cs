@@ -4255,6 +4255,7 @@ namespace Mono.CSharp {
 
 			var emg = new ExtensionMethodGroupExpr (methods, InstanceExpression, loc);
 			emg.SetTypeArguments (rc, type_arguments);
+			emg.ConditionalAccess = ConditionalAccess;
 			return emg;
 		}
 

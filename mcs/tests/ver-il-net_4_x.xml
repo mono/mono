@@ -69665,6 +69665,35 @@
       </method>
     </type>
   </test>
+  <test name="test-null-operator-22.cs">
+    <type name="A">
+      <method name="A get_Item(System.String)" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Item(System.String, A)" attrs="2182">
+        <size>2</size>
+      </method>
+      <method name="Int32 Count(System.String)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="System.String Count(A)" attrs="150">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()" attrs="6278">
