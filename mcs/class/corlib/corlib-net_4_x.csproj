@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -824,13 +824,19 @@
     <Compile Include="System.Diagnostics.SymbolStore\SymDocumentType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageVendor.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventActivityOptions.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventChannel.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommand.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommandEventArgs.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventKeywords.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventLevel.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventOpcode.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventSourceAttribute.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSourceOptions.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventSourceSettings.cs" />
+    <Compile Include="System.Diagnostics.Tracing\EventTags.cs" />
     <Compile Include="System.Diagnostics.Tracing\NonEventAttribute.cs" />
     <Compile Include="System.Diagnostics\Debugger.cs" />
     <Compile Include="System.Diagnostics\StackFrame.cs" />
@@ -1604,7 +1610,8 @@
     <Compile Include="System\Void.cs" />
     <Compile Include="System\WeakReference.cs" />
     <Compile Include="System\WeakReference_T.cs" />
-    <Compile Include="System\WindowsConsoleDriver.cs" />  </ItemGroup>
+    <Compile Include="System\WindowsConsoleDriver.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

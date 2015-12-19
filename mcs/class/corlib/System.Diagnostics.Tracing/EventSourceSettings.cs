@@ -1,10 +1,10 @@
 //
-// EventKeywords.cs
+// EventSourceSettings.cs
 //
 // Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+//	Frederik Carlier  <frederik.carlier@quamotion.mobi>
 //
-// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2015 Quamotion (http://quamotion.mobi)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +30,12 @@
 namespace System.Diagnostics.Tracing
 {
 	[Flags]
-	public enum EventKeywords : long
+	public enum EventSourceSettings
 	{
-		None,
-		WdiContext = 		0x2000000000000,
-		WdiDiagnostic =		0x4000000000000,
-		Sqm =				0x8000000000000,
-		AuditFailure =		0x10000000000000,
-		AuditSuccess = 		0x20000000000000,
-		CorrelationHint =	0x10000000000000,
-		EventLogClassic =	0x80000000000000
+		Default = 0,
+		EtwManifestEventFormat = 1,
+		EtwSelfDescribingEventFormat = 4,
+		ThrowOnEventWriteErrors = 8
 	}
 }
 
