@@ -45,6 +45,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\AppSettings.cs" />
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\AssociatedMetadataTypeTypeDescriptionProvider.cs" />
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\AssociatedMetadataTypeTypeDescriptor.cs" />
     <Compile Include="..\..\..\external\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\AssociationAttribute.cs" />

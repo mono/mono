@@ -482,6 +482,7 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LazyAsyncResult.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_LoggingObject.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\_ScatterGatherBuffers.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\Net\Cache\RequestCachePolicy.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookie.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookiecollection.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\cookiecontainer.cs" />
@@ -501,6 +502,10 @@
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WebPermission.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WebUtility.cs" />
     <Compile Include="..\..\..\external\referencesource\System\net\System\Net\WriteStreamClosedEventArgs.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\UriEnumTypes.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\URIFormatException.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\UriHostNameType.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\net\System\URIPartial.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\compiledregexrunner.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\compiledregexrunnerfactory.cs" />
     <Compile Include="..\..\..\external\referencesource\System\regex\system\text\regularexpressions\Regex.cs" />
@@ -532,6 +537,8 @@
     <Compile Include="..\..\..\external\referencesource\System\services\timers\system\timers\TimersDescriptionAttribute.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\BlockingCollection.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\collections\concurrent\ConcurrentBag.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\interopservices\DefaultParameterValueAttribute.cs" />
+    <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\interopservices\handlecollector.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\runtime\versioning\FrameworkName.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\threading\Barrier.cs" />
     <Compile Include="..\..\..\external\referencesource\System\sys\system\windows\markup\ValueSerializerAttribute.cs" />
@@ -802,11 +809,6 @@
     <Compile Include="System.Media\SystemSound.cs" />
     <Compile Include="System.Media\SystemSounds.cs" />
     <Compile Include="System.Media\Win32SoundPlayer.cs" />
-    <Compile Include="System.Net.Cache\HttpCacheAgeControl.cs" />
-    <Compile Include="System.Net.Cache\HttpRequestCacheLevel.cs" />
-    <Compile Include="System.Net.Cache\HttpRequestCachePolicy.cs" />
-    <Compile Include="System.Net.Cache\RequestCacheLevel.cs" />
-    <Compile Include="System.Net.Cache\RequestCachePolicy.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModuleElement.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModuleElementCollection.cs" />
     <Compile Include="System.Net.Configuration\AuthenticationModulesSection.cs" />
@@ -1073,8 +1075,6 @@
     <Compile Include="System.Runtime.InteropServices.ComTypes\STATDATA.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\STGMEDIUM.cs" />
     <Compile Include="System.Runtime.InteropServices.ComTypes\TYMED.cs" />
-    <Compile Include="System.Runtime.InteropServices\DefaultParameterValueAttribute.cs" />
-    <Compile Include="System.Runtime.InteropServices\HandleCollector.cs" />
     <Compile Include="System.Runtime.InteropServices\StandardOleMarshalObject.cs" />
     <Compile Include="System.Security.AccessControl\SemaphoreAccessRule.cs" />
     <Compile Include="System.Security.AccessControl\SemaphoreAuditRule.cs" />
@@ -1169,18 +1169,11 @@
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\Uri.cs" />
     <Compile Include="System\UriBuilder.cs" />
-    <Compile Include="System\UriComponents.cs" />
     <Compile Include="System\UriData.cs" />
     <Compile Include="System\UriElements.cs" />
-    <Compile Include="System\UriFormat.cs" />
-    <Compile Include="System\UriFormatException.cs" />
     <Compile Include="System\UriHelper.cs" />
-    <Compile Include="System\UriHostNameType.cs" />
-    <Compile Include="System\UriIdnScope.cs" />
-    <Compile Include="System\UriKind.cs" />
     <Compile Include="System\UriParseComponents.cs" />
     <Compile Include="System\UriParser.cs" />
-    <Compile Include="System\UriPartial.cs" />
     <Compile Include="System\UriTypeConverter.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
