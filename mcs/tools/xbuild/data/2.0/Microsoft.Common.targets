@@ -131,6 +131,7 @@
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
 			.exe.mdb;
 			.dll.mdb;
+			.pdb;
 			.xml
 		</AllowedReferenceRelatedFileExtensions>
 
@@ -490,6 +491,14 @@
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
+		<Copy
+			SourceFiles="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="'$(OutDir)' != '' and Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')"
+			DestinationFolder="$(OutDir)"
+			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)" >
+			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
+		</Copy>
+
 		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != '' and Exists ('@(IntermediateAssembly)')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
@@ -724,6 +733,11 @@
 
 		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')">
+			<Output TaskParameter="Include" ItemName="FileWrites"/>
+		</CreateItem>
+
+		<CreateItem Include="$(IntermediateOutputPath)$(AssemblyName).pdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName).pdb')">
 			<Output TaskParameter="Include" ItemName="FileWrites"/>
 		</CreateItem>
 	</Target>
