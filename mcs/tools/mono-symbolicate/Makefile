@@ -13,7 +13,7 @@ include ../../build/executable.make
 
 LIB_PATH = $(topdir)/class/lib/$(PROFILE)
 
-MONO = MONO_PATH=$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH $(RUNTIME) -O=-inline
+MONO = MONO_PATH="$(LIB_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) -O=-inline
 
 OUT_DIR = Test/out
 TEST_CS = Test/StackTraceDumper.cs
