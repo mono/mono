@@ -124,6 +124,14 @@ namespace Microsoft.Build.BuildEngine
 			return value;
 		}
 
+		static string TrimFirstAndLast(string unTrimmed)
+		{
+			if (unTrimmed.Length > 1 && Array.IndexOf (ArgumentTrimChars, unTrimmed [0]) != -1 && Array.IndexOf (ArgumentTrimChars, unTrimmed [unTrimmed.Length - 1]) != -1) {
+				return unTrimmed.Substring (1, unTrimmed.Length - 2);
+			}
+			return unTrimmed;
+		}
+
 		void ExpandArguments (Project project, ExpressionOptions options)
 		{
 			for (int i = 0; i < Arguments.Count; ++i) {
@@ -134,7 +142,7 @@ namespace Microsoft.Build.BuildEngine
 					arg = Expression.ParseAs<string> (arg, ParseOptions.None,
 						project, options);
 
-					arg = arg.Trim (ArgumentTrimChars);
+					arg = TrimFirstAndLast (arg);
 				}
 
 				Arguments [i] = arg;
