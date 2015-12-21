@@ -104,12 +104,15 @@ namespace System.ServiceModel.Channels.Http
 		}
 
 		bool close_started;
+		object close_lock = new object ();
 
 		protected override void OnClose (TimeSpan timeout)
 		{
-			if (close_started)
-				return;
-			close_started = true;
+			lock (close_lock) {
+				if (close_started)
+					return;
+				close_started = true;
+			}
 			DateTime start = DateTime.Now;
 
 			// FIXME: consider timeout
