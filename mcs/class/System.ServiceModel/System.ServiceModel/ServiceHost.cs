@@ -151,7 +151,7 @@ namespace System.ServiceModel
 
 		TAttr PopulateAttribute<TAttr> ()
 		{
-			object [] atts = service_type.GetCustomAttributes (typeof (TAttr), false);
+			object [] atts = service_type.GetCustomAttributes (typeof (TAttr), true);
 			return (TAttr) (atts.Length > 0 ? atts [0] : Activator.CreateInstance (typeof (TAttr)));
 		}
 
