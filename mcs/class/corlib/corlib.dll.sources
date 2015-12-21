@@ -1137,6 +1137,7 @@ ReferenceSources/SecurityContext.cs
 
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contracts.cs
 ../../../external/referencesource/mscorlib/system/diagnostics/contracts/contractsbcl.cs
+../../../external/referencesource/mscorlib/system/diagnostics/eventing/winmeta.cs
 
 ../../../external/referencesource/mscorlib/system/globalization/bidicategory.cs
 ../../../external/referencesource/mscorlib/system/globalization/calendar.cs
