@@ -50,7 +50,7 @@ DATE_JSON       = 'date'          # POSIX timestamp of test suite run
 INVOKE_JSON     = 'invocation'
 COUNT_JSON      = 'iteration'        # How many times was command executed?
 LIMIT_JSON      = 'failure_max'
-SUPPORT_JSON    = 'retry_support' # Was the test suite running with a babysitter-aware nunit?
+SUPPORT_JSON    = 'babysitter_protocol' # Was the test suite running with a babysitter-aware nunit?
 FINAL_CODE_JSON = 'final_code'
 TESTS_JSON      = 'tests'         # Holds dictionary of (test case name)->(dict with TEST_ keys below)
 TEST_FAILURES         = 'normal_failures'
@@ -157,7 +157,10 @@ if babysitting:
 	global_env[RAN_TEST_KEY]     = os.path.join(babysitter_dir, RAN_TEST_FILE)
 	global_env[FAILED_TEST_KEY]  = os.path.join(babysitter_dir, FAILED_TEST_FILE)
 
-### Utility functions
+have_unix_process_groups = 'killpg' in os.__dict__
+have_windows_process_groups = 'CREATE_NEW_PROCESS_GROUP' in subprocess.__dict__
+
+### Timeout implementation
 
 def wait(proc, duration):
 	# TODO: If we detect Python 3.3, Popen objects have a wait(timeout) method we can use
@@ -169,6 +172,33 @@ def wait(proc, duration):
 		if time.time()-start > duration:
 			return None
 		time.sleep(0.05)
+
+# Popen and send_signal can't be called in their basic forms because we want to
+# send signals to all children, not just to the immediately spawned process.
+# Unfortunately the way to do this varies by operating system.
+def popen(*args, **kwargs):
+	if have_unix_process_groups: # Call function on spawn to become process group leader
+		kwargs['preexec_fn'] = os.setsid
+	elif have_windows_process_groups: # Set magic flag for Windows process groups
+		kwargs['creationflags'] = subprocess.CREATE_NEW_PROCESS_GROUP
+	return subprocess.Popen(*args, **kwargs)
+
+def send_signal(proc, sig):
+	if have_unix_process_groups: # UNIX
+		# For compatibility with GNU timeout, pre-send the signal to just the monitored process
+		os.kill(proc.pid, sig)
+		# Send signal to entire group
+		os.killpg(proc.pid, sig)
+		# For compatibility with GNU Timeout, send a SIGCONT after the signal
+		# (so delivery has a chance to occur even for stopped processes)
+		if sig != signal.SIGKILL and sig != signal.SIGCONT:
+			os.kill(proc.pid, signal.SIGCONT)
+	elif have_windows_process_groups: # Windows with Python 2.7 or better
+		os.kill(proc.pid, sig) # Becuase CREATE_NEW_PROCESS_GROUP, will go to entire group
+	else: # Windows with Python 2.6-- CREATE_NEW_PROCESS_GROUP not supported
+		proc.send_signal(sig) # No way to contact group, just kill process
+
+### Utility functions
 
 def attemptDelete(path):
 	try:
@@ -269,7 +299,7 @@ def run(): # Returns exit code
 
 			# Run test suite
 			try:
-				proc = subprocess.Popen(command, env=env)
+				proc = popen(command, env=env)
 			except OSError:
 				died_politely = True
 				sys.stderr.write("%s: Could not execute command `%s`\n" % (scriptname, command[0]))
@@ -278,11 +308,11 @@ def run(): # Returns exit code
 			code = wait(proc, duration)
 			timed_out = code is None
 			if timed_out:                  # Initial timeout
-				proc.send_signal(timeout_signal)
+				send_signal(proc, timeout_signal)
 				if kill_after is not None: # Kill-after timeout
 					code = wait(proc, kill_after)
 					if code is None:
-						proc.send_signal(9)
+						send_signal(proc, signal.SIGKILL)
 				code = proc.wait()         # Waits forever
 				sys.stderr.write("%s: Command `%s` timed out\n" % (scriptname, command[0]))
 			died_politely = True
@@ -369,7 +399,7 @@ def run(): # Returns exit code
 	finally:
 		# Emergency: Ensure command does not outlive this script
 		if proc is not None and not died_politely:
-			proc.send_signal(9)
+			send_signal(proc, signal.SIGKILL)
 
 		# Write out logs
 		log_value(FINAL_CODE_JSON, "EXCEPTION" if code is None else code)
