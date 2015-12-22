@@ -32,21 +32,23 @@ LOGGING_FILE      = "babysitter_report.json_lines"
 
 # Environment keys
 
+# Keys used for Babysitter<->Nunit IPC
 CURRENT_TEST_KEY  = 'MONO_BABYSITTER_NUNIT_CURRENT_TEST_FILE' # Tell nunit where to leave files
 RAN_TEST_KEY      = 'MONO_BABYSITTER_NUNIT_RAN_TEST_FILE'
 FAILED_TEST_KEY   = 'MONO_BABYSITTER_NUNIT_FAILED_TEST_FILE'
 RUN_KEY           = 'MONO_BABYSITTER_NUNIT_RUN_TEST' # Semicolon-separated list of test names
 RUN_MODE_KEY      = 'MONO_BABYSITTER_NUNIT_RUN_MODE' # Equal to either RUN or AFTER
+
+# Keys used for script configuration (see --help text)
+LOGGING_DIR_KEY   = 'WORKSPACE'                      # Path
 RETRY_KEY         = 'MONO_BABYSITTER_RETRY'          # Equal to an integer
-CRASH_RESUME_KEY  = 'MONO_BABYSITTER_CRASH_RESUME'
-VERBOSE_KEY       = 'MONO_BABYSITTER_VERBOSE'
-LOGGING_DIR_KEY   = 'WORKSPACE'
+VERBOSE_KEY       = 'MONO_BABYSITTER_VERBOSE'        # "Undocumented"-- used for debugging babysitter
 
 # JSON keys
 
 DATE_JSON       = 'date'          # POSIX timestamp of test suite run
 INVOKE_JSON     = 'invocation'
-COUNT_JSON      = 'passes'        # How many times was command executed?
+COUNT_JSON      = 'iteration'        # How many times was command executed?
 LIMIT_JSON      = 'failure_max'
 SUPPORT_JSON    = 'retry_support' # Was the test suite running with a babysitter-aware nunit?
 FINAL_CODE_JSON = 'final_code'
@@ -83,10 +85,8 @@ Durations are floating point numbers followed by an optional unit:\n
 'd' for days\n
 supported environment variables:
   %s: Directory path to save logs into
-  %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)
-  %s: If set, rerun even for test cases which terminated early
-  %s: If set, print extra logging during run""" %
-		(LOGGING_DIR_KEY, RETRY_KEY, CRASH_RESUME_KEY, VERBOSE_KEY),
+  %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)""" %
+		(LOGGING_DIR_KEY, RETRY_KEY),
 	formatter_class=argparse.RawTextHelpFormatter)
 argparser.add_argument('-s', '--signal', dest='signal', metavar='signal', default='TERM',
 	help="Send this signal to the command on timeout, instead of TERM.")
@@ -149,7 +149,7 @@ verbose = VERBOSE_KEY in global_env
 logging = LOGGING_DIR_KEY in global_env
 logging_dir = global_env[LOGGING_DIR_KEY] if logging else None
 logfile = os.path.join(logging_dir, LOGGING_FILE) if logging else None
-crash_resuming = CRASH_RESUME_KEY in global_env
+crash_resuming = True # TODO: Consider exposing this option, or adding a retry_on_crash option.
 failmax = int(global_env[RETRY_KEY]) if RETRY_KEY in global_env else 0
 babysitting = logging or failmax
 if babysitting:
@@ -161,7 +161,7 @@ if babysitting:
 ### Utility functions
 
 def wait(proc, duration):
-	# FIXME: If we can guarantee Python 3.3, Popen objects have a wait(timeout) method
+	# TODO: If we detect Python 3.3, Popen objects have a wait(timeout) method we can use
 	start = time.time()
 	while True:
 		code = proc.poll()
@@ -203,6 +203,12 @@ def failure_may_retry(test):
 def verbose_print(arg):
 	if (verbose):
 		print(arg)
+
+def failure_annotate(test):
+	return "%s (failure #%d of %d allowed)" % (test, failcount[test], failmax)
+
+def pluralize(lst):
+	return "s" if len(lst) > 1 else ""
 
 ### Run command
 
@@ -300,8 +306,7 @@ def run(): # Returns exit code
 				log_value(SUPPORT_JSON, True)
 
 			if not crashed_at and not ever_completed:  # The resume_after whitelist is only
-				verbose_print ("--- First completion") # used before the first noncrashing run
-				resume_after = []
+				resume_after = []                      # used before the first noncrashing run
 				ever_completed = True
 
 			if timed_out:       # Currently no retries after timeout
@@ -316,7 +321,6 @@ def run(): # Returns exit code
 						bailout = True
 
 					if failure_may_retry(crashed_at):
-						verbose_print( "--- CRASH FAIL    on %s (will retry)" % (crashed_at) )
 						if ever_completed:           # Rerun with whitelist next time
 							for test in retry_these: # Prepopulate with last whitelist minus run testcases
 								if test == crashed_at or test not in ran_tests: # (plus crashed testcase)
@@ -326,18 +330,27 @@ def run(): # Returns exit code
 								if test != crashed_at:   # (except for the crashed testcase)
 									resume_after.append(test)
 					else:
-						verbose_print( "--- CRASH FAIL    on %s (will NOT retry)" % (crashed_at) )
 						bailout = True
 
 				# Handle reported failures
 				for test in failed_tests:
 					log_test(test, TEST_FAILURES, add=1)
 					if failure_may_retry(test):
-						verbose_print( "--- REPORTED FAIL on %s (will retry)" % (test) )
 						retry_next.append(test)
 					else:
-						verbose_print( "--- REPORTED FAIL on %s (will NOT retry)" % (test) )
 						bailout = True
+
+				# Report human-readable failures for stdout log.
+				message = "%s:" % (scriptname)
+				if timed_out:
+					message += " Saw timeout in test case %s (never allowed)." % (crashed_at)
+				elif crashed_at:
+					message += " Saw crash in test case %s." % (failure_annotate(crashed_at))
+				if failed_tests:
+					message += " Saw test failure in test case%s %s." % (pluralize(failed_tests), "; ".join(map(failure_annotate, failed_tests)))
+				if bailout:
+					message += " Will halt testing."
+				print(message)
 
 			if bailout or not (babysitting and (resume_after or retry_next)): # If not retrying
 				return code
@@ -345,11 +358,15 @@ def run(): # Returns exit code
 			# If we got here, a retry is occurring
 			retry_these = retry_next
 
+			# Report human-readable retry notice for stdout log.
+			message = "%s: Will rerun test suite" % (scriptname)
+			if log[COUNT_JSON] > 1:
+				message += " (iteration #%d)" % (log[COUNT_JSON])
 			if resume_after:
-				print "Babysitter script will rerun, resuming at crashed testcase %s" % (crashed_at)
+				message += ", resuming at crashed testcase %s." % (crashed_at)
 			else:
-				print "Babysitter script will rerun, running %d failed testcases" % (len(retry_these))
-			verbose_print( "--- Tests pending to rerun: %s" % (retry_these) )
+				message += ", running previously failed testcase%s: %s." % (pluralize(retry_these), "; ".join(retry_these))
+			print(message)
 	finally:
 		# Emergency: Ensure command does not outlive this script
 		if proc is not None and not died_politely:
