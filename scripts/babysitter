@@ -40,7 +40,7 @@ RUN_KEY           = 'MONO_BABYSITTER_NUNIT_RUN_TEST' # Semicolon-separated list 
 RUN_MODE_KEY      = 'MONO_BABYSITTER_NUNIT_RUN_MODE' # Equal to either RUN or AFTER
 
 # Keys used for script configuration (see --help text)
-LOGGING_DIR_KEY   = 'WORKSPACE'                      # Path
+LOG_FILE_KEY      = 'MONO_BABYSITTER_LOG_FILE'       # Path
 RETRY_KEY         = 'MONO_BABYSITTER_RETRY'          # Equal to an integer
 VERBOSE_KEY       = 'MONO_BABYSITTER_VERBOSE'        # "Undocumented"-- used for debugging babysitter
 
@@ -84,9 +84,9 @@ Durations are floating point numbers followed by an optional unit:\n
 'h' for hours
 'd' for days\n
 supported environment variables:
-  %s: Directory path to save logs into
+  %s: File to write logs to (as line-delimited JSON)
   %s: If set to a number, failed test cases will be rerun this many times (NUnit test suites only)""" %
-		(LOGGING_DIR_KEY, RETRY_KEY),
+		(LOG_FILE_KEY, RETRY_KEY),
 	formatter_class=argparse.RawTextHelpFormatter)
 argparser.add_argument('-s', '--signal', dest='signal', metavar='signal', default='TERM',
 	help="Send this signal to the command on timeout, instead of TERM.")
@@ -146,9 +146,8 @@ command = args.command + extra_args
 global_env = copy.deepcopy( os.environ )
 
 verbose = VERBOSE_KEY in global_env
-logging = LOGGING_DIR_KEY in global_env
-logging_dir = global_env[LOGGING_DIR_KEY] if logging else None
-logfile = os.path.join(logging_dir, LOGGING_FILE) if logging else None
+logging = LOG_FILE_KEY in global_env
+logfile = global_env[LOG_FILE_KEY] if logging else None
 crash_resuming = True # TODO: Consider exposing this option, or adding a retry_on_crash option.
 failmax = int(global_env[RETRY_KEY]) if RETRY_KEY in global_env else 0
 babysitting = logging or failmax
