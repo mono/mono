@@ -38,21 +38,13 @@ using System.ServiceModel.Dispatcher;
 using System.Text;
 
 using NUnit.Framework;
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
 	public class MetadataExchangeBindingsTest
 	{
-		Uri CreateUri (string uriString)
-		{
-			var uri = new Uri (uriString);
-			var l = new TcpListener (uri.Port);
-			l.Start ();
-			l.Stop ();
-			return uri;
-		}
-
 		[Test]
 		public void CreateMexHttpBinding ()
 		{
@@ -69,7 +61,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, b.GetProperty<MessageVersion> (new BindingParameterCollection ()), "#6");
 
 			var host = new ServiceHost (typeof (MetadataExchange));
-			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), CreateUri ("http://localhost:30158"));
+			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), "http://localhost:" + NetworkHelpers.FindFreePort ());
 			host.Open ();
 			try {
 				// it still does not rewrite MessageVersion.None. It's rather likely ServiceMetadataExtension which does overwriting.
@@ -96,7 +88,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual(Uri.UriSchemeHttps, b.Scheme, "#8");
 
 			var host = new ServiceHost(typeof(MetadataExchange));
-			host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpsBinding(), CreateUri("https://localhost:30158"));
+			host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpsBinding(), "https://localhost:" + NetworkHelpers.FindFreePort ());
 			host.Open();
 			try
 			{
