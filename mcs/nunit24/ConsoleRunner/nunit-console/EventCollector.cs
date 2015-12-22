@@ -98,6 +98,8 @@ namespace NUnit.ConsoleRunner
 							}
 						}
 					}
+
+					BabysitterSupport.RecordFailedTest(currentTestName);
 				}
 			}
 			else
