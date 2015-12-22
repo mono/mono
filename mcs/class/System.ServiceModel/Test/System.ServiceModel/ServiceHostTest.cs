@@ -353,6 +353,29 @@ namespace MonoTests.System.ServiceModel
 			}
 		}
 
+		[Test]
+		public void InstanceWithSingletonMode_InheritServiceBehavior ()
+		{
+			// # 37035
+
+			var ep = NetworkHelpers.LocalEphemeralEndPoint ().ToString ();
+
+			ChildSingletonService instance = new ChildSingletonService ();
+			ServiceHost host = new ServiceHost (instance);
+
+			host.AddServiceEndpoint (typeof (SingletonService),
+						 new BasicHttpBinding (),
+						 new Uri ("http://" + ep + "/s3"));
+
+			try {
+				host.Open ();
+			} catch (InvalidOperationException ex) {
+				Assert.Fail ("InstanceContextMode was not inherited from parent, exception was: {0}", ex);
+			} finally {
+				host.Close ();
+			}
+		}
+
 		[ServiceContract]
 		interface IBar
 		{
@@ -446,7 +469,14 @@ namespace MonoTests.System.ServiceModel
 		public class SingletonService
 		{
 			[OperationContract]
-			public void Process (string input)
+			public virtual void Process (string input)
+			{
+			}
+		}
+
+		public class ChildSingletonService : SingletonService
+		{
+			public override void Process (string input)
 			{
 			}
 		}
