@@ -794,13 +794,8 @@ namespace System.Net.Mail {
 				CheckCancellation ();
 
 				if (escapeDots) {
-					int i;
-					for (i = 0; i < line.Length; i++) {
-						if (line[i] != '.')
-							break;
-					}
-					if (i > 0 && i == line.Length) {
-						line += ".";
+					if (line.Length > 0 && line[0] == '.') {
+						line = "." + line;
 					}
 				}
 				writer.Write (line);
