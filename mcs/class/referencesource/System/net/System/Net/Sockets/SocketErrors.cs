@@ -383,7 +383,10 @@ namespace System.Net.Sockets {
 
 
         //OS dependent errors
-
+#if MONO
+        IOPending             = 997,
+        OperationAborted      = 995,
+#else
         /// <devdoc>
         ///    <para>
         ///       Overlapped operations will complete later.
@@ -396,5 +399,6 @@ namespace System.Net.Sockets {
         ///    </para>
         /// </devdoc>
         OperationAborted      = (int) UnsafeNclNativeMethods.ErrorCodes.ERROR_OPERATION_ABORTED,   // 995, WSA_OPERATION_ABORTED
+#endif
     }
 }
