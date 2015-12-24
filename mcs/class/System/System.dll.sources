@@ -400,12 +400,11 @@ System/NetPipeStyleUriParser.cs
 System.Net/ProtocolViolationException.cs
 System.Net/RequestStream.cs
 System.Net/ResponseStream.cs
-System.Net.Security/AuthenticatedStream.cs
-System.Net.Security/AuthenticationLevel.cs
+../../../external/referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
+../../../external/referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
 System.Net.Security/EncryptionPolicy.cs
 System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
-System.Net.Security/ProtectionLevel.cs
 System.Net/SecurityProtocolType.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslStream.cs

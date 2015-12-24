@@ -99,12 +99,11 @@ System.Net.NetworkInformation/TcpStatistics.cs
 System.Net.NetworkInformation/UdpStatistics.cs
 System.Net.NetworkInformation/UnicastIPAddressInformation.cs
 System.Net.NetworkInformation/UnicastIPAddressInformationCollection.cs
-System.Net.Security/AuthenticatedStream.cs
-System.Net.Security/AuthenticationLevel.cs
+../../../external/referencesource/System/net/System/Net/SecureProtocols/AuthenticatedStream.cs
+../../../external/referencesource/System/net/System/Net/SecureProtocols/NegotiateEnumTypes.cs
 System.Net.Security/EncryptionPolicy.cs
 System.Net.Security/LocalCertificateSelectionCallback.cs
 System.Net.Security/NegotiateStream.cs
-System.Net.Security/ProtectionLevel.cs
 System.Net.Security/RemoteCertificateValidationCallback.cs
 System.Net.Security/SslPolicyErrors.cs
 System.Net.Security/SslStream.cs
