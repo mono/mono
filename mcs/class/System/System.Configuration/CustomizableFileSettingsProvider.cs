@@ -578,6 +578,34 @@ namespace System.Configuration
 		private ExeConfigurationFileMap exeMapPrev = null;
 		private SettingsPropertyValueCollection values = null;
 
+		/// <remarks>
+		/// Hack to remove the XmlDeclaration that the XmlSerializer adds.
+		/// <br />
+		/// see <a href="https://github.com/mono/mono/pull/2273">Issue 2273</a> for details
+		/// </remarks>
+		private string StripXmlHeader (string serializedValue)
+		{
+			if (serializedValue == null)
+			{
+				return string.Empty;
+			}
+
+			XmlDocument doc = new XmlDocument ();
+			XmlElement valueXml = doc.CreateElement ("value");
+			valueXml.InnerXml = serializedValue;
+
+			foreach (XmlNode child in valueXml.ChildNodes) {
+				if (child.NodeType == XmlNodeType.XmlDeclaration) {
+					valueXml.RemoveChild (child);
+					break;
+				}
+			}
+
+			// InnerXml will give you well-formed XML that you could save as a separate document, and 
+			// InnerText will immediately give you a pure-text representation of this inner XML.
+			return valueXml.InnerXml;
+		}
+
 		private void SaveProperties (ExeConfigurationFileMap exeMap, SettingsPropertyValueCollection collection, ConfigurationUserLevel level, SettingsContext context, bool checkUserLevel)
 		{
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap, level);
@@ -623,7 +651,7 @@ namespace System.Configuration
 					element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
 				switch (value.Property.SerializeAs) {
 				case SettingsSerializeAs.Xml:
-					element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
+					element.Value.ValueXml.InnerXml = StripXmlHeader (value.SerializedValue as string);
 					break;
 				case SettingsSerializeAs.String:
 					element.Value.ValueXml.InnerText = value.SerializedValue as string;
