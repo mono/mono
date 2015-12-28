@@ -18,6 +18,7 @@
 #include "class-internals.h"
 #include "threads-types.h"
 
+#include "mono/utils/mono-threads.h"
 #include "mono/utils/mono-threads-coop.h"
 
 G_BEGIN_DECLS
@@ -116,11 +117,44 @@ typedef struct _MonoHandleArena MonoHandleArena;
 gsize
 mono_handle_arena_size (gsize nb_handles);
 
+void
+mono_handle_arena_push (MonoHandleArena *arena, gsize nb_handles);
+
+void
+mono_handle_arena_pop (MonoHandleArena *arena, gsize nb_handles);
+
+void
+mono_handle_arena_init_thread (MonoThreadInfo* thread);
+
+void
+mono_handle_arena_deinit_thread (MonoThreadInfo* thread);
+
+
 MonoHandle
 mono_handle_new (MonoObject *rawptr);
 
 MonoHandle
 mono_handle_elevate (MonoHandle handle);
+
+#define MONO_HANDLE_ARENA_PUSH(nb_handles)	\
+	do {	\
+		gsize __arena_nb_handles = (nb_handles);	\
+		MonoHandleArena *__arena = (MonoHandleArena*) g_alloca (mono_handle_arena_size (__arena_nb_handles));	\
+		mono_handle_arena_push (__arena, __arena_nb_handles)
+
+#define MONO_HANDLE_ARENA_POP	\
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
+	} while (0)
+
+#define MONO_HANDLE_ARENA_POP_RETURN(handle,ret)	\
+		(ret) = (handle)->obj;	\
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
+	} while (0)
+
+#define MONO_HANDLE_ARENA_POP_RETURN_ELEVATE(handle,ret_handle)	\
+		*((MonoHandle**)(&(ret_handle))) = mono_handle_elevate ((MonoHandle*)(handle)); \
+		mono_handle_arena_pop(__arena, __arena_nb_handles);	\
+	} while (0)
 
 /* Some common handle types */
 

@@ -254,8 +254,8 @@ assert_not_in_gc_critical_region(void)
 	CheckState *state = get_state();
 	if (state->in_gc_critical_region) {
 		MonoThreadInfo *cur = mono_thread_info_current();
-		state = mono_thread_info_current_state(cur);
-		assertion_fail("Expected GC Unsafe mode, but was in %s state", mono_thread_state_name(state));
+		int thread_state = mono_thread_info_current_state(cur);
+		assertion_fail("Expected GC Unsafe mode, but was in %s state", mono_thread_state_name(thread_state));
 	}
 }
 
