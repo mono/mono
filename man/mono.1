@@ -124,6 +124,16 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP
+.I data-outfile=FILE.dll.aotdata
+.Sp
+This instructs the AOT code generator to output certain data
+constructs into a separate file.   This can reduce the executable
+images some five to twenty percent.   Developers need to then ship the
+resulting aotdata as a resource and register a hook to load the data
+on demand by using the 
+.I mono_install_load_aot_data_hook
+method.
+.TP
 .I direct-pinvoke
 .Sp
 When this option is specified, P/Invoke methods are invoked directly
@@ -139,7 +149,8 @@ only supported by the ARM backend. In LLVM mode, this triple is passed on to the
 llc compiler.
 .TP
 .I nimt-trampolines=[number]
-When compiling in full aot mode, the IMT trampolines must be precreated
+When compiling in full aot mthis data at startup
+usingode, the IMT trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
 Defaults to 128.
 .TP
