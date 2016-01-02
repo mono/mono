@@ -119,6 +119,16 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			RuntimeHelpers.RunClassConstructor (typeof (Thrower).TypeHandle);
 		}
 
+		class GClass<T> {
+			protected T Field;
+		}
+
+		[Test]
+		public void RunClassConstructor_Generic ()
+		{
+			RuntimeHelpers.RunClassConstructor (typeof (GClass<>).TypeHandle);
+		}
+
 		class Fielder {
 			public byte [] array = new byte [1];
 		}
