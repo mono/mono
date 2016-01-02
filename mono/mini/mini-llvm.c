@@ -1369,9 +1369,11 @@ sig_to_llvm_sig_full (EmitContext *ctx, MonoMethodSignature *sig, LLVMCallInfo *
 		case LLVMArgAsFpArgs: {
 			int j;
 
+			/* Emit dummy fp arguments if needed so the rest is passed on the stack */
+			for (j = 0; j < ainfo->ndummy_fpargs; ++j)
+				param_types [pindex ++] = LLVMDoubleType ();
 			for (j = 0; j < ainfo->nslots; ++j)
-				param_types [pindex + j] = ainfo->esize == 8 ? LLVMDoubleType () : LLVMFloatType ();
-			pindex += ainfo->nslots;
+				param_types [pindex ++] = ainfo->esize == 8 ? LLVMDoubleType () : LLVMFloatType ();
 			break;
 		}
 		case LLVMArgVtypeAsScalar:
@@ -2725,7 +2727,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 
 			/* The argument is received as a set of int/fp arguments, store them into the real argument */
 			memset (args, 0, sizeof (args));
-			pindex = ctx->pindexes [i];
+			pindex = ctx->pindexes [i] + ainfo->ndummy_fpargs;
 			if (ainfo->storage == LLVMArgVtypeInReg) {
 				args [0] = LLVMGetParam (ctx->lmethod, pindex);
 				if (ainfo->pair_storage [1] != LLVMArgNone)
@@ -2733,7 +2735,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 			} else {
 				g_assert (ainfo->nslots <= 8);
 				for (j = 0; j < ainfo->nslots; ++j)
-					args [j] = LLVMGetParam (ctx->lmethod, ctx->pindexes [i] + j);
+					args [j] = LLVMGetParam (ctx->lmethod, pindex + j);
 			}
 			ctx->addresses [reg] = build_alloca (ctx, sig->params [i]);
 
@@ -3102,6 +3104,11 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		case LLVMArgVtypeInReg:
 		case LLVMArgAsFpArgs: {
 			guint32 nargs;
+			int j;
+
+			for (j = 0; j < ainfo->ndummy_fpargs; ++j)
+				args [pindex + j] = LLVMConstNull (LLVMDoubleType ());
+			pindex += ainfo->ndummy_fpargs;
 
 			g_assert (addresses [reg]);
 			emit_vtype_to_args (ctx, builder, sig->params [i - sig->hasthis], addresses [reg], ainfo, args + pindex, &nargs);
@@ -6145,8 +6152,16 @@ mono_llvm_emit_method (MonoCompile *cfg)
 
 	for (i = 0; i < sig->param_count; ++i) {
 		char *name;
+		int pindex = linfo->pindexes [i] + linfo->args [i + sig->hasthis].ndummy_fpargs;
+		int j;
 
-		values [cfg->args [i + sig->hasthis]->dreg] = LLVMGetParam (method, linfo->pindexes [i]);
+		for (j = 0; j < linfo->args [i + sig->hasthis].ndummy_fpargs; ++j) {
+			name = g_strdup_printf ("dummy_%d_%d", i, j);
+			LLVMSetValueName (LLVMGetParam (method, linfo->pindexes [i] + j), name);
+			g_free (name);
+		}
+
+		values [cfg->args [i + sig->hasthis]->dreg] = LLVMGetParam (method, pindex);
 		if (names [i] && names [i][0] != '\0')
 			name = g_strdup_printf ("arg_%s", names [i]);
 		else
@@ -6154,7 +6169,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		LLVMSetValueName (values [cfg->args [i + sig->hasthis]->dreg], name);
 		g_free (name);
 		if (linfo->args [i + sig->hasthis].storage == LLVMArgVtypeByVal)
-			LLVMAddAttribute (LLVMGetParam (method, linfo->pindexes [i]), LLVMByValAttribute);
+			LLVMAddAttribute (LLVMGetParam (method, pindex), LLVMByValAttribute);
 
 		if (linfo->args [i + sig->hasthis].storage == LLVMArgVtypeByRef) {
 			/* For OP_LDADDR */

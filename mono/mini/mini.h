@@ -790,6 +790,8 @@ typedef struct {
 	int nslots;
 	/* Only if storage == LLVMArgAsFpArgs/LLVMArgFpStruct (4/8) */
 	int esize;
+	/* Only if storage == LLVMArgAsFpArgs. Dummy fp args to insert before this arg */
+	int ndummy_fpargs;
 } LLVMArgInfo;
 
 typedef struct {
