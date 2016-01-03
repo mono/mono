@@ -70,7 +70,7 @@ namespace System.Security.Cryptography.X509Certificates
 			var x509 = new MX.X509Certificate (data);
 			return new X509CertificateImplMono (x509);
 		}
-#elif !MONOTOUCH && !XAMMAC
+#else
 		public static X509CertificateImpl InitFromHandle (IntPtr handle)
 		{
 			throw new NotSupportedException ();
@@ -161,6 +161,11 @@ namespace System.Security.Cryptography.X509Certificates
 
 			return new X509CertificateImplMono (x509);
 		}
+#else
+		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			throw new NotSupportedException ();
+		}		
 #endif
 
 		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
