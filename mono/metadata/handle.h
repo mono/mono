@@ -41,7 +41,7 @@ struct _MonoHandleStorage {
 
 #define mono_handle_obj(handle) ((handle)->obj)
 
-#define mono_handle_assign(handle,rawptr) do { (handle)->obj = (rawptr); } while(0)
+#define mono_handle_assign(handle,rawptr) do { (handle)->obj = (rawptr); } while (0)
 
 #else
 
@@ -82,10 +82,19 @@ mono_handle_domain (MonoHandle handle)
 
 #define MONO_HANDLE_SETREF(handle,fieldname,value)			\
 	do {								\
+		g_assert (sizeof ((value)->obj) == sizeof (gpointer));	\
 		MonoHandle __value = (MonoHandle) (value);		\
 		MONO_PREPARE_GC_CRITICAL_REGION;					\
 		MONO_OBJECT_SETREF (mono_handle_obj ((handle)), fieldname, mono_handle_obj (__value)); \
 		MONO_FINISH_GC_CRITICAL_REGION;					\
+	} while (0)
+
+#define MONO_HANDLE_SETREF_RAWPTR(handle,fieldname,value)		\
+	do {								\
+		MonoObject* __value = (MonoObject*) (value);		\
+		MONO_PREPARE_GC_CRITICAL_REGION;			\
+		MONO_OBJECT_SETREF (mono_handle_obj ((handle)), fieldname, __value); \
+		MONO_FINISH_GC_CRITICAL_REGION;				\
 	} while (0)
 
 #define MONO_HANDLE_SET(handle,fieldname,value)	\
@@ -103,10 +112,18 @@ mono_handle_domain (MonoHandle handle)
 		MONO_FINISH_GC_CRITICAL_REGION;					\
 	} while (0)
 
+#define MONO_HANDLE_ARRAY_SETREF_RAWPTR(handle,index,value)		\
+	do {								\
+		MonoObject* __value = (MonoObject*) (value);		\
+		MONO_PREPARE_GC_CRITICAL_REGION;			\
+		mono_array_setref (mono_handle_obj ((handle)), (index), __value); \
+		MONO_FINISH_GC_CRITICAL_REGION;				\
+	} while (0)
+
 #define MONO_HANDLE_ARRAY_SET(handle,type,index,value)	\
 	do {	\
 		MONO_PREPARE_GC_CRITICAL_REGION;	\
-		mono_array_set (mono_handle_obj ((handle)), (type), (index), (value));	\
+		mono_array_set (mono_handle_obj ((handle)), type, (index), (value));	\
 		MONO_FINISH_GC_CRITICAL_REGION;	\
 	} while (0)
 
@@ -151,9 +168,10 @@ mono_handle_elevate (MonoHandle handle);
 		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
 	} while (0)
 
-#define MONO_HANDLE_ARENA_POP_RETURN_ELEVATE(handle,ret_handle)	\
-		*((MonoHandle**)(&(ret_handle))) = mono_handle_elevate ((MonoHandle*)(handle)); \
-		mono_handle_arena_pop(__arena, __arena_nb_handles);	\
+#define MONO_HANDLE_ARENA_POP_RETURN_ELEVATE(handle,ret_handle)		\
+		g_assert (sizeof ((handle)->obj) == sizeof (gpointer));	\
+		*((MonoHandle*)(&(ret_handle))) = mono_handle_elevate ((MonoHandle)(handle)); \
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
 	} while (0)
 
 /* Some common handle types */
