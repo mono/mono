@@ -20,7 +20,9 @@ namespace System.Collections.Specialized
     /// A collection implementing this interface will notify listeners of dynamic changes,
     /// e.g. when items get added and removed or the whole list is refreshed.
     /// </summary>
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
     public interface INotifyCollectionChanged
     {
         /// <summary>

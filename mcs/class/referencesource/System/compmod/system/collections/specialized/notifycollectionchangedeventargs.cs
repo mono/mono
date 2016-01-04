@@ -20,7 +20,9 @@ namespace System.Collections.Specialized
     /// <summary>
     /// This enum describes the action that caused a CollectionChanged event.
     /// </summary>
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
     public enum NotifyCollectionChangedAction
     {
         /// <summary> One or more items were added to the collection. </summary>
@@ -41,7 +43,9 @@ namespace System.Collections.Specialized
     /// whenever an item is added or removed, or when the contents of the collection
     /// changes dramatically.
     /// </summary>
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
     public class NotifyCollectionChangedEventArgs : EventArgs
     {
         //------------------------------------------------------
@@ -405,7 +409,9 @@ namespace System.Collections.Specialized
     /// <summary>
     ///     The delegate to use for handlers that receive the CollectionChanged event.
     /// </summary>
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
     public delegate void NotifyCollectionChangedEventHandler(object sender, NotifyCollectionChangedEventArgs e);
 
 }

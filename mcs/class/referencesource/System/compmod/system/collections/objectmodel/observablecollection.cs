@@ -31,7 +31,9 @@ namespace System.Collections.ObjectModel
     /// </summary>
 #if !FEATURE_NETCORE
     [Serializable()]
+#if !MOBILE
     [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
 #endif
     public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
@@ -385,7 +387,9 @@ namespace System.Collections.ObjectModel
         // this class helps prevent reentrant calls
 #if !FEATURE_NETCORE
         [Serializable()]
+#if !MOBILE
         [TypeForwardedFrom("WindowsBase, Version=3.0.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
+#endif
 #endif
         private class SimpleMonitor : IDisposable
         {
