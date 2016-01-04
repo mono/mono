@@ -2938,6 +2938,22 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void MemberInOtherDomain () {
+		vm.Detach ();
+
+		Start (new string [] { "dtest-app.exe", "domain-test" });
+
+		vm.EnableEvents (EventType.AppDomainCreate, EventType.AppDomainUnload, EventType.AssemblyUnload);
+
+		Event e = run_until ("domains_print_across");
+
+		var frame = e.Thread.GetFrames ()[0];
+		var inOtherDomain = frame.GetArgument (0) as ObjectMirror;
+		var crossDomainField = (ObjectMirror) inOtherDomain.GetValue (inOtherDomain.Type.GetField("printMe"));
+		Assert.AreEqual ("SentinelClass", crossDomainField.Type.Name);
+	}
+
+	[Test]
 	public void Domains () {
 		vm.Detach ();
 
