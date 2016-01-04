@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections;
 using System.Threading;
@@ -126,7 +127,21 @@ namespace MonoTests.System.Net.Sockets
 						  ProtocolType.Tcp);
 			conn.Connect (ep);
 
-			Socket client = server.Accept();
+			Socket client = null;
+			var sw = Stopwatch.StartNew ();
+			while (sw.ElapsedMilliseconds < 100)
+			{
+				try {
+					client = server.Accept();
+					break;
+				}
+				catch (SocketException ex) {
+					if (ex.SocketErrorCode == SocketError.WouldBlock)
+						continue;
+					throw;
+				}
+			}
+			Assert.IsNotNull (client, "Couldn't accept a client connection within 100ms.");
 			bool client_block = client.Blocking;
 
 			client.Close();
