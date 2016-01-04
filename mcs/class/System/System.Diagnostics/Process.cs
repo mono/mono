@@ -1288,7 +1288,8 @@ namespace System.Diagnostics {
 				async_error.AsyncWaitHandle.WaitOne ();
 #endif // MONO_FEATURE_PROCESS_START
 
-			OnExited ();
+			if (EnableRaisingEvents)
+				OnExited ();
 
 			return true;
 		}
