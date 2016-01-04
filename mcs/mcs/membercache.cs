@@ -1322,7 +1322,7 @@ namespace Mono.CSharp {
 			if (a.DeclaringType.MemberDefinition != b.DeclaringType.MemberDefinition)
 				return mc_b;
 
-			if (mc_a.Location.File != mc_a.Location.File)
+			if (mc_a.Location.File != mc_b.Location.File)
 				return mc_b;
 
 			return mc_b.Location.Row > mc_a.Location.Row ? mc_b : mc_a;
