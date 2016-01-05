@@ -33,7 +33,6 @@ PROFILE_MCS_FLAGS = \
 	$(PLATFORM_DEBUG_FLAGS)
 
 FRAMEWORK_VERSION = 2.1
-NO_TEST = yes
 
 # the tuner takes care of the install
 NO_INSTALL = yes
