@@ -2458,6 +2458,13 @@ if test "x$enable_big_arrays" = "xyes" ; then
 fi
 AC_MSG_RESULT($enable_big_arrays)
 
+AC_MSG_CHECKING([if OSX sandboxing is to be enabled])
+AC_ARG_ENABLE(osx-sandboxing,  [  --enable-osx-sandboxing	Restrict the runtime from using functionality disalowed by the OSX sandbox], enable_osx_sandbox=$enableval, enable_osx_sandbox=no)
+if test "x$enable_osx_sandbox" = "xyes" ; then
+	AC_DEFINE(ENABLE_OSX_SANDBOXING,1,[Restrict the runtime from using functionality disalowed by the OSX sandbox])
+fi
+AC_MSG_RESULT($enable_osx_sandbox)
+
 dnl **************
 dnl *** DTRACE ***
 dnl **************

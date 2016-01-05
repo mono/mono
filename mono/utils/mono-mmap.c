@@ -35,7 +35,6 @@
 #include "mono-proclib.h"
 #include <mono/utils/mono-threads.h>
 
-
 #define BEGIN_CRITICAL_SECTION do { \
 	MonoThreadInfo *__info = mono_thread_info_current_unchecked (); \
 	if (__info) __info->inside_critical_region = TRUE;	\
@@ -259,6 +258,33 @@ mono_shared_area_instances (void **array, int count)
 #else
 #if defined(HAVE_MMAP)
 
+#if defined (PLATFORM_MACOSX) && !defined(ENABLE_OSX_SANDBOXING)
+#include <sys/syscall.h>
+
+typedef void* (*ptr_syscall)(int, ...);
+
+static void*
+mmap_internal (void *addr, size_t len, int prot, int flags, int fd, off_t offset)
+{
+	ptr_syscall my_mmap = (ptr_syscall)&syscall;
+	return my_mmap (SYS_mmap, addr, len, prot, flags, fd, offset);
+}
+
+static int
+munmap_internal (void *addr, size_t len)
+{
+	return syscall (SYS_munmap, addr, len);
+}
+
+#else
+
+#define mmap_internal mmap
+#define munmap_internal munmap
+
+#endif
+
+
+
 /**
  * mono_pagesize:
  * Get the page size in use on the system. Addresses and sizes in the
@@ -321,11 +347,11 @@ mono_valloc (void *addr, size_t length, int flags)
 	mflags |= MAP_PRIVATE;
 
 	BEGIN_CRITICAL_SECTION;
-	ptr = mmap (addr, length, prot, mflags, -1, 0);
+	ptr = mmap_internal (addr, length, prot, mflags, -1, 0);
 	if (ptr == MAP_FAILED) {
 		int fd = open ("/dev/zero", O_RDONLY);
 		if (fd != -1) {
-			ptr = mmap (addr, length, prot, mflags, fd, 0);
+			ptr = mmap_internal (addr, length, prot, mflags, fd, 0);
 			close (fd);
 		}
 	}
@@ -350,7 +376,7 @@ mono_vfree (void *addr, size_t length)
 {
 	int res;
 	BEGIN_CRITICAL_SECTION;
-	res = munmap (addr, length);
+	res = munmap_internal (addr, length);
 	END_CRITICAL_SECTION;
 	return res;
 }
@@ -388,7 +414,7 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 		mflags |= MAP_32BIT;
 
 	BEGIN_CRITICAL_SECTION;
-	ptr = mmap (0, length, prot, mflags, fd, offset);
+	ptr = mmap_internal (0, length, prot, mflags, fd, offset);
 	END_CRITICAL_SECTION;
 	if (ptr == MAP_FAILED)
 		return NULL;
