@@ -29,8 +29,11 @@
 
 //#define SPEW
 
-
 using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Xml.Schema;
 using System.Text;
 using System.Configuration;
 using System.ComponentModel;
@@ -460,6 +463,60 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual ("donut", holder2.TestKey1OnHolder2, "#3");
 			Assert.AreEqual ("eclair", holder1.TestKey, "#4");
 			Assert.AreEqual ("", holder2.TestKey, "#5");
+		}
+
+		class Settings : ApplicationSettingsBase
+		{
+			[UserScopedSetting]
+			public WindowPositionList WindowPositions {
+				get {
+					return ((WindowPositionList)(this ["WindowPositions"]));
+				}
+				set {
+					this ["WindowPositions"] = value;
+				}
+			}
+		}
+
+		[Serializable]
+		public class WindowPositionList : IXmlSerializable
+		{
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+
+			public void ReadXml (XmlReader reader)
+			{
+				reader.ReadStartElement ("sampleNode");
+				reader.ReadEndElement ();
+			}
+
+			public void WriteXml (XmlWriter writer)
+			{
+				writer.WriteStartElement ("sampleNode");
+				writer.WriteEndElement ();
+			}
+		}
+
+		[Test] //Covers 36388
+		public void XmlHeader ()
+		{
+			try {
+				var settings = new Settings ();
+				settings.Reset ();
+				settings.Save ();
+
+				settings.WindowPositions = new WindowPositionList ();
+
+				settings.Save ();
+				// If Reloads fails then saved data is corrupted
+				settings.Reload ();
+			} catch (ConfigurationErrorsException e) {
+				// Delete corrupted config file so other test won't fail.
+				File.Delete (e.Filename);
+				Assert.Fail ("Invalid data was saved to config file.");
+			}
 		}
 	}
 }
