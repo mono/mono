@@ -99,10 +99,12 @@ namespace Mono.Security.Interface
 			return (HttpListener)NoReflectionHelper.CreateHttpListener (certificate, provider, settings);
 		}
 
+#if SECURITY_DEP
 		public static IMonoSslStream GetMonoSslStream (SslStream stream)
 		{
 			return (IMonoSslStream)NoReflectionHelper.GetMonoSslStream (stream);
 		}
+#endif
 	}
 }
 
