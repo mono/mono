@@ -516,7 +516,7 @@ namespace System.Net.NetworkInformation {
 				return new LinuxNetworkInterfaceAPI ();
 			}
 
-#if !MONODROID
+#if !MOBILE
 			if (Environment.OSVersion.Version >= windowsVer51)
 				return new Win32NetworkInterfaceAPI ();
 #endif
