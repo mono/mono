@@ -613,8 +613,6 @@ namespace System.Configuration
 			UserSettingsGroup userGroup = config.GetSectionGroup ("userSettings") as UserSettingsGroup;
 			bool isRoaming = (level == ConfigurationUserLevel.PerUserRoaming);
 
-#if true // my reimplementation
-
 			if (userGroup == null) {
 				userGroup = new UserSettingsGroup ();
 				config.SectionGroups.Add ("userSettings", userGroup);
@@ -665,43 +663,6 @@ namespace System.Configuration
 			}
 			if (hasChanges)
 				config.Save (ConfigurationSaveMode.Minimal, true);
-
-#else // original impl. - likely buggy to miss some properties to save
-
-			foreach (ConfigurationSection configSection in userGroup.Sections)
-			{
-				ClientSettingsSection userSection = configSection as ClientSettingsSection;
-				if (userSection != null)
-				{
-/*
-					userSection.Settings.Clear();
-
-					foreach (SettingsPropertyValue propertyValue in collection)
-					{
-						if (propertyValue.IsDirty)
-						{
-							SettingElement element = new SettingElement(propertyValue.Name, SettingsSerializeAs.String);
-							element.Value.ValueXml = new XmlDocument();
-							element.Value.ValueXml.InnerXml = (string)propertyValue.SerializedValue;
-							userSection.Settings.Add(element);
-						}
-					}
-*/
-					foreach (SettingElement element in userSection.Settings)
-					{
-						if (collection [element.Name] != null) {
-							if (collection [element.Name].Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
-								continue;
-
-							element.SerializeAs = SettingsSerializeAs.String;
-							element.Value.ValueXml.InnerXml = (string) collection [element.Name].SerializedValue;	///Value = XmlElement
-						}
-					}
- 
-				}
-			}
-			config.Save (ConfigurationSaveMode.Minimal, true);
-#endif
 		}
 
 		// NOTE: We should add here all the chars that are valid in a name of a class (Ecma-wise),
