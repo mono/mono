@@ -43,7 +43,7 @@ mono_handle_arena_current_addr (void);
 	} while (0)
 
 #define MONO_HANDLE_ARENA_POP_RETURN(handle,ret)	\
-		(ret) = (handle)->obj;	\
+		(ret) = (handle)->__private_obj;	\
 		mono_handle_arena_stack_pop (__arena_stack, __arena);	\
 	} while (0)
 
