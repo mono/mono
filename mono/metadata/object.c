@@ -4920,14 +4920,27 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 MonoArray *
 mono_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+	MonoArray *arr;
 
-	MonoClass *ac;
+	MONO_HANDLE_ARENA_PUSH ();
 
-	ac = mono_array_class_get (eclass, 1);
-	g_assert (ac);
+	MONO_HANDLE_TYPE (MonoArray) arr_handle = mono_handle_array_new (domain, eclass, n, &error);
 
-	return mono_array_new_specific (mono_class_vtable_full (domain, ac, TRUE), n);
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (arr_handle, arr);
+
+	if (G_UNLIKELY (!mono_error_ok (&error))) {
+		switch (mono_error_get_error_code (&error)) {
+		case MONO_ERROR_OUT_OF_MEMORY:
+			mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+			break;
+		default:
+			mono_error_raise_exception (&error);
+			break;
+		}
+	}
+
+	return arr;
 }
 
 /**
@@ -4941,25 +4954,28 @@ mono_array_new (MonoDomain *domain, MonoClass *eclass, uintptr_t n)
 MonoArray *
 mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+	MonoArray *arr;
 
-	MonoObject *o;
-	MonoArray *ao;
-	uintptr_t byte_len;
+	MONO_HANDLE_ARENA_PUSH ();
 
-	if (G_UNLIKELY (n > MONO_ARRAY_MAX_INDEX)) {
-		arith_overflow ();
-		return NULL;
+	MONO_HANDLE_TYPE (MonoArray) arr_handle = mono_handle_array_new_specific (vtable, n, &error);
+
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (arr_handle, arr);
+
+	if (G_UNLIKELY (!mono_error_ok (&error))) {
+		switch (mono_error_get_error_code (&error)) {
+		case MONO_ERROR_OUT_OF_MEMORY:
+			mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+			break;
+		default:
+			mono_error_raise_exception (&error);
+			break;
+		}
+		g_assert_not_reached ();
 	}
 
-	if (!mono_array_calc_byte_len (vtable->klass, n, &byte_len)) {
-		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
-		return NULL;
-	}
-	o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, n);
-	ao = (MonoArray*)o;
-
-	return ao;
+	return arr;
 }
 
 /**
@@ -4972,16 +4988,28 @@ mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 MonoString *
 mono_string_new_utf16 (MonoDomain *domain, const guint16 *text, gint32 len)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+	MonoString *str;
 
-	MonoString *s;
-	
-	s = mono_string_new_size (domain, len);
-	g_assert (s != NULL);
+	MONO_HANDLE_ARENA_PUSH ();
 
-	memcpy (mono_string_chars (s), text, len * 2);
+	MONO_HANDLE_TYPE (MonoString) str_handle = mono_handle_string_new_utf16 (domain, text, len, &error);
 
-	return s;
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (str_handle, str);
+
+	if (G_UNLIKELY (!mono_error_ok (&error))) {
+		switch (mono_error_get_error_code (&error)) {
+		case MONO_ERROR_OUT_OF_MEMORY:
+			mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+			break;
+		default:
+			mono_error_raise_exception (&error);
+			break;
+		}
+		g_assert_not_reached ();
+	}
+
+	return str;
 }
 
 /**
@@ -5029,25 +5057,28 @@ mono_string_new_utf32 (MonoDomain *domain, const mono_unichar4 *text, gint32 len
 MonoString *
 mono_string_new_size (MonoDomain *domain, gint32 len)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+	MonoString *str;
 
-	MonoString *s;
-	MonoVTable *vtable;
-	size_t size;
+	MONO_HANDLE_ARENA_PUSH ();
 
-	/* check for overflow */
-	if (len < 0 || len > ((SIZE_MAX - G_STRUCT_OFFSET (MonoString, chars) - 8) / 2))
-		mono_gc_out_of_memory (-1);
+	MONO_HANDLE_TYPE (MonoString) str_handle = mono_handle_string_new_size (domain, len, &error);
 
-	size = (G_STRUCT_OFFSET (MonoString, chars) + (((size_t)len + 1) * 2));
-	g_assert (size > 0);
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (str_handle, str);
 
-	vtable = mono_class_vtable (domain, mono_defaults.string_class);
-	g_assert (vtable);
+	if (G_UNLIKELY (!mono_error_ok (&error))) {
+		switch (mono_error_get_error_code (&error)) {
+		case MONO_ERROR_OUT_OF_MEMORY:
+			mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+			break;
+		default:
+			mono_error_raise_exception (&error);
+			break;
+		}
+		g_assert_not_reached ();
+	}
 
-	s = (MonoString *)mono_gc_alloc_string (vtable, size, len);
-
-	return s;
+	return str;
 }
 
 /**
@@ -5088,44 +5119,27 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 MonoString*
 mono_string_new (MonoDomain *domain, const char *text)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoError error;
+	MonoString *str;
 
-    GError *error = NULL;
-    MonoString *o = NULL;
-    guint16 *ut;
-    glong items_written;
-    int l;
+	MONO_HANDLE_ARENA_PUSH ();
 
-    l = strlen (text);
-   
-    ut = g_utf8_to_utf16 (text, l, NULL, &items_written, &error);
+	MONO_HANDLE_TYPE (MonoString) str_handle = mono_handle_string_new (domain, text, &error);
 
-    if (!error)
-        o = mono_string_new_utf16 (domain, ut, items_written);
-    else
-        g_error_free (error);
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (str_handle, str);
 
-    g_free (ut);
-/*FIXME g_utf8_get_char, g_utf8_next_char and g_utf8_validate are not part of eglib.*/
-#if 0
-	gunichar2 *str;
-	const gchar *end;
-	int len;
-	MonoString *o = NULL;
-
-	if (!g_utf8_validate (text, -1, &end))
-		return NULL;
-
-	len = g_utf8_strlen (text, -1);
-	o = mono_string_new_size (domain, len);
-	str = mono_string_chars (o);
-
-	while (text < end) {
-		*str++ = g_utf8_get_char (text);
-		text = g_utf8_next_char (text);
+	if (G_UNLIKELY (!mono_error_ok (&error))) {
+		switch (mono_error_get_error_code (&error)) {
+		case MONO_ERROR_OUT_OF_MEMORY:
+			mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+			break;
+		default:
+			mono_error_raise_exception (&error);
+			break;
+		}
 	}
-#endif
-	return o;
+
+	return str;
 }
 
 /**
@@ -6931,3 +6945,339 @@ mono_glist_to_array (GList *list, MonoClass *eclass)
 	return res;
 }
 
+/* Handle API specifics */
+
+/**
+ * mono_string_new:
+ * @text: a pointer to an utf8 string
+ *
+ * Returns: A newly created string object which contains @text.
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new (MonoDomain *domain, const gchar *text, MonoError *error)
+{
+	GError *gerror = NULL;
+	MONO_HANDLE_TYPE (MonoString) handle;
+	guint16 *u16;
+	glong u16_written;
+
+	mono_error_init (error);
+
+	u16 = g_utf8_to_utf16 (text, strlen (text), NULL, &u16_written, &gerror);
+
+	if (!gerror) {
+		handle = mono_handle_string_new_utf16 (domain, u16, u16_written, error);
+	} else {
+		handle = MONO_HANDLE_NEW (MonoString, NULL);
+		g_error_free (gerror);
+	}
+
+	g_free (u16);
+
+	return handle;
+}
+
+/**
+ * mono_string_new_size:
+ * @text: a pointer to an utf16 string
+ * @len: the length of the string
+ *
+ * Returns: A newly created string object of @len
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_size (MonoDomain *domain, gint32 len, MonoError *error)
+{
+	MonoVTable *vtable;
+	size_t size;
+
+	mono_error_init (error);
+
+	/* check for overflow */
+	if (len < 0 || len > ((SIZE_MAX - G_STRUCT_OFFSET (MonoString, chars) - 8) / 2)) {
+		mono_error_set_out_of_memory (error, "Could not allocate string of length %d", len);
+		return MONO_HANDLE_NEW (MonoString, NULL);
+	}
+
+	size = (G_STRUCT_OFFSET (MonoString, chars) + (((size_t)len + 1) * 2));
+	g_assert (size > 0);
+
+	vtable = mono_class_vtable (domain, mono_defaults.string_class);
+	g_assert (vtable);
+
+	return mono_handle_gc_alloc_string (vtable, size, len, error);
+}
+
+/**
+ * mono_string_new_utf16:
+ * @text: a pointer to an utf16 string
+ * @len: the length of the string
+ *
+ * Returns: A newly created string object which contains @text.
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_utf16 (MonoDomain *domain, const guint16 *text, glong len, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoString) handle;
+
+	handle = mono_handle_string_new_size (domain, len, error);
+	g_assert (!mono_handle_obj_is_null (handle));
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	memcpy (mono_handle_string_chars (handle), text, len * 2);
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return handle;
+}
+
+/**
+ * mono_string_chars:
+ * @handle: a MonoString handle
+ *
+ * Returns a pointer to the UCS16 characters stored in the MonoString
+ */
+gunichar2*
+mono_handle_string_chars (MONO_HANDLE_TYPE (MonoString) handle)
+{
+	return mono_handle_obj (handle)->chars;
+}
+
+/**
+ * mono_string_length:
+ * @s: MonoString
+ *
+ * Returns the lenght in characters of the string
+ */
+gint32
+mono_handle_string_length (MONO_HANDLE_TYPE (MonoString) handle)
+{
+	return mono_handle_obj (handle)->length;
+}
+
+/**
+ * mono_string_to_utf8_checked:
+ * @handle: a System.String handle
+ * @error: a MonoError.
+ *
+ * Converts a MonoString to its UTF8 representation. May fail; check
+ * @error to determine whether the conversion was successful.
+ * The resulting buffer should be freed with mono_free().
+ */
+gchar*
+mono_handle_string_to_utf8 (MONO_HANDLE_TYPE (MonoString) handle, MonoError *error)
+{
+	gchar *u8_chars;
+	glong u8_length = 0;
+	gunichar2 *str_chars;
+	gint32 str_length;
+
+	mono_error_init (error);
+
+	if (mono_handle_obj_is_null (handle))
+		return NULL;
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	str_chars = mono_handle_string_chars (handle);
+	str_length = mono_handle_string_length (handle);
+
+	if (str_length == 0) {
+		u8_chars = g_strdup ("");
+	} else {
+		GError *gerror;
+
+		u8_length = 0;
+		gerror = NULL;
+		u8_chars = g_utf16_to_utf8 (str_chars, str_length, NULL, &u8_length, &gerror);
+		if (gerror) {
+			mono_error_set_argument (error, "string", "%s", gerror->message);
+			g_error_free (gerror);
+			u8_chars = NULL;
+		} else {
+			/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
+			if (u8_length < str_length) {
+				/* allocate the total length and copy the part of the string that has been converted */
+				gchar *u8_2 = (gchar*) g_malloc0 (str_length);
+				memcpy (u8_2, u8_chars, u8_length);
+				g_free (u8_chars);
+				u8_chars = u8_2;
+			}
+		}
+	}
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return u8_chars;
+}
+
+/**
+ * mono_array_new:
+ * @domain: domain where the object is created
+ * @element_class: element class
+ * @size: number of array elements
+ * @error: a MonoError
+ *
+ * This routine creates a new szarray with @n elements of type @eclass.
+ */
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new (MonoDomain *domain, MonoClass *element_class, uintptr_t size, MonoError *error)
+{
+	MonoClass *array_class;
+
+	array_class = mono_array_class_get (element_class, 1);
+	g_assert (array_class);
+
+	return mono_handle_array_new_specific (mono_class_vtable_full (domain, array_class, TRUE), size, error);
+}
+
+/**
+ * mono_array_new_specific:
+ * @vtable: a vtable in the appropriate domain for an initialized class
+ * @size: number of array elements
+ * @error: a MonoError
+ *
+ * This routine is a fast alternative to mono_array_new() for code which
+ * can be sure about the domain it operates in.
+ */
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new_specific (MonoVTable *vtable, uintptr_t size, MonoError *error)
+{
+	uintptr_t byte_size;
+
+	mono_error_init (error);
+
+	if (G_UNLIKELY (size > MONO_ARRAY_MAX_INDEX)) {
+		mono_error_set_generic_error (error, "System", "OverflowException", "");
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+	}
+
+	if (!mono_array_calc_byte_len (vtable->klass, size, &byte_size)) {
+		mono_error_set_out_of_memory (error, "Could not allocate array of size " G_GSIZE_FORMAT, size);
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+	}
+
+	return mono_handle_gc_alloc_vector (vtable, byte_size, size, error);
+}
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_array_value_box (MonoDomain *domain, MonoClass *element_class, MONO_HANDLE_TYPE (MonoArray) arr_handle, gint32 pos, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoObject) ret;
+	MonoVTable *vtable;
+	gsize element_size;
+
+	g_assert (element_class->valuetype);
+	if (mono_class_is_nullable (element_class))
+		return mono_handle_array_nullable_box (domain, element_class, arr_handle, pos, error);
+
+	mono_error_init (error);
+
+	vtable = mono_class_vtable (domain, element_class);
+	if (!vtable)
+		return MONO_HANDLE_NEW (MonoObject, NULL);
+
+	ret = mono_handle_object_new_alloc_specific (vtable, error);
+
+	if (!mono_error_ok (error))
+		return ret;
+
+	element_size = mono_class_instance_size (element_class) - sizeof (MonoObject);
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	guint8 *src = (guint8*) mono_handle_array_addr_with_size (arr_handle, element_size, pos);
+	guint8 *dst = (guint8*) mono_handle_obj (ret) + sizeof (MonoObject);
+
+	mono_gc_wbarrier_value_copy (dst, src, 1, element_class);
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return ret;
+}
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_array_nullable_box (MonoDomain *domain, MonoClass *element_class, MONO_HANDLE_TYPE (MonoArray) arr_handle, gint32 pos, MonoError *error)
+{
+	MonoClass *param_class;
+	MonoBoolean has_value;
+	gsize element_size;
+
+	mono_error_init (error);
+
+	param_class = element_class->cast_class;
+
+	mono_class_setup_fields_locking (element_class);
+	g_assert (element_class->fields_inited);
+
+	g_assert (mono_class_from_mono_type (element_class->fields [0].type) == param_class);
+	g_assert (mono_class_from_mono_type (element_class->fields [1].type) == mono_defaults.boolean_class);
+
+	element_size = mono_class_instance_size (element_class) - sizeof (MonoObject);
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	has_value = *(mono_handle_array_addr_with_size (arr_handle, element_size, pos) + element_class->fields [1].offset - sizeof (MonoObject));
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	if (!has_value) {
+		return MONO_HANDLE_NEW (MonoObject, NULL);
+	} else {
+		MONO_HANDLE_TYPE (MonoObject) ret;
+
+		ret = mono_handle_object_new (domain, param_class, error);
+		if (!mono_error_ok (error))
+			return ret;
+
+		/* mono_gc_wbarrier_value_copy -> mono_class_value_size -> mono_class_instance_size -> mono_class_init can enter a safepoint */
+		mono_class_init (param_class);
+
+		MONO_PREPARE_GC_CRITICAL_REGION;
+
+		guint8 *src = (guint8*) mono_handle_array_addr_with_size (arr_handle, element_size, pos) + element_class->fields [0].offset - sizeof (MonoObject);
+		guint8 *dst = (guint8*) mono_handle_obj (ret) + sizeof (MonoObject);
+
+		mono_gc_wbarrier_value_copy (dst, src, 1, param_class);
+
+		MONO_FINISH_GC_CRITICAL_REGION;
+
+		return ret;
+	}
+}
+
+void
+mono_handle_array_nullable_init (MonoDomain *domain, MonoClass *element_class, MONO_HANDLE_TYPE (MonoArray) arr_handle, gint32 pos, MONO_HANDLE_TYPE (MonoObject) value_handle, MonoError *error)
+{
+	MonoClass *param_class;
+	gsize element_size;
+
+	mono_error_init (error);
+
+	param_class = element_class->cast_class;
+
+	mono_class_setup_fields_locking (element_class);
+	g_assert (element_class->fields_inited);
+
+	g_assert (mono_class_from_mono_type (element_class->fields [0].type) == param_class);
+	g_assert (mono_class_from_mono_type (element_class->fields [1].type) == mono_defaults.boolean_class);
+
+	mono_class_init (param_class);
+
+	element_size = mono_class_instance_size (element_class) - sizeof (MonoObject);
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	guint8* dst;
+
+	dst = mono_handle_array_addr_with_size (arr_handle, element_size, pos) + element_class->fields [1].offset - sizeof (MonoObject);
+
+	/* Set HasValue */
+	*dst = mono_handle_obj_is_null (value_handle) ? FALSE : TRUE;
+
+	dst = mono_handle_array_addr_with_size (arr_handle, element_size, pos) + element_class->fields [0].offset - sizeof (MonoObject);
+
+	/* Set Value */
+	if (mono_handle_obj_is_null (value_handle))
+		mono_gc_bzero_atomic (dst, mono_class_value_size (param_class, NULL));
+	else
+		mono_gc_wbarrier_value_copy (dst, mono_handle_obj (value_handle) + sizeof (MonoObject), 1, param_class);
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+}
