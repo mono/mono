@@ -37,7 +37,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -197,7 +197,7 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
-#if !MONOTOUCH // Reflection.Emit is not supported.
+#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
 		[Test]
 		[Category("AndroidNotWorking")] // Missing Mono.CompilerServices.SymbolWriter
 		public void GetModules_MissingFile ()
@@ -502,7 +502,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-#if !MONOTOUCH // Reflection.Emit is not supported.
+#if !MONOTOUCH && !MOBILE_STATIC // Reflection.Emit is not supported.
 		[Test]
 		public void Location_Empty() {
 			string assemblyFileName = Path.Combine (
@@ -1175,7 +1175,7 @@ namespace MonoTests.System.Reflection
 
 			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
 #endif
 			Assert.IsFalse (module.IsResource (), "#4");

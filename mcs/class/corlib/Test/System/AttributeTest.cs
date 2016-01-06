@@ -12,7 +12,7 @@
 
 using System;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -846,7 +846,7 @@ namespace MonoTests.System
 			Assert.IsTrue (custom [2].GetType () == typeof (SerializableAttribute));
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void GetCustomAttributeOnNewSreTypes ()
 		{

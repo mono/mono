@@ -5,7 +5,7 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 
 using System;
 using System.Threading;
