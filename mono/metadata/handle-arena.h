@@ -26,4 +26,10 @@ mono_handle_arena_initialize (MonoHandleArena **arena_stack);
 void
 mono_handle_arena_deinitialize (MonoHandleArena **arena_stack);
 
+MonoHandleArena*
+mono_handle_arena_current (void);
+
+MonoHandleArena**
+mono_handle_arena_current_addr (void);
+
 #endif/*__MONO_HANDLE_PRIVATE_H__*/

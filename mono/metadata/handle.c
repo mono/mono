@@ -105,16 +105,6 @@ mono_handle_arena_new (MonoHandleArena *arena, MonoObject *obj)
 	return handle_new (arena, obj);
 }
 
-MonoHandle
-mono_handle_new (MonoObject *obj)
-{
-	/* TODO: finish implementation by placing an arena somewhere
-	 * in the current thread */
-	g_assert_not_reached ();
-	MonoHandleArena *arena = NULL;
-	return mono_handle_arena_new (arena, obj);
-}
-
 /*
  * Elevate the handle to the parent arena
  */
@@ -126,16 +116,6 @@ mono_handle_arena_elevate (MonoHandleArena *arena, MonoHandle handle)
 	g_assert (arena->prev);
 
 	return handle_new (arena->prev, handle->obj);
-}
-
-MonoHandle
-mono_handle_elevate (MonoHandle handle)
-{
-	/* TODO: finish implementation by placing an arena somewhere
-	 * in the current thread */
-	g_assert_not_reached ();
-	MonoHandleArena *arena = NULL;
-	return mono_handle_arena_elevate (arena, handle);
 }
 
 gsize
@@ -222,3 +202,14 @@ mono_handle_arena_deinitialize (MonoHandleArena **arena_stack)
 #endif
 }
 
+MonoHandleArena*
+mono_handle_arena_current (void)
+{
+	g_assert_not_reached ();
+}
+
+MonoHandleArena**
+mono_handle_arena_current_addr (void)
+{
+	g_assert_not_reached ();
+}
