@@ -13,18 +13,8 @@
 #include <config.h>
 #include <glib.h>
 
-#include "object.h"
-#include "class.h"
-#include "class-internals.h"
-#include "threads-types.h"
-#include "handle-arena.h"
-
-#include "mono/utils/mono-threads-coop.h"
-
-G_BEGIN_DECLS
-
-typedef struct _MonoHandleStorage MonoHandleStorage;
-typedef MonoHandleStorage* MonoHandle;
+#include <mono/metadata/object.h>
+#include <mono/metadata/class.h>
 
 /*
  * DO NOT ACCESS DIRECTLY
@@ -33,9 +23,15 @@ typedef MonoHandleStorage* MonoHandle;
  * The field obj is not private as there is no way to do that
  * in C, but using a C++ template would simplify that a lot
  */
-struct _MonoHandleStorage {
+typedef struct {
 	MonoObject *obj;
-};
+} MonoHandleStorage;
+
+typedef MonoHandleStorage* MonoHandle;
+
+#include "handle-arena.h"
+
+G_BEGIN_DECLS
 
 static inline MonoHandle
 mono_handle_new (MonoObject *obj)
@@ -72,13 +68,13 @@ mono_handle_check_in_critical_section ()
 static inline MonoClass*
 mono_handle_class (MonoHandle handle)
 {
-	return handle->obj->vtable->klass;
+	return mono_object_get_class (handle->obj);
 }
 
 static inline MonoDomain*
 mono_handle_domain (MonoHandle handle)
 {
-	return handle->obj->vtable->domain;
+	return mono_object_get_domain (handle->obj);
 }
 
 #define MONO_HANDLE_TYPE_DECL(type)      typedef struct { type *obj; } type ## HandleStorage ; \
