@@ -11,7 +11,7 @@
 #include <glib.h>
 
 #include <mono/metadata/handle.h>
-#include <mono/metadata/handle-private.h>
+#include <mono/metadata/handle-arena.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/atomic.h>

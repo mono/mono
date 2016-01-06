@@ -10,7 +10,7 @@
 #include <config.h>
 #include <glib.h>
 #include <mono/metadata/handle.h>
-#include <mono/metadata/handle-private.h>
+#include <mono/metadata/handle-arena.h>
 
 static void
 test1_arena_size ()
