@@ -1,0 +1,8 @@
+/Users/akyte/mono/mcs/NUnitLite/NUnitLite-1.0.0/src/TestResultConsole/bin/Debug/TestResultConsole.exe.mdb
+/Users/akyte/mono/mcs/NUnitLite/NUnitLite-1.0.0/src/TestResultConsole/bin/Debug/TestResultConsole.exe
+/Users/akyte/mono/mcs/NUnitLite/NUnitLite-1.0.0/src/TestResultConsole/obj/Debug/TestResultConsole.exe
+/Users/akyte/mono/mcs/NUnitLite/NUnitLite-1.0.0/src/TestResultConsole/obj/Debug/TestResultConsole.exe.mdb
+/Users/akyte/mono/mcs/NUnitLite/src/TestResultConsole/bin/Debug/TestResultConsole.exe.mdb
+/Users/akyte/mono/mcs/NUnitLite/src/TestResultConsole/bin/Debug/TestResultConsole.exe
+/Users/akyte/mono/mcs/NUnitLite/src/TestResultConsole/obj/Debug/TestResultConsole.exe
+/Users/akyte/mono/mcs/NUnitLite/src/TestResultConsole/obj/Debug/TestResultConsole.exe.mdb

@@ -18,7 +18,13 @@ TEST_RUNTIME_WRAPPERS_PATH = $(shell dirname $(RUNTIME))/_tmpinst/bin
 
 ## Unit test support
 ifndef NO_TEST
+
+ifdef NUNIT_LITE
+test_nunit_lib = nunitlite.dll
+else
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll nunit.mocks.dll
+endif
+
 test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
@@ -33,18 +39,26 @@ tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBL
 
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
-endif
+endif # HAVE_CS_TESTS
 
-endif
+endif # NO_TEST
 
 ifndef NO_TEST
+
 $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
+ifdef NUNIT_LITE
+$(topdir)/build/deps/nunit-$(PROFILE).stamp:
+	cd ${topdir}/NUnitLite && $(MAKE)
+	echo "stamp" >$@
+else
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
 	cd ${topdir}/nunit24 && $(MAKE)
 	echo "stamp" >$@
+endif # NOT NUNIT_LITE
+
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
-endif
+endif # NO_TEST
 
 test_assemblies :=
 

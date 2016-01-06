@@ -1,0 +1,402 @@
+<?xml version="1.0"?>
+<project name="NUnit" default="help" basedir=".">
+
+<!-- ***************************************************************** -->
+<!-- This script has been tested using NAnt 0.92. At least             -->
+<!-- one of the supported runtimes and sdk must be installed. In       -->
+<!-- order to build the msi, WiX 2.0 and the WiX tasks for NAnt        -->
+<!-- are required. To run the test coverage target, NCover is          -->
+<!-- required.                                                         -->
+<!-- ***************************************************************** -->
+<!-- TODO: Edit above to reflect actual targets -->
+
+<!-- ***************************************************************** -->
+<!-- ***                 Default Help Target                       *** -->
+<!-- ***************************************************************** -->
+
+<target name="help">
+  <echo>
+This build file will build NUnitLite for any of the supported
+runtime frameworks which are actually installed. To add support
+for a framework, edit this script
+
+Running on the current system, the following runtime frameworks
+are available for building and testing NUnit:
+  </echo>
+
+  <foreach item="String" delim="," 
+      property="framework" in="${installed.frameworks}">
+    <echo message="    ${string::pad-right(framework,18,' ')}${framework::get-description(framework)}"/>
+  </foreach>
+
+  <echo>
+Note that targets that set the build configuration or runtime
+to be used must come before action targets. For example:
+
+    nant net-2.0 release build
+    nant build-all
+    nant debug clean build
+
+Use   nant -projecthelp to see a full list of targets.
+  </echo>
+</target>
+
+<!-- ***************************************************************** -->
+<!-- ********* Common properties that control the build ************** -->
+<!-- ***************************************************************** -->
+ 
+  <!-- Project name - used as a prefix for packages -->
+  <property name="project.name" value="NUnitLite"/>
+
+  <!-- NUnit version for packaging -->
+  <property name="package.version" value="1.0.0"/>
+
+  <!-- Additional suffix used to distinguish files with the same version -->
+  <property name="package.suffix" value=""/>
+
+  <!-- Frameworks supported by this build script -->
+  <property name="supported.frameworks"
+    value="net-1.1,net-2.0,net-3.5,net-4.0,net-4.5,netcf-2.0,netcf-3.5,mono-2.0,mono-3.5,mono-4.0,silverlight-3.0,silverlight-4.0,silverlight-5.0"/>
+
+  <!-- Framework versions for which packages are normally created -->
+  <property name="standard.packages"
+    value="net-1.1,net-2.0,net-3.5,net-4.0,net-4.5,netcf-2.0,netcf-3.5,silverlight-3.0,silverlight-4.0,silverlight-5.0" />
+	
+	<!-- Nuget packages normally created -->
+	<property name="nuget.packages" value="NUnitLite,NUnitLiteCF"/>
+
+  <!-- Additional internal properties are set in the include file -->
+  <include buildfile="nunitlite.build.include"/>
+
+
+<!-- ***************************************************************** -->
+<!-- ***          Targets that set the build configuration         *** -->
+<!-- ***     These must come before actions like build or test     *** -->
+<!-- ***************************************************************** -->
+
+  <target name="debug" description="Set config to debug for commands that follow">
+    <call target="set-debug-build-config" />
+  </target>
+
+  <target name="release" description="Set config to release for commands that follow">
+    <call target="set-release-build-config" />
+  </target>
+
+<!-- ***************************************************************** -->
+<!-- ***         Targets that set the runtime configuration        *** -->
+<!-- ***     These must come before actions like build or test     *** -->
+<!-- ***************************************************************** -->
+
+  <target name="net-1.1" 
+    description="Set runtime to .NET 1.1 for targets that follow"
+    depends="set-net-1.1-runtime-config"/>
+      
+  <target name="net-2.0" 
+    description="Set runtime to .NET 2.0 for targets that follow"
+    depends="set-net-2.0-runtime-config"/>
+      
+  <target name="net-3.5"
+    description="Set runtime to .NET 3.5 for targets that follow"
+    depends="set-net-3.5-runtime-config"/>
+
+  <target name="net-4.0"
+    description="Set runtime to .NET 4.0 for targets that follow"
+    depends="set-net-4.0-runtime-config"/>
+
+  <target name="net-4.5"
+    description="Set runtime to .NET 4.5 for targets that follow"
+    depends="set-net-4.5-runtime-config"/>
+
+  <target name="netcf-2.0" 
+    description="Set runtime to .NET CF 2.0 for targets that follow"
+    depends="set-netcf-2.0-runtime-config"/>
+      
+  <target name="netcf-3.5" 
+    description="Set runtime to .NET CF 3.5 for targets that follow"
+    depends="set-netcf-3.5-runtime-config"/>
+      
+  <target name="mono-2.0"
+    description="Set runtime to Mono 2.0 for targets that follow"
+    depends="set-mono-2.0-runtime-config"/>
+
+  <target name="mono-3.5"
+    description="Set runtime to Mono 3.5 for targets that follow"
+    depends="set-mono-3.5-runtime-config"/>
+
+  <target name="mono-4.0"
+    description="Set runtime to Mono 4.0 for targets that follow"
+    depends="set-mono-4.0-runtime-config"/>
+
+  <target name="sl-3.0"
+    description="Set runtime to Silverlight 3.0 for targets that follow"
+    depends="set-silverlight-3.0-runtime-config"/>
+
+  <target name="sl-4.0"
+    description="Set runtime to Silverlight 4.0 for targets that follow"
+    depends="set-silverlight-4.0-runtime-config"/>
+
+  <target name="sl-5.0"
+    description="Set runtime to Silverlight 5.0 for targets that follow"
+    depends="set-silverlight-5.0-runtime-config"/>
+
+<!-- ***************************************************************** -->
+<!-- ***             Targets that clean directories                *** -->
+<!-- ***************************************************************** -->
+
+  <target name="clean" depends="set-build-dir"
+      description="Removes the current build directory">
+
+    <property name="current.target" value="clean"/>
+    <call target="run-subprojects"/>
+
+  </target>
+
+  <target name="clean-all" description="Removes all build directories">
+    <delete dir="${project.build.dir}" 
+      if="${directory::exists( project.build.dir )}"/>
+  </target>
+
+  <target name="clean-package-dir"
+    description="Removes the current package working directory">
+        <delete dir="${package.working.dir}" 
+            if="${directory::exists( package.working.dir )}"/>
+  </target>
+
+  <target name="clean-source-dirs">
+    <delete>
+      <fileset>
+        <include name="*/*/obj/**/*"/>
+        <include name="*/*/bin/**/*"/>
+      </fileset>
+    </delete>
+  </target>
+.
+<!-- ***************************************************************** -->
+<!-- ***              Targets that perform builds                  *** -->
+<!-- ***************************************************************** -->
+
+  <target name="build" depends="make-build-dir"
+    description="Build NUnit for default runtime version and config">
+
+    <echo message="*"/>
+    <echo message="* Starting ${runtime.config} ${build.config} build"/>
+    <echo message="* Current Build Directory = ${current.build.dir}"/>
+    <echo message="*"/>
+
+    <property name="nant.settings.currentframework" value="${build.framework}"/>
+
+    <property name="current.target" value="build"/>
+    <call target="run-subprojects"/>
+
+  </target>
+
+  <target name="build-all"
+      description="Build current config for all available runtimes">
+    <foreach item="String" delim="," 
+        property="framework" in="${installed.frameworks}">
+      <call target="set-${framework}-runtime-config"/>
+      <call target="build"/>
+    </foreach>
+  </target>
+
+  <target name="rebuild" depends="make-build-dir"
+    description="Rebuild NUnit for default runtime version and config">
+
+    <echo message="*"/>
+    <echo message="* Starting ${runtime.config} ${build.config} rebuild"/>
+    <echo message="* Current Build Directory = ${current.build.dir}"/>
+    <echo message="*"/>
+
+    <property name="nant.settings.currentframework" value="${build.framework}"/>
+
+    <property name="current.target" value="rebuild"/>
+    <call target="run-subprojects"/>
+
+  </target>
+
+  <target name="rebuild-all" depends="clean-all,build-all"
+      description="Rebuild current config for all available runtimes">
+    <foreach item="String" delim="," 
+        property="framework" in="${installed.frameworks}">
+      <call target="set-${framework}-runtime-config"/>
+      <call target="rebuild"/>
+    </foreach>
+  </target>
+
+<!-- ***************************************************************** -->
+<!-- ***                 Targets for running tests                 *** -->
+<!-- ***************************************************************** -->
+
+  <target name="test" depends="build"
+    description="Build and run tests for selected config and runtime">
+
+    <call target="run-test" unless="${runtime.platform == 'silverlight'}"/>
+    <call target="run-silverlight-test" if="${runtime.platform == 'silverlight'}"/>
+
+  </target>
+
+  <target name="ci-test" depends="build"
+    description="Build and run CI test (no gui) for selected config and runtime">
+
+    <call target="run-test" unless="${runtime.platform == 'silverlight'}"/>
+    <call target="run-silverlight-ci-test" if="${runtime.platform == 'silverlight'}"/>
+
+  </target>
+
+  <target name="run-test"
+      description="Run tests for selected config and runtime (no rebuild)">
+
+    <property name="nant.settings.currentframework" value="${runtime.config}"/>
+
+    <echo message="*"/>
+    <echo message="* Testing ${runtime.config} ${build.config} build"/>
+    <echo message="*"/>
+
+    <exec basedir="${current.build.dir}"
+      workingdir="${current.build.dir}" 
+      program="nunitlite.tests.exe" 
+      managed="Strict"/>
+
+  </target>
+
+  <target name="run-silverlight-test">
+
+    <property name="xap.file.name" value="nunitlite.tests-${msbuild.proj.suffix}.xap"/>
+
+    <exec program="sllauncher.exe"
+          basedir="C:\Program Files\Microsoft Silverlight"
+          workingdir="${current.build.dir}">
+      
+      <arg value="/emulate:${xap.file.name}"/>
+      <arg value="/origin:file://TestPage.html"/>
+
+    </exec>
+
+  </target>
+
+  <target name="run-silverlight-ci-test">
+
+    <echo message="*"/>
+    <echo message="* Testing ${runtime.config} ${build.config} build"/>
+    <echo message="*"/>
+
+    <exec basedir="${current.build.dir}"
+      workingdir="${current.build.dir}" 
+      program="ci-test-runner.exe" 
+      commandline="nunitlite.tests"
+      managed="Strict"/>
+
+  </target>
+
+  <target name="test-all"
+      description="Build and test all runtimes for current config">
+	  
+    <foreach item="String" delim="," 
+        property="framework" in="${installed.frameworks}">
+      <call target="set-${framework}-runtime-config"/>
+      <call target="test" />
+    </foreach>
+	  
+  </target>
+
+<!-- ***************************************************************** -->
+<!-- ***       Targets for packaging the NUnitLite distribution    *** -->
+<!-- ***************************************************************** -->
+
+  <target name="package" description="Create package for a release">
+
+    <call target="package-bins"/>
+    <call target="package-src"/>
+
+  </target>
+
+  <target name="package-bins" depends="clean-package-dir"
+    description="Package binaries for all supported frameworks">
+
+    <foreach item="String" delim="," 
+        property="framework" in="${standard.packages}">
+
+      <if test="${framework::exists(framework)}">
+        <if test="${string::starts-with(framework, 'silverlight') or framework::sdk-exists(framework)}">
+          <call target="set-${framework}-runtime-config"/>
+          <call target="package-build"/>
+        </if>
+      </if>
+
+    </foreach>
+
+    <!-- Create the zip file -->
+	<property name="zip.file.name" value="${package.name}" unless="${build.debug}"/>
+	<property name="zip.file.name" value="${package.name}-dbg" if="${build.debug}"/>
+	
+    <zip zipfile="${project.package.dir}/${zip.file.name}.zip" ziplevel="9">
+      <fileset basedir="${package.working.dir}" prefix="${package.base.name}">
+        <include name="**"/>
+      </fileset>
+    </zip>
+
+    <!-- Create the NuGet packages -->
+	<foreach item="String" delim="," property="nuget.package.name" in="${nuget.packages}">
+		  
+	  <copy file="${nuget.package.name}.nuspec"
+		  tofile="_TEMP.nuspec"
+		  overwrite="true">
+		  <filterchain>
+			  <expandproperties/>
+		  </filterchain>
+	  </copy>
+
+	  <exec program="NuGet.exe"
+          commandline="pack _TEMP.nuspec -OutputDirectory package"
+          workingdir="."/>
+
+		<move file="package/${nuget.package.name}.${package.version}.nupkg"
+			  tofile="package/${nuget.package.name}.${package.version}-dbg.nupkg"
+			  if="${build.debug}"/>
+
+	</foreach>
+  </target>
+
+  <target name="package-build" depends="build"
+    description="Helper that packages the binaries for a single build">
+
+    <copy todir="${package.working.dir}/${runtime.config}">
+      <fileset basedir="${current.build.dir}">
+		  <include name="nunitlite.dll"/>
+		  <include name="nunitlite.pdb"/>
+		  <include name="nunitlite.xml"/>
+	  </fileset>
+    </copy>
+
+  </target>
+
+  <target name="package-src" depends="clean-package-dir"
+    description="Create full source package for developer use">
+
+    <copy todir="${package.working.dir}">
+      <fileset basedir="${project.base.dir}">
+        <include name="README.txt"/>
+        <include name="CHANGES.txt"/>
+        <include name="LICENSE.txt"/>
+        <include name="nant.bat"/>
+        <include name="nunitlite.build"/>
+        <include name="nunitlite.build.include"/>
+        <include name="NUnitLite.nuspec"/>
+        <include name="NUnitLite.sln"/>
+        <include name="NUnitLiteCF.sln"/>
+      </fileset>
+    </copy>
+
+    <call target="copy-src"/>
+    <call target="copy-tools"/>
+
+    <!-- Create the zip file -->
+    <zip zipfile="${project.package.dir}/${package.name}-src.zip" ziplevel="9">
+      <fileset basedir="${package.working.dir}" prefix="${package.base.name}">
+        <include name="**"/>
+      </fileset>
+    </zip>
+
+  </target>
+  
+</project>

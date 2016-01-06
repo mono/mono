@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<project name="MockAssembly" default="build" basedir=".">
+
+  <property name="msbuild.project" value="mock-assembly-${msbuild.proj.suffix}.csproj"/>
+
+  <include buildfile="../../nunitlite.projects.common"/>
+
+  <target name="nant-clean">
+
+    <delete file="${current.build.dir}/mock-assembly.dll"/>
+    <delete file="${current.build.dir}/mock-assembly.pdb"/>
+
+  </target>
+
+  <target name="nant-build">
+
+    <csc target="library"
+        output="${current.build.dir}/mock-assembly.dll"
+        debug="${build.debug}"
+        define="${build.defines};NUNITLITE">
+      <sources basedir=".">
+        <include name="**/*.cs"/>
+      </sources>
+      <references basedir="${current.build.dir}">
+        <include name="mscorlib.dll"/>
+        <include name="nunitlite.dll"/>   
+      </references>
+    </csc>
+
+  </target>
+
+</project>

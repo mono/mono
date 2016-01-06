@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project name="NUnitLiteFramework" default="build" basedir=".">
+
+  <patternset id="source-files">
+    <include name="*.cs"/>
+
+    <include name="Api/*.cs"/>
+    <exclude name="Api/ITestCaseSourceProvider.cs"/>
+
+    <include name="Attributes/*.cs"/>
+    <exclude name="Attributes/SetCultureAttribute.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Attributes/SetUICultureAttribute.cs" if="${runtime.platform == 'netcf'}"/>
+
+    <include name="Compatibility/*.cs" if="${runtime.platform == 'silverlight'}"/>
+    <include name="Compatibility/*.cs" if="${runtime.config == 'netcf-1.0'}"/>
+
+    <include name="Constraints/**/*.cs"/>
+    <exclude name="Constraints/BinarySerializableConstraint.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Constraints/BinarySerializableConstraint.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Constraints/XmlSerializableConstraint.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Constraints/XmlSerializableConstraint.cs" if="${runtime.config == 'netcf-1.0'}"/>
+
+    <include name="Exceptions/*.cs"/>
+    <include name="Extensibility/*.cs"/>
+
+    <include name="Internal/**/*.cs"/>
+    <exclude name="Internal/XmlHelper.cs"/>
+
+    <include name="Runner/*.cs"/>
+    <exclude name="Runner/TcpWriter.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Runner/TextUi.cs" if="${runtime.platform == 'silverlight'}"/>
+    <include name="obj/Debug/TestPage.g.cs"/>
+
+    <include name="Runner/Silverlight/*.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Runner/Silverlight/TestRunListener.cs"/>
+    <exclude name="Runner/Silverlight/TestRunStatus.cs"/>
+  </patternset>
+
+  <target name="build">
+
+    <csc target="library"
+        output="${current.build.dir}/nunitlite.dll"
+        doc="${current.build.dir}/nunitlite.xml"
+        debug="${build.debug}" 
+        define="${build.defines};NUNITLITE">
+      <sources basedir="${project.src.dir}/framework">
+        <patternset refid="source-files"/>
+      </sources>
+      <references>
+        <include name="mscorlib.dll"/>
+        <include name="System.dll"/>
+        <include name="System.Xml.dll"/>
+        <include name="System.Windows.dll" if="${runtime.platform == 'silverlight'}"/>
+      </references>
+    </csc>
+
+  </target>
+
+</project>
+

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<project>
+
+<!-- ***************************************************************** -->
+<!-- ***                  Primary Targets                          *** -->
+<!-- ***************************************************************** -->
+
+  <target name="clean" depends="${build.method}-clean"/>
+
+  <target name="build" depends="${build.method}-build"/>
+
+  <target name="rebuild" depends="${build.method}-rebuild"/>
+
+  <target name="nant-rebuild" depends="nant-clean,nant-build"/>
+
+<!-- ***************************************************************** -->
+<!-- ***       Targets Used when Build.Method is MSBuild           *** -->
+<!-- ***************************************************************** -->
+
+  <target name="msbuild-clean">
+
+    <property name="msbuild.target" value="clean"/>
+    <call target="run-msbuild"/>
+
+  </target>
+
+  <target name="msbuild-build">
+
+    <property name="msbuild.target" value="build"/>
+    <call target="run-msbuild"/>
+
+  </target>
+
+  <target name="msbuild-rebuild">
+
+    <property name="msbuild.target" value="rebuild"/>
+    <call target="run-msbuild"/>
+
+  </target>
+
+  <target name="run-msbuild">
+
+    <exec program="${msbuild.path}">
+      <arg file="${msbuild.project}"/>
+      <arg value="/t:${msbuild.target}"/>
+      <arg value='/property:OutputPath="${current.build.dir}"'/>
+      <arg value='/property:Configuration=${build.config}'/>
+    </exec>
+
+  </target>
+
+</project>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+		<id>NUnitLite</id>
+		<version>${package.version}${package.suffix}</version>
+		<authors>Charlie Poole</authors>
+		<owners>Charlie Poole</owners>
+		<licenseUrl>http://nunit.org/nuget/nunitlite-license.txt</licenseUrl>
+		<projectUrl>http://nunitlite.org</projectUrl>
+		<iconUrl>http://nunit.org/nuget/nunit_32x32.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<summary>NUnitLite is a lightweight testing framework for .NET, based on NUnit.</summary>
+		<description>NUnitLite provides a subset of the features of NUnit, uses minimal resources and runs on resource-restricted platforms used in embedded and mobile development. This packaage contains builds of NUnitLite for .NET 2.0, 3.5, 4.0 and 4.5 as well as Silverlight 5.0.&#10;&#13;How to use this package:&#10;&#13;1. Create a console application for your tests and delete the generated class containing Main().&#10;&#13;2. Install the NUnitLite package, which creates a new Main() as well as adding a reference to NUnitLite.&#10;&#13;3. Add your tests to the test project and start the project to execute them.</description>
+		<copyright>Copyright (c) 2004-2012 Charlie Poole</copyright>
+		<language>en-US</language>
+		<tags>test testing tdd framework fluent assert device phone compact embedded</tags>
+	</metadata>
+	<files>
+		<file src="LICENSE.txt" />
+                <file src="README.txt" />
+                <file src="CHANGES.txt" />
+		<file src="package\${package.base.name}\net-4.5\nunitlite.dll"  target="lib/net45" />
+		<file src="package\${package.base.name}\net-4.5\nunitlite.xml"  target="lib/net45" />
+		<file src="package\${package.base.name}\net-4.0\nunitlite.dll"  target="lib/net40" />
+		<file src="package\${package.base.name}\net-4.0\nunitlite.xml"  target="lib/net40" />
+		<file src="package\${package.base.name}\net-3.5\nunitlite.dll"  target="lib/net35" />
+		<file src="package\${package.base.name}\net-3.5\nunitlite.xml"  target="lib/net35" />
+		<file src="package\${package.base.name}\net-2.0\nunitlite.dll"  target="lib/net20" />
+		<file src="package\${package.base.name}\net-2.0\nunitlite.xml"  target="lib/net20" />
+		<file src="package\${package.base.name}\silverlight-5.0\nunitlite.dll"  target="lib/sl50" />
+		<file src="package\${package.base.name}\silverlight-5.0\nunitlite.xml"  target="lib/sl50" />
+		<file src="src\tests\Program.cs" target="content" />
+	</files>
+</package>

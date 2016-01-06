@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6BB1FF9E-DF15-4999-8EEE-F4DA328FBCBB}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NUnit.TestData</RootNamespace>
+    <AssemblyName>nunitlite.testdata</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SignManifests>false</SignManifests>
+    <TargetFrameworkProfile />
+    <IntermediateOutputPath>obj\$(Configuration)\sl-3.0\</IntermediateOutputPath>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\sl-3.0\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;SL_3_0;CLR_2_0;NUNITLITE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\sl-3.0\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;SL_3_0;CLR_2_0;NUNITLITE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="AssertCountFixture.cs" />
+    <Compile Include="AssertFailFixture.cs" />
+    <Compile Include="AssertIgnoreData.cs" />
+    <Compile Include="AttributeInheritanceData.cs" />
+    <Compile Include="CategoryAttributeData.cs" />
+    <Compile Include="CultureAttributeData.cs" />
+    <Compile Include="DatapointFixture.cs" />
+    <Compile Include="DescriptionFixture.cs" />
+    <Compile Include="ExpectedExceptionData.cs" />
+    <Compile Include="FixtureSetUpTearDownData.cs" />
+    <Compile Include="MaxTimeFixture.cs" />
+    <Compile Include="ParameterizedTestFixture.cs" />
+    <Compile Include="PropertyAttributeTests.cs" />
+    <Compile Include="RepeatedTestFixture.cs" />
+    <Compile Include="SetUpData.cs" />
+    <Compile Include="TestCaseAttributeFixture.cs" />
+    <Compile Include="TestCaseSourceAttributeFixture.cs" />
+    <Compile Include="TestContextData.cs" />
+    <Compile Include="TestFixtureData.cs" />
+    <Compile Include="TestMethodSignatureFixture.cs" />
+    <Compile Include="TheoryFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\framework\nunitlite-sl-3.0.csproj">
+      <Project>{02B02379-2596-4E45-8B10-835D62EA2D9E}</Project>
+      <Name>nunitlite-sl-3.0</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

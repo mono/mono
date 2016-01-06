@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<project name="NUnitLiteTests" default="build" basedir=".">
+
+  <property name="msbuild.project" value="nunitlite.tests-${msbuild.proj.suffix}.csproj"/>
+
+  <include buildfile="../../nunitlite.projects.common"/>
+
+  <target name="nant-clean">
+
+    <delete file="${current.build.dir}/nunitlite.tests.exe"/>
+    <delete file="${current.build.dir}/nunitlite.tests.pdb"/>
+
+  </target>
+
+  <target name="nant-build">
+
+    <property name="csc.target" value="exe" unless="${runtime.platform=='silverlight'}"/>
+    <property name="csc.target" value="library" if="${runtime.platform=='silverlight'}"/>
+    <property name="csc.output" value="nunitlite.tests.exe" unless="${runtime.platform=='silverlight'}"/>
+    <property name="csc.output" value="nunitlite.tests.dll" if="${runtime.platform=='silverlight'}"/>
+
+    <csc target="exe"
+        output="${current.build.dir}/nunitlite.tests.exe"
+        debug="${build.debug}"
+        define="${build.defines};NUNITLITE">
+      <sources basedir=".">
+        <patternset refid="source-files"/>
+      </sources>
+      <references basedir="${current.build.dir}">
+        <include name="mscorlib.dll"/>
+        <include name="System.dll"/>
+        <include name="System.Core.dll" if="${runtime.version >= '3.5'}"/>
+        <include name="System.Windows.dll" if="${runtime.platform == 'silverlight'}"/>
+        <include name="System.Windows.Browser.dll" if="${runtime.platform == 'silverlight'}"/>
+        <include name="System.Xml.dll"/>
+        <include name="nunitlite.dll"/>
+        <include name="nunitlite.testdata.dll"/>
+        <include name="mock-assembly.dll"/>
+      </references>
+    </csc>
+
+  </target>
+
+  <patternset id="source-files">
+    <include name="AssemblyInfo.cs"/>
+    <include name="RecordingTestListener.cs"/>
+
+    <include name="App.g.cs" if="${runtime.platform=='silverlight'}"/>
+    <include name="App.xaml.cs" if="${runtime.platform=='silverlight'}"/>
+
+    <include name="Program.cs" unless="${runtime.platform == 'silverlight'}"/>
+
+    <include name="Api/ResultStateTests.cs"/>
+
+    <include name="Assertions/*.cs"/>
+
+    <include name="Attributes/*.cs"/>
+    <exclude name="Attributes/SetCultureAttributeTests.cs" if="${runtime.platform == 'netcf'}"/>
+
+    <include name="Constraints/*.cs"/>
+    <exclude name="Constraints/DelayedConstraintTest.cs" if="${runtime.platform == 'silverlight'}"/>
+
+    <include name="Framework/*.cs"/>
+
+    <include name="Internal/*.cs"/>
+
+    <include name="Runner/*.cs"/>
+    <!--<exclude name="Runner/CommandLineOptionTests.cs" if="${runtime.platform == 'silverlight'}"/>-->
+
+    <include name="Syntax/*.cs"/>
+    <exclude name="Syntax/TestCompiler.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Syntax/TestCompiler.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Syntax/InvalidCodeTests.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Syntax/InvalidCodeTests.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Syntax/AfterTests.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Syntax/AfterTests.cs" if="${runtime.platform == 'silverlight'}"/>
+
+    <include name="TestUtilities/*.cs"/>
+    <include name="TestUtilities/Collections/*.cs"/>
+    <include name="TestUtilities/Comparers/*.cs"/>
+  </patternset>
+
+</project>

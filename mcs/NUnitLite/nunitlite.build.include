@@ -1,0 +1,424 @@
+<?xml version="1.0"?>
+<project name="NUnit" default="build" basedir=".">
+
+<!-- ***************************************************************** -->
+<!-- **********Set Properties used by Various targets **************** -->
+<!-- ***************************************************************** -->
+
+  <!-- Project base dir is nant project base dir -->
+  <property name="project.base.dir"
+    value="${project::get-base-directory()}"/>
+
+  <!-- Other directories are derived from base -->
+  <property name="project.src.dir" 
+    value="${path::combine(project.base.dir,'src')}"/>
+  <property name="project.tools.dir" 
+    value="${path::combine(project.base.dir,'tools')}"/>
+  <property name="project.build.dir" 
+    value="${path::combine(project.base.dir,'build')}"/>
+  <property name="project.package.dir" 
+    value="${path::combine(project.base.dir,'package')}"/>
+
+  <!-- Root of the package file name -->
+  <property name="package.base.name"
+    value="${project.name}-${package.version}"/>
+  <property name="package.name" 
+    value="${package.base.name}${package.suffix}"/>
+
+  <!-- Package directories -->
+  <property name="package.working.dir" 
+    value="${path::combine(project.package.dir,package.base.name)}"/>
+  <property name="package.src.dir" 
+    value="${path::combine(package.working.dir,'src')}"/>
+  <property name="package.tools.dir" 
+    value="${path::combine(package.working.dir,'tools')}"/>
+
+  <!-- Default build configuration -->
+  <property name="build.config" value="debug"/>
+  <property name="build.defines" value=""/>
+
+  <!-- Default runtime configuration -->
+  <property name="runtime.config" value="${framework::get-target-framework()}"/>
+
+  <!-- Collect list of installed frameworks -->
+  <foreach item="String" delim="," 
+      property="framework" in="${supported.frameworks}">
+    <if test="${framework::exists( framework )}">
+    <if test="${string::starts-with(framework, 'silverlight') or framework::sdk-exists( framework )}">
+      <property name="installed.frameworks" value="${installed.frameworks},${framework}"
+        if="${property::exists('installed.frameworks')}"/>
+      <property name="installed.frameworks" value="${framework}"
+        unless="${property::exists('installed.frameworks')}"/>
+    </if>
+    </if>
+  </foreach>
+
+<!-- ***************************************************************** -->
+<!-- *********      FileSets Used by Various Targets       *********** -->
+<!-- ***************************************************************** -->
+
+  <!-- Files to be copied to source directories -->
+  <fileset id="source-files" >
+        <include name="**/*.sln" />
+        <include name="**/*.csproj" />
+        <include name="**/*.config" />
+        <include name="**/*.build" />
+        <include name="**/*.cs" />
+        <include name="**/*.xsd" />
+        <include name="**/*.xslt" />
+        <include name="**/*.resx" />
+        <include name="**/*.jpg" />
+        <include name="**/*.gif" />
+        <include name="**/*.ico" />
+        <include name="**/*.txt" />
+        <include name="**/resources/*" />
+
+        <exclude name="**/CVS/**" />
+        <exclude name="**/bin/**" />
+        <exclude name="**/obj/**" />
+        <exclude name="**/Debug/**" />
+        <exclude name="**/Release/**" />
+  </fileset>
+
+<!-- ***************************************************************** -->
+<!-- ********* Targets for setting the build configuration *********** -->
+<!-- ***************************************************************** -->
+
+  <target name="set-build-config">
+    <call target="set-${build.config}-build-config"/>
+  </target>
+
+  <target name="set-debug-build-config">
+    <property name="build.config" value="debug"/>
+    <property name="build.debug" value="true"/>
+    <property name="build.defines" value="DEBUG,TRACE,NUNITLITE,${runtime.defines}"
+        dynamic="true"/>
+  </target>
+	
+  <target name="set-release-build-config">
+    <property name="build.config" value="release"/>
+    <property name="build.debug" value="false"/>
+    <property name="build.defines" value="TRACE,NUNITLITE,${runtime.defines}"
+	dynamic="true"/>
+  </target>
+
+<!-- ***************************************************************** -->
+<!-- ***    Targets for setting the runtime configuration          *** -->
+<!-- ***************************************************************** -->
+
+  <target name="set-runtime-config">   
+    <call target="set-${runtime.config}-runtime-config"/>
+  </target>
+  
+  <target name="set-net-1.1-runtime-config">
+    <fail unless="${framework::exists( 'net-1.1' )}"
+      message=".NET 1.1 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-1.1' )}"
+      message="The .NET 1.1 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="net"/>
+    <property name="runtime.version" value="1.1"/>
+    <property name="runtime.config" value="net-1.1"/>
+    <property name="runtime.defines" value="NET,NET_1_1,CLR_1_1"/>
+    <property name="build.framework" value="net-1.1"/>
+    <property name="build.method" value="nant"/>
+    <property name="msbuild.proj.suffix" value=""/>
+  </target>
+	
+  <target name="set-net-2.0-runtime-config">
+    <fail unless="${framework::exists( 'net-2.0' )}"
+      message=".NET 2.0 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-2.0' )}"
+      message="The .NET 2.0 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="net"/>
+    <property name="runtime.version" value="2.0"/>
+    <property name="runtime.config" value="net-2.0"/>
+    <property name="runtime.defines" value="NET,NET_2_0,CLR_2_0"/>
+    <property name="build.framework" value="net-3.5"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="2.0"/>
+  </target>
+	
+  <target name="set-net-3.5-runtime-config">
+    <fail unless="${framework::exists( 'net-3.5' )}"
+      message=".NET 3.5 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-3.5' )}"
+      message="The .NET 3.5 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="net"/>
+    <property name="runtime.version" value="3.5"/>
+    <property name="runtime.config" value="net-3.5"/>
+    <property name="runtime.defines" value="NET,NET_3_5,CLR_2_0"/>
+    <property name="build.framework" value="net-4.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="3.5"/>
+  </target>
+
+  <target name="set-net-4.0-runtime-config">
+    <fail unless="${framework::exists( 'net-4.0' )}"
+      message=".NET 4.0 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-4.0' )}"
+      message="The .NET 4.0 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="net"/>
+    <property name="runtime.version" value="4.0"/>
+    <property name="runtime.config" value="net-4.0"/>
+    <property name="runtime.defines" value="NET,NET_4_0,CLR_4_0"/>
+    <property name="build.framework" value="net-4.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="4.0"/>
+  </target>
+
+  <target name="set-net-4.5-runtime-config">
+    <fail unless="${framework::exists( 'net-4.5' )}"
+      message=".NET 4.5 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-4.5' )}"
+      message="The .NET 4.5 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="net"/>
+    <property name="runtime.version" value="4.5"/>
+    <property name="runtime.config" value="net-4.5"/>
+    <property name="runtime.defines" value="NET,NET_4_5,CLR_4_0"/>
+    <property name="build.framework" value="net-4.5"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="4.5"/>
+  </target>
+
+  <target name="set-netcf-2.0-runtime-config">
+    <fail unless="${framework::exists( 'netcf-2.0' )}"
+      message=".NET CF 2.0 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'netcf-2.0' )}"
+      message="The .NET CF 2.0 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="netcf"/>
+    <property name="runtime.version" value="2.0"/>
+    <property name="runtime.config" value="netcf-2.0"/>
+    <property name="runtime.defines" value="NETCF,NETCF_2_0,CLR_2_0"/>
+    <property name="build.framework" value="netcf-2.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="netcf-2.0"/>
+  </target>
+	
+  <target name="set-netcf-3.5-runtime-config">
+    <!--<fail unless="${framework::exists( 'netcf-3.5' )}"
+      message=".NET CF 3.5 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'net-3.5' )}"
+      message="The .NET 3.5 SDK is not configured or not installed"/>-->
+
+    <property name="runtime.platform" value="netcf"/>
+    <property name="runtime.version" value="3.5"/>
+    <property name="runtime.config" value="netcf-3.5"/>
+    <property name="runtime.defines" value="NETCF,NETCF_3_5,CLR_2_0"/>
+    <property name="build.framework" value="net-3.5"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="netcf-3.5"/>
+  </target>
+	
+  <target name="set-mono-2.0-runtime-config">
+    <fail unless="${framework::exists( 'mono-2.0' )}"
+      message="Mono 2.0 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'mono-2.0' )}"
+      message="The Mono 2.0 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="mono"/>
+    <property name="runtime.version" value="2.0"/>
+    <property name="runtime.config" value="mono-2.0"/>
+    <property name="runtime.defines" value="MONO,MONO_2_0,CLR_2_0"/>
+    <property name="build.framework" value="mono-3.5"/>
+    <property name="build.method" value="nant"/>
+    <property name="msbuild.proj.suffix" value="2.0"/>
+  </target>
+
+  <target name="set-mono-3.5-runtime-config">
+    <fail unless="${framework::exists( 'mono-3.5' )}"
+      message="Mono 3.5 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'mono-3.5' )}"
+      message="The Mono 3.5 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="mono"/>
+    <property name="runtime.version" value="3.5"/>
+    <property name="runtime.config" value="mono-3.5"/>
+    <property name="runtime.defines" value="MONO,MONO_3_5,CLR_2_0"/>
+    <property name="build.framework" value="mono-3.5"/>
+    <property name="build.method" value="nant"/>
+    <property name="msbuild.proj.suffix" value="3.5"/>
+  </target>
+
+  <target name="set-mono-4.0-runtime-config">
+    <fail unless="${framework::exists( 'mono-4.0' )}"
+      message="Mono 4.0 is not installed"/>
+    <fail unless="${framework::sdk-exists( 'mono-4.0' )}"
+      message="The Mono 4.0 SDK is not configured or not installed"/>
+
+    <property name="runtime.platform" value="mono"/>
+    <property name="runtime.version" value="4.0"/>
+    <property name="runtime.config" value="mono-4.0"/>
+    <property name="runtime.defines" value="MONO,MONO_4_0,CLR_4_0"/>
+    <property name="build.framework" value="mono-4.0"/>
+    <property name="build.method" value="nant"/>
+    <property name="msbuild.proj.suffix" value="4.0"/>
+  </target>
+
+  <target name="set-silverlight-3.0-runtime-config">
+    <fail unless="${framework::exists( 'silverlight-3.0' )}"
+      message="Silverlight 3.0 is not installed"/>
+
+    <property name="runtime.platform" value="silverlight"/>
+    <property name="runtime.version" value="3.0"/>
+    <property name="runtime.config" value="silverlight-3.0"/>
+    <property name="runtime.defines" value="SILVERLIGHT,SL_3_0,CLR_2_0"/>
+    <property name="build.framework" value="silverlight-3.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="sl-3.0"/>
+  </target>
+
+  <target name="set-silverlight-4.0-runtime-config">
+    <fail unless="${framework::exists( 'silverlight-4.0' )}"
+      message="Silverlight 4.0 is not installed"/>
+
+    <property name="runtime.platform" value="silverlight"/>
+    <property name="runtime.version" value="4.0"/>
+    <property name="runtime.config" value="silverlight-4.0"/>
+    <property name="runtime.defines" value="SILVERLIGHT,SL_4_0,CLR_4_0"/>
+    <property name="build.framework" value="silverlight-4.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="sl-4.0"/>
+  </target>
+
+  <target name="set-silverlight-5.0-runtime-config">
+    <fail unless="${framework::exists( 'silverlight-5.0' )}"
+      message="Silverlight 5.0 is not installed"/>
+
+    <property name="runtime.platform" value="silverlight"/>
+    <property name="runtime.version" value="5.0"/>
+    <property name="runtime.config" value="silverlight-5.0"/>
+    <property name="runtime.defines" value="SILVERLIGHT,SL_5_0,CLR_4_0"/>
+    <property name="build.framework" value="silverlight-5.0"/>
+    <property name="build.method" value="msbuild"/>
+    <property name="msbuild.proj.suffix" value="sl-5.0"/>
+  </target>
+
+<!-- ***************************************************************** -->
+<!-- **************** Internally used targets ************************ -->
+<!-- ***************************************************************** -->
+
+  <!-- Set up the build directory -->
+  <target name="set-build-dir"
+    depends="set-build-config,set-runtime-config">
+    <property name="runtime.platform.dir"
+      value="${path::combine(project.build.dir,runtime.platform)}"/>
+    <property name="runtime.version.dir"
+      value="${path::combine(runtime.platform.dir,runtime.version)}"/>
+    <property name="current.build.dir" 
+      value="${path::combine(runtime.version.dir,build.config)}"/>
+
+    <property name="msbuild.dir" value="${framework::get-framework-directory(build.framework)}"/>
+    <property name="msbuild.exe" value="MSBuild.exe" unless="${runtime.platform == 'mono'}"/>
+    <property name="msbuild.exe" value="xbuild.exe" if="${runtime.platform == 'mono'}"/>
+    <property name="msbuild.path" value="${msbuild.dir}/${msbuild.exe}"/>
+  </target>
+  
+  <target name="make-build-dir" depends="set-build-dir">
+    <mkdir dir="${current.build.dir}"
+      unless="${directory::exists(current.build.dir)}"/>
+  </target>
+
+  <target name="create-zip" description="Create zip from existing image">
+    <!-- Create the zip file -->
+    <zip zipfile="${project.package.dir}/${zip.file.name}" ziplevel="9">
+      <fileset basedir="${package.working.dir}">
+        <include name="**"/>
+      </fileset>
+    </zip>
+  </target>
+
+  <target name="copy-src">
+    <delete dir="${package.src.dir}" />
+    <mkdir dir="${package.src.dir}"/>
+
+    <copy todir="${package.src.dir}">
+      <fileset basedir="${project.src.dir}">
+        <include name="framework/*.csproj"/>
+        <include name="framework/*.snk"/>
+        <include name="framework/*.build"/>
+        <include name="framework/**/*.cs"/>
+        <include name="tests/*.csproj"/>
+        <include name="tests/**/*.cs"/>
+        <include name="tests/*.build"/>
+        <include name="testdata/*.csproj"/>
+        <include name="testdata/**/*.cs"/>
+        <include name="testdata/*.build"/>
+        <include name="mock-assembly/*.csproj"/>
+        <include name="mock-assembly/**/*.cs"/>
+        <include name="mock-assembly/*.build"/>
+        <include name="TestResultConsole/*.csproj"/>
+        <include name="TestResultConsole/**/*.cs"/>
+        <include name="TestResultConsole/*.build"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+  <target name="copy-tools">
+	  
+    <delete dir="${package.tools.dir}" />
+    <mkdir dir="${package.tools.dir}"/>
+
+    <copy todir="${package.tools.dir}">
+      <fileset basedir="${project.tools.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+  <target name="run-subprojects">
+
+    <nant target="${current.target}" buildfile="src/framework/nunitlite.framework.build"/>
+    <nant target="${current.target}" buildfile="src/mock-assembly/mock-assembly.build"/>
+    <nant target="${current.target}" buildfile="src/testdata/nunitlite.testdata.build"/>
+    <nant target="${current.target}" buildfile="src/tests/nunitlite.tests.build"/>
+    <nant target="${current.target}" buildfile="src/runner/ci-test-runner.build"
+      if="${runtime.platform=='silverlight'}"/>
+
+	</target>
+
+	<!-- ***************************************************************** -->
+<!-- ***           Dump configuration settings for debugging       *** -->
+<!-- ***************************************************************** -->
+
+  <target name="dump-settings" depends="set-build-dir">
+    <echo>Project Directories</echo>
+    <echo>  Base:      ${project.base.dir}</echo>
+    <echo>   Source:   ${project.src.dir}</echo>
+    <echo>   Build:    ${project.build.dir}</echo>
+    <echo>   Package:  ${project.package.dir}</echo>
+    <echo></echo>
+    <echo>Supported Framework Versions</echo>
+    <echo>  ${supported.frameworks}</echo>
+    <echo></echo>
+    <echo>Installed Framework Versions</echo>
+    <echo>  ${installed.frameworks}</echo>
+    <echo></echo>
+    <echo>Current Configuration</echo>
+    <echo>  Config:    ${build.config}</echo>
+    <echo>  Runtime:   ${runtime.config}</echo>
+    <echo>  VS Proj:   nunitlite-${msbuild.proj.suffix}.csproj</echo>
+    <echo>  Defines:   ${build.defines}</echo>
+    <echo>  Builder:   ${msbuild.exe}</echo>
+    <echo>  Version:   ${package.version}</echo>
+	<echo>  Package Base Name: ${package.base.name}</echo>
+    <echo>  Package:   ${package.name}</echo>
+    <echo></echo>
+    <echo>Current Working Directories</echo>
+    <echo>  Build:     ${current.build.dir}</echo>
+    <echo>  Package:   ${package.working.dir}</echo>
+    <echo>   Source:   ${package.src.dir}</echo>
+    <echo></echo>
+    <echo>Current Framework and SDK Directories</echo>
+    <echo>  ${framework::get-framework-directory(runtime.config)}</echo>
+    <echo>  ${framework::get-sdk-directory(runtime.config)}</echo>
+  </target>
+
+</project>

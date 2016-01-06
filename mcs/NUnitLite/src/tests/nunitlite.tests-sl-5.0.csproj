@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7107C352-7F42-497E-A26C-25E9AAE8E54C}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NUnitLite.Tests</RootNamespace>
+    <AssemblyName>nunitlite.tests</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures />
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>nunitlite.tests-sl-5.0.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>NUnitLite.Tests.App</SilverlightAppEntry>
+    <TestPageFileName>TestPage.html</TestPageFileName>
+    <CreateTestPage>true</CreateTestPage>
+    <ValidateXaml>true</ValidateXaml>
+    <EnableOutOfBrowser>true</EnableOutOfBrowser>
+    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
+    <UsePlatformExtensions>false</UsePlatformExtensions>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <LinkedServerProject />
+    <TargetFrameworkProfile />
+    <IntermediateOutputPath>obj\$(Configuration)\sl-5.0\</IntermediateOutputPath>
+  </PropertyGroup>
+  <!--
+  //
+  // Silverlight Code Coverage Instrumentation
+  // List any libraries or assemblies that you would like to instrument during
+  // a code coverage pass. An example, for ClassLibrary1, is provided, and
+  // commented out below as a starting point:
+  //
+  -->
+  <!--
+  <ItemGroup>
+    <InstrumentSilverlightAssemblies Include="SilverlightClassLibrary1">
+      <Visible>false</Visible>
+    </InstrumentSilverlightAssemblies>
+  </ItemGroup>
+  -->
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Debug\sl-5.0\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;CLR_4_0;SL_5_0;NUNITLITE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Release\sl-5.0\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;CLR_4_0;SL_5_0;NUNITLITE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Silverlight.Testing">
+      <HintPath>$(MSBuildExtensionsPath)\..\Microsoft SDKs\Silverlight\v4.0\Toolkit\Apr10\Testing\Microsoft.Silverlight.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight">
+      <HintPath>$(MSBuildExtensionsPath)\..\Microsoft SDKs\Silverlight\v4.0\Toolkit\Apr10\Testing\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="system, Version=5.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Windows.Browser">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\ResultStateTests.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Assertions\ArrayEqualsFailureMessageFixture.cs" />
+    <Compile Include="Assertions\ArrayEqualsFixture.cs" />
+    <Compile Include="Assertions\ArrayNotEqualFixture.cs" />
+    <Compile Include="Assertions\AssertFailTests.cs" />
+    <Compile Include="Assertions\AssertIgnoreTests.cs" />
+    <Compile Include="Assertions\AssertInconclusiveTests.cs" />
+    <Compile Include="Assertions\AssertPassTests.cs" />
+    <Compile Include="Assertions\AssertThatTests.cs" />
+    <Compile Include="Assertions\AssertThrowsTests.cs" />
+    <Compile Include="Assertions\AssumeThatTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Assertions\CollectionTests.cs" />
+    <Compile Include="Assertions\ConditionAssertTests.cs" />
+    <Compile Include="Assertions\EqualsFixture.cs" />
+    <Compile Include="Assertions\MessageChecker.cs" />
+    <Compile Include="Assertions\NotEqualFixture.cs" />
+    <Compile Include="Assertions\NotSameFixture.cs" />
+    <Compile Include="Assertions\NullableTypesTests.cs" />
+    <Compile Include="Assertions\SameFixture.cs" />
+    <Compile Include="Attributes\ApplyToTestTests.cs" />
+    <Compile Include="Attributes\AttributeInheritanceTests.cs" />
+    <Compile Include="Attributes\CategoryAttributeTests.cs" />
+    <Compile Include="Attributes\CombinatorialTests.cs" />
+    <Compile Include="Attributes\DatapointTests.cs" />
+    <Compile Include="Attributes\DescriptionTests.cs" />
+    <Compile Include="Attributes\ExpectedExceptionTests.cs" />
+    <Compile Include="Attributes\FixtureSetUpTearDownTests.cs" />
+    <Compile Include="Attributes\MaxTimeTests.cs" />
+    <Compile Include="Attributes\PairwiseTests.cs" />
+    <Compile Include="Attributes\ParameterizedTestFixtureTests.cs" />
+    <Compile Include="Attributes\PropertyAttributeTests.cs" />
+    <Compile Include="Attributes\RepeatedTestTests.cs" />
+    <Compile Include="Attributes\SetCultureAttributeTests.cs" />
+    <Compile Include="Attributes\TestCaseAttributeTests.cs" />
+    <Compile Include="Attributes\TestCaseSourceTests.cs" />
+    <Compile Include="Attributes\TestDummy.cs" />
+    <Compile Include="Attributes\TestFixtureAttributeTests.cs" />
+    <Compile Include="Attributes\TheoryTests.cs" />
+    <Compile Include="Attributes\ValuesAttributeTests.cs" />
+    <Compile Include="Attributes\ValueSourceTests.cs" />
+    <Compile Include="Constraints\AllItemsConstraintTests.cs" />
+    <Compile Include="Constraints\AndConstraintTests.cs" />
+    <Compile Include="Constraints\AssignableFromConstraintTests.cs" />
+    <Compile Include="Constraints\AssignableToConstraintTests.cs" />
+    <Compile Include="Constraints\AttributeExistsConstraintTests.cs" />
+    <Compile Include="Constraints\BasicConstraintTests.cs" />
+    <Compile Include="Constraints\BinarySerializableTest.cs" />
+    <Compile Include="Constraints\CollectionContainsConstraintTests.cs" />
+    <Compile Include="Constraints\CollectionEquivalentConstraintTests.cs" />
+    <Compile Include="Constraints\CollectionOrderedConstraintTests.cs" />
+    <Compile Include="Constraints\CollectionSubsetConstraintTests.cs" />
+    <Compile Include="Constraints\ComparisonConstraintTest.cs" />
+    <Compile Include="Constraints\ConstraintTestBase.cs" />
+    <Compile Include="Constraints\EmptyConstraintTest.cs" />
+    <Compile Include="Constraints\EndsWithConstraintTests.cs" />
+    <Compile Include="Constraints\EqualConstraintTests.cs" />
+    <Compile Include="Constraints\ExactCountConstraintTests.cs" />
+    <Compile Include="Constraints\ExactTypeConstraintTests.cs" />
+    <Compile Include="Constraints\FloatingPointNumericsTest.cs" />
+    <Compile Include="Constraints\GreaterThanConstraintTests.cs" />
+    <Compile Include="Constraints\GreaterThanOrEqualConstraintTests.cs" />
+    <Compile Include="Constraints\InstanceOfTypeConstraintTests.cs" />
+    <Compile Include="Constraints\LessThanConstraintTests.cs" />
+    <Compile Include="Constraints\LessThanOrEqualConstraintTests.cs" />
+    <Compile Include="Constraints\MessageWriterTests.cs" />
+    <Compile Include="Constraints\MsgUtilTests.cs" />
+    <Compile Include="Constraints\NotConstraintTests.cs" />
+    <Compile Include="Constraints\NumericsTest.cs" />
+    <Compile Include="Constraints\NUnitComparerTests.cs" />
+    <Compile Include="Constraints\NUnitEqualityComparerTests.cs" />
+    <Compile Include="Constraints\OrConstraintTests.cs" />
+    <Compile Include="Constraints\PathConstraintTests.cs" />
+    <Compile Include="Constraints\PredicateConstraintTests.cs" />
+    <Compile Include="Constraints\PropertyTests.cs" />
+    <Compile Include="Constraints\RangeConstraintTests.cs" />
+    <Compile Include="Constraints\RangeTests.cs" />
+    <Compile Include="Constraints\ReusableConstraintTests.cs" />
+    <Compile Include="Constraints\SameAsTest.cs" />
+    <Compile Include="Constraints\StartsWithConstraintTests.cs" />
+    <Compile Include="Constraints\SubstringConstraintTests.cs" />
+    <Compile Include="Constraints\TestDelegates.cs" />
+    <Compile Include="Constraints\ThrowsConstraintTests.cs" />
+    <Compile Include="Constraints\ToStringTests.cs" />
+    <Compile Include="Constraints\UniqueItemsConstraintTests.cs" />
+    <Compile Include="Constraints\XmlSerializableTest.cs" />
+    <Compile Include="Framework\StackFilterTest.cs" />
+    <Compile Include="Framework\SyntaxTests.cs" />
+    <Compile Include="Framework\TestResultTests.cs" />
+    <Compile Include="Internal\CultureSettingAndDetectionTests.cs" />
+    <Compile Include="Internal\DeduceTypeArgsFromArgs.cs" />
+    <Compile Include="Internal\GenericTestFixtureTests.cs" />
+    <Compile Include="Internal\GenericTestMethodTests.cs" />
+    <Compile Include="Internal\PlatformDetectionTests.cs" />
+    <Compile Include="Internal\PropertyBagTests.cs" />
+    <Compile Include="Internal\RandomGeneratorTests.cs" />
+    <Compile Include="Internal\RandomizerTests.cs" />
+    <Compile Include="Internal\RuntimeFrameworkTests.cs" />
+    <Compile Include="Internal\SetUpTest.cs" />
+    <Compile Include="Internal\SimpleGenericMethods.cs" />
+    <Compile Include="Internal\TestExecutionContextTests.cs" />
+    <Compile Include="Internal\TestFixtureTests.cs" />
+    <Compile Include="Internal\TestMethodSignatureTests.cs" />
+    <Compile Include="Internal\TestResultTests.cs" />
+    <Compile Include="Internal\TestXmlTests.cs" />
+    <Compile Include="Internal\TextMessageWriterTests.cs" />
+    <Compile Include="Internal\TypeParameterUsedWithTestMethod.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="RecordingTestListener.cs" />
+    <Compile Include="Runner\CommandLineOptionTests.cs" />
+    <Compile Include="Runner\NUnit2XmlOutputWriterTests.cs" />
+    <Compile Include="Syntax\ArbitraryConstraintMatching.cs" />
+    <Compile Include="Syntax\CollectionTests.cs" />
+    <Compile Include="Syntax\ComparisonTests.cs" />
+    <Compile Include="Syntax\EqualityTests.cs" />
+    <Compile Include="Syntax\OperatorOverrides.cs" />
+    <Compile Include="Syntax\OperatorTests.cs" />
+    <Compile Include="Syntax\PathConstraintTests.cs" />
+    <Compile Include="Syntax\PropertyTests.cs" />
+    <Compile Include="Syntax\SerializableConstraints.cs" />
+    <Compile Include="Syntax\SimpleConstraints.cs" />
+    <Compile Include="Syntax\StringConstraints.cs" />
+    <Compile Include="Syntax\SyntaxTest.cs" />
+    <Compile Include="Syntax\ThrowsTests.cs" />
+    <Compile Include="Syntax\TypeConstraints.cs" />
+    <Compile Include="TestUtilities\Collections\SimpleObjectCollection.cs" />
+    <Compile Include="TestUtilities\Collections\SimpleObjectList.cs" />
+    <Compile Include="TestUtilities\Comparers\AlwaysEqualComparer.cs" />
+    <Compile Include="TestUtilities\Comparers\SimpleEqualityComparer.cs" />
+    <Compile Include="TestUtilities\Comparers\SimpleObjectComparer.cs" />
+    <Compile Include="TestUtilities\ResultSummary.cs" />
+    <Compile Include="TestUtilities\TestAssert.cs" />
+    <Compile Include="TestUtilities\TestBuilder.cs" />
+    <Compile Include="TestUtilities\TestComparer.cs" />
+    <Compile Include="TestUtilities\TestDelegates.cs" />
+    <Compile Include="TestUtilities\TestFinder.cs" />
+    <Compile Include="TestUtilities\UniqueValues.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\framework\nunitlite-sl-5.0.csproj">
+      <Project>{5EFE54B3-2494-4DF4-A42A-8492A5EC4BA3}</Project>
+      <Name>nunitlite-sl-5.0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\mock-assembly\mock-assembly-sl-5.0.csproj">
+      <Project>{3C19A734-11BB-48FD-81D0-042B6A8D4CFC}</Project>
+      <Name>mock-assembly-sl-5.0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\testdata\nunitlite.testdata-sl-5.0.csproj">
+      <Project>{A2B5D1FA-D865-4B30-A82D-30BB1C8C474E}</Project>
+      <Name>nunitlite.testdata-sl-5.0</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

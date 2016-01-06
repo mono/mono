@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="NUnitLite.Runner.Silverlight.TestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300" Loaded="UserControl_Loaded">
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="62"/>
+            <RowDefinition Height="3*" />
+            <!--<RowDefinition Height="2*" x:Name="TestStageRowDefinition" />-->
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid VerticalAlignment="Top" Height="62">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF293955" Offset="0" />
+                    <GradientStop Color="#FF4A5D80" Offset="1" />
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <TextBlock Grid.Column="0" Foreground="White" Margin="20,0" FontSize="16" VerticalAlignment="Center">NUnitLite</TextBlock>
+            <!--<Button Grid.Column="1" Width="75" Height="23" HorizontalAlignment="Left" Content="Run" Click="Button_Click" />-->
+            <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="Total" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Tests</TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="Passed" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Passed</TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="Failures" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Failed</TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="Errors" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Errors</TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="Inconclusive" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Inconclusive</TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock x:Name="NotRun" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                <TextBlock Foreground="White" Opacity=".8">Not Run</TextBlock>
+            </StackPanel>
+            <!--<StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,40,0">
+                <TextBlock Foreground="White" Opacity=".8" Text="{Binding CurrentTest}"/>
+                <TextBlock Foreground="White" FontSize="14" Text="{Binding CurrentFixture}"/>
+            </StackPanel>-->
+            <ProgressBar 
+                Grid.ColumnSpan="8"
+                Minimum="0" 
+                VerticalAlignment="Bottom"
+                Height="6"
+                Opacity=".5"
+                Foreground="White">
+            </ProgressBar>
+        </Grid>
+        
+        <!-- Results -->
+        <ScrollViewer Grid.Row ="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <TextBlock x:Name="ScratchArea" TextWrapping="Wrap" Width="800" Text="{Binding ScratchArea}" />
+        </ScrollViewer>
+        <TextBlock Grid.Row="1" x:Name="Notice" HorizontalAlignment="Center" VerticalAlignment="Center">Running Tests...</TextBlock>
+        
+    </Grid>
+    
+</UserControl>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<project name="TestData" default="build" basedir=".">
+
+  <property name="msbuild.project" value="nunitlite.testdata-${msbuild.proj.suffix}.csproj"/>
+
+  <include buildfile="../../nunitlite.projects.common"/>
+
+  <target name="nant-clean">
+
+    <delete file="${current.build.dir}/nunitlite.testdata.dll"/>
+    <delete file="${current.build.dir}/nunitlite.testdata.pdb"/>
+
+  </target>
+
+  <target name="nant-build">
+
+    <csc target="library"
+        output="${current.build.dir}/nunitlite.testdata.dll"
+        debug="${build.debug}"
+        define="${build.defines};NUNITLITE">
+      <sources basedir=".">
+        <include name="**/*.cs"/>
+      </sources>
+      <references basedir="${current.build.dir}">
+        <include name="mscorlib.dll"/>
+        <include name="nunitlite.dll"/>
+      </references>
+    </csc>
+
+  </target>
+
+</project>
