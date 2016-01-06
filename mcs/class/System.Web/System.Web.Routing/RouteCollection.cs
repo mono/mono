@@ -107,8 +107,10 @@ namespace System.Web.Routing
 
 		protected override void ClearItems ()
 		{
-			lock (GetWriteLock ())
+			lock (GetWriteLock ()) {
 				base.ClearItems ();
+				d.Clear ();
+			}
 		}
 
 		public IDisposable GetReadLock ()
