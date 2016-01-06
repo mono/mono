@@ -105,6 +105,8 @@ gpointer mono_gc_out_of_memory (size_t size);
 void     mono_gc_enable_events (void);
 void     mono_gc_enable_alloc_events (void);
 
+gpointer mono_handle_gc_out_of_memory (size_t size);
+
 void mono_gchandle_set_target (guint32 gchandle, MonoObject *obj);
 
 /*Ephemeron functionality. Sgen only*/
@@ -154,6 +156,12 @@ void* mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_lengt
 void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
 void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
+
+MonoHandle mono_handle_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size);
+MonoHandle mono_handle_gc_alloc_obj (MonoVTable *vtable, size_t size);
+MONO_HANDLE_TYPE (MonoArray) mono_handle_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length);
+MONO_HANDLE_TYPE (MonoArray) mono_handle_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+MONO_HANDLE_TYPE (MonoString) mono_handle_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 
 void  mono_gc_register_for_finalization (MonoObject *obj, void *user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
