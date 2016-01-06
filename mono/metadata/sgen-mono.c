@@ -36,6 +36,8 @@
 #include "metadata/gc-internals.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
+#include "utils/mono-error.h"
+#include "utils/mono-error-internals.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -933,10 +935,19 @@ mono_gc_enable_alloc_events (void)
 void*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
-	MonoObject *obj = sgen_alloc_obj (vtable, size);
+	MonoError error;
+	MonoObject *obj;
 
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (obj);
+	MONO_HANDLE_ARENA_PUSH ();
+
+	MONO_HANDLE_TYPE (MonoObject) obj_handle = mono_handle_gc_alloc_obj (vtable, size, &error);
+
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (obj_handle, obj);
+
+	if (!mono_error_ok (&error)) {
+		g_assert (mono_error_get_error_code (&error) == MONO_ERROR_OUT_OF_MEMORY);
+		mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+	}
 
 	return obj;
 }
@@ -944,10 +955,19 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 void*
 mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 {
-	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
+	MonoError error;
+	MonoObject *obj;
 
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (obj);
+	MONO_HANDLE_ARENA_PUSH ();
+
+	MONO_HANDLE_TYPE (MonoObject) obj_handle = mono_handle_gc_alloc_pinned_obj (vtable, size, &error);
+
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (obj_handle, obj);
+
+	if (!mono_error_ok (&error)) {
+		g_assert (mono_error_get_error_code (&error) == MONO_ERROR_OUT_OF_MEMORY);
+		mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+	}
 
 	return obj;
 }
@@ -955,7 +975,10 @@ mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
 void*
 mono_gc_alloc_mature (MonoVTable *vtable)
 {
-	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size, &error);
+
+	g_assert (mono_error_ok (&error));
 
 	if (obj && G_UNLIKELY (obj->vtable->klass->has_finalize))
 		mono_object_register_finalizer (obj);
@@ -1712,128 +1735,59 @@ LOOP_HEAD:
 void*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
+	MonoError error;
 	MonoArray *arr;
-	TLAB_ACCESS_INIT;
 
-	if (!SGEN_CAN_ALIGN_UP (size))
-		return NULL;
+	MONO_HANDLE_ARENA_PUSH ();
 
-#ifndef DISABLE_CRITICAL_REGION
-	ENTER_CRITICAL_REGION;
-	arr = (MonoArray*)sgen_try_alloc_obj_nolock (vtable, size);
-	if (arr) {
-		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
-		arr->max_length = (mono_array_size_t)max_length;
-		EXIT_CRITICAL_REGION;
-		goto done;
-	}
-	EXIT_CRITICAL_REGION;
-#endif
+	MONO_HANDLE_TYPE (MonoArray) arr_handle = mono_handle_gc_alloc_vector (vtable, size, max_length, &error);
 
-	LOCK_GC;
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (arr_handle, arr);
 
-	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
-	if (G_UNLIKELY (!arr)) {
-		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+	if (!mono_error_ok (&error)) {
+		g_assert (mono_error_get_error_code (&error) == MONO_ERROR_OUT_OF_MEMORY);
+		mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
 	}
 
-	arr->max_length = (mono_array_size_t)max_length;
-
-	UNLOCK_GC;
-
- done:
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (&arr->obj);
-
-	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*)arr)), "Vector has incorrect size.");
 	return arr;
 }
 
 void*
 mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
 {
+	MonoError error;
 	MonoArray *arr;
-	MonoArrayBounds *bounds;
-	TLAB_ACCESS_INIT;
 
-	if (!SGEN_CAN_ALIGN_UP (size))
-		return NULL;
+	MONO_HANDLE_ARENA_PUSH ();
 
-#ifndef DISABLE_CRITICAL_REGION
-	ENTER_CRITICAL_REGION;
-	arr = (MonoArray*)sgen_try_alloc_obj_nolock (vtable, size);
-	if (arr) {
-		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
-		arr->max_length = (mono_array_size_t)max_length;
+	MONO_HANDLE_TYPE (MonoArray) arr_handle = mono_handle_gc_alloc_array (vtable, size, max_length, bounds_size, &error);
 
-		bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
-		arr->bounds = bounds;
-		EXIT_CRITICAL_REGION;
-		goto done;
-	}
-	EXIT_CRITICAL_REGION;
-#endif
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (arr_handle, arr);
 
-	LOCK_GC;
-
-	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
-	if (G_UNLIKELY (!arr)) {
-		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+	if (!mono_error_ok (&error)) {
+		g_assert (mono_error_get_error_code (&error) == MONO_ERROR_OUT_OF_MEMORY);
+		mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
 	}
 
-	arr->max_length = (mono_array_size_t)max_length;
-
-	bounds = (MonoArrayBounds*)((char*)arr + size - bounds_size);
-	arr->bounds = bounds;
-
-	UNLOCK_GC;
-
- done:
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (&arr->obj);
-
-	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*)arr)), "Array has incorrect size.");
 	return arr;
 }
 
 void*
 mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 {
+	MonoError error;
 	MonoString *str;
-	TLAB_ACCESS_INIT;
 
-	if (!SGEN_CAN_ALIGN_UP (size))
-		return NULL;
+	MONO_HANDLE_ARENA_PUSH ();
 
-#ifndef DISABLE_CRITICAL_REGION
-	ENTER_CRITICAL_REGION;
-	str = (MonoString*)sgen_try_alloc_obj_nolock (vtable, size);
-	if (str) {
-		/*This doesn't require fencing since EXIT_CRITICAL_REGION already does it for us*/
-		str->length = len;
-		EXIT_CRITICAL_REGION;
-		goto done;
+	MONO_HANDLE_TYPE (MonoString) str_handle = mono_handle_gc_alloc_string (vtable, size, len, &error);
+
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (str_handle, str);
+
+	if (!mono_error_ok (&error)) {
+		g_assert (mono_error_get_error_code (&error) == MONO_ERROR_OUT_OF_MEMORY);
+		mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
 	}
-	EXIT_CRITICAL_REGION;
-#endif
-
-	LOCK_GC;
-
-	str = (MonoString*)sgen_alloc_obj_nolock (vtable, size);
-	if (G_UNLIKELY (!str)) {
-		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
-	}
-
-	str->length = len;
-
-	UNLOCK_GC;
-
- done:
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (&str->object);
 
 	return str;
 }
@@ -2704,12 +2658,6 @@ mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack,
 	// FIXME:
 }
 
-void
-sgen_client_out_of_memory (size_t size)
-{
-	mono_gc_out_of_memory (size);
-}
-
 guint8*
 mono_gc_get_card_table (int *shift_bits, gpointer *mask)
 {
@@ -2997,6 +2945,215 @@ gboolean
 mono_gc_is_null (void)
 {
 	return FALSE;
+}
+
+/* Handle API specifics */
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoObject) handle = MONO_HANDLE_NEW (MonoObject, sgen_alloc_obj_pinned (vtable, size, error));
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_profiler_allocation (mono_handle_obj (handle));
+		MONO_FINISH_GC_CRITICAL_REGION;
+	}
+
+	return handle;
+}
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_gc_alloc_obj (MonoVTable *vtable, size_t size, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoObject) handle = MONO_HANDLE_NEW (MonoObject, sgen_alloc_obj (vtable, size, error));
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_profiler_allocation (mono_handle_obj (handle));
+		MONO_FINISH_GC_CRITICAL_REGION;
+	}
+
+	return handle;
+}
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
+{
+	TLAB_ACCESS_INIT;
+
+	MONO_HANDLE_TYPE (MonoArray) arr;
+
+	mono_error_init (error);
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+
+	{
+		MonoObject *obj;
+
+#ifndef DISABLE_CRITICAL_REGION
+		ENTER_CRITICAL_REGION;
+		obj = sgen_try_alloc_obj_nolock (vtable, size);
+		if (obj) {
+			arr = MONO_HANDLE_NEW (MonoArray, obj);
+
+			MONO_HANDLE_SET (arr, max_length, (mono_array_size_t) max_length);
+
+			EXIT_CRITICAL_REGION;
+			goto done;
+		}
+		EXIT_CRITICAL_REGION;
+#endif
+
+		LOCK_GC;
+
+		obj = sgen_alloc_obj_nolock (vtable, size);
+		if (G_UNLIKELY (!obj)) {
+			UNLOCK_GC;
+			mono_error_set_out_of_memory (error, "Could not allocate vector of size " G_GSIZE_FORMAT " bytes", size);
+			return MONO_HANDLE_NEW (MonoArray, NULL);
+		}
+
+		arr = MONO_HANDLE_NEW (MonoArray, obj);
+
+		MONO_HANDLE_SET (arr, max_length, (mono_array_size_t)max_length);
+
+		UNLOCK_GC;
+	}
+
+done:
+	if (G_UNLIKELY (alloc_events)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_profiler_allocation ((MonoObject*) mono_handle_obj (arr));
+		MONO_FINISH_GC_CRITICAL_REGION;
+	}
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*) mono_handle_obj (arr))), "Vector has incorrect size.");
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return arr;
+}
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
+{
+	TLAB_ACCESS_INIT;
+
+	MONO_HANDLE_TYPE (MonoArray) arr;
+
+	mono_error_init (error);
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+
+	{
+		MonoObject *obj;
+
+#ifndef DISABLE_CRITICAL_REGION
+		ENTER_CRITICAL_REGION;
+		obj = sgen_try_alloc_obj_nolock (vtable, size);
+		if (obj) {
+			arr = MONO_HANDLE_NEW (MonoArray, obj);
+
+			MONO_PREPARE_GC_CRITICAL_REGION;
+			MONO_HANDLE_SET (arr, max_length, (mono_array_size_t)max_length);
+			MONO_HANDLE_SET (arr, bounds, (MonoArrayBounds*) ((char*) mono_handle_obj (arr) + size - bounds_size));
+			MONO_FINISH_GC_CRITICAL_REGION;
+
+			EXIT_CRITICAL_REGION;
+			goto done;
+		}
+		EXIT_CRITICAL_REGION;
+#endif
+
+		LOCK_GC;
+
+		obj = sgen_alloc_obj_nolock (vtable, size);
+		if (G_UNLIKELY (!obj)) {
+			UNLOCK_GC;
+			mono_error_set_out_of_memory (error, "Could not allocate array of size " G_GSIZE_FORMAT " bytes", size);
+			return MONO_HANDLE_NEW (MonoArray, NULL);
+		}
+
+		arr = MONO_HANDLE_NEW (MonoArray, obj);
+
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		MONO_HANDLE_SET (arr, max_length, (mono_array_size_t)max_length);
+		MONO_HANDLE_SET (arr, bounds, (MonoArrayBounds*) ((char*) mono_handle_obj (arr) + size - bounds_size));
+		MONO_FINISH_GC_CRITICAL_REGION;
+
+		UNLOCK_GC;
+	}
+
+ done:
+	if (G_UNLIKELY (alloc_events)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_profiler_allocation ((MonoObject*) mono_handle_obj (arr));
+		MONO_FINISH_GC_CRITICAL_REGION;
+	}
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*) mono_handle_obj (arr))), "Array has incorrect size.");
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return arr;
+}
+
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
+{
+	TLAB_ACCESS_INIT;
+
+	MONO_HANDLE_TYPE (MonoString) str;
+
+	mono_error_init (error);
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return MONO_HANDLE_NEW (MonoString, NULL);
+
+	{
+		MonoObject *obj;
+
+#ifndef DISABLE_CRITICAL_REGION
+		ENTER_CRITICAL_REGION;
+		obj = sgen_try_alloc_obj_nolock (vtable, size);
+		if (obj) {
+			str = MONO_HANDLE_NEW (MonoString, obj);
+
+			MONO_HANDLE_SET (str, length, len);
+
+			EXIT_CRITICAL_REGION;
+			goto done;
+		}
+		EXIT_CRITICAL_REGION;
+#endif
+
+		LOCK_GC;
+
+		obj = sgen_alloc_obj_nolock (vtable, size);
+		if (G_UNLIKELY (!obj)) {
+			UNLOCK_GC;
+			mono_error_set_out_of_memory (error, "Could not allocate string of size " G_GSIZE_FORMAT " bytes", size);
+			return MONO_HANDLE_NEW (MonoString, NULL);
+		}
+
+		str = MONO_HANDLE_NEW (MonoString, obj);
+
+		MONO_HANDLE_SET (str, length, len);
+
+		UNLOCK_GC;
+	}
+
+ done:
+	if (G_UNLIKELY (alloc_events)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_profiler_allocation ((MonoObject*) mono_handle_obj (str));
+		MONO_FINISH_GC_CRITICAL_REGION;
+	}
+
+	return str;
 }
 
 #endif

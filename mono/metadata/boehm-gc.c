@@ -31,6 +31,8 @@
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-internals.h>
 
 #if HAVE_BOEHM_GC
 
@@ -95,6 +97,33 @@ mono_gc_warning (char *msg, GC_word arg)
 	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, msg, (unsigned long)arg);
 }
 
+#ifdef HAVE_KW_THREAD
+static __thread MonoError *oom_error;
+#else
+static MonoNativeTlsKey oom_error;
+#endif
+
+static gpointer
+oom_cb (gsize size)
+{
+	MonoError *error;
+
+#ifdef HAVE_KW_THREAD
+	error = oom_error;
+#else
+	error = mono_native_tls_get_value (oom_error);
+#endif
+
+	if (error) {
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
+	}
+
+	mono_raise_exception (mono_domain_get ()->out_of_memory_ex);
+
+	return NULL;
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -106,6 +135,8 @@ mono_gc_base_init (void)
 		return;
 
 	mono_counters_init ();
+
+	mono_native_tls_alloc (&oom_error, NULL);
 
 	/*
 	 * Handle the case when we are called from a thread different from the main thread,
@@ -190,7 +221,7 @@ mono_gc_base_init (void)
 
 	GC_init ();
 
-	GC_oom_fn = mono_gc_out_of_memory;
+	GC_oom_fn = oom_cb;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
 	GC_finalizer_notifier = mono_gc_finalize_notify;
@@ -1866,6 +1897,104 @@ mono_gchandle_free_domain (MonoDomain *domain)
 		unlock_handles (handles);
 	}
 
+}
+
+/* Handle API specifics */
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_gc_alloc_obj (MonoVTable *vtable, size_t size, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoObject) ret;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	ret = MONO_HANDLE_NEW (MonoObject, mono_gc_alloc_obj (vtable, size));
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return ret;
+}
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoArray) ret;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	ret = MONO_HANDLE_NEW (MonoArray, mono_gc_alloc_vector (vtable, size, max_length));
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return ret;
+}
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoArray) ret;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	ret = MONO_HANDLE_NEW (MonoArray, mono_gc_alloc_array (vtable, size, max_length, bounds_size));
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return ret;
+}
+
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoString) ret;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	ret = MONO_HANDLE_NEW (MonoString, mono_gc_alloc_string (vtable, size, len));
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return ret;
 }
 
 #endif /* no Boehm GC */
