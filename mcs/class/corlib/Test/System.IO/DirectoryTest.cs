@@ -17,7 +17,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using Mono.Unix;
 #endif
 using NUnit.Framework;
