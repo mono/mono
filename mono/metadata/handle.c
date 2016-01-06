@@ -194,14 +194,16 @@ mono_handle_arena_deinitialize (MonoHandleArena **arena_stack)
 	mono_gc_deregister_root ((char*) arena_stack);
 }
 
+__thread MonoHandleArena *arena_stack;
+
 MonoHandleArena*
 mono_handle_arena_current (void)
 {
-	g_assert_not_reached ();
+	return arena_stack;
 }
 
 MonoHandleArena**
 mono_handle_arena_current_addr (void)
 {
-	g_assert_not_reached ();
+	return &arena_stack;
 }
