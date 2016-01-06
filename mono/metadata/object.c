@@ -6931,3 +6931,223 @@ mono_glist_to_array (GList *list, MonoClass *eclass)
 	return res;
 }
 
+/* Handle API specifics */
+
+/**
+ * mono_string_new:
+ * @text: a pointer to an utf8 string
+ *
+ * Returns: A newly created string object which contains @text.
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new (MonoDomain *domain, const gchar *text)
+{
+	GError *error = NULL;
+	MONO_HANDLE_TYPE (MonoString) handle;
+	guint16 *u16;
+	glong u16_written;
+
+	u16 = g_utf8_to_utf16 (text, strlen (text), NULL, &u16_written, &error);
+
+	if (!error) {
+		handle = mono_handle_string_new_utf16 (domain, u16, u16_written);
+	} else {
+		handle = MONO_HANDLE_NEW (MonoString, NULL);
+		g_error_free (error);
+	}
+
+	g_free (u16);
+
+	return handle;
+}
+
+/**
+ * mono_string_new_size:
+ * @text: a pointer to an utf16 string
+ * @len: the length of the string
+ *
+ * Returns: A newly created string object of @len
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_size (MonoDomain *domain, gint32 len)
+{
+	MonoVTable *vtable;
+	size_t size;
+
+	/* check for overflow */
+	if (len < 0 || len > ((SIZE_MAX - G_STRUCT_OFFSET (MonoString, chars) - 8) / 2))
+		mono_handle_gc_out_of_memory (-1);
+
+	size = (G_STRUCT_OFFSET (MonoString, chars) + (((size_t)len + 1) * 2));
+	g_assert (size > 0);
+
+	vtable = mono_class_vtable (domain, mono_defaults.string_class);
+	g_assert (vtable);
+
+	return mono_handle_gc_alloc_string (vtable, size, len);
+}
+
+/**
+ * mono_string_new_utf16:
+ * @text: a pointer to an utf16 string
+ * @len: the length of the string
+ *
+ * Returns: A newly created string object which contains @text.
+ */
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_utf16 (MonoDomain *domain, const guint16 *text, glong len)
+{
+	MONO_HANDLE_TYPE (MonoString) handle;
+
+	handle = mono_handle_string_new_size (domain, len);
+	g_assert (!mono_handle_obj_is_null (handle));
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+	memcpy (mono_handle_string_chars (handle), text, len * 2);
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return handle;
+}
+
+/**
+ * mono_string_chars:
+ * @handle: a MonoString handle
+ *
+ * Returns a pointer to the UCS16 characters stored in the MonoString
+ */
+gunichar2*
+mono_handle_string_chars (MONO_HANDLE_TYPE (MonoString) handle)
+{
+	return mono_handle_obj (handle)->chars;
+}
+
+/**
+ * mono_string_length:
+ * @s: MonoString
+ *
+ * Returns the lenght in characters of the string
+ */
+gint32
+mono_handle_string_length (MONO_HANDLE_TYPE (MonoString) handle)
+{
+	return mono_handle_obj (handle)->length;
+}
+
+/**
+ * mono_string_to_utf8:
+ * @s: a System.String
+ *
+ * Returns the UTF8 representation for @s.
+ * The resulting buffer needs to be freed with mono_free().
+ *
+ * @deprecated Use mono_string_to_utf8_checked to avoid having an exception arbritraly raised.
+ */
+gchar*
+mono_handle_string_to_utf8 (MONO_HANDLE_TYPE (MonoString) handle)
+{
+	MonoError error;
+	gchar *result;
+
+	result = mono_handle_string_to_utf8_checked (handle, &error);
+	g_assert (mono_error_ok (&error));
+
+	return result;
+}
+
+/**
+ * mono_string_to_utf8_checked:
+ * @s: a System.String
+ * @error: a MonoError.
+ *
+ * Converts a MonoString to its UTF8 representation. May fail; check
+ * @error to determine whether the conversion was successful.
+ * The resulting buffer should be freed with mono_free().
+ */
+gchar*
+mono_handle_string_to_utf8_checked (MONO_HANDLE_TYPE (MonoString) handle, MonoError *error)
+{
+	gchar *u8_chars;
+	glong u8_length = 0;
+	gunichar2 *str_chars;
+	gint32 str_length;
+
+	mono_error_init (error);
+
+	if (mono_handle_obj_is_null (handle))
+		return NULL;
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	str_chars = mono_handle_string_chars (handle);
+	str_length = mono_handle_string_length (handle);
+
+	if (str_length == 0) {
+		u8_chars = g_strdup ("");
+	} else {
+		GError *gerror;
+
+		u8_length = 0;
+		gerror = NULL;
+		u8_chars = g_utf16_to_utf8 (str_chars, str_length, NULL, &u8_length, &gerror);
+		if (gerror) {
+			mono_error_set_argument (error, "string", "%s", gerror->message);
+			g_error_free (gerror);
+			u8_chars = NULL;
+		} else {
+			/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
+			if (u8_length < str_length) {
+				/* allocate the total length and copy the part of the string that has been converted */
+				gchar *u8_2 = (gchar*) g_malloc0 (str_length);
+				memcpy (u8_2, u8_chars, u8_length);
+				g_free (u8_chars);
+				u8_chars = u8_2;
+			}
+		}
+	}
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return u8_chars;
+}
+
+/**
+ * mono_array_new:
+ * @domain: domain where the object is created
+ * @element_class: element class
+ * @size: number of array elements
+ *
+ * This routine creates a new szarray with @n elements of type @eclass.
+ */
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new (MonoDomain *domain, MonoClass *element_class, uintptr_t size)
+{
+	MonoClass *array_class;
+
+	array_class = mono_array_class_get (element_class, 1);
+	g_assert (array_class);
+
+	return mono_handle_array_new_specific (mono_class_vtable_full (domain, array_class, TRUE), size);
+}
+
+/**
+ * mono_array_new_specific:
+ * @vtable: a vtable in the appropriate domain for an initialized class
+ * @size: number of array elements
+ *
+ * This routine is a fast alternative to mono_array_new() for code which
+ * can be sure about the domain it operates in.
+ */
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new_specific (MonoVTable *vtable, uintptr_t size)
+{
+	uintptr_t byte_size;
+
+	// FIXME: return error
+	g_assert (size <= MONO_ARRAY_MAX_INDEX);
+
+	if (!mono_array_calc_byte_len (vtable->klass, size, &byte_size))
+		return mono_handle_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
+
+	return mono_handle_gc_alloc_vector (vtable, byte_size, size);
+}
+

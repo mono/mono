@@ -293,6 +293,13 @@ mono_gc_out_of_memory (size_t size)
 	return NULL;
 }
 
+gpointer
+mono_handle_gc_out_of_memory (size_t size)
+{
+	// FIXME: not implemented
+	g_assert_not_reached ();
+}
+
 /*
  * Some of our objects may point to a different address than the address returned by GC_malloc()
  * (because of the GetHashCode hack), but we need to pass the real address to register_finalizer.
