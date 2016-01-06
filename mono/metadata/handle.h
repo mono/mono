@@ -118,13 +118,38 @@ mono_handle_domain (MonoHandle handle)
 		MONO_FINISH_GC_CRITICAL_REGION;	\
 	} while (0)
 
-
-
-
 /* Some common handle types */
 
 MONO_HANDLE_TYPE_DECL (MonoArray);
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new (MonoDomain *domain, MonoClass *element_class, uintptr_t size);
+
+MONO_HANDLE_TYPE (MonoArray)
+mono_handle_array_new_specific (MonoVTable *vtable, uintptr_t size);
+
 MONO_HANDLE_TYPE_DECL (MonoString);
+
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new (MonoDomain *domain, const gchar *text);
+
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_size (MonoDomain *domain, gint32 len);
+
+MONO_HANDLE_TYPE (MonoString)
+mono_handle_string_new_utf16 (MonoDomain *domain, const guint16 *text, glong len);
+
+gunichar2*
+mono_handle_string_chars (MONO_HANDLE_TYPE (MonoString) handle);
+
+gint32
+mono_handle_string_length (MONO_HANDLE_TYPE (MonoString) handle);
+
+gchar*
+mono_handle_string_to_utf8 (MONO_HANDLE_TYPE (MonoString) handle);
+
+gchar*
+mono_handle_string_to_utf8_checked (MONO_HANDLE_TYPE (MonoString) handle, MonoError *error);
 
 G_END_DECLS
 
