@@ -16,6 +16,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-lazy-init.h>
+#include <mono/utils/mono-threads.h>
 
 #define HANDLES_PER_CHUNK (16 - 3)
 
@@ -40,6 +41,9 @@ static MonoGCDescriptor arena_desc = MONO_GC_DESCRIPTOR_NULL;
 #endif
 
 static MonoHandleArenaChunk *chunk_free_list = NULL;
+
+#define HANDLE_ARENA_STACK(thread_info) ((MonoHandleArena**) &(thread_info)->coop_handle_data)
+#define HANDLE_ARENA_STACK_TOP(thread_info) *(HANDLE_ARENA_STACK(thread_info))
 
 static inline MonoHandleArenaChunk*
 chunk_alloc (void)
@@ -109,10 +113,7 @@ mono_handle_arena_new (MonoHandleArena *arena, MonoObject *obj)
 MonoHandle
 mono_handle_new (MonoObject *obj)
 {
-	/* TODO: finish implementation by placing an arena somewhere
-	 * in the current thread */
-	g_assert_not_reached ();
-	MonoHandleArena *arena = NULL;
+	MonoHandleArena *arena = HANDLE_ARENA_STACK_TOP (mono_thread_info_current ());
 	return mono_handle_arena_new (arena, obj);
 }
 
@@ -132,10 +133,7 @@ mono_handle_arena_elevate (MonoHandleArena *arena, MonoHandle handle)
 MonoHandle
 mono_handle_elevate (MonoHandle handle)
 {
-	/* TODO: finish implementation by placing an arena somewhere
-	 * in the current thread */
-	g_assert_not_reached ();
-	MonoHandleArena *arena = NULL;
+	MonoHandleArena *arena = HANDLE_ARENA_STACK_TOP (mono_thread_info_current ());
 	return mono_handle_arena_elevate (arena, handle);
 }
 
@@ -147,7 +145,7 @@ mono_handle_arena_size (gsize nb_handles)
 }
 
 void
-mono_handle_arena_stack_push(MonoHandleArena **arena_stack, MonoHandleArena *arena, gsize nb_handles)
+mono_handle_arena_stack_push (MonoHandleArena **arena_stack, MonoHandleArena *arena, gsize nb_handles)
 {
 	g_assert (arena_stack);
 	g_assert (arena);
@@ -164,7 +162,15 @@ mono_handle_arena_stack_push(MonoHandleArena **arena_stack, MonoHandleArena *are
 }
 
 void
-mono_handle_arena_stack_pop(MonoHandleArena **arena_stack, MonoHandleArena *arena, gsize nb_handles)
+mono_handle_arena_push (MonoHandleArena *arena, gsize nb_handles)
+{
+	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoHandleArena** arena_stack = HANDLE_ARENA_STACK (info);
+	mono_handle_arena_stack_push (arena_stack, arena, nb_handles);
+}
+
+void
+mono_handle_arena_stack_pop (MonoHandleArena **arena_stack, MonoHandleArena *arena, gsize nb_handles)
 {
 	MonoHandleArenaChunk *chunk, *next;
 
@@ -181,6 +187,14 @@ mono_handle_arena_stack_pop(MonoHandleArena **arena_stack, MonoHandleArena *aren
 		if (chunk != arena->chunk)
 			chunk_free (chunk);
 	}
+}
+
+void
+mono_handle_arena_pop (MonoHandleArena *arena, gsize nb_handles)
+{
+	MonoThreadInfo *info = mono_thread_info_current ();
+	MonoHandleArena** arena_stack = HANDLE_ARENA_STACK (info);
+	mono_handle_arena_stack_pop (arena_stack, arena, nb_handles);
 }
 
 static void
@@ -225,3 +239,17 @@ mono_handle_arena_deinitialize (MonoHandleArena **arena_stack)
 #endif
 }
 
+void
+mono_handle_arena_init_thread (MonoThreadInfo *thread)
+{
+	MonoHandleArena** arena = HANDLE_ARENA_STACK (thread);
+	mono_handle_arena_initialize (arena);
+}
+
+void
+mono_handle_arena_deinit_thread (MonoThreadInfo *thread)
+{
+	
+	MonoHandleArena** arena = HANDLE_ARENA_STACK (thread);
+	mono_handle_arena_deinitialize (arena);
+}

@@ -18,6 +18,7 @@
 #include "class-internals.h"
 #include "threads-types.h"
 
+#include "mono/utils/mono-threads.h"
 #include "mono/utils/mono-threads-coop.h"
 
 G_BEGIN_DECLS
@@ -40,7 +41,7 @@ struct _MonoHandleStorage {
 
 #define mono_handle_obj(handle) ((handle)->obj)
 
-#define mono_handle_assign(handle,rawptr) do { (handle)->obj = (rawptr); } while(0)
+#define mono_handle_assign(handle,rawptr) do { (handle)->obj = (rawptr); } while (0)
 
 #else
 
@@ -81,10 +82,19 @@ mono_handle_domain (MonoHandle handle)
 
 #define MONO_HANDLE_SETREF(handle,fieldname,value)			\
 	do {								\
+		g_assert (sizeof ((value)->obj) == sizeof (gpointer));	\
 		MonoHandle __value = (MonoHandle) (value);		\
 		MONO_PREPARE_GC_CRITICAL_REGION;					\
 		MONO_OBJECT_SETREF (mono_handle_obj ((handle)), fieldname, mono_handle_obj (__value)); \
 		MONO_FINISH_GC_CRITICAL_REGION;					\
+	} while (0)
+
+#define MONO_HANDLE_SETREF_RAWPTR(handle,fieldname,value)		\
+	do {								\
+		MonoObject* __value = (MonoObject*) (value);		\
+		MONO_PREPARE_GC_CRITICAL_REGION;			\
+		MONO_OBJECT_SETREF (mono_handle_obj ((handle)), fieldname, __value); \
+		MONO_FINISH_GC_CRITICAL_REGION;				\
 	} while (0)
 
 #define MONO_HANDLE_SET(handle,fieldname,value)	\
@@ -102,10 +112,18 @@ mono_handle_domain (MonoHandle handle)
 		MONO_FINISH_GC_CRITICAL_REGION;					\
 	} while (0)
 
+#define MONO_HANDLE_ARRAY_SETREF_RAWPTR(handle,index,value)		\
+	do {								\
+		MonoObject* __value = (MonoObject*) (value);		\
+		MONO_PREPARE_GC_CRITICAL_REGION;			\
+		mono_array_setref (mono_handle_obj ((handle)), (index), __value); \
+		MONO_FINISH_GC_CRITICAL_REGION;				\
+	} while (0)
+
 #define MONO_HANDLE_ARRAY_SET(handle,type,index,value)	\
 	do {	\
 		MONO_PREPARE_GC_CRITICAL_REGION;	\
-		mono_array_set (mono_handle_obj ((handle)), (type), (index), (value));	\
+		mono_array_set (mono_handle_obj ((handle)), type, (index), (value));	\
 		MONO_FINISH_GC_CRITICAL_REGION;	\
 	} while (0)
 
@@ -116,11 +134,45 @@ typedef struct _MonoHandleArena MonoHandleArena;
 gsize
 mono_handle_arena_size (gsize nb_handles);
 
+void
+mono_handle_arena_push (MonoHandleArena *arena, gsize nb_handles);
+
+void
+mono_handle_arena_pop (MonoHandleArena *arena, gsize nb_handles);
+
+void
+mono_handle_arena_init_thread (MonoThreadInfo* thread);
+
+void
+mono_handle_arena_deinit_thread (MonoThreadInfo* thread);
+
+
 MonoHandle
 mono_handle_new (MonoObject *rawptr);
 
 MonoHandle
 mono_handle_elevate (MonoHandle handle);
+
+#define MONO_HANDLE_ARENA_PUSH(nb_handles)	\
+	do {	\
+		gsize __arena_nb_handles = (nb_handles);	\
+		MonoHandleArena *__arena = (MonoHandleArena*) g_alloca (mono_handle_arena_size (__arena_nb_handles));	\
+		mono_handle_arena_push (__arena, __arena_nb_handles)
+
+#define MONO_HANDLE_ARENA_POP	\
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
+	} while (0)
+
+#define MONO_HANDLE_ARENA_POP_RETURN(handle,ret)	\
+		(ret) = (handle)->obj;	\
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
+	} while (0)
+
+#define MONO_HANDLE_ARENA_POP_RETURN_ELEVATE(handle,ret_handle)		\
+		g_assert (sizeof ((handle)->obj) == sizeof (gpointer));	\
+		*((MonoHandle*)(&(ret_handle))) = mono_handle_elevate ((MonoHandle)(handle)); \
+		mono_handle_arena_pop (__arena, __arena_nb_handles);	\
+	} while (0)
 
 /* Some common handle types */
 
