@@ -53,7 +53,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 ifdef NUNIT_LITE
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
-	cd ${topdir}/NUnitLite && $(MAKE)
+	cd ${topdir}/nunit-lite && $(MAKE)
 	echo "stamp" >$@
 else
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
