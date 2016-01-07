@@ -1083,6 +1083,55 @@ namespace NUnit.Framework
 
         #endregion
 
+        /// <summary>
+        /// Verifies that the object that is passed in is equal to <code>null</code>
+        /// If the object is not <code>null</code> then an <see cref="AssertionException"/>
+        /// is thrown.
+        /// </summary>
+        /// <param name="anObject">The object that is to be tested</param>
+        /// <param name="message">The message to display in case of failure</param>
+        /// <param name="args">Array of objects to be used in formatting the message</param>
+        public static void IsInstanceOfType(object anObject, string message, params object[] args)
+        {
+            Assert.That(anObject, Is.Null ,message, args);
+        }
+
+
+	#region IsInstanceOfType
+	/// <summary>
+	/// Asserts that an object is an instance of a given type.
+	/// </summary>
+	/// <param name="expected">The expected Type</param>
+	/// <param name="actual">The object being examined</param>
+	public static void IsInstanceOfType( System.Type expected, object actual )
+	{
+		IsInstanceOfType( expected, actual, string.Empty, null );
+	}
+
+	/// <summary>
+	/// Asserts that an object is an instance of a given type.
+	/// </summary>
+	/// <param name="expected">The expected Type</param>
+	/// <param name="actual">The object being examined</param>
+	/// <param name="message">A message to display in case of failure</param>
+	public static void IsInstanceOfType(System.Type expected, object actual, string message )
+	{
+		IsInstanceOfType(expected, actual, message, null );
+	}
+
+	/// <summary>
+	/// Asserts that an object is an instance of a given type.
+	/// </summary>
+	/// <param name="expected">The expected Type</param>
+	/// <param name="actual">The object being examined</param>
+	/// <param name="message">A message to display in case of failure</param>
+	/// <param name="args">An array of objects to be used in formatting the message</param>
+	public static void IsInstanceOfType( System.Type expected, object actual, string message, params object[] args )
+	{
+		Assert.That(actual.GetType(), Is.EqualTo(expected), message, args);
+	}
+	#endregion
+
         #region Null
 
         /// <summary>
