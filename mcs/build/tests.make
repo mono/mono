@@ -30,7 +30,9 @@ test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
 test_lib = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test_$(PROFILE).dll)
-test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll.sources)
+test_sourcefile = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test_$(PROFILE).dll.sources)
+test_sourcefile_excludes = $(ASSEMBLY:$(ASSEMBLY_EXT)=_test_$(PROFILE).dll.excludes)
+
 test_pdb = $(test_lib:.dll=.pdb)
 test_response = $(depsdir)/$(test_lib).response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
@@ -40,6 +42,8 @@ tests_CLEAN_FILES += $(ASSEMBLY:$(ASSEMBLY_EXT)=_test*.dll) $(ASSEMBLY:$(ASSEMBL
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif # HAVE_CS_TESTS
+
+HAVE_SOURCE_EXCLUDES := $(wildcard $(test_sourcefile_excludes))
 
 endif # NO_TEST
 
@@ -123,12 +127,24 @@ ifdef HAVE_CS_TESTS
 $(test_lib): $(the_assembly) $(test_response) $(test_nunit_dep)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
-$(test_response): $(test_sourcefile)
+test_response_preprocessed = $(test_response)_preprocessed
+
+ifdef HAVE_SOURCE_EXCLUDES
+
+$(test_response_preprocessed): $(test_sourcefile)
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(test_sourcefile)' '$(test_sourcefile_excludes)'
+
+else
+$(test_response_preprocessed): $(test_sourcefile)
+	cp $(test_sourcefile) $(test_response_preprocessed)
+endif
+
+$(test_response): $(test_response_preprocessed)
 #	@echo Creating $@ ...
-	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_response_preprocessed) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(test_makefrag): $(test_response)
-#	@echo Creating $@ ...
+#	@echo Creating $@ without excludes ....
 	@sed 's,^,$(test_lib): ,' $< >$@
 
 -include $(test_makefrag)
