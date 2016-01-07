@@ -174,7 +174,7 @@ check-monodocer-dropns-classic: $(PROGRAM)
 	# tests the simplest --dropns case, a single class where the root namespace was dropped.
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest-DropNS-classic.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll --api-style=classic
 	$(MAKE) update-monodocer-dropns-unified
 	diff --exclude=.svn -rup Test/en.expected-dropns-classic-v1 Test/en.actual
 
@@ -186,12 +186,12 @@ check-monodocer-dropns-multi: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified-multitest.dll
 
 	# mdoc update for both classic and unified
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) --api-style=classic -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
 	
 	# now run it again to verify idempotency
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) --api-style=classic -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
 	
 	diff --exclude=.svn -rup Test/en.expected-dropns-multi Test/en.actual
 
@@ -204,12 +204,12 @@ check-monodocer-dropns-multi-withexisting: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified-multitest.dll
 
 	# mdoc update to show a pre-existing set of documents
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework 
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll --api-style=classic
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework 
 	
 	# mdoc update for both classic and unified
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) -multiassembly
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-CLASSIC) --api-style=classic -multiassembly
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual $(MULTI-UNIFIED) --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework --dropns Test/DocTest-DropNS-unified-multitest.dll=MyFramework -multiassembly
 	
 	diff --exclude=.svn -rup Test/en.expected-dropns-multi-withexisting Test/en.actual
 
@@ -218,13 +218,13 @@ check-monodocer-dropns-delete: $(PROGRAM)
 	rm -Rf Test/DocTest-DropNS-classic-deletetest.dll
 	rm -Rf Test/DocTest-DropNS-unified-deletetest.dll
 	$(MAKE) Test/DocTest-DropNS-classic-deletetest.dll
-	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-deletetest.dll
+	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-deletetest.dll --api-style=classic
 	$(MAKE) Test/DocTest-DropNS-unified-deletetest.dll
-	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified-deletetest.dll --dropns Test/DocTest-DropNS-unified-deletetest.dll=MyFramework
+	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified-deletetest.dll --api-style=unified --dropns Test/DocTest-DropNS-unified-deletetest.dll=MyFramework
 	$(MAKE) Test/DocTest-DropNS-classic-deletetest-V2.dll
-	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-deletetest.dll
+	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-deletetest.dll --api-style=classic
 	$(MAKE) Test/DocTest-DropNS-unified-deletetest-V2.dll
-	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified-deletetest.dll --dropns Test/DocTest-DropNS-unified-deletetest.dll=MyFramework
+	$(MONO) $(PROGRAM) update --delete --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified-deletetest.dll --api-style=unified --dropns Test/DocTest-DropNS-unified-deletetest.dll=MyFramework
 	diff --exclude=.dvn -rup Test/en.expected-dropns-delete Test/en.actual
 
 check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
@@ -232,21 +232,21 @@ check-monodocer-dropns-classic-withsecondary: $(PROGRAM)
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest-DropNS-classic.dll
 	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic.dll Test/DocTest-DropNS-classic-secondary.dll --api-style=classic
 	$(MAKE) update-monodocer-dropns-unified-withsecondary
 	diff --exclude=.svn -rup Test/en.expected-dropns-classic-withsecondary Test/en.actual
 
 update-monodocer-dropns-unified: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+	$(MONO) $(PROGRAM) update --debug --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework
 
 update-monodocer-dropns-unified-withsecondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-unified.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --dropns Test/DocTest-DropNS-unified.dll=MyFramework
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-unified.dll Test/DocTest-DropNS-classic-secondary.dll --api-style=unified --dropns Test/DocTest-DropNS-unified.dll=MyFramework
 
 update-monodocer-dropns-classic-secondary: $(PROGRAM)
 	$(MAKE) Test/DocTest-DropNS-classic-secondary.dll
-	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-secondary.dll
+	$(MONO) $(PROGRAM) update --exceptions=all -o Test/en.actual Test/DocTest-DropNS-classic-secondary.dll --api-style=classic
 
 check-monodocer-internal-interface: $(PROGRAM)
 	# Tests to make sure internal interfaces that are explicitly implemented are not documented

@@ -76,5 +76,37 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="OnlyInClassic" apistyle="classic">
+      <MemberSignature Language="C#" Value="public double OnlyInClassic { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 OnlyInClassic" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="classic">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnlyInUnified" apistyle="unified">
+      <MemberSignature Language="C#" Value="public char OnlyInUnified { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char OnlyInUnified" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo apistyle="unified">
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
 </Type>
