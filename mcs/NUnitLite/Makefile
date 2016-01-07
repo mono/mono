@@ -1,5 +1,5 @@
 thisdir = NUnitLite
-SUBDIRS = 
+SUBDIRS = nunit-lite-console
 include ../build/rules.make
 
 LIBRARY = nunitlite.dll
