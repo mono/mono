@@ -80,6 +80,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/file-mmap.h>
 #include <mono/metadata/seq-points-data.h>
+#include <mono/metadata/handle.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
@@ -6441,7 +6442,17 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 ICALL_EXPORT MonoString *
 ves_icall_System_IO_get_temp_path (void)
 {
-	return mono_string_new (mono_domain_get (), g_get_tmp_dir ());
+	MonoError error;
+	MonoString *ret;
+
+	MONO_HANDLE_ARENA_PUSH ();
+	MONO_HANDLE_TYPE (MonoString) ret_handle;
+	ret_handle = mono_handle_string_new (mono_domain_get (), g_get_tmp_dir (), &error);
+
+	MONO_HANDLE_ARENA_POP_RETURN_UNSAFE(ret_handle, ret);
+
+	mono_error_raise_exception (&error);
+	return ret;
 }
 
 #ifndef PLATFORM_NO_DRIVEINFO
