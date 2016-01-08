@@ -613,6 +613,16 @@ Currently this option is only supported on Linux.
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
 .TP
+\fB--bisect=optimization:filename\fR
+This flag is used by the automatic optimization bug bisector.  It
+takes an optimization flag and a filename of a file containing a list
+of full method names, one per line.  When it compiles one of the
+methods in the file it will use the optimization given, in addition to
+the optimizations that are otherwise enabled.  Note that if the
+optimization is enabled by default, you should disable it with `-O`,
+otherwise it will just apply to every method, whether it's in the file
+or not.
+.TP
 \fB--break method\fR
 Inserts a breakpoint before the method whose name is `method'
 (namespace.class:methodname).  Use `Main' as method name to insert a
