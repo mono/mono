@@ -123,19 +123,27 @@ mono_class_init_or_throw (MonoClass *klass)
 ICALL_EXPORT MonoObject *
 ves_icall_System_Array_GetValueImpl (MonoArray *arr, guint32 pos)
 {
-	MonoClass *ac;
-	gint32 esize;
-	gpointer *ea;
+	MonoClass *arr_class = mono_object_class (arr);
 
-	ac = (MonoClass *)arr->obj.vtable->klass;
+	if (!arr_class->element_class->valuetype) {
+		return *(MonoObject**) mono_array_addr_with_size (arr, mono_array_element_size (arr_class), pos);
+	} else {
+		MonoError error;
+		MonoObject *ret;
 
-	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
+		MONO_HANDLE_ARENA_PUSH ();
 
-	if (ac->element_class->valuetype)
-		return mono_value_box (arr->obj.vtable->domain, ac->element_class, ea);
-	else
-		return (MonoObject *)*ea;
+		MONO_HANDLE_TYPE (MonoArray) arr_handle = MONO_HANDLE_NEW (MonoArray, arr);
+		MONO_HANDLE_TYPE (MonoObject) ret_handle;
+
+		ret_handle = mono_handle_array_value_box (mono_handle_domain ((MonoHandle) arr_handle), arr_class->element_class, arr_handle, pos, &error);
+
+		MONO_HANDLE_ARENA_POP_RETURN_UNSAFE (ret_handle, ret);
+
+		mono_error_raise_exception (&error);
+
+		return ret;
+	}
 }
 
 ICALL_EXPORT MonoObject *
@@ -148,9 +156,9 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 	MONO_CHECK_ARG_NULL (idxs, NULL);
 
 	io = idxs;
-	ic = (MonoClass *)io->obj.vtable->klass;
-	
-	ac = (MonoClass *)arr->obj.vtable->klass;
+	ic = mono_object_class (io);
+
+	ac = mono_object_class (arr);
 
 	g_assert (ic->rank == 1);
 	if (io->bounds != NULL || io->max_length !=  ac->rank) {
@@ -167,90 +175,70 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 		}
 
 		return ves_icall_System_Array_GetValueImpl (arr, *ind);
-	}
-	
-	for (i = 0; i < ac->rank; i++) {
-		if ((ind [i] < arr->bounds [i].lower_bound) ||
-		    (ind [i] >=  (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
-			mono_set_pending_exception (mono_get_exception_index_out_of_range ());
-			return NULL;
+	} else {
+		for (i = 0; i < ac->rank; i++) {
+			if ((ind [i] < arr->bounds [i].lower_bound) ||
+			    (ind [i] >=  (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
+				mono_set_pending_exception (mono_get_exception_index_out_of_range ());
+				return NULL;
+			}
 		}
+
+		pos = ind [0] - arr->bounds [0].lower_bound;
+		for (i = 1; i < ac->rank; i++)
+			pos = pos * arr->bounds [i].length + ind [i] - arr->bounds [i].lower_bound;
+
+		return ves_icall_System_Array_GetValueImpl (arr, pos);
 	}
-
-	pos = ind [0] - arr->bounds [0].lower_bound;
-	for (i = 1; i < ac->rank; i++)
-		pos = pos * arr->bounds [i].length + ind [i] - 
-			arr->bounds [i].lower_bound;
-
-	return ves_icall_System_Array_GetValueImpl (arr, pos);
 }
 
 ICALL_EXPORT void
 ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 pos)
 {
-	MonoClass *ac, *vc, *ec;
-	gint32 esize, vsize;
-	gpointer *ea, *va;
-	int et, vt;
+	MONO_HANDLE_ARENA_PUSH ();
 
-	guint64 u64 = 0;
-	gint64 i64 = 0;
-	gdouble r64 = 0;
+	MONO_HANDLE_TYPE (MonoArray) arr_handle = MONO_HANDLE_NEW (MonoArray, arr);
+	MONO_HANDLE_TYPE (MonoObject) value_handle = MONO_HANDLE_NEW (MonoObject, value);
 
-	if (value)
-		vc = value->vtable->klass;
-	else
-		vc = NULL;
+	MonoClass *arr_class, *value_class, *element_class;
+	gint32 element_size, value_size;
+	int element_type, value_type;
 
-	ac = arr->obj.vtable->klass;
-	ec = ac->element_class;
+	arr_class = mono_handle_class ((MonoHandle) arr_handle);
+	element_class = arr_class->element_class;
 
-	esize = mono_array_element_size (ac);
-	ea = (gpointer*)((char*)arr->vector + (pos * esize));
-	va = (gpointer*)((char*)value + sizeof (MonoObject));
-
-	if (mono_class_is_nullable (ec)) {
-		mono_nullable_init ((guint8*)ea, value, ec);
-		return;
+	if (mono_class_is_nullable (element_class)) {
+		MonoError error;
+		mono_handle_array_nullable_init (mono_domain_get (), element_class, arr_handle, pos, value_handle, &error);
+		mono_error_set_pending_exception (&error);
+		goto done;
 	}
+
+	element_size = mono_array_element_size (arr_class);
 
 	if (!value) {
-		mono_gc_bzero_atomic (ea, esize);
-		return;
+		MONO_PREPARE_GC_CRITICAL_REGION;
+		mono_gc_bzero_atomic (mono_handle_array_addr_with_size (arr_handle, element_size, pos), element_size);
+		MONO_FINISH_GC_CRITICAL_REGION;
+		goto done;
 	}
 
-#define NO_WIDENING_CONVERSION G_STMT_START{\
-	mono_set_pending_exception (mono_get_exception_argument ( \
-		"value", "not a widening conversion")); \
-	return; \
-}G_STMT_END
-
-#define CHECK_WIDENING_CONVERSION(extra) G_STMT_START{\
-		if (esize < vsize + (extra)) { 							  \
-			mono_set_pending_exception (mono_get_exception_argument (	\
-			"value", "not a widening conversion")); \
-			return;									\
-		} \
-}G_STMT_END
-
-#define INVALID_CAST G_STMT_START{ \
-		mono_get_runtime_callbacks ()->set_cast_details (vc, ec); \
-	mono_set_pending_exception (mono_get_exception_invalid_cast ()); \
-	return; \
-}G_STMT_END
+	value_class = mono_handle_class ((MonoHandle) value_handle);
 
 	/* Check element (destination) type. */
-	switch (ec->byval_arg.type) {
+	switch (element_class->byval_arg.type) {
 	case MONO_TYPE_STRING:
-		switch (vc->byval_arg.type) {
+		switch (value_class->byval_arg.type) {
 		case MONO_TYPE_STRING:
 			break;
 		default:
-			INVALID_CAST;
+			mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+			mono_set_pending_exception (mono_get_exception_invalid_cast ());
+			goto done;
 		}
 		break;
 	case MONO_TYPE_BOOLEAN:
-		switch (vc->byval_arg.type) {
+		switch (value_class->byval_arg.type) {
 		case MONO_TYPE_BOOLEAN:
 			break;
 		case MONO_TYPE_CHAR:
@@ -264,53 +252,82 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 		case MONO_TYPE_I8:
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
-			NO_WIDENING_CONVERSION;
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion"));
+			goto done;
 		default:
-			INVALID_CAST;
+			mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+			mono_set_pending_exception (mono_get_exception_invalid_cast ());
+			goto done;
 		}
 		break;
 	default:
 		break;
 	}
 
-	if (!ec->valuetype) {
-		if (!mono_object_isinst (value, ec))
-			INVALID_CAST;
-		mono_gc_wbarrier_set_arrayref (arr, ea, (MonoObject*)value);
-		return;
+	if (!element_class->valuetype) {
+		if (!mono_handle_object_isinst (value_handle, element_class)) {
+			mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+			mono_set_pending_exception (mono_get_exception_invalid_cast ());
+		} else {
+			MONO_PREPARE_GC_CRITICAL_REGION;
+			mono_gc_wbarrier_set_arrayref (mono_handle_obj (arr_handle), mono_handle_array_addr_with_size (arr_handle, element_size, pos), mono_handle_obj (value_handle));
+			MONO_FINISH_GC_CRITICAL_REGION;
+		}
+
+		goto done;
 	}
 
-	if (mono_object_isinst (value, ec)) {
-		if (ec->has_references)
-			mono_value_copy (ea, (char*)value + sizeof (MonoObject), ec);
-		else
-			mono_gc_memmove_atomic (ea, (char *)value + sizeof (MonoObject), esize);
-		return;
+	if (mono_handle_object_isinst (value_handle, element_class)) {
+		MONO_PREPARE_GC_CRITICAL_REGION;
+
+		guint8 *src = (guint8*) mono_handle_obj (value_handle) + sizeof (MonoObject);
+		guint8 *dst = (guint8*) mono_handle_array_addr_with_size (arr_handle, element_size, pos);
+
+		mono_gc_wbarrier_value_copy (dst, src, 1, element_class);
+
+		MONO_FINISH_GC_CRITICAL_REGION;
+
+		goto done;
 	}
 
-	if (!vc->valuetype)
-		INVALID_CAST;
+	if (!value_class->valuetype) {
+		mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+		mono_set_pending_exception (mono_get_exception_invalid_cast ());
+		goto done;
+	}
 
-	vsize = mono_class_instance_size (vc) - sizeof (MonoObject);
+	element_type = element_class->byval_arg.type;
+	if (element_type == MONO_TYPE_VALUETYPE && element_class->byval_arg.data.klass->enumtype)
+		element_type = mono_class_enum_basetype (element_class->byval_arg.data.klass)->type;
 
-	et = ec->byval_arg.type;
-	if (et == MONO_TYPE_VALUETYPE && ec->byval_arg.data.klass->enumtype)
-		et = mono_class_enum_basetype (ec->byval_arg.data.klass)->type;
+	value_type = value_class->byval_arg.type;
+	if (value_type == MONO_TYPE_VALUETYPE && value_class->byval_arg.data.klass->enumtype)
+		value_type = mono_class_enum_basetype (value_class->byval_arg.data.klass)->type;
 
-	vt = vc->byval_arg.type;
-	if (vt == MONO_TYPE_VALUETYPE && vc->byval_arg.data.klass->enumtype)
-		vt = mono_class_enum_basetype (vc->byval_arg.data.klass)->type;
+	value_size = mono_class_instance_size (value_class) - sizeof (MonoObject);
 
-#define ASSIGN_UNSIGNED(etype) G_STMT_START{\
-	switch (vt) { \
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	guint8 *src = (guint8*) mono_handle_obj (value_handle) + sizeof (MonoObject);
+	guint8 *dst = (guint8*) mono_handle_array_addr_with_size (arr_handle, element_size, pos);
+
+	guint64 u64 = 0;
+	gint64 i64 = 0;
+	gdouble r64 = 0;
+
+#define ASSIGN_UNSIGNED(etype) do {\
+	switch (value_type) { \
 	case MONO_TYPE_U1: \
 	case MONO_TYPE_U2: \
 	case MONO_TYPE_U4: \
 	case MONO_TYPE_U8: \
 	case MONO_TYPE_CHAR: \
-		CHECK_WIDENING_CONVERSION(0); \
-		*(etype *) ea = (etype) u64; \
-		return; \
+		if (element_size < value_size) { \
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+			goto done_critical; \
+		} \
+		*(etype *) dst = (etype) u64; \
+		goto done_critical; \
 	/* You can't assign a signed value to an unsigned array. */ \
 	case MONO_TYPE_I1: \
 	case MONO_TYPE_I2: \
@@ -319,19 +336,23 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 	/* You can't assign a floating point number to an integer array. */ \
 	case MONO_TYPE_R4: \
 	case MONO_TYPE_R8: \
-		NO_WIDENING_CONVERSION; \
+		mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+		goto done_critical; \
 	} \
-}G_STMT_END
+} while (0)
 
-#define ASSIGN_SIGNED(etype) G_STMT_START{\
-	switch (vt) { \
+#define ASSIGN_SIGNED(etype) do {\
+	switch (value_type) { \
 	case MONO_TYPE_I1: \
 	case MONO_TYPE_I2: \
 	case MONO_TYPE_I4: \
 	case MONO_TYPE_I8: \
-		CHECK_WIDENING_CONVERSION(0); \
-		*(etype *) ea = (etype) i64; \
-		return; \
+		if (element_size < value_size) { \
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+			goto done_critical; \
+		} \
+		*(etype *) dst = (etype) i64; \
+		goto done_critical; \
 	/* You can assign an unsigned value to a signed array if the array's */ \
 	/* element size is larger than the value size. */ \
 	case MONO_TYPE_U1: \
@@ -339,78 +360,84 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 	case MONO_TYPE_U4: \
 	case MONO_TYPE_U8: \
 	case MONO_TYPE_CHAR: \
-		CHECK_WIDENING_CONVERSION(1); \
-		*(etype *) ea = (etype) u64; \
-		return; \
+		if (element_size < value_size + 1) { \
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+			goto done_critical; \
+		} \
+		*(etype *) dst = (etype) u64; \
+		goto done_critical; \
 	/* You can't assign a floating point number to an integer array. */ \
 	case MONO_TYPE_R4: \
 	case MONO_TYPE_R8: \
-		NO_WIDENING_CONVERSION; \
+		mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+		goto done_critical; \
 	} \
-}G_STMT_END
+} while (0)
 
-#define ASSIGN_REAL(etype) G_STMT_START{\
-	switch (vt) { \
+#define ASSIGN_REAL(etype) do {\
+	switch (value_type) { \
 	case MONO_TYPE_R4: \
 	case MONO_TYPE_R8: \
-		CHECK_WIDENING_CONVERSION(0); \
-		*(etype *) ea = (etype) r64; \
-		return; \
-	/* All integer values fit into a floating point array, so we don't */ \
-	/* need to CHECK_WIDENING_CONVERSION here. */ \
+		if (element_size < value_size) { \
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion")); \
+			goto done_critical; \
+		} \
+		*(etype *) dst = (etype) r64; \
+		goto done_critical; \
+	/* All integer values fit into a floating point array */ \
 	case MONO_TYPE_I1: \
 	case MONO_TYPE_I2: \
 	case MONO_TYPE_I4: \
 	case MONO_TYPE_I8: \
-		*(etype *) ea = (etype) i64; \
-		return; \
+		*(etype *) dst = (etype) i64; \
+		goto done_critical; \
 	case MONO_TYPE_U1: \
 	case MONO_TYPE_U2: \
 	case MONO_TYPE_U4: \
 	case MONO_TYPE_U8: \
 	case MONO_TYPE_CHAR: \
-		*(etype *) ea = (etype) u64; \
-		return; \
+		*(etype *) dst = (etype) u64; \
+		goto done_critical; \
 	} \
-}G_STMT_END
+} while (0)
 
-	switch (vt) {
+	switch (value_type) {
 	case MONO_TYPE_U1:
-		u64 = *(guint8 *) va;
+		u64 = *(guint8 *) src;
 		break;
 	case MONO_TYPE_U2:
-		u64 = *(guint16 *) va;
+		u64 = *(guint16 *) src;
 		break;
 	case MONO_TYPE_U4:
-		u64 = *(guint32 *) va;
+		u64 = *(guint32 *) src;
 		break;
 	case MONO_TYPE_U8:
-		u64 = *(guint64 *) va;
+		u64 = *(guint64 *) src;
 		break;
 	case MONO_TYPE_I1:
-		i64 = *(gint8 *) va;
+		i64 = *(gint8 *) src;
 		break;
 	case MONO_TYPE_I2:
-		i64 = *(gint16 *) va;
+		i64 = *(gint16 *) src;
 		break;
 	case MONO_TYPE_I4:
-		i64 = *(gint32 *) va;
+		i64 = *(gint32 *) src;
 		break;
 	case MONO_TYPE_I8:
-		i64 = *(gint64 *) va;
+		i64 = *(gint64 *) src;
 		break;
 	case MONO_TYPE_R4:
-		r64 = *(gfloat *) va;
+		r64 = *(gfloat *) src;
 		break;
 	case MONO_TYPE_R8:
-		r64 = *(gdouble *) va;
+		r64 = *(gdouble *) src;
 		break;
 	case MONO_TYPE_CHAR:
-		u64 = *(guint16 *) va;
+		u64 = *(guint16 *) src;
 		break;
 	case MONO_TYPE_BOOLEAN:
 		/* Boolean is only compatible with itself. */
-		switch (et) {
+		switch (element_type) {
 		case MONO_TYPE_CHAR:
 		case MONO_TYPE_U1:
 		case MONO_TYPE_U2:
@@ -422,15 +449,18 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 		case MONO_TYPE_I8:
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
-			NO_WIDENING_CONVERSION;
+			mono_set_pending_exception (mono_get_exception_argument ("value", "not a widening conversion"));
+			goto done_critical;
 		default:
-			INVALID_CAST;
+			mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+			mono_set_pending_exception (mono_get_exception_invalid_cast ());
+			goto done_critical;
 		}
 		break;
 	}
 
 	/* If we can't do a direct copy, let's try a widening conversion. */
-	switch (et) {
+	switch (element_type) {
 	case MONO_TYPE_CHAR:
 		ASSIGN_UNSIGNED (guint16);
 	case MONO_TYPE_U1:
@@ -455,29 +485,32 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 		ASSIGN_REAL (gdouble);
 	}
 
-	INVALID_CAST;
-	/* Not reached, INVALID_CAST does not return. Just to avoid a compiler warning ... */
-	return;
+	mono_get_runtime_callbacks ()->set_cast_details (value_class, element_class);
+	mono_set_pending_exception (mono_get_exception_invalid_cast ());
 
-#undef INVALID_CAST
-#undef NO_WIDENING_CONVERSION
-#undef CHECK_WIDENING_CONVERSION
-#undef ASSIGN_UNSIGNED
-#undef ASSIGN_SIGNED
 #undef ASSIGN_REAL
+#undef ASSIGN_SIGNED
+#undef ASSIGN_UNSIGNED
+
+done_critical:
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+done:
+
+	MONO_HANDLE_ARENA_POP;
 }
 
 ICALL_EXPORT void 
-ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
-				 MonoArray *idxs)
+ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value, MonoArray *idxs)
 {
 	MonoClass *ac, *ic;
 	gint32 i, pos, *ind;
 
 	MONO_CHECK_ARG_NULL (idxs,);
 
-	ic = idxs->obj.vtable->klass;
-	ac = arr->obj.vtable->klass;
+	ic = mono_object_class (idxs);
+	ac = mono_object_class (arr);
 
 	g_assert (ic->rank == 1);
 	if (idxs->bounds != NULL || idxs->max_length != ac->rank) {
@@ -485,7 +518,7 @@ ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
 		return;
 	}
 
-	ind = (gint32 *)idxs->vector;
+	ind = (gint32 *) idxs->vector;
 
 	if (arr->bounds == NULL) {
 		if (*ind < 0 || *ind >= arr->max_length) {
@@ -494,22 +527,20 @@ ves_icall_System_Array_SetValue (MonoArray *arr, MonoObject *value,
 		}
 
 		ves_icall_System_Array_SetValueImpl (arr, value, *ind);
-		return;
+	} else {
+		for (i = 0; i < ac->rank; i++)
+			if ((ind [i] < arr->bounds [i].lower_bound) ||
+			    (ind [i] >= (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
+				mono_set_pending_exception (mono_get_exception_index_out_of_range ());
+				return;
+			}
+
+		pos = ind [0] - arr->bounds [0].lower_bound;
+		for (i = 1; i < ac->rank; i++)
+			pos = pos * arr->bounds [i].length + ind [i] - arr->bounds [i].lower_bound;
+
+		ves_icall_System_Array_SetValueImpl (arr, value, pos);
 	}
-	
-	for (i = 0; i < ac->rank; i++)
-		if ((ind [i] < arr->bounds [i].lower_bound) ||
-		    (ind [i] >= (mono_array_lower_bound_t)arr->bounds [i].length + arr->bounds [i].lower_bound)) {
-			mono_set_pending_exception (mono_get_exception_index_out_of_range ());
-			return;
-		}
-
-	pos = ind [0] - arr->bounds [0].lower_bound;
-	for (i = 1; i < ac->rank; i++)
-		pos = pos * arr->bounds [i].length + ind [i] - 
-			arr->bounds [i].lower_bound;
-
-	ves_icall_System_Array_SetValueImpl (arr, value, pos);
 }
 
 ICALL_EXPORT MonoArray *
