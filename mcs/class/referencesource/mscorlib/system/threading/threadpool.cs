@@ -1185,9 +1185,27 @@ namespace System.Threading
     //
     internal static class _ThreadPoolWaitCallback
     {
+#if FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK
+        // This feature is used by Xamarin.iOS to use an NSAutoreleasePool
+        // for every task done by the threadpool.
+        static Func<Func<bool>, bool> dispatcher;
+
+        internal static void SetDispatcher (Func<Func<bool>, bool> value)
+        {
+            dispatcher = value;
+        }
+#endif
+
         [System.Security.SecurityCritical]
         static internal bool PerformWaitCallback()
         {
+#if FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK
+            // store locally first to ensure another thread doesn't clear the field between checking for null and using it.
+            var dispatcher = _ThreadPoolWaitCallback.dispatcher;
+            if (dispatcher != null)
+                return dispatcher (ThreadPoolWorkQueue.Dispatch);
+#endif
+
             return ThreadPoolWorkQueue.Dispatch();
         }
     }
