@@ -168,6 +168,23 @@ mono_handle_domain (MonoHandle handle)
 
 /* Some common handle types */
 
+MONO_HANDLE_TYPE_DECL (MonoObject);
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new_specific (MonoVTable *vtable, MonoError *error);
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new_alloc_specific (MonoVTable *vtable, MonoError *error);
+
+gboolean
+mono_handle_object_isinst (MONO_HANDLE_TYPE (MonoObject) handle, MonoClass *klass);
+
+void
+mono_handle_runtime_object_init (MONO_HANDLE_TYPE (MonoObject) this_handle);
+
 MONO_HANDLE_TYPE_DECL (MonoArray);
 
 MONO_HANDLE_TYPE (MonoArray)

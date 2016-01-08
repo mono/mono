@@ -80,6 +80,36 @@ mono_runtime_object_init (MonoObject *this_obj)
 	mono_runtime_invoke (method, this_obj, NULL, NULL);
 }
 
+void
+mono_handle_runtime_object_init (MONO_HANDLE_TYPE (MonoObject) handle)
+{
+	MonoClass *klass;
+	MonoMethod *method;
+	gpointer obj;
+	guint32 gchandle;
+
+	klass = mono_handle_class ((MonoHandle) handle);
+	method = mono_class_get_method_from_name (klass, ".ctor", 0);
+	if (!method)
+		g_error ("Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	/* FIXME: still not safe as there can be a call to alloc_handle ->
+	 * handle_data_grow -> sgen_register_root which will lock the GC */
+	gchandle = mono_gchandle_new (mono_handle_obj (handle), TRUE);
+
+	obj = method->klass->valuetype ?
+		mono_object_unbox (mono_handle_obj (handle)) :
+		mono_handle_obj (handle);
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	mono_runtime_invoke (method, obj, NULL, NULL);
+
+	mono_gchandle_free (gchandle);
+}
+
 /* The pseudo algorithm for type initialization from the spec
 Note it doesn't say anything about domains - only threads.
 
@@ -6946,6 +6976,78 @@ mono_glist_to_array (GList *list, MonoClass *eclass)
 }
 
 /* Handle API specifics */
+
+/**
+ * mono_handle_object_new:
+ * @domain: the domain of the object we want to create
+ * @klass: the class of the object that we want to create
+ *
+ * Returns: a newly created object whose definition is
+ * looked up using @klass. This will not invoke any constructors,
+ * so the consumer of this routine has to invoke any constructors on
+ * its own to initialize the object.
+ *
+ * It returns NULL on failure.
+ */
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new (MonoDomain *domain, MonoClass *klass, MonoError *error)
+{
+	MonoVTable *vtable;
+
+	mono_error_init (error);
+
+	vtable = mono_class_vtable (domain, klass);
+	if (!vtable)
+		return MONO_HANDLE_NEW (MonoObject, NULL);
+
+	return mono_handle_object_new_specific (vtable, error);
+}
+
+/**
+ * mono_handle_object_new_specific:
+ * @vtable: the vtable of the object that we want to create
+ *
+ * Returns: A newly created object with class and domain specified
+ * by @vtable
+ */
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new_specific (MonoVTable *vtable, MonoError *error)
+{
+	mono_error_init (error);
+
+	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
+		g_error ("not implemented");
+
+	return mono_handle_object_new_alloc_specific (vtable, error);
+}
+
+MONO_HANDLE_TYPE (MonoObject)
+mono_handle_object_new_alloc_specific (MonoVTable *vtable, MonoError *error)
+{
+	MONO_HANDLE_TYPE (MonoObject) handle = mono_handle_gc_alloc_obj (vtable, vtable->klass->instance_size, error);
+
+	if (mono_error_ok (error) && G_UNLIKELY (vtable->klass->has_finalize))
+		g_error ("not implemented");
+
+	return handle;
+}
+
+gboolean
+mono_handle_object_isinst (MONO_HANDLE_TYPE (MonoObject) handle, MonoClass *klass)
+{
+	gboolean ret;
+
+	if (!klass->inited)
+		mono_class_init (klass);
+
+	MONO_PREPARE_GC_CRITICAL_REGION;
+
+	ret = mono_object_isinst (mono_handle_obj (handle), klass) != NULL;
+
+	MONO_FINISH_GC_CRITICAL_REGION;
+
+	return ret;
+}
 
 /**
  * mono_string_new:
