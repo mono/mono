@@ -2194,6 +2194,7 @@ void        mono_parse_env_options         (int *ref_argc, char **ref_argv []);
 MonoDomain* mini_init                      (const char *filename, const char *runtime_version);
 void        mini_cleanup                   (MonoDomain *domain);
 MONO_API MonoDebugOptions *mini_get_debug_options   (void);
+MONO_API gboolean    mini_parse_debug_option (const char *option);
 
 /* helper methods */
 void      mini_jit_init                    (void);
