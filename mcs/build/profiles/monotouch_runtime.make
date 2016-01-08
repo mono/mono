@@ -27,6 +27,7 @@ PROFILE_MCS_FLAGS = \
 	-d:MONOTOUCH \
 	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
+	-d:FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK \
 	-nowarn:1699 \
 	-nostdlib \
 	-lib:$(topdir)/class/lib/$(PROFILE) \
