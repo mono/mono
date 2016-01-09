@@ -300,11 +300,10 @@ namespace System.IO {
 			else
 				fullPathNoLastSlash = fsw.FullPath;
 				
-			// GetFilenameFromFd() returns the *realpath* which can be different than fsw.FullPath because symlinks.
+			// realpath() returns the *realpath* which can be different than fsw.FullPath because symlinks.
 			// If so, introduce a fixup step.
-			int fd = open (fullPathNoLastSlash, O_EVTONLY, 0);
-			var resolvedFullPath = GetFilenameFromFd (fd);
-			close (fd);
+			var sb = new StringBuilder (__DARWIN_MAXPATHLEN);
+			var resolvedFullPath = (realpath(fsw.FullPath, sb) == IntPtr.Zero) ? "" : sb.ToString();
 
 			if (resolvedFullPath != fullPathNoLastSlash)
 				fixupPath = resolvedFullPath;
@@ -667,6 +666,9 @@ namespace System.IO {
 
 		[DllImport ("libc", EntryPoint="fcntl", CharSet=CharSet.Auto, SetLastError=true)]
 		static extern int fcntl (int file_names_by_descriptor, int cmd, StringBuilder sb);
+
+		[DllImport ("libc", CharSet=CharSet.Auto, SetLastError=true)]
+		static extern IntPtr realpath (string pathname, StringBuilder sb);
 
 		[DllImport ("libc")]
 		extern static int open (string path, int flags, int mode_t);
