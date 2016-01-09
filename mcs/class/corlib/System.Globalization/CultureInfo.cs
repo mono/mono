@@ -143,9 +143,12 @@ namespace System.Globalization
 
 			var locale_name = get_current_locale_name ();
 			CultureInfo ci = null;
-			try {
-				ci = CreateSpecificCulture (locale_name);
-			} catch {
+
+			if (locale_name != null) {
+				try {
+					ci = CreateSpecificCulture (locale_name);
+				} catch {
+				}
 			}
 
 			if (ci == null) {
