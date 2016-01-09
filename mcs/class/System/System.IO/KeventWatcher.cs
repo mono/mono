@@ -150,7 +150,7 @@ namespace System.IO {
 	[StructLayout(LayoutKind.Sequential)]
 	struct timespec {
 		public IntPtr tv_sec;
-		public IntPtr tv_usec;
+		public IntPtr tv_nsec;
 	}
 
 	class PathData
@@ -313,7 +313,7 @@ namespace System.IO {
 
 			Scan (fullPathNoLastSlash, false, ref initialFds);
 
-			var immediate_timeout = new timespec { tv_sec = (IntPtr)0, tv_usec = (IntPtr)0 };
+			var immediate_timeout = new timespec { tv_sec = (IntPtr)0, tv_nsec = (IntPtr)0 };
 			var eventBuffer = new kevent[0]; // we don't want to take any events from the queue at this point
 			var changes = CreateChangeList (ref initialFds);
 
