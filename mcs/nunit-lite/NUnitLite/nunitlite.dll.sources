@@ -252,7 +252,7 @@ src/framework/ObjectList.cs
 src/framework/Runner/CommandLineOptions.cs
 src/framework/Runner/ConsoleWriter.cs
 src/framework/Runner/DebugWriter.cs
-src/framework/Runner/FinallyDelegate.cs
+src/framework/FinallyDelegate.cs
 src/framework/Runner/OutputWriters/NUnit2XmlOutputWriter.cs
 src/framework/Runner/OutputWriters/NUnit3XmlOutputWriter.cs
 src/framework/Runner/OutputWriters/OutputWriter.cs
