@@ -2997,7 +2997,6 @@ mono_handle_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_leng
 	{
 		MonoObject *obj;
 
-#ifndef DISABLE_CRITICAL_REGION
 		ENTER_CRITICAL_REGION;
 		obj = sgen_try_alloc_obj_nolock (vtable, size);
 		if (obj) {
@@ -3009,7 +3008,6 @@ mono_handle_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_leng
 			goto done;
 		}
 		EXIT_CRITICAL_REGION;
-#endif
 
 		LOCK_GC;
 
@@ -3056,7 +3054,6 @@ mono_handle_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_lengt
 	{
 		MonoObject *obj;
 
-#ifndef DISABLE_CRITICAL_REGION
 		ENTER_CRITICAL_REGION;
 		obj = sgen_try_alloc_obj_nolock (vtable, size);
 		if (obj) {
@@ -3071,7 +3068,6 @@ mono_handle_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_lengt
 			goto done;
 		}
 		EXIT_CRITICAL_REGION;
-#endif
 
 		LOCK_GC;
 
@@ -3121,7 +3117,6 @@ mono_handle_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len, MonoEr
 	{
 		MonoObject *obj;
 
-#ifndef DISABLE_CRITICAL_REGION
 		ENTER_CRITICAL_REGION;
 		obj = sgen_try_alloc_obj_nolock (vtable, size);
 		if (obj) {
@@ -3133,7 +3128,6 @@ mono_handle_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len, MonoEr
 			goto done;
 		}
 		EXIT_CRITICAL_REGION;
-#endif
 
 		LOCK_GC;
 
