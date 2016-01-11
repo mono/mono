@@ -800,6 +800,18 @@ namespace System {
 			return (((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
 		}
 
+		// taken from referencesource/System/net/System/URI.cs
+		private static bool IsAsciiLetter(char character) {
+
+			return  (character >= 'a' && character <= 'z') ||
+					(character >= 'A' && character <= 'Z');
+		}
+
+		internal static bool IsAsciiLetterOrDigit(char character) {
+			return IsAsciiLetter (character) || (character >= '0' && character <= '9');
+		}
+		//
+
 		public override bool Equals (object comparand) 
 		{
 			if (comparand == null) 

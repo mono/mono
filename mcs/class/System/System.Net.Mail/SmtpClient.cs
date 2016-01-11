@@ -285,7 +285,7 @@ namespace System.Net.Mail {
 		private static string EncodeAddress(MailAddress address)
 		{
 			if (!String.IsNullOrEmpty (address.DisplayName)) {
-				string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
+				string encodedDisplayName = MailMessage.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
 				return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
 			}
 			return address.ToString ();
@@ -307,7 +307,7 @@ namespace System.Net.Mail {
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
-			return ContentType.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
+			return MailMessage.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
 		}
 
 		private string EncodeBody (MailMessage message)
@@ -710,7 +710,7 @@ namespace System.Net.Mail {
 				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 
 			foreach (string s in message.Headers.AllKeys)
-				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
+				SendHeader (s, MailMessage.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
 	
 			AddPriorityHeader (message);
 
