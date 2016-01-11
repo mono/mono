@@ -260,12 +260,12 @@ namespace NUnit.Framework.Internal
         /// </summary>
         /// <param name="childFilter">A filter to be used in selecting child tests</param>
         /// <returns>A new WorkItem</returns>
-        public override WorkItem CreateWorkItem(ITestFilter childFilter)
+        public override WorkItem CreateWorkItem(ITestFilter childFilter, FinallyDelegate finD)
         {
             //return RunState == Api.RunState.Runnable || RunState == Api.RunState.Explicit
             //    ? (WorkItem)new CompositeWorkItem(this, childFilter)
             //    : (WorkItem)new SimpleWorkItem(this);
-            return new CompositeWorkItem(this, childFilter);
+            return new CompositeWorkItem(this, childFilter, finD);
         }
 
         /// <summary>

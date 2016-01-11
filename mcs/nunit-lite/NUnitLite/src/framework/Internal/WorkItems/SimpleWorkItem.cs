@@ -40,7 +40,7 @@ namespace NUnit.Framework.Internal.WorkItems
         /// Construct a simple work item for a test.
         /// </summary>
         /// <param name="test">The test to be executed</param>
-        public SimpleWorkItem(TestMethod test) : base(test)
+        public SimpleWorkItem(TestMethod test, FinallyDelegate fd) : base(test, fd)
         {
             _command = test.MakeTestCommand();
         }
@@ -49,7 +49,7 @@ namespace NUnit.Framework.Internal.WorkItems
         /// Construct a simple work item for a test command.
         /// </summary>
         /// <param name="command">The command to be executed</param>
-        public SimpleWorkItem(TestCommand command) : base(command.Test)
+        public SimpleWorkItem(TestCommand command, FinallyDelegate fd) : base(command.Test, fd)
         {
             _command = command;
         }

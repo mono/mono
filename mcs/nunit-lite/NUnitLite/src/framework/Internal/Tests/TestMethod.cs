@@ -232,10 +232,10 @@ namespace NUnit.Framework.Internal
         /// </summary>
         /// <param name="childFilter">A filter to be used in selecting child tests</param>
         /// <returns>A new WorkItem</returns>
-        public override WorkItem CreateWorkItem(ITestFilter childFilter)
+        public override WorkItem CreateWorkItem(ITestFilter childFilter, FinallyDelegate fd)
         {
             // For simple test cases, we ignore the filter
-            return new SimpleWorkItem(this);
+            return new SimpleWorkItem(this, fd);
         }
 
         #endregion

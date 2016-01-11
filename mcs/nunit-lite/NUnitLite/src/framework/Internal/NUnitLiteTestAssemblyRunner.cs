@@ -38,6 +38,7 @@ namespace NUnit.Framework.Internal
         private ITestAssemblyBuilder builder;
         private TestSuite loadedTest;
         //private Thread runThread;
+        private FinallyDelegate finallyDelegate;
 
         #region Constructors
 
@@ -45,9 +46,10 @@ namespace NUnit.Framework.Internal
         /// Initializes a new instance of the <see cref="NUnitLiteTestAssemblyRunner"/> class.
         /// </summary>
         /// <param name="builder">The builder.</param>
-        public NUnitLiteTestAssemblyRunner(ITestAssemblyBuilder builder)
+        public NUnitLiteTestAssemblyRunner(ITestAssemblyBuilder builder, FinallyDelegate finallyDelegate)
         {
             this.builder = builder;
+            this.finallyDelegate = finallyDelegate;
         }
 
         #endregion
@@ -130,7 +132,7 @@ namespace NUnit.Framework.Internal
 #endif
             context.Listener = listener;
 
-            WorkItem workItem = loadedTest.CreateWorkItem(filter);
+            WorkItem workItem = loadedTest.CreateWorkItem(filter, finallyDelegate);
             workItem.Execute(context);
 
             while (workItem.State != WorkItemState.Complete)

@@ -53,8 +53,8 @@ namespace NUnit.Framework.Internal.WorkItems
         /// </summary>
         /// <param name="suite">The TestSuite to be executed</param>
         /// <param name="childFilter">A filter used to select child tests</param>
-        public CompositeWorkItem(TestSuite suite, ITestFilter childFilter)
-            : base(suite)
+        public CompositeWorkItem(TestSuite suite, ITestFilter childFilter, FinallyDelegate fd)
+            : base(suite, fd)
         {
             _suite = suite;
             _setupCommand = suite.GetOneTimeSetUpCommand();
@@ -72,7 +72,7 @@ namespace NUnit.Framework.Internal.WorkItems
             if (_suite.HasChildren)
                 foreach (Test test in _suite.Tests)
                     if (_childFilter.Pass(test))
-                        _children.Enqueue(test.CreateWorkItem(_childFilter));
+                        _children.Enqueue(test.CreateWorkItem(_childFilter, this.finD));
 
             switch (Test.RunState)
             {

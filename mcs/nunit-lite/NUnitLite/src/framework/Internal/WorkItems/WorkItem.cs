@@ -51,17 +51,22 @@ namespace NUnit.Framework.Internal.WorkItems
         // The execution context used by this work item
         private TestExecutionContext _context;
 
+	// A delegate to run the post-execution code even
+	// in the case of an unhandled exception
+	protected FinallyDelegate finD;
+
         #region Constructor
 
         /// <summary>
         /// Construct a WorkItem for a particular test.
         /// </summary>
         /// <param name="test">The test that the WorkItem will run</param>
-        public WorkItem(Test test)
+        public WorkItem(Test test, FinallyDelegate finallyDelegate)
         {
             _test = test;
             testResult = test.MakeTestResult();
             _state = WorkItemState.Ready;
+	    finD = finallyDelegate;
         }
 
         #endregion
@@ -187,27 +192,8 @@ namespace NUnit.Framework.Internal.WorkItems
             long startTicks = Stopwatch.GetTimestamp();
 #endif
 
-            try
-            {
-                PerformWork();
-            }
-            finally
-            {
-#if (CLR_2_0 || CLR_4_0) && !SILVERLIGHT && !NETCF_2_0
-                long tickCount = Stopwatch.GetTimestamp() - startTicks;
-                double seconds = (double)tickCount / Stopwatch.Frequency;
-                Result.Duration = TimeSpan.FromSeconds(seconds);
-#else
-                Result.Duration = DateTime.Now - Context.StartTime;
-#endif
-
-                Result.AssertCount = _context.AssertCount;
-
-                _context.Listener.TestFinished(Result);
-
-                _context = _context.Restore();
-                _context.AssertCount += Result.AssertCount;
-            }
+            finD.Set(_context, startTicks, Result);
+            PerformWork();
         }
 
         #endregion
@@ -225,6 +211,7 @@ namespace NUnit.Framework.Internal.WorkItems
         /// </summary>
         protected void WorkItemComplete()
         {
+            finD.Complete();
             _state = WorkItemState.Complete;
             if (Completed != null)
                 Completed(this, EventArgs.Empty);

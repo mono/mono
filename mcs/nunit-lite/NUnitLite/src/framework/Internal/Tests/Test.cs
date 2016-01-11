@@ -324,7 +324,7 @@ namespace NUnit.Framework.Internal
         /// </summary>
         /// <param name="childFilter">A filter to be used in selecting child tests</param>
         /// <returns>A new WorkItem</returns>
-        public abstract WorkItem CreateWorkItem(ITestFilter childFilter);
+        public abstract WorkItem CreateWorkItem(ITestFilter childFilter, FinallyDelegate finD);
 
         /// <summary>
         /// Modify a newly constructed test by applying any of NUnit's common
