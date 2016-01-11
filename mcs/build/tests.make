@@ -79,14 +79,24 @@ run-test-ondotnet-local: run-test-ondotnet-lib
 TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
 
+ifdef NUNIT_LITE
+NOSHADOW_FLAG =
+XML_FLAG =
+OUTPUT_FILE_FLAG=-out
+else
+OUTPUT_FILE_FLAG=-output
+NOSHADOW_FLAG = -noshadow
+XML_FLAG = -xml=TestResult-$(PROFILE).xml
+endif
+
 ifdef TEST_HARNESS_VERBOSE
 TEST_HARNESS_OUTPUT = -labels
 TEST_HARNESS_OUTPUT_ONDOTNET = -labels
 TEST_HARNESS_POSTPROC = :
 TEST_HARNESS_POSTPROC_ONDOTNET = :
 else
-TEST_HARNESS_OUTPUT = -output=TestResult-$(PROFILE).log
-TEST_HARNESS_OUTPUT_ONDOTNET = -output=TestResult-ondotnet-$(PROFILE).log
+TEST_HARNESS_OUTPUT = $(OUTPUT_FILE_FLAG)=TestResult-$(PROFILE).log
+TEST_HARNESS_OUTPUT_ONDOTNET = $(OUTPUT_FILE_FLAG)=TestResult-ondotnet-$(PROFILE).log
 TEST_HARNESS_POSTPROC = (echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-$(PROFILE).xml >> TestResult-$(PROFILE).log
 TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-ondotnet-$(PROFILE).xml >> TestResult-ondotnet-$(PROFILE).log
 endif
@@ -102,7 +112,7 @@ endif
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local
 	ok=:; \
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" MONO_REGISTRY_PATH="$(HOME)/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(test_assemblies) $(NOSHADOW_FLAG) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) $(XML_FLAG) $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	if [ ! -f "TestResult-$(PROFILE).xml" ]; then echo "<?xml version='1.0' encoding='utf-8'?><test-results failures='1' total='1' not-run='0' name='bcl-tests' date='$$(date +%F)' time='$$(date +%T)'><test-suite name='$(strip $(test_assemblies))' success='False' time='0'><results><test-case name='crash' executed='True' success='False' time='0'><failure><message>The test runner didn't produce a test result XML, probably due to a crash of the runtime. Check the log for more details.</message><stack-trace></stack-trace></failure></test-case></results></test-suite></test-results>" > TestResult-$(PROFILE).xml; fi; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
