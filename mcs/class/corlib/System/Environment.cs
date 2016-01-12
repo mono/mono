@@ -900,8 +900,11 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool GetIs64BitOperatingSystem ();
+
 		public static bool Is64BitOperatingSystem {
-			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
+			get { return GetIs64BitOperatingSystem (); }
 		}
 
 		public static int SystemPageSize {
