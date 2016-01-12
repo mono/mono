@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<project name="CITestRunner" default="build" basedir=".">
+
+  <property name="msbuild.project" value="ci-test-runner-${msbuild.proj.suffix}.csproj"/>
+
+  <include buildfile="../../nunitlite.projects.common"/>
+
+  <target name="nant-clean">
+
+    <delete file="${current.build.dir}/ci-test-runner.exe"/>
+    <delete file="${current.build.dir}/ci-test-runner.pdb"/>
+
+  </target>
+
+  <target name="nant-build">
+
+    <csc target="exe"
+        output="${current.build.dir}/ci-test-runner.exe"
+        debug="${build.debug}"
+        define="${build.defines};NUNITLITE">
+      <sources basedir=".">
+        <include name="SilverlightTestRunner.cs"/>
+      </sources>
+      <references basedir="${current.build.dir}">
+        <include name="mscorlib.dll"/>
+        <include name="nunitlite.dll"/>   
+      </references>
+    </csc>
+
+  </target>
+
+</project>

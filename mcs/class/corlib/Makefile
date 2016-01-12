@@ -61,8 +61,12 @@ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WAR
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
+
+ifndef MOBILE_STATIC
+TEST_MCS_FLAGS += -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll
+endif
 
 EXTRA_DISTFILES = \
 	Test/resources/MyResources.resources	\
@@ -166,12 +170,17 @@ TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
 
 run-test-vts: test-vts
 	@echo Running vts tests...
-	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \
+	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
 		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
 ifndef NO_TEST
+ifdef NUNIT_LITE
+test:
+run-test:
+else
 test: test-vts
 run-test: run-test-vts
-endif
+endif # NUNIT_LITE
+endif # NO_TEST
 
 EXTRA_DISTFILES += \
 	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \

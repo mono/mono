@@ -38,7 +38,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 	[TestFixture]
 	public class AsyncTaskMethodBuilderTest
 	{
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		// For some reason MT excludes CallContext handling
 
 		[Test]

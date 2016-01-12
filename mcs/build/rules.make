@@ -115,6 +115,11 @@ endif
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
 
+ifdef NUNIT_LITE
+TEST_HARNESS=$(topdir)/class/lib/$(PROFILE)/nunit-lite-console.exe
+endif
+export TEST_HARNESS
+
 ifdef BCL_OPTIMIZE
 PROFILE_MCS_FLAGS += -optimize
 endif

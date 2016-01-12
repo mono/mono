@@ -1,0 +1,400 @@
+NUnitLite Version 1.0 - September 13, 2013
+
+Bug Fixes
+
+* 1221712	When non-existing test method is specified in -test, result is still "Tests run: 1, Passed 1"
+* 1223294	System.NullReference thrown when ExpectedExceptionAttribute is used in a static class
+
+NUnitLite Version 1.0 Beta 2 - August 17, 2013
+
+Attributes
+
+* The TimeoutAttribute is now avaialable under the Compact Famework.
+
+Constraints
+
+* The DelayedConstraint and its associated 'After' syntax are now
+available under the Compact Framework.
+
+Bug Fixes
+
+* 1071343	Runner.Load fails on compact framework if the test assembly contains a generic method
+* 1203361	Randomizer uniqueness tests sometimes fail
+* 1212890	The /seed option value is not being used to generate tests
+* 1213174	Implement TimeoutAttribute for the compact framework builds
+* 1213176	Compact framework and Silverlight builds should use the document folder
+* 1213180	Split Compact frameowork 2.0 and 3.5 builds into separate solutions
+* 1213451	Implement DelayedConstraint for the compact framework builds
+
+NUnitLite Version 1.0 Beta 1 - July 28, 2013
+
+Runner
+
+* The build-in runner now accepts a -seed option, which may be used to
+set the seed for random arguments as well as for use by TestContext.Random.
+By setting the seed to the value used in a prior run, the same sequence
+of random values will be used in the current run, provided the tests
+have not been changed in any way between runs.
+
+Bug Fixes
+
+* 1111838	Include Random Seed in Test Report
+* 1182634	TestContext.Random.GetEnm isn't generic in .NET 4
+* 1183582	Add -seed /seed Command Line Option
+* 1203360	Tests under Ignored fixtures are not reported
+* 1203959	Resolve level of Silverlight support for the release
+* 1203961	Review and revise XML format for release
+
+NUnitLite Version 0.9 - May 5, 2013
+
+Framework
+
+* A .NET 4.5 build is included. When using the 4.5 package, 
+  C# 5.0 async methods may be used as tests, as the target of 
+  a Throws constraint and as an ActualValueDelegate returning
+  the value to be tested.
+
+* Experimental builds for Silverlight 3.0, 4.0 and 5.0 are included.
+
+* TestContext.Random may be used to provide random values of various
+  types for use in your tests.
+
+* The experimental Asynchronous attribute has been removed.
+
+Runner
+
+* The runner now supports the -include and -exclude options, which
+  are used to specify categories of tests to be included in a run.
+
+* Test execution time is now reported at a higher resolution on
+  systems that support it.
+
+Bug Fixes
+
+*  501784 	Theory tests do not work correctly when using null parameters
+*  671432 	Upgrade NAnt to Latest Release
+* 1028188 	Add Support for Silverlight
+* 1029785 	Test loaded from remote folder failed to run with exception System.IO.Directory Not Found
+* 1057981 	C#5 async tests are not supported
+* 1060631 	Add .NET 4.5 build
+* 1064014 	Simple async tests should not return Task<T>
+* 1071164 	Support async methods in usage scenarios of Throws constraints
+* 1071714 	TestContext is broken when a previous version of the runner is used alongside a new version of the framework
+* 1071861 	Error in Path Constraints
+* 1072379 	Report test execution time at a higher resolution
+* 1073750 	Remove Asynchronous Attribute
+* 1074568 	Assert/Assume should support an async method for the ActualValueDelegate
+* 1082330 	Better Exception if SetCulture attribute is applied multiple times
+* 1111834 	Expose Random Object as part of the test context
+* 1172979 	Add Category Support to nunitlite Runner
+* 1174741 	sl-4.0 csproj file is corrupt
+
+NUnitLite Version 0.8 - September 13, 2012
+
+Runner
+
+* The runner now displays the framework version for which it
+was built in the header, in addition to the framework under
+which it is currently running.
+
+* The new -explore option will list all the tests to a file 
+in XML format, without running them.
+
+* The runner now supports the -test option, which allows 
+selecting specific tests to be executed.
+
+Attributes
+
+* The new AsynchronousAttribute marks  test methods that are
+to be run asynchronously. An asynchronous test runs on a 
+separate thread and continues to run to completion while
+other tests run. Asynchronous tests must be written to
+avoid accessing common data, which may be changed by 
+other tests.
+
+* RandomAttribute can now provide random enumeration data
+
+* PlatformAttribute now recognizes MacOsX, Xbox and MonoTouch
+
+* The following attributes from full NUnit are now supported 
+by NUnitLite:
+	DataPoint
+	DataPoints
+	Theory
+	Timeout
+	Value
+	ValueSource
+
+Constraints
+
+* The following constraints from full NUnit are now supported
+by NUnitLite:
+	DelayedConstraint
+	ExactCountConstraint
+	PredicateConstraint
+	ReusableConstraint
+
+* New Syntax Helpers are supported in conjunction with the
+above constraints:
+	After
+	Exactly
+	Matching
+
+Bug Fixes
+
+*  999133 	Comments in Program.cs document non-existing classes
+*  999136 	NUGet adds all three assemblies to the project
+*  999137 	result:path missing filename could use better error report
+* 1000213 	Inconclusive message Not in report output
+* 1020295 	add v2 results output for continuous integration server support
+* 1023003 	-explore does not work unless a path is specified
+* 1023084 	Add Enum support to RandomAttribute
+* 1023673 	-test:<testName> argument does not work
+* 1028181 	TextUi class does not make use of TextWriter passed to constructor
+* 1028252 	Implement PredicateConstraint in NUnitLite
+* 1028253 	Implement Theories in NUnitLite
+* 1029170 	Implement ReusableConstraint in NUnitLite
+* 1029216 	Implement ExactCountConstraint in NUnitLite
+* 1037144 	Add MonoTouch support to PlatformAttribute
+* 1041365 	Add MaxOsX and Xbox support to platform attribute
+* 1047585 	Add Asynchronous attribute
+
+NUnitLite Version 0.7 - May 11, 2012
+
+This release brings NUnitLite to a point where it is functionally 
+equivalent to the NUnit 3.0 build of NUnitLite and has most of the 
+same capabilities as the full version of NUnit. 
+
+Obsolete methods and classes have been removed and the code has been
+reorganized to facilitate code sharing with NUnit 3.0. 
+
+NUnitLite is now built for the desktop using Visual Studio 2010. A VS 2008 project is still used for the compact framework builds.
+
+Separate builds are now created for .NET 2.0, 3.5 and 4.0
+
+A nuspec file is now provided and NUnitLite is distributed under NuGet.
+
+New Features and Enhancements
+
+* An An XML result file may be saved using the --result option of the runner.
+
+* The --explore option will create a list of tests contained in the assembly.
+
+* The --out option allows redirecting the final result to a report file. It must be used when running the test on a device without a Console. 
+
+* Assume.That is now supported
+
+* ExpectedExceptionAttribute now supports the same properties as for full NUnit.
+
+* New Constraints
+	  EmptyDirectoryConstraint
+	  ExceptionTypeConstraint
+
+* New Asserts
+          ByVal
+	  Throws
+	  DoesNotThrow
+	  Catch
+	  AreEqual
+	  AreNotEqual
+	  AreSame
+	  AreNotSame
+
+* New Syntax Helpers:
+
+  Is:     Positive
+          Negative
+
+  Has:    Exactly
+
+* New Attributes
+          CategoryAttribute
+          CombinatorialAttribute
+	  CultureAttribute
+	  DataAttribute
+	  ExplicitAttribute
+	  IncludeExcludeAttribute
+	  MaxTimeAttribute
+	  NUnitAttribute
+	  PairwiseAttribute
+	  PlatformAttribute
+	  RandomAttribute
+	  RangeAttribute
+	  RepeatAttribute
+	  SequentialAttribute
+	  SetCultureAttribute (not available on compact framework)
+	  SetUICultureAttribute (not available on compact framework)
+	  TestCaseAttribute
+	  TestCaseSourceAttribute
+	  TestFixtureSetUpAttribute
+	  TestFixtureTearDownAttribute
+	  TestModificationAttribute
+	  ValueSourceAttribute
+	  ValuesAttribute
+
+
+Bug Fixes
+
+* 554633 NUnitLite.csproj doesn't have required constants for Release
+* 742473 Assert.Pass is treated as a test failure
+* 742625 TestLoader.Load fails when run under Unity's web-player
+* 996055 NUnitLite runner should allow redirecting output via command line
+* 996059 Need a VS project for compact framework
+
+NUnitLite Version 0.6 - January 13, 2010
+
+This is the first release of NUnitLite under the MIT license.
+
+New Features and Enhancements
+
+* New Asserts
+          Pass
+          Ignore
+          Inconclusive
+
+* New Syntax Helpers:
+
+  Throws: InnerException
+          InvalidOperationException
+          ArgumentException
+          TargetInvocationException
+
+  Has:    InnerException
+
+  ConstraintExpression:
+          BinarySerializable
+          XmlSerializable
+          ContainsSubstring
+          StartsWith
+          EndsWith
+          Matches
+
+Bug fixes:
+
+* Additional control characters are now escaped in message output
+
+* A Stream now compares correctly as equal to itself
+
+
+NUnitLite Version 0.5 - June 14, 2009
+
+This is the first release from our new Launchpad.net project
+and aims at improved compatibility with NUnit 2.5.
+
+New Features and Enhancements
+
+* New Constraints: 
+       AssignableToConstraint
+       AttributeConstraint
+       AttributeExistsConstraint,
+       BinarySerializableConstraint (not available on compact framework)
+       CollectionOrderedConstraint
+       EmptyCollectionConstraint
+       EmptyStringConstraint
+       EqualConstraint
+       FalseConstraint
+       NaNConstraint
+       NullConstraint
+       NullOrEmptyStringConstraint
+       RangeConstraint
+       SamePathConstraint
+       SamePathOrUnderConstraint
+       ThrowsConstraint
+       ThrowsNothingConstraint
+       TrueConstraint
+       XmlSerializableConstraint (not available on compact framework 1.0)
+
+* New Syntax Helpers
+
+  Is:  AssignableTo
+       BinarySerializable (not available on compact framework)
+       TypeOf (replacing Type)
+       InRange
+       InstanceOf (replacing InstanceOfType)
+       Ordered
+       SamePath
+       SamePathOrUnder
+       XmlSerializable (not available on compact framework 1.0)
+
+  Has: Attribute
+       Message
+
+
+----------------------------------------------------------------------------
+NUnitLite Version 0.2 - November 3, 2007
+
+New Features and Enhancements
+
+* New attributes: PropertyAttribute, DescriptionAttribute, IgnoreAttribute
+* Text runner output may now be redirected (issue 12449) 
+* Added VS solution for building under the compact framework (issue 14447) 
+* Solutions are no longer bound to Source Control and anonymous access is now possible using several clients
+
+Bug fixes:
+
+* Fixed incorrect preprocessor constants (12361, 12411)
+* Fixed StackFilter to use correct namespace (12372)
+* Expected Exception is now handled corretly on Compact Framework (1446)
+
+----------------------------------------------------------------------------
+NUnitLite Version 0.1 - August 20, 2007
+
+The initial release of NUnitLite includes the following features:
+
+* Builds and runs on .NET 1.0, 1.1 and 2.0, .NET CF 1.0 and 2.0 and Mono 1.0 and 2.0 profiles. Since only a console runner is provided, it is not yet possible to run on devices that do not include a console.
+
+* Attributes recognized: 
+       TestFixtureAttribute
+       TestAttribute
+       SetUpAttribute
+       TearDownAttribute
+       ExpectedExceptionAttribute
+
+* Tests may be identified by inheritance from TestCase or using attributes.
+
+* Assert methods:
+       Assert.Null
+       Assert.NotNull
+       Assert.True
+       Assert.False
+       Assert.Fail
+       Assert.That
+
+* Constraint classes (excluding abstract classes):
+       AllItemsConstraint
+       AndConstraint
+       AssignableFromConstraint
+       CollectionContainsConstraint
+       CollectionEquivalentConstraint
+       CollectionSubsetConstraint
+       ContainsConstraint
+       EmptyConstraint
+       EndsWithConstraint
+       ExactTypeConstraint
+       GreaterThanConstraint
+       GreaterThanOrEqualConstraint
+       InstanceOfTypeConstraint
+       LessThanConstraint
+       LessThanOrEqualConstraint
+       NoItemConstraint
+       NotConstraint
+       OrConstraint
+       PropertyConstraint
+       RegexConstraint (not available on compact framework)
+       SameAsConstraint
+       SomeItemsConstraint
+       StartsWithConstraint
+       SubstringConstraint
+       UniqueItemsConstraint
+
+* Syntax helpers:
+       Is: Not, All, Null, True, False, NaN, Empty, Unique, EqualTo, SameAs,
+           GreaterThan, GreaterThanOrEqualTo, LessThan, LessThanOrEqualTo,
+           AtLeast, AtMost, Type, InstanceOfType, AssignableFrom, StringContaining,
+           StringStarting, StringEnding, StringMatching (except compact framework),
+           EquivalentTo, SubsetOf
+
+       Contains: Substring, Item
+
+       Has: No, All, Some, None,Property, Length, Count, Member
+

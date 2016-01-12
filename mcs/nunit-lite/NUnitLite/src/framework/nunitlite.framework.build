@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project name="NUnitLiteFramework" default="build" basedir=".">
+
+  <property name="msbuild.project" value="nunitlite-${msbuild.proj.suffix}.csproj"/>
+
+  <include buildfile="../../nunitlite.projects.common"/>
+
+  <target name="nant-clean">
+
+    <delete file="${current.build.dir}/nunitlite.dll"/>
+    <delete file="${current.build.dir}/nunitlite.pdb"/>
+    <delete file="${current.build.dir}/nunitlite.xml"/>
+
+  </target>
+
+  <target name="nant-build">
+
+    <csc target="library"
+        output="${current.build.dir}/nunitlite.dll"
+        doc="${current.build.dir}/nunitlite.xml"
+        debug="${build.debug}" 
+        define="${build.defines};NUNITLITE">
+      <sources basedir="${project.src.dir}/framework">
+        <patternset refid="source-files"/>
+      </sources>
+      <references>
+        <include name="mscorlib.dll"/>
+        <include name="System.dll"/>
+        <include name="System.Xml.dll"/>
+        <include name="System.Windows.dll" if="${runtime.platform == 'silverlight'}"/>
+      </references>
+    </csc>
+
+  </target>
+
+  <patternset id="source-files">
+    <include name="*.cs"/>
+
+    <include name="Api/*.cs"/>
+    <exclude name="Api/ITestCaseSourceProvider.cs"/>
+
+    <include name="Attributes/*.cs"/>
+    <exclude name="Attributes/SetCultureAttribute.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Attributes/SetUICultureAttribute.cs" if="${runtime.platform == 'netcf'}"/>
+
+    <include name="Compatibility/*.cs" if="${runtime.platform == 'silverlight'}"/>
+    <include name="Compatibility/*.cs" if="${runtime.config == 'netcf-1.0'}"/>
+
+    <include name="Constraints/**/*.cs"/>
+    <exclude name="Constraints/BinarySerializableConstraint.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Constraints/BinarySerializableConstraint.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Constraints/DelayedConstraint.cs" if="${runtime.platform == 'netcf'}"/>
+    <exclude name="Constraints/XmlSerializableConstraint.cs" if="${runtime.platform == 'silverlight'}"/>
+    <exclude name="Constraints/XmlSerializableConstraint.cs" if="${runtime.config == 'netcf-1.0'}"/>
+
+    <include name="Exceptions/*.cs"/>
+    <include name="Extensibility/*.cs"/>
+
+    <include name="Internal/**/*.cs"/>
+    <exclude name="Internal/AsyncSynchronizationContext.cs" unless="${runtime.config == 'net-4.5'}"/>
+    <exclude name="Internal/AsyncInvocationRegion.cs" unless="${runtime.config == 'net-4.5'}"/>
+    <exclude name="Internal/XmlHelper.cs"/>
+
+    <include name="Runner/**/*.cs"/>
+    <exclude name="Runner/TcpWriter.cs"/>
+    <exclude name="Runner/Silverlight/*.cs" unless="${runtime.platform == 'silverlight'}"/>
+  </patternset>
+
+</project>
+

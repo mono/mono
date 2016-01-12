@@ -54,10 +54,18 @@ if test -n "$extexcfile"; then
 fi
 
 if test -f $outfile.exc; then
+	# So what we're doing below with uniq -u is that we take 
+	# lines that have not been duplicated. This computes the 
+	# symmetric difference between the files. This is not
+	# what we want. If a file is in the excludes but not in
+	# the sources, we want that file not to show up. By duplicating the
+	# excludes, we ensure that we won't end up in this failure state.
 	sort -u $outfile.exc > $outfile.exc_s
+	sort -u $outfile.exc > $outfile.exc_s_dup
 	rm -f $outfile.exc
-    sort -m $outfile.inc_s $outfile.exc_s | uniq -u > $outfile
-    rm -f $outfile.inc_s $outfile.exc_s
+
+	sort -m $outfile.inc_s $outfile.exc_s $outfile.exc_s_dup | uniq -u > $outfile
+	rm -f $outfile.inc_s $outfile.exc_s
 else
 	mv $outfile.inc_s $outfile
 fi

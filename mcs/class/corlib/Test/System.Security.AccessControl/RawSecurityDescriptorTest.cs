@@ -9,7 +9,9 @@ using System;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
+#if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Security.AccessControl {
 
