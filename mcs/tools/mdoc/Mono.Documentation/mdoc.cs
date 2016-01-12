@@ -26,7 +26,7 @@ namespace Mono.Documentation {
 				else {
 					Console.Error.WriteLine ("mdoc: {0}", e.Message);
 				}
-				Console.Error.WriteLine ("See `mdoc help' for more information.");
+				Console.Error.WriteLine ("See `mdoc help' for more information or use --debug to diagnose.");
 				Environment.ExitCode = 1;
 			}
 		}

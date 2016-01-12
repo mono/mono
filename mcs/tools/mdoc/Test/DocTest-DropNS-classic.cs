@@ -4,6 +4,8 @@ namespace MyFramework.MyNamespace {
 		public float Hello(int value) {
 			return 0.0f;
 		}
+		public double OnlyInClassic {get;set;}
+		
 		#if DELETETEST
 		public string InBoth {get;set;}
 		public string InBothClassic {get;set;}
@@ -20,6 +22,10 @@ namespace MyFramework.MyNamespace {
 		#endif
 	}
 
+	#if DELETETEST 
+	public class TypeOnlyInClassic {}
+	#endif
+	
 	#if DELETETEST && !V2
 	public class WillDelete {
 		public string Name {get;set;}
