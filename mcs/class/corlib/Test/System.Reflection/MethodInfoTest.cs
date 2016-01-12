@@ -308,6 +308,9 @@ namespace MonoTests.System.Reflection
 			public override void f2 () { }
 		}
 
+		class DerivedFromGenericBase : GenericBase<int, int> {
+		}
+
 		[Test]
 		public void GetBaseDefinition_OpenConstructedBaseType () // 36305
 		{
@@ -822,6 +825,33 @@ namespace MonoTests.System.Reflection
 		{
 			var m = GetType ().GetMethod ("Bug12856");
 			Assert.AreEqual ("System.Nullable`1[System.Int32] Bug12856()", m.ToString (), "#1");
+		}
+
+		[Test]
+		public void GetReflectedType () // #12205
+		{
+			// public method declared in base type, queried from a derived type
+			MethodInfo mi = typeof (TestInheritedMethodB).GetMethod ("TestMethod2");
+			Assert.AreEqual (mi.ReflectedType, typeof (TestInheritedMethodB), "#1");
+
+			// public method declared in a generic class,
+			// queried from a non-generic class derived
+			// from an instantiation of the generic class.
+			mi = typeof (DerivedFromGenericBase).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (DerivedFromGenericBase), "#2");
+
+			// public method declared in a generic class,
+			// queried from the generic type defintion of
+			// a generic derived class.
+			mi = typeof (GenericMid<,>).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (GenericMid<,>), "#3");
+
+			// public method declared in a generic class,
+			// queried from an instantiation of a generic
+			// derived class.
+			mi = typeof (GenericMid<int,int>).GetMethod ("f2");
+			Assert.AreEqual (mi.ReflectedType, typeof (GenericMid<int,int>), "#4");
+
 		}
 
 #if !MONOTOUCH
