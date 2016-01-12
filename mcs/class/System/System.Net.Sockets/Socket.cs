@@ -1147,7 +1147,12 @@ namespace System.Net.Sockets
 
 			if (local_end == null)
 				throw new ArgumentNullException("local_end");
-
+				
+			var ipEndPoint = local_end as IPEndPoint;
+			if (ipEndPoint != null) {
+				local_end = RemapIPEndPoint (ipEndPoint);	
+			}
+			
 			int error;
 			Bind_internal (safe_handle, local_end.Serialize(), out error);
 
@@ -1239,6 +1244,8 @@ namespace System.Net.Sockets
 			int error = 0;
 			foreach (IPAddress address in addresses) {
 				IPEndPoint iep = new IPEndPoint (address, port);
+				
+				iep = RemapIPEndPoint (iep);
 
 				Connect_internal (safe_handle, iep.Serialize (), out error);
 				if (error == 0) {
@@ -1283,6 +1290,10 @@ namespace System.Net.Sockets
 
 			if (is_listening)
 				throw new InvalidOperationException ();
+				
+			if (ep != null) {
+				remoteEP = RemapIPEndPoint (ep);
+			}
 
 			SocketAddress serial = remoteEP.Serialize ();
 
@@ -1408,6 +1419,8 @@ namespace System.Net.Sockets
 					sockares.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
 					return sockares;
 				}
+				
+				end_point = RemapIPEndPoint (ep);
 			}
 
 			int error = 0;
@@ -3444,7 +3457,15 @@ namespace System.Net.Sockets
 				throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 			}
 		}
-
+		
+		IPEndPoint RemapIPEndPoint (IPEndPoint input) {
+			// If socket is DualMode ensure we automatically handle mapping IPv4 addresses to IPv6.
+			if (IsDualMode && input.AddressFamily == AddressFamily.InterNetwork)
+				return new IPEndPoint (input.Address.MapToIPv6 (), input.Port);
+			
+			return input;
+		}
+		
 		[StructLayout (LayoutKind.Sequential)]
 		struct WSABUF {
 			public int len;
