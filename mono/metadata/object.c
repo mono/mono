@@ -5996,6 +5996,7 @@ void
 mono_raise_exception (MonoException *ex) 
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	g_assert (mono_handle_arena_current () == NULL);
 
 	/*
 	 * NOTE: Do NOT annotate this function with G_GNUC_NORETURN, since
