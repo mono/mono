@@ -736,10 +736,6 @@ namespace System {
 				return String.Empty;
 			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
-				Version v = CreateVersionFromString (GetOSVersionString ());
-				if (Platform == PlatformID.MacOSX && v >= new Version(15, 0)) {
-					return "/usr/local/share";
-				}
 				return "/usr/share";
 			default:
 				throw new ArgumentException ("Invalid SpecialFolder");
