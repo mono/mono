@@ -231,7 +231,6 @@ System.Net/ServicePointManagerTest.cs
 System.Net/ServicePointTest.cs
 System.Net/SocketPermissionAttributeTest.cs
 System.Net/SocketPermissionTest.cs
-System.Net/SocketResponder.cs
 System.Net/WebHeaderCollectionTest.cs
 System.Net/WebPermissionAttributeTest.cs
 System.Net/WebPermissionTest.cs
@@ -510,3 +509,4 @@ System.Collections.Concurrent/CollectionStressTestHelper.cs
 System.Collections.Concurrent/ParallelTestHelper.cs
 System.Net.WebSockets/ClientWebSocketTest.cs
 ../../test-helpers/NetworkHelpers.cs
+../../test-helpers/SocketResponder.cs

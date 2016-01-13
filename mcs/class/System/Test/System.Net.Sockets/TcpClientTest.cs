@@ -13,6 +13,8 @@ using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Sockets
 {
 	/// <summary>
