@@ -60,8 +60,14 @@ WARNING_ABOUT_DISABLED_WARNING=1635
 LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618,$(WARNING_ABOUT_DISABLED_WARNING) -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS)
 DEFAULT_REFERENCES =
 
+ifdef MOBILE_STATIC
+CORLIB_MONO_POSIX_REF =
+else
+CORLIB_MONO_POSIX_REF = -r:Mono.Posix.dll
+endif
+
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe $(CORLIB_MONO_POSIX_REF) -r:System.Core.dll \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
