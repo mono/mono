@@ -1759,18 +1759,15 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		return;
 
 	if (klass->blittable) {
-		int msize = mono_class_value_size (klass, NULL);
-		int usize = msize;
-		g_assert (msize == info->native_size);
+		int usize = mono_class_value_size (klass, NULL);
+		g_assert (usize == info->native_size);
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_icon (mb, usize);
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
 
-		msize = offset_of_first_child_field;
-		
-		mono_mb_emit_add_to_local (mb, 0, msize);
+		mono_mb_emit_add_to_local (mb, 0, offset_of_first_child_field);
 		mono_mb_emit_add_to_local (mb, 1, usize);
 		return;
 	}
