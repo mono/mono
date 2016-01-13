@@ -1744,13 +1744,14 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 }
 
 static void
-emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int child_class_min_align)
+emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int offset_of_first_child_field)
 {
 	MonoMarshalType *info;
 	int i;
+	int first_field_offset = (klass->field.count != 0 ? klass->fields[0].offset : 0) - sizeof(MonoObject);
 
 	if (klass->parent)
-		emit_struct_conv_full(mb, klass->parent, to_object, klass->min_align);
+		emit_struct_conv_full(mb, klass->parent, to_object, first_field_offset);
 
 	info = mono_marshal_load_type_info (klass);
 
@@ -1767,12 +1768,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		mono_mb_emit_byte (mb, CEE_PREFIX1);
 		mono_mb_emit_byte (mb, CEE_CPBLK);
 
-		/* Make sure managed src pointer aligns with child struct address (if any)*/
-		if(child_class_min_align)
-		{
-			msize += child_class_min_align - 1;
-			msize &= ~(child_class_min_align - 1);
-		}
+		msize = offset_of_first_child_field;
 		
 		mono_mb_emit_add_to_local (mb, 0, msize);
 		mono_mb_emit_add_to_local (mb, 1, usize);
@@ -1804,14 +1800,6 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 		if (last_field) {
 			msize = klass->instance_size - info->fields [i].field->offset;
 			usize = info->native_size - info->fields [i].offset;
-
-			/* Make sure managed src pointer aligns with child struct address (if any) */
-			if(child_class_min_align)
-			{
-				msize += child_class_min_align - 1;
-				msize &= ~(child_class_min_align - 1);
-			}
-
 		} else {
 			msize = info->fields [i + 1].field->offset - info->fields [i].field->offset;
 			usize = info->fields [i + 1].offset - info->fields [i].offset;
