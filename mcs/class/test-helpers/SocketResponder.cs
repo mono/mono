@@ -34,7 +34,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace MonoTests.System.Net
+namespace MonoTests.Helpers
 {
 	public delegate byte [] SocketRequestHandler (Socket socket);
 

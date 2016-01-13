@@ -31,6 +31,6 @@ System.Web.Services.Description/WebReferenceOptionsTest.cs
 System.Web.Services.Description/WebServicesInteroperabilityTest.cs
 System.Web.Services.Protocols/LogicalMethodInfoTest.cs
 System.Web.Services.Protocols/SoapHttpClientProtocolTest.cs
-System.Web.Services.Protocols/SocketResponder.cs
 System.Web.Services.Protocols/WebClientProtocolTest.cs
 System.Web.Services.Protocols/SoapServerTypeTest.cs
+../../test-helpers/SocketResponder.cs

@@ -39,6 +39,8 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Services.Protocols
 {
 	[TestFixture]
