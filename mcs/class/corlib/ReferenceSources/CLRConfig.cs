@@ -33,10 +33,8 @@ namespace System {
 		[System.Security.SecurityCritical]
 		[ResourceExposure(ResourceScope.None)]
 		[SuppressUnmanagedCodeSecurity]
-		internal static bool CheckThrowUnobservedTaskExceptions()
-		{
-			return false;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern internal static bool CheckThrowUnobservedTaskExceptions();
 
 	}  // internal class CLRConfig
 
