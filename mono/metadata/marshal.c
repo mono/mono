@@ -1748,7 +1748,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 {
 	MonoMarshalType *info;
 	int i;
-	int first_field_offset = (klass->field.count != 0 ? klass->fields[0].offset : 0) - sizeof(MonoObject);
+	int first_field_offset = klass->field.count != 0 ? klass->fields[0].offset - sizeof(MonoObject) : 0;
 
 	if (klass->parent)
 		emit_struct_conv_full(mb, klass->parent, to_object, first_field_offset);
