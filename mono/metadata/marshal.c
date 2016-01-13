@@ -1743,15 +1743,26 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 	}
 }
 
+static int offset_of_first_nonstatic_field(MonoClass *klass)
+{
+	int i;
+	for (i = 0; i < klass->field.count; i++)
+	{
+		if (!(klass->fields[i].type->attrs & FIELD_ATTRIBUTE_STATIC) && !mono_field_is_deleted(&klass->fields[i]))
+			return klass->fields[i].offset - sizeof(MonoObject);
+	}
+
+	return 0;
+}
+
 static void
 emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int offset_of_first_child_field)
 {
 	MonoMarshalType *info;
 	int i;
-	int first_field_offset = klass->field.count > 0 ? klass->fields[0].offset - sizeof(MonoObject) : 0;
 
 	if (klass->parent)
-		emit_struct_conv_full(mb, klass->parent, to_object, first_field_offset);
+		emit_struct_conv_full(mb, klass->parent, to_object, offset_of_first_nonstatic_field(klass));
 
 	info = mono_marshal_load_type_info (klass);
 
