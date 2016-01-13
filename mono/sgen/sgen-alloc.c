@@ -46,6 +46,8 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-client.h"
 #include "mono/utils/mono-memory-model.h"
+#include "mono/utils/mono-error.h"
+#include "mono/utils/mono-error-internals.h"
 
 #define ALIGN_UP		SGEN_ALIGN_UP
 #define ALLOC_ALIGN		SGEN_ALLOC_ALIGN
@@ -418,15 +420,15 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 }
 
 GCObject*
-sgen_alloc_obj (GCVTable vtable, size_t size)
+sgen_alloc_obj (GCVTable vtable, size_t size, MonoError *error)
 {
 	GCObject *res;
 	TLAB_ACCESS_INIT;
 
+	mono_error_init (error);
+
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
-
-#ifndef DISABLE_CRITICAL_REGION
 
 	if (G_UNLIKELY (has_per_allocation_action)) {
 		static int alloc_count;
@@ -452,12 +454,12 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 		return res;
 	}
 	EXIT_CRITICAL_REGION;
-#endif
+
 	LOCK_GC;
 	res = sgen_alloc_obj_nolock (vtable, size);
 	UNLOCK_GC;
 	if (G_UNLIKELY (!res))
-		sgen_client_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
 	return res;
 }
 
@@ -466,9 +468,11 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
  * We may want to explicitly free these objects.
  */
 GCObject*
-sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
+sgen_alloc_obj_pinned (GCVTable vtable, size_t size, MonoError *error)
 {
 	GCObject *p;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -492,9 +496,11 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 }
 
 GCObject*
-sgen_alloc_obj_mature (GCVTable vtable, size_t size)
+sgen_alloc_obj_mature (GCVTable vtable, size_t size, MonoError *error)
 {
 	GCObject *res;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
