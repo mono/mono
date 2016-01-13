@@ -86,7 +86,7 @@ namespace System.Net
 		static object classLock = new object ();
 		MonoTlsStream tlsStream;
 
-#if MONOTOUCH
+#if MONOTOUCH && !MONOTOUCH_TV && !MONOTOUCH_WATCH
 		[System.Runtime.InteropServices.DllImport ("__Internal")]
 		static extern void xamarin_start_wwan (string uri);
 #endif
@@ -152,7 +152,7 @@ namespace System.Net
 				IPHostEntry hostEntry = sPoint.HostEntry;
 
 				if (hostEntry == null) {
-#if MONOTOUCH
+#if MONOTOUCH && !MONOTOUCH_TV && !MONOTOUCH_WATCH
 					xamarin_start_wwan (sPoint.Address.ToString ());
 					hostEntry = sPoint.HostEntry;
 					if (hostEntry == null) {
@@ -160,7 +160,7 @@ namespace System.Net
 						status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
 									    WebExceptionStatus.NameResolutionFailure;
 						return;
-#if MONOTOUCH
+#if MONOTOUCH && !MONOTOUCH_TV && !MONOTOUCH_WATCH
 					}
 #endif
 				}
