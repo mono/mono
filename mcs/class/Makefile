@@ -334,6 +334,8 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
+all-local-aot:
+
 # Files needed to bootstrap C# compiler
 basic_files = basic.exe mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.Core.dll System.Security.dll System.Configuration.dll
 monolite_files = $(basic_files:%=lib/monolite/%)
