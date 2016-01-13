@@ -7379,7 +7379,7 @@ mono_handle_array_nullable_init (MonoDomain *domain, MonoClass *element_class, M
 	if (mono_handle_obj_is_null (value_handle))
 		mono_gc_bzero_atomic (dst, mono_class_value_size (param_class, NULL));
 	else
-		mono_gc_wbarrier_value_copy (dst, mono_handle_obj (value_handle) + sizeof (MonoObject), 1, param_class);
+		mono_gc_wbarrier_value_copy (dst, ((guint8*)mono_handle_obj (value_handle)) + sizeof (MonoObject), 1, param_class);
 
 	MONO_FINISH_GC_CRITICAL_REGION;
 }
