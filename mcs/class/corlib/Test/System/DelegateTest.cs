@@ -5,7 +5,7 @@
 
 using System;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -1279,7 +1279,7 @@ namespace MonoTests.System
 		{
 			string retarg (string s);
 		}
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		[Test]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
@@ -1388,7 +1388,7 @@ namespace MonoTests.System
 			Assert.IsTrue (d (0, 0));
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		public static void DynInvokeWithClosedFirstArg (object a, object b)
 		{
 		}

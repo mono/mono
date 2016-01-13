@@ -33,7 +33,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Reflection;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -600,7 +600,7 @@ namespace MonoTests.System.Reflection
 			} catch (InvalidOperationException ex) {
 			}
 		}
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		public TFoo SimpleGenericMethod2<TFoo, TBar> () { return default (TFoo); }
 		/*Test for the uggly broken behavior of SRE.*/
 		[Test]
@@ -854,7 +854,7 @@ namespace MonoTests.System.Reflection
 
 		}
 
-#if !MONOTOUCH
+#if !MONOTOUCH && !MOBILE_STATIC
 		class GenericClass<T>
 		{
 			public void Method ()
