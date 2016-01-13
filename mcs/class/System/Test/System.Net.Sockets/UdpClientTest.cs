@@ -1068,6 +1068,9 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // #6057
 		public void ReceiveIPv6 ()
 		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not enabled.");
+
 			int PORT = 9997;
 			using(var udpClient = new UdpClient (PORT, AddressFamily.InterNetworkV6))
 			using(var udpClient2 = new UdpClient (PORT+1, AddressFamily.InterNetworkV6))
