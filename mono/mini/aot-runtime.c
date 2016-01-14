@@ -2468,6 +2468,38 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 				return code;
 		}
 
+		/* Same for CompareExchange<T> */
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass->image == mono_defaults.corlib && !strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Interlocked") && !strcmp (method->name, "CompareExchange") && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->params [1])) {
+			MonoMethod *m;
+			MonoGenericContext ctx;
+			MonoType *args [16];
+			gpointer iter = NULL;
+
+			while ((m = mono_class_get_methods (method->klass, &iter))) {
+				if (mono_method_signature (m)->generic_param_count && !strcmp (m->name, "CompareExchange"))
+					break;
+			}
+			g_assert (m);
+
+			memset (&ctx, 0, sizeof (ctx));
+			args [0] = &mono_defaults.object_class->byval_arg;
+			ctx.method_inst = mono_metadata_get_generic_inst (1, args);
+
+			m = mono_marshal_get_native_wrapper (mono_class_inflate_generic_method (m, &ctx), TRUE, TRUE);
+
+			/* Avoid recursion */
+			if (method == m)
+				return NULL;
+
+			/* 
+			 * Get the code for the <object> instantiation which should be emitted into
+			 * the mscorlib aot image by the AOT compiler.
+			 */
+			code = mono_aot_get_method (domain, m);
+			if (code)
+				return code;
+		}
+
 		if (method_index == 0xffffff) {
 			if (mono_aot_only && mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT)) {
 				char *full_name;
