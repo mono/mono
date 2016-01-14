@@ -48,7 +48,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			// that will return a AesCryptoServiceProvider
 			var aes = GetInstance ();
-#if MONOTOUCH
+#if MONOTOUCH || MOBILE_STATIC
 			Assert.AreEqual ("System.Security.Cryptography.AesManaged", aes.ToString (), "Default");
 			Assert.AreEqual (128, aes.FeedbackSize, "FeedbackSize");
 #else

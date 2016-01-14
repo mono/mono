@@ -54,7 +54,7 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class MethodInfoTest
 	{
-#if MONOTOUCH
+#if MONOTOUCH || MOBILE_STATIC
 		// use an existing symbol - so we can build without dlsym. It does not matter that the signature does not match for the test
 		[DllImport ("libc", EntryPoint="readlink", CharSet=CharSet.Unicode, ExactSpelling=false, PreserveSig=true, SetLastError=true, BestFitMapping=true, ThrowOnUnmappableChar=true)]
 #else
@@ -115,7 +115,7 @@ namespace MonoTests.System.Reflection
 			DllImportAttribute attr = (DllImportAttribute)((t.GetMethod ("dllImportMethod").GetCustomAttributes (typeof (DllImportAttribute), true)) [0]);
 
 			Assert.AreEqual (CallingConvention.Winapi, attr.CallingConvention, "#1");
-#if MONOTOUCH
+#if MONOTOUCH || MOBILE_STATIC
 			Assert.AreEqual ("readlink", attr.EntryPoint, "#2");
 			Assert.AreEqual ("libc", attr.Value, "#3");
 #else
@@ -397,7 +397,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody ()
 		{
-#if MONOTOUCH && !DEBUG
+#if (MONOTOUCH || MOBILE_STATIC) && !DEBUG
 			Assert.Ignore ("Release app (on devices) are stripped of (managed) IL so this test would fail");
 #endif
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
