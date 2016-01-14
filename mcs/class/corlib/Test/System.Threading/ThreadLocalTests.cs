@@ -193,6 +193,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("NotWorking")] // Finalizers aren't guaranteed
 		public void DisposeOnThreadExit ()
 		{
 			var threadLocal = new ThreadLocal<SetMreOnFinalize>();
@@ -210,7 +211,7 @@ namespace MonoTests.System.Threading
 			}, 500);
 
 			if (!mres.IsSet)
-				Assert.Fail ();
+				Assert.Fail ("Finalizer didn't run after thread termination");
 		}
 	}
 }
