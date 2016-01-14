@@ -457,7 +457,18 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void LoadWithPartialName ()
 		{
-			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_test_net_4_x", "corlib_test_mobile_static", "corlib_plattest", "mscorlibtests", "BclTests" };
+// FIXME?
+// So the problem here is that if we load an assembly
+// in a fully aot mode and then cannot load the
+// dylib, we will assert. This test is incompatible
+// with the semantics of aot'ed assembly loading, as
+// aot may assert when loading. This assumes that it's
+// safe to greedly load everything.
+#if MOBILE_STATIC
+			string [] names = { "corlib_test_mobile_static" };
+#else
+			string [] names = { "corlib_test_net_1_1", "corlib_test_net_2_0", "corlib_test_net_4_0", "corlib_test_net_4_5", "corlib_test_net_4_x", "corlib_plattest", "mscorlibtests", "BclTests" };
+#endif
 
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
