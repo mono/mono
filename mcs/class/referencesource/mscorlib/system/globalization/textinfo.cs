@@ -974,13 +974,30 @@ namespace System.Globalization {
             Contract.EndContractBlock();
 
 #if MONO
-            return this == s_Invariant ? StringComparer.InvariantCultureIgnoreCase.GetHashCode (str) : StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
+			return this == s_Invariant ? GetInvariantCaseInsensitiveHashCode (str) : StringComparer.CurrentCultureIgnoreCase.GetHashCode (str);
 #else
             // Return our result
             return (InternalGetCaseInsHash(this.m_dataHandle, this.m_handleOrigin, this.m_textInfoName, str, forceRandomizedHashing, additionalEntropy));
 #endif
         }
-#if !MONO
+#if MONO
+		unsafe int GetInvariantCaseInsensitiveHashCode (string str)
+		{
+			fixed (char * c = str) {
+				char * cc = c;
+				char * end = cc + str.Length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (cc [1]);
+				}
+				++end;
+				if (cc < end)
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+				return h;
+			}
+		}
+#else
         // Change case (ToUpper/ToLower) -- COMNlsInfo::InternalChangeCaseChar
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
