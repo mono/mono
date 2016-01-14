@@ -1127,13 +1127,16 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null) {
 					// CLDR uses unicode negative sign for some culture (e.g sv, is, lt, don't kwnow why) but .net always
 					// uses simple - sign
-					if (el.InnerText == "\u2212") {
+					switch (el.InnerText) {
+					case "\u2212":
+					case "\u200F\u002D": // Remove any right-to-left mark characters
+					case "\u200E\u002D":
 						ni.NegativeSign = "-";
-					} else if (el.InnerText ==  "\u200F\u002D") {
-						// Remove any right-to-left mark characters
-						ni.NegativeSign = "-";
-					} else
-						ni.NegativeSign = el.InnerText;					
+						break;
+					default:
+						ni.NegativeSign = el.InnerText;
+						break;
+					}
 				}
 
 				el = node.SelectSingleNode ("infinity");
