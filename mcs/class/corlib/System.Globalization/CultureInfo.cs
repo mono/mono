@@ -629,7 +629,7 @@ namespace System.Globalization
 				numInfo = (NumberFormatInfo) numInfo.Clone ();
 			}
 
-			textInfo = CreateTextInfo (read_only);
+			textInfo = TextInfo.Invariant;
 
 			m_name=String.Empty;
 			englishname=
