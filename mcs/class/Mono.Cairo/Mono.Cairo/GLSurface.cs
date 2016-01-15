@@ -1,11 +1,12 @@
 //
-// Mono.Cairo.SurfaceType.cs
+// Mono.Cairo.GLSurface.cs
 //
 // Authors:
-//    John Luke
-//    JP Bruyère
+//			JP Bruyère (jp_bruyere@hotmail.com)
 //
-// (C) John Luke, 2006.
+// This is an OO wrapper API for the Cairo API
+//
+// Copyright (C) 2016 JP Bruyère
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,32 +32,15 @@ using System;
 
 namespace Cairo {
 
-	[Serializable]
-	public enum SurfaceType
+	public class GLSurface : Surface
 	{
-		Image,
-		Pdf,
-		PS,
-		Xlib,
-		Xcb,
-		Glitz,
-		Quartz,
-		Win32,
-		BeOS,
-		DirectFB,
-		Svg,
-		OS2,
-		Win32Printing,
-		QuartzImage,
-		Script,
-		Qt,
-		Recording,
-		VG,
-		GL,
-		Drm,
-		Tee,
-		Xml,
-		Skia,
-		SubSurface
+		public GLSurface (Device device, Cairo.Content content, uint tex, int width, int height)
+			: base (NativeMethods.cairo_gl_surface_create_for_texture (device.Handle, (uint)content, tex, width, height), true)
+		{
+		}
+
+		internal GLSurface (IntPtr ptr, bool own) : base (ptr, own)
+		{
+		}
 	}
 }
