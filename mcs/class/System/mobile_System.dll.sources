@@ -788,6 +788,8 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/referencesource/System/compmod/system/diagnostics/TextWriterTraceListener.cs
 
+../../../external/referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
+
 ../Mono.Security/Mono.Security.Authenticode/PrivateKey.cs
 ../Mono.Security/Mono.Security.Cryptography/MD5SHA1.cs
 ../Mono.Security/Mono.Security.Cryptography/TlsHMAC.cs
