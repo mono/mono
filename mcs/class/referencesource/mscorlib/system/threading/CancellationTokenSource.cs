@@ -590,11 +590,33 @@ namespace System.Threading
 
                 m_registeredCallbacksLists = null; // free for GC.
 
+#if MONO
+                //
+                // .NET version has a race on m_kernelEvent which it's not easy to
+                // trigger on .net probably due to much faster Close implementation
+                // but on Mono this can happen quite easily.
+                //
+                // First race was between Dispose and NotifyCancellation where m_kernelEvent
+                // can be nulled/Closed and Set at same time.
+                //
+                // Second race was between concurrent Dispose calls.
+                //
+                // Third race is between Dispose and WaitHandle propery but that should
+                // be handled by user.
+                //
+                var ke = m_kernelEvent;
+                if (ke != null)
+                {
+                    m_kernelEvent = null;
+                    ke.Close();
+                }
+#else
                 if (m_kernelEvent != null)
                 {
                     m_kernelEvent.Close(); // the critical cleanup to release an OS handle
                     m_kernelEvent = null; // free for GC.
                 }
+#endif
 
                 m_disposed = true;
             }
@@ -730,8 +752,23 @@ namespace System.Threading
                 ThreadIDExecutingCallbacks = Thread.CurrentThread.ManagedThreadId;
                 
                 //If the kernel event is null at this point, it will be set during lazy construction.
+#if MONO
+                var ke = m_kernelEvent;
+                if (ke != null) {
+                    try {
+                        ke.Set(); // update the MRE value.
+                    } catch (ObjectDisposedException) {
+                        //
+                        // Rethrow only when we are not in race with Dispose
+                        //
+                        if (m_kernelEvent != null)
+                            throw;
+                    }
+                }
+#else
                 if (m_kernelEvent != null)
                     m_kernelEvent.Set(); // update the MRE value.
+#endif
 
                 // - late enlisters to the Canceled event will have their callbacks called immediately in the Register() methods.
                 // - Callbacks are not called inside a lock.
