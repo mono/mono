@@ -881,3 +881,5 @@ ReferenceSources/Win32Exception.cs
 ../Mono.Security/Mono.Security.Interface/TlsException.cs
 ../Mono.Security/Mono.Security.Interface/TlsProtocolCode.cs
 ../Mono.Security/Mono.Security.Interface/TlsProtocols.cs
+
+../../../external/referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
