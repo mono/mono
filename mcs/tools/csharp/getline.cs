@@ -1418,7 +1418,15 @@ namespace Mono.Terminal {
 	class Demo {
 		static void Main ()
 		{
-			LineEditor le = new LineEditor ("foo");
+			LineEditor le = new LineEditor ("foo") {
+				HeuristicsMode = "csharp"
+			};
+			le.AutoCompleteEvent += delegate (string a, int pos){
+				string prefix = "";
+				var completions = new string [] { "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten" };
+				return new Mono.Terminal.LineEditor.Completion (prefix, completions);
+			};
+			
 			string s;
 			
 			while ((s = le.Edit ("shell> ", "")) != null){
