@@ -75,6 +75,7 @@ default: all
 
 include $(topdir)/build/config-default.make
 -include $(topdir)/build/pre-config.make
+-include $(topdir)/build/config.make
 
 # Default PLATFORM and PROFILE if they're not already defined.
 
@@ -112,7 +113,6 @@ PROFILE = $(DEFAULT_PROFILE)
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
--include $(topdir)/build/config.make
 
 # If the profile is using nunit-lite, use it
 ifdef NUNIT_LITE
