@@ -50,7 +50,6 @@
 #include <mono/metadata/attach.h>
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-hwcap.h"
-#include "mono/utils/mono-logger-internals.h"
 
 #include "mini.h"
 #include "jit.h"
