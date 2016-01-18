@@ -25,11 +25,12 @@
 // 
 
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace System.Net
+namespace Mono.Net
 {
 	internal class CFObject : IDisposable
 	{

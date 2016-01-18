@@ -41,6 +41,7 @@ using System.Net.Cache;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Mono.Net;
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
