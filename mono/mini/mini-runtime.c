@@ -1342,6 +1342,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 gpointer
 mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors)
 {
+	MonoError error;
 	unsigned char *ip = patch_info->ip.i + code;
 	gconstpointer target = NULL;
 
@@ -1497,8 +1498,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = GINT_TO_POINTER ((int)(-((patch_info->data.klass->interface_id + 1) * SIZEOF_VOID_P)));
 		break;
 	case MONO_PATCH_INFO_VTABLE:
-		target = mono_class_vtable (domain, patch_info->data.klass);
-		g_assert (target);
+		target = mono_class_vtable_checked (domain, patch_info->data.klass, &error);
+		g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
 		break;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
 		MonoDelegateClassMethodPair *del_tramp = patch_info->data.del_tramp;
@@ -1510,7 +1511,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	}
 	case MONO_PATCH_INFO_SFLDA: {
-		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.field->parent);
+		MonoVTable *vtable;
 
 		if (mono_class_field_is_special_static (patch_info->data.field)) {
 			gpointer addr = NULL;
@@ -1523,7 +1524,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			return addr;
 		}
 
-		g_assert (vtable);
+		vtable = mono_class_vtable_checked (domain, patch_info->data.field->parent, &error);
+		g_assert (mono_error_ok (&error));
+
 		if (!vtable->initialized && !(vtable->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) && (method && mono_class_needs_cctor_run (vtable->klass, method)))
 			/* Done by the generated code */
 			;
@@ -1614,8 +1617,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = mono_thread_interruption_request_flag ();
 		break;
 	case MONO_PATCH_INFO_METHOD_RGCTX: {
-		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.method->klass);
-		g_assert (vtable);
+		MonoVTable *vtable = mono_class_vtable_checked (domain, patch_info->data.method->klass, &error);
+		g_assert (mono_error_ok (&error));
 
 		target = mono_method_lookup_rgctx (vtable, mini_method_get_context (patch_info->data.method)->method_inst);
 		break;
@@ -1846,6 +1849,7 @@ no_gsharedvt_in_wrapper (void)
 static gpointer
 mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException **ex)
 {
+	MonoError error;
 	MonoDomain *target_domain, *domain = mono_domain_get ();
 	MonoJitInfo *info;
 	gpointer code = NULL, p;
@@ -1900,8 +1904,8 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			MonoException *tmpEx;
 
 			mono_jit_stats.methods_lookups++;
-			vtable = mono_class_vtable (domain, method->klass);
-			g_assert (vtable);
+			vtable = mono_class_vtable_checked (domain, method->klass, &error);
+			g_assert (mono_error_ok (&error));
 			tmpEx = mono_runtime_class_init_full (vtable, ex == NULL);
 			if (tmpEx) {
 				*ex = tmpEx;
@@ -1926,8 +1930,8 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 			 * called by init_method ().
 			 */
 			if (!mono_llvm_only) {
-				vtable = mono_class_vtable (domain, method->klass);
-				g_assert (vtable);
+				vtable = mono_class_vtable_checked (domain, method->klass, &error);
+				g_assert (mono_error_ok (&error));
 				mono_runtime_class_init (vtable);
 			}
 		}
@@ -2199,6 +2203,7 @@ typedef struct {
 static RuntimeInvokeInfo*
 create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer compiled_method, gboolean callee_gsharedvt)
 {
+	MonoError error;
 	MonoMethod *invoke;
 	RuntimeInvokeInfo *info;
 
@@ -2207,7 +2212,8 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 	info->sig = mono_method_signature (method);
 
 	invoke = mono_marshal_get_runtime_invoke (method, FALSE);
-	info->vtable = mono_class_vtable_full (domain, method->klass, TRUE);
+	info->vtable = mono_class_vtable_checked (domain, method->klass, &error);
+	mono_error_raise_exception (&error);
 	g_assert (info->vtable);
 
 	MonoMethodSignature *sig = mono_method_signature (method);
@@ -2421,7 +2427,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	if (!info) {
 		if (mono_security_core_clr_enabled ()) {
 			/*
-			 * This might be redundant since mono_class_vtable () already does this,
+			 * This might be redundant since mono_class_vtable_checked () already does this,
 			 * but keep it just in case for moonlight.
 			 */
 			mono_class_setup_vtable (method->klass);

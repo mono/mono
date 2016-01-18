@@ -1048,14 +1048,18 @@ mono_value_describe_fields (MonoClass* klass, const char* addr)
 void
 mono_class_describe_statics (MonoClass* klass)
 {
+	MonoError error;
 	MonoClassField *field;
 	MonoClass *p;
 	const char *field_ptr;
-	MonoVTable *vtable = mono_class_vtable_full (mono_domain_get (), klass, FALSE);
+	MonoVTable *vtable;
 	const char *addr;
 
-	if (!vtable)
+	vtable = mono_class_vtable_checked (mono_domain_get (), klass, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 		return;
+	}
 	if (!(addr = (const char *)mono_vtable_get_static_field_data (vtable)))
 		return;
 

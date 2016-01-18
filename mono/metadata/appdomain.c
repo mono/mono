@@ -158,6 +158,7 @@ mono_runtime_get_no_exec (void)
 static void
 create_domain_objects (MonoDomain *domain)
 {
+	MonoError error;
 	MonoDomain *old_domain = mono_domain_get ();
 	MonoString *arg;
 	MonoVTable *string_vt;
@@ -172,7 +173,10 @@ create_domain_objects (MonoDomain *domain)
 	 * Initialize String.Empty. This enables the removal of
 	 * the static cctor of the String class.
 	 */
-	string_vt = mono_class_vtable (domain, mono_defaults.string_class);
+
+	string_vt = mono_class_vtable_checked (domain, mono_defaults.string_class, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
+
 	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
 	g_assert (string_empty_fld);
 	mono_field_static_set_value (string_vt, string_empty_fld, mono_string_intern (mono_string_new (domain, "")));

@@ -1319,6 +1319,9 @@ mono_class_get_exception_data (MonoClass *klass);
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass);
 
+void
+mono_class_set_error_for_failure (MonoClass *klass, MonoError *error);
+
 char*
 mono_type_get_name_full (MonoType *type, MonoTypeNameFormat format);
 
@@ -1410,7 +1413,7 @@ MonoClassField*
 mono_class_get_field_from_name_full (MonoClass *klass, const char *name, MonoType *type);
 
 MonoVTable*
-mono_class_vtable_full (MonoDomain *domain, MonoClass *klass, gboolean raise_on_error);
+mono_class_vtable_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
 
 gboolean
 mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate);

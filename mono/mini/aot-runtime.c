@@ -4032,9 +4032,11 @@ mono_aot_find_method_index (MonoMethod *method)
 static gboolean
 init_llvm_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *method, MonoClass *init_class, MonoGenericContext *context)
 {
+	MonoError error;
 	MonoDomain *domain = mono_domain_get ();
 	MonoMemPool *mp;
 	MonoClass *klass;
+	MonoVTable *vtable;
 	gboolean from_plt = method == NULL;
 	int pindex, n_patches;
 	guint8 *p;
@@ -4121,10 +4123,17 @@ init_llvm_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *meth
 	if (mini_get_debug_options ()->load_aot_jit_info_eagerly)
 		jinfo = mono_aot_find_jit_info (domain, amodule->assembly->image, code);
 
-	if (init_class)
-		mono_runtime_class_init (mono_class_vtable (domain, init_class));
-	else if (from_plt && klass && !klass->generic_container)
-		mono_runtime_class_init (mono_class_vtable (domain, klass));
+	if (init_class) {
+		vtable = mono_class_vtable_checked (domain, init_class, &error);
+		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
+		mono_runtime_class_init (vtable);
+	} else if (from_plt && klass && !klass->generic_container) {
+		vtable = mono_class_vtable_checked (domain, klass, &error);
+		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
+		mono_runtime_class_init (vtable);
+	}
 
 	return TRUE;
 
