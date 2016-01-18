@@ -5953,6 +5953,11 @@ mono_raise_exception (MonoException *ex)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	/* unwind the handle arena stack to remove handle arenas that
+	 * we added since we most recently transitioned from managed
+	 * to native. */
+	mono_handle_arena_stack_unwind_to_mark_and_clear (mono_handle_arena_current_addr ());
+
 	/*
 	 * NOTE: Do NOT annotate this function with G_GNUC_NORETURN, since
 	 * that will cause gcc to omit the function epilog, causing problems when

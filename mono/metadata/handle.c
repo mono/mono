@@ -30,6 +30,10 @@ struct _MonoHandleArena {
 	MonoHandleArenaChunk *chunk;
 	MonoHandleArenaChunk *chunk_last;
 	MonoHandleArena *prev;
+	/* TRUE if this the arenas above this one on the arena stack
+	 * belong to a new icall and should be unwound when
+	 * mono_raise_exception is called. This arena itself is not unwound. */
+	guint unwind_mark       : 1;
 };
 
 static mono_lazy_init_t arena_status = MONO_LAZY_INIT_STATUS_NOT_INITIALIZED;
@@ -204,4 +208,34 @@ MonoHandleArena**
 mono_handle_arena_current_addr (void)
 {
 	return (MonoHandleArena**) &mono_thread_info_current ()->handle_arena;
+}
+
+void
+mono_handle_arena_set_unwind_mark (MonoHandleArena *arena)
+{
+	if (arena)
+		arena->unwind_mark = TRUE;
+}
+
+void
+mono_handle_arena_clear_unwind_mark (MonoHandleArena *arena)
+{
+	if (arena)
+		arena->unwind_mark = FALSE;
+}
+
+gboolean
+mono_handle_arena_unwind_mark_is_set (MonoHandleArena *arena)
+{
+	return (arena && arena->unwind_mark);
+}
+
+void
+mono_handle_arena_stack_unwind_to_mark_and_clear (MonoHandleArena **arena_stack)
+{
+	g_assert (arena_stack != NULL);
+	while (*arena_stack && !(*arena_stack)->unwind_mark) {
+		mono_handle_arena_stack_pop (arena_stack, *arena_stack);
+	}
+	mono_handle_arena_clear_unwind_mark (*arena_stack);
 }

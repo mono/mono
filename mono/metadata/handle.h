@@ -51,6 +51,19 @@ void
 mono_handle_arena_stack_pop (MonoHandleArena **arena_stack, MonoHandleArena *arena);
 
 void
+mono_handle_arena_set_unwind_mark (MonoHandleArena *arena);
+
+void
+mono_handle_arena_clear_unwind_mark (MonoHandleArena *arena);
+
+gboolean
+mono_handle_arena_unwind_mark_is_set (MonoHandleArena *arena);
+
+void
+mono_handle_arena_stack_unwind_to_mark_and_clear (MonoHandleArena **arena_stack);
+
+
+void
 mono_handle_arena_init (MonoHandleArena **arena_stack);
 
 void
@@ -61,6 +74,7 @@ mono_handle_arena_current (void);
 
 MonoHandleArena**
 mono_handle_arena_current_addr (void);
+
 
 #define MONO_HANDLE_ARENA_PUSH()	\
 	do {	\
@@ -81,6 +95,15 @@ mono_handle_arena_current_addr (void);
 		*((MonoHandle**)(&(ret_handle))) = mono_handle_elevate ((MonoHandle*)(handle)); \
 		mono_handle_arena_stack_pop(__arena_stack, __arena);	\
 	} while (0)
+
+
+#define MONO_ICALL_ENTER () \
+	do { mono_handle_arena_set_unwind_mark (mono_handle_arena_current ()); } while (0)
+
+
+#define MONO_ICALL_LEAVE () \
+	do { mono_handle_arena_clear_unwind_mark (mono_handle_arena_current ()); } while (0)
+
 
 static inline MonoHandle
 mono_handle_new (MonoObject *obj)
