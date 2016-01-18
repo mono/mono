@@ -161,7 +161,7 @@ refresh:
 	--rename-member=st_mtime=st_mtime_                    \
 	--rename-namespace=Mono.Unix.Native=Mono.Posix        \
 	--library=MonoPosixHelper                             \
-	$(mcs_topdir)/class/lib/net_4_x/Mono.Posix.dll map
+	$(mcs_topdir_from_srcdir)/class/lib/net_4_x/Mono.Posix.dll map
 
 # Useful if mono is compiled with --enable-shared=no
 patch-libtool:
