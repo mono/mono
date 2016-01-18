@@ -59,6 +59,8 @@
 #include <mono/metadata/debug-mono-symfile.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/mono-basic-block.h>
 
 #include "trace.h"
@@ -5345,8 +5347,10 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 				mono_error_cleanup (&error);
 				return FALSE;
 			}
-			if (!cfg->compile_aot)
-				mono_runtime_class_init (vtable);
+			if (!cfg->compile_aot) {
+				mono_runtime_class_init_checked (vtable, &error);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
+			}
 		} else if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {
 			if (cfg->run_cctors && method->klass->has_cctor) {
 				/*FIXME it would easier and lazier to just use mono_class_try_get_vtable */
@@ -5363,7 +5367,8 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 				/* running with a specific order... */
 				if (! vtable->initialized)
 					return FALSE;
-				mono_runtime_class_init (vtable);
+				mono_runtime_class_init_checked (vtable, &error);
+				mono_error_raise_exception (&error); /* FIXME don't raise here */
 			}
 		} else if (mono_class_needs_cctor_run (method->klass, NULL)) {
 			if (!method->klass->runtime_info)
@@ -11658,15 +11663,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						}
 					} else {
 						if (cfg->run_cctors) {
-							MonoException *ex;
+							MonoError error;
 							/* This makes so that inline cannot trigger */
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
 							g_assert (vtable);
 							if (! vtable->initialized)
 								INLINE_FAILURE ("class init");
-							ex = mono_runtime_class_init_full (vtable, FALSE);
-							if (ex) {
+							mono_runtime_class_init_checked (vtable, &error);
+							if (!mono_error_ok (&error)) {
+								MonoException *ex = mono_error_convert_to_exception (&error);
 								set_exception_object (cfg, ex);
 								goto exception_exit;
 							}

@@ -891,7 +891,8 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 	mono_error_raise_exception (&error);
 
 	/* This will call the type constructor */
-	mono_runtime_class_init (vtable);
+	mono_runtime_class_init_checked (vtable, &error);
+	mono_error_raise_exception (&error);
 }
 
 ICALL_EXPORT void
@@ -911,7 +912,8 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 		vtable = mono_class_vtable_checked (mono_domain_get (), klass, &error);
 		mono_error_raise_exception (&error);
 
-		mono_runtime_class_init (vtable);
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error);
 	}
 }
 
@@ -1819,8 +1821,11 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 		vtable = mono_class_vtable_checked (mono_object_domain (field), cf->parent, &error);
 		mono_error_raise_exception (&error);
 
-		if (!vtable->initialized)
-			mono_runtime_class_init (vtable);
+		if (!vtable->initialized) {
+			mono_runtime_class_init_checked (vtable, &error);
+			mono_error_raise_exception (&error);
+		}
+
 		mono_field_static_set_value (vtable, cf, v);
 	} else {
 		mono_field_set_value (obj, cf, v);

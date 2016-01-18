@@ -4096,6 +4096,7 @@ init_llvm_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *meth
 
 					g_assert (context);
 					ji->data.method = mono_class_inflate_generic_method_checked (ji->data.method, context, &error);
+					mono_error_cleanup (&error);
 				}
 				/* This cannot be resolved in mono_resolve_patch_target () */
 				if (ji->type == MONO_PATCH_INFO_AOT_JIT_INFO) {
@@ -4127,12 +4128,14 @@ init_llvm_method (MonoAotModule *amodule, guint32 method_index, MonoMethod *meth
 		vtable = mono_class_vtable_checked (domain, init_class, &error);
 		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
-		mono_runtime_class_init (vtable);
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	} else if (from_plt && klass && !klass->generic_container) {
 		vtable = mono_class_vtable_checked (domain, klass, &error);
 		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
-		mono_runtime_class_init (vtable);
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	}
 
 	return TRUE;

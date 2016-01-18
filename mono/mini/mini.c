@@ -4486,9 +4486,9 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		}
 	}
 
-	ex = mono_runtime_class_init_full (vtable, FALSE);
-	if (ex) {
-		*jit_ex = ex;
+	mono_runtime_class_init_checked (vtable, &error);
+	if (!mono_error_ok (&error)) {
+		*jit_ex = mono_error_convert_to_exception (&error);
 		return NULL;
 	}
 	return code;

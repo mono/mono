@@ -819,8 +819,10 @@ mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 	vtable = mono_class_vtable_checked (domain, field->parent, &error);
 	mono_error_raise_exception (&error);
 
-	if (!vtable->initialized)
-		mono_runtime_class_init (vtable);
+	if (!vtable->initialized) {
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+	}
 
 	//printf ("SFLDA1 %p\n", (char*)vtable->data + field->offset);
 
@@ -1315,7 +1317,9 @@ mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClass *klass)
 void
 mono_generic_class_init (MonoVTable *vtable)
 {
-	mono_runtime_class_init (vtable);
+	MonoError error;
+	mono_runtime_class_init_checked (vtable, &error);
+	mono_error_raise_exception (&error);
 }
 
 gpointer
