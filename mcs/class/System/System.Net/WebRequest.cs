@@ -40,6 +40,7 @@ using System.Net.Security;
 using System.Net.Cache;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Mono.Net;
 
 #if NET_2_1
 using ConfigurationException = System.ArgumentException;
