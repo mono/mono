@@ -918,6 +918,70 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSockaddrIn")]
+		private static extern int FromSockaddrIn (SockaddrIn source, IntPtr destination);
+
+		public static bool TryCopy (SockaddrIn source, IntPtr destination)
+		{
+			return FromSockaddrIn (source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSockaddrIn")]
+		private static extern int ToSockaddrIn (IntPtr source, SockaddrIn destination);
+
+		public static bool TryCopy (IntPtr source, SockaddrIn destination)
+		{
+			return ToSockaddrIn (source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSockaddrIn6")]
+		private static extern int FromSockaddrIn6 (SockaddrIn6 source, IntPtr destination);
+
+		public static bool TryCopy (SockaddrIn6 source, IntPtr destination)
+		{
+			return FromSockaddrIn6 (source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSockaddrIn6")]
+		private static extern int ToSockaddrIn6 (IntPtr source, SockaddrIn6 destination);
+
+		public static bool TryCopy (IntPtr source, SockaddrIn6 destination)
+		{
+			return ToSockaddrIn6 (source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSockaddrType")]
+		private static extern int FromSockaddrType (SockaddrType value, out Int32 rval);
+
+		internal static bool TryFromSockaddrType (SockaddrType value, out Int32 rval)
+		{
+			return FromSockaddrType (value, out rval) == 0;
+		}
+
+		internal static Int32 FromSockaddrType (SockaddrType value)
+		{
+			Int32 rval;
+			if (FromSockaddrType (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSockaddrType")]
+		private static extern int ToSockaddrType (Int32 value, out SockaddrType rval);
+
+		internal static bool TryToSockaddrType (Int32 value, out SockaddrType rval)
+		{
+			return ToSockaddrType (value, out rval) == 0;
+		}
+
+		internal static SockaddrType ToSockaddrType (Int32 value)
+		{
+			SockaddrType rval;
+			if (ToSockaddrType (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromSysconfName")]
 		private static extern int FromSysconfName (SysconfName value, out Int32 rval);
 
