@@ -100,7 +100,7 @@ namespace Mono.Net.Security.Private
 			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
 			MSI.MonoTlsSettings settings);
 
-		public override MSI.IMonoTlsContext CreateTlsContext (
+		internal override MSI.IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, XX509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,

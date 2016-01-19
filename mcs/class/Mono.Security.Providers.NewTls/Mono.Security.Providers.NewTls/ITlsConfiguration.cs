@@ -1,10 +1,10 @@
 //
-// IMonoTlsContext.cs
+// ITlsContext.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
 //
-// Copyright (c) 2015 Xamarin, Inc.
+// Copyright (c) 2015-2016 Xamarin, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,49 +23,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
-namespace Mono.Security.Interface
+using Mono.Security.Interface;
+using MX = Mono.Security.X509;
+
+namespace Mono.Security.Providers.NewTls
 {
-	interface IMonoTlsContext : IDisposable
+	interface ITlsConfiguration
 	{
-		bool IsServer {
-			get;
-		}
-
-		bool IsValid {
-			get;
-		}
-
-		void Initialize (IMonoTlsEventSink eventSink);
-
 		bool HasCredentials {
 			get;
 		}
 
-		void SetCertificate (X509Certificate certificate, AsymmetricAlgorithm privateKey);
+		void SetCertificate (MX.X509Certificate certificate, AsymmetricAlgorithm privateKey);
 
-		int GenerateNextToken (IBufferOffsetSize incoming, out IBufferOffsetSize outgoing);
-
-		int EncryptMessage (ref IBufferOffsetSize incoming);
-
-		int DecryptMessage (ref IBufferOffsetSize incoming);
-
-		bool ReceivedCloseNotify {
-			get;
+		bool? AskForClientCertificate {
+			get; set;
 		}
-
-		byte[] CreateCloseNotify ();
-
-		byte[] CreateHelloRequest ();
-
-		X509Certificate GetRemoteCertificate (out X509CertificateCollection remoteCertificateStore);
-
-		bool VerifyRemoteCertificate ();
-
-		MonoTlsConnectionInfo GetConnectionInfo ();
 	}
 }
-

@@ -1,5 +1,5 @@
 //
-// OldTlsProvider.cs
+// NewTlsProvider.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -23,64 +23,72 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
+extern alias NewSystemSource;
+
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Interface;
-using MNS = Mono.Net.Security;
 
-namespace Mono.Security.Providers.OldTls
+using MSI = Mono.Security.Interface;
+using MX = Mono.Security.X509;
+
+using PSSCX = System.Security.Cryptography.X509Certificates;
+using SSCX = System.Security.Cryptography.X509Certificates;
+
+namespace Mono.Security.Providers.NewTls
 {
-	public class OldTlsProvider : MonoTlsProvider
+	public class NewTlsProvider : MSI.MonoTlsProvider
 	{
-		static readonly Guid id = new Guid ("cf8baa0d-c6ed-40ae-b512-dec8d097e9af");
+		static readonly Guid id = new Guid ("e5ff34f1-8b7a-4aa6-aff9-24719d709693");
 
 		public override Guid ID {
 			get { return id; }
 		}
 
 		public override string Name {
-			get { return "old"; }
+			get { return "newtls"; }
 		}
 
 		public override bool SupportsSslStream {
 			get { return true; }
 		}
 
-		public override bool SupportsMonoExtensions {
-			get { return false; }
+		public override bool SupportsConnectionInfo {
+			get { return true; }
 		}
 
-		public override bool SupportsConnectionInfo {
-			get { return false; }
+		public override bool SupportsMonoExtensions {
+			get { return true; }
 		}
 
 		internal override bool SupportsTlsContext {
-			get { return false; }
+			get { return true; }
 		}
 
 		public override SslProtocols SupportedProtocols {
-			get { return SslProtocols.Tls; }
+			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
 		}
 
-		public override IMonoSslStream CreateSslStream (
+		public override MSI.IMonoSslStream CreateSslStream (
 			Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings = null)
+			MSI.MonoTlsSettings settings = null)
 		{
-			var impl = new MNS.Private.LegacySslStream (innerStream, leaveInnerStreamOpen, this, settings);
-			return new MNS.Private.MonoSslStreamImpl (impl);
+			return MonoNewTlsStreamFactory.CreateSslStream (innerStream, leaveInnerStreamOpen, this, settings);
 		}
 
-		internal override IMonoTlsContext CreateTlsContext (
-			string hostname, bool serverMode, TlsProtocols protocolFlags,
-			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
-			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,
-			MonoTlsSettings settings)
+		internal override MSI.IMonoTlsContext CreateTlsContext (
+			string hostname, bool serverMode, MSI.TlsProtocols protocolFlags,
+			SSCX.X509Certificate serverCertificate, PSSCX.X509CertificateCollection clientCertificates,
+			bool remoteCertRequired, MSI.MonoEncryptionPolicy encryptionPolicy,
+			MSI.MonoTlsSettings settings)
 		{
-			throw new NotSupportedException ();
+			var config = TlsProviderFactory.CreateTlsConfiguration (
+				hostname, serverMode, protocolFlags, serverCertificate,
+				remoteCertRequired, settings);
+			return new TlsContextWrapper (config, serverMode);
 		}
 	}
 }

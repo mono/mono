@@ -1,10 +1,10 @@
-//
-// IMonoTlsContext.cs
+﻿//
+// SecretParameters.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
 //
-// Copyright (c) 2015 Xamarin, Inc.
+// Copyright (c) 2014-2016 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,48 +24,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
-	interface IMonoTlsContext : IDisposable
+	public abstract class SecretParameters : IDisposable
 	{
-		bool IsServer {
-			get;
+		protected abstract void Clear ();
+
+		bool disposed;
+
+		protected void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().Name);
 		}
 
-		bool IsValid {
-			get;
+		protected static void Clear (byte[] array)
+		{
+			Array.Clear (array, 0, array.Length);
 		}
 
-		void Initialize (IMonoTlsEventSink eventSink);
-
-		bool HasCredentials {
-			get;
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
-		void SetCertificate (X509Certificate certificate, AsymmetricAlgorithm privateKey);
-
-		int GenerateNextToken (IBufferOffsetSize incoming, out IBufferOffsetSize outgoing);
-
-		int EncryptMessage (ref IBufferOffsetSize incoming);
-
-		int DecryptMessage (ref IBufferOffsetSize incoming);
-
-		bool ReceivedCloseNotify {
-			get;
+		void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				disposed = true;
+				Clear ();
+			}
 		}
 
-		byte[] CreateCloseNotify ();
-
-		byte[] CreateHelloRequest ();
-
-		X509Certificate GetRemoteCertificate (out X509CertificateCollection remoteCertificateStore);
-
-		bool VerifyRemoteCertificate ();
-
-		MonoTlsConnectionInfo GetConnectionInfo ();
+		~SecretParameters ()
+		{
+			Dispose (false);
+		}
 	}
 }
 

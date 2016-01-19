@@ -72,14 +72,14 @@ namespace Mono.Security.Interface
 		}
 
 		/*
-		 * Installs a custom TLS Provider.
+		 * Selects the default TLS Provider.
 		 *
 		 * May only be called at application startup and will throw
 		 * @InvalidOperationException if a provider has already been installed.
 		 */
-		public static void InstallProvider (MonoTlsProvider provider)
+		public static void SetDefaultProvider (string name)
 		{
-			NoReflectionHelper.InstallProvider (provider);
+			NoReflectionHelper.SetDefaultProvider (name);
 		}
 
 		/*

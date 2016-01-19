@@ -1,10 +1,10 @@
-//
-// IMonoTlsContext.cs
+﻿//
+// BufferOffsetSize.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
 //
-// Copyright (c) 2015 Xamarin, Inc.
+// Copyright (c) 2014-2016 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,48 +24,73 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
-	interface IMonoTlsContext : IDisposable
+	public class BufferOffsetSize : SecretParameters, IBufferOffsetSize
 	{
-		bool IsServer {
+		public byte[] Buffer {
 			get;
+			private set;
 		}
 
-		bool IsValid {
+		public int Offset {
 			get;
+			internal set;
 		}
 
-		void Initialize (IMonoTlsEventSink eventSink);
-
-		bool HasCredentials {
-			get;
+		public int Size {
+			get { return EndOffset - Offset; }
 		}
 
-		void SetCertificate (X509Certificate certificate, AsymmetricAlgorithm privateKey);
-
-		int GenerateNextToken (IBufferOffsetSize incoming, out IBufferOffsetSize outgoing);
-
-		int EncryptMessage (ref IBufferOffsetSize incoming);
-
-		int DecryptMessage (ref IBufferOffsetSize incoming);
-
-		bool ReceivedCloseNotify {
+		public int EndOffset {
 			get;
+			internal set;
 		}
 
-		byte[] CreateCloseNotify ();
+		public BufferOffsetSize (byte[] buffer, int offset, int size)
+		{
+			Buffer = buffer;
+			Offset = offset;
+			EndOffset = offset + size;
+		}
 
-		byte[] CreateHelloRequest ();
+		public BufferOffsetSize (byte[] buffer)
+			: this (buffer, 0, buffer.Length)
+		{
+		}
 
-		X509Certificate GetRemoteCertificate (out X509CertificateCollection remoteCertificateStore);
+		public BufferOffsetSize (int size)
+			: this (new byte [size])
+		{
+		}
 
-		bool VerifyRemoteCertificate ();
+		public byte[] GetBuffer ()
+		{
+			var copy = new byte [Size];
+			Array.Copy (Buffer, Offset, copy, 0, Size);
+			return copy;
+		}
 
-		MonoTlsConnectionInfo GetConnectionInfo ();
+		public void TruncateTo (int newSize)
+		{
+			if (newSize > Size)
+				throw new ArgumentException ("newSize");
+			EndOffset = Offset + newSize;
+		}
+
+		protected void SetBuffer (byte[] buffer, int offset, int size)
+		{
+			Buffer = buffer;
+			Offset = offset;
+			EndOffset = offset + size;
+		}
+
+		protected override void Clear ()
+		{
+			Buffer = null;
+			Offset = EndOffset = 0;
+		}
 	}
 }
 

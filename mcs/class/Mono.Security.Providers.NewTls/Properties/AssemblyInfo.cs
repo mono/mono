@@ -35,14 +35,13 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 
-[assembly: AssemblyCompany ("MONO development team")]
+[assembly: AssemblyCompany ("Xamarin")]
 [assembly: AssemblyCopyright ("(c) 2015 Xamarin")]
-[assembly: AssemblyDescription ("Mono.Security.Providers.NewSystemSource.dll")]
+[assembly: AssemblyDescription ("Mono.Security.Providers.NewTls.dll")]
 [assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyTitle ("Mono.Security.Providers.NewSystemSource.dll")]
-[assembly: CLSCompliant (true)]
+[assembly: AssemblyTitle ("Mono.Security.Providers.NewTls.dll")]
+[assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: InternalsVisibleTo ("Mono.Security.Providers.NewTls, PublicKey=002400000480000094000000060200000024000052534131000400001100000003336d6aed41624ca156ab579881fe90a576f1dfec48378fc94e4e440f4556776224e2d70c18996d91f36227f539fdb44340e07651f1455a489b29a7e6219a8f85e52b0f8588b4f8a857746a8468d37b556223d1452f3fcbaf0f269cdf1900ceb68f69485dc5887750d19571030c732331e00387d9b813a9ad52891087301793")]
-[assembly: InternalsVisibleTo ("Mono.Security.Providers.NewTls, PublicKey=002400000480000094000000060200000024000052534131000400000100010079159977d2d03a8e6bea7a2e74e8d1afcc93e8851974952bb480a12c9134474d04062447c37e0e68c080536fcf3c3fbe2ff9c979ce998475e506e8ce82dd5b0f350dc10e93bf2eeecf874b24770c5081dbea7447fddafa277b22de47d6ffea449674a4f9fccf84d15069089380284dbdd35f46cdff12a1bd78e4ef0065d016df")]
+[assembly: InternalsVisibleTo ("Mono.Security.NewTls, PublicKey=002400000480000094000000060200000024000052534131000400001100000003336d6aed41624ca156ab579881fe90a576f1dfec48378fc94e4e440f4556776224e2d70c18996d91f36227f539fdb44340e07651f1455a489b29a7e6219a8f85e52b0f8588b4f8a857746a8468d37b556223d1452f3fcbaf0f269cdf1900ceb68f69485dc5887750d19571030c732331e00387d9b813a9ad52891087301793")]

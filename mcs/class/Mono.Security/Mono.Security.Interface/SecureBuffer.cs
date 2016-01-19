@@ -1,10 +1,10 @@
-//
-// IMonoTlsContext.cs
+﻿//
+// SecureBuffer.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
 //
-// Copyright (c) 2015 Xamarin, Inc.
+// Copyright (c) 2014-2016 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,48 +24,63 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Interface
 {
-	interface IMonoTlsContext : IDisposable
+	public class SecureBuffer : SecretParameters, IBufferOffsetSize
 	{
-		bool IsServer {
-			get;
+		byte[] buffer;
+
+		public byte[] Buffer {
+			get {
+				CheckDisposed ();
+				return buffer;
+			}
 		}
 
-		bool IsValid {
-			get;
+		public int Size {
+			get {
+				CheckDisposed ();
+				return buffer != null ? buffer.Length : 0;
+			}
 		}
 
-		void Initialize (IMonoTlsEventSink eventSink);
-
-		bool HasCredentials {
-			get;
+		int IBufferOffsetSize.Offset {
+			get { return 0; }
 		}
 
-		void SetCertificate (X509Certificate certificate, AsymmetricAlgorithm privateKey);
-
-		int GenerateNextToken (IBufferOffsetSize incoming, out IBufferOffsetSize outgoing);
-
-		int EncryptMessage (ref IBufferOffsetSize incoming);
-
-		int DecryptMessage (ref IBufferOffsetSize incoming);
-
-		bool ReceivedCloseNotify {
-			get;
+		public SecureBuffer (int size)
+		{
+			buffer = new byte [size];
 		}
 
-		byte[] CreateCloseNotify ();
+		public SecureBuffer (byte[] buffer)
+		{
+			this.buffer = buffer;
+		}
 
-		byte[] CreateHelloRequest ();
+		public byte[] StealBuffer ()
+		{
+			CheckDisposed ();
+			var retval = this.buffer;
+			this.buffer = null;
+			return retval;
+		}
 
-		X509Certificate GetRemoteCertificate (out X509CertificateCollection remoteCertificateStore);
+		public static SecureBuffer CreateCopy (byte[] buffer)
+		{
+			var copy = new byte [buffer.Length];
+			Array.Copy (buffer, copy, buffer.Length);
+			return new SecureBuffer (copy);
+		}
 
-		bool VerifyRemoteCertificate ();
-
-		MonoTlsConnectionInfo GetConnectionInfo ();
+		protected override void Clear ()
+		{
+			if (buffer != null) {
+				Array.Clear (buffer, 0, buffer.Length);
+				buffer = null;
+			}
+		}
 	}
 }
 
