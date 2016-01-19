@@ -397,6 +397,7 @@ Mono_Posix_Syscall_accept (int socket, struct Mono_Posix__SockaddrHeader* addres
 int
 Mono_Posix_Syscall_accept4 (int socket, struct Mono_Posix__SockaddrHeader* address, int flags)
 {
+#ifdef HAVE_ACCEPT4
 	int r;
 
 	ALLOC_SOCKADDR
@@ -412,6 +413,10 @@ Mono_Posix_Syscall_accept4 (int socket, struct Mono_Posix__SockaddrHeader* addre
 		free (addr);
 
 	return r;
+#else
+	errno = EINVAL;
+	return -1;
+#endif
 }
 
 int

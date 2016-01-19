@@ -515,6 +515,7 @@ namespace MonoTests.Mono.Unix.Native
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void Accept4 ()
 		{
 			WithSockets (UnixAddressFamily.AF_UNIX, UnixSocketType.SOCK_STREAM, 0, (so1, so2) => {
