@@ -18,6 +18,7 @@ OTHER_H = \
 	events.h	\
 	handles.h	\
 	io.h		\
+	io-trace.h	\
 	io-layer.h	\
 	io-portability.h	\
 	macros.h	\
