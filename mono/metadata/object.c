@@ -4538,7 +4538,7 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", mono_class_instance_size (klass));
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
+		mono_object_register_finalizer (o, error);
 
 	return o;
 }
@@ -4634,7 +4634,7 @@ mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
+		mono_object_register_finalizer (o, error);
 
 	return o;
 }
@@ -4690,7 +4690,7 @@ mono_object_new_mature (MonoVTable *vtable, MonoError *error)
 	if (G_UNLIKELY (!o))
 		mono_error_set_out_of_memory (error, "Could not allocate %i bytes", vtable->klass->instance_size);
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
+		mono_object_register_finalizer (o, error);
 
 	return o;
 }
@@ -4800,7 +4800,8 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error)
 	mono_gc_wbarrier_object_copy (o, obj);
 
 	if (obj->vtable->klass->has_finalize)
-		mono_object_register_finalizer (o);
+		mono_object_register_finalizer (o, error);
+
 	return o;
 }
 
@@ -5413,8 +5414,10 @@ mono_value_box (MonoDomain *domain, MonoClass *klass, gpointer value)
 	}
 #endif
 #endif
-	if (klass->has_finalize)
-		mono_object_register_finalizer (res);
+	if (klass->has_finalize) {
+		mono_object_register_finalizer (res, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+	}
 	return res;
 }
 
