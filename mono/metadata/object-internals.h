@@ -1692,6 +1692,12 @@ mono_object_clone_checked (MonoObject *obj, MonoError *error);
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
+MonoObject*
+mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
+
+MonoObject*
+mono_object_isinst_mbyref_checked (MonoObject *obj, MonoClass *klass, MonoError *error);
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 

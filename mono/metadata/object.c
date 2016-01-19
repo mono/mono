@@ -5541,13 +5541,25 @@ mono_object_unbox (MonoObject *obj)
 MonoObject *
 mono_object_isinst (MonoObject *obj, MonoClass *klass)
 {
+	MonoError error;
+	MonoObject *ret = mono_object_isinst_checked (obj, klass, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject*
+mono_object_isinst_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	mono_error_init (error);
 
 	if (!klass->inited)
 		mono_class_init (klass);
 
 	if (mono_class_is_marshalbyref (klass) || (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
-		return mono_object_isinst_mbyref (obj, klass);
+		return mono_object_isinst_mbyref_checked (obj, klass, error);
 
 	if (!obj)
 		return NULL;
@@ -5558,10 +5570,21 @@ mono_object_isinst (MonoObject *obj, MonoClass *klass)
 MonoObject *
 mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 {
+	MonoError error;
+	MonoObject *ret = mono_object_isinst_mbyref_checked (obj, klass, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject*
+mono_object_isinst_mbyref_checked (MonoObject *obj, MonoClass *klass, MonoError *error)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoError error;
 	MonoVTable *vt;
+
+	mono_error_init (error);
 
 	if (!obj)
 		return NULL;
@@ -5596,13 +5619,17 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 		gpointer pa [2];
 
 		im = mono_class_get_method_from_name (rpklass, "CanCastTo", -1);
-		if (!im)
-			mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
+		if (!im) {
+			mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+			return NULL;
+		}
 		im = mono_object_get_virtual_method (rp, im);
 		g_assert (im);
 	
-		pa [0] = mono_type_get_object_checked (domain, &klass->byval_arg, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
+		pa [0] = mono_type_get_object_checked (domain, &klass->byval_arg, error);
+		if (!mono_error_ok (error))
+			return NULL;
+
 		pa [1] = obj;
 
 		res = mono_runtime_invoke (im, rp, pa, NULL);
@@ -5629,8 +5656,17 @@ mono_object_castclass_mbyref (MonoObject *obj, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	if (!obj) return NULL;
-	if (mono_object_isinst_mbyref (obj, klass)) return obj;
+	MonoError error;
+	gboolean isinst;
+
+	if (!obj)
+		return NULL;
+
+	isinst = mono_object_isinst_mbyref_checked (obj, klass, &error) != NULL;
+	mono_error_raise_exception (&error);
+
+	if (isinst)
+		return obj;
 		
 	mono_raise_exception (mono_exception_from_name (mono_defaults.corlib,
 							"System",

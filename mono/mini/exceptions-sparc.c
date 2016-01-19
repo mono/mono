@@ -166,9 +166,11 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 static void
 throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow)
 {
+	MonoError error;
 	MonoContext ctx;
 	static void (*restore_context) (MonoContext *);
 	gpointer *window;
+	gboolean isinst;
 	
 	if (!restore_context)
 		restore_context = mono_get_restore_context ();
@@ -178,7 +180,10 @@ throw_exception (MonoObject *exc, gpointer sp, gpointer ip, gboolean rethrow)
 	ctx.ip = ip;
 	ctx.fp = (gpointer*)(MONO_SPARC_WINDOW_ADDR (sp) [sparc_i6 - 16]);
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (exc, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;

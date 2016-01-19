@@ -306,12 +306,17 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 							guint64 dummy5, guint64 dummy6,
 							MonoContext *mctx, MonoObject *exc, gboolean rethrow)
 {
+	MonoError error;
 	MonoContext ctx;
+	gboolean isinst;
 
 	/* mctx is on the caller's stack */
 	memcpy (&ctx, mctx, sizeof (MonoContext));
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (exc, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;

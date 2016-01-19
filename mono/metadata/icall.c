@@ -192,10 +192,12 @@ ves_icall_System_Array_GetValue (MonoArray *arr, MonoArray *idxs)
 ICALL_EXPORT void
 ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 pos)
 {
+	MonoError error;
 	MonoClass *ac, *vc, *ec;
 	gint32 esize, vsize;
 	gpointer *ea, *va;
 	int et, vt;
+	gboolean isinst;
 
 	guint64 u64 = 0;
 	gint64 i64 = 0;
@@ -277,14 +279,17 @@ ves_icall_System_Array_SetValueImpl (MonoArray *arr, MonoObject *value, guint32 
 		break;
 	}
 
+	isinst = mono_object_isinst_checked (value, ec, &error) != NULL;
+	mono_error_raise_exception (&error);
+
 	if (!ec->valuetype) {
-		if (!mono_object_isinst (value, ec))
+		if (!isinst)
 			INVALID_CAST;
 		mono_gc_wbarrier_set_arrayref (arr, ea, (MonoObject*)value);
 		return;
 	}
 
-	if (mono_object_isinst (value, ec)) {
+	if (isinst) {
 		if (ec->has_references)
 			mono_value_copy (ea, (char*)value + sizeof (MonoObject), ec);
 		else
@@ -1571,9 +1576,17 @@ ves_icall_type_is_assignable_from (MonoReflectionType *type, MonoReflectionType 
 ICALL_EXPORT guint32
 ves_icall_type_IsInstanceOfType (MonoReflectionType *type, MonoObject *obj)
 {
-	MonoClass *klass = mono_class_from_mono_type (type->type);
+	MonoError error;
+	MonoClass *klass;
+	gboolean isinst;
+
+	klass = mono_class_from_mono_type (type->type);
 	mono_class_init_or_throw (klass);
-	return mono_object_isinst (obj, klass) != NULL;
+
+	isinst = mono_object_isinst_checked (obj, klass, &error) != NULL;
+	mono_error_raise_exception (&error);
+
+	return isinst;
 }
 
 ICALL_EXPORT guint32
@@ -2876,7 +2889,10 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		}
 
 		if (this_arg) {
-			if (!mono_object_isinst (this_arg, m->klass)) {
+			gboolean isinst = mono_object_isinst_checked (this_arg, m->klass, &error) != NULL;
+			mono_error_raise_exception (&error);
+
+			if (!isinst) {
 				char *this_name = mono_type_get_full_name (mono_object_get_class (this_arg));
 				char *target_name = mono_type_get_full_name (m->klass);
 				char *msg = g_strdup_printf ("Object of type '%s' doesn't match target type '%s'", this_name, target_name);
@@ -6037,12 +6053,14 @@ ves_icall_System_Buffer_BlockCopyInternal (MonoArray *src, gint32 src_offset, Mo
 ICALL_EXPORT MonoObject *
 ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObject *this_obj, MonoString *class_name)
 {
+	MonoError error;
 	MonoDomain *domain = mono_object_domain (this_obj); 
 	MonoObject *res;
 	MonoRealProxy *rp = ((MonoRealProxy *)this_obj);
 	MonoTransparentProxy *tp;
 	MonoType *type;
 	MonoClass *klass;
+	gboolean isinst;
 
 	res = mono_object_new (domain, mono_defaults.transparent_proxy_class);
 	tp = (MonoTransparentProxy*) res;
@@ -6058,7 +6076,10 @@ ves_icall_Remoting_RealProxy_GetTransparentProxy (MonoObject *this_obj, MonoStri
 		return NULL;
 	}
 
-	tp->custom_type_info = (mono_object_isinst (this_obj, mono_defaults.iremotingtypeinfo_class) != NULL);
+	isinst = mono_object_isinst_checked (this_obj, mono_defaults.iremotingtypeinfo_class, &error) != NULL;
+	mono_error_raise_exception (&error);
+
+	tp->custom_type_info = isinst;
 	tp->remote_class = mono_remote_class (domain, class_name, klass);
 
 	res->vtable = (MonoVTable *)mono_remote_class_vtable (domain, tp->remote_class, rp);

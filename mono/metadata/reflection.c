@@ -10156,9 +10156,11 @@ handle_type:
 		break;
 	}
 	case MONO_TYPE_OBJECT: {
+		MonoError error;
 		MonoClass *klass;
 		char *str;
 		guint32 slen;
+		gboolean isinst;
 
 		/*
 		 * The parameter type is 'object' but the type of the actual
@@ -10174,7 +10176,10 @@ handle_type:
 		
 		klass = mono_object_class (arg);
 
-		if (mono_object_isinst (arg, mono_defaults.systemtype_class)) {
+		isinst = mono_object_isinst_checked (arg, mono_defaults.systemtype_class, &error) != NULL;
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+		if (isinst) {
 			*p++ = 0x50;
 			goto handle_type;
 		} else if (klass->enumtype) {
