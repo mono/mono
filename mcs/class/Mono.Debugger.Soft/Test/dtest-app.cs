@@ -1200,6 +1200,8 @@ public class Tests : TestsBase, ITest2
 		CrossDomain o = (CrossDomain)domain.CreateInstanceAndUnwrap (
 				   typeof (CrossDomain).Assembly.FullName, "CrossDomain");
 
+		domains_print_across (o);
+
 		domains_2 (o, new CrossDomain ());
 
 		o.invoke_2 ();
@@ -1221,6 +1223,10 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void domains_2 (object o, object o2) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void domains_print_across (object o) {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -1454,8 +1460,13 @@ class TypeLoadClass {
 class TypeLoadClass2 {
 }
 
+public class SentinelClass : MarshalByRefObject {
+}
+
 public class CrossDomain : MarshalByRefObject
 {
+	SentinelClass printMe = new SentinelClass ();
+
 	public void invoke () {
 		Tests.invoke_in_domain ();
 	}
