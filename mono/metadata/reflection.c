@@ -6977,6 +6977,7 @@ mono_event_get_object (MonoDomain *domain, MonoClass *klass, MonoEvent *event)
 static MonoObject *
 mono_get_reflection_missing_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoObject *obj;
 	static MonoClassField *missing_value_field = NULL;
 	
@@ -6987,7 +6988,8 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 		missing_value_field = mono_class_get_field_from_name (missing_klass, "Value");
 		g_assert (missing_value_field);
 	}
-	obj = mono_field_get_value_object (domain, missing_value_field, NULL); 
+	obj = mono_field_get_value_object_checked (domain, missing_value_field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	g_assert (obj);
 	return obj;
 }
@@ -7269,6 +7271,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 MonoObject *
 mono_get_dbnull_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoObject *obj;
 	static MonoClassField *dbnull_value_field = NULL;
 	
@@ -7279,7 +7282,8 @@ mono_get_dbnull_object (MonoDomain *domain)
 		dbnull_value_field = mono_class_get_field_from_name (dbnull_klass, "Value");
 		g_assert (dbnull_value_field);
 	}
-	obj = mono_field_get_value_object (domain, dbnull_value_field, NULL); 
+	obj = mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	g_assert (obj);
 	return obj;
 }

@@ -1652,6 +1652,9 @@ mono_error_set_pending_exception (MonoError *error);
 MonoArray *
 mono_glist_to_array (GList *list, MonoClass *eclass);
 
+MonoObject*
+mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, MonoObject *obj, MonoError *error);
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
 

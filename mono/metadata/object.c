@@ -3214,7 +3214,17 @@ mono_field_get_value (MonoObject *obj, MonoClassField *field, void *value)
  */
 MonoObject *
 mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObject *obj)
-{	
+{
+	MonoError error;
+	MonoObject *ret = mono_field_get_value_object_checked (domain, field, obj, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject*
+mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, MonoObject *obj, MonoError *error)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *o;
@@ -3225,11 +3235,13 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 	gboolean is_ref = FALSE;
 	gboolean is_literal = FALSE;
 	gboolean is_ptr = FALSE;
-	MonoError error;
-	MonoType *type = mono_field_get_type_checked (field, &error);
+	MonoType *type;
 
-	if (!mono_error_ok (&error))
-		mono_error_raise_exception (&error);
+	mono_error_init (error);
+
+	type = mono_field_get_type_checked (field, error);
+	if (!mono_error_ok (error))
+		return NULL;
 
 	switch (type->type) {
 	case MONO_TYPE_STRING:
@@ -3263,8 +3275,7 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 		is_ptr = TRUE;
 		break;
 	default:
-		g_error ("type 0x%x not handled in "
-			 "mono_field_get_value_object", type->type);
+		g_error ("type 0x%x not handled in mono_field_get_value_object_checked", type->type);
 		return NULL;
 	}
 
@@ -3275,12 +3286,14 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 		is_static = TRUE;
 
 		if (!is_literal) {
-			MonoError error;
-			vtable = mono_class_vtable_checked (domain, field->parent, &error);
-			mono_error_raise_exception (&error);
+			vtable = mono_class_vtable_checked (domain, field->parent, error);
+			if (!mono_error_ok (error))
+				return NULL;
+
 			if (!vtable->initialized) {
-				mono_runtime_class_init_checked (vtable, &error);
-				mono_error_raise_exception (&error); /* FIXME don't raise here */
+				mono_runtime_class_init_checked (vtable, error);
+				if (!mono_error_ok (error))
+					return NULL;
 			}
 		}
 	} else {
@@ -4105,6 +4118,7 @@ mono_unhandled_exception (MonoObject *exc)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoClassField *field;
 	MonoDomain *current_domain, *root_domain;
 	MonoObject *current_appdomain_delegate = NULL, *root_appdomain_delegate = NULL;
@@ -4118,9 +4132,12 @@ mono_unhandled_exception (MonoObject *exc)
 	current_domain = mono_domain_get ();
 	root_domain = mono_get_root_domain ();
 
-	root_appdomain_delegate = mono_field_get_value_object (root_domain, field, (MonoObject*) root_domain->domain);
-	if (current_domain != root_domain)
-		current_appdomain_delegate = mono_field_get_value_object (current_domain, field, (MonoObject*) current_domain->domain);
+	root_appdomain_delegate = mono_field_get_value_object_checked (root_domain, field, (MonoObject*) root_domain->domain, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+	if (current_domain != root_domain) {
+		current_appdomain_delegate = mono_field_get_value_object_checked (current_domain, field, (MonoObject*) current_domain->domain, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+	}
 
 	/* set exitcode only if we will abort the process */
 	if (!current_appdomain_delegate && !root_appdomain_delegate) {
