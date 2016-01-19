@@ -134,25 +134,35 @@ namespace Mono.Net.Security
 
 #if SECURITY_DEP && !MONO_FEATURE_NEW_SYSTEM_SOURCE
 
-#if !MOBILE
 		static Dictionary<string,string> providerRegistration;
 
-		internal static void RegisterProvider (string name, string type)
+		static Type LookupProviderType (string name, bool throwOnError)
 		{
 			lock (locker) {
 				InitializeProviderRegistration ();
-				providerRegistration.Add (name, type);
+				string typeName;
+				if (!providerRegistration.TryGetValue (name, out typeName)) {
+					if (throwOnError)
+						throw new NotSupportedException (string.Format ("No such TLS Provider: `{0}'.", name));
+					return null;
+				}
+				var type = Type.GetType (typeName, false);
+				if (type == null && throwOnError)
+					throw new NotSupportedException (string.Format ("Could not find TLS Provider: `{0}'.", typeName));
+				return type;
 			}
 		}
 
-		static string LookupProvider (string name)
+		static MSI.MonoTlsProvider LookupProvider (string name, bool throwOnError)
 		{
-			lock (locker) {
-				InitializeProviderRegistration ();
-				string type;
-				if (!providerRegistration.TryGetValue (name, out type))
-					type = null;
-				return type;
+			var type = LookupProviderType (name, throwOnError);
+			if (type == null)
+				return null;
+
+			try {
+				return (MSI.MonoTlsProvider)Activator.CreateInstance (type);
+			} catch (Exception ex) {
+				throw new NotSupportedException (string.Format ("Unable to instantiate TLS Provider `{0}'.", type), ex);
 			}
 		}
 
@@ -162,11 +172,12 @@ namespace Mono.Net.Security
 				if (providerRegistration != null)
 					return;
 				providerRegistration = new Dictionary<string,string> ();
-				providerRegistration.Add ("newtls", "Mono.Security.Providers.NewTls.NewTlsProvider, Mono.Security.Providers.NewTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=84e3aee7225169c2");
-				providerRegistration.Add ("oldtls", "Mono.Security.Providers.OldTls.OldTlsProvider, Mono.Security.Providers.OldTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=84e3aee7225169c2");
+				providerRegistration.Add ("newtls", "Mono.Security.Providers.NewTls.NewTlsProvider, Mono.Security.Providers.NewTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
+				providerRegistration.Add ("oldtls", "Mono.Security.Providers.OldTls.OldTlsProvider, Mono.Security.Providers.OldTls, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
 			}
 		}
 
+#if !MOBILE
 		static IMonoTlsProvider TryDynamicLoad ()
 		{
 			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
@@ -176,25 +187,7 @@ namespace Mono.Net.Security
 			if (string.Equals (variable, "default", StringComparison.OrdinalIgnoreCase))
 				return null;
 
-			string typeName;
-			if (variable.IndexOfAny (new char[] { ',', '.', '=' }) > 0) {
-				typeName = variable;
-			} else {
-				typeName = LookupProvider (variable);
-				if (typeName == null)
-					throw new NotSupportedException (string.Format ("No such TLS Provider: `{0}'.", typeName));
-			}
-
-			var type = Type.GetType (typeName, false);
-			if (type == null)
-				throw new NotSupportedException (string.Format ("Could not find TLS Provider: `{0}'.", typeName));
-
-			MSI.MonoTlsProvider provider;
-			try {
-				provider = (MSI.MonoTlsProvider)Activator.CreateInstance (type);
-			} catch (Exception ex) {
-				throw new NotSupportedException (string.Format ("Unable to instantiate TLS Provider `{0}'.", typeName), ex);
-			}
+			var provider = LookupProvider (variable, true);
 
 			return new Private.MonoTlsProviderWrapper (provider);
 		}
@@ -245,9 +238,10 @@ namespace Mono.Net.Security
 			}
 		}
 
-		internal static void InstallProvider (MSI.MonoTlsProvider provider)
+		internal static void SetDefaultProvider (string name)
 		{
 			lock (locker) {
+				var provider = LookupProvider (name, true);
 				currentProvider = new Private.MonoTlsProviderWrapper (provider);
 			}
 		}
