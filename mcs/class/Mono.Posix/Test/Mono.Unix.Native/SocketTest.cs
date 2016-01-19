@@ -596,6 +596,292 @@ namespace MonoTests.Mono.Unix.Native
 					Assert.AreEqual (buffer1[i], buffer2[i]);
 			});
 		}
+
+		[Test]
+		public unsafe void SendMsgRecvMsg ()
+		{
+			WithSocketPair ((so1, so2) => {
+				long ret;
+				var buffer1 = new byte[] { 42, 43, 44 };
+				fixed (byte* ptr_buffer1 = buffer1) {
+					var iovecs1 = new Iovec[] {
+						new Iovec {
+							iov_base = (IntPtr) ptr_buffer1,
+							iov_len = (ulong) buffer1.Length,
+						},
+					};
+					var msghdr1 = new Msghdr {
+						msg_iov = iovecs1,
+						msg_iovlen = 1,
+					};
+					ret = Syscall.sendmsg (so1, msghdr1, 0);
+				}
+				if (ret < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+
+				var buffer2 = new byte[1024];
+				fixed (byte* ptr_buffer2 = buffer2) {
+					var iovecs2 = new Iovec[] {
+						new Iovec {
+							iov_base = (IntPtr) ptr_buffer2,
+							iov_len = (ulong) buffer2.Length,
+						},
+					};
+					var msghdr2 = new Msghdr {
+						msg_iov = iovecs2,
+						msg_iovlen = 1,
+					};
+					ret = Syscall.recvmsg (so2, msghdr2, 0);
+				}
+				if (ret < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+
+				Assert.AreEqual (buffer1.Length, ret);
+				for (int i = 0; i < buffer1.Length; i++)
+					Assert.AreEqual (buffer1[i], buffer2[i]);
+			});
+		}
+
+		[Test]
+		public unsafe void SendMsgRecvMsgAddress ()
+		{
+			WithSockets (UnixAddressFamily.AF_INET, UnixSocketType.SOCK_DGRAM, UnixSocketProtocol.IPPROTO_UDP, (so1, so2) => {
+				// Bind UDP socket so1 to 127.0.0.1 with dynamic port
+				var address = new SockaddrIn {
+					sin_family = UnixAddressFamily.AF_INET,
+					sin_port = Syscall.htons (0),
+					sin_addr = new InAddr (127, 0, 0, 1),
+				};
+				if (Syscall.bind (so1, address) < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+
+				// Get actual port number using getsockname()
+				var actualAddress = new SockaddrIn ();
+				if (Syscall.getsockname (so1, actualAddress) < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+				Assert.AreEqual (actualAddress.sa_family, UnixAddressFamily.AF_INET);
+				var port = Syscall.ntohs (actualAddress.sin_port);
+				Assert.IsTrue (port != 0);
+
+
+				var remoteAddress = new SockaddrIn {
+					sin_family = UnixAddressFamily.AF_INET,
+					sin_port = Syscall.htons (port),
+					sin_addr = new InAddr (127, 0, 0, 1),
+				};
+
+				// Send and receive a few bytes
+				long ret;
+				var buffer1 = new byte[] { 42, 43, 44 };
+				fixed (byte* ptr_buffer1 = buffer1) {
+					var iovecs1 = new Iovec[] {
+						new Iovec {
+							iov_base = (IntPtr) ptr_buffer1,
+							iov_len = (ulong) buffer1.Length,
+						},
+					};
+					var msghdr1 = new Msghdr {
+						msg_name = remoteAddress,
+						msg_iov = iovecs1,
+						msg_iovlen = 1,
+					};
+					ret = Syscall.sendmsg (so2, msghdr1, 0);
+					msghdr1.msg_name = remoteAddress.ToSockaddrStorage ();
+					if (ret >= 0)
+						ret = Syscall.sendmsg (so2, msghdr1, 0);
+				}
+				if (ret < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+
+				var senderAddress = new SockaddrIn ();
+				var senderAddressStorage = new SockaddrStorage ();
+				var buffer2 = new byte[1024];
+				var buffer3 = new byte[1024];
+				fixed (byte* ptr_buffer2 = buffer2, ptr_buffer3 = buffer3) {
+					var iovecs2 = new Iovec[] {
+						new Iovec {
+							iov_base = (IntPtr) ptr_buffer2,
+							iov_len = (ulong) buffer2.Length,
+						},
+					};
+					var msghdr2 = new Msghdr {
+						msg_name = senderAddress,
+						msg_iov = iovecs2,
+						msg_iovlen = 1,
+					};
+					ret = Syscall.recvmsg (so1, msghdr2, 0);
+					msghdr2.msg_name = senderAddressStorage;
+					iovecs2[0].iov_base = (IntPtr) ptr_buffer3;
+					if (ret >= 0)
+						ret = Syscall.recvmsg (so1, msghdr2, 0);
+				}
+				if (ret < 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+				Assert.AreEqual (senderAddress.sa_family, UnixAddressFamily.AF_INET);
+				Assert.AreEqual (senderAddress.sin_addr, new InAddr (127, 0, 0, 1));
+				var senderAddress2 = SockaddrIn.FromSockaddrStorage (senderAddressStorage);
+				Assert.AreEqual (senderAddress2.sa_family, UnixAddressFamily.AF_INET);
+				Assert.AreEqual (senderAddress2.sin_addr, new InAddr (127, 0, 0, 1));
+
+				Assert.AreEqual (buffer1.Length, ret);
+				for (int i = 0; i < buffer1.Length; i++)
+					Assert.AreEqual (buffer1[i], buffer2[i]);
+				for (int i = 0; i < buffer1.Length; i++)
+					Assert.AreEqual (buffer1[i], buffer3[i]);
+			});
+		}
+
+		[Test]
+		public unsafe void ControlMsg ()
+		{
+			// Create two socket pairs and send inner_so1 and inner_so2 over the other socket pair using SCM_RIGHTS
+			WithSocketPair ((inner_so1, inner_so2) => {
+				WithSocketPair ((so1, so2) => {
+					// Create two SCM_RIGHTS control messages
+					var cmsg = new byte[2 * Syscall.CMSG_SPACE (sizeof (int))];
+					var hdr = new Cmsghdr {
+						cmsg_len = (long) Syscall.CMSG_LEN (sizeof (int)),
+						cmsg_level = UnixSocketProtocol.SOL_SOCKET,
+						cmsg_type = UnixSocketControlMessage.SCM_RIGHTS,
+					};
+					var msghdr1 = new Msghdr {
+						msg_control = cmsg,
+						msg_controllen = cmsg.Length,
+					};
+					long offset = 0;
+					hdr.WriteToBuffer (msghdr1, offset);
+					var dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
+					fixed (byte* ptr = msghdr1.msg_control) {
+						((int*) (ptr + dataOffset))[0] = inner_so1;
+					}
+					offset = (long) Syscall.CMSG_SPACE (sizeof (int));
+					hdr.WriteToBuffer (msghdr1, offset);
+					dataOffset = Syscall.CMSG_DATA (msghdr1, offset);
+					fixed (byte* ptr = msghdr1.msg_control) {
+						((int*) (ptr + dataOffset))[0] = inner_so2;
+					}
+
+					long ret;
+					var buffer1 = new byte[] { 42, 43, 44 };
+					fixed (byte* ptr_buffer1 = buffer1) {
+						var iovecs1 = new Iovec[] {
+							new Iovec {
+								iov_base = (IntPtr) ptr_buffer1,
+								iov_len = (ulong) buffer1.Length,
+							},
+						};
+						msghdr1.msg_iov = iovecs1;
+						msghdr1.msg_iovlen = 1;
+						// Send message twice
+						ret = Syscall.sendmsg (so1, msghdr1, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+						ret = Syscall.sendmsg (so1, msghdr1, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+					}
+
+					// Receive without control message buffer
+					var buffer2 = new byte[1024];
+					var msghdr2 = new Msghdr { };
+					fixed (byte* ptr_buffer2 = buffer2) {
+						var iovecs2 = new Iovec[] {
+							new Iovec {
+								iov_base = (IntPtr) ptr_buffer2,
+								iov_len = (ulong) buffer2.Length,
+							},
+						};
+						msghdr2.msg_iov = iovecs2;
+						msghdr2.msg_iovlen = 1;
+						ret = Syscall.recvmsg (so2, msghdr2, 0);
+					}
+					if (ret < 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+
+					Assert.IsTrue ((msghdr2.msg_flags & MessageFlags.MSG_CTRUNC) != 0); // Control message has been truncated
+
+					Assert.AreEqual (buffer1.Length, ret);
+					for (int i = 0; i < buffer1.Length; i++)
+						Assert.AreEqual (buffer1[i], buffer2[i]);
+
+					// Receive with control message buffer
+					buffer2 = new byte[1024];
+					var cmsg2 = new byte[1024];
+					msghdr2 = new Msghdr {
+						msg_control = cmsg2,
+						msg_controllen = cmsg2.Length,
+					};
+					fixed (byte* ptr_buffer2 = buffer2) {
+						var iovecs2 = new Iovec[] {
+							new Iovec {
+								iov_base = (IntPtr) ptr_buffer2,
+								iov_len = (ulong) buffer2.Length,
+							},
+						};
+						msghdr2.msg_iov = iovecs2;
+						msghdr2.msg_iovlen = 1;
+						ret = Syscall.recvmsg (so2, msghdr2, 0);
+					}
+					if (ret < 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+
+					var fds = new global::System.Collections.Generic.List<int> ();
+					for (offset = Syscall.CMSG_FIRSTHDR (msghdr2); offset != -1; offset = Syscall.CMSG_NXTHDR (msghdr2, offset)) {
+						var recvHdr = Cmsghdr.ReadFromBuffer (msghdr2, offset);
+						var recvDataOffset = Syscall.CMSG_DATA (msghdr2, offset);
+						var bytes = recvHdr.cmsg_len - (recvDataOffset - offset);
+						Assert.AreEqual (bytes % sizeof (int), 0);
+						var fdCount = bytes / sizeof (int);
+						fixed (byte* ptr = msghdr2.msg_control)
+							for (int i = 0; i < fdCount; i++)
+								fds.Add (((int*) (ptr + recvDataOffset))[i]);
+					}
+					try {
+						Assert.IsTrue ((msghdr2.msg_flags & MessageFlags.MSG_CTRUNC) == 0); // Control message has not been truncated
+
+						Assert.AreEqual (buffer1.Length, ret);
+						for (int i = 0; i < buffer1.Length; i++)
+							Assert.AreEqual (buffer1[i], buffer2[i]);
+
+						Assert.AreEqual (fds.Count, 2);
+
+						// Send message over the first received fd and receive it over inner_so2
+						var buffer3 = new byte[] { 16, 17 };
+						ret = Syscall.send (fds[0], buffer3, (ulong) buffer3.Length, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+
+						var buffer4 = new byte[1024];
+						ret = Syscall.recv (inner_so2, buffer4, (ulong) buffer4.Length, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+
+						Assert.AreEqual (buffer3.Length, ret);
+						for (int i = 0; i < buffer3.Length; i++)
+							Assert.AreEqual (buffer3[i], buffer4[i]);
+
+						// Send message over inner_so1 and receive it second received fd
+						var buffer5 = new byte[] { 10, 40, 0, 1 };
+						ret = Syscall.send (inner_so1, buffer5, (ulong) buffer5.Length, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+
+						var buffer6 = new byte[1024];
+						ret = Syscall.recv (fds[1], buffer6, (ulong) buffer6.Length, 0);
+						if (ret < 0)
+							UnixMarshal.ThrowExceptionForLastError ();
+
+						Assert.AreEqual (buffer5.Length, ret);
+						for (int i = 0; i < buffer5.Length; i++)
+							Assert.AreEqual (buffer5[i], buffer6[i]);
+					} finally {
+						foreach (var fd in fds)
+							if (Syscall.close (fd) < 0)
+								UnixMarshal.ThrowExceptionForLastError ();
+					}
+				});
+			});
+		}
 	}
 }
 

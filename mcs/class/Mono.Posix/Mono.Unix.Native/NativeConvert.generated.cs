@@ -86,6 +86,22 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromCmsghdr")]
+		private static extern int FromCmsghdr (ref Cmsghdr source, IntPtr destination);
+
+		public static bool TryCopy (ref Cmsghdr source, IntPtr destination)
+		{
+			return FromCmsghdr (ref source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToCmsghdr")]
+		private static extern int ToCmsghdr (IntPtr source, out Cmsghdr destination);
+
+		public static bool TryCopy (IntPtr source, out Cmsghdr destination)
+		{
+			return ToCmsghdr (source, out destination) == 0;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromConfstrName")]
 		private static extern int FromConfstrName (ConfstrName value, out Int32 rval);
 
@@ -1186,6 +1202,38 @@ namespace Mono.Unix.Native {
 		{
 			UnixAddressFamily rval;
 			if (ToUnixAddressFamily (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromUnixSocketControlMessage")]
+		private static extern int FromUnixSocketControlMessage (UnixSocketControlMessage value, out Int32 rval);
+
+		public static bool TryFromUnixSocketControlMessage (UnixSocketControlMessage value, out Int32 rval)
+		{
+			return FromUnixSocketControlMessage (value, out rval) == 0;
+		}
+
+		public static Int32 FromUnixSocketControlMessage (UnixSocketControlMessage value)
+		{
+			Int32 rval;
+			if (FromUnixSocketControlMessage (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToUnixSocketControlMessage")]
+		private static extern int ToUnixSocketControlMessage (Int32 value, out UnixSocketControlMessage rval);
+
+		public static bool TryToUnixSocketControlMessage (Int32 value, out UnixSocketControlMessage rval)
+		{
+			return ToUnixSocketControlMessage (value, out rval) == 0;
+		}
+
+		public static UnixSocketControlMessage ToUnixSocketControlMessage (Int32 value)
+		{
+			UnixSocketControlMessage rval;
+			if (ToUnixSocketControlMessage (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}

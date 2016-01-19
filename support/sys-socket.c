@@ -17,6 +17,7 @@
 
 #include "map.h"
 #include "mph.h"
+#include "sys-uio.h"
 
 G_BEGIN_DECLS
 
@@ -31,6 +32,12 @@ Mono_Posix_SockaddrUn_get_sizeof_sun_path (void)
 {
 	struct sockaddr_un sun;
 	return sizeof (sun.sun_path);
+}
+
+int
+Mono_Posix_Cmsghdr_getsize (void)
+{
+	return sizeof (struct cmsghdr);
 }
 
 int
@@ -394,10 +401,10 @@ Mono_Posix_Syscall_accept (int socket, struct Mono_Posix__SockaddrHeader* addres
 	return r;
 }
 
+#ifdef HAVE_ACCEPT4
 int
 Mono_Posix_Syscall_accept4 (int socket, struct Mono_Posix__SockaddrHeader* address, int flags)
 {
-#ifdef HAVE_ACCEPT4
 	int r;
 
 	ALLOC_SOCKADDR
@@ -413,11 +420,8 @@ Mono_Posix_Syscall_accept4 (int socket, struct Mono_Posix__SockaddrHeader* addre
 		free (addr);
 
 	return r;
-#else
-	errno = EINVAL;
-	return -1;
-#endif
 }
+#endif
 
 int
 Mono_Posix_Syscall_getpeername (int socket, struct Mono_Posix__SockaddrHeader* address)
@@ -512,6 +516,148 @@ Mono_Posix_Syscall_sendto (int socket, void* message, guint64 length, int flags,
 
 	return r;
 }
+
+gint64
+Mono_Posix_Syscall_recvmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, struct Mono_Posix__SockaddrHeader* address, int flags)
+{
+	struct msghdr hdr;
+	int r;
+
+	ALLOC_SOCKADDR
+
+	memset (&hdr, 0, sizeof (struct msghdr));
+
+	hdr.msg_name = addr;
+	hdr.msg_namelen = addrlen;
+	hdr.msg_iovlen = message->msg_iovlen;
+	hdr.msg_control = message->msg_control;
+	hdr.msg_controllen = message->msg_controllen;
+
+	hdr.msg_iov = _mph_from_iovec_array (message->msg_iov, message->msg_iovlen);
+
+	r = recvmsg (socket, &hdr, flags);
+
+	if (r != -1 && Mono_Posix_ToSockaddr (addr, hdr.msg_namelen, address) != 0)
+		r = -1;
+
+	free (hdr.msg_iov);
+	if (need_free)
+		free (addr);
+
+	message->msg_controllen = hdr.msg_controllen;
+	message->msg_flags = hdr.msg_flags;
+
+	return r;
+}
+
+gint64
+Mono_Posix_Syscall_sendmsg (int socket, struct Mono_Posix_Syscall__Msghdr* message, struct Mono_Posix__SockaddrHeader* address, int flags)
+{
+	struct msghdr hdr;
+	int r;
+
+	ALLOC_SOCKADDR
+	if (Mono_Posix_FromSockaddr (address, addr) != 0) {
+		if (need_free)
+			free (addr);
+		return -1;
+	}
+
+	memset (&hdr, 0, sizeof (struct msghdr));
+
+	hdr.msg_name = addr;
+	hdr.msg_namelen = addrlen;
+	hdr.msg_iovlen = message->msg_iovlen;
+	hdr.msg_control = message->msg_control;
+	hdr.msg_controllen = message->msg_controllen;
+
+	hdr.msg_iov = _mph_from_iovec_array (message->msg_iov, message->msg_iovlen);
+
+	r = sendmsg (socket, &hdr, flags);
+
+	free (hdr.msg_iov);
+	if (need_free)
+		free (addr);
+
+	return r;
+}
+
+static inline void make_msghdr (struct msghdr* hdr, unsigned char* msg_control, gint64 msg_controllen)
+{
+	memset (hdr, 0, sizeof (struct msghdr));
+	hdr->msg_control = msg_control;
+	hdr->msg_controllen = msg_controllen;
+}
+static inline struct cmsghdr* from_offset (unsigned char* msg_control, gint64 offset)
+{
+	if (offset == -1)
+		return NULL;
+	return (struct cmsghdr*) (msg_control + offset);
+}
+static inline gint64 to_offset (unsigned char* msg_control, void* hdr)
+{
+	if (!hdr)
+		return -1;
+	return ((unsigned char*) hdr) - msg_control;
+}
+
+#ifdef CMSG_FIRSTHDR
+gint64
+Mono_Posix_Syscall_CMSG_FIRSTHDR (unsigned char* msg_control, gint64 msg_controllen)
+{
+	struct msghdr hdr;
+
+	make_msghdr (&hdr, msg_control, msg_controllen);
+	return to_offset (msg_control, CMSG_FIRSTHDR (&hdr));
+}
+#endif
+
+#ifdef CMSG_NXTHDR
+gint64
+Mono_Posix_Syscall_CMSG_NXTHDR (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg)
+{
+	struct msghdr hdr;
+
+	make_msghdr (&hdr, msg_control, msg_controllen);
+	return to_offset (msg_control, CMSG_NXTHDR (&hdr, from_offset (msg_control, cmsg)));
+}
+#endif
+
+#ifdef CMSG_DATA
+gint64
+Mono_Posix_Syscall_CMSG_DATA (unsigned char* msg_control, gint64 msg_controllen, gint64 cmsg)
+{
+	return to_offset (msg_control, CMSG_DATA (from_offset (msg_control, cmsg)));
+}
+#endif
+
+#ifdef CMSG_ALIGN
+guint64
+Mono_Posix_Syscall_CMSG_ALIGN (guint64 length)
+{
+	return CMSG_ALIGN (length);
+}
+#endif
+
+#ifdef CMSG_SPACE
+guint64
+Mono_Posix_Syscall_CMSG_SPACE (guint64 length)
+{
+	return CMSG_SPACE (length);
+}
+#endif
+
+#ifdef CMSG_LEN
+guint64
+Mono_Posix_Syscall_CMSG_LEN (guint64 length)
+{
+	return CMSG_LEN (length);
+}
+#endif
+
+/*
+ * vim: noexpandtab
+ */
 
 // vim: noexpandtab
 // Local Variables: 

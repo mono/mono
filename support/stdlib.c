@@ -15,7 +15,7 @@
 G_BEGIN_DECLS
 
 // See Stdlib.cs
-const char *
+void*
 Mono_Unix_VersionString ()
 {
 	return "MonoProject-2015-12-1";

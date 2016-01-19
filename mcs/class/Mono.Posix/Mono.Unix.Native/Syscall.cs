@@ -924,6 +924,13 @@ namespace Mono.Unix.Native {
 		MustBeWrapped = 0x8000,
 	}
 
+	[Map]
+	[CLSCompliant (false)]
+	public enum UnixSocketControlMessage : int {
+		SCM_RIGHTS      = 0x01,  /* Transfer file descriptors. */
+		SCM_CREDENTIALS = 0x02,  /* Credentials passing. */
+	}
+
 	#endregion
 
 	#region Structures
@@ -1573,6 +1580,60 @@ namespace Mono.Unix.Native {
 		public bool Equals (In6Addr value)
 		{
 			return addr0 == value.addr0 && addr1 == value.addr1;
+		}
+	}
+
+	[Map ("struct cmsghdr")]
+	[CLSCompliant (false)]
+	public struct Cmsghdr {
+		public long cmsg_len;
+		public UnixSocketProtocol cmsg_level;
+		public UnixSocketControlMessage cmsg_type;
+
+		[DllImport (Syscall.MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Cmsghdr_getsize")]
+		static extern int getsize ();
+		static readonly int size = getsize ();
+		public static int Size {
+			get {
+				return size;
+			}
+		}
+
+		// Read a struct cmsghdr from msgh.msg_control at offset cmsg and convert it to managed Cmsghdr structure
+		public static unsafe Cmsghdr ReadFromBuffer (Msghdr msgh, long cmsg)
+		{
+			if (msgh == null)
+				throw new ArgumentNullException ("msgh");
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length", "msgh");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg offset pointing out of buffer", "cmsg");
+
+			Cmsghdr hdr;
+			fixed (byte* ptr = msgh.msg_control)
+				if (!NativeConvert.TryCopy ((IntPtr) (ptr + cmsg), out hdr))
+					throw new ArgumentException ("Failed to convert from native struct", "buffer");
+			// SOL_SOCKET has the same value as IPPROTO_ICMP on linux.
+			// Make sure that cmsg_level is set to SOL_SOCKET in this case.
+			if (NativeConvert.FromUnixSocketProtocol (hdr.cmsg_level) == NativeConvert.FromUnixSocketProtocol (UnixSocketProtocol.SOL_SOCKET))
+				hdr.cmsg_level = UnixSocketProtocol.SOL_SOCKET;
+			return hdr;
+		}
+
+		// Convert the Cmsghdr to a native struct cmsghdr and write it to msgh.msg_control at offset cmsg
+		public unsafe void WriteToBuffer (Msghdr msgh, long cmsg)
+		{
+			if (msgh == null)
+				throw new ArgumentNullException ("msgh");
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length", "msgh");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg offset pointing out of buffer", "cmsg");
+
+			fixed (byte* ptr = msgh.msg_control)
+				if (!NativeConvert.TryCopy (ref this, (IntPtr) (ptr + cmsg)))
+					throw new ArgumentException ("Failed to convert to native struct", "buffer");
 		}
 	}
 
@@ -2384,6 +2445,18 @@ namespace Mono.Unix.Native {
 				&& sin6_addr.Equals (value.sin6_addr)
 				&& sin6_scope_id == value.sin6_scope_id;
 		}
+	}
+
+	[CLSCompliant (false)]
+	public sealed class Msghdr
+	{
+		public Sockaddr msg_name;
+		// msg_name_len is part of the Sockaddr structure
+		public Iovec[] msg_iov;
+		public int msg_iovlen;
+		public byte[] msg_control;
+		public long msg_controllen;
+		public MessageFlags msg_flags;
 	}
 
 	//
@@ -5250,7 +5323,7 @@ namespace Mono.Unix.Native {
 
 		#region <socket.h> Declarations
 		//
-		// <socket.h>
+		// <socket.h> -- COMPLETE
 		//
 
 		// socket(2)
@@ -5641,6 +5714,155 @@ namespace Mono.Unix.Native {
 			fixed (byte* ptr = message)
 				return sendto (socket, ptr, length, flags, address);
 		}
+
+		// structure for recvmsg() and sendmsg()
+		unsafe struct _Msghdr
+		{
+			public Iovec* msg_iov;
+			public int msg_iovlen;
+			public byte* msg_control;
+			public long msg_controllen;
+			public int msg_flags;
+
+			public _Msghdr (Msghdr message, Iovec* ptr_msg_iov, byte* ptr_msg_control)
+			{
+				if (message.msg_iovlen > message.msg_iov.Length || message.msg_iovlen < 0)
+					throw new ArgumentException ("message.msg_iovlen > message.msg_iov.Length || message.msg_iovlen < 0", "message");
+				msg_iov = ptr_msg_iov;
+				msg_iovlen = message.msg_iovlen;
+
+				if (message.msg_control == null && message.msg_controllen != 0)
+					throw new ArgumentException ("message.msg_control == null && message.msg_controllen != 0", "message");
+				if (message.msg_control != null && message.msg_controllen > message.msg_control.Length)
+					throw new ArgumentException ("message.msg_controllen > message.msg_control.Length", "message");
+				msg_control = ptr_msg_control;
+				msg_controllen = message.msg_controllen;
+
+				msg_flags = 0; // msg_flags is only passed out of the kernel
+			}
+
+			public void Update (Msghdr message)
+			{
+				message.msg_controllen = msg_controllen;
+				message.msg_flags = NativeConvert.ToMessageFlags (msg_flags);
+			}
+		}
+
+		// recvmsg(2)
+		//    ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_recvmsg")]
+		static extern unsafe long sys_recvmsg (int socket, ref _Msghdr message, _SockaddrHeader* msg_name, int flags);
+
+		public static unsafe long recvmsg (int socket, Msghdr message, MessageFlags flags)
+		{
+			var _flags = NativeConvert.FromMessageFlags (flags);
+			var address = message.msg_name;
+			fixed (byte* ptr_msg_control = message.msg_control)
+			fixed (Iovec* ptr_msg_iov = message.msg_iov) {
+				var _message = new _Msghdr (message, ptr_msg_iov, ptr_msg_control);
+				long r;
+				fixed (SockaddrType* addr = &Sockaddr.GetAddress (address).type)
+				fixed (byte* data = Sockaddr.GetDynamicData (address)) {
+					var dyn = new _SockaddrDynamic (address, data, useMaxLength: true);
+					r = sys_recvmsg (socket, ref _message, Sockaddr.GetNative (&dyn, addr), _flags);
+					dyn.Update (address);
+				}
+				_message.Update (message);
+				return r;
+			}
+		}
+
+		// sendmsg(2)
+		//    ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_sendmsg")]
+		static extern unsafe long sys_sendmsg (int socket, ref _Msghdr message, _SockaddrHeader* msg_name, int flags);
+
+		public static unsafe long sendmsg (int socket, Msghdr message, MessageFlags flags)
+		{
+			var _flags = NativeConvert.FromMessageFlags (flags);
+			var address = message.msg_name;
+			fixed (byte* ptr_msg_control = message.msg_control)
+			fixed (Iovec* ptr_msg_iov = message.msg_iov) {
+				var _message = new _Msghdr (message, ptr_msg_iov, ptr_msg_control);
+				fixed (SockaddrType* addr = &Sockaddr.GetAddress (address).type)
+				fixed (byte* data = Sockaddr.GetDynamicData (address)) {
+					var dyn = new _SockaddrDynamic (address, data, useMaxLength: false);
+					return sys_sendmsg (socket, ref _message, Sockaddr.GetNative (&dyn, addr), _flags);
+				}
+			}
+		}
+
+		// cmsg(3)
+		//    struct cmsghdr *CMSG_FIRSTHDR(struct msghdr *msgh);
+		//    struct cmsghdr *CMSG_NXTHDR(struct msghdr *msgh, struct cmsghdr *cmsg);
+		//    size_t CMSG_ALIGN(size_t length);
+		//    size_t CMSG_SPACE(size_t length);
+		//    size_t CMSG_LEN(size_t length);
+		//    unsigned char *CMSG_DATA(struct cmsghdr *cmsg);
+
+		// Wrapper methods use long offsets into msg_control instead of a
+		// struct cmsghdr *cmsg pointer because pointers into a byte[] aren't
+		// stable when the array is not pinned.
+		// NULL is mapped to -1.
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_FIRSTHDR")]
+		static extern unsafe long CMSG_FIRSTHDR (byte* msg_control, long msg_controllen);
+
+		public static unsafe long CMSG_FIRSTHDR (Msghdr msgh)
+		{
+			if (msgh.msg_control == null && msgh.msg_controllen != 0)
+				throw new ArgumentException ("msgh.msg_control == null && msgh.msg_controllen != 0", "msgh");
+			if (msgh.msg_control != null && msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh.msg_controllen > msgh.msg_control.Length", "msgh");
+
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_FIRSTHDR (ptr, msgh.msg_controllen);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_NXTHDR")]
+		static extern unsafe long CMSG_NXTHDR (byte* msg_control, long msg_controllen, long cmsg);
+
+		public static unsafe long CMSG_NXTHDR (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length", "msgh");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg offset pointing out of buffer", "cmsg");
+
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_NXTHDR (ptr, msgh.msg_controllen, cmsg);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_DATA")]
+		static extern unsafe long CMSG_DATA (byte* msg_control, long msg_controllen, long cmsg);
+
+		public static unsafe long CMSG_DATA (Msghdr msgh, long cmsg)
+		{
+			if (msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length)
+				throw new ArgumentException ("msgh.msg_control == null || msgh.msg_controllen > msgh.msg_control.Length", "msgh");
+			if (cmsg < 0 || cmsg + Cmsghdr.Size > msgh.msg_controllen)
+				throw new ArgumentException ("cmsg offset pointing out of buffer", "cmsg");
+
+			fixed (byte* ptr = msgh.msg_control)
+				return CMSG_DATA (ptr, msgh.msg_controllen, cmsg);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_ALIGN")]
+		public static extern ulong CMSG_ALIGN (ulong length);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_SPACE")]
+		public static extern ulong CMSG_SPACE (ulong length);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_CMSG_LEN")]
+		public static extern ulong CMSG_LEN (ulong length);
 
 		#endregion
 	}
