@@ -152,3 +152,9 @@
 ./Mono.Security.Interface/TlsException.cs
 ./Mono.Security.Interface/TlsProtocolCode.cs
 ./Mono.Security.Interface/TlsProtocols.cs
+
+./Mono.Security.Interface/BufferOffsetSize.cs
+./Mono.Security.Interface/SecretParameters.cs
+./Mono.Security.Interface/SecureBuffer.cs
+./Mono.Security.Interface/TlsBuffer.cs
+./Mono.Security.Interface/TlsMultiBuffer.cs

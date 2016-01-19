@@ -130,3 +130,9 @@
 ./Mono.Security.Protocol.Tls.Handshake.Server/TlsServerKeyExchange.cs
 ./Mono.Xml/MiniParser.cs
 ./Mono.Xml/SecurityParser.cs
+
+./Mono.Security.Interface/BufferOffsetSize.cs
+./Mono.Security.Interface/SecretParameters.cs
+./Mono.Security.Interface/SecureBuffer.cs
+./Mono.Security.Interface/TlsBuffer.cs
+./Mono.Security.Interface/TlsMultiBuffer.cs

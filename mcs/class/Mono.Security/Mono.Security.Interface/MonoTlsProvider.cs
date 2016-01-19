@@ -72,6 +72,10 @@ namespace Mono.Security.Interface
 
 	public abstract class MonoTlsProvider
 	{
+		internal MonoTlsProvider ()
+		{
+		}
+
 		public abstract Guid ID {
 			get;
 		}
@@ -155,11 +159,11 @@ namespace Mono.Security.Interface
 		 * The managed SSPI implementation from the new TLS code.
 		 */
 
-		public abstract bool SupportsTlsContext {
+		internal abstract bool SupportsTlsContext {
 			get;
 		}
 
-		public abstract IMonoTlsContext CreateTlsContext (
+		internal abstract IMonoTlsContext CreateTlsContext (
 			string hostname, bool serverMode, TlsProtocols protocolFlags,
 			X509Certificate serverCertificate, X509CertificateCollection clientCertificates,
 			bool remoteCertRequired, MonoEncryptionPolicy encryptionPolicy,

@@ -86,7 +86,7 @@ namespace Mono.Net.Security.Private
 			get { return false; }
 		}
 
-		public override bool SupportsTlsContext {
+		internal override bool SupportsTlsContext {
 			get { return false; }
 		}
 
