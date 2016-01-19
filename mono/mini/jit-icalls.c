@@ -97,11 +97,18 @@ mono_ldvirtfn_gshared (MonoObject *obj, MonoMethod *method)
 void
 mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val)
 {
+	MonoError error;
+	gboolean isinst;
+
 	if (!array) {
 		mono_set_pending_exception (mono_get_exception_null_reference ());
 		return;
 	}
-	if (val && !mono_object_isinst (val, array->obj.vtable->klass->element_class)) {
+
+	isinst = mono_object_isinst_checked (val, array->obj.vtable->klass->element_class, &error) != NULL;
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	if (!isinst) {
 		mono_set_pending_exception (mono_get_exception_array_type_mismatch ());
 		return;
 	}
@@ -1141,8 +1148,10 @@ mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg
 MonoObject*
 mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = NULL;
 	MonoClass *oklass;
+	gboolean isinst;
 
 	if (mini_get_debug_options ()->better_cast_details) {
 		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
@@ -1155,7 +1164,11 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 	oklass = obj->vtable->klass;
 	if ((klass->enumtype && oklass == klass->element_class) || (oklass->enumtype && klass == oklass->element_class))
 		return obj;
-	if (mono_object_isinst (obj, klass))
+
+	isinst = mono_object_isinst_checked (obj, klass, &error) != NULL;
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	if (isinst)
 		return obj;
 
 	if (mini_get_debug_options ()->better_cast_details) {
@@ -1172,8 +1185,10 @@ mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 MonoObject*
 mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache)
 {
+	MonoError error;
 	MonoJitTlsData *jit_tls = NULL;
 	gpointer cached_vtable, obj_vtable;
+	gboolean isinst;
 
 	if (mini_get_debug_options ()->better_cast_details) {
 		jit_tls = (MonoJitTlsData *)mono_native_tls_get_value (mono_jit_tls_id);
@@ -1189,7 +1204,10 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 	if (cached_vtable == obj_vtable)
 		return obj;
 
-	if (mono_object_isinst (obj, klass)) {
+	isinst = mono_object_isinst_checked (obj, klass, &error) != NULL;
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	if (isinst) {
 		*cache = obj_vtable;
 		return obj;
 	}
@@ -1208,7 +1226,9 @@ mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *c
 MonoObject*
 mono_object_isinst_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache)
 {
+	MonoError error;
 	size_t cached_vtable, obj_vtable;
+	gboolean isinst;
 
 	if (!obj)
 		return NULL;
@@ -1220,7 +1240,10 @@ mono_object_isinst_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cach
 		return (cached_vtable & 0x1) ? NULL : obj;
 	}
 
-	if (mono_object_isinst (obj, klass)) {
+	isinst = mono_object_isinst_checked (obj, klass, &error) != NULL;
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	if (isinst) {
 		*cache = (gpointer)obj_vtable;
 		return obj;
 	} else {

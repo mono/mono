@@ -456,7 +456,9 @@ void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
 						  mgreg_t eip, gboolean rethrow)
 {
+	MonoError error;
 	MonoContext ctx;
+	gboolean isinst;
 
 	ctx.esp = regs [X86_ESP];
 	ctx.eip = eip;
@@ -473,7 +475,10 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 	g_assert ((ctx.esp % MONO_ARCH_FRAME_ALIGNMENT) == 0);
 #endif
 
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+	isinst = mono_object_isinst_checked (exc, mono_defaults.exception_class, &error) != NULL;
+	mono_error_assert_ok (&error);
+
+	if (isinst) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;

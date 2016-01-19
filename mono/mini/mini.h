@@ -48,6 +48,8 @@
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/exception.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-error.h"
+#include "mono/utils/mono-error-internals.h"
 
 #ifdef __native_client_codegen__
 #include <nacl/nacl_dyncode.h>
