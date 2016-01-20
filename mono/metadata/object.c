@@ -4520,10 +4520,8 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-#ifndef HAVE_SGEN_GC
 	MonoError error;
 	MonoObject *ret;
-#endif
 	MonoVTable *vtable;
 
 	vtable = mono_class_vtable (domain, klass);
@@ -4531,13 +4529,13 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 		return NULL;
 
 #ifdef HAVE_SGEN_GC
-	return (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
+	ret = (MonoObject*) mono_gc_alloc_pinned_obj_checked (vtable, mono_class_instance_size (klass), &error);
 #else
 	ret = mono_object_new_specific_checked (vtable, &error);
+#endif
 	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return ret;
-#endif
 }
 
 /**
@@ -5492,10 +5490,12 @@ mono_string_get_pinned (MonoString *str)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	int size;
 	MonoString *news;
 	size = sizeof (MonoString) + 2 * (mono_string_length (str) + 1);
-	news = (MonoString *)mono_gc_alloc_pinned_obj (((MonoObject*)str)->vtable, size);
+	news = (MonoString*) mono_gc_alloc_pinned_obj_checked (((MonoObject*)str)->vtable, size, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	if (news) {
 		memcpy (mono_string_chars (news), mono_string_chars (str), mono_string_length (str) * 2);
 		news->length = mono_string_length (str);

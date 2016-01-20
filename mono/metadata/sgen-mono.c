@@ -943,11 +943,11 @@ mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 }
 
 void*
-mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
+	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size, error);
 
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
