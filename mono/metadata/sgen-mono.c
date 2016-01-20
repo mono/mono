@@ -1067,7 +1067,7 @@ create_allocator (int atype, gboolean slowpath)
 	if (!registered) {
 		mono_register_jit_icall (ves_icall_gc_alloc_obj, "ves_icall_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
 		mono_register_jit_icall (ves_icall_gc_alloc_vector, "ves_icall_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_string, "ves_icall_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
 		registered = TRUE;
 	}
 
@@ -1317,7 +1317,7 @@ create_allocator (int atype, gboolean slowpath)
 		mono_mb_emit_icall (mb, ves_icall_gc_alloc_vector);
 	} else if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_string);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_string);
 	} else {
 		g_assert_not_reached ();
 	}
@@ -1808,10 +1808,12 @@ mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_leng
 }
 
 void*
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
 	MonoString *str;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1833,7 +1835,8 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	str = (MonoString*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!str)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	str->length = len;

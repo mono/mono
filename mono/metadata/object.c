@@ -5080,6 +5080,7 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoString *s;
 	MonoVTable *vtable;
 	size_t size;
@@ -5094,7 +5095,8 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 	vtable = mono_class_vtable (domain, mono_defaults.string_class);
 	g_assert (vtable);
 
-	s = (MonoString *)mono_gc_alloc_string (vtable, size, len);
+	s = (MonoString*) mono_gc_alloc_string_checked (vtable, size, len, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	return s;
 }

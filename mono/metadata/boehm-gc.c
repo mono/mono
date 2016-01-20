@@ -790,16 +790,31 @@ mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_leng
 }
 
 void *
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
-	MonoString *obj = (MonoString *)GC_MALLOC_ATOMIC (size);
+	MonoString *obj;
 
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
+	obj = (MonoString *)GC_MALLOC_ATOMIC (size);
 	obj->object.vtable = vtable;
 	obj->object.synchronisation = NULL;
 	obj->length = len;
 	obj->chars [len] = 0;
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&obj->object);
 
 	return obj;

@@ -232,10 +232,13 @@ mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_leng
 }
 
 void *
-mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
+mono_gc_alloc_string_checked (MonoVTable *vtable, size_t size, gint32 len, MonoError *error)
 {
-	MonoString *obj = calloc (1, size);
+	MonoString *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->object.vtable = vtable;
 	obj->length = len;
 	obj->chars [len] = 0;
