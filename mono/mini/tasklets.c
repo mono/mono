@@ -16,7 +16,7 @@ static void
 internal_init (void)
 {
 	if (!mono_gc_is_moving ())
-		/* Boehm requires the keepalive stacks to be kept in a hash since mono_gc_alloc_fixed () returns GC memory */
+		/* Boehm requires the keepalive stacks to be kept in a hash since mono_gc_alloc_fixed_checked () returns GC memory */
 		g_assert_not_reached ();
 }
 
@@ -75,6 +75,7 @@ continuation_mark_frame (MonoContinuation *cont)
 static int
 continuation_store (MonoContinuation *cont, int state, MonoException **e)
 {
+	MonoError error;
 	MonoLMF *lmf = mono_get_lmf ();
 	gsize num_bytes;
 
@@ -108,7 +109,8 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 			mono_gc_free_fixed (cont->saved_stack);
 		cont->stack_used_size = num_bytes;
 		cont->stack_alloc_size = num_bytes * 1.1;
-		cont->saved_stack = mono_gc_alloc_fixed (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, "saved tasklet stack");
+		cont->saved_stack = mono_gc_alloc_fixed_checked (cont->stack_alloc_size, NULL, MONO_ROOT_SOURCE_THREADING, "saved tasklet stack", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		tasklets_unlock ();
 	}
 	memcpy (cont->saved_stack, cont->return_sp, num_bytes);

@@ -34,9 +34,13 @@ typedef struct {
 	(ARRAY).capacity = MAX (INITIAL_SIZE, MONO_PTR_ARRAY_MAX_ON_STACK); \
 	(ARRAY).source = SOURCE; \
 	(ARRAY).msg = MSG; \
-	(ARRAY).data = INITIAL_SIZE > MONO_PTR_ARRAY_MAX_ON_STACK \
-		? (void **)mono_gc_alloc_fixed (sizeof (void*) * INITIAL_SIZE, mono_gc_make_root_descr_all_refs (INITIAL_SIZE), SOURCE, MSG) \
-		: g_newa (void*, MONO_PTR_ARRAY_MAX_ON_STACK); \
+	if (INITIAL_SIZE <= MONO_PTR_ARRAY_MAX_ON_STACK) { \
+		(ARRAY).data = g_newa (void*, MONO_PTR_ARRAY_MAX_ON_STACK); \
+	} else { \
+		MonoError __error; \
+		(ARRAY).data = (void**) mono_gc_alloc_fixed_checked (sizeof (void*) * INITIAL_SIZE, mono_gc_make_root_descr_all_refs (INITIAL_SIZE), SOURCE, MSG, &__error); \
+		mono_error_raise_exception (&__error); /* FIXME don't raise here */ \
+	} \
 } while (0)
 
 #define mono_ptr_array_destroy(ARRAY) do {\
@@ -46,7 +50,9 @@ typedef struct {
 
 #define mono_ptr_array_append(ARRAY, VALUE) do { \
 	if ((ARRAY).size >= (ARRAY).capacity) {\
-	void **__tmp = (void **)mono_gc_alloc_fixed (sizeof (void*) * (ARRAY).capacity * 2, mono_gc_make_root_descr_all_refs ((ARRAY).capacity * 2), (ARRAY).source, (ARRAY).msg); \
+		MonoError __error; \
+		void **__tmp = (void **)mono_gc_alloc_fixed_checked (sizeof (void*) * (ARRAY).capacity * 2, mono_gc_make_root_descr_all_refs ((ARRAY).capacity * 2), (ARRAY).source, (ARRAY).msg, &__error); \
+		mono_error_raise_exception (&__error); /* FIXME don't raise here */ \
 		mono_gc_memmove_aligned ((void *)__tmp, (ARRAY).data, (ARRAY).capacity * sizeof (void*)); \
 		if ((ARRAY).capacity > MONO_PTR_ARRAY_MAX_ON_STACK)	\
 			mono_gc_free_fixed ((ARRAY).data);	\

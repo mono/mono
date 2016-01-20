@@ -972,10 +972,14 @@ mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
 	/* FIXME: do a single allocation */
-	void *res = calloc (1, size);
+	void *res;
+
+	mono_error_init (error);
+
+	res = calloc (1, size);
 	if (!res)
 		return NULL;
 	if (!mono_gc_register_root ((char *)res, size, descr, source, msg)) {

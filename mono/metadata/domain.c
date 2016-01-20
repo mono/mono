@@ -338,10 +338,12 @@ mono_ptrarray_hash (gpointer *s)
 static int
 domain_id_alloc (MonoDomain *domain)
 {
+	MonoError error;
 	int id = -1, i;
 	if (!appdomains_list) {
 		appdomain_list_size = 2;
-		appdomains_list = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		appdomains_list = (MonoDomain**) mono_gc_alloc_fixed_checked (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	}
 	for (i = appdomain_next; i < appdomain_list_size; ++i) {
 		if (!appdomains_list [i]) {
@@ -363,7 +365,8 @@ domain_id_alloc (MonoDomain *domain)
 		if (new_size >= (1 << 16))
 			g_assert_not_reached ();
 		id = appdomain_list_size;
-		new_list = (MonoDomain **)mono_gc_alloc_fixed (new_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list");
+		new_list = (MonoDomain**) mono_gc_alloc_fixed_checked (new_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "domains list", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		memcpy (new_list, appdomains_list, appdomain_list_size * sizeof (void*));
 		mono_gc_free_fixed (appdomains_list);
 		appdomains_list = new_list;
@@ -384,6 +387,7 @@ static guint32 domain_shadow_serial = 0L;
 MonoDomain *
 mono_domain_create (void)
 {
+	MonoError error;
 	MonoDomain *domain;
 	guint32 shadow_serial;
   
@@ -407,9 +411,11 @@ mono_domain_create (void)
 	 * running the corlib test suite.
 	 * To solve this, we pass a NULL descriptor, and don't register roots.
 	 */
-	domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), NULL, MONO_ROOT_SOURCE_DOMAIN, "domain object");
+	domain = (MonoDomain*) mono_gc_alloc_fixed_checked (sizeof (MonoDomain), NULL, MONO_ROOT_SOURCE_DOMAIN, "domain object", &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 #else
-	domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, "domain object");
+	domain = (MonoDomain*) mono_gc_alloc_fixed_checked (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, "domain object", &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	mono_gc_register_root ((char*)&(domain->MONO_DOMAIN_FIRST_GC_TRACKED), G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_LAST_GC_TRACKED) - G_STRUCT_OFFSET (MonoDomain, MONO_DOMAIN_FIRST_GC_TRACKED), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "misc domain fields");
 #endif
 	domain->shadow_serial = shadow_serial;
@@ -1025,6 +1031,7 @@ mono_domain_set_internal (MonoDomain *domain)
 void
 mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 {
+	MonoError error;
 	int i, size;
 	MonoDomain **copy;
 
@@ -1035,7 +1042,8 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 	 */
 	mono_appdomains_lock ();
 	size = appdomain_list_size;
-	copy = (MonoDomain **)mono_gc_alloc_fixed (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "temporary domains list");
+	copy = (MonoDomain**) mono_gc_alloc_fixed_checked (appdomain_list_size * sizeof (void*), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_DOMAIN, "temporary domains list", &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	memcpy (copy, appdomains_list, appdomain_list_size * sizeof (void*));
 	mono_appdomains_unlock ();
 
@@ -1563,6 +1571,7 @@ mono_context_get_domain_id (MonoAppContext *context)
 void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap)
 {
+	MonoError error;
 	/* The first entry in the array is the index of the next free slot
 	 * and the total size of the array
 	 */
@@ -1572,7 +1581,8 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		next = GPOINTER_TO_INT (domain->static_data_array [0]);
 		if (next >= size) {
 			/* 'data' is allocated by alloc_fixed */
-			gpointer *new_array = (gpointer *)mono_gc_alloc_fixed (sizeof (gpointer) * (size * 2), MONO_GC_ROOT_DESCR_FOR_FIXED (size * 2), MONO_ROOT_SOURCE_DOMAIN, "static field list");
+			gpointer *new_array = (gpointer*) mono_gc_alloc_fixed_checked (sizeof (gpointer) * (size * 2), MONO_GC_ROOT_DESCR_FOR_FIXED (size * 2), MONO_ROOT_SOURCE_DOMAIN, "static field list", &error);
+			mono_error_raise_exception (&error); /* FIXME don't raise here */
 			mono_gc_memmove_aligned (new_array, domain->static_data_array, sizeof (gpointer) * size);
 			size *= 2;
 			new_array [1] = GINT_TO_POINTER (size);
@@ -1581,7 +1591,8 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		}
 	} else {
 		int size = 32;
-		gpointer *new_array = (gpointer *)mono_gc_alloc_fixed (sizeof (gpointer) * size, MONO_GC_ROOT_DESCR_FOR_FIXED (size), MONO_ROOT_SOURCE_DOMAIN, "static field list");
+		gpointer *new_array = (gpointer*) mono_gc_alloc_fixed_checked (sizeof (gpointer) * size, MONO_GC_ROOT_DESCR_FOR_FIXED (size), MONO_ROOT_SOURCE_DOMAIN, "static field list", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		next = 2;
 		new_array [0] = GINT_TO_POINTER (next);
 		new_array [1] = GINT_TO_POINTER (size);

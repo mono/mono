@@ -27,7 +27,7 @@
 
 /*
  * Register a memory location as a root pointing to memory allocated using
- * mono_gc_alloc_fixed (). This includes MonoGHashTable.
+ * mono_gc_alloc_fixed_checked (). This includes MonoGHashTable.
  */
 /* The result of alloc_fixed () is not GC tracked memory */
 #define MONO_GC_REGISTER_ROOT_FIXED(x,src,msg) do { \
@@ -37,7 +37,7 @@
 
 /*
  * Return a GC descriptor for an array containing N pointers to memory allocated
- * by mono_gc_alloc_fixed ().
+ * by mono_gc_alloc_fixed_checked ().
  */
 /* For SGEN, the result of alloc_fixed () is not GC tracked memory */
 #define MONO_GC_ROOT_DESCR_FOR_FIXED(n) (mono_gc_is_moving () ? mono_gc_make_root_descr_all_refs (0) : MONO_GC_DESCRIPTOR_NULL)
@@ -135,7 +135,7 @@ gboolean mono_gc_user_markers_supported (void);
  * NOTE: Under Boehm, this returns memory allocated using GC_malloc, so the result should
  * be stored into a location registered using MONO_GC_REGISTER_ROOT_FIXED ().
  */
-void* mono_gc_alloc_fixed            (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg);
+void* mono_gc_alloc_fixed_checked    (size_t size, MonoGCDescriptor descr, MonoGCRootSource source, const char *msg, MonoError *error);
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */

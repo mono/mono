@@ -639,8 +639,18 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, void *descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
+	MonoObject *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
+
 	/* To help track down typed allocation bugs */
 	/*
 	static int count;
@@ -652,9 +662,17 @@ mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const ch
 	*/
 
 	if (descr)
-		return GC_MALLOC_EXPLICITLY_TYPED (size, (GC_descr)descr);
+		obj = GC_MALLOC_EXPLICITLY_TYPED (size, (GC_descr)descr);
 	else
-		return GC_MALLOC (size);
+		obj = GC_MALLOC (size);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	return obj;
 }
 
 void
@@ -1618,12 +1636,15 @@ find_first_unset (guint32 bitmap)
 static void
 handle_data_alloc_entries (HandleData *handles)
 {
+	MonoError error;
+
 	handles->size = 32;
 	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
 		handles->entries = (void **)g_malloc0 (sizeof (*handles->entries) * handles->size);
 		handles->domain_ids = (guint16 *)g_malloc0 (sizeof (*handles->domain_ids) * handles->size);
 	} else {
-		handles->entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		handles->entries = (void**) mono_gc_alloc_fixed_checked (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 	}
 	handles->bitmap = (guint32 *)g_malloc0 (handles->size / CHAR_BIT);
 }
@@ -1658,6 +1679,7 @@ handle_data_first_unset (HandleData *handles)
 static void
 handle_data_grow (HandleData *handles, gboolean track)
 {
+	MonoError error;
 	guint32 *new_bitmap;
 	guint32 new_size = handles->size * 2; /* always double: we memset to 0 based on this below */
 
@@ -1690,7 +1712,8 @@ handle_data_grow (HandleData *handles, gboolean track)
 		handles->domain_ids = domain_ids;
 	} else {
 		gpointer *entries;
-		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table");
+		entries = (void**) mono_gc_alloc_fixed_checked (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, "gc handles table", &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
 		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
 		mono_gc_free_fixed (handles->entries);
 		handles->entries = entries;

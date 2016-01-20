@@ -176,8 +176,9 @@ mono_gc_make_root_descr_all_refs (int numbits)
 }
 
 void*
-mono_gc_alloc_fixed (size_t size, void *descr, MonoGCRootSource source, const char *msg)
+mono_gc_alloc_fixed_checked (size_t size, void *descr, MonoGCRootSource source, const char *msg, MonoError *error)
 {
+	mono_error_init (error);
 	return g_malloc0 (size);
 }
 
