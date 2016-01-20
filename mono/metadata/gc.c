@@ -926,6 +926,15 @@ mono_gc_alloc_mature (MonoVTable *vtable)
 }
 #endif
 
+void*
+ves_icall_gc_alloc_obj (MonoVTable *vtable, size_t size)
+{
+	MonoError error;
+	MonoObject *ret = (MonoObject*) mono_gc_alloc_obj_checked (vtable, size, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
 
 static MonoReferenceQueue *ref_queues;
 

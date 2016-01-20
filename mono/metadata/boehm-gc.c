@@ -31,6 +31,8 @@
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-os-mutex.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-error.h>
+#include <mono/utils/mono-error-internals.h>
 
 #if HAVE_BOEHM_GC
 
@@ -60,6 +62,12 @@ register_test_toggleref_callback (void);
 
 #define BOEHM_GC_BIT_FINALIZER_AWARE 1
 static MonoGCFinalizerCallbacks fin_callbacks;
+
+#ifdef HAVE_KW_THREAD
+static __thread MonoError *oom_error;
+#else
+static MonoNativeTlsKey oom_error;
+#endif
 
 /* GC Handles */
 
@@ -95,6 +103,27 @@ mono_gc_warning (char *msg, GC_word arg)
 	mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_GC, msg, (unsigned long)arg);
 }
 
+static gpointer
+oom_cb (gsize size)
+{
+	MonoError *error;
+
+#ifdef HAVE_KW_THREAD
+	error = oom_error;
+#else
+	error = mono_native_tls_get_value (oom_error);
+#endif
+
+	if (error) {
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
+	}
+
+	mono_gc_out_of_memory (size);
+
+	return NULL;
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -106,6 +135,10 @@ mono_gc_base_init (void)
 		return;
 
 	mono_counters_init ();
+
+#ifndef HAVE_KW_THREAD
+	mono_native_tls_alloc (&oom_error, NULL);
+#endif
 
 	/*
 	 * Handle the case when we are called from a thread different from the main thread,
@@ -190,7 +223,7 @@ mono_gc_base_init (void)
 
 	GC_init ();
 
-	GC_oom_fn = mono_gc_out_of_memory;
+	GC_oom_fn = oom_cb;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
 	GC_finalizer_notifier = mono_gc_finalize_notify;
@@ -382,6 +415,12 @@ boehm_thread_register (MonoThreadInfo* info, void *baseptr)
 {
 	struct GC_stack_base sb;
 	int res;
+
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
 
 	/* TODO: use GC_get_stack_base instead of baseptr. */
 	sb.mem_base = baseptr;
@@ -624,9 +663,17 @@ mono_gc_free_fixed (void* addr)
 }
 
 void *
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
 	MonoObject *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
 
 	if (!vtable->klass->has_references) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
@@ -643,7 +690,13 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 		obj->vtable = vtable;
 	}
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
