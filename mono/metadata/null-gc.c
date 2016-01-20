@@ -188,10 +188,13 @@ mono_gc_free_fixed (void* addr)
 }
 
 void *
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = calloc (1, size);
+	MonoObject *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->vtable = vtable;
 
 	return obj;

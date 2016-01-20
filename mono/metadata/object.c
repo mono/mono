@@ -4573,7 +4573,9 @@ mono_object_new_alloc_specific (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o = (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *o = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
 
 	if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
@@ -4586,7 +4588,11 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *ret = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 /**
@@ -4663,13 +4669,15 @@ mono_object_clone (MonoObject *obj)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *o;
 	int size = obj->vtable->klass->instance_size;
 
 	if (obj->vtable->klass->rank)
 		return (MonoObject*)mono_array_clone ((MonoArray*)obj);
 
-	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
+	o = (MonoObject *)mono_gc_alloc_obj_checked (obj->vtable, size, &error);
+	mono_error_raise_exception (&error);
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	mono_gc_wbarrier_object_copy (o, obj);
