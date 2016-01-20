@@ -932,22 +932,22 @@ mono_gc_enable_alloc_events (void)
 }
 
 void*
-mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj (vtable, size);
+	MonoObject *obj = sgen_alloc_obj (vtable, size, error);
 
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
 }
 
 void*
-mono_gc_alloc_pinned_obj (MonoVTable *vtable, size_t size)
+mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size);
+	MonoObject *obj = sgen_alloc_obj_pinned (vtable, size, error);
 
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (obj);
 
 	return obj;
@@ -1063,7 +1063,7 @@ create_allocator (int atype, gboolean slowpath)
 	int num_params, i;
 
 	if (!registered) {
-		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_obj, "ves_icall_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
 		registered = TRUE;
@@ -1305,11 +1305,11 @@ create_allocator (int atype, gboolean slowpath)
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 
-	/* FIXME: mono_gc_alloc_obj takes a 'size_t' as an argument, not an int32 */
+	/* FIXME: ves_icall_gc_alloc_obj takes a 'size_t' as an argument, not an int32 */
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldloc (mb, size_var);
 	if (atype == ATYPE_NORMAL || atype == ATYPE_SMALL) {
-		mono_mb_emit_icall (mb, mono_gc_alloc_obj);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_obj);
 	} else if (atype == ATYPE_VECTOR) {
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icall (mb, mono_gc_alloc_vector);
@@ -1408,7 +1408,7 @@ mono_gc_get_aligned_size_for_allocator (int size)
 }
 
 /*
- * Generate an allocator method implementing the fast path of mono_gc_alloc_obj ().
+ * Generate an allocator method implementing the fast path of mono_gc_alloc_obj_checked ().
  * The signature of the called method is:
  * 	object allocate (MonoVTable *vtable)
  */
@@ -2707,12 +2707,6 @@ void
 mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
 {
 	// FIXME:
-}
-
-void
-sgen_client_out_of_memory (size_t size)
-{
-	mono_gc_out_of_memory (size);
 }
 
 guint8*

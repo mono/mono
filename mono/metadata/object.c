@@ -4514,6 +4514,10 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+#ifdef HAVE_SGEN_GC
+	MonoError error;
+	MonoObject *ret;
+#endif
 	MonoVTable *vtable;
 
 	vtable = mono_class_vtable (domain, klass);
@@ -4521,7 +4525,10 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 		return NULL;
 
 #ifdef HAVE_SGEN_GC
-	return (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
+	ret = (MonoObject*) mono_gc_alloc_pinned_obj_checked (vtable, mono_class_instance_size (klass), &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 #else
 	return mono_object_new_specific (vtable);
 #endif
@@ -4573,7 +4580,9 @@ mono_object_new_alloc_specific (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	MonoObject *o = (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *o = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
 
 	if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
@@ -4586,7 +4595,11 @@ mono_object_new_fast (MonoVTable *vtable)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	return (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
+	MonoError error;
+	MonoObject *ret = (MonoObject *) mono_gc_alloc_obj_checked (vtable, vtable->klass->instance_size, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 /**
@@ -4663,13 +4676,15 @@ mono_object_clone (MonoObject *obj)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *o;
 	int size = obj->vtable->klass->instance_size;
 
 	if (obj->vtable->klass->rank)
 		return (MonoObject*)mono_array_clone ((MonoArray*)obj);
 
-	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
+	o = (MonoObject *)mono_gc_alloc_obj_checked (obj->vtable, size, &error);
+	mono_error_raise_exception (&error);
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	mono_gc_wbarrier_object_copy (o, obj);
@@ -5447,10 +5462,12 @@ mono_string_get_pinned (MonoString *str)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	int size;
 	MonoString *news;
 	size = sizeof (MonoString) + 2 * (mono_string_length (str) + 1);
-	news = (MonoString *)mono_gc_alloc_pinned_obj (((MonoObject*)str)->vtable, size);
+	news = (MonoString*) mono_gc_alloc_pinned_obj_checked (((MonoObject*)str)->vtable, size, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	if (news) {
 		memcpy (mono_string_chars (news), mono_string_chars (str), mono_string_length (str) * 2);
 		news->length = mono_string_length (str);
