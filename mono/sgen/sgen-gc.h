@@ -980,7 +980,7 @@ void sgen_clear_tlabs (void);
 
 GCObject* sgen_alloc_obj (GCVTable vtable, size_t size, MonoError *error);
 GCObject* sgen_alloc_obj_pinned (GCVTable vtable, size_t size, MonoError *error);
-GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size);
+GCObject* sgen_alloc_obj_mature (GCVTable vtable, size_t size, MonoError *error);
 
 /* Debug support */
 

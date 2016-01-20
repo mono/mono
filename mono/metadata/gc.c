@@ -916,13 +916,9 @@ mono_gc_get_mach_exception_thread (void)
 
 #ifndef HAVE_SGEN_GC
 void*
-mono_gc_alloc_mature (MonoVTable *vtable)
+mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error)
 {
-	MonoError error;
-	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
-	mono_error_raise_exception (&error); /* FIXME don't raise here */
-
-	return ret;
+	return mono_object_new_specific_checked (vtable, error);
 }
 #endif
 

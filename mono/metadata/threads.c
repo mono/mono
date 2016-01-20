@@ -570,8 +570,12 @@ set_current_thread_for_domain (MonoDomain *domain, MonoInternalThread *thread, M
 static MonoThread*
 create_thread_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoVTable *vt = mono_class_vtable (domain, mono_defaults.thread_class);
-	return (MonoThread*)mono_gc_alloc_mature (vt);
+	MonoThread *ret = (MonoThread*) mono_gc_alloc_mature_checked (vt, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 static MonoThread*
@@ -585,11 +589,13 @@ new_thread_with_internal (MonoDomain *domain, MonoInternalThread *internal)
 static MonoInternalThread*
 create_internal_thread (void)
 {
+	MonoError error;
 	MonoInternalThread *thread;
 	MonoVTable *vt;
 
 	vt = mono_class_vtable (mono_get_root_domain (), mono_defaults.internal_thread_class);
-	thread = (MonoInternalThread*)mono_gc_alloc_mature (vt);
+	thread = (MonoInternalThread*) mono_gc_alloc_mature_checked (vt, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 
 	thread->synch_cs = g_new0 (MonoCoopMutex, 1);
 	mono_coop_mutex_init_recursive (thread->synch_cs);

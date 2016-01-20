@@ -171,7 +171,7 @@ void  mono_gc_deregister_root (char* addr);
 int   mono_gc_finalizers_for_domain (MonoDomain *domain, MonoObject **out_array, int out_size);
 void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
-void* mono_gc_alloc_mature (MonoVTable *vtable);
+void* mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error);
 
 /* 
  * Register a root which can only be written using a write barrier.

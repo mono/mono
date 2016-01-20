@@ -496,9 +496,11 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size, MonoError *error)
 }
 
 GCObject*
-sgen_alloc_obj_mature (GCVTable vtable, size_t size)
+sgen_alloc_obj_mature (GCVTable vtable, size_t size, MonoError *error)
 {
 	GCObject *res;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;

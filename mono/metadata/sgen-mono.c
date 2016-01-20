@@ -956,15 +956,17 @@ mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *er
 }
 
 void*
-mono_gc_alloc_mature (MonoVTable *vtable)
+mono_gc_alloc_mature_checked (MonoVTable *vtable, MonoError *error)
 {
-	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size);
+	MonoObject *obj = sgen_alloc_obj_mature (vtable, vtable->klass->instance_size, error);
 
-	if (obj && G_UNLIKELY (obj->vtable->klass->has_finalize))
-		mono_object_register_finalizer (obj);
+	if (mono_error_ok (error)) {
+		if (obj && G_UNLIKELY (obj->vtable->klass->has_finalize))
+			mono_object_register_finalizer (obj);
 
-	if (G_UNLIKELY (alloc_events))
-		mono_profiler_allocation (obj);
+		if (G_UNLIKELY (alloc_events))
+			mono_profiler_allocation (obj);
+	}
 
 	return obj;
 }
