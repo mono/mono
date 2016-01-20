@@ -918,7 +918,11 @@ mono_gc_get_mach_exception_thread (void)
 void*
 mono_gc_alloc_mature (MonoVTable *vtable)
 {
-	return mono_object_new_specific (vtable);
+	MonoError error;
+	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 #endif
 

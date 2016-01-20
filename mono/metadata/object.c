@@ -4495,12 +4495,18 @@ mono_object_new (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoVTable *vtable;
+	MonoObject *ret;
 
 	vtable = mono_class_vtable (domain, klass);
 	if (!vtable)
 		return NULL;
-	return mono_object_new_specific (vtable);
+
+	ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 }
 
 /**
@@ -4514,6 +4520,10 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+#ifndef HAVE_SGEN_GC
+	MonoError error;
+	MonoObject *ret;
+#endif
 	MonoVTable *vtable;
 
 	vtable = mono_class_vtable (domain, klass);
@@ -4523,7 +4533,10 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 #ifdef HAVE_SGEN_GC
 	return (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
 #else
-	return mono_object_new_specific (vtable);
+	ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
+	return ret;
 #endif
 }
 
@@ -4537,9 +4550,21 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
 MonoObject *
 mono_object_new_specific (MonoVTable *vtable)
 {
+	MonoError error;
+	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
+MonoObject *
+mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
+{
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *o;
+
+	mono_error_init (error);
 
 	/* check for is_com_object for COM Interop */
 	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
@@ -4554,8 +4579,10 @@ mono_object_new_specific (MonoVTable *vtable)
 				mono_class_init (klass);
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
-			if (!im)
-				mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
+			if (!im) {
+				mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+				return NULL;
+			}
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 	
@@ -4566,6 +4593,16 @@ mono_object_new_specific (MonoVTable *vtable)
 	}
 
 	return mono_object_new_alloc_specific (vtable);
+}
+
+MonoObject *
+ves_icall_object_new_specific (MonoVTable *vtable)
+{
+	MonoError error;
+	MonoObject *ret = mono_object_new_specific_checked (vtable, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 MonoObject *
@@ -4606,7 +4643,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 	*pass_size_in_words = FALSE;
 
 	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
-		return mono_object_new_specific;
+		return ves_icall_object_new_specific;
 
 	if (vtable->gc_descr != MONO_GC_DESCRIPTOR_NULL) {
 
@@ -4626,7 +4663,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 		*/
 	}
 
-	return mono_object_new_specific;
+	return ves_icall_object_new_specific;
 }
 
 /**
