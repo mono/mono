@@ -732,6 +732,9 @@ namespace System.Globalization
 		
 		public static CultureInfo GetCultureInfo (int culture)
 		{
+			if (culture < 1)
+				throw new ArgumentOutOfRangeException ("culture", "Positive number required.");
+
 			CultureInfo c;
 			
 			lock (shared_table_lock){
@@ -1057,7 +1060,7 @@ namespace System.Globalization
 
 		static Exception CreateNotFoundException (string name)
 		{
-			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
+			return new CreateNotFoundException ("name", "Culture name " + name + " is not supported.");
 		}
 		
 		public static CultureInfo DefaultThreadCurrentCulture {
