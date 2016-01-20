@@ -1757,11 +1757,13 @@ mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_len
 }
 
 void*
-mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size)
+mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error)
 {
 	MonoArray *arr;
 	MonoArrayBounds *bounds;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1786,7 +1788,8 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	arr->max_length = (mono_array_size_t)max_length;

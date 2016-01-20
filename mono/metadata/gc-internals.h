@@ -151,7 +151,7 @@ void     mono_gc_finalize_notify    (void);
 void* mono_gc_alloc_pinned_obj_checked (MonoVTable *vtable, size_t size, MonoError *error);
 void* mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error);
 void* mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error);
-void* mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size);
+void* mono_gc_alloc_array_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, uintptr_t bounds_size, MonoError *error);
 void* mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len);
 MonoGCDescriptor mono_gc_make_descr_for_string (gsize *bitmap, int numbits);
 

@@ -4935,11 +4935,12 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 	 */
 	vtable = mono_class_vtable_full (domain, array_class, TRUE);
 	if (bounds_size)
-		o = (MonoObject *)mono_gc_alloc_array (vtable, byte_len, len, bounds_size);
-	else {
+		o = (MonoObject*) mono_gc_alloc_array_checked (vtable, byte_len, len, bounds_size, &error);
+	else
 		o = (MonoObject*) mono_gc_alloc_vector_checked (vtable, byte_len, len, &error);
-		mono_error_raise_exception (&error); /* FIXME don't raise here */
-	}
+
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
+
 	array = (MonoArray*)o;
 
 	bounds = array->bounds;
