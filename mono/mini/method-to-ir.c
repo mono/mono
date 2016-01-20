@@ -3348,7 +3348,7 @@ mini_emit_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass
 		return;
 	}
 
-	klass = mono_class_from_mono_type (mini_get_underlying_type (&klass->byval_arg));
+	klass = mono_class_from_mono_type (mini_get_underlying_type (cfg, &klass->byval_arg));
 
 	n = mono_class_value_size (klass, &align);
 
