@@ -201,10 +201,13 @@ mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 }
 
 void *
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
-	MonoArray *obj = calloc (1, size);
+	MonoArray *obj;
 
+	mono_error_init (error);
+
+	obj = calloc (1, size);
 	obj->obj.vtable = vtable;
 	obj->max_length = max_length;
 

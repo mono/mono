@@ -4886,6 +4886,7 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	uintptr_t byte_len = 0, len, bounds_size;
 	MonoObject *o;
 	MonoArray *array;
@@ -4935,8 +4936,10 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, uintptr_t *leng
 	vtable = mono_class_vtable_full (domain, array_class, TRUE);
 	if (bounds_size)
 		o = (MonoObject *)mono_gc_alloc_array (vtable, byte_len, len, bounds_size);
-	else
-		o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, len);
+	else {
+		o = (MonoObject*) mono_gc_alloc_vector_checked (vtable, byte_len, len, &error);
+		mono_error_raise_exception (&error); /* FIXME don't raise here */
+	}
 	array = (MonoArray*)o;
 
 	bounds = array->bounds;
@@ -4986,6 +4989,7 @@ mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	MonoError error;
 	MonoObject *o;
 	MonoArray *ao;
 	uintptr_t byte_len;
@@ -4999,7 +5003,8 @@ mono_array_new_specific (MonoVTable *vtable, uintptr_t n)
 		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 		return NULL;
 	}
-	o = (MonoObject *)mono_gc_alloc_vector (vtable, byte_len, n);
+	o = (MonoObject*) mono_gc_alloc_vector_checked (vtable, byte_len, n, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	ao = (MonoArray*)o;
 
 	return ao;

@@ -703,9 +703,17 @@ mono_gc_alloc_obj_checked (MonoVTable *vtable, size_t size, MonoError *error)
 }
 
 void *
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
 	MonoArray *obj;
+
+	mono_error_init (error);
+
+#ifdef HAVE_KW_THREAD
+	oom_error = error;
+#else
+	mono_native_tls_set_value (oom_error, error);
+#endif
 
 	if (!vtable->klass->has_references) {
 		obj = (MonoArray *)GC_MALLOC_ATOMIC (size);
@@ -724,7 +732,13 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	obj->max_length = max_length;
 
-	if (G_UNLIKELY (alloc_events))
+#ifdef HAVE_KW_THREAD
+	oom_error = NULL;
+#else
+	mono_native_tls_set_value (oom_error, NULL);
+#endif
+
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&obj->obj);
 
 	return obj;

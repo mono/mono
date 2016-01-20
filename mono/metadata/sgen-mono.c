@@ -37,6 +37,8 @@
 #include "metadata/handle.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internals.h"
+#include "utils/mono-error.h"
+#include "utils/mono-error-internals.h"
 
 #ifdef HEAVY_STATISTICS
 static guint64 stat_wbarrier_set_arrayref = 0;
@@ -1064,7 +1066,7 @@ create_allocator (int atype, gboolean slowpath)
 
 	if (!registered) {
 		mono_register_jit_icall (ves_icall_gc_alloc_obj, "ves_icall_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
+		mono_register_jit_icall (ves_icall_gc_alloc_vector, "ves_icall_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
 		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
 		registered = TRUE;
 	}
@@ -1312,7 +1314,7 @@ create_allocator (int atype, gboolean slowpath)
 		mono_mb_emit_icall (mb, ves_icall_gc_alloc_obj);
 	} else if (atype == ATYPE_VECTOR) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_icall (mb, mono_gc_alloc_vector);
+		mono_mb_emit_icall (mb, ves_icall_gc_alloc_vector);
 	} else if (atype == ATYPE_STRING) {
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icall (mb, mono_gc_alloc_string);
@@ -1711,10 +1713,12 @@ LOOP_HEAD:
  */
 
 void*
-mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+mono_gc_alloc_vector_checked (MonoVTable *vtable, size_t size, uintptr_t max_length, MonoError *error)
 {
 	MonoArray *arr;
 	TLAB_ACCESS_INIT;
+
+	mono_error_init (error);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -1736,7 +1740,8 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	arr = (MonoArray*)sgen_alloc_obj_nolock (vtable, size);
 	if (G_UNLIKELY (!arr)) {
 		UNLOCK_GC;
-		return mono_gc_out_of_memory (size);
+		mono_error_set_out_of_memory (error, "Could not allocate " G_GSIZE_FORMAT " bytes", size);
+		return NULL;
 	}
 
 	arr->max_length = (mono_array_size_t)max_length;
@@ -1744,7 +1749,7 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 	UNLOCK_GC;
 
  done:
-	if (G_UNLIKELY (alloc_events))
+	if (mono_error_ok (error) && G_UNLIKELY (alloc_events))
 		mono_profiler_allocation (&arr->obj);
 
 	SGEN_ASSERT (6, SGEN_ALIGN_UP (size) == SGEN_ALIGN_UP (sgen_client_par_object_get_size (vtable, (GCObject*)arr)), "Vector has incorrect size.");
