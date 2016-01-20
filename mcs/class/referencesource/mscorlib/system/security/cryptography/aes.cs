@@ -34,7 +34,7 @@ namespace System.Security.Cryptography {
         }
 
         public static new Aes Create() {
-#if FULL_AOT_RUNTIME
+#if MONOTOUCH
             // The Aes base class was moved from System.Core to mscorlib - so we can't just return a new AesCryptoServiceProvider instance
             // note: the linker is aware of this condition
             return (Aes) Activator.CreateInstance (Type.GetType ("System.Security.Cryptography.AesManaged, " + Consts.AssemblySystem_Core));
