@@ -932,6 +932,16 @@ ves_icall_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	return ret;
 }
 
+void*
+ves_icall_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+{
+	MonoError error;
+	MonoArray *ret = (MonoArray*) mono_gc_alloc_vector_checked (vtable, size, max_length, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
+}
+
 static MonoReferenceQueue *ref_queues;
 
 static void
