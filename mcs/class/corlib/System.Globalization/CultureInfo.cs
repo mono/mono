@@ -732,6 +732,9 @@ namespace System.Globalization
 		
 		public static CultureInfo GetCultureInfo (int culture)
 		{
+			if (culture < 1)
+				throw new ArgumentOutOfRangeException ("culture", "Positive number required.");
+
 			CultureInfo c;
 			
 			lock (shared_table_lock){
