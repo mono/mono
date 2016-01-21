@@ -82,6 +82,10 @@ namespace Mono.Security.Interface
 			get; set;
 		}
 
+		public CipherSuiteCode[] EnabledCiphers {
+			get; set;
+		}
+
 		bool cloned = false;
 		bool checkCertName = true;
 		bool checkCertRevocationStatus = false;
@@ -155,6 +159,7 @@ namespace Mono.Security.Interface
 			callbackNeedsChain = other.callbackNeedsChain;
 			UserSettings = other.UserSettings;
 			EnabledProtocols = other.EnabledProtocols;
+			EnabledCiphers = other.EnabledCiphers;
 			TrustAnchors = other.TrustAnchors;
 			cloned = true;
 		}
