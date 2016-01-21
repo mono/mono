@@ -4479,6 +4479,29 @@ arith_overflow (void)
 	mono_raise_exception (mono_get_exception_overflow ());
 }
 
+
+
+MonoObject *
+mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+MonoObject *
+mono_object_new_pinned_checked (MonoDomain *domain, MonoClass *klass, MonoError *error);
+
+MonoObject *
+mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error);
+
+MonoObject *
+mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error);
+
+MonoObject*
+mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error);
+
+MonoObject *
+mono_object_clone_checked (MonoObject *obj, MonoError *error);
+
+MonoObject*
+mono_object_new_mature_checked (MonoVTable *vtable, MonoError *error);
+
 /**
  * mono_object_new:
  * @klass: the class of the object that we want to create
@@ -4491,16 +4514,28 @@ arith_overflow (void)
  * It returns NULL on failure.
  */
 MonoObject *
-mono_object_new (MonoDomain *domain, MonoClass *klass)
+mono_object_new_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoVTable *vtable;
 
 	vtable = mono_class_vtable (domain, klass);
-	if (!vtable)
+	if (!vtable) {
+		mono_error_set_out_of_memory (error, "Could not resolve vtable");
 		return NULL;
-	return mono_object_new_specific (vtable);
+	}
+	return mono_object_new_specific_checked (vtable, error);
+}
+
+MonoObject *
+mono_object_new (MonoDomain *domain, MonoClass *klass)
+{
+	MonoError error;
+	MonoObject *o = mono_object_new_checked (domain, klass, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
+	return o;
 }
 
 /**
@@ -4510,23 +4545,37 @@ mono_object_new (MonoDomain *domain, MonoClass *klass)
  * For SGEN, these objects will only be freed at appdomain unload.
  */
 MonoObject *
-mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
+mono_object_new_pinned_checked (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoVTable *vtable;
 
+	error_init (error);
+
 	vtable = mono_class_vtable (domain, klass);
-	if (!vtable)
+	if (!vtable) {
+		mono_error_set_out_of_memory (error, "Could not resolve vtable");
 		return NULL;
+	}
 
 	MonoObject *o = (MonoObject *)mono_gc_alloc_pinned_obj (vtable, mono_class_instance_size (klass));
 
-	if (G_UNLIKELY (!o))
-		mono_gc_out_of_memory (mono_class_instance_size (klass));
-	else if (G_UNLIKELY (vtable->klass->has_finalize))
+	if (G_UNLIKELY (!o)) {
+		mono_error_set_out_of_memory (error, "Could not allocate %d bytes",  mono_class_instance_size (klass));
+	} else if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
 
+	return o;
+}
+
+MonoObject *
+mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
+{
+	MonoError error;
+	MonoObject *o = mono_object_new_pinned_checked (domain, klass, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
 	return o;
 }
 
@@ -4538,11 +4587,13 @@ mono_object_new_pinned (MonoDomain *domain, MonoClass *klass)
  * by @vtable
  */
 MonoObject *
-mono_object_new_specific (MonoVTable *vtable)
+mono_object_new_specific_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	MonoObject *o;
+
+	error_init (error);
 
 	/* check for is_com_object for COM Interop */
 	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
@@ -4553,12 +4604,19 @@ mono_object_new_specific (MonoVTable *vtable)
 		if (im == NULL) {
 			MonoClass *klass = mono_class_from_name (mono_defaults.corlib, "System.Runtime.Remoting.Activation", "ActivationServices");
 
+			if (!klass) {
+				mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+				return NULL;				
+			}
+
 			if (!klass->inited)
 				mono_class_init (klass);
 
 			im = mono_class_get_method_from_name (klass, "CreateProxyForType", 1);
-			if (!im)
-				mono_raise_exception (mono_get_exception_not_supported ("Linked away."));
+			if (!im) {
+				mono_error_set_generic_error (error, "System", "NotSupportedException", "Linked away.");
+				return NULL;
+			}
 			vtable->domain->create_proxy_for_type_method = im;
 		}
 	
@@ -4568,33 +4626,84 @@ mono_object_new_specific (MonoVTable *vtable)
 		if (o != NULL) return o;
 	}
 
-	return mono_object_new_alloc_specific (vtable);
+	return mono_object_new_alloc_specific_checked (vtable, error);
 }
 
 MonoObject *
-mono_object_new_alloc_specific (MonoVTable *vtable)
+mono_object_new_specific (MonoVTable *vtable)
+{
+	MonoError error;
+	MonoObject *o = mono_object_new_specific_checked (vtable, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
+	return o;
+}
+
+MonoObject *
+mono_object_new_alloc_specific_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+	
+	error_init (error);
 
 	MonoObject *o = (MonoObject *)mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
 
 	if (G_UNLIKELY (!o))
-		mono_gc_out_of_memory (vtable->klass->instance_size);
+		mono_error_set_out_of_memory (error, "Could not allocate %d bytes", vtable->klass->instance_size);
 	else if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
 
 	return o;
 }
 
+MonoObject *
+mono_object_new_alloc_specific (MonoVTable *vtable)
+{
+	MonoError error;
+	MonoObject *o = mono_object_new_alloc_specific_checked (vtable, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
+	return o;
+}
+
 MonoObject*
-mono_object_new_fast (MonoVTable *vtable)
+mono_object_new_fast_checked (MonoVTable *vtable, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
 
 	MonoObject *o = mono_gc_alloc_obj (vtable, vtable->klass->instance_size);
 
 	if (G_UNLIKELY (!o))
-		mono_gc_out_of_memory (vtable->klass->instance_size);
+		mono_error_set_out_of_memory (error, "Could not allocate %d bytes", vtable->klass->instance_size);
+
+	return o;
+}
+
+MonoObject *
+mono_object_new_fast (MonoVTable *vtable)
+{
+	MonoError error;
+	MonoObject *o = mono_object_new_fast_checked (vtable, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
+	return o;
+}
+
+MonoObject*
+mono_object_new_mature_checked (MonoVTable *vtable, MonoError *error)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
+
+	MonoObject *o = mono_gc_alloc_mature (vtable, vtable->klass->instance_size);
+
+	if (G_UNLIKELY (!o))
+		mono_error_set_out_of_memory (error, "Could not allocate %d bytes", vtable->klass->instance_size);
+	else if (G_UNLIKELY (vtable->klass->has_finalize))
+		mono_object_register_finalizer (o);
 
 	return o;
 }
@@ -4602,15 +4711,10 @@ mono_object_new_fast (MonoVTable *vtable)
 MonoObject*
 mono_object_new_mature (MonoVTable *vtable)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
-
-	MonoObject *o = mono_gc_alloc_mature (vtable, vtable->klass->instance_size);
-
-	if (G_UNLIKELY (!o))
-		mono_gc_out_of_memory (vtable->klass->instance_size);
-	else if (G_UNLIKELY (vtable->klass->has_finalize))
-		mono_object_register_finalizer (o);
-
+	MonoError error;
+	MonoObject *o = mono_object_new_mature_checked (vtable, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
 	return o;
 }
 
@@ -4684,9 +4788,11 @@ mono_object_new_from_token  (MonoDomain *domain, MonoImage *image, guint32 token
  * Returns: A newly created object who is a shallow copy of @obj
  */
 MonoObject *
-mono_object_clone (MonoObject *obj)
+mono_object_clone_checked (MonoObject *obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
+
+	error_init (error);
 
 	MonoObject *o;
 	int size = obj->vtable->klass->instance_size;
@@ -4696,8 +4802,10 @@ mono_object_clone (MonoObject *obj)
 
 	o = (MonoObject *)mono_gc_alloc_obj (obj->vtable, size);
 
-	if (G_UNLIKELY (!o))
-		mono_gc_out_of_memory (size);
+	if (G_UNLIKELY (!o)) {
+		mono_error_set_out_of_memory (error, "Could not allocate %d bytes", obj->vtable->klass->instance_size);
+		return NULL;
+	}
 
 	/* If the object doesn't contain references this will do a simple memmove. */
 	mono_gc_wbarrier_object_copy (o, obj);
@@ -4707,6 +4815,16 @@ mono_object_clone (MonoObject *obj)
 	return o;
 }
 
+
+MonoObject *
+mono_object_clone (MonoObject *obj)
+{
+	MonoError error;
+	MonoObject *o = mono_object_clone_checked (obj, &error);
+	if (!is_ok (&error))
+		mono_error_raise_exception (&error);
+	return o;
+}
 /**
  * mono_array_full_copy:
  * @src: source array to copy
