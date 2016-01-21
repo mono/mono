@@ -15,7 +15,7 @@ use Getopt::Long;
 use lib File::Spec->rel2abs(dirname(__FILE__)).'/.';
 
 # Override this value to point to a local directory for local testing
-my $base_url = "https://rhodecode.unity3d.com/unity-extra/";
+my $base_url = "https://ono.unity3d.com/unity-extra/";
 my $base_url_mirror = "http://mercurial-mirror.hq.unity3d.com/unity-extra/";
 
 # SDKDownloader fetches the default branch of a remote repository located at $base_url/$repo_name.
