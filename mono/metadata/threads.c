@@ -539,7 +539,7 @@ static MonoThread**
 get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *thread)
 {
 	static MonoClassField *current_thread_field = NULL;
-
+	MonoError error;
 	guint32 offset;
 
 	if (!current_thread_field) {
@@ -547,7 +547,8 @@ get_current_thread_ptr_for_domain (MonoDomain *domain, MonoInternalThread *threa
 		g_assert (current_thread_field);
 	}
 
-	mono_class_vtable (domain, mono_defaults.thread_class);
+	mono_class_vtable_checked (domain, mono_defaults.thread_class, &error);
+	mono_error_cleanup (&error); /* FIXME don't swallow the error */
 	mono_domain_lock (domain);
 	offset = GPOINTER_TO_UINT (g_hash_table_lookup (domain->special_static_fields, current_thread_field));
 	mono_domain_unlock (domain);
@@ -570,7 +571,9 @@ set_current_thread_for_domain (MonoDomain *domain, MonoInternalThread *thread, M
 static MonoThread*
 create_thread_object (MonoDomain *domain)
 {
-	MonoVTable *vt = mono_class_vtable (domain, mono_defaults.thread_class);
+	MonoError error;
+	MonoVTable *vt = mono_class_vtable_checked (domain, mono_defaults.thread_class, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 	return (MonoThread*)mono_gc_alloc_mature (vt);
 }
 
@@ -585,10 +588,12 @@ new_thread_with_internal (MonoDomain *domain, MonoInternalThread *internal)
 static MonoInternalThread*
 create_internal_thread (void)
 {
+	MonoError error;
 	MonoInternalThread *thread;
 	MonoVTable *vt;
 
-	vt = mono_class_vtable (mono_get_root_domain (), mono_defaults.internal_thread_class);
+	vt = mono_class_vtable_checked (mono_get_root_domain (), mono_defaults.internal_thread_class, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 	thread = (MonoInternalThread*)mono_gc_alloc_mature (vt);
 
 	thread->synch_cs = g_new0 (MonoCoopMutex, 1);

@@ -7849,6 +7849,7 @@ collect_interfaces (MonoClass *klass, GHashTable *ifaces, MonoError *error)
 static ErrorCode
 type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint8 *p, guint8 *end, Buffer *buf)
 {
+	MonoError error;
 	MonoClass *nested;
 	MonoType *type;
 	gpointer iter;
@@ -8097,7 +8098,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (!found)
 				return ERR_INVALID_FIELDID;
 
-			vtable = mono_class_vtable (domain, f->parent);
+			vtable = mono_class_vtable_checked (domain, f->parent, &error);
+			g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
 			mono_field_static_get_value_for_thread (thread ? thread : mono_thread_internal_current (), vtable, f, val);
 			buffer_add_value (buf, f->type, val, domain);
@@ -8137,7 +8139,8 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 
 			// FIXME: Check for literal/const
 
-			vtable = mono_class_vtable (domain, f->parent);
+			vtable = mono_class_vtable_checked (domain, f->parent, &error);
+			g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
 			err = decode_value (f->type, domain, val, p, &p, end);
 			if (err != ERR_NONE) {
@@ -8212,7 +8215,6 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 	case CMD_TYPE_GET_INTERFACES: {
 		MonoClass *parent;
 		GHashTable *iface_hash = g_hash_table_new (NULL, NULL);
-		MonoError error;
 		MonoClass *tclass, *iface;
 		GHashTableIter iter;
 
@@ -8268,12 +8270,14 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		break;
 	}
 	case CMD_TYPE_IS_INITIALIZED: {
-		MonoVTable *vtable = mono_class_vtable (domain, klass);
+		MonoVTable *vtable = mono_class_vtable_checked (domain, klass, &error);
 
-		if (vtable)
+		if (mono_error_ok (&error)) {
 			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
-		else
+		} else {
+			mono_error_cleanup (&error); /* FIXME: don't swallow the error */
 			buffer_add_int (buf, 0);
+		}
 		break;
 	}
 	case CMD_TYPE_CREATE_INSTANCE: {
@@ -9175,6 +9179,7 @@ static ErrorCode
 object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
 	int objid;
+	MonoError error;
 	ErrorCode err;
 	MonoObject *obj;
 	int len, i;
@@ -9240,7 +9245,8 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					return ERR_INVALID_FIELDID;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
-				vtable = mono_class_vtable (obj->vtable->domain, f->parent);
+				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
 				mono_field_static_get_value (vtable, f, val);
 				buffer_add_value (buf, f->type, val, obj->vtable->domain);
@@ -9289,7 +9295,8 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					return ERR_INVALID_FIELDID;
 
 				g_assert (f->type->attrs & FIELD_ATTRIBUTE_STATIC);
-				vtable = mono_class_vtable (obj->vtable->domain, f->parent);
+				vtable = mono_class_vtable_checked (obj->vtable->domain, f->parent, &error);
+				g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
 
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type (f->type)));
 				err = decode_value (f->type, obj->vtable->domain, val, p, &p, end);

@@ -287,8 +287,12 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 		if (cfg->compile_aot) {											\
 			NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_METHOD_RGCTX, (method)); \
 		} else {														\
+			MonoError error;											\
+			MonoVTable *vtable;											\
 			MonoMethodRuntimeGenericContext *mrgctx;					\
-			mrgctx = mono_method_lookup_rgctx (mono_class_vtable ((cfg)->domain, (method)->klass), mini_method_get_context ((method))->method_inst); \
+			vtable = mono_class_vtable_checked ((cfg)->domain, (method)->klass, &error); \
+			g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */ \
+			mrgctx = mono_method_lookup_rgctx (vtable, mini_method_get_context ((method))->method_inst); \
 			NEW_PCONST ((cfg), (dest), (mrgctx));						\
 		}																\
 	} while (0)

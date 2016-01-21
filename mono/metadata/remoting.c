@@ -402,8 +402,9 @@ mono_marshal_get_remoting_invoke (MonoMethod *method)
 	/* this seems to be the best plase to put this, as all remoting invokes seem to get filtered through here */
 #ifndef DISABLE_COM
 	if (mono_class_is_com_object (method->klass) || method->klass == mono_class_get_com_object_class ()) {
-		MonoVTable *vtable = mono_class_vtable (mono_domain_get (), method->klass);
-		g_assert (vtable); /*FIXME do proper error handling*/
+		MonoError error;
+		MonoVTable *vtable = mono_class_vtable_checked (mono_domain_get (), method->klass, &error);
+		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
 
 		if (!mono_vtable_is_remote (vtable)) {
 			return mono_cominterop_get_invoke (method);

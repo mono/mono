@@ -808,6 +808,7 @@ mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 leng
 gpointer
 mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 {
+	MonoError error;
 	MonoVTable *vtable;
 	gpointer addr;
 	
@@ -815,7 +816,9 @@ mono_class_static_field_address (MonoDomain *domain, MonoClassField *field)
 
 	mono_class_init (field->parent);
 
-	vtable = mono_class_vtable_full (domain, field->parent, TRUE);
+	vtable = mono_class_vtable_checked (domain, field->parent, &error);
+	mono_error_raise_exception (&error);
+
 	if (!vtable->initialized)
 		mono_runtime_class_init (vtable);
 
