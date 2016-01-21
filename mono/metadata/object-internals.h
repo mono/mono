@@ -1579,8 +1579,8 @@ mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy
 MonoVTable *
 mono_class_try_get_vtable (MonoDomain *domain, MonoClass *klass);
 
-MonoException *
-mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception);
+void
+mono_runtime_class_init_checked (MonoVTable *vtable, MonoError *error);
 
 void
 mono_method_clear_object (MonoDomain *domain, MonoMethod *method);
@@ -1651,6 +1651,9 @@ mono_error_set_pending_exception (MonoError *error);
 
 MonoArray *
 mono_glist_to_array (GList *list, MonoClass *eclass);
+
+MonoObject*
+mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, MonoObject *obj, MonoError *error);
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

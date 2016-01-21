@@ -9970,6 +9970,13 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	}
 }
 
+void
+mono_class_set_error_for_failure (MonoClass *klass, MonoError *error)
+{
+	// FIXME: base on mono_class_get_exception_for_failure, transform klass->exception_data to MonoError
+	g_error ("not implemented");
+}
+
 static gboolean
 is_nesting_type (MonoClass *outer_klass, MonoClass *inner_klass)
  {

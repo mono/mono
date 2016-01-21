@@ -6977,6 +6977,7 @@ mono_event_get_object (MonoDomain *domain, MonoClass *klass, MonoEvent *event)
 static MonoObject *
 mono_get_reflection_missing_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoObject *obj;
 	static MonoClassField *missing_value_field = NULL;
 	
@@ -6987,7 +6988,8 @@ mono_get_reflection_missing_object (MonoDomain *domain)
 		missing_value_field = mono_class_get_field_from_name (missing_klass, "Value");
 		g_assert (missing_value_field);
 	}
-	obj = mono_field_get_value_object (domain, missing_value_field, NULL); 
+	obj = mono_field_get_value_object_checked (domain, missing_value_field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	g_assert (obj);
 	return obj;
 }
@@ -7022,6 +7024,8 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 	static MonoClass *System_Reflection_ParameterInfo;
 	static MonoClass *System_Reflection_ParameterInfo_array;
 	MonoError error;
+	MonoVTable *System_Reflection_ParameterInfo_vtable;
+	MonoVTable *System_Reflection_ParameterInfo_array_vtable;
 	MonoArray *res = NULL;
 	MonoReflectionMethod *member = NULL;
 	MonoReflectionParameter *param = NULL;
@@ -7032,7 +7036,6 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 	MonoObject *missing = NULL;
 	MonoMarshalSpec **mspecs;
 	MonoMethodSignature *sig;
-	MonoVTable *pinfo_vtable;
 	int i;
 
 	if (!System_Reflection_ParameterInfo_array) {
@@ -7055,8 +7058,11 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 	if (!mono_error_ok (&error))
 		mono_error_raise_exception (&error);
 
+	System_Reflection_ParameterInfo_array_vtable = mono_class_vtable_checked (domain, System_Reflection_ParameterInfo_array, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
 	if (!sig->param_count)
-		return mono_array_new_specific (mono_class_vtable (domain, System_Reflection_ParameterInfo_array), 0);
+		return mono_array_new_specific (System_Reflection_ParameterInfo_array_vtable, 0);
 
 	/* Note: the cache is based on the address of the signature into the method
 	 * since we already cache MethodInfos with the method as keys.
@@ -7070,10 +7076,12 @@ mono_param_get_objects_internal (MonoDomain *domain, MonoMethod *method, MonoCla
 	mspecs = g_new (MonoMarshalSpec*, sig->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
 
-	res = mono_array_new_specific (mono_class_vtable (domain, System_Reflection_ParameterInfo_array), sig->param_count);
-	pinfo_vtable = mono_class_vtable (domain, System_Reflection_ParameterInfo);
+	System_Reflection_ParameterInfo_vtable = mono_class_vtable_checked (domain, System_Reflection_ParameterInfo, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+
+	res = mono_array_new_specific (System_Reflection_ParameterInfo_array_vtable, sig->param_count);
 	for (i = 0; i < sig->param_count; ++i) {
-		param = (MonoReflectionParameter *)mono_object_new_specific (pinfo_vtable);
+		param = (MonoReflectionParameter *)mono_object_new_specific (System_Reflection_ParameterInfo_vtable);
 		MONO_OBJECT_SETREF (param, ClassImpl, mono_type_get_object (domain, sig->params [i]));
 		MONO_OBJECT_SETREF (param, MemberImpl, (MonoObject*)member);
 		MONO_OBJECT_SETREF (param, NameImpl, mono_string_new (domain, names [i]));
@@ -7263,6 +7271,7 @@ mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
 MonoObject *
 mono_get_dbnull_object (MonoDomain *domain)
 {
+	MonoError error;
 	MonoObject *obj;
 	static MonoClassField *dbnull_value_field = NULL;
 	
@@ -7273,7 +7282,8 @@ mono_get_dbnull_object (MonoDomain *domain)
 		dbnull_value_field = mono_class_get_field_from_name (dbnull_klass, "Value");
 		g_assert (dbnull_value_field);
 	}
-	obj = mono_field_get_value_object (domain, dbnull_value_field, NULL); 
+	obj = mono_field_get_value_object_checked (domain, dbnull_value_field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	g_assert (obj);
 	return obj;
 }

@@ -875,6 +875,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetObjectValue (MonoObj
 ICALL_EXPORT void
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (MonoType *handle)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoVTable *vtable;
 
@@ -886,10 +887,12 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 	if (klass->generic_container)
 		return;
 
-	vtable = mono_class_vtable_full (mono_domain_get (), klass, TRUE);
+	vtable = mono_class_vtable_checked (mono_domain_get (), klass, &error);
+	mono_error_raise_exception (&error);
 
 	/* This will call the type constructor */
-	mono_runtime_class_init (vtable);
+	mono_runtime_class_init_checked (vtable, &error);
+	mono_error_raise_exception (&error);
 }
 
 ICALL_EXPORT void
@@ -899,10 +902,18 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 
 	mono_image_check_for_module_cctor (image);
 	if (image->has_module_cctor) {
-		MonoClass *module_klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, &error);
+		MonoClass *klass;
+		MonoVTable *vtable;
+
+		klass = mono_class_get_checked (image, MONO_TOKEN_TYPE_DEF | 1, &error);
 		mono_error_raise_exception (&error);
+
 		/*It's fine to raise the exception here*/
-		mono_runtime_class_init (mono_class_vtable_full (mono_domain_get (), module_klass, TRUE));
+		vtable = mono_class_vtable_checked (mono_domain_get (), klass, &error);
+		mono_error_raise_exception (&error);
+
+		mono_runtime_class_init_checked (vtable, &error);
+		mono_error_raise_exception (&error);
 	}
 }
 
@@ -943,6 +954,7 @@ ves_icall_System_Object_MemberwiseClone (MonoObject *this_obj)
 ICALL_EXPORT gint32
 ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray **fields)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoObject **values = NULL;
 	MonoObject *o;
@@ -982,7 +994,8 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 		default:
 			if (!values)
 				values = g_newa (MonoObject*, mono_class_num_fields (klass));
-			o = mono_field_get_value_object (mono_object_domain (this_obj), field, this_obj);
+			o = mono_field_get_value_object_checked (mono_object_domain (this_obj), field, this_obj, &error);
+			mono_error_raise_exception (&error);
 			values [count++] = o;
 		}
 	}
@@ -1001,6 +1014,7 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this_obj, MonoArray 
 ICALL_EXPORT MonoBoolean
 ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoArray **fields)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoObject **values = NULL;
 	MonoObject *o;
@@ -1086,9 +1100,11 @@ ves_icall_System_ValueType_Equals (MonoObject *this_obj, MonoObject *that, MonoA
 		default:
 			if (!values)
 				values = g_newa (MonoObject*, mono_class_num_fields (klass) * 2);
-			o = mono_field_get_value_object (mono_object_domain (this_obj), field, this_obj);
+			o = mono_field_get_value_object_checked (mono_object_domain (this_obj), field, this_obj, &error);
+			mono_error_raise_exception (&error);
 			values [count++] = o;
-			o = mono_field_get_value_object (mono_object_domain (this_obj), field, that);
+			o = mono_field_get_value_object_checked (mono_object_domain (this_obj), field, that, &error);
+			mono_error_raise_exception (&error);
 			values [count++] = o;
 		}
 
@@ -1706,7 +1722,9 @@ ves_icall_MonoField_GetParentType (MonoReflectionField *field, MonoBoolean decla
 
 ICALL_EXPORT MonoObject *
 ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *obj)
-{	
+{
+	MonoError error;
+	MonoObject *ret;
 	MonoClass *fklass = field->klass;
 	MonoClassField *cf = field->field;
 	MonoDomain *domain = mono_object_domain (field);
@@ -1720,7 +1738,10 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	if (mono_security_core_clr_enabled ())
 		mono_security_core_clr_ensure_reflection_access_field (cf);
 
-	return mono_field_get_value_object (domain, cf, obj);
+	ret = mono_field_get_value_object_checked (domain, cf, obj, &error);
+	mono_error_raise_exception (&error);
+
+	return ret;
 }
 
 ICALL_EXPORT void
@@ -1805,9 +1826,16 @@ ves_icall_MonoField_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 	}
 
 	if (type->attrs & FIELD_ATTRIBUTE_STATIC) {
-		MonoVTable *vtable = mono_class_vtable_full (mono_object_domain (field), cf->parent, TRUE);
-		if (!vtable->initialized)
-			mono_runtime_class_init (vtable);
+		MonoVTable *vtable;
+
+		vtable = mono_class_vtable_checked (mono_object_domain (field), cf->parent, &error);
+		mono_error_raise_exception (&error);
+
+		if (!vtable->initialized) {
+			mono_runtime_class_init_checked (vtable, &error);
+			mono_error_raise_exception (&error);
+		}
+
 		mono_field_static_set_value (vtable, cf, v);
 	} else {
 		mono_field_set_value (obj, cf, v);
@@ -2706,8 +2734,10 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		mono_security_core_clr_ensure_reflection_access_method (m);
 
 	if (!(m->flags & METHOD_ATTRIBUTE_STATIC)) {
-		if (!mono_class_vtable_full (mono_object_domain (method), m->klass, FALSE)) {
-			mono_gc_wbarrier_generic_store (exc, (MonoObject*) mono_class_get_exception_for_failure (m->klass));
+		MonoError error;
+		mono_class_vtable_checked (mono_object_domain (method), m->klass, &error);
+		if (!mono_error_ok (&error)) {
+			mono_gc_wbarrier_generic_store (exc, (MonoObject*) mono_error_convert_to_exception (&error));
 			return NULL;
 		}
 
@@ -3443,6 +3473,7 @@ ICALL_EXPORT MonoArray*
 ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, guint32 bflags, MonoBoolean ignore_case, MonoReflectionType *reftype)
 {
 	static MonoClass *MethodInfo_array;
+	MonoError error;
 	MonoDomain *domain; 
 	MonoArray *res;
 	MonoVTable *array_vtable;
@@ -3461,7 +3492,8 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 	klass = mono_class_from_mono_type (type->type);
 	refklass = mono_class_from_mono_type (reftype->type);
 	domain = ((MonoObject *)type)->vtable->domain;
-	array_vtable = mono_class_vtable_full (domain, MethodInfo_array, TRUE);
+	array_vtable = mono_class_vtable_checked (domain, MethodInfo_array, &error);
+	mono_error_raise_exception (&error);
 	if (type->type->byref)
 		return mono_array_new_specific (array_vtable, 0);
 
@@ -6387,11 +6419,13 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 ICALL_EXPORT void
 ves_icall_System_Runtime_Activation_ActivationServices_EnableProxyActivation (MonoReflectionType *type, MonoBoolean enable)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoVTable* vtable;
 
 	klass = mono_class_from_mono_type (type->type);
-	vtable = mono_class_vtable_full (mono_domain_get (), klass, TRUE);
+	vtable = mono_class_vtable_checked (mono_domain_get (), klass, &error);
+	mono_error_raise_exception (&error);
 
 	mono_vtable_set_is_remote (vtable, enable);
 }
@@ -6425,8 +6459,14 @@ ves_icall_System_Runtime_Activation_ActivationServices_AllocateUninitializedClas
 		g_assert (klass->rank == 1);
 		return (MonoObject *) mono_array_new (domain, klass->element_class, 0);
 	} else {
+		MonoError error;
+		MonoVTable *vtable;
+
+		vtable = mono_class_vtable_checked (domain, klass, &error);
+		mono_error_raise_exception (&error);
+
 		/* Bypass remoting object creation check */
-		return mono_object_new_alloc_specific (mono_class_vtable_full (domain, klass, TRUE));
+		return mono_object_new_alloc_specific (vtable);
 	}
 }
 

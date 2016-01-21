@@ -158,6 +158,7 @@ mono_runtime_get_no_exec (void)
 static void
 create_domain_objects (MonoDomain *domain)
 {
+	MonoError error;
 	MonoDomain *old_domain = mono_domain_get ();
 	MonoString *arg;
 	MonoVTable *string_vt;
@@ -172,7 +173,10 @@ create_domain_objects (MonoDomain *domain)
 	 * Initialize String.Empty. This enables the removal of
 	 * the static cctor of the String class.
 	 */
-	string_vt = mono_class_vtable (domain, mono_defaults.string_class);
+
+	string_vt = mono_class_vtable_checked (domain, mono_defaults.string_class, &error);
+	g_assert (mono_error_ok (&error)); /* FIXME: don't swallow the error */
+
 	string_empty_fld = mono_class_get_field_from_name (mono_defaults.string_class, "Empty");
 	g_assert (string_empty_fld);
 	mono_field_static_set_value (string_vt, string_empty_fld, mono_string_intern (mono_string_new (domain, "")));
@@ -285,6 +289,7 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 static int
 mono_get_corlib_version (void)
 {
+	MonoError error;
 	MonoClass *klass;
 	MonoClassField *field;
 	MonoObject *value;
@@ -296,7 +301,8 @@ mono_get_corlib_version (void)
 		return -1;
 	if (! (field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 		return -1;
-	value = mono_field_get_value_object (mono_domain_get (), field, NULL);
+	value = mono_field_get_value_object_checked (mono_domain_get (), field, NULL, &error);
+	mono_error_raise_exception (&error); /* FIXME don't raise here */
 	return *(gint32*)((gchar*)value + sizeof (MonoObject));
 }
 
